@@ -18,7 +18,7 @@ import org.coconut.cache.CacheLoader;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * $Id$
- * $HeadUrl$
+ * $URL$
  * TODO: Test for class 
  * TODO: add static method to Caches
  */
