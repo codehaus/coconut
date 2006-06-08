@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>coconut</groupId>
+  <artifactId>coconut-root</artifactId>
+  <packaging>pom</packaging>
+  <name>Coconut</name>
+  <version>5.0-SNAPSHOT</version>
+  <ciManagement>
+    <notifiers>
+      <notifier>
+        <type>mail</type>
+        <address>kasper@codehaus.org</address>
+      </notifier>
+    </notifiers>
+  </ciManagement>
+  <inceptionYear>2004</inceptionYear>
+  <mailingLists>
+    <mailingList>
+      <name>Coconut Developer List</name>
+      <subscribe>
+        http://lists.codehaus.org/mailman/listinfo/coconut-dev</subscribe>
+      <unsubscribe>
+        http://lists.codehaus.org/mailman/listinfo/coconut-dev</unsubscribe>
+      <archive>http://lists.codehaus.org/pipermail/coconut-dev/</archive>
+    </mailingList>
+    <mailingList>
+      <name>Coconut Scm List</name>
+      <subscribe>
+        http://lists.codehaus.org/mailman/listinfo/coconut-scm</subscribe>
+      <unsubscribe>
+        http://lists.codehaus.org/mailman/listinfo/coconut-scm</unsubscribe>
+      <archive>http://lists.codehaus.org/pipermail/coconut-scm/</archive>
+    </mailingList>
+    <mailingList>
+      <name>Coconut User List</name>
+      <subscribe>
+        http://lists.codehaus.org/mailman/listinfo/coconut-user</subscribe>
+      <unsubscribe>
+        http://lists.codehaus.org/mailman/listinfo/coconut-user</unsubscribe>
+      <archive>http://lists.codehaus.org/pipermail/coconut-user/</archive>
+    </mailingList>
+  </mailingLists>
+  
+  <distributionManagement>
+    <repository>
+      <id>repo1</id>
+      <name>Maven Repository</name>
+      <url>scp://dist.codehaus.org/</url>
+    </repository>
+  </distributionManagement>
+  
+  <developers>
+    <developer>
+      <id>kasper</id>
+      <name>Kasper Nielsen</name>
+      <email>kasper@codehaus.org</email>
+      <organization></organization>
+      <roles>
+        <role>Despot</role>
+      </roles>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:svn:svn://svn.codehaus.org/coconut/scm/trunk/</connection>
+    <developerConnection>
+      scm:svn:https://svn.codehaus.org/coconut/trunk</developerConnection>
+  </scm>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <source>1.5</source>
+            <target>1.5</target>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+  <organization>
+    <name>Codehaus</name>
+    <url>http://www.codehaus.org/</url>
+  </organization>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clover-plugin</artifactId>
+        <configuration>
+          <jdk>1.5</jdk>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+  <modules>
+    <module>coconut-aio</module>
+    <module>coconut-cache</module>
+    <module>coconut-core</module>
+    <module>coconut-event</module>
+    <module>coconut-sandbox</module>
+    <module>coconut-test-framework</module>
+  </modules>
+</project>
