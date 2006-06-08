@@ -1,22 +1,59 @@
 package org.coconut.cache.util;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
 import org.coconut.cache.CacheLoader;
 
 /**
+ * A composite cache loader used for allowing multiple loaders to load a value.
+ * The composite loader is constructor used either an array or list of cache
+ * loaders. The cache loader with the array index 0 or the first in the
+ * specified list is the first one given the chance to load the object. If this
+ * loader Then the loader with index 1.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
+ * $Id$
+ * $HeadUrl$
+ * TODO: Test for class 
+ * TODO: add static method to Caches
  */
 public class CompositeCacheLoader<K, V> implements CacheLoader<K, V> {
+
+    /**
+     * The array of loaders used for loading the value.
+     */
     private final CacheLoader<K, V>[] loaders;
 
+    /**
+     * Creates a new composite cache loader.
+     * 
+     * @param loaders
+     *            the cache loaders used for loading values.
+     * @throws NullPointerException
+     *             if specified array of cache loaders is <tt>null</tt> or if
+     *             one of the cache loaders in the array is <tt>null</tt>
+     */
+    public CompositeCacheLoader(CacheLoader<K, V>... loaders) {
+        this(Arrays.asList(loaders));
+    }
+
+    /**
+     * Creates a new composite cache loader.
+     * 
+     * @param loaders
+     *            a list of the cache loaders used for loading values.
+     * @throws NullPointerException
+     *             if the specified list of cache loaders is <tt>null</tt> or
+     *             if the list contains a <tt>null</tt>
+     */
     @SuppressWarnings("unchecked")
-    public CompositeCacheLoader(CacheLoader<K, V>[] loaders) {
-        this.loaders = new CacheLoader[loaders.length];
-        System.arraycopy(loaders, 0, this.loaders, 0, loaders.length);
+    public CompositeCacheLoader(List<? extends CacheLoader<K, V>> loaders) {
+        this.loaders = loaders.toArray(new CacheLoader[0]);
         for (int i = 0; i < this.loaders.length; i++) {
             if (this.loaders[i] == null)
                 throw new NullPointerException("The array or list contained a null on index=" + i);
@@ -36,7 +73,7 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V> {
             }
         }
         if (v == null) {
-            return noValueFoundForLoaders(key);
+            return noValueFoundForKey(key);
         } else {
             return v;
         }
@@ -57,7 +94,7 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V> {
                     map = loadingFailed(loader, keys, e);
                 }
             } else {
-                //no keys we haven't found a value for
+                // no keys left that we haven't found a value for
                 break;
             }
             if (map != null) {
@@ -74,21 +111,26 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V> {
             }
         }
         for (K key : ks) {
-            result.put(key, noValueFoundForLoaders(key));
+            result.put(key, noValueFoundForKey(key));
         }
         return result;
+    }
+
+    protected Map<K, V> loadingFailed(CacheLoader<K, V> loader, Collection<? extends K> keys,
+            Exception cause) throws Exception {
+        throw cause;
     }
 
     protected V loadingFailed(CacheLoader<K, V> loader, K key, Exception cause) throws Exception {
         throw cause;
     }
 
-    protected V noValueFoundForLoaders(K key) throws Exception {
+    /**
+     * @param key
+     *            the key for whose value could not be loaded
+     * @return the value that should be mapped to the key
+     */
+    protected V noValueFoundForKey(K key) {
         return null;
-    }
-
-    protected Map<K, V> loadingFailed(CacheLoader<K, V> loader, Collection<? extends K> keys,
-            Exception cause) throws Exception {
-        throw cause;
     }
 }
