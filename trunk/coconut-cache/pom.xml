@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>coconut</groupId>
+		<artifactId>coconut-root</artifactId>
+		<version>5.0-SNAPSHOT</version>
+	</parent>
+	
+	<groupId>coconut</groupId>
+  <artifactId>coconut-cache-root</artifactId>
+  <name>Coconut Cache Project</name>
+  <description>Root Pom for Coconut Cache</description>
+	<version>5.0-alpha3-SNAPSHOT</version>
+	<packaging>pom</packaging>
+    
+    <dependencies>
+      <dependency>
+        <groupId>coconut</groupId>
+        <artifactId>coconut</artifactId>
+        <version>5.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>coconut</groupId>
+        <artifactId>coconut-filter</artifactId>
+        <version>5.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>coconut</groupId>
+        <artifactId>coconut-event-bus</artifactId>
+        <version>5.0-alpha1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>coconut</groupId>
+        <artifactId>coconut-test-framework</artifactId>
+        <version>5.0-SNAPSHOT</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+
+    <modules>
+      <module>coconut-cache-api</module>
+      <module>coconut-cache-impl</module>
+      <module>coconut-cache-policies</module>
+      <module>coconut-cache-tck</module>
+    </modules>
+    
+          <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <source>1.5</source>
+            <target>1.5</target>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>
