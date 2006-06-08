@@ -1,0 +1,197 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<!--
+ $Id $
+ 
+ Copyright 2004 Kasper Nielsen. All rights reserved.
+-->
+
+</head>
+<body bgcolor="white">
+
+Provides the management interface for monitoring and management of Coconut AIO.  
+It allows both local and remote monitoring and management of the running Coconut AIO subsystem.  
+
+<h4>MXBeans</h4>
+
+This package defines the management interface of the following
+components:
+
+<blockquote>
+<table cellspacing=1 summary="Description of the MXBeans">
+<tr>
+<th><p align="left">Management Interface</p></th>
+<th><p align="left">Description</p></th>
+</tr>
+<tr>
+<td> <tt>{@link coconut.aio.management.ServerSocketMXBean}</tt> </td>
+<td> Control of asynchronous server-sockets - {@link coconut.aio.AsyncServerSocket}.</td>
+</tr>
+<tr>
+<td> <tt>{@link coconut.aio.management.DatagramMXBean}</tt> </td>
+<td> Control of asynchronous datagrams - {@link coconut.aio.AsyncDatagram}.</td>
+</tr>
+<tr>
+<td> <tt>{@link coconut.aio.management.DatagramGroupMXBean}</tt> </td>
+<td> Control of datagram-groups - {@link coconut.aio.AsyncDatagramGroup}.</td>
+</tr>
+<tr>
+<td> <tt>{@link coconut.aio.management.SocketMXBean}</tt> </td>
+<td> Control of asynchronous sockets - {@link coconut.aio.AsyncSocket}.</td>
+</tr>
+<tr>
+<td> <tt>{@link coconut.aio.management.SocketGroupMXBean}</tt> </td>
+<td> Control of socket-groups - {@link coconut.aio.AsyncSocketGroup}.</td>
+</tr>
+<tr>
+<td> <tt>{@link coconut.aio.management.FileMXBean}</tt> </td>
+<td> Control of asynchronous files - {@link coconut.aio.AsyncFile}.</td>
+</tr>
+</table>
+</blockquote>
+
+<p>
+A MXBean is a <i>managed bean</i> that defines the management
+interface for one component for the platform.
+
+<p>An application can monitor the instrumentation of the 
+Coconut AIO subsystem and manage certain characteristics in
+the following ways:
+<ul>
+<li><i>Direct access to an MXBean interface</i>
+    <ol type="a">
+    <li>Get the MXBean instance through the static factory method
+        and access the MXBean interface locally of the running
+        virtual machine.</li>
+    <li>Construct an MXBean proxy instance that
+        forwards the method calls to a given 
+        {@link javax.management.MBeanServer MBeanServer}
+        by calling
+        {@link java.lang.management.ManagementFactory#newPlatformMXBeanProxy
+         ManagementFactory.newPlatformMXBeanProxy}.
+         A proxy is typically constructed to remotely access
+         an MXBean of another running virtual machine.</li>
+    </ol></li>
+<li><i>Indirect access via {@link javax.management.MBeanServer MBeanServer} 
+       interface</i>
+    <ol type="a">
+    <li>Go through the 
+        {@link java.lang.management.ManagementFactory#getPlatformMBeanServer
+        platform MBeanServer} to access MXBeans locally or
+        a specific <tt>MBeanServerConnection</tt> to access
+        MXBeans remotely.
+        The attributes and operations of an MXBean use only
+        <em>JMX open types</em> which include basic data types, 
+        {@link javax.management.openmbean.CompositeData CompositeData},
+        and {@link javax.management.openmbean.TabularData TabularData} 
+        defined in {@link javax.management.openmbean.OpenType OpenType}.
+       </li>
+    </ol></li>
+</ul>
+
+Below shows a few <a href="#examples">examples</a> of different
+ways to access MXBeans.
+
+<h4>ManagementFactory</h4>
+
+The {@link coconut.aio.management.ManagementFactory} class is the management
+factory class for the Coconut AIO subsystem.  This class provides a set of 
+static factory methods to obtain the MXBeans for the subsystem
+to allow an application to access the MXBeans directly.
+
+<p>A <em>platform MBeanServer</em> can be accessed with the
+{@link java.lang.management.ManagementFactory#getPlatformMBeanServer
+ getPlatformMBeanServer} method.  On the first call to this method,
+it creates the platform MBeanServer and registers all platform MXBeans 
+including platform MXBeans defined in other packages such as
+{@link java.util.logging.LoggingMXBean}.  
+Each platform MXBean is registered with a unique name defined in the
+{@link java.lang.management.ManagementFactory ManagementFactory} class
+for constructing {@link javax.management.ObjectName ObjectName}. 
+This is a single MBeanServer that can be shared by different managed 
+components running within the same Java virtual machine.
+ 
+<h4>Interoperability</h4>
+
+A management application and a platform MBeanServer of a running
+virtual machine can interoperate 
+without requiring classes used by the platform MXBean interfaces.
+The data types being transmitted between the JMX connector
+server and the connector client are JMX
+{@link javax.management.openmbean.OpenType open types} and
+this allows interoperation across versions.
+
+<p>A data type used by the MXBean interfaces are mapped to
+an open type when being accessed via MBeanServer interface.
+The data type mapping is specified in the
+{@link java.lang.management.ManagementFactory ManagementFactory} class.
+
+<h4><a name="examples">Ways to Access MXBeans</a></h4>
+
+There are three different ways to access the management interfaces. 
+
+<p>
+<ol>
+<li>Call the methods in the MXBean directly within the same 
+    Java virtual machine.
+<blockquote><pre>
+   SocketMXBean mxbean = ManagementFactory.getSocketMXBean();
+
+   // Get the number of sockets opened
+   long count = mxbean.getTotalSocketCount();
+
+</pre>
+</blockquote>
+</li>
+
+<li>Go through a <tt>MBeanServerConnection</tt> connecting 
+    to the <tt>platform MBeanServer</tt> of a running virtual machine.</li>
+<blockquote><pre>
+   MBeanServerConnection mbs;
+
+   // Connect to a running JVM (or itself) and get MBeanServerConnection
+   // that has the JVM MXBeans registered in it
+   ...
+
+   try {
+       // Assuming the RuntimeMXBean has been registered in mbs
+       ObjectName oname = new ObjectName(ManagementFactory.SOCKET_MXBEAN_NAME);
+    
+       // Get standard attribute "TotalSocketCount"
+       Long vendor = (Long) mbs.getAttribute(oname, "TotalSocketCount");
+   } catch (....) {
+       // Catch the exceptions thrown by ObjectName constructor
+       // and MBeanServer.getAttribute method
+       ...
+   }
+
+</pre></blockquote>
+
+<li>Use MXBean proxy.</li>
+<blockquote><pre>
+   MBeanServerConnection mbs;
+
+   // Connect to a running JVM (or itself) and get MBeanServerConnection
+   // that has the JVM MBeans registered in it
+   ...
+
+   // Get a MBean proxy for RuntimeMXBean interface
+   SocketMXBean proxy = 
+       ManagementFactory.newPlatformMXBeanProxy(mbs,
+                                                ManagementFactory.SOCKET_MXBEAN_NAME,
+                                                SocketMXBean.class);
+   // Get the number of sockets opened
+   long count = proxy.getTotalSocketCount();
+
+</pre></blockquote>
+</ol>
+
+<p> Unless otherwise noted, passing a <tt>null</tt> argument to a constructor
+or method in any class or interface in this package will cause a {@link
+java.lang.NullPointerException NullPointerException} to be thrown.
+
+@see <a href="../../../javax/management/package-summary.html">
+     JMX Specification.</a>
+</body>
+</html>
