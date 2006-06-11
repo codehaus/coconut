@@ -8,8 +8,8 @@ import java.util.concurrent.locks.Lock;
 /**
  * A stage is self-contained component that handle events, optionally
  * dispatching events to other stages while processing these. Most
- * implementations will use an incoming event-queue to store events that have
- * not been processed. A StageManager takes care of thread scheduling
+ * implementations will use an incoming queue to store events that have not yet
+ * been processed. A StageManager takes care of thread scheduling
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$

@@ -27,8 +27,7 @@ public interface StageManager {
      * @throws InterruptedException
      *             if interrupted while waiting
      */
-    boolean awaitTermination(long timeout, TimeUnit unit)
-            throws InterruptedException;
+    boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException;
 
     /**
      * This method returns all the stages that has been registered in this stage
@@ -90,7 +89,7 @@ public interface StageManager {
      * 
      * </pre>
      * 
-     * A successful lock operation acts Each action in a thread happens-before
+     * A successful lock operation acts as in action in a thread happens-before
      * every action This can be more effective then acquiring the lock on each
      * stage.
      * <ul>
@@ -104,7 +103,7 @@ public interface StageManager {
      * any thread working inside container happens before relationship with
      * subsequent actions of any threads executing within the stage manager.
      * <li>After having released the lock the container will resume with work
-     * <li>Optaining the lock does not force the runtime to empty any queues
+     * <li>Obtaining the lock does not force the runtime to empty any queues
      * </ul>
      * 
      * @return the lock for the <code>StageManager</code>

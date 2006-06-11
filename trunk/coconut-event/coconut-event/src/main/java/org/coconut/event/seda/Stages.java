@@ -25,7 +25,6 @@ public class Stages {
         StageStatistics[] info = bean.getStageInfo(stages);
         ps.println("Started " + info[0].getEventsAccepted() + " Finished "
                 + info[info.length - 1].getEventsProcessed());
-        long uptime = bean.getUptime();
         long sumTime = 0;
         long sumCpuTime = 0;
         long sumUserTime = 0;
@@ -46,7 +45,6 @@ public class Stages {
             String avgCpuTime = "NA";
             String avgUserTime = "NA";
             String avgSystemTime = "NA";
-            String avgEventsSec = "NA";
             if (in.getEventsAccepted() > 0) {
                 avgTime = TabularFormatter.formatTime(in.getTotalTime()
                         / in.getEventsAccepted());
