@@ -555,6 +555,8 @@ public final class Caches {
         }
 
         public EventBus<CacheEvent<K, V>> getEventBus() {
+            //TODO this is okay, just need to return an unmodifiable event bus
+            //we should probably define it in the event bus project
             throw new UnsupportedOperationException();
         }
 
@@ -984,14 +986,6 @@ public final class Caches {
                 && cache.getClass().getAnnotation(CacheSupport.class).JMXSupport();
     }
 
-    @SuppressWarnings("unchecked")
-    public static <K,V> CacheQuery<K, V> queryByKey(Cache<K,V> c, Filter<K> filter) {
-        return c.query((Filter) CacheFilters.keyFilter(filter));
-    }
-    @SuppressWarnings("unchecked")
-    public static <K,V> CacheQuery<K, V> queryByValue(Cache<K,V> c, Filter<V> filter) {
-        return c.query((Filter) CacheFilters.valueFilter(filter));
-    }
     // /CLOVER:OFF
     /** Cannot instantiate. */
     private Caches() {

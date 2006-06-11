@@ -1,8 +1,10 @@
 package org.coconut.cache.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -16,11 +18,10 @@ import org.coconut.cache.CacheLoader;
  * specified list is the first one given the chance to load the object. If this
  * loader Then the loader with index 1.
  * 
- * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
- * $Id$
- * $URL$
- * TODO: Test for class 
- * TODO: add static method to Caches
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a> $Id:
+ *         CompositeCacheLoader.java 15 2006-06-08 21:58:37Z kasper $ $URL:
+ *         https://svn.codehaus.org/coconut/trunk/coconut-cache/coconut-cache-api/src/main/java/org/coconut/cache/util/CompositeCacheLoader.java $
+ *         TODO: Test for class
  */
 public class CompositeCacheLoader<K, V> implements CacheLoader<K, V> {
 
@@ -68,6 +69,9 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V> {
         for (CacheLoader<K, V> loader : loaders) {
             try {
                 v = loader.load(key);
+                if (v != null) {
+                    break;
+                }
             } catch (Exception e) {
                 v = loadingFailed(loader, key, e);
             }
@@ -84,7 +88,7 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V> {
      */
     public Map<K, V> loadAll(final Collection<? extends K> keys) throws Exception {
         final HashMap<K, V> result = new HashMap<K, V>(keys.size());
-        Collection<K> ks = new TreeSet<K>(keys);
+        Collection<K> ks = new HashSet<K>(keys);
         for (CacheLoader<K, V> loader : loaders) {
             Map<K, V> map = null;
             if (ks.size() > 0) {
@@ -97,18 +101,20 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V> {
                 // no keys left that we haven't found a value for
                 break;
             }
-            if (map != null) {
-                result.putAll(map);
-                // we don't check that map.size==ks.size
-                // we assume this is the case (part of the contract)
-                for (Map.Entry<K, V> e : map.entrySet()) {
-                    if (e.getValue() == null) {
-                        ks.add(e.getKey());
-                    } else {
-                        result.put(e.getKey(), e.getValue());
-                    }
+            // map is not null part of the cache loader contract
+            assert (map != null);
+            ks = new HashSet<K>();
+            result.putAll(map);
+            // we don't check that map.size==ks.size
+            // we assume this is the case (part of the contract)
+            for (Map.Entry<K, V> e : map.entrySet()) {
+                if (e.getValue() == null) {
+                    ks.add(e.getKey());
+                } else {
+                    result.put(e.getKey(), e.getValue());
                 }
             }
+
         }
         for (K key : ks) {
             result.put(key, noValueFoundForKey(key));
@@ -116,6 +122,24 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V> {
         return result;
     }
 
+    public List<CacheLoader<K, V>> getLoaders() {
+        return Arrays.asList(loaders);
+    }
+
+    /**
+     * If this method returns a map it <tt>must</tt> provide a mapping for all
+     * the specified keys. Either to a value or to <tt>null</tt>. Also the
+     * size of the map must be the same as the size of key collection.
+     * 
+     * @param loader
+     *            the cache loader that threw an exception
+     * @param keys
+     *            the keys the cache loader was trying to load values from
+     * @param cause
+     *            the exception that was thrown by the cache loader
+     * @return a map containing the mapping that should be used instead
+     * @throws Exception
+     */
     protected Map<K, V> loadingFailed(CacheLoader<K, V> loader, Collection<? extends K> keys,
             Exception cause) throws Exception {
         throw cause;

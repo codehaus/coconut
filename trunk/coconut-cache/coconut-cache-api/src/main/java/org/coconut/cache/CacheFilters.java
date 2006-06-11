@@ -17,6 +17,9 @@ import org.coconut.filter.Filters;
 import org.coconut.filter.Filters.TransformerFilter;
 
 /**
+ * Factory and utility methods for for creating different types of filters for
+ * cache events and cache queries.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id$
  */
@@ -28,24 +31,23 @@ public class CacheFilters {
     private final static Transformer<CacheEvent, String> EVENT_TO_NAME_TRANSFORMER = Transformers
             .transform(CacheEvent.class, "getName");
 
-//    private final static Transformer<CacheItemEvent, CacheEntry> EVENT_TO_ENTRY_TRANSFORMER = Transformers
-//            .transform(CacheItemEvent.class, "getEntry");
+    // private final static Transformer<CacheItemEvent, CacheEntry>
+    // EVENT_TO_ENTRY_TRANSFORMER = Transformers
+    // .transform(CacheItemEvent.class, "getEntry");
 
     /**
      * Returns a Filter that filters {@link org.coconut.cache.CacheEvent}s
      * originating from a particular cache.
-     * 
      */
-    public static <K, V> Filter<CacheEvent<K, V>> cacheEqualsFilter(
-            Cache<K, V> cache) {
+    public static <K, V> Filter<CacheEvent<K, V>> cacheEqualsFilter(Cache<K, V> cache) {
         return cacheFilter(ComparisonFilters.equal(cache));
     }
 
     /**
-     * Returns a Filter that filters {@link org.coconut.cache.CacheEvent}s depending
-     * of some property/attribute regarding the originating cache. For example,
-     * the following Filter filters only accepts Cache events where the size of
-     * originating cache size is greater then 10.
+     * Returns a Filter that filters {@link org.coconut.cache.CacheEvent}s
+     * depending of some property/attribute regarding the originating cache. For
+     * example, the following Filter filters only accepts Cache events where the
+     * size of originating cache size is greater then 10.
      * 
      * <pre>
      * Filter&lt;CacheEvent&lt;Integer, String&gt;&gt; filter = cacheFilter(new Filter&lt;Cache&lt;Integer, String&gt;&gt;() {
@@ -56,14 +58,12 @@ public class CacheFilters {
      * </pre>
      */
     @SuppressWarnings("unchecked")
-    public static <K, V> Filter<CacheEvent<K, V>> cacheFilter(
-            Filter<Cache<K, V>> filter) {
+    public static <K, V> Filter<CacheEvent<K, V>> cacheFilter(Filter<Cache<K, V>> filter) {
         return new Filters.TransformerFilter(EVENT_TO_CACHE_TRANSFORMER, filter);
     }
 
     @SuppressWarnings("unchecked")
-    public static <K, V> Filter<CacheEvent<K, V>> cacheName(
-            Filter<String> filter) {
+    public static <K, V> Filter<CacheEvent<K, V>> cacheName(Filter<String> filter) {
         return new Filters.TransformerFilter(EVENT_TO_NAME_TRANSFORMER, filter);
     }
 
@@ -80,7 +80,8 @@ public class CacheFilters {
     /**
      * Returns a Filter that only accepts event regarding a particular key.
      * 
-     * @param key the key that is accepted
+     * @param key
+     *            the key that is accepted
      * @return a filter that only accepts event regarding a particular key.
      */
     @SuppressWarnings("unchecked")
@@ -97,95 +98,40 @@ public class CacheFilters {
     public static <K, V> Filter<CacheEvent<K, V>> anyKeyEquals(final K... keys) {
         return (Filter) keyFilter(ComparisonFilters.anyEquals(keys));
     }
-    
+
     @SuppressWarnings("unchecked")
     public static <K, V> Filter<CacheEvent<K, V>> anyKeyEqualsCol(final Collection<? extends K> keys) {
         return (Filter) keyFilter(ComparisonFilters.anyEquals(keys.toArray()));
     }
-    
+
+    /**
+     * Creates a filter that accepts all cache events which is being mapped to
+     * one of the specified values.
+     * 
+     * @param values the values that are accepted by the filter
+     * @return 
+     */
     @SuppressWarnings("unchecked")
-    public static <K, V> Filter<CacheEvent<K, V>> anyValueEquals(
-            final V... values) {
+    public static <K, V> Filter<CacheEvent<K, V>> anyValueEquals(final V... values) {
         return (Filter) valueFilter(ComparisonFilters.anyEquals(values));
     }
 
-    // /**
-    // * A CacheFilter filters {link coconut.cache.CacheEvent}s originating from
-    // a
-    // * particular cache.
-    // *
-    // * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
-    // */
-    // public final static class CacheFilter<K, V> implements
-    // Filter<CacheEvent<K, V>> {
-    //
-    // private final Filter<Cache<K, V>> filter;
-    //
-    // /**
-    // * Creates a new <code>CacheKeyedFilter</code>
-    // *
-    // * @param filter
-    // * the filter we wish to compare against
-    // */
-    // public CacheFilter(final Filter<Cache<K, V>> filter) {
-    // if (filter == null) {
-    // throw new NullPointerException("filter is null");
-    // }
-    // this.filter = filter;
-    // }
-    //
-    // /**
-    // * Returns the key we are comparing against
-    // *
-    // * @return the key we are comparing against
-    // */
-    // public Filter<Cache<K, V>> getFilter() {
-    // return filter;
-    // }
-    //
-    // /**
-    // * @see coconut.eventbus.Handler#accept(org.coconut.cache.CacheEvent)
-    // */
-    // public boolean accept(final CacheEvent<K, V> event) {
-    // return filter.accept(event.getCache());
-    // }
-    // }
-    //
-    // /**
-    // * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
-    // */
-    // public final static class EventNameFilter<K, V> implements
-    // Filter<CacheEvent<K, V>> {
-    //
-    // private final Filter<String> filter;
-    //
-    // /**
-    // * Creates a new <code>CacheKeyedFilter</code>
-    // *
-    // * @param filter
-    // * the filter we wish to compare against
-    // */
-    // public EventNameFilter(final Filter<String> filter) {
-    // if (filter == null) {
-    // throw new NullPointerException("filter is null");
-    // }
-    // this.filter = filter;
-    // }
-    //
-    // /**
-    // * Returns the key we are comparing against
-    // *
-    // * @return the key we are comparing against
-    // */
-    // public Filter<String> getFilter() {
-    // return filter;
-    // }
-    //
-    // /**
-    // * @see coconut.eventbus.Handler#accept(org.coconut.cache.CacheEvent)
-    // */
-    // public boolean accept(final CacheEvent<K, V> event) {
-    // return filter.accept(event.getName());
-    // }
-    // }
+    @SuppressWarnings("unchecked")
+    public static <K, V> CacheQuery<K, V> queryByKey(Cache<K, V> c, Filter<K> filter) {
+        return c.query((Filter) keyFilter(filter));
+    }
+
+    /**
+     * Used for easily querying a cache about certain values.
+     * 
+     * @param cache
+     *            the cache to query
+     * @param filter
+     *            the filter to apply to the value
+     * @return a cache query for the given cache and filter
+     */
+    @SuppressWarnings("unchecked")
+    public static <K, V> CacheQuery<K, V> queryByValue(Cache<K, V> cache, Filter<V> filter) {
+        return cache.query((Filter) valueFilter(filter));
+    }
 }

@@ -9,7 +9,6 @@ import java.lang.reflect.Constructor;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import javax.management.MBeanServer;

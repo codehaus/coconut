@@ -13,6 +13,9 @@ import java.util.Map;
  * it to the cache. A cache implementation can use a cache loader for lazily
  * creating values for missing entries making this process transparant for the
  * user. A cache loader is also sometimes referred to as a cache backend.
+ * Another type of a cache backend is the cache store
+ * {@link org.coconut.cache.store.CacheStore} which allows persisting values in
+ * addition to retrieving them.
  * <p>
  * Usage example, a loader that for each key (String) loads the file for that
  * given path.
@@ -39,8 +42,8 @@ import java.util.Map;
  * When a user requests a value for a particular key that is not present in the
  * cache. The cache will automatically call the supplied cache loader to fetch
  * the value. The cache will then insert the key-value pair into the cache and
- * then return the value. The cache loader is also used when a user requests an
- * entry that has expired to get an updated value.
+ * return the value. The cache loader might also be used to fetch an updated
+ * value when an entry has expired.
  * <p>
  * Another usage of a cache loader is for lazily creating new values. For
  * example, a cache that caches <code>Patterns</code>.
@@ -70,8 +73,9 @@ import java.util.Map;
  * cache implementations might use this information for optimization.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
- * @version $Revision$
+ * @version $Id$
  * @see org.coconut.cache.util.AbstractCacheLoader
+ * @see org.coconut.cache.store.CacheStore
  * @param <K>
  *            the type of keys used for loading values
  * @param <V>
@@ -92,12 +96,13 @@ public interface CacheLoader<K, V> {
     V load(K key) throws Exception;
 
     /**
-     * Loads a collection of values.
+     * Loads multiple values. This might for be usefull for performance reasons,
+     * for example, if the values are to be retrieved from a remote host.
      * 
      * @param keys
      *            a collection of keys whose associated values are to be
      *            returned
-     * @return a map where each key from the collection maps to associated
+     * @return a map where each key from the collection maps to an associated
      *         value. If no mapping between a key and value could be found (or
      *         created). The key is mapped to <tt>null</tt>
      * @throws Exception

@@ -287,7 +287,7 @@ public class CacheDecorator<K, V> implements Cache<K, V>, Serializable {
      */
     @Override
     public String toString() {
-        return super.toString();
+        return cache.toString();
     }
 
     /**

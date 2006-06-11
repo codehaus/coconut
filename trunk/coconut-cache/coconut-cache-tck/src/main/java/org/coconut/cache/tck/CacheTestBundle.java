@@ -12,8 +12,8 @@ import junit.framework.Assert;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.CacheFilters;
 import org.coconut.cache.CacheQuery;
-import org.coconut.cache.Caches;
 import org.coconut.cache.tck.util.IntegerToStringLoader;
 import org.coconut.core.Clock.DeterministicClock;
 import org.coconut.filter.Filter;
@@ -207,7 +207,7 @@ public class CacheTestBundle {
     }
 
     protected CacheQuery<Integer, String> keyQuery(Filter<Integer> filter) {
-        return Caches.queryByKey(c, filter);
+        return CacheFilters.queryByKey(c, filter);
     }
 
     protected void putAll(long timeout, TimeUnit unit, Map.Entry<Integer, String>... entries) {

@@ -8,6 +8,7 @@ import static org.coconut.filter.ComparisonFilters.greatherThen;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.CacheFilters;
 import org.coconut.cache.Caches;
 
 /**
@@ -20,12 +21,12 @@ public class UnlTest {
         for (int i = 0; i < 256;i++) {
             c.put(i, Integer.toHexString(i));
         }
-        for (CacheEntry entry : Caches.queryByKey(c, between(40, 45))) {
+        for (CacheEntry entry : CacheFilters.queryByKey(c, between(40, 45))) {
             System.out.println(entry);
         }
         System.out.println("------");
         
-        for (CacheEntry entry : Caches.queryByValue(c, greatherThen("f5"))) {
+        for (CacheEntry entry : CacheFilters.queryByValue(c, greatherThen("f5"))) {
             System.out.println(entry);
         }
 

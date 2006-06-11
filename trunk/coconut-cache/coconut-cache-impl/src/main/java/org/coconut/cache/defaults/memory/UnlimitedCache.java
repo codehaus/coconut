@@ -1,6 +1,5 @@
 package org.coconut.cache.defaults.memory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -688,26 +687,8 @@ public class UnlimitedCache<K, V> extends LoadableCache<K, V> implements Concurr
         }
     }
 
-    private void writeObject(java.io.ObjectOutputStream s) throws IOException {
-        Iterator<Map.Entry<K, MyEntry>> i = map.entrySet().iterator();
-
-        // Write out the threshold, loadfactor, and any hidden stuff
-        s.defaultWriteObject();
-        s.writeInt(map.size());
-        // s.writeInt(map.size());
-        // Write out number of buckets
-        // Write out keys and values (alternating)
-        while (i.hasNext()) {
-            MyEntry e = (MyEntry) i.next();
-            s.writeObject(e.getKey());
-            s.writeObject(e.getValueSilent());
-            s.writeInt(e.policyIndex);
-        }
-    }
-
     @Override
     public CacheMXBean getInfo() {
-        // TODO Auto-generated method stub
         return super.getInfo();
     }
 
@@ -726,48 +707,10 @@ public class UnlimitedCache<K, V> extends LoadableCache<K, V> implements Concurr
 
         @Override
         public long getDefaultExpiration() {
-            // TODO Auto-generated method stub
             return super.getDefaultExpiration();
         }
-
-        @Override
-        public long getMaximumMemoryUsage() {
-            // TODO Auto-generated method stub
-            return super.getMaximumMemoryUsage();
-        }
-
-        @Override
-        public int getMaximumSize() {
-            // TODO Auto-generated method stub
-            return super.getMaximumSize();
-        }
-
-        @Override
-        public long getMemoryUsage() {
-            // TODO Auto-generated method stub
-            return super.getMemoryUsage();
-        }
-
-        @Override
-        public String getName() {
-            // TODO Auto-generated method stub
-            return super.getName();
-        }
-
-        @Override
-        public void setDefaultExpiration(long nanos) {
-            UnlimitedCache.this.setDefaultExpirationTime(nanos);
-        }
-
-        @Override
-        public void setMaximumMemoryUsage() {
-            // TODO Auto-generated method stub
-            super.setMaximumMemoryUsage();
-        }
-
         @Override
         public void setMaximumSize(long maximumCapacity) {
-            // TODO Auto-generated method stub
             super.setMaximumSize(maximumCapacity);
         }
 
@@ -778,8 +721,6 @@ public class UnlimitedCache<K, V> extends LoadableCache<K, V> implements Concurr
         }
 
         public void handle(Object event) {
-            // TODO Auto-generated method stub
-
         }
 
     }

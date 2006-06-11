@@ -27,7 +27,7 @@ import org.coconut.filter.Filter;
  * caches. See a list of all the various cache implementations <a
  * href="http://org.coconut.codehaus.org/cache/cache-implementations.html">here</a>.
  * <p>
- * This <a href="{@docRoot}/../index.html">page</a> details how the various
+ * This <a href="{@docRoot}/index.html">page</a> details how the various
  * cache classes relate.
  * <p>
  * The first level is thread safety/performance unsynchronized cache, for
@@ -111,11 +111,12 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * keys. The effect of this call is equivalent to that of calling
      * {@link #get(Object)} on this cache once for each key in the specified
      * collection. However, in some cases it can be much faster to load several
-     * cache items at once, for example, if the cache is distributed.
+     * cache items at once, for example, if the cache must fetch the values from
+     * a remote host.
      * <p>
-     * If a value is not found in the cache and a value cannot be loaded by any
-     * of the configured cache backends. The returned map will contain a mapping
-     * from the key to <code>null</code>.
+     * If a value is not contained in the cache and the value cannot be loaded
+     * by any of the configured cache backends. The returned map will contain a
+     * mapping from the key to <code>null</code>.
      * <p>
      * The behavior of this operation is unspecified if the specified collection
      * is modified while the operation is in progress.
@@ -123,7 +124,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @param keys
      *            the keys to get.
      * @return a map with mappings from each key to the corresponding value, or
-     *         <code>null</code> if no mapping for this key exists.
+     *         to <code>null</code> if no mapping for this key exists.
      * @throws ClassCastException
      *             if any of the keys in the specified collection are of an
      *             inappropriate type for this cache (optional).
@@ -136,11 +137,12 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     /**
      * Returns the {@link org.coconut.event.bus.EventBus} attached to this cache
      * (optional operation). The event bus can be used for getting notications
-     * about various {@link CacheEvent events} in the cache.
+     * about various {@link CacheEvent events} that is being raised internally
+     * in the cache.
      * 
      * @throws UnsupportedOperationException
-     *             if the cache does not support notifications of significant
-     *             events in the cache.
+     *             if the cache does not support notifications of events in the
+     *             cache.
      * @see CacheEvent
      * @see CacheItemEvent
      */
@@ -157,7 +159,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      */
     Cache.HitStat getHitStat();
 
-    //determine how exceptions are thrown from the future
+    // determine how exceptions are thrown from the future
     /**
      * Attempts to load the value for the specified key from a configured cache
      * backend. This method is usefull for preloading the cache with entries
@@ -409,7 +411,8 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * <p>
      * Come up with example usage
      * <p>
-     * TODO: Determine whether or not this entry loads 
+     * TODO: Determine whether or not this entry loads
+     * 
      * @param key
      *            whose associated cache entry is to be returned.
      * @return the cache entry to which this cache maps the specified key, or
@@ -425,19 +428,18 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     /**
      * This method is used to make queries into the cache locating cache entries
      * that match a particular criteria. The returned {@link CacheQuery} can be
-     * used for returning all the matching cache entries. It can also be used to
-     * just retrieve a small subset of the entries (paging capabilities).
+     * used for returning all the matching cache entries at once or just a small
+     * subset (paging functionality) at a time.
      * <p>
      * NOTICE: querying a cache can be a very time consuming affair especially
-     * if no usefull indexes are available at query time. 
+     * if no usefull indexes are available at query time.
      * <p>
      * If a backend stored is configured <tt>and</tt> it supports querying it
      * will be used for querying otherwise only the local cache will be queried.
      * 
      * @param filter
      *            the filter used to identify which entries should be retrieved
-     * @return a {@link CacheQuery} that can be used to retrieve the matching
-     *         entries
+     * @return a cache query that can be used to retrieve the matching entries
      */
     CacheQuery<K, V> query(Filter<? super CacheEntry<K, V>> filter);
 
@@ -448,18 +450,18 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     interface HitStat {
 
         /**
-         * Returns the ratio between hits and misses or -1 if no hits or misses
-         * has been recorded.
+         * Returns the ratio between cache hits and misses or -1 if no hits or
+         * misses has been recorded.
          * 
-         * @return the ratio between hits and misses or -1 if no hits or misses
-         *         has been recorded
+         * @return the ratio between cache hits and misses or -1 if no hits or
+         *         misses has been recorded
          */
         float getHitRatio();
 
         /**
-         * Returns the number of succesfull hits from for a cache. A request to
-         * a cache is a hit if the value is already contained within the cache
-         * and no external cachhe backends must be used to fetch the value.
+         * Returns the number of succesfull hits for a cache. A request to a
+         * cache is a hit if the value is already contained within the cache and
+         * no external cache backends must be used to fetch the value.
          * 
          * @return the number of hits
          */
@@ -467,7 +469,8 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
 
         /**
          * Returns the number of cache misses. A request is a miss if the value
-         * is not already contained within the cache.
+         * is not already contained within the cache when it is requested and a
+         * cache backend must fetch the value.
          * 
          * @return the number of cache misses.
          */

@@ -7,14 +7,26 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReadWriteLock;
 
 import org.coconut.cache.Cache;
+import org.coconut.cache.CacheEntry;
+import org.coconut.cache.CacheQuery;
 import org.coconut.cache.Cache.HitStat;
 import org.coconut.event.bus.EventBus;
+import org.coconut.filter.Filter;
 import org.coconut.test.MockTestCase;
 import org.jmock.Mock;
 
 public class AbstraktCacheDecoratorTest extends MockTestCase {
+
+    public void testNullConstructor() {
+        try {
+            new CacheDecorator<Long, Long>(null);
+            fail("Did not fail with NullPointerException");
+        } catch (NullPointerException npe) {
+        }
+    }
 
     public void testDecorator() {
         EventBus eventBus = mockDummy(EventBus.class);
@@ -22,21 +34,23 @@ public class AbstraktCacheDecoratorTest extends MockTestCase {
         Map map = new HashMap();
         Future future = mockDummy(Future.class);
         Collection<Integer> col = new LinkedList<Integer>();
+        Collection<String> cols = new LinkedList<String>();
         Set set = mockDummy(Set.class);
+        ReadWriteLock lock = mockDummy(ReadWriteLock.class);
+        CacheEntry ce = mockDummy(CacheEntry.class);
+        CacheQuery cq = mockDummy(CacheQuery.class);
+        Filter f = mockDummy(Filter.class);
 
         Mock m = mock(Cache.class);
+
         m.expects(once()).method("clear");
-        m.expects(once()).method("containsKey").with(eq(1)).will(
-                returnValue(true));
-        m.expects(once()).method("containsValue").with(eq("A")).will(
-                returnValue(false));
+        m.expects(once()).method("containsKey").with(eq(1)).will(returnValue(true));
+        m.expects(once()).method("containsValue").with(eq("A")).will(returnValue(false));
         m.expects(once()).method("entrySet").will(returnValue(set));
-        m.expects(once()).method("equals").with(eq("B")).will(
-                returnValue(false));
+        m.expects(once()).method("equals").with(eq("B")).will(returnValue(false));
         m.expects(once()).method("evict");
         m.expects(once()).method("get").with(eq(2)).will(returnValue("C"));
-        m.expects(once()).method("getAll").with(same(col)).will(
-                returnValue(map));
+        m.expects(once()).method("getAll").with(same(col)).will(returnValue(map));
         m.expects(once()).method("getEventBus").will(returnValue(eventBus));
         m.expects(once()).method("getHitStat").will(returnValue(hitStat));
 
@@ -45,20 +59,30 @@ public class AbstraktCacheDecoratorTest extends MockTestCase {
         m.expects(once()).method("entrySet").will(returnValue(set));
         m.expects(once()).method("keySet").will(returnValue(set));
         m.expects(once()).method("load").with(eq(4)).will(returnValue(future));
-        m.expects(once()).method("loadAll").with(same(col)).will(
-                returnValue(future));
+        m.expects(once()).method("loadAll").with(same(col)).will(returnValue(future));
         m.expects(once()).method("peek").with(eq(5)).will(returnValue("D"));
 
-        m.expects(once()).method("put").with(eq(6), eq("E")).will(
-                returnValue("F"));
-        m.expects(once()).method("put").with(eq(7), eq("G"), eq(8l),
-                same(TimeUnit.MILLISECONDS)).will(returnValue("H"));
-        m.expects(once()).method("putAll").with(same(map));
-        m.expects(once()).method("putAll").with(same(map), eq(9l),
-                same(TimeUnit.SECONDS));
+        m.expects(once()).method("put").with(eq(6), eq("E")).will(returnValue("F"));
+        m.expects(once()).method("put").with(eq(7), eq("G"), eq(8l), same(TimeUnit.MILLISECONDS))
+                .will(returnValue("H"));
 
-        Cache<Integer, String> c = new Decorator((Cache<Integer, String>) m
-                .proxy());
+        m.expects(once()).method("putAll").with(same(map));
+        m.expects(once()).method("putAll").with(same(map), eq(9l), same(TimeUnit.SECONDS));
+        m.expects(once()).method("putIfAbsent").with(eq(8), eq("I")).will(returnValue("J"));
+        m.expects(once()).method("remove").with(eq(9), eq("J")).will(returnValue(true));
+        m.expects(once()).method("remove").with(eq(10)).will(returnValue(true));
+        m.expects(once()).method("replace").with(eq(11), eq("K"), eq("L")).will(returnValue(true));
+        m.expects(once()).method("replace").with(eq(12), eq("M")).will(returnValue("N"));
+        m.expects(once()).method("resetStatistics");
+        m.expects(once()).method("size").will(returnValue(13));
+        m.expects(once()).method("values").will(returnValue(col));
+        m.expects(once()).method("getLock").with(eq(new Integer[] { 14, 15 })).will(
+                returnValue(lock));
+        m.expects(once()).method("toString").will(returnValue("ttt"));
+        m.expects(once()).method("query").with(eq(f)).will(returnValue(cq));
+        m.expects(once()).method("getEntry").with(eq(16)).will(returnValue(ce));
+
+        Cache<Integer, String> c = new CacheDecorator((Cache<Integer, String>) m.proxy());
 
         c.clear();
         assertEquals(true, c.containsKey(1));
@@ -82,26 +106,24 @@ public class AbstraktCacheDecoratorTest extends MockTestCase {
         assertEquals("H", c.put(7, "G", 8, TimeUnit.MILLISECONDS));
         c.putAll(map);
         c.putAll(map, 9, TimeUnit.SECONDS);
-
-        // c.putAll(null);
-        // c.putAll(null, 8, TimeUnit.MICROSECONDS);
-        // c.putIfAbsent(9, "D");
-        // c.remove(10);
-        // c.remove(10, "E");
-        // c.replace(11, "F", "G");
-        // c.replace(12, "H");
-        // c.resetStatistics();
-        // c.size();
-        // c.toString();
-        // c.values();
-
+        assertEquals("J", c.putIfAbsent(8, "I"));
+        assertEquals(true, c.remove(9, "J"));
+        assertEquals(true, c.remove(10));
+        assertEquals(true, c.replace(11, "K", "L"));
+        assertEquals("N", c.replace(12, "M"));
+        c.resetStatistics();
+        assertEquals(13, c.size());
+        assertEquals(cols, c.values());
+        assertEquals(lock, c.getLock(14, 15));
+        assertEquals("ttt", c.toString());
+        assertEquals(cq, c.query(f));
+        assertEquals(ce, c.getEntry(16));
     }
 
-    static class Decorator extends CacheDecorator<Integer, String> {
-        private static final long serialVersionUID = 1L; // shut up compiler
-
-        public Decorator(Cache<Integer, String> cache) {
-            super(cache);
-        }
-    }
+    // @SuppressWarnings("serial")
+    // static class Decorator extends CacheDecorator<Integer, String> {
+    // public Decorator(Cache<Integer, String> cache) {
+    // super(cache);
+    // }
+    // }
 }

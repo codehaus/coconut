@@ -4,15 +4,15 @@
 package org.coconut.cache.tck.query;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.CacheFilters;
 import org.coconut.cache.CacheQuery;
-import org.coconut.cache.Caches;
 import org.coconut.cache.tck.CacheTestBundle;
 import org.coconut.filter.ComparisonFilters;
 import org.junit.Test;
@@ -31,7 +31,7 @@ public class CacheQueryBundle extends CacheTestBundle {
     @Test
     public void testQuery() {
         c = c5;
-        CacheQuery<Integer, String> cq = Caches.queryByKey(c5, ComparisonFilters.anyEquals(2, 4));
+        CacheQuery<Integer, String> cq = CacheFilters.queryByKey(c5, ComparisonFilters.anyEquals(2, 4));
         assertNotNull(cq);
         assertEquals(0, cq.getCurrentIndex());
         assertEquals(2, cq.getTotalCount());
@@ -41,7 +41,7 @@ public class CacheQueryBundle extends CacheTestBundle {
     @Test
     public void testIterator() {
         c = c5;
-        CacheQuery<Integer, String> cq = Caches.queryByKey(c5, ComparisonFilters.anyEquals(2, 4));
+        CacheQuery<Integer, String> cq = CacheFilters.queryByKey(c5, ComparisonFilters.anyEquals(2, 4));
         CacheEntry<Integer, String> c2 = null;
         CacheEntry<Integer, String> c4 = null;
         int count = 0;
@@ -65,7 +65,7 @@ public class CacheQueryBundle extends CacheTestBundle {
     @Test(expected = NoSuchElementException.class)
     public void testIteratorFail() {
         c = c5;
-        CacheQuery<Integer, String> cq = Caches.queryByKey(c5, ComparisonFilters.anyEquals(2, 4));
+        CacheQuery<Integer, String> cq = CacheFilters.queryByKey(c5, ComparisonFilters.anyEquals(2, 4));
         Iterator<CacheEntry<Integer, String>> iter = cq.iterator();
         iter.next();
         iter.next();

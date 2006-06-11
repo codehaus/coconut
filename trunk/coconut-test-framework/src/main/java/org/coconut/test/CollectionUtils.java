@@ -62,7 +62,7 @@ public class CollectionUtils {
 
     public static final Map.Entry<Integer, String> MNAN4 = newEntry(4, "C");
 
-    private static Map.Entry<Integer, String> newEntry(Integer key, String value) {
+    public static Map.Entry<Integer, String> newEntry(Integer key, String value) {
         return new ImmutableMapEntry<Integer, String>(key, value);
 
     }
