@@ -3,7 +3,6 @@
  */
 package org.coconut.event.seda.management;
 
-
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
@@ -42,8 +41,8 @@ public interface StageManagerMXBean {
      * 
      * @param name
      *            the name of the stage.
-     * @return a {@link StageStatistics} object for the stage with the given name;
-     *         <tt>null</tt> if no stage with the name exist.
+     * @return a {@link StageStatistics} object for the stage with the given
+     *         name; <tt>null</tt> if no stage with the name exist.
      * @throws NullPointerException
      *             if the specified stage name is <tt>null</tt>
      * @throws java.lang.SecurityException
@@ -79,6 +78,7 @@ public interface StageManagerMXBean {
     StageStatistics[] getStageInfo(String[] names);
 
     StageStatistics[] getStageInfo();
+
     /**
      * Returns the total CPU time used by all threads operating within the stage
      * manager. The returned value is of nanoseconds precision but not
@@ -117,6 +117,7 @@ public interface StageManagerMXBean {
      * @return the number of threads
      */
     int getLargestTotalCount();
+
     /**
      * Returns the current number of threads that are actively processing events
      * within any stage or waiting for work.

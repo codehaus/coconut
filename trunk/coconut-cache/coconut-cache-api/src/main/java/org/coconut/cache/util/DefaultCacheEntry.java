@@ -7,34 +7,33 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.cache.policy.CostSizeObject;
 
 /**
- * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class DefaultCacheEntry<K,V> implements CacheEntry<K,V> {
-    
+public class DefaultCacheEntry<K, V> implements CacheEntry<K, V> {
+
     private final V value;
 
     private final K key;
-    
+
     public DefaultCacheEntry(K key, V value) {
         this.value = value;
-        this.key=key;
+        this.key = key;
     }
 
-//    /**
-//     * {@inheritDoc}
-//     */
-//    public Map<String, ?> getMetaMap() {
-//        return null; // no extended attributes
-//    }
+    // /**
+    // * {@inheritDoc}
+    // */
+    // public Map<String, ?> getMetaMap() {
+    // return null; // no extended attributes
+    // }
 
-//    /**
-//     * {@inheritDoc}
-//     */
-//    public long getTimeToLive(TimeUnit unit) {
-//        return Cache.DEFAULT_EXPIRATION;
-//    }
+    // /**
+    // * {@inheritDoc}
+    // */
+    // public long getTimeToLive(TimeUnit unit) {
+    // return Cache.DEFAULT_EXPIRATION;
+    // }
 
     /**
      * {@inheritDoc}
@@ -110,6 +109,6 @@ public class DefaultCacheEntry<K,V> implements CacheEntry<K,V> {
      * {@inheritDoc}
      */
     public V setValue(V value) {
-       throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 }

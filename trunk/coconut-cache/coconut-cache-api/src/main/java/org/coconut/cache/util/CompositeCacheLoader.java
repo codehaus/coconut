@@ -1,13 +1,11 @@
 package org.coconut.cache.util;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeSet;
 
 import org.coconut.cache.CacheLoader;
 
@@ -18,10 +16,9 @@ import org.coconut.cache.CacheLoader;
  * specified list is the first one given the chance to load the object. If this
  * loader Then the loader with index 1.
  * 
- * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a> $Id:
- *         CompositeCacheLoader.java 15 2006-06-08 21:58:37Z kasper $ $URL:
- *         https://svn.codehaus.org/coconut/trunk/coconut-cache/coconut-cache-api/src/main/java/org/coconut/cache/util/CompositeCacheLoader.java $
- *         TODO: Test for class
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
+ * @version $Id$
+ * @url $URL$
  */
 public class CompositeCacheLoader<K, V> implements CacheLoader<K, V> {
 

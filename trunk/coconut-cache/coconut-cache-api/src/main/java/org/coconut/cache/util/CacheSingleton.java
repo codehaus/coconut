@@ -18,6 +18,8 @@ import org.coconut.cache.CacheException;
  * discussion. However, we also realize that in certain situations the pattern
  * has its merits.
  * <p>
+ * $Id$
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
 @ThreadSafe(true)

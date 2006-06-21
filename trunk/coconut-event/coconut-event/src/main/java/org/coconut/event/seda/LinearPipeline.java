@@ -149,9 +149,9 @@ public class LinearPipeline extends AbstractManagedStageManager {
                             // if (o == null) {
                             // break;
                             // }
-                            if (Thread.interrupted()) {
-                                // do check
-                            }
+//                            if (Thread.interrupted()) {
+//                                // do check
+//                            }
                         }
                     } finally {
                         rwLock.readLock().unlock();

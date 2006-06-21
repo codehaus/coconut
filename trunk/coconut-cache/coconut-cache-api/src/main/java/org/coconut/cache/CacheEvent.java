@@ -10,16 +10,19 @@ import org.coconut.filter.LogicFilters;
 import org.coconut.filter.Filters.IsTypeFilter;
 
 /**
- * This interface defines the top level type for events published by a {link
- * Cache}. CacheEvent defines two subtypes that any event published inherits
- * froms.
+ * This interface defines the top level type for events published by a {@link
+ * Cache}. The events are generally divided into these two categories:
  * <ul>
- * <li> <strong>Item</strong> events concerns a particular key-value pair in
- * the cache. These all inherit from {@link CacheItemEvent}.
- * <li> <strong>Instance</strong> events which are general events concerning a
- * particular <tt>instance</tt>. For example, that the cache has been reset.
- * These all inherit from {@link CacheEvent}.
+ * <li> <strong>Item events</strong>, which concerns a particular key-value
+ * pair in the cache. For example, an event indicating that a particular
+ * key-value has been removed. Item events all inherit from
+ * {@link CacheItemEvent}.
+ * <li> <strong>Instance events</strong> which are general events concerning a
+ * particular cache <tt>instance</tt>. For example, that the cache has been
+ * cleared and all values removed. These all inherit from {@link CacheEvent}.
  * </ul>
+ * <p>
+ * Cache events are usually delivered locally to a computer only.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id$

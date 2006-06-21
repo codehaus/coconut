@@ -18,7 +18,8 @@ public interface Stage /* extends ReadWriteLock */{
 
     /**
      * Returns the name of the Stage. Each stage is registered with a unique
-     * name within a stage manager.
+     * name within a stage manager. Most implementations do not allow stages to
+     * be renamed.
      */
     String getName();
 
