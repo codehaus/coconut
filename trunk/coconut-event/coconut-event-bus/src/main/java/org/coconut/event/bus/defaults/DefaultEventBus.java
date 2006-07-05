@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
@@ -16,6 +17,8 @@ import org.coconut.filter.Filter;
 import org.coconut.filter.LogicFilters;
 
 /**
+ * The order of subscribers are maintained.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
 public class DefaultEventBus<E> implements EventBus<E>, Serializable {
@@ -37,8 +40,8 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
      * @see org.coconut.event.bus.EventBus#getSubscribers()
      */
     @SuppressWarnings("unchecked")
-    public Collection<Subscription<E>> getSubscribers() {
-        return Collections.unmodifiableCollection((Collection) list);
+    public List<Subscription<E>> getSubscribers() {
+        return Collections.unmodifiableList((List) list);
     }
 
     /**
@@ -66,8 +69,7 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
      * @see org.coconut.event.bus.EventBus#subscribe(org.coconut.core.EventHandler,
      *      org.coconut.filter.Filter)
      */
-    public Subscription<E> subscribe(EventHandler<? super E> eventHandler,
-            Filter<? super E> filter) {
+    public Subscription<E> subscribe(EventHandler<? super E> eventHandler, Filter<? super E> filter) {
         if (eventHandler == null) {
             throw new NullPointerException("eventHandler is null");
         } else if (filter == null) {
@@ -113,9 +115,8 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
         try {
             for (DefaultSubscription<E> s : list) {
                 if (s.getName().equals(name)) {
-                    throw new IllegalArgumentException(
-                            "subscription with name '" + name
-                                    + "' already registered.");
+                    throw new IllegalArgumentException("subscription with name '" + name
+                            + "' already registered.");
                 }
             }
             Subscription<E> s = subscribe0(eventHandler, filter, name);
@@ -127,8 +128,7 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
 
     private Subscription<E> subscribe0(EventHandler<? super E> eventHandler,
             Filter<? super E> filter, String name) {
-        DefaultSubscription<E> s = new DefaultSubscription<E>(this, name,
-                eventHandler, filter);
+        DefaultSubscription<E> s = new DefaultSubscription<E>(this, name, eventHandler, filter);
         list.add(s);
         subscribed(s);
         return s;
@@ -148,8 +148,7 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
     public boolean offerAll(final E... elements) {
         for (int i = 0; i < elements.length; i++) {
             if (elements[i] == null) {
-                throw new NullPointerException(
-                        "elements contained a null on index = " + i);
+                throw new NullPointerException("elements contained a null on index = " + i);
             }
         }
         for (E element : elements) {
@@ -175,8 +174,7 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
         }
     }
 
-    protected void deliveryFailed(Subscription<E> s, final E element,
-            Throwable cause) {
+    protected void deliveryFailed(Subscription<E> s, final E element, Throwable cause) {
         try {
             System.err.println("The delivery to " + s.getName()
                     + " failed with the following exception: ");
@@ -223,8 +221,7 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
          * @param filter
          */
         DefaultSubscription(DefaultEventBus<E> bus, final String name,
-                final EventHandler<? super E> destination,
-                final Filter<? super E> filter) {
+                final EventHandler<? super E> destination, final Filter<? super E> filter) {
             this.bus = bus;
             this.name = name;
             this.destination = destination;
@@ -268,4 +265,8 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
 
         void release();
     }
+
+    // subscribeFirst
+    // subscribeBefore
+    // subscribeLast
 }
