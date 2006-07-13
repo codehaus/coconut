@@ -9,6 +9,9 @@ package org.coconut.aio;
 @SuppressWarnings("unchecked")
 public class AsyncFileTransferToTest extends AioTestCase {
 
+    public void testNone() {
+        
+    }
 //    public void testTransferToAsyncSocketFuture() throws IOException {
 //        final int port = getNextPort();
 //        final AsyncFile af = getFactory().openFile();

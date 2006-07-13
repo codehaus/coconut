@@ -39,7 +39,7 @@ import org.coconut.test.MockTestCase;
  * @version $Id$
  */
 @SuppressWarnings("unchecked")
-public class AioTestCase extends MockTestCase {
+public abstract class AioTestCase extends MockTestCase {
 
     private static DefaultTestProvider fac;
     public static int startport = 23000;

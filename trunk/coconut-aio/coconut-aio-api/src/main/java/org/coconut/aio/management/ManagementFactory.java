@@ -103,33 +103,31 @@ import org.coconut.aio.spi.AioProvider;
  * </tr>
  * <tr>
  * <td>{@link ServerSocketMXBean}</td>
- * <td>{@link #SERVER_SOCKET_MXBEAN_NAME<tt>coconut.aio:type=ServerSocket</tt>}
+ * <td>{@link #SERVER_SOCKET_MXBEAN_NAME<tt>org.coconut.aio:type=ServerSocket</tt>}
  * </td>
  * </tr>
  * <tr>
  * <td>{@link SocketMXBean}</td>
- * <td>{@link #SOCKET_MXBEAN_NAME<tt>coconut.aio:type=Socket</tt>}</td>
+ * <td>{@link #SOCKET_MXBEAN_NAME<tt>org.coconut.aio:type=Socket</tt>}</td>
  * </tr>
  * <tr>
  * <td>{@link SocketGroupMXBean}</td>
- * <td>{@link #SOCKET_GROUP_MXBEAN_NAME<tt>coconut.aio:type=SocketGroup</tt>}</td>
+ * <td>{@link #SOCKET_GROUP_MXBEAN_NAME<tt>org.coconut.aio:type=SocketGroup</tt>}</td>
  * </tr>
  * <tr>
  * <td>{@link DatagramMXBean}</td>
- * <td>{@link #DATAGRAM_MXBEAN_NAME<tt>coconut.aio:type=Datagram</tt>}</td>
+ * <td>{@link #DATAGRAM_MXBEAN_NAME<tt>org.coconut.aio:type=Datagram</tt>}</td>
  * </tr>
  * <tr>
  * <td>{@link DatagramGroupMXBean}</td>
- * <td>{@link #DATAGRAM_GROUP_MXBEAN_NAME<tt>coconut.aio:type=DatagramGroup</tt>}</td>
+ * <td>{@link #DATAGRAM_GROUP_MXBEAN_NAME<tt>org.coconut.aio:type=DatagramGroup</tt>}</td>
  * </tr>
  * <tr>
  * <td>{@link FileMXBean}</td>
- * <td>{@link #DISC_MXBEAN_NAME<tt>coconut.aio:type=Disc</tt>}</td>
+ * <td>{@link #DISC_MXBEAN_NAME<tt>org.coconut.aio:type=Disc</tt>}</td>
  * </tr>
  * </table> </blockquote>
  * 
- * @see <a href="../../../javax/management/package-summary.html"> JMX
- *      Specification. </a>
  * @see <a href="package-summary.html#examples"> Ways to Access Management
  *      Metrics </a>
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
@@ -143,37 +141,37 @@ public class ManagementFactory {
      * String representation of the <tt>ObjectName</tt> for the
      * {@link ServerSocketMXBean}.
      */
-    public final static String SERVER_SOCKET_MXBEAN_NAME = "coconut.aio:type=ServerSocket";
+    public final static String SERVER_SOCKET_MXBEAN_NAME = "org.coconut.aio:type=ServerSocket";
 
     /**
      * String representation of the <tt>ObjectName</tt> for the
      * {@link SocketMXBean}.
      */
-    public final static String SOCKET_MXBEAN_NAME = "coconut.aio:type=Socket";
+    public final static String SOCKET_MXBEAN_NAME = "org.coconut.aio:type=Socket";
 
     /**
      * String representation of the <tt>ObjectName</tt> for the
      * {@link SocketGroupMXBean}.
      */
-    public final static String SOCKET_GROUP_MXBEAN_NAME = "coconut.aio:type=SocketGroup";
+    public final static String SOCKET_GROUP_MXBEAN_NAME = "org.coconut.aio:type=SocketGroup";
 
     /**
      * String representation of the <tt>ObjectName</tt> for the
      * {@link DatagramMXBean}.
      */
-    public final static String DATAGRAM_MXBEAN_NAME = "coconut.aio:type=Datagram";
+    public final static String DATAGRAM_MXBEAN_NAME = "org.coconut.aio:type=Datagram";
 
     /**
      * String representation of the <tt>ObjectName</tt> for the
      * {@link DatagramGroupMXBean}.
      */
-    public final static String DATAGRAM_GROUP_MXBEAN_NAME = "coconut.aio:type=DatagramGroup";
+    public final static String DATAGRAM_GROUP_MXBEAN_NAME = "org.coconut.aio:type=DatagramGroup";
 
     /**
      * String representation of the <tt>ObjectName</tt> for the
      * {@link FileMXBean}.
      */
-    public final static String DISC_MXBEAN_NAME = "coconut.aio:type=Disc";
+    public final static String DISC_MXBEAN_NAME = "org.coconut.aio:type=Disc";
 
     public static ServerSocketMXBean getServerSocketMXBean() {
         return AioProvider.provider().getServerSocketMXBean();

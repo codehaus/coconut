@@ -71,7 +71,7 @@ public abstract class AioProvider implements AsyncFactory {
     }
     protected static Object instantiateObject(String className) {
         if (className == null)
-            throw new NullPointerException("className");
+            throw new NullPointerException("className is null");
         try {
             final ClassLoader loader = Thread.currentThread().getContextClassLoader();
             final Class c = Class.forName(className, true, loader);
@@ -169,7 +169,7 @@ public abstract class AioProvider implements AsyncFactory {
                     }
                 }
             }
-            String cn = properties.getProperty("coconut.aio.spi.AioProvider");
+            String cn = properties.getProperty("org.coconut.aio.spi.AioProvider");
             provider = (AioProvider) instantiateObject(cn);
             return provider;
         }

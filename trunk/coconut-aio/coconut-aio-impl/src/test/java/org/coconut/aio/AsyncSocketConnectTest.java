@@ -207,7 +207,7 @@ public class AsyncSocketConnectTest extends AioTestCase {
         socket.connect(address).getIO();
         assertTrue(socket.isConnected());
 
-        Object[] p = (Object[]) awaitOnQueue(q);
+        Object[] p = (Object[]) awaitOnQueue(q2);
 
         assertSame(socket, p[0]);
         assertSame(address, p[1]);
@@ -263,7 +263,7 @@ public class AsyncSocketConnectTest extends AioTestCase {
         assertFalse(socket.isConnected());
         socket.connect(address).getIO();
 
-        Object[] p = (Object[]) awaitOnQueue(q);
+        Object[] p = (Object[]) awaitOnQueue(q2);
 
         assertSame(socket, p[0]);
         assertSame(address, p[1]);

@@ -1,2 +1,0 @@
-The tests in coconut.aio.defaults
-should probably be moved elsewhere

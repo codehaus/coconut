@@ -25,28 +25,28 @@ components:
 <th><p align="left">Description</p></th>
 </tr>
 <tr>
-<td> <tt>{@link coconut.aio.management.ServerSocketMXBean}</tt> </td>
-<td> Control of asynchronous server-sockets - {@link coconut.aio.AsyncServerSocket}.</td>
+<td> <tt>{@link org.coconut.aio.management.ServerSocketMXBean}</tt> </td>
+<td> Control of asynchronous server-sockets - {@link org.coconut.aio.AsyncServerSocket}.</td>
 </tr>
 <tr>
-<td> <tt>{@link coconut.aio.management.DatagramMXBean}</tt> </td>
-<td> Control of asynchronous datagrams - {@link coconut.aio.AsyncDatagram}.</td>
+<td> <tt>{@link org.coconut.aio.management.DatagramMXBean}</tt> </td>
+<td> Control of asynchronous datagrams - {@link org.coconut.aio.AsyncDatagram}.</td>
 </tr>
 <tr>
-<td> <tt>{@link coconut.aio.management.DatagramGroupMXBean}</tt> </td>
-<td> Control of datagram-groups - {@link coconut.aio.AsyncDatagramGroup}.</td>
+<td> <tt>{@link org.coconut.aio.management.DatagramGroupMXBean}</tt> </td>
+<td> Control of datagram-groups - {@link org.coconut.aio.AsyncDatagramGroup}.</td>
 </tr>
 <tr>
-<td> <tt>{@link coconut.aio.management.SocketMXBean}</tt> </td>
-<td> Control of asynchronous sockets - {@link coconut.aio.AsyncSocket}.</td>
+<td> <tt>{@link org.coconut.aio.management.SocketMXBean}</tt> </td>
+<td> Control of asynchronous sockets - {@link org.coconut.aio.AsyncSocket}.</td>
 </tr>
 <tr>
-<td> <tt>{@link coconut.aio.management.SocketGroupMXBean}</tt> </td>
-<td> Control of socket-groups - {@link coconut.aio.AsyncSocketGroup}.</td>
+<td> <tt>{@link org.coconut.aio.management.SocketGroupMXBean}</tt> </td>
+<td> Control of socket-groups - {@link org.coconut.aio.AsyncSocketGroup}.</td>
 </tr>
 <tr>
-<td> <tt>{@link coconut.aio.management.FileMXBean}</tt> </td>
-<td> Control of asynchronous files - {@link coconut.aio.AsyncFile}.</td>
+<td> <tt>{@link org.coconut.aio.management.FileMXBean}</tt> </td>
+<td> Control of asynchronous files - {@link org.coconut.aio.AsyncFile}.</td>
 </tr>
 </table>
 </blockquote>
@@ -95,7 +95,7 @@ ways to access MXBeans.
 
 <h4>ManagementFactory</h4>
 
-The {@link coconut.aio.management.ManagementFactory} class is the management
+The {@link org.coconut.aio.management.ManagementFactory} class is the management
 factory class for the Coconut AIO subsystem.  This class provides a set of 
 static factory methods to obtain the MXBeans for the subsystem
 to allow an application to access the MXBeans directly.
@@ -190,8 +190,5 @@ There are three different ways to access the management interfaces.
 <p> Unless otherwise noted, passing a <tt>null</tt> argument to a constructor
 or method in any class or interface in this package will cause a {@link
 java.lang.NullPointerException NullPointerException} to be thrown.
-
-@see <a href="../../../javax/management/package-summary.html">
-     JMX Specification.</a>
 </body>
 </html>
