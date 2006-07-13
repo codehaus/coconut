@@ -11,14 +11,20 @@ import org.coconut.cache.CacheLoader;
 
 /**
  * A composite cache loader used for allowing multiple loaders to load a value.
- * The composite loader is constructor used either an array or list of cache
- * loaders. The cache loader with the array index 0 or the first in the
- * specified list is the first one given the chance to load the object. If this
- * loader Then the loader with index 1.
+ * The composite loader is constructed using either an array or list of cache
+ * loaders. When attempting to load a value through on of the load methods in
+ * this class. This loader will first attempt to load the values through the
+ * specified cache loader with the array index 0 or the first in the specified
+ * list. If this loader return <tt>null</tt> for the given key-value mapping
+ * the next loader in the array/list is asked to load the value. This keeps
+ * repeating until the last loader has tried loading the value for the key. If
+ * this loader also returns <tt>null</tt> this loader will also return
+ * <tt>null</tt>.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id$
- * @url $URL$
+ * @url $URL:
+ *      https://svn.codehaus.org/coconut/trunk/coconut-cache/coconut-cache-api/src/main/java/org/coconut/cache/util/CompositeCacheLoader.java $
  */
 public class CompositeCacheLoader<K, V> implements CacheLoader<K, V> {
 
@@ -33,8 +39,8 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V> {
      * @param loaders
      *            the cache loaders used for loading values.
      * @throws NullPointerException
-     *             if specified array of cache loaders is <tt>null</tt> or if
-     *             one of the cache loaders in the array is <tt>null</tt>
+     *             if the specified array of cache loaders is <tt>null</tt> or
+     *             if one of the cache loaders in the array is <tt>null</tt>
      */
     public CompositeCacheLoader(CacheLoader<K, V>... loaders) {
         this(Arrays.asList(loaders));
@@ -47,7 +53,7 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V> {
      *            a list of the cache loaders used for loading values.
      * @throws NullPointerException
      *             if the specified list of cache loaders is <tt>null</tt> or
-     *             if the list contains a <tt>null</tt>
+     *             if the list contains a <tt>null</tt> element
      */
     @SuppressWarnings("unchecked")
     public CompositeCacheLoader(List<? extends CacheLoader<K, V>> loaders) {
@@ -59,7 +65,7 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V> {
     }
 
     /**
-     * @see coconut.cache.CacheLoader#load(null)
+     * {@inheritDoc}
      */
     public V load(final K key) throws Exception {
         V v = null;
@@ -81,7 +87,7 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V> {
     }
 
     /**
-     * @see coconut.cache.CacheLoader#loadAll(null)
+     * {@inheritDoc}
      */
     public Map<K, V> loadAll(final Collection<? extends K> keys) throws Exception {
         final HashMap<K, V> result = new HashMap<K, V>(keys.size());
@@ -119,11 +125,20 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V> {
         return result;
     }
 
+    /**
+     * Returns the list of loaders that this composite loader consists of.
+     * 
+     * @return the list of loaders that this composite loader consists of.
+     */
     public List<CacheLoader<K, V>> getLoaders() {
         return Arrays.asList(loaders);
     }
 
     /**
+     * This method handles failures of {@link CacheLoader#loadAll} method.
+     * Override to provide customized handling the default version just makes
+     * sure the original exception is thrown.
+     * <p>
      * If this method returns a map it <tt>must</tt> provide a mapping for all
      * the specified keys. Either to a value or to <tt>null</tt>. Also the
      * size of the map must be the same as the size of key collection.
@@ -142,16 +157,33 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V> {
         throw cause;
     }
 
+    /**
+     * @param loader
+     *            the cache loader that threw an excepti
+     * @param key
+     *            the key the loader was trying to retrieve a value for
+     * @param cause
+     *            the exception that was thrown by the cache loader
+     * @return the value for this key
+     * @throws Exception
+     */
     protected V loadingFailed(CacheLoader<K, V> loader, K key, Exception cause) throws Exception {
         throw cause;
     }
 
     /**
+     * This method decides which value if returned for keys whose values could
+     * not be found in any of the specified loaders. The default value returned
+     * is <tt>null</tt>. Can be overridden, for example, to return a default
+     * value for non existing key->value mappings or throw an exception
+     * indicating an illegal state.
+     * <p>
+     * 
      * @param key
      *            the key for whose value could not be loaded
      * @return the value that should be mapped to the key
      */
-    protected V noValueFoundForKey(K key) {
+    protected V noValueFoundForKey(K key) throws Exception {
         return null;
     }
 }

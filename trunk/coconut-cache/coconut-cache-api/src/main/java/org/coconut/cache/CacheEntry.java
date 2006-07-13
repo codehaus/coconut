@@ -7,8 +7,6 @@ import java.util.Map;
 
 import org.coconut.cache.policy.CostSizeObject;
 
-// TODO: what about locks, if method exists but
-// getLock() : throws unsupported operation.
 // except for setValue, I think this class should be informational
 // purpose only
 

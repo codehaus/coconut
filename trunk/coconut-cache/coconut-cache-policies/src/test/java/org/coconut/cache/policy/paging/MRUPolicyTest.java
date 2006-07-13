@@ -9,13 +9,14 @@ import static org.coconut.test.CollectionUtils.seq;
 import junit.framework.JUnit4TestAdapter;
 
 import org.coconut.cache.policy.ReplacementPolicy;
+import org.coconut.test.MavenDummyTest;
 import org.junit.Test;
 /**
  * Test of the MRU policy.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-public class MRUPolicyTest {
+public class MRUPolicyTest extends MavenDummyTest {
 
     public static junit.framework.Test suite() {
         return new JUnit4TestAdapter(MRUPolicyTest.class);

@@ -12,13 +12,14 @@ import static org.junit.Assert.assertTrue;
 import junit.framework.JUnit4TestAdapter;
 
 import org.coconut.filter.Filters.IsTypeFilter;
+import org.coconut.test.MavenDummyTest;
 import org.junit.Test;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id$
  */
-public class FiltersIsAssignableFromTest {
+public class FiltersIsAssignableFromTest extends MavenDummyTest {
 
     @Test
     public void testFilter() {

@@ -17,6 +17,7 @@ import static org.junit.Assert.fail;
 import junit.framework.JUnit4TestAdapter;
 
 import org.coconut.filter.LogicFilters.AllFilter;
+import org.coconut.test.MavenDummyTest;
 import org.junit.Test;
 
 /**
@@ -24,7 +25,7 @@ import org.junit.Test;
  * @version $Id$
  */
 @SuppressWarnings("unchecked")
-public class LogicFiltersAllTest {
+public class LogicFiltersAllTest extends MavenDummyTest {
 
     @Test
     public void testConstructor() {

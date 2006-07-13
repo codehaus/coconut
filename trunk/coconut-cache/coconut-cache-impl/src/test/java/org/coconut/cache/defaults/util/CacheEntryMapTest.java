@@ -11,6 +11,7 @@ import java.util.Map;
 import junit.framework.JUnit4TestAdapter;
 
 import org.coconut.cache.tck.CacheTestBundle;
+import org.coconut.test.MavenDummyTest;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,7 +19,7 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class CacheEntryMapTest {
+public class CacheEntryMapTest extends MavenDummyTest {
 
     public static junit.framework.Test suite() {
         return new JUnit4TestAdapter(CacheEntryMapTest.class);

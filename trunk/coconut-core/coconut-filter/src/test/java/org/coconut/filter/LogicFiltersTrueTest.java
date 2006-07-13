@@ -18,7 +18,8 @@ import org.junit.Test;
  */
 public class LogicFiltersTrueTest {
 
-    @Test public void testFilter() {
+    @Test 
+    public void testFilter() {
         assertTrue(TRUE.accept(null));
         assertTrue(TRUE.accept(this));
         TRUE.toString(); //does not fail

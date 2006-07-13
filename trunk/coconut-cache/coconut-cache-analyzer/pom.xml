@@ -2,8 +2,8 @@
 <project>
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>coconut</groupId>
-    <artifactId>coconut-cache-root</artifactId>
+    <groupId>org.coconut.cache</groupId>
+    <artifactId>coconut-cache-parent</artifactId>
     <version>5.0-alpha3-SNAPSHOT</version>
   </parent>
   

@@ -15,6 +15,7 @@ import junit.framework.JUnit4TestAdapter;
 
 import org.coconut.cache.policy.Policies;
 import org.coconut.cache.policy.ReplacementPolicy;
+import org.coconut.test.MavenDummyTest;
 import org.junit.Test;
 
 /**
@@ -22,7 +23,7 @@ import org.junit.Test;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-public class RandomPolicyTest {
+public class RandomPolicyTest extends MavenDummyTest {
 
     public static junit.framework.Test suite() {
         return new JUnit4TestAdapter(RandomPolicyTest.class);

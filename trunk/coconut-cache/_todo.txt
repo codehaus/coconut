@@ -22,7 +22,7 @@ v alpha 3 Late june - the synchronous period
      ExpirationPolicy - use a filter instead that takes a cache entry and returns true if it is still valid or false if it should be evicted or vice versa
      isExpired(CacheEntry entry); accept implements Filter<CacheEntry<K,V>> {
      
-   * support for cost/size based for unsafe, hmm
+   V support for cost/size based for unsafe, hmm
      we need some to calculate cost, size, also some polices might base stuff on the 
      particular value and not just the key.
      We might need a policy interface, taken cost/size + cache entry dumping the current cost based policy and

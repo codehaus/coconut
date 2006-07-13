@@ -4,6 +4,7 @@ import static junit.framework.Assert.assertEquals;
 import static org.coconut.cache.policy.PolicyTestUtils.addToPolicy;
 import static org.coconut.cache.policy.PolicyTestUtils.empty;
 import static org.coconut.test.CollectionUtils.seq;
+import junit.framework.JUnit4TestAdapter;
 
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.junit.Test;
@@ -15,6 +16,11 @@ import org.junit.Test;
  */
 public class LFUPolicyTest {
 
+
+    public static junit.framework.Test suite() {
+        return new JUnit4TestAdapter(LFUPolicyTest.class);
+    }
+    
     public ReplacementPolicy<Integer> createPolicy() {
         return new LFUPolicy<Integer>();
     }

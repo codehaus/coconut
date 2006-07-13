@@ -55,7 +55,7 @@ public class AbstractCacheMXBean<K, V> extends JmxEmitterSupport implements
     }
 
     public void initializeSubscriptions() {
-        bus.subscribe(this, LogicFilters.TRUE);
+        bus.subscribe(this, LogicFilters.TRUE,"internal#CACHE_JMX_SUPPORT");
     }
 
     @Override
@@ -145,8 +145,7 @@ public class AbstractCacheMXBean<K, V> extends JmxEmitterSupport implements
      * @see org.coconut.cache.management.CacheMXBean#trimToSize(int)
      */
     public void trimToSize(int newSize) {
-        // TODO Auto-generated method stub
-        
+      throw new UnsupportedOperationException(); 
     }
 
     /**

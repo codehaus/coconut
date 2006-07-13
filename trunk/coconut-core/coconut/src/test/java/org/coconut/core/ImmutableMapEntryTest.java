@@ -7,14 +7,16 @@ import static org.junit.Assert.assertTrue;
 import java.util.Map;
 
 import junit.framework.JUnit4TestAdapter;
+import junit.framework.TestResult;
 
+import org.coconut.test.MavenDummyTest;
 import org.junit.Test;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id$
  */
-public class ImmutableMapEntryTest {
+public class ImmutableMapEntryTest extends MavenDummyTest {
 
     public static junit.framework.Test suite() {
         return new JUnit4TestAdapter(ImmutableMapEntryTest.class);
@@ -22,6 +24,7 @@ public class ImmutableMapEntryTest {
     
     @Test(expected = UnsupportedOperationException.class)
     public void testMapEntryTest() {
+        
         Map.Entry<Integer, Integer> me = EventHandlers.newMapEntry(
                 0, 1);
         assertEquals(0, me.getKey());
@@ -49,6 +52,20 @@ public class ImmutableMapEntryTest {
         assertFalse(me.equals(EventHandlers.newMapEntry(1, 1)));
         assertFalse(me.equals(EventHandlers.newMapEntry(null, 1)));
         assertTrue(me.equals(EventHandlers.newMapEntry(0, 1)));
+    }
+
+    /**
+     * @see junit.framework.Test#countTestCases()
+     */
+    public int countTestCases() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * @see junit.framework.Test#run(junit.framework.TestResult)
+     */
+    public void run(TestResult arg0) {
+       throw new UnsupportedOperationException();
     }
 
 }

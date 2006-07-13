@@ -15,12 +15,13 @@ import java.io.File;
 import junit.framework.JUnit4TestAdapter;
 
 import org.coconut.filter.util.FileFilters.FileExtensionFilter;
+import org.coconut.test.MavenDummyTest;
 import org.junit.Test;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-public class FileFiltersExtensionTest {
+public class FileFiltersExtensionTest extends MavenDummyTest {
 
     @Test
     public void testFilterConstructor1() {

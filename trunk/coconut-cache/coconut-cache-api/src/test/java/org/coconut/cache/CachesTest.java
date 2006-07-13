@@ -77,8 +77,8 @@ public class CachesTest extends MockTestCase {
         mock.expects(once()).method("size").will(returnValue(2));
         assertEquals(2, c.size());
 
-        mock.expects(once()).method("toString").will(returnValue("foo"));
-        assertEquals("foo", c.toString());
+//        mock.expects(once()).method("toString").will(returnValue("foo"));
+//        assertEquals("foo", c.toString());
 
         mock.expects(once()).method("values").will(returnValue(map.values()));
         assertSame(map.values(), c.values());

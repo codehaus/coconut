@@ -20,12 +20,13 @@ import java.util.TreeSet;
 import junit.framework.JUnit4TestAdapter;
 
 import org.coconut.internal.IndexedHeap;
+import org.coconut.test.MavenDummyTest;
 import org.junit.Test;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-public class IndexedTest {
+public class IndexedTest extends MavenDummyTest {
 
     private int plenty = 1000;// magic number
 

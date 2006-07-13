@@ -18,6 +18,7 @@ import java.util.Arrays;
 
 import junit.framework.JUnit4TestAdapter;
 
+import org.coconut.test.MavenDummyTest;
 import org.junit.Test;
 
 /**
@@ -25,7 +26,7 @@ import org.junit.Test;
  * @version $Id$
  */
 @SuppressWarnings("unchecked")
-public class LogicFiltersOrTest {
+public class LogicFiltersOrTest extends MavenDummyTest {
 
     @Test
     public void testOr() {

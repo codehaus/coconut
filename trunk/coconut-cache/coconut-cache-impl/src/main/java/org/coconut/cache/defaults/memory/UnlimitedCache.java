@@ -672,6 +672,30 @@ public class UnlimitedCache<K, V> extends LoadableCache<K, V> implements Concurr
         public List<CacheEntry<K, V>> getAll() {
             throw new UnsupportedOperationException();
         }
+
+        /**
+         * @see java.util.Iterator#hasNext()
+         */
+        public boolean hasNext() {
+            return index < entries.length;
+        }
+
+        /**
+         * @see java.util.Iterator#next()
+         */
+        public CacheEntry<K, V> next() {
+            if (index >= entries.length) {
+                throw new NoSuchElementException();
+            }
+            return entries[index++];
+        }
+
+        /**
+         * @see java.util.Iterator#remove()
+         */
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
     }
 
     @Override

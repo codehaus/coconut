@@ -17,13 +17,14 @@ import static org.junit.Assert.fail;
 import junit.framework.JUnit4TestAdapter;
 
 import org.coconut.filter.LogicFilters.AnyFilter;
+import org.coconut.test.MavenDummyTest;
 import org.junit.Test;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id$
  */
-public class LogicFiltersAnyTest {
+public class LogicFiltersAnyTest extends MavenDummyTest {
 
     @Test
     @SuppressWarnings("unchecked")

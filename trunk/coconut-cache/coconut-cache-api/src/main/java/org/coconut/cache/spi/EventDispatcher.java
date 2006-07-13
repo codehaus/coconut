@@ -936,4 +936,11 @@ public class EventDispatcher<K, V> implements CacheEventDispatcher<K, V>, Serial
         return false;
     }
 
+    /**
+     * @see org.coconut.cache.spi.CacheEventDispatcher#isEnabled()
+     */
+    public boolean isEnabled() {
+        return true;
+    }
+
 }

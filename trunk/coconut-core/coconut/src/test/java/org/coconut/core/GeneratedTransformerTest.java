@@ -6,61 +6,46 @@ import static org.junit.Assert.assertNotNull;
 import junit.framework.JUnit4TestAdapter;
 
 import org.coconut.core.Transformers.DynamicTransformer;
+import org.coconut.test.MavenDummyTest;
 import org.junit.Test;
 
-public class GeneratedTransformerTest {
+public class GeneratedTransformerTest extends MavenDummyTest {
 
     @Test
     public void testSimpleCreate() {
         assertNotNull(t("method"));
         assertEquals("m", t("method").transform(new GeneratedTransformerMock()));
-        assertEquals("m2", t("method2").transform(
-                new GeneratedTransformerMock()));
-        assertEquals("im", t("interfaceMethod").transform(
-                new GeneratedTransformerMock()));
+        assertEquals("m2", t("method2").transform(new GeneratedTransformerMock()));
+        assertEquals("im", t("interfaceMethod").transform(new GeneratedTransformerMock()));
     }
 
     @Test
     public void testInheritance() {
-        assertEquals("moverride", t("method").transform(
-                new GeneratedTransformerMockChild()));
-        assertEquals("m2", t("method2").transform(
-                new GeneratedTransformerMockChild()));
+        assertEquals("moverride", t("method").transform(new GeneratedTransformerMockChild()));
+        assertEquals("m2", t("method2").transform(new GeneratedTransformerMockChild()));
 
-        assertEquals("moverride", t("method").transform(
-                new GeneratedTransformerMockChild()));
-        assertEquals("m2", t("method2").transform(
-                new GeneratedTransformerMockChild()));
+        assertEquals("moverride", t("method").transform(new GeneratedTransformerMockChild()));
+        assertEquals("m2", t("method2").transform(new GeneratedTransformerMockChild()));
     }
 
     @Test
     public void testInnerClass() {
         assertNotNull(transform(Simple.class, "foo"));
-        assertEquals("foo1", transform(Simple.class, "foo").transform(
-                new SimpleStaticImpl()));
-        assertEquals("foo2", transform(Simple.class, "foo").transform(
-                new SimpleImpl()));
+        assertEquals("foo1", transform(Simple.class, "foo").transform(new SimpleStaticImpl()));
+        assertEquals("foo2", transform(Simple.class, "foo").transform(new SimpleImpl()));
     }
 
     @Test
     public void testPrimitive() {
         assertNotNull(t("ireturn"));
-        assertEquals(1, t("ireturn").transform(
-                new GeneratedTransformerMockChild()));
-        assertEquals(2l, t("lreturn").transform(
-                new GeneratedTransformerMockChild()));
-        assertEquals((short) 3, t("sreturn").transform(
-                new GeneratedTransformerMockChild()));
-        assertEquals(4d, t("dreturn").transform(
-                new GeneratedTransformerMockChild()));
-        assertEquals(5f, t("freturn").transform(
-                new GeneratedTransformerMockChild()));
-        assertEquals((byte) 6, t("byreturn").transform(
-                new GeneratedTransformerMockChild()));
-        assertEquals((char) 7, t("creturn").transform(
-                new GeneratedTransformerMockChild()));
-        assertEquals(true, t("breturn").transform(
-                new GeneratedTransformerMockChild()));
+        assertEquals(1, t("ireturn").transform(new GeneratedTransformerMockChild()));
+        assertEquals(2l, t("lreturn").transform(new GeneratedTransformerMockChild()));
+        assertEquals((short) 3, t("sreturn").transform(new GeneratedTransformerMockChild()));
+        assertEquals(4d, t("dreturn").transform(new GeneratedTransformerMockChild()));
+        assertEquals(5f, t("freturn").transform(new GeneratedTransformerMockChild()));
+        assertEquals((byte) 6, t("byreturn").transform(new GeneratedTransformerMockChild()));
+        assertEquals((char) 7, t("creturn").transform(new GeneratedTransformerMockChild()));
+        assertEquals(true, t("breturn").transform(new GeneratedTransformerMockChild()));
 
     }
 
@@ -104,8 +89,7 @@ public class GeneratedTransformerTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testNoParameters() {
-        assertEquals(0, ((Transformers.GeneratedTransformer) t("ireturn"))
-                .getParameters().length);
+        assertEquals(0, ((Transformers.GeneratedTransformer) t("ireturn")).getParameters().length);
     }
 
     @SuppressWarnings("unchecked")
@@ -115,8 +99,7 @@ public class GeneratedTransformerTest {
         assertNotNull(gt);
         assertEquals(5l, gt.transform(new GeneratedTransformerMockChild()));
 
-        assertEquals(12l, t("string2Arg", "5", "7").transform(
-                new GeneratedTransformerMockChild()));
+        assertEquals(12l, t("string2Arg", "5", "7").transform(new GeneratedTransformerMockChild()));
 
         assertEquals(18l, t("string3Arg", "5", "7", "6").transform(
                 new GeneratedTransformerMockChild()));
@@ -128,8 +111,7 @@ public class GeneratedTransformerTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testWithVariousParameters() {
-        DynamicTransformer gt = t("transform", "5",
-                (Object) Integer.valueOf(1), Long.valueOf(4l));
+        DynamicTransformer gt = t("transform", "5", (Object) Integer.valueOf(1), Long.valueOf(4l));
         assertNotNull(gt);
         assertEquals(10l, gt.transform(new GeneratedTransformerMockChild()));
     }
@@ -139,8 +121,8 @@ public class GeneratedTransformerTest {
         t("iarg", 4);
     }
 
-    private static <T> DynamicTransformer<GeneratedTransformerMock, T> t(
-            String method, Object... args) {
+    private static <T> DynamicTransformer<GeneratedTransformerMock, T> t(String method,
+            Object... args) {
         return transform(GeneratedTransformerMock.class, method, args);
     }
 

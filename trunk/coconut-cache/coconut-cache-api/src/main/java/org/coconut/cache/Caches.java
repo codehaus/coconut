@@ -986,9 +986,9 @@ public final class Caches {
                 && cache.getClass().getAnnotation(CacheSupport.class).JMXSupport();
     }
 
-    // /CLOVER:OFF
+    ///CLOVER:OFF
     /** Cannot instantiate. */
     private Caches() {
     }
-    // /CLOVER:ON
+    ///CLOVER:ON
 }

@@ -6,6 +6,7 @@ package org.coconut.cache;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Constructor;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -82,10 +83,10 @@ import org.xml.sax.SAXException;
  */
 @ThreadSafe(false)
 public final class CacheConfiguration<K, V> implements Cloneable {
-    
+
     /**
-     * The default configuration that should be used by any cache that is not
-     * provided with configuration object.
+     * The default configuration that can be used by any cache that is not
+     * provided with a cache configuration object.
      */
     public static final CacheConfiguration DEFAULT_CONFIGURATION = CacheConfiguration.newConf();
 
@@ -257,8 +258,26 @@ public final class CacheConfiguration<K, V> implements Cloneable {
     }
 
     public static enum EventStrategy {
-        // måden vi løser
-        NO_EVENTS, NORMAL, STRONG, WEAK;
+        /**
+         * No events are ever posted. Trying to create a subscription on the
+         * caches eventsbus will throw an {@link UnsupportedOperationException}.
+         */
+        NO_EVENTS,
+
+        /**
+         * update operations are synchronized
+         */
+        NORMAL,
+
+        /**
+         * update and get operations are synchronized
+         */
+        STRONG,
+
+        /**
+         * No order . Information purposes
+         */
+        WEAK;
     }
 
     public class Eviction {
@@ -529,18 +548,6 @@ public final class CacheConfiguration<K, V> implements Cloneable {
 
     }
 
-    // /**
-    // * These are items that does not effect the semantics of a cache, but are
-    // * merely hints to the cache implementation. Implementations are free to
-    // * ignore these.
-    // * <p>
-    // * TODO or just as normal methods on cacheconfiguration postfixed with
-    // hint.
-    // */
-    // public class Hints {
-    //
-    // }
-
     /**
      * This class defines JMX configuration. To register a cache in the platform
      * MBeanServer with the name TODO, simply call
@@ -639,10 +646,10 @@ public final class CacheConfiguration<K, V> implements Cloneable {
 
         /**
          * Sets the specific {@link ObjectName} that this cache should register
-         * with. If no objectname is set the cache will be registered under
-         * foo+getName, if no name has been set foo+S
-         * System.identityHashCode(cache) the name should probably also be
-         * initialized to this value (hexed)
+         * with. If no ObjectName but the cache has been registered with a name
+         * {@link #setName()} the cache will be registered under foo+name. If no
+         * name has been set foo+S System.identityHashCode(cache) the name
+         * should probably also be initialized to this value (hexed)
          * 
          * @param name
          *            the object name
@@ -829,12 +836,15 @@ public final class CacheConfiguration<K, V> implements Cloneable {
         // document.getDocumentElement().getAttribute("classs");
 
         CacheConfiguration<String, Integer> cc = newConf();
+
         cc.setName("MyCache");
         // cc.backend().setLoader(myLoader);
         cc.eviction().setMaximumCapacity(1000);
         cc.expiration().setDefaultTimeout(100, TimeUnit.SECONDS);
         cc.jmx().setRegister(true);
-
+        for (CacheEntry<String,Integer> entry : cc.newInstance(null).query(null)) {
+            
+        }
         // Cache<String,Integer> cache=cc.newInstance(UnlimitedCache.class);
         // // cc.parseDocument(document.getDocumentElement());
         // // System.out.println("bye" + cacheInstance.length());
@@ -1068,10 +1078,12 @@ public final class CacheConfiguration<K, V> implements Cloneable {
 
     /**
      * Sets the name of the cache. The name should be unique among other
-     * configured caches. Alltough not a strict requirement we advise that only
-     * alphanumeric characters are used in the name.
+     * configured caches. Allthough not a strict requirement it is advised that
+     * only alphanumeric characters are used in the name.
      * <p>
-     * If no name is set a cache implementation should generate an unique name.
+     * If no name is set, most cache implementation will generate an unique name
+     * to reference the cache. How exactly this name is generated is
+     * implementation specific.
      * 
      * @param name
      *            the name of the cache
@@ -1088,6 +1100,22 @@ public final class CacheConfiguration<K, V> implements Cloneable {
         return this;
     }
 
+    /**
+     * Some cache implementations might allow additional properties to be set
+     * then those defined by this class. This method can be used to set these
+     * additional properties.
+     * 
+     * @param key
+     *            the key of the property
+     * @param value
+     *            the value of the property
+     * @return this configuration
+     * @see #getProperties()
+     * @see #getProperty(String)
+     * @see #getProperty(String, Object)
+     * @throws NullPointerException
+     *             if key is <tt>null</tt>
+     */
     public CacheConfiguration<K, V> setProperty(String key, Object value) {
         if (name == key) {
             throw new NullPointerException("name is null");
@@ -1096,10 +1124,28 @@ public final class CacheConfiguration<K, V> implements Cloneable {
         return this;
     }
 
+    /**
+     * Returns a map of any additional properties that is defined. This map is a
+     * copy of the current properties.
+     * 
+     * @see #setProperty(String, Object)
+     */
     public Map<String, ?> getProperties() {
-        return new HashMap<String, Object>(additionalProperties);
+        return Collections.unmodifiableMap(new HashMap<String, Object>(additionalProperties));
     }
 
+    /**
+     * Returns the property value for the specified key or <tt>null</tt> if no
+     * such property exists. A <tt>null</tt> can also indicate that the key
+     * was explicitly mapped to <tt>null</tt>.
+     * 
+     * @param key
+     *            the key for which to retrieve the value
+     * @return the value of the property or <tt>null</tt> if no such property
+     *         exists
+     * @throws NullPointerException
+     *             if key is <tt>null</tt>
+     */
     public Object getProperty(String key) {
         if (name == key) {
             throw new NullPointerException("name is null");
@@ -1107,12 +1153,28 @@ public final class CacheConfiguration<K, V> implements Cloneable {
         return additionalProperties.get(key);
     }
 
-    public Object getProperty(String key, Object def) {
+    /**
+     * Returns the property value for the specified key or the specified default
+     * value if no such property exists. A property does not exists if it is
+     * mapped to <tt>null</tt> either explicitly or because no such entry
+     * exists.
+     * 
+     * @param key
+     *            the key for which to retrieve the value
+     * @param defaultValue
+     *            the default value to return if the property does not exist
+     * @return the value of the property or the specified default value if the
+     *         property does not exist
+     * @throws NullPointerException
+     *             if key is <tt>null</tt>
+     */
+    public Object getProperty(String key, Object defaultValue) {
         if (name == key) {
             throw new NullPointerException("name is null");
         }
+
         Object result = additionalProperties.get(key);
-        return result == null ? def : result;
+        return result == null ? defaultValue : result;
     }
     // public void saveConfigurationAsXml(OutputStream stream) {
     // Document doc;
@@ -1214,4 +1276,16 @@ public final class CacheConfiguration<K, V> implements Cloneable {
     // return fromInputStream(Cache.class.getResourceAsStream(path));
     // }
 
+
+    // /**
+    // * These are items that does not effect the semantics of a cache, but are
+    // * merely hints to the cache implementation. Implementations are free to
+    // * ignore these.
+    // * <p>
+    // * TODO or just as normal methods on cacheconfiguration postfixed with
+    // hint.
+    // */
+    // public class Hints {
+    //
+    // }
 }

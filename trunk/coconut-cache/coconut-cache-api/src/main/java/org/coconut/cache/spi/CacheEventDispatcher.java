@@ -14,6 +14,7 @@ import org.coconut.cache.CacheEntry;
  */
 public interface CacheEventDispatcher<K, V> {
 
+    boolean isEnabled();
     boolean doNotifyAdded();
 
     boolean doNotifyClear();
