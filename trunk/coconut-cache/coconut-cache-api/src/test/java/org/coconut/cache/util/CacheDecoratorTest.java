@@ -78,7 +78,9 @@ public class CacheDecoratorTest extends MockTestCase {
         m.expects(once()).method("values").will(returnValue(col));
         m.expects(once()).method("getLock").with(eq(new Integer[] { 14, 15 })).will(
                 returnValue(lock));
-    //    m.expects(once()).method("toString").will(returnValue("ttt"));
+    
+        
+        m.expects(once()).method("toString").will(returnValue("ttt"));
         m.expects(once()).method("query").with(eq(f)).will(returnValue(cq));
         m.expects(once()).method("getEntry").with(eq(16)).will(returnValue(ce));
 
@@ -115,7 +117,7 @@ public class CacheDecoratorTest extends MockTestCase {
         assertEquals(13, c.size());
         assertEquals(cols, c.values());
         assertEquals(lock, c.getLock(14, 15));
- //       assertEquals("ttt", c.toString());
+        assertEquals("ttt", c.toString());
         assertEquals(cq, c.query(f));
         assertEquals(ce, c.getEntry(16));
     }
