@@ -121,15 +121,14 @@
     </plugins>
   </reporting>
 
-<!--
   <repositories>
     <repository>
       <id>apache-snapshots</id>
       <name>Snapshot repository</name>
-      <url>http://dist.codehaus.org/</url>
+      <url>http://people.apache.org/maven-snapshot-repository/</url>
     </repository>
   </repositories>
--->
+
   
   <modules>
     <module>coconut-aio</module>
