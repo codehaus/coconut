@@ -26,7 +26,7 @@ import org.junit.Test;
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-public class IndexedTest extends MavenDummyTest {
+public class IndexedTest extends MavenDummyTest extends MavenDummyTest {
 
     private int plenty = 1000;// magic number
 

@@ -8,6 +8,7 @@ import java.util.Random;
 import junit.framework.JUnit4TestAdapter;
 
 import org.coconut.internal.IndexedStack;
+import org.coconut.test.MavenDummyTest;
 import org.junit.Test;
 
 /**
@@ -15,7 +16,7 @@ import org.junit.Test;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-public class IndexedStackTest {
+public class IndexedStackTest extends MavenDummyTest {
 
     private final Random rnd = new Random();
 
