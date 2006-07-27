@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNull;
 import java.util.Random;
 
 import org.coconut.test.MavenDummyTest;
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 /**
  * Test of PolicyList.
