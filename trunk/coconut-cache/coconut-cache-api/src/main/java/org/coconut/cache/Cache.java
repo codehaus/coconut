@@ -450,10 +450,10 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     interface HitStat {
 
         /**
-         * Returns the ratio between cache hits and misses or -1 if no hits or
-         * misses has been recorded.
+         * Returns the ratio between cache hits and misses or
+         * {@link java.lang.Double#NaN} if no hits or misses has been recorded.
          * 
-         * @return the ratio between cache hits and misses or -1 if no hits or
+         * @return the ratio between cache hits and misses or NaN if no hits or
          *         misses has been recorded
          */
         float getHitRatio();

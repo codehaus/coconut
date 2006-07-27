@@ -93,4 +93,20 @@ public class StuffComplex extends LazyCompositeData implements StuffInfo {
         return new String[] { "erer", "lwkjer", "wekljelrkjt", "kljlj" };
     }
 
+    /**
+     * @see org.coconut.monitor.management.StuffInfo#getDescription()
+     */
+    public String getDescription() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * @see org.coconut.monitor.management.StuffInfo#getName()
+     */
+    public String getName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

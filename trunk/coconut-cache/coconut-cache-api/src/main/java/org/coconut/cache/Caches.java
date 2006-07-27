@@ -172,7 +172,7 @@ public final class Caches {
         public float getHitRatio() {
             final long sum = hits + misses;
             if (sum == 0) {
-                return -1;
+                return Float.NaN;
             }
             return ((float) hits) / sum;
         }

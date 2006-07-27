@@ -146,7 +146,7 @@ public class Doo extends StandardMBean implements ProfileMXBean {
      * @see org.coconut.monitor.management.ProfileMXBean#getInfo()
      */
     public StuffInfo getInfo() {
-        return new StuffInfoSimpleImpl();
+        return null;
     }
 
     /**

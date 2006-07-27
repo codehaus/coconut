@@ -162,7 +162,7 @@ public final class CacheConfiguration<K, V> implements Cloneable {
          * @return the current CacheConfiguration
          */
         public Backend setExtendedLoader(CacheLoader<K, ? extends CacheEntry<K, V>> loader) {
-            if (extendedLoader != null) {
+            if (CacheConfiguration.this.loader != null) {
                 throw new IllegalStateException("loader already set, cannot set an extended loader");
             }
             extendedLoader = loader;

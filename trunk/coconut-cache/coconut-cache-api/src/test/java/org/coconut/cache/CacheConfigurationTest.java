@@ -28,6 +28,11 @@ public class CacheConfigurationTest extends MavenDummyTest {
         conf = CacheConfiguration.newConf();
     }
 
+    /** ************ BACKEND ********************** */
+    public void testBackend() {
+        assertEquals(conf, conf.backend().c());
+    }
+
     @Test
     public void testLoader() {
         CacheLoader<Number, Collection> cl = mockDummy(CacheLoader.class);
@@ -46,6 +51,34 @@ public class CacheConfigurationTest extends MavenDummyTest {
         assertTrue(conf.backend().setLoader(clI) instanceof CacheConfiguration.Backend);
 
         assertEquals(clI, conf.backend().getLoader());
+    }
+
+    @Test
+    public void testExtendedLoader() {
+        CacheLoader<Number, ? extends CacheEntry<Number, Collection>> ecl = mockDummy(CacheLoader.class);
+
+        assertNull(conf.backend().getExtendedLoader());
+
+        assertTrue(conf.backend().setExtendedLoader(ecl) instanceof CacheConfiguration.Backend);
+
+        assertEquals(ecl, conf.backend().getExtendedLoader());
+        assertTrue(conf.backend().hasLoader());
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testLoaderSetThenExtendedLoader() {
+        CacheLoader<Number, ? extends CacheEntry<Number, Collection>> ecl = mockDummy(CacheLoader.class);
+        CacheLoader<Number, Collection> cl = mockDummy(CacheLoader.class);
+        conf.backend().setLoader(cl);
+        conf.backend().setExtendedLoader(ecl);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testExtendedLoaderSetThenLoader() {
+        CacheLoader<Number, ? extends CacheEntry<Number, Collection>> ecl = mockDummy(CacheLoader.class);
+        CacheLoader<Number, Collection> cl = mockDummy(CacheLoader.class);
+        conf.backend().setExtendedLoader(ecl);
+        conf.backend().setLoader(cl);
     }
 
     @Test
@@ -69,20 +102,15 @@ public class CacheConfigurationTest extends MavenDummyTest {
      */
     @Test
     public void testDefaultExpiration() {
-        assertEquals(Cache.NEVER_EXPIRE, conf.expiration()
-                .getDefaultTimeout(TimeUnit.NANOSECONDS));
-        assertEquals(Cache.NEVER_EXPIRE, conf.expiration()
-                .getDefaultTimeout(TimeUnit.SECONDS));
+        assertEquals(Cache.NEVER_EXPIRE, conf.expiration().getDefaultTimeout(TimeUnit.NANOSECONDS));
+        assertEquals(Cache.NEVER_EXPIRE, conf.expiration().getDefaultTimeout(TimeUnit.SECONDS));
 
-        assertEquals(conf, conf.expiration()
-                .setDefaultTimeout(2, TimeUnit.SECONDS).c());
+        assertEquals(conf, conf.expiration().setDefaultTimeout(2, TimeUnit.SECONDS).c());
         assertEquals(2l, conf.expiration().getDefaultTimeout(TimeUnit.SECONDS));
-        assertEquals(2l * 1000, conf.expiration()
-                .getDefaultTimeout(TimeUnit.MILLISECONDS));
-        assertEquals(2l * 1000 * 1000, conf.expiration()
-                .getDefaultTimeout(TimeUnit.MICROSECONDS));
-        assertEquals(2l * 1000 * 1000 * 1000, conf.expiration()
-                .getDefaultTimeout(TimeUnit.NANOSECONDS));
+        assertEquals(2l * 1000, conf.expiration().getDefaultTimeout(TimeUnit.MILLISECONDS));
+        assertEquals(2l * 1000 * 1000, conf.expiration().getDefaultTimeout(TimeUnit.MICROSECONDS));
+        assertEquals(2l * 1000 * 1000 * 1000, conf.expiration().getDefaultTimeout(
+                TimeUnit.NANOSECONDS));
     }
 
     @Test(expected = IllegalArgumentException.class)

@@ -13,5 +13,4 @@ public interface MovingAverageMXBean extends Statistics{
     int getSamplings();
     long getTotal();
     double getAverage();
-
 }

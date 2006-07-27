@@ -26,7 +26,7 @@ import org.junit.Before;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Header$
  */
-public class CacheTestBundle {
+public abstract class CacheTestBundle {
 
     protected DeterministicClock clock;
 

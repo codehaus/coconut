@@ -39,8 +39,8 @@ public class HitStat extends CacheTestBundle {
      */
     @Test
     public void initialHitStat() {
-        assertHitstat(-1, 0, 0, c0.getHitStat());
-        assertHitstat(-1, 0, 0, c1.getHitStat());
+        assertHitstat(Float.NaN, 0, 0, c0.getHitStat());
+        assertHitstat(Float.NaN, 0, 0, c1.getHitStat());
     }
 
     /**
@@ -65,7 +65,7 @@ public class HitStat extends CacheTestBundle {
         c = c1;
         assertNotNull(peek(M1)); // hit
         assertNull(peek(M2)); // miss
-        assertHitstat(-1, 0, 0, c.getHitStat());
+        assertHitstat(Float.NaN, 0, 0, c.getHitStat());
     }
 
     /**
@@ -79,7 +79,7 @@ public class HitStat extends CacheTestBundle {
         assertNullGet(M2); // miss
         assertHitstat(0.5f, 1, 1, c.getHitStat());
         c.resetStatistics();
-        assertHitstat(-1, 0, 0, c.getHitStat());
+        assertHitstat(Float.NaN, 0, 0, c.getHitStat());
     }
 
     /**
@@ -127,7 +127,7 @@ public class HitStat extends CacheTestBundle {
 
         c.size();
         c.toString();
-        assertHitstat(-1, 0, 0, c4.getHitStat());
+        assertHitstat(Float.NaN, 0, 0, c4.getHitStat());
     }
 
     /**
@@ -152,7 +152,7 @@ public class HitStat extends CacheTestBundle {
         values.toArray();
         values.toArray(new String[4]);
         values.toString();
-        assertHitstat(-1, 0, 0, c4.getHitStat());
+        assertHitstat(Float.NaN, 0, 0, c4.getHitStat());
     }
 
     /**
@@ -177,7 +177,7 @@ public class HitStat extends CacheTestBundle {
         keys.toArray();
         keys.toArray(new Integer[4]);
         keys.toString();
-        assertHitstat(-1, 0, 0, c4.getHitStat());
+        assertHitstat(Float.NaN, 0, 0, c4.getHitStat());
     }
 
     /**
@@ -203,7 +203,7 @@ public class HitStat extends CacheTestBundle {
         entrySet.toArray();
         entrySet.toArray(new Map.Entry[4]);
         entrySet.toString();
-        assertHitstat(-1, 0, 0, c4.getHitStat());
+        assertHitstat(Float.NaN, 0, 0, c4.getHitStat());
     }
 
     /**
@@ -224,7 +224,7 @@ public class HitStat extends CacheTestBundle {
         } catch (UnsupportedOperationException ignore) {
             // cache does not support loading, ignore
         }
-        assertHitstat(-1, 0, 0, loadableEmptyCache.getHitStat());
+        assertHitstat(Float.NaN, 0, 0, loadableEmptyCache.getHitStat());
     }
 
     @Test

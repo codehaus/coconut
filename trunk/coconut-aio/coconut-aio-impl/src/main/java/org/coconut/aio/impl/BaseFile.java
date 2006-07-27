@@ -24,13 +24,13 @@ public abstract class BaseFile extends AsyncFile {
     private final ManagedAioProvider provider;
 
     /** An atomic refence to a future used for closing down the socket */
-    private final AtomicReference<AsyncFile.Closed> closeFuture = new AtomicReference<AsyncFile.Closed>();
+    //private final AtomicReference<AsyncFile.Closed> closeFuture = new AtomicReference<AsyncFile.Closed>();
 
     /** The number of commited bytes for writing */
-    private final AtomicLong bytesWritten = new AtomicLong();
+    //private final AtomicLong bytesWritten = new AtomicLong();
 
     /** The number of commited bytes for writing */
-    private final AtomicLong bytesRead = new AtomicLong();
+    //private final AtomicLong bytesRead = new AtomicLong();
 
     // -- General volatile user-mod socket fields --
 

@@ -44,7 +44,7 @@ import org.coconut.cache.tck.other.Serialization;
 import org.coconut.cache.tck.query.CacheQueryBundle;
 import org.coconut.cache.tck.query.NoQuerySupport;
 
-public class AbstractCacheImplTest extends TestSuite {
+public abstract class AbstractCacheImplTest extends TestSuite {
 
     private Class<? extends Cache> cacheClazz;
 

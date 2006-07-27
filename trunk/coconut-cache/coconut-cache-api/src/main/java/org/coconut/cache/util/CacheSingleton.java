@@ -2,11 +2,13 @@ package org.coconut.cache.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.coconut.annotation.ThreadSafe;
 import org.coconut.cache.Cache;
+import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
 
 /**
@@ -70,8 +72,14 @@ public final class CacheSingleton {
         try {
             InputStream is = null;
             try {
-                is = Thread.currentThread().getContextClassLoader().getResource(
-                        DEFAULT_CACHE_RESSOURCE).openStream();
+                URL url = Thread.currentThread().getContextClassLoader().getResource(
+                        DEFAULT_CACHE_RESSOURCE);
+                if (url == null) {
+                    throw new CacheException("Could not find configuration '"
+                            + DEFAULT_CACHE_RESSOURCE + "' on the classpath.");
+                }
+                is = url.openStream();
+                //TODO read config
             } catch (IOException ioe) {
                 throw new CacheException("Cache could not be instantiated", ioe);
             } finally {

@@ -3,8 +3,6 @@
  */
 package org.coconut.monitor.management;
 
-import java.util.List;
-
 /**
  * 
  * 
@@ -16,4 +14,6 @@ public interface StuffInfo {
     int getLow();
     long[] getValues();
     String[] getFoo();
+    String getName();
+    String getDescription();
 }

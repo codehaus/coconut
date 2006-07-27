@@ -11,8 +11,15 @@
   <name>Coconut Test Framework</name>
   <dependencies>
     <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>5.0</version>
+      <scope>test</scope>
+      <classifier>jdk15</classifier>
+    </dependency>
+    <dependency>
       <groupId>org.coconut.test</groupId>
-      <artifactId>coconut-jmock</artifactId>
+      <artifactId>jmock</artifactId>
       <version>1.1.0RC1</version>
     </dependency>
     <dependency>
@@ -40,4 +47,12 @@
       </plugins>
     </pluginManagement>
   </build>
+  
+    <repositories>
+    <repository>
+      <id>coconut-backup-site</id>
+      <name>coconut backup site</name>
+      <url>http://www.it.edu/people/kav/maven/</url>
+    </repository>
+  </repositories>
 </project>
