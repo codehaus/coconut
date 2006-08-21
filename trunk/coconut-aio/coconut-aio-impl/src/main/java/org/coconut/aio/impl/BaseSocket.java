@@ -19,11 +19,11 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.coconut.aio.AioFuture;
 import org.coconut.aio.AsyncSocket;
 import org.coconut.aio.AsyncSocketGroup;
+import org.coconut.aio.ErroneousHandler;
 import org.coconut.aio.ReadHandler;
 import org.coconut.aio.impl.util.AioFutureTask;
 import org.coconut.aio.management.SocketInfo;
 import org.coconut.aio.monitor.SocketMonitor;
-import org.coconut.core.ErroneousHandler;
 import org.coconut.core.EventHandler;
 import org.coconut.core.Offerable;
 

@@ -7,7 +7,7 @@ import java.util.List;
 import org.coconut.annotation.ThreadSafe;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.policy.spi.AbstractPolicy;
-import org.coconut.internal.IndexedList;
+import org.coconut.internal.util.IndexedList;
 
 /**
  * <a href="http://larch-www.lcs.mit.edu:8001/~corbato/">Frank Corbató</a>

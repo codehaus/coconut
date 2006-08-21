@@ -7,7 +7,7 @@ import org.coconut.annotation.ThreadSafe;
 import org.coconut.cache.policy.Hitable;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.policy.spi.AbstractPolicy;
-import org.coconut.internal.IndexedHeap;
+import org.coconut.internal.util.IndexedHeap;
 
 /**
  * A LFU based replacement policy.

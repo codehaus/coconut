@@ -100,7 +100,8 @@ public class CacheFilters {
     }
 
     @SuppressWarnings("unchecked")
-    public static <K, V> Filter<CacheEvent<K, V>> anyKeyEqualsCol(final Collection<? extends K> keys) {
+    public static <K, V> Filter<CacheEvent<K, V>> anyKeyInCollection(
+            final Collection<? extends K> keys) {
         return (Filter) keyFilter(ComparisonFilters.anyEquals(keys.toArray()));
     }
 
@@ -108,12 +109,19 @@ public class CacheFilters {
      * Creates a filter that accepts all cache events which is being mapped to
      * one of the specified values.
      * 
-     * @param values the values that are accepted by the filter
-     * @return 
+     * @param values
+     *            the values that are accepted by the filter
+     * @return
      */
     @SuppressWarnings("unchecked")
     public static <K, V> Filter<CacheEvent<K, V>> anyValueEquals(final V... values) {
         return (Filter) valueFilter(ComparisonFilters.anyEquals(values));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <K, V> Filter<CacheEvent<K, V>> anyValueInCollection(
+            final Collection<? extends V> values) {
+        return (Filter) valueFilter(ComparisonFilters.anyEquals(values.toArray()));
     }
 
     @SuppressWarnings("unchecked")

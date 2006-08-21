@@ -1,4 +1,4 @@
-package org.coconut.internal;
+package org.coconut.internal.util;
 
 import java.util.ArrayList;
 import java.util.List;

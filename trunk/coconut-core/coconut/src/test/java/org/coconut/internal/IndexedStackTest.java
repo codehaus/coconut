@@ -7,7 +7,7 @@ import java.util.Random;
 
 import junit.framework.JUnit4TestAdapter;
 
-import org.coconut.internal.IndexedStack;
+import org.coconut.internal.util.IndexedStack;
 import org.coconut.test.MavenDummyTest;
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package org.coconut.internal;
+package org.coconut.internal.util;
 
 import java.io.Serializable;
 import java.util.ArrayList;

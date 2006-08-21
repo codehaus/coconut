@@ -22,13 +22,13 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.coconut.aio.AsyncDatagram;
 import org.coconut.aio.AsyncDatagramGroup;
 import org.coconut.aio.AsyncDatagramSource;
+import org.coconut.aio.ErroneousHandler;
 import org.coconut.aio.ReadHandler;
 import org.coconut.aio.impl.BaseDatagram;
 import org.coconut.aio.impl.BaseDatagramGroup;
 import org.coconut.aio.impl.util.AioFutureTask;
 import org.coconut.aio.impl.util.ByteBufferUtil;
 import org.coconut.aio.monitor.DatagramMonitor;
-import org.coconut.core.ErroneousHandler;
 import org.coconut.core.EventHandler;
 import org.coconut.core.Offerable;
 

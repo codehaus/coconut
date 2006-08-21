@@ -1,6 +1,6 @@
 Coconut - A Framework for event-driven and highly concurrent services.
 
-Last updated 8 June 2006, Copyright 2004-2006 Kasper Nielsen
+Last updated 21 August 2006, Copyright 2004-2006 Kasper Nielsen
 
 This is a small overview of how the source repository is organised, and how to build Coconut 5.0.
 
@@ -24,15 +24,19 @@ The repository is organised into the following components.
 
 
 
-## Prerequisites
-
-* JDK 5.0 or later 
-* Maven 2 (maven.apache.org)
-* SVN (optional, for checking out the source distribution)
 
 ## Building Coconut
-By coming to this step we assume that you have already gotten hold of all files. If this is not the case you need to run svn ....
 
+1. Prerequisites for building Coconut
+  * JDK 5.0 or later 
+  * Maven 2 (maven.apache.org)
+  * SVN (optional, for checking out the source distribution)
+
+2. Checking out the source
+> svn co http://svn.codehaus.org/coconut/trunk
+ As an alternative nightly sources can be downloaded from ......
+ 
+3. Building Cocount
 In order to build Coconut you need to stand in the top level directory coconut-5.0 (the directory where this file is located) and run
 > mvn install
 This will build all Coconut modules and run all tests associated with each component.

@@ -19,7 +19,7 @@ import java.util.TreeSet;
 
 import junit.framework.JUnit4TestAdapter;
 
-import org.coconut.internal.IndexedHeap;
+import org.coconut.internal.util.IndexedHeap;
 import org.coconut.test.MavenDummyTest;
 import org.junit.Test;
 

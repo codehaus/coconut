@@ -7,7 +7,7 @@ import java.io.PrintStream;
 
 import org.coconut.event.seda.management.StageManagerMXBean;
 import org.coconut.event.seda.management.StageStatistics;
-import org.coconut.internal.util.TabularFormatter;
+import org.coconut.internal.util.tabular.TabularFormatter;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

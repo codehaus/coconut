@@ -75,6 +75,7 @@ public class Queues {
         }
 
         public Iterator<E> iterator() {
+            //TODO remove remove-support from iterator
             return q.iterator();
         }
 
@@ -108,15 +109,15 @@ public class Queues {
         }
 
         public E remove() {
-            throw new UnsupportedOperationException("drainTo not supported");
+            throw new UnsupportedOperationException("remove not supported");
         }
 
         public boolean remove(Object o) {
-            return q.remove(o);
+            throw new UnsupportedOperationException("remove not supported");
         }
 
         public boolean removeAll(Collection<?> c) {
-            return q.removeAll(c);
+            throw new UnsupportedOperationException("removeAll not supported");
         }
 
         public boolean retainAll(Collection<?> c) {

@@ -89,7 +89,7 @@ public class GeneratedTransformerTest extends MavenDummyTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testNoParameters() {
-        assertEquals(0, ((Transformers.GeneratedTransformer) t("ireturn")).getParameters().length);
+        assertEquals(0, ((Transformers.ASMBasedTransformer) t("ireturn")).getParameters().length);
     }
 
     @SuppressWarnings("unchecked")
@@ -131,11 +131,9 @@ public class GeneratedTransformerTest extends MavenDummyTest {
     }
 
     public static void main(String[] args) {
-        System.out.println(Simple.class.getName());
-        System.out.println(Simple.class.getSimpleName());
-        System.out.println(Simple.class.isMemberClass());
-        System.out.println(Simple.class.getCanonicalName());
-        System.out.println(Simple.class.getDeclaringClass());
+        Transformer tt=t("string1Arg", "4");
+        System.out.println(tt.transform(new GeneratedTransformerMock()).getClass());
+        System.out.println(tt);
     }
 
     public interface Simple {

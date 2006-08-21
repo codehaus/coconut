@@ -28,7 +28,6 @@ import junit.framework.TestSuite;
 
 import org.coconut.aio.management.ManagementFactory;
 import org.coconut.core.Callback;
-import org.coconut.core.ErroneousHandler;
 import org.coconut.core.EventHandler;
 import org.coconut.core.Offerable;
 import org.coconut.test.MockTestCase;

@@ -4,7 +4,9 @@
  * http://coconut.codehaus.org/license for details.
  */
 
-package org.coconut.core;
+package org.coconut.aio;
+
+import org.coconut.core.EventHandler;
 
 /**
  * Extend EventHandler with a method for handling exceptions and errors.

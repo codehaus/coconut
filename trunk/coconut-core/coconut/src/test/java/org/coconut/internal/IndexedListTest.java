@@ -5,6 +5,9 @@ import static org.junit.Assert.assertNull;
 
 import java.util.Random;
 
+import junit.framework.JUnit4TestAdapter;
+
+import org.coconut.internal.util.IndexedList;
 import org.coconut.test.MavenDummyTest;
 import org.junit.Test;
 
@@ -17,9 +20,9 @@ public class IndexedListTest extends MavenDummyTest {
 
     private final Random rnd = new Random();
 
-//    public static junit.framework.Test suite() {
-//        return new JUnit4TestAdapter(IndexedListTest.class);
-//    }
+    public static junit.framework.Test suite() {
+        return new JUnit4TestAdapter(IndexedListTest.class);
+    }
 
     @Test
     public void testAdd() {
