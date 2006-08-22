@@ -1,3 +1,7 @@
+/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the MIT license, see http://coconut.codehaus.org/license.
+ */
+
 package org.coconut.core;
 
 import java.io.IOException;
@@ -26,6 +30,7 @@ import org.coconut.internal.asm.Label;
 import org.coconut.internal.asm.MethodVisitor;
 import org.coconut.internal.asm.Opcodes;
 import org.coconut.internal.asm.Type;
+import org.coconut.internal.util.MapUtils;
 
 /**
  * Not quite done yet.
@@ -540,7 +545,7 @@ public final class Transformers {
     }
 
     public static <K, V> Map.Entry<K, V> immutableMapEntry(K key, V value) {
-        return EventHandlers.newMapEntry(key, value);
+        return MapUtils.newMapEntry(key, value);
     }
 
     public static <K, V> Transformer<Map.Entry<K, V>, K> mapEntryToKey() {

@@ -1,4 +1,8 @@
-package org.coconut.internal;
+/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the MIT license, see http://coconut.codehaus.org/license.
+ */
+
+package org.coconut.internal.util;
 
 import static org.coconut.test.CollectionUtils.seq;
 import static org.junit.Assert.assertEquals;
@@ -19,7 +23,6 @@ import java.util.TreeSet;
 
 import junit.framework.JUnit4TestAdapter;
 
-import org.coconut.internal.util.IndexedHeap;
 import org.coconut.test.MavenDummyTest;
 import org.junit.Test;
 
@@ -118,9 +121,9 @@ public class IndexedTest extends MavenDummyTest {
         heap.add(0, 2);
         heap.add(1, 1);
         heap.add(2, 0);
-        assertEquals(2, heap.poll());
-        assertEquals(1, heap.poll());
-        assertEquals(0, heap.poll());
+        assertEquals(2, heap.poll().intValue());
+        assertEquals(1, heap.poll().intValue());
+        assertEquals(0, heap.poll().intValue());
     }
 
     @Test
@@ -136,7 +139,7 @@ public class IndexedTest extends MavenDummyTest {
             heap.add(number, number.intValue());
         }
         for (int i = 0; i < many; i++) {
-            assertEquals(i, heap.poll());
+            assertEquals(i, heap.poll().intValue());
         }
     }
 
@@ -194,9 +197,9 @@ public class IndexedTest extends MavenDummyTest {
         int i1 = heap.add(2, 2);
         int i2 = heap.add(1, 1);
         int i3 = heap.add(0, 0);
-        assertEquals(1, heap.remove(i2));
-        assertEquals(0, heap.remove(i3));
-        assertEquals(2, heap.remove(i1));
+        assertEquals(1, heap.remove(i2).intValue());
+        assertEquals(0, heap.remove(i3).intValue());
+        assertEquals(2, heap.remove(i1).intValue());
         assertEquals(0, heap.size());
     }
 
@@ -221,9 +224,9 @@ public class IndexedTest extends MavenDummyTest {
         int i1 = heap.add(0, 2);
         int i2 = heap.add(1, 1);
         int i3 = heap.add(2, 0);
-        assertEquals(2, heap.remove(i3));
-        assertEquals(1, heap.remove(i2));
-        assertEquals(0, heap.remove(i1));
+        assertEquals(2, heap.remove(i3).intValue());
+        assertEquals(1, heap.remove(i2).intValue());
+        assertEquals(0, heap.remove(i1).intValue());
     }
 
     @Test
@@ -291,9 +294,9 @@ public class IndexedTest extends MavenDummyTest {
         int i3 = heap.add(0, 0);
         heap.setPriority(i3, 3);
         heap.setPriority(i2, 4);
-        assertEquals(2, heap.poll());
-        assertEquals(0, heap.poll());
-        assertEquals(1, heap.poll());
+        assertEquals(2, heap.poll().intValue());
+        assertEquals(0, heap.poll().intValue());
+        assertEquals(1, heap.poll().intValue());
     }
 
     @Test
@@ -345,10 +348,10 @@ public class IndexedTest extends MavenDummyTest {
         assertNull(heap.peek());
         heap.add(1, 3);
         heap.add(2, 4);
-        assertEquals(1, heap.peek());
-        assertEquals(1, heap.poll());
-        assertEquals(2, heap.peek());
-        assertEquals(2, heap.poll());
+        assertEquals(1, heap.peek().intValue());
+        assertEquals(1, heap.poll().intValue());
+        assertEquals(2, heap.peek().intValue());
+        assertEquals(2, heap.poll().intValue());
     }
 
     @Test

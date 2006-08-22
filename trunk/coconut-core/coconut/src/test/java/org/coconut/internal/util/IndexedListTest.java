@@ -1,4 +1,8 @@
-package org.coconut.internal;
+/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the MIT license, see http://coconut.codehaus.org/license.
+ */
+
+package org.coconut.internal.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -7,7 +11,6 @@ import java.util.Random;
 
 import junit.framework.JUnit4TestAdapter;
 
-import org.coconut.internal.util.IndexedList;
 import org.coconut.test.MavenDummyTest;
 import org.junit.Test;
 
@@ -55,13 +58,13 @@ public class IndexedListTest extends MavenDummyTest {
         list.add(2);
         list.add(3);
 
-        assertEquals(1, list.remove());
+        assertEquals(1, list.remove().intValue());
         assertEquals(2, list.getSize());
 
-        assertEquals(2, list.remove());
+        assertEquals(2, list.remove().intValue());
         assertEquals(1, list.getSize());
 
-        assertEquals(3, list.remove());
+        assertEquals(3, list.remove().intValue());
         assertEquals(0, list.getSize());
     }
 
@@ -88,10 +91,10 @@ public class IndexedListTest extends MavenDummyTest {
         list.touch(i);
         assertEquals(4, list.getSize());
 
-        assertEquals(2, list.remove());
-        assertEquals(4, list.remove());
-        assertEquals(3, list.remove());
-        assertEquals(1, list.remove());
+        assertEquals(2, list.remove().intValue());
+        assertEquals(4, list.remove().intValue());
+        assertEquals(3, list.remove().intValue());
+        assertEquals(1, list.remove().intValue());
         assertEquals(0, list.getSize());
     }
 
@@ -100,7 +103,7 @@ public class IndexedListTest extends MavenDummyTest {
         IndexedList<Integer> list = new IndexedList<Integer>(1);
         list.add(1);
         list.touch(300);
-        assertEquals(1, list.remove());
+        assertEquals(1, list.remove().intValue());
     }
 
     @Test
@@ -108,7 +111,7 @@ public class IndexedListTest extends MavenDummyTest {
         IndexedList<Integer> list = new IndexedList<Integer>(1);
         int i1 = list.add(1);
         list.touch(i1);
-        assertEquals(1, list.remove());
+        assertEquals(1, list.remove().intValue());
     }
 
     @Test
@@ -124,16 +127,16 @@ public class IndexedListTest extends MavenDummyTest {
         list.add(8);
         int i9 = list.add(9);
 
-        assertEquals(3, list.remove(i3));
-        assertEquals(7, list.remove(i7));
-        assertEquals(1, list.remove(i1));
-        assertEquals(9, list.remove(i9));
+        assertEquals(3, list.remove(i3).intValue());
+        assertEquals(7, list.remove(i7).intValue());
+        assertEquals(1, list.remove(i1).intValue());
+        assertEquals(9, list.remove(i9).intValue());
 
-        assertEquals(2, list.remove());
-        assertEquals(4, list.remove());
-        assertEquals(5, list.remove());
-        assertEquals(6, list.remove());
-        assertEquals(8, list.remove());
+        assertEquals(2, list.remove().intValue());
+        assertEquals(4, list.remove().intValue());
+        assertEquals(5, list.remove().intValue());
+        assertEquals(6, list.remove().intValue());
+        assertEquals(8, list.remove().intValue());
         assertEquals(0, list.getSize());
     }
 
@@ -158,13 +161,13 @@ public class IndexedListTest extends MavenDummyTest {
         list.add(4);
         assertEquals(4, list.getSize());
 
-        assertEquals(1, list.remove());
+        assertEquals(1, list.remove().intValue());
         assertEquals(3, list.getSize());
-        assertEquals(2, list.remove());
+        assertEquals(2, list.remove().intValue());
         assertEquals(2, list.getSize());
-        assertEquals(3, list.remove());
+        assertEquals(3, list.remove().intValue());
         assertEquals(1, list.getSize());
-        assertEquals(4, list.remove());
+        assertEquals(4, list.remove().intValue());
         assertEquals(0, list.getSize());
     }
 
@@ -174,10 +177,10 @@ public class IndexedListTest extends MavenDummyTest {
         assertNull(list.peek());
         list.add(1);
         list.add(2);
-        assertEquals(1, list.peek());
-        assertEquals(1, list.remove());
-        assertEquals(2, list.peek());
-        assertEquals(2, list.remove());
+        assertEquals(1, list.peek().intValue());
+        assertEquals(1, list.remove().intValue());
+        assertEquals(2, list.peek().intValue());
+        assertEquals(2, list.remove().intValue());
     }
     
     private IndexedList<Integer> getDirtyList() {

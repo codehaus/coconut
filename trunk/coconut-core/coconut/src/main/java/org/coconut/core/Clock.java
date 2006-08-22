@@ -1,3 +1,7 @@
+/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the MIT license, see http://coconut.codehaus.org/license.
+ */
+
 package org.coconut.core;
 
 import java.io.Serializable;
@@ -5,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * This class is used by most components in Coconut that relies on some kind og
+ * This class is used by most components in Coconut that relies on some kind of
  * time concept. The primary purpose is control whether we are using real world
  * calendars/clocks time (including daylight saving) or we used purely elapsed
  * time from some fixed but arbitrary time.
@@ -13,7 +17,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * The following describes how this is used in Coconut Cache.
  * <p>
  * This class can also useful for making sure that tests run deterministically
- * each time.
+ * each time. TODO javadoc TODO semantics of methods
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
@@ -66,9 +70,11 @@ public abstract class Clock implements Serializable {
         public void setAbsolutTime(long amount) {
             absolutTime.set(amount);
         }
+
         public void setRelativeTime(long amount) {
             relativeTime.set(amount);
         }
+
         public void incrementRelativeTime() {
             relativeTime.incrementAndGet();
         }

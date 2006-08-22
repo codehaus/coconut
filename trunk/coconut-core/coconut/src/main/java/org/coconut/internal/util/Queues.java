@@ -1,6 +1,7 @@
-/* Copyright 2004 - 2006 Kasper Nielsen. Licensed under the academic free
- * license, see LICENSE.txt or http://coconut.codehaus.org/license for details. 
+/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the MIT license, see http://coconut.codehaus.org/license.
  */
+
 package org.coconut.internal.util;
 
 import java.util.Collection;
