@@ -3,8 +3,7 @@
  */
 package org.coconut.test;
 
-import junit.framework.Test;
-import junit.framework.TestResult;
+import junit.framework.TestCase;
 
 /**
  * There is a bug in the maven surefire plugin that forces
@@ -13,14 +12,6 @@ import junit.framework.TestResult;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class MavenDummyTest implements Test {
-
-    public int countTestCases() {
-       throw new UnsupportedOperationException();
-    }
-
-    public void run(TestResult arg0) {
-        throw new UnsupportedOperationException(); 
-    }
+public class MavenDummyTest extends TestCase {
 
 }
