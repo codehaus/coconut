@@ -1,3 +1,7 @@
+/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the MIT license, see http://coconut.codehaus.org/license.
+ */
+
 package org.coconut.cache.defaults.memory;
 
 import java.util.ArrayList;
@@ -209,14 +213,6 @@ public class UnlimitedCache<K, V> extends LoadableCache<K, V> implements Concurr
         }
         return value;
 
-    }
-
-    /**
-     * @see java.lang.Object#hashCode()
-     */
-    @Override
-    public int hashCode() {
-        return map.hashCode();
     }
 
     private MyEntry newE(K key, V value, long timeout, TimeUnit unit) {

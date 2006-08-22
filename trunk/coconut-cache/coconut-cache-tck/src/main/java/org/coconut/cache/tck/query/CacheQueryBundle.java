@@ -1,6 +1,7 @@
-/* Copyright 2004 - 2006 Kasper Nielsen. Licensed under the academic free
- * license, see LICENSE.txt or http://coconut.codehaus.org/license for details. 
+/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the MIT license, see http://coconut.codehaus.org/license.
  */
+
 package org.coconut.cache.tck.query;
 
 import static org.junit.Assert.assertEquals;
@@ -56,8 +57,8 @@ public class CacheQueryBundle extends CacheTestBundle {
 
         }
         assertEquals(2, count);
-        assertEquals(2, c2.getKey());
-        assertEquals(4, c4.getKey());
+        assertEquals(2, c2.getKey().intValue());
+        assertEquals(4, c4.getKey().intValue());
         assertEquals("B", c2.getValue());
         assertEquals("D", c4.getValue());
     }

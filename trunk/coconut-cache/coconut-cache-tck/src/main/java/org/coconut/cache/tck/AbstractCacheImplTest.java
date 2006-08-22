@@ -1,3 +1,7 @@
+/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the MIT license, see http://coconut.codehaus.org/license.
+ */
+
 package org.coconut.cache.tck;
 
 import java.io.Serializable;
@@ -51,6 +55,7 @@ public abstract class AbstractCacheImplTest extends TestSuite {
     public AbstractCacheImplTest(Class<? extends Cache> cacheClazz) {
         this.cacheClazz = cacheClazz;
         tt = this;
+        
     }
 
     @SuppressWarnings("unchecked")
@@ -59,6 +64,8 @@ public abstract class AbstractCacheImplTest extends TestSuite {
     }
 
     public void init() {
+        System.out.println("adding bundle");
+
         if (!cacheClazz.isAnnotationPresent(CacheSupport.class)) {
             throw new IllegalStateException(
                     "Cache implementation must have a CacheSupport annotation");
@@ -130,23 +137,6 @@ public abstract class AbstractCacheImplTest extends TestSuite {
     }
 
     static AbstractCacheImplTest tt;
-
-    public class MFSuite extends JUnit4TestAdapter {
-
-        public MFSuite(Class<? extends Object> newTestClass) {
-            super(newTestClass);
-        }
-
-        // @Override
-        // public void run(TestResult result) {
-        // tt = AbstractCacheImplTest.this;
-        // super.run(result);
-        // Enumeration<TestFailure> e=result.errors();
-        // while (e.hasMoreElements()) {
-        // e.nextElement().thrownException().printStackTrace();
-        // }
-        // }
-    }
 
     private void addCoreFeatures() {
         addTestBundle(BasicCache.class);

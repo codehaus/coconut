@@ -1,3 +1,7 @@
+/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the MIT license, see http://coconut.codehaus.org/license.
+ */
+
 package org.coconut.cache.util;
 
 import static org.coconut.test.CollectionUtils.asList;
@@ -29,9 +33,9 @@ public class AbstraktCacheLoaderTest {
         AbstractCacheLoader<Integer, Integer> loader = new LoaderStub();
 
         Map<Integer, Integer> map = loader.loadAll(asList(0, 1, 2));
-        assertEquals(5, map.get(0));
-        assertEquals(6, map.get(1));
-        assertEquals(7, map.get(2));
+        assertEquals(5, map.get(0).intValue());
+        assertEquals(6, map.get(1).intValue());
+        assertEquals(7, map.get(2).intValue());
     }
 
     public static class LoaderStub extends

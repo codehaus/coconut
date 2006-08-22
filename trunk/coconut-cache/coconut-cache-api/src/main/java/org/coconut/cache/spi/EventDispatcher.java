@@ -1,6 +1,7 @@
-/* Copyright 2004 - 2006 Kasper Nielsen. Licensed under a MIT compatible 
- * license, see LICENSE.txt or http://coconut.codehaus.org/license for details. 
+/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the MIT license, see http://coconut.codehaus.org/license.
  */
+
 package org.coconut.cache.spi;
 
 import java.io.Serializable;
@@ -15,13 +16,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheEvent;
-import org.coconut.cache.CacheLoader;
 import org.coconut.cache.Cache.HitStat;
-import org.coconut.cache.CacheItemEvent.ItemAccessed;
-import org.coconut.cache.CacheItemEvent.ItemAdded;
-import org.coconut.cache.CacheItemEvent.ItemRemoved;
-import org.coconut.cache.CacheItemEvent.ItemUpdated;
-import org.coconut.core.EventHandlers;
 import org.coconut.core.Offerable;
 import org.coconut.event.bus.EventBus;
 

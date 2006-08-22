@@ -1,3 +1,7 @@
+/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the MIT license, see http://coconut.codehaus.org/license.
+ */
+
 package org.coconut.cache.tck;
 
 import static org.junit.Assert.assertEquals;
@@ -58,16 +62,17 @@ public abstract class CacheTestBundle {
         Class c;
         try {
             c = Class.forName("org.coconut.cache.defaults.memory.UnlimitedCacheTest");
-            defaultSuite=(AbstractCacheImplTest) c.newInstance();
+            defaultSuite = (AbstractCacheImplTest) c.newInstance();
         } catch (ClassNotFoundException e) {
-         //ignore, not running from within ide
+            // ignore, not running from within ide
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-        
+
     }
+
     @Before
     public void setUp() throws Exception {
 
@@ -80,13 +85,14 @@ public abstract class CacheTestBundle {
         c5 = newCache(5);
         c6 = newCache(6);
         CacheConfiguration<Integer, String> cc = CacheConfiguration.newConf();
-        loadableEmptyCache = newCache(cc.backend().setLoader(new IntegerToStringLoader()).c());
+        loadableEmptyCache = newCache(cc.backend().setLoader(new IntegerToStringLoader())
+                .c());
     }
 
     final Cache<Integer, String> newCache(int entries) {
         suite = AbstractCacheImplTest.tt;
-        if (suite==null) {
-            suite=defaultSuite;
+        if (suite == null) {
+            suite = defaultSuite;
         }
         CacheConfiguration<Integer, String> cc = CacheConfiguration.newConf();
         return suite.newCache(cc.setInitialMap(createMap(entries)).setClock(clock));
@@ -210,7 +216,8 @@ public abstract class CacheTestBundle {
         return CacheFilters.queryByKey(c, filter);
     }
 
-    protected void putAll(long timeout, TimeUnit unit, Map.Entry<Integer, String>... entries) {
+    protected void putAll(long timeout, TimeUnit unit,
+            Map.Entry<Integer, String>... entries) {
         c.putAll(CollectionUtils.asMap(entries), timeout, unit);
     }
 
@@ -238,7 +245,8 @@ public abstract class CacheTestBundle {
      * @param hitstat
      *            the HitStat to compare against
      */
-    protected static void assertHitstat(float ratio, long hits, long misses, Cache.HitStat hitstat) {
+    protected static void assertHitstat(float ratio, long hits, long misses,
+            Cache.HitStat hitstat) {
         Assert.assertEquals(ratio, hitstat.getHitRatio(), 0.0001);
         Assert.assertEquals(hits, hitstat.getNumberOfHits());
         Assert.assertEquals(misses, hitstat.getNumberOfMisses());

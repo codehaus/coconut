@@ -1,9 +1,7 @@
-/*
- * Created on 2004-10-05
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
+/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the MIT license, see http://coconut.codehaus.org/license.
  */
+
 package org.coconut.cache.analyzer.management;
 
 /**

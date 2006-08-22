@@ -1,17 +1,14 @@
-/* Copyright 2004 - 2006 Kasper Nielsen. Licensed under a MIT compatible 
- * license, see LICENSE.txt or http://coconut.codehaus.org/license for details. 
+/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the MIT license, see http://coconut.codehaus.org/license.
  */
+
 package org.coconut.cache.spi;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
@@ -19,12 +16,9 @@ import java.util.concurrent.FutureTask;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheException;
-import org.coconut.cache.CacheItemEvent;
 import org.coconut.cache.CacheLoader;
 import org.coconut.cache.Caches;
 import org.coconut.cache.util.DefaultCacheEntry;
-import org.coconut.core.Log;
-import org.coconut.core.Logs;
 
 /**
  * This class provides a skeletal implementation of a <tt>Cache</tt> that is
