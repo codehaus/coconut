@@ -4,14 +4,9 @@
 
 package org.coconut.internal.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Map;
 
 import junit.framework.JUnit4TestAdapter;
-import junit.framework.TestResult;
 
 import org.coconut.test.MavenDummyTest;
 import org.junit.Test;
@@ -56,20 +51,6 @@ public class ImmutableMapEntryTest extends MavenDummyTest {
         assertFalse(me.equals(MapUtils.newMapEntry(1, 1)));
         assertFalse(me.equals(MapUtils.newMapEntry(null, 1)));
         assertTrue(me.equals(MapUtils.newMapEntry(0, 1)));
-    }
-
-    /**
-     * @see junit.framework.Test#countTestCases()
-     */
-    public int countTestCases() {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * @see junit.framework.Test#run(junit.framework.TestResult)
-     */
-    public void run(TestResult arg0) {
-       throw new UnsupportedOperationException();
     }
 
 }
