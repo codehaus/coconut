@@ -1,10 +1,13 @@
+/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the MIT license, see http://coconut.codehaus.org/license.
+ */
+
 package org.coconut.aio;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.SocketAddress;
-import java.nio.channels.NotYetBoundException;
 import java.util.Queue;
 import java.util.concurrent.Executor;
 

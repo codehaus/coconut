@@ -1,9 +1,8 @@
-package org.coconut.aio.management;
+/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the MIT license, see http://coconut.codehaus.org/license.
+ */
 
-import javax.management.MBeanServer;
-import javax.management.openmbean.CompositeData;
-import javax.management.openmbean.CompositeType;
-import javax.management.openmbean.TabularData;
+package org.coconut.aio.management;
 
 import org.coconut.aio.spi.AioProvider;
 

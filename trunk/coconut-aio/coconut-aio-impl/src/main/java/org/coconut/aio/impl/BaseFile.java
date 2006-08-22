@@ -1,8 +1,10 @@
+/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the MIT license, see http://coconut.codehaus.org/license.
+ */
+
 package org.coconut.aio.impl;
 
 import java.util.concurrent.Executor;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.coconut.aio.AsyncFile;
 import org.coconut.aio.monitor.FileMonitor;
