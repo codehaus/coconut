@@ -82,7 +82,7 @@
   </developers>
 
   <scm>
-    <connection>scm:svn:https://svn.codehaus.org/coconut/trunk/</connection>
+    <connection>scm:svn:http://svn.codehaus.org/coconut/trunk/</connection>
     <developerConnection>scm:svn:https://svn.codehaus.org/coconut/trunk</developerConnection>
   </scm>
   <build>
