@@ -30,7 +30,7 @@
     <modules>
     <module>coconut-aio-api</module>
     <module>coconut-aio-impl</module>
-    
+    <module>coconut-aio-standalone</module>    
   </modules>
         <build>
     <pluginManagement>
