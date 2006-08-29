@@ -6,6 +6,10 @@
   <packaging>pom</packaging>
   <name>Coconut</name>
   <version>5.0-SNAPSHOT</version>
+  <issueManagement>
+    <system>jira</system>
+    <url>http://jira.codehaus.org/browse/COCONUT</url>
+  </issueManagement>
   <ciManagement>
     <notifiers>
       <notifier>
@@ -23,39 +27,19 @@
     </notifiers>
   </ciManagement>
   <inceptionYear>2004</inceptionYear>
-  <mailingLists>
-    <mailingList>
-      <name>Coconut Developer List</name>
-      <subscribe>http://lists.codehaus.org/mailman/listinfo/coconut-dev</subscribe>
-      <unsubscribe>http://lists.codehaus.org/mailman/listinfo/coconut-dev</unsubscribe>
-      <archive>http://lists.codehaus.org/pipermail/coconut-dev/</archive>
-    </mailingList>
-    <mailingList>
-      <name>Coconut Scm List</name>
-      <subscribe>http://lists.codehaus.org/mailman/listinfo/coconut-scm</subscribe>
-      <unsubscribe>http://lists.codehaus.org/mailman/listinfo/coconut-scm</unsubscribe>
-      <archive>http://lists.codehaus.org/pipermail/coconut-scm/</archive>
-    </mailingList>
-    <mailingList>
-      <name>Coconut User List</name>
-      <subscribe>http://lists.codehaus.org/mailman/listinfo/coconut-user</subscribe>
-      <unsubscribe>http://lists.codehaus.org/mailman/listinfo/coconut-user</unsubscribe>
-      <archive>http://lists.codehaus.org/pipermail/coconut-user/</archive>
-    </mailingList>
-  </mailingLists>
   <distributionManagement>
     <repository>
-      <id>coconut</id>
-      <name>Coconut Central Repository</name>
+      <id>coconut-release</id>
+      <name>Coconut's release repository</name>
       <url>dav:https://dav.codehaus.org/repository/coconut/</url>
     </repository>
     <snapshotRepository>
-      <id>coconut</id>
-      <name>Coconut Central Development Repository</name>
+      <id>coconut-snapshot</id>
+      <name>Coconut's snapshot repository</name>
       <url>dav:https://dav.codehaus.org/snapshots.repository/coconut/</url>
     </snapshotRepository>
     <site>
-      <id>coconut</id>
+      <id>coconut-website</id>
       <url>dav:https://dav.codehaus.org/coconut/</url>
     </site>
   </distributionManagement>
@@ -91,8 +75,67 @@
             <target>1.5</target>
           </configuration>
         </plugin>
+        
+                <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <dependencies>
+            <dependency>
+              <groupId>org.coconut</groupId>
+              <artifactId>coconut-build-tools</artifactId>
+              <version>5.0</version>
+            </dependency>
+
+          </dependencies>
+          <configuration>
+            <consoleOutput>true</consoleOutput>
+            <configLocation>build-tools/checkstyle.xml</configLocation>
+            <headerLocation>build-tools/checkstyle.license</headerLocation>
+            <suppressionsLocation>build-tools/checkstyle-suppressions.xml</suppressionsLocation>
+            <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
+          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>check</goal>
+              </goals>
+            </execution>
+          </executions>
+
+        </plugin>
+       
       </plugins>
     </pluginManagement>
+    
+        <plugins>
+
+      <!-- Generate sources JARs too -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+
+        <executions>
+          <execution>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+        
+    </plugins>
   </build>
   <organization>
     <name>Codehaus</name>
@@ -107,6 +150,10 @@
           <jdk>1.5</jdk>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+      </plugin>
     </plugins>
   </reporting>
   <repositories>
@@ -117,6 +164,7 @@
     </repository>
   </repositories>
   <modules>
+    <module>build-tools</module>
     <module>coconut-aio</module>
     <module>coconut-cache</module>
     <module>coconut-core</module>
