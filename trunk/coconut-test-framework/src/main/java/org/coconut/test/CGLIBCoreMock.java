@@ -1,5 +1,7 @@
-/*  Copyright (c) 2000-2004 jMock.org
+/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the MIT license, see http://coconut.codehaus.org/license.
  */
+
 package org.coconut.test;
 
 import java.lang.reflect.Method;
