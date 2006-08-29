@@ -10,8 +10,7 @@
   <artifactId>coconut-aio-impl</artifactId>
   <name>Coconut AIO API Impl</name>
   <description>API for Coconut AIO</description> 
-  
-      <dependencies>
+       <dependencies>
       <dependency>
         <groupId>org.coconut.aio</groupId>
         <artifactId>coconut-aio-api</artifactId>

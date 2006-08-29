@@ -6,23 +6,7 @@
     <artifactId>coconut-aio-parent</artifactId>
     <version>5.0-alpha3-SNAPSHOT</version>
   </parent>
-  
   <artifactId>coconut-aio-api</artifactId>
   <name>Coconut AIO API</name>
   <description>API for Coconut AIO</description>
-  
-      <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <configuration>
-            <source>1.5</source>
-            <target>1.5</target>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
-  
 </project>
