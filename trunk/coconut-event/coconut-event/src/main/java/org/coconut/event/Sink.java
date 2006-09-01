@@ -4,7 +4,7 @@ import org.coconut.core.Offerable;
 
 public interface Sink<T> extends Offerable<T> {
 
-    void send(Object o) throws SinkException;
+    void send(T o) throws SinkException;
     
     //or enqueue 
     
