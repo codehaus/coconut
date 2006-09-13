@@ -1,11 +1,19 @@
 <?xml version="1.0"?>
-<project>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.coconut</groupId>
   <artifactId>coconut-parent</artifactId>
   <packaging>pom</packaging>
   <name>Coconut</name>
-  <version>5.0-SNAPSHOT</version>
+    <licenses>
+    <license>
+      <name>The MIT License</name>
+      <url>http://coconut.codehaus.org/license</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <version>1.0</version>
   <issueManagement>
     <system>jira</system>
     <url>http://jira.codehaus.org/browse/COCONUT</url>
@@ -143,6 +151,14 @@
   </organization>
   <reporting>
     <plugins>
+          <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>taglist-maven-plugin</artifactId>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clover-plugin</artifactId>
@@ -153,14 +169,43 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <configLocation>http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-checkstyle-plugin/src/main/resources/config/maven_checks.xml</configLocation>
+          <headerLocation>http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-checkstyle-plugin/src/main/resources/config/maven-header.txt</headerLocation>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <links>
+            <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
+            <link>http://jakarta.apache.org/commons/logging/apidocs/</link>
+            <link>http://www.junit.org/junit/javadoc/</link>
+            <link>http://logging.apache.org/log4j/docs/api/</link>
+          </links>
+        </configuration>
       </plugin>
     </plugins>
   </reporting>
   <repositories>
+      <repository>
+      <id>apache.snapshots</id>
+      <name>Apache Snapshot Repository</name>
+      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
     <repository>
       <id>apache-snapshots</id>
       <name>Snapshot repository</name>
       <url>http://people.apache.org/maven-snapshot-repository/</url>
+    </repository>
+    <repository>
+      <id>coconut-snapshots</id>
+      <name>Snapshot repository</name>
+      <url>http://www.it.edu/~kav/maven</url>
     </repository>
   </repositories>
   <modules>

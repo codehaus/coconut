@@ -15,42 +15,25 @@ import org.coconut.annotation.ThreadSafe;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-// TODO implement equals, hashcode
 @ThreadSafe(false)
 public class IndexedList<T> implements Serializable {
-    protected int threshold;
+
+    static final int DEFAULT_CAPACITY = 16;
 
     protected int currentEntryIndex;
+
+    protected T[] data;
+
+    protected int[] freeEntries;
 
     protected int[] next;
 
     protected int[] prev;
 
-    protected int[] freeEntries;
+    protected int threshold;
 
-    protected T[] data;
-
-    /**
-     * @param initialCapacity
-     *            the initial capacity for this list, must be bigger then 0.
-     * @throws IllegalArgumentException
-     *             if <tt>initialCapacity</tt> is less than 1
-     */
-    @SuppressWarnings("unchecked")
-    public IndexedList(int initialCapacity) {
-        if (initialCapacity < 0) {
-            throw new IllegalArgumentException("initialCapacity must be 0 or greater, was "
-                    + initialCapacity);
-        }
-
-        this.threshold = initialCapacity;
-        next = new int[threshold + 1];
-        prev = new int[threshold + 1];
-        data = (T[]) new Object[threshold + 1];
-        freeEntries = new int[threshold + 1];
-        for (int i = 1; i < freeEntries.length; i++) {
-            freeEntries[i] = i;
-        }
+    public IndexedList() {
+        this(DEFAULT_CAPACITY);
     }
 
     @SuppressWarnings("unchecked")
@@ -72,13 +55,33 @@ public class IndexedList<T> implements Serializable {
 
     }
 
-    public int getSize() {
-        return currentEntryIndex;
+    /**
+     * @param initialCapacity
+     *            the initial capacity for this list, must be bigger then 0.
+     * @throws IllegalArgumentException
+     *             if <tt>initialCapacity</tt> is less than 1
+     */
+    @SuppressWarnings("unchecked")
+    public IndexedList(int initialCapacity) {
+        if (initialCapacity < 0) {
+            throw new IllegalArgumentException(
+                    "initialCapacity must be 0 or greater, was " + initialCapacity);
+        }
+
+        this.threshold = initialCapacity;
+        next = new int[threshold + 1];
+        prev = new int[threshold + 1];
+        data = (T[]) new Object[threshold + 1];
+        freeEntries = new int[threshold + 1];
+        for (int i = 1; i < freeEntries.length; i++) {
+            freeEntries[i] = i;
+        }
     }
 
     public int add(T newData) {
-        if (currentEntryIndex >= threshold - 1)
+        if (currentEntryIndex >= threshold - 1) {
             resize(threshold * 2);
+        }
         int newIndex = freeEntries[++currentEntryIndex];
         this.data[newIndex] = newData;
         next[prev[0]] = newIndex; // update previous tail to point at new
@@ -89,61 +92,81 @@ public class IndexedList<T> implements Serializable {
         return newIndex;
     }
 
-    protected void innerAdd(int index) {
-        /* Override to be informed */
-    }
-
+    /**
+     * Clears the list.
+     */
     @SuppressWarnings("unchecked")
-    private void resize(int newSize) {
-        threshold = newSize + 1;
-        int[] oldNext = next;
+    public void clear() {
+        currentEntryIndex = 0;
         next = new int[threshold];
-        System.arraycopy(oldNext, 0, next, 0, Math.min(oldNext.length, next.length));
-
-        int[] oldPrev = prev;
         prev = new int[threshold];
-        System.arraycopy(oldPrev, 0, prev, 0, Math.min(oldPrev.length, prev.length));
-
-        int[] oldFreeEntries = freeEntries;
         freeEntries = new int[threshold];
-        System.arraycopy(oldFreeEntries, 0, freeEntries, 0, Math.min(oldFreeEntries.length,
-                freeEntries.length));
-        for (int i = oldFreeEntries.length - 1; i < freeEntries.length; i++) {
-            freeEntries[i] = i;
-        }
-        Object[] oldData = data;
         data = (T[]) new Object[threshold];
-        System.arraycopy(oldData, 0, data, 0, Math.min(oldData.length, data.length));
-        innerResize(threshold);
     }
 
-    protected void innerResize(int newThreshold) {
-        /* Override to be informed */
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof IndexedList)) {
+            return false;
+        }
+        IndexedList il = (IndexedList) obj;
+        return peekAll().equals(il.peekAll());
     }
 
-    public void touch(int index) {
-        if (index < data.length - 1 && data[index] != null) {
-            // we do not keep count of access attempts so we only
-            // need to modify datastructures if we have 2 or more entries
-            if (currentEntryIndex > 1) {
-                prev[next[index]] = prev[index]; // update next head pointer
-                next[prev[index]] = next[index];
-                next[index] = 0;
-                next[prev[0]] = index;
-                prev[index] = prev[0];
-                prev[0] = index;
-            }
-            innerRefresh(index); // subclasses might want some special
-            // treatment
+    public int getSize() {
+        return currentEntryIndex;
+    }
+
+    /**
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return peekAll().hashCode();
+    }
+
+    public T peek() {
+        if (currentEntryIndex == 0) {
+            return null;
+        } else {
+            return data[next[0]];
         }
     }
 
-    protected void innerRefresh(int index) {
-        /* Override to be informed */
+    public List<T> peekAll() {
+        ArrayList<T> col = new ArrayList<T>(currentEntryIndex);
+        int head = next[0];
+        while (head != 0) {
+            col.add(data[head]);
+            head = next[head];
+        }
+        return col;
+    }
+
+    public T removeFirst() {
+        if (currentEntryIndex == 0) {
+            return null;
+        } else {
+            int remove = next[0]; // remove head
+            freeEntries[currentEntryIndex--] = remove; // recycle entry
+            if (currentEntryIndex == 0) { // clear
+                next[0] = 0;
+                prev[0] = 0;
+            } else {
+                int nextHead = next[remove];
+                prev[nextHead] = 0; // update next head pointer
+                next[0] = nextHead; // update head
+            }
+            T removeMe = data[remove];
+            data[remove] = null;
+            return removeMe;
+        }
     }
 
     public T remove(int index) {
-
         if (index > data.length - 1 || data[index] == null)
             return null;
         int entry = index;
@@ -164,45 +187,98 @@ public class IndexedList<T> implements Serializable {
         return oldData;
     }
 
+    public T replace(int index, T newElement) {
+        T old = data[index];
+        data[index] = newElement;
+        return old;
+    }
+
+    /**
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("head:\n");
+        int head = next[0];
+        while (head != 0) {
+            sb.append(data[head]);
+            sb.append("\n");
+            head = next[head];
+        }
+        return sb.toString();
+    }
+
+    public void touch(int index) {
+        if (index < data.length - 1 && data[index] != null) {
+            // we do not keep count of access attempts so we only
+            // need to modify datastructures if we have 2 or more entries
+            if (currentEntryIndex > 1) {
+                prev[next[index]] = prev[index]; // update next head pointer
+                next[prev[index]] = next[index];
+                next[index] = 0;
+                next[prev[0]] = index;
+                prev[index] = prev[0];
+                prev[0] = index;
+            }
+            innerRefresh(index); // subclasses might want some special
+            // treatment
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void resize(int newSize) {
+        threshold = newSize + 1;
+        int[] oldNext = next;
+        next = new int[threshold];
+        System.arraycopy(oldNext, 0, next, 0, Math.min(oldNext.length, next.length));
+
+        int[] oldPrev = prev;
+        prev = new int[threshold];
+        System.arraycopy(oldPrev, 0, prev, 0, Math.min(oldPrev.length, prev.length));
+
+        int[] oldFreeEntries = freeEntries;
+        freeEntries = new int[threshold];
+        System.arraycopy(oldFreeEntries, 0, freeEntries, 0, Math.min(
+                oldFreeEntries.length, freeEntries.length));
+        for (int i = oldFreeEntries.length - 1; i < freeEntries.length; i++) {
+            freeEntries[i] = i;
+        }
+        Object[] oldData = data;
+        data = (T[]) new Object[threshold];
+        System.arraycopy(oldData, 0, data, 0, Math.min(oldData.length, data.length));
+        innerResize(threshold);
+    }
+
+    /**
+     * @see java.lang.Object#clone()
+     */
+    @Override
+    protected Object clone() {
+        return new IndexedList(this);
+    }
+
+    protected void innerAdd(int index) {
+        /* Override to be informed */
+    }
+
+    protected void innerRefresh(int index) {
+        /* Override to be informed */
+    }
+
     protected void innerRemove(int index) {
         /* Override to be informed */
     }
 
-    public T remove() {
-        if (currentEntryIndex == 0) {
-            return null;
-        } else {
-            int remove = next[0]; // remove head
-            freeEntries[currentEntryIndex--] = remove; // recycle entry
-            if (currentEntryIndex == 0) { // clear
-                next[0] = 0;
-                prev[0] = 0;
-            } else {
-                int nextHead = next[remove];
-                prev[nextHead] = 0; // update next head pointer
-                next[0] = nextHead; // update head
-            }
-            T removeMe = data[remove];
-            data[remove] = null;
-            return removeMe;
-        }
+    protected void innerResize(int newThreshold) {
+        /* Override to be informed */
     }
-
-    public List<T> peekAll() {
-        ArrayList<T> col = new ArrayList<T>(currentEntryIndex);
-        int head = next[0];
-        while (head != 0) {
-            col.add(data[head]);
-            head = next[head];
-        }
-        return col;
-    }
-
-    // /CLOVER:OFF
+/*
+    ///CLOVER:ON
     void print() {
         for (int i = 0; i < threshold; i++) {
-            System.out.println(i + " " + next[i] + " " + prev[i] + " " + freeEntries[i] + " Data: "
-                    + data[i]);
+            System.out.println(i + " " + next[i] + " " + prev[i] + " " + freeEntries[i]
+                    + " Data: " + data[i]);
         }
         int head = next[0];
         String str = "head:";
@@ -212,33 +288,7 @@ public class IndexedList<T> implements Serializable {
         }
         System.out.println(str);
     }
-
-    // /CLOVER:ON
-
-    public T peek() {
-        if (currentEntryIndex == 0) {
-            return null;
-        } else {
-            return data[next[0]];
-        }
-    }
-
-    public T replace(int index, T newElement) {
-        T old = data[index];
-        data[index] = newElement;
-        return old;
-    }
-
-
-    /**
-     * Clears the list.
-     */
-    @SuppressWarnings("unchecked")
-    public void clear() {
-        currentEntryIndex = 0;
-        next = new int[threshold];
-        prev = new int[threshold];
-        freeEntries = new int[threshold];
-        data = (T[]) new Object[threshold];
-    }
+    ///CLOVER:OFF
+ */
+     
 }

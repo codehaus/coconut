@@ -3,7 +3,6 @@
  */
 package org.coconut.event.seda;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
@@ -28,18 +27,6 @@ public interface StageManager {
      *             if interrupted while waiting
      */
     boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException;
-
-    /**
-     * This method returns all the stages that has been registered in this stage
-     * manager. If the specific manager implementation poses any ordering among
-     * the stages, for example, for example in a pipeline. This method will
-     * return the stages in the specific ordering. If no specific ordering
-     * exists among the stages the manager is free to return the stages in any
-     * order.
-     * 
-     * @return a <code>List</code> with all registered stages
-     */
-    List<? extends Stage> getStages();
 
     /**
      * Returns the stage with the specified name.
@@ -110,6 +97,7 @@ public interface StageManager {
      */
     Lock lock();
 
+    void start();
     /**
      * Initiates an orderly shutdown in which all outstanding events are
      * processed, but no new events will be accepted. Invocation has no

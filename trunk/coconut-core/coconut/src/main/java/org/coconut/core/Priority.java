@@ -13,8 +13,12 @@ import java.io.Serializable;
  * @version $Id$
  */
 public final class Priority implements Serializable, Comparable<Priority> {
-    // public static final Priority REALTIME = new Priority(16);
 
+    //TODO define a maximum priority, usefull for determining which
+    //bucket to put stuff into
+    //TODO do we want log priorities?
+    //Pro
+    //Con
     /** serialVersionUID */
     private static final long serialVersionUID = 5279037606038599422L;
 

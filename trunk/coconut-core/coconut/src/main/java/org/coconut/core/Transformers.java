@@ -410,26 +410,25 @@ public final class Transformers {
     /**
      * TODO describe
      */
-    static class DTransformer implements Transformer, Serializable, Cloneable {
-
+    final static class ArrayTransformer implements Transformer, Serializable, Cloneable {
         /** serialVersionUID */
-        private static final long serialVersionUID = -7578902636724363213L;
+        private static final long serialVersionUID = 4920880113547573214L;
 
         private final Transformer<Object, Object>[] t;
 
-        DTransformer(Transformer<Object, Object>[] t) {
+        ArrayTransformer(Transformer<Object, Object>[] t) {
             this.t = t;
         }
 
         @Override
         public Object clone() {
-            return new DTransformer(t);
+            return new ArrayTransformer(t);
         }
 
         @Override
         public boolean equals(Object obj) {
-            return (obj instanceof DTransformer)
-                    && Arrays.equals(t, ((DTransformer) obj).t);
+            return (obj instanceof ArrayTransformer)
+                    && Arrays.equals(t, ((ArrayTransformer) obj).t);
         }
 
         @Override
@@ -448,24 +447,28 @@ public final class Transformers {
         @SuppressWarnings("unchecked")
         public Object transform(Object from) {
             Object o = from;
-            for (int i = t.length - 1; i >= 0; i++) {
+            for (int i = 0; i < t.length; i++) {
                 o = t[i].transform(o);
             }
             return o;
         }
-
     }
 
-    final static class NoTransformer<K> implements Transformer<K, K>, Serializable {
-        /** serialVersionUID */
-        private static final long serialVersionUID = -8962120380535833773L;
+    final static class PassThroughTransformer<K> implements Transformer<K, K>,
+            Serializable {
 
+        /** serialVersionUID */
+        private static final long serialVersionUID = -8159540593935721003L;
+
+        /**
+         * @see org.coconut.core.Transformer#transform(java.lang.Object)
+         */
         public K transform(K element) {
             return element;
         }
     }
 
-    static class TransformableCallable<F, T> implements Callable<T>, Serializable {
+    final static class TransformableCallable<F, T> implements Callable<T>, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -7911352798294529252L;
 
@@ -473,14 +476,14 @@ public final class Transformers {
 
         private final Transformer<F, T> t;
 
-        public TransformableCallable(Callable<F> from, Transformer<F, T> t) {
-            if (from == null) {
+        public TransformableCallable(Callable<F> callable, Transformer<F, T> transformer) {
+            if (callable == null) {
                 throw new NullPointerException("from is null");
-            } else if (t == null) {
+            } else if (transformer == null) {
                 throw new NullPointerException("t is null");
             }
-            this.from = from;
-            this.t = t;
+            this.from = callable;
+            this.t = transformer;
         }
 
         public T call() throws Exception {
@@ -496,14 +499,14 @@ public final class Transformers {
 
         private final Transformer<F, T> t;
 
-        public TransformableFuture(Future<F> from, Transformer<F, T> t) {
-            if (from == null) {
+        public TransformableFuture(Future<F> future, Transformer<F, T> transformer) {
+            if (future == null) {
                 throw new NullPointerException("from is null");
-            } else if (t == null) {
+            } else if (transformer == null) {
                 throw new NullPointerException("t is null");
             }
-            this.from = from;
-            this.t = t;
+            this.from = future;
+            this.t = transformer;
         }
 
         /**
@@ -544,10 +547,6 @@ public final class Transformers {
         }
     }
 
-    public static <K, V> Map.Entry<K, V> immutableMapEntry(K key, V value) {
-        return MapUtils.newMapEntry(key, value);
-    }
-
     public static <K, V> Transformer<Map.Entry<K, V>, K> mapEntryToKey() {
         return (Transformer) transform(Map.Entry.class, "getKey");
     }
@@ -556,8 +555,8 @@ public final class Transformers {
         return (Transformer) transform(Map.Entry.class, "getValue");
     }
 
-    public static <K> Transformer<K, K> noTransformer() {
-        return new NoTransformer<K>();
+    public static <K> Transformer<K, K> passThroughTransformer() {
+        return new PassThroughTransformer<K>();
     }
 
     public static <F, T> Transformer<F, T> reflect(Class<F> type, String method)
@@ -587,7 +586,7 @@ public final class Transformers {
         } else if (transformers.length == 1) {
             return transformers[0];
         } else {
-            return new DTransformer(transformers);
+            return new ArrayTransformer(transformers);
         }
     }
 
@@ -769,49 +768,16 @@ public final class Transformers {
      * {@link Future#get()} or {@link Future#get(long, TimeUnit)} will returned
      * through the specified transformer.
      * <p>
-     * Any value exception thrown by the specified future will be returned
-     * unharmed *
      * 
-     * <pre>
-     * class StringToLongTransformer implements Transformer&lt;String, Long&gt; {
-     *     public Long transform(String str) {
-     *         return Long.parseLong(str);
-     *     }
-     * }
-     * </pre>
-     * 
-     * @param <F>
-     * @param <T>
      * @param from
      * @param t
      *            the transformer used for transforming the value returned from
      *            the specified future
      * @return
      */
-    public static <F, T> Future<T> wrapFuture(final Future<F> from,
-            final Transformer<F, T> t) {
-        return new Future<T>() {
-            public boolean cancel(boolean mayInterruptIfRunning) {
-                return from.cancel(mayInterruptIfRunning);
-            }
-
-            public T get() throws InterruptedException, ExecutionException {
-                return t.transform(from.get());
-            }
-
-            public T get(long timeout, TimeUnit unit) throws InterruptedException,
-                    ExecutionException, TimeoutException {
-                return t.transform(from.get(timeout, unit));
-            }
-
-            public boolean isCancelled() {
-                return from.isCancelled();
-            }
-
-            public boolean isDone() {
-                return from.isDone();
-            }
-        };
+    public static <F, T> Future<T> wrapFuture(final Future<F> future,
+            final Transformer<F, T> transformer) {
+        return new TransformableFuture<F, T>(future, transformer);
     }
 
     public static <F, T> Collection<T> transformCollection(Collection<? extends F> col,
@@ -824,8 +790,8 @@ public final class Transformers {
     }
 
     @SuppressWarnings("unchecked")
-    public static <F, T> List<T> wrapList(final List<F> list, final Transformer<F, T> tIn,
-            final Transformer<T, F> tOut) {
+    public static <F, T> List<T> wrapList(final List<F> list,
+            final Transformer<F, T> tIn, final Transformer<T, F> tOut) {
         return new WrappedList<F, T>(list, tIn, tOut);
     }
 
@@ -1054,38 +1020,40 @@ public final class Transformers {
         }
 
     }
-//
-//    static class WrappedMap<K, V, KK, VV> /* implements Map<K,V> */{
-//        private final Map<KK, VV> map = null;
-//
-//        private final Transformer<KK, K> fromKey = null;
-//
-//        private final Transformer<KK, K> toKey = null;
-//
-//        public void clear() {
-//            map.clear();
-//        }
-//
-//        public boolean isEmpty() {
-//            return map.isEmpty();
-//        }
-//
-//        public int size() {
-//            return map.size();
-//        }
-//    }
 
-//    @SuppressWarnings("unchecked")
-//    public static <F, T> Queue<T> wrapQueue(final Queue<F> col,
-//            final Transformer<F, T> tIn, final Transformer<T, F> tOut) {
-//        throw new UnsupportedOperationException();
-//    }
-//
-//    @SuppressWarnings("unchecked")
-//    public static <F, T> Set<T> wrapSet(final Set<F> col, final Transformer<F, T> tIn,
-//            final Transformer<T, F> tOut) {
-//        throw new UnsupportedOperationException();
-//    }
+    //
+    // static class WrappedMap<K, V, KK, VV> /* implements Map<K,V> */{
+    // private final Map<KK, VV> map = null;
+    //
+    // private final Transformer<KK, K> fromKey = null;
+    //
+    // private final Transformer<KK, K> toKey = null;
+    //
+    // public void clear() {
+    // map.clear();
+    // }
+    //
+    // public boolean isEmpty() {
+    // return map.isEmpty();
+    // }
+    //
+    // public int size() {
+    // return map.size();
+    // }
+    // }
+
+    // @SuppressWarnings("unchecked")
+    // public static <F, T> Queue<T> wrapQueue(final Queue<F> col,
+    // final Transformer<F, T> tIn, final Transformer<T, F> tOut) {
+    // throw new UnsupportedOperationException();
+    // }
+    //
+    // @SuppressWarnings("unchecked")
+    // public static <F, T> Set<T> wrapSet(final Set<F> col, final
+    // Transformer<F, T> tIn,
+    // final Transformer<T, F> tOut) {
+    // throw new UnsupportedOperationException();
+    // }
 
     private static Class fromPrimitive(Class c) {
         if (c.equals(Integer.TYPE)) {

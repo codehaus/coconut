@@ -58,20 +58,20 @@ public class IndexedListTest extends MavenDummyTest {
         list.add(2);
         list.add(3);
 
-        assertEquals(1, list.remove().intValue());
+        assertEquals(1, list.removeFirst().intValue());
         assertEquals(2, list.getSize());
 
-        assertEquals(2, list.remove().intValue());
+        assertEquals(2, list.removeFirst().intValue());
         assertEquals(1, list.getSize());
 
-        assertEquals(3, list.remove().intValue());
+        assertEquals(3, list.removeFirst().intValue());
         assertEquals(0, list.getSize());
     }
 
     @Test
     public void testRemoveEmpty() {
         IndexedList<Integer> list = new IndexedList<Integer>(1);
-        assertNull(list.remove());
+        assertNull(list.removeFirst());
     }
 
     @Test
@@ -91,10 +91,10 @@ public class IndexedListTest extends MavenDummyTest {
         list.touch(i);
         assertEquals(4, list.getSize());
 
-        assertEquals(2, list.remove().intValue());
-        assertEquals(4, list.remove().intValue());
-        assertEquals(3, list.remove().intValue());
-        assertEquals(1, list.remove().intValue());
+        assertEquals(2, list.removeFirst().intValue());
+        assertEquals(4, list.removeFirst().intValue());
+        assertEquals(3, list.removeFirst().intValue());
+        assertEquals(1, list.removeFirst().intValue());
         assertEquals(0, list.getSize());
     }
 
@@ -103,7 +103,7 @@ public class IndexedListTest extends MavenDummyTest {
         IndexedList<Integer> list = new IndexedList<Integer>(1);
         list.add(1);
         list.touch(300);
-        assertEquals(1, list.remove().intValue());
+        assertEquals(1, list.removeFirst().intValue());
     }
 
     @Test
@@ -111,7 +111,7 @@ public class IndexedListTest extends MavenDummyTest {
         IndexedList<Integer> list = new IndexedList<Integer>(1);
         int i1 = list.add(1);
         list.touch(i1);
-        assertEquals(1, list.remove().intValue());
+        assertEquals(1, list.removeFirst().intValue());
     }
 
     @Test
@@ -132,11 +132,11 @@ public class IndexedListTest extends MavenDummyTest {
         assertEquals(1, list.remove(i1).intValue());
         assertEquals(9, list.remove(i9).intValue());
 
-        assertEquals(2, list.remove().intValue());
-        assertEquals(4, list.remove().intValue());
-        assertEquals(5, list.remove().intValue());
-        assertEquals(6, list.remove().intValue());
-        assertEquals(8, list.remove().intValue());
+        assertEquals(2, list.removeFirst().intValue());
+        assertEquals(4, list.removeFirst().intValue());
+        assertEquals(5, list.removeFirst().intValue());
+        assertEquals(6, list.removeFirst().intValue());
+        assertEquals(8, list.removeFirst().intValue());
         assertEquals(0, list.getSize());
     }
 
@@ -161,13 +161,13 @@ public class IndexedListTest extends MavenDummyTest {
         list.add(4);
         assertEquals(4, list.getSize());
 
-        assertEquals(1, list.remove().intValue());
+        assertEquals(1, list.removeFirst().intValue());
         assertEquals(3, list.getSize());
-        assertEquals(2, list.remove().intValue());
+        assertEquals(2, list.removeFirst().intValue());
         assertEquals(2, list.getSize());
-        assertEquals(3, list.remove().intValue());
+        assertEquals(3, list.removeFirst().intValue());
         assertEquals(1, list.getSize());
-        assertEquals(4, list.remove().intValue());
+        assertEquals(4, list.removeFirst().intValue());
         assertEquals(0, list.getSize());
     }
 
@@ -178,9 +178,9 @@ public class IndexedListTest extends MavenDummyTest {
         list.add(1);
         list.add(2);
         assertEquals(1, list.peek().intValue());
-        assertEquals(1, list.remove().intValue());
+        assertEquals(1, list.removeFirst().intValue());
         assertEquals(2, list.peek().intValue());
-        assertEquals(2, list.remove().intValue());
+        assertEquals(2, list.removeFirst().intValue());
     }
     
     private IndexedList<Integer> getDirtyList() {
@@ -192,12 +192,12 @@ public class IndexedListTest extends MavenDummyTest {
 
         // list.print();
         for (int i = 0; i < 400; i++) {
-            Integer data = list.remove();
+            Integer data = list.removeFirst();
             list.add(data);
             if (i % 20 == 0)
                 list.add((i / 20 + 20));
         }
-        while (list.remove() != null) {/* don't do anything */
+        while (list.removeFirst() != null) {/* don't do anything */
         }
         // list.print();
         return list;

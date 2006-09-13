@@ -152,7 +152,7 @@ public interface StageManagerMXBean {
 
     /**
      * Returns the start time of the stage manager in milliseconds. This method
-     * returns the approximate time when the stage manager started.
+     * returns the approximate time when the stage manager was started.
      * 
      * @return start time of the stage manager in milliseconds.
      */

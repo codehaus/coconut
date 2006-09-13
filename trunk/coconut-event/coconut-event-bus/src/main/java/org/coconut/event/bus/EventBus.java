@@ -79,7 +79,7 @@ public interface EventBus<E> extends Offerable<E> {
      * @return a boolean indicating if all events was accepted.
      */
     boolean offerAll(E... events); // TODO replace with collection??
-
+    
     /**
      * Returns all subscribers that is registered for this EventBus.
      * 

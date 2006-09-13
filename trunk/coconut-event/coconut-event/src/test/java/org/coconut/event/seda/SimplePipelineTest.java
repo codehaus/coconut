@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.coconut.core.Transformer;
 import org.coconut.core.Transformers;
 import org.coconut.event.seda.management.StatisticsUtil;
+import org.coconut.event.seda.pipeline.DefaultLinearPipeline;
 import org.coconut.test.CpuBottlenecks;
 
 /**
@@ -26,9 +27,9 @@ public class SimplePipelineTest {
 
     public static void main2(String[] args) {
 
-        LinearPipeline sp = new LinearPipeline(c(1), s(1), s(1), s(1), s(1));
+        DefaultLinearPipeline sp = new DefaultLinearPipeline(c(1), s(1), s(1), s(1), s(1));
 
-        BlockingQueue bq = sp.getInitialQueue();
+        BlockingQueue bq = sp.getInputQueue();
 
     }
 
@@ -65,12 +66,12 @@ public class SimplePipelineTest {
                 return ignore;
             }
         };
-        LinearPipeline.threads = threads;
+        DefaultLinearPipeline.threads = threads;
         System.out.println("Threads :" + threads);
-        Transformer no = Transformers.noTransformer();
+        Transformer no = Transformers.passThroughTransformer();
         //LinearPipeline sp = new LinearPipeline(c, c(1), c(2), s(50), c(1), c(1));
         //LinearPipeline sp = new LinearPipeline(c, cc(450), cc(250), cc(800), cc(500), no);
-        LinearPipeline sp = new LinearPipeline(c, m(45), m(25), m(80), m(50), no);
+        DefaultLinearPipeline sp = new DefaultLinearPipeline(c, m(45), m(25), m(80), m(50), no);
         // LinearPipeline sp = new LinearPipeline(c, c(1), new FetchStage(),
         // s(1), s(1), s(1));
         // sp.addStage("Last", s(1));

@@ -3,9 +3,10 @@ package org.coconut.event.bus.defaults;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -25,11 +26,11 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
 
     private final static String subscriptionNamePrefix = "Subscription-";
 
-    // private final Set<String> names = new HashSet<String>();
-
     private final AtomicLong idGenerator = new AtomicLong();
 
-    private final CopyOnWriteArrayList<DefaultSubscription<E>> list = new CopyOnWriteArrayList<DefaultSubscription<E>>();
+    private final ConcurrentHashMap<String, DefaultSubscription<E>> list = new ConcurrentHashMap<String, DefaultSubscription<E>>();
+
+    private final AtomicLong size = new AtomicLong();
 
     final Lock lock = new ReentrantLock();
 
@@ -51,10 +52,11 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
         lock.lock();
         try {
             Collection<Subscription<E>> c = new LinkedList<Subscription<E>>();
-            for (DefaultSubscription<E> s : list) {
+            for (DefaultSubscription<E> s : list.values()) {
                 cancel(s);
                 c.add(s);
             }
+            size.set(0);
             return c;
         } finally {
             lock.unlock();
@@ -69,7 +71,8 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
      * @see org.coconut.event.bus.EventBus#subscribe(org.coconut.core.EventHandler,
      *      org.coconut.filter.Filter)
      */
-    public Subscription<E> subscribe(EventHandler<? super E> eventHandler, Filter<? super E> filter) {
+    public Subscription<E> subscribe(EventHandler<? super E> eventHandler,
+            Filter<? super E> filter) {
         if (eventHandler == null) {
             throw new NullPointerException("eventHandler is null");
         } else if (filter == null) {
@@ -77,25 +80,19 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
         }
         lock.lock();
         try {
-            return subscribe0(eventHandler, filter, getUniqueName());
+            for (;;) {
+                String name = subscriptionNamePrefix + idGenerator.incrementAndGet();
+                DefaultSubscription<E> s = new DefaultSubscription<E>(this, name,
+                        eventHandler, filter);
+                if (list.putIfAbsent(name, s) == null) {
+                    size.incrementAndGet();
+                    subscribed(s);
+                    return s;
+                }
+            }
         } finally {
             lock.unlock();
         }
-    }
-
-    protected String getUniqueName() {
-        // as an alternative create a set with all names and check against that.
-        String name = null;
-        while (name == null) {
-            name = subscriptionNamePrefix + idGenerator.incrementAndGet();
-            for (DefaultSubscription<E> s : list) {
-                if (s.getName().equals(name)) {
-                    name = null;
-                    break;
-                }
-            }
-        }
-        return name;
     }
 
     /**
@@ -113,25 +110,19 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
         }
         lock.lock();
         try {
-            for (DefaultSubscription<E> s : list) {
-                if (s.getName().equals(name)) {
-                    throw new IllegalArgumentException("subscription with name '" + name
-                            + "' already registered.");
-                }
+            DefaultSubscription<E> s = new DefaultSubscription<E>(this, name,
+                    eventHandler, filter);
+            if (list.putIfAbsent(name, s) != null) {
+                throw new IllegalArgumentException("subscription with name '" + name
+                        + "' already registered.");
             }
-            Subscription<E> s = subscribe0(eventHandler, filter, name);
+            list.put(name, s);
+            size.incrementAndGet();
+            subscribed(s);
             return s;
         } finally {
             lock.unlock();
         }
-    }
-
-    private Subscription<E> subscribe0(EventHandler<? super E> eventHandler,
-            Filter<? super E> filter, String name) {
-        DefaultSubscription<E> s = new DefaultSubscription<E>(this, name, eventHandler, filter);
-        list.add(s);
-        subscribed(s);
-        return s;
     }
 
     /**
@@ -148,7 +139,8 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
     public boolean offerAll(final E... elements) {
         for (int i = 0; i < elements.length; i++) {
             if (elements[i] == null) {
-                throw new NullPointerException("elements contained a null on index = " + i);
+                throw new NullPointerException("elements contained a null on index = "
+                        + i);
             }
         }
         for (E element : elements) {
@@ -158,7 +150,7 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
     }
 
     protected void inform(final E element) {
-        for (Subscription<E> s : list) {
+        for (Subscription<E> s : list.values()) {
             if (s.getFilter().accept(element)) {
                 deliver(element, s);
             }
@@ -192,6 +184,7 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
         lock.lock();
         try {
             list.remove(s);
+            size.incrementAndGet();
         } finally {
             lock.unlock();
         }
