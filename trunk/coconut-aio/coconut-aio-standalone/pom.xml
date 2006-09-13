@@ -8,7 +8,7 @@
   </parent>
   
   <artifactId>coconut-aio-standalone</artifactId>
-  <name>Coconut AIO API Impl</name>
+  <name>Coconut AIO Standalone distribution</name>
   <description>API for Coconut AIO</description> 
   
       <dependencies>
