@@ -4,25 +4,46 @@
 <!--
  $Id $
  
- Copyright 2004-2005 Kasper Nielsen. All rights reserved.
+ Copyright 2004-2006 Kasper Nielsen. All rights reserved.
 -->
 
 </head>
 <body bgcolor="white">
-	Coconut PocketCache
+	PocketCache
 </body>
+PocketCache is a small embedable in-memory cache with no dependencies except JDK 1.5.
+
 This contains a small number of in-memory cache implementations.
 There are 3 different types categorized according to their concurrent abilities.
 
-
+Goal of PocketCache
+Mission
+Less the 100 kb
+No Dependencies
+Less then 20 classes
+Well documented
+Well tested (95 % coverage)
+Supporting
+A small Cache library, less then 100 kb, no depencies, less then 20 classes
+Well documented in javadoc
+Well tested
 Supports
 
+Functionality
 eviction/size-limit - hit stats, value loader
 
+Ending with Map is very similar to ordinary maps except that they support lazy-loading of values using a ValueLoader
 * ConcurrentMap -> no eviction, but value loader
 * Cache -> eviction/size limit - hit stats
 
 UnsafePocketCache -> not threadsafe cache
 SynchronousPocketCache -> synchronous cache
 
+It will not (and not ever) support the following functionality
+  Storing of cache data (except serialization)
+  Notification of cache events
+  Expiration of items (specifying a timeout for values)
+  Transactions
+  Distributed version
+Look at its big brother Coconut Cache if you need any of this functionality
 </html>

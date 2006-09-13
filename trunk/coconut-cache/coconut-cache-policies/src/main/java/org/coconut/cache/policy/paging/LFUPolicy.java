@@ -23,7 +23,7 @@ public class LFUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
         Cloneable {
 
     /** serialVersionUID */
-    private static final long serialVersionUID = -7514906566453311058L;
+    private static final long serialVersionUID = -6697601242550775282L;
 
     /** A unique policy name. */
     public static final String NAME = "LFU";
@@ -75,6 +75,15 @@ public class LFUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
     }
 
     /**
+     * @see org.coconut.cache.policy.ReplacementPolicy#clear()
+     */
+    public void clear() {
+        while (evictNext() != null) {
+            /* ignore */
+        }
+    }
+    
+    /**
      * @{inheritDoc}
      */
     @Override
@@ -92,7 +101,6 @@ public class LFUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
     /**
      * @{inheritDoc}
      */
-    @Override
     public int getSize() {
         return heap.size();
     }

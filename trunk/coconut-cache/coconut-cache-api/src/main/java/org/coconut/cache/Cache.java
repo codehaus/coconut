@@ -96,7 +96,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * through {@link #get(Object)}.
      * <p>
      * Unless otherwise specified calling this method is the responsibility of
-     * the programmer. The typical usage is to create a single thread that
+     * the user. The typical usage is to create a single thread that
      * periodically runs this method.
      * <p>
      * Implementations that block (stop-the-world) all other concurrent access
@@ -257,8 +257,8 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * Works as {@link java.util.Map#get(Object)} with the following
      * modifications.
      * <p>
-     * If no mapping exists for the given any configured cache backend is asked
-     * to try and fetch a value for the specified key.
+     * If no mapping exists for the specified key any configured cache backend
+     * is asked to try and fetch a value for the key.
      * <p>
      * TODO What happens when a get fails on a backend store. throw exception
      * right? Perhaps point to the method in spi.loadableCache that can be
@@ -266,7 +266,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * <p>
      * Unlike {@link java.util.Map#get(Object)} throwing a
      * {@link NullPointerException} is not optional when <tt>null</tt> is
-     * specified as the key.
+     * specified as the key. (TODO Move to TCK)
      */
     V get(Object key);
 

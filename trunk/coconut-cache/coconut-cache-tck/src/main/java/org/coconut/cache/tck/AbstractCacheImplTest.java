@@ -48,14 +48,13 @@ import org.coconut.cache.tck.other.Serialization;
 import org.coconut.cache.tck.query.CacheQueryBundle;
 import org.coconut.cache.tck.query.NoQuerySupport;
 
-public abstract class AbstractCacheImplTest extends TestSuite {
+public class AbstractCacheImplTest extends TestSuite {
 
     private Class<? extends Cache> cacheClazz;
 
     public AbstractCacheImplTest(Class<? extends Cache> cacheClazz) {
         this.cacheClazz = cacheClazz;
         tt = this;
-        
     }
 
     @SuppressWarnings("unchecked")
@@ -131,6 +130,7 @@ public abstract class AbstractCacheImplTest extends TestSuite {
 
     public AbstractCacheImplTest addTestBundle(Class<? extends CacheTestBundle>... features) {
         for (Class<? extends CacheTestBundle> class1 : features) {
+        	System.out.println("adding " + class1 );
             addTest(new JUnit4TestAdapter(class1));
         }
         return this;

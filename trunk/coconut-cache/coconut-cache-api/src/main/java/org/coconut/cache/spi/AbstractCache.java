@@ -193,6 +193,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements C
             }
             V value = get0(key, false);
             if (value == null) {
+                //I think the method overriden this should have checked this allready
                 value = handleNullGet(key);
             }
             h.put(key, value); //

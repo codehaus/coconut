@@ -35,6 +35,13 @@ public class ThresholdPolicy<T extends CostSizeObject> extends AbstractPolicy<T>
 
     private final ReplacementPolicy<T> policy;
 
+    /**
+     * @see org.coconut.cache.policy.ReplacementPolicy#clear()
+     */
+    public void clear() {
+        policy.clear();
+    }
+
     private long threshold;
 
     /**
@@ -53,7 +60,11 @@ public class ThresholdPolicy<T extends CostSizeObject> extends AbstractPolicy<T>
         if (policy == null) {
             throw new NullPointerException("policy is null");
         }
-        setThreshold(threshold);// I think this is ugly, but easiest
+        if (threshold <= 0) {
+            throw new IllegalArgumentException(
+                    "threshold must be a positive number, was " + threshold);
+        }
+        this.threshold = threshold;
         this.policy = policy;
     }
 
@@ -126,8 +137,8 @@ public class ThresholdPolicy<T extends CostSizeObject> extends AbstractPolicy<T>
 
     public void setThreshold(long threshold) {
         if (threshold <= 0) {
-            throw new IllegalArgumentException("threshold must be a positive number, was "
-                    + threshold);
+            throw new IllegalArgumentException(
+                    "threshold must be a positive number, was " + threshold);
         }
         this.threshold = threshold;
     }
@@ -142,6 +153,13 @@ public class ThresholdPolicy<T extends CostSizeObject> extends AbstractPolicy<T>
         // det kunne også være fint hvis man kunne decore metoderne
         // feks have en lock omkring dem.
         return null;
+    }
+
+    /**
+     * @see org.coconut.cache.policy.spi.AbstractPolicy#getSize()
+     */
+    public int getSize() {
+        return policy.getSize();
     }
 
 }

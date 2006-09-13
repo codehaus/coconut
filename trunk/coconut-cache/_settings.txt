@@ -94,3 +94,20 @@ nostrict & nocall
 readable | readablewriteable
 nonloadable | loadable
 
+****** Implementation Strategies ********
+
+Values in map, meta-data in another map.
+ Pros
+Pending values in back-end map
+  * pros
+    Only need one lookup
+  * Cons
+    *   
+
+
+* Map with value-keys
+  Cons
+    * Meta-data must be in seperate map
+  
+  Pros
+    * Easy to return collection  

@@ -56,8 +56,8 @@ public class FIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolic
      */
     public FIFOPolicy(int initialCapacity) {
         if (initialCapacity < 0) {
-            throw new IllegalArgumentException(
-                    "size must be 0 or greater, was " + initialCapacity);
+            throw new IllegalArgumentException("size must be 0 or greater, was "
+                    + initialCapacity);
         }
         policy = new MRUPolicy<T>(initialCapacity);
     }
@@ -123,7 +123,8 @@ public class FIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolic
     }
 
     /**
-     * @see org.coconut.cache.policy.ReplacementPolicy#update(int, java.lang.Object)
+     * @see org.coconut.cache.policy.ReplacementPolicy#update(int,
+     *      java.lang.Object)
      */
     public boolean update(int index, T newElement) {
         return policy.update(index, newElement);
@@ -134,5 +135,12 @@ public class FIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolic
      */
     public void touch(int index) {
         // ignore
+    }
+
+    /**
+     * @see org.coconut.cache.policy.ReplacementPolicy#clear()
+     */
+    public void clear() {
+        policy.clear();
     }
 }

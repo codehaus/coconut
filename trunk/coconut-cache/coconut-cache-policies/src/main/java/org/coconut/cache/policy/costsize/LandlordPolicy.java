@@ -16,6 +16,13 @@ import org.coconut.cache.policy.spi.AbstractPolicy;
 @ThreadSafe(false)
 public class LandlordPolicy<T extends CostSizeObject> extends AbstractPolicy<T> {
 
+    /**
+     * @see org.coconut.cache.policy.spi.AbstractPolicy#getSize()
+     */
+    public int getSize() {
+        return getSize();
+    }
+
     private double[] objectCost;
 
     private double[] objectCredit;
@@ -67,6 +74,15 @@ public class LandlordPolicy<T extends CostSizeObject> extends AbstractPolicy<T> 
         return index;
     }
 
+    /**
+     * @see org.coconut.cache.policy.ReplacementPolicy#clear()
+     */
+    public void clear() {
+        while (evictNext() != null) {
+            /* ignore */
+        }
+    }
+    
     private int evict() {
         double delta = Double.MAX_VALUE;
         int foundZero = -1;

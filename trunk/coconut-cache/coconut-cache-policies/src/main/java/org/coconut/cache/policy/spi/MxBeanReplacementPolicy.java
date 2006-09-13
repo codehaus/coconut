@@ -11,6 +11,5 @@ package org.coconut.cache.policy.spi;
  * @version $Id$
  */
 public interface MxBeanReplacementPolicy {
-
     Object getJMXBean();
 }

@@ -7,6 +7,7 @@ package org.coconut.cache.policy.paging;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -111,6 +112,15 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
     }
 
     /**
+     * @see org.coconut.cache.policy.ReplacementPolicy#clear()
+     */
+    public void clear() {
+        while (evictNext() != null) {
+            /* ignore */
+        }
+    }
+    
+    /**
      * @see org.coconut.cache.policy.ReplacementPolicy#evictNext()
      */
     public T evictNext() {
@@ -127,6 +137,7 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
         return rnd.nextInt(nextEntryIndex - 1);
     }
 
+    
     /**
      * @return the number of entries in currently held by the policy.
      */

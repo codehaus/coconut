@@ -45,13 +45,22 @@ public class ClockPolicy<T> extends AbstractPolicy<T> implements ReplacementPoli
     }
 
     /**
+     * @see org.coconut.cache.policy.ReplacementPolicy#clear()
+     */
+    public void clear() {
+        while (evictNext() != null) {
+            /* ignore */
+        }
+    }
+    
+    /**
      * @see java.lang.Object#clone()
      */
     public ClockPolicy<T> clone() {
         return new ClockPolicy<T>(this);
     }
 
-    private static class InnerClockPolicy<T> extends IndexedList<T> implements Serializable {
+    static class InnerClockPolicy<T> extends IndexedList<T> implements Serializable {
 
         /** serialVersionUID. */
         private static final long serialVersionUID = -2146530585201851381L;
@@ -215,7 +224,7 @@ public class ClockPolicy<T> extends AbstractPolicy<T> implements ReplacementPoli
     }
 
     public T remove() {
-        return policy.remove();
+        return policy.removeFirst();
     }
 
     public int getSize() {

@@ -20,6 +20,15 @@ import org.coconut.internal.util.IndexedStack;
 @ThreadSafe(false)
 public class MRUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy<T>, Serializable {
 
+    /**
+     * @see org.coconut.cache.policy.ReplacementPolicy#clear()
+     */
+    public void clear() {
+        while (evictNext() != null) {
+            /* ignore */
+        }
+    }
+
     /** serialVersionUID */
     private static final long serialVersionUID = 7334611172293116644L;
 

@@ -6,6 +6,7 @@ package org.coconut.cache.pocket;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>

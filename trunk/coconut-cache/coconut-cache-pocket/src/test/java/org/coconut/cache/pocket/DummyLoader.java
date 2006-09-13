@@ -2,7 +2,7 @@
  * the MIT license, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.pocket;
+package org.coconut.cache.pocket;
 
 import org.coconut.cache.pocket.ValueLoader;
 

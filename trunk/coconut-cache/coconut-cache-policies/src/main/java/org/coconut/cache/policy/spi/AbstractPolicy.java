@@ -15,60 +15,42 @@ import org.coconut.cache.policy.ReplacementPolicy;
  */
 public abstract class AbstractPolicy<T> implements ReplacementPolicy<T> {
 
-    /**
-     * @see org.coconut.cache.policy.ReplacementPolicy#clear()
-     */
-    public void clear() {
-        while (evictNext() != null) {
-            /* ignore */
-        }
-    }
-
-    // to slow use in practice.
-    // /**
-    // * Slow
-    // * @return
-    // */
-    // public int getSize() {
-    // return peekAll().size();
-    // }
-
     public double getEvictionScore() {
+        // ??
         return -1;
     }
 
-    // TODO don't know if its usefull at all???
-    // /**
-    // * Adds all the elements to the policy. The elements will be added
-    // * accordingly to the returning order of the iterator.
-    // *
-    // * @param items
-    // * the elements to add
-    // * @return the references of each element that was added. The first
-    // element
-    // * returned by the lists iterator will have index 0 in the array.
-    // * The last element returned by the iterator will have index
-    // */
-    // public int[] addAll(List<T> items) {
-    // int[] result = new int[items.size()];
-    // int count = 0;
-    // for (T t : items) {
-    // result[count++] = add(t);
-    // }
-    // return result;
-    // }
+    /**
+     * Adds all the elements to the policy. The elements will be added
+     * accordingly to the returning order of the iterator.
+     * 
+     * @param items
+     *            the elements to add
+     * @return the references of each element that was added. The first element
+     *         returned by the lists iterator will have index 0 in the array.
+     *         The last element returned by the iterator will have index
+     */
+    public int[] addAll(List<T> items) {
+        int[] result = new int[items.size()];
+        int count = 0;
+        for (T t : items) {
+            result[count++] = add(t);
+        }
+        return result;
+    }
 
     /**
-     * Evict entries.
+     * Evict at most the specified entries. If the
      * 
      * @param number
      *            the number of entries to evict
-     * @return a list containing the elements that was evicted
+     * @return a list containing the elements that was evicted in the order they
+     *         where evicted
      */
-    public List<T> evict(int number) {
+    public List<T> evict(final int number) {
         int count = number;
         // do not use number as initial capacity, might be Integer.MAX_VALUE
-        ArrayList<T> list = new ArrayList<T>(Math.min(100, number));
+        ArrayList<T> list = new ArrayList<T>(Math.min(getSize(), number));
         T i = evictNext();
         while (i != null && count-- > 0) {
             list.add(i);
@@ -77,11 +59,12 @@ public abstract class AbstractPolicy<T> implements ReplacementPolicy<T> {
         return list;
     }
 
+    /**
+     * Evicts all the entries in the policy.
+     * 
+     * @return all the entries in the policy.
+     */
     public List<T> evictAll() {
         return evict(Integer.MAX_VALUE);
-    }
-
-    public int getSize() {
-        return peekAll().size();
     }
 }

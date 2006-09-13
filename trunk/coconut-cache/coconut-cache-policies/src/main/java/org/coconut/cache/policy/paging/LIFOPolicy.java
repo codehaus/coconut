@@ -20,7 +20,8 @@ import org.coconut.cache.policy.spi.AbstractPolicy;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
 @ThreadSafe(false)
-public class LIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy<T>, Serializable {
+public class LIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy<T>,
+        Serializable {
 
     /** A unique policy name. */
     public static final String NAME = "LIFO";
@@ -48,8 +49,8 @@ public class LIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolic
      */
     public LIFOPolicy(int initialCapacity) {
         if (initialCapacity < 0) {
-            throw new IllegalArgumentException(
-                    "size must be 0 or greater, was " + initialCapacity);
+            throw new IllegalArgumentException("size must be 0 or greater, was "
+                    + initialCapacity);
         }
         policy = new LRUPolicy<T>(initialCapacity);
     }
@@ -69,6 +70,15 @@ public class LIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolic
      */
     public int add(T data) {
         return policy.add(data);
+    }
+
+    /**
+     * @see org.coconut.cache.policy.ReplacementPolicy#clear()
+     */
+    public void clear() {
+        while (evictNext() != null) {
+            /* ignore */
+        }
     }
 
     /**
@@ -130,8 +140,10 @@ public class LIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolic
     public void touch(int index) {
         // ignore touch
     }
+
     /**
-     * @see org.coconut.cache.policy.ReplacementPolicy#update(int, java.lang.Object)
+     * @see org.coconut.cache.policy.ReplacementPolicy#update(int,
+     *      java.lang.Object)
      */
     public boolean update(int index, T newElement) {
         return policy.update(index, newElement);

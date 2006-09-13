@@ -2,7 +2,7 @@
  * the MIT license, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.pocket;
+package org.coconut.cache.pocket;
 
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Semaphore;

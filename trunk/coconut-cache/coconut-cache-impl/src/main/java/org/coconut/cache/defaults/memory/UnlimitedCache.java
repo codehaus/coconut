@@ -190,7 +190,7 @@ public class UnlimitedCache<K, V> extends LoadableCache<K, V> implements Concurr
     void trimToSize(int newSize) {
         while (newSize < size()) {
             MyEntry key = cp.evictNext();
-            MyEntry prev = map.remove(key.getKey(), false);
+            MyEntry prev = map.remove(key.getKey());
             V value = prev == null ? null : prev.getValueSilent();
             if (value != null && ed.doNotifyRemoved()) {
                 ed.notifyRemoved(nextSequenceId(), prev.getKey(), value, false, prev);
@@ -346,6 +346,7 @@ public class UnlimitedCache<K, V> extends LoadableCache<K, V> implements Concurr
         MyEntry newEntry = null;
         V value = entry == null ? null : entry.getValue();
         V prev = value;
+        //TODO handle null value
         if (!isPeeking) {
             if (value == null) {
                 if (usesExtendedCacheLoader()) {
@@ -696,12 +697,14 @@ public class UnlimitedCache<K, V> extends LoadableCache<K, V> implements Concurr
 
     @Override
     public void evict() {
-        for (MyEntry m : map.values()) {
+        Iterator<MyEntry> iter = map.values().iterator();
+        for (Iterator<MyEntry> iterator = map.values().iterator(); iterator.hasNext();) {
+            MyEntry m = (MyEntry) iterator.next();
             if (isExpired(m)) {
-                MyEntry prev = map.remove(m.getKey(), false);
-                V value = prev == null ? null : prev.getValueSilent();
+                iter.remove();
+                V value = m.getValueSilent();
                 if (value != null && ed.doNotifyRemoved()) {
-                    ed.notifyRemoved(nextSequenceId(), prev.getKey(), value, true, prev);
+                    ed.notifyRemoved(nextSequenceId(), m.getKey(), value, true, m);
                 }
             }
         }

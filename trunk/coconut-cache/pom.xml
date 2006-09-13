@@ -44,18 +44,4 @@
       <module>coconut-cache-policies</module>
       <module>coconut-cache-tck</module>
     </modules>
-    
-          <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <configuration>
-            <source>1.5</source>
-            <target>1.5</target>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
 </project>

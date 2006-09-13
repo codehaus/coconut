@@ -4,16 +4,16 @@
 
 package org.coconut.cache.defaults.memory;
 
+import org.junit.Test;
+
 import junit.framework.TestCase;
 
-/**
- * 
- * 
- * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id$
- */
-public class MyTest extends TestCase{
+public class MyTest extends TestCase {
     public void testFoo() {
-        
+        System.out.println("foo");
+    }
+    @Test
+    public void tetFoo2() {
+        System.out.println("foo2");
     }
 }

@@ -1,12 +1,11 @@
 /* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the MIT license, see http://coconut.codehaus.org/license.
  */
- 
- package org.coconut.cache.pocket;
+
+package org.coconut.cache.pocket;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,12 +22,14 @@ import java.util.concurrent.ConcurrentMap;
  * afraid of occasionally wasting effort especially on multiprocessors. It is
  * usually cheaper than blocking. But always verify whether this holds in your
  * application.
+ * <p>
+ * If reversible side effects undoCallingNewValue can be used.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class OptimisticConcurrentMap<K, V> implements ConcurrentMap<K, V>, Serializable {
-    
+
     /** serialVersionUID */
     private static final long serialVersionUID = -5658657821339289321L;
 

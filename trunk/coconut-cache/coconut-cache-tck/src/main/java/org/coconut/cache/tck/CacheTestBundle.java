@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import junit.framework.Assert;
+import junit.framework.TestCase;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
@@ -30,7 +31,7 @@ import org.junit.Before;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Header$
  */
-public abstract class CacheTestBundle {
+public abstract class CacheTestBundle extends TestCase {
 
     protected DeterministicClock clock;
 
@@ -61,16 +62,11 @@ public abstract class CacheTestBundle {
     static {
         Class c;
         try {
-            c = Class.forName("org.coconut.cache.defaults.memory.UnlimitedCacheTest");
-            defaultSuite = (AbstractCacheImplTest) c.newInstance();
+            c = Class.forName("org.coconut.cache.defaults.memory.UnlimitedCache");
+            defaultSuite = new AbstractCacheImplTest(c);
         } catch (ClassNotFoundException e) {
-            // ignore, not running from within ide
-        } catch (InstantiationException e) {
             e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
+        } 
     }
 
     @Before

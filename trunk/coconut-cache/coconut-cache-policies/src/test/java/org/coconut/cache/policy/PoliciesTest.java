@@ -35,6 +35,5 @@ public class PoliciesTest {
         assertTrue(Policies.newLRU() instanceof LRUPolicy);
         assertTrue(Policies.newMRU() instanceof MRUPolicy);
         assertTrue(Policies.newRandom() instanceof RandomPolicy);
-
     }
 }

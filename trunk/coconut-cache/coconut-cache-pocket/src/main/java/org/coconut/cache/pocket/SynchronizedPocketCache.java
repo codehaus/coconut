@@ -1,10 +1,12 @@
 /* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the MIT license, see http://coconut.codehaus.org/license.
  */
- 
+
 package org.coconut.cache.pocket;
 
+import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,102 +14,184 @@ import java.util.Set;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class SynchronizedPocketCache<K, V> implements Map<K, V> {
+public class SynchronizedPocketCache<K, V> implements PocketCache<K, V>, Serializable {
 
-    /**
-     * @see java.util.Map#clear()
-     */
+    private final UnsafePocketCache<K, V> cache;
+
+    private final Map<K, V> syncMap;
+
+    public SynchronizedPocketCache(ValueLoader<K, V> loader) {
+        this.cache = new UnsafePocketCache<K, V>(loader);
+        syncMap = Collections.synchronizedMap(cache);
+    }
+
     public void clear() {
-        // TODO Auto-generated method stub
-        
+        synchronized (cache) {
+            cache.clear();
+        }
     }
 
-    /**
-     * @see java.util.Map#containsKey(java.lang.Object)
-     */
     public boolean containsKey(Object key) {
-        // TODO Auto-generated method stub
-        return false;
+        synchronized (cache) {
+            return cache.containsKey(key);
+        }
     }
 
-    /**
-     * @see java.util.Map#containsValue(java.lang.Object)
-     */
     public boolean containsValue(Object value) {
-        // TODO Auto-generated method stub
-        return false;
+        synchronized (cache) {
+            return cache.containsValue(value);
+        }
     }
 
-    /**
-     * @see java.util.Map#entrySet()
-     */
-    public Set<java.util.Map.Entry<K, V>> entrySet() {
-        // TODO Auto-generated method stub
-        return null;
+    public Set<Entry<K, V>> entrySet() {
+        synchronized (cache) {
+            return syncMap.entrySet();
+        }
     }
 
-    /**
-     * @see java.util.Map#get(java.lang.Object)
-     */
+    public boolean equals(Object o) {
+        synchronized (cache) {
+            return cache.equals(o);
+        }
+    }
+
+    public void evict() {
+        synchronized (cache) {
+            cache.evict();
+        }
+    }
+
     public V get(Object key) {
+        synchronized (cache) {
+            return cache.get(key);
+        }
+    }
+
+    public Map<K, V> getAll(Collection<? extends K> keys) {
+        synchronized (cache) {
+            return cache.getAll(keys);
+        }
+    }
+
+    public double getHitRatio() {
+        synchronized (cache) {
+            return cache.getHitRatio();
+        }
+    }
+
+    public long getNumberOfHits() {
+        synchronized (cache) {
+            return cache.getNumberOfHits();
+        }
+    }
+
+    public long getNumberOfMisses() {
+        synchronized (cache) {
+            return cache.getNumberOfMisses();
+        }
+    }
+
+    public int hashCode() {
+        synchronized (cache) {
+            return cache.hashCode();
+        }
+    }
+
+    public boolean isEmpty() {
+        synchronized (cache) {
+            return cache.isEmpty();
+        }
+    }
+
+    public Set<K> keySet() {
+        synchronized (cache) {
+            return syncMap.keySet();
+        }
+    }
+
+    public V peek(Object key) {
+        synchronized (cache) {
+            return cache.peek(key);
+        }
+    }
+
+    public V put(K key, V value) {
+        synchronized (cache) {
+            return cache.put(key, value);
+        }
+    }
+
+    public void putAll(Map<? extends K, ? extends V> t) {
+        synchronized (cache) {
+            cache.putAll(t);
+        }
+    }
+
+    public V remove(Object key) {
+        synchronized (cache) {
+            return cache.remove(key);
+        }
+    }
+
+    public void resetStatistics() {
+        synchronized (cache) {
+            cache.resetStatistics();
+        }
+    }
+
+    public int size() {
+        synchronized (cache) {
+            return cache.size();
+        }
+    }
+
+    public String toString() {
+        synchronized (cache) {
+            return cache.toString();
+        }
+    }
+
+    public void trimToSize(int newSize) {
+        synchronized (cache) {
+            cache.trimToSize(newSize);
+        }
+    }
+
+    public Collection<V> values() {
+        synchronized (cache) {
+            return syncMap.values();
+        }
+    }
+
+    /**
+     * @see java.util.concurrent.ConcurrentMap#putIfAbsent(java.lang.Object, java.lang.Object)
+     */
+    public V putIfAbsent(K key, V value) {
         // TODO Auto-generated method stub
         return null;
     }
 
     /**
-     * @see java.util.Map#isEmpty()
+     * @see java.util.concurrent.ConcurrentMap#remove(java.lang.Object, java.lang.Object)
      */
-    public boolean isEmpty() {
+    public boolean remove(Object key, Object value) {
         // TODO Auto-generated method stub
         return false;
     }
 
     /**
-     * @see java.util.Map#keySet()
+     * @see java.util.concurrent.ConcurrentMap#replace(java.lang.Object, java.lang.Object)
      */
-    public Set<K> keySet() {
+    public V replace(K key, V value) {
         // TODO Auto-generated method stub
         return null;
     }
 
     /**
-     * @see java.util.Map#put(java.lang.Object, java.lang.Object)
+     * @see java.util.concurrent.ConcurrentMap#replace(java.lang.Object, java.lang.Object, java.lang.Object)
      */
-    public V put(K key, V value) {
+    public boolean replace(K key, V oldValue, V newValue) {
         // TODO Auto-generated method stub
-        return null;
+        return false;
     }
-
-    /**
-     * @see java.util.Map#putAll(java.util.Map)
-     */
-    public void putAll(Map<? extends K, ? extends V> t) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    /**
-     * @see java.util.Map#remove(java.lang.Object)
-     */
-    public V remove(Object key) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * @see java.util.Map#size()
-     */
-    public int size() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    /**
-     * @see java.util.Map#values()
-     */
-    public Collection<V> values() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 }

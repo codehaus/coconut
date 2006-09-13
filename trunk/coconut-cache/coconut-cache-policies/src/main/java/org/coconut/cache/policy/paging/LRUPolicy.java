@@ -82,7 +82,7 @@ public class LRUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
      * {@inheritDoc}
      */
     public T evictNext() {
-        return list.remove();
+        return list.removeFirst();
     }
 
     /**
@@ -136,7 +136,6 @@ public class LRUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
         return true; // LRU never rejects an entry
     }
 
-    @Override
     public void clear() {
         list.clear();
     }
