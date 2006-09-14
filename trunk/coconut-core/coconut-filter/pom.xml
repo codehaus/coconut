@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.coconut.core</groupId>
     <artifactId>coconut-core-parent</artifactId>
-    <version>5.0-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
   </parent>
   
   <artifactId>coconut-filter</artifactId>
@@ -15,7 +15,7 @@
     <dependency>
       <groupId>org.coconut.core</groupId>
       <artifactId>coconut</artifactId>
-      <version>5.0-SNAPSHOT</version>
+      <version>1.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
   <build>

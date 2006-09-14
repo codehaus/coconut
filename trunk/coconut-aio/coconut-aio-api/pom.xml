@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.coconut.aio</groupId>
     <artifactId>coconut-aio-parent</artifactId>
-    <version>5.0-alpha3-SNAPSHOT</version>
+    <version>1.0-alpha3-SNAPSHOT</version>
   </parent>
   <artifactId>coconut-aio-api</artifactId>
   <name>Coconut AIO API</name>

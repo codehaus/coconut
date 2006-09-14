@@ -658,6 +658,9 @@ public abstract class AbstractStageManager implements StageManager {
         return map;
     }
 
+    List<Stage> getStages() {
+        return null;
+    }
     protected Lock getMainLock() {
         return mainLock;
     }

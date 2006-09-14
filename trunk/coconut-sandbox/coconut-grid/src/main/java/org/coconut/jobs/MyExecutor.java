@@ -66,30 +66,62 @@ public class MyExecutor implements JobService {
         return null;
     }
 
-    public <T> List<Future<T>> invokeAll(Collection<Callable<T>> arg0, long arg1, TimeUnit arg2) throws InterruptedException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public <T> T invokeAny(Collection<Callable<T>> arg0) throws InterruptedException, ExecutionException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public <T> T invokeAny(Collection<Callable<T>> arg0, long arg1, TimeUnit arg2) throws InterruptedException, ExecutionException, TimeoutException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public <T> List<Future<T>> invokeAll(Collection<Callable<T>> arg0) throws InterruptedException {
-        // TODO Auto-generated method stub
-        return null;
-    }
+//    public <T> List<Future<T>> invokeAll(Collection<Callable<T>> arg0, long arg1, TimeUnit arg2) throws InterruptedException {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
+//
+//    public <T> T invokeAny(Collection<Callable<T>> arg0) throws InterruptedException, ExecutionException {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
+//
+//    public <T> T invokeAny(Collection<Callable<T>> arg0, long arg1, TimeUnit arg2) throws InterruptedException, ExecutionException, TimeoutException {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
+//
+//    public <T> List<Future<T>> invokeAll(Collection<Callable<T>> arg0) throws InterruptedException {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
 
     /**
      * @see org.coconut.jobs.JobService#submit(java.lang.Class)
      */
     public <S, T extends Callable<S>> JobFuture<S> submit(Class<T> task) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * @see java.util.concurrent.ExecutorService#invokeAll(java.util.Collection)
+     */
+    public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> arg0) throws InterruptedException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * @see java.util.concurrent.ExecutorService#invokeAll(java.util.Collection, long, java.util.concurrent.TimeUnit)
+     */
+    public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> arg0, long arg1, TimeUnit arg2) throws InterruptedException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * @see java.util.concurrent.ExecutorService#invokeAny(java.util.Collection)
+     */
+    public <T> T invokeAny(Collection<? extends Callable<T>> arg0) throws InterruptedException, ExecutionException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * @see java.util.concurrent.ExecutorService#invokeAny(java.util.Collection, long, java.util.concurrent.TimeUnit)
+     */
+    public <T> T invokeAny(Collection<? extends Callable<T>> arg0, long arg1, TimeUnit arg2) throws InterruptedException, ExecutionException, TimeoutException {
         // TODO Auto-generated method stub
         return null;
     }

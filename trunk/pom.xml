@@ -13,7 +13,7 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  <version>1.0</version>
+  <version>1.0-SNAPSHOT</version>
   <issueManagement>
     <system>jira</system>
     <url>http://jira.codehaus.org/browse/COCONUT</url>

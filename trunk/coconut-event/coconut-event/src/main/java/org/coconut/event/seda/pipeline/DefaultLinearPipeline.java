@@ -21,6 +21,7 @@ import org.coconut.core.Transformer;
 import org.coconut.event.seda.spi.AbstractManagedStage;
 import org.coconut.event.seda.spi.AbstractManagedStageManager;
 import org.coconut.event.seda.spi.ThreadWorker;
+import org.coconut.filter.Filter;
 import org.coconut.internal.util.Queues;
 import org.coconut.pool.Pool;
 
@@ -246,6 +247,14 @@ public class DefaultLinearPipeline extends AbstractManagedStageManager implement
         public Pool<Transformer<?, ?>> getPool() {
             // TODO Auto-generated method stub
             return null;
+        }
+
+        /**
+         * @see org.coconut.event.seda.pipeline.LinearPipelineStage#processOutstanding(org.coconut.filter.Filter, org.coconut.core.Transformer)
+         */
+        public void processOutstanding(Filter f, Transformer t) {
+            // TODO Auto-generated method stub
+            
         }
     }
 

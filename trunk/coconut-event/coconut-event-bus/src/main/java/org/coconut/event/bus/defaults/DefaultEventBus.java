@@ -1,9 +1,9 @@
 package org.coconut.event.bus.defaults;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,7 +42,7 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
      */
     @SuppressWarnings("unchecked")
     public List<Subscription<E>> getSubscribers() {
-        return Collections.unmodifiableList((List) list);
+        return Collections.unmodifiableList(new ArrayList(list.values()));
     }
 
     /**
@@ -183,7 +183,7 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
     private void cancel(DefaultSubscription<E> s) {
         lock.lock();
         try {
-            list.remove(s);
+            list.remove(s.name);
             size.incrementAndGet();
         } finally {
             lock.unlock();

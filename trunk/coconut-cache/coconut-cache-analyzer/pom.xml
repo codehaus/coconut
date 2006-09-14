@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.coconut.cache</groupId>
     <artifactId>coconut-cache-parent</artifactId>
-    <version>5.0-alpha3-SNAPSHOT</version>
+    <version>1.0-alpha3-SNAPSHOT</version>
   </parent>
   
   <artifactId>coconut-cache-analyzer</artifactId>
@@ -15,12 +15,12 @@
       <dependency>
         <groupId>coconut</groupId>
         <artifactId>coconut-cache-api</artifactId>
-        <version>5.0-alpha3-SNAPSHOT</version>
+        <version>1.0-alpha3-SNAPSHOT</version>
       </dependency>
               <dependency>
         <groupId>coconut</groupId>
         <artifactId>coconut-cache-policies</artifactId>
-        <version>5.0-alpha3-SNAPSHOT</version>
+        <version>1.0-alpha3-SNAPSHOT</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
