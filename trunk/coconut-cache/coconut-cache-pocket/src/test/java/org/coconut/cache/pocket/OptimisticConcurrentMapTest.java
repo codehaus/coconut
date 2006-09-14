@@ -103,13 +103,13 @@ public class OptimisticConcurrentMapTest extends MockTestCase {
         Integer discardedValue;
 
         @Override
-        protected void undoCallingNewValue(ValueLoader<String, Integer> loader,
+        protected void undoNewValue(ValueLoader<String, Integer> loader,
                 String key, Integer value, Integer discardedValue) {
             this.loader = loader;
             this.key = key;
             this.value = value;
             this.discardedValue = discardedValue;
-            super.undoCallingNewValue(loader, key, value, discardedValue);
+            super.undoNewValue(loader, key, value, discardedValue);
         }
 
         /**
