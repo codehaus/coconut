@@ -5,11 +5,13 @@
 package org.coconut.cache.pocket;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A Concurrent map supporting full concurrency of retrievals and adjustable
@@ -22,16 +24,15 @@ import java.util.concurrent.ConcurrentMap;
  * afraid of occasionally wasting effort especially on multiprocessors. It is
  * usually cheaper than blocking. But always verify whether this holds in your
  * application.
- * <p>
- * If reversible side effects undoCallingNewValue can be used.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class OptimisticConcurrentMap<K, V> implements ConcurrentMap<K, V>, Serializable {
+public class OptimisticConcurrentPocketCache<K, V> implements ConcurrentMap<K, V>,
+        Serializable {
 
     /** serialVersionUID */
-    private static final long serialVersionUID = -6878964277238764619L;
+    private static final long serialVersionUID = -5658657821339289321L;
 
     /** The concurrent map that we wrap. */
     private final ConcurrentMap<K, V> map;
@@ -39,13 +40,24 @@ public class OptimisticConcurrentMap<K, V> implements ConcurrentMap<K, V>, Seria
     /** The value loader used for constructing new values. */
     private final ValueLoader<K, V> loader;
 
+    private final AtomicLong hits = new AtomicLong();
+
+    private final AtomicLong misses = new AtomicLong();
+
+    private final int maxSize = 100;
+
+    private final int pruneSize = 3; // items to prune on evict
+
+    private final int hardLimit = 300;
+    private final int softLimit = 100;
+
     /**
      * Create a new OptimisticConcurrentCache.
      * 
      * @param loader
      *            the value loader used for constructing new values
      */
-    public OptimisticConcurrentMap(ValueLoader<K, V> loader) {
+    public OptimisticConcurrentPocketCache(ValueLoader<K, V> loader) {
         this(loader, new ConcurrentHashMap<K, V>());
     }
 
@@ -58,7 +70,8 @@ public class OptimisticConcurrentMap<K, V> implements ConcurrentMap<K, V>, Seria
      * @param map
      *            the concurrent map to wrap
      */
-    public OptimisticConcurrentMap(ValueLoader<K, V> loader, ConcurrentMap<K, V> map) {
+    public OptimisticConcurrentPocketCache(ValueLoader<K, V> loader,
+            ConcurrentMap<K, V> map) {
         if (loader == null) {
             throw new NullPointerException("loader is null");
         } else if (map == null) {
@@ -66,6 +79,29 @@ public class OptimisticConcurrentMap<K, V> implements ConcurrentMap<K, V>, Seria
         }
         this.map = map;
         this.loader = loader;
+    }
+
+    public void resetStatistics() {
+        hits.set(0);
+        misses.set(0);
+    }
+
+    public long getHits() {
+        return hits.get();
+    }
+
+    public long getMisses() {
+        return misses.get();
+    }
+
+    public double getHitRatio() {
+        long h = hits.get();
+        long m = misses.get();
+        final long sum = h + m;
+        if (sum == 0) {
+            return Float.NaN;
+        }
+        return ((double) h) / sum;
     }
 
     /**
@@ -142,19 +178,51 @@ public class OptimisticConcurrentMap<K, V> implements ConcurrentMap<K, V>, Seria
      * @see java.util.Map#get(java.lang.Object)
      */
     public V get(Object key) {
+        return get(key, false);
+    }
+
+    public V peek(Object key) {
+        return get(key, true);
+    }
+
+    private V get(Object key, boolean peek) {
         V v = map.get(key);
         if (v == null) {
             K k = (K) key;
             V newValue = loader.load(k);
             v = map.putIfAbsent(k, newValue);
             if (v != null) {
+                if (!peek) {
+                    misses.incrementAndGet();
+                }
                 // we lost race to other thread, undo effects
-                undoNewValue(loader, k, v, newValue);
+                undoCallingNewValue(loader, k, v, newValue);
             } else {
+                if (!peek) {
+                    hits.incrementAndGet();
+                }
                 v = newValue;
             }
         }
         return v;
+    }
+
+    public void evict() {
+        int evictEntries = map.size() - maxSize;
+        if (evictEntries > 0) {
+            evictEntries(evictEntries);
+        }
+    }
+
+    protected Collection<V> evictEntries(int number) {
+        ArrayList<V> al = new ArrayList<V>();
+
+        return al;
+
+    }
+
+    public int getMaxSize() {
+        return maxSize;
     }
 
     /**
@@ -232,7 +300,7 @@ public class OptimisticConcurrentMap<K, V> implements ConcurrentMap<K, V>, Seria
      *            the value that was constructed but discarded because a mapping
      *            already existed for the key
      */
-    protected void undoNewValue(ValueLoader<K, V> loader, K key, V value,
+    protected void undoCallingNewValue(ValueLoader<K, V> loader, K key, V value,
             V discardedValue) {
 
     }
