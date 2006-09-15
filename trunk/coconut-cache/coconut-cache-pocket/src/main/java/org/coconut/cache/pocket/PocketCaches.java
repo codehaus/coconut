@@ -4,8 +4,6 @@
 package org.coconut.cache.pocket;
 
 import java.lang.management.ManagementFactory;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.InstanceNotFoundException;
@@ -80,7 +78,7 @@ public class PocketCaches {
         /**
          * @see org.coconut.cache.pocket.PocketCacheMXBean#size()
          */
-        public int size() {
+        public int getSize() {
             return pc.size();
         }
 
@@ -103,6 +101,27 @@ public class PocketCaches {
          */
         public void setEvictWatermark(int trimSize) {
             pc.setEvictWatermark(trimSize);
+        }
+
+        /**
+         * @see org.coconut.cache.pocket.PocketCacheMXBean#getCapacity()
+         */
+        public int getCapacity() {
+            return pc.getCapacity();
+        }
+
+        /**
+         * @see org.coconut.cache.pocket.PocketCacheMXBean#setCapacity(int)
+         */
+        public void setCapacity(int newCapacity) {
+            pc.setCapacity(newCapacity);
+        }
+
+        /**
+         * @see org.coconut.cache.pocket.PocketCacheMXBean#resetStatistics()
+         */
+        public void resetStatistics() {
+            pc.resetStatistics();
         }
     }
 
@@ -164,7 +183,7 @@ public class PocketCaches {
             return new ObjectName(JMX_PREFIX + name);
         } catch (MalformedObjectNameException e) {
             throw new IllegalArgumentException("Specified name (" + name
-                    + ") results in invalid object name" + e);
+                    + ") results in invalid object name", e);
         }
     }
 

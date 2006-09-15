@@ -417,7 +417,7 @@ public class UnsafePocketCacheTest extends TestCase {
      */
     public void testConstructor2() {
         try {
-            new UnsafePocketCache(vl, 1, 10, 0.0f);
+            new UnsafePocketCache(vl, 1, 0.0f);
             shouldThrow();
         } catch (IllegalArgumentException e) {
         }
@@ -428,7 +428,7 @@ public class UnsafePocketCacheTest extends TestCase {
      */
     public void testConstructor3() {
         try {
-            new UnsafePocketCache(vl, 10, 1, Float.NaN);
+            new UnsafePocketCache(vl, 10, Float.NaN);
             shouldThrow();
         } catch (IllegalArgumentException e) {
         }

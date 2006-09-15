@@ -71,7 +71,7 @@ public class PocketCachesTest extends MockTestCase {
         assertEquals(0.5d, bean.getHitRatio());
         assertEquals(1l, bean.getNumberOfHits());
         assertEquals(2l, bean.getNumberOfMisses());
-        assertEquals(3, bean.size());
+        assertEquals(3, bean.getSize());
         } finally {
             PocketCaches.jxmUnregisterCache("asd");
         }

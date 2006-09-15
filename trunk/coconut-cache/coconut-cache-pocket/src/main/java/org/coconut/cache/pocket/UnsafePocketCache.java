@@ -6,23 +6,36 @@ package org.coconut.cache.pocket;
 import java.util.AbstractCollection;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.management.InstanceAlreadyExistsException;
+import javax.management.MBeanRegistrationException;
 
 /**
- * This class is partly adopted from
+ * <p>
+ * This class makes no guarantees as to the which order entries are evicted to
+ * make room for new entries. Currently this implementation uses a LRU (Least
+ * Recently Used) replacement policy. However, this might change in future
+ * releases.
+ * <p>
+ * This class is partly based on the ConcurrentHashMap provided by JSR 166.
+ * <p>
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
+
 public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
         PocketCache<K, V> {
-
     /* ---------------- Constants -------------- */
 
     /**
@@ -46,10 +59,25 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
 
     /* ---------------- Fields -------------- */
 
+    private int capacity;
+
+    private int evictWatermark;
+
     /**
-     * The table.
+     * The head of the doubly linked list.
      */
-    transient HashEntry<K, V>[] table;
+    private HashEntry<K, V> header;
+
+    private long hits;
+
+    /** The value loader used for constructing new values. */
+    private final ValueLoader<K, V> loader;
+
+    private long misses;
+
+    transient Set<Map.Entry<K, V>> entrySet;
+
+    transient Set<K> keySet;
 
     /**
      * The load factor for the hash table.
@@ -68,32 +96,343 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
     transient int size;
 
     /**
+     * The table.
+     */
+    transient HashEntry<K, V>[] table;
+
+    /**
      * The table is rehashed when its size exceeds this threshold. (The value of
      * this field is always (int)(capacity * loadFactor).)
      */
     transient int threshold;
 
-    transient Set<K> keySet;
-
-    transient Set<Map.Entry<K, V>> entrySet;
-
     transient Collection<V> values;
 
-    private int capacity;
+    /* ---------------- Inner Classes -------------- */
 
-    private int evictWatermark;
-    
-    private long hits;
+    static abstract class BaseIterator<K, V, E> implements Iterator<E> {
+        private HashEntry<K, V> entry;
 
-    private long misses;
+        private int expectedModCount;
 
-    /**
-     * The head of the doubly linked list.
-     */
-    private HashEntry<K, V> header;
+        private int index;
 
-    /** The value loader used for constructing new values. */
-    private final ValueLoader<K, V> loader;
+        private HashEntry<K, V> nextEntry;
+
+        UnsafePocketCache<K, ?> map;
+
+        BaseIterator(UnsafePocketCache<K, ?> map) {
+            expectedModCount = map.modCount;
+            this.map = map;
+            if (map.size > 0) {
+                findNextBucket();
+            }
+        }
+
+        public boolean hasNext() {
+            return nextEntry != null;
+        }
+
+        /**
+         * @see java.util.Iterator#next()
+         */
+        public abstract E next();
+
+        /**
+         * @see java.util.Iterator#remove()
+         */
+        public void remove() {
+            if (entry == null)
+                throw new IllegalStateException();
+            checkForConcurrentMod();
+            HashEntry e = entry;
+            entry = null;
+            map.remove(e.key, e.value);
+            expectedModCount = map.modCount;
+        }
+
+        private void findNextBucket() {
+            HashEntry[] entries = map.table;
+            while (index < entries.length) {
+                nextEntry = entries[index++];
+                if (nextEntry != null) {
+                    break;
+                }
+            }
+        }
+
+        void checkForConcurrentMod() throws ConcurrentModificationException {
+            if (expectedModCount != map.modCount) {
+                throw new ConcurrentModificationException();
+            }
+        }
+
+        HashEntry<K, V> nextEntry() {
+            checkForConcurrentMod();
+            HashEntry<K, V> e = nextEntry;
+            entry = nextEntry;
+            if (e == null)
+                throw new NoSuchElementException();
+            nextEntry = nextEntry.next;
+            if (nextEntry == null) {
+                findNextBucket();
+            }
+            return e;
+        }
+    }
+
+    static class EntrySet<K, V> extends AbstractSet<Map.Entry<K, V>> {
+        UnsafePocketCache<K, V> map;
+
+        EntrySet(UnsafePocketCache<K, V> map) {
+            this.map = map;
+        }
+
+        @Override
+        public void clear() {
+            map.clear();
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            if (!(o instanceof Map.Entry))
+                return false;
+            Map.Entry<?, ?> e = (Map.Entry<?, ?>) o;
+            V v = map.get(e.getKey());
+            Object val = e.getValue();
+            return v != null && (v == val || v.equals(val));
+        }
+
+        /**
+         * @see java.util.AbstractCollection#iterator()
+         */
+        @Override
+        public Iterator<Map.Entry<K, V>> iterator() {
+            return map.newEntrySetIterator();
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            if (!(o instanceof Map.Entry))
+                return false;
+            Map.Entry<?, ?> e = (Map.Entry<?, ?>) o;
+            return map.remove(e.getKey(), e.getValue());
+        }
+
+        /**
+         * @see java.util.AbstractCollection#size()
+         */
+        @Override
+        public int size() {
+            return map.size();
+        }
+    }
+
+    static class EntrySetIterator<K, V> extends BaseIterator<K, V, Map.Entry<K, V>> {
+        EntrySetIterator(UnsafePocketCache<K, V> map) {
+            super(map);
+        }
+
+        @Override
+        public Map.Entry<K, V> next() {
+            return nextEntry();
+        }
+    }
+
+    static class HashEntry<K, V> implements Map.Entry<K, V> {
+        @SuppressWarnings("unchecked")
+        static final <K, V> HashEntry<K, V>[] newArray(int i) {
+            return new HashEntry[i];
+        }
+
+        HashEntry<K, V> before, after, next;
+
+        int flag;
+
+        final int hash;
+
+        final K key;
+
+        V value;
+
+        HashEntry(K key, int hash, HashEntry<K, V> next, V value) {
+            this.key = key;
+            this.value = value;
+            this.hash = hash;
+            this.next = next;
+        }
+
+        public final boolean equals(Object o) {
+            if (!(o instanceof Map.Entry))
+                return false;
+            Map.Entry e = (Map.Entry) o;
+            Object key1 = getKey();
+            Object key2 = e.getKey();
+            if (key1 == key2 || (key1 != null && key1.equals(key2))) {
+                Object value1 = getValue();
+                Object value2 = e.getValue();
+                if (value1 == value2 || (value1 != null && value1.equals(value2)))
+                    return true;
+            }
+            return false;
+        }
+
+        public final K getKey() {
+            return key;
+        }
+
+        public final V getValue() {
+            return value;
+        }
+
+        public final int hashCode() {
+            return (key == null ? 0 : key.hashCode())
+                    ^ (value == null ? 0 : value.hashCode());
+        }
+
+        public final V setValue(V newValue) {
+            V oldValue = value;
+            value = newValue;
+            return oldValue;
+        }
+
+        public final String toString() {
+            return key + " = " + value;
+        }
+
+        void accessed(UnsafePocketCache<K, V> m) {
+            m.modCount++;
+            remove();
+            addBefore(m.header);
+        }
+
+        /**
+         * Inserts this entry before the specified existing entry in the list.
+         */
+        void addBefore(HashEntry<K, V> existingEntry) {
+            after = existingEntry;
+            before = existingEntry.before;
+            before.after = this;
+            after.before = this;
+        }
+
+        /**
+         * This method is invoked whenever the entry is removed from the table.
+         */
+        void entryRemoved(UnsafePocketCache<K, V> m) {
+        }
+
+        /**
+         * This method is invoked whenever the value in an entry is overwritten
+         * by an invocation of put(k,v) for a key k that's already in the
+         * HashMap.
+         */
+        void entryValueUpdated(UnsafePocketCache<K, V> m) {
+        }
+
+        /**
+         * Removes this entry from the linked list.
+         */
+        void remove() {
+            before.after = after;
+            after.before = before;
+        }
+    }
+
+    static class KeyIterator<K, V> extends BaseIterator<K, V, K> {
+        KeyIterator(UnsafePocketCache<K, ?> map) {
+            super(map);
+        }
+
+        @Override
+        public K next() {
+            return nextEntry().getKey();
+        }
+    }
+
+    static class KeySet<K> extends AbstractSet<K> {
+        UnsafePocketCache<K, ?> map;
+
+        KeySet(UnsafePocketCache<K, ?> map) {
+            this.map = map;
+        }
+
+        @Override
+        public void clear() {
+            map.clear();
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            return map.containsKey(o);
+        }
+
+        /**
+         * @see java.util.AbstractCollection#iterator()
+         */
+        @Override
+        public Iterator<K> iterator() {
+            return map.newKeyIterator();
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            return map.remove(o) != null;
+        }
+
+        /**
+         * @see java.util.AbstractCollection#size()
+         */
+        @Override
+        public int size() {
+            return map.size();
+        }
+    }
+
+    static class ValueIterator<K, V> extends BaseIterator<K, V, V> {
+        ValueIterator(UnsafePocketCache<K, V> map) {
+            super(map);
+        }
+
+        @Override
+        public V next() {
+            return nextEntry().getValue();
+        }
+    }
+
+    static class Values<V> extends AbstractCollection<V> {
+        UnsafePocketCache<?, V> map;
+
+        Values(UnsafePocketCache<?, V> map) {
+            this.map = map;
+        }
+
+        @Override
+        public void clear() {
+            map.clear();
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            return map.containsValue(o);
+        }
+
+        /**
+         * @see java.util.AbstractCollection#iterator()
+         */
+        @Override
+        public Iterator<V> iterator() {
+            return map.newValueIterator();
+        }
+
+        /**
+         * @see java.util.AbstractCollection#size()
+         */
+        @Override
+        public int size() {
+            return map.size();
+        }
+    }
 
     /* ---------------- Small Utilities -------------- */
 
@@ -122,30 +461,52 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
         return hash & (tableLength - 1);
     }
 
-    /* ---------------- Inner Classes -------------- */
-
+    /**
+     * Constructs an empty <tt>UnsafePocketCache</tt> with the specified
+     * loader, the default capacity (1000), and the default load factor (0.75).
+     * 
+     * @param loader
+     *            the loader used for lazily construction missing values.
+     * @throws NullPointerException
+     *             if the specified loader is null
+     */
     public UnsafePocketCache(ValueLoader<K, V> loader) {
         this(loader, DEFAULT_CAPACITY);
     }
-    
+
+    /**
+     * Constructs an empty <tt>UnsafePocketCache</tt> with the specified
+     * loader, capacity, and the default load factor (0.75).
+     * 
+     * @param loader
+     *            the loader used for lazily construction missing values.
+     * @param capacity
+     *            the maximum number of entries allowed in the cache
+     * @throws NullPointerException
+     *             if the specified loader is <tt>null</tt>
+     * @throws IllegalArgumentException
+     *             if the capacity is nonpositive
+     */
     public UnsafePocketCache(ValueLoader<K, V> loader, int capacity) {
         this(loader, capacity, DEFAULT_LOAD_FACTOR);
     }
 
     /**
-     * Creates a new, empty map with the specified initial capacity, and load
-     * factor.
+     * Constructs an empty <tt>UnsafePocketCache</tt> with the specified
+     * loader, capacity, and load factor.
      * 
-     * @param initialCapacity
-     *            the initial capacity. The implementation performs internal
-     *            sizing to accommodate this many elements.
+     * @param loader
+     *            the loader used for lazily construction missing values.
+     * @param capacity
+     *            the maximum number of entries allowed in the cache
      * @param loadFactor
      *            the load factor threshold, used to control resizing. Resizing
      *            may be performed when the average number of elements per bin
      *            exceeds this threshold.
      * @throws IllegalArgumentException
-     *             if the initial capacity is negative or the load factor is
-     *             nonpositive.
+     *             if the capacity or the load factor is nonpositive
+     * @throws NullPointerException
+     *             if the specified loader is <tt>null</tt>
      */
     public UnsafePocketCache(ValueLoader<K, V> loader, int capacity, float loadFactor) {
         if (loader == null) {
@@ -162,7 +523,7 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
         int c = 1;
         while (c < (capacity / loadFactor))
             c <<= 1;
-    
+
         this.loader = loader;
         this.loadFactor = loadFactor;
         this.capacity = capacity;
@@ -173,13 +534,8 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
     }
 
     /**
-     * Return properly casted first entry of bin for given hash
+     * @see java.util.AbstractMap#clear()
      */
-    private HashEntry<K, V> getFirst(int hash) {
-        HashEntry[] tab = table;
-        return (HashEntry<K, V>) tab[hash & (tab.length - 1)];
-    }
-
     public void clear() {
         if (size != 0) {
             modCount++;
@@ -192,6 +548,9 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
         }
     }
 
+    /**
+     * @see java.util.AbstractMap#containsKey(java.lang.Object)
+     */
     @Override
     public boolean containsKey(Object key) {
         if (key == null) {
@@ -210,6 +569,9 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
         return false;
     }
 
+    /**
+     * @see java.util.AbstractMap#containsValue(java.lang.Object)
+     */
     @Override
     public boolean containsValue(Object value) {
         if (value == null) {
@@ -239,6 +601,32 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
         return (es != null) ? es : (entrySet = new EntrySet<K, V>(this));
     }
 
+    /**
+     * @see org.coconut.cache.pocket.PocketCache#evict()
+     */
+    public void evict() {
+        trimToSize(evictWatermark);
+    }
+
+    /**
+     * Evicts one entry and returns it.
+     * 
+     * @return the evicted entry or <tt>null</tt> if the cache was empy.
+     */
+    public Map.Entry<K, V> evictNext() {
+        if (size >= 0) {
+            ++modCount;
+            HashEntry<K, V> e = header.after;
+            remove(e.key);
+            evicted(e);
+            return e;
+        }
+        return null;
+    }
+
+    /**
+     * @see java.util.AbstractMap#get(java.lang.Object)
+     */
     @Override
     public V get(Object key) {
         int hash = hash(key.hashCode());
@@ -254,9 +642,82 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
             }
         }
         misses++;
-        return loadValue(key, hash);
+        K k = (K) key;
+        V v = loadValue(k);
+        if (v != null) {
+            put(k, v, false);
+        }
+        return v;
     }
 
+    /**
+     * @see org.coconut.cache.pocket.PocketCache#getAll(java.util.Collection)
+     */
+    public Map<K, V> getAll(Collection<? extends K> keys) {
+        if (keys == null) {
+            throw new NullPointerException("keys is null");
+        }
+        HashMap<K, V> h = new HashMap<K, V>();
+        for (K key : keys) {
+            h.put(key, get(key));
+        }
+        return h;
+    }
+
+    /**
+     * @see org.coconut.cache.pocket.PocketCache#getHardLimit()
+     */
+    public int getCapacity() {
+        return capacity;
+    }
+
+    /**
+     * @see org.coconut.cache.pocket.PocketCache#getDefaultTrimSize()
+     */
+    public int getEvictWatermark() {
+        return evictWatermark;
+    }
+
+    /**
+     * @see org.coconut.cache.pocket.PocketCache#getHitRatio()
+     */
+    public double getHitRatio() {
+        return hits == 0 && misses == 0 ? Double.NaN : 100*((double) hits / (misses + hits));
+    }
+
+    /**
+     * @see org.coconut.cache.pocket.PocketCache#getNumberOfHits()
+     */
+    public long getNumberOfHits() {
+        return hits;
+    }
+
+    /**
+     * @see org.coconut.cache.pocket.PocketCache#getNumberOfMisses()
+     */
+    public long getNumberOfMisses() {
+        return misses;
+    }
+
+    /**
+     * @see java.util.AbstractMap#isEmpty()
+     */
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    /**
+     * @see java.util.AbstractMap#keySet()
+     */
+    @Override
+    public Set<K> keySet() {
+        Set<K> ks = keySet;
+        return (ks != null) ? ks : (keySet = new KeySet<K>(this));
+    }
+
+    /**
+     * @see org.coconut.cache.pocket.PocketCache#peek(java.lang.Object)
+     */
     public V peek(Object key) {
         int hash = hash(key.hashCode());
         if (size != 0) {
@@ -271,105 +732,36 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
         return null;
     }
 
-    V loadValue(Object key, int hash) {
-        K k = (K) key;
-        V v = loader.load(k);
-        // check null, throw exception?
-        if (v == null) {
-            v = handleNullGet(k);
-        }
-        if (v != null) {
-            put(k, v, false);
-        }
-        return v;
-    }
-
     /**
-     * This can be overridden to provide custom handling for cases where the
-     * cache is unable to find a mapping for a given key. This can be used, for
-     * example, to provide a failfast behaviour if the cache is supposed to
-     * contain a value for any given key.
-     * 
-     * <pre>
-     * public class MyCacheImpl&lt;K, V&gt; extends AbstractCache&lt;K, V&gt; {
-     *     protected V handleNullGet(K key) {
-     *         throw new CacheRuntimeException(&quot;No value defined for Key [key=&quot; + key + &quot;]&quot;);
-     *     }
-     * }
-     * </pre>
-     * 
-     * @param key
-     *            the key for which no value could be found
-     * @return <tt>null</tt> or any value that should be used instead
+     * @see java.util.AbstractMap#put(java.lang.Object, java.lang.Object)
      */
-    protected V handleNullGet(K key) {
-        return null; // by default just return null
-    }
-
-    public boolean isEmpty() {
-        return size == 0;
-    }
-
-    /**
-     * @see java.util.AbstractMap#keySet()
-     */
-    @Override
-    public Set<K> keySet() {
-        Set<K> ks = keySet;
-        return (ks != null) ? ks : (keySet = new KeySet<K>(this));
-    }
-
     @Override
     public V put(K key, V value) {
         return put(key, value, false);
     }
 
-    V put(K key, V value, boolean onlyIfAbsent) {
-        if (key == null) {
-            throw new NullPointerException("key is null");
-        } else if (value == null) {
-            throw new NullPointerException("value is null");
-        }
-        int hash = hash(key.hashCode());
-        if (size >= capacity) {
-            HashEntry<K, V> removed = header.after;
-            remove(removed.key);
-            evicted(removed);
-        } else if (size >= threshold) {
-            rehash(); // ensure capacity
-
-        }
-        HashEntry<K, V>[] tab = table;
-        int index = hash & (tab.length - 1);
-        HashEntry<K, V> first = tab[index];
-        HashEntry<K, V> e = first;
-        while (e != null && (e.hash != hash || !key.equals(e.key))) {
-            e = e.next;
-        }
-        V oldValue;
-        if (e != null) {
-            oldValue = e.value;
-            if (!onlyIfAbsent) {
-                e.value = value;
-            }
-        } else {
-            oldValue = null;
-            ++modCount;
-            tab[index] = e = new HashEntry<K, V>(key, hash, first, value);
-            e.addBefore(header);
-            size++;
-        }
-        return oldValue;
-    }
-
+    /**
+     * @see java.util.AbstractMap#putAll(java.util.Map)
+     */
     @Override
     public void putAll(Map<? extends K, ? extends V> t) {
-        int evictItems =(size + t.size()) - capacity;
+        int evictItems = (size + t.size()) - capacity;
         if (evictItems > 0) {
             trimToSize(Math.max(0, capacity - evictItems));
         }
         super.putAll(t);
     }
+
+    // final HashEntry<K, V> getEntry(Object key, int hash) {
+    // HashEntry<K, V> e = getFirst(hash);
+    // while (e != null) {
+    // if (e.hash == hash && key.equals(e.key)) {
+    // return e;
+    // }
+    // e = e.next;
+    // }
+    // return null;
+    // }
 
     /**
      * @see java.util.concurrent.ConcurrentMap#putIfAbsent(java.lang.Object,
@@ -379,6 +771,9 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
         return put(key, value, true);
     }
 
+    /**
+     * @see java.util.AbstractMap#remove(java.lang.Object)
+     */
     public V remove(Object key) {
         if (key == null) {
             throw new NullPointerException("key is null");
@@ -387,32 +782,15 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
         return remove(key, hash, null);
     }
 
-    public void resetStatistics() {
-        hits = 0;
-        misses = 0;
-    }
-
-    public long getNumberOfHits() {
-        return hits;
-    }
-
-    public long getNumberOfMisses() {
-        return misses;
-    }
-
-    public double getHitRatio() {
-        return hits == 0 && misses == 0 ? Double.NaN : (hits / (misses + hits));
-    }
-
-    public V remove(Object key, int hash, Object value) {
+    private V remove(Object key, int hash, Object value) {
         HashEntry<K, V>[] tab = table;
         int index = hash & (tab.length - 1);
         HashEntry<K, V> first = tab[index];
         HashEntry<K, V> e = first;
         HashEntry<K, V> prev = first;
         while (e != null && (e.hash != hash || !key.equals(e.key))) {
-            e = e.next;
             prev = e;
+            e = e.next;
         }
         V oldValue = null;
         if (e != null) {
@@ -499,427 +877,46 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
         return replaced;
     }
 
+    /**
+     * @see org.coconut.cache.pocket.PocketCache#resetStatistics()
+     */
+    public void resetStatistics() {
+        hits = 0;
+        misses = 0;
+    }
+
+    /**
+     * @see org.coconut.cache.pocket.PocketCache#setCapacity(int)
+     */
+    public void setCapacity(int capacity) {
+        if (capacity <= 0) {
+            throw new IllegalArgumentException("capacity must be >0, was " + capacity);
+        }
+        this.capacity = capacity;
+        if (evictWatermark >= capacity) {
+            evictWatermark = capacity - 1;
+        }
+    }
+
+    /**
+     * @see org.coconut.cache.pocket.PocketCache#setEvictWatermark(int)
+     */
+    public void setEvictWatermark(int trimSize) {
+        // TODO Auto-generated method stub
+
+    }
+
+    /**
+     * @see java.util.AbstractMap#size()
+     */
     @Override
     public int size() {
         return size;
     }
 
     /**
-     * @see java.util.AbstractMap#values()
+     * @see org.coconut.cache.pocket.PocketCache#trimToSize(int)
      */
-    @Override
-    public Collection<V> values() {
-        Collection<V> vs = values;
-        return (vs != null) ? vs : (values = new Values<V>(this));
-    }
-
-    /**
-     * @param i
-     */
-    private void rehash() {
-        HashEntry<K, V>[] oldTable = table;
-        int oldCapacity = oldTable.length;
-        if (oldCapacity >= MAXIMUM_CAPACITY)
-            return;
-        //TODO perhaps we should check with capacity
-        HashEntry<K, V>[] newTable = HashEntry.newArray(oldCapacity << 1);
-        threshold = (int) (newTable.length * loadFactor);
-        int sizeMask = newTable.length - 1;
-
-        for (int i = 0; i < oldCapacity; i++) {
-            HashEntry<K, V> e = oldTable[i];
-
-            if (e != null) {
-                oldTable[i] = null;
-                do {
-                    HashEntry<K, V> nextEntry = e.next;
-                    int tableIndex = e.hash & sizeMask;
-                    e.next = newTable[tableIndex];
-                    newTable[tableIndex] = e;
-                    e = nextEntry;
-                } while (e != null);
-            }
-        }
-        table = newTable;
-    }
-
-    // final HashEntry<K, V> getEntry(Object key, int hash) {
-    // HashEntry<K, V> e = getFirst(hash);
-    // while (e != null) {
-    // if (e.hash == hash && key.equals(e.key)) {
-    // return e;
-    // }
-    // e = e.next;
-    // }
-    // return null;
-    // }
-
-    Iterator<Map.Entry<K, V>> newEntrySetIterator() {
-        return new EntrySetIterator<K, V>(this);
-    }
-
-    Iterator<K> newKeyIterator() {
-        return new KeyIterator<K, V>(this);
-    }
-
-    Iterator<V> newValueIterator() {
-        return new ValueIterator<K, V>(this);
-    }
-
-    static abstract class BaseIterator<K, V, E> implements Iterator<E> {
-        private HashEntry<K, V> entry;
-
-        private int expectedModCount;
-
-        private int index;
-
-        private HashEntry<K, V> nextEntry;
-
-        UnsafePocketCache<K, ?> map;
-
-        BaseIterator(UnsafePocketCache<K, ?> map) {
-            expectedModCount = map.modCount;
-            this.map = map;
-            if (map.size > 0) {
-                findNextBucket();
-            }
-        }
-
-        public boolean hasNext() {
-            return nextEntry != null;
-        }
-
-        /**
-         * @see java.util.Iterator#next()
-         */
-        public abstract E next();
-
-        /**
-         * @see java.util.Iterator#remove()
-         */
-        public void remove() {
-            if (entry == null)
-                throw new IllegalStateException();
-            checkForConcurrentMod();
-            HashEntry e = entry;
-            entry = null;
-            map.remove(e.key, e.value);
-            expectedModCount = map.modCount;
-        }
-
-        private void findNextBucket() {
-            HashEntry[] entries = map.table;
-            while (index < entries.length) {
-                nextEntry = entries[index++];
-                if (nextEntry != null) {
-                    break;
-                }
-            }
-        }
-
-        void checkForConcurrentMod() throws ConcurrentModificationException {
-            if (expectedModCount != map.modCount) {
-                throw new ConcurrentModificationException();
-            }
-        }
-
-        HashEntry<K, V> nextEntry() {
-            checkForConcurrentMod();
-            HashEntry<K, V> e = nextEntry;
-            entry = nextEntry;
-            if (e == null)
-                throw new NoSuchElementException();
-            nextEntry = nextEntry.next;
-            if (nextEntry == null) {
-                findNextBucket();
-            }
-            return e;
-        }
-    }
-
-    static class HashEntry<K, V> implements Map.Entry<K, V> {
-        HashEntry<K, V> before, after, next;
-
-        final int hash;
-
-        final K key;
-
-        int flag;
-
-        V value;
-
-        HashEntry(K key, int hash, HashEntry<K, V> next, V value) {
-            this.key = key;
-            this.value = value;
-            this.hash = hash;
-            this.next = next;
-        }
-
-        public final boolean equals(Object o) {
-            if (!(o instanceof Map.Entry))
-                return false;
-            Map.Entry e = (Map.Entry) o;
-            Object key1 = getKey();
-            Object key2 = e.getKey();
-            if (key1 == key2 || (key1 != null && key1.equals(key2))) {
-                Object value1 = getValue();
-                Object value2 = e.getValue();
-                if (value1 == value2 || (value1 != null && value1.equals(value2)))
-                    return true;
-            }
-            return false;
-        }
-
-        public final K getKey() {
-            return key;
-        }
-
-        public final V getValue() {
-            return value;
-        }
-
-        public final int hashCode() {
-            return (key == null ? 0 : key.hashCode())
-                    ^ (value == null ? 0 : value.hashCode());
-        }
-
-        public final V setValue(V newValue) {
-            V oldValue = value;
-            value = newValue;
-            return oldValue;
-        }
-
-        public final String toString() {
-            return key + " = " + value;
-        }
-
-        @SuppressWarnings("unchecked")
-        static final <K, V> HashEntry<K, V>[] newArray(int i) {
-            return new HashEntry[i];
-        }
-
-        void accessed(UnsafePocketCache<K, V> m) {
-            m.modCount++;
-            remove();
-            addBefore(m.header);
-        }
-
-        /**
-         * Removes this entry from the linked list.
-         */
-        void remove() {
-            before.after = after;
-            after.before = before;
-        }
-
-        /**
-         * Inserts this entry before the specified existing entry in the list.
-         */
-        void addBefore(HashEntry<K, V> existingEntry) {
-            after = existingEntry;
-            before = existingEntry.before;
-            before.after = this;
-            after.before = this;
-        }
-
-        /**
-         * This method is invoked whenever the entry is removed from the table.
-         */
-        void entryRemoved(UnsafePocketCache<K, V> m) {
-        }
-
-        /**
-         * This method is invoked whenever the value in an entry is overwritten
-         * by an invocation of put(k,v) for a key k that's already in the
-         * HashMap.
-         */
-        void entryValueUpdated(UnsafePocketCache<K, V> m) {
-        }
-    }
-
-    static class EntrySet<K, V> extends AbstractSet<Map.Entry<K, V>> {
-        UnsafePocketCache<K, V> map;
-
-        EntrySet(UnsafePocketCache<K, V> map) {
-            this.map = map;
-        }
-
-        @Override
-        public void clear() {
-            map.clear();
-        }
-
-        @Override
-        public boolean contains(Object o) {
-            if (!(o instanceof Map.Entry))
-                return false;
-            Map.Entry<?, ?> e = (Map.Entry<?, ?>) o;
-            V v = map.get(e.getKey());
-            Object val = e.getValue();
-            return v != null && (v == val || v.equals(val));
-        }
-
-        /**
-         * @see java.util.AbstractCollection#iterator()
-         */
-        @Override
-        public Iterator<Map.Entry<K, V>> iterator() {
-            return map.newEntrySetIterator();
-        }
-
-        @Override
-        public boolean remove(Object o) {
-            if (!(o instanceof Map.Entry))
-                return false;
-            Map.Entry<?, ?> e = (Map.Entry<?, ?>) o;
-            return map.remove(e.getKey(), e.getValue());
-        }
-
-        /**
-         * @see java.util.AbstractCollection#size()
-         */
-        @Override
-        public int size() {
-            return map.size();
-        }
-    }
-
-    static class EntrySetIterator<K, V> extends BaseIterator<K, V, Map.Entry<K, V>> {
-        EntrySetIterator(UnsafePocketCache<K, V> map) {
-            super(map);
-        }
-
-        @Override
-        public Map.Entry<K, V> next() {
-            return nextEntry();
-        }
-    }
-
-    static class KeyIterator<K, V> extends BaseIterator<K, V, K> {
-        KeyIterator(UnsafePocketCache<K, ?> map) {
-            super(map);
-        }
-
-        @Override
-        public K next() {
-            return nextEntry().getKey();
-        }
-    }
-
-    static class KeySet<K> extends AbstractSet<K> {
-        UnsafePocketCache<K, ?> map;
-
-        KeySet(UnsafePocketCache<K, ?> map) {
-            this.map = map;
-        }
-
-        @Override
-        public void clear() {
-            map.clear();
-        }
-
-        @Override
-        public boolean contains(Object o) {
-            return map.containsKey(o);
-        }
-
-        /**
-         * @see java.util.AbstractCollection#iterator()
-         */
-        @Override
-        public Iterator<K> iterator() {
-            return map.newKeyIterator();
-        }
-
-        /**
-         * @see java.util.AbstractCollection#size()
-         */
-        @Override
-        public int size() {
-            return map.size();
-        }
-
-        @Override
-        public boolean remove(Object o) {
-            return map.remove(o) != null;
-        }
-    }
-
-    static class ValueIterator<K, V> extends BaseIterator<K, V, V> {
-        ValueIterator(UnsafePocketCache<K, V> map) {
-            super(map);
-        }
-
-        @Override
-        public V next() {
-            return nextEntry().getValue();
-        }
-    }
-
-    static class Values<V> extends AbstractCollection<V> {
-        UnsafePocketCache<?, V> map;
-
-        Values(UnsafePocketCache<?, V> map) {
-            this.map = map;
-        }
-
-        @Override
-        public void clear() {
-            map.clear();
-        }
-
-        @Override
-        public boolean contains(Object o) {
-            return map.containsValue(o);
-        }
-
-        /**
-         * @see java.util.AbstractCollection#iterator()
-         */
-        @Override
-        public Iterator<V> iterator() {
-            return map.newValueIterator();
-        }
-
-        /**
-         * @see java.util.AbstractCollection#size()
-         */
-        @Override
-        public int size() {
-            return map.size();
-        }
-    }
-
-    /**
-     * Don't attempt to modify cache from within this method. Don't reuse the
-     * entry.
-     * 
-     * @param entry
-     */
-    void evicted(Map.Entry<K, V> entry) {
-
-    }
-
-    public static void main(String[] args) throws InterruptedException {
-        UnsafePocketCache map = new UnsafePocketCache(new IntegerToStringValueLoader(), 3);
-        map.put(1, "A");
-        map.put(2, "B");
-        map.put(3, "C");
-        map.get(1);
-        map.put(4, "D");
-        map.put(5, "E");
-        map.trimToSize(0);
-        HashMap hm=new HashMap(1000);
-        Thread.sleep(1000000);
-    }
-
-    /**
-     * @see org.coconut.cache.pocket.PocketCache#evict()
-     */
-    public void evict() {
-        System.out.println(header.after.after.after.after.key);
-    }
-
     public void trimToSize(int newSize) {
         if (newSize < 0) {
             throw new IllegalArgumentException("newSize must be >= 0, was " + newSize);
@@ -972,66 +969,167 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
         }
     }
 
-    public Map.Entry<K, V> evictNext() {
-        if (size >= 0) {
-            ++modCount;
-            HashEntry<K, V> e = header.after;
-            remove(e.key);
-            evicted(e);
-            return e;
-        }
-        return null;
+    /**
+     * @see java.util.AbstractMap#values()
+     */
+    @Override
+    public Collection<V> values() {
+        Collection<V> vs = values;
+        return (vs != null) ? vs : (values = new Values<V>(this));
     }
 
     /**
-     * @see org.coconut.cache.pocket.PocketCache#getAll(java.util.Collection)
+     * Return properly casted first entry of bin for given hash
      */
-    public Map<K, V> getAll(Collection<? extends K> keys) {
-        if (keys == null) {
-            throw new NullPointerException("keys is null");
+    private HashEntry<K, V> getFirst(int hash) {
+        HashEntry[] tab = table;
+        return (HashEntry<K, V>) tab[hash & (tab.length - 1)];
+    }
+
+    /**
+     * @param i
+     */
+    private void rehash() {
+        HashEntry<K, V>[] oldTable = table;
+        int oldCapacity = oldTable.length;
+        if (oldCapacity >= MAXIMUM_CAPACITY)
+            return;
+        // TODO perhaps we should check with capacity
+        HashEntry<K, V>[] newTable = HashEntry.newArray(oldCapacity << 1);
+        threshold = (int) (newTable.length * loadFactor);
+        int sizeMask = newTable.length - 1;
+
+        for (int i = 0; i < oldCapacity; i++) {
+            HashEntry<K, V> e = oldTable[i];
+
+            if (e != null) {
+                oldTable[i] = null;
+                do {
+                    HashEntry<K, V> nextEntry = e.next;
+                    int tableIndex = e.hash & sizeMask;
+                    e.next = newTable[tableIndex];
+                    newTable[tableIndex] = e;
+                    e = nextEntry;
+                } while (e != null);
+            }
         }
-        HashMap<K, V> h = new HashMap<K, V>();
-        for (K key : keys) {
-            h.put(key, get(key));
-        }
-        return h;
+        table = newTable;
+    }
+
+    /**
+     * This can be overridden to provide custom handling for cases where the
+     * cache is unable to find a mapping for a given key. This can be used, for
+     * example, to provide a failfast behaviour if the cache is supposed to
+     * contain a value for any given key.
+     * 
+     * <pre>
+     * public class MyCacheImpl&lt;K, V&gt; extends AbstractCache&lt;K, V&gt; {
+     *     protected V handleNullGet(K key) {
+     *         throw new CacheRuntimeException(&quot;No value defined for Key [key=&quot; + key + &quot;]&quot;);
+     *     }
+     * }
+     * </pre>
+     * 
+     * @param key
+     *            the key for which no value could be found
+     * @return <tt>null</tt> or any value that should be used instead
+     */
+    protected V handleNullGet(K key) {
+        return null; // by default just return null
     }
 
     protected int itemsToEvictOnAdd() {
         return 1;
     }
-    /**
-     * @see org.coconut.cache.pocket.PocketCache#getDefaultTrimSize()
-     */
-    public int getEvictWatermark() {
-        return evictWatermark;
-    }
 
     /**
-     * @see org.coconut.cache.pocket.PocketCache#getHardLimit()
+     * Don't attempt to modify cache from within this method. Don't reuse the
+     * entry.
+     * 
+     * @param entry
      */
-    public int getCapacity() {
-        return capacity;
-    }
-
-    /**
-     * @see org.coconut.cache.pocket.PocketCache#setDefaultTrimSize(int)
-     */
-    public void setEvictWatermark(int trimSize) {
-        // TODO Auto-generated method stub
+    void evicted(Map.Entry<K, V> entry) {
 
     }
 
-    /**
-     * @see org.coconut.cache.pocket.PocketCache#setHardLimit(int)
-     */
-    public void setCapacity(int hardLimit) {
-        if (hardLimit <= 0) {
-            throw new IllegalArgumentException("hardLimit must be >0, was " + hardLimit);
+    protected V loadValue(K k) {
+        V v = loader.load(k);
+        if (v == null) {
+            v = handleNullGet(k);
         }
-        this.capacity = hardLimit;
-        if (evictWatermark >= hardLimit) {
-            evictWatermark = hardLimit - 1;
+        return v;
+    }
+
+    Iterator<Map.Entry<K, V>> newEntrySetIterator() {
+        return new EntrySetIterator<K, V>(this);
+    }
+
+    Iterator<K> newKeyIterator() {
+        return new KeyIterator<K, V>(this);
+    }
+
+    Iterator<V> newValueIterator() {
+        return new ValueIterator<K, V>(this);
+    }
+
+    V put(K key, V value, boolean onlyIfAbsent) {
+        if (key == null) {
+            throw new NullPointerException("key is null");
+        } else if (value == null) {
+            throw new NullPointerException("value is null");
         }
+        int hash = hash(key.hashCode());
+        if (size >= capacity) {
+//            System.out.println("trying to insert " + key + ", " + value);
+//            // System.out.println(size);
+//            System.out.println("entries before insert: " + this);
+            HashEntry<K, V> removed = header.after;
+
+//            System.out.println("table before insert: " +Arrays.toString(table));
+//            System.out.println("Removing: " + removed.key + ", " + removed.value);
+//            if (key.equals(33)) {
+//                System.out.println("Key:" + table[2].next.key);
+//            }
+            V v = remove(removed.key);
+//            System.out.println("this after remove " + this);
+//            System.out.println("table after remove " + Arrays.toString(table));
+//            System.out.println(size());
+//
+//            if (v == null) {
+//                throw new RuntimeException();
+//            }
+            evicted(removed);
+
+        } else if (size >= threshold) {
+            rehash(); // ensure capacity
+
+        }
+        HashEntry<K, V>[] tab = table;
+        int index = hash & (tab.length - 1);
+        HashEntry<K, V> first = tab[index];
+        HashEntry<K, V> e = first;
+        while (e != null && (e.hash != hash || !key.equals(e.key))) {
+            e = e.next;
+        }
+        V oldValue;
+        if (e != null) {
+            oldValue = e.value;
+            if (!onlyIfAbsent) {
+                e.value = value;
+            }
+        } else {
+            oldValue = null;
+            ++modCount;
+            tab[index] = e = new HashEntry<K, V>(key, hash, first, value);
+            e.addBefore(header);
+            size++;
+        }
+//
+//        System.out.println(Arrays.toString(table));
+//        System.out.println(this);
+//        System.out.println(size());
+//        System.out.println("-------------");
+//
+        return oldValue;
     }
 }

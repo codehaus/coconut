@@ -4,7 +4,6 @@
 package org.coconut.cache.pocket;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
@@ -88,7 +87,7 @@ public interface PocketCache<K, V> extends ConcurrentMap<K, V> {
     V peek(Object key);
 
     /**
-     * Resets the hit ratio.
+     * Resets the hit ratio (optional).
      * 
      * @throws UnsupportedOperationException
      *             if the cache does not allow resetting the cache statistics
