@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class OptimisticConcurrentPocketCache<K, V> implements ConcurrentMap<K, V>,
+public class OptimisticConcurrentPocketCache<K, V> implements PocketCache<K, V>,
         Serializable {
 
     /** serialVersionUID */
@@ -49,6 +49,7 @@ public class OptimisticConcurrentPocketCache<K, V> implements ConcurrentMap<K, V
     private final int pruneSize = 3; // items to prune on evict
 
     private final int hardLimit = 300;
+
     private final int softLimit = 100;
 
     /**
@@ -94,14 +95,11 @@ public class OptimisticConcurrentPocketCache<K, V> implements ConcurrentMap<K, V
         return misses.get();
     }
 
+    /**
+     * @see org.coconut.cache.pocket.PocketCache#getHitRatio()
+     */
     public double getHitRatio() {
-        long h = hits.get();
-        long m = misses.get();
-        final long sum = h + m;
-        if (sum == 0) {
-            return Float.NaN;
-        }
-        return ((double) h) / sum;
+        return PocketCaches.getCacheRatio(hits.get(), misses.get());
     }
 
     /**
@@ -303,5 +301,69 @@ public class OptimisticConcurrentPocketCache<K, V> implements ConcurrentMap<K, V
     protected void undoCallingNewValue(ValueLoader<K, V> loader, K key, V value,
             V discardedValue) {
 
+    }
+
+    /**
+     * @see org.coconut.cache.pocket.PocketCache#getAll(java.util.Collection)
+     */
+    public Map<K, V> getAll(Collection<? extends K> keys) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * @see org.coconut.cache.pocket.PocketCache#getCapacity()
+     */
+    public int getCapacity() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    /**
+     * @see org.coconut.cache.pocket.PocketCache#getEvictWatermark()
+     */
+    public int getEvictWatermark() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    /**
+     * @see org.coconut.cache.pocket.PocketCache#getNumberOfHits()
+     */
+    public long getNumberOfHits() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    /**
+     * @see org.coconut.cache.pocket.PocketCache#getNumberOfMisses()
+     */
+    public long getNumberOfMisses() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    /**
+     * @see org.coconut.cache.pocket.PocketCache#setCapacity(int)
+     */
+    public void setCapacity(int limit) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /**
+     * @see org.coconut.cache.pocket.PocketCache#setEvictWatermark(int)
+     */
+    public void setEvictWatermark(int trimSize) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /**
+     * @see org.coconut.cache.pocket.PocketCache#trimToSize(int)
+     */
+    public void trimToSize(int newSize) {
+        // TODO Auto-generated method stub
+        
     }
 }

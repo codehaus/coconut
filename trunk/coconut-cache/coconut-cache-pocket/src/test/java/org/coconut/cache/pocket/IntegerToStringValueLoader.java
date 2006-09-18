@@ -34,7 +34,7 @@ public class IntegerToStringValueLoader implements ValueLoader<Integer, String> 
     public static void main(String[] args) throws InterruptedException,
             InstanceAlreadyExistsException, MBeanRegistrationException {
         UnsafePocketCache c = new UnsafePocketCache(new IntegerToStringValueLoader(), 100);
-        PocketCache map = PocketCaches.synchronizedPocketCache(c);
+        PocketCache map = PocketCaches.synchronizedCache(c);
         // map.put(1, "A");
         // map.put(2, "B");
         // map.put(3, "C");

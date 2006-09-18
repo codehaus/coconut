@@ -4,6 +4,7 @@
 package org.coconut.cache.pocket;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
@@ -15,9 +16,9 @@ public interface PocketCache<K, V> extends ConcurrentMap<K, V> {
 
     /**
      * Performs cleanup of the cache. This might be everything from persisting
-     * stale data to disk to adapting the cache with a better eviction policy
-     * given the current access pattern. This is done to avoid paying the cost
-     * upfront by application threads when accessing entries in the cache
+     * removing stale entries to adapting the cache with a better eviction
+     * policy given the current access pattern. This is done to avoid paying the
+     * cost upfront by application threads when accessing entries in the cache
      * through {@link #get(Object)}.
      * <p>
      * Unless otherwise specified calling this method is the responsibility of
@@ -61,18 +62,19 @@ public interface PocketCache<K, V> extends ConcurrentMap<K, V> {
      * Works as {@link java.util.Map#get(Object)} with the following
      * modifications.
      * <p>
-     * If no mapping exists for the specified any configured {@link CacheLoader}
-     * is asked to try and fetch a value for the key.
+     * If no mapping exists for the specified key in the cache. The cache will
+     * attempt to retrieve the value from the configured {@link ValueLoader}.
+     * If the value can be succesfully retrieved from the loader it will
+     * automatically be put into the cache.
      */
     V get(Object key);
 
     /**
      * This method works analogoes to the {@link java.util.Map#get(Object)}
-     * method. However, it will not try to fetch missing items in any configured
-     * {@link ValueLoader}, it will only return a value if it actually exists
-     * in the cache. Furthermore it will not effect the statistics gathered by
-     * the cache.
-     * <p>
+     * method. However, it will not try to fetch missing items from the
+     * configured {@link ValueLoader}, it will only return a value if it
+     * actually exists in the cache. Furthermore, calling this method does not
+     * effect the statistics gathered by the cache.
      * 
      * @param key
      *            key whose associated value is to be returned.
@@ -123,10 +125,12 @@ public interface PocketCache<K, V> extends ConcurrentMap<K, V> {
     long getNumberOfMisses();
 
     /**
-     * Evicts elements until the size of the cache is the specified new size.
+     * Evicts elements until the size of the cache is the specified new size. If
+     * the specified newSize is greater then the current size nothing will
+     * happen
      * 
      * @param newSize
-     *            the new
+     *            the size of the cache
      * @throws IllegalArgumentException
      *             if the specified newSize is <0
      */
@@ -138,17 +142,29 @@ public interface PocketCache<K, V> extends ConcurrentMap<K, V> {
     int getEvictWatermark();
 
     /**
-     * Returns the hard limit of the cache or
-     * {@link java.lang.Integer#MAX_VALUE} if no hard limit exist.
+     * Returns the maximum number of elements this cache can hold or
+     * {@link java.lang.Integer#MAX_VALUE} if no hard limit exist or the cache
+     * does not support a hard limit.
      * 
-     * @see #setHardLimit(int)
+     * @see #setCapacity(int)
      */
     int getCapacity();
 
     /**
-     * Sets the hard limit of the the cache (optional operation). TODO: what if
-     * newHardLimit<size (evict entries or ignore) If defaultTrimSize is
-     * greater or equal to the new hard limit then set trimSize to hardLimit-1
+     * Sets the hard limit of the the cache (optional operation).
+     * <p>
+     * If the specified new limit is less then the current size of the cache. An
+     * implementation can choose to evict entries until the size of the cache.
+     * However, this is an implementation specific detail.
+     * <p>
+     * If defaultTrimSize is greater or equal to the new hard limit then set
+     * trimSize to hardLimit-1
+     * 
+     * @throws IllegalArgumentException
+     *             if the specified limit is not a positive number (>0)
+     * @throws UnsupportedOperationException
+     *             if the cache does not support a hard limit of the number of
+     *             cache entries.
      */
     void setCapacity(int limit);
 }

@@ -9,32 +9,33 @@ package org.coconut.cache.pocket;
  */
 public interface PocketCacheMXBean {
 
-    int getSize();
-
+    /**
+     * Clears the cache.
+     */
     void clear();
 
     void evict();
 
+    int getCapacity();
+
+    int getEvictWatermark();
+
+    double getHitRatio();
+
     long getNumberOfHits();
+
+    long getNumberOfMisses();
+
+    int getSize();
 
     /**
      * Resets the hit ratio.
-     * 
-     * @throws UnsupportedOperationException
-     *             if the cache does not allow resetting the cache statistics
-     *             (read-only cache)
      */
     void resetStatistics();
-    
-    long getNumberOfMisses();
 
-    double getHitRatio();
-    
-    int getCapacity();
     void setCapacity(int newCapacity);
+
+    void setEvictWatermark(int watermark);
+
     void trimToSize(int newSize);
-    
-    void setEvictWatermark(int trimSize);
-    
-    int getDefaultTrimSize();
 }

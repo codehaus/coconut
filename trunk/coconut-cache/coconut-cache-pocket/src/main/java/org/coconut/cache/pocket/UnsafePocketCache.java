@@ -6,19 +6,13 @@ package org.coconut.cache.pocket;
 import java.util.AbstractCollection;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.MBeanRegistrationException;
 
 /**
  * <p>
@@ -104,7 +98,7 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
      * The table is rehashed when its size exceeds this threshold. (The value of
      * this field is always (int)(capacity * loadFactor).)
      */
-    transient int threshold;
+    transient int rehashThreshold;
 
     transient Collection<V> values;
 
@@ -119,9 +113,9 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
 
         private HashEntry<K, V> nextEntry;
 
-        UnsafePocketCache<K, ?> map;
+        UnsafePocketCache<K, V> map;
 
-        BaseIterator(UnsafePocketCache<K, ?> map) {
+        BaseIterator(UnsafePocketCache<K, V> map) {
             expectedModCount = map.modCount;
             this.map = map;
             if (map.size > 0) {
@@ -152,7 +146,7 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
         }
 
         private void findNextBucket() {
-            HashEntry[] entries = map.table;
+            HashEntry<K, V>[] entries = map.table;
             while (index < entries.length) {
                 nextEntry = entries[index++];
                 if (nextEntry != null) {
@@ -340,7 +334,7 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
     }
 
     static class KeyIterator<K, V> extends BaseIterator<K, V, K> {
-        KeyIterator(UnsafePocketCache<K, ?> map) {
+        KeyIterator(UnsafePocketCache<K, V> map) {
             super(map);
         }
 
@@ -527,7 +521,7 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
         this.loader = loader;
         this.loadFactor = loadFactor;
         this.capacity = capacity;
-        threshold = (int) (c * loadFactor);
+        rehashThreshold = (int) (c * loadFactor);
         table = new HashEntry[c];
         header = new HashEntry<K, V>(null, -1, null, null);
         header.before = header.after = header;
@@ -682,7 +676,7 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
      * @see org.coconut.cache.pocket.PocketCache#getHitRatio()
      */
     public double getHitRatio() {
-        return hits == 0 && misses == 0 ? Double.NaN : 100*((double) hits / (misses + hits));
+        return PocketCaches.getCacheRatio(hits, misses);
     }
 
     /**
@@ -902,8 +896,7 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
      * @see org.coconut.cache.pocket.PocketCache#setEvictWatermark(int)
      */
     public void setEvictWatermark(int trimSize) {
-        // TODO Auto-generated method stub
-
+        this.evictWatermark = trimSize;
     }
 
     /**
@@ -996,7 +989,7 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
             return;
         // TODO perhaps we should check with capacity
         HashEntry<K, V>[] newTable = HashEntry.newArray(oldCapacity << 1);
-        threshold = (int) (newTable.length * loadFactor);
+        rehashThreshold = (int) (newTable.length * loadFactor);
         int sizeMask = newTable.length - 1;
 
         for (int i = 0; i < oldCapacity; i++) {
@@ -1052,6 +1045,22 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
 
     }
 
+    void removed(Map.Entry<K, V> entry) {
+
+    }
+
+    void added(Map.Entry<K, V> entry) {
+
+    }
+
+    void valueUpdated(Map.Entry<K, V> entry, V previousValue) {
+
+    }
+
+    void valueAccessed(Map.Entry<K, V> entry) {
+
+    }
+
     protected V loadValue(K k) {
         V v = loader.load(k);
         if (v == null) {
@@ -1080,29 +1089,11 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
         }
         int hash = hash(key.hashCode());
         if (size >= capacity) {
-//            System.out.println("trying to insert " + key + ", " + value);
-//            // System.out.println(size);
-//            System.out.println("entries before insert: " + this);
             HashEntry<K, V> removed = header.after;
-
-//            System.out.println("table before insert: " +Arrays.toString(table));
-//            System.out.println("Removing: " + removed.key + ", " + removed.value);
-//            if (key.equals(33)) {
-//                System.out.println("Key:" + table[2].next.key);
-//            }
-            V v = remove(removed.key);
-//            System.out.println("this after remove " + this);
-//            System.out.println("table after remove " + Arrays.toString(table));
-//            System.out.println(size());
-//
-//            if (v == null) {
-//                throw new RuntimeException();
-//            }
+            remove(removed.key);
             evicted(removed);
-
-        } else if (size >= threshold) {
+        } else if (size >= rehashThreshold) {
             rehash(); // ensure capacity
-
         }
         HashEntry<K, V>[] tab = table;
         int index = hash & (tab.length - 1);
@@ -1124,12 +1115,6 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
             e.addBefore(header);
             size++;
         }
-//
-//        System.out.println(Arrays.toString(table));
-//        System.out.println(this);
-//        System.out.println(size());
-//        System.out.println("-------------");
-//
         return oldValue;
     }
 }

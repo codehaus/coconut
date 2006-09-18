@@ -97,7 +97,7 @@ public class LoadableConcurrentMap<K, V> extends AbstractMap<K, V> implements Co
             } catch (ExecutionException e) {
                 if (e.getCause() instanceof Error) {
                     throw (Error) e.getCause();
-                } else if (e instanceof Exception) {
+                } else if (e.getCause() instanceof Exception) {
 
                 }
                 e.printStackTrace();
