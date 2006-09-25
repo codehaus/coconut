@@ -4,6 +4,11 @@ import org.coconut.core.Offerable;
 
 public interface Sink<T> extends Offerable<T> {
 
+    /**
+     * If for some reason the object cannot be enqueued
+     * @param o
+     * @throws SinkException
+     */
     void send(T o) throws SinkException;
     
     //or enqueue 
