@@ -3,6 +3,8 @@
  */
 package org.coconut.cache.pocket;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.AbstractCollection;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
@@ -15,21 +17,60 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 /**
+ * Hash table based implementation of the <tt>PocketCache</tt> interface. This
+ * class and its views and iterators implement all of the <em>optional</em>
+ * methods of the {@link Map}, {@link Iterator}, and {@link PocketCache}
+ * interfaces. This class makes <b>no</b> guarantees as to which order entries
+ * are evicted to make room for new entries. Currently this implementation uses
+ * a LRU (Least Recently Used) replacement policy. However, this might change in
+ * future releases.
  * <p>
- * This class makes no guarantees as to the which order entries are evicted to
- * make room for new entries. Currently this implementation uses a LRU (Least
- * Recently Used) replacement policy. However, this might change in future
- * releases.
+ * <b>Note that this implementation is not synchronized.</b> If multiple
+ * threads access this cache concurrently, and at least one of the threads
+ * modifies the cache structurally, it <i>must</i> be synchronized externally.
+ * (A structural modification is any operation that adds or deletes one or more
+ * mappings; merely changing the value associated with a key that an instance
+ * already contains is not a structural modification.) This is typically
+ * accomplished by synchronizing on some object that naturally encapsulates the
+ * cache.
  * <p>
- * This class is partly based on the ConcurrentHashMap provided by JSR 166.
+ * If no such object exists, the map should be "wrapped" using the
+ * {@link PocketCaches#synchronizedCache PocketCaches.synchronizedCache} method.
+ * This is best done at creation time, to prevent accidental unsynchronized
+ * access to the map:
+ * 
+ * <pre>
+ * PocketCache m = PocketCaches.synchronizedCache(new UnsafePocketCache());
+ * </pre>
+ * 
  * <p>
+ * The iterators returned by all of this class's "collection view methods" are
+ * <i>fail-fast</i>: if the cache is structurally modified at any time after
+ * the iterator is created, in any way except through the iterator's own
+ * <tt>remove</tt> method, the iterator will throw a
+ * {@link ConcurrentModificationException}. Thus, in the face of concurrent
+ * modification, the iterator fails quickly and cleanly, rather than risking
+ * arbitrary, non-deterministic behavior at an undetermined time in the future.
+ * <p>
+ * Note that the fail-fast behavior of an iterator cannot be guaranteed as it
+ * is, generally speaking, impossible to make any hard guarantees in the
+ * presence of unsynchronized concurrent modification. Fail-fast iterators throw
+ * <tt>ConcurrentModificationException</tt> on a best-effort basis. Therefore,
+ * it would be wrong to write a program that depended on this exception for its
+ * correctness: <i>the fail-fast behavior of iterators should be used only to
+ * detect bugs.</i>
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * 
+ * @param <K> the type of keys maintained by this cache
+ * @param <V> the type of mapped values
  */
 
+// This class is partly based on the ConcurrentHashMap provided by JSR 166.
 public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
-        PocketCache<K, V> {
+        PocketCache<K, V>, Serializable {
+
     /* ---------------- Constants -------------- */
 
     /**
@@ -98,9 +139,11 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
      * The table is rehashed when its size exceeds this threshold. (The value of
      * this field is always (int)(capacity * loadFactor).)
      */
-    transient int rehashThreshold;
+    int rehashThreshold;
 
     transient Collection<V> values;
+
+    private final boolean serializeEntries;
 
     /* ---------------- Inner Classes -------------- */
 
@@ -503,6 +546,11 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
      *             if the specified loader is <tt>null</tt>
      */
     public UnsafePocketCache(ValueLoader<K, V> loader, int capacity, float loadFactor) {
+        this(loader, capacity, loadFactor, true);
+    }
+
+    public UnsafePocketCache(ValueLoader<K, V> loader, int capacity, float loadFactor,
+            boolean serializeEntries) {
         if (loader == null) {
             throw new NullPointerException("loader is null");
         } else if (capacity <= 0) {
@@ -525,6 +573,7 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
         table = new HashEntry[c];
         header = new HashEntry<K, V>(null, -1, null, null);
         header.before = header.after = header;
+        this.serializeEntries = serializeEntries;
     }
 
     /**
@@ -1116,5 +1165,61 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
             size++;
         }
         return oldValue;
+    }
+
+    /**
+     * Save the state of the <tt>HashMap</tt> instance to a stream (i.e.,
+     * serialize it).
+     * 
+     * @serialData The <i>capacity</i> of the HashMap (the length of the bucket
+     *             array) is emitted (int), followed by the <i>size</i> (an
+     *             int, the number of key-value mappings), followed by the key
+     *             (Object) and value (Object) for each key-value mapping. The
+     *             key-value mappings are emitted in no particular order.
+     */
+    private void writeObject(java.io.ObjectOutputStream s) throws IOException {
+
+        // Write out the threshold, loadfactor, and any hidden stuff
+        s.defaultWriteObject();
+
+        // Write out number of buckets
+        s.writeInt(table.length);
+
+        // Write out size (number of Mappings)
+        s.writeInt(size);
+
+        // Write out keys and values (alternating)
+        if (serializeEntries) {
+            for (HashEntry<K, V> e = header.after; e != header; e = e.after) {
+                s.writeObject(e.getKey());
+                s.writeObject(e.getValue());
+            }
+        }
+    }
+
+    /**
+     * Reconstitute the <tt>HashMap</tt> instance from a stream (i.e.,
+     * deserialize it).
+     */
+    private void readObject(java.io.ObjectInputStream s) throws IOException,
+            ClassNotFoundException {
+        // Read in the threshold, loadfactor, and any hidden stuff
+        s.defaultReadObject();
+
+        // Read in number of buckets and allocate the bucket array;
+        int numBuckets = s.readInt();
+        table = new HashEntry[numBuckets];
+
+        // Read in size (number of Mappings)
+        int size = s.readInt();
+
+        // Read the keys and values, and put the mappings in the HashMap
+        if (serializeEntries) {
+            for (int i = 0; i < size; i++) {
+                K key = (K) s.readObject();
+                V value = (V) s.readObject();
+                put(key, value);
+            }
+        }
     }
 }

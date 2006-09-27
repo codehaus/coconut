@@ -3,9 +3,9 @@
  */
 package org.coconut.cache.pocket;
 
+import java.io.Serializable;
 import java.lang.ref.SoftReference;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -25,7 +25,7 @@ import java.util.Map;
  * at creation time, to prevent accidental unsynchronized access to the map:
  * 
  * <pre>
- *                     PocketCache m = PocketCaches.synchronizedCache(new SoftReferenceCache(...));
+ *                                        PocketCache m = PocketCaches.synchronizedCache(new SoftReferenceCache(...));
  * </pre>
  * 
  * <p>
@@ -58,16 +58,19 @@ import java.util.Map;
  */
 public class SoftReferenceCache<K, V> extends UnsafePocketCache<K, V> {
 
-    private final SoftReferenceMap softReferences = new SoftReferenceMap();
+    /** serialVersionUID */
+    private static final long serialVersionUID = -2069397396054197298L;
 
-    private final int capacity;
+    /** The cache of soft references. */
+    final SoftReferenceMap softReferences;
 
     /**
      * Constructs an empty <tt>SoftReferenceCache</tt> with the specified
      * loader, the default capacity (1000), and the default load factor (0.75).
+     * The cache will keep atmost 1000 soft references to evicted entries.
      * 
      * @param loader
-     *            the loader used for lazily construction missing values.
+     *            the loader used for lazily constructing missing values.
      * @throws NullPointerException
      *             if the specified loader is null
      */
@@ -77,7 +80,8 @@ public class SoftReferenceCache<K, V> extends UnsafePocketCache<K, V> {
 
     /**
      * Constructs an empty <tt>SoftReferenceCache</tt> with the specified
-     * loader, capacity, and the default load factor (0.75).
+     * loader, capacity, and the default load factor (0.75). The number of soft
+     * references to evicted entries will be limited to the specified capacity.
      * 
      * @param loader
      *            the loader used for lazily construction missing values.
@@ -94,16 +98,19 @@ public class SoftReferenceCache<K, V> extends UnsafePocketCache<K, V> {
 
     /**
      * Constructs an empty <tt>SoftReferenceCache</tt> with the specified
-     * loader, capacity, and load factor.
+     * loader, capacity, and the default load factor (0.75). The number of soft
+     * references to evicted entries will not exceed the specified soft
+     * reference capacity.
      * 
      * @param loader
      *            the loader used for lazily construction missing values.
      * @param capacity
      *            the maximum number of entries allowed in the cache
      * @param softReferenceCapacity
-     *            the number of softreferences we should keep.
+     *            the maximum number of soft references to keep.
      * @throws IllegalArgumentException
-     *             if the capacity or the load factor is nonpositive
+     *             if the capacity or the soft references capacity is
+     *             nonpositive
      * @throws NullPointerException
      *             if the specified loader is <tt>null</tt>
      */
@@ -114,7 +121,8 @@ public class SoftReferenceCache<K, V> extends UnsafePocketCache<K, V> {
 
     /**
      * Constructs an empty <tt>SoftReferenceCache</tt> with the specified
-     * loader, capacity, and load factor.
+     * loader, capacity, and load factor. The number of soft references to
+     * evicted entries will not exceed the specified soft reference capacity.
      * 
      * @param loader
      *            the loader used for lazily construction missing values.
@@ -124,24 +132,20 @@ public class SoftReferenceCache<K, V> extends UnsafePocketCache<K, V> {
      *            the load factor threshold, used to control resizing. Resizing
      *            may be performed when the average number of elements per bin
      *            exceeds this threshold.
+     * @param softReferenceCapacity
+     *            the maximum number of soft references to keep.
      * @throws IllegalArgumentException
-     *             if the capacity or the load factor is nonpositive
+     *             if the capacity, soft reference capacity, or the load factor
+     *             is nonpositive
      * @throws NullPointerException
      *             if the specified loader is <tt>null</tt>
      */
     public SoftReferenceCache(ValueLoader<K, V> loader, int capacity,
             int softReferenceCapacity, float loadFactor) {
         super(loader, capacity, DEFAULT_LOAD_FACTOR);
-        this.capacity = softReferenceCapacity;
-    }
-
-    /**
-     * @see org.coconut.cache.pocket.UnsafePocketCache#evicted(java.util.Map.Entry)
-     */
-    @Override
-    void evicted(java.util.Map.Entry<K, V> entry) {
-        super.evicted(entry);
-        softReferences.put(entry.getKey(), new SoftReference<V>(entry.getValue()));
+        softReferences = new SoftReferenceMap((int) Math.ceil(softReferenceCapacity
+                / loadFactor), loadFactor);
+        softReferences.setCapacity(softReferenceCapacity);
     }
 
     /**
@@ -151,35 +155,6 @@ public class SoftReferenceCache<K, V> extends UnsafePocketCache<K, V> {
     public void clear() {
         softReferences.clear();
         super.clear();
-    }
-
-    /**
-     * @see org.coconut.cache.pocket.UnsafePocketCache#loadValue(java.lang.Object)
-     */
-    @Override
-    protected V loadValue(K k) {
-        final SoftReference<V> ref = softReferences.get(k);
-        if (ref == null) {
-            softReferences.remove(k);
-            return super.loadValue(k);
-        } else {
-            return ref.get();
-        }
-    }
-
-    class SoftReferenceMap extends LinkedHashMap<K, SoftReference<V>> {
-        /** serialVersionUID */
-        private static final long serialVersionUID = 8408194972744164863L;
-
-        /**
-         * @see java.util.LinkedHashMap#removeEldestEntry(java.util.Map.Entry)
-         */
-        @Override
-        protected boolean removeEldestEntry(
-                java.util.Map.Entry<K, SoftReference<V>> eldest) {
-            return size() > capacity;
-        }
-
     }
 
     /**
@@ -194,5 +169,57 @@ public class SoftReferenceCache<K, V> extends UnsafePocketCache<K, V> {
             }
         }
         super.evict();
+    }
+
+    /**
+     * @see org.coconut.cache.pocket.UnsafePocketCache#loadValue(java.lang.Object)
+     */
+    @Override
+    protected V loadValue(K k) {
+        final SoftReference<V> ref = softReferences.remove(k);
+        if (ref == null) {
+            return super.loadValue(k);
+        } else {
+            return ref.get();
+        }
+    }
+
+    /**
+     * @see org.coconut.cache.pocket.UnsafePocketCache#evicted(java.util.Map.Entry)
+     */
+    @Override
+    void evicted(java.util.Map.Entry<K, V> entry) {
+        super.evicted(entry);
+        softReferences.put(entry.getKey(), new SoftReference<V>(entry.getValue()));
+    }
+
+    /**
+     * Manages the soft references.
+     */
+    class SoftReferenceMap extends UnsafePocketCache<K, SoftReference<V>> implements
+            Serializable {
+        /** serialVersionUID */
+        private static final long serialVersionUID = -8134438486165658400L;
+
+        /**
+         * @param initialCapacity
+         * @param loadFactor
+         */
+        public SoftReferenceMap(int initialCapacity, float loadFactor) {
+            super(new DummyLoader<K, SoftReference<V>>(), initialCapacity, loadFactor,
+                    false);
+        }
+    }
+
+    static class DummyLoader<K, V> implements ValueLoader<K, V>, Serializable {
+        /** serialVersionUID */
+        private static final long serialVersionUID = 588677333512518573L;
+
+        /**
+         * @see org.coconut.cache.pocket.ValueLoader#load(java.lang.Object)
+         */
+        public V load(K key) {
+            return null;
+        }
     }
 }

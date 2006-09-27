@@ -15,9 +15,6 @@ import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
 import javax.management.StandardMBean;
 
-import org.coconut.cache.Cache;
-import org.coconut.cache.Caches.UnmodifiableCache;
-
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -40,7 +37,8 @@ public class PocketCaches {
             if (pc == null) {
                 throw new NullPointerException("pc is null");
             } else if (pc instanceof UnsafePocketCache) {
-                throw new IllegalArgumentException("Cannot use non thread-safe instances of UnsafePocketCache");
+                throw new IllegalArgumentException(
+                        "Cannot use non thread-safe instances of UnsafePocketCache");
             }
             this.pc = pc;
         }
@@ -196,11 +194,25 @@ public class PocketCaches {
         return CollectionUtils.synchronizedPocketCache(cache);
     }
 
-    public static <K, V> PocketCache<K, V> unmodifiableCache(PocketCache<? extends K, ? extends V> c) {
-        return new UnmodifiableCache<K, V>(c);
-    }
+    // public static <K, V> PocketCache<K, V> unmodifiableCache(PocketCache<?
+    // extends K, ? extends V> c) {
+    // return new UnmodifiableCache<K, V>(c);
+    // }
     static double getCacheRatio(long hits, long misses) {
         return hits == 0 && misses == 0 ? Double.NaN
                 : 100 * ((double) hits / (misses + hits));
+    }
+
+    static class DummyLoader<K, V> implements ValueLoader<K, V> {
+        /**
+         * @see org.coconut.cache.pocket.ValueLoader#load(java.lang.Object)
+         */
+        public V load(K key) {
+            return null;
+        }
+    }
+
+    public static <K, V> ValueLoader<K, V> nullLoader() {
+        return new DummyLoader<K, V>();
     }
 }
