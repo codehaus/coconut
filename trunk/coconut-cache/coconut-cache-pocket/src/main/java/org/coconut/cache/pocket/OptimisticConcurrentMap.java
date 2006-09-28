@@ -234,6 +234,5 @@ public class OptimisticConcurrentMap<K, V> implements ConcurrentMap<K, V>, Seria
      */
     protected void undoNewValue(ValueLoader<K, V> loader, K key, V value,
             V discardedValue) {
-
     }
 }

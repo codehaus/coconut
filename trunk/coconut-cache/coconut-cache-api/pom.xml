@@ -6,33 +6,33 @@
     <artifactId>coconut-cache-parent</artifactId>
     <version>1.0-alpha3-SNAPSHOT</version>
   </parent>
-  
+
   <artifactId>coconut-cache-api</artifactId>
   <name>Coconut Cache API</name>
   <description>API for Coconut Cache</description>
-    
-      <dependencies>
-      <dependency>
-        <groupId>org.coconut.cache</groupId>
-        <artifactId>coconut-cache-policies</artifactId>
-        <version>1.0-alpha3-SNAPSHOT</version>
-      </dependency>
-    </dependencies>
-      <build>
-          <plugins>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.coconut.cache</groupId>
+      <artifactId>coconut-cache-policies</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
-        <links>
-        <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
-        </links>
+          <links>
+            <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
+          </links>
           <showPackage>false</showPackage>
           <showProtected>true</showProtected>
-                    <quiet>true</quiet>
+          <quiet>true</quiet>
         </configuration>
       </plugin>
     </plugins>
   </build>
-  
+
 </project>

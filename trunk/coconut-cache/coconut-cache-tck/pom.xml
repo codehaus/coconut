@@ -15,12 +15,11 @@
       <dependency>
         <groupId>org.coconut.cache</groupId>
         <artifactId>coconut-cache-api</artifactId>
-        <version>1.0-alpha3-SNAPSHOT</version>
+	  <version>${project.version}</version>
       </dependency>
         <dependency>
         <groupId>org.coconut.test</groupId>
         <artifactId>coconut-test-framework</artifactId>
-        <version>1.0-SNAPSHOT</version>
       </dependency>
    </dependencies>
 </project>

@@ -25,7 +25,7 @@ import java.util.Map;
  * at creation time, to prevent accidental unsynchronized access to the map:
  * 
  * <pre>
- *                                        PocketCache m = PocketCaches.synchronizedCache(new SoftReferenceCache(...));
+ *                                         PocketCache m = PocketCaches.synchronizedCache(new SoftReferenceCache(...));
  * </pre>
  * 
  * <p>
@@ -175,13 +175,9 @@ public class SoftReferenceCache<K, V> extends UnsafePocketCache<K, V> {
      * @see org.coconut.cache.pocket.UnsafePocketCache#loadValue(java.lang.Object)
      */
     @Override
-    protected V loadValue(K k) {
-        final SoftReference<V> ref = softReferences.remove(k);
-        if (ref == null) {
-            return super.loadValue(k);
-        } else {
-            return ref.get();
-        }
+    protected V freeLoad(K k) {
+        SoftReference<V> ref = softReferences.remove(k);
+        return ref == null ? null : ref.get();
     }
 
     /**

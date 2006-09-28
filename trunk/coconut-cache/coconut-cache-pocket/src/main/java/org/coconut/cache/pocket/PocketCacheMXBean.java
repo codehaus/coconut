@@ -26,10 +26,18 @@ public interface PocketCacheMXBean {
 
     long getNumberOfMisses();
 
+    /**
+     * Returns the number of key-value mappings in this cache. If the cache
+     * contains more than <tt>Integer.MAX_VALUE</tt> elements, returns
+     * <tt>Integer.MAX_VALUE</tt>.
+     * 
+     * @return the number of key-value mappings in this cache
+     */
     int getSize();
 
     /**
-     * Resets the hit ratio.
+     * Sets the number of cache hits, and cache misses to 0. The hit ratio will
+     * be set to {@link java.lang.Double.NaN}.
      */
     void resetStatistics();
 

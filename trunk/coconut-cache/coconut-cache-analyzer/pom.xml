@@ -6,22 +6,22 @@
     <artifactId>coconut-cache-parent</artifactId>
     <version>1.0-alpha3-SNAPSHOT</version>
   </parent>
-  
+
   <artifactId>coconut-cache-analyzer</artifactId>
   <name>Coconut Cache TCK</name>
   <description>Common eviction cache policies</description>
-  
-      <dependencies>
-      <dependency>
-        <groupId>coconut</groupId>
-        <artifactId>coconut-cache-api</artifactId>
-        <version>1.0-alpha3-SNAPSHOT</version>
-      </dependency>
-              <dependency>
-        <groupId>coconut</groupId>
-        <artifactId>coconut-cache-policies</artifactId>
-        <version>1.0-alpha3-SNAPSHOT</version>
-        <scope>test</scope>
-      </dependency>
-    </dependencies>
+
+  <dependencies>
+    <dependency>
+      <groupId>coconut</groupId>
+      <artifactId>coconut-cache-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>coconut</groupId>
+      <artifactId>coconut-cache-policies</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 </project>

@@ -684,15 +684,26 @@ public class UnsafePocketCache<K, V> extends AbstractMap<K, V> implements
                 e = e.next;
             }
         }
-        misses++;
         K k = (K) key;
-        V v = loadValue(k);
+        V v = freeLoad(k);
+        if (v == null) {
+            misses++;
+            v = loadValue(k);
+        }
         if (v != null) {
             put(k, v, false);
         }
         return v;
     }
 
+    /**
+     * T
+     * @param key
+     * @return
+     */
+    V freeLoad(K key) {
+        return null;
+    }
     /**
      * @see org.coconut.cache.pocket.PocketCache#getAll(java.util.Collection)
      */

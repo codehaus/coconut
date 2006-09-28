@@ -26,5 +26,4 @@ public class IntegerToStringLoader extends AbstractCacheLoader<Integer, String> 
 
         }
     }
-
 }
