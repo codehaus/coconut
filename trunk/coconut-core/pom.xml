@@ -24,6 +24,5 @@
 
     <modules>
       <module>coconut</module>
-      <module>coconut-filter</module>
     </modules>
 </project>
