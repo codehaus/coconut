@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.coconut</groupId>
+    <artifactId>coconut-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <groupId>org.coconut</groupId>
+  <artifactId>coconut-components-parent</artifactId>
+  <name>Coconut Components Project</name>
+  <description>This is the root pom for coconut components</description>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>coconut-concurrent</module>
+  </modules>
+</project>
