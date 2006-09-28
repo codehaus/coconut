@@ -68,7 +68,7 @@ public class TabularFormatter {
     }
 
     public void setHeader(String... header) {
-        this.header = header;
+        this.header = header.clone();
     }
 
     public void add(int row, int column, String value) {

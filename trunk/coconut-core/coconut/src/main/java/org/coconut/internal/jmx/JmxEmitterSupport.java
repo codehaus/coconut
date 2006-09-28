@@ -50,7 +50,7 @@ public abstract class JmxEmitterSupport extends StandardMBean implements
         if (notifInfo == null) {
             notifInfo = getNotifInfo();
         }
-        return notifInfo;
+        return notifInfo.clone();
     }
 
     public synchronized MBeanInfo getMBeanInfo() {

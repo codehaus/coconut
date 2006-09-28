@@ -18,7 +18,6 @@
       <dependency>
         <groupId>org.coconut.test</groupId>
         <artifactId>coconut-test-framework</artifactId>
-        <version>1.0-SNAPSHOT</version>
         <scope>test</scope>
       </dependency>
     </dependencies>

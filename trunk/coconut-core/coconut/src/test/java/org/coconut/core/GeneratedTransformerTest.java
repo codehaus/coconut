@@ -13,7 +13,7 @@ import org.coconut.core.Transformers.DynamicTransformer;
 import org.coconut.test.MavenDummyTest;
 import org.junit.Test;
 
-public class GeneratedTransformerTest extends MavenDummyTest {
+public class GeneratedTransformerTest {
 
     @Test
     public void testSimpleCreate() {
@@ -25,17 +25,20 @@ public class GeneratedTransformerTest extends MavenDummyTest {
 
     @Test
     public void testInheritance() {
-        assertEquals("moverride", t("method").transform(new GeneratedTransformerMockChild()));
+        assertEquals("moverride", t("method").transform(
+                new GeneratedTransformerMockChild()));
         assertEquals("m2", t("method2").transform(new GeneratedTransformerMockChild()));
 
-        assertEquals("moverride", t("method").transform(new GeneratedTransformerMockChild()));
+        assertEquals("moverride", t("method").transform(
+                new GeneratedTransformerMockChild()));
         assertEquals("m2", t("method2").transform(new GeneratedTransformerMockChild()));
     }
 
     @Test
     public void testInnerClass() {
         assertNotNull(transform(Simple.class, "foo"));
-        assertEquals("foo1", transform(Simple.class, "foo").transform(new SimpleStaticImpl()));
+        assertEquals("foo1", transform(Simple.class, "foo").transform(
+                new SimpleStaticImpl()));
         assertEquals("foo2", transform(Simple.class, "foo").transform(new SimpleImpl()));
     }
 
@@ -44,11 +47,14 @@ public class GeneratedTransformerTest extends MavenDummyTest {
         assertNotNull(t("ireturn"));
         assertEquals(1, t("ireturn").transform(new GeneratedTransformerMockChild()));
         assertEquals(2l, t("lreturn").transform(new GeneratedTransformerMockChild()));
-        assertEquals((short) 3, t("sreturn").transform(new GeneratedTransformerMockChild()));
+        assertEquals((short) 3, t("sreturn").transform(
+                new GeneratedTransformerMockChild()));
         assertEquals(4d, t("dreturn").transform(new GeneratedTransformerMockChild()));
         assertEquals(5f, t("freturn").transform(new GeneratedTransformerMockChild()));
-        assertEquals((byte) 6, t("byreturn").transform(new GeneratedTransformerMockChild()));
-        assertEquals((char) 7, t("creturn").transform(new GeneratedTransformerMockChild()));
+        assertEquals((byte) 6, t("byreturn").transform(
+                new GeneratedTransformerMockChild()));
+        assertEquals((char) 7, t("creturn")
+                .transform(new GeneratedTransformerMockChild()));
         assertEquals(true, t("breturn").transform(new GeneratedTransformerMockChild()));
 
     }
@@ -66,7 +72,7 @@ public class GeneratedTransformerTest extends MavenDummyTest {
     // }
 
     @Test(expected = NullPointerException.class)
-    public void failNullPassed() {
+    public void testfailNullPassed() {
         t("method").transform(null);
     }
 
@@ -93,7 +99,8 @@ public class GeneratedTransformerTest extends MavenDummyTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testNoParameters() {
-        assertEquals(0, ((Transformers.ASMBasedTransformer) t("ireturn")).getParameters().length);
+        assertEquals(0,
+                ((Transformers.ASMBasedTransformer) t("ireturn")).getParameters().length);
     }
 
     @SuppressWarnings("unchecked")
@@ -103,7 +110,8 @@ public class GeneratedTransformerTest extends MavenDummyTest {
         assertNotNull(gt);
         assertEquals(5l, gt.transform(new GeneratedTransformerMockChild()));
 
-        assertEquals(12l, t("string2Arg", "5", "7").transform(new GeneratedTransformerMockChild()));
+        assertEquals(12l, t("string2Arg", "5", "7").transform(
+                new GeneratedTransformerMockChild()));
 
         assertEquals(18l, t("string3Arg", "5", "7", "6").transform(
                 new GeneratedTransformerMockChild()));
@@ -115,7 +123,8 @@ public class GeneratedTransformerTest extends MavenDummyTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testWithVariousParameters() {
-        DynamicTransformer gt = t("transform", "5", (Object) Integer.valueOf(1), Long.valueOf(4l));
+        DynamicTransformer gt = t("transform", "5", (Object) Integer.valueOf(1), Long
+                .valueOf(4l));
         assertNotNull(gt);
         assertEquals(10l, gt.transform(new GeneratedTransformerMockChild()));
     }
@@ -131,11 +140,12 @@ public class GeneratedTransformerTest extends MavenDummyTest {
     }
 
     public static junit.framework.Test suite() {
+        System.out.println("suite");
         return new JUnit4TestAdapter(GeneratedTransformerTest.class);
     }
 
     public static void main(String[] args) {
-        Transformer tt=t("string1Arg", "4");
+        Transformer tt = t("string1Arg", "4");
         System.out.println(tt.transform(new GeneratedTransformerMock()).getClass());
         System.out.println(tt);
     }

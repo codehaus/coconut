@@ -104,6 +104,10 @@ public final class Filters {
         }
     }
 
+    public static <E> List<E> filterList(List<E> list, Class<E> filter) {
+        return (List<E>) filterList(list, isType(filter));
+    }
+    
     public static <E> List<E> filterList(List<E> list, Filter<E> filter) {
         return (List<E>) filter(list, filter);
     }

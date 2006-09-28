@@ -196,12 +196,14 @@ public class IndexedStack<T> {
                     + freeEntries[i]);
         }
         int head = next[0];
-        String str = "head:";
+        StringBuilder sb=new StringBuilder();
+        sb.append("head:");
         while (head != 0) {
-            str += head + ", ";
+            sb.append(head);
+            sb.append(", ");
             head = next[head];
         }
-        System.out.println(str);
+        System.out.println(sb.toString());
     }
     ///CLOVER:ON
 }

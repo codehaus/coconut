@@ -593,6 +593,9 @@ public final class Transformers {
     @SuppressWarnings("unchecked")
     public static <F, T> DynamicTransformer<F, T> transform(Class<F> fromClass,
             String method, Object... parameters) {
+
+        // TODO write warn if they specify parameters=null
+        // and does not find a method (just 30 min on that error)
         if (fromClass == null) {
             throw new NullPointerException("fromClass is null");
         } else if (method == null) {
@@ -600,7 +603,6 @@ public final class Transformers {
         } else if (method.length() == 0) {
             throw new IllegalArgumentException("method name cannot be \"\"");
         }
-
         // Simpel version, looking for a method with no arguments
         if (parameters != null && parameters.length == 0) {
             try {

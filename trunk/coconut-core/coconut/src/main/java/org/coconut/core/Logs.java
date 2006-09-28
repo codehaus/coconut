@@ -7,8 +7,8 @@ package org.coconut.core;
 import java.io.PrintStream;
 
 /**
- * This class is used for creating {@link Log} wrappers from
- * popular logging frameworks such as <a
+ * This class is used for creating {@link Log} wrappers from popular logging
+ * frameworks such as <a
  * href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/logging/package-summary.html">
  * Standard JDK logging </a>, <a
  * href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/logging/package-summary.html">
@@ -26,7 +26,7 @@ public final class Logs {
      * @return a logger that ignores any input.
      */
     public static Log nullLog() {
-        return new SimpleLogger(Log.Level.Fatal.getLevel() + 1, null);
+        return new SimpelLogger(Log.Level.Fatal.getLevel() + 1, null);
     }
 
     /**
@@ -36,11 +36,15 @@ public final class Logs {
      * @return a system.out logger
      */
     public static Log systemOutLog(Log.Level level) {
-        return new SimpleLogger(level.getLevel(), System.out);
+        return new SimpelLogger(level.getLevel(), System.out);
     }
 
     public static Log systemErrLog(Log.Level level) {
-        return new SimpleLogger(level.getLevel(), System.err);
+        return new SimpelLogger(level.getLevel(), System.err);
+    }
+
+    public static Log printStreamLog(Log.Level level, PrintStream ps) {
+        return new SimpelLogger(level.getLevel(), ps);
     }
 
     /**
@@ -142,12 +146,15 @@ public final class Logs {
         }
     }
 
-    static class SimpleLogger extends AbstractLogger {
+    static class SimpelLogger extends AbstractLogger {
         private final int level;
 
         private final PrintStream stream;
 
-        private SimpleLogger(int level, PrintStream stream) {
+        private SimpelLogger(int level, PrintStream stream) {
+            if (stream == null) {
+                throw new NullPointerException("stream is null");
+            }
             this.level = level;
             this.stream = stream;
         }
@@ -279,12 +286,16 @@ public final class Logs {
             switch (level) {
             case Debug:
                 debug(message);
+                break;
             case Error:
                 error(message);
+                break;
             case Fatal:
                 fatal(message);
+                break;
             case Info:
                 info(message);
+                break;
             default /* Warn */:
                 warn(message);
             }
@@ -298,19 +309,23 @@ public final class Logs {
             switch (level) {
             case Debug:
                 debug(message, cause);
+                break;
             case Error:
                 error(message, cause);
+                break;
             case Fatal:
                 fatal(message, cause);
+                break;
             case Info:
                 info(message, cause);
+                break;
             default /* Warn */:
                 warn(message, cause);
             }
         }
     }
 
-    private static class CommonsLogger extends AbstractLoggerForRetardedImplementations {
+    static class CommonsLogger extends AbstractLoggerForRetardedImplementations {
         private final org.apache.commons.logging.Log log;
 
         private CommonsLogger(org.apache.commons.logging.Log log) {
