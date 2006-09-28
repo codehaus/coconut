@@ -8,11 +8,9 @@ import java.util.List;
 import org.coconut.core.Transformer;
 
 /**
- * 
- * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public interface BatchedTransformer<F,T> extends Transformer<F,T>{
+public interface BatchedTransformer<F, T> extends Transformer<F, T> {
     List<? extends T> transformAll(List<? extends F> list);
 }

@@ -9,7 +9,7 @@ import org.coconut.filter.Filter;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-public interface Subscription<E> {
+public interface EventSubscription<E> {
 
     /**
      * Returns the listener for this subscription.
@@ -19,7 +19,8 @@ public interface Subscription<E> {
     EventHandler<? super E> getEventHandler();
 
     /**
-     * Returns the filter that is used for this subscription.
+     * Returns the filter that is used for this subscription or <tt>null</tt>
+     * all events are accepted.
      * 
      * @return the filter that is used for this subscription.
      */

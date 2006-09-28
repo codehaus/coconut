@@ -13,7 +13,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.coconut.core.EventHandler;
 import org.coconut.event.bus.EventBus;
-import org.coconut.event.bus.Subscription;
+import org.coconut.event.bus.EventSubscription;
 import org.coconut.filter.Filter;
 import org.coconut.filter.LogicFilters;
 
@@ -41,17 +41,17 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
      * @see org.coconut.event.bus.EventBus#getSubscribers()
      */
     @SuppressWarnings("unchecked")
-    public List<Subscription<E>> getSubscribers() {
+    public List<EventSubscription<E>> getSubscribers() {
         return Collections.unmodifiableList(new ArrayList(list.values()));
     }
 
     /**
      * @see org.coconut.event.bus.EventBus#unsubscribeAll()
      */
-    public Collection<Subscription<E>> unsubscribeAll() {
+    public Collection<EventSubscription<E>> unsubscribeAll() {
         lock.lock();
         try {
-            Collection<Subscription<E>> c = new LinkedList<Subscription<E>>();
+            Collection<EventSubscription<E>> c = new LinkedList<EventSubscription<E>>();
             for (DefaultSubscription<E> s : list.values()) {
                 cancel(s);
                 c.add(s);
@@ -63,7 +63,7 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
         }
     }
 
-    public Subscription<E> subscribe(EventHandler<? super E> eventHandler) {
+    public EventSubscription<E> subscribe(EventHandler<? super E> eventHandler) {
         return subscribe(eventHandler, LogicFilters.trueFilter());
     }
 
@@ -71,7 +71,7 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
      * @see org.coconut.event.bus.EventBus#subscribe(org.coconut.core.EventHandler,
      *      org.coconut.filter.Filter)
      */
-    public Subscription<E> subscribe(EventHandler<? super E> eventHandler,
+    public EventSubscription<E> subscribe(EventHandler<? super E> eventHandler,
             Filter<? super E> filter) {
         if (eventHandler == null) {
             throw new NullPointerException("eventHandler is null");
@@ -99,7 +99,7 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
      * @see org.coconut.event.bus.EventBus#subscribe(org.coconut.core.EventHandler,
      *      org.coconut.filter.Filter, java.lang.String)
      */
-    public Subscription<E> subscribe(EventHandler<? super E> eventHandler,
+    public EventSubscription<E> subscribe(EventHandler<? super E> eventHandler,
             Filter<? super E> filter, String name) {
         if (eventHandler == null) {
             throw new NullPointerException("eventHandler is null");
@@ -136,6 +136,16 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
         return true;
     }
 
+    /**
+     * @see org.coconut.core.EventHandler#handle(java.lang.Object)
+     */
+    public void handle(E event) {
+        if (event == null) {
+            throw new NullPointerException("element is null");
+        }
+        inform(event);
+    }
+
     public boolean offerAll(final E... elements) {
         for (int i = 0; i < elements.length; i++) {
             if (elements[i] == null) {
@@ -150,14 +160,14 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
     }
 
     protected void inform(final E element) {
-        for (Subscription<E> s : list.values()) {
+        for (EventSubscription<E> s : list.values()) {
             if (s.getFilter().accept(element)) {
                 deliver(element, s);
             }
         }
     }
 
-    protected void deliver(final E element, Subscription<E> s) {
+    protected void deliver(final E element, EventSubscription<E> s) {
         try {
             // check if still valid subscription??
             s.getEventHandler().handle(element);
@@ -166,7 +176,7 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
         }
     }
 
-    protected void deliveryFailed(Subscription<E> s, final E element, Throwable cause) {
+    protected void deliveryFailed(EventSubscription<E> s, final E element, Throwable cause) {
         try {
             System.err.println("The delivery to " + s.getName()
                     + " failed with the following exception: ");
@@ -191,16 +201,16 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
         unsubscribed(s);
     }
 
-    protected void unsubscribed(Subscription<E> s) {
+    protected void unsubscribed(EventSubscription<E> s) {
 
     }
 
-    protected void subscribed(Subscription<E> s) {
+    protected void subscribed(EventSubscription<E> s) {
 
     }
 
     @SuppressWarnings("hiding")
-    static class DefaultSubscription<E> implements Subscription<E> {
+    static class DefaultSubscription<E> implements EventSubscription<E> {
         private final String name;
 
         private final DefaultEventBus<E> bus;

@@ -65,7 +65,7 @@ import org.coconut.filter.Filter;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @see Bus
  */
-public interface EventBus<E> extends Offerable<E> {
+public interface EventBus<E> extends Offerable<E>, EventHandler<E> {
 
     /**
      * A failure encountered while attempting to offering elements to an event
@@ -86,7 +86,7 @@ public interface EventBus<E> extends Offerable<E> {
      * @see Subscription
      * @return all subscribers that is registered for this EventBus
      */
-    Collection<Subscription<E>> getSubscribers();
+    Collection<EventSubscription<E>> getSubscribers();
 
     /**
      * Cancels all subscriptions. This is analogues to calling cancel on every
@@ -94,7 +94,7 @@ public interface EventBus<E> extends Offerable<E> {
      * 
      * @return A collection of all the subscribers that was unregistered.
      */
-    Collection<Subscription<E>> unsubscribeAll();
+    Collection<EventSubscription<E>> unsubscribeAll();
 
     /**
      * Creates an subscription that will be notified for <tt>any</tt> event
@@ -105,7 +105,7 @@ public interface EventBus<E> extends Offerable<E> {
      * @return a subscription that can be used to cancel any further
      *         notifications
      */
-    Subscription<E> subscribe(EventHandler<? super E> eventHandler);
+    EventSubscription<E> subscribe(EventHandler<? super E> eventHandler);
 
     /**
      * Creates an subscription that will be notified for any event that is
@@ -118,7 +118,7 @@ public interface EventBus<E> extends Offerable<E> {
      * @return a subscription that can be used to cancel any further
      *         notifications
      */
-    Subscription<E> subscribe(EventHandler<? super E> eventHandler, Filter<? super E> filter);
+    EventSubscription<E> subscribe(EventHandler<? super E> eventHandler, Filter<? super E> filter);
 
     /**
      * Creates an subscription that will be notified for any event that is
@@ -138,6 +138,6 @@ public interface EventBus<E> extends Offerable<E> {
      *             if the specified name is not unique within all the
      *             subscriptions
      */
-    Subscription<E> subscribe(EventHandler<? super E> listener, Filter<? super E> filter,
+    EventSubscription<E> subscribe(EventHandler<? super E> listener, Filter<? super E> filter,
             String name);
 }

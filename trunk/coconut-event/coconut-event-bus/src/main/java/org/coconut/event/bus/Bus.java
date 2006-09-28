@@ -35,16 +35,16 @@ public class Bus {
      * @param eventHandler
      *            the EventHandler to filter on
      */
-    public static <E> Filter<Subscription<E>> getListenerFilter(
+    public static <E> Filter<EventSubscription<E>> getListenerFilter(
             EventHandler<E> eventHandler) {
         return new EventListenerFilter<E>(eventHandler);
     }
 
-    public static <E> Filter<Subscription<E>> getEventTypeFilter(E event) {
+    public static <E> Filter<EventSubscription<E>> getEventTypeFilter(E event) {
         return new EventMatchFilter<E>(event);
     }
 
-    public static <E> Collection<Subscription<E>> findSubscribers(
+    public static <E> Collection<EventSubscription<E>> findSubscribers(
             EventBus<E> bus, EventHandler<E> eventHandler) {
         if (bus == null) {
             throw new NullPointerException("bus is null");
@@ -62,13 +62,13 @@ public class Bus {
      * @param event
      * @return
      */
-    public static <E> Collection<Subscription<E>> matchSubscriberEvent(
+    public static <E> Collection<EventSubscription<E>> matchSubscriberEvent(
             EventBus<E> bus, E event) {
         return findSubscribers(bus, new EventMatchFilter<E>(event));
     }
 
-    public static <E> Collection<Subscription<E>> findSubscribers(
-            EventBus<E> bus, Filter<Subscription<E>> filter) {
+    public static <E> Collection<EventSubscription<E>> findSubscribers(
+            EventBus<E> bus, Filter<EventSubscription<E>> filter) {
         return Filters.filter(bus.getSubscribers(), filter);
     }
 
@@ -128,7 +128,7 @@ public class Bus {
         }
     }
 
-    static class EventListenerFilter<E> implements Filter<Subscription<E>>,
+    static class EventListenerFilter<E> implements Filter<EventSubscription<E>>,
             Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = 4194707549593512350L;
@@ -149,12 +149,12 @@ public class Bus {
         /**
          * @see org.coconut.filter.Filter#accept(java.lang.Object)
          */
-        public boolean accept(Subscription<E> element) {
+        public boolean accept(EventSubscription<E> element) {
             return handler.equals(element.getEventHandler());
         }
     }
 
-    private static class EventMatchFilter<E> implements Filter<Subscription<E>> {
+    private static class EventMatchFilter<E> implements Filter<EventSubscription<E>> {
         private final E event;
 
         /**
@@ -167,7 +167,7 @@ public class Bus {
         /**
          * @see org.coconut.filter.Filter#accept(java.lang.Object)
          */
-        public boolean accept(Subscription<E> element) {
+        public boolean accept(EventSubscription<E> element) {
             return element.getFilter().accept(event);
         }
     }

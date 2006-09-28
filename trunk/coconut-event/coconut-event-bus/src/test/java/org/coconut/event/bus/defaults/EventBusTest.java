@@ -5,7 +5,7 @@ import static org.coconut.filter.LogicFilters.TRUE;
 import org.coconut.core.EventHandler;
 import org.coconut.event.bus.AbstractEventBusTestCase;
 import org.coconut.event.bus.EventBus;
-import org.coconut.event.bus.Subscription;
+import org.coconut.event.bus.EventSubscription;
 import org.coconut.filter.Filters;
 import org.jmock.Mock;
 
@@ -86,12 +86,12 @@ public class EventBusTest extends AbstractEventBusTestCase {
         EventBus<Number> bus = createNew();
         assertEquals(0, bus.getSubscribers().size());
 
-        Subscription s = bus.subscribe(trueOfferable, Filters
+        EventSubscription s = bus.subscribe(trueOfferable, Filters
                 .isType(Integer.class));
         assertEquals(1, bus.getSubscribers().size());
         assertTrue(bus.getSubscribers().contains(s));
 
-        Subscription s2 = bus.subscribe(trueOfferable, Filters
+        EventSubscription s2 = bus.subscribe(trueOfferable, Filters
                 .isType(Long.class));
         assertEquals(2, bus.getSubscribers().size());
         assertTrue(bus.getSubscribers().contains(s2));
@@ -100,9 +100,9 @@ public class EventBusTest extends AbstractEventBusTestCase {
     @SuppressWarnings("unchecked")
     public void testUnsubscribe() {
         EventBus<Number> bus = createNew();
-        Subscription s = bus.subscribe(trueOfferable, Filters
+        EventSubscription s = bus.subscribe(trueOfferable, Filters
                 .isType(Integer.class));
-        Subscription s1 = bus.subscribe(otherEventHandler, Filters
+        EventSubscription s1 = bus.subscribe(otherEventHandler, Filters
                 .isType(Integer.class));
 
         s1.cancel();

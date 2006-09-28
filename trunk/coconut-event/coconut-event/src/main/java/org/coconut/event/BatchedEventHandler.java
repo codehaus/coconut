@@ -8,11 +8,9 @@ import java.util.List;
 import org.coconut.core.EventHandler;
 
 /**
- * 
- * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public interface BatchedEventHandler<E> extends EventHandler<E>{
+public interface BatchedEventHandler<E> extends EventHandler<E> {
     void handleAll(List<? extends E> list);
 }

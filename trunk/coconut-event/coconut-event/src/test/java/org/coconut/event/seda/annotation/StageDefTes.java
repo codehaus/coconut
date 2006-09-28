@@ -3,14 +3,12 @@
  */
 package org.coconut.event.seda.annotation;
 
-import static org.coconut.event.sandbox.annotation.RessourceUsage.HIGH_ALLOCATION;
-import org.coconut.event.sandbox.annotation.StageDef;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-@StageDef(value = "ping", sinks = { "pang", "pong" }, memoryUsage = HIGH_ALLOCATION)
+//@StageDef(value = "ping", sinks = { "pang", "pong" }, memoryUsage = HIGH_ALLOCATION)
 public class StageDefTes {
 
 }

@@ -4,13 +4,14 @@
 package org.coconut.event.testutil;
 
 import org.coconut.core.EventHandler;
+import org.coconut.core.Offerable;
 import org.coconut.core.Transformer;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class DevNullHelper<F, T> implements Transformer<F, T>, EventHandler<F> {
+public class DevNullHelper<F, T> implements Transformer<F, T>, EventHandler<F>,Offerable<F> {
 
     /**
      * @see org.coconut.core.Transformer#transform(F)
@@ -24,6 +25,13 @@ public class DevNullHelper<F, T> implements Transformer<F, T>, EventHandler<F> {
      */
     public void handle(F event) {
         // ignore
+    }
+
+    /**
+     * @see org.coconut.core.Offerable#offer(java.lang.Object)
+     */
+    public boolean offer(F element) {
+        return true;
     }
 
 }

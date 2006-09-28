@@ -7,7 +7,7 @@ import java.util.Collection;
 
 import org.coconut.core.EventHandler;
 import org.coconut.event.bus.EventBus;
-import org.coconut.event.bus.Subscription;
+import org.coconut.event.bus.EventSubscription;
 import org.coconut.filter.Filter;
 
 /**
@@ -26,7 +26,7 @@ public class EventBusDecorator<T> implements EventBus<T> {
         this.bus = bus;
     }
 
-    public Collection<Subscription<T>> getSubscribers() {
+    public Collection<EventSubscription<T>> getSubscribers() {
         return bus.getSubscribers();
     }
 
@@ -38,30 +38,34 @@ public class EventBusDecorator<T> implements EventBus<T> {
         return bus.offerAll(events);
     }
 
-    public Subscription<T> subscribe(EventHandler<? super T> listener,
+    public void handle(T event) {
+        bus.handle(event);
+    }
+
+    public EventSubscription<T> subscribe(EventHandler<? super T> listener,
             Filter<? super T> filter, String prefix) {
         return bus.subscribe(listener, filter, prefix);
     }
 
-    public Subscription<T> subscribe(EventHandler<? super T> listener,
+    public EventSubscription<T> subscribe(EventHandler<? super T> listener,
             Filter<? super T> filter) {
         return bus.subscribe(listener, filter);
     }
 
-    public Subscription<T> subscribe(EventHandler<? super T> eventHandler) {
+    public EventSubscription<T> subscribe(EventHandler<? super T> eventHandler) {
         return bus.subscribe(eventHandler);
     }
 
-    public Collection<Subscription<T>> unsubscribeAll() {
+    public Collection<EventSubscription<T>> unsubscribeAll() {
         return bus.unsubscribeAll();
     }
 
-    protected void decorateEvent(T event, Subscription<T> s) {
+    protected void decorateEvent(T event, EventSubscription<T> s) {
         s.getEventHandler().handle(event);
     }
 
-    class DecoratedSubscription implements Subscription<T>, EventHandler<T> {
-        Subscription s;
+    class DecoratedSubscription implements EventSubscription<T>, EventHandler<T> {
+        EventSubscription s;
 
         public void cancel() {
             s.cancel();
@@ -79,7 +83,7 @@ public class EventBusDecorator<T> implements EventBus<T> {
             return s.getName();
         }
 
-        DecoratedSubscription(Subscription<T> s) {
+        DecoratedSubscription(EventSubscription<T> s) {
             this.s = s;
         }
 
@@ -91,4 +95,5 @@ public class EventBusDecorator<T> implements EventBus<T> {
         }
 
     }
+
 }
