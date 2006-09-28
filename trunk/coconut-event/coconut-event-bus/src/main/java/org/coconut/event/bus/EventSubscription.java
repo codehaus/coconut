@@ -1,15 +1,19 @@
 package org.coconut.event.bus;
 
 import org.coconut.core.EventHandler;
+import org.coconut.core.Named;
 import org.coconut.filter.Filter;
 
 /**
- * This interface represent a subcription of a particular sets of events by its
+ * This interface represent a subscription of a particular sets of events by its
  * filter delivered to its destination.
+ * <p>
+ * Each subscription has a unique name. If no name is specified at construction
+ * time an implementation should automatically generate a unique name.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-public interface EventSubscription<E> {
+public interface EventSubscription<E> extends Named {
 
     /**
      * Returns the listener for this subscription.
@@ -25,15 +29,6 @@ public interface EventSubscription<E> {
      * @return the filter that is used for this subscription.
      */
     Filter<? super E> getFilter();
-
-    /**
-     * Returns a unique name used for this subscription. If no name is specified
-     * at construction time the EventBus will automatically generate a unique
-     * name.
-     * 
-     * @return a unique name used for this subscription.
-     */
-    String getName();
 
     /**
      * Cancels the subscription. No further events will be delivered to the
