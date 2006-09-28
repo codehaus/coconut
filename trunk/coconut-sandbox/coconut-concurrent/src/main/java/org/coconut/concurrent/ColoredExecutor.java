@@ -174,8 +174,10 @@ public class ColoredExecutor implements Executor {
         private void trySubmitNext() {
             if (submitted.compareAndSet(false, true)) {
                 Runnable r = queue.poll();
-                if (r != null)
+                if (r != null) {
+                    //TODO this sucks
                     executor.execute(r); //TODO do something about exceptions
+                }
                 else
                     submitted.set(false);
             }
