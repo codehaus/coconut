@@ -1,4 +1,4 @@
-package org.coconut.event.bus;
+package org.coconut.event;
 
 import org.coconut.core.EventHandler;
 import org.coconut.core.Named;

@@ -6,8 +6,8 @@ package org.coconut.event.bus.util;
 import java.util.Collection;
 
 import org.coconut.core.EventHandler;
+import org.coconut.event.EventSubscription;
 import org.coconut.event.bus.EventBus;
-import org.coconut.event.bus.EventSubscription;
 import org.coconut.filter.Filter;
 
 /**

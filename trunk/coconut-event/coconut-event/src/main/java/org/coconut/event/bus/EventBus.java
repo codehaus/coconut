@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.coconut.core.EventHandler;
 import org.coconut.core.Offerable;
+import org.coconut.event.EventSubscription;
 import org.coconut.filter.Filter;
 
 /**

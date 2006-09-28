@@ -1,4 +1,4 @@
-package org.coconut.event.bus.defaults;
+package org.coconut.event.bus;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,8 +12,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.coconut.core.EventHandler;
-import org.coconut.event.bus.EventBus;
-import org.coconut.event.bus.EventSubscription;
+import org.coconut.event.EventSubscription;
 import org.coconut.filter.Filter;
 import org.coconut.filter.LogicFilters;
 

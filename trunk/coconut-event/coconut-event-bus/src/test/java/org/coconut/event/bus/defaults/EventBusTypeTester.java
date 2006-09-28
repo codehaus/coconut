@@ -2,6 +2,7 @@ package org.coconut.event.bus.defaults;
 
 import org.coconut.core.EventHandler;
 import org.coconut.event.bus.AbstractEventBusTestCase;
+import org.coconut.event.bus.DefaultEventBus;
 import org.coconut.event.bus.EventBus;
 import org.coconut.filter.Filter;
 import org.coconut.filter.Filters;

@@ -6,7 +6,7 @@ import java.util.concurrent.Callable;
 
 import org.coconut.core.EventHandler;
 import org.coconut.core.Offerable;
-import org.coconut.event.bus.defaults.DefaultEventBus;
+import org.coconut.event.EventSubscription;
 import org.coconut.filter.Filter;
 import org.coconut.filter.Filters;
 
@@ -81,20 +81,20 @@ public class Bus {
         };
     }
 
-    public static <E> Runnable offerAsRunnable(final Callable<E> c,
-            final Offerable<? super E> o) {
-        return new Runnable() {
-            public void run() {
-                try {
-                    E e = c.call();
-                    o.offer(e);
-                } catch (Exception e) {
-                    throw new EventBusException(e);
-                }
-            }
-
-        };
-    }
+//    public static <E> Runnable offerAsRunnable(final Callable<E> c,
+//            final Offerable<? super E> o) {
+//        return new Runnable() {
+//            public void run() {
+//                try {
+//                    E e = c.call();
+//                    o.offer(e);
+//                } catch (Exception e) {
+//                    throw new EventBusException(e);
+//                }
+//            }
+//
+//        };
+//    }
 
     public static <E> Callable<E> asCallable(E element) {
         return new StaticCallable<E>(element);

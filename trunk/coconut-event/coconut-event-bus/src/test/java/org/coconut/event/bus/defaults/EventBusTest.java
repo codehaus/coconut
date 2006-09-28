@@ -3,9 +3,10 @@ package org.coconut.event.bus.defaults;
 import static org.coconut.filter.LogicFilters.TRUE;
 
 import org.coconut.core.EventHandler;
+import org.coconut.event.EventSubscription;
 import org.coconut.event.bus.AbstractEventBusTestCase;
+import org.coconut.event.bus.DefaultEventBus;
 import org.coconut.event.bus.EventBus;
-import org.coconut.event.bus.EventSubscription;
 import org.coconut.filter.Filters;
 import org.jmock.Mock;
 
