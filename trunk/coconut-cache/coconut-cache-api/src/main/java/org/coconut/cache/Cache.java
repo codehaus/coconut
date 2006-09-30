@@ -33,7 +33,7 @@ import org.coconut.filter.Filter;
  * The first level is thread safety/performance unsynchronized cache, for
  * example, {@link org.coconut.cache.impl.memory.UnlimitedCache} synchronized
  * caches which offers thread safety. concurrent caches with offers thread
- * safery and concurrent retrievels on the expense of features Coconut comes
+ * safery and concurrent retrievels on the expense of features. Coconut comes
  * with build-in support for the following types of cache. TODO What is a cache
  * interface Distributed.. serializable CachePolicies.
  * <p>
@@ -191,9 +191,9 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * 
      * @param key
      *            whose associated value is to be loaded.
-     * @return a Future representing pending completion of the task, and whose
-     *         <tt>get()</tt> method will return <code>null</code> upon
-     *         completion.
+     * @return a Future representing pending completion of the loading, and
+     *         whose <tt>get()</tt> method will return <code>null</code>
+     *         upon completion.
      * @throws ClassCastException
      *             if the key is of an inappropriate type for this cache
      *             (optional).

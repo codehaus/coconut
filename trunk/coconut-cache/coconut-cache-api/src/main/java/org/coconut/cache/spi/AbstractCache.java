@@ -4,7 +4,6 @@
 
 package org.coconut.cache.spi;
 
-import java.text.MessageFormat;
 import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,8 +12,6 @@ import java.util.UUID;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
@@ -24,8 +21,6 @@ import org.coconut.cache.CacheQuery;
 import org.coconut.cache.Caches;
 import org.coconut.cache.management.CacheMXBean;
 import org.coconut.core.Clock;
-import org.coconut.core.Log;
-import org.coconut.core.Logs;
 import org.coconut.event.bus.EventBus;
 import org.coconut.filter.Filter;
 
@@ -37,7 +32,8 @@ import org.coconut.filter.Filter;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements Cache<K, V> {
+public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
+        Cache<K, V> {
 
     @SuppressWarnings("unchecked")
     private final static CacheConfiguration NO_CONF = CacheConfiguration.newConf();
@@ -74,7 +70,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements C
 
     private final Clock clock;
 
-    private Log log;
+    private final CacheErrorHandler<K, V> errorHandler;
 
     @SuppressWarnings("unchecked")
     public AbstractCache() {
@@ -85,28 +81,14 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements C
         if (configuration == null) {
             throw new NullPointerException("configuration is null");
         }
-        log = configuration.getLog();
-        name = configuration.getName() == null ? UUID.randomUUID().toString() : configuration
-                .getName();
+        errorHandler = configuration.getErrorHandler();
+        name = configuration.getName() == null ? UUID.randomUUID().toString()
+                : configuration.getName();
         this.clock = configuration.getClock();
     }
 
-    /**
-     * Returns the logger defined for this cache
-     * @return
-     */
-    protected Log getLog() {
-        if (log == null) {
-            //initializing default logger
-            String name = getName();
-            String loggerName = Cache.class.getPackage().getName() + "." + name;
-            Logger l = Logger.getLogger(loggerName);
-            String infoMsg = Ressources.getString("AbstractCache.default_logger");
-            log = Logs.JDK.from(l);
-            log.info(MessageFormat.format(infoMsg, name, loggerName));
-            l.setLevel(Level.SEVERE);
-        }
-        return log;
+    protected CacheErrorHandler<K, V> getErrorHandler() {
+        return errorHandler;
     }
 
     protected Clock getClock() {
@@ -160,6 +142,16 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements C
         return value;
     }
 
+    protected void putEntry(CacheEntry<K, V> entry) {
+        put(entry.getKey(), entry.getValue());
+    }
+
+    protected void putEntries(Collection<CacheEntry<K, V>> entries) {
+        for (CacheEntry<K, V> ce : entries) {
+            putEntry(ce);
+        }
+    }
+
     /**
      * @param key
      *            key whose associated value is to be returned.
@@ -193,7 +185,8 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements C
             }
             V value = get0(key, false);
             if (value == null) {
-                //I think the method overriden this should have checked this allready
+                // I think the method overriden this should have checked this
+                // allready
                 value = handleNullGet(key);
             }
             h.put(key, value); //
@@ -207,8 +200,8 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements C
      * @see org.coconut.cache.Cache#getHitStat()
      */
     public EventBus<CacheEvent<K, V>> getEventBus() {
-        throw new UnsupportedOperationException("getEventBus() not supported for Cache of type "
-                + getClass());
+        throw new UnsupportedOperationException(
+                "getEventBus() not supported for Cache of type " + getClass());
     }
 
     /**
@@ -257,8 +250,8 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements C
      */
     public Future<?> load(K key) {
         // default implementation does not support loading of values
-        throw new UnsupportedOperationException("load(Key k) not supported for Cache of type "
-                + getClass());
+        throw new UnsupportedOperationException(
+                "load(Key k) not supported for Cache of type " + getClass());
 
     }
 
@@ -309,7 +302,8 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements C
             throw new NullPointerException("value is null");
         }
         if (timeout < 0) {
-            throw new IllegalArgumentException("timeout must be zero or a positive number");
+            throw new IllegalArgumentException(
+                    "timeout must be zero or a positive number");
         }
         if (unit == null) {
             throw new NullPointerException("unit is null");
@@ -347,7 +341,8 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements C
             throw new NullPointerException("m is null");
         }
         if (timeout < 0) {
-            throw new IllegalArgumentException("timeout must be zero or a positive number");
+            throw new IllegalArgumentException(
+                    "timeout must be zero or a positive number");
         }
         if (unit == null) {
             throw new NullPointerException("unit is null");
@@ -355,7 +350,8 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements C
         putAll0(m, timeout, unit);
     }
 
-    protected abstract void putAll0(Map<? extends K, ? extends V> t, long timeout, TimeUnit unit);
+    protected abstract void putAll0(Map<? extends K, ? extends V> t, long timeout,
+            TimeUnit unit);
 
     /**
      * @see org.coconut.cache.Cache#getEntry(java.lang.Object)
@@ -487,12 +483,13 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements C
     }
 
     public ReadWriteLock getLock(K... keys) {
-        throw new UnsupportedOperationException("locking not supported for Cache of type "
-                + getClass());
+        throw new UnsupportedOperationException(
+                "locking not supported for Cache of type " + getClass());
     }
 
     public CacheMXBean getInfo() {
-        throw new UnsupportedOperationException("This cache does not support jmx monitoring");
+        throw new UnsupportedOperationException(
+                "This cache does not support jmx monitoring");
     }
 
     String getName() {

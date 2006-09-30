@@ -59,7 +59,7 @@ public class CacheConfigurationTest extends MavenDummyTest {
 
     @Test
     public void testExtendedLoader() {
-        CacheLoader<Number, ? extends CacheEntry<Number, Collection>> ecl = mockDummy(CacheLoader.class);
+        CacheLoader<Number, CacheEntry<Number, Collection>> ecl = mockDummy(CacheLoader.class);
 
         assertNull(conf.backend().getExtendedLoader());
 

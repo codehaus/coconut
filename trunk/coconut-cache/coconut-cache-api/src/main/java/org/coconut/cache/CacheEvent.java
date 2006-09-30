@@ -4,6 +4,8 @@
 
 package org.coconut.cache;
 
+import java.util.Map;
+
 import org.coconut.core.Sequenced;
 import org.coconut.filter.Filter;
 import org.coconut.filter.Filters;
@@ -51,6 +53,7 @@ public interface CacheEvent<K, V> extends Sequenced /* , TimeStamp */{
      *         if the cache is not located in the same jvm as the originating
      *         event.
      */
+    //Name of the cache????
     Cache<K, V> getCache();
 
     /**
@@ -61,6 +64,7 @@ public interface CacheEvent<K, V> extends Sequenced /* , TimeStamp */{
      */
     String getName();
 
+    Map<String, Object> getAttributes();
     /**
      * An event indicating that a particular {@link Cache} was cleared.
      */

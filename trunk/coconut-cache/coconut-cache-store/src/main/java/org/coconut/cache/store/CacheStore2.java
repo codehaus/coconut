@@ -14,8 +14,8 @@ import org.coconut.cache.CacheLoader;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-public interface CacheStore<K, V> extends CacheLoader<K, V> {
-    void delete(K key) throws Exception;
+public interface CacheStore2<K, V> extends CacheLoader<K, V> {
+    void delete(K key) throws Exception; /* IO Exception? */
     void deleteAll(Collection< ? extends K> colKeys) throws Exception;
     void store(K Key, V value) throws Exception;
     void storeAll(Map< ? extends K, ? extends V> mapEntries) throws Exception;

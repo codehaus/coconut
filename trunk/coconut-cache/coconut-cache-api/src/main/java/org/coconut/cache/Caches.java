@@ -19,6 +19,7 @@ import org.coconut.cache.spi.CacheSupport;
 import org.coconut.cache.spi.Ressources;
 import org.coconut.cache.util.AbstractCacheLoader;
 import org.coconut.cache.util.CacheDecorator;
+import org.coconut.cache.util.DefaultCacheEntry;
 import org.coconut.event.bus.EventBus;
 import org.coconut.filter.Filter;
 
@@ -457,7 +458,8 @@ public final class Caches {
         }
     }
 
-    final static class AbstractExtendedLoaderToLoader<K, V> extends AbstractCacheLoader<K, V> {
+    final static class AbstractExtendedLoaderToLoader<K, V> extends
+            AbstractCacheLoader<K, V> {
 
         private final CacheLoader<K, ? extends CacheEntry<K, V>> loader;
 
@@ -471,7 +473,23 @@ public final class Caches {
         }
     }
 
-    final static class NullLoader<K, V> extends AbstractCacheLoader<K, V> implements Serializable {
+    final static class AbstractLoaderToExtendedLoader<K, V> extends
+            AbstractCacheLoader<K, CacheEntry<K, V>> {
+
+        private final CacheLoader<K, V> loader;
+
+        AbstractLoaderToExtendedLoader(CacheLoader<K, V> loader) {
+            this.loader = loader;
+        }
+
+        /** {@inheritDoc} */
+        public CacheEntry<K, V> load(K key) throws Exception {
+            return new DefaultCacheEntry<K, V>(key, loader.load(key));
+        }
+    }
+
+    final static class NullLoader<K, V> extends AbstractCacheLoader<K, V> implements
+            Serializable {
 
         /** serialVersionUID */
         private static final long serialVersionUID = -4411446068656772121L;
@@ -482,8 +500,8 @@ public final class Caches {
         }
     }
 
-    final static class SynchronizedAbstractCacheLoader<K, V> extends AbstractCacheLoader<K, V>
-            implements CacheLoader<K, V>, Serializable {
+    final static class SynchronizedAbstractCacheLoader<K, V> extends
+            AbstractCacheLoader<K, V> implements CacheLoader<K, V>, Serializable {
         /** serial version UID */
         private static final long serialVersionUID = 8225025114128657456L;
 
@@ -503,7 +521,8 @@ public final class Caches {
         }
     }
 
-    final static class SynchronizedCacheLoader<K, V> implements CacheLoader<K, V>, Serializable {
+    final static class SynchronizedCacheLoader<K, V> implements CacheLoader<K, V>,
+            Serializable {
 
         /** serial version UID */
         private static final long serialVersionUID = -1525938064071224475L;
@@ -525,13 +544,15 @@ public final class Caches {
         }
 
         /** {@inheritDoc} */
-        public synchronized Map<K, V> loadAll(Collection<? extends K> keys) throws Exception {
+        public synchronized Map<K, V> loadAll(Collection<? extends K> keys)
+                throws Exception {
             return loader.loadAll(keys);
         }
     }
 
-    final static class UnmodifiableCache<K, V> extends CacheDecorator<K, V> implements Serializable {
-        //TODO Get should be peek()?????? 
+    final static class UnmodifiableCache<K, V> extends CacheDecorator<K, V> implements
+            Serializable {
+        // TODO Get should be peek()??????
         /** serial version UID */
         private static final long serialVersionUID = -8041219332852403222L;
 
@@ -556,8 +577,8 @@ public final class Caches {
         }
 
         public EventBus<CacheEvent<K, V>> getEventBus() {
-            //TODO this is okay, just need to return an unmodifiable event bus
-            //we should probably define it in the event bus project
+            // TODO this is okay, just need to return an unmodifiable event bus
+            // we should probably define it in the event bus project
             throw new UnsupportedOperationException();
         }
 
@@ -943,7 +964,8 @@ public final class Caches {
      *            loader.
      * @return a synchronized cache loader using the specified cache loader.
      */
-    public static <K, V> CacheLoader<K, V> synchronizedCacheLoader(CacheLoader<K, V> loader) {
+    public static <K, V> CacheLoader<K, V> synchronizedCacheLoader(
+            CacheLoader<K, V> loader) {
         if (loader instanceof AbstractCacheLoader) {
             return new SynchronizedAbstractCacheLoader<K, V>(loader);
         } else {
@@ -958,6 +980,11 @@ public final class Caches {
         } else {
             return new ExtendedLoaderToLoader<K, V>(loader);
         }
+    }
+
+    public static <K, V> CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> asCacheLoader(
+            CacheLoader<K, V> loader) {
+        return new AbstractExtendedLoaderToLoader(loader);
     }
 
     /**
@@ -987,9 +1014,9 @@ public final class Caches {
                 && cache.getClass().getAnnotation(CacheSupport.class).JMXSupport();
     }
 
-    ///CLOVER:OFF
+    // /CLOVER:OFF
     /** Cannot instantiate. */
     private Caches() {
     }
-    ///CLOVER:ON
+    // /CLOVER:ON
 }

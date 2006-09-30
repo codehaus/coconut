@@ -14,6 +14,7 @@ import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import javax.management.NotCompliantMBeanException;
@@ -23,20 +24,22 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheEvent;
+import org.coconut.cache.CacheLoader;
 import org.coconut.cache.CacheQuery;
 import org.coconut.cache.Caches;
 import org.coconut.cache.CacheConfiguration.ExpirationStrategy;
 import org.coconut.cache.defaults.util.CacheEntryMap;
 import org.coconut.cache.management.CacheMXBean;
 import org.coconut.cache.policy.ReplacementPolicy;
-import org.coconut.cache.sandbox.store.CacheStore;
+import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.AbstractCacheMXBean;
 import org.coconut.cache.spi.CacheEventDispatcher;
 import org.coconut.cache.spi.CacheSupport;
 import org.coconut.cache.spi.EventDispatcher;
-import org.coconut.cache.spi.LoadableCache;
+import org.coconut.cache.spi.LoaderSupport;
+import org.coconut.cache.store.CacheStore;
+import org.coconut.event.bus.DefaultEventBus;
 import org.coconut.event.bus.EventBus;
-import org.coconut.event.bus.defaults.DefaultEventBus;
 import org.coconut.filter.Filter;
 import org.coconut.filter.Filters;
 
@@ -56,7 +59,8 @@ import org.coconut.filter.Filters;
  */
 @CacheSupport(CacheLoadingSuppurt = true, CacheEntrySupport = true, querySupport = true, ExpirationSupport = true, statisticsSupport = true, eventSupport = true)
 @ThreadSafe(false)
-public class UnlimitedCache<K, V> extends LoadableCache<K, V> implements ConcurrentMap<K, V> {
+public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
+        ConcurrentMap<K, V> {
 
     private final CacheEntryMap<K, V, MyEntry> map;
 
@@ -71,6 +75,8 @@ public class UnlimitedCache<K, V> extends LoadableCache<K, V> implements Concurr
     private long eventId = 0;
 
     private final CacheStore<K, V> store;
+
+    private final CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader;
 
     private final CacheConfiguration.StorageStrategy storageStrategy;
 
@@ -118,7 +124,8 @@ public class UnlimitedCache<K, V> extends LoadableCache<K, V> implements Concurr
         store = conf.backend().getStore();
         storageStrategy = CacheConfiguration.StorageStrategy.WRITE_THROUGH;
         this.expirationStrategy = conf.expiration().getStrategy();
-        this.defaultExpirationTime = conf.expiration().getDefaultTimeout(TimeUnit.NANOSECONDS);
+        this.defaultExpirationTime = conf.expiration().getDefaultTimeout(
+                TimeUnit.NANOSECONDS);
         expireFilter = conf.expiration().getFilter();
 
         // ed = null;
@@ -127,6 +134,7 @@ public class UnlimitedCache<K, V> extends LoadableCache<K, V> implements Concurr
         if (conf.getInitialMap() != null) {
             putAll(conf.getInitialMap());
         }
+        loader = LoaderSupport.getLoader(conf);
     }
 
     @SuppressWarnings("unchecked")
@@ -187,6 +195,20 @@ public class UnlimitedCache<K, V> extends LoadableCache<K, V> implements Concurr
         return map.valueEntrySet();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public Future<?> load(final K key) {
+        return LoaderSupport.loadEntry(this, loader, key);
+    }
+
+    /**
+     * @see org.coconut.cache.spi.AbstractCache#loadAll(java.util.Collection)
+     */
+    @Override
+    public Future<?> loadAll(Collection<? extends K> keys) {
+        return LoaderSupport.loadAllEntries(this, loader, keys);
+    }
+
     void trimToSize(int newSize) {
         while (newSize < size()) {
             MyEntry key = cp.evictNext();
@@ -238,10 +260,10 @@ public class UnlimitedCache<K, V> extends LoadableCache<K, V> implements Concurr
     }
 
     @Override
-    protected CacheEntry<K, V> putEntry(CacheEntry<K, V> entry) {
+    protected void putEntry(CacheEntry<K, V> entry) {
         MyEntry me = new MyEntry(entry);
         putMyEntry(me);
-        return me;
+        // return me;
     }
 
     protected MyEntry putMyEntry(MyEntry me) {
@@ -268,7 +290,8 @@ public class UnlimitedCache<K, V> extends LoadableCache<K, V> implements Concurr
 
     }
 
-    private void added(MyEntry newEntry, MyEntry prev, CacheEntry<K, V> extendedInitializer) {
+    private void added(MyEntry newEntry, MyEntry prev,
+            CacheEntry<K, V> extendedInitializer) {
         if (extendedInitializer != null) {
             if (prev != null) {
                 newEntry.policyIndex = prev.policyIndex;
@@ -296,8 +319,8 @@ public class UnlimitedCache<K, V> extends LoadableCache<K, V> implements Concurr
     protected void putAll0(Map<? extends K, ? extends V> t, long timeout, TimeUnit unit) {
         checkMapForNulls(t);
         ArrayList<MyEntry> am = new ArrayList<MyEntry>();
-        for (Iterator<? extends Map.Entry<? extends K, ? extends V>> i = t.entrySet().iterator(); i
-                .hasNext();) {
+        for (Iterator<? extends Map.Entry<? extends K, ? extends V>> i = t.entrySet()
+                .iterator(); i.hasNext();) {
             Map.Entry<? extends K, ? extends V> e = i.next();
             am.add(newE(e.getKey(), e.getValue(), timeout, unit));
         }
@@ -305,7 +328,7 @@ public class UnlimitedCache<K, V> extends LoadableCache<K, V> implements Concurr
     }
 
     @Override
-    protected void putAllEntries(Collection<CacheEntry<K, V>> entries) {
+    protected void putEntries(Collection<CacheEntry<K, V>> entries) {
         ArrayList<MyEntry> am = new ArrayList<MyEntry>(entries.size());
         for (CacheEntry<K, V> entry : entries) {
             am.add(new MyEntry(entry));
@@ -326,16 +349,17 @@ public class UnlimitedCache<K, V> extends LoadableCache<K, V> implements Concurr
                     V preVal = prev == null ? null : prev.getValueSilent();
                     if (prev == null) {
                         if (ed.doNotifyAdded()) {
-                            ed.notifyAdded(nextSequenceId(), mm.getKey(), mm.getValue(), mm);
+                            ed.notifyAdded(nextSequenceId(), mm.getKey(), mm.getValue(),
+                                    mm);
                         }
                     } else {
                         if (ed.doNotifyChanged() && !mm.getValue().equals(preVal)) {
-                            ed.notifyChanged(eventId++, mm.getKey(), mm.getValue(), preVal, mm);
+                            ed.notifyChanged(eventId++, mm.getKey(), mm.getValue(),
+                                    preVal, mm);
                         }
                     }
                 }
             }
-
         }
     }
 
@@ -346,29 +370,19 @@ public class UnlimitedCache<K, V> extends LoadableCache<K, V> implements Concurr
         MyEntry newEntry = null;
         V value = entry == null ? null : entry.getValue();
         V prev = value;
-        //TODO handle null value
+        // TODO handle null value
         if (!isPeeking) {
             if (value == null) {
-                if (usesExtendedCacheLoader()) {
-                    CacheEntry<K, V> ce = loadExtendedValueFromCacheLoader(key, false);
-                    if (ce != null) {
-                        value = ce.getValue();
-                        wasLoaded = true;
-                        newEntry = new MyEntry(ce);
-                        added(newEntry, null, ce);
-                        map.put(key, newEntry);
-                        newEntry.lastAccessTime = getClock().absolutTime();
-                    }
-                } else {
-                    value = loadValueFromCacheLoader(key, false);
-                    if (value != null) {
-                        wasLoaded = true;
-                        newEntry = new MyEntry(key, value);
-                        added(newEntry, null, null);
-                        map.put(key, newEntry);
-                        newEntry.lastAccessTime = getClock().absolutTime();
-                    }
+                CacheEntry<K, V> ce = LoaderSupport.loadEntryNow(this, loader, key);
+                if (ce != null) {
+                    value = ce.getValue();
+                    wasLoaded = true;
+                    newEntry = new MyEntry(ce);
+                    added(newEntry, null, ce);
+                    map.put(key, newEntry);
+                    newEntry.lastAccessTime = getClock().absolutTime();
                 }
+
                 misses++;
                 ed.notifyAccessed(nextSequenceId(), key, value, newEntry, false);
                 if (wasLoaded) {
@@ -385,7 +399,9 @@ public class UnlimitedCache<K, V> extends LoadableCache<K, V> implements Concurr
                     // cache policy?
                 } else {
                     if (isExpired(entry)) {
-                        value = loadValueFromCacheLoader(key, false);
+                        CacheEntry<K, V> e = LoaderSupport
+                                .loadEntryNow(this, loader, key);
+                        value = e == null ? null : e.getValue();
                         if (value != null) {
                             wasLoaded = true;
                             MyEntry me = new MyEntry(key, value);
@@ -432,7 +448,8 @@ public class UnlimitedCache<K, V> extends LoadableCache<K, V> implements Concurr
                     MyEntry prev = map.remove(key.getKey(), false);
                     V value = prev == null ? null : prev.getValueSilent();
                     if (value != null && ed.doNotifyRemoved()) {
-                        ed.notifyRemoved(nextSequenceId(), prev.getKey(), value, false, prev);
+                        ed.notifyRemoved(nextSequenceId(), prev.getKey(), value, false,
+                                prev);
                     }
                 }
                 // not initialized
@@ -598,7 +615,8 @@ public class UnlimitedCache<K, V> extends LoadableCache<K, V> implements Concurr
          * @see org.coconut.cache.CacheQuery#getNext(int)
          */
         public List<CacheEntry<K, V>> getNext(int count) {
-            int realCount = count + index > entries.length ? entries.length - index : count;
+            int realCount = count + index > entries.length ? entries.length - index
+                    : count;
             CacheEntry<K, V>[] e = new CacheEntry[realCount];
             System.arraycopy(entries, index, e, 0, realCount);
             index += realCount;
@@ -732,6 +750,7 @@ public class UnlimitedCache<K, V> extends LoadableCache<K, V> implements Concurr
         public long getDefaultExpiration() {
             return super.getDefaultExpiration();
         }
+
         @Override
         public void setMaximumSize(long maximumCapacity) {
             super.setMaximumSize(maximumCapacity);

@@ -22,7 +22,7 @@ import org.coconut.cache.CacheItemEvent;
 import org.coconut.cache.tck.CacheTestBundle;
 import org.coconut.core.EventHandler;
 import org.coconut.core.EventHandlers;
-import org.coconut.event.bus.Subscription;
+import org.coconut.event.EventSubscription;
 import org.coconut.filter.Filter;
 import org.junit.After;
 import org.junit.Before;
@@ -60,8 +60,8 @@ public class AbstractEventTestBundle extends CacheTestBundle {
         }
     }
 
-    Subscription subscribe(Filter f) {
-        Subscription s = c.getEventBus().subscribe(eventHandler, f);
+    EventSubscription subscribe(Filter f) {
+        EventSubscription s = c.getEventBus().subscribe(eventHandler, f);
         assertNotNull(s);
         return s;
     }

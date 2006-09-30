@@ -28,7 +28,7 @@ import org.coconut.cache.CacheItemEvent.ItemRemoved;
 import org.coconut.cache.CacheItemEvent.ItemUpdated;
 import org.coconut.cache.policy.Policies;
 import org.coconut.cache.tck.util.IntegerToStringLoader;
-import org.coconut.event.bus.Subscription;
+import org.coconut.event.EventSubscription;
 import org.junit.Test;
 
 @SuppressWarnings("unchecked")
@@ -351,7 +351,7 @@ public class EventBusFeature extends AbstractEventTestBundle {
     @Test
     public void testUnsubscribe() throws Exception {
         c = c0;
-        Subscription<?> s = subscribe(ItemAccessed.FILTER);
+        EventSubscription<?> s = subscribe(ItemAccessed.FILTER);
         c.get(M1.getKey());
         assertEquals(1, getPendingEvents());
         s.cancel();

@@ -8,11 +8,11 @@ import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheException;
-import org.coconut.cache.spi.LoadableCache;
+import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.store.OldCacheStore;
 
 
-public abstract class StoragableCache<K, V> extends LoadableCache<K, V> {
+public abstract class StoragableCache<K, V> extends AbstractCache<K, V> {
 
     private OldCacheStore<K, V> store;
    

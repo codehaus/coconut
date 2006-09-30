@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the MIT license, see http://coconut.codehaus.org/license.
  */
- 
+
 package org.coconut.cache;
 
 import java.io.IOException;
@@ -20,7 +20,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.coconut.annotation.ThreadSafe;
 import org.coconut.cache.policy.ReplacementPolicy;
-import org.coconut.cache.sandbox.store.CacheStore;
+import org.coconut.cache.spi.CacheErrorHandler;
+import org.coconut.cache.store.CacheStore;
 import org.coconut.core.Clock;
 import org.coconut.core.Log;
 import org.coconut.filter.Filter;
@@ -89,7 +90,8 @@ public final class CacheConfiguration<K, V> implements Cloneable {
      * The default configuration that can be used by any cache that is not
      * provided with a cache configuration object.
      */
-    public static final CacheConfiguration DEFAULT_CONFIGURATION = CacheConfiguration.newConf();
+    public static final CacheConfiguration DEFAULT_CONFIGURATION = CacheConfiguration
+            .newConf();
 
     public class Backend {
 
@@ -102,7 +104,7 @@ public final class CacheConfiguration<K, V> implements Cloneable {
             return CacheConfiguration.this;
         }
 
-        public CacheLoader<K, ? extends CacheEntry<K, V>> getExtendedLoader() {
+        public CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> getExtendedLoader() {
             return extendedLoader;
         }
 
@@ -111,7 +113,7 @@ public final class CacheConfiguration<K, V> implements Cloneable {
          * key-value bindings. If this method returns <code>null</code> no
          * initial loader will be set.
          */
-        public CacheLoader<K, ? extends V> getLoader() {
+        public CacheLoader<? super K, ? extends V> getLoader() {
             return loader;
         }
 
@@ -162,9 +164,10 @@ public final class CacheConfiguration<K, V> implements Cloneable {
          *            the loader to set
          * @return the current CacheConfiguration
          */
-        public Backend setExtendedLoader(CacheLoader<K, ? extends CacheEntry<K, V>> loader) {
+        public Backend setExtendedLoader(CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader) {
             if (CacheConfiguration.this.loader != null) {
-                throw new IllegalStateException("loader already set, cannot set an extended loader");
+                throw new IllegalStateException(
+                        "loader already set, cannot set an extended loader");
             }
             extendedLoader = loader;
             return this;
@@ -180,9 +183,10 @@ public final class CacheConfiguration<K, V> implements Cloneable {
          *            the loader to set
          * @return the current CacheConfiguration
          */
-        public Backend setLoader(CacheLoader<K, ? extends V> loader) {
+        public Backend setLoader(CacheLoader<? super K, ? extends V> loader) {
             if (extendedLoader != null) {
-                throw new IllegalStateException("extended loader already set, cannot set a loader");
+                throw new IllegalStateException(
+                        "extended loader already set, cannot set a loader");
             }
             CacheConfiguration.this.loader = loader;
             return this;
@@ -356,7 +360,8 @@ public final class CacheConfiguration<K, V> implements Cloneable {
         public Eviction setMaximumCapacity(int elements) {
             if (elements <= 0) {
                 throw new IllegalArgumentException(
-                        "number of maximum elements must be greater then 0, was " + elements);
+                        "number of maximum elements must be greater then 0, was "
+                                + elements);
             }
             maximumElements = elements;
             return this;
@@ -395,7 +400,8 @@ public final class CacheConfiguration<K, V> implements Cloneable {
                 // don't convert relative to time unit
                 return defaultExpirationTimeoutDuration;
             } else {
-                return unit.convert(defaultExpirationTimeoutDuration, TimeUnit.NANOSECONDS);
+                return unit.convert(defaultExpirationTimeoutDuration,
+                        TimeUnit.NANOSECONDS);
             }
         }
 
@@ -424,8 +430,8 @@ public final class CacheConfiguration<K, V> implements Cloneable {
          */
         public Expiration setDefaultTimeout(long duration, TimeUnit unit) {
             if (duration <= 0) {
-                throw new IllegalArgumentException("duration must be greather then 0, was "
-                        + duration);
+                throw new IllegalArgumentException(
+                        "duration must be greather then 0, was " + duration);
             } else if (unit == null) {
                 throw new NullPointerException("unit is null");
             }
@@ -596,7 +602,8 @@ public final class CacheConfiguration<K, V> implements Cloneable {
                     return on;
                 } catch (MalformedObjectNameException e) {
                     // this only happens if the user has set a lame name
-                    throw new IllegalStateException("The configured name of the cache, ", e);
+                    throw new IllegalStateException("The configured name of the cache, ",
+                            e);
                 }
 
             }
@@ -843,8 +850,8 @@ public final class CacheConfiguration<K, V> implements Cloneable {
         cc.eviction().setMaximumCapacity(1000);
         cc.expiration().setDefaultTimeout(100, TimeUnit.SECONDS);
         cc.jmx().setRegister(true);
-        for (CacheEntry<String,Integer> entry : cc.newInstance(null).query(null)) {
-            
+        for (CacheEntry<String, Integer> entry : cc.newInstance(null).query(null)) {
+
         }
         // Cache<String,Integer> cache=cc.newInstance(UnlimitedCache.class);
         // // cc.parseDocument(document.getDocumentElement());
@@ -869,7 +876,8 @@ public final class CacheConfiguration<K, V> implements Cloneable {
      * @throws NullPointerException
      *             if the specified class is <tt>null</tt>
      */
-    public Cache<K, V> newInstance(Class<? extends Cache> clazz) throws IllegalArgumentException {
+    public Cache<K, V> newInstance(Class<? extends Cache> clazz)
+            throws IllegalArgumentException {
         if (clazz == null) {
             throw new NullPointerException("clazz is null");
         }
@@ -890,13 +898,13 @@ public final class CacheConfiguration<K, V> implements Cloneable {
 
     private ExpirationStrategy expirationStrategy = DEFAULT_EXPIRATION_STRATEGY;
 
-    private CacheLoader<K, ? extends CacheEntry<K, V>> extendedLoader;
+    private CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> extendedLoader;
 
     private Map<? extends K, ? extends V> initialMap;
 
-    private CacheLoader<K, ? extends V> loader;
+    private CacheLoader<? super K, ? extends V> loader;
 
-    private Log log;
+    private CacheErrorHandler<K, V> errorHandler=CacheErrorHandler.DEFAULT;
 
     private int maximumElements = Integer.MAX_VALUE;
 
@@ -992,8 +1000,8 @@ public final class CacheConfiguration<K, V> implements Cloneable {
      *         configured
      * @see #setLog(Log)
      */
-    public Log getLog() {
-        return log;
+    public CacheErrorHandler<K, V> getErrorHandler() {
+        return errorHandler;
     }
 
     /**
@@ -1069,11 +1077,11 @@ public final class CacheConfiguration<K, V> implements Cloneable {
      * @throws NullPointerException
      *             if log is <tt>null</tt>
      */
-    public CacheConfiguration<K, V> setLog(Log log) {
-        if (log == null) {
-            throw new NullPointerException("log is null");
+    public CacheConfiguration<K, V> setErrorHandler(CacheErrorHandler<K, V> errorHandler) {
+        if (errorHandler == null) {
+            throw new NullPointerException("errorHandler is null");
         }
-        this.log = log;
+        this.errorHandler = errorHandler;
         return this;
     }
 
@@ -1132,7 +1140,8 @@ public final class CacheConfiguration<K, V> implements Cloneable {
      * @see #setProperty(String, Object)
      */
     public Map<String, ?> getProperties() {
-        return Collections.unmodifiableMap(new HashMap<String, Object>(additionalProperties));
+        return Collections.unmodifiableMap(new HashMap<String, Object>(
+                additionalProperties));
     }
 
     /**
@@ -1276,7 +1285,6 @@ public final class CacheConfiguration<K, V> implements Cloneable {
     // public static <K, V> Cache<K, V> fromClasspath(String path) {
     // return fromInputStream(Cache.class.getResourceAsStream(path));
     // }
-
 
     // /**
     // * These are items that does not effect the semantics of a cache, but are
