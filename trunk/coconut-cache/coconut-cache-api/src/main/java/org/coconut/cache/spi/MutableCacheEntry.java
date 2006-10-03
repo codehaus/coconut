@@ -4,6 +4,8 @@
 
 package org.coconut.cache.spi;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.Semaphore;
 
 import org.coconut.cache.CacheEntry;
@@ -154,5 +156,11 @@ public class MutableCacheEntry<K, V> implements CacheEntry<K, V> {
     public long getMisses() {
         // TODO Auto-generated method stub
         return 0;
+    }
+    /**
+     * @see org.coconut.cache.CacheEntry#getAttributes()
+     */
+    public Map<String, Object> getAttributes() {
+        return Collections.unmodifiableMap(Collections.EMPTY_MAP);
     }
 }

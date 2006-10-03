@@ -23,9 +23,10 @@ public interface CostSizeObject {
      * The size returned does not necessarily represent the actual number of
      * bytes used to store the element.
      * 
-     * @return the size of the element or
-     *         {@link org.coconut.cache.policy.CostSizePolicy#DEFAULT_SIZE} if
-     *         no cost is associated with this element
+     * @return the size of the element. If the size of the object cannot be
+     *         determined
+     *         {@link org.coconut.cache.policy.CostSizePolicy#DEFAULT_SIZE}
+     *         should be returned
      */
     long getSize();
 

@@ -397,21 +397,11 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
 
     /**
      * Retrieves a {@link CacheEntry} for the specified key (optional). If no
-     * entry exists for the specified key <code>null</code> is returned. This
-     * method will not attempt to fetch a missing value from any configured
-     * cache backends.
+     * entry exists for the specified key any configured cache backend is asked
+     * to try and fetch a value for the key.
      * <p>
-     * But actually why not why would anyone call this method if they don't want
-     * the value. It can always be guarded by an containsKey() call // * as get,
-     * will load value on miss, // functions as a cache miss if value is not
-     * there? // maybe it should just work as peek(); // * If it loads values it
-     * should function as a cache -> don't fetch values on getEntry() method But
-     * if we load entries, we should probably also supply a get all entries
-     * (Collection) as load+get.
+     * TODO: Come up with example usage
      * <p>
-     * Come up with example usage
-     * <p>
-     * TODO: Determine whether or not this entry loads
      * 
      * @param key
      *            whose associated cache entry is to be returned.
@@ -423,6 +413,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @throws NullPointerException
      *             if the specified key is <tt>null</tt>
      */
+    // also see http://jira.codehaus.org/browse/COCACHE-25
     CacheEntry<K, V> getEntry(K key);
 
     /**

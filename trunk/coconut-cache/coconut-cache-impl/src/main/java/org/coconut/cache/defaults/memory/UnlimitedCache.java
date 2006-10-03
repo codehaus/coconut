@@ -7,6 +7,7 @@ package org.coconut.cache.defaults.memory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,6 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheEvent;
 import org.coconut.cache.CacheLoader;
 import org.coconut.cache.CacheQuery;
-import org.coconut.cache.Caches;
 import org.coconut.cache.CacheConfiguration.ExpirationStrategy;
 import org.coconut.cache.defaults.util.CacheEntryMap;
 import org.coconut.cache.management.CacheMXBean;
@@ -34,6 +34,7 @@ import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.AbstractCacheMXBean;
 import org.coconut.cache.spi.CacheEventDispatcher;
+import org.coconut.cache.spi.CacheStatisticsSupport;
 import org.coconut.cache.spi.CacheSupport;
 import org.coconut.cache.spi.EventDispatcher;
 import org.coconut.cache.spi.LoaderSupport;
@@ -57,7 +58,7 @@ import org.coconut.filter.Filters;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-@CacheSupport(CacheLoadingSuppurt = true, CacheEntrySupport = true, querySupport = true, ExpirationSupport = true, statisticsSupport = true, eventSupport = true)
+@CacheSupport(CacheLoadingSupport = true, CacheEntrySupport = true, querySupport = true, ExpirationSupport = true, statisticsSupport = true, eventSupport = true)
 @ThreadSafe(false)
 public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
         ConcurrentMap<K, V> {
@@ -68,9 +69,8 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
 
     private final ReplacementPolicy<MyEntry> cp;
 
-    private int hits;
-
-    private int misses;
+    private final CacheStatisticsSupport statistics = CacheStatisticsSupport
+            .createConcurrent();
 
     private long eventId = 0;
 
@@ -122,6 +122,7 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
         // .toOfferable(EventHandlers.toSystemOut()));
         ed = new EventDispatcher(this, conf, eb);
         store = conf.backend().getStore();
+        loader = LoaderSupport.getLoader(conf);
         storageStrategy = CacheConfiguration.StorageStrategy.WRITE_THROUGH;
         this.expirationStrategy = conf.expiration().getStrategy();
         this.defaultExpirationTime = conf.expiration().getDefaultTimeout(
@@ -134,7 +135,6 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
         if (conf.getInitialMap() != null) {
             putAll(conf.getInitialMap());
         }
-        loader = LoaderSupport.getLoader(conf);
     }
 
     @SuppressWarnings("unchecked")
@@ -198,7 +198,21 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
     /** {@inheritDoc} */
     @Override
     public Future<?> load(final K key) {
-        return LoaderSupport.loadEntry(this, loader, key);
+        // final long start=System.nanoTime();
+        // Callback<CacheEntry<K,V>> c=new Callback<CacheEntry<K,V>>() {
+        //
+        // public void completed(CacheEntry<K,V> result) {
+        // long time=System.nanoTime()-start;
+        // System.out.println("took " + time);
+        // }
+        //
+        // public void failed(Throwable cause) {
+        // // TODO Auto-generated method stub
+        //                
+        // }
+        //            
+        // }
+        return LoaderSupport.loadEntry(this, key, loader);
     }
 
     /**
@@ -365,13 +379,14 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
 
     @Override
     protected V get0(K key, boolean isPeeking) {
+        long start = isPeeking ? 0 : statistics.getStarted();
         boolean wasLoaded = false;
         MyEntry entry = map.get(key);
         MyEntry newEntry = null;
         V value = entry == null ? null : entry.getValue();
         V prev = value;
-        // TODO handle null value
         if (!isPeeking) {
+            boolean wasHit = false;
             if (value == null) {
                 CacheEntry<K, V> ce = LoaderSupport.loadEntryNow(this, loader, key);
                 if (ce != null) {
@@ -383,20 +398,24 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
                     newEntry.lastAccessTime = getClock().absolutTime();
                 }
 
-                misses++;
                 ed.notifyAccessed(nextSequenceId(), key, value, newEntry, false);
                 if (wasLoaded) {
                     ed.notifyAdded(nextSequenceId(), key, value, newEntry);
                 }
             } else {
                 if (getExpirationStrategy() == ExpirationStrategy.ON_EVICT) {
-                    hits++;
                     entry.hits++;
+                    wasHit = true;
                     entry.lastAccessTime = getClock().absolutTime();
                     ed.notifyAccessed(nextSequenceId(), key, value, entry, true);
                     // what if we need to reload value, miss right but what
                     // about
                     // cache policy?
+                    // actually i think it is a hit. Why miss?
+                    // værdien er der jo, men den er bare for gammel
+                    // kald update på policy
+                    // vrøvl det er et miss, ihverfald i forhold til den
+                    // definition vi har
                 } else {
                     if (isExpired(entry)) {
                         CacheEntry<K, V> e = LoaderSupport
@@ -411,14 +430,15 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
                             map.remove(key);
                             // TODO notify removal
                         }
-                        misses++;
+                        statistics.expiredIncrement();
                         entry.lastAccessTime = getClock().absolutTime();
                         ed.notifyAccessed(nextSequenceId(), key, value, entry, false);
                         if (wasLoaded) {
                             ed.notifyChanged(nextSequenceId(), key, value, prev, entry);
                         }
                     } else {
-                        hits++;
+                        entry.hits++;
+                        wasHit = true;
                         entry.lastAccessTime = getClock().absolutTime();
                         ed.notifyAccessed(nextSequenceId(), key, value, entry, true);
                     }
@@ -427,7 +447,13 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
                     cp.touch(entry.policyIndex);
                 }
             }
+            if (wasHit) {
+                statistics.getHitStopped(start);
+            } else {
+                statistics.getMissStopped(start);
+            }
         }
+        // long done=System.currentTimeMillis();
         return value;
     }
 
@@ -440,12 +466,14 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
                 // this method, to avoid that the policy wants to evict the
                 // newly added element.
                 // However this causes a problem if add rejects the entry and
-                // size=maxCapaciry, then we have evicted an entry without
+                // size=maxCapacity (which is usually the case), then we have
+                // evicted an entry without
                 // actually needing to do so. But this is how it works for now.
 
                 if (UnlimitedCache.this.size() == maxCapacity) {
                     MyEntry key = cp.evictNext();
                     MyEntry prev = map.remove(key.getKey(), false);
+                    statistics.evictedIncrement();
                     V value = prev == null ? null : prev.getValueSilent();
                     if (value != null && ed.doNotifyRemoved()) {
                         ed.notifyRemoved(nextSequenceId(), prev.getKey(), value, false,
@@ -582,6 +610,13 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
         public double getCost() {
             return cost;
         }
+
+        /**
+         * @see org.coconut.cache.CacheEntry#getAttributes()
+         */
+        public Map<String, Object> getAttributes() {
+            return Collections.unmodifiableMap(Collections.EMPTY_MAP);
+        }
     }
 
     @Override
@@ -715,16 +750,24 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
 
     @Override
     public void evict() {
+        long start = statistics.evictStarted();
         Iterator<MyEntry> iter = map.values().iterator();
-        for (Iterator<MyEntry> iterator = map.values().iterator(); iterator.hasNext();) {
-            MyEntry m = (MyEntry) iterator.next();
-            if (isExpired(m)) {
-                iter.remove();
-                V value = m.getValueSilent();
-                if (value != null && ed.doNotifyRemoved()) {
-                    ed.notifyRemoved(nextSequenceId(), m.getKey(), value, true, m);
+        int count = 0;
+        try {
+            for (Iterator<MyEntry> iterator = map.values().iterator(); iterator.hasNext();) {
+                MyEntry m = (MyEntry) iterator.next();
+                if (isExpired(m)) {
+                    iter.remove();
+                    count++;
+                    V value = m.getValueSilent();
+                    if (value != null && ed.doNotifyRemoved()) {
+                        ed.notifyRemoved(nextSequenceId(), m.getKey(), value, true, m);
+                    }
                 }
             }
+        } finally {
+            statistics.expiredIncrement(count);
+            statistics.evictStopped(start);
         }
     }
 
@@ -769,17 +812,25 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
 
     @Override
     public HitStat getHitStat() {
-        return Caches.newImmutableHitStat(hits, misses);
+        return statistics.getHitStat();
     }
 
     @Override
     public void resetStatistics() {
-        hits = 0;
-        misses = 0;
+        statistics.reset();
     }
 
     @Override
     public EventBus<CacheEvent<K, V>> getEventBus() {
         return eb;
     }
+
+    public Collection<Object> getMetrics() {
+        return statistics.getMetrics();
+    }
+
+    public CacheStatisticsSupport getStats() {
+        return statistics;
+    }
+
 }

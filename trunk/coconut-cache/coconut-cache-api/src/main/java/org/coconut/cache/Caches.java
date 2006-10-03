@@ -984,7 +984,7 @@ public final class Caches {
 
     public static <K, V> CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> asCacheLoader(
             CacheLoader<K, V> loader) {
-        return new AbstractExtendedLoaderToLoader(loader);
+        return new AbstractLoaderToExtendedLoader(loader);
     }
 
     /**

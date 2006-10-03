@@ -385,7 +385,7 @@ public abstract class CacheEntryMap<K, V, M extends CacheEntryMap.Entry<K, V>>
     static int indexFor(int h, int length) {
         return h & (length - 1);
     }
-
+    
     @SuppressWarnings("hiding")
     public static class Entry<K, V> implements Map.Entry<K, V> {
 

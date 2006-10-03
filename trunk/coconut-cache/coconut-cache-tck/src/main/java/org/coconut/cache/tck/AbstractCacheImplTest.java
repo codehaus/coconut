@@ -73,7 +73,7 @@ public class AbstractCacheImplTest extends TestSuite {
         boolean isThreadSafe = cacheClazz.isAnnotationPresent(ThreadSafe.class)
                 && cacheClazz.getAnnotation(ThreadSafe.class).value();
         addCoreFeatures();
-        if (cs.CacheLoadingSuppurt()) {
+        if (cs.CacheLoadingSupport()) {
             addTestBundle(Loading.class);
             addTestBundle(FutureLoading.class);
             if (cs.CacheEntrySupport()) {

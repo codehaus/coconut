@@ -8,9 +8,6 @@ import java.util.Map;
 
 import org.coconut.cache.policy.CostSizeObject;
 
-// except for setValue, I think this class should be informational
-// purpose only
-
 /**
  * A <tt>CacheEntry</tt> describes a value-key mapping much like
  * {@link java.util.Map.Entry}. However, this interface extends it with
@@ -31,9 +28,6 @@ import org.coconut.cache.policy.CostSizeObject;
  * on the cache entry (version=1) it will fail. This failure is indicated by
  * returning <tt>null</tt> from setValue instead of returning the existing
  * value. Use code example try -> use concurrent example.
- * <p>
- * Persistens : what about persistence do we keep creation time all cache stores
- * should store these values
  * <p>
  * When storing entries in a cache store, these additional fields should also be
  * stored. While there is no way to enforce this any cache store should also
@@ -59,7 +53,7 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V>, CostSizeObject {
      * Returns the time at which the current value of the cache entry will
      * expire. Whether or not expired entries are served is determined by the
      * configuration of the cache. {@link Long#MAX_VALUE} is returned if the
-     * entry never expires.
+     * entry will never expire.
      * 
      * @return the time at which the current value of the cache entry will
      *         expire
@@ -104,5 +98,9 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V>, CostSizeObject {
     // 
     // boolean hasAttributes(); //if attribute map is lazy created check this
     // first
-    // Map getAttributes(); /* Optional??? */
+    /**
+     * Returns a map of attributes (optional operation). This are valid only
+     * doing lifetime and will not be persisted.
+     */
+    Map<String, Object> getAttributes();
 }

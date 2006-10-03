@@ -23,7 +23,7 @@ public @interface CacheSupport {
     boolean eventSupport() default false;
     boolean CacheWideLockSupport() default false;
     boolean CacheEntryLockSupport() default false;
-    boolean CacheLoadingSuppurt() default false;
+    boolean CacheLoadingSupport() default false;
     boolean CacheStoreSupport() default false; 
     boolean ExpirationSupport() default false;
     boolean statisticsSupport() default false;

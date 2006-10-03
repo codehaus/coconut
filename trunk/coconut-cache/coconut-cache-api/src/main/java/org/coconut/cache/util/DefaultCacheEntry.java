@@ -4,6 +4,9 @@
 
 package org.coconut.cache.util;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.policy.CostSizeObject;
 
@@ -111,5 +114,12 @@ public class DefaultCacheEntry<K, V> implements CacheEntry<K, V> {
      */
     public V setValue(V value) {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * @see org.coconut.cache.CacheEntry#getAttributes()
+     */
+    public Map<String, Object> getAttributes() {
+        return Collections.unmodifiableMap(Collections.EMPTY_MAP);
     }
 }

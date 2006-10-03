@@ -42,11 +42,9 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         for (Map.Entry<?, ?> entry : map.entrySet()) {
             if (entry == null) {
                 throw new NullPointerException("map contains a null entry");
-            }
-            if (entry.getKey() == null) {
+            } else if (entry.getKey() == null) {
                 throw new NullPointerException("map contains a null key");
-            }
-            if (entry.getValue() == null) {
+            } else if (entry.getValue() == null) {
                 throw new NullPointerException("map contains a null value for key = "
                         + entry.getKey());
             }
@@ -136,9 +134,6 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         }
         K k = (K) key;
         V value = get0(k, false);
-        if (value == null) {
-            value = handleNullGet(k);
-        }
         return value;
     }
 
@@ -184,11 +179,6 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
                 throw new NullPointerException("collection contains a null element");
             }
             V value = get0(key, false);
-            if (value == null) {
-                // I think the method overriden this should have checked this
-                // allready
-                value = handleNullGet(key);
-            }
             h.put(key, value); //
         }
         return h;
@@ -212,35 +202,6 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
      */
     public Cache.HitStat getHitStat() {
         return Caches.STAT00;
-    }
-
-    // /**
-    // * Returns a unique id for this cache.
-    // */
-    // public UUID getID() {
-    // return id;
-    // }
-
-    /**
-     * This can be overridden to provide custom handling for cases where the
-     * cache is unable to find a mapping for a given key. This can be used, for
-     * example, to provide a failfast behaviour if the cache is supposed to
-     * contain a value for any given key.
-     * 
-     * <pre>
-     * public class MyCacheImpl&lt;K, V&gt; extends AbstractCache&lt;K, V&gt; {
-     *     protected V handleNullGet(K key) {
-     *         throw new CacheRuntimeException(&quot;No value defined for Key [key=&quot; + key + &quot;]&quot;);
-     *     }
-     * }
-     * </pre>
-     * 
-     * @param key
-     *            the key for which no value could be found
-     * @return <tt>null</tt> or any value that should be used instead
-     */
-    protected V handleNullGet(K key) {
-        return null; // by default just return null
     }
 
     /**
@@ -284,8 +245,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
     public V put(K key, V value) {
         if (key == null) {
             throw new NullPointerException("key is null");
-        }
-        if (value == null) {
+        } else if (value == null) {
             throw new NullPointerException("value is null");
         }
         return put0(key, value, DEFAULT_EXPIRATION, null);
@@ -297,15 +257,12 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
     public V put(K key, V value, long timeout, TimeUnit unit) {
         if (key == null) {
             throw new NullPointerException("key is null");
-        }
-        if (value == null) {
+        } else if (value == null) {
             throw new NullPointerException("value is null");
-        }
-        if (timeout < 0) {
-            throw new IllegalArgumentException(
-                    "timeout must be zero or a positive number");
-        }
-        if (unit == null) {
+        } else if (timeout < 0) {
+            throw new IllegalArgumentException("timeout must not be negative, was "
+                    + timeout);
+        } else if (unit == null) {
             throw new NullPointerException("unit is null");
         }
         return put0(key, value, timeout, unit);
@@ -339,12 +296,10 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
     public void putAll(Map<? extends K, ? extends V> m, long timeout, TimeUnit unit) {
         if (m == null) {
             throw new NullPointerException("m is null");
-        }
-        if (timeout < 0) {
-            throw new IllegalArgumentException(
-                    "timeout must be zero or a positive number");
-        }
-        if (unit == null) {
+        } else if (timeout < 0) {
+            throw new IllegalArgumentException("timeout must not be negative, was "
+                    + timeout);
+        } else if (unit == null) {
             throw new NullPointerException("unit is null");
         }
         putAll0(m, timeout, unit);
@@ -495,5 +450,36 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
     String getName() {
         return name;
     }
-
 }
+
+// /**
+// * Returns a unique id for this cache.
+// */
+// public UUID getID() {
+// return id;
+// }
+//
+// /**
+// * This can be overridden to provide custom handling for cases where the
+// * cache is unable to find a mapping for a given key. This can be used,
+// for
+// * example, to provide a failfast behaviour if the cache is supposed to
+// * contain a value for any given key.
+// *
+// * <pre>
+// * public class MyCacheImpl&lt;K, V&gt; extends AbstractCache&lt;K, V&gt;
+// {
+// * protected V handleNullGet(K key) {
+// * throw new CacheRuntimeException(&quot;No value defined for Key
+// [key=&quot; + key + &quot;]&quot;);
+// * }
+// * }
+// * </pre>
+// *
+// * @param key
+// * the key for which no value could be found
+// * @return <tt>null</tt> or any value that should be used instead
+// */
+// protected V handleNullGet(K key) {
+// return null; // by default just return null
+// }

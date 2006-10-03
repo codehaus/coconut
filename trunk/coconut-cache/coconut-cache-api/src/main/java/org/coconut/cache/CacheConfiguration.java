@@ -164,7 +164,8 @@ public final class CacheConfiguration<K, V> implements Cloneable {
          *            the loader to set
          * @return the current CacheConfiguration
          */
-        public Backend setExtendedLoader(CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader) {
+        public Backend setExtendedLoader(
+                CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader) {
             if (CacheConfiguration.this.loader != null) {
                 throw new IllegalStateException(
                         "loader already set, cannot set an extended loader");
@@ -283,6 +284,32 @@ public final class CacheConfiguration<K, V> implements Cloneable {
          * No order . Information purposes
          */
         WEAK;
+    }
+
+    private TimeUnit statisticsTimeUnit = TimeUnit.MILLISECONDS;
+
+    private boolean statisticsEnabled = false;
+
+    public class Statistics {
+        public void setTimeUnit(TimeUnit unit) {
+            if (unit == null) {
+                throw new NullPointerException("unit is null");
+            }
+            statisticsTimeUnit = unit;
+        }
+
+        public TimeUnit getTimeUnit() {
+            return statisticsTimeUnit;
+        }
+
+        public void setEnabled(boolean isEnabled) {
+            statisticsEnabled = isEnabled;
+        }
+
+        public boolean getEnabled() {
+            return statisticsEnabled;
+        }
+
     }
 
     public class Eviction {
@@ -904,7 +931,7 @@ public final class CacheConfiguration<K, V> implements Cloneable {
 
     private CacheLoader<? super K, ? extends V> loader;
 
-    private CacheErrorHandler<K, V> errorHandler=CacheErrorHandler.DEFAULT;
+    private CacheErrorHandler<K, V> errorHandler = CacheErrorHandler.DEFAULT;
 
     private int maximumElements = Integer.MAX_VALUE;
 
