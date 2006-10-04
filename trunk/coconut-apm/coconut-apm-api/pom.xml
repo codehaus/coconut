@@ -8,7 +8,7 @@
   </parent>
 
   <artifactId>coconut-apm</artifactId>
-  <name>Coconut Monitor (Sandboxed)</name>
+  <name>Coconut APM</name>
   <description>
     This library contains class that are used across all Coconut
     projects
