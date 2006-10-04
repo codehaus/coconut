@@ -6,7 +6,7 @@
   <groupId>org.coconut</groupId>
   <artifactId>coconut-parent</artifactId>
   <packaging>pom</packaging>
-  <name>Coconut</name>
+  <name>Coconut Parent Pom</name>
   <licenses>
     <license>
       <name>The MIT License</name>
