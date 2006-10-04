@@ -1,0 +1,8 @@
+Web interface
+  + add probes
+ list of things we can instrument
+ ...
+ ...
+ 
+Remote access (VIA JMX??), what if
+ 
