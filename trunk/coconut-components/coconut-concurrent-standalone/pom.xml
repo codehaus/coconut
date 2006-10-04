@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.coconut</groupId>
+    <artifactId>coconut-components-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>coconut-concurrent-standalone</artifactId>
+  <name>Coconut Cache Standalone distribution</name>
+  <description>API for Coconut AIO</description>
+  <groupId>org.coconut.concurrent</groupId>
+  <dependencies>
+    <dependency>
+      <groupId>org.coconut.concurrent</groupId>
+      <artifactId>coconut-concurrent</artifactId>
+      <version>1.0-alpha1-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.1</version>
+        <!-- 
+          <executions>
+          <execution>
+          <id>1</id>
+          <phase>package</phase>
+          <goals>
+          <goal>assembly</goal>
+          </goals>
+          </execution>
+          </executions>
+        -->
+        <configuration>
+          <descriptor>assembly.xml</descriptor>
+          <finalName>coconut</finalName>
+          <outputDirectory>target</outputDirectory>
+          <workDirectory>target/assembly/work</workDirectory>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
