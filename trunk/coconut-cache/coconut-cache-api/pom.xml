@@ -17,6 +17,11 @@
       <artifactId>coconut-cache-policies</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.coconut.apm</groupId>
+      <artifactId>coconut-apm</artifactId>
+      <version>1.0-alpha1-SNAPSHOT</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>

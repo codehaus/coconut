@@ -23,7 +23,6 @@
   </dependencies>
 
   <modules>
-    <module>coconut-concurrent</module>
     <module>coconut-filter</module>
   </modules>
 </project>

@@ -33,7 +33,7 @@
         <artifactId>coconut-test-framework</artifactId>
         <version>1.0-SNAPSHOT</version>
       </dependency>
-            <dependency>
+      <dependency>
         <groupId>org.coconut.core</groupId>
         <artifactId>coconut-filter</artifactId>
         <version>1.0-SNAPSHOT</version>
@@ -154,36 +154,41 @@
       </plugins>
     </pluginManagement>
 
-    <plugins>
 
-      <!-- Generate sources JARs too -->
-      <!--
-        <plugin>
+
+    <plugins>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        
-        <executions>
-        <execution>
-        <goals>
-        <goal>check</goal>
-        </goals>
-        </execution>
-        </executions>
-        </plugin>
-        
-        <plugin>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <executions>
-        <execution>
-        <goals>
-        <goal>check</goal>
-        </goals>
-        </execution>
-        </executions>
-        </plugin>
-      -->
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
     </plugins>
   </build>
+  <!-- Generate sources JARs too -->
+  <!--
+    <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-source-plugin</artifactId>
+    
+    <executions>
+    <execution>
+    <goals>
+    <goal>check</goal>
+    </goals>
+    </execution>
+    </executions>
+    </plugin>
+    
+    <plugin>
+    <artifactId>maven-javadoc-plugin</artifactId>
+    <executions>
+    <execution>
+    <goals>
+    <goal>check</goal>
+    </goals>
+    </execution>
+    </executions>
+    </plugin>
+  -->
   <organization>
     <name>Codehaus</name>
     <url>http://www.codehaus.org/</url>
@@ -200,10 +205,6 @@
           <visitors>FindDeadLocalStores,UnreadFields</visitors>
           <omitVisitors>FindDeadLocalStores,UnreadFields</omitVisitors>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-report-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -266,14 +267,20 @@
       <url>http://www.it.edu/~kav/maven</url>
     </repository>
   </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>tapestry.javaforge</id>
+      <url>http://howardlewisship.com/repository</url>
+    </pluginRepository>
+  </pluginRepositories>
   <modules>
-    <module>build-tools</module>
     <module>coconut-aio</module>
+    <module>coconut-apm</module>
     <module>coconut-cache</module>
     <module>coconut-components</module>
+    <module>coconut-concurrent</module>
     <module>coconut-core</module>
     <module>coconut-event</module>
-    <module>coconut-sandbox</module>
     <module>coconut-test-framework</module>
   </modules>
 </project>

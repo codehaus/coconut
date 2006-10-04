@@ -21,6 +21,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.testng.annotations.ExpectedExceptions;
 import org.testng.annotations.Test;
 
 /**
@@ -43,7 +44,8 @@ public class IndexedTest {
         assertEquals(1, heap.size());
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
+    @ExpectedExceptions(IllegalArgumentException.class)
     public void testConstructorIAE() {
         new IndexedHeap<Integer>(-1);
     }
@@ -363,7 +365,8 @@ public class IndexedTest {
         assertEquals(l, list);
     }
 
-    @Test(expectedExceptions = IllegalArgumentException.class)
+    @Test
+    @ExpectedExceptions(IllegalArgumentException.class)
     public void testChangePriorityNonExistingIndex() {
         IndexedHeap<Integer> list = create();
         list.add(1);
