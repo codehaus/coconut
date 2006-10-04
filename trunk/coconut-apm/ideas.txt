@@ -5,4 +5,8 @@ Web interface
  ...
  
 Remote access (VIA JMX??), what if
- 
+
+also add
+coconut-apm-charting
+coconut-apm-jconsole
+coconut apm-persistance
