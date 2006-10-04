@@ -4,9 +4,6 @@
 
 package org.coconut.internal.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
 import java.util.Random;
 
 import junit.framework.JUnit4TestAdapter;

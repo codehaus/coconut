@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.coconut</groupId>
   <artifactId>coconut-parent</artifactId>
   <packaging>pom</packaging>
   <name>Coconut</name>
-    <licenses>
+  <licenses>
     <license>
       <name>The MIT License</name>
       <url>http://coconut.codehaus.org/license</url>
@@ -14,6 +15,32 @@
     </license>
   </licenses>
   <version>1.0-SNAPSHOT</version>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.coconut.core</groupId>
+        <artifactId>coconut</artifactId>
+        <version>1.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.coconut.event</groupId>
+        <artifactId>coconut-event</artifactId>
+        <version>1.0-alpha1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.coconut.test</groupId>
+        <artifactId>coconut-test-framework</artifactId>
+        <version>1.0-SNAPSHOT</version>
+      </dependency>
+            <dependency>
+        <groupId>org.coconut.core</groupId>
+        <artifactId>coconut-filter</artifactId>
+        <version>1.0-SNAPSHOT</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <issueManagement>
     <system>jira</system>
     <url>http://jira.codehaus.org/browse/COCONUT</url>
@@ -44,7 +71,9 @@
     <snapshotRepository>
       <id>coconut-snapshot</id>
       <name>Coconut's snapshot repository</name>
-      <url>dav:https://dav.codehaus.org/snapshots.repository/coconut/</url>
+      <url>
+        dav:https://dav.codehaus.org/snapshots.repository/coconut/
+      </url>
     </snapshotRepository>
     <site>
       <id>coconut-website</id>
@@ -56,15 +85,19 @@
       <id>kasper</id>
       <name>Kasper Nielsen</name>
       <email>kasper@codehaus.org</email>
-      <organization/>
+      <organization />
       <roles>
         <role>Despot</role>
       </roles>
     </developer>
   </developers>
   <scm>
-    <connection>scm:svn:http://svn.codehaus.org/coconut/trunk/</connection>
-    <developerConnection>scm:svn:https://svn.codehaus.org/coconut/trunk</developerConnection>
+    <connection>
+      scm:svn:http://svn.codehaus.org/coconut/trunk/
+    </connection>
+    <developerConnection>
+      scm:svn:https://svn.codehaus.org/coconut/trunk
+    </developerConnection>
   </scm>
   <build>
     <extensions>
@@ -83,8 +116,8 @@
             <target>1.5</target>
           </configuration>
         </plugin>
-        
-                <plugin>
+
+        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
 
           <artifactId>maven-checkstyle-plugin</artifactId>
@@ -99,9 +132,15 @@
           <configuration>
             <consoleOutput>true</consoleOutput>
             <configLocation>build-tools/checkstyle.xml</configLocation>
-            <headerLocation>build-tools/checkstyle.license</headerLocation>
-            <suppressionsLocation>build-tools/checkstyle-suppressions.xml</suppressionsLocation>
-            <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
+            <headerLocation>
+              build-tools/checkstyle.license
+            </headerLocation>
+            <suppressionsLocation>
+              build-tools/checkstyle-suppressions.xml
+            </suppressionsLocation>
+            <suppressionsFileExpression>
+              checkstyle.suppressions.file
+            </suppressionsFileExpression>
           </configuration>
           <executions>
             <execution>
@@ -112,37 +151,37 @@
           </executions>
 
         </plugin>
-       
       </plugins>
     </pluginManagement>
-    
-        <plugins>
+
+    <plugins>
 
       <!-- Generate sources JARs too -->
-      <plugin>
+      <!--
+        <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-
+        
         <executions>
-          <execution>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
+        <execution>
+        <goals>
+        <goal>check</goal>
+        </goals>
+        </execution>
         </executions>
-      </plugin>
-
-      <plugin>
+        </plugin>
+        
+        <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
         <executions>
-          <execution>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
+        <execution>
+        <goals>
+        <goal>check</goal>
+        </goals>
+        </execution>
         </executions>
-      </plugin>
-        
+        </plugin>
+      -->
     </plugins>
   </build>
   <organization>
@@ -151,7 +190,18 @@
   </organization>
   <reporting>
     <plugins>
-          <plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <version>1.0-beta-1</version>
+        <configuration>
+          <threshold>Normal</threshold>
+          <effort>Default</effort>
+          <visitors>FindDeadLocalStores,UnreadFields</visitors>
+          <omitVisitors>FindDeadLocalStores,UnreadFields</omitVisitors>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-report-plugin</artifactId>
       </plugin>
@@ -166,21 +216,29 @@
           <jdk>1.5</jdk>
         </configuration>
       </plugin>
-      <plugin>
+      <!-- 
+        <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <configuration>
-          <configLocation>http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-checkstyle-plugin/src/main/resources/config/maven_checks.xml</configLocation>
-          <headerLocation>http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-checkstyle-plugin/src/main/resources/config/maven-header.txt</headerLocation>
+        <configLocation>
+        http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-checkstyle-plugin/src/main/resources/config/maven_checks.xml
+        </configLocation>
+        <headerLocation>
+        http://svn.apache.org/repos/asf/maven/plugins/trunk/maven-checkstyle-plugin/src/main/resources/config/maven-header.txt
+        </headerLocation>
         </configuration>
-      </plugin>
+        </plugin>
+      -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
           <links>
             <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
-            <link>http://jakarta.apache.org/commons/logging/apidocs/</link>
+            <link>
+              http://jakarta.apache.org/commons/logging/apidocs/
+            </link>
             <link>http://www.junit.org/junit/javadoc/</link>
             <link>http://logging.apache.org/log4j/docs/api/</link>
           </links>
@@ -189,7 +247,7 @@
     </plugins>
   </reporting>
   <repositories>
-      <repository>
+    <repository>
       <id>apache.snapshots</id>
       <name>Apache Snapshot Repository</name>
       <url>http://people.apache.org/repo/m2-snapshot-repository</url>
@@ -212,6 +270,7 @@
     <module>build-tools</module>
     <module>coconut-aio</module>
     <module>coconut-cache</module>
+    <module>coconut-components</module>
     <module>coconut-core</module>
     <module>coconut-event</module>
     <module>coconut-sandbox</module>

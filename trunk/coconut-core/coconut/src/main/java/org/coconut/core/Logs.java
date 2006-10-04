@@ -26,7 +26,7 @@ public final class Logs {
      * @return a logger that ignores any input.
      */
     public static Log nullLog() {
-        return new SimpelLogger(Log.Level.Fatal.getLevel() + 1, null);
+        return new SimpelLogger(Log.Level.Fatal.getLevel() + 1);
     }
 
     /**
@@ -151,7 +151,12 @@ public final class Logs {
 
         private final PrintStream stream;
 
-        private SimpelLogger(int level, PrintStream stream) {
+        SimpelLogger(int level) {
+            this.level = level;
+            this.stream = null;
+        }
+
+        SimpelLogger(int level, PrintStream stream) {
             if (stream == null) {
                 throw new NullPointerException("stream is null");
             }
@@ -168,7 +173,7 @@ public final class Logs {
         }
 
         public void log(Log.Level l, String message, Throwable cause) {
-            if (level <= l.getLevel()) {
+            if (stream != null && level <= l.getLevel()) {
                 stream.println(message);
                 if (cause != null)
                     cause.printStackTrace(stream);

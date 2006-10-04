@@ -30,7 +30,6 @@ import org.coconut.internal.asm.Label;
 import org.coconut.internal.asm.MethodVisitor;
 import org.coconut.internal.asm.Opcodes;
 import org.coconut.internal.asm.Type;
-import org.coconut.internal.util.MapUtils;
 
 /**
  * Not quite done yet.

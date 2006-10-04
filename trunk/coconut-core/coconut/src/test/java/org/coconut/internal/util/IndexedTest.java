@@ -21,23 +21,16 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 
-import junit.framework.JUnit4TestAdapter;
-
-import org.coconut.test.MavenDummyTest;
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-public class IndexedTest extends MavenDummyTest {
+public class IndexedTest {
 
     private int plenty = 1000;// magic number
 
     private int many = plenty * 10; // magic number
-
-    public static junit.framework.Test suite() {
-        return new JUnit4TestAdapter(IndexedTest.class);
-    }
 
     private IndexedHeap<Integer> create() {
         return new IndexedHeap<Integer>(5);
@@ -50,7 +43,7 @@ public class IndexedTest extends MavenDummyTest {
         assertEquals(1, heap.size());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testConstructorIAE() {
         new IndexedHeap<Integer>(-1);
     }
@@ -247,8 +240,7 @@ public class IndexedTest extends MavenDummyTest {
             indexValMap.put(index, number1);
         }
 
-        LinkedList<Integer> indexes = new LinkedList<Integer>(indexValMap
-                .keySet());
+        LinkedList<Integer> indexes = new LinkedList<Integer>(indexValMap.keySet());
 
         Collections.shuffle(indexes); // create a random list
 
@@ -371,7 +363,7 @@ public class IndexedTest extends MavenDummyTest {
         assertEquals(l, list);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testChangePriorityNonExistingIndex() {
         IndexedHeap<Integer> list = create();
         list.add(1);

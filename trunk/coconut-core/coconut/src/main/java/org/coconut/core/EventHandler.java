@@ -22,6 +22,7 @@ package org.coconut.core;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id$
  */
+//TODO rename to EventProcessor and process(E event)
 public interface EventHandler<E> {
 
     /**

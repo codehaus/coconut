@@ -71,10 +71,10 @@ public class GeneratedTransformerTest {
     // t( "voidReturn");
     // }
 
-    @Test(expected = NullPointerException.class)
-    public void testfailNullPassed() {
-        t("method").transform(null);
-    }
+//    @Test(expected = NullPointerException.class)
+//    public void testfailNullPassed() {
+//        t("method").transform(null);
+//    }
 
     @Test(expected = IllegalArgumentException.class)
     public void failNonExistinMethod() {
@@ -129,10 +129,10 @@ public class GeneratedTransformerTest {
         assertEquals(10l, gt.transform(new GeneratedTransformerMockChild()));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testPrimitiveAndObjectCollision() {
-        t("iarg", 4);
-    }
+//    @Test(expected = IllegalArgumentException.class)
+//    public void testPrimitiveAndObjectCollision() {
+//        t("iarg", 4);
+//    }
 
     private static <T> DynamicTransformer<GeneratedTransformerMock, T> t(String method,
             Object... args) {

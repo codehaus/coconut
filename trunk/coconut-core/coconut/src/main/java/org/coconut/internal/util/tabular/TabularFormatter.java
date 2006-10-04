@@ -139,10 +139,10 @@ public class TabularFormatter {
         sb.append(app.substring(app.length() - post));
     }
 
-    public static String formatTime(long nanos) {
-        double micros = ((double) nanos) / 1000;
-        double millies = ((double) micros) / 1000;
-        double seconds = ((double) millies) / 1000;
+    public static String formatTime(double nanos) {
+        double micros = (nanos) / 1000;
+        double millies = ( micros) / 1000;
+        double seconds = ( millies) / 1000;
         if (micros < 1) {
             return nanos + " ns";
         } else if (micros < 1000) {
