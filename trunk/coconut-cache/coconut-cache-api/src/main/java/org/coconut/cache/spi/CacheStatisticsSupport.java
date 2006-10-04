@@ -6,10 +6,10 @@ package org.coconut.cache.spi;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.coconut.apm.monitor.LongCounter;
+import org.coconut.apm.monitor.LongSamplingCounter;
 import org.coconut.cache.Cache;
 import org.coconut.cache.Caches;
-import org.coconut.metric.impl.LongCounter;
-import org.coconut.metric.impl.LongSamplingCounter;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
