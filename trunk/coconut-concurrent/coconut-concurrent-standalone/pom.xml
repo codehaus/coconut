@@ -2,14 +2,14 @@
 <project>
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.coconut</groupId>
-    <artifactId>coconut-components-parent</artifactId>
+    <groupId>org.coconut.concurrent</groupId>
+    <artifactId>coconut-concurrent-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>coconut-concurrent-standalone</artifactId>
-  <name>Coconut Cache Standalone distribution</name>
-  <description>API for Coconut AIO</description>
+  <name>Coconut Concurrent Standalone distribution</name>
+  <description>Concurrent Concurrent standalone distribution</description>
   <groupId>org.coconut.concurrent</groupId>
   <dependencies>
     <dependency>

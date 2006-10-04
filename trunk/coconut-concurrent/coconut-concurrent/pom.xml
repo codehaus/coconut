@@ -2,8 +2,8 @@
 <project>
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.coconut</groupId>
-    <artifactId>coconut-parent</artifactId>
+    <groupId>org.coconut.concurrent</groupId>
+    <artifactId>coconut-concurrent-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
 
@@ -15,19 +15,10 @@
     projects
   </description>
   <version>1.0-alpha1-SNAPSHOT</version>
-
   <dependencies>
-
       <dependency>
       <groupId>org.coconut.core</groupId>
       <artifactId>coconut</artifactId>
       </dependency>
-
-    <dependency>
-      <groupId>org.coconut.test</groupId>
-      <artifactId>coconut-test-framework</artifactId>
-      <version>1.0-SNAPSHOT</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 </project>
