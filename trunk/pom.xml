@@ -267,12 +267,6 @@
       <url>http://www.it.edu/~kav/maven</url>
     </repository>
   </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>tapestry.javaforge</id>
-      <url>http://howardlewisship.com/repository</url>
-    </pluginRepository>
-  </pluginRepositories>
   <modules>
     <module>coconut-aio</module>
     <module>coconut-apm</module>
