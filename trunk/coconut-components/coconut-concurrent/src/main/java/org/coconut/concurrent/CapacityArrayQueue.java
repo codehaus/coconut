@@ -16,6 +16,7 @@ package org.coconut.concurrent;
 import java.util.AbstractQueue;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
@@ -102,10 +103,9 @@ public class CapacityArrayQueue<E> extends AbstractQueue<E> implements CapacityQ
         return (++i == items.length) ? 0 : i;
     }
 
-    private void checkShutdown() throws InterruptedException{
+    private void checkShutdown() throws InterruptedException {
         if (isShutdown) {
-            throw new InterruptedException(
-                    "Queue was closed, no items can be added");
+            throw new InterruptedException("Queue was closed, no items can be added");
         }
     }
 
@@ -254,9 +254,9 @@ public class CapacityArrayQueue<E> extends AbstractQueue<E> implements CapacityQ
         lock.lock();
         try {
             if (isShutdown) {
-                throw new IllegalStateException("Queue Closed"); 
+                throw new IllegalStateException("Queue Closed");
             } else if (count >= capacity) {
-                throw new IllegalStateException("Queue Full"); 
+                throw new IllegalStateException("Queue Full");
             } else {
                 insert(e);
                 return true;
@@ -770,7 +770,6 @@ public class CapacityArrayQueue<E> extends AbstractQueue<E> implements CapacityQ
         }
     }
 
-    // TODO check shutdown
     public int drainTo(Collection<? super E> c, long timeout, TimeUnit unit)
             throws InterruptedException {
         if (c == null)
@@ -967,6 +966,151 @@ public class CapacityArrayQueue<E> extends AbstractQueue<E> implements CapacityQ
             } finally {
                 lock.unlock();
             }
+        }
+    }
+
+    private static void checkNull(Object[] elements) {
+        for (int i = 0; i < elements.length; i++) {
+            if (elements[i] == null) {
+                throw new NullPointerException("collection contained a null element");
+            }
+        }
+    }
+
+    /**
+     * @see org.coconut.concurrent.CapacityQueue#offerAll(java.util.Collection)
+     */
+    public boolean offerAll(Collection<? extends E> c) {
+        if (c == null)
+            throw new NullPointerException();
+        Object[] elements = c.toArray();
+        if (elements.length == 0) {
+            return true;
+        }
+        checkNull(elements);
+
+        final ReentrantLock lock = this.lock;
+        lock.lock();
+        try {
+            if (isShutdown || count + elements.length >= capacity) // MOD
+                return false;
+            else {
+                for (int i = 0; i < elements.length; i++) {
+                    items[putIndex] = (E) elements[i];
+                    putIndex = inc(putIndex);
+                }
+                count += elements.length;
+                notEmpty.signal();
+                return true;
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * @see org.coconut.concurrent.BulkQueue#offerAll(java.util.Collection,
+     *      long, java.util.concurrent.TimeUnit)
+     */
+    public Collection<? extends E> offerAll(Collection<? extends E> c, long timeout,
+            TimeUnit unit) throws InterruptedException {
+        if (c == null)
+            throw new NullPointerException();
+        Object[] elements = c.toArray();
+        if (elements.length == 0) {
+            return c;
+        }
+        checkNull(elements);
+        long nanos = unit.toNanos(timeout);
+
+        final ReentrantLock lock = this.lock;
+        lock.lockInterruptibly();
+        try {
+            checkShutdown();
+            int index = 0;
+            for (;;) {
+                final int missing = elements.length - index;
+                if (missing == 0) {
+                    return Collections.emptyList();
+                }
+                if (nanos <= 0) {
+                    ArrayList<E> al = new ArrayList<E>(missing);
+                    for (int i = index; i < elements.length; i++) {
+                        al.add((E) elements[i]);
+                    }
+                    return al;
+                }
+                final int add = Math.min(missing, capacity - count);
+                if (add > 0) {
+                    for (int i = 0; i < add; i++) {
+                        items[putIndex] = (E) elements[index++];
+                        putIndex = inc(putIndex);
+                    }
+                    count += add;
+                    notEmpty.signal();
+                } else {
+                    try {
+                        while (count >= capacity) { // MOD
+                            nanos = notFull.awaitNanos(nanos);
+                            checkShutdown();
+                        }
+                    } catch (InterruptedException ie) {
+                        notFull.signal();
+                        // propagate to non-interrupted thread
+                        throw ie;
+                    }
+                }
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * @see org.coconut.concurrent.BulkQueue#putAll(java.util.Collection)
+     */
+    public void putAll(Collection<? extends E> c) throws InterruptedException {
+        if (c == null)
+            throw new NullPointerException();
+        Object[] elements = c.toArray();
+        if (elements.length == 0) {
+            return;
+        }
+        checkNull(elements);
+
+        final ReentrantLock lock = this.lock;
+        lock.lockInterruptibly();
+        try {
+            checkShutdown();
+            int index = 0;
+            for (;;) {
+                final int missing = elements.length - index;
+                if (missing == 0) {
+                    return;
+                }
+                final int add = Math.min(missing, capacity - count);
+                if (add > 0) {
+                    for (int i = 0; i < add; i++) {
+                        items[putIndex] = (E) elements[index++];
+                        putIndex = inc(putIndex);
+                    }
+                    count += add;
+                    notEmpty.signal();
+                } else {
+                    try {
+                        while (count >= capacity) { // MOD
+                            notFull.await();
+                            checkShutdown();
+                        }
+                    } catch (InterruptedException ie) {
+                        notFull.signal();
+                        // propagate to non-interrupted thread
+                        throw ie;
+                    }
+                }
+            }
+        } finally {
+            lock.unlock();
         }
     }
 }

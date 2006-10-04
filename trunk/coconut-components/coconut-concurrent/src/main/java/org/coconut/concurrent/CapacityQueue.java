@@ -3,15 +3,12 @@
  */
 package org.coconut.concurrent;
 
-import java.util.Collection;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
-
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public interface CapacityQueue<E> extends BlockingQueue<E> {
+//TODO rename to bulkCapacityQueue?
+public interface CapacityQueue<E> extends BulkQueue<E> {
 
     /**
      * Closes the queue. No new items can be added.
@@ -24,7 +21,5 @@ public interface CapacityQueue<E> extends BlockingQueue<E> {
 
     void setCapacity(int newCapacity, boolean downSize);
 
-    int drainTo(Collection<? super E> c, long timeout, TimeUnit unit)
-            throws InterruptedException;
 
 }

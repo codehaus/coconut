@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.coconut.core.EventHandler;
 import org.coconut.core.Transformer;
+import org.coconut.core.Transformers;
 
 /**
  * Factory and utility methods for Filter.
@@ -57,7 +58,8 @@ public final class Filters {
         return list;
     }
 
-    public static <E> void apply(Iterable<E> iterable, Filter<E> filter, EventHandler<E> handler) {
+    public static <E> void apply(Iterable<E> iterable, Filter<E> filter,
+            EventHandler<E> handler) {
         // usefull??
         for (E e : iterable) {
             if (filter.accept(e)) {
@@ -107,7 +109,7 @@ public final class Filters {
     public static <E> List<E> filterList(List<E> list, Class<E> filter) {
         return (List<E>) filterList(list, isType(filter));
     }
-    
+
     public static <E> List<E> filterList(List<E> list, Filter<E> filter) {
         return (List<E>) filter(list, filter);
     }
@@ -311,6 +313,16 @@ public final class Filters {
             return "is not null and " + filter.toString();
         }
 
+    }
+
+    /* uses reflection */
+    public static <E> Filter<E> transformFilter(String method, Filter<?> f) {
+        throw new UnsupportedOperationException();
+    }
+
+    public static <E> Filter<E> transformFilter(Class<E> c, String method, Filter<?> f) {
+        Transformer<E, ?> t = Transformers.transform(c, method);
+        return new TransformerFilter(t, f);
     }
 
     // /CLOVER:OFF

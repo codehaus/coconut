@@ -18,8 +18,8 @@ public class CapacityArrayQueueTest extends TestCase {
 
     public void testCapacity() throws InterruptedException {
         BlockingQueue cq = new CapacityArrayQueue(4);
-        //BlockingQueue cq = new ArrayBlockingQueue(40);
-        Thread t=new Thread(new TakeMe(cq));
+        // BlockingQueue cq = new ArrayBlockingQueue(40);
+        Thread t = new Thread(new TakeMe(cq));
         t.start();
         for (int i = 0; i < 100; i++) {
             assertTrue(cq.offer(i, 10, TimeUnit.SECONDS));
@@ -44,7 +44,7 @@ public class CapacityArrayQueueTest extends TestCase {
         public void run() {
             for (int i = 0; i < 100; i++) {
                 try {
-                    System.out.println(q.poll(5, TimeUnit.SECONDS));
+                    q.poll(5, TimeUnit.SECONDS);
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
