@@ -46,3 +46,9 @@ You can also build parts of the framework, for example, if you just need to buil
 
 ##License
 see LICENSE.txt in this folder
+
+##Tools
+
+#Findbugs: 
+    homepage http://findbugs.sourceforge.net/index.html
+mvn homepage http://mojo.codehaus.org/findbugs-maven-plugin/

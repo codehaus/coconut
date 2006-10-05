@@ -24,13 +24,13 @@ import org.coconut.filter.Filters.IsTypeFilter;
  * @version $Id$
  */
 @SuppressWarnings("hiding")
-public interface CacheItemEvent<K, V> extends CacheEvent<K, V>, Map.Entry<K, V> {
+public interface CacheEntryEvent<K, V> extends CacheEvent<K, V>, Map.Entry<K, V> {
 
     /**
      * A {@link org.coconut.filter.Filter} that will accept all instances of
      * CacheItemEvent.
      */
-    Filter ITEM_FILTER = Filters.isType(CacheItemEvent.class);
+    Filter ITEM_FILTER = Filters.isType(CacheEntryEvent.class);
 
     /**
      * Returns the cacheentry corresponding to the key-value mapping (optional).
@@ -51,7 +51,7 @@ public interface CacheItemEvent<K, V> extends CacheEvent<K, V>, Map.Entry<K, V> 
      * NOTE: This event can be fairly expensive in terms of performance to
      * subscribe to as it is raised on every access to cache.
      */
-    interface ItemAccessed<K, V> extends CacheItemEvent<K, V> {
+    interface ItemAccessed<K, V> extends CacheEntryEvent<K, V> {
         /** A filter that only accepts instances of ItemAccessed events. */
         IsTypeFilter FILTER = Filters.isType(ItemAccessed.class);
 
@@ -74,7 +74,7 @@ public interface CacheItemEvent<K, V> extends CacheEvent<K, V>, Map.Entry<K, V> 
      * {@link Cache#get(Object)} or {@link Cache#load(Object)} and letting the
      * cache loader fetch the value.
      */
-    interface ItemAdded<K, V> extends CacheItemEvent<K, V> {
+    interface ItemAdded<K, V> extends CacheEntryEvent<K, V> {
 
         /**
          * A {@link org.coconut.filter.Filter} that only accepts instances of
@@ -122,7 +122,7 @@ public interface CacheItemEvent<K, V> extends CacheEvent<K, V>, Map.Entry<K, V> 
      * happen, for example, if an entry has expired an the cache is configured
      * to automatically fetch fresh elements whenever an element expires.
      */
-    interface ItemRemoved<K, V> extends CacheItemEvent<K, V> {
+    interface ItemRemoved<K, V> extends CacheEntryEvent<K, V> {
 
         /**
          * A {@link org.coconut.filter.Filter} that only accepts instances of
@@ -149,7 +149,7 @@ public interface CacheItemEvent<K, V> extends CacheEvent<K, V>, Map.Entry<K, V> 
      * entry expires and the cache automatically loads an updated value from the
      * specified cache loader.
      */
-    interface ItemUpdated<K, V> extends CacheItemEvent<K, V> {
+    interface ItemUpdated<K, V> extends CacheEntryEvent<K, V> {
 
         /**
          * A {@link org.coconut.filter.Filter} that only accepts instances of

@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEvent;
-import org.coconut.cache.CacheItemEvent;
+import org.coconut.cache.CacheEntryEvent;
 import org.coconut.core.EventHandler;
 import org.coconut.core.EventHandlers;
 import org.coconut.test.MockTestCase;
@@ -55,9 +55,9 @@ public class EventDispatcherTest extends MockTestCase {
         }
     }
 
-    private <S> S consumeItem(Class<? extends CacheItemEvent> type,
+    private <S> S consumeItem(Class<? extends CacheEntryEvent> type,
             Integer key, String value, long sequenceId) {
-        CacheItemEvent<?,?> event = consumeItem(type, sequenceId);
+        CacheEntryEvent<?,?> event = consumeItem(type, sequenceId);
         assertEquals(key, event.getKey());
         assertEquals(value, event.getValue());
         return (S) event;

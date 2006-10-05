@@ -903,10 +903,11 @@ public final class Transformers {
 
     static class WrappedList<V, VV> extends WrappedCollection<V, VV> implements List<VV> {
 
-        private final List<V> list = null;
+        private final List<V> list;
 
         WrappedList(List<V> list, Transformer<V, VV> from, Transformer<VV, V> to) {
             super(list, from, to);
+            this.list=list;
         }
 
         /**

@@ -72,8 +72,8 @@ public class FooBar implements Benchmark {
     }
     
     static class ItemLoaded {
-        private Object key;
-        private Object value;
+        public Object key;
+        public Object value;
         
     }
 }

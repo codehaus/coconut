@@ -4,6 +4,7 @@
 
 package org.coconut.internal.util;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import org.coconut.annotation.ThreadSafe;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
 @ThreadSafe(false)
-public class IndexedStack<T> {
+public class IndexedStack<T> implements Serializable{
     private int threshold;
 
     private int currentEntryIndex;

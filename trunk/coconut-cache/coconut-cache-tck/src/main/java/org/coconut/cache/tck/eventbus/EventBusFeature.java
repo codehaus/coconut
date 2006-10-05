@@ -21,11 +21,11 @@ import static org.junit.Assert.assertTrue;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEvent;
-import org.coconut.cache.CacheItemEvent;
-import org.coconut.cache.CacheItemEvent.ItemAccessed;
-import org.coconut.cache.CacheItemEvent.ItemAdded;
-import org.coconut.cache.CacheItemEvent.ItemRemoved;
-import org.coconut.cache.CacheItemEvent.ItemUpdated;
+import org.coconut.cache.CacheEntryEvent;
+import org.coconut.cache.CacheEntryEvent.ItemAccessed;
+import org.coconut.cache.CacheEntryEvent.ItemAdded;
+import org.coconut.cache.CacheEntryEvent.ItemRemoved;
+import org.coconut.cache.CacheEntryEvent.ItemUpdated;
 import org.coconut.cache.policy.Policies;
 import org.coconut.cache.tck.util.IntegerToStringLoader;
 import org.coconut.event.EventSubscription;
@@ -268,7 +268,7 @@ public class EventBusFeature extends AbstractEventTestBundle {
     @Test
     public void itemAccessedThenAddedByLoading() throws Exception {
         c = loadableEmptyCache;
-        subscribe(CacheItemEvent.ITEM_FILTER);
+        subscribe(CacheEntryEvent.ITEM_FILTER);
         assertEquals(M1.getValue(), get(M1));
         ItemAccessed<Integer, String> event = consumeItem(ItemAccessed.class, M1);
         assertFalse(event.isHit());

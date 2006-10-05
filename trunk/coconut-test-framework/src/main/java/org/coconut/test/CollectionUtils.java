@@ -55,7 +55,7 @@ public class CollectionUtils {
     public static final Collection<Integer> M1_TO_M5_KEY_SET = Arrays.asList(M1
             .getKey(), M2.getKey(), M3.getKey(), M4.getKey(), M5.getKey());
 
-    public static final Integer[] M1_TO_M5_KEY_ARRAY = M1_TO_M5_KEY_SET.toArray(new Integer[0]);
+    static final Integer[] M1_TO_M5_KEY_ARRAY = M1_TO_M5_KEY_SET.toArray(new Integer[0]);
 
     
     public static final Map.Entry<Integer, String> MNAN1 = newEntry(1, "B");

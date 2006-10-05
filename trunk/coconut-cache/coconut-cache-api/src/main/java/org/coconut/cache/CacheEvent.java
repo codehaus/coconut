@@ -41,7 +41,7 @@ public interface CacheEvent<K, V> extends Sequenced /* , TimeStamp */{
      * instances of {@link CacheItemEvent}).
      */
     @SuppressWarnings("unchecked")
-    Filter CACHE_INSTANCE_FILTER = LogicFilters.not(Filters.isType(CacheItemEvent.class));
+    Filter CACHE_INSTANCE_FILTER = LogicFilters.not(Filters.isType(CacheEntryEvent.class));
 
     /**
      * Returns the cache from where this event originated. If this event occured

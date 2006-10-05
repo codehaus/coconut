@@ -69,7 +69,7 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
 
     private final ReplacementPolicy<MyEntry> cp;
 
-    private final CacheStatisticsSupport statistics = CacheStatisticsSupport
+    private final CacheStatisticsSupport<K,V> statistics = CacheStatisticsSupport
             .createConcurrent();
 
     private long eventId = 0;
@@ -379,7 +379,7 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
 
     @Override
     protected V get0(K key, boolean isPeeking) {
-        long start = isPeeking ? 0 : statistics.getStarted();
+        long start = isPeeking ? 0 : statistics.entryGetStart();
         boolean wasLoaded = false;
         MyEntry entry = map.get(key);
         MyEntry newEntry = null;
@@ -430,7 +430,7 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
                             map.remove(key);
                             // TODO notify removal
                         }
-                        statistics.expiredIncrement();
+                        statistics.entryExpired();
                         entry.lastAccessTime = getClock().absolutTime();
                         ed.notifyAccessed(nextSequenceId(), key, value, entry, false);
                         if (wasLoaded) {
@@ -447,11 +447,7 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
                     cp.touch(entry.policyIndex);
                 }
             }
-            if (wasHit) {
-                statistics.getHitStopped(start);
-            } else {
-                statistics.getMissStopped(start);
-            }
+            statistics.entryGetStop(entry, start, wasHit);
         }
         // long done=System.currentTimeMillis();
         return value;
@@ -472,8 +468,9 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
 
                 if (UnlimitedCache.this.size() == maxCapacity) {
                     MyEntry key = cp.evictNext();
+                    /// whats the difference between key and prev??
                     MyEntry prev = map.remove(key.getKey(), false);
-                    statistics.evictedIncrement();
+                    statistics.entryEvictedStart(key);
                     V value = prev == null ? null : prev.getValueSilent();
                     if (value != null && ed.doNotifyRemoved()) {
                         ed.notifyRemoved(nextSequenceId(), prev.getKey(), value, false,
@@ -750,7 +747,7 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
 
     @Override
     public void evict() {
-        long start = statistics.evictStarted();
+        long start = statistics.cacheEvictStart(this);
         Iterator<MyEntry> iter = map.values().iterator();
         int count = 0;
         try {
@@ -766,8 +763,8 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
                 }
             }
         } finally {
-            statistics.expiredIncrement(count);
-            statistics.evictStopped(start);
+            statistics.entryExpired(count);
+            statistics.cacheEvictStop(this, start);
         }
     }
 
@@ -817,7 +814,7 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
 
     @Override
     public void resetStatistics() {
-        statistics.reset();
+        statistics.cacheReset();
     }
 
     @Override

@@ -4,14 +4,6 @@
 
 package org.coconut.cache.spi;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
-
 import org.coconut.cache.CacheConfiguration;
 
 

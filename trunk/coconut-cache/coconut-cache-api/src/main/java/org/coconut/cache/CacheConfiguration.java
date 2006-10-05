@@ -513,14 +513,14 @@ public final class CacheConfiguration<K, V> implements Cloneable {
         public Expiration setCustomExpirator(Filter<? extends Cache> filter) {
             // kunne også være rart med en version, der f.eks. kunne tage alle
             // store elementer
-            Filter f = new Filter<Cache>() {
-                private int evictFooElement;
-
-                public boolean accept(Cache element) {
-                    // TODO Auto-generated method stub
-                    return evictFooElement-- > 0;
-                }
-            };
+//            Filter f = new Filter<Cache>() {
+//                private int evictFooElement;
+//
+//                public boolean accept(Cache element) {
+//                    // TODO Auto-generated method stub
+//                    return evictFooElement-- > 0;
+//                }
+//            };
             // mem notifier-> receive low
             // mem->f.evictFooElement=10000->cache.evict
             // to gange federe at sende som events
@@ -1153,7 +1153,7 @@ public final class CacheConfiguration<K, V> implements Cloneable {
      *             if key is <tt>null</tt>
      */
     public CacheConfiguration<K, V> setProperty(String key, Object value) {
-        if (name == key) {
+        if (name == null) {
             throw new NullPointerException("name is null");
         }
         additionalProperties.put(key, value);
@@ -1184,7 +1184,7 @@ public final class CacheConfiguration<K, V> implements Cloneable {
      *             if key is <tt>null</tt>
      */
     public Object getProperty(String key) {
-        if (name == key) {
+        if (name == null) {
             throw new NullPointerException("name is null");
         }
         return additionalProperties.get(key);
@@ -1206,7 +1206,7 @@ public final class CacheConfiguration<K, V> implements Cloneable {
      *             if key is <tt>null</tt>
      */
     public Object getProperty(String key, Object defaultValue) {
-        if (name == key) {
+        if (name == null) {
             throw new NullPointerException("name is null");
         }
 

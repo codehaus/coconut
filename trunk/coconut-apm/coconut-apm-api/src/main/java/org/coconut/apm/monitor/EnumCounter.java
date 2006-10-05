@@ -3,6 +3,7 @@
  */
 package org.coconut.apm.monitor;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.SortedMap;
@@ -19,7 +20,7 @@ import org.coconut.core.EventHandler;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class EnumCounter<T extends Enum> extends AbstractApm implements
-        EventHandler<T> {
+        EventHandler<T>,Serializable {
 
     private final long[] count;
 
@@ -165,7 +166,7 @@ public class EnumCounter<T extends Enum> extends AbstractApm implements
          * @see java.util.concurrent.Callable#call()
          */
         public Number call() {
-            return new Long(getCount(ordinal));
+            return Long.valueOf(getCount(ordinal));
         }
 
         /**

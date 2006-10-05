@@ -15,7 +15,7 @@ public class PacketLatencyWithAveragePackets {
     public static void main(String[] args) throws Exception {
         // create a long counter with a name & description
         // and register it with the platform Mbeanserver
-        LongSamplingCounter lr = new LongSamplingCounter("PacketLatency");
+        LongSamplingCounter lr = new LongSamplingCounter("PacketLatency","");
         // register it with the platform Mbeanserver
         lr.register("my.app:name=PacketLatency");
 

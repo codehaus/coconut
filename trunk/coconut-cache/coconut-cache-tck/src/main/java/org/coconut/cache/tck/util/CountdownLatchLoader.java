@@ -47,7 +47,7 @@ public class CountdownLatchLoader implements CacheLoader<Integer, String> {
         beforeLoad.countDown();
         latch.await();
         loadAlls.incrementAndGet();
-        return loadAll(keys);
+        return loader.loadAll(keys);
     }
 
     public void countDown() {

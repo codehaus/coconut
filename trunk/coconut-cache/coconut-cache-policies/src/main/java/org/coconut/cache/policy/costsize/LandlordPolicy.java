@@ -20,7 +20,7 @@ public class LandlordPolicy<T extends CostSizeObject> extends AbstractPolicy<T> 
      * @see org.coconut.cache.policy.spi.AbstractPolicy#getSize()
      */
     public int getSize() {
-        return getSize();
+        return size;
     }
 
     private double[] objectCost;

@@ -23,8 +23,8 @@ public class FiltersIsAssignableFromTest extends MavenDummyTest {
     public void testFilter() {
         IsTypeFilter filter = Filters.isType(Number.class);
         assertEquals(Number.class, filter.getFilteredClass());
-        assertTrue(filter.accept(new Integer(0)));
-        assertTrue(filter.accept(new Long(0)));
+        assertTrue(filter.accept(Integer.valueOf(0)));
+        assertTrue(filter.accept(Long.valueOf(0)));
         assertFalse(filter.accept(new Object()));
     }
 

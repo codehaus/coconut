@@ -1645,7 +1645,7 @@ public class ClassReader {
                 v += 2;
                 break;
             default:
-                frame[index] = new Integer(type);
+                frame[index] = Integer.valueOf(type);
         }
         return v;
     }
@@ -1876,11 +1876,11 @@ public class ClassReader {
         int index = items[item];
         switch (b[index - 1]) {
             case ClassWriter.INT:
-                return new Integer(readInt(index));
+                return Integer.valueOf(readInt(index));
             case ClassWriter.FLOAT:
                 return new Float(Float.intBitsToFloat(readInt(index)));
             case ClassWriter.LONG:
-                return new Long(readLong(index));
+                return Long.valueOf(readLong(index));
             case ClassWriter.DOUBLE:
                 return new Double(Double.longBitsToDouble(readLong(index)));
             case ClassWriter.CLASS:

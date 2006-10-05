@@ -469,7 +469,7 @@ public class NioDatagram extends BaseDatagram {
         List<Written> l = new ArrayList<Written>(w.size());
         Written current = currentWrite;
         // add currentwrite to list
-        if (!(w.contains(current)) && current instanceof Written) {
+        if (!(w.contains(current))) {
             l.add((Written) current);
         }
         for (Written wr : w) {
@@ -1096,7 +1096,7 @@ public class NioDatagram extends BaseDatagram {
                 return -bytes;
             } else {
                 writeAttempts = 0;
-                set(new Long(bytesWritten));
+                set(Long.valueOf(bytesWritten));
                 return 1;
             }
         }

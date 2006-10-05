@@ -12,7 +12,7 @@ import javax.management.Notification;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEvent;
-import org.coconut.cache.CacheItemEvent;
+import org.coconut.cache.CacheEntryEvent;
 import org.coconut.cache.management.CacheMXBean;
 import org.coconut.cache.spi.EventDispatcher.NotificationTransformer;
 import org.coconut.core.EventHandler;
@@ -71,10 +71,10 @@ public class AbstractCacheMXBean<K, V> extends JmxEmitterSupport implements
                     CacheEvent.CacheCleared.NAME, CacheEvent.CacheEvicted.NAME,
                     CacheEvent.CacheStatisticsReset.NAME };
             String[] cacheItems = new String[] {
-                    CacheItemEvent.ItemAccessed.NAME,
-                    CacheItemEvent.ItemAdded.NAME,
-                    CacheItemEvent.ItemRemoved.NAME,
-                    CacheItemEvent.ItemUpdated.NAME, };
+                    CacheEntryEvent.ItemAccessed.NAME,
+                    CacheEntryEvent.ItemAdded.NAME,
+                    CacheEntryEvent.ItemRemoved.NAME,
+                    CacheEntryEvent.ItemUpdated.NAME, };
             return new MBeanNotificationInfo[] {
                     new MBeanNotificationInfo(cacheInstances, instanceName,
                             "Coconut Cache Instance Notifications"),

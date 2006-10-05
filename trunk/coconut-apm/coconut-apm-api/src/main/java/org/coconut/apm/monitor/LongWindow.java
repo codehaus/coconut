@@ -53,7 +53,7 @@ public class LongWindow extends AbstractManagedNumberHolder {
     }
 
     public synchronized double getAverage() {
-        return size == 0 ? Double.NaN : total / size;
+        return size == 0 ? Double.NaN : total / (double) size;
     }
 
     public synchronized long[] copyData() {

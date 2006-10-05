@@ -51,7 +51,7 @@ public class DefaultMetricManager {
         return r;
     }
 
-    public void start() {
+    public synchronized void start() {
         for (Object o : l) {
             if (o instanceof Foo) {
                 Foo f = (Foo) o;
@@ -86,7 +86,7 @@ public class DefaultMetricManager {
     /**
      * 
      */
-    public void stopAndUnregister() throws MBeanRegistrationException {
+    public synchronized void stopAndUnregister() throws MBeanRegistrationException {
         ses.shutdown();
         bean.unregister();
     }

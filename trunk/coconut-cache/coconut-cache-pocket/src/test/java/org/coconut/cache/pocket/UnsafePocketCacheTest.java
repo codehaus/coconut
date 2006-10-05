@@ -10,6 +10,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.coconut.apm.sandbox.Usager;
+
 import junit.framework.TestCase;
 
 /**
@@ -25,48 +27,48 @@ public class UnsafePocketCacheTest extends TestCase {
 
     // Some convenient Integer constants
 
-    static final Integer zero = new Integer(0);
+    static final Integer zero =Integer.valueOf(0);
 
-    static final Integer one = new Integer(1);
+    static final Integer one = Integer.valueOf(1);
 
-    static final Integer two = new Integer(2);
+    static final Integer two = Integer.valueOf(2);
 
-    static final Integer three = new Integer(3);
+    static final Integer three = Integer.valueOf(3);
 
-    static final Integer four = new Integer(4);
+    static final Integer four = Integer.valueOf(4);
 
-    static final Integer five = new Integer(5);
+    static final Integer five = Integer.valueOf(5);
 
-    static final Integer six = new Integer(6);
+    static final Integer six = Integer.valueOf(6);
 
-    static final Integer seven = new Integer(7);
+    static final Integer seven = Integer.valueOf(7);
 
-    static final Integer eight = new Integer(8);
+    static final Integer eight = Integer.valueOf(8);
 
-    static final Integer nine = new Integer(9);
+    static final Integer nine = Integer.valueOf(9);
     
-    static final Integer ten = new Integer(10);
+    static final Integer ten = Integer.valueOf(10);
 
-    static final Integer m1 = new Integer(-1);
+    static final Integer m1 = Integer.valueOf(-1);
 
-    static final Integer m2 = new Integer(-2);
+    static final Integer m2 = Integer.valueOf(-2);
 
-    static final Integer m3 = new Integer(-3);
+    static final Integer m3 = Integer.valueOf(-3);
 
-    static final Integer m4 = new Integer(-4);
+    static final Integer m4 = Integer.valueOf(-4);
 
-    static final Integer m5 = new Integer(-5);
+    static final Integer m5 = Integer.valueOf(-5);
 
-    static final Integer m6 = new Integer(-6);
+    static final Integer m6 =Integer.valueOf(-6);
 
-    static final Integer m10 = new Integer(-10);
+    static final Integer m10 = Integer.valueOf(-10);
 
-    static ValueLoader vl= new IntegerToStringValueLoader();
+    static ValueLoader<Integer, String> vl= new IntegerToStringValueLoader();
     /**
      * Create a map from Integers 1-5 to Strings "A"-"E".
      */
-    private static UnsafePocketCache map5() {
-        UnsafePocketCache map = new UnsafePocketCache(vl,10);
+    private static UnsafePocketCache<Integer, String> map5() {
+        UnsafePocketCache<Integer, String> map = new UnsafePocketCache<Integer, String>(vl,10);
         assertTrue(map.isEmpty());
         map.put(one, "A");
         map.put(two, "B");
@@ -124,7 +126,6 @@ public class UnsafePocketCacheTest extends TestCase {
     public void testGet() {
         UnsafePocketCache map = map5();
         assertEquals("A", (String) map.get(one));
-        UnsafePocketCache empty = new UnsafePocketCache(vl,10);
         assertNull(map.get(6));
     }
 
@@ -132,7 +133,7 @@ public class UnsafePocketCacheTest extends TestCase {
      * isEmpty is true of empty map and false for non-empty
      */
     public void testIsEmpty() {
-        UnsafePocketCache empty = new UnsafePocketCache(vl,10);
+        UnsafePocketCache<Integer, String> empty = new UnsafePocketCache<Integer, String>(vl,10);
         UnsafePocketCache map = map5();
         assertTrue(empty.isEmpty());
         assertFalse(map.isEmpty());
@@ -156,8 +157,8 @@ public class UnsafePocketCacheTest extends TestCase {
      * keySet.toArray returns contains all keys
      */
     public void testKeySetToArray() {
-        UnsafePocketCache map = map5();
-        Set s = map.keySet();
+        UnsafePocketCache<Integer, String> map = map5();
+        Set<Integer> s = map.keySet();
         Object[] ar = s.toArray();
         assertTrue(s.containsAll(Arrays.asList(ar)));
         assertEquals(5, ar.length);
@@ -169,10 +170,10 @@ public class UnsafePocketCacheTest extends TestCase {
      * Values.toArray contains all values
      */
     public void testValuesToArray() {
-        UnsafePocketCache map = map5();
-        Collection v = map.values();
-        Object[] ar = v.toArray();
-        ArrayList s = new ArrayList(Arrays.asList(ar));
+        UnsafePocketCache<Integer, String> map = map5();
+        Collection<String> v = map.values();
+        String[] ar = v.toArray(new String[0]);
+        ArrayList<String> s = new ArrayList<String>(Arrays.asList(ar));
         assertEquals(5, ar.length);
         assertTrue(s.contains("A"));
         assertTrue(s.contains("B"));
@@ -231,8 +232,8 @@ public class UnsafePocketCacheTest extends TestCase {
      * putAll adds all key-value pairs from the given map
      */
     public void testPutAll() {
-        UnsafePocketCache empty = new UnsafePocketCache(vl,10);
-        UnsafePocketCache map = map5();
+        UnsafePocketCache<Integer, String> empty = new UnsafePocketCache<Integer, String>(vl,10);
+        UnsafePocketCache<Integer, String> map = map5();
         empty.putAll(map);
         assertEquals(5, empty.size());
         assertTrue(empty.containsKey(one));
@@ -246,8 +247,8 @@ public class UnsafePocketCacheTest extends TestCase {
      * putAll adds all key-value pairs from the given map
      */
     public void testHardLimit() {
-        UnsafePocketCache empty = new UnsafePocketCache(vl, 3);
-        UnsafePocketCache map = map5();
+        UnsafePocketCache<Integer, String> empty = new UnsafePocketCache<Integer, String>(vl, 3);
+        UnsafePocketCache<Integer, String> map = map5();
         empty.putAll(map);
         assertEquals(3, empty.size());
     }
@@ -256,7 +257,7 @@ public class UnsafePocketCacheTest extends TestCase {
      * putAll adds all key-value pairs from the given map
      */
     public void testHardLimitOrder() {
-        UnsafePocketCache map = new UnsafePocketCache(vl, 3);
+        UnsafePocketCache<Integer, String> map = new UnsafePocketCache<Integer, String>(vl, 3);
         map.put(one, "A");
         map.put(two, "B");
         map.put(three, "C");
@@ -273,7 +274,7 @@ public class UnsafePocketCacheTest extends TestCase {
      * putAll adds all key-value pairs from the given map
      */
     public void testHardLimitAccess() {
-        UnsafePocketCache map = new UnsafePocketCache(vl, 5);
+        UnsafePocketCache<Integer, String> map = new UnsafePocketCache<Integer, String>(vl, 5);
         map.put(one, "A");
         map.put(two, "B");
         map.put(three, "C");
@@ -303,7 +304,7 @@ public class UnsafePocketCacheTest extends TestCase {
      * putIfAbsent works when the given key is not present
      */
     public void testPutIfAbsent() {
-        UnsafePocketCache map = map5();
+        UnsafePocketCache<Integer, String> map = map5();
         map.putIfAbsent(six, "Z");
         assertTrue(map.containsKey(six));
     }
@@ -312,7 +313,7 @@ public class UnsafePocketCacheTest extends TestCase {
      * putIfAbsent does not add the pair if the key is already present
      */
     public void testPutIfAbsent2() {
-        UnsafePocketCache map = map5();
+        UnsafePocketCache<Integer, String> map = map5();
         assertEquals("A", map.putIfAbsent(one, "Z"));
     }
 
@@ -320,7 +321,7 @@ public class UnsafePocketCacheTest extends TestCase {
      * replace fails when the given key is not present
      */
     public void testReplace() {
-        UnsafePocketCache map = map5();
+        UnsafePocketCache<Integer, String> map = map5();
         assertNull(map.replace(six, "Z"));
         assertFalse(map.containsKey(six));
     }
@@ -329,7 +330,7 @@ public class UnsafePocketCacheTest extends TestCase {
      * replace succeeds if the key is already present
      */
     public void testReplace2() {
-        UnsafePocketCache map = map5();
+        UnsafePocketCache<Integer, String> map = map5();
         assertNotNull(map.replace(one, "Z"));
         assertEquals("Z", map.get(one));
     }
@@ -338,7 +339,7 @@ public class UnsafePocketCacheTest extends TestCase {
      * replace value fails when the given key not mapped to expected value
      */
     public void testReplaceValue() {
-        UnsafePocketCache map = map5();
+        UnsafePocketCache<Integer, String> map = map5();
         assertEquals("A", map.get(one));
         assertFalse(map.replace(one, "Z", "Z"));
         assertEquals("A", map.get(one));
@@ -348,7 +349,7 @@ public class UnsafePocketCacheTest extends TestCase {
      * replace value succeeds when the given key mapped to expected value
      */
     public void testReplaceValue2() {
-        UnsafePocketCache map = map5();
+        UnsafePocketCache<Integer, String> map = map5();
         assertEquals("A", map.get(one));
         assertTrue(map.replace(one, "A", "Z"));
         assertEquals("Z", map.get(one));
@@ -383,7 +384,7 @@ public class UnsafePocketCacheTest extends TestCase {
      */
     public void testSize() {
         UnsafePocketCache map = map5();
-        UnsafePocketCache empty = new UnsafePocketCache(vl,10);
+        UnsafePocketCache<Integer, String> empty = new UnsafePocketCache<Integer, String>(vl,10);
         assertEquals(0, empty.size());
         assertEquals(5, map.size());
     }
@@ -406,7 +407,7 @@ public class UnsafePocketCacheTest extends TestCase {
      */
     public void testConstructor1() {
         try {
-            new UnsafePocketCache(vl, -1, 0);
+            new UnsafePocketCache<Integer, String>(vl, -1, 0);
             shouldThrow();
         } catch (IllegalArgumentException e) {
         }
@@ -417,7 +418,7 @@ public class UnsafePocketCacheTest extends TestCase {
      */
     public void testConstructor2() {
         try {
-            new UnsafePocketCache(vl, 1, 0.0f);
+            new UnsafePocketCache<Integer, String>(vl, 1, 0.0f);
             shouldThrow();
         } catch (IllegalArgumentException e) {
         }
@@ -428,7 +429,7 @@ public class UnsafePocketCacheTest extends TestCase {
      */
     public void testConstructor3() {
         try {
-            new UnsafePocketCache(vl, 10, Float.NaN);
+            new UnsafePocketCache<Integer, String>(vl, 10, Float.NaN);
             shouldThrow();
         } catch (IllegalArgumentException e) {
         }
@@ -439,7 +440,7 @@ public class UnsafePocketCacheTest extends TestCase {
      */
     public void testConstructor4() {
         try {
-            new UnsafePocketCache(vl, -1);
+            new UnsafePocketCache<Integer, String>(vl, -1);
             shouldThrow();
         } catch (IllegalArgumentException e) {
         }
@@ -450,7 +451,7 @@ public class UnsafePocketCacheTest extends TestCase {
      */
     public void testGet_NullPointerException() {
         try {
-            UnsafePocketCache c = new UnsafePocketCache(vl, 5);
+            UnsafePocketCache<Integer, String> c = new UnsafePocketCache<Integer, String>(vl, 5);
             c.get(null);
             shouldThrow();
         } catch (NullPointerException e) {
@@ -462,7 +463,7 @@ public class UnsafePocketCacheTest extends TestCase {
      */
     public void testContainsKey_NullPointerException() {
         try {
-            UnsafePocketCache c = new UnsafePocketCache(vl, 5);
+            UnsafePocketCache<Integer, String> c = new UnsafePocketCache<Integer, String>(vl, 5);
             c.containsKey(null);
             shouldThrow();
         } catch (NullPointerException e) {
@@ -474,7 +475,7 @@ public class UnsafePocketCacheTest extends TestCase {
      */
     public void testContainsValue_NullPointerException() {
         try {
-            UnsafePocketCache c = new UnsafePocketCache(vl, 5);
+            UnsafePocketCache<Integer, String> c = new UnsafePocketCache<Integer, String>(vl, 5);
             c.containsValue(null);
             shouldThrow();
         } catch (NullPointerException e) {
@@ -486,7 +487,7 @@ public class UnsafePocketCacheTest extends TestCase {
      */
     public void testPut1_NullPointerException() {
         try {
-            UnsafePocketCache c = new UnsafePocketCache(vl, 5);
+            UnsafePocketCache<Integer, String> c = new UnsafePocketCache<Integer, String>(vl, 5);
             c.put(null, "whatever");
             shouldThrow();
         } catch (NullPointerException e) {

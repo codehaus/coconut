@@ -17,7 +17,7 @@ import java.util.List;
 public final class PolicyTestUtils {
 
     private PolicyTestUtils() {}
-    protected static final Integer[] values;
+    static final Integer[] values;
 
     static {
         values = new Integer[1000];

@@ -330,6 +330,7 @@ public class AioFutureTaskTest extends AioTestCase {
                 try {
                     ft.getIO(SHORT_DELAY_MS, TimeUnit.MILLISECONDS);
                 } catch (TimeoutException success) {
+                    /*succes*/
                 } catch (Exception e) {
                     threadUnexpectedException();
                 }

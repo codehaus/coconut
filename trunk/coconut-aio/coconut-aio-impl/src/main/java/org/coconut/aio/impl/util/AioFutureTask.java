@@ -216,7 +216,7 @@ public abstract class AioFutureTask<V, T> implements Runnable, AioFuture<V, T>, 
                     c.failed(t);
                 }
                 public int getColor() {
-                    return getColor();
+                    return AioFutureTask.this.getColor();
                 }
             };
             if (exec != null)

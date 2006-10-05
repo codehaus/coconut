@@ -4,7 +4,6 @@
 
 package org.coconut.aio;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -45,13 +44,20 @@ import org.coconut.test.MockTestCase;
 public abstract class AioTestCase extends MockTestCase {
 
     private static DefaultTestProvider fac;
-    public static int startport = 23000;
-    public static int finishport = 27000;
+
+    static int startport = 23000;
+
+    static int finishport = 27000;
+
     // public static int finishport = 23040;
-    public static int currentport = startport;
-    public static boolean persistPort = true;
+    static int currentport = startport;
+
+    static boolean persistPort = true;
+
     public static final int defaultShortTimeoutMillies = 1000;
+
     public static final int defaultLongTimeoutMillies = 5000;
+
     private final static ByteBuffer nonsensBuffer;
     static {
         byte[] bytes = new byte[8192];
@@ -70,15 +76,23 @@ public abstract class AioTestCase extends MockTestCase {
             return true;
         }
     };
+
     public static final Callback IGNORE_CALLBACK = new Callback() {
-        public void completed(Object arg0) {}
-        public void failed(Throwable arg0) {}
+        public void completed(Object arg0) {
+        }
+
+        public void failed(Throwable arg0) {
+        }
     };
+
     public static final EventHandler IGNORE_HANDLER = new EventHandler() {
-        public void handle(Object arg0) {}
+        public void handle(Object arg0) {
+        }
     };
+
     public static final ReadHandler IGNORE_READ_HANDLER = new ReadHandler() {
-        public void handle(Object arg0) {}
+        public void handle(Object arg0) {
+        }
     };
 
     public static final AcceptPolicy ACCEPT_ALL = new AcceptPolicy() {
@@ -94,8 +108,11 @@ public abstract class AioTestCase extends MockTestCase {
     };
 
     public static long SHORT_DELAY_MS;
+
     public static long SMALL_DELAY_MS;
+
     public static long MEDIUM_DELAY_MS;
+
     public static long LONG_DELAY_MS;
 
     /**
@@ -217,7 +234,7 @@ public abstract class AioTestCase extends MockTestCase {
         fail("Unexpected exception");
     }
 
-   //private AtomicInteger //rts = new AtomicInteger(3244);
+    // private AtomicInteger //rts = new AtomicInteger(3244);
 
     public synchronized int getNextPort() {
         // TODO fix hack
@@ -232,7 +249,8 @@ public abstract class AioTestCase extends MockTestCase {
             try {
                 raf = new RandomAccessFile(file, "rw");
                 port = raf.readInt() + 1;
-            } catch (IOException ioe) {}
+            } catch (IOException ioe) {
+            }
             if (port > finishport)
                 port = startport;
             try {
@@ -250,9 +268,11 @@ public abstract class AioTestCase extends MockTestCase {
             return currentport;
         }
     }
+
     public SocketAddress createBindingAddress(int port) {
         return new InetSocketAddress(port);
     }
+
     public SocketAddress createConnectAddress(int port) throws UnknownHostException {
         InetAddress adr = InetAddress.getLocalHost();
         return new InetSocketAddress(adr, port);
@@ -263,6 +283,7 @@ public abstract class AioTestCase extends MockTestCase {
         f.deleteOnExit();
         return f;
     }
+
     public File createTmpFile(byte[] data) throws IOException {
         File f = createTmpFile();
         RandomAccessFile file = new RandomAccessFile(f, "rws");
@@ -314,7 +335,8 @@ public abstract class AioTestCase extends MockTestCase {
         return o;
     }
 
-    public ByteBuffer read(ScatteringByteChannel channel, ByteBuffer data) throws IOException {
+    public ByteBuffer read(ScatteringByteChannel channel, ByteBuffer data)
+            throws IOException {
         int length = data.remaining();
         channel.read(data);
         if (data.position() < length) {
@@ -344,8 +366,9 @@ public abstract class AioTestCase extends MockTestCase {
         data.flip();
         return data;
     }
-    public void read(ScatteringByteChannel channel, ByteBuffer[] data, int offset, int lenght)
-        throws IOException {
+
+    public void read(ScatteringByteChannel channel, ByteBuffer[] data, int offset,
+            int lenght) throws IOException {
         long length = 0;
         for (int i = 0; i < data.length; i++) {
             length += data[i].remaining();
@@ -396,7 +419,8 @@ public abstract class AioTestCase extends MockTestCase {
         }
     }
 
-    public void readAndEqual(ReadableByteChannel channel, String expectedString) throws IOException {
+    public void readAndEqual(ReadableByteChannel channel, String expectedString)
+            throws IOException {
         // System.out.println("trying to read");
 
         ByteBuffer data = ByteBuffer.allocate(expectedString.length() + 5);
@@ -453,7 +477,7 @@ public abstract class AioTestCase extends MockTestCase {
     }
 
     public void readAndEqualGathering(ScatteringByteChannel channel, String expectedString)
-        throws IOException {
+            throws IOException {
         final int l = expectedString.length();
         ByteBuffer expectedData = ByteBuffer.wrap(expectedString.getBytes());
 
@@ -488,7 +512,6 @@ public abstract class AioTestCase extends MockTestCase {
             }
             channel.read(bufs);
         }
-        
 
         for (int i = 0; i < l - 1; i++) {
             bufs[i].flip();
@@ -529,20 +552,21 @@ public abstract class AioTestCase extends MockTestCase {
             t.run(new MyTestResult());
             long[] idSockets = ManagementFactory.getSocketMXBean().getAllSocketIds();
             long[] idServerSockets = ManagementFactory.getServerSocketMXBean()
-                .getAllServerSocketIds();
-            long[] idDatagramIds = ManagementFactory.getDatagramMXBean().getAllDatagramIds();
+                    .getAllServerSocketIds();
+            long[] idDatagramIds = ManagementFactory.getDatagramMXBean()
+                    .getAllDatagramIds();
             if (idSockets.length > 0 || idServerSockets.length > 0) {
                 System.out.println("Possible memory leak");
                 for (int j = 0; j < idSockets.length; j++) {
-                    Throwable tt = getFactory().hm.get(new Long(idSockets[j]));
+                    Throwable tt = getFactory().hm.get(Long.valueOf(idSockets[j]));
                     tt.printStackTrace();
                 }
                 for (int j = 0; j < idServerSockets.length; j++) {
-                    Throwable tt = getFactory().hm.get(new Long(idServerSockets[j]));
+                    Throwable tt = getFactory().hm.get(Long.valueOf(idServerSockets[j]));
                     tt.printStackTrace();
                 }
                 for (int j = 0; j < idDatagramIds.length; j++) {
-                    Throwable tt = getFactory().hm.get(new Long(idDatagramIds[j]));
+                    Throwable tt = getFactory().hm.get(Long.valueOf(idDatagramIds[j]));
                     tt.printStackTrace();
                 }
             }
@@ -563,6 +587,7 @@ public abstract class AioTestCase extends MockTestCase {
             System.err.println(test + " failed");
             t.printStackTrace();
         }
+
         public synchronized void addFailure(Test test, AssertionFailedError t) {
             System.err.println(test + " failed");
             t.printStackTrace();
@@ -610,6 +635,7 @@ public abstract class AioTestCase extends MockTestCase {
             public void completed(Object arg0) {
                 latch.countDown();
             }
+
             public void failed(Throwable ingore) {
                 System.out.println("createCallbackCompleted failed called");
                 (new Exception()).printStackTrace();
@@ -617,11 +643,13 @@ public abstract class AioTestCase extends MockTestCase {
             }
         };
     }
+
     public Callback createCallbackCompleted(final Queue q) {
         return new Callback() {
             public void completed(Object o) {
                 q.add(o);
             }
+
             public void failed(Throwable ingore) {
                 System.out.println("createCallbackCompleted failed called");
                 (new Exception()).printStackTrace();
@@ -629,6 +657,7 @@ public abstract class AioTestCase extends MockTestCase {
             }
         };
     }
+
     public static <E> Callback<E> createCallbackFailed(final Queue<Object> q) {
         return new Callback<E>() {
             public void completed(E o) {
@@ -637,13 +666,15 @@ public abstract class AioTestCase extends MockTestCase {
                 throw new AssertionFailedError();
 
             }
+
             public void failed(Throwable ignore) {
                 q.add(ignore);
             }
         };
     }
-    public static Offerable< ? super Object> createQueueOfferableOnce(
-        final BlockingQueue<Object> queue) {
+
+    public static Offerable<? super Object> createQueueOfferableOnce(
+            final BlockingQueue<Object> queue) {
         return new Offerable() {
             private int count = 0;
 
@@ -658,6 +689,7 @@ public abstract class AioTestCase extends MockTestCase {
             }
         };
     }
+
     public EventHandler createQueueHandlerOnce(final BlockingQueue queue) {
         return new EventHandler() {
             private int count = 0;
@@ -672,6 +704,7 @@ public abstract class AioTestCase extends MockTestCase {
             }
         };
     }
+
     public EventHandler createQueueErroneousHandlerOnce(final BlockingQueue<Object> queue) {
         return new ErroneousHandler() {
             private int count = 0;
@@ -681,19 +714,20 @@ public abstract class AioTestCase extends MockTestCase {
                 (new Exception()).printStackTrace();
                 throw new AssertionFailedError();
             }
+
             public void handleFailed(Object o, Throwable t) {
                 if (count++ > 0) {
                     System.out.println("createQueueErroneousHandlerOnce called twice");
                     (new Exception()).printStackTrace();
                     throw new AssertionFailedError();
                 }
-                queue.add(new Object[] {o, t});
+                queue.add(new Object[] { o, t });
             }
         };
     }
 
     CountDownLatch startAccepting(final Queue<Object> q, SocketAddress address,
-        final int numberOfAccepts) throws IOException {
+            final int numberOfAccepts) throws IOException {
         final ServerSocketChannel ch = ServerSocketChannel.open();
         final CountDownLatch latch = new CountDownLatch(1);
 
@@ -728,15 +762,19 @@ public abstract class AioTestCase extends MockTestCase {
         });
         return latch;
     }
+
     public AsyncSocket emptySocket() {
         return (AsyncSocket) mock(AsyncSocket.class).proxy();
     }
+
     public AsyncSocketGroup emptySocketGroup() {
         return (AsyncSocketGroup) mock(AsyncSocketGroup.class).proxy();
     }
+
     public AsyncDatagram emptyDatagram() {
         return (AsyncDatagram) mock(AsyncDatagram.class).proxy();
     }
+
     public AsyncDatagramGroup emptyDatagramGroup() {
         return (AsyncDatagramGroup) mock(AsyncDatagramGroup.class).proxy();
     }

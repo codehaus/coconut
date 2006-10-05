@@ -379,7 +379,7 @@ public abstract class LongCounter extends AbstractApmNumber implements
 
         private volatile EventHandler<? super LongCounter>[] array = new EventHandler[0];
 
-        private final boolean doUpdate = true;
+        private final static boolean doUpdate = true;
 
         private final Object mutex = new Object();
 

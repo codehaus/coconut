@@ -20,7 +20,7 @@ import org.coconut.cache.CacheEvent;
 import org.coconut.cache.Cache.HitStat;
 import org.coconut.core.Offerable;
 import org.coconut.event.bus.EventBus;
-import org.coconut.cache.CacheItemEvent.*;
+import org.coconut.cache.CacheEntryEvent.*;
 
 @SuppressWarnings("hiding")
 public class EventDispatcher<K, V> implements CacheEventDispatcher<K, V> {

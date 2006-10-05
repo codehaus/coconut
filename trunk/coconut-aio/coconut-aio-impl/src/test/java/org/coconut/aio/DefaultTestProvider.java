@@ -47,14 +47,14 @@ public class DefaultTestProvider implements AsyncFactory {
         AsyncDatagram as = fac.openDatagram();
         as.socket().setReuseAddress(true);
         if (DEBUG)
-            hm.put(new Long(as.getId()), new Throwable());
+            hm.put(Long.valueOf(as.getId()), new Throwable());
         return as;
     }
     public AsyncDatagram openDatagram(Executor executor) throws IOException {
         AsyncDatagram as = fac.openDatagram(executor);
         as.socket().setReuseAddress(true);
         if (DEBUG)
-            hm.put(new Long(as.getId()), new Throwable());
+            hm.put(Long.valueOf(as.getId()), new Throwable());
         return as;
 
     }
@@ -65,7 +65,7 @@ public class DefaultTestProvider implements AsyncFactory {
         AsyncDatagram as = fac.openDatagram(e);
         as.socket().setReuseAddress(true);
         if (DEBUG)
-            hm.put(new Long(as.getId()), new Throwable());
+            hm.put(Long.valueOf(as.getId()), new Throwable());
         return as;
 
     }
@@ -73,7 +73,7 @@ public class DefaultTestProvider implements AsyncFactory {
         AsyncDatagram as = fac.openDatagram(queue);
         as.socket().setReuseAddress(true);
         if (DEBUG)
-            hm.put(new Long(as.getId()), new Throwable());
+            hm.put(Long.valueOf(as.getId()), new Throwable());
         return as;
 
     }
@@ -104,13 +104,13 @@ public class DefaultTestProvider implements AsyncFactory {
     public AsyncServerSocket openServerSocket() throws IOException {
         AsyncServerSocket as = fac.openServerSocket();
         if (DEBUG)
-            hm.put(new Long(as.getId()), new Throwable());
+            hm.put(Long.valueOf(as.getId()), new Throwable());
         return as;
     }
     public AsyncServerSocket openServerSocket(Executor executor) throws IOException {
         AsyncServerSocket as = fac.openServerSocket(executor);
         if (DEBUG)
-            hm.put(new Long(as.getId()), new Throwable());
+            hm.put(Long.valueOf(as.getId()), new Throwable());
         return as;
     }
     /**
@@ -120,14 +120,14 @@ public class DefaultTestProvider implements AsyncFactory {
         throws IOException {
         AsyncServerSocket as = fac.openServerSocket(e);
         if (DEBUG)
-            hm.put(new Long(as.getId()), new Throwable());
+            hm.put(Long.valueOf(as.getId()), new Throwable());
         return as;
     }
     public AsyncServerSocket openServerSocket(Queue< ? super AsyncServerSocket.Event> queue)
         throws IOException {
         AsyncServerSocket as = fac.openServerSocket(queue);
         if (DEBUG)
-            hm.put(new Long(as.getId()), new Throwable());
+            hm.put(Long.valueOf(as.getId()), new Throwable());
         return as;
     }
     /**
@@ -138,14 +138,14 @@ public class DefaultTestProvider implements AsyncFactory {
 
         as.socket().setReuseAddress(true);
         if (DEBUG)
-            hm.put(new Long(as.getId()), new Throwable());
+            hm.put(Long.valueOf(as.getId()), new Throwable());
         return as;
     }
     public AsyncSocket openSocket(Executor executor) throws IOException {
         AsyncSocket as = fac.openSocket(executor);
         as.socket().setReuseAddress(true);
         if (DEBUG)
-            hm.put(new Long(as.getId()), new Throwable());
+            hm.put(Long.valueOf(as.getId()), new Throwable());
 
         return as;
     }
@@ -156,7 +156,7 @@ public class DefaultTestProvider implements AsyncFactory {
         AsyncSocket as = fac.openSocket(e);
         as.socket().setReuseAddress(true);
         if (DEBUG)
-            hm.put(new Long(as.getId()), new Throwable());
+            hm.put(Long.valueOf(as.getId()), new Throwable());
 
         return as;
     }
@@ -164,7 +164,7 @@ public class DefaultTestProvider implements AsyncFactory {
         AsyncSocket as = fac.openSocket(queue);
         as.socket().setReuseAddress(true);
         if (DEBUG)
-            hm.put(new Long(as.getId()), new Throwable());
+            hm.put(Long.valueOf(as.getId()), new Throwable());
         return as;
     }
     public AsyncSocketGroup openSocketGroup() {

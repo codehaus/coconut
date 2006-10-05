@@ -117,7 +117,7 @@ public abstract class ManagedAioProvider extends AbstractAioProvider {
     }
 
     public void opened(BaseSocket socket) {
-        Long l = new Long(socket.getId());
+        Long l = Long.valueOf(socket.getId());
         sockets.put(l, socket);
         totalSockets.incrementAndGet();
         int peak = sockets.size();
@@ -126,7 +126,7 @@ public abstract class ManagedAioProvider extends AbstractAioProvider {
     }
 
     public void opened(BaseDatagram socket) {
-        Long l = new Long(socket.getId());
+        Long l = Long.valueOf(socket.getId());
         datagrams.put(l, socket);
         totalDatagrams.incrementAndGet();
         int peak = datagrams.size();
@@ -160,42 +160,42 @@ public abstract class ManagedAioProvider extends AbstractAioProvider {
     }
 
     public void joined(BaseDatagramGroup group, BaseDatagram socket) {
-        DatagramInf grp = datagramGroups.get(new Long(group.getId()));
+        DatagramInf grp = datagramGroups.get(Long.valueOf(group.getId()));
         grp.totalCount.incrementAndGet();
         int size = group.size();
         if (size > grp.peekCount.get())
             grp.peekCount.set(size);
     }
     public void left(BaseDatagramGroup group, BaseDatagram socket) {
-        DatagramInf grp = datagramGroups.get(new Long(group.getId()));
+        DatagramInf grp = datagramGroups.get(Long.valueOf(group.getId()));
         grp.totalCount.decrementAndGet();
     }
     public void joined(BaseSocketGroup group, BaseSocket socket) {
-        SocketInf grp = socketGroups.get(new Long(group.getId()));
+        SocketInf grp = socketGroups.get(Long.valueOf(group.getId()));
         grp.totalCount.incrementAndGet();
         int size = group.size();
         if (size > grp.peekCount.get())
             grp.peekCount.set(size);
     }
     public void left(BaseSocketGroup group, BaseSocket socket) {
-        SocketInf grp = socketGroups.get(new Long(group.getId()));
+        SocketInf grp = socketGroups.get(Long.valueOf(group.getId()));
         grp.totalCount.decrementAndGet();
     }
 
     public void socketClosed(AsyncSocket.Closed closed) {
-        Long l = new Long(closed.async().getId());
+        Long l = Long.valueOf(closed.async().getId());
         sockets.remove(l);
     }
     public void closed(AsyncDatagram socket) {
-        Long l = new Long(socket.getId());
+        Long l = Long.valueOf(socket.getId());
         datagrams.remove(l);
     }
     public void closed(AsyncSocketGroup group) {
-        Long l = new Long(group.getId());
+        Long l = Long.valueOf(group.getId());
         socketGroups.remove(l);
     }
     public void closed(AsyncDatagramGroup group) {
-        Long l = new Long(group.getId());
+        Long l = Long.valueOf(group.getId());
         datagramGroups.remove(l);
     }
 
@@ -206,7 +206,7 @@ public abstract class ManagedAioProvider extends AbstractAioProvider {
         final SocketGroupMonitor m = getDefaultSocketGroupMonitor();
 
         BaseSocketGroup group = new BaseSocketGroup(this, getNextId(), m);
-        Long l = new Long(group.getId());
+        Long l = Long.valueOf(group.getId());
         socketGroups.put(l, new SocketInf(group));
 
         if (m != null)
@@ -220,7 +220,7 @@ public abstract class ManagedAioProvider extends AbstractAioProvider {
         final DatagramGroupMonitor m = getDefaultDatagramGroupMonitor();
 
         BaseDatagramGroup group = new BaseDatagramGroup(this, getNextId(), m);
-        Long l = new Long(group.getId());
+        Long l = Long.valueOf(group.getId());
         datagramGroups.put(l, new DatagramInf(group));
 
         if (m != null)
@@ -231,12 +231,12 @@ public abstract class ManagedAioProvider extends AbstractAioProvider {
     // ServerSocket methods --
 
     protected void serverSocketClosed(AsyncServerSocket.Closed closed) {
-        final Long l = new Long(closed.async().getId());
+        final Long l = Long.valueOf(closed.async().getId());
         serverSockets.remove(l);
     }
 
     protected void serverSocketOpened(BaseServerSocket socket) {
-        final Long l = new Long(socket.getId());
+        final Long l = Long.valueOf(socket.getId());
         serverSockets.put(l, socket);
         final int peak = serverSockets.size();
         if (peak > peakServerSocketCount.get())
@@ -340,7 +340,7 @@ public abstract class ManagedAioProvider extends AbstractAioProvider {
          * @see org.coconut.aio.management.ServerSocketMXBean#getTotalAcceptCount(long)
          */
         public long getTotalAcceptCount(long id) {
-            BaseServerSocket dss = serverSockets.get(new Long(id));
+            BaseServerSocket dss = serverSockets.get(Long.valueOf(id));
             return dss == null ? 0 : dss.getNumberOfAccepts();
 
         }
@@ -349,7 +349,7 @@ public abstract class ManagedAioProvider extends AbstractAioProvider {
          * @see org.coconut.aio.management.ServerSocketMXBean#getServerSocketInfo(long)
          */
         public ServerSocketInfo getServerSocketInfo(long id) {
-            BaseServerSocket serverSocket = serverSockets.get(new Long(id));
+            BaseServerSocket serverSocket = serverSockets.get(Long.valueOf(id));
 
             if (serverSocket != null) {
                 for (;;) {
@@ -422,14 +422,14 @@ public abstract class ManagedAioProvider extends AbstractAioProvider {
          * @see org.coconut.aio.management.SocketMXBean#getBytesWritten(long)
          */
         public long getBytesWritten(long id) {
-            DatagramInf group = datagramGroups.get(new Long(id));
+            DatagramInf group = datagramGroups.get(Long.valueOf(id));
             return group == null ? 0 : group.group.getNumberOfBytesWritten();
         }
         /**
          * @see org.coconut.aio.management.SocketMXBean#getSocketsInGroup(long)
          */
         public long[] getDatagramsInGroup(long id) {
-            DatagramInf group = datagramGroups.get(new Long(id));
+            DatagramInf group = datagramGroups.get(Long.valueOf(id));
             if (group != null) {
                 Object o[] = group.group.toArray();
                 long[] ids = new long[o.length];
@@ -445,7 +445,7 @@ public abstract class ManagedAioProvider extends AbstractAioProvider {
          * @see org.coconut.aio.management.SocketMXBean#getBytesRead(long)
          */
         public long getBytesRead(long id) {
-            DatagramInf group = datagramGroups.get(new Long(id));
+            DatagramInf group = datagramGroups.get(Long.valueOf(id));
             return group == null ? 0 : group.group.getNumberOfBytesRead();
         }
 
@@ -453,7 +453,7 @@ public abstract class ManagedAioProvider extends AbstractAioProvider {
          * @see org.coconut.aio.management.SocketMXBean#getSocketGroupInfo(long)
          */
         public DatagramGroupInfo getDatagramGroupInfo(long id) {
-            DatagramInf group = datagramGroups.get(new Long(id));
+            DatagramInf group = datagramGroups.get(Long.valueOf(id));
             if (group != null)
                 return group.group.getDatagramInfo();
             else
@@ -464,7 +464,7 @@ public abstract class ManagedAioProvider extends AbstractAioProvider {
          * @see org.coconut.aio.management.SocketMXBean#getSocketCount(long)
          */
         public int getSize(long id) {
-            DatagramInf group = datagramGroups.get(new Long(id));
+            DatagramInf group = datagramGroups.get(Long.valueOf(id));
             if (group != null) {
                 return group.group.size();
             } else {
@@ -476,7 +476,7 @@ public abstract class ManagedAioProvider extends AbstractAioProvider {
          * @see org.coconut.aio.management.SocketMXBean#getPeakSocketCount(long)
          */
         public int getPeakDatagramCount(long id) {
-            DatagramInf group = datagramGroups.get(new Long(id));
+            DatagramInf group = datagramGroups.get(Long.valueOf(id));
             if (group != null) {
                 return group.peekCount.get();
             } else {
@@ -487,7 +487,7 @@ public abstract class ManagedAioProvider extends AbstractAioProvider {
          * @see org.coconut.aio.management.SocketMXBean#getTotalOpenedSocketCount(long)
          */
         public long getTotalDatagramCount(long id) {
-            DatagramInf group = datagramGroups.get(new Long(id));
+            DatagramInf group = datagramGroups.get(Long.valueOf(id));
             if (group != null) {
                 return group.totalCount.get();
             } else {
@@ -498,7 +498,7 @@ public abstract class ManagedAioProvider extends AbstractAioProvider {
          * @see org.coconut.aio.management.SocketMXBean#resetPeakSocketCount(long)
          */
         public void resetPeakDatagramCount(long id) {
-            DatagramInf group = datagramGroups.get(new Long(id));
+            DatagramInf group = datagramGroups.get(Long.valueOf(id));
             if (group != null) {
                 group.peekCount.set(getSize(id));
             }
@@ -543,7 +543,7 @@ public abstract class ManagedAioProvider extends AbstractAioProvider {
          * @see org.coconut.aio.management.SocketMXBean#getPeakSocketCount(long)
          */
         public int getPeakSocketCount(long id) {
-            SocketInf group = socketGroups.get(new Long(id));
+            SocketInf group = socketGroups.get(Long.valueOf(id));
             if (group != null) {
                 return group.peekCount.get();
             } else {
@@ -555,7 +555,7 @@ public abstract class ManagedAioProvider extends AbstractAioProvider {
          * @see org.coconut.aio.management.SocketMXBean#getSocketCount(long)
          */
         public int getSize(long id) {
-            SocketInf group = socketGroups.get(new Long(id));
+            SocketInf group = socketGroups.get(Long.valueOf(id));
             if (group != null) {
                 return group.group.size();
             } else {
@@ -567,7 +567,7 @@ public abstract class ManagedAioProvider extends AbstractAioProvider {
          * @see org.coconut.aio.management.SocketMXBean#getSocketGroupInfo(long)
          */
         public SocketGroupInfo getSocketGroupInfo(long id) {
-            SocketInf group = socketGroups.get(new Long(id));
+            SocketInf group = socketGroups.get(Long.valueOf(id));
             if (group != null)
                 return group.group.getGroupInfo();
             else
@@ -577,7 +577,7 @@ public abstract class ManagedAioProvider extends AbstractAioProvider {
          * @see org.coconut.aio.management.SocketMXBean#getSocketsInGroup(long)
          */
         public long[] getSocketsInGroup(long id) {
-            SocketInf group = socketGroups.get(new Long(id));
+            SocketInf group = socketGroups.get(Long.valueOf(id));
             if (group != null) {
                 Object o[] = group.group.toArray();
                 long[] ids = new long[o.length];
@@ -592,7 +592,7 @@ public abstract class ManagedAioProvider extends AbstractAioProvider {
          * @see org.coconut.aio.management.SocketMXBean#getTotalOpenedSocketCount(long)
          */
         public long getTotalSocketCount(long id) {
-            SocketInf group = socketGroups.get(new Long(id));
+            SocketInf group = socketGroups.get(Long.valueOf(id));
             if (group != null) {
                 return group.totalCount.get();
             } else {
@@ -603,7 +603,7 @@ public abstract class ManagedAioProvider extends AbstractAioProvider {
          * @see org.coconut.aio.management.SocketMXBean#resetPeakSocketCount(long)
          */
         public void resetPeakSocketCount(long id) {
-            SocketInf group = socketGroups.get(new Long(id));
+            SocketInf group = socketGroups.get(Long.valueOf(id));
             if (group != null) {
                 group.peekCount.set(getSize(id));
             }
@@ -612,7 +612,7 @@ public abstract class ManagedAioProvider extends AbstractAioProvider {
          * @see org.coconut.aio.management.SocketGroupMXBean#getBytesRead(long)
          */
         public long getBytesRead(long id) {
-            SocketInf group = socketGroups.get(new Long(id));
+            SocketInf group = socketGroups.get(Long.valueOf(id));
             return group == null ? 0 : group.group.getNumberOfBytesRead();
 
         }
@@ -620,7 +620,7 @@ public abstract class ManagedAioProvider extends AbstractAioProvider {
          * @see org.coconut.aio.management.SocketGroupMXBean#getBytesWritten(long)
          */
         public long getBytesWritten(long id) {
-            SocketInf group = socketGroups.get(new Long(id));
+            SocketInf group = socketGroups.get(Long.valueOf(id));
             return group == null ? 0 : group.group.getNumberOfBytesWritten();
 
         }
@@ -668,7 +668,7 @@ public abstract class ManagedAioProvider extends AbstractAioProvider {
          * @see org.coconut.aio.management.SocketMXBean#getBytesWritten(long)
          */
         public long getBytesWritten(long id) {
-            BaseSocket socket = sockets.get(new Long(id));
+            BaseSocket socket = sockets.get(Long.valueOf(id));
             if (socket == null) {
                 return 0;
             } else
@@ -686,7 +686,7 @@ public abstract class ManagedAioProvider extends AbstractAioProvider {
          * @see org.coconut.aio.management.SocketMXBean#getBytesRead(long)
          */
         public long getBytesRead(long id) {
-            BaseSocket socket = sockets.get(new Long(id));
+            BaseSocket socket = sockets.get(Long.valueOf(id));
             if (socket == null) {
                 return 0;
             } else
@@ -725,7 +725,7 @@ public abstract class ManagedAioProvider extends AbstractAioProvider {
          * @see org.coconut.aio.management.SocketMXBean#getSocketInfo(long)
          */
         public SocketInfo getSocketInfo(long id) {
-            BaseSocket socket = sockets.get(new Long(id));
+            BaseSocket socket = sockets.get(Long.valueOf(id));
 
             if (socket != null) {
                 for (;;) {
@@ -807,7 +807,7 @@ public abstract class ManagedAioProvider extends AbstractAioProvider {
          * @see org.coconut.aio.management.SocketMXBean#getBytesWritten(long)
          */
         public long getBytesWritten(long id) {
-            BaseDatagram socket = datagrams.get(new Long(id));
+            BaseDatagram socket = datagrams.get(Long.valueOf(id));
             if (socket == null) {
                 return 0;
             } else
@@ -824,7 +824,7 @@ public abstract class ManagedAioProvider extends AbstractAioProvider {
          * @see org.coconut.aio.management.SocketMXBean#getBytesRead(long)
          */
         public long getBytesRead(long id) {
-            BaseDatagram socket = datagrams.get(new Long(id));
+            BaseDatagram socket = datagrams.get(Long.valueOf(id));
             if (socket == null) {
                 return 0;
             } else
@@ -856,7 +856,7 @@ public abstract class ManagedAioProvider extends AbstractAioProvider {
          * @see org.coconut.aio.management.SocketMXBean#getSocketInfo(long)
          */
         public DatagramInfo getDatagramInfo(long id) {
-            BaseDatagram socket = datagrams.get(new Long(id));
+            BaseDatagram socket = datagrams.get(Long.valueOf(id));
 
             if (socket != null) {
                 for (;;) {

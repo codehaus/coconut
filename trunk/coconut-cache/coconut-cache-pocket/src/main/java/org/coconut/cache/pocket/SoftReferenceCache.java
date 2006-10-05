@@ -62,7 +62,7 @@ public class SoftReferenceCache<K, V> extends UnsafePocketCache<K, V> {
     private static final long serialVersionUID = -2069397396054197298L;
 
     /** The cache of soft references. */
-    final SoftReferenceMap softReferences;
+    final SoftReferenceMap<K,V> softReferences;
 
     /**
      * Constructs an empty <tt>SoftReferenceCache</tt> with the specified
@@ -143,7 +143,7 @@ public class SoftReferenceCache<K, V> extends UnsafePocketCache<K, V> {
     public SoftReferenceCache(ValueLoader<K, V> loader, int capacity,
             int softReferenceCapacity, float loadFactor) {
         super(loader, capacity, DEFAULT_LOAD_FACTOR);
-        softReferences = new SoftReferenceMap((int) Math.ceil(softReferenceCapacity
+        softReferences = new SoftReferenceMap<K,V>((int) Math.ceil(softReferenceCapacity
                 / loadFactor), loadFactor);
         softReferences.setCapacity(softReferenceCapacity);
     }
@@ -192,7 +192,7 @@ public class SoftReferenceCache<K, V> extends UnsafePocketCache<K, V> {
     /**
      * Manages the soft references.
      */
-    class SoftReferenceMap extends UnsafePocketCache<K, SoftReference<V>> implements
+    static class SoftReferenceMap<K,V> extends UnsafePocketCache<K, SoftReference<V>> implements
             Serializable {
         /** serialVersionUID */
         private static final long serialVersionUID = -8134438486165658400L;

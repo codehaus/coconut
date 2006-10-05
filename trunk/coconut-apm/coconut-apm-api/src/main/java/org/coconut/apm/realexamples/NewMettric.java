@@ -25,13 +25,13 @@ public class NewMettric {
         processed.add(LongCounter.newConcurrent("Total Dropped", ""));
         // total.addMetric("Cummulativ History");
 
-        processed.add(new LongSamplingCounter("Total Processed Pr/Second"));
+        processed.add(new LongSamplingCounter("Total Processed Pr/Second",""));
 
         stage.add(LongCounter.newConcurrent("Cpu Time", ""));
         stage.add(LongCounter.newConcurrent("System Time", ""));
         stage.add(LongCounter.newConcurrent("User Time", ""));
 
-        stage.add(new LongSamplingCounter("Active Threads"));
+        stage.add(new LongSamplingCounter("Active Threads",""));
 
         System.out.println(m);
     }

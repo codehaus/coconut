@@ -31,7 +31,7 @@ public class Tester {
                     Thread.sleep(4000);
                     ch.close();
                 } catch (Exception e) {
-
+                    e.printStackTrace();
                 }
             }
 

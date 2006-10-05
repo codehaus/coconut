@@ -33,7 +33,6 @@ public class ConcurrentMap extends CacheTestBundle {
      */
     private static <K, V> java.util.concurrent.ConcurrentMap<K, V> asCm(
             Cache<K, V> cache) {
-        assertTrue(cache instanceof java.util.concurrent.ConcurrentMap);
         // return (ConcurrentMap) cache;
         return cache;
     }

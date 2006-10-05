@@ -15,6 +15,9 @@ import java.util.concurrent.locks.Lock;
 public class AggregateLock implements Lock {
     private Lock[] locks;
 
+    AggregateLock(Lock[] locks) {
+        this.locks=locks;
+    }
     /**
      * @see java.util.concurrent.locks.Lock#lock()
      */

@@ -42,17 +42,21 @@ public final class Ressources {
             }
         }
         // loc=new Locale("da_DK");
-        //System.out.println(loc);
+        // System.out.println(loc);
         Locale.setDefault(loc);
         RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME, loc);
         Locale.setDefault(def);
-        //System.out.println(RESOURCE_BUNDLE.getLocale());
+        // System.out.println(RESOURCE_BUNDLE.getLocale());
         locale = loc;
 
     }
 
     public static MessageFormat getMessageFormatter(String key) {
         return new MessageFormat(getString(key), locale);
+    }
+
+    public static String getString(Class c, String key) {
+        return getString(c.getCanonicalName() + "." + key.replace(' ', '_'));
     }
 
     public static String getString(String key) {
@@ -67,7 +71,13 @@ public final class Ressources {
     }
 
     public static void main(String[] args) {
-      
+        String str = Ressources.getString("AbstractCache.6");
+        MessageFormat mf = new MessageFormat(str);
+        System.out.println(MessageFormat.format(str, 213));
+
+        // str =
+        // Ressources.getString(CacheStatisticsSupport.class,CacheStatisticsSupport.CACHE_HIT_COUNTER);
+        System.out.println(str);
     }
 
     public static void main2(String[] args) {

@@ -144,7 +144,7 @@ public final class Policies {
          */
         public E evictNext() {
             synchronized (mutex) {
-               return policy.evictNext();
+                return policy.evictNext();
             }
         }
 
@@ -171,7 +171,7 @@ public final class Policies {
          */
         public List<E> peekAll() {
             synchronized (mutex) {
-               return policy.peekAll();
+                return policy.peekAll();
             }
         }
 
@@ -180,7 +180,7 @@ public final class Policies {
          */
         public E remove(int index) {
             synchronized (mutex) {
-                return remove(index);
+                return policy.remove(index);
             }
         }
 
@@ -189,7 +189,7 @@ public final class Policies {
          */
         public void touch(int index) {
             synchronized (mutex) {
-               policy.touch(index);
+                policy.touch(index);
             }
         }
 
@@ -202,7 +202,7 @@ public final class Policies {
                 return policy.update(index, newElement);
             }
         }
-        
+
         public boolean equals(Object o) {
             synchronized (mutex) {
                 return policy.equals(o);
@@ -230,12 +230,12 @@ public final class Policies {
 
     public static <E> ReplacementPolicy<E> synchronizedReplacementPolicy(
             ReplacementPolicy<E> policy) {
-        return synchronizedReplacementPolicy(policy);
+        return synchronizedReplacementPolicy(policy, policy);
     }
 
     public static <E> ReplacementPolicy<E> synchronizedReplacementPolicy(
             ReplacementPolicy<E> policy, Object mutex) {
-        return synchronizedReplacementPolicy(policy, mutex);
+        return new SynchronizedReplacementPolicy<E>(policy, mutex);
     }
 
     // /CLOVER:OFF

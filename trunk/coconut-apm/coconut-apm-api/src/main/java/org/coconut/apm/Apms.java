@@ -139,9 +139,13 @@ public class Apms {
          */
         @Override
         public boolean equals(Object obj) {
-            return super.equals(obj);
+            return getNumber().equals(obj);
         }
 
+        @Override
+        public int hashCode() {
+            return getNumber().hashCode();
+        }
         /**
          * @see java.lang.Object#toString()
          */

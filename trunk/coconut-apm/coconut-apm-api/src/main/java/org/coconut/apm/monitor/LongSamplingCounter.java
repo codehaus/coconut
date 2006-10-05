@@ -27,10 +27,10 @@ public class LongSamplingCounter extends AbstractApm {
     /**
      * @param name
      */
-    public LongSamplingCounter(String name) {
-        setName(name);
-    }
 
+    public LongSamplingCounter(String name, String description) {
+        super(name,description);
+    }
     /**
      * @see org.coconut.metric.spi.AbstractLongMetricReporter#report(long)
      */

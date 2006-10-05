@@ -18,7 +18,7 @@ import junit.framework.AssertionFailedError;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEvent;
-import org.coconut.cache.CacheItemEvent;
+import org.coconut.cache.CacheEntryEvent;
 import org.coconut.cache.tck.CacheTestBundle;
 import org.coconut.core.EventHandler;
 import org.coconut.core.EventHandlers;
@@ -98,15 +98,15 @@ public class AbstractEventTestBundle extends CacheTestBundle {
 
     Integer peekKey() throws InterruptedException {
         ev = events.poll(1, TimeUnit.SECONDS);
-        return ((CacheItemEvent<Integer, String>) ev).getKey();
+        return ((CacheEntryEvent<Integer, String>) ev).getKey();
     }
 
-    <S extends CacheItemEvent> S consumeItem(Class<S> type,
+    <S extends CacheEntryEvent> S consumeItem(Class<S> type,
             Map.Entry<Integer, String> entry) throws Exception {
         return consumeItem(type, entry.getKey(), entry.getValue());
     }
 
-    <S extends CacheItemEvent> S consumeItem(Class<S> type, Integer key,
+    <S extends CacheEntryEvent> S consumeItem(Class<S> type, Integer key,
             String value) throws Exception {
         S event = consumeItem(c, type);
         assertEquals(key, event.getKey());
@@ -114,7 +114,7 @@ public class AbstractEventTestBundle extends CacheTestBundle {
         return (S) event;
     }
 
-    void consumeItems(Class<? extends CacheItemEvent> type,
+    void consumeItems(Class<? extends CacheEntryEvent> type,
             Map.Entry<Integer, String>... entries) throws Exception {
         Map<Integer, String> map = asMap(entries);
 
@@ -122,7 +122,7 @@ public class AbstractEventTestBundle extends CacheTestBundle {
             Integer key = peekKey();
             String value = map.get(key);
             assertNotNull(value);
-            CacheItemEvent<?, ?> event = consumeItem(c, type);
+            CacheEntryEvent<?, ?> event = consumeItem(c, type);
             assertEquals(key, event.getKey());
             assertEquals(value, event.getValue());
             map.remove(key);

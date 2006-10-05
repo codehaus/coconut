@@ -350,7 +350,7 @@ public class DefaultFile extends BaseFile {
 //        public Object call() throws Exception {
 //            if (latch.getCount() == 0) {
 //                bytes = raf.getChannel().transferTo(position, count, realTarget);
-//                return new Long(bytes);
+//                return Long.valueOf(bytes);
 //            } else {
 //                System.out.println("wait a bit");
 //                return null;

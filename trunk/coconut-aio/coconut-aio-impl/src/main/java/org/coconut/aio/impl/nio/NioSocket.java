@@ -555,7 +555,7 @@ final class NioSocket extends BaseSocket {
                 return 0;
             } else {
                 writeAttempts = 0;
-                set(new Long(bytesWritten));
+                set(Long.valueOf(bytesWritten));
                 return -1;
             }
         }

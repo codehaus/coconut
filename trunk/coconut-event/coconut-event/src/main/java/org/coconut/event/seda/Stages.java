@@ -18,9 +18,8 @@ public class Stages {
     public static void printUsage(StageManagerMXBean bean, PrintStream ps) {
         TabularFormatter t = new TabularFormatter(bean.getStageCount() + 1, 10);
         t.setResultLine(true);
-        t.setHeader("Name", "Processed", "Failed", "Events/S", "Time",
-                "Avg Time", "CPU Time", "Avg CPU Time", "User/System Time",
-                "Avg User/System Time");
+        t.setHeader("Name", "Processed", "Failed", "Events/S", "Time", "Avg Time",
+                "CPU Time", "Avg CPU Time", "User/System Time", "Avg User/System Time");
         String[] stages = bean.getAllStageNames();
         StageStatistics[] info = bean.getStageInfo(stages);
         ps.println("Started " + info[0].getEventsAccepted() + " Finished "
@@ -47,23 +46,22 @@ public class Stages {
             String avgSystemTime = "NA";
             if (in.getEventsAccepted() > 0) {
                 avgTime = TabularFormatter.formatTime(in.getTotalTime()
-                        / in.getEventsAccepted());
+                        / (double)in.getEventsAccepted());
 
                 avgCpuTime = TabularFormatter.formatTime(in.getTotalCpuTime()
-                        / in.getEventsAccepted());
+                        / (double)in.getEventsAccepted());
                 avgUserTime = TabularFormatter.formatTime(in.getUserTime()
-                        / in.getEventsAccepted());
+                        / (double)in.getEventsAccepted());
                 avgSystemTime = TabularFormatter.formatTime(systemTime
-                        / in.getEventsAccepted());
+                        / (double)in.getEventsAccepted());
             }
-            t.addNextRow(in.getName(), in.getEventsProcessed(), in
-                    .getEventsFailed(), TabularFormatter.form(in
-                    .getAverageEventsPerSecond()), TabularFormatter
-                    .formatTime(in.getTotalTime()), avgTime, TabularFormatter
-                    .formatTime(in.getTotalCpuTime()), avgCpuTime,
+            t.addNextRow(in.getName(), in.getEventsProcessed(), in.getEventsFailed(),
+                    TabularFormatter.form(in.getAverageEventsPerSecond()),
+                    TabularFormatter.formatTime(in.getTotalTime()), avgTime,
+                    TabularFormatter.formatTime(in.getTotalCpuTime()), avgCpuTime,
                     TabularFormatter.formatTime(in.getUserTime()) + " / "
-                            + TabularFormatter.formatTime(systemTime),
-                    avgUserTime + " / " + avgSystemTime);
+                            + TabularFormatter.formatTime(systemTime), avgUserTime
+                            + " / " + avgSystemTime);
         }
 
         long systemTime = sumCpuTime - sumUserTime;
@@ -72,18 +70,17 @@ public class Stages {
         String avgUserTime = "NA";
         String avgSystemTime = "NA";
         if (events > 0) {
-            avgTime = TabularFormatter.formatTime(sumTime / events);
-            avgCpuTime = TabularFormatter.formatTime(sumCpuTime / events);
-            avgUserTime = TabularFormatter.formatTime(sumUserTime / events);
-            avgSystemTime = TabularFormatter.formatTime(systemTime / events);
+            avgTime = TabularFormatter.formatTime(sumTime / (double) events);
+            avgCpuTime = TabularFormatter.formatTime(sumCpuTime / (double) events);
+            avgUserTime = TabularFormatter.formatTime(sumUserTime / (double) events);
+            avgSystemTime = TabularFormatter.formatTime(systemTime / (double) events);
         }
         t.addNextRow("Total", events, eventsFailed, TabularFormatter.form(in
-                .getAverageEventsPerSecond()), TabularFormatter
-                .formatTime(sumTime), avgTime, TabularFormatter
-                .formatTime(sumCpuTime), avgCpuTime, TabularFormatter
-                .formatTime(sumUserTime)
-                + " / " + TabularFormatter.formatTime(systemTime), avgUserTime
-                + " / " + avgSystemTime);
+                .getAverageEventsPerSecond()), TabularFormatter.formatTime(sumTime),
+                avgTime, TabularFormatter.formatTime(sumCpuTime), avgCpuTime,
+                TabularFormatter.formatTime(sumUserTime) + " / "
+                        + TabularFormatter.formatTime(systemTime), avgUserTime + " / "
+                        + avgSystemTime);
         ps.print(t);
     }
 

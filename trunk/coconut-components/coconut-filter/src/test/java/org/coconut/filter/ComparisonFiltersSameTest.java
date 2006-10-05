@@ -24,7 +24,7 @@ public class ComparisonFiltersSameTest extends MavenDummyTest {
         String o = "1";
         assertEquals("1", same("1").getObject());
         assertTrue(same(o).accept(o));
-        assertFalse(same(new Integer(1)).accept(new Integer(1)));
+        assertFalse(same(Integer.valueOf(1)).accept(Integer.valueOf(1)));
         assertFalse(same("1").accept("2"));
         assertFalse(same("1").accept(null));
         same("1").toString(); // check no exception

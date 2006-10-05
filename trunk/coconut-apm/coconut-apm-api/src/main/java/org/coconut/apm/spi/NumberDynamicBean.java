@@ -317,8 +317,8 @@ public class NumberDynamicBean implements DynamicMBean, JMXConfigurator {
     public Object getAttribute(String attribute) throws AttributeNotFoundException,
             MBeanException, ReflectionException {
         try {
-            Object o = map.get(attribute).getValue();
-            return o;
+            AbstractAttribute aa=map.get(attribute);
+            return aa==null ? null : aa.getValue();
         } catch (Exception e) {
             e.printStackTrace();
             throw new IllegalStateException("Could not compute value", e);
@@ -378,7 +378,9 @@ public class NumberDynamicBean implements DynamicMBean, JMXConfigurator {
     public Object invoke(String actionName, Object[] params, String[] signature)
             throws MBeanException, ReflectionException {
         try {
-            return mapOper.get(actionName).invoke();
+            InternalOperation aa=mapOper.get(actionName);
+            return aa==null ? null : aa.invoke();
+
         } catch (IllegalAccessException e) {
             throw new IllegalStateException("Could not compute value", e);
         } catch (InvocationTargetException e) {

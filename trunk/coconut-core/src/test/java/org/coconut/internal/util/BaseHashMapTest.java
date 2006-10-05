@@ -25,39 +25,39 @@ public class BaseHashMapTest extends TestCase {
 
     // Some convenient Integer constants
 
-    static final Integer zero = new Integer(0);
+    static final Integer zero = Integer.valueOf(0);
 
-    static final Integer one = new Integer(1);
+    static final Integer one = Integer.valueOf(1);
 
-    static final Integer two = new Integer(2);
+    static final Integer two = Integer.valueOf(2);
 
-    static final Integer three = new Integer(3);
+    static final Integer three = Integer.valueOf(3);
 
-    static final Integer four = new Integer(4);
+    static final Integer four = Integer.valueOf(4);
 
-    static final Integer five = new Integer(5);
+    static final Integer five = Integer.valueOf(5);
 
-    static final Integer six = new Integer(6);
+    static final Integer six = Integer.valueOf(6);
 
-    static final Integer seven = new Integer(7);
+    static final Integer seven = Integer.valueOf(7);
 
-    static final Integer eight = new Integer(8);
+    static final Integer eight = Integer.valueOf(8);
 
-    static final Integer nine = new Integer(9);
+    static final Integer nine = Integer.valueOf(9);
 
-    static final Integer m1 = new Integer(-1);
+    static final Integer m1 = Integer.valueOf(-1);
 
-    static final Integer m2 = new Integer(-2);
+    static final Integer m2 = Integer.valueOf(-2);
 
-    static final Integer m3 = new Integer(-3);
+    static final Integer m3 = Integer.valueOf(-3);
 
-    static final Integer m4 = new Integer(-4);
+    static final Integer m4 = Integer.valueOf(-4);
 
-    static final Integer m5 = new Integer(-5);
+    static final Integer m5 = Integer.valueOf(-5);
 
-    static final Integer m6 = new Integer(-6);
+    static final Integer m6 = Integer.valueOf(-6);
 
-    static final Integer m10 = new Integer(-10);
+    static final Integer m10 = Integer.valueOf(-10);
 
     /**
      * Create a map from Integers 1-5 to Strings "A"-"E".
@@ -121,7 +121,6 @@ public class BaseHashMapTest extends TestCase {
     public void testGet() {
         OpenHashMap map = map5();
         assertEquals("A", (String) map.get(one));
-        OpenHashMap empty = new OpenHashMap();
         assertNull(map.get("anything"));
     }
 

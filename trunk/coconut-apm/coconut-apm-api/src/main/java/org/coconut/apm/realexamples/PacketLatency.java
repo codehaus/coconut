@@ -23,7 +23,7 @@ public class PacketLatency {
         // create a long counter with a name & description
         // and register it with the platform Mbeanserver
         LongSamplingCounter lr = mg.addMetric(new LongSamplingCounter(
-                "Packets Received (Bytes)"));
+                "Packets Received (Bytes)",""));
         // adds an average of the number of samplings pr second
         // mg.add(new TimedAverage(lr.getRunningTotal(), "Bytes/s"));
         TimedAverage ta = mg.add(new TimedAverage(lr.liveTotal(), "Bytes/s"), 1,
