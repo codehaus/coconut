@@ -14,11 +14,10 @@
     This library contains class that are used across all Coconut
     projects
   </description>
-  <version>1.0-alpha1-SNAPSHOT</version>
   <dependencies>
       <dependency>
       <groupId>org.coconut.core</groupId>
-      <artifactId>coconut</artifactId>
+      <artifactId>coconut-core</artifactId>
       </dependency>
   </dependencies>
 </project>

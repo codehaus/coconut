@@ -6,19 +6,25 @@
     <artifactId>coconut-cache-parent</artifactId>
     <version>1.0-alpha3-SNAPSHOT</version>
   </parent>
-  
+
   <artifactId>coconut-cache-policies</artifactId>
   <name>Coconut Cache Policies</name>
   <description>Common eviction cache policies</description>
-        <reporting>
-          <plugins>
-              <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-checkstyle-plugin</artifactId>
-                  <configuration>
-                      <configLocation>src/main/resources/check.xml</configLocation>
-                  </configuration>
-              </plugin>
-          </plugins>
-      </reporting>
+  <dependencies>
+    <dependency>
+      <groupId>org.coconut.core</groupId>
+      <artifactId>coconut-core</artifactId>
+    </dependency>
+  </dependencies>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <configLocation>src/main/resources/check.xml</configLocation>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>

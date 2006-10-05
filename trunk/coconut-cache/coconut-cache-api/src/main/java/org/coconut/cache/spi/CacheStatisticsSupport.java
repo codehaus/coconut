@@ -171,7 +171,7 @@ public final class CacheStatisticsSupport<K, V> {
 
     public long cacheClearStop(Cache<K, V> cache, long start) {
         long time = System.nanoTime() - start;
-        cacheClearLast.updateNow();
+        cacheClearLast.run();
         cacheClearTime.report(time);
         cacheClearCount.incrementAndGet();
         return time;
@@ -183,14 +183,14 @@ public final class CacheStatisticsSupport<K, V> {
 
     public long cacheEvictStop(Cache<K, V> cache, long start) {
         long time = System.nanoTime() - start;
-        cacheEvictLast.updateNow();
+        cacheEvictLast.run();
         cacheEvictTime.report(time);
         cacheEvictCount.incrementAndGet();
         return time;
     }
 
     public void cacheReset() {
-        cacheStatisticsResetLast.updateNow();
+        cacheStatisticsResetLast.run();
         entryGetHitCount.reset();
         entryGetMissCount.reset();
         // TODO reset others;

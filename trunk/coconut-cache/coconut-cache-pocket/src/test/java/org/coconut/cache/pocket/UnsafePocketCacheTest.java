@@ -10,8 +10,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.coconut.apm.sandbox.Usager;
-
 import junit.framework.TestCase;
 
 /**

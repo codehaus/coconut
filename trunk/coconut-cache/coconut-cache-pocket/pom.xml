@@ -6,28 +6,27 @@
     <artifactId>coconut-cache-parent</artifactId>
     <version>1.0-alpha3-SNAPSHOT</version>
   </parent>
-  
+
   <artifactId>coconut-cache-pocket</artifactId>
   <name>Coconut Pocket Cache</name>
   <description>An in-memory cache implementation</description>
-    
-    <dependencies>
-    </dependencies>
-      <build>
-          <plugins>
+
+  <dependencies></dependencies>
+  <build>
+    <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
-        <links>
-        <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
-        </links>
+          <links>
+            <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
+          </links>
           <showPackage>false</showPackage>
           <showProtected>true</showProtected>
-                    <quiet>true</quiet>
+          <quiet>true</quiet>
         </configuration>
       </plugin>
     </plugins>
   </build>
-  
+
 </project>

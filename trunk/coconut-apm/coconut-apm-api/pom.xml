@@ -10,17 +10,8 @@
   <artifactId>coconut-apm</artifactId>
   <name>Coconut APM</name>
   <description>
-    This library contains class that are used across all Coconut
-    projects
+    This library contains core class for Coconut Application Performance
+    Monitor (APM)
   </description>
-  <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.coconut.core</groupId>
-      <artifactId>coconut</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-  </dependencies>
 </project>

@@ -18,9 +18,10 @@
 
   <dependencyManagement>
     <dependencies>
+      <!-- Parents -->
       <dependency>
         <groupId>org.coconut.core</groupId>
-        <artifactId>coconut</artifactId>
+        <artifactId>coconut-core</artifactId>
         <version>1.0-SNAPSHOT</version>
       </dependency>
       <dependency>
@@ -268,10 +269,10 @@
     </repository>
   </repositories>
   <modules>
-    <module>coconut-aio</module>
+<!--   <module>coconut-aio</module> -->
     <module>coconut-apm</module>
     <module>coconut-cache</module>
-    <module>coconut-components</module>
+    <module>coconut-filter</module>
     <module>coconut-concurrent</module>
     <module>coconut-core</module>
     <module>coconut-event</module>

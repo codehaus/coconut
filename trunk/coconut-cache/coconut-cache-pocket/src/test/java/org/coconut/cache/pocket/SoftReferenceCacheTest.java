@@ -3,11 +3,9 @@
  */
 package org.coconut.cache.pocket;
 
-import java.lang.ref.SoftReference;
-
-import org.coconut.internal.util.SimpleEntry;
-
 import junit.framework.TestCase;
+
+import org.coconut.test.ImmutableMapEntry;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -18,7 +16,7 @@ public class SoftReferenceCacheTest extends TestCase {
     public void testSoftReferences() {
         SoftReferenceCache<Integer, String> src = new SoftReferenceCache<Integer, String>(
                 new IntegerToStringValueLoader());
-        src.evicted(new SimpleEntry<Integer, String>(10, "foo"));
+        src.evicted(new ImmutableMapEntry<Integer, String>(10, "foo"));
         assertEquals("foo", src.get(10));
         assertEquals("E", src.get(5));
     }
@@ -26,7 +24,7 @@ public class SoftReferenceCacheTest extends TestCase {
     public void testSoftReferencesClear() {
         SoftReferenceCache<Integer, String> src = new SoftReferenceCache<Integer, String>(
                 new IntegerToStringValueLoader());
-        src.evicted(new SimpleEntry<Integer, String>(10, "foo"));
+        src.evicted(new ImmutableMapEntry<Integer, String>(10, "foo"));
         src.clear();
         assertNull(src.get(10));
     }

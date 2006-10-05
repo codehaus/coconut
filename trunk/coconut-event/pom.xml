@@ -17,7 +17,7 @@
     <dependencies>
       <dependency>
         <groupId>org.coconut.core</groupId>
-        <artifactId>coconut</artifactId>
+        <artifactId>coconut-core</artifactId>
       </dependency>
             <dependency>
         <groupId>org.coconut.concurrent</groupId>
