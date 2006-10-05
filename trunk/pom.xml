@@ -18,10 +18,19 @@
 
   <dependencyManagement>
     <dependencies>
-      <!-- Parents -->
+      <dependency>
+        <groupId>org.coconut.apm</groupId>
+        <artifactId>coconut-apm</artifactId>
+        <version>1.0-alpha1-SNAPSHOT</version>
+      </dependency>
       <dependency>
         <groupId>org.coconut.core</groupId>
         <artifactId>coconut-core</artifactId>
+        <version>1.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.coconut.concurrent</groupId>
+        <artifactId>coconut-concurrent</artifactId>
         <version>1.0-SNAPSHOT</version>
       </dependency>
       <dependency>
@@ -35,9 +44,9 @@
         <version>1.0-SNAPSHOT</version>
       </dependency>
       <dependency>
-        <groupId>org.coconut.core</groupId>
+        <groupId>org.coconut.filter</groupId>
         <artifactId>coconut-filter</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0-alpha1-SNAPSHOT</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -269,7 +278,7 @@
     </repository>
   </repositories>
   <modules>
-<!--   <module>coconut-aio</module> -->
+    <!--   <module>coconut-aio</module> -->
     <module>coconut-apm</module>
     <module>coconut-cache</module>
     <module>coconut-filter</module>

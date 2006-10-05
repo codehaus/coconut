@@ -6,29 +6,14 @@
     <artifactId>coconut-event-parent</artifactId>
     <version>1.0-alpha1-SNAPSHOT</version>
   </parent>
-  
+
   <artifactId>coconut-event</artifactId>
   <name>Coconut Event</name>
   <description>An eventbus</description>
-  
-      <dependencies>
-      <dependency>
-        <groupId>org.coconut.core</groupId>
-        <artifactId>coconut-filter</artifactId>
-      </dependency>
-        </dependencies>
-      <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <configuration>
-            <source>1.5</source>
-            <target>1.5</target>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
-  
+  <dependencies>
+    <dependency>
+      <groupId>org.coconut.filter</groupId>
+      <artifactId>coconut-filter</artifactId>
+    </dependency>
+  </dependencies>
 </project>

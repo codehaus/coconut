@@ -17,7 +17,7 @@
       <artifactId>coconut-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.coconut.core</groupId>
+      <groupId>org.coconut.filter</groupId>
       <artifactId>coconut-filter</artifactId>
     </dependency>
     <dependency>
@@ -32,7 +32,6 @@
     <dependency>
       <groupId>org.coconut.apm</groupId>
       <artifactId>coconut-apm</artifactId>
-      <version>1.0-alpha1-SNAPSHOT</version>
     </dependency>
   </dependencies>
   <build>
