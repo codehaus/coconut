@@ -36,7 +36,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         Cache<K, V> {
 
     @SuppressWarnings("unchecked")
-    private final static CacheConfiguration NO_CONF = CacheConfiguration.newConf();
+    private final static CacheConfiguration NO_CONF = CacheConfiguration.DEFAULT_CONFIGURATION;
 
     public static void checkMapForNulls(Map<?, ?> map) {
         for (Map.Entry<?, ?> entry : map.entrySet()) {
@@ -70,9 +70,16 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
 
     private final CacheErrorHandler<K, V> errorHandler;
 
+    private final CacheConfiguration<K, V> conf;
+
     @SuppressWarnings("unchecked")
     public AbstractCache() {
         this(NO_CONF);
+    }
+
+    public CacheConfiguration<K, V> getConfiguration() {
+        //unmodifiable...
+        return conf;
     }
 
     public AbstractCache(CacheConfiguration<K, V> configuration) {
@@ -83,8 +90,16 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         name = configuration.getName() == null ? UUID.randomUUID().toString()
                 : configuration.getName();
         this.clock = configuration.getClock();
+        this.conf = configuration;
     }
 
+    public void initialize() {
+        
+    }
+    
+    public void shutdown() {
+        
+    }
     protected CacheErrorHandler<K, V> getErrorHandler() {
         return errorHandler;
     }

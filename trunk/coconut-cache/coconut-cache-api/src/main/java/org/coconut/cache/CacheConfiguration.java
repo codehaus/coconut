@@ -7,6 +7,7 @@ package org.coconut.cache;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -20,6 +21,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.coconut.annotation.ThreadSafe;
 import org.coconut.cache.policy.ReplacementPolicy;
+import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.CacheErrorHandler;
 import org.coconut.cache.store.CacheStore;
 import org.coconut.core.Clock;
@@ -513,14 +515,14 @@ public final class CacheConfiguration<K, V> implements Cloneable {
         public Expiration setCustomExpirator(Filter<? extends Cache> filter) {
             // kunne også være rart med en version, der f.eks. kunne tage alle
             // store elementer
-//            Filter f = new Filter<Cache>() {
-//                private int evictFooElement;
-//
-//                public boolean accept(Cache element) {
-//                    // TODO Auto-generated method stub
-//                    return evictFooElement-- > 0;
-//                }
-//            };
+            // Filter f = new Filter<Cache>() {
+            // private int evictFooElement;
+            //
+            // public boolean accept(Cache element) {
+            // // TODO Auto-generated method stub
+            // return evictFooElement-- > 0;
+            // }
+            // };
             // mem notifier-> receive low
             // mem->f.evictFooElement=10000->cache.evict
             // to gange federe at sende som events
@@ -870,6 +872,11 @@ public final class CacheConfiguration<K, V> implements Cloneable {
         // String cacheInstance =
         // document.getDocumentElement().getAttribute("classs");
 
+//        Loading / Storing / Prefetch / storage
+//        events
+//        statistics/jmx ? monitoring????
+//        locking /transactions (thread safety)
+//        
         CacheConfiguration<String, Integer> cc = newConf();
 
         cc.setName("MyCache");
@@ -908,13 +915,31 @@ public final class CacheConfiguration<K, V> implements Cloneable {
         if (clazz == null) {
             throw new NullPointerException("clazz is null");
         }
+        Cache<K, V> cache = null;
+        Constructor<Cache<K, V>> c = null;
         try {
-            Constructor<Cache<K, V>> c = (Constructor<Cache<K, V>>) clazz
+            c = (Constructor<Cache<K, V>>) clazz
                     .getDeclaredConstructor(CacheConfiguration.class);
-            return c.newInstance(this);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Could not create cache instance", e);
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException(
+                    "Could not create cache instance, no public contructor taking a single CacheConfiguration instance",
+                    e);
         }
+        try {
+            cache = c.newInstance(this);
+        } catch (InstantiationException e) {
+            throw new IllegalArgumentException(
+                    "Could not create cache instance, specified clazz " + clazz
+                            + ") is an interface or abstract class", e);
+        } catch (IllegalAccessException e) {
+            throw new IllegalArgumentException("Could not create instance of " + clazz, e);
+        } catch (InvocationTargetException e) {
+            throw new IllegalArgumentException("Constructor threw exception", e);
+        }
+        if (cache instanceof AbstractCache) {
+            ((AbstractCache) cache).initialize();
+        }
+        return cache;
     }
 
     private final Map<String, Object> additionalProperties = new HashMap<String, Object>();

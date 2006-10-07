@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheException;
-import org.coconut.cache.util.DefaultCacheEntry;
+import org.coconut.cache.CacheLoader;
 import org.coconut.core.Log;
 import org.coconut.core.Logs;
 
@@ -45,75 +45,43 @@ public class CacheErrorHandler<K, V> {
         this.name = name;
     }
 
-    /**
-     * @param key
-     *            the key that failed to load
-     * @param cause
-     */
-    protected CacheEntry<K, V> loadingEntryOfValueFailed(K key, Throwable cause) {
-        throw new CacheException("Failed to load value [key = " + key.toString() + "]",
-                cause);
-    }
-
-    public V asyncLoadingFailed(K key, Throwable cause) {
-        checkInitialized();
-        String msg = "Failed to asynchronously load value [key = " + key.toString() + "]";
-        getLogger().error(msg, cause);
-        throw new CacheException(msg, cause);
-    }
-    public CacheEntry<K,V> asyncLoadingEntryFailed(K key, Throwable cause) {
-        checkInitialized();
-        String msg = "Failed to asynchronously load value [key = " + key.toString() + "]";
-        getLogger().error(msg, cause);
-        throw new CacheException(msg, cause);
-    }
-    public Map<K,V> asyncLoadingAllFailed(Collection<? extends K> keys, Throwable cause) {
-        checkInitialized();
-        String msg = "Failed to asynchronously load value [key = " + keys.size() + "]";
-        getLogger().error(msg, cause);
-        throw new CacheException(msg, cause);
-    }
-    
-    protected V loadingOfValueFailed(K key, Throwable cause) {
+    public V loadFailed(CacheLoader<? super K, ? extends V> loader, K key,
+            boolean isAsync, Throwable cause) {
         checkInitialized();
         String msg = "Failed to load value [key = " + key.toString() + "]";
         getLogger().error(msg, cause);
         throw new CacheException(msg, cause);
     }
 
-    /**
-     * @param key
-     *            the key that failed to load
-     * @param cause
-     */
-    protected Map<K, V> backendLoadFailed(Collection<? extends K> keys, Throwable cause) {
+    public Map<K, V> loadAllFailed(CacheLoader<? super K, ? extends V> loader,
+            Collection<? extends K> keys, boolean isAsync, Throwable cause) {
         checkInitialized();
-        String msg = "Failed to load values for collection of keys [keys.size = "
-                + keys.size() + "]";
+        String msg = "Failed to load values [keys = " + keys.toString() + "]";
         getLogger().error(msg, cause);
         throw new CacheException(msg, cause);
     }
 
-    public CacheEntry<K, V> loadingOfCacheEntryFailed(K key, Throwable cause) {
-        return new DefaultCacheEntry<K, V>(key, loadingOfValueFailed(key, cause));
+    public CacheEntry<K, V> loadEntryFailed(
+            CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader,
+            K key, boolean isAsync, Throwable cause) {
+        checkInitialized();
+        String msg = "Failed to load value [key = " + key.toString() + "]";
+        getLogger().error(msg, cause);
+        throw new CacheException(msg, cause);
     }
 
-    /**
-     * @param key
-     *            the key that failed to load
-     * @param cause
-     */
-    public Map<K, V> loadingOfValuesFailed(Collection<? extends K> keys, Throwable cause) {
-        throw new CacheException(
-                "Failed to load values for collection of keys [keys.size = "
-                        + keys.size() + "]", cause);
+    public Map<K, CacheEntry<K, V>> loadAllEntrisFailed(
+            final CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader,
+            Collection<? extends K> keys, boolean isAsync, Throwable cause) {
+        checkInitialized();
+        String msg = "Failed to load values [keys = " + keys.toString() + "]";
+        getLogger().error(msg, cause);
+        throw new CacheException(msg, cause);
     }
 
-    public Map<K, CacheEntry<K, V>> loadingOfCacheEntryFailed(
-            Collection<? extends K> keys, Throwable cause) {
-        throw new CacheException(
-                "Failed to load values for collection of keys [keys.size = "
-                        + keys.size() + "]", cause);
+    public final void unhandledError(Throwable t) {
+        checkInitialized();
+        getLogger().error("Unhandled Error", t);
     }
 
     public void backendDeleteFailed(Collection<? extends K> keys, Throwable cause) {

@@ -7,15 +7,16 @@ package org.coconut.cache.spi;
 import org.coconut.cache.CacheEntry;
 
 /**
- * This interface is subject to change,
- * TODO Should have the eventbus build in?
+ * This interface is subject to change, TODO Should have the eventbus build in?
  * TODO take cache entry instead of key, value
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
 public interface CacheEventDispatcher<K, V> {
 
     boolean isEnabled();
+
     boolean doNotifyAdded();
 
     boolean doNotifyClear();
@@ -31,11 +32,13 @@ public interface CacheEventDispatcher<K, V> {
      */
     boolean showOldValueForChanged();
 
-    void notifyAccessed(long sequenceID, K key, V value, CacheEntry<K,V> entry, boolean wasHit);
+    void notifyAccessed(long sequenceID, K key, V value, CacheEntry<K, V> entry,
+            boolean wasHit);
 
-    void notifyAdded(long sequenceID, K key, V value, CacheEntry<K,V> entry);
+    void notifyAdded(long sequenceID, K key, V value, CacheEntry<K, V> entry);
 
-    void notifyChanged(long sequenceID, K key, V value, V oldValue, CacheEntry<K,V> entry);
+    void notifyChanged(long sequenceID, K key, V value, V oldValue, CacheEntry<K, V> entry);
 
-    void notifyRemoved(long sequenceID, K key, V value, boolean isExpired, CacheEntry<K,V> entry);
+    void notifyRemoved(long sequenceID, K key, V value, boolean isExpired,
+            CacheEntry<K, V> entry);
 }

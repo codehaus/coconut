@@ -11,10 +11,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
 
+import org.coconut.cache.spi.AsyncCacheLoader;
 import org.coconut.cache.spi.CacheSupport;
 import org.coconut.cache.spi.Ressources;
 import org.coconut.cache.util.AbstractCacheLoader;
@@ -982,6 +984,14 @@ public final class Caches {
         }
     }
 
+    public static <K, V> AsyncCacheLoader<K, V> asAsyncCacheLoader(
+            CacheLoader<K, V> loader, Executors e) {
+        return null;
+    }
+    public static <K, V> AsyncCacheLoader<K, CacheEntry<K, V>> asAsyncExtendedCacheLoader(
+            CacheLoader<K, CacheEntry<K, V>> loader, Executors e) {
+        return null;
+    }
     public static <K, V> CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> asCacheLoader(
             CacheLoader<K, V> loader) {
         return new AbstractLoaderToExtendedLoader(loader);
