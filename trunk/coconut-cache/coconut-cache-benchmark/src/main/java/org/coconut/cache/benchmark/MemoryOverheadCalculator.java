@@ -17,58 +17,7 @@ import org.coconut.cache.defaults.memory.UnlimitedCache;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class MemoryOverheadCalculator {
-    public interface OverHeadTester<K, V> {
-        Map<K, V> create(int runs) throws Exception ;
-    }
-
-    static class Put1000 implements OverHeadTester<Integer, Integer> {
-
-        private final OverHeadTester<Integer, Integer> tester;
-
-        /**
-         * @param tester
-         */
-        public Put1000(final OverHeadTester<Integer, Integer> tester) {
-            this.tester = tester;
-        }
-
-        /**
-         * @see org.coconut.cache.policy.concurrent.OverHeadTester#create(int)
-         */
-        public Map<Integer, Integer> create(int runs) throws Exception {
-            Map<Integer, Integer> m = tester.create(runs);
-            for (int i = 0; i < runs; i++) {
-                m.put(ints[i], ints[i]);
-            }
-            return m;
-        }
-    }
-
-    static class Ref<K, V> implements OverHeadTester<K, V> {
-
-        private final Class<? extends Map> c;
-
-        /**
-         * @param c
-         */
-        public Ref(final Class<? extends Map> c) {
-            this.c = c;
-        }
-
-        /**
-         * @see org.coconut.cache.policy.concurrent.OverHeadTester#create(int)
-         */
-        public Map<K, V> create(int runs) throws Exception {
-            return c.newInstance();
-        }
-
-        public String toString() {
-            return c.getCanonicalName().toString();
-        }
-    }
-
     // 6144, 6145
-
     public final static int[] DEFAULT_ITERATIONS = new int[] { 1, 10, 100, 1000, 10000,
             100000 };
 
@@ -160,4 +109,53 @@ public class MemoryOverheadCalculator {
         return sb.toString();
     }
 
+    public interface OverHeadTester<K, V> {
+        Map<K, V> create(int runs) throws Exception ;
+    }
+
+    static class Put1000 implements OverHeadTester<Integer, Integer> {
+
+        private final OverHeadTester<Integer, Integer> tester;
+
+        /**
+         * @param tester
+         */
+        public Put1000(final OverHeadTester<Integer, Integer> tester) {
+            this.tester = tester;
+        }
+
+        /**
+         * @see org.coconut.cache.policy.concurrent.OverHeadTester#create(int)
+         */
+        public Map<Integer, Integer> create(int runs) throws Exception {
+            Map<Integer, Integer> m = tester.create(runs);
+            for (int i = 0; i < runs; i++) {
+                m.put(ints[i], ints[i]);
+            }
+            return m;
+        }
+    }
+
+    static class Ref<K, V> implements OverHeadTester<K, V> {
+
+        private final Class<? extends Map> c;
+
+        /**
+         * @param c
+         */
+        public Ref(final Class<? extends Map> c) {
+            this.c = c;
+        }
+
+        /**
+         * @see org.coconut.cache.policy.concurrent.OverHeadTester#create(int)
+         */
+        public Map<K, V> create(int runs) throws Exception {
+            return c.newInstance();
+        }
+
+        public String toString() {
+            return c.getCanonicalName().toString();
+        }
+    }
 }
