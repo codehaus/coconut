@@ -173,21 +173,21 @@ public class CacheDecorator<K, V> implements Cache<K, V>, Serializable {
     /**
      * {@inheritDoc}
      */
-    public Future<?> load(K key) {
-        return cache.load(key);
+    public Future<?> loadAsync(K key) {
+        return cache.loadAsync(key);
     }
 
     /**
      * {@inheritDoc}
      */
-    public Future<?> loadAll(Collection<? extends K> keys) {
-        return cache.loadAll(keys);
+    public Future<?> loadAllAsync(Collection<? extends K> keys) {
+        return cache.loadAllAsync(keys);
     }
 
     /**
      * {@inheritDoc}
      */
-    public V peek(Object key) {
+    public V peek(K key) {
         return cache.peek(key);
     }
 
@@ -303,5 +303,12 @@ public class CacheDecorator<K, V> implements Cache<K, V>, Serializable {
      */
     public CacheEntry<K, V> getEntry(K key) {
         return cache.getEntry(key);
+    }
+
+    /**
+     * @see org.coconut.cache.Cache#peekEntry(java.lang.Object)
+     */
+    public CacheEntry<K, V> peekEntry(K key) {
+        return cache.peekEntry(key);
     }
 }

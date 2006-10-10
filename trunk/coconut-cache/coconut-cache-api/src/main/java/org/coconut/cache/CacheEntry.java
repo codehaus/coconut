@@ -94,6 +94,8 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V>, CostSizeObject {
      */
     long getVersion();
 
+    //void expireNow(boolean attemptToRefresh);
+    //boolean isExpired()
     // Whats the purpose of this??? boolean isValid(); hmm isExpired w
     // 
     // boolean hasAttributes(); //if attribute map is lazy created check this

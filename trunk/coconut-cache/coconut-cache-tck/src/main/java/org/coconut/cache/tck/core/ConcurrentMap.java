@@ -26,27 +26,15 @@ import org.junit.Test;
 public class ConcurrentMap extends CacheTestBundle {
 
     /**
-     * Converts a cache to a concurrentmap, right now the Cache interface
-     * extends ConcurrentMap, however, this might change.
-     * 
-     * @return the cache as a concurrent map.
-     */
-    private static <K, V> java.util.concurrent.ConcurrentMap<K, V> asCm(
-            Cache<K, V> cache) {
-        // return (ConcurrentMap) cache;
-        return cache;
-    }
-
-    /**
      * Tests the putIfAbsent(K key, V value) method.
      */
     @Test
     public void testPutIfAbsent() {
-        assertNull(asCm(c0).putIfAbsent(M1.getKey(), M1.getValue()));
-        assertEquals(M1.getValue(), asCm(c0).get(M1.getKey()));
-        assertEquals(M1.getValue(), asCm(c0).putIfAbsent(M1.getKey(),
+        assertNull(c0.putIfAbsent(M1.getKey(), M1.getValue()));
+        assertEquals(M1.getValue(), c0.get(M1.getKey()));
+        assertEquals(M1.getValue(), c0.putIfAbsent(M1.getKey(),
                 M2.getValue()));
-        assertFalse(asCm(c0).containsValue(M2.getValue()));
+        assertFalse(c0.containsValue(M2.getValue()));
     }
 
     /**
@@ -54,7 +42,7 @@ public class ConcurrentMap extends CacheTestBundle {
      */
     @Test(expected = NullPointerException.class)
     public void testPutIfAbsentStringNPE() {
-        asCm(c0).putIfAbsent(null, "A");
+        c0.putIfAbsent(null, "A");
     }
 
     /**
@@ -62,15 +50,15 @@ public class ConcurrentMap extends CacheTestBundle {
      */
     @Test(expected = NullPointerException.class)
     public void testPutIfAbsentIntegerNPE() {
-        asCm(c0).putIfAbsent(1, null);
+        c0.putIfAbsent(1, null);
     }
 
     @Test
     public void testRemoveTwo() {
-        assertTrue(asCm(c2).remove(M2.getKey(), M2.getValue()));
-        assertEquals(1, asCm(c2).size());
-        assertFalse(asCm(c2).remove(M1.getKey(), M2.getValue()));
-        assertEquals(1, asCm(c2).size());
+        assertTrue(c2.remove(M2.getKey(), M2.getValue()));
+        assertEquals(1, c2.size());
+        assertFalse(c2.remove(M1.getKey(), M2.getValue()));
+        assertEquals(1, c2.size());
     }
 
     /**
@@ -78,7 +66,7 @@ public class ConcurrentMap extends CacheTestBundle {
      */
     @Test(expected = NullPointerException.class)
     public void testRemoveNullValue() {
-        asCm(c1).remove(null, M1.getValue());
+        c1.remove(null, M1.getValue());
     }
 
     /**
@@ -86,18 +74,18 @@ public class ConcurrentMap extends CacheTestBundle {
      */
     @Test(expected = NullPointerException.class)
     public void testRemoveKeyNull() {
-        asCm(c0).remove(M1.getKey(), null);
+        c0.remove(M1.getKey(), null);
     }
 
     @Test
     public void testReplace2() {
-        assertNull(asCm(c1).replace(M2.getKey(), M2.getValue()));
-        assertEquals(M1.getValue(), asCm(c2)
+        assertNull(c1.replace(M2.getKey(), M2.getValue()));
+        assertEquals(M1.getValue(), c2
                 .replace(M1.getKey(), M3.getValue()));
-        assertEquals(M3.getValue(), asCm(c2).get(M1.getKey()));
-        assertNull(asCm(c2).replace(M4.getKey(), M4.getValue()));
-        assertFalse(asCm(c2).containsValue(M4.getValue()));
-        assertFalse(asCm(c2).containsValue(M1.getValue()));
+        assertEquals(M3.getValue(), c2.get(M1.getKey()));
+        assertNull(c2.replace(M4.getKey(), M4.getValue()));
+        assertFalse(c2.containsValue(M4.getValue()));
+        assertFalse(c2.containsValue(M1.getValue()));
     }
 
     /**
@@ -105,7 +93,7 @@ public class ConcurrentMap extends CacheTestBundle {
      */
     @Test(expected = NullPointerException.class)
     public void testReplace2NullValue() {
-        asCm(c1).replace(null, M2.getValue());
+        c1.replace(null, M2.getValue());
     }
 
     /**
@@ -113,15 +101,15 @@ public class ConcurrentMap extends CacheTestBundle {
      */
     @Test(expected = NullPointerException.class)
     public void testReplace2KeyNull() {
-        asCm(c1).replace(M1.getKey(), null);
+        c1.replace(M1.getKey(), null);
     }
 
     @Test
     public void testReplace3() {
-        assertTrue(asCm(c2).replace(M1.getKey(), M1.getValue(), M3.getValue()));
-        assertEquals(M3.getValue(), asCm(c2).get(M1.getKey()));
-        assertFalse(asCm(c2).replace(M1.getKey(), M1.getValue(), M3.getValue()));
-        assertFalse(asCm(c2).containsValue(M1.getValue()));
+        assertTrue(c2.replace(M1.getKey(), M1.getValue(), M3.getValue()));
+        assertEquals(M3.getValue(), c2.get(M1.getKey()));
+        assertFalse(c2.replace(M1.getKey(), M1.getValue(), M3.getValue()));
+        assertFalse(c2.containsValue(M1.getValue()));
     }
 
     /**
@@ -129,7 +117,7 @@ public class ConcurrentMap extends CacheTestBundle {
      */
     @Test(expected = NullPointerException.class)
     public void testReplace3NullValueValue() {
-        asCm(c1).replace(null, M1.getValue(), M2.getValue());
+        c1.replace(null, M1.getValue(), M2.getValue());
     }
 
     /**
@@ -137,7 +125,7 @@ public class ConcurrentMap extends CacheTestBundle {
      */
     @Test(expected = NullPointerException.class)
     public void testReplace3KeyNullValue() {
-        asCm(c1).replace(M1.getKey(), null, M2.getValue());
+        c1.replace(M1.getKey(), null, M2.getValue());
     }
 
     /**
@@ -145,7 +133,7 @@ public class ConcurrentMap extends CacheTestBundle {
      */
     @Test(expected = NullPointerException.class)
     public void testReplace3KeyValueNull() {
-        asCm(c1).replace(M1.getKey(), M1.getValue(), null);
+        c1.replace(M1.getKey(), M1.getValue(), null);
     }
 
 }

@@ -13,6 +13,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheException;
 import org.coconut.cache.CacheLoader;
+import org.coconut.cache.store.CacheStore;
 import org.coconut.core.Log;
 import org.coconut.core.Logs;
 
@@ -49,6 +50,22 @@ public class CacheErrorHandler<K, V> {
             boolean isAsync, Throwable cause) {
         checkInitialized();
         String msg = "Failed to load value [key = " + key.toString() + "]";
+        getLogger().error(msg, cause);
+        throw new CacheException(msg, cause);
+    }
+
+    public V storeFailed(CacheStore<K, V> loader, K key, V value, boolean isAsync,
+            Throwable cause) {
+        checkInitialized();
+        String msg = "Failed to store value [key = " + key.toString() + "]";
+        getLogger().error(msg, cause);
+        throw new CacheException(msg, cause);
+    }
+
+    public CacheEntry<K, V> storeEntryFailed(CacheStore<K, CacheEntry<K, V>> store,
+            K key, CacheEntry<K, V> value, boolean isAsync, Throwable cause) {
+        checkInitialized();
+        String msg = "Failed to store value [key = " + key.toString() + "]";
         getLogger().error(msg, cause);
         throw new CacheException(msg, cause);
     }

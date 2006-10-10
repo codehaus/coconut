@@ -8,11 +8,16 @@ import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M4;
 import static org.coconut.test.CollectionUtils.M5;
 import static org.coconut.test.CollectionUtils.asList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Map;
 
 import org.coconut.cache.tck.CacheTestBundle;
+import org.junit.Test;
 
 /**
  * Test basic functionality of a Cache. This test should be applicable for any
@@ -23,39 +28,29 @@ import org.coconut.cache.tck.CacheTestBundle;
  */
 public class BasicCache extends CacheTestBundle {
 
-    public void testGetAllNull() {
-        try {
-            c5.getAll(null);
-            fail("Did not throw NullPointerException");
-        } catch (NullPointerException npe) {
-            // ignore
-        }
+    @Test(expected = NullPointerException.class)
+    public void getAllNullFails() {
+        c5.getAll(null);
     }
 
-    public void testGetAllNullElements() {
-        try {
-            c5.getAll(Arrays.asList(1, null));
-            fail("Did not throw NullPointerException");
-        } catch (NullPointerException npe) {
-            // ignore
-        }
+    @Test(expected = NullPointerException.class)
+    public void getAllNull2Fails() {
+        c5.getAll(Arrays.asList(1, null));
     }
 
+    @Test
     public void testPeek() {
         assertNull(c5.peek(6));
         assertEquals(M1.getValue(), c5.peek(M1.getKey()));
         assertEquals(M5.getValue(), c5.peek(M5.getKey()));
     }
 
+    @Test(expected = NullPointerException.class)
     public void testPeekNull() {
-        try {
-            c5.get(null);
-            fail("Did not throw NullPointerException");
-        } catch (NullPointerException npe) {
-            // ignore
-        }
+        c5.get(null);
     }
 
+    @Test
     public void testGetAllElement() {
         Map<Integer, String> map = c4
                 .getAll(asList(M1.getKey(), M5.getKey(), M4.getKey()));

@@ -10,9 +10,11 @@ import java.lang.management.ManagementFactory;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -34,7 +36,6 @@ import javax.management.ObjectName;
 import javax.management.ReflectionException;
 
 import org.coconut.apm.Apm;
-import org.coconut.apm.monitor.SingleExponentialSmoothing;
 import org.coconut.apm.spi.annotation.ManagedAttribute;
 import org.coconut.apm.spi.annotation.ManagedOperation;
 import org.coconut.core.EventHandler;
@@ -222,9 +223,11 @@ public class NumberDynamicBean implements DynamicMBean, JMXConfigurator {
 
     private final String description;
 
-    private final ConcurrentHashMap<String, AbstractAttribute> map = new ConcurrentHashMap<String, AbstractAttribute>();
+    private final Map<String, AbstractAttribute> map = Collections
+            .synchronizedMap(new HashMap<String, AbstractAttribute>());
 
-    private final ConcurrentHashMap<String, InternalOperation> mapOper = new ConcurrentHashMap<String, InternalOperation>();
+    private final Map<String, InternalOperation> mapOper = Collections
+            .synchronizedMap(new HashMap<String, InternalOperation>());
 
     // gotta delete this so we are serializeable
     private SoftReference<MBeanServer> mbs;
@@ -239,7 +242,7 @@ public class NumberDynamicBean implements DynamicMBean, JMXConfigurator {
      * @see org.coconut.metric.spi.ManagedConfigurator#add(java.lang.String,
      *      java.lang.Object)
      */
-    public void add(Object o) {
+    public synchronized void add(Object o) {
         BeanInfo bi;
         try {
             bi = Introspector.getBeanInfo(o.getClass());
@@ -273,7 +276,10 @@ public class NumberDynamicBean implements DynamicMBean, JMXConfigurator {
                 String name = filterString(o, mo.defaultValue());
                 String description = filterString(o, mo.description());
                 InternalOperation io = new InternalOperation(m, o, name, description);
-                mapOper.putIfAbsent(name, io); // check not already
+                if (mapOper.containsKey(name)) {
+                    throw new IllegalArgumentException();
+                }
+                mapOper.put(name, io); // check not already
             }
         }
     }
@@ -290,24 +296,30 @@ public class NumberDynamicBean implements DynamicMBean, JMXConfigurator {
         return str;
     }
 
-    public <T> void addAttribute(String name, String description, Callable<T> reader,
-            Class<? extends T> type) {
+    public synchronized <T> void addAttribute(String name, String description,
+            Callable<T> reader, Class<? extends T> type) {
         addAttribute(name, description, reader, null, type);
     }
 
-    public <T> void addAttribute(String name, String description, Callable<T> reader,
-            EventHandler<T> writer, Class<? extends T> type) {
+    public synchronized <T> void addAttribute(String name, String description,
+            Callable<T> reader, EventHandler<T> writer, Class<? extends T> type) {
         CustomAttribute m = new CustomAttribute(name, description, reader, writer, type);
-        map.putIfAbsent(name, m); // check not already registered
+        if (map.containsKey(name)) {
+            throw new IllegalArgumentException("Already registered");
+        }
+        map.put(name, m); // check not already registered
     }
 
     /**
      * @see org.coconut.metric.spi.ManagedConfigurator#addOperation(java.lang.Runnable,
      *      java.lang.String, java.lang.String)
      */
-    public void addOperation(Runnable r, String name, String description) {
+    public synchronized void addOperation(Runnable r, String name, String description) {
         InternalOperation m = new InternalOperation(r, name, description);
-        mapOper.putIfAbsent(name, m);
+        if (mapOper.containsKey(name)) {
+            throw new IllegalArgumentException("Already registered");
+        }
+        mapOper.put(name, m);
 
     }
 
@@ -317,8 +329,8 @@ public class NumberDynamicBean implements DynamicMBean, JMXConfigurator {
     public Object getAttribute(String attribute) throws AttributeNotFoundException,
             MBeanException, ReflectionException {
         try {
-            AbstractAttribute aa=map.get(attribute);
-            return aa==null ? null : aa.getValue();
+            AbstractAttribute aa = map.get(attribute);
+            return aa == null ? null : aa.getValue();
         } catch (Exception e) {
             e.printStackTrace();
             throw new IllegalStateException("Could not compute value", e);
@@ -378,8 +390,8 @@ public class NumberDynamicBean implements DynamicMBean, JMXConfigurator {
     public Object invoke(String actionName, Object[] params, String[] signature)
             throws MBeanException, ReflectionException {
         try {
-            InternalOperation aa=mapOper.get(actionName);
-            return aa==null ? null : aa.invoke();
+            InternalOperation aa = mapOper.get(actionName);
+            return aa == null ? null : aa.invoke();
 
         } catch (IllegalAccessException e) {
             throw new IllegalStateException("Could not compute value", e);

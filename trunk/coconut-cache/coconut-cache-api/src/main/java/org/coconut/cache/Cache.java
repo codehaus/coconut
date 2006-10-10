@@ -200,7 +200,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @throws NullPointerException
      *             if the specified key is <tt>null</tt>
      */
-    Future<?> load(K key);
+    Future<?> loadAsync(K key);
 
     /**
      * Attempts to asynchronously load the values to which this cache maps the
@@ -227,19 +227,15 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      *             if the specified collection of keys is <tt>null</tt> or the
      *             specified collection contains <tt>null</tt> values
      */
-    Future<?> loadAll(Collection<? extends K> keys);
+    Future<?> loadAllAsync(Collection<? extends K> keys);
 
     /**
      * This method works analogoes to the {@link java.util.Map#get(Object)}
      * method. However, it will not try to fetch missing items in any configured
      * backend, it will only return a value if it actually exists in the cache.
-     * Furthermore it will not effect the statistics gathered by the cache and
-     * no {@link CacheItemEvent.ItemAccessed} event will be raised.
-     * <p>
-     * Some implementations might use this as a hint to prefetch the specified
-     * element if it is not already in the cache.
-     * <p>
-     * TODO does this check for expired items????
+     * Furthermore, it will not effect the statistics gathered by the cache and
+     * no {@link CacheItemEvent.ItemAccessed} event will be raised. Finally,
+     * even if the item has expired it will still be returned by this method.
      * 
      * @param key
      *            key whose associated value is to be returned.
@@ -251,7 +247,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @throws NullPointerException
      *             if the specified key is <tt>null</tt>
      */
-    V peek(Object key);
+    V peek(K key);
 
     /**
      * Works as {@link java.util.Map#get(Object)} with the following
@@ -281,6 +277,9 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * It is often more effective to specify a {@link CacheLoader} that
      * implicitly loads values then to explicitly add them to cache using the
      * various <tt>put</tt> and <tt>putAll</tt> methods.
+     * <p>
+     * If a backend store is configured for the cache. The value might be stored
+     * in this store.
      * 
      * @param key
      *            key with which the specified value is to be associated.
@@ -297,7 +296,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      *             cache.
      * @throws ClassCastException
      *             if the class of the specified key or value prevents it from
-     *             being stored in this cacje.
+     *             being stored in this cache.
      * @throws IllegalArgumentException
      *             if some aspect of this key or value prevents it from being
      *             stored in this cache.
@@ -358,7 +357,10 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * want to insert 2,3,4,5 and then unlock when all have been inserted. We
      * could use finalization/weak queue. Using this method for locking multiple
      * elements is prefereble to locking one element at a time because it avoids
-     * potential deadlock.
+     * potential deadlock. The
+     * {@link java.util.concurrent.locks.Lock#newCondition()} method is not
+     * supported by the returned lock. And any invocation of the method will
+     * throw an {@link java.lang.UnsupportedOperationException}
      * <p>
      * TODO Sematics of read lock versus write lock
      * <p>
@@ -386,8 +388,8 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     /**
      * Resets the hit ratio.
      * <p>
-     * The number of hits returned by {@link CacheEntry#getHits()} is not
-     * affected by calls to this method.
+     * The number of hits returned by individual items
+     * {@link CacheEntry#getHits()} are not affected by calls to this method.
      * 
      * @throws UnsupportedOperationException
      *             if the cache does not allow resetting the cache statistics
@@ -415,6 +417,8 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      */
     // also see http://jira.codehaus.org/browse/COCACHE-25
     CacheEntry<K, V> getEntry(K key);
+
+    CacheEntry<K, V> peekEntry(K key);
 
     /**
      * This method is used to make queries into the cache locating cache entries

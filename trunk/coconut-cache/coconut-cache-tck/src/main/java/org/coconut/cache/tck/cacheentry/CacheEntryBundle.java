@@ -129,7 +129,7 @@ public class CacheEntryBundle extends CacheTestBundle {
         assertEquals(10l, getEntry(M1).getLastAccessTime());
 
         //tests that a never accessed entry returns 0
-        c.load(M2.getKey());
+        c.loadAsync(M2.getKey());
         assertEquals(0l, getEntry(M2).getLastAccessTime());
     }
 

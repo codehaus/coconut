@@ -17,6 +17,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheEvent;
+import org.coconut.cache.CacheLoader;
 import org.coconut.cache.CacheQuery;
 import org.coconut.cache.Caches;
 import org.coconut.cache.management.CacheMXBean;
@@ -33,7 +34,7 @@ import org.coconut.filter.Filter;
  * @version $Id$
  */
 public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
-        Cache<K, V> {
+        Cache<K, V>, CacheLoader<K, V> {
 
     @SuppressWarnings("unchecked")
     private final static CacheConfiguration NO_CONF = CacheConfiguration.DEFAULT_CONFIGURATION;
@@ -78,7 +79,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
     }
 
     public CacheConfiguration<K, V> getConfiguration() {
-        //unmodifiable...
+        // unmodifiable...
         return conf;
     }
 
@@ -94,12 +95,13 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
     }
 
     public void initialize() {
-        
+
     }
-    
+
     public void shutdown() {
-        
+
     }
+
     protected CacheErrorHandler<K, V> getErrorHandler() {
         return errorHandler;
     }
@@ -112,7 +114,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
      * {@inheritDoc}
      */
     public boolean containsKey(Object key) {
-        return peek(key) != null;
+        return peek((K) key) != null;
     }
 
     /**
@@ -141,17 +143,6 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         // evict is ignored for default implementation
     }
 
-    /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
-    public V get(Object key) {
-        if (key == null) {
-            throw new NullPointerException("key is null");
-        }
-        K k = (K) key;
-        V value = get0(k, false);
-        return value;
-    }
-
     protected void putEntry(CacheEntry<K, V> entry) {
         put(entry.getKey(), entry.getValue());
     }
@@ -161,17 +152,6 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
             putEntry(ce);
         }
     }
-
-    /**
-     * @param key
-     *            key whose associated value is to be returned.
-     * @param isPeeking
-     *            whether or not it is a peek
-     * @return the value to which this cache maps the specified key, or
-     *         <tt>null</tt> if the cache contains no mapping for this key or
-     *         no value can be found in any cacheloaders defined.
-     */
-    protected abstract V get0(K key, boolean isPeeking);
 
     /**
      * {@inheritDoc}
@@ -190,10 +170,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
     protected Map<K, V> getAll0(Collection<? extends K> keys) {
         HashMap<K, V> h = new HashMap<K, V>();
         for (K key : keys) {
-            if (key == null) {
-                throw new NullPointerException("collection contains a null element");
-            }
-            V value = get0(key, false);
+            V value = get(key);
             h.put(key, value); //
         }
         return h;
@@ -224,7 +201,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
      * 
      * @see org.coconut.cache.Cache#load(Object)
      */
-    public Future<?> load(K key) {
+    public Future<?> loadAsync(K key) {
         // default implementation does not support loading of values
         throw new UnsupportedOperationException(
                 "load(Key k) not supported for Cache of type " + getClass());
@@ -236,22 +213,11 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
      * 
      * @see org.coconut.cache.Cache#loadAll(Collection)
      */
-    public Future<?> loadAll(Collection<? extends K> keys) {
+    public Future<?> loadAllAsync(Collection<? extends K> keys) {
         // default implementation does not support loading of values
         throw new UnsupportedOperationException(
                 "loadAll(Collection<? extends K> keys) not supported for Cache of type "
                         + getClass());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
-    public V peek(Object key) {
-        if (key == null) {
-            throw new NullPointerException("key is null");
-        }
-        return get0((K) key, true);
     }
 
     /**
@@ -340,7 +306,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         if (!containsKey(key)) {
             return put0(key, value, DEFAULT_EXPIRATION, TimeUnit.SECONDS);
         } else {
-            return get0(key, true);
+            return get(key);
         }
     }
 
@@ -349,7 +315,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
      */
     @SuppressWarnings("unchecked")
     public boolean remove(Object key, Object value) {
-        if (get0((K) key, true).equals(value)) {
+        if (get((K) key).equals(value)) {
             remove(key);
             return true;
         } else {
@@ -375,14 +341,12 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
      * {@inheritDoc}
      */
     public boolean replace(K key, V oldValue, V newValue) {
-        if (key == null) {
-            throw new NullPointerException("key is null");
-        } else if (oldValue == null) {
+        if (oldValue == null) {
             throw new NullPointerException("oldValue is null");
         } else if (newValue == null) {
             throw new NullPointerException("newValue is null");
         }
-        if (get0((K) key, true).equals(oldValue)) {
+        if (get(key).equals(oldValue)) {
             put(key, newValue);
             return true;
         } else {
@@ -464,6 +428,28 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
 
     String getName() {
         return name;
+    }
+
+    boolean supportsLoading() {
+        return true;
+    }
+
+    boolean supportsAsyncLoading() {
+        return false;
+    }
+
+    /**
+     * @see org.coconut.cache.CacheLoader#load(java.lang.Object)
+     */
+    public V load(K key) {
+        return get(key);
+    }
+
+    /**
+     * @see org.coconut.cache.CacheLoader#loadAll(java.util.Collection)
+     */
+    public Map<K, V> loadAll(Collection<? extends K> keys) {
+        return getAll(keys);
     }
 }
 

@@ -26,6 +26,51 @@ import org.coconut.core.EventHandler;
  */
 public class LoaderSupport {
 
+    public final static Executor SAME_THREAD_EXECUTOR = new SameThreadExecutor();
+
+    public static <K,V> AsyncCacheLoader<K, V> noAsyncLoad(CacheLoader<K, V> loader) {
+        return new NoAsyncLoad<K,V>(loader);
+    }
+    static class NoAsyncLoad<K,V> implements AsyncCacheLoader<K, V> {
+
+        private final CacheLoader<K, V> loader;
+        /**
+         * @see org.coconut.cache.spi.AsyncCacheLoader#asyncLoad(java.lang.Object, org.coconut.core.Callback)
+         */
+        public Future<?> asyncLoad(K key, Callback<V> c) {
+           throw new UnsupportedOperationException("operation not supported, A AsyncCacheLoader has not been specfied");
+        }
+
+        /**
+         * @see org.coconut.cache.spi.AsyncCacheLoader#asyncLoadAll(java.util.Collection, org.coconut.core.Callback)
+         */
+        public Future<?> asyncLoadAll(Collection<? extends K> keys, Callback<Map<K, V>> c) {
+            throw new UnsupportedOperationException("operation not supported, A AsyncCacheLoader has not been specfied");
+        }
+
+        /**
+         * @see org.coconut.cache.CacheLoader#load(java.lang.Object)
+         */
+        public V load(K key) throws Exception {
+            return loader.load(key);
+        }
+
+        /**
+         * @see org.coconut.cache.CacheLoader#loadAll(java.util.Collection)
+         */
+        public Map<K, V> loadAll(Collection<? extends K> keys) throws Exception {
+            return loader.loadAll(keys);
+        }
+
+        /**
+         * @param loader
+         */
+        public NoAsyncLoad(final CacheLoader<K, V> loader) {
+            super();
+            this.loader = loader;
+        }
+        
+    }
     static class SameThreadExecutor implements Executor, Serializable {
 
         /** serialVersionUID */
@@ -150,7 +195,7 @@ public class LoaderSupport {
             try {
                 Map<K, V> map = loader.loadAll(keys);
                 callback.completed(map);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 callback.failed(e);
             }
         }
@@ -299,7 +344,7 @@ public class LoaderSupport {
             if (result != null) {
                 try {
                     ac.handle(result);
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     errorHandler
                             .unhandledError(new CacheException("unknown exception", e));
                 }
@@ -344,7 +389,7 @@ public class LoaderSupport {
             if (result != null) {
                 try {
                     eventHandler.handle(result);
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     errorHandler
                             .unhandledError(new CacheException("unknown exception", e));
                 }
@@ -389,7 +434,7 @@ public class LoaderSupport {
             if (result != null) {
                 try {
                     eventHandler.handle(result);
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     errorHandler
                             .unhandledError(new CacheException("unknown exception", e));
                 }
@@ -437,7 +482,7 @@ public class LoaderSupport {
             if (result != null) {
                 try {
                     eventHandler.handle(result);
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     errorHandler
                             .unhandledError(new CacheException("unknown exception", e));
                 }
@@ -454,7 +499,7 @@ public class LoaderSupport {
         }
     }
 
-    public static <K, V> AsyncCacheLoader<K, V> asyncFromLoader(CacheLoader<K, V> loader,
+    public static <K, V> AsyncCacheLoader<K, V> wrapAsAsync(CacheLoader<K, V> loader,
             Executor e) {
         return new AsyncCacheLoaderAdaptor<K, V>(e, loader);
     }
@@ -492,9 +537,9 @@ public class LoaderSupport {
 
     public static <K, V> Future<?> asyncLoadEntry(
             AsyncCacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader,
-            final K key, CacheErrorHandler<K, V> errorHandler, AbstractCache<K, V> sink) {
-        return asyncLoadEntry(loader, key, errorHandler, new NonNullEntryIntoCache<K, V>(
-                sink));
+            final K key, AbstractCache<K, V> sink) {
+        return asyncLoadEntry(loader, key, sink.getErrorHandler(),
+                new NonNullEntryIntoCache<K, V>(sink));
     }
 
     public static <K, V> Future<?> asyncLoadEntry(
@@ -517,10 +562,9 @@ public class LoaderSupport {
 
     public static <K, V> Future<?> asyncLoadAllEntries(
             AsyncCacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader,
-            final Collection<? extends K> keys, CacheErrorHandler<K, V> errorHandler,
-            AbstractCache<K, V> sink) {
-        return asyncLoadAllEntries(loader, keys, errorHandler,
-                new NonNullEntriesIntoCache<K, V>(sink));
+            final Collection<? extends K> keys, AbstractCache<K, V> cache) {
+        return asyncLoadAllEntries(loader, keys, cache.getErrorHandler(),
+                new NonNullEntriesIntoCache<K, V>(cache));
     }
 
     /**

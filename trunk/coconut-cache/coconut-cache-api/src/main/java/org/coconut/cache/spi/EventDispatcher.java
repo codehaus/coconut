@@ -405,7 +405,7 @@ public class EventDispatcher<K, V> implements CacheEventDispatcher<K, V> {
          */
         public AddedEvent(final Cache<K, V> cache, final CacheEntry<K, V> ce,
                 final long sequenceID, final K key, final V value) {
-            super(sequenceID, ItemUpdated.NAME, cache, ce, key, value);
+            super(sequenceID, ItemAdded.NAME, cache, ce, key, value);
         }
 
         @Override

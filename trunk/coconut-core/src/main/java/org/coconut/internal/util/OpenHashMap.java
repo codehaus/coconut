@@ -440,7 +440,6 @@ public class OpenHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMa
         int oldCapacity = oldTable.length;
         if (oldCapacity >= MAXIMUM_CAPACITY)
             return;
-        
         HashEntry<K,V>[] newTable = HashEntry.newArray(oldCapacity<<1);
         threshold = (int)(newTable.length * loadFactor);
         int sizeMask = newTable.length - 1;

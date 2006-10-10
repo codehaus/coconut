@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import junit.framework.Assert;
-import junit.framework.TestCase;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
@@ -31,7 +30,7 @@ import org.junit.Before;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Header$
  */
-public abstract class CacheTestBundle extends TestCase {
+public abstract class CacheTestBundle {
 
     protected DeterministicClock clock;
 
@@ -55,23 +54,8 @@ public abstract class CacheTestBundle extends TestCase {
 
     protected Cache<Integer, String> c6;
 
-    private AbstractCacheImplTest suite;
-
-    private static AbstractCacheImplTest defaultSuite;
-
-    static {
-        Class c;
-        try {
-            c = Class.forName("org.coconut.cache.defaults.memory.UnlimitedCache");
-            defaultSuite = new AbstractCacheImplTest(c);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } 
-    }
-
     @Before
     public void setUp() throws Exception {
-
         clock = new DeterministicClock();
         c0 = newCache(0);
         c1 = newCache(1);
@@ -86,16 +70,9 @@ public abstract class CacheTestBundle extends TestCase {
     }
 
     final Cache<Integer, String> newCache(int entries) {
-        suite = AbstractCacheImplTest.tt;
-        if (suite == null) {
-            suite = defaultSuite;
-        }
         CacheConfiguration<Integer, String> cc = CacheConfiguration.newConf();
-        return suite.newCache(cc.setInitialMap(createMap(entries)).setClock(clock));
-    }
-
-    void setCacheTestSuite(AbstractCacheImplTest suite) {
-        this.suite = suite;
+        cc.setInitialMap(createMap(entries)).setClock(clock);
+        return cc.newInstance(TCKRunner.tt);
     }
 
     @SuppressWarnings("unchecked")
@@ -104,9 +81,7 @@ public abstract class CacheTestBundle extends TestCase {
     }
 
     protected Cache<Integer, String> newCache(CacheConfiguration<Integer, String> conf) {
-        suite = AbstractCacheImplTest.tt;
-        Cache<Integer, String> cc = suite.newCache(conf);
-        return cc;
+        return conf.newInstance(TCKRunner.tt);
     }
 
     public static Map<Integer, String> createMap(int entries) {

@@ -19,6 +19,7 @@ import junit.framework.AssertionFailedError;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEvent;
 import org.coconut.cache.CacheEntryEvent;
+import org.coconut.cache.CacheEntryEvent.ItemAdded;
 import org.coconut.cache.tck.CacheTestBundle;
 import org.coconut.core.EventHandler;
 import org.coconut.core.EventHandlers;
@@ -32,13 +33,13 @@ import org.junit.Before;
  * @version $Id$
  */
 public class AbstractEventTestBundle extends CacheTestBundle {
-    private LinkedBlockingQueue<CacheEvent<Integer, String>> events;
+    LinkedBlockingQueue<EventWrapper> events;
 
     private EventHandler<CacheEvent<Integer, String>> eventHandler;
 
     private long prevId;
 
-    private CacheEvent<?, ?> ev;
+    private EventWrapper ev;
 
     int getPendingEvents() {
         return ev == null ? events.size() : events.size() + 1;
@@ -46,17 +47,44 @@ public class AbstractEventTestBundle extends CacheTestBundle {
 
     @Before
     public void setUpEvent() {
-        events = new LinkedBlockingQueue<CacheEvent<Integer, String>>();
-        eventHandler = EventHandlers.fromQueue(events);
+        events = new LinkedBlockingQueue<EventWrapper>();
+        eventHandler = new EventHandler<CacheEvent<Integer, String>>() {
+            public void handle(CacheEvent<Integer, String> event) {
+                events.add(new EventWrapper(event));
+            }
+        };
     }
 
     @After
     public void stop() {
         if (!events.isEmpty()) {
             while (!events.isEmpty()) {
-                System.out.println("Pending event: " + events.poll());
+                EventWrapper ew=events.poll();
+                System.err.println("Pending event: " + ew.event);
+                ew.toErr();
             }
             throw new AssertionFailedError("event queue was not empty");
+        }
+    }
+
+    static class EventWrapper {
+        CacheEvent<Integer, String> event;
+
+        private StackTraceElement[] elements;
+
+        EventWrapper(CacheEvent<Integer, String> event) {
+            this.event = event;
+            elements = (new Exception()).fillInStackTrace().getStackTrace();
+        }
+
+        CacheEvent<Integer, String> event() {
+            return event;
+        }
+
+        public void toErr() {
+            Exception e = new Exception();
+            e.setStackTrace(elements);
+            e.printStackTrace(System.err);
         }
     }
 
@@ -74,16 +102,17 @@ public class AbstractEventTestBundle extends CacheTestBundle {
         assertNotNull(events.poll(50, TimeUnit.MILLISECONDS));
     }
 
-    <S extends CacheEvent> S consumeItem(Cache c, Class<S> type)
-            throws Exception {
-        CacheEvent<?, ?> event = ev != null ? ev : events.poll(50,
-                TimeUnit.MILLISECONDS);
+    <S extends CacheEvent> S consumeItem(Cache c, Class<S> type) throws Exception {
+        EventWrapper ew = ev != null ? ev : events.poll(50, TimeUnit.MILLISECONDS);
+        CacheEvent<?, ?> event = ew.event;
         ev = null;
         if (event == null) {
             fail("No events was delivered ");
         }
         assertTrue(type.isAssignableFrom(event.getClass()));
         assertEquals(c, event.getCache());
+        // name did not match this is mostlike because the items
+        // class.NAME did not match its type
         assertEquals(type.getDeclaredField("NAME").get(null), event.getName());
         if (checkStrict()) {
             assertEquals(prevId + 1, event.getSequenceID());
@@ -98,7 +127,7 @@ public class AbstractEventTestBundle extends CacheTestBundle {
 
     Integer peekKey() throws InterruptedException {
         ev = events.poll(1, TimeUnit.SECONDS);
-        return ((CacheEntryEvent<Integer, String>) ev).getKey();
+        return ((CacheEntryEvent<Integer, String>) ev.event).getKey();
     }
 
     <S extends CacheEntryEvent> S consumeItem(Class<S> type,
@@ -106,8 +135,8 @@ public class AbstractEventTestBundle extends CacheTestBundle {
         return consumeItem(type, entry.getKey(), entry.getValue());
     }
 
-    <S extends CacheEntryEvent> S consumeItem(Class<S> type, Integer key,
-            String value) throws Exception {
+    <S extends CacheEntryEvent> S consumeItem(Class<S> type, Integer key, String value)
+            throws Exception {
         S event = consumeItem(c, type);
         assertEquals(key, event.getKey());
         assertEquals(value, event.getValue());

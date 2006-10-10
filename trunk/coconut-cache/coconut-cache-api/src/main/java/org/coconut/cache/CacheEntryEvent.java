@@ -40,16 +40,20 @@ public interface CacheEntryEvent<K, V> extends CacheEvent<K, V>, Map.Entry<K, V>
      *             if the entry does not provide cache entries
      */
     CacheEntry<K, V> getEntry();
-    
+
     /**
      * This event indicates that an entry in the cache was accessed. This
      * happens through either the {@link Cache#get(Object)} or
      * {@link Cache#getAll(java.util.Collection)} method. Calling
-     * {@link Cache#peek(Object)} on a cache will not result in an ItemAccessed
-     * event being raised.
+     * {@link Cache#peek(Object)} or {@link Cache#peekEntry(Object)} on a cache
+     * will not result in an ItemAccessed event being raised.
+     * <p>
+     * If the item is a miss ({@link isHit()} returns false) and the cache
+     * succesfully loads a new cache entry. The {@link #getValue()} will return
+     * the new value and {@link #getEntry()} will return the new cache entry.
      * <p>
      * NOTE: This event can be fairly expensive in terms of performance to
-     * subscribe to as it is raised on every access to cache.
+     * subscribe for, as it is raised on every access to cache.
      */
     interface ItemAccessed<K, V> extends CacheEntryEvent<K, V> {
         /** A filter that only accepts instances of ItemAccessed events. */

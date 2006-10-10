@@ -64,7 +64,7 @@ public final class Ressources {
             return RESOURCE_BUNDLE.getString(key);
         } catch (MissingResourceException e) {
             if (true) {
-                throw new RuntimeException("missing entry for key " + key);
+                //throw new RuntimeException("missing entry for key " + key);
             }
             return "No Desc for [key = " + key + "]";
         }

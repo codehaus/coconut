@@ -297,12 +297,12 @@ public final class Caches {
         }
 
         /** {@inheritDoc} */
-        public Future<?> load(K key) {
+        public Future<?> loadAsync(K key) {
             throw new UnsupportedOperationException();
         }
 
         /** {@inheritDoc} */
-        public Future<?> loadAll(Collection<? extends K> keys) {
+        public Future<?> loadAllAsync(Collection<? extends K> keys) {
             throw new UnsupportedOperationException();
         }
 
@@ -408,7 +408,14 @@ public final class Caches {
         }
 
         /** {@inheritDoc} */
-        public CacheEntry<K, V> getEntry(K key) {
+        public CacheEntry<K, V> getEntry(Object key) {
+            throw new UnsupportedOperationException();
+        }
+
+        /**
+         * @see org.coconut.cache.Cache#peekEntry(java.lang.Object)
+         */
+        public CacheEntry<K, V> peekEntry(Object key) {
             throw new UnsupportedOperationException();
         }
     }
@@ -486,7 +493,8 @@ public final class Caches {
 
         /** {@inheritDoc} */
         public CacheEntry<K, V> load(K key) throws Exception {
-            return new DefaultCacheEntry<K, V>(key, loader.load(key));
+            V v = loader.load(key);
+            return v == null ? null : new DefaultCacheEntry<K, V>(key, v);
         }
     }
 
@@ -588,11 +596,11 @@ public final class Caches {
             return Collections.unmodifiableSet(super.keySet());
         }
 
-        public Future<?> load(K key) {
+        public Future<?> loadAsync(K key) {
             throw new UnsupportedOperationException();
         }
 
-        public Future<?> loadAll(Collection<? extends K> keys) {
+        public Future<?> loadAllAsync(Collection<? extends K> keys) {
             throw new UnsupportedOperationException();
         }
 
@@ -988,10 +996,12 @@ public final class Caches {
             CacheLoader<K, V> loader, Executors e) {
         return null;
     }
+
     public static <K, V> AsyncCacheLoader<K, CacheEntry<K, V>> asAsyncExtendedCacheLoader(
             CacheLoader<K, CacheEntry<K, V>> loader, Executors e) {
         return null;
     }
+
     public static <K, V> CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> asCacheLoader(
             CacheLoader<K, V> loader) {
         return new AbstractLoaderToExtendedLoader(loader);

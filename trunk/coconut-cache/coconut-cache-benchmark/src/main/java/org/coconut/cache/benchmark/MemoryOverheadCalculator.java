@@ -34,15 +34,15 @@ public class MemoryOverheadCalculator {
     public static void main(String[] args) throws Exception {
         MemoryOverheadCalculator t = new MemoryOverheadCalculator();
         System.out
-                .println("|| JDK Implementations \\\\ || 1 Object || 10 Objects || 100 Objects || 1.000 Objects || 10.000 Objects || 100.000 Objects ||");
+                .println("|| JDK Implementations \\\\ || 1 Object || 10 Objects || 100 Objects || 1.000 Objects || 10.000 Objects || 100.000 Objects || Elements/MB ||");
         t.test(HashMap.class);
         t.test(Hashtable.class);
         t.test(LinkedHashMap.class);
         t.test(TreeMap.class);
         t.test(ConcurrentHashMap.class);
-        System.out.println("|| Coconut Cache Implementations \\\\ || || || || || || ||");
+        System.out.println("|| Coconut Cache Implementations \\\\ || || || || || || || ||");
         t.test(UnlimitedCache.class);
-        System.out.println("|| Other Cache Implementations \\\\ || || || || || || ||");
+        System.out.println("|| Other Cache Implementations \\\\ || || || || || || || ||");
 
     }
 
@@ -100,17 +100,21 @@ public class MemoryOverheadCalculator {
         sb.append("| ");
         sb.append(o);
         sb.append(" \\\\ |");
+        int s = 0;
         for (int i = 0; i < scores.length; i++) {
-            int s = (int) ((double) scores[i] / iterations[i]);
+            s = (int) ((double) scores[i] / iterations[i]);
             sb.append(" ");
             sb.append(s);
             sb.append(" |");
         }
+        sb.append(" ");
+        sb.append((int) ((2 << 20) / (double) s));
+        sb.append(" |");
         return sb.toString();
     }
 
     public interface OverHeadTester<K, V> {
-        Map<K, V> create(int runs) throws Exception ;
+        Map<K, V> create(int runs) throws Exception;
     }
 
     static class Put1000 implements OverHeadTester<Integer, Integer> {

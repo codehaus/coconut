@@ -9,7 +9,7 @@ Secondary concerns
 Ternary concerns
  * Distributed version
 
-v alpha 3 Late june - the synchronous period
+v alpha 3 Late October - the more-features period
 
    V Unsafe cache Implementation (100 % coverage), Supporting
        V Cache Entry (copy based or direct refence to entry, or dependent on cache)
@@ -29,6 +29,13 @@ v alpha 3 Late june - the synchronous period
      add a add(CacheEntry<K,V) method
      But make sure the policy only store, this also means though, that cache policy must be moved to cache-api
 
+
+   V Eviction
+       *15* periodically evict caches
+        evict ttl policies -> block on Delay queue (bad idea i think)
+                           -> every minute - expunge all delayed.
+                evict parameter
+                
    * tck 100 % done for no concurrency (semantics are clear for every method)
    
    * 80 % test coverage
@@ -40,14 +47,9 @@ v alpha 3 Late june - the synchronous period
         Events 
         Locking of individual elements for synchronous
 
-   * Eviction
-       *15* periodically evict caches
-        evict ttl policies -> block on Delay queue (bad idea i think)
-                           -> every minute - expunge all delayed.
-                evict parameter
 
  
-v alpha 4 late july <-public fanfare - the concurrent period
+v alpha 5 late july <-public fanfare - the concurrent period
 
    * Internal Threaded
    
@@ -64,11 +66,6 @@ v alpha 4 late july <-public fanfare - the concurrent period
    *20* simple nio based store
    *15* Berkeley JavaDB for proof of concept
    *  * Derby
-    
-    Sizeable<V> {
-       long getSize(V value)
-    }
-    DefaultSize implements Sizeable : getSize() {return 1 }
 
 v Alpha 5 early sep 
 

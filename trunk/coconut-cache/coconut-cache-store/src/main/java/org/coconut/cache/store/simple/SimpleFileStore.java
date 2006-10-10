@@ -35,7 +35,7 @@ import org.coconut.event.annotation.Handler;
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-public class SimpleFileStore<K, V> implements CacheLoader<K, V>,
+public class SimpleFileStore<K, V> implements 
         AsyncCacheLoader<K, V> {
 
     public static String ff = "c:/cache/" + System.currentTimeMillis() + "/";
@@ -238,25 +238,10 @@ public class SimpleFileStore<K, V> implements CacheLoader<K, V>,
     /**
      * @see org.coconut.cache.spi.AsyncCacheLoader#asyncLoadAll(java.util.Collection, org.coconut.core.Callback)
      */
-    public Future<?> asyncLoadAll(Collection<K> keys, Callback<Map<K, V>> c) {
+    public Future<?> asyncLoadAll(Collection<? extends K> keys, Callback<Map<K, V>> c) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    /**
-     * @see org.coconut.cache.spi.AsyncCacheLoader#asyncLoadAll(java.util.Collection, java.util.Collection)
-     */
-    public Future<?> asyncLoadAll(Collection<K> keys, Collection<Callback<V>> c) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * @see org.coconut.cache.spi.AsyncCacheLoader#asyncLoadAll(java.util.Collection, org.coconut.cache.spi.ContinuesLoadCallback)
-     */
-    public Future<?> asyncLoadAll(Collection<K> keys, AsyncLoadCallback<K, V> c) {
-        // TODO Auto-generated method stub
-        return null;
-    }
 
 }

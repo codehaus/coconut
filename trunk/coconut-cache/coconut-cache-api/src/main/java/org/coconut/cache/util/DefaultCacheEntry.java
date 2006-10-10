@@ -28,13 +28,6 @@ public class DefaultCacheEntry<K, V> implements CacheEntry<K, V> {
     // /**
     // * {@inheritDoc}
     // */
-    // public Map<String, ?> getMetaMap() {
-    // return null; // no extended attributes
-    // }
-
-    // /**
-    // * {@inheritDoc}
-    // */
     // public long getTimeToLive(TimeUnit unit) {
     // return Cache.DEFAULT_EXPIRATION;
     // }

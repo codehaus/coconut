@@ -25,7 +25,7 @@ public class FutureLoading extends CacheTestBundle {
     @Test
     public void testCancelAfterRun() throws InterruptedException,
             ExecutionException {
-        Future<?> task = loadableEmptyCache.load(0);
+        Future<?> task = loadableEmptyCache.loadAsync(0);
         task.get();
         assertFalse(task.cancel(false));
         assertTrue(task.isDone());
@@ -41,7 +41,7 @@ public class FutureLoading extends CacheTestBundle {
     @Test
     public void testCancelAfterRun2() throws InterruptedException,
             ExecutionException {
-        Future<?> task = loadableEmptyCache.load(0);
+        Future<?> task = loadableEmptyCache.loadAsync(0);
         task.get();
         assertFalse(task.cancel(true));
         assertTrue(task.isDone());

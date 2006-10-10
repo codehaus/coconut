@@ -12,6 +12,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.management.MBeanServer;
@@ -201,6 +203,17 @@ public final class CacheConfiguration<K, V> implements Cloneable {
             return this;
         }
 
+        public void setUseCacheSettings(boolean useIt) {
+            // putIfAbsent
+            // create item in cache, check backend...
+
+            // replace, put(3), remove
+
+            // remove-> should that propagate to backend store
+
+            // containskey, value
+            // don't check in backend stuff, if we want to
+        }
     }
 
     /**
@@ -313,6 +326,21 @@ public final class CacheConfiguration<K, V> implements Cloneable {
         }
 
     }
+
+    //
+    // public class Threading {
+    // public void stopExecutorsOnCacheShutdown(boolean doIt) {
+    //
+    // }
+    //
+    // public void setAsyncLoadExecutor(Executor e) {
+    //
+    // }
+    //
+    // public void setEvictExecutor(ScheduledExecutorService e) {
+    //
+    // }
+    // }
 
     public class Eviction {
 
@@ -535,14 +563,9 @@ public final class CacheConfiguration<K, V> implements Cloneable {
      * handle expired cache items. The following strategies must be supported by
      * any cache supporting expiration of cache items. Unless otherwise noted
      * this is a cache-wide setting and cannot be configured for individual
-     * elements. Checks for expiration time are performed for the following
-     * methods {@link Cache#containsKey(Object)},
-     * {@link Cache#containsValue(Object)}, {@link Cache#peek},
-     * {@link Cache#get(Object)}, {@link Cache#getAll} and for the ananologues
-     * methods defined in the three <i>collection views</i>. The iterators for
-     * the collection views will also check for expiration accordingly to the
-     * expiration strategy. The {@link Cache#equals(Object)} method will
-     * <tt>not</tt> check the expiration of any elements.
+     * elements. Checks for expiration time are only performed for the following
+     * methods {@link Cache#get(Object)}, {@link Cache#getAll}. No checks are
+     * made for the ananologues methods defined in the three <i>collection views</i>. *
      * <p>
      * <ul>
      * <li>{@link #STRICT}<br>
@@ -872,11 +895,11 @@ public final class CacheConfiguration<K, V> implements Cloneable {
         // String cacheInstance =
         // document.getDocumentElement().getAttribute("classs");
 
-//        Loading / Storing / Prefetch / storage
-//        events
-//        statistics/jmx ? monitoring????
-//        locking /transactions (thread safety)
-//        
+        // Loading / Storing / Prefetch / storage
+        // events
+        // statistics/jmx ? monitoring????
+        // locking /transactions (thread safety)
+        //        
         CacheConfiguration<String, Integer> cc = newConf();
 
         cc.setName("MyCache");
@@ -884,9 +907,7 @@ public final class CacheConfiguration<K, V> implements Cloneable {
         cc.eviction().setMaximumCapacity(1000);
         cc.expiration().setDefaultTimeout(100, TimeUnit.SECONDS);
         cc.jmx().setRegister(true);
-        for (CacheEntry<String, Integer> entry : cc.newInstance(null).query(null)) {
 
-        }
         // Cache<String,Integer> cache=cc.newInstance(UnlimitedCache.class);
         // // cc.parseDocument(document.getDocumentElement());
         // // System.out.println("bye" + cacheInstance.length());
@@ -910,16 +931,15 @@ public final class CacheConfiguration<K, V> implements Cloneable {
      * @throws NullPointerException
      *             if the specified class is <tt>null</tt>
      */
-    public Cache<K, V> newInstance(Class<? extends Cache> clazz)
+    public <T extends Cache<K, V>> T newInstance(Class<? extends Cache> clazz)
             throws IllegalArgumentException {
         if (clazz == null) {
             throw new NullPointerException("clazz is null");
         }
-        Cache<K, V> cache = null;
-        Constructor<Cache<K, V>> c = null;
+        T cache = null;
+        Constructor<T> c = null;
         try {
-            c = (Constructor<Cache<K, V>>) clazz
-                    .getDeclaredConstructor(CacheConfiguration.class);
+            c = (Constructor<T>) clazz.getDeclaredConstructor(CacheConfiguration.class);
         } catch (NoSuchMethodException e) {
             throw new IllegalArgumentException(
                     "Could not create cache instance, no public contructor taking a single CacheConfiguration instance",

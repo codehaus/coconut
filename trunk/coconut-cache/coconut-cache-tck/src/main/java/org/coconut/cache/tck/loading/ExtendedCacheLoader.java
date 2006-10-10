@@ -115,7 +115,7 @@ public class ExtendedCacheLoader extends Loading {
     @Test
     public void testLoad() throws InterruptedException, ExecutionException {
         clock.setAbsolutTime(200);
-        c.loadAll(Arrays.asList(M1.getKey(), M2.getKey())).get();
+        c.loadAllAsync(Arrays.asList(M1.getKey(), M2.getKey())).get();
 
         assertEquals(10.1, getEntry(M1).getCost());
         assertEquals(11l, getEntry(M1).getCreationTime());
@@ -147,7 +147,7 @@ public class ExtendedCacheLoader extends Loading {
     @Test
     public void testLoadAll() throws InterruptedException, ExecutionException {
         clock.setAbsolutTime(200);
-        c.load(M1.getKey()).get();
+        c.loadAsync(M1.getKey()).get();
         assertEquals(10.1, getEntry(M1).getCost());
         assertEquals(11l, getEntry(M1).getCreationTime());
         assertEquals(12l, getEntry(M1).getExpirationTime());
