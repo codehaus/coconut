@@ -22,6 +22,7 @@ import org.coconut.cache.spi.Ressources;
 import org.coconut.cache.util.AbstractCacheLoader;
 import org.coconut.cache.util.CacheDecorator;
 import org.coconut.cache.util.DefaultCacheEntry;
+import org.coconut.core.Callback;
 import org.coconut.event.bus.EventBus;
 import org.coconut.filter.Filter;
 
@@ -495,6 +496,51 @@ public final class Caches {
         public CacheEntry<K, V> load(K key) throws Exception {
             V v = loader.load(key);
             return v == null ? null : new DefaultCacheEntry<K, V>(key, v);
+        }
+    }
+
+    final static class AbstractAsyncLoaderToExtendedLoader<K, V> extends
+            AbstractCacheLoader<K, CacheEntry<K, V>> implements
+            AsyncCacheLoader<K, CacheEntry<K, V>> {
+
+        private final AsyncCacheLoader<K, V> loader;
+
+        AbstractAsyncLoaderToExtendedLoader(AsyncCacheLoader<K, V> loader) {
+            this.loader = loader;
+        }
+
+        /** {@inheritDoc} */
+        public CacheEntry<K, V> load(K key) throws Exception {
+            V v = loader.load(key);
+            return v == null ? null : new DefaultCacheEntry<K, V>(key, v);
+        }
+
+        /**
+         * @see org.coconut.cache.spi.AsyncCacheLoader#asyncLoad(java.lang.Object,
+         *      org.coconut.core.Callback)
+         */
+        public Future<?> asyncLoad(final K key, final Callback<CacheEntry<K, V>> c) {
+            return loader.asyncLoad(key, new Callback<V>() {
+
+                public void completed(V result) {
+                    CacheEntry<K, V> e = result == null ? null
+                            : new DefaultCacheEntry<K, V>(key, result);
+                    c.completed(e);
+                }
+
+                public void failed(Throwable cause) {
+                    c.failed(cause);
+                }
+            });
+        }
+
+        /**
+         * @see org.coconut.cache.spi.AsyncCacheLoader#asyncLoadAll(java.util.Collection,
+         *      org.coconut.core.Callback)
+         */
+        public Future<?> asyncLoadAll(Collection<? extends K> keys,
+                Callback<Map<K, CacheEntry<K, V>>> c) {
+            throw new UnsupportedOperationException();
         }
     }
 
@@ -1004,7 +1050,10 @@ public final class Caches {
 
     public static <K, V> CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> asCacheLoader(
             CacheLoader<K, V> loader) {
-        return new AbstractLoaderToExtendedLoader(loader);
+        return loader instanceof AsyncCacheLoader ? new AbstractAsyncLoaderToExtendedLoader<K, V>(
+                (AsyncCacheLoader) loader)
+                : new AbstractLoaderToExtendedLoader(loader);
+
     }
 
     /**

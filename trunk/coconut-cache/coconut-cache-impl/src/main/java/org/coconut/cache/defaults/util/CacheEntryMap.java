@@ -20,6 +20,7 @@ import java.util.Set;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
+//TODO convert to Open HashMap
 public abstract class CacheEntryMap<K, V, M extends CacheEntryMap.Entry<K, V>>
         extends AbstractMap<K, M> {
 

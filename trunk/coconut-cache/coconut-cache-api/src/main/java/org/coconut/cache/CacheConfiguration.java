@@ -12,8 +12,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.management.MBeanServer;
@@ -27,7 +25,6 @@ import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.CacheErrorHandler;
 import org.coconut.cache.store.CacheStore;
 import org.coconut.core.Clock;
-import org.coconut.core.Log;
 import org.coconut.filter.Filter;
 import org.xml.sax.SAXException;
 
@@ -440,6 +437,23 @@ public final class CacheConfiguration<K, V> implements Cloneable {
             // Its
             return this;
         }
+
+        public Eviction setCustomExpirator(Filter<? extends Cache> filter) {
+            // kunne også være rart med en version, der f.eks. kunne tage alle
+            // store elementer
+            // Filter f = new Filter<Cache>() {
+            // private int evictFooElement;
+            //
+            // public boolean accept(Cache element) {
+            // // TODO Auto-generated method stub
+            // return evictFooElement-- > 0;
+            // }
+            // };
+            // mem notifier-> receive low
+            // mem->f.evictFooElement=10000->cache.evict
+            // to gange federe at sende som events
+            return this;
+        }
     }
 
     public class Expiration {
@@ -461,6 +475,14 @@ public final class CacheConfiguration<K, V> implements Cloneable {
                         TimeUnit.NANOSECONDS);
             }
         }
+
+        public long getRefreshWindow(TimeUnit unit) {
+            return unit.convert(defaultExpirationRefreshDuration, TimeUnit.NANOSECONDS);
+        }
+
+//        public Filter<CacheEntry<K, V>> getRefreshFilter() {
+//            return expirationRefreshFilter;
+//        }
 
         public Filter<CacheEntry<K, V>> getFilter() {
             return expirationFilter;
@@ -535,27 +557,31 @@ public final class CacheConfiguration<K, V> implements Cloneable {
             return this;
         }
 
-        // Perhaps a version where we could specify a time duration for how long
-        // time
-        // we want to serve expired content in the case of SERVE_OLD before
-        // switching to STRICT.
-
-        public Expiration setCustomExpirator(Filter<? extends Cache> filter) {
-            // kunne også være rart med en version, der f.eks. kunne tage alle
-            // store elementer
-            // Filter f = new Filter<Cache>() {
-            // private int evictFooElement;
-            //
-            // public boolean accept(Cache element) {
-            // // TODO Auto-generated method stub
-            // return evictFooElement-- > 0;
-            // }
-            // };
-            // mem notifier-> receive low
-            // mem->f.evictFooElement=10000->cache.evict
-            // to gange federe at sende som events
+        /**
+         * Sets the default expiration refresh window. Setting of the refresh
+         * window only makes sense if an asynchronously loader has been
+         * specified.
+         * -1 
+         * 
+         * @param duration
+         * @param unit
+         * @return
+         */
+        public Expiration setRefreshWindow(long duration, TimeUnit unit) {
+            if (duration <= 0) {
+                throw new IllegalArgumentException(
+                        "duration must be greather then 0, was " + duration);
+            } else if (unit == null) {
+                throw new NullPointerException("unit is null");
+            }
+            defaultExpirationRefreshDuration = unit.toNanos(duration);
             return this;
         }
+
+//        public Expiration setRefreshFilter(Filter<CacheEntry<K, V>> filter) {
+//            expirationRefreshFilter = filter;
+//            return this;
+//        }
     }
 
     /**
@@ -967,6 +993,10 @@ public final class CacheConfiguration<K, V> implements Cloneable {
     private long defaultExpirationTimeoutDuration = Cache.NEVER_EXPIRE;
 
     private Filter<CacheEntry<K, V>> expirationFilter;
+
+    private long defaultExpirationRefreshDuration = -1;
+
+    private Filter<CacheEntry<K, V>> expirationRefreshFilter;
 
     private ExpirationStrategy expirationStrategy = DEFAULT_EXPIRATION_STRATEGY;
 

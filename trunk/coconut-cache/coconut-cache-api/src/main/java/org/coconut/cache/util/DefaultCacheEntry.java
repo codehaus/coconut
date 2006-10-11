@@ -21,8 +21,18 @@ public class DefaultCacheEntry<K, V> implements CacheEntry<K, V> {
     private final K key;
 
     public DefaultCacheEntry(K key, V value) {
+        if (key == null) {
+            throw new NullPointerException("key is null");
+        } else if (value == null) {
+            throw new NullPointerException("value is null");
+        }
         this.value = value;
         this.key = key;
+    }
+
+    public static <K, V> CacheEntry<K, V> entryWithExpiration(K key, V value,
+            long expiration) {
+        return new WithExpiration<K, V>(key, value, expiration);
     }
 
     // /**
@@ -114,5 +124,32 @@ public class DefaultCacheEntry<K, V> implements CacheEntry<K, V> {
      */
     public Map<String, Object> getAttributes() {
         return Collections.unmodifiableMap(Collections.EMPTY_MAP);
+    }
+
+    static class WithExpiration<K, V> extends DefaultCacheEntry<K, V> {
+
+        private final long expirationTime;
+
+        /**
+         * @param key
+         * @param value
+         */
+        public WithExpiration(K key, V value, long expiration) {
+            super(key, value);
+            if (expiration < 0) {
+                throw new IllegalArgumentException(
+                        "expiration must be a positive number, was " + expiration);
+            }
+            this.expirationTime = expiration;
+        }
+
+        /**
+         * @see org.coconut.cache.util.DefaultCacheEntry#getExpirationTime()
+         */
+        @Override
+        public long getExpirationTime() {
+            return expirationTime;
+        }
+
     }
 }

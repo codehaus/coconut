@@ -14,6 +14,7 @@ import java.util.Map;
 
 import junit.framework.JUnit4TestAdapter;
 
+import org.coconut.cache.defaults.memory.UnlimitedCacheTest;
 import org.coconut.cache.tck.CacheTestBundle;
 import org.coconut.test.MavenDummyTest;
 import org.junit.Before;
@@ -23,11 +24,7 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class CacheEntryMapTest extends MavenDummyTest {
-
-    public static junit.framework.Test suite() {
-        return new JUnit4TestAdapter(CacheEntryMapTest.class);
-    }
+public class CacheEntryMapTest extends MavenDummyTest{
 
     protected CacheEntryMapStub c0;
 
@@ -43,6 +40,10 @@ public class CacheEntryMapTest extends MavenDummyTest {
 
     protected CacheEntryMapStub c6;
 
+    public static junit.framework.Test suite() {
+        return new JUnit4TestAdapter(CacheEntryMapTest.class);
+    }
+    
     @Before
     public void setUp() throws Exception {
         c0 = new CacheEntryMapStub();
@@ -140,16 +141,14 @@ public class CacheEntryMapTest extends MavenDummyTest {
         assertEquals(M5.getValue(), c5.getValue(M5.getKey()));
     }
 
-    static class CacheEntryMapStub
-            extends
+    static class CacheEntryMapStub extends
             CacheEntryMap<Integer, String, CacheEntryMap.Entry<Integer, String>> {
 
         public CacheEntryMapStub() {
         }
 
         public CacheEntryMapStub(Map<? extends Integer, ? extends String> m) {
-            for (Map.Entry<? extends Integer, ? extends String> entry : m
-                    .entrySet()) {
+            for (Map.Entry<? extends Integer, ? extends String> entry : m.entrySet()) {
                 EntryStub stub = new EntryStub(entry.getKey(), entry.getValue());
                 put(stub.getKey(), stub);
             }

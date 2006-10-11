@@ -71,16 +71,16 @@ public class ExtendedCacheLoader extends Loading {
     public void testGet() {
         clock.setAbsolutTime(200);
         assertGet(M1);
-        assertEquals(10.1, getEntry(M1).getCost());
-        assertEquals(11l, getEntry(M1).getCreationTime());
-        assertEquals(12l, getEntry(M1).getExpirationTime());
-        assertEquals(13l, getEntry(M1).getHits());
+        assertEquals(10.1, peekEntry(M1).getCost());
+        assertEquals(11l, peekEntry(M1).getCreationTime());
+        assertEquals(12l, peekEntry(M1).getExpirationTime());
+        assertEquals(13l, peekEntry(M1).getHits());
         // last access/update was at 200, because of get
         // override 14 and 15
-        assertEquals(200l, getEntry(M1).getLastAccessTime());
-        assertEquals(200l, getEntry(M1).getLastUpdateTime());
-        assertEquals(16l, getEntry(M1).getSize());
-        assertEquals(17l, getEntry(M1).getVersion());
+        assertEquals(200l, peekEntry(M1).getLastAccessTime());
+        assertEquals(200l, peekEntry(M1).getLastUpdateTime());
+        assertEquals(16l, peekEntry(M1).getSize());
+        assertEquals(17l, peekEntry(M1).getVersion());
     }
 
     @Test
@@ -88,27 +88,27 @@ public class ExtendedCacheLoader extends Loading {
         clock.setAbsolutTime(200);
         assertGetAll(M1, M2);
 
-        assertEquals(10.1, getEntry(M1).getCost());
-        assertEquals(11l, getEntry(M1).getCreationTime());
-        assertEquals(12l, getEntry(M1).getExpirationTime());
-        assertEquals(13l, getEntry(M1).getHits());
+        assertEquals(10.1, peekEntry(M1).getCost());
+        assertEquals(11l, peekEntry(M1).getCreationTime());
+        assertEquals(12l, peekEntry(M1).getExpirationTime());
+        assertEquals(13l, peekEntry(M1).getHits());
         // last access/update was at 200, because of get
         // override 14 and 15
-        assertEquals(200l, getEntry(M1).getLastAccessTime());
-        assertEquals(200l, getEntry(M1).getLastUpdateTime());
-        assertEquals(16l, getEntry(M1).getSize());
-        assertEquals(17l, getEntry(M1).getVersion());
+        assertEquals(200l, peekEntry(M1).getLastAccessTime());
+        assertEquals(200l, peekEntry(M1).getLastUpdateTime());
+        assertEquals(16l, peekEntry(M1).getSize());
+        assertEquals(17l, peekEntry(M1).getVersion());
 
-        assertEquals(20.1, getEntry(M2).getCost());
-        assertEquals(21l, getEntry(M2).getCreationTime());
-        assertEquals(22l, getEntry(M2).getExpirationTime());
-        assertEquals(23l, getEntry(M2).getHits());
+        assertEquals(20.1, peekEntry(M2).getCost());
+        assertEquals(21l, peekEntry(M2).getCreationTime());
+        assertEquals(22l, peekEntry(M2).getExpirationTime());
+        assertEquals(23l, peekEntry(M2).getHits());
         // last access/update was at 200, because of get
         // override 14 and 15
-        assertEquals(200l, getEntry(M2).getLastAccessTime());
-        assertEquals(200l, getEntry(M2).getLastUpdateTime());
-        assertEquals(26l, getEntry(M2).getSize());
-        assertEquals(27l, getEntry(M2).getVersion());
+        assertEquals(200l, peekEntry(M2).getLastAccessTime());
+        assertEquals(200l, peekEntry(M2).getLastUpdateTime());
+        assertEquals(26l, peekEntry(M2).getSize());
+        assertEquals(27l, peekEntry(M2).getVersion());
 
     }
 
@@ -117,49 +117,49 @@ public class ExtendedCacheLoader extends Loading {
         clock.setAbsolutTime(200);
         c.loadAllAsync(Arrays.asList(M1.getKey(), M2.getKey())).get();
 
-        assertEquals(10.1, getEntry(M1).getCost());
-        assertEquals(11l, getEntry(M1).getCreationTime());
-        assertEquals(12l, getEntry(M1).getExpirationTime());
-        assertEquals(13l, getEntry(M1).getHits());
+        assertEquals(10.1, peekEntry(M1).getCost());
+        assertEquals(11l, peekEntry(M1).getCreationTime());
+        assertEquals(12l, peekEntry(M1).getExpirationTime());
+        assertEquals(13l, peekEntry(M1).getHits());
         // notice that unlike get accesstime is not updated
         // because load does not count as an access
-        assertEquals(14l, getEntry(M1).getLastAccessTime());
+        assertEquals(14l, peekEntry(M1).getLastAccessTime());
         // last update was at 200, because of load
         // override 15
-        assertEquals(200l, getEntry(M1).getLastUpdateTime());
-        assertEquals(16l, getEntry(M1).getSize());
-        assertEquals(17l, getEntry(M1).getVersion());
+        assertEquals(200l, peekEntry(M1).getLastUpdateTime());
+        assertEquals(16l, peekEntry(M1).getSize());
+        assertEquals(17l, peekEntry(M1).getVersion());
 
-        assertEquals(20.1, getEntry(M2).getCost());
-        assertEquals(21l, getEntry(M2).getCreationTime());
-        assertEquals(22l, getEntry(M2).getExpirationTime());
-        assertEquals(23l, getEntry(M2).getHits());
+        assertEquals(20.1, peekEntry(M2).getCost());
+        assertEquals(21l, peekEntry(M2).getCreationTime());
+        assertEquals(22l, peekEntry(M2).getExpirationTime());
+        assertEquals(23l, peekEntry(M2).getHits());
         // notice that unlike get accesstime is not updated
         // because load does not count as an access
-        assertEquals(24l, getEntry(M2).getLastAccessTime());
+        assertEquals(24l, peekEntry(M2).getLastAccessTime());
         // last update was at 200, because of load
         // override 25
-        assertEquals(200l, getEntry(M2).getLastUpdateTime());
-        assertEquals(26l, getEntry(M2).getSize());
-        assertEquals(27l, getEntry(M2).getVersion());
+        assertEquals(200l, peekEntry(M2).getLastUpdateTime());
+        assertEquals(26l, peekEntry(M2).getSize());
+        assertEquals(27l, peekEntry(M2).getVersion());
     }
 
     @Test
     public void testLoadAll() throws InterruptedException, ExecutionException {
         clock.setAbsolutTime(200);
         c.loadAsync(M1.getKey()).get();
-        assertEquals(10.1, getEntry(M1).getCost());
-        assertEquals(11l, getEntry(M1).getCreationTime());
-        assertEquals(12l, getEntry(M1).getExpirationTime());
-        assertEquals(13l, getEntry(M1).getHits());
+        assertEquals(10.1, peekEntry(M1).getCost());
+        assertEquals(11l, peekEntry(M1).getCreationTime());
+        assertEquals(12l, peekEntry(M1).getExpirationTime());
+        assertEquals(13l, peekEntry(M1).getHits());
         // notice that unlike get accesstime is not updated
         // because load does not count as an access
-        assertEquals(14l, getEntry(M1).getLastAccessTime());
+        assertEquals(14l, peekEntry(M1).getLastAccessTime());
         // last update was at 200, because of load
         // override 15
-        assertEquals(200l, getEntry(M1).getLastUpdateTime());
-        assertEquals(16l, getEntry(M1).getSize());
-        assertEquals(17l, getEntry(M1).getVersion());
+        assertEquals(200l, peekEntry(M1).getLastUpdateTime());
+        assertEquals(16l, peekEntry(M1).getSize());
+        assertEquals(17l, peekEntry(M1).getVersion());
     }
 
     // also test getAll, loadAll

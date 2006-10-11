@@ -16,10 +16,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.concurrent.TimeUnit;
+
 import org.coconut.cache.CacheConfiguration.ExpirationStrategy;
 import org.coconut.cache.tck.CacheTestBundle;
+import org.coconut.cache.tck.util.AsyncIntegerToStringLoader;
 import org.junit.Before;
 import org.junit.Test;
+
+import sun.security.action.GetLongAction;
 
 /**
  * This test bundle tests the on-evict expiration strategy for a cache.
@@ -99,8 +104,8 @@ public class ExpirationOnEvict extends CacheTestBundle {
     @Test
     public void customExpirationFilter() {
         ExpirationFilter f = new ExpirationFilter();
-        c = newCache(newConf().setClock(clock).expiration().setFilter(f)
-                .setStrategy(ExpirationStrategy.ON_EVICT).c());
+        c = newCache(newConf().setClock(clock).expiration().setFilter(f).setStrategy(
+                ExpirationStrategy.ON_EVICT).c());
         fillItUp();
 
         incTime(3);
@@ -146,6 +151,32 @@ public class ExpirationOnEvict extends CacheTestBundle {
         assertTrue(c.containsKey(M1.getKey()));
         assertEquals(5, c.size());
         assertFalse(c.isEmpty());
+    }
+
+    /**
+     * Test refresh window
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void refreshWindowSingleElement() throws Exception {
+        AsyncIntegerToStringLoader loader = new AsyncIntegerToStringLoader();
+        c = newCache(newConf().setClock(clock).expiration().setStrategy(
+                ExpirationStrategy.ON_EVICT).setRefreshWindow(2, TimeUnit.NANOSECONDS)
+                .c().backend().setLoader(loader).c());
+        c.put(M1.getKey(), "AB1", 2, TimeUnit.NANOSECONDS);
+        c.put(M2.getKey(), "AB2", 3, TimeUnit.NANOSECONDS);
+        c.put(M3.getKey(), "AB3", 4, TimeUnit.NANOSECONDS);
+        c.put(M4.getKey(), "AB4", 7, TimeUnit.NANOSECONDS);
+
+        incTime(); // time is one
+        getAll(M1, M2, M3, M4);
+        // test no refresh on get
+        assertEquals(0, loader.getLoadedKeys().size());
+        c.evict();
+        assertEquals(2, loader.getLoadedKeys().size());
+        waitAndAssertGet(M1, M2);
+        assertEquals("AB3", get(M3));
+        assertEquals("AB4", get(M4));
     }
 
     // what to do about loading, fetch all on evict??

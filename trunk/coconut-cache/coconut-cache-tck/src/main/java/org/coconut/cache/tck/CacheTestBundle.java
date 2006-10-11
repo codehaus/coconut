@@ -4,6 +4,7 @@
 
 package org.coconut.cache.tck;
 
+import static org.coconut.test.CollectionUtils.M2;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -171,12 +172,32 @@ public abstract class CacheTestBundle {
         return c.get(e.getKey());
     }
 
+    protected CacheEntry<Integer, String> peekEntry(Map.Entry<Integer, String> e) {
+        return c.peekEntry(e.getKey());
+    }
+
     protected CacheEntry<Integer, String> getEntry(Map.Entry<Integer, String> e) {
         return c.getEntry(e.getKey());
     }
 
     protected Map<Integer, String> getAll(Map.Entry<Integer, String>... e) {
         return c.getAll(CollectionUtils.asMap(e).keySet());
+    }
+
+    protected void waitAndAssertGet(Map.Entry<Integer, String>... e)
+            throws InterruptedException {
+        for (Map.Entry<Integer, String> m : e) {
+            for (int i = 0; i < 100; i++) {
+                if (c.get(m.getKey()).equals(m.getValue())) {
+                    break;
+                } else {
+                    Thread.sleep(15);
+                }
+                if (i == 99) {
+                    throw new AssertionError("Value did not change");
+                }
+            }
+        }
     }
 
     protected void putAll(Map.Entry<Integer, String>... entries) {

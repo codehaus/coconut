@@ -85,6 +85,8 @@ public class TCKRunner extends Runner {
                 && ((ThreadSafe) klass.getAnnotation(ThreadSafe.class)).value();
         addCoreFeatures(runner);
 
+        addExpiration(runner, cs, isThreadSafe);
+        addLoading(runner, cs, isThreadSafe);
         if (cs.statisticsSupport()) {
             composite.add(new TestClassRunner(HitStat.class));
         } else {
@@ -122,7 +124,11 @@ public class TCKRunner extends Runner {
             if (isThreadSafe) {
                 composite.add(new TestClassRunner(ExpirationConcurrent.class));
             } else {
-                composite.add(new TestClassRunner(ExpirationLazySingleThreaded.class));
+                //TODO decide what todo, I think we should throw an exception.
+                //when we have a non asynchronous loader and the lazy strategy
+                //at construction time that is...
+                
+                //composite.add(new TestClassRunner(ExpirationLazySingleThreaded.class));
             }
         }
     }

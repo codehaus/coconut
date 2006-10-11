@@ -11,7 +11,6 @@ import static org.junit.Assert.assertNull;
 
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.tck.CacheTestBundle;
-import org.coconut.cache.tck.loading.Loading;
 import org.junit.Test;
 
 /**

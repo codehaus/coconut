@@ -4,17 +4,21 @@
 
 package org.coconut.cache.defaults.memory;
 
+import junit.framework.JUnit4TestAdapter;
+import junit.framework.Test;
+
 import org.coconut.cache.tck.TCKClassTester;
 import org.coconut.cache.tck.TCKRunner;
-import org.junit.Test;
+import org.coconut.test.MavenDummyTest;
 import org.junit.runner.RunWith;
 
 @RunWith(TCKRunner.class)
 @TCKClassTester(UnlimitedCache.class)
-public class UnlimitedCacheTest {
+public class UnlimitedCacheTest extends MavenDummyTest {
 
-    @Test
-    public void test() {
-        System.out.println("asdsd");
+    public static Test suite() {
+        return new JUnit4TestAdapter(UnlimitedCacheTest.class);
     }
+
+
 }

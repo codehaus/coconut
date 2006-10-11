@@ -28,24 +28,30 @@ public class LoaderSupport {
 
     public final static Executor SAME_THREAD_EXECUTOR = new SameThreadExecutor();
 
-    public static <K,V> AsyncCacheLoader<K, V> noAsyncLoad(CacheLoader<K, V> loader) {
-        return new NoAsyncLoad<K,V>(loader);
+    public static <K, V> AsyncCacheLoader<K, V> noAsyncLoad(CacheLoader<K, V> loader) {
+        return new NoAsyncLoad<K, V>(loader);
     }
-    static class NoAsyncLoad<K,V> implements AsyncCacheLoader<K, V> {
+
+    static class NoAsyncLoad<K, V> implements AsyncCacheLoader<K, V> {
 
         private final CacheLoader<K, V> loader;
+
         /**
-         * @see org.coconut.cache.spi.AsyncCacheLoader#asyncLoad(java.lang.Object, org.coconut.core.Callback)
+         * @see org.coconut.cache.spi.AsyncCacheLoader#asyncLoad(java.lang.Object,
+         *      org.coconut.core.Callback)
          */
         public Future<?> asyncLoad(K key, Callback<V> c) {
-           throw new UnsupportedOperationException("operation not supported, A AsyncCacheLoader has not been specfied");
+            throw new UnsupportedOperationException(
+                    "operation not supported, A AsyncCacheLoader has not been specfied");
         }
 
         /**
-         * @see org.coconut.cache.spi.AsyncCacheLoader#asyncLoadAll(java.util.Collection, org.coconut.core.Callback)
+         * @see org.coconut.cache.spi.AsyncCacheLoader#asyncLoadAll(java.util.Collection,
+         *      org.coconut.core.Callback)
          */
         public Future<?> asyncLoadAll(Collection<? extends K> keys, Callback<Map<K, V>> c) {
-            throw new UnsupportedOperationException("operation not supported, A AsyncCacheLoader has not been specfied");
+            throw new UnsupportedOperationException(
+                    "operation not supported, A AsyncCacheLoader has not been specfied");
         }
 
         /**
@@ -69,8 +75,9 @@ public class LoaderSupport {
             super();
             this.loader = loader;
         }
-        
+
     }
+
     static class SameThreadExecutor implements Executor, Serializable {
 
         /** serialVersionUID */
@@ -501,7 +508,8 @@ public class LoaderSupport {
 
     public static <K, V> AsyncCacheLoader<K, V> wrapAsAsync(CacheLoader<K, V> loader,
             Executor e) {
-        return new AsyncCacheLoaderAdaptor<K, V>(e, loader);
+        return loader instanceof AsyncCacheLoader ? (AsyncCacheLoader) loader
+                : new AsyncCacheLoaderAdaptor<K, V>(e, loader);
     }
 
     public static <K, V> Future<?> asyncLoad(
@@ -546,6 +554,9 @@ public class LoaderSupport {
             AsyncCacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader,
             final K key, CacheErrorHandler<K, V> errorHandler,
             EventHandler<CacheEntry<K, V>> eh) {
+        if (key == null) {
+            throw new NullPointerException("key is null");
+        }
         Callback<CacheEntry<K, V>> c = new SingleEntryCallback<K, V>(key, eh, loader,
                 errorHandler);
         return loader.asyncLoad(key, (Callback) c);

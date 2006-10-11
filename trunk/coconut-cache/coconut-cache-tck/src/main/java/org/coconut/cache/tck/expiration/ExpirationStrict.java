@@ -13,8 +13,12 @@ import static org.coconut.test.CollectionUtils.M5;
 import static org.coconut.test.CollectionUtils.M6;
 import static org.junit.Assert.assertEquals;
 
+import java.util.concurrent.TimeUnit;
+
+import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheConfiguration.ExpirationStrategy;
 import org.coconut.cache.tck.CacheTestBundle;
+import org.coconut.cache.tck.util.AsyncIntegerToStringLoader;
 import org.coconut.cache.tck.util.IntegerToStringLoader;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,8 +34,8 @@ public class ExpirationStrict extends CacheTestBundle {
 
     @Before
     public void setUpCaches() {
-        c = newCache(newConf().setClock(clock).expiration().setStrategy(
-                getStrategy()).c());
+        c = newCache(newConf().setClock(clock).expiration().setStrategy(getStrategy())
+                .c());
         fillItUp();
     }
 
@@ -126,8 +130,8 @@ public class ExpirationStrict extends CacheTestBundle {
     @Test
     public void customExpirationFilter() {
         ExpirationFilter f = new ExpirationFilter();
-        c = newCache(newConf().setClock(clock).expiration().setFilter(f)
-                .setStrategy(getStrategy()).c());
+        c = newCache(newConf().setClock(clock).expiration().setFilter(f).setStrategy(
+                getStrategy()).c());
         fillItUp();
 
         incTime(3);
@@ -153,8 +157,8 @@ public class ExpirationStrict extends CacheTestBundle {
     public void strictLoading() {
         ExpirationFilter f = new ExpirationFilter();
         c = newCache(newConf().setClock(clock).backend().setLoader(
-                new IntegerToStringLoader()).c().expiration().setFilter(f)
-                .setStrategy(getStrategy()).c());
+                new IntegerToStringLoader()).c().expiration().setFilter(f).setStrategy(
+                getStrategy()).c());
         c.put(M1.getKey(), "AA");
         c.put(M2.getKey(), "AB");
         c.put(M3.getKey(), "AC");
@@ -168,6 +172,74 @@ public class ExpirationStrict extends CacheTestBundle {
         assertNullGet(M6);
     }
 
+    @Test
+    public void strictCacheEntry() {
+        ExpirationFilter f = new ExpirationFilter();
+        c = newCache(newConf().setClock(clock).backend().setLoader(
+                new IntegerToStringLoader()).c().expiration().setFilter(f).setStrategy(
+                getStrategy()).c());
+        clock.incrementAbsolutTime();
+        c.put(M1.getKey(), "AB");
+        CacheEntry<Integer, String> ce = getEntry(M1);
+        assertEquals("AB", ce.getValue());
+        long creationTime = ce.getCreationTime();
+        f.doAccept = true; // entries are evicted, explicity load new ones
+        CacheEntry<Integer, String> ce2 = getEntry(M1);
+        assertEquals(creationTime, ce2.getCreationTime());
+        assertEquals(M1.getValue(), ce2.getValue());
+    }
+
+    @Test
+    public void evictionOrderTest() {
+        // TODO test that eviction does not change when we
+        // need to update values
+    }
+
+    /**
+     * Test refresh window
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void refreshWindowSingleElementEvict() throws Exception {
+        AsyncIntegerToStringLoader loader = new AsyncIntegerToStringLoader();
+        c = newCache(newConf().setClock(clock).expiration().setStrategy(
+                ExpirationStrategy.STRICT).setRefreshWindow(2, TimeUnit.NANOSECONDS).c()
+                .backend().setLoader(loader).c());
+        c.put(M1.getKey(), "AB1", 2, TimeUnit.NANOSECONDS);
+        c.put(M2.getKey(), "AB2", 3, TimeUnit.NANOSECONDS);
+        c.put(M3.getKey(), "AB3", 4, TimeUnit.NANOSECONDS);
+        c.put(M4.getKey(), "AB4", 7, TimeUnit.NANOSECONDS);
+
+        incTime(); // time is one
+        // test no refresh on get
+        c.evict();
+        assertEquals(2, loader.getLoadedKeys().size());
+        waitAndAssertGet(M1, M2);
+
+        assertEquals("AB3", get(M3));
+        assertEquals("AB4", get(M4));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void refreshWindowSingleElementGet() throws Exception {
+        AsyncIntegerToStringLoader loader = new AsyncIntegerToStringLoader();
+        c = newCache(newConf().setClock(clock).expiration().setStrategy(
+                ExpirationStrategy.STRICT).setRefreshWindow(2, TimeUnit.NANOSECONDS).c()
+                .backend().setLoader(loader).c());
+        c.put(M1.getKey(), "AB1", 2, TimeUnit.NANOSECONDS);
+        c.put(M2.getKey(), "AB2", 3, TimeUnit.NANOSECONDS);
+        c.put(M3.getKey(), "AB3", 4, TimeUnit.NANOSECONDS);
+        c.put(M4.getKey(), "AB4", 7, TimeUnit.NANOSECONDS);
+
+        incTime(); // time is one
+        // test no refresh on get
+        getAll(M1, M2, M3, M4);
+        assertEquals(2, loader.getLoadedKeys().size());
+        waitAndAssertGet(M1, M2);
+        assertEquals("AB3", get(M3));
+        assertEquals("AB4", get(M4));
+    }
     // TODO tests these, actually we should be able to only tests these for the
     // strict protocol, other strategies are "sub" strategy of strict
 

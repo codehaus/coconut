@@ -34,6 +34,7 @@ import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.AbstractCacheMXBean;
 import org.coconut.cache.spi.AsyncCacheLoader;
+import org.coconut.cache.spi.AsyncLoadCallback;
 import org.coconut.cache.spi.CacheEventDispatcher;
 import org.coconut.cache.spi.CacheStatisticsSupport;
 import org.coconut.cache.spi.CacheSupport;
@@ -64,7 +65,7 @@ import org.coconut.filter.Filters;
 @CacheSupport(CacheLoadingSupport = true, CacheEntrySupport = true, querySupport = true, ExpirationSupport = true, statisticsSupport = true, eventSupport = true)
 @ThreadSafe(false)
 public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
-        ConcurrentMap<K, V>, AsyncCacheLoader<K, V> {
+        ConcurrentMap<K, V> {
 
     private final CacheEntryMap<K, V, MyEntry> map;
 
@@ -91,7 +92,17 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
 
     private long defaultExpirationTime;
 
+    private long refreshExpirationTime;
+
     private final Filter<CacheEntry<K, V>> expireFilter;
+
+    protected boolean needsRefresh(CacheEntry<K, V> entry) {
+        if (refreshExpirationTime < 0) {
+            return false;
+        }
+        long refTime = entry.getExpirationTime() - refreshExpirationTime;
+        return getClock().hasExpired(refTime);
+    }
 
     protected boolean isExpired(CacheEntry<K, V> entry) {
         if (expireFilter != null && expireFilter.accept(entry)) {
@@ -130,6 +141,8 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
         storageStrategy = CacheConfiguration.StorageStrategy.WRITE_THROUGH;
         this.expirationStrategy = conf.expiration().getStrategy();
         this.defaultExpirationTime = conf.expiration().getDefaultTimeout(
+                TimeUnit.NANOSECONDS);
+        this.refreshExpirationTime = conf.expiration().getRefreshWindow(
                 TimeUnit.NANOSECONDS);
         expireFilter = conf.expiration().getFilter();
 
@@ -673,12 +686,22 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
             for (Iterator<MyEntry> iterator = map.values().iterator(); iterator.hasNext();) {
                 MyEntry m = (MyEntry) iterator.next();
                 if (isExpired(m)) {
-                    iterator.remove();
-                    count++;
-                    V value = m.getValueSilent();
-                    if (value != null && ed.doNotifyRemoved()) {
-                        ed.notifyRemoved(nextSequenceId(), m.getKey(), value, true, m);
+                    if (refreshExpirationTime >= 0) {
+                        loadAsync(m.getKey());
+                    } else {
+                        //we don't want to refresh expired items
+                        //so just remove it
+                        iterator.remove();
+                        count++;
+                        V value = m.getValueSilent();
+                        if (value != null && ed.doNotifyRemoved()) {
+                            ed
+                                    .notifyRemoved(nextSequenceId(), m.getKey(), value,
+                                            true, m);
+                        }
                     }
+                } else if (needsRefresh(m)) {
+                    loadAsync(m.getKey());
                 }
             }
         } finally {
@@ -749,24 +772,6 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
         return statistics;
     }
 
-    /**
-     * @see org.coconut.cache.spi.AsyncCacheLoader#asyncLoad(java.lang.Object,
-     *      org.coconut.core.Callback)
-     */
-    public Future<?> asyncLoad(K key, Callback<V> c) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * @see org.coconut.cache.spi.AsyncCacheLoader#asyncLoadAll(java.util.Collection,
-     *      org.coconut.core.Callback)
-     */
-    public Future<?> asyncLoadAll(Collection<? extends K> keys, Callback<Map<K, V>> c) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     public V get(Object key) {
@@ -804,10 +809,20 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
             }
             statistics.entryGetStop(entry, start, false);
         } else {
-            if (getExpirationStrategy() == ExpirationStrategy.LAZY && isExpired(entry)) {
-                loadAsync(key);
+
+            boolean strictLoading = false;
+            if (getExpirationStrategy() == ExpirationStrategy.LAZY) {
+                if (needsRefresh(entry) || isExpired(entry)) {
+                    loadAsync(key);
+                }
+            } else if (getExpirationStrategy() == ExpirationStrategy.STRICT) {
+                strictLoading = isExpired(entry);
+                if (!strictLoading && needsRefresh(entry)) {
+                    loadAsync(key);
+                }
             }
-            if (getExpirationStrategy() == ExpirationStrategy.STRICT && isExpired(entry)) {
+
+            if (strictLoading) {
                 CacheEntry<K, V> loadEntry = LoaderSupport.loadEntry(loader, key,
                         getErrorHandler());
                 statistics.entryExpired();
@@ -818,7 +833,7 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
                     entry = null;
                 } else {
                     MyEntry newEntry = new MyEntry(loadEntry);
-                    added(entry, null, newEntry);
+                    added(newEntry, entry, loadEntry);
                     map.put(key, entry);
                     entry.accessed();
                     ed.notifyChanged(nextSequenceId(), key, loadEntry.getValue(), entry

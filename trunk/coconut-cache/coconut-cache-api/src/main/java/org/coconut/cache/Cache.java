@@ -414,6 +414,8 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      *             (optional).
      * @throws NullPointerException
      *             if the specified key is <tt>null</tt>
+     * @throws UnsupportedOperationException
+     *             if the cache does not cache entries
      */
     // also see http://jira.codehaus.org/browse/COCACHE-25
     CacheEntry<K, V> getEntry(K key);
