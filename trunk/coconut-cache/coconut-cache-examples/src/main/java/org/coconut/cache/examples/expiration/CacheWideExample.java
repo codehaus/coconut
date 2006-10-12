@@ -15,9 +15,11 @@ import org.coconut.cache.defaults.memory.UnlimitedCache;
  */
 public class CacheWideExample {
     public static void main(String[] args) {
+        // START SNIPPET: CacheWideExample
         CacheConfiguration<String, String> cc = CacheConfiguration.newConf();
         cc.expiration().setDefaultTimeout(24 * 60 * 60, TimeUnit.SECONDS);
         Cache<String, String> cache = cc.newInstance(UnlimitedCache.class);
         cache.put("key", "value"); // element will expire after 24 hours
+        // END SNIPPET: CacheWideExample
     }
 }
