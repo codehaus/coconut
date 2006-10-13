@@ -24,8 +24,6 @@ import org.coconut.cache.tck.util.AsyncIntegerToStringLoader;
 import org.junit.Before;
 import org.junit.Test;
 
-import sun.security.action.GetLongAction;
-
 /**
  * This test bundle tests the on-evict expiration strategy for a cache.
  * 
@@ -161,7 +159,7 @@ public class ExpirationOnEvict extends CacheTestBundle {
     public void refreshWindowSingleElement() throws Exception {
         AsyncIntegerToStringLoader loader = new AsyncIntegerToStringLoader();
         c = newCache(newConf().setClock(clock).expiration().setStrategy(
-                ExpirationStrategy.ON_EVICT).setRefreshWindow(2, TimeUnit.NANOSECONDS)
+                ExpirationStrategy.ON_EVICT).setPreExpirationRefreshTime(2, TimeUnit.NANOSECONDS)
                 .c().backend().setLoader(loader).c());
         c.put(M1.getKey(), "AB1", 2, TimeUnit.NANOSECONDS);
         c.put(M2.getKey(), "AB2", 3, TimeUnit.NANOSECONDS);

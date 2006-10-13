@@ -25,24 +25,21 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheEvent;
-import org.coconut.cache.CacheLoader;
 import org.coconut.cache.CacheQuery;
-import org.coconut.cache.CacheConfiguration.ExpirationStrategy;
 import org.coconut.cache.defaults.util.CacheEntryMap;
 import org.coconut.cache.management.CacheMXBean;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.AbstractCacheMXBean;
 import org.coconut.cache.spi.AsyncCacheLoader;
-import org.coconut.cache.spi.AsyncLoadCallback;
 import org.coconut.cache.spi.CacheEventDispatcher;
 import org.coconut.cache.spi.CacheStatisticsSupport;
 import org.coconut.cache.spi.CacheSupport;
 import org.coconut.cache.spi.EventDispatcher;
+import org.coconut.cache.spi.ExpirationSupport;
 import org.coconut.cache.spi.LoaderSupport;
 import org.coconut.cache.spi.StoreSupport;
 import org.coconut.cache.store.CacheStore;
-import org.coconut.core.Callback;
 import org.coconut.event.bus.DefaultEventBus;
 import org.coconut.event.bus.EventBus;
 import org.coconut.filter.Filter;
@@ -88,42 +85,7 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
 
     private final EventBus<CacheEvent<K, V>> eb = new DefaultEventBus<CacheEvent<K, V>>();
 
-    private final ExpirationStrategy expirationStrategy;
-
-    private long defaultExpirationTime;
-
-    private long refreshExpirationTime;
-
-    private final Filter<CacheEntry<K, V>> expireFilter;
-
-    protected boolean needsRefresh(CacheEntry<K, V> entry) {
-        if (refreshExpirationTime < 0) {
-            return false;
-        }
-        long refTime = entry.getExpirationTime() - refreshExpirationTime;
-        return getClock().hasExpired(refTime);
-    }
-
-    protected boolean isExpired(CacheEntry<K, V> entry) {
-        if (expireFilter != null && expireFilter.accept(entry)) {
-            return true;
-        }
-        long expTime = entry.getExpirationTime();
-        return expTime == Cache.NEVER_EXPIRE ? false : getClock().hasExpired(expTime);
-
-    }
-
-    public long getDefaultExpirationNanoTime() {
-        return defaultExpirationTime;
-    }
-
-    void setDefaultExpirationTime(long nanos) {
-        defaultExpirationTime = nanos;
-    }
-
-    public ExpirationStrategy getExpirationStrategy() {
-        return expirationStrategy;
-    }
+    private final ExpirationSupport<K, V> expirationSupport;
 
     public UnlimitedCache(CacheConfiguration<K, V> conf) {
         super(conf);
@@ -132,21 +94,12 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
         if (maxCapacity != Integer.MAX_VALUE && cp == null) {
             throw new IllegalArgumentException("Must define a cache policy");
         }
-        // ed = new EventDispatcher(this, conf, EventHandlers
-        // .toOfferable(EventHandlers.toSystemOut()));
         ed = new EventDispatcher(this, conf, eb);
         store = (CacheStore) conf.backend().getStore();
         loader = LoaderSupport.wrapAsAsync(LoaderSupport.getLoader(conf),
                 LoaderSupport.SAME_THREAD_EXECUTOR);
         storageStrategy = CacheConfiguration.StorageStrategy.WRITE_THROUGH;
-        this.expirationStrategy = conf.expiration().getStrategy();
-        this.defaultExpirationTime = conf.expiration().getDefaultTimeout(
-                TimeUnit.NANOSECONDS);
-        this.refreshExpirationTime = conf.expiration().getRefreshWindow(
-                TimeUnit.NANOSECONDS);
-        expireFilter = conf.expiration().getFilter();
-
-        // ed = null;
+        expirationSupport = ExpirationSupport.newFinal(conf);
         // important must be last, because of final value being inlined.
         map = new MyMap();
         if (conf.getInitialMap() != null) {
@@ -255,18 +208,7 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
     }
 
     private MyEntry newE(K key, V value, long timeout, TimeUnit unit) {
-        final MyEntry me;
-        if (timeout == Cache.NEVER_EXPIRE) {
-            me = new MyEntry(key, value);
-        } else if (timeout == Cache.DEFAULT_EXPIRATION) {
-            long time = getClock().getDeadlineFromNow(getDefaultExpirationNanoTime(),
-                    TimeUnit.NANOSECONDS);
-            me = new MyEntry(key, value, time);
-        } else {
-            long time = getClock().getDeadlineFromNow(timeout, unit);
-            me = new MyEntry(key, value, time);
-        }
-        return me;
+        return new MyEntry(key, value, expirationSupport.getDeadline(timeout, unit));
     }
 
     @Override
@@ -280,10 +222,9 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
     protected void putEntry(CacheEntry<K, V> entry) {
         MyEntry me = new MyEntry(entry);
         putMyEntry(me);
-        // return me;
     }
 
-    protected MyEntry putMyEntry(MyEntry me) {
+    MyEntry putMyEntry(MyEntry me) {
         K key = me.getKey();
         MyEntry prev = map.put(key, me);
         added(me, prev, null);
@@ -355,7 +296,7 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
         putAllMyEntries(am);
     }
 
-    protected void putAllMyEntries(Collection<MyEntry> entries) {
+    void putAllMyEntries(Collection<MyEntry> entries) {
         Map<MyEntry, MyEntry> m = map.putAllValues(entries);
 
         boolean postEvents = ed != null && (ed.doNotifyChanged() || ed.doNotifyAdded());
@@ -456,7 +397,7 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
 
         MyEntry(CacheEntry<K, V> entry) {
             super(entry.getKey(), entry.getValue());
-            expirationTime = entry.getExpirationTime();
+            expirationTime = expirationSupport.getExpirationTimeFromLoaded(entry);
             creationTime = entry.getCreationTime();
             version = entry.getVersion();
             lastUpdateTime = entry.getLastUpdateTime();
@@ -464,10 +405,6 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
             hits = entry.getHits();
             size = entry.getSize();
             cost = entry.getCost();
-        }
-
-        MyEntry(K key, V value) {
-            this(key, value, Long.MAX_VALUE);
         }
 
         @Override
@@ -685,23 +622,15 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
         try {
             for (Iterator<MyEntry> iterator = map.values().iterator(); iterator.hasNext();) {
                 MyEntry m = (MyEntry) iterator.next();
-                if (isExpired(m)) {
-                    if (refreshExpirationTime >= 0) {
-                        loadAsync(m.getKey());
-                    } else {
-                        //we don't want to refresh expired items
-                        //so just remove it
-                        iterator.remove();
-                        count++;
-                        V value = m.getValueSilent();
-                        if (value != null && ed.doNotifyRemoved()) {
-                            ed
-                                    .notifyRemoved(nextSequenceId(), m.getKey(), value,
-                                            true, m);
-                        }
+                if (expirationSupport.evictRemove(this, m)) {
+                    // we don't want to refresh expired items
+                    // so just remove it
+                    iterator.remove();
+                    count++;
+                    V value = m.getValueSilent();
+                    if (value != null && ed.doNotifyRemoved()) {
+                        ed.notifyRemoved(nextSequenceId(), m.getKey(), value, true, m);
                     }
-                } else if (needsRefresh(m)) {
-                    loadAsync(m.getKey());
                 }
             }
         } finally {
@@ -809,20 +738,7 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
             }
             statistics.entryGetStop(entry, start, false);
         } else {
-
-            boolean strictLoading = false;
-            if (getExpirationStrategy() == ExpirationStrategy.LAZY) {
-                if (needsRefresh(entry) || isExpired(entry)) {
-                    loadAsync(key);
-                }
-            } else if (getExpirationStrategy() == ExpirationStrategy.STRICT) {
-                strictLoading = isExpired(entry);
-                if (!strictLoading && needsRefresh(entry)) {
-                    loadAsync(key);
-                }
-            }
-
-            if (strictLoading) {
+            if (expirationSupport.doStrictAndLoad(this, entry)) {
                 CacheEntry<K, V> loadEntry = LoaderSupport.loadEntry(loader, key,
                         getErrorHandler());
                 statistics.entryExpired();
@@ -849,7 +765,6 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
                 statistics.entryGetStop(entry, start, true);
             }
         }
-
         return entry;
     }
 
@@ -863,5 +778,4 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
         MyEntry entry = map.get(key);
         return entry;
     }
-
 }

@@ -480,9 +480,9 @@ public final class CacheConfiguration<K, V> implements Cloneable {
             return unit.convert(defaultExpirationRefreshDuration, TimeUnit.NANOSECONDS);
         }
 
-//        public Filter<CacheEntry<K, V>> getRefreshFilter() {
-//            return expirationRefreshFilter;
-//        }
+        public Filter<CacheEntry<K, V>> getPreExpirationFilter() {
+            return expirationRefreshFilter;
+        }
 
         public Filter<CacheEntry<K, V>> getFilter() {
             return expirationFilter;
@@ -567,7 +567,7 @@ public final class CacheConfiguration<K, V> implements Cloneable {
          * @param unit
          * @return
          */
-        public Expiration setRefreshWindow(long duration, TimeUnit unit) {
+        public Expiration setPreExpirationRefreshTime(long duration, TimeUnit unit) {
             if (duration <= 0) {
                 throw new IllegalArgumentException(
                         "duration must be greather then 0, was " + duration);
@@ -578,10 +578,10 @@ public final class CacheConfiguration<K, V> implements Cloneable {
             return this;
         }
 
-//        public Expiration setRefreshFilter(Filter<CacheEntry<K, V>> filter) {
-//            expirationRefreshFilter = filter;
-//            return this;
-//        }
+        public Expiration setPreExpirationFilter(Filter<CacheEntry<K, V>> filter) {
+            expirationRefreshFilter = filter;
+            return this;
+        }
     }
 
     /**

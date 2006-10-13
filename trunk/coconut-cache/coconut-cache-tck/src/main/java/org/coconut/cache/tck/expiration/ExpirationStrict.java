@@ -203,7 +203,7 @@ public class ExpirationStrict extends CacheTestBundle {
     public void refreshWindowSingleElementEvict() throws Exception {
         AsyncIntegerToStringLoader loader = new AsyncIntegerToStringLoader();
         c = newCache(newConf().setClock(clock).expiration().setStrategy(
-                ExpirationStrategy.STRICT).setRefreshWindow(2, TimeUnit.NANOSECONDS).c()
+                ExpirationStrategy.STRICT).setPreExpirationRefreshTime(2, TimeUnit.NANOSECONDS).c()
                 .backend().setLoader(loader).c());
         c.put(M1.getKey(), "AB1", 2, TimeUnit.NANOSECONDS);
         c.put(M2.getKey(), "AB2", 3, TimeUnit.NANOSECONDS);
@@ -225,7 +225,7 @@ public class ExpirationStrict extends CacheTestBundle {
     public void refreshWindowSingleElementGet() throws Exception {
         AsyncIntegerToStringLoader loader = new AsyncIntegerToStringLoader();
         c = newCache(newConf().setClock(clock).expiration().setStrategy(
-                ExpirationStrategy.STRICT).setRefreshWindow(2, TimeUnit.NANOSECONDS).c()
+                ExpirationStrategy.STRICT).setPreExpirationRefreshTime(2, TimeUnit.NANOSECONDS).c()
                 .backend().setLoader(loader).c());
         c.put(M1.getKey(), "AB1", 2, TimeUnit.NANOSECONDS);
         c.put(M2.getKey(), "AB2", 3, TimeUnit.NANOSECONDS);

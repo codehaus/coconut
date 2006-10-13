@@ -3,8 +3,8 @@
  */
 package org.coconut.cache.policy.concurrent;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -12,33 +12,41 @@ import java.util.List;
  */
 public class Sizeof {
     static class MyObj {
-        //private Object[] foo2=;
-       // List l=Arrays.asList(new Object[3]);
+        // private Object[] foo2=;
+        // List l=Arrays.asList(new Object[3]);
     }
 
-    static class MyOj extends MyObj{
-        int fo=3;
-        int fof=3;
-        //int fosa=3;
-        //int foss=1;
-        //int fosss=1;
+    static class MyOj extends MyObj {
+        int fo = 3;
+
+        int fof = 3;
+        // int fosa=3;
+        // int foss=1;
+        // int fosss=1;
     }
+
     static class MyOja {
-       int foo=3;
-       int fo=3;
-       int fof=3;
+        int foo = 3;
+
+        int fo = 3;
+
+        int fof = 3;
     }
+
     public static void main(String[] args) throws Exception {
         // Warm up all classes/methods we will use
         runGC();
         usedMemory();
 
         // Array to keep strong references to allocated objects
-        final int count = 100000;
+        final int count = 10000;
         Object[] objects = new Object[count];
 
         long heap1 = 0;
-
+        Integer[] ints=new Integer[1];
+        for (int i = 0; i < ints.length; i++) {
+            ints[i]=i;
+        }
         // Allocate count+1 objects, discard the first one
         for (int i = -1; i < count; ++i) {
             Object object = null;
@@ -47,7 +55,12 @@ public class Sizeof {
 
             // object = new Object ();
             // object = new Integer (i);
-            object = new MyOja();
+            Map h = new ConcurrentHashMap();
+            object = h;
+            for (int j=0;j<ints.length;j++) {
+                h.put(ints[j], ints[j]);
+            }
+            //h.put("sa", " 234kjh");
             // object = new Long (i);
             // object = new String ();
             // object = new byte [128][1]
