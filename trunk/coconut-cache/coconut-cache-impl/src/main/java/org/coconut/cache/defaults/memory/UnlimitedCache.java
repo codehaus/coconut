@@ -21,6 +21,8 @@ import java.util.concurrent.TimeUnit;
 import javax.management.NotCompliantMBeanException;
 
 import org.coconut.annotation.ThreadSafe;
+import org.coconut.apm.ApmGroup;
+import org.coconut.apm.defaults.DefaultApmGroup;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
@@ -38,6 +40,7 @@ import org.coconut.cache.spi.CacheSupport;
 import org.coconut.cache.spi.EventDispatcher;
 import org.coconut.cache.spi.ExpirationSupport;
 import org.coconut.cache.spi.LoaderSupport;
+import org.coconut.cache.spi.ManagementSupport;
 import org.coconut.cache.spi.StoreSupport;
 import org.coconut.cache.store.CacheStore;
 import org.coconut.event.bus.DefaultEventBus;
@@ -87,6 +90,8 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
 
     private final ExpirationSupport<K, V> expirationSupport;
 
+    private final ManagementSupport managementSupport;
+
     public UnlimitedCache(CacheConfiguration<K, V> conf) {
         super(conf);
         cp = conf.eviction().getPolicy();
@@ -101,6 +106,7 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
         storageStrategy = CacheConfiguration.StorageStrategy.WRITE_THROUGH;
         expirationSupport = ExpirationSupport.newFinal(conf);
         // important must be last, because of final value being inlined.
+        managementSupport = new ManagementSupport(conf);
         map = new MyMap();
         if (conf.getInitialMap() != null) {
             putAll(conf.getInitialMap());
@@ -177,6 +183,25 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
     @Override
     public Future<?> loadAllAsync(Collection<? extends K> keys) {
         return LoaderSupport.asyncLoadAllEntries(loader, keys, this);
+    }
+
+    @Override
+    public void start() {
+        super.start();
+        if (getConfiguration().jmx().isRegister()) {
+            String name = "org.coconut.cache:name=" + getConfiguration().getName()
+                    + ",group=$1,subgroup=$2";
+            ApmGroup dg = DefaultApmGroup.newRoot(name, getConfiguration().jmx()
+                    .getMBeanServer());
+            expirationSupport.addTo(dg);
+            statistics.addTo(dg);
+            try {
+                dg.register("org.coconut.cache:name=$0,group=$1,subgroup=$2");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("started");
     }
 
     void trimToSize(int newSize) {

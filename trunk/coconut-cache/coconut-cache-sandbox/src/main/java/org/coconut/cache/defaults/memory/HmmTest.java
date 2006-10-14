@@ -57,7 +57,7 @@ public class HmmTest {
         cc.expiration().setDefaultTimeout(24 * 60 * 60, TimeUnit.SECONDS);
         // cc.backend().setLoader(new ErrorCacheLoader());
         // cc.backend().setStore(new SysoutStore<Object, Object>(null));
-        Cache c = cc.newInstance(UnlimitedCache.class);
+        Cache c = cc.create(UnlimitedCache.class);
         for (int i = 0; i < 100000; i++) {
             c.put(i, i);
         }

@@ -15,7 +15,6 @@ import javax.management.InstanceAlreadyExistsException;
 import javax.management.MBeanRegistrationException;
 
 import org.coconut.apm.Apm;
-import org.coconut.apm.spi.ManagedMetric;
 import org.coconut.apm.spi.NumberDynamicBean;
 
 /**
@@ -75,9 +74,9 @@ public class DefaultMetricManager {
             if (o instanceof Foo) {
                 o = ((Foo) o).o;
             }
-            if (o instanceof ManagedMetric) {
-                ManagedMetric p = (ManagedMetric) o;
-                p.prepare(bean);
+            if (o instanceof Apm) {
+                Apm p = (Apm) o;
+                p.configureJMX(bean);
             }
         }
         bean.register(name);

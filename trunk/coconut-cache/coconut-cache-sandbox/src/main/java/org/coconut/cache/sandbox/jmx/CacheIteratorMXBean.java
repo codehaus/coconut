@@ -4,7 +4,7 @@
 
 package org.coconut.cache.sandbox.jmx;
 
-import org.coconut.cache.management.CacheEntryInfo;
+//import org.coconut.cache.management.CacheEntryInfo;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -12,8 +12,6 @@ import org.coconut.cache.management.CacheEntryInfo;
  */
 public interface CacheIteratorMXBean {
     String[] getNextIds(int amount);
-
-    CacheEntryInfo[] getNext(int amount);
 
     int getAmount();
 

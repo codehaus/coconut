@@ -6,9 +6,11 @@ package org.coconut.cache.spi;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.coconut.apm.ApmGroup;
 import org.coconut.apm.monitor.DateSampler;
 import org.coconut.apm.monitor.LongCounter;
 import org.coconut.apm.monitor.LongSamplingCounter;
+import org.coconut.apm.spi.annotation.ManagedAttribute;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.Caches;
@@ -29,21 +31,21 @@ public final class CacheStatisticsSupport<K, V> {
     // number of loads, loaded elements, number of queries,
     // number of added, number of new elements
 
-    public final static String CACHE_CLEAR_COUNTER = "cache clear counter";
+    public final static String CACHE_CLEAR_COUNTER = "Cache clear counter";
 
-    public final static String CACHE_CLEAR_LASTTIME = "cache clear counter";
+    public final static String CACHE_CLEAR_LASTTIME = "Cache clear counter";
 
-    public final static String CACHE_CLEAR_TIMER = "cache clear counter";
+    public final static String CACHE_CLEAR_TIMER = "Cache clear counter";
 
-    public final static String CACHE_EVICT_COUNTER = "cache evicts";
+    public final static String CACHE_EVICT_COUNTER = "Cache evicts";
 
-    public final static String CACHE_EVICT_LASTTIME = "cache clear counter";
+    public final static String CACHE_EVICT_LASTTIME = "Cache clear counter";
 
     public final static String CACHE_EVICT_TIMER = "duration of cache evicts";
 
-    public final static String CACHE_RESET_COUNTER = "cache evicts";
+    public final static String CACHE_RESET_COUNTER = "Cache evicts";
 
-    public final static String CACHE_RESET_LASTTIME = "cache clear counter";
+    public final static String CACHE_RESET_LASTTIME = "Cache clear counter";
 
     public final static String ENTRY_EVICTED_COUNTER = "items evicted";
 
@@ -51,21 +53,21 @@ public final class CacheStatisticsSupport<K, V> {
 
     public final static String ENTRY_EXPIRED_COUNTER = "items expired";
 
-    public final static String ENTRY_HIT_COUNTER = "cache hits";
+    public final static String ENTRY_HIT_COUNTER = "Cache hits";
 
-    public final static String ENTRY_HIT_TIMER = "cache hit time";
+    public final static String ENTRY_HIT_TIMER = "Cache hit time";
 
-    public final static String ENTRY_MISS_COUNTER = "misses";
+    public final static String ENTRY_MISS_COUNTER = "Cache misses";
 
-    public final static String ENTRY_MISS_TIMER = "misses";
+    public final static String ENTRY_MISS_TIMER = "Cache miss time";
 
-    public final static String ENTRY_PUT_COUNTER = "misses";
+    public final static String ENTRY_PUT_COUNTER = "Caches puts";
 
-    public final static String ENTRY_PUT_TIMER = "misses";
+    public final static String ENTRY_PUT_TIMER = "Cache puts time";
 
-    public final static String ENTRY_REMOVE_COUNTER = "misses";
+    public final static String ENTRY_REMOVE_COUNTER = "Cache removes";
 
-    public final static String ENTRY_REMOVE_TIMER = "misses";
+    public final static String ENTRY_REMOVE_TIMER = "Cache remove times";
 
     public static CacheStatisticsSupport createConcurrent() {
         return new CacheStatisticsSupport(true);
@@ -163,6 +165,16 @@ public final class CacheStatisticsSupport<K, V> {
                 getDesc(ENTRY_REMOVE_COUNTER));
         entryRemoveTime = new LongSamplingCounter(ENTRY_REMOVE_TIMER,
                 getDesc(ENTRY_REMOVE_TIMER));
+    }
+
+    long started;
+
+    public void started() {
+        started = System.currentTimeMillis();
+    }
+
+    public void shutdown() {
+        // ignore for now
     }
 
     public long cacheClearStart(Cache<K, V> cache) {
@@ -282,5 +294,58 @@ public final class CacheStatisticsSupport<K, V> {
 
     private String getDesc(String key) {
         return Ressources.getString(CacheStatisticsSupport.class, key);
+    }
+
+    /**
+     * @see org.coconut.apm.Apm#configureJMX(org.coconut.apm.spi.JMXConfigurator)
+     */
+    public void addTo(ApmGroup dg) {
+        ApmGroup m = dg.addGroup("Statistics", false);
+
+        ApmGroup general = m.addGroup("General");
+        general.add(cacheStatisticsResetCount);
+        general.add(cacheStatisticsResetLast);
+        general.add(entryExpiredCount);
+
+        ApmGroup clear = m.addGroup("Clear");
+        clear.add(cacheClearCount);
+        clear.add(cacheClearLast);
+        clear.add(cacheClearTime);
+
+        ApmGroup eviction = m.addGroup("Eviction");
+        eviction.add(cacheEvictCount);
+        eviction.add(cacheEvictLast);
+        eviction.add(cacheEvictTime);
+        eviction.add(entryEvictedCount);
+        eviction.add(entryEvictedTime);
+
+        ApmGroup access = m.addGroup("Access");
+        access.setDescription("Statistics regarding access to the cache");
+        access.add(entryGetHitCount);
+        access.add(entryGetMissCount);
+        access.add(entryGetHitTime);
+        access.add(entryGetMissTime);
+        access.add(new CacheRatio());
+
+        ApmGroup put = m.addGroup("Put");
+        put.add(entryPutCount);
+        put.add(entryPutTime);
+
+        ApmGroup remove = m.addGroup("Remove");
+        remove.add(entryRemoveCount);
+        remove.add(entryRemoveTime);
+    }
+
+    public class CacheRatio {
+        @ManagedAttribute(defaultValue = "cache hit ratio")
+        public float getHitRatio() {
+            long hits = entryGetHitCount.get();
+            long misses = entryGetMissCount.get();
+            final long sum = hits + misses;
+            if (sum == 0) {
+                return Float.NaN;
+            }
+            return ((float) hits) / sum;
+        }
     }
 }

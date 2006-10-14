@@ -29,8 +29,9 @@ public class LongSamplingCounter extends AbstractApm {
      */
 
     public LongSamplingCounter(String name, String description) {
-        super(name,description);
+        super(name, description);
     }
+
     /**
      * @see org.coconut.metric.spi.AbstractLongMetricReporter#report(long)
      */
@@ -49,7 +50,8 @@ public class LongSamplingCounter extends AbstractApm {
     /**
      * @see org.coconut.metric.MetricReporter#reset()
      */
-    @ManagedOperation(defaultValue = "reset", description = "Resets all variables to their initial value")
+    // @ManagedOperation(defaultValue = "reset", description = "Resets all
+    // variables to their initial value")
     public synchronized void reset() {
         high = Long.MIN_VALUE;
         low = Long.MAX_VALUE;
@@ -83,7 +85,6 @@ public class LongSamplingCounter extends AbstractApm {
         return samplings;
     }
 
-
     @ManagedAttribute(defaultValue = "$name Average", description = "The average recorded value of $name")
     public synchronized double getAverage() {
         return samplings == 0 ? Double.NaN : (double) total / samplings;
@@ -113,10 +114,6 @@ public class LongSamplingCounter extends AbstractApm {
         sb.append(getAverage());
         sb.append("\n");
         return sb.toString();
-    }
-
-    public String getName() {
-        return "High/Low Metric stat";
     }
 
     public String getDescription() {

@@ -5,12 +5,16 @@
 package org.coconut.internal.util.tabular;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
 public class TabularFormatter {
+
+    public final static DecimalFormat zz3 = new DecimalFormat("00");
 
     public final static DecimalFormat z3 = new DecimalFormat("0.000");
 
@@ -32,7 +36,7 @@ public class TabularFormatter {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main2(String[] args) {
         DecimalFormat ss = new DecimalFormat("##0.000");
         System.out.println(ss.format(400.34));
         System.out.println(ss.format(40.343));
@@ -141,8 +145,8 @@ public class TabularFormatter {
 
     public static String formatTime(double nanos) {
         double micros = (nanos) / 1000;
-        double millies = ( micros) / 1000;
-        double seconds = ( millies) / 1000;
+        double millies = (micros) / 1000;
+        double seconds = (millies) / 1000;
         if (micros < 1) {
             return nanos + " ns";
         } else if (micros < 1000) {
@@ -153,5 +157,47 @@ public class TabularFormatter {
             return form(seconds) + " s";
         } else
             return ((long) seconds) + " s";
+    }
+
+    public static String formatTime2(final long totalNano) {
+        long nano = TimeUnit.NANOSECONDS.toNanos(totalNano) % 1000;
+        long micro = TimeUnit.NANOSECONDS.toMicros(totalNano) % 1000;
+        long millies = TimeUnit.NANOSECONDS.toMillis(totalNano) % 1000;
+        long sup = TimeUnit.NANOSECONDS.toSeconds(totalNano);
+        long seconds = (sup) % 60;
+        sup -= seconds;
+        long minutes = (sup / 60) % 60;
+        sup -= minutes * 60;
+        long hours = (sup / 3600) % 24;
+        sup -= hours * 24 * 60;
+        long days = (sup / (24 * 3600));
+        StringBuilder sb = new StringBuilder();
+        if (days != 0) {
+            sb.append(days + " day(s), ");
+        }
+        if (days != 0 || hours != 0 || minutes != 0 || seconds != 0) {
+            sb.append(hours + ":" + zz3.format(minutes) + ":" + zz3.format(seconds)
+                    + " hours");
+            return sb.toString();
+        }
+        return sb.toString();
+        // if (n != 0) {
+        // return n + " ns";
+        // } else if (micros != 0) {
+        // return micros + " µs";
+        // } else if (millies != 0) {
+        // return millies + " ms";
+        // } else {
+        // return seconds + " s";
+        // }
+    }
+
+    public static void main(String[] args) {
+        System.out.println(formatTime2(3));
+        long value = 10023434l * 1000000000l;
+        System.out.println(formatTime2(value));
+        System.out.println(formatTime2(4000000));
+        System.out.println(formatTime2(124000234433000l));
+        System.out.println(zz3.format(2));
     }
 }

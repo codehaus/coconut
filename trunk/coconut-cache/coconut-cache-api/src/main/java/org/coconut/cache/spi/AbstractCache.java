@@ -98,6 +98,10 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
 
     }
 
+    public void start(){
+
+    }
+
     public void shutdown() {
 
     }

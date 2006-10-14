@@ -24,24 +24,22 @@ public class MemoryTestRunner {
 
     public static void main(String[] args) throws Exception {
         MemoryTestRunner t = new MemoryTestRunner();
-//        System.out
-//                .println("|| JDK Implementations \\\\ || 1 Object || 10 Objects || 100 Objects || 1.000 Objects || 10.000 Objects || 100.000 Objects || Elements/MB ||");
-//        t.test(new MapMemoryOverheadTest(ConcurrentHashMap.class));
-//        t.test(new MapMemoryOverheadTest(HashMap.class));
-//        t.test(new MapMemoryOverheadTest(Hashtable.class));
-//        t.test(new MapMemoryOverheadTest(LinkedHashMap.class));
-//        t.test(new MapMemoryOverheadTest(TreeMap.class));
-//        System.out
-//                .println("|| Coconut Cache Implementations \\\\ || || || || || || || ||");
-//        t.test(new MapMemoryOverheadTest(UnlimitedCache.class));
-//        System.out.println("|| Other Cache Implementations \\\\ || || || || || || || ||");
-//        t.test(new EHcacheMemoryOverheadTest());
-//        t.test(new JBossMemoryOverheadTest());
-        t.test(new JCSOverheadTest());
+        System.out
+                .println("|| JDK Implementations \\\\ || 1 Object || 10 Objects || 100 Objects || 1.000 Objects || 10.000 Objects || 100.000 Objects || Elements/MB ||");
+        t.test(new MapMemoryOverheadTest(ConcurrentHashMap.class));
+        t.test(new MapMemoryOverheadTest(HashMap.class));
+        t.test(new MapMemoryOverheadTest(Hashtable.class));
+        t.test(new MapMemoryOverheadTest(LinkedHashMap.class));
+        t.test(new MapMemoryOverheadTest(TreeMap.class));
+        System.out
+                .println("|| Coconut Cache Implementations \\\\ || || || || || || || ||");
+        t.test(new MapMemoryOverheadTest(UnlimitedCache.class));
+        System.out.println("|| Other Cache Implementations \\\\ || || || || || || || ||");
+        t.test(new EHcacheMemoryOverheadTest());
+        t.test(new JBossMemoryOverheadTest());
         t.test(new JCSOverheadTest());
         t.test(new OSCacheMemoryOverTest());
         t.test(new WhirlyCacheMemoryOverheadTest());
-
     }
 
     public int test(MemoryOverheadTest map, int iterations) throws Exception {

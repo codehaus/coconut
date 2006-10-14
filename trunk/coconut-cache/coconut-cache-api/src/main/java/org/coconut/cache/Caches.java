@@ -16,6 +16,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
 
+import org.coconut.apm.spi.annotation.ManagedAttribute;
 import org.coconut.cache.spi.AsyncCacheLoader;
 import org.coconut.cache.spi.CacheSupport;
 import org.coconut.cache.spi.Ressources;

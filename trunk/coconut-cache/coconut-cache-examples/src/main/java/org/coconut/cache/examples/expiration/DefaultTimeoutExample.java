@@ -18,7 +18,7 @@ public class DefaultTimeoutExample {
         // START SNIPPET: class
         CacheConfiguration<String, String> cc = CacheConfiguration.newConf();
         cc.expiration().setDefaultTimeout(24 * 60 * 60, TimeUnit.SECONDS);
-        Cache<String, String> cache = cc.newInstance(UnlimitedCache.class);
+        Cache<String, String> cache = cc.create(UnlimitedCache.class);
         cache.put("key", "value"); // element will expire after 24 hours
         // END SNIPPET: class
     }

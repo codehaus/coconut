@@ -65,7 +65,7 @@ import org.coconut.filter.Filter;
  * Pattern</a> can be used as an alternative.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id$
+ * @version $Id: Cache.java 130 2006-10-11 13:00:46Z kasper $
  * @param <K>
  *            the type of keys maintained by this cache
  * @param <V>

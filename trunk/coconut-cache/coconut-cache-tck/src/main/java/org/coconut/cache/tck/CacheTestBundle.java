@@ -73,7 +73,7 @@ public abstract class CacheTestBundle {
     final Cache<Integer, String> newCache(int entries) {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.newConf();
         cc.setInitialMap(createMap(entries)).setClock(clock);
-        return cc.newInstance(TCKRunner.tt);
+        return cc.create(TCKRunner.tt);
     }
 
     @SuppressWarnings("unchecked")
@@ -82,7 +82,7 @@ public abstract class CacheTestBundle {
     }
 
     protected Cache<Integer, String> newCache(CacheConfiguration<Integer, String> conf) {
-        return conf.newInstance(TCKRunner.tt);
+        return conf.create(TCKRunner.tt);
     }
 
     public static Map<Integer, String> createMap(int entries) {

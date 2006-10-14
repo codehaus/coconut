@@ -302,6 +302,10 @@ public final class CacheConfiguration<K, V> implements Cloneable {
 
     private boolean statisticsEnabled = false;
 
+    private boolean useHighResolutionCounter = true;
+
+    private boolean enableTiming = true;
+
     public class Statistics {
         public void setTimeUnit(TimeUnit unit) {
             if (unit == null) {
@@ -560,8 +564,7 @@ public final class CacheConfiguration<K, V> implements Cloneable {
         /**
          * Sets the default expiration refresh window. Setting of the refresh
          * window only makes sense if an asynchronously loader has been
-         * specified.
-         * -1 
+         * specified. -1
          * 
          * @param duration
          * @param unit
@@ -908,7 +911,7 @@ public final class CacheConfiguration<K, V> implements Cloneable {
 
     public static final ExpirationStrategy DEFAULT_EXPIRATION_STRATEGY = ExpirationStrategy.ON_EVICT;
 
-    public static final String JMX_PREFIX = "org.coconut.cache:type=Cache,name=";
+    public static final String JMX_PREFIX = "org.coconut.cache:name=";
 
     public static void main(String[] args) throws SAXException, IOException,
             ParserConfigurationException {
@@ -957,7 +960,7 @@ public final class CacheConfiguration<K, V> implements Cloneable {
      * @throws NullPointerException
      *             if the specified class is <tt>null</tt>
      */
-    public <T extends Cache<K, V>> T newInstance(Class<? extends Cache> clazz)
+    public <T extends Cache<K, V>> T create(Class<? extends Cache> clazz)
             throws IllegalArgumentException {
         if (clazz == null) {
             throw new NullPointerException("clazz is null");
@@ -986,6 +989,13 @@ public final class CacheConfiguration<K, V> implements Cloneable {
             ((AbstractCache) cache).initialize();
         }
         return cache;
+    }
+
+    public <T extends AbstractCache<K, V>> T createAndStart(
+            Class<? extends AbstractCache> clazz) {
+        T t = create(clazz);
+        t.start();
+        return t;
     }
 
     private final Map<String, Object> additionalProperties = new HashMap<String, Object>();

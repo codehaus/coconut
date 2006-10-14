@@ -277,9 +277,11 @@ public class NumberDynamicBean implements DynamicMBean, JMXConfigurator {
                 String description = filterString(o, mo.description());
                 InternalOperation io = new InternalOperation(m, o, name, description);
                 if (mapOper.containsKey(name)) {
-                    throw new IllegalArgumentException();
+                    // TODO fix
+                 //   throw new IllegalArgumentException(name);
+                } else {
+                    mapOper.put(name, io); // check not already
                 }
-                mapOper.put(name, io); // check not already
             }
         }
     }
@@ -288,6 +290,7 @@ public class NumberDynamicBean implements DynamicMBean, JMXConfigurator {
         if (o instanceof Named) {
             Named n = (Named) o;
             str = str.replace("$name", n.getName());
+            System.out.println(n.getName());
         }
         if (o instanceof Apm) {
             Apm n = (Apm) o;
