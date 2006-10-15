@@ -3,11 +3,8 @@
  */
 package org.coconut.cache.spi;
 
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.MBeanRegistrationException;
-
-import org.coconut.apm.Apm;
 import org.coconut.apm.ApmGroup;
+import org.coconut.apm.defaults.DefaultApmGroup;
 import org.coconut.apm.monitor.DefaultMetricManager;
 import org.coconut.cache.CacheConfiguration;
 
@@ -17,25 +14,25 @@ import org.coconut.cache.CacheConfiguration;
  */
 public class ManagementSupport {
 
-
     private DefaultMetricManager dmm = new DefaultMetricManager();
-
+    private final ApmGroup group;
+    
     public ManagementSupport(CacheConfiguration<?, ?> conf) {
-
+        String name = "org.coconut.cache:name=" + conf.getName()
+                + ",group=$1,subgroup=$2";
+        group = DefaultApmGroup.newRoot(name, conf.jmx().getMBeanServer());
+    }
+    public ApmGroup getGroup() {
+        return group;
     }
 
-    public void add(Apm o) {
-//        g.add(o);
-        dmm.addMetric(o);
-    }
-
-    public void foo(){
-        try {
-            dmm.startAndRegister("org.coconut.cache:name=Cache");
-        } catch (InstanceAlreadyExistsException e) {
-            e.printStackTrace();
-        } catch (MBeanRegistrationException e) {
-            e.printStackTrace();
+    public void start(AbstractCache cache) {
+        if (cache.getConfiguration().jmx().isRegister()) {
+            try {
+                group.register("org.coconut.cache:name=$0,group=$1,subgroup=$2");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }

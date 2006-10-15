@@ -69,8 +69,8 @@ public final class CacheStatisticsSupport<K, V> {
 
     public final static String ENTRY_REMOVE_TIMER = "Cache remove times";
 
-    public static CacheStatisticsSupport createConcurrent() {
-        return new CacheStatisticsSupport(true);
+    public static <K, V> CacheStatisticsSupport<K, V> createConcurrent() {
+        return new CacheStatisticsSupport<K, V>(true);
     }
 
     /* Cache Statistics */

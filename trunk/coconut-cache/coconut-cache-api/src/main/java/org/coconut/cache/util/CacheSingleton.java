@@ -7,12 +7,12 @@ package org.coconut.cache.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.coconut.annotation.ThreadSafe;
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
 
 /**
@@ -37,37 +37,37 @@ public final class CacheSingleton {
     /** The single cache instance. */
     private static volatile Cache cacheInstance;
 
-    // public static void initializeCache(String file) {
-    // try {
-    // initializeCache(new FileInputStream(file));
-    // } catch (FileNotFoundException ffe) {
-    // throw new CacheException("Configuration file " + file
-    // + " could not be located", ffe);
-    // }
-    // }
-    //
-    // public static void initializeCache(InputStream is) {
-    // try {
-    // cacheInstance = CacheConfiguration.loadCache(is);
-    // } catch (Exception e) {
-    // throw new CacheException("Cache could not be instanciated", e);
-    // }
-    // }
+    private final static ConcurrentHashMap<String, Cache<?, ?>> caches = new ConcurrentHashMap<String, Cache<?, ?>>();
 
-    /**
-     * @param cache
-     */
-    public static void setCacheInstance(Cache<?, ?> cache) {
-        lock.lock(); // lock not strictly needed
+    public static void addCache(Cache<?, ?> c, String name, boolean isDefault) {
+        lock.lock();
         try {
-            cacheInstance = cache;
+            if (isDefault) {
+                cacheInstance = c;
+            }
+            caches.put(name, c);
         } finally {
             lock.unlock();
         }
     }
 
+    public static void addCache(Cache<?, ?> c, String name) {
+        addCache(c, name, false);
+    }
+
+    /**
+     * @param cache
+     */
+    public static void setDefaultCache(Cache<?, ?> cache) {
+
+    }
+
+    public static <K, V> Cache<K, V> getCache(String name) {
+        return (Cache<K, V>) caches.get(name);
+    }
+
     @SuppressWarnings("unchecked")
-    public static <K, V> Cache<K, V> getCacheInstance() {
+    public static <K, V> Cache<K, V> getDefaultCache() {
         Cache c = cacheInstance;
         if (c != null) {
             return c;
@@ -83,7 +83,7 @@ public final class CacheSingleton {
                             + DEFAULT_CACHE_RESSOURCE + "' on the classpath.");
                 }
                 is = url.openStream();
-                //TODO read config
+                // TODO read config
             } catch (IOException ioe) {
                 throw new CacheException("Cache could not be instantiated", ioe);
             } finally {
@@ -107,5 +107,22 @@ public final class CacheSingleton {
     //
     // public static <K, V> CacheTree<K, V> singletonCacheTree() {
     //        
+    // }
+
+    // public static void initializeCache(String file) {
+    // try {
+    // initializeCache(new FileInputStream(file));
+    // } catch (FileNotFoundException ffe) {
+    // throw new CacheException("Configuration file " + file
+    // + " could not be located", ffe);
+    // }
+    // }
+    //
+    // public static void initializeCache(InputStream is) {
+    // try {
+    // cacheInstance = CacheConfiguration.loadCache(is);
+    // } catch (Exception e) {
+    // throw new CacheException("Cache could not be instanciated", e);
+    // }
     // }
 }

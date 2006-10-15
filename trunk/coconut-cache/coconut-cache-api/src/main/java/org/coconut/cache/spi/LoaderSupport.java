@@ -512,132 +512,7 @@ public class LoaderSupport {
                 : new AsyncCacheLoaderAdaptor<K, V>(e, loader);
     }
 
-    public static <K, V> Future<?> asyncLoad(
-            AsyncCacheLoader<? super K, ? extends V> loader, final K key,
-            CacheErrorHandler<K, V> errorHandler, EventHandler<V> eh) {
-        Callback<V> c = new SingleValueCallback<K, V>(key, eh, loader, errorHandler);
-        return loader.asyncLoad(key, (Callback) c);
-    }
 
-    public static <K, V> Future<?> asyncLoad(
-            AsyncCacheLoader<? super K, ? extends V> loader, final K key,
-            CacheErrorHandler<K, V> errorHandler, Map<K, V> sink) {
-        return asyncLoad(loader, key, errorHandler, new NonNullValueIntoMap<K, V>(sink,
-                key));
-    }
-
-    public static <K, V> Future<?> asyncLoadAll(
-            AsyncCacheLoader<? super K, ? extends V> loader,
-            final Collection<? extends K> keys, CacheErrorHandler<K, V> errorHandler,
-            EventHandler<Map<K, V>> eh) {
-        Callback<Map<K, V>> c = new SingleValuesCallback<K, V>(keys, eh, loader,
-                errorHandler);
-        return loader.asyncLoadAll(keys, (Callback) c);
-    }
-
-    public static <K, V> Future<?> asyncLoadAll(
-            AsyncCacheLoader<? super K, ? extends V> loader,
-            final Collection<? extends K> keys, CacheErrorHandler<K, V> errorHandler,
-            Map<K, V> sink) {
-        return asyncLoadAll(loader, keys, errorHandler, new NonNullValuesIntoMap<K, V>(
-                sink));
-    }
-
-    public static <K, V> Future<?> asyncLoadEntry(
-            AsyncCacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader,
-            final K key, AbstractCache<K, V> sink) {
-        return asyncLoadEntry(loader, key, sink.getErrorHandler(),
-                new NonNullEntryIntoCache<K, V>(sink));
-    }
-
-    public static <K, V> Future<?> asyncLoadEntry(
-            AsyncCacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader,
-            final K key, CacheErrorHandler<K, V> errorHandler,
-            EventHandler<CacheEntry<K, V>> eh) {
-        if (key == null) {
-            throw new NullPointerException("key is null");
-        }
-        Callback<CacheEntry<K, V>> c = new SingleEntryCallback<K, V>(key, eh, loader,
-                errorHandler);
-        return loader.asyncLoad(key, (Callback) c);
-    }
-
-    public static <K, V> Future<?> asyncLoadAllEntries(
-            AsyncCacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader,
-            final Collection<? extends K> keys, CacheErrorHandler<K, V> errorHandler,
-            EventHandler<Map<K, CacheEntry<K, V>>> eh) {
-        SingleEntriesCallback<K, V> c = new SingleEntriesCallback<K, V>(keys, eh, loader,
-                errorHandler);
-        return loader.asyncLoadAll(keys, (Callback) c);
-    }
-
-    public static <K, V> Future<?> asyncLoadAllEntries(
-            AsyncCacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader,
-            final Collection<? extends K> keys, AbstractCache<K, V> cache) {
-        return asyncLoadAllEntries(loader, keys, cache.getErrorHandler(),
-                new NonNullEntriesIntoCache<K, V>(cache));
-    }
-
-    /**
-     * Attempts to load and return a value from the specified cache loader. If
-     * the load fails by throwing an exception. The specified CacheErrorHandler
-     * will be used to handle the error.
-     * 
-     * @param loader
-     *            the cache loader that the value should be loaded from
-     * @param key
-     *            the key for which value to load
-     * @param errorHandler
-     *            the error handler used for handling errors
-     * @return the value for the given key or <tt>null</tt> if no value could
-     *         be found for the specified key
-     */
-    public static <K, V> V load(final CacheLoader<? super K, ? extends V> loader,
-            final K key, final CacheErrorHandler<K, V> errorHandler) {
-        V v;
-        try {
-            v = loader.load(key);
-        } catch (Exception e) {
-            v = errorHandler.loadFailed(loader, key, false, e);
-        }
-        return v;
-    }
-
-    public static <K, V> Map<K, V> loadAll(
-            final CacheLoader<? super K, ? extends V> loader,
-            Collection<? extends K> keys, final CacheErrorHandler<K, V> errorHandler) {
-        Map<K, V> map;
-        try {
-            map = (Map<K, V>) loader.loadAll(keys);
-        } catch (Exception e) {
-            map = errorHandler.loadAllFailed(loader, keys, false, e);
-        }
-        return map;
-    }
-
-    public static <K, V> Map<K, CacheEntry<K, V>> loadAllEntries(
-            final CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader,
-            Collection<? extends K> keys, final CacheErrorHandler<K, V> errorHandler) {
-        Map<K, CacheEntry<K, V>> map;
-        try {
-            map = (Map<K, CacheEntry<K, V>>) loader.loadAll(keys);
-        } catch (Exception e) {
-            map = errorHandler.loadAllEntrisFailed(loader, keys, false, e);
-        }
-        return map;
-    }
-
-    public static <K, V> CacheEntry<K, V> loadEntry(
-            final CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader,
-            final K key, final CacheErrorHandler<K, V> errorHandler) {
-        CacheEntry<K, V> entry;
-        try {
-            entry = (CacheEntry<K, V>) loader.load(key);
-        } catch (Exception e) {
-            entry = errorHandler.loadEntryFailed(loader, key, false, e);
-        }
-        return entry;
-    }
 
     public static <K, V> CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> getLoader(
             CacheConfiguration<K, V> conf) {
@@ -652,4 +527,137 @@ public class LoaderSupport {
         }
     }
 
+    static <K, V> EntrySupport getEntryLoader(CacheConfiguration<K, V> conf) {
+        return new EntrySupport(conf);
+    }
+
+    public static class ValueSupport<K, V> {
+        private final CacheErrorHandler<K, V> errorHandler;
+
+        private final AsyncCacheLoader<? super K, ? extends V> loader;
+
+        ValueSupport(CacheConfiguration<K, V> conf) {
+            errorHandler = conf.getErrorHandler();
+            loader = null;
+        }
+
+        public Future<?> asyncLoad(final K key, EventHandler<V> eh) {
+            Callback<V> c = new SingleValueCallback<K, V>(key, eh, loader, errorHandler);
+            return loader.asyncLoad(key, (Callback) c);
+        }
+
+        public Future<?> asyncLoad(final K key, Map<K, V> sink) {
+            return asyncLoad(key, new NonNullValueIntoMap<K, V>(sink, key));
+        }
+
+        public Future<?> asyncLoadAll(final Collection<? extends K> keys,
+                EventHandler<Map<K, V>> eh) {
+            Callback<Map<K, V>> c = new SingleValuesCallback<K, V>(keys, eh, loader,
+                    errorHandler);
+            return loader.asyncLoadAll(keys, (Callback) c);
+        }
+
+        public Future<?> asyncLoadAll(final Collection<? extends K> keys, Map<K, V> sink) {
+            return asyncLoadAll(keys, new NonNullValuesIntoMap<K, V>(sink));
+        }
+
+        /**
+         * Attempts to load and return a value from the specified cache loader.
+         * If the load fails by throwing an exception. The specified
+         * CacheErrorHandler will be used to handle the error.
+         * 
+         * @param loader
+         *            the cache loader that the value should be loaded from
+         * @param key
+         *            the key for which value to load
+         * @param errorHandler
+         *            the error handler used for handling errors
+         * @return the value for the given key or <tt>null</tt> if no value
+         *         could be found for the specified key
+         */
+        public V load(final K key) {
+            V v;
+            try {
+                v = loader.load(key);
+            } catch (Exception e) {
+                v = errorHandler.loadFailed(loader, key, false, e);
+            }
+            return v;
+        }
+
+        public Map<K, V> loadAll(
+
+        Collection<? extends K> keys) {
+            Map<K, V> map;
+            try {
+                map = (Map<K, V>) loader.loadAll(keys);
+            } catch (Exception e) {
+                map = errorHandler.loadAllFailed(loader, keys, false, e);
+            }
+            return map;
+        }
+
+    }
+
+    public static class EntrySupport<K, V> {
+        private final CacheErrorHandler<K, V> errorHandler;
+
+        private final AsyncCacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader;
+
+        public EntrySupport(CacheConfiguration<K, V> conf) {
+            errorHandler = conf.getErrorHandler();
+            loader = LoaderSupport.wrapAsAsync(LoaderSupport.getLoader(conf),
+                    LoaderSupport.SAME_THREAD_EXECUTOR);
+        }
+
+        public Future<?> asyncLoadEntry(
+
+        final K key, AbstractCache<K, V> sink) {
+            return asyncLoadEntry(key, new NonNullEntryIntoCache<K, V>(sink));
+        }
+
+        public Future<?> asyncLoadEntry(
+
+        final K key, EventHandler<CacheEntry<K, V>> eh) {
+            if (key == null) {
+                throw new NullPointerException("key is null");
+            }
+            Callback<CacheEntry<K, V>> c = new SingleEntryCallback<K, V>(key, eh, loader,
+                    errorHandler);
+            return loader.asyncLoad(key, (Callback) c);
+        }
+
+        public Future<?> asyncLoadAllEntries(
+
+        final Collection<? extends K> keys, EventHandler<Map<K, CacheEntry<K, V>>> eh) {
+            SingleEntriesCallback<K, V> c = new SingleEntriesCallback<K, V>(keys, eh,
+                    loader, errorHandler);
+            return loader.asyncLoadAll(keys, (Callback) c);
+        }
+
+        public Future<?> asyncLoadAllEntries(final Collection<? extends K> keys,
+                AbstractCache<K, V> cache) {
+            return asyncLoadAllEntries(keys, new NonNullEntriesIntoCache<K, V>(cache));
+        }
+
+        public Map<K, CacheEntry<K, V>> loadAllEntries(Collection<? extends K> keys) {
+            Map<K, CacheEntry<K, V>> map;
+            try {
+                map = (Map<K, CacheEntry<K, V>>) loader.loadAll(keys);
+            } catch (Exception e) {
+                map = errorHandler.loadAllEntrisFailed(loader, keys, false, e);
+            }
+            return map;
+        }
+
+        public CacheEntry<K, V> loadEntry(final K key) {
+            CacheEntry<K, V> entry;
+            try {
+                entry = (CacheEntry<K, V>) loader.load(key);
+            } catch (Exception e) {
+                entry = errorHandler.loadEntryFailed(loader, key, false, e);
+            }
+            return entry;
+        }
+    }
 }

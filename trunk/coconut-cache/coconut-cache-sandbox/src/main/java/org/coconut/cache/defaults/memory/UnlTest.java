@@ -52,7 +52,7 @@ public class UnlTest {
         System.out.println(uc.size());
         System.out.println(System.nanoTime() - start);
         System.out.println(uc.getHitStat());
-        System.out.println(uc.getStats());
+        System.out.println(uc.getGroup());
     }
 
     public static void mains(String[] args) {

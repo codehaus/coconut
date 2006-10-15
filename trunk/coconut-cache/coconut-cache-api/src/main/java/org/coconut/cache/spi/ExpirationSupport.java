@@ -201,6 +201,5 @@ public abstract class ExpirationSupport<K, V> {
         public Filter<CacheEntry<K, V>> getRefreshFilter() {
             return refreshFilter;
         }
-
     }
 }

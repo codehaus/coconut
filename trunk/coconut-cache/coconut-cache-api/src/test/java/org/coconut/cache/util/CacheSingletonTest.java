@@ -24,13 +24,13 @@ public class CacheSingletonTest extends MavenDummyTest {
 
     @Test(expected = CacheException.class)
     public void testNoConfiguration() {
-        CacheSingleton.getCacheInstance();
+        CacheSingleton.getDefaultCache();
     }
 
     @Test
     public void testSetCacheInstance() {
         Cache c = MockTestCase.mockDummy(Cache.class);
-        CacheSingleton.setCacheInstance(c);
-        Assert.assertSame(c, CacheSingleton.getCacheInstance());
+        CacheSingleton.setDefaultCache(c);
+        Assert.assertSame(c, CacheSingleton.getDefaultCache());
     }
 }

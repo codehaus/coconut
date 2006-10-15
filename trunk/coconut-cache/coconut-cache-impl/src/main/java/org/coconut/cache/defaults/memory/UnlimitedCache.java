@@ -22,7 +22,6 @@ import javax.management.NotCompliantMBeanException;
 
 import org.coconut.annotation.ThreadSafe;
 import org.coconut.apm.ApmGroup;
-import org.coconut.apm.defaults.DefaultApmGroup;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
@@ -33,7 +32,6 @@ import org.coconut.cache.management.CacheMXBean;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.AbstractCacheMXBean;
-import org.coconut.cache.spi.AsyncCacheLoader;
 import org.coconut.cache.spi.CacheEventDispatcher;
 import org.coconut.cache.spi.CacheStatisticsSupport;
 import org.coconut.cache.spi.CacheSupport;
@@ -42,6 +40,7 @@ import org.coconut.cache.spi.ExpirationSupport;
 import org.coconut.cache.spi.LoaderSupport;
 import org.coconut.cache.spi.ManagementSupport;
 import org.coconut.cache.spi.StoreSupport;
+import org.coconut.cache.spi.LoaderSupport.EntrySupport;
 import org.coconut.cache.store.CacheStore;
 import org.coconut.event.bus.DefaultEventBus;
 import org.coconut.event.bus.EventBus;
@@ -80,7 +79,7 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
 
     private final CacheStore<K, CacheEntry<K, V>> store;
 
-    private final AsyncCacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader;
+    private final EntrySupport<K, V> loaderSupport;
 
     private final CacheConfiguration.StorageStrategy storageStrategy;
 
@@ -101,12 +100,16 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
         }
         ed = new EventDispatcher(this, conf, eb);
         store = (CacheStore) conf.backend().getStore();
-        loader = LoaderSupport.wrapAsAsync(LoaderSupport.getLoader(conf),
-                LoaderSupport.SAME_THREAD_EXECUTOR);
         storageStrategy = CacheConfiguration.StorageStrategy.WRITE_THROUGH;
+
+        // support
         expirationSupport = ExpirationSupport.newFinal(conf);
-        // important must be last, because of final value being inlined.
+        loaderSupport = new LoaderSupport.EntrySupport<K, V>(conf);
         managementSupport = new ManagementSupport(conf);
+
+        expirationSupport.addTo(managementSupport.getGroup());
+        statistics.addTo(managementSupport.getGroup());
+        // important must be last, because of final value being inlined.
         map = new MyMap();
         if (conf.getInitialMap() != null) {
             putAll(conf.getInitialMap());
@@ -120,7 +123,7 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
 
     @SuppressWarnings("unchecked")
     public UnlimitedCache(Map<K, V> map) {
-        this(CacheConfiguration.DEFAULT_CONFIGURATION);
+        this();
         if (map == null) {
             throw new NullPointerException("map is null");
         }
@@ -174,7 +177,7 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
     /** {@inheritDoc} */
     @Override
     public Future<?> loadAsync(final K key) {
-        return LoaderSupport.asyncLoadEntry(loader, key, this);
+        return loaderSupport.asyncLoadEntry(key, this);
     }
 
     /**
@@ -182,25 +185,13 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
      */
     @Override
     public Future<?> loadAllAsync(Collection<? extends K> keys) {
-        return LoaderSupport.asyncLoadAllEntries(loader, keys, this);
+        return loaderSupport.asyncLoadAllEntries(keys, this);
     }
 
     @Override
     public void start() {
         super.start();
-        if (getConfiguration().jmx().isRegister()) {
-            String name = "org.coconut.cache:name=" + getConfiguration().getName()
-                    + ",group=$1,subgroup=$2";
-            ApmGroup dg = DefaultApmGroup.newRoot(name, getConfiguration().jmx()
-                    .getMBeanServer());
-            expirationSupport.addTo(dg);
-            statistics.addTo(dg);
-            try {
-                dg.register("org.coconut.cache:name=$0,group=$1,subgroup=$2");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        managementSupport.start(this);
         System.out.println("started");
     }
 
@@ -718,12 +709,8 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
         return eb;
     }
 
-    public Collection<Object> getMetrics() {
-        return statistics.getMetrics();
-    }
-
-    public CacheStatisticsSupport getStats() {
-        return statistics;
+    public ApmGroup getGroup() {
+        return managementSupport.getGroup();
     }
 
     /** {@inheritDoc} */
@@ -749,7 +736,7 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
         MyEntry entry = map.get(key);
 
         if (entry == null) { // Cache Miss
-            CacheEntry<K, V> ce = LoaderSupport.loadEntry(loader, key, getErrorHandler());
+            CacheEntry<K, V> ce = loaderSupport.loadEntry(key);
             if (ce != null) {
                 entry = new MyEntry(ce);
                 added(entry, null, ce);
@@ -764,8 +751,7 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
             statistics.entryGetStop(entry, start, false);
         } else {
             if (expirationSupport.doStrictAndLoad(this, entry)) {
-                CacheEntry<K, V> loadEntry = LoaderSupport.loadEntry(loader, key,
-                        getErrorHandler());
+                CacheEntry<K, V> loadEntry = loaderSupport.loadEntry(key);
                 statistics.entryExpired();
                 // TODO what about lazy.., when does it expire??
                 if (loadEntry == null) {
