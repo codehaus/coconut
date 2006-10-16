@@ -14,6 +14,7 @@ import javax.management.NotificationListener;
 import javax.management.ObjectName;
 
 import org.coconut.cache.Cache;
+import org.coconut.cache.defaults.support.JMXSupport;
 import org.coconut.test.MockTestCase;
 
 

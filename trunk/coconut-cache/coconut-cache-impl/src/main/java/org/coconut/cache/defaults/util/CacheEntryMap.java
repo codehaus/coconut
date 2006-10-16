@@ -429,10 +429,6 @@ public abstract class CacheEntryMap<K, V, M extends CacheEntryMap.Entry<K, V>>
             return value;
         }
 
-        public V getValueSilent() {
-            return value;
-        }
-
         public int hashCode() {
             return key.hashCode() ^ value.hashCode();
         }

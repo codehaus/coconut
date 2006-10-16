@@ -2,7 +2,7 @@
  * the MIT license, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.cache.spi;
+package org.coconut.cache.defaults.support;
 
 import java.lang.management.ManagementFactory;
 import java.util.Properties;
@@ -18,6 +18,8 @@ import javax.management.ObjectName;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.management.CacheMXBean;
+import org.coconut.cache.spi.AbstractCache;
+import org.coconut.cache.spi.AbstractCacheMXBean;
 import org.coconut.event.bus.EventBus;
 
 /**

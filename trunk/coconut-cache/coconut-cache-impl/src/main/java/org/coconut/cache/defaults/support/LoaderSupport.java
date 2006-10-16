@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the MIT license, see http://coconut.codehaus.org/license.
  */
-package org.coconut.cache.spi;
+package org.coconut.cache.defaults.support;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -17,6 +17,9 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheException;
 import org.coconut.cache.CacheLoader;
 import org.coconut.cache.Caches;
+import org.coconut.cache.spi.AbstractCache;
+import org.coconut.cache.spi.AsyncCacheLoader;
+import org.coconut.cache.spi.CacheErrorHandler;
 import org.coconut.core.Callback;
 import org.coconut.core.EventHandler;
 

@@ -19,7 +19,8 @@ public class CacheEntryKeys {
     public final static String TOTAL_STORAGE_SIZE_IN_BYTES = "last_load_time";
 
     public static <K, V> Long getLastLoadTime(CacheEntry<K, V> ce) {
-        Long value = (Long) ce.getAttributes().get(LAST_LOAD_TIME);
+        // Long value = (Long) ce.getAttributes().get(LAST_LOAD_TIME);
+        Long value = 0l;
         return value == null ? -1 : value;
     }
 }

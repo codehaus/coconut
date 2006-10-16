@@ -1,12 +1,13 @@
 /* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the MIT license, see http://coconut.codehaus.org/license.
  */
-package org.coconut.cache.spi;
+package org.coconut.cache.defaults.support;
 
 import org.coconut.apm.ApmGroup;
 import org.coconut.apm.defaults.DefaultApmGroup;
 import org.coconut.apm.monitor.DefaultMetricManager;
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.spi.AbstractCache;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

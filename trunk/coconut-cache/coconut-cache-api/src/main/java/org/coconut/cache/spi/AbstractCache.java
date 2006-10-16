@@ -147,11 +147,11 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         // evict is ignored for default implementation
     }
 
-    protected void putEntry(CacheEntry<K, V> entry) {
+    public void putEntry(CacheEntry<K, V> entry) {
         put(entry.getKey(), entry.getValue());
     }
 
-    protected void putEntries(Collection<CacheEntry<K, V>> entries) {
+    public void putEntries(Collection<CacheEntry<K, V>> entries) {
         for (CacheEntry<K, V> ce : entries) {
             putEntry(ce);
         }
@@ -358,7 +358,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         }
     }
 
-    protected EventBus jmxRegistrant() {
+    public EventBus jmxRegistrant() {
         return getEventBus();
     }
 

@@ -104,5 +104,5 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V>, CostSizeObject {
      * Returns a map of attributes (optional operation). This are valid only
      * doing lifetime and will not be persisted.
      */
-    Map<String, Object> getAttributes();
+    //Map<String, Object> getAttributes();
 }

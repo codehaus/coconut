@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the MIT license, see http://coconut.codehaus.org/license.
  */
-package org.coconut.cache.spi;
+package org.coconut.cache.defaults.support;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,8 +12,10 @@ import org.coconut.apm.monitor.LongCounter;
 import org.coconut.apm.monitor.LongSamplingCounter;
 import org.coconut.apm.spi.annotation.ManagedAttribute;
 import org.coconut.cache.Cache;
+import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.Caches;
+import org.coconut.cache.spi.Ressources;
 import org.coconut.core.Clock;
 
 /**
@@ -69,7 +71,7 @@ public final class CacheStatisticsSupport<K, V> {
 
     public final static String ENTRY_REMOVE_TIMER = "Cache remove times";
 
-    public static <K, V> CacheStatisticsSupport<K, V> createConcurrent() {
+    public static <K, V> CacheStatisticsSupport<K, V> createConcurrent(CacheConfiguration<K, V> conf) {
         return new CacheStatisticsSupport<K, V>(true);
     }
 
