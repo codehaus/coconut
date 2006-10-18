@@ -3,8 +3,6 @@
  */
 package org.coconut.cache.examples.expiration;
 
-import java.util.concurrent.TimeUnit;
-
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
