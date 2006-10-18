@@ -9,12 +9,10 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.filter.Filter;
 
 /**
- * 
- * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-//START SNIPPET: class
+// START SNIPPET: class
 public class Refresh2200FilterExample<K, V> implements Filter<CacheEntry<K, V>> {
     private volatile long nextRefresh;
 
