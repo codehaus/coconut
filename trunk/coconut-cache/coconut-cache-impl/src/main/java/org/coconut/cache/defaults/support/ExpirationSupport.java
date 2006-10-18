@@ -20,18 +20,18 @@ import org.coconut.internal.util.tabular.TabularFormatter;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public abstract class ExpirationSupport<K, V> {
-    final Clock clock;
+    private final Clock clock;
 
-    private final ExpirationStrategy expirationStrategy;
+    // private final ExpirationStrategy expirationStrategy;
 
     ExpirationSupport(CacheConfiguration<K, V> conf) {
         clock = conf.getClock();
-        expirationStrategy = conf.expiration().getStrategy();
+        // expirationStrategy = conf.expiration().getStrategy();
     }
 
-    public ExpirationStrategy getExpirationStrategy() {
-        return expirationStrategy;
-    }
+    // public ExpirationStrategy getExpirationStrategy() {
+    // return expirationStrategy;
+    // }
 
     @ManagedAttribute(defaultValue = "Default Expiration Nano", description = "The default expiration time of cache entries in nanoseconds")
     public long getDefaultExpirationNanoTime() {
@@ -81,27 +81,32 @@ public abstract class ExpirationSupport<K, V> {
         return false;
     }
 
-    public boolean doStrictAndLoad(Cache<K, V> cache, CacheEntry<K, V> entry) {
-        boolean strictLoading = false;
-        if (getExpirationStrategy() == ExpirationStrategy.LAZY) {
-            if (needsRefresh(entry) || isExpired(entry)) {
-                cache.loadAsync(entry.getKey());
-            }
-        } else if (getExpirationStrategy() == ExpirationStrategy.STRICT) {
-            strictLoading = isExpired(entry);
-            if (!strictLoading && needsRefresh(entry)) {
-                cache.loadAsync(entry.getKey());
-            }
-        }
-        return strictLoading;
-    }
+    // public boolean doStrictAndLoad(Cache<K, V> cache, CacheEntry<K, V> entry)
+    // {
+    // boolean strictLoading = false;
+    // if (getExpirationStrategy() == ExpirationStrategy.LAZY) {
+    // if (needsRefresh(entry) || isExpired(entry)) {
+    // cache.loadAsync(entry.getKey());
+    // }
+    // } else if (getExpirationStrategy() == ExpirationStrategy.STRICT) {
+    // strictLoading = isExpired(entry);
+    // if (!strictLoading && needsRefresh(entry)) {
+    // cache.loadAsync(entry.getKey());
+    // }
+    // }
+    // return strictLoading;
+    // }
 
     public long getDeadline(long timeout, TimeUnit unit) {
         if (timeout == Cache.NEVER_EXPIRE) {
             return Long.MAX_VALUE;
         } else if (timeout == Cache.DEFAULT_EXPIRATION) {
-            return clock.getDeadlineFromNow(getDefaultExpirationNanoTime(),
-                    TimeUnit.NANOSECONDS);
+            long d = getDefaultExpirationNanoTime();
+            if (d == Cache.NEVER_EXPIRE) {
+                return Cache.NEVER_EXPIRE;
+            } else {
+                return clock.getDeadlineFromNow(d, TimeUnit.NANOSECONDS);
+            }
         } else {
             return clock.getDeadlineFromNow(timeout, unit);
         }
@@ -172,10 +177,10 @@ public abstract class ExpirationSupport<K, V> {
             super(conf);
             defaultExpirationTime = conf.expiration().getDefaultTimeout(
                     TimeUnit.NANOSECONDS);
-            refreshExpirationTime = conf.expiration().getRefreshWindow(
+            refreshExpirationTime = conf.expiration().getRefreshInterval(
                     TimeUnit.NANOSECONDS);
             expireFilter = conf.expiration().getFilter();
-            refreshFilter = conf.expiration().getPreExpirationFilter();
+            refreshFilter = conf.expiration().getRefreshFilter();
         }
 
         long innerGetDefaultExpirationNanoTime() {

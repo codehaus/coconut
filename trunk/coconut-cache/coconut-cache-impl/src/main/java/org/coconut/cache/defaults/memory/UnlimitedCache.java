@@ -30,6 +30,8 @@ import org.coconut.cache.defaults.support.LoaderSupport.EntrySupport;
 import org.coconut.cache.defaults.util.CacheEntryMap;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.CacheSupport;
+import org.coconut.core.EventHandlers;
+import org.coconut.core.Offerable;
 import org.coconut.event.bus.EventBus;
 import org.coconut.filter.Filter;
 import org.coconut.filter.Filters;
@@ -166,30 +168,31 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
             V value = ce == null ? null : ce.getValue();
             eventSupport.getAndLoad(this, key, ce);
             statistics.entryGetStop(entry, start, false);
-        } else {
-            if (expirationSupport.doStrictAndLoad(this, entry)) {
-                CacheEntry<K, V> loadEntry = loaderSupport.loadEntry(key);
-                statistics.entryExpired();
-                // TODO what about lazy.., when does it expire??
-                if (loadEntry == null) {
-                    map.remove(key);
-                    entry = null;
-                } else {
-                    MyEntry newEntry = new MyEntry(loadEntry);
-                    added(newEntry, entry, loadEntry);
-                    map.put(key, entry);
-                    entry.accessed();
-                    entry = newEntry;
-                }
-                eventSupport.expiredAndGet(this, key, loadEntry);
-                statistics.entryGetStop(entry, start, false);
+        } else if (expirationSupport.isExpired(entry)) {
+            CacheEntry<K, V> loadEntry = loaderSupport.loadEntry(key);
+            statistics.entryExpired();
+            // TODO what about lazy.., when does it expire??
+            if (loadEntry == null) {
+                map.remove(key);
+                entry = null;
             } else {
-                entry.hits++;
+                MyEntry newEntry = new MyEntry(loadEntry);
+                added(newEntry, entry, loadEntry);
+                map.put(key, entry);
                 entry.accessed();
-                entry.touched();
-                eventSupport.getHit(this, entry);
-                statistics.entryGetStop(entry, start, true);
+                entry = newEntry;
             }
+            eventSupport.expiredAndGet(this, key, loadEntry);
+            statistics.entryGetStop(entry, start, false);
+        } else {
+            if (expirationSupport.needsRefresh(entry)) {
+                loadAsync(entry.getKey());
+            }
+            entry.hits++;
+            entry.accessed();
+            entry.touched();
+            eventSupport.getHit(this, entry);
+            statistics.entryGetStop(entry, start, true);
         }
         return entry;
     }
@@ -274,8 +277,10 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
             throw new NullPointerException("key is null");
         }
         MyEntry e = map.remove(key);
-        evictionSupport.remove(e.policyIndex);
-        eventSupport.removed(this, e);
+        if (e != null) {
+            evictionSupport.remove(e.policyIndex);
+            eventSupport.removed(this, e);
+        }
         return e == null ? null : e.getValue();
     }
 

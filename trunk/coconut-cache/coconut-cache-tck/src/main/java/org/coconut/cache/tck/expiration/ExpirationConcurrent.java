@@ -32,8 +32,8 @@ public class ExpirationConcurrent extends CacheTestBundle {
         for (;;) {
             gets = 0;
             CacheConfiguration<Integer, String> cc = CacheConfiguration.newConf();
-            Cache<Integer, String> c = newCache(cc.expiration().setStrategy(
-                    CacheConfiguration.ExpirationStrategy.STRICT).c().setClock(Clock.NANO_CLOCK));
+            Cache<Integer, String> c = newCache(cc.expiration().c().setClock(
+                    Clock.NANO_CLOCK));
             long earlyStart = Clock.NANO_CLOCK.relativeTime();
             c.put(M1.getKey(), M1.getValue(), s, TimeUnit.NANOSECONDS);
             long lateStart = Clock.NANO_CLOCK.relativeTime();
@@ -65,8 +65,8 @@ public class ExpirationConcurrent extends CacheTestBundle {
         final AtomicLong counts = new AtomicLong();
         CountdownLatchLoader loader = CountdownLatchLoader.integerToStringLoader(1);
         CacheConfiguration<Integer, String> cc = CacheConfiguration.newConf();
-        final Cache<Integer, String> c = newCache(cc.backend().setLoader(loader).c().expiration().setStrategy(
-                CacheConfiguration.ExpirationStrategy.STRICT).c().setClock(Clock.NANO_CLOCK));
+        final Cache<Integer, String> c = newCache(cc.backend().setLoader(loader).c()
+                .setClock(Clock.NANO_CLOCK));
 
         c.put(M1.getKey(), "ZXCW", 1, TimeUnit.NANOSECONDS);
 
@@ -98,8 +98,8 @@ public class ExpirationConcurrent extends CacheTestBundle {
         final AtomicLong counts = new AtomicLong();
         CountdownLatchLoader loader = CountdownLatchLoader.integerToStringLoader(1);
         CacheConfiguration<Integer, String> cc = CacheConfiguration.newConf();
-        final Cache<Integer, String> c = newCache(cc.backend().setLoader(loader).c().expiration().setStrategy(
-                CacheConfiguration.ExpirationStrategy.LAZY).c().setClock(Clock.NANO_CLOCK));
+        final Cache<Integer, String> c = newCache(cc.backend().setLoader(loader).c()
+                .setClock(Clock.NANO_CLOCK));
 
         c.put(M1.getKey(), "ZXCW", 1, TimeUnit.NANOSECONDS);
 

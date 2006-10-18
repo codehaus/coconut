@@ -126,25 +126,25 @@ public class CacheConfigurationTest extends MavenDummyTest {
     public void testDefaultExpirationNPE() {
         conf.expiration().setDefaultTimeout(1, null);
     }
-
-    @Test
-    public void testExpirationStrategy() {
-        assertEquals(ExpirationStrategy.ON_EVICT, conf.expiration().getStrategy());
-
-        assertTrue(conf.expiration().setStrategy(ExpirationStrategy.LAZY) instanceof CacheConfiguration.Expiration);
-
-        assertEquals(ExpirationStrategy.LAZY, conf.expiration().getStrategy());
-
-        assertTrue(conf.expiration().setStrategy(ExpirationStrategy.STRICT) instanceof CacheConfiguration.Expiration);
-
-        assertEquals(ExpirationStrategy.STRICT, conf.expiration().getStrategy());
-
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testExpirationStrategyNullPointer() {
-        conf.expiration().setStrategy(null);
-    }
+//
+//    @Test
+//    public void testExpirationStrategy() {
+//        assertEquals(ExpirationStrategy.ON_EVICT, conf.expiration().getStrategy());
+//
+//        assertTrue(conf.expiration().setStrategy(ExpirationStrategy.LAZY) instanceof CacheConfiguration.Expiration);
+//
+//        assertEquals(ExpirationStrategy.LAZY, conf.expiration().getStrategy());
+//
+//        assertTrue(conf.expiration().setStrategy(ExpirationStrategy.STRICT) instanceof CacheConfiguration.Expiration);
+//
+//        assertEquals(ExpirationStrategy.STRICT, conf.expiration().getStrategy());
+//
+//    }
+//
+//    @Test(expected = NullPointerException.class)
+//    public void testExpirationStrategyNullPointer() {
+//        conf.expiration().setStrategy(null);
+//    }
 
     public static junit.framework.Test suite() {
         return new JUnit4TestAdapter(CacheConfigurationTest.class);

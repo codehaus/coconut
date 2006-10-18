@@ -480,11 +480,11 @@ public final class CacheConfiguration<K, V> implements Cloneable {
             }
         }
 
-        public long getRefreshWindow(TimeUnit unit) {
+        public long getRefreshInterval(TimeUnit unit) {
             return unit.convert(defaultExpirationRefreshDuration, TimeUnit.NANOSECONDS);
         }
 
-        public Filter<CacheEntry<K, V>> getPreExpirationFilter() {
+        public Filter<CacheEntry<K, V>> getRefreshFilter() {
             return expirationRefreshFilter;
         }
 
@@ -492,9 +492,9 @@ public final class CacheConfiguration<K, V> implements Cloneable {
             return expirationFilter;
         }
 
-        public ExpirationStrategy getStrategy() {
-            return expirationStrategy;
-        }
+//        public ExpirationStrategy getStrategy() {
+//            return expirationStrategy;
+//        }
 
         /**
          * Sets the default expiration time for elements added to the cache.
@@ -539,27 +539,27 @@ public final class CacheConfiguration<K, V> implements Cloneable {
             expirationFilter = filter;
             return this;
         }
-
-        /**
-         * Sets the {@link ExpirationStrategy} that the cache should use. If no
-         * expiration strategy is set the {@link #DEFAULT_EXPIRATION_STRATEGY}
-         * default expiration strategy is used.
-         * 
-         * @param strategy
-         *            the expiration strategy
-         * @return the current CacheConfiguration
-         * @throws NullPointerException
-         *             if the specified expirationStrategy is <code>null</code>
-         * @see #DEFAULT_EXPIRATION_STRATEGY
-         */
-        public Expiration setStrategy(ExpirationStrategy strategy) {
-            if (strategy == null) {
-                throw new NullPointerException(
-                        "strategy is null, an expiration strategy must be defined");
-            }
-            expirationStrategy = strategy;
-            return this;
-        }
+//
+//        /**
+//         * Sets the {@link ExpirationStrategy} that the cache should use. If no
+//         * expiration strategy is set the {@link #DEFAULT_EXPIRATION_STRATEGY}
+//         * default expiration strategy is used.
+//         * 
+//         * @param strategy
+//         *            the expiration strategy
+//         * @return the current CacheConfiguration
+//         * @throws NullPointerException
+//         *             if the specified expirationStrategy is <code>null</code>
+//         * @see #DEFAULT_EXPIRATION_STRATEGY
+//         */
+//        public Expiration setStrategy(ExpirationStrategy strategy) {
+//            if (strategy == null) {
+//                throw new NullPointerException(
+//                        "strategy is null, an expiration strategy must be defined");
+//            }
+//            expirationStrategy = strategy;
+//            return this;
+//        }
 
         /**
          * Sets the default expiration refresh window. Setting of the refresh
@@ -570,7 +570,7 @@ public final class CacheConfiguration<K, V> implements Cloneable {
          * @param unit
          * @return
          */
-        public Expiration setPreExpirationRefreshTime(long duration, TimeUnit unit) {
+        public Expiration setRefreshInterval(long duration, TimeUnit unit) {
             if (duration <= 0) {
                 throw new IllegalArgumentException(
                         "duration must be greather then 0, was " + duration);
@@ -581,7 +581,7 @@ public final class CacheConfiguration<K, V> implements Cloneable {
             return this;
         }
 
-        public Expiration setPreExpirationFilter(Filter<CacheEntry<K, V>> filter) {
+        public Expiration setRefreshFilter(Filter<CacheEntry<K, V>> filter) {
             expirationRefreshFilter = filter;
             return this;
         }

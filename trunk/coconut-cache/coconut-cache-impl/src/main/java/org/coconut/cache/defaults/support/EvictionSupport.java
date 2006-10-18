@@ -13,7 +13,7 @@ import org.coconut.cache.policy.ReplacementPolicy;
 public class EvictionSupport<T> {
     private final ReplacementPolicy<T> cp;
 
-    private int maxCapacity;
+    private final int maxCapacity;
 
     public EvictionSupport(CacheConfiguration<?, ?> conf) {
         cp = conf.eviction().getPolicy();

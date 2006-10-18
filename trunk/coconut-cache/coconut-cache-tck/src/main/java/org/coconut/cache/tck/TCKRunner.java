@@ -27,10 +27,9 @@ import org.coconut.cache.tck.eviction.CacheEntryToPolicy;
 import org.coconut.cache.tck.eviction.SerializablePolicyEviction;
 import org.coconut.cache.tck.eviction.SimplePolicyEviction;
 import org.coconut.cache.tck.expiration.ExpirationCommon;
-import org.coconut.cache.tck.expiration.ExpirationConcurrent;
-import org.coconut.cache.tck.expiration.ExpirationLazySingleThreaded;
-import org.coconut.cache.tck.expiration.ExpirationOnEvict;
-import org.coconut.cache.tck.expiration.ExpirationStrict;
+import org.coconut.cache.tck.expiration.ExpirationEvict;
+import org.coconut.cache.tck.expiration.ExpirationFilterBased;
+import org.coconut.cache.tck.expiration.ExpirationTimeBased;
 import org.coconut.cache.tck.loading.ConcurrentLoading;
 import org.coconut.cache.tck.loading.ExtendedCacheLoader;
 import org.coconut.cache.tck.loading.FutureLoading;
@@ -119,17 +118,21 @@ public class TCKRunner extends Runner {
             boolean isThreadSafe) throws InitializationError {
         if (cs.ExpirationSupport()) {
             composite.add(new TestClassRunner(ExpirationCommon.class));
-            composite.add(new TestClassRunner(ExpirationOnEvict.class));
-            composite.add(new TestClassRunner(ExpirationStrict.class));
-            if (isThreadSafe) {
-                composite.add(new TestClassRunner(ExpirationConcurrent.class));
-            } else {
-                //TODO decide what todo, I think we should throw an exception.
-                //when we have a non asynchronous loader and the lazy strategy
-                //at construction time that is...
-                
-                //composite.add(new TestClassRunner(ExpirationLazySingleThreaded.class));
-            }
+            composite.add(new TestClassRunner(ExpirationEvict.class));
+            composite.add(new TestClassRunner(ExpirationFilterBased.class));
+            composite.add(new TestClassRunner(ExpirationTimeBased.class));
+//            composite.add(new TestClassRunner(ExpirationCommon.class));
+//            composite.add(new TestClassRunner(ExpirationOnEvict.class));
+//            composite.add(new TestClassRunner(ExpirationStrict.class));
+//            if (isThreadSafe) {
+//                composite.add(new TestClassRunner(ExpirationConcurrent.class));
+//            } else {
+//                //TODO decide what todo, I think we should throw an exception.
+//                //when we have a non asynchronous loader and the lazy strategy
+//                //at construction time that is...
+//                
+//                //composite.add(new TestClassRunner(ExpirationLazySingleThreaded.class));
+//            }
         }
     }
 

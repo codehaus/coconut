@@ -13,16 +13,16 @@ import org.coconut.filter.Filter;
  */
 public class ExpirationFilter implements Filter<CacheEntry<Integer, String>> {
 
-    boolean doAccept = false;
+    volatile boolean isExpired = false;
 
-    CacheEntry<Integer, String> lastEntry;
+    volatile CacheEntry<Integer, String> lastEntry;
 
     /**
      * @see org.coconut.filter.Filter#accept(E)
      */
     public boolean accept(CacheEntry<Integer, String> element) {
         lastEntry = element;
-        return doAccept;
+        return isExpired;
     }
 
 }

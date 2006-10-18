@@ -11,10 +11,10 @@ import javax.management.NotCompliantMBeanException;
 import javax.management.Notification;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheEvent;
 import org.coconut.cache.CacheEntryEvent;
+import org.coconut.cache.CacheEvent;
+import org.coconut.cache.defaults.support.EventSupport.NotificationTransformer;
 import org.coconut.cache.management.CacheMXBean;
-import org.coconut.cache.spi.EventDispatcher.NotificationTransformer;
 import org.coconut.core.EventHandler;
 import org.coconut.event.bus.EventBus;
 import org.coconut.filter.LogicFilters;
