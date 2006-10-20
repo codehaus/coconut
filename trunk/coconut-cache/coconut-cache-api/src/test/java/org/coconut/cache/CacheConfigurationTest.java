@@ -17,7 +17,6 @@ import java.util.concurrent.TimeUnit;
 
 import junit.framework.JUnit4TestAdapter;
 
-import org.coconut.cache.CacheConfiguration.ExpirationStrategy;
 import org.coconut.test.MavenDummyTest;
 import org.junit.Before;
 import org.junit.Test;

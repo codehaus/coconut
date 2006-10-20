@@ -7,6 +7,7 @@ package org.coconut.cache.defaults.memory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
@@ -125,19 +126,27 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
     @Override
     public void evict() {
         long start = statistics.cacheEvictStart(this);
-        int count = 0;
+        int expireCount = 0;
+        int evictCount = 0;
         try {
             for (Iterator<MyEntry> iterator = map.values().iterator(); iterator.hasNext();) {
                 MyEntry m = iterator.next();
                 if (expirationSupport.evictRemove(this, m)) {
                     iterator.remove();
-                    count++;
+                    expireCount++;
                     eventSupport.expired(this, m);
                 }
             }
+            List<MyEntry> evictThese = evictionSupport.evict(map.size(), 0);
+            for (MyEntry e : evictThese) {
+                map.remove(e.getKey());
+                eventSupport.evicted(this, e);
+                evictCount++;
+            }
         } finally {
-            eventSupport.evicted(this, count);
-            statistics.entryExpired(count);
+            eventSupport.expired(this, expireCount);
+            eventSupport.evicted(this, evictCount);
+            statistics.entryExpired(expireCount);
             statistics.cacheEvictStop(this, start);
         }
     }
@@ -389,7 +398,7 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
         return prev;
     }
 
-    void trimToSize(int newSize) {
+    public void trimToSize(int newSize) {
         while (newSize < size()) {
             evictNext();
         }

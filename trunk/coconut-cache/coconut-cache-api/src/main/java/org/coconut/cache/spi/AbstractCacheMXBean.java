@@ -13,9 +13,9 @@ import javax.management.Notification;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntryEvent;
 import org.coconut.cache.CacheEvent;
-import org.coconut.cache.defaults.support.EventSupport.NotificationTransformer;
 import org.coconut.cache.management.CacheMXBean;
 import org.coconut.core.EventHandler;
+import org.coconut.core.Transformer;
 import org.coconut.event.bus.EventBus;
 import org.coconut.filter.LogicFilters;
 import org.coconut.internal.jmx.JmxEmitterSupport;
@@ -88,8 +88,8 @@ public class AbstractCacheMXBean<K, V> extends JmxEmitterSupport implements
      */
     public void handle(CacheEvent<K,V> event) {
         try {
-            Notification n = ((NotificationTransformer) event)
-                    .notification(((AbstractCache) event.getCache()).getName());
+            Notification n = ((Transformer<Object, Notification>) event)
+                    .transform(((AbstractCache) event.getCache()).getName());
             super.sendNotification(n);
         } catch (Exception e) {
             e.printStackTrace();

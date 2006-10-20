@@ -10,7 +10,6 @@ import org.coconut.apm.spi.annotation.ManagedAttribute;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.CacheConfiguration.ExpirationStrategy;
 import org.coconut.core.Clock;
 import org.coconut.filter.Filter;
 import org.coconut.internal.util.tabular.TabularFormatter;
@@ -22,16 +21,9 @@ import org.coconut.internal.util.tabular.TabularFormatter;
 public abstract class ExpirationSupport<K, V> {
     private final Clock clock;
 
-    // private final ExpirationStrategy expirationStrategy;
-
-    ExpirationSupport(CacheConfiguration<K, V> conf) {
+    public ExpirationSupport(CacheConfiguration<K, V> conf) {
         clock = conf.getClock();
-        // expirationStrategy = conf.expiration().getStrategy();
     }
-
-    // public ExpirationStrategy getExpirationStrategy() {
-    // return expirationStrategy;
-    // }
 
     @ManagedAttribute(defaultValue = "Default Expiration Nano", description = "The default expiration time of cache entries in nanoseconds")
     public long getDefaultExpirationNanoTime() {
@@ -80,22 +72,6 @@ public abstract class ExpirationSupport<K, V> {
         }
         return false;
     }
-
-    // public boolean doStrictAndLoad(Cache<K, V> cache, CacheEntry<K, V> entry)
-    // {
-    // boolean strictLoading = false;
-    // if (getExpirationStrategy() == ExpirationStrategy.LAZY) {
-    // if (needsRefresh(entry) || isExpired(entry)) {
-    // cache.loadAsync(entry.getKey());
-    // }
-    // } else if (getExpirationStrategy() == ExpirationStrategy.STRICT) {
-    // strictLoading = isExpired(entry);
-    // if (!strictLoading && needsRefresh(entry)) {
-    // cache.loadAsync(entry.getKey());
-    // }
-    // }
-    // return strictLoading;
-    // }
 
     public long getDeadline(long timeout, TimeUnit unit) {
         if (timeout == Cache.NEVER_EXPIRE) {

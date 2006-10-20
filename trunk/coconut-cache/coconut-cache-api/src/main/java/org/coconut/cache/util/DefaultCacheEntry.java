@@ -7,6 +7,7 @@ package org.coconut.cache.util;
 import java.util.Collections;
 import java.util.Map;
 
+import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.policy.CostSizeObject;
 
@@ -15,6 +16,22 @@ import org.coconut.cache.policy.CostSizeObject;
  * @version $Id$
  */
 public class DefaultCacheEntry<K, V> implements CacheEntry<K, V> {
+
+    public static final double DEFAULT_COST = CostSizeObject.DEFAULT_COST;
+
+    public static final long DEFAULT_CREATION_TIME = 0;
+
+    public static final long DEFAULT_EXPIRATION_TIME = Cache.DEFAULT_EXPIRATION;
+
+    public static final long DEFAULT_HIT_COUNT = 0;
+
+    public static final long DEFAULT_LAST_ACCESS_TIME = 0;
+
+    public static final long DEFAULT_LAST_UPDATE_TIME = Cache.DEFAULT_EXPIRATION;
+
+    public static final long DEFAULT_SIZE = CostSizeObject.DEFAULT_SIZE;
+
+    public static final long DEFAULT_VERSION = 0;
 
     private final V value;
 
@@ -46,14 +63,14 @@ public class DefaultCacheEntry<K, V> implements CacheEntry<K, V> {
      * {@inheritDoc}
      */
     public double getCost() {
-        return CostSizeObject.DEFAULT_COST;
+        return DEFAULT_COST;
     }
 
     /**
      * {@inheritDoc}
      */
     public long getSize() {
-        return CostSizeObject.DEFAULT_SIZE;
+        return DEFAULT_SIZE;
     }
 
     /**
@@ -67,42 +84,42 @@ public class DefaultCacheEntry<K, V> implements CacheEntry<K, V> {
      * {@inheritDoc}
      */
     public long getCreationTime() {
-        return 0;
+        return DEFAULT_CREATION_TIME;
     }
 
     /**
      * {@inheritDoc}
      */
     public long getExpirationTime() {
-        return 0;
+        return DEFAULT_EXPIRATION_TIME;
     }
 
     /**
      * {@inheritDoc}
      */
     public long getHits() {
-        return 0;
+        return DEFAULT_HIT_COUNT;
     }
 
     /**
      * {@inheritDoc}
      */
     public long getLastAccessTime() {
-        return 0;
+        return DEFAULT_LAST_ACCESS_TIME;
     }
 
     /**
      * {@inheritDoc}
      */
     public long getLastUpdateTime() {
-        return 0;
+        return DEFAULT_LAST_UPDATE_TIME;
     }
 
     /**
      * {@inheritDoc}
      */
     public long getVersion() {
-        return 0;
+        return DEFAULT_VERSION;
     }
 
     /**

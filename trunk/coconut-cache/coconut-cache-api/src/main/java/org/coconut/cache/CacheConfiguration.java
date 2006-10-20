@@ -87,13 +87,6 @@ import org.xml.sax.SAXException;
 @ThreadSafe(false)
 public final class CacheConfiguration<K, V> implements Cloneable {
 
-    /**
-     * The default configuration that can be used by any cache that is not
-     * provided with a cache configuration object.
-     */
-    public static final CacheConfiguration DEFAULT_CONFIGURATION = CacheConfiguration
-            .newConf();
-
     public class Backend {
 
         /**
@@ -298,88 +291,7 @@ public final class CacheConfiguration<K, V> implements Cloneable {
         WEAK;
     }
 
-    private TimeUnit statisticsTimeUnit = TimeUnit.MILLISECONDS;
-
-    private boolean statisticsEnabled = false;
-
-    private boolean useHighResolutionCounter = true;
-
-    private boolean enableTiming = true;
-
-    public class Statistics {
-        public void setTimeUnit(TimeUnit unit) {
-            if (unit == null) {
-                throw new NullPointerException("unit is null");
-            }
-            statisticsTimeUnit = unit;
-        }
-
-        public TimeUnit getTimeUnit() {
-            return statisticsTimeUnit;
-        }
-
-        public void setEnabled(boolean isEnabled) {
-            statisticsEnabled = isEnabled;
-        }
-
-        public boolean getEnabled() {
-            return statisticsEnabled;
-        }
-
-    }
-
-    //
-    // public class Threading {
-    // public void stopExecutorsOnCacheShutdown(boolean doIt) {
-    //
-    // }
-    //
-    // public void setAsyncLoadExecutor(Executor e) {
-    //
-    // }
-    //
-    // public void setEvictExecutor(ScheduledExecutorService e) {
-    //
-    // }
-    // }
-
     public class Eviction {
-
-        /**
-         * This is probably only usefull when we have configured the writeback
-         * strategy. Or perhaps if we have lots of lock contension.
-         * 
-         * @return the number of items to prune
-         */
-        public int getCapacityNumberOfItemsToPrune() {
-            return 1;
-            // 0 = conservative prune as little as possible
-        }
-
-        // public static class EvictionStrategy {
-        // public static EvictionStrategy PCT_25 = null;
-        //
-        // public static EvictionStrategy PCT_50 = null;
-        //
-        // public static EvictionStrategy PCT_75 = null;
-        //
-        // public static EvictionStrategy ALL = null;
-        //
-        // private final boolean isPct=true;
-        // public static EvictionStrategy pctEviction(float pct) {
-        // return null;
-        // }
-        // public static EvictionStrategy numEviction(float pct) {
-        // return null;
-        // }
-        // public int getNumberToPrune(int currentSize) {
-        // return 1;
-        // }
-        // }
-        // hmm class CapacityStrategy
-
-        // number of items to evict every time, is this usefull?
-        //
 
         /**
          * Returns the CacheConfiguration that this instance is part of.
@@ -395,13 +307,30 @@ public final class CacheConfiguration<K, V> implements Cloneable {
          * 
          * @return the maximum number of elements.
          */
-        public int getMaximumCapacity() {
-            return maximumElements;
+        public long getMaximumCapacity() {
+            return maximumCapacity;
+        }
+
+        /**
+         * Integer.MAX_VALUE = unlimited
+         * 
+         * @return the maximum number of elements.
+         */
+        public int getMaximumSize() {
+            return maximumSize;
         }
 
         public ReplacementPolicy getPolicy() {
             return replacementPolicy;
 
+        }
+
+        public long getPreferableCapacity() {
+            return preferableCapacity;
+        }
+
+        public int getPreferableSize() {
+            return preferableSize;
         }
 
         /**
@@ -415,13 +344,37 @@ public final class CacheConfiguration<K, V> implements Cloneable {
          * @param elements
          *            the maximum capacity.
          */
-        public Eviction setMaximumCapacity(int elements) {
+        public Eviction setMaximumCapacity(long capacity) {
+            // TODO we probably want to allow 0...
+            // easy way do disable caching
+            if (capacity <= 0) {
+                throw new IllegalArgumentException(
+                        "capacity must be greater then 0, was " + capacity);
+            }
+            maximumCapacity = capacity;
+            return this;
+        }
+
+        /**
+         * Sets that maximum number of elements that the cache can contain. If
+         * the limit is reached the cache should evict elements according to the
+         * cache policy specified in {@link #setPolicy(ReplacementPolicy)}.
+         * <p>
+         * The default value is Integer.MAX_VALUE TODO we might allow 0 as
+         * value, if its 0 it will imidiatly discard the element.
+         * 
+         * @param elements
+         *            the maximum capacity.
+         */
+        public Eviction setMaximumSize(int elements) {
+            // TODO we probably want to allow 0...
+            // easy way do disable caching
             if (elements <= 0) {
                 throw new IllegalArgumentException(
                         "number of maximum elements must be greater then 0, was "
                                 + elements);
             }
-            maximumElements = elements;
+            maximumSize = elements;
             return this;
         }
 
@@ -432,32 +385,16 @@ public final class CacheConfiguration<K, V> implements Cloneable {
             return this;
         }
 
-        public Eviction setUseSoftReferenceOnEvictedEntriesHits(boolean useit) {
-            // the idea is to maintain a softreference to items that are
-            // evicted.
-            // when we run low on memory they will automatically be removed by
-            // the
-            // gc.
-            // Its
+        public Eviction setPreferableCapacity(long capacity) {
+            preferableCapacity = capacity;
             return this;
         }
 
-        public Eviction setCustomExpirator(Filter<? extends Cache> filter) {
-            // kunne også være rart med en version, der f.eks. kunne tage alle
-            // store elementer
-            // Filter f = new Filter<Cache>() {
-            // private int evictFooElement;
-            //
-            // public boolean accept(Cache element) {
-            // // TODO Auto-generated method stub
-            // return evictFooElement-- > 0;
-            // }
-            // };
-            // mem notifier-> receive low
-            // mem->f.evictFooElement=10000->cache.evict
-            // to gange federe at sende som events
+        public Eviction setPreferableSize(int size) {
+            preferableSize = size;
             return this;
         }
+
     }
 
     public class Expiration {
@@ -480,21 +417,17 @@ public final class CacheConfiguration<K, V> implements Cloneable {
             }
         }
 
-        public long getRefreshInterval(TimeUnit unit) {
-            return unit.convert(defaultExpirationRefreshDuration, TimeUnit.NANOSECONDS);
+        public Filter<CacheEntry<K, V>> getFilter() {
+            return expirationFilter;
         }
 
         public Filter<CacheEntry<K, V>> getRefreshFilter() {
             return expirationRefreshFilter;
         }
 
-        public Filter<CacheEntry<K, V>> getFilter() {
-            return expirationFilter;
+        public long getRefreshInterval(TimeUnit unit) {
+            return unit.convert(defaultExpirationRefreshDuration, TimeUnit.NANOSECONDS);
         }
-
-//        public ExpirationStrategy getStrategy() {
-//            return expirationStrategy;
-//        }
 
         /**
          * Sets the default expiration time for elements added to the cache.
@@ -539,101 +472,32 @@ public final class CacheConfiguration<K, V> implements Cloneable {
             expirationFilter = filter;
             return this;
         }
-//
-//        /**
-//         * Sets the {@link ExpirationStrategy} that the cache should use. If no
-//         * expiration strategy is set the {@link #DEFAULT_EXPIRATION_STRATEGY}
-//         * default expiration strategy is used.
-//         * 
-//         * @param strategy
-//         *            the expiration strategy
-//         * @return the current CacheConfiguration
-//         * @throws NullPointerException
-//         *             if the specified expirationStrategy is <code>null</code>
-//         * @see #DEFAULT_EXPIRATION_STRATEGY
-//         */
-//        public Expiration setStrategy(ExpirationStrategy strategy) {
-//            if (strategy == null) {
-//                throw new NullPointerException(
-//                        "strategy is null, an expiration strategy must be defined");
-//            }
-//            expirationStrategy = strategy;
-//            return this;
-//        }
-
-        /**
-         * Sets the default expiration refresh window. Setting of the refresh
-         * window only makes sense if an asynchronously loader has been
-         * specified. -1
-         * 
-         * @param duration
-         * @param unit
-         * @return
-         */
-        public Expiration setRefreshInterval(long duration, TimeUnit unit) {
-            if (duration <= 0) {
-                throw new IllegalArgumentException(
-                        "duration must be greather then 0, was " + duration);
-            } else if (unit == null) {
-                throw new NullPointerException("unit is null");
-            }
-            defaultExpirationRefreshDuration = unit.toNanos(duration);
-            return this;
-        }
 
         public Expiration setRefreshFilter(Filter<CacheEntry<K, V>> filter) {
             expirationRefreshFilter = filter;
             return this;
         }
-    }
-
-    /**
-     * A caches <tt>ExpirationStrategy</tt> indicates how the cache should
-     * handle expired cache items. The following strategies must be supported by
-     * any cache supporting expiration of cache items. Unless otherwise noted
-     * this is a cache-wide setting and cannot be configured for individual
-     * elements. Checks for expiration time are only performed for the following
-     * methods {@link Cache#get(Object)}, {@link Cache#getAll}. No checks are
-     * made for the ananologues methods defined in the three <i>collection views</i>. *
-     * <p>
-     * <ul>
-     * <li>{@link #STRICT}<br>
-     * Each time an element is requested through normal access or any of the
-     * caches iterators the expiration status of the item is checked. If the
-     * item has expired the requsting thread is blocked and any CacheLoader
-     * defined is called to retrieve a new value. If no CacheLoader is defined
-     * <tt>null</tt> is returned.</li>
-     * <li>{@link #LAZY}<br>
-     * As {@link #STRICT}, however, the current element will be served for any
-     * request until the CacheLoader has retrieved a new value (most likely
-     * asynchronously). If no CacheLoader is defined the cache will keep serving
-     * the expired element and take no action.</li>
-     * <li>{@link #ON_EVICT}<br>
-     * Expiration of an item is only checked when {@link Cache#evict} is called.
-     * All elements are served even if they are expired.</li>
-     * </ul>
-     * <p>
-     * A call to {@link Cache#evict} will check all elements for expiration for
-     * any of the three strategies.
-     * <p>
-     * The default expiration strategy is {@link #ON_EVICT}
-     */
-    public static enum ExpirationStrategy {
-        /**
-         * 
-         */
-        LAZY,
 
         /**
+         * Sets the default refresh interval. Setting of the refresh window only
+         * makes sense if an asynchronously loader has been specified. -1
          * 
+         * @param interval
+         *            the i
+         * @param unit
+         *            the unit of the interval
+         * @return this Expiration
          */
-        ON_EVICT,
-
-        /**
-         * 
-         */
-        STRICT;
-
+        public Expiration setRefreshInterval(long interval, TimeUnit unit) {
+            if (interval <= 0) {
+                throw new IllegalArgumentException(
+                        "interval must be greather then 0, was " + interval);
+            } else if (unit == null) {
+                throw new NullPointerException("unit is null");
+            }
+            defaultExpirationRefreshDuration = unit.toNanos(interval);
+            return this;
+        }
     }
 
     /**
@@ -776,11 +640,11 @@ public final class CacheConfiguration<K, V> implements Cloneable {
             return null;
         }
 
-        public Locking setLocking(LockStrategy locking) {
+        public Locking setAllowLockNonExistingElements(boolean allowLocking) {
             return this;
         }
 
-        public Locking setAllowLockNonExistingElements(boolean allowLocking) {
+        public Locking setLocking(LockStrategy locking) {
             return this;
         }
 
@@ -856,36 +720,41 @@ public final class CacheConfiguration<K, V> implements Cloneable {
         WRITE_ONLY;
     }
 
-    public final class Prefetch {
-        // public void setPrefetch(long time, TimeUnit unit) {
-        //
-        // }
-        //
-        // /**
-        // * The cache will automatically try to prefetch elements that are
-        // close
-        // * to expiration.
-        // */
-        // public void setAutomaticPrefetch() {
-        //
-        // }
+    //
+    // public class Threading {
+    // public void stopExecutorsOnCacheShutdown(boolean doIt) {
+    //
+    // }
+    //
+    // public void setAsyncLoadExecutor(Executor e) {
+    //
+    // }
+    //
+    // public void setEvictExecutor(ScheduledExecutorService e) {
+    //
+    // }
+    // }
 
-        // default prefetch=1 = never prefetch
-        /**
-         * @param value
-         */
-        public void setPrefetchHint(double value) {
-
+    public class Statistics {
+        public boolean getEnabled() {
+            return statisticsEnabled;
         }
-        // det man i virkeligheden har brug for er en fuzzy configurator der
-        // giver et tal mellem 0-1 alt efter hvor tæt på elementet er på
-        // expiration
-        // så kan f.eks. sige at når det når op på .99 så prefetcher vi.
-        // kunne også være fornuftigt med en score fra cache policy
-        // 1=so hot that we don't reckon it will be removed soon
-        // 0.000111 well it will most likely be removed in .. seconds
 
-        // data must be normalized to 0->1
+        public TimeUnit getTimeUnit() {
+            return statisticsTimeUnit;
+        }
+
+        public void setEnabled(boolean isEnabled) {
+            statisticsEnabled = isEnabled;
+        }
+
+        public void setTimeUnit(TimeUnit unit) {
+            if (unit == null) {
+                throw new NullPointerException("unit is null");
+            }
+            statisticsTimeUnit = unit;
+        }
+
     }
 
     /**
@@ -909,7 +778,14 @@ public final class CacheConfiguration<K, V> implements Cloneable {
 
     public static final Clock DEFAULT_CLOCK = Clock.MILLI_CLOCK;
 
-    public static final ExpirationStrategy DEFAULT_EXPIRATION_STRATEGY = ExpirationStrategy.ON_EVICT;
+    /**
+     * The default configuration that can be used by any cache that is not
+     * provided with a cache configuration object.
+     */
+    public static final CacheConfiguration DEFAULT_CONFIGURATION = CacheConfiguration
+            .newConf();
+
+    public final static int DEFAULT_MAXIMUM_SIZE = Integer.MAX_VALUE;
 
     public static final String JMX_PREFIX = "org.coconut.cache:name=";
 
@@ -945,6 +821,87 @@ public final class CacheConfiguration<K, V> implements Cloneable {
 
     public static <K, V> CacheConfiguration<K, V> newConf() {
         return new CacheConfiguration<K, V>();
+    }
+
+    private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
+
+    private long defaultExpirationRefreshDuration = -1;
+
+    private long defaultExpirationTimeoutDuration = Cache.NEVER_EXPIRE;
+
+    private boolean enableTiming = true;
+
+    private CacheErrorHandler<K, V> errorHandler = CacheErrorHandler.DEFAULT;
+
+    private Filter<CacheEntry<K, V>> expirationFilter;
+
+    private Filter<CacheEntry<K, V>> expirationRefreshFilter;
+
+    private CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> extendedLoader;
+
+    private Map<? extends K, ? extends V> initialMap;
+
+    private CacheLoader<? super K, ? extends V> loader;
+
+    private long maximumCapacity = Long.MAX_VALUE;
+
+    private int maximumSize = DEFAULT_MAXIMUM_SIZE;
+
+    private MBeanServer mBeanServer;
+
+    private String name;
+
+    private ObjectName oName;
+
+    private long preferableCapacity; // default??
+
+    private int preferableSize; // default??
+
+    /** Whether or not the cache is automatically registered for JMX usage. */
+    private boolean registerForJMXAutomatically;
+
+    private ReplacementPolicy replacementPolicy;
+
+    private boolean statisticsEnabled = false;
+
+    private TimeUnit statisticsTimeUnit = TimeUnit.MILLISECONDS;
+
+    private CacheStore<K, V> store;
+
+    private Clock timingStrategy = Clock.MILLI_CLOCK;
+
+    private boolean useHighResolutionCounter = true;
+
+    /**
+     * Creates a new CacheConfiguration by copying an existing configuration.
+     * 
+     * @param otherConfiguration
+     *            the configuration to copy from
+     */
+    public CacheConfiguration(CacheConfiguration<K, V> otherConfiguration) {
+        throw new UnsupportedOperationException(); // TODO implement
+    }
+
+    /**
+     * Creates a new Configuration with default settings. CacheConfiguration
+     * instances should be created using the {@link #newConf()} method.
+     */
+    protected CacheConfiguration() {
+        // package private for now, might change at a later time.
+    }
+
+    public Backend backend() {
+        return new Backend();
+    }
+
+    /**
+     * Creates a new CacheConfiguration by copying this configuration.
+     * 
+     * @see java.lang.Object#clone()
+     */
+    @Override
+    public Object clone() {
+        return new CacheConfiguration<K, V>(this);
     }
 
     /**
@@ -991,80 +948,10 @@ public final class CacheConfiguration<K, V> implements Cloneable {
         return cache;
     }
 
-    public <T extends AbstractCache<K, V>> T createAndStart(
-            Class<? extends AbstractCache> clazz) {
-        T t = create(clazz);
+    public <T extends Cache<K, V>> T createAndStart(Class<? extends AbstractCache> clazz) {
+        AbstractCache t = create(clazz);
         t.start();
-        return t;
-    }
-
-    private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
-
-    private long defaultExpirationTimeoutDuration = Cache.NEVER_EXPIRE;
-
-    private Filter<CacheEntry<K, V>> expirationFilter;
-
-    private long defaultExpirationRefreshDuration = -1;
-
-    private Filter<CacheEntry<K, V>> expirationRefreshFilter;
-
-    private ExpirationStrategy expirationStrategy = DEFAULT_EXPIRATION_STRATEGY;
-
-    private CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> extendedLoader;
-
-    private Map<? extends K, ? extends V> initialMap;
-
-    private CacheLoader<? super K, ? extends V> loader;
-
-    private CacheErrorHandler<K, V> errorHandler = CacheErrorHandler.DEFAULT;
-
-    private int maximumElements = Integer.MAX_VALUE;
-
-    private MBeanServer mBeanServer;
-
-    private String name;
-
-    private ObjectName oName;
-
-    /** Whether or not the cache is automatically registered for JMX usage. */
-    private boolean registerForJMXAutomatically;
-
-    private ReplacementPolicy replacementPolicy;
-
-    private CacheStore<K, V> store;
-
-    private Clock timingStrategy = Clock.MILLI_CLOCK;
-
-    /**
-     * Creates a new CacheConfiguration by copying an existing configuration.
-     * 
-     * @param otherConfiguration
-     *            the configuration to copy from
-     */
-    public CacheConfiguration(CacheConfiguration<K, V> otherConfiguration) {
-        throw new UnsupportedOperationException(); // TODO implement
-    }
-
-    /**
-     * Creates a new Configuration with default settings. CacheConfiguration
-     * instances should be created using the {@link #newConf()} method.
-     */
-    protected CacheConfiguration() {
-        // package private for now, might change at a later time.
-    }
-
-    public Backend backend() {
-        return new Backend();
-    }
-
-    /**
-     * Creates a new CacheConfiguration by copying this configuration.
-     * 
-     * @see java.lang.Object#clone()
-     */
-    @Override
-    public Object clone() {
-        return new CacheConfiguration<K, V>(this);
+        return (T) t;
     }
 
     /**
@@ -1096,16 +983,6 @@ public final class CacheConfiguration<K, V> implements Cloneable {
     }
 
     /**
-     * Returns a map whose mappings are to be placed in the cache as initial
-     * entries or <code>null</code> if no map has been specified.
-     * 
-     * @see #setInitialMap(Map)
-     */
-    public Map<? extends K, ? extends V> getInitialMap() {
-        return initialMap;
-    }
-
-    /**
      * Returns the log configured for the cache.
      * 
      * @return the log configured for the cache, or <tt>null</tt> if no log is
@@ -1117,6 +994,16 @@ public final class CacheConfiguration<K, V> implements Cloneable {
     }
 
     /**
+     * Returns a map whose mappings are to be placed in the cache as initial
+     * entries or <code>null</code> if no map has been specified.
+     * 
+     * @see #setInitialMap(Map)
+     */
+    public Map<? extends K, ? extends V> getInitialMap() {
+        return initialMap;
+    }
+
+    /**
      * Returns the name of the cache.
      * 
      * @return the name of the cache, or <tt>null</tt> if no name has been
@@ -1125,124 +1012,6 @@ public final class CacheConfiguration<K, V> implements Cloneable {
      */
     public String getName() {
         return name;
-    }
-
-    /**
-     * Returns a {@link JMX} instance that can be used to configure the JMX
-     * settings for the cache.
-     * 
-     * @return returns a jmx configuration instance
-     */
-    public JMX jmx() {
-        return new JMX();
-    }
-
-    /**
-     * Sets the {@link org.coconut.core.Clock} that the cache should use.
-     * Normally users should not need to set this, only if they want to provide
-     * another timing mechanism then the built-in
-     * {@link java.lang.System#currentTimeMillis()}. For example, a custom NTP
-     * protocol.
-     * 
-     * @param timingStrategy
-     *            the Timer to use
-     * @return this configuration
-     * @throws NullPointerException
-     *             if the supplied timingStrategy is <tt>null</tt>
-     */
-    public CacheConfiguration<K, V> setClock(Clock timingStrategy) {
-        if (timingStrategy == null) {
-            throw new NullPointerException("timingStrategy is null");
-        }
-        this.timingStrategy = timingStrategy;
-        return this;
-    }
-
-    /**
-     * Sets a map whose mappings are to be placed in the Cache as initial
-     * entries.
-     * 
-     * @param map
-     *            the map to set
-     * @return this configuration
-     * @see #getInitialMap()
-     * @throws NullPointerException
-     *             if map is <tt>null</tt>
-     */
-    public CacheConfiguration<K, V> setInitialMap(Map<? extends K, ? extends V> map) {
-        if (map == null) {
-            throw new NullPointerException("map is null");
-        }
-        initialMap = map;
-        return this;
-    }
-
-    /**
-     * Sets the log that the cache should use for logging anomalies and errors.
-     * If no log is set the cache will redirect all output to dev/null
-     * 
-     * @param log
-     *            the log to use
-     * @return this configuration
-     * @see org.coconut.core.Logs
-     * @see org.coconut.core.Log
-     * @throws NullPointerException
-     *             if log is <tt>null</tt>
-     */
-    public CacheConfiguration<K, V> setErrorHandler(CacheErrorHandler<K, V> errorHandler) {
-        if (errorHandler == null) {
-            throw new NullPointerException("errorHandler is null");
-        }
-        this.errorHandler = errorHandler;
-        return this;
-    }
-
-    /**
-     * Sets the name of the cache. The name should be unique among other
-     * configured caches. Allthough not a strict requirement it is advised that
-     * only alphanumeric characters are used in the name.
-     * <p>
-     * If no name is set, most cache implementation will generate an unique name
-     * to reference the cache. How exactly this name is generated is
-     * implementation specific.
-     * 
-     * @param name
-     *            the name of the cache
-     * @return this configuration
-     * @see #getName()
-     * @throws NullPointerException
-     *             if name is <tt>null</tt>
-     */
-    public CacheConfiguration<K, V> setName(String name) {
-        if (name == null) {
-            throw new NullPointerException("name is null");
-        }
-        this.name = name;
-        return this;
-    }
-
-    /**
-     * Some cache implementations might allow additional properties to be set
-     * then those defined by this class. This method can be used to set these
-     * additional properties.
-     * 
-     * @param key
-     *            the key of the property
-     * @param value
-     *            the value of the property
-     * @return this configuration
-     * @see #getProperties()
-     * @see #getProperty(String)
-     * @see #getProperty(String, Object)
-     * @throws NullPointerException
-     *             if key is <tt>null</tt>
-     */
-    public CacheConfiguration<K, V> setProperty(String key, Object value) {
-        if (name == null) {
-            throw new NullPointerException("name is null");
-        }
-        additionalProperties.put(key, value);
-        return this;
     }
 
     /**
@@ -1388,6 +1157,124 @@ public final class CacheConfiguration<K, V> implements Cloneable {
     // //do we need this, not for now i think
     // return null;
     // }
+
+    /**
+     * Returns a {@link JMX} instance that can be used to configure the JMX
+     * settings for the cache.
+     * 
+     * @return returns a jmx configuration instance
+     */
+    public JMX jmx() {
+        return new JMX();
+    }
+
+    /**
+     * Sets the {@link org.coconut.core.Clock} that the cache should use.
+     * Normally users should not need to set this, only if they want to provide
+     * another timing mechanism then the built-in
+     * {@link java.lang.System#currentTimeMillis()}. For example, a custom NTP
+     * protocol.
+     * 
+     * @param timingStrategy
+     *            the Timer to use
+     * @return this configuration
+     * @throws NullPointerException
+     *             if the supplied timingStrategy is <tt>null</tt>
+     */
+    public CacheConfiguration<K, V> setClock(Clock timingStrategy) {
+        if (timingStrategy == null) {
+            throw new NullPointerException("timingStrategy is null");
+        }
+        this.timingStrategy = timingStrategy;
+        return this;
+    }
+
+    /**
+     * Sets the log that the cache should use for logging anomalies and errors.
+     * If no log is set the cache will redirect all output to dev/null
+     * 
+     * @param log
+     *            the log to use
+     * @return this configuration
+     * @see org.coconut.core.Logs
+     * @see org.coconut.core.Log
+     * @throws NullPointerException
+     *             if log is <tt>null</tt>
+     */
+    public CacheConfiguration<K, V> setErrorHandler(CacheErrorHandler<K, V> errorHandler) {
+        if (errorHandler == null) {
+            throw new NullPointerException("errorHandler is null");
+        }
+        this.errorHandler = errorHandler;
+        return this;
+    }
+
+    /**
+     * Sets a map whose mappings are to be placed in the Cache as initial
+     * entries.
+     * 
+     * @param map
+     *            the map to set
+     * @return this configuration
+     * @see #getInitialMap()
+     * @throws NullPointerException
+     *             if map is <tt>null</tt>
+     */
+    public CacheConfiguration<K, V> setInitialMap(Map<? extends K, ? extends V> map) {
+        if (map == null) {
+            throw new NullPointerException("map is null");
+        }
+        initialMap = map;
+        return this;
+    }
+
+    /**
+     * Sets the name of the cache. The name should be unique among other
+     * configured caches. Allthough not a strict requirement it is advised that
+     * only alphanumeric characters are used in the name.
+     * <p>
+     * If no name is set, most cache implementation will generate an unique name
+     * to reference the cache. How exactly this name is generated is
+     * implementation specific.
+     * 
+     * @param name
+     *            the name of the cache
+     * @return this configuration
+     * @see #getName()
+     * @throws NullPointerException
+     *             if name is <tt>null</tt>
+     */
+    public CacheConfiguration<K, V> setName(String name) {
+        if (name == null) {
+            throw new NullPointerException("name is null");
+        }
+        this.name = name;
+        return this;
+    }
+
+    /**
+     * Some cache implementations might allow additional properties to be set
+     * then those defined by this class. This method can be used to set these
+     * additional properties.
+     * 
+     * @param key
+     *            the key of the property
+     * @param value
+     *            the value of the property
+     * @return this configuration
+     * @see #getProperties()
+     * @see #getProperty(String)
+     * @see #getProperty(String, Object)
+     * @throws NullPointerException
+     *             if key is <tt>null</tt>
+     */
+    public CacheConfiguration<K, V> setProperty(String key, Object value) {
+        if (name == null) {
+            throw new NullPointerException("name is null");
+        }
+        additionalProperties.put(key, value);
+        return this;
+    }
 
     // public static <K, V> Cache<K, V> fromFile(File file)
     // throws FileNotFoundException {

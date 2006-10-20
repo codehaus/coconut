@@ -136,10 +136,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         return false;
     }
 
-    protected CacheConfiguration.ExpirationStrategy getExpirationStrategy() {
-        return CacheConfiguration.ExpirationStrategy.LAZY;
-    }
-
+    public abstract void trimToSize(int newSize);
     /**
      * {@inheritDoc}
      */

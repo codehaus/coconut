@@ -407,35 +407,37 @@ public class EventSupport<K, V> {
         dispatch(e);
     }
 
+    public void expired(Cache<K, V> cache, int size) {
+
+    }
+
     public void evicted(Cache<K, V> cache, int size) {
 
     }
-    private final EventBus<CacheEvent<K, V>> eb = new DefaultEventBus<CacheEvent<K, V>>();
+
     
+    private final EventBus<CacheEvent<K, V>> eb = new DefaultEventBus<CacheEvent<K, V>>();
+
     public void put(Cache<K, V> cache, CacheEntry<K, V> newEntry, CacheEntry<K, V> prev) {
         V preVal = prev == null ? null : prev.getValue();
 
-        // if (prev == null) {
-        // if (ed.doNotifyAdded()) {
-        // ed.notifyAdded(nextSequenceId(), newEntry.getKey(),
-        // newEntry.getValue(),
-        // newEntry);
-        // }
-        // } else {
-        // if (ed.doNotifyChanged() && !newEntry.getValue().equals(preVal)) {
-        // ed.notifyChanged(eventId++, newEntry.getKey(), newEntry.getValue(),
-        // preVal, newEntry);
-        // }
-        // }
-
+        if (prev == null) {
+            CacheEvent<K, V> ee = new AddedEvent<K, V>(cache, newEntry, nextSequenceId(),
+                    newEntry.getKey(), newEntry.getValue());
+            dispatch(ee);
+        } else {
+            if (!newEntry.getValue().equals(preVal)) {
+                CacheEvent<K, V> e = new ChangedEvent<K, V>(cache, nextSequenceId(),
+                        newEntry, newEntry.getKey(), newEntry.getValue(), prev.getValue());
+                dispatch(e);
+            }
+        }
     }
 
     public void getHit(Cache<K, V> cache, CacheEntry<K, V> entry) {
-        if (entry != null) {
-            AccessedEvent<K, V> e = new AccessedEvent<K, V>(cache, nextSequenceId(),
-                    entry, entry.getKey(), entry.getValue(), true);
-            dispatch(e);
-        }
+        AccessedEvent<K, V> e = new AccessedEvent<K, V>(cache, nextSequenceId(), entry,
+                entry.getKey(), entry.getValue(), true);
+        dispatch(e);
     }
 
     public void expiredAndGet(Cache<K, V> cache, K key, CacheEntry<K, V> entry) {
@@ -444,38 +446,42 @@ public class EventSupport<K, V> {
                     entry, key, null, false);
             dispatch(e);
         } else {
-            CacheEvent<K, V> e = new ChangedEvent<K, V>(cache, nextSequenceId(), entry, key, entry.getValue(),
-                    entry.getValue());
+            CacheEvent<K, V> e = new ChangedEvent<K, V>(cache, nextSequenceId(), entry,
+                    key, entry.getValue(), entry.getValue());
             dispatch(e);
         }
     }
 
     public void getAndLoad(Cache<K, V> cache, K key, CacheEntry<K, V> entry) {
         if (entry != null) {
-            AccessedEvent<K, V> e = new AccessedEvent<K, V>(cache, nextSequenceId(), entry,
-                    key, entry.getValue(), false);
+            AccessedEvent<K, V> e = new AccessedEvent<K, V>(cache, nextSequenceId(),
+                    entry, key, entry.getValue(), false);
             dispatch(e);
-            CacheEvent<K, V> ee = new AddedEvent<K, V>(cache, entry, nextSequenceId(), key, entry.getValue());
+            CacheEvent<K, V> ee = new AddedEvent<K, V>(cache, entry, nextSequenceId(),
+                    key, entry.getValue());
             dispatch(ee);
+        } else {
+            AccessedEvent<K, V> e = new AccessedEvent<K, V>(cache, nextSequenceId(),
+                    null, key, null, false);
+            dispatch(e);
         }
     }
 
     public void expired(Cache<K, V> cache, CacheEntry<K, V> entry) {
-        V value = entry == null ? null : entry.getValue();
-        if (value != null) {
-            CacheEvent<K, V> e = new RemovedEvent<K, V>(cache, entry, nextSequenceId(),
-                    entry.getKey(), value, true);
-            dispatch(e);
-        }
+        CacheEvent<K, V> e = new RemovedEvent<K, V>(cache, entry, nextSequenceId(), entry
+                .getKey(), entry.getValue(), true);
+        dispatch(e);
     }
 
+    public void evicted(Cache<K, V> cache, CacheEntry<K, V> entry) {
+        CacheEvent<K, V> e = new RemovedEvent<K, V>(cache, entry, nextSequenceId(), entry
+                .getKey(), entry.getValue(), false);
+        dispatch(e);
+    }
     public void removed(Cache<K, V> cache, CacheEntry<K, V> entry) {
-        V value = entry == null ? null : entry.getValue();
-        if (value != null) {
-            CacheEvent<K, V> e = new RemovedEvent<K, V>(cache, entry, nextSequenceId(),
-                    entry.getKey(), value, false);
-            dispatch(e);
-        }
+        CacheEvent<K, V> e = new RemovedEvent<K, V>(cache, entry, nextSequenceId(), entry
+                .getKey(), entry.getValue(), false);
+        dispatch(e);
     }
 
     private final Offerable<CacheEvent<K, V>> offerable;

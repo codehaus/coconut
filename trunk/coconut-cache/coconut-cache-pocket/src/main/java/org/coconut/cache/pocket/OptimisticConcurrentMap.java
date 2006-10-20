@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A Concurrent map supporting full concurrency of retrievals and adjustable
@@ -38,6 +39,8 @@ public class OptimisticConcurrentMap<K, V> implements ConcurrentMap<K, V>, Seria
 
     /** The value loader used for constructing new values. */
     private final ValueLoader<K, V> loader;
+
+    private final AtomicLong overhead = new AtomicLong();
 
     /**
      * Create a new OptimisticConcurrentCache.
@@ -149,6 +152,7 @@ public class OptimisticConcurrentMap<K, V> implements ConcurrentMap<K, V>, Seria
             v = map.putIfAbsent(k, newValue);
             if (v != null) {
                 // we lost race to other thread, undo effects
+                overhead.incrementAndGet();
                 undoNewValue(loader, k, v, newValue);
             } else {
                 v = newValue;
@@ -218,6 +222,17 @@ public class OptimisticConcurrentMap<K, V> implements ConcurrentMap<K, V>, Seria
     }
 
     /**
+     * Returns the number of operations that resulted in values being created
+     * twice.
+     * 
+     * @return the number of operations that resulted in values being created
+     *         twice
+     */
+    public long getOverhead() {
+        return overhead.get();
+    }
+
+    /**
      * This method is invoked whenever a value is constructed that is never
      * inserted into the map. This might be used, for example, for closing a
      * connection.
@@ -232,7 +247,6 @@ public class OptimisticConcurrentMap<K, V> implements ConcurrentMap<K, V>, Seria
      *            the value that was constructed but discarded because a mapping
      *            already existed for the key
      */
-    protected void undoNewValue(ValueLoader<K, V> loader, K key, V value,
-            V discardedValue) {
+    protected void undoNewValue(ValueLoader<K, V> loader, K key, V value, V discardedValue) {
     }
 }
