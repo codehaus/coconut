@@ -3,6 +3,7 @@
  */
 package org.coconut.apm.defaults;
 
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,9 +14,9 @@ import java.util.regex.Pattern;
 
 import javax.management.MBeanServer;
 
-import org.coconut.apm.Apm;
 import org.coconut.apm.ApmGroup;
 import org.coconut.apm.spi.NumberDynamicBean;
+import org.coconut.apm.spi.SelfConfigure;
 import org.coconut.core.Named;
 
 /**
@@ -39,6 +40,7 @@ public class DefaultApmGroup implements ApmGroup {
     private boolean register;
 
     private String pattern;
+
     public DefaultApmGroup(String name, boolean register) {
         this(name, null, register);
     }
@@ -51,6 +53,9 @@ public class DefaultApmGroup implements ApmGroup {
     }
 
     private void checkName(String name) {
+        if (true) {
+            return;
+        }
         if (name == null) {
             throw new NullPointerException("name is null");
         } else if (!PATTERN.matcher(name).matches()) {
@@ -58,34 +63,25 @@ public class DefaultApmGroup implements ApmGroup {
         }
     }
 
-    public static ApmGroup newRoot(String name) {
-        return new DefaultApmGroup(name, false);
-    }
-
-    public static ApmGroup newRoot(String name, MBeanServer server) {
-        DefaultApmGroup d = new DefaultApmGroup(name, false);
-        d.setMbeanServer(server);
-        return d;
-    }
-
     public String getName() {
         return name;
     }
 
-    MBeanServer server;
+    MBeanServer server=ManagementFactory.getPlatformMBeanServer();
 
     public synchronized void setMbeanServer(MBeanServer server) {
         this.server = server;
     }
 
-    public ApmGroup addGroup(String name) {
-        return addGroup(name, true);
+    public ApmGroup addGroup(String name, String description) {
+        return addGroup(name, description, true);
     }
 
     /**
      * @see org.coconut.apm.ApmGroup#addGroup(java.lang.String)
      */
-    public synchronized ApmGroup addGroup(String name, boolean register) {
+    public synchronized ApmGroup addGroup(String name, String description,
+            boolean register) {
         if (name == null) {
             throw new NullPointerException("name is null");
         } else if (!Pattern.matches("[\\da-zA-Z\\x5F]*", name)) {
@@ -95,6 +91,7 @@ public class DefaultApmGroup implements ApmGroup {
                     + name);
         }
         DefaultApmGroup dg = new DefaultApmGroup(name, this, register);
+        dg.description = description;
         groups.put(name, dg);
         return dg;
     }
@@ -118,16 +115,16 @@ public class DefaultApmGroup implements ApmGroup {
      * @return
      * @see java.util.Collection#add(java.lang.Object)
      */
-    public synchronized ApmGroup add(Object e) {
+    public synchronized <T> T add(T e) {
         apms.add(e);
-        return this;
+        return e;
     }
 
     /**
      * @see org.coconut.apm.next.ApmGroup#addAsGroup(org.coconut.core.Named)
      */
     public ApmGroup addAsGroup(Named name) {
-        ApmGroup gm = addGroup(name.getName());
+        ApmGroup gm = addGroup(name.getName(), "No description");
         gm.add(name);
         return gm;
     }
@@ -135,9 +132,9 @@ public class DefaultApmGroup implements ApmGroup {
     /**
      * @see org.coconut.apm.next.ApmGroup#getAll()
      */
-    public Collection<?> getAll() {
+    public synchronized Collection<?> getAll() {
         // TODO Auto-generated method stub
-        return null;
+        return new ArrayList(apms);
     }
 
     /**
@@ -153,13 +150,6 @@ public class DefaultApmGroup implements ApmGroup {
      */
     public synchronized String getDescription() {
         return description;
-    }
-
-    /**
-     * @see org.coconut.apm.next.ApmGroup#setDescription(java.lang.String)
-     */
-    public synchronized void setDescription(String name) {
-        this.description = name;
     }
 
     /**
@@ -181,12 +171,7 @@ public class DefaultApmGroup implements ApmGroup {
         // deregister allready registered?
         if (register) {
             for (Object o : apms) {
-                if (o instanceof Apm) {
-                    Apm p = (Apm) o;
-                    p.configureJMX(bean);
-                } else {
-                    bean.add(o);
-                }
+                register(bean,o);
             }
             bean.register(server, name);
         }
@@ -195,14 +180,31 @@ public class DefaultApmGroup implements ApmGroup {
         }
     }
 
+    void register(NumberDynamicBean bean, Object o) {
+        if (o instanceof SelfConfigure) {
+            ((SelfConfigure) o).configure(bean);
+        } else {
+            bean.add(o);
+        }
+    }
+
     private int getLevel() {
         return parent == null ? 0 : parent.getLevel() + 1;
     }
 
     /**
-     * @see org.coconut.apm.ApmGroup#add(java.lang.Runnable, long, java.util.concurrent.TimeUnit)
+     * @see org.coconut.apm.ApmGroup#add(java.lang.Runnable, long,
+     *      java.util.concurrent.TimeUnit)
      */
-    public <T extends Runnable> ApmGroup add(T r, long time, TimeUnit unit) {
+    public <T extends Runnable> T add(T r, long time, TimeUnit unit) {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * @see org.coconut.apm.ApmGroup#unregister()
+     */
+    public void unregister() throws Exception {
+        // TODO Auto-generated method stub
+        
     }
 }

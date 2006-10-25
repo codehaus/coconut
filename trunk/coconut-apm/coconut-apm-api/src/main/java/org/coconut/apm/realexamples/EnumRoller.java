@@ -5,7 +5,8 @@ package org.coconut.apm.realexamples;
 
 import java.util.Random;
 
-import org.coconut.apm.monitor.DefaultMetricManager;
+import org.coconut.apm.ApmGroup;
+import org.coconut.apm.Apms;
 import org.coconut.apm.monitor.EnumCounter;
 import org.coconut.apm.monitor.TimedAverage;
 
@@ -15,19 +16,19 @@ import org.coconut.apm.monitor.TimedAverage;
  */
 public class EnumRoller {
     public static void main(String[] args) throws Exception {
-        DefaultMetricManager mg = new DefaultMetricManager();
+        ApmGroup mg = Apms.newGroup();
 
         EnumCounter<Dice> dice = new EnumCounter<Dice>(Dice.class, "DiceRoll");
-        mg.addMetric(dice);
+        mg.add(dice);
         for (Dice d : Dice.values()) {
-            mg.addMetric(new TimedAverage(dice.liveCount(d)));
+            mg.add(new TimedAverage(dice.liveCount(d)));
         }
-        mg.startAndRegister("my.app:name=Rolled Dices");
+        mg.register("my.app:name=Rolled Dices");
         for (int i = 0; i < 10000; i++) {
             dice.handle(Dice.roll());
             Thread.sleep(15);
         }
-        mg.stopAndUnregister();
+        mg.unregister();
     }
 
     static enum Dice {

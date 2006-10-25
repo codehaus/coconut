@@ -8,13 +8,13 @@ import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.coconut.apm.Apm;
+import org.coconut.core.Named;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public abstract class AbstractApm implements Apm {
+public abstract class AbstractApm implements Named, Described {
     private final static String DEFAULT_NAME = "unknown";
 
     private volatile String desc;
@@ -63,25 +63,41 @@ public abstract class AbstractApm implements Apm {
 
     public synchronized void register(MBeanServer server, ObjectName name)
             throws InstanceAlreadyExistsException, MBeanRegistrationException {
-        configureJMX(ndb);
+        if (this instanceof SelfConfigure) {
+            ((SelfConfigure) this).configure(ndb);
+        } else {
+            ndb.add(this);
+        }
         ndb.register(server, name);
     }
 
     public synchronized void register(MBeanServer server, String name)
             throws InstanceAlreadyExistsException, MBeanRegistrationException {
-        configureJMX(ndb);
+        if (this instanceof SelfConfigure) {
+            ((SelfConfigure) this).configure(ndb);
+        } else {
+            ndb.add(this);
+        }
         ndb.register(server, name);
     }
 
     public synchronized void register(ObjectName on)
             throws InstanceAlreadyExistsException, MBeanRegistrationException {
-        configureJMX(ndb);
+        if (this instanceof SelfConfigure) {
+            ((SelfConfigure) this).configure(ndb);
+        } else {
+            ndb.add(this);
+        }
         ndb.register(on);
     }
 
     public synchronized void register(String name) throws InstanceAlreadyExistsException,
             MBeanRegistrationException {
-        configureJMX(ndb);
+        if (this instanceof SelfConfigure) {
+            ((SelfConfigure) this).configure(ndb);
+        } else {
+            ndb.add(this);
+        }
         ndb.register(name);
     }
 

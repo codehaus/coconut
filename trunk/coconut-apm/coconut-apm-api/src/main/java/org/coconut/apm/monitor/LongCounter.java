@@ -143,12 +143,14 @@ public abstract class LongCounter extends AbstractApmNumber implements
     }
 
     @ManagedOperation(defaultValue = "reset $name", description = "Sets the value of $name to 0")
-    public abstract void reset();
+    public void reset() {
+        set(0);
+    }
 
     /**
      * @see org.coconut.metric.spi.AbstractManagedNumber#prepare(org.coconut.metric.spi.ManagedConfigurator)
      */
-    public void configureJMX(JMXConfigurator jmx) {
+    public void configure(JMXConfigurator jmx) {
         throw new UnsupportedOperationException();
         // jmx.add(this);
     }
@@ -392,7 +394,7 @@ public abstract class LongCounter extends AbstractApmNumber implements
         }
 
         @Override
-        public void configureJMX(JMXConfigurator jmx) {
+        public void configure(JMXConfigurator jmx) {
             jmx.add(this);
         }
 

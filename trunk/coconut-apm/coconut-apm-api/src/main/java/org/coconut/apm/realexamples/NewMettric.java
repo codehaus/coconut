@@ -4,7 +4,6 @@
 package org.coconut.apm.realexamples;
 
 import org.coconut.apm.ApmGroup;
-import org.coconut.apm.MetricManager;
 import org.coconut.apm.monitor.LongCounter;
 import org.coconut.apm.monitor.LongSamplingCounter;
 
@@ -14,11 +13,11 @@ import org.coconut.apm.monitor.LongSamplingCounter;
  */
 public class NewMettric {
     public static void main(String[] args) {
-        MetricManager m = null; // new MEDMED("PipelineFoo");
-        ApmGroup stages = m.addGroup("Stages");
-        ApmGroup stage = stages.addGroup("ConvertToFooStage");
+        ApmGroup m = null; // new MEDMED("PipelineFoo");
+        ApmGroup stages = m.addGroup("Stages","");
+        ApmGroup stage = stages.addGroup("ConvertToFooStage","");
 
-        ApmGroup processed = stages.addGroup("Events");
+        ApmGroup processed = stages.addGroup("Events","");
         processed.add(LongCounter.newConcurrent("Total Processed", ""));
 
         processed.add(LongCounter.newConcurrent("Total Failed", ""));

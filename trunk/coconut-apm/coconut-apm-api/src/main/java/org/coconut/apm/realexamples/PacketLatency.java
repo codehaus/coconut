@@ -6,7 +6,8 @@ package org.coconut.apm.realexamples;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.apm.monitor.DefaultMetricManager;
+import org.coconut.apm.Apms;
+import org.coconut.apm.ExecutableApmGroup;
 import org.coconut.apm.monitor.DoubleSamplingCounter;
 import org.coconut.apm.monitor.LongSamplingCounter;
 import org.coconut.apm.monitor.SingleExponentialSmoothing;
@@ -18,20 +19,20 @@ import org.coconut.apm.monitor.TimedAverage;
  */
 public class PacketLatency {
     public static void main(String[] args) throws Exception {
-        DefaultMetricManager mg = new DefaultMetricManager();
+        ExecutableApmGroup grp = Apms.newExecutableGroup();
 
         // create a long counter with a name & description
         // and register it with the platform Mbeanserver
-        LongSamplingCounter lr = mg.addMetric(new LongSamplingCounter(
-                "Packets Received (Bytes)",""));
+        LongSamplingCounter lr = grp.add(new LongSamplingCounter(
+                "Packets Received (Bytes)", ""));
         // adds an average of the number of samplings pr second
         // mg.add(new TimedAverage(lr.getRunningTotal(), "Bytes/s"));
-        TimedAverage ta = mg.add(new TimedAverage(lr.liveTotal(), "Bytes/s"), 1,
+        TimedAverage ta = grp.add(new TimedAverage(lr.liveTotal(), "Bytes/s"), 1,
                 TimeUnit.SECONDS);
-        ta.addEventHandler(mg.addMetric(new DoubleSamplingCounter()));
-        ta.addEventHandler(mg.addMetric(new SingleExponentialSmoothing(0.3, "Bytes/s (SES)")));
+        ta.addEventHandler(grp.add(new DoubleSamplingCounter()));
+        ta.addEventHandler(grp.add(new SingleExponentialSmoothing(0.3, "Bytes/s (SES)")));
 
-        mg.startAndRegister("my.app:name=PacketObserver");
+        grp.startAndRegister("my.app:name=PacketObserver");
         Random r = new Random();
         // simulate receiving a packet and report latency
         for (int i = 0; i < 10000; i++) {
@@ -40,6 +41,6 @@ public class PacketLatency {
         }
 
         // unregisters the counter with the platform MBeanserver
-        mg.stopAndUnregister();
+        grp.stopAndUnregister();
     }
 }

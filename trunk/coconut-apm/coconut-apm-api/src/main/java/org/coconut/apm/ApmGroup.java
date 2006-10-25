@@ -14,25 +14,42 @@ import org.coconut.core.Named;
  */
 public interface ApmGroup extends Named {
 
-    <T extends Runnable> ApmGroup add(T r, long time, TimeUnit unit);
+    /**
+     * Adds an object to the group. The
+     * 
+     * @param r
+     * @return
+     * @throws NullPointerException
+     *             if the specified object is <tt>null</tt>
+     */
+    <T> T add(T r);
 
-    ApmGroup add(Object r);
+    /**
+     * (optional)
+     * 
+     * @param <T>
+     * @param r
+     * @param time
+     * @param unit
+     * @return
+     */
+    <T extends Runnable> T add(T r, long time, TimeUnit unit);
+
+    ApmGroup addGroup(String name, String description);
+
+    ApmGroup addGroup(String name, String description, boolean register);
 
     Collection<?> getAll();
 
-    void setDescription(String name);
-
     String getDescription();
-
-    ApmGroup addGroup(String name);
-
-    ApmGroup addGroup(String name, boolean register);
-
-    ApmGroup getParentGroup();
 
     Collection<ApmGroup> getGroups();
 
-    void remove();
+    ApmGroup getParentGroup();
 
     void register(String name) throws Exception;
+
+    void unregister() throws Exception;
+
+    void remove();
 }

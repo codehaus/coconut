@@ -100,7 +100,7 @@ public class LongWindow extends AbstractManagedNumberHolder {
     /**
      * @see org.coconut.metric.spi.ManagedMetric#prepare(org.coconut.metric.spi.ManagedConfigurator)
      */
-    public void configureJMX(JMXConfigurator jmx) {
+    public void configure(JMXConfigurator jmx) {
         // TODO Auto-generated method stub
 
     }

@@ -10,17 +10,18 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
 
-import org.coconut.apm.Apm;
 import org.coconut.apm.spi.AbstractApm;
+import org.coconut.apm.spi.Described;
 import org.coconut.apm.spi.JMXConfigurator;
 import org.coconut.core.EventHandler;
+import org.coconut.core.Named;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class EnumCounter<T extends Enum> extends AbstractApm implements
-        EventHandler<T>,Serializable {
+public class EnumCounter<T extends Enum> extends AbstractApm implements EventHandler<T>,
+        Serializable {
 
     private final long[] count;
 
@@ -41,7 +42,7 @@ public class EnumCounter<T extends Enum> extends AbstractApm implements
     /**
      * @see org.coconut.metric.jmx.PreparedForJMX#prepare(org.coconut.metric.jmx.PrepareJmx)
      */
-    public void configureJMX(JMXConfigurator jmx) {
+    public void configure(JMXConfigurator jmx) {
         for (T t : clazz.getEnumConstants()) {
             jmx.addAttribute(t.toString(), getDescription(t),
                     new EnumNumber(t.ordinal()), Long.TYPE);
@@ -120,7 +121,7 @@ public class EnumCounter<T extends Enum> extends AbstractApm implements
         return sb.toString();
     }
 
-    final class EnumNumber extends Number implements Callable<Number>, Apm {
+    final class EnumNumber extends Number implements Callable<Number>, Named, Described {
         private final int ordinal;
 
         /**
@@ -186,7 +187,7 @@ public class EnumCounter<T extends Enum> extends AbstractApm implements
         /**
          * @see org.coconut.metric.PerformanceMonitor#prepare(org.coconut.metric.spi.ManagedConfigurator)
          */
-        public void configureJMX(JMXConfigurator jmx) {
+        public void configure(JMXConfigurator jmx) {
             throw new UnsupportedOperationException();
         }
     }

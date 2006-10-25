@@ -11,8 +11,8 @@ import java.util.concurrent.TimeUnit;
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.MBeanRegistrationException;
 
-import org.coconut.apm.Apm;
 import org.coconut.apm.spi.AbstractApmNumber;
+import org.coconut.apm.spi.Described;
 import org.coconut.apm.spi.JMXConfigurator;
 import org.coconut.apm.spi.annotation.ManagedAttribute;
 import org.coconut.core.EventHandler;
@@ -99,8 +99,8 @@ public class TimedAverage extends AbstractApmNumber implements Runnable /*
         this.n = n;
         adjust = unit.toNanos(time);
         setName(na.getName() + "/s");
-        if (na instanceof Apm) {
-            setDescription(((Apm) na).getDescription() + " the last second");
+        if (na instanceof Described) {
+            setDescription(((Described) na).getDescription() + " the last second");
         }
     }
 
@@ -206,7 +206,7 @@ public class TimedAverage extends AbstractApmNumber implements Runnable /*
     /**
      * @see org.coconut.metric.spi.AbstractManagedNumber#prepare(org.coconut.metric.spi.ManagedConfigurator)
      */
-    public void configureJMX(JMXConfigurator jmx) {
+    public void configure(JMXConfigurator jmx) {
         jmx.add(this);
     }
 

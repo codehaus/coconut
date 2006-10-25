@@ -35,7 +35,6 @@ import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
 
-import org.coconut.apm.Apm;
 import org.coconut.apm.spi.annotation.ManagedAttribute;
 import org.coconut.apm.spi.annotation.ManagedOperation;
 import org.coconut.core.EventHandler;
@@ -292,8 +291,8 @@ public class NumberDynamicBean implements DynamicMBean, JMXConfigurator {
             str = str.replace("$name", n.getName());
             System.out.println(n.getName());
         }
-        if (o instanceof Apm) {
-            Apm n = (Apm) o;
+        if (o instanceof Described) {
+            Described n = (Described) o;
             str = str.replace("$description", n.getDescription());
         }
         return str;

@@ -124,7 +124,7 @@ public class LongSamplingCounter extends AbstractApm {
     /**
      * @see org.coconut.metric.spi.ManagedMetric#prepare(org.coconut.metric.spi.ManagedConfigurator)
      */
-    public void configureJMX(JMXConfigurator jmx) {
+    public void configure(JMXConfigurator jmx) {
         jmx.add(this);
     }
 }

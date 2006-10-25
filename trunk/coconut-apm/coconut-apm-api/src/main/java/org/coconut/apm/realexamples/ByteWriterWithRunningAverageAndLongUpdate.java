@@ -5,7 +5,8 @@ package org.coconut.apm.realexamples;
 
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.apm.monitor.DefaultMetricManager;
+import org.coconut.apm.Apms;
+import org.coconut.apm.ExecutableApmGroup;
 import org.coconut.apm.monitor.LongCounter;
 import org.coconut.apm.monitor.TimedAverage;
 
@@ -15,12 +16,12 @@ import org.coconut.apm.monitor.TimedAverage;
  */
 public class ByteWriterWithRunningAverageAndLongUpdate {
     public static void main(String[] args) throws Exception {
-        DefaultMetricManager mg = new DefaultMetricManager();
-
-        LongCounter lr = mg.addMetric(LongCounter.newConcurrent("BytesWritten",
+        
+        ExecutableApmGroup mg = Apms.newExecutableGroup("BytesWritten");
+        LongCounter lr = mg.add(LongCounter.newConcurrent("BytesWritten",
                 "Number of Bytes written to disk A"));
 
-        mg.addMetric(new TimedAverage(lr));
+        mg.add(new TimedAverage(lr));
         mg.add(new TimedAverage(lr, "Bytes written/s (last 10s)",
                 "Number of Bytes written to disk A/second during the last 10 seconds"),
                 10, TimeUnit.SECONDS);

@@ -4,10 +4,13 @@
 package org.coconut.apm;
 
 import javax.management.MBeanAttributeInfo;
+import javax.management.MBeanServer;
 import javax.management.MBeanServerConnection;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
+import org.coconut.apm.defaults.DefaultApmGroup;
+import org.coconut.apm.defaults.DefaultExecutableApmGroup;
 import org.coconut.core.Transformers;
 import org.coconut.internal.util.ClassUtils;
 
@@ -36,6 +39,40 @@ import org.coconut.internal.util.ClassUtils;
  */
 public class Apms {
 
+    public static ExecutableApmGroup newExecutableGroup() {
+        return newExecutableGroup("");
+    }
+
+    /**
+     * @param name
+     * @return
+     */
+    public static ExecutableApmGroup newExecutableGroup(String name) {
+        return newExecutableGroup(name, true);
+    }
+
+    /**
+     * @param name
+     * @return
+     */
+    public static ExecutableApmGroup newExecutableGroup(String name, boolean register) {
+        return new DefaultExecutableApmGroup(name, register);
+    }
+
+    public static ApmGroup newGroup() {
+        return newRootGroup("");
+    }
+
+    public static ApmGroup newRootGroup(String name) {
+        return new DefaultApmGroup(name, false);
+    }
+
+    public static ApmGroup newRootGroup(String name, MBeanServer server) {
+        DefaultApmGroup d = new DefaultApmGroup(name, false);
+        d.setMbeanServer(server);
+        return d;
+    }
+
     private static ObjectName toObjectName(String name) {
         if (name == null) {
             throw new NullPointerException("name is null");
@@ -48,15 +85,12 @@ public class Apms {
         }
     }
 
-    //TODO create a version where we can parse an attribute name along as well
+    // TODO create a version where we can parse an attribute name along as well
     public static Number createNumberProxy(MBeanServerConnection server, String name)
             throws Exception {
         return createNumberProxy(server, toObjectName(name));
     }
 
-    public static Apm fromNumber(Number n) {
-        return null;
-    }
     public static Number createNumberProxy(MBeanServerConnection server, ObjectName name)
             throws Exception {
         return new JMXNumberProxy(server, name, null);
@@ -146,6 +180,7 @@ public class Apms {
         public int hashCode() {
             return getNumber().hashCode();
         }
+
         /**
          * @see java.lang.Object#toString()
          */
@@ -222,15 +257,14 @@ public class Apms {
         }
     }
 
-    
-    //easy to use jxm from
-//  static Metric fromThreadPoolExecutor(ThreadPoolExecutor t) {
-//      return null;
-//  }
-  //fromCollection (size?) ,fromQueue, fromMap (size?)
-  //from Locks
-  
-  //we need some way of easy adding operations.
-  //something with reflection
-  //ala reflect(ThreadPoolExecutor t, "shutdown");
+    // easy to use jxm from
+    // static Metric fromThreadPoolExecutor(ThreadPoolExecutor t) {
+    // return null;
+    // }
+    // fromCollection (size?) ,fromQueue, fromMap (size?)
+    // from Locks
+
+    // we need some way of easy adding operations.
+    // something with reflection
+    // ala reflect(ThreadPoolExecutor t, "shutdown");
 }
