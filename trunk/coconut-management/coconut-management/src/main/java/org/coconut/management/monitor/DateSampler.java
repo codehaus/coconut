@@ -6,10 +6,10 @@ package org.coconut.management.monitor;
 import java.util.Date;
 
 import org.coconut.core.Clock;
+import org.coconut.management.annotation.ManagedAttribute;
+import org.coconut.management.annotation.ManagedOperation;
 import org.coconut.management.spi.AbstractApm;
 import org.coconut.management.spi.JMXConfigurator;
-import org.coconut.management.spi.annotation.ManagedAttribute;
-import org.coconut.management.spi.annotation.ManagedOperation;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

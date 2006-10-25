@@ -37,8 +37,8 @@ import javax.management.ReflectionException;
 
 import org.coconut.core.EventHandler;
 import org.coconut.core.Named;
-import org.coconut.management.spi.annotation.ManagedAttribute;
-import org.coconut.management.spi.annotation.ManagedOperation;
+import org.coconut.management.annotation.ManagedAttribute;
+import org.coconut.management.annotation.ManagedOperation;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

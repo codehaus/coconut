@@ -5,12 +5,12 @@ package org.coconut.cache.defaults.support;
 
 import java.util.Map;
 
-import org.coconut.apm.ApmGroup;
-import org.coconut.apm.Apms;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.AbstractCacheService;
+import org.coconut.management.ApmGroup;
+import org.coconut.management.Apms;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

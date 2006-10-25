@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-import org.coconut.apm.benchmark.Benchmark;
+import org.coconut.management.benchmark.Benchmark;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

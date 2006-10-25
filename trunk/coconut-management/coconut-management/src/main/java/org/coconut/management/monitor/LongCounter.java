@@ -10,10 +10,10 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.coconut.core.EventHandler;
 import org.coconut.management.ApmObserver;
+import org.coconut.management.annotation.ManagedAttribute;
+import org.coconut.management.annotation.ManagedOperation;
 import org.coconut.management.spi.AbstractApmNumber;
 import org.coconut.management.spi.JMXConfigurator;
-import org.coconut.management.spi.annotation.ManagedAttribute;
-import org.coconut.management.spi.annotation.ManagedOperation;
 
 /**
  * noget federe end det åndsvage event handling.

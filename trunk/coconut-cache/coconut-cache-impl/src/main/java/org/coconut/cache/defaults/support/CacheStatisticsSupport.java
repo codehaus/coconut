@@ -8,12 +8,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.coconut.apm.ApmGroup;
-import org.coconut.apm.monitor.DateSampler;
-import org.coconut.apm.monitor.LongCounter;
-import org.coconut.apm.monitor.LongSamplingCounter;
-import org.coconut.apm.spi.annotation.ManagedAttribute;
-import org.coconut.apm.util.AtomicDouble;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
@@ -22,6 +16,12 @@ import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.AbstractCacheService;
 import org.coconut.cache.spi.Ressources;
 import org.coconut.core.Clock;
+import org.coconut.management.ApmGroup;
+import org.coconut.management.annotation.ManagedAttribute;
+import org.coconut.management.monitor.DateSampler;
+import org.coconut.management.monitor.LongCounter;
+import org.coconut.management.monitor.LongSamplingCounter;
+import org.coconut.management.util.AtomicDouble;
 
 /**
  * possible to disable certain statistics

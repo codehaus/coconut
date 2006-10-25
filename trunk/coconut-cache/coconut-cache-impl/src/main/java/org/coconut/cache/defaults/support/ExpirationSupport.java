@@ -5,8 +5,6 @@ package org.coconut.cache.defaults.support;
 
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.apm.ApmGroup;
-import org.coconut.apm.spi.annotation.ManagedAttribute;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
@@ -14,6 +12,8 @@ import org.coconut.cache.spi.AbstractCacheService;
 import org.coconut.core.Clock;
 import org.coconut.filter.Filter;
 import org.coconut.internal.util.tabular.TabularFormatter;
+import org.coconut.management.ApmGroup;
+import org.coconut.management.annotation.ManagedAttribute;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

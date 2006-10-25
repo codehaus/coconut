@@ -15,7 +15,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.annotation.ThreadSafe;
-import org.coconut.apm.ApmGroup;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheEvent;
@@ -36,6 +35,7 @@ import org.coconut.cache.spi.CacheSupport;
 import org.coconut.event.bus.EventBus;
 import org.coconut.filter.Filter;
 import org.coconut.filter.Filters;
+import org.coconut.management.ApmGroup;
 
 /**
  * <p>

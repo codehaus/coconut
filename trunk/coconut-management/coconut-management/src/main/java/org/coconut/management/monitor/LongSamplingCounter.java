@@ -4,10 +4,9 @@
 package org.coconut.management.monitor;
 
 import org.coconut.management.Apms;
+import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.spi.AbstractApm;
 import org.coconut.management.spi.JMXConfigurator;
-import org.coconut.management.spi.annotation.ManagedAttribute;
-import org.coconut.management.spi.annotation.ManagedOperation;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

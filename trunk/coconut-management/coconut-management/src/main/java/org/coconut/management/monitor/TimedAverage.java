@@ -13,10 +13,10 @@ import javax.management.MBeanRegistrationException;
 
 import org.coconut.core.EventHandler;
 import org.coconut.core.Named;
+import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.spi.AbstractApmNumber;
 import org.coconut.management.spi.Described;
 import org.coconut.management.spi.JMXConfigurator;
-import org.coconut.management.spi.annotation.ManagedAttribute;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.coconut.apm.benchmark.Benchmark;
-import org.coconut.apm.benchmark.BenchmarkRunner;
-import org.coconut.apm.benchmark.SimpelRandom;
+import org.coconut.management.benchmark.Benchmark;
+import org.coconut.management.benchmark.BenchmarkRunner;
+import org.coconut.management.benchmark.SimpelRandom;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

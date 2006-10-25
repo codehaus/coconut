@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.coconut.management.spi.annotation;
+package org.coconut.management.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
