@@ -14,9 +14,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.coconut.filter.Filter;
 import org.coconut.filter.Filters.IsTypeFilter;
-import org.coconut.filter.spi.FilterIndexer;
 
-public class TypeMatcher<K, E> implements FilterIndexer<K, E> {
+public class TypeMatcher<K, E>  {
 
     private final Map<Class, K> map = new HashMap<Class, K>();
 

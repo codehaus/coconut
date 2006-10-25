@@ -27,12 +27,12 @@ import org.coconut.cache.defaults.support.ExpirationSupport;
 import org.coconut.cache.defaults.support.LoaderSupport;
 import org.coconut.cache.defaults.support.ManagementSupport;
 import org.coconut.cache.defaults.support.StoreSupport;
+import org.coconut.cache.defaults.support.ExpirationSupport.FinalExpirationSupport;
 import org.coconut.cache.defaults.support.LoaderSupport.EntrySupport;
 import org.coconut.cache.defaults.util.CacheEntryMap;
 import org.coconut.cache.spi.AbstractCache;
+import org.coconut.cache.spi.CacheServiceManager;
 import org.coconut.cache.spi.CacheSupport;
-import org.coconut.core.EventHandlers;
-import org.coconut.core.Offerable;
 import org.coconut.event.bus.EventBus;
 import org.coconut.filter.Filter;
 import org.coconut.filter.Filters;
@@ -60,6 +60,8 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
 
     /* SUPPORT */
 
+    private final CacheServiceManager<K, V> csm;
+
     private final EvictionSupport<MyEntry> evictionSupport;
 
     private final EventSupport<K, V> eventSupport;
@@ -68,11 +70,24 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
 
     private final EntrySupport<K, V> loaderSupport;
 
-    private final ManagementSupport managementSupport;
+    private final ManagementSupport<K, V> managementSupport;
 
     private final CacheStatisticsSupport<K, V> statistics;
 
     private final StoreSupport.EntrySupport<K, V> storeSupport;
+
+    @SuppressWarnings("unchecked")
+    protected CacheServiceManager<K, V> newCsm(CacheConfiguration<K, V> conf) {
+        CacheServiceManager<K, V> csm = new CacheServiceManager<K, V>(conf);
+        csm.addDefault(CacheStatisticsSupport.class);
+        csm.addDefault(EvictionSupport.class);
+        csm.addDefault(FinalExpirationSupport.class);
+        csm.addDefault(LoaderSupport.EntrySupport.class);
+        csm.addDefault(ManagementSupport.class);
+        csm.addDefault(StoreSupport.EntrySupport.class);
+        csm.addDefault(EventSupport.class);
+        return csm;
+    }
 
     @SuppressWarnings("unchecked")
     public UnlimitedCache() {
@@ -81,16 +96,17 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
 
     public UnlimitedCache(CacheConfiguration<K, V> conf) {
         super(conf);
+        csm = newCsm(conf);
         // support
-        statistics = CacheStatisticsSupport.createConcurrent(conf);
-        evictionSupport = new EvictionSupport<MyEntry>(conf);
-        expirationSupport = ExpirationSupport.newFinal(conf);
-        loaderSupport = new LoaderSupport.EntrySupport<K, V>(conf);
-        managementSupport = new ManagementSupport(conf);
-        storeSupport = new StoreSupport.EntrySupport<K, V>(conf);
-        eventSupport = new EventSupport<K, V>(conf);
-        expirationSupport.addTo(managementSupport.getGroup());
-        statistics.addTo(managementSupport.getGroup());
+        statistics = csm.create(CacheStatisticsSupport.class);
+        evictionSupport = csm.create(EvictionSupport.class);
+        expirationSupport = csm.create(ExpirationSupport.class);
+        loaderSupport = csm.create(LoaderSupport.EntrySupport.class);
+        managementSupport = csm.create(ManagementSupport.class);
+        storeSupport = csm.create(StoreSupport.EntrySupport.class);
+        eventSupport = csm.create(EventSupport.class);
+        
+        csm.initializeApm(managementSupport.getGroup());
         // important must be last, because of final value being inlined.
         map = new MyMap();
         if (conf.getInitialMap() != null) {
@@ -308,7 +324,7 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
     @Override
     public void start() {
         super.start();
-        managementSupport.start(this);
+        csm.initializeAll(this);
     }
 
     /**

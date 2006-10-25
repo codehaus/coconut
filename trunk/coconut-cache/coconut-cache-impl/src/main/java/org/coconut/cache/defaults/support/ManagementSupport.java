@@ -3,36 +3,45 @@
  */
 package org.coconut.cache.defaults.support;
 
+import java.util.Map;
+
 import org.coconut.apm.ApmGroup;
-import org.coconut.apm.defaults.DefaultApmGroup;
-import org.coconut.apm.monitor.DefaultMetricManager;
+import org.coconut.apm.Apms;
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.CacheException;
 import org.coconut.cache.spi.AbstractCache;
+import org.coconut.cache.spi.AbstractCacheService;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class ManagementSupport {
+public class ManagementSupport<K, V> extends AbstractCacheService<K, V> {
 
-    private DefaultMetricManager dmm = new DefaultMetricManager();
     private final ApmGroup group;
-    
-    public ManagementSupport(CacheConfiguration<?, ?> conf) {
+
+    public ManagementSupport(CacheConfiguration<K, V> conf) {
+        super(conf);
         String name = "org.coconut.cache:name=" + conf.getName()
                 + ",group=$1,subgroup=$2";
-        group = DefaultApmGroup.newRoot(name, conf.jmx().getMBeanServer());
+        group = Apms.newRootGroup(name, conf.jmx().getMBeanServer());
     }
+
     public ApmGroup getGroup() {
         return group;
     }
 
-    public void start(AbstractCache cache) {
+    /**
+     * @see org.coconut.cache.spi.AbstractCacheService#doStart(org.coconut.cache.spi.AbstractCache,
+     *      java.util.Map)
+     */
+    @Override
+    protected void doStart(AbstractCache<K, V> cache, Map<String, Object> properties) {
         if (cache.getConfiguration().jmx().isRegister()) {
             try {
                 group.register("org.coconut.cache:name=$0,group=$1,subgroup=$2");
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new CacheException("Could not start cache", e);
             }
         }
     }

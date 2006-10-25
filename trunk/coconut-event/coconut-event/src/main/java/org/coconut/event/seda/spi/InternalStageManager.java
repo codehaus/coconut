@@ -40,7 +40,7 @@ public abstract class InternalStageManager {
     /**
      * Lifecycle state
      */
-    volatile RunState runState = RunState.NEW;
+    volatile RunState runState = RunState.NOT_STARTED;
 
     /**
      * Lock held on updates to poolSize, corePoolSize, maximumPoolSize, and
@@ -357,7 +357,7 @@ public abstract class InternalStageManager {
 
     public boolean isShutdown() {
         RunState state = runState;
-        return state != RunState.RUNNING && state != RunState.NEW;
+        return state != RunState.RUNNING && state != RunState.NOT_STARTED;
     }
 
     /**
@@ -404,7 +404,7 @@ public abstract class InternalStageManager {
         final ReentrantLock mainLock = this.mainLock;
         mainLock.lock();
         try {
-            if (getState() == RunState.NEW) {
+            if (getState() == RunState.NOT_STARTED) {
                 runState = RunState.RUNNING;
                 started();
             } else if (getState() != RunState.RUNNING) {
@@ -681,7 +681,7 @@ public abstract class InternalStageManager {
      * @see AbstractStageManager#getState
      */
     public static enum RunState {
-        NEW, RUNNING, SHUTDOWN, STOP, TERMINATED;
+        NOT_STARTED, RUNNING, SHUTDOWN, STOP, TERMINATED;
     }
 
 }

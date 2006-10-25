@@ -15,6 +15,8 @@ import org.coconut.core.EventHandler;
 import org.coconut.event.EventSubscription;
 import org.coconut.filter.Filter;
 import org.coconut.filter.LogicFilters;
+import org.coconut.filter.matcher.DefaultFilterMatcher;
+import org.coconut.filter.matcher.FilterMatcher;
 
 /**
  * The order of subscribers are maintained.
@@ -29,10 +31,14 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
 
     private final ConcurrentHashMap<String, DefaultSubscription<E>> list = new ConcurrentHashMap<String, DefaultSubscription<E>>();
 
+    private final FilterMatcher<DefaultSubscription<E>, E> indexer = new DefaultFilterMatcher<DefaultSubscription<E>, E>();
+
     private final AtomicLong size = new AtomicLong();
 
     final Lock lock = new ReentrantLock();
 
+    //specify indexer, log, thread pool
+    //management, ...
     public DefaultEventBus() {
     }
 
@@ -55,6 +61,7 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
                 cancel(s);
                 c.add(s);
             }
+            indexer.clear();
             size.set(0);
             return c;
         } finally {
@@ -86,6 +93,7 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
                 if (list.putIfAbsent(name, s) == null) {
                     size.incrementAndGet();
                     subscribed(s);
+                    indexer.put(s, filter);
                     return s;
                 }
             }
@@ -116,6 +124,7 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
                         + "' already registered.");
             }
             list.put(name, s);
+            indexer.put(s, filter);
             size.incrementAndGet();
             subscribed(s);
             return s;
@@ -159,10 +168,8 @@ public class DefaultEventBus<E> implements EventBus<E>, Serializable {
     }
 
     protected void inform(final E element) {
-        for (EventSubscription<E> s : list.values()) {
-            if (s.getFilter().accept(element)) {
-                deliver(element, s);
-            }
+        for (EventSubscription<E> s : indexer.match(element)) {
+            deliver(element, s);
         }
     }
 

@@ -18,6 +18,7 @@ import org.coconut.cache.CacheException;
 import org.coconut.cache.CacheLoader;
 import org.coconut.cache.Caches;
 import org.coconut.cache.spi.AbstractCache;
+import org.coconut.cache.spi.AbstractCacheService;
 import org.coconut.cache.spi.AsyncCacheLoader;
 import org.coconut.cache.spi.CacheErrorHandler;
 import org.coconut.core.Callback;
@@ -27,7 +28,7 @@ import org.coconut.core.EventHandler;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class LoaderSupport {
+public class LoaderSupport<K, V> {
 
     public final static Executor SAME_THREAD_EXECUTOR = new SameThreadExecutor();
 
@@ -515,8 +516,6 @@ public class LoaderSupport {
                 : new AsyncCacheLoaderAdaptor<K, V>(e, loader);
     }
 
-
-
     public static <K, V> CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> getLoader(
             CacheConfiguration<K, V> conf) {
         if (conf.backend().getStore() != null) {
@@ -602,12 +601,13 @@ public class LoaderSupport {
 
     }
 
-    public static class EntrySupport<K, V> {
+    public static class EntrySupport<K, V> extends AbstractCacheService<K, V> {
         private final CacheErrorHandler<K, V> errorHandler;
 
         private final AsyncCacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader;
 
         public EntrySupport(CacheConfiguration<K, V> conf) {
+            super(conf);
             errorHandler = conf.getErrorHandler();
             loader = LoaderSupport.wrapAsAsync(LoaderSupport.getLoader(conf),
                     LoaderSupport.SAME_THREAD_EXECUTOR);

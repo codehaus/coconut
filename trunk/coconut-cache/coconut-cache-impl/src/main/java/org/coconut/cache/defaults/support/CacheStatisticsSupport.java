@@ -5,16 +5,21 @@ package org.coconut.cache.defaults.support;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.coconut.apm.ApmGroup;
 import org.coconut.apm.monitor.DateSampler;
 import org.coconut.apm.monitor.LongCounter;
 import org.coconut.apm.monitor.LongSamplingCounter;
 import org.coconut.apm.spi.annotation.ManagedAttribute;
+import org.coconut.apm.util.AtomicDouble;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.Caches;
+import org.coconut.cache.spi.AbstractCache;
+import org.coconut.cache.spi.AbstractCacheService;
 import org.coconut.cache.spi.Ressources;
 import org.coconut.core.Clock;
 
@@ -28,7 +33,7 @@ import org.coconut.core.Clock;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public final class CacheStatisticsSupport<K, V> {
+public final class CacheStatisticsSupport<K, V> extends AbstractCacheService<K, V> {
 
     // number of loads, loaded elements, number of queries,
     // number of added, number of new elements
@@ -71,10 +76,6 @@ public final class CacheStatisticsSupport<K, V> {
 
     public final static String ENTRY_REMOVE_TIMER = "Cache remove times";
 
-    public static <K, V> CacheStatisticsSupport<K, V> createConcurrent(CacheConfiguration<K, V> conf) {
-        return new CacheStatisticsSupport<K, V>(true);
-    }
-
     /* Cache Statistics */
     private final LongCounter cacheClearCount;
 
@@ -102,9 +103,17 @@ public final class CacheStatisticsSupport<K, V> {
 
     private final LongCounter entryGetHitCount;
 
+    private final AtomicLong entryGetHitSizeCount = new AtomicLong();
+
+    private final AtomicDouble entryGetHitCostCount = new AtomicDouble();
+
     private final LongSamplingCounter entryGetHitTime;
 
     private final LongCounter entryGetMissCount;
+
+    private final AtomicLong entryGetMissSizeCount = new AtomicLong();
+
+    private final AtomicDouble entryGetMissCostCount = new AtomicDouble();
 
     private final LongSamplingCounter entryGetMissTime;
 
@@ -116,7 +125,8 @@ public final class CacheStatisticsSupport<K, V> {
 
     private final LongSamplingCounter entryRemoveTime;
 
-    CacheStatisticsSupport(boolean isConcurrent) {
+    public CacheStatisticsSupport(CacheConfiguration<K, V> conf) {
+        super(conf);
         Clock c = Clock.MILLI_CLOCK;
         // cache counters
 
@@ -169,14 +179,14 @@ public final class CacheStatisticsSupport<K, V> {
                 getDesc(ENTRY_REMOVE_TIMER));
     }
 
-    long started;
+    volatile long started;
 
-    public void started() {
+    /**
+     * @see org.coconut.cache.spi.AbstractCacheService#initialize(org.coconut.cache.spi.AbstractCache,
+     *      java.util.Map)
+     */
+    protected void doStart(AbstractCache<K, V> cache, Map<String, Object> properties) {
         started = System.currentTimeMillis();
-    }
-
-    public void shutdown() {
-        // ignore for now
     }
 
     public long cacheClearStart(Cache<K, V> cache) {
@@ -236,12 +246,29 @@ public final class CacheStatisticsSupport<K, V> {
 
     public long entryGetStop(CacheEntry<K, V> entry, long start, boolean wasHit) {
         long time = System.nanoTime() - start;
+
+        // keep statistics about null loads
+
+        // we might also want to keep statistics about byte hit count..
+        // and cost hit count...
+        // total hit cost / total miss cost
+
         if (wasHit) {
             entryGetHitTime.report(time);
             entryGetHitCount.incrementAndGet();
+            double cost = entry.getCost();
+            entryGetHitCostCount.addAndGet(cost);
+            long size = entry.getSize();
+            entryGetHitSizeCount.addAndGet(size);
         } else {
             entryGetMissTime.report(time);
             entryGetMissCount.incrementAndGet();
+            if (entry != null) {
+                double cost = entry.getCost();
+                entryGetMissCostCount.addAndGet(cost);
+                long size = entry.getSize();
+                entryGetMissSizeCount.addAndGet(size);
+            }
         }
         return time;
     }
@@ -302,45 +329,45 @@ public final class CacheStatisticsSupport<K, V> {
      * @see org.coconut.apm.Apm#configureJMX(org.coconut.apm.spi.JMXConfigurator)
      */
     public void addTo(ApmGroup dg) {
-        ApmGroup m = dg.addGroup("Statistics", false);
+        ApmGroup m = dg.addGroup("Statistics", "", false);
 
-        ApmGroup general = m.addGroup("General");
+        ApmGroup general = m.addGroup("General", "");
         general.add(cacheStatisticsResetCount);
         general.add(cacheStatisticsResetLast);
         general.add(entryExpiredCount);
 
-        ApmGroup clear = m.addGroup("Clear");
+        ApmGroup clear = m.addGroup("Clear", "");
         clear.add(cacheClearCount);
         clear.add(cacheClearLast);
         clear.add(cacheClearTime);
 
-        ApmGroup eviction = m.addGroup("Eviction");
+        ApmGroup eviction = m.addGroup("Eviction", "");
         eviction.add(cacheEvictCount);
         eviction.add(cacheEvictLast);
         eviction.add(cacheEvictTime);
         eviction.add(entryEvictedCount);
         eviction.add(entryEvictedTime);
 
-        ApmGroup access = m.addGroup("Access");
-        access.setDescription("Statistics regarding access to the cache");
+        ApmGroup access = m
+                .addGroup("Access", "Statistics regarding access to the cache");
         access.add(entryGetHitCount);
         access.add(entryGetMissCount);
         access.add(entryGetHitTime);
         access.add(entryGetMissTime);
         access.add(new CacheRatio());
 
-        ApmGroup put = m.addGroup("Put");
+        ApmGroup put = m.addGroup("Put", "");
         put.add(entryPutCount);
         put.add(entryPutTime);
 
-        ApmGroup remove = m.addGroup("Remove");
+        ApmGroup remove = m.addGroup("Remove", "");
         remove.add(entryRemoveCount);
         remove.add(entryRemoveTime);
     }
 
     public class CacheRatio {
         @ManagedAttribute(defaultValue = "cache hit ratio")
-        public float getHitRatio() {
+        public double getHitRatio() {
             long hits = entryGetHitCount.get();
             long misses = entryGetMissCount.get();
             final long sum = hits + misses;
@@ -350,4 +377,31 @@ public final class CacheStatisticsSupport<K, V> {
             return ((float) hits) / sum;
         }
     }
+
+    public class CacheRatioSize {
+        @ManagedAttribute(defaultValue = "cache hit ratio")
+        public double getHitRatio() {
+            long hits = entryGetHitSizeCount.get();
+            long misses = entryGetMissSizeCount.get();
+            final long sum = hits + misses;
+            if (sum == 0) {
+                return Float.NaN;
+            }
+            return ((float) hits) / sum;
+        }
+    }
+
+    public class CacheRatioCost {
+        @ManagedAttribute(defaultValue = "cache hit ratio")
+        public double getHitRatio() {
+            double hits = entryGetHitCostCount.get();
+            double misses = entryGetMissCostCount.get();
+            final double sum = hits + misses;
+            if (sum == 0) {
+                return Float.NaN;
+            }
+            return hits / sum;
+        }
+    }
+
 }

@@ -148,7 +148,8 @@ public interface ReplacementPolicy<T> {
      * <p>
      * Be aware that this can be a very expensive operation. For complicated
      * policies where we lazyly calculate which element should be evicted next.
-     * We might need to create a complete copy of the policy.
+     * A complete copy of policys internal datastructures might need to be
+     * created. (TODO) hmm shouldn't we just throw UnsupportedOperation()??
      * 
      * @return the next element that should be evicted
      */

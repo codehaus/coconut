@@ -5,6 +5,7 @@ package org.coconut.cache.defaults.support;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.spi.AbstractCacheService;
 import org.coconut.cache.spi.CacheErrorHandler;
 import org.coconut.cache.store.CacheStore;
 
@@ -14,7 +15,7 @@ import org.coconut.cache.store.CacheStore;
  */
 public class StoreSupport {
 
-    public static class EntrySupport<K, V> {
+    public static class EntrySupport<K, V> extends AbstractCacheService<K, V> {
         private final CacheStore<K, CacheEntry<K, V>> store;
 
         private final CacheErrorHandler<K, V> errorHandler;
@@ -22,6 +23,7 @@ public class StoreSupport {
         private final boolean retrievePrevious = false;
 
         public EntrySupport(CacheConfiguration<K, V> conf) {
+            super(conf);
             errorHandler = conf.getErrorHandler();
             store = (CacheStore<K, CacheEntry<K, V>>) conf.backend().getStore();
         }

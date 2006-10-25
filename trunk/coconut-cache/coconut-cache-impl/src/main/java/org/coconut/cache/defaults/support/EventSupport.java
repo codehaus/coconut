@@ -21,6 +21,7 @@ import org.coconut.cache.CacheEntryEvent.ItemAccessed;
 import org.coconut.cache.CacheEntryEvent.ItemAdded;
 import org.coconut.cache.CacheEntryEvent.ItemRemoved;
 import org.coconut.cache.CacheEntryEvent.ItemUpdated;
+import org.coconut.cache.spi.AbstractCacheService;
 import org.coconut.core.Offerable;
 import org.coconut.event.bus.DefaultEventBus;
 import org.coconut.event.bus.EventBus;
@@ -29,7 +30,7 @@ import org.coconut.event.bus.EventBus;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class EventSupport<K, V> {
+public class EventSupport<K, V> extends AbstractCacheService<K, V> {
 
     public interface NotificationTransformer {
         Notification notification(Object source);
@@ -415,7 +416,6 @@ public class EventSupport<K, V> {
 
     }
 
-    
     private final EventBus<CacheEvent<K, V>> eb = new DefaultEventBus<CacheEvent<K, V>>();
 
     public void put(Cache<K, V> cache, CacheEntry<K, V> newEntry, CacheEntry<K, V> prev) {
@@ -478,6 +478,7 @@ public class EventSupport<K, V> {
                 .getKey(), entry.getValue(), false);
         dispatch(e);
     }
+
     public void removed(Cache<K, V> cache, CacheEntry<K, V> entry) {
         CacheEvent<K, V> e = new RemovedEvent<K, V>(cache, entry, nextSequenceId(), entry
                 .getKey(), entry.getValue(), false);
@@ -486,10 +487,8 @@ public class EventSupport<K, V> {
 
     private final Offerable<CacheEvent<K, V>> offerable;
 
-    private final CacheConfiguration<K, V> conf;
-
     public EventSupport(CacheConfiguration<K, V> conf) {
-        this.conf = conf;
+        super(conf);
         this.offerable = eb;
     }
 

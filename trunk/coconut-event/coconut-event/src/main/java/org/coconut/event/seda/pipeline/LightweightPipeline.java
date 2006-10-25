@@ -54,7 +54,7 @@ public class LightweightPipeline extends AbstractLinearPipeline {
         final ReentrantLock mainLock = dutte.getMainLock();
         mainLock.lock();
         try {
-            if (dutte.getState() != InternalStageManager.RunState.NEW) {
+            if (dutte.getState() != InternalStageManager.RunState.NOT_STARTED) {
                 throw new IllegalStateException("Pipeline has already been started");
             }
             if (getStage(name) != null) {

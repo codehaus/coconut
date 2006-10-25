@@ -11,12 +11,13 @@ import java.util.List;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.policy.ReplacementPolicy;
+import org.coconut.cache.spi.AbstractCacheService;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class EvictionSupport<T extends CacheEntry> {
+public class EvictionSupport<T extends CacheEntry> extends AbstractCacheService {
     private final ReplacementPolicy<T> cp;
 
     private final int maxSize;
@@ -28,6 +29,7 @@ public class EvictionSupport<T extends CacheEntry> {
     private final long preferableCapacity;
 
     public EvictionSupport(CacheConfiguration<?, ?> conf) {
+        super(conf);
         cp = conf.eviction().getPolicy();
         maxSize = conf.eviction().getMaximumSize();
         maxCapacity = conf.eviction().getMaximumCapacity();

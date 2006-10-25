@@ -10,6 +10,7 @@ import org.coconut.apm.spi.annotation.ManagedAttribute;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.spi.AbstractCacheService;
 import org.coconut.core.Clock;
 import org.coconut.filter.Filter;
 import org.coconut.internal.util.tabular.TabularFormatter;
@@ -18,10 +19,11 @@ import org.coconut.internal.util.tabular.TabularFormatter;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public abstract class ExpirationSupport<K, V> {
+public abstract class ExpirationSupport<K, V> extends AbstractCacheService<K, V> {
     private final Clock clock;
 
     public ExpirationSupport(CacheConfiguration<K, V> conf) {
+        super(conf);
         clock = conf.getClock();
     }
 
@@ -105,9 +107,10 @@ public abstract class ExpirationSupport<K, V> {
      * @see org.coconut.apm.Apm#configureJMX(org.coconut.apm.spi.JMXConfigurator)
      */
     public void addTo(ApmGroup dg) {
-        ApmGroup m = dg.addGroup("Expiration").add(this);
+        ApmGroup m = dg.addGroup("Expiration",
+                "Management of Expiration settings for the cache");
+        m.add(this);
         Filter f = getExpirationFilter();
-        m.setDescription("Management of Expiration settings for the cache");
         if (f != null) {
             m.add(f);
         }
@@ -149,7 +152,7 @@ public abstract class ExpirationSupport<K, V> {
 
         private final long refreshExpirationTime;
 
-        FinalExpirationSupport(CacheConfiguration<K, V> conf) {
+        public FinalExpirationSupport(CacheConfiguration<K, V> conf) {
             super(conf);
             defaultExpirationTime = conf.expiration().getDefaultTimeout(
                     TimeUnit.NANOSECONDS);

@@ -142,7 +142,7 @@ public class MRUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
      */
     public boolean update(int index, T newElement) {
         list.replace(index, newElement);
-        return true; // LRU never rejects an entry
+        return true; // MRU never rejects an entry
     }
 
 }

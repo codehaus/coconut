@@ -87,6 +87,10 @@ import org.xml.sax.SAXException;
 @ThreadSafe(false)
 public final class CacheConfiguration<K, V> implements Cloneable {
 
+    public class Services {
+        
+        
+    }
     public class Backend {
 
         /**
