@@ -4,18 +4,16 @@
 package org.coconut.management;
 
 import java.util.List;
+import java.util.Observable;
 
 import org.coconut.core.EventHandler;
 
 /**
- * 
- * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public interface ApmObserver<T> {
     EventHandler<? super T> addEventHandler(EventHandler<? super T> e);
-
     List<EventHandler<? super T>> getEventHandlers();
 
     boolean removeEventHandler(EventHandler<?> e);

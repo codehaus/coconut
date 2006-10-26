@@ -16,7 +16,6 @@ public class AtomicDouble extends Number {
 
     private final AtomicLong al;
 
-
     /**
      * Create a new AtomicLong with initial value <tt>0</tt>.
      */

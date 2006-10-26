@@ -11,8 +11,8 @@ import javax.management.ObjectName;
 
 import org.coconut.core.Transformers;
 import org.coconut.internal.util.ClassUtils;
-import org.coconut.management.defaults.DefaultApmGroup;
-import org.coconut.management.defaults.DefaultExecutableApmGroup;
+import org.coconut.management.defaults.DefaultManagedGroup;
+import org.coconut.management.defaults.DefaultExecutableGroup;
 
 /**
  * Factory and utility methods for {@link MetricManager}, {@link
@@ -39,7 +39,7 @@ import org.coconut.management.defaults.DefaultExecutableApmGroup;
  */
 public class Apms {
 
-    public static ExecutableApmGroup newExecutableGroup() {
+    public static ExecutableGroup newExecutableGroup() {
         return newExecutableGroup("");
     }
 
@@ -47,7 +47,7 @@ public class Apms {
      * @param name
      * @return
      */
-    public static ExecutableApmGroup newExecutableGroup(String name) {
+    public static ExecutableGroup newExecutableGroup(String name) {
         return newExecutableGroup(name, true);
     }
 
@@ -55,20 +55,20 @@ public class Apms {
      * @param name
      * @return
      */
-    public static ExecutableApmGroup newExecutableGroup(String name, boolean register) {
-        return new DefaultExecutableApmGroup(name, register);
+    public static ExecutableGroup newExecutableGroup(String name, boolean register) {
+        return new DefaultExecutableGroup(name, register);
     }
 
-    public static ApmGroup newGroup() {
-        return newRootGroup("");
+    public static ManagedGroup newGroup() {
+        return newGroup("");
     }
 
-    public static ApmGroup newRootGroup(String name) {
-        return new DefaultApmGroup(name, false);
+    public static ManagedGroup newGroup(String name) {
+        return new DefaultManagedGroup(name, false);
     }
 
-    public static ApmGroup newRootGroup(String name, MBeanServer server) {
-        DefaultApmGroup d = new DefaultApmGroup(name, false);
+    public static ManagedGroup newGroup(String name, MBeanServer server) {
+        DefaultManagedGroup d = new DefaultManagedGroup(name, false);
         d.setMbeanServer(server);
         return d;
     }

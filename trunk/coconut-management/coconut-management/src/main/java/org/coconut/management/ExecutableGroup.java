@@ -3,15 +3,28 @@
  */
 package org.coconut.management;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public interface ExecutableApmGroup extends ApmGroup {
+public interface ExecutableGroup extends ManagedGroup {
 
-    void startSampling();
+    /**
+     * (optional)
+     * 
+     * @param <T>
+     * @param r
+     * @param time
+     * @param unit
+     * @return
+     */
+    <T extends Runnable> T add(T r, long time, TimeUnit unit);
+    
+    void start();
 
-    void stopSampling();
+    void stop();
 
     void startAndRegister(String name) throws Exception;
 

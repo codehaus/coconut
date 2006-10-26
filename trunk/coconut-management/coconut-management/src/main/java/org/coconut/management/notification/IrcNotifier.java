@@ -4,20 +4,16 @@
 package org.coconut.management.notification;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Date;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class IrcNotifier implements Notifier{
+public class IrcNotifier implements Notifier {
     static final int DEFAULT_PORT = 6667;
-
-    static final String DEFAULT_HOST = "irc.codehaus.org";
 
     static final String DEFAULT_NICK = "sss2";
 
@@ -27,16 +23,32 @@ public class IrcNotifier implements Notifier{
 
     static final String DEFAULT_CHANNEL = "#coconut";
 
-    public IrcNotifier(String foo) {
+    private String host = "irc.codehaus.org";
 
+    public IrcNotifier(String hostfoo) {
+
+    }
+
+    public synchronized void setHost(String host) {
+        if (host == null) {
+            throw new NullPointerException("host is null");
+        }
+        this.host = host;
+    }
+
+    public synchronized String getHost() {
+        return host;
     }
 
     private Socket s;
 
     private PrintWriter pw;
 
-    public void connect() throws IOException {
-        s = new Socket(DEFAULT_HOST, DEFAULT_PORT);
+    public synchronized void connect() throws IOException {
+        if (host == null) {
+            throw new IllegalStateException("No host set, use setHost() to setup a host");
+        }
+        s = new Socket(host, DEFAULT_PORT);
         pw = new PrintWriter(s.getOutputStream());
         // As dictated by RFC1459...
         // first, we send the PASS message
@@ -46,7 +58,7 @@ public class IrcNotifier implements Notifier{
         sendMsg("NICK " + DEFAULT_NICK + "\r\n");
 
         // finally, we send the USER message
-        String d = "USER " + DEFAULT_USERNAME + " localhost " + DEFAULT_HOST + ":"
+        String d = "USER " + DEFAULT_USERNAME + " localhost " + host + ":"
                 + DEFAULT_REALNAME + "\r\n";
         sendMsg(d);
 
@@ -59,11 +71,11 @@ public class IrcNotifier implements Notifier{
         pw.flush();
     }
 
-    public void send(String msg) {
+    public synchronized void send(String msg) {
         sendMsg("PRIVMSG " + DEFAULT_CHANNEL + " :" + msg + "\r\n");
     }
 
-    public void disconnect() throws IOException {
+    public synchronized void disconnect() throws IOException {
         sendMsg("Quit\r\n");
         int i = s.getInputStream().read();
         while (i != -1) {
@@ -76,7 +88,7 @@ public class IrcNotifier implements Notifier{
     public static void main(String[] args) throws IOException, InterruptedException {
         IrcNotifier in = new IrcNotifier("");
         in.connect();
-        for (int i=0;i<100;i++) {
+        for (int i = 0; i < 100; i++) {
             in.send(new Date().toString());
             Thread.sleep(1000);
         }

@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 import javax.management.MBeanServer;
 
 import org.coconut.core.Named;
-import org.coconut.management.ApmGroup;
+import org.coconut.management.ManagedGroup;
 import org.coconut.management.spi.NumberDynamicBean;
 import org.coconut.management.spi.SelfConfigure;
 
@@ -23,7 +23,7 @@ import org.coconut.management.spi.SelfConfigure;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class DefaultApmGroup implements ApmGroup {
+public class DefaultManagedGroup implements ManagedGroup {
     private final static Pattern PATTERN = Pattern
             .compile("[\\da-zA-Z\\x5F]*(\\x2E([\\da-z\\x5F])+)*");
 
@@ -33,19 +33,19 @@ public class DefaultApmGroup implements ApmGroup {
 
     private final List<Object> apms = new ArrayList<Object>();
 
-    private final Map<String, DefaultApmGroup> groups = new HashMap<String, DefaultApmGroup>();
+    private final Map<String, DefaultManagedGroup> groups = new HashMap<String, DefaultManagedGroup>();
 
-    private final DefaultApmGroup parent;
+    private final DefaultManagedGroup parent;
 
     private boolean register;
 
     private String pattern;
 
-    public DefaultApmGroup(String name, boolean register) {
+    public DefaultManagedGroup(String name, boolean register) {
         this(name, null, register);
     }
 
-    private DefaultApmGroup(String name, DefaultApmGroup parent, boolean register) {
+    private DefaultManagedGroup(String name, DefaultManagedGroup parent, boolean register) {
         checkName(name);
         this.name = name;
         this.parent = parent;
@@ -73,14 +73,14 @@ public class DefaultApmGroup implements ApmGroup {
         this.server = server;
     }
 
-    public ApmGroup addGroup(String name, String description) {
+    public ManagedGroup addGroup(String name, String description) {
         return addGroup(name, description, true);
     }
 
     /**
      * @see org.coconut.apm.ApmGroup#addGroup(java.lang.String)
      */
-    public synchronized ApmGroup addGroup(String name, String description,
+    public synchronized ManagedGroup addGroup(String name, String description,
             boolean register) {
         if (name == null) {
             throw new NullPointerException("name is null");
@@ -90,7 +90,7 @@ public class DefaultApmGroup implements ApmGroup {
             throw new IllegalArgumentException("already a group defined with name "
                     + name);
         }
-        DefaultApmGroup dg = new DefaultApmGroup(name, this, register);
+        DefaultManagedGroup dg = new DefaultManagedGroup(name, this, register);
         dg.description = description;
         groups.put(name, dg);
         return dg;
@@ -99,14 +99,14 @@ public class DefaultApmGroup implements ApmGroup {
     /**
      * @see org.coconut.apm.ApmGroup#getGroups()
      */
-    public synchronized Collection<ApmGroup> getGroups() {
-        return new ArrayList<ApmGroup>(groups.values());
+    public synchronized Collection<ManagedGroup> getGroups() {
+        return new ArrayList<ManagedGroup>(groups.values());
     }
 
     /**
      * @see org.coconut.apm.ApmGroup#getParentGroup()
      */
-    public synchronized ApmGroup getParentGroup() {
+    public synchronized ManagedGroup getParentGroup() {
         return parent;
     }
 
@@ -123,8 +123,8 @@ public class DefaultApmGroup implements ApmGroup {
     /**
      * @see org.coconut.apm.next.ApmGroup#addAsGroup(org.coconut.core.Named)
      */
-    public ApmGroup addAsGroup(Named name) {
-        ApmGroup gm = addGroup(name.getName(), "No description");
+    public ManagedGroup addAsGroup(Named name) {
+        ManagedGroup gm = addGroup(name.getName(), "No description");
         gm.add(name);
         return gm;
     }
@@ -175,7 +175,7 @@ public class DefaultApmGroup implements ApmGroup {
             }
             bean.register(server, name);
         }
-        for (ApmGroup gm : groups.values()) {
+        for (ManagedGroup gm : groups.values()) {
             gm.register(nextLevel);
         }
     }

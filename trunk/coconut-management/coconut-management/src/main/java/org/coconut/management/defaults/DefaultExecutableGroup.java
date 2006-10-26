@@ -7,16 +7,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.management.ApmGroup;
-import org.coconut.management.ExecutableApmGroup;
+import org.coconut.management.ExecutableGroup;
 import org.coconut.management.spi.NumberDynamicBean;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class DefaultExecutableApmGroup extends DefaultApmGroup implements
-        ExecutableApmGroup {
+public class DefaultExecutableGroup extends DefaultManagedGroup implements
+        ExecutableGroup {
     private final ScheduledExecutorService ses = Executors
             .newSingleThreadScheduledExecutor();
 
@@ -24,7 +23,7 @@ public class DefaultExecutableApmGroup extends DefaultApmGroup implements
      * @param name
      * @param register
      */
-    public DefaultExecutableApmGroup(String name, boolean register) {
+    public DefaultExecutableGroup(String name, boolean register) {
         super(name, register);
     }
 
@@ -38,7 +37,7 @@ public class DefaultExecutableApmGroup extends DefaultApmGroup implements
         return r;
     }
 
-    public synchronized void startSampling() {
+    public synchronized void start() {
         for (Object o : getAll()) {
             if (o instanceof Foo) {
                 Foo f = (Foo) o;
@@ -57,12 +56,12 @@ public class DefaultExecutableApmGroup extends DefaultApmGroup implements
         register(name);
     }
 
-    public synchronized void stopSampling() {
+    public synchronized void stop() {
         ses.shutdown();
     }
 
     public synchronized void stopAndUnregister() {
-        stopSampling();
+        stop();
     }
 
     /**
