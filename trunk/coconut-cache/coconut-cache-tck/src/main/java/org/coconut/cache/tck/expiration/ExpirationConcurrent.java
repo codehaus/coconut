@@ -65,7 +65,7 @@ public class ExpirationConcurrent extends CacheTestBundle {
         final AtomicLong counts = new AtomicLong();
         CountdownLatchLoader loader = CountdownLatchLoader.integerToStringLoader(1);
         CacheConfiguration<Integer, String> cc = CacheConfiguration.newConf();
-        final Cache<Integer, String> c = newCache(cc.backend().setLoader(loader).c()
+        final Cache<Integer, String> c = newCache(cc.backend().setBackend(loader).c()
                 .setClock(Clock.NANO_CLOCK));
 
         c.put(M1.getKey(), "ZXCW", 1, TimeUnit.NANOSECONDS);
@@ -98,7 +98,7 @@ public class ExpirationConcurrent extends CacheTestBundle {
         final AtomicLong counts = new AtomicLong();
         CountdownLatchLoader loader = CountdownLatchLoader.integerToStringLoader(1);
         CacheConfiguration<Integer, String> cc = CacheConfiguration.newConf();
-        final Cache<Integer, String> c = newCache(cc.backend().setLoader(loader).c()
+        final Cache<Integer, String> c = newCache(cc.backend().setBackend(loader).c()
                 .setClock(Clock.NANO_CLOCK));
 
         c.put(M1.getKey(), "ZXCW", 1, TimeUnit.NANOSECONDS);

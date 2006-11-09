@@ -12,6 +12,7 @@ import static org.coconut.test.CollectionUtils.M6;
 
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.cache.CacheEntry;
 import org.coconut.cache.tck.CacheTestBundle;
 import org.coconut.cache.tck.util.CacheEntryFilter;
 import org.coconut.cache.tck.util.IntegerToStringLoader;
@@ -44,5 +45,17 @@ public class ExpirationWithCacheLoader extends CacheTestBundle {
         assertGet(M1);
         assertGetAll(M2, M3);
         assertGetEntry(M4);
+    }
+
+    @Test
+    public void testCreationTime() {
+        CacheEntryFilter f = new CacheEntryFilter();
+        c = newCache(newConf().setClock(clock).backend().setBackend(
+                new IntegerToStringLoader()).c().expiration().setFilter(f).c());
+        clock.incrementAbsolutTime();
+        c.put(M1.getKey(), "AB");
+        long time = getEntry(M1).getCreationTime();
+        f.setAccept(true); // entries are evicted, explicity load new ones
+        assertEquals(time, getEntry(M1).getCreationTime());
     }
 }

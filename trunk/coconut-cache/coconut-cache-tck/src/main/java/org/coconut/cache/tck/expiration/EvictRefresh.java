@@ -28,7 +28,7 @@ public class EvictRefresh extends CacheTestBundle {
     public void refreshWindowSingleElement() throws Exception {
         AsyncIntegerToStringLoader loader = new AsyncIntegerToStringLoader();
         c = newCache(newConf().setClock(clock).expiration().setRefreshInterval(2,
-                TimeUnit.NANOSECONDS).c().backend().setLoader(loader).c());
+                TimeUnit.NANOSECONDS).c().backend().setBackend(loader).c());
         c.put(M1.getKey(), "AB1", 2, TimeUnit.NANOSECONDS);
         c.put(M2.getKey(), "AB2", 3, TimeUnit.NANOSECONDS);
         c.put(M3.getKey(), "AB3", 4, TimeUnit.NANOSECONDS);
@@ -44,4 +44,49 @@ public class EvictRefresh extends CacheTestBundle {
         assertEquals("AB3", get(M3));
         assertEquals("AB4", get(M4));
     }
+    
+    /**
+     * Test refresh window
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void refreshWindowSingleElementEvict() throws Exception {
+        AsyncIntegerToStringLoader loader = new AsyncIntegerToStringLoader();
+        c = newCache(newConf().setClock(clock).expiration().setRefreshInterval(2,
+                TimeUnit.NANOSECONDS).c().backend().setBackend(loader).c());
+        c.put(M1.getKey(), "AB1", 2, TimeUnit.NANOSECONDS);
+        c.put(M2.getKey(), "AB2", 3, TimeUnit.NANOSECONDS);
+        c.put(M3.getKey(), "AB3", 4, TimeUnit.NANOSECONDS);
+        c.put(M4.getKey(), "AB4", 7, TimeUnit.NANOSECONDS);
+
+        incTime(); // time is one
+        // test no refresh on get
+        c.evict();
+        assertEquals(2, loader.getLoadedKeys().size());
+        waitAndAssertGet(M1, M2);
+
+        assertEquals("AB3", get(M3));
+        assertEquals("AB4", get(M4));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void refreshWindowSingleElementGet() throws Exception {
+        AsyncIntegerToStringLoader loader = new AsyncIntegerToStringLoader();
+        c = newCache(newConf().setClock(clock).expiration().setRefreshInterval(2,
+                TimeUnit.NANOSECONDS).c().backend().setBackend(loader).c());
+        c.put(M1.getKey(), "AB1", 2, TimeUnit.NANOSECONDS);
+        c.put(M2.getKey(), "AB2", 3, TimeUnit.NANOSECONDS);
+        c.put(M3.getKey(), "AB3", 4, TimeUnit.NANOSECONDS);
+        c.put(M4.getKey(), "AB4", 7, TimeUnit.NANOSECONDS);
+
+        incTime(); // time is one
+        // test no refresh on get
+        getAll(M1, M2, M3, M4);
+        assertEquals(2, loader.getLoadedKeys().size());
+        waitAndAssertGet(M1, M2);
+        assertEquals("AB3", get(M3));
+        assertEquals("AB4", get(M4));
+    }
+    
 }
