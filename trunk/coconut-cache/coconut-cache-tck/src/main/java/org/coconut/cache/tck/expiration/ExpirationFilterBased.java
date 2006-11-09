@@ -4,68 +4,100 @@
 package org.coconut.cache.tck.expiration;
 
 import static org.coconut.test.CollectionUtils.M1;
-import static org.coconut.test.CollectionUtils.M1_TO_M5_KEY_SET;
 import static org.coconut.test.CollectionUtils.M2;
 import static org.coconut.test.CollectionUtils.M3;
 import static org.coconut.test.CollectionUtils.M4;
 import static org.coconut.test.CollectionUtils.M5;
-import static org.junit.Assert.assertEquals;
+
+import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.tck.CacheTestBundle;
+import org.coconut.cache.tck.util.CacheEntryFilter;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
+ * Tests various scenarios with filter-based expiration
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
+@SuppressWarnings("unchecked")
 public class ExpirationFilterBased extends CacheTestBundle {
 
-    private ExpirationFilter f;
+    private CacheEntryFilter f;
 
     @Before
     public void setUpCaches() {
-        f = new ExpirationFilter();
-        c = newCache(newConf().setClock(clock).expiration().setFilter(f).c());
-        fillItUp();
+        f = new CacheEntryFilter();
+        c = newCache(newConf().expiration().setFilter(f).c());
     }
 
-    private void fillItUp() {
-        put(M1, 2);
-        put(M2, 3);
-        put(M3, 4);
-        put(M4, 4);
-        put(M5, 6);
+    /**
+     * Tests a custom expiration filter with get.
+     */
+    @Test
+    public void testFilterGet() {
+        put(M1);
+        assertGet(M1);
+        f.setAccept(true);
+        assertNullGet(M1);
+        f.assertLastEquals(M1);
+    }
+
+    /**
+     * Tests a custom expiration filter with getEntry.
+     */
+    @Test
+    public void testFilterGetEntry() {
+        put(M2);
+        assertGetEntry(M2);
+        f.setAccept(true);
+        assertNullGet(M2);
+        assertNull(c.getEntry(M2.getKey()));
+    }
+
+    /**
+     * Tests a custom expiration filter with getAll.
+     */
+    @Test
+    public void testFilterGetAll() {
+        putAll(M3, M4, M5);
+        assertGetAll(M3, M4, M5);
+        f.setAccept(true);
+        assertNullGet(M3, M4);
+        assertSize(1);
+        assertNullGet(M5);
+        assertSize(0);
     }
 
     /**
      * Tests that time based expiration still works even though a filter is
      * defined.
      */
-    public void timeExpirationStillWorks() {
-        incTime(3);
-        c.getAll(M1_TO_M5_KEY_SET);
-        assertSize(3);
-
-        incTime(10);
-        c.getAll(M1_TO_M5_KEY_SET);
-        assertSize(0);
+    public void testFilterAndTimeExpiration() {
+        put(M1, 5);
+        put(M2, 7);
+        incTime(5);
+        assertNullGet(M1);
+        assertGet(M2);
+        f.setAccept(true);
+        assertNullGet(M2);
     }
 
     /**
-     * Tests a custom expiration filter.
+     * Tests that default time based expiration still works even though a filter
+     * is defined.
      */
-    @Test
-    public void testFilter() {
-        assertSize(5); // time still has influence
-        f.isExpired = true;
-        assertNullGet(M3);
-        assertEquals(M3.getKey(), f.lastEntry.getKey());
-        assertEquals(M3.getValue(), f.lastEntry.getValue());
-        f.isExpired = false;
-        assertGet(M2);
-        f.isExpired = true;
-        c.getAll(M1_TO_M5_KEY_SET);
-        assertSize(0); // time has no influence any more
+    public void testFilterAndDefaultTimeExpiration() {
+        c = newCache(newConf().expiration().setFilter(f).c().setClock(clock).expiration()
+                .setDefaultTimeout(5, TimeUnit.NANOSECONDS).c());
+        put(M1);
+        put(M2);
+        assertGet(M1, M2);
+        incTime(5);
+        assertNullGet(M1);
+        f.setAccept(true);
+        assertNullGet(M2);
     }
 }
