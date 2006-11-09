@@ -11,6 +11,7 @@ import static org.coconut.test.CollectionUtils.M4;
 import static org.coconut.test.CollectionUtils.M5;
 
 import org.coconut.cache.tck.CacheTestBundle;
+import org.coconut.cache.tck.util.CacheEntryFilter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,6 +21,7 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
+@SuppressWarnings("unchecked")
 public class ExpirationEvict extends CacheTestBundle {
 
     @Before
@@ -37,20 +39,22 @@ public class ExpirationEvict extends CacheTestBundle {
     }
 
     /**
-     * Test that at time 2 M1 is expired.
+     * Test that the expiration status of an element is checked when we call
+     * evict.
      */
-    @SuppressWarnings("unchecked")
     @Test
-    public void singleElementExpiration() {
+    public void evictSingleElement() {
+        c = newCache(newConf().setClock(clock));
+        put(M1, 2);
+
         incTime();
         evict();
         assertGet(M1);
-        assertSize(5);
 
         incTime();
         evict();
         assertNullGet("Element M1 was not expired and removed", M1);
-        assertSize(4);
+        assertSize(0);
     }
 
     /**
@@ -58,7 +62,7 @@ public class ExpirationEvict extends CacheTestBundle {
      * times.
      */
     @Test
-    public void manyElements() {
+    public void evictManyElements() {
         assertSize(5);
 
         incTime(); // time1
@@ -91,7 +95,7 @@ public class ExpirationEvict extends CacheTestBundle {
      */
     @Test
     public void customExpirationFilter() {
-        ExpirationFilter f = new ExpirationFilter();
+        CacheEntryFilter f = new CacheEntryFilter();
         c = newCache(newConf().setClock(clock).expiration().setFilter(f).c());
         fillItUp();
 
@@ -99,10 +103,8 @@ public class ExpirationEvict extends CacheTestBundle {
         evict();
         assertSize(3); // time still has influence
 
-        f.isExpired = true;
+        f.setAccept(true);
         evict();
         assertSize(0);
-
-        // TODO f.lastEntry.equals(c.getEntry(M1.getKey));
     }
 }
