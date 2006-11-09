@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.defaults.memory.UnlimitedCache;
+import org.coconut.cache.defaults.memory.UnsynchronizedCache;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -18,7 +18,7 @@ public class RefreshEntryExample {
         // START SNIPPET: class
         CacheConfiguration<String, String> cc = CacheConfiguration.newConf();
         cc.expiration().setRefreshInterval(5 * 60, TimeUnit.SECONDS);
-        Cache<String, String> cache = cc.create(UnlimitedCache.class);
+        Cache<String, String> cache = cc.create(UnsynchronizedCache.class);
         cache.put("key", "value", 60 * 60, TimeUnit.SECONDS);
         // element will expire after 1 hours, but should be refreshed 5 minutes
         // before it expires.

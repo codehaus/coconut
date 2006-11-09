@@ -14,22 +14,30 @@ import org.coconut.filter.Filter;
  */
 // START SNIPPET: class
 public class Refresh2200FilterExample<K, V> implements Filter<CacheEntry<K, V>> {
-    private volatile long nextRefresh;
+    private volatile long nextRefreshTime = getNextUpdateTime();
 
-    private volatile long current;
+    private volatile long refreshTime = getNextUpdateTime();
+
+    // TODO Right now the first invocation will force a reload of all items
 
     public boolean accept(CacheEntry<K, V> entry) {
         long now = System.currentTimeMillis();
-        if (now > nextRefresh) {
-            Calendar c = Calendar.getInstance();
-            c.add(Calendar.DAY_OF_MONTH, 1);
-            c.set(Calendar.HOUR_OF_DAY, 22);
-            c.set(Calendar.MINUTE, 0);
-            c.set(Calendar.SECOND, 0);
-            current = nextRefresh;
-            nextRefresh = c.getTimeInMillis();
+        if (now > nextRefreshTime) {
+            refreshTime = nextRefreshTime;
+            nextRefreshTime = getNextUpdateTime();
         }
-        return current > entry.getLastUpdateTime();
+        return refreshTime > entry.getLastUpdateTime();
+    }
+
+    protected long getNextUpdateTime() {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, 22);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        if (c.getTimeInMillis() > System.currentTimeMillis()) {
+            c.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        return c.getTimeInMillis();
     }
 }
 // END SNIPPET: class

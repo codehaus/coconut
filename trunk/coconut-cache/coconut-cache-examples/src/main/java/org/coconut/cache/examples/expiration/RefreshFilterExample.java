@@ -6,8 +6,7 @@ package org.coconut.cache.examples.expiration;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.defaults.memory.UnlimitedCache;
-import org.coconut.cache.examples.expiration.CustomExpirationExample.CustomExpirationFilter;
+import org.coconut.cache.defaults.memory.UnsynchronizedCache;
 import org.coconut.filter.Filter;
 
 /**
@@ -28,7 +27,7 @@ public class RefreshFilterExample {
     public static void main(String[] args) {
         CacheConfiguration<String, String> cc = CacheConfiguration.newConf();
         cc.expiration().setRefreshFilter(new RefreshFilter<String, String>());
-        Cache<String, String> cache = cc.create(UnlimitedCache.class);
+        Cache<String, String> cache = cc.create(UnsynchronizedCache.class);
         cache.put("key", "value");
         // element will expire if has not been accessed with the last 1 hour
     }

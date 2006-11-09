@@ -6,7 +6,7 @@ package org.coconut.cache.examples.expiration;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.defaults.memory.UnlimitedCache;
+import org.coconut.cache.defaults.memory.UnsynchronizedCache;
 import org.coconut.cache.util.AbstractCacheLoader;
 import org.coconut.cache.util.DefaultCacheEntry;
 
@@ -26,8 +26,8 @@ public class CacheEntryLoaderExample {
 
     public static void main(String[] args) {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.newConf();
-        cc.backend().setExtendedLoader(new ExpirationLoader());
-        Cache<Integer, String> cache = cc.create(UnlimitedCache.class);
+        cc.backend().setExtendedBackend(new ExpirationLoader());
+        Cache<Integer, String> cache = cc.create(UnsynchronizedCache.class);
         cache.get(4); // item will expire after 1 hour (60 * 60 * 1000)
     }
     // END SNIPPET: class
