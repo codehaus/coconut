@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.coconut.filter</groupId>
+    <artifactId>coconut-filter-parent</artifactId>
+    <version>1.0-alpha1-SNAPSHOT</version>
+  </parent>
+  
+  <artifactId>coconut-filter-sandbox</artifactId>
+  <name>Coconut Filter project</name>
+  <description>This library contains the coconut filter project</description>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.coconut.core</groupId>
+      <artifactId>coconut-core</artifactId>
+    </dependency>
+  </dependencies>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <source>1.5</source>
+            <target>1.5</target>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>
