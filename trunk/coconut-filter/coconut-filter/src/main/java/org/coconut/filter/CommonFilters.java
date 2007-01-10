@@ -10,7 +10,6 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.coconut.filter.Filters.IsTypeFilter;
-import org.coconut.filter.util.StringFilters.ContainsFilter;
 
 /**
  * Not quite done yet.
@@ -80,10 +79,6 @@ public class CommonFilters {
 
     public static class EndsWithFilter {
 
-    }
-
-    public static Filter<String> stringContains(CharSequence charSequence) {
-        return new ContainsFilter(charSequence);
     }
 
     public static class EqualsIgnoreCaseFilter {
