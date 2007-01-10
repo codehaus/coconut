@@ -8,10 +8,18 @@ import java.util.concurrent.locks.Lock;
 import org.coconut.core.Named;
 
 /**
- * A stage is self-contained component that handle events, optionally
- * dispatching events to other stages while processing these. Most
- * implementations will use an incoming queue to store events that have not yet
- * been processed. A StageManager takes care of thread scheduling
+ * A stage is self-contained component that handle events.
+ * There is no limitation to the types of events a 
+ * 
+ * This stage interface is not implemented by users, Most im
+ *  Specifically, an
+ * event is any Java object that descends from the QueueElementIF interface, and
+ * a stage is any Java object that descends from the EventHandlerIF interface.
+ * 
+ * 
+ * optionally dispatching events to other stages while processing these. Most
+ * implementations use an incoming queue to store events that have not yet been
+ * processed. HoweverA StageManager takes care of thread scheduling
  * <p>
  * Each stage is registered with a unique name within a stage manager. Most
  * implementations do not allow stages to be renamed.

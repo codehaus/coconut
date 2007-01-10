@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.defaults.memory.UnlimitedCache;
+import org.coconut.cache.defaults.memory.UnsynchronizedCache;
 import org.coconut.cache.policy.Policies;
 
 public class Test {
@@ -18,7 +18,7 @@ public class Test {
         conf.eviction().setMaximumCapacity(10000);
         conf.eviction().setPolicy(Policies.newLRU());
         //conf.setPolicy(Policies.newMRU());
-        Map<Integer, Object> uc = new UnlimitedCache<Integer, Object>(conf);
+        Map<Integer, Object> uc = new UnsynchronizedCache<Integer, Object>(conf);
         // Map<Integer, String> uc = new HashMap<Integer, String>();
 
         String foo = "dfdf";

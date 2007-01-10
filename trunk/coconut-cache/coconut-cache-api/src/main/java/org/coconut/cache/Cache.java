@@ -9,10 +9,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReadWriteLock;
 
 import org.coconut.event.bus.EventBus;
-import org.coconut.filter.Filter;
 
 /**
  * A <tt>cache</tt> is a collection of data duplicating original values stored
@@ -27,21 +25,21 @@ import org.coconut.filter.Filter;
  * caches. See a list of all the various cache implementations <a
  * href="http://org.coconut.codehaus.org/cache/cache-implementations.html">here</a>.
  * <p>
- * This <a href="{@docRoot}/index.html">page</a> details how the various
- * cache classes relate.
+ * Coconut Cache is made up of a number of core classes. This <a href="{@docRoot}/index.html">page</a>
+ * tries to explain how they relate.
+ * <p> *
  * <p>
- * The first level is thread safety/performance unsynchronized cache, for
+ * All o The first level is thread safety/performance unsynchronized cache, for
  * example, {@link org.coconut.cache.impl.memory.UnlimitedCache} synchronized
  * caches which offers thread safety. concurrent caches with offers thread
  * safery and concurrent retrievels on the expense of features. Coconut comes
  * with build-in support for the following types of cache. TODO What is a cache
- * interface Distributed.. serializable CachePolicies.
- * <p>
- * The three collection views, which allow a cache's contents to be viewed as a
- * set of keys, collection of values, or set of key-value mappings only shows
- * values contained in the actual cache not in any backend storages.
- * Furthermore, it will <tt>not</tt> attempt to fetch updated values for
- * entries that has expired.
+ * interface Distributed.. serializable CachePolicies. The three collection
+ * views, which allow a cache's contents to be viewed as a set of keys,
+ * collection of values, or set of key-value mappings only shows values
+ * contained in the actual cache not in any backend storages. Furthermore, the
+ * cache will <tt>not</tt> attempt to fetch updated values for entries that
+ * has expired when calling methods on any of the collection views.
  * <p>
  * All general-purpose <tt>Cache</tt> implementation classes should provide
  * three "standard" constructors: a void (no arguments) constructor, which
@@ -57,7 +55,7 @@ import org.coconut.filter.Filter;
  * identity-based versions from class <tt>Object</tt>. Nore, are they
  * generally serializable.
  * <p>
- * Unlike {@link java.util.HashMap}, a <code>cache</code> does NOT allow
+ * Unlike {@link java.util.HashMap}, a <tt>cache</tt> does NOT allow
  * <tt>null</tt> to be used as a key or value. It is the authors belief that
  * allowing null values (or keys) does more harm then good, by masking what are
  * almost always usage errors. If nulls are absolutely needed the <a
@@ -116,7 +114,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * <p>
      * If a value is not contained in the cache and the value cannot be loaded
      * by any of the configured cache backends. The returned map will contain a
-     * mapping from the key to <code>null</code>.
+     * mapping from the key to <tt>null</tt>.
      * <p>
      * The behavior of this operation is unspecified if the specified collection
      * is modified while the operation is in progress.
@@ -124,7 +122,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @param keys
      *            the keys to get.
      * @return a map with mappings from each key to the corresponding value, or
-     *         to <code>null</code> if no mapping for this key exists.
+     *         to <tt>null</tt> if no mapping for this key exists.
      * @throws ClassCastException
      *             if any of the keys in the specified collection are of an
      *             inappropriate type for this cache (optional).
@@ -192,8 +190,8 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @param key
      *            whose associated value is to be loaded.
      * @return a Future representing pending completion of the loading, and
-     *         whose <tt>get()</tt> method will return <code>null</code>
-     *         upon completion.
+     *         whose <tt>get()</tt> method will return <tt>null</tt> upon
+     *         completion.
      * @throws ClassCastException
      *             if the key is of an inappropriate type for this cache
      *             (optional).
@@ -236,6 +234,10 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * Furthermore, it will not effect the statistics gathered by the cache and
      * no {@link CacheItemEvent.ItemAccessed} event will be raised. Finally,
      * even if the item has expired it will still be returned by this method.
+     * <p>
+     * All implementations of this method should take care to assure that a call
+     * to peek does not have any side effects on the cache or any retrived
+     * value.
      * 
      * @param key
      *            key whose associated value is to be returned.
@@ -251,18 +253,20 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
 
     /**
      * Works as {@link java.util.Map#get(Object)} with the following
-     * modifications.
+     * modification.
      * <p>
-     * If no mapping exists for the specified key any configured cache backend
-     * is asked to try and fetch a value for the key.
-     * <p>
-     * TODO What happens when a get fails on a backend store. throw exception
-     * right? Perhaps point to the method in spi.loadableCache that can be
-     * overridden to alter the behaviour
-     * <p>
-     * Unlike {@link java.util.Map#get(Object)} throwing a
-     * {@link NullPointerException} is not optional when <tt>null</tt> is
-     * specified as the key. (TODO Move to TCK)
+     * If no mapping exists for the specified key and a backend has been
+     * configured for the cache. The cache will attempt to load a value for the
+     * specified key through the backend.
+     * 
+     * @throws ClassCastException
+     *             if the key is of an inappropriate type for this map
+     *             (optional).
+     * @throws NullPointerException
+     *             if the key is <tt>null</tt>
+     * @throws CacheException
+     *             if the any configured backend store failed while trying to
+     *             load a value (optional).
      */
     V get(Object key);
 
@@ -335,57 +339,6 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     void putAll(Map<? extends K, ? extends V> t, long timeout, TimeUnit unit);
 
     /**
-     * Tries to acquire a lock on either the cache instance, a single item in
-     * the cache, or a set of items in the cache depending on the specified
-     * arguments. This operation is optional.
-     * <p>
-     * getLock() : A call to getLock() with no arguments will return a lock that
-     * can be used to acquire a lock on the whole cache. Read and write lock
-     * should have semantics as the getLock(all items). Furthermore there are
-     * the additional constraints. Locks cannot be acquired on non existing
-     * items
-     * <p>
-     * getLock(k) : a call to getLock() with a single key argument will return a
-     * lock that can be used to acquire a lock on the cache entry with the
-     * specified key. trying to acquire a lock on an item that does not exist
-     * will return a d
-     * <p>
-     * getLock(k1, k2, k3) = a call to getLock() with multiple key arguments
-     * will return a lock that can be used to acquire a lock on all the cache
-     * entries with the specified keys. //use lock comperator or natural
-     * ordering What about locks on non existing keys??? we might for example
-     * want to insert 2,3,4,5 and then unlock when all have been inserted. We
-     * could use finalization/weak queue. Using this method for locking multiple
-     * elements is prefereble to locking one element at a time because it avoids
-     * potential deadlock. The
-     * {@link java.util.concurrent.locks.Lock#newCondition()} method is not
-     * supported by the returned lock. And any invocation of the method will
-     * throw an {@link java.lang.UnsupportedOperationException}
-     * <p>
-     * TODO Sematics of read lock versus write lock
-     * <p>
-     * Unless otherwise specified the lock is held by the thread that locks the
-     * lock.
-     * <p>
-     * Might want to set useOnlyWriteLock=true to save the overhead of a full
-     * read-writelock implementation.
-     * 
-     * @param keys
-     * @return a read write lock that can be used to lock a specific element,
-     *         elements or the whole cache depending on the usage
-     * @throws IllegalArgumentException
-     *             if multiple key arguments are no natural order exists among
-     *             the keys and no lock key comparator has been specified for
-     *             the cache
-     * @throws NullPointerException
-     *             if any of the specified keys are <tt>null</tt>.
-     * @throws UnsupportedOperationException
-     *             if the <tt>getLock</tt> method is not supported by this
-     *             cache
-     */
-    ReadWriteLock getLock(K... keys);
-
-    /**
      * Resets the hit ratio.
      * <p>
      * The number of hits returned by individual items
@@ -400,9 +353,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     /**
      * Retrieves a {@link CacheEntry} for the specified key (optional). If no
      * entry exists for the specified key any configured cache backend is asked
-     * to try and fetch a value for the key.
-     * <p>
-     * TODO: Come up with example usage
+     * to try and fetch an entry for the key.
      * <p>
      * 
      * @param key
@@ -417,28 +368,27 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @throws UnsupportedOperationException
      *             if the cache does not cache entries
      */
-    // also see http://jira.codehaus.org/browse/COCACHE-25
     CacheEntry<K, V> getEntry(K key);
 
-    CacheEntry<K, V> peekEntry(K key);
-
     /**
-     * This method is used to make queries into the cache locating cache entries
-     * that match a particular criteria. The returned {@link CacheQuery} can be
-     * used for returning all the matching cache entries at once or just a small
-     * subset (paging functionality) at a time.
+     * This method works analogoes to the {@link #peek(Object)} method. However,
+     * it will return a cache entry instead of just the value.
      * <p>
-     * NOTICE: querying a cache can be a very time consuming affair especially
-     * if no usefull indexes are available at query time.
-     * <p>
-     * If a backend stored is configured <tt>and</tt> it supports querying it
-     * will be used for querying otherwise only the local cache will be queried.
+     * Just like {@link #peek(Object)} any implementation of this method should
+     * take care to assure that the call does not have any side effects on the
+     * cache or any retrived entry.
      * 
-     * @param filter
-     *            the filter used to identify which entries should be retrieved
-     * @return a cache query that can be used to retrieve the matching entries
+     * @param key
+     *            key whose associated value is to be returned.
+     * @return the cache entry to which this cache maps the specified key, or
+     *         <tt>null</tt> if the cache contains no mapping for this key.
+     * @throws ClassCastException
+     *             if the key is of an inappropriate type for this cache
+     *             (optional).
+     * @throws NullPointerException
+     *             if the specified key is <tt>null</tt>
      */
-    CacheQuery<K, V> query(Filter<? super CacheEntry<K, V>> filter);
+    CacheEntry<K, V> peekEntry(K key);
 
     /**
      * The class holds the hit statistics for a cache. Unless otherwise

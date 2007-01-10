@@ -25,7 +25,7 @@ public class NoLockSupport extends CacheTestBundle {
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testLockGlobal() {
-        c1.getLock();
+     //   c1.getLock();
     }
 
     /**
@@ -34,7 +34,7 @@ public class NoLockSupport extends CacheTestBundle {
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testLockSingleElement() {
-        c1.getLock(M1.getKey());
+     //   c1.getLock(M1.getKey());
     }
 
     /**
@@ -43,6 +43,6 @@ public class NoLockSupport extends CacheTestBundle {
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testLockMultipleElement() {
-        c2.getLock(M1.getKey(), M2.getKey());
+   //     c2.getLock(M1.getKey(), M2.getKey());
     }
 }

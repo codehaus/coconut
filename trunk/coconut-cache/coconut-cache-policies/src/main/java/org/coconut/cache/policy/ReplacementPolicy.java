@@ -63,6 +63,8 @@ public interface ReplacementPolicy<T> {
      * <p>
      * TODO as an alternative is it allowed to create a new index??? would work
      * analogeuos to add(). Why would this be needed?
+     * <p>
+     * The element should be removed if the update is rejected
      * 
      * @param index
      *            the index of the previous element

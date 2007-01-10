@@ -8,26 +8,26 @@ import java.util.Map;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
 import org.coconut.cache.spi.AbstractCache;
-import org.coconut.cache.spi.AbstractCacheService;
-import org.coconut.management.ApmGroup;
+import org.coconut.cache.spi.service.AbstractCacheService;
 import org.coconut.management.Apms;
+import org.coconut.management.ManagedGroup;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class ManagementSupport<K, V> extends AbstractCacheService<K, V> {
+public class ManagementCacheService<K, V> extends AbstractCacheService<K, V> {
 
-    private final ApmGroup group;
+    private final ManagedGroup group;
 
-    public ManagementSupport(CacheConfiguration<K, V> conf) {
+    public ManagementCacheService(CacheConfiguration<K, V> conf) {
         super(conf);
-        String name = "org.coconut.cache:name=" + conf.getName()
-                + ",group=$1,subgroup=$2";
-        group = Apms.newRootGroup(name, conf.jmx().getMBeanServer());
+        String name = "org.coconut.cache:name=" + conf.getName();
+                //+ ",group=$1,subgroup=$2";
+        group = Apms.newGroup(name, conf.jmx().getMBeanServer());
     }
 
-    public ApmGroup getGroup() {
+    public ManagedGroup getGroup() {
         return group;
     }
 
@@ -39,7 +39,8 @@ public class ManagementSupport<K, V> extends AbstractCacheService<K, V> {
     protected void doStart(AbstractCache<K, V> cache, Map<String, Object> properties) {
         if (cache.getConfiguration().jmx().isRegister()) {
             try {
-                group.register("org.coconut.cache:name=$0,group=$1,subgroup=$2");
+                //,group=$1,subgroup=$2
+                group.register("org.coconut.cache:name=$0");
             } catch (Exception e) {
                 throw new CacheException("Could not start cache", e);
             }

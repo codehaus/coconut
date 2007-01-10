@@ -5,64 +5,67 @@ package org.coconut.cache.defaults.support;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.spi.AbstractCacheService;
 import org.coconut.cache.spi.CacheErrorHandler;
+import org.coconut.cache.spi.service.AbstractCacheService;
 import org.coconut.cache.store.CacheStore;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class StoreSupport {
+public class StoreCacheService {
 
     public static class EntrySupport<K, V> extends AbstractCacheService<K, V> {
         private final CacheStore<K, CacheEntry<K, V>> store;
 
-        private final CacheErrorHandler<K, V> errorHandler;
+        private final CacheStore<K, V> store2;
 
-        private final boolean retrievePrevious = false;
+        private final CacheErrorHandler<K, V> errorHandler;
 
         public EntrySupport(CacheConfiguration<K, V> conf) {
             super(conf);
             errorHandler = conf.getErrorHandler();
-            store = (CacheStore<K, CacheEntry<K, V>>) conf.backend().getStore();
+            store = (CacheStore<K, CacheEntry<K, V>>) conf.backend().getExtendedBackend();
+            store2 = (CacheStore<K, V>) conf.backend().getBackend();
         }
 
-        public CacheEntry<K, V> storeEntry(final CacheEntry<K, V> value) {
-            CacheEntry<K, V> v;
+        public void storeEntry(final CacheEntry<K, V> value) {
             if (store != null) {
                 K key = value.getKey();
                 try {
-                    v = store.store(key, value, retrievePrevious);
+                    store.store(key, value);
                 } catch (Exception e) {
-                    v = errorHandler.storeEntryFailed(store, key, value, false, e);
+                    errorHandler.storeEntryFailed(store, key, value, false, e);
                 }
-                return v;
+            } else if (store2 != null) {
+                K key = value.getKey();
+                V v =value.getValue();
+                try {
+                    store2.store(key,v);
+                } catch (Exception e) {
+                    errorHandler.storeFailed(store2, key, v, false, e);
+                }
             }
-            return null;
         }
     }
 
-    public static class ValueSupport<K, V> {
+    public static class ValueSupport<K, V> extends AbstractCacheService<K, V> {
         private final CacheStore<K, V> store;
 
         private final CacheErrorHandler<K, V> errorHandler;
 
-        private final boolean retrievePrevious = false;
-
         public ValueSupport(CacheConfiguration<K, V> conf) {
+            super(conf);
             errorHandler = conf.getErrorHandler();
-            store = conf.backend().getStore();
+            store = (CacheStore<K, V>) conf.backend().getBackend();
         }
 
-        public V store(final K key, final V value) {
-            V v;
+        public void store(final K key, final V value) {
             try {
-                v = store.store(key, value, retrievePrevious);
+                store.store(key, value);
             } catch (Exception e) {
-                v = errorHandler.storeFailed(store, key, value, false, e);
+                errorHandler.storeFailed(store, key, value, false, e);
             }
-            return v;
         }
     }
 

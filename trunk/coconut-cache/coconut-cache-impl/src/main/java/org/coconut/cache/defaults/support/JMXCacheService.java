@@ -25,7 +25,7 @@ import org.coconut.event.bus.EventBus;
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-public class JMXSupport {
+public class JMXCacheService {
 
     public static CacheMXBean createProxy(MBeanServer server, String name)
             throws MalformedObjectNameException {

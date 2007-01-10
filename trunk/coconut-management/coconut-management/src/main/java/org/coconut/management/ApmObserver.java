@@ -4,7 +4,6 @@
 package org.coconut.management;
 
 import java.util.List;
-import java.util.Observable;
 
 import org.coconut.core.EventHandler;
 
@@ -14,6 +13,7 @@ import org.coconut.core.EventHandler;
  */
 public interface ApmObserver<T> {
     EventHandler<? super T> addEventHandler(EventHandler<? super T> e);
+
     List<EventHandler<? super T>> getEventHandlers();
 
     boolean removeEventHandler(EventHandler<?> e);

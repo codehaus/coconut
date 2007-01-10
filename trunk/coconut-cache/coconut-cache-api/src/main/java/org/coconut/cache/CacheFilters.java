@@ -124,23 +124,23 @@ public class CacheFilters {
             final Collection<? extends V> values) {
         return (Filter) valueFilter(ComparisonFilters.anyEquals(values.toArray()));
     }
-
-    @SuppressWarnings("unchecked")
-    public static <K, V> CacheQuery<K, V> queryByKey(Cache<K, V> c, Filter<K> filter) {
-        return c.query((Filter) keyFilter(filter));
-    }
-
-    /**
-     * Used for easily querying a cache about certain values.
-     * 
-     * @param cache
-     *            the cache to query
-     * @param filter
-     *            the filter to apply to the value
-     * @return a cache query for the given cache and filter
-     */
-    @SuppressWarnings("unchecked")
-    public static <K, V> CacheQuery<K, V> queryByValue(Cache<K, V> cache, Filter<V> filter) {
-        return cache.query((Filter) valueFilter(filter));
-    }
+//
+//    @SuppressWarnings("unchecked")
+//    public static <K, V> CacheQuery<K, V> queryByKey(Cache<K, V> c, Filter<K> filter) {
+//        return c.query((Filter) keyFilter(filter));
+//    }
+//
+//    /**
+//     * Used for easily querying a cache about certain values.
+//     * 
+//     * @param cache
+//     *            the cache to query
+//     * @param filter
+//     *            the filter to apply to the value
+//     * @return a cache query for the given cache and filter
+//     */
+//    @SuppressWarnings("unchecked")
+//    public static <K, V> CacheQuery<K, V> queryByValue(Cache<K, V> cache, Filter<V> filter) {
+//        return cache.query((Filter) valueFilter(filter));
+//    }
 }

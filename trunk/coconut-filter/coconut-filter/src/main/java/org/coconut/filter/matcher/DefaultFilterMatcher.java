@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.coconut.core.EventHandler;
 import org.coconut.filter.Filter;
 
 /**
@@ -33,6 +34,17 @@ public class DefaultFilterMatcher<K, E> implements FilterMatcher<K, E> {
         return al;
     }
 
+    /**
+     * @see org.coconut.filter.matcher.FilterMatcher#apply(java.lang.Object, org.coconut.core.EventHandler)
+     */
+    public void match(E object, EventHandler<E> eh) {
+        for (Map.Entry<K, Filter<? super E>> f : map.entrySet()) {
+            if (f.getValue().accept(object)) {
+               eh.handle(object);
+            }
+        }
+    }
+    
     /**
      * 
      * @see java.util.concurrent.ConcurrentHashMap#clear()
@@ -225,5 +237,4 @@ public class DefaultFilterMatcher<K, E> implements FilterMatcher<K, E> {
     public Collection<Filter<? super E>> values() {
         return map.values();
     }
-
 }

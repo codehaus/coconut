@@ -8,21 +8,21 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.spi.AbstractCacheService;
+import org.coconut.cache.spi.service.AbstractCacheService;
 import org.coconut.core.Clock;
 import org.coconut.filter.Filter;
 import org.coconut.internal.util.tabular.TabularFormatter;
-import org.coconut.management.ApmGroup;
+import org.coconut.management.ManagedGroup;
 import org.coconut.management.annotation.ManagedAttribute;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public abstract class ExpirationSupport<K, V> extends AbstractCacheService<K, V> {
+public abstract class ExpirationCacheService<K, V> extends AbstractCacheService<K, V> {
     private final Clock clock;
 
-    public ExpirationSupport(CacheConfiguration<K, V> conf) {
+    public ExpirationCacheService(CacheConfiguration<K, V> conf) {
         super(conf);
         clock = conf.getClock();
     }
@@ -94,7 +94,7 @@ public abstract class ExpirationSupport<K, V> extends AbstractCacheService<K, V>
 
     public abstract Filter<CacheEntry<K, V>> getRefreshFilter();
 
-    public static <K, V> ExpirationSupport<K, V> newFinal(CacheConfiguration<K, V> conf) {
+    public static <K, V> ExpirationCacheService<K, V> newFinal(CacheConfiguration<K, V> conf) {
         return new FinalExpirationSupport<K, V>(conf);
     }
 
@@ -106,14 +106,15 @@ public abstract class ExpirationSupport<K, V> extends AbstractCacheService<K, V>
     /**
      * @see org.coconut.apm.Apm#configureJMX(org.coconut.apm.spi.JMXConfigurator)
      */
-    public void addTo(ApmGroup dg) {
-        ApmGroup m = dg.addGroup("Expiration",
+    public void addTo(ManagedGroup dg) {
+        ManagedGroup m = dg.addGroup("Expiration",
                 "Management of Expiration settings for the cache");
         m.add(this);
         Filter f = getExpirationFilter();
         if (f != null) {
             m.add(f);
         }
+        f = getRefreshFilter();
         if (f != null) {
             m.add(f);
         }
@@ -142,8 +143,7 @@ public abstract class ExpirationSupport<K, V> extends AbstractCacheService<K, V>
         return clock.hasExpired(refTime);
     }
 
-    public static final class FinalExpirationSupport<K, V> extends
-            ExpirationSupport<K, V> {
+    public static class FinalExpirationSupport<K, V> extends ExpirationCacheService<K, V> {
         private final Filter<CacheEntry<K, V>> expireFilter;
 
         private final Filter<CacheEntry<K, V>> refreshFilter;

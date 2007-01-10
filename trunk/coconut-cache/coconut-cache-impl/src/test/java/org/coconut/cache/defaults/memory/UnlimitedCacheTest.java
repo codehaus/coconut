@@ -13,7 +13,7 @@ import org.coconut.test.MavenDummyTest;
 import org.junit.runner.RunWith;
 
 @RunWith(TCKRunner.class)
-@TCKClassTester(UnlimitedCache.class)
+@TCKClassTester(UnsynchronizedCache.class)
 public class UnlimitedCacheTest extends MavenDummyTest {
 
     public static Test suite() {

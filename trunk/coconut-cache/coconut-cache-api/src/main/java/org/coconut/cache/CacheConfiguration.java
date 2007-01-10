@@ -102,7 +102,7 @@ public final class CacheConfiguration<K, V> implements Cloneable {
             return CacheConfiguration.this;
         }
 
-        public CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> getExtendedLoader() {
+        public CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> getExtendedBackend() {
             return extendedLoader;
         }
 
@@ -111,32 +111,8 @@ public final class CacheConfiguration<K, V> implements Cloneable {
          * key-value bindings. If this method returns <code>null</code> no
          * initial loader will be set.
          */
-        public CacheLoader<? super K, ? extends V> getLoader() {
+        public CacheLoader<? super K, ? extends V> getBackend() {
             return loader;
-        }
-
-        /**
-         * Returns the {@link CacheStore} that the cache should use.
-         * 
-         * @return the CacheStore that the cache should use.
-         */
-        public CacheStore<K, V> getStore() {
-            return store;
-        }
-
-        /**
-         * Returns <code>true</code> if a cache loader has been set. This can
-         * both a normal loader that loads a single value for a key, or an
-         * extended loader that loads a {@link CacheEntry} for specific key. Use
-         * {@link #getLoader()} or {@link #getExtendedLoader()} to retrieve the
-         * loaders respectively.
-         * 
-         * @return <code>true</code> if a cache loader has been set
-         * @see #setLoader(CacheLoader)
-         * @see #setExtendedLoader(CacheLoader)
-         */
-        public boolean hasLoader() {
-            return loader != null || extendedLoader != null;
         }
 
         // /**
@@ -162,7 +138,7 @@ public final class CacheConfiguration<K, V> implements Cloneable {
          *            the loader to set
          * @return the current CacheConfiguration
          */
-        public Backend setExtendedLoader(
+        public Backend setExtendedBackend(
                 CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader) {
             if (CacheConfiguration.this.loader != null) {
                 throw new IllegalStateException(
@@ -182,7 +158,7 @@ public final class CacheConfiguration<K, V> implements Cloneable {
          *            the loader to set
          * @return the current CacheConfiguration
          */
-        public Backend setLoader(CacheLoader<? super K, ? extends V> loader) {
+        public Backend setBackend(CacheLoader<? super K, ? extends V> loader) {
             if (extendedLoader != null) {
                 throw new IllegalStateException(
                         "extended loader already set, cannot set a loader");
@@ -191,13 +167,10 @@ public final class CacheConfiguration<K, V> implements Cloneable {
             return this;
         }
 
-        public Backend setStore(CacheStore<K, V> cacheStore) {
-            // check loader, extended loader
-            store = cacheStore;
-            return this;
-        }
-
         public void setUseCacheSettings(boolean useIt) {
+            //how does these work
+            //
+            
             // putIfAbsent
             // create item in cache, check backend...
 

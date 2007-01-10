@@ -3,14 +3,10 @@
  */
 package org.coconut.cache.util;
 
-import com.sun.corba.se.impl.orbutil.closure.Future;
-
-import java.awt.List;
 import java.lang.instrument.Instrumentation;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;

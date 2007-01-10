@@ -9,7 +9,7 @@ import java.util.concurrent.BlockingQueue;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEvent;
-import org.coconut.cache.defaults.support.JMXSupport;
+import org.coconut.cache.defaults.support.JMXCacheService;
 import org.coconut.cache.management.CacheMXBean;
 import org.coconut.core.EventHandler;
 import org.coconut.event.bus.EventBus;
@@ -33,14 +33,14 @@ public class JMXCacheMXBeanTest extends MockTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         c = null; //Caches.newFastMemoryCache(Policies.newClock(), 100);
-        JMXSupport.registerCache(c, "test");
-        bean = JMXSupport.createProxy(ManagementFactory
+        JMXCacheService.registerCache(c, "test");
+        bean = JMXCacheService.createProxy(ManagementFactory
                 .getPlatformMBeanServer(), "test");
     }
 
     protected void tearDown() throws Exception {
         super.tearDown();
-        JMXSupport.unregisterCache("test");
+        JMXCacheService.unregisterCache("test");
     }
 
     public void testNoTests() {

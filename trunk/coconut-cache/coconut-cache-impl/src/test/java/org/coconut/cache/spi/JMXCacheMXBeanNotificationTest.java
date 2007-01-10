@@ -14,7 +14,7 @@ import javax.management.NotificationListener;
 import javax.management.ObjectName;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.defaults.support.JMXSupport;
+import org.coconut.cache.defaults.support.JMXCacheService;
 import org.coconut.test.MockTestCase;
 
 
@@ -33,7 +33,7 @@ public class JMXCacheMXBeanNotificationTest extends MockTestCase
         super.setUp();
         events = new LinkedBlockingQueue<Notification>();
         c =null; // Caches.newFastMemoryCache(Policies.newClock(), 5);
-        ObjectName name = JMXSupport.registerCache(c, "test");
+        ObjectName name = JMXCacheService.registerCache(c, "test");
         ManagementFactory.getPlatformMBeanServer().addNotificationListener(
                 name, this, null, null);
         // JMXRegistrant.getProxy(ManagementFactory.getPlatformMBeanServer(),
@@ -42,7 +42,7 @@ public class JMXCacheMXBeanNotificationTest extends MockTestCase
 
     protected void tearDown() throws Exception {
         super.tearDown();
-        JMXSupport.unregisterCache("test");
+        JMXCacheService.unregisterCache("test");
     }
 
     public void verify() {

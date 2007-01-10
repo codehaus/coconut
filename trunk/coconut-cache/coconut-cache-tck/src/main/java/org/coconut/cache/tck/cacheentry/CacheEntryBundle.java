@@ -62,7 +62,7 @@ public class CacheEntryBundle extends CacheTestBundle {
      */
     @Test
     public void testCreationDateFromLoader() {
-        c = newCache(newConf().setClock(clock).backend().setLoader(DEFAULT_LOADER).c());
+        c = newCache(newConf().setClock(clock).backend().setBackend(DEFAULT_LOADER).c());
         clock.setAbsolutTime(10);
         get(M1);
         assertEquals(10l, getEntry(M1).getCreationTime());
@@ -95,7 +95,7 @@ public class CacheEntryBundle extends CacheTestBundle {
 
     @Test
     public void testLastUpdateFromLoader() {
-        c = newCache(newConf().setClock(clock).backend().setLoader(DEFAULT_LOADER).c());
+        c = newCache(newConf().setClock(clock).backend().setBackend(DEFAULT_LOADER).c());
         clock.setAbsolutTime(10);
         get(M1);
         assertEquals(10l, getEntry(M1).getLastUpdateTime());
@@ -122,7 +122,7 @@ public class CacheEntryBundle extends CacheTestBundle {
 
     @Test
     public void testAccessFromLoader() {
-        c = newCache(newConf().setClock(clock).backend().setLoader(DEFAULT_LOADER).c());
+        c = newCache(newConf().setClock(clock).backend().setBackend(DEFAULT_LOADER).c());
         clock.setAbsolutTime(10);
         get(M1);
         assertEquals(10l, getEntry(M1).getLastAccessTime());

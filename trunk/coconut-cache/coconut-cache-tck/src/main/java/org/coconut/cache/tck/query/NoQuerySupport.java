@@ -27,7 +27,7 @@ public class NoQuerySupport extends CacheTestBundle {
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testNoQuerySupport() {
-        c.query(LogicFilters.TRUE);
+    //    c.query(LogicFilters.TRUE);
     }
 
 }

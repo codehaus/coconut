@@ -19,23 +19,23 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheEvent;
 import org.coconut.cache.CacheQuery;
-import org.coconut.cache.defaults.support.CacheStatisticsSupport;
-import org.coconut.cache.defaults.support.EventSupport;
-import org.coconut.cache.defaults.support.EvictionSupport;
-import org.coconut.cache.defaults.support.ExpirationSupport;
-import org.coconut.cache.defaults.support.LoaderSupport;
-import org.coconut.cache.defaults.support.ManagementSupport;
-import org.coconut.cache.defaults.support.StoreSupport;
-import org.coconut.cache.defaults.support.ExpirationSupport.FinalExpirationSupport;
-import org.coconut.cache.defaults.support.LoaderSupport.EntrySupport;
+import org.coconut.cache.defaults.support.CacheStatisticsCacheService;
+import org.coconut.cache.defaults.support.EventCacheService;
+import org.coconut.cache.defaults.support.EvictionCacheService;
+import org.coconut.cache.defaults.support.ExpirationCacheService;
+import org.coconut.cache.defaults.support.LoaderCacheService;
+import org.coconut.cache.defaults.support.ManagementCacheService;
+import org.coconut.cache.defaults.support.StoreCacheService;
+import org.coconut.cache.defaults.support.ExpirationCacheService.FinalExpirationSupport;
+import org.coconut.cache.defaults.support.LoaderCacheService.EntrySupport;
 import org.coconut.cache.defaults.util.CacheEntryMap;
 import org.coconut.cache.spi.AbstractCache;
-import org.coconut.cache.spi.CacheServiceManager;
 import org.coconut.cache.spi.CacheSupport;
+import org.coconut.cache.spi.service.CacheServiceManager;
 import org.coconut.event.bus.EventBus;
 import org.coconut.filter.Filter;
 import org.coconut.filter.Filters;
-import org.coconut.management.ApmGroup;
+import org.coconut.management.ManagedGroup;
 
 /**
  * <p>
@@ -53,7 +53,7 @@ import org.coconut.management.ApmGroup;
  */
 @CacheSupport(CacheLoadingSupport = true, CacheEntrySupport = true, querySupport = true, ExpirationSupport = true, statisticsSupport = true, eventSupport = true)
 @ThreadSafe(false)
-public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
+public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         ConcurrentMap<K, V> {
 
     private final CacheEntryMap<K, V, MyEntry> map;
@@ -62,49 +62,49 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
 
     private final CacheServiceManager<K, V> csm;
 
-    private final EvictionSupport<MyEntry> evictionSupport;
+    private final EvictionCacheService<MyEntry> evictionSupport;
 
-    private final EventSupport<K, V> eventSupport;
+    private final EventCacheService<K, V> eventSupport;
 
-    private final ExpirationSupport<K, V> expirationSupport;
+    private final ExpirationCacheService<K, V> expirationSupport;
 
     private final EntrySupport<K, V> loaderSupport;
 
-    private final ManagementSupport<K, V> managementSupport;
+    private final ManagementCacheService<K, V> managementSupport;
 
-    private final CacheStatisticsSupport<K, V> statistics;
+    private final CacheStatisticsCacheService<K, V> statistics;
 
-    private final StoreSupport.EntrySupport<K, V> storeSupport;
+    private final StoreCacheService.EntrySupport<K, V> storeSupport;
 
     @SuppressWarnings("unchecked")
     protected CacheServiceManager<K, V> newCsm(CacheConfiguration<K, V> conf) {
         CacheServiceManager<K, V> csm = new CacheServiceManager<K, V>(conf);
-        csm.addDefault(CacheStatisticsSupport.class);
-        csm.addDefault(EvictionSupport.class);
+        csm.addDefault(CacheStatisticsCacheService.class);
+        csm.addDefault(EvictionCacheService.class);
         csm.addDefault(FinalExpirationSupport.class);
-        csm.addDefault(LoaderSupport.EntrySupport.class);
-        csm.addDefault(ManagementSupport.class);
-        csm.addDefault(StoreSupport.EntrySupport.class);
-        csm.addDefault(EventSupport.class);
+        csm.addDefault(LoaderCacheService.EntrySupport.class);
+        csm.addDefault(ManagementCacheService.class);
+        csm.addDefault(StoreCacheService.EntrySupport.class);
+        csm.addDefault(EventCacheService.class);
         return csm;
     }
 
     @SuppressWarnings("unchecked")
-    public UnlimitedCache() {
+    public UnsynchronizedCache() {
         this(CacheConfiguration.DEFAULT_CONFIGURATION);
     }
 
-    public UnlimitedCache(CacheConfiguration<K, V> conf) {
+    public UnsynchronizedCache(CacheConfiguration<K, V> conf) {
         super(conf);
         csm = newCsm(conf);
         // support
-        statistics = csm.create(CacheStatisticsSupport.class);
-        evictionSupport = csm.create(EvictionSupport.class);
-        expirationSupport = csm.create(ExpirationSupport.class);
-        loaderSupport = csm.create(LoaderSupport.EntrySupport.class);
-        managementSupport = csm.create(ManagementSupport.class);
-        storeSupport = csm.create(StoreSupport.EntrySupport.class);
-        eventSupport = csm.create(EventSupport.class);
+        statistics = csm.create(CacheStatisticsCacheService.class);
+        evictionSupport = csm.create(EvictionCacheService.class);
+        expirationSupport = csm.create(ExpirationCacheService.class);
+        loaderSupport = csm.create(LoaderCacheService.EntrySupport.class);
+        managementSupport = csm.create(ManagementCacheService.class);
+        storeSupport = csm.create(StoreCacheService.EntrySupport.class);
+        eventSupport = csm.create(EventCacheService.class);
         
         csm.initializeApm(managementSupport.getGroup());
         // important must be last, because of final value being inlined.
@@ -115,7 +115,7 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
     }
 
     @SuppressWarnings("unchecked")
-    public UnlimitedCache(Map<K, V> map) {
+    public UnsynchronizedCache(Map<K, V> map) {
         this();
         if (map == null) {
             throw new NullPointerException("map is null");
@@ -227,7 +227,7 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
         return eventSupport.getEventBus();
     }
 
-    public ApmGroup getGroup() {
+    public ManagedGroup getGroup() {
         return managementSupport.getGroup();
     }
 
@@ -402,10 +402,11 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
 
     MyEntry putMyEntry(MyEntry me) {
         K key = me.getKey();
+        storeSupport.storeEntry(me);
+
         MyEntry prev = map.put(key, me);
         added(me, prev, null);
         me.lastUpdateTime = getClock().absolutTime();
-        CacheEntry prv = storeSupport.storeEntry(me);
         // the check for me.policyIndex is for values rejected by a
         // cache policy
         if (me.policyIndex >= 0) {
@@ -542,7 +543,7 @@ public class UnlimitedCache<K, V> extends AbstractCache<K, V> implements
                 // evicted an entry without
                 // actually needing to do so. But this is how it works for now.
 
-                if (evictionSupport.isCapacityReached(UnlimitedCache.this.size())) {
+                if (evictionSupport.isCapacityReached(UnsynchronizedCache.this.size())) {
                     evictNext();
                 }
                 // not initialized

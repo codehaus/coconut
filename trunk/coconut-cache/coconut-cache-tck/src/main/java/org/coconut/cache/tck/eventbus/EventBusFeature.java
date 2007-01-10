@@ -300,7 +300,7 @@ public class EventBusFeature extends AbstractEventTestBundle {
 
     @Test
     public void itemUpdatedExpiredWithLoading() throws Exception {
-        c = newCache(newConf().setClock(clock).backend().setLoader(new IntegerToStringLoader()).c());
+        c = newCache(newConf().setClock(clock).backend().setBackend(new IntegerToStringLoader()).c());
         subscribe(ItemUpdated.FILTER);
         put(M1, 1, TimeUnit.NANOSECONDS);
         putAll(3, TimeUnit.NANOSECONDS, M2, M3);

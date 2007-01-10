@@ -694,7 +694,6 @@ public final class Caches {
             return Collections.unmodifiableCollection(super.values());
         }
 
-        @Override
         public ReadWriteLock getLock(K... keys) {
             // TODO perhaps we should return the lock just make
             // The thing is though that Lock does not have any non
@@ -920,6 +919,23 @@ public final class Caches {
      */
     public static Runnable evictAsRunnable(Cache<?, ?> cache) {
         return new EvictRunnable(cache);
+    }
+
+    static class CronUpdateTimeChecker implements Filter<CacheEntry> {
+
+        /**
+         * @see org.coconut.filter.Filter#accept(java.lang.Object)
+         */
+        public boolean accept(CacheEntry element) {
+            long updateTime = element.getLastUpdateTime();
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+    }
+
+    public static Filter<CacheEntry> checkUpdateTime(String cronExpression) {
+        return null;
     }
 
     /**

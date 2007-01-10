@@ -13,10 +13,10 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.Caches;
 import org.coconut.cache.spi.AbstractCache;
-import org.coconut.cache.spi.AbstractCacheService;
 import org.coconut.cache.spi.Ressources;
+import org.coconut.cache.spi.service.AbstractCacheService;
 import org.coconut.core.Clock;
-import org.coconut.management.ApmGroup;
+import org.coconut.management.ManagedGroup;
 import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.monitor.DateSampler;
 import org.coconut.management.monitor.LongCounter;
@@ -33,7 +33,7 @@ import org.coconut.management.util.AtomicDouble;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public final class CacheStatisticsSupport<K, V> extends AbstractCacheService<K, V> {
+public final class CacheStatisticsCacheService<K, V> extends AbstractCacheService<K, V> {
 
     // number of loads, loaded elements, number of queries,
     // number of added, number of new elements
@@ -125,7 +125,7 @@ public final class CacheStatisticsSupport<K, V> extends AbstractCacheService<K, 
 
     private final LongSamplingCounter entryRemoveTime;
 
-    public CacheStatisticsSupport(CacheConfiguration<K, V> conf) {
+    public CacheStatisticsCacheService(CacheConfiguration<K, V> conf) {
         super(conf);
         Clock c = Clock.MILLI_CLOCK;
         // cache counters
@@ -322,33 +322,33 @@ public final class CacheStatisticsSupport<K, V> extends AbstractCacheService<K, 
     }
 
     private String getDesc(String key) {
-        return Ressources.getString(CacheStatisticsSupport.class, key);
+        return Ressources.getString(CacheStatisticsCacheService.class, key);
     }
 
     /**
      * @see org.coconut.apm.Apm#configureJMX(org.coconut.apm.spi.JMXConfigurator)
      */
-    public void addTo(ApmGroup dg) {
-        ApmGroup m = dg.addGroup("Statistics", "", false);
+    public void addTo(ManagedGroup dg) {
+        ManagedGroup m = dg.addGroup("Statistics", "", false);
 
-        ApmGroup general = m.addGroup("General", "");
+        ManagedGroup general = m.addGroup("General", "");
         general.add(cacheStatisticsResetCount);
         general.add(cacheStatisticsResetLast);
         general.add(entryExpiredCount);
 
-        ApmGroup clear = m.addGroup("Clear", "");
+        ManagedGroup clear = m.addGroup("Clear", "");
         clear.add(cacheClearCount);
         clear.add(cacheClearLast);
         clear.add(cacheClearTime);
 
-        ApmGroup eviction = m.addGroup("Eviction", "");
+        ManagedGroup eviction = m.addGroup("Eviction", "");
         eviction.add(cacheEvictCount);
         eviction.add(cacheEvictLast);
         eviction.add(cacheEvictTime);
         eviction.add(entryEvictedCount);
         eviction.add(entryEvictedTime);
 
-        ApmGroup access = m
+        ManagedGroup access = m
                 .addGroup("Access", "Statistics regarding access to the cache");
         access.add(entryGetHitCount);
         access.add(entryGetMissCount);
@@ -356,11 +356,11 @@ public final class CacheStatisticsSupport<K, V> extends AbstractCacheService<K, 
         access.add(entryGetMissTime);
         access.add(new CacheRatio());
 
-        ApmGroup put = m.addGroup("Put", "");
+        ManagedGroup put = m.addGroup("Put", "");
         put.add(entryPutCount);
         put.add(entryPutTime);
 
-        ApmGroup remove = m.addGroup("Remove", "");
+        ManagedGroup remove = m.addGroup("Remove", "");
         remove.add(entryRemoveCount);
         remove.add(entryRemoveTime);
     }

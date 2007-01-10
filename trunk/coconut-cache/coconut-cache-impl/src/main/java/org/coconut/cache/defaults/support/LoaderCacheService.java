@@ -18,9 +18,9 @@ import org.coconut.cache.CacheException;
 import org.coconut.cache.CacheLoader;
 import org.coconut.cache.Caches;
 import org.coconut.cache.spi.AbstractCache;
-import org.coconut.cache.spi.AbstractCacheService;
 import org.coconut.cache.spi.AsyncCacheLoader;
 import org.coconut.cache.spi.CacheErrorHandler;
+import org.coconut.cache.spi.service.AbstractCacheService;
 import org.coconut.core.Callback;
 import org.coconut.core.EventHandler;
 
@@ -28,7 +28,7 @@ import org.coconut.core.EventHandler;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class LoaderSupport<K, V> {
+public class LoaderCacheService<K, V> {
 
     public final static Executor SAME_THREAD_EXECUTOR = new SameThreadExecutor();
 
@@ -518,12 +518,10 @@ public class LoaderSupport<K, V> {
 
     public static <K, V> CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> getLoader(
             CacheConfiguration<K, V> conf) {
-        if (conf.backend().getStore() != null) {
-            return (CacheLoader) conf.backend().getStore();
-        } else if (conf.backend().getLoader() != null) {
-            return Caches.asCacheLoader(conf.backend().getLoader());
-        } else if (conf.backend().getExtendedLoader() != null) {
-            return conf.backend().getExtendedLoader();
+        if (conf.backend().getBackend() != null) {
+            return Caches.asCacheLoader(conf.backend().getBackend());
+        } else if (conf.backend().getExtendedBackend() != null) {
+            return conf.backend().getExtendedBackend();
         } else {
             return Caches.nullLoader();
         }
@@ -609,8 +607,8 @@ public class LoaderSupport<K, V> {
         public EntrySupport(CacheConfiguration<K, V> conf) {
             super(conf);
             errorHandler = conf.getErrorHandler();
-            loader = LoaderSupport.wrapAsAsync(LoaderSupport.getLoader(conf),
-                    LoaderSupport.SAME_THREAD_EXECUTOR);
+            loader = LoaderCacheService.wrapAsAsync(LoaderCacheService.getLoader(conf),
+                    LoaderCacheService.SAME_THREAD_EXECUTOR);
         }
 
         public Future<?> asyncLoadEntry(

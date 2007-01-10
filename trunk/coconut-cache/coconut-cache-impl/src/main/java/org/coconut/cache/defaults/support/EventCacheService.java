@@ -21,7 +21,7 @@ import org.coconut.cache.CacheEntryEvent.ItemAccessed;
 import org.coconut.cache.CacheEntryEvent.ItemAdded;
 import org.coconut.cache.CacheEntryEvent.ItemRemoved;
 import org.coconut.cache.CacheEntryEvent.ItemUpdated;
-import org.coconut.cache.spi.AbstractCacheService;
+import org.coconut.cache.spi.service.AbstractCacheService;
 import org.coconut.core.Offerable;
 import org.coconut.event.bus.DefaultEventBus;
 import org.coconut.event.bus.EventBus;
@@ -30,7 +30,7 @@ import org.coconut.event.bus.EventBus;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class EventSupport<K, V> extends AbstractCacheService<K, V> {
+public class EventCacheService<K, V> extends AbstractCacheService<K, V> {
 
     public interface NotificationTransformer {
         Notification notification(Object source);
@@ -487,7 +487,7 @@ public class EventSupport<K, V> extends AbstractCacheService<K, V> {
 
     private final Offerable<CacheEvent<K, V>> offerable;
 
-    public EventSupport(CacheConfiguration<K, V> conf) {
+    public EventCacheService(CacheConfiguration<K, V> conf) {
         super(conf);
         this.offerable = eb;
     }

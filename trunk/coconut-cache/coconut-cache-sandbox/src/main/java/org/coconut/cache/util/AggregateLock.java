@@ -16,8 +16,9 @@ public class AggregateLock implements Lock {
     private Lock[] locks;
 
     AggregateLock(Lock[] locks) {
-        this.locks=locks;
+        this.locks = locks;
     }
+
     /**
      * @see java.util.concurrent.locks.Lock#lock()
      */
@@ -83,8 +84,7 @@ public class AggregateLock implements Lock {
      * @see java.util.concurrent.locks.Lock#tryLock(long,
      *      java.util.concurrent.TimeUnit)
      */
-    public boolean tryLock(long time, TimeUnit unit)
-            throws InterruptedException {
+    public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
         // TODO Auto-generated method stub
         return false;
     }

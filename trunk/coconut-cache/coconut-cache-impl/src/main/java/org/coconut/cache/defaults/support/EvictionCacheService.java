@@ -4,20 +4,19 @@
 package org.coconut.cache.defaults.support;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.policy.ReplacementPolicy;
-import org.coconut.cache.spi.AbstractCacheService;
+import org.coconut.cache.spi.service.AbstractCacheService;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class EvictionSupport<T extends CacheEntry> extends AbstractCacheService {
+public class EvictionCacheService<T extends CacheEntry> extends AbstractCacheService {
     private final ReplacementPolicy<T> cp;
 
     private final int maxSize;
@@ -28,7 +27,7 @@ public class EvictionSupport<T extends CacheEntry> extends AbstractCacheService 
 
     private final long preferableCapacity;
 
-    public EvictionSupport(CacheConfiguration<?, ?> conf) {
+    public EvictionCacheService(CacheConfiguration<?, ?> conf) {
         super(conf);
         cp = conf.eviction().getPolicy();
         maxSize = conf.eviction().getMaximumSize();

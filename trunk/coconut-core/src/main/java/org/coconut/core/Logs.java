@@ -26,7 +26,7 @@ public final class Logs {
      * @return a logger that ignores any input.
      */
     public static Log nullLog() {
-        return new SimpelLogger(Log.Level.Fatal.getLevel() + 1);
+        return new SimpelLogger(Log.Level.Off.getLevel());
     }
 
     /**
@@ -72,7 +72,7 @@ public final class Logs {
         }
     }
 
-    static abstract class AbstractLogger implements Log {
+    public static abstract class AbstractLogger implements Log {
         public boolean isDebugEnabled() {
             return isEnabled(Level.Debug);
         }

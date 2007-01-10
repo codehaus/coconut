@@ -26,7 +26,6 @@ import org.coconut.cache.tck.eventbus.NoEventBusSupport;
 import org.coconut.cache.tck.eviction.CacheEntryToPolicy;
 import org.coconut.cache.tck.eviction.SerializablePolicyEviction;
 import org.coconut.cache.tck.eviction.SimplePolicyEviction;
-import org.coconut.cache.tck.expiration.ExpirationCommon;
 import org.coconut.cache.tck.expiration.ExpirationEvict;
 import org.coconut.cache.tck.expiration.ExpirationFilterBased;
 import org.coconut.cache.tck.expiration.ExpirationTimeBased;
@@ -117,7 +116,6 @@ public class TCKRunner extends Runner {
     private void addExpiration(CompositeRunner runner, CacheSupport cs,
             boolean isThreadSafe) throws InitializationError {
         if (cs.ExpirationSupport()) {
-            composite.add(new TestClassRunner(ExpirationCommon.class));
             composite.add(new TestClassRunner(ExpirationEvict.class));
             composite.add(new TestClassRunner(ExpirationFilterBased.class));
             composite.add(new TestClassRunner(ExpirationTimeBased.class));

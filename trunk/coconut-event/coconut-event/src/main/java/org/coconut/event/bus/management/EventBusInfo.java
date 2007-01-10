@@ -1,4 +1,4 @@
-package org.coconut.event.bus;
+package org.coconut.event.bus.management;
 
 /**
  * 

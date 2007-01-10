@@ -36,7 +36,7 @@ public class ExtendedCacheLoader extends Loading {
     @Before
     public void setup() {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.newConf();
-        cc.backend().setExtendedLoader(cel);
+        cc.backend().setExtendedBackend(cel);
         cc.setClock(clock);
         c = newCache(cc);
         e1 = new Entry(M1.getKey(), M1.getValue());

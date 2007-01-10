@@ -5,7 +5,7 @@ package org.coconut.management.examples;
 
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.management.defaults.DefaultExecutableApmGroup;
+import org.coconut.management.defaults.DefaultExecutableGroup;
 import org.coconut.management.monitor.LongCounter;
 import org.coconut.management.monitor.TimedAverage;
 
@@ -15,7 +15,7 @@ import org.coconut.management.monitor.TimedAverage;
  */
 public class ByteWriterWithRunningAverage {
     public static void main(String[] args) throws Exception {
-        DefaultExecutableApmGroup group = new DefaultExecutableApmGroup("BytesTransfered",true);
+        DefaultExecutableGroup group = new DefaultExecutableGroup("BytesTransfered",true);
         // adds a long counter that keeps track of the total number of bytes
         // written
         LongCounter lr = LongCounter.newConcurrent("Bytes written",
@@ -25,7 +25,7 @@ public class ByteWriterWithRunningAverage {
         // adds a counter to keep of the average number of bytes written per
         // second
         group.add(new TimedAverage(lr), 1, TimeUnit.SECONDS);
-
+        
         // start sampling and register with platform mbean server
         group.startAndRegister("my.app:name=BytesTransferred");
         for (int i = 0; i < 10000; i++) {

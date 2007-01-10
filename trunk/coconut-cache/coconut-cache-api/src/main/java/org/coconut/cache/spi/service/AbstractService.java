@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the MIT license, see http://coconut.codehaus.org/license.
  */
-package org.coconut.cache.spi;
+package org.coconut.cache.spi.service;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
@@ -155,22 +155,6 @@ public abstract class AbstractService {
     }
 
     protected void shutdowned(boolean wasShutdown) {
-    }
-
-    protected void start() {
-        final ReentrantLock mainLock = this.mainLock;
-        mainLock.lock();
-        try {
-            if (getState() == RunState.NOT_STARTED) {
-                runState = RunState.RUNNING;
-                started();
-            } else if (getState() != RunState.RUNNING) {
-                throw new IllegalStateException(
-                        "Service termination started, cannot restart service");
-            }
-        } finally {
-            mainLock.unlock();
-        }
     }
 
     protected boolean tryStart() {

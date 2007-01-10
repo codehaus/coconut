@@ -9,7 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.coconut.cache.defaults.memory.UnlimitedCache;
+import org.coconut.cache.defaults.memory.UnsynchronizedCache;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -33,7 +33,7 @@ public class MemoryTestRunner {
         t.test(new MapMemoryOverheadTest(TreeMap.class));
         System.out
                 .println("|| Coconut Cache Implementations \\\\ || || || || || || || ||");
-        t.test(new MapMemoryOverheadTest(UnlimitedCache.class));
+        t.test(new MapMemoryOverheadTest(UnsynchronizedCache.class));
         System.out.println("|| Other Cache Implementations \\\\ || || || || || || || ||");
         t.test(new EHcacheMemoryOverheadTest());
         t.test(new JBossMemoryOverheadTest());

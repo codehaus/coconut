@@ -3,7 +3,7 @@
  */
 package org.coconut.management.examples;
 
-import org.coconut.management.ApmGroup;
+import org.coconut.management.ManagedGroup;
 import org.coconut.management.monitor.LongCounter;
 import org.coconut.management.monitor.LongSamplingCounter;
 
@@ -13,11 +13,11 @@ import org.coconut.management.monitor.LongSamplingCounter;
  */
 public class NewMettric {
     public static void main(String[] args) {
-        ApmGroup m = null; // new MEDMED("PipelineFoo");
-        ApmGroup stages = m.addGroup("Stages","");
-        ApmGroup stage = stages.addGroup("ConvertToFooStage","");
+        ManagedGroup m = null; // new MEDMED("PipelineFoo");
+        ManagedGroup stages = m.addGroup("Stages","");
+        ManagedGroup stage = stages.addGroup("ConvertToFooStage","");
 
-        ApmGroup processed = stages.addGroup("Events","");
+        ManagedGroup processed = stages.addGroup("Events","");
         processed.add(LongCounter.newConcurrent("Total Processed", ""));
 
         processed.add(LongCounter.newConcurrent("Total Failed", ""));

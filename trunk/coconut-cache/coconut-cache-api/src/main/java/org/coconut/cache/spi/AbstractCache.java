@@ -205,7 +205,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
     public Future<?> loadAsync(K key) {
         // default implementation does not support loading of values
         throw new UnsupportedOperationException(
-                "load(Key k) not supported for Cache of type " + getClass());
+                "loadAsync(K key) not supported for Cache of type " + getClass());
 
     }
 
@@ -397,26 +397,6 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
 
     }
 
-    public boolean hasLoadingSupport() {
-        return false;
-    }
-
-    public boolean hasCacheEntrySupport() {
-        return false;
-    }
-
-    public boolean hasEventBusSupport() {
-        return false;
-    }
-
-    public boolean hasJMXSupport() {
-        return false;
-    }
-
-    public boolean hasLockingSupport() {
-        return false;
-    }
-
     public ReadWriteLock getLock(K... keys) {
         throw new UnsupportedOperationException(
                 "locking not supported for Cache of type " + getClass());
@@ -429,14 +409,6 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
 
     String getName() {
         return name;
-    }
-
-    boolean supportsLoading() {
-        return true;
-    }
-
-    boolean supportsAsyncLoading() {
-        return false;
     }
 
     /**

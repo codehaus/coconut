@@ -21,8 +21,8 @@ import org.coconut.cache.tck.util.IntegerToStringLoader;
 public class UnlTest {
     public static void maing(String[] args) {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.newConf();
-        cc.backend().setLoader(new IntegerToStringLoader());
-        UnlimitedCache uc = new UnlimitedCache(cc);
+        cc.backend().setBackend(new IntegerToStringLoader());
+        UnsynchronizedCache uc = new UnsynchronizedCache(cc);
 
         uc.loadAsync(3);
         System.out.println(uc.get(5));
@@ -32,10 +32,10 @@ public class UnlTest {
 
     public static void main(String[] args) throws InterruptedException {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.newConf();
-        cc.backend().setLoader(new IntegerToStringLoader());
+        cc.backend().setBackend(new IntegerToStringLoader());
         cc.eviction().setMaximumCapacity(10000);
         cc.eviction().setPolicy(Policies.newLRU());
-        UnlimitedCache uc = new UnlimitedCache(cc);
+        UnsynchronizedCache uc = new UnsynchronizedCache(cc);
         for (int i = 0; i < 1000; i++) {
             uc.put(i, "" + i);
         }
@@ -56,18 +56,18 @@ public class UnlTest {
     }
 
     public static void mains(String[] args) {
-        Cache<Integer, String> c = new UnlimitedCache<Integer, String>();
+        Cache<Integer, String> c = new UnsynchronizedCache<Integer, String>();
         for (int i = 0; i < 256; i++) {
             c.put(i, Integer.toHexString(i));
         }
-        for (CacheEntry entry : CacheFilters.queryByKey(c, between(40, 45))) {
-            System.out.println(entry);
-        }
-        System.out.println("------");
-
-        for (CacheEntry entry : CacheFilters.queryByValue(c, greatherThen("f5"))) {
-            System.out.println(entry);
-        }
+//        for (CacheEntry entry : CacheFilters.queryByKey(c, between(40, 45))) {
+//            System.out.println(entry);
+//        }
+//        System.out.println("------");
+//
+//        for (CacheEntry entry : CacheFilters.queryByValue(c, greatherThen("f5"))) {
+//            System.out.println(entry);
+//        }
 
     }
 }

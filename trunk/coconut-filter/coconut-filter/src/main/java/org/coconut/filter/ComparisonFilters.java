@@ -44,14 +44,21 @@ public final class ComparisonFilters {
         return new GreaterThenOrEqualFilter<E>(object, comparator);
     }
 
-        
-     public static <E> LessThenFilter<E>
-     lessThen(
-     E element) {
-     return new LessThenFilter<E>(element);
-     }
-    
-    public static <E> LessThenFilter<E> lessThen(E object, final Comparator<? extends E> comparator) {
+    public static <E> LessThenFilter<E> lessThen(E element) {
+        return new LessThenFilter<E>(element);
+    }
+
+    public static <E> LessThenOrEqualFilter<E> lessThenOrEqual(E object) {
+        return new LessThenOrEqualFilter<E>(object);
+    }
+
+    public static <E> LessThenOrEqualFilter<E> lessThenOrEqual(E object,
+            final Comparator<? extends E> comparator) {
+        return new LessThenOrEqualFilter<E>(object, comparator);
+    }
+
+    public static <E> LessThenFilter<E> lessThen(E object,
+            final Comparator<? extends E> comparator) {
         return new LessThenFilter<E>(object, comparator);
     }
 
@@ -65,10 +72,6 @@ public final class ComparisonFilters {
     // return new LessThenOrEqualFilter<E>(element);
     // }
     //
-    public static <E> LessThenOrEqualFilter<E> lessThenOrEqual(E object,
-            final Comparator<? extends E> comparator) {
-        return new LessThenOrEqualFilter<E>(object, comparator);
-    }
 
     //    
     // public static <E, T extends E & Comparable<? super T>> Filter<E> between(
@@ -227,7 +230,7 @@ public final class ComparisonFilters {
          */
         @Override
         public String toString() {
-            return " > " + object;
+            return "$x > " + object;
         }
 
         @SuppressWarnings("unchecked")
@@ -239,7 +242,8 @@ public final class ComparisonFilters {
     /**
      * A Greather Then Or Equal filter as per Comparable/Comparator contract.
      */
-    public final static class GreaterThenOrEqualFilter<E> implements Filter<E>, Serializable {
+    public final static class GreaterThenOrEqualFilter<E> implements Filter<E>,
+            Serializable {
 
         /** <code>serialVersionUID</code> */
         private static final long serialVersionUID = -6815218477296552273L;
@@ -346,18 +350,16 @@ public final class ComparisonFilters {
             this.comparator = comparator;
         }
 
-         public LessThenFilter(E object)
-         {
-         if (object == null) {
-         throw new NullPointerException("element is null");
-         }
-         if (!(object instanceof Comparable)) {
-         throw new IllegalArgumentException(
-         "object not instanceof Comparable");
-         }
-         this.object = object;
-         this.comparator = null;
-         }
+        public LessThenFilter(E object) {
+            if (object == null) {
+                throw new NullPointerException("element is null");
+            }
+            if (!(object instanceof Comparable)) {
+                throw new IllegalArgumentException("object not instanceof Comparable");
+            }
+            this.object = object;
+            this.comparator = null;
+        }
 
         /**
          * Returns the object we are comparing.
@@ -385,7 +387,7 @@ public final class ComparisonFilters {
          */
         @Override
         public String toString() {
-            return " < " + object;
+            return "$x < " + object;
         }
 
         @SuppressWarnings("unchecked")
@@ -425,18 +427,16 @@ public final class ComparisonFilters {
             this.comparator = comparator;
         }
 
-        // public <T extends E & Comparable<? super T>> LessThenOrEqualFilter(T
-        // object) {
-        // if (object == null) {
-        // throw new NullPointerException("element is null");
-        // }
-        // if (!(object instanceof Comparable)) {
-        // throw new IllegalArgumentException(
-        // "object not instanceof Comparable");
-        // }
-        // this.object = object;
-        // this.comparator = null;
-        // }
+        public <T extends E> LessThenOrEqualFilter(T object) {
+            if (object == null) {
+                throw new NullPointerException("element is null");
+            }
+            if (!(object instanceof Comparable)) {
+                throw new IllegalArgumentException("object not instanceof Comparable");
+            }
+            this.object = object;
+            this.comparator = null;
+        }
 
         /**
          * Returns the object we are comparing.

@@ -31,7 +31,7 @@ import org.junit.Before;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Header$
  */
-public abstract class CacheTestBundle {
+public abstract class CacheTestBundle extends Assert {
 
     protected DeterministicClock clock;
 
@@ -66,8 +66,8 @@ public abstract class CacheTestBundle {
         c5 = newCache(5);
         c6 = newCache(6);
         CacheConfiguration<Integer, String> cc = CacheConfiguration.newConf();
-        loadableEmptyCache = newCache(cc.backend().setLoader(new IntegerToStringLoader())
-                .c());
+        loadableEmptyCache = newCache(cc.backend()
+                .setBackend(new IntegerToStringLoader()).c());
     }
 
     final Cache<Integer, String> newCache(int entries) {
@@ -137,6 +137,10 @@ public abstract class CacheTestBundle {
         assertNull(msg, get(e));
     }
 
+    protected void assertNullGet(Map.Entry<Integer, String> e) {
+        assertNullGet(new Map.Entry[] { e });
+    }
+
     protected void assertNullGet(Map.Entry<Integer, String>... e) {
         for (Map.Entry<Integer, String> entry : e) {
             assertNull(get(entry));
@@ -153,6 +157,24 @@ public abstract class CacheTestBundle {
         for (Map.Entry<Integer, String> entry : e) {
             assertEquals(entry.getValue(), c.peek(entry.getKey()));
         }
+    }
+
+    protected void assertPeekEntry(Map.Entry<Integer, String>... e) {
+        for (Map.Entry<Integer, String> entry : e) {
+            CacheEntry<Integer, String> ee = c.peekEntry(entry.getKey());
+            assertEquals(ee.getValue(), entry.getValue());
+            assertEquals(ee.getKey(), entry.getKey());
+        }
+    }
+
+    protected void assertGet(Map.Entry<Integer, String> e) {
+        assertEquals(e.getValue(), c.get(e.getKey()));
+    }
+
+    protected void assertGetEntry(Map.Entry<Integer, String> e) {
+        CacheEntry<Integer, String> ee = c.getEntry(e.getKey());
+        assertEquals(ee.getValue(), e.getValue());
+        assertEquals(ee.getKey(), e.getKey());
     }
 
     protected void assertGet(Map.Entry<Integer, String>... e) {
@@ -204,9 +226,9 @@ public abstract class CacheTestBundle {
         c.putAll(CollectionUtils.asMap(entries));
     }
 
-    protected CacheQuery<Integer, String> keyQuery(Filter<Integer> filter) {
-        return CacheFilters.queryByKey(c, filter);
-    }
+//    protected CacheQuery<Integer, String> keyQuery(Filter<Integer> filter) {
+//        return CacheFilters.queryByKey(c, filter);
+//    }
 
     protected void putAll(long timeout, TimeUnit unit,
             Map.Entry<Integer, String>... entries) {

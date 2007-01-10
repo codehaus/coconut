@@ -90,4 +90,11 @@ public class DefaultExecutableGroup extends DefaultManagedGroup implements
 
         TimeUnit unit;
     }
+
+    /**
+     * @see org.coconut.management.ExecutableGroup#reSchedule(java.lang.Runnable, long, java.util.concurrent.TimeUnit)
+     */
+    public <T extends Runnable> T reSchedule(T r, long time, TimeUnit unit) {
+       throw new UnsupportedOperationException();
+    }
 }

@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.defaults.memory.UnlimitedCache;
+import org.coconut.cache.defaults.memory.UnsynchronizedCache;
 import org.coconut.cache.policy.Policies;
 
 /**
@@ -32,7 +32,7 @@ public class SimpleGetTest {
         cc.eviction().setPolicy(Policies.newLRU()).setMaximumCapacity(100000);
 
         Map map;
-        map = new UnlimitedCache(cc);
+        map = new UnsynchronizedCache(cc);
         //map = new HashMap();
         // map = CacheBuilder.create().addCache(Policies.newFIFO(),
         // 10000).build();

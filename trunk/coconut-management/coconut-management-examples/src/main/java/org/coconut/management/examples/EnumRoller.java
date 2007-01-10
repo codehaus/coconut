@@ -5,7 +5,7 @@ package org.coconut.management.examples;
 
 import java.util.Random;
 
-import org.coconut.management.ApmGroup;
+import org.coconut.management.ManagedGroup;
 import org.coconut.management.Apms;
 import org.coconut.management.monitor.EnumCounter;
 import org.coconut.management.monitor.TimedAverage;
@@ -16,7 +16,7 @@ import org.coconut.management.monitor.TimedAverage;
  */
 public class EnumRoller {
     public static void main(String[] args) throws Exception {
-        ApmGroup mg = Apms.newGroup();
+        ManagedGroup mg = Apms.newGroup();
 
         EnumCounter<Dice> dice = new EnumCounter<Dice>(Dice.class, "DiceRoll");
         mg.add(dice);

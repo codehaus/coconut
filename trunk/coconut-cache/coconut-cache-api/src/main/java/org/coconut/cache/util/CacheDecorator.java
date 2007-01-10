@@ -279,23 +279,9 @@ public class CacheDecorator<K, V> implements Cache<K, V>, Serializable {
     /**
      * {@inheritDoc}
      */
-    public ReadWriteLock getLock(K... keys) {
-        return cache.getLock(keys);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return cache.toString();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public CacheQuery<K, V> query(Filter<? super CacheEntry<K, V>> filter) {
-        return cache.query(filter);
     }
 
     /**

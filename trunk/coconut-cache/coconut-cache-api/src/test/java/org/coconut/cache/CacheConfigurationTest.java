@@ -40,48 +40,48 @@ public class CacheConfigurationTest extends MavenDummyTest {
     public void testLoader() {
         CacheLoader<Number, Collection> cl = mockDummy(CacheLoader.class);
 
-        assertNull(conf.backend().getLoader());
-        assertFalse(conf.backend().hasLoader());
+        assertNull(conf.backend().getBackend());
+        //assertFalse(conf.backend().hasBackend());
 
-        assertTrue(conf.backend().setLoader(cl) instanceof CacheConfiguration.Backend);
+        assertTrue(conf.backend().setBackend(cl) instanceof CacheConfiguration.Backend);
 
-        assertEquals(cl, conf.backend().getLoader());
-        assertTrue(conf.backend().hasLoader());
+        assertEquals(cl, conf.backend().getBackend());
+        //assertTrue(conf.backend().hasBackend());
 
         // narrow bounds
         CacheLoader<Number, List> clI = mockDummy(CacheLoader.class);
 
-        assertTrue(conf.backend().setLoader(clI) instanceof CacheConfiguration.Backend);
+        assertTrue(conf.backend().setBackend(clI) instanceof CacheConfiguration.Backend);
 
-        assertEquals(clI, conf.backend().getLoader());
+        assertEquals(clI, conf.backend().getBackend());
     }
 
     @Test
     public void testExtendedLoader() {
         CacheLoader<Number, CacheEntry<Number, Collection>> ecl = mockDummy(CacheLoader.class);
 
-        assertNull(conf.backend().getExtendedLoader());
+        assertNull(conf.backend().getExtendedBackend());
 
-        assertTrue(conf.backend().setExtendedLoader(ecl) instanceof CacheConfiguration.Backend);
+        assertTrue(conf.backend().setExtendedBackend(ecl) instanceof CacheConfiguration.Backend);
 
-        assertEquals(ecl, conf.backend().getExtendedLoader());
-        assertTrue(conf.backend().hasLoader());
+        assertEquals(ecl, conf.backend().getExtendedBackend());
     }
+    //assertTrue(conf.backend().hasBackend());
 
     @Test(expected = IllegalStateException.class)
     public void testLoaderSetThenExtendedLoader() {
         CacheLoader<Number, ? extends CacheEntry<Number, Collection>> ecl = mockDummy(CacheLoader.class);
         CacheLoader<Number, Collection> cl = mockDummy(CacheLoader.class);
-        conf.backend().setLoader(cl);
-        conf.backend().setExtendedLoader(ecl);
+        conf.backend().setBackend(cl);
+        conf.backend().setExtendedBackend(ecl);
     }
 
     @Test(expected = IllegalStateException.class)
     public void testExtendedLoaderSetThenLoader() {
         CacheLoader<Number, ? extends CacheEntry<Number, Collection>> ecl = mockDummy(CacheLoader.class);
         CacheLoader<Number, Collection> cl = mockDummy(CacheLoader.class);
-        conf.backend().setExtendedLoader(ecl);
-        conf.backend().setLoader(cl);
+        conf.backend().setExtendedBackend(ecl);
+        conf.backend().setBackend(cl);
     }
 
     @Test

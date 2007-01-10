@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the MIT license, see http://coconut.codehaus.org/license.
  */
-package org.coconut.cache.spi;
+package org.coconut.cache.spi.service;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -11,9 +11,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.management.ApmGroup;
+import org.coconut.cache.spi.AbstractCache;
+import org.coconut.management.ManagedGroup;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -79,7 +79,7 @@ public class CacheServiceManager<K, V> {
         }
     }
 
-    public void initializeApm(ApmGroup root) {
+    public void initializeApm(ManagedGroup root) {
         for (CacheService<K, V> cs : services) {
             if (cs instanceof AbstractCacheService) {
                 ((AbstractCacheService<K, V>) cs).addTo(root);

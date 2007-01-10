@@ -29,7 +29,7 @@ import org.coconut.event.seda.spi.ThreadWorker;
  */
 public class LightweightPipeline extends AbstractLinearPipeline {
 
-    private final InternalManager dutte = new InternalManager();
+    private final InternalManager im = new InternalManager();
 
     private final CopyOnWriteArrayList<TransformerStage> stages = new CopyOnWriteArrayList<TransformerStage>();
 
@@ -51,10 +51,10 @@ public class LightweightPipeline extends AbstractLinearPipeline {
         if (transformer == null) {
             throw new NullPointerException("transformer is null");
         }
-        final ReentrantLock mainLock = dutte.getMainLock();
+        final ReentrantLock mainLock = im.getMainLock();
         mainLock.lock();
         try {
-            if (dutte.getState() != InternalStageManager.RunState.NOT_STARTED) {
+            if (im.getState() != InternalStageManager.RunState.NOT_STARTED) {
                 throw new IllegalStateException("Pipeline has already been started");
             }
             if (getStage(name) != null) {
@@ -82,21 +82,21 @@ public class LightweightPipeline extends AbstractLinearPipeline {
      */
     public boolean awaitTermination(long timeout, TimeUnit unit)
             throws InterruptedException {
-        return dutte.awaitTermination(timeout, unit);
+        return im.awaitTermination(timeout, unit);
     }
 
     /**
      * @see org.coconut.event.seda.StageManager#isShutdown()
      */
     public boolean isShutdown() {
-        return dutte.isShutdown();
+        return im.isShutdown();
     }
 
     /**
      * @see org.coconut.event.seda.StageManager#isTerminated()
      */
     public boolean isTerminated() {
-        return dutte.isTerminated();
+        return im.isTerminated();
     }
 
     /**
@@ -110,7 +110,7 @@ public class LightweightPipeline extends AbstractLinearPipeline {
      * @see org.coconut.event.seda.StageManager#shutdown()
      */
     public void shutdown() {
-        dutte.shutdown();
+        im.shutdown();
     }
 
     /**
@@ -122,7 +122,7 @@ public class LightweightPipeline extends AbstractLinearPipeline {
             throw new IllegalStateException(
                     "Cannot start pipeline without any registered stages");
         }
-        dutte.start();
+        im.start();
     }
 
     class TransformerStage extends AbstractStage {

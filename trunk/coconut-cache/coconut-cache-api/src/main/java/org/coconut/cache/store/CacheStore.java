@@ -3,17 +3,31 @@
  */
 package org.coconut.cache.store;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.coconut.cache.CacheLoader;
 
 /**
+ * have a CacheConfiguration.setBackend();
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public interface CacheStore<K, V> extends CacheLoader<K, V> {
 
-    V store(K key, V value, boolean retrievePrevious) throws Exception;
+    /**
+     * Deletes the key for the underlying store.
+     * 
+     * @param key
+     *            the key to delete
+     * @throws Exception
+     */
+    void delete(K key) throws Exception;
 
-    Map<K, V> storeAll(Map<K, V> entries, boolean retrievePrevious) throws Exception;
+    void deleteAll(Collection<? extends K> keys) throws Exception;
+
+    void store(K key, V value) throws Exception;
+
+    void storeAll(Map<K, V> entries) throws Exception;
 }

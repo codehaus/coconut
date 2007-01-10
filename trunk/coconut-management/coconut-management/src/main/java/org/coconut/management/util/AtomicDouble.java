@@ -93,7 +93,7 @@ public class AtomicDouble extends Number {
      *            the new value
      * @return true if successful.
      */
-    public final boolean weakCompareAndSet(double expect, long update) {
+    public final boolean weakCompareAndSet(double expect, double update) {
         return al.weakCompareAndSet(c(expect), c(update));
     }
 

@@ -10,6 +10,7 @@ import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.coconut.core.EventHandler;
 import org.coconut.core.Named;
 
 /**
@@ -17,7 +18,7 @@ import org.coconut.core.Named;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public abstract class AbstractApmNumber extends Number implements Callable<Number>,
-        Named, Described {
+        Named, Described, Comparable<Number> {
 
     private final static String DEFAULT_NAME = "unknown";
 
@@ -33,6 +34,13 @@ public abstract class AbstractApmNumber extends Number implements Callable<Numbe
 
     public AbstractApmNumber(String name) {
         this(name, "value of " + name);
+    }
+
+    public int compareTo(Number anotherLong) {
+
+        double thisVal = this.doubleValue();
+        double anotherVal = anotherLong.doubleValue();
+        return (thisVal < anotherVal ? -1 : (thisVal == anotherVal ? 0 : 1));
     }
 
     public AbstractApmNumber(String name, String description) {

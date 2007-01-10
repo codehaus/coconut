@@ -21,7 +21,9 @@ public interface ExecutableGroup extends ManagedGroup {
      * @return
      */
     <T extends Runnable> T add(T r, long time, TimeUnit unit);
-    
+
+    <T extends Runnable> T reSchedule(T r, long time, TimeUnit unit);
+
     void start();
 
     void stop();
@@ -29,5 +31,4 @@ public interface ExecutableGroup extends ManagedGroup {
     void startAndRegister(String name) throws Exception;
 
     void stopAndUnregister() throws Exception;
-
 }

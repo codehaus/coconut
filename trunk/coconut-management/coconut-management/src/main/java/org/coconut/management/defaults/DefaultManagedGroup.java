@@ -159,6 +159,7 @@ public class DefaultManagedGroup implements ManagedGroup {
         // We could use a cool syntes such as org.coconut.cache:name=$1,type=$2,
         // ..
         // and then do a replacement on $1, $2
+
         String nextLevel = name;
         NumberDynamicBean bean = new NumberDynamicBean(getDescription());
         int index = name.indexOf("$" + getLevel());
