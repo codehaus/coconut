@@ -2,9 +2,11 @@
  * the MIT license, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.core;
+package org.coconut.core.util;
 
 import java.io.IOException;
+
+import org.coconut.core.Transformer;
 
 public class GeneratedTransformerMock implements
         GeneratedTransformerMockInterface, Transformer<String, Long> {

@@ -2,11 +2,13 @@
  * the MIT license, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.core;
+package org.coconut.core.util;
 
 import java.io.PrintStream;
 import java.util.Queue;
 
+import org.coconut.core.EventProcessor;
+import org.coconut.core.Offerable;
 import org.coconut.test.MockTestCase;
 import org.jmock.Mock;
 

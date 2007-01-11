@@ -2,15 +2,15 @@
  * the MIT license, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.core;
+package org.coconut.core.util;
 
-import static org.coconut.core.Transformers.transform;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import junit.framework.JUnit4TestAdapter;
 
-import org.coconut.core.Transformers.DynamicTransformer;
-import org.coconut.test.MavenDummyTest;
+import org.coconut.core.Transformer;
+import org.coconut.core.util.Transformers.DynamicTransformer;
+import static org.coconut.core.util.Transformers.*;
 import org.junit.Test;
 
 public class GeneratedTransformerTest {

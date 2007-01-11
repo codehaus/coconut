@@ -2,7 +2,7 @@
  * the MIT license, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.core;
+package org.coconut.core.util;
 
 public interface GeneratedTransformerMockInterface {
     String interfaceMethod();

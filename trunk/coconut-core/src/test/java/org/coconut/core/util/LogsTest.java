@@ -2,7 +2,7 @@
  * the MIT license, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.core;
+package org.coconut.core.util;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -10,8 +10,8 @@ import java.io.PrintStream;
 import java.util.LinkedList;
 
 import org.apache.commons.logging.impl.SimpleLog;
+import org.coconut.core.Log;
 import org.coconut.test.MockTestCase;
-
 import org.jmock.Mock;
 
 /**

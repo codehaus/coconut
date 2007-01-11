@@ -2,13 +2,20 @@
  * the MIT license, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.core;
+package org.coconut.core.util;
 
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.AbstractQueue;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.Callable;
+
+import org.coconut.core.BatchedEventProcessor;
+import org.coconut.core.EventProcessor;
+import org.coconut.core.Offerable;
+import org.coconut.core.Transformer;
 
 /**
  * Factory and utility methods for {@link Callback}, {@link EventHandler} and
@@ -24,6 +31,115 @@ import java.util.Queue;
  */
 public final class EventUtils {
 
+
+    static class EventHandlerAsBatch<E> implements BatchedEventProcessor<E> {
+
+        private final EventProcessor<E> eh;
+
+        public EventHandlerAsBatch(EventProcessor<E> eh) {
+            this.eh = eh;
+        }
+
+        /**
+         * @see org.coconut.core.EventHandler#handle(E)
+         */
+        public void process(E event) {
+            eh.process(event);
+        }
+
+        /**
+         * @see org.coconut.event.BatchedEventHandler#handleAll(java.util.List)
+         */
+        public void handleAll(List<? extends E> list) {
+            for (E e : list) {
+                try {
+                    process(e);
+                } catch (RuntimeException re) {
+                    if (!handleRuntimeException(e, re)) {
+                        return;
+                    }
+                }
+            }
+        }
+
+        protected boolean handleRuntimeException(E event, RuntimeException re) {
+            // ignore
+            return true;
+        }
+    }
+
+    static class ProcessEventFromFactory<E> implements Runnable, Serializable {
+
+        private final EventProcessor<? super E> eh;
+
+        private final Callable<E> factory;
+
+        /**
+         * @param event
+         * @param eh
+         */
+        public ProcessEventFromFactory(final Callable<E> factory,
+                final EventProcessor<? super E> eh) {
+            if (eh == null) {
+                throw new NullPointerException("eh is null");
+            } else if (factory == null) {
+                throw new NullPointerException("factory is null");
+            }
+            this.factory = factory;
+            this.eh = eh;
+        }
+
+        /**
+         * @see java.lang.Runnable#run()
+         */
+        public void run() {
+            try {
+                E event = factory.call();
+                eh.process(event);
+            } catch (RuntimeException re) {
+                throw re;
+            } catch (Exception e) {
+                throw new IllegalStateException("Could not create new value", e);
+            }
+        }
+    }
+
+    static class ProcessEvent<E> implements Runnable, Serializable {
+
+        private final EventProcessor<? super E> eh;
+
+        private final E event;
+
+        /**
+         * @param event
+         * @param eh
+         */
+        public ProcessEvent(final E event, final EventProcessor<? super E> eh) {
+            if (eh == null) {
+                throw new NullPointerException("eh is null");
+            } else if (event == null) {
+                throw new NullPointerException("event is null");
+            }
+            this.event = event;
+            this.eh = eh;
+        }
+
+        /**
+         * @see java.lang.Runnable#run()
+         */
+        public void run() {
+            eh.process(event);
+        }
+    }
+
+    public static <E> Runnable processEvent(E event, EventProcessor<E> handler) {
+        return new ProcessEvent<E>(event, handler);
+    }
+
+    public static <E> Runnable processEvent(Callable<E> factory, EventProcessor<E> handler) {
+        return new ProcessEventFromFactory<E>(factory, handler);
+    }
+    
     static class IgnoreTrueOfferable<E> implements Offerable<E>, Serializable {
         /** serialVersionUID */
         private static final long serialVersionUID = -8883512217513983631L;

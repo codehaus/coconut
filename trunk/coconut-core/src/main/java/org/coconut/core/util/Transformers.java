@@ -2,7 +2,7 @@
  * the MIT license, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.core;
+package org.coconut.core.util;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.coconut.core.Transformer;
 import org.coconut.internal.asm.ClassWriter;
 import org.coconut.internal.asm.FieldVisitor;
 import org.coconut.internal.asm.Label;
