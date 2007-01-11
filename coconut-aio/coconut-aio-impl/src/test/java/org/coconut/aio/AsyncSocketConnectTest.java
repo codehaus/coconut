@@ -89,7 +89,6 @@ public class AsyncSocketConnectTest extends AioTestCase {
         assertTrue(o instanceof AsyncSocket.Connected);
         AsyncSocket.Connected ac = (Connected) o;
         assertSame(socket, ac.async());
-        assertEquals(socket.getColor(),ac.getColor());
         assertEquals(addr, ac.getSocketAddress());
 
         assertTrue(socket.isConnected());
@@ -139,7 +138,6 @@ public class AsyncSocketConnectTest extends AioTestCase {
         AsyncSocket.ErroneousEvent ee = (AsyncSocket.ErroneousEvent) o;
         assertEquals(socket, ee.async());
         assertEquals(ee.getMessage(), ee.getCause().getMessage());
-        assertEquals(socket.getColor(),ee.getColor());
         assertTrue(ee.getCause() instanceof ConnectException);
         assertTrue(ee.getEvent() instanceof AsyncSocket.Connected);
 

@@ -18,7 +18,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.coconut.aio.AioFuture;
 import org.coconut.core.Callback;
-import org.coconut.core.Colored;
 import org.coconut.core.Offerable;
 
 
@@ -194,7 +193,6 @@ public abstract class AioFutureTask<V, T> implements Runnable, AioFuture<V, T>, 
     }
     protected abstract void deliverFailure(Offerable< ? super T> o, Throwable t);
 
-    protected abstract int getColor();
     protected void doneException(final Throwable t) {
 
         if (o != null) {
@@ -211,12 +209,9 @@ public abstract class AioFutureTask<V, T> implements Runnable, AioFuture<V, T>, 
 
         if (c != null) {
             Executor exec = newExecutor;
-            Runnable r = new ColoredRunnable() {
+            Runnable r = new Runnable() {
                 public void run() {
                     c.failed(t);
-                }
-                public int getColor() {
-                    return AioFutureTask.this.getColor();
                 }
             };
             if (exec != null)
@@ -428,7 +423,4 @@ public abstract class AioFutureTask<V, T> implements Runnable, AioFuture<V, T>, 
         }
     }
 
-    private interface ColoredRunnable extends Colored, Runnable {
-
-    }
 }

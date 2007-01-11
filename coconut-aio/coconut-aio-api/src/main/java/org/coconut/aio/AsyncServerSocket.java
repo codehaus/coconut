@@ -14,8 +14,7 @@ import java.util.concurrent.Executor;
 import org.coconut.aio.monitor.ServerSocketMonitor;
 import org.coconut.aio.spi.AioProvider;
 import org.coconut.core.Callback;
-import org.coconut.core.Colored;
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
 
 
@@ -45,7 +44,7 @@ import org.coconut.core.Offerable;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id$
  */
-public abstract class AsyncServerSocket implements Colored {
+public abstract class AsyncServerSocket {
 
     /**
      * Retrieves an unique id associated with this server-socket.
@@ -231,14 +230,14 @@ public abstract class AsyncServerSocket implements Colored {
      * 
      * @param handler the closedHandler
      */
-    public abstract AsyncServerSocket setCloseHandler(EventHandler<AsyncServerSocket> handler);
+    public abstract AsyncServerSocket setCloseHandler(EventProcessor<AsyncServerSocket> handler);
 
     /**
      * Return the server-sockets close handler.
      * 
      * @return the closedHandler
      */
-    public abstract EventHandler<AsyncServerSocket> getCloseHandler();
+    public abstract EventProcessor<AsyncServerSocket> getCloseHandler();
 
     /**
      * Binds the <code>ServerSocket</code> to a specific address (IP address
@@ -389,7 +388,7 @@ public abstract class AsyncServerSocket implements Colored {
     /**
      * The base event used for all asynchronous server-socket events.
      */
-    public interface Event extends Colored {
+    public interface Event  {
         /**
          * Returns the asynchronous server-socket that created this event.
          * 

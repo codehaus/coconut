@@ -10,8 +10,9 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import coconut.aio.AsyncServerSocket.SocketAccepted;
-import coconut.core.EventHandler;
+import org.coconut.aio.AsyncServerSocket;
+import org.coconut.aio.AsyncServerSocket.SocketAccepted;
+import org.coconut.core.EventProcessor;
 
 public class AcceptTest {
 
@@ -21,8 +22,8 @@ public class AcceptTest {
 
         AsyncServerSocket s = AsyncServerSocket.open();
         s.bind(new InetSocketAddress(port));
-        QueueOfferable o = new QueueOfferable(new EventHandler() {
-            public void handle(Object socket) {
+        QueueOfferable o = new QueueOfferable(new EventProcessor() {
+            public void process(Object socket) {
                 AsyncServerSocket.SocketAccepted sa = (SocketAccepted) socket;
                 if (count.incrementAndGet() == 0)
                     latch.countDown();

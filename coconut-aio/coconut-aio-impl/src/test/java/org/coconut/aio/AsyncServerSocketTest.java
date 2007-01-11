@@ -150,9 +150,4 @@ public class AsyncServerSocketTest extends AioTestCase {
         assertNotNull(o);
     }
     
-    public void testColor() throws IOException {
-        final AsyncServerSocket socket = getFactory().openServerSocket();
-        assertTrue(socket.getColor() == socket.getColor()); //fake
-        socket.close().getIO();
-    }
 }

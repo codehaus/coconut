@@ -7,6 +7,9 @@ package coconut.aio;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 
+import org.coconut.aio.AsyncServerSocket;
+import org.coconut.aio.AsyncSocket;
+
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */

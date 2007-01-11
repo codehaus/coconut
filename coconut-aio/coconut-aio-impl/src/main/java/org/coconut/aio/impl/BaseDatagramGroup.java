@@ -14,7 +14,7 @@ import org.coconut.aio.AsyncDatagramGroup;
 import org.coconut.aio.ReadHandler;
 import org.coconut.aio.management.DatagramGroupInfo;
 import org.coconut.aio.monitor.DatagramGroupMonitor;
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
 
 
@@ -36,8 +36,8 @@ public class BaseDatagramGroup extends AsyncDatagramGroup {
     private volatile Executor e;
     private volatile Offerable< ? super AsyncDatagram.Event> offerable;
     private volatile ReadHandler<AsyncDatagram> reader;
-    private volatile EventHandler<AsyncDatagram> joinHandler;
-    private volatile EventHandler<AsyncDatagram> leaveHandler;
+    private volatile EventProcessor<AsyncDatagram> joinHandler;
+    private volatile EventProcessor<AsyncDatagram> leaveHandler;
 
     public BaseDatagramGroup(ManagedAioProvider mProvider, long id, DatagramGroupMonitor monitor) {
         this.monitor = monitor;
@@ -73,7 +73,7 @@ public class BaseDatagramGroup extends AsyncDatagramGroup {
     /**
      * @see org.coconut.aio.AsyncDatagramGroup#setAddHandler(coconut.event.Handler)
      */
-    public AsyncDatagramGroup setJoinHandler(EventHandler<AsyncDatagram> handler) {
+    public AsyncDatagramGroup setJoinHandler(EventProcessor<AsyncDatagram> handler) {
         this.joinHandler = handler;
         return this;
     }
@@ -81,10 +81,10 @@ public class BaseDatagramGroup extends AsyncDatagramGroup {
     public void added(BaseDatagram s) {
         sockets.put(s, s);
         groupJoined(this, s);
-        final EventHandler<AsyncDatagram> handler = joinHandler;
+        final EventProcessor<AsyncDatagram> handler = joinHandler;
         if (handler != null) {
             try {
-                handler.handle(s);
+                handler.process(s);
             } catch (Exception e) {
                 // TODO handle exception
             }
@@ -124,7 +124,7 @@ public class BaseDatagramGroup extends AsyncDatagramGroup {
     /**
      * @see org.coconut.aio.AsyncDatagramGroup#setRemoveHandler(coconut.event.Handler)
      */
-    public AsyncDatagramGroup setLeaveHandler(EventHandler<AsyncDatagram> handler) {
+    public AsyncDatagramGroup setLeaveHandler(EventProcessor<AsyncDatagram> handler) {
         this.leaveHandler = handler;
         return this;
     }
@@ -133,9 +133,9 @@ public class BaseDatagramGroup extends AsyncDatagramGroup {
         boolean removed = sockets.remove(o) != null;
         if (removed) {
             BaseDatagram socket = (BaseDatagram) o;
-            final EventHandler<AsyncDatagram> handler = leaveHandler;
+            final EventProcessor<AsyncDatagram> handler = leaveHandler;
             if (handler != null)
-                handler.handle(socket);
+                handler.process(socket);
             final DatagramGroupMonitor m = monitor;
             if (m != null) {
                 try {
@@ -195,14 +195,14 @@ public class BaseDatagramGroup extends AsyncDatagramGroup {
     /**
      * @see org.coconut.aio.AsyncDatagramGroup#getAddHandler()
      */
-    public EventHandler<AsyncDatagram> getJoinHandler() {
+    public EventProcessor<AsyncDatagram> getJoinHandler() {
         return joinHandler;
     }
 
     /**
      * @see org.coconut.aio.AsyncDatagramGroup#getRemoveHandler()
      */
-    public EventHandler<AsyncDatagram> getLeaveHandler() {
+    public EventProcessor<AsyncDatagram> getLeaveHandler() {
         return leaveHandler;
     }
 

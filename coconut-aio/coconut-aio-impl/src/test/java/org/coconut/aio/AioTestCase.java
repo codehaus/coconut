@@ -31,7 +31,7 @@ import junit.framework.TestSuite;
 
 import org.coconut.aio.management.ManagementFactory;
 import org.coconut.core.Callback;
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
 import org.coconut.test.MockTestCase;
 
@@ -85,8 +85,8 @@ public abstract class AioTestCase extends MockTestCase {
         }
     };
 
-    public static final EventHandler IGNORE_HANDLER = new EventHandler() {
-        public void handle(Object arg0) {
+    public static final EventProcessor IGNORE_HANDLER = new EventProcessor() {
+        public void process(Object arg0) {
         }
     };
 
@@ -690,11 +690,11 @@ public abstract class AioTestCase extends MockTestCase {
         };
     }
 
-    public EventHandler createQueueHandlerOnce(final BlockingQueue queue) {
-        return new EventHandler() {
+    public EventProcessor createQueueHandlerOnce(final BlockingQueue queue) {
+        return new EventProcessor() {
             private int count = 0;
 
-            public void handle(Object o) {
+            public void process(Object o) {
                 if (count++ > 0) {
                     System.out.println("createQueueHandlerOnce called twice");
                     (new Exception()).printStackTrace();
@@ -705,11 +705,11 @@ public abstract class AioTestCase extends MockTestCase {
         };
     }
 
-    public EventHandler createQueueErroneousHandlerOnce(final BlockingQueue<Object> queue) {
+    public EventProcessor createQueueErroneousHandlerOnce(final BlockingQueue<Object> queue) {
         return new ErroneousHandler() {
             private int count = 0;
 
-            public void handle(Object o) {
+            public void process(Object o) {
                 System.out.println("createQueueErroneousHandlerOnce handle called");
                 (new Exception()).printStackTrace();
                 throw new AssertionFailedError();

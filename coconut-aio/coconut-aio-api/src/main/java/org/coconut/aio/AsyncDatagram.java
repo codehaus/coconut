@@ -14,8 +14,7 @@ import java.util.concurrent.Executor;
 
 import org.coconut.aio.monitor.DatagramMonitor;
 import org.coconut.aio.spi.AioProvider;
-import org.coconut.core.Colored;
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
 
 /**
@@ -52,7 +51,7 @@ import org.coconut.core.Offerable;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id$
  */
-public abstract class AsyncDatagram implements Colored {
+public abstract class AsyncDatagram {
 
     /**
      * Retrieves an unique id associated with this asynchronous socket.
@@ -557,14 +556,14 @@ public abstract class AsyncDatagram implements Colored {
      *            the closedHandler
      */
     public abstract AsyncDatagram setCloseHandler(
-            EventHandler<AsyncDatagram> handler);
+            EventProcessor<AsyncDatagram> handler);
 
     /**
      * Return the sockets close handler.
      * 
      * @return the closedHandler
      */
-    public abstract EventHandler<AsyncDatagram> getCloseHandler();
+    public abstract EventProcessor<AsyncDatagram> getCloseHandler();
 
     /**
      * Returns whether or not this socket is open. A socket is open from it is
@@ -581,7 +580,7 @@ public abstract class AsyncDatagram implements Colored {
      */
     public abstract AsyncDatagramSource getSource();
 
-    public interface Event extends Colored {
+    public interface Event {
 
         /**
          * Returns the asynchronous socket that created this event.

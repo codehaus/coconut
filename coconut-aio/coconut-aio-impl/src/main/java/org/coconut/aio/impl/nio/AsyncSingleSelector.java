@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 
 
 /**
@@ -122,7 +122,7 @@ final class AsyncSingleSelector implements Runnable {
                     final SelectionKey key = iter.next();
                     iter.remove();
                     try {
-                        ((EventHandler) key.attachment()).handle(key);
+                        ((EventProcessor) key.attachment()).process(key);
                     } catch (Exception e1) {
                         //TODO methods should not throw exceptions
                         //Perhaps create a Safe event-handler?
@@ -169,7 +169,7 @@ final class AsyncSingleSelector implements Runnable {
      * @return the selectionkey registered
      * @throws IOException
      */
-    Callable registerChannel(final SelectableChannel channel, final int ops, final EventHandler handler) throws IOException {
+    Callable registerChannel(final SelectableChannel channel, final int ops, final EventProcessor handler) throws IOException {
         SelectionKey k = null;
         try {
             k = channel.register(selector, ops, handler);

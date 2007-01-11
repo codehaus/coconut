@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.coconut.aio.monitor.DatagramGroupMonitor;
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
 
 @SuppressWarnings("unchecked")
@@ -174,7 +174,7 @@ public class AsyncDatagramGroupTest extends AioTestCase {
         final AsyncDatagramGroup group = getFactory().openDatagramGroup();
         final AsyncDatagram s = getFactory().openDatagram();
         final BlockingQueue q = new LinkedBlockingQueue();
-        final EventHandler h = createQueueHandlerOnce(q);
+        final EventProcessor h = createQueueHandlerOnce(q);
 
         assertNull(group.getJoinHandler());
 
@@ -210,7 +210,7 @@ public class AsyncDatagramGroupTest extends AioTestCase {
         final AsyncDatagramGroup group = getFactory().openDatagramGroup();
         final AsyncDatagram s = getFactory().openDatagram();
         final BlockingQueue q = new LinkedBlockingQueue();
-        final EventHandler h = createQueueHandlerOnce(q);
+        final EventProcessor h = createQueueHandlerOnce(q);
 
         assertNull(group.getLeaveHandler());
 

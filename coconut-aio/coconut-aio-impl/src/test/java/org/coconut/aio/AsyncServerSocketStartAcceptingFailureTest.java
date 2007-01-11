@@ -32,7 +32,6 @@ public class AsyncServerSocketStartAcceptingFailureTest extends AioTestCase {
         assertTrue(obj instanceof AsyncServerSocket.ErroneousEvent);
         AsyncServerSocket.ErroneousEvent event = (ErroneousEvent) obj;
         assertTrue(event.getCause() instanceof IOException);
-        assertEquals(socket.getColor(),event.getColor());
         assertEquals(event.getMessage(), event.getCause().getMessage());
         assertTrue(event.getEvent() instanceof AsyncServerSocket.AcceptingStarted);
         assertEquals(event.async(), socket);

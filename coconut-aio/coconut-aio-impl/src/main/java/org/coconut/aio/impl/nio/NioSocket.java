@@ -28,7 +28,7 @@ import org.coconut.aio.impl.BaseSocketGroup;
 import org.coconut.aio.impl.util.AioFutureTask;
 import org.coconut.aio.impl.util.ByteBufferUtil;
 import org.coconut.aio.monitor.SocketMonitor;
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
 
 
@@ -132,8 +132,8 @@ final class NioSocket extends BaseSocket {
         final Runnable runnable =new Runnable() {
             public void run() {
                 try {
-                    netHandler.socketStartConnecting(NioSocket.this, channel, new EventHandler() {
-                        public void handle(Object key) {
+                    netHandler.socketStartConnecting(NioSocket.this, channel, new EventProcessor() {
+                        public void process(Object key) {
                             try {
                                 if (!channel.finishConnect()) {
                                     // this is a bug in java nio.
@@ -230,8 +230,8 @@ final class NioSocket extends BaseSocket {
         }
         Runnable r = new Runnable() {
             public void run() {
-                EventHandler h = new EventHandler() {
-                    public void handle(Object ignore) {
+                EventProcessor h = new EventProcessor() {
+                    public void process(Object ignore) {
                         readAvailable();
                     }
                 };
@@ -390,9 +390,6 @@ final class NioSocket extends BaseSocket {
         public AsyncSocket async() {
             return socket;
         }
-        public int getColor() {
-            return socket.getColor();
-        }
         /**
          * @see org.coconut.aio.AsyncServerSocket.Event#setDestination(org.coconut.core.Offerable)
          */
@@ -403,10 +400,6 @@ final class NioSocket extends BaseSocket {
             Event error = new ErroneousEvent() {
                 public Throwable getCause() {
                     return t;
-                }
-                public int getColor() {
-                    return socket.getColor();
-
                 }
                 public String getMessage() {
                     return t.getMessage();
@@ -465,7 +458,7 @@ final class NioSocket extends BaseSocket {
         }
     }
 
-    class WrittenEvent extends BaseNioEvent<Long> implements AsyncSocket.Written, EventHandler,
+    class WrittenEvent extends BaseNioEvent<Long> implements AsyncSocket.Written, EventProcessor,
         Writeable {
         private final ByteBuffer[] srcs;
         private final int offset;
@@ -493,7 +486,7 @@ final class NioSocket extends BaseSocket {
         public ByteBuffer[] getSrcs() {
             return srcs;
         }
-        public void handle(Object o) {
+        public void process(Object o) {
             handleWrite();
         }
         public void run() {

@@ -12,7 +12,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import junit.framework.AssertionFailedError;
 
 import org.coconut.aio.monitor.ServerSocketMonitor;
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 
 /**
  * 
@@ -59,7 +59,6 @@ public class AsyncServerSocketAcceptTest extends AioTestCase {
 
         AsyncServerSocket.SocketAccepted s = ((AsyncServerSocket.SocketAccepted) awaitOnQueue(q));
         assertSame(socket, s.async());
-        assertEquals(socket.getColor(),s.getColor());
         assertTrue(s.getAcceptedSocket().isOpen());
         assertTrue(s.getAcceptedSocket().isBound());
         //s.isConnected() TODO fix
@@ -164,7 +163,7 @@ public class AsyncServerSocketAcceptTest extends AioTestCase {
     public void testAcceptMonitorErrorneous() throws IOException, InterruptedException {
         final AsyncServerSocket socket = getFactory().openServerSocket();
         final BlockingQueue q = new LinkedBlockingQueue();
-        final EventHandler<AsyncServerSocket> h = createQueueHandlerOnce(q);
+        final EventProcessor<AsyncServerSocket> h = createQueueHandlerOnce(q);
         final int port = getNextPort();
 
         ServerSocketMonitor m = new ServerSocketMonitor() {

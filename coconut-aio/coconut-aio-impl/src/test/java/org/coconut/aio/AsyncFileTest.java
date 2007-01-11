@@ -126,10 +126,5 @@ public class AsyncFileTest extends AioTestCase {
         AsyncFile.setDefaultMonitor(null);
         file1.close().getIO();
     }
-    
-    public void testColor() throws IOException {
-        final AsyncFile file = getFactory().openFile();
-        assertTrue(file.getColor() == file.getColor()); //fake
-        file.close().getIO();
-    }
+
 }

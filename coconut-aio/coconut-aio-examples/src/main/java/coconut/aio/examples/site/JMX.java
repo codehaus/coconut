@@ -9,9 +9,9 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.ServerSocketChannel;
 
-import coconut.aio.AsyncSocket;
-import coconut.aio.management.ManagementFactory;
-import coconut.aio.management.SocketMBean;
+import org.coconut.aio.AsyncSocket;
+import org.coconut.aio.management.ManagementFactory;
+import org.coconut.aio.management.SocketMXBean;
 
 /**
  * 
@@ -28,12 +28,12 @@ public class JMX {
     }
     public void JXMTest1() throws IOException {
 //START SNIPPET: jmx-simple
-SocketMBean mxBean = ManagementFactory.getSocketMXBean();
+SocketMXBean mxBean = ManagementFactory.getSocketMXBean();
 AsyncSocket socket = AsyncSocket.open();
 socket.connect(new InetSocketAddress("localhost", 12345)).getIO();
 
 System.out.println(mxBean.getBytesWritten(socket.getId()) + " bytes written");
-socket.write(ByteBuffer.wrap("HelloWorld".getBytes())).getIO();
+socket.writeAsync(ByteBuffer.wrap("HelloWorld".getBytes())).getIO();
 System.out.println(mxBean.getBytesWritten(socket.getId()) + " bytes written");
 //END SNIPPET: jmx-simple
     }

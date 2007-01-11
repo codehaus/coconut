@@ -8,14 +8,14 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import coconut.core.EventHandler;
-import coconut.core.Offerable;
+import org.coconut.core.EventProcessor;
+import org.coconut.core.Offerable;
 
 public class QueueOfferable implements Offerable, Runnable {
 
     private final BlockingQueue queue = new LinkedBlockingQueue();
-    private final EventHandler handler;
-    public QueueOfferable(EventHandler handler) {
+    private final EventProcessor handler;
+    public QueueOfferable(EventProcessor handler) {
         this.handler = handler;
     }
     public QueueOfferable start() {
@@ -36,7 +36,7 @@ public class QueueOfferable implements Offerable, Runnable {
         for (;;) {
             try {
                 Object o = queue.take();
-                handler.handle(o);
+                handler.process(o);
             } catch (Exception e) {
                 e.printStackTrace();
             }

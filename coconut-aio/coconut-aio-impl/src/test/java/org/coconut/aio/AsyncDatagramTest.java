@@ -107,12 +107,6 @@ public class AsyncDatagramTest extends AioTestCase {
         socket.close().getIO();
     }
 
-    public void testColor() throws IOException {
-        final AsyncDatagram socket = getFactory().openDatagram();
-        assertTrue(socket.getColor() == socket.getColor()); //fake
-        socket.close().getIO();
-    }
-
     public void testAttach() throws IOException {
         final AsyncDatagram socket = getFactory().openDatagram();
         final Object o = new Object();

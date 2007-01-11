@@ -28,7 +28,7 @@ import org.coconut.aio.ReadHandler;
 import org.coconut.aio.impl.util.AioFutureTask;
 import org.coconut.aio.management.SocketInfo;
 import org.coconut.aio.monitor.SocketMonitor;
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
 
 
@@ -93,7 +93,7 @@ public abstract class BaseSocket extends AsyncSocket {
     private volatile int writeQueueLimit = Integer.MAX_VALUE;
 
     /** A user defined close handler */
-    private volatile EventHandler<AsyncSocket> closeHandler;
+    private volatile EventProcessor<AsyncSocket> closeHandler;
 
     /** An int indicating the connectstate if a connect has finished */
     private volatile ConnectState connectState;
@@ -370,7 +370,7 @@ public abstract class BaseSocket extends AsyncSocket {
     /**
      * @see org.coconut.aio.AsyncSocket#setCloseHandler(org.coconut.core.Handler)
      */
-    public AsyncSocket setCloseHandler(EventHandler<AsyncSocket> handler) {
+    public AsyncSocket setCloseHandler(EventProcessor<AsyncSocket> handler) {
         this.closeHandler = handler;
         return this;
     }
@@ -378,7 +378,7 @@ public abstract class BaseSocket extends AsyncSocket {
     /**
      * @see org.coconut.aio.AsyncSocket#getCloseHandler()
      */
-    public EventHandler<AsyncSocket> getCloseHandler() {
+    public EventProcessor<AsyncSocket> getCloseHandler() {
         return closeHandler;
     }
     /**
@@ -524,13 +524,13 @@ public abstract class BaseSocket extends AsyncSocket {
             }
         }
 
-        final EventHandler<AsyncSocket> handler = getCloseHandler();
+        final EventProcessor<AsyncSocket> handler = getCloseHandler();
         if (handler != null) {
             try {
                 if (event.getCause() != null && handler instanceof ErroneousHandler)
                     ((ErroneousHandler<AsyncSocket>) handler).handleFailed(this, event.getCause());
                 else {
-                    handler.handle(this);
+                    handler.process(this);
                 }
             } catch (RuntimeException ignore) {
                 // Can't really do anything about this ,socket is closed

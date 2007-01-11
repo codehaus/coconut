@@ -10,8 +10,9 @@ import java.nio.ByteBuffer;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 
-import coconut.aio.management.ManagementFactory;
-import coconut.aio.management.SocketMXBean;
+import org.coconut.aio.AsyncSocket;
+import org.coconut.aio.management.ManagementFactory;
+import org.coconut.aio.management.SocketMXBean;
 
 /**
  * 

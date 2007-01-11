@@ -4,7 +4,7 @@
 
 package org.coconut.aio;
 
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 
 /**
  * Extend EventHandler with a method for handling exceptions and errors.
@@ -12,7 +12,7 @@ import org.coconut.core.EventHandler;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public interface ErroneousHandler<T> extends EventHandler<T> {
+public interface ErroneousHandler<T> extends EventProcessor<T> {
     
     /**
      * @param element the element that was attempted to be handled.

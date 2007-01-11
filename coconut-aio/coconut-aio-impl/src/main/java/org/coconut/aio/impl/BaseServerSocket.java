@@ -24,7 +24,7 @@ import org.coconut.aio.impl.util.AioFutureTask;
 import org.coconut.aio.management.ServerSocketInfo;
 import org.coconut.aio.monitor.ServerSocketMonitor;
 import org.coconut.core.Callback;
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
 
 /**
@@ -65,7 +65,7 @@ public abstract class BaseServerSocket extends AsyncServerSocket {
     private volatile Object attachment;
 
     /** A user defined close handler */
-    private volatile EventHandler<AsyncServerSocket> closeHandler;
+    private volatile EventProcessor<AsyncServerSocket> closeHandler;
 
     /** The sockets default executor */
     private volatile Executor defaultExecutor;
@@ -284,7 +284,7 @@ public abstract class BaseServerSocket extends AsyncServerSocket {
      */
     @Override
     public AsyncServerSocket setCloseHandler(
-            EventHandler<AsyncServerSocket> handler) {
+            EventProcessor<AsyncServerSocket> handler) {
         this.closeHandler = handler;
         return this;
     }
@@ -293,7 +293,7 @@ public abstract class BaseServerSocket extends AsyncServerSocket {
      * @see org.coconut.aio.AsyncServerSocket#getCloseHandler()
      */
     @Override
-    public EventHandler<AsyncServerSocket> getCloseHandler() {
+    public EventProcessor<AsyncServerSocket> getCloseHandler() {
         return closeHandler;
     }
 
@@ -500,7 +500,7 @@ public abstract class BaseServerSocket extends AsyncServerSocket {
             }
         }
 
-        final EventHandler<AsyncServerSocket> handler = getCloseHandler();
+        final EventProcessor<AsyncServerSocket> handler = getCloseHandler();
         if (handler != null) {
             try {
                 if (event.getCause() != null
@@ -508,7 +508,7 @@ public abstract class BaseServerSocket extends AsyncServerSocket {
                     ((ErroneousHandler<AsyncServerSocket>) handler)
                             .handleFailed(this, event.getCause());
                 } else {
-                    handler.handle(this);
+                    handler.process(this);
                 }
             } catch (RuntimeException e) {
                 provider.unhandledException(this,

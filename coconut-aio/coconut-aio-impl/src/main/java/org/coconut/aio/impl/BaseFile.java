@@ -8,7 +8,7 @@ import java.util.concurrent.Executor;
 
 import org.coconut.aio.AsyncFile;
 import org.coconut.aio.monitor.FileMonitor;
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
 
 
@@ -46,7 +46,7 @@ public abstract class BaseFile extends AsyncFile {
     private volatile Object attachment;
 
     /** A user defined close handler */
-    private volatile EventHandler<AsyncFile> closeHandler;
+    private volatile EventProcessor<AsyncFile> closeHandler;
 
     /** A user defined server-socket monitor */
     private volatile FileMonitor monitor;

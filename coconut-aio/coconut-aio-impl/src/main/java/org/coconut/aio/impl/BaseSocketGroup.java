@@ -14,7 +14,7 @@ import org.coconut.aio.AsyncSocketGroup;
 import org.coconut.aio.ReadHandler;
 import org.coconut.aio.management.SocketGroupInfo;
 import org.coconut.aio.monitor.SocketGroupMonitor;
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
 
 
@@ -55,10 +55,10 @@ public class BaseSocketGroup extends AsyncSocketGroup {
     private volatile ReadHandler<AsyncSocket> reader;
 
     /** An EventHandler called every time a socket joins this group. */
-    private volatile EventHandler<AsyncSocket> joinHandler;
+    private volatile EventProcessor<AsyncSocket> joinHandler;
 
     /** An EventHandler called every time a socket leaves this group. */
-    private volatile EventHandler<AsyncSocket> leaveHandler;
+    private volatile EventProcessor<AsyncSocket> leaveHandler;
 
     /**
      * Constructs a new BaseSocketGroup.
@@ -100,7 +100,7 @@ public class BaseSocketGroup extends AsyncSocketGroup {
     /**
      * @see org.coconut.aio.AsyncSocketGroup#setAddHandler(coconut.event.Handler)
      */
-    public AsyncSocketGroup setJoinHandler(EventHandler<AsyncSocket> handler) {
+    public AsyncSocketGroup setJoinHandler(EventProcessor<AsyncSocket> handler) {
         this.joinHandler = handler;
         return this;
     }
@@ -137,7 +137,7 @@ public class BaseSocketGroup extends AsyncSocketGroup {
     /**
      * @see org.coconut.aio.AsyncSocketGroup#setRemoveHandler(coconut.event.Handler)
      */
-    public AsyncSocketGroup setLeaveHandler(EventHandler<AsyncSocket> handler) {
+    public AsyncSocketGroup setLeaveHandler(EventProcessor<AsyncSocket> handler) {
         this.leaveHandler = handler;
         return this;
     }
@@ -197,14 +197,14 @@ public class BaseSocketGroup extends AsyncSocketGroup {
     /**
      * @see org.coconut.aio.AsyncSocketGroup#getAddHandler()
      */
-    public EventHandler<AsyncSocket> getJoinHandler() {
+    public EventProcessor<AsyncSocket> getJoinHandler() {
         return joinHandler;
     }
 
     /**
      * @see org.coconut.aio.AsyncSocketGroup#getRemoveHandler()
      */
-    public EventHandler<AsyncSocket> getLeaveHandler() {
+    public EventProcessor<AsyncSocket> getLeaveHandler() {
         return leaveHandler;
     }
 
@@ -241,10 +241,10 @@ public class BaseSocketGroup extends AsyncSocketGroup {
     boolean innerRemove(BaseSocket socket) {
         boolean removed = sockets.remove(socket) != null;
         if (removed) {
-            final EventHandler<AsyncSocket> handler = leaveHandler;
+            final EventProcessor<AsyncSocket> handler = leaveHandler;
             if (handler != null) {
                 try {
-                    handler.handle(socket);
+                    handler.process(socket);
                 } catch (Exception e) {
                     // TODO handle exception
                 }
@@ -269,10 +269,10 @@ public class BaseSocketGroup extends AsyncSocketGroup {
     void added(BaseSocket s) {
         sockets.put(s, s);
         mProvider.joined(this, s);
-        final EventHandler<AsyncSocket> handler = joinHandler;
+        final EventProcessor<AsyncSocket> handler = joinHandler;
         if (handler != null) {
             try {
-                handler.handle(s);
+                handler.process(s);
             } catch (Exception e) {
                 // TODO handle exception
             }

@@ -9,7 +9,7 @@ import java.util.concurrent.Executor;
 
 import org.coconut.aio.monitor.DatagramGroupMonitor;
 import org.coconut.aio.spi.AioProvider;
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
 
 
@@ -133,14 +133,14 @@ public abstract class AsyncDatagramGroup extends AbstractSet<AsyncDatagram> {
      *            the Handler that is called every time
      * @return this group
      */
-    public abstract AsyncDatagramGroup setJoinHandler(EventHandler<AsyncDatagram> handler);
+    public abstract AsyncDatagramGroup setJoinHandler(EventProcessor<AsyncDatagram> handler);
 
     /**
      * Returns the join handler or <tt>null</tt> is no handler is set.
      * 
      * @return the join handler or <tt>null</tt> is no handler is set
      */
-    public abstract EventHandler<AsyncDatagram> getJoinHandler();
+    public abstract EventProcessor<AsyncDatagram> getJoinHandler();
 
     /**
      * Sets a Handler that is called everytime a AsyncDatagram is removed from
@@ -153,13 +153,13 @@ public abstract class AsyncDatagramGroup extends AbstractSet<AsyncDatagram> {
      *            the Handler to call when an AsyncDatagram leaves the group
      * @return this group
      */
-    public abstract AsyncDatagramGroup setLeaveHandler(EventHandler<AsyncDatagram> handler);
+    public abstract AsyncDatagramGroup setLeaveHandler(EventProcessor<AsyncDatagram> handler);
 
     /**
      * Returns the leave handler or <tt>null</tt> is no handler is set.
      * 
      * @return the leave handler or <tt>null</tt> is no handler is set
      */
-    public abstract EventHandler<AsyncDatagram> getLeaveHandler();
+    public abstract EventProcessor<AsyncDatagram> getLeaveHandler();
    
 }

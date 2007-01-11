@@ -10,14 +10,14 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 
-import coconut.aio.AsyncSocket;
+import org.coconut.aio.AsyncSocket;
 
 public class AioClient {
     public static void main(String[] args) throws IOException {
         AsyncSocket socket = AsyncSocket.open();
         InetSocketAddress adr = new InetSocketAddress(InetAddress.getLocalHost(), 12345);
         socket.connect(adr).getIO();
-        socket.write(ByteBuffer.wrap("Helloworld".getBytes())).getIO();
+        socket.writeAsync(ByteBuffer.wrap("Helloworld".getBytes())).getIO();
         socket.close();
     }
 }

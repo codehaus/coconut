@@ -16,8 +16,7 @@ import java.util.concurrent.Executor;
 
 import org.coconut.aio.monitor.SocketMonitor;
 import org.coconut.aio.spi.AioProvider;
-import org.coconut.core.Colored;
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
 
 
@@ -49,7 +48,7 @@ import org.coconut.core.Offerable;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id$
  */
-public abstract class AsyncSocket implements Colored, WritableByteChannel, ScatteringByteChannel {
+public abstract class AsyncSocket implements WritableByteChannel, ScatteringByteChannel {
 
 
     /**
@@ -203,7 +202,7 @@ public abstract class AsyncSocket implements Colored, WritableByteChannel, Scatt
      * 
      * @return the closedHandler
      */
-    public abstract EventHandler<AsyncSocket> getCloseHandler();
+    public abstract EventProcessor<AsyncSocket> getCloseHandler();
 
     /**
      * Returns the default Offerable or <tt>null</tt> is no Offerable is set.
@@ -351,7 +350,7 @@ public abstract class AsyncSocket implements Colored, WritableByteChannel, Scatt
      * 
      * @param handler the closedHandler
      */
-    public abstract AsyncSocket setCloseHandler(EventHandler<AsyncSocket> handler);
+    public abstract AsyncSocket setCloseHandler(EventProcessor<AsyncSocket> handler);
 
     /**
      * Adds this socket to the provided group. If this socket is allready a
@@ -548,7 +547,7 @@ public abstract class AsyncSocket implements Colored, WritableByteChannel, Scatt
     /**
      * The default Event interface that all AsyncSocket events inherit.
      */
-    public interface Event extends Colored {
+    public interface Event{
 
         /**
          * Returns the asynchronous socket that created this event.

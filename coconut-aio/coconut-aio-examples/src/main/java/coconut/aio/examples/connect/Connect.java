@@ -9,8 +9,8 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import coconut.aio.AsyncSocket;
-import coconut.core.Callback;
+import org.coconut.aio.AsyncSocket;
+import org.coconut.core.Callback;
 
 /**
  * 

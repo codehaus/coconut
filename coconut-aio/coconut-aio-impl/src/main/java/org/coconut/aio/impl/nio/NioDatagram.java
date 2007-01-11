@@ -33,7 +33,7 @@ import org.coconut.aio.impl.BaseDatagramGroup;
 import org.coconut.aio.impl.util.AioFutureTask;
 import org.coconut.aio.impl.util.ByteBufferUtil;
 import org.coconut.aio.monitor.DatagramMonitor;
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
 
 
@@ -86,7 +86,7 @@ public class NioDatagram extends BaseDatagram {
     private volatile Object attachment;
 
     /** A user defined close handler */
-    private volatile EventHandler<AsyncDatagram> closeHandler;
+    private volatile EventProcessor<AsyncDatagram> closeHandler;
 
     /** A user defined server-socket monitor */
     private volatile DatagramMonitor monitor;
@@ -341,7 +341,7 @@ public class NioDatagram extends BaseDatagram {
     /**
      * @see org.coconut.aio.AsyncSocket#setCloseHandler(org.coconut.core.Handler)
      */
-    public AsyncDatagram setCloseHandler(EventHandler<AsyncDatagram> handler) {
+    public AsyncDatagram setCloseHandler(EventProcessor<AsyncDatagram> handler) {
         this.closeHandler = handler;
         return this;
     }
@@ -349,7 +349,7 @@ public class NioDatagram extends BaseDatagram {
     /**
      * @see org.coconut.aio.AsyncSocket#getCloseHandler()
      */
-    public EventHandler<AsyncDatagram> getCloseHandler() {
+    public EventProcessor<AsyncDatagram> getCloseHandler() {
         return closeHandler;
     }
 
@@ -596,8 +596,8 @@ public class NioDatagram extends BaseDatagram {
         final ReaderSetEvent event = new ReaderSetEvent(handler);
         Runnable r = new Runnable() {
             public void run() {
-                EventHandler h = new EventHandler() {
-                    public void handle(Object ignore) {
+                EventProcessor h = new EventProcessor() {
+                    public void process(Object ignore) {
                         readAvailable();
                     }
                 };
@@ -675,13 +675,13 @@ public class NioDatagram extends BaseDatagram {
             }
         }
 
-        final EventHandler<AsyncDatagram> handler = closeHandler;
+        final EventProcessor<AsyncDatagram> handler = closeHandler;
         if (handler != null) {
             try {
                 if (cause != null && handler instanceof ErroneousHandler)
                     ((ErroneousHandler<AsyncDatagram>) handler).handleFailed(this, cause);
                 else {
-                    handler.handle(this);
+                    handler.process(this);
                 }
             } catch (RuntimeException ignore) {
                 // Can't really do anything about this ,socket is closed
@@ -941,7 +941,7 @@ public class NioDatagram extends BaseDatagram {
 
     }
 
-    class WrittenEvent extends BaseEvent<Long> implements AsyncDatagram.Written, EventHandler {
+    class WrittenEvent extends BaseEvent<Long> implements AsyncDatagram.Written, EventProcessor {
         private final ByteBuffer[] srcs;
         private final int offset;
         private final int length;
@@ -975,7 +975,7 @@ public class NioDatagram extends BaseDatagram {
         public ByteBuffer[] getSrcs() {
             return srcs;
         }
-        public void handle(Object o) {
+        public void process(Object o) {
             for (;;) {
                 if (currentWrite == null)
                     currentWrite = writes.poll();

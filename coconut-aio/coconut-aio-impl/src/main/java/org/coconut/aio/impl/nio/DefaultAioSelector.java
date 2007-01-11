@@ -12,7 +12,7 @@ import java.nio.channels.SocketChannel;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadFactory;
 
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 
 
 /**
@@ -78,30 +78,30 @@ final class DefaultAioSelector {
     }
 
     Callable serverSocketStartAccepting(NioServerSocket socket, ServerSocketChannel channel,
-        EventHandler handler) throws IOException {
+        EventProcessor handler) throws IOException {
         return acceptHandler.registerChannel(channel, SelectionKey.OP_ACCEPT, handler);
     }
 
-    Callable socketStartReading(NioSocket socket, SocketChannel channel, EventHandler handler)
+    Callable socketStartReading(NioSocket socket, SocketChannel channel, EventProcessor handler)
         throws IOException {
         return readHandler.registerChannel(channel, SelectionKey.OP_READ, handler);
     }
 
-    Callable datagramStartReading(NioDatagram socket, DatagramChannel channel, EventHandler handler)
+    Callable datagramStartReading(NioDatagram socket, DatagramChannel channel, EventProcessor handler)
         throws IOException {
         return readHandler.registerChannel(channel, SelectionKey.OP_READ, handler);
     }
 
-    void socketStartConnecting(NioSocket socket, SocketChannel channel, EventHandler handler)
+    void socketStartConnecting(NioSocket socket, SocketChannel channel, EventProcessor handler)
         throws IOException {
         writeConnectHandler.registerChannel(channel, SelectionKey.OP_CONNECT, handler);
     }
-    Callable socketStartWriting(NioSocket socket, SocketChannel channel, EventHandler handler)
+    Callable socketStartWriting(NioSocket socket, SocketChannel channel, EventProcessor handler)
         throws IOException {
         return writeConnectHandler.registerChannel(channel, SelectionKey.OP_WRITE, handler);
     }
 
-    Callable datagramStartWriting(NioDatagram socket, DatagramChannel channel, EventHandler handler)
+    Callable datagramStartWriting(NioDatagram socket, DatagramChannel channel, EventProcessor handler)
         throws IOException {
         return writeConnectHandler.registerChannel(channel, SelectionKey.OP_WRITE, handler);
     }

@@ -9,7 +9,7 @@ import java.util.concurrent.Executor;
 
 import org.coconut.aio.monitor.SocketGroupMonitor;
 import org.coconut.aio.spi.AioProvider;
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
 
 
@@ -132,14 +132,14 @@ public abstract class AsyncSocketGroup extends AbstractSet<AsyncSocket> {
      *            the Handler that is called every time
      * @return this group
      */
-    public abstract AsyncSocketGroup setJoinHandler(EventHandler<AsyncSocket> handler);
+    public abstract AsyncSocketGroup setJoinHandler(EventProcessor<AsyncSocket> handler);
 
     /**
      * Returns the join handler or <tt>null</tt> is no handler is set.
      * 
      * @return the join handler or <tt>null</tt> is no handler is set
      */
-    public abstract EventHandler<AsyncSocket> getJoinHandler();
+    public abstract EventProcessor<AsyncSocket> getJoinHandler();
 
     /**
      * Sets a Handler that is called everytime a AsyncSocket is removed from
@@ -152,12 +152,12 @@ public abstract class AsyncSocketGroup extends AbstractSet<AsyncSocket> {
      *            the Handler to call when an AsyncSocket leaves the group
      * @return this group
      */
-    public abstract AsyncSocketGroup setLeaveHandler(EventHandler<AsyncSocket> handler);
+    public abstract AsyncSocketGroup setLeaveHandler(EventProcessor<AsyncSocket> handler);
 
     /**
      * Returns the leave handler or <tt>null</tt> is no handler is set.
      * 
      * @return the leave handler or <tt>null</tt> is no handler is set
      */
-    public abstract EventHandler<AsyncSocket> getLeaveHandler();
+    public abstract EventProcessor<AsyncSocket> getLeaveHandler();
 }

@@ -183,11 +183,4 @@ public class AsyncSocketTest extends AioTestCase {
         Object o = awaitOnQueue(q);
         assertNotNull(o);
     }
-    
-    public void testColor() throws IOException {
-        final AsyncSocket socket = getFactory().openSocket();
-        assertTrue(socket.getColor() == socket.getColor()); //fake
-        socket.closeNow().getIO();
-    }
-
 }

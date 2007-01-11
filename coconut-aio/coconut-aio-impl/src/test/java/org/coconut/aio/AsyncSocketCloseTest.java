@@ -15,7 +15,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.coconut.aio.monitor.SocketMonitor;
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 
 
 /**
@@ -61,7 +61,7 @@ public class AsyncSocketCloseTest extends AioTestCase {
 
         final AsyncSocket socket = getFactory().openSocket();
         final BlockingQueue q = new LinkedBlockingQueue();
-        final EventHandler h = createQueueHandlerOnce(q);
+        final EventProcessor h = createQueueHandlerOnce(q);
 
         assertNull(socket.getCloseHandler());
 
@@ -76,7 +76,7 @@ public class AsyncSocketCloseTest extends AioTestCase {
     public void testCloseErrorneous() throws IOException, ClosedChannelException, InterruptedException {
         final AsyncSocket socket = getFactory().openSocket();
         final BlockingQueue q = new LinkedBlockingQueue();
-        final EventHandler h = createQueueHandlerOnce(q);
+        final EventProcessor h = createQueueHandlerOnce(q);
         final SocketAddress adr = createBindingAddress(getNextPort());
         final SocketChannel channel = SocketChannel.open();
 
@@ -96,7 +96,7 @@ public class AsyncSocketCloseTest extends AioTestCase {
 
         final AsyncSocket socket = getFactory().openSocket();
         final BlockingQueue q = new LinkedBlockingQueue();
-        final EventHandler h = createQueueErroneousHandlerOnce(q);
+        final EventProcessor h = createQueueErroneousHandlerOnce(q);
         final SocketAddress adr = createBindingAddress(getNextPort());
         final SocketChannel channel = SocketChannel.open();
 

@@ -13,7 +13,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.coconut.aio.monitor.ServerSocketMonitor;
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 
 
 /**
@@ -59,7 +59,7 @@ public class AsyncServerSocketCloseTest extends AioTestCase {
 
         final AsyncServerSocket socket = getFactory().openServerSocket();
         final BlockingQueue q = new LinkedBlockingQueue();
-        final EventHandler h = createQueueHandlerOnce(q);
+        final EventProcessor h = createQueueHandlerOnce(q);
 
         assertNull(socket.getCloseHandler());
 
@@ -95,7 +95,7 @@ public class AsyncServerSocketCloseTest extends AioTestCase {
         final int port = getNextPort();
         final AsyncServerSocket socket = getFactory().openServerSocket();
         final BlockingQueue q = new LinkedBlockingQueue();
-        final EventHandler h = createQueueHandlerOnce(q);
+        final EventProcessor h = createQueueHandlerOnce(q);
         final SocketAddress adr = createBindingAddress(port);
 
         socket.bind(adr);
@@ -127,7 +127,7 @@ public class AsyncServerSocketCloseTest extends AioTestCase {
         final int port = getNextPort();
         final AsyncServerSocket socket = getFactory().openServerSocket();
         final BlockingQueue q = new LinkedBlockingQueue();
-        final EventHandler h = createQueueErroneousHandlerOnce(q);
+        final EventProcessor h = createQueueErroneousHandlerOnce(q);
         final SocketAddress adr = createBindingAddress(port);
 
         socket.bind(adr);
@@ -160,7 +160,7 @@ public class AsyncServerSocketCloseTest extends AioTestCase {
         final int port = getNextPort();
         final AsyncServerSocket socket = getFactory().openServerSocket();
         final BlockingQueue q = new LinkedBlockingQueue();
-        final EventHandler h = createQueueErroneousHandlerOnce(q);
+        final EventProcessor h = createQueueErroneousHandlerOnce(q);
         final SocketAddress adr = createBindingAddress(port);
 
         socket.bind(adr);

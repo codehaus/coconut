@@ -18,7 +18,7 @@ import org.coconut.aio.impl.BaseServerSocket;
 import org.coconut.aio.impl.util.AioFutureTask;
 import org.coconut.aio.monitor.ServerSocketMonitor;
 import org.coconut.core.Callback;
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
 
 
@@ -100,8 +100,8 @@ final class NioServerSocket extends BaseServerSocket {
             isAccepting.set(true);
             channel.configureBlocking(false);
             acceptCancelSubscription = netHandler.serverSocketStartAccepting(NioServerSocket.this,
-                channel, new EventHandler() {
-                    public void handle(Object arg0) {
+                channel, new EventProcessor() {
+                    public void process(Object arg0) {
                         acceptEvents();
                     }
                 });

@@ -10,7 +10,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.coconut.aio.monitor.DatagramMonitor;
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 
 
 /**
@@ -56,7 +56,7 @@ public class AsyncDatagramCloseTest extends AioTestCase {
 
         final AsyncDatagram socket = getFactory().openDatagram();
         final BlockingQueue q = new LinkedBlockingQueue();
-        final EventHandler h = createQueueHandlerOnce(q);
+        final EventProcessor h = createQueueHandlerOnce(q);
 
         assertNull(socket.getCloseHandler());
 

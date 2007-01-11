@@ -15,7 +15,6 @@ import java.util.concurrent.Executor;
 
 import org.coconut.aio.monitor.FileMonitor;
 import org.coconut.aio.spi.AioProvider;
-import org.coconut.core.Colored;
 import org.coconut.core.Offerable;
 
 
@@ -25,7 +24,7 @@ import org.coconut.core.Offerable;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id$
  */
-public abstract class AsyncFile implements Colored {
+public abstract class AsyncFile {
 
     public static AsyncFile open() throws IOException {
         return AioProvider.provider().openFile();
@@ -166,7 +165,7 @@ public abstract class AsyncFile implements Colored {
     /**
      * The base event used for all asynchronous file events.
      */
-    public interface Event extends Colored {
+    public interface Event {
         /**
          * Returns the asynchronous file that created this event.
          * 
