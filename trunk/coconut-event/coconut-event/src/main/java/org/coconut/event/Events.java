@@ -4,10 +4,15 @@
 package org.coconut.event;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Collection;
 import java.util.concurrent.Callable;
 
 import org.coconut.core.EventProcessor;
+import org.coconut.core.Offerable;
+import org.coconut.event.impl.DefaultEventBus;
+import org.coconut.filter.Filter;
+import org.coconut.filter.Filters;
+
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -15,114 +20,161 @@ import org.coconut.core.EventProcessor;
  */
 public class Events {
 
-    static class EventHandlerAsBatch<E> implements BatchedEventHandler<E> {
 
-        private final EventProcessor<E> eh;
+    /**
+     * Returns a filter that can be used to filter a particular EventHandler.
+     * <p>
+     * 
+     * <pre>
+     * public void useIt() {
+     *     EventBus eb;
+     *     EventHandler lookFor;
+     *     Filters.filter(eb.getSubscribers(), Bus.getListenerFilter(lookFor));
+     * }
+     * </pre>
+     * 
+     * As an alternative findSubscribers can be used.
+     * 
+     * @param eventHandler
+     *            the EventHandler to filter on
+     */
+    public static <E> Filter<EventSubscription<E>> getListenerFilter(
+            EventProcessor<E> eventHandler) {
+        return new EventListenerFilter<E>(eventHandler);
+    }
 
-        public EventHandlerAsBatch(EventProcessor<E> eh) {
-            this.eh = eh;
+    public static <E> Filter<EventSubscription<E>> getEventTypeFilter(E event) {
+        return new EventMatchFilter<E>(event);
+    }
+
+    public static <E> Collection<EventSubscription<E>> findSubscribers(
+            EventBus<E> bus, EventProcessor<E> eventHandler) {
+        if (bus == null) {
+            throw new NullPointerException("bus is null");
+        } else if (eventHandler == null) {
+            throw new NullPointerException("eventHandler is null");
         }
+        return findSubscribers(bus, new EventListenerFilter<E>(eventHandler));
+    }
 
-        /**
-         * @see org.coconut.core.EventHandler#handle(E)
-         */
-        public void process(E event) {
-            eh.process(event);
-        }
+    /**
+     * Returns a collection of all the subscribers that would recieve a
+     * specified event if it was posted to the eventbus.
+     * 
+     * @param bus
+     * @param event
+     * @return
+     */
+    public static <E> Collection<EventSubscription<E>> matchSubscriberEvent(
+            EventBus<E> bus, E event) {
+        return findSubscribers(bus, new EventMatchFilter<E>(event));
+    }
 
-        /**
-         * @see org.coconut.event.BatchedEventHandler#handleAll(java.util.List)
-         */
-        public void handleAll(List<? extends E> list) {
-            for (E e : list) {
-                try {
-                    process(e);
-                } catch (RuntimeException re) {
-                    if (!handleRuntimeException(e, re)) {
-                        return;
-                    }
-                }
+    public static <E> Collection<EventSubscription<E>> findSubscribers(
+            EventBus<E> bus, Filter<EventSubscription<E>> filter) {
+        return Filters.filter(bus.getSubscribers(), filter);
+    }
+
+    public static <E> Runnable offerAsRunnable(final E element,
+            final Offerable<? super E> o) {
+        return new Runnable() {
+            public void run() {
+                o.offer(element);
             }
+        };
+    }
+
+//    public static <E> Runnable offerAsRunnable(final Callable<E> c,
+//            final Offerable<? super E> o) {
+//        return new Runnable() {
+//            public void run() {
+//                try {
+//                    E e = c.call();
+//                    o.offer(e);
+//                } catch (Exception e) {
+//                    throw new EventBusException(e);
+//                }
+//            }
+//
+//        };
+//    }
+
+    public static <E> Callable<E> asCallable(E element) {
+        return new StaticCallable<E>(element);
+    }
+
+    /**
+     * Returns a new event bus.
+     * 
+     * @return a new event bus
+     */
+    public static <E> EventBus<E> newEventBus() {
+        return new DefaultEventBus<E>();
+    }
+
+    static class StaticCallable<E> implements Callable<E>, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = 6497274083600963110L;
+
+        /** The object to return on each invocation of call. */
+        private final E object;
+
+        public StaticCallable(final E object) {
+            if (object == null) {
+                throw new NullPointerException("object is null");
+            }
+            this.object = object;
         }
 
-        protected boolean handleRuntimeException(E event, RuntimeException re) {
-            // ignore
-            return true;
+        public E call() {
+            return object;
         }
     }
 
-    static class ProcessEventFromFactory<E> implements Runnable, Serializable {
+    static class EventListenerFilter<E> implements Filter<EventSubscription<E>>,
+            Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = 4194707549593512350L;
 
-        private final EventProcessor<? super E> eh;
-
-        private final Callable<E> factory;
+        /** The event-handler we are looking for. */
+        private final EventProcessor<E> handler;
 
         /**
-         * @param event
-         * @param eh
+         * @param handler
          */
-        public ProcessEventFromFactory(final Callable<E> factory,
-                final EventProcessor<? super E> eh) {
-            if (eh == null) {
-                throw new NullPointerException("eh is null");
-            } else if (factory == null) {
-                throw new NullPointerException("factory is null");
+        EventListenerFilter(final EventProcessor<E> eventHandler) {
+            if (eventHandler == null) {
+                throw new NullPointerException("eventHandler is null");
             }
-            this.factory = factory;
-            this.eh = eh;
+            this.handler = eventHandler;
         }
 
         /**
-         * @see java.lang.Runnable#run()
+         * @see org.coconut.filter.Filter#accept(java.lang.Object)
          */
-        public void run() {
-            try {
-                E event = factory.call();
-                eh.process(event);
-            } catch (RuntimeException re) {
-                throw re;
-            } catch (Exception e) {
-                throw new IllegalStateException("Could not create new value", e);
-            }
+        public boolean accept(EventSubscription<E> element) {
+            return handler.equals(element.getEventHandler());
         }
     }
 
-    static class ProcessEvent<E> implements Runnable, Serializable {
-
-        private final EventProcessor<? super E> eh;
-
+    private static class EventMatchFilter<E> implements Filter<EventSubscription<E>> {
         private final E event;
 
         /**
          * @param event
-         * @param eh
          */
-        public ProcessEvent(final E event, final EventProcessor<? super E> eh) {
-            if (eh == null) {
-                throw new NullPointerException("eh is null");
-            } else if (event == null) {
-                throw new NullPointerException("event is null");
-            }
+        public EventMatchFilter(final E event) {
             this.event = event;
-            this.eh = eh;
         }
 
         /**
-         * @see java.lang.Runnable#run()
+         * @see org.coconut.filter.Filter#accept(java.lang.Object)
          */
-        public void run() {
-            eh.process(event);
+        public boolean accept(EventSubscription<E> element) {
+            return element.getFilter().accept(event);
         }
     }
-
-    public static <E> Runnable processEvent(E event, EventProcessor<E> handler) {
-        return new ProcessEvent<E>(event, handler);
-    }
-
-    public static <E> Runnable processEvent(Callable<E> factory, EventProcessor<E> handler) {
-        return new ProcessEventFromFactory<E>(factory, handler);
-    }
-
+    
     public static StageManager newPipeline(Object... stages) {
         return null;
     }

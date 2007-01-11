@@ -1,4 +1,4 @@
-package org.coconut.event.bus;
+package org.coconut.event.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,9 +9,9 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.spi.AbstractCache;
 import org.coconut.core.EventProcessor;
+import org.coconut.event.EventBus;
+import org.coconut.event.EventBusConfiguration;
 import org.coconut.event.EventSubscription;
 import org.coconut.filter.Filter;
 import org.coconut.filter.LogicFilters;

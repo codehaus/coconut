@@ -31,13 +31,11 @@ public interface EventSubscription<E> extends Named {
     Filter<? super E> getFilter();
 
     /**
-     * Cancels the subscription. No further events will be delivered to the
-     * specified event handler.
+     * Cancels the subscription. After this method has returned no further
+     * events will be delivered to the specified event processor.
      * <p>
-     * Note: that unless otherwise noted this method gurantees that no pending
-     * events will be delivered. A highly concurrent lock-free implementation
-     * might not be able to gurantee that some pending events will not be
-     * delivered.
+     * Implementations that cannot guarantee that pending events will be
+     * delivered should clearly specify this.
      */
     void cancel();
 }

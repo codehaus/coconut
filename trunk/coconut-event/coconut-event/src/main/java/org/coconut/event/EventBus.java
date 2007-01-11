@@ -1,10 +1,9 @@
-package org.coconut.event.bus;
+package org.coconut.event;
 
 import java.util.Collection;
 
 import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
-import org.coconut.event.EventSubscription;
 import org.coconut.filter.Filter;
 
 /**

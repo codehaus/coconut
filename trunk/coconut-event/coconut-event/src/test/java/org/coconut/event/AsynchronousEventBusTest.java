@@ -1,6 +1,5 @@
-package org.coconut.event.bus;
+package org.coconut.event;
 
-import org.coconut.event.bus.AbstractEventBusTestCase;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
