@@ -22,7 +22,7 @@ import java.util.Queue;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public final class EventHandlers {
+public final class EventUtils {
 
     static class IgnoreTrueOfferable<E> implements Offerable<E>, Serializable {
         /** serialVersionUID */
@@ -42,7 +42,7 @@ public final class EventHandlers {
         }
     }
 
-    static class Offerable2EventHandlerAdaptor<E> implements EventHandler<E>,
+    static class Offerable2EventHandlerAdaptor<E> implements EventProcessor<E>,
             Serializable {
         /** serialVersionUID */
         private static final long serialVersionUID = -4293606104983956712L;
@@ -56,7 +56,7 @@ public final class EventHandlers {
             this.offerable = offerable;
         }
 
-        public void handle(E element) {
+        public void process(E element) {
             offerable.offer(element);
         }
     }
@@ -65,9 +65,9 @@ public final class EventHandlers {
         /** serialVersionUID */
         private static final long serialVersionUID = 5555001640212350081L;
 
-        private final EventHandler<E> offerable;
+        private final EventProcessor<E> offerable;
 
-        public EventHandler2OfferableAdaptor(final EventHandler<E> offerable) {
+        public EventHandler2OfferableAdaptor(final EventProcessor<E> offerable) {
             if (offerable == null) {
                 throw new NullPointerException("offerable is null");
             }
@@ -75,12 +75,12 @@ public final class EventHandlers {
         }
 
         public boolean offer(E element) {
-            offerable.handle(element);
+            offerable.process(element);
             return true;
         }
     }
 
-    static class QueueAdaptor<E> implements EventHandler<E>, Serializable {
+    static class QueueAdaptor<E> implements EventProcessor<E>, Serializable {
         /** serialVersionUID */
         private static final long serialVersionUID = -467485596894009881L;
 
@@ -93,7 +93,7 @@ public final class EventHandlers {
             this.queue = queue;
         }
 
-        public void handle(E element) {
+        public void process(E element) {
             queue.offer(element); // ignore return value
         }
     }
@@ -107,7 +107,7 @@ public final class EventHandlers {
      * @throws NullPointerException
      *             if the supplied offerable is <code>null</code>
      */
-    public static <E> EventHandler<E> fromOfferable(final Offerable<E> offerable) {
+    public static <E> EventProcessor<E> fromOfferable(final Offerable<E> offerable) {
         return new Offerable2EventHandlerAdaptor<E>(offerable);
 
     }
@@ -121,13 +121,13 @@ public final class EventHandlers {
      * @throws NullPointerException
      *             if the supplied offerable is <code>null</code>
      */
-    public static <E> EventHandler<E> fromQueue(final Queue<E> queue) {
+    public static <E> EventProcessor<E> fromQueue(final Queue<E> queue) {
         return new QueueAdaptor<E>(queue);
     }
 
     @SuppressWarnings("unchecked")
-    public static <E> EventHandler<E> ignoreEventHandler() {
-        return (EventHandler<E>) fromOfferable(ignoreFalse());
+    public static <E> EventProcessor<E> ignoreEventHandler() {
+        return (EventProcessor<E>) fromOfferable(ignoreFalse());
     }
 
     /**
@@ -161,26 +161,26 @@ public final class EventHandlers {
      * @throws NullPointerException
      *             if the supplied eventHandler is <code>null</code>
      */
-    public static <E> Offerable<E> toOfferable(final EventHandler<E> handler) {
+    public static <E> Offerable<E> toOfferable(final EventProcessor<E> handler) {
         if (handler == null) {
             throw new NullPointerException("handler is null");
         }
         return new Offerable<E>() {
             public boolean offer(E element) {
-                handler.handle(element);
+                handler.process(element);
                 return true;
             }
         };
     }
 
-    public static <E> Offerable<E> toOfferableSafe(final EventHandler<E> eventHandler) {
+    public static <E> Offerable<E> toOfferableSafe(final EventProcessor<E> eventHandler) {
         if (eventHandler == null) {
             throw new NullPointerException("eventHandler is null");
         }
         return new Offerable<E>() {
             public boolean offer(E element) {
                 try {
-                    eventHandler.handle(element);
+                    eventHandler.process(element);
                     return true;
                 } catch (RuntimeException ex) {
                     return false;
@@ -189,23 +189,23 @@ public final class EventHandlers {
         };
     }
 
-    public static <E> EventHandler<E> toPrintStream(final PrintStream ps) {
+    public static <E> EventProcessor<E> toPrintStream(final PrintStream ps) {
         if (ps == null) {
             throw new NullPointerException("ps is null");
         }
-        return new EventHandler<E>() {
-            public void handle(E element) {
+        return new EventProcessor<E>() {
+            public void process(E element) {
                 ps.println(element.toString());
             }
         };
     }
 
-    public static <E> EventHandler<E> toPrintStreamSafe(final PrintStream ps) {
+    public static <E> EventProcessor<E> toPrintStreamSafe(final PrintStream ps) {
         if (ps == null) {
             throw new NullPointerException("ps is null");
         }
-        return new EventHandler<E>() {
-            public void handle(E element) {
+        return new EventProcessor<E>() {
+            public void process(E element) {
                 try {
                     ps.println(element.toString());
                 } catch (RuntimeException re) {
@@ -224,7 +224,7 @@ public final class EventHandlers {
      * @throws NullPointerException
      *             if the supplied eventHandler is <code>null</code>
      */
-    public static <E> Queue<E> toQueue(final EventHandler<E> handler) {
+    public static <E> Queue<E> toQueue(final EventProcessor<E> handler) {
         if (handler == null) {
             throw new NullPointerException("handler is null");
         }
@@ -235,7 +235,7 @@ public final class EventHandlers {
             }
 
             public boolean offer(E element) {
-                handler.handle(element);
+                handler.process(element);
                 return true;
             }
 
@@ -254,26 +254,26 @@ public final class EventHandlers {
         };
     }
 
-    public static <E> EventHandler<E> toSystemOut() {
+    public static <E> EventProcessor<E> toSystemOut() {
         return toPrintStream(System.out);
     }
 
-    public static <E> EventHandler<E> toSystemOutSafe() {
+    public static <E> EventProcessor<E> toSystemOutSafe() {
         return toPrintStreamSafe(System.out);
     }
 
-    public static <F, T> EventHandler<T> wrapEventHandler(final EventHandler<F> from,
+    public static <F, T> EventProcessor<T> wrapEventHandler(final EventProcessor<F> from,
             final Transformer<T, F> t) {
-        return new EventHandler<T>() {
-            public void handle(T element) {
-                from.handle(t.transform(element));
+        return new EventProcessor<T>() {
+            public void process(T element) {
+                from.process(t.transform(element));
             }
         };
     }
 
     // /CLOVER:OFF
     /** Cannot instantiate. */
-    private EventHandlers() {
+    private EventUtils() {
     }
     // /CLOVER:ON
 }

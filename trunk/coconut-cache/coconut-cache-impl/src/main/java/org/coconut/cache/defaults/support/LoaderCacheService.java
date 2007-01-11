@@ -22,7 +22,7 @@ import org.coconut.cache.spi.AsyncCacheLoader;
 import org.coconut.cache.spi.CacheErrorHandler;
 import org.coconut.cache.spi.service.AbstractCacheService;
 import org.coconut.core.Callback;
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -213,7 +213,7 @@ public class LoaderCacheService<K, V> {
     }
 
     static class NonNullEntriesIntoCache<K, V> implements
-            EventHandler<Map<K, CacheEntry<K, V>>> {
+            EventProcessor<Map<K, CacheEntry<K, V>>> {
         private final AbstractCache<K, V> cache;
 
         /**
@@ -229,7 +229,7 @@ public class LoaderCacheService<K, V> {
         /**
          * @see org.coconut.core.EventHandler#handle(java.lang.Object)
          */
-        public void handle(Map<K, CacheEntry<K, V>> map) {
+        public void process(Map<K, CacheEntry<K, V>> map) {
             ArrayList<CacheEntry<K, V>> col = new ArrayList<CacheEntry<K, V>>(map.size());
             for (Map.Entry<K, CacheEntry<K, V>> e : map.entrySet()) {
                 CacheEntry<K, V> value = e.getValue();
@@ -243,7 +243,7 @@ public class LoaderCacheService<K, V> {
         }
     }
 
-    static class NonNullEntryIntoCache<K, V> implements EventHandler<CacheEntry<K, V>> {
+    static class NonNullEntryIntoCache<K, V> implements EventProcessor<CacheEntry<K, V>> {
         private final AbstractCache<K, V> cache;
 
         /**
@@ -259,14 +259,14 @@ public class LoaderCacheService<K, V> {
         /**
          * @see org.coconut.core.EventHandler#handle(java.lang.Object)
          */
-        public void handle(CacheEntry<K, V> entry) {
+        public void process(CacheEntry<K, V> entry) {
             if (entry != null) {
                 cache.putEntry(entry);
             }
         }
     }
 
-    static class NonNullValueIntoMap<K, V> implements EventHandler<V> {
+    static class NonNullValueIntoMap<K, V> implements EventProcessor<V> {
         private final Map<K, V> cache;
 
         private final K key;
@@ -287,14 +287,14 @@ public class LoaderCacheService<K, V> {
         /**
          * @see org.coconut.core.EventHandler#handle(java.lang.Object)
          */
-        public void handle(V value) {
+        public void process(V value) {
             if (value != null) {
                 cache.put(key, value);
             }
         }
     }
 
-    static class NonNullValuesIntoMap<K, V> implements EventHandler<Map<K, V>> {
+    static class NonNullValuesIntoMap<K, V> implements EventProcessor<Map<K, V>> {
         private final Map<K, V> map;
 
         /**
@@ -310,7 +310,7 @@ public class LoaderCacheService<K, V> {
         /**
          * @see org.coconut.core.EventHandler#handle(java.lang.Object)
          */
-        public void handle(Map<K, V> map) {
+        public void process(Map<K, V> map) {
             Map<K, V> noNullsMap = new HashMap<K, V>(map.size());
             for (Map.Entry<K, V> e : map.entrySet()) {
                 V value = e.getValue();
@@ -325,7 +325,7 @@ public class LoaderCacheService<K, V> {
     }
 
     static class SingleEntryCallback<K, V> implements Callback<CacheEntry<K, V>> {
-        private final EventHandler<CacheEntry<K, V>> ac;
+        private final EventProcessor<CacheEntry<K, V>> ac;
 
         private final CacheErrorHandler<K, V> errorHandler;
 
@@ -339,7 +339,7 @@ public class LoaderCacheService<K, V> {
          */
         public SingleEntryCallback(
                 final K key,
-                EventHandler<CacheEntry<K, V>> eh,
+                EventProcessor<CacheEntry<K, V>> eh,
                 final CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader,
                 CacheErrorHandler<K, V> errorHandler) {
             this.key = key;
@@ -354,7 +354,7 @@ public class LoaderCacheService<K, V> {
         public void completed(CacheEntry<K, V> result) {
             if (result != null) {
                 try {
-                    ac.handle(result);
+                    ac.process(result);
                 } catch (Throwable e) {
                     errorHandler
                             .unhandledError(new CacheException("unknown exception", e));
@@ -374,7 +374,7 @@ public class LoaderCacheService<K, V> {
     static class SingleValueCallback<K, V> implements Callback<V> {
         private final CacheErrorHandler<K, V> errorHandler;
 
-        private final EventHandler<V> eventHandler;
+        private final EventProcessor<V> eventHandler;
 
         private final K key;
 
@@ -384,7 +384,7 @@ public class LoaderCacheService<K, V> {
          * @param ac
          * @param key
          */
-        public SingleValueCallback(final K key, EventHandler<V> eh,
+        public SingleValueCallback(final K key, EventProcessor<V> eh,
                 CacheLoader<? super K, ? extends V> loader,
                 CacheErrorHandler<K, V> errorHandler) {
             this.key = key;
@@ -399,7 +399,7 @@ public class LoaderCacheService<K, V> {
         public void completed(V result) {
             if (result != null) {
                 try {
-                    eventHandler.handle(result);
+                    eventHandler.process(result);
                 } catch (Throwable e) {
                     errorHandler
                             .unhandledError(new CacheException("unknown exception", e));
@@ -419,7 +419,7 @@ public class LoaderCacheService<K, V> {
     static class SingleValuesCallback<K, V> implements Callback<Map<K, V>> {
         private final CacheErrorHandler<K, V> errorHandler;
 
-        private final EventHandler<Map<K, V>> eventHandler;
+        private final EventProcessor<Map<K, V>> eventHandler;
 
         private final Collection<? extends K> keys;
 
@@ -430,7 +430,7 @@ public class LoaderCacheService<K, V> {
          * @param key
          */
         public SingleValuesCallback(final Collection<? extends K> keys,
-                EventHandler<Map<K, V>> eh, CacheLoader<? super K, ? extends V> loader,
+                EventProcessor<Map<K, V>> eh, CacheLoader<? super K, ? extends V> loader,
                 CacheErrorHandler<K, V> errorHandler) {
             this.keys = keys;
             this.eventHandler = eh;
@@ -444,7 +444,7 @@ public class LoaderCacheService<K, V> {
         public void completed(Map<K, V> result) {
             if (result != null) {
                 try {
-                    eventHandler.handle(result);
+                    eventHandler.process(result);
                 } catch (Throwable e) {
                     errorHandler
                             .unhandledError(new CacheException("unknown exception", e));
@@ -465,7 +465,7 @@ public class LoaderCacheService<K, V> {
             Callback<Map<K, CacheEntry<K, V>>> {
         private final Collection<? extends K> keys;
 
-        private final EventHandler<Map<K, CacheEntry<K, V>>> eventHandler;
+        private final EventProcessor<Map<K, CacheEntry<K, V>>> eventHandler;
 
         private final CacheErrorHandler<K, V> errorHandler;
 
@@ -477,7 +477,7 @@ public class LoaderCacheService<K, V> {
          */
         public SingleEntriesCallback(
                 final Collection<? extends K> keys,
-                EventHandler<Map<K, CacheEntry<K, V>>> eh,
+                EventProcessor<Map<K, CacheEntry<K, V>>> eh,
                 CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader,
                 CacheErrorHandler<K, V> errorHandler) {
             this.keys = keys;
@@ -492,7 +492,7 @@ public class LoaderCacheService<K, V> {
         public void completed(Map<K, CacheEntry<K, V>> result) {
             if (result != null) {
                 try {
-                    eventHandler.handle(result);
+                    eventHandler.process(result);
                 } catch (Throwable e) {
                     errorHandler
                             .unhandledError(new CacheException("unknown exception", e));
@@ -541,7 +541,7 @@ public class LoaderCacheService<K, V> {
             loader = null;
         }
 
-        public Future<?> asyncLoad(final K key, EventHandler<V> eh) {
+        public Future<?> asyncLoad(final K key, EventProcessor<V> eh) {
             Callback<V> c = new SingleValueCallback<K, V>(key, eh, loader, errorHandler);
             return loader.asyncLoad(key, (Callback) c);
         }
@@ -551,7 +551,7 @@ public class LoaderCacheService<K, V> {
         }
 
         public Future<?> asyncLoadAll(final Collection<? extends K> keys,
-                EventHandler<Map<K, V>> eh) {
+                EventProcessor<Map<K, V>> eh) {
             Callback<Map<K, V>> c = new SingleValuesCallback<K, V>(keys, eh, loader,
                     errorHandler);
             return loader.asyncLoadAll(keys, (Callback) c);
@@ -619,7 +619,7 @@ public class LoaderCacheService<K, V> {
 
         public Future<?> asyncLoadEntry(
 
-        final K key, EventHandler<CacheEntry<K, V>> eh) {
+        final K key, EventProcessor<CacheEntry<K, V>> eh) {
             if (key == null) {
                 throw new NullPointerException("key is null");
             }
@@ -630,7 +630,7 @@ public class LoaderCacheService<K, V> {
 
         public Future<?> asyncLoadAllEntries(
 
-        final Collection<? extends K> keys, EventHandler<Map<K, CacheEntry<K, V>>> eh) {
+        final Collection<? extends K> keys, EventProcessor<Map<K, CacheEntry<K, V>>> eh) {
             SingleEntriesCallback<K, V> c = new SingleEntriesCallback<K, V>(keys, eh,
                     loader, errorHandler);
             return loader.asyncLoadAll(keys, (Callback) c);

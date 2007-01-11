@@ -8,7 +8,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.filter.Filter;
 
 /**
@@ -21,16 +21,16 @@ public interface CacheExecutor<K, V> {
     // Future<?> execute(K k, EventHandler<CacheEntry<K, V>> handler);
 
     Future<?> execute(Filter<? super CacheEntry<K, V>> filter,
-            EventHandler<Collection<CacheEntry<K, V>>> handler);
+            EventProcessor<Collection<CacheEntry<K, V>>> handler);
 
     Future<?> execute(Collection<? extends K> k,
-            EventHandler<Collection<CacheEntry<K, V>>> handler, Executor e);
+            EventProcessor<Collection<CacheEntry<K, V>>> handler, Executor e);
 
     Future<?> submitAll(Collection<? extends K> k,
-            EventHandler<Collection<CacheEntry<K, V>>> handler, Executor e);
+            EventProcessor<Collection<CacheEntry<K, V>>> handler, Executor e);
 
     <T> Future<T> submit(K k, Calculator<T, CacheEntry<K, V>> cal);
 
     void executse(Collection<? extends K> k,
-            EventHandler<Collection<CacheEntry<K, V>>> handler, Executor e);
+            EventProcessor<Collection<CacheEntry<K, V>>> handler, Executor e);
 }

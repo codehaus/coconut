@@ -10,7 +10,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
 
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.core.Named;
 import org.coconut.management.spi.AbstractApm;
 import org.coconut.management.spi.Described;
@@ -20,7 +20,7 @@ import org.coconut.management.spi.JMXConfigurator;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class EnumCounter<T extends Enum> extends AbstractApm implements EventHandler<T>,
+public class EnumCounter<T extends Enum> extends AbstractApm implements EventProcessor<T>,
         Serializable {
 
     private final long[] count;
@@ -53,7 +53,7 @@ public class EnumCounter<T extends Enum> extends AbstractApm implements EventHan
         return "Amount of handled " + t + "s";
     }
 
-    public synchronized void handle(T value) {
+    public synchronized void process(T value) {
         latest = value;
         count[value.ordinal()]++;
     }

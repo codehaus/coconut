@@ -11,7 +11,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.spi.AbstractCache;
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.event.EventSubscription;
 import org.coconut.filter.Filter;
 import org.coconut.filter.LogicFilters;
@@ -39,6 +39,7 @@ public class DefaultEventBus<E> implements EventBus<E> {
     // specify indexer, log, thread pool
     // management, ...
     public DefaultEventBus() {
+        conf=null;
     }
 
     /**
@@ -52,7 +53,7 @@ public class DefaultEventBus<E> implements EventBus<E> {
     /**
      * @see org.coconut.core.EventHandler#handle(java.lang.Object)
      */
-    public void handle(E event) {
+    public void process(E event) {
         offer(event);
     }
 
@@ -83,7 +84,7 @@ public class DefaultEventBus<E> implements EventBus<E> {
     /**
      * @see org.coconut.event.bus.EventBus#subscribe(org.coconut.core.EventHandler)
      */
-    public EventSubscription<E> subscribe(EventHandler<? super E> eventHandler) {
+    public EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler) {
         return subscribe(eventHandler, LogicFilters.trueFilter());
     }
 
@@ -91,7 +92,7 @@ public class DefaultEventBus<E> implements EventBus<E> {
      * @see org.coconut.event.bus.EventBus#subscribe(org.coconut.core.EventHandler,
      *      org.coconut.filter.Filter)
      */
-    public EventSubscription<E> subscribe(EventHandler<? super E> eventHandler,
+    public EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler,
             Filter<? super E> filter) {
         if (eventHandler == null) {
             throw new NullPointerException("eventHandler is null");
@@ -121,7 +122,7 @@ public class DefaultEventBus<E> implements EventBus<E> {
      * @see org.coconut.event.bus.EventBus#subscribe(org.coconut.core.EventHandler,
      *      org.coconut.filter.Filter, java.lang.String)
      */
-    public EventSubscription<E> subscribe(EventHandler<? super E> eventHandler,
+    public EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler,
             Filter<? super E> filter, String name) {
         if (eventHandler == null) {
             throw new NullPointerException("eventHandler is null");
@@ -182,7 +183,7 @@ public class DefaultEventBus<E> implements EventBus<E> {
     protected void deliver(final E element, EventSubscription<E> s) {
         try {
             // check if still valid subscription??
-            s.getEventHandler().handle(element);
+            s.getEventHandler().process(element);
         } catch (RuntimeException e) {
             deliveryFailed(s, element, e);
         }
@@ -218,7 +219,7 @@ public class DefaultEventBus<E> implements EventBus<E> {
     static class DefaultSubscription<E> implements EventSubscription<E> {
         private final DefaultEventBus<E> bus;
 
-        private final EventHandler<? super E> destination;
+        private final EventProcessor<? super E> destination;
 
         private final Filter<? super E> filter;
 
@@ -229,7 +230,7 @@ public class DefaultEventBus<E> implements EventBus<E> {
          * @param filter
          */
         DefaultSubscription(DefaultEventBus<E> bus, final String name,
-                final EventHandler<? super E> destination, final Filter<? super E> filter) {
+                final EventProcessor<? super E> destination, final Filter<? super E> filter) {
             this.bus = bus;
             this.name = name;
             this.destination = destination;
@@ -246,7 +247,7 @@ public class DefaultEventBus<E> implements EventBus<E> {
         /**
          * @see org.coconut.event.bus.Subscription#getListener()
          */
-        public EventHandler<? super E> getEventHandler() {
+        public EventProcessor<? super E> getEventHandler() {
             return destination;
         }
 

@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.MBeanRegistrationException;
 
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.core.Named;
 import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.spi.AbstractApmNumber;
@@ -210,13 +210,13 @@ public class TimedAverage extends AbstractApmNumber implements Runnable /*
         jmx.add(this);
     }
 
-    private final List<EventHandler<? super TimedAverage>> dependent = new ArrayList<EventHandler<? super TimedAverage>>();
+    private final List<EventProcessor<? super TimedAverage>> dependent = new ArrayList<EventProcessor<? super TimedAverage>>();
 
     /**
      * @see org.coconut.metric.MetricHub#addEventHandler(org.coconut.core.EventHandler)
      */
-    public synchronized EventHandler<? super TimedAverage> addEventHandler(
-            EventHandler<? super TimedAverage> e) {
+    public synchronized EventProcessor<? super TimedAverage> addEventHandler(
+            EventProcessor<? super TimedAverage> e) {
         dependent.add(e);
         return e;
     }
@@ -224,14 +224,14 @@ public class TimedAverage extends AbstractApmNumber implements Runnable /*
     /**
      * @see org.coconut.metric.MetricHub#getEventHandlers()
      */
-    public synchronized List<EventHandler<? super TimedAverage>> getEventHandlers() {
-        return new ArrayList<EventHandler<? super TimedAverage>>(dependent);
+    public synchronized List<EventProcessor<? super TimedAverage>> getEventHandlers() {
+        return new ArrayList<EventProcessor<? super TimedAverage>>(dependent);
     }
 
     protected void update() {
         if (dependent.size() > 0) {
-            for (EventHandler<? super TimedAverage> e : dependent) {
-                e.handle(this);
+            for (EventProcessor<? super TimedAverage> e : dependent) {
+                e.process(this);
             }
         }
     }

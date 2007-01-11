@@ -1,6 +1,6 @@
 package org.coconut.event;
 
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.core.Named;
 import org.coconut.filter.Filter;
 
@@ -20,7 +20,7 @@ public interface EventSubscription<E> extends Named {
      * 
      * @return the listener for this subscription.
      */
-    EventHandler<? super E> getEventHandler();
+    EventProcessor<? super E> getEventHandler();
 
     /**
      * Returns the filter that is used for this subscription or <tt>null</tt>

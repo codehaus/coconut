@@ -35,7 +35,7 @@ import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
 
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.core.Named;
 import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.annotation.ManagedOperation;
@@ -65,12 +65,12 @@ public class NumberDynamicBean implements DynamicMBean, JMXConfigurator {
     static class CustomAttribute extends AbstractAttribute {
         private final Callable reader;
 
-        private final EventHandler writer;
+        private final EventProcessor writer;
 
         private final Class type;
 
         public CustomAttribute(String name, String description, Callable reader,
-                EventHandler writer, Class type) {
+                EventProcessor writer, Class type) {
             super(name, description);
             this.reader = reader;
             this.writer = writer;
@@ -99,7 +99,7 @@ public class NumberDynamicBean implements DynamicMBean, JMXConfigurator {
          */
         @Override
         void setValue(Object o) {
-            writer.handle(o);
+            writer.process(o);
         }
 
     }
@@ -304,7 +304,7 @@ public class NumberDynamicBean implements DynamicMBean, JMXConfigurator {
     }
 
     public synchronized <T> void addAttribute(String name, String description,
-            Callable<T> reader, EventHandler<T> writer, Class<? extends T> type) {
+            Callable<T> reader, EventProcessor<T> writer, Class<? extends T> type) {
         CustomAttribute m = new CustomAttribute(name, description, reader, writer, type);
         if (map.containsKey(name)) {
             throw new IllegalArgumentException("Already registered");

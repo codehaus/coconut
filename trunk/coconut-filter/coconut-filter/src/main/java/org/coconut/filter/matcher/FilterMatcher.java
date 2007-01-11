@@ -6,7 +6,7 @@ package org.coconut.filter.matcher;
 import java.util.Collection;
 import java.util.Map;
 
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.filter.Filter;
 
 /**
@@ -27,5 +27,5 @@ public interface FilterMatcher<K, E> extends Map<K, Filter<? super E>> {
      */
     Collection<K> match(E object);
     
-    void match(E object, EventHandler<E> eh);
+    void match(E object, EventProcessor<E> eh);
 }

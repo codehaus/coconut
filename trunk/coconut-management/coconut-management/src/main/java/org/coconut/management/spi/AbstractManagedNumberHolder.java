@@ -3,14 +3,14 @@
  */
 package org.coconut.management.spi;
 
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public abstract class AbstractManagedNumberHolder extends AbstractApmNumber implements
-        Runnable, EventHandler<Number> {
+        Runnable, EventProcessor<Number> {
     private final Number n;
 
     public AbstractManagedNumberHolder() {
@@ -34,7 +34,7 @@ public abstract class AbstractManagedNumberHolder extends AbstractApmNumber impl
     /**
      * @see org.coconut.core.EventHandler#handle(java.lang.Object)
      */
-    public void handle(Number event) {
+    public void process(Number event) {
         if (n != null) {
             throw new IllegalStateException("Number configured for object");
         }

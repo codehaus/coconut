@@ -3,13 +3,13 @@
  */
 package org.coconut.management.threshold;
 
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class Thresholder implements Runnable, EventHandler<Number> {
+public class Thresholder implements Runnable, EventProcessor<Number> {
     private Number n;
 
     // when value has been high-> and gets back to normal
@@ -37,7 +37,7 @@ public class Thresholder implements Runnable, EventHandler<Number> {
     /**
      * @see org.coconut.core.EventHandler#handle(java.lang.Object)
      */
-    public void handle(Number event) {
+    public void process(Number event) {
         if (n != null) {
             throw new IllegalStateException("Number configured for object");
         }

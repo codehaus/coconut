@@ -1,6 +1,6 @@
 package org.coconut.event.bus;
 
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.event.bus.AbstractEventBusTestCase;
 import org.coconut.event.bus.DefaultEventBus;
 import org.coconut.event.bus.EventBus;
@@ -20,11 +20,11 @@ public class EventBusTypeTester extends AbstractEventBusTestCase {
     public void testSubscribe() {
         EventBus<Number> bus = createNew();
 
-        EventHandler<Integer> hi = null;
-        EventHandler<Number> hn = null;
-        EventHandler<Object> ho = null;
-        EventHandler hall = null;
-        EventHandler<String> hs = null;
+        EventProcessor<Integer> hi = null;
+        EventProcessor<Number> hn = null;
+        EventProcessor<Object> ho = null;
+        EventProcessor hall = null;
+        EventProcessor<String> hs = null;
 
         // bus.subscribe(hi, Filters.clazz(Integer.class));
         bus.subscribe(hn, Filters.isType(Integer.class));
@@ -36,7 +36,7 @@ public class EventBusTypeTester extends AbstractEventBusTestCase {
     public void testSubscribeFilter() {
         EventBus<Number> bus = createNew();
 
-        EventHandler<Object> o = null;
+        EventProcessor<Object> o = null;
         Filter<Integer> hi = null;
         Filter<Number> hn = null;
         Filter<Object> ho = null;

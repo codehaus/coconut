@@ -20,13 +20,13 @@ public class EventHandlersTest extends MockTestCase {
         Mock mock = mock(Offerable.class);
         mock.expects(once()).method("offer").with(eq(0))
                 .will(returnValue(true));
-        EventHandler eh = EventHandlers.fromOfferable((Offerable) mock.proxy());
-        eh.handle(0);
+        EventProcessor eh = EventUtils.fromOfferable((Offerable) mock.proxy());
+        eh.process(0);
     }
 
     public void testToHandlerNull() {
         try {
-            EventHandlers.fromOfferable((Offerable) null);
+            EventUtils.fromOfferable((Offerable) null);
             fail("Did not fail with NullPointerException");
         } catch (NullPointerException npe) {
         }
@@ -36,71 +36,71 @@ public class EventHandlersTest extends MockTestCase {
         Mock mock = mock(Queue.class);
         mock.expects(once()).method("offer").with(eq(0))
                 .will(returnValue(true));
-        EventHandler<Integer> eh = EventHandlers
+        EventProcessor<Integer> eh = EventUtils
                 .fromQueue((Queue) mock.proxy());
-        eh.handle(0);
+        eh.process(0);
     }
 
     public void testToQueueNull() {
         try {
-            EventHandlers.fromQueue((Queue) null);
+            EventUtils.fromQueue((Queue) null);
             fail("Did not fail with NullPointerException");
         } catch (NullPointerException npe) {
         }
     }
 
     public void testToOfferable() {
-        Mock mock = mock(EventHandler.class);
+        Mock mock = mock(EventProcessor.class);
         mock.expects(once()).method("handle").with(eq(0));
-        Offerable<Integer> eh = EventHandlers.toOfferable((EventHandler) mock
+        Offerable<Integer> eh = EventUtils.toOfferable((EventProcessor) mock
                 .proxy());
         assertTrue(eh.offer(0));
     }
 
     public void testToOfferableNull() {
         try {
-            EventHandlers.toOfferable(null);
+            EventUtils.toOfferable(null);
             fail("Did not fail with NullPointerException");
         } catch (NullPointerException npe) {
         }
     }
 
     public void testToOfferableSafe() {
-        Mock mock = mock(EventHandler.class);
+        Mock mock = mock(EventProcessor.class);
         mock.expects(once()).method("handle").with(eq(0));
-        Offerable<Integer> eh = EventHandlers
-                .toOfferableSafe((EventHandler) mock.proxy());
+        Offerable<Integer> eh = EventUtils
+                .toOfferableSafe((EventProcessor) mock.proxy());
         assertTrue(eh.offer(0));
     }
 
     public void testToOfferableErroneous() {
-        Mock mock = mock(EventHandler.class);
+        Mock mock = mock(EventProcessor.class);
         mock.expects(once()).method("handle").with(eq(0)).will(
                 throwException(new IllegalArgumentException()));
-        Offerable<Integer> eh = EventHandlers
-                .toOfferableSafe((EventHandler) mock.proxy());
+        Offerable<Integer> eh = EventUtils
+                .toOfferableSafe((EventProcessor) mock.proxy());
         assertFalse(eh.offer(0));
     }
 
     public void testToOfferableSafeNull() {
         try {
-            EventHandlers.toOfferableSafe(null);
+            EventUtils.toOfferableSafe(null);
             fail("Did not fail with NullPointerException");
         } catch (NullPointerException npe) {
         }
     }
 
     public void testIgnoreFalse() {
-        assertFalse(EventHandlers.ignoreFalse().offer(this));
+        assertFalse(EventUtils.ignoreFalse().offer(this));
     }
 
     public void testIgnoreTrue() {
-        assertTrue(EventHandlers.ignoreTrue().offer(this));
+        assertTrue(EventUtils.ignoreTrue().offer(this));
     }
 
     public void testIgnoreEventHandler() {
-        EventHandler<?> e = EventHandlers.ignoreEventHandler();
-        e.handle(null); // ignore
+        EventProcessor<?> e = EventUtils.ignoreEventHandler();
+        e.process(null); // ignore
     }
 
     public void testToPrintStream() {
@@ -113,7 +113,7 @@ public class EventHandlersTest extends MockTestCase {
 
     public void testToPrintStreamNull() {
         try {
-            EventHandlers.toPrintStream(null);
+            EventUtils.toPrintStream(null);
             fail("Did not fail with NullPointerException");
         } catch (NullPointerException npe) {
         }
@@ -121,7 +121,7 @@ public class EventHandlersTest extends MockTestCase {
 
     public void testPrintToSafe() {
         try {
-            EventHandlers.toPrintStreamSafe(null);
+            EventUtils.toPrintStreamSafe(null);
             fail("Did not fail with NullPointerException");
         } catch (NullPointerException npe) {
         }
@@ -130,7 +130,7 @@ public class EventHandlersTest extends MockTestCase {
     public void testPrintToSystemOut() {
         PrintStream out = System.out;
         try {
-            EventHandler eh = EventHandlers.toSystemOut();
+            EventProcessor eh = EventUtils.toSystemOut();
             assertNotNull(eh);
         } finally {
             System.setOut(out);
@@ -138,7 +138,7 @@ public class EventHandlersTest extends MockTestCase {
     }
 
     public void testPrintToSystemOutSafe() {
-        EventHandler eh = EventHandlers.toSystemOutSafe();
+        EventProcessor eh = EventUtils.toSystemOutSafe();
         assertNotNull(eh);
     }
 

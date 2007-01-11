@@ -88,12 +88,12 @@ public class LongWindow extends AbstractManagedNumberHolder {
 
     public static void main(String[] args) {
         LongWindow lw = new LongWindow(4);
-        lw.handle(2);
-        lw.handle(4);
-        lw.handle(3);
-        lw.handle(7);
+        lw.process(2);
+        lw.process(4);
+        lw.process(3);
+        lw.process(7);
         System.out.println(lw.total);
-        lw.handle(23);
+        lw.process(23);
         System.out.println(lw.total);
     }
 

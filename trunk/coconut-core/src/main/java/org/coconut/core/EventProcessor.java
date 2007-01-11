@@ -23,7 +23,7 @@ package org.coconut.core;
  * @version $Id$
  */
 //TODO rename to EventProcessor and process(E event)
-public interface EventHandler<E> {
+public interface EventProcessor<E> {
 
     /**
      * Handles an event.
@@ -40,5 +40,5 @@ public interface EventHandler<E> {
      *             some aspect of this element prevents it from being
      *             handled by this event-handler.
      */
-    void handle(E event);
+    void process(E event);
 }

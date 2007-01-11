@@ -5,7 +5,7 @@ package org.coconut.management.spi;
 
 import java.util.concurrent.Callable;
 
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -30,7 +30,7 @@ public interface JMXConfigurator {
             Class<? extends T> type);
 
     <T> void addAttribute(String name, String description, Callable<T> reader,
-            EventHandler<T> writer, Class<? extends T> type);
+            EventProcessor<T> writer, Class<? extends T> type);
 
     void addOperation(Runnable r, String name, String description);
     // some kind of unregister?

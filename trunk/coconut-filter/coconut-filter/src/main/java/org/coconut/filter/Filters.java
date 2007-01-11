@@ -12,7 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.core.Transformer;
 import org.coconut.core.Transformers;
 
@@ -59,11 +59,11 @@ public final class Filters {
     }
 
     public static <E> void apply(Iterable<E> iterable, Filter<E> filter,
-            EventHandler<E> handler) {
+            EventProcessor<E> handler) {
         // usefull??
         for (E e : iterable) {
             if (filter.accept(e)) {
-                handler.handle(e);
+                handler.process(e);
             }
         }
     }

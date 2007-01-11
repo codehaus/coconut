@@ -5,12 +5,12 @@ package org.coconut.event;
 
 import java.util.List;
 
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public interface BatchedEventHandler<E> extends EventHandler<E> {
+public interface BatchedEventHandler<E> extends EventProcessor<E> {
     void handleAll(List<? extends E> list);
 }

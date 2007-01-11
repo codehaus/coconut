@@ -11,7 +11,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEvent;
 import org.coconut.cache.defaults.support.JMXCacheService;
 import org.coconut.cache.management.CacheMXBean;
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.event.bus.EventBus;
 import org.coconut.test.MockTestCase;
 
@@ -28,7 +28,7 @@ public class JMXCacheMXBeanTest extends MockTestCase {
 
     BlockingQueue<CacheEvent<Integer, Integer>> events;
 
-    EventHandler<CacheEvent<Integer, Integer>> eventHandler;
+    EventProcessor<CacheEvent<Integer, Integer>> eventHandler;
 
     protected void setUp() throws Exception {
         super.setUp();

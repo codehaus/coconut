@@ -14,7 +14,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntryEvent;
 import org.coconut.cache.CacheEvent;
 import org.coconut.cache.management.CacheMXBean;
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.core.Transformer;
 import org.coconut.event.bus.EventBus;
 import org.coconut.filter.LogicFilters;
@@ -25,7 +25,7 @@ import org.coconut.internal.jmx.JmxEmitterSupport;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
 public class AbstractCacheMXBean<K, V> extends JmxEmitterSupport implements
-        CacheMXBean, EventHandler<CacheEvent<K, V>> {
+        CacheMXBean, EventProcessor<CacheEvent<K, V>> {
 
     private final Cache<K, V> cache;
 
@@ -86,7 +86,7 @@ public class AbstractCacheMXBean<K, V> extends JmxEmitterSupport implements
     /**
      * @see org.coconut.cache.CacheListener#handle(org.coconut.cache.CacheEvent)
      */
-    public void handle(CacheEvent<K,V> event) {
+    public void process(CacheEvent<K,V> event) {
         try {
             Notification n = ((Transformer<Object, Notification>) event)
                     .transform(((AbstractCache) event.getCache()).getName());

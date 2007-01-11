@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
 import org.coconut.event.EventSubscription;
 import org.coconut.filter.Filter;
@@ -36,7 +36,7 @@ public class Bus {
      *            the EventHandler to filter on
      */
     public static <E> Filter<EventSubscription<E>> getListenerFilter(
-            EventHandler<E> eventHandler) {
+            EventProcessor<E> eventHandler) {
         return new EventListenerFilter<E>(eventHandler);
     }
 
@@ -45,7 +45,7 @@ public class Bus {
     }
 
     public static <E> Collection<EventSubscription<E>> findSubscribers(
-            EventBus<E> bus, EventHandler<E> eventHandler) {
+            EventBus<E> bus, EventProcessor<E> eventHandler) {
         if (bus == null) {
             throw new NullPointerException("bus is null");
         } else if (eventHandler == null) {
@@ -134,12 +134,12 @@ public class Bus {
         private static final long serialVersionUID = 4194707549593512350L;
 
         /** The event-handler we are looking for. */
-        private final EventHandler<E> handler;
+        private final EventProcessor<E> handler;
 
         /**
          * @param handler
          */
-        EventListenerFilter(final EventHandler<E> eventHandler) {
+        EventListenerFilter(final EventProcessor<E> eventHandler) {
             if (eventHandler == null) {
                 throw new NullPointerException("eventHandler is null");
             }

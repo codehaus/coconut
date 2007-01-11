@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -17,17 +17,17 @@ public class Events {
 
     static class EventHandlerAsBatch<E> implements BatchedEventHandler<E> {
 
-        private final EventHandler<E> eh;
+        private final EventProcessor<E> eh;
 
-        public EventHandlerAsBatch(EventHandler<E> eh) {
+        public EventHandlerAsBatch(EventProcessor<E> eh) {
             this.eh = eh;
         }
 
         /**
          * @see org.coconut.core.EventHandler#handle(E)
          */
-        public void handle(E event) {
-            eh.handle(event);
+        public void process(E event) {
+            eh.process(event);
         }
 
         /**
@@ -36,7 +36,7 @@ public class Events {
         public void handleAll(List<? extends E> list) {
             for (E e : list) {
                 try {
-                    handle(e);
+                    process(e);
                 } catch (RuntimeException re) {
                     if (!handleRuntimeException(e, re)) {
                         return;
@@ -53,7 +53,7 @@ public class Events {
 
     static class ProcessEventFromFactory<E> implements Runnable, Serializable {
 
-        private final EventHandler<? super E> eh;
+        private final EventProcessor<? super E> eh;
 
         private final Callable<E> factory;
 
@@ -62,7 +62,7 @@ public class Events {
          * @param eh
          */
         public ProcessEventFromFactory(final Callable<E> factory,
-                final EventHandler<? super E> eh) {
+                final EventProcessor<? super E> eh) {
             if (eh == null) {
                 throw new NullPointerException("eh is null");
             } else if (factory == null) {
@@ -78,7 +78,7 @@ public class Events {
         public void run() {
             try {
                 E event = factory.call();
-                eh.handle(event);
+                eh.process(event);
             } catch (RuntimeException re) {
                 throw re;
             } catch (Exception e) {
@@ -89,7 +89,7 @@ public class Events {
 
     static class ProcessEvent<E> implements Runnable, Serializable {
 
-        private final EventHandler<? super E> eh;
+        private final EventProcessor<? super E> eh;
 
         private final E event;
 
@@ -97,7 +97,7 @@ public class Events {
          * @param event
          * @param eh
          */
-        public ProcessEvent(final E event, final EventHandler<? super E> eh) {
+        public ProcessEvent(final E event, final EventProcessor<? super E> eh) {
             if (eh == null) {
                 throw new NullPointerException("eh is null");
             } else if (event == null) {
@@ -111,15 +111,15 @@ public class Events {
          * @see java.lang.Runnable#run()
          */
         public void run() {
-            eh.handle(event);
+            eh.process(event);
         }
     }
 
-    public static <E> Runnable processEvent(E event, EventHandler<E> handler) {
+    public static <E> Runnable processEvent(E event, EventProcessor<E> handler) {
         return new ProcessEvent<E>(event, handler);
     }
 
-    public static <E> Runnable processEvent(Callable<E> factory, EventHandler<E> handler) {
+    public static <E> Runnable processEvent(Callable<E> factory, EventProcessor<E> handler) {
         return new ProcessEventFromFactory<E>(factory, handler);
     }
 

@@ -3,7 +3,7 @@
  */
 package org.coconut.management.monitor;
 
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.spi.AbstractApmNumber;
 
@@ -12,7 +12,7 @@ import org.coconut.management.spi.AbstractApmNumber;
  * @version $Id: SingleExponentialSmoothing.java 26 2006-07-14 11:42:29Z kasper $
  */
 public class SingleExponentialSmoothing extends AbstractApmNumber implements
-        Runnable, EventHandler<Number> {
+        Runnable, EventProcessor<Number> {
 
     private final Number n;
 
@@ -102,7 +102,7 @@ public class SingleExponentialSmoothing extends AbstractApmNumber implements
     /**
      * @see org.coconut.core.EventHandler#handle(java.lang.Object)
      */
-    public void handle(Number event) {
+    public void process(Number event) {
         if (n != null) {
             throw new IllegalStateException("Number configured for object");
         }

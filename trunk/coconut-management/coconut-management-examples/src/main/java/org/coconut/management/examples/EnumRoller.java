@@ -25,7 +25,7 @@ public class EnumRoller {
         }
         mg.register("my.app:name=Rolled Dices");
         for (int i = 0; i < 10000; i++) {
-            dice.handle(Dice.roll());
+            dice.process(Dice.roll());
             Thread.sleep(15);
         }
         mg.unregister();

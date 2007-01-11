@@ -2,7 +2,7 @@ package org.coconut.event.bus;
 
 import java.util.Collection;
 
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
 import org.coconut.event.EventSubscription;
 import org.coconut.filter.Filter;
@@ -66,7 +66,7 @@ import org.coconut.filter.Filter;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @see Bus
  */
-public interface EventBus<E> extends Offerable<E>, EventHandler<E> {
+public interface EventBus<E> extends Offerable<E>, EventProcessor<E> {
 
     /**
      * A failure encountered while attempting to offering elements to an event
@@ -106,7 +106,7 @@ public interface EventBus<E> extends Offerable<E>, EventHandler<E> {
      * @return a subscription that can be used to cancel any further
      *         notifications
      */
-    EventSubscription<E> subscribe(EventHandler<? super E> eventHandler);
+    EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler);
 
     /**
      * Creates an subscription that will be notified for any event that is
@@ -119,7 +119,7 @@ public interface EventBus<E> extends Offerable<E>, EventHandler<E> {
      * @return a subscription that can be used to cancel any further
      *         notifications
      */
-    EventSubscription<E> subscribe(EventHandler<? super E> eventHandler, Filter<? super E> filter);
+    EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler, Filter<? super E> filter);
 
     /**
      * Creates an subscription that will be notified for any event that is
@@ -139,6 +139,6 @@ public interface EventBus<E> extends Offerable<E>, EventHandler<E> {
      *             if the specified name is not unique within all the
      *             subscriptions
      */
-    EventSubscription<E> subscribe(EventHandler<? super E> listener, Filter<? super E> filter,
+    EventSubscription<E> subscribe(EventProcessor<? super E> listener, Filter<? super E> filter,
             String name);
 }

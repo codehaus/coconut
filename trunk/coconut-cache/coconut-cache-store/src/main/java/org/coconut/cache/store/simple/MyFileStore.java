@@ -8,7 +8,7 @@ import java.io.File;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntryEvent;
-import org.coconut.core.EventHandlers;
+import org.coconut.core.EventUtils;
 
 
 /**
@@ -25,7 +25,7 @@ public class MyFileStore {
         Cache<String, String> c = null;
         // new DefaultSynchronousCache<String, String>(Policies.newFIFO(),2,
         // sfs);
-        c.getEventBus().subscribe(EventHandlers.toSystemOut(),
+        c.getEventBus().subscribe(EventUtils.toSystemOut(),
                 CacheEntryEvent.ITEM_FILTER);
         c.put("Hello", "World");
         c.put("Hello1", "World");

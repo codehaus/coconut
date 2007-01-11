@@ -3,7 +3,7 @@
  */
 package org.coconut.management.monitor;
 
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.management.Apms;
 import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.annotation.ManagedOperation;
@@ -15,7 +15,7 @@ import org.coconut.management.spi.JMXConfigurator;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class DoubleSamplingCounter extends AbstractApm implements Runnable,
-        EventHandler<Number> {
+        EventProcessor<Number> {
     private double high = Double.NaN;
 
     private double low = Double.NaN;
@@ -159,7 +159,7 @@ public class DoubleSamplingCounter extends AbstractApm implements Runnable,
     /**
      * @see org.coconut.core.EventHandler#handle(java.lang.Object)
      */
-    public void handle(Number event) {
+    public void process(Number event) {
         if (n != null) {
             throw new IllegalStateException("Value cannot be updated externally");
         }

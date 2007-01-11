@@ -6,7 +6,7 @@ package org.coconut.management.spi;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.management.ApmObserver;
 import org.coconut.management.monitor.TimedAverage;
 

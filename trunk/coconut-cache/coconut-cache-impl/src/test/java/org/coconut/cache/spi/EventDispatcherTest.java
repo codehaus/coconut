@@ -11,8 +11,8 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEvent;
 import org.coconut.cache.CacheEntryEvent;
-import org.coconut.core.EventHandler;
-import org.coconut.core.EventHandlers;
+import org.coconut.core.EventProcessor;
+import org.coconut.core.EventUtils;
 import org.coconut.test.MockTestCase;
 
 @SuppressWarnings("unused")
@@ -22,13 +22,13 @@ public class EventDispatcherTest extends MockTestCase {
 
     BlockingQueue<CacheEvent<Integer, String>> events;
 
-    EventHandler<CacheEvent<Integer, String>> eventHandler;
+    EventProcessor<CacheEvent<Integer, String>> eventHandler;
 
     protected void setUp() throws Exception {
         super.setUp();
         c = (Cache) mock(Cache.class).proxy();
         events = new LinkedBlockingQueue<CacheEvent<Integer, String>>();
-        eventHandler = EventHandlers.fromQueue(events);
+        eventHandler = EventUtils.fromQueue(events);
     }
 
     private <S> S consumeItem(Class<? extends CacheEvent> type, long sequenceId) {

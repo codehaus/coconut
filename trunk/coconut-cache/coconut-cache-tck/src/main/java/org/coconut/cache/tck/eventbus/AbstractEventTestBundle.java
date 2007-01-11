@@ -21,8 +21,8 @@ import org.coconut.cache.CacheEvent;
 import org.coconut.cache.CacheEntryEvent;
 import org.coconut.cache.CacheEntryEvent.ItemAdded;
 import org.coconut.cache.tck.CacheTestBundle;
-import org.coconut.core.EventHandler;
-import org.coconut.core.EventHandlers;
+import org.coconut.core.EventProcessor;
+import org.coconut.core.EventUtils;
 import org.coconut.event.EventSubscription;
 import org.coconut.filter.Filter;
 import org.junit.After;
@@ -35,7 +35,7 @@ import org.junit.Before;
 public class AbstractEventTestBundle extends CacheTestBundle {
     LinkedBlockingQueue<EventWrapper> events;
 
-    private EventHandler<CacheEvent<Integer, String>> eventHandler;
+    private EventProcessor<CacheEvent<Integer, String>> eventHandler;
 
     private long prevId;
 
@@ -48,8 +48,8 @@ public class AbstractEventTestBundle extends CacheTestBundle {
     @Before
     public void setUpEvent() {
         events = new LinkedBlockingQueue<EventWrapper>();
-        eventHandler = new EventHandler<CacheEvent<Integer, String>>() {
-            public void handle(CacheEvent<Integer, String> event) {
+        eventHandler = new EventProcessor<CacheEvent<Integer, String>>() {
+            public void process(CacheEvent<Integer, String> event) {
                 events.add(new EventWrapper(event));
             }
         };

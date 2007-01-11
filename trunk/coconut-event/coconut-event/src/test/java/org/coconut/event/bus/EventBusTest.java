@@ -2,7 +2,7 @@ package org.coconut.event.bus;
 
 import static org.coconut.filter.LogicFilters.TRUE;
 
-import org.coconut.core.EventHandler;
+import org.coconut.core.EventProcessor;
 import org.coconut.event.EventSubscription;
 import org.coconut.event.bus.AbstractEventBusTestCase;
 import org.coconut.event.bus.DefaultEventBus;
@@ -15,13 +15,13 @@ import org.jmock.Mock;
  */
 public class EventBusTest extends AbstractEventBusTestCase {
 
-    private static EventHandler<Number> trueOfferable = new EventHandler<Number>() {
-        public void handle(Number element) {
+    private static EventProcessor<Number> trueOfferable = new EventProcessor<Number>() {
+        public void process(Number element) {
         }
     };
 
-    private static EventHandler<Number> otherEventHandler = new EventHandler<Number>() {
-        public void handle(Number element) {
+    private static EventProcessor<Number> otherEventHandler = new EventProcessor<Number>() {
+        public void process(Number element) {
         }
     };
 
@@ -128,10 +128,10 @@ public class EventBusTest extends AbstractEventBusTestCase {
     @SuppressWarnings("unchecked")
     public void testOffer() {
         EventBus<Number> bus = createNew();
-        Mock mock = mock(EventHandler.class);
+        Mock mock = mock(EventProcessor.class);
         mock.expects(once()).method("handle").with(eq(0));
         mock.expects(once()).method("handle").with(eq(1));
-        bus.subscribe((EventHandler<? super Number>) mock.proxy(), Filters
+        bus.subscribe((EventProcessor<? super Number>) mock.proxy(), Filters
                 .isType(Integer.class));
 
         assertTrue(bus.offer(0));
@@ -141,9 +141,9 @@ public class EventBusTest extends AbstractEventBusTestCase {
     @SuppressWarnings("unchecked")
     public void testOfferNoSubscription() {
         EventBus<Number> bus = createNew();
-        Mock mock = mock(EventHandler.class);
+        Mock mock = mock(EventProcessor.class);
         mock.expects(once()).method("handle").with(eq(0));
-        bus.subscribe((EventHandler<? super Number>) mock
+        bus.subscribe((EventProcessor<? super Number>) mock
                 .proxy(), Filters.isType(Integer.class));
         assertTrue(bus.offer(0.6));
         assertTrue(bus.offer(0));
@@ -155,22 +155,22 @@ public class EventBusTest extends AbstractEventBusTestCase {
 
         EventBus<Number> bus = createNew();
 
-        Mock mock = mock(EventHandler.class);
+        Mock mock = mock(EventProcessor.class);
         mock.expects(once()).method("handle").with(eq(0));
         mock.expects(once()).method("handle").with(eq(1));
-        bus.subscribe((EventHandler<? super Number>) mock.proxy(), Filters
+        bus.subscribe((EventProcessor<? super Number>) mock.proxy(), Filters
                 .isType(Integer.class));
 
-        Mock mock1 = mock(EventHandler.class);
+        Mock mock1 = mock(EventProcessor.class);
         mock1.expects(once()).method("handle").with(eq(0.5));
-        bus.subscribe((EventHandler<? super Number>) mock1.proxy(), Filters
+        bus.subscribe((EventProcessor<? super Number>) mock1.proxy(), Filters
                 .isType(Double.class));
 
-        Mock mock2 = mock(EventHandler.class);
+        Mock mock2 = mock(EventProcessor.class);
         mock2.expects(once()).method("handle").with(eq(0));
         mock2.expects(once()).method("handle").with(eq(0.5));
         mock2.expects(once()).method("handle").with(eq(1));
-        bus.subscribe((EventHandler<? super Number>) mock2.proxy(), Filters
+        bus.subscribe((EventProcessor<? super Number>) mock2.proxy(), Filters
                 .isType(Number.class));
 
         assertTrue(bus.offer(0));
@@ -193,11 +193,11 @@ public class EventBusTest extends AbstractEventBusTestCase {
     @SuppressWarnings("unchecked")
     public void testOfferMany() {
         EventBus<Number> bus = createNew();
-        Mock mock = mock(EventHandler.class);
+        Mock mock = mock(EventProcessor.class);
         mock.expects(once()).method("handle").with(eq(0));
         mock.expects(once()).method("handle").with(eq(1));
         mock.expects(once()).method("handle").with(eq(2));
-        bus.subscribe((EventHandler<? super Number>) mock
+        bus.subscribe((EventProcessor<? super Number>) mock
                 .proxy(), Filters.isType(Integer.class));
 
         assertTrue(bus.offerAll(0));
