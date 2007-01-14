@@ -61,9 +61,6 @@ public interface ReplacementPolicy<T> {
      * The entry with the specified index was updated with a new value. This new
      * element should be referenced instead of the previous element.
      * <p>
-     * TODO as an alternative is it allowed to create a new index??? would work
-     * analogeuos to add(). Why would this be needed?
-     * <p>
      * The element should be removed if the update is rejected
      * 
      * @param index
@@ -151,7 +148,7 @@ public interface ReplacementPolicy<T> {
      * Be aware that this can be a very expensive operation. For complicated
      * policies where we lazyly calculate which element should be evicted next.
      * A complete copy of policys internal datastructures might need to be
-     * created. (TODO) hmm shouldn't we just throw UnsupportedOperation()??
+     * created.
      * 
      * @return the next element that should be evicted
      */

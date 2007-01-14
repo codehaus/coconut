@@ -14,7 +14,7 @@ import org.coconut.cache.policy.ReplacementPolicy;
  */
 public class ReplacementPolicyDecorator<T> implements ReplacementPolicy<T> {
 
-    protected final ReplacementPolicy<T> policy;
+    private final ReplacementPolicy<T> policy;
 
     public ReplacementPolicyDecorator(ReplacementPolicy<T> policy) {
         if (policy == null) {
@@ -23,6 +23,9 @@ public class ReplacementPolicyDecorator<T> implements ReplacementPolicy<T> {
         this.policy = policy;
     }
 
+    protected ReplacementPolicy<T> getPolicy() {
+        return policy;
+    }
     /**
      * {@inheritDoc}
      */

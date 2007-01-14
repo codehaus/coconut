@@ -40,16 +40,19 @@ public class CostSizeHolder<T> implements CostSizeObject {
     }
 
     public static <T> CostSizeHolder add(T data) {
-        return new CostSizeHolder<T>(data, CostSizeObject.DEFAULT_SIZE, CostSizeObject.DEFAULT_COST);
+        return new CostSizeHolder<T>(data, CostSizeObject.DEFAULT_SIZE,
+                CostSizeObject.DEFAULT_COST);
     }
 
     @Override
     public boolean equals(Object obj) {
         return (obj instanceof CostSizeHolder) && equalsObject((CostSizeHolder) obj);
     }
+
     public boolean equalsObject(CostSizeHolder<T> obj) {
-        return cost==obj.cost && size==obj.size && data.equals(obj.data);
+        return cost == obj.cost && size == obj.size && data.equals(obj.data);
     }
+
     @Override
     public int hashCode() {
         // TODO Auto-generated method stub

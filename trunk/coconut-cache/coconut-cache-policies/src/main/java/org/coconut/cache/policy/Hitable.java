@@ -22,7 +22,4 @@ public interface Hitable {
      *         requested.
      */
     long getHits();
-    
-    //TODO long getMisses()????, for example we want to keep entries, that
-    //have lots of misses
 }
