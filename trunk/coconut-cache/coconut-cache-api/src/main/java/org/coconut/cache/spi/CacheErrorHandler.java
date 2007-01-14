@@ -15,7 +15,7 @@ import org.coconut.cache.CacheException;
 import org.coconut.cache.CacheLoader;
 import org.coconut.cache.store.CacheStore;
 import org.coconut.core.Log;
-import org.coconut.core.Logs;
+import org.coconut.core.util.Logs;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

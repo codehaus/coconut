@@ -17,7 +17,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheQuery;
 import org.coconut.cache.Cache.HitStat;
-import org.coconut.event.bus.EventBus;
+import org.coconut.event.EventBus;
 import org.coconut.filter.Filter;
 import org.coconut.test.MockTestCase;
 import org.jmock.Mock;
@@ -42,7 +42,7 @@ public class CacheDecoratorTest extends MockTestCase {
         Set set = mockDummy(Set.class);
         ReadWriteLock lock = mockDummy(ReadWriteLock.class);
         CacheEntry ce = mockDummy(CacheEntry.class);
-        CacheQuery cq = mockDummy(CacheQuery.class);
+        //CacheQuery cq = mockDummy(CacheQuery.class);
         Filter f = mockDummy(Filter.class);
 
         Mock m = mock(Cache.class);
@@ -85,7 +85,7 @@ public class CacheDecoratorTest extends MockTestCase {
     
         
         m.expects(once()).method("toString").will(returnValue("ttt"));
-        m.expects(once()).method("query").with(eq(f)).will(returnValue(cq));
+        //m.expects(once()).method("query").with(eq(f)).will(returnValue(cq));
         m.expects(once()).method("getEntry").with(eq(16)).will(returnValue(ce));
 
         Cache<Integer, String> c = new CacheDecorator((Cache<Integer, String>) m.proxy());

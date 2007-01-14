@@ -10,14 +10,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReadWriteLock;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheEvent;
-import org.coconut.cache.CacheQuery;
-import org.coconut.event.bus.EventBus;
-import org.coconut.filter.Filter;
+import org.coconut.event.EventBus;
 
 /**
  * A class that can be used for easily decorating a cache with a specific

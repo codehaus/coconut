@@ -12,7 +12,7 @@ import org.coconut.cache.CacheEvent;
 import org.coconut.cache.defaults.support.JMXCacheService;
 import org.coconut.cache.management.CacheMXBean;
 import org.coconut.core.EventProcessor;
-import org.coconut.event.bus.EventBus;
+import org.coconut.event.EventBus;
 import org.coconut.test.MockTestCase;
 
 /**

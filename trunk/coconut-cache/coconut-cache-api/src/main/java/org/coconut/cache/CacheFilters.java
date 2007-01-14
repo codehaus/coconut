@@ -4,14 +4,14 @@
 
 package org.coconut.cache;
 
-import static org.coconut.core.Transformers.mapEntryToKey;
-import static org.coconut.core.Transformers.mapEntryToValue;
+import static org.coconut.core.util.Transformers.mapEntryToKey;
+import static org.coconut.core.util.Transformers.mapEntryToValue;
 
 import java.util.Collection;
 import java.util.Map;
 
 import org.coconut.core.Transformer;
-import org.coconut.core.Transformers;
+import org.coconut.core.util.Transformers;
 import org.coconut.filter.ComparisonFilters;
 import org.coconut.filter.Filter;
 import org.coconut.filter.Filters;

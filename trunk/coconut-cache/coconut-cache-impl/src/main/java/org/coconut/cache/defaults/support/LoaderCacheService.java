@@ -519,7 +519,7 @@ public class LoaderCacheService<K, V> {
     public static <K, V> CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> getLoader(
             CacheConfiguration<K, V> conf) {
         if (conf.backend().getBackend() != null) {
-            return Caches.asCacheLoader(conf.backend().getBackend());
+            return Caches.toExtendedCacheLoader(conf.backend().getBackend());
         } else if (conf.backend().getExtendedBackend() != null) {
             return conf.backend().getExtendedBackend();
         } else {

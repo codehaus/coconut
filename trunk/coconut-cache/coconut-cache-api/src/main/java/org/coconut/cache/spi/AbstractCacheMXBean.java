@@ -16,7 +16,7 @@ import org.coconut.cache.CacheEvent;
 import org.coconut.cache.management.CacheMXBean;
 import org.coconut.core.EventProcessor;
 import org.coconut.core.Transformer;
-import org.coconut.event.bus.EventBus;
+import org.coconut.event.EventBus;
 import org.coconut.filter.LogicFilters;
 import org.coconut.internal.jmx.JmxEmitterSupport;
 

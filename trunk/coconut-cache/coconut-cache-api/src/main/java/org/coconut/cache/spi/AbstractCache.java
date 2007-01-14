@@ -22,7 +22,7 @@ import org.coconut.cache.CacheQuery;
 import org.coconut.cache.Caches;
 import org.coconut.cache.management.CacheMXBean;
 import org.coconut.core.Clock;
-import org.coconut.event.bus.EventBus;
+import org.coconut.event.EventBus;
 import org.coconut.filter.Filter;
 
 /**
@@ -36,9 +36,6 @@ import org.coconut.filter.Filter;
 public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         Cache<K, V>, CacheLoader<K, V> {
 
-    @SuppressWarnings("unchecked")
-    private final static CacheConfiguration NO_CONF = CacheConfiguration.DEFAULT_CONFIGURATION;
-
     public static void checkMapForNulls(Map<?, ?> map) {
         for (Map.Entry<?, ?> entry : map.entrySet()) {
             if (entry == null) {
@@ -50,10 +47,6 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
                         + entry.getKey());
             }
         }
-    }
-
-    public CacheQuery<K, V> query(Filter<? super CacheEntry<K, V>> filter) {
-        throw new UnsupportedOperationException();
     }
 
     public static void checkCollectionForNulls(Collection<?> col) {
@@ -75,7 +68,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
 
     @SuppressWarnings("unchecked")
     public AbstractCache() {
-        this(NO_CONF);
+        this(CacheConfiguration.DEFAULT_CONFIGURATION);
     }
 
     public CacheConfiguration<K, V> getConfiguration() {

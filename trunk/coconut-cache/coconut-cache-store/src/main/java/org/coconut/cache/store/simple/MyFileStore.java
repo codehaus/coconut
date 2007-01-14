@@ -8,7 +8,7 @@ import java.io.File;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntryEvent;
-import org.coconut.core.EventUtils;
+import org.coconut.core.util.EventUtils;
 
 
 /**

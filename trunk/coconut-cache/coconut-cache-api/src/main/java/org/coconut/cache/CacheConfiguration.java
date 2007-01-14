@@ -88,9 +88,9 @@ import org.xml.sax.SAXException;
 public final class CacheConfiguration<K, V> implements Cloneable {
 
     public class Services {
-        
-        
+
     }
+
     public class Backend {
 
         /**
@@ -168,9 +168,9 @@ public final class CacheConfiguration<K, V> implements Cloneable {
         }
 
         public void setUseCacheSettings(boolean useIt) {
-            //how does these work
+            // how does these work
             //
-            
+
             // putIfAbsent
             // create item in cache, check backend...
 
@@ -337,8 +337,9 @@ public final class CacheConfiguration<K, V> implements Cloneable {
          * the limit is reached the cache should evict elements according to the
          * cache policy specified in {@link #setPolicy(ReplacementPolicy)}.
          * <p>
-         * The default value is Integer.MAX_VALUE TODO we might allow 0 as
-         * value, if its 0 it will imidiatly discard the element.
+         * The default value is Integer.MAX_VALUE. If 0 is specified the cache
+         * will never retain any elements. An effective method for disabling
+         * caching.
          * 
          * @param elements
          *            the maximum capacity.
@@ -346,9 +347,9 @@ public final class CacheConfiguration<K, V> implements Cloneable {
         public Eviction setMaximumSize(int elements) {
             // TODO we probably want to allow 0...
             // easy way do disable caching
-            if (elements <= 0) {
+            if (elements < 0) {
                 throw new IllegalArgumentException(
-                        "number of maximum elements must be greater then 0, was "
+                        "number of maximum elements must be 0 or greater, was "
                                 + elements);
             }
             maximumSize = elements;
@@ -371,7 +372,6 @@ public final class CacheConfiguration<K, V> implements Cloneable {
             preferableSize = size;
             return this;
         }
-
     }
 
     public class Expiration {
@@ -1044,6 +1044,7 @@ public final class CacheConfiguration<K, V> implements Cloneable {
         Object result = additionalProperties.get(key);
         return result == null ? defaultValue : result;
     }
+
     // public void saveConfigurationAsXml(OutputStream stream) {
     // Document doc;
     // }

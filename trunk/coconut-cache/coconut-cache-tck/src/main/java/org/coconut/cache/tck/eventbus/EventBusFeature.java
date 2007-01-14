@@ -354,7 +354,7 @@ public class EventBusFeature extends AbstractEventTestBundle {
         EventSubscription<?> s = subscribe(ItemAccessed.FILTER);
         c.get(M1.getKey());
         assertEquals(1, getPendingEvents());
-        s.cancel();
+        s.unsubscribe();
         c.get(M2.getKey());
         assertEquals(1, getPendingEvents());
         consumeItem(); // take event

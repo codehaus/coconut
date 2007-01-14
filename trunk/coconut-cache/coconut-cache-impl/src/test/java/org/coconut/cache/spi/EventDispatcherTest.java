@@ -9,10 +9,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheEvent;
 import org.coconut.cache.CacheEntryEvent;
+import org.coconut.cache.CacheEvent;
 import org.coconut.core.EventProcessor;
-import org.coconut.core.EventUtils;
+import org.coconut.core.util.EventUtils;
 import org.coconut.test.MockTestCase;
 
 @SuppressWarnings("unused")

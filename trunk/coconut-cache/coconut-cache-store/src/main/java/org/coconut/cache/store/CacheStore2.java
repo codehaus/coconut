@@ -14,7 +14,7 @@ import org.coconut.cache.CacheLoader;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-public interface CacheStore2<K, V> extends CacheLoader<K, V> {
+public interface CacheStore2<K, V> extends CacheStore<K, V> {
     void delete(K key) throws Exception; /* IO Exception? */
     void deleteAll(Collection< ? extends K> colKeys) throws Exception;
     void store(K Key, V value) throws Exception;
@@ -22,11 +22,11 @@ public interface CacheStore2<K, V> extends CacheLoader<K, V> {
     
     void sync();
 
-//    void eraseAll() throws Exception;
-//    Iterable<K> keys() throws Exception;
-//    Iterable<Map.Entry< ? extends K, ? extends V>> entries() throws Exception;
-//    Iterable<V> values() throws Exception;
-//    int size() throws Exception;
+    void eraseAll() throws Exception;
+    Iterable<K> keys() throws Exception;
+    Iterable<Map.Entry< ? extends K, ? extends V>> entries() throws Exception;
+    Iterable<V> values() throws Exception;
+    int size() throws Exception;
 
     
     //events -deleted, added, accessed

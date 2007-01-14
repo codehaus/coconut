@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.event.bus.EventBus;
+import org.coconut.event.EventBus;
 
 /**
  * A <tt>cache</tt> is a collection of data duplicating original values stored
@@ -164,17 +164,18 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * that might be used at later time. Preloading attempts to place data in
      * the cache far enough in advance to hide the latency of a cache miss.
      * <p>
+     * A {@link java.util.concurrent.Future} is returned that can be used to
+     * check if the loading is complete and to wait for its completion.
+     * Cancellation can be performed by the using the
+     * {@link java.util.concurrent.Future#cancel(boolean)} method.
+     * <p>
      * This method does not guarantee that the specified value is ever loaded
      * into the cache. Implementations are free to ignore the hint, however,
      * most implementations won't. If the implementation chooses to ignore some
      * or all calls to this method. The returned futures
      * {@link java.util.concurrent.Future#isCancelled()} method will return
-     * <tt>true</tt>
-     * <p>
-     * A {@link java.util.concurrent.Future} is returned that can be used to
-     * check if the loading is complete and to wait for its completion.
-     * Cancellation can be performed by the using the
-     * {@link java.util.concurrent.Future#cancel(boolean)} method.
+     * <tt>true</tt> and {@link java.util.concurrent.Future#get()} returns
+     * <tt>null</tt>.
      * <p>
      * If no backend, cache loader or cache store, is configured for the cache a
      * call to this method is silently ignored. And the returned futures

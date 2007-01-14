@@ -5,10 +5,6 @@
 package org.coconut.cache.tck.eventbus;
 
 import static org.coconut.test.CollectionUtils.asMap;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -17,12 +13,10 @@ import java.util.concurrent.TimeUnit;
 import junit.framework.AssertionFailedError;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheEvent;
 import org.coconut.cache.CacheEntryEvent;
-import org.coconut.cache.CacheEntryEvent.ItemAdded;
+import org.coconut.cache.CacheEvent;
 import org.coconut.cache.tck.CacheTestBundle;
 import org.coconut.core.EventProcessor;
-import org.coconut.core.EventUtils;
 import org.coconut.event.EventSubscription;
 import org.coconut.filter.Filter;
 import org.junit.After;

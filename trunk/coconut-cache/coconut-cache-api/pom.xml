@@ -30,8 +30,8 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.coconut.apm</groupId>
-      <artifactId>coconut-apm</artifactId>
+      <groupId>org.coconut.management</groupId>
+      <artifactId>coconut-management</artifactId>
     </dependency>
   </dependencies>
   <build>

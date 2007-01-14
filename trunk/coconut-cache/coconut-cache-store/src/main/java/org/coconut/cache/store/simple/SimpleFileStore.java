@@ -25,12 +25,9 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.coconut.cache.CacheLoader;
 import org.coconut.cache.CacheEntryEvent.ItemAdded;
 import org.coconut.cache.spi.AsyncCacheLoader;
-import org.coconut.cache.spi.AsyncLoadCallback;
 import org.coconut.core.Callback;
-import org.coconut.event.annotation.Handler;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
@@ -44,7 +41,6 @@ public class SimpleFileStore<K, V> implements
 
     private final Lock lock = new ReentrantLock();
 
-    @Handler
     public void handleEvicted(ItemAdded<K, V> event) {
         q.add(event);
         performWork();

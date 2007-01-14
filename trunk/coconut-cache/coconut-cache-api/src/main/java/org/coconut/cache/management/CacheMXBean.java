@@ -5,7 +5,10 @@
 package org.coconut.cache.management;
 
 /**
- * The management interface for a {@link org.coconut.cache.Cache}.
+ * The management interface for a {@link org.coconut.cache.Cache}. Some cache
+ * implementations might define additional methods in addition to those defined
+ * in this interface. However all implementations that has JMX support must as a
+ * minimum support this interface.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  */

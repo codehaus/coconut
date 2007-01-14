@@ -23,7 +23,7 @@ import org.coconut.cache.util.AbstractCacheLoader;
 import org.coconut.cache.util.CacheDecorator;
 import org.coconut.cache.util.DefaultCacheEntry;
 import org.coconut.core.Callback;
-import org.coconut.event.bus.EventBus;
+import org.coconut.event.EventBus;
 import org.coconut.filter.Filter;
 
 /**
@@ -400,11 +400,6 @@ public final class Caches {
 
         /** {@inheritDoc} */
         public ReadWriteLock getLock(K... keys) {
-            throw new UnsupportedOperationException();
-        }
-
-        /** {@inheritDoc} */
-        public CacheQuery<K, V> query(Filter<? super CacheEntry<K, V>> filter) {
             throw new UnsupportedOperationException();
         }
 
@@ -1045,7 +1040,7 @@ public final class Caches {
         }
     }
 
-    public static <K, V> CacheLoader<K, V> asOrdinaryCacheLoader(
+    public static <K, V> CacheLoader<K, V> fromExtendedCacheLoader(
             CacheLoader<K, ? extends CacheEntry<K, V>> loader) {
         if (loader instanceof AbstractCacheLoader) {
             return new AbstractExtendedLoaderToLoader<K, V>(loader);
@@ -1064,12 +1059,11 @@ public final class Caches {
         return null;
     }
 
-    public static <K, V> CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> asCacheLoader(
+    public static <K, V> CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> toExtendedCacheLoader(
             CacheLoader<K, V> loader) {
         return loader instanceof AsyncCacheLoader ? new AbstractAsyncLoaderToExtendedLoader<K, V>(
                 (AsyncCacheLoader) loader)
                 : new AbstractLoaderToExtendedLoader(loader);
-
     }
 
     /**

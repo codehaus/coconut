@@ -32,7 +32,7 @@ import org.coconut.cache.defaults.util.CacheEntryMap;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.CacheSupport;
 import org.coconut.cache.spi.service.CacheServiceManager;
-import org.coconut.event.bus.EventBus;
+import org.coconut.event.EventBus;
 import org.coconut.filter.Filter;
 import org.coconut.filter.Filters;
 import org.coconut.management.ManagedGroup;
@@ -288,12 +288,6 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     public void putEntry(CacheEntry<K, V> entry) {
         MyEntry me = new MyEntry(entry);
         putMyEntry(me);
-    }
-
-    @Override
-    public CacheQuery<K, V> query(Filter<? super CacheEntry<K, V>> filter) {
-        Collection col = Filters.filter((Collection) map.valueEntrySet(), filter);
-        return new CopyQuery<K, V>((CacheEntry[]) col.toArray(new CacheEntry[0]));
     }
 
     @Override

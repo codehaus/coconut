@@ -20,7 +20,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.management.CacheMXBean;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.AbstractCacheMXBean;
-import org.coconut.event.bus.EventBus;
+import org.coconut.event.EventBus;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
