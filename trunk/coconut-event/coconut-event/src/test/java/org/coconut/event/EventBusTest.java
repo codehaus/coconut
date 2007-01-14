@@ -2,6 +2,10 @@ package org.coconut.event;
 
 import static org.coconut.filter.LogicFilters.TRUE;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
 import org.coconut.core.EventProcessor;
 import org.coconut.event.EventBus;
 import org.coconut.event.EventSubscription;
@@ -86,13 +90,11 @@ public class EventBusTest extends AbstractEventBusTestCase {
         EventBus<Number> bus = createNew();
         assertEquals(0, bus.getSubscribers().size());
 
-        EventSubscription s = bus.subscribe(trueOfferable, Filters
-                .isType(Integer.class));
+        EventSubscription s = bus.subscribe(trueOfferable, Filters.isType(Integer.class));
         assertEquals(1, bus.getSubscribers().size());
         assertTrue(bus.getSubscribers().contains(s));
 
-        EventSubscription s2 = bus.subscribe(trueOfferable, Filters
-                .isType(Long.class));
+        EventSubscription s2 = bus.subscribe(trueOfferable, Filters.isType(Long.class));
         assertEquals(2, bus.getSubscribers().size());
         assertTrue(bus.getSubscribers().contains(s2));
     }
@@ -100,16 +102,15 @@ public class EventBusTest extends AbstractEventBusTestCase {
     @SuppressWarnings("unchecked")
     public void testUnsubscribe() {
         EventBus<Number> bus = createNew();
-        EventSubscription s = bus.subscribe(trueOfferable, Filters
-                .isType(Integer.class));
+        EventSubscription s = bus.subscribe(trueOfferable, Filters.isType(Integer.class));
         EventSubscription s1 = bus.subscribe(otherEventHandler, Filters
                 .isType(Integer.class));
 
-        s1.cancel();
+        s1.unsubscribe();
         assertFalse(bus.getSubscribers().contains(s1));
         assertEquals(1, bus.getSubscribers().size());
 
-        s.cancel();
+        s.unsubscribe();
         assertFalse(bus.getSubscribers().contains(s));
         assertEquals(0, bus.getSubscribers().size());
     }
@@ -142,8 +143,8 @@ public class EventBusTest extends AbstractEventBusTestCase {
         EventBus<Number> bus = createNew();
         Mock mock = mock(EventProcessor.class);
         mock.expects(once()).method("handle").with(eq(0));
-        bus.subscribe((EventProcessor<? super Number>) mock
-                .proxy(), Filters.isType(Integer.class));
+        bus.subscribe((EventProcessor<? super Number>) mock.proxy(), Filters
+                .isType(Integer.class));
         assertTrue(bus.offer(0.6));
         assertTrue(bus.offer(0));
         assertTrue(bus.offer(1.8));
@@ -196,11 +197,11 @@ public class EventBusTest extends AbstractEventBusTestCase {
         mock.expects(once()).method("handle").with(eq(0));
         mock.expects(once()).method("handle").with(eq(1));
         mock.expects(once()).method("handle").with(eq(2));
-        bus.subscribe((EventProcessor<? super Number>) mock
-                .proxy(), Filters.isType(Integer.class));
+        bus.subscribe((EventProcessor<? super Number>) mock.proxy(), Filters
+                .isType(Integer.class));
 
-        assertTrue(bus.offerAll(0));
-        assertTrue(bus.offerAll(1, 2));
+        assertTrue(bus.offerAll(Arrays.asList(0)));
+        assertTrue(bus.offerAll(Arrays.asList(1, 2)));
     }
 
     @SuppressWarnings("unchecked")
@@ -208,7 +209,7 @@ public class EventBusTest extends AbstractEventBusTestCase {
         EventBus<Number> bus = createNew();
         bus.subscribe(trueOfferable, Filters.isType(Integer.class)); // dummy
         try {
-            bus.offerAll(null, null);
+            bus.offerAll((List) Arrays.asList(null, null));
         } catch (NullPointerException npe) {
             return;
         }

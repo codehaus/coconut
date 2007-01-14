@@ -20,7 +20,7 @@ public class InNewThreadDelivery<E> implements EventBusDispatcher<E> {
      */
     public void deliver(Collection<EventSubscription<? super E>> s, E e) {
         for (EventSubscription<? super E> es : s) {
-            EventProcessor<? super E> eh = es.getEventHandler();
+            EventProcessor<? super E> eh = es.getEventProcessor();
             eh.process(e);
         }
     }

@@ -7,21 +7,27 @@ public interface EventsBusMBean {
     void resetStatistics();
 
     /**
-     * Returns the number of events that was accepted (TODO define accepted) by
-     * the {@link EventBus#offer()} or offerAll method.
+     * Returns the number of events that was accepted by the
+     * {@link EventBus#offer(Object)},{@link EventBus#process(Object)} or
+     * {@link EventBus#offerAll(Collection)} method.
      */
-    int getNumberOfEventsReceived();
+    long getNumberOfIncomingEvents();
 
-    int getNumberOfDeliveries();
+    /**
+     * Returns the number of events that have been delivered, the number of
+     * times process has been invoked.
+     */
+    long getTotalNumberOfDeliveries();
 
-    int getNumberOfDeliveryFailures();
+    long getTotalNumberOfSuccesfullyDeliveries();
 
     int getNumberOfSubscribers();
 
     String[] getAllSubscriberNames();
 
     void cancel(String subcriber);
-    
+
     SubscriberInfo getInfo(String subscriber);
+
     SubscriberInfo[] getInfos(String[] subscriber);
 }

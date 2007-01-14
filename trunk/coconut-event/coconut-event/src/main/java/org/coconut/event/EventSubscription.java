@@ -20,7 +20,7 @@ public interface EventSubscription<E> extends Named {
      * 
      * @return the listener for this subscription.
      */
-    EventProcessor<? super E> getEventHandler();
+    EventProcessor<? super E> getEventProcessor();
 
     /**
      * Returns the filter that is used for this subscription or <tt>null</tt>
@@ -34,8 +34,10 @@ public interface EventSubscription<E> extends Named {
      * Cancels the subscription. After this method has returned no further
      * events will be delivered to the specified event processor.
      * <p>
-     * Implementations that cannot guarantee that pending events will be
+     * Implementations that cannot guarantee that no pending events will be
      * delivered should clearly specify this.
      */
-    void cancel();
+    void unsubscribe();
+    
+    boolean isActive();
 }

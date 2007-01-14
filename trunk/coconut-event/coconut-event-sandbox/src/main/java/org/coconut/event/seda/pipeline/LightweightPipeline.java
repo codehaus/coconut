@@ -21,7 +21,7 @@ import org.coconut.core.SinkException;
 import org.coconut.core.Transformer;
 import org.coconut.event.Stage;
 import org.coconut.event.seda.spi.InternalStageManager;
-import org.coconut.event.seda.spi.ThreadWorker;
+import org.coconut.event.spi.ThreadWorker;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

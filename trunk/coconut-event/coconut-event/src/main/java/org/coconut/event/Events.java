@@ -48,13 +48,13 @@ public class Events {
     }
 
     public static <E> Collection<EventSubscription<E>> findSubscribers(
-            EventBus<E> bus, EventProcessor<E> eventHandler) {
+            EventBus<E> bus, EventProcessor<E> eventProcessor) {
         if (bus == null) {
             throw new NullPointerException("bus is null");
-        } else if (eventHandler == null) {
-            throw new NullPointerException("eventHandler is null");
+        } else if (eventProcessor == null) {
+            throw new NullPointerException("eventProcessor is null");
         }
-        return findSubscribers(bus, new EventListenerFilter<E>(eventHandler));
+        return findSubscribers(bus, new EventListenerFilter<E>(eventProcessor));
     }
 
     /**
@@ -153,7 +153,7 @@ public class Events {
          * @see org.coconut.filter.Filter#accept(java.lang.Object)
          */
         public boolean accept(EventSubscription<E> element) {
-            return handler.equals(element.getEventHandler());
+            return handler.equals(element.getEventProcessor());
         }
     }
 

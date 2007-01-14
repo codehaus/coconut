@@ -6,6 +6,7 @@ package org.coconut.event.seda.pipeline;
 import java.util.concurrent.BlockingQueue;
 
 import org.coconut.concurrent.CapacityArrayQueue;
+import org.coconut.event.LinearPipeline;
 import org.coconut.event.Stage;
 import org.coconut.internal.util.Queues;
 

@@ -5,16 +5,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
 
 import org.coconut.core.EventProcessor;
 import org.coconut.event.EventBus;
 import org.coconut.event.EventBusConfiguration;
 import org.coconut.event.EventSubscription;
 import org.coconut.filter.Filter;
-import org.coconut.filter.LogicFilters;
 import org.coconut.filter.matcher.DefaultFilterMatcher;
 import org.coconut.filter.matcher.FilterMatcher;
 
@@ -23,23 +22,22 @@ import org.coconut.filter.matcher.FilterMatcher;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-public class DefaultEventBus<E> implements EventBus<E> {
+public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<E> {
 
-    private final static String SUBSCRIPTION_NAME_PREFIX = "Subscription-";
-
-    private final AtomicLong idGenerator = new AtomicLong();
-
-    private final FilterMatcher<DefaultSubscription<E>, E> indexer = new DefaultFilterMatcher<DefaultSubscription<E>, E>();
+    final FilterMatcher<DefaultEventSubscription<E>, E> indexer = new DefaultFilterMatcher<DefaultEventSubscription<E>, E>();
 
     private final Lock lock = new ReentrantLock();
 
-    private final ConcurrentHashMap<String, DefaultSubscription<E>> subscribers = new ConcurrentHashMap<String, DefaultSubscription<E>>();
+    private final ConcurrentHashMap<String, DefaultEventSubscription<E>> subscribers = new ConcurrentHashMap<String, DefaultEventSubscription<E>>();
 
-    private final EventBusConfiguration<E> conf;
     // specify indexer, log, thread pool
     // management, ...
     public DefaultEventBus() {
-        conf=null;
+        super();
+    }
+
+    public DefaultEventBus(EventBusConfiguration<E> conf) {
+        super(conf);
     }
 
     /**
@@ -48,44 +46,6 @@ public class DefaultEventBus<E> implements EventBus<E> {
     @SuppressWarnings("unchecked")
     public List<EventSubscription<E>> getSubscribers() {
         return Collections.unmodifiableList(new ArrayList(subscribers.values()));
-    }
-
-    /**
-     * @see org.coconut.core.EventHandler#handle(java.lang.Object)
-     */
-    public void process(E event) {
-        offer(event);
-    }
-
-    /**
-     * @see org.coconut.core.Offerable#offer(java.lang.Object)
-     */
-    public boolean offer(final E element) {
-        if (element == null) {
-            throw new NullPointerException("element is null");
-        }
-        return inform(element);
-    }
-
-    public boolean offerAll(final E... elements) {
-        for (int i = 0; i < elements.length; i++) {
-            if (elements[i] == null) {
-                throw new NullPointerException("elements contained a null on index = "
-                        + i);
-            }
-        }
-        boolean ok = true;
-        for (E element : elements) {
-            ok &= inform(element);
-        }
-        return ok;
-    }
-
-    /**
-     * @see org.coconut.event.bus.EventBus#subscribe(org.coconut.core.EventHandler)
-     */
-    public EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler) {
-        return subscribe(eventHandler, LogicFilters.trueFilter());
     }
 
     /**
@@ -102,9 +62,9 @@ public class DefaultEventBus<E> implements EventBus<E> {
         lock.lock();
         try {
             for (;;) {
-                String name = SUBSCRIPTION_NAME_PREFIX + idGenerator.incrementAndGet();
-                DefaultSubscription<E> s = new DefaultSubscription<E>(this, name,
-                        eventHandler, filter);
+                String name = getNextName(eventHandler, filter);
+                DefaultEventSubscription<E> s = newSubscription(eventHandler, filter,
+                        name);
                 // this will only fail if somebody has registered some stage
                 // with a specified name starting with SUBSCRIPTION_NAME_PREFIX
                 if (subscribers.putIfAbsent(name, s) == null) {
@@ -133,8 +93,7 @@ public class DefaultEventBus<E> implements EventBus<E> {
         }
         lock.lock();
         try {
-            DefaultSubscription<E> s = new DefaultSubscription<E>(this, name,
-                    eventHandler, filter);
+            DefaultEventSubscription<E> s = newSubscription(eventHandler, filter, name);
             if (subscribers.putIfAbsent(name, s) != null) {
                 throw new IllegalArgumentException("subscription with name '" + name
                         + "' already registered.");
@@ -155,7 +114,7 @@ public class DefaultEventBus<E> implements EventBus<E> {
         try {
             Collection<EventSubscription<E>> c = new ArrayList<EventSubscription<E>>(
                     subscribers.size());
-            for (DefaultSubscription<E> s : subscribers.values()) {
+            for (DefaultEventSubscription<E> s : subscribers.values()) {
                 unsubscribed(s);
             }
             subscribers.clear();
@@ -169,12 +128,18 @@ public class DefaultEventBus<E> implements EventBus<E> {
     /**
      * @see org.coconut.event.bus.defaults.AbstractEventBus#cancel(org.coconut.event.bus.defaults.AbstractEventBus.DefaultSubscription)
      */
-    private void cancel(DefaultSubscription<E> s) {
+    void cancel(DefaultEventSubscription<E> s) {
         lock.lock();
         try {
-            subscribers.remove(s.name);
-            indexer.remove(s);
-            unsubscribed(s);
+            s.writeLock().lock();
+            try {
+                subscribers.remove(s.getName());
+                indexer.remove(s);
+                unsubscribed(s);
+                s.setActive(false);
+            } finally {
+                s.writeLock().unlock();
+            }
         } finally {
             lock.unlock();
         }
@@ -183,7 +148,7 @@ public class DefaultEventBus<E> implements EventBus<E> {
     protected void deliver(final E element, EventSubscription<E> s) {
         try {
             // check if still valid subscription??
-            s.getEventHandler().process(element);
+            s.getEventProcessor().process(element);
         } catch (RuntimeException e) {
             deliveryFailed(s, element, e);
         }
@@ -196,74 +161,24 @@ public class DefaultEventBus<E> implements EventBus<E> {
         } catch (RuntimeException re) {
             re.printStackTrace(System.out);
         }
-        // we cancel
-        s.cancel();
+        s.unsubscribe();
     }
 
-    protected boolean inform(final E element) {
-        for (EventSubscription<E> s : indexer.match(element)) {
-            deliver(element, s);
+    protected boolean doInform(final E element) {
+        for (DefaultEventSubscription<E> s : indexer.match(element)) {
+            ReadLock rl = s.readLock();
+            rl.lock();
+            try {
+                deliver(element, s);
+            } finally {
+                rl.unlock();
+            }
         }
         return true;
     }
 
-    protected void subscribed(EventSubscription<E> s) {
-
+    DefaultEventSubscription<E> newSubscription(EventProcessor<? super E> eventHandler,
+            Filter<? super E> filter, String name) {
+        return new DefaultEventSubscription<E>(this, name, eventHandler, filter);
     }
-
-    protected void unsubscribed(EventSubscription<E> s) {
-
-    }
-
-    @SuppressWarnings("hiding")
-    static class DefaultSubscription<E> implements EventSubscription<E> {
-        private final DefaultEventBus<E> bus;
-
-        private final EventProcessor<? super E> destination;
-
-        private final Filter<? super E> filter;
-
-        private final String name;
-
-        /**
-         * @param destination
-         * @param filter
-         */
-        DefaultSubscription(DefaultEventBus<E> bus, final String name,
-                final EventProcessor<? super E> destination, final Filter<? super E> filter) {
-            this.bus = bus;
-            this.name = name;
-            this.destination = destination;
-            this.filter = filter;
-        }
-
-        /**
-         * @see org.coconut.event.bus.Subscription#cancel()
-         */
-        public void cancel() {
-            bus.cancel(this);
-        }
-
-        /**
-         * @see org.coconut.event.bus.Subscription#getListener()
-         */
-        public EventProcessor<? super E> getEventHandler() {
-            return destination;
-        }
-
-        /**
-         * @see org.coconut.event.bus.Subscription#getFilter()
-         */
-        public Filter<? super E> getFilter() {
-            return filter;
-        }
-
-        /**
-         * @see org.coconut.event.bus.Subscription#getName()
-         */
-        public String getName() {
-            return name;
-        }
-    }
-
 }

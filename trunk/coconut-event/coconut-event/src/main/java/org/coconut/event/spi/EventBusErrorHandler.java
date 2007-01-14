@@ -15,12 +15,10 @@ import org.coconut.event.EventBus;
 import org.coconut.event.EventSubscription;
 
 /**
- * 
- * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class EventBusErrorHandler {
+public class EventBusErrorHandler<E> {
     private Log logger;
 
     private boolean isInitialized;
@@ -47,9 +45,20 @@ public class EventBusErrorHandler {
         this.name = name;
     }
 
-    public void deliveryFailed(EventSubscription<?> s, final Object element, Throwable cause) {
-        String msg = "Failed to process event [subscription = " + s.getName() + ", element = element]";
+    public boolean filterFailed(EventSubscription<?> s, final Object element,
+            Throwable cause) {
+        String msg = "Filter failed to accept event [subscription = " + s.getName()
+                + ", element = element]";
         getLogger().error(msg, cause);
+        return false;
+    }
+
+    public boolean deliveryFailed(EventSubscription<?> s, final Object element,
+            Throwable cause) {
+        String msg = "Failed to process event [subscription = " + s.getName()
+                + ", element = element]";
+        getLogger().error(msg, cause);
+        return false;
     }
 
     public Log getLogger() {

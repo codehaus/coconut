@@ -1,13 +1,11 @@
 /* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the MIT license, see http://coconut.codehaus.org/license.
  */
-package org.coconut.event.seda.pipeline;
+package org.coconut.event;
 
 import java.util.List;
 
 import org.coconut.core.Transformer;
-import org.coconut.event.Stage;
-import org.coconut.event.StageManager;
 
 /**
  * Two versions

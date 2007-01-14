@@ -26,11 +26,12 @@ import org.coconut.filter.Filter;
  * <p>
  * Most implementations will deliver events to all the matching subscribers
  * using the same thread (synchronous delivery) that originally dispatched the
- * event (called {@link #offer(Object)}. Some implementations might choose to
- * use another thread (asynchronous delivery) to do the actual delivery of the
- * event (call the {@link org.coconut.core.EventHandler#handle(Object)}. It is
- * also possible to use a mixture of the two approaches where high priority
- * events are delivered synchronously and low priority are delivered
+ * event (called the {@link #offer(Object) method}. Some implementations might
+ * choose to use another thread (asynchronous delivery) to do the actual
+ * delivery of the event (by calling
+ * {@link org.coconut.core.EventProcessor#process(Object) on the subscriber}.
+ * It is also possible to use a mixture of the two approaches where high
+ * priority events are delivered synchronously and low priority are delivered
  * asynchronusly by a low priority thread.
  * <p>
  * <b>Message order:</b>
@@ -59,7 +60,7 @@ import org.coconut.filter.Filter;
  * "overhalet" af andre events i offer metoden. Eller de bliver alle leveret i
  * samme order for all listeners
  * <p>
- * Use {@link Bus} to easily create instances of various implementations of
+ * Use {@link Events} to easily create instances of various implementations of
  * eventbus
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -70,16 +71,16 @@ public interface EventBus<E> extends Offerable<E>, EventProcessor<E> {
     /**
      * A failure encountered while attempting to offering elements to an event
      * bus may result in some elements having already been processed. when the
-     * associated exception is thrown. Further, the behavior of this operation
-     * is undefined if the specified array is modified while the operation is in
-     * progress.
+     * associated exception is thrown. The behavior of this operation is
+     * unspecified if the specified collection is modified while the operation
+     * is in progress.
      * 
      * @param events
      *            the event to process
      * @return a boolean indicating if all events was accepted.
      */
-    boolean offerAll(E... events); // TODO replace with collection??
-    
+    boolean offerAll(Collection<? extends E> c);
+
     /**
      * Returns all subscribers that is registered for this EventBus.
      * 
@@ -118,7 +119,8 @@ public interface EventBus<E> extends Offerable<E>, EventProcessor<E> {
      * @return a subscription that can be used to cancel any further
      *         notifications
      */
-    EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler, Filter<? super E> filter);
+    EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler,
+            Filter<? super E> filter);
 
     /**
      * Creates an subscription that will be notified for any event that is
@@ -138,6 +140,6 @@ public interface EventBus<E> extends Offerable<E>, EventProcessor<E> {
      *             if the specified name is not unique within all the
      *             subscriptions
      */
-    EventSubscription<E> subscribe(EventProcessor<? super E> listener, Filter<? super E> filter,
-            String name);
+    EventSubscription<E> subscribe(EventProcessor<? super E> listener,
+            Filter<? super E> filter, String name);
 }
