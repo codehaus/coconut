@@ -8,6 +8,9 @@ import java.util.Collection;
 import org.coconut.core.Named;
 
 /**
+ * A ManagedGroup is pretty similar to a MBean.
+ * Easy to register as MBean
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -75,12 +78,16 @@ public interface ManagedGroup extends Named {
     Collection<ManagedGroup> getGroups();
 
     /**
-     * Registers the group.
+     * Registers the group. Any groups contained within this group is not
+     * registered.
      * 
-     * @param name
+     * @param domain
+     *            the domain to register on
      * @throws Exception
      */
-    void register(String name) throws Exception;
+    void register(String domain) throws Exception;
+
+    void registerAll(JmxRegistrant namer) throws Exception;
 
     void unregister() throws Exception;
 

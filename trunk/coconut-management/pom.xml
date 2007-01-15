@@ -26,6 +26,6 @@
     </dependency>
   </dependencies>
   <modules>
-    <module>coconut-apm-api</module>
+    <module>coconut-management</module>
   </modules>
 </project>

@@ -1,0 +1,19 @@
+Example:
+
+Latency -> Never above 10 
+			create a filter, and check it
+			
+		//Slas.lessThen
+        -> Never above 10 in 5 seconds (keep timestamp for above)
+           create a field, and some that checks the number of violations
+           
+           //Slas.outOf
+           
+        -> Never above 10 in more then 5 seconds within a 60 second period
+        -> Never rise more then 2 in 5 seconds (keep a window)
+
+        -> Between 5 and 10
+        
+        -> Not out of the range for more the 5 seconds
+        
+        //between + outOf

@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import javax.management.MBeanServer;
 
 import org.coconut.core.Named;
+import org.coconut.management.JmxRegistrant;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.spi.NumberDynamicBean;
 import org.coconut.management.spi.SelfConfigure;
@@ -67,7 +68,7 @@ public class DefaultManagedGroup implements ManagedGroup {
         return name;
     }
 
-    MBeanServer server=ManagementFactory.getPlatformMBeanServer();
+    MBeanServer server = ManagementFactory.getPlatformMBeanServer();
 
     public synchronized void setMbeanServer(MBeanServer server) {
         this.server = server;
@@ -155,29 +156,45 @@ public class DefaultManagedGroup implements ManagedGroup {
     /**
      * @see org.coconut.apm.next.ApmGroup#register(java.lang.String)
      */
-    public synchronized void register(String name) throws Exception {
+    public synchronized void register(String objectName) throws Exception {
         // We could use a cool syntes such as org.coconut.cache:name=$1,type=$2,
         // ..
         // and then do a replacement on $1, $2
 
-        String nextLevel = name;
+        String nextLevel = objectName;
         NumberDynamicBean bean = new NumberDynamicBean(getDescription());
-        int index = name.indexOf("$" + getLevel());
+        int index = objectName.indexOf("$" + getLevel());
         if (index > 0) {
-            name = name.replace("$" + getLevel(), this.name);
-            nextLevel = name;
-            name = name.substring(0, index);
+            objectName = objectName.replace("$" + getLevel(), this.name);
+            nextLevel = objectName;
+            objectName = objectName.substring(0, index);
         }
 
         // deregister allready registered?
         if (register) {
             for (Object o : apms) {
-                register(bean,o);
+                register(bean, o);
             }
-            bean.register(server, name);
+            bean.register(server, objectName);
         }
         for (ManagedGroup gm : groups.values()) {
             gm.register(nextLevel);
+        }
+    }
+
+    /**
+     * @see org.coconut.management.ManagedGroup#register(org.coconut.management.JmxNamer)
+     */
+    public void registerAll(JmxRegistrant namer) throws Exception {
+        NumberDynamicBean bean = new NumberDynamicBean(getDescription());
+        if (register) {
+            for (Object o : apms) {
+                register(bean, o);
+            }
+            bean.register(server, namer.getName());
+        }
+        for (ManagedGroup gm : groups.values()) {
+            namer.registerChild(gm);
         }
     }
 
@@ -195,7 +212,7 @@ public class DefaultManagedGroup implements ManagedGroup {
 
     /**
      * @see org.coconut.apm.ApmGroup#add(java.lang.Runnable, long,
-     *      java.util.concurrent.TimeUnit)
+     *      j33316011ava.util.concurrent.TimeUnit)
      */
     public <T extends Runnable> T add(T r, long time, TimeUnit unit) {
         throw new UnsupportedOperationException();
@@ -206,6 +223,7 @@ public class DefaultManagedGroup implements ManagedGroup {
      */
     public void unregister() throws Exception {
         // TODO Auto-generated method stub
-        
+
     }
+
 }

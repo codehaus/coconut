@@ -9,7 +9,7 @@ import javax.management.MBeanServerConnection;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
-import org.coconut.core.Transformers;
+import org.coconut.core.util.Transformers;
 import org.coconut.internal.util.ClassUtils;
 import org.coconut.management.defaults.DefaultManagedGroup;
 import org.coconut.management.defaults.DefaultExecutableGroup;
