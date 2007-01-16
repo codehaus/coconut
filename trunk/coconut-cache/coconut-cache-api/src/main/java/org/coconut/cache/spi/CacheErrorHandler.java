@@ -13,7 +13,6 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheException;
 import org.coconut.cache.CacheLoader;
-import org.coconut.cache.store.CacheStore;
 import org.coconut.core.Log;
 import org.coconut.core.util.Logs;
 
@@ -22,9 +21,11 @@ import org.coconut.core.util.Logs;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class CacheErrorHandler<K, V> {
-    private Log logger;
+    public static final CacheErrorHandler DEFAULT = new CacheErrorHandler();
 
     private boolean isInitialized;
+
+    private Log logger;
 
     private volatile String name;
 
@@ -40,61 +41,6 @@ public class CacheErrorHandler<K, V> {
             isInitialized = true;
         }
         this.logger = logger;
-    }
-
-    public static final CacheErrorHandler DEFAULT = new CacheErrorHandler();
-
-    public synchronized void setCacheName(String name) {
-        this.name = name;
-    }
-
-    public V loadFailed(CacheLoader<? super K, ? extends V> loader, K key,
-            boolean isAsync, Throwable cause) {
-        String msg = "Failed to load value [key = " + key.toString() + "]";
-        getLogger().error(msg, cause);
-        throw new CacheException(msg, cause);
-    }
-
-    public void storeFailed(CacheStore<K, V> loader, K key, V value, boolean isAsync,
-            Throwable cause) {
-        checkInitialized();
-        String msg = "Failed to store value [key = " + key.toString() + "]";
-        getLogger().error(msg, cause);
-        throw new CacheException(msg, cause);
-    }
-
-    public void storeEntryFailed(CacheStore<K, CacheEntry<K, V>> store, K key,
-            CacheEntry<K, V> value, boolean isAsync, Throwable cause) {
-        String msg = "Failed to store value [key = " + key.toString() + "]";
-        getLogger().error(msg, cause);
-        throw new CacheException(msg, cause);
-    }
-
-    public Map<K, V> loadAllFailed(CacheLoader<? super K, ? extends V> loader,
-            Collection<? extends K> keys, boolean isAsync, Throwable cause) {
-        String msg = "Failed to load values [keys = " + keys.toString() + "]";
-        getLogger().error(msg, cause);
-        throw new CacheException(msg, cause);
-    }
-
-    public CacheEntry<K, V> loadEntryFailed(
-            CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader,
-            K key, boolean isAsync, Throwable cause) {
-        String msg = "Failed to load value [key = " + key.toString() + "]";
-        getLogger().error(msg, cause);
-        throw new CacheException(msg, cause);
-    }
-
-    public Map<K, CacheEntry<K, V>> loadAllEntrisFailed(
-            final CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader,
-            Collection<? extends K> keys, boolean isAsync, Throwable cause) {
-        String msg = "Failed to load values [keys = " + keys.toString() + "]";
-        getLogger().error(msg, cause);
-        throw new CacheException(msg, cause);
-    }
-
-    public final void unhandledError(Throwable t) {
-        getLogger().error("Unhandled Error", t);
     }
 
     public void backendDeleteFailed(Collection<? extends K> keys, Throwable cause) {
@@ -119,6 +65,59 @@ public class CacheErrorHandler<K, V> {
     public Log getLogger() {
         checkInitialized();
         return logger;
+    }
+
+    public Map<K, CacheEntry<K, V>> loadAllEntrisFailed(
+            final CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader,
+            Collection<? extends K> keys, boolean isAsync, Throwable cause) {
+        String msg = "Failed to load values [keys = " + keys.toString() + "]";
+        getLogger().error(msg, cause);
+        throw new CacheException(msg, cause);
+    }
+
+    public Map<K, V> loadAllFailed(CacheLoader<? super K, ? extends V> loader,
+            Collection<? extends K> keys, boolean isAsync, Throwable cause) {
+        String msg = "Failed to load values [keys = " + keys.toString() + "]";
+        getLogger().error(msg, cause);
+        throw new CacheException(msg, cause);
+    }
+
+    public CacheEntry<K, V> loadEntryFailed(
+            CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader,
+            K key, boolean isAsync, Throwable cause) {
+        String msg = "Failed to load value [key = " + key.toString() + "]";
+        getLogger().error(msg, cause);
+        throw new CacheException(msg, cause);
+    }
+
+    public V loadFailed(CacheLoader<? super K, ? extends V> loader, K key,
+            boolean isAsync, Throwable cause) {
+        String msg = "Failed to load value [key = " + key.toString() + "]";
+        getLogger().error(msg, cause);
+        throw new CacheException(msg, cause);
+    }
+
+    public synchronized void setCacheName(String name) {
+        this.name = name;
+    }
+
+    public void storeEntryFailed(CacheStore<K, CacheEntry<K, V>> store, K key,
+            CacheEntry<K, V> value, boolean isAsync, Throwable cause) {
+        String msg = "Failed to store value [key = " + key.toString() + "]";
+        getLogger().error(msg, cause);
+        throw new CacheException(msg, cause);
+    }
+
+    public void storeFailed(CacheStore<K, V> loader, K key, V value, boolean isAsync,
+            Throwable cause) {
+        checkInitialized();
+        String msg = "Failed to store value [key = " + key.toString() + "]";
+        getLogger().error(msg, cause);
+        throw new CacheException(msg, cause);
+    }
+
+    public final void unhandledError(Throwable t) {
+        getLogger().error("Unhandled Error", t);
     }
 
     private synchronized void checkInitialized() {

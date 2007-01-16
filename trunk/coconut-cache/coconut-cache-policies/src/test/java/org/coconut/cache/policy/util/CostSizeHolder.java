@@ -55,7 +55,6 @@ public class CostSizeHolder<T> implements CostSizeObject {
 
     @Override
     public int hashCode() {
-        // TODO Auto-generated method stub
         return super.hashCode();
     }
 }

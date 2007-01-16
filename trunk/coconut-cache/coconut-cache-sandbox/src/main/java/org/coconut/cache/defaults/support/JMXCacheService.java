@@ -17,9 +17,10 @@ import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
 
 import org.coconut.cache.Cache;
+import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.defaults.util.AbstractCacheMXBean;
 import org.coconut.cache.management.CacheMXBean;
 import org.coconut.cache.spi.AbstractCache;
-import org.coconut.cache.spi.AbstractCacheMXBean;
 import org.coconut.event.EventBus;
 
 /**
@@ -33,8 +34,8 @@ public class JMXCacheService {
     }
 
     public static CacheMXBean createProxy(MBeanServer server, ObjectName name) {
-        return (CacheMXBean) MBeanServerInvocationHandler.newProxyInstance(
-                server, name, CacheMXBean.class, false);
+        return (CacheMXBean) MBeanServerInvocationHandler.newProxyInstance(server, name,
+                CacheMXBean.class, false);
     }
 
     public static ObjectName registerCache(Cache c, String name)
@@ -42,16 +43,13 @@ public class JMXCacheService {
             NotCompliantMBeanException, MalformedObjectNameException {
 
         ObjectName oName = toObjectName(name);
-        registerCache(c, oName, ManagementFactory
-                .getPlatformMBeanServer());
+        registerCache(c, oName, ManagementFactory.getPlatformMBeanServer());
         return oName;
     }
 
-    public static void unregisterCache(String name)
-            throws InstanceNotFoundException, MBeanRegistrationException,
-            MalformedObjectNameException {
-        ManagementFactory.getPlatformMBeanServer().unregisterMBean(
-                toObjectName(name));
+    public static void unregisterCache(String name) throws InstanceNotFoundException,
+            MBeanRegistrationException, MalformedObjectNameException {
+        ManagementFactory.getPlatformMBeanServer().unregisterMBean(toObjectName(name));
 
     }
 
@@ -61,9 +59,9 @@ public class JMXCacheService {
         registerCache(c, name, ManagementFactory.getPlatformMBeanServer());
     }
 
-    public static void registerCache(Cache c, ObjectName name,
-            MBeanServer mbs) throws InstanceAlreadyExistsException,
-            MBeanRegistrationException, NotCompliantMBeanException {
+    public static void registerCache(Cache c, ObjectName name, MBeanServer mbs)
+            throws InstanceAlreadyExistsException, MBeanRegistrationException,
+            NotCompliantMBeanException {
         final AbstractCacheMXBean cache;
 
         if (c instanceof AbstractCache) {
@@ -78,6 +76,7 @@ public class JMXCacheService {
 
     public static ObjectName toObjectName(String name)
             throws MalformedObjectNameException {
-        return new ObjectName("org.coconut.cache:type=Cache,name=" + name);
+        return new ObjectName(CacheConfiguration.DEFAULT_JMX_DOMAIN + ":type=Cache,name="
+                + name);
     }
 }

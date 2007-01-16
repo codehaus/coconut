@@ -43,6 +43,8 @@ public abstract class AbstractCacheService<K, V> extends AbstractService impleme
         NOT_STARTED, RUNNING, SHUTDOWN, STOP, TERMINATED;
     }
 
+    private volatile RunState runState;
+
     // private volatile
 
     private volatile AbstractCache<K, V> cache;
@@ -59,6 +61,10 @@ public abstract class AbstractCacheService<K, V> extends AbstractService impleme
 
     }
 
+    boolean isStarted() {
+        return runState != RunState.NOT_STARTED;
+    }
+
     public final void start(AbstractCache<K, V> cache, Map<String, Object> properties) {
         final ReentrantLock mainLock = getMainLock();
         mainLock.lock();
@@ -66,18 +72,27 @@ public abstract class AbstractCacheService<K, V> extends AbstractService impleme
             if (tryStart()) {
                 this.cache = cache;
                 this.properties = properties;
-                doStart(cache, properties);
+                try {
+                    doStart(cache, properties);
+                } catch (Exception e) {
+                    throw new RuntimeException("Could not start cache");
+                }
             }
         } finally {
             mainLock.unlock();
         }
     }
 
-    protected void doStart(AbstractCache<K, V> cache, Map<String, Object> properties) {
+    protected void doStart(AbstractCache<K, V> cache, Map<String, Object> properties)
+            throws Exception {
 
     }
 
     protected final CacheConfiguration<K, V> getConf() {
         return conf;
+    }
+
+    protected Object getMutex() {
+        return cache;
     }
 }

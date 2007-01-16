@@ -12,11 +12,11 @@ import org.coconut.cache.policy.ReplacementPolicy;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class ReplacementPolicyDecorator<T> implements ReplacementPolicy<T> {
+public class PolicyDecorator<T> implements ReplacementPolicy<T> {
 
     private final ReplacementPolicy<T> policy;
 
-    public ReplacementPolicyDecorator(ReplacementPolicy<T> policy) {
+    public PolicyDecorator(ReplacementPolicy<T> policy) {
         if (policy == null) {
             throw new NullPointerException("policy is null");
         }

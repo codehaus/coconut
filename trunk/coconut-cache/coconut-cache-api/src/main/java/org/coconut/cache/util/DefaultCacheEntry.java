@@ -52,13 +52,6 @@ public class DefaultCacheEntry<K, V> implements CacheEntry<K, V> {
         return new WithExpiration<K, V>(key, value, expiration);
     }
 
-    // /**
-    // * {@inheritDoc}
-    // */
-    // public long getTimeToLive(TimeUnit unit) {
-    // return Cache.DEFAULT_EXPIRATION;
-    // }
-
     /**
      * {@inheritDoc}
      */
@@ -134,13 +127,6 @@ public class DefaultCacheEntry<K, V> implements CacheEntry<K, V> {
      */
     public V setValue(V value) {
         throw new UnsupportedOperationException();
-    }
-
-    /**
-     * @see org.coconut.cache.CacheEntry#getAttributes()
-     */
-    public Map<String, Object> getAttributes() {
-        return Collections.unmodifiableMap(Collections.EMPTY_MAP);
     }
 
     static class WithExpiration<K, V> extends DefaultCacheEntry<K, V> {

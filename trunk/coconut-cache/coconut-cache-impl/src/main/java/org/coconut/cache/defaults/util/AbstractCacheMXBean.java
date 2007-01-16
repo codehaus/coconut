@@ -2,7 +2,7 @@
  * the MIT license, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.cache.spi;
+package org.coconut.cache.defaults.util;
 
 import java.util.Properties;
 
@@ -14,6 +14,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntryEvent;
 import org.coconut.cache.CacheEvent;
 import org.coconut.cache.management.CacheMXBean;
+import org.coconut.cache.spi.AbstractCache;
 import org.coconut.core.EventProcessor;
 import org.coconut.core.Transformer;
 import org.coconut.event.EventBus;
@@ -127,7 +128,7 @@ public class AbstractCacheMXBean<K, V> extends JmxEmitterSupport implements
     /**
      * @see org.coconut.cache.management.CacheMXBean#resetHitStat()
      */
-    public void resetHitStat() {
+    public void resetStatistics() {
         cache.resetStatistics();
     }
 

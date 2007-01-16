@@ -99,6 +99,9 @@ public class EvictionCacheService<T extends CacheEntry> extends AbstractCacheSer
     }
 
     public int add(T t) {
+        if (maxCapacity == 0) {
+            return -1;
+        }
         return cp.add(t);
     }
 }

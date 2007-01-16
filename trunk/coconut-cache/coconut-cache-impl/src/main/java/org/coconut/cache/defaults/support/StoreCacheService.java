@@ -6,8 +6,8 @@ package org.coconut.cache.defaults.support;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.spi.CacheErrorHandler;
+import org.coconut.cache.spi.CacheStore;
 import org.coconut.cache.spi.service.AbstractCacheService;
-import org.coconut.cache.store.CacheStore;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -25,8 +25,20 @@ public class StoreCacheService {
         public EntrySupport(CacheConfiguration<K, V> conf) {
             super(conf);
             errorHandler = conf.getErrorHandler();
-            store = (CacheStore<K, CacheEntry<K, V>>) conf.backend().getExtendedBackend();
-            store2 = (CacheStore<K, V>) conf.backend().getBackend();
+            System.out.println(conf.backend().getExtendedBackend());
+            System.out.println("skæljfsdljf\nasdasdas\n");
+            if (conf.backend().getExtendedBackend() instanceof CacheStore) {
+                
+                store = (CacheStore<K, CacheEntry<K, V>>) conf.backend()
+                        .getExtendedBackend();
+            } else {
+                store = null;
+            }
+            if (conf.backend().getBackend() instanceof CacheStore) {
+                store2 = (CacheStore<K, V>) conf.backend().getBackend();
+            } else {
+                store2 = null;
+            }
         }
 
         public void storeEntry(final CacheEntry<K, V> value) {
@@ -39,9 +51,9 @@ public class StoreCacheService {
                 }
             } else if (store2 != null) {
                 K key = value.getKey();
-                V v =value.getValue();
+                V v = value.getValue();
                 try {
-                    store2.store(key,v);
+                    store2.store(key, v);
                 } catch (Exception e) {
                     errorHandler.storeFailed(store2, key, v, false, e);
                 }

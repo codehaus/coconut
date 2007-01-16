@@ -611,15 +611,11 @@ public class LoaderCacheService<K, V> {
                     LoaderCacheService.SAME_THREAD_EXECUTOR);
         }
 
-        public Future<?> asyncLoadEntry(
-
-        final K key, AbstractCache<K, V> sink) {
+        public Future<?> asyncLoadEntry(final K key, AbstractCache<K, V> sink) {
             return asyncLoadEntry(key, new NonNullEntryIntoCache<K, V>(sink));
         }
 
-        public Future<?> asyncLoadEntry(
-
-        final K key, EventProcessor<CacheEntry<K, V>> eh) {
+        public Future<?> asyncLoadEntry(final K key, EventProcessor<CacheEntry<K, V>> eh) {
             if (key == null) {
                 throw new NullPointerException("key is null");
             }
@@ -628,9 +624,8 @@ public class LoaderCacheService<K, V> {
             return loader.asyncLoad(key, (Callback) c);
         }
 
-        public Future<?> asyncLoadAllEntries(
-
-        final Collection<? extends K> keys, EventProcessor<Map<K, CacheEntry<K, V>>> eh) {
+        public Future<?> asyncLoadAllEntries(final Collection<? extends K> keys,
+                EventProcessor<Map<K, CacheEntry<K, V>>> eh) {
             SingleEntriesCallback<K, V> c = new SingleEntriesCallback<K, V>(keys, eh,
                     loader, errorHandler);
             return loader.asyncLoadAll(keys, (Callback) c);

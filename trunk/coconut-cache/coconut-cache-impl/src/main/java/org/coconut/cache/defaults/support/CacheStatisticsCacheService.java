@@ -127,7 +127,7 @@ public final class CacheStatisticsCacheService<K, V> extends AbstractCacheServic
 
     public CacheStatisticsCacheService(CacheConfiguration<K, V> conf) {
         super(conf);
-        Clock c = Clock.MILLI_CLOCK;
+        Clock c = Clock.DEFAULT_CLOCK;
         // cache counters
 
         // invocations of evict() on the cache (since start or last reset)
@@ -403,5 +403,4 @@ public final class CacheStatisticsCacheService<K, V> extends AbstractCacheServic
             return hits / sum;
         }
     }
-
 }

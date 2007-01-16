@@ -6,8 +6,8 @@ package org.coconut.cache.policy;
 
 /**
  * A mix-in style interface for marking objects that maintains statistics about
- * how many time it has been succesfully requested. A cache policy might use
- * this information for optimization.
+ * how many time it has been succesfully requested. A replacement policy might
+ * use this information for deciding when to evict the object.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$

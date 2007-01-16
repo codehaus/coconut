@@ -52,7 +52,7 @@ public class ExpirationWithCacheLoader extends CacheTestBundle {
         CacheEntryFilter f = new CacheEntryFilter();
         c = newCache(newConf().setClock(clock).backend().setBackend(
                 new IntegerToStringLoader()).c().expiration().setFilter(f).c());
-        clock.incrementAbsolutTime();
+        clock.incrementTimestamp();
         c.put(M1.getKey(), "AB");
         long time = getEntry(M1).getCreationTime();
         f.setAccept(true); // entries are evicted, explicity load new ones

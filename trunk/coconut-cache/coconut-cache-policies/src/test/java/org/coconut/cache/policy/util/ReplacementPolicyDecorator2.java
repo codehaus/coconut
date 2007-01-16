@@ -41,8 +41,8 @@ public class ReplacementPolicyDecorator2 extends MockTestCase {
     void test() throws Exception {
         Object returnType = null;
         Mock mock = mock(ReplacementPolicy.class);
-        Method[] methods = ReplacementPolicyDecorator.class.getMethods();
-        ReplacementPolicyDecorator dec = new ReplacementPolicyDecorator((ReplacementPolicy) mock
+        Method[] methods = PolicyDecorator.class.getMethods();
+        PolicyDecorator dec = new PolicyDecorator((ReplacementPolicy) mock
                 .proxy());
         for (Method m : methods) {
             if (!Modifier.isFinal(m.getModifiers())) {

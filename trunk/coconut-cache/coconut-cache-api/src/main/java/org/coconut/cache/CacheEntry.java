@@ -43,9 +43,16 @@ import org.coconut.cache.policy.CostSizeObject;
 public interface CacheEntry<K, V> extends Map.Entry<K, V>, CostSizeObject {
 
     /**
-     * Returns the time of creation for the specific cache entry.
+     * Returns the time of creation for the specific cache entry in
+     * milliseconds.
+     * <p>
+     * See the description of the class Date for a discussion of slight
+     * discrepancies that may arise between "computer time" and coordinated
+     * universal time (UTC).
      * 
-     * @return the time at which this entry was created
+     * @return the difference, measured in milliseconds, between the time at
+     *         which this entry was created and January 1, 1970 UTC.
+     * @see java.util.Date
      */
     long getCreationTime();
 
@@ -55,8 +62,9 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V>, CostSizeObject {
      * configuration of the cache. {@link Long#MAX_VALUE} is returned if the
      * entry will never expire.
      * 
-     * @return the time at which the current value of the cache entry will
-     *         expire
+     * @return the difference, measured in milliseconds, between the time at
+     *         which the current value of the cache entry will expire and
+     *         January 1, 1970 UTC.
      * @see CacheConfiguration.ExpirationStrategy
      */
     long getExpirationTime();
@@ -68,19 +76,23 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V>, CostSizeObject {
     long getHits();
 
     /**
-     * Returns the time at which the specific cache entry was last accessed
-     * (optional operation). If the value has never been requested, for example,
-     * if the entry has been added to the cache due to a call on
+     * Returns the time at which the specific cache entry was last accessed in
+     * milliseconds (optional operation). If the value has never been requested,
+     * for example, if the entry has been added to the cache due to a call on
      * {@link Cache#load(Object)} this method returns <tt>0</tt>.
      * 
-     * @return the time at which the entry was last accessed or <tt>0</tt> if
-     *         it has never been accessed
+     * @return the difference, measured in milliseconds, between the time at
+     *         which the entry was last accessed and January 1, 1970 UTC. Or
+     *         <tt>0</tt> if it has never been accessed
      */
     long getLastAccessTime();
 
     /**
-     * Returns when the value of the specific cache entry was last updated
-     * (optional operation).
+     * Returns when the value of the specific cache entry was last updated in
+     * milliseconds (optional operation).
+     * 
+     * @return the difference, measured in milliseconds, between the time at
+     *         which the entry was last updated and January 1, 1970 UTC.
      */
     long getLastUpdateTime();
 
@@ -93,16 +105,4 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V>, CostSizeObject {
      * @return the version of the current entry
      */
     long getVersion();
-
-    //void expireNow(boolean attemptToRefresh);
-    //boolean isExpired()
-    // Whats the purpose of this??? boolean isValid(); hmm isExpired w
-    // 
-    // boolean hasAttributes(); //if attribute map is lazy created check this
-    // first
-    /**
-     * Returns a map of attributes (optional operation). This are valid only
-     * doing lifetime and will not be persisted.
-     */
-    //Map<String, Object> getAttributes();
 }

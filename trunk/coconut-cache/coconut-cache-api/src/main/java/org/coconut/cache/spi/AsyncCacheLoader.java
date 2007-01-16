@@ -18,9 +18,18 @@ import org.coconut.core.Callback;
 public interface AsyncCacheLoader<K, V> extends CacheLoader<K, V> {
     Future<?> asyncLoad(final K key, Callback<V> c);
 
-    Future<?> asyncLoadAll(final Collection<? extends K> keys, Callback<Map<K,V>> c);
-//    
-//    Future<?> asyncLoadAll(Collection<K> keys, Collection<Callback<V>> c);
-//
-//    Future<?> asyncLoadAll(Collection<K> keys, AsyncLoadCallback<K, V> c);
+    Future<?> asyncLoadAll(final Collection<? extends K> keys, Callback<Map<K, V>> c);
+
+    //    
+    // Future<?> asyncLoadAll(Collection<K> keys, Collection<Callback<V>> c);
+    //
+    // Future<?> asyncLoadAll(Collection<K> keys, AsyncLoadCallback<K, V> c);
+
+    interface LoadKeyRunnable<K> extends Runnable {
+        K getKey();
+    }
+
+    interface LoadKeysRunnable<K> extends Runnable {
+        Collection<? extends K> getKeys();
+    }
 }

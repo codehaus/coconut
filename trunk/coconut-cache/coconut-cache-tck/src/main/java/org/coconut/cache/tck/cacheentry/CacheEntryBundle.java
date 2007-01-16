@@ -35,23 +35,23 @@ public class CacheEntryBundle extends CacheTestBundle {
     @Test
     public void testCreationDate() {
         c = newCache(newConf().setClock(clock));
-        clock.setAbsolutTime(10);
+        clock.setTimestamp(10);
         put(M1);
         assertEquals(10l, getEntry(M1).getCreationTime());
-        clock.incrementAbsolutTime();
+        clock.incrementTimestamp();
         put(M1);
         assertEquals(10l, getEntry(M1).getCreationTime());
-        clock.incrementAbsolutTime();
+        clock.incrementTimestamp();
         c.put(M1.getKey(), M2.getValue());
         assertEquals(10l, getEntry(M1).getCreationTime());
 
         // Test for putAll
         c = newCache(newConf().setClock(clock));
-        clock.setAbsolutTime(10);
+        clock.setTimestamp(10);
         putAll(M1, M2);
         assertEquals(10l, getEntry(M1).getCreationTime());
         assertEquals(10l, getEntry(M2).getCreationTime());
-        clock.incrementAbsolutTime();
+        clock.incrementTimestamp();
         putAll(M1, M2);
         assertEquals(10l, getEntry(M1).getCreationTime());
         assertEquals(10l, getEntry(M2).getCreationTime());
@@ -63,7 +63,7 @@ public class CacheEntryBundle extends CacheTestBundle {
     @Test
     public void testCreationDateFromLoader() {
         c = newCache(newConf().setClock(clock).backend().setBackend(DEFAULT_LOADER).c());
-        clock.setAbsolutTime(10);
+        clock.setTimestamp(10);
         get(M1);
         assertEquals(10l, getEntry(M1).getCreationTime());
     }
@@ -81,13 +81,13 @@ public class CacheEntryBundle extends CacheTestBundle {
     @Test
     public void testLastUpdateTime() {
         c = newCache(newConf().setClock(clock));
-        clock.setAbsolutTime(10);
+        clock.setTimestamp(10);
         put(M1);
         assertEquals(10l, getEntry(M1).getLastUpdateTime());
-        clock.setAbsolutTime(20);
+        clock.setTimestamp(20);
         put(M1);
         assertEquals(20l, getEntry(M1).getLastUpdateTime());
-        clock.setAbsolutTime(30);
+        clock.setTimestamp(30);
         putAll(M1, M2);
         assertEquals(30l, getEntry(M1).getLastUpdateTime());
         assertEquals(30l, getEntry(M1).getLastUpdateTime());
@@ -96,7 +96,7 @@ public class CacheEntryBundle extends CacheTestBundle {
     @Test
     public void testLastUpdateFromLoader() {
         c = newCache(newConf().setClock(clock).backend().setBackend(DEFAULT_LOADER).c());
-        clock.setAbsolutTime(10);
+        clock.setTimestamp(10);
         get(M1);
         assertEquals(10l, getEntry(M1).getLastUpdateTime());
     }
@@ -104,17 +104,17 @@ public class CacheEntryBundle extends CacheTestBundle {
     @Test
     public void testAccessedTime() {
         c = newCache(newConf().setClock(clock));
-        clock.setAbsolutTime(10);
+        clock.setTimestamp(10);
         put(M1);
         assertEquals(0l, getEntry(M1).getLastAccessTime());
 
         get(M1);
         assertEquals(10l, getEntry(M1).getLastAccessTime());
-        clock.incrementAbsolutTime();
+        clock.incrementTimestamp();
 
         peek(M1); // peek does not update accessTime
         assertEquals(10l, getEntry(M1).getLastAccessTime());
-        clock.incrementAbsolutTime();
+        clock.incrementTimestamp();
 
         getAll(M1, M2);
         assertEquals(12l, getEntry(M1).getLastAccessTime());
@@ -123,7 +123,7 @@ public class CacheEntryBundle extends CacheTestBundle {
     @Test
     public void testAccessFromLoader() {
         c = newCache(newConf().setClock(clock).backend().setBackend(DEFAULT_LOADER).c());
-        clock.setAbsolutTime(10);
+        clock.setTimestamp(10);
         get(M1);
         assertEquals(10l, getEntry(M1).getLastAccessTime());
 

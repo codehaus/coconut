@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.coconut.cache.CacheLoader;
+import org.coconut.cache.spi.CacheStore;
 
 /**
  * To be documented. This will change for sure!!

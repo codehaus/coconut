@@ -18,27 +18,23 @@ import org.coconut.annotation.ThreadSafe;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheEvent;
-import org.coconut.cache.CacheQuery;
 import org.coconut.cache.defaults.support.CacheStatisticsCacheService;
 import org.coconut.cache.defaults.support.EventCacheService;
 import org.coconut.cache.defaults.support.EvictionCacheService;
-import org.coconut.cache.defaults.support.ExpirationCacheService;
 import org.coconut.cache.defaults.support.LoaderCacheService;
 import org.coconut.cache.defaults.support.ManagementCacheService;
 import org.coconut.cache.defaults.support.StoreCacheService;
-import org.coconut.cache.defaults.support.ExpirationCacheService.FinalExpirationSupport;
 import org.coconut.cache.defaults.support.LoaderCacheService.EntrySupport;
+import org.coconut.cache.defaults.support.expiration.ExpirationCacheService;
+import org.coconut.cache.defaults.support.expiration.FinalExpirationCacheService;
 import org.coconut.cache.defaults.util.CacheEntryMap;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.CacheSupport;
 import org.coconut.cache.spi.service.CacheServiceManager;
 import org.coconut.event.EventBus;
-import org.coconut.filter.Filter;
-import org.coconut.filter.Filters;
 import org.coconut.management.ManagedGroup;
 
 /**
- * <p>
  * <b>Note that this implementation is not synchronized.</b> If multiple
  * threads access this cache concurrently, and at least one of the threads
  * modifies the cache structurally, it <i>must</i> be synchronized externally.
@@ -53,8 +49,7 @@ import org.coconut.management.ManagedGroup;
  */
 @CacheSupport(CacheLoadingSupport = true, CacheEntrySupport = true, querySupport = true, ExpirationSupport = true, statisticsSupport = true, eventSupport = true)
 @ThreadSafe(false)
-public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
-        ConcurrentMap<K, V> {
+public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
 
     private final CacheEntryMap<K, V, MyEntry> map;
 
@@ -79,13 +74,13 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     @SuppressWarnings("unchecked")
     protected CacheServiceManager<K, V> newCsm(CacheConfiguration<K, V> conf) {
         CacheServiceManager<K, V> csm = new CacheServiceManager<K, V>(conf);
-        csm.addDefault(CacheStatisticsCacheService.class);
-        csm.addDefault(EvictionCacheService.class);
-        csm.addDefault(FinalExpirationSupport.class);
-        csm.addDefault(LoaderCacheService.EntrySupport.class);
-        csm.addDefault(ManagementCacheService.class);
-        csm.addDefault(StoreCacheService.EntrySupport.class);
-        csm.addDefault(EventCacheService.class);
+        csm.setService(CacheStatisticsCacheService.class);
+        csm.setService(EvictionCacheService.class);
+        csm.setService(ExpirationCacheService.class, FinalExpirationCacheService.class);
+        csm.setService(LoaderCacheService.EntrySupport.class);
+        csm.setService(ManagementCacheService.class);
+        csm.setService(StoreCacheService.EntrySupport.class);
+        csm.setService(EventCacheService.class);
         return csm;
     }
 
@@ -105,7 +100,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         managementSupport = csm.create(ManagementCacheService.class);
         storeSupport = csm.create(StoreCacheService.EntrySupport.class);
         eventSupport = csm.create(EventCacheService.class);
-        
+
         csm.initializeApm(managementSupport.getGroup());
         // important must be last, because of final value being inlined.
         map = new MyMap();
@@ -190,7 +185,6 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
                 map.put(key, entry);
                 entry.accessed();
             }
-            V value = ce == null ? null : ce.getValue();
             eventSupport.getAndLoad(this, key, ce);
             statistics.entryGetStop(entry, start, false);
         } else if (expirationSupport.isExpired(entry)) {
@@ -346,11 +340,11 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
                 newEntry.version = prev.version + 1;
             } else {
                 if (newEntry.creationTime <= 0) {
-                    newEntry.creationTime = getClock().absolutTime();
+                    newEntry.creationTime = getClock().timestamp();
                 }
             }
         }
-        newEntry.lastUpdateTime = getClock().absolutTime();
+        newEntry.lastUpdateTime = getClock().timestamp();
     }
 
     private void evictNext() {
@@ -400,7 +394,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
 
         MyEntry prev = map.put(key, me);
         added(me, prev, null);
-        me.lastUpdateTime = getClock().absolutTime();
+        me.lastUpdateTime = getClock().timestamp();
         // the check for me.policyIndex is for values rejected by a
         // cache policy
         if (me.policyIndex >= 0) {
@@ -516,7 +510,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         }
 
         void accessed() {
-            lastAccessTime = getClock().absolutTime();
+            lastAccessTime = getClock().timestamp();
         }
 
         void touched() {
@@ -554,5 +548,10 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
             }
             return true;
         }
+    }
+
+    /* Helper methods for Synchronized Cache */
+    Future<?> loadAsync(AbstractCache<K, V> callback, K key) {
+        return loaderSupport.asyncLoadEntry(key, callback);
     }
 }

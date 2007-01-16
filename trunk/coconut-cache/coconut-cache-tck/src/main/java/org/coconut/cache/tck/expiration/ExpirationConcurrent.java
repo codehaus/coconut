@@ -33,14 +33,14 @@ public class ExpirationConcurrent extends CacheTestBundle {
             gets = 0;
             CacheConfiguration<Integer, String> cc = CacheConfiguration.newConf();
             Cache<Integer, String> c = newCache(cc.expiration().c().setClock(
-                    Clock.NANO_CLOCK));
-            long earlyStart = Clock.NANO_CLOCK.relativeTime();
+                    Clock.DEFAULT_CLOCK));
+            long earlyStart = Clock.DEFAULT_CLOCK.relativeTime();
             c.put(M1.getKey(), M1.getValue(), s, TimeUnit.NANOSECONDS);
-            long lateStart = Clock.NANO_CLOCK.relativeTime();
+            long lateStart = Clock.DEFAULT_CLOCK.relativeTime();
             for (;;) {
-                long earlyNow = Clock.NANO_CLOCK.relativeTime();
+                long earlyNow = Clock.DEFAULT_CLOCK.relativeTime();
                 String value = c.get(M1.getKey());
-                long lateNow = Clock.NANO_CLOCK.relativeTime();
+                long lateNow = Clock.DEFAULT_CLOCK.relativeTime();
                 if (value != null) {
                     assertEquals(M1.getValue(), value);
                     assertFalse(earlyNow - lateStart > s);
@@ -66,7 +66,7 @@ public class ExpirationConcurrent extends CacheTestBundle {
         CountdownLatchLoader loader = CountdownLatchLoader.integerToStringLoader(1);
         CacheConfiguration<Integer, String> cc = CacheConfiguration.newConf();
         final Cache<Integer, String> c = newCache(cc.backend().setBackend(loader).c()
-                .setClock(Clock.NANO_CLOCK));
+                .setClock(Clock.DEFAULT_CLOCK));
 
         c.put(M1.getKey(), "ZXCW", 1, TimeUnit.NANOSECONDS);
 
@@ -99,7 +99,7 @@ public class ExpirationConcurrent extends CacheTestBundle {
         CountdownLatchLoader loader = CountdownLatchLoader.integerToStringLoader(1);
         CacheConfiguration<Integer, String> cc = CacheConfiguration.newConf();
         final Cache<Integer, String> c = newCache(cc.backend().setBackend(loader).c()
-                .setClock(Clock.NANO_CLOCK));
+                .setClock(Clock.DEFAULT_CLOCK));
 
         c.put(M1.getKey(), "ZXCW", 1, TimeUnit.NANOSECONDS);
 

@@ -18,12 +18,10 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheEvent;
 import org.coconut.cache.CacheLoader;
-import org.coconut.cache.CacheQuery;
 import org.coconut.cache.Caches;
 import org.coconut.cache.management.CacheMXBean;
 import org.coconut.core.Clock;
 import org.coconut.event.EventBus;
-import org.coconut.filter.Filter;
 
 /**
  * This class provides a skeletal implementation of the <tt>Cache</tt>
@@ -400,7 +398,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
                 "This cache does not support jmx monitoring");
     }
 
-    String getName() {
+    public String getName() {
         return name;
     }
 

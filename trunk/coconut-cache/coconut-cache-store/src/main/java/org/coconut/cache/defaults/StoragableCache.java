@@ -9,12 +9,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheException;
 import org.coconut.cache.spi.AbstractCache;
-import org.coconut.cache.store.OldCacheStore;
 
 
 public abstract class StoragableCache<K, V> extends AbstractCache<K, V> {
 
-    private OldCacheStore<K, V> store;
+   // private OldCacheStore<K, V> store;
    
 
     /**
@@ -56,7 +55,7 @@ public abstract class StoragableCache<K, V> extends AbstractCache<K, V> {
         }
         public void run() {
             try {
-                store.store(key, value);
+         //       store.store(key, value);
             } catch (Exception e) {
                 storeFailed(key, e);
             }

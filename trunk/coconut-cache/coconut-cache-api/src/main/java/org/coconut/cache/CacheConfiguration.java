@@ -13,6 +13,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
@@ -23,7 +24,7 @@ import org.coconut.annotation.ThreadSafe;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.CacheErrorHandler;
-import org.coconut.cache.store.CacheStore;
+import org.coconut.cache.spi.CacheStore;
 import org.coconut.core.Clock;
 import org.coconut.filter.Filter;
 import org.xml.sax.SAXException;
@@ -86,6 +87,10 @@ import org.xml.sax.SAXException;
  */
 @ThreadSafe(false)
 public final class CacheConfiguration<K, V> implements Cloneable {
+
+    // 5F = _
+    private final static Pattern CACHE_NAME_PATTERN = Pattern
+            .compile("[\\da-zA-Z\\x5F]*(\\x2E([\\da-z\\x5F])+)*");
 
     public class Services {
 
@@ -507,29 +512,33 @@ public final class CacheConfiguration<K, V> implements Cloneable {
             return mBeanServer;
         }
 
-        /**
-         * @return the configured MBeanServer or the platform MBeanServer if no
-         *         server has been set
-         * @throws IllegalStateException
-         *             if no ObjectName was configured
-         */
-        public ObjectName getObjectName() {
-            if (oName == null) {
-                try {
-                    String name = getName();
-
-                    ObjectName on = new ObjectName(JMX_PREFIX + name);
-                    // we properly shouldn't keep a reference to this.
-                    // because the name of the cache might change.
-                    return on;
-                } catch (MalformedObjectNameException e) {
-                    // this only happens if the user has set a lame name
-                    throw new IllegalStateException("The configured name of the cache, ",
-                            e);
-                }
-
-            }
-            return oName;
+        // /**
+        // * @return the configured MBeanServer or the platform MBeanServer if
+        // no
+        // * server has been set
+        // * @throws IllegalStateException
+        // * if no ObjectName was configured
+        // */
+        // public ObjectName getObjectName() {
+        // if (oName == null) {
+        // try {
+        // String name = getName();
+        // ObjectName on = new ObjectName(DEFAULT_JMX_DOMAIN + ":name=" + name);
+        // // we properly shouldn't keep a reference to this.
+        // // because the name of the cache might change.
+        // return on;
+        // } catch (MalformedObjectNameException e) {
+        // // this only happens if the user has set a lame name
+        // // TODO lets make sure
+        // throw new IllegalStateException("The configured name of the cache, ",
+        // e);
+        // }
+        //
+        // }
+        // return oName;
+        // }
+        public String getDomain() {
+            return domain;
         }
 
         /**
@@ -585,7 +594,12 @@ public final class CacheConfiguration<K, V> implements Cloneable {
          *            the object name
          * @return this configuration
          */
-        public JMX setObjectName(ObjectName name) {
+        public JMX setDomain(String name) {
+            if (name == null) {
+                throw new NullPointerException("name is null");
+            }
+            // TODO validate domain name
+            CacheConfiguration.this.domain = domain;
             return this;
         }
 
@@ -753,7 +767,7 @@ public final class CacheConfiguration<K, V> implements Cloneable {
         WRITE_BACK, WRITE_THROUGH, WRITE_THROUGH_ASYNC, WRITE_THROUGH_SAFE;
     }
 
-    public static final Clock DEFAULT_CLOCK = Clock.MILLI_CLOCK;
+    public static final Clock DEFAULT_CLOCK = Clock.DEFAULT_CLOCK;
 
     /**
      * The default configuration that can be used by any cache that is not
@@ -764,7 +778,7 @@ public final class CacheConfiguration<K, V> implements Cloneable {
 
     public final static int DEFAULT_MAXIMUM_SIZE = Integer.MAX_VALUE;
 
-    public static final String JMX_PREFIX = "org.coconut.cache:name=";
+    public static final String DEFAULT_JMX_DOMAIN = "org.coconut.cache";
 
     public static void main(String[] args) throws SAXException, IOException,
             ParserConfigurationException {
@@ -828,7 +842,7 @@ public final class CacheConfiguration<K, V> implements Cloneable {
 
     private String name;
 
-    private ObjectName oName;
+    private String domain = DEFAULT_JMX_DOMAIN;
 
     private long preferableCapacity; // default??
 
@@ -845,7 +859,7 @@ public final class CacheConfiguration<K, V> implements Cloneable {
 
     private CacheStore<K, V> store;
 
-    private Clock timingStrategy = Clock.MILLI_CLOCK;
+    private Clock timingStrategy = Clock.DEFAULT_CLOCK;
 
     private boolean useHighResolutionCounter = true;
 
@@ -1225,6 +1239,10 @@ public final class CacheConfiguration<K, V> implements Cloneable {
     public CacheConfiguration<K, V> setName(String name) {
         if (name == null) {
             throw new NullPointerException("name is null");
+        } else if (!Pattern.matches("[\\da-zA-Z\\x5F]*", name)) {
+            throw new IllegalArgumentException(
+                    "not a valid name, must only contain alphanumeric characters and '_', was "
+                            + name);
         }
         this.name = name;
         return this;

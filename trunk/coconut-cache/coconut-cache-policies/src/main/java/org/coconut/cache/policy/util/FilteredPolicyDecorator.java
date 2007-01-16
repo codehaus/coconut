@@ -14,7 +14,7 @@ import org.coconut.filter.Filter;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class PolicyFilterRejector<T> extends ReplacementPolicyDecorator<T> {
+public class FilteredPolicyDecorator<T> extends PolicyDecorator<T> {
 
     /**
      * This replacement decorates another cache policy rejecting any documents
@@ -31,12 +31,12 @@ public class PolicyFilterRejector<T> extends ReplacementPolicyDecorator<T> {
      */
     public static <T extends CostSizeObject> ReplacementPolicy<T> sizeRejector(
             ReplacementPolicy<T> policy, long size) {
-        return new PolicyFilterRejector<T>(policy, new SizeFilter<T>(size));
+        return new FilteredPolicyDecorator<T>(policy, new SizeFilter<T>(size));
     }
 
     public static <T extends CostSizeObject> ReplacementPolicy<T> costRejector(
             ReplacementPolicy<T> policy, double minimumCost) {
-        return new PolicyFilterRejector<T>(policy, new CostFilter<T>(minimumCost));
+        return new FilteredPolicyDecorator<T>(policy, new CostFilter<T>(minimumCost));
     }
 
     private final Filter<T> filter;
@@ -44,7 +44,7 @@ public class PolicyFilterRejector<T> extends ReplacementPolicyDecorator<T> {
     /**
      * @param policy
      */
-    public PolicyFilterRejector(ReplacementPolicy<T> policy, Filter<T> filter) {
+    public FilteredPolicyDecorator(ReplacementPolicy<T> policy, Filter<T> filter) {
         super(policy);
         if (filter == null) {
             throw new NullPointerException("filter is null");
