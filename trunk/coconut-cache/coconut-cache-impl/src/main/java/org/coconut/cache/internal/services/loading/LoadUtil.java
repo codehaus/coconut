@@ -17,6 +17,7 @@ import org.coconut.cache.CacheLoader;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.AsyncCacheLoader;
 import org.coconut.cache.spi.CacheErrorHandler;
+import org.coconut.cache.spi.ExecutorEvent;
 import org.coconut.core.Callback;
 import org.coconut.core.EventProcessor;
 
@@ -293,7 +294,7 @@ public class LoadUtil {
         }
     }
 
-    static class LoadValueRunnable<K, V> implements AsyncCacheLoader.LoadKeyRunnable<K> {
+    static class LoadValueRunnable<K, V> implements ExecutorEvent.LoadKey<K> {
         private final Callback<V> callback;
 
         private final K key;
@@ -338,7 +339,7 @@ public class LoadUtil {
         }
     }
 
-    static class LoadValuesRunnable<K, V> implements AsyncCacheLoader.LoadKeysRunnable<K> {
+    static class LoadValuesRunnable<K, V> implements ExecutorEvent.LoadKeys<K> {
         private final Callback<Map<K, V>> callback;
 
         private final Collection<? extends K> keys;

@@ -92,7 +92,7 @@ public final class Ressources {
         System.out.println(l);
         l.log(Level.INFO, MessageFormat.format(a, "fooBar", "org.coconut.cache.fooBar"));
         System.out.println();
-        System.out.println(Caches.newImmutableHitStat(23, 34));
+        System.out.println(CacheUtil.newImmutableHitStat(23, 34));
         System.out.println(Locale.getDefault());
     }
 }

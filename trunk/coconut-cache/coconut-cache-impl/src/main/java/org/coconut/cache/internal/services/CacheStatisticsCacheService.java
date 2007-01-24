@@ -13,6 +13,7 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.Caches;
 import org.coconut.cache.spi.AbstractCache;
+import org.coconut.cache.spi.CacheUtil;
 import org.coconut.cache.spi.Ressources;
 import org.coconut.cache.spi.service.AbstractCacheService;
 import org.coconut.core.Clock;
@@ -296,7 +297,7 @@ public final class CacheStatisticsCacheService<K, V> extends AbstractCacheServic
     }
 
     public Cache.HitStat getHitStat() {
-        return Caches
+        return CacheUtil
                 .newImmutableHitStat(entryGetHitCount.get(), entryGetMissCount.get());
     }
 

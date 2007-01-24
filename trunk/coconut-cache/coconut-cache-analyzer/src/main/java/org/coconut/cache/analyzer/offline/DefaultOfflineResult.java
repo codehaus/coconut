@@ -6,6 +6,7 @@ package org.coconut.cache.analyzer.offline;
 
 import org.coconut.cache.Caches;
 import org.coconut.cache.Cache.HitStat;
+import org.coconut.cache.spi.CacheUtil;
 
 public class DefaultOfflineResult implements OfflineResult {
 
@@ -49,7 +50,7 @@ public class DefaultOfflineResult implements OfflineResult {
         this.hits = hits;
         this.misses = misses;
         this.stepWidth = stepWidth;
-        this.total = Caches.newImmutableHitStat(total);
+        this.total = CacheUtil.newImmutableHitStat(total);
     }
 
     public HitStat getTotal() {
@@ -69,6 +70,6 @@ public class DefaultOfflineResult implements OfflineResult {
             throw new IllegalArgumentException("step must be between 0 and "
                     + (hits.length - 1) + ", was " + step);
         }
-        return Caches.newImmutableHitStat(hits[step], misses[step]);
+        return CacheUtil.newImmutableHitStat(hits[step], misses[step]);
     }
 }

@@ -865,26 +865,8 @@ public class CacheConfiguration<K, V> implements Cloneable {
 
     }
 
-    /**
-     * WRITE_THROUGH = put/load value, make avilable for others, persist,
-     * return. Is there any _observable_ difference between WRITE_THROUGH &
-     * WRITE_THROUGH_ASYNC??? I can't think of a reason why we want all but the
-     * caller to get() to see a value???
-     * <p>
-     * WRITE_THROUGH_SAFE = put/load value, persist, make avilable for others,
-     * return
-     * <p>
-     * WRITE_THROUGH_ASYNC = put/load value, make available for other, return,
-     * persist asynchronously later
-     * <p>
-     * WRITE_BACK = put/load value, make available for other, return, persist at
-     * latests possible time. perhaps drop WRITE_THROUGH_ASYNC
-     */
-    public static enum StorageStrategy {
-        WRITE_BACK, WRITE_THROUGH, WRITE_THROUGH_ASYNC, WRITE_THROUGH_SAFE;
-    }
-
     public class Threading {
+        
         /**
          * Returns the CacheConfiguration that this instance is part of.
          * 
@@ -927,4 +909,8 @@ public class CacheConfiguration<K, V> implements Cloneable {
     }
 
     long scheduleEvictionAtFixedRateNanos = 0;
+    
+    public Threading threading() {
+        return new Threading();
+    }
 }

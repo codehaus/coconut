@@ -32,10 +32,6 @@ public class CacheFilters {
     private final static Transformer<CacheEvent, String> EVENT_TO_NAME_TRANSFORMER = Transformers
             .transform(CacheEvent.class, "getName");
 
-    // private final static Transformer<CacheItemEvent, CacheEntry>
-    // EVENT_TO_ENTRY_TRANSFORMER = Transformers
-    // .transform(CacheItemEvent.class, "getEntry");
-
     /**
      * Returns a Filter that filters {@link org.coconut.cache.CacheEvent}s
      * originating from a particular cache.

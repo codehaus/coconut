@@ -156,7 +156,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
      * @see org.coconut.cache.Cache#getHitStat()
      */
     public Cache.HitStat getHitStat() {
-        return Caches.STAT00;
+        return CacheUtil.STAT00;
     }
 
     public CacheMXBean getInfo() {

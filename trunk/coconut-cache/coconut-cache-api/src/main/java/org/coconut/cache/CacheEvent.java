@@ -25,7 +25,7 @@ import org.coconut.filter.Filters.IsTypeFilter;
  * cleared and all values removed. These all inherit from {@link CacheEvent}.
  * </ul>
  * <p>
- * Cache events are usually delivered locally to a computer only.
+ * Cache events are usually delivered locally to a single JVM instance only.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id$
@@ -41,19 +41,16 @@ public interface CacheEvent<K, V> extends Sequenced /* , TimeStamp */{
      * instances of {@link CacheItemEvent}).
      */
     @SuppressWarnings("unchecked")
-    Filter CACHE_INSTANCE_FILTER = LogicFilters.not(Filters.isType(CacheEntryEvent.class));
+    Filter CACHE_INSTANCE_FILTER = LogicFilters
+            .not(Filters.isType(CacheEntryEvent.class));
 
     /**
-     * Returns the cache from where this event originated. If this event occured
-     * for a remote cache certain methods on the returned cache might not work.
-     * <p>
-     * Important: any implementation should not attempt to serialize this field.
+     * Returns the cache from where this event originated.
      * 
      * @return the cache from where this event originated or <code>null</code>
-     *         if the cache is not located in the same jvm as the originating
-     *         event.
+     *         if the cache is not available (for example, if the event is
+     *         handled in another JVM than it was raised in)
      */
-    //Name of the cache????
     Cache<K, V> getCache();
 
     /**
@@ -65,6 +62,7 @@ public interface CacheEvent<K, V> extends Sequenced /* , TimeStamp */{
     String getName();
 
     Map<String, Object> getAttributes();
+
     /**
      * An event indicating that a particular {@link Cache} was cleared.
      */

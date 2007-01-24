@@ -25,11 +25,4 @@ public interface AsyncCacheLoader<K, V> extends CacheLoader<K, V> {
     //
     // Future<?> asyncLoadAll(Collection<K> keys, AsyncLoadCallback<K, V> c);
 
-    interface LoadKeyRunnable<K> extends Runnable {
-        K getKey();
-    }
-
-    interface LoadKeysRunnable<K> extends Runnable {
-        Collection<? extends K> getKeys();
-    }
 }

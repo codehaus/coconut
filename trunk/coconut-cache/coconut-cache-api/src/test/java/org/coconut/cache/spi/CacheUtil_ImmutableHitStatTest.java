@@ -2,11 +2,13 @@
  * the MIT license, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.cache;
+package org.coconut.cache.spi;
 
 import junit.framework.JUnit4TestAdapter;
 
+import org.coconut.cache.Cache;
 import org.coconut.cache.Cache.HitStat;
+import org.coconut.cache.spi.CacheUtil;
 import org.coconut.test.MockTestCase;
 import org.jmock.Mock;
 import org.junit.Test;
@@ -15,17 +17,17 @@ import org.junit.Test;
  * Test ImmutableHitStat
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
- * @version $Id$
+ * @version $Id: Caches_ImmutableHitStatTest.java 186 2007-01-24 12:30:38Z kasper $
  */
-public class Caches_ImmutableHitStatTest extends MockTestCase {
+public class CacheUtil_ImmutableHitStatTest extends MockTestCase {
 
     public static junit.framework.Test suite() {
-        return new JUnit4TestAdapter(Caches_ImmutableHitStatTest.class);
+        return new JUnit4TestAdapter(CacheUtil_ImmutableHitStatTest.class);
     }
 
     @Test
     public void testHitStat00() {
-        HitStat hs = Caches.newImmutableHitStat(0, 0);
+        HitStat hs = CacheUtil.newImmutableHitStat(0, 0);
         assertEquals(0l, hs.getNumberOfHits());
         assertEquals(0l, hs.getNumberOfMisses());
         // per default contract
@@ -34,7 +36,7 @@ public class Caches_ImmutableHitStatTest extends MockTestCase {
 
     @Test
     public void testHitStat() {
-        HitStat hs = Caches.newImmutableHitStat(80, 20);
+        HitStat hs = CacheUtil.newImmutableHitStat(80, 20);
         assertEquals(80l, hs.getNumberOfHits());
         assertEquals(20l, hs.getNumberOfMisses());
         assertEquals(0.8, hs.getHitRatio(), 0.000001);
@@ -48,7 +50,7 @@ public class Caches_ImmutableHitStatTest extends MockTestCase {
         mock.expects(once()).method("getNumberOfMisses").will(
                 returnValue((long) 20));
         Cache.HitStat chs = (Cache.HitStat) mock.proxy();
-        HitStat hs = Caches.newImmutableHitStat(chs);
+        HitStat hs = CacheUtil.newImmutableHitStat(chs);
         assertEquals(80l, hs.getNumberOfHits());
         assertEquals(20l, hs.getNumberOfMisses());
         assertEquals(0.8, hs.getHitRatio(), 0.000001);
@@ -70,8 +72,8 @@ public class Caches_ImmutableHitStatTest extends MockTestCase {
             }
 
         };
-        HitStat hs1 = Caches.newImmutableHitStat(0, 0);
-        HitStat hs2 = Caches.newImmutableHitStat(80, 20);
+        HitStat hs1 = CacheUtil.newImmutableHitStat(0, 0);
+        HitStat hs2 = CacheUtil.newImmutableHitStat(80, 20);
         assertFalse(hs1.equals(null));
         assertFalse(hs1.equals(new Object()));
         assertFalse(hs1.equals(hs2));
@@ -79,6 +81,6 @@ public class Caches_ImmutableHitStatTest extends MockTestCase {
         assertTrue(hs2.equals(hs));
         
         assertFalse(hs1.hashCode() == hs2.hashCode()); // well its possible
-        assertEquals(Caches.newImmutableHitStat(80, 20).hashCode(), hs2.hashCode());
+        assertEquals(CacheUtil.newImmutableHitStat(80, 20).hashCode(), hs2.hashCode());
     }
 }

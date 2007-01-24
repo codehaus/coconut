@@ -4,6 +4,7 @@
 package org.coconut.core.util;
 
 import java.io.Serializable;
+import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,6 +20,14 @@ public class ThreadUtils {
 
     public final static Executor SAME_THREAD_EXECUTOR = new SameThreadExecutor();
 
+
+    /**
+     * A {@link java.util.concurrent.Callable} that returns <code>null</code>
+     * on every invocation of {@link #call}.
+     */
+    private static Callable NULL_CALLABLE = new NullCallable();
+
+    
     static class SameThreadExecutor implements Executor, Serializable {
 
         /** serialVersionUID */
@@ -110,4 +119,30 @@ public class ThreadUtils {
             return t;
         }
     }
+    
+
+    /**
+     * A {@link java.util.concurrent.Callable} that returns <code>null</code>
+     * on every invocation of {@link java.util.concurrent.Callable#call}.
+     */
+    @SuppressWarnings("unchecked")
+    public static <V> Callable<V> nullCallable() {
+        return NULL_CALLABLE;
+    }
+    
+
+    /**
+     * A {@link java.util.concurrent.Callable} that returns <code>null</code>
+     * on every invocation of {@link #call}.
+     */
+    final static class NullCallable<V> implements Callable<V>, Serializable {
+        /** serialVersionUID */
+        private static final long serialVersionUID = 4869209484084557763L;
+
+        /** {@inheritDoc} */
+        public V call() {
+            return null;
+        }
+    }
+
 }

@@ -10,6 +10,7 @@ import org.coconut.cache.Caches;
 import org.coconut.cache.Cache.HitStat;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.policy.oldanalyzer.PolicyMonitor;
+import org.coconut.cache.spi.CacheUtil;
 
 public class DefaultPolicyMonitor<K> implements PolicyMonitor<K> {
 
@@ -73,7 +74,7 @@ public class DefaultPolicyMonitor<K> implements PolicyMonitor<K> {
      * @see org.coconut.cache.policy.analyzer.PolicyMonitor#getHitStat()
      */
     public HitStat getHitStat() {
-        return Caches.newImmutableHitStat(hits, misses);
+        return CacheUtil.newImmutableHitStat(hits, misses);
     }
 
     /**

@@ -4,20 +4,14 @@
 
 package org.coconut.cache.util;
 
-import java.util.Collections;
-import java.util.Map;
-
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.policy.CostSizeObject;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
 public class DefaultCacheEntry<K, V> implements CacheEntry<K, V> {
-
-    public static final double DEFAULT_COST = CostSizeObject.DEFAULT_COST;
 
     public static final long DEFAULT_CREATION_TIME = 0;
 
@@ -27,9 +21,7 @@ public class DefaultCacheEntry<K, V> implements CacheEntry<K, V> {
 
     public static final long DEFAULT_LAST_ACCESS_TIME = 0;
 
-    public static final long DEFAULT_LAST_UPDATE_TIME = Cache.DEFAULT_EXPIRATION;
-
-    public static final long DEFAULT_SIZE = CostSizeObject.DEFAULT_SIZE;
+    public static final long DEFAULT_LAST_UPDATE_TIME = 0;
 
     public static final long DEFAULT_VERSION = 0;
 

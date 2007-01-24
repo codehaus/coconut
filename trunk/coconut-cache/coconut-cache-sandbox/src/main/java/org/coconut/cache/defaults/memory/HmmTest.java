@@ -12,6 +12,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheLoader;
+import org.coconut.cache.defaults.UnsynchronizedCache;
 import org.coconut.filter.Filter;
 
 /**

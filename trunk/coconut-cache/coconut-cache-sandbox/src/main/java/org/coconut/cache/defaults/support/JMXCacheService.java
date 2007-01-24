@@ -18,7 +18,7 @@ import javax.management.ObjectName;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.defaults.util.AbstractCacheMXBean;
+import org.coconut.cache.internal.util.AbstractCacheMXBean;
 import org.coconut.cache.management.CacheMXBean;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.event.EventBus;

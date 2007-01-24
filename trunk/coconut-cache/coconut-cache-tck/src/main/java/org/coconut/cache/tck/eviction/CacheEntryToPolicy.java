@@ -36,7 +36,7 @@ public class CacheEntryToPolicy extends CacheTestBundle {
     @Test
     public void testIsCacheEntry() throws InterruptedException {
         c = newCache(newConf().eviction().setPolicy(new PolicyMock())
-                .setMaximumCapacity(5).c());
+                .setMaximumSize(5).c());
 
         c.put(M1.getKey(), M1.getValue());
 

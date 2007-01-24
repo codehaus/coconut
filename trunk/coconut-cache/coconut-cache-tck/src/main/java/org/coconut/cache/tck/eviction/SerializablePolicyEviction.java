@@ -27,7 +27,7 @@ public class SerializablePolicyEviction extends CacheTestBundle {
     @Test
     public void testSerializable() throws IOException, ClassNotFoundException {
         Cache<Integer, String> c = newCache(newConf().eviction().setPolicy(
-                Policies.newLRU()).setMaximumCapacity(10).c());
+                Policies.newLRU()).setMaximumSize(10).c());
         for (int i = 0; i < 10; i++) {
             c.put(i, Integer.toString(i), 1, TimeUnit.NANOSECONDS);
         }

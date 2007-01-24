@@ -15,6 +15,7 @@ import org.coconut.cache.Caches;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.AsyncCacheLoader;
 import org.coconut.cache.spi.CacheErrorHandler;
+import org.coconut.cache.spi.CacheUtil;
 import org.coconut.cache.spi.service.AbstractCacheService;
 import org.coconut.core.Callback;
 import org.coconut.core.EventProcessor;
@@ -99,7 +100,7 @@ public class CacheEntryLoaderService<K, V> extends AbstractCacheService<K, V> im
     static <K, V> CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> getLoader(
             CacheConfiguration<K, V> conf) {
         if (conf.backend().getBackend() != null) {
-            return Caches.toExtendedCacheLoader(conf.backend().getBackend());
+            return CacheUtil.toExtendedCacheLoader(conf.backend().getBackend());
         } else if (conf.backend().getExtendedBackend() != null) {
             return conf.backend().getExtendedBackend();
         } else {

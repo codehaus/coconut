@@ -10,19 +10,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
 
-import org.coconut.cache.spi.AsyncCacheLoader;
-import org.coconut.cache.spi.CacheSupport;
-import org.coconut.cache.spi.Ressources;
+import org.coconut.cache.spi.CacheUtil;
+import org.coconut.cache.spi.ExecutorEvent;
 import org.coconut.cache.util.AbstractCacheLoader;
 import org.coconut.cache.util.CacheDecorator;
-import org.coconut.cache.util.DefaultCacheEntry;
-import org.coconut.core.Callback;
 import org.coconut.event.EventBus;
 import org.coconut.filter.Filter;
 
@@ -36,42 +31,163 @@ import org.coconut.filter.Filter;
 public final class Caches {
 
     /**
-     * This class wraps a cache in such a way that it can be used as a cache
-     * loader for another cache.
+     * The empty cache (immutable). This cache is serializable.
      * 
-     * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
-     * @version $Id$
+     * @see #emptyCache()
      */
-    static class CacheAsCacheLoader<K, V> implements CacheLoader<K, V>, Serializable {
+    public static final Cache EMPTY_CACHE;
 
-        /** serialVersionUID */
-        private static final long serialVersionUID = -1907266938637317312L;
+    static {
+        EMPTY_CACHE = mapToCache(Collections.emptyMap());
+    }
 
-        /** The cache used as a cache loader. */
-        private final Cache<K, V> cache;
+    /**
+     * Returns a Runnable that when executed will call the clear method on the
+     * specified cache.
+     * <p>
+     * The following example shows how this can be used to clear the cache every
+     * hour.
+     * 
+     * <pre>
+     * Cache c;
+     * ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
+     * ses.scheduleAtFixedRate(Caches.clearAsRunnable(c), 0, 60 * 60, TimeUnit.SECONDS);
+     * </pre>
+     * 
+     * @param cache
+     *            the cache on which to call evict
+     * @return a runnable where invocation of the run method will clear the
+     *         specified cache
+     * @throws NullPointerException
+     *             if the specified cache is <tt>null</tt>.
+     */
+    public static Runnable clearAsRunnable(Cache<?, ?> cache) {
+        return new ClearRunnable(cache);
+    }
 
-        public CacheAsCacheLoader(Cache<K, V> cache) {
-            if (cache == null) {
-                throw new NullPointerException("cache is null");
-            }
-            this.cache = cache;
-        }
+    /**
+     * Returns the empty cache (immutable). This cache is serializable.
+     * <p>
+     * This example illustrates the type-safe way to obtain an empty cache:
+     * 
+     * <pre>
+     * Cache&lt;String, Date&gt; s = Caches.emptyCache();
+     * </pre>
+     * 
+     * Implementation note: Implementations of this method need not create a
+     * separate <tt>Cache</tt> object for each call. Using this method is
+     * likely to have comparable cost to using the like-named field. (Unlike
+     * this method, the field does not provide type safety.)
+     * 
+     * @see #EMPTY_CACHE
+     */
+    @SuppressWarnings("unchecked")
+    public static <K, V> Cache<K, V> emptyCache() {
+        return (Cache<K, V>) EMPTY_CACHE;
+    }
 
-        /** {@inheritDoc} */
-        public V load(K key) {
-            return cache.get(key);
-        }
+    /**
+     * Returns a Runnable that when executed will call the evict method on the
+     * supplied cache.
+     * 
+     * <pre>
+     * Cache c;
+     * ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
+     * ses.scheduleAtFixedRate(Caches.evictAsRunnable(c), 0, 60, TimeUnit.SECONDS);
+     * </pre>
+     * 
+     * @param cache
+     *            the cache on which to call evict
+     * @return a evict runnable
+     * @throws NullPointerException
+     *             if the cache is <tt>null</tt>.
+     */
+    public static Runnable evictAsRunnable(Cache<?, ?> cache) {
+        return new EvictRunnable(cache);
+    }
 
-        /** {@inheritDoc} */
-        public Map<K, V> loadAll(Collection<? extends K> keys) {
-            return cache.getAll(keys);
+    /**
+     * Wraps a Map inside a cache.
+     * 
+     * @param map
+     *            the map to wrap
+     * @return a Cache wrapping a map
+     */
+    public static <K, V> Cache<K, V> mapToCache(Map<K, V> map) {
+        return new MapAdapter<K, V>(map);
+    }
+
+    /**
+     * Returns a cache loader that returns <tt>null</tt> for any key. The
+     * loadAll() method will return a map with a mapping for each key to
+     * <tt>null</tt>.
+     * 
+     * @return a cache loader that returns <tt>null</tt> for any key.
+     */
+    public static <K, V> CacheLoader<K, V> nullLoader() {
+        return new NullLoader<K, V>();
+    }
+
+    /**
+     * Returns a synchronized (thread-safe) cache loader backed by the specified
+     * cache loader. In order to guarantee serial access, it is critical that
+     * <strong>all</strong> access to the backing cache loader is accomplished
+     * through the returned cache loader.
+     * <p>
+     * If the specified cache loader is an instance of an
+     * {@link org.coconut.cache.util.AbstractCacheLoader} the returned cache
+     * loader will also be an instance of an AbstractCacheLoader.
+     * <p>
+     * The returned cache loader will be serializable if the specified cache
+     * loader is serializable.
+     * 
+     * @param loader
+     *            the cache loader to be "wrapped" in a synchronized cache
+     *            loader.
+     * @return a synchronized cache loader using the specified cache loader.
+     */
+    public static <K, V> CacheLoader<K, V> synchronizedCacheLoader(
+            CacheLoader<K, V> loader) {
+        if (loader instanceof AbstractCacheLoader) {
+            return new SynchronizedAbstractCacheLoader<K, V>(loader);
+        } else {
+            return new SynchronizedCacheLoader<K, V>(loader);
         }
     }
 
     /**
+     * Returns an unmodifiable view of the specified cache. This method allows
+     * modules to provide users with "read-only" access to internal caches.
+     * Query operations on the returned cache "read through" to the specified
+     * cache, and attempts to modify the returned cache, whether direct or via
+     * its collection views, result in an <tt>UnsupportedOperationException</tt>.
+     * <p>
+     * The returned cache will be serializable if the specified cache is
+     * serializable.
+     * <p>
+     * The returned cache cannot guard against values entering the cache due to
+     * calls to get() which in turn invokes a cache loader to fetch the
+     * requested item.
+     * 
+     * @param c
+     *            the cache for which an unmodifiable view is to be returned.
+     * @return an unmodifiable view of the specified cache.
+     */
+    public static <K, V> Cache<K, V> unmodifiableCache(Cache<? extends K, ? extends V> c) {
+        return new UnmodifiableCache<K, V>(c);
+    }
+
+    // /CLOVER:OFF
+    /** Cannot instantiate. */
+    private Caches() {
+    }
+
+    // /CLOVER:ON
+
+    /**
      * A runnable used for calling clear on a cache.
      */
-    static class ClearRunnable implements Runnable, Serializable {
+    static class ClearRunnable implements ExecutorEvent.Clear, Serializable {
 
         /** serialVersionUID */
         private static final long serialVersionUID = -9150488448517115905L;
@@ -96,9 +212,16 @@ public final class Caches {
         public void run() {
             cache.clear();
         }
+
+        /**
+         * @see org.coconut.cache.spi.ExecutorEvent.Clear#getCache()
+         */
+        public Cache getCache() {
+            return cache;
+        }
     }
 
-    static class EvictRunnable implements Runnable, Serializable {
+    static class EvictRunnable implements ExecutorEvent.Evict, Serializable {
 
         /** serial version UID */
         private static final long serialVersionUID = 5989561008827627705L;
@@ -115,97 +238,12 @@ public final class Caches {
         public void run() {
             cache.evict();
         }
-    }
-
-    /**
-     * The default implementation of a <code>HitStat<code>.
-     * 
-     * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
-     */
-    static final class ImmutableHitStat implements Cache.HitStat, Serializable {
-
-        /** serialVersionUID. */
-        private static final long serialVersionUID = 2775783950714414347L;
-
-        /** The number of cache hits */
-        private final long hits;
-
-        /** The number of cache misses */
-        private final long misses;
 
         /**
-         * Constructs a new HitStat.
-         * 
-         * @param hits
-         *            the number of cache hits
-         * @param misses
-         *            the number of cache misses
+         * @see org.coconut.cache.spi.ExecutorEvent.Clear#getCache()
          */
-        ImmutableHitStat(Cache.HitStat hitstat) {
-            this(hitstat.getNumberOfHits(), hitstat.getNumberOfMisses());
-        }
-
-        /**
-         * Constructs a new HitStat.
-         * 
-         * @param hits
-         *            the number of cache hits
-         * @param misses
-         *            the number of cache misses
-         */
-        ImmutableHitStat(long hits, long misses) {
-            if (hits < 0) {
-                throw new IllegalArgumentException("hits must be 0 or greater");
-            } else if (misses < 0) {
-                throw new IllegalArgumentException("misses must be 0 or greater");
-            }
-            this.misses = misses;
-            this.hits = hits;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null || !(obj instanceof Cache.HitStat)) {
-                return false;
-            }
-            Cache.HitStat hs = (Cache.HitStat) obj;
-            return hs.getNumberOfHits() == hits && hs.getNumberOfMisses() == misses;
-        }
-
-        /** {@inheritDoc} */
-        public float getHitRatio() {
-            final long sum = hits + misses;
-            if (sum == 0) {
-                return Float.NaN;
-            }
-            return ((float) hits) / sum;
-        }
-
-        /** {@inheritDoc} */
-        public long getNumberOfHits() {
-            return hits;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public long getNumberOfMisses() {
-            return misses;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public int hashCode() {
-            long value = hits ^ misses;
-            return (int) (value ^ (value >>> 32));
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String toString() {
-            return Ressources.getMessageFormatter("org.coconut.cache.hitstat").format(
-                    new Object[] { getHitRatio(), hits, misses });
+        public Cache getCache() {
+            return cache;
         }
     }
 
@@ -272,13 +310,23 @@ public final class Caches {
         }
 
         /** {@inheritDoc} */
+        public CacheEntry<K, V> getEntry(Object key) {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
         public EventBus<CacheEvent<K, V>> getEventBus() {
             throw new UnsupportedOperationException();
         }
 
         /** {@inheritDoc} */
         public Cache.HitStat getHitStat() {
-            return STAT00;
+            return CacheUtil.STAT00;
+        }
+
+        /** {@inheritDoc} */
+        public ReadWriteLock getLock(K... keys) {
+            throw new UnsupportedOperationException();
         }
 
         /** {@inheritDoc} */
@@ -298,18 +346,25 @@ public final class Caches {
         }
 
         /** {@inheritDoc} */
-        public Future<?> loadAsync(K key) {
+        public Future<?> loadAllAsync(Collection<? extends K> keys) {
             throw new UnsupportedOperationException();
         }
 
         /** {@inheritDoc} */
-        public Future<?> loadAllAsync(Collection<? extends K> keys) {
+        public Future<?> loadAsync(K key) {
             throw new UnsupportedOperationException();
         }
 
         /** {@inheritDoc} */
         public V peek(Object key) {
             return map.get(key);
+        }
+
+        /**
+         * @see org.coconut.cache.Cache#peekEntry(java.lang.Object)
+         */
+        public CacheEntry<K, V> peekEntry(Object key) {
+            throw new UnsupportedOperationException();
         }
 
         /** {@inheritDoc} */
@@ -397,146 +452,6 @@ public final class Caches {
         public Collection<V> values() {
             return map.values();
         }
-
-        /** {@inheritDoc} */
-        public ReadWriteLock getLock(K... keys) {
-            throw new UnsupportedOperationException();
-        }
-
-        /** {@inheritDoc} */
-        public CacheEntry<K, V> getEntry(Object key) {
-            throw new UnsupportedOperationException();
-        }
-
-        /**
-         * @see org.coconut.cache.Cache#peekEntry(java.lang.Object)
-         */
-        public CacheEntry<K, V> peekEntry(Object key) {
-            throw new UnsupportedOperationException();
-        }
-    }
-
-    /**
-     * A {@link java.util.concurrent.Callable} that returns <code>null</code>
-     * on every invocation of {@link #call}.
-     */
-    final static class NullCallable<V> implements Callable<V>, Serializable {
-        /** serialVersionUID */
-        private static final long serialVersionUID = 4869209484084557763L;
-
-        /** {@inheritDoc} */
-        public V call() {
-            return null;
-        }
-    }
-
-    final static class ExtendedLoaderToLoader<K, V> implements CacheLoader<K, V> {
-
-        private final CacheLoader<K, ? extends CacheEntry<K, V>> loader;
-
-        ExtendedLoaderToLoader(CacheLoader<K, ? extends CacheEntry<K, V>> loader) {
-            this.loader = loader;
-        }
-
-        /** {@inheritDoc} */
-        public V load(K key) throws Exception {
-            CacheEntry<K, V> i = loader.load(key);
-            if (i == null) {
-                return null;
-            } else {
-                return i.getValue();
-            }
-        }
-
-        /** {@inheritDoc} */
-        public Map<K, V> loadAll(Collection<? extends K> keys) throws Exception {
-            HashMap<K, V> map = new HashMap<K, V>(keys.size());
-            Map<K, ? extends CacheEntry<K, V>> loaded = loader.loadAll(keys);
-            for (Map.Entry<K, ? extends CacheEntry<K, V>> e : loaded.entrySet()) {
-                if (e.getValue() == null) {
-                    map.put(e.getKey(), null);
-                } else {
-                    map.put(e.getKey(), e.getValue().getValue());
-                }
-            }
-            return map;
-        }
-    }
-
-    final static class AbstractExtendedLoaderToLoader<K, V> extends
-            AbstractCacheLoader<K, V> {
-
-        private final CacheLoader<K, ? extends CacheEntry<K, V>> loader;
-
-        AbstractExtendedLoaderToLoader(CacheLoader<K, ? extends CacheEntry<K, V>> loader) {
-            this.loader = loader;
-        }
-
-        /** {@inheritDoc} */
-        public V load(K key) throws Exception {
-            return loader.load(key).getValue();
-        }
-    }
-
-    final static class AbstractLoaderToExtendedLoader<K, V> extends
-            AbstractCacheLoader<K, CacheEntry<K, V>> {
-
-        private final CacheLoader<K, V> loader;
-
-        AbstractLoaderToExtendedLoader(CacheLoader<K, V> loader) {
-            this.loader = loader;
-        }
-
-        /** {@inheritDoc} */
-        public CacheEntry<K, V> load(K key) throws Exception {
-            V v = loader.load(key);
-            return v == null ? null : new DefaultCacheEntry<K, V>(key, v);
-        }
-    }
-
-    final static class AbstractAsyncLoaderToExtendedLoader<K, V> extends
-            AbstractCacheLoader<K, CacheEntry<K, V>> implements
-            AsyncCacheLoader<K, CacheEntry<K, V>> {
-
-        private final AsyncCacheLoader<K, V> loader;
-
-        AbstractAsyncLoaderToExtendedLoader(AsyncCacheLoader<K, V> loader) {
-            this.loader = loader;
-        }
-
-        /** {@inheritDoc} */
-        public CacheEntry<K, V> load(K key) throws Exception {
-            V v = loader.load(key);
-            return v == null ? null : new DefaultCacheEntry<K, V>(key, v);
-        }
-
-        /**
-         * @see org.coconut.cache.spi.AsyncCacheLoader#asyncLoad(java.lang.Object,
-         *      org.coconut.core.Callback)
-         */
-        public Future<?> asyncLoad(final K key, final Callback<CacheEntry<K, V>> c) {
-            return loader.asyncLoad(key, new Callback<V>() {
-
-                public void completed(V result) {
-                    CacheEntry<K, V> e = result == null ? null
-                            : new DefaultCacheEntry<K, V>(key, result);
-                    c.completed(e);
-                }
-
-                public void failed(Throwable cause) {
-                    c.failed(cause);
-                }
-            });
-        }
-
-        /**
-         * @see org.coconut.cache.spi.AsyncCacheLoader#asyncLoadAll(java.util.Collection,
-         *      org.coconut.core.Callback)
-         */
-        public Future<?> asyncLoadAll(Collection<? extends K> keys,
-                Callback<Map<K, CacheEntry<K, V>>> c) {
-            throw new UnsupportedOperationException();
-        }
     }
 
     final static class NullLoader<K, V> extends AbstractCacheLoader<K, V> implements
@@ -603,9 +518,8 @@ public final class Caches {
 
     final static class UnmodifiableCache<K, V> extends CacheDecorator<K, V> implements
             Serializable {
-        // TODO Get should be peek()??????
         /** serial version UID */
-        private static final long serialVersionUID = -8041219332852403222L;
+        private static final long serialVersionUID = 2573709165408359708L;
 
         /**
          * @param c
@@ -627,9 +541,38 @@ public final class Caches {
             throw new UnsupportedOperationException();
         }
 
+        /**
+         * @see org.coconut.cache.util.CacheDecorator#get(java.lang.Object)
+         */
+        @Override
+        public V get(Object key) {
+            return peek((K) key);
+        }
+
+        /**
+         * @see org.coconut.cache.util.CacheDecorator#getAll(java.util.Collection)
+         */
+        @Override
+        public Map<K, V> getAll(Collection<? extends K> keys) {
+            if (keys == null) {
+                throw new NullPointerException("keys is null");
+            }
+            Map<K, V> result = new HashMap<K, V>();
+            for (K k : keys) {
+                result.put(k, peek(k));
+            }
+            return result;
+        }
+
+        /**
+         * @see org.coconut.cache.util.CacheDecorator#getEntry(java.lang.Object)
+         */
+        @Override
+        public CacheEntry<K, V> getEntry(K key) {
+            return peekEntry(key);
+        }
+
         public EventBus<CacheEvent<K, V>> getEventBus() {
-            // TODO this is okay, just need to return an unmodifiable event bus
-            // we should probably define it in the event bus project
             throw new UnsupportedOperationException();
         }
 
@@ -637,11 +580,11 @@ public final class Caches {
             return Collections.unmodifiableSet(super.keySet());
         }
 
-        public Future<?> loadAsync(K key) {
+        public Future<?> loadAllAsync(Collection<? extends K> keys) {
             throw new UnsupportedOperationException();
         }
 
-        public Future<?> loadAllAsync(Collection<? extends K> keys) {
+        public Future<?> loadAsync(K key) {
             throw new UnsupportedOperationException();
         }
 
@@ -688,414 +631,5 @@ public final class Caches {
         public Collection<V> values() {
             return Collections.unmodifiableCollection(super.values());
         }
-
-        public ReadWriteLock getLock(K... keys) {
-            // TODO perhaps we should return the lock just make
-            // The thing is though that Lock does not have any non
-            // mutable operations.
-            throw new UnsupportedOperationException();
-        }
     }
-
-    // static class UnmodifiableReadWriteLock {
-    // private final Lock read;
-    // private final Lock write;
-    // }
-    //
-    // static class UnmodifiableLock implements Lock{
-    // private final Lock lock;
-    //
-    // /**
-    // * @see java.util.concurrent.locks.Lock#lock()
-    // */
-    // public void lock() {
-    // throw new UnsupportedOperationException("lock not supported by
-    // unmodifiable cache");
-    // }
-    //
-    // /**
-    // * @see java.util.concurrent.locks.Lock#lockInterruptibly()
-    // */
-    // public void lockInterruptibly() throws InterruptedException {
-    // throw new UnsupportedOperationException("lock not supported by
-    // unmodifiable cache");
-    // }
-    //
-    // /**
-    // * @see java.util.concurrent.locks.Lock#tryLock()
-    // */
-    // public boolean tryLock() {
-    // throw new UnsupportedOperationException("lock not supported by
-    // unmodifiable cache");
-    // }
-    //
-    // /**
-    // * @see java.util.concurrent.locks.Lock#tryLock(long,
-    // java.util.concurrent.TimeUnit)
-    // */
-    // public boolean tryLock(long time, TimeUnit unit) throws
-    // InterruptedException {
-    // throw new UnsupportedOperationException("lock not supported by
-    // unmodifiable cache");
-    // }
-    //
-    // /**
-    // * @see java.util.concurrent.locks.Lock#unlock()
-    // */
-    // public void unlock() {
-    // // TODO Auto-generated method stub
-    //            
-    // }
-    //
-    // /**
-    // * @see java.util.concurrent.locks.Lock#newCondition()
-    // */
-    // public Condition newCondition() {
-    // // TODO Auto-generated method stub
-    // return null;
-    // }
-    // }
-    // /**
-    // * Creates a thread-safe Cache that is held entirely in memory. The cache
-    // * returned is <tt>not</tt> optimized for heavy concurrency.
-    // *
-    // * @param policy
-    // * the replacement policy that should be used for determining
-    // * which elements to evict when the Cache is full.
-    // * @param maxSize
-    // * the maximum number of elements that the Cache can contain
-    // * @return the newly created Cache
-    // */
-    // public static <K, V> Cache<K, V> newFastMemoryCache(
-    // final CachePolicy policy, final int maxSize) {
-    // return null;
-    // // return new DefaultSynchronousCache<K, V>(policy, maxSize);
-    // }
-
-    // /**
-    // * Creates a thread-safe Cache that is held entirely in memory. If a
-    // request
-    // * is made for an element that is not in the cache the cache will try to
-    // get
-    // * the loader to create or fetch one for it. The cache returned is
-    // * <tt>not</tt> optimized for heavy concurrency.
-    // *
-    // * @param policy
-    // * the replacement policy that should be used for determining
-    // * which elements to evict when the Cache is full.
-    // * @param maxSize
-    // * the maximum number of elements that the cache can contain
-    // * @param loader
-    // * the loader that is used for creating or fetching elements that
-    // * are not present in the Cache
-    // * @return the newly created Cache
-    // */
-    // public static <K, V> Cache<K, V> newFastMemoryCache(
-    // final CachePolicy policy, final int maxSize,
-    // CacheLoader<K, V> loader) {
-    // return new CacheEntrySynchronousCache<K, V>(loader);
-    // }
-
-    // /**
-    // * Creates a new <code>CacheLoader</code> by wrapping multiple loaders.
-    // * Any Cache that access the loader will first ask the loader that is
-    // first
-    // * in the list of loaders. If the object cannot be found there it will ask
-    // * the loader that is second in the list and so on. If the value cannot be
-    // * found in any of the loaders null is returned. The <code>loadAll</code>
-    // * method has similiar semantics. Any map that is returned will return
-    // keys
-    // * that could be resolved to <code>null</code>.
-    // *
-    // * @param loaders the list of loaders that we should wrap
-    // * @return A CacheLoader that ask each loader by turn.
-    // */
-    // public static <K, V> ArrayCacheLoader<K, V>
-    // newCacfheLoader(CacheLoader<K, V>... loaders) {
-    // // CacheLoader[] array = loaders.toArray(new
-    // // CacheLoader[loaders.size()]);
-    // return new ArrayCacheLoader<K, V>(loaders);
-    // }
-
-    /**
-     * The empty cache (immutable). This cache is serializable.
-     * 
-     * @see #emptyCache()
-     */
-    public static final Cache EMPTY_CACHE;
-
-    /**
-     * A {@link java.util.concurrent.Callable} that returns <code>null</code>
-     * on every invocation of {@link #call}.
-     */
-    private static Callable NULL_CALLABLE = new NullCallable();
-
-    public static final Cache.HitStat STAT00 = new ImmutableHitStat(0, 0);
-
-    static {
-        EMPTY_CACHE = mapToCache(Collections.emptyMap());
-    }
-
-    /**
-     * Returns a Runnable that when executed will call the clear method on the
-     * specified cache.
-     * <p>
-     * The following example shows how this can be used to clear the cache every
-     * hour.
-     * 
-     * <pre>
-     * Cache c;
-     * ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
-     * ses.scheduleAtFixedRate(Caches.clearAsRunnable(c), 0, 3600, TimeUnit.SECONDS);
-     * </pre>
-     * 
-     * @param cache
-     *            the cache on which to call evict
-     * @return a runnable where invocation of the run method will clear the
-     *         specified cache
-     * @throws NullPointerException
-     *             if the specified cache is <tt>null</tt>.
-     */
-    public static Runnable clearAsRunnable(Cache<?, ?> cache) {
-        return new ClearRunnable(cache);
-    }
-
-    /**
-     * Returns the empty cache (immutable). This cache is serializable.
-     * <p>
-     * This example illustrates the type-safe way to obtain an empty cache:
-     * 
-     * <pre>
-     * Cache&lt;String, Date&gt; s = Caches.emptyCache();
-     * </pre>
-     * 
-     * Implementation note: Implementations of this method need not create a
-     * separate <tt>Cache</tt> object for each call. Using this method is
-     * likely to have comparable cost to using the like-named field. (Unlike
-     * this method, the field does not provide type safety.)
-     * 
-     * @see #EMPTY_CACHE
-     */
-    @SuppressWarnings("unchecked")
-    public static <K, V> Cache<K, V> emptyCache() {
-        return (Cache<K, V>) EMPTY_CACHE;
-    }
-
-    /**
-     * This method converts the specified cache to a cache loader. Calls to
-     * {@link CacheLoader#load(Object)} will be converted to calls on
-     * {@link Cache#get(Object)}. Calls to
-     * {@link CacheLoader#loadAll(Collection)} will be converted to calls on
-     * {@link Cache#getAll(Collection)}
-     * 
-     * @param c
-     *            the cache to load entries from
-     * @return a cache loader that can load values from another cache
-     */
-    public static <K, V> CacheLoader<K, V> cacheAsLoader(Cache<K, V> c) {
-        return new CacheAsCacheLoader<K, V>(c);
-    }
-
-    /**
-     * Returns a Runnable that when executed will call the evict method on the
-     * supplied cache.
-     * 
-     * <pre>
-     * Cache c;
-     * ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
-     * ses.scheduleAtFixedRate(Caches.evictAsRunnable(c), 0, 60, TimeUnit.SECONDS);
-     * </pre>
-     * 
-     * @param cache
-     *            the cache on which to call evict
-     * @return a evict runnable
-     * @throws NullPointerException
-     *             if the cache is <tt>null</tt>.
-     */
-    public static Runnable evictAsRunnable(Cache<?, ?> cache) {
-        return new EvictRunnable(cache);
-    }
-
-    static class CronUpdateTimeChecker implements Filter<CacheEntry> {
-
-        /**
-         * @see org.coconut.filter.Filter#accept(java.lang.Object)
-         */
-        public boolean accept(CacheEntry element) {
-            long updateTime = element.getLastUpdateTime();
-            // TODO Auto-generated method stub
-            return false;
-        }
-
-    }
-
-    public static Filter<CacheEntry> checkUpdateTime(String cronExpression) {
-        return null;
-    }
-
-    /**
-     * Wraps a Map inside a cache.
-     * 
-     * @param map
-     *            the map to wrap
-     * @return a Cache wrapping a map
-     */
-    public static <K, V> Cache<K, V> mapToCache(Map<K, V> map) {
-        return new MapAdapter<K, V>(map);
-    }
-
-    /**
-     * Creates new a new HitStat object with the same number of hits and misses
-     * as the specified HitStat.
-     * 
-     * @param copyFrom
-     *            the HitStat to copy from
-     * @return
-     */
-    public static Cache.HitStat newImmutableHitStat(Cache.HitStat copyFrom) {
-        return new ImmutableHitStat(copyFrom);
-    }
-
-    public static Cache.HitStat newImmutableHitStat(long hits, long misses) {
-        return new ImmutableHitStat(hits, misses);
-    }
-
-    /**
-     * Constructs a new Cache which is held entirely in memory and which
-     * capacity is only limited by the the amount of physical memory. This Cache
-     * is optimized for a high amount of Retrieval operations (get) and
-     * generally do not block these operations, so may overlap with update
-     * operations (including put and remove). For aggregate operations such as
-     * <tt>putAll</tt> and <tt>clear</tt>, concurrent retrievals may
-     * reflect insertion or removal of only some entries. Similarly, Iterators
-     * and Enumerations return elements reflecting the state of the cache at
-     * some point at or since the creation of the iterator/enumeration. They do
-     * <em>not</em> throw {@link java.util.ConcurrentModificationException}.
-     * However, iterators are designed to be used by only one thread at a time.
-     * <p>
-     * The following special conditions apply:
-     * <ul>
-     * <li> {@link Cache#getEventBus()} is not supported and throws an
-     * {@link java.lang.UnsupportedOperationException}.
-     * <li> {@link Cache#getHitStat()} returns a instance of a
-     * {@link Cache.HitStat} with no records of hits or misses and a ratio of
-     * -1.
-     * <li> Calls to {@link Cache#evict()}, {@link Cache#load(Object)},
-     * {@link Cache#loadAll(Collection)} and {@link Cache#resetStatistics()} has
-     * no effect and returns immediatly.
-     * </ul>
-     * <p>
-     * 
-     * @return a new unlimited cache
-     */
-    public static <K, V> Cache<K, V> newUnlimitedCache() {
-        // return new CacheEntrySynchronousCache<K, V>();
-        return null;
-    }
-
-    /**
-     * A {@link java.util.concurrent.Callable} that returns <code>null</code>
-     * on every invocation of {@link java.util.concurrent.Callable#call}.
-     */
-    @SuppressWarnings("unchecked")
-    public static <V> Callable<V> nullCallable() {
-        return NULL_CALLABLE;
-    }
-
-    /**
-     * Returns a cache loader that returns <tt>null</tt> for any key. The
-     * loadAll() method will return a map with a mapping for each key to
-     * <tt>null</tt>.
-     * 
-     * @return a cache loader that returns <tt>null</tt> for any key.
-     */
-    public static <K, V> CacheLoader<K, V> nullLoader() {
-        return new NullLoader<K, V>();
-    }
-
-    /**
-     * Returns a synchronized (thread-safe) cache loader backed by the specified
-     * cache loader. In order to guarantee serial access, it is critical that
-     * <strong>all</strong> access to the backing cache loader is accomplished
-     * through the returned cache loader.
-     * <p>
-     * If the specified cache loader is an instance of an
-     * {@link org.coconut.cache.util.AbstractCacheLoader} the returned cache
-     * loader will also be an instance of an AbstractCacheLoader.
-     * <p>
-     * The returned cache loader will be serializable if the specified cache
-     * loader is serializable.
-     * 
-     * @param loader
-     *            the cache loader to be "wrapped" in a synchronized cache
-     *            loader.
-     * @return a synchronized cache loader using the specified cache loader.
-     */
-    public static <K, V> CacheLoader<K, V> synchronizedCacheLoader(
-            CacheLoader<K, V> loader) {
-        if (loader instanceof AbstractCacheLoader) {
-            return new SynchronizedAbstractCacheLoader<K, V>(loader);
-        } else {
-            return new SynchronizedCacheLoader<K, V>(loader);
-        }
-    }
-
-    public static <K, V> CacheLoader<K, V> fromExtendedCacheLoader(
-            CacheLoader<K, ? extends CacheEntry<K, V>> loader) {
-        if (loader instanceof AbstractCacheLoader) {
-            return new AbstractExtendedLoaderToLoader<K, V>(loader);
-        } else {
-            return new ExtendedLoaderToLoader<K, V>(loader);
-        }
-    }
-
-    public static <K, V> AsyncCacheLoader<K, V> asAsyncCacheLoader(
-            CacheLoader<K, V> loader, Executors e) {
-        return null;
-    }
-
-    public static <K, V> AsyncCacheLoader<K, CacheEntry<K, V>> asAsyncExtendedCacheLoader(
-            CacheLoader<K, CacheEntry<K, V>> loader, Executors e) {
-        return null;
-    }
-
-    public static <K, V> CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> toExtendedCacheLoader(
-            CacheLoader<K, V> loader) {
-        return loader instanceof AsyncCacheLoader ? new AbstractAsyncLoaderToExtendedLoader<K, V>(
-                (AsyncCacheLoader) loader)
-                : new AbstractLoaderToExtendedLoader(loader);
-    }
-
-    /**
-     * Returns an unmodifiable view of the specified cache. This method allows
-     * modules to provide users with "read-only" access to internal caches.
-     * Query operations on the returned cache "read through" to the specified
-     * cache, and attempts to modify the returned cache, whether direct or via
-     * its collection views, result in an <tt>UnsupportedOperationException</tt>.
-     * <p>
-     * The returned cache will be serializable if the specified cache is
-     * serializable.
-     * <p>
-     * The returned cache cannot guard against values entering the cache due to
-     * calls to get() which in turn invokes a cache loader to fetch the
-     * requested item.
-     * 
-     * @param c
-     *            the cache for which an unmodifiable view is to be returned.
-     * @return an unmodifiable view of the specified cache.
-     */
-    public static <K, V> Cache<K, V> unmodifiableCache(Cache<? extends K, ? extends V> c) {
-        return new UnmodifiableCache<K, V>(c);
-    }
-
-    public static boolean supportsJMX(Cache<?, ?> cache) {
-        return cache.getClass().isAnnotationPresent(CacheSupport.class)
-                && cache.getClass().getAnnotation(CacheSupport.class).JMXSupport();
-    }
-
-    // /CLOVER:OFF
-    /** Cannot instantiate. */
-    private Caches() {
-    }
-    // /CLOVER:ON
 }

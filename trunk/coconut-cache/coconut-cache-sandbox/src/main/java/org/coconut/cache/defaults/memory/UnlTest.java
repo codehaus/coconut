@@ -11,6 +11,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheFilters;
+import org.coconut.cache.defaults.UnsynchronizedCache;
 import org.coconut.cache.policy.Policies;
 import org.coconut.cache.tck.util.IntegerToStringLoader;
 
@@ -33,7 +34,7 @@ public class UnlTest {
     public static void main(String[] args) throws InterruptedException {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.newConf();
         cc.backend().setBackend(new IntegerToStringLoader());
-        cc.eviction().setMaximumCapacity(10000);
+        cc.eviction().setMaximumSize(10000);
         cc.eviction().setPolicy(Policies.newLRU());
         UnsynchronizedCache uc = new UnsynchronizedCache(cc);
         for (int i = 0; i < 1000; i++) {
