@@ -1,0 +1,51 @@
+/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the MIT license, see http://coconut.codehaus.org/license.
+ */
+package org.coconut.cache.examples.general;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
+
+import org.coconut.cache.Cache;
+import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.defaults.UnsynchronizedCache;
+import org.coconut.cache.util.AbstractCacheLoader;
+
+/**
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ */
+public class CacheHTTPExample {
+    static class UrlLoader extends AbstractCacheLoader<String, String> {
+        public String load(String key) throws Exception {
+            URL url = new URL(key);
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(url.openStream()));
+            StringBuilder sb = new StringBuilder();
+            int str;
+            while ((str = in.read()) != -1) {
+                sb.append((char) str);
+            }
+            in.close();
+            return sb.toString();
+        }
+    }
+
+    public static void main(String[] args) {
+        CacheConfiguration<String, String> cc = CacheConfiguration.newConf();
+        cc.setName("MyCache");
+        cc.backend().setBackend(new UrlLoader());
+        UnsynchronizedCache<String, String> c = cc.create(UnsynchronizedCache.class);
+        readGoogle(c,"Not Cached:");
+        readGoogle(c,"Cached    :");
+    }
+
+    public static void readGoogle(Cache<?, ?> c, String prefix) {
+        long start = System.currentTimeMillis();
+        c.get("http://www.google.com");
+        System.out.println(prefix + " Time to read www.google.com: "
+                + (System.currentTimeMillis() - start));
+    }
+
+}
