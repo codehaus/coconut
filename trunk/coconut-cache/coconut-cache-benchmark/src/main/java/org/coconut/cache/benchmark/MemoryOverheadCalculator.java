@@ -3,12 +3,17 @@
  */
 package org.coconut.cache.benchmark;
 
+import com.opensymphony.oscache.base.algorithm.UnlimitedCache;
 import com.whirlycott.cache.Cache;
 import com.whirlycott.cache.CacheConfiguration;
 import com.whirlycott.cache.CacheManager;
 
 import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -56,19 +61,16 @@ public class MemoryOverheadCalculator {
 
         System.out
                 .println("|| JDK Implementations \\\\ || 1 Object || 10 Objects || 100 Objects || 1.000 Objects || 10.000 Objects || 100.000 Objects || Elements/MB ||");
-        // t.test(new Ref(ConcurrentHashMap.class));
-        // t.test(new Ref(HashMap.class));
-        // t.test(new Ref(Hashtable.class));
-        // t.test(new Ref(LinkedHashMap.class));
-        // t.test(new Ref(TreeMap.class));
-        // System.out
-        // .println("|| Coconut Cache Implementations \\\\ || || || || || || ||
-        // ||");
-        // t.test(new Ref(UnlimitedCache.class));
-        // System.out.println("|| Other Cache Implementations \\\\ || || || ||
-        // || || || ||");
+         t.test(new Ref(ConcurrentHashMap.class));
+         t.test(new Ref(HashMap.class));
+         t.test(new Ref(Hashtable.class));
+         t.test(new Ref(LinkedHashMap.class));
+         t.test(new Ref(TreeMap.class));
+         System.out.println("|| Coconut Cache Implementations \\\\ || || || || || || || ||");
+         t.test(new Ref(UnlimitedCache.class));
+         System.out.println("|| Other Cache Implementations \\\\ || || || || || || || ||");
         t.test(new OSCacheTester<Integer, Integer>());
-        //t.test(new WhirlyCacheTester<Integer, Integer>());
+        t.test(new WhirlyCacheTester<Integer, Integer>());
     }
 
     private static void runGC() throws Exception {

@@ -10,7 +10,6 @@ import com.whirlycott.cache.CacheManager;
 import java.io.PrintWriter;
 
 import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Layout;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.SimpleLayout;

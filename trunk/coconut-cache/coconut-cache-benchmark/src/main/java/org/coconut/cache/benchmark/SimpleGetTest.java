@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.defaults.memory.UnsynchronizedCache;
+import org.coconut.cache.defaults.UnsynchronizedCache;
 import org.coconut.cache.policy.Policies;
 
 /**
@@ -25,11 +25,11 @@ public class SimpleGetTest {
         for (int i = 0; i < size; i++) {
             ints[i] = i;
         }
-        List shuffleMe = Arrays.asList(ints);
+        List<Integer> shuffleMe = Arrays.asList(ints);
         Collections.shuffle(shuffleMe);
         Integer[] shuffled = (Integer[]) shuffleMe.toArray();
         CacheConfiguration cc = CacheConfiguration.newConf();
-        cc.eviction().setPolicy(Policies.newLRU()).setMaximumCapacity(100000);
+        cc.eviction().setPolicy(Policies.newLRU()).setMaximumSize(100000);
 
         Map map;
         map = new UnsynchronizedCache(cc);

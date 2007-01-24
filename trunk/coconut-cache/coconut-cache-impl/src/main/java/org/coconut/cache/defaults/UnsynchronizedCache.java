@@ -2,7 +2,7 @@
  * the MIT license, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.cache.defaults.memory;
+package org.coconut.cache.defaults;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,18 +13,16 @@ import java.util.Map;
 import org.coconut.annotation.ThreadSafe;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.CacheEvent;
-import org.coconut.cache.defaults.support.CacheStatisticsCacheService;
-import org.coconut.cache.defaults.support.EventCacheService;
-import org.coconut.cache.defaults.support.EvictionCacheService;
-import org.coconut.cache.defaults.support.ManagementCacheService;
-import org.coconut.cache.defaults.support.StoreCacheService;
-import org.coconut.cache.defaults.support.expiration.ExpirationCacheService;
-import org.coconut.cache.defaults.support.expiration.FinalExpirationCacheService;
-import org.coconut.cache.defaults.support.loading.EntryCacheService;
+import org.coconut.cache.internal.services.CacheStatisticsCacheService;
+import org.coconut.cache.internal.services.EventCacheService;
+import org.coconut.cache.internal.services.EvictionCacheService;
+import org.coconut.cache.internal.services.ManagementCacheService;
+import org.coconut.cache.internal.services.StoreCacheService;
+import org.coconut.cache.internal.services.expiration.ExpirationCacheService;
+import org.coconut.cache.internal.services.expiration.FinalExpirationCacheService;
+import org.coconut.cache.internal.services.loading.CacheEntryLoaderService;
 import org.coconut.cache.spi.CacheSupport;
 import org.coconut.cache.spi.service.CacheServiceManager;
-import org.coconut.event.EventBus;
 
 /**
  * <b>Note that this implementation is not synchronized.</b> If multiple
@@ -42,11 +40,9 @@ import org.coconut.event.EventBus;
 @CacheSupport(CacheLoadingSupport = true, CacheEntrySupport = true, querySupport = true, ExpirationSupport = true, statisticsSupport = true, eventSupport = true)
 @ThreadSafe(false)
 public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
-    private final EventCacheService<K, V> eventSupport;
-
     private final StoreCacheService.EntrySupport<K, V> storeSupport;
 
-    private final OpenHashMap<K, V> map;
+    private final EntryMap<K, V> map;
 
     @SuppressWarnings("unchecked")
     public UnsynchronizedCache() {
@@ -56,7 +52,6 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
     public UnsynchronizedCache(CacheConfiguration<K, V> conf) {
         super(conf);
         storeSupport = getCsm().create(StoreCacheService.EntrySupport.class);
-        eventSupport = getCsm().create(EventCacheService.class);
         getCsm().initializeApm(getManagementSupport().getGroup());
         // important must be last, because of final value being inlined.
         map = new MyMap();
@@ -67,11 +62,7 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
 
     @SuppressWarnings("unchecked")
     public UnsynchronizedCache(Map<K, V> map) {
-        this();
-        if (map == null) {
-            throw new NullPointerException("map is null");
-        }
-        putAll(map);
+        this((CacheConfiguration) CacheConfiguration.newConf().setInitialMap(map));
     }
 
     /**
@@ -80,7 +71,7 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
     public void clear() {
         int size = size();
         map.clear();
-        eventSupport.cleared(this, size);
+        getEventService().cleared(this, size);
     }
 
     @Override
@@ -95,19 +86,19 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
                 if (getExpirationSupport().evictRemove(this, m)) {
                     iterator.remove();
                     expireCount++;
-                    eventSupport.expired(this, m);
+                    getEventService().expired(this, m);
                 }
             }
             List<AbstractCacheEntry<K, V>> evictThese = getEvictionSupport().evict(
                     map.size(), 0);
             for (AbstractCacheEntry<K, V> e : evictThese) {
                 map.remove(e.getKey());
-                eventSupport.evicted(this, e);
+                getEventService().evicted(this, e);
                 evictCount++;
             }
         } finally {
-            eventSupport.expired(this, expireCount);
-            eventSupport.evicted(this, evictCount);
+            getEventService().expired(this, expireCount);
+            getEventService().evicted(this, evictCount);
             getStatisticsSupport().entryExpired(expireCount);
             getStatisticsSupport().cacheEvictStop(this, start, evictCount);
         }
@@ -128,7 +119,7 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
                 map.put(entry);
                 entry.accessed();
             }
-            eventSupport.getAndLoad(this, key, ce);
+            getEventService().getAndLoad(this, key, ce);
             getStatisticsSupport().entryGetStop(entry, start, false);
         } else if (getExpirationSupport().isExpired(entry)) {
             CacheEntry<K, V> loadEntry = getLoaderSupport().load(key);
@@ -144,7 +135,7 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
                 entry.accessed();
                 entry = newEntry;
             }
-            eventSupport.expiredAndGet(this, key, loadEntry);
+            getEventService().expiredAndGet(this, key, loadEntry);
             getStatisticsSupport().entryGetStop(entry, start, false);
         } else {
             if (getExpirationSupport().needsRefresh(entry)) {
@@ -153,15 +144,10 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
             entry.increment();
             entry.accessed();
             getEvictionSupport().touch(entry.getPolicyIndex());
-            eventSupport.getHit(this, entry);
+            getEventService().getHit(this, entry);
             getStatisticsSupport().entryGetStop(entry, start, true);
         }
         return entry;
-    }
-
-    @Override
-    public EventBus<CacheEvent<K, V>> getEventBus() {
-        return eventSupport.getEventBus();
     }
 
     @Override
@@ -174,12 +160,6 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
         putAllMyEntries(am);
     }
 
-    @Override
-    public void putEntry(CacheEntry<K, V> entry) {
-        AbstractCacheEntry<K, V> me = newEntry(entry, map.get(entry.getKey()), null,
-                null, 0, false);
-        putMyEntry(me);
-    }
 
     @Override
     public V remove(Object key) {
@@ -189,29 +169,20 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
         AbstractCacheEntry<K, V> e = map.remove(key);
         if (e != null) {
             getEvictionSupport().remove(e.getPolicyIndex());
-            eventSupport.removed(this, e);
+            getEventService().removed(this, e);
         }
         return e == null ? null : e.getValue();
     }
 
-    public void trimToSize(int newSize) {
-        while (newSize < size()) {
-            evictNext();
-        }
-    }
-
-
-    private AbstractCacheEntry<K, V> newEntry(CacheEntry<K, V> entry,
-            AbstractCacheEntry<K, V> existing, K key, V value, long expirationTimeMilli,
-            boolean isExpired) {
-        return AbstractCacheEntry.UnsynchronizedCacheEntry.newEntry(this, entry,
-                existing, key, value, expirationTimeMilli, isExpired);
+    @Override
+    AbstractCacheEntry.EntryFactory<K, V> getEntryFactory() {
+        return AbstractCacheEntry.UNSYNC;
     }
 
     void evictNext() {
         AbstractCacheEntry<K, V> e = getEvictionSupport().evictNext();
         map.remove(e.getKey());
-        eventSupport.removed(this, e);
+        getEventService().removed(this, e);
     }
 
     @SuppressWarnings("unchecked")
@@ -220,19 +191,11 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
         csm.setService(CacheStatisticsCacheService.class);
         csm.setService(EvictionCacheService.class);
         csm.setService(ExpirationCacheService.class, FinalExpirationCacheService.class);
-        csm.setService(EntryCacheService.class);
+        csm.setService(CacheEntryLoaderService.class);
         csm.setService(ManagementCacheService.class);
         csm.setService(StoreCacheService.EntrySupport.class);
         csm.setService(EventCacheService.class);
         return csm;
-    }
-
-    @Override
-    protected V put0(K key, V value, long expirationTimeMilli) {
-        AbstractCacheEntry<K, V> me = newEntry(null, map.get(key), key, value,
-                expirationTimeMilli, false);
-        AbstractCacheEntry<K, V> prev = putMyEntry(me);
-        return prev == null ? null : prev.getValue();
     }
 
     @Override
@@ -251,22 +214,22 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
     }
 
     void putAllMyEntries(Collection<? extends AbstractCacheEntry<K, V>> entries) {
-        Map<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>> m = map
-                .putAll(entries);
+        Map<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>> m = map.putAll(entries);
         for (Map.Entry<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>> entry : m
                 .entrySet()) {
             AbstractCacheEntry<K, V> mm = entry.getKey();
             if (mm.getPolicyIndex() >= 0) {
-                eventSupport.put(this, mm, entry.getValue());
+                getEventService().put(this, mm, entry.getValue());
             }
         }
     }
 
+    @Override
     AbstractCacheEntry<K, V> putMyEntry(AbstractCacheEntry<K, V> me) {
         storeSupport.storeEntry(me);
         AbstractCacheEntry<K, V> prev = map.put(me);
         if (me.getPolicyIndex() >= 0) {// check rejected by policy
-            eventSupport.put(this, me, prev);
+            getEventService().put(this, me, prev);
         }
         return prev;
     }
@@ -275,7 +238,7 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
      * @see org.coconut.cache.defaults.memory.SupportedCache#getMap()
      */
     @Override
-    OpenHashMap<K, V> getMap() {
+    EntryMap<K, V> getMap() {
         return map;
     }
 }

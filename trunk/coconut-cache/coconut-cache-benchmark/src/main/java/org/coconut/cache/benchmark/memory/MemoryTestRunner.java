@@ -9,7 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.coconut.cache.defaults.memory.UnsynchronizedCache;
+import org.coconut.cache.defaults.UnsynchronizedCache;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

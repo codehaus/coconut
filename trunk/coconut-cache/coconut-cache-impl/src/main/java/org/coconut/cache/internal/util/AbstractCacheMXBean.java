@@ -2,7 +2,7 @@
  * the MIT license, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.cache.defaults.util;
+package org.coconut.cache.internal.util;
 
 import java.util.Properties;
 

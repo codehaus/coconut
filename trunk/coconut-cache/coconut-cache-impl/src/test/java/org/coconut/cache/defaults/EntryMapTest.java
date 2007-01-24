@@ -2,16 +2,16 @@
  * the MIT license, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.cache.defaults.util;
+package org.coconut.cache.defaults;
 
 import org.junit.Test;
 
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id$
+ * @version $Id: CacheEntryMapTest.java 186 2007-01-24 12:30:38Z kasper $
  */
-public class CacheEntryMapTest {
+public class EntryMapTest {
 
     @Test
     public void testNoting() {

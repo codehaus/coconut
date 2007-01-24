@@ -15,7 +15,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.defaults.util.DieMutableCacheEntry;
+import org.coconut.cache.internal.util.DieMutableCacheEntry;
 import org.coconut.test.MockTestCase;
 
 public class MutableCacheEntryTest extends MockTestCase {

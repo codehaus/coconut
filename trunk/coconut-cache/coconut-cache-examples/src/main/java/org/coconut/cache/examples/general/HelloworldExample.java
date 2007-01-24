@@ -5,7 +5,7 @@ package org.coconut.cache.examples.general;
 
 // START SNIPPET: class
 import org.coconut.cache.Cache;
-import org.coconut.cache.defaults.memory.UnsynchronizedCache;
+import org.coconut.cache.defaults.UnsynchronizedCache;
 
 public class HelloworldExample {
     public static void main(String[] args) {
