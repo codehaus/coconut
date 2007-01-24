@@ -35,6 +35,4 @@ public class DefaultFilterMatcher<K, E> extends AbstractFilterMatcher<K, E> {
         }
         return al;
     }
-
-    //public FilterMatcher<K,E> fromMap
 }
