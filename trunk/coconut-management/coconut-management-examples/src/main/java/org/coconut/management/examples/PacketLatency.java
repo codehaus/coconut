@@ -23,16 +23,20 @@ public class PacketLatency {
 
         // create a long counter with a name & description
         // and register it with the platform Mbeanserver
-        LongSamplingCounter lr = grp.add(new LongSamplingCounter(
-                "Packets Received (Bytes)", ""));
+        LongSamplingCounter lr = new LongSamplingCounter("Packets Received (Bytes)", "");
         // adds an average of the number of samplings pr second
         // mg.add(new TimedAverage(lr.getRunningTotal(), "Bytes/s"));
-        TimedAverage ta = grp.add(new TimedAverage(lr.liveTotal(), "Bytes/s"), 1,
-                TimeUnit.SECONDS);
-        ta.addEventHandler(grp.add(new DoubleSamplingCounter()));
-        ta.addEventHandler(grp.add(new SingleExponentialSmoothing(0.3, "Bytes/s (SES)")));
+        TimedAverage ta = new TimedAverage(lr.liveTotal(), "Bytes/s");
 
-        grp.startAndRegister("my.app:name=PacketObserver");
+        DoubleSamplingCounter dsc = new DoubleSamplingCounter();
+        ta.addEventHandler(dsc);
+
+        SingleExponentialSmoothing ses = new SingleExponentialSmoothing(0.3,
+                "Bytes/s (SES)");
+        ta.addEventHandler(ses);
+
+        grp.add(lr).add(ta, 1, TimeUnit.SECONDS).add(dsc).add(ses).startAndRegister(
+                "my.app:name=PacketObserver");
         Random r = new Random();
         // simulate receiving a packet and report latency
         for (int i = 0; i < 10000; i++) {

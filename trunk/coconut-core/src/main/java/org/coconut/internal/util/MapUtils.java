@@ -25,7 +25,7 @@ public class MapUtils {
     }
     
 
-    static final class ImmutableMapEntry<K, V> implements Entry<K, V>, Serializable {
+    public static final class ImmutableMapEntry<K, V> implements Entry<K, V>, Serializable {
 
         /** serialVersionUID. */
         private static final long serialVersionUID = -4374349503886412002L;

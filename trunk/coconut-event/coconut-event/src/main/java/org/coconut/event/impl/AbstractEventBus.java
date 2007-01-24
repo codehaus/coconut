@@ -27,10 +27,6 @@ public abstract class AbstractEventBus<E> implements EventBus<E> {
 
     private final ThreadLocal<Boolean> allowReentrant;
 
-    public AbstractEventBus() {
-        this(EventBusConfiguration.DEFAULT_CONFIGURATION);
-    }
-
     public AbstractEventBus(EventBusConfiguration<E> conf) {
         this.conf = conf;
         if (conf.getCheckReentrant()) {

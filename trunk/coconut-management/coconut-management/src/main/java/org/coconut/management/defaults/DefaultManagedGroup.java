@@ -9,9 +9,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+import javax.management.JMException;
 import javax.management.MBeanServer;
 
 import org.coconut.core.Named;
@@ -28,19 +28,19 @@ public class DefaultManagedGroup implements ManagedGroup {
     private final static Pattern PATTERN = Pattern
             .compile("[\\da-zA-Z\\x5F]*(\\x2E([\\da-z\\x5F])+)*");
 
-    private final String name;
+    private final List<Object> apms = new ArrayList<Object>();
 
     private String description;
 
-    private final List<Object> apms = new ArrayList<Object>();
-
     private final Map<String, DefaultManagedGroup> groups = new HashMap<String, DefaultManagedGroup>();
+
+    private final String name;
 
     private final DefaultManagedGroup parent;
 
-    private boolean register;
+    private boolean doRegister;
 
-    private String pattern;
+    private MBeanServer server = ManagementFactory.getPlatformMBeanServer();
 
     public DefaultManagedGroup(String name, boolean register) {
         this(name, null, register);
@@ -50,28 +50,26 @@ public class DefaultManagedGroup implements ManagedGroup {
         checkName(name);
         this.name = name;
         this.parent = parent;
-        this.register = register;
+        this.doRegister = register;
     }
 
-    private void checkName(String name) {
-        if (true) {
-            return;
-        }
-        if (name == null) {
-            throw new NullPointerException("name is null");
-        } else if (!PATTERN.matcher(name).matches()) {
-            throw new IllegalArgumentException("not a valid name, was " + name);
-        }
+    /**
+     * @param e
+     * @return
+     * @see java.util.Collection#add(java.lang.Object)
+     */
+    public synchronized ManagedGroup add(Object e) {
+        apms.add(e);
+        return this;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-
-    public synchronized void setMbeanServer(MBeanServer server) {
-        this.server = server;
+    /**
+     * @see org.coconut.apm.next.ApmGroup#addAsGroup(org.coconut.core.Named)
+     */
+    public ManagedGroup addAsGroup(Named name) {
+        ManagedGroup gm = addGroup(name.getName(), "No description");
+        gm.add(name);
+        return gm;
     }
 
     public ManagedGroup addGroup(String name, String description) {
@@ -98,52 +96,11 @@ public class DefaultManagedGroup implements ManagedGroup {
     }
 
     /**
-     * @see org.coconut.apm.ApmGroup#getGroups()
-     */
-    public synchronized Collection<ManagedGroup> getGroups() {
-        return new ArrayList<ManagedGroup>(groups.values());
-    }
-
-    /**
-     * @see org.coconut.apm.ApmGroup#getParentGroup()
-     */
-    public synchronized ManagedGroup getParentGroup() {
-        return parent;
-    }
-
-    /**
-     * @param e
-     * @return
-     * @see java.util.Collection#add(java.lang.Object)
-     */
-    public synchronized <T> T add(T e) {
-        apms.add(e);
-        return e;
-    }
-
-    /**
-     * @see org.coconut.apm.next.ApmGroup#addAsGroup(org.coconut.core.Named)
-     */
-    public ManagedGroup addAsGroup(Named name) {
-        ManagedGroup gm = addGroup(name.getName(), "No description");
-        gm.add(name);
-        return gm;
-    }
-
-    /**
      * @see org.coconut.apm.next.ApmGroup#getAll()
      */
     public synchronized Collection<?> getAll() {
         // TODO Auto-generated method stub
         return new ArrayList(apms);
-    }
-
-    /**
-     * @see org.coconut.apm.next.ApmGroup#remove()
-     */
-    public void remove() {
-        // TODO Auto-generated method stub
-
     }
 
     /**
@@ -154,9 +111,27 @@ public class DefaultManagedGroup implements ManagedGroup {
     }
 
     /**
+     * @see org.coconut.apm.ApmGroup#getGroups()
+     */
+    public synchronized Collection<ManagedGroup> getGroups() {
+        return new ArrayList<ManagedGroup>(groups.values());
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @see org.coconut.apm.ApmGroup#getParentGroup()
+     */
+    public synchronized ManagedGroup getParentGroup() {
+        return parent;
+    }
+
+    /**
      * @see org.coconut.apm.next.ApmGroup#register(java.lang.String)
      */
-    public synchronized void register(String objectName) throws Exception {
+    public synchronized void register(String objectName) throws JMException {
         // We could use a cool syntes such as org.coconut.cache:name=$1,type=$2,
         // ..
         // and then do a replacement on $1, $2
@@ -171,7 +146,7 @@ public class DefaultManagedGroup implements ManagedGroup {
         }
 
         // deregister allready registered?
-        if (register) {
+        if (doRegister) {
             for (Object o : apms) {
                 register(bean, o);
             }
@@ -185,9 +160,9 @@ public class DefaultManagedGroup implements ManagedGroup {
     /**
      * @see org.coconut.management.ManagedGroup#register(org.coconut.management.JmxNamer)
      */
-    public void registerAll(JmxRegistrant namer) throws Exception {
+    public void registerAll(JmxRegistrant namer) throws JMException {
         NumberDynamicBean bean = new NumberDynamicBean(getDescription());
-        if (register) {
+        if (doRegister) {
             for (Object o : apms) {
                 register(bean, o);
             }
@@ -198,11 +173,34 @@ public class DefaultManagedGroup implements ManagedGroup {
         }
     }
 
-    void register(NumberDynamicBean bean, Object o) {
-        if (o instanceof SelfConfigure) {
-            ((SelfConfigure) o).configure(bean);
-        } else {
-            bean.add(o);
+    /**
+     * @see org.coconut.apm.next.ApmGroup#remove()
+     */
+    public void remove() {
+        // TODO Auto-generated method stub
+
+    }
+
+    public synchronized void setMbeanServer(MBeanServer server) {
+        this.server = server;
+    }
+
+    /**
+     * @see org.coconut.apm.ApmGroup#unregister()
+     */
+    public void unregister() throws JMException {
+        // TODO Auto-generated method stub
+
+    }
+
+    private void checkName(String name) {
+        if (true) {
+            return;
+        }
+        if (name == null) {
+            throw new NullPointerException("name is null");
+        } else if (!PATTERN.matcher(name).matches()) {
+            throw new IllegalArgumentException("not a valid name, was " + name);
         }
     }
 
@@ -210,20 +208,12 @@ public class DefaultManagedGroup implements ManagedGroup {
         return parent == null ? 0 : parent.getLevel() + 1;
     }
 
-    /**
-     * @see org.coconut.apm.ApmGroup#add(java.lang.Runnable, long,
-     *      j33316011ava.util.concurrent.TimeUnit)
-     */
-    public <T extends Runnable> T add(T r, long time, TimeUnit unit) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * @see org.coconut.apm.ApmGroup#unregister()
-     */
-    public void unregister() throws Exception {
-        // TODO Auto-generated method stub
-
+    void register(NumberDynamicBean bean, Object o) {
+        if (o instanceof SelfConfigure) {
+            ((SelfConfigure) o).configure(bean);
+        } else {
+            bean.add(o);
+        }
     }
 
 }

@@ -76,7 +76,7 @@ public class JMXCacheService {
 
     public static ObjectName toObjectName(String name)
             throws MalformedObjectNameException {
-        return new ObjectName(CacheConfiguration.DEFAULT_JMX_DOMAIN + ":type=Cache,name="
+        return new ObjectName(CacheMXBean.DEFAULT_JMX_DOMAIN + ":type=Cache,name="
                 + name);
     }
 }

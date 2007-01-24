@@ -13,7 +13,6 @@ import static org.coconut.test.CollectionUtils.seq;
 import junit.framework.JUnit4TestAdapter;
 
 import org.coconut.cache.policy.ReplacementPolicy;
-import org.coconut.test.MavenDummyTest;
 import org.junit.Test;
 
 /**
@@ -21,7 +20,7 @@ import org.junit.Test;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-public class FIFOPolicyTest extends MavenDummyTest {
+public class FIFOPolicyTest {
 
     public static junit.framework.Test suite() {
         return new JUnit4TestAdapter(FIFOPolicyTest.class);

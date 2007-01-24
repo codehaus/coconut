@@ -9,10 +9,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import org.coconut.annotation.ThreadSafe;
 import org.coconut.cache.CacheConfiguration;
@@ -21,18 +17,14 @@ import org.coconut.cache.CacheEvent;
 import org.coconut.cache.defaults.support.CacheStatisticsCacheService;
 import org.coconut.cache.defaults.support.EventCacheService;
 import org.coconut.cache.defaults.support.EvictionCacheService;
-import org.coconut.cache.defaults.support.LoaderCacheService;
 import org.coconut.cache.defaults.support.ManagementCacheService;
 import org.coconut.cache.defaults.support.StoreCacheService;
-import org.coconut.cache.defaults.support.LoaderCacheService.EntrySupport;
 import org.coconut.cache.defaults.support.expiration.ExpirationCacheService;
 import org.coconut.cache.defaults.support.expiration.FinalExpirationCacheService;
-import org.coconut.cache.defaults.util.CacheEntryMap;
-import org.coconut.cache.spi.AbstractCache;
+import org.coconut.cache.defaults.support.loading.EntryCacheService;
 import org.coconut.cache.spi.CacheSupport;
 import org.coconut.cache.spi.service.CacheServiceManager;
 import org.coconut.event.EventBus;
-import org.coconut.management.ManagedGroup;
 
 /**
  * <b>Note that this implementation is not synchronized.</b> If multiple
@@ -49,40 +41,12 @@ import org.coconut.management.ManagedGroup;
  */
 @CacheSupport(CacheLoadingSupport = true, CacheEntrySupport = true, querySupport = true, ExpirationSupport = true, statisticsSupport = true, eventSupport = true)
 @ThreadSafe(false)
-public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
-
-    private final CacheEntryMap<K, V, MyEntry> map;
-
-    /* SUPPORT */
-
-    private final CacheServiceManager<K, V> csm;
-
-    private final EvictionCacheService<MyEntry> evictionSupport;
-
+public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
     private final EventCacheService<K, V> eventSupport;
-
-    private final ExpirationCacheService<K, V> expirationSupport;
-
-    private final EntrySupport<K, V> loaderSupport;
-
-    private final ManagementCacheService<K, V> managementSupport;
-
-    private final CacheStatisticsCacheService<K, V> statistics;
 
     private final StoreCacheService.EntrySupport<K, V> storeSupport;
 
-    @SuppressWarnings("unchecked")
-    protected CacheServiceManager<K, V> newCsm(CacheConfiguration<K, V> conf) {
-        CacheServiceManager<K, V> csm = new CacheServiceManager<K, V>(conf);
-        csm.setService(CacheStatisticsCacheService.class);
-        csm.setService(EvictionCacheService.class);
-        csm.setService(ExpirationCacheService.class, FinalExpirationCacheService.class);
-        csm.setService(LoaderCacheService.EntrySupport.class);
-        csm.setService(ManagementCacheService.class);
-        csm.setService(StoreCacheService.EntrySupport.class);
-        csm.setService(EventCacheService.class);
-        return csm;
-    }
+    private final OpenHashMap<K, V> map;
 
     @SuppressWarnings("unchecked")
     public UnsynchronizedCache() {
@@ -91,17 +55,9 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
 
     public UnsynchronizedCache(CacheConfiguration<K, V> conf) {
         super(conf);
-        csm = newCsm(conf);
-        // support
-        statistics = csm.create(CacheStatisticsCacheService.class);
-        evictionSupport = csm.create(EvictionCacheService.class);
-        expirationSupport = csm.create(ExpirationCacheService.class);
-        loaderSupport = csm.create(LoaderCacheService.EntrySupport.class);
-        managementSupport = csm.create(ManagementCacheService.class);
-        storeSupport = csm.create(StoreCacheService.EntrySupport.class);
-        eventSupport = csm.create(EventCacheService.class);
-
-        csm.initializeApm(managementSupport.getGroup());
+        storeSupport = getCsm().create(StoreCacheService.EntrySupport.class);
+        eventSupport = getCsm().create(EventCacheService.class);
+        getCsm().initializeApm(getManagementSupport().getGroup());
         // important must be last, because of final value being inlined.
         map = new MyMap();
         if (conf.getInitialMap() != null) {
@@ -127,29 +83,24 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         eventSupport.cleared(this, size);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public Set<Entry<K, V>> entrySet() {
-        return map.valueEntrySet();
-    }
-
     @Override
     public void evict() {
-        long start = statistics.cacheEvictStart(this);
         int expireCount = 0;
         int evictCount = 0;
+        long start = getStatisticsSupport().cacheEvictStart(this);
         try {
-            for (Iterator<MyEntry> iterator = map.values().iterator(); iterator.hasNext();) {
-                MyEntry m = iterator.next();
-                if (expirationSupport.evictRemove(this, m)) {
+            for (Iterator<AbstractCacheEntry<K, V>> iterator = map.entrySet().iterator(); iterator
+                    .hasNext();) {
+                AbstractCacheEntry<K, V> m = iterator.next();
+                if (getExpirationSupport().evictRemove(this, m)) {
                     iterator.remove();
                     expireCount++;
                     eventSupport.expired(this, m);
                 }
             }
-            List<MyEntry> evictThese = evictionSupport.evict(map.size(), 0);
-            for (MyEntry e : evictThese) {
+            List<AbstractCacheEntry<K, V>> evictThese = getEvictionSupport().evict(
+                    map.size(), 0);
+            for (AbstractCacheEntry<K, V> e : evictThese) {
                 map.remove(e.getKey());
                 eventSupport.evicted(this, e);
                 evictCount++;
@@ -157,16 +108,9 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         } finally {
             eventSupport.expired(this, expireCount);
             eventSupport.evicted(this, evictCount);
-            statistics.entryExpired(expireCount);
-            statistics.cacheEvictStop(this, start);
+            getStatisticsSupport().entryExpired(expireCount);
+            getStatisticsSupport().cacheEvictStop(this, start, evictCount);
         }
-    }
-
-    /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
-    public V get(Object key) {
-        CacheEntry<K, V> e = getEntry((K) key);
-        return e == null ? null : e.getValue();
     }
 
     @Override
@@ -174,44 +118,43 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         if (key == null) {
             throw new NullPointerException("key is null");
         }
-        long start = statistics.entryGetStart();
-        MyEntry entry = map.get(key);
+        long start = getStatisticsSupport().entryGetStart();
+        AbstractCacheEntry<K, V> entry = map.get(key);
 
         if (entry == null) { // Cache Miss
-            CacheEntry<K, V> ce = loaderSupport.loadEntry(key);
+            CacheEntry<K, V> ce = getLoaderSupport().load(key);
             if (ce != null) {
-                entry = new MyEntry(ce);
-                added(entry, null, ce);
-                map.put(key, entry);
+                entry = newEntry(ce, null, null, null, 0, false);
+                map.put(entry);
                 entry.accessed();
             }
             eventSupport.getAndLoad(this, key, ce);
-            statistics.entryGetStop(entry, start, false);
-        } else if (expirationSupport.isExpired(entry)) {
-            CacheEntry<K, V> loadEntry = loaderSupport.loadEntry(key);
-            statistics.entryExpired();
+            getStatisticsSupport().entryGetStop(entry, start, false);
+        } else if (getExpirationSupport().isExpired(entry)) {
+            CacheEntry<K, V> loadEntry = getLoaderSupport().load(key);
+            getStatisticsSupport().entryExpired();
             // TODO what about lazy.., when does it expire??
             if (loadEntry == null) {
                 map.remove(key);
                 entry = null;
             } else {
-                MyEntry newEntry = new MyEntry(loadEntry);
-                added(newEntry, entry, loadEntry);
-                map.put(key, entry);
+                AbstractCacheEntry<K, V> newEntry = newEntry(loadEntry, entry, null,
+                        null, 0, true);
+                map.put(entry);
                 entry.accessed();
                 entry = newEntry;
             }
             eventSupport.expiredAndGet(this, key, loadEntry);
-            statistics.entryGetStop(entry, start, false);
+            getStatisticsSupport().entryGetStop(entry, start, false);
         } else {
-            if (expirationSupport.needsRefresh(entry)) {
+            if (getExpirationSupport().needsRefresh(entry)) {
                 loadAsync(entry.getKey());
             }
-            entry.hits++;
+            entry.increment();
             entry.accessed();
-            entry.touched();
+            getEvictionSupport().touch(entry.getPolicyIndex());
             eventSupport.getHit(this, entry);
-            statistics.entryGetStop(entry, start, true);
+            getStatisticsSupport().entryGetStop(entry, start, true);
         }
         return entry;
     }
@@ -221,66 +164,20 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         return eventSupport.getEventBus();
     }
 
-    public ManagedGroup getGroup() {
-        return managementSupport.getGroup();
-    }
-
-    @Override
-    public HitStat getHitStat() {
-        return statistics.getHitStat();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Set<K> keySet() {
-        return map.keySet();
-    }
-
-    /**
-     * @see org.coconut.cache.spi.AbstractCache#loadAll(java.util.Collection)
-     */
-    @Override
-    public Future<?> loadAllAsync(Collection<? extends K> keys) {
-        return loaderSupport.asyncLoadAllEntries(keys, this);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Future<?> loadAsync(final K key) {
-        return loaderSupport.asyncLoadEntry(key, this);
-    }
-
-    /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
-    public V peek(K key) {
-        CacheEntry<K, V> e = peekEntry(key);
-        return e == null ? null : e.getValue();
-    }
-
-    /**
-     * @see org.coconut.cache.Cache#peekEntry(java.lang.Object)
-     */
-    public CacheEntry<K, V> peekEntry(Object key) {
-        if (key == null) {
-            throw new NullPointerException("key is null");
-        }
-        MyEntry entry = map.get(key);
-        return entry;
-    }
-
     @Override
     public void putEntries(Collection<CacheEntry<K, V>> entries) {
-        ArrayList<MyEntry> am = new ArrayList<MyEntry>(entries.size());
+        ArrayList<AbstractCacheEntry<K, V>> am = new ArrayList<AbstractCacheEntry<K, V>>(
+                entries.size());
         for (CacheEntry<K, V> entry : entries) {
-            am.add(new MyEntry(entry));
+            am.add(newEntry(entry, map.get(entry.getKey()), null, null, 0, false));
         }
         putAllMyEntries(am);
     }
 
     @Override
     public void putEntry(CacheEntry<K, V> entry) {
-        MyEntry me = new MyEntry(entry);
+        AbstractCacheEntry<K, V> me = newEntry(entry, map.get(entry.getKey()), null,
+                null, 0, false);
         putMyEntry(me);
     }
 
@@ -289,118 +186,12 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         if (key == null) {
             throw new NullPointerException("key is null");
         }
-        MyEntry e = map.remove(key);
+        AbstractCacheEntry<K, V> e = map.remove(key);
         if (e != null) {
-            evictionSupport.remove(e.policyIndex);
+            getEvictionSupport().remove(e.getPolicyIndex());
             eventSupport.removed(this, e);
         }
         return e == null ? null : e.getValue();
-    }
-
-    @Override
-    public void resetStatistics() {
-        statistics.cacheReset();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public int size() {
-        return map.size();
-    }
-
-    @Override
-    public void start() {
-        super.start();
-        csm.initializeAll(this);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Collection<V> values() {
-        return map.valueValues();
-    }
-
-    private void added(MyEntry newEntry, MyEntry prev,
-            CacheEntry<K, V> extendedInitializer) {
-        if (extendedInitializer != null) {
-            if (prev != null) {
-                newEntry.policyIndex = prev.policyIndex;
-                newEntry.creationTime = prev.creationTime;
-                newEntry.version = prev.version + 1;
-            } else {
-                newEntry.creationTime = extendedInitializer.getCreationTime();
-                newEntry.version = extendedInitializer.getVersion();
-            }
-        } else {
-            if (prev != null) {
-                newEntry.policyIndex = prev.policyIndex;
-                newEntry.creationTime = prev.creationTime;
-                newEntry.version = prev.version + 1;
-            } else {
-                if (newEntry.creationTime <= 0) {
-                    newEntry.creationTime = getClock().timestamp();
-                }
-            }
-        }
-        newEntry.lastUpdateTime = getClock().timestamp();
-    }
-
-    private void evictNext() {
-        MyEntry e = evictionSupport.evictNext();
-        map.remove(e.getKey());
-        eventSupport.removed(this, e);
-    }
-
-    private MyEntry newE(K key, V value, long timeout, TimeUnit unit) {
-        return new MyEntry(key, value, expirationSupport.getDeadline(timeout, unit));
-    }
-
-    @Override
-    protected V put0(K key, V value, long timeout, TimeUnit unit) {
-        MyEntry me = newE(key, value, timeout, unit);
-        MyEntry prev = putMyEntry(me);
-        return prev == null ? null : prev.getValue();
-    }
-
-    @Override
-    protected void putAll0(Map<? extends K, ? extends V> t, long timeout, TimeUnit unit) {
-        checkMapForNulls(t);
-        ArrayList<MyEntry> am = new ArrayList<MyEntry>();
-        for (Iterator<? extends Map.Entry<? extends K, ? extends V>> i = t.entrySet()
-                .iterator(); i.hasNext();) {
-            Map.Entry<? extends K, ? extends V> e = i.next();
-            am.add(newE(e.getKey(), e.getValue(), timeout, unit));
-        }
-        putAllMyEntries(am);
-    }
-
-    void putAllMyEntries(Collection<MyEntry> entries) {
-        Map<MyEntry, MyEntry> m = map.putAllValues(entries);
-        for (Map.Entry<MyEntry, MyEntry> entry : m.entrySet()) {
-            MyEntry mm = entry.getKey();
-            MyEntry prev = entry.getValue();
-            added(mm, prev, null);
-            if (mm.policyIndex >= 0) {
-                eventSupport.put(this, mm, prev);
-            }
-        }
-    }
-
-    MyEntry putMyEntry(MyEntry me) {
-        K key = me.getKey();
-        storeSupport.storeEntry(me);
-
-        MyEntry prev = map.put(key, me);
-        added(me, prev, null);
-        me.lastUpdateTime = getClock().timestamp();
-        // the check for me.policyIndex is for values rejected by a
-        // cache policy
-        if (me.policyIndex >= 0) {
-            eventSupport.put(this, me, prev);
-        }
-        return prev;
     }
 
     public void trimToSize(int newSize) {
@@ -409,149 +200,82 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         }
     }
 
-    final class MyEntry extends CacheEntryMap.Entry<K, V> implements CacheEntry<K, V> {
 
-        double cost;
-
-        long creationTime;
-
-        /** The time at which this element expires. */
-        long expirationTime;
-
-        long hits;
-
-        long lastAccessTime;
-
-        long lastUpdateTime;
-
-        /** the index in cache policy, is -1 if not used or initialized. */
-        int policyIndex = -1;
-
-        long size;
-
-        long version = 1;
-
-        MyEntry(CacheEntry<K, V> entry) {
-            super(entry.getKey(), entry.getValue());
-            expirationTime = expirationSupport.getExpirationTimeFromLoaded(entry);
-            creationTime = entry.getCreationTime();
-            version = entry.getVersion();
-            lastUpdateTime = entry.getLastUpdateTime();
-            lastAccessTime = entry.getLastAccessTime();
-            hits = entry.getHits();
-            size = entry.getSize();
-            cost = entry.getCost();
-        }
-
-        MyEntry(K key, V value, long expirationTime) {
-            super(key, value);
-            this.expirationTime = expirationTime;
-        }
-
-        /**
-         * @see org.coconut.cache.CacheEntry#getCost()
-         */
-        public double getCost() {
-            return cost;
-        }
-
-        /**
-         * @see org.coconut.cache.CacheEntry#getCreationTime()
-         */
-        public long getCreationTime() {
-            return creationTime;
-        }
-
-        /**
-         * @see org.coconut.cache.CacheEntry#getExpirationTime()
-         */
-        public long getExpirationTime() {
-            return expirationTime;
-        }
-
-        /**
-         * @see org.coconut.cache.CacheEntry#getHits()
-         */
-        public long getHits() {
-            return hits;
-        }
-
-        /**
-         * @see org.coconut.cache.CacheEntry#getLastAccessTime()
-         */
-        public long getLastAccessTime() {
-            return lastAccessTime;
-        }
-
-        /**
-         * @see org.coconut.cache.CacheEntry#getLastUpdateTime()
-         */
-        public long getLastUpdateTime() {
-            return lastUpdateTime;
-        }
-
-        /**
-         * @see org.coconut.cache.CacheEntry#getSize()
-         */
-        public long getSize() {
-            return size;
-        }
-
-        /**
-         * @see org.coconut.cache.CacheEntry#getVersion()
-         */
-        public long getVersion() {
-            return version;
-        }
-
-        @Override
-        public String toString() {
-            return getKey() + "=" + getValue();
-        }
-
-        void accessed() {
-            lastAccessTime = getClock().timestamp();
-        }
-
-        void touched() {
-            evictionSupport.touch(policyIndex);
-        }
+    private AbstractCacheEntry<K, V> newEntry(CacheEntry<K, V> entry,
+            AbstractCacheEntry<K, V> existing, K key, V value, long expirationTimeMilli,
+            boolean isExpired) {
+        return AbstractCacheEntry.UnsynchronizedCacheEntry.newEntry(this, entry,
+                existing, key, value, expirationTimeMilli, isExpired);
     }
 
-    class MyMap extends CacheEntryMap<K, V, MyEntry> {
-        @Override
-        protected boolean elementAdded(MyEntry entry) {
-            if (evictionSupport.isEnabled()) {
-                // we want to remove an element before adding a new one.
-                // because the element (entry) isn't being added until after
-                // this method, to avoid that the policy wants to evict the
-                // newly added element.
-                // However this causes a problem if add rejects the entry and
-                // size=maxCapacity (which is usually the case), then we have
-                // evicted an entry without
-                // actually needing to do so. But this is how it works for now.
+    void evictNext() {
+        AbstractCacheEntry<K, V> e = getEvictionSupport().evictNext();
+        map.remove(e.getKey());
+        eventSupport.removed(this, e);
+    }
 
-                if (evictionSupport.isCapacityReached(UnsynchronizedCache.this.size())) {
-                    evictNext();
-                }
-                // not initialized
-                if (entry.policyIndex == -1) {
-                    entry.policyIndex = evictionSupport.add(entry);
-                    if (entry.policyIndex < 0) {
-                        return false;
-                    }
-                }
-            } else {
-                // we tests against policyIndex to see if an value has been
-                // added some times
-                entry.policyIndex = Integer.MAX_VALUE;
+    @SuppressWarnings("unchecked")
+    protected CacheServiceManager<K, V> populateCsm(CacheServiceManager<K, V> csm,
+            CacheConfiguration<K, V> conf) {
+        csm.setService(CacheStatisticsCacheService.class);
+        csm.setService(EvictionCacheService.class);
+        csm.setService(ExpirationCacheService.class, FinalExpirationCacheService.class);
+        csm.setService(EntryCacheService.class);
+        csm.setService(ManagementCacheService.class);
+        csm.setService(StoreCacheService.EntrySupport.class);
+        csm.setService(EventCacheService.class);
+        return csm;
+    }
+
+    @Override
+    protected V put0(K key, V value, long expirationTimeMilli) {
+        AbstractCacheEntry<K, V> me = newEntry(null, map.get(key), key, value,
+                expirationTimeMilli, false);
+        AbstractCacheEntry<K, V> prev = putMyEntry(me);
+        return prev == null ? null : prev.getValue();
+    }
+
+    @Override
+    protected void putAll0(Map<? extends K, ? extends V> t, long expirationTime) {
+        checkMapForNulls(t);
+        ArrayList<AbstractCacheEntry<K, V>> am = new ArrayList<AbstractCacheEntry<K, V>>();
+        for (Iterator<? extends Map.Entry<? extends K, ? extends V>> i = t.entrySet()
+                .iterator(); i.hasNext();) {
+            Map.Entry<? extends K, ? extends V> e = i.next();
+            K key = e.getKey();
+            AbstractCacheEntry<K, V> me = newEntry(null, map.get(key), key, e.getValue(),
+                    expirationTime, false);
+            am.add(me);
+        }
+        putAllMyEntries(am);
+    }
+
+    void putAllMyEntries(Collection<? extends AbstractCacheEntry<K, V>> entries) {
+        Map<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>> m = map
+                .putAll(entries);
+        for (Map.Entry<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>> entry : m
+                .entrySet()) {
+            AbstractCacheEntry<K, V> mm = entry.getKey();
+            if (mm.getPolicyIndex() >= 0) {
+                eventSupport.put(this, mm, entry.getValue());
             }
-            return true;
         }
     }
 
-    /* Helper methods for Synchronized Cache */
-    Future<?> loadAsync(AbstractCache<K, V> callback, K key) {
-        return loaderSupport.asyncLoadEntry(key, callback);
+    AbstractCacheEntry<K, V> putMyEntry(AbstractCacheEntry<K, V> me) {
+        storeSupport.storeEntry(me);
+        AbstractCacheEntry<K, V> prev = map.put(me);
+        if (me.getPolicyIndex() >= 0) {// check rejected by policy
+            eventSupport.put(this, me, prev);
+        }
+        return prev;
+    }
+
+    /**
+     * @see org.coconut.cache.defaults.memory.SupportedCache#getMap()
+     */
+    @Override
+    OpenHashMap<K, V> getMap() {
+        return map;
     }
 }

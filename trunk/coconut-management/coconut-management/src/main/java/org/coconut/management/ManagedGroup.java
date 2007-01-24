@@ -5,11 +5,12 @@ package org.coconut.management;
 
 import java.util.Collection;
 
+import javax.management.JMException;
+
 import org.coconut.core.Named;
 
 /**
- * A ManagedGroup is pretty similar to a MBean.
- * Easy to register as MBean
+ * A ManagedGroup is passive collection of attributes  pretty similar to a MBean. Easy to register as MBean
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -19,14 +20,15 @@ public interface ManagedGroup extends Named {
     /**
      * Adds an object to the group. The
      * 
-     * @param r
-     * @return
+     * @param o
+     *            the object to add
+     * @return the object that was added
      * @throws NullPointerException
      *             if the specified object is <tt>null</tt>
      * @throws IllegalArgumentException
      *             if the object has already been registered
      */
-    <T> T add(T r);
+    ManagedGroup add(Object o);
 
     /**
      * Adds a child group.
@@ -83,16 +85,33 @@ public interface ManagedGroup extends Named {
      * 
      * @param domain
      *            the domain to register on
+     * @throws IllegalStateException
+     *             if this group is already registered
+     * @throws Exception 
+     */
+    void register(String domain) throws JMException;
+
+    /**
+     * Registers the group. Any groups contained within this group is not
+     * registered.
+     * 
+     * @param domain
+     *            the domain to register on
+     * @throws IllegalStateException
+     *             if this group or any of its sub groups are already registered
      * @throws Exception
      */
-    void register(String domain) throws Exception;
-
-    void registerAll(JmxRegistrant namer) throws Exception;
-
-    void unregister() throws Exception;
+    void registerAll(JmxRegistrant namer) throws JMException;
 
     /**
      * Remove this group from its parent.
      */
     void remove();
+
+    /**
+     * If any sub groups has registered these will also be unregistered.
+     * 
+     * @throws Exception
+     */
+    void unregister() throws JMException;
 }

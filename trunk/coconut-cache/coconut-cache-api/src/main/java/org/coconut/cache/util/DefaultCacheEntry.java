@@ -23,7 +23,7 @@ public class DefaultCacheEntry<K, V> implements CacheEntry<K, V> {
 
     public static final long DEFAULT_EXPIRATION_TIME = Cache.DEFAULT_EXPIRATION;
 
-    public static final long DEFAULT_HIT_COUNT = 0;
+    public static final long DEFAULT_HIT_COUNT = -1;
 
     public static final long DEFAULT_LAST_ACCESS_TIME = 0;
 

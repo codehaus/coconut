@@ -17,12 +17,11 @@ import java.util.concurrent.TimeUnit;
 
 import junit.framework.JUnit4TestAdapter;
 
-import org.coconut.test.MavenDummyTest;
 import org.junit.Before;
 import org.junit.Test;
 
 @SuppressWarnings("unchecked")
-public class CacheConfigurationTest extends MavenDummyTest {
+public class CacheConfigurationTest {
 
     CacheConfiguration<Number, Collection> conf;
 

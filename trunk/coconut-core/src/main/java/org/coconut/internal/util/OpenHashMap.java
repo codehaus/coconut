@@ -295,7 +295,7 @@ public class OpenHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMa
         } else {
             oldValue = null;
             ++modCount;
-            tab[index] = new HashEntry<K, V>(key, hash, first, value);
+            tab[index] = newEntry(key, hash, first, value);
             size++;
         }
         return oldValue;
@@ -396,7 +396,6 @@ public class OpenHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMa
      *      java.lang.Object, java.lang.Object)
      */
     public boolean replace(K key, V oldValue, V newValue) {
-        // DONE
         if (key == null) {
             throw new NullPointerException("key is null");
         } else if (oldValue == null) {
@@ -460,17 +459,6 @@ public class OpenHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMa
         }
         table = newTable;
     }
-
-//    final HashEntry<K, V> getEntry(Object key, int hash) {
-//        HashEntry<K, V> e = getFirst(hash);
-//        while (e != null) {
-//            if (e.hash == hash && key.equals(e.key)) {
-//                return e;
-//            }
-//            e = e.next;
-//        }
-//        return null;
-//    }
 
     Iterator<Map.Entry<K, V>> newEntrySetIterator() {
         return new EntrySetIterator<K, V>(this);
@@ -555,6 +543,10 @@ public class OpenHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMa
         }
     }
 
+    protected HashEntry<K, V> newEntry(K key, int hash, HashEntry<K, V> next, V value) {
+        return new HashEntry<K, V>(key, hash, next, value);
+    }
+    
     static class HashEntry<K, V> implements Map.Entry<K, V> {
         final int hash;
 

@@ -158,7 +158,9 @@ public class TabularFormatter {
         } else
             return ((long) seconds) + " s";
     }
-
+    public static String formatTime2(final long total,TimeUnit unit) {
+        return formatTime2(unit.toNanos(total));
+    }
     public static String formatTime2(final long totalNano) {
         long nano = TimeUnit.NANOSECONDS.toNanos(totalNano) % 1000;
         long micro = TimeUnit.NANOSECONDS.toMicros(totalNano) % 1000;

@@ -3,10 +3,9 @@
  */
 package org.coconut.filter.matcher;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
-import org.coconut.core.EventProcessor;
 import org.coconut.filter.Filter;
 
 /**
@@ -20,12 +19,11 @@ public interface FilterMatcher<K, E> extends Map<K, Filter<? super E>> {
 
     /**
      * This method will return the registered keys for all those filters that
-     * accepts the specified object.
+     * accepts the specified object. The list returned should be processed in
+     * the order returned by the lists iterator.
      * 
      * @param object
      * @return a Collection of keys whose filter match the particular event.
      */
-    Collection<K> match(E object);
-    
-    void match(E object, EventProcessor<E> eh);
+    List<K> match(E object);
 }

@@ -3,12 +3,9 @@ package org.coconut.event;
 import static org.coconut.filter.LogicFilters.TRUE;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import org.coconut.core.EventProcessor;
-import org.coconut.event.EventBus;
-import org.coconut.event.EventSubscription;
 import org.coconut.event.impl.DefaultEventBus;
 import org.coconut.filter.Filters;
 import org.jmock.Mock;
@@ -129,8 +126,8 @@ public class EventBusTest extends AbstractEventBusTestCase {
     public void testOffer() {
         EventBus<Number> bus = createNew();
         Mock mock = mock(EventProcessor.class);
-        mock.expects(once()).method("handle").with(eq(0));
-        mock.expects(once()).method("handle").with(eq(1));
+        mock.expects(once()).method("process").with(eq(0));
+        mock.expects(once()).method("process").with(eq(1));
         bus.subscribe((EventProcessor<? super Number>) mock.proxy(), Filters
                 .isType(Integer.class));
 
@@ -142,7 +139,7 @@ public class EventBusTest extends AbstractEventBusTestCase {
     public void testOfferNoSubscription() {
         EventBus<Number> bus = createNew();
         Mock mock = mock(EventProcessor.class);
-        mock.expects(once()).method("handle").with(eq(0));
+        mock.expects(once()).method("process").with(eq(0));
         bus.subscribe((EventProcessor<? super Number>) mock.proxy(), Filters
                 .isType(Integer.class));
         assertTrue(bus.offer(0.6));
@@ -156,20 +153,20 @@ public class EventBusTest extends AbstractEventBusTestCase {
         EventBus<Number> bus = createNew();
 
         Mock mock = mock(EventProcessor.class);
-        mock.expects(once()).method("handle").with(eq(0));
-        mock.expects(once()).method("handle").with(eq(1));
+        mock.expects(once()).method("process").with(eq(0));
+        mock.expects(once()).method("process").with(eq(1));
         bus.subscribe((EventProcessor<? super Number>) mock.proxy(), Filters
                 .isType(Integer.class));
 
         Mock mock1 = mock(EventProcessor.class);
-        mock1.expects(once()).method("handle").with(eq(0.5));
+        mock1.expects(once()).method("process").with(eq(0.5));
         bus.subscribe((EventProcessor<? super Number>) mock1.proxy(), Filters
                 .isType(Double.class));
 
         Mock mock2 = mock(EventProcessor.class);
-        mock2.expects(once()).method("handle").with(eq(0));
-        mock2.expects(once()).method("handle").with(eq(0.5));
-        mock2.expects(once()).method("handle").with(eq(1));
+        mock2.expects(once()).method("process").with(eq(0));
+        mock2.expects(once()).method("process").with(eq(0.5));
+        mock2.expects(once()).method("process").with(eq(1));
         bus.subscribe((EventProcessor<? super Number>) mock2.proxy(), Filters
                 .isType(Number.class));
 
@@ -194,9 +191,9 @@ public class EventBusTest extends AbstractEventBusTestCase {
     public void testOfferMany() {
         EventBus<Number> bus = createNew();
         Mock mock = mock(EventProcessor.class);
-        mock.expects(once()).method("handle").with(eq(0));
-        mock.expects(once()).method("handle").with(eq(1));
-        mock.expects(once()).method("handle").with(eq(2));
+        mock.expects(once()).method("process").with(eq(0));
+        mock.expects(once()).method("process").with(eq(1));
+        mock.expects(once()).method("process").with(eq(2));
         bus.subscribe((EventProcessor<? super Number>) mock.proxy(), Filters
                 .isType(Integer.class));
 

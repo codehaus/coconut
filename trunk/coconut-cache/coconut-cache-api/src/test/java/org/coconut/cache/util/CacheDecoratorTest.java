@@ -15,7 +15,6 @@ import java.util.concurrent.locks.ReadWriteLock;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.CacheQuery;
 import org.coconut.cache.Cache.HitStat;
 import org.coconut.event.EventBus;
 import org.coconut.filter.Filter;
@@ -80,8 +79,8 @@ public class CacheDecoratorTest extends MockTestCase {
         m.expects(once()).method("resetStatistics");
         m.expects(once()).method("size").will(returnValue(13));
         m.expects(once()).method("values").will(returnValue(col));
-        m.expects(once()).method("getLock").with(eq(new Integer[] { 14, 15 })).will(
-                returnValue(lock));
+//        m.expects(once()).method("getLock").with(eq(new Integer[] { 14, 15 })).will(
+//                returnValue(lock));
     
         
         m.expects(once()).method("toString").will(returnValue("ttt"));

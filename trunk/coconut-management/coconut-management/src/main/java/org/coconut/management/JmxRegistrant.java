@@ -3,6 +3,7 @@
  */
 package org.coconut.management;
 
+import javax.management.JMException;
 import javax.management.ObjectName;
 
 /**
@@ -14,5 +15,5 @@ public interface JmxRegistrant {
 
     ObjectName getName();
 
-    void registerChild(ManagedGroup mg);
+    void registerChild(ManagedGroup mg) throws JMException;
 }

@@ -4,10 +4,6 @@
 
 package org.coconut.cache.tck;
 
-import static org.coconut.test.CollectionUtils.M2;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -17,11 +13,8 @@ import junit.framework.Assert;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.CacheFilters;
-import org.coconut.cache.CacheQuery;
 import org.coconut.cache.tck.util.IntegerToStringLoader;
 import org.coconut.core.Clock.DeterministicClock;
-import org.coconut.filter.Filter;
 import org.coconut.test.CollectionUtils;
 import org.junit.Before;
 
@@ -118,7 +111,7 @@ public abstract class CacheTestBundle extends Assert {
     }
 
     protected String put(Map.Entry<Integer, String> e, long timeout) {
-        return c.put(e.getKey(), e.getValue(), timeout, TimeUnit.NANOSECONDS);
+        return c.put(e.getKey(), e.getValue(), timeout, TimeUnit.MILLISECONDS);
     }
 
     protected void evict() {
@@ -240,11 +233,11 @@ public abstract class CacheTestBundle extends Assert {
     }
 
     protected void incTime() {
-        clock.incrementRelativeTime();
+        clock.incrementAbsolutTime(1);
     }
 
     protected void incTime(int amount) {
-        clock.incrementRelativeTime(amount);
+        clock.incrementAbsolutTime(amount);
     }
 
     /**

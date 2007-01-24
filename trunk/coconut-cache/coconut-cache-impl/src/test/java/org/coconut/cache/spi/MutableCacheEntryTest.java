@@ -15,22 +15,22 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.defaults.util.MutableCacheEntry;
+import org.coconut.cache.defaults.util.DieMutableCacheEntry;
 import org.coconut.test.MockTestCase;
 
 public class MutableCacheEntryTest extends MockTestCase {
 
     private ExecutorService e;
 
-    private MutableCacheEntry<Integer, String> notLoaded;
+    private DieMutableCacheEntry<Integer, String> notLoaded;
 
-    private MutableCacheEntry<Integer, String> loaded;
+    private DieMutableCacheEntry<Integer, String> loaded;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        notLoaded = new MutableCacheEntry<Integer, String>(1, 123);
-        loaded = new MutableCacheEntry<Integer, String>(1, "A", 123);
+        notLoaded = new DieMutableCacheEntry<Integer, String>(1, 123);
+        loaded = new DieMutableCacheEntry<Integer, String>(1, "A", 123);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class MutableCacheEntryTest extends MockTestCase {
     }
 
     public void testConstructor1() {
-        MutableCacheEntry<Integer, String> entry = new MutableCacheEntry<Integer, String>(
+        DieMutableCacheEntry<Integer, String> entry = new DieMutableCacheEntry<Integer, String>(
                 1, 123);
         assertEqual(1, entry.getKey());
         assertNull(entry.peek());
@@ -52,7 +52,7 @@ public class MutableCacheEntryTest extends MockTestCase {
     }
 
     public void testConstructor2() {
-        MutableCacheEntry<Integer, String> entry = new MutableCacheEntry<Integer, String>(
+        DieMutableCacheEntry<Integer, String> entry = new DieMutableCacheEntry<Integer, String>(
                 1, "A", 123);
         assertEqual(1, entry.getKey());
         assertEquals("A", entry.getValue());
@@ -172,7 +172,7 @@ public class MutableCacheEntryTest extends MockTestCase {
         int threads = 10;
         e = new FailureExecutor(threads);
         final CountDownLatch s = new CountDownLatch(threads);
-        final MutableCacheEntry<Integer, Integer> entry = new MutableCacheEntry<Integer, Integer>(
+        final DieMutableCacheEntry<Integer, Integer> entry = new DieMutableCacheEntry<Integer, Integer>(
                 0, 0);
         assertTrue(notLoaded.tryPrepareLoad(false));
 

@@ -3,6 +3,9 @@
  */
 package org.coconut.management;
 
+import java.util.Arrays;
+
+import javax.management.JMException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerConnection;
@@ -11,8 +14,8 @@ import javax.management.ObjectName;
 
 import org.coconut.core.util.Transformers;
 import org.coconut.internal.util.ClassUtils;
-import org.coconut.management.defaults.DefaultManagedGroup;
 import org.coconut.management.defaults.DefaultExecutableGroup;
+import org.coconut.management.defaults.DefaultManagedGroup;
 
 /**
  * Factory and utility methods for {@link MetricManager}, {@link
@@ -38,6 +41,49 @@ import org.coconut.management.defaults.DefaultExecutableGroup;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class Apms {
+    static class JmxRegistrant1 implements JmxRegistrant {
+        private final String domain;
+
+        private final int level;
+
+        private final String[] levels;
+
+        JmxRegistrant1(String domain, String[] levels) {
+            this(domain, levels.clone(), 0);
+        }
+
+        JmxRegistrant1(String domain, String[] levels, int level) {
+            this.level = level;
+            this.domain = domain;
+            this.levels = levels;
+        }
+
+        /**
+         * @see org.coconut.management.JmxRegistrant#getDomain()
+         */
+        public String getDomain() {
+            return domain;
+        }
+
+        /**
+         * @see org.coconut.management.JmxRegistrant#getName()
+         */
+        public ObjectName getName() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        /**
+         * @see org.coconut.management.JmxRegistrant#registerChild(org.coconut.management.ManagedGroup)
+         */
+        public void registerChild(ManagedGroup mg) throws JMException {
+            mg.registerAll(new JmxRegistrant1(domain, levels, level + 1));
+        }
+    }
+
+    public static JmxRegistrant newRegistrant(String domain, String... levelname) {
+        return new JmxRegistrant1(domain, levelname);
+    }
 
     public static ExecutableGroup newExecutableGroup() {
         return newExecutableGroup("");

@@ -5,6 +5,7 @@ package org.coconut.management.examples;
 
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.management.ExecutableGroup;
 import org.coconut.management.defaults.DefaultExecutableGroup;
 import org.coconut.management.monitor.LongCounter;
 import org.coconut.management.monitor.TimedAverage;
@@ -15,7 +16,7 @@ import org.coconut.management.monitor.TimedAverage;
  */
 public class ByteWriterWithRunningAverage {
     public static void main(String[] args) throws Exception {
-        DefaultExecutableGroup group = new DefaultExecutableGroup("BytesTransfered",true);
+        ExecutableGroup group = new DefaultExecutableGroup("BytesTransfered",true);
         // adds a long counter that keeps track of the total number of bytes
         // written
         LongCounter lr = LongCounter.newConcurrent("Bytes written",

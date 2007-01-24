@@ -3,6 +3,8 @@
  */
 package org.coconut.core.util;
 
+import java.io.Serializable;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -15,19 +17,33 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ThreadUtils {
 
+    public final static Executor SAME_THREAD_EXECUTOR = new SameThreadExecutor();
+
+    static class SameThreadExecutor implements Executor, Serializable {
+
+        /** serialVersionUID */
+        private static final long serialVersionUID = -6365439666830575122L;
+
+        /**
+         * @see java.util.concurrent.Executor#execute(java.lang.Runnable)
+         */
+        public void execute(Runnable command) {
+            command.run();
+        }
+    }
+
     /**
-     * Creates an Executor that uses a single worker thread operating
-     * off an unbounded queue, and uses the provided ThreadFactory to
-     * create a new thread when needed. Unlike the otherwise
-     * equivalent <tt>newFixedThreadPool(1, threadFactory)</tt> the
-     * returned executor is guaranteed not to be reconfigurable to use
-     * additional threads.
-     *
-     * @param threadFactory the factory to use when creating new
-     * threads
-     *
+     * Creates an Executor that uses a single worker thread operating off an
+     * unbounded queue, and uses the provided ThreadFactory to create a new
+     * thread when needed. Unlike the otherwise equivalent
+     * <tt>newFixedThreadPool(1, threadFactory)</tt> the returned executor is
+     * guaranteed not to be reconfigurable to use additional threads.
+     * 
+     * @param threadFactory
+     *            the factory to use when creating new threads
      * @return the newly created single-threaded Executor
-     * @throws NullPointerException if threadFactory is null
+     * @throws NullPointerException
+     *             if threadFactory is null
      */
     public static ExecutorService newSingleDaemonThreadExecutor() {
         return Executors.newSingleThreadExecutor(daemonThreadFactory());
@@ -52,12 +68,12 @@ public class ThreadUtils {
     /**
      * Returns a default thread factory used to create new threads. This factory
      * creates all new threads used by an Executor in the same
-     * {@link ThreadGroup}. If there is a {@link java.lang.SecurityManager}, it
-     * uses the group of {@link System#getSecurityManager}, else the group of
-     * the thread invoking this <tt>defaultThreadFactory</tt> method. Each new
-     * thread is created as a daemon thread with priority set to the smaller of
-     * <tt>Thread.NORM_PRIORITY</tt> and the maximum priority permitted in the
-     * thread group. New threads have names accessible via
+     * {@link ThreadGroup}. If there is a {@link java.lang.SecurityManager},
+     * it uses the group of {@link System#getSecurityManager}, else the group
+     * of the thread invoking this <tt>defaultThreadFactory</tt> method. Each
+     * new thread is created as a daemon thread with priority set to the smaller
+     * of <tt>Thread.NORM_PRIORITY</tt> and the maximum priority permitted in
+     * the thread group. New threads have names accessible via
      * {@link Thread#getName} of <em>pool-N-deamon-thread-M</em>, where
      * <em>N</em> is the sequence number of this factory, and <em>M</em> is
      * the sequence number of the thread created by this factory.

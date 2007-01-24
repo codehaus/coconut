@@ -6,15 +6,10 @@ package org.coconut.cache.policy.offline;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
-import junit.framework.JUnit4TestAdapter;
 
 import org.junit.Test;
 
 public class OPTPolicyTest {
-
-    public static junit.framework.Test suite() {
-        return new JUnit4TestAdapter(OPTPolicyTest.class);
-    }
 
     @Test
     public void testSimple() {

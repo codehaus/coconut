@@ -196,6 +196,9 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @throws ClassCastException
      *             if the key is of an inappropriate type for this cache
      *             (optional).
+     * @throws UnsupportedOperationException
+     *             if the implementation does not support asynchronously load of
+     *             elements
      * @throws NullPointerException
      *             if the specified key is <tt>null</tt>
      */
@@ -222,6 +225,9 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @throws ClassCastException
      *             if any of the keys in the specified collection are of an
      *             inappropriate type for this cache (optional).
+     * @throws UnsupportedOperationException
+     *             if the implementation does not support asynchronously load of
+     *             elements
      * @throws NullPointerException
      *             if the specified collection of keys is <tt>null</tt> or the
      *             specified collection contains <tt>null</tt> values

@@ -12,7 +12,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import junit.framework.JUnit4TestAdapter;
 
-import org.coconut.test.MavenDummyTest;
 import org.junit.Test;
 
 /**
@@ -20,7 +19,7 @@ import org.junit.Test;
  * @version $Id: LogicFiltersXorTest.java 36 2006-08-22 09:59:45Z kasper $
  */
 @SuppressWarnings("unchecked")
-public class LogicFiltersXorTest extends MavenDummyTest {
+public class LogicFiltersXorTest {
 
     @Test
     public void testXor() {

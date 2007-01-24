@@ -14,7 +14,7 @@ import java.util.Map;
 
 import org.coconut.core.EventProcessor;
 import org.coconut.core.Transformer;
-import org.coconut.core.Transformers;
+import org.coconut.core.util.Transformers;
 
 /**
  * Factory and utility methods for Filter.

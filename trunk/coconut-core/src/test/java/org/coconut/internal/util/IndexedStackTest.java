@@ -4,19 +4,20 @@
 
 package org.coconut.internal.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import java.util.Random;
 
 import junit.framework.JUnit4TestAdapter;
 
-import org.coconut.test.MavenDummyTest;
 import org.junit.Test;
-
 /**
  * Test of PolicyStack.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-public class IndexedStackTest extends MavenDummyTest {
+public class IndexedStackTest  {
 
     private final Random rnd = new Random();
 

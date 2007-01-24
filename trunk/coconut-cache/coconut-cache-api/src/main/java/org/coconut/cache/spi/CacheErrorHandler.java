@@ -29,6 +29,10 @@ public class CacheErrorHandler<K, V> {
 
     private volatile String name;
 
+    public static <K,V> CacheErrorHandler<K, V> getDefault() {
+        return DEFAULT;
+    }
+
     public CacheErrorHandler() {
 
     }
@@ -115,7 +119,10 @@ public class CacheErrorHandler<K, V> {
         getLogger().error(msg, cause);
         throw new CacheException(msg, cause);
     }
-
+    
+    public final void warning(String warning) {
+        getLogger().warn(warning);
+    }
     public final void unhandledError(Throwable t) {
         getLogger().error("Unhandled Error", t);
     }

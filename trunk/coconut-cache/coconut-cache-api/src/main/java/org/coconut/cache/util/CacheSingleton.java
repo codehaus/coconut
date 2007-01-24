@@ -59,7 +59,12 @@ public final class CacheSingleton {
      * @param cache
      */
     public static void setDefaultCache(Cache<?, ?> cache) {
-
+        lock.lock();
+        try {
+            cacheInstance = cache;
+        } finally {
+            lock.unlock();
+        }
     }
 
     public static <K, V> Cache<K, V> getCache(String name) {

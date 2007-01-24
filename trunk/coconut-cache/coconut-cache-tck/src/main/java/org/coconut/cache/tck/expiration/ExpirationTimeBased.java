@@ -4,8 +4,6 @@
 package org.coconut.cache.tck.expiration;
 
 import static org.coconut.test.CollectionUtils.M1;
-import static org.coconut.test.CollectionUtils.M1_TO_M5_KEY_SET;
-import static org.coconut.test.CollectionUtils.M1_TO_M5_SET;
 import static org.coconut.test.CollectionUtils.M2;
 import static org.coconut.test.CollectionUtils.M3;
 import static org.coconut.test.CollectionUtils.M4;
@@ -13,21 +11,15 @@ import static org.coconut.test.CollectionUtils.M5;
 
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.CacheEntry;
 import org.coconut.cache.tck.CacheTestBundle;
-import org.coconut.cache.tck.util.AsyncIntegerToStringLoader;
-import org.coconut.cache.tck.util.CacheEntryFilter;
-import org.coconut.cache.tck.util.IntegerToStringLoader;
 import org.junit.Before;
 import org.junit.Test;
-
 /**
- * 
- * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class ExpirationTimeBased extends CacheTestBundle {
+    
     @Before
     public void setUpCaches() {
         c = newCache(newConf().setClock(clock));
@@ -40,8 +32,13 @@ public class ExpirationTimeBased extends CacheTestBundle {
         put(M5, 6);
     }
 
+    /**
+     * Tests a custom expiration filter with get.
+     */
+    @Test
+    public void testFilterGet() {
 
-
+    }
 
 
 }

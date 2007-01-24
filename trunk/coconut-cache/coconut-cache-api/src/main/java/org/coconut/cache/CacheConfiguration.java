@@ -4,30 +4,27 @@
 
 package org.coconut.cache;
 
-import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.coconut.annotation.ThreadSafe;
+import org.coconut.cache.management.CacheMXBean;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.CacheErrorHandler;
-import org.coconut.cache.spi.CacheStore;
 import org.coconut.core.Clock;
 import org.coconut.filter.Filter;
-import org.xml.sax.SAXException;
 
 /**
  * This class is the primary class used for representing the configuration of a
@@ -86,729 +83,23 @@ import org.xml.sax.SAXException;
  * @version $Id$
  */
 @ThreadSafe(false)
-public final class CacheConfiguration<K, V> implements Cloneable {
-
-    // 5F = _
-    private final static Pattern CACHE_NAME_PATTERN = Pattern
-            .compile("[\\da-zA-Z\\x5F]*(\\x2E([\\da-z\\x5F])+)*");
-
-    public class Services {
-
-    }
-
-    public class Backend {
-
-        /**
-         * Returns the CacheConfiguration that this instance is part of.
-         * 
-         * @return the CacheConfiguration that this instance is part of
-         */
-        public CacheConfiguration<K, V> c() {
-            return CacheConfiguration.this;
-        }
-
-        public CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> getExtendedBackend() {
-            return extendedLoader;
-        }
-
-        /**
-         * Returns the CacheLoader that the cache should use for loading new
-         * key-value bindings. If this method returns <code>null</code> no
-         * initial loader will be set.
-         */
-        public CacheLoader<? super K, ? extends V> getBackend() {
-            return loader;
-        }
-
-        // /**
-        // * The cache will try to interrupt the thread that is loading a a
-        // * element if one with a corresponding key is added. Primarily usefull
-        // * for distributed caches with very expensive values (in terms of
-        // * calculation) where an update for another host might occur in the
-        // * middle of a calculation. Hmm not sure this is so usefull... Lets
-        // see
-        // * if this is a problem before doing anything against it.
-        // */
-        // public void setInterruptLoad(boolean interrupt) {
-        //
-        // }
-
-        /**
-         * Sets the loader that should be used for loading new elements into the
-         * cache. If the specified loader is <code>null</code> no loader will
-         * be used for loading new key-value bindings. All values must then put
-         * into the cache by using put or putAll.
-         * 
-         * @param loader
-         *            the loader to set
-         * @return the current CacheConfiguration
-         */
-        public Backend setExtendedBackend(
-                CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader) {
-            if (CacheConfiguration.this.loader != null) {
-                throw new IllegalStateException(
-                        "loader already set, cannot set an extended loader");
-            }
-            extendedLoader = loader;
-            return this;
-        }
-
-        /**
-         * Sets the loader that should be used for loading new elements into the
-         * cache. If the specified loader is <code>null</code> no loader will
-         * be used for loading new key-value bindings. All values must then put
-         * into the cache by using put or putAll.
-         * 
-         * @param loader
-         *            the loader to set
-         * @return the current CacheConfiguration
-         */
-        public Backend setBackend(CacheLoader<? super K, ? extends V> loader) {
-            if (extendedLoader != null) {
-                throw new IllegalStateException(
-                        "extended loader already set, cannot set a loader");
-            }
-            CacheConfiguration.this.loader = loader;
-            return this;
-        }
-
-        public void setUseCacheSettings(boolean useIt) {
-            // how does these work
-            //
-
-            // putIfAbsent
-            // create item in cache, check backend...
-
-            // replace, put(3), remove
-
-            // remove-> should that propagate to backend store
-
-            // containskey, value
-            // don't check in backend stuff, if we want to
-        }
-    }
-
-    /**
-     * Note this setting is only used if an EventStrategy has been set.
-     */
-    public static enum EventNumbering {
-
-        /**
-         * nextId>=previousID
-         */
-        INCREASING,
-
-        /**
-         * No Event sequence number is generated and
-         * {@link java.lang.Long#MIN_VALUE} is returned as sequence id.
-         */
-        NONE,
-
-        /**
-         * nextId=lastPreviousId+1 Important, might in some data structure that
-         * sorts incoming elements. no gaps allowed then
-         */
-        ORDERED,
-
-        /**
-         * nextId>previousID
-         */
-        STRICTLY_INCREASING,
-
-        /**
-         * see timing policy generate timestamp.
-         */
-        TIME_STAMP;
-    }
-
-    public class Events {
-
-        public CacheConfiguration<K, V> c() {
-            return CacheConfiguration.this;
-        }
-
-        public boolean getSendEarly(Class<? extends CacheEvent> event) {
-            return true;
-        }
-
-        public boolean isEnabled() {
-            return false;
-        }
-
-        public void setEnabled(boolean isEnabled) {
-
-        }
-
-        /**
-         * This can be used to indicate that certain events
-         * 
-         * @param event
-         * @param sendEarly
-         */
-        public Events setSendEarly(Class<? extends CacheEvent> event, boolean sendEarly) {
-            return this;
-        }
-    }
-
-    public static enum EventStrategy {
-        /**
-         * No events are ever posted. Trying to create a subscription on the
-         * caches eventsbus will throw an {@link UnsupportedOperationException}.
-         */
-        NO_EVENTS,
-
-        /**
-         * update operations are synchronized
-         */
-        NORMAL,
-
-        /**
-         * update and get operations are synchronized
-         */
-        STRONG,
-
-        /**
-         * No order . Information purposes
-         */
-        WEAK;
-    }
-
-    public class Eviction {
-
-        /**
-         * Returns the CacheConfiguration that this instance is part of.
-         * 
-         * @return the CacheConfiguration that this instance is part of
-         */
-        public CacheConfiguration<K, V> c() {
-            return CacheConfiguration.this;
-        }
-
-        /**
-         * Integer.MAX_VALUE = unlimited
-         * 
-         * @return the maximum number of elements.
-         */
-        public long getMaximumCapacity() {
-            return maximumCapacity;
-        }
-
-        /**
-         * Integer.MAX_VALUE = unlimited
-         * 
-         * @return the maximum number of elements.
-         */
-        public int getMaximumSize() {
-            return maximumSize;
-        }
-
-        public ReplacementPolicy getPolicy() {
-            return replacementPolicy;
-
-        }
-
-        public long getPreferableCapacity() {
-            return preferableCapacity;
-        }
-
-        public int getPreferableSize() {
-            return preferableSize;
-        }
-
-        /**
-         * Sets that maximum number of elements that a cache can contain. If the
-         * limit is reached the cache should evict elements according to the
-         * cache policy specified in setExpirationStrategy.
-         * <p>
-         * The default value is Integer.MAX_VALUE TODO we might allow 0 as
-         * value, if its 0 it will imidiatly discard the element.
-         * 
-         * @param elements
-         *            the maximum capacity.
-         */
-        public Eviction setMaximumCapacity(long capacity) {
-            // TODO we probably want to allow 0...
-            // easy way do disable caching
-            if (capacity <= 0) {
-                throw new IllegalArgumentException(
-                        "capacity must be greater then 0, was " + capacity);
-            }
-            maximumCapacity = capacity;
-            return this;
-        }
-
-        /**
-         * Sets that maximum number of elements that the cache can contain. If
-         * the limit is reached the cache should evict elements according to the
-         * cache policy specified in {@link #setPolicy(ReplacementPolicy)}.
-         * <p>
-         * The default value is Integer.MAX_VALUE. If 0 is specified the cache
-         * will never retain any elements. An effective method for disabling
-         * caching.
-         * 
-         * @param elements
-         *            the maximum capacity.
-         */
-        public Eviction setMaximumSize(int elements) {
-            // TODO we probably want to allow 0...
-            // easy way do disable caching
-            if (elements < 0) {
-                throw new IllegalArgumentException(
-                        "number of maximum elements must be 0 or greater, was "
-                                + elements);
-            }
-            maximumSize = elements;
-            return this;
-        }
-
-        public Eviction setPolicy(ReplacementPolicy policy) {
-            // policies are passed a CacheEntry, because it is the easiest way
-            // to support cost/sized based policies.
-            replacementPolicy = policy;
-            return this;
-        }
-
-        public Eviction setPreferableCapacity(long capacity) {
-            preferableCapacity = capacity;
-            return this;
-        }
-
-        public Eviction setPreferableSize(int size) {
-            preferableSize = size;
-            return this;
-        }
-    }
-
-    public class Expiration {
-        /**
-         * Returns the CacheConfiguration that this instance is part of.
-         * 
-         * @return the CacheConfiguration that this instance is part of
-         */
-        public CacheConfiguration<K, V> c() {
-            return CacheConfiguration.this;
-        }
-
-        public long getDefaultTimeout(TimeUnit unit) {
-            if (defaultExpirationTimeoutDuration == Cache.NEVER_EXPIRE) {
-                // don't convert relative to time unit
-                return defaultExpirationTimeoutDuration;
-            } else {
-                return unit.convert(defaultExpirationTimeoutDuration,
-                        TimeUnit.NANOSECONDS);
-            }
-        }
-
-        public Filter<CacheEntry<K, V>> getFilter() {
-            return expirationFilter;
-        }
-
-        public Filter<CacheEntry<K, V>> getRefreshFilter() {
-            return expirationRefreshFilter;
-        }
-
-        public long getRefreshInterval(TimeUnit unit) {
-            return unit.convert(defaultExpirationRefreshDuration, TimeUnit.NANOSECONDS);
-        }
-
-        /**
-         * Sets the default expiration time for elements added to the cache.
-         * Elements added using the {@link Cache#put(Object, Object)} will
-         * expire at <tt>time_of_insert + default_expiration_time</tt>.
-         * Expired elements are handled accordingly to the
-         * {@link ExpirationStrategy} set for the cache using
-         * {@link #setFilter(Filter)}. The default expiration is infinite, that
-         * is elements never expires..
-         * 
-         * @param duration
-         *            the default timeout for elements added to the cache, must
-         *            be positive
-         * @param unit
-         *            the time unit of the duration argument
-         */
-        public Expiration setDefaultTimeout(long duration, TimeUnit unit) {
-            if (duration <= 0) {
-                throw new IllegalArgumentException(
-                        "duration must be greather then 0, was " + duration);
-            } else if (unit == null) {
-                throw new NullPointerException("unit is null");
-            }
-            if (duration == Cache.NEVER_EXPIRE) {
-                defaultExpirationTimeoutDuration = Cache.NEVER_EXPIRE;
-                // don't convert relative to time unit
-            } else {
-                defaultExpirationTimeoutDuration = unit.toNanos(duration);
-            }
-            return this;
-        }
-
-        /**
-         * Sets a specific expiration that can be used in <tt>addition</tt> to
-         * the time based expiration filter to check if items has expired. If no
-         * filter has been set items are expired according to their registered
-         * expiration time. If an expiration filter is set cache entries are
-         * first checked against that filter then against the time based
-         * expiration times.
-         */
-        public Expiration setFilter(Filter<CacheEntry<K, V>> filter) {
-            expirationFilter = filter;
-            return this;
-        }
-
-        public Expiration setRefreshFilter(Filter<CacheEntry<K, V>> filter) {
-            expirationRefreshFilter = filter;
-            return this;
-        }
-
-        /**
-         * Sets the default refresh interval. Setting of the refresh window only
-         * makes sense if an asynchronously loader has been specified. -1
-         * 
-         * @param interval
-         *            the i
-         * @param unit
-         *            the unit of the interval
-         * @return this Expiration
-         */
-        public Expiration setRefreshInterval(long interval, TimeUnit unit) {
-            if (interval <= 0) {
-                throw new IllegalArgumentException(
-                        "interval must be greather then 0, was " + interval);
-            } else if (unit == null) {
-                throw new NullPointerException("unit is null");
-            }
-            defaultExpirationRefreshDuration = unit.toNanos(interval);
-            return this;
-        }
-    }
-
-    /**
-     * This class defines JMX configuration. To register a cache in the platform
-     * MBeanServer with the name TODO, simply call
-     * <code>setAutomaticRegister(true)</code>. If for some reason the cache
-     * fails to properly register with the MBeanServer at construction time a
-     * {@link CacheException} is thrown. The user remember to deregister the jmx
-     * instance when shutting the down the server. (Or use a softreference)
-     */
-    public class JMX {
-
-        /**
-         * Returns the CacheConfiguration that this instance is part of.
-         * 
-         * @return the CacheConfiguration that this instance is part of
-         */
-        public CacheConfiguration<K, V> c() {
-            return CacheConfiguration.this;
-        }
-
-        /**
-         * @return the configured MBeanServer or the platform MBeanServer if no
-         *         server has been set
-         */
-        public MBeanServer getMBeanServer() {
-            if (mBeanServer == null) {
-                mBeanServer = ManagementFactory.getPlatformMBeanServer();
-            }
-            return mBeanServer;
-        }
-
-        // /**
-        // * @return the configured MBeanServer or the platform MBeanServer if
-        // no
-        // * server has been set
-        // * @throws IllegalStateException
-        // * if no ObjectName was configured
-        // */
-        // public ObjectName getObjectName() {
-        // if (oName == null) {
-        // try {
-        // String name = getName();
-        // ObjectName on = new ObjectName(DEFAULT_JMX_DOMAIN + ":name=" + name);
-        // // we properly shouldn't keep a reference to this.
-        // // because the name of the cache might change.
-        // return on;
-        // } catch (MalformedObjectNameException e) {
-        // // this only happens if the user has set a lame name
-        // // TODO lets make sure
-        // throw new IllegalStateException("The configured name of the cache, ",
-        // e);
-        // }
-        //
-        // }
-        // return oName;
-        // }
-        public String getDomain() {
-            return domain;
-        }
-
-        /**
-         * Returns whether or not the cache is automatically registered with a
-         * {@link javax.management.MBeanServer} when constructed.
-         * 
-         * @return <tt>true</tt> if the cache should be automatically
-         *         registered with a {@link javax.management.MBeanServer},
-         *         otherwise <tt>false</tt>
-         * @see #setRegister(boolean)
-         */
-        public boolean isRegister() {
-            return registerForJMXAutomatically;
-        }
-
-        /**
-         * We can now deliver jmx events.
-         * 
-         * @param events
-         *            the types of events that should be delivered
-         * @return this configuration
-         */
-        public JMX registerEventsForNotification(Class<? extends CacheEvent>... events) {
-            return this;
-        }
-
-        /**
-         * Sets the {@link MBeanServer}} that the cache should register with.
-         * If no value is set the platform {@link MBeanServer} will be used.
-         * 
-         * @param server
-         *            the server that the cache should register with
-         * @return this configuration
-         * @throws NullPointerException
-         *             if server is <tt>null</tt>
-         */
-        public JMX setMbeanServer(MBeanServer server) {
-            if (server == null) {
-                throw new NullPointerException("server is null");
-            }
-            mBeanServer = server;
-            return this;
-        }
-
-        /**
-         * Sets the specific {@link ObjectName} that this cache should register
-         * with. If no ObjectName but the cache has been registered with a name
-         * {@link #setName()} the cache will be registered under foo+name. If no
-         * name has been set foo+S System.identityHashCode(cache) the name
-         * should probably also be initialized to this value (hexed)
-         * 
-         * @param name
-         *            the object name
-         * @return this configuration
-         */
-        public JMX setDomain(String name) {
-            if (name == null) {
-                throw new NullPointerException("name is null");
-            }
-            // TODO validate domain name
-            CacheConfiguration.this.domain = domain;
-            return this;
-        }
-
-        /**
-         * Determines whether or not the cache will be register with its
-         * MBeanServer at construction time.
-         * 
-         * @param registerAutomatic
-         *            whether or not the cache should register with the
-         *            configured MBeanServer at startup
-         * @return this configuration
-         * @see #isRegister()
-         * @see #setObjectName(ObjectName)
-         */
-        public JMX setRegister(boolean registerAutomatic) {
-            registerForJMXAutomatically = registerAutomatic;
-            return this;
-        }
-    }
-
-    public class Locking {
-
-        // when we lock, we need all keys to implement comparable
-        // unless we have used setLockKeyComparator(Comparator<K>))
-        // we could have a setUseOnlyExclusiveLock method, calling readLock
-        // on ReadWriteLock would result in a unsupportedOperationException
-        //
-        public Comparator<K> getLockKeyComparator() {
-            return null;
-        }
-
-        public Locking setAllowLockNonExistingElements(boolean allowLocking) {
-            return this;
-        }
-
-        public Locking setLocking(LockStrategy locking) {
-            return this;
-        }
-
-        /**
-         * This property will we ignored if Locking is set to NO_LOCKING How
-         * long time we . If set to 0 = infinite
-         * 
-         * @param timeout
-         *            the default lock timeout
-         * @param unit
-         *            the unit of the timeout
-         * @return this configuration
-         */
-        public Locking setLockInternalTimeout(long timeout, TimeUnit unit) {
-            // difference for put/get???
-            // well this needs to throw some kind of exception if it fails??
-            // not sure this under the 80/20 rule
-            return this;
-        }
-
-        /**
-         * Too avoid deadlock when multiple locks on the different objects are
-         * requested. A lock comparator can be set to make sure that locks are
-         * allways acquired in the specified order. If no lock comparator is set
-         * the default order among the keys are used. This is only needed if
-         * acquiring locks on multiple objects on the same time.
-         * 
-         * @param lockKeyComperator
-         *            the comperator to use for generating combo locks
-         * @return this configuration
-         */
-        public Locking setLockKeyComparator(Comparator<K> lockKeyComperator) {
-            // if null natural lock order among keys is used
-            return this;
-        }
-
-        // This will override
-        // public void setInternalLockTimeoutPut(long timeout, TimeUnit unit) {
-        // //difference for put/get???
-        //
-
-        /**
-         * if this false the users needs to explicitly lock things.
-         * 
-         * @param lockOnGetPut
-         *            whether or not to use locks explicitly
-         * @return this configuration
-         */
-        public Locking setLockOnPutGet(boolean lockOnGetPut) {
-            return this;
-        }
-    }
-
-    /**
-     * What about peek does it lock it???
-     */
-    public static enum LockStrategy {
-        /**
-         * 
-         */
-        NO_LOCKING,
-
-        /**
-         * Trying to acquire a readLock on the ReadWriteLock will throw an
-         * unsupported operation.
-         */
-        READ_WRITE,
-
-        /**
-         * Trying to acquire a readLock on the ReadWriteLock will throw an
-         * unsupported operation.
-         */
-        WRITE_ONLY;
-    }
-
-    //
-    // public class Threading {
-    // public void stopExecutorsOnCacheShutdown(boolean doIt) {
-    //
-    // }
-    //
-    // public void setAsyncLoadExecutor(Executor e) {
-    //
-    // }
-    //
-    // public void setEvictExecutor(ScheduledExecutorService e) {
-    //
-    // }
-    // }
-
-    public class Statistics {
-        public boolean getEnabled() {
-            return statisticsEnabled;
-        }
-
-        public TimeUnit getTimeUnit() {
-            return statisticsTimeUnit;
-        }
-
-        public void setEnabled(boolean isEnabled) {
-            statisticsEnabled = isEnabled;
-        }
-
-        public void setTimeUnit(TimeUnit unit) {
-            if (unit == null) {
-                throw new NullPointerException("unit is null");
-            }
-            statisticsTimeUnit = unit;
-        }
-
-    }
-
-    /**
-     * WRITE_THROUGH = put/load value, make avilable for others, persist,
-     * return. Is there any _observable_ difference between WRITE_THROUGH &
-     * WRITE_THROUGH_ASYNC??? I can't think of a reason why we want all but the
-     * caller to get() to see a value???
-     * <p>
-     * WRITE_THROUGH_SAFE = put/load value, persist, make avilable for others,
-     * return
-     * <p>
-     * WRITE_THROUGH_ASYNC = put/load value, make available for other, return,
-     * persist asynchronously later
-     * <p>
-     * WRITE_BACK = put/load value, make available for other, return, persist at
-     * latests possible time. perhaps drop WRITE_THROUGH_ASYNC
-     */
-    public static enum StorageStrategy {
-        WRITE_BACK, WRITE_THROUGH, WRITE_THROUGH_ASYNC, WRITE_THROUGH_SAFE;
-    }
-
-    public static final Clock DEFAULT_CLOCK = Clock.DEFAULT_CLOCK;
+public class CacheConfiguration<K, V> implements Cloneable {
 
     /**
      * The default configuration that can be used by any cache that is not
      * provided with a cache configuration object.
+     * TODO what if someone changes the default configuration....!Smart or not
      */
     public static final CacheConfiguration DEFAULT_CONFIGURATION = CacheConfiguration
             .newConf();
 
-    public final static int DEFAULT_MAXIMUM_SIZE = Integer.MAX_VALUE;
+    /**
+     * The default maximum size of a newly
+     */
 
-    public static final String DEFAULT_JMX_DOMAIN = "org.coconut.cache";
-
-    public static void main(String[] args) throws SAXException, IOException,
-            ParserConfigurationException {
-        //     
-        // DocumentBuilder parser =
-        // DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        // System.out.println(ExpirationStrategy.valueOf("ON_EVICT"));
-        // Document document = parser.parse(new File("c:/d.xml"));
-        // System.out.println(document.getDocumentElement().getNodeName());
-        // String cacheInstance =
-        // document.getDocumentElement().getAttribute("classs");
-
-        // Loading / Storing / Prefetch / storage
-        // events
-        // statistics/jmx ? monitoring????
-        // locking /transactions (thread safety)
-        //        
-        CacheConfiguration<String, Integer> cc = newConf();
-
-        cc.setName("MyCache");
-        // cc.backend().setLoader(myLoader);
-        cc.eviction().setMaximumCapacity(1000);
-        cc.expiration().setDefaultTimeout(100, TimeUnit.SECONDS);
-        cc.jmx().setRegister(true);
-
-        // Cache<String,Integer> cache=cc.newInstance(UnlimitedCache.class);
-        // // cc.parseDocument(document.getDocumentElement());
-        // // System.out.println("bye" + cacheInstance.length());
-        // cc.jmx().setRegister(true);
-    }
+    // 5F = _
+    private final static Pattern CACHE_NAME_PATTERN = Pattern
+            .compile("[\\da-zA-Z\\x5F]*(\\x2E([\\da-z\\x5F])+)*");
 
     public static <K, V> CacheConfiguration<K, V> newConf() {
         return new CacheConfiguration<K, V>();
@@ -820,9 +111,11 @@ public final class CacheConfiguration<K, V> implements Cloneable {
 
     private long defaultExpirationTimeoutDuration = Cache.NEVER_EXPIRE;
 
-    private boolean enableTiming = true;
+    private String domain = CacheMXBean.DEFAULT_JMX_DOMAIN;
 
-    private CacheErrorHandler<K, V> errorHandler = CacheErrorHandler.DEFAULT;
+    private CacheErrorHandler<K, V> errorHandler = CacheErrorHandler.getDefault();
+
+    private Executor executor;
 
     private Filter<CacheEntry<K, V>> expirationFilter;
 
@@ -836,13 +129,11 @@ public final class CacheConfiguration<K, V> implements Cloneable {
 
     private long maximumCapacity = Long.MAX_VALUE;
 
-    private int maximumSize = DEFAULT_MAXIMUM_SIZE;
+    private int maximumSize = Eviction.DEFAULT_MAXIMUM_SIZE;
 
     private MBeanServer mBeanServer;
 
-    private String name;
-
-    private String domain = DEFAULT_JMX_DOMAIN;
+    private String name = UUID.randomUUID().toString();
 
     private long preferableCapacity; // default??
 
@@ -853,46 +144,22 @@ public final class CacheConfiguration<K, V> implements Cloneable {
 
     private ReplacementPolicy replacementPolicy;
 
+    private boolean shutdownExecutor;
+
     private boolean statisticsEnabled = false;
 
-    private TimeUnit statisticsTimeUnit = TimeUnit.MILLISECONDS;
-
-    private CacheStore<K, V> store;
-
     private Clock timingStrategy = Clock.DEFAULT_CLOCK;
-
-    private boolean useHighResolutionCounter = true;
-
-    /**
-     * Creates a new CacheConfiguration by copying an existing configuration.
-     * 
-     * @param otherConfiguration
-     *            the configuration to copy from
-     */
-    public CacheConfiguration(CacheConfiguration<K, V> otherConfiguration) {
-        throw new UnsupportedOperationException(); // TODO implement
-    }
 
     /**
      * Creates a new Configuration with default settings. CacheConfiguration
      * instances should be created using the {@link #newConf()} method.
      */
-    protected CacheConfiguration() {
+    CacheConfiguration() {
         // package private for now, might change at a later time.
     }
 
     public Backend backend() {
         return new Backend();
-    }
-
-    /**
-     * Creates a new CacheConfiguration by copying this configuration.
-     * 
-     * @see java.lang.Object#clone()
-     */
-    @Override
-    public Object clone() {
-        return new CacheConfiguration<K, V>(this);
     }
 
     /**
@@ -1059,97 +326,6 @@ public final class CacheConfiguration<K, V> implements Cloneable {
         return result == null ? defaultValue : result;
     }
 
-    // public void saveConfigurationAsXml(OutputStream stream) {
-    // Document doc;
-    // }
-    // protected void parseDocument(Element doc) {
-    // Node loader = doc.getElementsByTagName("cache-loader").item(0);
-    // System.out.println(loader.getAttributes().getNamedItem("class"));
-    //
-    // }
-    //
-    // @SuppressWarnings("unchecked")
-    // public static <K, V> Cache<K, V> loadCache(InputStream is) throws
-    // Exception {
-    // CacheConfiguration<K, V> conf = loadConfiguration(is);
-    // String name = null;
-    //
-    // Class c = Class.forName(name);
-    // Constructor<Cache> cons = c.getConstructor(CacheConfiguration.class);
-    // return cons.newInstance(conf);
-    // }
-    //
-    // public static <K, V> CacheConfiguration<K, V>
-    // loadConfiguration(InputStream is) {
-    // BufferedInputStream bis = new BufferedInputStream(is);
-    // bis.mark(Integer.MAX_VALUE);
-    // Properties props = tryLoadProperties(bis);
-    // if (props == null) {
-    // // try load xml
-    // }
-    // return null;
-    // }
-    // /**
-    // * Returns an unmodifiable view of the specified configuration. This
-    // method
-    // * allows modules to provide users with "read-only" access to
-    // * configurations. Query (get) operations on the returned configuration
-    // * "read through" to the specified configuration, and attempts to modify
-    // the
-    // * returned configuration result in an UnsupportedOperationException.
-    // * <p>
-    // * If you need an unmodifiable version that is not backed by the existing
-    // * configuration use new CacheConfiguration(existing
-    // * configuration).unmodifiableConfiguration();
-    // *
-    // * @return an unmodifiable version of the current configuration
-    // */
-    // public CacheConfiguration<K, V> unmodifiableConfiguration() {
-    // throw new UnsupportedOperationException();
-    // }
-    //    
-    //
-    // private static Properties tryLoadFromXML(InputStream is) {
-    // Properties props = new Properties();
-    // try {
-    // props.load(is);
-    // System.out.println(props.size());
-    // props.list(System.err);
-    // } catch (IOException e) {
-    // e.printStackTrace();
-    // }
-    // return props;
-    // }
-    //
-    // private static Properties tryLoadProperties(InputStream is) {
-    // Properties props = new Properties();
-    // try {
-    // props.load(is);
-    // System.out.println(props.size());
-    // props.list(System.err);
-    // } catch (IOException e) {
-    // e.printStackTrace();
-    // }
-    // return props;
-    // }
-    // public static <K, V> Cache<K, V> fromInputStream(InputStream stream) {
-    // return CacheFactory.fromInputStream(stream);
-    // }
-    //
-    //
-    // /**
-    // * Override current configuration with *non default* values from specified
-    // * configuration
-    // *
-    // * @param overwriteWith
-    // * @return
-    // */
-    // public CacheConfiguration<K, V> overwriteConfiguration(
-    // CacheConfiguration<K, V> overwriteWith) {
-    // //do we need this, not for now i think
-    // return null;
-    // }
-
     /**
      * Returns a {@link JMX} instance that can be used to configure the JMX
      * settings for the cache.
@@ -1239,9 +415,12 @@ public final class CacheConfiguration<K, V> implements Cloneable {
     public CacheConfiguration<K, V> setName(String name) {
         if (name == null) {
             throw new NullPointerException("name is null");
-        } else if (!Pattern.matches("[\\da-zA-Z\\x5F]*", name)) {
+        } else if (name.equals("")) {
             throw new IllegalArgumentException(
-                    "not a valid name, must only contain alphanumeric characters and '_', was "
+                    "Cannot specify the empty string as a name");
+        } else if (!Pattern.matches("[\\da-zA-Z\\x5F\\x2D]+", name)) {
+            throw new IllegalArgumentException(
+                    "not a valid name, must only contain alphanumeric characters and '_' or '-', was "
                             + name);
         }
         this.name = name;
@@ -1272,24 +451,480 @@ public final class CacheConfiguration<K, V> implements Cloneable {
         return this;
     }
 
-    // public static <K, V> Cache<K, V> fromFile(File file)
-    // throws FileNotFoundException {
-    // return fromInputStream(new FileInputStream(file));
-    // }
-    //
-    // public static <K, V> Cache<K, V> fromClasspath(String path) {
-    // return fromInputStream(Cache.class.getResourceAsStream(path));
-    // }
+    public class Backend {
 
-    // /**
-    // * These are items that does not effect the semantics of a cache, but are
-    // * merely hints to the cache implementation. Implementations are free to
-    // * ignore these.
-    // * <p>
-    // * TODO or just as normal methods on cacheconfiguration postfixed with
-    // hint.
-    // */
-    // public class Hints {
-    //
-    // }
+        /**
+         * Returns the CacheConfiguration that this instance is part of.
+         * 
+         * @return the CacheConfiguration that this instance is part of
+         */
+        public CacheConfiguration<K, V> c() {
+            return CacheConfiguration.this;
+        }
+
+        /**
+         * Returns the CacheLoader that the cache should use for loading new
+         * key-value bindings. If this method returns <code>null</code> no
+         * initial loader will be set.
+         */
+        public CacheLoader<? super K, ? extends V> getBackend() {
+            return loader;
+        }
+
+        public CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> getExtendedBackend() {
+            return extendedLoader;
+        }
+
+        // /**
+        // * The cache will try to interrupt the thread that is loading a a
+        // * element if one with a corresponding key is added. Primarily usefull
+        // * for distributed caches with very expensive values (in terms of
+        // * calculation) where an update for another host might occur in the
+        // * middle of a calculation. Hmm not sure this is so usefull... Lets
+        // see
+        // * if this is a problem before doing anything against it.
+        // */
+        // public void setInterruptLoad(boolean interrupt) {
+        //
+        // }
+
+        /**
+         * Sets the loader that should be used for loading new elements into the
+         * cache. If the specified loader is <code>null</code> no loader will
+         * be used for loading new key-value bindings. All values must then put
+         * into the cache by using put or putAll.
+         * 
+         * @param loader
+         *            the loader to set
+         * @return the current CacheConfiguration
+         */
+        public Backend setBackend(CacheLoader<? super K, ? extends V> loader) {
+            if (extendedLoader != null) {
+                throw new IllegalStateException(
+                        "extended loader already set, cannot set a loader");
+            }
+            CacheConfiguration.this.loader = loader;
+            return this;
+        }
+
+        /**
+         * Sets the loader that should be used for loading new elements into the
+         * cache. If the specified loader is <code>null</code> no loader will
+         * be used for loading new key-value bindings. All values must then put
+         * into the cache by using put or putAll.
+         * 
+         * @param loader
+         *            the loader to set
+         * @return the current CacheConfiguration
+         */
+        public Backend setExtendedBackend(
+                CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader) {
+            if (CacheConfiguration.this.loader != null) {
+                throw new IllegalStateException(
+                        "loader already set, cannot set an extended loader");
+            }
+            extendedLoader = loader;
+            return this;
+        }
+    }
+
+    public class Eviction {
+        /**
+         * The default maximum size of a cache unless otherwise specified.
+         */
+        public final static int DEFAULT_MAXIMUM_SIZE = Integer.MAX_VALUE;
+
+        /**
+         * Returns the CacheConfiguration that this instance is part of.
+         * 
+         * @return the CacheConfiguration that this instance is part of
+         */
+        public CacheConfiguration<K, V> c() {
+            return CacheConfiguration.this;
+        }
+
+        /**
+         * Integer.MAX_VALUE = unlimited
+         * 
+         * @return the maximum number of elements.
+         */
+        public long getMaximumCapacity() {
+            return maximumCapacity;
+        }
+
+        /**
+         * Integer.MAX_VALUE = unlimited
+         * 
+         * @return the maximum number of elements.
+         */
+        public int getMaximumSize() {
+            return maximumSize;
+        }
+
+        public ReplacementPolicy getPolicy() {
+            return replacementPolicy;
+
+        }
+
+        public long getPreferableCapacity() {
+            return preferableCapacity;
+        }
+
+        public int getPreferableSize() {
+            return preferableSize;
+        }
+
+        /**
+         * Sets that maximum number of elements that a cache can contain. If the
+         * limit is reached the cache should evict elements according to the
+         * cache policy specified in setExpirationStrategy.
+         * <p>
+         * The default value is Integer.MAX_VALUE.
+         * 
+         * @param elements
+         *            the maximum capacity.
+         */
+        public Eviction setMaximumCapacity(long capacity) {
+            if (capacity <= 0) {
+                throw new IllegalArgumentException("capacity must greater then 0, was "
+                        + capacity);
+            }
+            maximumCapacity = capacity;
+            return this;
+        }
+
+        /**
+         * Sets that maximum number of elements that the cache can contain. If
+         * the limit is reached the cache should evict elements according to the
+         * cache policy specified in {@link #setPolicy(ReplacementPolicy)}.
+         * <p>
+         * The default value is Integer.MAX_VALUE. If 0 is specified the cache
+         * will never retain any elements. An effective method for disabling
+         * caching.
+         * 
+         * @param elements
+         *            the maximum capacity.
+         */
+        public Eviction setMaximumSize(int elements) {
+            if (elements < 0) {
+                throw new IllegalArgumentException(
+                        "number of maximum elements must be 0 or greater, was "
+                                + elements);
+            }
+            maximumSize = elements;
+            return this;
+        }
+
+        /**
+         * policies are passed a CacheEntry, because it is the easiest way to
+         * support cost/sized based policies.
+         * 
+         * @param policy
+         * @return
+         */
+        public Eviction setPolicy(ReplacementPolicy<? super CacheEntry<K, V>> policy) {
+            replacementPolicy = policy;
+            return this;
+        }
+
+        public Eviction setPreferableCapacity(long capacity) {
+            preferableCapacity = capacity;
+            return this;
+        }
+
+        public Eviction setPreferableSize(int size) {
+            preferableSize = size;
+            return this;
+        }
+    }
+
+    public class Expiration {
+        /**
+         * Returns the CacheConfiguration that this instance is part of.
+         * 
+         * @return the CacheConfiguration that this instance is part of
+         */
+        public CacheConfiguration<K, V> c() {
+            return CacheConfiguration.this;
+        }
+
+        public long getDefaultTimeout(TimeUnit unit) {
+            if (defaultExpirationTimeoutDuration == Cache.NEVER_EXPIRE) {
+                // don't convert relative to time unit
+                return defaultExpirationTimeoutDuration;
+            } else {
+                return unit.convert(defaultExpirationTimeoutDuration,
+                        TimeUnit.NANOSECONDS);
+            }
+        }
+
+        public Filter<CacheEntry<K, V>> getFilter() {
+            return expirationFilter;
+        }
+
+        public Filter<CacheEntry<K, V>> getRefreshFilter() {
+            return expirationRefreshFilter;
+        }
+
+        public long getRefreshInterval(TimeUnit unit) {
+            return unit.convert(defaultExpirationRefreshDuration, TimeUnit.NANOSECONDS);
+        }
+
+        /**
+         * Sets the default expiration time for elements added to the cache.
+         * Elements added using the {@link Cache#put(Object, Object)} will
+         * expire at <tt>time_of_insert + default_expiration_time</tt>.
+         * Expired elements are handled accordingly to the
+         * {@link ExpirationStrategy} set for the cache using
+         * {@link #setFilter(Filter)}. The default expiration is infinite, that
+         * is elements never expires..
+         * 
+         * @param duration
+         *            the default timeout for elements added to the cache, must
+         *            be positive
+         * @param unit
+         *            the time unit of the duration argument
+         */
+        public Expiration setDefaultTimeout(long duration, TimeUnit unit) {
+            if (duration <= 0) {
+                throw new IllegalArgumentException(
+                        "duration must be greather then 0, was " + duration);
+            } else if (unit == null) {
+                throw new NullPointerException("unit is null");
+            }
+            if (duration == Cache.NEVER_EXPIRE) {
+                defaultExpirationTimeoutDuration = Cache.NEVER_EXPIRE;
+                // don't convert relative to time unit
+            } else {
+                defaultExpirationTimeoutDuration = unit.toNanos(duration);
+            }
+            return this;
+        }
+
+        /**
+         * Sets a specific expiration that can be used in <tt>addition</tt> to
+         * the time based expiration filter to check if items has expired. If no
+         * filter has been set items are expired according to their registered
+         * expiration time. If an expiration filter is set cache entries are
+         * first checked against that filter then against the time based
+         * expiration times.
+         */
+        public Expiration setFilter(Filter<CacheEntry<K, V>> filter) {
+            expirationFilter = filter;
+            return this;
+        }
+
+        public Expiration setRefreshFilter(Filter<CacheEntry<K, V>> filter) {
+            expirationRefreshFilter = filter;
+            return this;
+        }
+
+        /**
+         * Sets the default refresh interval. Setting of the refresh window only
+         * makes sense if an asynchronously loader has been specified. -1
+         * 
+         * @param interval
+         *            the i
+         * @param unit
+         *            the unit of the interval
+         * @return this Expiration
+         */
+        public Expiration setRefreshInterval(long interval, TimeUnit unit) {
+            if (interval <= 0) {
+                throw new IllegalArgumentException(
+                        "interval must be greather then 0, was " + interval);
+            } else if (unit == null) {
+                throw new NullPointerException("unit is null");
+            }
+            defaultExpirationRefreshDuration = unit.toNanos(interval);
+            return this;
+        }
+    }
+
+    /**
+     * This class defines JMX configuration. To register a cache in the platform
+     * MBeanServer with the name TODO, simply call
+     * <code>setAutomaticRegister(true)</code>. If for some reason the cache
+     * fails to properly register with the MBeanServer at construction time a
+     * {@link CacheException} is thrown. The user remember to deregister the jmx
+     * instance when shutting the down the server. (Or use a softreference)
+     */
+    public class JMX {
+
+        /**
+         * Returns the CacheConfiguration that this instance is part of.
+         * 
+         * @return the CacheConfiguration that this instance is part of
+         */
+        public CacheConfiguration<K, V> c() {
+            return CacheConfiguration.this;
+        }
+
+        public String getDomain() {
+            return domain;
+        }
+
+        /**
+         * @return the configured MBeanServer or the platform MBeanServer if no
+         *         server has been set
+         */
+        public MBeanServer getMBeanServer() {
+            if (mBeanServer == null) {
+                mBeanServer = ManagementFactory.getPlatformMBeanServer();
+            }
+            return mBeanServer;
+        }
+
+        /**
+         * Returns whether or not the cache is automatically registered with a
+         * {@link javax.management.MBeanServer} when constructed.
+         * 
+         * @return <tt>true</tt> if the cache should be automatically
+         *         registered with a {@link javax.management.MBeanServer},
+         *         otherwise <tt>false</tt>
+         * @see #setRegister(boolean)
+         */
+        public boolean isRegister() {
+            return registerForJMXAutomatically;
+        }
+
+        /**
+         * Sets the specific {@link ObjectName} that this cache should register
+         * with. If no ObjectName but the cache has been registered with a name
+         * {@link #setName()} the cache will be registered under foo+name. If no
+         * name has been set foo+S System.identityHashCode(cache) the name
+         * should probably also be initialized to this value (hexed)
+         * 
+         * @param name
+         *            the object name
+         * @return this configuration
+         */
+        public JMX setDomain(String name) {
+            if (name == null) {
+                throw new NullPointerException("name is null");
+            }
+            // TODO validate domain name
+            CacheConfiguration.this.domain = domain;
+            return this;
+        }
+
+        /**
+         * Sets the {@link MBeanServer}} that the cache should register with.
+         * If no value is set the platform {@link MBeanServer} will be used.
+         * 
+         * @param server
+         *            the server that the cache should register with
+         * @return this configuration
+         * @throws NullPointerException
+         *             if server is <tt>null</tt>
+         */
+        public JMX setMbeanServer(MBeanServer server) {
+            if (server == null) {
+                throw new NullPointerException("server is null");
+            }
+            mBeanServer = server;
+            return this;
+        }
+
+        /**
+         * Determines whether or not the cache will be register with its
+         * MBeanServer at construction time.
+         * 
+         * @param registerAutomatic
+         *            whether or not the cache should register with the
+         *            configured MBeanServer at startup
+         * @return this configuration
+         * @see #isRegister()
+         * @see #setObjectName(ObjectName)
+         */
+        public JMX setRegister(boolean registerAutomatic) {
+            registerForJMXAutomatically = registerAutomatic;
+            return this;
+        }
+
+        /**
+         * We can now deliver jmx events.
+         * 
+         * @param events
+         *            the types of events that should be delivered
+         * @return this configuration
+         */
+        public JMX setRegisterEventsForNotification(Class<? extends CacheEvent>... events) {
+            return this;
+        }
+    }
+
+    public class Statistics {
+        public boolean getEnabled() {
+            return statisticsEnabled;
+        }
+
+        public void setEnabled(boolean isEnabled) {
+            statisticsEnabled = isEnabled;
+        }
+
+    }
+
+    /**
+     * WRITE_THROUGH = put/load value, make avilable for others, persist,
+     * return. Is there any _observable_ difference between WRITE_THROUGH &
+     * WRITE_THROUGH_ASYNC??? I can't think of a reason why we want all but the
+     * caller to get() to see a value???
+     * <p>
+     * WRITE_THROUGH_SAFE = put/load value, persist, make avilable for others,
+     * return
+     * <p>
+     * WRITE_THROUGH_ASYNC = put/load value, make available for other, return,
+     * persist asynchronously later
+     * <p>
+     * WRITE_BACK = put/load value, make available for other, return, persist at
+     * latests possible time. perhaps drop WRITE_THROUGH_ASYNC
+     */
+    public static enum StorageStrategy {
+        WRITE_BACK, WRITE_THROUGH, WRITE_THROUGH_ASYNC, WRITE_THROUGH_SAFE;
+    }
+
+    public class Threading {
+        /**
+         * Returns the CacheConfiguration that this instance is part of.
+         * 
+         * @return the CacheConfiguration that this instance is part of
+         */
+        public CacheConfiguration<K, V> c() {
+            return CacheConfiguration.this;
+        }
+
+        public Executor getExecutor() {
+            return executor;
+        }
+
+        public boolean getShutdownExecutorService() {
+            return shutdownExecutor;
+        }
+
+        public void setExecutor(Executor e) {
+            executor = e;
+        }
+
+        public void setShutdownExecutorService(boolean shutdown) {
+            shutdownExecutor = shutdown;
+        }
+
+        public long getScheduledEvictionAtFixedRate(TimeUnit unit) {
+            return unit.convert(scheduleEvictionAtFixedRateNanos, TimeUnit.NANOSECONDS);
+        }
+
+        public void SetScheduledEvictionAtFixedRate(long period, TimeUnit unit) {
+            if (period < 0) {
+                throw new IllegalArgumentException("period must be 0 or greater, was "
+                        + period);
+            } 
+            if (executor == null || !(executor instanceof ScheduledExecutorService)) {
+                throw new IllegalStateException("A ScheduledExecutorService must be set");
+            }
+            scheduleEvictionAtFixedRateNanos = unit.toNanos(period);
+        }
+    }
+
+    long scheduleEvictionAtFixedRateNanos = 0;
 }

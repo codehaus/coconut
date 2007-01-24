@@ -29,7 +29,7 @@ public class Caches_ImmutableHitStatTest extends MockTestCase {
         assertEquals(0l, hs.getNumberOfHits());
         assertEquals(0l, hs.getNumberOfMisses());
         // per default contract
-        assertEquals(-1, hs.getHitRatio(), 0.000001);
+        assertEquals(Double.NaN, hs.getHitRatio(), 0.000001);
     }
 
     @Test

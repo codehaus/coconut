@@ -13,6 +13,10 @@ package org.coconut.cache.management;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  */
 public interface CacheMXBean {
+    /**
+     * The domain used when registering a cache unless otherwise specified.
+     */
+    static final String DEFAULT_JMX_DOMAIN = "org.coconut.cache";
 
     /**
      * Returns the current number of elements in the cache.

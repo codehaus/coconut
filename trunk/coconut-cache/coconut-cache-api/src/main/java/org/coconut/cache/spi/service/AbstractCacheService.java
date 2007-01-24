@@ -17,36 +17,6 @@ import org.coconut.management.ManagedGroup;
 public abstract class AbstractCacheService<K, V> extends AbstractService implements
         CacheService<K, V> {
 
-    /**
-     * An AbstractCacheService can be in one of the following states:
-     * <ul>
-     * <li>{@link #NEW}<br>
-     * A service that has not yet been started is in this state. </li>
-     * <li>{@link #RUNNING}<br>
-     * A service actively processing events is in this state. </li>
-     * <li>{@link #SHUTDOWN}<br>
-     * A thread that is blocked waiting for a monitor lock is in this state.
-     * </li>
-     * <li>{@link #STOP}<br>
-     * A thread that is blocked waiting for a monitor lock is in this state.
-     * </li>
-     * <li>{@link #TERMINATED}<br>
-     * A thread that is waiting indefinitely for another thread to perform a
-     * particular action is in this state. </li>
-     * </ul>
-     * <p>
-     * A manager can be in only one state at a given point in time.
-     * 
-     * @see AbstractStageManager#getState
-     */
-    public static enum RunState {
-        NOT_STARTED, RUNNING, SHUTDOWN, STOP, TERMINATED;
-    }
-
-    private volatile RunState runState;
-
-    // private volatile
-
     private volatile AbstractCache<K, V> cache;
 
     private final CacheConfiguration<K, V> conf;

@@ -3,12 +3,8 @@
  */
 package org.coconut.event;
 
-import java.util.List;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 
-import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.spi.CacheErrorHandler;
 import org.coconut.core.Log;
 import org.coconut.event.spi.EventBusErrorHandler;
 import org.coconut.filter.matcher.FilterMatcher;
@@ -23,11 +19,15 @@ public class EventBusConfiguration<E> {
      * The default configuration that can be used by any event bus that is not
      * provided with a eventbus configuration object.
      */
-    public static final EventBusConfiguration DEFAULT_CONFIGURATION = null;
+    public static final EventBusConfiguration DEFAULT_CONFIGURATION = newConf();
 
-    public CacheConfiguration conf;
+    public static <E> EventBusConfiguration<E> newConf() {
+        return new EventBusConfiguration<E>();
+    }
+    
+    public EventBusConfiguration conf;
 
-    private FilterMatcher<?, E> fm;
+    private FilterMatcher<?, E> filterMatcher;
 
     private Log log;
 
@@ -77,5 +77,19 @@ public class EventBusConfiguration<E> {
         }
         this.errorHandler = errorHandler;
         return this;
+    }
+
+    /**
+     * @return the filterMatcher
+     */
+    public FilterMatcher<?, E> getFilterMatcher() {
+        return filterMatcher;
+    }
+
+    /**
+     * @param filterMatcher the filterMatcher to set
+     */
+    public void setFilterMatcher(FilterMatcher<?, E> filterMatcher) {
+        this.filterMatcher = filterMatcher;
     }
 }

@@ -4,18 +4,21 @@
 
 package org.coconut.internal.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Map;
 
 import junit.framework.JUnit4TestAdapter;
 
-import org.coconut.test.MavenDummyTest;
 import org.junit.Test;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id$
  */
-public class ImmutableMapEntryTest extends MavenDummyTest {
+public class ImmutableMapEntryTest {
 
     public static junit.framework.Test suite() {
         return new JUnit4TestAdapter(ImmutableMapEntryTest.class);

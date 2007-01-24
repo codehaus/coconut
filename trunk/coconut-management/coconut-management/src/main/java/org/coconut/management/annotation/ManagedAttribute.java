@@ -28,5 +28,8 @@ public @interface ManagedAttribute {
      */
     String description() default "";
 
+    /**
+     * Whether or not this attribute is read only.
+     */
     boolean readOnly() default true;
 }

@@ -11,7 +11,6 @@ import java.util.Random;
 
 import junit.framework.JUnit4TestAdapter;
 
-import org.coconut.test.MavenDummyTest;
 import org.junit.Test;
 
 /**
@@ -19,7 +18,7 @@ import org.junit.Test;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-public class IndexedListTest extends MavenDummyTest {
+public class IndexedListTest  {
 
     private final Random rnd = new Random();
 

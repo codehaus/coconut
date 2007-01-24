@@ -7,8 +7,6 @@ import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.coconut.cache.spi.CacheErrorHandler;
-import org.coconut.cache.spi.Ressources;
 import org.coconut.core.Log;
 import org.coconut.core.util.Logs;
 import org.coconut.event.EventBus;
@@ -39,7 +37,7 @@ public class EventBusErrorHandler<E> {
         this.logger = logger;
     }
 
-    public static final CacheErrorHandler DEFAULT = new CacheErrorHandler();
+    public static final EventBusErrorHandler DEFAULT = new EventBusErrorHandler();
 
     public void setCacheName(String name) {
         this.name = name;

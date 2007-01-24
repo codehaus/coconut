@@ -8,20 +8,21 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static org.coconut.cache.policy.PolicyTestUtils.addToPolicy;
 import static org.coconut.cache.policy.PolicyTestUtils.empty;
+import static org.coconut.test.CollectionUtils.M1;
+import static org.coconut.test.CollectionUtils.M2;
+import static org.coconut.test.CollectionUtils.M3;
 import static org.coconut.test.CollectionUtils.asList;
 import static org.coconut.test.CollectionUtils.seq;
 import junit.framework.JUnit4TestAdapter;
 
 import org.coconut.cache.policy.ReplacementPolicy;
-import org.coconut.test.MavenDummyTest;
 import org.junit.Test;
-
 /**
  * Test of the LRU policy.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-public class LRUPolicyTest extends MavenDummyTest {
+public class LRUPolicyTest {
 
     public static junit.framework.Test suite() {
         return new JUnit4TestAdapter(LRUPolicyTest.class);

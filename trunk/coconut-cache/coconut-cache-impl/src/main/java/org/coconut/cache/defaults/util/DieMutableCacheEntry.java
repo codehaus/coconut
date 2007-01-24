@@ -11,7 +11,7 @@ import java.util.concurrent.Semaphore;
 import org.coconut.cache.CacheEntry;
 
 
-public class MutableCacheEntry<K, V> implements CacheEntry<K, V> {
+public class DieMutableCacheEntry<K, V> implements CacheEntry<K, V> {
 
     private final Semaphore loadLock = new Semaphore(1);
 
@@ -29,12 +29,12 @@ public class MutableCacheEntry<K, V> implements CacheEntry<K, V> {
      * @param key
      * @param creationTime
      */
-    public MutableCacheEntry(K key, long creationTime) {
+    public DieMutableCacheEntry(K key, long creationTime) {
         this.key = key;
         this.creationTime = creationTime;
     }
 
-    public MutableCacheEntry(K key, V value, long creationTime) {
+    public DieMutableCacheEntry(K key, V value, long creationTime) {
         this.key = key;
         this.value = value;
         this.creationTime = creationTime;

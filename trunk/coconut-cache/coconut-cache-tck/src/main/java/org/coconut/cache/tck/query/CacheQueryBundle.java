@@ -4,18 +4,7 @@
 
 package org.coconut.cache.tck.query;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-
-import org.coconut.cache.CacheEntry;
-import org.coconut.cache.CacheFilters;
-import org.coconut.cache.CacheQuery;
 import org.coconut.cache.tck.CacheTestBundle;
-import org.coconut.filter.ComparisonFilters;
 import org.junit.Test;
 
 /**

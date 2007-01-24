@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -79,8 +78,8 @@ public class CapacityArrayQueue<E> extends AbstractQueue<E> implements CapacityQ
     /** Number of items in the queue */
     private int count;
 
-    private boolean isShutdown;
 
+    private boolean isShutdown;
     /*
      * Concurrency control uses the classic two-condition algorithm found in any
      * textbook.
@@ -104,16 +103,10 @@ public class CapacityArrayQueue<E> extends AbstractQueue<E> implements CapacityQ
         return (++i == items.length) ? 0 : i;
     }
 
-    private void checkShutdown() throws InterruptedException {
-        if (isShutdown) {
-            throw new InterruptedException("Queue was closed, no items can be added");
-        }
-    }
-
     private void checkShutdownTake() {
-        if (isShutdown && count == 0) {
+        if (isShutdown) {
             throw new IllegalStateException(
-                    "Queue has been shutdown, no items can be added");
+                    "Queue has been shutdown, no items can be taken");
         }
     }
 
@@ -309,11 +302,15 @@ public class CapacityArrayQueue<E> extends AbstractQueue<E> implements CapacityQ
         final ReentrantLock lock = this.lock;
         lock.lockInterruptibly();
         try {
-            checkShutdown();
+            if (isShutdown) {
+                throw new IllegalStateException("queue has been closed");
+            }
             try {
                 while (count >= capacity) { // MOD
                     notFull.await();
-                    checkShutdown(); // is this needed?
+                    if (isShutdown) {
+                        throw new IllegalStateException("queue has been closed");
+                    }
                 }
             } catch (InterruptedException ie) {
                 notFull.signal(); // propagate to non-interrupted thread
@@ -406,7 +403,9 @@ public class CapacityArrayQueue<E> extends AbstractQueue<E> implements CapacityQ
         lock.lockInterruptibly();
         try {
             for (;;) {
-                checkShutdown(); // MOD
+                if (isShutdown) {
+                    return false;
+                }
                 if (count < capacity) { // MOD
                     insert(e);
                     return true;
@@ -443,8 +442,10 @@ public class CapacityArrayQueue<E> extends AbstractQueue<E> implements CapacityQ
         lock.lockInterruptibly();
         try {
             try {
-                while (count == 0)
+                while (count == 0) {
+                    checkShutdownTake();
                     notEmpty.await();
+                }
             } catch (InterruptedException ie) {
                 notEmpty.signal(); // propagate to non-interrupted thread
                 throw ie;
@@ -465,11 +466,12 @@ public class CapacityArrayQueue<E> extends AbstractQueue<E> implements CapacityQ
                 if (count != 0) {
                     E x = extract();
                     return x;
-                }
+                } 
                 if (nanos <= 0) {
                     return null;
                 }
                 try {
+                    checkShutdownTake();
                     nanos = notEmpty.awaitNanos(nanos);
                 } catch (InterruptedException ie) {
                     notEmpty.signal(); // propagate to non-interrupted thread
@@ -1027,7 +1029,9 @@ public class CapacityArrayQueue<E> extends AbstractQueue<E> implements CapacityQ
         final ReentrantLock lock = this.lock;
         lock.lockInterruptibly();
         try {
-            checkShutdown();
+            if (isShutdown) {
+                throw new IllegalStateException("queue has been closed");
+            }
             int index = 0;
             for (;;) {
                 final int missing = elements.length - index;
@@ -1053,7 +1057,9 @@ public class CapacityArrayQueue<E> extends AbstractQueue<E> implements CapacityQ
                     try {
                         while (count >= capacity) { // MOD
                             nanos = notFull.awaitNanos(nanos);
-                            checkShutdown();
+                            if (isShutdown) {
+                                throw new IllegalStateException("queue has been closed");
+                            }
                         }
                     } catch (InterruptedException ie) {
                         notFull.signal();
@@ -1082,7 +1088,9 @@ public class CapacityArrayQueue<E> extends AbstractQueue<E> implements CapacityQ
         final ReentrantLock lock = this.lock;
         lock.lockInterruptibly();
         try {
-            checkShutdown();
+            if (isShutdown) {
+                throw new IllegalStateException("queue has been closed");
+            }
             int index = 0;
             for (;;) {
                 final int missing = elements.length - index;
@@ -1101,7 +1109,9 @@ public class CapacityArrayQueue<E> extends AbstractQueue<E> implements CapacityQ
                     try {
                         while (count >= capacity) { // MOD
                             notFull.await();
-                            checkShutdown();
+                            if (isShutdown) {
+                                throw new IllegalStateException("queue has been closed");
+                            }
                         }
                     } catch (InterruptedException ie) {
                         notFull.signal();

@@ -18,9 +18,10 @@ public class ByteWriterWithRunningAverageAndLongUpdate {
     public static void main(String[] args) throws Exception {
         
         ExecutableGroup mg = Apms.newExecutableGroup("BytesWritten");
-        LongCounter lr = mg.add(LongCounter.newConcurrent("BytesWritten",
-                "Number of Bytes written to disk A"));
-
+        LongCounter lr = LongCounter.newConcurrent("BytesWritten",
+                "Number of Bytes written to disk A");
+        
+        mg.add(lr);
         mg.add(new TimedAverage(lr));
         mg.add(new TimedAverage(lr, "Bytes written/s (last 10s)",
                 "Number of Bytes written to disk A/second during the last 10 seconds"),

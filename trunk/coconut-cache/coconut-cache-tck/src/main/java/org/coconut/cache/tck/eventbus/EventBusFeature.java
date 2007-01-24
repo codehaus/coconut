@@ -219,7 +219,7 @@ public class EventBusFeature extends AbstractEventTestBundle {
      */
     @Test
     public void itemRemovedEvicted() throws Exception {
-        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumCapacity(3).c());
+        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(3).c());
         subscribe(ItemRemoved.FILTER);
         putAll(M1, M2, M3);
         get(M2);
@@ -241,17 +241,17 @@ public class EventBusFeature extends AbstractEventTestBundle {
         c = newCache(newConf().setClock(clock));
         subscribe(ItemRemoved.FILTER);
 
-        put(M1, 1, TimeUnit.NANOSECONDS);
-        putAll(3, TimeUnit.NANOSECONDS, M2, M3);
+        put(M1, 1, TimeUnit.MILLISECONDS);
+        putAll(3, TimeUnit.MILLISECONDS, M2, M3);
 
-        clock.incrementRelativeTime(2);
+        clock.incrementAbsolutTime(2);
         c.evict();
         assertEquals(2, c.size());
 
         ItemRemoved<?, ?> r = consumeItem(ItemRemoved.class, M1);
         assertTrue(r.hasExpired());
 
-        clock.incrementRelativeTime(2);
+        clock.incrementAbsolutTime(2);
         c.evict();
 
         r = consumeItem(ItemRemoved.class, M2);

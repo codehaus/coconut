@@ -9,7 +9,6 @@ import junit.framework.JUnit4TestAdapter;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheException;
-import org.coconut.test.MavenDummyTest;
 import org.coconut.test.MockTestCase;
 import org.junit.Test;
 
@@ -17,7 +16,7 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class CacheSingletonTest extends MavenDummyTest {
+public class CacheSingletonTest  {
     public static junit.framework.Test suite() {
         return new JUnit4TestAdapter(CacheSingletonTest.class);
     }

@@ -9,12 +9,11 @@ import junit.framework.Test;
 
 import org.coconut.cache.tck.TCKClassTester;
 import org.coconut.cache.tck.TCKRunner;
-import org.coconut.test.MavenDummyTest;
 import org.junit.runner.RunWith;
 
 @RunWith(TCKRunner.class)
 @TCKClassTester(UnsynchronizedCache.class)
-public class UnlimitedCacheTest extends MavenDummyTest {
+public class UnlimitedCacheTest {
 
     public static Test suite() {
         return new JUnit4TestAdapter(UnlimitedCacheTest.class);

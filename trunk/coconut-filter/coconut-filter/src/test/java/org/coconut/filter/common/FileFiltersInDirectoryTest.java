@@ -14,13 +14,12 @@ import java.io.IOException;
 import junit.framework.JUnit4TestAdapter;
 
 import org.coconut.filter.util.FileFilters.FileInDirectoryFilter;
-import org.coconut.test.MavenDummyTest;
 import org.junit.Test;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-public class FileFiltersInDirectoryTest extends MavenDummyTest {
+public class FileFiltersInDirectoryTest {
 
     @Test
     public void testFilter() throws IOException {

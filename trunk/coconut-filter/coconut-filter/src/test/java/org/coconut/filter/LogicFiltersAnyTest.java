@@ -15,14 +15,13 @@ import static org.junit.Assert.fail;
 import junit.framework.JUnit4TestAdapter;
 
 import org.coconut.filter.LogicFilters.AnyFilter;
-import org.coconut.test.MavenDummyTest;
 import org.junit.Test;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id: LogicFiltersAnyTest.java 36 2006-08-22 09:59:45Z kasper $
  */
-public class LogicFiltersAnyTest extends MavenDummyTest {
+public class LogicFiltersAnyTest {
 
     @Test
     @SuppressWarnings("unchecked")

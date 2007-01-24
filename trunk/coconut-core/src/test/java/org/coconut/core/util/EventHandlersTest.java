@@ -53,7 +53,7 @@ public class EventHandlersTest extends MockTestCase {
 
     public void testToOfferable() {
         Mock mock = mock(EventProcessor.class);
-        mock.expects(once()).method("handle").with(eq(0));
+        mock.expects(once()).method("process").with(eq(0));
         Offerable<Integer> eh = EventUtils.toOfferable((EventProcessor) mock
                 .proxy());
         assertTrue(eh.offer(0));
@@ -69,7 +69,7 @@ public class EventHandlersTest extends MockTestCase {
 
     public void testToOfferableSafe() {
         Mock mock = mock(EventProcessor.class);
-        mock.expects(once()).method("handle").with(eq(0));
+        mock.expects(once()).method("process").with(eq(0));
         Offerable<Integer> eh = EventUtils
                 .toOfferableSafe((EventProcessor) mock.proxy());
         assertTrue(eh.offer(0));
@@ -77,7 +77,7 @@ public class EventHandlersTest extends MockTestCase {
 
     public void testToOfferableErroneous() {
         Mock mock = mock(EventProcessor.class);
-        mock.expects(once()).method("handle").with(eq(0)).will(
+        mock.expects(once()).method("process").with(eq(0)).will(
                 throwException(new IllegalArgumentException()));
         Offerable<Integer> eh = EventUtils
                 .toOfferableSafe((EventProcessor) mock.proxy());

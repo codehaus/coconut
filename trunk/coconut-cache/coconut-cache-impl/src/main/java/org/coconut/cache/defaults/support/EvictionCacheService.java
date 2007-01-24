@@ -54,13 +54,16 @@ public class EvictionCacheService<T extends CacheEntry> extends AbstractCacheSer
             cp.touch(index);
         }
     }
-
+    
+    public boolean replace(int index, T t) {
+        return cp.update(index, t);
+    }
     public boolean isEnabled() {
         return cp != null;
     }
 
     public List<T> evict(int size, long capacity) {
-        int diffSize = maxSize - size;
+        int diffSize = size - maxSize;
         if (diffSize > 0) {
             if (diffSize == 1) {
                 return Collections.singletonList(evictNext());
@@ -72,7 +75,8 @@ public class EvictionCacheService<T extends CacheEntry> extends AbstractCacheSer
                 return list;
             }
         }
-        long diffCapacity = maxCapacity - capacity;
+        long diffCapacity = capacity - maxCapacity;
+        
         if (diffCapacity > 0) {
             ArrayList list = new ArrayList();
             while (diffCapacity > 0) {

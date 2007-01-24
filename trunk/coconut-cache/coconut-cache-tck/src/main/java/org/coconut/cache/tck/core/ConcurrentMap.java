@@ -83,6 +83,7 @@ public class ConcurrentMap extends CacheTestBundle {
         assertEquals(M1.getValue(), c2
                 .replace(M1.getKey(), M3.getValue()));
         assertEquals(M3.getValue(), c2.get(M1.getKey()));
+        
         assertNull(c2.replace(M4.getKey(), M4.getValue()));
         assertFalse(c2.containsValue(M4.getValue()));
         assertFalse(c2.containsValue(M1.getValue()));

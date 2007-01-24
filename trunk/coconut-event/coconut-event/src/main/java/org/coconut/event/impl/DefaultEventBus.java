@@ -24,7 +24,7 @@ import org.coconut.filter.matcher.FilterMatcher;
  */
 public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<E> {
 
-    final FilterMatcher<DefaultEventSubscription<E>, E> indexer = new DefaultFilterMatcher<DefaultEventSubscription<E>, E>();
+    final FilterMatcher<DefaultEventSubscription<E>, E> indexer;
 
     private final Lock lock = new ReentrantLock();
 
@@ -33,11 +33,17 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
     // specify indexer, log, thread pool
     // management, ...
     public DefaultEventBus() {
-        super();
+        this(EventBusConfiguration.DEFAULT_CONFIGURATION);
     }
 
     public DefaultEventBus(EventBusConfiguration<E> conf) {
         super(conf);
+        if (conf.getFilterMatcher() == null) {
+            indexer = new DefaultFilterMatcher<DefaultEventSubscription<E>, E>();
+        } else {
+            indexer = (FilterMatcher<DefaultEventSubscription<E>, E>) conf
+                    .getFilterMatcher();
+        }
     }
 
     /**

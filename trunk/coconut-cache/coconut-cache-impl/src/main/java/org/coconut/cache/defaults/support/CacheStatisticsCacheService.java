@@ -205,7 +205,7 @@ public final class CacheStatisticsCacheService<K, V> extends AbstractCacheServic
         return System.nanoTime();
     }
 
-    public long cacheEvictStop(Cache<K, V> cache, long start) {
+    public long cacheEvictStop(Cache<K, V> cache, long start, long evictCount) {
         long time = System.nanoTime() - start;
         cacheEvictLast.run();
         cacheEvictTime.report(time);

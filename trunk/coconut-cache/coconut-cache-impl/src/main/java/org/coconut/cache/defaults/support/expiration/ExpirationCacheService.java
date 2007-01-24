@@ -47,7 +47,9 @@ public abstract class ExpirationCacheService<K, V> extends AbstractCacheService<
     public boolean evictRemove(Cache<K, V> cache, CacheEntry<K, V> entry) {
         if (isExpired(entry)) {
             if (getDefaultRefreshTime() >= 0) {
+                //TODO What if cache doesn't support async load
                 cache.loadAsync(entry.getKey());
+                return true;
             } else {
                 return true;
             }
@@ -57,20 +59,21 @@ public abstract class ExpirationCacheService<K, V> extends AbstractCacheService<
         return false;
     }
 
-    public long getDeadline(long timeout, TimeUnit unit) {
-        if (timeout == Cache.NEVER_EXPIRE) {
-            return Long.MAX_VALUE;
-        } else if (timeout == Cache.DEFAULT_EXPIRATION) {
-            long d = getDefaultExpirationTime();
-            if (d == Cache.NEVER_EXPIRE) {
-                return Cache.NEVER_EXPIRE;
-            } else {
-                return clock.getDeadlineFromNow(d, TimeUnit.MILLISECONDS);
-            }
-        } else {
-            return clock.getDeadlineFromNow(timeout, unit);
-        }
-    }
+
+//    public long getDeadline(long timeout, TimeUnit unit) {
+//        if (timeout == Cache.NEVER_EXPIRE) {
+//            return Long.MAX_VALUE;
+//        } else if (timeout == Cache.DEFAULT_EXPIRATION) {
+//            long d = getDefaultExpirationTime();
+//            if (d == Cache.NEVER_EXPIRE) {
+//                return Cache.NEVER_EXPIRE;
+//            } else {
+//                return clock.getDeadlineFromNow(d, TimeUnit.MILLISECONDS);
+//            }
+//        } else {
+//            return clock.getDeadlineFromNow(timeout, unit);
+//        }
+//    }
 
     @ManagedAttribute(defaultValue = "Default Expiration Description", description = "The default expiration time of the cache")
     public String getDefaultExpirationDescription() {

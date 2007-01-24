@@ -10,14 +10,11 @@ import static org.coconut.test.CollectionUtils.M3;
 import static org.coconut.test.CollectionUtils.M4;
 import static org.coconut.test.CollectionUtils.asMap;
 import static org.coconut.test.CollectionUtils.asSet;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.policy.Policies;
+import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.policy.paging.LRUPolicy;
 import org.coconut.cache.tck.CacheTestBundle;
 import org.junit.Test;
@@ -26,7 +23,8 @@ public class SimplePolicyEviction extends CacheTestBundle {
 
     @Test
     public void testSimpleSize() {
-        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumCapacity(5).c());
+        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(5)
+                .c());
         for (int i = 0; i < 5; i++) {
             c.put(i, Integer.toString(i), 1, TimeUnit.NANOSECONDS);
         }
@@ -39,7 +37,8 @@ public class SimplePolicyEviction extends CacheTestBundle {
 
     @Test
     public void testEviction() {
-        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumCapacity(5).c());
+        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(5)
+                .c());
         for (int i = 0; i < 5; i++) {
             c.put(i, Integer.toString(i), 1, TimeUnit.NANOSECONDS);
         }
@@ -58,7 +57,8 @@ public class SimplePolicyEviction extends CacheTestBundle {
 
     @Test
     public void testTouch() {
-        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumCapacity(10).c());
+        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(10)
+                .c());
         for (int i = 0; i < 10; i++) {
             c.put(i, Integer.toString(i), 1, TimeUnit.NANOSECONDS);
         }
@@ -83,7 +83,8 @@ public class SimplePolicyEviction extends CacheTestBundle {
 
     @Test
     public void testPeek() {
-        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumCapacity(5).c());
+        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(5)
+                .c());
         for (int i = 0; i < 5; i++) {
             c.put(i, Integer.toString(i), 1, TimeUnit.NANOSECONDS);
         }
@@ -104,7 +105,8 @@ public class SimplePolicyEviction extends CacheTestBundle {
     @Test
     public void testRejectEntry() {
         RejectEntriesPolicy rep = new RejectEntriesPolicy();
-        c = newCache(newConf().eviction().setPolicy(rep).setMaximumCapacity(5).c().setClock(clock));
+        c = newCache(newConf().eviction().setPolicy(rep).setMaximumSize(5).c().setClock(
+                clock));
 
         c.put(1, "A");
         rep.reject = true;
@@ -118,8 +120,8 @@ public class SimplePolicyEviction extends CacheTestBundle {
     @SuppressWarnings("unchecked")
     @Test
     public void testRejectEntryPutAll() {
-        c = newCache(newConf().eviction().setPolicy(new Reject2EntriesPolicy()).setMaximumCapacity(5)
-                .c().setClock(clock));
+        c = newCache(newConf().eviction().setPolicy(new Reject2EntriesPolicy())
+                .setMaximumSize(5).c().setClock(clock));
         // the reject2EntriesPolicy is kind of a hack until we are
         // clear with one goes into add() for the policy
         c.putAll(asMap(M1, M2, M3));
@@ -132,26 +134,24 @@ public class SimplePolicyEviction extends CacheTestBundle {
     // 
     /**
      * Currently put is ignored with regards to cache policies, but should just
-     * inherit the previous entry. TODO: how is a put treated as a touch or as
-     * insertation of a new element??
+     * inherit the previous entry.
      */
     @Test
     public void testPutOverridesPreviousValue() {
-        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumCapacity(2).c());
+        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(2).c());
         c.put(M1.getKey(), M1.getValue());
         c.put(M2.getKey(), M2.getValue());
         c.get(M1.getKey());
         c.put(M2.getKey(), M3.getValue());
-
         c.get(M2.getKey());
-
         replaceAndCheck(10, M1.getKey());
         replaceAndCheck(11, M2.getKey());
     }
 
     @Test
     public void testPutAllOverridesPreviousValue() {
-        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumCapacity(3).c());
+        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(3)
+                .c());
         put(M1);
         put(M2);
         put(M3);
@@ -174,7 +174,8 @@ public class SimplePolicyEviction extends CacheTestBundle {
 
     @Test
     public void testRemoveEntry() {
-        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumCapacity(2).c());
+        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(2)
+                .c());
         c.put(M1.getKey(), M1.getValue());
         c.put(M2.getKey(), M2.getValue());
         c.get(M1.getKey());
@@ -186,7 +187,8 @@ public class SimplePolicyEviction extends CacheTestBundle {
     public void testExpiration() {
         // cross check with expiration.
 
-        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumCapacity(5).c().setClock(clock));
+        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(5)
+                .c().setClock(clock));
 
         for (int i = 0; i < 5; i++) {
             c.put(i, Integer.toString(i), i + 1, TimeUnit.NANOSECONDS);

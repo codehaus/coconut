@@ -15,14 +15,13 @@ import java.util.Collections;
 
 import junit.framework.JUnit4TestAdapter;
 
-import org.coconut.test.MavenDummyTest;
 import org.junit.Test;
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id: LogicFiltersNotTest.java 36 2006-08-22 09:59:45Z kasper $
  */
 @SuppressWarnings("unchecked")
-public class LogicFiltersNotTest extends MavenDummyTest {
+public class LogicFiltersNotTest {
 
     @Test
     public void testNot() {

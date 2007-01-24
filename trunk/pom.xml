@@ -9,7 +9,7 @@
   <name>Coconut</name>
   <licenses>
     <license>
-      <name>The MIT License</name>
+      <name>The Apache License, Version 2.0</name>
       <url>http://coconut.codehaus.org/license</url>
       <distribution>repo</distribution>
     </license>
@@ -114,7 +114,23 @@
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
         <artifactId>wagon-webdav</artifactId>
-        <version>1.0-beta-1-SNAPSHOT</version>
+        <version>1.0-beta-2-SNAPSHOT</version>
+      </extension>
+            <extension>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.3-SNAPSHOT</version>
+      </extension>
+      
+                  <extension>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.0</version>
+      </extension>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-webdav</artifactId>
+        <version>1.0-beta-2-SNAPSHOT</version>
       </extension>
     </extensions>
     <pluginManagement>
@@ -126,7 +142,6 @@
             <target>1.5</target>
           </configuration>
         </plugin>
-
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
 
@@ -161,6 +176,11 @@
           </executions>
 
         </plugin>
+              <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.3-SNAPSHOT</version>
+      </plugin>
       </plugins>
     </pluginManagement>
 
@@ -170,6 +190,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.3-SNAPSHOT</version>
       </plugin>
     </plugins>
   </build>
@@ -263,7 +284,7 @@
       <name>Apache Snapshot Repository</name>
       <url>http://people.apache.org/repo/m2-snapshot-repository</url>
       <releases>
-        <enabled>false</enabled>
+        <enabled>true</enabled>
       </releases>
     </repository>
     <repository>
@@ -278,7 +299,6 @@
     </repository>
   </repositories>
   <modules>
-    <!--   <module>coconut-aio</module> -->
     <module>coconut-cache</module>
     <module>coconut-filter</module>
     <module>coconut-concurrent</module>
