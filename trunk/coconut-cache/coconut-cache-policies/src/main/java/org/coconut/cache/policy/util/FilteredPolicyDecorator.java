@@ -43,12 +43,12 @@ public class FilteredPolicyDecorator<T> extends PolicyDecorator<T> {
         return new FilteredPolicyDecorator<T>(policy, new CostFilter<T>(minimumCost));
     }
 
-    public static <K, V> ReplacementPolicy<? extends Map.Entry<K, V>> entryKeyRejector(
+    public static <K, V> ReplacementPolicy<? extends Map.Entry<K, V>> entryKeyAcceptor(
             ReplacementPolicy policy, Filter<? extends K> filter) {
         return new FilteredPolicyDecorator(policy, CacheFilters.keyFilter(filter));
     }
 
-    public static <K, V> ReplacementPolicy<? extends Map.Entry<K, V>> entryValueRejector(
+    public static <K, V> ReplacementPolicy<? extends Map.Entry<K, V>> entryValueAcceptor(
             ReplacementPolicy<Map.Entry<K, V>> policy, Filter<? extends K> filter) {
         return new FilteredPolicyDecorator(policy, CacheFilters.valueFilter(filter));
     }
