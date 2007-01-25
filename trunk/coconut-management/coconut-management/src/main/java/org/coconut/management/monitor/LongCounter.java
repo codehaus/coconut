@@ -1,5 +1,5 @@
-/**
- * 
+/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the MIT license, see http://coconut.codehaus.org/license.
  */
 package org.coconut.management.monitor;
 
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.coconut.core.EventProcessor;
-import org.coconut.management.ApmObserver;
+import org.coconut.management.ManagementObserver;
 import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.annotation.ManagedOperation;
 import org.coconut.management.spi.AbstractApmNumber;
@@ -22,7 +22,7 @@ import org.coconut.management.spi.JMXConfigurator;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public abstract class LongCounter extends AbstractApmNumber implements
-        EventProcessor<Number>, ApmObserver<LongCounter> {
+        EventProcessor<Number>, ManagementObserver<LongCounter> {
 
     /**
      * @param numberType
@@ -345,7 +345,7 @@ public abstract class LongCounter extends AbstractApmNumber implements
         /**
          * @see org.coconut.metric.MetricHub#addEventHandler(org.coconut.core.EventHandler)
          */
-        public EventProcessor<? super LongCounter> addEventHandler(
+        public EventProcessor<? super LongCounter> addEventProcessor(
                 EventProcessor<? super LongCounter> e) {
             synchronized (mutex) {
                 array = add(array, e);
@@ -356,7 +356,7 @@ public abstract class LongCounter extends AbstractApmNumber implements
         /**
          * @see org.coconut.metric.MetricHub#getEventHandlers()
          */
-        public List<EventProcessor<? super LongCounter>> getEventHandlers() {
+        public List<EventProcessor<? super LongCounter>> getEventProcessors() {
             synchronized (mutex) {
                 return new ArrayList<EventProcessor<? super LongCounter>>(Arrays
                         .asList(array));
@@ -366,7 +366,7 @@ public abstract class LongCounter extends AbstractApmNumber implements
         /**
          * @see org.coconut.metric.MetricUpdateBus#removeEventHandler(org.coconut.core.EventHandler)
          */
-        public boolean removeEventHandler(EventProcessor<?> e) {
+        public boolean removeEventProcessor(EventProcessor<?> e) {
             synchronized (mutex) {
                 EventProcessor<? super LongCounter>[] prev = array;
                 array = remove(array, e);
@@ -535,7 +535,7 @@ public abstract class LongCounter extends AbstractApmNumber implements
         /**
          * @see org.coconut.metric.MetricHub#addEventHandler(org.coconut.core.EventHandler)
          */
-        public EventProcessor<? super LongCounter> addEventHandler(
+        public EventProcessor<? super LongCounter> addEventProcessor(
                 EventProcessor<? super LongCounter> e) {
             synchronized (mutex) {
                 array = add(array, e);
@@ -546,7 +546,7 @@ public abstract class LongCounter extends AbstractApmNumber implements
         /**
          * @see org.coconut.metric.MetricHub#getEventHandlers()
          */
-        public List<EventProcessor<? super LongCounter>> getEventHandlers() {
+        public List<EventProcessor<? super LongCounter>> getEventProcessors() {
             synchronized (mutex) {
                 return new ArrayList<EventProcessor<? super LongCounter>>(Arrays
                         .asList(array));
@@ -556,7 +556,7 @@ public abstract class LongCounter extends AbstractApmNumber implements
         /**
          * @see org.coconut.metric.MetricUpdateBus#removeEventHandler(org.coconut.core.EventHandler)
          */
-        public boolean removeEventHandler(EventProcessor<?> e) {
+        public boolean removeEventProcessor(EventProcessor<?> e) {
             synchronized (mutex) {
                 EventProcessor<? super LongCounter>[] prev = array;
                 array = remove(array, e);
@@ -723,7 +723,7 @@ public abstract class LongCounter extends AbstractApmNumber implements
         /**
          * @see org.coconut.metric.MetricHub#addEventHandler(org.coconut.core.EventHandler)
          */
-        public EventProcessor<? super LongCounter> addEventHandler(
+        public EventProcessor<? super LongCounter> addEventProcessor(
                 EventProcessor<? super LongCounter> e) {
             array = add(array, e);
             return e;
@@ -733,14 +733,14 @@ public abstract class LongCounter extends AbstractApmNumber implements
         /**
          * @see org.coconut.metric.MetricHub#getEventHandlers()
          */
-        public List<EventProcessor<? super LongCounter>> getEventHandlers() {
+        public List<EventProcessor<? super LongCounter>> getEventProcessors() {
             return new ArrayList<EventProcessor<? super LongCounter>>(Arrays.asList(array));
         }
 
         /**
          * @see org.coconut.metric.MetricUpdateBus#removeEventHandler(org.coconut.core.EventHandler)
          */
-        public boolean removeEventHandler(EventProcessor<?> e) {
+        public boolean removeEventProcessor(EventProcessor<?> e) {
             EventProcessor<? super LongCounter>[] prev = array;
             array = remove(array, e);
             return prev.length != array.length;

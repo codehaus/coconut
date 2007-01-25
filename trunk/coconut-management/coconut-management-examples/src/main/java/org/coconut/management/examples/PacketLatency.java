@@ -6,8 +6,8 @@ package org.coconut.management.examples;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.management.Apms;
-import org.coconut.management.ExecutableGroup;
+import org.coconut.management.Managements;
+import org.coconut.management.ExecutableManagementGroup;
 import org.coconut.management.monitor.DoubleSamplingCounter;
 import org.coconut.management.monitor.LongSamplingCounter;
 import org.coconut.management.monitor.SingleExponentialSmoothing;
@@ -19,7 +19,7 @@ import org.coconut.management.monitor.TimedAverage;
  */
 public class PacketLatency {
     public static void main(String[] args) throws Exception {
-        ExecutableGroup grp = Apms.newExecutableGroup();
+        ExecutableManagementGroup grp = Managements.newExecutableGroup();
 
         // create a long counter with a name & description
         // and register it with the platform Mbeanserver

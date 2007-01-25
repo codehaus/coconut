@@ -1,5 +1,5 @@
-/**
- * 
+/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the MIT license, see http://coconut.codehaus.org/license.
  */
 package org.coconut.management;
 
@@ -78,7 +78,11 @@ public interface ManagedGroup extends Named {
      * Returns all the child groups.
      */
     Collection<ManagedGroup> getGroups();
-
+    
+    /**
+     * @return
+     */
+    ManagedGroup getParent();
     /**
      * Registers the group. Any groups contained within this group is not
      * registered.

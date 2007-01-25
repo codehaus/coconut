@@ -64,14 +64,14 @@ public class IsHostReachable implements ActiveMonitor<Boolean> {
      * @see org.coconut.core.Named#getName()
      */
     public String getName() {
-        return "www.dr.dk up";
+        return address + " up";
     }
 
     /**
      * @see org.coconut.management.spi.Described#getDescription()
      */
     public String getDescription() {
-        return "Whether or not www.dr.dk is reacheable";
+        return "Whether or not " + address + " is reacheable";
     }
 
     public String getHostName() {

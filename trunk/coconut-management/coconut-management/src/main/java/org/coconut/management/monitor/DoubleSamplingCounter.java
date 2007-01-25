@@ -1,10 +1,10 @@
-/**
- * 
+/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the MIT license, see http://coconut.codehaus.org/license.
  */
 package org.coconut.management.monitor;
 
 import org.coconut.core.EventProcessor;
-import org.coconut.management.Apms;
+import org.coconut.management.Managements;
 import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.annotation.ManagedOperation;
 import org.coconut.management.spi.AbstractApm;
@@ -95,7 +95,7 @@ public class DoubleSamplingCounter extends AbstractApm implements Runnable,
     }
 
     public Number getRunningTotal() {
-        return Apms.runningNumber(this, "getTotal");
+        return Managements.runningNumber(this, "getTotal");
     }
 
     @ManagedAttribute(defaultValue = "Samplings", description = "The total number of recordings")
@@ -104,7 +104,7 @@ public class DoubleSamplingCounter extends AbstractApm implements Runnable,
     }
 
     public Number getRunningSamplings() {
-        return Apms.runningNumber(this, "getSamplings");
+        return Managements.runningNumber(this, "getSamplings");
     }
 
     @ManagedAttribute(defaultValue = "Average", description = "The average recorded value")
@@ -118,11 +118,11 @@ public class DoubleSamplingCounter extends AbstractApm implements Runnable,
 
     public class Live {
         public Number samplings() {
-            return Apms.runningNumber(DoubleSamplingCounter.this, "getSamplings");
+            return Managements.runningNumber(DoubleSamplingCounter.this, "getSamplings");
         }
 
         public Number total() {
-            return Apms.runningNumber(DoubleSamplingCounter.this, "getTotal");
+            return Managements.runningNumber(DoubleSamplingCounter.this, "getTotal");
         }
     }
 

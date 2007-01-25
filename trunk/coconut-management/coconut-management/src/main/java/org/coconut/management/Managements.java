@@ -1,9 +1,7 @@
-/**
- * 
+/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the MIT license, see http://coconut.codehaus.org/license.
  */
 package org.coconut.management;
-
-import java.util.Arrays;
 
 import javax.management.JMException;
 import javax.management.MBeanAttributeInfo;
@@ -40,7 +38,7 @@ import org.coconut.management.defaults.DefaultManagedGroup;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class Apms {
+public class Managements {
     static class JmxRegistrant1 implements JmxRegistrant {
         private final String domain;
 
@@ -66,18 +64,36 @@ public class Apms {
         }
 
         /**
-         * @see org.coconut.management.JmxRegistrant#getName()
-         */
-        public ObjectName getName() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        /**
          * @see org.coconut.management.JmxRegistrant#registerChild(org.coconut.management.ManagedGroup)
          */
         public void registerChild(ManagedGroup mg) throws JMException {
             mg.registerAll(new JmxRegistrant1(domain, levels, level + 1));
+        }
+
+        /**
+         * @see org.coconut.management.JmxRegistrant#getName(org.coconut.management.ManagedGroup)
+         */
+        public ObjectName getName(ManagedGroup mg) throws MalformedObjectNameException {
+            ManagedGroup[] hierarchy = new ManagedGroup[level + 1];
+
+            hierarchy[level] = mg;
+            for (int i = level - 1; i >= 0; i--) {
+                hierarchy[i] = hierarchy[i + 1].getParent();
+            }
+
+            StringBuilder name = new StringBuilder();
+            name.append(domain);
+            name.append(':');
+            for (int i = 0; i <= level; i++) {
+                name.append(levels[i]);
+                name.append('=');
+                name.append(hierarchy[i].getName());
+                if (i != level) {
+                    name.append(',');
+                }
+            }
+            // System.out.println(name);
+            return new ObjectName(name.toString());
         }
     }
 
@@ -85,7 +101,7 @@ public class Apms {
         return new JmxRegistrant1(domain, levelname);
     }
 
-    public static ExecutableGroup newExecutableGroup() {
+    public static ExecutableManagementGroup newExecutableGroup() {
         return newExecutableGroup("");
     }
 
@@ -93,28 +109,42 @@ public class Apms {
      * @param name
      * @return
      */
-    public static ExecutableGroup newExecutableGroup(String name) {
-        return newExecutableGroup(name, true);
+    public static ExecutableManagementGroup newExecutableGroup(String name) {
+        return newExecutableGroup(name, "no description");
     }
 
     /**
      * @param name
      * @return
      */
-    public static ExecutableGroup newExecutableGroup(String name, boolean register) {
-        return new DefaultExecutableGroup(name, register);
+    public static ExecutableManagementGroup newExecutableGroup(String name, String description) {
+        return newExecutableGroup(name, description, true);
+    }
+
+    /**
+     * @param name
+     * @return
+     */
+    public static ExecutableManagementGroup newExecutableGroup(String name, String description,
+            boolean register) {
+        return new DefaultExecutableGroup(name, description, register);
     }
 
     public static ManagedGroup newGroup() {
-        return newGroup("");
+        return newGroup("noname");
     }
 
     public static ManagedGroup newGroup(String name) {
-        return new DefaultManagedGroup(name, false);
+        return newGroup(name, "no description");
     }
 
-    public static ManagedGroup newGroup(String name, MBeanServer server) {
-        DefaultManagedGroup d = new DefaultManagedGroup(name, false);
+    public static ManagedGroup newGroup(String name, String description) {
+        return new DefaultManagedGroup(name, description, false);
+    }
+
+    public static ManagedGroup newGroup(String name, String description,
+            MBeanServer server) {
+        DefaultManagedGroup d = new DefaultManagedGroup(name, description, false);
         d.setMbeanServer(server);
         return d;
     }

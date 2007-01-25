@@ -110,7 +110,6 @@ public class EntryMapTest {
     // assertTrue(s.indexOf("" + (char) (i + 64)) >= 0);
     // }
     // } catch (AssertionError ar) {
-    // System.out.println(s);
     // throw ar;
     // }
     // }

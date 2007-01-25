@@ -17,7 +17,7 @@ import org.coconut.cache.util.AbstractCacheLoader;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class CacheHTTPExample {
-    static class UrlLoader extends AbstractCacheLoader<String, String> {
+   public static class UrlLoader extends AbstractCacheLoader<String, String> {
         public String load(String key) throws Exception {
             URL url = new URL(key);
             BufferedReader in = new BufferedReader(

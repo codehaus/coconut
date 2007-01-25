@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 
 import javax.management.JMException;
 import javax.management.MBeanServer;
+import javax.management.ObjectName;
 
 import org.coconut.core.Named;
 import org.coconut.management.JmxRegistrant;
@@ -42,14 +43,19 @@ public class DefaultManagedGroup implements ManagedGroup {
 
     private MBeanServer server = ManagementFactory.getPlatformMBeanServer();
 
-    public DefaultManagedGroup(String name, boolean register) {
-        this(name, null, register);
+    public DefaultManagedGroup(String name, String description, boolean register) {
+        this(name, description, null, register);
     }
 
-    private DefaultManagedGroup(String name, DefaultManagedGroup parent, boolean register) {
+    private DefaultManagedGroup(String name, String description,
+            DefaultManagedGroup parent, boolean register) {
         checkName(name);
+        if (description == null) {
+            throw new NullPointerException("description, parent, register is null");
+        }
         this.name = name;
         this.parent = parent;
+        this.description = description;
         this.doRegister = register;
     }
 
@@ -63,16 +69,20 @@ public class DefaultManagedGroup implements ManagedGroup {
         return this;
     }
 
+    public synchronized ManagedGroup getParent() {
+        return parent;
+    }
+
     /**
      * @see org.coconut.apm.next.ApmGroup#addAsGroup(org.coconut.core.Named)
      */
-    public ManagedGroup addAsGroup(Named name) {
+    public synchronized ManagedGroup addAsGroup(Named name) {
         ManagedGroup gm = addGroup(name.getName(), "No description");
         gm.add(name);
         return gm;
     }
 
-    public ManagedGroup addGroup(String name, String description) {
+    public synchronized ManagedGroup addGroup(String name, String description) {
         return addGroup(name, description, true);
     }
 
@@ -89,8 +99,8 @@ public class DefaultManagedGroup implements ManagedGroup {
             throw new IllegalArgumentException("already a group defined with name "
                     + name);
         }
-        DefaultManagedGroup dg = new DefaultManagedGroup(name, this, register);
-        dg.description = description;
+        DefaultManagedGroup dg = new DefaultManagedGroup(name, description, this,
+                register);
         groups.put(name, dg);
         return dg;
     }
@@ -117,15 +127,8 @@ public class DefaultManagedGroup implements ManagedGroup {
         return new ArrayList<ManagedGroup>(groups.values());
     }
 
-    public String getName() {
+    public synchronized String getName() {
         return name;
-    }
-
-    /**
-     * @see org.coconut.apm.ApmGroup#getParentGroup()
-     */
-    public synchronized ManagedGroup getParentGroup() {
-        return parent;
     }
 
     /**
@@ -160,13 +163,17 @@ public class DefaultManagedGroup implements ManagedGroup {
     /**
      * @see org.coconut.management.ManagedGroup#register(org.coconut.management.JmxNamer)
      */
-    public void registerAll(JmxRegistrant namer) throws JMException {
+    public synchronized void registerAll(JmxRegistrant namer) throws JMException {
         NumberDynamicBean bean = new NumberDynamicBean(getDescription());
         if (doRegister) {
+            ObjectName name = namer.getName(this);
+            if (name == null) {
+                throw new IllegalArgumentException("namer returns null for objectname");
+            }
             for (Object o : apms) {
                 register(bean, o);
             }
-            bean.register(server, namer.getName());
+            bean.register(server, name);
         }
         for (ManagedGroup gm : groups.values()) {
             namer.registerChild(gm);
@@ -176,7 +183,7 @@ public class DefaultManagedGroup implements ManagedGroup {
     /**
      * @see org.coconut.apm.next.ApmGroup#remove()
      */
-    public void remove() {
+    public synchronized void remove() {
         // TODO Auto-generated method stub
 
     }
@@ -188,15 +195,12 @@ public class DefaultManagedGroup implements ManagedGroup {
     /**
      * @see org.coconut.apm.ApmGroup#unregister()
      */
-    public void unregister() throws JMException {
+    public synchronized void unregister() throws JMException {
         // TODO Auto-generated method stub
 
     }
 
     private void checkName(String name) {
-        if (true) {
-            return;
-        }
         if (name == null) {
             throw new NullPointerException("name is null");
         } else if (!PATTERN.matcher(name).matches()) {

@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.management.JMException;
 
-import org.coconut.management.ExecutableGroup;
+import org.coconut.management.ExecutableManagementGroup;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.spi.NumberDynamicBean;
 
@@ -18,15 +18,15 @@ import org.coconut.management.spi.NumberDynamicBean;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class DefaultExecutableGroup extends DefaultManagedGroup implements
-        ExecutableGroup {
+        ExecutableManagementGroup {
     private final ScheduledExecutorService ses;
 
     /**
      * @param name
      * @param register
      */
-    public DefaultExecutableGroup(String name, boolean register) {
-        this(name, register, Executors.newSingleThreadScheduledExecutor());
+    public DefaultExecutableGroup(String name,String description, boolean register) {
+        this(name, description, register, Executors.newSingleThreadScheduledExecutor());
     }
 
     /**
@@ -34,7 +34,7 @@ public class DefaultExecutableGroup extends DefaultManagedGroup implements
      * @return
      * @see java.util.Collection#add(java.lang.Object)
      */
-    public ExecutableGroup add(Object e) {
+    public ExecutableManagementGroup add(Object e) {
         super.add(e);
         return this;
     }
@@ -43,9 +43,9 @@ public class DefaultExecutableGroup extends DefaultManagedGroup implements
      * @param name
      * @param register
      */
-    public DefaultExecutableGroup(String name, boolean register,
+    public DefaultExecutableGroup(String name, String description, boolean register,
             ScheduledExecutorService ses) {
-        super(name, register);
+        super(name, description, register);
         this.ses = ses;
     }
 
@@ -53,7 +53,7 @@ public class DefaultExecutableGroup extends DefaultManagedGroup implements
      * @see org.coconut.apm.defaults.DefaultApmGroup#add(java.lang.Runnable,
      *      long, java.util.concurrent.TimeUnit)
      */
-    public <T extends Runnable> ExecutableGroup add(T r, long time, TimeUnit unit) {
+    public <T extends Runnable> ExecutableManagementGroup add(T r, long time, TimeUnit unit) {
         super.add(new Foo(r, time, unit));
         return this;
     }
@@ -112,7 +112,7 @@ public class DefaultExecutableGroup extends DefaultManagedGroup implements
      * @see org.coconut.management.ExecutableGroup#reSchedule(java.lang.Runnable,
      *      long, java.util.concurrent.TimeUnit)
      */
-    public <T extends Runnable> ExecutableGroup reSchedule(T r, long time, TimeUnit unit) {
+    public <T extends Runnable> ExecutableManagementGroup reSchedule(T r, long time, TimeUnit unit) {
         throw new UnsupportedOperationException();
     }
 }

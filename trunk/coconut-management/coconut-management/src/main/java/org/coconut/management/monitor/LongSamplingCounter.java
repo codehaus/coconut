@@ -1,9 +1,9 @@
-/**
- * 
+/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the MIT license, see http://coconut.codehaus.org/license.
  */
 package org.coconut.management.monitor;
 
-import org.coconut.management.Apms;
+import org.coconut.management.Managements;
 import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.spi.AbstractApm;
 import org.coconut.management.spi.JMXConfigurator;
@@ -90,11 +90,11 @@ public class LongSamplingCounter extends AbstractApm {
     }
 
     public Number liveSamplings() {
-        return Apms.runningNumber(this, "getSamplings");
+        return Managements.runningNumber(this, "getSamplings");
     }
 
     public Number liveTotal() {
-        return Apms.runningNumber(this, "getTotal");
+        return Managements.runningNumber(this, "getTotal");
     }
 
     /**

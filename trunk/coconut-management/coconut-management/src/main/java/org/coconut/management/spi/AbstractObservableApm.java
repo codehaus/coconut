@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.coconut.core.EventProcessor;
-import org.coconut.management.ApmObserver;
+import org.coconut.management.ManagementObserver;
 import org.coconut.management.monitor.TimedAverage;
 
 /**
@@ -15,7 +15,7 @@ import org.coconut.management.monitor.TimedAverage;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public abstract class AbstractObservableApm<T extends AbstractObservableApm> extends AbstractApm
-        implements ApmObserver<T> {
+        implements ManagementObserver<T> {
 
 //    private final List<EventHandler<T>> dependent = new ArrayList<EventHandler<T>>();
 //

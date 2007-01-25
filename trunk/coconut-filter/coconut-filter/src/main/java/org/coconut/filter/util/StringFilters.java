@@ -14,6 +14,10 @@ public class StringFilters {
         return new ContainsFilter(charSequence);
     }
 
+    public static Filter<String> stringStartsWith(String string) {
+        return new ContainsFilter(string);
+    }
+
     static final class ContainsFilter implements Filter<String>, Serializable {
         /** serialVersionUID */
         private static final long serialVersionUID = 9017164210753456879L;
@@ -32,4 +36,22 @@ public class StringFilters {
         }
     }
 
+    static final class StartsWithFilter implements Filter<String>, Serializable {
+
+        /** serialVersionUID */
+        private static final long serialVersionUID = -4403651350378953066L;
+
+        private final String string;
+
+        StartsWithFilter(String string) {
+            if (string == null) {
+                throw new NullPointerException("string is null");
+            }
+            this.string = string;
+        }
+
+        public boolean accept(String element) {
+            return element.startsWith(string);
+        }
+    }
 }

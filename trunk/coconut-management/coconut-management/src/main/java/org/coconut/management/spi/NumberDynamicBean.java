@@ -1,5 +1,5 @@
-/**
- * 
+/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the MIT license, see http://coconut.codehaus.org/license.
  */
 package org.coconut.management.spi;
 
@@ -289,7 +289,7 @@ public class NumberDynamicBean implements DynamicMBean, JMXConfigurator {
         if (o instanceof Named) {
             Named n = (Named) o;
             str = str.replace("$name", n.getName());
-            System.out.println(n.getName());
+            //System.out.println(n.getName());
         }
         if (o instanceof Described) {
             Described n = (Described) o;
@@ -410,7 +410,7 @@ public class NumberDynamicBean implements DynamicMBean, JMXConfigurator {
             throws InstanceAlreadyExistsException, MBeanRegistrationException {
         if (server == null) {
             throw new NullPointerException("server is null");
-        } else if (server == null) {
+        } else if (name == null) {
             throw new NullPointerException("name is null");
         }
         if (this.name != null) {

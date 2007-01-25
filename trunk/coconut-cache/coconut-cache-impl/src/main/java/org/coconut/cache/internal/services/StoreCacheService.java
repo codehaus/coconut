@@ -25,8 +25,6 @@ public class StoreCacheService {
         public EntrySupport(CacheConfiguration<K, V> conf) {
             super(conf);
             errorHandler = conf.getErrorHandler();
-            //System.out.println(conf.backend().getExtendedBackend());
-            //System.out.println("skæljfsdljf\nasdasdas\n");
             if (conf.backend().getExtendedBackend() instanceof CacheStore) {
                 
                 store = (CacheStore<K, CacheEntry<K, V>>) conf.backend()

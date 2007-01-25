@@ -14,7 +14,7 @@ import javax.management.JMException;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public interface ExecutableGroup extends ManagedGroup {
+public interface ExecutableManagementGroup extends ManagedGroup {
 
     /**
      * Adds an object to the group. The
@@ -27,7 +27,7 @@ public interface ExecutableGroup extends ManagedGroup {
      * @throws IllegalArgumentException
      *             if the object has already been registered
      */
-    ExecutableGroup add(Object o);
+    ExecutableManagementGroup add(Object o);
 
     /**
      * (optional)
@@ -38,9 +38,9 @@ public interface ExecutableGroup extends ManagedGroup {
      * @param unit
      * @return
      */
-    <T extends Runnable> ExecutableGroup add(T r, long time, TimeUnit unit);
+    <T extends Runnable> ExecutableManagementGroup add(T r, long time, TimeUnit unit);
 
-    <T extends Runnable> ExecutableGroup reSchedule(T r, long time, TimeUnit unit);
+    <T extends Runnable> ExecutableManagementGroup reSchedule(T r, long time, TimeUnit unit);
 
     void start();
 

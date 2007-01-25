@@ -45,7 +45,7 @@ public abstract class AbstractCacheService<K, V> extends AbstractService impleme
                 try {
                     doStart(cache, properties);
                 } catch (Exception e) {
-                    throw new RuntimeException("Could not start cache");
+                    throw new RuntimeException("Could not start cache",e);
                 }
             }
         } finally {

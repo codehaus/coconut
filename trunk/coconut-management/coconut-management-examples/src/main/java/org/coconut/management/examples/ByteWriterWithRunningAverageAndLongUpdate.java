@@ -5,8 +5,8 @@ package org.coconut.management.examples;
 
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.management.Apms;
-import org.coconut.management.ExecutableGroup;
+import org.coconut.management.Managements;
+import org.coconut.management.ExecutableManagementGroup;
 import org.coconut.management.monitor.LongCounter;
 import org.coconut.management.monitor.TimedAverage;
 
@@ -17,7 +17,7 @@ import org.coconut.management.monitor.TimedAverage;
 public class ByteWriterWithRunningAverageAndLongUpdate {
     public static void main(String[] args) throws Exception {
         
-        ExecutableGroup mg = Apms.newExecutableGroup("BytesWritten");
+        ExecutableManagementGroup mg = Managements.newExecutableGroup("BytesWritten");
         LongCounter lr = LongCounter.newConcurrent("BytesWritten",
                 "Number of Bytes written to disk A");
         

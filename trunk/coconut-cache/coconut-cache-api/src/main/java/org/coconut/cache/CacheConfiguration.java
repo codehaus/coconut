@@ -622,7 +622,7 @@ public class CacheConfiguration<K, V> implements Cloneable {
          * @param policy
          * @return
          */
-        public Eviction setPolicy(ReplacementPolicy<? super CacheEntry<K, V>> policy) {
+        public Eviction setPolicy(ReplacementPolicy policy) {
             replacementPolicy = policy;
             return this;
         }

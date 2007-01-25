@@ -10,7 +10,7 @@ import javax.management.JMException;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.service.AbstractCacheService;
-import org.coconut.management.Apms;
+import org.coconut.management.Managements;
 import org.coconut.management.ManagedGroup;
 
 /**
@@ -23,7 +23,7 @@ public class ManagementCacheService<K, V> extends AbstractCacheService<K, V> {
 
     public ManagementCacheService(CacheConfiguration<K, V> conf) {
         super(conf);
-        group = Apms.newGroup(conf.getName(), conf.jmx().getMBeanServer());
+        group = Managements.newGroup(conf.getName(), "Base bean", conf.jmx().getMBeanServer());
     }
 
     public ManagedGroup getGroup() {
@@ -38,8 +38,8 @@ public class ManagementCacheService<K, V> extends AbstractCacheService<K, V> {
     protected void doStart(AbstractCache<K, V> cache, Map<String, Object> properties)
             throws JMException {
         if (cache.getConfiguration().jmx().isRegister()) {
-            group.registerAll(Apms.newRegistrant(cache.getConfiguration().jmx()
-                    .getDomain(), "name", "service"));
+            group.registerAll(Managements.newRegistrant(cache.getConfiguration().jmx()
+                    .getDomain(), "name", "service", "group"));
         }
     }
 }

@@ -28,4 +28,8 @@ public interface ExecutorEvent extends Runnable {
     interface Evict extends ExecutorEvent {
         Cache getCache();
     }
+    
+    interface Statistics extends ExecutorEvent {
+        
+    }
 }

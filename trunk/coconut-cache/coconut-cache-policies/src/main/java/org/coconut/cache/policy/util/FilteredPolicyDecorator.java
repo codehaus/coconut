@@ -3,6 +3,10 @@
  */
 package org.coconut.cache.policy.util;
 
+import java.util.Map;
+
+import org.coconut.cache.CacheEntry;
+import org.coconut.cache.CacheFilters;
 import org.coconut.cache.policy.CostSizeObject;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.filter.Filter;
@@ -37,6 +41,16 @@ public class FilteredPolicyDecorator<T> extends PolicyDecorator<T> {
     public static <T extends CostSizeObject> ReplacementPolicy<T> costRejector(
             ReplacementPolicy<T> policy, double minimumCost) {
         return new FilteredPolicyDecorator<T>(policy, new CostFilter<T>(minimumCost));
+    }
+
+    public static <K, V> ReplacementPolicy<? extends Map.Entry<K, V>> entryKeyRejector(
+            ReplacementPolicy policy, Filter<? extends K> filter) {
+        return new FilteredPolicyDecorator(policy, CacheFilters.keyFilter(filter));
+    }
+
+    public static <K, V> ReplacementPolicy<? extends Map.Entry<K, V>> entryValueRejector(
+            ReplacementPolicy<Map.Entry<K, V>> policy, Filter<? extends K> filter) {
+        return new FilteredPolicyDecorator(policy, CacheFilters.valueFilter(filter));
     }
 
     private final Filter<T> filter;

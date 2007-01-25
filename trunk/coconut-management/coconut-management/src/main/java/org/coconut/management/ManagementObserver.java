@@ -11,10 +11,10 @@ import org.coconut.core.EventProcessor;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public interface ApmObserver<T> {
-    EventProcessor<? super T> addEventHandler(EventProcessor<? super T> e);
+public interface ManagementObserver<T> {
+    EventProcessor<? super T> addEventProcessor(EventProcessor<? super T> e);
 
-    List<EventProcessor<? super T>> getEventHandlers();
+    List<EventProcessor<? super T>> getEventProcessors();
 
-    boolean removeEventHandler(EventProcessor<?> e);
+    boolean removeEventProcessor(EventProcessor<?> e);
 }

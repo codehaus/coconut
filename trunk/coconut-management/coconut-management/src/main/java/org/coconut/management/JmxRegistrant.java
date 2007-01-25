@@ -13,7 +13,7 @@ import javax.management.ObjectName;
 public interface JmxRegistrant {
     String getDomain();
 
-    ObjectName getName();
+    ObjectName getName(ManagedGroup mg) throws JMException;
 
     void registerChild(ManagedGroup mg) throws JMException;
 }
