@@ -18,7 +18,6 @@ import org.coconut.cache.internal.services.CacheStatisticsCacheService;
 import org.coconut.cache.internal.services.EventCacheService;
 import org.coconut.cache.internal.services.EvictionCacheService;
 import org.coconut.cache.internal.services.ManagementCacheService;
-import org.coconut.cache.internal.services.StoreCacheService;
 import org.coconut.cache.internal.services.expiration.ExpirationCacheService;
 import org.coconut.cache.internal.services.expiration.FinalExpirationCacheService;
 import org.coconut.cache.internal.services.loading.CacheEntryLoaderService;

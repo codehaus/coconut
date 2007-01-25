@@ -4,8 +4,8 @@
 package org.coconut.cache.examples.policy;
 
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.Caches;
 import org.coconut.cache.policy.Policies;
-import org.coconut.cache.policy.util.FilteredPolicyDecorator;
 import org.coconut.filter.Filter;
 import org.coconut.filter.LogicFilters;
 import org.coconut.filter.util.StringFilters;
@@ -19,6 +19,6 @@ public class CachePolicyDecoratorExample {
         CacheConfiguration conf = CacheConfiguration.create();
         Filter<String> f = LogicFilters.not(StringFilters.stringStartsWith("https"));
         conf.eviction().setPolicy(
-                FilteredPolicyDecorator.entryKeyAcceptor(Policies.newLRU(), f));
+                Caches.entryKeyAcceptor(Policies.newLRU(), f));
     }
 }

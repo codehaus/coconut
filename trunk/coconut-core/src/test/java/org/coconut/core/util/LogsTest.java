@@ -45,8 +45,8 @@ public class LogsTest extends MockTestCase {
         mock.expects(once()).method("isTraceEnabled").will(returnValue(true));
         mock.expects(once()).method("isWarnEnabled").will(returnValue(true));
 
-        Log l = Logs.Commons.from((org.apache.commons.logging.Log) mock.proxy());
-        runMock(l, t);
+        Log log = Logs.Commons.from((org.apache.commons.logging.Log) mock.proxy());
+        runMock(log, t);
     }
     public void testCommonsCacheLogging() {
         InnerPrintStream str = InnerPrintStream.getErr();

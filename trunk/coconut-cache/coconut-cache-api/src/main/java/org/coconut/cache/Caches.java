@@ -14,11 +14,14 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
 
+import org.coconut.cache.policy.ReplacementPolicy;
+import org.coconut.cache.policy.util.FilteredPolicyDecorator;
 import org.coconut.cache.spi.CacheUtil;
 import org.coconut.cache.spi.ExecutorEvent;
 import org.coconut.cache.util.AbstractCacheLoader;
 import org.coconut.cache.util.CacheDecorator;
 import org.coconut.event.EventBus;
+import org.coconut.filter.Filter;
 
 /**
  * Factory and utility methods for for creating different types of
@@ -79,7 +82,17 @@ public final class Caches {
     public static <K, V> CacheLoader<K, V> cacheAsCacheLoader(Cache<K, V> c) {
         return new CacheAsCacheLoader<K, V>(c);
     }
-    
+
+    public static <K, V> ReplacementPolicy<? extends Map.Entry<K, V>> entryKeyAcceptor(
+            ReplacementPolicy policy, Filter<? extends K> filter) {
+        return new FilteredPolicyDecorator(policy, CacheFilters.keyFilter(filter));
+    }
+
+    public static <K, V> ReplacementPolicy<? extends Map.Entry<K, V>> entryValueAcceptor(
+            ReplacementPolicy<Map.Entry<K, V>> policy, Filter<? extends K> filter) {
+        return new FilteredPolicyDecorator(policy, CacheFilters.valueFilter(filter));
+    }
+
     /**
      * This class wraps a cache in such a way that it can be used as a cache
      * loader for another cache.

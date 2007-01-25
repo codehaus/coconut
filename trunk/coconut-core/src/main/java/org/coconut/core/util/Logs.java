@@ -73,7 +73,7 @@ public final class Logs {
         public static Log from(Class clazz) {
             return from(org.apache.log4j.Logger.getLogger(clazz));
         }
-        
+
         public static boolean isLog4jLogger(Log log) {
             return log.getClass().getName().equals("org.apache.log4j.Logger");
         }
@@ -284,9 +284,11 @@ public final class Logs {
         public static Log from(Class clazz) {
             return from(org.apache.commons.logging.LogFactory.getLog(clazz));
         }
+
         public static boolean isCommonsLogger(Log log) {
             return log.getClass().getName().equals("org.apache.commons.logging.Log");
         }
+
         // /CLOVER:OFF
         /** Cannot instantiate. */
         private Commons() {/* Cannot instantiate. */
@@ -311,6 +313,8 @@ public final class Logs {
                 return log.isFatalEnabled();
             case Info:
                 return log.isInfoEnabled();
+            case Trace:
+                return log.isTraceEnabled();
             default /* Warn */:
                 return log.isWarnEnabled();
             }
@@ -334,6 +338,9 @@ public final class Logs {
             case Info:
                 log.info(message);
                 break;
+            case Trace:
+                log.trace(message);
+                break;
             default /* Warn */:
                 log.warn(message);
             }
@@ -356,6 +363,9 @@ public final class Logs {
                 break;
             case Info:
                 log.info(message, cause);
+                break;
+            case Trace:
+                log.trace(message, cause);
                 break;
             default /* Warn */:
                 log.warn(message, cause);
@@ -381,16 +391,19 @@ public final class Logs {
         public static Log from(java.util.logging.Logger log) {
             return new JDKLogger(log);
         }
+
         public static Log from(Class clazz) {
             return from(clazz.getName());
         }
+
         public static Log from(String name) {
             return from(java.util.logging.Logger.getLogger(name));
         }
+
         public static boolean isJDKLogger(Log log) {
             return log instanceof JDKLogger;
         }
-        
+
         // /CLOVER:OFF
         /** Cannot instantiate. */
         private JDK() {/* Cannot instantiate. */

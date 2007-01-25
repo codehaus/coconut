@@ -5,6 +5,7 @@
 package org.coconut.cache;
 
 import static org.coconut.test.TestUtil.assertEqual;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.coconut.cache.util.AbstractCacheLoader;
 import org.coconut.test.MockTestCase;
 import org.jmock.Mock;
+import org.junit.Test;
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
@@ -25,6 +27,12 @@ public class CachesTest extends MockTestCase {
 
     private final Exception ex = new Exception();
 
+    @Test
+    public void testConstanst() {
+        assertEquals(0l, Cache.DEFAULT_EXPIRATION);
+        assertEquals(Long.MAX_VALUE, Cache.NEVER_EXPIRE);
+    }
+    
     public void testNullCacheLoader() throws Exception {
         CacheLoader<Object, Object> loader = Caches.nullLoader();
         assertNull(loader.load(new Object()));

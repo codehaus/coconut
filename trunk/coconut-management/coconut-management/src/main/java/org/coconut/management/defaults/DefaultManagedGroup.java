@@ -27,7 +27,7 @@ import org.coconut.management.spi.SelfConfigure;
  */
 public class DefaultManagedGroup implements ManagedGroup {
     private final static Pattern PATTERN = Pattern
-            .compile("[\\da-zA-Z\\x5F]*(\\x2E([\\da-z\\x5F])+)*");
+            .compile("[\\da-zA-Z\\x5F\\x2D]*(\\x2E([\\da-z\\x5F\\x2D])+)*");
 
     private final List<Object> apms = new ArrayList<Object>();
 
@@ -93,7 +93,7 @@ public class DefaultManagedGroup implements ManagedGroup {
             boolean register) {
         if (name == null) {
             throw new NullPointerException("name is null");
-        } else if (!Pattern.matches("[\\da-zA-Z\\x5F]*", name)) {
+        } else if (!Pattern.matches("[\\da-zA-Z\\x5F\\x2D]*", name)) {
             throw new IllegalArgumentException("not a valid name, was " + name);
         } else if (groups.containsKey(name)) {
             throw new IllegalArgumentException("already a group defined with name "

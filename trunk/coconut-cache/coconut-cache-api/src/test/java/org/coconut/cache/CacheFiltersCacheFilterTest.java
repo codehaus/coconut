@@ -48,7 +48,7 @@ public class CacheFiltersCacheFilterTest extends MockTestCase {
         fail("Did not fail with NullPointerException");
     }
 
-    public void testNotNull() {
+    public void testNotNull2() {
         try {
             CacheFilters.cacheFilter(null);
         } catch (NullPointerException npe) {
@@ -57,4 +57,31 @@ public class CacheFiltersCacheFilterTest extends MockTestCase {
         fail("Did not fail with NullPointerException");
     }
 
+    public void testNameFilter() {
+        Mock mock = mock(CacheEvent.class);
+        Filter<String> f = equal("TT");
+        mock.expects(once()).method("getName").will(returnValue("TT"));
+        Filter<CacheEvent<Integer, String>> filter = CacheFilters.cacheName(f);
+        assertTrue(filter.accept((CacheEvent) mock.proxy()));
+    }
+
+    public void testNameEqualsFilter() {
+        Mock mock = mock(CacheEvent.class);
+        Mock mock2 = mock(CacheEvent.class);
+        mock.expects(once()).method("getName").will(returnValue("T1"));
+        mock2.expects(once()).method("getName").will(returnValue("T2"));
+        Filter<CacheEvent<Integer, String>> f = CacheFilters
+                .cacheName(equal("T1"));
+        assertTrue(f.accept((CacheEvent) mock.proxy()));
+        assertFalse(f.accept((CacheEvent) mock2.proxy()));
+    }
+
+    public void testNotNull() {
+        try {
+            CacheFilters.cacheName(null);
+        } catch (NullPointerException npe) {
+            return; // success
+        }
+        fail("Did not fail with NullPointerException");
+    }
 }

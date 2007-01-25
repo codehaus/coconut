@@ -214,7 +214,7 @@ public class CacheConfiguration<K, V> implements Cloneable {
     }
     public static <K, V> AbstractCache<K, V> createInstantiateAndStart(InputStream is) throws Exception {
         CacheConfiguration<K, V> conf = create(is);
-        AbstractCache cc= conf.newInstance((Class) Class.forName(conf.getProperty(XmlConfigurator.CACHE_INSTANCE_TYPE)
+        AbstractCache cc=(AbstractCache) conf.newInstance((Class) Class.forName(conf.getProperty(XmlConfigurator.CACHE_INSTANCE_TYPE)
                 .toString()));
         cc.start();
         return cc;

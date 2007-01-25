@@ -61,8 +61,8 @@ public class CacheDecoratorTest extends MockTestCase {
         m.expects(once()).method("isEmpty").will(returnValue(true));
         m.expects(once()).method("entrySet").will(returnValue(set));
         m.expects(once()).method("keySet").will(returnValue(set));
-        m.expects(once()).method("loadAsync").with(eq(4)).will(returnValue(future));
-        m.expects(once()).method("loadAllAsync").with(same(col)).will(returnValue(future));
+        m.expects(once()).method("load").with(eq(4)).will(returnValue(future));
+        m.expects(once()).method("loadAll").with(same(col)).will(returnValue(future));
         m.expects(once()).method("peek").with(eq(5)).will(returnValue("D"));
 
         m.expects(once()).method("put").with(eq(6), eq("E")).will(returnValue("F"));
