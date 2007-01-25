@@ -13,6 +13,7 @@ import java.util.Map;
 import org.coconut.annotation.ThreadSafe;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.service.CacheServiceManager;
 import org.coconut.cache.internal.services.CacheStatisticsCacheService;
 import org.coconut.cache.internal.services.EventCacheService;
 import org.coconut.cache.internal.services.EvictionCacheService;
@@ -22,7 +23,6 @@ import org.coconut.cache.internal.services.expiration.ExpirationCacheService;
 import org.coconut.cache.internal.services.expiration.FinalExpirationCacheService;
 import org.coconut.cache.internal.services.loading.CacheEntryLoaderService;
 import org.coconut.cache.spi.CacheSupport;
-import org.coconut.cache.spi.service.CacheServiceManager;
 
 /**
  * <b>Note that this implementation is not synchronized.</b> If multiple
@@ -40,8 +40,6 @@ import org.coconut.cache.spi.service.CacheServiceManager;
 @CacheSupport(CacheLoadingSupport = true, CacheEntrySupport = true, querySupport = true, ExpirationSupport = true, statisticsSupport = true, eventSupport = true)
 @ThreadSafe(false)
 public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
-    private final StoreCacheService.EntrySupport<K, V> storeSupport;
-
     private final EntryMap<K, V> map;
 
     @SuppressWarnings("unchecked")
@@ -51,7 +49,6 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
 
     public UnsynchronizedCache(CacheConfiguration<K, V> conf) {
         super(conf);
-        storeSupport = getCsm().create(StoreCacheService.EntrySupport.class);
         getCsm().initializeApm(getManagementSupport().getGroup());
         // important must be last, because of final value being inlined.
         map = new MyMap();
@@ -139,7 +136,7 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
             getStatisticsSupport().entryGetStop(entry, start, false);
         } else {
             if (getExpirationSupport().needsRefresh(entry)) {
-                loadAsync(entry.getKey());
+                load(entry.getKey());
             }
             entry.increment();
             entry.accessed();
@@ -193,7 +190,6 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
         csm.setService(ExpirationCacheService.class, FinalExpirationCacheService.class);
         csm.setService(CacheEntryLoaderService.class);
         csm.setService(ManagementCacheService.class);
-        csm.setService(StoreCacheService.EntrySupport.class);
         csm.setService(EventCacheService.class);
         return csm;
     }
@@ -226,7 +222,6 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
 
     @Override
     AbstractCacheEntry<K, V> putMyEntry(AbstractCacheEntry<K, V> me) {
-        storeSupport.storeEntry(me);
         AbstractCacheEntry<K, V> prev = map.put(me);
         if (me.getPolicyIndex() >= 0) {// check rejected by policy
             getEventService().put(this, me, prev);

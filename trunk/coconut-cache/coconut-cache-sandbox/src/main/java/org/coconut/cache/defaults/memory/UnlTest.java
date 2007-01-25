@@ -25,7 +25,7 @@ public class UnlTest {
         cc.backend().setBackend(new IntegerToStringLoader());
         UnsynchronizedCache uc = new UnsynchronizedCache(cc);
 
-        uc.loadAsync(3);
+        uc.load(3);
         System.out.println(uc.get(5));
         System.out.println(uc.getHitStat());
         // 

@@ -170,15 +170,15 @@ public class CacheDecorator<K, V> implements Cache<K, V>, Serializable {
     /**
      * {@inheritDoc}
      */
-    public Future<?> loadAsync(K key) {
-        return cache.loadAsync(key);
+    public Future<?> load(K key) {
+        return cache.load(key);
     }
 
     /**
      * {@inheritDoc}
      */
-    public Future<?> loadAllAsync(Collection<? extends K> keys) {
-        return cache.loadAllAsync(keys);
+    public Future<?> loadAll(Collection<? extends K> keys) {
+        return cache.loadAll(keys);
     }
 
     /**

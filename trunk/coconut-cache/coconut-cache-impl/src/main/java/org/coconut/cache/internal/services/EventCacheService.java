@@ -21,7 +21,7 @@ import org.coconut.cache.CacheEntryEvent.ItemAccessed;
 import org.coconut.cache.CacheEntryEvent.ItemAdded;
 import org.coconut.cache.CacheEntryEvent.ItemRemoved;
 import org.coconut.cache.CacheEntryEvent.ItemUpdated;
-import org.coconut.cache.spi.service.AbstractCacheService;
+import org.coconut.cache.internal.service.AbstractCacheService;
 import org.coconut.core.Offerable;
 import org.coconut.event.EventBus;
 import org.coconut.event.impl.DefaultEventBus;

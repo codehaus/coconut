@@ -57,56 +57,8 @@ public class Caches2 {
     public static Filter<CacheEntry> checkUpdateTime(String cronExpression) {
         return null;
     }
-    
-    /**
-     * This method converts the specified cache to a cache loader. Calls to
-     * {@link CacheLoader#load(Object)} will be converted to calls on
-     * {@link Cache#get(Object)}. Calls to
-     * {@link CacheLoader#loadAll(Collection)} will be converted to calls on
-     * {@link Cache#getAll(Collection)}
-     * 
-     * @param c
-     *            the cache to load entries from
-     * @return a cache loader that can load values from another cache
-     */
-    public static <K, V> CacheLoader<K, V> cacheAsLoader(Cache<K, V> c) {
-        
-        return new CacheAsCacheLoader<K, V>(c);
-    }
 
 
-    /**
-     * This class wraps a cache in such a way that it can be used as a cache
-     * loader for another cache.
-     * 
-     * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
-     * @version $Id: Caches.java 182 2007-01-14 22:25:59Z kasper $
-     */
-    static class CacheAsCacheLoader<K, V> implements CacheLoader<K, V>, Serializable {
-
-        /** serialVersionUID */
-        private static final long serialVersionUID = -1907266938637317312L;
-
-        /** The cache used as a cache loader. */
-        private final Cache<K, V> cache;
-
-        public CacheAsCacheLoader(Cache<K, V> cache) {
-            if (cache == null) {
-                throw new NullPointerException("cache is null");
-            }
-            this.cache = cache;
-        }
-
-        /** {@inheritDoc} */
-        public V load(K key) {
-            return cache.get(key);
-        }
-
-        /** {@inheritDoc} */
-        public Map<K, V> loadAll(Collection<? extends K> keys) {
-            return cache.getAll(keys);
-        }
-    }
 
     static class CronUpdateTimeChecker implements Filter<CacheEntry> {
 

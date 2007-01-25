@@ -8,8 +8,8 @@ import java.util.Map;
 import javax.management.JMException;
 
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.internal.service.AbstractCacheService;
 import org.coconut.cache.spi.AbstractCache;
-import org.coconut.cache.spi.service.AbstractCacheService;
 import org.coconut.management.Managements;
 import org.coconut.management.ManagedGroup;
 

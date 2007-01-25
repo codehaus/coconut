@@ -219,8 +219,8 @@ public class HitStat extends CacheTestBundle {
      */
     @Test
     public void load() throws Exception {
-        Future<?> f = loadableEmptyCache.loadAsync(M5.getKey());
-        Future<?> fAll = loadableEmptyCache.loadAllAsync(Arrays.asList(M2.getKey(),
+        Future<?> f = loadableEmptyCache.load(M5.getKey());
+        Future<?> fAll = loadableEmptyCache.loadAll(Arrays.asList(M2.getKey(),
                 M4.getKey()));
         try {
             f.get();

@@ -42,25 +42,6 @@ public class CacheErrorHandler<K, V> {
         this.logger = logger;
     }
 
-    public void backendDeleteFailed(Collection<? extends K> keys, Throwable cause) {
-        String msg = "Failed to delete values for collection of keys [keys.size = "
-                + keys.size() + "]";
-        getLogger().error(msg, cause);
-        throw new CacheException(msg, cause);
-    }
-
-    /**
-     * @param key
-     *            the key that failed to load
-     * @param cause
-     */
-    public void backendStoreFailed(Map<K, V> map, Throwable cause) {
-        String msg = "Failed to store values for collection entries [size = "
-                + map.size() + "]";
-        getLogger().error(msg, cause);
-        throw new CacheException(msg, cause);
-    }
-
     public synchronized boolean hasLogger() {
         return logger != null;
     }
@@ -104,21 +85,6 @@ public class CacheErrorHandler<K, V> {
         this.name = name;
     }
 
-    public void storeEntryFailed(CacheStore<K, CacheEntry<K, V>> store, K key,
-            CacheEntry<K, V> value, boolean isAsync, Throwable cause) {
-        String msg = "Failed to store value [key = " + key.toString() + "]";
-        getLogger().error(msg, cause);
-        throw new CacheException(msg, cause);
-    }
-
-    public void storeFailed(CacheStore<K, V> loader, K key, V value, boolean isAsync,
-            Throwable cause) {
-        checkInitialized();
-        String msg = "Failed to store value [key = " + key.toString() + "]";
-        getLogger().error(msg, cause);
-        throw new CacheException(msg, cause);
-    }
-
     public final void warning(String warning) {
         getLogger().warn(warning);
     }
@@ -127,7 +93,7 @@ public class CacheErrorHandler<K, V> {
         getLogger().error("Unhandled Error", t);
     }
 
-    private synchronized void checkInitialized() {
+    protected synchronized void checkInitialized() {
         if (!isInitialized) {
             isInitialized = true;
             String loggerName = Cache.class.getPackage().getName() + "." + name;

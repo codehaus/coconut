@@ -17,22 +17,22 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheEvent;
-import org.coconut.cache.CacheLoader;
-import org.coconut.cache.Caches;
 import org.coconut.cache.management.CacheMXBean;
 import org.coconut.core.Clock;
 import org.coconut.event.EventBus;
 
 /**
  * This class provides a skeletal implementation of the <tt>Cache</tt>
- * interface, to minimize the effort required to implement this interface.
+ * interface, to minimize the effort required to implement the Cache interface.
  * <p>
+ * This class also contains various lifecycle methods such as
+ * {@link AbstractCache#start()} and {@link AbstractCache#shutdown()}
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
 public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
-        Cache<K, V>, CacheLoader<K, V> {
+        Cache<K, V> {
 
     public static void checkCollectionForNulls(Collection<?> col) {
         for (Object entry : col) {
@@ -182,25 +182,11 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
     }
 
     /**
-     * @see org.coconut.cache.CacheLoader#load(java.lang.Object)
-     */
-    public V load(K key) {
-        return get(key);
-    }
-
-    /**
-     * @see org.coconut.cache.CacheLoader#loadAll(java.util.Collection)
-     */
-    public Map<K, V> loadAll(Collection<? extends K> keys) {
-        return getAll(keys);
-    }
-
-    /**
      * The default implementation throws {@link UnsupportedOperationException}
      * 
      * @see org.coconut.cache.Cache#loadAll(Collection)
      */
-    public Future<?> loadAllAsync(Collection<? extends K> keys) {
+    public Future<?> loadAll(Collection<? extends K> keys) {
         // default implementation does not support loading of values
         throw new UnsupportedOperationException(
                 "loadAll(Collection<? extends K> keys) not supported for Cache of type "
@@ -212,7 +198,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
      * 
      * @see org.coconut.cache.Cache#load(Object)
      */
-    public Future<?> loadAsync(K key) {
+    public Future<?> load(K key) {
         // default implementation does not support loading of values
         throw new UnsupportedOperationException(
                 "loadAsync(K key) not supported for Cache of type " + getClass());

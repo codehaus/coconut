@@ -24,10 +24,7 @@ import org.coconut.core.Callback;
  */
 public class CacheUtil {
 
-    public static final String CACHE_INSTANCE_TYPE = "org.coconut.cache.type";
-    
     public static final Cache.HitStat STAT00 = new ImmutableHitStat(0, 0);
-
 
     final static class ExtendedLoaderToLoader<K, V> implements CacheLoader<K, V> {
 
@@ -259,8 +256,8 @@ public class CacheUtil {
         /** {@inheritDoc} */
         @Override
         public String toString() {
-            return Ressources.getMessageFormatter("org.coconut.cache.hitstat").format(
-                    new Object[] { getHitRatio(), hits, misses });
+            return Ressources.getString("org.coconut.cache.hitstat", getHitRatio(), hits,
+                    misses);
         }
     }
 }

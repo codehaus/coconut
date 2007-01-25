@@ -5,9 +5,10 @@ package org.coconut.cache.internal.services;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.service.AbstractCacheService;
 import org.coconut.cache.spi.CacheErrorHandler;
+import org.coconut.cache.spi.CacheErrorHandler2;
 import org.coconut.cache.spi.CacheStore;
-import org.coconut.cache.spi.service.AbstractCacheService;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -20,11 +21,11 @@ public class StoreCacheService {
 
         private final CacheStore<K, V> store2;
 
-        private final CacheErrorHandler<K, V> errorHandler;
+        private final CacheErrorHandler2<K, V> errorHandler;
 
         public EntrySupport(CacheConfiguration<K, V> conf) {
             super(conf);
-            errorHandler = conf.getErrorHandler();
+            errorHandler =(CacheErrorHandler2) conf.getErrorHandler();
             if (conf.backend().getExtendedBackend() instanceof CacheStore) {
                 
                 store = (CacheStore<K, CacheEntry<K, V>>) conf.backend()
@@ -62,11 +63,11 @@ public class StoreCacheService {
     public static class ValueSupport<K, V> extends AbstractCacheService<K, V> {
         private final CacheStore<K, V> store;
 
-        private final CacheErrorHandler<K, V> errorHandler;
+        private final CacheErrorHandler2<K, V> errorHandler;
 
         public ValueSupport(CacheConfiguration<K, V> conf) {
             super(conf);
-            errorHandler = conf.getErrorHandler();
+            errorHandler = (CacheErrorHandler2<K, V>) conf.getErrorHandler();
             store = (CacheStore<K, V>) conf.backend().getBackend();
         }
 

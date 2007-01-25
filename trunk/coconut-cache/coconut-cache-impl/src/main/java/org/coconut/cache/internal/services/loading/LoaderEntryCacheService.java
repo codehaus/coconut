@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.spi.service.AbstractCacheService;
+import org.coconut.cache.internal.service.AbstractCacheService;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

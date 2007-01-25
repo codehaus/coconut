@@ -6,10 +6,10 @@ package org.coconut.cache.defaults;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import net.sf.ehcache.constructs.blocking.CacheEntryFactory;
-
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.defaults.EntryMap;
+import org.coconut.cache.defaults.SupportedCache;
 import org.coconut.cache.spi.CacheErrorHandler;
 import org.coconut.cache.util.DefaultCacheEntry;
 import org.coconut.core.Clock;

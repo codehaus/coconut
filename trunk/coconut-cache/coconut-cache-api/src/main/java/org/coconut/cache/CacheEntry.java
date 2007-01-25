@@ -14,25 +14,19 @@ import org.coconut.cache.policy.CostSizeObject;
  * information about creation time, access patterns, size and cost.
  * <p>
  * Unless otherwise specified a cache entry obtained from a cache is always an
- * immmutable and read-only copy. If the value for a given key is updated while
- * another thread holds a cache entry for the key. It will not be reflected in
- * calls to any of the methods on the cache entry. This is done in order to make
- * sure that all cache entry attributes are consistent.
+ * immmutable copy of the existing entry. If the value for a given key is
+ * updated while another thread holds a cache entry for the key. It will not be
+ * reflected in calls to any of the methods on the cache entry. This is done in
+ * order to make sure that all cache entry attributes are consistent.
  * <p>
- * If the cache makes use of version number the {@link #setValue(Object)} will
- * only update the value of the entry if the version of the cache entry match
- * the current version of the entry in the cache. For example, if one threads
- * acquires a cache entry with <tt>version = 1</tt> for a key <tt>K</tt>.
- * Another thread then updates the value for <tt>K</tt> resulting in a version
- * bumb to 2. If the first thread now attempts to call {@link #setValue(Object)}
- * on the cache entry (version=1) it will fail. This failure is indicated by
- * returning <tt>null</tt> from setValue instead of returning the existing
- * value. Use code example try -> use concurrent example.
- * <p>
- * When storing entries in a cache store, these additional fields should also be
- * stored. While there is no way to enforce this any cache store should also
- * store these additional fields. If fields such as size and cost are defined by
- * the cache store these fields does not need to stored
+ * A call to {@link #setValue(Object)} will only update the value of the entry
+ * if the version of the cache entry matches the current version of the entry in
+ * the cache. For example, if one threads acquires a cache entry with
+ * <tt>version = 1</tt> for a key <tt>K</tt>. Another thread then updates
+ * the value for <tt>K</tt> resulting in a version bumb to 2. If the first
+ * thread now attempts to call {@link #setValue(Object)} on the cache entry
+ * (version=1) it will fail. This failure is indicated by returning
+ * <tt>null</tt> from setValue instead of returning the existing value.
  * <p>
  * The notion of time, unless otherwise specified by the implementation, is
  * relative to the Unix epoch (on January 1, 1970, 00:00:00 GMT).

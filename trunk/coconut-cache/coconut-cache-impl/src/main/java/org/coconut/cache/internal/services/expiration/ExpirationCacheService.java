@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.spi.service.AbstractCacheService;
+import org.coconut.cache.internal.service.AbstractCacheService;
 import org.coconut.core.Clock;
 import org.coconut.filter.Filter;
 import org.coconut.internal.util.tabular.TabularFormatter;
@@ -48,13 +48,13 @@ public abstract class ExpirationCacheService<K, V> extends AbstractCacheService<
         if (isExpired(entry)) {
             if (getDefaultRefreshTime() >= 0) {
                 //TODO What if cache doesn't support async load
-                cache.loadAsync(entry.getKey());
+                cache.load(entry.getKey());
                 return true;
             } else {
                 return true;
             }
         } else if (needsRefresh(entry)) {
-            cache.loadAsync(entry.getKey());
+            cache.load(entry.getKey());
         }
         return false;
     }

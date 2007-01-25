@@ -4,6 +4,7 @@
 
 package org.coconut.cache;
 
+import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -23,6 +24,7 @@ import org.coconut.cache.management.CacheMXBean;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.CacheErrorHandler;
+import org.coconut.cache.spi.XmlConfigurator;
 import org.coconut.core.Clock;
 import org.coconut.filter.Filter;
 
@@ -200,6 +202,23 @@ public class CacheConfiguration<K, V> implements Cloneable {
         return (T) t;
     }
 
+    public static <K, V> CacheConfiguration<K, V> create(InputStream is)
+            throws Exception {
+        return XmlConfigurator.getInstance().from(is);
+    }
+
+    public static <K, V> Cache<K, V> createAndInstantiate(InputStream is) throws Exception {
+        CacheConfiguration<K, V> conf = create(is);
+        return conf.newInstance((Class) Class.forName(conf.getProperty(XmlConfigurator.CACHE_INSTANCE_TYPE)
+                .toString()));
+    }
+    public static <K, V> AbstractCache<K, V> createInstantiateAndStart(InputStream is) throws Exception {
+        CacheConfiguration<K, V> conf = create(is);
+        AbstractCache cc= conf.newInstance((Class) Class.forName(conf.getProperty(XmlConfigurator.CACHE_INSTANCE_TYPE)
+                .toString()));
+        cc.start();
+        return cc;
+    }
     /**
      * Returns a new Eviction object.
      */

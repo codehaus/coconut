@@ -92,23 +92,6 @@ public class CacheConfiguration2<K, V> extends CacheConfiguration<K, V> {
         throw new UnsupportedOperationException();
     }
 
-    public static <K, V> CacheConfiguration<K, V> create(InputStream is)
-            throws Exception {
-        return XmlConfigurator.getInstance().from(is);
-    }
-
-    public static <K, V> Cache<K, V> createAndInstantiate(InputStream is) throws Exception {
-        CacheConfiguration<K, V> conf = create(is);
-        return conf.newInstance((Class) Class.forName(conf.getProperty(CacheUtil.CACHE_INSTANCE_TYPE)
-                .toString()));
-    }
-    public static <K, V> AbstractCache<K, V> createInstantiateAndStart(InputStream is) throws Exception {
-        CacheConfiguration<K, V> conf = create(is);
-        AbstractCache cc= conf.newInstance((Class) Class.forName(conf.getProperty(CacheUtil.CACHE_INSTANCE_TYPE)
-                .toString()));
-        cc.start();
-        return cc;
-    }
     /**
      * Creates a new CacheConfiguration by copying this configuration.
      * 

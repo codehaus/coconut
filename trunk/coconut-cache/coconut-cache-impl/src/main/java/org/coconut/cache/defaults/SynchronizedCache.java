@@ -115,15 +115,15 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
      * @see org.coconut.cache.spi.AbstractCache#loadAllAsync(java.util.Collection)
      */
     @Override
-    public synchronized Future<?> loadAllAsync(Collection<? extends K> keys) {
-        return wrapped.loadAllAsync(keys);
+    public synchronized Future<?> loadAll(Collection<? extends K> keys) {
+        return wrapped.loadAll(keys);
     }
 
     /**
      * @see org.coconut.cache.spi.AbstractCache#loadAsync(java.lang.Object)
      */
     @Override
-    public synchronized Future<?> loadAsync(K key) {
+    public synchronized Future<?> load(K key) {
         return wrapped.loadAsync(this, key);
     }
 

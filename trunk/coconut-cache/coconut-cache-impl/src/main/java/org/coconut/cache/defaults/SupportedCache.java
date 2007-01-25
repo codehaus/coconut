@@ -5,12 +5,12 @@ package org.coconut.cache.defaults;
 
 import java.util.Collection;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheEvent;
+import org.coconut.cache.internal.service.CacheServiceManager;
 import org.coconut.cache.internal.services.CacheStatisticsCacheService;
 import org.coconut.cache.internal.services.EventCacheService;
 import org.coconut.cache.internal.services.EvictionCacheService;
@@ -19,7 +19,6 @@ import org.coconut.cache.internal.services.expiration.ExpirationCacheService;
 import org.coconut.cache.internal.services.loading.CacheEntryLoaderService;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.CacheErrorHandler;
-import org.coconut.cache.spi.service.CacheServiceManager;
 import org.coconut.core.Clock;
 import org.coconut.event.EventBus;
 import org.coconut.management.ManagedGroup;
@@ -182,13 +181,13 @@ public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
      * @see org.coconut.cache.spi.AbstractCache#loadAll(java.util.Collection)
      */
     @Override
-    public Future<?> loadAllAsync(Collection<? extends K> keys) {
+    public Future<?> loadAll(Collection<? extends K> keys) {
         return loaderSupport.asyncLoadAllEntries(keys, this);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Future<?> loadAsync(final K key) {
+    public Future<?> load(final K key) {
         return loaderSupport.asyncLoadEntry(key, this);
     }
 

@@ -104,8 +104,8 @@ public class CacheDecoratorTest extends MockTestCase {
         assertTrue(c.isEmpty());
         assertSame(set, c.entrySet());
         assertSame(set, c.keySet());
-        assertSame(future, c.loadAsync(4));
-        assertSame(future, c.loadAllAsync(col));
+        assertSame(future, c.load(4));
+        assertSame(future, c.loadAll(col));
         assertEquals("D", c.peek(5));
         assertEquals("F", c.put(6, "E"));
         assertEquals("H", c.put(7, "G", 8, TimeUnit.MILLISECONDS));

@@ -11,8 +11,6 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.coconut.cache.Caches;
-
 /**
  * This is class is used for looking up ressources. The default language is
  * english no matter what the default locale is, unless org.coconut.cache.lang
@@ -50,11 +48,6 @@ public final class Ressources {
         locale = loc;
 
     }
-
-    public static MessageFormat getMessageFormatter(String key) {
-        return new MessageFormat(getString(key), locale);
-    }
-
     public static String getString(String key, Object... o) {
         String lookup = getString(key);
         if (o != null && o.length > 0) {
@@ -76,7 +69,7 @@ public final class Ressources {
             if (true) {
                 // throw new RuntimeException("missing entry for key " + key);
             }
-            return "No Desc for [key = " + key + "]";
+            return "String could not be found [key = " + key + "]";
         }
     }
 

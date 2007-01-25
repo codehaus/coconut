@@ -20,26 +20,19 @@ import org.coconut.event.EventBus;
  * accessing the cached copy rather than refetching or recomputing the original
  * data, so that the average access time is lowered.
  * <p>
- * Coconut cache supports a wide range of different cache implementations.
- * Ranging from simple unsynchronized caches to highly concurrent distributed
- * caches. See a list of all the various cache implementations <a
- * href="http://org.coconut.codehaus.org/cache/cache-implementations.html">here</a>.
+ * Currently Coconut cache only supports two types of caches that are entirely
+ * held in memory: {@link org.coconut.cache.defaults.UnsynchronizedCache} and
+ * {@link org.coconut.cache.defaults.SynchronizedCache}.
  * <p>
  * Coconut Cache is made up of a number of core classes. This <a href="{@docRoot}/index.html">page</a>
  * tries to explain how they relate.
- * <p> *
  * <p>
- * All o The first level is thread safety/performance unsynchronized cache, for
- * example, {@link org.coconut.cache.impl.memory.UnlimitedCache} synchronized
- * caches which offers thread safety. concurrent caches with offers thread
- * safery and concurrent retrievels on the expense of features. Coconut comes
- * with build-in support for the following types of cache. TODO What is a cache
- * interface Distributed.. serializable CachePolicies. The three collection
- * views, which allow a cache's contents to be viewed as a set of keys,
- * collection of values, or set of key-value mappings only shows values
- * contained in the actual cache not in any backend storages. Furthermore, the
- * cache will <tt>not</tt> attempt to fetch updated values for entries that
- * has expired when calling methods on any of the collection views.
+ * The three collection views, which allow a cache's contents to be viewed as a
+ * set of keys, collection of values, or set of key-value mappings only shows
+ * values contained in the actual cache not any values that is stored in any
+ * CacheLoader. Furthermore, the cache will <tt>not</tt> attempt to fetch
+ * updated values for entries that has expired when calling methods on any of
+ * the collection views.
  * <p>
  * All general-purpose <tt>Cache</tt> implementation classes should provide
  * three "standard" constructors: a void (no arguments) constructor, which
@@ -91,7 +84,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * stale data to disk to adapting the cache with a better eviction policy
      * given the current access pattern. This is done to avoid paying the cost
      * upfront by application threads when accessing entries in the cache
-     * through {@link #get(Object)}.
+     * through {@link #get(Object)} or {@link #getAll(Collection)}.
      * <p>
      * Unless otherwise specified calling this method is the responsibility of
      * the user. The typical usage is to create a single thread that
@@ -202,7 +195,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @throws NullPointerException
      *             if the specified key is <tt>null</tt>
      */
-    Future<?> loadAsync(K key);
+    Future<?> load(K key);
 
     /**
      * Attempts to asynchronously load the values to which this cache maps the
@@ -232,7 +225,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      *             if the specified collection of keys is <tt>null</tt> or the
      *             specified collection contains <tt>null</tt> values
      */
-    Future<?> loadAllAsync(Collection<? extends K> keys);
+    Future<?> loadAll(Collection<? extends K> keys);
 
     /**
      * This method works analogoes to the {@link java.util.Map#get(Object)}

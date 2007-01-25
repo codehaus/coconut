@@ -12,7 +12,21 @@ import org.coconut.filter.Filter;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public interface Cache2<K, V> extends Cache<K, V> {
-
+    /* All o The first level is thread safety/performance unsynchronized cache, for
+    * example, org. {@link org.coconut.cache.defaults.UnsynchronizedCache}
+    * synchronized caches which offers thread safety. concurrent caches with offers
+    * thread safery and concurrent retrievels on the expense of features. Coconut
+    * comes with build-in support for the following types of cache. TODO What is a
+    * cache interface Distributed.. serializable CachePolicies.
+    * <p>
+    
+    *small range of different cache
+    * implementations. Ranging from simple unsynchronized caches to highly
+    * concurrent distributed caches. See a list of all the various cache
+    * implementations <a
+    * href="http://org.coconut.codehaus.org/cache/cache-implementations.html">here</a>.
+    */
+    
     /**
      * Tries to acquire a lock on either the cache instance, a single item in
      * the cache, or a set of items in the cache depending on the specified

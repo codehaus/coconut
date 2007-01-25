@@ -100,7 +100,7 @@ public class Loading extends CacheTestBundle {
      */
     @Test
     public void testLoad() throws InterruptedException, ExecutionException {
-        Future<?> task = c.loadAsync(1);
+        Future<?> task = c.load(1);
         assertNull(task.get());
         assertTrue(task.isDone());
         assertFalse(task.isCancelled());
@@ -113,12 +113,12 @@ public class Loading extends CacheTestBundle {
 
     @Test(expected = NullPointerException.class)
     public void testLoadNullPointer() {
-        c.loadAsync(null);
+        c.load(null);
     }
 
     @Test
     public void testLoadAll() throws InterruptedException, ExecutionException {
-        Future<?> task = c.loadAllAsync(Arrays.asList(1, 2, 3, 4));
+        Future<?> task = c.loadAll(Arrays.asList(1, 2, 3, 4));
         assertNull(task.get());
         assertTrue(task.isDone());
         assertFalse(task.isCancelled());
@@ -130,7 +130,7 @@ public class Loading extends CacheTestBundle {
 
     @Test(expected = NullPointerException.class)
     public void testLoadAllNullPointer() {
-        c.loadAllAsync(null);
+        c.loadAll(null);
     }
 
     /**
@@ -141,7 +141,7 @@ public class Loading extends CacheTestBundle {
      */
     @Test
     public void testLoadNull() throws InterruptedException, ExecutionException {
-        Future<?> task = c.loadAsync(M6.getKey());
+        Future<?> task = c.load(M6.getKey());
         assertNull(task.get());
         assertTrue(task.isDone());
         assertFalse(task.isCancelled());
@@ -149,13 +149,13 @@ public class Loading extends CacheTestBundle {
         assertSize(0);
         assertFalse(containsKey(M6));
 
-        assertNull(c.loadAsync(4).get());
+        assertNull(c.load(4).get());
         assertSize(1);
     }
 
     @Test
     public void testLoadManyNull() throws InterruptedException, ExecutionException {
-        Future<?> task = c.loadAllAsync(Arrays.asList(1, 2, 6, 7));
+        Future<?> task = c.loadAll(Arrays.asList(1, 2, 6, 7));
         assertNull(task.get());
         assertTrue(task.isDone());
         assertFalse(task.isCancelled());

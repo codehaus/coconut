@@ -9,8 +9,8 @@ import java.util.List;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.service.AbstractCacheService;
 import org.coconut.cache.policy.ReplacementPolicy;
-import org.coconut.cache.spi.service.AbstractCacheService;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
