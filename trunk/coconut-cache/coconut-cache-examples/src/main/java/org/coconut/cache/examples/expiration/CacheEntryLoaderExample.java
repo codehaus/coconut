@@ -1,5 +1,5 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.examples.expiration;
 
@@ -25,9 +25,9 @@ public class CacheEntryLoaderExample {
     }
 
     public static void main(String[] args) {
-        CacheConfiguration<Integer, String> cc = CacheConfiguration.newConf();
+        CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
         cc.backend().setExtendedBackend(new ExpirationLoader());
-        Cache<Integer, String> cache = cc.create(UnsynchronizedCache.class);
+        Cache<Integer, String> cache = cc.newInstance(UnsynchronizedCache.class);
         cache.get(4); // item will expire after 1 hour (60 * 60 * 1000)
     }
     // END SNIPPET: class

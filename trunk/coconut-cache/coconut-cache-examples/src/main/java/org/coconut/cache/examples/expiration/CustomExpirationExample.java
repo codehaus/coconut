@@ -1,5 +1,5 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.examples.expiration;
 
@@ -24,9 +24,9 @@ public class CustomExpirationExample {
     }
 
     public static void main(String[] args) {
-        CacheConfiguration<String, String> cc = CacheConfiguration.newConf();
+        CacheConfiguration<String, String> cc = CacheConfiguration.create();
         cc.expiration().setFilter(new CustomExpirationFilter<String, String>());
-        Cache<String, String> cache = cc.create(UnsynchronizedCache.class);
+        Cache<String, String> cache = cc.newInstance(UnsynchronizedCache.class);
         cache.put("key", "value");
         // element will expire if has not been accessed with the last 1 hour
     }

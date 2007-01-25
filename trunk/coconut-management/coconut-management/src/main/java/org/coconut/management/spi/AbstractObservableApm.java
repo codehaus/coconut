@@ -1,5 +1,5 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.management.spi;
 
@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.coconut.core.EventProcessor;
-import org.coconut.management.ManagementObserver;
+import org.coconut.management.ManagedObserver;
 import org.coconut.management.monitor.TimedAverage;
 
 /**
@@ -15,7 +15,7 @@ import org.coconut.management.monitor.TimedAverage;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public abstract class AbstractObservableApm<T extends AbstractObservableApm> extends AbstractApm
-        implements ManagementObserver<T> {
+        implements ManagedObserver<T> {
 
 //    private final List<EventHandler<T>> dependent = new ArrayList<EventHandler<T>>();
 //

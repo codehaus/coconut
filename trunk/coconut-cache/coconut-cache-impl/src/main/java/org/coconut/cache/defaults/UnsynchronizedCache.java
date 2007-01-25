@@ -1,5 +1,5 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
 package org.coconut.cache.defaults;
@@ -46,7 +46,7 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
 
     @SuppressWarnings("unchecked")
     public UnsynchronizedCache() {
-        this(CacheConfiguration.DEFAULT_CONFIGURATION);
+        this((CacheConfiguration) CacheConfiguration.create());
     }
 
     public UnsynchronizedCache(CacheConfiguration<K, V> conf) {
@@ -62,7 +62,7 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
 
     @SuppressWarnings("unchecked")
     public UnsynchronizedCache(Map<K, V> map) {
-        this((CacheConfiguration) CacheConfiguration.newConf().setInitialMap(map));
+        this((CacheConfiguration) CacheConfiguration.create().setInitialMap(map));
     }
 
     /**

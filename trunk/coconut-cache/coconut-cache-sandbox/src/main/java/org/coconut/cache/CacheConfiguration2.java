@@ -1,14 +1,25 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.Constructor;
 import java.util.Comparator;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.coconut.cache.spi.AbstractCache;
+import org.coconut.cache.spi.CacheUtil;
+import org.coconut.cache.spi.XmlConfigurator;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 /**
@@ -16,7 +27,6 @@ import org.xml.sax.SAXException;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class CacheConfiguration2<K, V> extends CacheConfiguration<K, V> {
-
 
     /**
      * WRITE_THROUGH = put/load value, make avilable for others, persist,
@@ -36,7 +46,7 @@ public class CacheConfiguration2<K, V> extends CacheConfiguration<K, V> {
     public static enum StorageStrategy {
         WRITE_BACK, WRITE_THROUGH, WRITE_THROUGH_ASYNC, WRITE_THROUGH_SAFE;
     }
-    
+
     // /**
     // * @return the configured MBeanServer or the platform MBeanServer if
     // no
@@ -62,99 +72,43 @@ public class CacheConfiguration2<K, V> extends CacheConfiguration<K, V> {
     // }
     // return oName;
     // }
-    
 
-    // public void saveConfigurationAsXml(OutputStream stream) {
-    // Document doc;
-    // }
-    // protected void parseDocument(Element doc) {
-    // Node loader = doc.getElementsByTagName("cache-loader").item(0);
-    // System.out.println(loader.getAttributes().getNamedItem("class"));
-    //
-    // }
-    //
-    // @SuppressWarnings("unchecked")
-    // public static <K, V> Cache<K, V> loadCache(InputStream is) throws
-    // Exception {
-    // CacheConfiguration<K, V> conf = loadConfiguration(is);
-    // String name = null;
-    //
-    // Class c = Class.forName(name);
-    // Constructor<Cache> cons = c.getConstructor(CacheConfiguration.class);
-    // return cons.newInstance(conf);
-    // }
-    //
-    // public static <K, V> CacheConfiguration<K, V>
-    // loadConfiguration(InputStream is) {
-    // BufferedInputStream bis = new BufferedInputStream(is);
-    // bis.mark(Integer.MAX_VALUE);
-    // Properties props = tryLoadProperties(bis);
-    // if (props == null) {
-    // // try load xml
-    // }
-    // return null;
-    // }
-    // /**
-    // * Returns an unmodifiable view of the specified configuration. This
-    // method
-    // * allows modules to provide users with "read-only" access to
-    // * configurations. Query (get) operations on the returned configuration
-    // * "read through" to the specified configuration, and attempts to modify
-    // the
-    // * returned configuration result in an UnsupportedOperationException.
-    // * <p>
-    // * If you need an unmodifiable version that is not backed by the existing
-    // * configuration use new CacheConfiguration(existing
-    // * configuration).unmodifiableConfiguration();
-    // *
-    // * @return an unmodifiable version of the current configuration
-    // */
-    // public CacheConfiguration<K, V> unmodifiableConfiguration() {
-    // throw new UnsupportedOperationException();
-    // }
-    //    
-    //
-    // private static Properties tryLoadFromXML(InputStream is) {
-    // Properties props = new Properties();
-    // try {
-    // props.load(is);
-    // System.out.println(props.size());
-    // props.list(System.err);
-    // } catch (IOException e) {
-    // e.printStackTrace();
-    // }
-    // return props;
-    // }
-    //
-    // private static Properties tryLoadProperties(InputStream is) {
-    // Properties props = new Properties();
-    // try {
-    // props.load(is);
-    // System.out.println(props.size());
-    // props.list(System.err);
-    // } catch (IOException e) {
-    // e.printStackTrace();
-    // }
-    // return props;
-    // }
-    // public static <K, V> Cache<K, V> fromInputStream(InputStream stream) {
-    // return CacheFactory.fromInputStream(stream);
-    // }
-    //
-    //
-    // /**
-    // * Override current configuration with *non default* values from specified
-    // * configuration
-    // *
-    // * @param overwriteWith
-    // * @return
-    // */
-    // public CacheConfiguration<K, V> overwriteConfiguration(
-    // CacheConfiguration<K, V> overwriteWith) {
-    // //do we need this, not for now i think
-    // return null;
-    // }
 
+
+    /**
+     * Returns an unmodifiable view of the specified configuration. This method
+     * allows modules to provide users with "read-only" access to
+     * configurations. Query (get) operations on the returned configuration
+     * "read through" to the specified configuration, and attempts to modify the
+     * returned configuration result in an UnsupportedOperationException.
+     * <p>
+     * If you need an unmodifiable version that is not backed by the existing
+     * configuration use new CacheConfiguration(existing
+     * configuration).unmodifiableConfiguration();
+     * 
+     * @return an unmodifiable version of the current configuration
+     */
+    public CacheConfiguration<K, V> unmodifiableConfiguration() {
+        throw new UnsupportedOperationException();
+    }
+
+    public static <K, V> CacheConfiguration<K, V> create(InputStream is)
+            throws Exception {
+        return XmlConfigurator.getInstance().from(is);
+    }
+
+    public static <K, V> Cache<K, V> createAndInstantiate(InputStream is) throws Exception {
+        CacheConfiguration<K, V> conf = create(is);
+        return conf.newInstance((Class) Class.forName(conf.getProperty(CacheUtil.CACHE_INSTANCE_TYPE)
+                .toString()));
+    }
+    public static <K, V> AbstractCache<K, V> createInstantiateAndStart(InputStream is) throws Exception {
+        CacheConfiguration<K, V> conf = create(is);
+        AbstractCache cc= conf.newInstance((Class) Class.forName(conf.getProperty(CacheUtil.CACHE_INSTANCE_TYPE)
+                .toString()));
+        cc.start();
+        return cc;
+    }
     /**
      * Creates a new CacheConfiguration by copying this configuration.
      * 
@@ -164,6 +118,7 @@ public class CacheConfiguration2<K, V> extends CacheConfiguration<K, V> {
     public Object clone() {
         return new CacheConfiguration2<K, V>(this);
     }
+
     /**
      * Creates a new CacheConfiguration by copying an existing configuration.
      * 
@@ -173,7 +128,7 @@ public class CacheConfiguration2<K, V> extends CacheConfiguration<K, V> {
     public CacheConfiguration2(CacheConfiguration2<K, V> otherConfiguration) {
         throw new UnsupportedOperationException(); // TODO implement
     }
-    
+
     private boolean enableTiming = true;
 
     public static void main(String[] args) throws SAXException, IOException,
@@ -192,7 +147,7 @@ public class CacheConfiguration2<K, V> extends CacheConfiguration<K, V> {
         // statistics/jmx ? monitoring????
         // locking /transactions (thread safety)
         //        
-        CacheConfiguration<String, Integer> cc = newConf();
+        CacheConfiguration<String, Integer> cc = create();
 
         cc.setName("MyCache");
         // cc.backend().setLoader(myLoader);
@@ -205,6 +160,7 @@ public class CacheConfiguration2<K, V> extends CacheConfiguration<K, V> {
         // // System.out.println("bye" + cacheInstance.length());
         // cc.jmx().setRegister(true);
     }
+
     /**
      * Note this setting is only used if an EventStrategy has been set.
      */
@@ -267,6 +223,11 @@ public class CacheConfiguration2<K, V> extends CacheConfiguration<K, V> {
         }
     }
 
+    /*
+     * none -> seqid=0; unique inc -> unique increasing numbers putconsist ->
+     * put(a,"1") , put(a,"2") . "1".seqid<"2".seqId strong -> put(a,"1") ,
+     * get(a)="1" -> put.seqid<get.seqid VeryStrong -> clear ->
+     */
     public static enum EventStrategy {
         /**
          * No events are ever posted. Trying to create a subscription on the
@@ -290,25 +251,24 @@ public class CacheConfiguration2<K, V> extends CacheConfiguration<K, V> {
         WEAK;
     }
 
-
     private TimeUnit statisticsTimeUnit = TimeUnit.MILLISECONDS;
 
     private boolean useHighResolutionCounter = true;
 
     public class Statistics2 extends CacheConfiguration.Statistics {
-        
-      public TimeUnit getTimeUnit() {
-          return statisticsTimeUnit;
-      }
 
-      public void setTimeUnit(TimeUnit unit) {
-          if (unit == null) {
-              throw new NullPointerException("unit is null");
-          }
-          statisticsTimeUnit = unit;
-      }
+        public TimeUnit getTimeUnit() {
+            return statisticsTimeUnit;
+        }
+
+        public void setTimeUnit(TimeUnit unit) {
+            if (unit == null) {
+                throw new NullPointerException("unit is null");
+            }
+            statisticsTimeUnit = unit;
+        }
     }
-    
+
     public class Locking {
 
         // when we lock, we need all keys to implement comparable
@@ -399,7 +359,6 @@ public class CacheConfiguration2<K, V> extends CacheConfiguration<K, V> {
          */
         WRITE_ONLY;
     }
-
 
     // public static <K, V> Cache<K, V> fromFile(File file)
     // throws FileNotFoundException {

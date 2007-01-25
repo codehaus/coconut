@@ -1,5 +1,5 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
 package org.coconut.cache.tck.core;
@@ -70,7 +70,7 @@ public class Constructors extends CacheTestBundle {
     @Test
     public void testCacheConfigurationArgumentConstructor() throws Exception {
         Constructor con = getClazz().getConstructor(CacheConfiguration.class);
-        Cache c = (Cache) con.newInstance(CacheConfiguration.newConf()
+        Cache c = (Cache) con.newInstance(CacheConfiguration.create()
                 .setInitialMap(new HashMap<Integer, String>(c1)));
         assertEquals(1, c.size());
         assertEquals(M1.getValue(), c.peek(M1.getKey()));

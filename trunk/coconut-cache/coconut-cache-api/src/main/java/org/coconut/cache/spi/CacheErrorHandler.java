@@ -1,5 +1,5 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.spi;
 
@@ -21,17 +21,12 @@ import org.coconut.core.util.Logs;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class CacheErrorHandler<K, V> {
-    public static final CacheErrorHandler DEFAULT = new CacheErrorHandler();
 
     private boolean isInitialized;
 
     private Log logger;
 
     private volatile String name;
-
-    public static <K,V> CacheErrorHandler<K, V> getDefault() {
-        return DEFAULT;
-    }
 
     public CacheErrorHandler() {
 
@@ -64,6 +59,10 @@ public class CacheErrorHandler<K, V> {
                 + map.size() + "]";
         getLogger().error(msg, cause);
         throw new CacheException(msg, cause);
+    }
+
+    public synchronized boolean hasLogger() {
+        return logger != null;
     }
 
     public Log getLogger() {
@@ -119,10 +118,11 @@ public class CacheErrorHandler<K, V> {
         getLogger().error(msg, cause);
         throw new CacheException(msg, cause);
     }
-    
+
     public final void warning(String warning) {
         getLogger().warn(warning);
     }
+
     public final void unhandledError(Throwable t) {
         getLogger().error("Unhandled Error", t);
     }

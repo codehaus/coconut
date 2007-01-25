@@ -1,5 +1,5 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
 package org.coconut.cache.tck;
@@ -58,24 +58,24 @@ public abstract class CacheTestBundle extends Assert {
         c4 = newCache(4);
         c5 = newCache(5);
         c6 = newCache(6);
-        CacheConfiguration<Integer, String> cc = CacheConfiguration.newConf();
+        CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
         loadableEmptyCache = newCache(cc.backend()
                 .setBackend(new IntegerToStringLoader()).c());
     }
 
     final Cache<Integer, String> newCache(int entries) {
-        CacheConfiguration<Integer, String> cc = CacheConfiguration.newConf();
+        CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
         cc.setInitialMap(createMap(entries)).setClock(clock);
-        return cc.create(TCKRunner.tt);
+        return cc.newInstance(TCKRunner.tt);
     }
 
     @SuppressWarnings("unchecked")
     protected CacheConfiguration<Integer, String> newConf() {
-        return CacheConfiguration.newConf();
+        return CacheConfiguration.create();
     }
 
     protected Cache<Integer, String> newCache(CacheConfiguration<Integer, String> conf) {
-        return conf.create(TCKRunner.tt);
+        return conf.newInstance(TCKRunner.tt);
     }
 
     public static Map<Integer, String> createMap(int entries) {

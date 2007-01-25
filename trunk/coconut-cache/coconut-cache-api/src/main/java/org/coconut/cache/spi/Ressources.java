@@ -1,5 +1,5 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
 package org.coconut.cache.spi;
@@ -55,6 +55,16 @@ public final class Ressources {
         return new MessageFormat(getString(key), locale);
     }
 
+    public static String getString(String key, Object... o) {
+        String lookup = getString(key);
+        if (o != null && o.length > 0) {
+            MessageFormat mf = new MessageFormat(lookup, locale);
+            return mf.format(o);
+        } else {
+            return lookup;
+        }
+    }
+
     public static String getString(Class c, String key) {
         return getString(c.getCanonicalName() + "." + key.replace(' ', '_'));
     }
@@ -64,7 +74,7 @@ public final class Ressources {
             return RESOURCE_BUNDLE.getString(key);
         } catch (MissingResourceException e) {
             if (true) {
-                //throw new RuntimeException("missing entry for key " + key);
+                // throw new RuntimeException("missing entry for key " + key);
             }
             return "No Desc for [key = " + key + "]";
         }

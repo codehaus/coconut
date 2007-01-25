@@ -1,5 +1,5 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.examples.expiration;
 
@@ -16,9 +16,9 @@ import org.coconut.cache.defaults.UnsynchronizedCache;
 public class SpecialExpirationValueExample {
     public static void main(String[] args) {
         // START SNIPPET: class
-        CacheConfiguration<String, String> cc = CacheConfiguration.newConf();
+        CacheConfiguration<String, String> cc = CacheConfiguration.create();
         cc.expiration().setDefaultTimeout(24 * 60 * 60, TimeUnit.SECONDS);
-        Cache<String, String> cache = cc.create(UnsynchronizedCache.class);
+        Cache<String, String> cache = cc.newInstance(UnsynchronizedCache.class);
 
         cache.put("key1", "value", Cache.DEFAULT_EXPIRATION, TimeUnit.SECONDS);
         // element will expire after 24 hours

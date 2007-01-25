@@ -1,5 +1,5 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
 package org.coconut.cache.benchmark;
@@ -14,7 +14,7 @@ import org.coconut.cache.policy.Policies;
 public class Test {
     public static void main(String[] args) throws InterruptedException {
         int tests = 1000 * 1000;
-        CacheConfiguration<Integer, Object> conf = CacheConfiguration.newConf();
+        CacheConfiguration<Integer, Object> conf = CacheConfiguration.create();
         conf.eviction().setMaximumSize(10000);
         conf.eviction().setPolicy(Policies.newLRU());
         //conf.setPolicy(Policies.newMRU());

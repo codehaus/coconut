@@ -1,5 +1,5 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
 package org.coconut.cache;
@@ -85,23 +85,11 @@ import org.coconut.filter.Filter;
 @ThreadSafe(false)
 public class CacheConfiguration<K, V> implements Cloneable {
 
-    /**
-     * The default configuration that can be used by any cache that is not
-     * provided with a cache configuration object.
-     * TODO what if someone changes the default configuration....!Smart or not
-     */
-    public static final CacheConfiguration DEFAULT_CONFIGURATION = CacheConfiguration
-            .newConf();
-
-    /**
-     * The default maximum size of a newly
-     */
-
     // 5F = _
     private final static Pattern CACHE_NAME_PATTERN = Pattern
             .compile("[\\da-zA-Z\\x5F]*(\\x2E([\\da-z\\x5F])+)*");
 
-    public static <K, V> CacheConfiguration<K, V> newConf() {
+    public static <K, V> CacheConfiguration<K, V> create() {
         return new CacheConfiguration<K, V>();
     }
 
@@ -113,7 +101,7 @@ public class CacheConfiguration<K, V> implements Cloneable {
 
     private String domain = CacheMXBean.DEFAULT_JMX_DOMAIN;
 
-    private CacheErrorHandler<K, V> errorHandler = CacheErrorHandler.getDefault();
+    private CacheErrorHandler<K, V> errorHandler = new CacheErrorHandler();
 
     private Executor executor;
 
@@ -175,15 +163,15 @@ public class CacheConfiguration<K, V> implements Cloneable {
      * @throws NullPointerException
      *             if the specified class is <tt>null</tt>
      */
-    public <T extends Cache<K, V>> T create(Class<? extends Cache> clazz)
+    public <T extends Cache<K, V>> T newInstance(Class<? extends Cache> type)
             throws IllegalArgumentException {
-        if (clazz == null) {
+        if (type == null) {
             throw new NullPointerException("clazz is null");
         }
         T cache = null;
         Constructor<T> c = null;
         try {
-            c = (Constructor<T>) clazz.getDeclaredConstructor(CacheConfiguration.class);
+            c = (Constructor<T>) type.getDeclaredConstructor(CacheConfiguration.class);
         } catch (NoSuchMethodException e) {
             throw new IllegalArgumentException(
                     "Could not create cache instance, no public contructor taking a single CacheConfiguration instance",
@@ -193,10 +181,10 @@ public class CacheConfiguration<K, V> implements Cloneable {
             cache = c.newInstance(this);
         } catch (InstantiationException e) {
             throw new IllegalArgumentException(
-                    "Could not create cache instance, specified clazz " + clazz
+                    "Could not create cache instance, specified clazz " + type
                             + ") is an interface or abstract class", e);
         } catch (IllegalAccessException e) {
-            throw new IllegalArgumentException("Could not create instance of " + clazz, e);
+            throw new IllegalArgumentException("Could not create instance of " + type, e);
         } catch (InvocationTargetException e) {
             throw new IllegalArgumentException("Constructor threw exception", e);
         }
@@ -206,8 +194,8 @@ public class CacheConfiguration<K, V> implements Cloneable {
         return cache;
     }
 
-    public <T extends Cache<K, V>> T createAndStart(Class<? extends AbstractCache> clazz) {
-        AbstractCache t = create(clazz);
+    public <T extends Cache<K, V>> T newInstanceAndStart(Class<? extends AbstractCache> clazz) {
+        AbstractCache t = newInstance(clazz);
         t.start();
         return (T) t;
     }
@@ -666,8 +654,20 @@ public class CacheConfiguration<K, V> implements Cloneable {
             return expirationRefreshFilter;
         }
 
+        /**
+         * Returns the refresh interval in the specified timeunit.
+         * 
+         * @param unit
+         *            the unit of time to return the refresh interval in
+         * @return
+         */
         public long getRefreshInterval(TimeUnit unit) {
-            return unit.convert(defaultExpirationRefreshDuration, TimeUnit.NANOSECONDS);
+            if (defaultExpirationRefreshDuration > 0) {
+                return unit.convert(defaultExpirationRefreshDuration,
+                        TimeUnit.NANOSECONDS);
+            } else {
+                return defaultExpirationRefreshDuration;
+            }
         }
 
         /**
@@ -730,13 +730,14 @@ public class CacheConfiguration<K, V> implements Cloneable {
          * @return this Expiration
          */
         public Expiration setRefreshInterval(long interval, TimeUnit unit) {
-            if (interval <= 0) {
-                throw new IllegalArgumentException(
-                        "interval must be greather then 0, was " + interval);
-            } else if (unit == null) {
+            if (unit == null) {
                 throw new NullPointerException("unit is null");
             }
-            defaultExpirationRefreshDuration = unit.toNanos(interval);
+            if (interval <= 0) {
+                defaultExpirationRefreshDuration = interval;
+            } else {
+                defaultExpirationRefreshDuration = unit.toNanos(interval);
+            }
             return this;
         }
     }
@@ -866,7 +867,7 @@ public class CacheConfiguration<K, V> implements Cloneable {
     }
 
     public class Threading {
-        
+
         /**
          * Returns the CacheConfiguration that this instance is part of.
          * 
@@ -900,7 +901,7 @@ public class CacheConfiguration<K, V> implements Cloneable {
             if (period < 0) {
                 throw new IllegalArgumentException("period must be 0 or greater, was "
                         + period);
-            } 
+            }
             if (executor == null || !(executor instanceof ScheduledExecutorService)) {
                 throw new IllegalStateException("A ScheduledExecutorService must be set");
             }
@@ -909,7 +910,7 @@ public class CacheConfiguration<K, V> implements Cloneable {
     }
 
     long scheduleEvictionAtFixedRateNanos = 0;
-    
+
     public Threading threading() {
         return new Threading();
     }

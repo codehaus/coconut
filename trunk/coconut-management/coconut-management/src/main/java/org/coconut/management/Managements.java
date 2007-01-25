@@ -1,5 +1,5 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.management;
 
@@ -16,23 +16,12 @@ import org.coconut.management.defaults.DefaultExecutableGroup;
 import org.coconut.management.defaults.DefaultManagedGroup;
 
 /**
- * Factory and utility methods for {@link MetricManager}, {@link
- * MetricManager}, {@link MetricManager}, {@link MetricManager}, and
- * {@link MetricManager} classes defined in this package. This class supports
- * the following kinds of methods:
+ * Factory and utility methods for {@link ManagedGroup}, {@link
+ * ManagedExecutableGroup} and various other classes defined in this package.
+ * This class supports the following kinds of methods:
  * <ul>
- * <li> Methods that create and return an {@link ExecutorService} set up with
+ * <li> Methods that create and return an {@link ManagedGroup} set up with
  * commonly useful configuration settings.
- * <li> Methods that create and return a {@link ScheduledExecutorService} set up
- * with commonly useful configuration settings.
- * <li> Methods that create and return a "wrapped" ExecutorService, that
- * disables reconfiguration by making implementation-specific methods
- * inaccessible.
- * <li> Methods that create and return a {@link ThreadFactory} that sets newly
- * created threads to a known state.
- * <li> Methods that create and return a {@link Callable} out of other
- * closure-like forms, so they can be used in execution methods requiring
- * <tt>Callable</tt>.
  * </ul>
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -101,7 +90,7 @@ public class Managements {
         return new JmxRegistrant1(domain, levelname);
     }
 
-    public static ExecutableManagementGroup newExecutableGroup() {
+    public static ManagedExecutableGroup newExecutableGroup() {
         return newExecutableGroup("");
     }
 
@@ -109,7 +98,7 @@ public class Managements {
      * @param name
      * @return
      */
-    public static ExecutableManagementGroup newExecutableGroup(String name) {
+    public static ManagedExecutableGroup newExecutableGroup(String name) {
         return newExecutableGroup(name, "no description");
     }
 
@@ -117,7 +106,8 @@ public class Managements {
      * @param name
      * @return
      */
-    public static ExecutableManagementGroup newExecutableGroup(String name, String description) {
+    public static ManagedExecutableGroup newExecutableGroup(String name,
+            String description) {
         return newExecutableGroup(name, description, true);
     }
 
@@ -125,8 +115,8 @@ public class Managements {
      * @param name
      * @return
      */
-    public static ExecutableManagementGroup newExecutableGroup(String name, String description,
-            boolean register) {
+    public static ManagedExecutableGroup newExecutableGroup(String name,
+            String description, boolean register) {
         return new DefaultExecutableGroup(name, description, register);
     }
 

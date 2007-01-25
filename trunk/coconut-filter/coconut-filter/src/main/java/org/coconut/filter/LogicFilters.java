@@ -1,5 +1,5 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
 package org.coconut.filter;
@@ -31,11 +31,12 @@ public class LogicFilters {
     public static <E> Filter<E> falseFilter() {
         return FALSE;
     }
-    
+
     @SuppressWarnings("unchecked")
     public static <E> Filter<E> trueFilter() {
         return TRUE;
     }
+
     /**
      * Returns a Filter that only accepts an element if <tt>all</tt> the
      * filters accept the element. The Filter will use a copy of the array of
@@ -53,8 +54,7 @@ public class LogicFilters {
         return new AndFilter<E>(left, right);
     }
 
-    public static <E> AndFilter<E> and(Filter<E> left, Filter<E> right,
-            boolean isStrict) {
+    public static <E> AndFilter<E> and(Filter<E> left, Filter<E> right, boolean isStrict) {
         return new AndFilter<E>(left, right, isStrict);
     }
 
@@ -87,8 +87,8 @@ public class LogicFilters {
      * A Filter that tests that <tt>all</tt> of the supplied Filters accepts a
      * given element.
      */
-    public final static class AllFilter<E> implements Filter<E>,
-            CompositeFilter<E>, Iterable<Filter<E>>, Serializable {
+    public final static class AllFilter<E> implements Filter<E>, CompositeFilter<E>,
+            Iterable<Filter<E>>, Serializable {
 
         /** Default <code>serialVersionUID</code> */
         private static final long serialVersionUID = -8945752276662769791L;
@@ -108,8 +108,8 @@ public class LogicFilters {
             System.arraycopy(filters, 0, this.filters, 0, filters.length);
             for (int i = 0; i < this.filters.length; i++) {
                 if (this.filters[i] == null) {
-                    throw new NullPointerException(
-                            "filters contained a null on index = " + i);
+                    throw new NullPointerException("filters contained a null on index = "
+                            + i);
                 }
             }
         }
@@ -175,8 +175,8 @@ public class LogicFilters {
      * A Filter that performs a logical exclusive AND on two supplied filters.
      * The filter TODO check focs for javas and.
      */
-    public final static class AndFilter<E> implements Filter<E>,
-            CompositeFilter<E>, Serializable {
+    public final static class AndFilter<E> implements Filter<E>, CompositeFilter<E>,
+            Serializable {
 
         /** Default <code>serialVersionUID</code> */
         private static final long serialVersionUID = 6981902451700512606L;
@@ -201,8 +201,7 @@ public class LogicFilters {
             this(left, right, true);
         }
 
-        public AndFilter(final Filter<E> left, final Filter<E> right,
-                boolean isStrict) {
+        public AndFilter(final Filter<E> left, final Filter<E> right, boolean isStrict) {
             if (left == null) {
                 throw new NullPointerException("left is null");
             }
@@ -269,8 +268,8 @@ public class LogicFilters {
      * A Filter that tests that at least one of the supplied filters accepts a
      * given element.
      */
-    public final static class AnyFilter<E> implements Filter<E>,
-            CompositeFilter<E>, Iterable<Filter<E>>, Serializable {
+    public final static class AnyFilter<E> implements Filter<E>, CompositeFilter<E>,
+            Iterable<Filter<E>>, Serializable {
 
         /** Default <code>serialVersionUID</code> */
         private static final long serialVersionUID = 3257282517878192437L;
@@ -286,8 +285,8 @@ public class LogicFilters {
             System.arraycopy(filters, 0, this.filters, 0, filters.length);
             for (int i = 0; i < this.filters.length; i++) {
                 if (this.filters[i] == null) {
-                    throw new NullPointerException(
-                            "filters contained a null on index = " + i);
+                    throw new NullPointerException("filters contained a null on index = "
+                            + i);
                 }
             }
         }
@@ -387,8 +386,8 @@ public class LogicFilters {
      * A Filter that test that a supplied Filter does <tt>not</tt> accept a
      * given Element.
      */
-    public final static class NotFilter<E> implements Filter<E>,
-            CompositeFilter<E>, Serializable {
+    public final static class NotFilter<E> implements Filter<E>, CompositeFilter<E>,
+            Serializable {
 
         /** Default <code>serialVersionUID</code> */
         private static final long serialVersionUID = -5117781730584740429L;
@@ -451,8 +450,8 @@ public class LogicFilters {
     /**
      * A Filter that performs a logical inclusive OR on two supplied filters.
      */
-    public final static class OrFilter<E> implements Filter<E>,
-            CompositeFilter<E>, Serializable {
+    public final static class OrFilter<E> implements Filter<E>, CompositeFilter<E>,
+            Serializable {
 
         /** Default <code>serialVersionUID</code> */
         private static final long serialVersionUID = 7602293335100183390L;
@@ -494,9 +493,8 @@ public class LogicFilters {
          */
         @SuppressWarnings("unchecked")
         public List<Filter<E>> getFilters() {
-            return Arrays.asList(left,right);
+            return Arrays.asList(left, right);
         }
-
 
         /**
          * Returns the left side operand.
@@ -567,8 +565,8 @@ public class LogicFilters {
      * A Filter that performs a logical exclusive OR (XOR) on two supplied
      * filters.
      */
-    public final static class XorFilter<E> implements CompositeFilter<E>,
-            Filter<E>, Serializable {
+    public final static class XorFilter<E> implements CompositeFilter<E>, Filter<E>,
+            Serializable {
 
         /** Default <code>serialVersionUID</code> */
         private static final long serialVersionUID = 1155267141991954303L;
@@ -590,8 +588,7 @@ public class LogicFilters {
         public XorFilter(final Filter<E> left, final Filter<E> right) {
             if (left == null) {
                 throw new NullPointerException("left is null");
-            }
-            if (right == null) {
+            } else if (right == null) {
                 throw new NullPointerException("right is null");
             }
             this.left = left;
@@ -609,9 +606,8 @@ public class LogicFilters {
          * @see org.coconut.filter.CompositeFilter#getFilters()
          */
         public List<Filter<E>> getFilters() {
-            return Arrays.asList(left,right);
+            return Arrays.asList(left, right);
         }
-
 
         /**
          * Returns the left side operand.

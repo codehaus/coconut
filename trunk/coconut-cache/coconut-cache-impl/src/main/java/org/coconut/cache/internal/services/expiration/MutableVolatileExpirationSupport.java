@@ -1,5 +1,5 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.services.expiration;
 
@@ -50,7 +50,7 @@ public class MutableVolatileExpirationSupport<K, V> extends ExpirationCacheServi
     public void setDefaultRefreshTime(long timeMs) {
         // we use validation rutine from CacheConfiguration
         // a bit slow, but this method is not called to often
-        CacheConfiguration<K, V> conf = CacheConfiguration.newConf();
+        CacheConfiguration<K, V> conf = CacheConfiguration.create();
         conf.expiration().setRefreshInterval(timeMs, TimeUnit.MILLISECONDS);
         refreshExpirationTime = conf.expiration().getRefreshInterval(
                 TimeUnit.MILLISECONDS);
@@ -59,7 +59,7 @@ public class MutableVolatileExpirationSupport<K, V> extends ExpirationCacheServi
     public void setDefaultExpirationTime(long timeMs) {
         // we use validation rutine from CacheConfiguration
         // a bit slow, but this method is not called to often
-        CacheConfiguration<K, V> conf = CacheConfiguration.newConf();
+        CacheConfiguration<K, V> conf = CacheConfiguration.create();
         conf.expiration().setDefaultTimeout(timeMs, TimeUnit.MILLISECONDS);
         refreshExpirationTime = conf.expiration()
                 .getDefaultTimeout(TimeUnit.MILLISECONDS);

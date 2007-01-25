@@ -1,5 +1,5 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.spi;
 
@@ -24,6 +24,8 @@ import org.coconut.core.Callback;
  */
 public class CacheUtil {
 
+    public static final String CACHE_INSTANCE_TYPE = "org.coconut.cache.type";
+    
     public static final Cache.HitStat STAT00 = new ImmutableHitStat(0, 0);
 
 

@@ -1,5 +1,5 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.defaults.memory;
 
@@ -53,12 +53,12 @@ public class HmmTest {
     }
 
     public static void main2(String[] args) throws InterruptedException {
-        CacheConfiguration cc = CacheConfiguration.newConf();
+        CacheConfiguration cc = CacheConfiguration.create();
 
         cc.expiration().setDefaultTimeout(24 * 60 * 60, TimeUnit.SECONDS);
         // cc.backend().setLoader(new ErrorCacheLoader());
         // cc.backend().setStore(new SysoutStore<Object, Object>(null));
-        Cache c = cc.create(UnsynchronizedCache.class);
+        Cache c = cc.newInstance(UnsynchronizedCache.class);
         for (int i = 0; i < 100000; i++) {
             c.put(i, i);
         }

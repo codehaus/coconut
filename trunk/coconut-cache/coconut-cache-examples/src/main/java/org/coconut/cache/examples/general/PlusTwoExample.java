@@ -1,5 +1,5 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.examples.general;
 
@@ -16,9 +16,9 @@ public class PlusTwoExample {
     }
 
     public static void main(String[] args) {
-        CacheConfiguration<Integer, Integer> cc = CacheConfiguration.newConf();
+        CacheConfiguration<Integer, Integer> cc = CacheConfiguration.create();
         cc.backend().setBackend(new Plus2Loader());
-        UnsynchronizedCache<Integer, Integer> c = cc.create(UnsynchronizedCache.class);
+        UnsynchronizedCache<Integer, Integer> c = cc.newInstance(UnsynchronizedCache.class);
         System.out.println(c.get(5));
         System.out.println(c.get(8));
     }

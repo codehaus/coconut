@@ -1,5 +1,5 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
 package org.coconut.cache.tck.expiration;
@@ -31,7 +31,7 @@ public class ExpirationConcurrent extends CacheTestBundle {
         int failures = 0;
         for (;;) {
             gets = 0;
-            CacheConfiguration<Integer, String> cc = CacheConfiguration.newConf();
+            CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
             Cache<Integer, String> c = newCache(cc.expiration().c().setClock(
                     Clock.DEFAULT_CLOCK));
             long earlyStart = Clock.DEFAULT_CLOCK.relativeTime();
@@ -64,7 +64,7 @@ public class ExpirationConcurrent extends CacheTestBundle {
     public void testStrictThreaded() throws InterruptedException {
         final AtomicLong counts = new AtomicLong();
         CountdownLatchLoader loader = CountdownLatchLoader.integerToStringLoader(1);
-        CacheConfiguration<Integer, String> cc = CacheConfiguration.newConf();
+        CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
         final Cache<Integer, String> c = newCache(cc.backend().setBackend(loader).c()
                 .setClock(Clock.DEFAULT_CLOCK));
 
@@ -97,7 +97,7 @@ public class ExpirationConcurrent extends CacheTestBundle {
     public void testLazyThreaded() throws InterruptedException {
         final AtomicLong counts = new AtomicLong();
         CountdownLatchLoader loader = CountdownLatchLoader.integerToStringLoader(1);
-        CacheConfiguration<Integer, String> cc = CacheConfiguration.newConf();
+        CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
         final Cache<Integer, String> c = newCache(cc.backend().setBackend(loader).c()
                 .setClock(Clock.DEFAULT_CLOCK));
 

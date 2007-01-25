@@ -1,11 +1,20 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.management.util;
 
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
+ * A {@code double} value that may be updated atomically.  See the
+ * {@link java.util.concurrent.atomic} package specification for
+ * description of the properties of atomic variables. An
+ * {@code AtomicDouble} is used in applications such as atomically
+ * aggregating numbers, and cannot be used as a replacement
+ * for a {@link java.lang.Double}. However, this class does extend
+ * {@code Number} to allow uniform access by tools and utilities that
+ * deal with numerically-based classes.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -14,6 +23,7 @@ public class AtomicDouble extends Number {
     /** serialVersionUID */
     private static final long serialVersionUID = 3159267328827547102L;
 
+    /* The AtomicLong we are wrapping */
     private final AtomicLong al;
 
     /**
@@ -24,7 +34,7 @@ public class AtomicDouble extends Number {
     }
     
     /**
-     * Create a new AtomicLong with the given initial value.
+     * Create a new AtomicDouble with the given initial value.
      * 
      * @param initialValue
      *            the initial value
@@ -165,18 +175,30 @@ public class AtomicDouble extends Number {
         return Double.toString(get());
     }
 
+    /**
+     * @see java.lang.Number#intValue()
+     */
     public int intValue() {
         return (int) get();
     }
 
+    /**
+     * @see java.lang.Number#longValue()
+     */
     public long longValue() {
         return (long) get();
     }
 
+    /**
+     * @see java.lang.Number#floatValue()
+     */
     public float floatValue() {
         return (float) get();
     }
 
+    /**
+     * @see java.lang.Number#doubleValue()
+     */
     public double doubleValue() {
         return get();
     }

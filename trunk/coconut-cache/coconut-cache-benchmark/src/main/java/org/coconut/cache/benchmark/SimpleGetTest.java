@@ -1,5 +1,5 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
 package org.coconut.cache.benchmark;
@@ -28,7 +28,7 @@ public class SimpleGetTest {
         List<Integer> shuffleMe = Arrays.asList(ints);
         Collections.shuffle(shuffleMe);
         Integer[] shuffled = (Integer[]) shuffleMe.toArray();
-        CacheConfiguration cc = CacheConfiguration.newConf();
+        CacheConfiguration cc = CacheConfiguration.create();
         cc.eviction().setPolicy(Policies.newLRU()).setMaximumSize(100000);
 
         Map map;

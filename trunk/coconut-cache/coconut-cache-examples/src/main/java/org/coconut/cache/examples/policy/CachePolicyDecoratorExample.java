@@ -1,5 +1,5 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.examples.policy;
 
@@ -16,7 +16,7 @@ import org.coconut.filter.util.StringFilters;
  */
 public class CachePolicyDecoratorExample {
     public static void main(String[] args) {
-        CacheConfiguration conf = CacheConfiguration.newConf();
+        CacheConfiguration conf = CacheConfiguration.create();
         Filter<String> f = LogicFilters.not(StringFilters.stringStartsWith("https"));
         conf.eviction().setPolicy(
                 FilteredPolicyDecorator.entryKeyAcceptor(Policies.newLRU(), f));

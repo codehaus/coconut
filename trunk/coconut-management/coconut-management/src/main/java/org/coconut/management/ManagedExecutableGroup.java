@@ -1,5 +1,5 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.management;
 
@@ -14,7 +14,7 @@ import javax.management.JMException;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public interface ExecutableManagementGroup extends ManagedGroup {
+public interface ManagedExecutableGroup extends ManagedGroup {
 
     /**
      * Adds an object to the group. The
@@ -27,7 +27,7 @@ public interface ExecutableManagementGroup extends ManagedGroup {
      * @throws IllegalArgumentException
      *             if the object has already been registered
      */
-    ExecutableManagementGroup add(Object o);
+    ManagedExecutableGroup add(Object o);
 
     /**
      * (optional)
@@ -38,9 +38,9 @@ public interface ExecutableManagementGroup extends ManagedGroup {
      * @param unit
      * @return
      */
-    <T extends Runnable> ExecutableManagementGroup add(T r, long time, TimeUnit unit);
+    <T extends Runnable> ManagedExecutableGroup add(T r, long time, TimeUnit unit);
 
-    <T extends Runnable> ExecutableManagementGroup reSchedule(T r, long time, TimeUnit unit);
+    <T extends Runnable> ManagedExecutableGroup reSchedule(T r, long time, TimeUnit unit);
 
     void start();
 

@@ -1,11 +1,12 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
 package org.coconut.core.util;
 
 import java.io.PrintStream;
 
+import org.apache.commons.logging.impl.Jdk14Logger;
 import org.coconut.core.Log;
 
 /**
@@ -71,6 +72,10 @@ public final class Logs {
 
         public static Log from(Class clazz) {
             return from(org.apache.log4j.Logger.getLogger(clazz));
+        }
+        
+        public static boolean isLog4jLogger(Log log) {
+            return log.getClass().getName().equals("org.apache.log4j.Logger");
         }
     }
 
@@ -146,6 +151,8 @@ public final class Logs {
         public void fatal(String message, Throwable cause) {
             log(Level.Fatal, message, cause);
         }
+
+        public abstract String getName();
     }
 
     static class SimpelLogger extends AbstractLogger {
@@ -180,6 +187,14 @@ public final class Logs {
                 if (cause != null)
                     cause.printStackTrace(stream);
             }
+        }
+
+        /**
+         * @see org.coconut.core.util.Logs.AbstractLogger#getName()
+         */
+        @Override
+        public String getName() {
+            return "simpel";
         }
     }
 
@@ -216,6 +231,10 @@ public final class Logs {
                 return java.util.logging.Level.WARNING;
             }
         }
+
+        public String getName() {
+            return log.getName();
+        }
     }
 
     static class Log4JLogger extends AbstractLogger {
@@ -251,6 +270,10 @@ public final class Logs {
                 return org.apache.log4j.Level.WARN;
             }
         }
+
+        public String getName() {
+            return log.getName();
+        }
     }
 
     public static class Commons {
@@ -261,7 +284,9 @@ public final class Logs {
         public static Log from(Class clazz) {
             return from(org.apache.commons.logging.LogFactory.getLog(clazz));
         }
-
+        public static boolean isCommonsLogger(Log log) {
+            return log.getClass().getName().equals("org.apache.commons.logging.Log");
+        }
         // /CLOVER:OFF
         /** Cannot instantiate. */
         private Commons() {/* Cannot instantiate. */
@@ -269,19 +294,25 @@ public final class Logs {
         // /CLOVER:ON
     }
 
-    abstract static class AbstractLoggerForRetardedImplementations implements Log {
+    static class CommonsLogger extends AbstractLogger {
+        private final org.apache.commons.logging.Log log;
+
+        private CommonsLogger(org.apache.commons.logging.Log log) {
+            this.log = log;
+        }
+
         public boolean isEnabled(Level level) {
             switch (level) {
             case Debug:
-                return isDebugEnabled();
+                return log.isDebugEnabled();
             case Error:
-                return isErrorEnabled();
+                return log.isErrorEnabled();
             case Fatal:
-                return isFatalEnabled();
+                return log.isFatalEnabled();
             case Info:
-                return isInfoEnabled();
+                return log.isInfoEnabled();
             default /* Warn */:
-                return isWarnEnabled();
+                return log.isWarnEnabled();
             }
         }
 
@@ -292,19 +323,19 @@ public final class Logs {
         public void log(Level level, String message) {
             switch (level) {
             case Debug:
-                debug(message);
+                log.debug(message);
                 break;
             case Error:
-                error(message);
+                log.error(message);
                 break;
             case Fatal:
-                fatal(message);
+                log.fatal(message);
                 break;
             case Info:
-                info(message);
+                log.info(message);
                 break;
             default /* Warn */:
-                warn(message);
+                log.warn(message);
             }
         }
 
@@ -315,100 +346,34 @@ public final class Logs {
         public void log(Level level, String message, Throwable cause) {
             switch (level) {
             case Debug:
-                debug(message, cause);
+                log.debug(message, cause);
                 break;
             case Error:
-                error(message, cause);
+                log.error(message, cause);
                 break;
             case Fatal:
-                fatal(message, cause);
+                log.fatal(message, cause);
                 break;
             case Info:
-                info(message, cause);
+                log.info(message, cause);
                 break;
             default /* Warn */:
-                warn(message, cause);
+                log.warn(message, cause);
             }
         }
-    }
 
-    static class CommonsLogger extends AbstractLoggerForRetardedImplementations {
-        private final org.apache.commons.logging.Log log;
-
-        private CommonsLogger(org.apache.commons.logging.Log log) {
-            this.log = log;
-        }
-
-        public void debug(String message) {
-            log.debug(message);
-        }
-
-        public void debug(String message, Throwable cause) {
-            log.debug(message, cause);
-        }
-
-        public void error(String message) {
-            log.error(message);
-        }
-
-        public void error(String message, Throwable cause) {
-            log.error(message, cause);
-        }
-
-        public void fatal(String message) {
-            log.fatal(message);
-        }
-
-        public void fatal(String message, Throwable cause) {
-            log.fatal(message, cause);
-        }
-
-        public void info(String message) {
-            log.info(message);
-        }
-
-        public void info(String message, Throwable cause) {
-            log.info(message, cause);
-        }
-
-        public boolean isDebugEnabled() {
-            return log.isDebugEnabled();
-        }
-
-        public boolean isErrorEnabled() {
-            return log.isErrorEnabled();
-        }
-
-        public boolean isFatalEnabled() {
-            return log.isFatalEnabled();
-        }
-
-        public boolean isInfoEnabled() {
-            return log.isInfoEnabled();
-        }
-
-        public boolean isTraceEnabled() {
-            return log.isTraceEnabled();
-        }
-
-        public boolean isWarnEnabled() {
-            return log.isWarnEnabled();
-        }
-
-        public void trace(String message) {
-            log.trace(message);
-        }
-
-        public void trace(String message, Throwable cause) {
-            log.trace(message, cause);
-        }
-
-        public void warn(String message) {
-            log.warn(message);
-        }
-
-        public void warn(String message, Throwable cause) {
-            log.warn(message, cause);
+        /**
+         * @see org.coconut.core.util.Logs.AbstractLogger#getName()
+         */
+        @Override
+        public String getName() {
+            if (log instanceof Jdk14Logger) {
+                return ((Jdk14Logger) log).getLogger().getName();
+            } else if (log instanceof Log4JLogger) {
+                return ((Log4JLogger) log).getName();
+            } else {
+                return null;// or should we throw an exception?
+            }
         }
     }
 
@@ -416,7 +381,16 @@ public final class Logs {
         public static Log from(java.util.logging.Logger log) {
             return new JDKLogger(log);
         }
-
+        public static Log from(Class clazz) {
+            return from(clazz.getName());
+        }
+        public static Log from(String name) {
+            return from(java.util.logging.Logger.getLogger(name));
+        }
+        public static boolean isJDKLogger(Log log) {
+            return log instanceof JDKLogger;
+        }
+        
         // /CLOVER:OFF
         /** Cannot instantiate. */
         private JDK() {/* Cannot instantiate. */

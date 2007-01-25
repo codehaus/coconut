@@ -1,5 +1,5 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.management.monitor;
 
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.coconut.core.EventProcessor;
-import org.coconut.management.ManagementObserver;
+import org.coconut.management.ManagedObserver;
 import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.annotation.ManagedOperation;
 import org.coconut.management.spi.AbstractApmNumber;
@@ -22,7 +22,7 @@ import org.coconut.management.spi.JMXConfigurator;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public abstract class LongCounter extends AbstractApmNumber implements
-        EventProcessor<Number>, ManagementObserver<LongCounter> {
+        EventProcessor<Number>, ManagedObserver<LongCounter> {
 
     /**
      * @param numberType

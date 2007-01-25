@@ -1,5 +1,5 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.management.defaults;
 
@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.management.JMException;
 
-import org.coconut.management.ExecutableManagementGroup;
+import org.coconut.management.ManagedExecutableGroup;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.spi.NumberDynamicBean;
 
@@ -18,7 +18,7 @@ import org.coconut.management.spi.NumberDynamicBean;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class DefaultExecutableGroup extends DefaultManagedGroup implements
-        ExecutableManagementGroup {
+        ManagedExecutableGroup {
     private final ScheduledExecutorService ses;
 
     /**
@@ -34,7 +34,7 @@ public class DefaultExecutableGroup extends DefaultManagedGroup implements
      * @return
      * @see java.util.Collection#add(java.lang.Object)
      */
-    public ExecutableManagementGroup add(Object e) {
+    public ManagedExecutableGroup add(Object e) {
         super.add(e);
         return this;
     }
@@ -53,7 +53,7 @@ public class DefaultExecutableGroup extends DefaultManagedGroup implements
      * @see org.coconut.apm.defaults.DefaultApmGroup#add(java.lang.Runnable,
      *      long, java.util.concurrent.TimeUnit)
      */
-    public <T extends Runnable> ExecutableManagementGroup add(T r, long time, TimeUnit unit) {
+    public <T extends Runnable> ManagedExecutableGroup add(T r, long time, TimeUnit unit) {
         super.add(new Foo(r, time, unit));
         return this;
     }
@@ -112,7 +112,7 @@ public class DefaultExecutableGroup extends DefaultManagedGroup implements
      * @see org.coconut.management.ExecutableGroup#reSchedule(java.lang.Runnable,
      *      long, java.util.concurrent.TimeUnit)
      */
-    public <T extends Runnable> ExecutableManagementGroup reSchedule(T r, long time, TimeUnit unit) {
+    public <T extends Runnable> ManagedExecutableGroup reSchedule(T r, long time, TimeUnit unit) {
         throw new UnsupportedOperationException();
     }
 }

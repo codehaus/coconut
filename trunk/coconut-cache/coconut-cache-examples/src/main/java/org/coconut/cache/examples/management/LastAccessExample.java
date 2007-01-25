@@ -1,5 +1,5 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.examples.management;
 
@@ -15,10 +15,11 @@ import org.coconut.management.annotation.ManagedAttribute;
  */
 class LastAccessExample {
     public static void main(String[] args) throws InterruptedException {
-        CacheConfiguration<String, String> conf = CacheConfiguration.newConf();
+        CacheConfiguration<String, String> conf = CacheConfiguration.create();
         conf.setName("WebPage-Cache").jmx().setRegister(true);
         conf.expiration().setFilter(new LastAccessFilter());
-        conf.createAndStart(UnsynchronizedCache.class);
+        UnsynchronizedCache cache = conf.newInstance(UnsynchronizedCache.class);
+        cache.start();
         Thread.sleep(1000000);
     }
 

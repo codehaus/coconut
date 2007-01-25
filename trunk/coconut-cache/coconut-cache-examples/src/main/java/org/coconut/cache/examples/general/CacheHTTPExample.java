@@ -1,5 +1,5 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.examples.general;
 
@@ -33,10 +33,10 @@ public class CacheHTTPExample {
     }
 
     public static void main(String[] args) {
-        CacheConfiguration<String, String> cc = CacheConfiguration.newConf();
+        CacheConfiguration<String, String> cc = CacheConfiguration.create();
         cc.setName("MyCache");
         cc.backend().setBackend(new UrlLoader());
-        UnsynchronizedCache<String, String> c = cc.create(UnsynchronizedCache.class);
+        UnsynchronizedCache<String, String> c = cc.newInstance(UnsynchronizedCache.class);
         readGoogle(c,"Not Cached:");
         readGoogle(c,"Cached    :");
     }

@@ -1,5 +1,5 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
 package org.coconut.cache.defaults.memory;
@@ -21,7 +21,7 @@ import org.coconut.cache.tck.util.IntegerToStringLoader;
  */
 public class UnlTest {
     public static void maing(String[] args) {
-        CacheConfiguration<Integer, String> cc = CacheConfiguration.newConf();
+        CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
         cc.backend().setBackend(new IntegerToStringLoader());
         UnsynchronizedCache uc = new UnsynchronizedCache(cc);
 
@@ -32,7 +32,7 @@ public class UnlTest {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        CacheConfiguration<Integer, String> cc = CacheConfiguration.newConf();
+        CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
         cc.backend().setBackend(new IntegerToStringLoader());
         cc.eviction().setMaximumSize(10000);
         cc.eviction().setPolicy(Policies.newLRU());
