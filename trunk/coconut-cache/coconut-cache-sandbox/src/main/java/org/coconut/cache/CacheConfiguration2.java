@@ -28,6 +28,10 @@ import org.xml.sax.SAXException;
  */
 public class CacheConfiguration2<K, V> extends CacheConfiguration<K, V> {
 
+    
+    public void setInstallShutdownHooks(boolean installShutdownHooks) {
+        
+    }
     /**
      * WRITE_THROUGH = put/load value, make avilable for others, persist,
      * return. Is there any _observable_ difference between WRITE_THROUGH &

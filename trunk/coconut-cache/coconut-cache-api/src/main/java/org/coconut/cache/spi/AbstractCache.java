@@ -11,13 +11,11 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReadWriteLock;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheEvent;
-import org.coconut.cache.management.CacheMXBean;
 import org.coconut.core.Clock;
 import org.coconut.event.EventBus;
 
@@ -34,24 +32,17 @@ import org.coconut.event.EventBus;
 public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         Cache<K, V> {
 
-    public static void checkCollectionForNulls(Collection<?> col) {
-        for (Object entry : col) {
-            if (entry == null) {
-                throw new NullPointerException("collection contains a null entry");
+    private static long convert(long timeout, TimeUnit unit) {
+        if (timeout == Cache.NEVER_EXPIRE) {
+            return Long.MAX_VALUE;
+        } else {
+            long newTime = unit.toMillis(timeout);
+            if (newTime == Long.MAX_VALUE) {
+                throw new IllegalArgumentException(
+                        "Overflow for specified expiration time, was " + timeout + " "
+                                + unit);
             }
-        }
-    }
-
-    public static void checkMapForNulls(Map<?, ?> map) {
-        for (Map.Entry<?, ?> entry : map.entrySet()) {
-            if (entry == null) {
-                throw new NullPointerException("map contains a null entry");
-            } else if (entry.getKey() == null) {
-                throw new NullPointerException("map contains a null key");
-            } else if (entry.getValue() == null) {
-                throw new NullPointerException("map contains a null value for key = "
-                        + entry.getKey());
-            }
+            return newTime;
         }
     }
 
@@ -112,9 +103,21 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     public V get(Object key) {
-        CacheEntry<K, V> e = getEntry((K) key);
+        CacheEntry<K, V> e = getEntry((K) key, false);
         return e == null ? null : e.getValue();
     }
+
+    /**
+     * @see org.coconut.cache.Cache#getEntry(java.lang.Object)
+     */
+    public CacheEntry<K, V> getEntry(K key) {
+        return getEntry(key, true);
+    }
+
+    /**
+     * @see org.coconut.cache.Cache#getEntry(java.lang.Object)
+     */
+    protected abstract CacheEntry<K, V> getEntry(K key, boolean doCopy);
 
     /**
      * {@inheritDoc}
@@ -123,20 +126,13 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         if (keys == null) {
             throw new NullPointerException("keys is null");
         }
-        checkCollectionForNulls(keys);
+        CacheUtil.checkCollectionForNulls(keys);
         return getAll0(keys);
     }
 
     public CacheConfiguration<K, V> getConfiguration() {
         // unmodifiable...
         return conf;
-    }
-
-    /**
-     * @see org.coconut.cache.Cache#getEntry(java.lang.Object)
-     */
-    public CacheEntry<K, V> getEntry(K key) {
-        throw new UnsupportedOperationException();
     }
 
     /**
@@ -159,16 +155,9 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         return CacheUtil.STAT00;
     }
 
-    public CacheMXBean getInfo() {
-        throw new UnsupportedOperationException(
-                "This cache does not support jmx monitoring");
-    }
-
-    public ReadWriteLock getLock(K... keys) {
-        throw new UnsupportedOperationException(
-                "locking not supported for Cache of type " + getClass());
-    }
-
+    /**
+     * Returns the name of this cache.
+     */
     public String getName() {
         return name;
     }
@@ -177,8 +166,15 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
 
     }
 
-    public EventBus jmxRegistrant() {
-        return getEventBus();
+    /**
+     * The default implementation throws {@link UnsupportedOperationException}
+     * 
+     * @see org.coconut.cache.Cache#load(Object)
+     */
+    public Future<?> load(K key) {
+        throw new UnsupportedOperationException(
+                "loadAsync(K key) not supported for Cache of type " + getClass());
+
     }
 
     /**
@@ -187,28 +183,15 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
      * @see org.coconut.cache.Cache#loadAll(Collection)
      */
     public Future<?> loadAll(Collection<? extends K> keys) {
-        // default implementation does not support loading of values
         throw new UnsupportedOperationException(
                 "loadAll(Collection<? extends K> keys) not supported for Cache of type "
                         + getClass());
     }
 
-    /**
-     * The default implementation throws {@link UnsupportedOperationException}
-     * 
-     * @see org.coconut.cache.Cache#load(Object)
-     */
-    public Future<?> load(K key) {
-        // default implementation does not support loading of values
-        throw new UnsupportedOperationException(
-                "loadAsync(K key) not supported for Cache of type " + getClass());
-
-    }
-
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     public V peek(K key) {
-        CacheEntry<K, V> e = peekEntry(key);
+        CacheEntry<K, V> e = peekEntry(key, false);
         return e == null ? null : e.getValue();
     }
 
@@ -216,8 +199,10 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
      * @see org.coconut.cache.Cache#peekEntry(java.lang.Object)
      */
     public CacheEntry<K, V> peekEntry(K key) {
-        throw new UnsupportedOperationException();
+        return peekEntry(key, true);
     }
+
+    abstract protected CacheEntry<K, V> peekEntry(K key, boolean doCopy);
 
     /**
      * {@inheritDoc}
@@ -279,7 +264,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
 
     public void putEntry(CacheEntry<K, V> entry) {
         throw new UnsupportedOperationException();
-    };
+    }
 
     /**
      * {@inheritDoc}
@@ -300,7 +285,11 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
      */
     @SuppressWarnings("unchecked")
     public boolean remove(Object key, Object value) {
-        if (get((K) key).equals(value)) {
+        if (value == null) {
+            throw new NullPointerException("value is null");
+        }
+        V v = peek((K) key);
+        if (v != null && v.equals(value)) {
             remove(key);
             return true;
         } else {
@@ -387,10 +376,16 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         return h;
     }
 
+    /**
+     * Returns the Clock defined for this cache.
+     */
     protected Clock getClock() {
         return clock;
     }
 
+    /**
+     * Returns the CacheErrorHandler defined for this cache.
+     */
     protected CacheErrorHandler<K, V> getErrorHandler() {
         return errorHandler;
     }
@@ -420,50 +415,4 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
     protected void toString0(StringBuilder buf) {
 
     }
-
-    private static long convert(long timeout, TimeUnit unit) {
-        if (timeout == Cache.NEVER_EXPIRE) {
-            return Long.MAX_VALUE;
-        } else {
-            long newTime = unit.toMillis(timeout);
-            if (newTime == Long.MAX_VALUE) {
-                throw new IllegalArgumentException(
-                        "Overflow for specified expiration time, was " + timeout + " "
-                                + unit);
-            }
-            return newTime;
-        }
-    }
 }
-
-// /**
-// * Returns a unique id for this cache.
-// */
-// public UUID getID() {
-// return id;
-// }
-//
-// /**
-// * This can be overridden to provide custom handling for cases where the
-// * cache is unable to find a mapping for a given key. This can be used,
-// for
-// * example, to provide a failfast behaviour if the cache is supposed to
-// * contain a value for any given key.
-// *
-// * <pre>
-// * public class MyCacheImpl&lt;K, V&gt; extends AbstractCache&lt;K, V&gt;
-// {
-// * protected V handleNullGet(K key) {
-// * throw new CacheRuntimeException(&quot;No value defined for Key
-// [key=&quot; + key + &quot;]&quot;);
-// * }
-// * }
-// * </pre>
-// *
-// * @param key
-// * the key for which no value could be found
-// * @return <tt>null</tt> or any value that should be used instead
-// */
-// protected V handleNullGet(K key) {
-// return null; // by default just return null
-// }

@@ -43,6 +43,8 @@ public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
 
     private final EventCacheService<K, V> eventSupport;
 
+    boolean copyEntry = true;
+
     /**
      * @param conf
      */
@@ -106,14 +108,14 @@ public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
      * {@inheritDoc}
      */
     public Set<K> keySet() {
-        return getMap().keySet();
+        return getMap().keySet(this, isSynchronized());
     }
 
     /**
      * {@inheritDoc}
      */
     public Set<Entry<K, V>> entrySet() {
-        return (Set) getMap().entrySet();
+        return (Set) getMap().entrySet(this, isSynchronized(), true);
     }
 
     /**
@@ -130,11 +132,14 @@ public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
      * @see org.coconut.cache.Cache#peekEntry(java.lang.Object)
      */
     @Override
-    public CacheEntry<K, V> peekEntry(K key) {
+    protected CacheEntry<K, V> peekEntry(K key, boolean doCopy) {
         if (key == null) {
             throw new NullPointerException("key is null");
         }
-        AbstractCacheEntry<K, V> entry = getMap().get(key);
+        CacheEntry<K, V> entry = getMap().get(key);
+        if (entry != null && doCopy) {
+            entry = new ImmutableCacheEntry<K, V>(this, entry);
+        }
         return entry;
     }
 
@@ -151,7 +156,11 @@ public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
      * {@inheritDoc}
      */
     public Collection<V> values() {
-        return getMap().values();
+        return getMap().values(this, isSynchronized());
+    }
+
+    boolean isSynchronized() {
+        return false;
     }
 
     /**
@@ -177,6 +186,7 @@ public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
             evictNext();
         }
     }
+
     /**
      * @see org.coconut.cache.spi.AbstractCache#loadAll(java.util.Collection)
      */
@@ -230,6 +240,15 @@ public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
             boolean isExpired) {
         return AbstractCacheEntry.newEntry(this, entry, existing, key, value,
                 expirationTimeMilli, isExpired);
+    }
+
+    V putVersionized(K key, V value, long version) {
+        AbstractCacheEntry<K, V> entry = getMap().get(value);
+        if (entry != null && entry.getVersion() == version) {
+            return put(key, value);
+        } else {
+            return null;
+        }
     }
 
     class MyMap extends EntryMap<K, V> {

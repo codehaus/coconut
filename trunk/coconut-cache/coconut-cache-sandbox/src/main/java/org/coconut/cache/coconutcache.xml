@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<instances xmlns="http://coconut.codehaus.org/cache/1.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://coconut.codehaus.org/cache/1.0.0 http://coconut.codehaus.org/cache/coconutcache-v1_0_0.xsd">
+  <version>1.0.0</version>
+  <cache name="MyCache1">
+    <errorhandler>
+      <logging type="log4j" name="org.company.doo.MyLoh" level="debug" />
+    </errorhandler>
+  </cache>
+</instances>

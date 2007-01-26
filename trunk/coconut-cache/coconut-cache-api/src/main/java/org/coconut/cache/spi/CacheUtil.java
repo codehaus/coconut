@@ -26,6 +26,28 @@ public class CacheUtil {
 
     public static final Cache.HitStat STAT00 = new ImmutableHitStat(0, 0);
 
+
+    public static void checkCollectionForNulls(Collection<?> col) {
+        for (Object entry : col) {
+            if (entry == null) {
+                throw new NullPointerException("collection contains a null entry");
+            }
+        }
+    }
+
+    public static void checkMapForNulls(Map<?, ?> map) {
+        for (Map.Entry<?, ?> entry : map.entrySet()) {
+            if (entry == null) {
+                throw new NullPointerException("map contains a null entry");
+            } else if (entry.getKey() == null) {
+                throw new NullPointerException("map contains a null key");
+            } else if (entry.getValue() == null) {
+                throw new NullPointerException("map contains a null value for key = "
+                        + entry.getKey());
+            }
+        }
+    }
+    
     final static class ExtendedLoaderToLoader<K, V> implements CacheLoader<K, V> {
 
         private final CacheLoader<K, ? extends CacheEntry<K, V>> loader;

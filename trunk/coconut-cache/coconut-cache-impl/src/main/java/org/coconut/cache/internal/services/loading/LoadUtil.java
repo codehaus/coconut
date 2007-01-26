@@ -17,6 +17,7 @@ import org.coconut.cache.CacheLoader;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.AsyncCacheLoader;
 import org.coconut.cache.spi.CacheErrorHandler;
+import org.coconut.cache.spi.CacheUtil;
 import org.coconut.cache.spi.ExecutorEvent;
 import org.coconut.core.Callback;
 import org.coconut.core.EventProcessor;
@@ -99,7 +100,7 @@ public class LoadUtil {
          *      org.coconut.core.Callback)
          */
         public Future<?> asyncLoadAll(Collection<? extends K> keys, Callback<Map<K, V>> c) {
-            AbstractCache.checkCollectionForNulls(keys);
+            CacheUtil.checkCollectionForNulls(keys);
             LoadValuesRunnable lvr = new LoadValuesRunnable<K, V>(loader, keys, c);
             FutureTask<V> ft = new FutureTask<V>(lvr, null);
             executor.execute(ft);

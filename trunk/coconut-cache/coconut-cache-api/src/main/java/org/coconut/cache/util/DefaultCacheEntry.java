@@ -120,7 +120,7 @@ public class DefaultCacheEntry<K, V> implements CacheEntry<K, V> {
     public V setValue(V value) {
         throw new UnsupportedOperationException();
     }
-
+    
     static class WithExpiration<K, V> extends DefaultCacheEntry<K, V> {
 
         private final long expirationTime;
@@ -145,6 +145,5 @@ public class DefaultCacheEntry<K, V> implements CacheEntry<K, V> {
         public long getExpirationTime() {
             return expirationTime;
         }
-
     }
 }

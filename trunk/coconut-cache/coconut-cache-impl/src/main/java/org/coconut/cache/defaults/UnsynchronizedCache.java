@@ -22,6 +22,7 @@ import org.coconut.cache.internal.services.expiration.ExpirationCacheService;
 import org.coconut.cache.internal.services.expiration.FinalExpirationCacheService;
 import org.coconut.cache.internal.services.loading.CacheEntryLoaderService;
 import org.coconut.cache.spi.CacheSupport;
+import org.coconut.cache.spi.CacheUtil;
 
 /**
  * <b>Note that this implementation is not synchronized.</b> If multiple
@@ -76,7 +77,7 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
         int evictCount = 0;
         long start = getStatisticsSupport().cacheEvictStart(this);
         try {
-            for (Iterator<AbstractCacheEntry<K, V>> iterator = map.entrySet().iterator(); iterator
+            for (Iterator<AbstractCacheEntry<K, V>> iterator = map.entryIterator(); iterator
                     .hasNext();) {
                 AbstractCacheEntry<K, V> m = iterator.next();
                 if (getExpirationSupport().evictRemove(this, m)) {
@@ -101,7 +102,7 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
     }
 
     @Override
-    public CacheEntry<K, V> getEntry(K key) {
+    protected CacheEntry<K, V> getEntry(K key, boolean doCopy) {
         if (key == null) {
             throw new NullPointerException("key is null");
         }
@@ -143,7 +144,11 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
             getEventService().getHit(this, entry);
             getStatisticsSupport().entryGetStop(entry, start, true);
         }
-        return entry;
+        if (entry!=null && doCopy) {
+            return new ImmutableCacheEntry<K, V>(this, entry);
+        } else {
+            return entry;
+        }
     }
 
     @Override
@@ -195,7 +200,7 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
 
     @Override
     protected void putAll0(Map<? extends K, ? extends V> t, long expirationTime) {
-        checkMapForNulls(t);
+        CacheUtil.checkMapForNulls(t);
         ArrayList<AbstractCacheEntry<K, V>> am = new ArrayList<AbstractCacheEntry<K, V>>();
         for (Iterator<? extends Map.Entry<? extends K, ? extends V>> i = t.entrySet()
                 .iterator(); i.hasNext();) {
@@ -235,4 +240,6 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
     EntryMap<K, V> getMap() {
         return map;
     }
+
+
 }

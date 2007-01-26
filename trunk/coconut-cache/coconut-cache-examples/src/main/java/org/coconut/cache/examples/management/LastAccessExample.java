@@ -27,7 +27,9 @@ class LastAccessExample {
         private volatile int seconds = 60 * 60;// initial 1 hour
 
         public boolean accept(CacheEntry<K, V> entry) {
-            long delta = System.currentTimeMillis() - entry.getLastAccessTime();
+
+            long delta = System.currentTimeMillis()
+                    - Math.max(entry.getCreationTime(), entry.getLastAccessTime());
             // return true to indicate that the entry should be refreshed
             return delta > seconds * 1000;
         }

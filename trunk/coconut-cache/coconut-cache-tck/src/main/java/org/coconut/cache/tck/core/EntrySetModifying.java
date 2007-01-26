@@ -18,6 +18,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
 import org.coconut.cache.tck.CacheTestBundle;
 import org.junit.Test;

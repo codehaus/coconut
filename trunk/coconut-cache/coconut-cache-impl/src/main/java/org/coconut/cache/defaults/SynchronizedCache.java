@@ -58,17 +58,10 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
     }
 
     /**
-     * @see org.coconut.cache.Cache#peek(java.lang.Object)
-     */
-    public synchronized V peek(K key) {
-        return wrapped.peek(key);
-    }
-
-    /**
      * @see org.coconut.cache.Cache#peekEntry(java.lang.Object)
      */
-    public synchronized CacheEntry<K, V> peekEntry(K key) {
-        return wrapped.peekEntry(key);
+    protected synchronized CacheEntry<K, V> peekEntry(K key, boolean doCopy) {
+        return wrapped.peekEntry(key,doCopy);
     }
 
     /**
@@ -99,8 +92,8 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
      * @see org.coconut.cache.spi.AbstractCache#getEntry(java.lang.Object)
      */
     @Override
-    public synchronized CacheEntry<K, V> getEntry(K key) {
-        return wrapped.getEntry(key);
+    protected synchronized CacheEntry<K, V> getEntry(K key, boolean doCopy) {
+        return wrapped.getEntry(key,doCopy);
     }
 
     /**
