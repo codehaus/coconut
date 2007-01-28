@@ -4,20 +4,23 @@
 
 package org.coconut.cache;
 
-import static org.coconut.test.TestUtil.assertEqual;
-import static org.junit.Assert.assertEquals;
-
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.coconut.cache.policy.Policies;
+import org.coconut.cache.policy.ReplacementPolicy;
+import org.coconut.cache.spi.ExecutorEvent;
 import org.coconut.cache.util.AbstractCacheLoader;
+import org.coconut.filter.ComparisonFilters;
+import org.coconut.filter.LogicFilters;
 import org.coconut.test.MockTestCase;
 import org.jmock.Mock;
 import org.junit.Test;
+
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
@@ -32,91 +35,21 @@ public class CachesTest extends MockTestCase {
         assertEquals(0l, Cache.DEFAULT_EXPIRATION);
         assertEquals(Long.MAX_VALUE, Cache.NEVER_EXPIRE);
     }
-    
+
     public void testNullCacheLoader() throws Exception {
         CacheLoader<Object, Object> loader = Caches.nullLoader();
         assertNull(loader.load(new Object()));
     }
 
-    public void testMapAsCache() {
-        Map<Integer, Integer> map = new HashMap<Integer, Integer>();
-        Cache<Integer, Integer> cc = Caches.mapToCache(map);
-        Mock mock = mock(Map.class);
-        ConcurrentMap<Integer, Integer> c = Caches.mapToCache((Map) mock
-                .proxy());
-
-        mock.expects(once()).method("clear");
-        c.clear();
-
-        mock.expects(once()).method("containsKey").with(eq(0)).will(
-                returnValue(true));
-        assertTrue(c.containsKey(0));
-
-        mock.expects(once()).method("containsValue").with(eq(0)).will(
-                returnValue(false));
-        assertFalse(c.containsValue(0));
-
-        mock.expects(once()).method("entrySet").will(
-                returnValue(map.entrySet()));
-        assertSame(map.entrySet(), c.entrySet());
-
-        mock.expects(once()).method("equals").with(eq(cc)).will(
-                returnValue(true));
-        assertTrue(c.equals(cc));
-
-        mock.expects(once()).method("get").with(eq(0)).will(returnValue(1));
-        assertEqual(1, c.get(0));
-
-        mock.expects(once()).method("hashCode").will(returnValue(123));
-        assertEquals(123, c.hashCode());
-
-        mock.expects(once()).method("isEmpty").will(returnValue(false));
-        assertFalse(c.isEmpty());
-
-        mock.expects(once()).method("keySet").will(returnValue(map.keySet()));
-        assertSame(map.keySet(), c.keySet());
-
-        mock.expects(once()).method("put").with(eq(0), eq(1)).will(
-                returnValue(Integer.valueOf(2)));
-        assertEqual(2, c.put(0, 1));
-
-        mock.expects(once()).method("putAll").with(eq(map));
-        c.putAll(map);
-
-        mock.expects(once()).method("remove").with(eq(0)).will(returnValue(1));
-        assertEqual(1, c.remove(0));
-
-        mock.expects(once()).method("size").will(returnValue(2));
-        assertEquals(2, c.size());
-
-//        mock.expects(once()).method("toString").will(returnValue("foo"));
-//        assertEquals("foo", c.toString());
-
-        mock.expects(once()).method("values").will(returnValue(map.values()));
-        assertSame(map.values(), c.values());
-        // c.putIfAbsent()
-        //        
-        // c.remove()
-        //        
-        // c.replace()
-        //        
-        // c.replace()
-
-    }
-
     public void testSynchronizedCacheLoader1() throws Exception {
         Mock mock = mock(CacheLoader.class);
         CacheLoader<Integer, String> loader = Caches
-                .synchronizedCacheLoader((CacheLoader<Integer, String>) mock
-                        .proxy());
+                .synchronizedCacheLoader((CacheLoader<Integer, String>) mock.proxy());
         Collection<Integer> col = new LinkedList<Integer>();
         Map<Integer, String> map = new HashMap<Integer, String>();
-        mock.expects(once()).method("load").with(eq(0))
-                .will(returnValue("foo"));
-        mock.expects(once()).method("load").with(eq(1))
-                .will(throwException(ex));
-        mock.expects(once()).method("loadAll").with(eq(col)).will(
-                returnValue(map));
+        mock.expects(once()).method("load").with(eq(0)).will(returnValue("foo"));
+        mock.expects(once()).method("load").with(eq(1)).will(throwException(ex));
+        mock.expects(once()).method("loadAll").with(eq(col)).will(returnValue(map));
 
         assertEquals("foo", loader.load(0));
 
@@ -142,8 +75,7 @@ public class CachesTest extends MockTestCase {
                         return null;
                     }
 
-                    public Map<Integer, String> loadAll(
-                            Collection<? extends Integer> keys)
+                    public Map<Integer, String> loadAll(Collection<? extends Integer> keys)
                             throws Exception {
                         int i = ai.incrementAndGet();
                         Thread.sleep(15);
@@ -178,15 +110,12 @@ public class CachesTest extends MockTestCase {
         CacheLoader<Integer, String> loader = Caches
                 .synchronizedCacheLoader(new AbstractCacheLoader<Integer, String>() {
                     public String load(Integer key) throws Exception {
-                        return ((CacheLoader<Integer, String>) mock.proxy())
-                                .load(key);
+                        return ((CacheLoader<Integer, String>) mock.proxy()).load(key);
                     }
                 });
         assertTrue(loader instanceof AbstractCacheLoader);
-        mock.expects(once()).method("load").with(eq(0))
-                .will(returnValue("foo"));
-        mock.expects(once()).method("load").with(eq(1))
-                .will(throwException(ex));
+        mock.expects(once()).method("load").with(eq(0)).will(returnValue("foo"));
+        mock.expects(once()).method("load").with(eq(1)).will(throwException(ex));
 
         assertEquals("foo", loader.load(0));
 
@@ -237,4 +166,75 @@ public class CachesTest extends MockTestCase {
         } catch (NullPointerException e) { /* okay */
         }
     }
+
+    public void testClearAsRunnable() {
+        Mock m = mock(Cache.class);
+        Cache c = (Cache) m.proxy();
+        Runnable r = Caches.clearAsRunnable(c);
+        assertTrue(r instanceof ExecutorEvent.Clear);
+        assertEquals(c, ((ExecutorEvent.Clear) r).getCache());
+
+        m.expects(once()).method("clear");
+        r.run();
+
+        try {
+            Caches.clearAsRunnable(null);
+            shouldThrow();
+        } catch (NullPointerException e) { /* okay */
+        }
+    }
+
+    public void testEvictAsRunnable() {
+        Mock m = mock(Cache.class);
+        Cache c = (Cache) m.proxy();
+        Runnable r = Caches.evictAsRunnable(c);
+        assertTrue(r instanceof ExecutorEvent.Evict);
+        assertEquals(c, ((ExecutorEvent.Evict) r).getCache());
+
+        m.expects(once()).method("evict");
+        r.run();
+
+        try {
+            Caches.evictAsRunnable(null);
+            shouldThrow();
+        } catch (NullPointerException e) { /* okay */
+        }
+    }
+
+    public void testCacheAsCacheLoader() throws Exception {
+        Map dummy = new HashMap();
+        Collection dummyCol = new ArrayList();
+        Mock m = mock(Cache.class);
+        Cache c = (Cache) m.proxy();
+        CacheLoader cl = Caches.cacheAsCacheLoader(c);
+
+        m.expects(once()).method("get").with(eq(0)).will(returnValue(1));
+        assertEquals(1, cl.load(0));
+
+        m.expects(once()).method("getAll").with(eq(dummyCol)).will(returnValue(dummy));
+        assertEquals(dummy, cl.loadAll(dummyCol));
+
+        try {
+            Caches.cacheAsCacheLoader(null);
+            shouldThrow();
+        } catch (NullPointerException e) { /* okay */
+        }
+    }
+
+    public void testAcceptors() {
+        HashMap hm = new HashMap();
+        hm.put(1, 2);
+        hm.put(3, 4);
+        ReplacementPolicy rp = Caches.entryKeyAcceptor(Policies.newClock(),
+                ComparisonFilters.equal(1));
+        assertTrue(rp.add(hm.entrySet().toArray()[0]) > 0);
+        assertTrue(rp.add(hm.entrySet().toArray()[1]) < 0);
+        
+        ReplacementPolicy rp1 =Caches.entryValueAcceptor(Policies.newClock(),
+                ComparisonFilters.equal(2));
+        assertTrue(rp1.add(hm.entrySet().toArray()[0]) > 0);
+        assertTrue(rp1.add(hm.entrySet().toArray()[1]) < 0);
+
+    }
+
 }

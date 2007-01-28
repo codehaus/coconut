@@ -4,32 +4,133 @@
 
 package org.coconut.cache.util;
 
-import junit.framework.Assert;
-import junit.framework.JUnit4TestAdapter;
+import java.lang.reflect.Field;
+import java.net.URL;
+import java.util.Map;
 
+import junit.framework.JUnit4TestAdapter;
+import static org.junit.Assert.*;
 import org.coconut.cache.Cache;
+import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
+import org.coconut.cache.DummyCache;
+import org.coconut.cache.spi.AbstractCache;
 import org.coconut.test.MockTestCase;
+import org.jmock.Mock;
+import org.junit.After;
 import org.junit.Test;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class CacheSingletonTest  {
-    public static junit.framework.Test suite() {
-        return new JUnit4TestAdapter(CacheSingletonTest.class);
+public class CacheSingletonTest {
+    private final static String pck1 = "org/coconut/cache/util/TestConfig1.xml";
+
+    private final static String pck2 = "org/coconut/cache/util/TestConfig2.xml";
+
+    @After
+    public void after() throws Exception {
+        Field f = CacheSingleton.class.getDeclaredField("isInitialized");
+        f.setAccessible(true);
+        f.setBoolean(null, false);
+
+        f = CacheSingleton.class.getDeclaredField("caches");
+        f.setAccessible(true);
+        ((Map) f.get(null)).clear();
+
+        f = CacheSingleton.class.getDeclaredField("cacheInstance");
+        f.setAccessible(true);
+        f.set(null, null);
     }
 
     @Test(expected = CacheException.class)
-    public void testNoConfiguration() {
-        CacheSingleton.getDefaultCache();
+    public void testNoConfiguration1() {
+        CacheSingleton.getSingleCache();
+    }
+
+    @Test(expected = CacheException.class)
+    public void testNoConfiguration2() {
+        CacheSingleton.getCache("foo");
     }
 
     @Test
-    public void testSetCacheInstance() {
+    public void testSetGetDefault() {
         Cache c = MockTestCase.mockDummy(Cache.class);
-        CacheSingleton.setDefaultCache(c);
-        Assert.assertSame(c, CacheSingleton.getDefaultCache());
+        CacheSingleton.setSingleCache(c);
+        assertEquals(c, CacheSingleton.getSingleCache());
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testSetNPE() {
+        CacheSingleton.setSingleCache(null);
+    }
+
+    @Test
+    public void testSetAbstract() {
+        MockTestCase mtc = new MockTestCase();
+        Mock m = mtc.mock(AbstractCache.class);
+        m.stubs().method("getName").will(mtc.returnValue("foo"));
+        CacheSingleton.setSingleCache((Cache<?, ?>) m.proxy());
+        assertEquals(m.proxy(), CacheSingleton.getSingleCache());
+        assertEquals(m.proxy(), CacheSingleton.getCache("foo"));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testAddNPE1() {
+        CacheSingleton.addCache(MockTestCase.mockDummy(Cache.class), null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testAddNPE2() {
+        CacheSingleton.addCache(null, "foo");
+    }
+
+    @Test
+    public void testAddCache() {
+        MockTestCase mtc = new MockTestCase();
+        Mock m = mtc.mock(AbstractCache.class);
+        m.stubs().method("getName").will(mtc.returnValue("foo"));
+        CacheSingleton.addCache((AbstractCache<?, ?>) m.proxy());
+        assertTrue(CacheSingleton.hasCache("foo"));
+        assertFalse(CacheSingleton.hasCache("foo1"));
+        assertEquals(m.proxy(), CacheSingleton.getCache("foo"));
+    }
+
+    @Test
+    public void testInitializeFromClasspathGetSingleCache() {
+        assertEquals(CacheSingleton.DEFAULT_CACHE_RESSOURCE, CacheSingleton
+                .getCacheRessourceLocation());
+        CacheSingleton.setCacheRessourceLocation(pck1);
+        assertEquals(pck1, CacheSingleton.getCacheRessourceLocation());
+        Cache c = CacheSingleton.getSingleCache();
+        assertTrue(c instanceof DummyCache);
+        assertEquals("foobar", ((DummyCache) c).getName());
+        assertEquals(c, CacheSingleton.getCache("foobar"));
+        CacheSingleton.setCacheRessourceLocation(CacheSingleton.DEFAULT_CACHE_RESSOURCE);
+    }
+
+    @Test
+    public void testInitializeFromClasspathGetCache() {
+        assertEquals(CacheSingleton.DEFAULT_CACHE_RESSOURCE, CacheSingleton
+                .getCacheRessourceLocation());
+        CacheSingleton.setCacheRessourceLocation(pck1);
+        assertEquals(pck1, CacheSingleton.getCacheRessourceLocation());
+        Cache c =CacheSingleton.getCache("foobar");
+        assertTrue(c instanceof DummyCache);
+        assertEquals("foobar", ((DummyCache) c).getName());
+        CacheSingleton.setCacheRessourceLocation(CacheSingleton.DEFAULT_CACHE_RESSOURCE);
+    }
+    @Test(expected = CacheException.class)
+    public void testInitializeFromClasspathNoTypeInfo() {
+        CacheSingleton.setCacheRessourceLocation(pck2);
+        CacheSingleton.getSingleCache();
+    }
+
+    @Test(expected = CacheException.class)
+    public void testUnknownCache() {
+        CacheSingleton.setCacheRessourceLocation(pck1);
+        CacheSingleton.getCache("foo1");
+
     }
 }

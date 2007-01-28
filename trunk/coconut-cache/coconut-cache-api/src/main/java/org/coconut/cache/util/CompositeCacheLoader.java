@@ -4,6 +4,7 @@
 
 package org.coconut.cache.util;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -30,7 +31,10 @@ import org.coconut.cache.CacheLoader;
  * @url $URL:
  *      https://svn.codehaus.org/coconut/trunk/coconut-cache/coconut-cache-api/src/main/java/org/coconut/cache/util/CompositeCacheLoader.java $
  */
-public class CompositeCacheLoader<K, V> implements CacheLoader<K, V> {
+public class CompositeCacheLoader<K, V> implements CacheLoader<K, V>, Serializable {
+
+    /** serialVersionUID */
+    private static final long serialVersionUID = 4594083777845671521L;
 
     /**
      * The array of loaders used for loading the value.
@@ -64,7 +68,8 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V> {
         this.loaders = loaders.toArray(new CacheLoader[0]);
         for (int i = 0; i < this.loaders.length; i++) {
             if (this.loaders[i] == null)
-                throw new NullPointerException("The array or list contained a null on index=" + i);
+                throw new NullPointerException(
+                        "The array or list contained a null on index=" + i);
         }
     }
 
@@ -76,11 +81,11 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V> {
         for (CacheLoader<K, V> loader : loaders) {
             try {
                 v = loader.load(key);
-                if (v != null) {
-                    break;
-                }
             } catch (Exception e) {
-                v = loadingFailed(loader, key, e);
+                v = loadFailed(loader, key, e);
+            }
+            if (v != null) {
+                break;
             }
         }
         if (v == null) {
@@ -102,14 +107,14 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V> {
                 try {
                     map = loader.loadAll(ks);
                 } catch (Exception e) {
-                    map = loadingFailed(loader, keys, e);
+                    map = loadAllFailed(loader, keys, e);
                 }
             } else {
                 // no keys left that we haven't found a value for
                 break;
             }
             // map is not null part of the cache loader contract
-            assert (map != null);
+            // assert (map != null);
             ks = new HashSet<K>();
             result.putAll(map);
             // we don't check that map.size==ks.size
@@ -156,8 +161,8 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V> {
      * @return a map containing the mapping that should be used instead
      * @throws Exception
      */
-    protected Map<K, V> loadingFailed(CacheLoader<K, V> loader, Collection<? extends K> keys,
-            Exception cause) throws Exception {
+    protected Map<K, V> loadAllFailed(CacheLoader<K, V> loader,
+            Collection<? extends K> keys, Exception cause) throws Exception {
         throw cause;
     }
 
@@ -171,7 +176,8 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V> {
      * @return the value for this key
      * @throws Exception
      */
-    protected V loadingFailed(CacheLoader<K, V> loader, K key, Exception cause) throws Exception {
+    protected V loadFailed(CacheLoader<K, V> loader, K key, Exception cause)
+            throws Exception {
         throw cause;
     }
 

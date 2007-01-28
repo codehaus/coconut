@@ -9,8 +9,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import javax.management.MBeanServerFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -67,9 +70,11 @@ public class XmlConfigurator {
     public static final String CONFIG_VERSION_ATTR = "version";
 
     /** The current version of the XML schema */
-    public static final String CURRENT_VERSION = "1.0.0";
+    public static final String CURRENT_VERSION = "0.0.1";
 
     private final static XmlConfigurator DEFAULT = new XmlConfigurator();
+
+    final static CacheConfiguration CONF = CacheConfiguration.create();
 
     /**
      * Returns the default instance of XmlConfigurator.
@@ -92,6 +97,11 @@ public class XmlConfigurator {
      */
     public <K, V> void from(CacheConfiguration<K, V> configuration, InputStream stream)
             throws Exception {
+        if (configuration == null) {
+            throw new NullPointerException("configuration is null");
+        } else if (stream == null) {
+            throw new NullPointerException("stream is null");
+        }
         Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(
                 stream);
         from(configuration, doc);
@@ -127,6 +137,11 @@ public class XmlConfigurator {
      *             serialized
      */
     public void to(CacheConfiguration<?, ?> cc, OutputStream stream) throws Exception {
+        if (cc == null) {
+            throw new NullPointerException("cc is null");
+        } else if (stream == null) {
+            throw new NullPointerException("stream is null");
+        }
         DocumentBuilder builder = DocumentBuilderFactory.newInstance()
                 .newDocumentBuilder();
         Document doc = builder.newDocument();
@@ -143,54 +158,56 @@ public class XmlConfigurator {
         transform(doc, stream);
     }
 
-    protected <K, V> void from(CacheConfiguration<K, V> base, Document doc)
-            throws Exception {
+    <K, V> void from(CacheConfiguration<K, V> base, Document doc) throws Exception {
         Element root = doc.getDocumentElement();
-        int length = root.getElementsByTagName(CACHE_TAG).getLength();
-        if (length == 0) {
-            throw new IllegalStateException(
-                    "No cache is defined in the specified document, "
-                            + doc.getDocumentURI());
-        } else if (length > 1) {
-            throw new IllegalStateException("Only one cache can be defined, "
-                    + doc.getDocumentURI());
-        } else {
-            Node n = root.getElementsByTagName("cache").item(0);
-            from(base, doc, (Element) n);
-        }
+        // int length = root.getElementsByTagName(CACHE_TAG).getLength();
+        // if (length == 0) {
+        // throw new IllegalStateException(
+        // "No cache is defined in the specified document, "
+        // + doc.getDocumentURI());
+        // } else if (length > 1) {
+        // throw new IllegalStateException("Only one cache can be defined, "
+        // + doc.getDocumentURI());
+        // } else {
+        Node n = root.getElementsByTagName("cache").item(0);
+        from(base, doc, (Element) n);
     }
 
-    protected <K, V> void from(CacheConfiguration<K, V> conf, Document doc, Element cache)
+    <K, V> void from(CacheConfiguration<K, V> conf, Document doc, Element cache)
             throws Exception {
         if (cache.hasAttribute(CACHE_NAME_ATTR)) {
             conf.setName(cache.getAttribute(CACHE_NAME_ATTR));
+        }
+        if (cache.hasAttribute(CACHE_TYPE_ATTR)) {
+            conf.setProperty(XmlConfigurator.CACHE_INSTANCE_TYPE, cache
+                    .getAttribute(CACHE_TYPE_ATTR));
         }
         for (AbstractConfigurator p : getPersisters()) {
             p.read(conf, cache);
         }
     }
 
-    protected List<AbstractConfigurator> getPersisters() {
+    List<AbstractConfigurator> getPersisters() {
         ArrayList<AbstractConfigurator> list = new ArrayList<AbstractConfigurator>();
         list.add(new ErrorHandlerConfigurator());
         list.add(new ExpirationConfigurator());
+        list.add(new EvictionConfigurator());
+        list.add(new JMXConfigurator());
         return list;
     }
 
-    protected void to(CacheConfiguration<?, ?> cc, Document doc, Element cache)
-            throws Exception {
+    void to(CacheConfiguration<?, ?> cc, Document doc, Element cache) throws Exception {
         cache.setAttribute(CACHE_NAME_ATTR, cc.getName());
-        if (cache.hasAttribute(CACHE_TYPE_ATTR)) {
-            cc.setProperty(XmlConfigurator.CACHE_INSTANCE_TYPE, cache
-                    .getAttribute(CACHE_TYPE_ATTR));
+        if (cc.getProperties().containsKey(XmlConfigurator.CACHE_INSTANCE_TYPE)) {
+            cache.setAttribute(CACHE_TYPE_ATTR, cc.getProperty(CACHE_INSTANCE_TYPE)
+                    .toString());
         }
         for (AbstractConfigurator p : getPersisters()) {
-            p.add(cc, doc, cache);
+            p.write(cc, doc, cache);
         }
     }
 
-    protected void transform(Document doc, OutputStream stream)
-            throws TransformerException {
+    void transform(Document doc, OutputStream stream) throws TransformerException {
         DOMSource domSource = new DOMSource(doc);
         StreamResult result = new StreamResult(stream);
         Transformer f = TransformerFactory.newInstance().newTransformer();
@@ -203,9 +220,9 @@ public class XmlConfigurator {
 
         private CacheConfiguration cc;
 
-        private Document doc;
+        Document doc;
 
-        private Element root;
+        Element root;
 
         protected Element add(String name) {
             return add(name, root);
@@ -239,14 +256,18 @@ public class XmlConfigurator {
             return cc;
         }
 
+        // protected Element getChild(String name) {
+        // for (int i = 0; i < root.getChildNodes().getLength(); i++) {
+        // if (root.getChildNodes().item(i).getNodeName().equals(name)) {
+        // return (Element) root.getChildNodes().item(i);
+        // }
+        // }
+        // throw new IllegalArgumentException("Element with name (" + name
+        // + ") could not be found");
+        // }
+
         protected Element getChild(String name) {
-            for (int i = 0; i < root.getChildNodes().getLength(); i++) {
-                if (root.getChildNodes().item(i).getNodeName().equals(name)) {
-                    return (Element) root.getChildNodes().item(i);
-                }
-            }
-            throw new IllegalArgumentException("Element with name (" + name
-                    + ") could not be found");
+            return getChild(name, root);
         }
 
         protected Element getChild(String name, Element e) {
@@ -273,20 +294,12 @@ public class XmlConfigurator {
             Constructor c = null;
             try {
                 c = o.getClass().getConstructor(null);
-            } catch (SecurityException e1) {
-                addComment("missingconstructor", e, name, o.getClass());
-                e.getParentNode().removeChild(e);
             } catch (NoSuchMethodException e1) {
-                addComment("missingconstructor", e, name, o.getClass());
+                addComment("missingconstructor", e.getParentNode(), name, o.getClass());
                 e.getParentNode().removeChild(e);
             }
             if (c != null) {
-                if ((!Modifier.isPublic(c.getModifiers()))) {
-                    addComment("missingpublicconstructor", e, name, o.getClass());
-                    e.getParentNode().removeChild(e);
-                } else {
-                    e.setAttribute("type", o.getClass().getName());
-                }
+                e.setAttribute("type", o.getClass().getName());
             }
         }
 
@@ -296,7 +309,7 @@ public class XmlConfigurator {
          * @see org.coconut.cache.spi.XMLSupport.Persister#add(org.coconut.cache.CacheConfiguration,
          *      org.w3c.dom.Document, org.w3c.dom.Element)
          */
-        void add(CacheConfiguration cc, Document doc, Element root) throws Exception {
+        void write(CacheConfiguration cc, Document doc, Element root) throws Exception {
             this.cc = cc;
             this.doc = doc;
             this.root = root;
@@ -323,11 +336,26 @@ public class XmlConfigurator {
         @Override
         protected void read() {
             Element e = getChild("errorhandler");
-            Element log = getChild("log", e);
-            String type = log.getAttribute("type");
-            if (type.equals("jdk")) {
-                conf().setErrorHandler(
-                        new CacheErrorHandler(Logs.JDK.from(log.getTextContent())));
+            if (e != null) {
+                Element log = getChild("log", e);
+                if (log != null) {
+                    String type = log.getAttribute("type");
+                    if (type.equals("jdk")) {
+                        conf()
+                                .setErrorHandler(
+                                        new CacheErrorHandler(Logs.JDK.from(log
+                                                .getTextContent())));
+                    } else if (type.equals("log4j")) {
+                        conf().setErrorHandler(
+                                new CacheErrorHandler(Logs
+                                        .fromLog4j(log.getTextContent())));
+                    } else {
+                        // commons, this should guaranteed by schema validation
+                        conf().setErrorHandler(
+                                new CacheErrorHandler(Logs.fromCommons(log
+                                        .getTextContent())));
+                    }
+                }
             }
         }
 
@@ -337,9 +365,9 @@ public class XmlConfigurator {
          */
         protected void write() {
             CacheErrorHandler cee = conf().getErrorHandler();
-            Element eh = add("errorhandler");
             if (cee.getClass().equals(CacheErrorHandler.class)) {
                 if (cee.hasLogger()) {
+                    Element eh = add("errorhandler");
                     Log log = cee.getLogger();
                     String name = log instanceof Logs.AbstractLogger ? ((Logs.AbstractLogger) log)
                             .getName()
@@ -360,7 +388,6 @@ public class XmlConfigurator {
                     if (logType != null) {
                         add("log", eh, name).setAttribute("type", logType);
                     }
-
                 }
             } else {
                 addComment("errorhandler.notinstance1", cee.getClass());
@@ -368,11 +395,71 @@ public class XmlConfigurator {
         }
     }
 
+    static class JMXConfigurator extends AbstractConfigurator {
+
+        public final static String REGISTER_ATRB = "auto-register";
+
+        public final static String DOMAIN_TAG = "domain";
+
+        public final static String EXPIRATION_TAG = "expiration";
+
+        public final static String JMX_TAG = "jmx";
+
+        public CacheConfiguration.JMX j() {
+            return conf().jmx();
+        }
+
+        /**
+         * @see org.coconut.cache.spi.xml.AbstractPersister#read()
+         */
+        @Override
+        protected void read() throws Exception {
+            Element e = getChild(JMX_TAG);
+            if (e != null) {
+                /* Register */
+                if (e.hasAttribute(REGISTER_ATRB)) {
+                    j().setAutoRegister(Boolean.parseBoolean(e.getAttribute(REGISTER_ATRB)));
+                }
+                /* Domain */
+                Element domain = getChild(DOMAIN_TAG, e);
+                if (domain != null) {
+                    j().setDomain(domain.getTextContent());
+                }
+            }
+        }
+
+        /**
+         * @see org.coconut.cache.spi.xml.AbstractPersister#write()
+         */
+        @Override
+        protected void write() throws Exception {
+            Element base = doc.createElement(JMX_TAG);
+
+            /* Register */
+            if (j().getAutoRegister() != CONF.jmx().getAutoRegister()) {
+                base.setAttribute(REGISTER_ATRB, Boolean.toString(j().getAutoRegister()));
+            }
+
+            /* Domain Filter */
+            if (!(j().getDomain().equals(CONF.jmx().getDomain()))) {
+                add(DOMAIN_TAG, base, j().getDomain());
+            }
+            /* MBeanServer */
+            if (!(j().getMBeanServer().equals(CONF.jmx().getMBeanServer()))) {
+                addComment("cannotsavembeanserver");
+            }
+            
+            if (base.hasChildNodes() || base.hasAttributes()) {
+                root.appendChild(base);
+            }
+        }
+    }
+
     static class ExpirationConfigurator extends AbstractConfigurator {
 
-        public final static String DEFAULT_TIMEOUT_TAG = "expiration-timeout";
+        public final static String DEFAULT_TIMEOUT_TAG = "default-timeout";
 
-        public final static String EXPIRATION_FILTER_TAG = "expiration-filter";
+        public final static String EXPIRATION_FILTER_TAG = "filter";
 
         public final static String EXPIRATION_TAG = "expiration";
 
@@ -390,32 +477,34 @@ public class XmlConfigurator {
         @Override
         protected void read() throws Exception {
             Element e = getChild(EXPIRATION_TAG);
-            /* Expiration timeout */
-            Element defaultTimeout = getChild(DEFAULT_TIMEOUT_TAG, e);
-            if (defaultTimeout != null) {
-                long timeout = UnitOfTime.fromElement(defaultTimeout,
-                        TimeUnit.MILLISECONDS);
-                e().setDefaultTimeout(timeout, TimeUnit.MILLISECONDS);
-            }
-            /* Expiration Filter */
-            Element filter = getChild(EXPIRATION_FILTER_TAG, e);
-            if (filter != null) {
-                Filter f = loadObject(filter, Filter.class);
-                e().setFilter(f);
-            }
-            /* Refresh timer */
-            Element refreshInterval = getChild(REFRESH_INTERVAL_TAG, e);
-            if (refreshInterval != null) {
-                long timeout = UnitOfTime.fromElement(refreshInterval,
-                        TimeUnit.MILLISECONDS);
-                e().setRefreshInterval(timeout, TimeUnit.MILLISECONDS);
-            }
+            if (e != null) {
+                /* Expiration timeout */
+                Element defaultTimeout = getChild(DEFAULT_TIMEOUT_TAG, e);
+                if (defaultTimeout != null) {
+                    long timeout = UnitOfTime.fromElement(defaultTimeout,
+                            TimeUnit.MILLISECONDS);
+                    e().setDefaultTimeout(timeout, TimeUnit.MILLISECONDS);
+                }
+                /* Expiration Filter */
+                Element filter = getChild(EXPIRATION_FILTER_TAG, e);
+                if (filter != null) {
+                    Filter f = loadObject(filter, Filter.class);
+                    e().setFilter(f);
+                }
+                /* Refresh timer */
+                Element refreshInterval = getChild(REFRESH_INTERVAL_TAG, e);
+                if (refreshInterval != null) {
+                    long timeout = UnitOfTime.fromElement(refreshInterval,
+                            TimeUnit.MILLISECONDS);
+                    e().setRefreshInterval(timeout, TimeUnit.MILLISECONDS);
+                }
 
-            /* Refresh Filter */
-            Element refreshFilter = getChild(REFRESH_FILTER_TAG, e);
-            if (refreshFilter != null) {
-                Filter f = loadObject(refreshFilter, Filter.class);
-                e().setRefreshFilter(f);
+                /* Refresh Filter */
+                Element refreshFilter = getChild(REFRESH_FILTER_TAG, e);
+                if (refreshFilter != null) {
+                    Filter f = loadObject(refreshFilter, Filter.class);
+                    e().setRefreshFilter(f);
+                }
             }
         }
 
@@ -424,7 +513,7 @@ public class XmlConfigurator {
          */
         @Override
         protected void write() throws Exception {
-            Element base = add(EXPIRATION_TAG);
+            Element base = doc.createElement(EXPIRATION_TAG);
 
             /* Expiration Timeout */
             long timeout = e().getDefaultTimeout(TimeUnit.MILLISECONDS);
@@ -448,10 +537,106 @@ public class XmlConfigurator {
             }
 
             /* Refresh Filter */
-            Filter refreshFilter = e().getFilter();
+            Filter refreshFilter = e().getRefreshFilter();
             if (refreshFilter != null) {
                 super.saveObject(add(REFRESH_FILTER_TAG, base), REFRESH_FILTER_TAG,
-                        filter);
+                        refreshFilter);
+            }
+            if (base.hasChildNodes()) {
+                root.appendChild(base);
+            }
+        }
+    }
+
+    static class EvictionConfigurator extends AbstractConfigurator {
+
+        public final static String MAXIMUM_CAPACITY = "max-capacity";
+
+        public final static String MAXIMUM_SIZE = "max-size";
+
+        public final static String EVICTION_TAG = "eviction";
+
+        public final static String PREFERABLE_CAPACITY = "preferable-capacity";
+
+        public final static String PREFERABLE_SIZE = "preferable-size";
+
+        public CacheConfiguration.Eviction e() {
+            return conf().eviction();
+        }
+
+        /**
+         * @see org.coconut.cache.spi.xml.AbstractPersister#read()
+         */
+        @Override
+        protected void read() throws Exception {
+            Element e = getChild(EVICTION_TAG);
+            if (e != null) {
+                /* Maximum Capacity */
+                Element maximumCapacity = getChild(MAXIMUM_CAPACITY, e);
+                if (maximumCapacity != null) {
+                    e().setMaximumCapacity(
+                            Long.parseLong(maximumCapacity.getTextContent()));
+                }
+
+                /* Preferable Capacity */
+                Element preferableCapacity = getChild(PREFERABLE_CAPACITY, e);
+                if (preferableCapacity != null) {
+                    e().setPreferableCapacity(
+                            Long.parseLong(preferableCapacity.getTextContent()));
+                }
+
+                /* Maximum Size */
+                Element maximumSize = getChild(MAXIMUM_SIZE, e);
+                if (maximumSize != null) {
+                    e().setMaximumSize(Integer.parseInt(maximumSize.getTextContent()));
+                }
+
+                /* Preferable Size */
+                Element preferableSize = getChild(PREFERABLE_SIZE, e);
+                if (preferableSize != null) {
+                    e().setPreferableSize(
+                            Integer.parseInt(preferableSize.getTextContent()));
+                }
+
+            }
+        }
+
+        /**
+         * @see org.coconut.cache.spi.xml.AbstractPersister#write()
+         */
+        @Override
+        protected void write() throws Exception {
+            Element base = doc.createElement(EVICTION_TAG);
+
+            /* Maximum Capacity */
+            long maximumCapacity = e().getMaximumCapacity();
+            if (maximumCapacity != CONF.eviction().getMaximumCapacity()) {
+                add(MAXIMUM_CAPACITY, base)
+                        .setTextContent(Long.toString(maximumCapacity));
+            }
+
+            /* Preferable Capacity */
+            long preferableCapacity = e().getPreferableCapacity();
+            if (preferableCapacity != CONF.eviction().getPreferableCapacity()) {
+                add(PREFERABLE_CAPACITY, base).setTextContent(
+                        Long.toString(preferableCapacity));
+            }
+
+            /* Maximum Size */
+            int maximumSize = e().getMaximumSize();
+            if (maximumSize != CONF.eviction().getMaximumSize()) {
+                add(MAXIMUM_SIZE, base).setTextContent(Integer.toString(maximumSize));
+            }
+
+            /* Preferable Size */
+            int preferableSize = e().getPreferableSize();
+            if (preferableSize != CONF.eviction().getPreferableSize()) {
+                add(PREFERABLE_SIZE, base).setTextContent(
+                        Integer.toString(preferableSize));
+            }
+
+            if (base.hasChildNodes()) {
+                root.appendChild(base);
             }
         }
     }

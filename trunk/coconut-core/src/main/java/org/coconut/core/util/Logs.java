@@ -5,6 +5,7 @@
 package org.coconut.core.util;
 
 import java.io.PrintStream;
+import java.util.logging.Logger;
 
 import org.apache.commons.logging.impl.Jdk14Logger;
 import org.coconut.core.Log;
@@ -74,8 +75,22 @@ public final class Logs {
             return from(org.apache.log4j.Logger.getLogger(clazz));
         }
 
+        public static Log from(String name) {
+            return from(org.apache.log4j.Logger.getLogger(name));
+        }
+
         public static boolean isLog4jLogger(Log log) {
-            return log.getClass().getName().equals("org.apache.log4j.Logger");
+            if (log == null) {
+                throw new NullPointerException("log is null");
+            }
+            return log instanceof Log4JLogger;
+        }
+
+        public static org.apache.log4j.Logger getAsLog4jLogger(Log log) {
+            if (!isLog4jLogger(log)) {
+                throw new IllegalArgumentException("Not a JDK Logger");
+            }
+            return ((Log4JLogger) log).log;
         }
     }
 
@@ -285,17 +300,43 @@ public final class Logs {
             return from(org.apache.commons.logging.LogFactory.getLog(clazz));
         }
 
-        public static boolean isCommonsLogger(Log log) {
-            return log.getClass().getName().equals("org.apache.commons.logging.Log");
-        }
-
         // /CLOVER:OFF
         /** Cannot instantiate. */
         private Commons() {/* Cannot instantiate. */
         }
+
         // /CLOVER:ON
+
+        /**
+         * @param string
+         * @return
+         */
+        public static Log from(String name) {
+            return from(org.apache.commons.logging.LogFactory.getLog(name));
+        }
+
+        public static boolean isCommonsLogger(Log log) {
+            if (log == null) {
+                throw new NullPointerException("log is null");
+            }
+            return log instanceof CommonsLogger;
+        }
+
+        public static org.apache.commons.logging.Log getAsCommonsLogger(Log log) {
+            if (!isCommonsLogger(log)) {
+                throw new IllegalArgumentException("Not a Commons Logger");
+            }
+            return ((CommonsLogger) log).log;
+        }
     }
 
+    public static Log fromLog4j(String name) {
+        return Logs.Log4j.from(name);
+    }
+    
+    public static Log fromCommons(String name) {
+        return Logs.Commons.from(name);
+    }
     static class CommonsLogger extends AbstractLogger {
         private final org.apache.commons.logging.Log log;
 
@@ -401,7 +442,17 @@ public final class Logs {
         }
 
         public static boolean isJDKLogger(Log log) {
+            if (log == null) {
+                throw new NullPointerException("log is null");
+            }
             return log instanceof JDKLogger;
+        }
+
+        public static java.util.logging.Logger getAsJDKLogger(Log log) {
+            if (!isJDKLogger(log)) {
+                throw new IllegalArgumentException("Not a JDK Logger");
+            }
+            return ((JDKLogger) log).log;
         }
 
         // /CLOVER:OFF

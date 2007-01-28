@@ -11,14 +11,9 @@
   <name>Coconut Test Framework</name>
   <dependencies>
     <dependency>
-      <groupId>org.coconut.test</groupId>
-      <artifactId>jmock</artifactId>
-      <version>1.1.0RC1</version>
-    </dependency>
-    <dependency>
-      <groupId>cglib</groupId>
-      <artifactId>cglib-nodep</artifactId>
-      <version>2.1</version>
+       <groupId>jmock</groupId>
+       <artifactId>jmock-cglib</artifactId>
+       <version>1.1.0</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -31,6 +26,7 @@
       <version>2.3-SNAPSHOT</version>
       </dependency>
   </dependencies>
+  <!--
   <repositories>
     <repository>
       <id>coconut-backup-site</id>
@@ -38,4 +34,5 @@
       <url>http://www.it.edu/people/kav/maven/</url>
     </repository>
   </repositories>
+  -->
 </project>

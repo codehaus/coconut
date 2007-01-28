@@ -12,10 +12,8 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.cache.spi.AbstractCache;
 
 /**
- * TODO 
- * fix loading.
- * fix event bus
- * make cache services mutable
+ * TODO fix loading. fix event bus make cache services mutable
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -28,8 +26,8 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
      *      java.lang.Object, long, java.util.concurrent.TimeUnit)
      */
     @Override
-    protected synchronized V put0(K key, V value, long timeout) {
-        return wrapped.put0(key, value, timeout);
+    protected synchronized V put(K key, V value, long timeout) {
+        return wrapped.put(key, value, timeout);
     }
 
     /**
@@ -37,8 +35,8 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
      *      java.util.concurrent.TimeUnit)
      */
     @Override
-    protected synchronized void putAll0(Map<? extends K, ? extends V> t, long timeout) {
-        wrapped.putAll0(t, timeout);
+    protected synchronized void putAll(Map<? extends K, ? extends V> t, long timeout) {
+        wrapped.putAll(t, timeout);
     }
 
     /**
@@ -61,7 +59,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
      * @see org.coconut.cache.Cache#peekEntry(java.lang.Object)
      */
     protected synchronized CacheEntry<K, V> peekEntry(K key, boolean doCopy) {
-        return wrapped.peekEntry(key,doCopy);
+        return wrapped.peekEntry(key, doCopy);
     }
 
     /**
@@ -89,14 +87,6 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
     }
 
     /**
-     * @see org.coconut.cache.spi.AbstractCache#getEntry(java.lang.Object)
-     */
-    @Override
-    protected synchronized CacheEntry<K, V> getEntry(K key, boolean doCopy) {
-        return wrapped.getEntry(key,doCopy);
-    }
-
-    /**
      * @see org.coconut.cache.spi.AbstractCache#getHitStat()
      */
     @Override
@@ -121,7 +111,8 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
     }
 
     /**
-     * @see org.coconut.cache.spi.AbstractCache#putIfAbsent(java.lang.Object, java.lang.Object)
+     * @see org.coconut.cache.spi.AbstractCache#putIfAbsent(java.lang.Object,
+     *      java.lang.Object)
      */
     @Override
     public synchronized V putIfAbsent(K key, V value) {
@@ -129,7 +120,8 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
     }
 
     /**
-     * @see org.coconut.cache.spi.AbstractCache#remove(java.lang.Object, java.lang.Object)
+     * @see org.coconut.cache.spi.AbstractCache#remove(java.lang.Object,
+     *      java.lang.Object)
      */
     @Override
     public synchronized boolean remove(Object key, Object value) {
@@ -137,7 +129,8 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
     }
 
     /**
-     * @see org.coconut.cache.spi.AbstractCache#replace(java.lang.Object, java.lang.Object, java.lang.Object)
+     * @see org.coconut.cache.spi.AbstractCache#replace(java.lang.Object,
+     *      java.lang.Object, java.lang.Object)
      */
     @Override
     public synchronized boolean replace(K key, V oldValue, V newValue) {
@@ -145,7 +138,8 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
     }
 
     /**
-     * @see org.coconut.cache.spi.AbstractCache#replace(java.lang.Object, java.lang.Object)
+     * @see org.coconut.cache.spi.AbstractCache#replace(java.lang.Object,
+     *      java.lang.Object)
      */
     @Override
     public synchronized V replace(K key, V value) {
@@ -175,5 +169,31 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
     public synchronized void putEntry(CacheEntry<K, V> entry) {
         wrapped.putEntry(entry);
     }
+
+    /**
+     * @see org.coconut.cache.Cache#getEntry(java.lang.Object)
+     */
+    public CacheEntry<K, V> getEntry(K key) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * @see org.coconut.cache.Cache#peek(java.lang.Object)
+     */
+    public V peek(K key) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * @see org.coconut.cache.Cache#peekEntry(java.lang.Object)
+     */
+    public CacheEntry<K, V> peekEntry(K key) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+
 
 }

@@ -4,6 +4,7 @@
 
 package org.coconut.cache;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Constructor;
@@ -95,6 +96,26 @@ public class CacheConfiguration<K, V> implements Cloneable {
         return new CacheConfiguration<K, V>();
     }
 
+    public static <K, V> CacheConfiguration<K, V> create(InputStream is) throws Exception {
+        return XmlConfigurator.getInstance().from(is);
+    }
+
+    public static <K, V> Cache<K, V> createAndInstantiate(InputStream is)
+            throws Exception {
+        CacheConfiguration<K, V> conf = create(is);
+        return conf.newInstance((Class) Class.forName(conf.getProperty(
+                XmlConfigurator.CACHE_INSTANCE_TYPE).toString()));
+    }
+
+    public static <K, V> AbstractCache<K, V> createInstantiateAndStart(InputStream is)
+            throws Exception {
+        CacheConfiguration<K, V> conf = create(is);
+        AbstractCache cc = (AbstractCache) conf.newInstance((Class) Class.forName(conf
+                .getProperty(XmlConfigurator.CACHE_INSTANCE_TYPE).toString()));
+        cc.start();
+        return cc;
+    }
+
     private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     private long defaultExpirationRefreshDuration = -1;
@@ -125,9 +146,9 @@ public class CacheConfiguration<K, V> implements Cloneable {
 
     private String name = UUID.randomUUID().toString();
 
-    private long preferableCapacity; // default??
+    private long preferableCapacity = Long.MAX_VALUE;
 
-    private int preferableSize; // default??
+    private int preferableSize = Eviction.DEFAULT_MAXIMUM_SIZE;
 
     /** Whether or not the cache is automatically registered for JMX usage. */
     private boolean registerForJMXAutomatically;
@@ -136,9 +157,26 @@ public class CacheConfiguration<K, V> implements Cloneable {
 
     private boolean shutdownExecutor;
 
-    private boolean statisticsEnabled = false;
+    private boolean statisticsEnabled = true;
 
     private Clock timingStrategy = Clock.DEFAULT_CLOCK;
+
+    long scheduleEvictionAtFixedRateNanos = 0;
+
+    /**
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        ByteArrayOutputStream sos = new ByteArrayOutputStream();
+        try {
+            XmlConfigurator.getInstance().to(this, sos);
+        } catch (Exception e) {
+            throw new RuntimeException("An exception occured", e);
+        }
+        return new String(sos.toByteArray());
+
+    }
 
     /**
      * Creates a new Configuration with default settings. CacheConfiguration
@@ -152,73 +190,6 @@ public class CacheConfiguration<K, V> implements Cloneable {
         return new Backend();
     }
 
-    /**
-     * Creates a new cache instance of the specified type using this
-     * configuration.
-     * 
-     * @param clazz
-     *            the clazz the type of cache that should be created
-     * @return a new Cache instance
-     * @throws IllegalArgumentException
-     *             if specified class does not contain a public constructor
-     *             taking a single CacheConfiguration argument
-     * @throws NullPointerException
-     *             if the specified class is <tt>null</tt>
-     */
-    public <T extends Cache<K, V>> T newInstance(Class<? extends Cache> type)
-            throws IllegalArgumentException {
-        if (type == null) {
-            throw new NullPointerException("clazz is null");
-        }
-        T cache = null;
-        Constructor<T> c = null;
-        try {
-            c = (Constructor<T>) type.getDeclaredConstructor(CacheConfiguration.class);
-        } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException(
-                    "Could not create cache instance, no public contructor taking a single CacheConfiguration instance",
-                    e);
-        }
-        try {
-            cache = c.newInstance(this);
-        } catch (InstantiationException e) {
-            throw new IllegalArgumentException(
-                    "Could not create cache instance, specified clazz " + type
-                            + ") is an interface or abstract class", e);
-        } catch (IllegalAccessException e) {
-            throw new IllegalArgumentException("Could not create instance of " + type, e);
-        } catch (InvocationTargetException e) {
-            throw new IllegalArgumentException("Constructor threw exception", e);
-        }
-        if (cache instanceof AbstractCache) {
-            ((AbstractCache) cache).initialize();
-        }
-        return cache;
-    }
-
-    public <T extends Cache<K, V>> T newInstanceAndStart(Class<? extends AbstractCache> clazz) {
-        AbstractCache t = newInstance(clazz);
-        t.start();
-        return (T) t;
-    }
-
-    public static <K, V> CacheConfiguration<K, V> create(InputStream is)
-            throws Exception {
-        return XmlConfigurator.getInstance().from(is);
-    }
-
-    public static <K, V> Cache<K, V> createAndInstantiate(InputStream is) throws Exception {
-        CacheConfiguration<K, V> conf = create(is);
-        return conf.newInstance((Class) Class.forName(conf.getProperty(XmlConfigurator.CACHE_INSTANCE_TYPE)
-                .toString()));
-    }
-    public static <K, V> AbstractCache<K, V> createInstantiateAndStart(InputStream is) throws Exception {
-        CacheConfiguration<K, V> conf = create(is);
-        AbstractCache cc=(AbstractCache) conf.newInstance((Class) Class.forName(conf.getProperty(XmlConfigurator.CACHE_INSTANCE_TYPE)
-                .toString()));
-        cc.start();
-        return cc;
-    }
     /**
      * Returns a new Eviction object.
      */
@@ -303,10 +274,7 @@ public class CacheConfiguration<K, V> implements Cloneable {
      *             if key is <tt>null</tt>
      */
     public Object getProperty(String key) {
-        if (name == null) {
-            throw new NullPointerException("name is null");
-        }
-        return additionalProperties.get(key);
+        return getProperty(key, null);
     }
 
     /**
@@ -325,8 +293,8 @@ public class CacheConfiguration<K, V> implements Cloneable {
      *             if key is <tt>null</tt>
      */
     public Object getProperty(String key, Object defaultValue) {
-        if (name == null) {
-            throw new NullPointerException("name is null");
+        if (key == null) {
+            throw new NullPointerException("key is null");
         }
 
         Object result = additionalProperties.get(key);
@@ -341,6 +309,54 @@ public class CacheConfiguration<K, V> implements Cloneable {
      */
     public JMX jmx() {
         return new JMX();
+    }
+
+    /**
+     * Creates a new cache instance of the specified type using this
+     * configuration.
+     * 
+     * @param clazz
+     *            the clazz the type of cache that should be created
+     * @return a new Cache instance
+     * @throws IllegalArgumentException
+     *             if specified class does not contain a public constructor
+     *             taking a single CacheConfiguration argument
+     * @throws NullPointerException
+     *             if the specified class is <tt>null</tt>
+     */
+    public <T extends Cache<K, V>> T newInstance(Class<? extends Cache> type)
+            throws IllegalArgumentException {
+        if (type == null) {
+            throw new NullPointerException("clazz is null");
+        }
+        T cache = null;
+        Constructor<T> c = null;
+        try {
+            c = (Constructor<T>) type.getDeclaredConstructor(CacheConfiguration.class);
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException(
+                    "Could not create cache instance, no public contructor taking a single CacheConfiguration instance",
+                    e);
+        }
+        try {
+            cache = c.newInstance(this);
+        } catch (InstantiationException e) {
+            throw new IllegalArgumentException(
+                    "Could not create cache instance, specified clazz " + type
+                            + ") is an interface or abstract class", e);
+        } catch (IllegalAccessException e) {
+            throw new IllegalArgumentException("Could not create instance of " + type, e);
+        } catch (InvocationTargetException e) {
+            throw new IllegalArgumentException("Constructor threw exception", e);
+        }
+        return cache;
+    }
+
+    public <T extends Cache<K, V>> T newInstanceAndStart(
+            Class<? extends AbstractCache> clazz) {
+        AbstractCache t = newInstance(clazz);
+        t.start();
+        return (T) t;
     }
 
     /**
@@ -451,11 +467,19 @@ public class CacheConfiguration<K, V> implements Cloneable {
      *             if key is <tt>null</tt>
      */
     public CacheConfiguration<K, V> setProperty(String key, Object value) {
-        if (name == null) {
-            throw new NullPointerException("name is null");
+        if (key == null) {
+            throw new NullPointerException("key is null");
         }
         additionalProperties.put(key, value);
         return this;
+    }
+
+    public Statistics statistics() {
+        return new Statistics();
+    }
+
+    public Threading threading() {
+        return new Threading();
     }
 
     public class Backend {
@@ -635,12 +659,21 @@ public class CacheConfiguration<K, V> implements Cloneable {
         }
 
         public Eviction setPreferableCapacity(long capacity) {
+            if (capacity <= 0) {
+                throw new IllegalArgumentException("capacity must greater then 0, was "
+                        + capacity);
+            }
             preferableCapacity = capacity;
             return this;
         }
 
-        public Eviction setPreferableSize(int size) {
-            preferableSize = size;
+        public Eviction setPreferableSize(int elements) {
+            if (elements < 0) {
+                throw new IllegalArgumentException(
+                        "number of maximum elements must be 0 or greater, was "
+                                + elements);
+            }
+            preferableSize = elements;
             return this;
         }
     }
@@ -789,6 +822,9 @@ public class CacheConfiguration<K, V> implements Cloneable {
          *         server has been set
          */
         public MBeanServer getMBeanServer() {
+            //TODO we might want to have a hasMBeanServer()
+            //to avoid initializing it, for example,
+            //when we save the configuration
             if (mBeanServer == null) {
                 mBeanServer = ManagementFactory.getPlatformMBeanServer();
             }
@@ -804,7 +840,7 @@ public class CacheConfiguration<K, V> implements Cloneable {
          *         otherwise <tt>false</tt>
          * @see #setRegister(boolean)
          */
-        public boolean isRegister() {
+        public boolean getAutoRegister() {
             return registerForJMXAutomatically;
         }
 
@@ -819,9 +855,9 @@ public class CacheConfiguration<K, V> implements Cloneable {
          *            the object name
          * @return this configuration
          */
-        public JMX setDomain(String name) {
-            if (name == null) {
-                throw new NullPointerException("name is null");
+        public JMX setDomain(String domain) {
+            if (domain == null) {
+                throw new NullPointerException("domain is null");
             }
             // TODO validate domain name
             CacheConfiguration.this.domain = domain;
@@ -857,30 +893,30 @@ public class CacheConfiguration<K, V> implements Cloneable {
          * @see #isRegister()
          * @see #setObjectName(ObjectName)
          */
-        public JMX setRegister(boolean registerAutomatic) {
+        public JMX setAutoRegister(boolean registerAutomatic) {
             registerForJMXAutomatically = registerAutomatic;
-            return this;
-        }
-
-        /**
-         * We can now deliver jmx events.
-         * 
-         * @param events
-         *            the types of events that should be delivered
-         * @return this configuration
-         */
-        public JMX setRegisterEventsForNotification(Class<? extends CacheEvent>... events) {
             return this;
         }
     }
 
     public class Statistics {
+
+        /**
+         * Returns the CacheConfiguration that this instance is part of.
+         * 
+         * @return the CacheConfiguration that this instance is part of
+         */
+        public CacheConfiguration<K, V> c() {
+            return CacheConfiguration.this;
+        }
+
         public boolean getEnabled() {
             return statisticsEnabled;
         }
 
-        public void setEnabled(boolean isEnabled) {
+        public Statistics setEnabled(boolean isEnabled) {
             statisticsEnabled = isEnabled;
+            return this;
         }
 
     }
@@ -900,23 +936,20 @@ public class CacheConfiguration<K, V> implements Cloneable {
             return executor;
         }
 
-        public boolean getShutdownExecutorService() {
-            return shutdownExecutor;
-        }
-
-        public void setExecutor(Executor e) {
-            executor = e;
-        }
-
-        public void setShutdownExecutorService(boolean shutdown) {
-            shutdownExecutor = shutdown;
-        }
-
         public long getScheduledEvictionAtFixedRate(TimeUnit unit) {
             return unit.convert(scheduleEvictionAtFixedRateNanos, TimeUnit.NANOSECONDS);
         }
 
-        public void SetScheduledEvictionAtFixedRate(long period, TimeUnit unit) {
+        public boolean getShutdownExecutorService() {
+            return shutdownExecutor;
+        }
+
+        public Threading setExecutor(Executor e) {
+            executor = e;
+            return this;
+        }
+
+        public Threading SetScheduledEvictionAtFixedRate(long period, TimeUnit unit) {
             if (period < 0) {
                 throw new IllegalArgumentException("period must be 0 or greater, was "
                         + period);
@@ -925,12 +958,12 @@ public class CacheConfiguration<K, V> implements Cloneable {
                 throw new IllegalStateException("A ScheduledExecutorService must be set");
             }
             scheduleEvictionAtFixedRateNanos = unit.toNanos(period);
+            return this;
         }
-    }
 
-    long scheduleEvictionAtFixedRateNanos = 0;
-
-    public Threading threading() {
-        return new Threading();
+        public Threading setShutdownExecutorService(boolean shutdown) {
+            shutdownExecutor = shutdown;
+            return this;
+        }
     }
 }

@@ -199,7 +199,7 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
     }
 
     @Override
-    protected void putAll0(Map<? extends K, ? extends V> t, long expirationTime) {
+    protected void putAll(Map<? extends K, ? extends V> t, long expirationTime) {
         CacheUtil.checkMapForNulls(t);
         ArrayList<AbstractCacheEntry<K, V>> am = new ArrayList<AbstractCacheEntry<K, V>>();
         for (Iterator<? extends Map.Entry<? extends K, ? extends V>> i = t.entrySet()

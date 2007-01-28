@@ -100,7 +100,7 @@ public class CacheEntryLoaderService<K, V> extends AbstractCacheService<K, V> im
     static <K, V> CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> getLoader(
             CacheConfiguration<K, V> conf) {
         if (conf.backend().getBackend() != null) {
-            return CacheUtil.toExtendedCacheLoader(conf.backend().getBackend());
+            return LoadUtil.toExtendedCacheLoader(conf.backend().getBackend());
         } else if (conf.backend().getExtendedBackend() != null) {
             return conf.backend().getExtendedBackend();
         } else {

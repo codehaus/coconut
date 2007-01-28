@@ -8,7 +8,6 @@ import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -65,8 +64,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
             throw new NullPointerException("configuration is null");
         }
         errorHandler = configuration.getErrorHandler();
-        name = configuration.getName() == null ? UUID.randomUUID().toString()
-                : configuration.getName();
+        name = configuration.getName();
         this.clock = configuration.getClock();
         this.conf = configuration;
     }
@@ -100,25 +98,6 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         // evict is ignored for default implementation
     }
 
-    /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
-    public V get(Object key) {
-        CacheEntry<K, V> e = getEntry((K) key, false);
-        return e == null ? null : e.getValue();
-    }
-
-    /**
-     * @see org.coconut.cache.Cache#getEntry(java.lang.Object)
-     */
-    public CacheEntry<K, V> getEntry(K key) {
-        return getEntry(key, true);
-    }
-
-    /**
-     * @see org.coconut.cache.Cache#getEntry(java.lang.Object)
-     */
-    protected abstract CacheEntry<K, V> getEntry(K key, boolean doCopy);
-
     /**
      * {@inheritDoc}
      */
@@ -128,11 +107,6 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         }
         CacheUtil.checkCollectionForNulls(keys);
         return getAll0(keys);
-    }
-
-    public CacheConfiguration<K, V> getConfiguration() {
-        // unmodifiable...
-        return conf;
     }
 
     /**
@@ -162,10 +136,6 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         return name;
     }
 
-    public void initialize() {
-
-    }
-
     /**
      * The default implementation throws {@link UnsupportedOperationException}
      * 
@@ -188,32 +158,11 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
                         + getClass());
     }
 
-    /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
-    public V peek(K key) {
-        CacheEntry<K, V> e = peekEntry(key, false);
-        return e == null ? null : e.getValue();
-    }
-
-    /**
-     * @see org.coconut.cache.Cache#peekEntry(java.lang.Object)
-     */
-    public CacheEntry<K, V> peekEntry(K key) {
-        return peekEntry(key, true);
-    }
-
-    abstract protected CacheEntry<K, V> peekEntry(K key, boolean doCopy);
-
     /**
      * {@inheritDoc}
      */
     public V put(K key, V value) {
-        if (key == null) {
-            throw new NullPointerException("key is null");
-        } else if (value == null) {
-            throw new NullPointerException("value is null");
-        }
-        return put0(key, value, DEFAULT_EXPIRATION);
+        return put(key, value, DEFAULT_EXPIRATION, TimeUnit.SECONDS);
     }
 
     /**
@@ -225,22 +174,19 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         } else if (value == null) {
             throw new NullPointerException("value is null");
         } else if (expirationTime < 0) {
-            throw new IllegalArgumentException("timeout must not be negative, was "
-                    + expirationTime);
+            throw new IllegalArgumentException(
+                    "timeout must be a non-negative number, was " + expirationTime);
         } else if (unit == null) {
             throw new NullPointerException("unit is null");
         }
-        return put0(key, value, convert(expirationTime, unit));
+        return put(key, value, convert(expirationTime, unit));
     }
 
     /**
      * {@inheritDoc}
      */
     public void putAll(Map<? extends K, ? extends V> m) {
-        if (m == null) {
-            throw new NullPointerException("m is null");
-        }
-        putAll0(m, DEFAULT_EXPIRATION);
+        putAll(m, DEFAULT_EXPIRATION,TimeUnit.SECONDS);
     }
 
     /**
@@ -255,7 +201,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         } else if (unit == null) {
             throw new NullPointerException("unit is null");
         }
-        putAll0(m, convert(expirationTime, unit));
+        putAll(m, convert(expirationTime, unit));
     }
 
     public void putEntries(Collection<CacheEntry<K, V>> entries) {
@@ -274,7 +220,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
             throw new NullPointerException("value is null");
         }
         if (!containsKey(key)) {
-            return put0(key, value, DEFAULT_EXPIRATION);
+            return put(key, value, DEFAULT_EXPIRATION);
         } else {
             return get(key);
         }
@@ -400,9 +346,9 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
      * @return previous value associated with specified key, or <tt>null</tt>
      *         if there was no mapping for the key.
      */
-    protected abstract V put0(K key, V value, long expirationTime);
+    protected abstract V put(K key, V value, long expirationTimeNano);
 
-    protected abstract void putAll0(Map<? extends K, ? extends V> t, long expirationTime);
+    protected abstract void putAll(Map<? extends K, ? extends V> t, long expirationTimeNano);
 
     /**
      * Subclasses can override this method to provide a custom toString method.

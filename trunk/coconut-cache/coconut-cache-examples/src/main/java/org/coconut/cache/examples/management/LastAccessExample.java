@@ -16,7 +16,7 @@ import org.coconut.management.annotation.ManagedAttribute;
 class LastAccessExample {
     public static void main(String[] args) throws InterruptedException {
         CacheConfiguration<String, String> conf = CacheConfiguration.create();
-        conf.setName("WebPage-Cache").jmx().setRegister(true);
+        conf.setName("WebPage-Cache").jmx().setAutoRegister(true);
         conf.expiration().setFilter(new LastAccessFilter());
         UnsynchronizedCache cache = conf.newInstance(UnsynchronizedCache.class);
         cache.start();

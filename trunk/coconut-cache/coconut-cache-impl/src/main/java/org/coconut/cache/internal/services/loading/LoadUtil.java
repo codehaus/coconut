@@ -19,6 +19,8 @@ import org.coconut.cache.spi.AsyncCacheLoader;
 import org.coconut.cache.spi.CacheErrorHandler;
 import org.coconut.cache.spi.CacheUtil;
 import org.coconut.cache.spi.ExecutorEvent;
+import org.coconut.cache.util.AbstractCacheLoader;
+import org.coconut.cache.util.DefaultCacheEntry;
 import org.coconut.core.Callback;
 import org.coconut.core.EventProcessor;
 
@@ -500,4 +502,106 @@ public class LoadUtil {
             }
         }
     }
+    
+    /* Should be refactored */
+
+    public static <K, V> CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> toExtendedCacheLoader(
+            CacheLoader<K, V> loader) {
+        if (loader instanceof AsyncCacheLoader) {
+            return new AbstractAsyncLoaderToExtendedLoader<K, V>(
+                    (AsyncCacheLoader) loader);
+        } else {
+            return loader instanceof AbstractCacheLoader ? new AbstractLoaderToExtendedLoader(
+                    loader)
+                    : new LoaderToExtendedLoader(loader);
+        }
+
+    }
+
+    final static class AbstractAsyncLoaderToExtendedLoader<K, V> extends
+            AbstractLoaderToExtendedLoader<K, V> implements
+            AsyncCacheLoader<K, CacheEntry<K, V>> {
+
+        private final AsyncCacheLoader<K, V> loader;
+
+        AbstractAsyncLoaderToExtendedLoader(AsyncCacheLoader<K, V> loader) {
+            super(loader);
+            this.loader = loader;
+        }
+
+        /**
+         * @see org.coconut.cache.spi.AsyncCacheLoader#asyncLoad(java.lang.Object,
+         *      org.coconut.core.Callback)
+         */
+        public Future<?> asyncLoad(final K key, final Callback<CacheEntry<K, V>> c) {
+            return loader.asyncLoad(key, new Callback<V>() {
+
+                public void completed(V result) {
+                    CacheEntry<K, V> e = result == null ? null
+                            : new DefaultCacheEntry<K, V>(key, result);
+                    c.completed(e);
+                }
+
+                public void failed(Throwable cause) {
+                    c.failed(cause);
+                }
+            });
+        }
+
+        /**
+         * @see org.coconut.cache.spi.AsyncCacheLoader#asyncLoadAll(java.util.Collection,
+         *      org.coconut.core.Callback)
+         */
+        public Future<?> asyncLoadAll(Collection<? extends K> keys,
+                Callback<Map<K, CacheEntry<K, V>>> c) {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    static class AbstractLoaderToExtendedLoader<K, V> extends
+            AbstractCacheLoader<K, CacheEntry<K, V>> {
+
+        final CacheLoader<K, V> loader;
+
+        AbstractLoaderToExtendedLoader(CacheLoader<K, V> loader) {
+            this.loader = loader;
+        }
+
+        /** {@inheritDoc} */
+        public CacheEntry<K, V> load(K key) throws Exception {
+            V v = loader.load(key);
+            return v == null ? null : new DefaultCacheEntry<K, V>(key, v);
+        }
+    }
+
+    static class LoaderToExtendedLoader<K, V> implements CacheLoader<K, CacheEntry<K, V>> {
+
+        final CacheLoader<K, V> loader;
+
+        LoaderToExtendedLoader(CacheLoader<K, V> loader) {
+            this.loader = loader;
+        }
+
+        /** {@inheritDoc} */
+        public CacheEntry<K, V> load(K key) throws Exception {
+            V v = loader.load(key);
+            return v == null ? null : new DefaultCacheEntry<K, V>(key, v);
+        }
+
+        /**
+         * @see org.coconut.cache.CacheLoader#loadAll(java.util.Collection)
+         */
+        public Map<K, CacheEntry<K, V>> loadAll(Collection<? extends K> keys)
+                throws Exception {
+            Map<K, V> h = loader.loadAll(keys);
+            Map<K, CacheEntry<K, V>> result = new HashMap<K, CacheEntry<K, V>>();
+            for (Map.Entry<K, V> e : h.entrySet()) {
+                K k = e.getKey();
+                V v = e.getValue();
+                result.put(k, v == null ? null : new DefaultCacheEntry<K, V>(k, v));
+            }
+            return result;
+        }
+    }
+
 }

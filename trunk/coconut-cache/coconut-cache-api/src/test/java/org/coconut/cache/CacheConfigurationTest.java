@@ -6,17 +6,25 @@ package org.coconut.cache;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertSame;
 import static junit.framework.Assert.assertTrue;
 import static org.coconut.test.MockTestCase.mockDummy;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import java.util.Set;
 
-import junit.framework.JUnit4TestAdapter;
-
+import org.coconut.cache.spi.AbstractCache;
+import org.coconut.cache.spi.CacheErrorHandler;
+import org.coconut.cache.spi.XmlConfigurator;
+import org.coconut.core.Clock;
+import org.coconut.test.MockTestCase;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,60 +38,29 @@ public class CacheConfigurationTest {
         conf = CacheConfiguration.create();
     }
 
-    /** ************ BACKEND ********************** */
-    public void testBackend() {
-        assertEquals(conf, conf.backend().c());
+    @Test(expected = NullPointerException.class)
+    public void testClock() {
+        assertEquals(Clock.DEFAULT_CLOCK, conf.getClock());
+        Clock c = new Clock.DeterministicClock();
+        assertEquals(conf, conf.setClock(c));
+        assertEquals(c, conf.getClock());
+
+        conf.setClock(null);
     }
 
-    @Test
-    public void testLoader() {
-        CacheLoader<Number, Collection> cl = mockDummy(CacheLoader.class);
+    @Test(expected = NullPointerException.class)
+    public void testErrorHandler() {
+        CacheErrorHandler def = conf.getErrorHandler();
+        assertFalse(def.hasLogger());
+        assertEquals(CacheErrorHandler.class, def.getClass());
+        def = new CacheErrorHandler();
+        assertEquals(conf, conf.setErrorHandler(def));
+        assertSame(def, conf.getErrorHandler());
 
-        assertNull(conf.backend().getBackend());
-        //assertFalse(conf.backend().hasBackend());
-
-        assertTrue(conf.backend().setBackend(cl) instanceof CacheConfiguration.Backend);
-
-        assertEquals(cl, conf.backend().getBackend());
-        //assertTrue(conf.backend().hasBackend());
-
-        // narrow bounds
-        CacheLoader<Number, List> clI = mockDummy(CacheLoader.class);
-
-        assertTrue(conf.backend().setBackend(clI) instanceof CacheConfiguration.Backend);
-
-        assertEquals(clI, conf.backend().getBackend());
+        conf.setErrorHandler(null);
     }
 
-    @Test
-    public void testExtendedLoader() {
-        CacheLoader<Number, CacheEntry<Number, Collection>> ecl = mockDummy(CacheLoader.class);
-
-        assertNull(conf.backend().getExtendedBackend());
-
-        assertTrue(conf.backend().setExtendedBackend(ecl) instanceof CacheConfiguration.Backend);
-
-        assertEquals(ecl, conf.backend().getExtendedBackend());
-    }
-    //assertTrue(conf.backend().hasBackend());
-
-    @Test(expected = IllegalStateException.class)
-    public void testLoaderSetThenExtendedLoader() {
-        CacheLoader<Number, ? extends CacheEntry<Number, Collection>> ecl = mockDummy(CacheLoader.class);
-        CacheLoader<Number, Collection> cl = mockDummy(CacheLoader.class);
-        conf.backend().setBackend(cl);
-        conf.backend().setExtendedBackend(ecl);
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void testExtendedLoaderSetThenLoader() {
-        CacheLoader<Number, ? extends CacheEntry<Number, Collection>> ecl = mockDummy(CacheLoader.class);
-        CacheLoader<Number, Collection> cl = mockDummy(CacheLoader.class);
-        conf.backend().setExtendedBackend(ecl);
-        conf.backend().setBackend(cl);
-    }
-
-    @Test
+    @Test(expected = NullPointerException.class)
     public void testInitialMap() {
         Map<Number, Collection> map = mockDummy(Map.class);
         assertNull(conf.getInitialMap());
@@ -97,54 +74,129 @@ public class CacheConfigurationTest {
 
         assertEquals(conf, conf.setInitialMap(map2));
         assertEquals(map2, conf.getInitialMap());
-    }
 
-    /**
-     * Test default expiration. The default is that entries never expire.
-     */
-    @Test
-    public void testDefaultExpiration() {
-        assertEquals(Cache.NEVER_EXPIRE, conf.expiration().getDefaultTimeout(TimeUnit.NANOSECONDS));
-        assertEquals(Cache.NEVER_EXPIRE, conf.expiration().getDefaultTimeout(TimeUnit.SECONDS));
-
-        assertEquals(conf, conf.expiration().setDefaultTimeout(2, TimeUnit.SECONDS).c());
-        assertEquals(2l, conf.expiration().getDefaultTimeout(TimeUnit.SECONDS));
-        assertEquals(2l * 1000, conf.expiration().getDefaultTimeout(TimeUnit.MILLISECONDS));
-        assertEquals(2l * 1000 * 1000, conf.expiration().getDefaultTimeout(TimeUnit.MICROSECONDS));
-        assertEquals(2l * 1000 * 1000 * 1000, conf.expiration().getDefaultTimeout(
-                TimeUnit.NANOSECONDS));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testDefaultExpirationIAE() {
-        conf.expiration().setDefaultTimeout(0, TimeUnit.MICROSECONDS);
+        conf.setInitialMap(null);
     }
 
     @Test(expected = NullPointerException.class)
-    public void testDefaultExpirationNPE() {
-        conf.expiration().setDefaultTimeout(1, null);
+    public void testName() {
+        assertNotNull(conf.getName());
+        assertEquals(conf, conf.setName("foo"));
+        assertSame("foo", conf.getName());
+        conf.setName(null);
     }
-//
-//    @Test
-//    public void testExpirationStrategy() {
-//        assertEquals(ExpirationStrategy.ON_EVICT, conf.expiration().getStrategy());
-//
-//        assertTrue(conf.expiration().setStrategy(ExpirationStrategy.LAZY) instanceof CacheConfiguration.Expiration);
-//
-//        assertEquals(ExpirationStrategy.LAZY, conf.expiration().getStrategy());
-//
-//        assertTrue(conf.expiration().setStrategy(ExpirationStrategy.STRICT) instanceof CacheConfiguration.Expiration);
-//
-//        assertEquals(ExpirationStrategy.STRICT, conf.expiration().getStrategy());
-//
-//    }
-//
-//    @Test(expected = NullPointerException.class)
-//    public void testExpirationStrategyNullPointer() {
-//        conf.expiration().setStrategy(null);
-//    }
 
-    public static junit.framework.Test suite() {
-        return new JUnit4TestAdapter(CacheConfigurationTest.class);
+    @Test(expected = IllegalArgumentException.class)
+    public void testNameEmptyString() {
+        conf.setName("");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testNameInvalid() {
+        conf.setName("&asdad");
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testProperties() {
+        conf.setProperty("a", 1);
+        conf.setProperty("b", 2);
+        assertEquals(1, conf.getProperty("a"));
+        assertEquals(2, conf.getProperty("b"));
+        assertNull(conf.getProperty("c"));
+        assertEquals(2, conf.getProperty("b", 3));
+        assertEquals(3, conf.getProperty("c", 3));
+        conf.getProperty(null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testProperties2() {
+        conf.setProperty(null, 1);
+    }
+
+    @Test
+    public void testProperties3() {
+        conf.setProperty("a", 1);
+        conf.setProperty("b", 2);
+        assertEquals(1, conf.getProperties().get("a"));
+    }
+
+    @Test
+    public void testToString() {
+        conf.setName("foo");
+        CacheConfiguration conf2 = CacheConfiguration.create();
+        conf2.setName("foo");
+        assertEquals(conf.toString(), conf2.toString());
+        conf2.setName("foo1");
+        assertFalse(conf.toString().equals(conf2.toString()));
+    }
+
+    @Test
+    public void testCreateAndInstantiate() throws Exception {
+        conf.setProperty(XmlConfigurator.CACHE_INSTANCE_TYPE,
+                "org.coconut.cache.DummyCache");
+        conf.setName("foo");
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        XmlConfigurator.getInstance().to(conf, os);
+
+        Cache c = CacheConfiguration.createAndInstantiate(new ByteArrayInputStream(os
+                .toByteArray()));
+        assertTrue(c instanceof DummyCache);
+        assertEquals("foo", ((DummyCache) c).getName());
+        assertFalse(((DummyCache) c).isStarted);
+
+        c = CacheConfiguration.createInstantiateAndStart(new ByteArrayInputStream(os
+                .toByteArray()));
+        assertTrue(c instanceof DummyCache);
+        assertEquals("foo", ((DummyCache) c).getName());
+        assertTrue(((DummyCache) c).isStarted);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testNewInstance() throws Exception {
+        conf.setName("foo");
+
+        Cache c = conf.newInstance(DummyCache.class);
+        assertTrue(c instanceof DummyCache);
+        assertEquals("foo", ((DummyCache) c).getName());
+        assertFalse(((DummyCache) c).isStarted);
+
+        c = conf.newInstanceAndStart(DummyCache.class);
+        assertTrue(c instanceof DummyCache);
+        assertEquals("foo", ((DummyCache) c).getName());
+        assertTrue(((DummyCache) c).isStarted);
+
+        conf.newInstance(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testNewInstanceNoConstructor() throws Exception {
+        conf.newInstance(MockTestCase.mockDummy(Cache.class).getClass());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testNewInstanceAbstractClass() throws Exception {
+        conf.newInstance(AbstractCache.class);
+    }
+
+    @Test(expected = InvocationTargetException.class)
+    public void testNewInstanceConstructorThrows() throws Throwable {
+        try {
+            conf.newInstance(DummyCache2.class);
+        } catch (IllegalArgumentException e) {
+            throw e.getCause();
+        }
+    }
+
+    public static class DummyCache2 extends DummyCache {
+
+        /**
+         * @param configuration
+         */
+        public DummyCache2(CacheConfiguration configuration) {
+            super(configuration);
+            throw new ArithmeticException();
+        }
+
     }
 }

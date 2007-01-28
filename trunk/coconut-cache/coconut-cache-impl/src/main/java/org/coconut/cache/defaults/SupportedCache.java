@@ -128,10 +128,52 @@ public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
         }
     }
 
+    /** {@inheritDoc} */
+    @SuppressWarnings("unchecked")
+    public V get(Object key) {
+        if (key == null) {
+            throw new NullPointerException("key is null");
+        }
+        CacheEntry<K, V> e = getEntry((K) key, false);
+        return e == null ? null : e.getValue();
+    }
+
+    /**
+     * @see org.coconut.cache.Cache#getEntry(java.lang.Object)
+     */
+    public CacheEntry<K, V> getEntry(K key) {
+        if (key == null) {
+            throw new NullPointerException("key is null");
+        }
+        return getEntry(key, true);
+    }
+
+    protected abstract CacheEntry<K, V> getEntry(K key, boolean isExported);
+
+    
+    /** {@inheritDoc} */
+    @SuppressWarnings("unchecked")
+    public V peek(K key) {
+        if (key == null) {
+            throw new NullPointerException("key is null");
+        }
+        CacheEntry<K, V> e = peekEntry(key,false);
+        return e == null ? null : e.getValue();
+    }
+
     /**
      * @see org.coconut.cache.Cache#peekEntry(java.lang.Object)
      */
-    @Override
+    public CacheEntry<K, V> peekEntry(K key) {
+        if (key == null) {
+            throw new NullPointerException("key is null");
+        }
+        return peekEntry(key, true);
+    }
+    
+    /**
+     * @see org.coconut.cache.Cache#peekEntry(java.lang.Object)
+     */
     protected CacheEntry<K, V> peekEntry(K key, boolean doCopy) {
         if (key == null) {
             throw new NullPointerException("key is null");
@@ -222,7 +264,7 @@ public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
     }
 
     @Override
-    protected V put0(K key, V value, long expirationTimeMilli) {
+    protected V put(K key, V value, long expirationTimeMilli) {
         AbstractCacheEntry<K, V> me = newEntry(null, getMap().get(key), key, value,
                 expirationTimeMilli, false);
         AbstractCacheEntry<K, V> prev = putMyEntry(me);

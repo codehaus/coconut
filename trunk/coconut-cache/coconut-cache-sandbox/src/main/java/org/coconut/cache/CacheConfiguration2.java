@@ -118,8 +118,7 @@ public class CacheConfiguration2<K, V> extends CacheConfiguration<K, V> {
 
     private boolean enableTiming = true;
 
-    public static void main(String[] args) throws SAXException, IOException,
-            ParserConfigurationException {
+    public static void main2(String[] args) throws Exception {
         //     
         // DocumentBuilder parser =
         // DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -140,7 +139,7 @@ public class CacheConfiguration2<K, V> extends CacheConfiguration<K, V> {
         // cc.backend().setLoader(myLoader);
         cc.eviction().setMaximumSize(1000);
         cc.expiration().setDefaultTimeout(100, TimeUnit.SECONDS);
-        cc.jmx().setRegister(true);
+        cc.jmx().setAutoRegister(true);
 
         // Cache<String,Integer> cache=cc.newInstance(UnlimitedCache.class);
         // // cc.parseDocument(document.getDocumentElement());

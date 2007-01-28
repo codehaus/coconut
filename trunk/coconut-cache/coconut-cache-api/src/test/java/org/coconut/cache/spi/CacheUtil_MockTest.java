@@ -4,11 +4,8 @@
 
 package org.coconut.cache.spi;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.coconut.cache.Cache;
 import org.coconut.cache.Cache.HitStat;
-import org.coconut.cache.spi.CacheUtil;
 import org.coconut.test.MockTestCase;
 import org.jmock.Mock;
 import org.junit.Test;
@@ -17,12 +14,25 @@ import org.junit.Test;
  * Test ImmutableHitStat
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
- * @version $Id: Caches_ImmutableHitStatTest.java 186 2007-01-24 12:30:38Z kasper $
+ * @version $Id: Caches_ImmutableHitStatTest.java 186 2007-01-24 12:30:38Z
+ *          kasper $
  */
-public class CacheUtil_ImmutableHitStatTest extends MockTestCase {
+public class CacheUtil_MockTest extends MockTestCase {
+   
+    public void testIAE1() {
+        try {
+            CacheUtil.newImmutableHitStat(-1, 0);
+            fail("Did not fail with IllegalArgumentException");
+        } catch (IllegalArgumentException npe) {
+        }
+    }
 
-    public static junit.framework.Test suite() {
-        return new JUnit4TestAdapter(CacheUtil_ImmutableHitStatTest.class);
+    public void testIAE2() {
+        try {
+            CacheUtil.newImmutableHitStat(0, -1);
+            fail("Did not fail with IllegalArgumentException");
+        } catch (IllegalArgumentException npe) {
+        }
     }
 
     @Test
@@ -40,15 +50,16 @@ public class CacheUtil_ImmutableHitStatTest extends MockTestCase {
         assertEquals(80l, hs.getNumberOfHits());
         assertEquals(20l, hs.getNumberOfMisses());
         assertEquals(0.8, hs.getHitRatio(), 0.000001);
+        assertTrue(hs.toString().contains("80"));
+        assertTrue(hs.toString().contains("20"));
+        assertTrue(hs.toString().contains("0.8"));
     }
 
     @Test
     public void testHitStatConstructor() {
         Mock mock = mock(Cache.HitStat.class);
-        mock.expects(once()).method("getNumberOfHits").will(
-                returnValue((long) 80));
-        mock.expects(once()).method("getNumberOfMisses").will(
-                returnValue((long) 20));
+        mock.expects(once()).method("getNumberOfHits").will(returnValue((long) 80));
+        mock.expects(once()).method("getNumberOfMisses").will(returnValue((long) 20));
         Cache.HitStat chs = (Cache.HitStat) mock.proxy();
         HitStat hs = CacheUtil.newImmutableHitStat(chs);
         assertEquals(80l, hs.getNumberOfHits());
@@ -79,7 +90,7 @@ public class CacheUtil_ImmutableHitStatTest extends MockTestCase {
         assertFalse(hs1.equals(hs2));
         assertTrue(hs2.equals(hs2));
         assertTrue(hs2.equals(hs));
-        
+
         assertFalse(hs1.hashCode() == hs2.hashCode()); // well its possible
         assertEquals(CacheUtil.newImmutableHitStat(80, 20).hashCode(), hs2.hashCode());
     }

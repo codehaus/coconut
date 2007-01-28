@@ -37,7 +37,7 @@ public class CacheFilters {
      * originating from a particular cache.
      */
     public static <K, V> Filter<CacheEvent<K, V>> cacheEqualsFilter(Cache<K, V> cache) {
-        return cacheFilter(ComparisonFilters.equal(cache));
+        return cacheFilter(ComparisonFilters.same(cache));
     }
 
     /**
@@ -104,20 +104,27 @@ public class CacheFilters {
 
     /**
      * Creates a filter that accepts all cache events which is being mapped to
-     * one of the specified values.
+     * any of the specified values.
      * 
      * @param values
      *            the values that are accepted by the filter
-     * @return
      */
     @SuppressWarnings("unchecked")
     public static <K, V> Filter<CacheEvent<K, V>> anyValueEquals(final V... values) {
         return (Filter) valueFilter(ComparisonFilters.anyEquals(values));
     }
 
+    /**
+     * Creates a filter that accepts all cache events which is being mapped to
+     * any of the values contained in the specified Collection.
+     * 
+     * @param values
+     *            the values that are accepted by the filter
+     */
     @SuppressWarnings("unchecked")
     public static <K, V> Filter<CacheEvent<K, V>> anyValueInCollection(
             final Collection<? extends V> values) {
+        //TODO what about null values in the collection?
         return (Filter) valueFilter(ComparisonFilters.anyEquals(values.toArray()));
     }
 }

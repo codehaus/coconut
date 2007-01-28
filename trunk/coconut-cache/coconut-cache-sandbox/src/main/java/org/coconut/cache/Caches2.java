@@ -5,9 +5,17 @@ package org.coconut.cache;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.spi.CacheSupport;
+import org.coconut.cache.spi.CacheUtil;
+import org.coconut.event.EventBus;
 import org.coconut.filter.Filter;
 
 /**
@@ -18,6 +26,254 @@ import org.coconut.filter.Filter;
  */
 public class Caches2 {
 
+    final static class MapAdapter<K, V> implements Cache<K, V>, Serializable {
+
+        /** serial version UID */
+        private static final long serialVersionUID = -5535423001040946603L;
+
+        /** the map to delegate to */
+        private final Map<K, V> map;
+
+        MapAdapter(Map<K, V> map) {
+            if (map == null)
+                throw new NullPointerException("map is null");
+            this.map = map;
+        }
+
+        /** {@inheritDoc} */
+        public void clear() {
+            map.clear();
+        }
+
+        /** {@inheritDoc} */
+        public boolean containsKey(Object key) {
+            return map.containsKey(key);
+        }
+
+        /** {@inheritDoc} */
+        public boolean containsValue(Object value) {
+            return map.containsValue(value);
+        }
+
+        /** {@inheritDoc} */
+        public Set<Entry<K, V>> entrySet() {
+            return map.entrySet();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean equals(Object o) {
+            return map.equals(o);
+        }
+
+        /** {@inheritDoc} */
+        public void evict() {
+            // ignore
+        }
+
+        /** {@inheritDoc} */
+        public V get(Object key) {
+            return map.get(key);
+        }
+
+        /** {@inheritDoc} */
+        public Map<K, V> getAll(Collection<? extends K> keys) {
+            Map<K, V> result = new HashMap<K, V>(keys.size());
+            for (K key : keys) {
+                if (key == null) {
+                    throw new NullPointerException("collection contains a null element");
+                }
+                result.put(key, map.get(key));
+            }
+            return result;
+        }
+
+        /** {@inheritDoc} */
+        public CacheEntry<K, V> getEntry(Object key) {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        public EventBus<CacheEvent<K, V>> getEventBus() {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        public Cache.HitStat getHitStat() {
+            return CacheUtil.STAT00;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public int hashCode() {
+            return map.hashCode();
+        }
+
+        /** {@inheritDoc} */
+        public boolean isEmpty() {
+            return map.isEmpty();
+        }
+
+        /** {@inheritDoc} */
+        public Set<K> keySet() {
+            return map.keySet();
+        }
+
+        /** {@inheritDoc} */
+        public Future<?> loadAll(Collection<? extends K> keys) {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        public Future<?> load(K key) {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        public V peek(Object key) {
+            return map.get(key);
+        }
+
+        /**
+         * @see org.coconut.cache.Cache#peekEntry(java.lang.Object)
+         */
+        public CacheEntry<K, V> peekEntry(Object key) {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        public V put(K key, V value) {
+            return map.put(key, value);
+        }
+
+        /** {@inheritDoc} */
+        public V put(K key, V value, long timeout, TimeUnit unit) {
+            return put(key, value);
+        }
+
+        /** {@inheritDoc} */
+        public void putAll(Map<? extends K, ? extends V> t) {
+            map.putAll(t);
+
+        }
+
+        /** {@inheritDoc} */
+        public void putAll(Map<? extends K, ? extends V> t, long timeout, TimeUnit unit) {
+            putAll(t);
+        }
+
+        /** {@inheritDoc} */
+        public V putIfAbsent(K key, V value) {
+            if (!map.containsKey(key)) {
+                return map.put(key, value);
+            } else {
+                return map.get(key);
+            }
+        }
+
+        /** {@inheritDoc} */
+        public V remove(Object key) {
+            return map.remove(key);
+        }
+
+        /** {@inheritDoc} */
+        public boolean remove(Object key, Object value) {
+            if (map.containsKey(key) && map.get(key).equals(value)) {
+                map.remove(key);
+                return true;
+            } else {
+                return false;
+            }
+
+        }
+
+        /** {@inheritDoc} */
+        public V replace(K key, V value) {
+            if (map.containsKey(key)) {
+                return map.put(key, value);
+            } else {
+                return null;
+            }
+        }
+
+        /** {@inheritDoc} */
+        public boolean replace(K key, V oldValue, V newValue) {
+            if (map.containsKey(key) && map.get(key).equals(oldValue)) {
+                map.put(key, newValue);
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        /** {@inheritDoc} */
+        public void resetStatistics() {
+            // ignore
+        }
+
+        /** {@inheritDoc} */
+        public int size() {
+            return map.size();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString() {
+            return map.toString();
+        }
+
+        /** {@inheritDoc} */
+        public Collection<V> values() {
+            return map.values();
+        }
+    }
+
+    /**
+     * The empty cache (immutable). This cache is serializable.
+     * 
+     * @see #emptyCache()
+     */
+    public static final Cache EMPTY_CACHE;
+
+    static {
+        EMPTY_CACHE = mapToCache(Collections.emptyMap());
+    }
+    
+    /**
+     * Returns the empty cache (immutable). This cache is serializable.
+     * <p>
+     * This example illustrates the type-safe way to obtain an empty cache:
+     * 
+     * <pre>
+     * Cache&lt;String, Date&gt; s = Caches.emptyCache();
+     * </pre>
+     * 
+     * Implementation note: Implementations of this method need not create a
+     * separate <tt>Cache</tt> object for each call. Using this method is
+     * likely to have comparable cost to using the like-named field. (Unlike
+     * this method, the field does not provide type safety.)
+     * 
+     * @see #EMPTY_CACHE
+     */
+    @SuppressWarnings("unchecked")
+    public static <K, V> Cache<K, V> emptyCache() {
+        return (Cache<K, V>) EMPTY_CACHE;
+    }
+
+    
+
+    /**
+     * Wraps a Map inside a cache.
+     * 
+     * @param map
+     *            the map to wrap
+     * @return a Cache wrapping a map
+     */
+    public static <K, V> Cache<K, V> mapToCache(Map<K, V> map) {
+        return new MapAdapter<K, V>(map);
+    }
+
+    
     /**
      * Constructs a new Cache which is held entirely in memory and which
      * capacity is only limited by the the amount of physical memory. This Cache
