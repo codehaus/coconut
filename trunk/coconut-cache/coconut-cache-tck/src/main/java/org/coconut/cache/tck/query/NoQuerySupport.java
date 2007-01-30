@@ -4,12 +4,7 @@
 
 package org.coconut.cache.tck.query;
 
-import static org.coconut.test.CollectionUtils.M1;
-import static org.coconut.test.CollectionUtils.M2;
-
 import org.coconut.cache.tck.CacheTestBundle;
-import org.coconut.filter.Filters;
-import org.coconut.filter.LogicFilters;
 import org.junit.Test;
 
 /**

@@ -8,8 +8,6 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * This is class is used for looking up ressources. The default language is
@@ -26,7 +24,6 @@ public final class Ressources {
 
     private static final Locale locale;
     static {
-
         Locale def = Locale.getDefault();
         Locale loc = Locale.getDefault();
         String property = System.getProperty("org.coconut.cache.lang");
@@ -39,16 +36,13 @@ public final class Ressources {
                 }
             }
         }
-        // loc=new Locale("da_DK");
-        // System.out.println(loc);
         Locale.setDefault(loc);
         RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME, loc);
         Locale.setDefault(def);
-        // System.out.println(RESOURCE_BUNDLE.getLocale());
         locale = loc;
-
     }
-    public static String getString(String key, Object... o) {
+
+    public static String lookup(String key, Object... o) {
         String lookup = getString(key);
         if (o != null && o.length > 0) {
             MessageFormat mf = new MessageFormat(lookup, locale);
@@ -58,44 +52,17 @@ public final class Ressources {
         }
     }
 
-    public static String getString(Class c, String key) {
-        return getString(c.getCanonicalName() + "." + key.replace(' ', '_'));
+    public static String lookup(Class c, String key, Object... o) {
+        return lookup(c.getCanonicalName() + "." + key.replace(' ', '_'), o);
     }
 
-    public static String getString(String key) {
+    private static String getString(String key) {
         try {
             return RESOURCE_BUNDLE.getString(key);
         } catch (MissingResourceException e) {
-            if (true) {
-                // throw new RuntimeException("missing entry for key " + key);
-            }
-            return "String could not be found [key = " + key + "]";
+           // System.out.println(key + " = TODO Fillout");
+            throw new RuntimeException("missing entry for key " + key, e);
         }
     }
 
-    public static void main(String[] args) {
-        String str = Ressources.getString("AbstractCache.6");
-        MessageFormat mf = new MessageFormat(str);
-        System.out.println(MessageFormat.format(str, 213));
-
-        // str =
-        // Ressources.getString(CacheStatisticsSupport.class,CacheStatisticsSupport.CACHE_HIT_COUNTER);
-        System.out.println(str);
-    }
-
-    public static void main2(String[] args) {
-        String str = Ressources.getString("AbstractCache.6");
-        MessageFormat mf = new MessageFormat(str);
-        System.out.println(MessageFormat.format(str, 213));
-        String a = Ressources.getString("AbstractCache.7");
-        System.out.println();
-        System.out.println(MessageFormat.format(a, "fooBar", "org.coconut.cache.fooBar"));
-        Logger l = Logger.getLogger("org.coconut.cache.fooBar");
-        // LogManager.getLogManager().addLogger(Logger.getLogger(name))
-        System.out.println(l);
-        l.log(Level.INFO, MessageFormat.format(a, "fooBar", "org.coconut.cache.fooBar"));
-        System.out.println();
-        System.out.println(CacheUtil.newImmutableHitStat(23, 34));
-        System.out.println(Locale.getDefault());
-    }
 }

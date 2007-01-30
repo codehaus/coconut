@@ -16,10 +16,9 @@ import org.coconut.cache.internal.service.AbstractCacheService;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.AsyncCacheLoader;
 import org.coconut.cache.spi.CacheErrorHandler;
-import org.coconut.cache.spi.CacheUtil;
 import org.coconut.core.Callback;
 import org.coconut.core.EventProcessor;
-import org.coconut.core.util.ThreadUtils;
+import org.coconut.internal.util.ThreadUtils;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -82,7 +81,7 @@ public class CacheEntryLoaderService<K, V> extends AbstractCacheService<K, V> im
         try {
             map = (Map<K, CacheEntry<K, V>>) loader.loadAll(keys);
         } catch (Exception e) {
-            map = errorHandler.loadAllEntrisFailed(loader, keys, false, e);
+            map = errorHandler.loadAllFailed(loader, keys, false, e);
         }
         return map;
     }

@@ -4,11 +4,10 @@
 
 package org.coconut.cache;
 
-import static org.coconut.filter.ComparisonFilters.equal;
-
 import java.util.Arrays;
 
 import org.coconut.filter.Filter;
+import org.coconut.filter.Filters;
 import org.coconut.test.MockTestCase;
 import org.jmock.Mock;
 
@@ -23,7 +22,7 @@ public class CacheFiltersTest extends MockTestCase {
     public void testCacheFilter() {
         Mock mock = mock(CacheEvent.class);
         Cache c = (Cache) mock(Cache.class).proxy();
-        Filter f = equal(c);
+        Filter f = Filters.equal(c);
         mock.expects(once()).method("getCache").will(returnValue(c));
         Filter<CacheEvent> filter = CacheFilters.cacheFilter(f);
         assertTrue(filter.accept((CacheEvent) mock.proxy()));
@@ -44,7 +43,7 @@ public class CacheFiltersTest extends MockTestCase {
     public void testAcceptNull() {
         Cache<Integer, Integer> c = (Cache) mock(Cache.class).proxy();
         try {
-            CacheFilters.cacheFilter(equal(c)).accept(null);
+            CacheFilters.cacheFilter(Filters.equal(c)).accept(null);
             fail("Did not fail with NullPointerException");
         } catch (NullPointerException npe) {
         }
@@ -60,7 +59,7 @@ public class CacheFiltersTest extends MockTestCase {
 
     public void testNameFilter() {
         Mock mock = mock(CacheEvent.class);
-        Filter<String> f = equal("TT");
+        Filter<String> f = Filters.equal("TT");
         mock.expects(once()).method("getName").will(returnValue("TT"));
         Filter<CacheEvent<Integer, String>> filter = CacheFilters.cacheName(f);
         assertTrue(filter.accept((CacheEvent) mock.proxy()));
@@ -71,7 +70,7 @@ public class CacheFiltersTest extends MockTestCase {
         Mock mock2 = mock(CacheEvent.class);
         mock.expects(once()).method("getName").will(returnValue("T1"));
         mock2.expects(once()).method("getName").will(returnValue("T2"));
-        Filter<CacheEvent<Integer, String>> f = CacheFilters.cacheName(equal("T1"));
+        Filter<CacheEvent<Integer, String>> f = CacheFilters.cacheName(Filters.equal("T1"));
         assertTrue(f.accept((CacheEvent) mock.proxy()));
         assertFalse(f.accept((CacheEvent) mock2.proxy()));
     }

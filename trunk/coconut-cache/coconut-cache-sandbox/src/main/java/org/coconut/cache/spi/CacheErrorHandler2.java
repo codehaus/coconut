@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheException;
+import org.coconut.cache.CacheLoader;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -45,6 +46,24 @@ public class CacheErrorHandler2<K, V> extends CacheErrorHandler<K, V> {
             Throwable cause) {
         checkInitialized();
         String msg = "Failed to store value [key = " + key.toString() + "]";
+        getLogger().error(msg, cause);
+        throw new CacheException(msg, cause);
+    }
+    
+
+    
+    public synchronized Map<K, V> loadAllFailed2(
+            CacheLoader<? super K, ? extends V> loader, Collection<? extends K> keys,
+            boolean isAsync, Throwable cause) {
+        String msg = "Failed to load values [keys = " + keys.toString() + "]";
+        getLogger().error(msg, cause);
+        throw new CacheException(msg, cause);
+    }
+
+
+    public synchronized V loadFailed2(CacheLoader<? super K, ? extends V> loader, K key,
+            boolean isAsync, Throwable cause) {
+        String msg = "Failed to load value [key = " + key.toString() + "]";
         getLogger().error(msg, cause);
         throw new CacheException(msg, cause);
     }

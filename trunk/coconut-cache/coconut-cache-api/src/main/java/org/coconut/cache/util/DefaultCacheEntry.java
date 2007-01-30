@@ -17,9 +17,9 @@ public class DefaultCacheEntry<K, V> implements CacheEntry<K, V> {
 
     public static final long DEFAULT_EXPIRATION_TIME = Cache.DEFAULT_EXPIRATION;
 
-    /* is -1 beucase*/
-    //is -1 because any entry loaded with hit count>=0
-    //will override the existings entrys hitcount
+    /* is -1 beucase */
+    // is -1 because any entry loaded with hit count>=0
+    // will override the existings entrys hitcount
     public static final long DEFAULT_HIT_COUNT = -1;
 
     public static final long DEFAULT_LAST_ACCESS_TIME = 0;
@@ -42,7 +42,11 @@ public class DefaultCacheEntry<K, V> implements CacheEntry<K, V> {
         this.key = key;
     }
 
-    public static <K, V> DefaultCacheEntry<K, V> entryWithExpiration(K key, V value,
+    public static <K, V> DefaultCacheEntry<K, V> create(K key, V value) {
+        return new DefaultCacheEntry<K, V>(key, value);
+    }
+
+    public static <K, V> DefaultCacheEntry<K, V> createWithExpiration(K key, V value,
             long expiration) {
         return new WithExpiration<K, V>(key, value, expiration);
     }
@@ -123,7 +127,7 @@ public class DefaultCacheEntry<K, V> implements CacheEntry<K, V> {
     public V setValue(V value) {
         throw new UnsupportedOperationException();
     }
-    
+
     static class WithExpiration<K, V> extends DefaultCacheEntry<K, V> {
 
         private final long expirationTime;
@@ -149,6 +153,6 @@ public class DefaultCacheEntry<K, V> implements CacheEntry<K, V> {
             return expirationTime;
         }
     }
-    
-    //add equals/hashcode?
+
+    // add equals/hashcode?
 }

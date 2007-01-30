@@ -12,10 +12,10 @@ import java.util.Map;
 
 import org.coconut.core.Transformer;
 import org.coconut.core.util.Transformers;
-import org.coconut.filter.ComparisonFilters;
 import org.coconut.filter.Filter;
+import org.coconut.filter.CollectionFilters;
 import org.coconut.filter.Filters;
-import org.coconut.filter.Filters.TransformerFilter;
+import org.coconut.filter.CollectionFilters.TransformerFilter;
 
 /**
  * Factory and utility methods for for creating different types of filters for
@@ -37,7 +37,7 @@ public class CacheFilters {
      * originating from a particular cache.
      */
     public static <K, V> Filter<CacheEvent<K, V>> cacheEqualsFilter(Cache<K, V> cache) {
-        return cacheFilter(ComparisonFilters.same(cache));
+        return cacheFilter(Filters.same(cache));
     }
 
     /**
@@ -56,12 +56,12 @@ public class CacheFilters {
      */
     @SuppressWarnings("unchecked")
     public static <K, V> Filter<CacheEvent<K, V>> cacheFilter(Filter<Cache<K, V>> filter) {
-        return new Filters.TransformerFilter(EVENT_TO_CACHE_TRANSFORMER, filter);
+        return new CollectionFilters.TransformerFilter(EVENT_TO_CACHE_TRANSFORMER, filter);
     }
 
     @SuppressWarnings("unchecked")
     public static <K, V> Filter<CacheEvent<K, V>> cacheName(Filter<String> filter) {
-        return new Filters.TransformerFilter(EVENT_TO_NAME_TRANSFORMER, filter);
+        return new CollectionFilters.TransformerFilter(EVENT_TO_NAME_TRANSFORMER, filter);
     }
 
     @SuppressWarnings("unchecked")
@@ -83,23 +83,23 @@ public class CacheFilters {
      */
     @SuppressWarnings("unchecked")
     public static <K, V> Filter<CacheEvent<K, V>> keyEqualsFilter(K key) {
-        return (Filter) keyFilter(ComparisonFilters.equal(key));
+        return (Filter) keyFilter(Filters.equal(key));
     }
 
     @SuppressWarnings("unchecked")
     public static <K, V> Filter<CacheEvent<K, V>> valueEqualsFilter(V value) {
-        return (Filter) valueFilter(ComparisonFilters.equal(value));
+        return (Filter) valueFilter(Filters.equal(value));
     }
 
     @SuppressWarnings("unchecked")
     public static <K, V> Filter<CacheEvent<K, V>> anyKeyEquals(final K... keys) {
-        return (Filter) keyFilter(ComparisonFilters.anyEquals(keys));
+        return (Filter) keyFilter(Filters.anyEquals(keys));
     }
 
     @SuppressWarnings("unchecked")
     public static <K, V> Filter<CacheEvent<K, V>> anyKeyInCollection(
             final Collection<? extends K> keys) {
-        return (Filter) keyFilter(ComparisonFilters.anyEquals(keys.toArray()));
+        return (Filter) keyFilter(Filters.anyEquals(keys.toArray()));
     }
 
     /**
@@ -111,7 +111,7 @@ public class CacheFilters {
      */
     @SuppressWarnings("unchecked")
     public static <K, V> Filter<CacheEvent<K, V>> anyValueEquals(final V... values) {
-        return (Filter) valueFilter(ComparisonFilters.anyEquals(values));
+        return (Filter) valueFilter(Filters.anyEquals(values));
     }
 
     /**
@@ -125,6 +125,6 @@ public class CacheFilters {
     public static <K, V> Filter<CacheEvent<K, V>> anyValueInCollection(
             final Collection<? extends V> values) {
         //TODO what about null values in the collection?
-        return (Filter) valueFilter(ComparisonFilters.anyEquals(values.toArray()));
+        return (Filter) valueFilter(Filters.anyEquals(values.toArray()));
     }
 }

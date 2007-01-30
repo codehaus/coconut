@@ -16,6 +16,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.coconut.internal.asm</groupId>
+      <artifactId>coconut-asm</artifactId>
+      <version>3.0</version>
+    </dependency>
+    <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
       <version>1.0.4</version>
@@ -33,11 +38,25 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
   <reporting>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clover-plugin</artifactId>
+        <configuration>
+
+          <targetPercentage>1%</targetPercentage>
+
+          <!-- Verify that we can specify the JDK version for Clover's instrumentation -->
+          <jdk>1.5</jdk>
+
+          <!-- Verify that we can exclude some files from the instrumentation -->
+          <excludes>
+            <exclude>**/asm/*.java</exclude>
+          </excludes>
+
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

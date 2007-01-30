@@ -52,19 +52,6 @@ public class LoadUtil {
         return new EntryLoadedCallback<K, V>(key, eh, loader, errorHandler);
     }
 
-    public static <K, V> Callback<V> valueLoadedCallback(final K key,
-            EventProcessor<V> eh, final CacheLoader<? super K, ? extends V> loader,
-            CacheErrorHandler<K, V> errorHandler) {
-        return new ValueLoadedCallback<K, V>(key, eh, loader, errorHandler);
-    }
-
-    public static <K, V> Callback<Map<K, V>> valuesLoadedCallback(
-            final Collection<? extends K> keys, EventProcessor<Map<K, V>> eh,
-            final CacheLoader<? super K, ? extends V> loader,
-            CacheErrorHandler<K, V> errorHandler) {
-        return new ValuesLoadedCallback<K, V>(keys, eh, loader, errorHandler);
-    }
-
     static class AsyncCacheLoaderAdaptor<K, V> implements AsyncCacheLoader<K, V> {
         private final Executor executor;
 
@@ -134,14 +121,6 @@ public class LoadUtil {
         return new EntryNonNullIntoCache<K, V>(cache);
     }
 
-    public static <K, V> EventProcessor<V> valueNonNullIntoMap(K key, Map<K, V> map) {
-        return new ValueNonNullIntoMap<K, V>(map, key);
-    }
-
-    public static <K, V> EventProcessor<Map<K, V>> valuesNonNullIntoMap(Map<K, V> map) {
-        return new ValuesNonNullIntoMap<K, V>(map);
-    }
-
     static abstract class AbstractLoadedCallback<K, V, E> implements Callback<E> {
         final CacheErrorHandler<K, V> errorHandler;
 
@@ -164,8 +143,8 @@ public class LoadUtil {
         public void completed(E result) {
             try {
                 eventHandler.process(result);
-            } catch (Throwable e) {
-                errorHandler.unhandledError(new CacheException("unknown exception", e));
+            } catch (RuntimeException e) {
+                errorHandler.unhandledRuntimeException(e);
             }
         }
     }
@@ -201,8 +180,8 @@ public class LoadUtil {
          * @see org.coconut.core.Callback#failed(java.lang.Throwable)
          */
         public void failed(Throwable cause) {
-            Map<K, CacheEntry<K, V>> map = errorHandler.loadAllEntrisFailed(loader, keys,
-                    true, cause);
+            Map<K, CacheEntry<K, V>> map = errorHandler.loadAllFailed(loader, keys, true,
+                    cause);
             completed(map);
         }
     }
@@ -387,122 +366,6 @@ public class LoadUtil {
         }
     }
 
-    static class ValueLoadedCallback<K, V> extends AbstractLoadedCallback<K, V, V> {
-        private final K key;
-
-        private final CacheLoader<? super K, ? extends V> loader;
-
-        /**
-         * @param ac
-         * @param key
-         */
-        public ValueLoadedCallback(final K key, EventProcessor<V> eh,
-                CacheLoader<? super K, ? extends V> loader,
-                CacheErrorHandler<K, V> errorHandler) {
-            super(eh, errorHandler);
-            if (key == null) {
-                throw new NullPointerException("key is null");
-            } else if (loader == null) {
-                throw new NullPointerException("loader is null");
-            }
-            this.key = key;
-            this.loader = loader;
-        }
-
-        /**
-         * @see org.coconut.core.Callback#failed(java.lang.Throwable)
-         */
-        public void failed(Throwable cause) {
-            V v = errorHandler.loadFailed(loader, key, false, cause);
-            completed(v);
-        }
-    }
-
-    static class ValueNonNullIntoMap<K, V> implements EventProcessor<V> {
-        private final Map<K, V> cache;
-
-        private final K key;
-
-        /**
-         * @param cache
-         */
-        public ValueNonNullIntoMap(final Map<K, V> map, final K key) {
-            if (map == null) {
-                throw new NullPointerException("map is null");
-            } else if (key == null) {
-                throw new NullPointerException("key is null");
-            }
-            this.key = key;
-            this.cache = map;
-        }
-
-        /**
-         * @see org.coconut.core.EventHandler#handle(java.lang.Object)
-         */
-        public void process(V value) {
-            if (value != null) {
-                cache.put(key, value);
-            }
-        }
-    }
-
-    static class ValuesLoadedCallback<K, V> extends
-            AbstractLoadedCallback<K, V, Map<K, V>> {
-        private final Collection<? extends K> keys;
-
-        private final CacheLoader<? super K, ? extends V> loader;
-
-        /**
-         * @param ac
-         * @param key
-         */
-        public ValuesLoadedCallback(final Collection<? extends K> keys,
-                EventProcessor<Map<K, V>> eh, CacheLoader<? super K, ? extends V> loader,
-                CacheErrorHandler<K, V> errorHandler) {
-            super(eh, errorHandler);
-            this.keys = keys;
-            this.loader = loader;
-        }
-
-        /**
-         * @see org.coconut.core.Callback#failed(java.lang.Throwable)
-         */
-        public void failed(Throwable cause) {
-            Map<K, V> v = errorHandler.loadAllFailed(loader, keys, true, cause);
-            completed(v);
-        }
-    }
-
-    static class ValuesNonNullIntoMap<K, V> implements EventProcessor<Map<K, V>> {
-        private final Map<K, V> map;
-
-        /**
-         * @param cache
-         */
-        public ValuesNonNullIntoMap(final Map<K, V> map) {
-            if (map == null) {
-                throw new NullPointerException("map is null");
-            }
-            this.map = map;
-        }
-
-        /**
-         * @see org.coconut.core.EventHandler#handle(java.lang.Object)
-         */
-        public void process(Map<K, V> map) {
-            Map<K, V> noNullsMap = new HashMap<K, V>(map.size());
-            for (Map.Entry<K, V> e : map.entrySet()) {
-                V value = e.getValue();
-                if (value != null) {
-                    noNullsMap.put(e.getKey(), value);
-                }
-            }
-            if (noNullsMap.size() > 0) {
-                this.map.putAll(noNullsMap);
-            }
-        }
-    }
-    
     /* Should be refactored */
 
     public static <K, V> CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> toExtendedCacheLoader(

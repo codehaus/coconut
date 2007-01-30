@@ -11,7 +11,7 @@ import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
 import org.coconut.event.impl.DefaultEventBus;
 import org.coconut.filter.Filter;
-import org.coconut.filter.Filters;
+import org.coconut.filter.CollectionFilters;
 
 
 /**
@@ -72,7 +72,7 @@ public class Events {
 
     public static <E> Collection<EventSubscription<E>> findSubscribers(
             EventBus<E> bus, Filter<EventSubscription<E>> filter) {
-        return Filters.filter(bus.getSubscribers(), filter);
+        return CollectionFilters.filter(bus.getSubscribers(), filter);
     }
 
     public static <E> Runnable offerAsRunnable(final E element,

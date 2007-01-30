@@ -6,9 +6,10 @@ package org.coconut.cache;
 
 import java.util.Map;
 
+import org.coconut.filter.CollectionFilters;
 import org.coconut.filter.Filter;
 import org.coconut.filter.Filters;
-import org.coconut.filter.Filters.IsTypeFilter;
+import org.coconut.filter.CollectionFilters.IsTypeFilter;
 
 /**
  * A CacheItemEvent events concerns a particular key-value pair in the cache.

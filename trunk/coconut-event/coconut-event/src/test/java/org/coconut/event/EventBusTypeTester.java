@@ -4,7 +4,6 @@
 package org.coconut.event;
 
 import org.coconut.core.EventProcessor;
-import org.coconut.event.EventBus;
 import org.coconut.event.impl.DefaultEventBus;
 import org.coconut.filter.Filter;
 import org.coconut.filter.Filters;

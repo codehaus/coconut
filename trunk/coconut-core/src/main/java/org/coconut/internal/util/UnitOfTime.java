@@ -127,6 +127,27 @@ public enum UnitOfTime {
         UnitOfTime from = UnitOfTime.fromSymbol(e.getAttribute("time-unit"));
         return from.convertTo(val, unit);
     }
+    public static void toElementAttributes(Element e, Long time, TimeUnit unit, String attrTime, String attrUnit) {
+        long t = time;
+        UnitOfTime b = UnitOfTime.from(unit);
+        while (b.ordinal() != UnitOfTime.values().length) {
+            UnitOfTime next = UnitOfTime.values()[b.ordinal() + 1];
+            long from = next.convert(t, b);
+            if (t == b.convert(from, next)) {
+                b = next;
+                t = from;
+            } else {
+                break;
+            }
+        }
+        e.setAttribute(attrTime,Long.toString(t));
+        e.setAttribute(attrUnit,b.getSymbol());
+    }
+    public static long fromAttributes(Element e, TimeUnit unit, String attrTime, String attrUnit) {
+        long val = Long.parseLong(e.getAttribute(attrTime));
+        UnitOfTime from = UnitOfTime.fromSymbol(e.getAttribute(attrUnit));
+        return from.convertTo(val, unit);
+    }
     
     public static UnitOfTime from(TimeUnit unit) {
         return UnitOfTime.values()[unit.ordinal()];

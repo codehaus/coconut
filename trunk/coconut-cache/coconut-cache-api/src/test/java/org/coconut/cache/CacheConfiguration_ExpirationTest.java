@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.filter.Filter;
-import org.coconut.filter.LogicFilters;
+import org.coconut.filter.Filters;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,7 +25,7 @@ public class CacheConfiguration_ExpirationTest {
 
     CacheConfiguration.Expiration e;
 
-    Filter<CacheEntry> f = LogicFilters.TRUE;
+    Filter<CacheEntry> f = Filters.TRUE;
 
     @Before
     public void setUp() {

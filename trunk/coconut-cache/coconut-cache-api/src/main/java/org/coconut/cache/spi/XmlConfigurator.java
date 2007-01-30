@@ -6,14 +6,20 @@ package org.coconut.cache.spi;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import javax.management.MBeanServerFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -77,7 +83,7 @@ public class XmlConfigurator {
     final static CacheConfiguration CONF = CacheConfiguration.create();
 
     /**
-     * Returns the default instance of XmlConfigurator.
+     * Returns the default instance of a XmlConfigurator.
      */
     public static XmlConfigurator getInstance() {
         return DEFAULT;
@@ -109,7 +115,7 @@ public class XmlConfigurator {
 
     /**
      * Reads the XML configuration from the specified InputStream and returns a
-     * new CacheConfiguration.
+     * new populated CacheConfiguration.
      * 
      * @param stream
      *            the InputStream to load the configuration from
@@ -193,6 +199,7 @@ public class XmlConfigurator {
         list.add(new ExpirationConfigurator());
         list.add(new EvictionConfigurator());
         list.add(new JMXConfigurator());
+        list.add(new ThreadConfigurator());
         return list;
     }
 
@@ -241,30 +248,15 @@ public class XmlConfigurator {
             return ee;
         }
 
-        protected void addComment(String comment, Element e, Object... o) {
-            String c = Ressources
-                    .getString("org.coconut.cache.xml.comment." + comment, o);
+        protected void addComment(String comment, Node e, Object... o) {
+            String c = Ressources.lookup(XmlConfigurator.class, comment, o);
             Comment eee = doc.createComment(c);
             e.appendChild(eee);
-        }
-
-        protected void addComment(String comment, Object... o) {
-            addComment(comment, root, o);
         }
 
         protected CacheConfiguration conf() {
             return cc;
         }
-
-        // protected Element getChild(String name) {
-        // for (int i = 0; i < root.getChildNodes().getLength(); i++) {
-        // if (root.getChildNodes().item(i).getNodeName().equals(name)) {
-        // return (Element) root.getChildNodes().item(i);
-        // }
-        // }
-        // throw new IllegalArgumentException("Element with name (" + name
-        // + ") could not be found");
-        // }
 
         protected Element getChild(String name) {
             return getChild(name, root);
@@ -277,8 +269,6 @@ public class XmlConfigurator {
                 }
             }
             return null;
-            // throw new IllegalArgumentException("Element with name (" + name
-            // + ") could not be found");
         }
 
         protected <T> T loadObject(Element e, Class<T> type) throws Exception {
@@ -290,17 +280,21 @@ public class XmlConfigurator {
 
         protected abstract void read() throws Exception;
 
-        void saveObject(Element e, String name, Object o) {
+        boolean saveObject(Element e, String commentName, String atrbName, Object o) {
             Constructor c = null;
             try {
                 c = o.getClass().getConstructor(null);
+                e.setAttribute(atrbName, o.getClass().getName());
+                return true;
             } catch (NoSuchMethodException e1) {
-                addComment("missingconstructor", e.getParentNode(), name, o.getClass());
+                addComment(commentName, e.getParentNode(), o.getClass());
                 e.getParentNode().removeChild(e);
             }
-            if (c != null) {
-                e.setAttribute("type", o.getClass().getName());
-            }
+            return false;
+        }
+
+        boolean saveObject(Element e, String name, Object o) {
+            return saveObject(e, name, "type", o);
         }
 
         protected abstract void write() throws Exception;
@@ -330,16 +324,22 @@ public class XmlConfigurator {
 
     static class ErrorHandlerConfigurator extends AbstractConfigurator {
 
+        public final static String LOG_TYPE_ATRB = "type";
+
+        public final static String LOG_TAG = "log";
+
+        public final static String ERRORHANDLER_TAG = "errorhandler";
+
         /**
          * @see org.coconut.cache.spi.xml.AbstractPersister#read()
          */
         @Override
         protected void read() {
-            Element e = getChild("errorhandler");
+            Element e = getChild(ERRORHANDLER_TAG);
             if (e != null) {
-                Element log = getChild("log", e);
+                Element log = getChild(LOG_TAG, e);
                 if (log != null) {
-                    String type = log.getAttribute("type");
+                    String type = log.getAttribute(LOG_TYPE_ATRB);
                     if (type.equals("jdk")) {
                         conf()
                                 .setErrorHandler(
@@ -367,7 +367,7 @@ public class XmlConfigurator {
             CacheErrorHandler cee = conf().getErrorHandler();
             if (cee.getClass().equals(CacheErrorHandler.class)) {
                 if (cee.hasLogger()) {
-                    Element eh = add("errorhandler");
+                    Element eh = add(ERRORHANDLER_TAG);
                     Log log = cee.getLogger();
                     String name = log instanceof Logs.AbstractLogger ? ((Logs.AbstractLogger) log)
                             .getName()
@@ -382,15 +382,174 @@ public class XmlConfigurator {
                     } else if (Logs.JDK.isJDKLogger(log)) {
                         logType = "jdk";
                     } else {
-                        addComment("errorhandler.notinstance2", eh, cee.getClass());
+                        addComment("errorHandler.notInstanceLog", eh, log.getClass());
                         logType = null;
                     }
                     if (logType != null) {
-                        add("log", eh, name).setAttribute("type", logType);
+                        add(LOG_TAG, eh, name).setAttribute(LOG_TYPE_ATRB, logType);
                     }
                 }
             } else {
-                addComment("errorhandler.notinstance1", cee.getClass());
+                addComment("errorHandler.notInstance", root, cee.getClass());
+            }
+        }
+    }
+
+    static class ThreadConfigurator extends AbstractConfigurator {
+
+        public final static String CORE_SIZE_ATRB = "core-size";
+
+        public final static String MAX_SIZE_ATRB = "max-size";
+
+        public final static String EXECUTOR_TAG = "threadpool";
+
+        public final static String THREAD_FACTORY_TAG = "thread-factory";
+
+        public final static String SCHEDULED_EXECUTOR_TAG = "scheduled-threadpool";
+
+        public final static String REJECTED_EXECUTION_HANDLER_TAG = "rejectedExecutionHandler";
+
+        public final static String THREADING_TAG = "threading";
+
+        public final static String QUEUE_TAG = "queue";
+
+        private final static Class DEFAULT_REH = ThreadPoolExecutor.AbortPolicy.class;
+
+        public CacheConfiguration.Threading t() {
+            return conf().threading();
+        }
+
+        /**
+         * @see org.coconut.cache.spi.xml.AbstractPersister#read()
+         */
+        @Override
+        protected void read() throws Exception {
+            Element e = getChild(THREADING_TAG);
+            if (e != null) {
+                /* Register */
+                // if (e.hasAttribute(REGISTER_ATRB)) {
+                // j().setAutoRegister(
+                // Boolean.parseBoolean(e.getAttribute(REGISTER_ATRB)));
+                // }
+                // /* Domain */
+                // Element domain = getChild(DOMAIN_TAG, e);
+                // if (domain != null) {
+                // j().setDomain(domain.getTextContent());
+                // }
+            }
+        }
+
+        private final static HashMap<Class, String> policy = new HashMap<Class, String>();
+        static {
+            policy.put(ThreadPoolExecutor.AbortPolicy.class, "abort");
+            policy.put(ThreadPoolExecutor.CallerRunsPolicy.class, "callerRuns");
+            policy.put(ThreadPoolExecutor.DiscardOldestPolicy.class, "discardOldest");
+            policy.put(ThreadPoolExecutor.DiscardPolicy.class, "discard");
+        }
+
+        private void writeExecutor(Element base, ThreadPoolExecutor tpe,
+                boolean isScheduled) {
+
+            Element exTag = isScheduled ? add(SCHEDULED_EXECUTOR_TAG, base) : add(
+                    EXECUTOR_TAG, base);
+            if (!"java.util.concurrent.Executors.DefaultThreadFactory".equals(tpe
+                    .getThreadFactory().getClass().getCanonicalName())) {
+                Element tfTag=add(THREAD_FACTORY_TAG,exTag);
+                if (!saveObject(tfTag, "threading.cannotPersistThreadFactory",
+                        tpe.getThreadFactory())) {
+                    return;
+                }
+            }
+            /* RejectedExecutionHandler */
+            RejectedExecutionHandler reh = tpe.getRejectedExecutionHandler();
+            if (!DEFAULT_REH.equals(reh.getClass())) {
+                Element rehTag = add(REJECTED_EXECUTION_HANDLER_TAG, exTag);
+                if (policy.containsKey(reh.getClass())) {
+                    rehTag.setAttribute("type", policy.get(reh.getClass()));
+                } else if (!saveObject(rehTag, "threading.cannotPersistREH", reh)) {
+                    return;
+                }
+            }
+
+            /* Queue */
+            if (!isScheduled) {
+                Class c = tpe.getQueue().getClass();
+                if (c.equals(ArrayBlockingQueue.class)) {
+                    ArrayBlockingQueue q = (ArrayBlockingQueue) tpe.getQueue();
+                    Element abq = add("array-queue", base);
+                    abq.setAttribute("size", Integer.toString(q.size()
+                            + q.remainingCapacity()));
+                } else if (c.equals(LinkedBlockingQueue.class)) {
+                    // default
+                } else if (c.equals(PriorityBlockingQueue.class)) {
+                    PriorityBlockingQueue q = (PriorityBlockingQueue) tpe.getQueue();
+                    Element qElement = add("priorityQueue", base);
+                    Comparator comp = q.comparator();
+                    if (comp != null
+                            && !saveObject(qElement, "threading.cannotPersistComperator",
+                                    comp)) {
+                        return;
+                    }
+                } else if (c.equals(SynchronousQueue.class)) {
+                    add("synchronous-queue", base);
+                } else {
+                    Element q = add("queue", base);
+                    if (!saveObject(q, "threading.cannotPersistQueue", tpe.getQueue())) {
+                        return;
+                    }
+                }
+            }
+
+            /* Attributes */
+            exTag.setAttribute(CORE_SIZE_ATRB, Integer.toString(tpe.getCorePoolSize()));
+            if (tpe.getCorePoolSize() != tpe.getMaximumPoolSize()) {
+                exTag.setAttribute(MAX_SIZE_ATRB, Integer.toString(tpe
+                        .getMaximumPoolSize()));
+            }
+            if (tpe.getKeepAliveTime(TimeUnit.NANOSECONDS) != 0) {
+                UnitOfTime.toElementAttributes(exTag, tpe
+                        .getKeepAliveTime(TimeUnit.NANOSECONDS), TimeUnit.NANOSECONDS,
+                        "keepAlive", "keepAliveUnit");
+            }
+        }
+
+        /**
+         * @see org.coconut.cache.spi.xml.AbstractPersister#write()
+         */
+        @Override
+        protected void write() throws Exception {
+            Element base = doc.createElement(THREADING_TAG);
+
+            /* Register */
+            Executor e = t().getExecutor();
+            if (e != CONF.threading().getExecutor()) {
+                boolean isThreadPoolExecutor = e.getClass().equals(
+                        ThreadPoolExecutor.class);
+                if (isThreadPoolExecutor
+                        || e.getClass().equals(ScheduledThreadPoolExecutor.class)) {
+                    writeExecutor(base, (ThreadPoolExecutor) e, !isThreadPoolExecutor);
+                } else {
+                    addComment("threading.cannotPersistExecutor", base, e.getClass()
+                            .getCanonicalName());
+                }
+            }
+            // if (j().getAutoRegister() != CONF.jmx().getAutoRegister()) {
+            // base.setAttribute(REGISTER_ATRB,
+            // Boolean.toString(j().getAutoRegister()));
+            // }
+            //
+            // /* Domain Filter */
+            // if (!(j().getDomain().equals(CONF.jmx().getDomain()))) {
+            // add(DOMAIN_TAG, base, j().getDomain());
+            // }
+            // /* MBeanServer */
+            // if (!(j().getMBeanServer().equals(CONF.jmx().getMBeanServer())))
+            // {
+            // addComment("management.cannotPersistMBeanServer", base);
+            // }
+
+            if (base.hasChildNodes() || base.hasAttributes()) {
+                root.appendChild(base);
             }
         }
     }
@@ -418,7 +577,8 @@ public class XmlConfigurator {
             if (e != null) {
                 /* Register */
                 if (e.hasAttribute(REGISTER_ATRB)) {
-                    j().setAutoRegister(Boolean.parseBoolean(e.getAttribute(REGISTER_ATRB)));
+                    j().setAutoRegister(
+                            Boolean.parseBoolean(e.getAttribute(REGISTER_ATRB)));
                 }
                 /* Domain */
                 Element domain = getChild(DOMAIN_TAG, e);
@@ -446,9 +606,9 @@ public class XmlConfigurator {
             }
             /* MBeanServer */
             if (!(j().getMBeanServer().equals(CONF.jmx().getMBeanServer()))) {
-                addComment("cannotsavembeanserver");
+                addComment("management.cannotPersistMBeanServer", base);
             }
-            
+
             if (base.hasChildNodes() || base.hasAttributes()) {
                 root.appendChild(base);
             }
@@ -525,7 +685,7 @@ public class XmlConfigurator {
             /* Expiration Filter */
             Filter filter = e().getFilter();
             if (filter != null) {
-                super.saveObject(add(EXPIRATION_FILTER_TAG, base), EXPIRATION_FILTER_TAG,
+                super.saveObject(add(EXPIRATION_FILTER_TAG, base), "expiration.cannotPersistFilter",
                         filter);
             }
 
@@ -539,7 +699,7 @@ public class XmlConfigurator {
             /* Refresh Filter */
             Filter refreshFilter = e().getRefreshFilter();
             if (refreshFilter != null) {
-                super.saveObject(add(REFRESH_FILTER_TAG, base), REFRESH_FILTER_TAG,
+                super.saveObject(add(REFRESH_FILTER_TAG, base), "expiration.cannotPersistRefreshFilter",
                         refreshFilter);
             }
             if (base.hasChildNodes()) {

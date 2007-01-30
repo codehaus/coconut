@@ -17,6 +17,8 @@ import org.coconut.core.Log;
 import org.coconut.core.util.Logs;
 
 /**
+ * A CacheErrorHandler takes of all error handling within a Cache.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -28,55 +30,41 @@ public class CacheErrorHandler<K, V> {
 
     private volatile String name;
 
+    /**
+     * Creates a new CacheErrorHandler.
+     */
     public CacheErrorHandler() {
-
     }
 
     /**
-     * @param default_logger2
+     * Creates a new CacheErrorHandler using the specified logger.
      */
     public CacheErrorHandler(Log logger) {
-        synchronized (this) {
-            isInitialized = true;
-        }
-        this.logger = logger;
+        setLogger(logger);
+    }
+
+    public synchronized Log getLogger() {
+        checkInitialized();
+        return logger;
     }
 
     public synchronized boolean hasLogger() {
         return logger != null;
     }
 
-    public Log getLogger() {
-        checkInitialized();
-        return logger;
-    }
-
-    public Map<K, CacheEntry<K, V>> loadAllEntrisFailed(
-            final CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader,
-            Collection<? extends K> keys, boolean isAsync, Throwable cause) {
-        String msg = "Failed to load values [keys = " + keys.toString() + "]";
+    public synchronized Map<K, CacheEntry<K, V>> loadAllFailed(
+            final CacheLoader<? super K, ?> loader, Collection<? extends K> keys,
+            boolean isAsynchronous, Throwable cause) {
+        String msg = Ressources.lookup(CacheErrorHandler.class, "loadAllFailed", keys
+                .toString());
         getLogger().error(msg, cause);
         throw new CacheException(msg, cause);
     }
 
-    public Map<K, V> loadAllFailed(CacheLoader<? super K, ? extends V> loader,
-            Collection<? extends K> keys, boolean isAsync, Throwable cause) {
-        String msg = "Failed to load values [keys = " + keys.toString() + "]";
-        getLogger().error(msg, cause);
-        throw new CacheException(msg, cause);
-    }
-
-    public CacheEntry<K, V> loadEntryFailed(
-            CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader,
-            K key, boolean isAsync, Throwable cause) {
-        String msg = "Failed to load value [key = " + key.toString() + "]";
-        getLogger().error(msg, cause);
-        throw new CacheException(msg, cause);
-    }
-
-    public V loadFailed(CacheLoader<? super K, ? extends V> loader, K key,
-            boolean isAsync, Throwable cause) {
-        String msg = "Failed to load value [key = " + key.toString() + "]";
+    public synchronized CacheEntry<K, V> loadEntryFailed(
+            CacheLoader<? super K, ?> loader, K key, boolean isAsync, Throwable cause) {
+        String msg = Ressources
+                .lookup(CacheErrorHandler.class, "loadAll", key.toString());
         getLogger().error(msg, cause);
         throw new CacheException(msg, cause);
     }
@@ -85,25 +73,32 @@ public class CacheErrorHandler<K, V> {
         this.name = name;
     }
 
-    public final void warning(String warning) {
+    public synchronized void setLogger(Log logger) {
+        if (logger == null) {
+            throw new NullPointerException("logger is null");
+        }
+        this.logger = logger;
+        isInitialized = true;
+    }
+
+    public synchronized final void unhandledRuntimeException(RuntimeException t) {
+        getLogger().error("Unhandled RuntimeException", t);
+    }
+
+    public synchronized void warning(String warning) {
         getLogger().warn(warning);
     }
 
-    public final void unhandledError(Throwable t) {
-        getLogger().error("Unhandled Error", t);
-    }
-
-    protected synchronized void checkInitialized() {
+    protected void checkInitialized() {
         if (!isInitialized) {
             isInitialized = true;
             String loggerName = Cache.class.getPackage().getName() + "." + name;
             Logger l = Logger.getLogger(loggerName);
-            String infoMsg = Ressources.getString("AbstractCache.default_logger");
+            String infoMsg = Ressources.lookup(CacheErrorHandler.class, "noLogger");
             logger = Logs.JDK.from(l);
             logger.info(MessageFormat.format(infoMsg, name, loggerName));
             l.setLevel(Level.SEVERE);
             isInitialized = true;
         }
     }
-
 }

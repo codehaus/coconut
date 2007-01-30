@@ -3,12 +3,12 @@
  */
 package org.coconut.cache.examples.eviction;
 
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.defaults.UnsynchronizedCache;
 import org.coconut.cache.spi.AbstractCache;
-import org.coconut.core.util.ThreadUtils;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -54,9 +54,11 @@ public class ScheduableTrimmerExample {
 
     public static void main(String[] args) {
         UnsynchronizedCache<String, String> c = new UnsynchronizedCache<String, String>();
-        ScheduledExecutorService ses = ThreadUtils
-                .newSingleDaemonThreadScheduledExecutor();
+        ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
         ses.scheduleAtFixedRate(new TrimToSize(c, 1100, 1000), 0, 1, TimeUnit.SECONDS);
-        // /other code
+
+        //other code
+
+        ses.shutdown();
     }
 }

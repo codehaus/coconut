@@ -27,7 +27,7 @@ public class DefaultCacheEntryTest {
 
     @Test(expected=UnsupportedOperationException.class)
     public void testDefaultCacheEntry() {
-        DefaultCacheEntry dce = new DefaultCacheEntry("A", "B");
+        DefaultCacheEntry dce = DefaultCacheEntry.create("A", "B");
         assertEquals(CostSizeObject.DEFAULT_COST, dce.getCost());
         assertEquals(0l, dce.getCreationTime());
         assertEquals(Cache.DEFAULT_EXPIRATION, dce.getExpirationTime());
@@ -44,12 +44,12 @@ public class DefaultCacheEntryTest {
 
     @Test(expected=IllegalArgumentException.class)
     public void testDefaultCacheEntryExpiration() {
-        DefaultCacheEntry dce = DefaultCacheEntry.entryWithExpiration("A", "B", 100);
+        DefaultCacheEntry dce = DefaultCacheEntry.createWithExpiration("A", "B", 100);
         assertEquals(CostSizeObject.DEFAULT_COST, dce.getCost());
         assertEquals(100l, dce.getExpirationTime());
         assertEquals("A", dce.getKey());
         assertEquals("B", dce.getValue());
         
-        DefaultCacheEntry.entryWithExpiration("A", "B", -1);
+        DefaultCacheEntry.createWithExpiration("A", "B", -1);
     }
 }

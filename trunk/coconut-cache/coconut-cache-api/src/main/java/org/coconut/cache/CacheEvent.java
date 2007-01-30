@@ -6,11 +6,9 @@ package org.coconut.cache;
 
 import java.util.Map;
 
-import org.coconut.core.Sequenced;
 import org.coconut.filter.Filter;
 import org.coconut.filter.Filters;
-import org.coconut.filter.LogicFilters;
-import org.coconut.filter.Filters.IsTypeFilter;
+import org.coconut.filter.CollectionFilters.IsTypeFilter;
 
 /**
  * This interface defines the top level type for events published by a {@link
@@ -31,7 +29,7 @@ import org.coconut.filter.Filters.IsTypeFilter;
  * @version $Id$
  */
 @SuppressWarnings("hiding")
-public interface CacheEvent<K, V> extends Sequenced /* , TimeStamp */{
+public interface CacheEvent<K, V> {
 
     /** A filter that only accepts instances of CacheEvent events. */
     IsTypeFilter FILTER = new IsTypeFilter(CacheEvent.class);
@@ -41,7 +39,7 @@ public interface CacheEvent<K, V> extends Sequenced /* , TimeStamp */{
      * instances of {@link CacheItemEvent}).
      */
     @SuppressWarnings("unchecked")
-    Filter CACHE_INSTANCE_FILTER = LogicFilters
+    Filter CACHE_INSTANCE_FILTER = Filters
             .not(Filters.isType(CacheEntryEvent.class));
 
     /**
@@ -53,6 +51,17 @@ public interface CacheEvent<K, V> extends Sequenced /* , TimeStamp */{
      */
     Cache<K, V> getCache();
 
+    /**
+     * Returns the sequence id of the object. Usually used for maintaining a
+     * ordered collection of events.
+     * <p>
+     * As a general rule a sequence id is a positiv number.
+     * <p>
+     * If for some reason it is impossible to generate a sequence id or if it is
+     * not needed, {@link LONG.MIN_VALUE} should be returned.
+     */
+    long getSequenceID();
+    
     /**
      * Returns a unique name that can be used to identify the
      * <tt>type<tt> of the event. This is usual a display friendly name.

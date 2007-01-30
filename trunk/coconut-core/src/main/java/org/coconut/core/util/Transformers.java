@@ -14,23 +14,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.coconut.core.Transformer;
-import org.coconut.internal.asm.ClassWriter;
-import org.coconut.internal.asm.FieldVisitor;
-import org.coconut.internal.asm.Label;
-import org.coconut.internal.asm.MethodVisitor;
-import org.coconut.internal.asm.Opcodes;
-import org.coconut.internal.asm.Type;
+import org.codehaus.internal.asm.ClassWriter;
+import org.codehaus.internal.asm.FieldVisitor;
+import org.codehaus.internal.asm.Label;
+import org.codehaus.internal.asm.MethodVisitor;
+import org.codehaus.internal.asm.Opcodes;
+import org.codehaus.internal.asm.Type;
 
 /**
  * Not quite done yet.
@@ -60,7 +53,7 @@ public final class Transformers {
      * This class is serializable is all provided parameters are serializable
      */
     static final class ASMBasedTransformer<F, T> implements DynamicTransformer<F, T>,
-            Serializable, Cloneable {
+            Serializable {
 
         // DONE toString method
 
@@ -468,85 +461,6 @@ public final class Transformers {
         }
     }
 
-    final static class TransformableCallable<F, T> implements Callable<T>, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = -7911352798294529252L;
-
-        private final Callable<F> from;
-
-        private final Transformer<F, T> t;
-
-        public TransformableCallable(Callable<F> callable, Transformer<F, T> transformer) {
-            if (callable == null) {
-                throw new NullPointerException("from is null");
-            } else if (transformer == null) {
-                throw new NullPointerException("t is null");
-            }
-            this.from = callable;
-            this.t = transformer;
-        }
-
-        public T call() throws Exception {
-            return t.transform(from.call());
-        }
-    }
-
-    static class TransformableFuture<F, T> implements Future<T>, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = -7911352798294529252L;
-
-        private final Future<F> from;
-
-        private final Transformer<F, T> t;
-
-        public TransformableFuture(Future<F> future, Transformer<F, T> transformer) {
-            if (future == null) {
-                throw new NullPointerException("from is null");
-            } else if (transformer == null) {
-                throw new NullPointerException("t is null");
-            }
-            this.from = future;
-            this.t = transformer;
-        }
-
-        /**
-         * @see java.util.concurrent.Future#cancel(boolean)
-         */
-        public boolean cancel(boolean mayInterruptIfRunning) {
-            return from.cancel(mayInterruptIfRunning);
-        }
-
-        /**
-         * @see java.util.concurrent.Future#get()
-         */
-        public T get() throws InterruptedException, ExecutionException {
-            return t.transform(from.get());
-        }
-
-        /**
-         * @see java.util.concurrent.Future#get(long,
-         *      java.util.concurrent.TimeUnit)
-         */
-        public T get(long timeout, TimeUnit unit) throws InterruptedException,
-                ExecutionException, TimeoutException {
-            return t.transform(from.get(timeout, unit));
-        }
-
-        /**
-         * @see java.util.concurrent.Future#isCancelled()
-         */
-        public boolean isCancelled() {
-            return from.isCancelled();
-        }
-
-        /**
-         * @see java.util.concurrent.Future#isDone()
-         */
-        public boolean isDone() {
-            return from.isDone();
-        }
-    }
-
     public static <K, V> Transformer<Map.Entry<K, V>, K> mapEntryToKey() {
         return (Transformer) transform(Map.Entry.class, "getKey");
     }
@@ -754,33 +668,6 @@ public final class Transformers {
         return new ASMBasedTransformer<F, T>(method, parameters);
     }
 
-    public static <F, T> Callable<T> wrapCallable(final Callable<F> from,
-            final Transformer<F, T> t) {
-        return new TransformableCallable<F, T>(from, t);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <F, T> Collection<T> wrapCollection(final Collection<F> col,
-            final Transformer<F, T> tIn, final Transformer<T, F> tOut) {
-        return (Collection<T>) col;
-    }
-
-    /**
-     * Returns a future where any value retrieved using either
-     * {@link Future#get()} or {@link Future#get(long, TimeUnit)} will returned
-     * through the specified transformer.
-     * <p>
-     * 
-     * @param from
-     * @param t
-     *            the transformer used for transforming the value returned from
-     *            the specified future
-     * @return
-     */
-    public static <F, T> Future<T> wrapFuture(final Future<F> future,
-            final Transformer<F, T> transformer) {
-        return new TransformableFuture<F, T>(future, transformer);
-    }
 
     public static <F, T> Collection<T> transformCollection(Collection<? extends F> col,
             Transformer<F, T> t) {
@@ -790,273 +677,6 @@ public final class Transformers {
         }
         return list;
     }
-
-    @SuppressWarnings("unchecked")
-    public static <F, T> List<T> wrapList(final List<F> list,
-            final Transformer<F, T> tIn, final Transformer<T, F> tOut) {
-        return new WrappedList<F, T>(list, tIn, tOut);
-    }
-
-    static class WrappedCollection<V, VV> implements Collection<VV> {
-        final Transformer<V, VV> from;
-
-        final Transformer<VV, V> to;
-
-        private final Collection<V> col;
-
-        /**
-         * @param list
-         */
-        WrappedCollection(Collection<V> col, Transformer<V, VV> from,
-                Transformer<VV, V> to) {
-            if (col == null) {
-                throw new NullPointerException("col is null");
-            } else if (from == null) {
-                throw new NullPointerException("from is null");
-            } else if (to == null) {
-                throw new NullPointerException("to is null");
-            } else
-                this.col = col;
-            this.to = to;
-            this.from = from;
-        }
-
-        public boolean add(VV o) {
-            return col.add(to.transform(o));
-        }
-
-        public boolean addAll(Collection<? extends VV> c) {
-            return col.addAll(transformCollection(c, to));
-        }
-
-        public void clear() {
-            col.clear();
-        }
-
-        public boolean isEmpty() {
-            return col.isEmpty();
-        }
-
-        public int size() {
-            return col.size();
-        }
-
-        public boolean contains(Object o) {
-            return col.contains(to.transform((VV) o));
-        }
-
-        public boolean containsAll(Collection<?> c) {
-            return col.containsAll(transformCollection((Collection) c, to));
-        }
-
-        public Iterator<VV> iterator() {
-            final Iterator<V> iter = col.iterator();
-            return new Iterator<VV>() {
-
-                public boolean hasNext() {
-                    return iter.hasNext();
-                }
-
-                public VV next() {
-                    return from.transform(iter.next());
-                }
-
-                public void remove() {
-                    iter.remove();
-                }
-            };
-        }
-
-        public boolean remove(Object o) {
-            return col.remove(to.transform((VV) o));
-        }
-
-        public boolean removeAll(Collection<?> c) {
-            return col.removeAll(transformCollection((Collection) c, to));
-        }
-
-        public boolean retainAll(Collection<?> c) {
-            return col.retainAll(transformCollection((Collection) c, to));
-        }
-
-        // public int hashCode() {
-        // int h = 0;
-        // Iterator<VV> i = iterator();
-        // while (i.hasNext()) {
-        // VV obj = i.next();
-        // if (obj != null)
-        // h += obj.hashCode();
-        // }
-        // return h;
-        // }
-
-        public Object[] toArray() {
-            return transformCollection((Collection) Arrays.asList(col.toArray()), from)
-                    .toArray();
-        }
-
-        public <T> T[] toArray(T[] a) {
-            throw new UnsupportedOperationException(
-                    "Generified version of toArray not supported");
-        }
-
-    }
-
-    static class WrappedList<V, VV> extends WrappedCollection<V, VV> implements List<VV> {
-
-        private final List<V> list;
-
-        WrappedList(List<V> list, Transformer<V, VV> from, Transformer<VV, V> to) {
-            super(list, from, to);
-            this.list=list;
-        }
-
-        /**
-         * @see java.util.List#add(int, java.lang.Object)
-         */
-        public void add(int index, VV element) {
-            list.add(index, to.transform(element));
-        }
-
-        /**
-         * @see java.util.List#addAll(int, java.util.Collection)
-         */
-        public boolean addAll(int index, Collection<? extends VV> c) {
-            return list.addAll(index, transformCollection(c, to));
-        }
-
-        /**
-         * @see java.util.List#get(int)
-         */
-        public VV get(int index) {
-            return from.transform(list.get(index));
-        }
-
-        /**
-         * @see java.util.List#indexOf(java.lang.Object)
-         */
-        public int indexOf(Object o) {
-            return list.indexOf(to.transform((VV) o));
-        }
-
-        /**
-         * @see java.util.List#lastIndexOf(java.lang.Object)
-         */
-        public int lastIndexOf(Object o) {
-            return list.lastIndexOf(to.transform((VV) o));
-        }
-
-        /**
-         * @see java.util.List#listIterator()
-         */
-        public ListIterator<VV> listIterator() {
-            return createListIterator(list.listIterator());
-        }
-
-        /**
-         * @see java.util.List#listIterator(int)
-         */
-        public ListIterator<VV> listIterator(int index) {
-            return createListIterator(list.listIterator(index));
-        }
-
-        private ListIterator<VV> createListIterator(final ListIterator<V> iter) {
-            return new ListIterator<VV>() {
-
-                public boolean hasNext() {
-                    return iter.hasNext();
-                }
-
-                public VV next() {
-                    return from.transform(iter.next());
-                }
-
-                public void remove() {
-                    iter.remove();
-                }
-
-                public void add(VV o) {
-                    iter.add(to.transform(o));
-                }
-
-                public boolean hasPrevious() {
-                    return iter.hasPrevious();
-                }
-
-                public int nextIndex() {
-                    return iter.nextIndex();
-                }
-
-                public VV previous() {
-                    return from.transform(iter.previous());
-                }
-
-                public int previousIndex() {
-                    return iter.previousIndex();
-                }
-
-                public void set(VV o) {
-                    iter.set(to.transform(o));
-                }
-            };
-        }
-
-        /**
-         * @see java.util.List#remove(int)
-         */
-        public VV remove(int index) {
-            return from.transform(list.remove(index));
-        }
-
-        /**
-         * @see java.util.List#set(int, java.lang.Object)
-         */
-        public VV set(int index, VV element) {
-            return from.transform(list.set(index, to.transform(element)));
-        }
-
-        /**
-         * @see java.util.List#subList(int, int)
-         */
-        public List<VV> subList(int fromIndex, int toIndex) {
-            throw new UnsupportedOperationException("sublist not supported");
-        }
-
-    }
-
-    //
-    // static class WrappedMap<K, V, KK, VV> /* implements Map<K,V> */{
-    // private final Map<KK, VV> map = null;
-    //
-    // private final Transformer<KK, K> fromKey = null;
-    //
-    // private final Transformer<KK, K> toKey = null;
-    //
-    // public void clear() {
-    // map.clear();
-    // }
-    //
-    // public boolean isEmpty() {
-    // return map.isEmpty();
-    // }
-    //
-    // public int size() {
-    // return map.size();
-    // }
-    // }
-
-    // @SuppressWarnings("unchecked")
-    // public static <F, T> Queue<T> wrapQueue(final Queue<F> col,
-    // final Transformer<F, T> tIn, final Transformer<T, F> tOut) {
-    // throw new UnsupportedOperationException();
-    // }
-    //
-    // @SuppressWarnings("unchecked")
-    // public static <F, T> Set<T> wrapSet(final Set<F> col, final
-    // Transformer<F, T> tIn,
-    // final Transformer<T, F> tOut) {
-    // throw new UnsupportedOperationException();
-    // }
 
     private static Class fromPrimitive(Class c) {
         if (c.equals(Integer.TYPE)) {

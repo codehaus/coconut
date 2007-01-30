@@ -4,13 +4,8 @@
 
 package org.coconut.cache.defaults.memory;
 
-import static org.coconut.filter.ComparisonFilters.between;
-import static org.coconut.filter.ComparisonFilters.greatherThen;
-
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.CacheEntry;
-import org.coconut.cache.CacheFilters;
 import org.coconut.cache.defaults.UnsynchronizedCache;
 import org.coconut.cache.policy.Policies;
 import org.coconut.cache.tck.util.IntegerToStringLoader;

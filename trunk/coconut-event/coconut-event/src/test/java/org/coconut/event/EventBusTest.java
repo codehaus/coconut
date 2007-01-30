@@ -3,8 +3,6 @@
  */
 package org.coconut.event;
 
-import static org.coconut.filter.LogicFilters.TRUE;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,7 +34,7 @@ public class EventBusTest extends AbstractEventBusTestCase {
     public void testSubcribe1FilterNull() {
         EventBus<Number> bus = createNew();
         try {
-            bus.subscribe(null, TRUE);
+            bus.subscribe(null, Filters.TRUE);
         } catch (NullPointerException npe) {
             return;
         }
@@ -57,7 +55,7 @@ public class EventBusTest extends AbstractEventBusTestCase {
     public void testSubcribe2FilterNull() {
         EventBus<Number> bus = createNew();
         try {
-            bus.subscribe(null, TRUE, "s");
+            bus.subscribe(null, Filters.TRUE, "s");
         } catch (NullPointerException npe) {
             return;
         }
@@ -78,7 +76,7 @@ public class EventBusTest extends AbstractEventBusTestCase {
     public void testSubcribe2NameNull() {
         EventBus<Number> bus = createNew();
         try {
-            bus.subscribe(trueOfferable, TRUE, null);
+            bus.subscribe(trueOfferable, Filters.TRUE, null);
         } catch (NullPointerException npe) {
             return;
         }

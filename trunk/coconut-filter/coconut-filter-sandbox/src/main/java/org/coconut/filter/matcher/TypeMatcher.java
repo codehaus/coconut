@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.coconut.filter.Filter;
-import org.coconut.filter.Filters.IsTypeFilter;
+import org.coconut.filter.CollectionFilters.IsTypeFilter;
 
 public class TypeMatcher<K, E>  {
 

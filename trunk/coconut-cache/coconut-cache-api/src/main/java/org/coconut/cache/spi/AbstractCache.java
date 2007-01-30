@@ -64,6 +64,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
             throw new NullPointerException("configuration is null");
         }
         errorHandler = configuration.getErrorHandler();
+        errorHandler.setCacheName(configuration.getName());
         name = configuration.getName();
         this.clock = configuration.getClock();
         this.conf = configuration;
@@ -186,7 +187,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
      * {@inheritDoc}
      */
     public void putAll(Map<? extends K, ? extends V> m) {
-        putAll(m, DEFAULT_EXPIRATION,TimeUnit.SECONDS);
+        putAll(m, DEFAULT_EXPIRATION, TimeUnit.SECONDS);
     }
 
     /**
@@ -295,16 +296,10 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
-        buf.append("Cache Name: ");
-        buf.append(getName());
-        buf.append("\nCache of type: ");
-        buf.append(this.getClass().getSimpleName());
+        String s = Ressources.lookup(AbstractCache.class, "toString", getName(), this
+                .getClass().getSimpleName(), size(), super.toString());
+        buf.append(s);
         toString0(buf);
-        buf.append("\nContains ");
-        int elements = this.size();
-        buf.append(elements);
-        buf.append(" element(s)");
-        buf.append(super.toString());
         return buf.toString();
     }
 
@@ -348,7 +343,8 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
      */
     protected abstract V put(K key, V value, long expirationTimeNano);
 
-    protected abstract void putAll(Map<? extends K, ? extends V> t, long expirationTimeNano);
+    protected abstract void putAll(Map<? extends K, ? extends V> t,
+            long expirationTimeNano);
 
     /**
      * Subclasses can override this method to provide a custom toString method.

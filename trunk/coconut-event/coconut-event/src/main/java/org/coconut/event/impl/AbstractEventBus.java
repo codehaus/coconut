@@ -11,7 +11,7 @@ import org.coconut.event.EventBus;
 import org.coconut.event.EventBusConfiguration;
 import org.coconut.event.EventSubscription;
 import org.coconut.filter.Filter;
-import org.coconut.filter.LogicFilters;
+import org.coconut.filter.Filters;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -62,7 +62,7 @@ public abstract class AbstractEventBus<E> implements EventBus<E> {
      * @see org.coconut.event.bus.EventBus#subscribe(org.coconut.core.EventHandler)
      */
     public EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler) {
-        return subscribe(eventHandler, LogicFilters.trueFilter());
+        return subscribe(eventHandler, Filters.trueFilter());
     }
 
     public boolean offerAll(Collection<? extends E> c) {

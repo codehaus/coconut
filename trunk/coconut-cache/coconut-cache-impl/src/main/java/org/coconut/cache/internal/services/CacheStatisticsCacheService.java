@@ -323,7 +323,7 @@ public final class CacheStatisticsCacheService<K, V> extends AbstractCacheServic
     }
 
     private String getDesc(String key) {
-        return Ressources.getString(CacheStatisticsCacheService.class, key);
+        return Ressources.lookup(CacheStatisticsCacheService.class, key.toLowerCase());
     }
 
     /**

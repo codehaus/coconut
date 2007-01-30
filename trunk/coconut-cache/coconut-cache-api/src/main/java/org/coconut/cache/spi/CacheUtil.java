@@ -5,16 +5,9 @@ package org.coconut.cache.spi;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Future;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheEntry;
-import org.coconut.cache.CacheLoader;
-import org.coconut.cache.util.AbstractCacheLoader;
-import org.coconut.cache.util.DefaultCacheEntry;
-import org.coconut.core.Callback;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -60,7 +53,7 @@ public class CacheUtil {
     }
 
     /**
-     * The default implementation of a <code>HitStat<code>.
+     * The default (immutable) implementation of a <code>HitStat<code>.
      * 
      * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
      */
@@ -146,8 +139,8 @@ public class CacheUtil {
         /** {@inheritDoc} */
         @Override
         public String toString() {
-            return Ressources.getString("org.coconut.cache.hitstat", getHitRatio(), hits,
-                    misses);
+            return Ressources.lookup(Cache.HitStat.class, "toString", getHitRatio(),
+                    hits, misses);
         }
     }
 }

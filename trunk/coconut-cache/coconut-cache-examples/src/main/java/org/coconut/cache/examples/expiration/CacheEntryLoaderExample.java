@@ -19,7 +19,7 @@ public class CacheEntryLoaderExample {
     static class ExpirationLoader extends
             AbstractCacheLoader<Integer, CacheEntry<Integer, String>> {
         public CacheEntry<Integer, String> load(Integer key) throws Exception {
-            return DefaultCacheEntry.entryWithExpiration(key, "val=" + key, System
+            return DefaultCacheEntry.createWithExpiration(key, "val=" + key, System
                     .currentTimeMillis() + 60 * 60 * 1000);
         }
     }

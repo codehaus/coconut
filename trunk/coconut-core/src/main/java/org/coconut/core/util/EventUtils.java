@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.Callable;
 
-import org.coconut.core.BatchedEventProcessor;
 import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
 import org.coconut.core.Transformer;
@@ -32,7 +31,7 @@ import org.coconut.core.Transformer;
 public final class EventUtils {
 
 
-    static class EventHandlerAsBatch<E> implements BatchedEventProcessor<E> {
+    static class EventHandlerAsBatch<E> implements EventProcessor<E> {
 
         private final EventProcessor<E> eh;
 

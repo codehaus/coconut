@@ -7,8 +7,8 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.Caches;
 import org.coconut.cache.policy.Policies;
 import org.coconut.filter.Filter;
-import org.coconut.filter.LogicFilters;
-import org.coconut.filter.util.StringFilters;
+import org.coconut.filter.Filters;
+import org.coconut.filter.StringFilters;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -17,7 +17,7 @@ import org.coconut.filter.util.StringFilters;
 public class CachePolicyDecoratorExample {
     public static void main(String[] args) {
         CacheConfiguration conf = CacheConfiguration.create();
-        Filter<String> f = LogicFilters.not(StringFilters.stringStartsWith("https"));
+        Filter<String> f = Filters.not(StringFilters.stringStartsWith("https"));
         conf.eviction().setPolicy(
                 Caches.entryKeyAcceptor(Policies.newLRU(), f));
     }

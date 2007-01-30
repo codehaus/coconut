@@ -15,8 +15,7 @@ import org.coconut.cache.policy.Policies;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.spi.ExecutorEvent;
 import org.coconut.cache.util.AbstractCacheLoader;
-import org.coconut.filter.ComparisonFilters;
-import org.coconut.filter.LogicFilters;
+import org.coconut.filter.Filters;
 import org.coconut.test.MockTestCase;
 import org.jmock.Mock;
 import org.junit.Test;
@@ -226,12 +225,12 @@ public class CachesTest extends MockTestCase {
         hm.put(1, 2);
         hm.put(3, 4);
         ReplacementPolicy rp = Caches.entryKeyAcceptor(Policies.newClock(),
-                ComparisonFilters.equal(1));
+                Filters.equal(1));
         assertTrue(rp.add(hm.entrySet().toArray()[0]) > 0);
         assertTrue(rp.add(hm.entrySet().toArray()[1]) < 0);
         
         ReplacementPolicy rp1 =Caches.entryValueAcceptor(Policies.newClock(),
-                ComparisonFilters.equal(2));
+                Filters.equal(2));
         assertTrue(rp1.add(hm.entrySet().toArray()[0]) > 0);
         assertTrue(rp1.add(hm.entrySet().toArray()[1]) < 0);
 

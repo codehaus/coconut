@@ -15,7 +15,7 @@ import org.coconut.cache.spi.AbstractCache;
 import org.coconut.core.EventProcessor;
 import org.coconut.core.Transformer;
 import org.coconut.event.EventBus;
-import org.coconut.filter.LogicFilters;
+import org.coconut.filter.Filters;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -38,7 +38,7 @@ public class AbstractCacheMXBean2<K,V> extends WrapperCacheMXBean implements Eve
     }
 
     public void initializeSubscriptions() {
-        bus.subscribe(this, LogicFilters.TRUE, "internal#CACHE_JMX_SUPPORT");
+        bus.subscribe(this, Filters.TRUE, "internal#CACHE_JMX_SUPPORT");
     }
 
     protected MBeanNotificationInfo[] getNotifInfo() {
