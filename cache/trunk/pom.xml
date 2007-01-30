@@ -24,7 +24,6 @@
   <modules>
     <module>coconut-cache-api</module>
     <module>coconut-cache-impl</module>
-    <module>coconut-cache-pocket</module>    
     <module>coconut-cache-policies</module>
     <module>coconut-cache-tck</module>
   </modules>

@@ -15,10 +15,6 @@
       <groupId>org.coconut.core</groupId>
       <artifactId>coconut-core</artifactId>
     </dependency>
-        <dependency>
-      <groupId>org.coconut.filter</groupId>
-      <artifactId>coconut-filter</artifactId>
-    </dependency>
   </dependencies>
   <reporting>
     <plugins>
