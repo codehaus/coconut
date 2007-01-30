@@ -16,6 +16,7 @@
   <modules>
     <module>coconut-cache</module>
     <module>coconut-core</module>
-    <module>coconut-event</module>    
+    <module>coconut-event</module>
+    <module>coconut-management</module>
   </modules>
 </project>
