@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   <groupId>org.coconut.internal</groupId>
-  <artifactId>coconut-internal.asm</artifactId>
+  <artifactId>coconut-internal-asm</artifactId>
   <name>Coconut Internal ASM</name>
    <version>3.0</version>
    <inceptionYear>2004</inceptionYear>
