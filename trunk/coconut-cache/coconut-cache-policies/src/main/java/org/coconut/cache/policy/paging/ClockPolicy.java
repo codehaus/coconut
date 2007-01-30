@@ -8,7 +8,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.coconut.annotation.ThreadSafe;
+import net.jcip.annotations.NotThreadSafe;
+
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.policy.spi.AbstractPolicy;
 import org.coconut.internal.util.IndexedList;
@@ -20,7 +21,7 @@ import org.coconut.internal.util.IndexedList;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-@ThreadSafe(false)
+@NotThreadSafe
 public class ClockPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy<T>,
         Serializable, Cloneable {
 

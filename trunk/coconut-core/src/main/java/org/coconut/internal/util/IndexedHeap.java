@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.coconut.annotation.ThreadSafe;
+import net.jcip.annotations.NotThreadSafe;
 
 /**
  * For internal use in the various cache policies. This class can be optimized
@@ -18,7 +18,7 @@ import org.coconut.annotation.ThreadSafe;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-@ThreadSafe(false)
+@NotThreadSafe
 public class IndexedHeap<T> implements Serializable {
     /**
      * 

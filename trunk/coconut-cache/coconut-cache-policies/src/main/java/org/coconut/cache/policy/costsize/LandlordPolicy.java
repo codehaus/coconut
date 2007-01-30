@@ -9,11 +9,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.coconut.annotation.ThreadSafe;
+import net.jcip.annotations.NotThreadSafe;
+
 import org.coconut.cache.policy.CostSizeObject;
 import org.coconut.cache.policy.spi.AbstractPolicy;
 
-@ThreadSafe(false)
+@NotThreadSafe
 public class LandlordPolicy<T extends CostSizeObject> extends AbstractPolicy<T> {
 
     /**

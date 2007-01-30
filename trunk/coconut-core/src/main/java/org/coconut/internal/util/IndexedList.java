@@ -8,14 +8,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.coconut.annotation.ThreadSafe;
+import net.jcip.annotations.NotThreadSafe;
 
 /**
  * A PolicyList
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-@ThreadSafe(false)
+@NotThreadSafe
 public class IndexedList<T> implements Serializable {
 
     static final int DEFAULT_CAPACITY = 16;

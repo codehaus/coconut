@@ -20,7 +20,8 @@ import java.util.regex.Pattern;
 
 import javax.management.MBeanServer;
 
-import org.coconut.annotation.ThreadSafe;
+import net.jcip.annotations.NotThreadSafe;
+
 import org.coconut.cache.management.CacheMXBean;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.spi.AbstractCache;
@@ -85,7 +86,7 @@ import org.coconut.filter.Filter;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-@ThreadSafe(false)
+@NotThreadSafe
 public class CacheConfiguration<K, V> implements Cloneable {
 
     // 5F = _

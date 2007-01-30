@@ -5,7 +5,8 @@ package org.coconut.cache.tck;
 
 import java.io.Serializable;
 
-import org.coconut.annotation.ThreadSafe;
+import net.jcip.annotations.ThreadSafe;
+
 import org.coconut.cache.Cache;
 import org.coconut.cache.spi.CacheSupport;
 import org.coconut.cache.tck.core.BasicCache;
@@ -79,8 +80,7 @@ public class TCKRunner extends Runner {
                     "Cache implementation must have a CacheSupport annotation");
         }
         CacheSupport cs = (CacheSupport) tt.getAnnotation(CacheSupport.class);
-        boolean isThreadSafe = klass.isAnnotationPresent(ThreadSafe.class)
-                && ((ThreadSafe) klass.getAnnotation(ThreadSafe.class)).value();
+        boolean isThreadSafe = klass.isAnnotationPresent(ThreadSafe.class);
         addCoreFeatures(runner);
 
         addExpiration(runner, cs, isThreadSafe);

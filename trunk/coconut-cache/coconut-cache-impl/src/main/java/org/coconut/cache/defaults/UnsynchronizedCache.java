@@ -10,7 +10,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.coconut.annotation.ThreadSafe;
+import net.jcip.annotations.NotThreadSafe;
+
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.CacheServiceManager;
@@ -38,7 +39,7 @@ import org.coconut.cache.spi.CacheUtil;
  * @version $Id$
  */
 @CacheSupport(CacheLoadingSupport = true, CacheEntrySupport = true, querySupport = true, ExpirationSupport = true, statisticsSupport = true, eventSupport = true)
-@ThreadSafe(false)
+@NotThreadSafe
 public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
     private final EntryMap<K, V> map;
 

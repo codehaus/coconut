@@ -10,7 +10,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import org.coconut.annotation.ThreadSafe;
+import net.jcip.annotations.NotThreadSafe;
+
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.policy.spi.AbstractPolicy;
 
@@ -19,7 +20,7 @@ import org.coconut.cache.policy.spi.AbstractPolicy;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-@ThreadSafe(false)
+@NotThreadSafe
 public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy<T>, Serializable, Cloneable {
 
     /** A unique policy name. */

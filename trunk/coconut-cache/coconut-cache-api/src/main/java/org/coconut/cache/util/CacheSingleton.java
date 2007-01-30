@@ -7,12 +7,10 @@ package org.coconut.cache.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
-import org.coconut.annotation.ThreadSafe;
+import net.jcip.annotations.ThreadSafe;
+
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
@@ -31,7 +29,7 @@ import org.coconut.cache.spi.AbstractCache;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-@ThreadSafe(true)
+@ThreadSafe
 public final class CacheSingleton {
     /**
      * The <tt>default</tt> location of the cache configuration file which is
