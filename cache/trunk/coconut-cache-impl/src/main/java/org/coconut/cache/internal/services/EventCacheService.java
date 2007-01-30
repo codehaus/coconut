@@ -24,7 +24,7 @@ import org.coconut.cache.CacheEntryEvent.ItemUpdated;
 import org.coconut.cache.internal.service.AbstractCacheService;
 import org.coconut.core.Offerable;
 import org.coconut.event.EventBus;
-import org.coconut.event.impl.DefaultEventBus;
+import org.coconut.event.defaults.DefaultEventBus;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
