@@ -244,14 +244,14 @@ public class EventBusFeature extends AbstractEventTestBundle {
         put(M1, 1, TimeUnit.MILLISECONDS);
         putAll(3, TimeUnit.MILLISECONDS, M2, M3);
 
-        clock.incrementAbsolutTime(2);
+        clock.incrementTimestamp(2);
         c.evict();
         assertEquals(2, c.size());
 
         ItemRemoved<?, ?> r = consumeItem(ItemRemoved.class, M1);
         assertTrue(r.hasExpired());
 
-        clock.incrementAbsolutTime(2);
+        clock.incrementTimestamp(2);
         c.evict();
 
         r = consumeItem(ItemRemoved.class, M2);

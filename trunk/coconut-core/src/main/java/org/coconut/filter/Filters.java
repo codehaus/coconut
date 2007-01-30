@@ -14,8 +14,6 @@ import org.coconut.filter.CollectionFilters.IsTypeFilter;
 import org.coconut.filter.spi.CompositeFilter;
 
 /**
- * 
- * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -26,7 +24,6 @@ public class Filters {
         return new IsTypeFilter(clazz);
     }
 
-
     @SuppressWarnings("unchecked")
     public static Filters.AnyFilter<IsTypeFilter> anyType(Class... clazz) {
         IsTypeFilter[] cbf = new IsTypeFilter[clazz.length];
@@ -36,9 +33,9 @@ public class Filters {
         return Filters.any((Filter[]) cbf);
     }
 
-
     /** A filter that always return False. */
     public static final Filters.FalseFilter FALSE = Filters.FalseFilter.INSTANCE;
+
     /** A filter that always return True. */
     public static final Filters.TrueFilter TRUE = Filters.TrueFilter.INSTANCE;
 
@@ -47,12 +44,10 @@ public class Filters {
         return FALSE;
     }
 
-
     @SuppressWarnings("unchecked")
     public static <E> Filter<E> trueFilter() {
         return TRUE;
     }
-
 
     /**
      * Returns a Filter that only accepts an element if <tt>all</tt> the
@@ -67,31 +62,26 @@ public class Filters {
         return new Filters.AllFilter<E>(filters);
     }
 
-
     public static <E> Filters.AndFilter<E> and(Filter<E> left, Filter<E> right) {
         return new Filters.AndFilter<E>(left, right);
     }
 
-
-    public static <E> Filters.AndFilter<E> and(Filter<E> left, Filter<E> right, boolean isStrict) {
+    public static <E> Filters.AndFilter<E> and(Filter<E> left, Filter<E> right,
+            boolean isStrict) {
         return new Filters.AndFilter<E>(left, right, isStrict);
     }
-
 
     public static <E> Filters.AnyFilter<E> any(Filter<E>... filters) {
         return new Filters.AnyFilter<E>(filters);
     }
 
-
     public static <E> Filters.NotFilter<E> not(Filter<E> filter) {
         return new Filters.NotFilter<E>(filter);
     }
 
-
     public static <E> Filters.OrFilter<E> or(Filter<E> left, Filter<E> right) {
         return new Filters.OrFilter<E>(left, right);
     }
-
 
     /**
      * This method returns a Filter that performs xor on two other filters.
@@ -105,56 +95,50 @@ public class Filters {
     public static <E> Filters.XorFilter<E> xor(Filter<E> left, Filter<E> right) {
         return new Filters.XorFilter<E>(left, right);
     }
-    
-    
+
     public static <E> Filters.SameFilter<E> same(E element) {
         return new Filters.SameFilter<E>(element);
     }
 
-
     public static <E> Filters.GreaterThenFilter<E> greatherThen(E element) {
         return new Filters.GreaterThenFilter<E>(element);
     }
-
 
     public static <E> Filters.GreaterThenFilter<E> greatherThen(E object,
             final Comparator<? extends E> comparator) {
         return new Filters.GreaterThenFilter<E>(object, comparator);
     }
 
+    public static <E> Filters.GreaterThenOrEqualFilter<E> greatherThenOrEqual(E object) {
+        return new Filters.GreaterThenOrEqualFilter<E>(object);
+    }
 
     public static <E> Filters.GreaterThenOrEqualFilter<E> greatherThenOrEqual(E object,
             final Comparator<? extends E> comparator) {
         return new Filters.GreaterThenOrEqualFilter<E>(object, comparator);
     }
 
-
     public static <E> Filters.LessThenFilter<E> lessThen(E element) {
         return new Filters.LessThenFilter<E>(element);
     }
 
-
     public static <E> Filters.LessThenOrEqualFilter<E> lessThenOrEqual(E object) {
         return new Filters.LessThenOrEqualFilter<E>(object);
     }
-
 
     public static <E> Filters.LessThenOrEqualFilter<E> lessThenOrEqual(E object,
             final Comparator<? extends E> comparator) {
         return new Filters.LessThenOrEqualFilter<E>(object, comparator);
     }
 
-
     public static <E> Filters.LessThenFilter<E> lessThen(E object,
             final Comparator<? extends E> comparator) {
         return new Filters.LessThenFilter<E>(object, comparator);
     }
 
-
     public static <E> Filter<E> between(E first, E second) {
         return and(Filters.greatherThen(first), Filters.lessThen(second));
     }
-
 
     /**
      * Returns a Filter that accepts all elements that are
@@ -170,7 +154,6 @@ public class Filters {
         return new Filters.EqualsFilter<E>(object);
     }
 
-
     @SuppressWarnings( { "unchecked" })
     public static <E> AnyFilter<E> anyEquals(E... elements) {
         Filters.EqualsFilter[] filter = new Filters.EqualsFilter[elements.length];
@@ -179,7 +162,6 @@ public class Filters {
         }
         return any((Filter[]) filter);
     }
-
 
     /**
      * A Filter that tests that <tt>all</tt> of the supplied Filters accepts a
@@ -733,7 +715,7 @@ public class Filters {
             return "(" + left + ") xor (" + right + ")";
         }
     }
-    
+
     /**
      * A Filter that accepts all elements that are {@link Object#equals equal}
      * to the specified object.
@@ -901,18 +883,16 @@ public class Filters {
             this.comparator = comparator;
         }
 
-        // public <T extends E & Comparable<? super T> >
-        // GreaterThenOrEqualFilter(T object) {
-        // if (object == null) {
-        // throw new NullPointerException("element is null");
-        // }
-        // if (!(object instanceof Comparable)) {
-        // throw new IllegalArgumentException(
-        // "object not instanceof Comparable");
-        // }
-        // this.object = null; //object;
-        // this.comparator = null;
-        // }
+         public <T extends E> GreaterThenOrEqualFilter(T object) {
+            if (object == null) {
+                throw new NullPointerException("element is null");
+            }
+            if (!(object instanceof Comparable)) {
+                throw new IllegalArgumentException("object not instanceof Comparable");
+            }
+            this.object = object;
+            this.comparator = null;
+        }
 
         /**
          * Returns the object we are comparing.
@@ -1156,6 +1136,5 @@ public class Filters {
             return "is (==) " + object;
         }
     }
-
 
 }

@@ -2,7 +2,7 @@
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.filter.common;
+package org.coconut.filter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -19,7 +19,7 @@ import org.junit.Test;
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-public class FileFiltersInDirectoryTest {
+public class FileFilters_InDirectoryTest {
 
     @Test
     public void testFilter() throws IOException {
@@ -131,6 +131,6 @@ public class FileFiltersInDirectoryTest {
     
     
     public static junit.framework.Test suite() {
-        return new JUnit4TestAdapter(FileFiltersInDirectoryTest.class);
+        return new JUnit4TestAdapter(FileFilters_InDirectoryTest.class);
     }
 }

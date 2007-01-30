@@ -3,6 +3,7 @@
  */
 package org.coconut.core;
 
+import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -12,8 +13,11 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public abstract class Clock {
 
-    public static final Clock DEFAULT_CLOCK = new Clock() {
+    public static final Clock DEFAULT_CLOCK = new DefaultClock();
+
+    static class DefaultClock extends Clock implements Serializable {
         /** serialVersionUID */
+        private static final long serialVersionUID = -3343971832371995608L;
 
         public long timestamp() {
             return System.currentTimeMillis();
@@ -22,23 +26,24 @@ public abstract class Clock {
         public long relativeTime() {
             return System.nanoTime();
         }
-    };
-    public static class DeterministicClock extends Clock {
+    }
+
+    public static class DeterministicClock extends Clock implements Serializable {
 
         /** serialVersionUID */
-        private static final long serialVersionUID = -7600850757932509321L;
+        private static final long serialVersionUID = -7045902747103949579L;
 
-        private final AtomicLong absolutTime = new AtomicLong();
+        private final AtomicLong timestamp = new AtomicLong();
 
         private final AtomicLong relativeTime = new AtomicLong();
 
         @Override
         public long timestamp() {
-            return absolutTime.get();
+            return timestamp.get();
         }
 
         public void incrementTimestamp() {
-            absolutTime.incrementAndGet();
+            timestamp.incrementAndGet();
         }
 
         public void incrementRelativeTime() {
@@ -48,22 +53,25 @@ public abstract class Clock {
         public void incrementRelativeTime(int amount) {
             relativeTime.addAndGet(amount);
         }
-        public void incrementAbsolutTime(int amount) {
-            absolutTime.addAndGet(amount);
+
+        public void incrementTimestamp(int amount) {
+            timestamp.addAndGet(amount);
         }
+
         @Override
         public long relativeTime() {
             return relativeTime.get();
         }
 
         public void setTimestamp(long amount) {
-            absolutTime.set(amount);
+            timestamp.set(amount);
         }
 
         public void setRelativeTime(long amount) {
             relativeTime.set(amount);
         }
     }
+
     public abstract long timestamp();
 
     public abstract long relativeTime();
@@ -75,6 +83,7 @@ public abstract class Clock {
     public long getDeadlineFromNow(long timeout, TimeUnit unit) {
         return getDeadlineFromNow(unit.toMillis(timeout));
     }
+
     public long getDeadlineFromNow(long timeoutMS) {
         return timestamp() + timeoutMS;
     }

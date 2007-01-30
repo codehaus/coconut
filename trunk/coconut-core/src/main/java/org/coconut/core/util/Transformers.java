@@ -18,12 +18,12 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.coconut.core.Transformer;
-import org.codehaus.internal.asm.ClassWriter;
-import org.codehaus.internal.asm.FieldVisitor;
-import org.codehaus.internal.asm.Label;
-import org.codehaus.internal.asm.MethodVisitor;
-import org.codehaus.internal.asm.Opcodes;
-import org.codehaus.internal.asm.Type;
+import org.coconut.internal.asm.ClassWriter;
+import org.coconut.internal.asm.FieldVisitor;
+import org.coconut.internal.asm.Label;
+import org.coconut.internal.asm.MethodVisitor;
+import org.coconut.internal.asm.Opcodes;
+import org.coconut.internal.asm.Type;
 
 /**
  * Not quite done yet.

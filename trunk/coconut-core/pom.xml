@@ -16,8 +16,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.coconut.internal.asm</groupId>
-      <artifactId>coconut-asm</artifactId>
+      <groupId>org.coconut.internal</groupId>
+      <artifactId>coconut-internal-asm</artifactId>
       <version>3.0</version>
     </dependency>
     <dependency>
@@ -47,7 +47,9 @@
         <configuration>
 
           <targetPercentage>1%</targetPercentage>
-
+          <licenseLocation>
+            ${user.home}/licenses/coconut-clover.license
+          </licenseLocation>
           <!-- Verify that we can specify the JDK version for Clover's instrumentation -->
           <jdk>1.5</jdk>
 

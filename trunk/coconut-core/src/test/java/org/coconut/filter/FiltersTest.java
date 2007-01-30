@@ -53,8 +53,5 @@ public class FiltersTest {
         assertTrue(c.contains("2"));
         assertTrue(c.contains("3"));
     }
-    
-    public static junit.framework.Test suite() {
-        return new JUnit4TestAdapter(FiltersTest.class);
-    }
+
 }

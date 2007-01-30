@@ -148,6 +148,5 @@
     <module>coconut-concurrent</module>
     <module>coconut-event</module>
     <module>coconut-management</module>
-    <module>coconut-test-framework</module>
   </modules>
 </project>

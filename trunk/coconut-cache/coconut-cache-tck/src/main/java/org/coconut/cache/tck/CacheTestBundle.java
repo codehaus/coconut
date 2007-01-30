@@ -233,11 +233,11 @@ public abstract class CacheTestBundle extends Assert {
     }
 
     protected void incTime() {
-        clock.incrementAbsolutTime(1);
+        clock.incrementTimestamp(1);
     }
 
     protected void incTime(int amount) {
-        clock.incrementAbsolutTime(amount);
+        clock.incrementTimestamp(amount);
     }
 
     /**
