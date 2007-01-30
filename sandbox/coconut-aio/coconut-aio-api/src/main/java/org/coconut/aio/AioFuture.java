@@ -1,15 +1,16 @@
-/* Copyright 2004 - 2006 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the MIT license, see http://coconut.codehaus.org/license.
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
 package org.coconut.aio;
 
 import java.io.IOException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.coconut.core.Callback;
-import org.coconut.core.CallbackFuture;
 import org.coconut.core.Offerable;
 
 
@@ -20,7 +21,7 @@ import org.coconut.core.Offerable;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public interface AioFuture<V, T> extends CallbackFuture<V> {
+public interface AioFuture<V, T> extends Future<V> {
 
     /**
      * Waits if necessary for the computation to complete, and then retrieves
@@ -59,5 +60,7 @@ public interface AioFuture<V, T> extends CallbackFuture<V> {
 
     void setCallback(Callback<V> callback);
 
+    void setCallback(Executor executor, Callback<T> callback);
+    
     void setDestination(Offerable< ? super T> dest);
 }
