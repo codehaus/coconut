@@ -1,6 +1,6 @@
 Coconut - A Framework for event-driven and highly concurrent services.
 
-Last updated 21 August 2006, Copyright 2004-2006 Kasper Nielsen
+Last updated 30 January 2007, Copyright 2004-2006 Kasper Nielsen
 
 This is a small overview of how the source repository is organised, and how to build Coconut 5.0.
 
