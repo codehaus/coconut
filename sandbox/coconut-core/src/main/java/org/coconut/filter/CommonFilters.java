@@ -97,4 +97,9 @@ public class CommonFilters {
 
     }
 
+
+    /* uses reflection */
+    public static <E> Filter<E> transformFilter(String method, Filter<?> f) {
+        throw new UnsupportedOperationException();
+    }
 }

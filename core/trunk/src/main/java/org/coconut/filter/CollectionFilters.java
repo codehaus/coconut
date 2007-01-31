@@ -302,11 +302,6 @@ public final class CollectionFilters {
 
     }
 
-    /* uses reflection */
-    public static <E> Filter<E> transformFilter(String method, Filter<?> f) {
-        throw new UnsupportedOperationException();
-    }
-
     public static <E> Filter<E> transformFilter(Class<E> c, String method, Filter<?> f) {
         Transformer<E, ?> t = Transformers.transform(c, method);
         return new TransformerFilter(t, f);

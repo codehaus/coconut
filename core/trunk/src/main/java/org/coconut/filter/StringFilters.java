@@ -9,11 +9,11 @@ import java.io.Serializable;
 
 public class StringFilters {
 
-    public static Filter<String> stringContains(CharSequence charSequence) {
+    public static Filter<String> contains(CharSequence charSequence) {
         return new ContainsFilter(charSequence);
     }
 
-    public static Filter<String> stringStartsWith(String string) {
+    public static Filter<String> startsWith(String string) {
         return new ContainsFilter(string);
     }
 

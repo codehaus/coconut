@@ -7,28 +7,33 @@ This is a small overview of how the source repository is organised, and how to b
 ## Repository organisation
 The repository is organised into the following components.
 
-- cache
+- cache            Coconut Cache
+                   svn co https://svn.codehaus.org/coconut/cache/trunk to work on trunk
+                   
+- core             Core interfaces, used in most of the other projects
+                   svn co https://svn.codehaus.org/coconut/core/trunk to work on trunk
 
-- core   Contains core interfaces (used throuhout most of the other projects),
-				 Filters : Definitions
-- coconut-utils
+- event            Coconut Event Framework
+                   svn co https://svn.codehaus.org/coconut/cache/trunk to work on trunk
+                   
+- internal         Internal classes and some build tools, you will most likely never need
+                   to check these out
 
-- event
+- management       Coconut Management
+                   svn co https://svn.codehaus.org/coconut/management/trunk to work on trunk
 
-- internal
-
-- management 
-
-- pom
-
-
-
+- pom              The root pom for coconut project, you will most likely never need
+                   to check these out
+                   
 - sandbox          This is where experimental code is placed
 
 - test-framework   This framework is used for testing most coconut projects
                    Most likely you will not need to check this out
 
-- trunks                   
+- trunks           Contains the main trunk of coconut-cache, coconut-core, coconut-event
+                   and coconut-management
+                   svn co https://svn.codehaus.org/coconut/trunks to work on trunk
+                   
 - site                     (not currently present) This is where the web site for www.coconut.org is generated from.
 
 
@@ -42,11 +47,11 @@ The repository is organised into the following components.
   * SVN (optional, for checking out the source distribution)
 
 2. Checking out the source
-> svn co http://svn.codehaus.org/coconut/trunk
+> svn co http://svn.codehaus.org/coconut/trunks
  As an alternative nightly sources can be downloaded from ......
  
 3. Building Cocount
-In order to build Coconut you need to stand in the top level directory coconut-5.0 (the directory where this file is located) and run
+In order to build Coconut you need to stand in the top level directory trunks and run
 > mvn install
 This will build all Coconut modules and run all tests associated with each component.
 
