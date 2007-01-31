@@ -35,7 +35,7 @@
       </dependency>
       <dependency>
         <groupId>org.coconut.event</groupId>
-        <artifactId>coconut-event</artifactId>
+        <artifactId>coconut-event-impl</artifactId>
         <version>1.0-alpha1-SNAPSHOT</version>
       </dependency>
       <dependency>
