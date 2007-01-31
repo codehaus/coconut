@@ -139,7 +139,7 @@ public class CacheUtil {
         /** {@inheritDoc} */
         @Override
         public String toString() {
-            return Ressources.lookup(Cache.HitStat.class, "toString", getHitRatio(),
+            return Resources.lookup(Cache.HitStat.class, "toString", getHitRatio(),
                     hits, misses);
         }
     }

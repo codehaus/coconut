@@ -296,7 +296,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
-        String s = Ressources.lookup(AbstractCache.class, "toString", getName(), this
+        String s = Resources.lookup(AbstractCache.class, "toString", getName(), this
                 .getClass().getSimpleName(), size(), super.toString());
         buf.append(s);
         toString0(buf);

@@ -15,7 +15,7 @@ import org.coconut.cache.Caches;
 import org.coconut.cache.internal.service.AbstractCacheService;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.CacheUtil;
-import org.coconut.cache.spi.Ressources;
+import org.coconut.cache.internal.util.Resources;
 import org.coconut.core.Clock;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.annotation.ManagedAttribute;
@@ -323,7 +323,7 @@ public final class CacheStatisticsCacheService<K, V> extends AbstractCacheServic
     }
 
     private String getDesc(String key) {
-        return Ressources.lookup(CacheStatisticsCacheService.class, key.toLowerCase());
+        return Resources.lookup(CacheStatisticsCacheService.class, key.toLowerCase());
     }
 
     /**

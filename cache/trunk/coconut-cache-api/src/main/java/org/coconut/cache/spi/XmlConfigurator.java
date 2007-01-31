@@ -249,7 +249,7 @@ public class XmlConfigurator {
         }
 
         protected void addComment(String comment, Node e, Object... o) {
-            String c = Ressources.lookup(XmlConfigurator.class, comment, o);
+            String c = Resources.lookup(XmlConfigurator.class, comment, o);
             Comment eee = doc.createComment(c);
             e.appendChild(eee);
         }

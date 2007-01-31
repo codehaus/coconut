@@ -55,7 +55,7 @@ public class CacheErrorHandler<K, V> {
     public synchronized Map<K, CacheEntry<K, V>> loadAllFailed(
             final CacheLoader<? super K, ?> loader, Collection<? extends K> keys,
             boolean isAsynchronous, Throwable cause) {
-        String msg = Ressources.lookup(CacheErrorHandler.class, "loadAllFailed", keys
+        String msg = Resources.lookup(CacheErrorHandler.class, "loadAllFailed", keys
                 .toString());
         getLogger().error(msg, cause);
         throw new CacheException(msg, cause);
@@ -63,7 +63,7 @@ public class CacheErrorHandler<K, V> {
 
     public synchronized CacheEntry<K, V> loadEntryFailed(
             CacheLoader<? super K, ?> loader, K key, boolean isAsync, Throwable cause) {
-        String msg = Ressources
+        String msg = Resources
                 .lookup(CacheErrorHandler.class, "loadAll", key.toString());
         getLogger().error(msg, cause);
         throw new CacheException(msg, cause);
@@ -94,7 +94,7 @@ public class CacheErrorHandler<K, V> {
             isInitialized = true;
             String loggerName = Cache.class.getPackage().getName() + "." + name;
             Logger l = Logger.getLogger(loggerName);
-            String infoMsg = Ressources.lookup(CacheErrorHandler.class, "noLogger");
+            String infoMsg = Resources.lookup(CacheErrorHandler.class, "noLogger");
             logger = Logs.JDK.from(l);
             logger.info(MessageFormat.format(infoMsg, name, loggerName));
             l.setLevel(Level.SEVERE);
