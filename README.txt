@@ -1,25 +1,34 @@
 Coconut - A Framework for event-driven and highly concurrent services.
 
-Last updated 30 January 2007, Copyright 2004-2006 Kasper Nielsen
+Last updated 31 January 2007, Copyright 2004-2007 Kasper Nielsen
 
-This is a small overview of how the source repository is organised, and how to build Coconut 5.0.
+This is a small overview of how the source repository is organised, and how to build it.
 
 ## Repository organisation
 The repository is organised into the following components.
 
-- coconut-core   Contains core interfaces (used throuhout most of the other projects),
+- cache
+
+- core   Contains core interfaces (used throuhout most of the other projects),
 				 Filters : Definitions
+- coconut-utils
 
-- coconut-aio
+- event
 
-- coconut-cache
+- internal
 
-- coconut-event
+- management 
 
-- coconut-sandbox          This is where experimental code is placed
+- pom
 
-- coconut-test-framework   This framework is used for testing all coconut projects, its based on a cvs version of junit 4
 
+
+- sandbox          This is where experimental code is placed
+
+- test-framework   This framework is used for testing most coconut projects
+                   Most likely you will not need to check this out
+
+- trunks                   
 - site                     (not currently present) This is where the web site for www.coconut.org is generated from.
 
 
