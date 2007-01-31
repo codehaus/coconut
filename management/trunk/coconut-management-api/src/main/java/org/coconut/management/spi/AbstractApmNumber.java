@@ -11,7 +11,6 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.coconut.core.EventProcessor;
-import org.coconut.core.Named;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

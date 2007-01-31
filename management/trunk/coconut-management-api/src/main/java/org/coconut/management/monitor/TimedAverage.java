@@ -12,11 +12,11 @@ import javax.management.InstanceAlreadyExistsException;
 import javax.management.MBeanRegistrationException;
 
 import org.coconut.core.EventProcessor;
-import org.coconut.core.Named;
 import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.spi.AbstractApmNumber;
 import org.coconut.management.spi.Described;
 import org.coconut.management.spi.JMXConfigurator;
+import org.coconut.management.spi.Named;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

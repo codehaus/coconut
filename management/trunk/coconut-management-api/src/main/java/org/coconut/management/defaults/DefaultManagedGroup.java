@@ -15,9 +15,9 @@ import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.coconut.core.Named;
 import org.coconut.management.JmxRegistrant;
 import org.coconut.management.ManagedGroup;
+import org.coconut.management.spi.Named;
 import org.coconut.management.spi.NumberDynamicBean;
 import org.coconut.management.spi.SelfConfigure;
 
@@ -73,14 +73,14 @@ public class DefaultManagedGroup implements ManagedGroup {
         return parent;
     }
 
-    /**
-     * @see org.coconut.apm.next.ApmGroup#addAsGroup(org.coconut.core.Named)
-     */
-    public synchronized ManagedGroup addAsGroup(Named name) {
-        ManagedGroup gm = addGroup(name.getName(), "No description");
-        gm.add(name);
-        return gm;
-    }
+//    /**
+//     * @see org.coconut.apm.next.ApmGroup#addAsGroup(org.coconut.core.Named)
+//     */
+//    public synchronized ManagedGroup addAsGroup(Named name) {
+//        ManagedGroup gm = addGroup(name.getName(), "No description");
+//        gm.add(name);
+//        return gm;
+//    }
 
     public synchronized ManagedGroup addGroup(String name, String description) {
         return addGroup(name, description, true);

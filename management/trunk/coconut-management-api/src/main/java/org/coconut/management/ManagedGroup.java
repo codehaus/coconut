@@ -7,7 +7,7 @@ import java.util.Collection;
 
 import javax.management.JMException;
 
-import org.coconut.core.Named;
+import org.coconut.management.spi.Named;
 
 /**
  * A ManagedGroup is passive collection of attributes  pretty similar to a MBean. Easy to register as MBean
@@ -15,8 +15,15 @@ import org.coconut.core.Named;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public interface ManagedGroup extends Named {
+public interface ManagedGroup {
 
+    /**
+     * Returns the unique name of this group.
+     * 
+     * @Return the unique name of this group.
+     */
+    String getName();
+    
     /**
      * Adds an object to the group. The
      * 

@@ -4,7 +4,6 @@
 package org.coconut.event;
 
 import org.coconut.core.EventProcessor;
-import org.coconut.core.Named;
 import org.coconut.filter.Filter;
 
 /**
@@ -12,11 +11,18 @@ import org.coconut.filter.Filter;
  * filter delivered to its destination.
  * <p>
  * Each subscription has a unique name. If no name is specified at construction
- * time an implementation should automatically generate a unique name.
+ * time an unique name will be generated.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-public interface EventSubscription<E> extends Named {
+public interface EventSubscription<E> {
+
+    /**
+     * Returns the unique name of this subscription.
+     * 
+     * @Return the unique name of this subscription.
+     */
+    String getName();
 
     /**
      * Returns the listener for this subscription.
@@ -41,6 +47,6 @@ public interface EventSubscription<E> extends Named {
      * delivered should clearly specify this.
      */
     void unsubscribe();
-    
+
     boolean isActive();
 }

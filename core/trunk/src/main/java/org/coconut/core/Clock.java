@@ -8,6 +8,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
+ * Clock is a
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -28,6 +30,12 @@ public abstract class Clock {
         }
     }
 
+    /**
+     * DeterministicClock is useful for testing components that rely on time.
+     * 
+     * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+     * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+     */
     public static class DeterministicClock extends Clock implements Serializable {
 
         /** serialVersionUID */
@@ -72,6 +80,9 @@ public abstract class Clock {
         }
     }
 
+    /**
+     * Returns the current time.
+     */
     public abstract long timestamp();
 
     public abstract long relativeTime();

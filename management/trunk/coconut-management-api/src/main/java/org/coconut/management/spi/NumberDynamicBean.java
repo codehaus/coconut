@@ -36,7 +36,6 @@ import javax.management.ObjectName;
 import javax.management.ReflectionException;
 
 import org.coconut.core.EventProcessor;
-import org.coconut.core.Named;
 import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.annotation.ManagedOperation;
 

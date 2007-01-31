@@ -5,7 +5,8 @@
 package org.coconut.core;
 
 /**
- * A class used for transforming elements for one type to another.
+ * Used for transforming objects from one type to another. For example the
+ * following transformer transforms a String into a Long.
  * 
  * <pre>
  * class StringToLongTransformer implements Transformer&lt;String, Long&gt; {
@@ -17,10 +18,10 @@ package org.coconut.core;
  * 
  * <p>
  * Transformers are often applied together with
- * {@link org.coconut.filter.Filter filters}.
+ * {@link org.coconut.filter.Filter filters} to extract information on objects.
  * <p>
- * the {@link Transformers} class supports dynamic construction of transformers
- * either via on-the-fly bytecode generation or reflection.
+ * The {@link Transformers} class supports easy construction of dynamic
+ * transformers either via on-the-fly bytecode generation or reflection.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$

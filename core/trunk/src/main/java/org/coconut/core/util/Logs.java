@@ -5,9 +5,7 @@
 package org.coconut.core.util;
 
 import java.io.PrintStream;
-import java.util.logging.Logger;
 
-import org.apache.commons.logging.impl.Jdk14Logger;
 import org.coconut.core.Log;
 
 /**
@@ -418,8 +416,8 @@ public final class Logs {
          */
         @Override
         public String getName() {
-            if (log instanceof Jdk14Logger) {
-                return ((Jdk14Logger) log).getLogger().getName();
+            if (log instanceof org.apache.commons.logging.impl.Jdk14Logger) {
+                return ((org.apache.commons.logging.impl.Jdk14Logger) log).getLogger().getName();
             } else if (log instanceof Log4JLogger) {
                 return ((Log4JLogger) log).getName();
             } else {
