@@ -207,4 +207,12 @@ public class DefaultServiceCheckLog extends Logs.AbstractLogger implements
         return formatter.format(strip);
     }
 
+    /**
+     * @see org.coconut.core.util.Logs.AbstractLogger#getName()
+     */
+    @Override
+    public String getName() {
+        return "no name";
+    }
+
 }

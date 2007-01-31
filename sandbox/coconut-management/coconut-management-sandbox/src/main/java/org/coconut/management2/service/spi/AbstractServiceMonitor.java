@@ -21,7 +21,6 @@ public abstract class AbstractServiceMonitor<V> implements ServiceMonitor<V> {
      * @see org.coconut.management2.service.ServiceMonitor#getLogger()
      */
     public Log getLogger() {
-        // TODO Auto-generated method stub
         return logger;
     }
 

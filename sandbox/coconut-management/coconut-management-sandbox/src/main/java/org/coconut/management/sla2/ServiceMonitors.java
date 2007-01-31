@@ -3,8 +3,7 @@
  */
 package org.coconut.management.sla2;
 
-import static org.coconut.filter.ComparisonFilters.*;
-import static org.coconut.filter.LogicFilters.not;
+import static org.coconut.filter.Filters.*;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;

@@ -7,7 +7,6 @@ import java.io.File;
 
 import org.coconut.core.util.EventUtils;
 import org.coconut.management2.service.spi.AbstractServiceCheckerSession;
-import org.jgroups.util.GetNetworkInterfaces;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

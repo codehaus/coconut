@@ -3,7 +3,7 @@
  */
 package org.coconut.management2.service.file;
 
-import org.coconut.filter.util.FileFilters;
+import org.coconut.filter.FileFilters;
 import org.coconut.management2.service.spi.AbstractServiceCheckerSession;
 
 /**

@@ -8,6 +8,7 @@ package org.coconut.management2.service;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public interface ServiceMonitor<V> {
+    
     /**
      * Create a new ServiceCheck.
      */

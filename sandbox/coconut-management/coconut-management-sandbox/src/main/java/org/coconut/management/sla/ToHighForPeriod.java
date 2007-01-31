@@ -8,8 +8,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.coconut.core.Clock;
 import org.coconut.core.Named;
-import org.coconut.filter.ComparisonFilters;
 import org.coconut.filter.Filter;
+import org.coconut.filter.Filters;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -42,7 +42,7 @@ public class ToHighForPeriod<E> implements Runnable {
 
     public static ToHighForPeriod GreatherThen(Number b, Number cmp, long time,
             TimeUnit period) {
-        Filter<Number> f = (Filter) ComparisonFilters.lessThen(new CmpNumber(b));
+        Filter<Number> f = (Filter) Filters.lessThen(new CmpNumber(b));
         return new ToHighForPeriod(f, cmp, time, TimeUnit.SECONDS);
     }
 
