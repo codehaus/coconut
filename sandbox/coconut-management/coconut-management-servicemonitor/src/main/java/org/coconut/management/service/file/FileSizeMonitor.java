@@ -1,12 +1,12 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.management2.service.file;
+package org.coconut.management.service.file;
 
 import java.io.File;
 
 import org.coconut.core.util.EventUtils;
-import org.coconut.management2.service.spi.AbstractServiceCheckerSession;
+import org.coconut.management.service.spi.AbstractServiceMonitorSession;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -35,12 +35,12 @@ public class FileSizeMonitor extends FileServiceMonitor<Long> {
      * @see org.coconut.management2.service.spi.AbstractServiceChecker#create()
      */
     @Override
-    public AbstractServiceCheckerSession<Long> newSession() {
+    public AbstractServiceMonitorSession<Long> createSession() {
         return new FileSizeMonitorCheck(minimumSize, maximumSize, minimumWarningSize,
                 maximumWarningSize, new File(getFilename()));
     }
 
-    class FileSizeMonitorCheck extends AbstractServiceCheckerSession<Long> {
+    class FileSizeMonitorCheck extends AbstractServiceMonitorSession<Long> {
         private final long minimumSize;
 
         private final long maximumSize;

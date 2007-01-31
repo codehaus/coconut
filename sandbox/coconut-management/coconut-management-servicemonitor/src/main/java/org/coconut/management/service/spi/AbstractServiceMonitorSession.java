@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.management2.service.spi;
+package org.coconut.management.service.spi;
 
 import java.util.Date;
 import java.util.concurrent.Callable;
@@ -13,14 +13,16 @@ import java.util.concurrent.TimeoutException;
 
 import org.coconut.core.Log;
 import org.coconut.core.Log.Level;
-import org.coconut.management2.service.ServiceCheck;
-import org.coconut.management2.service.ServiceCheckStatus;
+import org.coconut.management.service.ServiceMonitorLog;
+import org.coconut.management.service.ServiceMonitorSession;
+import org.coconut.management.service.ServiceMonitorStatus;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public abstract class AbstractServiceCheckerSession<V> implements ServiceCheck<V> {
+public abstract class AbstractServiceMonitorSession<V> implements
+        ServiceMonitorSession<V> {
 
     static class MyFuture<V> extends FutureTask<V> {
         MyFuture(Callable c) {
@@ -59,9 +61,9 @@ public abstract class AbstractServiceCheckerSession<V> implements ServiceCheck<V
 
     private volatile Throwable exception;
 
-    private final DefaultServiceCheckLog log = new DefaultServiceCheckLog();
+    private final DefaultServiceMonitorLog log = new DefaultServiceMonitorLog();
 
-    private volatile ServiceCheckStatus status = ServiceCheckStatus.UNKNOWN;
+    private volatile ServiceMonitorStatus status = ServiceMonitorStatus.UNKNOWN;
 
     MyFuture<V> future = new MyFuture<V>(new MyRunnable());
 
@@ -132,7 +134,7 @@ public abstract class AbstractServiceCheckerSession<V> implements ServiceCheck<V
         return exception;
     }
 
-    public DefaultServiceCheckLog getLog() {
+    public ServiceMonitorLog getLog() {
         return log;
     }
 
@@ -143,7 +145,7 @@ public abstract class AbstractServiceCheckerSession<V> implements ServiceCheck<V
     /**
      * @see org.coconut.management2.service.ServiceCheckerSession#getStatus()
      */
-    public ServiceCheckStatus getStatus() {
+    public ServiceMonitorStatus getStatus() {
         return status;
     }
 
@@ -200,7 +202,7 @@ public abstract class AbstractServiceCheckerSession<V> implements ServiceCheck<V
 
     protected void setError(String message, Exception e) {
         log(Log.Level.Error, message);
-        setStatus(ServiceCheckStatus.ERROR);
+        setStatus(ServiceMonitorStatus.ERROR);
         setException(e);
         throw new CheckTerminatedException();
     }
@@ -215,14 +217,14 @@ public abstract class AbstractServiceCheckerSession<V> implements ServiceCheck<V
 
     protected void setOk(String message) {
         log(Log.Level.Info, message);
-        setStatus(ServiceCheckStatus.OK);
+        setStatus(ServiceMonitorStatus.OK);
     }
 
-    protected void setStatus(ServiceCheckStatus status) {
+    protected void setStatus(ServiceMonitorStatus status) {
         this.status = status;
     }
 
-    protected void setStatus(ServiceCheckStatus status, Exception e) {
+    protected void setStatus(ServiceMonitorStatus status, Exception e) {
         this.status = status;
         setException(e);
     }
@@ -233,14 +235,14 @@ public abstract class AbstractServiceCheckerSession<V> implements ServiceCheck<V
 
     protected void setUnknown(String message, Exception e) {
         log(Log.Level.Fatal, message);
-        setStatus(ServiceCheckStatus.UNKNOWN);
+        setStatus(ServiceMonitorStatus.UNKNOWN);
         setException(e);
         throw new CheckTerminatedException();
     }
 
     protected void setWarning(String message) {
         log(Log.Level.Warn, message);
-        setStatus(ServiceCheckStatus.WARNING);
+        setStatus(ServiceMonitorStatus.WARNING);
         throw new CheckTerminatedException();
     }
 

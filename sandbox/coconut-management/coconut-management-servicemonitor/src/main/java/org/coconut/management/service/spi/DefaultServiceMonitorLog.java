@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.management2.service.spi;
+package org.coconut.management.service.spi;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -13,16 +13,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.coconut.core.EventProcessor;
 import org.coconut.core.Log;
 import org.coconut.core.util.Logs;
-import org.coconut.management2.service.ServiceCheckLog;
+import org.coconut.management.service.ServiceMonitorLog;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class DefaultServiceCheckLog extends Logs.AbstractLogger implements
-        ServiceCheckLog {
+public class DefaultServiceMonitorLog extends Logs.AbstractLogger implements
+        ServiceMonitorLog {
 
-    static class LogEntry implements ServiceCheckLog.Entry {
+    static class LogEntry implements ServiceMonitorLog.Entry {
         final Log.Level level;
 
         final String message;
@@ -72,7 +72,7 @@ public class DefaultServiceCheckLog extends Logs.AbstractLogger implements
 
     private volatile long finish;
 
-    private volatile EventProcessor<? super ServiceCheckLog.Entry> handler;
+    private volatile EventProcessor<? super ServiceMonitorLog.Entry> handler;
 
     private final ConcurrentLinkedQueue<LogEntry> list = new ConcurrentLinkedQueue<LogEntry>();
 
@@ -81,7 +81,7 @@ public class DefaultServiceCheckLog extends Logs.AbstractLogger implements
     private volatile long start;
 
     public void addLog(StringBuilder app) {
-        for (ServiceCheckLog.Entry p : this) {
+        for (ServiceMonitorLog.Entry p : this) {
             if (p.getMessage().endsWith("\n")) {
                 app.append(formatTime(p.getTimestamp()) + " : " + p.getMessage());
             } else {
@@ -111,7 +111,7 @@ public class DefaultServiceCheckLog extends Logs.AbstractLogger implements
     /**
      * @return the handler
      */
-    public EventProcessor<? super ServiceCheckLog.Entry> getEventHandler() {
+    public EventProcessor<? super ServiceMonitorLog.Entry> getEventHandler() {
         return handler;
     }
 
@@ -182,7 +182,7 @@ public class DefaultServiceCheckLog extends Logs.AbstractLogger implements
      * @param handler
      *            the handler to set
      */
-    public void setEventHandler(EventProcessor<? super ServiceCheckLog.Entry> handler) {
+    public void setEventHandler(EventProcessor<? super ServiceMonitorLog.Entry> handler) {
         this.handler = handler;
     }
 

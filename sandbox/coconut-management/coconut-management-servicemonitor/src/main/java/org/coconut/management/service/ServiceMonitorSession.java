@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.management2.service;
+package org.coconut.management.service;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -10,9 +10,9 @@ import java.util.concurrent.TimeUnit;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public interface ServiceCheck<V> extends Runnable, Future<V> {
+public interface ServiceMonitorSession<V> extends Future<V> {
 
-    ServiceCheckLog getLog();
+    ServiceMonitorLog getLog();
 
     long getDuration(TimeUnit unit);
 
@@ -24,5 +24,5 @@ public interface ServiceCheck<V> extends Runnable, Future<V> {
      * 
      * @return the status of this check
      */
-    ServiceCheckStatus getStatus();
+    ServiceMonitorStatus getStatus();
 }

@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.management2.service.net;
+package org.coconut.management.service.net;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -21,11 +21,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.core.Log;
 import org.coconut.management.annotation.ManagedAttribute;
-import org.coconut.management2.service.ServiceCheck;
-import org.coconut.management2.service.ServiceCheckStatus;
-import org.coconut.management2.service.spi.AbstractServiceMonitor;
-import org.coconut.management2.service.spi.AbstractServiceCheckerSession;
-import org.coconut.management2.service.spi.CheckTerminatedException;
+import org.coconut.management.service.ServiceMonitorStatus;
+import org.coconut.management.service.spi.AbstractServiceMonitorSession;
+import org.coconut.management.service.spi.AbstractServiceMonitor;
+import org.coconut.management.service.spi.CheckTerminatedException;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -33,7 +32,7 @@ import org.coconut.management2.service.spi.CheckTerminatedException;
  */
 public abstract class AbstractTcpServiceChecker extends AbstractServiceMonitor {
     abstract static class AbstractTcpServiceCheckerSession extends
-            AbstractServiceCheckerSession {
+            AbstractServiceMonitorSession {
 
         private BufferedReader reader;
 
@@ -195,7 +194,7 @@ public abstract class AbstractTcpServiceChecker extends AbstractServiceMonitor {
 
         protected void setCancelled(String message, Exception e) {
             log(Log.Level.Info, message);
-            setStatus(ServiceCheckStatus.WARNING);
+            setStatus(ServiceMonitorStatus.WARNING);
             setException(e);
             closeSilent();
             throw new CheckTerminatedException();
@@ -224,7 +223,7 @@ public abstract class AbstractTcpServiceChecker extends AbstractServiceMonitor {
     /**
      * @see org.coconut.management2.service.ServiceChecker#newSession()
      */
-    public synchronized AbstractTcpServiceCheckerSession newSession() {
+    public synchronized AbstractTcpServiceCheckerSession createSession() {
         if (port == 0) {
             throw new IllegalStateException("No port defined");
         } else if (hostName == null) {

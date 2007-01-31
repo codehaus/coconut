@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.management2.service.net;
+package org.coconut.management.service.net;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -10,7 +10,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.coconut.core.util.EventUtils;
 import org.coconut.management.annotation.ManagedAttribute;
-import org.coconut.management2.service.ServiceCheckStatus;
+import org.coconut.management.service.ServiceMonitorStatus;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -119,7 +119,7 @@ public class SmtpServiceChecker extends AbstractTcpServiceChecker {
                     }
                 }
 
-                setStatus(ServiceCheckStatus.OK);
+                setStatus(ServiceMonitorStatus.OK);
             } finally {
                 if (isConnected()) {
                     sendNow(SMTP_QUIT);
@@ -127,7 +127,7 @@ public class SmtpServiceChecker extends AbstractTcpServiceChecker {
                 }
                 close();
             }
-            if (getStatus() == ServiceCheckStatus.OK) {
+            if (getStatus() == ServiceMonitorStatus.OK) {
                 setOk("SMTP Service Is OK");
             }
             return true;

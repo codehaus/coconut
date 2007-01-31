@@ -1,14 +1,14 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.management2.service.net;
+package org.coconut.management.service.net;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import org.coconut.management2.service.spi.AbstractServiceMonitor;
-import org.coconut.management2.service.spi.AbstractServiceCheckerSession;
+import org.coconut.management.service.spi.AbstractServiceMonitor;
+import org.coconut.management.service.spi.AbstractServiceMonitorSession;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -60,12 +60,12 @@ public class IsHostReachable extends AbstractServiceMonitor<Boolean> {
     /**
      * @see org.coconut.management2.service.ServiceChecker#createSession()
      */
-    public synchronized IsHostReachableSession newSession() {
+    public synchronized IsHostReachableSession createSession() {
         return new IsHostReachableSession(hostName, timeout);
     }
 
     public static class IsHostReachableSession extends
-            AbstractServiceCheckerSession<Boolean> {
+            AbstractServiceMonitorSession<Boolean> {
 
         private final int timeout;
 
