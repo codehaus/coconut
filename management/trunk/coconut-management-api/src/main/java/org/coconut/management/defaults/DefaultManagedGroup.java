@@ -134,7 +134,7 @@ public class DefaultManagedGroup implements ManagedGroup {
     /**
      * @see org.coconut.apm.next.ApmGroup#register(java.lang.String)
      */
-    public synchronized void register(String objectName) throws JMException {
+    public synchronized void registerGroup(String objectName) throws JMException {
         // We could use a cool syntes such as org.coconut.cache:name=$1,type=$2,
         // ..
         // and then do a replacement on $1, $2
@@ -156,7 +156,7 @@ public class DefaultManagedGroup implements ManagedGroup {
             bean.register(server, objectName);
         }
         for (ManagedGroup gm : groups.values()) {
-            gm.register(nextLevel);
+            gm.registerGroup(nextLevel);
         }
     }
 

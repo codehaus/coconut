@@ -113,7 +113,12 @@ public class AtomicDouble extends Number {
      * @return the previous value
      */
     public final double getAndIncrement() {
-        return Double.longBitsToDouble(al.getAndIncrement());
+        while (true) {
+            double current = get();
+            double next = current + 1;
+            if (compareAndSet(current, next))
+                return current;
+        }
     }
 
     /**
@@ -122,7 +127,12 @@ public class AtomicDouble extends Number {
      * @return the previous value
      */
     public final double getAndDecrement() {
-        return Double.longBitsToDouble(al.getAndDecrement());
+        while (true) {
+            double current = get();
+            double next = current - 1;
+            if (compareAndSet(current, next))
+                return current;
+        }
     }
 
     /**
@@ -133,7 +143,12 @@ public class AtomicDouble extends Number {
      * @return the previous value
      */
     public final double getAndAdd(double delta) {
-        return Double.longBitsToDouble(al.getAndAdd(c(delta)));
+        while (true) {
+            double current = get();
+            double next = current + delta;
+            if (compareAndSet(current, next))
+                return current;
+        }
     }
 
     /**
@@ -142,7 +157,12 @@ public class AtomicDouble extends Number {
      * @return the updated value
      */
     public final double incrementAndGet() {
-        return Double.longBitsToDouble(al.incrementAndGet());
+        for (;;) {
+            double current = get();
+            double next = current + 1;
+            if (compareAndSet(current, next))
+                return next;
+        }
     }
 
     /**
@@ -151,7 +171,12 @@ public class AtomicDouble extends Number {
      * @return the updated value
      */
     public final double decrementAndGet() {
-        return Double.longBitsToDouble(al.decrementAndGet());
+        for (;;) {
+            double current = get();
+            double next = current - 1;
+            if (compareAndSet(current, next))
+                return next;
+        }
 
     }
 
@@ -163,7 +188,12 @@ public class AtomicDouble extends Number {
      * @return the updated value
      */
     public final double addAndGet(double delta) {
-        return Double.longBitsToDouble(al.addAndGet(c(delta)));
+        for (;;) {
+            double current = get();
+            double next = current + delta;
+            if (compareAndSet(current, next))
+                return next;
+        }
     }
 
     /**

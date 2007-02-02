@@ -7,8 +7,6 @@ import java.util.Collection;
 
 import javax.management.JMException;
 
-import org.coconut.management.spi.Named;
-
 /**
  * A ManagedGroup is passive collection of attributes  pretty similar to a MBean. Easy to register as MBean
  * 
@@ -100,7 +98,7 @@ public interface ManagedGroup {
      *             if this group is already registered
      * @throws Exception 
      */
-    void register(String domain) throws JMException;
+    void registerGroup(String domain) throws JMException;
 
     /**
      * Registers the group. Any groups contained within this group is not

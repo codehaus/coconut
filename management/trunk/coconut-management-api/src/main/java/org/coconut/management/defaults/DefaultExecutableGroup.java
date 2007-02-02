@@ -69,7 +69,7 @@ public class DefaultExecutableGroup extends DefaultManagedGroup implements
 
     public synchronized void startAndRegister(String name) throws JMException {
         start();
-        super.register(name);
+        super.registerGroup(name);
     }
 
     public synchronized void stop() {
