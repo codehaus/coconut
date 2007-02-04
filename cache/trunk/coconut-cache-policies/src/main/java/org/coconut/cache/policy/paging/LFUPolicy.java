@@ -9,7 +9,7 @@ import java.util.List;
 
 import net.jcip.annotations.NotThreadSafe;
 
-import org.coconut.cache.policy.Hitable;
+import org.coconut.cache.policy.PolicyObject;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.policy.spi.AbstractPolicy;
 import org.coconut.internal.util.IndexedHeap;
@@ -20,8 +20,8 @@ import org.coconut.internal.util.IndexedHeap;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
 @NotThreadSafe
-public class LFUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy<T>, Serializable,
-        Cloneable {
+public class LFUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy<T>,
+        Serializable, Cloneable {
 
     /** serialVersionUID */
     private static final long serialVersionUID = -6697601242550775282L;
@@ -49,7 +49,8 @@ public class LFUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
      */
     public LFUPolicy(int initialCapacity) {
         if (initialCapacity < 0) {
-            throw new IllegalArgumentException("size must be 0 or greater, was " + initialCapacity);
+            throw new IllegalArgumentException("size must be 0 or greater, was "
+                    + initialCapacity);
         }
         heap = new IndexedHeap<T>(initialCapacity);
     }
@@ -68,11 +69,19 @@ public class LFUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
      * @{inheritDoc}
      */
     public int add(T data) {
-        if (data instanceof Hitable) {
-            return heap.add(data, ((Hitable) data).getHits());
-        } else {
-            return heap.add(data);
+        return data instanceof PolicyObject ? add(data, ((PolicyObject) data).getHits()) : add(
+                data, 1);
+    }
+
+    /**
+     * @{inheritDoc}
+     */
+    public int add(T data, long hits) {
+        if (hits < 0) {
+            throw new IllegalArgumentException("hits must a non-negative number, was"
+                    + hits);
         }
+        return heap.add(data, hits);
     }
 
     /**
@@ -83,7 +92,7 @@ public class LFUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
             /* ignore */
         }
     }
-    
+
     /**
      * @{inheritDoc}
      */
@@ -139,6 +148,8 @@ public class LFUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
      * @{inheritDoc}
      */
     public void touch(int index) {
+        //TODO what if instanceof PolicyObject?
+        //use getHits()?
         heap.changePriorityDelta(index, 1);
     }
 
@@ -146,6 +157,7 @@ public class LFUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
      * @{inheritDoc}
      */
     public boolean update(int index, T newElement) {
+        //TODO what about hits for newElement
         heap.replace(index, newElement);
         return true;
     }

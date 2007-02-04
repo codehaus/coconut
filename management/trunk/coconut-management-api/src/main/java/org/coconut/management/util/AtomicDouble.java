@@ -26,6 +26,8 @@ public class AtomicDouble extends Number {
     /* The AtomicLong we are wrapping */
     private final AtomicLong al;
 
+    //Replace AtomicLong with AtomicReference, much faster..
+    
     /**
      * Create a new AtomicLong with initial value <tt>0</tt>.
      */

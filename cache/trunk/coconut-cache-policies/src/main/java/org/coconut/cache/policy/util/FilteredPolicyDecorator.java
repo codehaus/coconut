@@ -3,7 +3,7 @@
  */
 package org.coconut.cache.policy.util;
 
-import org.coconut.cache.policy.CostSizeObject;
+import org.coconut.cache.policy.PolicyObject;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.filter.Filter;
 
@@ -29,12 +29,12 @@ public class FilteredPolicyDecorator<T> extends PolicyDecorator<T> {
      * If no cache policy is specified in the constructors a LRU replacement
      * policy is being wrapped (as in the original paper).
      */
-    public static <T extends CostSizeObject> ReplacementPolicy<T> sizeRejector(
-            ReplacementPolicy<T> policy, long size) {
-        return new FilteredPolicyDecorator<T>(policy, new SizeFilter<T>(size));
+    public static <T extends PolicyObject> ReplacementPolicy<T> sizeRejector(
+            ReplacementPolicy<T> policy, long maximumSize) {
+        return new FilteredPolicyDecorator<T>(policy, new SizeFilter<T>(maximumSize));
     }
 
-    public static <T extends CostSizeObject> ReplacementPolicy<T> costRejector(
+    public static <T extends PolicyObject> ReplacementPolicy<T> costRejector(
             ReplacementPolicy<T> policy, double minimumCost) {
         return new FilteredPolicyDecorator<T>(policy, new CostFilter<T>(minimumCost));
     }
@@ -82,7 +82,7 @@ public class FilteredPolicyDecorator<T> extends PolicyDecorator<T> {
         }
     }
 
-    static class CostFilter<T extends CostSizeObject> implements Filter<T> {
+    static class CostFilter<T extends PolicyObject> implements Filter<T> {
         private final double minimumCost;
 
         /**
@@ -100,7 +100,7 @@ public class FilteredPolicyDecorator<T> extends PolicyDecorator<T> {
         }
     }
 
-    static class SizeFilter<T extends CostSizeObject> implements Filter<T> {
+    static class SizeFilter<T extends PolicyObject> implements Filter<T> {
         private final long threshold;
 
         /**

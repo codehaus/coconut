@@ -11,11 +11,11 @@ import java.util.List;
 
 import net.jcip.annotations.NotThreadSafe;
 
-import org.coconut.cache.policy.CostSizeObject;
+import org.coconut.cache.policy.PolicyObject;
 import org.coconut.cache.policy.spi.AbstractPolicy;
 
 @NotThreadSafe
-public class LandlordPolicy<T extends CostSizeObject> extends AbstractPolicy<T> {
+public class LandlordPolicy<T extends PolicyObject> extends AbstractPolicy<T> {
 
     /**
      * @see org.coconut.cache.policy.spi.AbstractPolicy#getSize()
@@ -43,7 +43,7 @@ public class LandlordPolicy<T extends CostSizeObject> extends AbstractPolicy<T> 
         objectSize = new long[initialCapacity];
         objectCredit = new double[initialCapacity];
         objectCost = new double[initialCapacity];
-        objects = (T[]) new CostSizeObject[initialCapacity];
+        objects = (T[]) new PolicyObject[initialCapacity];
     }
 
     @SuppressWarnings("unchecked")
@@ -51,7 +51,7 @@ public class LandlordPolicy<T extends CostSizeObject> extends AbstractPolicy<T> 
         this.size = landlord.size;
         objectCost = new double[landlord.objectCost.length];
         objectCredit = new double[landlord.objectCredit.length];
-        objects = (T[]) new CostSizeObject[landlord.objects.length];
+        objects = (T[]) new PolicyObject[landlord.objects.length];
         objectSize = new long[landlord.objectSize.length];
         System.arraycopy(landlord.objects, 0, objects, 0, objects.length);
         System.arraycopy(landlord.objectSize, 0, objectSize, 0, objectSize.length);
@@ -190,7 +190,7 @@ public class LandlordPolicy<T extends CostSizeObject> extends AbstractPolicy<T> 
 
     @SuppressWarnings("unchecked")
     private void setSize(int newlen) {
-        CostSizeObject[] newData = new CostSizeObject[newlen];
+        PolicyObject[] newData = new PolicyObject[newlen];
         long[] newSize = new long[newlen];
         double[] newCost = new double[newlen];
         double[] newCredit = new double[newlen];

@@ -5,16 +5,24 @@
 package org.coconut.cache.policy;
 
 /**
+ * A mix-in style interface for marking objects that maintains various
+ * statistics about how many time it has been succesfully requested. A
+ * replacement policy might use this information for deciding when to evict the
+ * object.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public interface CostSizeObject {
+public interface PolicyObject {
 
     /** The default cost of fetching an element if no cost is specified. */
-    public static final double DEFAULT_COST = 1;
+    public static final double DEFAULT_COST = 1.0;
 
     /** The default size of an element if no size is specified. */
     public static final long DEFAULT_SIZE = 1;
+
+    /** The initial number of hits for an element. */
+    public static final long DEFAULT_HITS = 0;
 
     /**
      * Returns the size of this element. Implementations are free to include
@@ -49,4 +57,13 @@ public interface CostSizeObject {
      * @see org.coconut.cache.policy.CostSizePolicy
      */
     double getCost();
+
+    /**
+     * Returns the number of times the object has been previously succesfully
+     * requested.
+     * 
+     * @return the number of times the object has been previously succesfully
+     *         requested.
+     */
+    long getHits();
 }

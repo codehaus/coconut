@@ -6,7 +6,7 @@ package org.coconut.cache;
 
 import java.util.Map;
 
-import org.coconut.cache.policy.CostSizeObject;
+import org.coconut.cache.policy.PolicyObject;
 
 /**
  * A <tt>CacheEntry</tt> describes a value-key mapping much like
@@ -34,7 +34,7 @@ import org.coconut.cache.policy.CostSizeObject;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public interface CacheEntry<K, V> extends Map.Entry<K, V>, CostSizeObject {
+public interface CacheEntry<K, V> extends Map.Entry<K, V>, PolicyObject {
 
     /**
      * Returns the time of creation for the specific cache entry in

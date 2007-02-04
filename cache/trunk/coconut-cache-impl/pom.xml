@@ -24,6 +24,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  <!-- 
   <build>
     <plugins>
       <plugin>
@@ -34,7 +35,7 @@
           <descriptorRefs>
             <descriptorRef>jar-with-dependencies</descriptorRef>
           </descriptorRefs>
-<!--          <appendAssemblyId>false</appendAssemblyId> --> 
+         <appendAssemblyId>false</appendAssemblyId>  
         </configuration>
         <executions>
           <execution>
@@ -48,4 +49,5 @@
       </plugin>
     </plugins>
   </build>
+   -->
 </project>

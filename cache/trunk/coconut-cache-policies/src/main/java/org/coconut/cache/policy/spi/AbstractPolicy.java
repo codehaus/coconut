@@ -15,11 +15,6 @@ import org.coconut.cache.policy.ReplacementPolicy;
  */
 public abstract class AbstractPolicy<T> implements ReplacementPolicy<T> {
 
-    public double getEvictionScore() {
-        // ??
-        return -1;
-    }
-
     /**
      * Adds all the elements to the policy. The elements will be added
      * accordingly to the returning order of the iterator.
@@ -48,13 +43,17 @@ public abstract class AbstractPolicy<T> implements ReplacementPolicy<T> {
      *         where evicted
      */
     public List<T> evict(final int number) {
+        if (number <= 0) {
+            throw new IllegalArgumentException("number must be a positive number, was "
+                    + number);
+        }
         int count = number;
         // do not use number as initial capacity, might be Integer.MAX_VALUE
         ArrayList<T> list = new ArrayList<T>(Math.min(getSize(), number));
         T i = evictNext();
-        while (i != null && count-- > 0) {
+        while (i != null) {
             list.add(i);
-            i = evictNext();
+            i = --count > 0 ? evictNext() : null;
         }
         return list;
     }

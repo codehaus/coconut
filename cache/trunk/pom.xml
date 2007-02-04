@@ -21,10 +21,66 @@
     </dependency>
   </dependencies>
 
+  <reporting>
+    <excludeDefaults>true</excludeDefaults>
+    <plugins>
+      <plugin>
+        <artifactId>maven-clover-plugin</artifactId>
+        <configuration>
+          <generateHistorical>true</generateHistorical>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-clover-plugin</artifactId>
+        <configuration>
+          <jdk>1.5</jdk>
+          <excludes>
+    <!--         <exclude>**/tck/**/*.java</exclude> -->
+          </excludes>
+          <licenseLocation>
+            ${user.home}/licenses/coconut-clover.license
+          </licenseLocation>
+          <flushPolicy>threaded</flushPolicy>
+          <flushInterval>100</flushInterval>
+          <targetPercentage>0%</targetPercentage>
+        </configuration>
+        <executions>
+          <execution>
+            <id>main</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>instrument</goal>
+              <goal>aggregate</goal>
+              <goal>check</goal>
+              <goal>log</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>site</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>instrument</goal>
+              <goal>aggregate</goal>
+
+              <!-- We save a history point in order to have data to generate a historical report -->
+              <goal>save-history</goal>
+
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
   <modules>
     <module>coconut-cache-api</module>
     <module>coconut-cache-impl</module>
     <module>coconut-cache-policies</module>
+    <!-- 
     <module>coconut-cache-tck</module>
+     -->
   </modules>
 </project>

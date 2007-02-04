@@ -4,18 +4,20 @@
 
 package org.coconut.cache.policy.util;
 
-import org.coconut.cache.policy.CostSizeObject;
+import org.coconut.cache.policy.PolicyObject;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class CostSizeHolder<T> implements CostSizeObject {
+public class CostSizeHolder<T> implements PolicyObject {
     private final double cost;
 
     private final long size;
 
     private final T data;
+
+    private final long hits;
 
     public double getCost() {
         return cost;
@@ -33,6 +35,7 @@ public class CostSizeHolder<T> implements CostSizeObject {
         this.cost = cost;
         this.size = size;
         this.data = data;
+        this.hits = CostSizeHolder.DEFAULT_HITS;
     }
 
     public static <T> CostSizeHolder add(T data, long size, double cost) {
@@ -40,8 +43,8 @@ public class CostSizeHolder<T> implements CostSizeObject {
     }
 
     public static <T> CostSizeHolder add(T data) {
-        return new CostSizeHolder<T>(data, CostSizeObject.DEFAULT_SIZE,
-                CostSizeObject.DEFAULT_COST);
+        return new CostSizeHolder<T>(data, PolicyObject.DEFAULT_SIZE,
+                PolicyObject.DEFAULT_COST);
     }
 
     @Override
@@ -56,5 +59,12 @@ public class CostSizeHolder<T> implements CostSizeObject {
     @Override
     public int hashCode() {
         return super.hashCode();
+    }
+
+    /**
+     * @see org.coconut.cache.policy.CostSizeObject#getHits()
+     */
+    public long getHits() {
+        return hits;
     }
 }

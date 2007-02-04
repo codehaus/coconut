@@ -5,16 +5,15 @@
 package org.coconut.cache.tck.loading;
 
 import static org.coconut.test.CollectionUtils.M1;
-import static org.coconut.test.CollectionUtils.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.coconut.test.CollectionUtils.M2;
+import static org.coconut.test.CollectionUtils.M3;
+import static org.coconut.test.CollectionUtils.M4;
+import static org.coconut.test.CollectionUtils.M5;
 
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.tck.CacheTestBundle;
 import org.coconut.cache.tck.util.CacheEntryLoader;
 import org.coconut.cache.util.DefaultCacheEntry;
 import org.junit.Before;
