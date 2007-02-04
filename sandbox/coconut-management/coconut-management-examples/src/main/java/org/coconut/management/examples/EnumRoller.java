@@ -23,7 +23,7 @@ public class EnumRoller {
         for (Dice d : Dice.values()) {
             mg.add(new TimedAverage(dice.liveCount(d)));
         }
-        mg.register("my.app:name=Rolled Dices");
+        mg.registerGroup("my.app:name=Rolled Dices");
         for (int i = 0; i < 10000; i++) {
             dice.process(Dice.roll());
             Thread.sleep(15);
