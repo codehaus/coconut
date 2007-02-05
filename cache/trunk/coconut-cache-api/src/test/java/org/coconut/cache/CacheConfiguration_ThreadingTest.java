@@ -59,25 +59,25 @@ public class CacheConfiguration_ThreadingTest {
     @Test
     public void testScheduledEvictionAtFixedRate() {
         t.setExecutor(ses);
-        assertEquals(t, t.SetScheduledEvictionAtFixedRate(4, TimeUnit.MICROSECONDS));
+        assertEquals(t, t.setScheduledEvictionAtFixedRate(4, TimeUnit.MICROSECONDS));
         assertEquals(4000, t.getScheduledEvictionAtFixedRate(TimeUnit.NANOSECONDS));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testSetScheduledEvictionAtFixedRateIAE() {
         t.setExecutor(ses);
-        t.SetScheduledEvictionAtFixedRate(-1, TimeUnit.MICROSECONDS);
+        t.setScheduledEvictionAtFixedRate(-1, TimeUnit.MICROSECONDS);
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void testSetScheduledEvictionAtFixedRateISE1() {
-        t.SetScheduledEvictionAtFixedRate(4, TimeUnit.MICROSECONDS);
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void testSetScheduledEvictionAtFixedRateISE2() {
-        t.setExecutor(e);
-        t.SetScheduledEvictionAtFixedRate(4, TimeUnit.MICROSECONDS);
-    }
+//    @Test(expected = IllegalStateException.class)
+//    public void testSetScheduledEvictionAtFixedRateISE1() {
+//        t.setScheduledEvictionAtFixedRate(4, TimeUnit.MICROSECONDS);
+//    }
+//
+//    @Test(expected = IllegalStateException.class)
+//    public void testSetScheduledEvictionAtFixedRateISE2() {
+//        t.setExecutor(e);
+//        t.setScheduledEvictionAtFixedRate(4, TimeUnit.MICROSECONDS);
+//    }
 
 }

@@ -8,28 +8,31 @@ import java.util.Collection;
 import org.coconut.cache.Cache;
 
 /**
+ * All asynchronously tasks that are parsed on to the a user specified executor
+ * should implement this interface.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public interface ExecutorEvent extends Runnable {
+public interface CacheExecutorRunnable extends Runnable {
 
-    interface LoadKey<K> extends ExecutorEvent {
+    interface LoadKey<K> extends CacheExecutorRunnable {
         K getKey();
     }
 
-    interface LoadKeys<K> extends ExecutorEvent {
+    interface LoadKeys<K> extends CacheExecutorRunnable {
         Collection<? extends K> getKeys();
     }
 
-    interface Clear extends ExecutorEvent {
+    interface CacheClear extends CacheExecutorRunnable {
         Cache getCache();
     }
 
-    interface Evict extends ExecutorEvent {
+    interface CacheEvict extends CacheExecutorRunnable {
         Cache getCache();
     }
-    
-    interface Statistics extends ExecutorEvent {
-        
+
+    interface StatisticsGathering extends CacheExecutorRunnable {
+
     }
 }

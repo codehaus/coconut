@@ -11,12 +11,15 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -31,6 +34,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.CacheLoader;
 import org.coconut.core.Log;
 import org.coconut.core.util.Logs;
 import org.coconut.filter.Filter;
@@ -195,10 +199,12 @@ public class XmlConfigurator {
 
     List<AbstractConfigurator> getPersisters() {
         ArrayList<AbstractConfigurator> list = new ArrayList<AbstractConfigurator>();
+        list.add(new BackendConfigurator());
         list.add(new ErrorHandlerConfigurator());
         list.add(new ExpirationConfigurator());
         list.add(new EvictionConfigurator());
         list.add(new JMXConfigurator());
+        list.add(new StatisticsConfigurator());
         list.add(new ThreadConfigurator());
         return list;
     }
@@ -413,6 +419,10 @@ public class XmlConfigurator {
 
         public final static String QUEUE_TAG = "queue";
 
+        public final static String SHUTDOWN_EXECUTOR_SERVICE_TAG = "shutdown-executor-service";
+
+        public final static String SCHEDULE_EVICT_TAG = "schedule-evict";
+
         private final static Class DEFAULT_REH = ThreadPoolExecutor.AbortPolicy.class;
 
         public CacheConfiguration.Threading t() {
@@ -427,15 +437,87 @@ public class XmlConfigurator {
             Element e = getChild(THREADING_TAG);
             if (e != null) {
                 /* Register */
-                // if (e.hasAttribute(REGISTER_ATRB)) {
-                // j().setAutoRegister(
-                // Boolean.parseBoolean(e.getAttribute(REGISTER_ATRB)));
-                // }
-                // /* Domain */
-                // Element domain = getChild(DOMAIN_TAG, e);
-                // if (domain != null) {
-                // j().setDomain(domain.getTextContent());
-                // }
+                if (e.hasAttribute(SHUTDOWN_EXECUTOR_SERVICE_TAG)) {
+                    t().setShutdownExecutorService(
+                            Boolean.parseBoolean(e
+                                    .getAttribute(SHUTDOWN_EXECUTOR_SERVICE_TAG)));
+                }
+
+                Element evict = getChild(SCHEDULE_EVICT_TAG, e);
+                if (evict != null) {
+                    long timeout = UnitOfTime.fromElement(evict, TimeUnit.NANOSECONDS);
+                    t().setScheduledEvictionAtFixedRate(timeout, TimeUnit.NANOSECONDS);
+                }
+                Element threadPool = getChild(EXECUTOR_TAG, e);
+                Element sceduledThreadPool = getChild(SCHEDULED_EXECUTOR_TAG, e);
+                Element common = threadPool == null ? sceduledThreadPool : threadPool;
+                if (common != null) {
+                    Element tfElement = getChild(THREAD_FACTORY_TAG, common);
+                    ThreadFactory tf = tfElement == null ? Executors
+                            .defaultThreadFactory() : loadObject(tfElement,
+                            ThreadFactory.class);
+
+                    Element rejectElement = getChild(REJECTED_EXECUTION_HANDLER_TAG,
+                            common);
+                    final RejectedExecutionHandler reh;
+                    if (rejectElement == null
+                            || rejectElement.getAttribute("type").equals("abort")) {
+                        reh = new ThreadPoolExecutor.AbortPolicy();
+                    } else if (rejectElement.getAttribute("type").equals("callerRuns")) {
+                        reh = new ThreadPoolExecutor.CallerRunsPolicy();
+                    } else if (rejectElement.getAttribute("type").equals("discardOldest")) {
+                        reh = new ThreadPoolExecutor.DiscardOldestPolicy();
+                    } else if (rejectElement.getAttribute("type").equals("discard")) {
+                        reh = new ThreadPoolExecutor.DiscardPolicy();
+                    } else {
+                        reh = loadObject(rejectElement, RejectedExecutionHandler.class);
+                    }
+
+                    int coreSize = Integer.parseInt(common.getAttribute(CORE_SIZE_ATRB));
+                    final Executor ee;
+                    if (sceduledThreadPool == null) {
+                        int maximumSize = coreSize;
+                        if (threadPool.hasAttribute(MAX_SIZE_ATRB)) {
+                            maximumSize = Integer.parseInt(threadPool
+                                    .getAttribute(MAX_SIZE_ATRB));
+                        }
+                        long timeout = 0;
+                        if (threadPool.hasAttribute("keepAlive")) {
+                            timeout = UnitOfTime.fromAttributes(threadPool,
+                                    TimeUnit.NANOSECONDS, "keepAlive", "keepAliveUnit");
+                        }
+                        BlockingQueue q = new LinkedBlockingQueue();
+
+                        Element bq = getChild("array-queue", threadPool);
+                        if (bq != null) {
+                            int capacity = Integer.parseInt(bq.getAttribute("size"));
+                            q = new ArrayBlockingQueue(capacity);
+                        }
+                        Element pq = getChild("priorityQueue", threadPool);
+                        if (pq != null) {
+                            Comparator c = null;
+                            if (pq.hasAttribute("type")) {
+                                c = loadObject(pq, Comparator.class);
+                            }
+                            q = new PriorityBlockingQueue(11, c);
+                        }
+                        Element sq = getChild("synchronous-queue", threadPool);
+                        if (sq != null) {
+                            q = new SynchronousQueue();
+                        }
+
+                        Element qq = getChild("queue", threadPool);
+                        if (qq != null) {
+                            q = loadObject(qq, BlockingQueue.class);
+                        }
+
+                        ee = new ThreadPoolExecutor(coreSize, maximumSize, timeout,
+                                TimeUnit.NANOSECONDS, q, tf, reh);
+                    } else {
+                        ee = new ScheduledThreadPoolExecutor(coreSize, tf, reh);
+                    }
+                    t().setExecutor(ee);
+                }
             }
         }
 
@@ -454,11 +536,9 @@ public class XmlConfigurator {
                     EXECUTOR_TAG, base);
             if (!"java.util.concurrent.Executors.DefaultThreadFactory".equals(tpe
                     .getThreadFactory().getClass().getCanonicalName())) {
-                Element tfTag=add(THREAD_FACTORY_TAG,exTag);
-                if (!saveObject(tfTag, "threading.cannotPersistThreadFactory",
-                        tpe.getThreadFactory())) {
-                    return;
-                }
+                Element tfTag = add(THREAD_FACTORY_TAG, exTag);
+                saveObject(tfTag, "threading.cannotPersistThreadFactory", tpe
+                        .getThreadFactory());
             }
             /* RejectedExecutionHandler */
             RejectedExecutionHandler reh = tpe.getRejectedExecutionHandler();
@@ -466,8 +546,8 @@ public class XmlConfigurator {
                 Element rehTag = add(REJECTED_EXECUTION_HANDLER_TAG, exTag);
                 if (policy.containsKey(reh.getClass())) {
                     rehTag.setAttribute("type", policy.get(reh.getClass()));
-                } else if (!saveObject(rehTag, "threading.cannotPersistREH", reh)) {
-                    return;
+                } else {
+                    saveObject(rehTag, "threading.cannotPersistREH", reh);
                 }
             }
 
@@ -476,25 +556,28 @@ public class XmlConfigurator {
                 Class c = tpe.getQueue().getClass();
                 if (c.equals(ArrayBlockingQueue.class)) {
                     ArrayBlockingQueue q = (ArrayBlockingQueue) tpe.getQueue();
-                    Element abq = add("array-queue", base);
+                    Element abq = add("array-queue", exTag);
                     abq.setAttribute("size", Integer.toString(q.size()
                             + q.remainingCapacity()));
                 } else if (c.equals(LinkedBlockingQueue.class)) {
                     // default
                 } else if (c.equals(PriorityBlockingQueue.class)) {
                     PriorityBlockingQueue q = (PriorityBlockingQueue) tpe.getQueue();
-                    Element qElement = add("priorityQueue", base);
+                    Element qElement = add("priorityQueue", exTag);
                     Comparator comp = q.comparator();
                     if (comp != null
                             && !saveObject(qElement, "threading.cannotPersistComperator",
                                     comp)) {
+                        // Queue cannot be set on ThreadPoolExecutor
+                        base.removeChild(exTag);
                         return;
                     }
                 } else if (c.equals(SynchronousQueue.class)) {
-                    add("synchronous-queue", base);
+                    add("synchronous-queue", exTag);
                 } else {
-                    Element q = add("queue", base);
+                    Element q = add("queue", exTag);
                     if (!saveObject(q, "threading.cannotPersistQueue", tpe.getQueue())) {
+                        base.removeChild(exTag);
                         return;
                     }
                 }
@@ -533,22 +616,59 @@ public class XmlConfigurator {
                             .getCanonicalName());
                 }
             }
-            // if (j().getAutoRegister() != CONF.jmx().getAutoRegister()) {
-            // base.setAttribute(REGISTER_ATRB,
-            // Boolean.toString(j().getAutoRegister()));
-            // }
-            //
-            // /* Domain Filter */
-            // if (!(j().getDomain().equals(CONF.jmx().getDomain()))) {
-            // add(DOMAIN_TAG, base, j().getDomain());
-            // }
-            // /* MBeanServer */
-            // if (!(j().getMBeanServer().equals(CONF.jmx().getMBeanServer())))
-            // {
-            // addComment("management.cannotPersistMBeanServer", base);
-            // }
+            if (t().getShutdownExecutorService() != CONF.threading()
+                    .getShutdownExecutorService()) {
+                base.setAttribute(SHUTDOWN_EXECUTOR_SERVICE_TAG, Boolean.toString(t()
+                        .getShutdownExecutorService()));
+            }
+
+            /* Refresh Timer */
+            long evict = t().getScheduledEvictionAtFixedRate(TimeUnit.NANOSECONDS);
+            if (evict != CONF.threading().getScheduledEvictionAtFixedRate(
+                    TimeUnit.NANOSECONDS)) {
+                UnitOfTime.toElementCompact(add(SCHEDULE_EVICT_TAG, base), evict,
+                        TimeUnit.NANOSECONDS);
+            }
 
             if (base.hasChildNodes() || base.hasAttributes()) {
+                root.appendChild(base);
+            }
+        }
+    }
+
+    static class StatisticsConfigurator extends AbstractConfigurator {
+
+        public final static String ENABLED_ATRB = "enabled";
+
+        public final static String STATISTICS_TAG = "statistics";
+
+        public CacheConfiguration.Statistics s() {
+            return conf().statistics();
+        }
+
+        /**
+         * @see org.coconut.cache.spi.xml.AbstractPersister#read()
+         */
+        @Override
+        protected void read() throws Exception {
+            Element e = getChild(STATISTICS_TAG);
+            if (e != null) {
+                /* Register */
+                if (e.hasAttribute(ENABLED_ATRB)) {
+                    s().setEnabled(Boolean.parseBoolean(e.getAttribute(ENABLED_ATRB)));
+                }
+            }
+        }
+
+        /**
+         * @see org.coconut.cache.spi.xml.AbstractPersister#write()
+         */
+        @Override
+        protected void write() throws Exception {
+            /* Register */
+            if (s().isEnabled() != CONF.statistics().isEnabled()) {
+                Element base = doc.createElement(STATISTICS_TAG);
+                base.setAttribute(ENABLED_ATRB, Boolean.toString(s().isEnabled()));
                 root.appendChild(base);
             }
         }
@@ -605,11 +725,66 @@ public class XmlConfigurator {
                 add(DOMAIN_TAG, base, j().getDomain());
             }
             /* MBeanServer */
-            if (!(j().getMBeanServer().equals(CONF.jmx().getMBeanServer()))) {
+            if (j().getMBeanServer() != CONF.jmx().getMBeanServer()) {
                 addComment("management.cannotPersistMBeanServer", base);
             }
 
             if (base.hasChildNodes() || base.hasAttributes()) {
+                root.appendChild(base);
+            }
+        }
+    }
+
+    static class BackendConfigurator extends AbstractConfigurator {
+
+        public final static String LOADER_TAG = "loader";
+
+        public final static String BACKEND_TAG = "backed";
+
+        public final static String EXTENDED_LOADER_TAG = "extended-loader";
+
+        public CacheConfiguration.Backend b() {
+            return conf().backend();
+        }
+
+        /**
+         * @see org.coconut.cache.spi.xml.AbstractPersister#read()
+         */
+        @Override
+        protected void read() throws Exception {
+            Element e = getChild(BACKEND_TAG);
+            if (e != null) {
+                Element loaderE = getChild(LOADER_TAG, e);
+                if (loaderE != null) {
+                    CacheLoader loader = loadObject(loaderE, CacheLoader.class);
+                    b().setBackend(loader);
+                }
+
+                Element extendedLoader = getChild(EXTENDED_LOADER_TAG, e);
+                if (extendedLoader != null) {
+                    CacheLoader loader = loadObject(extendedLoader, CacheLoader.class);
+                    b().setExtendedBackend(loader);
+                }
+            }
+        }
+
+        /**
+         * @see org.coconut.cache.spi.xml.AbstractPersister#write()
+         */
+        @Override
+        protected void write() throws Exception {
+            Element base = doc.createElement(BACKEND_TAG);
+
+            if (b().getBackend() != null) {
+                saveObject(add(LOADER_TAG, base), "backend.cannotPersistLoader", b()
+                        .getBackend());
+            }
+            if (b().getExtendedBackend() != null) {
+                saveObject(add(EXTENDED_LOADER_TAG, base), "backend.cannotPersistLoader",
+                        b().getExtendedBackend());
+            }
+
+            if (base.hasChildNodes()) {
                 root.appendChild(base);
             }
         }
@@ -685,8 +860,8 @@ public class XmlConfigurator {
             /* Expiration Filter */
             Filter filter = e().getFilter();
             if (filter != null) {
-                super.saveObject(add(EXPIRATION_FILTER_TAG, base), "expiration.cannotPersistFilter",
-                        filter);
+                super.saveObject(add(EXPIRATION_FILTER_TAG, base),
+                        "expiration.cannotPersistFilter", filter);
             }
 
             /* Refresh Timer */
@@ -699,8 +874,8 @@ public class XmlConfigurator {
             /* Refresh Filter */
             Filter refreshFilter = e().getRefreshFilter();
             if (refreshFilter != null) {
-                super.saveObject(add(REFRESH_FILTER_TAG, base), "expiration.cannotPersistRefreshFilter",
-                        refreshFilter);
+                super.saveObject(add(REFRESH_FILTER_TAG, base),
+                        "expiration.cannotPersistRefreshFilter", refreshFilter);
             }
             if (base.hasChildNodes()) {
                 root.appendChild(base);

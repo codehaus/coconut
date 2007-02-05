@@ -35,8 +35,8 @@ public class CacheConfiguration_StatisticsTest {
     
     @Test
     public void testEnabled() {
-        assertTrue(s.getEnabled());
+        assertTrue(s.isEnabled());
         assertEquals(s, s.setEnabled(false));
-        assertFalse(s.getEnabled());
+        assertFalse(s.isEnabled());
     }
 }

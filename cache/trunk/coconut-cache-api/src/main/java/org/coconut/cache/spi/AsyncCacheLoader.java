@@ -11,17 +11,28 @@ import org.coconut.cache.CacheLoader;
 import org.coconut.core.Callback;
 
 /**
- * Any CacheLoader implementation  
+ * An asynchronous CacheLoader. Normally users do not define asynchronously
+ * cache loaders themself. Instead they implement {@link CacheLoader} and a
+ * specified {@link java.util.concurrent.Executor} takes care of loading the
+ * values. However, some services such as an NIO based cache loader, where
+ * entries are asynchronously loaded over the network. This interface might be
+ * useful.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-
 public interface AsyncCacheLoader<K, V> extends CacheLoader<K, V> {
-    
+
     /**
+     * Loads a single value asynchronously.
+     * 
      * @param key
+     *            the key whose associated value is to be returned.
      * @param c
-     * @return
+     *            the callback that is called once the request is completed
+     * @return a Future representing pending completion of the load, and
+     *         whose <tt>get()</tt> method will return <tt>null</tt> upon
+     *         completion.
      */
     Future<?> asyncLoad(final K key, Callback<V> c);
 

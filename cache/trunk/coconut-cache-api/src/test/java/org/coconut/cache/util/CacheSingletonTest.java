@@ -4,14 +4,14 @@
 
 package org.coconut.cache.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.lang.reflect.Field;
-import java.net.URL;
 import java.util.Map;
 
-import junit.framework.JUnit4TestAdapter;
-import static org.junit.Assert.*;
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
 import org.coconut.cache.DummyCache;
 import org.coconut.cache.spi.AbstractCache;

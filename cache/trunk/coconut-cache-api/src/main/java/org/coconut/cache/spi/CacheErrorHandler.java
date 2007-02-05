@@ -61,16 +61,20 @@ public class CacheErrorHandler<K, V> {
         throw new CacheException(msg, cause);
     }
 
-    public synchronized CacheEntry<K, V> loadEntryFailed(
+    public synchronized CacheEntry<K, V> loadFailed(
             CacheLoader<? super K, ?> loader, K key, boolean isAsync, Throwable cause) {
         String msg = Resources
-                .lookup(CacheErrorHandler.class, "loadAll", key.toString());
+                .lookup(CacheErrorHandler.class, "loadFailed", key.toString());
         getLogger().error(msg, cause);
         throw new CacheException(msg, cause);
     }
 
     public synchronized void setCacheName(String name) {
         this.name = name;
+    }
+    
+    public synchronized String getCacheName() {
+        return name;
     }
 
     public synchronized void setLogger(Log logger) {
@@ -96,8 +100,10 @@ public class CacheErrorHandler<K, V> {
             Logger l = Logger.getLogger(loggerName);
             String infoMsg = Resources.lookup(CacheErrorHandler.class, "noLogger");
             logger = Logs.JDK.from(l);
+            l.setLevel(Level.ALL);
             logger.info(MessageFormat.format(infoMsg, name, loggerName));
-            l.setLevel(Level.SEVERE);
+         //   l.setLevel(Level.INFO);
+           l.setLevel(Level.SEVERE);
             isInitialized = true;
         }
     }

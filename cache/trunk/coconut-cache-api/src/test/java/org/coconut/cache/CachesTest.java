@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.coconut.cache.policy.Policies;
 import org.coconut.cache.policy.ReplacementPolicy;
-import org.coconut.cache.spi.ExecutorEvent;
+import org.coconut.cache.spi.CacheExecutorRunnable;
 import org.coconut.cache.util.AbstractCacheLoader;
 import org.coconut.filter.Filters;
 import org.coconut.test.MockTestCase;
@@ -170,8 +170,8 @@ public class CachesTest extends MockTestCase {
         Mock m = mock(Cache.class);
         Cache c = (Cache) m.proxy();
         Runnable r = Caches.clearAsRunnable(c);
-        assertTrue(r instanceof ExecutorEvent.Clear);
-        assertEquals(c, ((ExecutorEvent.Clear) r).getCache());
+        assertTrue(r instanceof CacheExecutorRunnable.CacheClear);
+        assertEquals(c, ((CacheExecutorRunnable.CacheClear) r).getCache());
 
         m.expects(once()).method("clear");
         r.run();
@@ -187,8 +187,8 @@ public class CachesTest extends MockTestCase {
         Mock m = mock(Cache.class);
         Cache c = (Cache) m.proxy();
         Runnable r = Caches.evictAsRunnable(c);
-        assertTrue(r instanceof ExecutorEvent.Evict);
-        assertEquals(c, ((ExecutorEvent.Evict) r).getCache());
+        assertTrue(r instanceof CacheExecutorRunnable.CacheEvict);
+        assertEquals(c, ((CacheExecutorRunnable.CacheEvict) r).getCache());
 
         m.expects(once()).method("evict");
         r.run();

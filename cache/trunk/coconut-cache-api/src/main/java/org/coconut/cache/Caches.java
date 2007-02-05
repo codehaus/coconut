@@ -17,7 +17,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.policy.util.FilteredPolicyDecorator;
 import org.coconut.cache.spi.CacheUtil;
-import org.coconut.cache.spi.ExecutorEvent;
+import org.coconut.cache.spi.CacheExecutorRunnable;
 import org.coconut.cache.util.AbstractCacheLoader;
 import org.coconut.cache.util.CacheDecorator;
 import org.coconut.event.EventBus;
@@ -207,7 +207,7 @@ public final class Caches {
     /**
      * A runnable used for calling clear on a cache.
      */
-    static class ClearRunnable implements ExecutorEvent.Clear, Serializable {
+    static class ClearRunnable implements CacheExecutorRunnable.CacheClear, Serializable {
 
         /** serialVersionUID */
         private static final long serialVersionUID = -9150488448517115905L;
@@ -241,7 +241,7 @@ public final class Caches {
         }
     }
 
-    static class EvictRunnable implements ExecutorEvent.Evict, Serializable {
+    static class EvictRunnable implements CacheExecutorRunnable.CacheEvict, Serializable {
 
         /** serial version UID */
         private static final long serialVersionUID = 5989561008827627705L;

@@ -248,6 +248,10 @@ public final class Logs {
         public String getName() {
             return log.getName();
         }
+        
+        public String toString() {
+            return log.getName();
+        }
     }
 
     static class Log4JLogger extends AbstractLogger {

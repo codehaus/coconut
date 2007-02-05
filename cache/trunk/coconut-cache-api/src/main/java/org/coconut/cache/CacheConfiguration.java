@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
@@ -45,7 +44,7 @@ import org.coconut.filter.Filter;
  * <pre>
  * CacheConfiguration&lt;String, Integer&gt; cc = newConf();
  * cc.setName(&quot;MyCache&quot;);
- * cc.eviction().setPolicy(Policies.newLRU()).setMaximumCapacity(1000);
+ * cc.eviction().setPolicy(Policies.newLRU()).setMaximumSize(1000);
  * cc.expiration().setDefaultTimeout(60 * 60, TimeUnit.SECONDS);
  * cc.jmx().setRegister(true);
  * Cache&lt;String, Integer&gt; instance = cc.newInstance(Select_A_Cache_Impl);
@@ -58,16 +57,16 @@ import org.coconut.filter.Filter;
  * <dt>{@link Backend}</dt>
  * <dd>Handles storage and loading of entries from cache loaders and cache
  * stores</dd>
- * <dt>{@link Events}</dt>
- * <dd>Handles dispatching of events</dd>
  * <dt>{@link Eviction}</dt>
  * <dd>Handles maximum size of the cache and what entries will be evicted</dd>
  * <dt>{@link Expiration}</dt>
  * <dd>Handles expired items and timeout settings for entries</dd>
  * <dt>{@link JMX}</dt>
  * <dd>Handles JMX registration of the cache</dd>
- * <dt>{@link Locking}</dt>
- * <dd>Handles locking of individual items and lock ordering</dd>
+ * <dt>{@link Statistics}</dt>
+ * <dd>Handles various statistics related issues</dd>
+ * <dt>{@link Threading}</dt>
+ * <dd>Handles the usage of threads within the cache</dd>
  * </dl>
  * <p>
  * A few point on the naming of methods. Methods postfixed with <tt>Hint</tt>
@@ -78,9 +77,6 @@ import org.coconut.filter.Filter;
  * If Extension of this class is possible with the following TODO what about
  * extensions of this class?? could be usefull for special purpose caches, if so
  * we should change some of the static methods to allow overriding.
- * <p>
- * Currently no XML mappings exists for CacheConfigurations, however this is
- * planned see <a href="http://jira.codehaus.org/browse/COCACHE-2">COCACHE-2</a>
  * <p>
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -173,7 +169,7 @@ public class CacheConfiguration<K, V> implements Cloneable {
         try {
             XmlConfigurator.getInstance().to(this, sos);
         } catch (Exception e) {
-            throw new RuntimeException("An exception occured", e);
+            throw new CacheException("This is highly irregular, please report", e);
         }
         return new String(sos.toByteArray());
 
@@ -507,19 +503,6 @@ public class CacheConfiguration<K, V> implements Cloneable {
             return extendedLoader;
         }
 
-        // /**
-        // * The cache will try to interrupt the thread that is loading a a
-        // * element if one with a corresponding key is added. Primarily usefull
-        // * for distributed caches with very expensive values (in terms of
-        // * calculation) where an update for another host might occur in the
-        // * middle of a calculation. Hmm not sure this is so usefull... Lets
-        // see
-        // * if this is a problem before doing anything against it.
-        // */
-        // public void setInterruptLoad(boolean interrupt) {
-        //
-        // }
-
         /**
          * Sets the loader that should be used for loading new elements into the
          * cache. If the specified loader is <code>null</code> no loader will
@@ -529,11 +512,14 @@ public class CacheConfiguration<K, V> implements Cloneable {
          * @param loader
          *            the loader to set
          * @return the current CacheConfiguration
+         * @throws IllegalStateException
+         *             if an extended loader has already been set, using
+         *             {@link #setExtendedBackend(CacheLoader)}
          */
         public Backend setBackend(CacheLoader<? super K, ? extends V> loader) {
             if (extendedLoader != null) {
                 throw new IllegalStateException(
-                        "extended loader already set, cannot set a loader");
+                        "extended loader already set, cannot set an ordinary loader");
             }
             CacheConfiguration.this.loader = loader;
             return this;
@@ -548,6 +534,9 @@ public class CacheConfiguration<K, V> implements Cloneable {
          * @param loader
          *            the loader to set
          * @return the current CacheConfiguration
+         * @throws IllegalStateException
+         *             if an ordinary loader has already been set, using
+         *             {@link #setBackend(CacheLoader)}
          */
         public Backend setExtendedBackend(
                 CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader) {
@@ -796,12 +785,13 @@ public class CacheConfiguration<K, V> implements Cloneable {
     }
 
     /**
-     * This class defines JMX configuration. To register a cache in the platform
-     * MBeanServer with the name TODO, simply call
-     * <code>setAutomaticRegister(true)</code>. If for some reason the cache
-     * fails to properly register with the MBeanServer at construction time a
-     * {@link CacheException} is thrown. The user remember to deregister the jmx
-     * instance when shutting the down the server. (Or use a softreference)
+     * This class is used to configure how the cache can be remotely monitored
+     * and controlled (via JMX). To register the cache in the platform
+     * MBeanServer, simply call {@link #setAutoRegister(boolean)}. And the
+     * cache will automatically be registered.
+     * <p>
+     * If for some reason the cache fails to properly register with the
+     * MBeanServer at construction time a {@link CacheException} is thrown.
      */
     public class JMX {
 
@@ -823,9 +813,9 @@ public class CacheConfiguration<K, V> implements Cloneable {
          *         server has been set
          */
         public MBeanServer getMBeanServer() {
-            //TODO we might want to have a hasMBeanServer()
-            //to avoid initializing it, for example,
-            //when we save the configuration
+            // TODO we might want to have a hasMBeanServer()
+            // to avoid initializing it, for example,
+            // when we save the configuration
             if (mBeanServer == null) {
                 mBeanServer = ManagementFactory.getPlatformMBeanServer();
             }
@@ -846,15 +836,15 @@ public class CacheConfiguration<K, V> implements Cloneable {
         }
 
         /**
-         * Sets the specific {@link ObjectName} that this cache should register
-         * with. If no ObjectName but the cache has been registered with a name
-         * {@link #setName()} the cache will be registered under foo+name. If no
-         * name has been set foo+S System.identityHashCode(cache) the name
-         * should probably also be initialized to this value (hexed)
+         * Sets the specific domain that this cache should register under. If no
+         * domain is specified domain the cache will use is
+         * {@link CacheMXBean#DEFAULT_JMX_DOMAIN}.
          * 
          * @param name
-         *            the object name
+         *            the domain name
          * @return this configuration
+         * @throws NullPointerException
+         *             if domain is <tt>null</tt>
          */
         public JMX setDomain(String domain) {
             if (domain == null) {
@@ -884,7 +874,7 @@ public class CacheConfiguration<K, V> implements Cloneable {
         }
 
         /**
-         * Determines whether or not the cache will be register with its
+         * Determines whether or not the cache will be register with a
          * MBeanServer at construction time.
          * 
          * @param registerAutomatic
@@ -911,7 +901,7 @@ public class CacheConfiguration<K, V> implements Cloneable {
             return CacheConfiguration.this;
         }
 
-        public boolean getEnabled() {
+        public boolean isEnabled() {
             return statisticsEnabled;
         }
 
@@ -950,13 +940,10 @@ public class CacheConfiguration<K, V> implements Cloneable {
             return this;
         }
 
-        public Threading SetScheduledEvictionAtFixedRate(long period, TimeUnit unit) {
+        public Threading setScheduledEvictionAtFixedRate(long period, TimeUnit unit) {
             if (period < 0) {
                 throw new IllegalArgumentException("period must be 0 or greater, was "
                         + period);
-            }
-            if (executor == null || !(executor instanceof ScheduledExecutorService)) {
-                throw new IllegalStateException("A ScheduledExecutorService must be set");
             }
             scheduleEvictionAtFixedRateNanos = unit.toNanos(period);
             return this;

@@ -91,7 +91,7 @@ public class CacheEntryLoaderService<K, V> extends AbstractCacheService<K, V> im
         try {
             entry = (CacheEntry<K, V>) loader.load(key);
         } catch (Exception e) {
-            entry = errorHandler.loadEntryFailed(loader, key, false, e);
+            entry = errorHandler.loadFailed(loader, key, false, e);
         }
         return entry;
     }

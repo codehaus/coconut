@@ -18,7 +18,7 @@ import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.AsyncCacheLoader;
 import org.coconut.cache.spi.CacheErrorHandler;
 import org.coconut.cache.spi.CacheUtil;
-import org.coconut.cache.spi.ExecutorEvent;
+import org.coconut.cache.spi.CacheExecutorRunnable;
 import org.coconut.cache.util.AbstractCacheLoader;
 import org.coconut.cache.util.DefaultCacheEntry;
 import org.coconut.core.Callback;
@@ -248,7 +248,7 @@ public class LoadUtil {
          * @see org.coconut.core.Callback#failed(java.lang.Throwable)
          */
         public void failed(Throwable cause) {
-            CacheEntry<K, V> v = errorHandler.loadEntryFailed(loader, key, true, cause);
+            CacheEntry<K, V> v = errorHandler.loadFailed(loader, key, true, cause);
             completed(v);
         }
     }
@@ -276,7 +276,7 @@ public class LoadUtil {
         }
     }
 
-    static class LoadValueRunnable<K, V> implements ExecutorEvent.LoadKey<K> {
+    static class LoadValueRunnable<K, V> implements CacheExecutorRunnable.LoadKey<K> {
         private final Callback<V> callback;
 
         private final K key;
@@ -321,7 +321,7 @@ public class LoadUtil {
         }
     }
 
-    static class LoadValuesRunnable<K, V> implements ExecutorEvent.LoadKeys<K> {
+    static class LoadValuesRunnable<K, V> implements CacheExecutorRunnable.LoadKeys<K> {
         private final Callback<Map<K, V>> callback;
 
         private final Collection<? extends K> keys;

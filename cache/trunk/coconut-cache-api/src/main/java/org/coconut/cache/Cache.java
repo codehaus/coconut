@@ -183,8 +183,8 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * 
      * @param key
      *            whose associated value is to be loaded.
-     * @return a Future representing pending completion of the loading, and
-     *         whose <tt>get()</tt> method will return <tt>null</tt> upon
+     * @return a Future representing pending completion of the load, and whose
+     *         <tt>get()</tt> method will return <tt>null</tt> upon
      *         completion.
      * @throws ClassCastException
      *             if the key is of an inappropriate type for this cache
@@ -200,10 +200,12 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     /**
      * Attempts to asynchronously load the values to which this cache maps the
      * specified keys. The effect of this call is equivalent to that of calling
-     * {@link #load(Object)} on this cache once for each mapping from key k to
-     * value v in the specified map. The behavior of this operation is
-     * unspecified if the specified collection is modified while the operation
-     * is in progress.
+     * {@link #load(Object)}once for each mapping from key k to value v in the
+     * specified map. However certain implementation might take advantage of
+     * bulk loading.
+     * <p>
+     * The behavior of this operation is unspecified if the specified collection
+     * is modified while the operation is in progress.
      * <p>
      * The methods on the returned {@link java.util.concurrent.Future} are all
      * <tt>bulk</tt> operations.

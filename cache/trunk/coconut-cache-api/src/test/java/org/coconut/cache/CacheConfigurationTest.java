@@ -14,6 +14,7 @@ import static org.coconut.test.MockTestCase.mockDummy;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.Set;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.CacheErrorHandler;
 import org.coconut.cache.spi.XmlConfigurator;
+import org.coconut.cache.util.CacheSingleton;
 import org.coconut.core.Clock;
 import org.coconut.test.MockTestCase;
 import org.junit.Before;
@@ -188,6 +190,24 @@ public class CacheConfigurationTest {
         }
     }
 
+    @Test(expected = IllegalAccessException.class)
+    public void testNewInstanceConstructorThrows2() throws Throwable {
+        try {
+            conf.newInstance(DummyCache3.class);
+        } catch (IllegalArgumentException e) {
+            throw e.getCause();
+        }
+    }
+    
+    @Test (expected = CacheException.class)
+    public void testtoStringError() throws Throwable {
+        Field f = CacheConfiguration.class.getDeclaredField("domain");
+        f.setAccessible(true);
+        f.set(conf, null);
+        conf.toString();
+    }
+    
+    
     public static class DummyCache2 extends DummyCache {
 
         /**
@@ -197,6 +217,15 @@ public class CacheConfigurationTest {
             super(configuration);
             throw new ArithmeticException();
         }
+    }
 
+    public static class DummyCache3 extends DummyCache {
+
+        /**
+         * @param configuration
+         */
+        private DummyCache3(CacheConfiguration configuration) {
+            super(configuration);
+        }
     }
 }
