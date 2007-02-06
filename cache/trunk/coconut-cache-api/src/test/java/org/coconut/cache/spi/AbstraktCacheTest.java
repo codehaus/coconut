@@ -8,13 +8,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import static junit.framework.Assert.*;
 
+import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.core.Clock;
+import org.coconut.test.CollectionUtils;
 import org.coconut.test.MockTestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,6 +33,8 @@ public class AbstraktCacheTest {
     @Before
     public void setup() {
         t = new TestCache();
+        t.m.put(1, "a");
+        t.m.put(2, "b");
     }
 
     @Test
@@ -57,10 +62,46 @@ public class AbstraktCacheTest {
         new TestCache(null);
     }
 
+    @Test
+    public void testContainsKey() {
+        assertTrue(t.containsKey(1));
+        assertFalse(t.containsKey(3));
+    }
+
+    @Test
+    public void testContainsValue() {
+        assertTrue(t.containsValue("a"));
+        assertFalse(t.containsValue("c"));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testContainsValueNPE() {
+        t.containsValue(null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testGetAllNPE() {
+        t.getAll(null);
+    }
+
+    @Test
+    public void testGetAll() {
+        Map m = t.getAll(Arrays.asList(1, 2, 3));
+        assertTrue(m.containsValue("a"));
+        assertTrue(m.containsValue("b"));
+        assertFalse(m.containsValue("c"));
+    }
+
+    @Test
+    public void testGetHitStat() {
+        assertEquals(CacheUtil.newImmutableHitStat(0, 0), t.getHitStat());
+    }
+
     @Test(expected = UnsupportedOperationException.class)
     public void testEventBusUOE() {
         t.getEventBus();
     }
+
     @Test(expected = UnsupportedOperationException.class)
     public void testLoadUOE() {
         t.load("");
@@ -78,27 +119,13 @@ public class AbstraktCacheTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void testPutEntriesUOE() {
-        t.putEntries(Arrays.asList());
+        t.putEntries(Arrays.asList(MockTestCase.mockDummy(CacheEntry.class)));
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testPutNPE1() {
-        t.put(null, "");
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testPutNPE2() {
-        t.put("", null);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testPutNPE3() {
-        t.put("", "", 0, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testPutIAE() {
-        t.put("", "", -1, TimeUnit.SECONDS);
+        t.put(3, "c", -1, TimeUnit.SECONDS);
+        assertEquals("c", t.m.get(3));
     }
 
     @Test(expected = NullPointerException.class)
@@ -106,22 +133,79 @@ public class AbstraktCacheTest {
         t.putAll(null);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testPutAllNPE2() {
-        t.putAll(Collections.EMPTY_MAP, 0, null);
+        t.putAll((Map) CollectionUtils.M1_TO_M5_MAP, 0, TimeUnit.SECONDS);
+        assertEquals(5, t.m.size());
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testPutAllIAE() {
-        t.putAll(Collections.EMPTY_MAP, -1, TimeUnit.SECONDS);
+    @Test
+    public void testPutIfAbsent1() {
+        assertEquals("b", t.putIfAbsent(2, "d"));
+        assertNull(t.putIfAbsent(3, "c"));
+        assertEquals("c", t.m.get(3));
     }
-    
+
+    @Test(expected = NullPointerException.class)
+    public void testPutIfAbsentNPE() {
+        t.putIfAbsent("t", null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testRemoveNPE() {
+        t.remove("t", null);
+    }
+
+    @Test
+    public void testRemove() {
+        assertTrue(t.remove(1, "a"));
+        assertFalse(t.remove(1, "b"));
+        assertFalse(t.remove(3, "a"));
+    }
+
+    @Test
+    public void testReplace1() {
+        assertEquals("a", t.replace(1, "b"));
+        assertEquals("b", t.m.get(1));
+        assertNull(t.replace(3, "c"));
+    }
+
+    @Test
+    public void testReplace2() {
+        assertTrue("a", t.replace(1, "a", "b"));
+        assertEquals("b", t.m.get(1));
+        assertFalse(t.replace(2, "c", "d"));
+        assertFalse(t.replace(6, "c", "d"));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testReplaceNPE1() {
+        t.replace("t", null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testReplaceNPE2() {
+        t.replace("t", "d", null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testReplaceNPE3() {
+        t.replace("t", null, "g");
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testTrimToSize() {
+        t.trimToSize(34);
+    }
+
     @Test
     public void testToString() {
         assertTrue(t.toString().contains("!#!"));
     }
 
     static class TestCache extends AbstractCache {
+
+        Map m = new HashMap();
 
         /**
          * 
@@ -140,39 +224,11 @@ public class AbstraktCacheTest {
         }
 
         /**
-         * @see org.coconut.cache.spi.AbstractCache#put0(java.lang.Object,
-         *      java.lang.Object, long)
-         */
-        @Override
-        protected Object put(Object key, Object value, long expirationTime) {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        /**
-         * @see org.coconut.cache.spi.AbstractCache#putAll0(java.util.Map, long)
-         */
-        @Override
-        protected void putAll(Map t, long expirationTime) {
-            // TODO Auto-generated method stub
-
-        }
-
-        /**
-         * @see org.coconut.cache.spi.AbstractCache#trimToSize(int)
-         */
-        @Override
-        public void trimToSize(int newSize) {
-            // TODO Auto-generated method stub
-
-        }
-
-        /**
          * @see java.util.AbstractMap#entrySet()
          */
         @Override
         public Set entrySet() {
-            return new HashMap().entrySet();
+            return m.entrySet();
         }
 
         /**
@@ -196,8 +252,7 @@ public class AbstraktCacheTest {
          * @see org.coconut.cache.Cache#peek(java.lang.Object)
          */
         public Object peek(Object key) {
-            // TODO Auto-generated method stub
-            return null;
+            return m.get(key);
         }
 
         /**
@@ -208,6 +263,13 @@ public class AbstraktCacheTest {
             return null;
         }
 
+        /**
+         * @see org.coconut.cache.Cache#put(java.lang.Object, java.lang.Object,
+         *      long, java.util.concurrent.TimeUnit)
+         */
+        public Object put(Object key, Object value, long timeout, TimeUnit unit) {
+            return m.put(key, value);
+        }
     }
 
 }

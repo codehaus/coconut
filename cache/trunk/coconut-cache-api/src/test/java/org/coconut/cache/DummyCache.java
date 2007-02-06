@@ -5,6 +5,7 @@ package org.coconut.cache;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.spi.AbstractCache;
 
@@ -24,22 +25,6 @@ public class DummyCache extends AbstractCache {
         super(configuration);
     }
 
-
-    /**
-     * @see org.coconut.cache.spi.AbstractCache#put0(java.lang.Object,
-     *      java.lang.Object, long)
-     */
-    @Override
-    protected Object put(Object key, Object value, long expirationTime) {
-        return null;
-    }
-
-    /**
-     * @see org.coconut.cache.spi.AbstractCache#putAll0(java.util.Map, long)
-     */
-    @Override
-    protected void putAll(Map t, long expirationTime) {
-    }
 
     /**
      * @see org.coconut.cache.spi.AbstractCache#trimToSize(int)
@@ -86,6 +71,15 @@ public class DummyCache extends AbstractCache {
      * @see org.coconut.cache.Cache#peekEntry(java.lang.Object)
      */
     public CacheEntry peekEntry(Object key) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+
+    /**
+     * @see org.coconut.cache.Cache#put(java.lang.Object, java.lang.Object, long, java.util.concurrent.TimeUnit)
+     */
+    public Object put(Object key, Object value, long timeout, TimeUnit unit) {
         // TODO Auto-generated method stub
         return null;
     }

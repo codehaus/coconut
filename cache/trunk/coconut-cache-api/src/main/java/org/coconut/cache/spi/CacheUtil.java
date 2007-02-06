@@ -6,6 +6,7 @@ package org.coconut.cache.spi;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 
@@ -16,7 +17,7 @@ import org.coconut.cache.Cache;
 public class CacheUtil {
 
     public static final Cache.HitStat STAT00 = new ImmutableHitStat(0, 0);
-
+  
     public static void checkCollectionForNulls(Collection<?> col) {
         for (Object entry : col) {
             if (entry == null) {

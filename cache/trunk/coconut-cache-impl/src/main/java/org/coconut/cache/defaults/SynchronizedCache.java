@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.spi.AbstractCache;
@@ -20,24 +21,6 @@ import org.coconut.cache.spi.AbstractCache;
 public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
 
     private UnsynchronizedCache<K, V> wrapped;
-
-    /**
-     * @see org.coconut.cache.spi.AbstractCache#put0(java.lang.Object,
-     *      java.lang.Object, long, java.util.concurrent.TimeUnit)
-     */
-    @Override
-    protected synchronized V put(K key, V value, long timeout) {
-        return wrapped.put(key, value, timeout);
-    }
-
-    /**
-     * @see org.coconut.cache.spi.AbstractCache#putAll0(java.util.Map, long,
-     *      java.util.concurrent.TimeUnit)
-     */
-    @Override
-    protected synchronized void putAll(Map<? extends K, ? extends V> t, long timeout) {
-        wrapped.putAll(t, timeout);
-    }
 
     /**
      * @see org.coconut.cache.spi.AbstractCache#trimToSize(int)
@@ -194,6 +177,12 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
         return null;
     }
 
-
+    /**
+     * @see org.coconut.cache.Cache#put(java.lang.Object, java.lang.Object,
+     *      long, java.util.concurrent.TimeUnit)
+     */
+    public V put(K key, V value, long timeout, TimeUnit unit) {
+        return put(key, value, timeout, unit);
+    }
 
 }

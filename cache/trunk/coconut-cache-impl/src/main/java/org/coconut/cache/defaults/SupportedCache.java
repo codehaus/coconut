@@ -4,9 +4,12 @@
 package org.coconut.cache.defaults;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
+import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheEvent;
@@ -19,6 +22,7 @@ import org.coconut.cache.internal.services.expiration.ExpirationCacheService;
 import org.coconut.cache.internal.services.loading.CacheEntryLoaderService;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.CacheErrorHandler;
+import org.coconut.cache.spi.CacheUtil;
 import org.coconut.core.Clock;
 import org.coconut.event.EventBus;
 import org.coconut.management.ManagedGroup;
@@ -45,6 +49,20 @@ public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
 
     boolean copyEntry = true;
 
+    public static long convert(long timeout, TimeUnit unit) {
+        if (timeout == Cache.NEVER_EXPIRE) {
+            return Long.MAX_VALUE;
+        } else {
+            long newTime = unit.toMillis(timeout);
+            if (newTime == Long.MAX_VALUE) {
+                throw new IllegalArgumentException(
+                        "Overflow for specified expiration time, was " + timeout + " "
+                                + unit);
+            }
+            return newTime;
+        }
+    }
+    
     /**
      * @param conf
      */
@@ -150,14 +168,13 @@ public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
 
     protected abstract CacheEntry<K, V> getEntry(K key, boolean isExported);
 
-    
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     public V peek(K key) {
         if (key == null) {
             throw new NullPointerException("key is null");
         }
-        CacheEntry<K, V> e = peekEntry(key,false);
+        CacheEntry<K, V> e = peekEntry(key, false);
         return e == null ? null : e.getValue();
     }
 
@@ -170,7 +187,7 @@ public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
         }
         return peekEntry(key, true);
     }
-    
+
     /**
      * @see org.coconut.cache.Cache#peekEntry(java.lang.Object)
      */
@@ -263,7 +280,6 @@ public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
         return expirationSupport;
     }
 
-    @Override
     protected V put(K key, V value, long expirationTimeMilli) {
         AbstractCacheEntry<K, V> me = newEntry(null, getMap().get(key), key, value,
                 expirationTimeMilli, false);
@@ -318,4 +334,28 @@ public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
             return entry.getPolicyIndex() >= 0;
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public V put(K key, V value, long expirationTime, TimeUnit unit) {
+        if (key == null) {
+            throw new NullPointerException("key is null");
+        } else if (value == null) {
+            throw new NullPointerException("value is null");
+        } else if (expirationTime < 0) {
+            throw new IllegalArgumentException(
+                    "timeout must be a non-negative number, was " + expirationTime);
+        } else if (unit == null) {
+            throw new NullPointerException("unit is null");
+        }
+        long expirationTimeMilli = convert(expirationTime, unit);
+        AbstractCacheEntry<K, V> me = newEntry(null, getMap().get(key), key, value,
+                expirationTimeMilli, false);
+        AbstractCacheEntry<K, V> prev = putMyEntry(me);
+        return prev == null ? null : prev.getValue();
+    }
+
+    abstract void putAll(Map<? extends K, ? extends V> t, long expirationTimeNano);
+
 }
