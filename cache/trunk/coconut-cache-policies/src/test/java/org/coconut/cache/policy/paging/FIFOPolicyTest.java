@@ -5,6 +5,7 @@
 package org.coconut.cache.policy.paging;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.coconut.cache.policy.PolicyTestUtils.addToPolicy;
 import static org.coconut.cache.policy.PolicyTestUtils.empty;
@@ -13,6 +14,7 @@ import static org.coconut.test.CollectionUtils.seq;
 import junit.framework.JUnit4TestAdapter;
 
 import org.coconut.cache.policy.ReplacementPolicy;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -22,20 +24,19 @@ import org.junit.Test;
  */
 public class FIFOPolicyTest {
 
-    public static junit.framework.Test suite() {
-        return new JUnit4TestAdapter(FIFOPolicyTest.class);
+    FIFOPolicy<Integer> policy;
+
+    @Before
+    public void setup() {
+        policy = new FIFOPolicy<Integer>();
     }
 
-    public FIFOPolicy<Integer> createPolicy() {
-        return new FIFOPolicy<Integer>();
-    }
 
     /**
      * Test adding of new elements.
      */
     @Test
     public void testAdd() {
-        ReplacementPolicy<Integer> policy = createPolicy();
         addToPolicy(policy, 0, 9);
         assertEquals(seq(9, 0), policy.peekAll());
     }
@@ -45,7 +46,6 @@ public class FIFOPolicyTest {
      */
     @Test
     public void testRemove() {
-        ReplacementPolicy<Integer> policy = createPolicy();
         addToPolicy(policy, 0, 9);
         assertEquals(seq(9, 0), empty(policy));
     }
@@ -55,7 +55,6 @@ public class FIFOPolicyTest {
      */
     @Test
     public void testRemoveIndex() {
-        ReplacementPolicy<Integer> policy = createPolicy();
         int[] data = addToPolicy(policy, 0, 9);
         policy.remove(data[4]);
         policy.remove(data[7]);
@@ -69,7 +68,6 @@ public class FIFOPolicyTest {
      */
     @Test
     public void testRefresh() {
-        ReplacementPolicy<Integer> policy = createPolicy();
         int[] data = addToPolicy(policy, 0, 9);
 
         policy.touch(data[4]);
@@ -87,7 +85,6 @@ public class FIFOPolicyTest {
      */
     @Test
     public void testCopyConstructor() {
-        FIFOPolicy<Integer> policy = createPolicy();
         addToPolicy(policy, 0, 9);
         FIFOPolicy<Integer> copy = new FIFOPolicy<Integer>(policy);
         assertEquals(policy.peekAll(), copy.peekAll());
@@ -98,7 +95,6 @@ public class FIFOPolicyTest {
      */
     @Test
     public void testClone() {
-        FIFOPolicy<Integer> policy = createPolicy();
         addToPolicy(policy, 0, 9);
         FIFOPolicy<Integer> copy = policy.clone();
         assertEquals(policy.peekAll(), copy.peekAll());
@@ -117,7 +113,6 @@ public class FIFOPolicyTest {
      */
     @Test
     public void testPeek() {
-        FIFOPolicy<Integer> policy = createPolicy();
         addToPolicy(policy, 0, 9);
         assertEquals(9, policy.peek().intValue());
     }
@@ -127,7 +122,6 @@ public class FIFOPolicyTest {
      */
     @Test
     public void testGetSize() {
-        FIFOPolicy<Integer> policy = createPolicy();
         addToPolicy(policy, 0, 9);
         assertEquals(10, policy.getSize());
     }
@@ -137,8 +131,22 @@ public class FIFOPolicyTest {
      */
     @Test
     public void testToString() {
-        FIFOPolicy<Integer> policy = createPolicy();
         addToPolicy(policy, 0, 9);
         assertTrue(policy.toString().contains("" + policy.getSize()));
+    }
+    
+    @Test
+    public void testClear() {
+        addToPolicy(policy, 0, 9);
+        policy.clear();
+        assertNull(policy.evictNext());
+        assertEquals(0, policy.getSize());
+    }
+
+    @Test
+    public void testUpdate() {
+        int[] result = addToPolicy(policy, 0, 9);
+        policy.update(result[4], 123);
+        assertEquals(123, policy.evict(6).get(5).intValue());
     }
 }

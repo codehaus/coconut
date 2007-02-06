@@ -14,10 +14,10 @@ import org.junit.runner.RunWith;
 
 @RunWith(TCKRunner.class)
 @TCKClassTester(UnsynchronizedCache.class)
-public class UnlimitedCacheTest {
+public class UnsynchronizedCacheTest {
 
     public static Test suite() {
-        return new JUnit4TestAdapter(UnlimitedCacheTest.class);
+        return new JUnit4TestAdapter(UnsynchronizedCacheTest.class);
     }
 
 

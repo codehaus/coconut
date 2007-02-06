@@ -7,9 +7,7 @@ package org.coconut.cache.spi;
 import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -49,6 +47,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         if (configuration == null) {
             throw new NullPointerException("configuration is null");
         }
+        configuration.setProperty(XmlConfigurator.CACHE_INSTANCE_TYPE, getClass().getCanonicalName());
         name = configuration.getName();
         errorHandler = configuration.getErrorHandler();
         errorHandler.setCacheName(name);

@@ -73,13 +73,6 @@ public class ClockPolicy<T> extends AbstractPolicy<T> implements ReplacementPoli
         private int handPosition;
 
         /**
-         * Constructs a new ClockPolicy with an initial size of 100.
-         */
-        InnerClockPolicy() {
-            this(100);
-        }
-
-        /**
          * Constructs a new ClockPolicy by copying an existing ClockPolicy.
          * 
          * @param copyFrom

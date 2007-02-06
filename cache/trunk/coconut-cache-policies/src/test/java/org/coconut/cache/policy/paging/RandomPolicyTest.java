@@ -19,6 +19,7 @@ import junit.framework.JUnit4TestAdapter;
 
 import org.coconut.cache.policy.Policies;
 import org.coconut.cache.policy.ReplacementPolicy;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -26,14 +27,13 @@ import org.junit.Test;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-public class RandomPolicyTest{
+public class RandomPolicyTest {
 
-    public static junit.framework.Test suite() {
-        return new JUnit4TestAdapter(RandomPolicyTest.class);
-    }
+    RandomPolicy<Integer> policy;
 
-    public ReplacementPolicy<Integer> createPolicy() {
-        return Policies.newRandom();
+    @Before
+    public void setup() {
+        policy = new RandomPolicy<Integer>();
     }
 
     /**
@@ -41,7 +41,6 @@ public class RandomPolicyTest{
      */
     @Test
     public void testAdd() {
-        ReplacementPolicy<Integer> policy = createPolicy();
         addToPolicy(policy, 0, 9);
         assertTrue(policy.peekAll().containsAll(seq(0, 9)));
     }
@@ -103,7 +102,6 @@ public class RandomPolicyTest{
      */
     @Test
     public void testRefresh() {
-        ReplacementPolicy<Integer> policy = createPolicy();
         int[] data = addToPolicy(policy, 0, 9);
         policy.touch(data[4]);
         policy.touch(data[4]);
@@ -119,7 +117,6 @@ public class RandomPolicyTest{
      */
     @Test
     public void testRemove() {
-        ReplacementPolicy<Integer> policy = createPolicy();
         addToPolicy(policy, 0, 9);
         assertTrue(empty(policy).containsAll(seq(0, 9)));
     }
@@ -158,7 +155,6 @@ public class RandomPolicyTest{
      */
     @Test
     public void testRemoveIndex() {
-        ReplacementPolicy<Integer> policy = createPolicy();
         int[] data = addToPolicy(policy, 0, 9);
         policy.remove(data[4]);
         policy.remove(data[7]);
@@ -216,5 +212,27 @@ public class RandomPolicyTest{
         list.add(6);
         list.add(7);
         assertEquals(7, list.getSize());
+    }
+
+    @Test
+    public void testClear() {
+        addToPolicy(policy, 0, 9);
+        policy.clear();
+        assertNull(policy.evictNext());
+        assertEquals(0, policy.getSize());
+    }
+
+    @Test
+    public void testUpdate() {
+        int[] result = addToPolicy(policy, 0, 9);
+        policy.update(result[4], 123);
+        Integer i = -1;
+        while (i != null) {
+            if (i == 123) {
+                return;
+            }
+            i=policy.evictNext();
+        }
+        assertTrue(false);
     }
 }

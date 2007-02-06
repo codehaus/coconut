@@ -11,9 +11,8 @@ import static org.coconut.cache.policy.PolicyTestUtils.addToPolicy;
 import static org.coconut.cache.policy.PolicyTestUtils.empty;
 import static org.coconut.test.CollectionUtils.asList;
 import static org.coconut.test.CollectionUtils.seq;
-import junit.framework.JUnit4TestAdapter;
 
-import org.coconut.cache.policy.ReplacementPolicy;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -23,12 +22,11 @@ import org.junit.Test;
  */
 public class ClockPolicyTest {
 
-    public static junit.framework.Test suite() {
-        return new JUnit4TestAdapter(ClockPolicyTest.class);
-    }
+    ClockPolicy<Integer> policy;
 
-    public ClockPolicy<Integer> createPolicy() {
-        return new ClockPolicy<Integer>();
+    @Before
+    public void setup() {
+        policy = new ClockPolicy<Integer>();
     }
 
     /**
@@ -36,7 +34,6 @@ public class ClockPolicyTest {
      */
     @Test
     public void testAddAndPeekAll() {
-        ReplacementPolicy<Integer> policy = createPolicy();
         addToPolicy(policy, 0, 9);
         assertEquals(seq(0, 9), policy.peekAll());
     }
@@ -58,7 +55,6 @@ public class ClockPolicyTest {
      */
     @Test
     public void testRefresh() {
-        ReplacementPolicy<Integer> policy = createPolicy();
         int[] data = addToPolicy(policy, 0, 9);
         policy.touch(data[4]);
         assertEquals(asList(0, 1, 2, 3, 5, 6, 7, 8, 9, 4), policy.peekAll());
@@ -101,7 +97,6 @@ public class ClockPolicyTest {
      */
     @Test
     public void testRemove() {
-        ReplacementPolicy<Integer> policy = createPolicy();
         addToPolicy(policy, 0, 9);
         assertEquals(seq(0, 9), empty(policy));
     }
@@ -134,7 +129,6 @@ public class ClockPolicyTest {
      */
     @Test
     public void testRemoveIndex() {
-        ReplacementPolicy<Integer> policy = createPolicy();
         int[] data = addToPolicy(policy, 0, 9);
         policy.remove(data[4]);
         policy.remove(data[7]);
@@ -201,7 +195,6 @@ public class ClockPolicyTest {
      */
     @Test
     public void testCopyConstructor() {
-        ClockPolicy<Integer> policy = createPolicy();
         addToPolicy(policy, 0, 9);
         ClockPolicy<Integer> copy = new ClockPolicy<Integer>(policy);
         assertEquals(policy.peekAll(), copy.peekAll());
@@ -212,7 +205,6 @@ public class ClockPolicyTest {
      */
     @Test
     public void testClone() {
-        ClockPolicy<Integer> policy = createPolicy();
         addToPolicy(policy, 0, 9);
         ClockPolicy<Integer> copy = policy.clone();
         assertEquals(policy.peekAll(), copy.peekAll());
@@ -231,17 +223,28 @@ public class ClockPolicyTest {
      */
     @Test
     public void testPeek() {
-        ClockPolicy<Integer> policy = createPolicy();
         addToPolicy(policy, 0, 9);
         assertEquals(0, policy.peek().intValue());
     }
+    @Test
+    public void testClear() {
+        addToPolicy(policy, 0, 9);
+        policy.clear();
+        assertNull(policy.evictNext());
+        assertEquals(0, policy.getSize());
+    }
 
+    @Test
+    public void testUpdate() {
+        int[] result = addToPolicy(policy, 0, 9);
+        policy.update(result[4], 123);
+        assertEquals(123, policy.evict(5).get(4).intValue());
+    }
     /**
      * Test that toString doesn't fail
      */
     @Test
     public void testToString() {
-        ClockPolicy<Integer> policy = createPolicy();
         addToPolicy(policy, 0, 9);
         assertTrue(policy.toString().contains("" + policy.getSize()));
     }

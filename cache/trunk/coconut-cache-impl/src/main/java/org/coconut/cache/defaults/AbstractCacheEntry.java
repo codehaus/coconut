@@ -27,6 +27,26 @@ abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
 
     static final EntryFactory UNSYNC = new UnsynchronizedEntryFactory();
 
+    static final EntryFactory SYNC = new SynchronizedEntryFactory();
+
+    
+    static final class SynchronizedEntryFactory<K, V> implements EntryFactory<K, V> {
+
+        /**
+         * @see org.coconut.cache.defaults.memory.AbstractCacheEntry.EntryFactory#createNew(org.coconut.cache.defaults.memory.SupportedCache,
+         *      java.lang.Object, java.lang.Object, double, long, long, long,
+         *      long, long, long, long)
+         */
+        public AbstractCacheEntry<K, V> createNew(SupportedCache<K, V> cache, K key,
+                V value, double cost, long creationTime, long expirationTime, long hits,
+                long lastAccessTime, long lastUpdateTime, long size, long version) {
+            return new AbstractCacheEntry.SynchronizedCacheEntry<K, V>(cache, key,
+                    value, cost, creationTime, expirationTime, hits, lastAccessTime,
+                    cache.getClock().timestamp(), size, version);
+        }
+
+    }
+    
     static final class UnsynchronizedEntryFactory<K, V> implements EntryFactory<K, V> {
 
         /**
@@ -322,7 +342,81 @@ abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         }
         return me;
     }
+    static class SynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
 
+        private final SupportedCache<K, V> cache;
+
+        volatile long expirationTime;
+
+        volatile long hits;
+
+        volatile long lastAccessTime;
+
+        /** the index in cache policy, is -1 if not used or initialized. */
+        int policyIndex = -1;
+
+        SynchronizedCacheEntry(SupportedCache<K, V> cache, K key, V value, double cost,
+                long creationTime, long expirationTime, long hits, long lastAccessTime,
+                long lastUpdateTime, long size, long version) {
+            super(key, value, cost, creationTime, lastUpdateTime, size, version);
+            this.cache = cache;
+            this.expirationTime = expirationTime;
+            this.hits = hits;
+            this.lastAccessTime = lastAccessTime;
+        }
+
+        /**
+         * @see org.coconut.cache.CacheEntry#getExpirationTime()
+         */
+        public long getExpirationTime() {
+            return expirationTime;
+        }
+
+        /**
+         * @see org.coconut.cache.CacheEntry#getHits()
+         */
+        public long getHits() {
+            return hits;
+        }
+
+        /**
+         * @see org.coconut.cache.CacheEntry#getLastAccessTime()
+         */
+        public long getLastAccessTime() {
+            return lastAccessTime;
+        }
+
+        void accessed() {
+            lastAccessTime = cache.getClock().timestamp();
+            hits++;
+        }
+
+        /**
+         * @param expirationTime
+         *            the expirationTime to set
+         */
+        void setExpirationTime(long expirationTime) {
+            this.expirationTime = expirationTime;
+        }
+
+        /**
+         * @param hits
+         *            the hits to set
+         */
+        void setHits(long hits) {
+            this.hits = hits;
+        }
+
+        /**
+         * @param lastAccessTime
+         *            the lastAccessTime to set
+         */
+        void setLastAccessTime(long lastAccessTime) {
+            this.lastAccessTime = lastAccessTime;
+        }
+    }
+
+    
     static class UnsynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
 
         private final SupportedCache<K, V> cache;

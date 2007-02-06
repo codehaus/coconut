@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 
+import net.jcip.annotations.NotThreadSafe;
+import net.jcip.annotations.ThreadSafe;
+
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheLoader;
@@ -16,6 +19,7 @@ import org.coconut.cache.internal.service.AbstractCacheService;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.AsyncCacheLoader;
 import org.coconut.cache.spi.CacheErrorHandler;
+import org.coconut.cache.spi.XmlConfigurator;
 import org.coconut.core.Callback;
 import org.coconut.core.EventProcessor;
 import org.coconut.internal.util.ThreadUtils;
@@ -37,7 +41,14 @@ public class CacheEntryLoaderService<K, V> extends AbstractCacheService<K, V> im
         super(conf);
         errorHandler = conf.getErrorHandler();
         Executor e = conf.threading().getExecutor();
-        if (e == null) {
+        Class c = null;
+        try {
+            String s = (String) conf.getProperty(XmlConfigurator.CACHE_INSTANCE_TYPE);
+            c = Class.forName(s);
+        } catch (ClassNotFoundException e1) {
+            e1.printStackTrace();
+        }
+        if (e == null || c.isAnnotationPresent(NotThreadSafe.class)) {
             e = ThreadUtils.SAME_THREAD_EXECUTOR;
         }
         canLoadAsync = e != null;

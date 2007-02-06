@@ -5,14 +5,14 @@
 package org.coconut.cache.policy.paging;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.coconut.cache.policy.PolicyTestUtils.addToPolicy;
 import static org.coconut.cache.policy.PolicyTestUtils.empty;
 import static org.coconut.test.CollectionUtils.asList;
 import static org.coconut.test.CollectionUtils.seq;
-import junit.framework.JUnit4TestAdapter;
 
-import org.coconut.cache.policy.ReplacementPolicy;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -22,12 +22,11 @@ import org.junit.Test;
  */
 public class LIFOPolicyTest {
 
-    public static junit.framework.Test suite() {
-        return new JUnit4TestAdapter(LIFOPolicyTest.class);
-    }
+    LIFOPolicy<Integer> policy;
 
-    public LIFOPolicy<Integer> createPolicy() {
-        return new LIFOPolicy<Integer>();
+    @Before
+    public void setup() {
+        policy = new LIFOPolicy<Integer>();
     }
 
     /**
@@ -35,7 +34,6 @@ public class LIFOPolicyTest {
      */
     @Test
     public void testAdd() {
-        ReplacementPolicy<Integer> policy = createPolicy();
         addToPolicy(policy, 0, 9);
         assertEquals(seq(0, 9), policy.peekAll());
     }
@@ -45,7 +43,6 @@ public class LIFOPolicyTest {
      */
     @Test
     public void testRemove() {
-        ReplacementPolicy<Integer> policy = createPolicy();
         addToPolicy(policy, 0, 9);
         assertEquals(seq(0, 9), empty(policy));
     }
@@ -55,7 +52,6 @@ public class LIFOPolicyTest {
      */
     @Test
     public void testRemoveIndex() {
-        ReplacementPolicy<Integer> policy = createPolicy();
         int[] data = addToPolicy(policy, 0, 9);
         policy.remove(data[4]);
         policy.remove(data[7]);
@@ -69,7 +65,6 @@ public class LIFOPolicyTest {
      */
     @Test
     public void testRefresh() {
-        ReplacementPolicy<Integer> policy = createPolicy();
         int[] data = addToPolicy(policy, 0, 9);
 
         policy.touch(data[4]);
@@ -86,7 +81,6 @@ public class LIFOPolicyTest {
      */
     @Test
     public void testCopyConstructor() {
-        LIFOPolicy<Integer> policy = createPolicy();
         addToPolicy(policy, 0, 9);
         LIFOPolicy<Integer> copy = new LIFOPolicy<Integer>(policy);
         assertEquals(policy.peekAll(), copy.peekAll());
@@ -97,7 +91,6 @@ public class LIFOPolicyTest {
      */
     @Test
     public void testClone() {
-        LIFOPolicy<Integer> policy = createPolicy();
         addToPolicy(policy, 0, 9);
         LIFOPolicy<Integer> copy = policy.clone();
         assertEquals(policy.peekAll(), copy.peekAll());
@@ -116,7 +109,6 @@ public class LIFOPolicyTest {
      */
     @Test
     public void testPeek() {
-        LIFOPolicy<Integer> policy = createPolicy();
         addToPolicy(policy, 0, 9);
         assertEquals(0, policy.peek().intValue());
     }
@@ -126,7 +118,6 @@ public class LIFOPolicyTest {
      */
     @Test
     public void testGetSize() {
-        LIFOPolicy<Integer> policy = createPolicy();
         addToPolicy(policy, 0, 9);
         assertEquals(10, policy.getSize());
     }
@@ -136,8 +127,22 @@ public class LIFOPolicyTest {
      */
     @Test
     public void testToString() {
-        LIFOPolicy<Integer> policy = createPolicy();
         addToPolicy(policy, 0, 9);
         assertTrue(policy.toString().contains("" + policy.getSize()));
+    }
+    
+    @Test
+    public void testClear() {
+        addToPolicy(policy, 0, 9);
+        policy.clear();
+        assertNull(policy.evictNext());
+        assertEquals(0, policy.getSize());
+    }
+
+    @Test
+    public void testUpdate() {
+        int[] result = addToPolicy(policy, 0, 9);
+        policy.update(result[4], 123);
+        assertEquals(123, policy.evict(5).get(4).intValue());
     }
 }

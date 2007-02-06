@@ -50,6 +50,10 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
 
     public UnsynchronizedCache(CacheConfiguration<K, V> conf) {
         super(conf);
+        if (conf.threading().getExecutor() != null) {
+            throw new IllegalArgumentException(
+                    "Cannot specify an executor, since this cache is not threadsafe");
+        }
         getCsm().initializeApm(getManagementSupport().getGroup());
         // important must be last, because of final value being inlined.
         map = new MyMap();
@@ -145,7 +149,7 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
             getEventService().getHit(this, entry);
             getStatisticsSupport().entryGetStop(entry, start, true);
         }
-        if (entry!=null && doCopy) {
+        if (entry != null && doCopy) {
             return new ImmutableCacheEntry<K, V>(this, entry);
         } else {
             return entry;
@@ -161,7 +165,6 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
         }
         putAllMyEntries(am);
     }
-
 
     @Override
     public V remove(Object key) {
@@ -241,6 +244,4 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
     EntryMap<K, V> getMap() {
         return map;
     }
-
-
 }

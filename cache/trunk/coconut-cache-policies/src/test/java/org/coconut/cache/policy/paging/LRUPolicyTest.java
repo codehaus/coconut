@@ -5,18 +5,16 @@
 package org.coconut.cache.policy.paging;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.coconut.cache.policy.PolicyTestUtils.addToPolicy;
 import static org.coconut.cache.policy.PolicyTestUtils.empty;
-import static org.coconut.test.CollectionUtils.M1;
-import static org.coconut.test.CollectionUtils.M2;
-import static org.coconut.test.CollectionUtils.M3;
 import static org.coconut.test.CollectionUtils.asList;
 import static org.coconut.test.CollectionUtils.seq;
-import junit.framework.JUnit4TestAdapter;
 
-import org.coconut.cache.policy.ReplacementPolicy;
+import org.junit.Before;
 import org.junit.Test;
+
 /**
  * Test of the LRU policy.
  * 
@@ -24,12 +22,11 @@ import org.junit.Test;
  */
 public class LRUPolicyTest {
 
-    public static junit.framework.Test suite() {
-        return new JUnit4TestAdapter(LRUPolicyTest.class);
-    }
+    LRUPolicy<Integer> policy;
 
-    public LRUPolicy<Integer> createPolicy() {
-        return new LRUPolicy<Integer>();
+    @Before
+    public void setup() {
+        policy = new LRUPolicy<Integer>();
     }
 
     /**
@@ -37,7 +34,6 @@ public class LRUPolicyTest {
      */
     @Test
     public void testAdd() {
-        ReplacementPolicy<Integer> policy = createPolicy();
         addToPolicy(policy, 0, 9);
         assertEquals(seq(0, 9), policy.peekAll());
     }
@@ -47,7 +43,6 @@ public class LRUPolicyTest {
      */
     @Test
     public void testRemove() {
-        ReplacementPolicy<Integer> policy = createPolicy();
         addToPolicy(policy, 0, 9);
         assertEquals(seq(0, 9), empty(policy));
     }
@@ -57,7 +52,6 @@ public class LRUPolicyTest {
      */
     @Test
     public void testRemoveIndex() {
-        ReplacementPolicy<Integer> policy = createPolicy();
         int[] data = addToPolicy(policy, 0, 9);
         policy.remove(data[4]);
         policy.remove(data[7]);
@@ -71,7 +65,6 @@ public class LRUPolicyTest {
      */
     @Test
     public void testRefresh() {
-        ReplacementPolicy<Integer> policy = createPolicy();
         int[] data = addToPolicy(policy, 0, 9);
         policy.touch(data[4]);
         assertEquals(asList(0, 1, 2, 3, 5, 6, 7, 8, 9, 4), policy.peekAll());
@@ -90,7 +83,6 @@ public class LRUPolicyTest {
      */
     @Test
     public void testCopyConstructor() {
-        LRUPolicy<Integer> policy = createPolicy();
         addToPolicy(policy, 0, 9);
         LRUPolicy<Integer> copy = new LRUPolicy<Integer>(policy);
         assertEquals(policy.peekAll(), copy.peekAll());
@@ -101,7 +93,6 @@ public class LRUPolicyTest {
      */
     @Test
     public void testClone() {
-        LRUPolicy<Integer> policy = createPolicy();
         addToPolicy(policy, 0, 9);
         LRUPolicy<Integer> copy = policy.clone();
         assertEquals(policy.peekAll(), copy.peekAll());
@@ -120,7 +111,6 @@ public class LRUPolicyTest {
      */
     @Test
     public void testPeek() {
-        ReplacementPolicy<Integer> policy = createPolicy();
         addToPolicy(policy, 0, 9);
         assertEquals(0, policy.peek().intValue());
     }
@@ -130,7 +120,6 @@ public class LRUPolicyTest {
      */
     @Test
     public void testGetSize() {
-        LRUPolicy<Integer> policy = createPolicy();
         addToPolicy(policy, 0, 9);
         assertEquals(10, policy.getSize());
     }
@@ -140,14 +129,22 @@ public class LRUPolicyTest {
      */
     @Test
     public void testToString() {
-        LRUPolicy<Integer> policy = createPolicy();
         addToPolicy(policy, 0, 9);
         assertTrue(policy.toString().contains("" + policy.getSize()));
     }
 
     @Test
-    public void tetss() {
-        LRUPolicy<Integer> policy = createPolicy();
+    public void testClear() {
         addToPolicy(policy, 0, 9);
+        policy.clear();
+        assertNull(policy.evictNext());
+        assertEquals(0, policy.getSize());
+    }
+
+    @Test
+    public void testUpdate() {
+        int[] result = addToPolicy(policy, 0, 9);
+        policy.update(result[4], 123);
+        assertEquals(123, policy.evict(5).get(4).intValue());
     }
 }

@@ -20,9 +20,9 @@ import org.coconut.cache.internal.services.EvictionCacheService;
 import org.coconut.cache.internal.services.ManagementCacheService;
 import org.coconut.cache.internal.services.expiration.ExpirationCacheService;
 import org.coconut.cache.internal.services.loading.CacheEntryLoaderService;
+import org.coconut.cache.internal.util.InternalCacheutil;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.CacheErrorHandler;
-import org.coconut.cache.spi.CacheUtil;
 import org.coconut.core.Clock;
 import org.coconut.event.EventBus;
 import org.coconut.management.ManagedGroup;
@@ -49,6 +49,8 @@ public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
 
     boolean copyEntry = true;
 
+    final boolean isThreadSafe;
+
     public static long convert(long timeout, TimeUnit unit) {
         if (timeout == Cache.NEVER_EXPIRE) {
             return Long.MAX_VALUE;
@@ -62,12 +64,14 @@ public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
             return newTime;
         }
     }
-    
+
     /**
      * @param conf
      */
     SupportedCache(CacheConfiguration<K, V> conf) {
         super(conf);
+        conf.setProperty(Cache.class.getCanonicalName(), this.getClass());
+        isThreadSafe = InternalCacheutil.isThreadSafe(conf);
         csm = new CacheServiceManager<K, V>(conf);
         populateCsm(csm, conf);
         statistics = csm.create(CacheStatisticsCacheService.class);
@@ -126,14 +130,14 @@ public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
      * {@inheritDoc}
      */
     public Set<K> keySet() {
-        return getMap().keySet(this, isSynchronized());
+        return getMap().keySet(this, isThreadSafe);
     }
 
     /**
      * {@inheritDoc}
      */
     public Set<Entry<K, V>> entrySet() {
-        return (Set) getMap().entrySet(this, isSynchronized(), true);
+        return (Set) getMap().entrySet(this, isThreadSafe, true);
     }
 
     /**
@@ -166,7 +170,7 @@ public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
         return getEntry(key, true);
     }
 
-    protected abstract CacheEntry<K, V> getEntry(K key, boolean isExported);
+    abstract CacheEntry<K, V> getEntry(K key, boolean isExported);
 
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
@@ -215,11 +219,7 @@ public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
      * {@inheritDoc}
      */
     public Collection<V> values() {
-        return getMap().values(this, isSynchronized());
-    }
-
-    boolean isSynchronized() {
-        return false;
+        return getMap().values(this, isThreadSafe);
     }
 
     /**
@@ -354,6 +354,21 @@ public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
                 expirationTimeMilli, false);
         AbstractCacheEntry<K, V> prev = putMyEntry(me);
         return prev == null ? null : prev.getValue();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void putAll(Map<? extends K, ? extends V> m, long expirationTime, TimeUnit unit) {
+        if (m == null) {
+            throw new NullPointerException("m is null");
+        } else if (expirationTime < 0) {
+            throw new IllegalArgumentException("timeout must not be negative, was "
+                    + expirationTime);
+        } else if (unit == null) {
+            throw new NullPointerException("unit is null");
+        }
+        putAll(m, convert(expirationTime, unit));
     }
 
     abstract void putAll(Map<? extends K, ? extends V> t, long expirationTimeNano);
