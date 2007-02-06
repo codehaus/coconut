@@ -22,14 +22,11 @@ import org.junit.Test;
  */
 public class XmlConfiguratorTest_ExpirationTest {
 
-    XmlConfigurator c;
-
     CacheConfiguration conf;
 
     @Before
     public void setup() {
         conf = CacheConfiguration.create();
-        c = XmlConfigurator.getInstance();
     }
 
     protected CacheConfiguration.Expiration e() {

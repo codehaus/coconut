@@ -8,13 +8,8 @@ import static org.coconut.cache.spi.XmlConfiguratorTest.rw;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.lang.management.ManagementFactory;
-
-import javax.management.MBeanServerFactory;
-import javax.swing.DefaultBoundedRangeModel;
 
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.management.CacheMXBean;
 import org.junit.Before;
 import org.junit.Test;
 

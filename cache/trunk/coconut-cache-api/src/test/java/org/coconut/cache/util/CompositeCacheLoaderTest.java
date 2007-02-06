@@ -165,14 +165,12 @@ public class CompositeCacheLoaderTest extends MockTestCase {
 
     @SuppressWarnings("unchecked")
     public void testHandleException() throws Exception {
-        Composite.cause = new Exception();
-        Composite.keys = new HashSet(Arrays.asList(4, 3, 5));
-
         Mock m1 = mock(CacheLoader.class, "M1");
         Mock m2 = mock(CacheLoader.class);
-        Composite.loader = (CacheLoader) m1.proxy();
         Composite c = new Composite((CacheLoader) m1.proxy(), (CacheLoader) m2.proxy());
-
+        c.cause=new Exception();
+        c.keys=new HashSet(Arrays.asList(4, 3, 5));
+        c.loader= (CacheLoader) m1.proxy();
         m1.expects(once()).method("load").with(eq(4)).will(
                 throwException(Composite.cause));
         assertEquals("foo", c.load(4));
@@ -199,7 +197,7 @@ public class CompositeCacheLoaderTest extends MockTestCase {
             super(loaders);
         }
 
-        static Exception throwMe = new IllegalThreadStateException();
+         Exception throwMe = new IllegalThreadStateException();
 
         static CacheLoader<Integer, String> loader;
 

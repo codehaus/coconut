@@ -30,7 +30,15 @@
           <generateHistorical>true</generateHistorical>
         </configuration>
       </plugin>
+
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+      </plugin>
+
     </plugins>
+
   </reporting>
   <build>
     <plugins>
@@ -39,7 +47,7 @@
         <configuration>
           <jdk>1.5</jdk>
           <excludes>
-    <!--         <exclude>**/tck/**/*.java</exclude> -->
+            <!--         <exclude>**/tck/**/*.java</exclude> -->
           </excludes>
           <licenseLocation>
             ${user.home}/licenses/coconut-clover.license
@@ -80,7 +88,7 @@
     <module>coconut-cache-impl</module>
     <module>coconut-cache-policies</module>
     <!-- 
-    <module>coconut-cache-tck</module>
-     -->
+      <module>coconut-cache-tck</module>
+    -->
   </modules>
 </project>

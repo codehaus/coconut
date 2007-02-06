@@ -6,8 +6,6 @@ package org.coconut.cache.tck.cacheentry;
 
 import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M2;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.tck.CacheTestBundle;

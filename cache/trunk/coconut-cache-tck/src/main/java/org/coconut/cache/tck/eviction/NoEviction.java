@@ -4,8 +4,6 @@
 
 package org.coconut.cache.tck.eviction;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.tck.CacheTestBundle;

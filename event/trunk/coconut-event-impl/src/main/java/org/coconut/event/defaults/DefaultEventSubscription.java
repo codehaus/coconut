@@ -7,8 +7,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.coconut.core.EventProcessor;
 import org.coconut.event.EventSubscription;
-import org.coconut.event.defaults.DefaultEventBus;
-import org.coconut.event.spi.AbstractEventBus;
 import org.coconut.filter.Filter;
 
 /**

@@ -4,9 +4,6 @@
 
 package org.coconut.cache.tck.loading;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 

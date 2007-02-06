@@ -12,8 +12,8 @@ import java.util.Map;
 
 import org.coconut.core.Transformer;
 import org.coconut.core.util.Transformers;
-import org.coconut.filter.Filter;
 import org.coconut.filter.CollectionFilters;
+import org.coconut.filter.Filter;
 import org.coconut.filter.Filters;
 import org.coconut.filter.CollectionFilters.TransformerFilter;
 

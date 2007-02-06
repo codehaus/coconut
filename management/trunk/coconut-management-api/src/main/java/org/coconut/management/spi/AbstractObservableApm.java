@@ -3,12 +3,7 @@
  */
 package org.coconut.management.spi;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.coconut.core.EventProcessor;
 import org.coconut.management.ManagedObserver;
-import org.coconut.management.monitor.TimedAverage;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

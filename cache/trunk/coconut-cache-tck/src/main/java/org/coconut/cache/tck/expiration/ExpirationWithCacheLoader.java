@@ -7,12 +7,9 @@ import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M2;
 import static org.coconut.test.CollectionUtils.M3;
 import static org.coconut.test.CollectionUtils.M4;
-import static org.coconut.test.CollectionUtils.M5;
-import static org.coconut.test.CollectionUtils.M6;
 
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.CacheEntry;
 import org.coconut.cache.tck.CacheTestBundle;
 import org.coconut.cache.tck.util.CacheEntryFilter;
 import org.coconut.cache.tck.util.IntegerToStringLoader;

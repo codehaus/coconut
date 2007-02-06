@@ -4,8 +4,6 @@
 
 package org.coconut.cache.policy.util;
 
-import java.util.HashSet;
-
 import org.coconut.cache.policy.PolicyObject;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.filter.Filters;

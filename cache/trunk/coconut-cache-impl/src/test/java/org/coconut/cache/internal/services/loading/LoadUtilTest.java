@@ -7,13 +7,12 @@ import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M1_KEY_NULL;
 import static org.coconut.test.CollectionUtils.M2;
 import static org.coconut.test.CollectionUtils.asMap;
-import static org.coconut.test.CollectionUtils.*;
+import static org.coconut.test.CollectionUtils.asSet;
 
 import java.util.Map;
 
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheLoader;
-import org.coconut.cache.spi.CacheUtil;
 import org.coconut.cache.util.AbstractCacheLoader;
 import org.coconut.test.MockTestCase;
 import org.jmock.Mock;

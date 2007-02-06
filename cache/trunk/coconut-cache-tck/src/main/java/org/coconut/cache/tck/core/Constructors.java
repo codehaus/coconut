@@ -5,9 +5,6 @@
 package org.coconut.cache.tck.core;
 
 import static org.coconut.test.CollectionUtils.M1;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

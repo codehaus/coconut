@@ -3,7 +3,7 @@
  */
 package org.coconut.cache.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.policy.PolicyObject;

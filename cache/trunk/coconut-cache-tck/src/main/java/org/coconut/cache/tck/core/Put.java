@@ -11,9 +11,6 @@ import static org.coconut.test.CollectionUtils.M4;
 import static org.coconut.test.CollectionUtils.M5;
 import static org.coconut.test.CollectionUtils.MNAN1;
 import static org.coconut.test.CollectionUtils.asMap;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import org.coconut.cache.tck.CacheTestBundle;
 import org.junit.Test;

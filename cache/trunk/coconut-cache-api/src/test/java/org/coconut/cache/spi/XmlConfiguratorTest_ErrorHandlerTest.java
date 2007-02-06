@@ -23,14 +23,11 @@ import org.junit.Test;
  */
 public class XmlConfiguratorTest_ErrorHandlerTest {
 
-    XmlConfigurator c;
-
     CacheConfiguration conf;
 
     @Before
     public void setup() {
         conf = CacheConfiguration.create();
-        c = XmlConfigurator.getInstance();
     }
 
     @Test

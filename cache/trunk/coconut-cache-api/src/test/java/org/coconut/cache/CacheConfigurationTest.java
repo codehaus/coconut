@@ -19,12 +19,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.CacheErrorHandler;
 import org.coconut.cache.spi.XmlConfigurator;
-import org.coconut.cache.util.CacheSingleton;
 import org.coconut.core.Clock;
 import org.coconut.test.MockTestCase;
 import org.junit.Before;

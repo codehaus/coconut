@@ -4,11 +4,6 @@
 
 package org.coconut.cache.spi;
 
-import java.text.MessageFormat;
-import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import junit.framework.JUnit4TestAdapter;
 
 import org.junit.Test;

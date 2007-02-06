@@ -11,8 +11,8 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.AbstractCacheService;
 import org.coconut.cache.internal.util.WrapperCacheMXBean;
 import org.coconut.cache.spi.AbstractCache;
-import org.coconut.management.Managements;
 import org.coconut.management.ManagedGroup;
+import org.coconut.management.Managements;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

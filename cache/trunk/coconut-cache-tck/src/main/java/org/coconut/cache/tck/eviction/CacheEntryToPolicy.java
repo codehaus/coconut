@@ -5,9 +5,6 @@
 package org.coconut.cache.tck.eviction;
 
 import static org.coconut.test.CollectionUtils.M1;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;

@@ -8,8 +8,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.defaults.EntryMap;
-import org.coconut.cache.defaults.SupportedCache;
 import org.coconut.cache.spi.CacheErrorHandler;
 import org.coconut.cache.util.DefaultCacheEntry;
 import org.coconut.core.Clock;

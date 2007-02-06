@@ -12,11 +12,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReadWriteLock;
 
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.policy.util.FilteredPolicyDecorator;
-import org.coconut.cache.spi.CacheUtil;
 import org.coconut.cache.spi.CacheExecutorRunnable;
 import org.coconut.cache.util.AbstractCacheLoader;
 import org.coconut.cache.util.CacheDecorator;

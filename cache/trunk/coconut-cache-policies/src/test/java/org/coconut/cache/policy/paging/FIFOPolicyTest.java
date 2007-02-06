@@ -11,9 +11,7 @@ import static org.coconut.cache.policy.PolicyTestUtils.addToPolicy;
 import static org.coconut.cache.policy.PolicyTestUtils.empty;
 import static org.coconut.test.CollectionUtils.asList;
 import static org.coconut.test.CollectionUtils.seq;
-import junit.framework.JUnit4TestAdapter;
 
-import org.coconut.cache.policy.ReplacementPolicy;
 import org.junit.Before;
 import org.junit.Test;
 

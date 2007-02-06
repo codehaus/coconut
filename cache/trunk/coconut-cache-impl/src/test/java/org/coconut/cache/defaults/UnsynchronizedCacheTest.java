@@ -7,7 +7,6 @@ package org.coconut.cache.defaults;
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 
-import org.coconut.cache.defaults.UnsynchronizedCache;
 import org.coconut.cache.tck.TCKClassTester;
 import org.coconut.cache.tck.TCKRunner;
 import org.junit.runner.RunWith;

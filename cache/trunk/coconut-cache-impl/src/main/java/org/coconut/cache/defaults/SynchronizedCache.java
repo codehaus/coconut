@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import net.jcip.annotations.ThreadSafe;
 
@@ -66,11 +67,19 @@ public class SynchronizedCache<K, V> extends SupportedCache<K, V> {
     }
 
     /**
-     * {@inheritDoc}
+     * @see org.coconut.cache.spi.AbstractCache#containsValue(java.lang.Object)
      */
     @Override
-    public synchronized int size() {
-        return super.size();
+    public synchronized boolean containsValue(Object value) {
+        return super.containsValue(value);
+    }
+
+    /**
+     * @see java.util.AbstractMap#equals(java.lang.Object)
+     */
+    @Override
+    public synchronized boolean equals(Object o) {
+        return super.equals(o);
     }
 
     @Override
@@ -107,18 +116,76 @@ public class SynchronizedCache<K, V> extends SupportedCache<K, V> {
      * @see org.coconut.cache.defaults.SupportedCache#getHitStat()
      */
     @Override
-    public HitStat getHitStat() {
-        // TODO Auto-generated method stub
+    public synchronized HitStat getHitStat() {
         return super.getHitStat();
     }
 
     /**
-     * @see org.coconut.cache.defaults.SupportedCache#peekEntry(java.lang.Object,
-     *      boolean)
+     * @see java.util.AbstractMap#hashCode()
      */
     @Override
-    protected synchronized CacheEntry<K, V> peekEntry(K key, boolean doCopy) {
-        return super.peekEntry(key, doCopy);
+    public int hashCode() {
+        // TODO Auto-generated method stub
+        return super.hashCode();
+    }
+
+    @Override
+    public synchronized void putEntries(Collection<CacheEntry<K, V>> entries) {
+        ArrayList<AbstractCacheEntry<K, V>> am = new ArrayList<AbstractCacheEntry<K, V>>(
+                entries.size());
+        for (CacheEntry<K, V> entry : entries) {
+            am.add(newEntry(entry, map.get(entry.getKey()), null, null, 0, false));
+        }
+        putAllMyEntries(am);
+    }
+
+    /**
+     * @see org.coconut.cache.spi.AbstractCache#putIfAbsent(java.lang.Object,
+     *      java.lang.Object)
+     */
+    @Override
+    public synchronized V putIfAbsent(K key, V value) {
+        return super.putIfAbsent(key, value);
+    }
+
+    @Override
+    public synchronized V remove(Object key) {
+        if (key == null) {
+            throw new NullPointerException("key is null");
+        }
+        AbstractCacheEntry<K, V> e = map.remove(key);
+        if (e != null) {
+            getEvictionSupport().remove(e.getPolicyIndex());
+            getEventService().removed(this, e);
+        }
+        return e == null ? null : e.getValue();
+    }
+
+    /**
+     * @see org.coconut.cache.spi.AbstractCache#remove(java.lang.Object,
+     *      java.lang.Object)
+     */
+    @Override
+    public synchronized boolean remove(Object key, Object value) {
+        return super.remove(key, value);
+    }
+
+    /**
+     * @see org.coconut.cache.spi.AbstractCache#replace(java.lang.Object,
+     *      java.lang.Object)
+     */
+    @Override
+    public synchronized V replace(K key, V value) {
+        return super.replace(key, value);
+    }
+
+    /**
+     * @see org.coconut.cache.spi.AbstractCache#replace(java.lang.Object,
+     *      java.lang.Object, java.lang.Object)
+     */
+    @Override
+    public synchronized boolean replace(K key, V oldValue, V newValue) {
+        return super.replace(key, oldValue, newValue);
     }
 
     /**
@@ -130,11 +197,71 @@ public class SynchronizedCache<K, V> extends SupportedCache<K, V> {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized int size() {
+        return super.size();
+    }
+
+    /**
+     * @see org.coconut.cache.spi.AbstractCache#toString()
+     */
+    @Override
+    public synchronized String toString() {
+        return super.toString();
+    }
+
+    /**
      * @see org.coconut.cache.defaults.SupportedCache#trimToSize(int)
      */
     @Override
     public synchronized void trimToSize(int newSize) {
         super.trimToSize(newSize);
+    }
+
+    /**
+     * @see org.coconut.cache.defaults.SupportedCache#peekEntry(java.lang.Object,
+     *      boolean)
+     */
+    @Override
+    protected synchronized CacheEntry<K, V> peekEntry(K key, boolean doCopy) {
+        return super.peekEntry(key, doCopy);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected CacheServiceManager<K, V> populateCsm(CacheServiceManager<K, V> csm,
+            CacheConfiguration<K, V> conf) {
+        csm.setService(CacheStatisticsCacheService.class);
+        csm.setService(EvictionCacheService.class);
+        csm.setService(ExpirationCacheService.class, FinalExpirationCacheService.class);
+        csm.setService(CacheEntryLoaderService.class);
+        csm.setService(ManagementCacheService.class);
+        csm.setService(EventCacheService.class);
+        return csm;
+    }
+
+    @Override
+    protected synchronized void putAll(Map<? extends K, ? extends V> t,
+            long expirationTime) {
+        CacheUtil.checkMapForNulls(t);
+        ArrayList<AbstractCacheEntry<K, V>> am = new ArrayList<AbstractCacheEntry<K, V>>();
+        for (Iterator<? extends Map.Entry<? extends K, ? extends V>> i = t.entrySet()
+                .iterator(); i.hasNext();) {
+            Map.Entry<? extends K, ? extends V> e = i.next();
+            K key = e.getKey();
+            AbstractCacheEntry<K, V> me = newEntry(null, map.get(key), key, e.getValue(),
+                    expirationTime, false);
+            am.add(me);
+        }
+        putAllMyEntries(am);
+    }
+
+    //package private not Threadsafe
+    void evictNext() {
+        AbstractCacheEntry<K, V> e = getEvictionSupport().evictNext();
+        map.remove(e.getKey());
+        getEventService().removed(this, e);
     }
 
     @Override
@@ -188,65 +315,16 @@ public class SynchronizedCache<K, V> extends SupportedCache<K, V> {
     }
 
     @Override
-    public synchronized void putEntries(Collection<CacheEntry<K, V>> entries) {
-        ArrayList<AbstractCacheEntry<K, V>> am = new ArrayList<AbstractCacheEntry<K, V>>(
-                entries.size());
-        for (CacheEntry<K, V> entry : entries) {
-            am.add(newEntry(entry, map.get(entry.getKey()), null, null, 0, false));
-        }
-        putAllMyEntries(am);
-    }
-
-    @Override
-    public synchronized V remove(Object key) {
-        if (key == null) {
-            throw new NullPointerException("key is null");
-        }
-        AbstractCacheEntry<K, V> e = map.remove(key);
-        if (e != null) {
-            getEvictionSupport().remove(e.getPolicyIndex());
-            getEventService().removed(this, e);
-        }
-        return e == null ? null : e.getValue();
-    }
-
-    @Override
     AbstractCacheEntry.EntryFactory<K, V> getEntryFactory() {
         return AbstractCacheEntry.SYNC;
     }
 
-    void evictNext() {
-        AbstractCacheEntry<K, V> e = getEvictionSupport().evictNext();
-        map.remove(e.getKey());
-        getEventService().removed(this, e);
-    }
-
-    @SuppressWarnings("unchecked")
-    protected CacheServiceManager<K, V> populateCsm(CacheServiceManager<K, V> csm,
-            CacheConfiguration<K, V> conf) {
-        csm.setService(CacheStatisticsCacheService.class);
-        csm.setService(EvictionCacheService.class);
-        csm.setService(ExpirationCacheService.class, FinalExpirationCacheService.class);
-        csm.setService(CacheEntryLoaderService.class);
-        csm.setService(ManagementCacheService.class);
-        csm.setService(EventCacheService.class);
-        return csm;
-    }
-
+    /**
+     * @see org.coconut.cache.defaults.memory.SupportedCache#getMap()
+     */
     @Override
-    protected synchronized void putAll(Map<? extends K, ? extends V> t,
-            long expirationTime) {
-        CacheUtil.checkMapForNulls(t);
-        ArrayList<AbstractCacheEntry<K, V>> am = new ArrayList<AbstractCacheEntry<K, V>>();
-        for (Iterator<? extends Map.Entry<? extends K, ? extends V>> i = t.entrySet()
-                .iterator(); i.hasNext();) {
-            Map.Entry<? extends K, ? extends V> e = i.next();
-            K key = e.getKey();
-            AbstractCacheEntry<K, V> me = newEntry(null, map.get(key), key, e.getValue(),
-                    expirationTime, false);
-            am.add(me);
-        }
-        putAllMyEntries(am);
+    EntryMap<K, V> getMap() {
+        return map;
     }
 
     synchronized void putAllMyEntries(
@@ -271,11 +349,52 @@ public class SynchronizedCache<K, V> extends SupportedCache<K, V> {
     }
 
     /**
-     * @see org.coconut.cache.defaults.memory.SupportedCache#getMap()
+     * @see org.coconut.cache.spi.AbstractCache#getAll(java.util.Collection)
      */
     @Override
-    EntryMap<K, V> getMap() {
-        return map;
+    public synchronized Map<K, V> getAll(Collection<? extends K> keys) {
+        return super.getAll(keys);
     }
 
+    /**
+     * @see java.util.AbstractMap#clone()
+     */
+    @Override
+    protected synchronized Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+    /**
+     * @see org.coconut.cache.defaults.SupportedCache#putEntry(org.coconut.cache.CacheEntry)
+     */
+    @Override
+    public synchronized void putEntry(CacheEntry<K, V> entry) {
+        super.putEntry(entry);
+    }
+
+    /**
+     * @see org.coconut.cache.defaults.SupportedCache#put(java.lang.Object,
+     *      java.lang.Object, long)
+     */
+    @Override
+    protected synchronized V put(K key, V value, long expirationTimeMilli) {
+        return super.put(key, value, expirationTimeMilli);
+    }
+
+    /**
+     * @see org.coconut.cache.defaults.SupportedCache#putVersionized(java.lang.Object,
+     *      java.lang.Object, long)
+     */
+    @Override
+    synchronized V putVersionized(K key, V value, long version) {
+        return super.putVersionized(key, value, version);
+    }
+
+    /**
+     * @see org.coconut.cache.defaults.SupportedCache#put(java.lang.Object, java.lang.Object, long, java.util.concurrent.TimeUnit)
+     */
+    @Override
+    public synchronized V put(K key, V value, long expirationTime, TimeUnit unit) {
+        return super.put(key, value, expirationTime, unit);
+    }
 }

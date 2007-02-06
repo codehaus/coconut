@@ -4,7 +4,6 @@
 
 package org.coconut.cache.tck.util;
 
-import static org.coconut.test.CollectionUtils.M3;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Map;

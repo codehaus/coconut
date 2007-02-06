@@ -17,7 +17,6 @@ import javax.management.ObjectName;
 
 import org.coconut.management.JmxRegistrant;
 import org.coconut.management.ManagedGroup;
-import org.coconut.management.spi.Named;
 import org.coconut.management.spi.NumberDynamicBean;
 import org.coconut.management.spi.SelfConfigure;
 

@@ -14,7 +14,6 @@ import static org.coconut.test.CollectionUtils.asSet;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.policy.Policies;
-import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.policy.paging.LRUPolicy;
 import org.coconut.cache.tck.CacheTestBundle;
 import org.junit.Test;

@@ -17,10 +17,6 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheEvent;
 import org.coconut.cache.Cache.HitStat;
-import org.coconut.cache.CacheEntryEvent.ItemAccessed;
-import org.coconut.cache.CacheEntryEvent.ItemAdded;
-import org.coconut.cache.CacheEntryEvent.ItemRemoved;
-import org.coconut.cache.CacheEntryEvent.ItemUpdated;
 import org.coconut.cache.internal.service.AbstractCacheService;
 import org.coconut.core.Offerable;
 import org.coconut.event.EventBus;
@@ -144,7 +140,7 @@ public class EventCacheService<K, V> extends AbstractCacheService<K, V> {
     }
 
     final static class AccessedEvent<K, V> extends AbstractCacheItemEvent<K, V> implements
-            ItemAccessed<K, V> {
+            org.coconut.cache.CacheEntryEvent.ItemAccessed<K, V> {
 
         private static final long serialVersionUID = 3545235834329511987L;
 
@@ -185,7 +181,7 @@ public class EventCacheService<K, V> extends AbstractCacheService<K, V> {
     }
 
     final static class AddedEvent<K, V> extends AbstractCacheItemEvent<K, V> implements
-            ItemAdded<K, V> {
+            org.coconut.cache.CacheEntryEvent.ItemAdded<K, V> {
 
         private static final long serialVersionUID = 3545235834329511987L;
 
@@ -222,7 +218,7 @@ public class EventCacheService<K, V> extends AbstractCacheService<K, V> {
     }
 
     final static class ChangedEvent<K, V> extends AbstractCacheItemEvent<K, V> implements
-            ItemUpdated<K, V> {
+            org.coconut.cache.CacheEntryEvent.ItemUpdated<K, V> {
 
         private static final long serialVersionUID = 3545235834329511987L;
 
@@ -287,7 +283,7 @@ public class EventCacheService<K, V> extends AbstractCacheService<K, V> {
     }
 
     final static class EvictedEvent<K, V> extends AbstractCacheItemEvent<K, V> implements
-            ItemAdded<K, V> {
+            org.coconut.cache.CacheEntryEvent.ItemAdded<K, V> {
 
         private static final long serialVersionUID = 3545235834329511987L;
 
@@ -335,7 +331,7 @@ public class EventCacheService<K, V> extends AbstractCacheService<K, V> {
     }
 
     final static class RemovedEvent<K, V> extends AbstractCacheItemEvent<K, V> implements
-            ItemRemoved<K, V> {
+            org.coconut.cache.CacheEntryEvent.ItemRemoved<K, V> {
 
         private static final long serialVersionUID = 3545235834329511987L;
 

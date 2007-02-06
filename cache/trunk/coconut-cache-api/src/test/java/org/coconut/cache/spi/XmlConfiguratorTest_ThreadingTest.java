@@ -10,7 +10,6 @@ import static org.coconut.cache.spi.XmlConfiguratorTest.rw;
 
 import java.util.Comparator;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -31,15 +30,11 @@ import org.coconut.test.MockTestCase;
 import org.junit.Before;
 import org.junit.Test;
 
-import sun.awt.windows.ThemeReader;
-
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class XmlConfiguratorTest_ThreadingTest {
-
-    XmlConfigurator c;
 
     CacheConfiguration conf;
 
@@ -48,7 +43,6 @@ public class XmlConfiguratorTest_ThreadingTest {
     @Before
     public void setup() {
         conf = CacheConfiguration.create();
-        c = XmlConfigurator.getInstance();
     }
 
     protected CacheConfiguration.Threading t() {

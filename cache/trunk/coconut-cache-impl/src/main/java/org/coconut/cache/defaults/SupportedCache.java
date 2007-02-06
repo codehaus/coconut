@@ -47,8 +47,6 @@ public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
 
     private final EventCacheService<K, V> eventSupport;
 
-    boolean copyEntry = true;
-
     final boolean isThreadSafe;
 
     public static long convert(long timeout, TimeUnit unit) {
@@ -258,11 +256,6 @@ public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
     @Override
     public Future<?> load(final K key) {
         return loaderSupport.asyncLoadEntry(key, this);
-    }
-
-    /* Helper methods for Synchronized Cache */
-    Future<?> loadAsync(AbstractCache<K, V> callback, K key) {
-        return loaderSupport.asyncLoadEntry(key, callback);
     }
 
     /**

@@ -4,10 +4,10 @@
 
 package org.coconut.cache.policy.costsize;
 
+import static org.coconut.cache.policy.util.CostSizeHolder.add;
 import junit.framework.TestCase;
 
 import org.coconut.cache.policy.util.CostSizeHolder;
-import static org.coconut.cache.policy.util.CostSizeHolder.add;
 
 public class LandlordTest extends TestCase {
 

@@ -12,13 +12,12 @@ import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.CacheException;
 import org.coconut.cache.CacheLoader;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.AsyncCacheLoader;
 import org.coconut.cache.spi.CacheErrorHandler;
-import org.coconut.cache.spi.CacheUtil;
 import org.coconut.cache.spi.CacheExecutorRunnable;
+import org.coconut.cache.spi.CacheUtil;
 import org.coconut.cache.util.AbstractCacheLoader;
 import org.coconut.cache.util.DefaultCacheEntry;
 import org.coconut.core.Callback;

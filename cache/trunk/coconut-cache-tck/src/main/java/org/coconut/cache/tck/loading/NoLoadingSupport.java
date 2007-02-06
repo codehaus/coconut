@@ -4,8 +4,8 @@
 
 package org.coconut.cache.tck.loading;
 
-import static org.junit.Assert.assertNull;
 import static org.coconut.test.CollectionUtils.M1;
+
 import org.coconut.cache.tck.CacheTestBundle;
 import org.junit.Test;
 

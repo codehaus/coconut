@@ -21,14 +21,11 @@ import org.junit.Test;
  */
 public class XmlConfiguratorTest_JMXTest {
 
-    XmlConfigurator c;
-
     CacheConfiguration conf;
     static CacheConfiguration DEFAULT=CacheConfiguration.create();
     @Before
     public void setup() {
         conf = CacheConfiguration.create();
-        c = XmlConfigurator.getInstance();
     }
 
     protected CacheConfiguration.JMX j() {

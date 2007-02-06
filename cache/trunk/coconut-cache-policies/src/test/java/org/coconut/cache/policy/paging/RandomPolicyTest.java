@@ -15,10 +15,6 @@ import static org.coconut.test.CollectionUtils.seq;
 import java.util.Set;
 import java.util.TreeSet;
 
-import junit.framework.JUnit4TestAdapter;
-
-import org.coconut.cache.policy.Policies;
-import org.coconut.cache.policy.ReplacementPolicy;
 import org.junit.Before;
 import org.junit.Test;
 

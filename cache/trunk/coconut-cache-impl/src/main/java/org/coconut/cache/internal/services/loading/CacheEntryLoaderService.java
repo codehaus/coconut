@@ -9,7 +9,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 
 import net.jcip.annotations.NotThreadSafe;
-import net.jcip.annotations.ThreadSafe;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;

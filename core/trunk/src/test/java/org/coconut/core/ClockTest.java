@@ -3,13 +3,14 @@
  */
 package org.coconut.core;
 
-import static org.junit.Assert.*;
+import static org.coconut.test.TestUtil.assertIsSerializable;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.core.Clock.DeterministicClock;
 import org.junit.Test;
-import static org.coconut.test.TestUtil.*;
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $

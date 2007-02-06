@@ -3,7 +3,9 @@
  */
 package org.coconut.cache;
 
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 
 import java.lang.management.ManagementFactory;
 import java.util.Collection;

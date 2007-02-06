@@ -13,8 +13,6 @@ import java.io.IOException;
 
 import junit.framework.JUnit4TestAdapter;
 
-import org.coconut.filter.FileFilters;
-import org.coconut.filter.Filter;
 import org.coconut.filter.FileFilters.FileCanReadFilter;
 import org.coconut.filter.FileFilters.FileCanWriteFilter;
 import org.coconut.filter.FileFilters.FileExistsFilter;

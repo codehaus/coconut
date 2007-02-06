@@ -10,7 +10,6 @@ import java.util.concurrent.TimeUnit;
 import javax.management.JMException;
 
 import org.coconut.management.ManagedExecutableGroup;
-import org.coconut.management.ManagedGroup;
 import org.coconut.management.spi.NumberDynamicBean;
 
 /**

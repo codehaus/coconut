@@ -9,9 +9,6 @@ import static org.coconut.test.CollectionUtils.M1_TO_M5_SET;
 import static org.coconut.test.CollectionUtils.M5;
 import static org.coconut.test.CollectionUtils.MNAN1;
 import static org.coconut.test.CollectionUtils.MNAN2;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;

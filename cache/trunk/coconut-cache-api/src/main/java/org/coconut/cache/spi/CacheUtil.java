@@ -6,7 +6,6 @@ package org.coconut.cache.spi;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 

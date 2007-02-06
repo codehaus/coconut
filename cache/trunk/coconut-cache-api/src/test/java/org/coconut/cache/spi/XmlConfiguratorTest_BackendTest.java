@@ -3,17 +3,12 @@
  */
 package org.coconut.cache.spi;
 
-import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.coconut.cache.spi.XmlConfiguratorTest.rw;
 
-import java.util.concurrent.TimeUnit;
-
-import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.util.AbstractCacheLoader;
-import org.coconut.filter.Filter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,14 +18,11 @@ import org.junit.Test;
  */
 public class XmlConfiguratorTest_BackendTest {
 
-    XmlConfigurator c;
-
     CacheConfiguration conf;
 
     @Before
     public void setup() {
         conf = CacheConfiguration.create();
-        c = XmlConfigurator.getInstance();
     }
 
     protected CacheConfiguration.Backend b() {

@@ -5,7 +5,6 @@
 package org.coconut.internal.util.tabular;
 
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.concurrent.TimeUnit;
 
 /**

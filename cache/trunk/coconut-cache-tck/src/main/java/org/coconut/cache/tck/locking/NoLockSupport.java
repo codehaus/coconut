@@ -4,9 +4,6 @@
 
 package org.coconut.cache.tck.locking;
 
-import static org.coconut.test.CollectionUtils.M1;
-import static org.coconut.test.CollectionUtils.M2;
-
 import org.coconut.cache.tck.CacheTestBundle;
 import org.junit.Test;
 

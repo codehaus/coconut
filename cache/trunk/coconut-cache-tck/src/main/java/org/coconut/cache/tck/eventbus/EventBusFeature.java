@@ -13,15 +13,11 @@ import static org.coconut.test.CollectionUtils.M6;
 import static org.coconut.test.CollectionUtils.M7;
 import static org.coconut.test.CollectionUtils.M8;
 import static org.coconut.test.CollectionUtils.M9;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.CacheEvent;
 import org.coconut.cache.CacheEntryEvent;
+import org.coconut.cache.CacheEvent;
 import org.coconut.cache.CacheEntryEvent.ItemAccessed;
 import org.coconut.cache.CacheEntryEvent.ItemAdded;
 import org.coconut.cache.CacheEntryEvent.ItemRemoved;

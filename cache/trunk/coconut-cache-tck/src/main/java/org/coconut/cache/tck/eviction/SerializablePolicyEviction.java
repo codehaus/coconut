@@ -4,9 +4,6 @@
 
 package org.coconut.cache.tck.eviction;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
