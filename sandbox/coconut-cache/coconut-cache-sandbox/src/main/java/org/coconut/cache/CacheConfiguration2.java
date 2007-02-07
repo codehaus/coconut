@@ -28,6 +28,20 @@ import org.xml.sax.SAXException;
  */
 public class CacheConfiguration2<K, V> extends CacheConfiguration<K, V> {
 
+
+    // /**
+    // * The cache will try to interrupt the thread that is loading a a
+    // * element if one with a corresponding key is added. Primarily usefull
+    // * for distributed caches with very expensive values (in terms of
+    // * calculation) where an update for another host might occur in the
+    // * middle of a calculation. Hmm not sure this is so usefull... Lets
+    // see
+    // * if this is a problem before doing anything against it.
+    // */
+    // public void setInterruptLoad(boolean interrupt) {
+    //
+    // }
+
     
     public void setInstallShutdownHooks(boolean installShutdownHooks) {
         
@@ -139,7 +153,7 @@ public class CacheConfiguration2<K, V> extends CacheConfiguration<K, V> {
         // cc.backend().setLoader(myLoader);
         cc.eviction().setMaximumSize(1000);
         cc.expiration().setDefaultTimeout(100, TimeUnit.SECONDS);
-        cc.jmx().setAutoRegister(true);
+       // cc.jmx().setAutoRegister(true);
 
         // Cache<String,Integer> cache=cc.newInstance(UnlimitedCache.class);
         // // cc.parseDocument(document.getDocumentElement());

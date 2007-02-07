@@ -1,3 +1,5 @@
+package org.coconut.cache.policy;
+
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -5,7 +7,7 @@ import java.util.List;
 
 import org.coconut.cache.policy.*;
 
-public class Policies2<T> implements ReplacementPolicy<T>{
+public class Policies2<T> {
 
     static class SynchronizedReplacementPolicy<E> implements ReplacementPolicy<E>,
             Serializable {

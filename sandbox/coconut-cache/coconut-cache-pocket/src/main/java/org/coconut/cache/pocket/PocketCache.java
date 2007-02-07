@@ -135,10 +135,13 @@ public interface PocketCache<K, V> extends ConcurrentMap<K, V> {
      */
     void trimToSize(int newSize);
 
+    //Should be on imple....
+    
     // TODO: Does remove trim down to default Trim size?
     void setEvictWatermark(int trimSize);
 
     int getEvictWatermark();
+
 
     /**
      * Returns the maximum number of elements this cache can hold or
