@@ -16,11 +16,11 @@ public class InternalCacheutil {
 
     public static boolean isThreadSafe(CacheConfiguration conf) {
         Class c = null;
+        String s = (String) conf.getProperty(XmlConfigurator.CACHE_INSTANCE_TYPE);
         try {
-            String s = (String) conf.getProperty(XmlConfigurator.CACHE_INSTANCE_TYPE);
             c = Class.forName(s);
         } catch (ClassNotFoundException e1) {
-            e1.printStackTrace();
+            throw new Error("Could not find class " + s + ", this is highly irregular");
         }
         return c.isAnnotationPresent(ThreadSafe.class);
     }

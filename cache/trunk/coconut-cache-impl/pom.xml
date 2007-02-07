@@ -19,7 +19,7 @@
     </dependency>
     <dependency>
       <groupId>org.coconut.cache</groupId>
-      <artifactId>coconut-cache-tck</artifactId>
+      <artifactId>coconut-cache-test-tck</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

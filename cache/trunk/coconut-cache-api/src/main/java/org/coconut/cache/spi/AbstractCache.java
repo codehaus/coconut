@@ -47,7 +47,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         if (configuration == null) {
             throw new NullPointerException("configuration is null");
         }
-        configuration.setProperty(XmlConfigurator.CACHE_INSTANCE_TYPE, getClass().getCanonicalName());
+        ConfigurationValidator.getInstance().verify(configuration,(Class<Cache>) getClass());
         name = configuration.getName();
         errorHandler = configuration.getErrorHandler();
         errorHandler.setCacheName(name);

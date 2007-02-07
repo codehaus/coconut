@@ -21,20 +21,20 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class CacheConfiguration_JMXTest {
+public class CacheConfiguration_ManagementTest {
     CacheConfiguration<Number, Collection> conf;
 
-    CacheConfiguration.JMX j;
+    CacheConfiguration.Management j;
 
     @Before
     public void setUp() {
         conf = CacheConfiguration.create();
-        j = conf.jmx();
+        j = conf.management();
     }
 
     @Test
     public void testExpiration() {
-        assertEquals(conf, conf.jmx().c());
+        assertEquals(conf, conf.management().c());
     }
 
     @Test(expected = NullPointerException.class)

@@ -19,7 +19,7 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class XmlConfiguratorTest_JMXTest {
+public class XmlConfiguratorTest_ManagementTest {
 
     CacheConfiguration conf;
     static CacheConfiguration DEFAULT=CacheConfiguration.create();
@@ -28,8 +28,8 @@ public class XmlConfiguratorTest_JMXTest {
         conf = CacheConfiguration.create();
     }
 
-    protected CacheConfiguration.JMX j() {
-        return conf.jmx();
+    protected CacheConfiguration.Management j() {
+        return conf.management();
     }
 
     @Test
@@ -37,17 +37,17 @@ public class XmlConfiguratorTest_JMXTest {
         conf = rw(conf);
         assertEquals(CacheMXBean.DEFAULT_JMX_DOMAIN, j().getDomain());
         assertEquals(ManagementFactory.getPlatformMBeanServer(), j().getMBeanServer());
-        assertEquals(DEFAULT.jmx().getAutoRegister(), j().getAutoRegister());
+        assertEquals(DEFAULT.management().getAutoRegister(), j().getAutoRegister());
     }
 
     @Test
     public void testJMX() throws Exception {
         j().setDomain("foo.bar");
-        j().setAutoRegister(!DEFAULT.jmx().getAutoRegister());
+        j().setAutoRegister(!DEFAULT.management().getAutoRegister());
         j().setMbeanServer(MBeanServerFactory.createMBeanServer());
         conf = rw(conf);
         assertEquals("foo.bar", j().getDomain());
-        assertEquals(!DEFAULT.jmx().getAutoRegister(), j().getAutoRegister());
+        assertEquals(!DEFAULT.management().getAutoRegister(), j().getAutoRegister());
     }
 
     @Test
@@ -56,12 +56,12 @@ public class XmlConfiguratorTest_JMXTest {
         j().setDomain("foo.foo");
         conf = rw(conf);
         assertEquals("foo.foo", j().getDomain());
-        assertEquals(DEFAULT.jmx().getAutoRegister(), j().getAutoRegister());
+        assertEquals(DEFAULT.management().getAutoRegister(), j().getAutoRegister());
 
         conf = CacheConfiguration.create();
-        j().setAutoRegister(!DEFAULT.jmx().getAutoRegister());
+        j().setAutoRegister(!DEFAULT.management().getAutoRegister());
         conf = rw(conf);
-        assertEquals(!DEFAULT.jmx().getAutoRegister(), j().getAutoRegister());
+        assertEquals(!DEFAULT.management().getAutoRegister(), j().getAutoRegister());
     }
 
 }

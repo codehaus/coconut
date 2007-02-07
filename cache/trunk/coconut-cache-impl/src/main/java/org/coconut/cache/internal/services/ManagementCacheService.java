@@ -24,7 +24,7 @@ public class ManagementCacheService<K, V> extends AbstractCacheService<K, V> {
 
     public ManagementCacheService(CacheConfiguration<K, V> conf) {
         super(conf);
-        group = Managements.newGroup(conf.getName(), "Base bean", conf.jmx()
+        group = Managements.newGroup(conf.getName(), "Base bean", conf.management()
                 .getMBeanServer());
     }
 
@@ -42,8 +42,8 @@ public class ManagementCacheService<K, V> extends AbstractCacheService<K, V> {
         ManagedGroup g = group.addGroup("General",
                 "General cache attributes and settings");
         g.add(new WrapperCacheMXBean(cache));
-        if (getConf().jmx().getAutoRegister()) {
-            group.registerAll(Managements.newRegistrant(getConf().jmx()
+        if (getConf().management().getAutoRegister()) {
+            group.registerAll(Managements.newRegistrant(getConf().management()
                     .getDomain(), "name", "service", "group"));
         }
     }

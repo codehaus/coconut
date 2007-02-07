@@ -304,8 +304,8 @@ public class CacheConfiguration<K, V> implements Cloneable {
      * 
      * @return returns a jmx configuration instance
      */
-    public JMX jmx() {
-        return new JMX();
+    public Management management() {
+        return new Management();
     }
 
     /**
@@ -793,7 +793,7 @@ public class CacheConfiguration<K, V> implements Cloneable {
      * If for some reason the cache fails to properly register with the
      * MBeanServer at construction time a {@link CacheException} is thrown.
      */
-    public class JMX {
+    public class Management {
 
         /**
          * Returns the CacheConfiguration that this instance is part of.
@@ -846,7 +846,7 @@ public class CacheConfiguration<K, V> implements Cloneable {
          * @throws NullPointerException
          *             if domain is <tt>null</tt>
          */
-        public JMX setDomain(String domain) {
+        public Management setDomain(String domain) {
             if (domain == null) {
                 throw new NullPointerException("domain is null");
             }
@@ -865,7 +865,7 @@ public class CacheConfiguration<K, V> implements Cloneable {
          * @throws NullPointerException
          *             if server is <tt>null</tt>
          */
-        public JMX setMbeanServer(MBeanServer server) {
+        public Management setMbeanServer(MBeanServer server) {
             if (server == null) {
                 throw new NullPointerException("server is null");
             }
@@ -884,7 +884,7 @@ public class CacheConfiguration<K, V> implements Cloneable {
          * @see #isRegister()
          * @see #setObjectName(ObjectName)
          */
-        public JMX setAutoRegister(boolean registerAutomatic) {
+        public Management setAutoRegister(boolean registerAutomatic) {
             registerForJMXAutomatically = registerAutomatic;
             return this;
         }

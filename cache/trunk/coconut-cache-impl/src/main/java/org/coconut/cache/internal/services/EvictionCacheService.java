@@ -10,6 +10,7 @@ import java.util.List;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.AbstractCacheService;
+import org.coconut.cache.policy.Policies;
 import org.coconut.cache.policy.ReplacementPolicy;
 
 /**
@@ -29,7 +30,11 @@ public class EvictionCacheService<T extends CacheEntry> extends AbstractCacheSer
 
     public EvictionCacheService(CacheConfiguration<?, ?> conf) {
         super(conf);
-        cp = conf.eviction().getPolicy();
+        if (conf.eviction().getPolicy() == null) {
+            cp = Policies.newLRU();
+        } else {
+            cp = conf.eviction().getPolicy();
+        }
         maxSize = conf.eviction().getMaximumSize();
         maxCapacity = conf.eviction().getMaximumCapacity();
         preferableCapacity = conf.eviction().getPreferableCapacity();
@@ -54,10 +59,11 @@ public class EvictionCacheService<T extends CacheEntry> extends AbstractCacheSer
             cp.touch(index);
         }
     }
-    
+
     public boolean replace(int index, T t) {
         return cp.update(index, t);
     }
+
     public boolean isEnabled() {
         return cp != null;
     }
@@ -76,7 +82,7 @@ public class EvictionCacheService<T extends CacheEntry> extends AbstractCacheSer
             }
         }
         long diffCapacity = capacity - maxCapacity;
-        
+
         if (diffCapacity > 0) {
             ArrayList list = new ArrayList();
             while (diffCapacity > 0) {

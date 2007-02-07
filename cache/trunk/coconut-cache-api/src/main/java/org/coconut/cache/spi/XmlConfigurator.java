@@ -203,7 +203,7 @@ public class XmlConfigurator {
         list.add(new ErrorHandlerConfigurator());
         list.add(new ExpirationConfigurator());
         list.add(new EvictionConfigurator());
-        list.add(new JMXConfigurator());
+        list.add(new ManagementConfigurator());
         list.add(new StatisticsConfigurator());
         list.add(new ThreadConfigurator());
         return list;
@@ -674,18 +674,18 @@ public class XmlConfigurator {
         }
     }
 
-    static class JMXConfigurator extends AbstractConfigurator {
+    static class ManagementConfigurator extends AbstractConfigurator {
 
-        public final static String REGISTER_ATRB = "auto-register";
+        final static String REGISTER_ATRB = "auto-register";
 
-        public final static String DOMAIN_TAG = "domain";
+        final static String DOMAIN_TAG = "domain";
 
-        public final static String EXPIRATION_TAG = "expiration";
+        final static String EXPIRATION_TAG = "expiration";
 
-        public final static String JMX_TAG = "jmx";
+        final static String MANAGEMENT_TAG = "management";
 
-        public CacheConfiguration.JMX j() {
-            return conf().jmx();
+        public CacheConfiguration.Management m() {
+            return conf().management();
         }
 
         /**
@@ -693,17 +693,17 @@ public class XmlConfigurator {
          */
         @Override
         protected void read() throws Exception {
-            Element e = getChild(JMX_TAG);
+            Element e = getChild(MANAGEMENT_TAG);
             if (e != null) {
                 /* Register */
                 if (e.hasAttribute(REGISTER_ATRB)) {
-                    j().setAutoRegister(
+                    m().setAutoRegister(
                             Boolean.parseBoolean(e.getAttribute(REGISTER_ATRB)));
                 }
                 /* Domain */
                 Element domain = getChild(DOMAIN_TAG, e);
                 if (domain != null) {
-                    j().setDomain(domain.getTextContent());
+                    m().setDomain(domain.getTextContent());
                 }
             }
         }
@@ -713,19 +713,19 @@ public class XmlConfigurator {
          */
         @Override
         protected void write() throws Exception {
-            Element base = doc.createElement(JMX_TAG);
+            Element base = doc.createElement(MANAGEMENT_TAG);
 
             /* Register */
-            if (j().getAutoRegister() != CONF.jmx().getAutoRegister()) {
-                base.setAttribute(REGISTER_ATRB, Boolean.toString(j().getAutoRegister()));
+            if (m().getAutoRegister() != CONF.management().getAutoRegister()) {
+                base.setAttribute(REGISTER_ATRB, Boolean.toString(m().getAutoRegister()));
             }
 
             /* Domain Filter */
-            if (!(j().getDomain().equals(CONF.jmx().getDomain()))) {
-                add(DOMAIN_TAG, base, j().getDomain());
+            if (!(m().getDomain().equals(CONF.management().getDomain()))) {
+                add(DOMAIN_TAG, base, m().getDomain());
             }
             /* MBeanServer */
-            if (j().getMBeanServer() != CONF.jmx().getMBeanServer()) {
+            if (m().getMBeanServer() != CONF.management().getMBeanServer()) {
                 addComment("management.cannotPersistMBeanServer", base);
             }
 

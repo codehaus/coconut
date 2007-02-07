@@ -23,6 +23,7 @@ import org.coconut.cache.internal.services.loading.CacheEntryLoaderService;
 import org.coconut.cache.internal.util.InternalCacheutil;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.CacheErrorHandler;
+import org.coconut.cache.spi.XmlConfigurator;
 import org.coconut.core.Clock;
 import org.coconut.event.EventBus;
 import org.coconut.management.ManagedGroup;
@@ -69,6 +70,7 @@ public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
     SupportedCache(CacheConfiguration<K, V> conf) {
         super(conf);
         conf.setProperty(Cache.class.getCanonicalName(), this.getClass());
+        conf.setProperty(XmlConfigurator.CACHE_INSTANCE_TYPE, getClass().getCanonicalName());
         isThreadSafe = InternalCacheutil.isThreadSafe(conf);
         csm = new CacheServiceManager<K, V>(conf);
         populateCsm(csm, conf);
