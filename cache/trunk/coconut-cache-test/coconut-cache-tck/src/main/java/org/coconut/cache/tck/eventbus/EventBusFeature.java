@@ -16,31 +16,41 @@ import static org.coconut.test.CollectionUtils.M9;
 
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.CacheEntryEvent;
-import org.coconut.cache.CacheEvent;
-import org.coconut.cache.CacheEntryEvent.ItemAccessed;
-import org.coconut.cache.CacheEntryEvent.ItemAdded;
-import org.coconut.cache.CacheEntryEvent.ItemRemoved;
-import org.coconut.cache.CacheEntryEvent.ItemUpdated;
+import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.policy.Policies;
+import org.coconut.cache.service.event.CacheEntryEvent;
+import org.coconut.cache.service.event.CacheEvent;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemAccessed;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemAdded;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated;
+import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.cache.tck.util.IntegerToStringLoader;
 import org.coconut.event.EventSubscription;
+import org.junit.Before;
 import org.junit.Test;
 
 @SuppressWarnings("unchecked")
 public class EventBusFeature extends AbstractEventTestBundle {
 
-    /**
-     * Tests that the cache support the getEventBus method.
-     */
-    @Test
-    public void testEventBus() {
-        c = c0; // test c0
-        assertNotNull(c.getEventBus());
-        assertEquals(0, c.getEventBus().getSubscribers().size());
-        c.getEventBus().unsubscribeAll();
-        assertEquals(0, c.getEventBus().getSubscribers().size());
+    @Before
+    public void setup() {
+        CacheConfiguration conf = CacheConfiguration.create();
+        conf.addService(CacheManagementConfiguration.class);
+        c = newCache(conf);
     }
+
+    // /**
+    // * Tests that the cache support the getEventBus method.
+    // */
+    // @Test
+    // public void testEventBus() {
+    // c = c0; // test c0
+    // assertNotNull(c.getEventBus());
+    // assertEquals(0, c.getEventBus().getSubscribers().size());
+    // c.getEventBus().unsubscribeAll();
+    // assertEquals(0, c.getEventBus().getSubscribers().size());
+    // }
 
     /**
      * Tests that peek does not raise any events.
@@ -215,7 +225,8 @@ public class EventBusFeature extends AbstractEventTestBundle {
      */
     @Test
     public void itemRemovedEvicted() throws Exception {
-        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(3).c());
+        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(3)
+                .c());
         subscribe(ItemRemoved.FILTER);
         putAll(M1, M2, M3);
         get(M2);
@@ -296,7 +307,8 @@ public class EventBusFeature extends AbstractEventTestBundle {
 
     @Test
     public void itemUpdatedExpiredWithLoading() throws Exception {
-        c = newCache(newConf().setClock(clock).backend().setBackend(new IntegerToStringLoader()).c());
+        c = newCache(newConf().setClock(clock).backend().setBackend(
+                new IntegerToStringLoader()).c());
         subscribe(ItemUpdated.FILTER);
         put(M1, 1, TimeUnit.NANOSECONDS);
         putAll(3, TimeUnit.NANOSECONDS, M2, M3);
@@ -327,7 +339,8 @@ public class EventBusFeature extends AbstractEventTestBundle {
         c2.put(1, "B"); // sequenceid=1
         c2.put(5, "F"); // sequenceid=2
         c2.clear();
-        CacheEvent.CacheCleared<?, ?> cleared = consumeItem(c2, CacheEvent.CacheCleared.class);
+        CacheEvent.CacheCleared<?, ?> cleared = consumeItem(c2,
+                CacheEvent.CacheCleared.class);
         assertEquals(2, cleared.getPreviousSize());
     }
 

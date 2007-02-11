@@ -186,7 +186,8 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
 
     void evictNext() {
         AbstractCacheEntry<K, V> e = getEvictionSupport().evictNext();
-        map.remove(e.getKey());
+        AbstractCacheEntry removed = map.remove(e.getKey());
+        assert (removed != null);
         getEventService().removed(this, e);
     }
 

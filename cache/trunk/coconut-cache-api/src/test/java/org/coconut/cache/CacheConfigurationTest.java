@@ -197,13 +197,13 @@ public class CacheConfigurationTest {
         }
     }
     
-    @Test (expected = CacheException.class)
-    public void testtoStringError() throws Throwable {
-        Field f = CacheConfiguration.class.getDeclaredField("domain");
-        f.setAccessible(true);
-        f.set(conf, null);
-        conf.toString();
-    }
+//    @Test (expected = CacheException.class)
+//    public void testtoStringError() throws Throwable {
+//        Field f = CacheConfiguration.class.getDeclaredField("domain");
+//        f.setAccessible(true);
+//        f.set(conf, null);
+//        conf.toString();
+//    }
     
     
     public static class DummyCache2 extends DummyCache {

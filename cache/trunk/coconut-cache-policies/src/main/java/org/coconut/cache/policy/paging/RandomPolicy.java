@@ -21,7 +21,8 @@ import org.coconut.cache.policy.spi.AbstractPolicy;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
 @NotThreadSafe
-public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy<T>, Serializable, Cloneable {
+public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy<T>,
+        Serializable, Cloneable {
 
     /** A unique policy name. */
     public static final String NAME = "Random";
@@ -29,7 +30,7 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
     /** serialVersionUID. */
     private static final long serialVersionUID = -7065776518426915749L;
 
-    private T[] data;
+    public T[] data;
 
     private int[] freeEntries;
 
@@ -88,9 +89,7 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
         references = new int[h.references.length];
         System.arraycopy(h.references, 0, references, 0, h.references.length);
         freeEntries = new int[h.freeEntries.length];
-        System
-                .arraycopy(h.freeEntries, 0, freeEntries, 0,
-                        h.freeEntries.length);
+        System.arraycopy(h.freeEntries, 0, freeEntries, 0, h.freeEntries.length);
         data = (T[]) new Object[h.data.length];
         System.arraycopy(h.data, 0, data, 0, h.data.length);
     }
@@ -106,9 +105,10 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
 
         int newIndex = freeEntries[nextEntryIndex];
 
-        references[newIndex] = nextEntryIndex++; // update previous tail to
-        // point at new
-        return newIndex + 1; // indexs are positive numbers
+        // update previous tail to point at new
+        references[newIndex] = nextEntryIndex++;
+
+        return newIndex; 
     }
 
     /**
@@ -119,7 +119,7 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
             /* ignore */
         }
     }
-    
+
     /**
      * @see org.coconut.cache.policy.ReplacementPolicy#evictNext()
      */
@@ -137,7 +137,6 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
         return rnd.nextInt(nextEntryIndex - 1);
     }
 
-    
     /**
      * @return the number of entries in currently held by the policy.
      */
@@ -180,7 +179,6 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
      * @see org.coconut.cache.policy.ReplacementPolicy#remove(int)
      */
     public T remove(int index) {
-        index--;
         if (index > data.length - 1 || references[index] == -1)
             return null;
         return removeIndexed(references[index]);
@@ -202,7 +200,6 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
             data[remove] = data[nextEntryIndex];
             data[nextEntryIndex] = null;
         }
-
         return removeMe;
     }
 
@@ -211,8 +208,8 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
         threshold = newSize + 1;
         int[] oldReferences = references;
         references = new int[threshold];
-        System.arraycopy(oldReferences, 0, references, 0, Math.min(
-                oldReferences.length, references.length));
+        System.arraycopy(oldReferences, 0, references, 0, Math.min(oldReferences.length,
+                references.length));
 
         int[] oldFreeEntries = freeEntries;
         freeEntries = new int[threshold];
@@ -224,8 +221,7 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
         }
         Object[] oldData = data;
         data = (T[]) new Object[threshold];
-        System.arraycopy(oldData, 0, data, 0, Math.min(oldData.length,
-                data.length));
+        System.arraycopy(oldData, 0, data, 0, Math.min(oldData.length, data.length));
     }
 
     /**
@@ -236,20 +232,21 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
     }
 
     /**
-     * @see org.coconut.cache.policy.ReplacementPolicy#update(int, java.lang.Object)
+     * @see org.coconut.cache.policy.ReplacementPolicy#update(int,
+     *      java.lang.Object)
      */
     public boolean update(int index, T newElement) {
-        data[references[index]]=newElement;
+        data[references[index]] = newElement;
         return true; // Random never rejects an entry
     }
 
-    // ///CLOVER:OFF
-    // void print() {
-    // for (int i = 0; i < threshold; i++) {
-    // System.out.println(i + " " + references[i] + " " + freeEntries[i]
-    // + " Data: " + data[i]);
-    // }
-    // }
-    // ///CLOVER:ON
+//    // /CLOVER:OFF
+//    public void print() {
+//        for (int i = 0; i < threshold; i++) {
+//            System.out.println(i + " " + references[i] + " " + freeEntries[i]
+//                    + " Data: (" + data[i] + ")");
+//        }
+//    }
+//    // /CLOVER:ON
 
 }

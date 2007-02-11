@@ -12,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.CacheEvent;
 import org.coconut.cache.internal.service.CacheServiceManager;
 import org.coconut.cache.internal.services.CacheStatisticsCacheService;
 import org.coconut.cache.internal.services.EventCacheService;
@@ -21,6 +20,8 @@ import org.coconut.cache.internal.services.ManagementCacheService;
 import org.coconut.cache.internal.services.expiration.ExpirationCacheService;
 import org.coconut.cache.internal.services.loading.CacheEntryLoaderService;
 import org.coconut.cache.internal.util.InternalCacheutil;
+import org.coconut.cache.service.event.CacheEvent;
+import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.CacheErrorHandler;
 import org.coconut.cache.spi.XmlConfigurator;
@@ -33,6 +34,19 @@ import org.coconut.management.ManagedGroup;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
+
+    /**
+     * @see org.coconut.cache.spi.AbstractCache#getService(java.lang.Class)
+     */
+    @Override
+    public <T> T getService(Class<T> serviceType) {
+        if (serviceType.equals(ManagementCacheService.class)) {
+
+        } else if (serviceType.equals(CacheEventService.class)) {
+            return (T) eventSupport;
+        }
+        return null;
+    }
 
     private final ExpirationCacheService<K, V> expirationSupport;
 
@@ -70,7 +84,8 @@ public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
     SupportedCache(CacheConfiguration<K, V> conf) {
         super(conf);
         conf.setProperty(Cache.class.getCanonicalName(), this.getClass());
-        conf.setProperty(XmlConfigurator.CACHE_INSTANCE_TYPE, getClass().getCanonicalName());
+        conf.setProperty(XmlConfigurator.CACHE_INSTANCE_TYPE, getClass()
+                .getCanonicalName());
         isThreadSafe = InternalCacheutil.isThreadSafe(conf);
         csm = new CacheServiceManager<K, V>(conf);
         populateCsm(csm, conf);
@@ -326,6 +341,8 @@ public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
                 // method
                 entry.setPolicyIndex(Integer.MAX_VALUE);
             }
+            // if (SupportedCache<K, V>)
+
             return entry.getPolicyIndex() >= 0;
         }
     }

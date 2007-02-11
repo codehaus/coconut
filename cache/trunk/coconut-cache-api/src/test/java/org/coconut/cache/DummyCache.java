@@ -82,4 +82,12 @@ public class DummyCache extends AbstractCache {
         // TODO Auto-generated method stub
         return null;
     }
+
+
+    /**
+     * @see org.coconut.cache.Cache#getService(java.lang.Class)
+     */
+    public Object getService(Class serviceType) {
+        return null;
+    }
 }

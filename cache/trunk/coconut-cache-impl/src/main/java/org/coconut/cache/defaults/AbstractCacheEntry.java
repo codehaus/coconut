@@ -277,7 +277,7 @@ abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
 
     @Override
     public String toString() {
-        return getKey() + "=" + getValue() + " (ExpirationTime= " + getExpirationTime()
+        return getKey() + "=" + getValue() + " (policyIndex= " + getPolicyIndex()
                 + ")";
     }
 
@@ -424,9 +424,6 @@ abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         long hits;
 
         long lastAccessTime;
-
-        /** the index in cache policy, is -1 if not used or initialized. */
-        int policyIndex = -1;
 
         UnsynchronizedCacheEntry(SupportedCache<K, V> cache, K key, V value, double cost,
                 long creationTime, long expirationTime, long hits, long lastAccessTime,

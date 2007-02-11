@@ -4,6 +4,9 @@
 
 package org.coconut.filter;
 
+import static org.coconut.core.util.Transformers.mapEntryToKey;
+import static org.coconut.core.util.Transformers.mapEntryToValue;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -307,6 +310,71 @@ public final class CollectionFilters {
         return new TransformerFilter(t, f);
     }
 
+
+    @SuppressWarnings("unchecked")
+    public static <K, V> Filter<Map.Entry<K, V>> keyFilter(Filter<K> filter) {
+        return new TransformerFilter(mapEntryToKey(), filter);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <K, V> Filter<Map.Entry<K, V>> valueFilter(Filter<V> filter) {
+        return new TransformerFilter(mapEntryToValue(), filter);
+    }
+
+    /**
+     * Returns a Filter that only accepts event regarding a particular key.
+     * 
+     * @param key
+     *            the key that is accepted
+     * @return a filter that only accepts event regarding a particular key.
+     */
+    @SuppressWarnings("unchecked")
+    public static <K, V> Filter<Map.Entry<K, V>> keyEqualsFilter(K key) {
+        return (Filter) keyFilter(Filters.equal(key));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <K, V> Filter<Map.Entry<K, V>> valueEqualsFilter(V value) {
+        return (Filter) valueFilter(Filters.equal(value));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <K, V> Filter<Map.Entry<K, V>> anyKeyEquals(final K... keys) {
+        return (Filter) keyFilter(Filters.anyEquals(keys));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <K, V> Filter<Map.Entry<K, V>> anyKeyInCollection(
+            final Collection<? extends K> keys) {
+        return (Filter) keyFilter(Filters.anyEquals(keys.toArray()));
+    }
+
+    /**
+     * Creates a filter that accepts all cache events which is being mapped to
+     * any of the specified values.
+     * 
+     * @param values
+     *            the values that are accepted by the filter
+     */
+    @SuppressWarnings("unchecked")
+    public static <K, V> Filter<Map.Entry<K, V>> anyValueEquals(final V... values) {
+        return (Filter) valueFilter(Filters.anyEquals(values));
+    }
+
+    /**
+     * Creates a filter that accepts all cache events which is being mapped to
+     * any of the values contained in the specified Collection.
+     * 
+     * @param values
+     *            the values that are accepted by the filter
+     */
+    @SuppressWarnings("unchecked")
+    public static <K, V> Filter<Map.Entry<K, V>> anyValueInCollection(
+            final Collection<? extends V> values) {
+        //TODO what about null values in the collection?
+        return (Filter) valueFilter(Filters.anyEquals(values.toArray()));
+    }
+    
     // /CLOVER:OFF
     /** Cannot instantiate. */
     private CollectionFilters() {

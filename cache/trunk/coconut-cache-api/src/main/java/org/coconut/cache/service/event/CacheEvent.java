@@ -2,10 +2,11 @@
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.cache;
+package org.coconut.cache.service.event;
 
 import java.util.Map;
 
+import org.coconut.cache.Cache;
 import org.coconut.filter.Filter;
 import org.coconut.filter.Filters;
 import org.coconut.filter.CollectionFilters.IsTypeFilter;

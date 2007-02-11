@@ -6,24 +6,23 @@ package org.coconut.cache;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.lang.management.ManagementFactory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-import javax.management.MBeanServer;
-
 import net.jcip.annotations.NotThreadSafe;
 
-import org.coconut.cache.management.CacheMXBean;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.spi.AbstractCache;
+import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.cache.spi.CacheErrorHandler;
 import org.coconut.cache.spi.XmlConfigurator;
 import org.coconut.core.Clock;
@@ -119,8 +118,6 @@ public class CacheConfiguration<K, V> implements Cloneable {
 
     private long defaultExpirationTimeoutDuration = Cache.NEVER_EXPIRE;
 
-    private String domain = CacheMXBean.DEFAULT_JMX_DOMAIN;
-
     private CacheErrorHandler<K, V> errorHandler = new CacheErrorHandler();
 
     private Executor executor;
@@ -139,16 +136,11 @@ public class CacheConfiguration<K, V> implements Cloneable {
 
     private int maximumSize = Eviction.DEFAULT_MAXIMUM_SIZE;
 
-    private MBeanServer mBeanServer;
-
     private String name = UUID.randomUUID().toString();
 
     private long preferableCapacity = Long.MAX_VALUE;
 
     private int preferableSize = Eviction.DEFAULT_MAXIMUM_SIZE;
-
-    /** Whether or not the cache is automatically registered for JMX usage. */
-    private boolean registerForJMXAutomatically;
 
     private ReplacementPolicy replacementPolicy;
 
@@ -185,6 +177,34 @@ public class CacheConfiguration<K, V> implements Cloneable {
 
     public Backend backend() {
         return new Backend();
+    }
+
+    private ArrayList<AbstractCacheServiceConfiguration> list = new ArrayList<AbstractCacheServiceConfiguration>();
+
+    public <T extends AbstractCacheServiceConfiguration> T addService(Class<T> conf) {
+        AbstractCacheServiceConfiguration acsc;
+        try {
+            acsc = conf.newInstance();
+        } catch (InstantiationException e) {
+            throw new IllegalArgumentException(e);
+        } catch (IllegalAccessException e) {
+            throw new IllegalArgumentException(e);
+        }
+        return (T) addService(acsc);
+    }
+
+    public AbstractCacheServiceConfiguration addService(
+            AbstractCacheServiceConfiguration conf) {
+        for (AbstractCacheServiceConfiguration c : list) {
+            Class type = conf.getServiceInterface();
+            if (c.getServiceInterface().isAssignableFrom(type)) {
+
+            } else if (type.isAssignableFrom(c.getClass())) {
+
+            }
+        }
+        list.add(conf);
+        return conf;
     }
 
     /**
@@ -296,16 +316,6 @@ public class CacheConfiguration<K, V> implements Cloneable {
 
         Object result = additionalProperties.get(key);
         return result == null ? defaultValue : result;
-    }
-
-    /**
-     * Returns a {@link JMX} instance that can be used to configure the JMX
-     * settings for the cache.
-     * 
-     * @return returns a jmx configuration instance
-     */
-    public Management management() {
-        return new Management();
     }
 
     /**
@@ -784,112 +794,6 @@ public class CacheConfiguration<K, V> implements Cloneable {
         }
     }
 
-    /**
-     * This class is used to configure how the cache can be remotely monitored
-     * and controlled (via JMX). To register the cache in the platform
-     * MBeanServer, simply call {@link #setAutoRegister(boolean)}. And the
-     * cache will automatically be registered.
-     * <p>
-     * If for some reason the cache fails to properly register with the
-     * MBeanServer at construction time a {@link CacheException} is thrown.
-     */
-    public class Management {
-
-        /**
-         * Returns the CacheConfiguration that this instance is part of.
-         * 
-         * @return the CacheConfiguration that this instance is part of
-         */
-        public CacheConfiguration<K, V> c() {
-            return CacheConfiguration.this;
-        }
-
-        public String getDomain() {
-            return domain;
-        }
-
-        /**
-         * @return the configured MBeanServer or the platform MBeanServer if no
-         *         server has been set
-         */
-        public MBeanServer getMBeanServer() {
-            // TODO we might want to have a hasMBeanServer()
-            // to avoid initializing it, for example,
-            // when we save the configuration
-            if (mBeanServer == null) {
-                mBeanServer = ManagementFactory.getPlatformMBeanServer();
-            }
-            return mBeanServer;
-        }
-
-        /**
-         * Returns whether or not the cache is automatically registered with a
-         * {@link javax.management.MBeanServer} when constructed.
-         * 
-         * @return <tt>true</tt> if the cache should be automatically
-         *         registered with a {@link javax.management.MBeanServer},
-         *         otherwise <tt>false</tt>
-         * @see #setRegister(boolean)
-         */
-        public boolean getAutoRegister() {
-            return registerForJMXAutomatically;
-        }
-
-        /**
-         * Sets the specific domain that this cache should register under. If no
-         * domain is specified domain the cache will use is
-         * {@link CacheMXBean#DEFAULT_JMX_DOMAIN}.
-         * 
-         * @param name
-         *            the domain name
-         * @return this configuration
-         * @throws NullPointerException
-         *             if domain is <tt>null</tt>
-         */
-        public Management setDomain(String domain) {
-            if (domain == null) {
-                throw new NullPointerException("domain is null");
-            }
-            // TODO validate domain name
-            CacheConfiguration.this.domain = domain;
-            return this;
-        }
-
-        /**
-         * Sets the {@link MBeanServer}} that the cache should register with.
-         * If no value is set the platform {@link MBeanServer} will be used.
-         * 
-         * @param server
-         *            the server that the cache should register with
-         * @return this configuration
-         * @throws NullPointerException
-         *             if server is <tt>null</tt>
-         */
-        public Management setMbeanServer(MBeanServer server) {
-            if (server == null) {
-                throw new NullPointerException("server is null");
-            }
-            mBeanServer = server;
-            return this;
-        }
-
-        /**
-         * Determines whether or not the cache will be register with a
-         * MBeanServer at construction time.
-         * 
-         * @param registerAutomatic
-         *            whether or not the cache should register with the
-         *            configured MBeanServer at startup
-         * @return this configuration
-         * @see #isRegister()
-         * @see #setObjectName(ObjectName)
-         */
-        public Management setAutoRegister(boolean registerAutomatic) {
-            registerForJMXAutomatically = registerAutomatic;
-            return this;
-        }
-    }
-
     public class Statistics {
 
         /**
@@ -954,4 +858,25 @@ public class CacheConfiguration<K, V> implements Cloneable {
             return this;
         }
     }
+
+    /**
+     * @param name2
+     */
+    public <T extends AbstractCacheServiceConfiguration> T getServiceConfiguration(Class<T> service) {
+        for (AbstractCacheServiceConfiguration o : list) {
+            if (o.getClass().equals(service)) {
+                return (T) o;
+            }
+        }
+        return null;
+    }
+    
+
+    /**
+     * @param name2
+     */
+    public List<AbstractCacheServiceConfiguration> getServices() {
+        return new ArrayList<AbstractCacheServiceConfiguration>(list);
+    }
 }
+

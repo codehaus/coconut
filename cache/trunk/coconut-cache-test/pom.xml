@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.coconut.cache</groupId>
+    <artifactId>coconut-cache-parent</artifactId>
+    <version>1.0-alpha3-SNAPSHOT</version>
+  </parent>
+
+  <groupId>org.coconut.cache</groupId>
+  <artifactId>coconut-cache-test-parent</artifactId>
+  <name>Coconut Cache Test Project</name>
+  <description>Root Pom for Coconut Cache Test Project</description>
+  <version>1.0-alpha3-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <dependencies>
+    <dependency>
+      <groupId>org.coconut.test</groupId>
+      <artifactId>coconut-test-framework</artifactId>
+    </dependency>
+  </dependencies>
+
+  <reporting>
+    <excludeDefaults>true</excludeDefaults>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
+  <modules>
+    <module>coconut-cache-tck</module>
+  </modules>
+</project>

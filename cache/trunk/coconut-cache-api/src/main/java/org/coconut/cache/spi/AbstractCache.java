@@ -8,13 +8,14 @@ import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.CacheEvent;
+import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.core.Clock;
 import org.coconut.event.EventBus;
 
@@ -47,7 +48,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         if (configuration == null) {
             throw new NullPointerException("configuration is null");
         }
-        ConfigurationValidator.getInstance().verify(configuration,(Class<Cache>) getClass());
+        ConfigurationValidator.getInstance().verify(configuration,(Class) getClass());
         name = configuration.getName();
         errorHandler = configuration.getErrorHandler();
         errorHandler.setCacheName(name);
@@ -249,7 +250,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
     public void resetStatistics() {
         // ignore for default implementation
     }
-
+    
     public void shutdown() {
 
     }
@@ -299,5 +300,21 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
      */
     protected void toString0(StringBuilder buf) {
 
+    }
+
+    /**
+     * @see java.util.AbstractMap#entrySet()
+     */
+    @Override
+    public Set<java.util.Map.Entry<K, V>> entrySet() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * @see org.coconut.cache.Cache#getService(java.lang.Class)
+     */
+    public <T> T getService(Class<T> serviceType) {
+        throw new UnsupportedOperationException();
     }
 }

@@ -3,13 +3,17 @@
  */
 package org.coconut.cache.internal.services;
 
+import java.lang.management.ManagementFactory;
 import java.util.Map;
 
 import javax.management.JMException;
+import javax.management.MBeanServer;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.AbstractCacheService;
 import org.coconut.cache.internal.util.WrapperCacheMXBean;
+import org.coconut.cache.service.management.CacheManagementConfiguration;
+import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.Managements;
@@ -22,10 +26,21 @@ public class ManagementCacheService<K, V> extends AbstractCacheService<K, V> {
 
     private final ManagedGroup group;
 
+    private final String domain;
+
     public ManagementCacheService(CacheConfiguration<K, V> conf) {
         super(conf);
-        group = Managements.newGroup(conf.getName(), "Base bean", conf.management()
-                .getMBeanServer());
+        CacheManagementConfiguration cmc = conf
+                .getServiceConfiguration(CacheManagementConfiguration.class);
+        if (cmc != null) {
+            domain = cmc.getDomain();
+            MBeanServer server = cmc.getMBeanServer();
+            group = Managements.newGroup(conf.getName(), "Base bean", server);
+        } else {
+            domain = null;
+            MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+            group = Managements.newGroup(conf.getName(), "Base bean", server);
+        }
     }
 
     public ManagedGroup getGroup() {
@@ -42,9 +57,6 @@ public class ManagementCacheService<K, V> extends AbstractCacheService<K, V> {
         ManagedGroup g = group.addGroup("General",
                 "General cache attributes and settings");
         g.add(new WrapperCacheMXBean(cache));
-        if (getConf().management().getAutoRegister()) {
-            group.registerAll(Managements.newRegistrant(getConf().management()
-                    .getDomain(), "name", "service", "group"));
-        }
+        group.registerAll(Managements.newRegistrant(domain, "name", "service", "group"));
     }
 }

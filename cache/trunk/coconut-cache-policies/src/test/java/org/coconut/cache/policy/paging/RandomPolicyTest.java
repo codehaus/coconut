@@ -227,8 +227,16 @@ public class RandomPolicyTest {
             if (i == 123) {
                 return;
             }
-            i=policy.evictNext();
+            i = policy.evictNext();
         }
         assertTrue(false);
+    }
+
+    @Test
+    public void testUpdate1() {
+        RandomPolicy rp = new RandomPolicy(3);
+        rp.add(6);
+        int i2 = rp.add(5);
+        rp.update(i2, 7);
     }
 }

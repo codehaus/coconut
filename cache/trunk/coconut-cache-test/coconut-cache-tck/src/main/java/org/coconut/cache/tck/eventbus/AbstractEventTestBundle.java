@@ -13,8 +13,9 @@ import java.util.concurrent.TimeUnit;
 import junit.framework.AssertionFailedError;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheEntryEvent;
-import org.coconut.cache.CacheEvent;
+import org.coconut.cache.service.event.CacheEntryEvent;
+import org.coconut.cache.service.event.CacheEvent;
+import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.tck.CacheTestBundle;
 import org.coconut.core.EventProcessor;
 import org.coconut.event.EventSubscription;
@@ -53,7 +54,7 @@ public class AbstractEventTestBundle extends CacheTestBundle {
     public void stop() {
         if (!events.isEmpty()) {
             while (!events.isEmpty()) {
-                EventWrapper ew=events.poll();
+                EventWrapper ew = events.poll();
                 System.err.println("Pending event: " + ew.event);
                 ew.toErr();
             }
@@ -83,7 +84,8 @@ public class AbstractEventTestBundle extends CacheTestBundle {
     }
 
     EventSubscription subscribe(Filter f) {
-        EventSubscription s = c.getEventBus().subscribe(eventHandler, f);
+        EventSubscription s = c.getService(CacheEventService.class).getEventBus()
+                .subscribe(eventHandler, f);
         assertNotNull(s);
         return s;
     }

@@ -3,23 +3,19 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.coconut.cache</groupId>
-    <artifactId>coconut-cache-parent</artifactId>
+    <artifactId>coconut-cache-test-parent</artifactId>
     <version>1.0-alpha3-SNAPSHOT</version>
   </parent>
-  
-  <artifactId>coconut-cache-tck</artifactId>
+
+  <artifactId>coconut-cache-test-tck</artifactId>
   <name>Coconut Cache TCK</name>
-  <description>Common eviction cache policies</description>
-  
-      <dependencies>
-      <dependency>
-        <groupId>org.coconut.cache</groupId>
-        <artifactId>coconut-cache-api</artifactId>
-	  <version>${project.version}</version>
-      </dependency>
-        <dependency>
-        <groupId>org.coconut.test</groupId>
-        <artifactId>coconut-test-framework</artifactId>
-      </dependency>
-   </dependencies>
+  <description>Coconut Cache Test Compatibility Kit</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.coconut.cache</groupId>
+      <artifactId>coconut-cache-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
 </project>

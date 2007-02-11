@@ -35,6 +35,8 @@ import javax.xml.transform.stream.StreamResult;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheLoader;
+import org.coconut.cache.service.event.CacheEventConfiguration;
+import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.core.Log;
 import org.coconut.core.util.Logs;
 import org.coconut.filter.Filter;
@@ -85,6 +87,12 @@ public class XmlConfigurator {
     private final static XmlConfigurator DEFAULT = new XmlConfigurator();
 
     final static CacheConfiguration CONF = CacheConfiguration.create();
+
+    private final static List<Class> services = new ArrayList<Class>();
+    static {
+//        services.add(CacheEventConfiguration.class);
+        services.add(CacheManagementConfiguration.class);
+    }
 
     /**
      * Returns the default instance of a XmlConfigurator.
@@ -195,6 +203,15 @@ public class XmlConfigurator {
         for (AbstractConfigurator p : getPersisters()) {
             p.read(conf, cache);
         }
+        for (Class c : services) {
+            AbstractCacheServiceConfiguration acsc = (AbstractCacheServiceConfiguration) c
+                    .newInstance();
+            Element e = (Element) cache.getElementsByTagName(acsc.tag).item(0);
+            if (e != null) {
+                conf.addService(acsc);
+                acsc.fromXML(doc, e);
+            }
+        }
     }
 
     List<AbstractConfigurator> getPersisters() {
@@ -203,7 +220,6 @@ public class XmlConfigurator {
         list.add(new ErrorHandlerConfigurator());
         list.add(new ExpirationConfigurator());
         list.add(new EvictionConfigurator());
-        list.add(new ManagementConfigurator());
         list.add(new StatisticsConfigurator());
         list.add(new ThreadConfigurator());
         return list;
@@ -217,6 +233,11 @@ public class XmlConfigurator {
         }
         for (AbstractConfigurator p : getPersisters()) {
             p.write(cc, doc, cache);
+        }
+        for (AbstractCacheServiceConfiguration p : cc.getServices()) {
+            Element ee = doc.createElement(p.tag);
+            cache.appendChild(ee);
+            p.toXML(doc, ee);
         }
     }
 
@@ -669,67 +690,6 @@ public class XmlConfigurator {
             if (s().isEnabled() != CONF.statistics().isEnabled()) {
                 Element base = doc.createElement(STATISTICS_TAG);
                 base.setAttribute(ENABLED_ATRB, Boolean.toString(s().isEnabled()));
-                root.appendChild(base);
-            }
-        }
-    }
-
-    static class ManagementConfigurator extends AbstractConfigurator {
-
-        final static String REGISTER_ATRB = "auto-register";
-
-        final static String DOMAIN_TAG = "domain";
-
-        final static String EXPIRATION_TAG = "expiration";
-
-        final static String MANAGEMENT_TAG = "management";
-
-        public CacheConfiguration.Management m() {
-            return conf().management();
-        }
-
-        /**
-         * @see org.coconut.cache.spi.xml.AbstractPersister#read()
-         */
-        @Override
-        protected void read() throws Exception {
-            Element e = getChild(MANAGEMENT_TAG);
-            if (e != null) {
-                /* Register */
-                if (e.hasAttribute(REGISTER_ATRB)) {
-                    m().setAutoRegister(
-                            Boolean.parseBoolean(e.getAttribute(REGISTER_ATRB)));
-                }
-                /* Domain */
-                Element domain = getChild(DOMAIN_TAG, e);
-                if (domain != null) {
-                    m().setDomain(domain.getTextContent());
-                }
-            }
-        }
-
-        /**
-         * @see org.coconut.cache.spi.xml.AbstractPersister#write()
-         */
-        @Override
-        protected void write() throws Exception {
-            Element base = doc.createElement(MANAGEMENT_TAG);
-
-            /* Register */
-            if (m().getAutoRegister() != CONF.management().getAutoRegister()) {
-                base.setAttribute(REGISTER_ATRB, Boolean.toString(m().getAutoRegister()));
-            }
-
-            /* Domain Filter */
-            if (!(m().getDomain().equals(CONF.management().getDomain()))) {
-                add(DOMAIN_TAG, base, m().getDomain());
-            }
-            /* MBeanServer */
-            if (m().getMBeanServer() != CONF.management().getMBeanServer()) {
-                addComment("management.cannotPersistMBeanServer", base);
-            }
-
-            if (base.hasChildNodes() || base.hasAttributes()) {
                 root.appendChild(base);
             }
         }

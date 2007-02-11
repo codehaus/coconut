@@ -331,27 +331,23 @@ public class EntryMap<K, V> {
         AbstractCacheEntry<K, V> first = tab[index];
         AbstractCacheEntry<K, V> e = first;
         AbstractCacheEntry<K, V> prev = first;
-        while (e != null && (e.getHash() != hash || !key.equals(e.getKey()))) {
-            e = e.next;
-            prev = e;
-        }
-        AbstractCacheEntry<K, V> oldValue = e;
-        if (e != null) {
-            V v = e.getValue();
-            if (value == null || value.equals(v)) {
-                ++modCount;
-                if (prev == e) { // first entry
-                    table[index] = e.next;
-                } else {
-                    prev.next = e.next;
-                }
-                e.entryRemoved();
+        
+        while (e != null) {
+            AbstractCacheEntry<K,V> next = e.next;
+            if (e.getHash() == hash && key.equals(e.getKey())) {
+                modCount++;
                 size--;
-            } else {
-                return null;
+                if (prev == e) 
+                    table[index] = next;
+                else
+                    prev.next = next;
+                e.entryRemoved();
+                return e;
             }
+            prev = e;
+            e = next;
         }
-        return oldValue;
+        return null;
     }
 
     public int size() {

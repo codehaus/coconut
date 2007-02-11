@@ -39,9 +39,6 @@ public class EvictionCacheService<T extends CacheEntry> extends AbstractCacheSer
         maxCapacity = conf.eviction().getMaximumCapacity();
         preferableCapacity = conf.eviction().getPreferableCapacity();
         preferableSize = conf.eviction().getPreferableSize();
-        if (maxSize != Integer.MAX_VALUE && cp == null) {
-            throw new IllegalArgumentException("Must define a cache policy");
-        }
     }
 
     public T evictNext() {

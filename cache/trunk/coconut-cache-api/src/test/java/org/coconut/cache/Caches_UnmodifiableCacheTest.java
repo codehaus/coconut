@@ -36,11 +36,7 @@ public class Caches_UnmodifiableCacheTest extends MockTestCase {
             shouldThrow();
         } catch (UnsupportedOperationException e) { /* okay */
         }
-        try {
-            c.getEventBus();
-            shouldThrow();
-        } catch (UnsupportedOperationException e) { /* okay */
-        }
+
         try {
             c.load("");
             shouldThrow();

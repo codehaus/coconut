@@ -260,7 +260,8 @@ public class SynchronizedCache<K, V> extends SupportedCache<K, V> {
     //package private not Threadsafe
     void evictNext() {
         AbstractCacheEntry<K, V> e = getEvictionSupport().evictNext();
-        map.remove(e.getKey());
+        AbstractCacheEntry removed = map.remove(e.getKey());
+        assert (removed != null);
         getEventService().removed(this, e);
     }
 

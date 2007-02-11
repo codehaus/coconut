@@ -18,7 +18,7 @@ import org.coconut.cache.policy.util.FilteredPolicyDecorator;
 import org.coconut.cache.spi.CacheExecutorRunnable;
 import org.coconut.cache.util.AbstractCacheLoader;
 import org.coconut.cache.util.CacheDecorator;
-import org.coconut.event.EventBus;
+import org.coconut.filter.CollectionFilters;
 import org.coconut.filter.Filter;
 
 /**
@@ -72,12 +72,12 @@ public final class Caches {
 
     public static <K, V> ReplacementPolicy<? extends Map.Entry<K, V>> entryKeyAcceptor(
             ReplacementPolicy policy, Filter<? extends K> filter) {
-        return new FilteredPolicyDecorator(policy, CacheFilters.keyFilter(filter));
+        return new FilteredPolicyDecorator(policy, CollectionFilters.keyFilter(filter));
     }
 
     public static <K, V> ReplacementPolicy<? extends Map.Entry<K, V>> entryValueAcceptor(
             ReplacementPolicy policy, Filter<? extends V> filter) {
-        return new FilteredPolicyDecorator(policy, CacheFilters.valueFilter(filter));
+        return new FilteredPolicyDecorator(policy, CollectionFilters.valueFilter(filter));
     }
 
     /**
@@ -378,10 +378,6 @@ public final class Caches {
         @Override
         public CacheEntry<K, V> getEntry(K key) {
             return peekEntry(key);
-        }
-
-        public EventBus<CacheEvent<K, V>> getEventBus() {
-            throw new UnsupportedOperationException();
         }
 
         public Set<K> keySet() {

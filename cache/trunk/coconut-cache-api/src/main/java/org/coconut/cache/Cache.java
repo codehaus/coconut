@@ -10,8 +10,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.event.EventBus;
-
 /**
  * A <tt>cache</tt> is a collection of data duplicating original values stored
  * elsewhere or computed earlier, where the original data are expensive (usually
@@ -124,20 +122,6 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      *             specified collection contains <tt>null</tt>
      */
     Map<K, V> getAll(Collection<? extends K> keys);
-
-    /**
-     * Returns the {@link org.coconut.event.bus.EventBus} attached to this cache
-     * (optional operation). The event bus can be used for getting notications
-     * about various {@link CacheEvent events} that is being raised internally
-     * in the cache.
-     * 
-     * @throws UnsupportedOperationException
-     *             if the cache does not support notifications of events in the
-     *             cache.
-     * @see CacheEvent
-     * @see CacheItemEvent
-     */
-    EventBus<CacheEvent<K, V>> getEventBus();
 
     /**
      * Returns the current <tt>hit statistics</tt> for the cache (optional
@@ -392,6 +376,9 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      */
     CacheEntry<K, V> peekEntry(K key);
 
+
+    <T> T getService(Class<T> serviceType);
+    
     /**
      * The class holds the hit statistics for a cache. Unless otherwise
      * specified implementations of this interface is immutable.

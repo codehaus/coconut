@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.CacheEvent;
+import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.event.EventBus;
 
 /**
@@ -129,13 +129,6 @@ public class CacheDecorator<K, V> implements Cache<K, V>, Serializable {
      */
     public Map<K, V> getAll(Collection<? extends K> keys) {
         return cache.getAll(keys);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public EventBus<CacheEvent<K, V>> getEventBus() {
-        return cache.getEventBus();
     }
 
     /**
@@ -293,5 +286,12 @@ public class CacheDecorator<K, V> implements Cache<K, V>, Serializable {
      */
     public CacheEntry<K, V> peekEntry(K key) {
         return cache.peekEntry(key);
+    }
+
+    /**
+     * @see org.coconut.cache.Cache#getService(java.lang.Class)
+     */
+    public <T> T getService(Class<T> serviceType) {
+        return cache.getService(serviceType);
     }
 }

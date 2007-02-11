@@ -4,7 +4,7 @@
 
 package org.coconut.cache.internal.util;
 
-import org.coconut.cache.management.CacheMXBean;
+import org.coconut.cache.service.management.CacheMXBean;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.annotation.ManagedOperation;

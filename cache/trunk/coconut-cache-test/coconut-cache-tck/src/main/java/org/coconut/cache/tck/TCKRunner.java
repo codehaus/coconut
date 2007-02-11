@@ -23,7 +23,6 @@ import org.coconut.cache.tck.core.PutTimeoutable;
 import org.coconut.cache.tck.core.Values;
 import org.coconut.cache.tck.core.ValuesModifying;
 import org.coconut.cache.tck.eventbus.EventBusFeature;
-import org.coconut.cache.tck.eventbus.NoEventBusSupport;
 import org.coconut.cache.tck.eviction.CacheEntryToPolicy;
 import org.coconut.cache.tck.eviction.SerializablePolicyEviction;
 import org.coconut.cache.tck.eviction.SimplePolicyEviction;
@@ -92,9 +91,7 @@ public class TCKRunner extends Runner {
         }
         if (cs.eventSupport()) {
             composite.add(new TestClassRunner(EventBusFeature.class));
-        } else {
-            composite.add(new TestClassRunner(NoEventBusSupport.class));
-        }
+        } 
         if (Serializable.class.isAssignableFrom(tt)) {
             composite.add(new TestClassRunner(Serialization.class));
             composite.add(new TestClassRunner(SerializablePolicyEviction.class));

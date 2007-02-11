@@ -15,9 +15,10 @@ import javax.management.Notification;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.CacheEvent;
 import org.coconut.cache.Cache.HitStat;
 import org.coconut.cache.internal.service.AbstractCacheService;
+import org.coconut.cache.service.event.CacheEvent;
+import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.core.Offerable;
 import org.coconut.event.EventBus;
 import org.coconut.event.defaults.DefaultEventBus;
@@ -26,7 +27,8 @@ import org.coconut.event.defaults.DefaultEventBus;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class EventCacheService<K, V> extends AbstractCacheService<K, V> {
+public class EventCacheService<K, V> extends AbstractCacheService<K, V> implements
+        CacheEventService<K, V> {
 
     public interface NotificationTransformer {
         Notification notification(Object source);
@@ -140,7 +142,7 @@ public class EventCacheService<K, V> extends AbstractCacheService<K, V> {
     }
 
     final static class AccessedEvent<K, V> extends AbstractCacheItemEvent<K, V> implements
-            org.coconut.cache.CacheEntryEvent.ItemAccessed<K, V> {
+            org.coconut.cache.service.event.CacheEntryEvent.ItemAccessed<K, V> {
 
         private static final long serialVersionUID = 3545235834329511987L;
 
@@ -181,7 +183,7 @@ public class EventCacheService<K, V> extends AbstractCacheService<K, V> {
     }
 
     final static class AddedEvent<K, V> extends AbstractCacheItemEvent<K, V> implements
-            org.coconut.cache.CacheEntryEvent.ItemAdded<K, V> {
+            org.coconut.cache.service.event.CacheEntryEvent.ItemAdded<K, V> {
 
         private static final long serialVersionUID = 3545235834329511987L;
 
@@ -218,7 +220,7 @@ public class EventCacheService<K, V> extends AbstractCacheService<K, V> {
     }
 
     final static class ChangedEvent<K, V> extends AbstractCacheItemEvent<K, V> implements
-            org.coconut.cache.CacheEntryEvent.ItemUpdated<K, V> {
+            org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated<K, V> {
 
         private static final long serialVersionUID = 3545235834329511987L;
 
@@ -283,7 +285,7 @@ public class EventCacheService<K, V> extends AbstractCacheService<K, V> {
     }
 
     final static class EvictedEvent<K, V> extends AbstractCacheItemEvent<K, V> implements
-            org.coconut.cache.CacheEntryEvent.ItemAdded<K, V> {
+            org.coconut.cache.service.event.CacheEntryEvent.ItemAdded<K, V> {
 
         private static final long serialVersionUID = 3545235834329511987L;
 
@@ -331,7 +333,7 @@ public class EventCacheService<K, V> extends AbstractCacheService<K, V> {
     }
 
     final static class RemovedEvent<K, V> extends AbstractCacheItemEvent<K, V> implements
-            org.coconut.cache.CacheEntryEvent.ItemRemoved<K, V> {
+            org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved<K, V> {
 
         private static final long serialVersionUID = 3545235834329511987L;
 
@@ -352,6 +354,20 @@ public class EventCacheService<K, V> extends AbstractCacheService<K, V> {
 
         public boolean hasExpired() {
             return isExpired;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append(getSequenceID());
+            builder.append(":");
+            builder.append(getName());
+            builder.append("   [key = ");
+            builder.append(getKey());
+            builder.append(", value = ");
+            builder.append(getValue());
+            builder.append("]");
+            return builder.toString();
         }
     }
 

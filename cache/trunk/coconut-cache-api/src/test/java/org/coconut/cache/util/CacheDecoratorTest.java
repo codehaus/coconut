@@ -54,7 +54,6 @@ public class CacheDecoratorTest extends MockTestCase {
         m.expects(once()).method("evict");
         m.expects(once()).method("get").with(eq(2)).will(returnValue("C"));
         m.expects(once()).method("getAll").with(same(col)).will(returnValue(map));
-        m.expects(once()).method("getEventBus").will(returnValue(eventBus));
         m.expects(once()).method("getHitStat").will(returnValue(hitStat));
 
         m.expects(once()).method("hashCode").will(returnValue(3));
@@ -97,7 +96,6 @@ public class CacheDecoratorTest extends MockTestCase {
         c.evict();
         assertEquals("C", c.get(2));
         assertSame(map, c.getAll(col));
-        assertSame(eventBus, c.getEventBus());
         assertSame(hitStat, c.getHitStat());
 
         assertEquals(3, c.hashCode());

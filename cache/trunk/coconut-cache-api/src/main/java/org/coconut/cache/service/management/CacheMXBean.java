@@ -2,7 +2,7 @@
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.cache.management;
+package org.coconut.cache.service.management;
 
 /**
  * The management interface for a {@link org.coconut.cache.Cache}. Some cache
