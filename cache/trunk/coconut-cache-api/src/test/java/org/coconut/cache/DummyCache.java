@@ -44,7 +44,7 @@ public class DummyCache extends AbstractCache {
      * @see org.coconut.cache.spi.AbstractCache#initialize()
      */
     @Override
-    public void start() {
+    public void preStart() {
         isStarted = true;
     }
 

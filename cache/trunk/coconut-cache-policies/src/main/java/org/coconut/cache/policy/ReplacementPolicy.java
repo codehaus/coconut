@@ -61,7 +61,7 @@ public interface ReplacementPolicy<T> {
      * The entry with the specified index was updated with a new value. This new
      * element should be referenced instead of the previous element.
      * <p>
-     * The element should be removed if the update is rejected
+     * IMPORTANT: The previous element must be removed no matter what.
      * 
      * @param index
      *            the index of the previous element
@@ -147,7 +147,7 @@ public interface ReplacementPolicy<T> {
      * <p>
      * Be aware that this can be a very expensive operation. For complicated
      * policies where we lazyly calculate which element should be evicted next.
-     * A complete copy of policys internal datastructures might need to be
+     * A complete copy of the policys internal datastructures might need to be
      * created.
      * 
      * @return the next element that should be evicted

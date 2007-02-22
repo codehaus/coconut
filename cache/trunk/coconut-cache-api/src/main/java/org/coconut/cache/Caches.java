@@ -13,13 +13,11 @@ import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.policy.ReplacementPolicy;
-import org.coconut.cache.policy.util.FilteredPolicyDecorator;
+import net.jcip.annotations.ThreadSafe;
+
 import org.coconut.cache.spi.CacheExecutorRunnable;
 import org.coconut.cache.util.AbstractCacheLoader;
 import org.coconut.cache.util.CacheDecorator;
-import org.coconut.filter.CollectionFilters;
-import org.coconut.filter.Filter;
 
 /**
  * Factory and utility methods for for creating different types of
@@ -68,16 +66,6 @@ public final class Caches {
      */
     public static <K, V> CacheLoader<K, V> cacheAsCacheLoader(Cache<K, V> c) {
         return new CacheAsCacheLoader<K, V>(c);
-    }
-
-    public static <K, V> ReplacementPolicy<? extends Map.Entry<K, V>> entryKeyAcceptor(
-            ReplacementPolicy policy, Filter<? extends K> filter) {
-        return new FilteredPolicyDecorator(policy, CollectionFilters.keyFilter(filter));
-    }
-
-    public static <K, V> ReplacementPolicy<? extends Map.Entry<K, V>> entryValueAcceptor(
-            ReplacementPolicy policy, Filter<? extends V> filter) {
-        return new FilteredPolicyDecorator(policy, CollectionFilters.valueFilter(filter));
     }
 
     /**
@@ -276,7 +264,7 @@ public final class Caches {
             return null;
         }
     }
-
+    @ThreadSafe
     final static class SynchronizedAbstractCacheLoader<K, V> extends
             AbstractCacheLoader<K, V> implements CacheLoader<K, V>, Serializable {
         /** serial version UID */
@@ -295,6 +283,7 @@ public final class Caches {
         }
     }
 
+    @ThreadSafe
     final static class SynchronizedCacheLoader<K, V> implements CacheLoader<K, V>,
             Serializable {
 

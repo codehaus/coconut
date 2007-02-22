@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.CacheErrorHandler;
 import org.coconut.core.Clock;
 import org.coconut.test.CollectionUtils;
 import org.coconut.test.MockTestCase;
@@ -41,7 +42,7 @@ public class AbstraktCacheTest {
     public void testNoop() {
         t.evict();
         t.resetStatistics();
-        t.start();
+        t.preStart();
         t.shutdown();
     }
 
@@ -95,11 +96,6 @@ public class AbstraktCacheTest {
     @Test
     public void testGetHitStat() {
         assertEquals(CacheUtil.newImmutableHitStat(0, 0), t.getHitStat());
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void testEventBusUOE() {
-        t.getEventBus();
     }
 
     @Test(expected = UnsupportedOperationException.class)

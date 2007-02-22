@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.coconut.cache.spi.AbstractCache;
-import org.coconut.cache.spi.CacheErrorHandler;
 import org.coconut.cache.spi.XmlConfigurator;
 import org.coconut.core.Clock;
 import org.coconut.test.MockTestCase;

@@ -6,6 +6,7 @@ package org.coconut.cache.examples.management;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.defaults.UnsynchronizedCache;
+import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.filter.Filter;
 import org.coconut.management.annotation.ManagedAttribute;
 
@@ -16,10 +17,10 @@ import org.coconut.management.annotation.ManagedAttribute;
 class LastAccessExample {
     public static void main(String[] args) throws InterruptedException {
         CacheConfiguration<String, String> conf = CacheConfiguration.create();
-        conf.setName("WebPage-Cache").jmx().setAutoRegister(true);
+        conf.setName("WebPage-Cache").addService(CacheManagementConfiguration.class);
         conf.expiration().setFilter(new LastAccessFilter());
         UnsynchronizedCache cache = conf.newInstance(UnsynchronizedCache.class);
-        cache.start();
+        cache.preStart();
         Thread.sleep(1000000);
     }
 

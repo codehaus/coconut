@@ -17,7 +17,7 @@ import org.coconut.cache.util.AbstractCacheLoader;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class CacheHTTPExample {
-   public static class UrlLoader extends AbstractCacheLoader<String, String> {
+    public static class UrlLoader extends AbstractCacheLoader<String, String> {
         public String load(String key) throws Exception {
             URL url = new URL(key);
             BufferedReader in = new BufferedReader(
@@ -34,18 +34,17 @@ public class CacheHTTPExample {
 
     public static void main(String[] args) {
         CacheConfiguration<String, String> cc = CacheConfiguration.create();
-        cc.setName("MyCache");
         cc.backend().setBackend(new UrlLoader());
         UnsynchronizedCache<String, String> c = cc.newInstance(UnsynchronizedCache.class);
-        readGoogle(c,"Not Cached:");
-        readGoogle(c,"Cached    :");
+        readGoogle(c, "Not Cached : ");
+        readGoogle(c, "Cached     : ");
     }
 
     public static void readGoogle(Cache<?, ?> c, String prefix) {
-        long start = System.currentTimeMillis();
+        long start = System.nanoTime();
         c.get("http://www.google.com");
         System.out.println(prefix + " Time to read www.google.com: "
-                + (System.currentTimeMillis() - start));
+                + (System.nanoTime() - start));
     }
 
 }

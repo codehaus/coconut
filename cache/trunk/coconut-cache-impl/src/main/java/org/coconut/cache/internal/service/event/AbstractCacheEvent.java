@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.cache.internal.services;
+package org.coconut.cache.internal.service.event;
 
 import java.io.Serializable;
 import java.sql.Date;
@@ -13,84 +13,74 @@ import java.util.concurrent.TimeUnit;
 import javax.management.Notification;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.Cache.HitStat;
-import org.coconut.cache.internal.service.AbstractCacheService;
+import org.coconut.cache.internal.service.event.DefaultCacheEventService.NotificationTransformer;
 import org.coconut.cache.service.event.CacheEvent;
-import org.coconut.cache.service.event.CacheEventService;
-import org.coconut.core.Offerable;
-import org.coconut.event.EventBus;
-import org.coconut.event.defaults.DefaultEventBus;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemAccessed;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemAdded;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class EventCacheService<K, V> extends AbstractCacheService<K, V> implements
-        CacheEventService<K, V> {
+public abstract class AbstractCacheEvent<K, V> implements CacheEvent<K, V>, Serializable,
+        NotificationTransformer {
 
-    public interface NotificationTransformer {
-        Notification notification(Object source);
+    private final Cache<K, V> cache;
+
+    private final long id;
+
+    private final String name;
+
+    /**
+     * @param id
+     * @param name
+     * @param cache
+     */
+    public AbstractCacheEvent(final long id, final String name, final Cache<K, V> cache) {
+        this.id = id;
+        this.name = name;
+        this.cache = cache;
     }
 
-    abstract static class AbstractCacheEvent<K, V> implements CacheEvent<K, V>,
-            Serializable, NotificationTransformer {
-
-        private final Cache<K, V> cache;
-
-        private final long id;
-
-        private final String name;
-
-        /**
-         * @param id
-         * @param name
-         * @param cache
-         */
-        public AbstractCacheEvent(final long id, final String name,
-                final Cache<K, V> cache) {
-            this.id = id;
-            this.name = name;
-            this.cache = cache;
-        }
-
-        /**
-         * @see org.coconut.cache.CacheEvent#getAttributes()
-         */
-        public Map<String, Object> getAttributes() {
-            return Collections.emptyMap();
-        }
-
-        /**
-         * @see org.coconut.cache.CacheEvent#getCache()
-         */
-        public final Cache<K, V> getCache() {
-            return cache;
-        }
-
-        /**
-         * @see org.coconut.cache.CacheEvent#getName()
-         */
-        public final String getName() {
-            return name;
-        }
-
-        /**
-         * @see org.coconut.core.Sequenced#getSequenceID()
-         */
-        public final long getSequenceID() {
-            return id;
-        }
-
-        /**
-         * @see org.coconut.cache.spi.jmx.NotificationTransformer#notification(java.lang.Object)
-         */
-        public Notification notification(Object source) {
-            return new Notification(getName(), source, getSequenceID(), toString());
-        }
+    /**
+     * @see org.coconut.cache.CacheEvent#getAttributes()
+     */
+    public Map<String, Object> getAttributes() {
+        return Collections.emptyMap();
     }
 
+    /**
+     * @see org.coconut.cache.CacheEvent#getCache()
+     */
+    public final Cache<K, V> getCache() {
+        return cache;
+    }
+
+    /**
+     * @see org.coconut.cache.CacheEvent#getName()
+     */
+    public final String getName() {
+        return name;
+    }
+
+    /**
+     * @see org.coconut.core.Sequenced#getSequenceID()
+     */
+    public final long getSequenceID() {
+        return id;
+    }
+
+    /**
+     * @see org.coconut.cache.spi.jmx.NotificationTransformer#notification(java.lang.Object)
+     */
+    public Notification notification(Object source) {
+        return new Notification(getName(), source, getSequenceID(), toString());
+    }
+    
     abstract static class AbstractCacheItemEvent<K, V> extends AbstractCacheEvent<K, V> {
 
         private final CacheEntry<K, V> ce;
@@ -398,113 +388,5 @@ public class EventCacheService<K, V> extends AbstractCacheService<K, V> implemen
             return hitstat;
         }
 
-    }
-
-    private long eventId;
-
-    /**
-     * Returns the next id used for sequencing events.
-     * 
-     * @return the next id used for sequencing events.
-     */
-    private long nextSequenceId() {
-        return ++eventId;
-    }
-
-    public EventBus<CacheEvent<K, V>> getEventBus() {
-        return eb;
-    }
-
-    public void cleared(Cache<K, V> cache, int size) {
-        CacheEvent<K, V> e = new ClearEvent<K, V>(cache, nextSequenceId(), size);
-        dispatch(e);
-    }
-
-    public void expired(Cache<K, V> cache, int size) {
-
-    }
-
-    public void evicted(Cache<K, V> cache, int size) {
-
-    }
-
-    private final EventBus<CacheEvent<K, V>> eb = new DefaultEventBus<CacheEvent<K, V>>();
-
-    public void put(Cache<K, V> cache, CacheEntry<K, V> newEntry, CacheEntry<K, V> prev) {
-        V preVal = prev == null ? null : prev.getValue();
-
-        if (prev == null) {
-            CacheEvent<K, V> ee = new AddedEvent<K, V>(cache, newEntry, nextSequenceId(),
-                    newEntry.getKey(), newEntry.getValue());
-            dispatch(ee);
-        } else {
-            if (!newEntry.getValue().equals(preVal)) {
-                CacheEvent<K, V> e = new ChangedEvent<K, V>(cache, nextSequenceId(),
-                        newEntry, newEntry.getKey(), newEntry.getValue(), prev.getValue());
-                dispatch(e);
-            }
-        }
-    }
-
-    public void getHit(Cache<K, V> cache, CacheEntry<K, V> entry) {
-        AccessedEvent<K, V> e = new AccessedEvent<K, V>(cache, nextSequenceId(), entry,
-                entry.getKey(), entry.getValue(), true);
-        dispatch(e);
-    }
-
-    public void expiredAndGet(Cache<K, V> cache, K key, CacheEntry<K, V> entry) {
-        if (entry == null) {
-            AccessedEvent<K, V> e = new AccessedEvent<K, V>(cache, nextSequenceId(),
-                    entry, key, null, false);
-            dispatch(e);
-        } else {
-            CacheEvent<K, V> e = new ChangedEvent<K, V>(cache, nextSequenceId(), entry,
-                    key, entry.getValue(), entry.getValue());
-            dispatch(e);
-        }
-    }
-
-    public void getAndLoad(Cache<K, V> cache, K key, CacheEntry<K, V> entry) {
-        if (entry != null) {
-            AccessedEvent<K, V> e = new AccessedEvent<K, V>(cache, nextSequenceId(),
-                    entry, key, entry.getValue(), false);
-            dispatch(e);
-            CacheEvent<K, V> ee = new AddedEvent<K, V>(cache, entry, nextSequenceId(),
-                    key, entry.getValue());
-            dispatch(ee);
-        } else {
-            AccessedEvent<K, V> e = new AccessedEvent<K, V>(cache, nextSequenceId(),
-                    null, key, null, false);
-            dispatch(e);
-        }
-    }
-
-    public void expired(Cache<K, V> cache, CacheEntry<K, V> entry) {
-        CacheEvent<K, V> e = new RemovedEvent<K, V>(cache, entry, nextSequenceId(), entry
-                .getKey(), entry.getValue(), true);
-        dispatch(e);
-    }
-
-    public void evicted(Cache<K, V> cache, CacheEntry<K, V> entry) {
-        CacheEvent<K, V> e = new RemovedEvent<K, V>(cache, entry, nextSequenceId(), entry
-                .getKey(), entry.getValue(), false);
-        dispatch(e);
-    }
-
-    public void removed(Cache<K, V> cache, CacheEntry<K, V> entry) {
-        CacheEvent<K, V> e = new RemovedEvent<K, V>(cache, entry, nextSequenceId(), entry
-                .getKey(), entry.getValue(), false);
-        dispatch(e);
-    }
-
-    private final Offerable<CacheEvent<K, V>> offerable;
-
-    public EventCacheService(CacheConfiguration<K, V> conf) {
-        super(conf);
-        this.offerable = eb;
-    }
-
-    protected void dispatch(CacheEvent<K, V> event) {
-        offerable.offer(event);
     }
 }

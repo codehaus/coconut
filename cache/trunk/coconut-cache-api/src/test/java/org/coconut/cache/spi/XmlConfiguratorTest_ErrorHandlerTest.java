@@ -10,6 +10,7 @@ import static org.coconut.cache.spi.XmlConfiguratorTest.rw;
 import java.util.logging.Logger;
 
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.CacheErrorHandler;
 import org.coconut.core.Log;
 import org.coconut.core.util.Logs;
 import org.coconut.test.MockTestCase;

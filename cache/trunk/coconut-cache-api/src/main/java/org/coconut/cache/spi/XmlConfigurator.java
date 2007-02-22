@@ -34,9 +34,10 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.CacheErrorHandler;
 import org.coconut.cache.CacheLoader;
-import org.coconut.cache.service.event.CacheEventConfiguration;
 import org.coconut.cache.service.management.CacheManagementConfiguration;
+import org.coconut.cache.service.statistics.CacheStatisticsConfiguration;
 import org.coconut.core.Log;
 import org.coconut.core.util.Logs;
 import org.coconut.filter.Filter;
@@ -92,6 +93,7 @@ public class XmlConfigurator {
     static {
 //        services.add(CacheEventConfiguration.class);
         services.add(CacheManagementConfiguration.class);
+        services.add(CacheStatisticsConfiguration.class);
     }
 
     /**
@@ -220,7 +222,6 @@ public class XmlConfigurator {
         list.add(new ErrorHandlerConfigurator());
         list.add(new ExpirationConfigurator());
         list.add(new EvictionConfigurator());
-        list.add(new StatisticsConfigurator());
         list.add(new ThreadConfigurator());
         return list;
     }
@@ -652,44 +653,6 @@ public class XmlConfigurator {
             }
 
             if (base.hasChildNodes() || base.hasAttributes()) {
-                root.appendChild(base);
-            }
-        }
-    }
-
-    static class StatisticsConfigurator extends AbstractConfigurator {
-
-        public final static String ENABLED_ATRB = "enabled";
-
-        public final static String STATISTICS_TAG = "statistics";
-
-        public CacheConfiguration.Statistics s() {
-            return conf().statistics();
-        }
-
-        /**
-         * @see org.coconut.cache.spi.xml.AbstractPersister#read()
-         */
-        @Override
-        protected void read() throws Exception {
-            Element e = getChild(STATISTICS_TAG);
-            if (e != null) {
-                /* Register */
-                if (e.hasAttribute(ENABLED_ATRB)) {
-                    s().setEnabled(Boolean.parseBoolean(e.getAttribute(ENABLED_ATRB)));
-                }
-            }
-        }
-
-        /**
-         * @see org.coconut.cache.spi.xml.AbstractPersister#write()
-         */
-        @Override
-        protected void write() throws Exception {
-            /* Register */
-            if (s().isEnabled() != CONF.statistics().isEnabled()) {
-                Element base = doc.createElement(STATISTICS_TAG);
-                base.setAttribute(ENABLED_ATRB, Boolean.toString(s().isEnabled()));
                 root.appendChild(base);
             }
         }

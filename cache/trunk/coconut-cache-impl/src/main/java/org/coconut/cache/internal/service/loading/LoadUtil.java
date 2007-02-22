@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.cache.internal.services.loading;
+package org.coconut.cache.internal.service.loading;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,10 +12,11 @@ import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.CacheErrorHandler;
 import org.coconut.cache.CacheLoader;
+import org.coconut.cache.internal.spi.ExtendedExecutorRunnable;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.AsyncCacheLoader;
-import org.coconut.cache.spi.CacheErrorHandler;
 import org.coconut.cache.spi.CacheExecutorRunnable;
 import org.coconut.cache.spi.CacheUtil;
 import org.coconut.cache.util.AbstractCacheLoader;
@@ -275,7 +276,7 @@ public class LoadUtil {
         }
     }
 
-    static class LoadValueRunnable<K, V> implements CacheExecutorRunnable.LoadKey<K> {
+    static class LoadValueRunnable<K, V> implements ExtendedExecutorRunnable.LoadKey<K> {
         private final Callback<V> callback;
 
         private final K key;
@@ -320,7 +321,7 @@ public class LoadUtil {
         }
     }
 
-    static class LoadValuesRunnable<K, V> implements CacheExecutorRunnable.LoadKeys<K> {
+    static class LoadValuesRunnable<K, V> implements ExtendedExecutorRunnable.LoadKeys<K> {
         private final Callback<Map<K, V>> callback;
 
         private final Collection<? extends K> keys;

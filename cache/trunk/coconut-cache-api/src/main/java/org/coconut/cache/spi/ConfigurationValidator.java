@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import net.jcip.annotations.NotThreadSafe;
 import net.jcip.annotations.ThreadSafe;
 
 import org.coconut.cache.Cache;
@@ -29,9 +30,14 @@ public class ConfigurationValidator {
 
     public void verify(CacheConfiguration<?, ?> conf, Class<? extends Cache> type) {
         // preferable capacity>maxCapacity?
-        // preferavle size>maxSize?
+        // preferable size>maxSize?
         // no policy defined->cache is free to select a policy
         Executor e = conf.threading().getExecutor();
+//        if (type.isAnnotationPresent(NotThreadSafe.class)) {
+//            throw new IllegalCacheConfigurationException(
+//                    "Cannot specify an executor, since this cache is not threadsafe");
+//
+//        }
         boolean isScheduled = e instanceof ScheduledExecutorService;
 
         if (!isScheduled

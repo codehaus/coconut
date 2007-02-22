@@ -5,29 +5,21 @@ package org.coconut.cache.defaults;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.CacheErrorHandler;
 import org.coconut.cache.internal.service.CacheServiceManager;
-import org.coconut.cache.internal.services.CacheStatisticsCacheService;
-import org.coconut.cache.internal.services.EventCacheService;
-import org.coconut.cache.internal.services.EvictionCacheService;
-import org.coconut.cache.internal.services.ManagementCacheService;
-import org.coconut.cache.internal.services.expiration.ExpirationCacheService;
-import org.coconut.cache.internal.services.loading.CacheEntryLoaderService;
+import org.coconut.cache.internal.service.loading.CacheEntryLoaderService;
+import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsService;
 import org.coconut.cache.internal.util.InternalCacheutil;
-import org.coconut.cache.service.event.CacheEvent;
-import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.spi.AbstractCache;
-import org.coconut.cache.spi.CacheErrorHandler;
+import org.coconut.cache.spi.CacheUtil;
 import org.coconut.cache.spi.XmlConfigurator;
 import org.coconut.core.Clock;
-import org.coconut.event.EventBus;
-import org.coconut.management.ManagedGroup;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -35,229 +27,108 @@ import org.coconut.management.ManagedGroup;
  */
 public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
 
-    /**
-     * @see org.coconut.cache.spi.AbstractCache#getService(java.lang.Class)
-     */
-    @Override
-    public <T> T getService(Class<T> serviceType) {
-        if (serviceType.equals(ManagementCacheService.class)) {
+    private final CacheEntryLoaderService<K, V> loaderService;
 
-        } else if (serviceType.equals(CacheEventService.class)) {
-            return (T) eventSupport;
-        }
-        return null;
-    }
+    private final CacheServiceManager<K, V> serviceManager;
 
-    private final ExpirationCacheService<K, V> expirationSupport;
+    private final DefaultCacheStatisticsService<K, V> statistics;
 
-    private final CacheServiceManager<K, V> csm;
-
-    private final CacheStatisticsCacheService<K, V> statistics;
-
-    private final ManagementCacheService<K, V> managementSupport;
-
-    private final CacheEntryLoaderService<K, V> loaderSupport;
-
-    private final EvictionCacheService<AbstractCacheEntry<K, V>> evictionSupport;
-
-    private final EventCacheService<K, V> eventSupport;
-
-    final boolean isThreadSafe;
-
-    public static long convert(long timeout, TimeUnit unit) {
-        if (timeout == Cache.NEVER_EXPIRE) {
-            return Long.MAX_VALUE;
-        } else {
-            long newTime = unit.toMillis(timeout);
-            if (newTime == Long.MAX_VALUE) {
-                throw new IllegalArgumentException(
-                        "Overflow for specified expiration time, was " + timeout + " "
-                                + unit);
-            }
-            return newTime;
-        }
-    }
-
-    /**
-     * @param conf
-     */
-    SupportedCache(CacheConfiguration<K, V> conf) {
+    public SupportedCache(CacheConfiguration<K, V> conf) {
         super(conf);
         conf.setProperty(Cache.class.getCanonicalName(), this.getClass());
         conf.setProperty(XmlConfigurator.CACHE_INSTANCE_TYPE, getClass()
                 .getCanonicalName());
-        isThreadSafe = InternalCacheutil.isThreadSafe(conf);
-        csm = new CacheServiceManager<K, V>(conf);
-        populateCsm(csm, conf);
-        statistics = csm.create(CacheStatisticsCacheService.class);
-        managementSupport = csm.create(ManagementCacheService.class);
-        expirationSupport = getCsm().create(ExpirationCacheService.class);
-        loaderSupport = getCsm().create(CacheEntryLoaderService.class);
-        evictionSupport = getCsm().create(EvictionCacheService.class);
-        eventSupport = getCsm().create(EventCacheService.class);
-    }
-
-    EvictionCacheService<AbstractCacheEntry<K, V>> getEvictionSupport() {
-        return evictionSupport;
-    }
-
-    ManagementCacheService<K, V> getManagementSupport() {
-        return managementSupport;
-    }
-
-    EventCacheService<K, V> getEventService() {
-        return eventSupport;
-    }
-
-    @Override
-    public EventBus<CacheEvent<K, V>> getEventBus() {
-        return getEventService().getEventBus();
-    }
-
-    CacheEntryLoaderService<K, V> getLoaderSupport() {
-        return loaderSupport;
-    }
-
-    CacheStatisticsCacheService<K, V> getStatisticsSupport() {
-        return statistics;
+        serviceManager = new CacheServiceManager<K, V>(conf);
+        populateCsm(serviceManager, conf);
+        statistics = serviceManager.initialize(DefaultCacheStatisticsService.class);
+        loaderService = serviceManager.initialize(CacheEntryLoaderService.class);
     }
 
     CacheServiceManager<K, V> getCsm() {
-        return csm;
-    }
-
-    public ManagedGroup getGroup() {
-        return managementSupport.getGroup();
-    }
-
-    @Override
-    public void start() {
-        super.start();
-        getCsm().initializeAll(this);
-    }
-
-    abstract CacheServiceManager<K, V> populateCsm(CacheServiceManager<K, V> csm,
-            CacheConfiguration<K, V> conf);
-
-    abstract EntryMap<K, V> getMap();
-
-    /**
-     * {@inheritDoc}
-     */
-    public Set<K> keySet() {
-        return getMap().keySet(this, isThreadSafe);
+        return serviceManager;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Set<Entry<K, V>> entrySet() {
-        return (Set) getMap().entrySet(this, isThreadSafe, true);
-    }
-
-    /**
-     * @see org.coconut.cache.spi.AbstractCache#resetStatistics()
-     */
-    @Override
-    public void resetStatistics() {
+    public final void clear() {
+        long start = 0;
         if (statistics != null) {
-            statistics.cacheReset();
+            start = statistics.cacheClearStart(this);
+        }
+        int size = doClear();
+        if (statistics != null) {
+            statistics.cacheClearStop(this, start, size);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public final void evict() {
+        long start = 0;
+        if (statistics != null) {
+            start = statistics.cacheEvictStart(this);
+        }
+        int size = doEvict();
+        if (statistics != null) {
+            statistics.cacheEvictStop(this, start, size);
         }
     }
 
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
-    public V get(Object key) {
+    public final V get(Object key) {
         if (key == null) {
             throw new NullPointerException("key is null");
         }
-        CacheEntry<K, V> e = getEntry((K) key, false);
+        CacheEntry<K, V> e = doGet((K) key);
         return e == null ? null : e.getValue();
     }
 
     /**
      * @see org.coconut.cache.Cache#getEntry(java.lang.Object)
      */
-    public CacheEntry<K, V> getEntry(K key) {
+    public final CacheEntry<K, V> getEntry(K key) {
         if (key == null) {
             throw new NullPointerException("key is null");
         }
-        return getEntry(key, true);
-    }
-
-    abstract CacheEntry<K, V> getEntry(K key, boolean isExported);
-
-    /** {@inheritDoc} */
-    @SuppressWarnings("unchecked")
-    public V peek(K key) {
-        if (key == null) {
-            throw new NullPointerException("key is null");
-        }
-        CacheEntry<K, V> e = peekEntry(key, false);
-        return e == null ? null : e.getValue();
-    }
-
-    /**
-     * @see org.coconut.cache.Cache#peekEntry(java.lang.Object)
-     */
-    public CacheEntry<K, V> peekEntry(K key) {
-        if (key == null) {
-            throw new NullPointerException("key is null");
-        }
-        return peekEntry(key, true);
-    }
-
-    /**
-     * @see org.coconut.cache.Cache#peekEntry(java.lang.Object)
-     */
-    protected CacheEntry<K, V> peekEntry(K key, boolean doCopy) {
-        if (key == null) {
-            throw new NullPointerException("key is null");
-        }
-        CacheEntry<K, V> entry = getMap().get(key);
-        if (entry != null && doCopy) {
+        CacheEntry<K, V> entry = doGet(key);
+        if (entry != null) {
             entry = new ImmutableCacheEntry<K, V>(this, entry);
         }
         return entry;
     }
 
+    /**
+     * @see org.coconut.cache.spi.AbstractCache#getHitStat()
+     */
     @Override
-    public HitStat getHitStat() {
-        if (statistics != null) {
-            return statistics.getHitStat();
-        } else {
+    public final org.coconut.cache.Cache.HitStat getHitStat() {
+        if (statistics == null) {
             return super.getHitStat();
+        } else {
+            return statistics.getHitStat();
         }
     }
 
     /**
-     * {@inheritDoc}
+     * @see org.coconut.cache.spi.AbstractCache#getService(java.lang.Class)
      */
-    public Collection<V> values() {
-        return getMap().values(this, isThreadSafe);
+    @Override
+    public final <T> T getService(Class<T> serviceType) {
+        return serviceManager.getService(serviceType);
     }
 
     /**
-     * {@inheritDoc}
+     * @see org.coconut.cache.spi.AbstractCache#load(java.lang.Object)
      */
-    public int size() {
-        return getMap().size();
-    }
-
-    protected Clock getClock() {
-        return super.getClock();
-    }
-
     @Override
-    public void putEntry(CacheEntry<K, V> entry) {
-        AbstractCacheEntry<K, V> me = newEntry(entry, getMap().get(entry.getKey()), null,
-                null, 0, false);
-        putMyEntry(me);
-    }
-
-    public void trimToSize(int newSize) {
-        while (newSize < size()) {
-            evictNext();
+    public final Future<?> load(K key) {
+        if (loaderService == null) {
+            throw new UnsupportedOperationException("No CacheLoader has been specified");
+        } else {
+            return loaderService.asyncLoadEntry(key, this);
         }
     }
 
@@ -265,92 +136,40 @@ public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
      * @see org.coconut.cache.spi.AbstractCache#loadAll(java.util.Collection)
      */
     @Override
-    public Future<?> loadAll(Collection<? extends K> keys) {
-        return loaderSupport.asyncLoadAllEntries(keys, this);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Future<?> load(final K key) {
-        return loaderSupport.asyncLoadEntry(key, this);
-    }
-
-    /**
-     * @see org.coconut.cache.spi.AbstractCache#getErrorHandler()
-     */
-    @Override
-    protected CacheErrorHandler<K, V> getErrorHandler() {
-        return super.getErrorHandler();
-    }
-
-    /**
-     * @return the expirationSupport
-     */
-    ExpirationCacheService<K, V> getExpirationSupport() {
-        return expirationSupport;
-    }
-
-    protected V put(K key, V value, long expirationTimeMilli) {
-        AbstractCacheEntry<K, V> me = newEntry(null, getMap().get(key), key, value,
-                expirationTimeMilli, false);
-        AbstractCacheEntry<K, V> prev = putMyEntry(me);
-        return prev == null ? null : prev.getValue();
-    }
-
-    abstract AbstractCacheEntry<K, V> putMyEntry(AbstractCacheEntry<K, V> me);
-
-    abstract void evictNext();
-
-    abstract AbstractCacheEntry.EntryFactory<K, V> getEntryFactory();
-
-    AbstractCacheEntry<K, V> newEntry(CacheEntry<K, V> entry,
-            AbstractCacheEntry<K, V> existing, K key, V value, long expirationTimeMilli,
-            boolean isExpired) {
-        return AbstractCacheEntry.newEntry(this, entry, existing, key, value,
-                expirationTimeMilli, isExpired);
-    }
-
-    V putVersionized(K key, V value, long version) {
-        AbstractCacheEntry<K, V> entry = getMap().get(value);
-        if (entry != null && entry.getVersion() == version) {
-            return put(key, value);
+    public final Future<?> loadAll(Collection<? extends K> keys) {
+        if (loaderService == null) {
+            throw new UnsupportedOperationException("No CacheLoader has been specified");
         } else {
-            return null;
+            return loaderService.asyncLoadAllEntries(keys, this);
         }
     }
 
-    class MyMap extends EntryMap<K, V> {
-        @Override
-        protected boolean elementAdded(AbstractCacheEntry<K, V> entry) {
-            if (getEvictionSupport().isEnabled()) {
-                if (entry.getPolicyIndex() == -1) {
-                    entry.setPolicyIndex(getEvictionSupport().add(entry));
-                    if (entry.getPolicyIndex() != -1
-                            && getEvictionSupport().isCapacityReached(
-                                    SupportedCache.this.size())) {
-                        evictNext();
-                    }
-                } else {
-                    if (!getEvictionSupport().replace(entry.getPolicyIndex(), entry)) {
-                        entry.setPolicyIndex(-1);
-                    }
-                }
-            } else {
-                // we need to set policy index to a value >-1
-                // or else it will be thrown out from the calling
-                // method
-                entry.setPolicyIndex(Integer.MAX_VALUE);
-            }
-            // if (SupportedCache<K, V>)
-
-            return entry.getPolicyIndex() >= 0;
+    public final V peek(K key) {
+        if (key == null) {
+            throw new NullPointerException("key is null");
         }
+        CacheEntry<K, V> e = doPeek(key);
+        return e == null ? null : e.getValue();
+    }
+
+    /**
+     * @see org.coconut.cache.Cache#peekEntry(java.lang.Object)
+     */
+    public final CacheEntry<K, V> peekEntry(K key) {
+        if (key == null) {
+            throw new NullPointerException("key is null");
+        }
+        CacheEntry<K, V> entry = doPeek(key);
+        if (entry != null) {
+            entry = new ImmutableCacheEntry<K, V>(this, entry);
+        }
+        return entry;
     }
 
     /**
      * {@inheritDoc}
      */
-    public V put(K key, V value, long expirationTime, TimeUnit unit) {
+    public final V put(K key, V value, long expirationTime, TimeUnit unit) {
         if (key == null) {
             throw new NullPointerException("key is null");
         } else if (value == null) {
@@ -361,17 +180,23 @@ public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
         } else if (unit == null) {
             throw new NullPointerException("unit is null");
         }
-        long expirationTimeMilli = convert(expirationTime, unit);
-        AbstractCacheEntry<K, V> me = newEntry(null, getMap().get(key), key, value,
-                expirationTimeMilli, false);
-        AbstractCacheEntry<K, V> prev = putMyEntry(me);
+        long expirationTimeMilli = InternalCacheutil.convert(expirationTime, unit);
+        long start = 0;
+        if (statistics != null) {
+            start = statistics.entryPutStart();
+        }
+        CacheEntry<K, V> prev = doPut(key, value, expirationTimeMilli, -1, false);
+        if (statistics != null) {
+            statistics.entryPutStop(start);
+        }
         return prev == null ? null : prev.getValue();
     }
 
     /**
      * {@inheritDoc}
      */
-    public void putAll(Map<? extends K, ? extends V> m, long expirationTime, TimeUnit unit) {
+    public final void putAll(Map<? extends K, ? extends V> m, long expirationTime,
+            TimeUnit unit) {
         if (m == null) {
             throw new NullPointerException("m is null");
         } else if (expirationTime < 0) {
@@ -380,9 +205,255 @@ public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
         } else if (unit == null) {
             throw new NullPointerException("unit is null");
         }
-        putAll(m, convert(expirationTime, unit));
+        CacheUtil.checkMapForNulls(m);
+        long start = 0;
+        if (statistics != null) {
+            start = statistics.entryPutAllStart();
+        }
+        doPutAll(m, InternalCacheutil.convert(expirationTime, unit));
+        if (statistics != null) {
+            statistics.entryPutAllStop(start, m.size());
+        }
     }
 
-    abstract void putAll(Map<? extends K, ? extends V> t, long expirationTimeNano);
+    /**
+     * @see org.coconut.cache.spi.AbstractCache#putEntries(java.util.Collection)
+     */
+    @Override
+    public final void putEntries(Collection<CacheEntry<K, V>> entries) {
+        if (entries == null) {
+            throw new NullPointerException("entries is null");
+        }
+        CacheUtil.checkCollectionForNulls(entries);
+        long start = 0;
+        if (statistics != null) {
+            start = statistics.entryPutAllStart();
+        }
+        doPutEntries(entries);
+        if (statistics != null) {
+            statistics.entryPutAllStop(start, entries.size());
+        }
+    }
+
+    /**
+     * @see org.coconut.cache.spi.AbstractCache#putEntry(org.coconut.cache.CacheEntry)
+     */
+    @Override
+    public final CacheEntry<K, V> putEntry(CacheEntry<K, V> entry) {
+        if (entry == null) {
+            throw new NullPointerException("entry is null");
+        }
+        long start = 0;
+        if (statistics != null) {
+            start = statistics.entryPutStart();
+        }
+        CacheEntry<K, V> e = doPutEntry(entry, -1);
+        if (statistics != null) {
+            statistics.entryPutStop(start);
+        }
+        return e;
+    }
+
+    /**
+     * @see org.coconut.cache.spi.AbstractCache#putEntryVersion(org.coconut.cache.CacheEntry,
+     *      long)
+     */
+    @Override
+    public final CacheEntry<K, V> putEntryVersion(CacheEntry<K, V> entry,
+            long previousVersion) {
+        if (entry == null) {
+            throw new NullPointerException("entry is null");
+        }
+        if (previousVersion < 0) {
+            throw new IllegalArgumentException(
+                    "version number must a non negative number (>0), was"
+                            + previousVersion);
+        }
+        long start = 0;
+        if (statistics != null) {
+            start = statistics.entryPutStart();
+        }
+        CacheEntry<K, V> e = doPutEntry(entry, previousVersion);
+        if (statistics != null) {
+            statistics.entryPutStop(start);
+        }
+        return e;
+    }
+
+    @Override
+    public final V putIfAbsent(K key, V value) {
+        return putVersion0(key, value, 0, true);
+    }
+
+    /**
+     * @see org.coconut.cache.spi.AbstractCache#putVersion(java.lang.Object,
+     *      java.lang.Object, long)
+     */
+    @Override
+    public final V putVersion(K key, V value, long previousVersion) {
+        return putVersion0(key, value, previousVersion, false);
+    }
+
+    /**
+     * @see org.coconut.cache.spi.AbstractCache#putVersion(java.lang.Object,
+     *      java.lang.Object, long)
+     */
+    public final V putVersion0(K key, V value, long previousVersion, boolean isPutIfAbsent) {
+        if (key == null) {
+            throw new NullPointerException("key is null");
+        } else if (value == null) {
+            throw new NullPointerException("value is null");
+        } else if (previousVersion < 0) {
+            throw new IllegalArgumentException(
+                    "version number must a non negative number (>=0), was"
+                            + previousVersion);
+        }
+        long start = 0;
+        if (statistics != null) {
+            start = statistics.entryPutStart();
+        }
+        CacheEntry<K, V> prev = doPut(key, value, Cache.DEFAULT_EXPIRATION,
+                previousVersion, isPutIfAbsent);
+        if (statistics != null) {
+            statistics.entryPutStop(start);
+        }
+        return prev == null ? null : prev.getValue();
+    }
+
+    /**
+     * @see java.util.AbstractMap#remove(java.lang.Object)
+     */
+    @Override
+    public final V remove(Object key) {
+        if (key == null) {
+            throw new NullPointerException("key is null");
+        }
+        long start = 0;
+        if (statistics != null) {
+            start = statistics.entryRemoveStart(key);
+        }
+        CacheEntry<K, V> removed = doRemove(key, null);
+        if (statistics != null) {
+            start = statistics.entryRemoveStop(start, removed);
+        }
+        return removed == null ? null : removed.getValue();
+    }
+
+    /**
+     * @see org.coconut.cache.spi.AbstractCache#remove(java.lang.Object,
+     *      java.lang.Object)
+     */
+    @Override
+    public final boolean remove(Object key, Object value) {
+        if (key == null) {
+            throw new NullPointerException("key is null");
+        } else if (value == null) {
+            throw new NullPointerException("value is null");
+        }
+        long start = 0;
+        if (statistics != null) {
+            start = statistics.entryRemoveStart(key);
+        }
+        CacheEntry<K, V> removed = doRemove(key, value);
+        if (statistics != null) {
+            start = statistics.entryRemoveStop(start, removed);
+        }
+        return removed != null;
+    }
+
+    /**
+     * @see org.coconut.cache.spi.AbstractCache#replace(java.lang.Object,
+     *      java.lang.Object)
+     */
+    @Override
+    public final V replace(K key, V value) {
+        if (key == null) {
+            throw new NullPointerException("key is null");
+        } else if (value == null) {
+            throw new NullPointerException("value is null");
+        }
+        long start = 0;
+        if (statistics != null) {
+            start = statistics.entryReplaceStart();
+        }
+        CacheEntry<K, V> prev = doReplace(key, null, value);
+        if (statistics != null) {
+            statistics.entryReplaceStop(start);
+        }
+        return prev == null ? null : prev.getValue();
+    }
+
+    /**
+     * @see org.coconut.cache.spi.AbstractCache#replace(java.lang.Object,
+     *      java.lang.Object, java.lang.Object)
+     */
+    @Override
+    public final boolean replace(K key, V oldValue, V newValue) {
+        if (key == null) {
+            throw new NullPointerException("key is null");
+        } else if (oldValue == null) {
+            throw new NullPointerException("value is null");
+        } else if (newValue == null) {
+            throw new NullPointerException("value is null");
+        }
+        long start = 0;
+        if (statistics != null) {
+            start = statistics.entryReplaceStart();
+        }
+        CacheEntry<K, V> prev = doReplace(key, oldValue, newValue);
+        if (statistics != null) {
+            statistics.entryReplaceStop(start);
+        }
+        return prev != null;
+    }
+
+    /**
+     * @see org.coconut.cache.spi.AbstractCache#resetStatistics()
+     */
+    @Override
+    public final void resetStatistics() {
+        if (statistics == null) {
+            super.resetStatistics();
+        } else {
+            statistics.cacheReset();
+        }
+    }
+
+    // We need this because of visibility
+    protected Clock getClock() {
+        return super.getClock();
+    }
+
+    /**
+     * @see org.coconut.cache.spi.AbstractCache#getErrorHandler()
+     */
+    @Override
+    protected CacheErrorHandler<K, V> getErrorHandler() {
+        return super.getErrorHandler();
+    }
+
+    abstract int doClear();
+
+    abstract int doEvict();
+
+    abstract CacheEntry<K, V> doGet(K key);
+
+    abstract CacheEntry<K, V> doPeek(K key);
+
+    abstract CacheEntry<K, V> doPut(K key, V value, long expirationTimeMilli,
+            long version, boolean isPutIfAbsent);
+
+    abstract void doPutAll(Map<? extends K, ? extends V> t, long expirationTimeMilli);
+
+    abstract void doPutEntries(Collection<CacheEntry<K, V>> entries);
+
+    abstract CacheEntry<K, V> doPutEntry(CacheEntry<K, V> entry, long version);
+
+    abstract CacheEntry<K, V> doRemove(Object key, Object value);
+
+    abstract CacheEntry<K, V> doReplace(K key, V oldValue, V newValue);
+
+    abstract CacheServiceManager<K, V> populateCsm(CacheServiceManager<K, V> csm,
+            CacheConfiguration<K, V> conf);
 
 }

@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.cache.internal.services;
+package org.coconut.cache.internal.service.statistics;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,7 +33,7 @@ import org.coconut.management.util.AtomicDouble;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public final class CacheStatisticsCacheService<K, V> extends AbstractCacheService<K, V> {
+public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheService<K, V> {
 
     // number of loads, loaded elements, number of queries,
     // number of added, number of new elements
@@ -125,7 +125,7 @@ public final class CacheStatisticsCacheService<K, V> extends AbstractCacheServic
 
     private final LongSamplingCounter entryRemoveTime;
 
-    public CacheStatisticsCacheService(CacheConfiguration<K, V> conf) {
+    public DefaultCacheStatisticsService(CacheConfiguration<K, V> conf) {
         super(conf);
         Clock c = Clock.DEFAULT_CLOCK;
         // cache counters
@@ -193,7 +193,7 @@ public final class CacheStatisticsCacheService<K, V> extends AbstractCacheServic
         return System.nanoTime();
     }
 
-    public long cacheClearStop(Cache<K, V> cache, long start) {
+    public long cacheClearStop(Cache<K, V> cache, long start, int size) {
         long time = System.nanoTime() - start;
         cacheClearLast.run();
         cacheClearTime.report(time);
@@ -201,6 +201,7 @@ public final class CacheStatisticsCacheService<K, V> extends AbstractCacheServic
         return time;
     }
 
+    
     public long cacheEvictStart(Cache<K, V> cache) {
         return System.nanoTime();
     }
@@ -240,7 +241,7 @@ public final class CacheStatisticsCacheService<K, V> extends AbstractCacheServic
         entryExpiredCount.addAndGet(count);
     }
 
-    public long entryGetStart() {
+    public long entryGetStart(K key) {
         return System.nanoTime();
     }
 
@@ -273,21 +274,39 @@ public final class CacheStatisticsCacheService<K, V> extends AbstractCacheServic
         return time;
     }
 
-    public long entryRemoveStart() {
+    public long entryRemoveStart(Object key) {
         return System.nanoTime();
     }
 
-    public long entryRemoveStop(long start) {
+    public long entryRemoveStop(long start, CacheEntry<K,V> removed) {
         long time = System.nanoTime() - start;
         entryRemoveTime.report(time);
         entryRemoveCount.incrementAndGet();
         return time;
     }
-
+    public long entryReplaceStart() {
+        return System.nanoTime();
+    }
+    public long entryReplaceStop(long start) {
+        long time = System.nanoTime() - start;
+        entryPutTime.report(time);
+        entryPutCount.incrementAndGet();
+        return time;
+    }
     public long entryPutStart() {
         return System.nanoTime();
     }
 
+    public long entryPutAllStart() {
+        return System.nanoTime();
+    }
+    public long entryPutAllStop(long start, int puts) {
+        long time = System.nanoTime() - start;
+        entryPutTime.report(time);
+        entryPutCount.addAndGet(puts);
+        return time;
+    }
+    
     public long entryPutStop(long start) {
         long time = System.nanoTime() - start;
         entryPutTime.report(time);
@@ -322,7 +341,7 @@ public final class CacheStatisticsCacheService<K, V> extends AbstractCacheServic
     }
 
     private String getDesc(String key) {
-        return Resources.lookup(CacheStatisticsCacheService.class, key.toLowerCase());
+        return Resources.lookup(DefaultCacheStatisticsService.class, key.toLowerCase());
     }
 
     /**

@@ -3,6 +3,7 @@
  */
 package org.coconut.cache.spi;
 
+import org.coconut.cache.service.event.CacheEventService;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -16,10 +17,19 @@ public abstract class AbstractCacheServiceConfiguration {
 
     final String tag;
 
-    public AbstractCacheServiceConfiguration(String tag) {
+    final Class serviceClass;
+    public AbstractCacheServiceConfiguration(String tag, Class c) {
         this.tag = tag;
+        this.serviceClass=c;
     }
 
+    /**
+     * @see org.coconut.cache.spi.AbstractCacheServiceConfiguration#getServiceInterface()
+     */
+    public final Class getServiceInterface() {
+        return serviceClass;
+    }
+    
     protected abstract void fromXML(Document doc, Element parent);
 
     protected abstract void toXML(Document doc, Element parent);
@@ -45,5 +55,4 @@ public abstract class AbstractCacheServiceConfiguration {
         return ee;
     }
 
-    public abstract Class getServiceInterface();
 }

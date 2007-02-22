@@ -9,19 +9,16 @@ import org.coconut.event.EventBus;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public interface CacheEventService<K, V> {
+public interface CacheEventService<K, V> extends EventBus<CacheEvent<K, V>> {
 
     /**
-     * Returns the {@link org.coconut.event.bus.EventBus} attached to this cache
-     * (optional operation). The event bus can be used for getting notications
-     * about various {@link CacheEvent events} that is being raised internally
-     * in the cache.
-     * 
+     * @param event
      * @throws UnsupportedOperationException
-     *             if the cache does not support notifications of events in the
-     *             cache.
-     * @see CacheEvent
-     * @see CacheItemEvent
+     *             if no management is configured for this cache.
      */
-    EventBus<CacheEvent<K, V>> getEventBus();
+    //how do we handle serial numbers?
+    //Det er lige før vi bliver nødt til at fjerne den fra interfaces
+    //og putte det på som en property..
+    void publishJMX(CacheEvent<?, ?> event);
+
 }

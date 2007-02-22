@@ -220,20 +220,5 @@ public class CachesTest extends MockTestCase {
         }
     }
 
-    public void testAcceptors() {
-        HashMap hm = new HashMap();
-        hm.put(1, 2);
-        hm.put(3, 4);
-        ReplacementPolicy rp = Caches.entryKeyAcceptor(Policies.newClock(),
-                Filters.equal(1));
-        assertTrue(rp.add(hm.entrySet().toArray()[0]) > 0);
-        assertTrue(rp.add(hm.entrySet().toArray()[1]) < 0);
-        
-        ReplacementPolicy rp1 =Caches.entryValueAcceptor(Policies.newClock(),
-                Filters.equal(2));
-        assertTrue(rp1.add(hm.entrySet().toArray()[0]) > 0);
-        assertTrue(rp1.add(hm.entrySet().toArray()[1]) < 0);
-
-    }
 
 }

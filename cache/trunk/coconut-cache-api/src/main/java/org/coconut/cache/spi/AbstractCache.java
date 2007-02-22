@@ -15,9 +15,8 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.service.event.CacheEvent;
+import org.coconut.cache.CacheErrorHandler;
 import org.coconut.core.Clock;
-import org.coconut.event.EventBus;
 
 /**
  * This class provides a skeletal implementation of the <tt>Cache</tt>
@@ -100,16 +99,6 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
     }
 
     /**
-     * The default implementation throws {@link UnsupportedOperationException}
-     * 
-     * @see org.coconut.cache.Cache#getHitStat()
-     */
-    public EventBus<CacheEvent<K, V>> getEventBus() {
-        throw new UnsupportedOperationException(
-                "getEventBus() not supported for Cache of type " + getClass());
-    }
-
-    /**
      * The default implementation does not keep statistics about the cache
      * usage.
      * 
@@ -177,7 +166,15 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         }
     }
 
-    public void putEntry(CacheEntry<K, V> entry) {
+    public V putVersion(K key, V value, long previousVersion) {
+        throw new UnsupportedOperationException();
+    }
+    
+    public CacheEntry<K,V> putEntryVersion(CacheEntry<K, V> entry, long previousVersion) {
+        throw new UnsupportedOperationException();
+    }
+    
+    public CacheEntry<K,V> putEntry(CacheEntry<K, V> entry) {
         throw new UnsupportedOperationException();
     }
 
@@ -255,10 +252,13 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
 
     }
 
-    public void start() {
+    public void preStart() {
 
     }
 
+    protected void terminated() {
+        
+    }
     /**
      * {@inheritDoc}
      */

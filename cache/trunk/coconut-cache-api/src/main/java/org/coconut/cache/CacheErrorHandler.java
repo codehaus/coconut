@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.cache.spi;
+package org.coconut.cache;
 
 import java.text.MessageFormat;
 import java.util.Collection;
@@ -9,12 +9,11 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.coconut.cache.Cache;
-import org.coconut.cache.CacheEntry;
-import org.coconut.cache.CacheException;
-import org.coconut.cache.CacheLoader;
+import org.coconut.cache.service.event.CacheEvent;
+import org.coconut.cache.spi.Resources;
 import org.coconut.core.Log;
 import org.coconut.core.util.Logs;
+import org.coconut.event.EventSubscription;
 
 /**
  * A CacheErrorHandler takes of all error handling within a Cache.
@@ -61,10 +60,19 @@ public class CacheErrorHandler<K, V> {
         throw new CacheException(msg, cause);
     }
 
-    public synchronized CacheEntry<K, V> loadFailed(
-            CacheLoader<? super K, ?> loader, K key, boolean isAsync, Throwable cause) {
-        String msg = Resources
-                .lookup(CacheErrorHandler.class, "loadFailed", key.toString());
+    public synchronized CacheEntry<K, V> loadFailed(CacheLoader<? super K, ?> loader,
+            K key, boolean isAsync, Throwable cause) {
+        String msg = Resources.lookup(CacheErrorHandler.class, "loadFailed", key
+                .toString());
+        getLogger().error(msg, cause);
+        throw new CacheException(msg, cause);
+    }
+
+    public synchronized void eventDeliveryFailed(Cache<K, V> cache,
+            CacheEvent<K, V> event, EventSubscription<CacheEvent<K, V>> destination,
+            Throwable cause) {
+        String msg = Resources.lookup(CacheErrorHandler.class, "eventFailed", event
+                .toString());
         getLogger().error(msg, cause);
         throw new CacheException(msg, cause);
     }
@@ -72,7 +80,7 @@ public class CacheErrorHandler<K, V> {
     public synchronized void setCacheName(String name) {
         this.name = name;
     }
-    
+
     public synchronized String getCacheName() {
         return name;
     }
@@ -102,8 +110,7 @@ public class CacheErrorHandler<K, V> {
             logger = Logs.JDK.from(l);
             l.setLevel(Level.ALL);
             logger.info(MessageFormat.format(infoMsg, name, loggerName));
-         //   l.setLevel(Level.INFO);
-           l.setLevel(Level.SEVERE);
+            l.setLevel(Level.SEVERE);
             isInitialized = true;
         }
     }

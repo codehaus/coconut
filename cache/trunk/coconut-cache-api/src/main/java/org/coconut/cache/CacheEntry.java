@@ -64,12 +64,6 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V>, PolicyObject {
     long getExpirationTime();
 
     /**
-     * Returns the number of accesses to the value of this entry. Updating the
-     * value of an entry does not influence the number of hits.
-     */
-    long getHits();
-
-    /**
      * Returns the time at which the specific cache entry was last accessed in
      * milliseconds (optional operation). If the value has never been requested,
      * for example, if the entry has been added to the cache due to a call on

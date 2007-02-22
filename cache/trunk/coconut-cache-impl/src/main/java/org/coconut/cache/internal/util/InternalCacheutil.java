@@ -3,8 +3,11 @@
  */
 package org.coconut.cache.internal.util;
 
+import java.util.concurrent.TimeUnit;
+
 import net.jcip.annotations.ThreadSafe;
 
+import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.spi.XmlConfigurator;
 
@@ -14,6 +17,20 @@ import org.coconut.cache.spi.XmlConfigurator;
  */
 public class InternalCacheutil {
 
+    public static long convert(long timeout, TimeUnit unit) {
+        if (timeout == Cache.NEVER_EXPIRE) {
+            return Long.MAX_VALUE;
+        } else {
+            long newTime = unit.toMillis(timeout);
+            if (newTime == Long.MAX_VALUE) {
+                throw new IllegalArgumentException(
+                        "Overflow for specified expiration time, was " + timeout + " "
+                                + unit);
+            }
+            return newTime;
+        }
+    }
+    
     public static boolean isThreadSafe(CacheConfiguration conf) {
         Class c = null;
         String s = (String) conf.getProperty(XmlConfigurator.CACHE_INSTANCE_TYPE);

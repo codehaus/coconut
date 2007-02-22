@@ -2,7 +2,7 @@
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.cache.spi;
+package org.coconut.cache.spi.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -18,14 +18,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface CacheSupport {
-    boolean JMXSupport() default false;
     boolean CacheEntrySupport() default false;
-    boolean eventSupport() default false;
     boolean CacheWideLockSupport() default false;
     boolean CacheEntryLockSupport() default false;
     boolean CacheLoadingSupport() default false;
     boolean CacheStoreSupport() default false; 
     boolean ExpirationSupport() default false;
-    boolean statisticsSupport() default false;
-    boolean querySupport() default false;
 }

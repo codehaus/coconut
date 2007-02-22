@@ -5,9 +5,9 @@ package org.coconut.cache.defaults;
 
 import java.util.AbstractCollection;
 import java.util.AbstractSet;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -21,7 +21,7 @@ import org.coconut.cache.CacheEntry;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class EntryMap<K, V> {
+public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
 
     /* ---------------- Constants -------------- */
 
@@ -67,6 +67,8 @@ public class EntryMap<K, V> {
      */
     int size;
 
+    long capacity;
+
     /**
      * The table is rehashed when its size exceeds this threshold. (The value of
      * this field is always (int)(capacity * loadFactor).)
@@ -78,6 +80,8 @@ public class EntryMap<K, V> {
     Set<CacheEntry<K, V>> entrySet;
 
     Collection<V> values;
+
+    private final boolean isThreadSafe;
 
     // Collection<AbstractCacheEntry<K, V>> entries;
 
@@ -114,8 +118,8 @@ public class EntryMap<K, V> {
      * Creates a new, empty map with a default initial capacity, and load
      * factor.
      */
-    public EntryMap() {
-        this(DEFAULT_INITIAL_CAPACITY);
+    public EntryMap(boolean isThreadSafe) {
+        this(isThreadSafe, DEFAULT_INITIAL_CAPACITY);
     }
 
     /**
@@ -128,8 +132,8 @@ public class EntryMap<K, V> {
      * @throws IllegalArgumentException
      *             if the initial capacity of elements is negative.
      */
-    public EntryMap(int initialCapacity) {
-        this(initialCapacity, DEFAULT_LOAD_FACTOR);
+    public EntryMap(boolean isThreadSafe, int initialCapacity) {
+        this(isThreadSafe, initialCapacity, DEFAULT_LOAD_FACTOR);
     }
 
     /**
@@ -147,7 +151,7 @@ public class EntryMap<K, V> {
      *             if the initial capacity is negative or the load factor is
      *             nonpositive.
      */
-    public EntryMap(int initialCapacity, float loadFactor) {
+    public EntryMap(boolean isThreadSafe, int initialCapacity, float loadFactor) {
         if (initialCapacity < 0) {
             throw new IllegalArgumentException("initialCapacity must be >=0, was "
                     + initialCapacity);
@@ -163,6 +167,7 @@ public class EntryMap<K, V> {
         this.loadFactor = loadFactor;
         threshold = (int) (16 * loadFactor);
         table = new AbstractCacheEntry[16];
+        this.isThreadSafe = isThreadSafe;
     }
 
     /**
@@ -173,15 +178,18 @@ public class EntryMap<K, V> {
         return (AbstractCacheEntry<K, V>) tab[hash & (tab.length - 1)];
     }
 
-    public void clear() {
-        if (size != 0) {
+    public int clear() {
+        int s = size;
+        if (s != 0) {
             modCount++;
             AbstractCacheEntry<K, V>[] tab = table;
             for (int i = 0; i < tab.length; i++) {
                 tab[i] = null;
             }
             size = 0;
+            capacity = 0;
         }
+        return s;
     }
 
     public boolean containsKey(Object key) {
@@ -224,12 +232,27 @@ public class EntryMap<K, V> {
     /**
      * @see java.util.AbstractMap#entrySet()
      */
-    public Set<CacheEntry<K, V>> entrySet(SupportedCache<K, V> cache,
-            boolean isSynchronized, boolean copyEntries) {
+    public Set<Map.Entry<K, V>> entrySetPublic(SupportedCache<K, V> cache) {
+        return (Set) entrySet(cache, true);
+    }
+
+    /**
+     * @see java.util.AbstractMap#entrySet()
+     */
+    public Set<CacheEntry<K, V>> entrySet(SupportedCache<K, V> cache, boolean copyEntries) {
         Set<CacheEntry<K, V>> es = entrySet;
         return (es != null) ? es
-                : (entrySet = isSynchronized ? new EntrySetSynchronized<K, V>(cache,
-                        this, copyEntries) : new EntrySet<K, V>(cache, this, copyEntries));
+                : (entrySet = isThreadSafe ? new EntrySetSynchronized<K, V>(cache, this,
+                        copyEntries) : new EntrySet<K, V>(cache, this, copyEntries));
+    }
+
+    public Collection<? extends AbstractCacheEntry<K, V>> getAll() {
+        ArrayList<AbstractCacheEntry<K, V>> list = new ArrayList<AbstractCacheEntry<K, V>>(
+                size);
+        for (AbstractCacheEntry<K, V> e : this) {
+            list.add(e);
+        }
+        return list;
     }
 
     public AbstractCacheEntry<K, V> get(Object key) {
@@ -254,67 +277,55 @@ public class EntryMap<K, V> {
     /**
      * @see java.util.AbstractMap#keySet()
      */
-    public Set<K> keySet(SupportedCache<K, V> cache, boolean isSynchronized) {
+    public Set<K> keySet(SupportedCache<K, V> cache) {
         Set<K> ks = keySet;
-        return (ks != null) ? ks
-                : (keySet = isSynchronized ? new KeySetSynchronized<K, V>(cache, this)
-                        : new KeySet<K, V>(cache, this));
+        if (isThreadSafe) {
+            return (ks != null) ? ks : (keySet = new KeySet<K, V>(cache, this));
+        } else {
+            return (ks != null) ? ks
+                    : (keySet = new KeySetSynchronized<K, V>(cache, this));
+        }
     }
 
     AbstractCacheEntry<K, V> put(AbstractCacheEntry<K, V> entry) {
-        if (entry == null) {
-            throw new NullPointerException("entry is null");
+//        if (entry.getPolicyIndex()<0) {
+//            throw new IllegalArgumentException("cannot add entry");
+//        }
+        if (size + 1 > threshold) {
+            // ensure capacity
+            rehash();
         }
-        if (elementAdded(entry)) {
-            if (size + 1 > threshold) {
-                // ensure capacity
-                rehash();
-            }
-            K key = entry.getKey();
-            int hash = entry.getHash();
-            AbstractCacheEntry<K, V>[] tab = table;
-            int index = hash & (tab.length - 1);
-            AbstractCacheEntry<K, V> first = tab[index];
-            AbstractCacheEntry<K, V> e = first;
-            AbstractCacheEntry<K, V> prev = first;
-            while (e != null && (e.getHash() != hash || !key.equals(e.getKey()))) {
-                e = e.next;
-                prev = e;
-            }
-            AbstractCacheEntry<K, V> oldValue;
-            if (e != null) {
-                oldValue = e;
-                entry.next = oldValue.next;
-                if (prev == e) { // first entry
-                    table[index] = entry;
-                } else {
-                    prev.next = entry;
-                }
+        K key = entry.getKey();
+        int hash = entry.getHash();
+        AbstractCacheEntry<K, V>[] tab = table;
+        int index = hash & (tab.length - 1);
+        AbstractCacheEntry<K, V> first = tab[index];
+        AbstractCacheEntry<K, V> e = first;
+        AbstractCacheEntry<K, V> prev = first;
+        while (e != null && (e.getHash() != hash || !key.equals(e.getKey()))) {
+            e = e.next;
+            prev = e;
+        }
+        AbstractCacheEntry<K, V> oldValue;
+        if (e != null) {
+            oldValue = e;
+            entry.next = oldValue.next;
+            if (prev == e) { // first entry
+                table[index] = entry;
             } else {
-                oldValue = null;
-                ++modCount;
-                tab[index] = entry;
-                entry.next = first;
-                size++;
+                prev.next = entry;
             }
-            return oldValue;
+            capacity -= oldValue.getSize();
         } else {
-            remove(entry.getKey(), null);
-            return null;
+            oldValue = null;
+            ++modCount;
+            tab[index] = entry;
+            entry.next = first;
+            size++;
         }
-    }
+        capacity += entry.getSize();
+        return oldValue;
 
-    protected boolean elementAdded(AbstractCacheEntry<K, V> entry) {
-        return true;
-    }
-
-    public Map<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>> putAll(
-            Collection<? extends AbstractCacheEntry<K, V>> t) {
-        Map<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>> m = new HashMap<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>>();
-        for (AbstractCacheEntry<K, V> e : t) {
-            m.put(e, put(e));
-        }
-        return m;
     }
 
     public AbstractCacheEntry<K, V> remove(Object key) {
@@ -331,18 +342,23 @@ public class EntryMap<K, V> {
         AbstractCacheEntry<K, V> first = tab[index];
         AbstractCacheEntry<K, V> e = first;
         AbstractCacheEntry<K, V> prev = first;
-        
+
         while (e != null) {
-            AbstractCacheEntry<K,V> next = e.next;
+            AbstractCacheEntry<K, V> next = e.next;
             if (e.getHash() == hash && key.equals(e.getKey())) {
-                modCount++;
-                size--;
-                if (prev == e) 
-                    table[index] = next;
-                else
-                    prev.next = next;
-                e.entryRemoved();
-                return e;
+                if (value == null || value.equals(e.getValue())) {
+                    modCount++;
+                    size--;
+                    capacity -= e.getSize();
+                    if (prev == e)
+                        table[index] = next;
+                    else
+                        prev.next = next;
+                    e.entryRemoved();
+                    return e;
+                } else {
+                    next = null;
+                }
             }
             prev = e;
             e = next;
@@ -354,14 +370,21 @@ public class EntryMap<K, V> {
         return size;
     }
 
+    public long capacity() {
+        return capacity;
+    }
+
     /**
      * @see java.util.AbstractMap#values()
      */
-    public Collection<V> values(SupportedCache<K, V> cache, boolean isSynchronized) {
+    public Collection<V> values(SupportedCache<K, V> cache) {
         Collection<V> vs = values;
-        return (vs != null) ? vs
-                : (values = isSynchronized ? new ValuesSynchronized<K, V>(cache, this)
-                        : new Values<K, V>(cache, this));
+        if (isThreadSafe) {
+            return (vs != null) ? vs : (values = new Values<K, V>(cache, this));
+        } else {
+            return (vs != null) ? vs
+                    : (values = new ValuesSynchronized<K, V>(cache, this));
+        }
     }
 
     /**
@@ -395,7 +418,10 @@ public class EntryMap<K, V> {
         table = newTable;
     }
 
-    Iterator<AbstractCacheEntry<K, V>> entryIterator() {
+    /**
+     * @see java.lang.Iterable#iterator()
+     */
+    public Iterator<AbstractCacheEntry<K, V>> iterator() {
         return new EntrySetIterator<K, V>(null, this);
     }
 
@@ -574,7 +600,8 @@ public class EntryMap<K, V> {
         EntryMap<K, V> map;
 
         final boolean copyEntries;
-        /* Whacked*/
+
+        /* Whacked */
         final EntrySet<K, V> noCopySet;
 
         EntrySet(SupportedCache<K, V> cache, EntryMap<K, V> map, boolean copyEntries) {
@@ -639,7 +666,7 @@ public class EntryMap<K, V> {
          */
         @Override
         public boolean equals(Object o) {
-            return noCopySet ==null ? super.equals(o) : noCopySet.equals(o);
+            return noCopySet == null ? super.equals(o) : noCopySet.equals(o);
         }
 
         /**
@@ -647,7 +674,7 @@ public class EntryMap<K, V> {
          */
         @Override
         public int hashCode() {
-            return noCopySet ==null ? super.hashCode() : noCopySet.hashCode();
+            return noCopySet == null ? super.hashCode() : noCopySet.hashCode();
         }
 
         /**
@@ -655,7 +682,7 @@ public class EntryMap<K, V> {
          */
         @Override
         public boolean containsAll(Collection<?> c) {
-            return noCopySet ==null ? super.containsAll(c) : noCopySet.containsAll(c);
+            return noCopySet == null ? super.containsAll(c) : noCopySet.containsAll(c);
         }
 
         /**
@@ -663,7 +690,7 @@ public class EntryMap<K, V> {
          */
         @Override
         public boolean retainAll(Collection<?> c) {
-            return noCopySet ==null ? super.retainAll(c) : noCopySet.retainAll(c);
+            return noCopySet == null ? super.retainAll(c) : noCopySet.retainAll(c);
         }
 
         /**
@@ -671,7 +698,7 @@ public class EntryMap<K, V> {
          */
         @Override
         public Object[] toArray() {
-            return noCopySet ==null ? super.toArray() : noCopySet.toArray();
+            return noCopySet == null ? super.toArray() : noCopySet.toArray();
         }
 
         /**
@@ -679,7 +706,7 @@ public class EntryMap<K, V> {
          */
         @Override
         public <T> T[] toArray(T[] a) {
-            return noCopySet ==null ? super.toArray(a) : noCopySet.toArray(a);
+            return noCopySet == null ? super.toArray(a) : noCopySet.toArray(a);
         }
 
         /**
@@ -687,7 +714,7 @@ public class EntryMap<K, V> {
          */
         @Override
         public String toString() {
-            return noCopySet ==null ? super.toString() : noCopySet.toString();
+            return noCopySet == null ? super.toString() : noCopySet.toString();
         }
 
         /**
@@ -695,7 +722,7 @@ public class EntryMap<K, V> {
          */
         @Override
         public boolean removeAll(Collection<?> c) {
-            return noCopySet ==null ? super.removeAll(c) : noCopySet.removeAll(c);
+            return noCopySet == null ? super.removeAll(c) : noCopySet.removeAll(c);
         }
     }
 
@@ -1013,4 +1040,5 @@ public class EntryMap<K, V> {
             return cache.size();
         }
     }
+
 }

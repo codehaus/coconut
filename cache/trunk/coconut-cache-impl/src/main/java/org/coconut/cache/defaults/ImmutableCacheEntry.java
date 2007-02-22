@@ -6,6 +6,7 @@ package org.coconut.cache.defaults;
 import java.util.Map;
 
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.spi.AbstractCache;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -33,13 +34,13 @@ class ImmutableCacheEntry<K, V> implements CacheEntry<K, V> {
 
     private final long size;
 
-    private final SupportedCache<K, V> parent;
+    private final AbstractCache<K, V> parent;
 
     /**
      * @param key
      * @param value
      */
-    public ImmutableCacheEntry(SupportedCache<K, V> cache, CacheEntry<K, V> entry) {
+    public ImmutableCacheEntry(AbstractCache<K, V> cache, CacheEntry<K, V> entry) {
         this.cost = entry.getCost();
         this.creationTime = entry.getCreationTime();
         this.expirationTime = entry.getExpirationTime();
@@ -70,12 +71,12 @@ class ImmutableCacheEntry<K, V> implements CacheEntry<K, V> {
         }
         return false;
     }
-    
+
     @Override
     public int hashCode() {
         return key.hashCode() ^ value.hashCode();
     }
-    
+
     /**
      * @return the cost
      */
@@ -150,7 +151,7 @@ class ImmutableCacheEntry<K, V> implements CacheEntry<K, V> {
      * @see java.util.Map.Entry#setValue(java.lang.Object)
      */
     public V setValue(V value) {
-        return parent.putVersionized(key, value, version);
+        return parent.putVersion(key, value, version);
     }
 
 }

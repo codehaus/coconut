@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.cache.internal.services;
+package org.coconut.cache.internal.service.eviction;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,7 +17,8 @@ import org.coconut.cache.policy.ReplacementPolicy;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class EvictionCacheService<T extends CacheEntry> extends AbstractCacheService {
+public class DefaultCacheEvictionService<T extends CacheEntry> extends
+        AbstractCacheService {
     private final ReplacementPolicy<T> cp;
 
     private final int maxSize;
@@ -28,7 +29,7 @@ public class EvictionCacheService<T extends CacheEntry> extends AbstractCacheSer
 
     private final long preferableCapacity;
 
-    public EvictionCacheService(CacheConfiguration<?, ?> conf) {
+    public DefaultCacheEvictionService(CacheConfiguration<?, ?> conf) {
         super(conf);
         if (conf.eviction().getPolicy() == null) {
             cp = Policies.newLRU();
@@ -52,6 +53,10 @@ public class EvictionCacheService<T extends CacheEntry> extends AbstractCacheSer
     }
 
     public void touch(int index) {
+        if (index < 0) {
+            throw new IllegalArgumentException(
+                    "index must be a non negative number, was " + index);
+        }
         if (cp != null) {
             cp.touch(index);
         }
@@ -65,44 +70,33 @@ public class EvictionCacheService<T extends CacheEntry> extends AbstractCacheSer
         return cp != null;
     }
 
+    public List<T> evict(int count) {
+        ArrayList<T> list = new ArrayList<T>();
+        while (count-- > 0) {
+            T e = evictNext();
+            list.add(e);
+        }
+        return list;
+    }
+
     public List<T> evict(int size, long capacity) {
+        ArrayList<T> list = new ArrayList<T>();
         int diffSize = size - maxSize;
-        if (diffSize > 0) {
-            if (diffSize == 1) {
-                return Collections.singletonList(evictNext());
-            } else {
-                ArrayList<T> list = new ArrayList<T>(diffSize);
-                for (int i = 0; i < diffSize; i++) {
-                    list.add(evictNext());
-                }
-                return list;
-            }
-        }
         long diffCapacity = capacity - maxCapacity;
-
-        if (diffCapacity > 0) {
-            ArrayList list = new ArrayList();
-            while (diffCapacity > 0) {
-                CacheEntry e = evictNext();
-                diffCapacity -= e.getSize();
-                list.add(e);
-            }
-            return list;
+        while (diffSize-- > 0 || diffCapacity > 0) {
+            T e = evictNext();
+            list.add(e);
+            diffCapacity -= e.getSize();
         }
-        return Collections.emptyList();
+        return list;
     }
 
-    public boolean maxSizeReached(int size) {
-        int maxSize = this.maxSize;
-        return size >= maxSize;
+    public boolean isCapacityBreached(long capacity) {
+        return capacity > maxCapacity;
     }
 
-    public boolean maxCapacityReached(long capacity) {
-        return maxCapacity >= capacity;
-    }
-
-    public boolean isCapacityReached(int size) {
-        return size >= maxSize;
+    public boolean isSizeBreached(int size) {
+        return size > maxSize;
     }
 
     public int add(T t) {
@@ -110,5 +104,12 @@ public class EvictionCacheService<T extends CacheEntry> extends AbstractCacheSer
             return -1;
         }
         return cp.add(t);
+    }
+
+    /**
+     * 
+     */
+    public void clear() {
+       cp.clear();
     }
 }

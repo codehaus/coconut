@@ -13,8 +13,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.service.event.CacheEvent;
-import org.coconut.event.EventBus;
 
 /**
  * A class that can be used for easily decorating a cache with a specific

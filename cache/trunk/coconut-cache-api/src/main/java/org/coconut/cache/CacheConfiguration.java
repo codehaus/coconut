@@ -23,7 +23,6 @@ import net.jcip.annotations.NotThreadSafe;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
-import org.coconut.cache.spi.CacheErrorHandler;
 import org.coconut.cache.spi.XmlConfigurator;
 import org.coconut.core.Clock;
 import org.coconut.filter.Filter;
@@ -92,6 +91,12 @@ public class CacheConfiguration<K, V> implements Cloneable {
         return new CacheConfiguration<K, V>();
     }
 
+    public static <K, V> CacheConfiguration<K, V> create(String name) {
+        CacheConfiguration<K, V> conf = new CacheConfiguration<K, V>();
+        conf.setName(name);
+        return conf;
+    }
+
     public static <K, V> CacheConfiguration<K, V> create(InputStream is) throws Exception {
         return XmlConfigurator.getInstance().from(is);
     }
@@ -108,7 +113,7 @@ public class CacheConfiguration<K, V> implements Cloneable {
         CacheConfiguration<K, V> conf = create(is);
         AbstractCache cc = (AbstractCache) conf.newInstance((Class) Class.forName(conf
                 .getProperty(XmlConfigurator.CACHE_INSTANCE_TYPE).toString()));
-        cc.start();
+        cc.preStart();
         return cc;
     }
 
@@ -362,7 +367,7 @@ public class CacheConfiguration<K, V> implements Cloneable {
     public <T extends Cache<K, V>> T newInstanceAndStart(
             Class<? extends AbstractCache> clazz) {
         AbstractCache t = newInstance(clazz);
-        t.start();
+        t.preStart();
         return (T) t;
     }
 
@@ -479,10 +484,6 @@ public class CacheConfiguration<K, V> implements Cloneable {
         }
         additionalProperties.put(key, value);
         return this;
-    }
-
-    public Statistics statistics() {
-        return new Statistics();
     }
 
     public Threading threading() {
@@ -794,28 +795,6 @@ public class CacheConfiguration<K, V> implements Cloneable {
         }
     }
 
-    public class Statistics {
-
-        /**
-         * Returns the CacheConfiguration that this instance is part of.
-         * 
-         * @return the CacheConfiguration that this instance is part of
-         */
-        public CacheConfiguration<K, V> c() {
-            return CacheConfiguration.this;
-        }
-
-        public boolean isEnabled() {
-            return statisticsEnabled;
-        }
-
-        public Statistics setEnabled(boolean isEnabled) {
-            statisticsEnabled = isEnabled;
-            return this;
-        }
-
-    }
-
     public class Threading {
 
         /**
@@ -862,7 +841,8 @@ public class CacheConfiguration<K, V> implements Cloneable {
     /**
      * @param name2
      */
-    public <T extends AbstractCacheServiceConfiguration> T getServiceConfiguration(Class<T> service) {
+    public <T extends AbstractCacheServiceConfiguration> T getServiceConfiguration(
+            Class<T> service) {
         for (AbstractCacheServiceConfiguration o : list) {
             if (o.getClass().equals(service)) {
                 return (T) o;
@@ -870,7 +850,6 @@ public class CacheConfiguration<K, V> implements Cloneable {
         }
         return null;
     }
-    
 
     /**
      * @param name2
@@ -879,4 +858,3 @@ public class CacheConfiguration<K, V> implements Cloneable {
         return new ArrayList<AbstractCacheServiceConfiguration>(list);
     }
 }
-

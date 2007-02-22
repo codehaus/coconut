@@ -28,12 +28,6 @@ import org.coconut.filter.CollectionFilters.IsTypeFilter;
 public interface CacheEntryEvent<K, V> extends CacheEvent<K, V>, Map.Entry<K, V> {
 
     /**
-     * A {@link org.coconut.filter.Filter} that will accept all instances of
-     * CacheItemEvent.
-     */
-    Filter ITEM_FILTER = Filters.isType(CacheEntryEvent.class);
-
-    /**
      * Returns the cacheentry corresponding to the key-value mapping (optional).
      * A cache might, for performance reasons, not keep track
      * 
@@ -57,8 +51,6 @@ public interface CacheEntryEvent<K, V> extends CacheEvent<K, V>, Map.Entry<K, V>
      * subscribe for, as it is raised on every access to cache.
      */
     interface ItemAccessed<K, V> extends CacheEntryEvent<K, V> {
-        /** A filter that only accepts instances of ItemAccessed events. */
-        IsTypeFilter FILTER = Filters.isType(ItemAccessed.class);
 
         /** The unique name of this event. */
         String NAME = "cacheitem.Accessed";
@@ -80,12 +72,6 @@ public interface CacheEntryEvent<K, V> extends CacheEvent<K, V>, Map.Entry<K, V>
      * cache loader fetch the value.
      */
     interface ItemAdded<K, V> extends CacheEntryEvent<K, V> {
-
-        /**
-         * A {@link org.coconut.filter.Filter} that only accepts instances of
-         * ItemUpdated events.
-         */
-        IsTypeFilter FILTER = Filters.isType(ItemAdded.class);
 
         /** The unique name of this event. */
         String NAME = "cacheitem.Added";
@@ -129,12 +115,6 @@ public interface CacheEntryEvent<K, V> extends CacheEvent<K, V>, Map.Entry<K, V>
      */
     interface ItemRemoved<K, V> extends CacheEntryEvent<K, V> {
 
-        /**
-         * A {@link org.coconut.filter.Filter} that only accepts instances of
-         * ItemUpdated events.
-         */
-        IsTypeFilter FILTER = Filters.isType(ItemRemoved.class);
-
         /** The unique name of this event. */
         String NAME = "cacheitem.Removed";
 
@@ -155,12 +135,6 @@ public interface CacheEntryEvent<K, V> extends CacheEvent<K, V>, Map.Entry<K, V>
      * specified cache loader.
      */
     interface ItemUpdated<K, V> extends CacheEntryEvent<K, V> {
-
-        /**
-         * A {@link org.coconut.filter.Filter} that only accepts instances of
-         * ItemUpdated events.
-         */
-        IsTypeFilter FILTER = Filters.isType(ItemUpdated.class);
 
         /** The unique name of the event. */
         String NAME = "cacheitem.Updated";

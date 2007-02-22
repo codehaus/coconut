@@ -8,7 +8,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.spi.CacheErrorHandler;
+import org.coconut.cache.CacheErrorHandler;
+import org.coconut.cache.internal.service.expiration.ExpirationCacheService;
 import org.coconut.cache.util.DefaultCacheEntry;
 import org.coconut.core.Clock;
 
@@ -27,7 +28,6 @@ abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
 
     static final EntryFactory SYNC = new SynchronizedEntryFactory();
 
-    
     static final class SynchronizedEntryFactory<K, V> implements EntryFactory<K, V> {
 
         /**
@@ -38,13 +38,13 @@ abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         public AbstractCacheEntry<K, V> createNew(SupportedCache<K, V> cache, K key,
                 V value, double cost, long creationTime, long expirationTime, long hits,
                 long lastAccessTime, long lastUpdateTime, long size, long version) {
-            return new AbstractCacheEntry.SynchronizedCacheEntry<K, V>(cache, key,
-                    value, cost, creationTime, expirationTime, hits, lastAccessTime,
-                    cache.getClock().timestamp(), size, version);
+            return new AbstractCacheEntry.SynchronizedCacheEntry<K, V>(cache, key, value,
+                    cost, creationTime, expirationTime, hits, lastAccessTime, cache
+                            .getClock().timestamp(), size, version);
         }
 
     }
-    
+
     static final class UnsynchronizedEntryFactory<K, V> implements EntryFactory<K, V> {
 
         /**
@@ -194,6 +194,9 @@ abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
      */
     AbstractCacheEntry(K key, V value, double cost, long creationTime,
             long lastUpdateTime, long size, long version) {
+        if (value == null) {
+            throw new NullPointerException("value is null");
+        }
         this.hash = EntryMap.hash(key.hashCode());
         this.key = key;
         this.value = value;
@@ -277,8 +280,7 @@ abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
 
     @Override
     public String toString() {
-        return getKey() + "=" + getValue() + " (policyIndex= " + getPolicyIndex()
-                + ")";
+        return getKey() + "=" + getValue() + " (policyIndex= " + getPolicyIndex() + ")";
     }
 
     protected void entryRemoved() {
@@ -315,24 +317,26 @@ abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         this.policyIndex = index;
     }
 
-    static <K, V> AbstractCacheEntry<K, V> newEntry(
-            SupportedCache<K, V> cache, CacheEntry<K, V> entry,
-            AbstractCacheEntry<K, V> existing, K key, V value, long expirationTimeMilli,
-            boolean isExpired) {
+    static <K, V> AbstractCacheEntry<K, V> newEntry(EntryFactory<K, V> f,
+            SupportedCache<K, V> cache, ExpirationCacheService<K, V> service,
+            CacheEntry<K, V> entry, AbstractCacheEntry<K, V> existing, K key, V value,
+            long expirationTimeMilli, boolean isExpired3) {
         K k = entry == null ? key : entry.getKey();
         V v = entry == null ? value : entry.getValue();
+        if (v == null) {
+            throw new NullPointerException("value is null");
+        }
         double cost = getCost(entry, cache.getErrorHandler());
         long creationTime = getCreationTime(entry, existing, cache.getClock(), cache
                 .getErrorHandler());
         long size = getSize(entry, cache.getErrorHandler());
-        long expTime = getExpirationTime(entry, expirationTimeMilli, cache
-                .getExpirationSupport().getDefaultExpirationTime(), cache.getClock(),
-                cache.getErrorHandler());
+        long expTime = getExpirationTime(entry, expirationTimeMilli, service
+                .getDefaultExpirationTime(), cache.getClock(), cache.getErrorHandler());
         long lastAccessTime = getLastAccessTime(entry, existing, cache.getClock(), cache
                 .getErrorHandler());
         long hits = getHits(entry, existing, cache.getErrorHandler());
         long version = getVersion(entry, entry, cache.getErrorHandler());
-        AbstractCacheEntry<K, V> me = cache.getEntryFactory().createNew(cache, k, v, cost, creationTime,
+        AbstractCacheEntry<K, V> me = f.createNew(cache, k, v, cost, creationTime,
                 expTime, hits, lastAccessTime, cache.getClock().timestamp(), size,
                 version);
         if (existing != null) {
@@ -340,6 +344,7 @@ abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         }
         return me;
     }
+
     static class SynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
 
         private final SupportedCache<K, V> cache;
@@ -414,7 +419,25 @@ abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         }
     }
 
-    
+    static <K, V> AbstractCacheEntry<K, V> newUnsync(SupportedCache<K, V> cache,
+            ExpirationCacheService<K, V> service, AbstractCacheEntry<K, V> previous,
+            CacheEntry<K, V> newEntry) {
+        return newEntry(UNSYNC, cache, service, newEntry, previous, null, null, 0, false);
+    }
+
+    static <K, V> AbstractCacheEntry<K, V> newUnsync(SupportedCache<K, V> cache,
+            ExpirationCacheService<K, V> service, AbstractCacheEntry<K, V> previous,
+            K key, V value, long timeoutMillies) {
+        return newEntry(UNSYNC, cache, service, null, previous, key, value,
+                timeoutMillies, false);
+    }
+
+    static <K, V> AbstractCacheEntry<K, V> unsyncEntry(SupportedCache<K, V> cache,
+            CacheEntry<K, V> prev, CacheEntry<K, V> entry) {
+
+        return null;
+    }
+
     static class UnsynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
 
         private final SupportedCache<K, V> cache;

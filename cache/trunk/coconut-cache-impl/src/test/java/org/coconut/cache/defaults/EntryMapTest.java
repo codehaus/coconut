@@ -41,7 +41,7 @@ public class EntryMapTest {
 
     @Test
     public void testNotsa() {
-        CacheEntryMapStub s = new CacheEntryMapStub();
+        EntryMap<Integer, String> s = new EntryMap<Integer, String>(false);
         s.put(new EntryStub(-348653132, "a"));
         s.put(new EntryStub(772636595, "b"));
         AbstractCacheEntry ac1=s.remove(-348653132);
@@ -57,7 +57,7 @@ public class EntryMapTest {
     }
 
     public boolean testNots() {
-        CacheEntryMapStub s = new CacheEntryMapStub();
+        EntryMap<Integer, String> s = new EntryMap<Integer, String>(false);
         Random r = new Random();
         ArrayList<Integer> al = new ArrayList<Integer>();
         for (int i = 0; i < 30; i++) {
@@ -194,20 +194,6 @@ public class EntryMapTest {
     // assertEquals(M5.getValue(), c5.getValue(M5.getKey()));
     // }
     //
-    static class CacheEntryMapStub extends EntryMap<Integer, String> {
-
-        public CacheEntryMapStub() {
-        }
-
-        public CacheEntryMapStub(Map<? extends Integer, ? extends String> m) {
-            for (Map.Entry<? extends Integer, ? extends String> entry : m.entrySet()) {
-                // EntryStub stub = new EntryStub(entry.getKey(),
-                // entry.getValue());
-                // put(stub.getKey(), stub);
-            }
-        }
-
-    }
 
     static class EntryStub extends
             AbstractCacheEntry.UnsynchronizedCacheEntry<Integer, String> {

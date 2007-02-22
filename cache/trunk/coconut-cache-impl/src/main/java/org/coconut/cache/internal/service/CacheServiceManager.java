@@ -23,41 +23,58 @@ public class CacheServiceManager<K, V> {
 
     private final CacheConfiguration<K, V> conf;
 
-    private final Map<Class<? extends CacheService>, Class<? extends CacheService>> m = new HashMap<Class<? extends CacheService>, Class<? extends CacheService>>();
+    private final Map<Class, CacheService> instanciated = new HashMap<Class, CacheService>();
 
-    private List<CacheService> instantiatedServices = new ArrayList<CacheService>();
+    private List<Class<? extends CacheService>> types = new ArrayList<Class<? extends CacheService>>();
 
     public CacheServiceManager(CacheConfiguration<K, V> conf) {
         this.conf = conf;
     }
 
-    public void setService(Class<? extends CacheService> impl) {
-        m.put(impl, impl);
+    public void addService(Class<? extends CacheService> impl) {
+        types.add(impl);
     }
 
-    public void setService(Class<? extends CacheService> type,
-            Class<? extends CacheService> impl) {
-        m.put(type, impl);
-    }
-
-    private <T extends CacheService> Class<T> getService(
-            Class<? extends CacheService> type) {
-
-        Class<? extends CacheService> c = m.get(type);
-        if (c == null) {
-            throw new IllegalArgumentException("No such service registered for type = "
-                    + type);
+    public <T> T getService(Class<T> type) {
+        CacheService cs = instanciated.get(type);
+        if (cs != null) {
+            return (T) cs;
         }
-        return (Class) c;
+        for (CacheService c : instanciated.values()) {
+            if (type.isAssignableFrom(c.getClass())) {
+                instanciated.put(type, c);
+            }
+        }
+        // for (CacheService<K, V> cs : instantiatedServices) {
+        // System.out.println(type.getSimpleName() + " " +
+        // cs.getClass().getSimpleName()
+        // + " " + type.isAssignableFrom(cs.getClass()));
+        // if (type.isAssignableFrom(cs.getClass())) {
+        // return (T) cs;
+        // }
+        // }
+        return null;
     }
 
-    public <T extends CacheService<K, V>> T create(Class<? extends CacheService> type) {
+    public <T> T initialize(Class<T> type) {
         if (type == null) {
             throw new NullPointerException("clazz is null");
         }
-        Class<T> clazz = getService(type);
+        T service = (T) getService(type);
+        if (service != null) {
+            return service;
+        }
+        Class<T> clazz = null;
+        for (Class c : types) {
+            if (type.isAssignableFrom(c)) {
+                clazz = c;
+            }
+        }
+        if (clazz == null) {
+            throw new IllegalStateException("No defined service " + type + " " + types.toString());
+        }
         Constructor<T> c = null;
-        T service = null;
+        // T service = null;
         try {
             c = (Constructor<T>) clazz.getDeclaredConstructor(CacheConfiguration.class);
         } catch (NoSuchMethodException e) {
@@ -67,7 +84,7 @@ public class CacheServiceManager<K, V> {
         }
         try {
             service = c.newInstance(conf);
-            instantiatedServices.add(service);
+            instanciated.put(clazz, (CacheService) service);
         } catch (InstantiationException e) {
             throw new IllegalArgumentException(
                     "Could not create cache instance, specified clazz " + clazz
@@ -81,13 +98,13 @@ public class CacheServiceManager<K, V> {
     }
 
     public void initializeAll(AbstractCache<K, V> c) {
-        for (CacheService<K, V> cs : instantiatedServices) {
+        for (CacheService<K, V> cs : instanciated.values()) {
             cs.start(c, (Map) Collections.EMPTY_MAP);
         }
     }
 
     public void initializeApm(ManagedGroup root) {
-        for (CacheService<K, V> cs : instantiatedServices) {
+        for (CacheService<K, V> cs : instanciated.values()) {
             if (cs instanceof AbstractCacheService) {
                 ((AbstractCacheService<K, V>) cs).addTo(root);
             }

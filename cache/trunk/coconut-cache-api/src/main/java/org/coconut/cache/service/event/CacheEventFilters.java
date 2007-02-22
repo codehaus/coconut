@@ -5,11 +5,19 @@
 package org.coconut.cache.service.event;
 
 import org.coconut.cache.Cache;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemAccessed;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemAdded;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated;
+import org.coconut.cache.service.event.CacheEvent.CacheCleared;
+import org.coconut.cache.service.event.CacheEvent.CacheEvicted;
+import org.coconut.cache.service.event.CacheEvent.CacheStatisticsReset;
 import org.coconut.core.Transformer;
 import org.coconut.core.util.Transformers;
 import org.coconut.filter.CollectionFilters;
 import org.coconut.filter.Filter;
 import org.coconut.filter.Filters;
+import org.coconut.filter.CollectionFilters.IsTypeFilter;
 
 /**
  * Factory and utility methods for for creating different types of filters for
@@ -20,8 +28,61 @@ import org.coconut.filter.Filters;
  */
 public class CacheEventFilters {
 
-    //TODO Think we should move these to the CollectionFilters
-    //and add a isType(Map.Entry) to each of them 
+    /** A filter that only accepts instances of CacheEvent events. */
+
+    public static final Filter<?> CACHEEVENT_FILTER = new IsTypeFilter(CacheEvent.class);
+
+    /**
+     * A filter that only accepts all instance events (events that are not
+     * instances of {@link CacheItemEvent}).
+     */
+    @SuppressWarnings("unchecked")
+    public static final Filter<?> CACHE_INSTANCE_FILTER = Filters.not(Filters
+            .isType(CacheEntryEvent.class));
+
+    /** A filter that only accepts instances of CacheCleared events. */
+    public static final IsTypeFilter CACHE_CLEARED_FILTER = new IsTypeFilter(
+            CacheCleared.class);
+
+    /** A filter that only accepts instances of CacheStatisticsReset events. */
+    public static final IsTypeFilter CACHE_RESET_STATISTICS_FILTER = new IsTypeFilter(
+            CacheStatisticsReset.class);
+
+    /** A filter that only accepts instances of CacheEvicted events. */
+    public static final IsTypeFilter CACHE_EVICTED_FILTER = new IsTypeFilter(
+            CacheEvicted.class);
+
+    /**
+     * A {@link org.coconut.filter.Filter} that will accept all instances of
+     * CacheItemEvent.
+     */
+    public final static Filter CACHEENTRYEVENT_FILTER = Filters
+            .isType(CacheEntryEvent.class);
+
+    /** A filter that only accepts instances of ItemAccessed events. */
+    public final static IsTypeFilter CACHEENTRY_ACCESSED_FILTER = Filters
+            .isType(ItemAccessed.class);
+
+    /**
+     * A {@link org.coconut.filter.Filter} that only accepts instances of
+     * ItemUpdated events.
+     */
+    public final static IsTypeFilter CACHEENTRY_REMOVED_FILTER = Filters
+            .isType(ItemRemoved.class);
+
+    /**
+     * A {@link org.coconut.filter.Filter} that only accepts instances of
+     * ItemUpdated events.
+     */
+    public final static IsTypeFilter CACHEENTRY_UPDATED_FILTER = Filters
+            .isType(ItemUpdated.class);
+
+    /**
+     * A {@link org.coconut.filter.Filter} that only accepts instances of
+     * ItemUpdated events.
+     */
+    public final static IsTypeFilter CACHEENTRY_ADDED_FILTER = Filters
+            .isType(ItemAdded.class);
 
     private final static Transformer<CacheEvent, Cache> EVENT_TO_CACHE_TRANSFORMER = Transformers
             .transform(CacheEvent.class, "getCache");

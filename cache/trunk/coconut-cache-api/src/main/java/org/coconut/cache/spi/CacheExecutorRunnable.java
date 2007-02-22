@@ -15,24 +15,11 @@ import org.coconut.cache.Cache;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public interface CacheExecutorRunnable extends Runnable {
-
-    interface LoadKey<K> extends CacheExecutorRunnable {
-        K getKey();
-    }
-
-    interface LoadKeys<K> extends CacheExecutorRunnable {
-        Collection<? extends K> getKeys();
-    }
-
     interface CacheClear extends CacheExecutorRunnable {
         Cache getCache();
     }
 
     interface CacheEvict extends CacheExecutorRunnable {
         Cache getCache();
-    }
-
-    interface StatisticsGathering extends CacheExecutorRunnable {
-
     }
 }

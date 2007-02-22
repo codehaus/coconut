@@ -15,6 +15,7 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.logging.LogManager;
 
+import org.coconut.cache.CacheErrorHandler;
 import org.coconut.cache.CacheException;
 import org.coconut.cache.CacheLoader;
 import org.coconut.core.Log;

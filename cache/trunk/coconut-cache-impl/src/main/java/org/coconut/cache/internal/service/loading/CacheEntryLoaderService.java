@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.cache.internal.services.loading;
+package org.coconut.cache.internal.service.loading;
 
 import java.util.Collection;
 import java.util.Map;
@@ -12,12 +12,12 @@ import net.jcip.annotations.NotThreadSafe;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.CacheErrorHandler;
 import org.coconut.cache.CacheLoader;
 import org.coconut.cache.Caches;
 import org.coconut.cache.internal.service.AbstractCacheService;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.AsyncCacheLoader;
-import org.coconut.cache.spi.CacheErrorHandler;
 import org.coconut.cache.spi.XmlConfigurator;
 import org.coconut.core.Callback;
 import org.coconut.core.EventProcessor;

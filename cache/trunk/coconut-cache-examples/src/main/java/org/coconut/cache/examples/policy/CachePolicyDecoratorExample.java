@@ -17,8 +17,7 @@ import org.coconut.filter.StringFilters;
 public class CachePolicyDecoratorExample {
     public static void main(String[] args) {
         CacheConfiguration conf = CacheConfiguration.create();
-        Filter<String> f = Filters.not(StringFilters.stringStartsWith("https"));
-        conf.eviction().setPolicy(
-                Caches.entryKeyAcceptor(Policies.newLRU(), f));
+        Filter<String> f = Filters.not(StringFilters.startsWith("https"));
+        conf.eviction().setPolicy(Policies.filteredMapKeyPolicy(Policies.newLRU(), f));
     }
 }

@@ -15,7 +15,7 @@ import org.w3c.dom.Element;
 
 /**
  * This class is used to configure how the cache can be remotely monitored and
- * controlled (via JMX). 
+ * controlled (via JMX).
  * <p>
  * If for some reason the cache fails to properly register with the MBeanServer
  * at construction time a {@link CacheException} is thrown.
@@ -36,7 +36,7 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
     private MBeanServer mBeanServer;
 
     public CacheManagementConfiguration() {
-        super(MANAGEMENT_TAG);
+        super(MANAGEMENT_TAG, CacheManagementService.class);
     }
 
     public String getDomain() {
@@ -120,11 +120,5 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
         }
     }
 
-    /**
-     * @see org.coconut.cache.spi.AbstractCacheServiceConfiguration#getServiceInterface()
-     */
-    @Override
-    public Class getServiceInterface() {
-        return CacheManagementService.class;
-    }
+    //Register event notification
 }

@@ -4,12 +4,8 @@
 
 package org.coconut.cache.service.event;
 
-import java.util.Map;
-
 import org.coconut.cache.Cache;
-import org.coconut.filter.Filter;
-import org.coconut.filter.Filters;
-import org.coconut.filter.CollectionFilters.IsTypeFilter;
+import org.coconut.event.AttributedEvent;
 
 /**
  * This interface defines the top level type for events published by a {@link
@@ -30,18 +26,7 @@ import org.coconut.filter.CollectionFilters.IsTypeFilter;
  * @version $Id$
  */
 @SuppressWarnings("hiding")
-public interface CacheEvent<K, V> {
-
-    /** A filter that only accepts instances of CacheEvent events. */
-    IsTypeFilter FILTER = new IsTypeFilter(CacheEvent.class);
-
-    /**
-     * A filter that only accepts all instance events (events that are not
-     * instances of {@link CacheItemEvent}).
-     */
-    @SuppressWarnings("unchecked")
-    Filter CACHE_INSTANCE_FILTER = Filters
-            .not(Filters.isType(CacheEntryEvent.class));
+public interface CacheEvent<K, V> extends AttributedEvent{
 
     /**
      * Returns the cache from where this event originated.
@@ -53,17 +38,6 @@ public interface CacheEvent<K, V> {
     Cache<K, V> getCache();
 
     /**
-     * Returns the sequence id of the object. Usually used for maintaining a
-     * ordered collection of events.
-     * <p>
-     * As a general rule a sequence id is a positiv number.
-     * <p>
-     * If for some reason it is impossible to generate a sequence id or if it is
-     * not needed, {@link LONG.MIN_VALUE} should be returned.
-     */
-    long getSequenceID();
-    
-    /**
      * Returns a unique name that can be used to identify the
      * <tt>type<tt> of the event. This is usual a display friendly name.
      * 
@@ -71,8 +45,26 @@ public interface CacheEvent<K, V> {
      */
     String getName();
 
-    Map<String, Object> getAttributes();
+    interface CacheLifecycleChange<K, V> extends CacheEvent<K, V> {
 
+        /** The unique name of the event. */
+        String NAME = "cache.lifecyclechange";
+
+        //String STARTED="Started"
+        //hmm common states for threaded containers
+        
+        /**
+         * Returns the number of elements that was in the cache before it was
+         * cleared.
+         * 
+         * @return the number of elements that was in the cache before it was
+         *         cleared
+         */
+        //STARTED, SHUTDOWN, TERMINATED, OTHERS?
+        String getPreviousState();
+        String getNewState();
+    }
+    
     /**
      * An event indicating that a particular {@link Cache} was cleared.
      */
@@ -80,9 +72,6 @@ public interface CacheEvent<K, V> {
 
         /** The unique name of the event. */
         String NAME = "cache.cleared";
-
-        /** A filter that only accepts instances of CacheCleared events. */
-        IsTypeFilter FILTER = new IsTypeFilter(CacheCleared.class);
 
         /**
          * Returns the number of elements that was in the cache before it was
@@ -102,9 +91,6 @@ public interface CacheEvent<K, V> {
         /** The unique name of the event. */
         String NAME = "cache.statisticsReset";
 
-        /** A filter that only accepts instances of CacheStatisticsReset events. */
-        IsTypeFilter FILTER = new IsTypeFilter(CacheStatisticsReset.class);
-
         /**
          * Return the hit statistics of the cache before the statistics was
          * reset.
@@ -122,9 +108,6 @@ public interface CacheEvent<K, V> {
         /** The unique name of the event. */
         String NAME = "cache.evicted";
 
-        /** A filter that only accepts instances of CacheEvicted events. */
-        IsTypeFilter FILTER = new IsTypeFilter(CacheEvicted.class);
-
         /**
          * Returns the current number of elements contained in the cache after
          * evict has been called.
@@ -136,6 +119,5 @@ public interface CacheEvent<K, V> {
          * the call to evict.
          */
         int getPreviousSize();
-        // Duration?
     }
 }

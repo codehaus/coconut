@@ -5,6 +5,9 @@
 package org.coconut.cache.policy;
 
 import static org.junit.Assert.assertTrue;
+
+import java.util.HashMap;
+
 import junit.framework.JUnit4TestAdapter;
 
 import org.coconut.cache.policy.paging.ClockPolicy;
@@ -14,6 +17,7 @@ import org.coconut.cache.policy.paging.LIFOPolicy;
 import org.coconut.cache.policy.paging.LRUPolicy;
 import org.coconut.cache.policy.paging.MRUPolicy;
 import org.coconut.cache.policy.paging.RandomPolicy;
+import org.coconut.filter.Filters;
 import org.junit.Test;
 
 /**
@@ -35,5 +39,22 @@ public class PoliciesTest {
         assertTrue(Policies.newLRU() instanceof LRUPolicy);
         assertTrue(Policies.newMRU() instanceof MRUPolicy);
         assertTrue(Policies.newRandom() instanceof RandomPolicy);
+    }
+    
+
+    public void testAcceptors() {
+        HashMap hm = new HashMap();
+        hm.put(1, 2);
+        hm.put(3, 4);
+        ReplacementPolicy rp = Policies.filteredMapKeyPolicy(Policies.newClock(),
+                Filters.equal(1));
+        assertTrue(rp.add(hm.entrySet().toArray()[0]) > 0);
+        assertTrue(rp.add(hm.entrySet().toArray()[1]) < 0);
+        
+        ReplacementPolicy rp1 =Policies.filteredMapValuePolicy(Policies.newClock(),
+                Filters.equal(2));
+        assertTrue(rp1.add(hm.entrySet().toArray()[0]) > 0);
+        assertTrue(rp1.add(hm.entrySet().toArray()[1]) < 0);
+
     }
 }

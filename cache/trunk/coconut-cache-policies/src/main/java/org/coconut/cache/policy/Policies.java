@@ -4,6 +4,8 @@
 
 package org.coconut.cache.policy;
 
+import java.util.Map;
+
 import org.coconut.cache.policy.paging.ClockPolicy;
 import org.coconut.cache.policy.paging.FIFOPolicy;
 import org.coconut.cache.policy.paging.LFUPolicy;
@@ -11,6 +13,9 @@ import org.coconut.cache.policy.paging.LIFOPolicy;
 import org.coconut.cache.policy.paging.LRUPolicy;
 import org.coconut.cache.policy.paging.MRUPolicy;
 import org.coconut.cache.policy.paging.RandomPolicy;
+import org.coconut.cache.policy.util.FilteredPolicyDecorator;
+import org.coconut.filter.CollectionFilters;
+import org.coconut.filter.Filter;
 
 /**
  * Factory methods for different
@@ -92,6 +97,17 @@ public final class Policies {
      */
     public static <E> ReplacementPolicy<E> newRandom() {
         return new RandomPolicy<E>();
+    }
+
+
+    public static <K, V> ReplacementPolicy<? extends Map.Entry<K, V>> filteredMapKeyPolicy(
+            ReplacementPolicy policy, Filter<? extends K> filter) {
+        return new FilteredPolicyDecorator(policy, CollectionFilters.keyFilter(filter));
+    }
+
+    public static <K, V> ReplacementPolicy<? extends Map.Entry<K, V>> filteredMapValuePolicy(
+            ReplacementPolicy policy, Filter<? extends V> filter) {
+        return new FilteredPolicyDecorator(policy, CollectionFilters.valueFilter(filter));
     }
 
     ///CLOVER:OFF

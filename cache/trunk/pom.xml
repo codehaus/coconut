@@ -86,6 +86,7 @@
   <modules>
     <module>coconut-cache-api</module>
     <module>coconut-cache-impl</module>
+  <!--       <module>coconut-cache-examples</module>  -->
     <module>coconut-cache-policies</module>
     <module>coconut-cache-test</module>
   </modules>
