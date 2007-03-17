@@ -3,16 +3,19 @@
  */
 package org.coconut.cache.service.event;
 
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * All events are enabled pr default except AccessedEvent. While this might seem
- * inconsist. The main reason is that it is raised for every access, if running
- * in 99% read settings. In very few cases this information is usefull.
+ * All events are enabled as default except AccessedEvent. While this might seem
+ * inconsist. The main reason is that it is raised for every access to the and
+ * if the cache is running with a 99% read ratio. There is going to be a
+ * substantial overhead compared to how often this event is usefull.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -48,37 +51,68 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
     }
 
     public static void main(String[] args) {
-        CacheEventConfiguration cef = null;
-        // cef.includeAll(Arrays.asList(CacheEvent.CacheEvicted.class));
+        CacheEventConfiguration cef = new CacheEventConfiguration();
+        // Collection<Class<? extends CacheEvent>>
+        cef.exclude(CacheEvent.CacheCleared.class);
+        cef.exclude(CacheEntryEvent.class);
+        System.out.println(cef.isIncluded(CacheEntryEvent.ItemAccessed.class));
+        System.out.println(cef.isIncluded(CacheEntryEvent.ItemRemoved.class));
+        System.out.println(cef.isIncluded(CacheEvent.CacheCleared.class));
+        System.out.println(cef.isIncluded(CacheEvent.CacheEvicted.class));
+        cef.exclude(CacheEvent.CacheCleared.class, CacheEntryEvent.ItemAccessed.class);
     }
-
-    // Management, we can post some events
-    // on a notification fittelihut
-    // omvendt af regular cache events.
-    // alle er excluded some default
-
-    // Det skal kunne være muligt at definere et filter
-    // f.eks. 3 cache.gets > 1 second indenfor 10 seconder
-    // raise event....
-    // måske skal det snarere være en option hos
-    // Management configuration
 
     // statistics for event bus
     // provide own eventbus?
     // Er
-    public void exclude(Class<? extends CacheEvent> c) {
-
+    private final static Set<Class> defaultExcludes = new HashSet<Class>();
+    static {
+        defaultExcludes.add(CacheEntryEvent.ItemAccessed.class);
     }
 
-    public void excludeAll(Collection<Class<? extends CacheEvent>> c) {
+    private final Set<Class> includes = new HashSet<Class>();
 
+    private final Set<Class> excludes = new HashSet<Class>();
+
+    public void exclude(Class... classes) {
+        checkClasses(classes);
+        excludes.addAll(Arrays.asList(classes));
     }
 
-    public void include(Class<? extends CacheEvent> c) {
-
+    public void include(Class... classes) {
+        checkClasses(classes);
+        includes.addAll(Arrays.asList(classes));
     }
 
-    public void includeAll(Collection<Class<? extends CacheEvent>> c) {
-
+    public boolean isIncluded(Class<? extends CacheEvent> clazz) {
+        if (clazz == null) {
+            throw new NullPointerException("clazz is null");
+        }
+        boolean isIncluded = !isCovered(defaultExcludes, clazz);
+        isIncluded &= !isCovered(excludes, clazz);
+        isIncluded |= isCovered(includes, clazz);
+        return isIncluded;
     }
+
+    private boolean isCovered(Set<Class> set, Class type) {
+        for (Class c : set) {
+            if (type.equals(c) || c.isAssignableFrom(type)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void checkClasses(Class[] classes) {
+        if (classes == null) {
+            throw new NullPointerException("classes is null");
+        }
+        for (Class c : classes) {
+            if (!CacheEvent.class.isAssignableFrom(c)) {
+                throw new IllegalArgumentException("the specified class (" + c
+                        + ") does not inherit from " + CacheEvent.class);
+            }
+        }
+    }
+
 }

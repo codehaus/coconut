@@ -15,7 +15,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.Cache.HitStat;
+import org.coconut.cache.service.statistics.CacheHitStat;
 import org.coconut.event.EventBus;
 import org.coconut.filter.Filter;
 import org.coconut.test.MockTestCase;
@@ -33,7 +33,7 @@ public class CacheDecoratorTest extends MockTestCase {
 
     public void testDecorator() {
         EventBus eventBus = mockDummy(EventBus.class);
-        HitStat hitStat = mockDummy(HitStat.class);
+        CacheHitStat hitStat = mockDummy(CacheHitStat.class);
         Map map = new HashMap();
         Future future = mockDummy(Future.class);
         Collection<Integer> col = new LinkedList<Integer>();
@@ -54,28 +54,22 @@ public class CacheDecoratorTest extends MockTestCase {
         m.expects(once()).method("evict");
         m.expects(once()).method("get").with(eq(2)).will(returnValue("C"));
         m.expects(once()).method("getAll").with(same(col)).will(returnValue(map));
-        m.expects(once()).method("getHitStat").will(returnValue(hitStat));
 
         m.expects(once()).method("hashCode").will(returnValue(3));
         m.expects(once()).method("isEmpty").will(returnValue(true));
         m.expects(once()).method("entrySet").will(returnValue(set));
-        m.expects(once()).method("keySet").will(returnValue(set));
-        m.expects(once()).method("load").with(eq(4)).will(returnValue(future));
-        m.expects(once()).method("loadAll").with(same(col)).will(returnValue(future));
-        m.expects(once()).method("peek").with(eq(5)).will(returnValue("D"));
+        m.expects(once()).method("getService").with(eq(Integer.class)).will(returnValue(-1));
 
+        m.expects(once()).method("keySet").will(returnValue(set));
+        m.expects(once()).method("peek").with(eq(5)).will(returnValue("D"));
         m.expects(once()).method("put").with(eq(6), eq("E")).will(returnValue("F"));
-        m.expects(once()).method("put").with(eq(7), eq("G"), eq(8l), same(TimeUnit.MILLISECONDS))
-                .will(returnValue("H"));
 
         m.expects(once()).method("putAll").with(same(map));
-        m.expects(once()).method("putAll").with(same(map), eq(9l), same(TimeUnit.SECONDS));
         m.expects(once()).method("putIfAbsent").with(eq(8), eq("I")).will(returnValue("J"));
         m.expects(once()).method("remove").with(eq(9), eq("J")).will(returnValue(true));
         m.expects(once()).method("remove").with(eq(10)).will(returnValue(true));
         m.expects(once()).method("replace").with(eq(11), eq("K"), eq("L")).will(returnValue(true));
         m.expects(once()).method("replace").with(eq(12), eq("M")).will(returnValue("N"));
-        m.expects(once()).method("resetStatistics");
         m.expects(once()).method("size").will(returnValue(13));
         m.expects(once()).method("values").will(returnValue(col));
 //        m.expects(once()).method("getLock").with(eq(new Integer[] { 14, 15 })).will(
@@ -96,25 +90,20 @@ public class CacheDecoratorTest extends MockTestCase {
         c.evict();
         assertEquals("C", c.get(2));
         assertSame(map, c.getAll(col));
-        assertSame(hitStat, c.getHitStat());
 
         assertEquals(3, c.hashCode());
         assertTrue(c.isEmpty());
         assertSame(set, c.entrySet());
+        assertEquals(-1, c.getService(Integer.class).intValue());
         assertSame(set, c.keySet());
-        assertSame(future, c.load(4));
-        assertSame(future, c.loadAll(col));
         assertEquals("D", c.peek(5));
         assertEquals("F", c.put(6, "E"));
-        assertEquals("H", c.put(7, "G", 8, TimeUnit.MILLISECONDS));
         c.putAll(map);
-        c.putAll(map, 9, TimeUnit.SECONDS);
         assertEquals("J", c.putIfAbsent(8, "I"));
         assertEquals(true, c.remove(9, "J"));
         assertEquals(true, c.remove(10));
         assertEquals(true, c.replace(11, "K", "L"));
         assertEquals("N", c.replace(12, "M"));
-        c.resetStatistics();
         assertEquals(13, c.size());
         assertEquals(cols, c.values());
         //assertEquals(lock, c.getLock(14, 15));

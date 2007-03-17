@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.service.InternalCacheServiceManager;
 import org.coconut.filter.Filter;
 
 /**
@@ -22,14 +23,15 @@ public class FinalExpirationCacheService<K, V> extends ExpirationCacheService<K,
 
     private final Filter<CacheEntry<K, V>> refreshFilter;
 
-    public FinalExpirationCacheService(CacheConfiguration<K, V> conf) {
-        super(conf);
-        defaultExpirationTime = conf.expiration()
+    public FinalExpirationCacheService(InternalCacheServiceManager manager,
+            CacheConfiguration<K, V> conf) {
+        super(manager, conf);
+        defaultExpirationTime = conf.serviceExpiration()
                 .getDefaultTimeout(TimeUnit.MILLISECONDS);
-        refreshExpirationTime = conf.expiration().getRefreshInterval(
+        refreshExpirationTime = conf.serviceExpiration().getRefreshInterval(
                 TimeUnit.MILLISECONDS);
-        expireFilter = conf.expiration().getFilter();
-        refreshFilter = conf.expiration().getRefreshFilter();
+        expireFilter = conf.serviceExpiration().getFilter();
+        refreshFilter = conf.serviceExpiration().getRefreshFilter();
     }
 
     /**

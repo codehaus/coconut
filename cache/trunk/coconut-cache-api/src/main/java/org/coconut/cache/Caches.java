@@ -13,10 +13,7 @@ import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import net.jcip.annotations.ThreadSafe;
-
 import org.coconut.cache.spi.CacheExecutorRunnable;
-import org.coconut.cache.util.AbstractCacheLoader;
 import org.coconut.cache.util.CacheDecorator;
 
 /**
@@ -52,54 +49,6 @@ public final class Caches {
         return new ClearRunnable(cache);
     }
 
-    
-    /**
-     * This method converts the specified cache to a cache loader. Calls to
-     * {@link CacheLoader#load(Object)} will be converted to calls on
-     * {@link Cache#get(Object)}. Calls to
-     * {@link CacheLoader#loadAll(Collection)} will be converted to calls on
-     * {@link Cache#getAll(Collection)}
-     * 
-     * @param c
-     *            the cache to load entries from
-     * @return a cache loader that can load values from another cache
-     */
-    public static <K, V> CacheLoader<K, V> cacheAsCacheLoader(Cache<K, V> c) {
-        return new CacheAsCacheLoader<K, V>(c);
-    }
-
-    /**
-     * This class wraps a cache in such a way that it can be used as a cache
-     * loader for another cache.
-     * 
-     * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
-     * @version $Id$
-     */
-    static class CacheAsCacheLoader<K, V> implements CacheLoader<K, V>, Serializable {
-
-        /** serialVersionUID */
-        private static final long serialVersionUID = -1907266938637317312L;
-
-        /** The cache used as a cache loader. */
-        private final Cache<K, V> cache;
-
-        public CacheAsCacheLoader(Cache<K, V> cache) {
-            if (cache == null) {
-                throw new NullPointerException("cache is null");
-            }
-            this.cache = cache;
-        }
-
-        /** {@inheritDoc} */
-        public V load(K key) {
-            return cache.get(key);
-        }
-
-        /** {@inheritDoc} */
-        public Map<K, V> loadAll(Collection<? extends K> keys) {
-            return cache.getAll(keys);
-        }
-    }
 
     /**
      * Returns a Runnable that when executed will call the evict method on the
@@ -119,46 +68,6 @@ public final class Caches {
      */
     public static Runnable evictAsRunnable(Cache<?, ?> cache) {
         return new EvictRunnable(cache);
-    }
-
-
-    /**
-     * Returns a cache loader that returns <tt>null</tt> for any key. The
-     * loadAll() method will return a map with a mapping for each key to
-     * <tt>null</tt>.
-     * 
-     * @return a cache loader that returns <tt>null</tt> for any key.
-     */
-    public static <K, V> CacheLoader<K, V> nullLoader() {
-        return new NullLoader<K, V>();
-    }
-
-    /**
-     * Returns a synchronized (thread-safe) cache loader backed by the specified
-     * cache loader. In order to guarantee serial access, it is critical that
-     * <strong>all</strong> access to the backing cache loader is accomplished
-     * through the returned cache loader.
-     * <p>
-     * If the specified cache loader is an instance of an
-     * {@link org.coconut.cache.util.AbstractCacheLoader} the returned cache
-     * loader will also be an instance of an AbstractCacheLoader.
-     * <p>
-     * The returned cache loader will be serializable if the specified cache
-     * loader is serializable.
-     * 
-     * @param loader
-     *            the cache loader to be "wrapped" in a synchronized cache
-     *            loader.
-     * @return a synchronized cache loader using the specified cache loader.
-     */
-    public static <K, V> CacheLoader<K, V> synchronizedCacheLoader(
-            CacheLoader<K, V> loader) {
-        if (loader instanceof AbstractCacheLoader) {
-            //loader cannot be null
-            return new SynchronizedAbstractCacheLoader<K, V>(loader);
-        } else {
-            return new SynchronizedCacheLoader<K, V>(loader);
-        }
     }
 
     /**
@@ -253,65 +162,6 @@ public final class Caches {
         }
     }
 
-    final static class NullLoader<K, V> extends AbstractCacheLoader<K, V> implements
-            Serializable {
-
-        /** serialVersionUID */
-        private static final long serialVersionUID = -4411446068656772121L;
-
-        /** {@inheritDoc} */
-        public V load(K key) {
-            return null;
-        }
-    }
-    @ThreadSafe
-    final static class SynchronizedAbstractCacheLoader<K, V> extends
-            AbstractCacheLoader<K, V> implements CacheLoader<K, V>, Serializable {
-        /** serial version UID */
-        private static final long serialVersionUID = 8225025114128657456L;
-
-        /** the loader to delegate to */
-        private final CacheLoader<K, V> loader;
-
-        SynchronizedAbstractCacheLoader(CacheLoader<K, V> loader) {
-            this.loader = loader;
-        }
-
-        /** {@inheritDoc} */
-        public synchronized V load(K key) throws Exception {
-            return loader.load(key);
-        }
-    }
-
-    @ThreadSafe
-    final static class SynchronizedCacheLoader<K, V> implements CacheLoader<K, V>,
-            Serializable {
-
-        /** serial version UID */
-        private static final long serialVersionUID = -1525938064071224475L;
-
-        /** the loader to delegate to */
-        private final CacheLoader<K, V> loader;
-
-        SynchronizedCacheLoader(CacheLoader<K, V> loader) {
-            if (loader == null) {
-                throw new NullPointerException("loader is null");
-            }
-            this.loader = loader;
-
-        }
-
-        /** {@inheritDoc} */
-        public synchronized V load(K key) throws Exception {
-            return loader.load(key);
-        }
-
-        /** {@inheritDoc} */
-        public synchronized Map<K, V> loadAll(Collection<? extends K> keys)
-                throws Exception {
-            return loader.loadAll(keys);
-        }
-    }
 
     final static class UnmodifiableCache<K, V> extends CacheDecorator<K, V> implements
             Serializable {
@@ -373,19 +223,7 @@ public final class Caches {
             return Collections.unmodifiableSet(super.keySet());
         }
 
-        public Future<?> loadAll(Collection<? extends K> keys) {
-            throw new UnsupportedOperationException();
-        }
-
-        public Future<?> load(K key) {
-            throw new UnsupportedOperationException();
-        }
-
         public V put(K key, V value) {
-            throw new UnsupportedOperationException();
-        }
-
-        public V put(K key, V value, long timeout, TimeUnit unit) {
             throw new UnsupportedOperationException();
         }
 
@@ -393,9 +231,6 @@ public final class Caches {
             throw new UnsupportedOperationException();
         }
 
-        public void putAll(Map<? extends K, ? extends V> t, long timeout, TimeUnit unit) {
-            throw new UnsupportedOperationException();
-        }
 
         public V putIfAbsent(K key, V value) {
             throw new UnsupportedOperationException();
@@ -414,10 +249,6 @@ public final class Caches {
         }
 
         public boolean replace(K key, V oldValue, V newValue) {
-            throw new UnsupportedOperationException();
-        }
-
-        public void resetStatistics() {
             throw new UnsupportedOperationException();
         }
 

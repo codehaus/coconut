@@ -5,6 +5,7 @@ package org.coconut.cache.internal.service.event;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.AbstractCacheService;
+import org.coconut.cache.internal.service.InternalCacheServiceManager;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -12,7 +13,8 @@ import org.coconut.cache.internal.service.AbstractCacheService;
  */
 public class AbstractCacheEventService<K, V> extends AbstractCacheService<K, V> {
 
-    public AbstractCacheEventService(CacheConfiguration<K, V> conf) {
-        super(conf);
+    public AbstractCacheEventService(InternalCacheServiceManager manager,
+            CacheConfiguration<K, V> conf) {
+        super(manager, conf);
     }
 }

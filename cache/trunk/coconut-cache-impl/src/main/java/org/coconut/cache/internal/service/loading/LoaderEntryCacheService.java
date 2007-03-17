@@ -10,6 +10,7 @@ import java.util.concurrent.Future;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.AbstractCacheService;
+import org.coconut.cache.internal.service.InternalCacheServiceManager;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -19,12 +20,14 @@ public class LoaderEntryCacheService<K, V> extends AbstractCacheService<K, V> {
     /**
      * @param conf
      */
-    public LoaderEntryCacheService(CacheConfiguration<K, V> conf) {
-        super(conf);
+    public LoaderEntryCacheService(InternalCacheServiceManager manager,
+            CacheConfiguration<K, V> conf) {
+        super(manager, conf);
     }
 
     private final ConcurrentHashMap<K, Future<V>> loads = new ConcurrentHashMap<K, Future<V>>();
 
+    //cannot have cancelAll(false) followed by cancelAll(true)
     void cancelAll(boolean interrupt) {
         for (Iterator<Map.Entry<K, Future<V>>> iter = loads.entrySet().iterator(); iter
                 .hasNext();) {
@@ -33,4 +36,6 @@ public class LoaderEntryCacheService<K, V> extends AbstractCacheService<K, V> {
             iter.remove();
         }
     }
+    
+    //void load()
 }

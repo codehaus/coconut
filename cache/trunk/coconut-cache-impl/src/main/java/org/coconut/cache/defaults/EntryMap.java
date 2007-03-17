@@ -21,7 +21,7 @@ import org.coconut.cache.CacheEntry;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
+class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
 
     /* ---------------- Constants -------------- */
 
@@ -118,7 +118,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
      * Creates a new, empty map with a default initial capacity, and load
      * factor.
      */
-    public EntryMap(boolean isThreadSafe) {
+    EntryMap(boolean isThreadSafe) {
         this(isThreadSafe, DEFAULT_INITIAL_CAPACITY);
     }
 
@@ -132,7 +132,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
      * @throws IllegalArgumentException
      *             if the initial capacity of elements is negative.
      */
-    public EntryMap(boolean isThreadSafe, int initialCapacity) {
+    EntryMap(boolean isThreadSafe, int initialCapacity) {
         this(isThreadSafe, initialCapacity, DEFAULT_LOAD_FACTOR);
     }
 
@@ -151,7 +151,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
      *             if the initial capacity is negative or the load factor is
      *             nonpositive.
      */
-    public EntryMap(boolean isThreadSafe, int initialCapacity, float loadFactor) {
+    EntryMap(boolean isThreadSafe, int initialCapacity, float loadFactor) {
         if (initialCapacity < 0) {
             throw new IllegalArgumentException("initialCapacity must be >=0, was "
                     + initialCapacity);
@@ -214,7 +214,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
         if (value == null) {
             throw new NullPointerException("value is null");
         }
-        if (size != 0) { // read-volatile
+        if (size != 0) {
             AbstractCacheEntry<K, V>[] tab = table;
             int len = tab.length;
             for (int i = 0; i < len; i++) {
@@ -288,9 +288,6 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
     }
 
     AbstractCacheEntry<K, V> put(AbstractCacheEntry<K, V> entry) {
-//        if (entry.getPolicyIndex()<0) {
-//            throw new IllegalArgumentException("cannot add entry");
-//        }
         if (size + 1 > threshold) {
             // ensure capacity
             rehash();

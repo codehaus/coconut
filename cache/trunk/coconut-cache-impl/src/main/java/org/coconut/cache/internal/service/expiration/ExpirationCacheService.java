@@ -3,12 +3,17 @@
  */
 package org.coconut.cache.internal.service.expiration;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.AbstractCacheService;
+import org.coconut.cache.internal.service.InternalCacheServiceManager;
+import org.coconut.cache.service.expiration.CacheExpirationService;
+import org.coconut.cache.service.loading.CacheLoadingService;
+import org.coconut.cache.spi.AbstractCache;
 import org.coconut.core.Clock;
 import org.coconut.filter.Filter;
 import org.coconut.internal.util.tabular.TabularFormatter;
@@ -19,11 +24,47 @@ import org.coconut.management.annotation.ManagedAttribute;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public abstract class ExpirationCacheService<K, V> extends AbstractCacheService<K, V> {
+public abstract class ExpirationCacheService<K, V> extends AbstractCacheService<K, V>
+        implements CacheExpirationService<K, V> {
+    /**
+     * @see org.coconut.cache.service.expiration.CacheExpirationService#expire(org.coconut.cache.CacheEntry)
+     */
+    public boolean expire(CacheEntry<?, ?> entry) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    /**
+     * @see org.coconut.cache.service.expiration.CacheExpirationService#expireKey(java.lang.Object)
+     */
+    public boolean expireKey(Object key) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    /**
+     * @see org.coconut.cache.service.expiration.CacheExpirationService#put(java.lang.Object,
+     *      java.lang.Object, long, java.util.concurrent.TimeUnit)
+     */
+    public V put(K key, V value, long timeout, TimeUnit unit) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * @see org.coconut.cache.service.expiration.CacheExpirationService#putAll(java.util.Map,
+     *      long, java.util.concurrent.TimeUnit)
+     */
+    public void putAll(Map<? extends K, ? extends V> t, long timeout, TimeUnit unit) {
+        // TODO Auto-generated method stub
+
+    }
+
     private final Clock clock;
 
-    public ExpirationCacheService(CacheConfiguration<K, V> conf) {
-        super(conf);
+    public ExpirationCacheService(InternalCacheServiceManager manager,
+            CacheConfiguration<K, V> conf) {
+        super(manager, conf);
         clock = conf.getClock();
     }
 
@@ -31,7 +72,7 @@ public abstract class ExpirationCacheService<K, V> extends AbstractCacheService<
      * @see org.coconut.apm.Apm#configureJMX(org.coconut.apm.spi.JMXConfigurator)
      */
     public void addTo(ManagedGroup dg) {
-        ManagedGroup m = dg.addGroup("Expiration",
+        ManagedGroup m = dg.addNewGroup("Expiration",
                 "Management of Expiration settings for the cache");
         m.add(this);
         Filter f = getExpirationFilter();
@@ -47,38 +88,39 @@ public abstract class ExpirationCacheService<K, V> extends AbstractCacheService<
     public boolean evictRemove(Cache<K, V> cache, CacheEntry<K, V> entry) {
         if (isExpired(entry)) {
             if (getDefaultRefreshTime() >= 0) {
-                //TODO What if cache doesn't support async load
-                cache.load(entry.getKey());
+                // TODO What if cache doesn't support async load
+                if (loadingService != null) {
+                    loadingService.load(entry.getKey());
+                }
                 return true;
             } else {
                 return true;
             }
-        } else if (needsRefresh(entry)) {
-            cache.load(entry.getKey());
+        } else if (needsRefresh(entry) && loadingService != null) {
+            loadingService.load(entry.getKey());
         }
         return false;
     }
 
-
-//    public long getDeadline(long timeout, TimeUnit unit) {
-//        if (timeout == Cache.NEVER_EXPIRE) {
-//            return Long.MAX_VALUE;
-//        } else if (timeout == Cache.DEFAULT_EXPIRATION) {
-//            long d = getDefaultExpirationTime();
-//            if (d == Cache.NEVER_EXPIRE) {
-//                return Cache.NEVER_EXPIRE;
-//            } else {
-//                return clock.getDeadlineFromNow(d, TimeUnit.MILLISECONDS);
-//            }
-//        } else {
-//            return clock.getDeadlineFromNow(timeout, unit);
-//        }
-//    }
+    // public long getDeadline(long timeout, TimeUnit unit) {
+    // if (timeout == Cache.NEVER_EXPIRE) {
+    // return Long.MAX_VALUE;
+    // } else if (timeout == Cache.DEFAULT_EXPIRATION) {
+    // long d = getDefaultExpirationTime();
+    // if (d == Cache.NEVER_EXPIRE) {
+    // return Cache.NEVER_EXPIRE;
+    // } else {
+    // return clock.getDeadlineFromNow(d, TimeUnit.MILLISECONDS);
+    // }
+    // } else {
+    // return clock.getDeadlineFromNow(timeout, unit);
+    // }
+    // }
 
     @ManagedAttribute(defaultValue = "Default Expiration Description", description = "The default expiration time of the cache")
     public String getDefaultExpirationDescription() {
         long d = getDefaultExpirationTime();
-        if (d == Cache.NEVER_EXPIRE) {
+        if (d == CacheExpirationService.NEVER_EXPIRE) {
             return "Never expire";
         }
         return TabularFormatter.formatTime2(d, TimeUnit.MILLISECONDS);
@@ -121,13 +163,15 @@ public abstract class ExpirationCacheService<K, V> extends AbstractCacheService<
             return true;
         }
         long expTime = entry.getExpirationTime();
-        return expTime == Cache.NEVER_EXPIRE ? false : clock.isPassed(expTime);
+        return expTime == CacheExpirationService.NEVER_EXPIRE ? false : clock
+                .isPassed(expTime);
     }
 
     public boolean needsRefresh(CacheEntry<K, V> entry) {
         // create test for never expire
         long refreshAheadTime = getDefaultRefreshTime();
-        if (refreshAheadTime < 0 || entry.getExpirationTime() == Cache.NEVER_EXPIRE) {
+        if (refreshAheadTime < 0
+                || entry.getExpirationTime() == CacheExpirationService.NEVER_EXPIRE) {
             return false;
         }
         Filter<CacheEntry<K, V>> filter = getRefreshFilter();
@@ -141,5 +185,18 @@ public abstract class ExpirationCacheService<K, V> extends AbstractCacheService<
     protected abstract long innerGetDefaultExpirationMsTime();
 
     protected abstract long innerGetDefaultRefreshMsTime();
+
+    private volatile CacheLoadingService<K, V> loadingService;
+
+    /**
+     * @see org.coconut.cache.internal.service.AbstractCacheService#doStart(org.coconut.cache.spi.AbstractCache,
+     *      java.util.Map)
+     */
+    @Override
+    protected void doStart(AbstractCache<K, V> cache, Map<String, Object> properties)
+            throws Exception {
+        loadingService = cache.getService(CacheLoadingService.class);
+        super.doStart(cache, properties);
+    }
 
 }

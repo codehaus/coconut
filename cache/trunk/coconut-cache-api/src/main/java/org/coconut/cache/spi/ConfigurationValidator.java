@@ -8,7 +8,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import net.jcip.annotations.NotThreadSafe;
 import net.jcip.annotations.ThreadSafe;
 
 import org.coconut.cache.Cache;
@@ -32,7 +31,7 @@ public class ConfigurationValidator {
         // preferable capacity>maxCapacity?
         // preferable size>maxSize?
         // no policy defined->cache is free to select a policy
-        Executor e = conf.threading().getExecutor();
+        Executor e = conf.serviceThreading().getExecutor();
 //        if (type.isAnnotationPresent(NotThreadSafe.class)) {
 //            throw new IllegalCacheConfigurationException(
 //                    "Cannot specify an executor, since this cache is not threadsafe");
@@ -41,7 +40,7 @@ public class ConfigurationValidator {
         boolean isScheduled = e instanceof ScheduledExecutorService;
 
         if (!isScheduled
-                && conf.threading().getScheduledEvictionAtFixedRate(TimeUnit.NANOSECONDS) > 0) {
+                && conf.serviceThreading().getScheduledEvictionAtFixedRate(TimeUnit.NANOSECONDS) > 0) {
             if (e == null) {
                 throw new IllegalCacheConfigurationException(
                         "Cannot schedule evictions, when no executor has been set");
@@ -52,7 +51,7 @@ public class ConfigurationValidator {
             }
         }
         boolean isExecutorService = e instanceof ExecutorService;
-        if (!isExecutorService && conf.threading().getShutdownExecutorService()) {
+        if (!isExecutorService && conf.serviceThreading().getShutdownExecutorService()) {
             throw new IllegalCacheConfigurationException(
                     "Can only shutdown executors of type java.util.concurrent.ExecutorService, the type of the executor was, "
                             + e.getClass().getCanonicalName());
@@ -74,4 +73,9 @@ public class ConfigurationValidator {
         }
         return false;
     }
+    
+    public static void initializeConfiguration(AbstractCacheServiceConfiguration c, CacheConfiguration conf) {
+        c.setConfiguration(conf);
+    }
+
 }

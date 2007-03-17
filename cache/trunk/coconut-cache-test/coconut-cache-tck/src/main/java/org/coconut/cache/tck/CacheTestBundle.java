@@ -13,6 +13,7 @@ import junit.framework.Assert;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.service.statistics.CacheHitStat;
 import org.coconut.cache.tck.util.IntegerToStringLoader;
 import org.coconut.core.Clock.DeterministicClock;
 import org.coconut.test.CollectionUtils;
@@ -28,11 +29,7 @@ public abstract class CacheTestBundle extends Assert {
 
     protected DeterministicClock clock;
 
-    public static final IntegerToStringLoader DEFAULT_LOADER = new IntegerToStringLoader();
-
     protected Cache<Integer, String> c;
-
-    protected Cache<Integer, String> loadableEmptyCache;
 
     protected Cache<Integer, String> c0;
 
@@ -58,9 +55,6 @@ public abstract class CacheTestBundle extends Assert {
         c4 = newCache(4);
         c5 = newCache(5);
         c6 = newCache(6);
-        CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
-        loadableEmptyCache = newCache(cc.backend()
-                .setBackend(new IntegerToStringLoader()).c());
     }
 
     final Cache<Integer, String> newCache(int entries) {
@@ -74,8 +68,8 @@ public abstract class CacheTestBundle extends Assert {
         return CacheConfiguration.create();
     }
 
-    protected Cache<Integer, String> newCache(CacheConfiguration<Integer, String> conf) {
-        return conf.newInstance(TCKRunner.tt);
+    protected Cache<Integer, String> newCache(CacheConfiguration<?, ?> conf) {
+        return (Cache) conf.newInstance(TCKRunner.tt);
     }
 
     public static Map<Integer, String> createMap(int entries) {
@@ -104,14 +98,6 @@ public abstract class CacheTestBundle extends Assert {
 
     protected String put(Map.Entry<Integer, String> e) {
         return c.put(e.getKey(), e.getValue());
-    }
-
-    protected String put(Map.Entry<Integer, String> e, long timeout, TimeUnit unit) {
-        return c.put(e.getKey(), e.getValue(), timeout, unit);
-    }
-
-    protected String put(Map.Entry<Integer, String> e, long timeout) {
-        return c.put(e.getKey(), e.getValue(), timeout, TimeUnit.MILLISECONDS);
     }
 
     protected void evict() {
@@ -223,15 +209,6 @@ public abstract class CacheTestBundle extends Assert {
 //        return CacheFilters.queryByKey(c, filter);
 //    }
 
-    protected void putAll(long timeout, TimeUnit unit,
-            Map.Entry<Integer, String>... entries) {
-        c.putAll(CollectionUtils.asMap(entries), timeout, unit);
-    }
-
-    protected void putAll(long timeout, Map.Entry<Integer, String>... entries) {
-        putAll(timeout, TimeUnit.NANOSECONDS, entries);
-    }
-
     protected void incTime() {
         clock.incrementTimestamp(1);
     }
@@ -253,7 +230,7 @@ public abstract class CacheTestBundle extends Assert {
      *            the HitStat to compare against
      */
     protected static void assertHitstat(float ratio, long hits, long misses,
-            Cache.HitStat hitstat) {
+            CacheHitStat hitstat) {
         Assert.assertEquals(ratio, hitstat.getHitRatio(), 0.0001);
         Assert.assertEquals(hits, hitstat.getNumberOfHits());
         Assert.assertEquals(misses, hitstat.getNumberOfMisses());

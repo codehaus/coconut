@@ -17,7 +17,6 @@ import org.coconut.core.util.Transformers;
 import org.coconut.filter.CollectionFilters;
 import org.coconut.filter.Filter;
 import org.coconut.filter.Filters;
-import org.coconut.filter.CollectionFilters.IsTypeFilter;
 
 /**
  * Factory and utility methods for for creating different types of filters for
@@ -30,7 +29,7 @@ public class CacheEventFilters {
 
     /** A filter that only accepts instances of CacheEvent events. */
 
-    public static final Filter<?> CACHEEVENT_FILTER = new IsTypeFilter(CacheEvent.class);
+    public static final Filter<?> CACHEEVENT_FILTER = Filters.isType(CacheEvent.class);
 
     /**
      * A filter that only accepts all instance events (events that are not
@@ -41,16 +40,14 @@ public class CacheEventFilters {
             .isType(CacheEntryEvent.class));
 
     /** A filter that only accepts instances of CacheCleared events. */
-    public static final IsTypeFilter CACHE_CLEARED_FILTER = new IsTypeFilter(
-            CacheCleared.class);
+    public static final Filter CACHE_CLEARED_FILTER = Filters.isType(CacheCleared.class);
 
     /** A filter that only accepts instances of CacheStatisticsReset events. */
-    public static final IsTypeFilter CACHE_RESET_STATISTICS_FILTER = new IsTypeFilter(
-            CacheStatisticsReset.class);
+    public static final Filter CACHE_RESET_STATISTICS_FILTER = Filters
+            .isType(CacheStatisticsReset.class);
 
     /** A filter that only accepts instances of CacheEvicted events. */
-    public static final IsTypeFilter CACHE_EVICTED_FILTER = new IsTypeFilter(
-            CacheEvicted.class);
+    public static final Filter CACHE_EVICTED_FILTER = Filters.isType(CacheEvicted.class);
 
     /**
      * A {@link org.coconut.filter.Filter} that will accept all instances of
@@ -60,29 +57,28 @@ public class CacheEventFilters {
             .isType(CacheEntryEvent.class);
 
     /** A filter that only accepts instances of ItemAccessed events. */
-    public final static IsTypeFilter CACHEENTRY_ACCESSED_FILTER = Filters
+    public final static Filter CACHEENTRY_ACCESSED_FILTER = Filters
             .isType(ItemAccessed.class);
 
     /**
      * A {@link org.coconut.filter.Filter} that only accepts instances of
      * ItemUpdated events.
      */
-    public final static IsTypeFilter CACHEENTRY_REMOVED_FILTER = Filters
+    public final static Filter CACHEENTRY_REMOVED_FILTER = Filters
             .isType(ItemRemoved.class);
 
     /**
      * A {@link org.coconut.filter.Filter} that only accepts instances of
      * ItemUpdated events.
      */
-    public final static IsTypeFilter CACHEENTRY_UPDATED_FILTER = Filters
+    public final static Filter CACHEENTRY_UPDATED_FILTER = Filters
             .isType(ItemUpdated.class);
 
     /**
      * A {@link org.coconut.filter.Filter} that only accepts instances of
      * ItemUpdated events.
      */
-    public final static IsTypeFilter CACHEENTRY_ADDED_FILTER = Filters
-            .isType(ItemAdded.class);
+    public final static Filter CACHEENTRY_ADDED_FILTER = Filters.isType(ItemAdded.class);
 
     private final static Transformer<CacheEvent, Cache> EVENT_TO_CACHE_TRANSFORMER = Transformers
             .transform(CacheEvent.class, "getCache");
@@ -114,12 +110,14 @@ public class CacheEventFilters {
      */
     @SuppressWarnings("unchecked")
     public static <K, V> Filter<CacheEvent<K, V>> cacheFilter(Filter<Cache<K, V>> filter) {
-        return new CollectionFilters.TransformerFilter(EVENT_TO_CACHE_TRANSFORMER, filter);
+        return CollectionFilters.transformFilter(
+                (Transformer) EVENT_TO_CACHE_TRANSFORMER, filter);
     }
 
     @SuppressWarnings("unchecked")
     public static <K, V> Filter<CacheEvent<K, V>> cacheName(Filter<String> filter) {
-        return new CollectionFilters.TransformerFilter(EVENT_TO_NAME_TRANSFORMER, filter);
+        return CollectionFilters.transformFilter((Transformer) EVENT_TO_NAME_TRANSFORMER,
+                filter);
     }
 
 }

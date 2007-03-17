@@ -12,9 +12,12 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.AbstractCacheService;
+import org.coconut.cache.internal.service.InternalCacheServiceManager;
+import org.coconut.cache.internal.service.joinpoint.InternalCacheOperation;
 import org.coconut.cache.internal.util.Resources;
+import org.coconut.cache.service.statistics.CacheHitStat;
+import org.coconut.cache.service.statistics.Statistics;
 import org.coconut.cache.spi.AbstractCache;
-import org.coconut.cache.spi.CacheUtil;
 import org.coconut.core.Clock;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.annotation.ManagedAttribute;
@@ -33,7 +36,8 @@ import org.coconut.management.util.AtomicDouble;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheService<K, V> {
+public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheService<K, V>
+        implements InternalCacheOperation<K, V> {
 
     // number of loads, loaded elements, number of queries,
     // number of added, number of new elements
@@ -125,8 +129,9 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheServ
 
     private final LongSamplingCounter entryRemoveTime;
 
-    public DefaultCacheStatisticsService(CacheConfiguration<K, V> conf) {
-        super(conf);
+    public DefaultCacheStatisticsService(InternalCacheServiceManager manager,
+            CacheConfiguration<K, V> conf) {
+        super(manager, conf);
         Clock c = Clock.DEFAULT_CLOCK;
         // cache counters
 
@@ -189,29 +194,33 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheServ
         started = System.currentTimeMillis();
     }
 
-    public long cacheClearStart(Cache<K, V> cache) {
+    public long beforeCacheClear(Cache<K, V> cache) {
         return System.nanoTime();
     }
 
-    public long cacheClearStop(Cache<K, V> cache, long start, int size) {
+    public void afterCacheClear(Cache<K, V> cache, long start, int size, long capacity,
+            Collection<? extends CacheEntry<K, V>> removed) {
         long time = System.nanoTime() - start;
+        // TODO what about removed?
         cacheClearLast.run();
         cacheClearTime.report(time);
         cacheClearCount.incrementAndGet();
-        return time;
     }
 
-    
-    public long cacheEvictStart(Cache<K, V> cache) {
+    public long beforeCacheEvict(Cache<K, V> cache) {
         return System.nanoTime();
     }
 
-    public long cacheEvictStop(Cache<K, V> cache, long start, long evictCount) {
-        long time = System.nanoTime() - start;
+    public void afterCacheEvict(Cache<K, V> cache, long started, int size,
+            int previousSize, long capacity, long previousCapacity,
+            Collection<? extends CacheEntry<K, V>> evicted,
+            Collection<? extends CacheEntry<K, V>> expired) {
+        long time = System.nanoTime() - started;
         cacheEvictLast.run();
         cacheEvictTime.report(time);
         cacheEvictCount.incrementAndGet();
-        return time;
+        entryEvictedCount.addAndGet(evicted.size());
+        entryExpiredCount.addAndGet(expired.size());
     }
 
     public void cacheReset() {
@@ -241,72 +250,94 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheServ
         entryExpiredCount.addAndGet(count);
     }
 
-    public long entryGetStart(K key) {
+    public long beforeGet(Cache<K, V> cache, K key) {
         return System.nanoTime();
     }
 
-    public long entryGetStop(CacheEntry<K, V> entry, long start, boolean wasHit) {
-        long time = System.nanoTime() - start;
+    public void afterGet(Cache<K, V> cache, long started,
+            Collection<? extends CacheEntry<K, V>> evictedEntries, K key,
+            CacheEntry<K, V> prev, CacheEntry<K, V> newE, boolean isExpired) {
+        long time = System.nanoTime() - started;
 
         // keep statistics about null loads
 
         // we might also want to keep statistics about byte hit count..
         // and cost hit count...
         // total hit cost / total miss cost
+        boolean isHit = !isExpired && prev != null && newE == null;
 
-        if (wasHit) {
+        if (prev == null) {
+            if (newE == null) {
+
+            } else {
+
+            }
+        }
+        // TODO fix
+        if (isHit) {
             entryGetHitTime.report(time);
             entryGetHitCount.incrementAndGet();
-            double cost = entry.getCost();
+            double cost = prev.getCost();
             entryGetHitCostCount.addAndGet(cost);
-            long size = entry.getSize();
+            long size = prev.getSize();
             entryGetHitSizeCount.addAndGet(size);
         } else {
             entryGetMissTime.report(time);
             entryGetMissCount.incrementAndGet();
-            if (entry != null) {
-                double cost = entry.getCost();
-                entryGetMissCostCount.addAndGet(cost);
-                long size = entry.getSize();
-                entryGetMissSizeCount.addAndGet(size);
-            }
+            // if (entry != null) {
+            // double cost = entry.getCost();
+            // entryGetMissCostCount.addAndGet(cost);
+            // long size = entry.getSize();
+            // entryGetMissSizeCount.addAndGet(size);
+            // }
         }
-        return time;
     }
 
-    public long entryRemoveStart(Object key) {
+    public long beforeRemove(Cache<K, V> cache, Object key) {
         return System.nanoTime();
     }
 
-    public long entryRemoveStop(long start, CacheEntry<K,V> removed) {
+    public void afterRemove(Cache<K, V> cache, long start, CacheEntry<K, V> removed) {
         long time = System.nanoTime() - start;
         entryRemoveTime.report(time);
         entryRemoveCount.incrementAndGet();
-        return time;
     }
-    public long entryReplaceStart() {
-        return System.nanoTime();
-    }
-    public long entryReplaceStop(long start) {
-        long time = System.nanoTime() - start;
-        entryPutTime.report(time);
-        entryPutCount.incrementAndGet();
-        return time;
-    }
-    public long entryPutStart() {
+
+    public long beforeReplace(Cache<K, V> cache) {
         return System.nanoTime();
     }
 
-    public long entryPutAllStart() {
+    public void afterReplace(Cache<K, V> cache, long started,
+            Collection<? extends CacheEntry<K, V>> evicted, CacheEntry<K, V> oldEntry,
+            CacheEntry<K, V> newEntry) {
+        long time = System.nanoTime() - started;
+        entryPutTime.report(time);
+        entryPutCount.incrementAndGet();
+    }
+
+    public long beforePut(Cache<K, V> cache, CacheEntry<K, V> entry) {
         return System.nanoTime();
     }
-    public long entryPutAllStop(long start, int puts) {
+
+    public long beforePut(Cache<K, V> cache, Object key, Object value) {
+        return System.nanoTime();
+    }
+
+    public long beforePutAll(Cache<K, V> cache,
+            Collection<? extends CacheEntry<K, V>> entries) {
+        return System.nanoTime();
+    }
+
+    public long afterPutAll(Cache<K, V> cache, long start,
+            Collection<? extends CacheEntry<K, V>> entries,
+            Collection<? extends CacheEntry<K, V>> entries2,
+            Collection<? extends CacheEntry<K, V>> entries3) {
         long time = System.nanoTime() - start;
         entryPutTime.report(time);
-        entryPutCount.addAndGet(puts);
+        entryPutCount.addAndGet(entries.size());
         return time;
     }
-    
+
     public long entryPutStop(long start) {
         long time = System.nanoTime() - start;
         entryPutTime.report(time);
@@ -314,9 +345,9 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheServ
         return time;
     }
 
-    public Cache.HitStat getHitStat() {
-        return CacheUtil
-                .newImmutableHitStat(entryGetHitCount.get(), entryGetMissCount.get());
+    public CacheHitStat getHitStat() {
+        return Statistics.newImmutableHitStat(entryGetHitCount.get(), entryGetMissCount
+                .get());
     }
 
     public Collection<Object> getMetrics() {
@@ -348,38 +379,38 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheServ
      * @see org.coconut.apm.Apm#configureJMX(org.coconut.apm.spi.JMXConfigurator)
      */
     public void addTo(ManagedGroup dg) {
-        ManagedGroup m = dg.addGroup("Statistics", "", false);
+        ManagedGroup m = dg.addNewGroup("Statistics", "", false);
 
-        ManagedGroup general = m.addGroup("General", "");
+        ManagedGroup general = m.addNewGroup("General", "");
         general.add(cacheStatisticsResetCount);
         general.add(cacheStatisticsResetLast);
         general.add(entryExpiredCount);
 
-        ManagedGroup clear = m.addGroup("Clear", "");
+        ManagedGroup clear = m.addNewGroup("Clear", "");
         clear.add(cacheClearCount);
         clear.add(cacheClearLast);
         clear.add(cacheClearTime);
 
-        ManagedGroup eviction = m.addGroup("Eviction", "");
+        ManagedGroup eviction = m.addNewGroup("Eviction", "");
         eviction.add(cacheEvictCount);
         eviction.add(cacheEvictLast);
         eviction.add(cacheEvictTime);
         eviction.add(entryEvictedCount);
         eviction.add(entryEvictedTime);
 
-        ManagedGroup access = m
-                .addGroup("Access", "Statistics regarding access to the cache");
+        ManagedGroup access = m.addNewGroup("Access",
+                "Statistics regarding access to the cache");
         access.add(entryGetHitCount);
         access.add(entryGetMissCount);
         access.add(entryGetHitTime);
         access.add(entryGetMissTime);
         access.add(new CacheRatio());
 
-        ManagedGroup put = m.addGroup("Put", "");
+        ManagedGroup put = m.addNewGroup("Put", "");
         put.add(entryPutCount);
         put.add(entryPutTime);
 
-        ManagedGroup remove = m.addGroup("Remove", "");
+        ManagedGroup remove = m.addNewGroup("Remove", "");
         remove.add(entryRemoveCount);
         remove.add(entryRemoveTime);
     }
@@ -421,5 +452,74 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheServ
             }
             return hits / sum;
         }
+    }
+
+    /**
+     * @see org.coconut.cache.internal.service.joinpoint.InternalCacheJoinpoint#cacheClearNeedRemoved()
+     */
+    public boolean cacheClearNeedRemoved() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    /**
+     * @see org.coconut.cache.internal.service.joinpoint.AfterJoinPoint#afterPut(org.coconut.cache.Cache,
+     *      long, java.util.Collection, org.coconut.cache.CacheEntry,
+     *      org.coconut.cache.CacheEntry)
+     */
+    public void afterPut(Cache<K, V> cache, long started,
+            Collection<? extends CacheEntry<K, V>> evictedEntries,
+            CacheEntry<K, V> oldEntry, CacheEntry<K, V> newEntry) {
+        // TODO Auto-generated method stub
+
+    }
+
+    /**
+     * @see org.coconut.cache.internal.service.joinpoint.AfterJoinPoint#afterPutAll(org.coconut.cache.Cache,
+     *      long, java.util.Collection, java.util.Collection,
+     *      java.util.Collection)
+     */
+    public void afterPutAll(Cache<K, V> cache, long started,
+            Collection<? extends CacheEntry<K, V>> evictedEntries,
+            Collection<? extends CacheEntry<K, V>> prev,
+            Collection<? extends CacheEntry> added) {
+        // TODO Auto-generated method stub
+
+    }
+
+    /**
+     * @see org.coconut.cache.internal.service.joinpoint.AfterJoinPoint#afterTrimToSize(org.coconut.cache.Cache,
+     *      long, java.util.Collection)
+     */
+    public void afterTrimToSize(Cache<K, V> cache, long started,
+            Collection<? extends CacheEntry<K, V>> evictedEntries) {
+        // TODO Auto-generated method stub
+
+    }
+
+    /**
+     * @see org.coconut.cache.internal.service.joinpoint.BeforeJoinPoint#beforePutAll(org.coconut.cache.Cache,
+     *      java.util.Map)
+     */
+    public long beforePutAll(Cache<K, V> cache, Map<? extends K, ? extends V> map) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    /**
+     * @see org.coconut.cache.internal.service.joinpoint.BeforeJoinPoint#beforeReplace(org.coconut.cache.Cache,
+     *      java.lang.Object, java.lang.Object, java.lang.Object)
+     */
+    public long beforeReplace(Cache<K, V> cache, K key, V oldValue, V newValue) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    /**
+     * @see org.coconut.cache.internal.service.joinpoint.BeforeJoinPoint#beforeTrimToSize(org.coconut.cache.Cache)
+     */
+    public long beforeTrimToSize(Cache<K, V> cache) {
+        // TODO Auto-generated method stub
+        return 0;
     }
 }

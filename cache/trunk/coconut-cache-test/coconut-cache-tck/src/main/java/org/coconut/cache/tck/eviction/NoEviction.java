@@ -19,7 +19,7 @@ public class NoEviction extends CacheTestBundle {
     @Test
     public void testNoEvict() {
         for (int i = 0; i < 10; i++) {
-            c0.put(i, Integer.toString(i), 1, TimeUnit.NANOSECONDS);
+            c0.put(i, Integer.toString(i));
         }
         c0.evict();
         assertEquals(10, c0.size());

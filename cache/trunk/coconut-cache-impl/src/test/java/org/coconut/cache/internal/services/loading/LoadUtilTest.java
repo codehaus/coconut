@@ -12,9 +12,9 @@ import static org.coconut.test.CollectionUtils.asSet;
 import java.util.Map;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.CacheLoader;
 import org.coconut.cache.internal.service.loading.LoadUtil;
-import org.coconut.cache.util.AbstractCacheLoader;
+import org.coconut.cache.service.loading.AbstractCacheLoader;
+import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.test.MockTestCase;
 import org.jmock.Mock;
 

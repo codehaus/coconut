@@ -19,6 +19,6 @@ public interface CacheEventService<K, V> extends EventBus<CacheEvent<K, V>> {
     //how do we handle serial numbers?
     //Det er lige før vi bliver nødt til at fjerne den fra interfaces
     //og putte det på som en property..
-    void publishJMX(CacheEvent<?, ?> event);
+//    void publishJMX(CacheEvent<?, ?> event);
 
 }

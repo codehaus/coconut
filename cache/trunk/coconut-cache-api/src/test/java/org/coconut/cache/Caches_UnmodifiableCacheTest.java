@@ -36,34 +36,13 @@ public class Caches_UnmodifiableCacheTest extends MockTestCase {
             shouldThrow();
         } catch (UnsupportedOperationException e) { /* okay */
         }
-
-        try {
-            c.load("");
-            shouldThrow();
-        } catch (UnsupportedOperationException e) { /* okay */
-        }
-        try {
-            c.loadAll(new LinkedList());
-            shouldThrow();
-        } catch (UnsupportedOperationException e) { /* okay */
-        }
         try {
             c.put("", "");
             shouldThrow();
         } catch (UnsupportedOperationException e) { /* okay */
         }
         try {
-            c.put("", "", 1, TimeUnit.MICROSECONDS);
-            shouldThrow();
-        } catch (UnsupportedOperationException e) { /* okay */
-        }
-        try {
             c.putAll(new HashMap());
-            shouldThrow();
-        } catch (UnsupportedOperationException e) { /* okay */
-        }
-        try {
-            c.putAll(new HashMap(), 1, TimeUnit.MICROSECONDS);
             shouldThrow();
         } catch (UnsupportedOperationException e) { /* okay */
         }
@@ -92,13 +71,6 @@ public class Caches_UnmodifiableCacheTest extends MockTestCase {
             shouldThrow();
         } catch (UnsupportedOperationException e) { /* okay */
         }
-        try {
-            c.resetStatistics();
-            shouldThrow();
-        } catch (UnsupportedOperationException e) { /* okay */
-        }
-
-
     }
 
     @Test

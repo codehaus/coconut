@@ -12,13 +12,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheErrorHandler;
 import org.coconut.core.Clock;
-import org.coconut.test.CollectionUtils;
 import org.coconut.test.MockTestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,9 +39,9 @@ public class AbstraktCacheTest {
     @Test
     public void testNoop() {
         t.evict();
-        t.resetStatistics();
         t.preStart();
         t.shutdown();
+        t.terminated();
     }
 
     @Test
@@ -93,21 +91,6 @@ public class AbstraktCacheTest {
         assertFalse(m.containsValue("c"));
     }
 
-    @Test
-    public void testGetHitStat() {
-        assertEquals(CacheUtil.newImmutableHitStat(0, 0), t.getHitStat());
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void testLoadUOE() {
-        t.load("");
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void testLoadAllUOE() {
-        t.loadAll(Arrays.asList(""));
-    }
-
     @Test(expected = UnsupportedOperationException.class)
     public void testPutEntryUOE() {
         t.putEntry(MockTestCase.mockDummy(CacheEntry.class));
@@ -115,24 +98,18 @@ public class AbstraktCacheTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void testPutEntriesUOE() {
-        t.putEntries(Arrays.asList(MockTestCase.mockDummy(CacheEntry.class)));
+        t.putAllEntries(Arrays.asList(MockTestCase.mockDummy(CacheEntry.class)));
     }
 
     @Test
     public void testPutIAE() {
-        t.put(3, "c", -1, TimeUnit.SECONDS);
+        t.put(3, "c");
         assertEquals("c", t.m.get(3));
     }
 
     @Test(expected = NullPointerException.class)
     public void testPutAllNPE1() {
         t.putAll(null);
-    }
-
-    @Test
-    public void testPutAllNPE2() {
-        t.putAll((Map) CollectionUtils.M1_TO_M5_MAP, 0, TimeUnit.SECONDS);
-        assertEquals(5, t.m.size());
     }
 
     @Test
@@ -193,7 +170,11 @@ public class AbstraktCacheTest {
     public void testTrimToSize() {
         t.trimToSize(34);
     }
-
+    
+    @Test(expected = UnsupportedOperationException.class)
+    public void testGetService() {
+        t.getService(Object.class);
+    }
     @Test
     public void testToString() {
         assertTrue(t.toString().contains("!#!"));
@@ -263,7 +244,7 @@ public class AbstraktCacheTest {
          * @see org.coconut.cache.Cache#put(java.lang.Object, java.lang.Object,
          *      long, java.util.concurrent.TimeUnit)
          */
-        public Object put(Object key, Object value, long timeout, TimeUnit unit) {
+        public Object put(Object key, Object value) {
             return m.put(key, value);
         }
     }

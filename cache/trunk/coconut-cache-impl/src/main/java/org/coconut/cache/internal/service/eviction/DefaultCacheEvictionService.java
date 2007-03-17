@@ -10,6 +10,7 @@ import java.util.List;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.AbstractCacheService;
+import org.coconut.cache.internal.service.InternalCacheServiceManager;
 import org.coconut.cache.policy.Policies;
 import org.coconut.cache.policy.ReplacementPolicy;
 
@@ -29,8 +30,9 @@ public class DefaultCacheEvictionService<T extends CacheEntry> extends
 
     private final long preferableCapacity;
 
-    public DefaultCacheEvictionService(CacheConfiguration<?, ?> conf) {
-        super(conf);
+    public DefaultCacheEvictionService(InternalCacheServiceManager manager,
+            CacheConfiguration<?, ?> conf) {
+        super(manager, conf);
         if (conf.eviction().getPolicy() == null) {
             cp = Policies.newLRU();
         } else {
@@ -110,6 +112,6 @@ public class DefaultCacheEvictionService<T extends CacheEntry> extends
      * 
      */
     public void clear() {
-       cp.clear();
+        cp.clear();
     }
 }

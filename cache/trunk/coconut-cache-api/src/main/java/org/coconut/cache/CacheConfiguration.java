@@ -14,18 +14,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import net.jcip.annotations.NotThreadSafe;
 
-import org.coconut.cache.policy.ReplacementPolicy;
+import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
+import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
+import org.coconut.cache.service.loading.CacheLoadingConfiguration;
+import org.coconut.cache.service.management.CacheManagementConfiguration;
+import org.coconut.cache.service.threading.CacheThreadingConfiguration;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
+import org.coconut.cache.spi.ConfigurationValidator;
 import org.coconut.cache.spi.XmlConfigurator;
 import org.coconut.core.Clock;
-import org.coconut.filter.Filter;
 
 /**
  * This class is the primary class used for representing the configuration of a
@@ -83,94 +85,17 @@ import org.coconut.filter.Filter;
 @NotThreadSafe
 public class CacheConfiguration<K, V> implements Cloneable {
 
-    // 5F = _
-    private final static Pattern CACHE_NAME_PATTERN = Pattern
-            .compile("[\\da-zA-Z\\x5F]*(\\x2E([\\da-z\\x5F])+)*");
-
-    public static <K, V> CacheConfiguration<K, V> create() {
-        return new CacheConfiguration<K, V>();
-    }
-
-    public static <K, V> CacheConfiguration<K, V> create(String name) {
-        CacheConfiguration<K, V> conf = new CacheConfiguration<K, V>();
-        conf.setName(name);
-        return conf;
-    }
-
-    public static <K, V> CacheConfiguration<K, V> create(InputStream is) throws Exception {
-        return XmlConfigurator.getInstance().from(is);
-    }
-
-    public static <K, V> Cache<K, V> createAndInstantiate(InputStream is)
-            throws Exception {
-        CacheConfiguration<K, V> conf = create(is);
-        return conf.newInstance((Class) Class.forName(conf.getProperty(
-                XmlConfigurator.CACHE_INSTANCE_TYPE).toString()));
-    }
-
-    public static <K, V> AbstractCache<K, V> createInstantiateAndStart(InputStream is)
-            throws Exception {
-        CacheConfiguration<K, V> conf = create(is);
-        AbstractCache cc = (AbstractCache) conf.newInstance((Class) Class.forName(conf
-                .getProperty(XmlConfigurator.CACHE_INSTANCE_TYPE).toString()));
-        cc.preStart();
-        return cc;
-    }
-
     private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    private long defaultExpirationRefreshDuration = -1;
-
-    private long defaultExpirationTimeoutDuration = Cache.NEVER_EXPIRE;
-
-    private CacheErrorHandler<K, V> errorHandler = new CacheErrorHandler();
-
-    private Executor executor;
-
-    private Filter<CacheEntry<K, V>> expirationFilter;
-
-    private Filter<CacheEntry<K, V>> expirationRefreshFilter;
-
-    private CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> extendedLoader;
+    private CacheErrorHandler<K, V> errorHandler = new CacheErrorHandler<K, V>();
 
     private Map<? extends K, ? extends V> initialMap;
 
-    private CacheLoader<? super K, ? extends V> loader;
-
-    private long maximumCapacity = Long.MAX_VALUE;
-
-    private int maximumSize = Eviction.DEFAULT_MAXIMUM_SIZE;
+    private ArrayList<AbstractCacheServiceConfiguration> list = new ArrayList<AbstractCacheServiceConfiguration>();
 
     private String name = UUID.randomUUID().toString();
 
-    private long preferableCapacity = Long.MAX_VALUE;
-
-    private int preferableSize = Eviction.DEFAULT_MAXIMUM_SIZE;
-
-    private ReplacementPolicy replacementPolicy;
-
-    private boolean shutdownExecutor;
-
-    private boolean statisticsEnabled = true;
-
     private Clock timingStrategy = Clock.DEFAULT_CLOCK;
-
-    long scheduleEvictionAtFixedRateNanos = 0;
-
-    /**
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        ByteArrayOutputStream sos = new ByteArrayOutputStream();
-        try {
-            XmlConfigurator.getInstance().to(this, sos);
-        } catch (Exception e) {
-            throw new CacheException("This is highly irregular, please report", e);
-        }
-        return new String(sos.toByteArray());
-
-    }
 
     /**
      * Creates a new Configuration with default settings. CacheConfiguration
@@ -180,11 +105,23 @@ public class CacheConfiguration<K, V> implements Cloneable {
         // package private for now, might change at a later time.
     }
 
-    public Backend backend() {
-        return new Backend();
-    }
+    public AbstractCacheServiceConfiguration<K, V> addService(
+            AbstractCacheServiceConfiguration conf) {
+        if (conf == null) {
+            throw new NullPointerException("conf is null");
+        }
+        for (AbstractCacheServiceConfiguration c : list) {
+            Class type = conf.getServiceInterface();
+            if (c.getServiceInterface().isAssignableFrom(type)) {
 
-    private ArrayList<AbstractCacheServiceConfiguration> list = new ArrayList<AbstractCacheServiceConfiguration>();
+            } else if (type.isAssignableFrom(c.getClass())) {
+
+            }
+        }
+        list.add(conf);
+        ConfigurationValidator.initializeConfiguration(conf, this);
+        return conf;
+    }
 
     public <T extends AbstractCacheServiceConfiguration> T addService(Class<T> conf) {
         AbstractCacheServiceConfiguration acsc;
@@ -198,36 +135,11 @@ public class CacheConfiguration<K, V> implements Cloneable {
         return (T) addService(acsc);
     }
 
-    public AbstractCacheServiceConfiguration addService(
-            AbstractCacheServiceConfiguration conf) {
-        for (AbstractCacheServiceConfiguration c : list) {
-            Class type = conf.getServiceInterface();
-            if (c.getServiceInterface().isAssignableFrom(type)) {
-
-            } else if (type.isAssignableFrom(c.getClass())) {
-
-            }
-        }
-        list.add(conf);
-        return conf;
-    }
-
     /**
      * Returns a new Eviction object.
      */
-    public Eviction eviction() {
-        return new Eviction();
-    }
-
-    /**
-     * Returns a {@link Expiration} instance that can be used to configure the
-     * expiration settings for the cache. For example, default expiration times
-     * or custom expiration filters.
-     * 
-     * @return returns a expiration configuration instance
-     */
-    public Expiration expiration() {
-        return new Expiration();
+    public CacheEvictionConfiguration eviction() {
+        return lazyCreate(CacheEvictionConfiguration.class);
     }
 
     /**
@@ -239,6 +151,7 @@ public class CacheConfiguration<K, V> implements Cloneable {
     public Clock getClock() {
         return timingStrategy;
     }
+
 
     /**
      * Returns the log configured for the cache.
@@ -324,6 +237,26 @@ public class CacheConfiguration<K, V> implements Cloneable {
     }
 
     /**
+     * @param name2
+     */
+    public <T extends AbstractCacheServiceConfiguration> T getServiceConfiguration(
+            Class<T> service) {
+        for (AbstractCacheServiceConfiguration o : list) {
+            if (o.getClass().equals(service)) {
+                return (T) o;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param name2
+     */
+    public List<AbstractCacheServiceConfiguration> getServices() {
+        return new ArrayList<AbstractCacheServiceConfiguration>(list);
+    }
+
+    /**
      * Creates a new cache instance of the specified type using this
      * configuration.
      * 
@@ -369,6 +302,22 @@ public class CacheConfiguration<K, V> implements Cloneable {
         AbstractCache t = newInstance(clazz);
         t.preStart();
         return (T) t;
+    }
+
+    public CacheExpirationConfiguration<K, V> serviceExpiration() {
+        return lazyCreate(CacheExpirationConfiguration.class);
+    }
+
+    public CacheLoadingConfiguration<K, V> serviceLoading() {
+        return lazyCreate(CacheLoadingConfiguration.class);
+    }
+
+    public CacheManagementConfiguration<K, V> serviceManagement() {
+        return lazyCreate(CacheManagementConfiguration.class);
+    }
+
+    public CacheThreadingConfiguration serviceThreading() {
+        return lazyCreate(CacheThreadingConfiguration.class);
     }
 
     /**
@@ -461,7 +410,6 @@ public class CacheConfiguration<K, V> implements Cloneable {
         this.name = name;
         return this;
     }
-
     /**
      * Some cache implementations might allow additional properties to be set
      * then those defined by this class. This method can be used to set these
@@ -486,375 +434,58 @@ public class CacheConfiguration<K, V> implements Cloneable {
         return this;
     }
 
-    public Threading threading() {
-        return new Threading();
-    }
-
-    public class Backend {
-
-        /**
-         * Returns the CacheConfiguration that this instance is part of.
-         * 
-         * @return the CacheConfiguration that this instance is part of
-         */
-        public CacheConfiguration<K, V> c() {
-            return CacheConfiguration.this;
-        }
-
-        /**
-         * Returns the CacheLoader that the cache should use for loading new
-         * key-value bindings. If this method returns <code>null</code> no
-         * initial loader will be set.
-         */
-        public CacheLoader<? super K, ? extends V> getBackend() {
-            return loader;
-        }
-
-        public CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> getExtendedBackend() {
-            return extendedLoader;
-        }
-
-        /**
-         * Sets the loader that should be used for loading new elements into the
-         * cache. If the specified loader is <code>null</code> no loader will
-         * be used for loading new key-value bindings. All values must then put
-         * into the cache by using put or putAll.
-         * 
-         * @param loader
-         *            the loader to set
-         * @return the current CacheConfiguration
-         * @throws IllegalStateException
-         *             if an extended loader has already been set, using
-         *             {@link #setExtendedBackend(CacheLoader)}
-         */
-        public Backend setBackend(CacheLoader<? super K, ? extends V> loader) {
-            if (extendedLoader != null) {
-                throw new IllegalStateException(
-                        "extended loader already set, cannot set an ordinary loader");
-            }
-            CacheConfiguration.this.loader = loader;
-            return this;
-        }
-
-        /**
-         * Sets the loader that should be used for loading new elements into the
-         * cache. If the specified loader is <code>null</code> no loader will
-         * be used for loading new key-value bindings. All values must then put
-         * into the cache by using put or putAll.
-         * 
-         * @param loader
-         *            the loader to set
-         * @return the current CacheConfiguration
-         * @throws IllegalStateException
-         *             if an ordinary loader has already been set, using
-         *             {@link #setBackend(CacheLoader)}
-         */
-        public Backend setExtendedBackend(
-                CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader) {
-            if (CacheConfiguration.this.loader != null) {
-                throw new IllegalStateException(
-                        "loader already set, cannot set an extended loader");
-            }
-            extendedLoader = loader;
-            return this;
-        }
-    }
-
-    public class Eviction {
-        /**
-         * The default maximum size of a cache unless otherwise specified.
-         */
-        public final static int DEFAULT_MAXIMUM_SIZE = Integer.MAX_VALUE;
-
-        /**
-         * Returns the CacheConfiguration that this instance is part of.
-         * 
-         * @return the CacheConfiguration that this instance is part of
-         */
-        public CacheConfiguration<K, V> c() {
-            return CacheConfiguration.this;
-        }
-
-        /**
-         * Integer.MAX_VALUE = unlimited
-         * 
-         * @return the maximum number of elements.
-         */
-        public long getMaximumCapacity() {
-            return maximumCapacity;
-        }
-
-        /**
-         * Integer.MAX_VALUE = unlimited
-         * 
-         * @return the maximum number of elements.
-         */
-        public int getMaximumSize() {
-            return maximumSize;
-        }
-
-        public ReplacementPolicy getPolicy() {
-            return replacementPolicy;
-
-        }
-
-        public long getPreferableCapacity() {
-            return preferableCapacity;
-        }
-
-        public int getPreferableSize() {
-            return preferableSize;
-        }
-
-        /**
-         * Sets that maximum number of elements that a cache can contain. If the
-         * limit is reached the cache should evict elements according to the
-         * cache policy specified in setExpirationStrategy.
-         * <p>
-         * The default value is Integer.MAX_VALUE.
-         * 
-         * @param elements
-         *            the maximum capacity.
-         */
-        public Eviction setMaximumCapacity(long capacity) {
-            if (capacity <= 0) {
-                throw new IllegalArgumentException("capacity must greater then 0, was "
-                        + capacity);
-            }
-            maximumCapacity = capacity;
-            return this;
-        }
-
-        /**
-         * Sets that maximum number of elements that the cache can contain. If
-         * the limit is reached the cache should evict elements according to the
-         * cache policy specified in {@link #setPolicy(ReplacementPolicy)}.
-         * <p>
-         * The default value is Integer.MAX_VALUE. If 0 is specified the cache
-         * will never retain any elements. An effective method for disabling
-         * caching.
-         * 
-         * @param elements
-         *            the maximum capacity.
-         */
-        public Eviction setMaximumSize(int elements) {
-            if (elements < 0) {
-                throw new IllegalArgumentException(
-                        "number of maximum elements must be 0 or greater, was "
-                                + elements);
-            }
-            maximumSize = elements;
-            return this;
-        }
-
-        /**
-         * policies are passed a CacheEntry, because it is the easiest way to
-         * support cost/sized based policies.
-         * 
-         * @param policy
-         * @return
-         */
-        public Eviction setPolicy(ReplacementPolicy policy) {
-            replacementPolicy = policy;
-            return this;
-        }
-
-        public Eviction setPreferableCapacity(long capacity) {
-            if (capacity <= 0) {
-                throw new IllegalArgumentException("capacity must greater then 0, was "
-                        + capacity);
-            }
-            preferableCapacity = capacity;
-            return this;
-        }
-
-        public Eviction setPreferableSize(int elements) {
-            if (elements < 0) {
-                throw new IllegalArgumentException(
-                        "number of maximum elements must be 0 or greater, was "
-                                + elements);
-            }
-            preferableSize = elements;
-            return this;
-        }
-    }
-
-    public class Expiration {
-        /**
-         * Returns the CacheConfiguration that this instance is part of.
-         * 
-         * @return the CacheConfiguration that this instance is part of
-         */
-        public CacheConfiguration<K, V> c() {
-            return CacheConfiguration.this;
-        }
-
-        public long getDefaultTimeout(TimeUnit unit) {
-            if (defaultExpirationTimeoutDuration == Cache.NEVER_EXPIRE) {
-                // don't convert relative to time unit
-                return defaultExpirationTimeoutDuration;
-            } else {
-                return unit.convert(defaultExpirationTimeoutDuration,
-                        TimeUnit.NANOSECONDS);
-            }
-        }
-
-        public Filter<CacheEntry<K, V>> getFilter() {
-            return expirationFilter;
-        }
-
-        public Filter<CacheEntry<K, V>> getRefreshFilter() {
-            return expirationRefreshFilter;
-        }
-
-        /**
-         * Returns the refresh interval in the specified timeunit.
-         * 
-         * @param unit
-         *            the unit of time to return the refresh interval in
-         * @return
-         */
-        public long getRefreshInterval(TimeUnit unit) {
-            if (defaultExpirationRefreshDuration > 0) {
-                return unit.convert(defaultExpirationRefreshDuration,
-                        TimeUnit.NANOSECONDS);
-            } else {
-                return defaultExpirationRefreshDuration;
-            }
-        }
-
-        /**
-         * Sets the default expiration time for elements added to the cache.
-         * Elements added using the {@link Cache#put(Object, Object)} will
-         * expire at <tt>time_of_insert + default_expiration_time</tt>.
-         * Expired elements are handled accordingly to the
-         * {@link ExpirationStrategy} set for the cache using
-         * {@link #setFilter(Filter)}. The default expiration is infinite, that
-         * is elements never expires..
-         * 
-         * @param duration
-         *            the default timeout for elements added to the cache, must
-         *            be positive
-         * @param unit
-         *            the time unit of the duration argument
-         */
-        public Expiration setDefaultTimeout(long duration, TimeUnit unit) {
-            if (duration <= 0) {
-                throw new IllegalArgumentException(
-                        "duration must be greather then 0, was " + duration);
-            } else if (unit == null) {
-                throw new NullPointerException("unit is null");
-            }
-            if (duration == Cache.NEVER_EXPIRE) {
-                defaultExpirationTimeoutDuration = Cache.NEVER_EXPIRE;
-                // don't convert relative to time unit
-            } else {
-                defaultExpirationTimeoutDuration = unit.toNanos(duration);
-            }
-            return this;
-        }
-
-        /**
-         * Sets a specific expiration that can be used in <tt>addition</tt> to
-         * the time based expiration filter to check if items has expired. If no
-         * filter has been set items are expired according to their registered
-         * expiration time. If an expiration filter is set cache entries are
-         * first checked against that filter then against the time based
-         * expiration times.
-         */
-        public Expiration setFilter(Filter<CacheEntry<K, V>> filter) {
-            expirationFilter = filter;
-            return this;
-        }
-
-        public Expiration setRefreshFilter(Filter<CacheEntry<K, V>> filter) {
-            expirationRefreshFilter = filter;
-            return this;
-        }
-
-        /**
-         * Sets the default refresh interval. Setting of the refresh window only
-         * makes sense if an asynchronously loader has been specified. -1
-         * 
-         * @param interval
-         *            the i
-         * @param unit
-         *            the unit of the interval
-         * @return this Expiration
-         */
-        public Expiration setRefreshInterval(long interval, TimeUnit unit) {
-            if (unit == null) {
-                throw new NullPointerException("unit is null");
-            }
-            if (interval <= 0) {
-                defaultExpirationRefreshDuration = interval;
-            } else {
-                defaultExpirationRefreshDuration = unit.toNanos(interval);
-            }
-            return this;
-        }
-    }
-
-    public class Threading {
-
-        /**
-         * Returns the CacheConfiguration that this instance is part of.
-         * 
-         * @return the CacheConfiguration that this instance is part of
-         */
-        public CacheConfiguration<K, V> c() {
-            return CacheConfiguration.this;
-        }
-
-        public Executor getExecutor() {
-            return executor;
-        }
-
-        public long getScheduledEvictionAtFixedRate(TimeUnit unit) {
-            return unit.convert(scheduleEvictionAtFixedRateNanos, TimeUnit.NANOSECONDS);
-        }
-
-        public boolean getShutdownExecutorService() {
-            return shutdownExecutor;
-        }
-
-        public Threading setExecutor(Executor e) {
-            executor = e;
-            return this;
-        }
-
-        public Threading setScheduledEvictionAtFixedRate(long period, TimeUnit unit) {
-            if (period < 0) {
-                throw new IllegalArgumentException("period must be 0 or greater, was "
-                        + period);
-            }
-            scheduleEvictionAtFixedRateNanos = unit.toNanos(period);
-            return this;
-        }
-
-        public Threading setShutdownExecutorService(boolean shutdown) {
-            shutdownExecutor = shutdown;
-            return this;
-        }
-    }
-
     /**
-     * @param name2
+     * @see java.lang.Object#toString()
      */
-    public <T extends AbstractCacheServiceConfiguration> T getServiceConfiguration(
-            Class<T> service) {
-        for (AbstractCacheServiceConfiguration o : list) {
-            if (o.getClass().equals(service)) {
-                return (T) o;
-            }
+    @Override
+    public String toString() {
+        ByteArrayOutputStream sos = new ByteArrayOutputStream();
+        try {
+            XmlConfigurator.getInstance().to(this, sos);
+        } catch (Exception e) {
+            throw new CacheException("This is highly irregular, please report", e);
         }
-        return null;
+        return new String(sos.toByteArray());
+
     }
 
-    /**
-     * @param name2
-     */
-    public List<AbstractCacheServiceConfiguration> getServices() {
-        return new ArrayList<AbstractCacheServiceConfiguration>(list);
+    private <T extends AbstractCacheServiceConfiguration> T lazyCreate(Class<T> c) {
+        T service = getServiceConfiguration(c);
+        if (service == null) {
+            addService(c);
+            service = getServiceConfiguration(c);
+        }
+        return service;
+    }
+
+    public static <K, V> CacheConfiguration<K, V> create() {
+        return new CacheConfiguration<K, V>();
+    }
+
+    public static <K, V> CacheConfiguration<K, V> create(InputStream is) throws Exception {
+        return XmlConfigurator.getInstance().from(is);
+    }
+
+    public static <K, V> CacheConfiguration<K, V> create(String name) {
+        CacheConfiguration<K, V> conf = new CacheConfiguration<K, V>();
+        conf.setName(name);
+        return conf;
+    }
+
+
+    public static <K, V> Cache<K, V> createAndInstantiate(InputStream is)
+            throws Exception {
+        CacheConfiguration<K, V> conf = create(is);
+        return conf.newInstance((Class) Class.forName(conf.getProperty(
+                XmlConfigurator.CACHE_INSTANCE_TYPE).toString()));
+    }
+
+    public static <K, V> AbstractCache<K, V> createInstantiateAndStart(InputStream is)
+            throws Exception {
+        CacheConfiguration<K, V> conf = create(is);
+        AbstractCache cc = (AbstractCache) conf.newInstance((Class) Class.forName(conf
+                .getProperty(XmlConfigurator.CACHE_INSTANCE_TYPE).toString()));
+        cc.preStart();
+        return cc;
     }
 }

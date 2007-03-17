@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.service.InternalCacheServiceManager;
 import org.coconut.filter.Filter;
 
 /**
@@ -22,13 +23,14 @@ public class MutableVolatileExpirationSupport<K, V> extends ExpirationCacheServi
 
     private final Filter<CacheEntry<K, V>> refreshFilter;
 
-    public MutableVolatileExpirationSupport(CacheConfiguration<K, V> conf) {
-        super(conf);
-        defaultExpirationTime = conf.expiration().getDefaultTimeout(TimeUnit.NANOSECONDS);
-        refreshExpirationTime = conf.expiration()
+    public MutableVolatileExpirationSupport(InternalCacheServiceManager manager,
+            CacheConfiguration<K, V> conf) {
+        super(manager, conf);
+        defaultExpirationTime = conf.serviceExpiration().getDefaultTimeout(TimeUnit.NANOSECONDS);
+        refreshExpirationTime = conf.serviceExpiration()
                 .getRefreshInterval(TimeUnit.NANOSECONDS);
-        expireFilter = conf.expiration().getFilter();
-        refreshFilter = conf.expiration().getRefreshFilter();
+        expireFilter = conf.serviceExpiration().getFilter();
+        refreshFilter = conf.serviceExpiration().getRefreshFilter();
     }
 
     /**
@@ -51,8 +53,8 @@ public class MutableVolatileExpirationSupport<K, V> extends ExpirationCacheServi
         // we use validation rutine from CacheConfiguration
         // a bit slow, but this method is not called to often
         CacheConfiguration<K, V> conf = CacheConfiguration.create();
-        conf.expiration().setRefreshInterval(timeMs, TimeUnit.MILLISECONDS);
-        refreshExpirationTime = conf.expiration().getRefreshInterval(
+        conf.serviceExpiration().setRefreshInterval(timeMs, TimeUnit.MILLISECONDS);
+        refreshExpirationTime = conf.serviceExpiration().getRefreshInterval(
                 TimeUnit.MILLISECONDS);
     }
 
@@ -60,8 +62,8 @@ public class MutableVolatileExpirationSupport<K, V> extends ExpirationCacheServi
         // we use validation rutine from CacheConfiguration
         // a bit slow, but this method is not called to often
         CacheConfiguration<K, V> conf = CacheConfiguration.create();
-        conf.expiration().setDefaultTimeout(timeMs, TimeUnit.MILLISECONDS);
-        refreshExpirationTime = conf.expiration()
+        conf.serviceExpiration().setDefaultTimeout(timeMs, TimeUnit.MILLISECONDS);
+        refreshExpirationTime = conf.serviceExpiration()
                 .getDefaultTimeout(TimeUnit.MILLISECONDS);
     }
 

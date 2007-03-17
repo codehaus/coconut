@@ -17,7 +17,7 @@ import java.util.logging.LogManager;
 
 import org.coconut.cache.CacheErrorHandler;
 import org.coconut.cache.CacheException;
-import org.coconut.cache.CacheLoader;
+import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.core.Log;
 import org.coconut.test.MockTestCase;
 import org.junit.Before;

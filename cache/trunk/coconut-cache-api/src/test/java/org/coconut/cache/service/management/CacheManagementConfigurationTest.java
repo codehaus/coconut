@@ -3,7 +3,7 @@
  */
 package org.coconut.cache.service.management;
 
-import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -32,18 +32,6 @@ public class CacheManagementConfigurationTest {
         m = new CacheManagementConfiguration();
     }
 
-    static CacheManagementConfiguration rw(CacheManagementConfiguration conf)
-            throws Exception {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        CacheConfiguration cc = CacheConfiguration.create();
-        cc.addService(conf);
-        XmlConfigurator.getInstance().to(cc, os);
-        cc = XmlConfigurator.getInstance().from(
-                new ByteArrayInputStream(os.toByteArray()));
-        return (CacheManagementConfiguration) cc
-                .getServiceConfiguration(CacheManagementConfiguration.class);
-    }
-
     @Test
     public void testDomain() {
         assertEquals(CacheMXBean.DEFAULT_JMX_DOMAIN, m.getDomain());
@@ -54,6 +42,11 @@ public class CacheManagementConfigurationTest {
     @Test(expected = NullPointerException.class)
     public void testDomainNPE() {
         m.setDomain(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testDomainIAE() {
+        m.setDomain(":");
     }
 
     @Test
@@ -82,13 +75,18 @@ public class CacheManagementConfigurationTest {
         m.setMbeanServer(MBeanServerFactory.createMBeanServer());
         m = rw(m);
         assertEquals("foo.bar", m.getDomain());
+        assertEquals(DEFAULT.getMBeanServer(), m.getMBeanServer());
     }
 
-    @Test
-    public void testXmlCornerCase() throws Exception {
-        // coverage mostly
-        m.setDomain("foo.foo");
-        m = rw(m);
-        assertEquals("foo.foo", m.getDomain());
+    static CacheManagementConfiguration rw(CacheManagementConfiguration conf)
+            throws Exception {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        CacheConfiguration cc = CacheConfiguration.create();
+        cc.addService(conf);
+        XmlConfigurator.getInstance().to(cc, os);
+        cc = XmlConfigurator.getInstance().from(
+                new ByteArrayInputStream(os.toByteArray()));
+        return (CacheManagementConfiguration) cc
+                .getServiceConfiguration(CacheManagementConfiguration.class);
     }
 }

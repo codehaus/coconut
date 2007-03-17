@@ -9,13 +9,18 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 
 import net.jcip.annotations.NotThreadSafe;
+import net.jcip.annotations.ThreadSafe;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheErrorHandler;
-import org.coconut.cache.CacheLoader;
-import org.coconut.cache.Caches;
+import org.coconut.cache.CacheException;
 import org.coconut.cache.internal.service.AbstractCacheService;
+import org.coconut.cache.internal.service.InternalCacheServiceManager;
+import org.coconut.cache.internal.service.threading.InternalThreadManager;
+import org.coconut.cache.service.loading.CacheLoader;
+import org.coconut.cache.service.loading.CacheLoadingConfiguration;
+import org.coconut.cache.service.loading.Loaders;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.AsyncCacheLoader;
 import org.coconut.cache.spi.XmlConfigurator;
@@ -34,28 +39,18 @@ public class CacheEntryLoaderService<K, V> extends AbstractCacheService<K, V> im
 
     private final AsyncCacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader;
 
-    private boolean canLoadAsync = false;
+    private final InternalThreadManager threadManager;
 
-    public CacheEntryLoaderService(CacheConfiguration<K, V> conf) {
-        super(conf);
-        errorHandler = conf.getErrorHandler();
-        Executor e = conf.threading().getExecutor();
-        Class c = null;
-        try {
-            String s = (String) conf.getProperty(XmlConfigurator.CACHE_INSTANCE_TYPE);
-            c = Class.forName(s);
-        } catch (ClassNotFoundException e1) {
-            e1.printStackTrace();
-        }
-        if (e == null || c.isAnnotationPresent(NotThreadSafe.class)) {
-            e = ThreadUtils.SAME_THREAD_EXECUTOR;
-        }
-        canLoadAsync = e != null;
-        loader = LoadUtil.wrapAsAsync(getLoader(conf), e);
+    public CacheEntryLoaderService(InternalCacheServiceManager manager,
+            CacheConfiguration<K, V> conf, InternalThreadManager threadManager) {
+        super(manager, conf);
+        this.errorHandler = conf.getErrorHandler();
+        this.threadManager = threadManager;
+        this.loader = LoadUtil.wrapAsAsync(getLoader(conf), threadManager);
     }
 
     public boolean canLoadAsync() {
-        return canLoadAsync;
+        return threadManager.isAsync();
     }
 
     public Future<?> asyncLoadAllEntries(final Collection<? extends K> keys,
@@ -108,12 +103,14 @@ public class CacheEntryLoaderService<K, V> extends AbstractCacheService<K, V> im
 
     static <K, V> CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> getLoader(
             CacheConfiguration<K, V> conf) {
-        if (conf.backend().getBackend() != null) {
-            return LoadUtil.toExtendedCacheLoader(conf.backend().getBackend());
-        } else if (conf.backend().getExtendedBackend() != null) {
-            return conf.backend().getExtendedBackend();
+        CacheLoadingConfiguration<K, V> co = conf
+                .getServiceConfiguration(CacheLoadingConfiguration.class);
+        if (co.getBackend() != null) {
+            return LoadUtil.toExtendedCacheLoader(co.getBackend());
+        } else if (co.getExtendedBackend() != null) {
+            return co.getExtendedBackend();
         } else {
-            return Caches.nullLoader();
+            return Loaders.nullLoader();
         }
     }
 }

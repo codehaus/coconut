@@ -11,11 +11,11 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.coconut.cache.policy.Policies;
-import org.coconut.cache.policy.ReplacementPolicy;
+import org.coconut.cache.service.expiration.CacheExpirationService;
+import org.coconut.cache.service.loading.AbstractCacheLoader;
+import org.coconut.cache.service.loading.CacheLoader;
+import org.coconut.cache.service.loading.Loaders;
 import org.coconut.cache.spi.CacheExecutorRunnable;
-import org.coconut.cache.util.AbstractCacheLoader;
-import org.coconut.filter.Filters;
 import org.coconut.test.MockTestCase;
 import org.jmock.Mock;
 import org.junit.Test;
@@ -31,18 +31,18 @@ public class CachesTest extends MockTestCase {
 
     @Test
     public void testConstanst() {
-        assertEquals(0l, Cache.DEFAULT_EXPIRATION);
-        assertEquals(Long.MAX_VALUE, Cache.NEVER_EXPIRE);
+        assertEquals(0l, CacheExpirationService.DEFAULT_EXPIRATION);
+        assertEquals(Long.MAX_VALUE, CacheExpirationService.NEVER_EXPIRE);
     }
 
     public void testNullCacheLoader() throws Exception {
-        CacheLoader<Object, Object> loader = Caches.nullLoader();
+        CacheLoader<Object, Object> loader = Loaders.nullLoader();
         assertNull(loader.load(new Object()));
     }
 
     public void testSynchronizedCacheLoader1() throws Exception {
         Mock mock = mock(CacheLoader.class);
-        CacheLoader<Integer, String> loader = Caches
+        CacheLoader<Integer, String> loader = Loaders
                 .synchronizedCacheLoader((CacheLoader<Integer, String>) mock.proxy());
         Collection<Integer> col = new LinkedList<Integer>();
         Map<Integer, String> map = new HashMap<Integer, String>();
@@ -65,7 +65,7 @@ public class CachesTest extends MockTestCase {
     public void testSynchronizedCacheLoader1Sync() throws Exception {
         final AtomicInteger ai = new AtomicInteger();
 
-        final CacheLoader<Integer, String> loader = Caches
+        final CacheLoader<Integer, String> loader = Loaders
                 .synchronizedCacheLoader(new CacheLoader<Integer, String>() {
                     public String load(Integer key) throws Exception {
                         int i = ai.incrementAndGet();
@@ -106,7 +106,7 @@ public class CachesTest extends MockTestCase {
     public void testSynchronizedCacheLoader2() throws Exception {
 
         final Mock mock = mock(CacheLoader.class);
-        CacheLoader<Integer, String> loader = Caches
+        CacheLoader<Integer, String> loader = Loaders
                 .synchronizedCacheLoader(new AbstractCacheLoader<Integer, String>() {
                     public String load(Integer key) throws Exception {
                         return ((CacheLoader<Integer, String>) mock.proxy()).load(key);
@@ -129,7 +129,7 @@ public class CachesTest extends MockTestCase {
     public void testSynchronizedCacheLoader2Sync() throws Exception {
         final AtomicInteger ai = new AtomicInteger();
 
-        final CacheLoader<Integer, String> loader = Caches
+        final CacheLoader<Integer, String> loader = Loaders
                 .synchronizedCacheLoader(new AbstractCacheLoader<Integer, String>() {
                     public String load(Integer key) throws Exception {
                         int i = ai.incrementAndGet();
@@ -160,7 +160,7 @@ public class CachesTest extends MockTestCase {
 
     public void testSynchronizedCacheLoaderNullPointer() {
         try {
-            Caches.synchronizedCacheLoader(null);
+            Loaders.synchronizedCacheLoader(null);
             shouldThrow();
         } catch (NullPointerException e) { /* okay */
         }
@@ -205,7 +205,7 @@ public class CachesTest extends MockTestCase {
         Collection dummyCol = new ArrayList();
         Mock m = mock(Cache.class);
         Cache c = (Cache) m.proxy();
-        CacheLoader cl = Caches.cacheAsCacheLoader(c);
+        CacheLoader cl = Loaders.cacheAsCacheLoader(c);
 
         m.expects(once()).method("get").with(eq(0)).will(returnValue(1));
         assertEquals(1, cl.load(0));
@@ -214,7 +214,7 @@ public class CachesTest extends MockTestCase {
         assertEquals(dummy, cl.loadAll(dummyCol));
 
         try {
-            Caches.cacheAsCacheLoader(null);
+            Loaders.cacheAsCacheLoader(null);
             shouldThrow();
         } catch (NullPointerException e) { /* okay */
         }

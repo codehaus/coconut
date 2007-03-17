@@ -4,8 +4,8 @@
 
 package org.coconut.cache.util;
 
-import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.service.expiration.CacheExpirationService;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -15,7 +15,7 @@ public class DefaultCacheEntry<K, V> implements CacheEntry<K, V> {
 
     public static final long DEFAULT_CREATION_TIME = 0;
 
-    public static final long DEFAULT_EXPIRATION_TIME = Cache.DEFAULT_EXPIRATION;
+    public static final long DEFAULT_EXPIRATION_TIME = CacheExpirationService.DEFAULT_EXPIRATION;
 
     /* is -1 beucase */
     // is -1 because any entry loaded with hit count>=0

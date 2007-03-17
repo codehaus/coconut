@@ -11,36 +11,37 @@ import static org.coconut.test.CollectionUtils.asMap;
 
 import java.util.Arrays;
 
+import org.coconut.internal.util.CollectionUtils;
 import org.junit.Test;
+
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class CacheUtilTest {
 
-    
-  
     @Test
     public void checkCollectionForNulls() {
-        CacheUtil.checkCollectionForNulls(Arrays.asList(3, 4, 5));
+        CollectionUtils.checkCollectionForNulls(Arrays.asList(3, 4, 5));
     }
 
     @Test(expected = NullPointerException.class)
     public void checkCollectionForNulls2() {
-        CacheUtil.checkCollectionForNulls(Arrays.asList(3, 4, 5, null));
+        CollectionUtils.checkCollectionForNulls(Arrays.asList(3, 4, 5, null));
     }
 
     @Test
     public void checkMapForNulls() {
-        CacheUtil.checkMapForNulls(asMap(M1,M2));
+        CollectionUtils.checkMapForNulls(asMap(M1, M2));
     }
-    @Test(expected = NullPointerException.class)
 
+    @Test(expected = NullPointerException.class)
     public void checkMapForNulls1() {
-        CacheUtil.checkMapForNulls(asMap(M2,M1_NULL_VALUE));
+        CollectionUtils.checkMapForNulls(asMap(M2, M1_NULL_VALUE));
     }
+
     @Test(expected = NullPointerException.class)
     public void checkMapForNulls2() {
-        CacheUtil.checkMapForNulls(asMap(M2,M1_KEY_NULL));
+        CollectionUtils.checkMapForNulls(asMap(M2, M1_KEY_NULL));
     }
 }

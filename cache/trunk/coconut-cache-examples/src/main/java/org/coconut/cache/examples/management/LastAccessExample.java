@@ -3,10 +3,13 @@
  */
 package org.coconut.cache.examples.management;
 
+import net.jcip.annotations.ThreadSafe;
+
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.defaults.UnsynchronizedCache;
 import org.coconut.cache.service.management.CacheManagementConfiguration;
+import org.coconut.cache.spi.AbstractCache;
 import org.coconut.filter.Filter;
 import org.coconut.management.annotation.ManagedAttribute;
 
@@ -16,19 +19,20 @@ import org.coconut.management.annotation.ManagedAttribute;
  */
 class LastAccessExample {
     public static void main(String[] args) throws InterruptedException {
-        CacheConfiguration<String, String> conf = CacheConfiguration.create();
-        conf.setName("WebPage-Cache").addService(CacheManagementConfiguration.class);
-        conf.expiration().setFilter(new LastAccessFilter());
-        UnsynchronizedCache cache = conf.newInstance(UnsynchronizedCache.class);
+        CacheConfiguration<String, String> conf = CacheConfiguration
+                .create("WebPage-Cache");
+        conf.addService(CacheManagementConfiguration.class);
+        conf.serviceExpiration().setFilter(new LastAccessFilter<String, String>());
+        AbstractCache<String, String> cache = conf.newInstance(UnsynchronizedCache.class);
         cache.preStart();
         Thread.sleep(1000000);
     }
 
+    @ThreadSafe
     public static class LastAccessFilter<K, V> implements Filter<CacheEntry<K, V>> {
         private volatile int seconds = 60 * 60;// initial 1 hour
 
         public boolean accept(CacheEntry<K, V> entry) {
-
             long delta = System.currentTimeMillis()
                     - Math.max(entry.getCreationTime(), entry.getLastAccessTime());
             // return true to indicate that the entry should be refreshed

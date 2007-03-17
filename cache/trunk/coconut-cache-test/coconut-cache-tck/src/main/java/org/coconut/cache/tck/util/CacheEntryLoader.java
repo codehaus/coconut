@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.util.AbstractCacheLoader;
+import org.coconut.cache.service.loading.AbstractCacheLoader;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

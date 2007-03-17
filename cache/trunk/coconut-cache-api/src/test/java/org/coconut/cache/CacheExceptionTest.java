@@ -8,7 +8,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
-import junit.framework.JUnit4TestAdapter;
 
 import org.junit.Test;
 
@@ -49,7 +48,4 @@ public class CacheExceptionTest {
         assertEquals("a", e.getMessage());
     }
 
-    public static junit.framework.Test suite() {
-        return new JUnit4TestAdapter(CacheExceptionTest.class);
-    }
 }

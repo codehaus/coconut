@@ -5,7 +5,7 @@
 package org.coconut.cache.service.event;
 
 import org.coconut.cache.Cache;
-import org.coconut.event.AttributedEvent;
+import org.coconut.cache.service.statistics.CacheHitStat;
 
 /**
  * This interface defines the top level type for events published by a {@link
@@ -26,7 +26,7 @@ import org.coconut.event.AttributedEvent;
  * @version $Id$
  */
 @SuppressWarnings("hiding")
-public interface CacheEvent<K, V> extends AttributedEvent{
+public interface CacheEvent<K, V> /* extends AttributedEvent */{
 
     /**
      * Returns the cache from where this event originated.
@@ -45,26 +45,6 @@ public interface CacheEvent<K, V> extends AttributedEvent{
      */
     String getName();
 
-    interface CacheLifecycleChange<K, V> extends CacheEvent<K, V> {
-
-        /** The unique name of the event. */
-        String NAME = "cache.lifecyclechange";
-
-        //String STARTED="Started"
-        //hmm common states for threaded containers
-        
-        /**
-         * Returns the number of elements that was in the cache before it was
-         * cleared.
-         * 
-         * @return the number of elements that was in the cache before it was
-         *         cleared
-         */
-        //STARTED, SHUTDOWN, TERMINATED, OTHERS?
-        String getPreviousState();
-        String getNewState();
-    }
-    
     /**
      * An event indicating that a particular {@link Cache} was cleared.
      */
@@ -81,6 +61,8 @@ public interface CacheEvent<K, V> extends AttributedEvent{
          *         cleared
          */
         int getPreviousSize();
+        
+        long getPreviousCapacity();
     }
 
     /**
@@ -98,7 +80,7 @@ public interface CacheEvent<K, V> extends AttributedEvent{
          * @return the hit statistics of the cache before the statistics was
          *         reset
          */
-        Cache.HitStat getPreviousHitStat();
+        CacheHitStat getPreviousHitStat();
     }
 
     /**

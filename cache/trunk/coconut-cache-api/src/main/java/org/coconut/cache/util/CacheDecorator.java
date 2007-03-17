@@ -8,8 +8,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
@@ -132,13 +130,6 @@ public class CacheDecorator<K, V> implements Cache<K, V>, Serializable {
     /**
      * {@inheritDoc}
      */
-    public HitStat getHitStat() {
-        return cache.getHitStat();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode() {
         return cache.hashCode();
@@ -161,20 +152,6 @@ public class CacheDecorator<K, V> implements Cache<K, V>, Serializable {
     /**
      * {@inheritDoc}
      */
-    public Future<?> load(K key) {
-        return cache.load(key);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Future<?> loadAll(Collection<? extends K> keys) {
-        return cache.loadAll(keys);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public V peek(K key) {
         return cache.peek(key);
     }
@@ -182,22 +159,8 @@ public class CacheDecorator<K, V> implements Cache<K, V>, Serializable {
     /**
      * {@inheritDoc}
      */
-    public V put(K key, V value, long timeout, TimeUnit unit) {
-        return cache.put(key, value, timeout, unit);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public V put(K key, V value) {
         return cache.put(key, value);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void putAll(Map<? extends K, ? extends V> t, long timeout, TimeUnit unit) {
-        cache.putAll(t, timeout, unit);
     }
 
     /**
@@ -241,13 +204,6 @@ public class CacheDecorator<K, V> implements Cache<K, V>, Serializable {
      */
     public V replace(K key, V value) {
         return cache.replace(key, value);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void resetStatistics() {
-        cache.resetStatistics();
     }
 
     /**

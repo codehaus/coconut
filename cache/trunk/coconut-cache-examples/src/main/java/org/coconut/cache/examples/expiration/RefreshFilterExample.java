@@ -26,7 +26,7 @@ public class RefreshFilterExample {
 
     public static void main(String[] args) {
         CacheConfiguration<String, String> cc = CacheConfiguration.create();
-        cc.expiration().setRefreshFilter(new RefreshFilter<String, String>());
+        cc.serviceExpiration().setRefreshFilter(new RefreshFilter<String, String>());
         Cache<String, String> cache = cc.newInstance(UnsynchronizedCache.class);
         cache.put("key", "value");
         // element will expire if has not been accessed with the last 1 hour

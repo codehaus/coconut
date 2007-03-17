@@ -35,37 +35,37 @@ public class WrapperCacheMXBean implements CacheMXBean {
         return cache.size();
     }
 
-    /**
-     * @see org.coconut.cache.management.CacheMXBean#getNumberOfHits()
-     */
-    @ManagedAttribute(defaultValue="hits", description="The number of cache hits")
-    public long getNumberOfHits() {
-        return cache.getHitStat().getNumberOfHits();
-    }
-
-    /**
-     * @see org.coconut.cache.management.CacheMXBean#getNumberOfMisses()
-     */
-    @ManagedAttribute(defaultValue="NumberOfMisses", description="The number of cache misses")
-    public long getNumberOfMisses() {
-        return cache.getHitStat().getNumberOfMisses();
-    }
-
-    /**
-     * @see org.coconut.cache.management.CacheMXBean#getHitRatio()
-     */
-    @ManagedAttribute(defaultValue="HitRatio", description="The hit ratio")
-    public double getHitRatio() {
-        return cache.getHitStat().getHitRatio();
-    }
-
-    /**
-     * @see org.coconut.cache.management.CacheMXBean#resetHitStat()
-     */
-    @ManagedOperation(defaultValue="resetStatistics", description="Resets statistics")
-    public void resetStatistics() {
-        cache.resetStatistics();
-    }
+//    /**
+//     * @see org.coconut.cache.management.CacheMXBean#getNumberOfHits()
+//     */
+//    @ManagedAttribute(defaultValue="hits", description="The number of cache hits")
+//    public long getNumberOfHits() {
+//        return cache.getHitStat().getNumberOfHits();
+//    }
+//
+//    /**
+//     * @see org.coconut.cache.management.CacheMXBean#getNumberOfMisses()
+//     */
+//    @ManagedAttribute(defaultValue="NumberOfMisses", description="The number of cache misses")
+//    public long getNumberOfMisses() {
+//        return cache.getHitStat().getNumberOfMisses();
+//    }
+//
+//    /**
+//     * @see org.coconut.cache.management.CacheMXBean#getHitRatio()
+//     */
+//    @ManagedAttribute(defaultValue="HitRatio", description="The hit ratio")
+//    public double getHitRatio() {
+//        return cache.getHitStat().getHitRatio();
+//    }
+//
+//    /**
+//     * @see org.coconut.cache.management.CacheMXBean#resetHitStat()
+//     */
+//    @ManagedOperation(defaultValue="resetStatistics", description="Resets statistics")
+//    public void resetStatistics() {
+//        cache.resetStatistics();
+//    }
 
     /**
      * @see org.coconut.cache.management.CacheMXBean#clear()

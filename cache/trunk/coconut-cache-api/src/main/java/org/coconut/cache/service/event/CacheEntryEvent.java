@@ -4,12 +4,7 @@
 
 package org.coconut.cache.service.event;
 
-import java.util.Map;
-
 import org.coconut.cache.CacheEntry;
-import org.coconut.filter.Filter;
-import org.coconut.filter.Filters;
-import org.coconut.filter.CollectionFilters.IsTypeFilter;
 
 /**
  * A CacheItemEvent events concerns a particular key-value pair in the cache.
@@ -25,16 +20,7 @@ import org.coconut.filter.CollectionFilters.IsTypeFilter;
  * @version $Id$
  */
 @SuppressWarnings("hiding")
-public interface CacheEntryEvent<K, V> extends CacheEvent<K, V>, Map.Entry<K, V> {
-
-    /**
-     * Returns the cacheentry corresponding to the key-value mapping (optional).
-     * A cache might, for performance reasons, not keep track
-     * 
-     * @throws UnsupportedOperationException
-     *             if the entry does not provide cache entries
-     */
-    CacheEntry<K, V> getEntry();
+public interface CacheEntryEvent<K, V> extends CacheEvent<K, V>, CacheEntry<K, V> {
 
     /**
      * This event indicates that an entry in the cache was accessed. This

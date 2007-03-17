@@ -11,8 +11,6 @@ import static org.coconut.test.CollectionUtils.M4;
 import static org.coconut.test.CollectionUtils.asMap;
 import static org.coconut.test.CollectionUtils.asSet;
 
-import java.util.concurrent.TimeUnit;
-
 import org.coconut.cache.policy.Policies;
 import org.coconut.cache.policy.paging.LRUPolicy;
 import org.coconut.cache.tck.CacheTestBundle;
@@ -25,11 +23,11 @@ public class SimplePolicyEviction extends CacheTestBundle {
         c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(5)
                 .c());
         for (int i = 0; i < 5; i++) {
-            c.put(i, Integer.toString(i), 1, TimeUnit.NANOSECONDS);
+            c.put(i, Integer.toString(i));
         }
         assertEquals(5, c.size());
         for (int i = 5; i < 10; i++) {
-            c.put(i, Integer.toString(i), 1, TimeUnit.NANOSECONDS);
+            c.put(i, Integer.toString(i));
             assertEquals(5, c.size());
         }
     }
@@ -39,7 +37,7 @@ public class SimplePolicyEviction extends CacheTestBundle {
         c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(5)
                 .c());
         for (int i = 0; i < 5; i++) {
-            c.put(i, Integer.toString(i), 1, TimeUnit.NANOSECONDS);
+            c.put(i, Integer.toString(i));
         }
         assertEquals(asSet(0, 1, 2, 3, 4), c.keySet());
         c.put(5, "");
@@ -59,7 +57,7 @@ public class SimplePolicyEviction extends CacheTestBundle {
         c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(10)
                 .c());
         for (int i = 0; i < 10; i++) {
-            c.put(i, Integer.toString(i), 1, TimeUnit.NANOSECONDS);
+            c.put(i, Integer.toString(i));
         }
         c.get(4);
         c.get(4);
@@ -85,7 +83,7 @@ public class SimplePolicyEviction extends CacheTestBundle {
         c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(5)
                 .c());
         for (int i = 0; i < 5; i++) {
-            c.put(i, Integer.toString(i), 1, TimeUnit.NANOSECONDS);
+            c.put(i, Integer.toString(i));
         }
         c.peek(0);
         c.peek(2);
@@ -190,7 +188,7 @@ public class SimplePolicyEviction extends CacheTestBundle {
                 .c().setClock(clock));
 
         for (int i = 0; i < 5; i++) {
-            c.put(i, Integer.toString(i), i + 1, TimeUnit.NANOSECONDS);
+            c.put(i, Integer.toString(i));
         }
         clock.incrementRelativeTime(3);
         c.evict();

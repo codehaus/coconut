@@ -8,6 +8,8 @@ import static org.coconut.internal.util.XmlUtil.addAndSetText;
 import java.lang.management.ManagementFactory;
 
 import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
 
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.w3c.dom.Document;
@@ -15,28 +17,27 @@ import org.w3c.dom.Element;
 
 /**
  * This class is used to configure how the cache can be remotely monitored and
- * controlled (via JMX).
+ * controlled (using JMX).
  * <p>
  * If for some reason the cache fails to properly register with the MBeanServer
- * at construction time a {@link CacheException} is thrown.
+ * at startup time a {@link CacheException} is thrown.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class CacheManagementConfiguration extends AbstractCacheServiceConfiguration {
+public class CacheManagementConfiguration<K, V> extends
+        AbstractCacheServiceConfiguration<K, V> {
 
-    private final static CacheManagementConfiguration DEFAULT = new CacheManagementConfiguration();
+    final static String XML_DOMAIN_TAG = "domain";
 
-    final static String DOMAIN_TAG = "domain";
-
-    final static String MANAGEMENT_TAG = "management";
+    final static String XML_ROOT = "management";
 
     private String domain = CacheMXBean.DEFAULT_JMX_DOMAIN;
 
     private MBeanServer mBeanServer;
 
     public CacheManagementConfiguration() {
-        super(MANAGEMENT_TAG, CacheManagementService.class);
+        super(XML_ROOT, CacheManagementService.class);
     }
 
     public String getDomain() {
@@ -69,20 +70,26 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
         if (domain == null) {
             throw new NullPointerException("domain is null");
         }
-        // TODO validate domain name
+        try {
+            new ObjectName(domain + ":type=foo");
+        } catch (MalformedObjectNameException e) {
+            throw new IllegalArgumentException(
+                    "The specified domain results in an illegal objectname, "
+                            + e.getMessage());
+        }
         this.domain = domain;
         return this;
     }
 
     /**
      * Sets the {@link MBeanServer}} that the cache should register with. If no
-     * value is set the platform {@link MBeanServer} will be used.
+     * value is set the platform {@link MBeanServer} will be used as default.
      * 
      * @param server
      *            the server that the cache should register with
      * @return this configuration
      * @throws NullPointerException
-     *             if server is <tt>null</tt>
+     *             if the specified server is <tt>null</tt>
      */
     public CacheManagementConfiguration setMbeanServer(MBeanServer server) {
         if (server == null) {
@@ -98,7 +105,7 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
      */
     @Override
     protected void fromXML(Document doc, Element e) {
-        Element domainTag = getChild(DOMAIN_TAG, e);
+        Element domainTag = getChild(XML_DOMAIN_TAG, e);
         if (domainTag != null) {
             domain = domainTag.getTextContent();
         }
@@ -110,15 +117,15 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
     @Override
     protected void toXML(Document doc, Element base) {
         /* Domain Filter */
-        if (!domain.equals(DEFAULT.domain)) {
-            addAndSetText(doc, DOMAIN_TAG, base, domain);
+        if (!domain.equals(CacheMXBean.DEFAULT_JMX_DOMAIN)) {
+            addAndSetText(doc, XML_DOMAIN_TAG, base, domain);
         }
         /* MBeanServer */
         if (mBeanServer != null
-                || mBeanServer != ManagementFactory.getPlatformMBeanServer()) {
+                && mBeanServer != ManagementFactory.getPlatformMBeanServer()) {
             addComment(doc, "management.cannotPersistMBeanServer", base);
         }
     }
 
-    //Register event notification
+    // Register event notification
 }

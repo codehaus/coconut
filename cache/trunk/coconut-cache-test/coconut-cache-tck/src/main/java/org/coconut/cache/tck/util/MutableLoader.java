@@ -6,7 +6,7 @@ package org.coconut.cache.tck.util;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.coconut.cache.util.AbstractCacheLoader;
+import org.coconut.cache.service.loading.AbstractCacheLoader;
 
 /**
  * A simple cache loader used for testing. Will return 1->A, 2->B, 3->C, 4->D,

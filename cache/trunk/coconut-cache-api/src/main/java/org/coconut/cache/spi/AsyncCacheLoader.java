@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.Future;
 
-import org.coconut.cache.CacheLoader;
+import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.core.Callback;
 
 /**

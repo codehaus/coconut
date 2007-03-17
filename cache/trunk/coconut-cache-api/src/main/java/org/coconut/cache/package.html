@@ -4,26 +4,15 @@
 <!--
  $Id $
  
- Copyright 2004-2005 Kasper Nielsen. All rights reserved.
+ Copyright 2004-2007 Kasper Nielsen. All rights reserved.
 -->
 
 </head>
 <body bgcolor="white">
-	Provides classes that are fundamental to the design of Coconut Cache.
+Provides classes that are fundamental to the design of Coconut Cache.
 </body>
-
-The most important interface is the Cache interface which is a Map-like structure 
-Short explanation of the following classes
-Cache, CacheConfiguration, CacheEvent+CacheItemEvent, CacheQuery?
-
-Cache Backend
-  CacheLoader, CacheStore,
-Helper Classes
-  Caches, CacheFilters, CacheSingleton
-
-Terminology
-Expiration
-Eviction
-Replacement policy
-Prefetching
+The main interface is the Cache interface which is a Map-like structure.
+The CacheEntry interface is analogues to the Map.Entry interface in
+relation to the Cache interface. Finally there is CacheConfiguration
+which is used to configuring a cache before creating it
 </html>

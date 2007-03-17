@@ -26,7 +26,7 @@ public class SerializablePolicyEviction extends CacheTestBundle {
         Cache<Integer, String> c = newCache(newConf().eviction().setPolicy(
                 Policies.newLRU()).setMaximumSize(10).c());
         for (int i = 0; i < 10; i++) {
-            c.put(i, Integer.toString(i), 1, TimeUnit.NANOSECONDS);
+            c.put(i, Integer.toString(i));
         }
         c.get(4);
         c.get(4);

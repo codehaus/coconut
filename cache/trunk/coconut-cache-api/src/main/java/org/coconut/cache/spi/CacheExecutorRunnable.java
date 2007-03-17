@@ -3,8 +3,6 @@
  */
 package org.coconut.cache.spi;
 
-import java.util.Collection;
-
 import org.coconut.cache.Cache;
 
 /**

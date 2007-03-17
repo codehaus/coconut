@@ -5,8 +5,8 @@ package org.coconut.cache.util;
 
 import static org.junit.Assert.assertEquals;
 
-import org.coconut.cache.Cache;
 import org.coconut.cache.policy.PolicyObject;
+import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.junit.Test;
 
 /**
@@ -30,7 +30,7 @@ public class DefaultCacheEntryTest {
         DefaultCacheEntry dce = DefaultCacheEntry.create("A", "B");
         assertEquals(PolicyObject.DEFAULT_COST, dce.getCost());
         assertEquals(0l, dce.getCreationTime());
-        assertEquals(Cache.DEFAULT_EXPIRATION, dce.getExpirationTime());
+        assertEquals(CacheExpirationService.DEFAULT_EXPIRATION, dce.getExpirationTime());
         assertEquals(-1l, dce.getHits());
         assertEquals("A", dce.getKey());
         assertEquals(0l, dce.getLastAccessTime());

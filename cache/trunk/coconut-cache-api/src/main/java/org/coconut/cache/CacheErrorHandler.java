@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.coconut.cache.service.event.CacheEvent;
+import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.spi.Resources;
 import org.coconut.core.Log;
 import org.coconut.core.util.Logs;

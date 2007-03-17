@@ -6,7 +6,8 @@ package org.coconut.cache.examples.general;
 //START SNIPPET: class
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.defaults.UnsynchronizedCache;
-import org.coconut.cache.util.AbstractCacheLoader;
+import org.coconut.cache.service.loading.AbstractCacheLoader;
+import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 
 public class PlusTwoExample {
     static class Plus2Loader extends AbstractCacheLoader<Integer, Integer> {
@@ -17,7 +18,7 @@ public class PlusTwoExample {
 
     public static void main(String[] args) {
         CacheConfiguration<Integer, Integer> cc = CacheConfiguration.create();
-        cc.backend().setBackend(new Plus2Loader());
+        cc.addService(CacheLoadingConfiguration.class).setBackend(new Plus2Loader());
         UnsynchronizedCache<Integer, Integer> c = cc.newInstance(UnsynchronizedCache.class);
         System.out.println(c.get(5));
         System.out.println(c.get(8));

@@ -13,16 +13,15 @@ import java.util.concurrent.FutureTask;
 
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheErrorHandler;
-import org.coconut.cache.CacheLoader;
 import org.coconut.cache.internal.spi.ExtendedExecutorRunnable;
+import org.coconut.cache.service.loading.AbstractCacheLoader;
+import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.AsyncCacheLoader;
-import org.coconut.cache.spi.CacheExecutorRunnable;
-import org.coconut.cache.spi.CacheUtil;
-import org.coconut.cache.util.AbstractCacheLoader;
 import org.coconut.cache.util.DefaultCacheEntry;
 import org.coconut.core.Callback;
 import org.coconut.core.EventProcessor;
+import org.coconut.internal.util.CollectionUtils;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -89,7 +88,7 @@ public class LoadUtil {
          *      org.coconut.core.Callback)
          */
         public Future<?> asyncLoadAll(Collection<? extends K> keys, Callback<Map<K, V>> c) {
-            CacheUtil.checkCollectionForNulls(keys);
+            CollectionUtils.checkCollectionForNulls(keys);
             LoadValuesRunnable lvr = new LoadValuesRunnable<K, V>(loader, keys, c);
             FutureTask<V> ft = new FutureTask<V>(lvr, null);
             executor.execute(ft);
@@ -212,7 +211,7 @@ public class LoadUtil {
                 }
             }
             if (col.size() > 0) {
-                cache.putEntries(col);
+                cache.putAllEntries(col);
             }
         }
     }

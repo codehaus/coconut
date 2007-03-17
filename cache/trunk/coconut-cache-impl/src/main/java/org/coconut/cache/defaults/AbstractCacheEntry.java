@@ -6,10 +6,10 @@ package org.coconut.cache.defaults;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheErrorHandler;
 import org.coconut.cache.internal.service.expiration.ExpirationCacheService;
+import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.util.DefaultCacheEntry;
 import org.coconut.core.Clock;
 
@@ -97,16 +97,16 @@ abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
             errorHandler
                     .warning("'Must specify a positive expirationTime was expirationTime= "
                             + time + " for key = " + takeFrom.getKey());
-            time = Cache.DEFAULT_EXPIRATION;
+            time = CacheExpirationService.DEFAULT_EXPIRATION;
         }
-        if (time == Cache.DEFAULT_EXPIRATION) {
-            if (cacheDefaultExpirationTimeMS == Cache.NEVER_EXPIRE) {
-                return Cache.NEVER_EXPIRE;
+        if (time == CacheExpirationService.DEFAULT_EXPIRATION) {
+            if (cacheDefaultExpirationTimeMS == CacheExpirationService.NEVER_EXPIRE) {
+                return CacheExpirationService.NEVER_EXPIRE;
             } else {
                 return clock.getDeadlineFromNow(cacheDefaultExpirationTimeMS,
                         TimeUnit.MILLISECONDS);
             }
-        } else if (time == Cache.NEVER_EXPIRE) {
+        } else if (time == CacheExpirationService.NEVER_EXPIRE) {
             return Long.MAX_VALUE;
         } else {
             return takeFrom == null ? clock.getDeadlineFromNow(expirationTime,
@@ -153,19 +153,21 @@ abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         return size;
     }
 
-    static <K, V> long getVersion(CacheEntry<K, V> takeFrom, CacheEntry<K, V> existing,
-            CacheErrorHandler<K, V> errorHandler) {
-        if (takeFrom != null
-                && takeFrom.getVersion() != DefaultCacheEntry.DEFAULT_VERSION) {
-            long version = takeFrom.getVersion();
-            if (version > 0) {
-                return version;
-            }
-            errorHandler.warning("'Must specify a positive version was version= "
-                    + version + " for key = " + takeFrom.getKey());
-        }
-        return existing == null ? 1 : existing.getVersion() + 1;
-    }
+    //
+    // static <K, V> long getVersion(CacheEntry<K, V> takeFrom, CacheEntry<K, V>
+    // existing,
+    // CacheErrorHandler<K, V> errorHandler) {
+    // if (takeFrom != null
+    // && takeFrom.getVersion() != DefaultCacheEntry.DEFAULT_VERSION) {
+    // long version = takeFrom.getVersion();
+    // if (version > 0) {
+    // return version;
+    // }
+    // errorHandler.warning("'Must specify a positive version was version= "
+    // + version + " for key = " + takeFrom.getKey());
+    // }
+    // return existing == null ? 1 : existing.getVersion() + 1;
+    // }
 
     private final double cost;
 
@@ -301,7 +303,7 @@ abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         return policyIndex;
     }
 
-    void increment() {
+    void incrementHits() {
         setHits(getHits() + 1);
     }
 
@@ -335,7 +337,7 @@ abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         long lastAccessTime = getLastAccessTime(entry, existing, cache.getClock(), cache
                 .getErrorHandler());
         long hits = getHits(entry, existing, cache.getErrorHandler());
-        long version = getVersion(entry, entry, cache.getErrorHandler());
+        long version = cache.getNextVersion();
         AbstractCacheEntry<K, V> me = f.createNew(cache, k, v, cost, creationTime,
                 expTime, hits, lastAccessTime, cache.getClock().timestamp(), size,
                 version);
@@ -430,12 +432,6 @@ abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
             K key, V value, long timeoutMillies) {
         return newEntry(UNSYNC, cache, service, null, previous, key, value,
                 timeoutMillies, false);
-    }
-
-    static <K, V> AbstractCacheEntry<K, V> unsyncEntry(SupportedCache<K, V> cache,
-            CacheEntry<K, V> prev, CacheEntry<K, V> entry) {
-
-        return null;
     }
 
     static class UnsynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {

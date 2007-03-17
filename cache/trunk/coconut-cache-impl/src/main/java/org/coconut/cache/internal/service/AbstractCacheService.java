@@ -4,9 +4,9 @@
 package org.coconut.cache.internal.service;
 
 import java.util.Map;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.CacheException;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.management.ManagedGroup;
 
@@ -14,8 +14,7 @@ import org.coconut.management.ManagedGroup;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public abstract class AbstractCacheService<K, V> extends AbstractService implements
-        CacheService<K, V> {
+public abstract class AbstractCacheService<K, V> implements InternalCacheService<K, V> {
 
     private volatile AbstractCache<K, V> cache;
 
@@ -23,33 +22,30 @@ public abstract class AbstractCacheService<K, V> extends AbstractService impleme
 
     private volatile Map<String, Object> properties;
 
-    public AbstractCacheService(CacheConfiguration<K, V> conf) {
+    private final InternalCacheServiceManager manager;
+
+    public AbstractCacheService(InternalCacheServiceManager manager,
+            CacheConfiguration<K, V> conf) {
         this.conf = conf;
+        this.manager = manager;
+
+    }
+
+    protected void checkStarted() {
+        manager.checkStarted();
     }
 
     public void addTo(ManagedGroup dg) {
 
     }
 
-    boolean isStarted() {
-        return runState != RunState.NOT_STARTED;
-    }
-
     public final void start(AbstractCache<K, V> cache, Map<String, Object> properties) {
-        final ReentrantLock mainLock = getMainLock();
-        mainLock.lock();
+        this.cache = cache;
+        this.properties = properties;
         try {
-            if (tryStart()) {
-                this.cache = cache;
-                this.properties = properties;
-                try {
-                    doStart(cache, properties);
-                } catch (Exception e) {
-                    throw new RuntimeException("Could not start cache",e);
-                }
-            }
-        } finally {
-            mainLock.unlock();
+            doStart(cache, properties);
+        } catch (Exception e) {
+            throw new CacheException("Could not start cache", e);
         }
     }
 
@@ -64,5 +60,12 @@ public abstract class AbstractCacheService<K, V> extends AbstractService impleme
 
     protected Object getMutex() {
         return cache;
+    }
+
+    /**
+     * @see org.coconut.cache.internal.service.InternalCacheService#shutdown(java.lang.Runnable)
+     */
+    public void shutdown(Runnable shutdownCallback) throws Exception {
+        shutdownCallback.run();
     }
 }

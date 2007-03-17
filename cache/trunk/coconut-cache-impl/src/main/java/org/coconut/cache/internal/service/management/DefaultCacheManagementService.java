@@ -11,9 +11,9 @@ import javax.management.MBeanServer;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.AbstractCacheService;
+import org.coconut.cache.internal.service.InternalCacheServiceManager;
 import org.coconut.cache.internal.util.WrapperCacheMXBean;
 import org.coconut.cache.service.management.CacheManagementConfiguration;
-import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.Managements;
@@ -28,8 +28,9 @@ public class DefaultCacheManagementService<K, V> extends AbstractCacheService<K,
 
     private final String domain;
 
-    public DefaultCacheManagementService(CacheConfiguration<K, V> conf) {
-        super(conf);
+    public DefaultCacheManagementService(InternalCacheServiceManager manager,
+            CacheConfiguration<K, V> conf) {
+        super(manager, conf);
         CacheManagementConfiguration cmc = conf
                 .getServiceConfiguration(CacheManagementConfiguration.class);
         if (cmc != null) {
@@ -44,6 +45,7 @@ public class DefaultCacheManagementService<K, V> extends AbstractCacheService<K,
     }
 
     public ManagedGroup getGroup() {
+        checkStarted();
         return group;
     }
 
@@ -54,9 +56,17 @@ public class DefaultCacheManagementService<K, V> extends AbstractCacheService<K,
     @Override
     protected void doStart(AbstractCache<K, V> cache, Map<String, Object> properties)
             throws JMException {
-        ManagedGroup g = group.addGroup("General",
+        ManagedGroup g = group.addNewGroup("General",
                 "General cache attributes and settings");
         g.add(new WrapperCacheMXBean(cache));
         group.registerAll(Managements.newRegistrant(domain, "name", "service", "group"));
+    }
+
+    /**
+     * @see org.coconut.cache.internal.service.InternalCacheService#shutdown(java.lang.Runnable)
+     */
+    public void shutdown(Runnable shutdownCallback) throws JMException {
+        group.unregister();
+        
     }
 }

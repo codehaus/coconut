@@ -10,7 +10,7 @@ import java.net.URL;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.defaults.UnsynchronizedCache;
-import org.coconut.cache.util.AbstractCacheLoader;
+import org.coconut.cache.service.loading.AbstractCacheLoader;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -34,7 +34,7 @@ public class CacheHTTPExample {
 
     public static void main(String[] args) {
         CacheConfiguration<String, String> cc = CacheConfiguration.create();
-        cc.backend().setBackend(new UrlLoader());
+        cc.serviceLoading().setBackend(new UrlLoader());
         UnsynchronizedCache<String, String> c = cc.newInstance(UnsynchronizedCache.class);
         readGoogle(c, "Not Cached : ");
         readGoogle(c, "Cached     : ");

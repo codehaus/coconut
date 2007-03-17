@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.defaults.UnsynchronizedCache;
+import org.coconut.cache.service.expiration.CacheExpirationService;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -16,7 +17,8 @@ public class ExplicitTimeoutExample {
     public static void main(String[] args) {
         // START SNIPPET: class
         Cache<String, String> cache = new UnsynchronizedCache<String, String>();
-        cache.put("key", "value", 60 * 60, TimeUnit.SECONDS);
+        cache.getService(CacheExpirationService.class).put("key", "value", 60 * 60,
+                TimeUnit.SECONDS);
         // END SNIPPET: class
     }
 }

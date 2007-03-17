@@ -8,9 +8,6 @@ import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
@@ -47,7 +44,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         if (configuration == null) {
             throw new NullPointerException("configuration is null");
         }
-        ConfigurationValidator.getInstance().verify(configuration,(Class) getClass());
+        ConfigurationValidator.getInstance().verify(configuration, (Class) getClass());
         name = configuration.getName();
         errorHandler = configuration.getErrorHandler();
         errorHandler.setCacheName(name);
@@ -99,82 +96,19 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
     }
 
     /**
-     * The default implementation does not keep statistics about the cache
-     * usage.
-     * 
-     * @see org.coconut.cache.Cache#getHitStat()
-     */
-    public Cache.HitStat getHitStat() {
-        return CacheUtil.STAT00;
-    }
-
-    /**
      * Returns the name of this cache.
      */
     public String getName() {
         return name;
     }
 
-    /**
-     * The default implementation throws {@link UnsupportedOperationException}
-     * 
-     * @see org.coconut.cache.Cache#load(Object)
-     */
-    public Future<?> load(K key) {
-        throw new UnsupportedOperationException(
-                "loadAsync(K key) not supported for Cache of type " + getClass());
-
-    }
-
-    /**
-     * The default implementation throws {@link UnsupportedOperationException}
-     * 
-     * @see org.coconut.cache.Cache#loadAll(Collection)
-     */
-    public Future<?> loadAll(Collection<? extends K> keys) {
-        throw new UnsupportedOperationException(
-                "loadAll(Collection<? extends K> keys) not supported for Cache of type "
-                        + getClass());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public V put(K key, V value) {
-        return put(key, value, DEFAULT_EXPIRATION, TimeUnit.SECONDS);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void putAll(Map<? extends K, ? extends V> m) {
-        putAll(m, DEFAULT_EXPIRATION, TimeUnit.SECONDS);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void putAll(Map<? extends K, ? extends V> m, long expirationTime, TimeUnit unit) {
-        for (Entry<? extends K, ? extends V> e : m.entrySet()) {
-            put(e.getKey(), e.getValue(), expirationTime, unit);
-        }
-    }
-
-    public void putEntries(Collection<CacheEntry<K, V>> entries) {
+    public void putAllEntries(Collection<? extends CacheEntry<K, V>> entries) {
         for (CacheEntry<K, V> entry : entries) {
             putEntry(entry);
         }
     }
 
-    public V putVersion(K key, V value, long previousVersion) {
-        throw new UnsupportedOperationException();
-    }
-    
-    public CacheEntry<K,V> putEntryVersion(CacheEntry<K, V> entry, long previousVersion) {
-        throw new UnsupportedOperationException();
-    }
-    
-    public CacheEntry<K,V> putEntry(CacheEntry<K, V> entry) {
+    public CacheEntry<K, V> putEntry(CacheEntry<K, V> entry) {
         throw new UnsupportedOperationException();
     }
 
@@ -241,13 +175,6 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void resetStatistics() {
-        // ignore for default implementation
-    }
-    
     public void shutdown() {
 
     }
@@ -257,8 +184,9 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
     }
 
     protected void terminated() {
-        
+
     }
+
     /**
      * {@inheritDoc}
      */
@@ -300,15 +228,6 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
      */
     protected void toString0(StringBuilder buf) {
 
-    }
-
-    /**
-     * @see java.util.AbstractMap#entrySet()
-     */
-    @Override
-    public Set<java.util.Map.Entry<K, V>> entrySet() {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     /**

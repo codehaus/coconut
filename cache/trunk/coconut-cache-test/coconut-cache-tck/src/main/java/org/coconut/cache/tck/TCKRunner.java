@@ -4,11 +4,16 @@
 package org.coconut.cache.tck;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import net.jcip.annotations.ThreadSafe;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.spi.CacheSupport;
+import org.coconut.cache.service.event.CacheEventService;
+import org.coconut.cache.spi.annotations.CacheServiceSupport;
+import org.coconut.cache.spi.annotations.CacheSupport;
 import org.coconut.cache.tck.core.BasicCache;
 import org.coconut.cache.tck.core.BasicMap;
 import org.coconut.cache.tck.core.ClearRemove;
@@ -19,27 +24,21 @@ import org.coconut.cache.tck.core.EntrySetModifying;
 import org.coconut.cache.tck.core.KeySet;
 import org.coconut.cache.tck.core.KeySetModifying;
 import org.coconut.cache.tck.core.Put;
-import org.coconut.cache.tck.core.PutTimeoutable;
 import org.coconut.cache.tck.core.Values;
 import org.coconut.cache.tck.core.ValuesModifying;
-import org.coconut.cache.tck.eventbus.EventBusFeature;
 import org.coconut.cache.tck.eviction.CacheEntryToPolicy;
 import org.coconut.cache.tck.eviction.SerializablePolicyEviction;
 import org.coconut.cache.tck.eviction.SimplePolicyEviction;
-import org.coconut.cache.tck.expiration.ExpirationEvict;
-import org.coconut.cache.tck.expiration.ExpirationFilterBased;
-import org.coconut.cache.tck.expiration.ExpirationTimeBased;
-import org.coconut.cache.tck.loading.ConcurrentLoading;
-import org.coconut.cache.tck.loading.ExtendedCacheLoader;
-import org.coconut.cache.tck.loading.FutureLoading;
-import org.coconut.cache.tck.loading.Loading;
-import org.coconut.cache.tck.loading.NoLoadingSupport;
-import org.coconut.cache.tck.other.HitStat;
-import org.coconut.cache.tck.other.NoHitStat;
 import org.coconut.cache.tck.other.NoSerialization;
 import org.coconut.cache.tck.other.Serialization;
-import org.coconut.cache.tck.query.CacheQueryBundle;
-import org.coconut.cache.tck.query.NoQuerySupport;
+import org.coconut.cache.tck.service.event.EventBusFeature;
+import org.coconut.cache.tck.service.expiration.ExpirationEvict;
+import org.coconut.cache.tck.service.expiration.ExpirationFilterBased;
+import org.coconut.cache.tck.service.expiration.ExpirationTimeBased;
+import org.coconut.cache.tck.service.loading.ConcurrentLoading;
+import org.coconut.cache.tck.service.loading.ExtendedCacheLoader;
+import org.coconut.cache.tck.service.loading.FutureLoading;
+import org.coconut.cache.tck.service.loading.Loading;
 import org.junit.Test;
 import org.junit.internal.runners.CompositeRunner;
 import org.junit.internal.runners.InitializationError;
@@ -78,31 +77,38 @@ public class TCKRunner extends Runner {
             throw new IllegalStateException(
                     "Cache implementation must have a CacheSupport annotation");
         }
-        CacheSupport cs = (CacheSupport) tt.getAnnotation(CacheSupport.class);
+        CacheSupport cs = tt.getAnnotation(CacheSupport.class);
+        CacheServiceSupport ss = tt.getAnnotation(CacheServiceSupport.class);
+        List<Class> services = new ArrayList<Class>();
+        if (ss != null) {
+            services = Arrays.asList(ss.value());
+        }
         boolean isThreadSafe = klass.isAnnotationPresent(ThreadSafe.class);
         addCoreFeatures(runner);
 
         addExpiration(runner, cs, isThreadSafe);
         addLoading(runner, cs, isThreadSafe);
-        if (cs.statisticsSupport()) {
-            composite.add(new TestClassRunner(HitStat.class));
-        } else {
-            composite.add(new TestClassRunner(NoHitStat.class));
-        }
-        if (cs.eventSupport()) {
+        // if (cs.statisticsSupport()) {
+        // composite.add(new TestClassRunner(HitStat.class));
+        // } else {
+        // composite.add(new TestClassRunner(NoHitStat.class));
+        // }
+        if (services.contains(CacheEventService.class)) {
             composite.add(new TestClassRunner(EventBusFeature.class));
-        } 
+        }
         if (Serializable.class.isAssignableFrom(tt)) {
             composite.add(new TestClassRunner(Serialization.class));
             composite.add(new TestClassRunner(SerializablePolicyEviction.class));
         } else {
             composite.add(new TestClassRunner(NoSerialization.class));
         }
-        if (cs.querySupport()) {
-            composite.add(new TestClassRunner(CacheQueryBundle.class));
-        } else {
-            composite.add(new TestClassRunner(NoQuerySupport.class));
-        }
+
+        // No query support
+        // if (services.contains(ss) cs.querySupport()) {
+        // composite.add(new TestClassRunner(CacheQueryBundle.class));
+        // } else {
+        // composite.add(new TestClassRunner(NoQuerySupport.class));
+        // }
 
         composite.add(new TestClassRunner(CacheEntryToPolicy.class));
         composite.add(new TestClassRunner(SimplePolicyEviction.class));
@@ -116,18 +122,19 @@ public class TCKRunner extends Runner {
             composite.add(new TestClassRunner(ExpirationEvict.class));
             composite.add(new TestClassRunner(ExpirationFilterBased.class));
             composite.add(new TestClassRunner(ExpirationTimeBased.class));
-//            composite.add(new TestClassRunner(ExpirationCommon.class));
-//            composite.add(new TestClassRunner(ExpirationOnEvict.class));
-//            composite.add(new TestClassRunner(ExpirationStrict.class));
-//            if (isThreadSafe) {
-//                composite.add(new TestClassRunner(ExpirationConcurrent.class));
-//            } else {
-//                //TODO decide what todo, I think we should throw an exception.
-//                //when we have a non asynchronous loader and the lazy strategy
-//                //at construction time that is...
-//                
-//                //composite.add(new TestClassRunner(ExpirationLazySingleThreaded.class));
-//            }
+            // composite.add(new TestClassRunner(ExpirationCommon.class));
+            // composite.add(new TestClassRunner(ExpirationOnEvict.class));
+            // composite.add(new TestClassRunner(ExpirationStrict.class));
+            // if (isThreadSafe) {
+            // composite.add(new TestClassRunner(ExpirationConcurrent.class));
+            // } else {
+            // //TODO decide what todo, I think we should throw an exception.
+            // //when we have a non asynchronous loader and the lazy strategy
+            // //at construction time that is...
+            //                
+            // //composite.add(new
+            // TestClassRunner(ExpirationLazySingleThreaded.class));
+            // }
         }
     }
 
@@ -137,7 +144,6 @@ public class TCKRunner extends Runner {
         composite.add(new TestClassRunner(ClearRemove.class));
         composite.add(new TestClassRunner(ConcurrentMap.class));
         composite.add(new TestClassRunner(Constructors.class));
-        composite.add(new TestClassRunner(PutTimeoutable.class));
         composite.add(new TestClassRunner(Put.class));
         addCollectionViews(runner);
     }
@@ -163,7 +169,7 @@ public class TCKRunner extends Runner {
                 composite.add(new TestClassRunner(ConcurrentLoading.class));
             }
         } else {
-            composite.add(new TestClassRunner(NoLoadingSupport.class));
+         //   composite.add(new TestClassRunner(NoLoadingSupport.class));
         }
     }
 

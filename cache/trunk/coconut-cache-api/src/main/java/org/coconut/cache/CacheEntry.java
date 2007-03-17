@@ -84,13 +84,13 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V>, PolicyObject {
      */
     long getLastUpdateTime();
 
-    /**
-     * Returns a version counter. An implementation may use timestamps for this
-     * or an incrementing number. Timestamps usually have issues with
-     * granularity and are harder to use across clusteres or threads, so an
-     * incrementing counter is often safer.
-     * 
-     * @return the version of the current entry
-     */
-    long getVersion();
+//    /**
+//     * Returns a version counter. An implementation may use timestamps for this
+//     * or an incrementing number. Timestamps usually have issues with
+//     * granularity and are harder to use across clusteres or threads, so an
+//     * incrementing counter is often safer.
+//     * 
+//     * @return the version of the current entry
+//     */
+//    long getVersion();
 }

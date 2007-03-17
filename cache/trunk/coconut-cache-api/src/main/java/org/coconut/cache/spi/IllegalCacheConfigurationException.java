@@ -11,6 +11,9 @@ import org.coconut.cache.CacheException;
  */
 public class IllegalCacheConfigurationException extends CacheException {
 
+    /** serialVersionUID */
+    private static final long serialVersionUID = -1695400915732143052L;
+
     /**
      * 
      */

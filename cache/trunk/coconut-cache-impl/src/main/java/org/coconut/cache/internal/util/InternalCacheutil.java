@@ -7,8 +7,8 @@ import java.util.concurrent.TimeUnit;
 
 import net.jcip.annotations.ThreadSafe;
 
-import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.spi.XmlConfigurator;
 
 /**
@@ -18,10 +18,10 @@ import org.coconut.cache.spi.XmlConfigurator;
 public class InternalCacheutil {
 
     public static long convert(long timeout, TimeUnit unit) {
-        if (timeout == Cache.NEVER_EXPIRE) {
+        if (timeout == CacheExpirationService.NEVER_EXPIRE) {
             return Long.MAX_VALUE;
         } else {
-            long newTime = unit.toMillis(timeout);
+            long newTime = unit.toNanos(timeout);
             if (newTime == Long.MAX_VALUE) {
                 throw new IllegalArgumentException(
                         "Overflow for specified expiration time, was " + timeout + " "
