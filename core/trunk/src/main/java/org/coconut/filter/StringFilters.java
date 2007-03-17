@@ -6,7 +6,6 @@ package org.coconut.filter;
 
 import java.io.Serializable;
 
-
 public class StringFilters {
 
     public static Filter<String> contains(CharSequence charSequence) {
@@ -32,6 +31,31 @@ public class StringFilters {
 
         public boolean accept(String element) {
             return element.contains(charSequence);
+        }
+
+        /**
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof ContainsFilter
+                    && ((ContainsFilter) obj).charSequence.equals(charSequence);
+        }
+
+        /**
+         * @see java.lang.Object#hashCode()
+         */
+        @Override
+        public int hashCode() {
+            return charSequence.hashCode();
+        }
+
+        /**
+         * @see java.lang.Object#toString()
+         */
+        @Override
+        public String toString() {
+            return "String contains '" + charSequence + "'";
         }
     }
 

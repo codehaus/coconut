@@ -27,11 +27,13 @@ import org.coconut.core.util.Transformers;
  */
 public final class CollectionFilters {
 
-
+    public static <T> Filter<T> isNull() {
+        return new IsNullFilter();
+    }
+    
     public static <T> Filter<T> notNullAnd(Filter<T> f) {
         return new NotNullAndFilter<T>(f);
     }
-
 
     public static <E> Collection<E> filter(Collection<E> collection, Filter<E> filter) {
         if (collection == null) {
@@ -127,15 +129,11 @@ public final class CollectionFilters {
 
     // }
 
-    public static class AnnotationPresentFilter {
-
-    }
-
     /**
      * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
      * @version $Id: Filters.java 67 2006-09-28 08:07:48Z kasper $
      */
-    public final static class TransformerFilter<F, T> implements Filter<F>, Serializable {
+    final static class TransformerFilter<F, T> implements Filter<F>, Serializable {
 
         /** serialVersionUID */
         private static final long serialVersionUID = -6292758840373110577L;
@@ -212,7 +210,7 @@ public final class CollectionFilters {
      * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
      * @version $Id: Filters.java 67 2006-09-28 08:07:48Z kasper $
      */
-    public final static class IsTypeFilter implements Filter, Serializable {
+    final static class IsTypeFilter implements Filter, Serializable {
 
         /** A Filter that accepts all classes. */
         public static final Filter<?> ALL = new IsTypeFilter(Object.class);
@@ -260,7 +258,7 @@ public final class CollectionFilters {
         }
     }
 
-    public final static class IsNullFilter implements Filter, Serializable {
+    final static class IsNullFilter implements Filter, Serializable {
         /** serialVersionUID */
         private static final long serialVersionUID = 6280765768913457567L;
 
@@ -277,7 +275,7 @@ public final class CollectionFilters {
         }
     }
 
-    public final static class NotNullAndFilter<T> implements Filter<T>, Serializable {
+    final static class NotNullAndFilter<T> implements Filter<T>, Serializable {
         /** serialVersionUID */
         private static final long serialVersionUID = -324206595097699714L;
 
@@ -305,11 +303,15 @@ public final class CollectionFilters {
 
     }
 
+    public static <F, T> Filter<F> transformFilter(final Transformer<F, T> transformer,
+            Filter<T> filter) {
+        return new TransformerFilter<F, T>(transformer, filter);
+    }
+
     public static <E> Filter<E> transformFilter(Class<E> c, String method, Filter<?> f) {
         Transformer<E, ?> t = Transformers.transform(c, method);
         return new TransformerFilter(t, f);
     }
-
 
     @SuppressWarnings("unchecked")
     public static <K, V> Filter<Map.Entry<K, V>> keyFilter(Filter<K> filter) {
@@ -371,10 +373,10 @@ public final class CollectionFilters {
     @SuppressWarnings("unchecked")
     public static <K, V> Filter<Map.Entry<K, V>> anyValueInCollection(
             final Collection<? extends V> values) {
-        //TODO what about null values in the collection?
+        // TODO what about null values in the collection?
         return (Filter) valueFilter(Filters.anyEquals(values.toArray()));
     }
-    
+
     // /CLOVER:OFF
     /** Cannot instantiate. */
     private CollectionFilters() {

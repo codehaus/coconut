@@ -62,6 +62,13 @@ public class CollectionFiltersTest extends MockTestCase {
         assertFalse(f.accept((Map.Entry) mock2.proxy()));
     }
 
+    public void testNullFilter() {
+        Filter f = CollectionFilters.isNull();
+        assertTrue(f.accept(null));
+        assertFalse(f.accept(1));
+        assertFalse(f.accept(f));
+    }
+
     public void testAnyValueEqualsFilter() {
         Mock mock = mock(Map.Entry.class);
         Mock mock2 = mock(Map.Entry.class);

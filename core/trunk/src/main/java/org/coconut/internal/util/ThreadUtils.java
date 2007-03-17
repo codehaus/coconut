@@ -16,28 +16,12 @@ import java.util.concurrent.Executor;
 public class ThreadUtils {
     public final static Executor SAME_THREAD_EXECUTOR = new SameThreadExecutor();
 
-
     /**
      * A {@link java.util.concurrent.Callable} that returns <code>null</code>
      * on every invocation of {@link #call}.
      */
-    private static Callable NULL_CALLABLE = new NullCallable();
-
+    public static Callable NULL_CALLABLE = new NullCallable();
     
-    static class SameThreadExecutor implements Executor, Serializable {
-
-        /** serialVersionUID */
-        private static final long serialVersionUID = -6365439666830575122L;
-
-        /**
-         * @see java.util.concurrent.Executor#execute(java.lang.Runnable)
-         */
-        public void execute(Runnable command) {
-            command.run();
-        }
-    }
-    
-
     /**
      * A {@link java.util.concurrent.Callable} that returns <code>null</code>
      * on every invocation of {@link java.util.concurrent.Callable#call}.
@@ -59,6 +43,20 @@ public class ThreadUtils {
         /** {@inheritDoc} */
         public V call() {
             return null;
+        }
+    }
+    
+
+    static class SameThreadExecutor implements Executor, Serializable {
+
+        /** serialVersionUID */
+        private static final long serialVersionUID = -6365439666830575122L;
+
+        /**
+         * @see java.util.concurrent.Executor#execute(java.lang.Runnable)
+         */
+        public void execute(Runnable command) {
+            command.run();
         }
     }
 }

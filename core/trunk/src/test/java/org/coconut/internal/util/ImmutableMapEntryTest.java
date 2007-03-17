@@ -20,10 +20,6 @@ import org.junit.Test;
  */
 public class ImmutableMapEntryTest {
 
-    public static junit.framework.Test suite() {
-        return new JUnit4TestAdapter(ImmutableMapEntryTest.class);
-    }
-    
     @Test(expected = UnsupportedOperationException.class)
     public void testMapEntryTest() {
         

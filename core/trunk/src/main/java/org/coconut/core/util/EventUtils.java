@@ -29,116 +29,6 @@ import org.coconut.core.Transformer;
  * @version $Id$
  */
 public final class EventUtils {
-
-
-    static class EventHandlerAsBatch<E> implements EventProcessor<E> {
-
-        private final EventProcessor<E> eh;
-
-        public EventHandlerAsBatch(EventProcessor<E> eh) {
-            this.eh = eh;
-        }
-
-        /**
-         * @see org.coconut.core.EventHandler#handle(E)
-         */
-        public void process(E event) {
-            eh.process(event);
-        }
-
-        /**
-         * @see org.coconut.event.BatchedEventHandler#handleAll(java.util.List)
-         */
-        public void handleAll(List<? extends E> list) {
-            for (E e : list) {
-                try {
-                    process(e);
-                } catch (RuntimeException re) {
-                    if (!handleRuntimeException(e, re)) {
-                        return;
-                    }
-                }
-            }
-        }
-
-        protected boolean handleRuntimeException(E event, RuntimeException re) {
-            // ignore
-            return true;
-        }
-    }
-
-    static class ProcessEventFromFactory<E> implements Runnable, Serializable {
-
-        private final EventProcessor<? super E> eh;
-
-        private final Callable<E> factory;
-
-        /**
-         * @param event
-         * @param eh
-         */
-        public ProcessEventFromFactory(final Callable<E> factory,
-                final EventProcessor<? super E> eh) {
-            if (eh == null) {
-                throw new NullPointerException("eh is null");
-            } else if (factory == null) {
-                throw new NullPointerException("factory is null");
-            }
-            this.factory = factory;
-            this.eh = eh;
-        }
-
-        /**
-         * @see java.lang.Runnable#run()
-         */
-        public void run() {
-            try {
-                E event = factory.call();
-                eh.process(event);
-            } catch (RuntimeException re) {
-                throw re;
-            } catch (Exception e) {
-                throw new IllegalStateException("Could not create new value", e);
-            }
-        }
-    }
-
-    static class ProcessEvent<E> implements Runnable, Serializable {
-
-        private final EventProcessor<? super E> eh;
-
-        private final E event;
-
-        /**
-         * @param event
-         * @param eh
-         */
-        public ProcessEvent(final E event, final EventProcessor<? super E> eh) {
-            if (eh == null) {
-                throw new NullPointerException("eh is null");
-            } else if (event == null) {
-                throw new NullPointerException("event is null");
-            }
-            this.event = event;
-            this.eh = eh;
-        }
-
-        /**
-         * @see java.lang.Runnable#run()
-         */
-        public void run() {
-            eh.process(event);
-        }
-    }
-
-    public static <E> Runnable processEvent(E event, EventProcessor<E> handler) {
-        return new ProcessEvent<E>(event, handler);
-    }
-
-    public static <E> Runnable processEvent(Callable<E> factory, EventProcessor<E> handler) {
-        return new ProcessEventFromFactory<E>(factory, handler);
-    }
-    
     static class IgnoreTrueOfferable<E> implements Offerable<E>, Serializable {
         /** serialVersionUID */
         private static final long serialVersionUID = -8883512217513983631L;
@@ -176,13 +66,13 @@ public final class EventUtils {
         }
     }
 
-    static class EventHandler2OfferableAdaptor<E> implements Offerable<E>, Serializable {
+    static class EventProcessor2OfferableAdaptor<E> implements Offerable<E>, Serializable {
         /** serialVersionUID */
         private static final long serialVersionUID = 5555001640212350081L;
 
         private final EventProcessor<E> offerable;
 
-        public EventHandler2OfferableAdaptor(final EventProcessor<E> offerable) {
+        public EventProcessor2OfferableAdaptor(final EventProcessor<E> offerable) {
             if (offerable == null) {
                 throw new NullPointerException("offerable is null");
             }
@@ -224,7 +114,6 @@ public final class EventUtils {
      */
     public static <E> EventProcessor<E> fromOfferable(final Offerable<E> offerable) {
         return new Offerable2EventHandlerAdaptor<E>(offerable);
-
     }
 
     /**
@@ -277,15 +166,7 @@ public final class EventUtils {
      *             if the supplied eventHandler is <code>null</code>
      */
     public static <E> Offerable<E> toOfferable(final EventProcessor<E> handler) {
-        if (handler == null) {
-            throw new NullPointerException("handler is null");
-        }
-        return new Offerable<E>() {
-            public boolean offer(E element) {
-                handler.process(element);
-                return true;
-            }
-        };
+        return new EventProcessor2OfferableAdaptor<E>(handler);
     }
 
     public static <E> Offerable<E> toOfferableSafe(final EventProcessor<E> eventHandler) {
@@ -330,60 +211,12 @@ public final class EventUtils {
         };
     }
 
-    /**
-     * Wraps an {@link EventHandler} in an {@link Queue}.
-     * 
-     * @param handler
-     *            the EventHandler to wrap
-     * @return a Queue wrapping an EventHandler
-     * @throws NullPointerException
-     *             if the supplied eventHandler is <code>null</code>
-     */
-    public static <E> Queue<E> toQueue(final EventProcessor<E> handler) {
-        if (handler == null) {
-            throw new NullPointerException("handler is null");
-        }
-        return new AbstractQueue<E>() {
-            @Override
-            public Iterator<E> iterator() {
-                throw new UnsupportedOperationException();
-            }
-
-            public boolean offer(E element) {
-                handler.process(element);
-                return true;
-            }
-
-            public E peek() {
-                throw new UnsupportedOperationException();
-            }
-
-            public E poll() {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public int size() {
-                return 0;
-            }
-        };
-    }
-
     public static <E> EventProcessor<E> toSystemOut() {
         return toPrintStream(System.out);
     }
 
     public static <E> EventProcessor<E> toSystemOutSafe() {
         return toPrintStreamSafe(System.out);
-    }
-
-    public static <F, T> EventProcessor<T> wrapEventHandler(final EventProcessor<F> from,
-            final Transformer<T, F> t) {
-        return new EventProcessor<T>() {
-            public void process(T element) {
-                from.process(t.transform(element));
-            }
-        };
     }
 
     // /CLOVER:OFF

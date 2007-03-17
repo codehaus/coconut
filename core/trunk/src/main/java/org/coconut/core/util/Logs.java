@@ -21,14 +21,13 @@ import org.coconut.core.Log;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
 public final class Logs {
-
     /**
      * Creates a new Log that ignores any input.
      * 
      * @return a logger that ignores any input.
      */
     public static Log nullLog() {
-        return new SimpelLogger(Log.Level.Off.getLevel());
+        return new SimpleLogger(Log.Level.Off.getLevel());
     }
 
     /**
@@ -38,15 +37,20 @@ public final class Logs {
      * @return a system.out logger
      */
     public static Log systemOutLog(Log.Level level) {
-        return new SimpelLogger(level.getLevel(), System.out);
+        return new SimpleLogger(level.getLevel(), System.out);
     }
 
     public static Log systemErrLog(Log.Level level) {
-        return new SimpelLogger(level.getLevel(), System.err);
+        return new SimpleLogger(level.getLevel(), System.err);
     }
 
     public static Log printStreamLog(Log.Level level, PrintStream ps) {
-        return new SimpelLogger(level.getLevel(), ps);
+        return new SimpleLogger(level.getLevel(), ps);
+    }
+
+    public static String getName(Log log) {
+        return log instanceof Logs.AbstractLogger ? ((Logs.AbstractLogger) log).getName()
+                : null;
     }
 
     /**
@@ -78,9 +82,6 @@ public final class Logs {
         }
 
         public static boolean isLog4jLogger(Log log) {
-            if (log == null) {
-                throw new NullPointerException("log is null");
-            }
             return log instanceof Log4JLogger;
         }
 
@@ -92,7 +93,7 @@ public final class Logs {
         }
     }
 
-    public static abstract class AbstractLogger implements Log {
+    static abstract class AbstractLogger implements Log {
         public boolean isDebugEnabled() {
             return isEnabled(Level.Debug);
         }
@@ -168,17 +169,17 @@ public final class Logs {
         public abstract String getName();
     }
 
-    static class SimpelLogger extends AbstractLogger {
+    static class SimpleLogger extends AbstractLogger {
         private final int level;
 
         private final PrintStream stream;
 
-        SimpelLogger(int level) {
+        SimpleLogger(int level) {
             this.level = level;
             this.stream = null;
         }
 
-        SimpelLogger(int level, PrintStream stream) {
+        SimpleLogger(int level, PrintStream stream) {
             if (stream == null) {
                 throw new NullPointerException("stream is null");
             }
@@ -207,7 +208,7 @@ public final class Logs {
          */
         @Override
         public String getName() {
-            return "simpel";
+            return "simple";
         }
     }
 
@@ -246,10 +247,6 @@ public final class Logs {
         }
 
         public String getName() {
-            return log.getName();
-        }
-        
-        public String toString() {
             return log.getName();
         }
     }
@@ -318,9 +315,6 @@ public final class Logs {
         }
 
         public static boolean isCommonsLogger(Log log) {
-            if (log == null) {
-                throw new NullPointerException("log is null");
-            }
             return log instanceof CommonsLogger;
         }
 
@@ -330,14 +324,6 @@ public final class Logs {
             }
             return ((CommonsLogger) log).log;
         }
-    }
-
-    public static Log fromLog4j(String name) {
-        return Logs.Log4j.from(name);
-    }
-    
-    public static Log fromCommons(String name) {
-        return Logs.Commons.from(name);
     }
     static class CommonsLogger extends AbstractLogger {
         private final org.apache.commons.logging.Log log;
@@ -421,9 +407,10 @@ public final class Logs {
         @Override
         public String getName() {
             if (log instanceof org.apache.commons.logging.impl.Jdk14Logger) {
-                return ((org.apache.commons.logging.impl.Jdk14Logger) log).getLogger().getName();
-            } else if (log instanceof Log4JLogger) {
-                return ((Log4JLogger) log).getName();
+                return ((org.apache.commons.logging.impl.Jdk14Logger) log).getLogger()
+                        .getName();
+            } else if (log instanceof org.apache.commons.logging.impl.Log4JLogger) {
+                return ((org.apache.commons.logging.impl.Log4JLogger) log).getLogger().getName();
             } else {
                 return null;// or should we throw an exception?
             }
@@ -444,9 +431,6 @@ public final class Logs {
         }
 
         public static boolean isJDKLogger(Log log) {
-            if (log == null) {
-                throw new NullPointerException("log is null");
-            }
             return log instanceof JDKLogger;
         }
 

@@ -414,11 +414,6 @@ public final class Transformers {
         }
 
         @Override
-        public Object clone() {
-            return new ArrayTransformer(t);
-        }
-
-        @Override
         public boolean equals(Object obj) {
             return (obj instanceof ArrayTransformer)
                     && Arrays.equals(t, ((ArrayTransformer) obj).t);

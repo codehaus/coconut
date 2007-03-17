@@ -8,8 +8,8 @@ import java.util.concurrent.TimeUnit;
 import org.w3c.dom.Element;
 
 /**
- * 
- * 
+ * Mostly Copied from the TimeUnit class for Jave SE 6.0.
+ * The reason is primarily support for minutes,hours and days.
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -206,9 +206,7 @@ public enum UnitOfTime {
      * or <tt>Long.MIN_VALUE</tt> if conversion would negatively
      * overflow, or <tt>Long.MAX_VALUE</tt> if it would positively overflow.
      */
-    public long convert(long sourceDuration, UnitOfTime sourceUnit) {
-        throw new AbstractMethodError();
-    }
+    public abstract long convert(long sourceDuration, UnitOfTime sourceUnit);
 
     /**
      * Equivalent to <tt>NANOSECONDS.convert(duration, this)</tt>.
@@ -218,9 +216,7 @@ public enum UnitOfTime {
      * overflow, or <tt>Long.MAX_VALUE</tt> if it would positively overflow.
      * @see #convert
      */
-    public long toNanos(long duration) {
-        throw new AbstractMethodError();
-    }
+    public abstract long toNanos(long duration);
 
     /**
      * Equivalent to <tt>MICROSECONDS.convert(duration, this)</tt>.
@@ -230,9 +226,7 @@ public enum UnitOfTime {
      * overflow, or <tt>Long.MAX_VALUE</tt> if it would positively overflow.
      * @see #convert
      */
-    public long toMicros(long duration) {
-        throw new AbstractMethodError();
-    }
+    public abstract long toMicros(long duration);
 
     /**
      * Equivalent to <tt>MILLISECONDS.convert(duration, this)</tt>.
@@ -242,9 +236,7 @@ public enum UnitOfTime {
      * overflow, or <tt>Long.MAX_VALUE</tt> if it would positively overflow.
      * @see #convert
      */
-    public long toMillis(long duration) {
-        throw new AbstractMethodError();
-    }
+    public abstract long toMillis(long duration);
 
     /**
      * Equivalent to <tt>SECONDS.convert(duration, this)</tt>.
@@ -254,9 +246,7 @@ public enum UnitOfTime {
      * overflow, or <tt>Long.MAX_VALUE</tt> if it would positively overflow.
      * @see #convert
      */
-    public long toSeconds(long duration) {
-        throw new AbstractMethodError();
-    }
+    public abstract long toSeconds(long duration);
 
     /**
      * Equivalent to <tt>MINUTES.convert(duration, this)</tt>.
@@ -267,9 +257,7 @@ public enum UnitOfTime {
      * @see #convert
      * @since 1.6
      */
-    public long toMinutes(long duration) {
-        throw new AbstractMethodError();
-    }
+    public abstract long toMinutes(long duration);
 
     /**
      * Equivalent to <tt>HOURS.convert(duration, this)</tt>.
@@ -280,9 +268,7 @@ public enum UnitOfTime {
      * @see #convert
      * @since 1.6
      */
-    public long toHours(long duration) {
-        throw new AbstractMethodError();
-    }
+    public abstract long toHours(long duration);
 
     /**
      * Equivalent to <tt>DAYS.convert(duration, this)</tt>.
@@ -291,9 +277,7 @@ public enum UnitOfTime {
      * @see #convert
      * @since 1.6
      */
-    public long toDays(long duration) {
-        throw new AbstractMethodError();
-    }
+    public abstract long toDays(long duration);
 
     /**
      * Utility to compute the excess-nanosecond argument to wait,

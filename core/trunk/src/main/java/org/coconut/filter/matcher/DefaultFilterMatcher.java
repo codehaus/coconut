@@ -4,6 +4,7 @@
 package org.coconut.filter.matcher;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,13 +27,17 @@ public class DefaultFilterMatcher<K, E> extends AbstractFilterMatcher<K, E> {
     /**
      * @see org.coconut.filter.spi.FilterIndexer#match(java.lang.Object)
      */
+    @SuppressWarnings("unchecked")
     public List<K> match(E event) {
-        ArrayList<K> al = new ArrayList<K>();
+        List<K> al = null;
         for (Map.Entry<K, Filter<? super E>> f : getMap().entrySet()) {
             if (f.getValue().accept(event)) {
+                if (al == null) {
+                    al = new ArrayList<K>();
+                }
                 al.add(f.getKey());
             }
         }
-        return al;
+        return al == null ? Collections.EMPTY_LIST : al;
     }
 }

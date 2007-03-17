@@ -31,15 +31,14 @@ public class FileFilters {
      * <p>
      */
     @FilterAcceptTypesAnnotation(File.class)
-    public final static class FileCanReadFilter implements Filter<File>,
-            FileFilter, Serializable {
+    final static class FileCanReadFilter implements Filter<File>, FileFilter,
+            Serializable {
 
         /** A default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = -7655221428681897754L;
 
         /** Same hashcode for every Filter of this type. */
-        private static final int hashcode = FileCanReadFilter.class.getName()
-                .hashCode();
+        private static final int hashcode = FileCanReadFilter.class.getName().hashCode();
 
         /** A default instance of a FileCanReadFilter. */
         public static final FileCanReadFilter INSTANCE = new FileCanReadFilter();
@@ -86,8 +85,8 @@ public class FileFilters {
      * @version $Id: FileFilters.java 36 2006-08-22 09:59:45Z kasper $
      */
     @FilterAcceptTypesAnnotation(File.class)
-    public final static class FileCanWriteFilter implements Filter<File>,
-            FileFilter, Serializable {
+    final static class FileCanWriteFilter implements Filter<File>, FileFilter,
+            Serializable {
 
         /** A default instance of a FileCanReadFilter. */
         public static final FileCanWriteFilter INSTANCE = new FileCanWriteFilter();
@@ -96,8 +95,7 @@ public class FileFilters {
         private static final long serialVersionUID = 3544385898989828152L;
 
         /** Same hashcode for every Filter of this type. */
-        private static final int hashcode = FileCanReadFilter.class.getName()
-                .hashCode();
+        private static final int hashcode = FileCanReadFilter.class.getName().hashCode();
 
         /**
          * @see org.coconut.filter.Filter#accept(Object)
@@ -139,8 +137,7 @@ public class FileFilters {
      * @version $Id: FileFilters.java 36 2006-08-22 09:59:45Z kasper $
      */
     @FilterAcceptTypesAnnotation(File.class)
-    public final static class FileExistsFilter implements Filter<File>,
-            FileFilter, Serializable {
+    final static class FileExistsFilter implements Filter<File>, FileFilter, Serializable {
 
         /** A default instance of a FileExistsFilter. */
         public static final FileExistsFilter INSTANCE = new FileExistsFilter();
@@ -149,8 +146,7 @@ public class FileFilters {
         private static final long serialVersionUID = 3257850965406265907L;
 
         /** Same hashcode for every Filter of this type. */
-        private static final int hashcode = FileExistsFilter.class.getName()
-                .hashCode();
+        private static final int hashcode = FileExistsFilter.class.getName().hashCode();
 
         /**
          * @see org.coconut.filter.Filter#accept(Object)
@@ -193,20 +189,17 @@ public class FileFilters {
      * @version $Id: FileFilters.java 36 2006-08-22 09:59:45Z kasper $
      */
     @FilterAcceptTypesAnnotation(File.class)
-    public final static class FileExtensionFilter implements Filter<File>,
-            FileFilter, Serializable {
+    final static class FileExtensionFilter implements Filter<File>, FileFilter,
+            Serializable {
 
         /** A predifined casesensitive Filter that looks for all .java files. */
-        public static final FileExtensionFilter EXT_JAVA = new FileExtensionFilter(
-                "java");
+        public static final FileExtensionFilter EXT_JAVA = new FileExtensionFilter("java");
 
         /** A predifined casesensitive Filter that looks for all .xml files. */
-        public static final FileExtensionFilter EXT_XML = new FileExtensionFilter(
-                "xml");
+        public static final FileExtensionFilter EXT_XML = new FileExtensionFilter("xml");
 
         /** A predifined casesensitive Filter that looks for all .txt files. */
-        public static final FileExtensionFilter EXT_TXT = new FileExtensionFilter(
-                "txt");
+        public static final FileExtensionFilter EXT_TXT = new FileExtensionFilter("txt");
 
         /** A default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 3258408439225857329L;
@@ -298,8 +291,7 @@ public class FileFilters {
          */
         public boolean equals(FileExtensionFilter filter) {
             if (isCaseSensitive) {
-                return filter.isCaseSensitive
-                        && extension.equals(filter.extension);
+                return filter.isCaseSensitive && extension.equals(filter.extension);
             } else {
                 return !filter.isCaseSensitive
                         && extension.equalsIgnoreCase(filter.extension);
@@ -327,8 +319,8 @@ public class FileFilters {
      * @version $Id: FileFilters.java 36 2006-08-22 09:59:45Z kasper $
      */
     @FilterAcceptTypesAnnotation(File.class)
-    public final static class FileInDirectoryFilter implements Filter<File>,
-            FileFilter, Serializable {
+    final static class FileInDirectoryFilter implements Filter<File>, FileFilter,
+            Serializable {
 
         /** A default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 3258411750712883504L;
@@ -464,8 +456,8 @@ public class FileFilters {
      * @version $Id: FileFilters.java 36 2006-08-22 09:59:45Z kasper $
      */
     @FilterAcceptTypesAnnotation(File.class)
-    public final static class FileIsHiddenFilter implements Filter<File>,
-            FileFilter, Serializable {
+    final static class FileIsHiddenFilter implements Filter<File>, FileFilter,
+            Serializable {
 
         /** The default FileIsHiddenFilter instance. */
         public static final FileIsHiddenFilter INSTANCE = new FileIsHiddenFilter();
@@ -474,8 +466,7 @@ public class FileFilters {
         private static final long serialVersionUID = 3760840164653742384L;
 
         /** Same hashcode for every Filter of this type. */
-        private static final int hashcode = FileIsHiddenFilter.class.getName()
-                .hashCode();
+        private static final int hashcode = FileIsHiddenFilter.class.getName().hashCode();
 
         /**
          * @see org.coconut.filter.Filter#accept(Object)
@@ -520,8 +511,7 @@ public class FileFilters {
      * @version $Id: FileFilters.java 36 2006-08-22 09:59:45Z kasper $
      */
     @FilterAcceptTypesAnnotation(File.class)
-    public final static class FileIsDirectoryFilter implements Filter<File>,
-            Serializable {
+    final static class FileIsDirectoryFilter implements Filter<File>, Serializable {
 
         /** The default FileIsDirectoryFilter instance. */
         public static final FileIsDirectoryFilter INSTANCE = new FileIsDirectoryFilter();
@@ -530,8 +520,8 @@ public class FileFilters {
         private static final long serialVersionUID = 3258126947053024568L;
 
         /** Same hashcode for every Filter of this type. */
-        private static final int hashcode = FileIsDirectoryFilter.class
-                .getName().hashCode();
+        private static final int hashcode = FileIsDirectoryFilter.class.getName()
+                .hashCode();
 
         /**
          * @see org.coconut.filter.Filter#accept(Object)

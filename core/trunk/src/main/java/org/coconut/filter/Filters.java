@@ -167,7 +167,7 @@ public class Filters {
      * A Filter that tests that <tt>all</tt> of the supplied Filters accepts a
      * given element.
      */
-    public final static class AllFilter<E> implements Filter<E>, CompositeFilter<E>,
+    final static class AllFilter<E> implements Filter<E>, CompositeFilter<E>,
             Iterable<Filter<E>>, Serializable {
 
         /** Default <code>serialVersionUID</code> */
@@ -255,7 +255,7 @@ public class Filters {
      * A Filter that performs a logical exclusive AND on two supplied filters.
      * The filter TODO check focs for javas and.
      */
-    public final static class AndFilter<E> implements Filter<E>, CompositeFilter<E>,
+    final static class AndFilter<E> implements Filter<E>, CompositeFilter<E>,
             Serializable {
 
         /** Default <code>serialVersionUID</code> */
@@ -348,7 +348,7 @@ public class Filters {
      * A Filter that tests that at least one of the supplied filters accepts a
      * given element.
      */
-    public final static class AnyFilter<E> implements Filter<E>, CompositeFilter<E>,
+    final static class AnyFilter<E> implements Filter<E>, CompositeFilter<E>,
             Iterable<Filter<E>>, Serializable {
 
         /** Default <code>serialVersionUID</code> */
@@ -431,7 +431,7 @@ public class Filters {
      * 
      * @see TrueFilter
      */
-    public final static class FalseFilter implements Filter, Serializable {
+    final static class FalseFilter implements Filter, Serializable {
 
         /** The one and only instance. */
         static final FalseFilter INSTANCE = new FalseFilter();
@@ -466,7 +466,7 @@ public class Filters {
      * A Filter that test that a supplied Filter does <tt>not</tt> accept a
      * given Element.
      */
-    public final static class NotFilter<E> implements Filter<E>, CompositeFilter<E>,
+    final static class NotFilter<E> implements Filter<E>, CompositeFilter<E>,
             Serializable {
 
         /** Default <code>serialVersionUID</code> */
@@ -530,7 +530,7 @@ public class Filters {
     /**
      * A Filter that performs a logical inclusive OR on two supplied filters.
      */
-    public final static class OrFilter<E> implements Filter<E>, CompositeFilter<E>,
+    final static class OrFilter<E> implements Filter<E>, CompositeFilter<E>,
             Serializable {
 
         /** Default <code>serialVersionUID</code> */
@@ -610,7 +610,7 @@ public class Filters {
      * 
      * @see FalseFilter
      */
-    public final static class TrueFilter implements Filter, Serializable {
+    final static class TrueFilter implements Filter, Serializable {
 
         /** The TrueFilter instance. */
         static final TrueFilter INSTANCE = new TrueFilter();
@@ -645,7 +645,7 @@ public class Filters {
      * A Filter that performs a logical exclusive OR (XOR) on two supplied
      * filters.
      */
-    public final static class XorFilter<E> implements CompositeFilter<E>, Filter<E>,
+    final static class XorFilter<E> implements CompositeFilter<E>, Filter<E>,
             Serializable {
 
         /** Default <code>serialVersionUID</code> */
@@ -720,7 +720,7 @@ public class Filters {
      * A Filter that accepts all elements that are {@link Object#equals equal}
      * to the specified object.
      */
-    public final static class EqualsFilter<E> implements Filter<E>, Serializable {
+    final static class EqualsFilter<E> implements Filter<E>, Serializable {
 
         /** Default <code>serialVersionUID</code> */
         private static final long serialVersionUID = 3761971557773620791L;
@@ -777,7 +777,7 @@ public class Filters {
     /**
      * A greather-then filter as per Comparable/Comparator contract.
      */
-    public final static class GreaterThenFilter<E> implements Filter<E>, Serializable {
+    final static class GreaterThenFilter<E> implements Filter<E>, Serializable {
 
         /** <code>serialVersionUID</code> */
         private static final long serialVersionUID = -6815218477296552273L;
@@ -854,7 +854,7 @@ public class Filters {
     /**
      * A Greather Then Or Equal filter as per Comparable/Comparator contract.
      */
-    public final static class GreaterThenOrEqualFilter<E> implements Filter<E>,
+    final static class GreaterThenOrEqualFilter<E> implements Filter<E>,
             Serializable {
 
         /** <code>serialVersionUID</code> */
@@ -932,7 +932,7 @@ public class Filters {
     /**
      * A Less Then filter as per Comparable/Comparator contract.
      */
-    public final static class LessThenFilter<E> implements Filter<E>, Serializable {
+    final static class LessThenFilter<E> implements Filter<E>, Serializable {
 
         /** <code>serialVersionUID</code> */
         private static final long serialVersionUID = 1330339174193813467L;
@@ -1009,7 +1009,7 @@ public class Filters {
     /**
      * A Less Then filter as per Comparable/Comparator contract.
      */
-    public final static class LessThenOrEqualFilter<E> implements Filter<E>, Serializable {
+    final static class LessThenOrEqualFilter<E> implements Filter<E>, Serializable {
 
         /** <code>serialVersionUID</code> */
         private static final long serialVersionUID = 1330339174193813467L;
@@ -1090,7 +1090,7 @@ public class Filters {
      * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
      * @version $Id: Filters.java 36 2006-08-22 09:59:45Z kasper $
      */
-    public final static class SameFilter<E> implements Filter<E>, Serializable {
+    final static class SameFilter<E> implements Filter<E>, Serializable {
 
         /** Default <code>serialVersionUID</code> */
         private static final long serialVersionUID = 3761971557773620791L;
