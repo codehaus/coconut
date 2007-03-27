@@ -71,23 +71,40 @@ public class MockTestCase extends MockObjectTestCase {
 
     public <T> void delegateTest(T front, Mock back, String... methods) throws Exception {
         for (String s : methods) {
-            for (Method m : front.getClass().getMethods()) {
-                if (m.getName().equals(s)) {
-                    NameMatchBuilder nmb = back.expects(once());
-                    Object[] parameters = new Object[m.getParameterTypes().length];
-                    for (int i = 0; i < parameters.length; i++) {
-                        parameters[i] = getObject(m.getParameterTypes()[i]);
-                    }
-                    if (m.getReturnType().equals(Void.TYPE)) {
-                        m.invoke(front, parameters);
-                    } else {
-                        Object o = getObject(m.getReturnType());
-                        nmb.will(returnValue(o));
-                        assertEquals(o, m.invoke(front, parameters));
-                    }
+            ArrayList<Method> c = getMethods(front.getClass(), s);
+            if (c.size() > 0) {
+                Method m = c.get(0);
+                if (c.size() > 1) {
+                    throw new IllegalArgumentException(
+                            "More then one method named, name=" + s);
                 }
+                NameMatchBuilder nmb = back.expects(once());
+                Object[] parameters = new Object[m.getParameterTypes().length];
+                for (int i = 0; i < parameters.length; i++) {
+                    parameters[i] = getObject(m.getParameterTypes()[i]);
+                }
+                if (m.getReturnType().equals(Void.TYPE)) {
+                    m.invoke(front, parameters);
+                } else {
+                    Object o = getObject(m.getReturnType());
+                    nmb.will(returnValue(o));
+                    assertEquals(o, m.invoke(front, parameters));
+                }
+            } else {
+                throw new IllegalArgumentException("Unknown method, method=" + s);
             }
         }
+    }
+
+    private ArrayList<Method> getMethods(Class c, String name) {
+        ArrayList<Method> col = new ArrayList<Method>();
+        for (Method m : c.getMethods()) {
+            if (m.getName().equals(name)) {
+                col.add(m);
+            }
+        }
+
+        return col;
     }
 
     private <T> T getObject(Class<T> type) {
