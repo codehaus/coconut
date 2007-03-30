@@ -22,7 +22,7 @@ class LastAccessExample {
         CacheConfiguration<String, String> conf = CacheConfiguration
                 .create("WebPage-Cache");
         conf.addService(CacheManagementConfiguration.class);
-        conf.serviceExpiration().setFilter(new LastAccessFilter<String, String>());
+        conf.serviceExpiration().setExpirationFilter(new LastAccessFilter<String, String>());
         AbstractCache<String, String> cache = conf.newInstance(UnsynchronizedCache.class);
         cache.preStart();
         Thread.sleep(1000000);

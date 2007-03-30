@@ -12,10 +12,16 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.service.expiration.CacheExpirationService;
+import org.coconut.cache.service.expiration.CacheExpirationConfigurationTest.MyFilter2;
 import org.coconut.cache.spi.XmlConfigurator;
+import org.coconut.core.AttributeMap;
+import org.coconut.filter.Filter;
+import org.coconut.filter.Filters;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -51,101 +57,113 @@ public class CacheLoadingConfigurationTest {
     public void testLoader() {
         CacheLoader<Number, Collection> cl = mockDummy(CacheLoader.class);
 
-        assertNull(conf.getBackend());
+        assertNull(conf.getLoader());
         // assertFalse(conf.backend().hasBackend());
 
-        assertEquals(conf, conf.setBackend(cl));
+        assertEquals(conf, conf.setLoader(cl));
 
-        assertEquals(cl, conf.getBackend());
+        assertEquals(cl, conf.getLoader());
         // assertTrue(conf.hasBackend());
 
         // narrow bounds
         CacheLoader<Number, List> clI = mockDummy(CacheLoader.class);
 
-        assertEquals(conf, conf.setBackend(clI));
+        assertEquals(conf, conf.setLoader(clI));
 
-        assertEquals(clI, conf.getBackend());
-    }
-
-    @Test
-    public void testExtendedLoader() {
-        CacheLoader<Number, CacheEntry<Number, Collection>> ecl = mockDummy(CacheLoader.class);
-
-        assertNull(conf.getExtendedBackend());
-
-        assertEquals(conf, conf.setExtendedBackend(ecl));
-
-        assertEquals(ecl, conf.getExtendedBackend());
+        assertEquals(clI, conf.getLoader());
     }
 
     // assertTrue(conf.hasBackend());
 
-    @Test(expected = IllegalStateException.class)
-    public void testLoaderSetThenExtendedLoader() {
-        CacheLoader<Number, ? extends CacheEntry<Number, Collection>> ecl = mockDummy(CacheLoader.class);
-        CacheLoader<Number, Collection> cl = mockDummy(CacheLoader.class);
-        conf.setBackend(cl);
-        conf.setExtendedBackend(ecl);
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void testExtendedLoaderSetThenLoader() {
-        CacheLoader<Number, ? extends CacheEntry<Number, Collection>> ecl = mockDummy(CacheLoader.class);
-        CacheLoader<Number, Collection> cl = mockDummy(CacheLoader.class);
-        conf.setExtendedBackend(ecl);
-        conf.setBackend(cl);
-    }
-
     @Test
     public void testNoop() throws Exception {
         conf = rw(conf);
-        assertNull(conf.getBackend());
-        assertNull(conf.getExtendedBackend());
+        assertNull(conf.getLoader());
     }
 
     @Test
     public void testBackend() throws Exception {
-        conf.setBackend(new MyBackend1());
+        conf.setLoader(new MyBackend1());
         conf = rw(conf);
-        assertTrue(conf.getBackend() instanceof MyBackend1);
-        assertNull(conf.getExtendedBackend());
+        assertTrue(conf.getLoader() instanceof MyBackend1);
     }
 
     @Test
     public void testBackendFail() throws Exception {
-        conf.setBackend(new MyBackend2(""));
+        conf.setLoader(new MyBackend2(""));
         conf = rw(conf);
-        assertNull(conf.getBackend());
-        assertNull(conf.getExtendedBackend());
+        assertNull(conf.getLoader());
     }
 
     @Test
-    public void testExtendedBackend() throws Exception {
-        conf.setExtendedBackend(new MyBackend1());
+    public void testIgnoreFilters() throws Exception {
+        conf.setRefreshFilter(new MyFilter4());
         conf = rw(conf);
-        assertNull(conf.getBackend());
-        assertTrue(conf.getExtendedBackend() instanceof MyBackend1);
+        assertNull(conf.getRefreshFilter());
     }
 
     @Test
-    public void testExtendedBackendFail() throws Exception {
-        conf.setExtendedBackend(new MyBackend2(""));
+    public void testInitialValues() {
+        assertNull(conf.getRefreshFilter());
+        assertTrue(conf.getRefreshInterval(TimeUnit.NANOSECONDS) < 0);
+    }
+
+    Filter<CacheEntry> f = Filters.TRUE;
+
+    @Test
+    public void testReload() throws Exception {
+        conf.setDefaultRefreshTime(120, TimeUnit.SECONDS);
+        conf.setRefreshFilter(new MyFilter2());
         conf = rw(conf);
-        assertNull(conf.getBackend());
-        assertNull(conf.getExtendedBackend());
+        assertTrue(conf.getRefreshFilter() instanceof MyFilter2);
+        assertEquals(120 * 1000, conf.getRefreshInterval(TimeUnit.MILLISECONDS));
+    }
+
+    @Test
+    public void testNoop2() throws Exception {
+        conf = rw(conf);
+        assertNull(conf.getRefreshFilter());
+        assertTrue(conf.getRefreshInterval(TimeUnit.NANOSECONDS) < 0);
+    }
+
+    @Test
+    public void testReloadFilter() {
+        assertEquals(conf, conf.setRefreshFilter(f));
+        assertEquals(f, conf.getRefreshFilter());
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testReloadInterval() {
+
+        assertEquals(conf, conf.setDefaultRefreshTime(0, TimeUnit.SECONDS));
+        assertEquals(0, conf.getRefreshInterval(TimeUnit.NANOSECONDS));
+
+        conf.setDefaultRefreshTime(5, TimeUnit.MICROSECONDS);
+        assertEquals(5000, conf.getRefreshInterval(TimeUnit.NANOSECONDS));
+
+        conf.setDefaultRefreshTime(1000, null);
     }
 
     public static class MyBackend1 extends AbstractCacheLoader<Integer, String> {
         /**
          * @see org.coconut.cache.CacheLoader#load(java.lang.Object)
          */
-        public String load(Integer key) throws Exception {
+        public String load(Integer key, AttributeMap attributes) throws Exception {
             return null;
         }
     }
 
     public static class MyBackend2 extends MyBackend1 {
         public MyBackend2(Object foo) {
+        }
+    }
+
+    static class MyFilter4 implements Filter {
+        private MyFilter4() {
+        }
+
+        public boolean accept(Object element) {
+            return false;
         }
     }
 }

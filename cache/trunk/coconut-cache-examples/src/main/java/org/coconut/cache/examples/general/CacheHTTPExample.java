@@ -11,6 +11,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.defaults.UnsynchronizedCache;
 import org.coconut.cache.service.loading.AbstractCacheLoader;
+import org.coconut.core.AttributeMap;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -18,7 +19,7 @@ import org.coconut.cache.service.loading.AbstractCacheLoader;
  */
 public class CacheHTTPExample {
     public static class UrlLoader extends AbstractCacheLoader<String, String> {
-        public String load(String key) throws Exception {
+        public String load(String key, AttributeMap ignore) throws Exception {
             URL url = new URL(key);
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(url.openStream()));
@@ -34,7 +35,7 @@ public class CacheHTTPExample {
 
     public static void main(String[] args) {
         CacheConfiguration<String, String> cc = CacheConfiguration.create();
-        cc.serviceLoading().setBackend(new UrlLoader());
+        cc.serviceLoading().setLoader(new UrlLoader());
         UnsynchronizedCache<String, String> c = cc.newInstance(UnsynchronizedCache.class);
         readGoogle(c, "Not Cached : ");
         readGoogle(c, "Cached     : ");

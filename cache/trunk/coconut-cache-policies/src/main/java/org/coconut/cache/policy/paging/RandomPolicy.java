@@ -14,6 +14,7 @@ import net.jcip.annotations.NotThreadSafe;
 
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.policy.spi.AbstractPolicy;
+import org.coconut.core.AttributeMap;
 
 /**
  * This cache policy is not safe for concurrent access.
@@ -97,7 +98,7 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
     /**
      * @see org.coconut.cache.CachePolicy#add(null)
      */
-    public int add(T newData) {
+    public int add(T newData, AttributeMap ignore) {
         if (nextEntryIndex >= threshold - 1)
             resize(threshold * 2);
 
@@ -235,7 +236,7 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
      * @see org.coconut.cache.policy.ReplacementPolicy#update(int,
      *      java.lang.Object)
      */
-    public boolean update(int index, T newElement) {
+    public boolean update(int index, T newElement, AttributeMap ignore) {
         data[references[index]] = newElement;
         return true; // Random never rejects an entry
     }

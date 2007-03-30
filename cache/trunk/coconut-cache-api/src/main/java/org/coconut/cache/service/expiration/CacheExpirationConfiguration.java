@@ -5,6 +5,7 @@ package org.coconut.cache.service.expiration;
 
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.filter.Filter;
@@ -19,61 +20,38 @@ import org.w3c.dom.Element;
 public class CacheExpirationConfiguration<K, V> extends
         AbstractCacheServiceConfiguration<K, V> {
 
-    private final static String DEFAULT_TIMEOUT_TAG = "default-timeout";
+    private final static CacheExpirationConfiguration DEFAULT = new CacheExpirationConfiguration();
+
+    private final static String DEFAULT_TIMEOUT_TAG = "default-timetolive";
 
     private final static String EXPIRATION_FILTER_TAG = "filter";
 
     private final static String EXPIRATION_TAG = "expiration";
 
-    private final static String REFRESH_FILTER_TAG = "refresh-filter";
-
-    private final static String REFRESH_INTERVAL_TAG = "refresh-timer";
-
-    private long defaultExpirationRefreshDuration = -1;
-
-    private long defaultExpirationTimeoutDuration = CacheExpirationService.NEVER_EXPIRE;
+    private long defaultTimeToLive = CacheExpirationService.NEVER_EXPIRE;
 
     private Filter<CacheEntry<K, V>> expirationFilter;
 
-    private Filter<CacheEntry<K, V>> expirationRefreshFilter;
+    /* Ideas */
+    private boolean reloadOnExpiration = false;
+
+    public Filter<CacheEntry<K, V>> getExpirationFilter() {
+        return expirationFilter;
+    }
 
     /**
-     * @param tag
-     * @param c
+     * Creates a new CacheExpirationConfiguration
      */
     public CacheExpirationConfiguration() {
         super(EXPIRATION_TAG, CacheExpirationService.class);
     }
 
-    public long getDefaultTimeout(TimeUnit unit) {
-        if (defaultExpirationTimeoutDuration == CacheExpirationService.NEVER_EXPIRE) {
+    public long getDefaultTimeToLive(TimeUnit unit) {
+        if (defaultTimeToLive == CacheExpirationService.NEVER_EXPIRE) {
             // don't convert relative to time unit
-            return defaultExpirationTimeoutDuration;
+            return CacheExpirationService.NEVER_EXPIRE;
         } else {
-            return unit.convert(defaultExpirationTimeoutDuration, TimeUnit.NANOSECONDS);
-        }
-    }
-
-    public Filter<CacheEntry<K, V>> getFilter() {
-        return expirationFilter;
-    }
-
-    public Filter<CacheEntry<K, V>> getRefreshFilter() {
-        return expirationRefreshFilter;
-    }
-
-    /**
-     * Returns the refresh interval in the specified timeunit.
-     * 
-     * @param unit
-     *            the unit of time to return the refresh interval in
-     * @return
-     */
-    public long getRefreshInterval(TimeUnit unit) {
-        if (defaultExpirationRefreshDuration > 0) {
-            return unit.convert(defaultExpirationRefreshDuration, TimeUnit.NANOSECONDS);
-        } else {
-            return defaultExpirationRefreshDuration;
+            return unit.convert(defaultTimeToLive, TimeUnit.NANOSECONDS);
         }
     }
 
@@ -85,24 +63,25 @@ public class CacheExpirationConfiguration<K, V> extends
      * cache using {@link #setFilter(Filter)}. The default expiration is
      * infinite, that is elements never expires..
      * 
-     * @param duration
-     *            the default timeout for elements added to the cache, must be
-     *            positive
+     * @param timeToLive
+     *            the default time to live for elements added to the cache, must
+     *            be positive
      * @param unit
      *            the time unit of the duration argument
      */
-    public CacheExpirationConfiguration setDefaultTimeout(long duration, TimeUnit unit) {
-        if (duration <= 0) {
-            throw new IllegalArgumentException("duration must be greather then 0, was "
-                    + duration);
+    public CacheExpirationConfiguration<K, V> setDefaultTimeToLive(long timeToLive,
+            TimeUnit unit) {
+        if (timeToLive <= 0) {
+            throw new IllegalArgumentException("timeToLive must be greather then 0, was "
+                    + timeToLive);
         } else if (unit == null) {
             throw new NullPointerException("unit is null");
         }
-        if (duration == CacheExpirationService.NEVER_EXPIRE) {
-            defaultExpirationTimeoutDuration = CacheExpirationService.NEVER_EXPIRE;
+        if (timeToLive == CacheExpirationService.NEVER_EXPIRE) {
+            defaultTimeToLive = CacheExpirationService.NEVER_EXPIRE;
             // don't convert relative to time unit
         } else {
-            defaultExpirationTimeoutDuration = unit.toNanos(duration);
+            defaultTimeToLive = unit.toNanos(timeToLive);
         }
         return this;
     }
@@ -114,35 +93,9 @@ public class CacheExpirationConfiguration<K, V> extends
      * time. If an expiration filter is set cache entries are first checked
      * against that filter then against the time based expiration times.
      */
-    public CacheExpirationConfiguration setFilter(Filter<CacheEntry<K, V>> filter) {
+    public CacheExpirationConfiguration setExpirationFilter(
+            Filter<CacheEntry<K, V>> filter) {
         expirationFilter = filter;
-        return this;
-    }
-
-    public CacheExpirationConfiguration setRefreshFilter(Filter<CacheEntry<K, V>> filter) {
-        expirationRefreshFilter = filter;
-        return this;
-    }
-
-    /**
-     * Sets the default refresh interval. Setting of the refresh window only
-     * makes sense if an asynchronously loader has been specified. -1
-     * 
-     * @param interval
-     *            the i
-     * @param unit
-     *            the unit of the interval
-     * @return this Expiration
-     */
-    public CacheExpirationConfiguration setRefreshInterval(long interval, TimeUnit unit) {
-        if (unit == null) {
-            throw new NullPointerException("unit is null");
-        }
-        if (interval <= 0) {
-            defaultExpirationRefreshDuration = interval;
-        } else {
-            defaultExpirationRefreshDuration = unit.toNanos(interval);
-        }
         return this;
     }
 
@@ -156,27 +109,11 @@ public class CacheExpirationConfiguration<K, V> extends
         Element defaultTimeout = getChild(DEFAULT_TIMEOUT_TAG, parent);
         if (defaultTimeout != null) {
             long timeout = UnitOfTime.fromElement(defaultTimeout, TimeUnit.MILLISECONDS);
-            setDefaultTimeout(timeout, TimeUnit.MILLISECONDS);
+            setDefaultTimeToLive(timeout, TimeUnit.MILLISECONDS);
         }
         /* Expiration Filter */
-        Element filter = getChild(EXPIRATION_FILTER_TAG, parent);
-        if (filter != null) {
-            Filter f = loadObject(filter, Filter.class);
-            setFilter(f);
-        }
-        /* Refresh timer */
-        Element refreshInterval = getChild(REFRESH_INTERVAL_TAG, parent);
-        if (refreshInterval != null) {
-            long timeout = UnitOfTime.fromElement(refreshInterval, TimeUnit.MILLISECONDS);
-            setRefreshInterval(timeout, TimeUnit.MILLISECONDS);
-        }
-
-        /* Refresh Filter */
-        Element refreshFilter = getChild(REFRESH_FILTER_TAG, parent);
-        if (refreshFilter != null) {
-            Filter f = loadObject(refreshFilter, Filter.class);
-            setRefreshFilter(f);
-        }
+        setExpirationFilter(loadObject(getChild(EXPIRATION_FILTER_TAG, parent),
+                Filter.class));
     }
 
     /**
@@ -187,31 +124,19 @@ public class CacheExpirationConfiguration<K, V> extends
     protected void toXML(Document doc, Element base) throws Exception {
 
         /* Expiration Timeout */
-        long timeout = getDefaultTimeout(TimeUnit.MILLISECONDS);
+        long timeout = getDefaultTimeToLive(TimeUnit.MILLISECONDS);
         if (timeout != CacheExpirationService.NEVER_EXPIRE) {
             UnitOfTime.toElementCompact(add(doc, DEFAULT_TIMEOUT_TAG, base), timeout,
                     TimeUnit.MILLISECONDS);
         }
-
-        /* Expiration Filter */
-        Filter filter = getFilter();
-        if (filter != null) {
-            super.saveObject(doc, add(doc, EXPIRATION_FILTER_TAG, base),
-                    "expiration.cannotPersistFilter", filter);
-        }
-
-        /* Refresh Timer */
-        long refresh = getRefreshInterval(TimeUnit.MILLISECONDS);
-        if (refresh > 0) {
-            UnitOfTime.toElementCompact(add(doc, REFRESH_INTERVAL_TAG, base),
-                    refresh, TimeUnit.MILLISECONDS);
-        }
-
-        /* Refresh Filter */
-        Filter refreshFilter = getRefreshFilter();
-        if (refreshFilter != null) {
-            super.saveObject(doc, add(doc, REFRESH_FILTER_TAG, base),
-                    "expiration.cannotPersistRefreshFilter", refreshFilter);
-        }
+        saveObject(doc, base, EXPIRATION_FILTER_TAG, "expiration.cannotPersistFilter",
+                getExpirationFilter(), DEFAULT.getExpirationFilter());
     }
+    //
+    // public String toString() {
+    // CacheConfiguration conf = CacheConfiguration.create();
+    // conf.addService(this);
+    // return conf.toString();
+    // }
+
 }

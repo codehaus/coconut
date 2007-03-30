@@ -14,6 +14,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
 import org.coconut.cache.spi.AsyncCacheLoader;
+import org.coconut.core.AttributeMap;
 import org.coconut.core.Callback;
 
 /**
@@ -41,8 +42,8 @@ public class AsyncIntegerToStringLoader extends IntegerToStringLoader implements
      * @see org.coconut.cache.spi.AsyncCacheLoader#asyncLoad(java.lang.Object,
      *      org.coconut.core.Callback)
      */
-    public Future<?> asyncLoad(Integer key, Callback<String> c) {
-        c.completed(load(key));
+    public Future<?> asyncLoad(Integer key, AttributeMap attributes, Callback<String> c) {
+        c.completed(load(key, attributes));
         keysLoader.add(key);
         return new FutureTask(DUMMY_RUNNABLE, null);
     }
@@ -51,14 +52,16 @@ public class AsyncIntegerToStringLoader extends IntegerToStringLoader implements
      * @see org.coconut.cache.spi.AsyncCacheLoader#asyncLoadAll(java.util.Collection,
      *      org.coconut.core.Callback)
      */
-    public Future<?> asyncLoadAll(Collection<? extends Integer> keys,
+    public Future<?> asyncLoadAll(Map<? extends Integer, AttributeMap> keysWithAttributes,
             Callback<Map<Integer, String>> c) {
         HashMap<Integer, String> h = new HashMap<Integer, String>();
-        for (Integer key : keys) {
-            h.put(key, load(key)); // we keep nulls
+        for (Map.Entry<? extends Integer, AttributeMap> entry : keysWithAttributes.entrySet()) {
+            h.put(entry.getKey(), load(entry.getKey(), entry.getValue())); // we
+                                                                            // keep
+                                                                            // nulls
         }
         c.completed(h);
-        keysLoader.addAll(keys);
+        keysLoader.addAll(keysWithAttributes.keySet());
         return new FutureTask(DUMMY_RUNNABLE, null);
     }
 }

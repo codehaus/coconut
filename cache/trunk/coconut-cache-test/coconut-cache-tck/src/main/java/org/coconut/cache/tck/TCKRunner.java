@@ -12,6 +12,9 @@ import net.jcip.annotations.ThreadSafe;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.service.event.CacheEventService;
+import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
+import org.coconut.cache.service.expiration.CacheExpirationService;
+import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.spi.annotations.CacheServiceSupport;
 import org.coconut.cache.spi.annotations.CacheSupport;
 import org.coconut.cache.tck.core.BasicCache;
@@ -73,11 +76,10 @@ public class TCKRunner extends Runner {
     }
 
     private void addTests(CompositeRunner runner) throws InitializationError {
-        if (!tt.isAnnotationPresent(CacheSupport.class)) {
+        if (!tt.isAnnotationPresent(CacheServiceSupport.class)) {
             throw new IllegalStateException(
-                    "Cache implementation must have a CacheSupport annotation");
+                    "Cache implementation must have a CacheServiceSupport annotation");
         }
-        CacheSupport cs = tt.getAnnotation(CacheSupport.class);
         CacheServiceSupport ss = tt.getAnnotation(CacheServiceSupport.class);
         List<Class> services = new ArrayList<Class>();
         if (ss != null) {
@@ -85,9 +87,13 @@ public class TCKRunner extends Runner {
         }
         boolean isThreadSafe = klass.isAnnotationPresent(ThreadSafe.class);
         addCoreFeatures(runner);
+        if (services.contains(CacheExpirationService.class)) {
+            addExpiration(runner, isThreadSafe);
+        }
+        if (services.contains(CacheLoadingService.class)) {
+            addLoading(runner, isThreadSafe);
+        }
 
-        addExpiration(runner, cs, isThreadSafe);
-        addLoading(runner, cs, isThreadSafe);
         // if (cs.statisticsSupport()) {
         // composite.add(new TestClassRunner(HitStat.class));
         // } else {
@@ -116,26 +122,24 @@ public class TCKRunner extends Runner {
 
     }
 
-    private void addExpiration(CompositeRunner runner, CacheSupport cs,
-            boolean isThreadSafe) throws InitializationError {
-        if (cs.ExpirationSupport()) {
-            composite.add(new TestClassRunner(ExpirationEvict.class));
-            composite.add(new TestClassRunner(ExpirationFilterBased.class));
-            composite.add(new TestClassRunner(ExpirationTimeBased.class));
-            // composite.add(new TestClassRunner(ExpirationCommon.class));
-            // composite.add(new TestClassRunner(ExpirationOnEvict.class));
-            // composite.add(new TestClassRunner(ExpirationStrict.class));
-            // if (isThreadSafe) {
-            // composite.add(new TestClassRunner(ExpirationConcurrent.class));
-            // } else {
-            // //TODO decide what todo, I think we should throw an exception.
-            // //when we have a non asynchronous loader and the lazy strategy
-            // //at construction time that is...
-            //                
-            // //composite.add(new
-            // TestClassRunner(ExpirationLazySingleThreaded.class));
-            // }
-        }
+    private void addExpiration(CompositeRunner runner, boolean isThreadSafe)
+            throws InitializationError {
+        composite.add(new TestClassRunner(ExpirationEvict.class));
+        composite.add(new TestClassRunner(ExpirationFilterBased.class));
+        composite.add(new TestClassRunner(ExpirationTimeBased.class));
+        // composite.add(new TestClassRunner(ExpirationCommon.class));
+        // composite.add(new TestClassRunner(ExpirationOnEvict.class));
+        // composite.add(new TestClassRunner(ExpirationStrict.class));
+        // if (isThreadSafe) {
+        // composite.add(new TestClassRunner(ExpirationConcurrent.class));
+        // } else {
+        // //TODO decide what todo, I think we should throw an exception.
+        // //when we have a non asynchronous loader and the lazy strategy
+        // //at construction time that is...
+        //                
+        // //composite.add(new
+        // TestClassRunner(ExpirationLazySingleThreaded.class));
+        // }
     }
 
     private void addCoreFeatures(CompositeRunner runner) throws InitializationError {
@@ -157,19 +161,14 @@ public class TCKRunner extends Runner {
         composite.add(new TestClassRunner(ValuesModifying.class));
     }
 
-    private void addLoading(CompositeRunner runner, CacheSupport cs, boolean isThreadSafe)
+    private void addLoading(CompositeRunner runner, boolean isThreadSafe)
             throws InitializationError {
-        if (cs.CacheLoadingSupport()) {
-            composite.add(new TestClassRunner(Loading.class));
-            composite.add(new TestClassRunner(FutureLoading.class));
-            if (cs.CacheEntrySupport()) {
-                composite.add(new TestClassRunner(ExtendedCacheLoader.class));
-            }
-            if (isThreadSafe) {
-                composite.add(new TestClassRunner(ConcurrentLoading.class));
-            }
-        } else {
-         //   composite.add(new TestClassRunner(NoLoadingSupport.class));
+
+        composite.add(new TestClassRunner(Loading.class));
+        composite.add(new TestClassRunner(FutureLoading.class));
+        composite.add(new TestClassRunner(ExtendedCacheLoader.class));
+        if (isThreadSafe) {
+            composite.add(new TestClassRunner(ConcurrentLoading.class));
         }
     }
 

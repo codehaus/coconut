@@ -11,11 +11,13 @@ import java.util.List;
 
 import net.jcip.annotations.NotThreadSafe;
 
-import org.coconut.cache.policy.PolicyObject;
+import org.coconut.cache.policy.PolicyAttributes;
+import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.policy.spi.AbstractPolicy;
+import org.coconut.core.AttributeMap;
 
 @NotThreadSafe
-public class LandlordPolicy<T extends PolicyObject> extends AbstractPolicy<T> {
+public class LandlordPolicy<T> extends AbstractPolicy<T> {
 
     /**
      * @see org.coconut.cache.policy.spi.AbstractPolicy#getSize()
@@ -43,7 +45,7 @@ public class LandlordPolicy<T extends PolicyObject> extends AbstractPolicy<T> {
         objectSize = new long[initialCapacity];
         objectCredit = new double[initialCapacity];
         objectCost = new double[initialCapacity];
-        objects = (T[]) new PolicyObject[initialCapacity];
+        objects = (T[]) new Object[initialCapacity];
     }
 
     @SuppressWarnings("unchecked")
@@ -51,7 +53,7 @@ public class LandlordPolicy<T extends PolicyObject> extends AbstractPolicy<T> {
         this.size = landlord.size;
         objectCost = new double[landlord.objectCost.length];
         objectCredit = new double[landlord.objectCredit.length];
-        objects = (T[]) new PolicyObject[landlord.objects.length];
+        objects = (T[]) new Object[landlord.objects.length];
         objectSize = new long[landlord.objectSize.length];
         System.arraycopy(landlord.objects, 0, objects, 0, objects.length);
         System.arraycopy(landlord.objectSize, 0, objectSize, 0, objectSize.length);
@@ -59,11 +61,22 @@ public class LandlordPolicy<T extends PolicyObject> extends AbstractPolicy<T> {
         System.arraycopy(landlord.objectCredit, 0, objectCredit, 0, objectCredit.length);
     }
 
-    public int add(T element) {
-        double cost = element.getCost();
-        long size = element.getSize();
-        if (size < 0) {
-            throw new IllegalArgumentException("size must be a positive number (>0), was " + size);
+    public int add(T element, AttributeMap attributes) {
+        double cost = attributes.getDouble(PolicyAttributes.COST,
+                ReplacementPolicy.DEFAULT_COST);
+        long size = attributes.getLong(PolicyAttributes.SIZE,
+                ReplacementPolicy.DEFAULT_SIZE);
+        return add(element, size, cost);
+    }
+
+    public int add(T element, long size, double cost) {
+        if (element == null) {
+            throw new NullPointerException("element is null");
+        } else if (size <= 0) {
+            throw new IllegalArgumentException(
+                    "size must be a positive number (>0), was " + size);
+        } else if (Double.isNaN(cost)) {
+            throw new IllegalArgumentException("cost is NaN");
         }
         int index = this.size++;
         if (this.size >= objects.length)
@@ -83,7 +96,7 @@ public class LandlordPolicy<T extends PolicyObject> extends AbstractPolicy<T> {
             /* ignore */
         }
     }
-    
+
     private int evict() {
         double delta = Double.MAX_VALUE;
         int foundZero = -1;
@@ -190,7 +203,7 @@ public class LandlordPolicy<T extends PolicyObject> extends AbstractPolicy<T> {
 
     @SuppressWarnings("unchecked")
     private void setSize(int newlen) {
-        PolicyObject[] newData = new PolicyObject[newlen];
+        Object[] newData = new Object[newlen];
         long[] newSize = new long[newlen];
         double[] newCost = new double[newlen];
         double[] newCredit = new double[newlen];
@@ -224,7 +237,7 @@ public class LandlordPolicy<T extends PolicyObject> extends AbstractPolicy<T> {
      * @see org.coconut.cache.policy.ReplacementPolicy#update(int,
      *      java.lang.Object)
      */
-    public boolean update(int index, T newElement) {
+    public boolean update(int index, T newElement, AttributeMap attributes) {
         objects[index] = newElement;
         // TODO update cost/size
         // We should also check if cost size has changed...

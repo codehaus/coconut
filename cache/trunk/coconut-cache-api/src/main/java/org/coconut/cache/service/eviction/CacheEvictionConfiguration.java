@@ -16,27 +16,32 @@ public class CacheEvictionConfiguration<K, V> extends
         AbstractCacheServiceConfiguration<K, V> {
 
     /**
+     * The default maximum capacity of a cache unless otherwise specified.
+     */
+    public final static long DEFAULT_MAXIMUM_CAPACITY = Long.MAX_VALUE;
+
+    /**
      * The default maximum size of a cache unless otherwise specified.
      */
     public final static int DEFAULT_MAXIMUM_SIZE = Integer.MAX_VALUE;
 
-    public final static String EVICTION_TAG = "eviction";
-
-    public final static String MAXIMUM_CAPACITY = "max-capacity";
-
-    public final static String MAXIMUM_SIZE = "max-size";
-
-    public final static String PREFERABLE_CAPACITY = "preferable-capacity";
-
-    public final static String PREFERABLE_SIZE = "preferable-size";
-
     private final static CacheEvictionConfiguration DEFAULT = new CacheEvictionConfiguration();
 
-    private long maximumCapacity = Long.MAX_VALUE;
+    private final static String EVICTION_TAG = "eviction";
+
+    private final static String MAXIMUM_CAPACITY = "max-capacity";
+
+    private final static String MAXIMUM_SIZE = "max-size";
+
+    private final static String PREFERABLE_CAPACITY = "preferable-capacity";
+
+    private final static String PREFERABLE_SIZE = "preferable-size";
+
+    private long maximumCapacity = DEFAULT_MAXIMUM_CAPACITY;
 
     private int maximumSize = DEFAULT_MAXIMUM_SIZE;
 
-    private long preferableCapacity = Long.MAX_VALUE;
+    private long preferableCapacity = DEFAULT_MAXIMUM_CAPACITY;
 
     private int preferableSize = DEFAULT_MAXIMUM_SIZE;
 
@@ -51,23 +56,38 @@ public class CacheEvictionConfiguration<K, V> extends
     }
 
     /**
-     * Integer.MAX_VALUE = unlimited
+     * Returns the maximum allowed capacity of the cache or
+     * {@link Long#MAX_VALUE} if there is no limit.
      * 
-     * @return the maximum number of elements.
+     * @return the maximum allowed capacity of the cache or Long.MAX_VALUE if
+     *         there is no limit.
+     * @see #setMaximumCapacity(long)
      */
     public long getMaximumCapacity() {
         return maximumCapacity;
     }
 
+
     /**
-     * Integer.MAX_VALUE = unlimited
+     * Returns the maximum allowed size of the cache or
+     * {@link Integer#MAX_VALUE} if there is no limit.
      * 
-     * @return the maximum number of elements.
+     * @return the maximum allowed size of the cache or Integer.MAX_VALUE if
+     *         there is no limit.
+     * @see #setMaximumSize(int)
      */
     public int getMaximumSize() {
         return maximumSize;
     }
 
+    /**
+     * Returns the specified replacement policy or <tt>null</tt> if none has
+     * been specified.
+     * 
+     * @return the specified replacement policy or <tt>null</tt> if none has
+     *         been specified
+     * @see #setPolicy(ReplacementPolicy)
+     */
     public ReplacementPolicy getPolicy() {
         return replacementPolicy;
 
@@ -83,49 +103,66 @@ public class CacheEvictionConfiguration<K, V> extends
 
     /**
      * Sets that maximum number of elements that a cache can contain. If the
-     * limit is reached the cache should evict elements according to the cache
-     * policy specified in setExpirationStrategy.
+     * limit is reached the cache must evict existing elements before adding new
+     * elements.
      * <p>
-     * The default value is Integer.MAX_VALUE.
+     * The default value is Integer.MAX_VALUE. Which
      * 
      * @param elements
      *            the maximum capacity.
      */
-    public CacheEvictionConfiguration setMaximumCapacity(long capacity) {
-        if (capacity <= 0) {
+    public CacheEvictionConfiguration setMaximumCapacity(long maximumCapacity) {
+        if (maximumCapacity <= 0) {
             throw new IllegalArgumentException("capacity must greater then 0, was "
-                    + capacity);
+                    + maximumCapacity);
         }
-        maximumCapacity = capacity;
+        this.maximumCapacity = maximumCapacity;
         return this;
     }
 
     /**
-     * Sets that maximum number of elements that the cache can contain. If the
-     * limit is reached the cache should evict elements according to the cache
-     * policy specified in {@link #setPolicy(ReplacementPolicy)}.
+     * Sets that maximum number of elements that the cache is allowed to
+     * contain. If the limit is reached the cache must evict existing elements
+     * before adding new elements.
      * <p>
-     * The default value is Integer.MAX_VALUE. If 0 is specified the cache will
-     * never retain any elements. An effective method for disabling caching.
+     * To indicate that a cache can hold an unlimited number of items,
+     * {@link Integer#MAX_VALUE} should be specified. This is also refered to as
+     * an unlimited cache.
+     * <p>
+     * If the specified maximum capacity is 0, the cache will never store any
+     * elements internally.
      * 
-     * @param elements
-     *            the maximum capacity.
+     * @param maximumSize
+     *            the maximum number of elements the cache can hold or
+     *            Integer.MAX_VALUE if there is no limit
+     * @throws IllegalArgumentException
+     *             if the specified maximum size is negative
      */
-    public CacheEvictionConfiguration setMaximumSize(int elements) {
-        if (elements < 0) {
+    public CacheEvictionConfiguration setMaximumSize(int maximumSize) {
+        if (maximumSize < 0) {
             throw new IllegalArgumentException(
-                    "number of maximum elements must be 0 or greater, was " + elements);
+                    "number of maximum elements must be 0 or greater, was " + maximumSize);
         }
-        maximumSize = elements;
+        this.maximumSize = maximumSize;
         return this;
     }
 
     /**
-     * policies are passed a CacheEntry, because it is the easiest way to
-     * support cost/sized based policies.
+     * Sets the replacement policy that should be used when the cache needs to
+     * evict entries to make room for new entries. The replacement policy will
+     * unless otherwise specified pass instances of
+     * {@link org.coconut.cache.CacheEntry} to its
+     * {@link ReplacementPolicy#add(Object)) and {@link ReplacementPolicy#update(int, Object)}
+     * methods.
+     * <p>
+     * If no policy has been specified, the cache is free to choose any avilable
+     * method to decide which entries to replace when the maximum size or
+     * capacity is reached. Including choosing elements at random. However
      * 
      * @param policy
-     * @return
+     *            the replacement policy that should be used when the cache
+     *            needs to evict entries
+     * @return this CacheEvictionConfiguration
      */
     public CacheEvictionConfiguration setPolicy(ReplacementPolicy policy) {
         replacementPolicy = policy;

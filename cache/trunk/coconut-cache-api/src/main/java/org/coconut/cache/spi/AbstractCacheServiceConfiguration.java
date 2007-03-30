@@ -38,7 +38,7 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
      * not been registered yet.
      */
     public CacheConfiguration<K, V> c() {
-        return null;
+        return conf;
     }
 
     private CacheConfiguration<K, V> conf;
@@ -109,11 +109,36 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
         return saveObject(doc, e, comment, "type", o);
     }
 
+    protected boolean saveObject(Document doc, Element parent, String tagName,
+            String comment, Object o, Object defaultObject) {
+        if (o != defaultObject && o != null && !o.equals(defaultObject)) {
+            return saveObject(doc, add(doc, tagName, parent), comment, "type", o);
+        }
+        return false;
+    }
+
+    protected boolean saveObject(Document doc, Element e, String comment, Object o,
+            Object defaultObject) {
+        if (o != defaultObject && o != null && !o.equals(defaultObject)) {
+            return saveObject(doc, e, comment, "type", o);
+        }
+        return false;
+    }
+
     protected <T> T loadObject(Element e, Class<T> type) throws Exception {
-        String c = e.getAttribute("type");
-        Class<T> clazz = (Class) Class.forName(c);
-        Constructor<T> con = clazz.getConstructor(null);
-        return con.newInstance();
+        if (e != null) {
+            String c = e.getAttribute("type");
+            Class<T> clazz = null;
+            try {
+                clazz = (Class) Class.forName(c);
+            } catch (ClassNotFoundException e1) {
+                System.out.println("Class name='" + c + "'");
+                throw e1;
+            }
+            Constructor<T> con = clazz.getConstructor(null);
+            return con.newInstance();
+        }
+        return null;
     }
 
     protected Element getChild(String name, Element e) {
@@ -125,10 +150,16 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
         return null;
     }
 
-    protected Element add(Document doc, String name, Element parent) {
+    protected static Element add(Document doc, String name, Element parent) {
         Element ee = doc.createElement(name);
         parent.appendChild(ee);
         return ee;
     }
 
+    protected static Element add(Document doc, String name, Element parent, String text) {
+        Element ee = doc.createElement(name);
+        ee.setTextContent(text);
+        parent.appendChild(ee);
+        return ee;
+    }
 }

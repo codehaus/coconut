@@ -16,6 +16,7 @@ import java.util.Set;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheErrorHandler;
+import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
 import org.coconut.test.MockTestCase;
 import org.junit.Before;
@@ -91,15 +92,15 @@ public class AbstraktCacheTest {
         assertFalse(m.containsValue("c"));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testPutEntryUOE() {
-        t.putEntry(MockTestCase.mockDummy(CacheEntry.class));
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void testPutEntriesUOE() {
-        t.putAllEntries(Arrays.asList(MockTestCase.mockDummy(CacheEntry.class)));
-    }
+//    @Test(expected = UnsupportedOperationException.class)
+//    public void testPutEntryUOE() {
+//        t.putEntry(MockTestCase.mockDummy(CacheEntry.class));
+//    }
+//
+//    @Test(expected = UnsupportedOperationException.class)
+//    public void testPutEntriesUOE() {
+//        t.putAllEntries(Arrays.asList(MockTestCase.mockDummy(CacheEntry.class)));
+//    }
 
     @Test
     public void testPutIAE() {
@@ -246,6 +247,14 @@ public class AbstraktCacheTest {
          */
         public Object put(Object key, Object value) {
             return m.put(key, value);
+        }
+
+        /**
+         * @see org.coconut.cache.Cache#put(java.lang.Object, java.lang.Object, org.coconut.core.AttributeMap)
+         */
+        public Object put(Object key, Object value, AttributeMap attributes) {
+            // TODO Auto-generated method stub
+            return null;
         }
     }
 

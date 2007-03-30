@@ -5,7 +5,7 @@ package org.coconut.cache.util;
 
 import static org.junit.Assert.assertEquals;
 
-import org.coconut.cache.policy.PolicyObject;
+import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.junit.Test;
 
@@ -28,14 +28,14 @@ public class DefaultCacheEntryTest {
     @Test(expected=UnsupportedOperationException.class)
     public void testDefaultCacheEntry() {
         DefaultCacheEntry dce = DefaultCacheEntry.create("A", "B");
-        assertEquals(PolicyObject.DEFAULT_COST, dce.getCost());
+        assertEquals(ReplacementPolicy.DEFAULT_COST, dce.getCost());
         assertEquals(0l, dce.getCreationTime());
         assertEquals(CacheExpirationService.DEFAULT_EXPIRATION, dce.getExpirationTime());
         assertEquals(-1l, dce.getHits());
         assertEquals("A", dce.getKey());
         assertEquals(0l, dce.getLastAccessTime());
         assertEquals(0l, dce.getLastUpdateTime());
-        assertEquals(PolicyObject.DEFAULT_SIZE, dce.getSize());
+        assertEquals(ReplacementPolicy.DEFAULT_SIZE, dce.getSize());
         assertEquals("B", dce.getValue());
         assertEquals(0l, dce.getVersion());
         
@@ -45,7 +45,7 @@ public class DefaultCacheEntryTest {
     @Test(expected=IllegalArgumentException.class)
     public void testDefaultCacheEntryExpiration() {
         DefaultCacheEntry dce = DefaultCacheEntry.createWithExpiration("A", "B", 100);
-        assertEquals(PolicyObject.DEFAULT_COST, dce.getCost());
+        assertEquals(ReplacementPolicy.DEFAULT_COST, dce.getCost());
         assertEquals(100l, dce.getExpirationTime());
         assertEquals("A", dce.getKey());
         assertEquals("B", dce.getValue());

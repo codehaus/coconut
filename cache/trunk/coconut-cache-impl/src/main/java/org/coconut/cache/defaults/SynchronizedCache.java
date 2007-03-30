@@ -9,8 +9,7 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.CacheServiceManager;
 import org.coconut.cache.internal.service.event.DefaultCacheEventService;
 import org.coconut.cache.internal.service.eviction.DefaultCacheEvictionService;
-import org.coconut.cache.internal.service.expiration.FinalExpirationCacheService;
-import org.coconut.cache.internal.service.loading.CacheEntryLoaderService;
+import org.coconut.cache.internal.service.loading.DefaultCacheLoaderService;
 import org.coconut.cache.internal.service.management.DefaultCacheManagementService;
 import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsService;
 import org.coconut.cache.service.event.CacheEventService;
@@ -26,17 +25,13 @@ import org.coconut.cache.spi.annotations.CacheSupport;
 @ThreadSafe
 @CacheServiceSupport( { CacheEventService.class, CacheManagementService.class })
 public class SynchronizedCache<K, V> extends UnsynchronizedCache<K, V> {
-    
+
     @SuppressWarnings("unchecked")
-    protected CacheServiceManager<K, V> populateCsm(CacheServiceManager<K, V> csm,
+    protected void registerServices(CacheServiceManager<K, V> csm,
             CacheConfiguration<K, V> conf) {
-        csm.addService(DefaultCacheStatisticsService.class);
-        csm.addService(DefaultCacheEvictionService.class);
-        csm.addService(FinalExpirationCacheService.class);
-        csm.addService(CacheEntryLoaderService.class);
-        csm.addService(DefaultCacheManagementService.class);
-        csm.addService(DefaultCacheEventService.class);
-        return csm;
+        csm.addService(DefaultCacheStatisticsService.class,
+                DefaultCacheEvictionService.class, DefaultCacheLoaderService.class,
+                DefaultCacheManagementService.class, DefaultCacheEventService.class);
     }
 
-    }
+}

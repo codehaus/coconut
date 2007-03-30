@@ -4,8 +4,9 @@
 
 package org.coconut.cache.service.loading;
 
-import java.util.Collection;
 import java.util.Map;
+
+import org.coconut.core.AttributeMap;
 
 /**
  * A <code>CacheLoader</code> is used for transparant loading or creation of
@@ -94,7 +95,7 @@ public interface CacheLoader<K, V> {
      * @throws Exception
      *             An exception occured while loading or creating the value
      */
-    V load(K key) throws Exception;
+    V load(K key, AttributeMap attributes) throws Exception;
 
     /**
      * Loads multiple values. This might for be usefull for performance reasons,
@@ -109,5 +110,5 @@ public interface CacheLoader<K, V> {
      * @throws Exception
      *             An exception occured while loading or creating the values
      */
-    Map<K, V> loadAll(Collection<? extends K> keys) throws Exception;
+    Map<K, V> loadAll(Map<? extends K, AttributeMap> keysWithAttributes) throws Exception;
 }

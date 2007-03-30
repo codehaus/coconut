@@ -29,7 +29,7 @@ public class ExpirationFilterBased extends ExpirationTestBundle {
     @Before
     public void setUpCaches() {
         f = new CacheEntryFilter();
-        c = newCache(newConf().serviceExpiration().setFilter(f).c());
+        c = newCache(newConf().serviceExpiration().setExpirationFilter(f).c());
     }
 
     /**
@@ -89,8 +89,8 @@ public class ExpirationFilterBased extends ExpirationTestBundle {
      * is defined.
      */
     public void testFilterAndDefaultTimeExpiration() {
-        c = newCache(newConf().serviceExpiration().setFilter(f).c().setClock(clock).serviceExpiration()
-                .setDefaultTimeout(5, TimeUnit.NANOSECONDS).c());
+        c = newCache(newConf().serviceExpiration().setExpirationFilter(f).c().setClock(clock).serviceExpiration()
+                .setDefaultTimeToLive(5, TimeUnit.NANOSECONDS).c());
         put(M1);
         put(M2);
         assertGet(M1, M2);

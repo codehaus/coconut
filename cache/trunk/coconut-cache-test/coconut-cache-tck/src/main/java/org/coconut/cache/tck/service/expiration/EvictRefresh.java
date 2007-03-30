@@ -26,8 +26,8 @@ public class EvictRefresh extends ExpirationTestBundle {
     @Test
     public void refreshWindowSingleElement() throws Exception {
         AsyncIntegerToStringLoader loader = new AsyncIntegerToStringLoader();
-        c = newCache(newConf().setClock(clock).serviceExpiration().setRefreshInterval(2,
-                TimeUnit.NANOSECONDS).c().serviceLoading().setBackend(loader).c());
+        c = newCache(newConf().setClock(clock).serviceLoading().setDefaultRefreshTime(2,
+                TimeUnit.NANOSECONDS).setLoader(loader).c());
         service.put(M1.getKey(), "AB1", 2, TimeUnit.NANOSECONDS);
         service.put(M2.getKey(), "AB2", 3, TimeUnit.NANOSECONDS);
         service.put(M3.getKey(), "AB3", 4, TimeUnit.NANOSECONDS);
@@ -43,7 +43,7 @@ public class EvictRefresh extends ExpirationTestBundle {
         assertEquals("AB3", get(M3));
         assertEquals("AB4", get(M4));
     }
-    
+
     /**
      * Test refresh window
      */
@@ -51,8 +51,8 @@ public class EvictRefresh extends ExpirationTestBundle {
     @Test
     public void refreshWindowSingleElementEvict() throws Exception {
         AsyncIntegerToStringLoader loader = new AsyncIntegerToStringLoader();
-        c = newCache(newConf().setClock(clock).serviceExpiration().setRefreshInterval(2,
-                TimeUnit.NANOSECONDS).c().serviceLoading().setBackend(loader).c());
+        c = newCache(newConf().setClock(clock).serviceLoading().setDefaultRefreshTime(2,
+                TimeUnit.NANOSECONDS).setLoader(loader).c());
         service.put(M1.getKey(), "AB1", 2, TimeUnit.NANOSECONDS);
         service.put(M2.getKey(), "AB2", 3, TimeUnit.NANOSECONDS);
         service.put(M3.getKey(), "AB3", 4, TimeUnit.NANOSECONDS);
@@ -72,8 +72,8 @@ public class EvictRefresh extends ExpirationTestBundle {
     @Test
     public void refreshWindowSingleElementGet() throws Exception {
         AsyncIntegerToStringLoader loader = new AsyncIntegerToStringLoader();
-        c = newCache(newConf().setClock(clock).serviceExpiration().setRefreshInterval(2,
-                TimeUnit.NANOSECONDS).c().serviceLoading().setBackend(loader).c());
+        c = newCache(newConf().setClock(clock).serviceLoading().setDefaultRefreshTime(2,
+                TimeUnit.NANOSECONDS).setLoader(loader).c());
         service.put(M1.getKey(), "AB1", 2, TimeUnit.NANOSECONDS);
         service.put(M2.getKey(), "AB2", 3, TimeUnit.NANOSECONDS);
         service.put(M3.getKey(), "AB3", 4, TimeUnit.NANOSECONDS);
@@ -87,5 +87,5 @@ public class EvictRefresh extends ExpirationTestBundle {
         assertEquals("AB3", get(M3));
         assertEquals("AB4", get(M4));
     }
-    
+
 }

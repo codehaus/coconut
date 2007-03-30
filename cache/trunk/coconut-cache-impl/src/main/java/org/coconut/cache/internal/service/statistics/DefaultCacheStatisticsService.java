@@ -11,8 +11,9 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.AbstractCacheService;
+import org.coconut.cache.internal.service.CacheServiceLifecycle;
 import org.coconut.cache.internal.service.InternalCacheServiceManager;
+import org.coconut.cache.internal.service.ShutdownCallback;
 import org.coconut.cache.internal.service.joinpoint.InternalCacheOperation;
 import org.coconut.cache.internal.util.Resources;
 import org.coconut.cache.service.statistics.CacheHitStat;
@@ -36,8 +37,8 @@ import org.coconut.management.util.AtomicDouble;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheService<K, V>
-        implements InternalCacheOperation<K, V> {
+public final class DefaultCacheStatisticsService<K, V> implements
+        InternalCacheOperation<K, V>, CacheServiceLifecycle {
 
     // number of loads, loaded elements, number of queries,
     // number of added, number of new elements
@@ -131,7 +132,6 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheServ
 
     public DefaultCacheStatisticsService(InternalCacheServiceManager manager,
             CacheConfiguration<K, V> conf) {
-        super(manager, conf);
         Clock c = Clock.DEFAULT_CLOCK;
         // cache counters
 
@@ -185,14 +185,6 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheServ
     }
 
     volatile long started;
-
-    /**
-     * @see org.coconut.cache.spi.AbstractCacheService#initialize(org.coconut.cache.spi.AbstractCache,
-     *      java.util.Map)
-     */
-    protected void doStart(AbstractCache<K, V> cache, Map<String, Object> properties) {
-        started = System.currentTimeMillis();
-    }
 
     public long beforeCacheClear(Cache<K, V> cache) {
         return System.nanoTime();
@@ -457,7 +449,7 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheServ
     /**
      * @see org.coconut.cache.internal.service.joinpoint.InternalCacheJoinpoint#cacheClearNeedRemoved()
      */
-    public boolean cacheClearNeedRemoved() {
+    public boolean needElementsAfterClear() {
         // TODO Auto-generated method stub
         return false;
     }
@@ -521,5 +513,19 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheServ
     public long beforeTrimToSize(Cache<K, V> cache) {
         // TODO Auto-generated method stub
         return 0;
+    }
+
+    /**
+     * @see org.coconut.cache.internal.service.CacheServiceLifecycle#doStart()
+     */
+    public void doStart() {
+        started = System.currentTimeMillis();
+    }
+
+    /**
+     * @see org.coconut.cache.internal.service.CacheServiceLifecycle#shutdown(org.coconut.cache.internal.service.ShutdownCallback)
+     */
+    public void shutdown(ShutdownCallback callback) {
+
     }
 }

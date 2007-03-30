@@ -19,6 +19,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheErrorHandler;
+import org.coconut.cache.service.event.CacheEventConfiguration;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
@@ -77,7 +78,7 @@ public class XmlConfigurator {
 
     private final static List<Class> services = new ArrayList<Class>();
     static {
-        // services.add(CacheEventConfiguration.class);
+        services.add(CacheEventConfiguration.class);
         services.add(CacheManagementConfiguration.class);
         services.add(CacheStatisticsConfiguration.class);
         services.add(CacheLoadingConfiguration.class);

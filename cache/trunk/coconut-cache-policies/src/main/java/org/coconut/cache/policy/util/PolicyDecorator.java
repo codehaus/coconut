@@ -7,6 +7,7 @@ package org.coconut.cache.policy.util;
 import java.util.List;
 
 import org.coconut.cache.policy.ReplacementPolicy;
+import org.coconut.core.AttributeMap;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -26,6 +27,7 @@ public class PolicyDecorator<T> implements ReplacementPolicy<T> {
     protected ReplacementPolicy<T> getPolicy() {
         return policy;
     }
+
     /**
      * {@inheritDoc}
      */
@@ -95,5 +97,21 @@ public class PolicyDecorator<T> implements ReplacementPolicy<T> {
      */
     public int getSize() {
         return policy.getSize();
+    }
+
+    /**
+     * @see org.coconut.cache.policy.ReplacementPolicy#add(java.lang.Object,
+     *      org.coconut.core.AttributeMap)
+     */
+    public int add(T element, AttributeMap attributes) {
+        return add(element, attributes);
+    }
+
+    /**
+     * @see org.coconut.cache.policy.ReplacementPolicy#update(int,
+     *      java.lang.Object, org.coconut.core.AttributeMap)
+     */
+    public boolean update(int index, T newElement, AttributeMap attributes) {
+        return update(index, newElement, attributes);
     }
 }

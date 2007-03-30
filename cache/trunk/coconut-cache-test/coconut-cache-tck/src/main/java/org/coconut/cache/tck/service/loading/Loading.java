@@ -121,7 +121,7 @@ public class Loading extends LoadingTestBundle {
 
     @Test(expected = NullPointerException.class)
     public void testLoadAllNullPointer() {
-        service.loadAll(null);
+        service.loadAll((Map) null);
     }
 
     /**

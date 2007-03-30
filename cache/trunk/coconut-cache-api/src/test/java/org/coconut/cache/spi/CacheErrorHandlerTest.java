@@ -18,6 +18,7 @@ import java.util.logging.LogManager;
 import org.coconut.cache.CacheErrorHandler;
 import org.coconut.cache.CacheException;
 import org.coconut.cache.service.loading.CacheLoader;
+import org.coconut.core.AttributeMaps;
 import org.coconut.core.Log;
 import org.coconut.test.MockTestCase;
 import org.junit.Before;
@@ -117,8 +118,8 @@ public class CacheErrorHandlerTest {
             ce.getLogger();
             ce.unhandledRuntimeException(new IllegalThreadStateException());
             try {
-                ce.loadFailed(MockTestCase.mockDummy(CacheLoader.class), 7, true,
-                        new IllegalThreadStateException());
+                ce.loadFailed(MockTestCase.mockDummy(CacheLoader.class), 7,
+                        AttributeMaps.EMPTY_MAP, true, new IllegalThreadStateException());
                 fail("shouldThrow");
             } catch (CacheException ok) {
                 assertTrue(os.toString().contains("IllegalThreadStateException"));
@@ -138,8 +139,9 @@ public class CacheErrorHandlerTest {
 
             System.setErr(new PrintStream(os));
             try {
-                ce.loadAllFailed(MockTestCase.mockDummy(CacheLoader.class), Arrays
-                        .asList(6, 7), true, new IllegalThreadStateException());
+                ce.loadAllFailed(MockTestCase.mockDummy(CacheLoader.class), AttributeMaps
+                        .createMap(6, 7), true,
+                        new IllegalThreadStateException());
                 fail("shouldThrow");
             } catch (CacheException ok) {
                 assertTrue(os.toString().contains("IllegalThreadStateException"));

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import org.coconut.cache.spi.AsyncCacheLoader;
+import org.coconut.core.AttributeMap;
 import org.coconut.core.Callback;
 
 /**
@@ -18,13 +19,13 @@ public abstract class AbstractAsyncLoader<K, V> implements AsyncCacheLoader<K, V
     /**
      * @see org.coconut.cache.CacheLoader#load(java.lang.Object)
      */
-    public V load(K key) throws Exception {
+    public V load(K key, AttributeMap attributes) throws Exception {
         if (key == null) {
             throw new NullPointerException("key is null");
         }
         SingleKeyCallback<V> skc = new SingleKeyCallback<V>();
         try {
-            asyncLoad(key, skc).get();
+            asyncLoad(key, attributes,skc).get();
         } catch (ExecutionException ee) {
             Throwable t = ee.getCause();
             if (t instanceof Exception) {
@@ -41,13 +42,13 @@ public abstract class AbstractAsyncLoader<K, V> implements AsyncCacheLoader<K, V
     /**
      * @see org.coconut.cache.CacheLoader#loadAll(java.util.Collection)
      */
-    public Map<K, V> loadAll(Collection<? extends K> keys) throws Exception {
-        if (keys == null) {
+    public Map<K, V> loadAll(Map<? extends K, AttributeMap> keysWithAttributes) throws Exception {
+        if (keysWithAttributes == null) {
             throw new NullPointerException("keys is null");
         }
         SingleKeyCallback<Map<K, V>> skc = new SingleKeyCallback<Map<K, V>>();
         try {
-            asyncLoadAll(keys, skc).get();
+            asyncLoadAll(keysWithAttributes, skc).get();
         } catch (ExecutionException ee) {
             Throwable t = ee.getCause();
             if (t instanceof Exception) {

@@ -3,10 +3,6 @@
  */
 package org.coconut.cache.internal.service;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,9 +10,20 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.internal.service.event.DefaultCacheEventService;
+import org.coconut.cache.internal.service.eviction.DefaultCacheEvictionService;
+import org.coconut.cache.internal.service.eviction.InternalCacheEvictionService;
+import org.coconut.cache.internal.service.expiration.AbstractCacheExpirationService;
+import org.coconut.cache.internal.service.expiration.NoCacheExpirationService;
+import org.coconut.cache.internal.service.joinpoint.NoOpAfterCacheOperation;
+import org.coconut.cache.service.event.CacheEventConfiguration;
+import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
+import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.spi.AbstractCache;
-import org.coconut.filter.CollectionFilters;
+import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
+import org.coconut.internal.picocontainer.defaults.DefaultPicoContainer;
 import org.coconut.management.ManagedGroup;
 
 /**
@@ -25,43 +32,45 @@ import org.coconut.management.ManagedGroup;
  */
 public class CacheServiceManager<K, V> implements InternalCacheServiceManager {
 
-    private static final RuntimePermission shutdownPerm = new RuntimePermission(
-            "modifyCache");
-
-    private final CacheConfiguration<K, V> conf;
-
-    private final Map<Class, InternalCacheService> instanciated = new ConcurrentHashMap<Class, InternalCacheService>();
-
-    private List<Class<? extends InternalCacheService>> types = new ArrayList<Class<? extends InternalCacheService>>();
-
-    private final List<ShutdownRunnable> shutdownRequests = new CopyOnWriteArrayList<ShutdownRunnable>();
-
-    public CacheServiceManager(CacheConfiguration<K, V> conf) {
-        this.conf = conf;
-    }
-
-    private final AtomicInteger runState = new AtomicInteger();
-
-    private final CountDownLatch termination = new CountDownLatch(1);
-
     private static final int RUNNING = 1;
 
     private static final int SHUTDOWN = 1 << 1;
+
+    private static final RuntimePermission shutdownPerm = new RuntimePermission(
+            "modifyCache");
 
     private static final int STOP = 1 << 2;
 
     private static final int TERMINATED = 1 << 3;
 
-    private static boolean runStateAtLeast(int c, int s) {
-        return c >= s;
+    public final DefaultPicoContainer container = new DefaultPicoContainer();
+
+    private final CacheConfiguration<K, V> conf;
+
+    public final Map<Class, Object> instanciated = new ConcurrentHashMap<Class, Object>();
+
+    private final AtomicInteger runState = new AtomicInteger();
+
+    private final List<ShutdownRunnable> shutdownRequests = new CopyOnWriteArrayList<ShutdownRunnable>();
+
+    private final CountDownLatch termination = new CountDownLatch(1);
+
+    public CacheServiceManager(Cache<K, V> cache, CacheConfiguration<K, V> conf) {
+        container.registerComponentInstance(this);
+        container.registerComponentInstance(cache);
+        container.registerComponentInstance(conf);
+        container.registerComponentInstance(conf.getClock());
+        container.registerComponentInstance(conf.getErrorHandler());
+        for (AbstractCacheServiceConfiguration c : conf.getServices()) {
+            container.registerComponentInstance(c);
+        }
+        this.conf = conf;
     }
 
-    private static boolean runStateLessThan(int c, int s) {
-        return c < s;
-    }
-
-    private static boolean isRunning(int c) {
-        return c < SHUTDOWN;
+    public void addService(Class... services) {
+        for (Class c : services) {
+            container.registerComponentImplementation(c);
+        }
     }
 
     public boolean checkNotRunning() {
@@ -75,19 +84,78 @@ public class CacheServiceManager<K, V> implements InternalCacheServiceManager {
         }
     }
 
-    public boolean isTerminating() {
-        int c = runState.get();
-        return !isRunning(c) && runStateLessThan(c, TERMINATED);
+    /**
+     * @param name
+     * @return
+     */
+    public <T> T getComponent(Class<T> clazz) {
+        if (DefaultCacheEventService.class.isAssignableFrom(clazz)) {
+            if (conf.getServiceConfiguration(CacheEventConfiguration.class) == null) {
+                return (T) new NoOpAfterCacheOperation();
+            }
+        }
+        if (InternalCacheEvictionService.class.isAssignableFrom(clazz)) {
+            if (conf.getServiceConfiguration(CacheEvictionConfiguration.class) == null) {
+                T t = (T) new DefaultCacheEvictionService(
+                        new CacheEvictionConfiguration());
+                container.unregisterComponent(DefaultCacheEvictionService.class);
+                container.registerComponentInstance(t);
+                return t;
+            }
+        }
+        if (AbstractCacheExpirationService.class.isAssignableFrom(clazz)) {
+            if (conf.getServiceConfiguration(CacheExpirationConfiguration.class) == null) {
+                return (T) new NoCacheExpirationService();
+            }
+        }
+        T t = (T) container.getComponentInstanceOfType(clazz);
+        if (t == null) {
+            System.out.println("No service " + clazz);
+        }
+        return t;
+    }
+
+    public <T> T getService(Class<T> type) {
+        Object cs = instanciated.get(type);
+        if (cs == null) {
+            cs = (Object) container.getComponentInstanceOfType(type);
+            instanciated.put(type, cs);
+        }
+        return (T) cs;
+    }
+
+    public void initializeApm(ManagedGroup root) {
+        // for (InternalCacheService<K, V> cs : instanciated.values()) {
+        // if (cs instanceof AbstractCacheService) {
+        // ((AbstractCacheService<K, V>) cs).addTo(root);
+        // }
+        // }
     }
 
     public boolean isTerminated() {
         return runStateAtLeast(runState.get(), TERMINATED);
     }
 
-    private void checkShutdownAccess() {
-        SecurityManager security = System.getSecurityManager();
-        if (security != null) {
-            security.checkPermission(shutdownPerm);
+    public boolean isTerminating() {
+        int c = runState.get();
+        return !isRunning(c) && runStateLessThan(c, TERMINATED);
+    }
+
+    public void shutdown() {
+        checkShutdownAccess();
+        advanceRunState(SHUTDOWN);
+        shutdownAll();
+        tryTerminate();
+    }
+
+    public void startAll(AbstractCache<K, V> c) {
+        for (Object cs : instanciated.values()) {
+            try {
+                // cs.start(c, (Map) Collections.EMPTY_MAP);
+            } catch (Exception e) {
+                e.printStackTrace();
+                // shutdown cache
+            }
         }
     }
 
@@ -106,10 +174,35 @@ public class CacheServiceManager<K, V> implements InternalCacheServiceManager {
         }
     }
 
-    public void shutdown() {
+    private void checkShutdownAccess() {
+        SecurityManager security = System.getSecurityManager();
+        if (security != null) {
+            security.checkPermission(shutdownPerm);
+        }
+    }
+
+    private void serviceShutdown(Runnable service) {
+        shutdownRequests.remove(service);
+        tryTerminate();
+    }
+
+    private void shutdownAll() {
+        for (Object service : instanciated.values()) {
+            if (service instanceof CacheServiceLifecycle) {
+
+            }
+            CacheServiceLifecycle sr = (CacheServiceLifecycle) service;
+            try {
+                // service.shutdown(sr);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            // if (!sr.isDone()) {
+            // shutdownRequests.add(sr);
+            // }
+        }
         checkShutdownAccess();
         advanceRunState(SHUTDOWN);
-        shutdownAll();
         tryTerminate();
     }
 
@@ -131,127 +224,13 @@ public class CacheServiceManager<K, V> implements InternalCacheServiceManager {
 
     }
 
-    private void shutdownAll() {
-        for (InternalCacheService service : instanciated.values()) {
-            ShutdownRunnable sr = new ShutdownRunnable(service);
-            try {
-                service.shutdown(sr);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            if (!sr.isDone()) {
-                shutdownRequests.add(sr);
-            }
-
-        }
-        checkShutdownAccess();
-        advanceRunState(SHUTDOWN);
-        tryTerminate();
-    }
-
-    public void addService(Class<? extends InternalCacheService> impl) {
-        types.add(impl);
-    }
-
-    public <T> T getService(Class<T> type) {
-        T t = getService0(type);
-        if (t == null) {
-            (new Exception()).printStackTrace();
-        }
-        return t;
-    }
-
-    private <T> T getService0(Class<T> type) {
-        InternalCacheService cs = instanciated.get(type);
-        if (cs != null) {
-            return (T) cs;
-        }
-        for (InternalCacheService c : instanciated.values()) {
-            if (type.isAssignableFrom(c.getClass())) {
-                instanciated.put(type, c);
-                return (T) c;
-            }
-        }
-        return null;
-    }
-
-    public <T> T initialize(Class<T> type) {
-        if (type == null) {
-            throw new NullPointerException("clazz is null");
-        }
-        T service = (T) getService0(type);
-        if (service != null) {
-            return service;
-        }
-        Class<T> clazz = null;
-        for (Class c : types) {
-            if (type.isAssignableFrom(c)) {
-                clazz = c;
-            }
-        }
-        if (clazz == null) {
-            throw new IllegalStateException("No defined service " + type + " "
-                    + types.toString());
-        }
-        Constructor<T> c = null;
-        // T service = null;
-        try {
-            c = (Constructor<T>) clazz.getDeclaredConstructor(CacheConfiguration.class);
-        } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException(
-                    "Could not create cache instance, no public contructor taking a single CacheConfiguration instance",
-                    e);
-        }
-        try {
-            service = c.newInstance(conf);
-            instanciated.put(clazz, (InternalCacheService) service);
-        } catch (InstantiationException e) {
-            throw new IllegalArgumentException(
-                    "Could not create cache instance, specified clazz " + clazz
-                            + ") is an interface or abstract class", e);
-        } catch (IllegalAccessException e) {
-            throw new IllegalArgumentException("Could not create instance of " + clazz, e);
-        } catch (InvocationTargetException e) {
-            throw new IllegalArgumentException("Constructor threw exception", e);
-        }
-        return service;
-    }
-
-    public void startAll(AbstractCache<K, V> c) {
-        for (InternalCacheService<K, V> cs : instanciated.values()) {
-            try {
-                cs.start(c, (Map) Collections.EMPTY_MAP);
-            } catch (Exception e) {
-                e.printStackTrace();
-                //shutdown cache
-            }
-        }
-    }
-
-    public void initializeApm(ManagedGroup root) {
-        for (InternalCacheService<K, V> cs : instanciated.values()) {
-            if (cs instanceof AbstractCacheService) {
-                ((AbstractCacheService<K, V>) cs).addTo(root);
-            }
-        }
-    }
-
-    private void serviceShutdown(InternalCacheService service) {
-        shutdownRequests.remove(service);
-        tryTerminate();
-    }
-
     class ShutdownRunnable implements Runnable {
         private final CountDownLatch latch = new CountDownLatch(1);
 
-        private final InternalCacheService service;
+        private final Object service;
 
-        ShutdownRunnable(InternalCacheService service) {
+        ShutdownRunnable(Object service) {
             this.service = service;
-        }
-
-        boolean isDone() {
-            return latch.getCount() == 0;
         }
 
         /**
@@ -259,7 +238,31 @@ public class CacheServiceManager<K, V> implements InternalCacheServiceManager {
          */
         public void run() {
             latch.countDown();
-            serviceShutdown(service);
+            // serviceShutdown(service);
         }
+
+        boolean isDone() {
+            return latch.getCount() == 0;
+        }
+    }
+
+    private static boolean isRunning(int c) {
+        return c < SHUTDOWN;
+    }
+
+    private static boolean runStateAtLeast(int c, int s) {
+        return c >= s;
+    }
+
+    private static boolean runStateLessThan(int c, int s) {
+        return c < s;
+    }
+
+    /**
+     * 
+     */
+    public void initializeAll() {
+        // TODO Auto-generated method stub
+        
     }
 }

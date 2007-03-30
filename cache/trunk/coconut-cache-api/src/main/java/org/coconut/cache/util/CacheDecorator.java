@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
+import org.coconut.core.AttributeMap;
 
 /**
  * A class that can be used for easily decorating a cache with a specific
@@ -247,5 +248,12 @@ public class CacheDecorator<K, V> implements Cache<K, V>, Serializable {
      */
     public <T> T getService(Class<T> serviceType) {
         return cache.getService(serviceType);
+    }
+
+    /**
+     * @see org.coconut.cache.Cache#put(java.lang.Object, java.lang.Object, org.coconut.core.AttributeMap)
+     */
+    public V put(K key, V value, AttributeMap attributes) {
+        return cache.put(key, value, attributes);
     }
 }

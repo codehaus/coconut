@@ -9,9 +9,10 @@ import java.util.List;
 
 import net.jcip.annotations.NotThreadSafe;
 
-import org.coconut.cache.policy.PolicyObject;
+import org.coconut.cache.policy.PolicyAttributes;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.policy.spi.AbstractPolicy;
+import org.coconut.core.AttributeMap;
 import org.coconut.internal.util.IndexedHeap;
 
 /**
@@ -68,9 +69,9 @@ public class LFUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
     /**
      * @{inheritDoc}
      */
-    public int add(T data) {
-        return data instanceof PolicyObject ? add(data, ((PolicyObject) data).getHits()) : add(
-                data, 1);
+    public int add(T data, AttributeMap map) {
+        long hits = map.getLong(PolicyAttributes.HITS, 1);
+        return add(data, hits);
     }
 
     /**
@@ -148,8 +149,8 @@ public class LFUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
      * @{inheritDoc}
      */
     public void touch(int index) {
-        //TODO what if instanceof PolicyObject?
-        //use getHits()?
+        // TODO what if instanceof PolicyObject?
+        // use getHits()?
         heap.changePriorityDelta(index, 1);
     }
 
@@ -157,7 +158,15 @@ public class LFUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
      * @{inheritDoc}
      */
     public boolean update(int index, T newElement) {
-        //TODO what about hits for newElement
+        // TODO what about hits for newElement
+        heap.replace(index, newElement);
+        return true;
+    }
+    /**
+     * @{inheritDoc}
+     */
+    public boolean update(int index, T newElement, AttributeMap map) {
+        // TODO what about hits for newElement
         heap.replace(index, newElement);
         return true;
     }

@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import org.coconut.core.AttributeMap;
 
 /**
  * A composite cache loader used for allowing multiple loaders to load a value.
@@ -75,11 +76,11 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V>, Serializab
     /**
      * {@inheritDoc}
      */
-    public V load(final K key) throws Exception {
+    public V load(final K key, AttributeMap attributes) throws Exception {
         V v = null;
         for (CacheLoader<K, V> loader : loaders) {
             try {
-                v = loader.load(key);
+                v = loader.load(key, attributes);
             } catch (Exception e) {
                 v = loadFailed(loader, key, e);
             }
@@ -97,16 +98,16 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V>, Serializab
     /**
      * {@inheritDoc}
      */
-    public Map<K, V> loadAll(final Collection<? extends K> keys) throws Exception {
-        final HashMap<K, V> result = new HashMap<K, V>(keys.size());
-        Collection<K> ks = new HashSet<K>(keys);
+    public Map<K, V> loadAll(Map<? extends K, AttributeMap> mapsWithAttributes) throws Exception {
+        final HashMap<K, V> result = new HashMap<K, V>(mapsWithAttributes.size());
+        Collection<K> ks = new HashSet<K>(mapsWithAttributes.keySet());
         for (CacheLoader<K, V> loader : loaders) {
             Map<K, V> map = null;
             if (ks.size() > 0) {
                 try {
-                    map = loader.loadAll(ks);
+                    map = loader.loadAll(mapsWithAttributes);
                 } catch (Exception e) {
-                    map = loadAllFailed(loader, keys, e);
+                    map = loadAllFailed(loader, mapsWithAttributes, e);
                 }
             } else {
                 // no keys left that we haven't found a value for
@@ -161,7 +162,7 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V>, Serializab
      * @throws Exception
      */
     protected Map<K, V> loadAllFailed(CacheLoader<K, V> loader,
-            Collection<? extends K> keys, Exception cause) throws Exception {
+            Map<? extends K, AttributeMap> mapsWithAttributes, Exception cause) throws Exception {
         throw cause;
     }
 

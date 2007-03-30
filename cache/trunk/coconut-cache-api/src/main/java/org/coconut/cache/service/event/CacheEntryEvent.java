@@ -1,21 +1,37 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-
 package org.coconut.cache.service.event;
+
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import org.coconut.cache.CacheEntry;
 
 /**
- * A CacheItemEvent events concerns a particular key-value pair in the cache.
- * These events are raised, for example, when an entry has been removed or the
- * value of an entry has been changed.
+ * A CacheItemEvent is raised whenever a particular key-value pair in the cache
+ * has a significant change in its state. For example, when an entry has been
+ * removed or the value of an entry has been changed.
  * <p>
- * Currently 4 standard events are supported. However, it is possible to create
- * new events by implementing CacheItemEvent and wiring them to a cache
- * instance.
+ * Currently 4 standard events are supported.
+ * <ul>
+ * <li>{@link ItemAccessed}</li>: is raised whenever an entry is accessed through ..
+ * <li>{@link ItemAdded}</li>
+ * <li>{@link ItemRemoved}</li>
+ * <li>{@link ItemUpdated}</li>
+ * </ul>
  * <p>
+ * Since most usages of a cache has a very high read/write ratio.
+ * {@link ItemAccessed} are not posted with the default cache configuration.
+ * However, they can be enabled by using:
  * 
+ * <pre>
+ * CacheConfiguration&lt;?, ?&gt; conf = CacheConfiguration.create();
+ * CacheEventConfiguration cec = conf.getServiceConfiguration(CacheEventConfiguration.class);
+ * cec.include(CacheEntryEvent.ItemAccessed.class);
+ * </pre>
+ * 
+ * @see CacheEventConfiguration
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -37,7 +53,6 @@ public interface CacheEntryEvent<K, V> extends CacheEvent<K, V>, CacheEntry<K, V
      * subscribe for, as it is raised on every access to cache.
      */
     interface ItemAccessed<K, V> extends CacheEntryEvent<K, V> {
-
         /** The unique name of this event. */
         String NAME = "cacheitem.Accessed";
 

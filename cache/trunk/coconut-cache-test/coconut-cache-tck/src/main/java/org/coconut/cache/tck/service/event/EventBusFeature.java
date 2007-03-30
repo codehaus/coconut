@@ -33,11 +33,14 @@ import org.junit.Test;
 @SuppressWarnings("unchecked")
 public class EventBusFeature extends AbstractEventTestBundle {
 
+    
     @Before
     public void setup() {
         CacheConfiguration conf = CacheConfiguration.create();
-        conf.addService(CacheEventConfiguration.class);
+        conf.serviceEvent();
         c = newCache(conf);
+        c2 = newCache(conf, 2);
+        c0=newCache(conf,0);
     }
 
     // /**
@@ -236,9 +239,6 @@ public class EventBusFeature extends AbstractEventTestBundle {
         r = consumeItem(ItemRemoved.class, M3);
         assertFalse(r.hasExpired());
     }
-
-
-
 
     // TODO testExpiredNoLoadingStrict
     public void testCleared() throws Exception {

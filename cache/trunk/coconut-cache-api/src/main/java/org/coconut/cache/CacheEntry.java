@@ -6,8 +6,6 @@ package org.coconut.cache;
 
 import java.util.Map;
 
-import org.coconut.cache.policy.PolicyObject;
-
 /**
  * A <tt>CacheEntry</tt> describes a value-key mapping much like
  * {@link java.util.Map.Entry}. However, this interface extends it with
@@ -34,8 +32,51 @@ import org.coconut.cache.policy.PolicyObject;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public interface CacheEntry<K, V> extends Map.Entry<K, V>, PolicyObject {
+public interface CacheEntry<K, V> extends Map.Entry<K, V> {
 
+    /**
+     * Returns the size of this element. Implementations are free to include
+     * overhead of storing the element or just the size of the element itself.
+     * <p>
+     * The size returned does not necessarily represent the actual number of
+     * bytes used to store the element.
+     * 
+     * @return the size of the element. If the size of the object cannot be
+     *         determined
+     *         {@link org.coconut.cache.policy.CostSizePolicy#DEFAULT_SIZE}
+     *         should be returned
+     */
+    long getSize();
+
+    /**
+     * Returns the expected cost of fetching this element. Assigning costs to an
+     * element is context dependent. Examples include
+     * <ul>
+     * <li>Time duration for loading the value from disk.</li>
+     * <li>Price for transfering x number of bytes from an external storage
+     * service.
+     * <li>Number of calculations used to create the element</li>
+     * </ul>
+     * <p>
+     * The cost does not necessarily represent the actual time to fetch the
+     * element. However, this is often the case.
+     * 
+     * @return the expected cost of fetching this element or
+     *         {@link org.coconut.cache.policy.CostSizePolicy#DEFAULT_COST} if
+     *         no cost is associated with this element
+     * @see org.coconut.cache.policy.CostSizePolicy
+     */
+    double getCost();
+
+    /**
+     * Returns the number of times the object has been previously succesfully
+     * requested.
+     * 
+     * @return the number of times the object has been previously succesfully
+     *         requested.
+     */
+    long getHits();
+    
     /**
      * Returns the time of creation for the specific cache entry in
      * milliseconds.

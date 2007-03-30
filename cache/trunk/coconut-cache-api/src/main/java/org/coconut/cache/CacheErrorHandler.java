@@ -4,7 +4,6 @@
 package org.coconut.cache;
 
 import java.text.MessageFormat;
-import java.util.Collection;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -12,6 +11,7 @@ import java.util.logging.Logger;
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.spi.Resources;
+import org.coconut.core.AttributeMap;
 import org.coconut.core.Log;
 import org.coconut.core.util.Logs;
 import org.coconut.event.EventSubscription;
@@ -52,17 +52,18 @@ public class CacheErrorHandler<K, V> {
         return logger != null;
     }
 
-    public synchronized Map<K, CacheEntry<K, V>> loadAllFailed(
-            final CacheLoader<? super K, ?> loader, Collection<? extends K> keys,
-            boolean isAsynchronous, Throwable cause) {
-        String msg = Resources.lookup(CacheErrorHandler.class, "loadAllFailed", keys
-                .toString());
+    public synchronized Map<K, V> loadAllFailed(
+            final CacheLoader<? super K, ?> loader,
+            Map<? extends K, AttributeMap> keysWithAttributes, boolean isAsynchronous,
+            Throwable cause) {
+        String msg = Resources.lookup(CacheErrorHandler.class, "loadAllFailed",
+                keysWithAttributes.keySet().toString());
         getLogger().error(msg, cause);
         throw new CacheException(msg, cause);
     }
 
-    public synchronized CacheEntry<K, V> loadFailed(CacheLoader<? super K, ?> loader,
-            K key, boolean isAsync, Throwable cause) {
+    public synchronized V loadFailed(CacheLoader<? super K, ?> loader,
+            K key, AttributeMap map, boolean isAsync, Throwable cause) {
         String msg = Resources.lookup(CacheErrorHandler.class, "loadFailed", key
                 .toString());
         getLogger().error(msg, cause);

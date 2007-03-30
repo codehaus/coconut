@@ -4,13 +4,46 @@
 package org.coconut.cache.service.loading;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.Future;
+
+import org.coconut.cache.CacheEntry;
+import org.coconut.core.AttributeMap;
+import org.coconut.core.Transformer;
+import org.coconut.filter.Filter;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public interface CacheLoadingService<K, V> {
+
+    Future<?> filteredLoad(Filter<? super CacheEntry<K, V>> filter);
+
+    Future<?> filteredLoad(Filter<? super CacheEntry<K, V>> filter,
+            AttributeMap defaultAttributes);
+
+    Future<?> filteredLoad(Filter<? super CacheEntry<K, V>> filter,
+            Transformer<CacheEntry<K, V>, AttributeMap> attributeTransformer);
+
+    Future<?> forceLoad(K key);
+
+    Future<?> forceLoad(K key, AttributeMap attributes);
+
+    /**
+     * Attempts to reload all entries that are currently held in the cache. *
+     * 
+     * @return a Future representing pending completion of all the loads, and
+     *         whose <tt>get()</tt> method will return <tt>null</tt> upon
+     *         completion.
+     */
+    Future<?> forceLoadAll();
+
+    Future<?> forceLoadAll(AttributeMap aatributes);
+
+    Future<?> forceLoadAll(Collection<? extends K> keys);
+
+    Future<?> forceLoadAll(Map<K, AttributeMap> mapsWithAttributes);
 
     // determine how exceptions are thrown from the future
     /**
@@ -59,18 +92,20 @@ public interface CacheLoadingService<K, V> {
      */
     Future<?> load(K key);
 
+    Future<?> load(K key, AttributeMap attributes);
+
     /**
      * Attempts to asynchronously load the values to which this cache maps the
      * specified keys. The effect of this call is equivalent to that of calling
      * {@link #load(Object)}once for each mapping from key k to value v in the
-     * specified map. However certain implementation might take advantage of
-     * bulk loading.
+     * specified map. However, it is possible for implementations to take
+     * advantage of bulk loading.
      * <p>
      * The behavior of this operation is unspecified if the specified collection
      * is modified while the operation is in progress.
      * <p>
      * The methods on the returned {@link java.util.concurrent.Future} are all
-     * <tt>bulk</tt> operations.
+     * <tt>bulk</tt> operations that operate on the entire keyset.
      * {@link java.util.concurrent.Future#cancel(Boolean)} will attempt to
      * cancel the loading of all entries.{@link
      * java.util.concurrent.Future#get()} will not return until all entries has
@@ -90,4 +125,6 @@ public interface CacheLoadingService<K, V> {
      *             specified collection contains <tt>null</tt> values
      */
     Future<?> loadAll(Collection<? extends K> keys);
+
+    Future<?> loadAll(Map<K, AttributeMap> mapsWithAttributes);
 }

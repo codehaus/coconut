@@ -33,6 +33,16 @@ public interface CacheMXBean {
     int getSize();
 
     /**
+     * Returns the current used capacity of the cache.
+     * <p>
+     * This method is equivalent to calling
+     * {@link org.coconut.cache.Cache#getCapacity()}.
+     * 
+     * @return the current number of elements in the cache
+     */
+    long getCapacity();
+
+    /**
      * Returns the name of the cache.
      * 
      * @return the name of the cache
@@ -56,10 +66,9 @@ public interface CacheMXBean {
     void evict();
 
     /**
-     * Keep evicting entries (using the configured replacement policy) until the
-     * number of elements in the cache has reached the specified size. If the
-     * cache does not have a configured replacement policy the cache may remove
-     * the elements in any order.
+     * Keep evicting entries until the number of elements in the cache has
+     * reached the specified size. If the cache does not have a configured
+     * replacement policy the cache may remove the elements in any order.
      * 
      * @param newSize
      *            the number of elements that the cache should hold

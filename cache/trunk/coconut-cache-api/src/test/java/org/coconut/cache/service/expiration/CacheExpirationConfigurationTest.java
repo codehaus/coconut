@@ -25,140 +25,103 @@ import org.junit.Test;
  */
 public class CacheExpirationConfigurationTest {
 
+    static CacheExpirationConfiguration DEFAULT = new CacheExpirationConfiguration();
+
     CacheExpirationConfiguration conf;
 
-    static CacheExpirationConfiguration DEFAULT = new CacheExpirationConfiguration();
+    Filter<CacheEntry> f = Filters.TRUE;
 
     @Before
     public void setUp() {
         conf = new CacheExpirationConfiguration();
     }
 
-    Filter<CacheEntry> f = Filters.TRUE;
-
-    @Test
-    public void testInitialValues() {
-        assertNull(conf.getFilter());
-        assertNull(conf.getRefreshFilter());
-        assertTrue(conf.getRefreshInterval(TimeUnit.NANOSECONDS) < 0);
-        assertEquals(CacheExpirationService.NEVER_EXPIRE, conf.getDefaultTimeout(TimeUnit.NANOSECONDS));
-        assertEquals(CacheExpirationService.NEVER_EXPIRE, conf.getDefaultTimeout(TimeUnit.SECONDS));
-    }
-
-    @Test
-    public void testFilter() {
-        assertEquals(conf, conf.setFilter(f));
-        assertEquals(f, conf.getFilter());
-    }
-
-    @Test
-    public void testRefreshFilter() {
-        assertEquals(conf, conf.setRefreshFilter(f));
-        assertEquals(f, conf.getRefreshFilter());
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testRefreshInterval() {
-
-        assertEquals(conf, conf.setRefreshInterval(0, TimeUnit.SECONDS));
-        assertEquals(0, conf.getRefreshInterval(TimeUnit.NANOSECONDS));
-
-        conf.setRefreshInterval(5, TimeUnit.MICROSECONDS);
-        assertEquals(5000, conf.getRefreshInterval(TimeUnit.NANOSECONDS));
-
-        conf.setRefreshInterval(1000, null);
-    }
+//    @Test
+//    public void testCornerCase() throws Exception {
+//        // coverage mostly
+//        e().setDefaultTimeout(30, TimeUnit.SECONDS);
+//        conf = rw(conf);
+//        assertNull(e().getFilter());
+//        assertNull(e().getReloadFilter());
+//        assertTrue(e().getReloadInterval(TimeUnit.NANOSECONDS) < 0);
+//        assertEquals(30, e().getDefaultTimeout(TimeUnit.SECONDS));
+////        conf = CacheConfiguration.create();
+////        e().setRefreshInterval(30, TimeUnit.SECONDS);
+////        conf = rw(conf);
+////        assertEquals(Cache.NEVER_EXPIRE, e().getDefaultTimeout(TimeUnit.SECONDS));
+//    }
 
     /**
      * Test default expiration. The default is that entries never expire.
      */
     @Test
     public void testDefaultExpiration() {
-        assertEquals(conf, conf.setDefaultTimeout(2, TimeUnit.SECONDS));
+        assertEquals(conf, conf.setDefaultTimeToLive(2, TimeUnit.SECONDS));
 
-        assertEquals(2l, conf.getDefaultTimeout(TimeUnit.SECONDS));
-        assertEquals(2l * 1000, conf.getDefaultTimeout(TimeUnit.MILLISECONDS));
-        assertEquals(2l * 1000 * 1000, conf.getDefaultTimeout(TimeUnit.MICROSECONDS));
+        assertEquals(2l, conf.getDefaultTimeToLive(TimeUnit.SECONDS));
+        assertEquals(2l * 1000, conf.getDefaultTimeToLive(TimeUnit.MILLISECONDS));
+        assertEquals(2l * 1000 * 1000, conf.getDefaultTimeToLive(TimeUnit.MICROSECONDS));
         assertEquals(2l * 1000 * 1000 * 1000, conf
-                .getDefaultTimeout(TimeUnit.NANOSECONDS));
+                .getDefaultTimeToLive(TimeUnit.NANOSECONDS));
 
-        conf.setDefaultTimeout(CacheExpirationService.NEVER_EXPIRE, TimeUnit.MICROSECONDS);
-        assertEquals(CacheExpirationService.NEVER_EXPIRE, conf.getDefaultTimeout(TimeUnit.SECONDS));
+        conf.setDefaultTimeToLive(CacheExpirationService.NEVER_EXPIRE, TimeUnit.MICROSECONDS);
+        assertEquals(CacheExpirationService.NEVER_EXPIRE, conf.getDefaultTimeToLive(TimeUnit.SECONDS));
 
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testDefaultExpirationIAE() {
-        conf.setDefaultTimeout(0, TimeUnit.MICROSECONDS);
+        conf.setDefaultTimeToLive(0, TimeUnit.MICROSECONDS);
     }
 
     @Test(expected = NullPointerException.class)
     public void testDefaultExpirationNPE() {
-        conf.setDefaultTimeout(1, null);
+        conf.setDefaultTimeToLive(1, null);
+    }
+
+    @Test
+    public void testExpiration() throws Exception {
+        e().setDefaultTimeToLive(60, TimeUnit.SECONDS);
+        e().setExpirationFilter(new MyFilter());
+        
+        conf = rw(conf);
+        assertTrue(e().getExpirationFilter() instanceof MyFilter);
+        
+        assertEquals(60 * 1000, e().getDefaultTimeToLive(TimeUnit.MILLISECONDS));
+        
+    }
+
+    @Test
+    public void testFilter() {
+        assertEquals(conf, conf.setExpirationFilter(f));
+        assertEquals(f, conf.getExpirationFilter());
+    }
+
+    @Test
+    public void testIgnoreFilters() throws Exception {
+        e().setExpirationFilter(new MyFilter3(""));
+        conf = rw(conf);
+        assertNull(e().getExpirationFilter());
     }
     
     
-    CacheExpirationConfiguration e() {
-        return conf;
-    }
-    
-    static CacheExpirationConfiguration rw(CacheExpirationConfiguration conf) throws Exception {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        CacheConfiguration cc = CacheConfiguration.create();
-        cc.addService(conf);
-        XmlConfigurator.getInstance().to(cc, os);
-        cc = XmlConfigurator.getInstance().from(
-                new ByteArrayInputStream(os.toByteArray()));
-        return (CacheExpirationConfiguration) cc
-                .getServiceConfiguration(CacheExpirationConfiguration.class);
+    @Test
+    public void testInitialValues() {
+        assertNull(conf.getExpirationFilter());
+        assertEquals(CacheExpirationService.NEVER_EXPIRE, conf.getDefaultTimeToLive(TimeUnit.NANOSECONDS));
+        assertEquals(CacheExpirationService.NEVER_EXPIRE, conf.getDefaultTimeToLive(TimeUnit.SECONDS));
     }
     
     @Test
     public void testNoop() throws Exception {
         conf = rw(conf);
-        assertNull(e().getFilter());
-        assertNull(e().getRefreshFilter());
-        assertTrue(e().getRefreshInterval(TimeUnit.NANOSECONDS) < 0);
-        assertEquals(CacheExpirationService.NEVER_EXPIRE, e().getDefaultTimeout(TimeUnit.NANOSECONDS));
-        assertEquals(CacheExpirationService.NEVER_EXPIRE, e().getDefaultTimeout(TimeUnit.SECONDS));
+        assertNull(e().getExpirationFilter());
+        assertEquals(CacheExpirationService.NEVER_EXPIRE, e().getDefaultTimeToLive(TimeUnit.NANOSECONDS));
+        assertEquals(CacheExpirationService.NEVER_EXPIRE, e().getDefaultTimeToLive(TimeUnit.SECONDS));
     }
 
-    @Test
-    public void testExpiration() throws Exception {
-        e().setDefaultTimeout(60, TimeUnit.SECONDS);
-        e().setRefreshInterval(120, TimeUnit.SECONDS);
-        e().setFilter(new MyFilter());
-        e().setRefreshFilter(new MyFilter2());
-
-        conf = rw(conf);
-        assertTrue(e().getFilter() instanceof MyFilter);
-        assertTrue(e().getRefreshFilter() instanceof MyFilter2);
-        assertEquals(60 * 1000, e().getDefaultTimeout(TimeUnit.MILLISECONDS));
-        assertEquals(120 * 1000, e().getRefreshInterval(TimeUnit.MILLISECONDS));
-    }
-
-    @Test
-    public void testIgnoreFilters() throws Exception {
-        e().setFilter(new MyFilter3(""));
-        e().setRefreshFilter(new MyFilter4());
-        conf = rw(conf);
-        assertNull(e().getFilter());
-        assertNull(e().getRefreshFilter());
-    }
-
-    @Test
-    public void testCornerCase() throws Exception {
-        // coverage mostly
-        e().setDefaultTimeout(30, TimeUnit.SECONDS);
-        conf = rw(conf);
-        assertNull(e().getFilter());
-        assertNull(e().getRefreshFilter());
-        assertTrue(e().getRefreshInterval(TimeUnit.NANOSECONDS) < 0);
-        assertEquals(30, e().getDefaultTimeout(TimeUnit.SECONDS));
-//        conf = CacheConfiguration.create();
-//        e().setRefreshInterval(30, TimeUnit.SECONDS);
-//        conf = rw(conf);
-//        assertEquals(Cache.NEVER_EXPIRE, e().getDefaultTimeout(TimeUnit.SECONDS));
+    CacheExpirationConfiguration e() {
+        return conf;
     }
 
     public static class MyFilter implements Filter {
@@ -188,5 +151,16 @@ public class CacheExpirationConfigurationTest {
         public boolean accept(Object element) {
             return false;
         }
+    }
+
+    static CacheExpirationConfiguration rw(CacheExpirationConfiguration conf) throws Exception {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        CacheConfiguration cc = CacheConfiguration.create();
+        cc.addService(conf);
+        XmlConfigurator.getInstance().to(cc, os);
+        cc = XmlConfigurator.getInstance().from(
+                new ByteArrayInputStream(os.toByteArray()));
+        return (CacheExpirationConfiguration) cc
+                .getServiceConfiguration(CacheExpirationConfiguration.class);
     }
 }

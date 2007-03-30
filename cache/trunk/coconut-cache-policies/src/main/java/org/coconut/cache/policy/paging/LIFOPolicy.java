@@ -11,6 +11,7 @@ import net.jcip.annotations.NotThreadSafe;
 
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.policy.spi.AbstractPolicy;
+import org.coconut.core.AttributeMap;
 
 /**
  * A LIFO based replacement policy.
@@ -69,8 +70,8 @@ public class LIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolic
     /**
      * @see org.coconut.cache.policy.ReplacementPolicy#add(T)
      */
-    public int add(T data) {
-        return policy.add(data);
+    public int add(T data, AttributeMap ignore) {
+        return policy.add(data, ignore);
     }
 
     /**
@@ -146,7 +147,7 @@ public class LIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolic
      * @see org.coconut.cache.policy.ReplacementPolicy#update(int,
      *      java.lang.Object)
      */
-    public boolean update(int index, T newElement) {
-        return policy.update(index, newElement);
+    public boolean update(int index, T newElement, AttributeMap ignore) {
+        return policy.update(index, newElement, ignore);
     }
 }

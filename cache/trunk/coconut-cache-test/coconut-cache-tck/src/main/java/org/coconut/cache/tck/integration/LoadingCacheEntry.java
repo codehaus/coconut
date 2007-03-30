@@ -26,7 +26,7 @@ public class LoadingCacheEntry extends CacheEntryBundle {
     public void testCreationDateFromLoader() {
         CacheConfiguration<Integer, String> conf = CacheConfiguration.create();
         conf.setClock(clock);
-        conf.addService(CacheLoadingConfiguration.class).setBackend(
+        conf.addService(CacheLoadingConfiguration.class).setLoader(
                 LoadingTestBundle.DEFAULT_LOADER);
         c = newCache(conf);
         clock.setTimestamp(10);
@@ -34,24 +34,24 @@ public class LoadingCacheEntry extends CacheEntryBundle {
         assertEquals(10l, getEntry(M1).getCreationTime());
     }
 
-
     @Test
     public void testLastUpdateFromLoader() {
         CacheConfiguration<Integer, String> conf = CacheConfiguration.create();
         conf.setClock(clock);
-        conf.addService(CacheLoadingConfiguration.class).setBackend(LoadingTestBundle.DEFAULT_LOADER);
+        conf.addService(CacheLoadingConfiguration.class).setLoader(
+                LoadingTestBundle.DEFAULT_LOADER);
         c = newCache(conf);
         clock.setTimestamp(10);
         get(M1);
         assertEquals(10l, getEntry(M1).getLastUpdateTime());
     }
-    
 
     @Test
     public void testAccessFromLoader() {
         CacheConfiguration<Integer, String> conf = CacheConfiguration.create();
         conf.setClock(clock);
-        conf.addService(CacheLoadingConfiguration.class).setBackend(LoadingTestBundle.DEFAULT_LOADER);
+        conf.addService(CacheLoadingConfiguration.class).setLoader(
+                LoadingTestBundle.DEFAULT_LOADER);
         c = newCache(conf);
         clock.setTimestamp(10);
         get(M1);

@@ -102,12 +102,14 @@ public final class Policies {
 
     public static <K, V> ReplacementPolicy<? extends Map.Entry<K, V>> filteredMapKeyPolicy(
             ReplacementPolicy policy, Filter<? extends K> filter) {
-        return new FilteredPolicyDecorator(policy, CollectionFilters.keyFilter(filter));
+        return null;
+        //return new FilteredPolicyDecorator(policy, CollectionFilters.keyFilter(filter));
     }
 
     public static <K, V> ReplacementPolicy<? extends Map.Entry<K, V>> filteredMapValuePolicy(
             ReplacementPolicy policy, Filter<? extends V> filter) {
-        return new FilteredPolicyDecorator(policy, CollectionFilters.valueFilter(filter));
+        return null;
+        //return new FilteredPolicyDecorator(policy, CollectionFilters.valueFilter(filter));
     }
 
     ///CLOVER:OFF

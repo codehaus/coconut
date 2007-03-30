@@ -71,6 +71,10 @@ public abstract class CacheTestBundle extends Assert {
     protected Cache<Integer, String> newCache(CacheConfiguration<?, ?> conf) {
         return (Cache) conf.newInstance(TCKRunner.tt);
     }
+    protected Cache<Integer, String> newCache(CacheConfiguration<?, ?> conf, int entries) {
+        conf.setInitialMap((Map) createMap(entries));
+        return newCache(conf);
+    }
 
     public static Map<Integer, String> createMap(int entries) {
         if (entries < 0 || entries > 26) {

@@ -3,9 +3,10 @@
  */
 package org.coconut.cache.internal.spi;
 
-import java.util.Collection;
+import java.util.Map;
 
 import org.coconut.cache.spi.CacheExecutorRunnable;
+import org.coconut.core.AttributeMap;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -15,10 +16,11 @@ public interface ExtendedExecutorRunnable {
 
     interface LoadKey<K> extends CacheExecutorRunnable {
         K getKey();
+        AttributeMap getAttributeMap();
     }
 
     interface LoadKeys<K> extends CacheExecutorRunnable {
-        Collection<? extends K> getKeys();
+        Map<? extends K, AttributeMap> getKeys();
     }
 
     interface ServiceStatistics extends CacheExecutorRunnable {

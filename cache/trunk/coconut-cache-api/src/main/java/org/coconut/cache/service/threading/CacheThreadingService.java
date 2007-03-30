@@ -3,9 +3,6 @@
  */
 package org.coconut.cache.service.threading;
 
-import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

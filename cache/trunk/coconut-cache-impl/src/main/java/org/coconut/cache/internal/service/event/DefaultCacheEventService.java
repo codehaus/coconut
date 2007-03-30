@@ -18,9 +18,8 @@ import java.util.Collection;
 import javax.management.Notification;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.InternalCacheServiceManager;
+import org.coconut.cache.internal.service.CacheServiceManager;
 import org.coconut.cache.internal.service.joinpoint.AfterCacheOperation;
 import org.coconut.cache.service.event.CacheEntryEvent;
 import org.coconut.cache.service.event.CacheEvent;
@@ -37,8 +36,8 @@ import org.coconut.filter.Filter;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class DefaultCacheEventService<K, V> extends AbstractCacheEventService<K, V>
-        implements CacheEventService<K, V>, AfterCacheOperation<K, V> {
+public class DefaultCacheEventService<K, V> implements CacheEventService<K, V>,
+        AfterCacheOperation<K, V> {
 
     private final boolean doHit;
 
@@ -62,11 +61,11 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheEventService<K,
 
     private final Offerable<CacheEvent<K, V>> offerable;
 
-    public DefaultCacheEventService(InternalCacheServiceManager manager,
-            CacheConfiguration<K, V> conf) {
-        super(manager, conf);
-        CacheEventConfiguration co = conf
-                .getServiceConfiguration(CacheEventConfiguration.class);
+    private final CacheServiceManager manager;
+
+    public DefaultCacheEventService(CacheServiceManager manager,
+            CacheEventConfiguration co) {
+        this.manager = manager;
         this.offerable = eb;
         this.doHit = co.isIncluded(CacheEntryEvent.ItemAccessed.class);
         this.doMiss = doHit;
@@ -227,7 +226,7 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheEventService<K,
      * @see org.coconut.core.Offerable#offer(java.lang.Object)
      */
     public boolean offer(CacheEvent<K, V> element) {
-        checkStarted();
+        manager.checkStarted();
         return eb.offer(element);
     }
 
@@ -242,7 +241,7 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheEventService<K,
      * @see org.coconut.event.EventBus#offerAll(java.util.Collection)
      */
     public boolean offerAll(Collection<? extends CacheEvent<K, V>> c) {
-        checkStarted();
+        manager.checkStarted();
         return eb.offerAll(c);
     }
 
@@ -250,7 +249,7 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheEventService<K,
      * @see org.coconut.core.EventProcessor#process(java.lang.Object)
      */
     public void process(CacheEvent<K, V> event) {
-        checkStarted();
+        manager.checkStarted();
         eb.process(event);
     }
 
@@ -259,7 +258,7 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheEventService<K,
      */
     public EventSubscription<CacheEvent<K, V>> subscribe(
             EventProcessor<? super CacheEvent<K, V>> eventHandler) {
-        checkStarted();
+        manager.checkStarted();
         return eb.subscribe(eventHandler);
     }
 
@@ -270,7 +269,7 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheEventService<K,
     public EventSubscription<CacheEvent<K, V>> subscribe(
             EventProcessor<? super CacheEvent<K, V>> eventHandler,
             Filter<? super CacheEvent<K, V>> filter) {
-        checkStarted();
+        manager.checkStarted();
         return eb.subscribe(eventHandler, filter);
     }
 
@@ -281,7 +280,7 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheEventService<K,
     public EventSubscription<CacheEvent<K, V>> subscribe(
             EventProcessor<? super CacheEvent<K, V>> listener,
             Filter<? super CacheEvent<K, V>> filter, String name) {
-        checkStarted();
+        manager.checkStarted();
         return eb.subscribe(listener, filter, name);
     }
 
@@ -289,7 +288,7 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheEventService<K,
      * @see org.coconut.cache.service.event.CacheEventService#unsubscribeAll()
      */
     public Collection<EventSubscription<CacheEvent<K, V>>> unsubscribeAll() {
-        checkStarted();
+        manager.checkStarted();
         return eb.unsubscribeAll();
     }
 

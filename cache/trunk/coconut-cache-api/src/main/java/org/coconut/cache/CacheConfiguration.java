@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 
 import net.jcip.annotations.NotThreadSafe;
 
+import org.coconut.cache.service.event.CacheEventConfiguration;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
@@ -119,7 +120,6 @@ public class CacheConfiguration<K, V> implements Cloneable {
             }
         }
         list.add(conf);
-        ConfigurationValidator.initializeConfiguration(conf, this);
         return conf;
     }
 
@@ -308,6 +308,9 @@ public class CacheConfiguration<K, V> implements Cloneable {
         return lazyCreate(CacheExpirationConfiguration.class);
     }
 
+    public CacheEventConfiguration serviceEvent() {
+        return lazyCreate(CacheEventConfiguration.class);
+    }
     public CacheLoadingConfiguration<K, V> serviceLoading() {
         return lazyCreate(CacheLoadingConfiguration.class);
     }
@@ -455,6 +458,7 @@ public class CacheConfiguration<K, V> implements Cloneable {
             addService(c);
             service = getServiceConfiguration(c);
         }
+        ConfigurationValidator.initializeConfiguration(service,this);
         return service;
     }
 

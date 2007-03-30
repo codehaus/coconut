@@ -102,15 +102,15 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         return name;
     }
 
-    public void putAllEntries(Collection<? extends CacheEntry<K, V>> entries) {
-        for (CacheEntry<K, V> entry : entries) {
-            putEntry(entry);
-        }
-    }
-
-    public CacheEntry<K, V> putEntry(CacheEntry<K, V> entry) {
-        throw new UnsupportedOperationException();
-    }
+//    public void putAllEntries(Collection<? extends CacheEntry<K, V>> entries) {
+//        for (CacheEntry<K, V> entry : entries) {
+//            putEntry(entry);
+//        }
+//    }
+//
+//    public CacheEntry<K, V> putEntry(CacheEntry<K, V> entry) {
+//        throw new UnsupportedOperationException();
+//    }
 
     /**
      * {@inheritDoc}
@@ -204,6 +204,9 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         throw new UnsupportedOperationException("trimToSize not supported");
     }
 
+    public long getCapacity() {
+        return size();
+    }
     /**
      * Returns the Clock defined for this cache.
      */

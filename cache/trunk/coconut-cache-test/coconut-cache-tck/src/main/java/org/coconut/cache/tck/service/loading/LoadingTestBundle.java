@@ -26,7 +26,7 @@ public class LoadingTestBundle extends CacheTestBundle {
     public void setupLoading() {
         noLoadableCache = c;
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
-        c = newCache(cc.serviceLoading().setBackend(new IntegerToStringLoader()).c());
+        c = newCache(cc.serviceLoading().setLoader(new IntegerToStringLoader()).c());
         service = c.getService(CacheLoadingService.class);
     }
 

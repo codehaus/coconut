@@ -33,7 +33,7 @@ public class LoadingStatistics extends CacheTestBundle {
     @Test
     public void load() throws Exception {
         CacheConfiguration<Integer, String> conf = super.newConf();
-        conf.serviceLoading().setBackend(new IntegerToStringLoader());
+        conf.serviceLoading().setLoader(new IntegerToStringLoader());
         c = newCache(conf);
         CacheLoadingService<Integer, String> load = c
                 .getService(CacheLoadingService.class);

@@ -5,8 +5,6 @@ package org.coconut.cache.service.management;
 
 import javax.management.MBeanServer;
 
-import org.coconut.management.ManagedGroup;
-
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -22,5 +20,5 @@ public interface CacheManagementService {
 
     // configuration allow modification
     // what about executableGroup
-    ManagedGroup getGroup();
+  //  ManagedGroup getGroup();
 }

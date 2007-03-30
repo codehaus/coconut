@@ -4,13 +4,12 @@
 
 package org.coconut.cache.tck.util;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.coconut.cache.service.loading.CacheLoader;
-
+import org.coconut.core.AttributeMap;
 
 public class CountdownLatchLoader implements CacheLoader<Integer, String> {
 
@@ -28,32 +27,32 @@ public class CountdownLatchLoader implements CacheLoader<Integer, String> {
         this(loader, counts, 0);
     }
 
-    public CountdownLatchLoader(CacheLoader<Integer, String> loader,
-            int counts, int beforeLoads) {
+    public CountdownLatchLoader(CacheLoader<Integer, String> loader, int counts,
+            int beforeLoads) {
         this.latch = new CountDownLatch(counts);
         this.loader = loader;
         this.beforeLoad = new CountDownLatch(beforeLoads);
     }
 
-    public String load(Integer key) throws Exception {
+    public String load(Integer key, AttributeMap map) throws Exception {
         beforeLoad.countDown();
         latch.await();
         loads.incrementAndGet();
-        return loader.load(key);
+        return loader.load(key,map);
     }
 
-    public Map<Integer, String> loadAll(Collection<? extends Integer> keys)
+    public Map<Integer, String> loadAll(Map<? extends Integer, AttributeMap> mapsWithAttributes)
             throws Exception {
         beforeLoad.countDown();
         latch.await();
         loadAlls.incrementAndGet();
-        return loader.loadAll(keys);
+        return loader.loadAll(mapsWithAttributes);
     }
 
     public void countDown() {
         latch.countDown();
     }
-    
+
     public CountDownLatch beforeLoad() {
         return beforeLoad;
     }
@@ -69,5 +68,6 @@ public class CountdownLatchLoader implements CacheLoader<Integer, String> {
     public long getNumberOfLoadAlls() {
         return loadAlls.get();
     }
-    
+
+
 }

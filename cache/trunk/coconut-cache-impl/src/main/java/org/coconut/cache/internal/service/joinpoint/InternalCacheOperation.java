@@ -9,5 +9,5 @@ package org.coconut.cache.internal.service.joinpoint;
  */
 public interface InternalCacheOperation<K, V> extends AfterCacheOperation<K, V>,
         BeforeCacheOperation<K, V> {
-    boolean cacheClearNeedRemoved();
+    boolean needElementsAfterClear();
 }

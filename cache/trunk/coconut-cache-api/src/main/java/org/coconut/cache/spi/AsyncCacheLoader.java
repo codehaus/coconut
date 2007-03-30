@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.Future;
 
 import org.coconut.cache.service.loading.CacheLoader;
+import org.coconut.core.AttributeMap;
 import org.coconut.core.Callback;
 
 /**
@@ -34,8 +35,8 @@ public interface AsyncCacheLoader<K, V> extends CacheLoader<K, V> {
      *         whose <tt>get()</tt> method will return <tt>null</tt> upon
      *         completion.
      */
-    Future<?> asyncLoad(final K key, Callback<V> c);
+    Future<?> asyncLoad(final K key, AttributeMap attributes, Callback<V> c);
 
-    Future<?> asyncLoadAll(final Collection<? extends K> keys, Callback<Map<K, V>> c);
+    Future<?> asyncLoadAll(final Map<? extends K, AttributeMap> keysWithAttributes, Callback<Map<K, V>> c);
 
 }

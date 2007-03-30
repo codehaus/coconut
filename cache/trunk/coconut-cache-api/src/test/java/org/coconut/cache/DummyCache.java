@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.spi.AbstractCache;
+import org.coconut.core.AttributeMap;
 
 /**
  * 
@@ -88,6 +89,15 @@ public class DummyCache extends AbstractCache {
      * @see org.coconut.cache.Cache#getService(java.lang.Class)
      */
     public Object getService(Class serviceType) {
+        return null;
+    }
+
+
+    /**
+     * @see org.coconut.cache.Cache#put(java.lang.Object, java.lang.Object, org.coconut.core.AttributeMap)
+     */
+    public Object put(Object key, Object value, AttributeMap attributes) {
+        // TODO Auto-generated method stub
         return null;
     }
 }

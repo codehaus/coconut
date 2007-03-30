@@ -12,6 +12,7 @@ import net.jcip.annotations.NotThreadSafe;
 
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.policy.spi.AbstractPolicy;
+import org.coconut.core.AttributeMap;
 import org.coconut.internal.util.IndexedList;
 
 /**
@@ -236,7 +237,7 @@ public class ClockPolicy<T> extends AbstractPolicy<T> implements ReplacementPoli
     /**
      * @see org.coconut.cache.policy.ReplacementPolicy#add(T)
      */
-    public int add(T data) {
+    public int add(T data, AttributeMap ignore) {
         return policy.add(data);
     }
 
@@ -279,7 +280,7 @@ public class ClockPolicy<T> extends AbstractPolicy<T> implements ReplacementPoli
      * @see org.coconut.cache.policy.ReplacementPolicy#update(int,
      *      java.lang.Object)
      */
-    public boolean update(int index, T newElement) {
+    public boolean update(int index, T newElement, AttributeMap ignore) {
         policy.replace(index, newElement);
         return false;
     }

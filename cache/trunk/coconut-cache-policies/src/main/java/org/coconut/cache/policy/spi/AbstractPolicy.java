@@ -8,12 +8,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.coconut.cache.policy.ReplacementPolicy;
+import org.coconut.core.AttributeMaps;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
 public abstract class AbstractPolicy<T> implements ReplacementPolicy<T> {
+
+    /**
+     * @see org.coconut.cache.policy.ReplacementPolicy#add(java.lang.Object)
+     */
+    public int add(T element) {
+        return add(element, AttributeMaps.EMPTY_MAP);
+    }
+
+    /**
+     * @see org.coconut.cache.policy.ReplacementPolicy#update(int,
+     *      java.lang.Object)
+     */
+    public boolean update(int index, T newElement) {
+        return update(index, newElement, AttributeMaps.EMPTY_MAP);
+    }
 
     /**
      * Adds all the elements to the policy. The elements will be added

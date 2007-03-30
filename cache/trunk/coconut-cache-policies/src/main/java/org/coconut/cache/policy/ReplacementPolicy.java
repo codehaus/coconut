@@ -6,6 +6,8 @@ package org.coconut.cache.policy;
 
 import java.util.List;
 
+import org.coconut.core.AttributeMap;
+
 /**
  * A (cache) replacement policy determines which data item(s) should be evicted
  * (deleted) from the cache when the free space is insufficient for
@@ -52,6 +54,13 @@ import java.util.List;
  */
 public interface ReplacementPolicy<T> {
 
+    /** The default cost of fetching an element if no cost is specified. */
+    public static final double DEFAULT_COST = 1.0;
+
+    public static final long DEFAULT_SIZE = 1;
+
+    public static final long DEFAULT_HITS = 0;
+
     /**
      * Removes all elements from this policy.
      */
@@ -72,6 +81,8 @@ public interface ReplacementPolicy<T> {
      */
     boolean update(int index, T newElement);
 
+    boolean update(int index, T newElement, AttributeMap attributes);
+
     /**
      * Adds the specified element to the replacement policy. If the policy
      * accepts the element a positive integer is returned. This integer is
@@ -89,6 +100,8 @@ public interface ReplacementPolicy<T> {
      *         is not accepted into the replacement policy
      */
     int add(T element);
+
+    int add(T element, AttributeMap attributes);
 
     /**
      * Used for notifying the replacement policy that the element with specified

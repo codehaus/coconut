@@ -4,10 +4,10 @@
 
 package org.coconut.cache.service.loading;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.coconut.core.AttributeMap;
 
 /**
  * An abstract implementation of a {@link org.coconut.cache.CacheLoader}. Use
@@ -21,11 +21,12 @@ public abstract class AbstractCacheLoader<K, V> implements CacheLoader<K, V> {
     /**
      * @see org.coconut.cache.CacheLoader#loadAll(java.util.Collection)
      */
-    public final Map<K, V> loadAll(Collection<? extends K> keys)
+    public final Map<K, V> loadAll(Map<? extends K, AttributeMap> mapsWithAttributes)
             throws Exception {
         HashMap<K, V> h = new HashMap<K, V>();
-        for (K key : keys) {
-            h.put(key, load(key)); // we keep nulls
+        for (Map.Entry<? extends K, AttributeMap> e : mapsWithAttributes.entrySet()) {
+            K key = e.getKey();
+            h.put(key, load(key, e.getValue())); // we keep nulls
         }
         return h;
     }

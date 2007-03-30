@@ -30,7 +30,7 @@ public class EventBusLoading extends AbstractEventTestBundle {
     public void setup() {
         CacheConfiguration conf = CacheConfiguration.create();
         conf.addService(CacheEventConfiguration.class);
-        conf.serviceLoading().setBackend(new IntegerToStringLoader());
+        conf.serviceLoading().setLoader(new IntegerToStringLoader());
         c = newCache(conf);
     }
     

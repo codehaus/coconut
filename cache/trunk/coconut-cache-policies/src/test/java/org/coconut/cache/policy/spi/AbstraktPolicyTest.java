@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.coconut.core.AttributeMap;
 import org.junit.Test;
 
 /**
@@ -33,7 +34,7 @@ public class AbstraktPolicyTest {
     @Test
     public void testEvict() {
         Mock m = new Mock();
-        m.list = new LinkedList<String>(Arrays.asList("a", "b", "c", "d","e"));
+        m.list = new LinkedList<String>(Arrays.asList("a", "b", "c", "d", "e"));
 
         List<String> t = m.evict(2);
         assertEquals("a", t.get(0));
@@ -46,10 +47,11 @@ public class AbstraktPolicyTest {
         assertEquals(3, t.size());
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testIAE() {
         new Mock().evict(0);
     }
+
     static class Mock extends AbstractPolicy<String> {
 
         LinkedList<String> list = new LinkedList<String>();
@@ -59,7 +61,7 @@ public class AbstraktPolicyTest {
         /**
          * @see org.coconut.cache.policy.ReplacementPolicy#add(java.lang.Object)
          */
-        public int add(String element) {
+        public int add(String element, AttributeMap ignore) {
             list.add(element);
             return addCount++;
         }
@@ -117,7 +119,7 @@ public class AbstraktPolicyTest {
          * @see org.coconut.cache.policy.ReplacementPolicy#update(int,
          *      java.lang.Object)
          */
-        public boolean update(int index, String newElement) {
+        public boolean update(int index, String newElement, AttributeMap ignore) {
             throw new UnsupportedOperationException();
         }
 

@@ -11,14 +11,5 @@ import org.coconut.event.EventBus;
  */
 public interface CacheEventService<K, V> extends EventBus<CacheEvent<K, V>> {
 
-    /**
-     * @param event
-     * @throws UnsupportedOperationException
-     *             if no management is configured for this cache.
-     */
-    //how do we handle serial numbers?
-    //Det er lige før vi bliver nødt til at fjerne den fra interfaces
-    //og putte det på som en property..
-//    void publishJMX(CacheEvent<?, ?> event);
-
+    // pause()/resume()
 }

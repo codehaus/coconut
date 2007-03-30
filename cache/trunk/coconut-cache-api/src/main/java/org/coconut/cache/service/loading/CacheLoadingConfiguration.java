@@ -3,8 +3,12 @@
  */
 package org.coconut.cache.service.loading;
 
+import java.util.concurrent.TimeUnit;
+
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
+import org.coconut.filter.Filter;
+import org.coconut.internal.util.UnitOfTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -15,15 +19,17 @@ import org.w3c.dom.Element;
 public class CacheLoadingConfiguration<K, V> extends
         AbstractCacheServiceConfiguration<K, V> {
 
-    final static String LOADING_TAG = "loading";
+    private final static String LOADER_TAG = "loader";
 
-    final static String LOADER_TAG = "loader";
+    private final static String LOADING_TAG = "loading";
 
-    final static String BACKEND_TAG = "backed";
+    private final static String REFRESH_FILTER_TAG = "refresh-filter";
 
-    final static String EXTENDED_LOADER_TAG = "entryloader";
+    private final static String REFRESH_INTERVAL_TAG = "refresh-interval";
 
-    private CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> extendedLoader;
+    private long defaultRefreshInterval = -1;
+
+    private Filter<CacheEntry<K, V>> refreshFilter;
 
     private CacheLoader<? super K, ? extends V> loader;
 
@@ -36,12 +42,57 @@ public class CacheLoadingConfiguration<K, V> extends
      * key-value bindings. If this method returns <code>null</code> no initial
      * loader will be set.
      */
-    public CacheLoader<? super K, ? extends V> getBackend() {
+    public CacheLoader<? super K, ? extends V> getLoader() {
         return loader;
     }
 
-    public CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> getExtendedBackend() {
-        return extendedLoader;
+    public Filter<CacheEntry<K, V>> getRefreshFilter() {
+        return refreshFilter;
+    }
+
+    /**
+     * Returns the reload interval in the specified timeunit.
+     * 
+     * @param unit
+     *            the unit of time to return the reload interval in
+     * @return
+     * @see #setReloadInterval(long, TimeUnit)
+     */
+    public long getRefreshInterval(TimeUnit unit) {
+        if (defaultRefreshInterval > 0) {
+            return unit.convert(defaultRefreshInterval, TimeUnit.NANOSECONDS);
+        } else {
+            return defaultRefreshInterval;
+        }
+    }
+
+    /**
+     * Sets the default reload interval relative to the last update of the
+     * element. For example, if all elements should be refreshed 1 hour after
+     * they have been added or last updated. Use
+     * 
+     * <pre>
+     * CacheLoadingConfiguration clc;
+     * clc.setReloadInterval(60 * 60, TimeUnit.SECONDS);
+     * </pre>
+     * 
+     * @param interval
+     *            the i
+     * @param unit
+     *            the unit of the interval
+     * @return this Expiration
+     */
+    public CacheLoadingConfiguration<K, V> setDefaultRefreshTime(long interval,
+            TimeUnit unit) {
+        if (unit == null) {
+            throw new NullPointerException("unit is null");
+        }
+        if (interval <= 0) {
+            defaultRefreshInterval = interval;
+        } else {
+            defaultRefreshInterval = unit.toNanos(interval);
+        }
+        return this;
     }
 
     /**
@@ -57,36 +108,28 @@ public class CacheLoadingConfiguration<K, V> extends
      *             if an extended loader has already been set, using
      *             {@link #setExtendedBackend(CacheLoader)}
      */
-    public CacheLoadingConfiguration<K, V> setBackend(
+    public CacheLoadingConfiguration<K, V> setLoader(
             CacheLoader<? super K, ? extends V> loader) {
-        if (extendedLoader != null) {
-            throw new IllegalStateException(
-                    "extended loader already set, cannot set an ordinary loader");
-        }
         this.loader = loader;
         return this;
     }
 
     /**
-     * Sets the loader that should be used for loading new elements into the
-     * cache. If the specified loader is <code>null</code> no loader will be
-     * used for loading new key-value bindings. All values must then put into
-     * the cache by using put or putAll.
+     * Sets a function ({@link Filter}) that is used for determining if an
+     * element should be reloaded. The filter is checked on each call to
+     * {@link org.coconut.cache.Cache#get(Object)),{@link org.coconut.cache.Cache#getAll(Collection)),
+     * {@link org.coconut.cache.Cache#getEntry(Object)) if a mapping exist for specified key(s).
+     * Furthermore it is called for all entries within the cache on calls to
+     * {@link org.coconut.cache.Cache#evict()).
+     * <p>
      * 
-     * @param loader
-     *            the loader to set
-     * @return the current CacheConfiguration
-     * @throws IllegalStateException
-     *             if an ordinary loader has already been set, using
-     *             {@link #setBackend(CacheLoader)}
+     * @param filter
+     *            the reload filter
+     * @return this configuration
      */
-    public CacheLoadingConfiguration setExtendedBackend(
-            CacheLoader<? super K, ? extends CacheEntry<? super K, ? extends V>> loader) {
-        if (this.loader != null) {
-            throw new IllegalStateException(
-                    "loader already set, cannot set an extended loader");
-        }
-        extendedLoader = loader;
+    //currentNoMap to specify load attributes???, perhaps specify a refreshTransformer??(y)
+    public CacheLoadingConfiguration<K, V> setRefreshFilter(Filter<CacheEntry<K, V>> filter) {
+        refreshFilter = filter;
         return this;
     }
 
@@ -99,13 +142,21 @@ public class CacheLoadingConfiguration<K, V> extends
         Element loaderE = getChild(LOADER_TAG, parent);
         if (loaderE != null) {
             CacheLoader loader = loadObject(loaderE, CacheLoader.class);
-            setBackend(loader);
+            setLoader(loader);
         }
 
-        Element extendedLoader = getChild(EXTENDED_LOADER_TAG, parent);
-        if (extendedLoader != null) {
-            CacheLoader loader = loadObject(extendedLoader, CacheLoader.class);
-            setExtendedBackend(loader);
+        /* Refresh timer */
+        Element refreshInterval = getChild(REFRESH_INTERVAL_TAG, parent);
+        if (refreshInterval != null) {
+            long timeout = UnitOfTime.fromElement(refreshInterval, TimeUnit.MILLISECONDS);
+            setDefaultRefreshTime(timeout, TimeUnit.MILLISECONDS);
+        }
+
+        /* Refresh Filter */
+        Element refreshFilter = getChild(REFRESH_FILTER_TAG, parent);
+        if (refreshFilter != null) {
+            Filter f = loadObject(refreshFilter, Filter.class);
+            setRefreshFilter(f);
         }
     }
 
@@ -119,9 +170,19 @@ public class CacheLoadingConfiguration<K, V> extends
             Element e = add(doc, LOADER_TAG, parent);
             saveObject(doc, e, "backend.cannotPersistLoader", loader);
         }
-        if (extendedLoader != null) {
-            Element e = add(doc, EXTENDED_LOADER_TAG, parent);
-            saveObject(doc, e, "backend.cannotPersistLoader", extendedLoader);
+
+        /* Refresh Timer */
+        long refresh = getRefreshInterval(TimeUnit.MILLISECONDS);
+        if (refresh > 0) {
+            UnitOfTime.toElementCompact(add(doc, REFRESH_INTERVAL_TAG, parent), refresh,
+                    TimeUnit.MILLISECONDS);
+        }
+
+        /* Refresh Filter */
+        Filter refreshFilter = getRefreshFilter();
+        if (refreshFilter != null) {
+            super.saveObject(doc, add(doc, REFRESH_FILTER_TAG, parent),
+                    "expiration.cannotPersistRefreshFilter", refreshFilter);
         }
     }
 }

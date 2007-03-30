@@ -7,8 +7,11 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
+import org.coconut.filter.Filter;
 
 /**
+ * A service used to control the expiration of objects in the cache.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -20,18 +23,22 @@ public interface CacheExpirationService<K, V> {
      * use the default expiration time configured for the cache or never expire
      * if no such default value has been configured for the cache.
      */
-    static final long DEFAULT_EXPIRATION = 0;
+    long DEFAULT_EXPIRATION = 0;
 
     /**
      * Used in {@link #put(Object, Object, long, TimeUnit)} and
      * {@link #putAll(Map, long, TimeUnit)} to specify that an element should
      * never expire.
      */
-    static final long NEVER_EXPIRE = Long.MAX_VALUE;
+    long NEVER_EXPIRE = Long.MAX_VALUE;
 
-    boolean expireKey(Object key);
+    void setDefaultTimeToLive(long timeToLive, TimeUnit unit);
 
-    boolean expire(CacheEntry<?, ?> entry);
+    long getDefaultTimeToLive(TimeUnit unit);
+
+    Filter<CacheEntry<K, V>> getExpirationFilter();
+
+    void setExpirationFilter(Filter<CacheEntry<K, V>> filter);
 
     /**
      * Associates the specified value with the specified key in this cache
@@ -52,7 +59,7 @@ public interface CacheExpirationService<K, V> {
      *            key with which the specified value is to be associated.
      * @param value
      *            value to be associated with the specified key.
-     * @param timeout
+     * @param expirationTime
      *            the time from now to when the element can be expired
      * @param unit
      *            the time unit of the timeout parameter.
@@ -70,7 +77,7 @@ public interface CacheExpirationService<K, V> {
      * @throws NullPointerException
      *             if the specified key, value or timeunit is <tt>null</tt>.
      */
-    V put(K key, V value, long timeout, TimeUnit unit);
+    V put(K key, V value, long expirationTime, TimeUnit unit);
 
     /**
      * Copies all of the mappings from the specified map to this cache (optional

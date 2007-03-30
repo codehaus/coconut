@@ -6,16 +6,12 @@ package org.coconut.cache.tck.service.loading;
 
 import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M2;
-import static org.coconut.test.CollectionUtils.M3;
-import static org.coconut.test.CollectionUtils.M4;
-import static org.coconut.test.CollectionUtils.M5;
 
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.service.loading.CacheLoadingConfiguration;
-import org.coconut.cache.tck.util.CacheEntryLoader;
+import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.util.DefaultCacheEntry;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,7 +23,7 @@ import org.junit.Test;
 @SuppressWarnings("unchecked")
 public class ExtendedCacheLoader extends Loading {
 
-    private CacheEntryLoader cel = new CacheEntryLoader();
+    private CacheLoader cel = null;
 
     private Entry e1;
 
@@ -36,16 +32,16 @@ public class ExtendedCacheLoader extends Loading {
     @Before
     public void setup() {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
-        cc.addService(CacheLoadingConfiguration.class).setExtendedBackend(cel);
+  //      cc.addService(CacheLoadingConfiguration.class).setExtendedBackend(cel);
         cc.setClock(clock);
         c = newCache(cc);
         e1 = new Entry(M1.getKey(), M1.getValue());
         e2 = new Entry(M2.getKey(), M2.getValue());
-        cel.entries.put(e1.getKey(), e1);
-        cel.entries.put(e2.getKey(), e2);
-        cel.entries.put(M3.getKey(), new Entry(M3.getKey(), M3.getValue()));
-        cel.entries.put(M4.getKey(), new Entry(M4.getKey(), M4.getValue()));
-        cel.entries.put(M5.getKey(), new Entry(M5.getKey(), M5.getValue()));
+//        cel.entries.put(e1.getKey(), e1);
+//        cel.entries.put(e2.getKey(), e2);
+//        cel.entries.put(M3.getKey(), new Entry(M3.getKey(), M3.getValue()));
+//        cel.entries.put(M4.getKey(), new Entry(M4.getKey(), M4.getValue()));
+//        cel.entries.put(M5.getKey(), new Entry(M5.getKey(), M5.getValue()));
 
         e1.cost = 10.1;
         e1.creationTime = 11;

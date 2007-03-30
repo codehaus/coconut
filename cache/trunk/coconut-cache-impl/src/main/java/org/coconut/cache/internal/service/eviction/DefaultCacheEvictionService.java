@@ -4,44 +4,40 @@
 package org.coconut.cache.internal.service.eviction;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.AbstractCacheService;
-import org.coconut.cache.internal.service.InternalCacheServiceManager;
 import org.coconut.cache.policy.Policies;
 import org.coconut.cache.policy.ReplacementPolicy;
+import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class DefaultCacheEvictionService<T extends CacheEntry> extends
-        AbstractCacheService {
+public class DefaultCacheEvictionService<T extends CacheEntry> implements
+        InternalCacheEvictionService<T> {
     private final ReplacementPolicy<T> cp;
 
-    private final int maxSize;
+    private int maxSize;
 
-    private final int preferableSize;
+    private int preferableSize;
 
-    private final long maxCapacity;
+    private long maxCapacity;
 
-    private final long preferableCapacity;
+    private long preferableCapacity;
 
-    public DefaultCacheEvictionService(InternalCacheServiceManager manager,
-            CacheConfiguration<?, ?> conf) {
-        super(manager, conf);
-        if (conf.eviction().getPolicy() == null) {
+    public DefaultCacheEvictionService(CacheEvictionConfiguration conf) {
+        if (conf.getPolicy() == null) {
+            // default policy if used did not specify any
             cp = Policies.newLRU();
         } else {
-            cp = conf.eviction().getPolicy();
+            cp = conf.getPolicy();
         }
-        maxSize = conf.eviction().getMaximumSize();
-        maxCapacity = conf.eviction().getMaximumCapacity();
-        preferableCapacity = conf.eviction().getPreferableCapacity();
-        preferableSize = conf.eviction().getPreferableSize();
+        maxSize = conf.getMaximumSize();
+        maxCapacity = conf.getMaximumCapacity();
+        preferableCapacity = conf.getPreferableCapacity();
+        preferableSize = conf.getPreferableSize();
     }
 
     public T evictNext() {
@@ -106,6 +102,42 @@ public class DefaultCacheEvictionService<T extends CacheEntry> extends
             return -1;
         }
         return cp.add(t);
+    }
+
+    public int getMaximumSize() {
+        return maxSize;
+    }
+
+    public int getPreferableSize() {
+        return preferableSize;
+    }
+
+    public void setPreferableSize(int size) {
+        this.preferableSize = new CacheEvictionConfiguration().setPreferableSize(size)
+                .getPreferableSize();
+    }
+
+    public void setMaximumSize(int size) {
+        this.maxSize = new CacheEvictionConfiguration().setMaximumSize(size)
+                .getMaximumSize();
+    }
+
+    public long getMaximumCapacity() {
+        return maxCapacity;
+    }
+
+    public void setMaximumCapacity(long size) {
+        this.maxCapacity = new CacheEvictionConfiguration().setMaximumCapacity(size)
+                .getMaximumCapacity();
+    }
+
+    public long getPreferableCapacity() {
+        return preferableCapacity;
+    }
+
+    public void setPreferableCapacity(long size) {
+        this.preferableCapacity = new CacheEvictionConfiguration().setPreferableCapacity(
+                size).getPreferableCapacity();
     }
 
     /**

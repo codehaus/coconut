@@ -5,6 +5,7 @@
 package org.coconut.cache.util;
 
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 
 /**
@@ -55,14 +56,14 @@ public class DefaultCacheEntry<K, V> implements CacheEntry<K, V> {
      * {@inheritDoc}
      */
     public double getCost() {
-        return DEFAULT_COST;
+        return ReplacementPolicy.DEFAULT_COST;
     }
 
     /**
      * {@inheritDoc}
      */
     public long getSize() {
-        return DEFAULT_SIZE;
+        return ReplacementPolicy.DEFAULT_SIZE;
     }
 
     /**

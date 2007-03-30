@@ -11,6 +11,7 @@ import net.jcip.annotations.NotThreadSafe;
 
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.policy.spi.AbstractPolicy;
+import org.coconut.core.AttributeMap;
 import org.coconut.internal.util.IndexedStack;
 
 /**
@@ -75,7 +76,7 @@ public class MRUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
      * {@inheritDoc}
      * @see org.coconut.cache.policy.ReplacementPolicy#add(int)
      */
-    public int add(T data) {
+    public int add(T data, AttributeMap ignore) {
         return list.add(data);
     }
 
@@ -141,7 +142,7 @@ public class MRUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
      * @see org.coconut.cache.policy.ReplacementPolicy#update(int,
      *      java.lang.Object)
      */
-    public boolean update(int index, T newElement) {
+    public boolean update(int index, T newElement, AttributeMap ignore) {
         list.replace(index, newElement);
         return true; // MRU never rejects an entry
     }

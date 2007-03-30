@@ -8,8 +8,9 @@ import junit.framework.AssertionFailedError;
 
 import org.coconut.cache.service.loading.AbstractCacheLoader;
 import org.coconut.cache.tck.CacheTestBundle;
+import org.coconut.core.AttributeMap;
 
-public class ConcurrentLoading extends CacheTestBundle{
+public class ConcurrentLoading extends CacheTestBundle {
 
     // /**
     // * cancel(true) interrupts a running task
@@ -55,7 +56,7 @@ public class ConcurrentLoading extends CacheTestBundle{
         /**
          * @see org.coconut.cache.util.AbstractCacheLoader#load(java.lang.Object)
          */
-        public String load(Integer key) {
+        public String load(Integer key, AttributeMap ignore) {
             try {
                 Thread.sleep(key.intValue());
                 throw new AssertionFailedError();

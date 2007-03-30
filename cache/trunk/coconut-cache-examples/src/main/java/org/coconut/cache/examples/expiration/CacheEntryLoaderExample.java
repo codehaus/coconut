@@ -5,11 +5,10 @@ package org.coconut.cache.examples.expiration;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.CacheEntry;
+import org.coconut.cache.defaults.DefaultAttributes;
 import org.coconut.cache.defaults.UnsynchronizedCache;
 import org.coconut.cache.service.loading.AbstractCacheLoader;
-import org.coconut.cache.service.loading.CacheLoadingConfiguration;
-import org.coconut.cache.util.DefaultCacheEntry;
+import org.coconut.core.AttributeMap;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -17,18 +16,17 @@ import org.coconut.cache.util.DefaultCacheEntry;
  */
 public class CacheEntryLoaderExample {
     // START SNIPPET: class
-    static class ExpirationLoader extends
-            AbstractCacheLoader<Integer, CacheEntry<Integer, String>> {
-        public CacheEntry<Integer, String> load(Integer key) throws Exception {
-            return DefaultCacheEntry.createWithExpiration(key, "val=" + key, System
-                    .currentTimeMillis() + 60 * 60 * 1000);
+    static class ExpirationLoader extends AbstractCacheLoader<Integer, String> {
+        public String load(Integer key, AttributeMap attributes) throws Exception {
+            attributes.putLong(DefaultAttributes.TIME_TO_LIVE_NANO,
+                    System.currentTimeMillis() + 60 * 60 * 1000);
+            return "val=" + key;
         }
     }
 
     public static void main(String[] args) {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
-        cc.addService(CacheLoadingConfiguration.class).setExtendedBackend(
-                new ExpirationLoader());
+        cc.serviceLoading().setLoader(new ExpirationLoader());
         Cache<Integer, String> cache = cc.newInstance(UnsynchronizedCache.class);
         cache.get(4); // item will expire after 1 hour (60 * 60 * 1000)
     }

@@ -23,7 +23,7 @@ public class ExpirationTimeBased extends ExpirationTestBundle {
     @Before
     public void setUpCaches() {
         c = newCache(newConf().setClock(clock));
-        c0 = newCache(newConf().setClock(clock).serviceExpiration().setDefaultTimeout(10,
+        c0 = newCache(newConf().setClock(clock).serviceExpiration().setDefaultTimeToLive(10,
                 TimeUnit.NANOSECONDS).c());
         put(M1, 2);
         put(M2, 3);

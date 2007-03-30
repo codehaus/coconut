@@ -5,6 +5,7 @@
 package org.coconut.cache.tck.util;
 
 import org.coconut.cache.service.loading.AbstractCacheLoader;
+import org.coconut.core.AttributeMap;
 
 /**
  * A simple cache loader used for testing. Will return 1->A, 2->B, 3->C, 4->D,
@@ -18,7 +19,7 @@ public class IntegerToStringLoader extends AbstractCacheLoader<Integer, String> 
     /**
      * @see org.coconut.cache.util.AbstractCacheLoader#load(java.lang.Object)
      */
-    public String load(Integer key) {
+    public String load(Integer key, AttributeMap ignore) {
         if (1 <= key && key <= 5) {
             return "" + (char) (key + 64);
         } else {

@@ -8,6 +8,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
+import org.coconut.core.AttributeMap;
+
 /**
  * A <tt>cache</tt> is a collection of data duplicating original values stored
  * elsewhere or computed earlier, where the original data are expensive (usually
@@ -187,5 +189,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      *             if the specified key is <tt>null</tt>
      */
     CacheEntry<K, V> peekEntry(K key);
+    
+    V put(K key, V value, AttributeMap attributes);
 
 }
