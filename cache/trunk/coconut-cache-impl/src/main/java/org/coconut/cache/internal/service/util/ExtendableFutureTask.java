@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.cache.internal.service.loading;
+package org.coconut.cache.internal.service.util;
 
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -10,13 +10,29 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 
+import org.coconut.core.Callback;
+
 /**
  * Based on future task. But is easy to override.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public abstract class ExtendableFutureTask<V> implements Runnable, Future<V> {
+public abstract class ExtendableFutureTask<V> implements Runnable, Future<V>, Callback<V> {
+    /**
+     * @see org.coconut.core.Callback#completed(java.lang.Object)
+     */
+    public void completed(V result) {
+        set(result);
+    }
+
+    /**
+     * @see org.coconut.core.Callback#failed(java.lang.Throwable)
+     */
+    public void failed(Throwable cause) {
+        setException(cause);
+    }
+
     /** Synchronization control for FutureTask */
     private final Sync sync = new Sync();
 
@@ -94,7 +110,9 @@ public abstract class ExtendableFutureTask<V> implements Runnable, Future<V> {
         sync.innerRun();
     }
 
-    abstract V call() throws Exception;
+    protected V call() throws Exception {
+        return null;
+    }
 
     /**
      * Executes the computation without setting its result, and then resets this

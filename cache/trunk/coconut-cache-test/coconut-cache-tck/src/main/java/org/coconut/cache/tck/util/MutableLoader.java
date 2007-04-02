@@ -6,7 +6,7 @@ package org.coconut.cache.tck.util;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.coconut.cache.service.loading.AbstractCacheLoader;
+import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.core.AttributeMap;
 
 /**
@@ -16,7 +16,7 @@ import org.coconut.core.AttributeMap;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class MutableLoader extends AbstractCacheLoader<Integer, String> {
+public class MutableLoader implements CacheLoader<Integer, String> {
 
     private AtomicReference<String> ref = new AtomicReference<String>();
 

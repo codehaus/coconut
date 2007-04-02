@@ -3,9 +3,9 @@
  */
 package org.coconut.cache.internal.service.entry;
 
+import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheErrorHandler;
-import org.coconut.cache.defaults.DefaultAttributes;
 import org.coconut.cache.policy.PolicyAttributes;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.core.AttributeMap;
@@ -49,10 +49,10 @@ public abstract class AbstractCacheEntryFactoryService<K, V> {
 
     long getLastModified(K key, V value, AttributeMap attributes,
             CacheEntry<K, V> existing) {
-        long time = attributes.getLong(DefaultAttributes.LAST_MODIFIED_TIME);
+        long time = attributes.getLong(CacheAttributes.LAST_MODIFIED_TIME);
         if (time < 0) {
             errorHandler.warning("Must specify a positive modification time [Attribute="
-                    + DefaultAttributes.LAST_MODIFIED_TIME + " , modificationtime = "
+                    + CacheAttributes.LAST_MODIFIED_TIME + " , modificationtime = "
                     + time + " for key = " + key);
         }
         if (time > 0) {
@@ -64,10 +64,10 @@ public abstract class AbstractCacheEntryFactoryService<K, V> {
 
     long getCreationTime(K key, V value, AttributeMap attributes,
             CacheEntry<K, V> existing) {
-        long creationTime = attributes.getLong(DefaultAttributes.CREATION_TIME);
+        long creationTime = attributes.getLong(CacheAttributes.CREATION_TIME);
         if (creationTime < 0) {
             errorHandler.warning("Must specify a positive creation time [Attribute="
-                    + DefaultAttributes.CREATION_TIME + " , creationtime = "
+                    + CacheAttributes.CREATION_TIME + " , creationtime = "
                     + creationTime + " for key = " + key);
         }
         if (creationTime > 0) {

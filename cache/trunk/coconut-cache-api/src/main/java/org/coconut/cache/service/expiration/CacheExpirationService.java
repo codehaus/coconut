@@ -3,6 +3,7 @@
  */
 package org.coconut.cache.service.expiration;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -107,5 +108,18 @@ public interface CacheExpirationService<K, V> {
      *             <tt>null</tt>.
      */
     void putAll(Map<? extends K, ? extends V> t, long timeout, TimeUnit unit);
+
+    /**
+     * If
+     * 
+     * @param key
+     */
+    boolean expire(K key);
+
+    int expireAll(Collection<? extends K> keys);
+
+    int expireAll(Filter<? extends CacheEntry<K, V>> filter);
+
+    int expireAll();
 
 }

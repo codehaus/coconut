@@ -5,11 +5,12 @@ package org.coconut.cache.internal.service.expiration;
 
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.service.InternalCacheService;
+import org.coconut.cache.internal.service.ShutdownCallback;
 import org.coconut.cache.service.expiration.CacheExpirationMXBean;
 import org.coconut.cache.service.expiration.CacheExpirationService;
-import org.coconut.core.AttributeMap;
 import org.coconut.filter.Filter;
+import org.coconut.filter.Filters;
 import org.coconut.management.annotation.ManagedAttribute;
 
 /**
@@ -17,14 +18,31 @@ import org.coconut.management.annotation.ManagedAttribute;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public abstract class AbstractCacheExpirationService<K, V> implements
+        InternalCacheService, InternalCacheExpirationService<K, V>,
         CacheExpirationMXBean, CacheExpirationService<K, V> {
 
-    
+    /**
+     * @see org.coconut.cache.service.expiration.CacheExpirationMXBean#getFilter()
+     */
+    public String getFilterAsString() {
+        Filter f = getExpirationFilter();
+        if (f == null) {
+            return "No Filter defined";
+        } else {
+            return f.toString();
+        }
+    }
+
+    /**
+     * @see org.coconut.cache.service.expiration.CacheExpirationService#expireAll()
+     */
+    public int expireAll() {
+        return expireAll((Filter) Filters.trueFilter());
+    }
 
     /**
      * @see org.coconut.cache.service.expiration.CacheExpirationMXBean#getDefaultExpirationMs()
      */
-    @ManagedAttribute(defaultValue = "Default TimeToLive", description = "The default time to live for cache entries in milliseconds")
     public long getDefaultTimeToLiveMs() {
         return getDefaultTimeToLive(TimeUnit.MILLISECONDS);
     }
@@ -36,8 +54,18 @@ public abstract class AbstractCacheExpirationService<K, V> implements
         setDefaultTimeToLive(timeToLiveMs, TimeUnit.MILLISECONDS);
     }
 
-    public abstract boolean isExpired(CacheEntry<K, V> entry);
+    /**
+     * @see org.coconut.cache.internal.service.InternalCacheService#doStart()
+     */
+    public void doStart() throws Exception {
+        //ignore
+    }
 
-    public abstract long getExpirationTime(K key, V value, AttributeMap attributes);
+    /**
+     * @see org.coconut.cache.internal.service.InternalCacheService#shutdown(org.coconut.cache.internal.service.ShutdownCallback)
+     */
+    public void shutdown(ShutdownCallback callback) throws Exception {
+       //ignore
+    }
 
 }

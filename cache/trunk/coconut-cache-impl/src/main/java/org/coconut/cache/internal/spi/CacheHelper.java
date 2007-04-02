@@ -15,13 +15,30 @@ import org.coconut.filter.Filter;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public interface CacheHelper<K, V> {
-    // moveToExpirationService??
-    // returns all keys that 1. are present in the cache, 2. not expired
     Collection<K> filterEntries(Collection<? super K> col,
             Filter<? super CacheEntry> filter);
 
-    abstract void valueLoaded(K key, V value, AttributeMap attributes);
+    void valueLoaded(K key, V value, AttributeMap attributes);
 
-    abstract void valuesLoaded(Map<? super K, ? extends V> values,
+    void valuesLoaded(Map<? super K, ? extends V> values,
             Map<? extends K, AttributeMap> keys);
+
+    boolean expire(K key);
+
+    int expireAll(Collection<? extends K> collection);
+
+    int expireAll(Filter<? extends CacheEntry<K, V>> filter);
+
+    Object getMutex();
+
+    V put(K key, V value, AttributeMap attributes);
+
+    void putAll(Map<? extends K, ? extends V> keyValues,
+            Map<? extends K, AttributeMap> attributes);
+
+    boolean isValid(K key);
+
+    Collection<? extends K> filterKeys(Filter<? super CacheEntry<K, V>> filter);
+
+    Collection<? extends CacheEntry<K, V>> filter(Filter<? super CacheEntry<K, V>> filter);
 }

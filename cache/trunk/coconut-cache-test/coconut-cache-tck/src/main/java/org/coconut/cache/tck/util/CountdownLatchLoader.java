@@ -41,13 +41,13 @@ public class CountdownLatchLoader implements CacheLoader<Integer, String> {
         return loader.load(key,map);
     }
 
-    public Map<Integer, String> loadAll(Map<? extends Integer, AttributeMap> mapsWithAttributes)
-            throws Exception {
-        beforeLoad.countDown();
-        latch.await();
-        loadAlls.incrementAndGet();
-        return loader.loadAll(mapsWithAttributes);
-    }
+//    public Map<Integer, String> loadAll(Map<? extends Integer, AttributeMap> mapsWithAttributes)
+//            throws Exception {
+//        beforeLoad.countDown();
+//        latch.await();
+//        loadAlls.incrementAndGet();
+//        return loader.loadAll(mapsWithAttributes);
+//    }
 
     public void countDown() {
         latch.countDown();

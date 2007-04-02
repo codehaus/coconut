@@ -3,34 +3,31 @@
  */
 package org.coconut.cache.internal.service.loading;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheErrorHandler;
+import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.service.expiration.AbstractCacheExpirationService;
 import org.coconut.cache.internal.service.threading.InternalCacheThreadingService;
+import org.coconut.cache.internal.service.util.ExtendableFutureTask;
 import org.coconut.cache.internal.spi.CacheHelper;
 import org.coconut.cache.internal.spi.ExtendedExecutorRunnable;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.core.AttributeMap;
-import org.coconut.core.AttributeMaps;
 import org.coconut.core.Clock;
-import org.coconut.core.Transformer;
-import org.coconut.core.AttributeMaps.DefaultAttributeMap;
 import org.coconut.filter.Filter;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class DefaultCacheLoaderService<K, V> implements InternalCacheLoadingService<K, V> {
+public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService<K, V> {
 
-    private final CacheHelper<K, V> cache;
+    final CacheHelper<K, V> cache;
 
     private final Clock clock;
 
@@ -57,11 +54,13 @@ public class DefaultCacheLoaderService<K, V> implements InternalCacheLoadingServ
      * @param asyncLoader
      */
     public DefaultCacheLoaderService(final Clock clock,
+            InternalCacheAttributeService attributeFactory,
             final CacheErrorHandler<K, V> errorHandler,
             final CacheLoader<? super K, ? extends V> loader,
             final InternalCacheThreadingService threadManager,
             AbstractCacheExpirationService<K, V> expirationService,
             final CacheHelper<K, V> cache) {
+        super(attributeFactory, cache);
         this.clock = clock;
         this.errorHandler = errorHandler;
         this.loader = loader;
@@ -77,34 +76,16 @@ public class DefaultCacheLoaderService<K, V> implements InternalCacheLoadingServ
         return true;
     }
 
-    /*
-     * @see org.coconut.cache.service.loading.CacheLoadingService#load(java.lang.Object)
-     */
-    public Future<?> load(K key) {
-        return load(key, new DefaultAttributeMap());
-    }
-
-    /**
-     * @see org.coconut.cache.service.loading.CacheLoadingService#load(java.lang.Object,
-     *      org.coconut.core.AttributeMap)
-     */
-    public Future<?> load(K key, AttributeMap attributes) {
+    Future<?> doLoad(K key, AttributeMap attributes) {
         LoadValueRunnable lvr = new LoadValueRunnable<K, V>(this, loader, key, attributes);
         threadManager.execute(lvr);
         return lvr;
     }
 
     /**
-     * @see org.coconut.cache.service.loading.CacheLoadingService#loadAll(java.util.Collection)
-     */
-    public Future<?> loadAll(Collection<? extends K> keys) {
-        return loadAll(AttributeMaps.createMap(keys));
-    }
-
-    /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#loadAll(java.util.Map)
      */
-    public Future<?> loadAll(Map<K, AttributeMap> mapsWithAttributes) {
+    Future<?> doLoad(Map<? extends K, AttributeMap> mapsWithAttributes) {
         LoadValuesRunnable lvr = new LoadValuesRunnable<K, V>(this, loader,
                 mapsWithAttributes);
         FutureTask<V> ft = new FutureTask<V>(lvr, null);
@@ -144,7 +125,7 @@ public class DefaultCacheLoaderService<K, V> implements InternalCacheLoadingServ
             Map<? extends K, AttributeMap> keys) {
         Map<? super K, ? extends V> map = null;
         try {
-            map = loader.loadAll(keys);
+            map = null; //loader.loadAll(keys);
         } catch (Exception e) {
             map = errorHandler.loadAllFailed(loader, keys, false, e);
         }
@@ -159,26 +140,6 @@ public class DefaultCacheLoaderService<K, V> implements InternalCacheLoadingServ
         return loadBlocking(loader, key, attributes);
     }
 
-    /**
-     * @see org.coconut.cache.service.loading.CacheLoadingService#loadIfMissing(java.util.Collection)
-     */
-    public Future<?> forceLoadAll(Collection<? extends K> keys) {
-        return forceLoadAll(AttributeMaps.createMap(keys));
-    }
-
-    /**
-     * @see org.coconut.cache.service.loading.CacheLoadingService#loadIfMissing(java.util.Map)
-     */
-    public Future<?> forceLoadAll(Map<K, AttributeMap> mapsWithAttributes) {
-        // defensive copy
-        Map<K, AttributeMap> map = new HashMap<K, AttributeMap>(mapsWithAttributes);
-        Collection<K> keys = cache.filterEntries(
-                (Collection) mapsWithAttributes.keySet(), isValid);
-        // TODO what about needs reload???
-        map.keySet().removeAll(keys);
-        return loadAll(map);
-    }
-
     public boolean needsReload(CacheEntry<K, V> entry) {
         long reloadAheadTime = reloadExpirationTime;
         if (reloadAheadTime < 0
@@ -191,20 +152,6 @@ public class DefaultCacheLoaderService<K, V> implements InternalCacheLoadingServ
         }
         long refTime = entry.getLastUpdateTime() + reloadAheadTime;
         return clock.isPassed(refTime);
-    }
-
-    /**
-     * @see org.coconut.cache.service.loading.CacheLoadingService#reloadAll()
-     */
-    public Future<?> forceLoadAll() {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * @see org.coconut.cache.service.loading.CacheLoadingService#reloadAll(org.coconut.core.AttributeMap)
-     */
-    public Future<?> forceLoadAll(AttributeMap aatributes) {
-        throw new UnsupportedOperationException();
     }
 
     public void reloadIfNeeded(CacheEntry<K, V> entry) {
@@ -257,7 +204,7 @@ public class DefaultCacheLoaderService<K, V> implements InternalCacheLoadingServ
         /**
          * @see org.coconut.cache.internal.spi.ExtendedExecutorRunnable.LoadKey#getAttributeMap()
          */
-        public AttributeMap getAttributeMap() {
+        public AttributeMap getAttributes() {
             return attributes;
         }
 
@@ -324,7 +271,7 @@ public class DefaultCacheLoaderService<K, V> implements InternalCacheLoadingServ
         public void run() {
             Map<? super K, ? extends V> map = null;
             try {
-                map = loader.loadAll(keysWithAttributes);
+                map =null; // loader.loadAll(keysWithAttributes);
             } catch (Exception e) {
                 map = loaderService.errorHandler.loadAllFailed(loader,
                         keysWithAttributes, true, e);
@@ -335,43 +282,4 @@ public class DefaultCacheLoaderService<K, V> implements InternalCacheLoadingServ
         }
     }
 
-    /**
-     * @see org.coconut.cache.service.loading.CacheLoadingService#filteredLoad(org.coconut.filter.Filter)
-     */
-    public Future<?> filteredLoad(Filter<? super CacheEntry<K, V>> filter) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * @see org.coconut.cache.service.loading.CacheLoadingService#filteredLoad(org.coconut.filter.Filter, org.coconut.core.AttributeMap)
-     */
-    public Future<?> filteredLoad(Filter<? super CacheEntry<K, V>> filter, AttributeMap defaultAttributes) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * @see org.coconut.cache.service.loading.CacheLoadingService#filteredLoad(org.coconut.filter.Filter, org.coconut.core.Transformer)
-     */
-    public Future<?> filteredLoad(Filter<? super CacheEntry<K, V>> filter, Transformer<CacheEntry<K, V>, AttributeMap> attributeTransformer) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * @see org.coconut.cache.service.loading.CacheLoadingService#forceLoad(java.lang.Object)
-     */
-    public Future<?> forceLoad(K key) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * @see org.coconut.cache.service.loading.CacheLoadingService#forceLoad(java.lang.Object, org.coconut.core.AttributeMap)
-     */
-    public Future<?> forceLoad(K key, AttributeMap attributes) {
-        // TODO Auto-generated method stub
-        return null;
-    }
 }

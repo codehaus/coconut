@@ -30,14 +30,6 @@ import org.coconut.core.AttributeMap;
  *         (new RandomAccessFile(f, &quot;r&quot;)).read(bytes);
  *         return bytes;
  *     }
- * 
- *     public Map&lt;String, byte[]&gt; loadAll(Collection&lt;String&gt; keys) throws Exception {
- *         HashMap&lt;K, V&gt; h = new HashMap&lt;K, V&gt;();
- *         for (K key : keys) {
- *             h.put(key, load(key)); //just call load
- *         }
- *         return h;
- *     }
  * }
  * </pre>
  * 
@@ -96,19 +88,4 @@ public interface CacheLoader<K, V> {
      *             An exception occured while loading or creating the value
      */
     V load(K key, AttributeMap attributes) throws Exception;
-
-    /**
-     * Loads multiple values. This might for be usefull for performance reasons,
-     * for example, if the values are to be retrieved from a remote host.
-     * 
-     * @param keys
-     *            a collection of keys whose associated values are to be
-     *            returned
-     * @return a map where each key from the collection maps to an associated
-     *         value. If no mapping between a key and value could be found (or
-     *         created). The key is mapped to <tt>null</tt>
-     * @throws Exception
-     *             An exception occured while loading or creating the values
-     */
-    Map<K, V> loadAll(Map<? extends K, AttributeMap> keysWithAttributes) throws Exception;
 }

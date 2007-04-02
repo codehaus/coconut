@@ -11,14 +11,13 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.CacheServiceLifecycle;
+import org.coconut.cache.internal.service.InternalCacheService;
 import org.coconut.cache.internal.service.InternalCacheServiceManager;
 import org.coconut.cache.internal.service.ShutdownCallback;
 import org.coconut.cache.internal.service.joinpoint.InternalCacheOperation;
 import org.coconut.cache.internal.util.Resources;
 import org.coconut.cache.service.statistics.CacheHitStat;
 import org.coconut.cache.service.statistics.Statistics;
-import org.coconut.cache.spi.AbstractCache;
 import org.coconut.core.Clock;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.annotation.ManagedAttribute;
@@ -38,7 +37,7 @@ import org.coconut.management.util.AtomicDouble;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public final class DefaultCacheStatisticsService<K, V> implements
-        InternalCacheOperation<K, V>, CacheServiceLifecycle {
+        InternalCacheOperation<K, V>, InternalCacheService {
 
     // number of loads, loaded elements, number of queries,
     // number of added, number of new elements
@@ -527,5 +526,13 @@ public final class DefaultCacheStatisticsService<K, V> implements
      */
     public void shutdown(ShutdownCallback callback) {
 
+    }
+
+    /**
+     * @see org.coconut.cache.internal.service.InternalCacheService#isDummy()
+     */
+    public boolean isDummy() {
+        // TODO Auto-generated method stub
+        return false;
     }
 }

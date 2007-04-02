@@ -14,6 +14,8 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 
 /**
+ * This class is used to validate instances of CacheConfiguration.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -32,15 +34,16 @@ public class ConfigurationValidator {
         // preferable size>maxSize?
         // no policy defined->cache is free to select a policy
         Executor e = conf.serviceThreading().getExecutor();
-//        if (type.isAnnotationPresent(NotThreadSafe.class)) {
-//            throw new IllegalCacheConfigurationException(
-//                    "Cannot specify an executor, since this cache is not threadsafe");
-//
-//        }
+        // if (type.isAnnotationPresent(NotThreadSafe.class)) {
+        // throw new IllegalCacheConfigurationException(
+        // "Cannot specify an executor, since this cache is not threadsafe");
+        //
+        // }
         boolean isScheduled = e instanceof ScheduledExecutorService;
 
         if (!isScheduled
-                && conf.serviceThreading().getScheduledEvictionAtFixedRate(TimeUnit.NANOSECONDS) > 0) {
+                && conf.serviceThreading().getScheduledEvictionAtFixedRate(
+                        TimeUnit.NANOSECONDS) > 0) {
             if (e == null) {
                 throw new IllegalCacheConfigurationException(
                         "Cannot schedule evictions, when no executor has been set");
@@ -73,8 +76,9 @@ public class ConfigurationValidator {
         }
         return false;
     }
-    
-    public static void initializeConfiguration(AbstractCacheServiceConfiguration c, CacheConfiguration conf) {
+
+    public static void initializeConfiguration(AbstractCacheServiceConfiguration c,
+            CacheConfiguration conf) {
         c.setConfiguration(conf);
     }
 

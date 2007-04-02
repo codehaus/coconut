@@ -10,7 +10,7 @@ import java.net.URL;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.defaults.UnsynchronizedCache;
-import org.coconut.cache.service.loading.AbstractCacheLoader;
+import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.core.AttributeMap;
 
 /**
@@ -18,7 +18,7 @@ import org.coconut.core.AttributeMap;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class CacheHTTPExample {
-    public static class UrlLoader extends AbstractCacheLoader<String, String> {
+    public static class UrlLoader implements CacheLoader<String, String> {
         public String load(String key, AttributeMap ignore) throws Exception {
             URL url = new URL(key);
             BufferedReader in = new BufferedReader(

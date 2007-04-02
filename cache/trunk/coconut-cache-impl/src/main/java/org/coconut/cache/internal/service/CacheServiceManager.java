@@ -188,10 +188,10 @@ public class CacheServiceManager<K, V> implements InternalCacheServiceManager {
 
     private void shutdownAll() {
         for (Object service : instanciated.values()) {
-            if (service instanceof CacheServiceLifecycle) {
+            if (service instanceof InternalCacheService) {
 
             }
-            CacheServiceLifecycle sr = (CacheServiceLifecycle) service;
+            InternalCacheService sr = (InternalCacheService) service;
             try {
                 // service.shutdown(sr);
             } catch (Exception e) {

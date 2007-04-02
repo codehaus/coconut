@@ -12,11 +12,9 @@ import net.jcip.annotations.ThreadSafe;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.service.event.CacheEventService;
-import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.spi.annotations.CacheServiceSupport;
-import org.coconut.cache.spi.annotations.CacheSupport;
 import org.coconut.cache.tck.core.BasicCache;
 import org.coconut.cache.tck.core.BasicMap;
 import org.coconut.cache.tck.core.ClearRemove;
@@ -39,7 +37,6 @@ import org.coconut.cache.tck.service.expiration.ExpirationEvict;
 import org.coconut.cache.tck.service.expiration.ExpirationFilterBased;
 import org.coconut.cache.tck.service.expiration.ExpirationTimeBased;
 import org.coconut.cache.tck.service.loading.ConcurrentLoading;
-import org.coconut.cache.tck.service.loading.ExtendedCacheLoader;
 import org.coconut.cache.tck.service.loading.FutureLoading;
 import org.coconut.cache.tck.service.loading.Loading;
 import org.junit.Test;
@@ -166,7 +163,6 @@ public class TCKRunner extends Runner {
 
         composite.add(new TestClassRunner(Loading.class));
         composite.add(new TestClassRunner(FutureLoading.class));
-        composite.add(new TestClassRunner(ExtendedCacheLoader.class));
         if (isThreadSafe) {
             composite.add(new TestClassRunner(ConcurrentLoading.class));
         }

@@ -62,6 +62,14 @@ public abstract class SupportedCache<K, V> extends AbstractCache<K, V> {
         return internalVersion++;
     }
 
+    
+    /**
+     * Easy bean access.
+     */
+    public int getSize() {
+        return size();
+    }
+    
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     public final V get(Object key) {

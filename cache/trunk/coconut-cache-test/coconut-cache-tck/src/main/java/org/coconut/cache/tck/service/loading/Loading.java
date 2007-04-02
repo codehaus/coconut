@@ -83,76 +83,76 @@ public class Loading extends LoadingTestBundle {
         assertPeek(M1, M2);
     }
 
-    /**
-     * isDone is true when a task completes
-     * 
-     * @throws InterruptedException
-     * @throws ExecutionException
-     */
-    @Test
-    public void testLoad() throws InterruptedException, ExecutionException {
-        Future<?> task = service.load(1);
-        assertNull(task.get());
-        assertTrue(task.isDone());
-        assertFalse(task.isCancelled());
-
-        assertSize(1);
-        assertPeek(M1);
-        assertTrue(containsKey(M1));
-        assertTrue(containsValue(M1));
-    }
+//    /**
+//     * isDone is true when a task completes
+//     * 
+//     * @throws InterruptedException
+//     * @throws ExecutionException
+//     */
+//    @Test
+//    public void testLoad() throws InterruptedException, ExecutionException {
+//        Future<?> task = service.load(1);
+//        assertNull(task.get());
+//        assertTrue(task.isDone());
+//        assertFalse(task.isCancelled());
+//
+//        assertSize(1);
+//        assertPeek(M1);
+//        assertTrue(containsKey(M1));
+//        assertTrue(containsValue(M1));
+//    }
 
     @Test(expected = NullPointerException.class)
     public void testLoadNullPointer() {
         service.load(null);
     }
 
-    @Test
-    public void testLoadAll() throws InterruptedException, ExecutionException {
-        Future<?> task = service.loadAll(Arrays.asList(1, 2, 3, 4));
-        assertNull(task.get());
-        assertTrue(task.isDone());
-        assertFalse(task.isCancelled());
-
-        assertEquals(4, c.size());
-
-        assertPeek(M1, M2, M3, M4);
-    }
+//    @Test
+//    public void testLoadAll() throws InterruptedException, ExecutionException {
+//        Future<?> task = service.loadAll(Arrays.asList(1, 2, 3, 4));
+//        assertNull(task.get());
+//        assertTrue(task.isDone());
+//        assertFalse(task.isCancelled());
+//
+//        assertEquals(4, c.size());
+//
+//        assertPeek(M1, M2, M3, M4);
+//    }
 
     @Test(expected = NullPointerException.class)
     public void testLoadAllNullPointer() {
         service.loadAll((Map) null);
     }
 
-    /**
-     * isDone is true when a task completes
-     * 
-     * @throws InterruptedException
-     * @throws ExecutionException
-     */
-    @Test
-    public void testLoadNull() throws InterruptedException, ExecutionException {
-        Future<?> task = service.load(M6.getKey());
-        assertNull(task.get());
-        assertTrue(task.isDone());
-        assertFalse(task.isCancelled());
+//    /**
+//     * isDone is true when a task completes
+//     * 
+//     * @throws InterruptedException
+//     * @throws ExecutionException
+//     */
+//    @Test
+//    public void testLoadNull() throws InterruptedException, ExecutionException {
+//        Future<?> task = service.load(M6.getKey());
+//        assertNull(task.get());
+//        assertTrue(task.isDone());
+//        assertFalse(task.isCancelled());
+//
+//        assertSize(0);
+//        assertFalse(containsKey(M6));
+//
+//        assertNull(service.load(4));
+//        assertSize(1);
+//    }
 
-        assertSize(0);
-        assertFalse(containsKey(M6));
-
-        assertNull(service.load(4).get());
-        assertSize(1);
-    }
-
-    @Test
-    public void testLoadManyNull() throws InterruptedException, ExecutionException {
-        Future<?> task = service.loadAll(Arrays.asList(1, 2, 6, 7));
-        assertNull(task.get());
-        assertTrue(task.isDone());
-        assertFalse(task.isCancelled());
-
-        assertSize(2);
-
-        assertPeek(M1, M2);
-    }
+//    @Test
+//    public void testLoadManyNull() throws InterruptedException, ExecutionException {
+//        Future<?> task = service.loadAll(Arrays.asList(1, 2, 6, 7));
+//        assertNull(task.get());
+//        assertTrue(task.isDone());
+//        assertFalse(task.isCancelled());
+//
+//        assertSize(2);
+//
+//        assertPeek(M1, M2);
+//    }
 }

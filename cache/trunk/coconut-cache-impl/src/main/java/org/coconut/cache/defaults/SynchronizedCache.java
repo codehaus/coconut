@@ -13,6 +13,7 @@ import org.coconut.cache.internal.service.loading.DefaultCacheLoaderService;
 import org.coconut.cache.internal.service.management.DefaultCacheManagementService;
 import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsService;
 import org.coconut.cache.service.event.CacheEventService;
+import org.coconut.cache.service.management.CacheMXBean;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.spi.annotations.CacheServiceSupport;
 import org.coconut.cache.spi.annotations.CacheSupport;
@@ -24,7 +25,8 @@ import org.coconut.cache.spi.annotations.CacheSupport;
 @CacheSupport(CacheLoadingSupport = true, CacheEntrySupport = true, ExpirationSupport = true)
 @ThreadSafe
 @CacheServiceSupport( { CacheEventService.class, CacheManagementService.class })
-public class SynchronizedCache<K, V> extends UnsynchronizedCache<K, V> {
+public class SynchronizedCache<K, V> extends UnsynchronizedCache<K, V> implements
+        CacheMXBean {
 
     @SuppressWarnings("unchecked")
     protected void registerServices(CacheServiceManager<K, V> csm,

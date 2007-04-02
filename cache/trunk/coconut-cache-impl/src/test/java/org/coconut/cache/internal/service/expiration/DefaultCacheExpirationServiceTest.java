@@ -12,10 +12,12 @@ import static org.junit.Assert.assertTrue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheErrorHandler;
-import org.coconut.cache.defaults.DefaultAttributes;
 import org.coconut.cache.internal.DefaultAttributeMap;
+import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
+import org.coconut.cache.internal.spi.CacheHelper;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.core.Clock;
@@ -23,6 +25,7 @@ import org.coconut.filter.Filter;
 import org.coconut.filter.Filters;
 import org.coconut.test.MockTestCase;
 import org.jmock.Mock;
+import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,16 +39,26 @@ public class DefaultCacheExpirationServiceTest {
 
     private final Filter<CacheEntry<Integer, String>> FALSE = Filters.falseFilter();
 
-    CacheExpirationConfiguration<Integer, String> conf;
+    private CacheExpirationConfiguration<Integer, String> conf;
 
     private Clock.DeterministicClock clock;
 
     private DefaultCacheExpirationService<Integer, String> s;
 
+    private CacheHelper<Integer, String> helper = new JUnit4Mockery()
+            .mock(CacheHelper.class);
+
+    private CacheErrorHandler<Integer, String> errorHandler;
+
+    private InternalCacheAttributeService attributeFactory = new JUnit4Mockery()
+            .mock(InternalCacheAttributeService.class);
+
     private static final CacheEntry<Integer, String> neverExpire;
 
     private static final CacheEntry<Integer, String> expireAt10;
     static {
+        CacheEntry dd=new JUnit4Mockery().mock(CacheEntry.class);
+        
         MockTestCase m = new MockTestCase();
         Mock n = m.mock(CacheEntry.class);
         n.stubs().method("getExpirationTime").will(
@@ -60,7 +73,13 @@ public class DefaultCacheExpirationServiceTest {
     public void setup() {
         clock = new Clock.DeterministicClock();
         conf = new CacheExpirationConfiguration<Integer, String>();
-        s = new DefaultCacheExpirationService<Integer, String>(null, conf, clock, null);
+        errorHandler = new CacheErrorHandler<Integer, String>();
+        initialize();
+    }
+
+    private void initialize() {
+        s = new DefaultCacheExpirationService<Integer, String>(helper, conf, clock,
+                errorHandler, attributeFactory);
     }
 
     @Test
@@ -70,7 +89,7 @@ public class DefaultCacheExpirationServiceTest {
         assertSame(TRUE, s.getExpirationFilter());
         conf = new CacheExpirationConfiguration<Integer, String>()
                 .setExpirationFilter(FALSE);
-        s = new DefaultCacheExpirationService<Integer, String>(null, conf, clock, null);
+        initialize();
         assertSame(FALSE, s.getExpirationFilter());
     }
 
@@ -90,7 +109,7 @@ public class DefaultCacheExpirationServiceTest {
 
         conf = new CacheExpirationConfiguration<Integer, String>().setDefaultTimeToLive(
                 5, TimeUnit.SECONDS);
-        s = new DefaultCacheExpirationService<Integer, String>(null, conf, clock, null);
+        initialize();
         assertEquals(5 * 1000 * 1000 * 1000l, s
                 .getDefaultTimeToLive(TimeUnit.NANOSECONDS));
         assertEquals(5l, s.getDefaultTimeToLive(TimeUnit.SECONDS));
@@ -147,9 +166,12 @@ public class DefaultCacheExpirationServiceTest {
                 new DefaultAttributeMap()));
 
         DefaultAttributeMap dam = new DefaultAttributeMap();
-        dam.putLong(DefaultAttributes.TIME_TO_LIVE_NANO, CacheExpirationService.NEVER_EXPIRE);
+        dam.putLong(CacheAttributes.TIME_TO_LIVE_NANO,
+                CacheExpirationService.NEVER_EXPIRE);
         assertEquals(Long.MAX_VALUE, s.getExpirationTime(null, null, dam));
-        dam.putLong(DefaultAttributes.TIME_TO_LIVE_NANO, TimeUnit.MILLISECONDS.toNanos(5));
+        dam
+                .putLong(CacheAttributes.TIME_TO_LIVE_NANO, TimeUnit.MILLISECONDS
+                        .toNanos(5));
         assertEquals(5l, s.getExpirationTime(null, null, dam));
 
         s.setDefaultTimeToLive(10, TimeUnit.MILLISECONDS);
@@ -164,14 +186,14 @@ public class DefaultCacheExpirationServiceTest {
     @Test
     public void testErrorHandler() {
         final AtomicReference<String> ref = new AtomicReference<String>();
-        CacheErrorHandler<Integer, String> ceh = new CacheErrorHandler<Integer, String>() {
+        errorHandler = new CacheErrorHandler<Integer, String>() {
             public synchronized void warning(String warning) {
                 ref.set(warning);
             }
         };
-        s = new DefaultCacheExpirationService<Integer, String>(null, conf, clock, ceh);
+        initialize();
         DefaultAttributeMap dam = new DefaultAttributeMap();
-        dam.putLong(DefaultAttributes.TIME_TO_LIVE_NANO, -1);
+        dam.putLong(CacheAttributes.TIME_TO_LIVE_NANO, -1);
         s.getExpirationTime(123, null, dam);
 
         assertTrue(ref.get().contains("-1"));

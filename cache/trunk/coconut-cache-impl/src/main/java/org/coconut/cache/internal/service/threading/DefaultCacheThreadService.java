@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
-import org.coconut.cache.internal.service.CacheServiceLifecycle;
+import org.coconut.cache.internal.service.InternalCacheService;
 import org.coconut.cache.internal.service.InternalCacheServiceManager;
 import org.coconut.cache.internal.service.ShutdownCallback;
 import org.coconut.cache.spi.XmlConfigurator;
@@ -19,7 +19,7 @@ import org.coconut.cache.spi.XmlConfigurator;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class DefaultCacheThreadService<K, V> implements Executor,
-        CacheServiceLifecycle, InternalCacheThreadingService {
+        InternalCacheService, InternalCacheThreadingService {
 
     private final Executor e;
 
@@ -106,6 +106,14 @@ public class DefaultCacheThreadService<K, V> implements Executor,
      */
     public boolean isActive() {
         return isAsync();
+    }
+
+    /**
+     * @see org.coconut.cache.internal.service.InternalCacheService#isDummy()
+     */
+    public boolean isDummy() {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }

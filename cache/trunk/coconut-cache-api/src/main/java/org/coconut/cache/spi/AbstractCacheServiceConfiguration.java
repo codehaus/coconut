@@ -3,9 +3,14 @@
  */
 package org.coconut.cache.spi;
 
+import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Constructor;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.CacheException;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -57,7 +62,7 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
         e.appendChild(eee);
     }
 
-    protected long readLong(Element e, long defaultLong) {
+    protected static long readLong(Element e, long defaultLong) {
         if (e == null) {
             return defaultLong;
         } else {
@@ -67,21 +72,21 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
         }
     }
 
-    protected void writeLong(Document doc, Element base, String name, long value,
+    protected static void writeLong(Document doc, Element base, String name, long value,
             long defaultLong) {
         if (value != defaultLong) {
             add(doc, name, base).setTextContent(Long.toString(value));
         }
     }
 
-    protected void writeInt(Document doc, Element base, String name, int value,
+    protected static void writeInt(Document doc, Element base, String name, int value,
             int defaultInt) {
         if (value != defaultInt) {
             add(doc, name, base).setTextContent(Integer.toString(value));
         }
     }
 
-    protected int readInt(Element e, int defaultInt) {
+    protected static int readInt(Element e, int defaultInt) {
         if (e == null) {
             return defaultInt;
         } else {
@@ -91,7 +96,7 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
         }
     }
 
-    protected boolean saveObject(Document doc, Element e, String comment,
+    protected static boolean saveObject(Document doc, Element e, String comment,
             String atrbName, Object o) {
         Constructor c = null;
         try {
@@ -105,11 +110,11 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
         return false;
     }
 
-    protected boolean saveObject(Document doc, Element e, String comment, Object o) {
+    protected static boolean saveObject(Document doc, Element e, String comment, Object o) {
         return saveObject(doc, e, comment, "type", o);
     }
 
-    protected boolean saveObject(Document doc, Element parent, String tagName,
+    protected static boolean saveObject(Document doc, Element parent, String tagName,
             String comment, Object o, Object defaultObject) {
         if (o != defaultObject && o != null && !o.equals(defaultObject)) {
             return saveObject(doc, add(doc, tagName, parent), comment, "type", o);
@@ -117,7 +122,7 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
         return false;
     }
 
-    protected boolean saveObject(Document doc, Element e, String comment, Object o,
+    protected static boolean saveObject(Document doc, Element e, String comment, Object o,
             Object defaultObject) {
         if (o != defaultObject && o != null && !o.equals(defaultObject)) {
             return saveObject(doc, e, comment, "type", o);
@@ -125,7 +130,7 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
         return false;
     }
 
-    protected <T> T loadObject(Element e, Class<T> type) throws Exception {
+    protected static  <T> T loadObject(Element e, Class<T> type) throws Exception {
         if (e != null) {
             String c = e.getAttribute("type");
             Class<T> clazz = null;
@@ -141,7 +146,7 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
         return null;
     }
 
-    protected Element getChild(String name, Element e) {
+    protected static Element getChild(String name, Element e) {
         for (int i = 0; i < e.getChildNodes().getLength(); i++) {
             if (e.getChildNodes().item(i).getNodeName().equals(name)) {
                 return (Element) e.getChildNodes().item(i);
@@ -161,5 +166,25 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
         ee.setTextContent(text);
         parent.appendChild(ee);
         return ee;
+    }
+
+    /**
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        ByteArrayOutputStream sos = new ByteArrayOutputStream();
+        try {
+            DocumentBuilder builder = DocumentBuilderFactory.newInstance()
+                    .newDocumentBuilder();
+            Document doc = builder.newDocument();
+            Element root = doc.createElement(tag);
+            doc.appendChild(root);
+            toXML(doc, root);
+            XmlConfigurator.transform(doc, sos);
+            return new String(sos.toByteArray());
+        } catch (Exception e) {
+            throw new CacheException("This is highly irregular, please report", e);
+        }
     }
 }

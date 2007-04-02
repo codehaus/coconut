@@ -16,7 +16,7 @@ public interface ExtendedExecutorRunnable {
 
     interface LoadKey<K> extends CacheExecutorRunnable {
         K getKey();
-        AttributeMap getAttributeMap();
+        AttributeMap getAttributes();
     }
 
     interface LoadKeys<K> extends CacheExecutorRunnable {

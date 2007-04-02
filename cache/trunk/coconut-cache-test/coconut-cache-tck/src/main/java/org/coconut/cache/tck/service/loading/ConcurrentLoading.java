@@ -6,7 +6,7 @@ package org.coconut.cache.tck.service.loading;
 
 import junit.framework.AssertionFailedError;
 
-import org.coconut.cache.service.loading.AbstractCacheLoader;
+import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.tck.CacheTestBundle;
 import org.coconut.core.AttributeMap;
 
@@ -51,7 +51,7 @@ public class ConcurrentLoading extends CacheTestBundle {
     // }
     // }
 
-    class SleepLoader extends AbstractCacheLoader<Integer, String> {
+    class SleepLoader implements CacheLoader<Integer, String> {
 
         /**
          * @see org.coconut.cache.util.AbstractCacheLoader#load(java.lang.Object)

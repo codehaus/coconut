@@ -3,6 +3,7 @@
  */
 package org.coconut.cache.internal.service.expiration;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -21,7 +22,6 @@ public final class NoCacheExpirationService<K, V> extends
      * @see org.coconut.cache.service.expiration.CacheExpirationService#getDefaultTimeout(java.util.concurrent.TimeUnit)
      */
     public long getDefaultTimeToLive(TimeUnit unit) {
-        // TODO Auto-generated method stub
         return CacheExpirationService.NEVER_EXPIRE;
     }
     /**
@@ -70,6 +70,31 @@ public final class NoCacheExpirationService<K, V> extends
      */
     public void setExpirationFilter(Filter<CacheEntry<K, V>> filter) {
         throw new UnsupportedOperationException();
+    }
+    /**
+     * @see org.coconut.cache.service.expiration.CacheExpirationService#expire(java.lang.Object)
+     */
+    public boolean expire(K key) {
+        throw new UnsupportedOperationException();
+    }
+    /**
+     * @see org.coconut.cache.service.expiration.CacheExpirationService#expireAll(java.util.Collection)
+     */
+    public int expireAll(Collection<? extends K> keys) {
+        throw new UnsupportedOperationException();
+    }
+    /**
+     * @see org.coconut.cache.service.expiration.CacheExpirationService#expireAll(org.coconut.filter.Filter)
+     */
+    public int expireAll(Filter<? extends CacheEntry<K, V>> filter) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * @see org.coconut.cache.internal.service.InternalCacheService#isDummy()
+     */
+    public boolean isDummy() {
+        return true;
     }
 
 }

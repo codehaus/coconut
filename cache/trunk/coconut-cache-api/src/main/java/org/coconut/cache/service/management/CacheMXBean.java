@@ -4,6 +4,9 @@
 
 package org.coconut.cache.service.management;
 
+import org.coconut.management.annotation.ManagedAttribute;
+import org.coconut.management.annotation.ManagedOperation;
+
 /**
  * The management interface for a {@link org.coconut.cache.Cache}. Some cache
  * implementations might define additional methods in addition to those defined
@@ -30,6 +33,7 @@ public interface CacheMXBean {
      * 
      * @return the current number of elements in the cache
      */
+    @ManagedAttribute(defaultValue = "size", description = "The number of elements contained in the cache")
     int getSize();
 
     /**
@@ -40,6 +44,7 @@ public interface CacheMXBean {
      * 
      * @return the current number of elements in the cache
      */
+    @ManagedAttribute(defaultValue = "capacity", description = "The total size of all elements contained in the cache")
     long getCapacity();
 
     /**
@@ -47,6 +52,7 @@ public interface CacheMXBean {
      * 
      * @return the name of the cache
      */
+    @ManagedAttribute(defaultValue = "Name", description = "The name of the cache")
     String getName();
 
     /**
@@ -55,6 +61,7 @@ public interface CacheMXBean {
      * Calling this method is equivalent to calling
      * {@link org.coconut.cache.Cache#clear()}.
      */
+    @ManagedOperation(defaultValue = "clear", description = "Clears the cache")
     void clear();
 
     /**
@@ -63,6 +70,7 @@ public interface CacheMXBean {
      * Calling this method is equivalent to calling
      * {@link org.coconut.cache.Cache#evict()}.
      */
+    @ManagedOperation(defaultValue = "evict", description = "Evicts expired entries and performs housekeeping on the cache")
     void evict();
 
     /**
@@ -73,5 +81,6 @@ public interface CacheMXBean {
      * @param newSize
      *            the number of elements that the cache should hold
      */
+    @ManagedOperation(defaultValue = "trimToSize", description = "Trims the cache to this size")
     void trimToSize(int newSize);
 }

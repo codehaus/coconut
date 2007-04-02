@@ -4,7 +4,6 @@
 package org.coconut.cache.service.loading;
 
 import java.io.Serializable;
-import java.util.Map;
 
 import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
@@ -71,11 +70,7 @@ public class Loaders {
      */
     public static <K, V> CacheLoader<K, V> synchronizedCacheLoader(
             CacheLoader<K, V> loader) {
-        if (loader instanceof AbstractCacheLoader) {
-            return new SynchronizedAbstractCacheLoader<K, V>(loader);
-        } else {
-            return new SynchronizedCacheLoader<K, V>(loader);
-        }
+        return new SynchronizedCacheLoader<K, V>(loader);
     }
 
     /**
@@ -102,15 +97,9 @@ public class Loaders {
         public V load(K key, AttributeMap attributes) {
             return cache.get(key);
         }
-
-        /** {@inheritDoc} */
-        public Map<K, V> loadAll(Map<? extends K, AttributeMap> keysWithAttributes) {
-            return cache.getAll(keysWithAttributes.keySet());
-        }
     }
 
-    final static class NullLoader<K, V> extends AbstractCacheLoader<K, V> implements
-            Serializable {
+    final static class NullLoader<K, V> implements CacheLoader<K, V>, Serializable {
 
         /** serialVersionUID */
         private static final long serialVersionUID = -4411446068656772121L;
@@ -118,26 +107,6 @@ public class Loaders {
         /** {@inheritDoc} */
         public V load(K key, AttributeMap attributes) {
             return null;
-        }
-    }
-
-    @ThreadSafe
-    final static class SynchronizedAbstractCacheLoader<K, V> extends
-            AbstractCacheLoader<K, V> implements CacheLoader<K, V>, Serializable {
-        /** serialVersionUID */
-        private static final long serialVersionUID = -6859046403446262614L;
-
-        /** the loader to delegate to */
-        @GuardedBy("this")
-        private final CacheLoader<K, V> loader;
-
-        SynchronizedAbstractCacheLoader(CacheLoader<K, V> loader) {
-            this.loader = loader;
-        }
-
-        /** {@inheritDoc} */
-        public synchronized V load(K key, AttributeMap attributes) throws Exception {
-            return loader.load(key, attributes);
         }
     }
 
@@ -163,12 +132,6 @@ public class Loaders {
         /** {@inheritDoc} */
         public synchronized V load(K key, AttributeMap attributes) throws Exception {
             return loader.load(key, attributes);
-        }
-
-        /** {@inheritDoc} */
-        public synchronized Map<K, V> loadAll(Map<? extends K, AttributeMap> mapsWithAttributes)
-                throws Exception {
-            return loader.loadAll(mapsWithAttributes);
         }
     }
 }

@@ -5,9 +5,10 @@ package org.coconut.cache.internal.service.expiration;
 
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheErrorHandler;
+import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
+import org.coconut.cache.internal.spi.CacheHelper;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.core.Clock;
 import org.coconut.filter.Filter;
@@ -19,20 +20,21 @@ import org.coconut.filter.Filter;
 public class SynchronizedCacheExpirationService<K, V> extends
         DefaultCacheExpirationService<K, V> {
 
+    private final Object mutex;
+
     /**
      * @param cache
      * @param conf
      * @param clock
      * @param errorHandler
      */
-    public SynchronizedCacheExpirationService(Cache<K, V> cache,
+    public SynchronizedCacheExpirationService(CacheHelper<K, V> helper,
             CacheExpirationConfiguration<K, V> conf, Clock clock,
-            CacheErrorHandler<K, V> errorHandler) {
-        super(cache, conf, clock, errorHandler);
-        mutex = cache;
+            CacheErrorHandler<K, V> errorHandler,
+            InternalCacheAttributeService attributeFactory) {
+        super(helper, conf, clock, errorHandler, attributeFactory);
+        mutex = helper.getMutex();
     }
-
-    private final Object mutex;
 
     /**
      * @see org.coconut.cache.internal.service.expiration.DefaultCacheExpirationService#getDefaultTimeout(java.util.concurrent.TimeUnit)
@@ -72,6 +74,17 @@ public class SynchronizedCacheExpirationService<K, V> extends
     public void setExpirationFilter(Filter<CacheEntry<K, V>> filter) {
         synchronized (mutex) {
             super.setExpirationFilter(filter);
+        }
+    }
+
+    /**
+     * @see org.coconut.cache.internal.service.expiration.AbstractCacheExpirationService#getFilter()
+     */
+    @Override
+    public String getFilterAsString() {
+        //this is needed because we call f.toString();
+        synchronized (mutex) {
+            return super.getFilterAsString();
         }
     }
 

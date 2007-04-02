@@ -5,7 +5,6 @@ package org.coconut.cache.service.expiration;
 
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.filter.Filter;
@@ -32,13 +31,6 @@ public class CacheExpirationConfiguration<K, V> extends
 
     private Filter<CacheEntry<K, V>> expirationFilter;
 
-    /* Ideas */
-    private boolean reloadOnExpiration = false;
-
-    public Filter<CacheEntry<K, V>> getExpirationFilter() {
-        return expirationFilter;
-    }
-
     /**
      * Creates a new CacheExpirationConfiguration
      */
@@ -48,11 +40,18 @@ public class CacheExpirationConfiguration<K, V> extends
 
     public long getDefaultTimeToLive(TimeUnit unit) {
         if (defaultTimeToLive == CacheExpirationService.NEVER_EXPIRE) {
-            // don't convert relative to time unit
             return CacheExpirationService.NEVER_EXPIRE;
         } else {
             return unit.convert(defaultTimeToLive, TimeUnit.NANOSECONDS);
         }
+    }
+
+    /**
+     * Returns the specified expiration filter or <tt>null</tt> if no filter
+     * has been specified.
+     */
+    public Filter<CacheEntry<K, V>> getExpirationFilter() {
+        return expirationFilter;
     }
 
     /**
@@ -122,21 +121,14 @@ public class CacheExpirationConfiguration<K, V> extends
      */
     @Override
     protected void toXML(Document doc, Element base) throws Exception {
-
         /* Expiration Timeout */
         long timeout = getDefaultTimeToLive(TimeUnit.MILLISECONDS);
         if (timeout != CacheExpirationService.NEVER_EXPIRE) {
             UnitOfTime.toElementCompact(add(doc, DEFAULT_TIMEOUT_TAG, base), timeout,
                     TimeUnit.MILLISECONDS);
         }
+        /* Expiration Filter */
         saveObject(doc, base, EXPIRATION_FILTER_TAG, "expiration.cannotPersistFilter",
                 getExpirationFilter(), DEFAULT.getExpirationFilter());
     }
-    //
-    // public String toString() {
-    // CacheConfiguration conf = CacheConfiguration.create();
-    // conf.addService(this);
-    // return conf.toString();
-    // }
-
 }

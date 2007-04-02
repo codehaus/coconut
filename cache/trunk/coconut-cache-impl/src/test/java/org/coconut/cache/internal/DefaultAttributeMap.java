@@ -12,12 +12,18 @@ import org.coconut.core.AttributeMap;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class DefaultAttributeMap extends HashMap<String, Object> implements AttributeMap {
+    public DefaultAttributeMap() {
+    }
+
+    public DefaultAttributeMap(AttributeMap am) {
+        super(am);
+    }
 
     /**
      * @see org.coconut.cache.service.loading.AttributeMap#getLong(java.lang.String)
      */
     public long getLong(String key) {
-        return getLong(key,0);
+        return getLong(key, 0);
     }
 
     /**
@@ -27,12 +33,12 @@ public class DefaultAttributeMap extends HashMap<String, Object> implements Attr
     public void putLong(String key, long value) {
         put(key, value);
     }
-    
+
     /**
      * @see org.coconut.core.AttributeMap#getDouble(java.lang.String)
      */
     public double getDouble(String key) {
-        return getDouble(key,0);
+        return getDouble(key, 0);
     }
 
     /**

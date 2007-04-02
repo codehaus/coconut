@@ -42,6 +42,8 @@ import org.w3c.dom.Node;
  * {@link CacheConfiguration#createAndInstantiate(InputStream)} or
  * {@link CacheConfiguration#createInstantiateAndStart(InputStream)} methods in
  * {@link CacheConfiguration}
+ * <p>
+ * TODO: Move some of this functionality to an internal package.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -72,11 +74,11 @@ public class XmlConfigurator {
     /** The current version of the XML schema */
     public static final String CURRENT_VERSION = "0.0.1";
 
-    private final static XmlConfigurator DEFAULT = new XmlConfigurator();
+    private final static XmlConfigurator INSTANCE = new XmlConfigurator();
 
-    final static CacheConfiguration CONF = CacheConfiguration.create();
+    final static CacheConfiguration DEFAULT_CONF = CacheConfiguration.create();
 
-    private final static List<Class> services = new ArrayList<Class>();
+    private final static List<Class<? extends AbstractCacheServiceConfiguration>> services = new ArrayList<Class<? extends AbstractCacheServiceConfiguration>>();
     static {
         services.add(CacheEventConfiguration.class);
         services.add(CacheManagementConfiguration.class);
@@ -91,7 +93,7 @@ public class XmlConfigurator {
      * Returns the default instance of a XmlConfigurator.
      */
     public static XmlConfigurator getInstance() {
-        return DEFAULT;
+        return INSTANCE;
     }
 
     /**
@@ -171,15 +173,12 @@ public class XmlConfigurator {
 
     <K, V> void from(CacheConfiguration<K, V> base, Document doc) throws Exception {
         Element root = doc.getDocumentElement();
-        // int length = root.getElementsByTagName(CACHE_TAG).getLength();
-        // if (length == 0) {
-        // throw new IllegalStateException(
-        // "No cache is defined in the specified document, "
-        // + doc.getDocumentURI());
-        // } else if (length > 1) {
-        // throw new IllegalStateException("Only one cache can be defined, "
-        // + doc.getDocumentURI());
-        // } else {
+        int length = root.getElementsByTagName(CACHE_TAG).getLength();
+        if (length == 0) {
+            throw new IllegalStateException(
+                    "No cache is defined in the specified document, "
+                            + doc.getDocumentURI());
+        }
         Node n = root.getElementsByTagName("cache").item(0);
         from(base, doc, (Element) n);
     }
@@ -194,9 +193,8 @@ public class XmlConfigurator {
                     .getAttribute(CACHE_TYPE_ATTR));
         }
         new ErrorHandlerConfigurator().read(conf, cache);
-        for (Class c : services) {
-            AbstractCacheServiceConfiguration acsc = (AbstractCacheServiceConfiguration) c
-                    .newInstance();
+        for (Class<? extends AbstractCacheServiceConfiguration> c : services) {
+            AbstractCacheServiceConfiguration acsc = c.newInstance();
             Element e = (Element) cache.getElementsByTagName(acsc.tag).item(0);
             if (e != null) {
                 conf.addService(acsc);
@@ -219,7 +217,7 @@ public class XmlConfigurator {
         }
     }
 
-    void transform(Document doc, OutputStream stream) throws TransformerException {
+    static void transform(Document doc, OutputStream stream) throws TransformerException {
         DOMSource domSource = new DOMSource(doc);
         StreamResult result = new StreamResult(stream);
         Transformer f = TransformerFactory.newInstance().newTransformer();
@@ -228,7 +226,7 @@ public class XmlConfigurator {
         f.transform(domSource, result);
     }
 
-    static abstract class AbstractConfigurator {
+    static class ErrorHandlerConfigurator  {
 
         private CacheConfiguration cc;
 
@@ -276,10 +274,6 @@ public class XmlConfigurator {
             return null;
         }
 
-        protected abstract void read() throws Exception;
-
-        protected abstract void write() throws Exception;
-
         /**
          * @see org.coconut.cache.spi.XMLSupport.Persister#add(org.coconut.cache.CacheConfiguration,
          *      org.w3c.dom.Document, org.w3c.dom.Element)
@@ -301,10 +295,7 @@ public class XmlConfigurator {
             this.root = root;
             read();
         }
-    }
-
-    static class ErrorHandlerConfigurator extends AbstractConfigurator {
-
+        
         public final static String LOG_TYPE_ATRB = "type";
 
         public final static String LOG_TAG = "log";
@@ -314,7 +305,6 @@ public class XmlConfigurator {
         /**
          * @see org.coconut.cache.spi.xml.AbstractPersister#read()
          */
-        @Override
         protected void read() {
             Element e = getChild(ERRORHANDLER_TAG);
             if (e != null) {
@@ -372,5 +362,5 @@ public class XmlConfigurator {
             }
         }
     }
-   
+
 }

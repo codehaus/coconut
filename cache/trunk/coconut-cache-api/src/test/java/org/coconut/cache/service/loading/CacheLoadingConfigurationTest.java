@@ -144,7 +144,7 @@ public class CacheLoadingConfigurationTest {
         conf.setDefaultRefreshTime(1000, null);
     }
 
-    public static class MyBackend1 extends AbstractCacheLoader<Integer, String> {
+    public static class MyBackend1 implements CacheLoader<Integer, String> {
         /**
          * @see org.coconut.cache.CacheLoader#load(java.lang.Object)
          */

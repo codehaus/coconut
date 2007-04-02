@@ -7,10 +7,9 @@ import javax.management.JMException;
 import javax.management.MBeanServer;
 
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.internal.service.CacheServiceLifecycle;
 import org.coconut.cache.internal.service.CacheServiceManager;
 import org.coconut.cache.internal.service.ShutdownCallback;
-import org.coconut.cache.internal.util.WrapperCacheMXBean;
+import org.coconut.cache.service.management.CacheMXBean;
 import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.management.ManagedGroup;
@@ -20,29 +19,23 @@ import org.coconut.management.Managements;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class DefaultCacheManagementService<K, V> implements CacheServiceLifecycle {
-
-    private final ManagedGroup group;
-
-    private final String domain;
-
-    private final CacheServiceManager manager;
+public class DefaultCacheManagementService extends AbstractCacheManagementService {
 
     private final AbstractCache cache;
 
+    private final String domain;
+
+    private final ManagedGroup group;
+
+    private final CacheServiceManager manager;
+
     public DefaultCacheManagementService(CacheServiceManager manager,
-            CacheConfiguration<K, V> conf, CacheManagementConfiguration<K, V> cmc,
-            AbstractCache cache) {
+            CacheConfiguration conf, CacheManagementConfiguration cmc, AbstractCache cache) {
         this.manager = manager;
         this.cache = cache;
         domain = cmc.getDomain();
         MBeanServer server = cmc.getMBeanServer();
         group = Managements.newGroup(conf.getName(), "Base bean", server);
-    }
-
-    public ManagedGroup getGroup() {
-        manager.checkStarted();
-        return group;
     }
 
     /**
@@ -51,8 +44,22 @@ public class DefaultCacheManagementService<K, V> implements CacheServiceLifecycl
     public void doStart() throws JMException {
         ManagedGroup g = group.addNewGroup("General",
                 "General cache attributes and settings");
-        g.add(new WrapperCacheMXBean(cache));
+        if (cache instanceof CacheMXBean) {
+            g.add(cache);
+        }
         group.registerAll(Managements.newRegistrant(domain, "name", "service", "group"));
+    }
+
+    public ManagedGroup getGroup() {
+        manager.checkStarted();
+        return group;
+    }
+
+    /**
+     * @see org.coconut.cache.internal.service.InternalCacheService#isDummy()
+     */
+    public boolean isDummy() {
+        return false;
     }
 
     /**

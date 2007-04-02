@@ -4,59 +4,93 @@
 
 package org.coconut.core.util;
 
-import java.io.PrintStream;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Queue;
 
 import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
-import org.coconut.test.MockTestCase;
-import org.jmock.Mock;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
+import org.jmock.integration.junit4.JUnit4Mockery;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
 @SuppressWarnings("unchecked")
-public class EventUtilsTest extends MockTestCase {
-//TODO check serializeable
+@RunWith(JMock.class)
+public class EventUtilsTest {
+    Mockery context = new JUnit4Mockery();
+
+    @Test
     public void testToHandler() {
-        Mock mock = mock(Offerable.class);
-        mock.expects(once()).method("offer").with(eq(0))
-                .will(returnValue(true));
-        EventProcessor eh = EventUtils.fromOfferable((Offerable) mock.proxy());
+        final Offerable subscriber = context.mock(Offerable.class);
+        context.checking(new Expectations() {
+            {
+                one(subscriber).offer(0);
+            }
+        });
+        EventProcessor eh = EventUtils.fromOfferable(subscriber);
         eh.process(0);
     }
 
+    @Test
     public void testToHandlerFromQueue() {
-        Mock mock = mock(Queue.class);
-        mock.expects(once()).method("offer").with(eq(0))
-                .will(returnValue(true));
-        EventProcessor<Integer> eh = EventUtils
-                .fromQueue((Queue) mock.proxy());
+        final Queue q = context.mock(Queue.class);
+        context.checking(new Expectations() {
+            {
+                one(q).offer(0);
+            }
+        });
+        EventProcessor eh = EventUtils.fromQueue(q);
         eh.process(0);
     }
 
-    public void testToOfferable() {
-        Mock mock = mock(EventProcessor.class);
-        mock.expects(once()).method("process").with(eq(0));
-        Offerable<Integer> eh = EventUtils.toOfferable((EventProcessor) mock
-                .proxy());
-        assertTrue(eh.offer(0));
-    }
-  
-    public void testToOfferableSafe() {
-        Mock mock = mock(EventProcessor.class);
-        mock.expects(once()).method("process").with(eq(0));
-        Offerable<Integer> eh = EventUtils
-                .toOfferableSafe((EventProcessor) mock.proxy());
-        assertTrue(eh.offer(0));
+    @Test(expected = NullPointerException.class)
+    public void testToOfferableNPE() {
+        EventUtils.toOfferable(null);
     }
 
-    public void testToOfferableErroneous() {
-        Mock mock = mock(EventProcessor.class);
-        mock.expects(once()).method("process").with(eq(0)).will(
-                throwException(new IllegalArgumentException()));
-        Offerable<Integer> eh = EventUtils
-                .toOfferableSafe((EventProcessor) mock.proxy());
-        assertFalse(eh.offer(0));
+    @Test
+    public void testToOfferable() {
+        final EventProcessor eh = context.mock(EventProcessor.class);
+        context.checking(new Expectations() {
+            {
+                one(eh).process(0);
+            }
+        });
+        Offerable o = EventUtils.toOfferable(eh);
+        assertTrue(o.offer(0));
     }
+
+    @Test
+    public void testToOfferableSafe() {
+        final EventProcessor eh = context.mock(EventProcessor.class);
+        context.checking(new Expectations() {
+            {
+                one(eh).process(0);
+            }
+        });
+        Offerable o = EventUtils.toOfferableSafe(eh);
+        assertTrue(o.offer(0));
+    }
+
+    @Test
+    public void testToOfferableErroneous() {
+        final EventProcessor eh = context.mock(EventProcessor.class);
+        context.checking(new Expectations() {
+            {
+                one(eh).process(0);
+                will(throwException(new IllegalArgumentException()));
+            }
+        });
+        Offerable o = EventUtils.toOfferableSafe(eh);
+        assertFalse(o.offer(0));
+    }
+    // TODO check serializeable
+
 }

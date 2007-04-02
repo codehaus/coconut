@@ -28,9 +28,9 @@ import org.w3c.dom.Element;
 public class CacheManagementConfiguration<K, V> extends
         AbstractCacheServiceConfiguration<K, V> {
 
-    final static String XML_DOMAIN_TAG = "domain";
+    private final static String XML_DOMAIN_TAG = "domain";
 
-    final static String XML_ROOT = "management";
+    private final static String XML_ROOT = "management";
 
     private String domain = CacheMXBean.DEFAULT_JMX_DOMAIN;
 
@@ -126,6 +126,4 @@ public class CacheManagementConfiguration<K, V> extends
             addComment(doc, "management.cannotPersistMBeanServer", base);
         }
     }
-
-    // Register event notification
 }

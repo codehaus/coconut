@@ -16,18 +16,6 @@ import org.coconut.management.annotation.ManagedAttribute;
 public interface InternalCacheEvictionService<T extends CacheEntry> extends
         CacheEvictionService {
 
-    /**
-     * @see org.coconut.cache.service.eviction.CacheEvictionService#getMaximumCapacity()
-     */
-    @ManagedAttribute(defaultValue = "Maximum Capacity", description = "The maximum capacity of the cache")
-    long getMaximumCapacity();
-
-    /**
-     * @see org.coconut.cache.service.eviction.CacheEvictionService#getMaximumSize()
-     */
-    @ManagedAttribute(defaultValue = "Maximum Size", description = "The maximum size of the cache")
-    int getMaximumSize();
-
     @ManagedAttribute(defaultValue = "Preferable Size", description = "The preferable size of the cache")
     int getPreferableSize();
 

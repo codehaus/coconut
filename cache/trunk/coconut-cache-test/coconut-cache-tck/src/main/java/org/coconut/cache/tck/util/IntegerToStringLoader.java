@@ -4,7 +4,7 @@
 
 package org.coconut.cache.tck.util;
 
-import org.coconut.cache.service.loading.AbstractCacheLoader;
+import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.core.AttributeMap;
 
 /**
@@ -14,7 +14,7 @@ import org.coconut.core.AttributeMap;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class IntegerToStringLoader extends AbstractCacheLoader<Integer, String> {
+public class IntegerToStringLoader implements CacheLoader<Integer, String> {
 
     /**
      * @see org.coconut.cache.util.AbstractCacheLoader#load(java.lang.Object)

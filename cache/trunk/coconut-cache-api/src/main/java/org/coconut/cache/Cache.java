@@ -192,4 +192,6 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     
     V put(K key, V value, AttributeMap attributes);
 
+    //void putAll(Map<K,V> keys, AttributeMap defaultAttributes);
+    //void putAll(Map<K,V> keys, AttributeMap defaultAttributes, Map<K,AttributeMap> specialAttributes);
 }

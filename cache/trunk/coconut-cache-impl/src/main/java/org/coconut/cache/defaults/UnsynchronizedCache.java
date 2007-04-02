@@ -22,10 +22,11 @@ import org.coconut.cache.internal.service.entry.EntryMap;
 import org.coconut.cache.internal.service.event.DefaultCacheEventService;
 import org.coconut.cache.internal.service.eviction.DefaultCacheEvictionService;
 import org.coconut.cache.internal.service.eviction.InternalCacheEvictionService;
-import org.coconut.cache.internal.service.expiration.AbstractCacheExpirationService;
 import org.coconut.cache.internal.service.expiration.DefaultCacheExpirationService;
+import org.coconut.cache.internal.service.expiration.InternalCacheExpirationService;
 import org.coconut.cache.internal.service.joinpoint.AfterCacheOperation;
 import org.coconut.cache.internal.service.joinpoint.InternalCacheOperation;
+import org.coconut.cache.internal.service.loading.AbstractCacheLoadingService;
 import org.coconut.cache.internal.service.loading.DefaultCacheLoaderService;
 import org.coconut.cache.internal.service.loading.InternalCacheLoadingService;
 import org.coconut.cache.internal.service.management.DefaultCacheManagementService;
@@ -59,7 +60,7 @@ import org.coconut.core.AttributeMaps.DefaultAttributeMap;
 public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
     private final InternalCacheEvictionService<AbstractCacheEntry<K, V>> evictionService;
 
-    private final AbstractCacheExpirationService<K, V> expiration;
+    private final InternalCacheExpirationService<K, V> expiration;
 
     public final InternalCacheLoadingService<K, V> loadingService;
 
@@ -79,7 +80,7 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
     @SuppressWarnings("unchecked")
     public UnsynchronizedCache(CacheConfiguration<K, V> conf) {
         super(conf);
-        expiration = getCsm().getComponent(AbstractCacheExpirationService.class);
+        expiration = getCsm().getComponent(InternalCacheExpirationService.class);
         loadingService = getCsm().getComponent(InternalCacheLoadingService.class);
         evictionService = getCsm().getComponent(InternalCacheEvictionService.class);
         notifier = getCsm().getComponent(DefaultCacheEventService.class);
@@ -132,7 +133,7 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
         int previousSize = map.size();
         long previousCapacity = map.capacity();
         List<AbstractCacheEntry<K, V>> expired = new ArrayList<AbstractCacheEntry<K, V>>();
-        if (expiration != null && loadingService.canLoad()) {
+        if (expiration != null && loadingService.isDummy()) {
             for (Iterator<AbstractCacheEntry<K, V>> iterator = map.iterator(); iterator
                     .hasNext();) {
                 AbstractCacheEntry<K, V> m = iterator.next();

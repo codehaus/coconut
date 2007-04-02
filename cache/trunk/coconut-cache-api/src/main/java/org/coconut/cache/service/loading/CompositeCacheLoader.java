@@ -6,9 +6,6 @@ package org.coconut.cache.service.loading;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -95,44 +92,44 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V>, Serializab
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public Map<K, V> loadAll(Map<? extends K, AttributeMap> mapsWithAttributes) throws Exception {
-        final HashMap<K, V> result = new HashMap<K, V>(mapsWithAttributes.size());
-        Collection<K> ks = new HashSet<K>(mapsWithAttributes.keySet());
-        for (CacheLoader<K, V> loader : loaders) {
-            Map<K, V> map = null;
-            if (ks.size() > 0) {
-                try {
-                    map = loader.loadAll(mapsWithAttributes);
-                } catch (Exception e) {
-                    map = loadAllFailed(loader, mapsWithAttributes, e);
-                }
-            } else {
-                // no keys left that we haven't found a value for
-                break;
-            }
-            // map is not null part of the cache loader contract
-            // assert (map != null);
-            ks = new HashSet<K>();
-            result.putAll(map);
-            // we don't check that map.size==ks.size
-            // we assume this is the case (part of the contract)
-            for (Map.Entry<K, V> e : map.entrySet()) {
-                if (e.getValue() == null) {
-                    ks.add(e.getKey());
-                } else {
-                    result.put(e.getKey(), e.getValue());
-                }
-            }
-
-        }
-        for (K key : ks) {
-            result.put(key, noValueFoundForKey(key));
-        }
-        return result;
-    }
+//    /**
+//     * {@inheritDoc}
+//     */
+//    public Map<K, V> loadAll(Map<? extends K, AttributeMap> mapsWithAttributes) throws Exception {
+//        final HashMap<K, V> result = new HashMap<K, V>(mapsWithAttributes.size());
+//        Collection<K> ks = new HashSet<K>(mapsWithAttributes.keySet());
+//        for (CacheLoader<K, V> loader : loaders) {
+//            Map<K, V> map = null;
+//            if (ks.size() > 0) {
+//                try {
+//                    map = loader.loadAll(mapsWithAttributes);
+//                } catch (Exception e) {
+//                    map = loadAllFailed(loader, mapsWithAttributes, e);
+//                }
+//            } else {
+//                // no keys left that we haven't found a value for
+//                break;
+//            }
+//            // map is not null part of the cache loader contract
+//            // assert (map != null);
+//            ks = new HashSet<K>();
+//            result.putAll(map);
+//            // we don't check that map.size==ks.size
+//            // we assume this is the case (part of the contract)
+//            for (Map.Entry<K, V> e : map.entrySet()) {
+//                if (e.getValue() == null) {
+//                    ks.add(e.getKey());
+//                } else {
+//                    result.put(e.getKey(), e.getValue());
+//                }
+//            }
+//
+//        }
+//        for (K key : ks) {
+//            result.put(key, noValueFoundForKey(key));
+//        }
+//        return result;
+//    }
 
     /**
      * Returns the list of loaders that this composite loader consists of.

@@ -8,6 +8,8 @@ package org.coconut.cache.policy;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public interface PolicyAttributes {
+    String CREATION_TIME = "creation_time";
+
     String HITS = "hits";
 
     String COST = "cost";

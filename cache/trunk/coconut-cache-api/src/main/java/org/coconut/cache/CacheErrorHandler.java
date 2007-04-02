@@ -33,8 +33,7 @@ public class CacheErrorHandler<K, V> {
     /**
      * Creates a new CacheErrorHandler.
      */
-    public CacheErrorHandler() {
-    }
+    public CacheErrorHandler() {}
 
     /**
      * Creates a new CacheErrorHandler using the specified logger.
@@ -52,8 +51,7 @@ public class CacheErrorHandler<K, V> {
         return logger != null;
     }
 
-    public synchronized Map<K, V> loadAllFailed(
-            final CacheLoader<? super K, ?> loader,
+    public synchronized Map<K, V> loadAllFailed(final CacheLoader<? super K, ?> loader,
             Map<? extends K, AttributeMap> keysWithAttributes, boolean isAsynchronous,
             Throwable cause) {
         String msg = Resources.lookup(CacheErrorHandler.class, "loadAllFailed",
@@ -62,8 +60,8 @@ public class CacheErrorHandler<K, V> {
         throw new CacheException(msg, cause);
     }
 
-    public synchronized V loadFailed(CacheLoader<? super K, ?> loader,
-            K key, AttributeMap map, boolean isAsync, Throwable cause) {
+    public synchronized V loadFailed(CacheLoader<? super K, ?> loader, K key,
+            AttributeMap map, boolean isAsync, Throwable cause) {
         String msg = Resources.lookup(CacheErrorHandler.class, "loadFailed", key
                 .toString());
         getLogger().error(msg, cause);
@@ -97,6 +95,10 @@ public class CacheErrorHandler<K, V> {
 
     public synchronized final void unhandledRuntimeException(RuntimeException t) {
         getLogger().error("Unhandled RuntimeException", t);
+    }
+
+    public synchronized void configurationChanged(Cache<?, ?> cache, String title) {
+
     }
 
     public synchronized void warning(String warning) {

@@ -95,6 +95,9 @@ public class CacheConfiguration<K, V> implements Cloneable {
     private ArrayList<AbstractCacheServiceConfiguration> list = new ArrayList<AbstractCacheServiceConfiguration>();
 
     private String name = UUID.randomUUID().toString();
+    // TODO, cache should create name self
+    //because when we have a tree cache we want to forbid the user to specify a name
+    //or at least a full name
 
     private Clock timingStrategy = Clock.DEFAULT_CLOCK;
 
@@ -151,7 +154,6 @@ public class CacheConfiguration<K, V> implements Cloneable {
     public Clock getClock() {
         return timingStrategy;
     }
-
 
     /**
      * Returns the log configured for the cache.
@@ -311,6 +313,7 @@ public class CacheConfiguration<K, V> implements Cloneable {
     public CacheEventConfiguration serviceEvent() {
         return lazyCreate(CacheEventConfiguration.class);
     }
+
     public CacheLoadingConfiguration<K, V> serviceLoading() {
         return lazyCreate(CacheLoadingConfiguration.class);
     }
@@ -413,6 +416,7 @@ public class CacheConfiguration<K, V> implements Cloneable {
         this.name = name;
         return this;
     }
+
     /**
      * Some cache implementations might allow additional properties to be set
      * then those defined by this class. This method can be used to set these
@@ -458,7 +462,7 @@ public class CacheConfiguration<K, V> implements Cloneable {
             addService(c);
             service = getServiceConfiguration(c);
         }
-        ConfigurationValidator.initializeConfiguration(service,this);
+        ConfigurationValidator.initializeConfiguration(service, this);
         return service;
     }
 
@@ -475,7 +479,6 @@ public class CacheConfiguration<K, V> implements Cloneable {
         conf.setName(name);
         return conf;
     }
-
 
     public static <K, V> Cache<K, V> createAndInstantiate(InputStream is)
             throws Exception {
