@@ -6,7 +6,6 @@ package org.coconut.cache.test.harness;
 import net.jcip.annotations.ThreadSafe;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.spi.annotations.CacheSupport;
 import org.coconut.cache.tck.TCKClassTester;
 import org.junit.Test;
 import org.junit.internal.runners.CompositeRunner;
@@ -42,11 +41,6 @@ public class CacheHarnessRunner extends Runner {
     }
 
     private void addTests(CompositeRunner runner) throws InitializationError {
-        if (!tt.isAnnotationPresent(CacheSupport.class)) {
-            throw new IllegalStateException(
-                    "Cache implementation must have a CacheSupport annotation");
-        }
-        CacheSupport cs = (CacheSupport) tt.getAnnotation(CacheSupport.class);
         boolean isThreadSafe = klass.isAnnotationPresent(ThreadSafe.class);
 
         composite.add(new TestClassRunner(HarnessTest.class));

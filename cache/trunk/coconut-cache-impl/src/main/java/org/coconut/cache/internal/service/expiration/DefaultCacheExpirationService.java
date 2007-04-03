@@ -10,9 +10,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.CacheErrorHandler;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.spi.CacheHelper;
+import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.core.AttributeMap;
@@ -32,7 +32,7 @@ public class DefaultCacheExpirationService<K, V> extends
 
     private long defaultExpirationTime;
 
-    private final CacheErrorHandler<K, V> errorHandler;
+    private final CacheExceptionHandler<K, V> errorHandler;
 
     private Filter<CacheEntry<K, V>> expirationFilter;
 
@@ -40,7 +40,7 @@ public class DefaultCacheExpirationService<K, V> extends
 
     public DefaultCacheExpirationService(CacheHelper<K, V> helper,
             CacheExpirationConfiguration<K, V> conf, Clock clock,
-            CacheErrorHandler<K, V> errorHandler,
+            CacheExceptionHandler<K, V> errorHandler,
             InternalCacheAttributeService attributeFactory) {
         this.helper = helper;
         this.clock = clock;

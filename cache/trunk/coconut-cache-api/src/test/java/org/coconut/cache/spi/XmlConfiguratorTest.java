@@ -3,13 +3,19 @@
  */
 package org.coconut.cache.spi;
 
-import static org.junit.Assert.assertEquals;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.logging.Logger;
 
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.core.Log;
+import org.coconut.core.util.Logs;
+import org.coconut.test.MockTestCase;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -20,6 +26,13 @@ public class XmlConfiguratorTest {
 
     static XmlConfigurator c = XmlConfigurator.getInstance();
 
+    CacheConfiguration conf;
+
+    @Before
+    public void setup() {
+        conf = CacheConfiguration.create();
+    }
+    
     @Test
     public void cacheGetsName() throws Exception {
         String noNamed = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -61,5 +74,39 @@ public class XmlConfiguratorTest {
     @Test(expected = NullPointerException.class)
     public void from_NPE2() throws Exception {
         c.from(null);
+    }
+    
+    @Test
+    public void testJDK() throws Exception {
+        conf.setDefaultLog(Logs.JDK.from("org.coconut"));
+        conf = rw(conf);
+        Logger l = Logs.JDK.getAsJDKLogger(conf.getDefaultLog());
+        assertEquals("org.coconut", l.getName());
+    }
+
+    @Test
+    public void testLog4J() throws Exception {
+        conf.setDefaultLog(Logs.Log4j.from("org.coconut"));
+        conf = rw(conf);
+        org.apache.log4j.Logger l = Logs.Log4j.getAsLog4jLogger(conf.getDefaultLog()
+               );
+
+        assertEquals("org.coconut", l.getName());
+    }
+
+    @Test
+    public void testCommons() throws Exception {
+        conf.setDefaultLog(Logs.Commons.from("org.coconut"));
+        conf = rw(conf);
+        org.apache.commons.logging.Log l = Logs.Commons.getAsCommonsLogger(conf.getDefaultLog()            );
+
+        // hmm cannot test name
+    }
+
+    @Test
+    public void testCustomLog() throws Exception {
+        conf.setDefaultLog(MockTestCase.mockDummy(Log.class));
+        conf = rw(conf);
+        assertNull(conf.getDefaultLog());
     }
 }

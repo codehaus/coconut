@@ -24,7 +24,6 @@ public class IntegerToStringLoader implements CacheLoader<Integer, String> {
             return "" + (char) (key + 64);
         } else {
             return null;
-
         }
     }
 }

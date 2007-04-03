@@ -6,9 +6,9 @@ package org.coconut.cache.internal.service.expiration;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.CacheErrorHandler;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.spi.CacheHelper;
+import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.core.Clock;
 import org.coconut.filter.Filter;
@@ -30,7 +30,7 @@ public class SynchronizedCacheExpirationService<K, V> extends
      */
     public SynchronizedCacheExpirationService(CacheHelper<K, V> helper,
             CacheExpirationConfiguration<K, V> conf, Clock clock,
-            CacheErrorHandler<K, V> errorHandler,
+            CacheExceptionHandler<K, V> errorHandler,
             InternalCacheAttributeService attributeFactory) {
         super(helper, conf, clock, errorHandler, attributeFactory);
         mutex = helper.getMutex();

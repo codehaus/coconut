@@ -167,6 +167,13 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
     /**
      * {@inheritDoc}
      */
+    public long getCapacity() {
+        return map.capacity();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int size() {
         return map.size();

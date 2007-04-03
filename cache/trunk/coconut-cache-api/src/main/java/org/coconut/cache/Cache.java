@@ -59,6 +59,10 @@ import org.coconut.core.AttributeMap;
  */
 public interface Cache<K, V> extends ConcurrentMap<K, V> {
 
+    String getName();
+    
+    long getCapacity();
+    
     /**
      * Performs cleanup of the cache. This might be everything from persisting
      * stale data to disk to adapting the cache with a better eviction policy

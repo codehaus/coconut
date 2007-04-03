@@ -14,7 +14,6 @@ import java.util.Map;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheException;
 import org.coconut.cache.DummyCache;
-import org.coconut.cache.spi.AbstractCache;
 import org.coconut.test.MockTestCase;
 import org.jmock.Mock;
 import org.junit.After;
@@ -69,7 +68,7 @@ public class CacheSingletonTest {
     @Test
     public void testSetAbstract() {
         MockTestCase mtc = new MockTestCase();
-        Mock m = mtc.mock(AbstractCache.class);
+        Mock m = mtc.mock(Cache.class);
         m.stubs().method("getName").will(mtc.returnValue("foo"));
         CacheSingleton.setSingleCache((Cache<?, ?>) m.proxy());
         assertEquals(m.proxy(), CacheSingleton.getSingleCache());
@@ -89,9 +88,9 @@ public class CacheSingletonTest {
     @Test
     public void testAddCache() {
         MockTestCase mtc = new MockTestCase();
-        Mock m = mtc.mock(AbstractCache.class);
+        Mock m = mtc.mock(Cache.class);
         m.stubs().method("getName").will(mtc.returnValue("foo"));
-        CacheSingleton.addCache((AbstractCache<?, ?>) m.proxy());
+        CacheSingleton.addCache((Cache<?, ?>) m.proxy());
         assertTrue(CacheSingleton.hasCache("foo"));
         assertFalse(CacheSingleton.hasCache("foo1"));
         assertEquals(m.proxy(), CacheSingleton.getCache("foo"));
@@ -105,7 +104,7 @@ public class CacheSingletonTest {
         assertEquals(pck1, CacheSingleton.getCacheRessourceLocation());
         Cache c = CacheSingleton.getSingleCache();
         assertTrue(c instanceof DummyCache);
-        assertEquals("foobar", ((DummyCache) c).getName());
+        assertEquals("foobar", c.getName());
         assertEquals(c, CacheSingleton.getCache("foobar"));
         CacheSingleton.setCacheRessourceLocation(CacheSingleton.DEFAULT_CACHE_RESSOURCE);
     }
@@ -118,7 +117,7 @@ public class CacheSingletonTest {
         assertEquals(pck1, CacheSingleton.getCacheRessourceLocation());
         Cache c =CacheSingleton.getCache("foobar");
         assertTrue(c instanceof DummyCache);
-        assertEquals("foobar", ((DummyCache) c).getName());
+        assertEquals("foobar", c.getName());
         CacheSingleton.setCacheRessourceLocation(CacheSingleton.DEFAULT_CACHE_RESSOURCE);
     }
     @Test(expected = CacheException.class)

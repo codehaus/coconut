@@ -17,7 +17,7 @@ import org.coconut.cache.internal.service.ShutdownCallback;
 import org.coconut.cache.internal.service.joinpoint.InternalCacheOperation;
 import org.coconut.cache.internal.util.Resources;
 import org.coconut.cache.service.statistics.CacheHitStat;
-import org.coconut.cache.service.statistics.Statistics;
+import org.coconut.cache.service.statistics.CacheStatistics;
 import org.coconut.core.Clock;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.annotation.ManagedAttribute;
@@ -337,7 +337,7 @@ public final class DefaultCacheStatisticsService<K, V> implements
     }
 
     public CacheHitStat getHitStat() {
-        return Statistics.newImmutableHitStat(entryGetHitCount.get(), entryGetMissCount
+        return CacheStatistics.newImmutableHitStat(entryGetHitCount.get(), entryGetMissCount
                 .get());
     }
 

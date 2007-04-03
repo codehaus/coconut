@@ -6,12 +6,12 @@ package org.coconut.cache.internal.service.management;
 import javax.management.JMException;
 import javax.management.MBeanServer;
 
+import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.CacheServiceManager;
 import org.coconut.cache.internal.service.ShutdownCallback;
 import org.coconut.cache.service.management.CacheMXBean;
 import org.coconut.cache.service.management.CacheManagementConfiguration;
-import org.coconut.cache.spi.AbstractCache;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.Managements;
 
@@ -21,7 +21,7 @@ import org.coconut.management.Managements;
  */
 public class DefaultCacheManagementService extends AbstractCacheManagementService {
 
-    private final AbstractCache cache;
+    private final Cache cache;
 
     private final String domain;
 
@@ -30,7 +30,7 @@ public class DefaultCacheManagementService extends AbstractCacheManagementServic
     private final CacheServiceManager manager;
 
     public DefaultCacheManagementService(CacheServiceManager manager,
-            CacheConfiguration conf, CacheManagementConfiguration cmc, AbstractCache cache) {
+            CacheConfiguration conf, CacheManagementConfiguration cmc, Cache cache) {
         this.manager = manager;
         this.cache = cache;
         domain = cmc.getDomain();

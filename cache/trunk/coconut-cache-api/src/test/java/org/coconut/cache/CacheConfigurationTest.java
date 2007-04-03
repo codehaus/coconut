@@ -19,9 +19,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.XmlConfigurator;
 import org.coconut.core.Clock;
+import org.coconut.core.Log;
+import org.coconut.core.util.Logs;
 import org.coconut.test.MockTestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,14 +49,10 @@ public class CacheConfigurationTest {
 
     @Test(expected = NullPointerException.class)
     public void testErrorHandler() {
-        CacheErrorHandler def = conf.getErrorHandler();
-        assertFalse(def.hasLogger());
-        assertEquals(CacheErrorHandler.class, def.getClass());
-        def = new CacheErrorHandler();
-        assertEquals(conf, conf.setErrorHandler(def));
-        assertSame(def, conf.getErrorHandler());
-
-        conf.setErrorHandler(null);
+        assertNull(conf.getDefaultLog());
+        Log log = Logs.nullLog();
+        assertEquals(conf, conf.setDefaultLog(log));
+        assertSame(log, conf.getDefaultLog());
     }
 
     @Test(expected = NullPointerException.class)
@@ -143,14 +140,14 @@ public class CacheConfigurationTest {
         assertEquals("foo", ((DummyCache) c).getName());
         assertFalse(((DummyCache) c).isStarted);
 
-        c = CacheConfiguration.createInstantiateAndStart(new ByteArrayInputStream(os
-                .toByteArray()));
-        assertTrue(c instanceof DummyCache);
-        assertEquals("foo", ((DummyCache) c).getName());
-        assertTrue(((DummyCache) c).isStarted);
+//        c = CacheConfiguration.createInstantiateAndStart(new ByteArrayInputStream(os
+//                .toByteArray()));
+//        assertTrue(c instanceof DummyCache);
+//        assertEquals("foo", ((DummyCache) c).getName());
+//        assertTrue(((DummyCache) c).isStarted);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testNewInstance() throws Exception {
         conf.setName("foo");
 
@@ -159,14 +156,17 @@ public class CacheConfigurationTest {
         assertEquals("foo", ((DummyCache) c).getName());
         assertFalse(((DummyCache) c).isStarted);
 
-        c = conf.newInstanceAndStart(DummyCache.class);
-        assertTrue(c instanceof DummyCache);
-        assertEquals("foo", ((DummyCache) c).getName());
-        assertTrue(((DummyCache) c).isStarted);
+//        c = conf.newInstanceAndStart(DummyCache.class);
+//        assertTrue(c instanceof DummyCache);
+//        assertEquals("foo", ((DummyCache) c).getName());
+//        assertTrue(((DummyCache) c).isStarted);
 
-        conf.newInstance(null);
     }
-
+    @Test(expected = NullPointerException.class)
+    public void testNewInstanceNPE() throws Exception {
+        conf.newInstance(null);       
+    }
+    
     @Test(expected = IllegalArgumentException.class)
     public void testNewInstanceNoConstructor() throws Exception {
         conf.newInstance(MockTestCase.mockDummy(Cache.class).getClass());
@@ -174,7 +174,7 @@ public class CacheConfigurationTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testNewInstanceAbstractClass() throws Exception {
-        conf.newInstance(AbstractCache.class);
+        conf.newInstance(DummyCache.class);
     }
 
     @Test(expected = InvocationTargetException.class)

@@ -2,7 +2,7 @@
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.cache.spi;
+package org.coconut.cache.internal.service.event;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;

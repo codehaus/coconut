@@ -24,11 +24,11 @@ import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.cache.service.threading.CacheThreadingConfiguration;
-import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.cache.spi.ConfigurationValidator;
 import org.coconut.cache.spi.XmlConfigurator;
 import org.coconut.core.Clock;
+import org.coconut.core.Log;
 
 /**
  * This class is the primary class used for representing the configuration of a
@@ -51,35 +51,6 @@ import org.coconut.core.Clock;
  * Cache&lt;String, Integer&gt; instance = cc.newInstance(Select_A_Cache_Impl);
  * </pre>
  * 
- * <p>
- * In addition to the general methods available on CacheConfiguration This class
- * is using a number of inner classes to . This The following categories exist
- * <dl>
- * <dt>{@link Backend}</dt>
- * <dd>Handles storage and loading of entries from cache loaders and cache
- * stores</dd>
- * <dt>{@link Eviction}</dt>
- * <dd>Handles maximum size of the cache and what entries will be evicted</dd>
- * <dt>{@link Expiration}</dt>
- * <dd>Handles expired items and timeout settings for entries</dd>
- * <dt>{@link JMX}</dt>
- * <dd>Handles JMX registration of the cache</dd>
- * <dt>{@link Statistics}</dt>
- * <dd>Handles various statistics related issues</dd>
- * <dt>{@link Threading}</dt>
- * <dd>Handles the usage of threads within the cache</dd>
- * </dl>
- * <p>
- * A few point on the naming of methods. Methods postfixed with <tt>Hint</tt>
- * are merely hits to implementation on how to .... and can as such be ignored
- * by any implementation. They are only used to assist an implementation in
- * choosing performance optimal configuration.
- * <p>
- * If Extension of this class is possible with the following TODO what about
- * extensions of this class?? could be usefull for special purpose caches, if so
- * we should change some of the static methods to allow overriding.
- * <p>
- * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -88,16 +59,17 @@ public class CacheConfiguration<K, V> implements Cloneable {
 
     private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    private CacheErrorHandler<K, V> errorHandler = new CacheErrorHandler<K, V>();
-
     private Map<? extends K, ? extends V> initialMap;
 
     private ArrayList<AbstractCacheServiceConfiguration> list = new ArrayList<AbstractCacheServiceConfiguration>();
 
+    private Log defaultLogger;
+
+    // TODO, cache and cacheconfiguration should create name self
+    // because when we have a tree cache we want to forbid the user to specify a
+    // name or at least a full name
+
     private String name = UUID.randomUUID().toString();
-    // TODO, cache should create name self
-    //because when we have a tree cache we want to forbid the user to specify a name
-    //or at least a full name
 
     private Clock timingStrategy = Clock.DEFAULT_CLOCK;
 
@@ -106,7 +78,7 @@ public class CacheConfiguration<K, V> implements Cloneable {
      * instances should be created using the {@link #newConf()} method.
      */
     CacheConfiguration() {
-        // package private for now, might change at a later time.
+    // package private for now, might change at a later time.
     }
 
     public AbstractCacheServiceConfiguration<K, V> addService(
@@ -155,15 +127,8 @@ public class CacheConfiguration<K, V> implements Cloneable {
         return timingStrategy;
     }
 
-    /**
-     * Returns the log configured for the cache.
-     * 
-     * @return the log configured for the cache, or <tt>null</tt> if no log is
-     *         configured
-     * @see #setLog(Log)
-     */
-    public CacheErrorHandler<K, V> getErrorHandler() {
-        return errorHandler;
+    public Log getDefaultLog() {
+        return defaultLogger;
     }
 
     /**
@@ -233,7 +198,6 @@ public class CacheConfiguration<K, V> implements Cloneable {
         if (key == null) {
             throw new NullPointerException("key is null");
         }
-
         Object result = additionalProperties.get(key);
         return result == null ? defaultValue : result;
     }
@@ -299,19 +263,12 @@ public class CacheConfiguration<K, V> implements Cloneable {
         return cache;
     }
 
-    public <T extends Cache<K, V>> T newInstanceAndStart(
-            Class<? extends AbstractCache> clazz) {
-        AbstractCache t = newInstance(clazz);
-        t.preStart();
-        return (T) t;
+    public CacheEventConfiguration serviceEvent() {
+        return lazyCreate(CacheEventConfiguration.class);
     }
 
     public CacheExpirationConfiguration<K, V> serviceExpiration() {
         return lazyCreate(CacheExpirationConfiguration.class);
-    }
-
-    public CacheEventConfiguration serviceEvent() {
-        return lazyCreate(CacheEventConfiguration.class);
     }
 
     public CacheLoadingConfiguration<K, V> serviceLoading() {
@@ -347,23 +304,8 @@ public class CacheConfiguration<K, V> implements Cloneable {
         return this;
     }
 
-    /**
-     * Sets the log that the cache should use for logging anomalies and errors.
-     * If no log is set the cache will redirect all output to dev/null
-     * 
-     * @param log
-     *            the log to use
-     * @return this configuration
-     * @see org.coconut.core.Logs
-     * @see org.coconut.core.Log
-     * @throws NullPointerException
-     *             if log is <tt>null</tt>
-     */
-    public CacheConfiguration<K, V> setErrorHandler(CacheErrorHandler<K, V> errorHandler) {
-        if (errorHandler == null) {
-            throw new NullPointerException("errorHandler is null");
-        }
-        this.errorHandler = errorHandler;
+    public CacheConfiguration<K, V> setDefaultLog(Log logger) {
+        this.defaultLogger = logger;
         return this;
     }
 
@@ -485,14 +427,5 @@ public class CacheConfiguration<K, V> implements Cloneable {
         CacheConfiguration<K, V> conf = create(is);
         return conf.newInstance((Class) Class.forName(conf.getProperty(
                 XmlConfigurator.CACHE_INSTANCE_TYPE).toString()));
-    }
-
-    public static <K, V> AbstractCache<K, V> createInstantiateAndStart(InputStream is)
-            throws Exception {
-        CacheConfiguration<K, V> conf = create(is);
-        AbstractCache cc = (AbstractCache) conf.newInstance((Class) Class.forName(conf
-                .getProperty(XmlConfigurator.CACHE_INSTANCE_TYPE).toString()));
-        cc.preStart();
-        return cc;
     }
 }

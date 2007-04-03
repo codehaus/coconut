@@ -14,7 +14,6 @@ import net.jcip.annotations.ThreadSafe;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
-import org.coconut.cache.spi.AbstractCache;
 
 /**
  * This class gives access to a cache or cache manager as a singleton.
@@ -54,7 +53,7 @@ public final class CacheSingleton {
     /** Whether or not this singleton has been initialized. */
     private static boolean isInitialized = false;
 
-    public static void addCache(AbstractCache<?, ?> cache) {
+    public static void addCache(Cache<?, ?> cache) {
         addCache(cache, cache.getName());
     }
 
@@ -74,7 +73,7 @@ public final class CacheSingleton {
             lazyInitializeClasspathConfiguration();
             c = (Cache<K, V>) caches.get(name);
             if (c == null) {
-                throw new CacheException(
+                throw new IllegalArgumentException(
                         "A cache with the specified name does not exist, name = " + name
                                 + " registered caches = " + caches.keySet().toString());
             }
@@ -125,9 +124,7 @@ public final class CacheSingleton {
         }
         cacheInstance = cache;
         isInitialized = true;
-        if (cache instanceof AbstractCache) {
-            caches.put(((AbstractCache) cache).getName(), cache);
-        }
+        caches.put(cache.getName(), cache);
     }
 
     static synchronized void lazyInitializeClasspathConfiguration() {
@@ -141,7 +138,7 @@ public final class CacheSingleton {
                             + cache_ressource_location + "' on the classpath.");
                 }
                 is = url.openStream();
-                setSingleCache(CacheConfiguration.createInstantiateAndStart(is));
+                setSingleCache(CacheConfiguration.createAndInstantiate(is));
             } catch (Exception e) {
                 throw new CacheException("Cache could not be instantiated", e);
             } finally {

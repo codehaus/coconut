@@ -14,10 +14,10 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.CacheErrorHandler;
 import org.coconut.cache.internal.DefaultAttributeMap;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.spi.CacheHelper;
+import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.core.Clock;
@@ -48,7 +48,7 @@ public class DefaultCacheExpirationServiceTest {
     private CacheHelper<Integer, String> helper = new JUnit4Mockery()
             .mock(CacheHelper.class);
 
-    private CacheErrorHandler<Integer, String> errorHandler;
+    private CacheExceptionHandler<Integer, String> errorHandler;
 
     private InternalCacheAttributeService attributeFactory = new JUnit4Mockery()
             .mock(InternalCacheAttributeService.class);
@@ -73,7 +73,7 @@ public class DefaultCacheExpirationServiceTest {
     public void setup() {
         clock = new Clock.DeterministicClock();
         conf = new CacheExpirationConfiguration<Integer, String>();
-        errorHandler = new CacheErrorHandler<Integer, String>();
+        errorHandler = new CacheExceptionHandler<Integer, String>();
         initialize();
     }
 
@@ -186,7 +186,7 @@ public class DefaultCacheExpirationServiceTest {
     @Test
     public void testErrorHandler() {
         final AtomicReference<String> ref = new AtomicReference<String>();
-        errorHandler = new CacheErrorHandler<Integer, String>() {
+        errorHandler = new CacheExceptionHandler<Integer, String>() {
             public synchronized void warning(String warning) {
                 ref.set(warning);
             }

@@ -146,4 +146,20 @@ public class DefaultCacheEvictionService<T extends CacheEntry> implements
     public void clear() {
         cp.clear();
     }
+
+    /**
+     * @see org.coconut.cache.service.eviction.CacheEvictionMXBean#trimToCapacity(long)
+     */
+    public void trimToCapacity(long capacity) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /**
+     * @see org.coconut.cache.service.eviction.CacheEvictionMXBean#trimToSize(int)
+     */
+    public void trimToSize(int size) {
+        // TODO Auto-generated method stub
+        
+    }
 }

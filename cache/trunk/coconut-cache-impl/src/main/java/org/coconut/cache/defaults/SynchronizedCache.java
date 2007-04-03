@@ -16,13 +16,11 @@ import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.management.CacheMXBean;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.spi.annotations.CacheServiceSupport;
-import org.coconut.cache.spi.annotations.CacheSupport;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-@CacheSupport(CacheLoadingSupport = true, CacheEntrySupport = true, ExpirationSupport = true)
 @ThreadSafe
 @CacheServiceSupport( { CacheEventService.class, CacheManagementService.class })
 public class SynchronizedCache<K, V> extends UnsynchronizedCache<K, V> implements

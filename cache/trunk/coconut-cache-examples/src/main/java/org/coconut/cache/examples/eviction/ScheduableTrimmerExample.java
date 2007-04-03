@@ -7,8 +7,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.cache.Cache;
 import org.coconut.cache.defaults.UnsynchronizedCache;
-import org.coconut.cache.spi.AbstractCache;
+import org.coconut.cache.service.CacheServices;
+import org.coconut.cache.service.eviction.CacheEvictionService;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -17,13 +19,13 @@ import org.coconut.cache.spi.AbstractCache;
 public class ScheduableTrimmerExample {
     static class TrimToSize implements Runnable {
         // all coconut cache implementations extend AbstractCache
-        private final AbstractCache<?, ?> c;
+        private final CacheEvictionService c;
 
         private final int threshold;
 
         private final int trimTo;
 
-        public TrimToSize(AbstractCache<?, ?> cache, int threshold, int trimTo) {
+        public TrimToSize(Cache cache, int threshold, int trimTo) {
             if (cache == null) {
                 throw new NullPointerException("cache is null");
             } else if (threshold < 0) {
@@ -39,25 +41,24 @@ public class ScheduableTrimmerExample {
             }
             this.threshold = threshold;
             this.trimTo = trimTo;
-            c = cache;
+            c = CacheServices.eviction(cache);
         }
 
         /**
          * @see java.lang.Runnable#run()
          */
-        public synchronized void run() {
-            if (c.size() > threshold) {
-                c.trimToSize(trimTo);
-            }
+        public void run() {
+            c.trimToSize(trimTo);
         }
     }
 
     public static void main(String[] args) {
         UnsynchronizedCache<String, String> c = new UnsynchronizedCache<String, String>();
         ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
+        
         ses.scheduleAtFixedRate(new TrimToSize(c, 1100, 1000), 0, 1, TimeUnit.SECONDS);
 
-        //other code
+        // other code
 
         ses.shutdown();
     }

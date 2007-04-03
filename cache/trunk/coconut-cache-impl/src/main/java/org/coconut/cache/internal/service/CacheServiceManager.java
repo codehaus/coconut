@@ -21,7 +21,6 @@ import org.coconut.cache.internal.service.joinpoint.NoOpAfterCacheOperation;
 import org.coconut.cache.service.event.CacheEventConfiguration;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
-import org.coconut.cache.spi.AbstractCache;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.internal.picocontainer.defaults.DefaultPicoContainer;
 import org.coconut.management.ManagedGroup;
@@ -60,7 +59,7 @@ public class CacheServiceManager<K, V> implements InternalCacheServiceManager {
         container.registerComponentInstance(cache);
         container.registerComponentInstance(conf);
         container.registerComponentInstance(conf.getClock());
-        container.registerComponentInstance(conf.getErrorHandler());
+     // container.registerComponentInstance(conf.getErrorHandler());
         for (AbstractCacheServiceConfiguration c : conf.getServices()) {
             container.registerComponentInstance(c);
         }
@@ -148,16 +147,16 @@ public class CacheServiceManager<K, V> implements InternalCacheServiceManager {
         tryTerminate();
     }
 
-    public void startAll(AbstractCache<K, V> c) {
-        for (Object cs : instanciated.values()) {
-            try {
-                // cs.start(c, (Map) Collections.EMPTY_MAP);
-            } catch (Exception e) {
-                e.printStackTrace();
-                // shutdown cache
-            }
-        }
-    }
+//    public void startAll(AbstractCache<K, V> c) {
+//        for (Object cs : instanciated.values()) {
+//            try {
+//                // cs.start(c, (Map) Collections.EMPTY_MAP);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                // shutdown cache
+//            }
+//        }
+//    }
 
     /**
      * already at least the given target.

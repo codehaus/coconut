@@ -10,6 +10,11 @@ import org.coconut.management.annotation.ManagedAttribute;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public interface CacheEvictionMXBean {
+  
+    void trimToSize(int size);
+    
+    void trimToCapacity(long capacity);
+    
     /**
      * Returns the maximum allowed capacity of the cache or
      * {@link Long#MAX_VALUE} if there is no limit.

@@ -5,9 +5,9 @@ package org.coconut.cache.internal.service.entry;
 
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.CacheErrorHandler;
 import org.coconut.cache.policy.PolicyAttributes;
 import org.coconut.cache.policy.ReplacementPolicy;
+import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
 
@@ -18,7 +18,7 @@ import org.coconut.core.Clock;
 public abstract class AbstractCacheEntryFactoryService<K, V> {
     private Clock clock;
 
-    private CacheErrorHandler<K, V> errorHandler;
+    private CacheExceptionHandler<K, V> errorHandler;
 
     public V putVersion(K key, V value, long version) {
         return value;

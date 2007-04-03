@@ -8,13 +8,13 @@ import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.CacheErrorHandler;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.service.expiration.AbstractCacheExpirationService;
 import org.coconut.cache.internal.service.threading.InternalCacheThreadingService;
 import org.coconut.cache.internal.service.util.ExtendableFutureTask;
 import org.coconut.cache.internal.spi.CacheHelper;
 import org.coconut.cache.internal.spi.ExtendedExecutorRunnable;
+import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.core.AttributeMap;
@@ -31,7 +31,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
 
     private final Clock clock;
 
-    private final CacheErrorHandler<K, V> errorHandler;
+    private final CacheExceptionHandler<K, V> errorHandler;
 
     private final AbstractCacheExpirationService<K, V> expirationService;
 
@@ -55,7 +55,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
      */
     public DefaultCacheLoaderService(final Clock clock,
             InternalCacheAttributeService attributeFactory,
-            final CacheErrorHandler<K, V> errorHandler,
+            final CacheExceptionHandler<K, V> errorHandler,
             final CacheLoader<? super K, ? extends V> loader,
             final InternalCacheThreadingService threadManager,
             AbstractCacheExpirationService<K, V> expirationService,
@@ -103,7 +103,8 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         try {
             v = loader.load(key, attributes);
         } catch (Exception e) {
-            v = errorHandler.loadFailed(loader, key, attributes, false, e);
+            v = errorHandler.loadFailed(cache.getCache(), loader, key, attributes, false,
+                    e);
         }
         return v;
     }
@@ -125,7 +126,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
             Map<? extends K, AttributeMap> keys) {
         Map<? super K, ? extends V> map = null;
         try {
-            map = null; //loader.loadAll(keys);
+            map = null; // loader.loadAll(keys);
         } catch (Exception e) {
             map = errorHandler.loadAllFailed(loader, keys, false, e);
         }
@@ -223,8 +224,8 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
             try {
                 v = loader.load(key, attributes);
             } catch (Exception e) {
-                v = loaderService.errorHandler.loadFailed(loader, key, attributes, true,
-                        e);
+                v = loaderService.errorHandler.loadFailed(loaderService.cache.getCache(),
+                        loader, key, attributes, true, e);
             }
             if (v != null) {
                 loaderService.cache.valueLoaded(key, v, attributes);
@@ -271,7 +272,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         public void run() {
             Map<? super K, ? extends V> map = null;
             try {
-                map =null; // loader.loadAll(keysWithAttributes);
+                map = null; // loader.loadAll(keysWithAttributes);
             } catch (Exception e) {
                 map = loaderService.errorHandler.loadAllFailed(loader,
                         keysWithAttributes, true, e);

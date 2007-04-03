@@ -17,7 +17,7 @@ public class StatisticsTest extends MockTestCase{
     
     public void testIAE1() {
         try {
-            Statistics.newImmutableHitStat(-1, 0);
+            CacheStatistics.newImmutableHitStat(-1, 0);
             fail("Did not fail with IllegalArgumentException");
         } catch (IllegalArgumentException npe) {
         }
@@ -25,7 +25,7 @@ public class StatisticsTest extends MockTestCase{
 
     public void testIAE2() {
         try {
-            Statistics.newImmutableHitStat(0, -1);
+            CacheStatistics.newImmutableHitStat(0, -1);
             fail("Did not fail with IllegalArgumentException");
         } catch (IllegalArgumentException npe) {
         }
@@ -33,7 +33,7 @@ public class StatisticsTest extends MockTestCase{
 
     @Test
     public void testHitStat00() {
-        CacheHitStat hs = Statistics.newImmutableHitStat(0, 0);
+        CacheHitStat hs = CacheStatistics.newImmutableHitStat(0, 0);
         assertEquals(0l, hs.getNumberOfHits());
         assertEquals(0l, hs.getNumberOfMisses());
         // per default contract
@@ -42,7 +42,7 @@ public class StatisticsTest extends MockTestCase{
 
     @Test
     public void testHitStat() {
-        CacheHitStat hs = Statistics.newImmutableHitStat(80, 20);
+        CacheHitStat hs = CacheStatistics.newImmutableHitStat(80, 20);
         assertEquals(80l, hs.getNumberOfHits());
         assertEquals(20l, hs.getNumberOfMisses());
         assertEquals(0.8, hs.getHitRatio(), 0.000001);
@@ -57,7 +57,7 @@ public class StatisticsTest extends MockTestCase{
         mock.expects(once()).method("getNumberOfHits").will(returnValue((long) 80));
         mock.expects(once()).method("getNumberOfMisses").will(returnValue((long) 20));
         CacheHitStat chs = (CacheHitStat) mock.proxy();
-        CacheHitStat hs = Statistics.newImmutableHitStat(chs);
+        CacheHitStat hs = CacheStatistics.newImmutableHitStat(chs);
         assertEquals(80l, hs.getNumberOfHits());
         assertEquals(20l, hs.getNumberOfMisses());
         assertEquals(0.8, hs.getHitRatio(), 0.000001);
@@ -79,8 +79,8 @@ public class StatisticsTest extends MockTestCase{
             }
 
         };
-        CacheHitStat hs1 = Statistics.newImmutableHitStat(0, 0);
-        CacheHitStat hs2 = Statistics.newImmutableHitStat(80, 20);
+        CacheHitStat hs1 = CacheStatistics.newImmutableHitStat(0, 0);
+        CacheHitStat hs2 = CacheStatistics.newImmutableHitStat(80, 20);
         assertFalse(hs1.equals(null));
         assertFalse(hs1.equals(new Object()));
         assertFalse(hs1.equals(hs2));
@@ -88,6 +88,6 @@ public class StatisticsTest extends MockTestCase{
         assertTrue(hs2.equals(hs));
 
         assertFalse(hs1.hashCode() == hs2.hashCode()); // well its possible
-        assertEquals(Statistics.newImmutableHitStat(80, 20).hashCode(), hs2.hashCode());
+        assertEquals(CacheStatistics.newImmutableHitStat(80, 20).hashCode(), hs2.hashCode());
     }
 }

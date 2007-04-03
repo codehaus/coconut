@@ -6,6 +6,7 @@ package org.coconut.cache.internal.spi;
 import java.util.Collection;
 import java.util.Map;
 
+import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.core.AttributeMap;
 import org.coconut.filter.Filter;
@@ -15,6 +16,8 @@ import org.coconut.filter.Filter;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public interface CacheHelper<K, V> {
+    
+    Cache<K,V> getCache();
     Collection<K> filterEntries(Collection<? super K> col,
             Filter<? super CacheEntry> filter);
 

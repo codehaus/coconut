@@ -18,7 +18,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.CacheErrorHandler;
 import org.coconut.cache.service.event.CacheEventConfiguration;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
@@ -226,7 +225,7 @@ public class XmlConfigurator {
         f.transform(domSource, result);
     }
 
-    static class ErrorHandlerConfigurator  {
+    static class ErrorHandlerConfigurator {
 
         private CacheConfiguration cc;
 
@@ -234,38 +233,38 @@ public class XmlConfigurator {
 
         Element root;
 
-        protected Element add(String name) {
+        private Element add(String name) {
             return add(name, root);
         }
 
-        protected Element add(String name, Element parent) {
+        private Element add(String name, Element parent) {
             Element ee = doc.createElement(name);
             parent.appendChild(ee);
             return ee;
         }
 
-        protected Element add(String name, Element parent, String text) {
+        private Element add(String name, Element parent, String text) {
             Element ee = doc.createElement(name);
             parent.appendChild(ee);
             ee.setTextContent(text);
             return ee;
         }
 
-        protected void addComment(String comment, Node e, Object... o) {
+        private void addComment(String comment, Node e, Object... o) {
             String c = Resources.lookup(XmlConfigurator.class, comment, o);
             Comment eee = doc.createComment(c);
             e.appendChild(eee);
         }
 
-        protected CacheConfiguration conf() {
+        private CacheConfiguration conf() {
             return cc;
         }
 
-        protected Element getChild(String name) {
+        private Element getChild(String name) {
             return getChild(name, root);
         }
 
-        protected Element getChild(String name, Element e) {
+        private Element getChild(String name, Element e) {
             for (int i = 0; i < e.getChildNodes().getLength(); i++) {
                 if (e.getChildNodes().item(i).getNodeName().equals(name)) {
                     return (Element) e.getChildNodes().item(i);
@@ -295,7 +294,7 @@ public class XmlConfigurator {
             this.root = root;
             read();
         }
-        
+
         public final static String LOG_TYPE_ATRB = "type";
 
         public final static String LOG_TAG = "log";
@@ -312,18 +311,13 @@ public class XmlConfigurator {
                 if (log != null) {
                     String type = log.getAttribute(LOG_TYPE_ATRB);
                     if (type.equals("jdk")) {
-                        conf()
-                                .setErrorHandler(
-                                        new CacheErrorHandler(Logs.JDK.from(log
-                                                .getTextContent())));
+                        conf().setDefaultLog(Logs.JDK.from(log.getTextContent()));
                     } else if (type.equals("log4j")) {
-                        conf().setErrorHandler(
-                                new CacheErrorHandler(LogHelper.fromLog4j(log
-                                        .getTextContent())));
+                        conf().setDefaultLog(LogHelper.fromLog4j(log.getTextContent()));
                     } else {
                         // commons, this should guaranteed by schema validation
                         Log l = LogHelper.fromCommons(log.getTextContent());
-                        conf().setErrorHandler(new CacheErrorHandler(l));
+                        conf().setDefaultLog(l);
                     }
                 }
             }
@@ -334,33 +328,27 @@ public class XmlConfigurator {
          *      org.w3c.dom.Document, org.w3c.dom.Element)
          */
         protected void write() {
-            CacheErrorHandler cee = conf().getErrorHandler();
-            if (cee.getClass().equals(CacheErrorHandler.class)) {
-                if (cee.hasLogger()) {
-                    Element eh = add(ERRORHANDLER_TAG);
-                    Log log = cee.getLogger();
-                    String name = Logs.getName(log);
+            Log log = conf().getDefaultLog();
+            if (log != null) {
+                Element eh = add(ERRORHANDLER_TAG);
+                String name = Logs.getName(log);
 
-                    final String logType;
+                final String logType;
 
-                    if (Logs.Log4j.isLog4jLogger(log)) {
-                        logType = "log4j";
-                    } else if (Logs.Commons.isCommonsLogger(log)) {
-                        logType = "commons";
-                    } else if (Logs.JDK.isJDKLogger(log)) {
-                        logType = "jdk";
-                    } else {
-                        addComment("errorHandler.notInstanceLog", eh, log.getClass());
-                        logType = null;
-                    }
-                    if (logType != null) {
-                        add(LOG_TAG, eh, name).setAttribute(LOG_TYPE_ATRB, logType);
-                    }
+                if (Logs.Log4j.isLog4jLogger(log)) {
+                    logType = "log4j";
+                } else if (Logs.Commons.isCommonsLogger(log)) {
+                    logType = "commons";
+                } else if (Logs.JDK.isJDKLogger(log)) {
+                    logType = "jdk";
+                } else {
+                    addComment("errorHandler.notInstanceLog", eh, log.getClass());
+                    logType = null;
                 }
-            } else {
-                addComment("errorHandler.notInstance", root, cee.getClass());
+                if (logType != null) {
+                    add(LOG_TAG, eh, name).setAttribute(LOG_TYPE_ATRB, logType);
+                }
             }
         }
     }
-
 }
