@@ -41,40 +41,7 @@
 
   <reporting>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-clover-plugin</artifactId>
-        <configuration>
 
-          <targetPercentage>1%</targetPercentage>
-          <licenseLocation>
-            ${user.home}/licenses/coconut-clover.license
-          </licenseLocation>
-          <!-- Verify that we can specify the JDK version for Clover's instrumentation -->
-          <jdk>1.5</jdk>
-
-          <!-- Verify that we can exclude some files from the instrumentation -->
-          <excludes>
-            <exclude>**/asm/*.java</exclude>
-          </excludes>
-
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <excludePackageNames>
-            org.coconut.internal
-          </excludePackageNames>
-          <links>
-            <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
-          </links>
-          <showPackage>false</showPackage>
-          <showProtected>true</showProtected>
-          <quiet>true</quiet>
-        </configuration>
-      </plugin>
     </plugins>
   </reporting>
 </project>

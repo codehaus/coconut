@@ -10,12 +10,11 @@
   <licenses>
     <license>
       <name>The Apache License, Version 2.0</name>
-      <url>http://coconut.codehaus.org/license</url>
+      <url>http://svn.coconut.codehaus.org/browse/~raw,r=233/coconut/LICENSE.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
   <version>1.0-SNAPSHOT</version>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -105,16 +104,44 @@
     </developerConnection>
   </scm>
   <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <excludePackageNames>
+            *.internal.*:*.tck.*:*.test.*
+          </excludePackageNames>
+          <aggregate>true</aggregate>
+          <links>
+            <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
+          </links>
+          <showPackage>false</showPackage>
+          <showProtected>true</showProtected>
+          <quiet>true</quiet>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clover-plugin</artifactId>
+        <configuration>
+          <targetPercentage>30%</targetPercentage>
+          <licenseLocation>
+            ${user.home}/licenses/coconut-clover.license
+          </licenseLocation>
+          <jdk>1.5</jdk>
+        </configuration>
+      </plugin>
+    </plugins>
     <pluginManagement>
-      <plugins>
-        <plugin>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <configuration>
-            <source>1.5</source>
-            <target>1.5</target>
-          </configuration>
-        </plugin>
-      </plugins>
+
     </pluginManagement>
     <extensions>
       <extension>
@@ -124,12 +151,37 @@
       </extension>
     </extensions>
   </build>
-
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <version>1.0.0</version>
+        <configuration>
+          <xmlOutput>true</xmlOutput>
+          <threshold>Normal</threshold>
+          <effort>Max</effort>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clover-plugin</artifactId>
+        <configuration>
+          <targetPercentage>30%</targetPercentage>
+          <licenseLocation>
+            ${user.home}/licenses/coconut-clover.license
+          </licenseLocation>
+          <jdk>1.5</jdk>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
 
   <organization>
     <name>Codehaus</name>
     <url>http://www.codehaus.org/</url>
   </organization>
+  <!-- 
   <repositories>
     <repository>
       <id>apache.snapshots</id>
@@ -140,4 +192,5 @@
       </releases>
     </repository>
   </repositories>
+   -->
 </project>
