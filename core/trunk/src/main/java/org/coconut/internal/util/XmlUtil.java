@@ -5,8 +5,6 @@ package org.coconut.internal.util;
 
 import java.lang.reflect.Constructor;
 
-import org.coconut.cache.spi.Resources;
-import org.coconut.cache.spi.XmlConfigurator;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -23,12 +21,6 @@ public class XmlUtil {
         parent.appendChild(ee);
         ee.setTextContent(text);
         return ee;
-    }
-    
-    public static void addComment(Document doc, String comment, Node e, Object... o) {
-        String c = Resources.lookup(XmlConfigurator.class, comment, o);
-        Comment eee = doc.createComment(c);
-        e.appendChild(eee);
     }
 
     public static long readLong(Element e, long defaultLong) {
@@ -65,19 +57,6 @@ public class XmlUtil {
         }
     }
 
-    public static boolean saveObject(Document doc, Element e, String comment,
-            String atrbName, Object o) {
-        Constructor c = null;
-        try {
-            c = o.getClass().getConstructor(null);
-            e.setAttribute(atrbName, o.getClass().getName());
-            return true;
-        } catch (NoSuchMethodException e1) {
-            addComment(doc, comment, e.getParentNode(), o.getClass());
-            e.getParentNode().removeChild(e);
-        }
-        return false;
-    }
 
     public static boolean saveObject(Document doc, Element e, String comment, Object o) {
         return saveObject(doc, e, comment, "type", o);
