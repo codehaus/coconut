@@ -16,22 +16,17 @@ import net.jcip.annotations.NotThreadSafe;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.CacheServiceManager;
+import org.coconut.cache.internal.service.InternalCacheServiceManager;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
 import org.coconut.cache.internal.service.entry.EntryMap;
 import org.coconut.cache.internal.service.event.DefaultCacheEventService;
-import org.coconut.cache.internal.service.eviction.DefaultCacheEvictionService;
 import org.coconut.cache.internal.service.eviction.InternalCacheEvictionService;
-import org.coconut.cache.internal.service.expiration.DefaultCacheExpirationService;
 import org.coconut.cache.internal.service.expiration.InternalCacheExpirationService;
 import org.coconut.cache.internal.service.joinpoint.AfterCacheOperation;
 import org.coconut.cache.internal.service.joinpoint.InternalCacheOperation;
-import org.coconut.cache.internal.service.loading.AbstractCacheLoadingService;
-import org.coconut.cache.internal.service.loading.DefaultCacheLoaderService;
 import org.coconut.cache.internal.service.loading.InternalCacheLoadingService;
-import org.coconut.cache.internal.service.management.DefaultCacheManagementService;
 import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsService;
-import org.coconut.cache.internal.service.threading.NoThreadingCacheService;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
@@ -57,7 +52,7 @@ import org.coconut.core.AttributeMaps.DefaultAttributeMap;
 @CacheServiceSupport( { CacheEventService.class, CacheEvictionService.class,
         CacheExpirationService.class, CacheLoadingService.class,
         CacheStatisticsService.class })
-public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
+public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
     private final InternalCacheEvictionService<AbstractCacheEntry<K, V>> evictionService;
 
     private final InternalCacheExpirationService<K, V> expiration;
@@ -72,6 +67,8 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
 
     private AbstractCacheEntryFactoryService<K, V> entryFactory;
 
+    private final InternalCacheServiceManager<K, V> serviceManager;
+
     @SuppressWarnings("unchecked")
     public UnsynchronizedCache() {
         this((CacheConfiguration) CacheConfiguration.create());
@@ -80,20 +77,25 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
     @SuppressWarnings("unchecked")
     public UnsynchronizedCache(CacheConfiguration<K, V> conf) {
         super(conf);
-        expiration = getCsm().getComponent(InternalCacheExpirationService.class);
-        loadingService = getCsm().getComponent(InternalCacheLoadingService.class);
-        evictionService = getCsm().getComponent(InternalCacheEvictionService.class);
-        notifier = getCsm().getComponent(DefaultCacheEventService.class);
-        statistics = getCsm().getComponent(DefaultCacheStatisticsService.class);
-        // important must be last, because of final value being inlined.
-        if (conf.getInitialMap() != null) {
-            putAll(conf.getInitialMap());
-        }
+        serviceManager = new CacheServiceManager<K, V>(this, conf);
+        Defaults.initializeUnsynchronizedCache(serviceManager);
+        expiration = serviceManager.getAsCacheService(InternalCacheExpirationService.class);
+        loadingService = serviceManager.getAsCacheService(InternalCacheLoadingService.class);
+        evictionService = serviceManager.getAsCacheService(InternalCacheEvictionService.class);
+        notifier = serviceManager.getAsCacheService(DefaultCacheEventService.class);
+        statistics = serviceManager.getAsCacheService(DefaultCacheStatisticsService.class);
+        serviceManager.initializeAll();
     }
 
-    @SuppressWarnings("unchecked")
-    public UnsynchronizedCache(Map<K, V> map) {
-        this((CacheConfiguration) CacheConfiguration.create().setInitialMap(map));
+    /**
+     * @see org.coconut.cache.spi.AbstractCache#getService(java.lang.Class)
+     */
+    public final <T> T getService(Class<T> serviceType) {
+        return serviceManager.getServiceOrThrow(serviceType);
+    }
+
+    private void checkStarted() {
+        serviceManager.checkStarted();
     }
 
     /**
@@ -170,7 +172,7 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
     public long getCapacity() {
         return map.capacity();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -251,18 +253,6 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
         return list;
     }
 
-    @SuppressWarnings("unchecked")
-    protected void registerServices(CacheServiceManager<K, V> csm,
-            CacheConfiguration<K, V> conf) {
-        csm.addService(DefaultCacheStatisticsService.class);
-        csm.addService(DefaultCacheEvictionService.class);
-        csm.addService(DefaultCacheExpirationService.class);
-        csm.addService(DefaultCacheLoaderService.class);
-        csm.addService(DefaultCacheManagementService.class);
-        csm.addService(DefaultCacheEventService.class);
-        csm.addService(NoThreadingCacheService.class);
-    }
-
     /**
      * @see org.coconut.cache.defaults.SupportedCache#doGet(java.lang.Object)
      */
@@ -329,31 +319,6 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
         return map.get(key);
     }
 
-    //
-    // @Override
-    // void doPutAll(Map<? extends K, ? extends V> t, long expirationTime) {
-    // checkStarted();
-    // long started = statistics.beforePutAll(this, t);
-    // Collection<AbstractCacheEntry<K, V>> o = new
-    // ArrayList<AbstractCacheEntry<K, V>>(
-    // t.size());
-    // Collection<AbstractCacheEntry<K, V>> n = new
-    // ArrayList<AbstractCacheEntry<K, V>>(
-    // t.size());
-    // for (Map.Entry<? extends K, ? extends V> e : t.entrySet()) {
-    // K key = e.getKey();
-    // AbstractCacheEntry<K, V> prev = map.get(key);
-    // o.add(prev);
-    // AbstractCacheEntry<K, V> me = AbstractCacheEntry.newUnsync(this,
-    // expiration,
-    // prev, key, e.getValue(), expirationTime);
-    // doPut(me);
-    // n.add(me.getPolicyIndex() >= 0 ? me : null);
-    // }
-    // statistics.afterPutAll(this, started, trim(), o, n);
-    // notifier.afterPutAll(this, started, trim(), o, n);
-    // }
-
     /**
      * @see org.coconut.cache.defaults.SupportedCache#doRemove(java.lang.Object,
      *      java.lang.Object)
@@ -371,7 +336,6 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
         return e;
     }
 
-   
     /**
      * @see org.coconut.cache.defaults.SupportedCache#doPut(java.lang.Object,
      *      java.lang.Object, java.lang.Object, boolean, boolean,
@@ -383,7 +347,7 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
         checkStarted();
         long started = statistics.beforePut(this, key, newValue);
         AbstractCacheEntry<K, V> prev = map.get(key);
-        //TODO add replace
+        // TODO add replace
         if (putIfAbsent && prev != null) {
             statistics.afterPut(this, started, null, prev, null);
             notifier.afterPut(this, started, null, prev, null);
@@ -409,6 +373,22 @@ public class UnsynchronizedCache<K, V> extends SupportedCache<K, V> {
         for (Map.Entry<? extends K, ? extends V> e : t.entrySet()) {
             doPut(e.getKey(), null, e.getValue(), false, false, attributes);
         }
+    }
+
+    /**
+     * @see org.coconut.cache.defaults.SupportedCache#doGetAll(java.util.Collection)
+     */
+    @Override
+    Map<K, V> doGetAll(Collection<? extends K> keys) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * @see org.coconut.cache.Cache#hasService(java.lang.Class)
+     */
+    public boolean hasService(Class serviceType) {
+        return serviceManager.hasService(serviceType);
     }
 
 }

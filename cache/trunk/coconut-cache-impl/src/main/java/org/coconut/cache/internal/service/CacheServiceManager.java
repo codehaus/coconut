@@ -16,7 +16,7 @@ import org.coconut.cache.internal.service.event.DefaultCacheEventService;
 import org.coconut.cache.internal.service.eviction.DefaultCacheEvictionService;
 import org.coconut.cache.internal.service.eviction.InternalCacheEvictionService;
 import org.coconut.cache.internal.service.expiration.AbstractCacheExpirationService;
-import org.coconut.cache.internal.service.expiration.NoCacheExpirationService;
+import org.coconut.cache.internal.service.expiration.InternalCacheExpirationUtils;
 import org.coconut.cache.internal.service.joinpoint.NoOpAfterCacheOperation;
 import org.coconut.cache.service.event.CacheEventConfiguration;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
@@ -29,7 +29,7 @@ import org.coconut.management.ManagedGroup;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class CacheServiceManager<K, V> implements InternalCacheServiceManager {
+public class CacheServiceManager<K, V> implements InternalCacheServiceManager<K, V> {
 
     private static final int RUNNING = 1;
 
@@ -59,14 +59,13 @@ public class CacheServiceManager<K, V> implements InternalCacheServiceManager {
         container.registerComponentInstance(cache);
         container.registerComponentInstance(conf);
         container.registerComponentInstance(conf.getClock());
-     // container.registerComponentInstance(conf.getErrorHandler());
         for (AbstractCacheServiceConfiguration c : conf.getServices()) {
             container.registerComponentInstance(c);
         }
         this.conf = conf;
     }
 
-    public void addService(Class... services) {
+    public void registerServiceImplementations(Class... services) {
         for (Class c : services) {
             container.registerComponentImplementation(c);
         }
@@ -87,7 +86,7 @@ public class CacheServiceManager<K, V> implements InternalCacheServiceManager {
      * @param name
      * @return
      */
-    public <T> T getComponent(Class<T> clazz) {
+    public <T> T getAsCacheService(Class<T> clazz) {
         if (DefaultCacheEventService.class.isAssignableFrom(clazz)) {
             if (conf.getServiceConfiguration(CacheEventConfiguration.class) == null) {
                 return (T) new NoOpAfterCacheOperation();
@@ -104,7 +103,7 @@ public class CacheServiceManager<K, V> implements InternalCacheServiceManager {
         }
         if (AbstractCacheExpirationService.class.isAssignableFrom(clazz)) {
             if (conf.getServiceConfiguration(CacheExpirationConfiguration.class) == null) {
-                return (T) new NoCacheExpirationService();
+                return (T) InternalCacheExpirationUtils.DUMMY;
             }
         }
         T t = (T) container.getComponentInstanceOfType(clazz);
@@ -112,6 +111,15 @@ public class CacheServiceManager<K, V> implements InternalCacheServiceManager {
             System.out.println("No service " + clazz);
         }
         return t;
+    }
+
+    public <T> T getServiceOrThrow(Class<T> type) {
+        T service = getService(type);
+        if (service == null) {
+            throw new IllegalArgumentException("Unknown service " + type);
+        }
+        return service;
+
     }
 
     public <T> T getService(Class<T> type) {
@@ -124,11 +132,11 @@ public class CacheServiceManager<K, V> implements InternalCacheServiceManager {
     }
 
     public void initializeApm(ManagedGroup root) {
-        // for (InternalCacheService<K, V> cs : instanciated.values()) {
-        // if (cs instanceof AbstractCacheService) {
-        // ((AbstractCacheService<K, V>) cs).addTo(root);
-        // }
-        // }
+    // for (InternalCacheService<K, V> cs : instanciated.values()) {
+    // if (cs instanceof AbstractCacheService) {
+    // ((AbstractCacheService<K, V>) cs).addTo(root);
+    // }
+    // }
     }
 
     public boolean isTerminated() {
@@ -146,17 +154,6 @@ public class CacheServiceManager<K, V> implements InternalCacheServiceManager {
         shutdownAll();
         tryTerminate();
     }
-
-//    public void startAll(AbstractCache<K, V> c) {
-//        for (Object cs : instanciated.values()) {
-//            try {
-//                // cs.start(c, (Map) Collections.EMPTY_MAP);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                // shutdown cache
-//            }
-//        }
-//    }
 
     /**
      * already at least the given target.
@@ -261,7 +258,14 @@ public class CacheServiceManager<K, V> implements InternalCacheServiceManager {
      * 
      */
     public void initializeAll() {
-        // TODO Auto-generated method stub
-        
+    // TODO Auto-generated method stub
+
+    }
+
+    /**
+     * @see org.coconut.cache.internal.service.InternalCacheServiceManager#hasService(java.lang.Class)
+     */
+    public boolean hasService(Class serviceType) {
+        return false;
     }
 }

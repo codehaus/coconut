@@ -7,7 +7,7 @@ import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
+import static org.coconut.internal.util.XmlUtil.*;
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -27,7 +27,7 @@ public class CacheEvictionConfiguration<K, V> extends
 
     private final static CacheEvictionConfiguration DEFAULT = new CacheEvictionConfiguration();
 
-    private final static String EVICTION_TAG = "eviction";
+    public final static String SERVICE_NAME = "eviction";
 
     private final static String MAXIMUM_CAPACITY = "max-capacity";
 
@@ -52,7 +52,7 @@ public class CacheEvictionConfiguration<K, V> extends
      * @param c
      */
     public CacheEvictionConfiguration() {
-        super(EVICTION_TAG, CacheEvictionService.class);
+        super(SERVICE_NAME, CacheEvictionService.class);
     }
 
     /**

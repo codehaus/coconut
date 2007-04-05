@@ -11,7 +11,6 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
 import org.coconut.cache.internal.service.InternalCacheService;
 import org.coconut.cache.internal.service.InternalCacheServiceManager;
-import org.coconut.cache.internal.service.ShutdownCallback;
 import org.coconut.cache.spi.XmlConfigurator;
 
 /**
@@ -49,7 +48,7 @@ public class DefaultCacheThreadService<K, V> implements Executor,
     /**
      * @see org.coconut.cache.internal.service.AbstractCacheService#shutdown(java.lang.Runnable)
      */
-    public void shutdown(ShutdownCallback callback) /* throws Exception */{
+    public void shutdown(Executor callback) /* throws Exception */{
         if (shutdownOnExit && e instanceof ThreadPoolExecutor) {
             final ThreadPoolExecutor tpe = (ThreadPoolExecutor) e;
             tpe.shutdown();
@@ -66,7 +65,7 @@ public class DefaultCacheThreadService<K, V> implements Executor,
                         }
                     }
                 };
-                callback.asyncRun(r);
+                callback.execute(r);
                 return;
             }
         }

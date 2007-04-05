@@ -18,7 +18,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
+import static org.coconut.internal.util.XmlUtil.*;
 /**
  * All events are enabled per default except AccessedEvent. While this might
  * seem inconsist. The main reason is that it is raised for every access to the
@@ -31,7 +31,7 @@ import org.w3c.dom.NodeList;
  */
 public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
 
-    public final static String EVENT_TAG = "event";
+    public static final String SERVICE_NAME = "event";
 
     public final static String INCLUDES_TAG = "includes";
 
@@ -61,7 +61,7 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
      * Creates a new CacheEventConfiguration with default settings.
      */
     public CacheEventConfiguration() {
-        super(EVENT_TAG, CacheEventService.class);
+        super(SERVICE_NAME, CacheEventService.class);
     }
 
     /**

@@ -17,6 +17,14 @@ import org.coconut.core.AttributeMap;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public abstract class DummyCache<K,V> implements Cache<K,V> {
+    /**
+     * @see org.coconut.cache.Cache#hasService(java.lang.Class)
+     */
+    public boolean hasService(Class serviceType) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
     public volatile boolean isStarted;
 
     /**

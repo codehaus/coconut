@@ -222,7 +222,7 @@ public class EventBusFeature extends AbstractEventTestBundle {
      */
     @Test
     public void itemRemovedEvicted() throws Exception {
-        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(3)
+        c = newCache(newConf().serviceEviction().setPolicy(Policies.newLRU()).setMaximumSize(3)
                 .c());
         subscribe(CACHEENTRY_REMOVED_FILTER);
         putAll(M1, M2, M3);

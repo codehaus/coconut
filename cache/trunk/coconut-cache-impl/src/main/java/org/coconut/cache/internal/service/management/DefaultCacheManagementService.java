@@ -3,13 +3,14 @@
  */
 package org.coconut.cache.internal.service.management;
 
+import java.util.concurrent.Executor;
+
 import javax.management.JMException;
 import javax.management.MBeanServer;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.CacheServiceManager;
-import org.coconut.cache.internal.service.ShutdownCallback;
 import org.coconut.cache.service.management.CacheMXBean;
 import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.management.ManagedGroup;
@@ -65,7 +66,7 @@ public class DefaultCacheManagementService extends AbstractCacheManagementServic
     /**
      * @see org.coconut.cache.internal.service.CacheServiceLifecycle#shutdown(org.coconut.cache.internal.service.ShutdownCallback)
      */
-    public void shutdown(ShutdownCallback callback) throws JMException {
+    public void shutdown(Executor callback) throws JMException {
         group.unregister();
     }
 }

@@ -3,15 +3,16 @@
  */
 package org.coconut.cache.internal.service.expiration;
 
+import java.util.Map;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.internal.service.InternalCacheService;
-import org.coconut.cache.internal.service.ShutdownCallback;
 import org.coconut.cache.service.expiration.CacheExpirationMXBean;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.filter.Filter;
 import org.coconut.filter.Filters;
-import org.coconut.management.annotation.ManagedAttribute;
+import org.coconut.management.ManagedGroup;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -20,6 +21,24 @@ import org.coconut.management.annotation.ManagedAttribute;
 public abstract class AbstractCacheExpirationService<K, V> implements
         InternalCacheService, InternalCacheExpirationService<K, V>,
         CacheExpirationMXBean, CacheExpirationService<K, V> {
+
+    boolean registerForManagement() {
+        return false;
+    }
+    public void addServices(Map<Class, Object> map) {
+        map.put(CacheExpirationService.class,
+                new InternalCacheExpirationUtils.DelegatedCacheExpirationService<K, V>(
+                        this));
+        if (registerForManagement()) {
+            map.put(CacheExpirationMXBean.class, null);
+        }
+    }
+
+    public void addTo(ManagedGroup dg) {
+        ManagedGroup m = dg.addNewGroup("Expiration",
+                "Controls expiration of items in the cache", true);
+        m.add(this);
+    }
 
     /**
      * @see org.coconut.cache.service.expiration.CacheExpirationMXBean#getFilter()
@@ -58,14 +77,14 @@ public abstract class AbstractCacheExpirationService<K, V> implements
      * @see org.coconut.cache.internal.service.InternalCacheService#doStart()
      */
     public void doStart() throws Exception {
-        //ignore
+    // ignore
     }
 
     /**
      * @see org.coconut.cache.internal.service.InternalCacheService#shutdown(org.coconut.cache.internal.service.ShutdownCallback)
      */
-    public void shutdown(ShutdownCallback callback) throws Exception {
-       //ignore
+    public void shutdown(Executor callback) throws Exception {
+    // ignore
     }
 
 }

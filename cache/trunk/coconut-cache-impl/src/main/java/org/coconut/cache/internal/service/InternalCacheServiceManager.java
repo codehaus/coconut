@@ -4,11 +4,22 @@
 package org.coconut.cache.internal.service;
 
 /**
- * 
- * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public interface InternalCacheServiceManager {
+public interface InternalCacheServiceManager<K, V> {
+    
+    void initializeAll();
     void checkStarted();
+
+    void registerServiceImplementations(Class... services);
+
+    <T> T getAsCacheService(Class<T> type);
+
+    /**
+     * @param serviceType
+     */
+    boolean hasService(Class serviceType);
+    
+    <T> T getServiceOrThrow(Class<T> type);
 }

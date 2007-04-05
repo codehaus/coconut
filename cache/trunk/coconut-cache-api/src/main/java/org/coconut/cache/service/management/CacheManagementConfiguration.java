@@ -14,7 +14,7 @@ import javax.management.ObjectName;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
+import static org.coconut.internal.util.XmlUtil.*;
 /**
  * This class is used to configure how the cache can be remotely monitored and
  * controlled (using JMX).
@@ -30,14 +30,14 @@ public class CacheManagementConfiguration<K, V> extends
 
     private final static String XML_DOMAIN_TAG = "domain";
 
-    private final static String XML_ROOT = "management";
+    public final static String SERVICE_NAME = "management";
 
     private String domain = CacheMXBean.DEFAULT_JMX_DOMAIN;
 
     private MBeanServer mBeanServer;
 
     public CacheManagementConfiguration() {
-        super(XML_ROOT, CacheManagementService.class);
+        super(SERVICE_NAME, CacheManagementService.class);
     }
 
     public String getDomain() {

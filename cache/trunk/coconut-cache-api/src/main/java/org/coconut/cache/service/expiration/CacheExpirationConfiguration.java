@@ -5,13 +5,14 @@ package org.coconut.cache.service.expiration;
 
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.filter.Filter;
 import org.coconut.internal.util.UnitOfTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
+import static org.coconut.internal.util.XmlUtil.*;
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -25,7 +26,7 @@ public class CacheExpirationConfiguration<K, V> extends
 
     private final static String EXPIRATION_FILTER_TAG = "filter";
 
-    private final static String EXPIRATION_TAG = "expiration";
+    public final static String SERVICE_NAME = "expiration";
 
     private long defaultTimeToLive = CacheExpirationService.NEVER_EXPIRE;
 
@@ -35,7 +36,7 @@ public class CacheExpirationConfiguration<K, V> extends
      * Creates a new CacheExpirationConfiguration
      */
     public CacheExpirationConfiguration() {
-        super(EXPIRATION_TAG, CacheExpirationService.class);
+        super(SERVICE_NAME, CacheExpirationService.class);
     }
 
     public long getDefaultTimeToLive(TimeUnit unit) {
@@ -130,5 +131,9 @@ public class CacheExpirationConfiguration<K, V> extends
         /* Expiration Filter */
         saveObject(doc, base, EXPIRATION_FILTER_TAG, "expiration.cannotPersistFilter",
                 getExpirationFilter(), DEFAULT.getExpirationFilter());
+    }
+    
+    public static void main(String[] args) {
+        CacheExpirationConfiguration conf=new CacheExpirationConfiguration();
     }
 }

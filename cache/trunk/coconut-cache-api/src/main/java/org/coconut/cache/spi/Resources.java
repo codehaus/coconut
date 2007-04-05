@@ -24,4 +24,9 @@ public final class Resources {
     public static String lookup(Class c, String key, Object... o) {
         return RESOURCE_HOLDER.lookup(c, key, o);
     }
+    
+    public static String getHighlyIrregular() {
+        //take from configuration
+        return "This is a highly irregular exception, please report this ";
+    }
 }

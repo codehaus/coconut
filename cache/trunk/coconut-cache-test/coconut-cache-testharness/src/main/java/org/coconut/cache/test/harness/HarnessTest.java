@@ -28,10 +28,10 @@ public class HarnessTest extends CacheHarnessBundle {
     @Test
     public void testPutExpireEventBus() {
         CacheConfiguration conf = newConf();
-        conf.addService(CacheEventConfiguration.class);
-        conf.eviction().setMaximumSize(CACHE_SIZE);
+        conf.serviceEvent();
+        conf.serviceEviction().setMaximumSize(CACHE_SIZE);
         ReplacementPolicy rp = new RandomPolicy();
-        conf.eviction().setPolicy(rp);
+        conf.serviceEviction().setPolicy(rp);
         final HashSet<Integer> ha = new HashSet<Integer>();
         Cache<Integer, Integer> cc = (Cache) newCache(conf);
         cc.getService(CacheEventService.class).subscribe(
@@ -73,9 +73,9 @@ public class HarnessTest extends CacheHarnessBundle {
     @Test
     public void testPutExpire() {
         CacheConfiguration conf = newConf();
-        conf.eviction().setMaximumSize(CACHE_SIZE);
+        conf.serviceEviction().setMaximumSize(CACHE_SIZE);
         ReplacementPolicy rp = new RandomPolicy();
-        conf.eviction().setPolicy(rp);
+        conf.serviceEviction().setPolicy(rp);
 
         HashSet<Integer> ha = new HashSet<Integer>();
         Cache<Integer, Integer> cc = (Cache) newCache(conf);

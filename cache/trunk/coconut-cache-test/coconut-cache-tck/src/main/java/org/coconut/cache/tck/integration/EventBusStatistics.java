@@ -32,7 +32,7 @@ public class EventBusStatistics extends AbstractEventTestBundle {
     @Before
     public void setup() {
         CacheConfiguration conf = CacheConfiguration.create();
-        conf.addService(CacheStatisticsConfiguration.class);
+        conf.serviceEvent();
         conf.serviceExpiration();
         c = newCache(conf);
     }

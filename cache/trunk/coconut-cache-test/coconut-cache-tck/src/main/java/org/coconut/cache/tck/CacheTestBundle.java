@@ -59,8 +59,10 @@ public abstract class CacheTestBundle extends Assert {
 
     final Cache<Integer, String> newCache(int entries) {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
-        cc.setInitialMap(createMap(entries)).setClock(clock);
-        return cc.newInstance(TCKRunner.tt);
+        cc.setClock(clock);
+        Cache<Integer, String> c = cc.newInstance(TCKRunner.tt);
+        c.putAll(createMap(entries));
+        return c;
     }
 
     @SuppressWarnings("unchecked")
@@ -71,9 +73,11 @@ public abstract class CacheTestBundle extends Assert {
     protected Cache<Integer, String> newCache(CacheConfiguration<?, ?> conf) {
         return (Cache) conf.newInstance(TCKRunner.tt);
     }
+
     protected Cache<Integer, String> newCache(CacheConfiguration<?, ?> conf, int entries) {
-        conf.setInitialMap((Map) createMap(entries));
-        return newCache(conf);
+        Cache<Integer,String> cache= newCache(conf);
+        cache.putAll((Map) createMap(entries));
+        return cache;
     }
 
     public static Map<Integer, String> createMap(int entries) {
@@ -209,9 +213,9 @@ public abstract class CacheTestBundle extends Assert {
         c.putAll(CollectionUtils.asMap(entries));
     }
 
-//    protected CacheQuery<Integer, String> keyQuery(Filter<Integer> filter) {
-//        return CacheFilters.queryByKey(c, filter);
-//    }
+    // protected CacheQuery<Integer, String> keyQuery(Filter<Integer> filter) {
+    // return CacheFilters.queryByKey(c, filter);
+    // }
 
     protected void incTime() {
         clock.incrementTimestamp(1);

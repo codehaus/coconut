@@ -81,14 +81,14 @@ public class DefaultManagedGroup implements ManagedGroup {
 //        return gm;
 //    }
 
-    public synchronized ManagedGroup addGroup(String name, String description) {
-        return addGroup(name, description, true);
+    public synchronized ManagedGroup addNewGroup(String name, String description) {
+        return addNewGroup(name, description, true);
     }
 
     /**
      * @see org.coconut.apm.ApmGroup#addGroup(java.lang.String)
      */
-    public synchronized ManagedGroup addGroup(String name, String description,
+    public synchronized ManagedGroup addNewGroup(String name, String description,
             boolean register) {
         if (name == null) {
             throw new NullPointerException("name is null");

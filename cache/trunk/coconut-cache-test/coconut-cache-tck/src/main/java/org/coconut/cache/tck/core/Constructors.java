@@ -63,15 +63,15 @@ public class Constructors extends CacheTestBundle {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testCacheConfigurationArgumentConstructor() throws Exception {
-        Constructor con = getClazz().getConstructor(CacheConfiguration.class);
-        Cache c = (Cache) con.newInstance(CacheConfiguration.create()
-                .setInitialMap(new HashMap<Integer, String>(c1)));
-        assertEquals(1, c.size());
-        assertEquals(M1.getValue(), c.peek(M1.getKey()));
-    }
+//    @SuppressWarnings("unchecked")
+//    @Test
+//    public void testCacheConfigurationArgumentConstructor() throws Exception {
+//        Constructor con = getClazz().getConstructor(CacheConfiguration.class);
+//        Cache c = (Cache) con.newInstance(CacheConfiguration.create()
+//                .setInitialMap(new HashMap<Integer, String>(c1)));
+//        assertEquals(1, c.size());
+//        assertEquals(M1.getValue(), c.peek(M1.getKey()));
+//    }
 
     @Test(expected = NullPointerException.class)
     public void testNullCacheConfigurationArgumentConstructor()

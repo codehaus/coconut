@@ -7,11 +7,10 @@
     <version>1.0-alpha3-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.coconut.cache</groupId>
+  <groupId>org.coconut.cache.test</groupId>
   <artifactId>coconut-cache-test-parent</artifactId>
   <name>Coconut Cache Test Project</name>
   <description>Root Pom for Coconut Cache Test Project</description>
-  <version>1.0-alpha3-SNAPSHOT</version>
   <packaging>pom</packaging>
   <dependencies>
     <dependency>

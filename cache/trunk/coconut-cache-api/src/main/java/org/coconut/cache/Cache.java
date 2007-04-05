@@ -60,9 +60,9 @@ import org.coconut.core.AttributeMap;
 public interface Cache<K, V> extends ConcurrentMap<K, V> {
 
     String getName();
-    
+
     long getCapacity();
-    
+
     /**
      * Performs cleanup of the cache. This might be everything from persisting
      * stale data to disk to adapting the cache with a better eviction policy
@@ -148,6 +148,14 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      */
     CacheEntry<K, V> getEntry(K key);
 
+    boolean hasService(Class serviceType);
+    /**
+     * Returns a service of the specified type.
+     * 
+     * @param <T>
+     * @param serviceType
+     * @return
+     */
     <T> T getService(Class<T> serviceType);
 
     /**
@@ -193,9 +201,10 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      *             if the specified key is <tt>null</tt>
      */
     CacheEntry<K, V> peekEntry(K key);
-    
+
     V put(K key, V value, AttributeMap attributes);
 
-    //void putAll(Map<K,V> keys, AttributeMap defaultAttributes);
-    //void putAll(Map<K,V> keys, AttributeMap defaultAttributes, Map<K,AttributeMap> specialAttributes);
+    // void putAll(Map<K,V> keys, AttributeMap defaultAttributes);
+    // void putAll(Map<K,V> keys, AttributeMap defaultAttributes,
+    // Map<K,AttributeMap> specialAttributes);
 }

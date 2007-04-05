@@ -5,8 +5,8 @@ package org.coconut.cache.spi;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -71,21 +71,43 @@ public class XmlConfigurator {
     public static final String CONFIG_VERSION_ATTR = "version";
 
     /** The current version of the XML schema */
-    public static final String CURRENT_VERSION = "0.0.1";
+    public static final String CURRENT_VERSION = "0.0.4";
 
     private final static XmlConfigurator INSTANCE = new XmlConfigurator();
 
     final static CacheConfiguration DEFAULT_CONF = CacheConfiguration.create();
 
-    private final static List<Class<? extends AbstractCacheServiceConfiguration>> services = new ArrayList<Class<? extends AbstractCacheServiceConfiguration>>();
-    static {
-        services.add(CacheEventConfiguration.class);
-        services.add(CacheManagementConfiguration.class);
-        services.add(CacheStatisticsConfiguration.class);
-        services.add(CacheLoadingConfiguration.class);
-        services.add(CacheExpirationConfiguration.class);
-        services.add(CacheThreadingConfiguration.class);
-        services.add(CacheEvictionConfiguration.class);
+    private final Map<String, Class<? extends AbstractCacheServiceConfiguration>> services = new HashMap<String, Class<? extends AbstractCacheServiceConfiguration>>();
+
+    protected void addDefaultConfiguration(String name,
+            Class<? extends AbstractCacheServiceConfiguration> clazz) {
+        if (name == null) {
+            throw new NullPointerException("name is null");
+        } else if (clazz == null) {
+            throw new NullPointerException("clazz is null");
+        }
+        if (services.containsKey(name)) {
+            throw new IllegalArgumentException("Service with name " + name
+                    + " allready specified, with implementation " + services.get(name));
+        }
+        services.put(name, clazz);
+    }
+
+    protected void initiateDefaultServices() {
+        addDefaultConfiguration(CacheEventConfiguration.SERVICE_NAME,
+                CacheEventConfiguration.class);
+        addDefaultConfiguration(CacheManagementConfiguration.SERVICE_NAME,
+                CacheManagementConfiguration.class);
+        addDefaultConfiguration(CacheStatisticsConfiguration.SERVICE_NAME,
+                CacheStatisticsConfiguration.class);
+        addDefaultConfiguration(CacheLoadingConfiguration.SERVICE_NAME,
+                CacheLoadingConfiguration.class);
+        addDefaultConfiguration(CacheExpirationConfiguration.SERVICE_NAME,
+                CacheExpirationConfiguration.class);
+        addDefaultConfiguration(CacheThreadingConfiguration.SERVICE_NAME,
+                CacheThreadingConfiguration.class);
+        addDefaultConfiguration(CacheEvictionConfiguration.SERVICE_NAME,
+                CacheEvictionConfiguration.class);
     }
 
     /**
@@ -192,9 +214,10 @@ public class XmlConfigurator {
                     .getAttribute(CACHE_TYPE_ATTR));
         }
         new ErrorHandlerConfigurator().read(conf, cache);
-        for (Class<? extends AbstractCacheServiceConfiguration> c : services) {
+        for (Class<? extends AbstractCacheServiceConfiguration> c : services.values()) {
             AbstractCacheServiceConfiguration acsc = c.newInstance();
-            Element e = (Element) cache.getElementsByTagName(acsc.tag).item(0);
+            Element e = (Element) cache.getElementsByTagName(acsc.getServiceName()).item(
+                    0);
             if (e != null) {
                 conf.addService(acsc);
                 acsc.fromXML(doc, e);
@@ -210,7 +233,7 @@ public class XmlConfigurator {
         }
         new ErrorHandlerConfigurator().write(cc, doc, cache);
         for (AbstractCacheServiceConfiguration p : cc.getServices()) {
-            Element ee = doc.createElement(p.tag);
+            Element ee = doc.createElement(p.getServiceName());
             cache.appendChild(ee);
             p.toXML(doc, ee);
         }

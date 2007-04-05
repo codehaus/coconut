@@ -14,12 +14,12 @@ import org.w3c.dom.Element;
 public class CacheStatisticsConfiguration extends AbstractCacheServiceConfiguration {
 
     // add own counters???
-
+    public static final String SERVICE_NAME ="statistics";
     /**
      * @param tag
      */
     public CacheStatisticsConfiguration() {
-        super("statistics", CacheStatisticsService.class);
+        super(SERVICE_NAME, CacheStatisticsService.class);
     }
 
     /**

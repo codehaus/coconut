@@ -3,6 +3,7 @@
  */
 package org.coconut.cache.internal.service.expiration;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
@@ -10,6 +11,7 @@ import org.coconut.cache.internal.service.attribute.InternalCacheAttributeServic
 import org.coconut.cache.internal.spi.CacheHelper;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
+import org.coconut.cache.service.expiration.CacheExpirationMXBean;
 import org.coconut.core.Clock;
 import org.coconut.filter.Filter;
 
@@ -82,10 +84,18 @@ public class SynchronizedCacheExpirationService<K, V> extends
      */
     @Override
     public String getFilterAsString() {
-        //this is needed because we call f.toString();
+        // this is needed because we call f.toString();
         synchronized (mutex) {
             return super.getFilterAsString();
         }
+    }
+
+    /**
+     * @see org.coconut.cache.internal.service.expiration.AbstractCacheExpirationService#registerForManagement()
+     */
+    @Override
+    boolean registerForManagement() {
+        return true;
     }
 
 }

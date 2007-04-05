@@ -3,6 +3,12 @@
  */
 package org.coconut.cache.service.threading;
 
+import static org.coconut.internal.util.XmlUtil.add;
+import static org.coconut.internal.util.XmlUtil.addComment;
+import static org.coconut.internal.util.XmlUtil.getChild;
+import static org.coconut.internal.util.XmlUtil.loadObject;
+import static org.coconut.internal.util.XmlUtil.saveObject;
+
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -22,7 +28,6 @@ import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.internal.util.UnitOfTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -51,7 +56,7 @@ public class CacheThreadingConfiguration<K, V> extends
 
     public final static String REJECTED_EXECUTION_HANDLER_TAG = "rejectedExecutionHandler";
 
-    public final static String THREADING_TAG = "threading";
+    public final static String SERVICE_NAME = "threading";
 
     public final static String QUEUE_TAG = "queue";
 
@@ -72,7 +77,7 @@ public class CacheThreadingConfiguration<K, V> extends
      * @param c
      */
     public CacheThreadingConfiguration() {
-        super(THREADING_TAG, CacheThreadingService.class);
+        super(SERVICE_NAME, CacheThreadingService.class);
     }
 
     /**

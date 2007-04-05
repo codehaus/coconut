@@ -3,6 +3,11 @@
  */
 package org.coconut.cache.service.loading;
 
+import static org.coconut.internal.util.XmlUtil.add;
+import static org.coconut.internal.util.XmlUtil.getChild;
+import static org.coconut.internal.util.XmlUtil.loadObject;
+import static org.coconut.internal.util.XmlUtil.saveObject;
+
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
@@ -19,9 +24,9 @@ import org.w3c.dom.Element;
 public class CacheLoadingConfiguration<K, V> extends
         AbstractCacheServiceConfiguration<K, V> {
 
-    private final static String LOADER_TAG = "loader";
+    public static final String SERVICE_NAME = "loading";
 
-    private final static String LOADING_TAG = "loading";
+    private final static String LOADER_TAG = "loader";
 
     private final static String REFRESH_FILTER_TAG = "refresh-filter";
 
@@ -34,7 +39,7 @@ public class CacheLoadingConfiguration<K, V> extends
     private CacheLoader<? super K, ? extends V> loader;
 
     public CacheLoadingConfiguration() {
-        super(LOADING_TAG, CacheLoadingService.class);
+        super(SERVICE_NAME, CacheLoadingService.class);
     }
 
     /**
@@ -127,8 +132,10 @@ public class CacheLoadingConfiguration<K, V> extends
      *            the reload filter
      * @return this configuration
      */
-    //currentNoMap to specify load attributes???, perhaps specify a refreshTransformer??(y)
-    public CacheLoadingConfiguration<K, V> setRefreshFilter(Filter<CacheEntry<K, V>> filter) {
+    // currentNoMap to specify load attributes???, perhaps specify a
+    // refreshTransformer??(y)
+    public CacheLoadingConfiguration<K, V> setRefreshFilter(
+            Filter<CacheEntry<K, V>> filter) {
         refreshFilter = filter;
         return this;
     }
@@ -181,7 +188,7 @@ public class CacheLoadingConfiguration<K, V> extends
         /* Refresh Filter */
         Filter refreshFilter = getRefreshFilter();
         if (refreshFilter != null) {
-            super.saveObject(doc, add(doc, REFRESH_FILTER_TAG, parent),
+            saveObject(doc, add(doc, REFRESH_FILTER_TAG, parent),
                     "expiration.cannotPersistRefreshFilter", refreshFilter);
         }
     }

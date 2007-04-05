@@ -6,14 +6,12 @@ package org.coconut.cache;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.lang.management.MemoryUsage;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.regex.Pattern;
 
 import net.jcip.annotations.NotThreadSafe;
@@ -24,8 +22,6 @@ import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.cache.service.threading.CacheThreadingConfiguration;
-import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
-import org.coconut.cache.spi.ConfigurationValidator;
 import org.coconut.cache.spi.XmlConfigurator;
 import org.coconut.core.Clock;
 import org.coconut.core.Log;
@@ -38,16 +34,16 @@ import org.coconut.core.Log;
  * <b>Usage Examples.</b> The following creates a new cache with the name
  * MyCache. The cache has a maximum of 1000 elements and uses a
  * least-recently-used policy to determine which elements to evict when the
- * capacity has been reached. Elements are also marked as expired after not
- * having been request in 1 hour. Finally the cache is registered as a mbean
- * with the platform mbean server using the name of the cache.
+ * specified maximum size has been reached. Elements will automatically expired
+ * after having been in the cache for 1 hour. Finally, the cache is registered
+ * as a mbean with the platform mbean server using the name of the cache.
  * 
  * <pre>
  * CacheConfiguration&lt;String, Integer&gt; cc = newConf();
  * cc.setName(&quot;MyCache&quot;);
  * cc.eviction().setPolicy(Policies.newLRU()).setMaximumSize(1000);
  * cc.expiration().setDefaultTimeout(60 * 60, TimeUnit.SECONDS);
- * cc.jmx().setRegister(true);
+ * cc.management().setRegister(true);
  * Cache&lt;String, Integer&gt; instance = cc.newInstance(Select_A_Cache_Impl);
  * </pre>
  * 
@@ -55,21 +51,13 @@ import org.coconut.core.Log;
  * @version $Id$
  */
 @NotThreadSafe
-public class CacheConfiguration<K, V> implements Cloneable {
+public final class CacheConfiguration<K, V> extends AbstractCacheConfiguration<K, V> {
 
     private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    private Map<? extends K, ? extends V> initialMap;
-
-    private ArrayList<AbstractCacheServiceConfiguration> list = new ArrayList<AbstractCacheServiceConfiguration>();
-
     private Log defaultLogger;
 
-    // TODO, cache and cacheconfiguration should create name self
-    // because when we have a tree cache we want to forbid the user to specify a
-    // name or at least a full name
-
-    private String name = UUID.randomUUID().toString();
+    private String name;
 
     private Clock timingStrategy = Clock.DEFAULT_CLOCK;
 
@@ -77,43 +65,14 @@ public class CacheConfiguration<K, V> implements Cloneable {
      * Creates a new Configuration with default settings. CacheConfiguration
      * instances should be created using the {@link #newConf()} method.
      */
-    CacheConfiguration() {
-    // package private for now, might change at a later time.
-    }
+    public CacheConfiguration() {
 
-    public AbstractCacheServiceConfiguration<K, V> addService(
-            AbstractCacheServiceConfiguration conf) {
-        if (conf == null) {
-            throw new NullPointerException("conf is null");
-        }
-        for (AbstractCacheServiceConfiguration c : list) {
-            Class type = conf.getServiceInterface();
-            if (c.getServiceInterface().isAssignableFrom(type)) {
-
-            } else if (type.isAssignableFrom(c.getClass())) {
-
-            }
-        }
-        list.add(conf);
-        return conf;
-    }
-
-    public <T extends AbstractCacheServiceConfiguration> T addService(Class<T> conf) {
-        AbstractCacheServiceConfiguration acsc;
-        try {
-            acsc = conf.newInstance();
-        } catch (InstantiationException e) {
-            throw new IllegalArgumentException(e);
-        } catch (IllegalAccessException e) {
-            throw new IllegalArgumentException(e);
-        }
-        return (T) addService(acsc);
     }
 
     /**
      * Returns a new Eviction object.
      */
-    public CacheEvictionConfiguration eviction() {
+    public CacheEvictionConfiguration serviceEviction() {
         return lazyCreate(CacheEvictionConfiguration.class);
     }
 
@@ -127,18 +86,15 @@ public class CacheConfiguration<K, V> implements Cloneable {
         return timingStrategy;
     }
 
+    /**
+     * Returns the default log configured for this cache or <tt>null</tt> if
+     * no default log has been configured.
+     * 
+     * @return the default log configured for this cache or null if no default
+     *         log has been configured
+     */
     public Log getDefaultLog() {
         return defaultLogger;
-    }
-
-    /**
-     * Returns a map whose mappings are to be placed in the cache as initial
-     * entries or <code>null</code> if no map has been specified.
-     * 
-     * @see #setInitialMap(Map)
-     */
-    public Map<? extends K, ? extends V> getInitialMap() {
-        return initialMap;
     }
 
     /**
@@ -153,8 +109,7 @@ public class CacheConfiguration<K, V> implements Cloneable {
     }
 
     /**
-     * Returns a map of any additional properties that is defined. This map is a
-     * copy of the current properties.
+     * Returns a map of additional properties for the cache.
      * 
      * @see #setProperty(String, Object)
      */
@@ -200,26 +155,6 @@ public class CacheConfiguration<K, V> implements Cloneable {
         }
         Object result = additionalProperties.get(key);
         return result == null ? defaultValue : result;
-    }
-
-    /**
-     * @param name2
-     */
-    public <T extends AbstractCacheServiceConfiguration> T getServiceConfiguration(
-            Class<T> service) {
-        for (AbstractCacheServiceConfiguration o : list) {
-            if (o.getClass().equals(service)) {
-                return (T) o;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * @param name2
-     */
-    public List<AbstractCacheServiceConfiguration> getServices() {
-        return new ArrayList<AbstractCacheServiceConfiguration>(list);
     }
 
     /**
@@ -289,6 +224,7 @@ public class CacheConfiguration<K, V> implements Cloneable {
      * another timing mechanism then the built-in
      * {@link java.lang.System#currentTimeMillis()}. For example, a custom NTP
      * protocol.
+     * <p>
      * 
      * @param timingStrategy
      *            the Timer to use
@@ -304,56 +240,45 @@ public class CacheConfiguration<K, V> implements Cloneable {
         return this;
     }
 
+    /**
+     * Sets the default log for this cache. If a service needs to log
+     * information and no special logger has been set for the service. This log
+     * should be used.
+     * 
+     * @param logger
+     *            the log to use
+     * @return this configuration
+     * @see #getDefaultLog()
+     */
     public CacheConfiguration<K, V> setDefaultLog(Log logger) {
         this.defaultLogger = logger;
         return this;
     }
 
     /**
-     * Sets a map whose mappings are to be placed in the Cache as initial
-     * entries.
-     * 
-     * @param map
-     *            the map to set
-     * @return this configuration
-     * @see #getInitialMap()
-     * @throws NullPointerException
-     *             if map is <tt>null</tt>
-     */
-    public CacheConfiguration<K, V> setInitialMap(Map<? extends K, ? extends V> map) {
-        if (map == null) {
-            throw new NullPointerException("map is null");
-        }
-        initialMap = map;
-        return this;
-    }
-
-    /**
      * Sets the name of the cache. The name should be unique among other
-     * configured caches. Allthough not a strict requirement it is advised that
-     * only alphanumeric characters are used in the name.
+     * configured caches. The name must consists only of alphanumeric characters
+     * and '_' or '-'.
      * <p>
-     * If no name is set, most cache implementation will generate an unique name
-     * to reference the cache. How exactly this name is generated is
-     * implementation specific.
+     * If no name is set, a cache implementation must generate an unique name to
+     * for the cache. How exactly the name is generated is implementation
+     * specific.
      * 
      * @param name
      *            the name of the cache
      * @return this configuration
      * @see #getName()
-     * @throws NullPointerException
-     *             if name is <tt>null</tt>
      */
     public CacheConfiguration<K, V> setName(String name) {
-        if (name == null) {
-            throw new NullPointerException("name is null");
-        } else if (name.equals("")) {
-            throw new IllegalArgumentException(
-                    "Cannot specify the empty string as a name");
-        } else if (!Pattern.matches("[\\da-zA-Z\\x5F\\x2D]+", name)) {
-            throw new IllegalArgumentException(
-                    "not a valid name, must only contain alphanumeric characters and '_' or '-', was "
-                            + name);
+        if (name != null) {
+            if (name.equals("")) {
+                throw new IllegalArgumentException(
+                        "Cannot specify the empty string as a name");
+            } else if (!Pattern.matches("[\\da-zA-Z\\x5F\\x2D]+", name)) {
+                throw new IllegalArgumentException(
+                        "not a valid name, must only contain alphanumeric characters and '_' or '-', was "
+                                + name);
+            }
         }
         this.name = name;
         return this;
@@ -398,34 +323,53 @@ public class CacheConfiguration<K, V> implements Cloneable {
 
     }
 
-    private <T extends AbstractCacheServiceConfiguration> T lazyCreate(Class<T> c) {
-        T service = getServiceConfiguration(c);
-        if (service == null) {
-            addService(c);
-            service = getServiceConfiguration(c);
-        }
-        ConfigurationValidator.initializeConfiguration(service, this);
-        return service;
-    }
-
+    /**
+     * Creates a new CacheConfiguration with default settings.
+     * 
+     * @return a new CacheConfiguration
+     */
     public static <K, V> CacheConfiguration<K, V> create() {
         return new CacheConfiguration<K, V>();
     }
 
-    public static <K, V> CacheConfiguration<K, V> create(InputStream is) throws Exception {
-        return XmlConfigurator.getInstance().from(is);
-    }
-
+    /**
+     * Creates a new CacheConfiguration with the specified name.
+     * 
+     * @param name
+     *            the name of the cache
+     * @return a new CacheConfiguration with the specified name
+     */
     public static <K, V> CacheConfiguration<K, V> create(String name) {
         CacheConfiguration<K, V> conf = new CacheConfiguration<K, V>();
         conf.setName(name);
         return conf;
     }
 
-    public static <K, V> Cache<K, V> createAndInstantiate(InputStream is)
+    /**
+     * Creates a CacheConfiguration from the specified input stream.
+     * @param isXml
+     *            the inputstream from where to read the xml configuration
+     * @return a CacheConfiguration reflecting the xml configuration
+     * @throws Exception
+     *             something happended while reading from the stream
+     */
+    public static <K, V> CacheConfiguration<K, V> createFrom(InputStream isXml)
             throws Exception {
-        CacheConfiguration<K, V> conf = create(is);
+        return XmlConfigurator.getInstance().from(isXml);
+    }
+
+    /**
+     * Creates a new
+     * 
+     * @param is
+     * @return
+     * @throws Exception
+     */
+    public static <K, V> Cache<K, V> createAndInstantiate(InputStream isXml)
+            throws Exception {
+        CacheConfiguration<K, V> conf = createFrom(isXml);
         return conf.newInstance((Class) Class.forName(conf.getProperty(
                 XmlConfigurator.CACHE_INSTANCE_TYPE).toString()));
     }
+
 }

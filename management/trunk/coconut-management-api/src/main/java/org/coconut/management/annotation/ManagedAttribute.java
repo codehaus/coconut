@@ -36,5 +36,5 @@ public @interface ManagedAttribute {
     /**
      * Whether or not this attribute is read only.
      */
-    boolean readOnly() default true;
+    boolean readOnly() default false;
 }

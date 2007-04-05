@@ -56,24 +56,6 @@ public class CacheConfigurationTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void testInitialMap() {
-        Map<Number, Collection> map = mockDummy(Map.class);
-        assertNull(conf.getInitialMap());
-
-        assertEquals(conf, conf.setInitialMap(map));
-
-        assertEquals(map, conf.getInitialMap());
-
-        // narrow bounds
-        Map<Integer, List> map2 = mockDummy(Map.class);
-
-        assertEquals(conf, conf.setInitialMap(map2));
-        assertEquals(map2, conf.getInitialMap());
-
-        conf.setInitialMap(null);
-    }
-
-    @Test(expected = NullPointerException.class)
     public void testName() {
         assertNotNull(conf.getName());
         assertEquals(conf, conf.setName("foo"));

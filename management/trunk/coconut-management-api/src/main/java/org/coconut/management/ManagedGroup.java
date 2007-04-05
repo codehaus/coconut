@@ -8,7 +8,8 @@ import java.util.Collection;
 import javax.management.JMException;
 
 /**
- * A ManagedGroup is passive collection of attributes  pretty similar to a MBean. Easy to register as MBean
+ * A ManagedGroup is passive collection of attributes pretty similar to a MBean.
+ * Easy to register as MBean.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -21,9 +22,10 @@ public interface ManagedGroup {
      * @Return the unique name of this group.
      */
     String getName();
-    
+
     /**
-     * Adds an object to the group. The
+     * Adds an object to the group. The attributes and methods of this object
+     * will be added to the aggregated methods and operations of this group.
      * 
      * @param o
      *            the object to add
@@ -31,7 +33,9 @@ public interface ManagedGroup {
      * @throws NullPointerException
      *             if the specified object is <tt>null</tt>
      * @throws IllegalArgumentException
-     *             if the object has already been registered
+     *             if the object has already been registered, if it contains no
+     *             methods or operations?, or if operations or methods with the
+     *             same has already been registered
      */
     ManagedGroup add(Object o);
 
@@ -49,7 +53,7 @@ public interface ManagedGroup {
      *             if a group with the specified name has already been added or
      *             the specified name is the empty string
      */
-    ManagedGroup addGroup(String name, String description);
+    ManagedGroup addNewGroup(String name, String description);
 
     /**
      * Adds a child group.
@@ -67,7 +71,7 @@ public interface ManagedGroup {
      *             if a group with the specified name has already been added or
      *             the specified name is the empty string
      */
-    ManagedGroup addGroup(String name, String description, boolean register);
+    ManagedGroup addNewGroup(String name, String description, boolean register);
 
     /**
      * Returns all the objects that have been registered in this group.
@@ -83,11 +87,12 @@ public interface ManagedGroup {
      * Returns all the child groups.
      */
     Collection<ManagedGroup> getGroups();
-    
+
     /**
      * @return
      */
     ManagedGroup getParent();
+
     /**
      * Registers the group. Any groups contained within this group is not
      * registered.
@@ -96,7 +101,7 @@ public interface ManagedGroup {
      *            the domain to register on
      * @throws IllegalStateException
      *             if this group is already registered
-     * @throws Exception 
+     * @throws Exception
      */
     void registerGroup(String domain) throws JMException;
 
@@ -111,6 +116,8 @@ public interface ManagedGroup {
      * @throws Exception
      */
     void registerAll(JmxRegistrant namer) throws JMException;
+
+   // <T> T toBean(Class<? extends T> clazz) throws JMException;
 
     /**
      * Remove this group from its parent.

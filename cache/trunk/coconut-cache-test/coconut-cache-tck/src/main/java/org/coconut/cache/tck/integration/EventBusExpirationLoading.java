@@ -30,7 +30,7 @@ public class EventBusExpirationLoading extends AbstractEventTestBundle{
     @Before
     public void setup() {
         CacheConfiguration conf = CacheConfiguration.create();
-        conf.addService(CacheEventConfiguration.class);
+        conf.serviceEvent();
         conf.serviceExpiration();
         conf.serviceLoading().setLoader(new IntegerToStringLoader());
         c = newCache(conf);

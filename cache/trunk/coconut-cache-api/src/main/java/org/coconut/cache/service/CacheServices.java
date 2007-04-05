@@ -6,6 +6,7 @@ package org.coconut.cache.service;
 import org.coconut.cache.Cache;
 import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
+import org.coconut.cache.service.servicemanager.CacheLifecycleService;
 
 /**
  * A utility class to get hold of cache services in an easy and typesafe manner.
@@ -16,6 +17,11 @@ import org.coconut.cache.service.expiration.CacheExpirationService;
  */
 public final class CacheServices {
 
+    @SuppressWarnings("unchecked")
+    public static CacheLifecycleService lifecycle(Cache<?, ?> cache) {
+        return cache.getService(CacheLifecycleService.class);
+    }
+    
     @SuppressWarnings("unchecked")
     public static CacheEvictionService eviction(Cache<?, ?> cache) {
         return cache.getService(CacheEvictionService.class);

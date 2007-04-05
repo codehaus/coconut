@@ -14,6 +14,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.statistics.CacheHitStat;
+import org.coconut.cache.tck.TCKRunner;
 import org.coconut.cache.tck.util.IntegerToStringLoader;
 import org.coconut.core.Clock.DeterministicClock;
 import org.coconut.test.CollectionUtils;
@@ -56,8 +57,11 @@ public abstract class CacheHarnessBundle extends Assert {
 
     final Cache<Integer, String> newCache(int entries) {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
-        cc.setInitialMap(createMap(entries)).setClock(clock);
-        return cc.newInstance(CacheHarnessRunner.tt);
+        cc.setClock(clock);
+        Cache<Integer, String> c=cc.newInstance(CacheHarnessRunner.tt);
+        c.putAll(createMap(entries));
+        return c;
+
     }
 
     @SuppressWarnings("unchecked")

@@ -29,7 +29,7 @@ public class SynchronizedCache<K, V> extends UnsynchronizedCache<K, V> implement
     @SuppressWarnings("unchecked")
     protected void registerServices(CacheServiceManager<K, V> csm,
             CacheConfiguration<K, V> conf) {
-        csm.addService(DefaultCacheStatisticsService.class,
+        csm.registerServiceImplementations(DefaultCacheStatisticsService.class,
                 DefaultCacheEvictionService.class, DefaultCacheLoaderService.class,
                 DefaultCacheManagementService.class, DefaultCacheEventService.class);
     }

@@ -6,6 +6,7 @@ package org.coconut.cache.internal.service.statistics;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.coconut.cache.Cache;
@@ -13,7 +14,6 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.InternalCacheService;
 import org.coconut.cache.internal.service.InternalCacheServiceManager;
-import org.coconut.cache.internal.service.ShutdownCallback;
 import org.coconut.cache.internal.service.joinpoint.InternalCacheOperation;
 import org.coconut.cache.internal.util.Resources;
 import org.coconut.cache.service.statistics.CacheHitStat;
@@ -524,7 +524,7 @@ public final class DefaultCacheStatisticsService<K, V> implements
     /**
      * @see org.coconut.cache.internal.service.CacheServiceLifecycle#shutdown(org.coconut.cache.internal.service.ShutdownCallback)
      */
-    public void shutdown(ShutdownCallback callback) {
+    public void shutdown(Executor callback) {
 
     }
 

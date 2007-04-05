@@ -8,7 +8,6 @@ import net.jcip.annotations.ThreadSafe;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.defaults.UnsynchronizedCache;
-import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.filter.Filter;
 import org.coconut.management.annotation.ManagedAttribute;
 
@@ -20,7 +19,7 @@ class LastAccessExample {
     public static void main(String[] args) throws InterruptedException {
         CacheConfiguration<String, String> conf = CacheConfiguration
                 .create("WebPage-Cache");
-        conf.addService(CacheManagementConfiguration.class);
+        conf.serviceManagement();
         conf.serviceExpiration().setExpirationFilter(new LastAccessFilter<String, String>());
         UnsynchronizedCache<String, String> cache = conf.newInstance(UnsynchronizedCache.class);
         Thread.sleep(1000000);
