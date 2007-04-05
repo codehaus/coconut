@@ -20,7 +20,7 @@ public class ThreadUtils {
      * A {@link java.util.concurrent.Callable} that returns <code>null</code>
      * on every invocation of {@link #call}.
      */
-    public static Callable NULL_CALLABLE = new NullCallable();
+    public final static Callable NULL_CALLABLE = new NullCallable();
     
     /**
      * A {@link java.util.concurrent.Callable} that returns <code>null</code>

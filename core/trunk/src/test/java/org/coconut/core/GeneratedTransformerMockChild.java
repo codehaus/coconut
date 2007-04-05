@@ -2,7 +2,7 @@
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.core.util;
+package org.coconut.core;
 
 public class GeneratedTransformerMockChild extends GeneratedTransformerMock {
 

@@ -2,7 +2,7 @@
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.core.util;
+package org.coconut.core;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertNotNull;
@@ -12,8 +12,9 @@ import java.io.PrintStream;
 import java.util.Queue;
 
 import org.coconut.core.EventProcessor;
+import org.coconut.core.EventUtils;
 import org.coconut.core.Offerable;
-import org.coconut.core.util.LogsTest.InnerPrintStream;
+import org.coconut.core.LogsTest.InnerPrintStream;
 import org.junit.Test;
 
 /**

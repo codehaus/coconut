@@ -2,7 +2,7 @@
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.core.util;
+package org.coconut.core;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Queue;
 
 import org.coconut.core.EventProcessor;
+import org.coconut.core.EventUtils;
 import org.coconut.core.Offerable;
 import org.jmock.Expectations;
 import org.jmock.Mockery;

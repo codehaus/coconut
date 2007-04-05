@@ -4,8 +4,8 @@
 
 package org.coconut.filter;
 
-import static org.coconut.core.util.Transformers.mapEntryToKey;
-import static org.coconut.core.util.Transformers.mapEntryToValue;
+import static org.coconut.core.Transformers.mapEntryToKey;
+import static org.coconut.core.Transformers.mapEntryToValue;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import java.util.Map;
 
 import org.coconut.core.EventProcessor;
 import org.coconut.core.Transformer;
-import org.coconut.core.util.Transformers;
+import org.coconut.core.Transformers;
 
 /**
  * Factory and utility methods for Filter.

@@ -2,19 +2,12 @@
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.core.util;
+package org.coconut.core;
 
 import java.io.PrintStream;
 import java.io.Serializable;
-import java.util.AbstractQueue;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Queue;
-import java.util.concurrent.Callable;
 
-import org.coconut.core.EventProcessor;
-import org.coconut.core.Offerable;
-import org.coconut.core.Transformer;
 
 /**
  * Factory and utility methods for {@link Callback}, {@link EventHandler} and

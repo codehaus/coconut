@@ -2,7 +2,7 @@
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.core.util;
+package org.coconut.core;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.coconut.core.Transformer;
 import org.coconut.internal.asm.ClassWriter;
 import org.coconut.internal.asm.FieldVisitor;
 import org.coconut.internal.asm.Label;

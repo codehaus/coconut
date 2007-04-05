@@ -4,7 +4,7 @@
 package org.coconut.internal.util;
 
 import org.coconut.core.Log;
-import org.coconut.core.util.Logs;
+import org.coconut.core.Logs;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

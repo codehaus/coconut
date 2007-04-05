@@ -2,11 +2,10 @@
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.core.util;
+package org.coconut.core;
 
 import java.io.PrintStream;
 
-import org.coconut.core.Log;
 
 /**
  * This class is used for creating {@link Log} wrappers from popular logging

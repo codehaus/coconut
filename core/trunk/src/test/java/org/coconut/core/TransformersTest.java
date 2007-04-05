@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.core.util;
+package org.coconut.core;
 
 import java.util.Arrays;
 
@@ -9,7 +9,7 @@ import org.coconut.core.Transformer;
 import org.coconut.test.MockTestCase;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.coconut.core.util.Transformers.*;
+import static org.coconut.core.Transformers.*;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

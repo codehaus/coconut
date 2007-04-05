@@ -2,7 +2,7 @@
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.core.util;
+package org.coconut.core;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -16,6 +16,7 @@ import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.coconut.core.Log;
+import org.coconut.core.Logs;
 import org.coconut.core.Log.Level;
 import org.coconut.test.MockTestCase;
 import org.jmock.Mock;

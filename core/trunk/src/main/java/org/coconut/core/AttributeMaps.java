@@ -32,7 +32,7 @@ public class AttributeMaps {
         return map;
     }
 
-    public static final class EmptyMap extends AbstractMap<String, Object> implements
+    static final class EmptyMap extends AbstractMap<String, Object> implements
             AttributeMap, Serializable {
 
         private static final long serialVersionUID = 6428348081105594320L;
