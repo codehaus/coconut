@@ -10,7 +10,9 @@
   <licenses>
     <license>
       <name>The Apache License, Version 2.0</name>
-      <url>http://svn.coconut.codehaus.org/browse/~raw,r=233/coconut/LICENSE.txt</url>
+      <url>
+        http://svn.coconut.codehaus.org/browse/~raw,r=233/coconut/LICENSE.txt
+      </url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -107,6 +109,17 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <dependencies>
+          <dependency>
+            <groupId>org.coconut</groupId>
+            <artifactId>coconut-build-tools</artifactId>
+            <version>1.0</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
           <excludePackageNames>
@@ -174,6 +187,15 @@
           <jdk>1.5</jdk>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+
+        <configuration>
+          <configLocation>build-tools/checkstyle.xml</configLocation>
+          <headerLocation>build-tools/LICENSE.txt</headerLocation>
+        </configuration>
+      </plugin>
     </plugins>
   </reporting>
 
@@ -182,15 +204,15 @@
     <url>http://www.codehaus.org/</url>
   </organization>
   <!-- 
-  <repositories>
+    <repositories>
     <repository>
-      <id>apache.snapshots</id>
-      <name>Apache Snapshot Repository</name>
-      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
+    <id>apache.snapshots</id>
+    <name>Apache Snapshot Repository</name>
+    <url>http://people.apache.org/repo/m2-snapshot-repository</url>
+    <releases>
+    <enabled>true</enabled>
+    </releases>
     </repository>
-  </repositories>
-   -->
+    </repositories>
+  -->
 </project>
