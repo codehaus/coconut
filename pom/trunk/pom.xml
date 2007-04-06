@@ -190,7 +190,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-
         <configuration>
           <configLocation>build-tools/checkstyle.xml</configLocation>
           <headerLocation>build-tools/LICENSE.txt</headerLocation>
