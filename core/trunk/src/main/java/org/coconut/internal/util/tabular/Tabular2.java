@@ -46,7 +46,7 @@ public class Tabular2 {
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        int max[] = new int[columns];
+        int[] max = new int[columns];
         for (int i = 0; i < columns; i++) {
             for (int j = 0; j < rows; j++) {
                 if (list[j][i] == null) {

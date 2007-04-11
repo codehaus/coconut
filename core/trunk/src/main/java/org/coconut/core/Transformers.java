@@ -31,7 +31,11 @@ import org.coconut.internal.asm.Type;
  * @version $Id$
  */
 public final class Transformers {
-
+    ///CLOVER:OFF
+    /** Cannot instantiate. */
+    private Transformers() {}
+    ///CLOVER:ON
+    
     public interface DynamicTransformer<F, T> extends Transformer<F, T> {
         /**
          * Returns the method that is being called from the dynamic transformer.
@@ -71,16 +75,16 @@ public final class Transformers {
             }
         }
 
-        private final static AtomicLong counter = new AtomicLong();
+        private final static AtomicLong COUNTER = new AtomicLong();
 
         private final static Object[] EMPTY_ARRAY = new Object[0];
 
-        private final static Field f;
+        private final static Field F;
 
-        private final static SimpleLoader loader = new SimpleLoader(
+        private final static SimpleLoader LOADER = new SimpleLoader(
                 ASMBasedTransformer.class.getClassLoader());
 
-        private final static String transformerTypeName = Type
+        private final static String TRANSFORMER_TYPE_NAME = Type
                 .getInternalName(DynamicTransformer.class);
         static {
             Field field = null;
@@ -88,12 +92,33 @@ public final class Transformers {
                 field = ASMBasedTransformer.class.getField("t");
             } catch (NoSuchFieldException e) { /* not happening */
             }
-            f = field;
+            F = field;
+        }
+
+        private final Method m;
+
+        private final transient DynamicTransformer<F, T> t;
+
+        /**
+         * Constructs a new transformer by copying an existing
+         * GeneratedTransformer.
+         * 
+         * @param transformer
+         *            the GeneratedTransformer to copy
+         */
+        public ASMBasedTransformer(ASMBasedTransformer<F, T> transformer) {
+            this.m = transformer.m;
+            this.t = transformer.t;
+        }
+
+        private ASMBasedTransformer(Method m, Object... args) {
+            t = generateTransformer(m, args);
+            this.m = m;
         }
 
         private static String generateClassName(Method m) {
             return m.getName() + "From" + getFullName(m.getDeclaringClass())
-                    + counter.incrementAndGet();
+                    + COUNTER.incrementAndGet();
         }
 
         @SuppressWarnings("unchecked")
@@ -103,7 +128,7 @@ public final class Transformers {
             ClassLoader cl = method.getDeclaringClass().getClassLoader();
 
             final SimpleLoader sl = cl == null
-                    || cl.equals(ASMBasedTransformer.class.getClassLoader()) ? loader
+                    || cl.equals(ASMBasedTransformer.class.getClassLoader()) ? LOADER
                     : new SimpleLoader(cl);
 
             final String name = generateClassName(method);
@@ -143,8 +168,9 @@ public final class Transformers {
 
             // Generate Header
             cw.visit(Opcodes.V1_5, Opcodes.ACC_PUBLIC + Opcodes.ACC_SUPER, className,
-                    "Ljava/lang/Object;L" + transformerTypeName + "<" + from + to + ">;",
-                    "java/lang/Object", new String[] { transformerTypeName });
+                    "Ljava/lang/Object;L" + TRANSFORMER_TYPE_NAME + "<" + from + to
+                            + ">;", "java/lang/Object",
+                    new String[] { TRANSFORMER_TYPE_NAME });
 
             cw.visitSource(shortClassName + ".java", null);
             String construtorDesc = "";
@@ -290,27 +316,6 @@ public final class Transformers {
             return name;
         }
 
-        private final Method m;
-
-        private final transient DynamicTransformer<F, T> t;
-
-        /**
-         * Constructs a new transformer by copying an existing
-         * GeneratedTransformer.
-         * 
-         * @param transformer
-         *            the GeneratedTransformer to copy
-         */
-        public ASMBasedTransformer(ASMBasedTransformer<F, T> transformer) {
-            this.m = transformer.m;
-            this.t = transformer.t;
-        }
-
-        private ASMBasedTransformer(Method m, Object... args) {
-            t = generateTransformer(m, args);
-            this.m = m;
-        }
-
         /**
          * @see java.lang.Object#equals(java.lang.Object)
          */
@@ -374,15 +379,15 @@ public final class Transformers {
             s.defaultReadObject();
             Object[] args = (Object[]) s.readObject();
             DynamicTransformer<F, T> dt = generateTransformer(m, args);
-            boolean prev = f.isAccessible();
-            f.setAccessible(true);
+            boolean prev = F.isAccessible();
+            F.setAccessible(true);
             try {
-                f.set(this, dt);
+                F.set(this, dt);
             } catch (IllegalAccessException e) {
                 throw new IOException(
                         "could not deserialize the object, this is highly irregular");
             }
-            f.setAccessible(prev);
+            F.setAccessible(prev);
         }
 
         private void writeObject(java.io.ObjectOutputStream s) throws IOException {
@@ -662,7 +667,6 @@ public final class Transformers {
         return new ASMBasedTransformer<F, T>(method, parameters);
     }
 
-
     public static <F, T> Collection<T> transformCollection(Collection<? extends F> col,
             Transformer<F, T> t) {
         ArrayList<T> list = new ArrayList<T>(col.size());
@@ -693,9 +697,4 @@ public final class Transformers {
             throw new Error("unknown type " + c);
         }
     }
-
-    private Transformers() {
-
-    }
-
 }

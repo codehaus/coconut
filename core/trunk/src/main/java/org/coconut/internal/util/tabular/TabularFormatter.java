@@ -13,35 +13,16 @@ import java.util.concurrent.TimeUnit;
  */
 public class TabularFormatter {
 
-    public final static DecimalFormat zz3 = new DecimalFormat("00");
+    public final static DecimalFormat ZZ3 = new DecimalFormat("00");
 
-    public final static DecimalFormat z3 = new DecimalFormat("0.000");
+    public final static DecimalFormat Z3 = new DecimalFormat("0.000");
 
-    public final static DecimalFormat z2 = new DecimalFormat("00.00");
+    public final static DecimalFormat Z2 = new DecimalFormat("00.00");
 
-    public final static DecimalFormat z1 = new DecimalFormat("000.0");
+    public final static DecimalFormat Z1 = new DecimalFormat("000.0");
 
-    public final static DecimalFormat z = new DecimalFormat("##0.000");
+    public final static DecimalFormat Z = new DecimalFormat("##0.000");
 
-    public static String form(double value) {
-        if (value >= 1000) {
-            return Long.toString(((long) value));
-        }
-        if (value >= 0.1 && value < 1000) {
-            String s = z.format(value);
-            return s.substring(0, 5);
-        } else {
-            throw new IllegalArgumentException("");
-        }
-    }
-
-    public static void main2(String[] args) {
-        DecimalFormat ss = new DecimalFormat("##0.000");
-        System.out.println(ss.format(400.34));
-        System.out.println(ss.format(40.343));
-        System.out.println(ss.format(4.3455));
-        // System.out.println(ss.format(400.34));
-    }
 
     static String app = "                          ";
 
@@ -54,6 +35,7 @@ public class TabularFormatter {
     private int rows;
 
     private boolean useResultLine;
+  
 
     public TabularFormatter(int rows, int columns) {
         list = new String[rows][columns];
@@ -64,6 +46,27 @@ public class TabularFormatter {
                 list[i][j] = "";
             }
         }
+    }
+
+    
+    public static String form(double value) {
+        if (value >= 1000) {
+            return Long.toString(((long) value));
+        }
+        if (value >= 0.1 && value < 1000) {
+            String s = Z.format(value);
+            return s.substring(0, 5);
+        } else {
+            throw new IllegalArgumentException("");
+        }
+    }
+
+    public static void main2(String[] args) {
+        DecimalFormat ss = new DecimalFormat("##0.000");
+        System.out.println(ss.format(400.34));
+        System.out.println(ss.format(40.343));
+        System.out.println(ss.format(4.3455));
+        // System.out.println(ss.format(400.34));
     }
 
     public void setResultLine(boolean useResultLine) {
@@ -84,11 +87,7 @@ public class TabularFormatter {
         }
         currentRow++;
     }
-
-    public String toString() {
-
-        StringBuilder sb = new StringBuilder();
-        int max[] = new int[header.length];
+    private void calculateMax(int[] max) {
         for (int i = 0; i < header.length; i++) {
             max[i] = header[i].length();
             for (int j = 0; j < rows; j++) {
@@ -96,7 +95,12 @@ public class TabularFormatter {
                     max[i] = Math.max(max[i], list[j][i].length());
                 }
             }
-        }
+        } 
+    }
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        int[] max = new int[header.length];
+        calculateMax(max);
         for (int i = 0; i < header.length; i++) {
             format(sb, header[i], max[i]);
             if (i != header.length) {
@@ -157,9 +161,11 @@ public class TabularFormatter {
         } else
             return ((long) seconds) + " s";
     }
-    public static String formatTime2(final long total,TimeUnit unit) {
+
+    public static String formatTime2(final long total, TimeUnit unit) {
         return formatTime2(unit.toNanos(total));
     }
+
     public static String formatTime2(final long totalNano) {
         long nano = TimeUnit.NANOSECONDS.toNanos(totalNano) % 1000;
         long micro = TimeUnit.NANOSECONDS.toMicros(totalNano) % 1000;
@@ -177,7 +183,7 @@ public class TabularFormatter {
             sb.append(days + " day(s), ");
         }
         if (days != 0 || hours != 0 || minutes != 0 || seconds != 0) {
-            sb.append(hours + ":" + zz3.format(minutes) + ":" + zz3.format(seconds)
+            sb.append(hours + ":" + ZZ3.format(minutes) + ":" + ZZ3.format(seconds)
                     + " hours");
             return sb.toString();
         }
@@ -199,6 +205,6 @@ public class TabularFormatter {
         System.out.println(formatTime2(value));
         System.out.println(formatTime2(4000000));
         System.out.println(formatTime2(124000234433000l));
-        System.out.println(zz3.format(2));
+        System.out.println(ZZ3.format(2));
     }
 }

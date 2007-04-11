@@ -32,14 +32,6 @@ public class SimpleEntry<K, V> implements Map.Entry<K, V>, java.io.Serializable 
     }
 
     /**
-     * Utility method for SimpleEntry and SimpleImmutableEntry. Test for
-     * equality, checking for nulls.
-     */
-    private static boolean eq(Object o1, Object o2) {
-        return o1 == null ? o2 == null : o1.equals(o2);
-    }
-
-    /**
      * Creates an entry representing the same mapping as the specified entry.
      * 
      * @param entry
@@ -50,6 +42,14 @@ public class SimpleEntry<K, V> implements Map.Entry<K, V>, java.io.Serializable 
         this.value = entry.getValue();
     }
 
+    /**
+     * Utility method for SimpleEntry and SimpleImmutableEntry. Test for
+     * equality, checking for nulls.
+     */
+    private static boolean eq(Object o1, Object o2) {
+        return o1 == null ? o2 == null : o1.equals(o2);
+    }
+    
     /**
      * Returns the key corresponding to this entry.
      * 

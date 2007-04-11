@@ -10,6 +10,8 @@ package org.coconut.core;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
+ * @param <E>
+ *            the type of result that are allowed
  */
 public interface Callback<E> {
 

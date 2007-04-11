@@ -6,7 +6,6 @@ package org.coconut.core;
 
 import java.io.PrintStream;
 
-
 /**
  * This class is used for creating {@link Log} wrappers from popular logging
  * frameworks such as <a
@@ -20,6 +19,11 @@ import java.io.PrintStream;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
 public final class Logs {
+    ///CLOVER:OFF
+    /** Cannot instantiate. */
+    private Logs() {}
+    ///CLOVER:ON
+    
     /**
      * Creates a new Log that ignores any input.
      * 
@@ -59,8 +63,11 @@ public final class Logs {
      * Log log = Logs.Log4j.from(myLog4jLogger);
      * </pre>
      */
-    public static class Log4j {
-
+    public final static class Log4j {
+        ///CLOVER:OFF
+        /** Cannot instantiate. */
+        private Log4j() {}
+        ///CLOVER:ON
         /**
          * Wraps a Log4j logger.
          * 
@@ -168,7 +175,7 @@ public final class Logs {
         public abstract String getName();
     }
 
-    static class SimpleLogger extends AbstractLogger {
+    final static class SimpleLogger extends AbstractLogger {
         private final int level;
 
         private final PrintStream stream;
@@ -211,7 +218,7 @@ public final class Logs {
         }
     }
 
-    static class JDKLogger extends AbstractLogger {
+    final static class JDKLogger extends AbstractLogger {
         private final java.util.logging.Logger log;
 
         JDKLogger(java.util.logging.Logger log) {
@@ -250,7 +257,7 @@ public final class Logs {
         }
     }
 
-    static class Log4JLogger extends AbstractLogger {
+    final static class Log4JLogger extends AbstractLogger {
         private final org.apache.log4j.Logger log;
 
         Log4JLogger(org.apache.log4j.Logger log) {
@@ -289,7 +296,13 @@ public final class Logs {
         }
     }
 
-    public static class Commons {
+    public final static class Commons {
+
+        ///CLOVER:OFF
+        /** Cannot instantiate. */
+        private Commons() {}
+        ///CLOVER:ON
+
         public static Log from(org.apache.commons.logging.Log log) {
             return new CommonsLogger(log);
         }
@@ -297,13 +310,6 @@ public final class Logs {
         public static Log from(Class clazz) {
             return from(org.apache.commons.logging.LogFactory.getLog(clazz));
         }
-
-        // /CLOVER:OFF
-        /** Cannot instantiate. */
-        private Commons() {/* Cannot instantiate. */
-        }
-
-        // /CLOVER:ON
 
         /**
          * @param string
@@ -324,7 +330,8 @@ public final class Logs {
             return ((CommonsLogger) log).log;
         }
     }
-    static class CommonsLogger extends AbstractLogger {
+
+    final static class CommonsLogger extends AbstractLogger {
         private final org.apache.commons.logging.Log log;
 
         private CommonsLogger(org.apache.commons.logging.Log log) {
@@ -409,14 +416,20 @@ public final class Logs {
                 return ((org.apache.commons.logging.impl.Jdk14Logger) log).getLogger()
                         .getName();
             } else if (log instanceof org.apache.commons.logging.impl.Log4JLogger) {
-                return ((org.apache.commons.logging.impl.Log4JLogger) log).getLogger().getName();
+                return ((org.apache.commons.logging.impl.Log4JLogger) log).getLogger()
+                        .getName();
             } else {
                 return null;// or should we throw an exception?
             }
         }
     }
 
-    public static class JDK {
+    public final static class JDK {
+        ///CLOVER:OFF
+        /** Cannot instantiate. */
+        private JDK() {}
+        ///CLOVER:ON
+        
         public static Log from(java.util.logging.Logger log) {
             return new JDKLogger(log);
         }
@@ -439,17 +452,6 @@ public final class Logs {
             }
             return ((JDKLogger) log).log;
         }
-
-        // /CLOVER:OFF
-        /** Cannot instantiate. */
-        private JDK() {/* Cannot instantiate. */
-        }
-        // /CLOVER:ON
     }
 
-    // /CLOVER:OFF
-    /** Cannot instantiate. */
-    private Logs() {/* Cannot instantiate. */
-    }
-    // /CLOVER:ON
 }

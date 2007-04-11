@@ -78,35 +78,6 @@ public class OpenHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMa
 
     transient Collection<V> values;
 
-    /* ---------------- Small Utilities -------------- */
-
-    /**
-     * Applies a supplemental hash function to a given hashCode, which defends
-     * against poor quality hash functions. This is critical because this class
-     * uses power-of-two length hash tables, that otherwise encounter collisions
-     * for hashCodes that do not differ in lower bits.
-     */
-    private static int hash(int h) {
-        // This function ensures that hashCodes that differ only by
-        // constant multiples at each bit position have a bounded
-        // number of collisions (approximately 8 at default load factor).
-        h ^= (h >>> 20) ^ (h >>> 12);
-        return h ^ (h >>> 7) ^ (h >>> 4);
-    }
-
-    /**
-     * Returns the table entry that should be used for key with given hash
-     * 
-     * @param hash
-     *            the hash code for the key
-     * @return the table entry
-     */
-    static int indexFor(int hash, int tableLength) {
-        return hash & (tableLength - 1);
-    }
-
-    /* ---------------- Inner Classes -------------- */
-
     /**
      * Creates a new, empty map with a default initial capacity, and load
      * factor.
@@ -161,6 +132,37 @@ public class OpenHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMa
         threshold = (int) (16 * loadFactor);
         table = new HashEntry[16];
     }
+
+
+    /* ---------------- Small Utilities -------------- */
+
+    /**
+     * Applies a supplemental hash function to a given hashCode, which defends
+     * against poor quality hash functions. This is critical because this class
+     * uses power-of-two length hash tables, that otherwise encounter collisions
+     * for hashCodes that do not differ in lower bits.
+     */
+    private static int hash(int h) {
+        // This function ensures that hashCodes that differ only by
+        // constant multiples at each bit position have a bounded
+        // number of collisions (approximately 8 at default load factor).
+        h ^= (h >>> 20) ^ (h >>> 12);
+        return h ^ (h >>> 7) ^ (h >>> 4);
+    }
+
+    /**
+     * Returns the table entry that should be used for key with given hash
+     * 
+     * @param hash
+     *            the hash code for the key
+     * @return the table entry
+     */
+    static int indexFor(int hash, int tableLength) {
+        return hash & (tableLength - 1);
+    }
+
+
+    /* ---------------- Methods -------------- */
 
     /**
      * Return properly casted first entry of bin for given hash
@@ -473,6 +475,9 @@ public class OpenHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMa
     }
 
     static abstract class BaseIterator<K, V, E> implements Iterator<E> {
+
+        OpenHashMap<K, ?> map;
+
         private HashEntry<K, V> entry;
 
         private int expectedModCount;
@@ -480,8 +485,6 @@ public class OpenHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMa
         private int index;
 
         private HashEntry<K, V> nextEntry;
-
-        OpenHashMap<K, ?> map;
 
         BaseIterator(OpenHashMap<K, ?> map) {
             expectedModCount = map.modCount;

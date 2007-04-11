@@ -8,7 +8,6 @@ import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.Queue;
 
-
 /**
  * Factory and utility methods for {@link Callback}, {@link EventHandler} and
  * {@link Offerable} classes defined in this package. This class supports the
@@ -22,6 +21,11 @@ import java.util.Queue;
  * @version $Id$
  */
 public final class EventUtils {
+    ///CLOVER:OFF
+    /** Cannot instantiate. */
+    private EventUtils() {}
+    ///CLOVER:ON
+
     static class IgnoreTrueOfferable<E> implements Offerable<E>, Serializable {
         /** serialVersionUID */
         private static final long serialVersionUID = -8883512217513983631L;
@@ -211,10 +215,4 @@ public final class EventUtils {
     public static <E> EventProcessor<E> toSystemOutSafe() {
         return toPrintStreamSafe(System.out);
     }
-
-    // /CLOVER:OFF
-    /** Cannot instantiate. */
-    private EventUtils() {
-    }
-    // /CLOVER:ON
 }

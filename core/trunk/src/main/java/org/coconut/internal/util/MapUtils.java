@@ -30,9 +30,6 @@ public class MapUtils {
         /** serialVersionUID. */
         private static final long serialVersionUID = -4374349503886412002L;
 
-        public static <K, V> Entry<K, V> from(final K key, final V value) {
-            return new ImmutableMapEntry<K, V>(key, value);
-        }
 
         /** The key for this entry. */
         private final K key;
@@ -44,7 +41,7 @@ public class MapUtils {
             this.value = entry.getValue();
             this.key = entry.getKey();
         }
-
+        
         /**
          * Creates a new MapEntry.
          * 
@@ -58,6 +55,9 @@ public class MapUtils {
             this.key = key;
         }
 
+        public static <K, V> Entry<K, V> from(final K key, final V value) {
+            return new ImmutableMapEntry<K, V>(key, value);
+        }
         /**
          * @see java.lang.Object#equals(java.lang.Object)
          */

@@ -16,11 +16,19 @@ import org.coconut.filter.spi.FilterAcceptTypesAnnotation;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: FileFilters.java 36 2006-08-22 09:59:45Z kasper $
  */
-public class FileFilters {
+public final class FileFilters {
+
+    // /CLOVER:OFF
+    /** Cannot instantiate. */
+    private FileFilters() {}
+
+    // /CLOVER:ON
 
     /**
      * Returns a Filter that accepts all {@link java.io.File Files} that are
      * readable.
+     * 
+     * @return a Filter that accepts all files that are readable
      */
     public static FileCanReadFilter canRead() {
         return FileCanReadFilter.INSTANCE;
@@ -28,30 +36,29 @@ public class FileFilters {
 
     /**
      * A Filter that accepts all {@link java.io.File Files} that are readable.
-     * <p>
      */
     @FilterAcceptTypesAnnotation(File.class)
     final static class FileCanReadFilter implements Filter<File>, FileFilter,
             Serializable {
 
+        /** A default instance of a FileCanReadFilter. */
+        public static final FileCanReadFilter INSTANCE = new FileCanReadFilter();
+
         /** A default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = -7655221428681897754L;
 
         /** Same hashcode for every Filter of this type. */
-        private static final int hashcode = FileCanReadFilter.class.getName().hashCode();
-
-        /** A default instance of a FileCanReadFilter. */
-        public static final FileCanReadFilter INSTANCE = new FileCanReadFilter();
+        private static final int HASHCODE = FileCanReadFilter.class.getName().hashCode();
 
         /**
-         * @see org.coconut.filter.Filter#accept(Object)
+         * {@inheritDoc}
          */
         public boolean accept(File file) {
             return file.canRead();
         }
 
         /**
-         * @see java.lang.Object#toString()
+         * {@inheritDoc}
          */
         @Override
         public String toString() {
@@ -59,7 +66,7 @@ public class FileFilters {
         }
 
         /**
-         * @see java.lang.Object#equals(java.lang.Object)
+         * {@inheritDoc}
          */
         @Override
         public boolean equals(Object obj) {
@@ -67,11 +74,11 @@ public class FileFilters {
         }
 
         /**
-         * @see java.lang.Object#hashCode()
+         * {@inheritDoc}
          */
         @Override
         public int hashCode() {
-            return hashcode;
+            return HASHCODE;
         }
     }
 
@@ -95,15 +102,18 @@ public class FileFilters {
         private static final long serialVersionUID = 3544385898989828152L;
 
         /** Same hashcode for every Filter of this type. */
-        private static final int hashcode = FileCanReadFilter.class.getName().hashCode();
+        private static final int HASHCODE = FileCanReadFilter.class.getName().hashCode();
 
         /**
-         * @see org.coconut.filter.Filter#accept(Object)
+         * {@inheritDoc}
          */
         public boolean accept(File file) {
             return file.canWrite();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean equals(Object obj) {
             return this == obj || obj instanceof FileCanWriteFilter;
@@ -111,7 +121,7 @@ public class FileFilters {
         }
 
         /**
-         * @see java.lang.Object#toString()
+         * {@inheritDoc}
          */
         @Override
         public String toString() {
@@ -119,11 +129,11 @@ public class FileFilters {
         }
 
         /**
-         * @see java.lang.Object#hashCode()
+         * {@inheritDoc}
          */
         @Override
         public int hashCode() {
-            return hashcode;
+            return HASHCODE;
         }
     }
 
@@ -146,17 +156,17 @@ public class FileFilters {
         private static final long serialVersionUID = 3257850965406265907L;
 
         /** Same hashcode for every Filter of this type. */
-        private static final int hashcode = FileExistsFilter.class.getName().hashCode();
+        private static final int HASHCODE = FileExistsFilter.class.getName().hashCode();
 
         /**
-         * @see org.coconut.filter.Filter#accept(Object)
+         * {@inheritDoc}
          */
         public boolean accept(File file) {
             return file.exists();
         }
 
         /**
-         * @see java.lang.Object#toString()
+         * {@inheritDoc}
          */
         @Override
         public String toString() {
@@ -164,7 +174,7 @@ public class FileFilters {
         }
 
         /**
-         * @see java.lang.Object#equals(java.lang.Object)
+         * {@inheritDoc}
          */
         @Override
         public boolean equals(Object obj) {
@@ -172,11 +182,11 @@ public class FileFilters {
         }
 
         /**
-         * @see java.lang.Object#hashCode()
+         * {@inheritDoc}
          */
         @Override
         public int hashCode() {
-            return hashcode;
+            return HASHCODE;
         }
     }
 
@@ -222,6 +232,16 @@ public class FileFilters {
             this(extension, true);
         }
 
+        /**
+         * Constructs a new FileExtension Filter.
+         * 
+         * @param extension
+         *            the extension
+         * @param isCaseSensitive
+         *            whether or not to ignore casing
+         * @throws NullPointerException
+         *             if the extension is <code>null</code>
+         */
         public FileExtensionFilter(String extension, boolean isCaseSensitive) {
             if (extension == null) {
                 throw new NullPointerException("extension is null");
@@ -231,16 +251,26 @@ public class FileFilters {
             this.extension = extension;
         }
 
+        /**
+         * Returns the file extension that this filter filters for.
+         * 
+         * @return the file extension that this filter filters for
+         */
         public String getExtension() {
             return extension;
         }
 
+        /**
+         * Returns whether or not this filter is case sensitive.
+         * 
+         * @return whether or not this filter is case sensitive
+         */
         public boolean isCaseSensitive() {
             return isCaseSensitive;
         }
 
         /**
-         * @see org.coconut.filter.Filter#accept(Object)
+         * {@inheritDoc}
          */
         public boolean accept(File file) {
             if (file == null) {
@@ -261,7 +291,7 @@ public class FileFilters {
         }
 
         /**
-         * @see java.lang.Object#toString()
+         * {@inheritDoc}
          */
         @Override
         public String toString() {
@@ -273,7 +303,7 @@ public class FileFilters {
         }
 
         /**
-         * @see java.lang.Object#equals(java.lang.Object)
+         * {@inheritDoc}
          */
         @Override
         public boolean equals(Object obj) {
@@ -282,9 +312,9 @@ public class FileFilters {
         }
 
         /**
-         * Typed equals, as per normal equals contract
+         * Typed equals, as per normal equals contract.
          * 
-         * @param the
+         * @param filter
          *            reference filter with which to compare.
          * @return <tt>true</tt> if this object is the same as the filter
          *         argument; <tt>false</tt> otherwise.
@@ -299,7 +329,7 @@ public class FileFilters {
         }
 
         /**
-         * @see java.lang.Object#hashCode()
+         * {@inheritDoc}
          */
         @Override
         public int hashCode() {
@@ -363,6 +393,8 @@ public class FileFilters {
 
         /**
          * Returns the directory that files should be included in.
+         * 
+         * @return the directory that files should be included in
          */
         public File getDirectory() {
             return directory;
@@ -370,13 +402,15 @@ public class FileFilters {
 
         /**
          * Returns whether or not to include subdirectories.
+         * 
+         * @return whether or not to include subdirectories
          */
         public boolean getIncludeSubdirectories() {
             return includeSubdirectories;
         }
 
         /**
-         * @see org.coconut.filter.Filter#accept(Object)
+         * {@inheritDoc}
          */
         public boolean accept(File file) {
             if (file == null) {
@@ -398,7 +432,7 @@ public class FileFilters {
         }
 
         /**
-         * @see java.lang.Object#toString()
+         * {@inheritDoc}
          */
         @Override
         public String toString() {
@@ -411,7 +445,7 @@ public class FileFilters {
         }
 
         /**
-         * @see java.lang.Object#equals(java.lang.Object)
+         * {@inheritDoc}
          */
         @Override
         public boolean equals(Object obj) {
@@ -420,9 +454,9 @@ public class FileFilters {
         }
 
         /**
-         * Typed equals, as per normal equals contract
+         * Typed equals, as per normal equals contract.
          * 
-         * @param the
+         * @param filter
          *            reference filter with which to compare.
          * @return <tt>true</tt> if this object is the same as the filter
          *         argument; <tt>false</tt> otherwise.
@@ -434,7 +468,7 @@ public class FileFilters {
         }
 
         /**
-         * @see java.lang.Object#hashCode()
+         * {@inheritDoc}
          */
         @Override
         public int hashCode() {
@@ -466,17 +500,17 @@ public class FileFilters {
         private static final long serialVersionUID = 3760840164653742384L;
 
         /** Same hashcode for every Filter of this type. */
-        private static final int hashcode = FileIsHiddenFilter.class.getName().hashCode();
+        private static final int HASHCODE = FileIsHiddenFilter.class.getName().hashCode();
 
         /**
-         * @see org.coconut.filter.Filter#accept(Object)
+         * {@inheritDoc}
          */
         public boolean accept(File file) {
             return file.isHidden();
         }
 
         /**
-         * @see java.lang.Object#toString()
+         * {@inheritDoc}
          */
         @Override
         public String toString() {
@@ -484,7 +518,7 @@ public class FileFilters {
         }
 
         /**
-         * @see java.lang.Object#equals(java.lang.Object)
+         * {@inheritDoc}
          */
         @Override
         public boolean equals(Object obj) {
@@ -492,11 +526,11 @@ public class FileFilters {
         }
 
         /**
-         * @see java.lang.Object#hashCode()
+         * {@inheritDoc}
          */
         @Override
         public int hashCode() {
-            return hashcode;
+            return HASHCODE;
         }
     }
 
@@ -520,18 +554,18 @@ public class FileFilters {
         private static final long serialVersionUID = 3258126947053024568L;
 
         /** Same hashcode for every Filter of this type. */
-        private static final int hashcode = FileIsDirectoryFilter.class.getName()
+        private static final int HASHCODE = FileIsDirectoryFilter.class.getName()
                 .hashCode();
 
         /**
-         * @see org.coconut.filter.Filter#accept(Object)
+         * {@inheritDoc}
          */
         public boolean accept(File file) {
             return file.isDirectory();
         }
 
         /**
-         * @see java.lang.Object#toString()
+         * {@inheritDoc}
          */
         @Override
         public String toString() {
@@ -539,7 +573,7 @@ public class FileFilters {
         }
 
         /**
-         * @see java.lang.Object#equals(java.lang.Object)
+         * {@inheritDoc}
          */
         @Override
         public boolean equals(Object obj) {
@@ -547,11 +581,11 @@ public class FileFilters {
         }
 
         /**
-         * @see java.lang.Object#hashCode()
+         * {@inheritDoc}
          */
         @Override
         public int hashCode() {
-            return hashcode;
+            return HASHCODE;
         }
     }
 }

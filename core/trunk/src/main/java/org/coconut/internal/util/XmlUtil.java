@@ -5,10 +5,8 @@ package org.coconut.internal.util;
 
 import java.lang.reflect.Constructor;
 
-import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

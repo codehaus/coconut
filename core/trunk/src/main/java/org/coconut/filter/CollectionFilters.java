@@ -27,10 +27,16 @@ import org.coconut.core.Transformers;
  */
 public final class CollectionFilters {
 
+    ///CLOVER:OFF
+    /** Cannot instantiate. */
+    private CollectionFilters() {
+    }
+    ///CLOVER:ON
+    
     public static <T> Filter<T> isNull() {
         return new IsNullFilter();
     }
-    
+
     public static <T> Filter<T> notNullAnd(Filter<T> f) {
         return new NotNullAndFilter<T>(f);
     }
@@ -376,11 +382,4 @@ public final class CollectionFilters {
         // TODO what about null values in the collection?
         return (Filter) valueFilter(Filters.anyEquals(values.toArray()));
     }
-
-    // /CLOVER:OFF
-    /** Cannot instantiate. */
-    private CollectionFilters() {
-    }
-    // /CLOVER:ON
-
 }

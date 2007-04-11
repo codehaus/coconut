@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * Contains various utility methods for a {@link AttributeMap}.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -119,11 +121,145 @@ public class AttributeMaps {
         public long getLong(String key, long defaultValue) {
             return defaultValue;
         }
+
+        /**
+         * @see org.coconut.core.AttributeMap#getBoolean(java.lang.String)
+         */
+        public boolean getBoolean(String key) {
+            return false;
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#getBoolean(java.lang.String,
+         *      boolean)
+         */
+        public boolean getBoolean(String key, boolean defaultValue) {
+            return defaultValue;
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#getByte(java.lang.String)
+         */
+        public byte getByte(String key) {
+            return 0;
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#getByte(java.lang.String, byte)
+         */
+        public byte getByte(String key, byte defaultValue) {
+            return defaultValue;
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#getChar(java.lang.String)
+         */
+        public char getChar(String key) {
+            return Character.MIN_VALUE;
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#getChar(java.lang.String, char)
+         */
+        public char getChar(String key, char defaultValue) {
+            return defaultValue;
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#getFloat(java.lang.String)
+         */
+        public float getFloat(String key) {
+            return 0;
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#getFloat(java.lang.String, float)
+         */
+        public float getFloat(String key, float defaultValue) {
+            return defaultValue;
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#getInt(java.lang.String)
+         */
+        public int getInt(String key) {
+            return 0;
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#getInt(java.lang.String, int)
+         */
+        public int getInt(String key, int defaultValue) {
+            return defaultValue;
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#getShort(java.lang.String)
+         */
+        public short getShort(String key) {
+            return 0;
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#getShort(java.lang.String, short)
+         */
+        public short getShort(String key, short defaultValue) {
+            return defaultValue;
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#putBoolean(java.lang.String,
+         *      boolean)
+         */
+        public void putBoolean(String key, boolean value) {
+            throw new UnsupportedOperationException("map is immutable");
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#putByte(java.lang.String, byte)
+         */
+        public void putByte(String key, byte value) {
+            throw new UnsupportedOperationException("map is immutable");
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#putChar(java.lang.String, char)
+         */
+        public void putChar(String key, char value) {
+            throw new UnsupportedOperationException("map is immutable");
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#putFloat(java.lang.String, float)
+         */
+        public void putFloat(String key, float value) {
+            throw new UnsupportedOperationException("map is immutable");
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#putInt(java.lang.String, int)
+         */
+        public void putInt(String key, int value) {
+            throw new UnsupportedOperationException("map is immutable");
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#putShort(java.lang.String, short)
+         */
+        public void putShort(String key, short value) {
+            throw new UnsupportedOperationException("map is immutable");
+        }
     }
 
     public static class DefaultAttributeMap extends HashMap<String, Object> implements
             AttributeMap {
-
+        
+        public DefaultAttributeMap() {
+        }
+        
+        public DefaultAttributeMap(AttributeMap am) {
+            super(am);
+        }
         /**
          * @see org.coconut.cache.service.loading.AttributeMap#getLong(java.lang.String)
          */
@@ -169,6 +305,152 @@ public class AttributeMaps {
         public long getLong(String key, long defaultValue) {
             Object o = get(key);
             return o == null ? defaultValue : (Long) o;
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#getBoolean(java.lang.String)
+         */
+        public boolean getBoolean(String key) {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#getBoolean(java.lang.String,
+         *      boolean)
+         */
+        public boolean getBoolean(String key, boolean defaultValue) {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#getByte(java.lang.String)
+         */
+        public byte getByte(String key) {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#getByte(java.lang.String, byte)
+         */
+        public byte getByte(String key, byte defaultValue) {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#getChar(java.lang.String)
+         */
+        public char getChar(String key) {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#getChar(java.lang.String, char)
+         */
+        public char getChar(String key, char defaultValue) {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#getFloat(java.lang.String)
+         */
+        public float getFloat(String key) {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#getFloat(java.lang.String, float)
+         */
+        public float getFloat(String key, float defaultValue) {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#getInt(java.lang.String)
+         */
+        public int getInt(String key) {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#getInt(java.lang.String, int)
+         */
+        public int getInt(String key, int defaultValue) {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#getShort(java.lang.String)
+         */
+        public short getShort(String key) {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#getShort(java.lang.String, short)
+         */
+        public short getShort(String key, short defaultValue) {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#putBoolean(java.lang.String,
+         *      boolean)
+         */
+        public void putBoolean(String key, boolean value) {
+        // TODO Auto-generated method stub
+
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#putByte(java.lang.String, byte)
+         */
+        public void putByte(String key, byte value) {
+        // TODO Auto-generated method stub
+
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#putChar(java.lang.String, char)
+         */
+        public void putChar(String key, char value) {
+        // TODO Auto-generated method stub
+
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#putFloat(java.lang.String, float)
+         */
+        public void putFloat(String key, float value) {
+        // TODO Auto-generated method stub
+
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#putInt(java.lang.String, int)
+         */
+        public void putInt(String key, int value) {
+        // TODO Auto-generated method stub
+
+        }
+
+        /**
+         * @see org.coconut.core.AttributeMap#putShort(java.lang.String, short)
+         */
+        public void putShort(String key, short value) {
+        // TODO Auto-generated method stub
+
         }
     }
 }

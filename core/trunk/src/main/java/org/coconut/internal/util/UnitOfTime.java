@@ -100,6 +100,19 @@ public enum UnitOfTime {
         int excessNanos(long d, long m) { return 0; }
     };
 
+    // Handy constants for conversion methods
+
+    final static long C0 = 1L;
+    final static long C1 = C0 * 1000L;
+    final static long C2 = C1 * 1000L;
+    final static long C3 = C2 * 1000L;
+    final static long C4 = C3 * 60L;
+    final static long C5 = C4 * 60L;
+    final static long C6 = C5 * 24L;
+
+    final static long MAX = Long.MAX_VALUE;
+
+    
     public static void toElement(Element e, Long time, TimeUnit unit) {
         e.setTextContent(Long.toString(time));
         e.setAttribute("time-unit",UnitOfTime.from(unit).getSymbol());
@@ -165,18 +178,7 @@ public enum UnitOfTime {
         }
         throw new IllegalArgumentException("not a valid timeunit, was '" + symbol + "'");
     }
-    // Handy constants for conversion methods
-    static final long C0 = 1L;
-    static final long C1 = C0 * 1000L;
-    static final long C2 = C1 * 1000L;
-    static final long C3 = C2 * 1000L;
-    static final long C4 = C3 * 60L;
-    static final long C5 = C4 * 60L;
-    static final long C6 = C5 * 24L;
 
-    static final long MAX = Long.MAX_VALUE;
-
-    public abstract String getSymbol();
     /**
      * Scale d by m, checking for overflow.
      * This has a short name to make above code more readable.
@@ -187,6 +189,7 @@ public enum UnitOfTime {
         return d * m;
     }
 
+    public abstract String getSymbol();
     /**
      * Convert the given time duration in the given unit to this
      * unit.  Conversions from finer to coarser granularities

@@ -14,13 +14,11 @@ import java.util.ResourceBundle;
  */
 public class ResourceHolder {
 
+    private static final Locale LOCALE;
+    
     public final ResourceBundle ressourceBundle;
 
-    public ResourceHolder(String name) {
-        ressourceBundle = ResourceBundle.getBundle(name, locale);
-    }
 
-    private static final Locale locale;
     static {
         Locale def = Locale.getDefault();
         Locale loc = Locale.getDefault();
@@ -36,13 +34,16 @@ public class ResourceHolder {
         }
         Locale.setDefault(loc);
         Locale.setDefault(def);
-        locale = loc;
+        LOCALE = loc;
     }
 
+    public ResourceHolder(String name) {
+        ressourceBundle = ResourceBundle.getBundle(name, LOCALE);
+    }
     public String lookup(String key, Object... o) {
         String lookup = getString(key);
         if (o != null && o.length > 0) {
-            MessageFormat mf = new MessageFormat(lookup, locale);
+            MessageFormat mf = new MessageFormat(lookup, LOCALE);
             return mf.format(o);
         } else {
             return lookup;

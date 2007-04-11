@@ -12,13 +12,11 @@ import java.util.ArrayList;
  */
 public class Tabular {
 
-    private char separator = '*';
+    //private char separator = '*';
 
     private final ArrayList<ArrayList<String>> columns = new ArrayList<ArrayList<String>>();
 
-    private int currentRow = 0;
-
-    private int currentColumn = 0;
+    private int currentRow ;
 
     public void addRow(String... strs) {
         if (strs == null) {
