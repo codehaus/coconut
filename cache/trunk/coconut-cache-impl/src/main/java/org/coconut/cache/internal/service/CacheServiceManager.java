@@ -15,8 +15,8 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.event.DefaultCacheEventService;
 import org.coconut.cache.internal.service.eviction.DefaultCacheEvictionService;
 import org.coconut.cache.internal.service.eviction.InternalCacheEvictionService;
-import org.coconut.cache.internal.service.expiration.AbstractCacheExpirationService;
-import org.coconut.cache.internal.service.expiration.InternalCacheExpirationUtils;
+import org.coconut.cache.internal.service.expiration.AbstractExpirationService;
+import org.coconut.cache.internal.service.expiration.InternalExpirationUtils;
 import org.coconut.cache.internal.service.joinpoint.NoOpAfterCacheOperation;
 import org.coconut.cache.service.event.CacheEventConfiguration;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
@@ -29,7 +29,7 @@ import org.coconut.management.ManagedGroup;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class CacheServiceManager<K, V> implements InternalCacheServiceManager<K, V> {
+public class CacheServiceManager<K, V> implements OlfInternalCacheServiceManager<K, V> {
 
     private static final int RUNNING = 1;
 
@@ -59,7 +59,7 @@ public class CacheServiceManager<K, V> implements InternalCacheServiceManager<K,
         container.registerComponentInstance(cache);
         container.registerComponentInstance(conf);
         container.registerComponentInstance(conf.getClock());
-        for (AbstractCacheServiceConfiguration c : conf.getServices()) {
+        for (AbstractCacheServiceConfiguration c : conf.getConfigurations()) {
             container.registerComponentInstance(c);
         }
         this.conf = conf;
@@ -88,12 +88,12 @@ public class CacheServiceManager<K, V> implements InternalCacheServiceManager<K,
      */
     public <T> T getAsCacheService(Class<T> clazz) {
         if (DefaultCacheEventService.class.isAssignableFrom(clazz)) {
-            if (conf.getServiceConfiguration(CacheEventConfiguration.class) == null) {
+            if (conf.getConfiguration(CacheEventConfiguration.class) == null) {
                 return (T) new NoOpAfterCacheOperation();
             }
         }
         if (InternalCacheEvictionService.class.isAssignableFrom(clazz)) {
-            if (conf.getServiceConfiguration(CacheEvictionConfiguration.class) == null) {
+            if (conf.getConfiguration(CacheEvictionConfiguration.class) == null) {
                 T t = (T) new DefaultCacheEvictionService(
                         new CacheEvictionConfiguration());
                 container.unregisterComponent(DefaultCacheEvictionService.class);
@@ -101,9 +101,9 @@ public class CacheServiceManager<K, V> implements InternalCacheServiceManager<K,
                 return t;
             }
         }
-        if (AbstractCacheExpirationService.class.isAssignableFrom(clazz)) {
-            if (conf.getServiceConfiguration(CacheExpirationConfiguration.class) == null) {
-                return (T) InternalCacheExpirationUtils.DUMMY;
+        if (AbstractExpirationService.class.isAssignableFrom(clazz)) {
+            if (conf.getConfiguration(CacheExpirationConfiguration.class) == null) {
+                return (T) InternalExpirationUtils.DUMMY;
             }
         }
         T t = (T) container.getComponentInstanceOfType(clazz);
@@ -184,10 +184,10 @@ public class CacheServiceManager<K, V> implements InternalCacheServiceManager<K,
 
     private void shutdownAll() {
         for (Object service : instanciated.values()) {
-            if (service instanceof InternalCacheService) {
+            if (service instanceof OldInternalCacheService) {
 
             }
-            InternalCacheService sr = (InternalCacheService) service;
+            OldInternalCacheService sr = (OldInternalCacheService) service;
             try {
                 // service.shutdown(sr);
             } catch (Exception e) {

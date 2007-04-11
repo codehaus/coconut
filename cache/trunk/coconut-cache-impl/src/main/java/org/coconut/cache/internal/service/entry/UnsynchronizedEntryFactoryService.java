@@ -4,7 +4,7 @@
 package org.coconut.cache.internal.service.entry;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.expiration.AbstractCacheExpirationService;
+import org.coconut.cache.internal.service.expiration.AbstractExpirationService;
 import org.coconut.core.AttributeMap;
 
 /**
@@ -14,10 +14,10 @@ import org.coconut.core.AttributeMap;
 public class UnsynchronizedEntryFactoryService<K, V> extends
         AbstractCacheEntryFactoryService<K, V> {
 
-    private AbstractCacheExpirationService<K, V> expirationService;
+    private AbstractExpirationService<K, V> expirationService;
 
     UnsynchronizedEntryFactoryService(
-            AbstractCacheExpirationService<K, V> expirationService
+            AbstractExpirationService<K, V> expirationService
 
     ) {
         this.expirationService = expirationService;
@@ -31,7 +31,7 @@ public class UnsynchronizedEntryFactoryService<K, V> extends
     public AbstractCacheEntry<K, V> createEntry(K key, V value, AttributeMap attributes,
             AbstractCacheEntry<K, V> existing) {
         AbstractCacheEntry newEntry = null;
-        long expirationTime = expirationService.getExpirationTime(key, value, attributes);
+        long expirationTime = expirationService.innerGetExpirationTime(key, value, attributes);
         // TODO Auto-generated method stub
         if (existing != null) {
             newEntry.setPolicyIndex(existing.getPolicyIndex());

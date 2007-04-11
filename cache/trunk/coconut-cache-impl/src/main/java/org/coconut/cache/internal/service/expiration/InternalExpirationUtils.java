@@ -16,12 +16,18 @@ import org.coconut.filter.Filter;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class InternalCacheExpirationUtils {
+public class InternalExpirationUtils {
 
-    public static final InternalCacheExpirationService DUMMY = new NoCacheExpirationService();
+    public static final InternalExpirationService DUMMY = new NoCacheExpirationService();
 
-    public static final class NoCacheExpirationService<K, V> extends
-            AbstractCacheExpirationService<K, V> {
+    static <K, V> CacheExpirationService<K, V> wrap(
+            CacheExpirationService<K, V> service) {
+        return new DelegatedCacheExpirationService<K, V>(service);
+    }
+
+    static final class NoCacheExpirationService<K, V> implements
+            InternalExpirationService<K, V> {
+
         /**
          * @see org.coconut.cache.service.expiration.CacheExpirationService#getDefaultTimeout(java.util.concurrent.TimeUnit)
          */
@@ -30,25 +36,18 @@ public class InternalCacheExpirationUtils {
         }
 
         /**
-         * @see org.coconut.cache.service.expiration.CacheExpirationService#getExpirationFilter()
-         */
-        public Filter<CacheEntry<K, V>> getExpirationFilter() {
-            return null;
-        }
-
-        /**
          * @see org.coconut.cache.internal.service.expiration.InternalCacheExpirationService#getExpirationTime(java.lang.Object,
          *      java.lang.Object,
          *      org.coconut.cache.service.loading.AttributeMap)
          */
-        public long getExpirationTime(K key, V value, AttributeMap attributes) {
+        public long innerGetExpirationTime(K key, V value, AttributeMap attributes) {
             return CacheExpirationService.NEVER_EXPIRE;
         }
 
         /**
          * @see org.coconut.cache.internal.service.expiration.InternalCacheExpirationService#isExpired(org.coconut.cache.CacheEntry)
          */
-        public boolean isExpired(CacheEntry<K, V> entry) {
+        public boolean innerIsExpired(CacheEntry<K, V> entry) {
             return false;
         }
 
@@ -56,7 +55,7 @@ public class InternalCacheExpirationUtils {
          * @see org.coconut.cache.service.expiration.CacheExpirationService#put(java.lang.Object,
          *      java.lang.Object, long, java.util.concurrent.TimeUnit)
          */
-        public V put(K key, V value, long expirationTime, TimeUnit unit) {
+        public V put(K key, V value, long expirationTime) {
             throw new UnsupportedOperationException();
         }
 
@@ -64,7 +63,7 @@ public class InternalCacheExpirationUtils {
          * @see org.coconut.cache.service.expiration.CacheExpirationService#putAll(java.util.Map,
          *      long, java.util.concurrent.TimeUnit)
          */
-        public void putAll(Map<? extends K, ? extends V> t, long timeout, TimeUnit unit) {
+        public void putAll(Map<? extends K, ? extends V> t, long timeout) {
             throw new UnsupportedOperationException();
         }
 

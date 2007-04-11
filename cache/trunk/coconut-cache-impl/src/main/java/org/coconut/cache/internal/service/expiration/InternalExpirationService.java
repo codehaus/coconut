@@ -10,7 +10,7 @@ import org.coconut.core.AttributeMap;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public interface InternalCacheExpirationService<K, V> {
-    boolean isExpired(CacheEntry<K, V> entry);
-    long getExpirationTime(K key, V value, AttributeMap attributes);
+public interface InternalExpirationService<K, V> {
+    boolean innerIsExpired(CacheEntry<K, V> entry);
+    long innerGetExpirationTime(K key, V value, AttributeMap attributes);
 }

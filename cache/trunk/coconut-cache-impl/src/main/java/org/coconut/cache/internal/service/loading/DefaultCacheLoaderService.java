@@ -9,7 +9,7 @@ import java.util.concurrent.FutureTask;
 
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
-import org.coconut.cache.internal.service.expiration.AbstractCacheExpirationService;
+import org.coconut.cache.internal.service.expiration.AbstractExpirationService;
 import org.coconut.cache.internal.service.threading.InternalCacheThreadingService;
 import org.coconut.cache.internal.service.util.ExtendableFutureTask;
 import org.coconut.cache.internal.spi.CacheHelper;
@@ -33,7 +33,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
 
     private final CacheExceptionHandler<K, V> errorHandler;
 
-    private final AbstractCacheExpirationService<K, V> expirationService;
+    private final AbstractExpirationService<K, V> expirationService;
 
     private final IsValidEntry isValid = new IsValidEntry();
 
@@ -58,7 +58,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
             final CacheExceptionHandler<K, V> errorHandler,
             final CacheLoader<? super K, ? extends V> loader,
             final InternalCacheThreadingService threadManager,
-            AbstractCacheExpirationService<K, V> expirationService,
+            AbstractExpirationService<K, V> expirationService,
             final CacheHelper<K, V> cache) {
         super(attributeFactory, cache);
         this.clock = clock;
@@ -167,7 +167,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
          * @see org.coconut.filter.Filter#accept(java.lang.Object)
          */
         public boolean accept(CacheEntry element) {
-            return element == null ? false : !expirationService.isExpired(element);
+            return element == null ? false : !expirationService.innerIsExpired(element);
         }
 
     }

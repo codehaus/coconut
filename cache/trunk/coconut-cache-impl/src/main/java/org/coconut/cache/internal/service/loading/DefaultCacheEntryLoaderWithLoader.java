@@ -4,9 +4,9 @@
 package org.coconut.cache.internal.service.loading;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.internal.service.loading.BulkCacheLoader.LoadRequest;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.loading.CacheLoader;
+import org.coconut.cache.service.loading.LoadRequest;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.EventProcessor;
 

@@ -12,12 +12,13 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.InternalCacheService;
-import org.coconut.cache.internal.service.InternalCacheServiceManager;
+import org.coconut.cache.internal.service.OldInternalCacheService;
+import org.coconut.cache.internal.service.OlfInternalCacheServiceManager;
 import org.coconut.cache.internal.service.joinpoint.InternalCacheOperation;
 import org.coconut.cache.internal.util.Resources;
 import org.coconut.cache.service.statistics.CacheHitStat;
 import org.coconut.cache.service.statistics.CacheStatistics;
+import org.coconut.cache.spi.AbstractCacheService;
 import org.coconut.core.Clock;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.annotation.ManagedAttribute;
@@ -36,8 +37,8 @@ import org.coconut.management.util.AtomicDouble;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public final class DefaultCacheStatisticsService<K, V> implements
-        InternalCacheOperation<K, V>, InternalCacheService {
+public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheService
+        implements InternalCacheOperation<K, V>, OldInternalCacheService {
 
     // number of loads, loaded elements, number of queries,
     // number of added, number of new elements
@@ -129,8 +130,9 @@ public final class DefaultCacheStatisticsService<K, V> implements
 
     private final LongSamplingCounter entryRemoveTime;
 
-    public DefaultCacheStatisticsService(InternalCacheServiceManager manager,
+    public DefaultCacheStatisticsService(OlfInternalCacheServiceManager manager,
             CacheConfiguration<K, V> conf) {
+        super("statistics");
         Clock c = Clock.DEFAULT_CLOCK;
         // cache counters
 
@@ -337,8 +339,8 @@ public final class DefaultCacheStatisticsService<K, V> implements
     }
 
     public CacheHitStat getHitStat() {
-        return CacheStatistics.newImmutableHitStat(entryGetHitCount.get(), entryGetMissCount
-                .get());
+        return CacheStatistics.newImmutableHitStat(entryGetHitCount.get(),
+                entryGetMissCount.get());
     }
 
     public Collection<Object> getMetrics() {
@@ -461,7 +463,7 @@ public final class DefaultCacheStatisticsService<K, V> implements
     public void afterPut(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries,
             CacheEntry<K, V> oldEntry, CacheEntry<K, V> newEntry) {
-        // TODO Auto-generated method stub
+    // TODO Auto-generated method stub
 
     }
 
@@ -474,7 +476,7 @@ public final class DefaultCacheStatisticsService<K, V> implements
             Collection<? extends CacheEntry<K, V>> evictedEntries,
             Collection<? extends CacheEntry<K, V>> prev,
             Collection<? extends CacheEntry> added) {
-        // TODO Auto-generated method stub
+    // TODO Auto-generated method stub
 
     }
 
@@ -484,7 +486,7 @@ public final class DefaultCacheStatisticsService<K, V> implements
      */
     public void afterTrimToSize(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries) {
-        // TODO Auto-generated method stub
+    // TODO Auto-generated method stub
 
     }
 

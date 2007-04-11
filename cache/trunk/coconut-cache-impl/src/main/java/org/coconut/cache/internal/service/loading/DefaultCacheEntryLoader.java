@@ -5,6 +5,7 @@ package org.coconut.cache.internal.service.loading;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.internal.service.util.ExtendableFutureTask;
+import org.coconut.cache.service.loading.LoadRequest;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.EventProcessor;
 
@@ -20,14 +21,14 @@ public class DefaultCacheEntryLoader<K, V> extends ExtendableFutureTask<V> imple
 
     private final K key;
 
-    private final EventProcessor<? super BulkCacheLoader.LoadRequest<K, V>> req;
+    private final EventProcessor<? super LoadRequest<K, V>> req;
 
     /**
      * @param loader
      * @param key
      * @param callback
      */
-    DefaultCacheEntryLoader(EventProcessor<? super BulkCacheLoader.LoadRequest<K, V>> eh,
+    DefaultCacheEntryLoader(EventProcessor<? super LoadRequest<K, V>> eh,
             Cache<K, V> cache, final K key, AttributeMap attributes) {
         if (key == null) {
             throw new NullPointerException("key is null");

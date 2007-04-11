@@ -9,16 +9,17 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
-import org.coconut.cache.internal.service.InternalCacheService;
-import org.coconut.cache.internal.service.InternalCacheServiceManager;
+import org.coconut.cache.internal.service.OldInternalCacheService;
+import org.coconut.cache.internal.service.OlfInternalCacheServiceManager;
+import org.coconut.cache.spi.AbstractCacheService;
 import org.coconut.cache.spi.XmlConfigurator;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class DefaultCacheThreadService<K, V> implements Executor,
-        InternalCacheService, InternalCacheThreadingService {
+public class DefaultCacheThreadService<K, V> extends AbstractCacheService implements
+        Executor, OldInternalCacheService, InternalCacheThreadingService {
 
     private final Executor e;
 
@@ -28,8 +29,9 @@ public class DefaultCacheThreadService<K, V> implements Executor,
      * @param manager
      * @param conf
      */
-    public DefaultCacheThreadService(InternalCacheServiceManager manager,
+    public DefaultCacheThreadService(OlfInternalCacheServiceManager manager,
             CacheConfiguration<K, V> conf) {
+        super("threading");
         this.e = conf.serviceThreading().getExecutor();
         this.shutdownOnExit = conf.serviceThreading().getShutdownExecutorService();
         String s = (String) conf.getProperty(XmlConfigurator.CACHE_INSTANCE_TYPE);
@@ -61,8 +63,7 @@ public class DefaultCacheThreadService<K, V> implements Executor,
                                         .awaitTermination(Long.MAX_VALUE,
                                                 TimeUnit.NANOSECONDS);
                             }
-                        } catch (InterruptedException ignore) {
-                        }
+                        } catch (InterruptedException ignore) {}
                     }
                 };
                 callback.execute(r);
@@ -97,7 +98,7 @@ public class DefaultCacheThreadService<K, V> implements Executor,
      * @see org.coconut.cache.internal.service.CacheServiceLifecycle#doStart()
      */
     public void doStart() {
-        //ignore
+    // ignore
     }
 
     /**

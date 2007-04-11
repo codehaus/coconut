@@ -16,13 +16,13 @@ import net.jcip.annotations.NotThreadSafe;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.CacheServiceManager;
-import org.coconut.cache.internal.service.InternalCacheServiceManager;
+import org.coconut.cache.internal.service.OlfInternalCacheServiceManager;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
 import org.coconut.cache.internal.service.entry.EntryMap;
 import org.coconut.cache.internal.service.event.DefaultCacheEventService;
 import org.coconut.cache.internal.service.eviction.InternalCacheEvictionService;
-import org.coconut.cache.internal.service.expiration.InternalCacheExpirationService;
+import org.coconut.cache.internal.service.expiration.InternalExpirationService;
 import org.coconut.cache.internal.service.joinpoint.AfterCacheOperation;
 import org.coconut.cache.internal.service.joinpoint.InternalCacheOperation;
 import org.coconut.cache.internal.service.loading.InternalCacheLoadingService;
@@ -32,7 +32,7 @@ import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
-import org.coconut.cache.spi.annotations.CacheServiceSupport;
+import org.coconut.cache.spi.CacheServiceSupport;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.AttributeMaps.DefaultAttributeMap;
 
@@ -55,7 +55,7 @@ import org.coconut.core.AttributeMaps.DefaultAttributeMap;
 public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
     private final InternalCacheEvictionService<AbstractCacheEntry<K, V>> evictionService;
 
-    private final InternalCacheExpirationService<K, V> expiration;
+    private final InternalExpirationService<K, V> expiration;
 
     public final InternalCacheLoadingService<K, V> loadingService;
 
@@ -67,7 +67,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
 
     private AbstractCacheEntryFactoryService<K, V> entryFactory;
 
-    private final InternalCacheServiceManager<K, V> serviceManager;
+    private final OlfInternalCacheServiceManager<K, V> serviceManager;
 
     @SuppressWarnings("unchecked")
     public UnsynchronizedCache() {
@@ -79,7 +79,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         super(conf);
         serviceManager = new CacheServiceManager<K, V>(this, conf);
         Defaults.initializeUnsynchronizedCache(serviceManager);
-        expiration = serviceManager.getAsCacheService(InternalCacheExpirationService.class);
+        expiration = serviceManager.getAsCacheService(InternalExpirationService.class);
         loadingService = serviceManager.getAsCacheService(InternalCacheLoadingService.class);
         evictionService = serviceManager.getAsCacheService(InternalCacheEvictionService.class);
         notifier = serviceManager.getAsCacheService(DefaultCacheEventService.class);
@@ -140,7 +140,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
                     .hasNext();) {
                 AbstractCacheEntry<K, V> m = iterator.next();
                 loadingService.reloadIfNeeded(m);
-                if (expiration.isExpired(m)) {
+                if (expiration.innerIsExpired(m)) {
                     expired.add(m);
                     evictionService.remove(m.getPolicyIndex());
                     iterator.remove();
@@ -276,7 +276,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
                     trimmed = trim();
                 }
             }
-        } else if (expiration.isExpired(prev)) {
+        } else if (expiration.innerIsExpired(prev)) {
             isExpired = true;
             AttributeMap attributes = new DefaultAttributeMap();
             V newValue = loadingService.loadBlocking(key, attributes);

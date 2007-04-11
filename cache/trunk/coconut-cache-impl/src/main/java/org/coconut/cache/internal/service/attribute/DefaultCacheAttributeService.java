@@ -3,8 +3,8 @@
  */
 package org.coconut.cache.internal.service.attribute;
 
-import org.coconut.cache.internal.DefaultAttributeMap;
 import org.coconut.core.AttributeMap;
+import org.coconut.core.AttributeMaps;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -13,11 +13,11 @@ import org.coconut.core.AttributeMap;
 public class DefaultCacheAttributeService implements InternalCacheAttributeService {
 
     public AttributeMap createMap() {
-        return new DefaultAttributeMap();
+        return new AttributeMaps.DefaultAttributeMap();
     }
 
     public AttributeMap createMap(AttributeMap fromUser) {
-        return new DefaultAttributeMap(fromUser);
+        return new AttributeMaps.DefaultAttributeMap(fromUser);
     }
 
 }

@@ -12,7 +12,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.service.event.CacheEntryEvent;
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.core.EventProcessor;
-import org.coconut.core.util.EventUtils;
+import org.coconut.core.EventUtils;
 import org.coconut.test.MockTestCase;
 
 @SuppressWarnings("unused")

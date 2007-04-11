@@ -15,7 +15,7 @@ import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsServi
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.management.CacheMXBean;
 import org.coconut.cache.service.management.CacheManagementService;
-import org.coconut.cache.spi.annotations.CacheServiceSupport;
+import org.coconut.cache.spi.CacheServiceSupport;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
