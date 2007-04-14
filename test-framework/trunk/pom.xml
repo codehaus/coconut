@@ -11,28 +11,34 @@
   <name>Coconut Test Framework</name>
   <dependencies>
     <dependency>
-       <groupId>jmock</groupId>
-       <artifactId>jmock-cglib</artifactId>
-       <version>1.1.0</version>
+      <groupId>jmock</groupId>
+      <artifactId>jmock-cglib</artifactId>
+      <version>1.1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.coconut.test</groupId>
+      <artifactId>hamcrest-api</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.coconut.test</groupId>
+      <artifactId>hamcrest-library</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.coconut.test</groupId>
+      <artifactId>jmock</artifactId>
+      <version>2.0.0-RC1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.coconut.test</groupId>
+      <artifactId>jmock-junit4</artifactId>
+      <version>2.0.0-RC1</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.1</version>
     </dependency>
-    <dependency>
-	  <groupId>org.apache.maven.surefire</groupId>
-      <artifactId>surefire-junit4</artifactId>
-      <version>2.3-SNAPSHOT</version>
-      </dependency>
   </dependencies>
-  <!--
-  <repositories>
-    <repository>
-      <id>coconut-backup-site</id>
-      <name>coconut backup site</name>
-      <url>http://www.it.edu/people/kav/maven/</url>
-    </repository>
-  </repositories>
-  -->
 </project>
