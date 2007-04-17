@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.coconut.cache.test</groupId>
+    <artifactId>coconut-cache-test-adapter</artifactId>
+    <version>1.0</version>
+  </parent>
+
+  <artifactId>coconut-cache-test-adapter-oscache</artifactId>
+  <name>Coconut Cache Test Adapter OSCache</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.coconut.cache.3rdparty</groupId>
+      <artifactId>oscache</artifactId>
+      <version>2.3.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.coconut.cache.test</groupId>
+      <artifactId>coconut-cache-test-adapter-api</artifactId>
+      <version>1.0</version>
+    </dependency>
+  </dependencies>
+</project>
