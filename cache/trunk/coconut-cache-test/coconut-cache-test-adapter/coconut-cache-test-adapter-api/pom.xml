@@ -6,10 +6,6 @@
     <artifactId>coconut-cache-test-adapter</artifactId>
     <version>1.0</version>
   </parent>
-
   <artifactId>coconut-cache-test-adapter-api</artifactId>
   <name>Coconut Cache Test Adapter Api</name>
-
-  <dependencies>
-  </dependencies>
 </project>

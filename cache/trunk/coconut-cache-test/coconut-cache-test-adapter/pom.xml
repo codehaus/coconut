@@ -21,6 +21,7 @@
   </dependencies>
   <modules>
     <module>coconut-cache-test-adapter-api</module>
+    <module>coconut-cache-test-adapter-all</module>
     <module>coconut-cache-test-adapter-ehcache</module>
     <module>coconut-cache-test-adapter-jbosscache</module>
     <module>coconut-cache-test-adapter-jcs</module>
