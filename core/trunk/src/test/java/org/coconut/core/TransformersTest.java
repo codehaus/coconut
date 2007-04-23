@@ -3,13 +3,14 @@
  */
 package org.coconut.core;
 
+import static org.coconut.core.Transformers.passThroughTransformer;
+import static org.coconut.core.Transformers.t;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import java.util.Arrays;
 
-import org.coconut.core.Transformer;
-import org.coconut.test.MockTestCase;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.coconut.core.Transformers.*;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

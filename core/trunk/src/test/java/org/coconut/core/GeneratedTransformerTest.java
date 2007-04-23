@@ -7,10 +7,7 @@ package org.coconut.core;
 import static org.coconut.core.Transformers.transform;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import junit.framework.JUnit4TestAdapter;
 
-import org.coconut.core.Transformer;
-import org.coconut.core.Transformers;
 import org.coconut.core.Transformers.DynamicTransformer;
 import org.junit.Test;
 
@@ -138,11 +135,6 @@ public class GeneratedTransformerTest {
     private static <T> DynamicTransformer<GeneratedTransformerMock, T> t(String method,
             Object... args) {
         return transform(GeneratedTransformerMock.class, method, args);
-    }
-
-    public static junit.framework.Test suite() {
-        System.out.println("suite");
-        return new JUnit4TestAdapter(GeneratedTransformerTest.class);
     }
 
     public static void main(String[] args) {

@@ -10,8 +10,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.coconut.filter.FileFilters.FileExtensionFilter;
 import org.junit.Test;
 
@@ -92,7 +90,4 @@ public class FileFilters_ExtensionTest  {
         FileExtensionFilter.EXT_JAVA.accept(null);
     }
 
-    public static junit.framework.Test suite() {
-        return new JUnit4TestAdapter(FileFilters_ExtensionTest.class);
-    }
 }

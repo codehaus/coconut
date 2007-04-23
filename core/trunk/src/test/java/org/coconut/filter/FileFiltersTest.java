@@ -11,8 +11,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.coconut.filter.FileFilters.FileCanReadFilter;
 import org.coconut.filter.FileFilters.FileCanWriteFilter;
 import org.coconut.filter.FileFilters.FileExistsFilter;
@@ -96,7 +94,4 @@ public class FileFiltersTest {
         filter.toString();
     }
 
-    public static junit.framework.Test suite() {
-        return new JUnit4TestAdapter(FileFiltersTest.class);
-    }
 }

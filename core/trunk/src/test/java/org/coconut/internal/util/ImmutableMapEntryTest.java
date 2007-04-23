@@ -10,8 +10,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.junit.Test;
 
 /**

@@ -3,13 +3,13 @@
  */
 package org.coconut.internal.util;
 
-import java.util.concurrent.CountDownLatch;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.*;
 import org.junit.Test;
 
 /**

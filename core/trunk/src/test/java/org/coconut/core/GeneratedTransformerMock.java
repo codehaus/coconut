@@ -6,8 +6,6 @@ package org.coconut.core;
 
 import java.io.IOException;
 
-import org.coconut.core.Transformer;
-
 public class GeneratedTransformerMock implements
         GeneratedTransformerMockInterface, Transformer<String, Long> {
     public String method() {

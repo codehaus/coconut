@@ -9,8 +9,6 @@ import static org.junit.Assert.assertNull;
 
 import java.util.Random;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.junit.Test;
 /**
  * Test of PolicyStack.
@@ -20,10 +18,6 @@ import org.junit.Test;
 public class IndexedStackTest  {
 
     private final Random rnd = new Random();
-
-    public static junit.framework.Test suite() {
-        return new JUnit4TestAdapter(IndexedStackTest.class);
-    }
 
     @Test
     public void testAdd() {

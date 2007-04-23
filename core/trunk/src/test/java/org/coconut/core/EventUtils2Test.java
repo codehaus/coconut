@@ -4,16 +4,12 @@
 
 package org.coconut.core;
 
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.io.PrintStream;
 import java.util.Queue;
 
-import org.coconut.core.EventProcessor;
-import org.coconut.core.EventUtils;
-import org.coconut.core.Offerable;
 import org.coconut.core.LogsTest.InnerPrintStream;
 import org.junit.Test;
 

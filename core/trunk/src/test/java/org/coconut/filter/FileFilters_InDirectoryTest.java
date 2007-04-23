@@ -11,8 +11,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.coconut.filter.FileFilters.FileInDirectoryFilter;
 import org.junit.Test;
 
@@ -128,9 +126,5 @@ public class FileFilters_InDirectoryTest {
             f.delete();
         }
     }
-    
-    
-    public static junit.framework.Test suite() {
-        return new JUnit4TestAdapter(FileFilters_InDirectoryTest.class);
-    }
+
 }

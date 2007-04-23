@@ -3,57 +3,128 @@
  */
 package org.coconut.filter.matcher;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.coconut.filter.Filter;
-import org.coconut.test.MockTestCase;
-import org.jmock.Mock;
+import org.coconut.filter.Filters;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.integration.junit4.JUnit4Mockery;
+import org.junit.Test;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class AbstraktFilterMatcherTest extends MockTestCase {
+public class AbstraktFilterMatcherTest {
 
-    public void testMock() throws Exception {
-        Mock m = mock(Map.class);
-        DummyMatcher cm = new DummyMatcher((Map) m.proxy());
-        delegateTest(cm, m, "size", "isEmpty", "containsKey", "containsValue", "putAll",
-                "clear", "keySet", "values", "entrySet", "equals", "hashCode", "toString");
-        Filter f = mockDummy(Filter.class);
-        Filter f2 = mockDummy(Filter.class);
+	static final Map m1 = Collections.EMPTY_MAP;
 
-        m.expects(once()).method("get").with(eq(1)).will(returnValue(f));
-        m.expects(once()).method("put").with(eq(2), eq(f2)).will(returnValue(f));
-        m.expects(once()).method("remove").with(eq(3)).will(returnValue(f));
-        assertEquals(f, cm.get(1));
-        assertEquals(f, cm.put(2, f2));
-        assertEquals(f, cm.remove(3));
-        assertEquals(m.proxy(), cm.getMap());
-    }
+	static final Set s1 = Collections.EMPTY_SET;
 
-    static class DummyMatcher<K, V> extends AbstractFilterMatcher<K, V> {
-        DummyMatcher(Map m) {
-            super(m);
-        }
+	static final List l1 = Collections.EMPTY_LIST;
 
-        /**
+	Mockery context = new JUnit4Mockery();
+
+	@Test
+	public void testAbstraktFilterMatcher() throws Exception {
+		final Map m = context.mock(Map.class);
+
+		final AbstractFilterMatcher<Integer, Filter> afm = new DummyMatcher<Integer, Filter>(
+				m);
+		context.checking(new Expectations() {
+			{
+				one(m).clear();
+
+				one(m).containsKey(1);
+				will(returnValue(true));
+
+				one(m).containsValue("A");
+				will(returnValue(true));
+
+				one(m).entrySet();
+				will(returnValue(s1));
+
+				one(m).get(2);
+				will(returnValue(Filters.TRUE));
+
+				one(m).isEmpty();
+				will(returnValue(true));
+
+				one(m).keySet();
+				will(returnValue(s1));
+
+				one(m).put(3, Filters.IS_NUMBER);
+				will(returnValue(Filters.TRUE));
+
+				one(m).putAll(Collections.EMPTY_MAP);
+
+				one(m).remove(4);
+				will(returnValue(Filters.FALSE));
+
+				one(m).size();
+				will(returnValue(12));
+
+				one(m).values();
+				will(returnValue(l1));
+			}
+		});
+		afm.clear();
+		assertTrue(afm.containsKey(1));
+		assertTrue(afm.containsValue("A"));
+		assertSame(s1, afm.entrySet());
+		assertEquals(Filters.TRUE, afm.get(2));
+		assertEquals(m, afm.getMap());
+		assertTrue(afm.isEmpty());
+		assertSame(s1, afm.keySet());
+		assertSame(Filters.TRUE, afm.put(3, Filters.IS_NUMBER));
+		afm.putAll(Collections.EMPTY_MAP);
+		assertSame(Filters.FALSE, afm.remove(4));
+		assertEquals(12, afm.size());
+		assertSame(l1, afm.values());
+		
+		assertSame(m, afm.getMap());
+	}
+
+	@Test
+	public void testEqualsHashCodeToString() {
+		HashMap hm = new HashMap();
+		hm.put(1111, "foofoo");
+		DummyMatcher dm = new DummyMatcher(hm);
+		assertEquals(hm.toString(), dm.toString());
+		assertEquals(hm.hashCode(), dm.hashCode());
+		assertTrue(dm.equals(hm));
+		assertFalse(dm.equals(Collections.EMPTY_MAP));
+	}
+
+	static class DummyMatcher<K, V> extends AbstractFilterMatcher<K, V> {
+		DummyMatcher(Map m) {
+			super(m);
+		}
+
+		/**
          * @see org.coconut.filter.matcher.FilterMatcher#match(java.lang.Object)
          */
-        public List<K> match(V object) {
-            throw new UnsupportedOperationException();
-        }
+		public List<K> match(V object) {
+			throw new UnsupportedOperationException();
+		}
 
-        /**
+		/**
          * @see org.coconut.filter.matcher.AbstractFilterMatcher#getMap()
          */
-        @Override
-        protected Map<K, Filter<? super V>> getMap() {
-            return super.getMap();
-        }
-        
-        
-    }
+		@Override
+		protected Map<K, Filter<? super V>> getMap() {
+			return super.getMap();
+		}
+	}
 
 }
