@@ -4,18 +4,11 @@
 
 package org.coconut.cache.service.loading;
 
-import static org.coconut.core.AttributeMaps.createMap;
 import static org.coconut.core.AttributeMaps.EMPTY_MAP;
-import static org.coconut.test.CollectionUtils.M1;
-import static org.coconut.test.CollectionUtils.M2;
-import static org.coconut.test.CollectionUtils.M3;
-import static org.coconut.test.CollectionUtils.asMap;
-import static org.coconut.test.CollectionUtils.newEntry;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 

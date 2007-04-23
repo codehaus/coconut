@@ -3,14 +3,6 @@
  */
 package org.coconut.cache.service.statistics;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
-
-import java.util.Collection;
-
-import org.coconut.cache.CacheConfiguration;
-import org.junit.Before;
 import org.junit.Test;
 
 /**

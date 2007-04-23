@@ -25,10 +25,6 @@ import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.cache.service.statistics.CacheStatisticsConfiguration;
 import org.coconut.cache.service.threading.CacheThreadingConfiguration;
-import org.coconut.core.Log;
-import org.coconut.core.util.Logs;
-import org.coconut.internal.util.LogHelper;
-import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -49,75 +45,73 @@ import org.w3c.dom.Node;
  */
 public class XmlConfigurator {
 
-    /**
+	/**
      * The key for which the type of the cache is specified in
      * CacheConfiguration.getProperty()
      */
-    public static final String CACHE_INSTANCE_TYPE = "org.coconut.cache.type";
+	public static final String CACHE_INSTANCE_TYPE = "org.coconut.cache.type";
 
-    /** The name of cache */
-    public static final String CACHE_NAME_ATTR = "name";
+	/** The name of cache */
+	static final String CACHE_NAME_ATTR = "name";
 
-    /** The root tag for a cache instance */
-    public static final String CACHE_TAG = "cache";
+	/** The root tag for a cache instance */
+	 static final String CACHE_TAG = "cache";
 
-    /** The type of the cache */
-    public static final String CACHE_TYPE_ATTR = "type";
+	/** The type of the cache */
+	 static final String CACHE_TYPE_ATTR = "type";
 
-    /** The root tag */
-    public static final String CONFIG_TAG = "cache-config";
+	/** The root tag */
+	 static final String CONFIG_TAG = "cache-config";
 
-    /** The cache-config->version tag */
-    public static final String CONFIG_VERSION_ATTR = "version";
+	/** The cache-config->version tag */
+	 static final String CONFIG_VERSION_ATTR = "version";
 
-    /** The current version of the XML schema */
-    public static final String CURRENT_VERSION = "0.0.4";
+	/** The current version of the XML schema */
+	public static final String CURRENT_VERSION = "0.0.4";
 
-    private final static XmlConfigurator INSTANCE = new XmlConfigurator();
+	private final static XmlConfigurator INSTANCE = new XmlConfigurator();
 
-    final static CacheConfiguration DEFAULT_CONF = CacheConfiguration.create();
+	private final Map<String, Class<? extends AbstractCacheServiceConfiguration>> services = new HashMap<String, Class<? extends AbstractCacheServiceConfiguration>>();
 
-    private final Map<String, Class<? extends AbstractCacheServiceConfiguration>> services = new HashMap<String, Class<? extends AbstractCacheServiceConfiguration>>();
+	protected void addDefaultConfiguration(String name,
+			Class<? extends AbstractCacheServiceConfiguration> clazz) {
+		if (name == null) {
+			throw new NullPointerException("name is null");
+		} else if (clazz == null) {
+			throw new NullPointerException("clazz is null");
+		}
+		if (services.containsKey(name)) {
+			throw new IllegalArgumentException("Service with name " + name
+					+ " allready specified, with implementation " + services.get(name));
+		}
+		services.put(name, clazz);
+	}
 
-    protected void addDefaultConfiguration(String name,
-            Class<? extends AbstractCacheServiceConfiguration> clazz) {
-        if (name == null) {
-            throw new NullPointerException("name is null");
-        } else if (clazz == null) {
-            throw new NullPointerException("clazz is null");
-        }
-        if (services.containsKey(name)) {
-            throw new IllegalArgumentException("Service with name " + name
-                    + " allready specified, with implementation " + services.get(name));
-        }
-        services.put(name, clazz);
-    }
+	protected void initiateDefaultServices() {
+		addDefaultConfiguration(CacheEventConfiguration.SERVICE_NAME,
+				CacheEventConfiguration.class);
+		addDefaultConfiguration(CacheManagementConfiguration.SERVICE_NAME,
+				CacheManagementConfiguration.class);
+		addDefaultConfiguration(CacheStatisticsConfiguration.SERVICE_NAME,
+				CacheStatisticsConfiguration.class);
+		addDefaultConfiguration(CacheLoadingConfiguration.SERVICE_NAME,
+				CacheLoadingConfiguration.class);
+		addDefaultConfiguration(CacheExpirationConfiguration.SERVICE_NAME,
+				CacheExpirationConfiguration.class);
+		addDefaultConfiguration(CacheThreadingConfiguration.SERVICE_NAME,
+				CacheThreadingConfiguration.class);
+		addDefaultConfiguration(CacheEvictionConfiguration.SERVICE_NAME,
+				CacheEvictionConfiguration.class);
+	}
 
-    protected void initiateDefaultServices() {
-        addDefaultConfiguration(CacheEventConfiguration.SERVICE_NAME,
-                CacheEventConfiguration.class);
-        addDefaultConfiguration(CacheManagementConfiguration.SERVICE_NAME,
-                CacheManagementConfiguration.class);
-        addDefaultConfiguration(CacheStatisticsConfiguration.SERVICE_NAME,
-                CacheStatisticsConfiguration.class);
-        addDefaultConfiguration(CacheLoadingConfiguration.SERVICE_NAME,
-                CacheLoadingConfiguration.class);
-        addDefaultConfiguration(CacheExpirationConfiguration.SERVICE_NAME,
-                CacheExpirationConfiguration.class);
-        addDefaultConfiguration(CacheThreadingConfiguration.SERVICE_NAME,
-                CacheThreadingConfiguration.class);
-        addDefaultConfiguration(CacheEvictionConfiguration.SERVICE_NAME,
-                CacheEvictionConfiguration.class);
-    }
-
-    /**
+	/**
      * Returns the default instance of a XmlConfigurator.
      */
-    public static XmlConfigurator getInstance() {
-        return INSTANCE;
-    }
+	public static XmlConfigurator getInstance() {
+		return INSTANCE;
+	}
 
-    /**
+	/**
      * Reads the XML configuration from the specified InputStream and populates
      * the specified CacheConfiguration.
      * 
@@ -129,19 +123,19 @@ public class XmlConfigurator {
      *             some Exception prevented the CacheConfiguration from being
      *             populated
      */
-    public <K, V> void from(CacheConfiguration<K, V> configuration, InputStream stream)
-            throws Exception {
-        if (configuration == null) {
-            throw new NullPointerException("configuration is null");
-        } else if (stream == null) {
-            throw new NullPointerException("stream is null");
-        }
-        Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(
-                stream);
-        from(configuration, doc);
-    }
+	public <K, V> void from(CacheConfiguration<K, V> configuration, InputStream stream)
+			throws Exception {
+		if (configuration == null) {
+			throw new NullPointerException("configuration is null");
+		} else if (stream == null) {
+			throw new NullPointerException("stream is null");
+		}
+		Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(
+				stream);
+		from(configuration, doc);
+	}
 
-    /**
+	/**
      * Reads the XML configuration from the specified InputStream and returns a
      * new populated CacheConfiguration.
      * 
@@ -152,13 +146,13 @@ public class XmlConfigurator {
      *             some Exception prevented the CacheConfiguration from being
      *             populated
      */
-    public <K, V> CacheConfiguration<K, V> from(InputStream stream) throws Exception {
-        CacheConfiguration<K, V> conf = CacheConfiguration.create();
-        from(conf, stream);
-        return conf;
-    }
+	public <K, V> CacheConfiguration<K, V> from(InputStream stream) throws Exception {
+		CacheConfiguration<K, V> conf = CacheConfiguration.create();
+		from(conf, stream);
+		return conf;
+	}
 
-    /**
+	/**
      * Serializes the specified CacheConfiguration to the specified
      * OutputStream.
      * 
@@ -170,208 +164,79 @@ public class XmlConfigurator {
      *             some Exception prevented the CacheConfiguration from being
      *             serialized
      */
-    public void to(CacheConfiguration<?, ?> cc, OutputStream stream) throws Exception {
-        if (cc == null) {
-            throw new NullPointerException("cc is null");
-        } else if (stream == null) {
-            throw new NullPointerException("stream is null");
-        }
-        DocumentBuilder builder = DocumentBuilderFactory.newInstance()
-                .newDocumentBuilder();
-        Document doc = builder.newDocument();
-        doc.setDocumentURI("http://www.dr.dk");
+	public void to(CacheConfiguration<?, ?> cc, OutputStream stream) throws Exception {
+		if (cc == null) {
+			throw new NullPointerException("cc is null");
+		} else if (stream == null) {
+			throw new NullPointerException("stream is null");
+		}
+		DocumentBuilder builder = DocumentBuilderFactory.newInstance()
+				.newDocumentBuilder();
+		Document doc = builder.newDocument();
+		doc.setDocumentURI("http://www.dr.dk");
 
-        Element root = doc.createElement(CONFIG_TAG);
-        root.setAttribute(CONFIG_VERSION_ATTR, CURRENT_VERSION);
-        doc.appendChild(root);
+		Element root = doc.createElement(CONFIG_TAG);
+		root.setAttribute(CONFIG_VERSION_ATTR, CURRENT_VERSION);
+		doc.appendChild(root);
 
-        Element cache = doc.createElement(CACHE_TAG);
-        root.appendChild(cache);
+		Element cache = doc.createElement(CACHE_TAG);
+		root.appendChild(cache);
 
-        to(cc, doc, cache);
-        transform(doc, stream);
-    }
+		to(cc, doc, cache);
+		transform(doc, stream);
+	}
 
-    <K, V> void from(CacheConfiguration<K, V> base, Document doc) throws Exception {
-        Element root = doc.getDocumentElement();
-        int length = root.getElementsByTagName(CACHE_TAG).getLength();
-        if (length == 0) {
-            throw new IllegalStateException(
-                    "No cache is defined in the specified document, "
-                            + doc.getDocumentURI());
-        }
-        Node n = root.getElementsByTagName("cache").item(0);
-        from(base, doc, (Element) n);
-    }
+	<K, V> void from(CacheConfiguration<K, V> base, Document doc) throws Exception {
+		Element root = doc.getDocumentElement();
+		int length = root.getElementsByTagName(CACHE_TAG).getLength();
+		if (length == 0) {
+			throw new IllegalStateException(
+					"No cache is defined in the specified document, "
+							+ doc.getDocumentURI());
+		}
+		Node n = root.getElementsByTagName("cache").item(0);
+		from(base, doc, (Element) n);
+	}
 
-    <K, V> void from(CacheConfiguration<K, V> conf, Document doc, Element cache)
-            throws Exception {
-        if (cache.hasAttribute(CACHE_NAME_ATTR)) {
-            conf.setName(cache.getAttribute(CACHE_NAME_ATTR));
-        }
-        if (cache.hasAttribute(CACHE_TYPE_ATTR)) {
-            conf.setProperty(XmlConfigurator.CACHE_INSTANCE_TYPE, cache
-                    .getAttribute(CACHE_TYPE_ATTR));
-        }
-        new ErrorHandlerConfigurator().read(conf, cache);
-        for (Class<? extends AbstractCacheServiceConfiguration> c : services.values()) {
-            AbstractCacheServiceConfiguration acsc = c.newInstance();
-            Element e = (Element) cache.getElementsByTagName(acsc.getServiceName()).item(
-                    0);
-            if (e != null) {
-                conf.addService(acsc);
-                acsc.fromXML(doc, e);
-            }
-        }
-    }
+	<K, V> void from(CacheConfiguration<K, V> conf, Document doc, Element cache)
+			throws Exception {
+		if (cache.hasAttribute(CACHE_NAME_ATTR)) {
+			conf.setName(cache.getAttribute(CACHE_NAME_ATTR));
+		}
+		if (cache.hasAttribute(CACHE_TYPE_ATTR)) {
+			conf.setProperty(XmlConfigurator.CACHE_INSTANCE_TYPE, cache
+					.getAttribute(CACHE_TYPE_ATTR));
+		}
+		for (Class<? extends AbstractCacheServiceConfiguration> c : services.values()) {
+			AbstractCacheServiceConfiguration acsc = c.newInstance();
+			Element e = (Element) cache.getElementsByTagName(acsc.getServiceName()).item(
+					0);
+			if (e != null) {
+				conf.addConfiguration(acsc);
+				acsc.fromXML(doc, e);
+			}
+		}
+	}
 
-    void to(CacheConfiguration<?, ?> cc, Document doc, Element cache) throws Exception {
-        cache.setAttribute(CACHE_NAME_ATTR, cc.getName());
-        if (cc.getProperties().containsKey(XmlConfigurator.CACHE_INSTANCE_TYPE)) {
-            cache.setAttribute(CACHE_TYPE_ATTR, cc.getProperty(CACHE_INSTANCE_TYPE)
-                    .toString());
-        }
-        new ErrorHandlerConfigurator().write(cc, doc, cache);
-        for (AbstractCacheServiceConfiguration p : cc.getServices()) {
-            Element ee = doc.createElement(p.getServiceName());
-            cache.appendChild(ee);
-            p.toXML(doc, ee);
-        }
-    }
+	void to(CacheConfiguration<?, ?> cc, Document doc, Element cache) throws Exception {
+		cache.setAttribute(CACHE_NAME_ATTR, cc.getName());
+		if (cc.getProperties().containsKey(XmlConfigurator.CACHE_INSTANCE_TYPE)) {
+			cache.setAttribute(CACHE_TYPE_ATTR, cc.getProperty(CACHE_INSTANCE_TYPE)
+					.toString());
+		}
+		for (AbstractCacheServiceConfiguration p : cc.getConfigurations()) {
+			Element ee = doc.createElement(p.getServiceName());
+			cache.appendChild(ee);
+			p.toXML(doc, ee);
+		}
+	}
 
-    static void transform(Document doc, OutputStream stream) throws TransformerException {
-        DOMSource domSource = new DOMSource(doc);
-        StreamResult result = new StreamResult(stream);
-        Transformer f = TransformerFactory.newInstance().newTransformer();
-        f.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-        f.setOutputProperty(OutputKeys.INDENT, "yes");
-        f.transform(domSource, result);
-    }
-
-    static class ErrorHandlerConfigurator {
-
-        private CacheConfiguration cc;
-
-        Document doc;
-
-        Element root;
-
-        private Element add(String name) {
-            return add(name, root);
-        }
-
-        private Element add(String name, Element parent) {
-            Element ee = doc.createElement(name);
-            parent.appendChild(ee);
-            return ee;
-        }
-
-        private Element add(String name, Element parent, String text) {
-            Element ee = doc.createElement(name);
-            parent.appendChild(ee);
-            ee.setTextContent(text);
-            return ee;
-        }
-
-        private void addComment(String comment, Node e, Object... o) {
-            String c = Resources.lookup(XmlConfigurator.class, comment, o);
-            Comment eee = doc.createComment(c);
-            e.appendChild(eee);
-        }
-
-        private CacheConfiguration conf() {
-            return cc;
-        }
-
-        private Element getChild(String name) {
-            return getChild(name, root);
-        }
-
-        private Element getChild(String name, Element e) {
-            for (int i = 0; i < e.getChildNodes().getLength(); i++) {
-                if (e.getChildNodes().item(i).getNodeName().equals(name)) {
-                    return (Element) e.getChildNodes().item(i);
-                }
-            }
-            return null;
-        }
-
-        /**
-         * @see org.coconut.cache.spi.XMLSupport.Persister#add(org.coconut.cache.CacheConfiguration,
-         *      org.w3c.dom.Document, org.w3c.dom.Element)
-         */
-        void write(CacheConfiguration cc, Document doc, Element root) throws Exception {
-            this.cc = cc;
-            this.doc = doc;
-            this.root = root;
-            write();
-
-        }
-
-        /**
-         * @see org.coconut.cache.spi.XMLSupport.Persister#read(org.coconut.cache.CacheConfiguration,
-         *      org.w3c.dom.Element)
-         */
-        void read(CacheConfiguration cc, Element root) throws Exception {
-            this.cc = cc;
-            this.root = root;
-            read();
-        }
-
-        public final static String LOG_TYPE_ATRB = "type";
-
-        public final static String LOG_TAG = "log";
-
-        public final static String ERRORHANDLER_TAG = "errorhandler";
-
-        /**
-         * @see org.coconut.cache.spi.xml.AbstractPersister#read()
-         */
-        protected void read() {
-            Element e = getChild(ERRORHANDLER_TAG);
-            if (e != null) {
-                Element log = getChild(LOG_TAG, e);
-                if (log != null) {
-                    String type = log.getAttribute(LOG_TYPE_ATRB);
-                    if (type.equals("jdk")) {
-                        conf().setDefaultLog(Logs.JDK.from(log.getTextContent()));
-                    } else if (type.equals("log4j")) {
-                        conf().setDefaultLog(LogHelper.fromLog4j(log.getTextContent()));
-                    } else {
-                        // commons, this should guaranteed by schema validation
-                        Log l = LogHelper.fromCommons(log.getTextContent());
-                        conf().setDefaultLog(l);
-                    }
-                }
-            }
-        }
-
-        /**
-         * @see org.coconut.cache.spi.XMLSupport.Persister#add(org.coconut.cache.CacheConfiguration,
-         *      org.w3c.dom.Document, org.w3c.dom.Element)
-         */
-        protected void write() {
-            Log log = conf().getDefaultLog();
-            if (log != null) {
-                Element eh = add(ERRORHANDLER_TAG);
-                String name = Logs.getName(log);
-
-                final String logType;
-
-                if (Logs.Log4j.isLog4jLogger(log)) {
-                    logType = "log4j";
-                } else if (Logs.Commons.isCommonsLogger(log)) {
-                    logType = "commons";
-                } else if (Logs.JDK.isJDKLogger(log)) {
-                    logType = "jdk";
-                } else {
-                    addComment("errorHandler.notInstanceLog", eh, log.getClass());
-                    logType = null;
-                }
-                if (logType != null) {
-                    add(LOG_TAG, eh, name).setAttribute(LOG_TYPE_ATRB, logType);
-                }
-            }
-        }
-    }
+	static void transform(Document doc, OutputStream stream) throws TransformerException {
+		DOMSource domSource = new DOMSource(doc);
+		StreamResult result = new StreamResult(stream);
+		Transformer f = TransformerFactory.newInstance().newTransformer();
+		f.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+		f.setOutputProperty(OutputKeys.INDENT, "yes");
+		f.transform(domSource, result);
+	}
 }

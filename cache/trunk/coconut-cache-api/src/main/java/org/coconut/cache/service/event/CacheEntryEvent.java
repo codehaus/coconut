@@ -3,9 +3,6 @@
  */
 package org.coconut.cache.service.event;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-
 import org.coconut.cache.CacheEntry;
 
 /**

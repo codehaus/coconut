@@ -10,12 +10,25 @@ import org.coconut.management.annotation.ManagedAttribute;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public interface CacheEvictionMXBean {
-  
-    void trimToSize(int size);
-    
-    void trimToCapacity(long capacity);
-    
-    /**
+
+	@ManagedAttribute(defaultValue = "Expiration Filter", description = "toString() on the defined expiration filter")
+	String getEvictionFilterAsString();
+
+	/**
+     * Keeps evicting entries until the size of the cache is the specified size.
+     * If the specified size is greater then the current size no action is
+     * taken.
+     * 
+     * @param size
+     *            the size to trim the cache down to
+     * @throws IllegalArgumentException
+     *             if the specified size is negative
+     */
+	void trimToSize(int size);
+
+	void trimToCapacity(long capacity);
+
+	/**
      * Returns the maximum allowed capacity of the cache or
      * {@link Long#MAX_VALUE} if there is no limit.
      * 
@@ -23,21 +36,22 @@ public interface CacheEvictionMXBean {
      *         there is no limit.
      * @see #setMaximumCapacity(long)
      */
-    @ManagedAttribute(defaultValue = "Maximum Capacity", description = "The maximum capacity of the cache")
-    long getMaximumCapacity();
+	@ManagedAttribute(defaultValue = "Maximum Capacity", description = "The maximum capacity of the cache")
+	long getMaximumCapacity();
 
     /**
-     * Returns the maximum allowed size of the cache or
-     * {@link Integer#MAX_VALUE} if there is no limit.
+     * Returns the maximum number of elements that this cache can hold. If the
+     * cache has no upper limit {@link Integer#MAX_VALUE} is returned.
      * 
-     * @return the maximum allowed size of the cache or Integer.MAX_VALUE if
-     *         there is no limit.
+     * @return the maximum number of elements that this cache can hold or
+     *         {@link Integer#MAX_VALUE} if no such limit exist
      * @see #setMaximumSize(int)
+     * @see #getSize
      */
-    @ManagedAttribute(defaultValue = "Maximum Size", description = "The maximum size of the cache")
-    int getMaximumSize();
+	@ManagedAttribute(defaultValue = "Maximum Size", description = "The maximum size of the cache")
+	int getMaximumSize();
 
-    /**
+	/**
      * Sets that maximum capacity of the cache. This feature is only usefull if
      * per element sizing is enabled. In which case the total capacity of the
      * cache is the sum of all the elements size. If the limit is reached the
@@ -54,9 +68,9 @@ public interface CacheEvictionMXBean {
      *             if the cache does not support changing the maximum capacity
      *             at runtime
      */
-    void setMaximumCapacity(long maximumCapacity);
+	void setMaximumCapacity(long maximumCapacity);
 
-    /**
+	/**
      * Sets that maximum number of elements that the cache is allowed to
      * contain. If the limit is reached the cache must evict existing elements
      * before adding new elements.
@@ -77,5 +91,5 @@ public interface CacheEvictionMXBean {
      *             if the cache does not support changing the maximum size at
      *             runtime
      */
-    void setMaximumSize(int maximumSize);
+	void setMaximumSize(int maximumSize);
 }

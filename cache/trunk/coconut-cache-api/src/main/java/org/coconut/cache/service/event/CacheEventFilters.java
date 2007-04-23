@@ -13,7 +13,7 @@ import org.coconut.cache.service.event.CacheEvent.CacheCleared;
 import org.coconut.cache.service.event.CacheEvent.CacheEvicted;
 import org.coconut.cache.service.event.CacheEvent.CacheStatisticsReset;
 import org.coconut.core.Transformer;
-import org.coconut.core.util.Transformers;
+import org.coconut.core.Transformers;
 import org.coconut.filter.CollectionFilters;
 import org.coconut.filter.Filter;
 import org.coconut.filter.Filters;

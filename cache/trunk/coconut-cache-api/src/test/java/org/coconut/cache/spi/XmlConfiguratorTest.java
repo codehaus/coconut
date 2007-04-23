@@ -5,7 +5,6 @@ package org.coconut.cache.spi;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
-import static org.junit.Assert.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,7 +12,7 @@ import java.util.logging.Logger;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.core.Log;
-import org.coconut.core.util.Logs;
+import org.coconut.core.Logs;
 import org.coconut.test.MockTestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +37,7 @@ public class XmlConfiguratorTest {
         String noNamed = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
                 + "<cache-config version=\"" + XmlConfigurator.CURRENT_VERSION + "\">"
                 + "<cache/></cache-config>";
-        assertNotNull(c.from(new ByteArrayInputStream(noNamed.getBytes())).getName());
+        assertNull(c.from(new ByteArrayInputStream(noNamed.getBytes())).getName());
     }
 
     @Test

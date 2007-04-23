@@ -33,12 +33,12 @@ public class CacheEvictionConfigurationTest {
     static CacheEvictionConfiguration rw(CacheEvictionConfiguration conf) throws Exception {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         CacheConfiguration cc = CacheConfiguration.create();
-        cc.addService(conf);
+        cc.addConfiguration(conf);
         XmlConfigurator.getInstance().to(cc, os);
         cc = XmlConfigurator.getInstance().from(
                 new ByteArrayInputStream(os.toByteArray()));
         return (CacheEvictionConfiguration) cc
-                .getServiceConfiguration(CacheEvictionConfiguration.class);
+                .getConfiguration(CacheEvictionConfiguration.class);
     }
     
     @Test(expected = IllegalArgumentException.class)

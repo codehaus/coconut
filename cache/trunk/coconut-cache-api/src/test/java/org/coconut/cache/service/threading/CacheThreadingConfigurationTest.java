@@ -97,12 +97,12 @@ public class CacheThreadingConfigurationTest {
             throws Exception {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         CacheConfiguration cc = CacheConfiguration.create();
-        cc.addService(conf);
+        cc.addConfiguration(conf);
         XmlConfigurator.getInstance().to(cc, os);
         cc = XmlConfigurator.getInstance().from(
                 new ByteArrayInputStream(os.toByteArray()));
         return (CacheThreadingConfiguration) cc
-                .getServiceConfiguration(CacheThreadingConfiguration.class);
+                .getConfiguration(CacheThreadingConfiguration.class);
     }
 
     @Test

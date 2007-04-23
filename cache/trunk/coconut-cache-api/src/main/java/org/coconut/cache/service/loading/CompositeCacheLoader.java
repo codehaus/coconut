@@ -92,11 +92,12 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V>, Serializab
         }
     }
 
+
 //    /**
 //     * {@inheritDoc}
 //     */
-//    public Map<K, V> loadAll(Map<? extends K, AttributeMap> mapsWithAttributes) throws Exception {
-//        final HashMap<K, V> result = new HashMap<K, V>(mapsWithAttributes.size());
+//    public void loadAll(Collection<LoadRequest<K, V>> loadRequests) {
+//        final HashMap<K, V> result = new HashMap<K, V>(loadRequests.size());
 //        Collection<K> ks = new HashSet<K>(mapsWithAttributes.keySet());
 //        for (CacheLoader<K, V> loader : loaders) {
 //            Map<K, V> map = null;
@@ -128,7 +129,6 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V>, Serializab
 //        for (K key : ks) {
 //            result.put(key, noValueFoundForKey(key));
 //        }
-//        return result;
 //    }
 
     /**
@@ -193,4 +193,5 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V>, Serializab
     protected V noValueFoundForKey(K key) throws Exception {
         return null;
     }
+
 }

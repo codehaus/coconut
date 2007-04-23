@@ -192,11 +192,11 @@ public class CacheEventConfigurationTest {
     static CacheEventConfiguration rw(CacheEventConfiguration conf) throws Exception {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         CacheConfiguration cc = CacheConfiguration.create();
-        cc.addService(conf);
+        cc.addConfiguration(conf);
         XmlConfigurator.getInstance().to(cc, os);
         cc = XmlConfigurator.getInstance().from(
                 new ByteArrayInputStream(os.toByteArray()));
         return (CacheEventConfiguration) cc
-                .getServiceConfiguration(CacheEventConfiguration.class);
+                .getConfiguration(CacheEventConfiguration.class);
     }
 }

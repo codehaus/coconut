@@ -16,7 +16,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.expiration.CacheExpirationConfigurationTest.MyFilter2;
 import org.coconut.cache.spi.XmlConfigurator;
 import org.coconut.core.AttributeMap;
@@ -45,12 +44,12 @@ public class CacheLoadingConfigurationTest {
     static CacheLoadingConfiguration rw(CacheLoadingConfiguration conf) throws Exception {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         CacheConfiguration cc = CacheConfiguration.create();
-        cc.addService(conf);
+        cc.addConfiguration(conf);
         XmlConfigurator.getInstance().to(cc, os);
         cc = XmlConfigurator.getInstance().from(
                 new ByteArrayInputStream(os.toByteArray()));
         return (CacheLoadingConfiguration) cc
-                .getServiceConfiguration(CacheLoadingConfiguration.class);
+                .getConfiguration(CacheLoadingConfiguration.class);
     }
 
     @Test

@@ -3,8 +3,8 @@
  */
 package org.coconut.cache.service.threading;
 
+import static org.coconut.cache.spi.XmlUtil2.addComment;
 import static org.coconut.internal.util.XmlUtil.add;
-import static org.coconut.internal.util.XmlUtil.addComment;
 import static org.coconut.internal.util.XmlUtil.getChild;
 import static org.coconut.internal.util.XmlUtil.loadObject;
 import static org.coconut.internal.util.XmlUtil.saveObject;

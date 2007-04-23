@@ -1,10 +1,8 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
 package org.coconut.cache.service.loading;
-
-import java.util.Map;
 
 import org.coconut.core.AttributeMap;
 
@@ -82,10 +80,12 @@ public interface CacheLoader<K, V> {
      * 
      * @param key
      *            the key whose associated value is to be returned.
+     * @param attributes a map of attributes that can be updated by the cache
+     *        loader with additional attributes
      * @return the value to which this key is mapped, or null if no such mapping
      *         exist.
      * @throws Exception
      *             An exception occured while loading or creating the value
      */
-    V load(K key, AttributeMap attributes) throws Exception;
+    V load(K key, AttributeMap attributes) throws Exception; 
 }

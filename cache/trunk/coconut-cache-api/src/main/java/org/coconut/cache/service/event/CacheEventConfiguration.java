@@ -3,6 +3,8 @@
  */
 package org.coconut.cache.service.event;
 
+import static org.coconut.internal.util.XmlUtil.getChild;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -13,12 +15,12 @@ import java.util.Set;
 
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.cache.spi.IllegalCacheConfigurationException;
+import org.coconut.internal.util.XmlUtil;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import static org.coconut.internal.util.XmlUtil.*;
 /**
  * All events are enabled per default except AccessedEvent. While this might
  * seem inconsist. The main reason is that it is raised for every access to the
@@ -189,10 +191,10 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
         add(excludes, doc, parent, EXCLUDES_TAG, EXCLUDE_TAG);
     }
 
-    private static void add(Set<Class> set, Document doc, Element parent,
+    static void add(Set<Class> set, Document doc, Element parent,
             String parentTag, String tag) {
         if (set.size() > 0) {
-            Element e = add(doc, parentTag, parent);
+            Element e = XmlUtil.add(doc, parentTag, parent);
             for (Class c : set) {
                 String name = c.getCanonicalName();
                 if (c.getDeclaringClass() != null) {
@@ -200,7 +202,7 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
                             - 1)
                             + "$" + c.getSimpleName();
                 }
-                add(doc, tag, e, name);
+                XmlUtil.add(doc, tag, e, name);
             }
         }
     }

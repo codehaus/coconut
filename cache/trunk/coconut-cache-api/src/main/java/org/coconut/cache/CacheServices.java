@@ -1,12 +1,11 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.cache.service;
+package org.coconut.cache;
 
-import org.coconut.cache.Cache;
 import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
-import org.coconut.cache.service.servicemanager.CacheLifecycleService;
+import org.coconut.cache.service.servicemanager.CacheManagerService;
 
 /**
  * A utility class to get hold of cache services in an easy and typesafe manner.
@@ -18,8 +17,8 @@ import org.coconut.cache.service.servicemanager.CacheLifecycleService;
 public final class CacheServices {
 
     @SuppressWarnings("unchecked")
-    public static CacheLifecycleService lifecycle(Cache<?, ?> cache) {
-        return cache.getService(CacheLifecycleService.class);
+    public static CacheManagerService lifecycle(Cache<?, ?> cache) {
+        return cache.getService(CacheManagerService.class);
     }
     
     @SuppressWarnings("unchecked")

@@ -17,6 +17,7 @@ import org.coconut.management.annotation.ManagedOperation;
  * <code>org.coconut.cache:name=cache_name,service=General</code>
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id$
  */
 public interface CacheMXBean {
 

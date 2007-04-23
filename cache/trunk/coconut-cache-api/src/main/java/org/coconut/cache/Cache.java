@@ -1,7 +1,6 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-
 package org.coconut.cache;
 
 import java.util.Collection;
@@ -30,13 +29,13 @@ import org.coconut.core.AttributeMap;
  * the collection views.
  * <p>
  * All general-purpose <tt>Cache</tt> implementation classes should provide
- * three "standard" constructors: a void (no arguments) constructor, which
- * creates an empty cache with default settings, a constructor with a single
- * argument of type Map, which creates a new cache with the same key-value
- * mappings as its argument, and finally a constructor with a single argument of
- * type {@link CacheConfiguration}. There is no way to enforce this
+ * two "standard" constructors: a void (no arguments) constructor, which creates
+ * an empty cache with default settings, and a constructor with a single
+ * argument of type {@link CacheConfiguration}. There is no way to enforce this
  * recommendation (as interfaces cannot contain constructors) but all of the
- * general-purpose cache implementations in Coconut Cache comply.
+ * general-purpose cache implementations in Coconut Cache comply. Unlike the
+ * java.util.Map which this class extends. A constructor taking a single map is
+ * not required.
  * <p>
  * Cache implementations generally do not define element-based versions of the
  * <tt>equals</tt> and <tt>hashCode</tt> methods, but instead inherit the
@@ -59,11 +58,23 @@ import org.coconut.core.AttributeMap;
  */
 public interface Cache<K, V> extends ConcurrentMap<K, V> {
 
-    String getName();
+	/**
+     * Returns the name of the cache. If no name has been specified while
+     * constructing the cache a random name should be generated.
+     * 
+     * @return the name of the cache
+     */
+	String getName();
 
-    long getCapacity();
+	/**
+     * Returns the current capacity of this cache. If the current capacity of
+     * the is greater then Long.MAX_VALUE, this method returns Long.MAX_VALUE.
+     * 
+     * @return the current capacity of this cache
+     */
+	long getCapacity();
 
-    /**
+	/**
      * Performs cleanup of the cache. This might be everything from persisting
      * stale data to disk to adapting the cache with a better eviction policy
      * given the current access pattern. This is done to avoid paying the cost
@@ -77,30 +88,34 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * Implementations that block (stop-the-world) all other concurrent access
      * to the cache by calling this method should clearly specified it.
      * 
-     * @see Caches#evictAsRunnable(Cache)
      */
-    void evict();
+	void evict();
 
-    /**
+	/**
      * Works as {@link java.util.Map#get(Object)} with the following
      * modification.
      * <p>
-     * If no mapping exists for the specified key and a backend has been
-     * configured for the cache. The cache will attempt to load a value for the
-     * specified key through the backend.
+     * If no mapping exists for the specified key and the cache has a backend
+     * cache or a cache loader. The cache will transparently attempt to load a
+     * value for the specified key through the backend.
      * 
+     * @param key
+     *            key whose associated value is to be returned.
+     * @return the value to which this map maps the specified key
      * @throws ClassCastException
      *             if the key is of an inappropriate type for this map
      *             (optional).
      * @throws NullPointerException
      *             if the key is <tt>null</tt>
      * @throws CacheException
-     *             if the any configured backend store failed while trying to
-     *             load a value (optional).
+     *             if the backend store failed while trying to load a value
+     *             (optional). An implementation might choose to return null
+     *             instead
+     * @see Map#get(Object)
      */
-    V get(Object key);
+	V get(Object key);
 
-    /**
+	/**
      * Attempts to retrieve all of the mappings for the specified collection of
      * keys. The effect of this call is equivalent to that of calling
      * {@link #get(Object)} on this cache once for each key in the specified
@@ -116,7 +131,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * is modified while the operation is in progress.
      * 
      * @param keys
-     *            the keys to get.
+     *            a collection of keys whose associated values are to be returned.
      * @return a map with mappings from each key to the corresponding value, or
      *         to <tt>null</tt> if no mapping for this key exists.
      * @throws ClassCastException
@@ -126,9 +141,9 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      *             if the specified collection of keys is <tt>null</tt> or the
      *             specified collection contains <tt>null</tt>
      */
-    Map<K, V> getAll(Collection<? extends K> keys);
+	Map<K, V> getAll(Collection<? extends K> keys);
 
-    /**
+	/**
      * Retrieves a {@link CacheEntry} for the specified key (optional). If no
      * entry exists for the specified key any configured cache backend is asked
      * to try and fetch an entry for the key.
@@ -146,25 +161,40 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @throws UnsupportedOperationException
      *             if the cache does not cache entries
      */
-    CacheEntry<K, V> getEntry(K key);
+	CacheEntry<K, V> getEntry(K key);
 
-    boolean hasService(Class serviceType);
-    /**
+	/**
+     * Returns whether or not this cache contains a service of the specified
+     * type.
+     * 
+     * @param serviceType
+     *            the type of service
+     * @return true if this has a service of the specified type registered,
+     *         otherwise false
+     */
+	boolean hasService(Class serviceType);
+
+	/**
      * Returns a service of the specified type.
      * 
      * @param <T>
+     *            the type of service to retrieve
      * @param serviceType
-     * @return
+     *            the type of service to retrieve
+     * @return a service of the specified type
+     * @throws CacheException
+     *             if no service of the specified type is registered
+     * @see org.coconut.cache.service.CacheServices
      */
-    <T> T getService(Class<T> serviceType);
+	<T> T getService(Class<T> serviceType);
 
-    /**
+	/**
      * This method works analogoes to the {@link java.util.Map#get(Object)}
-     * method. However, it will not try to fetch missing items in any configured
-     * backend, it will only return a value if it actually exists in the cache.
-     * Furthermore, it will not effect the statistics gathered by the cache and
-     * no {@link CacheItemEvent.ItemAccessed} event will be raised. Finally,
-     * even if the item has expired it will still be returned by this method.
+     * method. However, it will not try to fetch missing items, it will only
+     * return a value if it actually exists in the cache. Furthermore, it will
+     * not effect the statistics gathered by the cache and no
+     * {@link CacheItemEvent.ItemAccessed} event will be raised. Finally, even
+     * if the item is expired it will still be returned.
      * <p>
      * All implementations of this method should take care to assure that a call
      * to peek does not have any side effects on the cache or any retrived
@@ -180,9 +210,9 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @throws NullPointerException
      *             if the specified key is <tt>null</tt>
      */
-    V peek(K key);
+	V peek(K key);
 
-    /**
+	/**
      * This method works analogoes to the {@link #peek(Object)} method. However,
      * it will return a cache entry instead of just the value.
      * <p>
@@ -200,11 +230,36 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @throws NullPointerException
      *             if the specified key is <tt>null</tt>
      */
-    CacheEntry<K, V> peekEntry(K key);
+	CacheEntry<K, V> peekEntry(K key);
 
-    V put(K key, V value, AttributeMap attributes);
-
-    // void putAll(Map<K,V> keys, AttributeMap defaultAttributes);
-    // void putAll(Map<K,V> keys, AttributeMap defaultAttributes,
-    // Map<K,AttributeMap> specialAttributes);
+	/**
+     * Associates the specified value with the specified key in this cache
+     * (optional operation). If the cache previously contained a mapping for
+     * this key, the old value is replaced by the specified value. (A cache
+     * <tt>m</tt> is said to contain a mapping for a key <tt>k</tt> if and
+     * only if {@link #containsKey(Object) m.containsKey(k)} would return
+     * <tt>true</tt>.))
+     * 
+     * @param key
+     *            key with which the specified value is to be associated.
+     * @param value
+     *            value to be associated with the specified key.
+     * @param attributes
+     *            a map of additional attributes
+     * @return previous value associated with specified key, or <tt>null</tt>
+     *         if there was no mapping for key.
+     * @throws UnsupportedOperationException
+     *             if the <tt>put</tt> operation is not supported by this
+     *             cache.
+     * @throws ClassCastException
+     *             if the class of the specified key or value prevents it from
+     *             being stored in this cache.
+     * @throws IllegalArgumentException
+     *             if some aspect of this key or value prevents it from being
+     *             stored in this cache.
+     * @throws NullPointerException
+     *             if specified key or value is <tt>null</tt>.
+     * @see Map#put(Object, Object)
+     */
+	V put(K key, V value, AttributeMap attributes);
 }

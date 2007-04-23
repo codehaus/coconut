@@ -3,7 +3,7 @@
  */
 package org.coconut.cache.service.management;
 
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -82,11 +82,11 @@ public class CacheManagementConfigurationTest {
             throws Exception {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         CacheConfiguration cc = CacheConfiguration.create();
-        cc.addService(conf);
+        cc.addConfiguration(conf);
         XmlConfigurator.getInstance().to(cc, os);
         cc = XmlConfigurator.getInstance().from(
                 new ByteArrayInputStream(os.toByteArray()));
         return (CacheManagementConfiguration) cc
-                .getServiceConfiguration(CacheManagementConfiguration.class);
+                .getConfiguration(CacheManagementConfiguration.class);
     }
 }

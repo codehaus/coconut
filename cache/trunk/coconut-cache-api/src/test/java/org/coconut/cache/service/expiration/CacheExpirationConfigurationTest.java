@@ -85,6 +85,7 @@ public class CacheExpirationConfigurationTest {
         e().setExpirationFilter(new MyFilter());
         
         conf = rw(conf);
+        System.out.println(e());
         assertTrue(e().getExpirationFilter() instanceof MyFilter);
         
         assertEquals(60 * 1000, e().getDefaultTimeToLive(TimeUnit.MILLISECONDS));
@@ -156,11 +157,11 @@ public class CacheExpirationConfigurationTest {
     static CacheExpirationConfiguration rw(CacheExpirationConfiguration conf) throws Exception {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         CacheConfiguration cc = CacheConfiguration.create();
-        cc.addService(conf);
+        cc.addConfiguration(conf);
         XmlConfigurator.getInstance().to(cc, os);
         cc = XmlConfigurator.getInstance().from(
                 new ByteArrayInputStream(os.toByteArray()));
         return (CacheExpirationConfiguration) cc
-                .getServiceConfiguration(CacheExpirationConfiguration.class);
+                .getConfiguration(CacheExpirationConfiguration.class);
     }
 }
