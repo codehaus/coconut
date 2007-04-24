@@ -9,7 +9,6 @@ import org.coconut.cache.service.servicemanager.CacheManagerService;
 
 /**
  * A utility class to get hold of cache services in an easy and typesafe manner.
- * TODO move back to org.coconut.cache??
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $

@@ -4,6 +4,7 @@
 package org.coconut.cache.service.eviction;
 
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
 import org.coconut.filter.Filter;
@@ -14,7 +15,55 @@ import org.coconut.filter.Filter;
  */
 public interface CacheEvictionService<K, V> extends CacheEvictionMXBean {
 
-	Filter<CacheEntry<K, V>> getEvictionFilter();
+	/**
+     * <p>
+     * If this is an in-memory-only cache calling this method has the same
+     * effect as calling {@link java.util.Map#remove(Object)} on the cache.
+     * 
+     * @param the
+     *            key whose mapping is to be evicted from the cache
+     */
+	void evict(K key);
+
+	/**
+     * @param keys
+     *            the keys whose mappings are to be evicted from the cache
+     */
+	void evictAll(Collection<? extends K> keys);
+	
+	/**
+     * Returns the default expiration time for entries. If entries never expire,
+     * {@link #NEVER_EXPIRE} is returned.
+     * 
+     * @param unit
+     *            the time unit that should be used for returning the default
+     *            expiration
+     * @return the default expiration time for entries, or {@link #NEVER_EXPIRE}
+     *         if entries never expire
+     */
+	long getDefaultIdleTime(TimeUnit unit);
+	
+	/**
+	 * @return
+	 */
+	Filter<CacheEntry<K, V>> getIdleFilter();
+
+	/**
+     * Sets the default time idle time for new objects that are added to the
+     * cache.
+     * 
+     * @param timeToLive
+     *            the time from insertion to the point where the entry should be
+     *            evicted from the cache
+     * @param unit
+     *            the time unit of the timeToLive argument
+     * @throws IllegalArgumentException
+     *             if the specified time to live is negative (<0)
+     * @throws NullPointerException
+     *             if the specified time unit is <tt>null</tt>
+     * @see #getDefaultTimeToLive(TimeUnit)
+     */
+	void setDefaultIdleTime(long idleTime, TimeUnit unit);
 
 	/**
      * Sets a filter that the cache can use to determine if a given cache entry
@@ -32,21 +81,5 @@ public interface CacheEvictionService<K, V> extends CacheEvictionMXBean {
      * @throws UnsupportedOperationException
      *             If this cache does not support setting an eviction filter
      */
-	void setEvictionFilter(Filter<CacheEntry<K, V>> filter);
-
-	/**
-     * <p>
-     * If this is an in-memory-only cache calling this method has the same
-     * effect as calling {@link java.util.Map#remove(Object)} on the cache.
-     * 
-     * @param the
-     *            key whose mapping is to be evicted from the cache
-     */
-	void evict(K key);
-
-	/**
-     * @param keys
-     *            the keys whose mappings are to be evicted from the cache
-     */
-	void evictAll(Collection<? extends K> keys);
+	void setIdleFilter(Filter<CacheEntry<K, V>> filter);
 }

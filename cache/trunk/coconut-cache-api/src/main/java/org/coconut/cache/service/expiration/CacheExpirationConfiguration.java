@@ -3,10 +3,9 @@
  */
 package org.coconut.cache.service.expiration;
 
-import static org.coconut.internal.util.XmlUtil.add;
+import static org.coconut.internal.util.XmlUtil.addAndsaveObject;
 import static org.coconut.internal.util.XmlUtil.getChild;
-import static org.coconut.internal.util.XmlUtil.loadObject;
-import static org.coconut.internal.util.XmlUtil.saveObject;
+import static org.coconut.internal.util.XmlUtil.loadOptional;
 
 import java.util.concurrent.TimeUnit;
 
@@ -24,13 +23,13 @@ import org.w3c.dom.Element;
 public class CacheExpirationConfiguration<K, V> extends
 		AbstractCacheServiceConfiguration<K, V> {
 
-	private final static CacheExpirationConfiguration DEFAULT = new CacheExpirationConfiguration();
+	public final static String SERVICE_NAME = "expiration";
 
 	private final static String DEFAULT_TIMEOUT_TAG = "default-timetolive";
 
 	private final static String EXPIRATION_FILTER_TAG = "filter";
 
-	public final static String SERVICE_NAME = "expiration";
+	private final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.NANOSECONDS;
 
 	private long defaultTimeToLive = CacheExpirationService.NEVER_EXPIRE;
 
@@ -47,7 +46,7 @@ public class CacheExpirationConfiguration<K, V> extends
 		if (defaultTimeToLive == CacheExpirationService.NEVER_EXPIRE) {
 			return CacheExpirationService.NEVER_EXPIRE;
 		} else {
-			return unit.convert(defaultTimeToLive, TimeUnit.NANOSECONDS);
+			return unit.convert(defaultTimeToLive, DEFAULT_TIME_UNIT);
 		}
 	}
 
@@ -85,7 +84,7 @@ public class CacheExpirationConfiguration<K, V> extends
 			defaultTimeToLive = CacheExpirationService.NEVER_EXPIRE;
 			// don't convert relative to time unit
 		} else {
-			defaultTimeToLive = unit.toNanos(timeToLive);
+			defaultTimeToLive = DEFAULT_TIME_UNIT.convert(timeToLive, unit);
 		}
 		return this;
 	}
@@ -108,16 +107,15 @@ public class CacheExpirationConfiguration<K, V> extends
      *      org.w3c.dom.Element)
      */
 	@Override
-	protected void fromXML(Document doc, Element parent) throws Exception {
+	protected void fromXML(Document doc, Element base) throws Exception {
 		/* Expiration timeout */
-		Element defaultTimeout = getChild(DEFAULT_TIMEOUT_TAG, parent);
-		if (defaultTimeout != null) {
-			long timeout = UnitOfTime.fromElement(defaultTimeout, TimeUnit.MILLISECONDS);
-			setDefaultTimeToLive(timeout, TimeUnit.MILLISECONDS);
-		}
+		Element eTime = getChild(DEFAULT_TIMEOUT_TAG, base);
+		long time = UnitOfTime.fromElement(eTime, DEFAULT_TIME_UNIT,
+				CacheExpirationService.NEVER_EXPIRE);
+		setDefaultTimeToLive(time, DEFAULT_TIME_UNIT);
+
 		/* Expiration Filter */
-		setExpirationFilter(loadObject(getChild(EXPIRATION_FILTER_TAG, parent),
-				Filter.class));
+		expirationFilter = loadOptional(base, EXPIRATION_FILTER_TAG, Filter.class);
 	}
 
 	/**
@@ -125,19 +123,13 @@ public class CacheExpirationConfiguration<K, V> extends
      *      org.w3c.dom.Element)
      */
 	@Override
-	protected void toXML(Document doc, Element base) throws Exception {
-		/* Expiration Timeout */
-		long timeout = getDefaultTimeToLive(TimeUnit.MILLISECONDS);
-		if (timeout != CacheExpirationService.NEVER_EXPIRE) {
-			UnitOfTime.toElementCompact(add(doc, DEFAULT_TIMEOUT_TAG, base), timeout,
-					TimeUnit.MILLISECONDS);
-		}
-		/* Expiration Filter */
-		saveObject(doc, base, EXPIRATION_FILTER_TAG, "expiration.cannotPersistFilter",
-				getExpirationFilter(), DEFAULT.getExpirationFilter());
-	}
+	protected void toXML(Document doc, Element parent) throws Exception {
+		/* Expiration Timer */
+		UnitOfTime.toElementCompact(doc, parent, DEFAULT_TIMEOUT_TAG, defaultTimeToLive,
+				DEFAULT_TIME_UNIT, Long.MAX_VALUE);
 
-	public static void main(String[] args) {
-		CacheExpirationConfiguration conf = new CacheExpirationConfiguration();
+		/* Filter */
+		addAndsaveObject(doc, parent, EXPIRATION_FILTER_TAG, "saveOfFilterFailed",
+				expirationFilter);
 	}
 }

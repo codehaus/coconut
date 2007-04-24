@@ -14,7 +14,8 @@ import org.coconut.filter.Filter;
  * A service used to control the expiration of objects in the cache.
  * <p>
  * Entries are checked for expiration when calling ...
- * 
+ * <p>
+ * Rename to CacheInvalidationService???
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */

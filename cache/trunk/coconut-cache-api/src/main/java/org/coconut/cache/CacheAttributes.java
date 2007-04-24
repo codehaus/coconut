@@ -63,6 +63,7 @@ public class CacheAttributes implements PolicyAttributes {
 			return ttl;
 		}
 	}
+	public static final String TIME_TO_IDLE_NANO = "time_to_idle_ns";
 
 	public static final String TIME_TO_REFRESH_NANO = "time_to_refresh_ns";
 

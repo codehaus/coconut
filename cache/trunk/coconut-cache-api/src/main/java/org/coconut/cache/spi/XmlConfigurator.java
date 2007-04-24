@@ -5,6 +5,7 @@ package org.coconut.cache.spi;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,16 +56,16 @@ public class XmlConfigurator {
 	static final String CACHE_NAME_ATTR = "name";
 
 	/** The root tag for a cache instance */
-	 static final String CACHE_TAG = "cache";
+	static final String CACHE_TAG = "cache";
 
 	/** The type of the cache */
-	 static final String CACHE_TYPE_ATTR = "type";
+	static final String CACHE_TYPE_ATTR = "type";
 
 	/** The root tag */
-	 static final String CONFIG_TAG = "cache-config";
+	static final String CONFIG_TAG = "cache-config";
 
 	/** The cache-config->version tag */
-	 static final String CONFIG_VERSION_ATTR = "version";
+	static final String CONFIG_VERSION_ATTR = "version";
 
 	/** The current version of the XML schema */
 	public static final String CURRENT_VERSION = "0.0.4";
@@ -73,8 +74,32 @@ public class XmlConfigurator {
 
 	private final Map<String, Class<? extends AbstractCacheServiceConfiguration>> services = new HashMap<String, Class<? extends AbstractCacheServiceConfiguration>>();
 
-	protected void addDefaultConfiguration(String name,
+	protected void addDefaultConfiguration(
 			Class<? extends AbstractCacheServiceConfiguration> clazz) {
+		if (clazz == null) {
+			throw new NullPointerException("clazz is null");
+		}
+		final String name;
+		try {
+			Field f = clazz.getField("SERVICE_NAME");
+			try {
+				name = (String) f.get(null);
+			} catch (IllegalArgumentException e) {
+				throw new IllegalArgumentException("service configuration (" + clazz
+						+ ") should have a public SERVICE_NAME field");
+			} catch (IllegalAccessException e) {
+				throw new IllegalArgumentException("service configuration (" + clazz
+						+ ") should have a public SERVICE_NAME field");
+			}
+		} catch (NoSuchFieldException e) {
+			throw new IllegalArgumentException("service configuration (" + clazz
+					+ ") should have a public SERVICE_NAME field");
+		}
+		addDefaultConfiguration(clazz, name);
+	}
+
+	protected void addDefaultConfiguration(
+			Class<? extends AbstractCacheServiceConfiguration> clazz, String name) {
 		if (name == null) {
 			throw new NullPointerException("name is null");
 		} else if (clazz == null) {
@@ -88,20 +113,13 @@ public class XmlConfigurator {
 	}
 
 	protected void initiateDefaultServices() {
-		addDefaultConfiguration(CacheEventConfiguration.SERVICE_NAME,
-				CacheEventConfiguration.class);
-		addDefaultConfiguration(CacheManagementConfiguration.SERVICE_NAME,
-				CacheManagementConfiguration.class);
-		addDefaultConfiguration(CacheStatisticsConfiguration.SERVICE_NAME,
-				CacheStatisticsConfiguration.class);
-		addDefaultConfiguration(CacheLoadingConfiguration.SERVICE_NAME,
-				CacheLoadingConfiguration.class);
-		addDefaultConfiguration(CacheExpirationConfiguration.SERVICE_NAME,
-				CacheExpirationConfiguration.class);
-		addDefaultConfiguration(CacheThreadingConfiguration.SERVICE_NAME,
-				CacheThreadingConfiguration.class);
-		addDefaultConfiguration(CacheEvictionConfiguration.SERVICE_NAME,
-				CacheEvictionConfiguration.class);
+		addDefaultConfiguration(CacheEventConfiguration.class);
+		addDefaultConfiguration(CacheManagementConfiguration.class);
+		addDefaultConfiguration(CacheStatisticsConfiguration.class);
+		addDefaultConfiguration(CacheLoadingConfiguration.class);
+		addDefaultConfiguration(CacheExpirationConfiguration.class);
+		addDefaultConfiguration(CacheThreadingConfiguration.class);
+		addDefaultConfiguration(CacheEvictionConfiguration.class);
 	}
 
 	/**
@@ -195,10 +213,10 @@ public class XmlConfigurator {
 							+ doc.getDocumentURI());
 		}
 		Node n = root.getElementsByTagName("cache").item(0);
-		from(base, doc, (Element) n);
+		readCache(base, doc, (Element) n);
 	}
 
-	<K, V> void from(CacheConfiguration<K, V> conf, Document doc, Element cache)
+	<K, V> void readCache(CacheConfiguration<K, V> conf, Document doc, Element cache)
 			throws Exception {
 		if (cache.hasAttribute(CACHE_NAME_ATTR)) {
 			conf.setName(cache.getAttribute(CACHE_NAME_ATTR));
@@ -207,6 +225,7 @@ public class XmlConfigurator {
 			conf.setProperty(XmlConfigurator.CACHE_INSTANCE_TYPE, cache
 					.getAttribute(CACHE_TYPE_ATTR));
 		}
+		//conf.set
 		for (Class<? extends AbstractCacheServiceConfiguration> c : services.values()) {
 			AbstractCacheServiceConfiguration acsc = c.newInstance();
 			Element e = (Element) cache.getElementsByTagName(acsc.getServiceName()).item(
@@ -224,6 +243,8 @@ public class XmlConfigurator {
 			cache.setAttribute(CACHE_TYPE_ATTR, cc.getProperty(CACHE_INSTANCE_TYPE)
 					.toString());
 		}
+		
+		/* Read other configurations */
 		for (AbstractCacheServiceConfiguration p : cc.getConfigurations()) {
 			Element ee = doc.createElement(p.getServiceName());
 			cache.appendChild(ee);
@@ -238,5 +259,9 @@ public class XmlConfigurator {
 		f.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 		f.setOutputProperty(OutputKeys.INDENT, "yes");
 		f.transform(domSource, result);
+	}
+	
+	protected void fromCache() {
+		
 	}
 }

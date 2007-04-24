@@ -9,8 +9,12 @@ import static org.coconut.internal.util.XmlUtil.readLong;
 import static org.coconut.internal.util.XmlUtil.writeInt;
 import static org.coconut.internal.util.XmlUtil.writeLong;
 
+import java.util.concurrent.TimeUnit;
+
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.policy.ReplacementPolicy;
+import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
+import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.filter.Filter;
 import org.w3c.dom.Document;
@@ -23,6 +27,10 @@ import org.w3c.dom.Element;
 public class CacheEvictionConfiguration<K, V> extends
 		AbstractCacheServiceConfiguration<K, V> {
 
+	private final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.NANOSECONDS;
+
+	private final static String DEFAULT_IDLE_TIME = "default-idle-time";
+	
 	/**
      * The default maximum capacity of a cache unless otherwise specified.
      */
@@ -243,4 +251,84 @@ public class CacheEvictionConfiguration<K, V> extends
 		writeInt(doc, base, PREFERABLE_SIZE, preferableSize, DEFAULT.getPreferableSize());
 	}
 
+	private long defaultIdleTimeNs = Long.MAX_VALUE;
+
+	private Filter<CacheEntry<K, V>> idleFilter;
+
+	/**
+     * Returns the default expiration time for entries. If entries never expire,
+     * {@link #NEVER_EXPIRE} is returned.
+     * 
+     * @param unit
+     *            the time unit that should be used for returning the default
+     *            expiration
+     * @return the default expiration time for entries, or {@link #NEVER_EXPIRE}
+     *         if entries never expire
+     */
+	public long getDefaultIdleTime(TimeUnit unit) {
+		if (defaultIdleTimeNs == Long.MAX_VALUE) {
+			return Long.MAX_VALUE;
+		} else {
+			return unit.convert(defaultIdleTimeNs, TimeUnit.NANOSECONDS);
+		}
+	}
+
+	/**
+     * @return
+     */
+	public Filter<CacheEntry<K, V>> getIdleFilter() {
+		return idleFilter;
+	}
+
+	/**
+     * Sets the default time idle time for new objects that are added to the
+     * cache.
+     * 
+     * @param timeToLive
+     *            the time from insertion to the point where the entry should be
+     *            evicted from the cache
+     * @param unit
+     *            the time unit of the timeToLive argument
+     * @throws IllegalArgumentException
+     *             if the specified time to live is negative (<0)
+     * @throws NullPointerException
+     *             if the specified time unit is <tt>null</tt>
+     * @see #getDefaultTimeToLive(TimeUnit)
+     */
+	public CacheEvictionConfiguration setDefaultIdleTime(long idleTime, TimeUnit unit) {
+		if (idleTime <= 0) {
+			throw new IllegalArgumentException("idleTime must be greather then 0, was "
+					+ idleTime);
+		} else if (unit == null) {
+			throw new NullPointerException("unit is null");
+		}
+		if (idleTime == Long.MAX_VALUE) {
+			defaultIdleTimeNs = Long.MAX_VALUE;
+			// don't convert relative to time unit
+		} else {
+			defaultIdleTimeNs = unit.toNanos(idleTime);
+		}
+		return this;
+	}
+
+	/**
+     * Sets a filter that the cache can use to determine if a given cache entry
+     * should be evicted. Usage of this method only makes sense if the cache
+     * stores entries in a background store. For example, a file on the disk.
+     * <p>
+     * This method is similar to the #setExpirationFilter(Filter) except that
+     * this is only used as a tempory
+     * <p>
+     * If this cache does
+     * 
+     * @param filter
+     *            the filter to check entries against
+     * @see #getEvictionFilter()
+     * @throws UnsupportedOperationException
+     *             If this cache does not support setting an eviction filter
+     */
+	public CacheEvictionConfiguration setIdleFilter(Filter<CacheEntry<K, V>> filter) {
+		idleFilter = filter;
+		return this;
+	}
 }

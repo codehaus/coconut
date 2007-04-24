@@ -12,7 +12,7 @@ import org.coconut.management.annotation.ManagedAttribute;
 public interface CacheEvictionMXBean {
 
 	@ManagedAttribute(defaultValue = "Expiration Filter", description = "toString() on the defined expiration filter")
-	String getEvictionFilterAsString();
+	String getEvictionIdleAsString();
 
 	/**
      * Keeps evicting entries until the size of the cache is the specified size.
@@ -92,4 +92,9 @@ public interface CacheEvictionMXBean {
      *             runtime
      */
 	void setMaximumSize(int maximumSize);
+	
+    @ManagedAttribute(defaultValue = "Default Idle Time", description = "The default time to idle for cache entries in milliseconds")
+    long getDefaultIdleTimeMs();
+
+    void setDefaultIdleTimeMs(long idleTimeMs);
 }
