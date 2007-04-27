@@ -3,8 +3,11 @@
  */
 package org.coconut.internal.util;
 
+import static org.coconut.internal.util.XmlUtil.add;
+
 import java.util.concurrent.TimeUnit;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
@@ -114,10 +117,19 @@ public enum UnitOfTime {
 
     
     public static void toElement(Element e, Long time, TimeUnit unit) {
-        e.setTextContent(Long.toString(time));
-        e.setAttribute("time-unit",UnitOfTime.from(unit).getSymbol());
-    }
+		e.setTextContent(Long.toString(time));
+		e.setAttribute("time-unit", UnitOfTime.from(unit).getSymbol());
+	}
 
+	public static void toElementCompact(Document doc, Element parent, String name,
+			Long time, TimeUnit unit, long defaultValue) {
+		if (defaultValue != time.longValue()) {
+			Element e = XmlUtil.add(doc, name, parent);
+			toElementCompact(e, time, unit);
+		}
+	}
+
+        
     public static void toElementCompact(Element e, Long time, TimeUnit unit) {
         long t = time;
         UnitOfTime b = UnitOfTime.from(unit);
@@ -135,11 +147,19 @@ public enum UnitOfTime {
         e.setTextContent(Long.toString(t));
     }
 
+    public static long fromElement(Element e, TimeUnit unit, long defaultTime) {
+    	if (e!=null) {
+    		return fromElement(e, unit);
+    	}else {
+    	return defaultTime;
+    	}
+    }
     public static long fromElement(Element e, TimeUnit unit) {
         long val = Long.parseLong(e.getTextContent());
         UnitOfTime from = UnitOfTime.fromSymbol(e.getAttribute("time-unit"));
         return from.convertTo(val, unit);
     }
+    
     public static void toElementAttributes(Element e, Long time, TimeUnit unit, String attrTime, String attrUnit) {
         long t = time;
         UnitOfTime b = UnitOfTime.from(unit);

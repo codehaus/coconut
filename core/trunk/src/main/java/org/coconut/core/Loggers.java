@@ -18,10 +18,10 @@ import java.io.PrintStream;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-public final class Logs {
+public final class Loggers {
     ///CLOVER:OFF
     /** Cannot instantiate. */
-    private Logs() {}
+    private Loggers() {}
     ///CLOVER:ON
     
     /**
@@ -29,8 +29,8 @@ public final class Logs {
      * 
      * @return a logger that ignores any input.
      */
-    public static Log nullLog() {
-        return new SimpleLogger(Log.Level.Off.getLevel());
+    public static Logger nullLog() {
+        return new SimpleLogger(Logger.Level.Off.getLevel());
     }
 
     /**
@@ -39,20 +39,20 @@ public final class Logs {
      * 
      * @return a system.out logger
      */
-    public static Log systemOutLog(Log.Level level) {
+    public static Logger systemOutLog(Logger.Level level) {
         return new SimpleLogger(level.getLevel(), System.out);
     }
 
-    public static Log systemErrLog(Log.Level level) {
+    public static Logger systemErrLog(Logger.Level level) {
         return new SimpleLogger(level.getLevel(), System.err);
     }
 
-    public static Log printStreamLog(Log.Level level, PrintStream ps) {
+    public static Logger printStreamLog(Logger.Level level, PrintStream ps) {
         return new SimpleLogger(level.getLevel(), ps);
     }
 
-    public static String getName(Log log) {
-        return log instanceof Logs.AbstractLogger ? ((Logs.AbstractLogger) log).getName()
+    public static String getName(Logger log) {
+        return log instanceof Loggers.AbstractLogger ? ((Loggers.AbstractLogger) log).getName()
                 : null;
     }
 
@@ -75,23 +75,23 @@ public final class Logs {
          *            the Log4j logger
          * @return a wrapped Log4j logger
          */
-        public static Log from(org.apache.log4j.Logger logger) {
+        public static Logger from(org.apache.log4j.Logger logger) {
             return new Log4JLogger(logger);
         }
 
-        public static Log from(Class clazz) {
+        public static Logger from(Class clazz) {
             return from(org.apache.log4j.Logger.getLogger(clazz));
         }
 
-        public static Log from(String name) {
+        public static Logger from(String name) {
             return from(org.apache.log4j.Logger.getLogger(name));
         }
 
-        public static boolean isLog4jLogger(Log log) {
+        public static boolean isLog4jLogger(Logger log) {
             return log instanceof Log4JLogger;
         }
 
-        public static org.apache.log4j.Logger getAsLog4jLogger(Log log) {
+        public static org.apache.log4j.Logger getAsLog4jLogger(Logger log) {
             if (!isLog4jLogger(log)) {
                 throw new IllegalArgumentException("Not a JDK Logger");
             }
@@ -99,7 +99,7 @@ public final class Logs {
         }
     }
 
-    static abstract class AbstractLogger implements Log {
+    static abstract class AbstractLogger implements Logger {
         public boolean isDebugEnabled() {
             return isEnabled(Level.Debug);
         }
@@ -197,11 +197,11 @@ public final class Logs {
             return this.level <= level.getLevel();
         }
 
-        public void log(Log.Level l, String message) {
+        public void log(Logger.Level l, String message) {
             log(l, message, null);
         }
 
-        public void log(Log.Level l, String message, Throwable cause) {
+        public void log(Logger.Level l, String message, Throwable cause) {
             if (stream != null && level <= l.getLevel()) {
                 stream.println(message);
                 if (cause != null)
@@ -229,11 +229,11 @@ public final class Logs {
             return log.isLoggable(from(level));
         }
 
-        public void log(Log.Level level, String message) {
+        public void log(Logger.Level level, String message) {
             log.log(from(level), message);
         }
 
-        public void log(Log.Level level, String message, Throwable cause) {
+        public void log(Logger.Level level, String message, Throwable cause) {
             log.log(from(level), message, cause);
         }
 
@@ -268,11 +268,11 @@ public final class Logs {
             return log.isEnabledFor(from(level));
         }
 
-        public void log(Log.Level level, String message) {
+        public void log(Logger.Level level, String message) {
             log(level, message, null);
         }
 
-        public void log(Log.Level level, String message, Throwable cause) {
+        public void log(Logger.Level level, String message, Throwable cause) {
             log.log(from(level), message, cause);
         }
 
@@ -303,11 +303,11 @@ public final class Logs {
         private Commons() {}
         ///CLOVER:ON
 
-        public static Log from(org.apache.commons.logging.Log log) {
+        public static Logger from(org.apache.commons.logging.Log log) {
             return new CommonsLogger(log);
         }
 
-        public static Log from(Class clazz) {
+        public static Logger from(Class clazz) {
             return from(org.apache.commons.logging.LogFactory.getLog(clazz));
         }
 
@@ -315,15 +315,15 @@ public final class Logs {
          * @param string
          * @return
          */
-        public static Log from(String name) {
+        public static Logger from(String name) {
             return from(org.apache.commons.logging.LogFactory.getLog(name));
         }
 
-        public static boolean isCommonsLogger(Log log) {
+        public static boolean isCommonsLogger(Logger log) {
             return log instanceof CommonsLogger;
         }
 
-        public static org.apache.commons.logging.Log getAsCommonsLogger(Log log) {
+        public static org.apache.commons.logging.Log getAsCommonsLogger(Logger log) {
             if (!isCommonsLogger(log)) {
                 throw new IllegalArgumentException("Not a Commons Logger");
             }
@@ -430,23 +430,23 @@ public final class Logs {
         private JDK() {}
         ///CLOVER:ON
         
-        public static Log from(java.util.logging.Logger log) {
+        public static Logger from(java.util.logging.Logger log) {
             return new JDKLogger(log);
         }
 
-        public static Log from(Class clazz) {
+        public static Logger from(Class clazz) {
             return from(clazz.getName());
         }
 
-        public static Log from(String name) {
+        public static Logger from(String name) {
             return from(java.util.logging.Logger.getLogger(name));
         }
 
-        public static boolean isJDKLogger(Log log) {
+        public static boolean isJDKLogger(Logger log) {
             return log instanceof JDKLogger;
         }
 
-        public static java.util.logging.Logger getAsJDKLogger(Log log) {
+        public static java.util.logging.Logger getAsJDKLogger(Logger log) {
             if (!isJDKLogger(log)) {
                 throw new IllegalArgumentException("Not a JDK Logger");
             }

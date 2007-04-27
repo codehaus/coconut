@@ -20,7 +20,7 @@ package org.coconut.core;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-public interface Log {
+public interface Logger {
 
     /**
      * Check to see if a message of <tt>debug</tt> level would actually be

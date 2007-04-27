@@ -10,7 +10,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Queue;
 
-import org.coconut.core.LogsTest.InnerPrintStream;
+import org.coconut.core.LoggersTest.InnerPrintStream;
 import org.junit.Test;
 
 /**

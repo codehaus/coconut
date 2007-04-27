@@ -3,8 +3,8 @@
  */
 package org.coconut.internal.util;
 
-import org.coconut.core.Log;
-import org.coconut.core.Logs;
+import org.coconut.core.Logger;
+import org.coconut.core.Loggers;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -12,11 +12,11 @@ import org.coconut.core.Logs;
  */
 public class LogHelper {
 
-    public static Log fromLog4j(String name) {
-        return Logs.Log4j.from(name);
+    public static Logger fromLog4j(String name) {
+        return Loggers.Log4j.from(name);
     }
     
-    public static Log fromCommons(String name) {
-        return Logs.Commons.from(name);
+    public static Logger fromCommons(String name) {
+        return Loggers.Commons.from(name);
     }
 }

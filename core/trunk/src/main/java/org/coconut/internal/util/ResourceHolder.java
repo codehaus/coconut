@@ -40,6 +40,9 @@ public class ResourceHolder {
     public ResourceHolder(String name) {
         ressourceBundle = ResourceBundle.getBundle(name, LOCALE);
     }
+    public static ResourceHolder fromPackage(Class c) {
+    	return new ResourceHolder(c.getPackage().getName());
+    }
     public String lookup(String key, Object... o) {
         String lookup = getString(key);
         if (o != null && o.length > 0) {

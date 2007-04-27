@@ -20,8 +20,7 @@ import org.apache.commons.logging.impl.Log4JLogger;
 import org.apache.commons.logging.impl.NoOpLog;
 import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.coconut.core.Log.Level;
+import org.coconut.core.Logger.Level;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
@@ -38,7 +37,7 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
 @RunWith(JMock.class)
-public class LogsTest {
+public class LoggersTest {
 
 	Mockery context = new JUnit4Mockery();
 
@@ -75,18 +74,18 @@ public class LogsTest {
 				will(returnValue(true));
 			}
 		});
-		runMock(Logs.Commons.from(log), t);
+		runMock(Loggers.Commons.from(log), t);
 	}
 
 	@Test
 	public void testCommonsLoggingName() {
 
-		Log l = Logs.Commons.from(new Jdk14Logger("foobar"));
-		assertEquals("foobar", Logs.getName(l));
-		l = Logs.Commons.from(new Log4JLogger(LogManager.getLogger("foobar2")));
-		assertEquals("foobar2", Logs.getName(l));
-		l = Logs.Commons.from(new NoOpLog("dkdkd"));
-		assertNull(Logs.getName(l));
+		Logger l = Loggers.Commons.from(new Jdk14Logger("foobar"));
+		assertEquals("foobar", Loggers.getName(l));
+		l = Loggers.Commons.from(new Log4JLogger(LogManager.getLogger("foobar2")));
+		assertEquals("foobar2", Loggers.getName(l));
+		l = Loggers.Commons.from(new NoOpLog("dkdkd"));
+		assertNull(Loggers.getName(l));
 	}
 
 	@Test
@@ -97,22 +96,22 @@ public class LogsTest {
 		System.setProperty("org.apache.commons.logging.simplelog.showlogname", "true");
 		System.setProperty("org.apache.commons.logging.simplelog.showShortLogname",
 				"false");
-		Log l = Logs.Commons.from(LogsTest.class);
+		Logger l = Loggers.Commons.from(LoggersTest.class);
 		l.error("test error");
-		assertTrue(str.last.getLast().indexOf(LogsTest.class.getName()) >= 0);
+		assertTrue(str.last.getLast().indexOf(LoggersTest.class.getName()) >= 0);
 		assertTrue(str.last.getLast().indexOf("test error") >= 0);
 		str.terminate();
 	}
 
 	@Test
 	public void testCommonsLogging2() {
-		Log l = Logs.Commons.from("asv");
-		org.apache.commons.logging.Log ll = Logs.Commons.getAsCommonsLogger(l);
+		Logger l = Loggers.Commons.from("asv");
+		org.apache.commons.logging.Log ll = Loggers.Commons.getAsCommonsLogger(l);
 		assertTrue(ll instanceof SimpleLog);
-		assertTrue(Logs.Commons.isCommonsLogger(l));
-		assertFalse(Logs.Commons.isCommonsLogger(Logs.systemErrLog(Level.Error)));
+		assertTrue(Loggers.Commons.isCommonsLogger(l));
+		assertFalse(Loggers.Commons.isCommonsLogger(Loggers.systemErrLog(Level.Error)));
 		try {
-			Logs.Commons.getAsCommonsLogger(Logs.systemErrLog(Level.Error));
+			Loggers.Commons.getAsCommonsLogger(Loggers.systemErrLog(Level.Error));
 			fail("Should throw IllegalArgumentException");
 		} catch (IllegalArgumentException iea) {}
 	}
@@ -126,26 +125,26 @@ public class LogsTest {
 		}
 		java.util.logging.Logger l = java.util.logging.Logger.getLogger("FooLogger");
 		l.setLevel(java.util.logging.Level.FINEST);
-		Log log = Logs.JDK.from(l);
-		assertEquals("FooLogger", Logs.getName(log));
-		testLevelOn(log, Log.Level.Trace.getLevel());
+		Logger log = Loggers.JDK.from(l);
+		assertEquals("FooLogger", Loggers.getName(log));
+		testLevelOn(log, Logger.Level.Trace.getLevel());
 
 		l.setLevel(java.util.logging.Level.OFF);
-		testLevelOn(log, Log.Level.Fatal.getLevel() + 1);
+		testLevelOn(log, Logger.Level.Fatal.getLevel() + 1);
 	}
 
 	public void testJDKLogging2() {
-		Log l = Logs.JDK.from("asv1");
-		java.util.logging.Logger ll = Logs.JDK.getAsJDKLogger(l);
+		Logger l = Loggers.JDK.from("asv1");
+		java.util.logging.Logger ll = Loggers.JDK.getAsJDKLogger(l);
 		assertEquals("asv1", ll.getName());
-		assertTrue(Logs.JDK.isJDKLogger(l));
-		assertFalse(Logs.JDK.isJDKLogger(Logs.systemErrLog(Level.Error)));
+		assertTrue(Loggers.JDK.isJDKLogger(l));
+		assertFalse(Loggers.JDK.isJDKLogger(Loggers.systemErrLog(Level.Error)));
 
-		l = Logs.JDK.from("asv1".getClass());
-		ll = Logs.JDK.getAsJDKLogger(l);
+		l = Loggers.JDK.from("asv1".getClass());
+		ll = Loggers.JDK.getAsJDKLogger(l);
 		assertEquals("asv1".getClass().getCanonicalName(), ll.getName());
 		try {
-			Logs.JDK.getAsJDKLogger(Logs.systemErrLog(Level.Error));
+			Loggers.JDK.getAsJDKLogger(Loggers.systemErrLog(Level.Error));
 			fail("Should throw IllegalArgumentException");
 		} catch (IllegalArgumentException iea) {}
 	}
@@ -159,7 +158,7 @@ public class LogsTest {
 		}
 		java.util.logging.Logger l = java.util.logging.Logger.getLogger("FooLogger");
 		l.setLevel(java.util.logging.Level.OFF);
-		Log log = Logs.JDK.from(l);
+		Logger log = Loggers.JDK.from(l);
 		testIgnoreLog(log);
 	}
 
@@ -169,30 +168,30 @@ public class LogsTest {
 
 		logger.setLevel(org.apache.log4j.Level.ALL);
 
-		Log log = Logs.Log4j.from(logger);
+		Logger log = Loggers.Log4j.from(logger);
 
-		testLevelOn(log, Log.Level.Trace.getLevel());
+		testLevelOn(log, Logger.Level.Trace.getLevel());
 
 		logger.setLevel(org.apache.log4j.Level.OFF);
-		testLevelOn(log, Log.Level.Fatal.getLevel() + 1);
+		testLevelOn(log, Logger.Level.Fatal.getLevel() + 1);
 
-		assertEquals("foobar", Logs.getName(Logs.Log4j.from(LogManager
+		assertEquals("foobar", Loggers.getName(Loggers.Log4j.from(LogManager
 				.getLogger("foobar"))));
 	}
 
 	@Test
 	public void testLog4JLogging2() {
-		Log l = Logs.Log4j.from("asv1");
-		Logger ll = Logs.Log4j.getAsLog4jLogger(l);
+		Logger l = Loggers.Log4j.from("asv1");
+		org.apache.log4j.Logger ll = Loggers.Log4j.getAsLog4jLogger(l);
 		assertEquals("asv1", ll.getName());
-		assertTrue(Logs.Log4j.isLog4jLogger(l));
-		assertFalse(Logs.Log4j.isLog4jLogger(Logs.systemErrLog(Level.Error)));
+		assertTrue(Loggers.Log4j.isLog4jLogger(l));
+		assertFalse(Loggers.Log4j.isLog4jLogger(Loggers.systemErrLog(Level.Error)));
 
-		l = Logs.Log4j.from("asv1".getClass());
-		ll = Logs.Log4j.getAsLog4jLogger(l);
+		l = Loggers.Log4j.from("asv1".getClass());
+		ll = Loggers.Log4j.getAsLog4jLogger(l);
 		assertEquals("asv1".getClass().getCanonicalName(), ll.getName());
 		try {
-			Logs.Log4j.getAsLog4jLogger(Logs.systemErrLog(Level.Error));
+			Loggers.Log4j.getAsLog4jLogger(Loggers.systemErrLog(Level.Error));
 			fail("Should throw IllegalArgumentException");
 		} catch (IllegalArgumentException iea) {}
 	}
@@ -202,15 +201,15 @@ public class LogsTest {
 		org.apache.log4j.Logger logger = org.apache.log4j.Logger.getRootLogger();
 
 		logger.setLevel(org.apache.log4j.Level.OFF);
-		Log log = Logs.Log4j.from(logger);
+		Logger log = Loggers.Log4j.from(logger);
 		testIgnoreLog(log);
 	}
 
-	public void testIgnoreLog(Log log) {
+	public void testIgnoreLog(Logger log) {
 		InnerPrintStream outStr = InnerPrintStream.get();
 		InnerPrintStream errStr = InnerPrintStream.getErr();
 		Throwable t = new Throwable();
-		testLevelOn(log, Log.Level.Fatal.getLevel() + 1);
+		testLevelOn(log, Logger.Level.Fatal.getLevel() + 1);
 		log.trace("trace test a");
 		log.trace("trace test b", t);
 		log.debug("debug test a");
@@ -233,10 +232,10 @@ public class LogsTest {
 	@Test
 	public void testSimpleLogging() {
 		InnerPrintStream str = InnerPrintStream.get();
-		Log log = Logs.systemOutLog(Log.Level.Trace);
+		Logger log = Loggers.systemOutLog(Logger.Level.Trace);
 
-		assertEquals("simple", Logs.getName(log));
-		testLevelOn(log, Log.Level.Trace.getLevel());
+		assertEquals("simple", Loggers.getName(log));
+		testLevelOn(log, Logger.Level.Trace.getLevel());
 		log.trace("trace test a");
 		assertTrue(str.last.getLast().indexOf("trace test a") >= 0);
 
@@ -260,10 +259,10 @@ public class LogsTest {
 	@Test
 	public void testSimpleLoggingWithException() {
 		InnerPrintStream str = InnerPrintStream.get();
-		Log log = Logs.systemOutLog(Log.Level.Trace);
+		Logger log = Loggers.systemOutLog(Logger.Level.Trace);
 		Throwable t = new Throwable();
 		int l = t.getStackTrace().length + 1;
-		testLevelOn(log, Log.Level.Trace.getLevel());
+		testLevelOn(log, Logger.Level.Trace.getLevel());
 		log.trace("trace test a", t);
 		assertTrue(str.getFromLast(l).indexOf("trace test a") >= 0);
 
@@ -287,15 +286,15 @@ public class LogsTest {
 	@Test
 	public void testNullLogger() {
 		InnerPrintStream.get();
-		Log log = Logs.nullLog();
+		Logger log = Loggers.nullLog();
 		testIgnoreLog(log);
 	}
 
 	@Test
 	public void testStaticMethods() {
-		assertNull(Logs.getName(context.mock(Log.class)));
+		assertNull(Loggers.getName(context.mock(Logger.class)));
 		try {
-			Logs.printStreamLog(Level.Error, null);
+			Loggers.printStreamLog(Level.Error, null);
 			fail("Should throw NullPointerException");
 		} catch (NullPointerException npe) {}
 	}
@@ -359,7 +358,7 @@ public class LogsTest {
 		}
 	}
 
-	private void runMock(Log log, Throwable t) {
+	private void runMock(Logger log, Throwable t) {
 		log.debug("a");
 		log.debug("b", t);
 		log.error("c");
@@ -372,15 +371,15 @@ public class LogsTest {
 		log.trace("j", t);
 		log.warn("k");
 		log.warn("l", t);
-		testLevelOn(log, Log.Level.Trace.getLevel());
+		testLevelOn(log, Logger.Level.Trace.getLevel());
 	}
 
-	private void testLevelOn(Log log, int level) {
-		assertEquals(level <= Log.Level.Trace.getLevel(), log.isTraceEnabled());
-		assertEquals(level <= Log.Level.Debug.getLevel(), log.isDebugEnabled());
-		assertEquals(level <= Log.Level.Info.getLevel(), log.isInfoEnabled());
-		assertEquals(level <= Log.Level.Warn.getLevel(), log.isWarnEnabled());
-		assertEquals(level <= Log.Level.Error.getLevel(), log.isErrorEnabled());
-		assertEquals(level <= Log.Level.Fatal.getLevel(), log.isFatalEnabled());
+	private void testLevelOn(Logger log, int level) {
+		assertEquals(level <= Logger.Level.Trace.getLevel(), log.isTraceEnabled());
+		assertEquals(level <= Logger.Level.Debug.getLevel(), log.isDebugEnabled());
+		assertEquals(level <= Logger.Level.Info.getLevel(), log.isInfoEnabled());
+		assertEquals(level <= Logger.Level.Warn.getLevel(), log.isWarnEnabled());
+		assertEquals(level <= Logger.Level.Error.getLevel(), log.isErrorEnabled());
+		assertEquals(level <= Logger.Level.Fatal.getLevel(), log.isFatalEnabled());
 	}
 }
