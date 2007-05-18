@@ -11,7 +11,6 @@ import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated;
 import org.coconut.cache.service.event.CacheEvent.CacheCleared;
 import org.coconut.cache.service.event.CacheEvent.CacheEvicted;
-import org.coconut.cache.service.event.CacheEvent.CacheStatisticsReset;
 import org.coconut.core.Transformer;
 import org.coconut.core.Transformers;
 import org.coconut.filter.CollectionFilters;
@@ -42,9 +41,9 @@ public class CacheEventFilters {
     /** A filter that only accepts instances of CacheCleared events. */
     public static final Filter CACHE_CLEARED_FILTER = Filters.isType(CacheCleared.class);
 
-    /** A filter that only accepts instances of CacheStatisticsReset events. */
-    public static final Filter CACHE_RESET_STATISTICS_FILTER = Filters
-            .isType(CacheStatisticsReset.class);
+//    /** A filter that only accepts instances of CacheStatisticsReset events. */
+//    public static final Filter CACHE_RESET_STATISTICS_FILTER = Filters
+//            .isType(CacheStatisticsReset.class);
 
     /** A filter that only accepts instances of CacheEvicted events. */
     public static final Filter CACHE_EVICTED_FILTER = Filters.isType(CacheEvicted.class);

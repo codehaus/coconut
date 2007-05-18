@@ -129,7 +129,10 @@ public class CacheExpirationConfiguration<K, V> extends
 				DEFAULT_TIME_UNIT, Long.MAX_VALUE);
 
 		/* Filter */
-		addAndsaveObject(doc, parent, EXPIRATION_FILTER_TAG, "saveOfFilterFailed",
+		addAndsaveObject(doc, parent, EXPIRATION_FILTER_TAG,
+				
+				getResourceBundle(),
+				"saveOfFilterFailed",
 				expirationFilter);
 	}
 }

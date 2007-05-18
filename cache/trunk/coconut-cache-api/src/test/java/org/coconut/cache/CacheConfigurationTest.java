@@ -17,8 +17,8 @@ import java.util.Collection;
 
 import org.coconut.cache.spi.XmlConfigurator;
 import org.coconut.core.Clock;
-import org.coconut.core.Log;
-import org.coconut.core.Logs;
+import org.coconut.core.Logger;
+import org.coconut.core.Loggers;
 import org.coconut.test.MockTestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,7 +49,7 @@ public class CacheConfigurationTest {
 	@Test
 	public void testSetDefaultLogger() {
 		assertNull(conf.getDefaultLog());
-		Log log = Logs.nullLog();
+		Logger log = Loggers.nullLog();
 		assertEquals(conf, conf.setDefaultLog(log));
 		assertSame(log, conf.getDefaultLog());
 		conf.setDefaultLog(null);

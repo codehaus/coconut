@@ -11,7 +11,7 @@ import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.InternalCacheService;
 import org.coconut.cache.internal.spi.CacheHelper;
-import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
+import org.coconut.cache.service.exceptionhandling.AbstractCacheExceptionHandler;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.spi.AbstractCacheService;
@@ -34,10 +34,10 @@ public abstract class AbstractExpirationService<K, V> extends AbstractCacheServi
 
     private final CacheHelper<K, V> helper;
 
-    private final CacheExceptionHandler<K, V> errorHandler;
+    private final AbstractCacheExceptionHandler<K, V> errorHandler;
 
     public AbstractExpirationService(Clock clock, CacheHelper<K, V> helper,
-            CacheExceptionHandler<K, V> errorHandler) {
+            AbstractCacheExceptionHandler<K, V> errorHandler) {
         super(SERVICE_NAME);
         this.clock = clock;
         this.helper = helper;
@@ -54,14 +54,14 @@ public abstract class AbstractExpirationService<K, V> extends AbstractCacheServi
     /**
      * @see org.coconut.cache.service.expiration.CacheExpirationService#expireAll(java.util.Collection)
      */
-    public final int expireAll(Collection<? extends K> keys) {
+    public final int removeAll(Collection<? extends K> keys) {
         return helper.expireAll(keys);
     }
 
     /**
      * @see org.coconut.cache.service.expiration.CacheExpirationService#expireAll(org.coconut.filter.Filter)
      */
-    public final int expireAll(Filter<? extends CacheEntry<K, V>> filter) {
+    public final int removeAll(Filter<? extends CacheEntry<K, V>> filter) {
         return helper.expireAll(filter);
     }
 
@@ -72,8 +72,8 @@ public abstract class AbstractExpirationService<K, V> extends AbstractCacheServi
     /**
      * @see org.coconut.cache.service.expiration.CacheExpirationService#expireAll()
      */
-    public final int expireAll() {
-        return expireAll((Filter) Filters.trueFilter());
+    public final int removeAll() {
+        return removeAll((Filter) Filters.trueFilter());
     }
 
     /**
@@ -118,7 +118,7 @@ public abstract class AbstractExpirationService<K, V> extends AbstractCacheServi
         }
         long ttl = timeToLive;
         if (ttl != CacheExpirationService.NEVER_EXPIRE
-                || ttl != CacheExpirationService.NEVER_EXPIRE) {
+                || ttl != CacheExpirationService.DEFAULT_EXPIRATION) {
             ttl = TimeUnit.NANOSECONDS.convert(ttl, unit);
         }
         doPutAll(t, ttl);

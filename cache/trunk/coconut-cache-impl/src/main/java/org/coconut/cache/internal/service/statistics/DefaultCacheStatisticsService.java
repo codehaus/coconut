@@ -22,10 +22,6 @@ import org.coconut.cache.spi.AbstractCacheService;
 import org.coconut.core.Clock;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.annotation.ManagedAttribute;
-import org.coconut.management.monitor.DateSampler;
-import org.coconut.management.monitor.LongCounter;
-import org.coconut.management.monitor.LongSamplingCounter;
-import org.coconut.management.util.AtomicDouble;
 
 /**
  * possible to disable certain statistics
@@ -372,26 +368,26 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheServ
      * @see org.coconut.apm.Apm#configureJMX(org.coconut.apm.spi.JMXConfigurator)
      */
     public void addTo(ManagedGroup dg) {
-        ManagedGroup m = dg.addNewGroup("Statistics", "", false);
+        ManagedGroup m = dg.addChild("Statistics", "");
 
-        ManagedGroup general = m.addNewGroup("General", "");
+        ManagedGroup general = m.addChild("General", "");
         general.add(cacheStatisticsResetCount);
         general.add(cacheStatisticsResetLast);
         general.add(entryExpiredCount);
 
-        ManagedGroup clear = m.addNewGroup("Clear", "");
+        ManagedGroup clear = m.addChild("Clear", "");
         clear.add(cacheClearCount);
         clear.add(cacheClearLast);
         clear.add(cacheClearTime);
 
-        ManagedGroup eviction = m.addNewGroup("Eviction", "");
+        ManagedGroup eviction = m.addChild("Eviction", "");
         eviction.add(cacheEvictCount);
         eviction.add(cacheEvictLast);
         eviction.add(cacheEvictTime);
         eviction.add(entryEvictedCount);
         eviction.add(entryEvictedTime);
 
-        ManagedGroup access = m.addNewGroup("Access",
+        ManagedGroup access = m.addChild("Access",
                 "Statistics regarding access to the cache");
         access.add(entryGetHitCount);
         access.add(entryGetMissCount);
@@ -399,11 +395,11 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheServ
         access.add(entryGetMissTime);
         access.add(new CacheRatio());
 
-        ManagedGroup put = m.addNewGroup("Put", "");
+        ManagedGroup put = m.addChild("Put", "");
         put.add(entryPutCount);
         put.add(entryPutTime);
 
-        ManagedGroup remove = m.addNewGroup("Remove", "");
+        ManagedGroup remove = m.addChild("Remove", "");
         remove.add(entryRemoveCount);
         remove.add(entryRemoveTime);
     }

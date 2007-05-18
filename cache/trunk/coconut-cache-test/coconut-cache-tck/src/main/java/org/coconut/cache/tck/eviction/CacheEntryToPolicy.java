@@ -32,7 +32,7 @@ public class CacheEntryToPolicy extends CacheTestBundle {
     @SuppressWarnings("unchecked")
     @Test
     public void testIsCacheEntry() throws InterruptedException {
-        c = newCache(newConf().serviceEviction().setPolicy(new PolicyMock())
+        c = newCache(newConf().eviction().setPolicy(new PolicyMock())
                 .setMaximumSize(5).c());
 
         c.put(M1.getKey(), M1.getValue());

@@ -14,7 +14,7 @@ import org.coconut.cache.internal.service.threading.InternalCacheThreadingServic
 import org.coconut.cache.internal.service.util.ExtendableFutureTask;
 import org.coconut.cache.internal.spi.CacheHelper;
 import org.coconut.cache.internal.spi.ExtendedExecutorRunnable;
-import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
+import org.coconut.cache.service.exceptionhandling.AbstractCacheExceptionHandler;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.core.AttributeMap;
@@ -31,7 +31,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
 
     private final Clock clock;
 
-    private final CacheExceptionHandler<K, V> errorHandler;
+    private final AbstractCacheExceptionHandler<K, V> errorHandler;
 
     private final AbstractExpirationService<K, V> expirationService;
 
@@ -55,7 +55,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
      */
     public DefaultCacheLoaderService(final Clock clock,
             InternalCacheAttributeService attributeFactory,
-            final CacheExceptionHandler<K, V> errorHandler,
+            final AbstractCacheExceptionHandler<K, V> errorHandler,
             final CacheLoader<? super K, ? extends V> loader,
             final InternalCacheThreadingService threadManager,
             AbstractExpirationService<K, V> expirationService,
@@ -128,7 +128,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         try {
             map = null; // loader.loadAll(keys);
         } catch (Exception e) {
-            map = errorHandler.loadAllFailed(loader, keys, false, e);
+           // map = errorHandler.loadAllFailed(loader, keys, false, e);
         }
         return map;
     }
@@ -274,8 +274,8 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
             try {
                 map = null; // loader.loadAll(keysWithAttributes);
             } catch (Exception e) {
-                map = loaderService.errorHandler.loadAllFailed(loader,
-                        keysWithAttributes, true, e);
+//                map = loaderService.errorHandler.loadAllFailed(loader,
+//                        keysWithAttributes, true, e);
             }
             if (map != null && map.size() > 0) {
                 loaderService.cache.valuesLoaded(map, keysWithAttributes);

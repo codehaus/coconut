@@ -19,8 +19,8 @@ class LastAccessExample {
     public static void main(String[] args) throws InterruptedException {
         CacheConfiguration<String, String> conf = CacheConfiguration
                 .create("WebPage-Cache");
-        conf.serviceManagement();
-        conf.serviceExpiration().setExpirationFilter(new LastAccessFilter<String, String>());
+        conf.management();
+        conf.expiration().setExpirationFilter(new LastAccessFilter<String, String>());
         UnsynchronizedCache<String, String> cache = conf.newInstance(UnsynchronizedCache.class);
         Thread.sleep(1000000);
     }

@@ -8,8 +8,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 
-import junit.framework.JUnit4TestAdapter;
-
 import org.coconut.cache.policy.paging.ClockPolicy;
 import org.coconut.cache.policy.paging.FIFOPolicy;
 import org.coconut.cache.policy.paging.LFUPolicy;
@@ -25,10 +23,6 @@ import org.junit.Test;
  * @version $Revision$
  */
 public class PoliciesTest {
-
-    public static junit.framework.Test suite() {
-        return new JUnit4TestAdapter(PoliciesTest.class);
-    }
 
     @Test
     public void assertInstances() {

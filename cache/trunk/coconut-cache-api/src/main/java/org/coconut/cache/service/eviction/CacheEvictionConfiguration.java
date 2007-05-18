@@ -13,8 +13,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.policy.ReplacementPolicy;
-import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
-import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.filter.Filter;
 import org.w3c.dom.Document;
@@ -65,6 +63,8 @@ public class CacheEvictionConfiguration<K, V> extends
 
 	private Filter<CacheEntry<K, V>> evictionFilter;
 
+	/** Time between evicts. */
+	private long scheduledEvictTime;
 	/**
      * @param tag
      * @param c

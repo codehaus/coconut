@@ -78,11 +78,14 @@ public class CacheLoadingConfigurationTest {
     public void testNoop() throws Exception {
         conf = rw(conf);
         assertNull(conf.getLoader());
+        assertEquals(Long.MAX_VALUE, conf.getDefaultRefreshTime(TimeUnit.MILLISECONDS));
+        assertNull(conf.getRefreshFilter());
     }
 
     @Test
     public void testBackend() throws Exception {
         conf.setLoader(new MyBackend1());
+        System.out.println(conf);
         conf = rw(conf);
         assertTrue(conf.getLoader() instanceof MyBackend1);
     }
@@ -104,7 +107,7 @@ public class CacheLoadingConfigurationTest {
     @Test
     public void testInitialValues() {
         assertNull(conf.getRefreshFilter());
-        assertTrue(conf.getRefreshInterval(TimeUnit.NANOSECONDS) < 0);
+        assertTrue(conf.getDefaultRefreshTime(TimeUnit.NANOSECONDS) < 0);
     }
 
     Filter<CacheEntry> f = Filters.TRUE;
@@ -115,14 +118,14 @@ public class CacheLoadingConfigurationTest {
         conf.setRefreshFilter(new MyFilter2());
         conf = rw(conf);
         assertTrue(conf.getRefreshFilter() instanceof MyFilter2);
-        assertEquals(120 * 1000, conf.getRefreshInterval(TimeUnit.MILLISECONDS));
+        assertEquals(120 * 1000, conf.getDefaultRefreshTime(TimeUnit.MILLISECONDS));
     }
 
     @Test
     public void testNoop2() throws Exception {
         conf = rw(conf);
         assertNull(conf.getRefreshFilter());
-        assertTrue(conf.getRefreshInterval(TimeUnit.NANOSECONDS) < 0);
+        assertTrue(conf.getDefaultRefreshTime(TimeUnit.NANOSECONDS) < 0);
     }
 
     @Test
@@ -135,10 +138,10 @@ public class CacheLoadingConfigurationTest {
     public void testReloadInterval() {
 
         assertEquals(conf, conf.setDefaultRefreshTime(0, TimeUnit.SECONDS));
-        assertEquals(0, conf.getRefreshInterval(TimeUnit.NANOSECONDS));
+        assertEquals(0, conf.getDefaultRefreshTime(TimeUnit.NANOSECONDS));
 
         conf.setDefaultRefreshTime(5, TimeUnit.MICROSECONDS);
-        assertEquals(5000, conf.getRefreshInterval(TimeUnit.NANOSECONDS));
+        assertEquals(5000, conf.getDefaultRefreshTime(TimeUnit.NANOSECONDS));
 
         conf.setDefaultRefreshTime(1000, null);
     }

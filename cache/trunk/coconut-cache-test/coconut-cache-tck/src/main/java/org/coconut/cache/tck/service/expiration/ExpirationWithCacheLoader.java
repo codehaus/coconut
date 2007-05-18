@@ -23,7 +23,7 @@ import org.junit.Test;
 public class ExpirationWithCacheLoader extends ExpirationTestBundle {
     @Before
     public void setup() {
-        c = newCache(newConf().setClock(clock).serviceLoading().setLoader(
+        c = newCache(newConf().setClock(clock).loading().setLoader(
                 new IntegerToStringLoader()).c());
     }
 
@@ -46,8 +46,8 @@ public class ExpirationWithCacheLoader extends ExpirationTestBundle {
     @Test
     public void testCreationTime() {
         CacheEntryFilter f = new CacheEntryFilter();
-        c = newCache(newConf().setClock(clock).serviceLoading().setLoader(
-                new IntegerToStringLoader()).c().serviceExpiration().setExpirationFilter(
+        c = newCache(newConf().setClock(clock).loading().setLoader(
+                new IntegerToStringLoader()).c().expiration().setExpirationFilter(
                 f).c());
         clock.incrementTimestamp();
         c.put(M1.getKey(), "AB");

@@ -20,7 +20,7 @@ public class SimplePolicyEviction extends CacheTestBundle {
 
     @Test
     public void testSimpleSize() {
-        c = newCache(newConf().serviceEviction().setPolicy(Policies.newLRU()).setMaximumSize(5)
+        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(5)
                 .c());
         for (int i = 0; i < 5; i++) {
             c.put(i, Integer.toString(i));
@@ -34,7 +34,7 @@ public class SimplePolicyEviction extends CacheTestBundle {
 
     @Test
     public void testEviction() {
-        c = newCache(newConf().serviceEviction().setPolicy(Policies.newLRU()).setMaximumSize(5)
+        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(5)
                 .c());
         for (int i = 0; i < 5; i++) {
             c.put(i, Integer.toString(i));
@@ -54,7 +54,7 @@ public class SimplePolicyEviction extends CacheTestBundle {
 
     @Test
     public void testTouch() {
-        c = newCache(newConf().serviceEviction().setPolicy(Policies.newLRU()).setMaximumSize(10)
+        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(10)
                 .c());
         for (int i = 0; i < 10; i++) {
             c.put(i, Integer.toString(i));
@@ -80,7 +80,7 @@ public class SimplePolicyEviction extends CacheTestBundle {
 
     @Test
     public void testPeek() {
-        c = newCache(newConf().serviceEviction().setPolicy(Policies.newLRU()).setMaximumSize(5)
+        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(5)
                 .c());
         for (int i = 0; i < 5; i++) {
             c.put(i, Integer.toString(i));
@@ -102,7 +102,7 @@ public class SimplePolicyEviction extends CacheTestBundle {
     @Test
     public void testRejectEntry() {
         RejectEntriesPolicy rep = new RejectEntriesPolicy();
-        c = newCache(newConf().serviceEviction().setPolicy(rep).setMaximumSize(5).c().setClock(
+        c = newCache(newConf().eviction().setPolicy(rep).setMaximumSize(5).c().setClock(
                 clock));
 
         c.put(1, "A");
@@ -117,7 +117,7 @@ public class SimplePolicyEviction extends CacheTestBundle {
     @SuppressWarnings("unchecked")
     @Test
     public void testRejectEntryPutAll() {
-        c = newCache(newConf().serviceEviction().setPolicy(new Reject2EntriesPolicy())
+        c = newCache(newConf().eviction().setPolicy(new Reject2EntriesPolicy())
                 .setMaximumSize(5).c().setClock(clock));
         // the reject2EntriesPolicy is kind of a hack until we are
         // clear with one goes into add() for the policy
@@ -135,7 +135,7 @@ public class SimplePolicyEviction extends CacheTestBundle {
      */
     @Test
     public void testPutOverridesPreviousValue() {
-        c = newCache(newConf().serviceEviction().setPolicy(Policies.newLRU()).setMaximumSize(2).c());
+        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(2).c());
         c.put(M1.getKey(), M1.getValue());
         c.put(M2.getKey(), M2.getValue());
         c.get(M1.getKey());
@@ -147,7 +147,7 @@ public class SimplePolicyEviction extends CacheTestBundle {
 
     @Test
     public void testPutAllOverridesPreviousValue() {
-        c = newCache(newConf().serviceEviction().setPolicy(Policies.newLRU()).setMaximumSize(3)
+        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(3)
                 .c());
         put(M1);
         put(M2);
@@ -171,7 +171,7 @@ public class SimplePolicyEviction extends CacheTestBundle {
 
     @Test
     public void testRemoveEntry() {
-        c = newCache(newConf().serviceEviction().setPolicy(Policies.newLRU()).setMaximumSize(2)
+        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(2)
                 .c());
         c.put(M1.getKey(), M1.getValue());
         c.put(M2.getKey(), M2.getValue());
@@ -184,7 +184,7 @@ public class SimplePolicyEviction extends CacheTestBundle {
     public void testExpiration() {
         // cross check with expiration.
 
-        c = newCache(newConf().serviceEviction().setPolicy(Policies.newLRU()).setMaximumSize(5)
+        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(5)
                 .c().setClock(clock));
 
         for (int i = 0; i < 5; i++) {

@@ -4,6 +4,8 @@
 
 package org.coconut.cache.spi;
 
+import java.util.ResourceBundle;
+
 import org.coconut.internal.util.ResourceHolder;
 
 /**
@@ -16,17 +18,18 @@ import org.coconut.internal.util.ResourceHolder;
  */
 public final class Resources {
 
-    private static final String BUNDLE_NAME = "org.coconut.cache.messages";//$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.coconut.cache.messages";//$NON-NLS-1$
 
-    private static final ResourceHolder RESOURCE_HOLDER = new ResourceHolder(
-            BUNDLE_NAME);
+	static final ResourceBundle DEFAULT_CACHE_BUNDLE = ResourceHolder.lookup(BUNDLE_NAME);
 
-    public static String lookup(Class c, String key, Object... o) {
-        return RESOURCE_HOLDER.lookup(c, key, o);
-    }
-    
-    public static String getHighlyIrregular() {
-        //take from configuration
-        return "This is a highly irregular exception, please report this ";
-    }
+	private static final ResourceHolder RESOURCE_HOLDER = new ResourceHolder(BUNDLE_NAME);
+
+	public static String lookup(Class c, String key, Object... o) {
+		return RESOURCE_HOLDER.lookup(c, key, o);
+	}
+
+	public static String getHighlyIrregular() {
+		// take from configuration
+		return "This is a highly irregular exception, please report this ";
+	}
 }

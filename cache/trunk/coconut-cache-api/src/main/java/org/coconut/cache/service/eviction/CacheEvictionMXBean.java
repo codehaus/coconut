@@ -4,6 +4,7 @@
 package org.coconut.cache.service.eviction;
 
 import org.coconut.management.annotation.ManagedAttribute;
+import org.coconut.management.annotation.ManagedOperation;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -11,8 +12,8 @@ import org.coconut.management.annotation.ManagedAttribute;
  */
 public interface CacheEvictionMXBean {
 
-	@ManagedAttribute(defaultValue = "Expiration Filter", description = "toString() on the defined expiration filter")
-	String getEvictionIdleAsString();
+	@ManagedAttribute(defaultValue = "ExpirationFilter", description = "toString() on the defined expiration filter")
+	String getIdleFilterAsString();
 
 	/**
      * Keeps evicting entries until the size of the cache is the specified size.
@@ -24,6 +25,8 @@ public interface CacheEvictionMXBean {
      * @throws IllegalArgumentException
      *             if the specified size is negative
      */
+    @ManagedOperation(description = "Trims the cache to this size")
+
 	void trimToSize(int size);
 
 	void trimToCapacity(long capacity);
@@ -36,7 +39,7 @@ public interface CacheEvictionMXBean {
      *         there is no limit.
      * @see #setMaximumCapacity(long)
      */
-	@ManagedAttribute(defaultValue = "Maximum Capacity", description = "The maximum capacity of the cache")
+	@ManagedAttribute(description = "The maximum capacity of the cache")
 	long getMaximumCapacity();
 
     /**
@@ -48,7 +51,7 @@ public interface CacheEvictionMXBean {
      * @see #setMaximumSize(int)
      * @see #getSize
      */
-	@ManagedAttribute(defaultValue = "Maximum Size", description = "The maximum size of the cache")
+	@ManagedAttribute(description = "The maximum size of the cache")
 	int getMaximumSize();
 
 	/**
@@ -93,7 +96,7 @@ public interface CacheEvictionMXBean {
      */
 	void setMaximumSize(int maximumSize);
 	
-    @ManagedAttribute(defaultValue = "Default Idle Time", description = "The default time to idle for cache entries in milliseconds")
+    @ManagedAttribute(description = "The default time to idle for cache entries in milliseconds")
     long getDefaultIdleTimeMs();
 
     void setDefaultIdleTimeMs(long idleTimeMs);

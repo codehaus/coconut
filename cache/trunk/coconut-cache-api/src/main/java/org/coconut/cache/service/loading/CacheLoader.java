@@ -21,8 +21,8 @@ import org.coconut.core.AttributeMap;
  * given path.
  * 
  * <pre>
- * class FileLoader implements CacheLoader {
- *     public byte[] load(String s) throws IOException {
+ * class FileLoader implements CacheLoader<String, byte[]> {
+ *     public byte[] load(String s, AttributeMap ignore) throws IOException {
  *         File f = new File(s);
  *         byte[] bytes = new byte[(int) f.length()];
  *         (new RandomAccessFile(f, &quot;r&quot;)).read(bytes);
@@ -42,7 +42,7 @@ import org.coconut.core.AttributeMap;
  * 
  * <pre>
  * class PatternLoader implements CacheLoader&lt;String, Pattern&gt; {
- *     public Pattern load(String s) throws IOException {
+ *     public Pattern load(String s, AttributeMap ignore) throws IOException {
  *         return Pattern.compile(s);
  *     }
  * }

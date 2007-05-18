@@ -25,7 +25,7 @@ public class CustomExpirationExample {
 
     public static void main(String[] args) {
         CacheConfiguration<String, String> cc = CacheConfiguration.create();
-        cc.serviceExpiration().setExpirationFilter(new CustomExpirationFilter<String, String>());
+        cc.expiration().setExpirationFilter(new CustomExpirationFilter<String, String>());
         Cache<String, String> cache = cc.newInstance(UnsynchronizedCache.class);
         cache.put("key", "value");
         // element will expire if has not been accessed with the last 1 hour

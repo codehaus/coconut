@@ -27,7 +27,7 @@ import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.cache.spi.ConfigurationValidator;
 import org.coconut.cache.spi.XmlConfigurator;
 import org.coconut.core.Clock;
-import org.coconut.core.Log;
+import org.coconut.core.Logger;
 
 /**
  * This class is the primary class used for representing the configuration of a
@@ -64,7 +64,7 @@ public final class CacheConfiguration<K, V> {
 	private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
 	/** The default logger for the cache. */
-	private Log defaultLogger;
+	private Logger defaultLogger;
 
 	private final List<AbstractCacheServiceConfiguration> list = new ArrayList<AbstractCacheServiceConfiguration>();
 
@@ -148,7 +148,7 @@ public final class CacheConfiguration<K, V> {
      * @return the default log configured for this cache or null if no default
      *         log has been configured
      */
-	public Log getDefaultLog() {
+	public Logger getDefaultLog() {
 		return defaultLogger;
 	}
 
@@ -262,7 +262,7 @@ public final class CacheConfiguration<K, V> {
      * 
      * @return a CacheEventConfiguration
      */
-	public CacheEventConfiguration serviceEvent() {
+	public CacheEventConfiguration event() {
 		return lazyCreate(CacheEventConfiguration.class);
 	}
 
@@ -272,7 +272,7 @@ public final class CacheConfiguration<K, V> {
      * 
      * @return a CacheEvictionConfiguration
      */
-	public CacheEvictionConfiguration serviceEviction() {
+	public CacheEvictionConfiguration eviction() {
 		return lazyCreate(CacheEvictionConfiguration.class);
 	}
 
@@ -282,7 +282,7 @@ public final class CacheConfiguration<K, V> {
      * 
      * @return a CacheExpirationConfiguration
      */
-	public CacheExpirationConfiguration<K, V> serviceExpiration() {
+	public CacheExpirationConfiguration<K, V> expiration() {
 		return lazyCreate(CacheExpirationConfiguration.class);
 	}
 
@@ -292,7 +292,7 @@ public final class CacheConfiguration<K, V> {
      * 
      * @return a CacheLoadingConfiguration
      */
-	public CacheLoadingConfiguration<K, V> serviceLoading() {
+	public CacheLoadingConfiguration<K, V> loading() {
 		return lazyCreate(CacheLoadingConfiguration.class);
 	}
 
@@ -302,7 +302,7 @@ public final class CacheConfiguration<K, V> {
      * 
      * @return a CacheManagementConfiguration
      */
-	public CacheManagementConfiguration<K, V> serviceManagement() {
+	public CacheManagementConfiguration<K, V> management() {
 		return lazyCreate(CacheManagementConfiguration.class);
 	}
 
@@ -312,7 +312,7 @@ public final class CacheConfiguration<K, V> {
      * 
      * @return a CacheThreadingConfiguration
      */
-	public CacheThreadingConfiguration serviceThreading() {
+	public CacheThreadingConfiguration threading() {
 		return lazyCreate(CacheThreadingConfiguration.class);
 	}
 
@@ -354,7 +354,7 @@ public final class CacheConfiguration<K, V> {
      * @return this configuration
      * @see #getDefaultLog()
      */
-	public CacheConfiguration<K, V> setDefaultLog(Log logger) {
+	public CacheConfiguration<K, V> setDefaultLog(Logger logger) {
 		this.defaultLogger = logger;
 		return this;
 	}

@@ -26,7 +26,7 @@ public class CacheEntryLoaderExample {
 
     public static void main(String[] args) {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
-        cc.serviceLoading().setLoader(new ExpirationLoader());
+        cc.loading().setLoader(new ExpirationLoader());
         Cache<Integer, String> cache = cc.newInstance(UnsynchronizedCache.class);
         cache.get(4); // item will expire after 1 hour (60 * 60 * 1000)
     }

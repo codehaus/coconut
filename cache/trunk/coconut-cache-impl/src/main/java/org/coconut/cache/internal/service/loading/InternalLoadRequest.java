@@ -5,7 +5,6 @@ package org.coconut.cache.internal.service.loading;
 
 import java.util.concurrent.Future;
 
-import org.coconut.cache.service.loading.LoadRequest;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

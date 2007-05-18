@@ -3,7 +3,6 @@
  */
 package org.coconut.cache.service.loading;
 
-import static org.coconut.internal.util.XmlUtil.add;
 import static org.coconut.internal.util.XmlUtil.addAndsaveObject;
 import static org.coconut.internal.util.XmlUtil.getChild;
 import static org.coconut.internal.util.XmlUtil.loadOptional;
@@ -13,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.filter.Filter;
-import org.coconut.internal.util.ResourceHolder;
 import org.coconut.internal.util.UnitOfTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -28,9 +26,6 @@ public class CacheLoadingConfiguration<K, V> extends
 		AbstractCacheServiceConfiguration<K, V> {
 
 	private final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.NANOSECONDS;
-
-	private final static ResourceHolder RH = ResourceHolder
-			.fromPackage(CacheLoadingConfiguration.class);
 
 	public static final String SERVICE_NAME = "loading";
 
@@ -174,14 +169,15 @@ public class CacheLoadingConfiguration<K, V> extends
 	@Override
 	protected void toXML(Document doc, Element parent) {
 		/* Cache Loader */
-		addAndsaveObject(doc, parent, LOADER_TAG, "saveOfLoaderFailed", loader);
+		addAndsaveObject(doc, parent, LOADER_TAG, getResourceBundle(),
+				"loading.saveOfLoaderFailed", loader);
 
 		/* Refresh Timer */
 		UnitOfTime.toElementCompact(doc, parent, REFRESH_INTERVAL_TAG,
 				defaultRefreshInterval, DEFAULT_TIME_UNIT, Long.MAX_VALUE);
 
 		/* Refresh Filter */
-		addAndsaveObject(doc, parent, REFRESH_FILTER_TAG, "saveOfFilterFailed",
-				refreshFilter);
+		addAndsaveObject(doc, parent, REFRESH_FILTER_TAG, getResourceBundle(),
+				"loading.saveOfFilterFailed", refreshFilter);
 	}
 }

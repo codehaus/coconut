@@ -95,7 +95,7 @@ public class ExpirationEvict extends ExpirationTestBundle {
     @Test
     public void customExpirationFilter() {
         CacheEntryFilter f = new CacheEntryFilter();
-        c = newCache(newConf().setClock(clock).serviceExpiration().setExpirationFilter(f).c());
+        c = newCache(newConf().setClock(clock).expiration().setExpirationFilter(f).c());
         fillItUp();
 
         incTime(3);

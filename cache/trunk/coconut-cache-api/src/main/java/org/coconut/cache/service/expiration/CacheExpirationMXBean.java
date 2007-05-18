@@ -30,10 +30,10 @@ import org.coconut.management.annotation.ManagedAttribute;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public interface CacheExpirationMXBean {
-    @ManagedAttribute(defaultValue = "Default TimeToLive", description = "The default time to live for cache entries in milliseconds")
+    @ManagedAttribute( description = "The default time to live for cache entries in milliseconds")
     long getDefaultTimeToLiveMs();
 
-    @ManagedAttribute(defaultValue = "Expiration Filter", description = "toString() on the defined expiration filter")
+    @ManagedAttribute(description = "toString() on the defined expiration filter")
     String getFilterAsString();
 
     void setDefaultTimeToLiveMs(long timeToLiveMs);

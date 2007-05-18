@@ -32,8 +32,8 @@ public class DefaultCacheThreadService<K, V> extends AbstractCacheService implem
     public DefaultCacheThreadService(OlfInternalCacheServiceManager manager,
             CacheConfiguration<K, V> conf) {
         super("threading");
-        this.e = conf.serviceThreading().getExecutor();
-        this.shutdownOnExit = conf.serviceThreading().getShutdownExecutorService();
+        this.e = conf.threading().getExecutor();
+        this.shutdownOnExit = conf.threading().getShutdownExecutorService();
         String s = (String) conf.getProperty(XmlConfigurator.CACHE_INSTANCE_TYPE);
         Class c = null;
         try {

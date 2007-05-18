@@ -37,7 +37,7 @@ public class EventBusFeature extends AbstractEventTestBundle {
     @Before
     public void setup() {
         CacheConfiguration conf = CacheConfiguration.create();
-        conf.serviceEvent();
+        conf.event();
         c = newCache(conf);
         c2 = newCache(conf, 2);
         c0=newCache(conf,0);
@@ -222,7 +222,7 @@ public class EventBusFeature extends AbstractEventTestBundle {
      */
     @Test
     public void itemRemovedEvicted() throws Exception {
-        c = newCache(newConf().serviceEviction().setPolicy(Policies.newLRU()).setMaximumSize(3)
+        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(3)
                 .c());
         subscribe(CACHEENTRY_REMOVED_FILTER);
         putAll(M1, M2, M3);

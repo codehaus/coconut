@@ -8,8 +8,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
+import org.coconut.cache.CacheServices;
 import org.coconut.cache.defaults.UnsynchronizedCache;
-import org.coconut.cache.service.CacheServices;
 import org.coconut.cache.service.eviction.CacheEvictionService;
 
 /**

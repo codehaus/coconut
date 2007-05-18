@@ -16,7 +16,7 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
 		AbstractCacheServiceConfiguration<K, V> {
 	public static final String SERVICE_NAME = "exceptionhandling";
 
-	private CacheExceptionHandler<K, V> exceptionHandler = new CacheExceptionHandlingStrategies.DefaultCacheExceptionHandler<K, V>();
+	private AbstractCacheExceptionHandler<K, V> exceptionHandler = new CacheExceptionHandlingStrategies.DefaultCacheExceptionHandler<K, V>();
 
 	/** The default exception log to log to. */
 	private Logger log;
@@ -32,7 +32,7 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
 	/**
      * @return the exceptionHandler
      */
-	public CacheExceptionHandler<K, V> getExceptionHandler() {
+	public AbstractCacheExceptionHandler<K, V> getExceptionHandler() {
 		return exceptionHandler;
 	}
 
@@ -52,7 +52,7 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
      * @param exceptionHandler
      *            the exceptionHandler to set
      */
-	public void setExceptionHandler(CacheExceptionHandler<K, V> exceptionHandler) {
+	public void setExceptionHandler(AbstractCacheExceptionHandler<K, V> exceptionHandler) {
 		this.exceptionHandler = exceptionHandler;
 	}
 

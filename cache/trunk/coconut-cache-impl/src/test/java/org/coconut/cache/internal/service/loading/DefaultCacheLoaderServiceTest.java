@@ -13,7 +13,7 @@ import org.coconut.cache.internal.service.threading.InternalCacheThreadingServic
 import org.coconut.cache.internal.spi.CacheHelper;
 import org.coconut.cache.internal.spi.ExtendedExecutorRunnable;
 import org.coconut.cache.internal.spi.ExtendedExecutorRunnable.LoadKey;
-import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
+import org.coconut.cache.service.exceptionhandling.AbstractCacheExceptionHandler;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.AttributeMaps;
@@ -62,7 +62,7 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
 
     Mock errorHandlerMock;
 
-    CacheExceptionHandler<Integer, String> errorHandlerProxy;
+    AbstractCacheExceptionHandler<Integer, String> errorHandlerProxy;
 
     Mock cacheHelperMock;
 
@@ -76,8 +76,8 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
         loaderMock2 = mock(CacheLoader.class);
         loaderProxy2 = (CacheLoader) loaderMock2.proxy();
 
-        errorHandlerMock = mock(CacheExceptionHandler.class);
-        errorHandlerProxy = (CacheExceptionHandler) errorHandlerMock.proxy();
+        errorHandlerMock = mock(AbstractCacheExceptionHandler.class);
+        errorHandlerProxy = (AbstractCacheExceptionHandler) errorHandlerMock.proxy();
 
         cacheHelperMock = mock(CacheHelper.class);
         cacheHelperProxy = (CacheHelper) cacheHelperMock.proxy();

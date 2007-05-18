@@ -8,11 +8,10 @@ import static junit.framework.Assert.assertNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.logging.Logger;
 
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.core.Log;
-import org.coconut.core.Logs;
+import org.coconut.core.Logger;
+import org.coconut.core.Loggers;
 import org.coconut.test.MockTestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -77,17 +76,17 @@ public class XmlConfiguratorTest {
     
     @Test
     public void testJDK() throws Exception {
-        conf.setDefaultLog(Logs.JDK.from("org.coconut"));
+        conf.setDefaultLog(Loggers.JDK.from("org.coconut"));
         conf = rw(conf);
-        Logger l = Logs.JDK.getAsJDKLogger(conf.getDefaultLog());
+        java.util.logging.Logger l = Loggers.JDK.getAsJDKLogger(conf.getDefaultLog());
         assertEquals("org.coconut", l.getName());
     }
 
     @Test
     public void testLog4J() throws Exception {
-        conf.setDefaultLog(Logs.Log4j.from("org.coconut"));
+        conf.setDefaultLog(Loggers.Log4j.from("org.coconut"));
         conf = rw(conf);
-        org.apache.log4j.Logger l = Logs.Log4j.getAsLog4jLogger(conf.getDefaultLog()
+        org.apache.log4j.Logger l = Loggers.Log4j.getAsLog4jLogger(conf.getDefaultLog()
                );
 
         assertEquals("org.coconut", l.getName());
@@ -95,16 +94,16 @@ public class XmlConfiguratorTest {
 
     @Test
     public void testCommons() throws Exception {
-        conf.setDefaultLog(Logs.Commons.from("org.coconut"));
+        conf.setDefaultLog(Loggers.Commons.from("org.coconut"));
         conf = rw(conf);
-        org.apache.commons.logging.Log l = Logs.Commons.getAsCommonsLogger(conf.getDefaultLog()            );
+        org.apache.commons.logging.Log l = Loggers.Commons.getAsCommonsLogger(conf.getDefaultLog()            );
 
         // hmm cannot test name
     }
 
     @Test
     public void testCustomLog() throws Exception {
-        conf.setDefaultLog(MockTestCase.mockDummy(Log.class));
+        conf.setDefaultLog(MockTestCase.mockDummy(Logger.class));
         conf = rw(conf);
         assertNull(conf.getDefaultLog());
     }

@@ -3,6 +3,8 @@
  */
 package org.coconut.cache.service.exceptionhandling;
 
+import java.util.Map;
+
 import org.coconut.cache.Cache;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.core.AttributeMap;
@@ -13,6 +15,7 @@ import org.coconut.core.AttributeMap;
  */
 public class CacheExceptionHandlingStrategies {
 
+	//log, rethrow/or not, shutdown cache, System.exit
 	// logAll
 	// logAndThrow
 	// NoLogJustThrow
@@ -22,37 +25,20 @@ public class CacheExceptionHandlingStrategies {
 	// SystemExit
 
 	
-	// Interceptor
-	static class ExceptionHandlerInterceptor extends CacheExceptionHandler {		CacheExceptionHandler delegate;
-
-		/**
-         * @see org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#loadFailed(org.coconut.cache.Cache,
-         *      org.coconut.cache.service.loading.CacheLoader, java.lang.Object,
-         *      org.coconut.core.AttributeMap, boolean, java.lang.Throwable)
-         */
-		@Override
-		public Object loadFailed(Cache cache, CacheLoader loader, Object key,
-				AttributeMap map, boolean isAsync, Throwable cause) {
-			beforeLoadFailed(cache, loader, key, map, isAsync, cause);
-			Object o = delegate.loadFailed(cache, loader, key, map, isAsync, cause);
-			afterLoadFailed(cache, loader, key, map, isAsync, cause);
-			return o;
-		}
-
-		protected void beforeLoadFailed(Cache cache, CacheLoader loader, Object key,
-				AttributeMap map, boolean isAsync, Throwable cause) {
-		// ignore
-		}
-
-		protected void afterLoadFailed(Cache cache, CacheLoader loader, Object key,
-				AttributeMap map, boolean isAsync, Throwable cause) {
-		// ignore
-		}
-	}
-
 
 	public static class DefaultCacheExceptionHandler<K, V> extends
-			CacheExceptionHandler<K, V> {
+			AbstractCacheExceptionHandler<K, V> {
+
+	
+
+		/**
+		 * @see org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#warning(java.lang.String)
+		 */
+		@Override
+		public void warning(String warning) {
+			// TODO Auto-generated method stub
+			
+		}
 
 	}
 }

@@ -12,12 +12,12 @@ import org.coconut.core.AttributeMaps;
  */
 public class DefaultCacheAttributeService implements InternalCacheAttributeService {
 
-    public AttributeMap createMap() {
-        return new AttributeMaps.DefaultAttributeMap();
-    }
+	public AttributeMap createMap() {
+		return new AttributeMaps.DefaultAttributeMap();
+	}
 
-    public AttributeMap createMap(AttributeMap fromUser) {
-        return new AttributeMaps.DefaultAttributeMap(fromUser);
-    }
+	public AttributeMap createMap(AttributeMap copyFrom) {
+		return new AttributeMaps.DefaultAttributeMap(copyFrom);
+	}
 
 }

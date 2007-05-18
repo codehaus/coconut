@@ -5,7 +5,7 @@ package org.coconut.cache.internal.service;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.service.servicemanager.CacheManagerService;
+import org.coconut.cache.service.lifecycle.CacheManagerService;
 import org.coconut.cache.spi.CacheService;
 
 /**

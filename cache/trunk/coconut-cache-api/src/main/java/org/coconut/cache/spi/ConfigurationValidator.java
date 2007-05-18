@@ -33,7 +33,7 @@ public class ConfigurationValidator {
         // preferable capacity>maxCapacity?
         // preferable size>maxSize?
         // no policy defined->cache is free to select a policy
-        Executor e = conf.serviceThreading().getExecutor();
+        Executor e = conf.threading().getExecutor();
         // if (type.isAnnotationPresent(NotThreadSafe.class)) {
         // throw new IllegalCacheConfigurationException(
         // "Cannot specify an executor, since this cache is not threadsafe");
@@ -42,7 +42,7 @@ public class ConfigurationValidator {
         boolean isScheduled = e instanceof ScheduledExecutorService;
 
         if (!isScheduled
-                && conf.serviceThreading().getScheduledEvictionAtFixedRate(
+                && conf.threading().getScheduledEvictionAtFixedRate(
                         TimeUnit.NANOSECONDS) > 0) {
             if (e == null) {
                 throw new IllegalCacheConfigurationException(
@@ -54,7 +54,7 @@ public class ConfigurationValidator {
             }
         }
         boolean isExecutorService = e instanceof ExecutorService;
-        if (!isExecutorService && conf.serviceThreading().getShutdownExecutorService()) {
+        if (!isExecutorService && conf.threading().getShutdownExecutorService()) {
             throw new IllegalCacheConfigurationException(
                     "Can only shutdown executors of type java.util.concurrent.ExecutorService, the type of the executor was, "
                             + e.getClass().getCanonicalName());

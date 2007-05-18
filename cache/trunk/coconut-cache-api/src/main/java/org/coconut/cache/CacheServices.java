@@ -5,7 +5,7 @@ package org.coconut.cache;
 
 import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
-import org.coconut.cache.service.servicemanager.CacheManagerService;
+import org.coconut.cache.service.lifecycle.CacheManagerService;
 
 /**
  * A utility class to get hold of cache services in an easy and typesafe manner.

@@ -18,7 +18,7 @@ public class SpecialExpirationValueExample {
     public static void main(String[] args) {
         // START SNIPPET: class
         CacheConfiguration<String, String> cc = CacheConfiguration.create();
-        cc.serviceExpiration().setDefaultTimeToLive(24 * 60 * 60, TimeUnit.SECONDS);
+        cc.expiration().setDefaultTimeToLive(24 * 60 * 60, TimeUnit.SECONDS);
         Cache<String, String> cache = cc.newInstance(UnsynchronizedCache.class);
 
         CacheExpirationService<String, String> e=cache.getService(CacheExpirationService.class);

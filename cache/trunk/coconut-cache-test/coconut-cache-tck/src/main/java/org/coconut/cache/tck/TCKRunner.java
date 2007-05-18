@@ -14,7 +14,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
-import org.coconut.cache.spi.annotations.CacheServiceSupport;
+import org.coconut.cache.spi.CacheServiceSupport;
 import org.coconut.cache.tck.core.BasicCache;
 import org.coconut.cache.tck.core.BasicMap;
 import org.coconut.cache.tck.core.ClearRemove;

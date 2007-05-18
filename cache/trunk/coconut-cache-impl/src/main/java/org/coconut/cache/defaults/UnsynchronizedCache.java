@@ -13,6 +13,7 @@ import java.util.Set;
 
 import net.jcip.annotations.NotThreadSafe;
 
+import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.CacheServiceManager;
@@ -27,6 +28,7 @@ import org.coconut.cache.internal.service.joinpoint.AfterCacheOperation;
 import org.coconut.cache.internal.service.joinpoint.InternalCacheOperation;
 import org.coconut.cache.internal.service.loading.InternalCacheLoadingService;
 import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsService;
+import org.coconut.cache.internal.spi.CacheHelper;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
@@ -35,6 +37,7 @@ import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.spi.CacheServiceSupport;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.AttributeMaps.DefaultAttributeMap;
+import org.coconut.filter.Filter;
 
 /**
  * An unsynchronized cache implementation.
@@ -391,4 +394,102 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         return serviceManager.hasService(serviceType);
     }
 
+    class MyHelper implements CacheHelper<K, V> {
+
+		/**
+		 * @see org.coconut.cache.internal.spi.CacheHelper#expire(java.lang.Object)
+		 */
+		public boolean expire(K key) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		/**
+		 * @see org.coconut.cache.internal.spi.CacheHelper#expireAll(java.util.Collection)
+		 */
+		public int expireAll(Collection<? extends K> collection) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		/**
+		 * @see org.coconut.cache.internal.spi.CacheHelper#expireAll(org.coconut.filter.Filter)
+		 */
+		public int expireAll(Filter<? extends CacheEntry<K, V>> filter) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		/**
+		 * @see org.coconut.cache.internal.spi.CacheHelper#filter(org.coconut.filter.Filter)
+		 */
+		public Collection<? extends CacheEntry<K, V>> filter(Filter<? super CacheEntry<K, V>> filter) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		/**
+		 * @see org.coconut.cache.internal.spi.CacheHelper#filterKeys(org.coconut.filter.Filter)
+		 */
+		public Collection<? extends K> filterKeys(Filter<? super CacheEntry<K, V>> filter) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		/**
+		 * @see org.coconut.cache.internal.spi.CacheHelper#getCache()
+		 */
+		public Cache<K, V> getCache() {
+			// TODO Auto-generated method stub
+			return UnsynchronizedCache.this;
+		}
+
+		/**
+		 * @see org.coconut.cache.internal.spi.CacheHelper#getMutex()
+		 */
+		public Object getMutex() {
+			throw new UnsupportedOperationException("synchronization not available");
+		}
+
+		/**
+		 * @see org.coconut.cache.internal.spi.CacheHelper#isValid(java.lang.Object)
+		 */
+		public boolean isValid(K key) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		/**
+		 * @see org.coconut.cache.internal.spi.CacheHelper#put(java.lang.Object, java.lang.Object, org.coconut.core.AttributeMap)
+		 */
+		public V put(K key, V value, AttributeMap attributes) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		/**
+		 * @see org.coconut.cache.internal.spi.CacheHelper#putAll(java.util.Map, java.util.Map)
+		 */
+		public void putAll(Map<? extends K, ? extends V> keyValues, Map<? extends K, AttributeMap> attributes) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		/**
+		 * @see org.coconut.cache.internal.spi.CacheHelper#valueLoaded(java.lang.Object, java.lang.Object, org.coconut.core.AttributeMap)
+		 */
+		public void valueLoaded(K key, V value, AttributeMap attributes) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		/**
+		 * @see org.coconut.cache.internal.spi.CacheHelper#valuesLoaded(java.util.Map, java.util.Map)
+		 */
+		public void valuesLoaded(Map<? super K, ? extends V> values, Map<? extends K, AttributeMap> keys) {
+			// TODO Auto-generated method stub
+			
+		}
+    	
+    }
 }

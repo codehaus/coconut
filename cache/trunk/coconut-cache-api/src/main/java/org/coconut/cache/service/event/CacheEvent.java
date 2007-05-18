@@ -66,23 +66,23 @@ public interface CacheEvent<K, V> {
 		long getPreviousCapacity();
 	}
 
-	/**
-     * An event indicating that the statistics of a particular cache has been
-     * reset.
-     */
-	interface CacheStatisticsReset<K, V> extends CacheEvent<K, V> {
-		/** The unique name of the event. */
-		String NAME = "cache.statisticsReset";
-
-		/**
-         * Return the hit statistics of the cache before the statistics was
-         * reset.
-         * 
-         * @return the hit statistics of the cache before the statistics was
-         *         reset
-         */
-		CacheHitStat getPreviousHitStat();
-	}
+//	/**
+//     * An event indicating that the statistics of a particular cache has been
+//     * reset.
+//     */
+//	interface CacheStatisticsReset<K, V> extends CacheEvent<K, V> {
+//		/** The unique name of the event. */
+//		String NAME = "cache.statisticsReset";
+//
+//		/**
+//         * Return the hit statistics of the cache before the statistics was
+//         * reset.
+//         * 
+//         * @return the hit statistics of the cache before the statistics was
+//         *         reset
+//         */
+//		CacheHitStat getPreviousHitStat();
+//	}
 
 	/**
      * An event indicating that evict was called on a particular {@link Cache}.

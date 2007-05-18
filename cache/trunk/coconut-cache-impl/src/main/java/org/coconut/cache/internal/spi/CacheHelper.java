@@ -18,8 +18,9 @@ import org.coconut.filter.Filter;
 public interface CacheHelper<K, V> {
     
     Cache<K,V> getCache();
-    Collection<K> filterEntries(Collection<? super K> col,
-            Filter<? super CacheEntry> filter);
+//    
+//    Collection<K> filterEntries(Collection<? super K> col,
+//            Filter<? super CacheEntry> filter);
 
     void valueLoaded(K key, V value, AttributeMap attributes);
 

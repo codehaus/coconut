@@ -3,7 +3,6 @@
  */
 package org.coconut.cache.service.threading;
 
-import static org.coconut.cache.spi.XmlUtil2.addComment;
 import static org.coconut.internal.util.XmlUtil.add;
 import static org.coconut.internal.util.XmlUtil.getChild;
 import static org.coconut.internal.util.XmlUtil.loadObject;
@@ -176,7 +175,7 @@ public class CacheThreadingConfiguration<K, V> extends
         if (!"java.util.concurrent.Executors.DefaultThreadFactory".equals(tpe
                 .getThreadFactory().getClass().getCanonicalName())) {
             Element tfTag = add(doc, THREAD_FACTORY_TAG, exTag);
-            saveObject(doc, tfTag, "threading.cannotPersistThreadFactory", tpe
+            saveObject(doc, tfTag, getResourceBundle(),"threading.cannotPersistThreadFactory", tpe
                     .getThreadFactory());
         }
         /* RejectedExecutionHandler */
@@ -186,7 +185,7 @@ public class CacheThreadingConfiguration<K, V> extends
             if (policy.containsKey(reh.getClass())) {
                 rehTag.setAttribute("type", policy.get(reh.getClass()));
             } else {
-                saveObject(doc, rehTag, "threading.cannotPersistREH", reh);
+                saveObject(doc, rehTag, getResourceBundle(),"threading.cannotPersistREH", reh);
             }
         }
 
@@ -206,7 +205,7 @@ public class CacheThreadingConfiguration<K, V> extends
                 Comparator comp = q.comparator();
                 if (comp != null
                         && !saveObject(doc, qElement,
-                                "threading.cannotPersistComperator", comp)) {
+                        		getResourceBundle(),"threading.cannotPersistComperator", comp)) {
                     // Queue cannot be set on ThreadPoolExecutor
                     base.removeChild(exTag);
                     return;
@@ -215,7 +214,7 @@ public class CacheThreadingConfiguration<K, V> extends
                 add(doc, "synchronous-queue", exTag);
             } else {
                 Element q = add(doc, "queue", exTag);
-                if (!saveObject(doc, q, "threading.cannotPersistQueue", tpe.getQueue())) {
+                if (!saveObject(doc, q, getResourceBundle(),"threading.cannotPersistQueue", tpe.getQueue())) {
                     base.removeChild(exTag);
                     return;
                 }
@@ -248,8 +247,8 @@ public class CacheThreadingConfiguration<K, V> extends
                     || e.getClass().equals(ScheduledThreadPoolExecutor.class)) {
                 writeExecutor(doc, base, (ThreadPoolExecutor) e, !isThreadPoolExecutor);
             } else {
-                addComment(doc, "threading.cannotPersistExecutor", base, e.getClass()
-                        .getCanonicalName());
+//                addComment(doc, "threading.cannotPersistExecutor", base, e.getClass()
+//                        .getCanonicalName());
             }
         }
         if (getShutdownExecutorService() != DEFAULT.getShutdownExecutorService()) {

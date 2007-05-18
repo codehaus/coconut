@@ -28,8 +28,8 @@ public class EventBusExpiration extends AbstractEventTestBundle {
     @Before
     public void setup() {
         CacheConfiguration conf = CacheConfiguration.create();
-        conf.serviceEvent();
-        conf.serviceExpiration();
+        conf.event();
+        conf.expiration();
         c = newCache(conf);
     }
 

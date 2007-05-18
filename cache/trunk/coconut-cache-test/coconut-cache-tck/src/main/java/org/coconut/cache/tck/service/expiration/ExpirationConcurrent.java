@@ -29,7 +29,7 @@ public class ExpirationConcurrent extends ExpirationTestBundle {
         for (;;) {
             gets = 0;
             CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
-            Cache<Integer, String> c = newCache(cc.serviceExpiration().c().setClock(
+            Cache<Integer, String> c = newCache(cc.expiration().c().setClock(
                     Clock.DEFAULT_CLOCK));
             long earlyStart = Clock.DEFAULT_CLOCK.relativeTime();
             service.put(M1.getKey(), M1.getValue(), s, TimeUnit.NANOSECONDS);
@@ -62,7 +62,7 @@ public class ExpirationConcurrent extends ExpirationTestBundle {
         final AtomicLong counts = new AtomicLong();
         CountdownLatchLoader loader = CountdownLatchLoader.integerToStringLoader(1);
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
-        final Cache<Integer, String> c = newCache(cc.serviceLoading().setLoader(loader).c()
+        final Cache<Integer, String> c = newCache(cc.loading().setLoader(loader).c()
                 .setClock(Clock.DEFAULT_CLOCK));
 
         service.put(M1.getKey(), "ZXCW", 1, TimeUnit.NANOSECONDS);
@@ -95,7 +95,7 @@ public class ExpirationConcurrent extends ExpirationTestBundle {
         final AtomicLong counts = new AtomicLong();
         CountdownLatchLoader loader = CountdownLatchLoader.integerToStringLoader(1);
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
-        final Cache<Integer, String> c = newCache(cc.serviceLoading().setLoader(loader).c()
+        final Cache<Integer, String> c = newCache(cc.loading().setLoader(loader).c()
                 .setClock(Clock.DEFAULT_CLOCK));
 
         service.put(M1.getKey(), "ZXCW", 1, TimeUnit.NANOSECONDS);

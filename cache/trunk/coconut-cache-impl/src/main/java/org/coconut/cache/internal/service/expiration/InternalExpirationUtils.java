@@ -125,31 +125,24 @@ public class InternalExpirationUtils {
         }
 
         /**
-         * @see org.coconut.cache.service.expiration.CacheExpirationService#expire(java.lang.Object)
-         */
-        public boolean expire(K key) {
-            return service.expire(key);
-        }
-
-        /**
          * @see org.coconut.cache.service.expiration.CacheExpirationService#expireAll()
          */
-        public int expireAll() {
-            return service.expireAll();
+        public int removeAll() {
+            return service.removeAll();
         }
 
         /**
          * @see org.coconut.cache.service.expiration.CacheExpirationService#expireAll(java.util.Collection)
          */
-        public int expireAll(Collection<? extends K> keys) {
-            return service.expireAll(keys);
+        public int removeAll(Collection<? extends K> keys) {
+            return service.removeAll(keys);
         }
 
         /**
          * @see org.coconut.cache.service.expiration.CacheExpirationService#expireAll(org.coconut.filter.Filter)
          */
-        public int expireAll(Filter<? extends CacheEntry<K, V>> filter) {
-            return service.expireAll(filter);
+        public int removeAll(Filter<? extends CacheEntry<K, V>> filter) {
+            return service.removeAll(filter);
         }
 
         /**

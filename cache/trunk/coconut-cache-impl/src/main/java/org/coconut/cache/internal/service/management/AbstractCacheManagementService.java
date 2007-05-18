@@ -3,7 +3,9 @@
  */
 package org.coconut.cache.internal.service.management;
 
+import org.coconut.cache.Cache;
 import org.coconut.cache.internal.service.OldInternalCacheService;
+import org.coconut.cache.service.management.CacheMXBean;
 import org.coconut.cache.spi.AbstractCacheService;
 
 /**
@@ -19,5 +21,4 @@ public abstract class AbstractCacheManagementService extends AbstractCacheServic
     public AbstractCacheManagementService() {
         super("management");
     }
-
 }

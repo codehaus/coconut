@@ -53,13 +53,13 @@ public class CacheManagementConfigurationTest {
     public void testMBeanServer() {
         assertEquals(ManagementFactory.getPlatformMBeanServer(), m.getMBeanServer());
         MBeanServer s = MBeanServerFactory.createMBeanServer();
-        assertEquals(m, m.setMbeanServer(s));
+        assertEquals(m, m.setMBeanServer(s));
         assertEquals(s, m.getMBeanServer());
     }
 
     @Test(expected = NullPointerException.class)
     public void testMBeanServerNPE() {
-        m.setMbeanServer(null);
+        m.setMBeanServer(null);
     }
 
     @Test
@@ -72,7 +72,7 @@ public class CacheManagementConfigurationTest {
     @Test
     public void testXmlJMX() throws Exception {
         m.setDomain("foo.bar");
-        m.setMbeanServer(MBeanServerFactory.createMBeanServer());
+        m.setMBeanServer(MBeanServerFactory.createMBeanServer());
         m = rw(m);
         assertEquals("foo.bar", m.getDomain());
         assertEquals(DEFAULT.getMBeanServer(), m.getMBeanServer());

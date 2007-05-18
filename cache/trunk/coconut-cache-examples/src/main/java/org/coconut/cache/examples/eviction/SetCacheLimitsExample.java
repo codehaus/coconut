@@ -15,8 +15,8 @@ public class SetCacheLimitsExample {
     // START SNIPPET: class
     public static void main(String[] args) {
         CacheConfiguration<String, String> cc = CacheConfiguration.create();
-        cc.serviceEviction().setMaximumSize(1000);
-        cc.serviceEviction().setMaximumCapacity(50000);
+        cc.eviction().setMaximumSize(1000);
+        cc.eviction().setMaximumCapacity(50000);
     }
     // END SNIPPET: class
 }

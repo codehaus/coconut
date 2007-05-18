@@ -21,7 +21,7 @@ import org.junit.Test;
 public class ExpirationWithDefaultTimeout extends CacheTestBundle {
     @Before
     public void setUpCaches() {
-        c = newCache(newConf().setClock(clock).serviceExpiration().setDefaultTimeToLive(10,
+        c = newCache(newConf().setClock(clock).expiration().setDefaultTimeToLive(10,
                 TimeUnit.NANOSECONDS).c());
     }
 

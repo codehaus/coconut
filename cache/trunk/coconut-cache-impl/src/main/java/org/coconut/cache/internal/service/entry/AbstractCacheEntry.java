@@ -6,7 +6,7 @@ package org.coconut.cache.internal.service.entry;
 import java.util.Map;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
+import org.coconut.cache.service.exceptionhandling.AbstractCacheExceptionHandler;
 import org.coconut.core.Clock;
 
 /**
@@ -18,7 +18,7 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
     public static final long DEFAULT_HIT_COUNT = -1;
     public static final long DEFAULT_LAST_ACCESS_TIME = 0;
     static <K, V> long getHits(CacheEntry<K, V> takeFrom, CacheEntry<K, V> existing,
-            CacheExceptionHandler<K, V> errorHandler) {
+            AbstractCacheExceptionHandler<K, V> errorHandler) {
         if (takeFrom != null && takeFrom.getHits() !=  DEFAULT_HIT_COUNT) {
             long hits = takeFrom.getHits();
             if (hits >= 0) {
@@ -31,7 +31,7 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
     }
 
     static <K, V> long getLastAccessTime(CacheEntry<K, V> takeFrom,
-            CacheEntry<K, V> existing, Clock clock, CacheExceptionHandler<K, V> errorHandler) {
+            CacheEntry<K, V> existing, Clock clock, AbstractCacheExceptionHandler<K, V> errorHandler) {
         if (takeFrom != null
                 && takeFrom.getLastAccessTime() != DEFAULT_LAST_ACCESS_TIME) {
             long time = takeFrom.getLastAccessTime();

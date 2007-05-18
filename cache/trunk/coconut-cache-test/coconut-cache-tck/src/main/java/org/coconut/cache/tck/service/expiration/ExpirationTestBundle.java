@@ -30,7 +30,7 @@ public class ExpirationTestBundle extends CacheTestBundle {
     public void setupLoading() {
         noExpiration = c;
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
-        c = newCache(cc.serviceExpiration().c());
+        c = newCache(cc.expiration().c());
         service = c.getService(CacheExpirationService.class);
     }
 

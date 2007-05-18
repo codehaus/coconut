@@ -30,15 +30,15 @@ public class EventBusExpirationLoading extends AbstractEventTestBundle{
     @Before
     public void setup() {
         CacheConfiguration conf = CacheConfiguration.create();
-        conf.serviceEvent();
-        conf.serviceExpiration();
-        conf.serviceLoading().setLoader(new IntegerToStringLoader());
+        conf.event();
+        conf.expiration();
+        conf.loading().setLoader(new IntegerToStringLoader());
         c = newCache(conf);
     }
 
     @Test
     public void itemUpdatedExpiredWithLoading() throws Exception {
-        c = newCache(newConf().setClock(clock).serviceLoading().setLoader(
+        c = newCache(newConf().setClock(clock).loading().setLoader(
                 new IntegerToStringLoader()).c());
         subscribe(CACHEENTRY_UPDATED_FILTER);
         c.getService(CacheExpirationService.class).put(M1.getKey(), M1.getValue(), 1,

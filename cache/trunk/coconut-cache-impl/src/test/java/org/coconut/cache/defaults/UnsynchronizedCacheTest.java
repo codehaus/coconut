@@ -4,10 +4,13 @@
 
 package org.coconut.cache.defaults;
 
+import org.coconut.cache.tck.TCKClassTester;
+import org.coconut.cache.tck.TCKRunner;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
-//@RunWith(TCKRunner.class)
-//@TCKClassTester(UnsynchronizedCache.class)
+@RunWith(TCKRunner.class)
+@TCKClassTester(UnsynchronizedCache.class)
 public class UnsynchronizedCacheTest {
 
     @Test

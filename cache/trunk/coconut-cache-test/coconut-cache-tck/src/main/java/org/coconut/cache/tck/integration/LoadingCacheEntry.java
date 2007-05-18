@@ -26,7 +26,7 @@ public class LoadingCacheEntry extends CacheEntryBundle {
     public void testCreationDateFromLoader() {
         CacheConfiguration<Integer, String> conf = CacheConfiguration.create();
         conf.setClock(clock);
-        conf.serviceLoading().setLoader(
+        conf.loading().setLoader(
                 LoadingTestBundle.DEFAULT_LOADER);
         c = newCache(conf);
         clock.setTimestamp(10);
@@ -38,7 +38,7 @@ public class LoadingCacheEntry extends CacheEntryBundle {
     public void testLastUpdateFromLoader() {
         CacheConfiguration<Integer, String> conf = CacheConfiguration.create();
         conf.setClock(clock);
-        conf.serviceLoading().setLoader(
+        conf.loading().setLoader(
                 LoadingTestBundle.DEFAULT_LOADER);
         c = newCache(conf);
         clock.setTimestamp(10);
@@ -50,7 +50,7 @@ public class LoadingCacheEntry extends CacheEntryBundle {
     public void testAccessFromLoader() {
         CacheConfiguration<Integer, String> conf = CacheConfiguration.create();
         conf.setClock(clock);
-        conf.serviceLoading().setLoader(
+        conf.loading().setLoader(
                 LoadingTestBundle.DEFAULT_LOADER);
         c = newCache(conf);
         clock.setTimestamp(10);

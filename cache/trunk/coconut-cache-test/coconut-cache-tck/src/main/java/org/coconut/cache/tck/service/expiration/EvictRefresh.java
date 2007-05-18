@@ -26,7 +26,7 @@ public class EvictRefresh extends ExpirationTestBundle {
     @Test
     public void refreshWindowSingleElement() throws Exception {
         AsyncIntegerToStringLoader loader = new AsyncIntegerToStringLoader();
-        c = newCache(newConf().setClock(clock).serviceLoading().setDefaultRefreshTime(2,
+        c = newCache(newConf().setClock(clock).loading().setDefaultRefreshTime(2,
                 TimeUnit.NANOSECONDS).setLoader(loader).c());
         service.put(M1.getKey(), "AB1", 2, TimeUnit.NANOSECONDS);
         service.put(M2.getKey(), "AB2", 3, TimeUnit.NANOSECONDS);
@@ -51,7 +51,7 @@ public class EvictRefresh extends ExpirationTestBundle {
     @Test
     public void refreshWindowSingleElementEvict() throws Exception {
         AsyncIntegerToStringLoader loader = new AsyncIntegerToStringLoader();
-        c = newCache(newConf().setClock(clock).serviceLoading().setDefaultRefreshTime(2,
+        c = newCache(newConf().setClock(clock).loading().setDefaultRefreshTime(2,
                 TimeUnit.NANOSECONDS).setLoader(loader).c());
         service.put(M1.getKey(), "AB1", 2, TimeUnit.NANOSECONDS);
         service.put(M2.getKey(), "AB2", 3, TimeUnit.NANOSECONDS);
@@ -72,7 +72,7 @@ public class EvictRefresh extends ExpirationTestBundle {
     @Test
     public void refreshWindowSingleElementGet() throws Exception {
         AsyncIntegerToStringLoader loader = new AsyncIntegerToStringLoader();
-        c = newCache(newConf().setClock(clock).serviceLoading().setDefaultRefreshTime(2,
+        c = newCache(newConf().setClock(clock).loading().setDefaultRefreshTime(2,
                 TimeUnit.NANOSECONDS).setLoader(loader).c());
         service.put(M1.getKey(), "AB1", 2, TimeUnit.NANOSECONDS);
         service.put(M2.getKey(), "AB2", 3, TimeUnit.NANOSECONDS);

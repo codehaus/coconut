@@ -27,7 +27,7 @@ public class StatisticsTestBundle extends CacheTestBundle {
     public void setupLoading() {
         noStatsCache = c;
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
-        c = newCache(cc.getServiceConfiguration(CacheStatisticsConfiguration.class).c());
+        c = newCache(cc.getConfiguration(CacheStatisticsConfiguration.class).c());
         service = c.getService(CacheStatisticsService.class);
     }
 

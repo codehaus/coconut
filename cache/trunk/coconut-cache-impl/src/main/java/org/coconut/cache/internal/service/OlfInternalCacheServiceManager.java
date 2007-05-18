@@ -12,6 +12,8 @@ public interface OlfInternalCacheServiceManager<K, V> {
     void initializeAll();
     void checkStarted();
 
+    void registerInstance(Class type, Object instance);
+
     void registerServiceImplementations(Class... services);
 
     <T> T getAsCacheService(Class<T> type);
