@@ -3,8 +3,6 @@
  */
 package org.coconut.cache.spi;
 
-import org.coconut.cache.Cache;
-import org.coconut.cache.CacheConfiguration;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -24,7 +22,7 @@ public class AbstractCacheService extends AbstractCacheLifecycle implements Cach
 	/**
      * @see org.coconut.cache.spi.CacheService#getName()
      */
-	public String getName() {
+	public final String getName() {
 		return name;
 	}
 

@@ -78,9 +78,7 @@ public final class CacheConfiguration<K, V> {
      * Creates a new Configuration with default settings. CacheConfiguration
      * instances should be created using the {@link #newConf()} method.
      */
-	public CacheConfiguration() {
-
-	}
+	public CacheConfiguration() {}
 
 	/**
      * @param <T>
@@ -272,7 +270,7 @@ public final class CacheConfiguration<K, V> {
      * 
      * @return a CacheEvictionConfiguration
      */
-	public CacheEvictionConfiguration eviction() {
+	public CacheEvictionConfiguration<K,V> eviction() {
 		return lazyCreate(CacheEvictionConfiguration.class);
 	}
 
@@ -312,7 +310,7 @@ public final class CacheConfiguration<K, V> {
      * 
      * @return a CacheThreadingConfiguration
      */
-	public CacheThreadingConfiguration threading() {
+	public CacheThreadingConfiguration<K,V> threading() {
 		return lazyCreate(CacheThreadingConfiguration.class);
 	}
 
@@ -511,28 +509,31 @@ public final class CacheConfiguration<K, V> {
      * @param <V>
      *            the type of mapped values
      */
-	public static <K, V> Cache<K, V> createAndInstantiate(InputStream xmlDoc)
-			throws Exception {
-		CacheConfiguration<K, V> conf = createFrom(xmlDoc);
+	public static <K, V> Cache<K, V> createCache(InputStream xmlDoc) throws Exception {
+		CacheConfiguration<K, V> conf = createConfiguration(xmlDoc);
 		return conf.newInstance((Class) Class.forName(conf.getProperty(
 				XmlConfigurator.CACHE_INSTANCE_TYPE).toString()));
 	}
 
 	/**
-     * Creates a CacheConfiguration from the specified input stream.
+     * Reads the XML configuration from the specified InputStream and returns a
+     * new populated CacheConfiguration.
      * 
      * @param xmlDoc
      *            an InputStream where the configuration can be read from
      * @return a CacheConfiguration reflecting the xml configuration
      * @throws Exception
-     *             the configuration could not be constructed for some reason
+     *             some Exception prevented the CacheConfiguration from being
+     *             populated
      * @param <K>
      *            the type of keys that should be maintained by the cache
      * @param <V>
      *            the type of mapped values
      */
-	public static <K, V> CacheConfiguration<K, V> createFrom(InputStream xmlDoc)
-			throws Exception {
-		return XmlConfigurator.getInstance().from(xmlDoc);
-	}
+	public static <K, V> CacheConfiguration<K, V> createConfiguration(InputStream xmlDoc)
+            throws Exception {
+        CacheConfiguration<K, V> conf = CacheConfiguration.create();
+        XmlConfigurator.getInstance().from(conf, xmlDoc);
+        return conf;
+    }
 }

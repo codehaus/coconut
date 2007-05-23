@@ -112,6 +112,10 @@ public class XmlConfigurator {
 		services.put(name, clazz);
 	}
 
+	XmlConfigurator() {
+		initiateDefaultServices();
+	}
+	
 	protected void initiateDefaultServices() {
 		addDefaultConfiguration(CacheEventConfiguration.class);
 		addDefaultConfiguration(CacheManagementConfiguration.class);
@@ -151,23 +155,6 @@ public class XmlConfigurator {
 		Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(
 				stream);
 		from(configuration, doc);
-	}
-
-	/**
-     * Reads the XML configuration from the specified InputStream and returns a
-     * new populated CacheConfiguration.
-     * 
-     * @param stream
-     *            the InputStream to load the configuration from
-     * @return the CacheConfiguration as read from the specified InputStream
-     * @throws Exception
-     *             some Exception prevented the CacheConfiguration from being
-     *             populated
-     */
-	public <K, V> CacheConfiguration<K, V> from(InputStream stream) throws Exception {
-		CacheConfiguration<K, V> conf = CacheConfiguration.create();
-		from(conf, stream);
-		return conf;
 	}
 
 	/**
@@ -225,7 +212,6 @@ public class XmlConfigurator {
 			conf.setProperty(XmlConfigurator.CACHE_INSTANCE_TYPE, cache
 					.getAttribute(CACHE_TYPE_ATTR));
 		}
-		//conf.set
 		for (Class<? extends AbstractCacheServiceConfiguration> c : services.values()) {
 			AbstractCacheServiceConfiguration acsc = c.newInstance();
 			Element e = (Element) cache.getElementsByTagName(acsc.getServiceName()).item(
@@ -259,9 +245,5 @@ public class XmlConfigurator {
 		f.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 		f.setOutputProperty(OutputKeys.INDENT, "yes");
 		f.transform(domSource, result);
-	}
-	
-	protected void fromCache() {
-		
 	}
 }

@@ -6,7 +6,7 @@ package org.coconut.cache.service.management;
 import static org.coconut.internal.util.XmlUtil.addAndSetText;
 import static org.coconut.internal.util.XmlUtil.addAndsaveObject;
 import static org.coconut.internal.util.XmlUtil.addComment;
-import static org.coconut.internal.util.XmlUtil.getAttribute;
+import static org.coconut.internal.util.XmlUtil.getAttributeBoolean;
 import static org.coconut.internal.util.XmlUtil.getChild;
 import static org.coconut.internal.util.XmlUtil.loadOptional;
 import static org.coconut.internal.util.XmlUtil.readValue;
@@ -29,7 +29,7 @@ import org.w3c.dom.Element;
  * managed using JMX.
  * <p>
  * Remote management (JMX) is turned off by default and you need to call
- * {@link #setEnabled(boolean)} to enable it.
+ * {@link #setEnabled(boolean)} to enable it before construction the cache.
  * <p>
  * If for some reason the cache fails to properly register with the MBeanServer
  * at startup time a {@link CacheException} will be thrown and the cache
@@ -41,11 +41,12 @@ import org.w3c.dom.Element;
 public class CacheManagementConfiguration<K, V> extends
 		AbstractCacheServiceConfiguration<K, V> {
 
-	/** The default registrant used to register cache services. */
-	public final static ManagedGroupVisitor DEFAULT_REGISTRANT = null;
 
 	/** The short name of this service. */
-	public final static String SERVICE_NAME = "management";
+	public static final String SERVICE_NAME = "management";
+	
+	/** The default registrant used to register cache services. */
+	public final static ManagedGroupVisitor DEFAULT_REGISTRANT = null;
 
 	/** XML domain tag. */
 	private final static String XML_DOMAIN_TAG = "domain";
@@ -117,6 +118,8 @@ public class CacheManagementConfiguration<K, V> extends
 
 	/**
      * Returns true if management is enabled for the cache, otherwise false.
+     * <p>
+     * The default setting is <tt>false</tt>.
      * 
      * @return <tt>true</tt> if management is enabled for the cache, otherwise
      *         <tt>false</tt>
@@ -160,10 +163,12 @@ public class CacheManagementConfiguration<K, V> extends
      * 
      * @param enabled
      *            whether or not management should be enabled for the cache
+     * @return this configuration
      * @see #isEnabled()
      */
-	public void setEnabled(boolean enabled) {
+	public CacheManagementConfiguration setEnabled(boolean enabled) {
 		this.enabled = enabled;
+		return this;
 	}
 
 	/**
@@ -218,7 +223,7 @@ public class CacheManagementConfiguration<K, V> extends
 	@Override
 	protected void fromXML(Document doc, Element e) throws Exception {
 		domain = readValue(getChild(XML_DOMAIN_TAG, e), CacheMXBean.DEFAULT_JMX_DOMAIN);
-		enabled = getAttribute(e, XML_ENABLED_ATTRIBUTE, false);
+		enabled = getAttributeBoolean(e, XML_ENABLED_ATTRIBUTE, false);
 		registrant = loadOptional(e, XML_REGISTRANT_TAG, ManagedGroupVisitor.class);
 		root = loadOptional(e, XML_ROOT_GROUP_TAG, ManagedGroup.class);
 	}
@@ -228,7 +233,7 @@ public class CacheManagementConfiguration<K, V> extends
      */
 	@Override
 	protected void toXML(Document doc, Element base) {
-		base.setAttribute("enabled", Boolean.toString(enabled));
+		base.setAttribute(XML_ENABLED_ATTRIBUTE, Boolean.toString(enabled));
 
 		/* Domain */
 		if (!domain.equals(CacheMXBean.DEFAULT_JMX_DOMAIN)) {

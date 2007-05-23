@@ -71,6 +71,10 @@ public class CacheExpirationConfiguration<K, V> extends
      *            be positive
      * @param unit
      *            the time unit of the duration argument
+     * @throws IllegalArgumentException
+     *             if specified timeToLive is a non positive number
+     * @throws NullPointerException
+     *             if the specified unit is <tt>null</tt>
      */
 	public CacheExpirationConfiguration<K, V> setDefaultTimeToLive(long timeToLive,
 			TimeUnit unit) {
@@ -130,9 +134,7 @@ public class CacheExpirationConfiguration<K, V> extends
 
 		/* Filter */
 		addAndsaveObject(doc, parent, EXPIRATION_FILTER_TAG,
-				
-				getResourceBundle(),
-				"saveOfFilterFailed",
-				expirationFilter);
+
+		getResourceBundle(), "saveOfFilterFailed", expirationFilter);
 	}
 }
