@@ -12,6 +12,7 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.spi.CacheHelper;
 import org.coconut.cache.service.exceptionhandling.AbstractCacheExceptionHandler;
+import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationMXBean;
 import org.coconut.cache.service.expiration.CacheExpirationService;
@@ -42,11 +43,12 @@ public class UnsynchronizedCacheExpirationService<K, V> extends
      */
     public UnsynchronizedCacheExpirationService(CacheHelper<K, V> helper,
             CacheExpirationConfiguration<K, V> conf, Clock clock,
-            AbstractCacheExceptionHandler<K, V> errorHandler,
+            CacheExceptionHandlingConfiguration<K, V> exceptionConfiguration,
             InternalCacheAttributeService attributeFactory) {
-        super(clock, helper, errorHandler);
+        super(clock, helper, exceptionConfiguration);
         this.helper = helper;
         defaultTTL = conf.getDefaultTimeToLive(TimeUnit.NANOSECONDS);
+        expirationFilter=conf.getExpirationFilter();
         this.attributeFactory = attributeFactory;
     }
 

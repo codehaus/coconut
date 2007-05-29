@@ -4,22 +4,23 @@
 package org.coconut.cache.internal.service.eviction;
 
 import org.coconut.cache.Cache;
+import org.coconut.cache.internal.spi.CacheHelper;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class SynchronizedCacheEvictionService extends DefaultCacheEvictionService {
+public class SynchronizedCacheEvictionService<K,V> extends UnsynchronizedCacheEvictionService {
     private final Cache mutex;
 
-    public SynchronizedCacheEvictionService(Cache c, CacheEvictionConfiguration conf) {
-        super(conf);
+    public SynchronizedCacheEvictionService(Cache c, CacheEvictionConfiguration conf,CacheHelper<K, V> helper) {
+        super(conf,helper);
         this.mutex = c;
     }
 
     /**
-     * @see org.coconut.cache.internal.service.eviction.DefaultCacheEvictionService#getMaximumCapacity()
+     * @see org.coconut.cache.internal.service.eviction.UnsynchronizedCacheEvictionService#getMaximumCapacity()
      */
     @Override
     public long getMaximumCapacity() {
@@ -29,7 +30,7 @@ public class SynchronizedCacheEvictionService extends DefaultCacheEvictionServic
     }
 
     /**
-     * @see org.coconut.cache.internal.service.eviction.DefaultCacheEvictionService#getMaximumSize()
+     * @see org.coconut.cache.internal.service.eviction.UnsynchronizedCacheEvictionService#getMaximumSize()
      */
     @Override
     public int getMaximumSize() {
@@ -39,7 +40,7 @@ public class SynchronizedCacheEvictionService extends DefaultCacheEvictionServic
     }
 
     /**
-     * @see org.coconut.cache.internal.service.eviction.DefaultCacheEvictionService#setMaximumCapacity(long)
+     * @see org.coconut.cache.internal.service.eviction.UnsynchronizedCacheEvictionService#setMaximumCapacity(long)
      */
     @Override
     public void setMaximumCapacity(long size) {
@@ -49,7 +50,7 @@ public class SynchronizedCacheEvictionService extends DefaultCacheEvictionServic
     }
 
     /**
-     * @see org.coconut.cache.internal.service.eviction.DefaultCacheEvictionService#setMaximumSize(int)
+     * @see org.coconut.cache.internal.service.eviction.UnsynchronizedCacheEvictionService#setMaximumSize(int)
      */
     @Override
     public void setMaximumSize(int size) {
@@ -59,7 +60,7 @@ public class SynchronizedCacheEvictionService extends DefaultCacheEvictionServic
     }
 
     /**
-     * @see org.coconut.cache.internal.service.eviction.DefaultCacheEvictionService#getPreferableCapacity()
+     * @see org.coconut.cache.internal.service.eviction.UnsynchronizedCacheEvictionService#getPreferableCapacity()
      */
     @Override
     public long getPreferableCapacity() {
@@ -69,7 +70,7 @@ public class SynchronizedCacheEvictionService extends DefaultCacheEvictionServic
     }
 
     /**
-     * @see org.coconut.cache.internal.service.eviction.DefaultCacheEvictionService#getPreferableSize()
+     * @see org.coconut.cache.internal.service.eviction.UnsynchronizedCacheEvictionService#getPreferableSize()
      */
     @Override
     public int getPreferableSize() {
@@ -79,7 +80,7 @@ public class SynchronizedCacheEvictionService extends DefaultCacheEvictionServic
     }
 
     /**
-     * @see org.coconut.cache.internal.service.eviction.DefaultCacheEvictionService#setPreferableCapacity(long)
+     * @see org.coconut.cache.internal.service.eviction.UnsynchronizedCacheEvictionService#setPreferableCapacity(long)
      */
     @Override
     public void setPreferableCapacity(long size) {
@@ -89,7 +90,7 @@ public class SynchronizedCacheEvictionService extends DefaultCacheEvictionServic
     }
 
     /**
-     * @see org.coconut.cache.internal.service.eviction.DefaultCacheEvictionService#setPreferableSize(int)
+     * @see org.coconut.cache.internal.service.eviction.UnsynchronizedCacheEvictionService#setPreferableSize(int)
      */
     @Override
     public void setPreferableSize(int size) {

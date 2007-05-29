@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.event.DefaultCacheEventService;
-import org.coconut.cache.internal.service.eviction.DefaultCacheEvictionService;
+import org.coconut.cache.internal.service.eviction.UnsynchronizedCacheEvictionService;
 import org.coconut.cache.internal.service.eviction.InternalCacheEvictionService;
 import org.coconut.cache.internal.service.expiration.AbstractExpirationService;
 import org.coconut.cache.internal.service.expiration.InternalExpirationUtils;
@@ -83,7 +83,7 @@ public class CacheServiceManager<K, V> implements OlfInternalCacheServiceManager
     }
 
     /**
-     * @param name
+     * @param names
      * @return
      */
     public <T> T getAsCacheService(Class<T> clazz) {
@@ -92,15 +92,15 @@ public class CacheServiceManager<K, V> implements OlfInternalCacheServiceManager
                 return (T) new NoOpAfterCacheOperation();
             }
         }
-        if (InternalCacheEvictionService.class.isAssignableFrom(clazz)) {
-            if (conf.getConfiguration(CacheEvictionConfiguration.class) == null) {
-                T t = (T) new DefaultCacheEvictionService(
-                        new CacheEvictionConfiguration());
-                container.unregisterComponent(DefaultCacheEvictionService.class);
-                container.registerComponentInstance(t);
-                return t;
-            }
-        }
+//        if (InternalCacheEvictionService.class.isAssignableFrom(clazz)) {
+//            if (conf.getConfiguration(CacheEvictionConfiguration.class) == null) {
+//                T t = (T) new UnsynchronizedCacheEvictionService(
+//                        new CacheEvictionConfiguration());
+//                container.unregisterComponent(UnsynchronizedCacheEvictionService.class);
+//                container.registerComponentInstance(t);
+//                return t;
+//            }
+//        }
         if (AbstractExpirationService.class.isAssignableFrom(clazz)) {
             if (conf.getConfiguration(CacheExpirationConfiguration.class) == null) {
                 return (T) InternalExpirationUtils.DUMMY;
@@ -268,4 +268,12 @@ public class CacheServiceManager<K, V> implements OlfInternalCacheServiceManager
     public boolean hasService(Class serviceType) {
         return false;
     }
+
+	/**
+	 * @see org.coconut.cache.internal.service.OlfInternalCacheServiceManager#registerInstance(java.lang.Class, java.lang.Object)
+	 */
+	public void registerInstance(Class type, Object instance) {
+		// TODO Auto-generated method stub
+		
+	}
 }

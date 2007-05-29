@@ -337,7 +337,7 @@ public abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAd
          * @see java.util.Map.Entry#getValue()
          */
         public V getValue() {
-            throw new UnsupportedOperationException();
+            return null;
         }
 
         /**

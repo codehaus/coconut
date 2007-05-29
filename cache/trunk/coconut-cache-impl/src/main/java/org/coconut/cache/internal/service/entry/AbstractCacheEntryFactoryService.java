@@ -8,6 +8,7 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.cache.policy.PolicyAttributes;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.service.exceptionhandling.AbstractCacheExceptionHandler;
+import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
 
@@ -16,13 +17,20 @@ import org.coconut.core.Clock;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public abstract class AbstractCacheEntryFactoryService<K, V> {
-    private Clock clock;
+    private final Clock clock;
 
-    private AbstractCacheExceptionHandler<K, V> errorHandler;
+    private final AbstractCacheExceptionHandler<K, V> errorHandler;
+
+    public AbstractCacheEntryFactoryService(Clock clock,
+            CacheExceptionHandlingConfiguration<K, V> conf) {
+        this.clock = clock;
+        this.errorHandler = conf.getExceptionHandler();
+    }
 
     public V putVersion(K key, V value, long version) {
         return value;
     }
+
     public abstract AbstractCacheEntry<K, V> createEntry(K key, V value,
             AttributeMap attributes, AbstractCacheEntry<K, V> existing);
 
@@ -67,8 +75,8 @@ public abstract class AbstractCacheEntryFactoryService<K, V> {
         long creationTime = attributes.getLong(CacheAttributes.CREATION_TIME);
         if (creationTime < 0) {
             errorHandler.warning("Must specify a positive creation time [Attribute="
-                    + CacheAttributes.CREATION_TIME + " , creationtime = "
-                    + creationTime + " for key = " + key);
+                    + CacheAttributes.CREATION_TIME + " , creationtime = " + creationTime
+                    + " for key = " + key);
         }
         if (creationTime > 0) {
             return creationTime;

@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.service.service.DummyCacheService;
+import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.core.AttributeMap;
 import org.coconut.filter.Filter;
@@ -25,10 +27,17 @@ public class InternalExpirationUtils {
         return new DelegatedCacheExpirationService<K, V>(service);
     }
 
-    static final class NoCacheExpirationService<K, V> implements
+    static final class NoCacheExpirationService<K, V> extends DummyCacheService implements
             InternalExpirationService<K, V> {
 
         /**
+		 * @param name
+		 */
+		public NoCacheExpirationService() {
+			super(CacheExpirationConfiguration.SERVICE_NAME);
+		}
+
+		/**
          * @see org.coconut.cache.service.expiration.CacheExpirationService#getDefaultTimeout(java.util.concurrent.TimeUnit)
          */
         public long getDefaultTimeToLive(TimeUnit unit) {
@@ -102,14 +111,6 @@ public class InternalExpirationUtils {
         public int expireAll(Filter<? extends CacheEntry<K, V>> filter) {
             throw new UnsupportedOperationException();
         }
-
-        /**
-         * @see org.coconut.cache.internal.service.InternalCacheService#isDummy()
-         */
-        public boolean isDummy() {
-            return true;
-        }
-
     }
 
     /**

@@ -18,6 +18,7 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.spi.CacheHelper;
 import org.coconut.cache.service.exceptionhandling.AbstractCacheExceptionHandler;
+import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoader;
@@ -60,8 +61,8 @@ public class DefaultCacheExpirationServiceTest {
 
     private static final CacheEntry<Integer, String> expireAt10;
     static {
-        CacheEntry dd=new JUnit4Mockery().mock(CacheEntry.class);
-        
+        CacheEntry dd = new JUnit4Mockery().mock(CacheEntry.class);
+
         MockTestCase m = new MockTestCase();
         Mock n = m.mock(CacheEntry.class);
         n.stubs().method("getExpirationTime").will(
@@ -81,8 +82,10 @@ public class DefaultCacheExpirationServiceTest {
     }
 
     private void initialize() {
-        s = new UnsynchronizedCacheExpirationService<Integer, String>(helper, conf, clock,
-                errorHandler, attributeFactory);
+        CacheExceptionHandlingConfiguration<Integer, String> econf = new CacheExceptionHandlingConfiguration<Integer, String>();
+        econf.setExceptionHandler(errorHandler);
+        s = new UnsynchronizedCacheExpirationService<Integer, String>(helper, conf,
+                clock, econf, attributeFactory);
     }
 
     @Test
@@ -172,13 +175,12 @@ public class DefaultCacheExpirationServiceTest {
         dam.putLong(CacheAttributes.TIME_TO_LIVE_NANO,
                 CacheExpirationService.NEVER_EXPIRE);
         assertEquals(Long.MAX_VALUE, s.innerGetExpirationTime(null, null, dam));
-        dam
-                .putLong(CacheAttributes.TIME_TO_LIVE_NANO, TimeUnit.MILLISECONDS
-                        .toNanos(5));
+        dam.putLong(CacheAttributes.TIME_TO_LIVE_NANO, TimeUnit.MILLISECONDS.toNanos(5));
         assertEquals(5l, s.innerGetExpirationTime(null, null, dam));
 
         s.setDefaultTimeToLive(10, TimeUnit.MILLISECONDS);
-        assertEquals(10l, s.innerGetExpirationTime(null, null, new AttributeMaps.DefaultAttributeMap()));
+        assertEquals(10l, s.innerGetExpirationTime(null, null,
+                new AttributeMaps.DefaultAttributeMap()));
         assertEquals(5l, s.innerGetExpirationTime(null, null, dam));
         assertEquals(10l, s.innerGetExpirationTime(null, null, null));
         clock.setTimestamp(50);
@@ -202,19 +204,17 @@ public class DefaultCacheExpirationServiceTest {
         assertTrue(ref.get().contains("-1"));
         assertTrue(ref.get().contains("123"));
     }
-    
-    static class AbstractTester<K,V> extends AbstractCacheExceptionHandler<K, V> {
 
+    static class AbstractTester<K, V> extends AbstractCacheExceptionHandler<K, V> {
 
+        /**
+         * @see org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#warning(java.lang.String)
+         */
+        @Override
+        public void warning(String warning) {
+        // TODO Auto-generated method stub
 
-		/**
-		 * @see org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#warning(java.lang.String)
-		 */
-		@Override
-		public void warning(String warning) {
-			// TODO Auto-generated method stub
-			
-		}
-    	
+        }
+
     }
 }

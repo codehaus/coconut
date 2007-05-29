@@ -15,8 +15,10 @@ import org.coconut.cache.internal.service.util.ExtendableFutureTask;
 import org.coconut.cache.internal.spi.CacheHelper;
 import org.coconut.cache.internal.spi.ExtendedExecutorRunnable;
 import org.coconut.cache.service.exceptionhandling.AbstractCacheExceptionHandler;
+import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoader;
+import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
 import org.coconut.filter.Filter;
@@ -45,6 +47,22 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
 
     private final InternalCacheThreadingService threadManager;
 
+    public DefaultCacheLoaderService(final Clock clock,
+            InternalCacheAttributeService attributeFactory,
+            CacheExceptionHandlingConfiguration<K, V> errorHandler,
+            CacheLoader<K, V> loadConf,
+            final InternalCacheThreadingService threadManager,
+            AbstractExpirationService<K, V> expirationService,
+            final CacheHelper<K, V> cache) {
+        super(attributeFactory, cache);
+        this.clock = clock;
+        this.errorHandler = errorHandler.getExceptionHandler();
+        this.loader = loadConf;
+        this.threadManager = threadManager;
+        this.cache = cache;
+        this.expirationService = expirationService;
+    }
+
     /**
      * @param clock
      * @param errorHandler
@@ -55,15 +73,15 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
      */
     public DefaultCacheLoaderService(final Clock clock,
             InternalCacheAttributeService attributeFactory,
-            final AbstractCacheExceptionHandler<K, V> errorHandler,
-            final CacheLoader<? super K, ? extends V> loader,
+            CacheExceptionHandlingConfiguration<K, V> errorHandler,
+            CacheLoadingConfiguration<K, V> loadConf,
             final InternalCacheThreadingService threadManager,
             AbstractExpirationService<K, V> expirationService,
             final CacheHelper<K, V> cache) {
         super(attributeFactory, cache);
         this.clock = clock;
-        this.errorHandler = errorHandler;
-        this.loader = loader;
+        this.errorHandler = errorHandler.getExceptionHandler();
+        this.loader = loadConf.getLoader();
         this.threadManager = threadManager;
         this.cache = cache;
         this.expirationService = expirationService;
@@ -128,7 +146,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         try {
             map = null; // loader.loadAll(keys);
         } catch (Exception e) {
-           // map = errorHandler.loadAllFailed(loader, keys, false, e);
+            // map = errorHandler.loadAllFailed(loader, keys, false, e);
         }
         return map;
     }
@@ -142,6 +160,9 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
     }
 
     public boolean needsReload(CacheEntry<K, V> entry) {
+        if (loader == null) {
+            return false;
+        }
         long reloadAheadTime = reloadExpirationTime;
         if (reloadAheadTime < 0
                 || entry.getExpirationTime() == CacheExpirationService.NEVER_EXPIRE) {
@@ -274,13 +295,17 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
             try {
                 map = null; // loader.loadAll(keysWithAttributes);
             } catch (Exception e) {
-//                map = loaderService.errorHandler.loadAllFailed(loader,
-//                        keysWithAttributes, true, e);
+// map = loaderService.errorHandler.loadAllFailed(loader,
+// keysWithAttributes, true, e);
             }
             if (map != null && map.size() > 0) {
                 loaderService.cache.valuesLoaded(map, keysWithAttributes);
             }
         }
+    }
+
+    public boolean isDummy() {
+        return false;
     }
 
 }

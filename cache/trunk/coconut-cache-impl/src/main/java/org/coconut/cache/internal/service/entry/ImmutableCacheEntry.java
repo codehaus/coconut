@@ -14,138 +14,134 @@ import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
  */
 public class ImmutableCacheEntry<K, V> implements CacheEntry<K, V> {
 
-    private final K key;
+	private final K key;
 
-    private final V value;
+	private final V value;
 
-    private final long expirationTime;
+	private final long expirationTime;
 
-    private final long creationTime;
+	private final long creationTime;
 
-    private final long hits;
+	private final long hits;
 
-    private final long lastAccessTime;
+	private final long lastAccessTime;
 
-    private final long lastUpdateTime;
+	private final long lastUpdateTime;
 
-    private final long version;
+	private final long version;
 
-    private final double cost;
+	private final double cost;
 
-    private final long size;
+	private final long size;
 
-    private final Object parent;
-
-    /**
+	/**
      * @param key
      * @param value
      */
-    public ImmutableCacheEntry(Object cache, AbstractCacheEntry<K, V> entry) {
-        this.cost = entry.getCost();
-        this.creationTime = entry.getCreationTime();
-        this.expirationTime = entry.getExpirationTime();
-        this.hits = entry.getHits();
-        this.key = entry.getKey();
-        this.lastAccessTime = entry.getLastAccessTime();
-        this.lastUpdateTime = entry.getLastUpdateTime();
-        this.size = entry.getSize();
-        this.value = entry.getValue();
-        this.version = entry.getVersion();
-        this.parent = cache;
-    }
+	public ImmutableCacheEntry(AbstractCacheEntry<K, V> entry) {
+		this.cost = entry.getCost();
+		this.creationTime = entry.getCreationTime();
+		this.expirationTime = entry.getExpirationTime();
+		this.hits = entry.getHits();
+		this.key = entry.getKey();
+		this.lastAccessTime = entry.getLastAccessTime();
+		this.lastUpdateTime = entry.getLastUpdateTime();
+		this.size = entry.getSize();
+		this.value = entry.getValue();
+		this.version = entry.getVersion();
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Map.Entry))
-            return false;
-        Map.Entry e = (Map.Entry) o;
-        Object k1 = getKey();
-        Object k2 = e.getKey();
-        // we keep null checks, might later want to use Map.Entry instead of
-        // Entry to compare with
-        if (k1 == k2 || (k1 != null && k1.equals(k2))) {
-            Object v1 = value;
-            Object v2 = e.getValue();
-            if (v1 == v2 || (v1 != null && v1.equals(v2)))
-                return true;
-        }
-        return false;
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof Map.Entry))
+			return false;
+		Map.Entry e = (Map.Entry) o;
+		Object k1 = getKey();
+		Object k2 = e.getKey();
+		// we keep null checks, might later want to use Map.Entry instead of
+		// Entry to compare with
+		if (k1 == k2 || (k1 != null && k1.equals(k2))) {
+			Object v1 = value;
+			Object v2 = e.getValue();
+			if (v1 == v2 || (v1 != null && v1.equals(v2)))
+				return true;
+		}
+		return false;
+	}
 
-    @Override
-    public int hashCode() {
-        return key.hashCode() ^ value.hashCode();
-    }
+	@Override
+	public int hashCode() {
+		return key.hashCode() ^ value.hashCode();
+	}
 
-    /**
+	/**
      * @return the cost
      */
-    public double getCost() {
-        return cost;
-    }
+	public double getCost() {
+		return cost;
+	}
 
-    /**
+	/**
      * @return the creationTime
      */
-    public long getCreationTime() {
-        return creationTime;
-    }
+	public long getCreationTime() {
+		return creationTime;
+	}
 
-    /**
+	/**
      * @return the expirationTime
      */
-    public long getExpirationTime() {
-        return expirationTime;
-    }
+	public long getExpirationTime() {
+		return expirationTime;
+	}
 
-    /**
+	/**
      * @return the hits
      */
-    public long getHits() {
-        return hits;
-    }
+	public long getHits() {
+		return hits;
+	}
 
-    /**
+	/**
      * @return the key
      */
-    public K getKey() {
-        return key;
-    }
+	public K getKey() {
+		return key;
+	}
 
-    /**
+	/**
      * @return the lastAccessTime
      */
-    public long getLastAccessTime() {
-        return lastAccessTime;
-    }
+	public long getLastAccessTime() {
+		return lastAccessTime;
+	}
 
-    /**
+	/**
      * @return the lastUpdateTime
      */
-    public long getLastUpdateTime() {
-        return lastUpdateTime;
-    }
+	public long getLastUpdateTime() {
+		return lastUpdateTime;
+	}
 
-    /**
+	/**
      * @return the size
      */
-    public long getSize() {
-        return size;
-    }
+	public long getSize() {
+		return size;
+	}
 
-    /**
+	/**
      * @return the value
      */
-    public V getValue() {
-        return value;
-    }
+	public V getValue() {
+		return value;
+	}
 
-    /**
+	/**
      * @see java.util.Map.Entry#setValue(java.lang.Object)
      */
-    public V setValue(V value) {
-   //     return parent.putVersion(key, value, version);
-        return null;
-    }
+	public V setValue(V value) {
+		throw new UnsupportedOperationException("setValue not supported");
+	}
 
 }

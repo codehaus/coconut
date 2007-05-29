@@ -737,16 +737,14 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
     }
 
     static class EntrySetCopyIterator<K, V> extends BaseIterator<K, V, CacheEntry<K, V>> {
-        private final Map<K, V> cache;
 
         EntrySetCopyIterator(Map<K, V> cache, EntryMap<K, V> map) {
             super(cache, map);
-            this.cache = cache;
         }
 
         @Override
         public CacheEntry<K, V> next() {
-            return new ImmutableCacheEntry<K, V>(cache, nextEntry());
+            return new ImmutableCacheEntry<K, V>(nextEntry());
         }
     }
 

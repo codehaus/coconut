@@ -4,11 +4,11 @@
 package org.coconut.cache.internal.service.eviction;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.spi.CacheHelper;
 import org.coconut.cache.policy.Policies;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
@@ -18,8 +18,8 @@ import org.coconut.filter.Filter;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class DefaultCacheEvictionService<T extends CacheEntry> implements
-        InternalCacheEvictionService<T> {
+public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>> extends
+        AbstractEvictionService<K, V, T> {
     private final ReplacementPolicy<T> cp;
 
     private int maxSize;
@@ -30,17 +30,23 @@ public class DefaultCacheEvictionService<T extends CacheEntry> implements
 
     private long preferableCapacity;
 
-    public DefaultCacheEvictionService(CacheEvictionConfiguration conf) {
-        if (conf.getPolicy() == null) {
-            // default policy if used did not specify any
-            cp = Policies.newLRU();
-        } else {
-            cp = conf.getPolicy();
-        }
+    private Filter<? super CacheEntry<K, V>> idleFilter;
+
+    private long defaultIdleTimeNS;
+
+    // private long
+    // @SuppressWarnings("unchecked")
+    public UnsynchronizedCacheEvictionService(CacheEvictionConfiguration<K, V> conf,
+            CacheHelper<K, V> helper) {
+        super(helper);
+        cp = conf.getPolicy() == null ? Policies.newLRU() : (ReplacementPolicy) conf
+                .getPolicy();
         maxSize = conf.getMaximumSize();
         maxCapacity = conf.getMaximumCapacity();
         preferableCapacity = conf.getPreferableCapacity();
         preferableSize = conf.getPreferableSize();
+        defaultIdleTimeNS = conf.getDefaultIdleTime(TimeUnit.NANOSECONDS);
+        idleFilter = conf.getIdleFilter();
     }
 
     public T evictNext() {
@@ -61,10 +67,6 @@ public class DefaultCacheEvictionService<T extends CacheEntry> implements
         if (cp != null) {
             cp.touch(index);
         }
-    }
-
-    public boolean replace(int index, T t) {
-        return cp.update(index, t);
     }
 
     public boolean isEnabled() {
@@ -150,91 +152,56 @@ public class DefaultCacheEvictionService<T extends CacheEntry> implements
         cp.clear();
     }
 
+
     /**
-     * @see org.coconut.cache.service.eviction.CacheEvictionMXBean#trimToCapacity(long)
+     * @see org.coconut.cache.service.eviction.CacheEvictionService#getEvictionFilter()
      */
-    public void trimToCapacity(long capacity) {
-        // TODO Auto-generated method stub
-        
+    public Filter<? super CacheEntry<K, V>> getIdleFilter() {
+        return idleFilter;
     }
 
     /**
-     * @see org.coconut.cache.service.eviction.CacheEvictionMXBean#trimToSize(int)
+     * @see org.coconut.cache.service.eviction.CacheEvictionService#setEvictionFilter(org.coconut.filter.Filter)
      */
-    public void trimToSize(int size) {
-        // TODO Auto-generated method stub
-        
+    public void setIdleFilter(Filter<? super CacheEntry<K, V>> filter) {
+        idleFilter = filter;
     }
 
-	/**
-	 * @see org.coconut.cache.service.eviction.CacheEvictionService#evict(java.lang.Object)
-	 */
-	public void evict(Object key) {
-		// TODO Auto-generated method stub
-		
-	}
+    /**
+     * @see org.coconut.cache.service.eviction.CacheEvictionMXBean#getEvictionFilterAsString()
+     */
+    public String getIdleFilterAsString() {
+        Filter<? super CacheEntry<K, V>> f = idleFilter;
+        if (f == null) {
+            return "null";
+        } else {
+            return f.toString();
+        }
+    }
 
-	/**
-	 * @see org.coconut.cache.service.eviction.CacheEvictionService#evictAll(java.util.Collection)
-	 */
-	public void evictAll(Collection keys) {
-		// TODO Auto-generated method stub
-		
-	}
+    /**
+     * @see org.coconut.cache.service.eviction.CacheEvictionService#getDefaultIdleTime(java.util.concurrent.TimeUnit)
+     */
+    public long getDefaultIdleTime(TimeUnit unit) {
+        return new CacheEvictionConfiguration().setDefaultIdleTime(defaultIdleTimeNS,
+                TimeUnit.NANOSECONDS).getDefaultIdleTime(unit);
+    }
 
-	/**
-	 * @see org.coconut.cache.service.eviction.CacheEvictionService#getEvictionFilter()
-	 */
-	public Filter getIdleFilter() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    /**
+     * @see org.coconut.cache.service.eviction.CacheEvictionService#setDefaultIdleTime(long,
+     *      java.util.concurrent.TimeUnit)
+     */
+    public void setDefaultIdleTime(long idleTime, TimeUnit unit) {
+        defaultIdleTimeNS = new CacheEvictionConfiguration().setDefaultIdleTime(idleTime,
+                unit).getDefaultIdleTime(TimeUnit.NANOSECONDS);
+    }
 
-	/**
-	 * @see org.coconut.cache.service.eviction.CacheEvictionService#setEvictionFilter(org.coconut.filter.Filter)
-	 */
-	public void setIdleFilter(Filter filter) {
-		// TODO Auto-generated method stub
-		
-	}
+    /**
+     * @see org.coconut.cache.internal.service.eviction.InternalCacheEvictionService#replace(int,
+     *      org.coconut.cache.CacheEntry)
+     */
+    public boolean replace(int index, T t) {
+        return cp.update(index, t);
+    }
 
-	/**
-	 * @see org.coconut.cache.service.eviction.CacheEvictionMXBean#getEvictionFilterAsString()
-	 */
-	public String getIdleFilterAsString() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * @see org.coconut.cache.service.eviction.CacheEvictionService#getDefaultIdleTime(java.util.concurrent.TimeUnit)
-	 */
-	public long getDefaultIdleTime(TimeUnit unit) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	/**
-	 * @see org.coconut.cache.service.eviction.CacheEvictionService#setDefaultIdleTime(long, java.util.concurrent.TimeUnit)
-	 */
-	public void setDefaultIdleTime(long idleTime, TimeUnit unit) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * @see org.coconut.cache.service.eviction.CacheEvictionMXBean#getDefaultIdleTimeMs()
-	 */
-	public long getDefaultIdleTimeMs() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	/**
-	 * @see org.coconut.cache.service.eviction.CacheEvictionMXBean#setDefaultIdleTimeMs(long)
-	 */
-	public void setDefaultIdleTimeMs(long idleTimeMs) {
-		// TODO Auto-generated method stub
-		
-	}
 }

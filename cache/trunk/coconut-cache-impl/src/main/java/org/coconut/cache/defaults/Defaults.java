@@ -4,11 +4,13 @@
 package org.coconut.cache.defaults;
 
 import org.coconut.cache.internal.service.OlfInternalCacheServiceManager;
+import org.coconut.cache.internal.service.attribute.DefaultCacheAttributeService;
 import org.coconut.cache.internal.service.event.DefaultCacheEventService;
-import org.coconut.cache.internal.service.eviction.DefaultCacheEvictionService;
+import org.coconut.cache.internal.service.eviction.UnsynchronizedCacheEvictionService;
 import org.coconut.cache.internal.service.expiration.UnsynchronizedCacheExpirationService;
 import org.coconut.cache.internal.service.loading.DefaultCacheLoaderService;
 import org.coconut.cache.internal.service.management.DefaultCacheManagementService;
+import org.coconut.cache.internal.service.service.InternalCacheServiceManager;
 import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsService;
 import org.coconut.cache.internal.service.threading.NoThreadingCacheService;
 
@@ -18,14 +20,15 @@ import org.coconut.cache.internal.service.threading.NoThreadingCacheService;
  */
 final class Defaults {
 
-    static <K, V> void initializeUnsynchronizedCache(
-            OlfInternalCacheServiceManager<K, V> serviceManager) {
-        serviceManager.registerServiceImplementations(DefaultCacheStatisticsService.class);
-        serviceManager.registerServiceImplementations(DefaultCacheEvictionService.class);
-        serviceManager.registerServiceImplementations(UnsynchronizedCacheExpirationService.class);
-        serviceManager.registerServiceImplementations(DefaultCacheLoaderService.class);
-        serviceManager.registerServiceImplementations(DefaultCacheManagementService.class);
-        serviceManager.registerServiceImplementations(DefaultCacheEventService.class);
-        serviceManager.registerServiceImplementations(NoThreadingCacheService.class);
+    @SuppressWarnings("unchecked")
+	static <K, V> void initializeUnsynchronizedCache(
+            InternalCacheServiceManager serviceManager) {
+        serviceManager.registerServices(DefaultCacheStatisticsService.class);
+        serviceManager.registerServices(UnsynchronizedCacheEvictionService.class);
+        serviceManager.registerServices(UnsynchronizedCacheExpirationService.class);
+        serviceManager.registerServices(DefaultCacheLoaderService.class);
+        serviceManager.registerServices(DefaultCacheManagementService.class);
+        serviceManager.registerServices(DefaultCacheEventService.class);
+        serviceManager.registerServices(NoThreadingCacheService.class);
     }
 }

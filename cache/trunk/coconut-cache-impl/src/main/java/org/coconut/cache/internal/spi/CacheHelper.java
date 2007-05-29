@@ -45,4 +45,11 @@ public interface CacheHelper<K, V> {
     Collection<? extends K> filterKeys(Filter<? super CacheEntry<K, V>> filter);
 
     Collection<? extends CacheEntry<K, V>> filter(Filter<? super CacheEntry<K, V>> filter);
+    
+    public void trimToCapacity(long capacity);
+
+    public void trimToSize(int size);
+
+    public void evict(Object key);
+    public void evictAll(Collection keys);
 }

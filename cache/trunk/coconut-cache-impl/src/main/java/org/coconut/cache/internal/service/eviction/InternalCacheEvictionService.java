@@ -13,8 +13,7 @@ import org.coconut.management.annotation.ManagedAttribute;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public interface InternalCacheEvictionService<T extends CacheEntry> extends
-        CacheEvictionService {
+public interface InternalCacheEvictionService<K, V, T extends CacheEntry<K, V>> {
 
     @ManagedAttribute(defaultValue = "Preferable Size", description = "The preferable size of the cache")
     int getPreferableSize();

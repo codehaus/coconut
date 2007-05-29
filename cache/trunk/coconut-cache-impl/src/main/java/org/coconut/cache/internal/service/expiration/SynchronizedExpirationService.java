@@ -12,6 +12,7 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.spi.CacheHelper;
 import org.coconut.cache.service.exceptionhandling.AbstractCacheExceptionHandler;
+import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationMXBean;
 import org.coconut.cache.service.expiration.CacheExpirationService;
@@ -45,7 +46,7 @@ public class SynchronizedExpirationService<K, V> extends AbstractExpirationServi
      */
     public SynchronizedExpirationService(CacheHelper<K, V> helper,
             CacheExpirationConfiguration<K, V> conf, Clock clock,
-            AbstractCacheExceptionHandler<K, V> errorHandler,
+            CacheExceptionHandlingConfiguration<K, V> errorHandler,
             InternalCacheAttributeService attributeFactory) {
         super(clock, helper, errorHandler);
         this.helper = helper;

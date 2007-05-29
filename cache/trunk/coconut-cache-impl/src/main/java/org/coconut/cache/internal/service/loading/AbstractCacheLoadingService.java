@@ -10,7 +10,10 @@ import java.util.concurrent.Future;
 
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
+import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
 import org.coconut.cache.internal.spi.CacheHelper;
+import org.coconut.cache.service.loading.CacheLoadingConfiguration;
+import org.coconut.cache.service.loading.CacheLoadingMXBean;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Transformer;
@@ -21,15 +24,24 @@ import org.coconut.filter.Filters;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public abstract class AbstractCacheLoadingService<K, V> implements
-        CacheLoadingService<K, V> {
+public abstract class AbstractCacheLoadingService<K, V> extends
+        AbstractInternalCacheService implements CacheLoadingService<K, V>,
+        InternalCacheLoadingService<K, V> {
 
     private final CacheHelper<K, V> helper;
 
     private final InternalCacheAttributeService attributeFactory;
 
+    @Override
+    public void registerServices(Map<Class, Object> serviceMap) {
+        serviceMap.put(CacheLoadingService.class, this);
+        //serviceMap.put(CacheLoadingMXBean.class, this);
+        super.registerServices(serviceMap);
+    }
+
     AbstractCacheLoadingService(InternalCacheAttributeService attributeFactory,
             CacheHelper<K, V> helper) {
+        super(CacheLoadingConfiguration.SERVICE_NAME);
         this.attributeFactory = attributeFactory;
         this.helper = helper;
     }
@@ -55,35 +67,35 @@ public abstract class AbstractCacheLoadingService<K, V> implements
      * @see org.coconut.cache.service.loading.CacheLoadingService#forceLoadAll()
      */
     public final Future<?> forceLoadAll() {
-        return   filteredLoad(Filters.trueFilter());
+        return filteredLoad(Filters.trueFilter());
     }
 
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#forceLoadAll(org.coconut.core.AttributeMap)
      */
     public final Future<?> forceLoadAll(AttributeMap attributes) {
-        return   filteredLoad(Filters.trueFilter(), attributes);
+        return filteredLoad(Filters.trueFilter(), attributes);
     }
 
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#forceLoadAll(java.util.Collection)
      */
     public final Future<?> forceLoadAll(Collection<? extends K> keys) {
-        return  doLoadAll(keys, true);
+        return doLoadAll(keys, true);
     }
 
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#forceLoadAll(java.util.Map)
      */
     public final Future<?> forceLoadAll(Map<K, AttributeMap> mapsWithAttributes) {
-        return  doLoadAll(mapsWithAttributes, true);
+        return doLoadAll(mapsWithAttributes, true);
     }
 
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#load(java.lang.Object)
      */
     public final Future<?> load(K key) {
-        return  doLoad(key, false);
+        return doLoad(key, false);
     }
 
     /**
@@ -91,15 +103,15 @@ public abstract class AbstractCacheLoadingService<K, V> implements
      *      org.coconut.core.AttributeMap)
      */
     public Future<?> load(K key, AttributeMap attributes) {
-        return  doLoad(key, attributes, false);
+        return doLoad(key, attributes, false);
     }
 
     public final Future<?> loadAll(Collection<? extends K> keys) {
-        return  doLoadAll(keys, false);
+        return doLoadAll(keys, false);
     }
 
     public final Future<?> loadAll(Map<K, AttributeMap> mapsWithAttributes) {
-         return doLoadAll(mapsWithAttributes, false);
+        return doLoadAll(mapsWithAttributes, false);
     }
 
     public abstract V loadBlocking(K key, AttributeMap attributes);
@@ -131,7 +143,7 @@ public abstract class AbstractCacheLoadingService<K, V> implements
         }
         if (forceLoad || !helper.isValid(key)) {
             return doLoad(key, attributeFactory.createMap());
-        } 
+        }
         return null;
     }
 
@@ -151,7 +163,7 @@ public abstract class AbstractCacheLoadingService<K, V> implements
                 map.put(key, attributeFactory.createMap());
             }
         }
-        if (map.size()> 0) {
+        if (map.size() > 0) {
             return doLoad(map);
         }
         return null;
@@ -234,6 +246,6 @@ public abstract class AbstractCacheLoadingService<K, V> implements
             AttributeMap atr = attributeTransformer.transform(entry);
             map.put(entry.getKey(), atr);
         }
-         return forceLoadAll(map);
+        return forceLoadAll(map);
     }
 }
