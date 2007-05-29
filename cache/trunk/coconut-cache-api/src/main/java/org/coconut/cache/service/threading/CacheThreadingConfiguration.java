@@ -8,6 +8,7 @@ import static org.coconut.internal.util.XmlUtil.getChild;
 import static org.coconut.internal.util.XmlUtil.loadObject;
 import static org.coconut.internal.util.XmlUtil.saveObject;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -27,6 +28,7 @@ import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.internal.util.UnitOfTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -76,7 +78,7 @@ public class CacheThreadingConfiguration<K, V> extends
      * @param c
      */
     public CacheThreadingConfiguration() {
-        super(SERVICE_NAME, CacheThreadingService.class);
+        super(SERVICE_NAME, Arrays.asList(CacheThreadingService.class));
     }
 
     /**
@@ -84,7 +86,7 @@ public class CacheThreadingConfiguration<K, V> extends
      *      org.w3c.dom.Element)
      */
     @Override
-    protected void fromXML(Document doc, Element e) throws Exception {
+    public void fromXML(Document doc, Element e) throws Exception {
 
         /* Register */
         if (e.hasAttribute(SHUTDOWN_EXECUTOR_SERVICE_TAG)) {
@@ -175,8 +177,8 @@ public class CacheThreadingConfiguration<K, V> extends
         if (!"java.util.concurrent.Executors.DefaultThreadFactory".equals(tpe
                 .getThreadFactory().getClass().getCanonicalName())) {
             Element tfTag = add(doc, THREAD_FACTORY_TAG, exTag);
-            saveObject(doc, tfTag, getResourceBundle(),"threading.cannotPersistThreadFactory", tpe
-                    .getThreadFactory());
+            saveObject(doc, tfTag, getResourceBundle(),
+                    "threading.cannotPersistThreadFactory", tpe.getThreadFactory());
         }
         /* RejectedExecutionHandler */
         RejectedExecutionHandler reh = tpe.getRejectedExecutionHandler();
@@ -185,7 +187,8 @@ public class CacheThreadingConfiguration<K, V> extends
             if (policy.containsKey(reh.getClass())) {
                 rehTag.setAttribute("type", policy.get(reh.getClass()));
             } else {
-                saveObject(doc, rehTag, getResourceBundle(),"threading.cannotPersistREH", reh);
+                saveObject(doc, rehTag, getResourceBundle(),
+                        "threading.cannotPersistREH", reh);
             }
         }
 
@@ -204,8 +207,8 @@ public class CacheThreadingConfiguration<K, V> extends
                 Element qElement = add(doc, "priorityQueue", exTag);
                 Comparator comp = q.comparator();
                 if (comp != null
-                        && !saveObject(doc, qElement,
-                        		getResourceBundle(),"threading.cannotPersistComperator", comp)) {
+                        && !saveObject(doc, qElement, getResourceBundle(),
+                                "threading.cannotPersistComperator", comp)) {
                     // Queue cannot be set on ThreadPoolExecutor
                     base.removeChild(exTag);
                     return;
@@ -214,7 +217,8 @@ public class CacheThreadingConfiguration<K, V> extends
                 add(doc, "synchronous-queue", exTag);
             } else {
                 Element q = add(doc, "queue", exTag);
-                if (!saveObject(doc, q, getResourceBundle(),"threading.cannotPersistQueue", tpe.getQueue())) {
+                if (!saveObject(doc, q, getResourceBundle(),
+                        "threading.cannotPersistQueue", tpe.getQueue())) {
                     base.removeChild(exTag);
                     return;
                 }
@@ -238,7 +242,7 @@ public class CacheThreadingConfiguration<K, V> extends
      *      org.w3c.dom.Element)
      */
     @Override
-    protected void toXML(Document doc, Element base) throws Exception {
+    public void toXML(Document doc, Element base) throws Exception {
         /* Register */
         Executor e = executor;
         if (e != DEFAULT.getExecutor()) {
@@ -247,8 +251,8 @@ public class CacheThreadingConfiguration<K, V> extends
                     || e.getClass().equals(ScheduledThreadPoolExecutor.class)) {
                 writeExecutor(doc, base, (ThreadPoolExecutor) e, !isThreadPoolExecutor);
             } else {
-//                addComment(doc, "threading.cannotPersistExecutor", base, e.getClass()
-//                        .getCanonicalName());
+// addComment(doc, "threading.cannotPersistExecutor", base, e.getClass()
+// .getCanonicalName());
             }
         }
         if (getShutdownExecutorService() != DEFAULT.getShutdownExecutorService()) {

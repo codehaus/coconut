@@ -5,15 +5,12 @@ package org.coconut.cache.service.eviction;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
+import static org.coconut.cache.spi.XmlConfigurator.reloadService;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.Collection;
 
-import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.policy.Policies;
 import org.coconut.cache.policy.ReplacementPolicy;
-import org.coconut.cache.spi.XmlConfigurator;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,23 +21,11 @@ import org.junit.Test;
 public class CacheEvictionConfigurationTest {
     CacheEvictionConfiguration<Number, Collection> ee;
 
-
     @Before
     public void setUp() {
         ee = new CacheEvictionConfiguration();
     }
 
-    static CacheEvictionConfiguration rw(CacheEvictionConfiguration conf) throws Exception {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        CacheConfiguration cc = CacheConfiguration.create();
-        cc.addConfiguration(conf);
-        XmlConfigurator.getInstance().to(cc, os);
-        cc = XmlConfigurator.getInstance().from(
-                new ByteArrayInputStream(os.toByteArray()));
-        return (CacheEvictionConfiguration) cc
-                .getConfiguration(CacheEvictionConfiguration.class);
-    }
-    
     @Test(expected = IllegalArgumentException.class)
     public void testMaximumCapacity() {
         assertEquals(Long.MAX_VALUE, ee.getMaximumCapacity());
@@ -80,11 +65,10 @@ public class CacheEvictionConfigurationTest {
         assertEquals(4, ee.getPreferableSize());
         ee.setPreferableSize(-1);
     }
-    
 
     @Test
     public void testNoop() throws Exception {
-        ee = rw(ee);
+        ee = reloadService(ee);
         assertEquals(Integer.MAX_VALUE, ee.getMaximumSize());
         assertEquals(Integer.MAX_VALUE, ee.getPreferableSize());
         assertEquals(Long.MAX_VALUE, ee.getMaximumCapacity());
@@ -97,7 +81,7 @@ public class CacheEvictionConfigurationTest {
         ee.setPreferableSize(2);
         ee.setMaximumCapacity(3);
         ee.setPreferableCapacity(4);
-        ee = rw(ee);
+        ee = reloadService(ee);
         assertEquals(1, ee.getMaximumSize());
         assertEquals(2, ee.getPreferableSize());
         assertEquals(3, ee.getMaximumCapacity());
@@ -108,15 +92,15 @@ public class CacheEvictionConfigurationTest {
     public void testCornerCase() throws Exception {
         // coverage mostly
         ee.setMaximumSize(2);
-        ee = rw(ee);
+        ee = reloadService(ee);
         assertEquals(2, ee.getMaximumSize());
         assertEquals(Integer.MAX_VALUE, ee.getPreferableSize());
         assertEquals(Long.MAX_VALUE, ee.getMaximumCapacity());
         assertEquals(Long.MAX_VALUE, ee.getPreferableCapacity());
 //        
-//        ee = CacheConfiguration.create();
-//        ee.setPreferableSize(3);
-//        ee = rw(ee);
-//        assertEquals(3, ee.getPreferableSize());
+// ee = CacheConfiguration.create();
+// ee.setPreferableSize(3);
+// ee = rw(ee);
+// assertEquals(3, ee.getPreferableSize());
     }
 }

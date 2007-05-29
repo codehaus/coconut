@@ -7,6 +7,7 @@ import static org.coconut.internal.util.XmlUtil.addAndsaveObject;
 import static org.coconut.internal.util.XmlUtil.getChild;
 import static org.coconut.internal.util.XmlUtil.loadOptional;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
@@ -42,7 +43,7 @@ public class CacheLoadingConfiguration<K, V> extends
 	private CacheLoader<? super K, ? extends V> loader;
 
 	public CacheLoadingConfiguration() {
-		super(SERVICE_NAME, CacheLoadingService.class);
+		super(SERVICE_NAME, Arrays.asList(CacheLoadingService.class, CacheLoadingMXBean.class));
 	}
 
 	/**
@@ -149,7 +150,7 @@ public class CacheLoadingConfiguration<K, V> extends
      *      org.w3c.dom.Element)
      */
 	@Override
-	protected void fromXML(Document doc, Element parent) throws Exception {
+	public void fromXML(Document doc, Element parent) throws Exception {
 		/* Loader */
 		this.loader = loadOptional(parent, LOADER_TAG, CacheLoader.class);
 
@@ -167,7 +168,7 @@ public class CacheLoadingConfiguration<K, V> extends
      *      org.w3c.dom.Element)
      */
 	@Override
-	protected void toXML(Document doc, Element parent) {
+	public void toXML(Document doc, Element parent) {
 		/* Cache Loader */
 		addAndsaveObject(doc, parent, LOADER_TAG, getResourceBundle(),
 				"loading.saveOfLoaderFailed", loader);

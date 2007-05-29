@@ -9,6 +9,7 @@ import static org.coconut.internal.util.XmlUtil.readLong;
 import static org.coconut.internal.util.XmlUtil.writeInt;
 import static org.coconut.internal.util.XmlUtil.writeLong;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
@@ -76,7 +77,7 @@ public class CacheEvictionConfiguration<K, V> extends
      * @param c
      */
     public CacheEvictionConfiguration() {
-        super(SERVICE_NAME, CacheEvictionService.class);
+        super(SERVICE_NAME, Arrays.asList(CacheEvictionService.class));
     }
 
     /**
@@ -309,7 +310,7 @@ public class CacheEvictionConfiguration<K, V> extends
      *      org.w3c.dom.Element)
      */
     @Override
-    protected void fromXML(Document doc, Element e) throws Exception {
+    public void fromXML(Document doc, Element e) throws Exception {
         maximumCapacity = readLong(getChild(MAXIMUM_CAPACITY, e), maximumCapacity);
         preferableCapacity = readLong(getChild(PREFERABLE_CAPACITY, e),
                 preferableCapacity);
@@ -322,7 +323,7 @@ public class CacheEvictionConfiguration<K, V> extends
      *      org.w3c.dom.Element)
      */
     @Override
-    protected void toXML(Document doc, Element base) throws Exception {
+    public void toXML(Document doc, Element base) throws Exception {
         writeLong(doc, base, MAXIMUM_CAPACITY, maximumCapacity, DEFAULT
                 .getMaximumCapacity());
         writeLong(doc, base, PREFERABLE_CAPACITY, preferableCapacity, DEFAULT

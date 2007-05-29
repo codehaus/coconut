@@ -29,10 +29,10 @@ import java.util.concurrent.ThreadPoolExecutor.DiscardOldestPolicy;
 import java.util.concurrent.ThreadPoolExecutor.DiscardPolicy;
 
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.spi.XmlConfigurator;
 import org.coconut.test.MockTestCase;
 import org.junit.Before;
 import org.junit.Test;
+import static org.coconut.cache.spi.XmlConfigurator.reloadService;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -93,21 +93,10 @@ public class CacheThreadingConfigurationTest {
     // t.setScheduledEvictionAtFixedRate(4, TimeUnit.MICROSECONDS);
     // }
 
-    static CacheThreadingConfiguration rw(CacheThreadingConfiguration conf)
-            throws Exception {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        CacheConfiguration cc = CacheConfiguration.create();
-        cc.addConfiguration(conf);
-        XmlConfigurator.getInstance().to(cc, os);
-        cc = XmlConfigurator.getInstance().from(
-                new ByteArrayInputStream(os.toByteArray()));
-        return (CacheThreadingConfiguration) cc
-                .getConfiguration(CacheThreadingConfiguration.class);
-    }
 
     @Test
     public void testNoop() throws Exception {
-        t = rw(t);
+        t = reloadService(t);
         assertNull(t.getExecutor());
         assertEquals(DEFAULT.getScheduledEvictionAtFixedRate(
                 TimeUnit.NANOSECONDS), t.getScheduledEvictionAtFixedRate(
@@ -121,7 +110,7 @@ public class CacheThreadingConfigurationTest {
         t.setShutdownExecutorService(!DEFAULT.getShutdownExecutorService());
         t.setScheduledEvictionAtFixedRate(360000, TimeUnit.MILLISECONDS);
         t.setExecutor(MockTestCase.mockDummy(Executor.class));
-        t = rw(t);
+        t = reloadService(t);
         assertEquals(!DEFAULT.getShutdownExecutorService(), t
                 .getShutdownExecutorService());
         assertEquals(360, t.getScheduledEvictionAtFixedRate(TimeUnit.SECONDS));
@@ -131,7 +120,7 @@ public class CacheThreadingConfigurationTest {
     @Test
     public void testThreading_ThreadPool() throws Exception {
         t.setExecutor(Executors.newFixedThreadPool(5));
-        t = rw(t);
+        t = reloadService(t);
         ThreadPoolExecutor tpe = (ThreadPoolExecutor) t.getExecutor();
         assertEquals(5, tpe.getCorePoolSize());
         assertEquals(5, tpe.getMaximumPoolSize());
@@ -149,7 +138,7 @@ public class CacheThreadingConfigurationTest {
                 new ThreadPoolExecutor.CallerRunsPolicy());
         tpe1.setThreadFactory(new Tf1());
         t.setExecutor(tpe1);
-        t = rw(t);
+        t = reloadService(t);
         ThreadPoolExecutor tpe = (ThreadPoolExecutor) t.getExecutor();
         assertEquals(10, tpe.getCorePoolSize());
         assertEquals(20, tpe.getMaximumPoolSize());
@@ -166,7 +155,7 @@ public class CacheThreadingConfigurationTest {
                 TimeUnit.MILLISECONDS, new PriorityBlockingQueue<Runnable>(),
                 new ThreadPoolExecutor.DiscardOldestPolicy());
         t.setExecutor(tpe1);
-        t = rw(t);
+        t = reloadService(t);
         ThreadPoolExecutor tpe = (ThreadPoolExecutor) t.getExecutor();
         assertTrue(tpe != tpe1);
         assertEquals(10, tpe.getCorePoolSize());
@@ -183,7 +172,7 @@ public class CacheThreadingConfigurationTest {
                 TimeUnit.MILLISECONDS, new PriorityBlockingQueue(11, new Comp()),
                 new ThreadPoolExecutor.DiscardPolicy());
         t.setExecutor(tpe1);
-        t = rw(t);
+        t = reloadService(t);
         ThreadPoolExecutor tpe = (ThreadPoolExecutor) t.getExecutor();
         assertTrue(tpe != tpe1);
         assertTrue(tpe.getRejectedExecutionHandler() instanceof DiscardPolicy);
@@ -196,7 +185,7 @@ public class CacheThreadingConfigurationTest {
         ThreadPoolExecutor tpe1 = new ThreadPoolExecutor(10, 20, 30,
                 TimeUnit.MILLISECONDS, new SynchronousQueue<Runnable>(), new MyREH1());
         t.setExecutor(tpe1);
-        t = rw(t);
+        t = reloadService(t);
         ThreadPoolExecutor tpe = (ThreadPoolExecutor) t.getExecutor();
         assertTrue(tpe != tpe1);
         assertTrue(tpe.getRejectedExecutionHandler() instanceof MyREH1);
@@ -208,7 +197,7 @@ public class CacheThreadingConfigurationTest {
         ThreadPoolExecutor tpe1 = new ThreadPoolExecutor(10, 20, 30,
                 TimeUnit.MILLISECONDS, new MyQueue(), new AbortPolicy());
         t.setExecutor(tpe1);
-        t = rw(t);
+        t = reloadService(t);
 
         ThreadPoolExecutor tpe = (ThreadPoolExecutor) t.getExecutor();
         assertTrue(tpe != tpe1);
@@ -222,7 +211,7 @@ public class CacheThreadingConfigurationTest {
                 new ThreadPoolExecutor.DiscardOldestPolicy());
         tpe1.setThreadFactory(new Tf2(""));
         t.setExecutor(tpe1);
-        t = rw(t);
+        t = reloadService(t);
         ThreadPoolExecutor tpe = (ThreadPoolExecutor) t.getExecutor();
         assertEquals(10, tpe.getCorePoolSize());
         assertEquals(20, tpe.getMaximumPoolSize());
@@ -237,7 +226,7 @@ public class CacheThreadingConfigurationTest {
                 TimeUnit.MILLISECONDS, new PriorityBlockingQueue<Runnable>(), new MyREH(
                         ""));
         t.setExecutor(tpe1);
-        t = rw(t);
+        t = reloadService(t);
         ThreadPoolExecutor tpe = (ThreadPoolExecutor) t.getExecutor();
         assertEquals(10, tpe.getCorePoolSize());
         assertEquals(20, tpe.getMaximumPoolSize());
@@ -251,7 +240,7 @@ public class CacheThreadingConfigurationTest {
                 TimeUnit.MILLISECONDS, new PriorityBlockingQueue(11, new Comp2("")),
                 new AbortPolicy());
         t.setExecutor(tpe1);
-        t = rw(t);
+        t = reloadService(t);
         assertNull(t.getExecutor());
     }
 
@@ -260,7 +249,7 @@ public class CacheThreadingConfigurationTest {
         ThreadPoolExecutor tpe1 = new ThreadPoolExecutor(10, 20, 30,
                 TimeUnit.MILLISECONDS, new MyQueue2(""), new AbortPolicy());
         t.setExecutor(tpe1);
-        t = rw(t);
+        t = reloadService(t);
         assertNull(t.getExecutor());
     }
 
@@ -269,7 +258,7 @@ public class CacheThreadingConfigurationTest {
         ScheduledThreadPoolExecutor tpe1 = new ScheduledThreadPoolExecutor(12, new Tf1(),
                 new MyREH1());
         t.setExecutor(tpe1);
-        t = rw(t);
+        t = reloadService(t);
         ScheduledThreadPoolExecutor tpe = (ScheduledThreadPoolExecutor) t.getExecutor();
         assertTrue(tpe != tpe1);
 

@@ -6,18 +6,15 @@ package org.coconut.cache.service.loading;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
+import static org.coconut.cache.spi.XmlConfigurator.reloadService;
 import static org.coconut.test.MockTestCase.mockDummy;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.expiration.CacheExpirationConfigurationTest.MyFilter2;
-import org.coconut.cache.spi.XmlConfigurator;
 import org.coconut.core.AttributeMap;
 import org.coconut.filter.Filter;
 import org.coconut.filter.Filters;
@@ -39,17 +36,6 @@ public class CacheLoadingConfigurationTest {
     @Before
     public void setUp() {
         conf = new CacheLoadingConfiguration();
-    }
-
-    static CacheLoadingConfiguration rw(CacheLoadingConfiguration conf) throws Exception {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        CacheConfiguration cc = CacheConfiguration.create();
-        cc.addConfiguration(conf);
-        XmlConfigurator.getInstance().to(cc, os);
-        cc = XmlConfigurator.getInstance().from(
-                new ByteArrayInputStream(os.toByteArray()));
-        return (CacheLoadingConfiguration) cc
-                .getConfiguration(CacheLoadingConfiguration.class);
     }
 
     @Test
@@ -76,7 +62,7 @@ public class CacheLoadingConfigurationTest {
 
     @Test
     public void testNoop() throws Exception {
-        conf = rw(conf);
+        conf = reloadService(conf);
         assertNull(conf.getLoader());
         assertEquals(Long.MAX_VALUE, conf.getDefaultRefreshTime(TimeUnit.MILLISECONDS));
         assertNull(conf.getRefreshFilter());
@@ -85,29 +71,29 @@ public class CacheLoadingConfigurationTest {
     @Test
     public void testBackend() throws Exception {
         conf.setLoader(new MyBackend1());
-        System.out.println(conf);
-        conf = rw(conf);
+        // System.out.println(conf);
+        conf = reloadService(conf);
         assertTrue(conf.getLoader() instanceof MyBackend1);
     }
 
     @Test
     public void testBackendFail() throws Exception {
         conf.setLoader(new MyBackend2(""));
-        conf = rw(conf);
+        conf = reloadService(conf);
         assertNull(conf.getLoader());
     }
 
     @Test
     public void testIgnoreFilters() throws Exception {
         conf.setRefreshFilter(new MyFilter4());
-        conf = rw(conf);
+        conf = reloadService(conf);
         assertNull(conf.getRefreshFilter());
     }
 
     @Test
     public void testInitialValues() {
         assertNull(conf.getRefreshFilter());
-        assertTrue(conf.getDefaultRefreshTime(TimeUnit.NANOSECONDS) < 0);
+        assertEquals(Long.MAX_VALUE, conf.getDefaultRefreshTime(TimeUnit.NANOSECONDS));
     }
 
     Filter<CacheEntry> f = Filters.TRUE;
@@ -116,16 +102,16 @@ public class CacheLoadingConfigurationTest {
     public void testReload() throws Exception {
         conf.setDefaultRefreshTime(120, TimeUnit.SECONDS);
         conf.setRefreshFilter(new MyFilter2());
-        conf = rw(conf);
+        conf = reloadService(conf);
         assertTrue(conf.getRefreshFilter() instanceof MyFilter2);
         assertEquals(120 * 1000, conf.getDefaultRefreshTime(TimeUnit.MILLISECONDS));
     }
 
     @Test
     public void testNoop2() throws Exception {
-        conf = rw(conf);
+        conf = reloadService(conf);
         assertNull(conf.getRefreshFilter());
-        assertTrue(conf.getDefaultRefreshTime(TimeUnit.NANOSECONDS) < 0);
+        assertEquals(Long.MAX_VALUE, conf.getDefaultRefreshTime(TimeUnit.NANOSECONDS));
     }
 
     @Test
@@ -134,15 +120,20 @@ public class CacheLoadingConfigurationTest {
         assertEquals(f, conf.getRefreshFilter());
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testReloadInterval() {
 
-        assertEquals(conf, conf.setDefaultRefreshTime(0, TimeUnit.SECONDS));
-        assertEquals(0, conf.getDefaultRefreshTime(TimeUnit.NANOSECONDS));
+        assertEquals(conf, conf.setDefaultRefreshTime(1, TimeUnit.SECONDS));
+        assertEquals(1 * 1000 * 1000 * 1000, conf
+                .getDefaultRefreshTime(TimeUnit.NANOSECONDS));
 
         conf.setDefaultRefreshTime(5, TimeUnit.MICROSECONDS);
         assertEquals(5000, conf.getDefaultRefreshTime(TimeUnit.NANOSECONDS));
 
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testReloadIntervalNPE() {
         conf.setDefaultRefreshTime(1000, null);
     }
 
@@ -156,13 +147,11 @@ public class CacheLoadingConfigurationTest {
     }
 
     public static class MyBackend2 extends MyBackend1 {
-        public MyBackend2(Object foo) {
-        }
+        public MyBackend2(Object foo) {}
     }
 
     static class MyFilter4 implements Filter {
-        private MyFilter4() {
-        }
+        private MyFilter4() {}
 
         public boolean accept(Object element) {
             return false;

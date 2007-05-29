@@ -3,6 +3,8 @@
  */
 package org.coconut.cache.service.statistics;
 
+import java.util.Arrays;
+
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -19,7 +21,7 @@ public class CacheStatisticsConfiguration extends AbstractCacheServiceConfigurat
      * @param tag
      */
     public CacheStatisticsConfiguration() {
-        super(SERVICE_NAME, CacheStatisticsService.class);
+        super(SERVICE_NAME, Arrays.asList(CacheStatisticsService.class));
     }
 
     /**
@@ -27,7 +29,7 @@ public class CacheStatisticsConfiguration extends AbstractCacheServiceConfigurat
      *      org.w3c.dom.Element)
      */
     @Override
-    protected void fromXML(Document doc, Element parent) {
+    public void fromXML(Document doc, Element parent) {
 
     }
 
@@ -36,7 +38,7 @@ public class CacheStatisticsConfiguration extends AbstractCacheServiceConfigurat
      *      org.w3c.dom.Element)
      */
     @Override
-    protected void toXML(Document doc, Element parent) {
+    public void toXML(Document doc, Element parent) {
 
     }
 

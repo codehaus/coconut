@@ -116,9 +116,9 @@ public class CacheConfigurationTest {
 		conf.setName("foo");
 
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		XmlConfigurator.getInstance().to(conf, os);
+		new XmlConfigurator().write(conf, os);
 
-		Cache c = CacheConfiguration.createAndInstantiate(new ByteArrayInputStream(os
+		Cache c = CacheConfiguration.createCache(new ByteArrayInputStream(os
 				.toByteArray()));
 		assertTrue(c instanceof DummyCache);
 		assertEquals("foo", ((DummyCache) c).getName());

@@ -5,15 +5,12 @@ package org.coconut.cache.service.event;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
+import static org.coconut.cache.spi.XmlConfigurator.reloadService;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Field;
 import java.util.Set;
 
-import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.spi.IllegalCacheConfigurationException;
-import org.coconut.cache.spi.XmlConfigurator;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -43,8 +40,8 @@ public class CacheEventConfigurationTest {
         assertTrue(conf.isIncluded(CacheEvent.class));
         assertTrue(conf.isIncluded(CacheEvent.CacheCleared.class));
         assertTrue(conf.isIncluded(CacheEvent.CacheEvicted.class));
-      //  assertTrue(conf.isIncluded(CacheEvent.CacheStatisticsReset.class));
-        conf = rw(conf);
+        // assertTrue(conf.isIncluded(CacheEvent.CacheStatisticsReset.class));
+        conf = reloadService(conf);
         assertTrue(conf.isIncluded(CacheEntryEvent.class));
         assertFalse(conf.isIncluded(CacheEntryEvent.ItemAccessed.class));
         assertTrue(conf.isIncluded(CacheEntryEvent.ItemAdded.class));
@@ -54,7 +51,7 @@ public class CacheEventConfigurationTest {
         assertTrue(conf.isIncluded(CacheEvent.class));
         assertTrue(conf.isIncluded(CacheEvent.CacheCleared.class));
         assertTrue(conf.isIncluded(CacheEvent.CacheEvicted.class));
-    //    assertTrue(conf.isIncluded(CacheEvent.CacheStatisticsReset.class));
+        // assertTrue(conf.isIncluded(CacheEvent.CacheStatisticsReset.class));
     }
 
     @Test
@@ -65,14 +62,14 @@ public class CacheEventConfigurationTest {
         assertFalse(conf.isIncluded(CacheEntryEvent.ItemUpdated.class));
 
         assertFalse(conf.isIncluded(CacheEvent.class));
-    //    assertFalse(conf.isIncluded(CacheEvent.CacheStatisticsReset.class));
-        conf = rw(conf);
+        // assertFalse(conf.isIncluded(CacheEvent.CacheStatisticsReset.class));
+        conf = reloadService(conf);
         assertFalse(conf.isIncluded(CacheEntryEvent.class));
         assertFalse(conf.isIncluded(CacheEntryEvent.ItemAccessed.class));
         assertFalse(conf.isIncluded(CacheEntryEvent.ItemUpdated.class));
 
         assertFalse(conf.isIncluded(CacheEvent.class));
-  //      assertFalse(conf.isIncluded(CacheEvent.CacheStatisticsReset.class));
+        // assertFalse(conf.isIncluded(CacheEvent.CacheStatisticsReset.class));
     }
 
     @Test
@@ -83,14 +80,14 @@ public class CacheEventConfigurationTest {
         assertFalse(conf.isIncluded(CacheEntryEvent.ItemUpdated.class));
 
         assertTrue(conf.isIncluded(CacheEvent.class));
-    //    assertTrue(conf.isIncluded(CacheEvent.CacheStatisticsReset.class));
-        conf = rw(conf);
+        // assertTrue(conf.isIncluded(CacheEvent.CacheStatisticsReset.class));
+        conf = reloadService(conf);
         assertFalse(conf.isIncluded(CacheEntryEvent.class));
         assertFalse(conf.isIncluded(CacheEntryEvent.ItemAccessed.class));
         assertFalse(conf.isIncluded(CacheEntryEvent.ItemUpdated.class));
 
         assertTrue(conf.isIncluded(CacheEvent.class));
-  //      assertTrue(conf.isIncluded(CacheEvent.CacheStatisticsReset.class));
+        // assertTrue(conf.isIncluded(CacheEvent.CacheStatisticsReset.class));
     }
 
     @Test
@@ -102,14 +99,14 @@ public class CacheEventConfigurationTest {
         assertTrue(conf.isIncluded(CacheEntryEvent.ItemUpdated.class));
 
         assertFalse(conf.isIncluded(CacheEvent.class));
-   //     assertFalse(conf.isIncluded(CacheEvent.CacheStatisticsReset.class));
-        conf = rw(conf);
+        // assertFalse(conf.isIncluded(CacheEvent.CacheStatisticsReset.class));
+        conf = reloadService(conf);
         assertTrue(conf.isIncluded(CacheEntryEvent.class));
         assertTrue(conf.isIncluded(CacheEntryEvent.ItemAccessed.class));
         assertTrue(conf.isIncluded(CacheEntryEvent.ItemUpdated.class));
 
         assertFalse(conf.isIncluded(CacheEvent.class));
-   //     assertFalse(conf.isIncluded(CacheEvent.CacheStatisticsReset.class));
+        // assertFalse(conf.isIncluded(CacheEvent.CacheStatisticsReset.class));
     }
 
     @Test
@@ -122,36 +119,36 @@ public class CacheEventConfigurationTest {
         assertFalse(conf.isIncluded(CacheEntryEvent.ItemUpdated.class));
 
         assertTrue(conf.isIncluded(CacheEvent.class));
-   //     assertTrue(conf.isIncluded(CacheEvent.CacheStatisticsReset.class));
-        conf = rw(conf);
+        // assertTrue(conf.isIncluded(CacheEvent.CacheStatisticsReset.class));
+        conf = reloadService(conf);
         assertFalse(conf.isIncluded(CacheEntryEvent.class));
         assertTrue(conf.isIncluded(CacheEntryEvent.ItemAccessed.class));
         assertFalse(conf.isIncluded(CacheEntryEvent.ItemUpdated.class));
 
         assertTrue(conf.isIncluded(CacheEvent.class));
- //       assertTrue(conf.isIncluded(CacheEvent.CacheStatisticsReset.class));
+        // assertTrue(conf.isIncluded(CacheEvent.CacheStatisticsReset.class));
     }
 
     @Test(expected = IllegalCacheConfigurationException.class)
     public void testInvalidXML() throws Exception {
-        conf = rw(conf);
+        conf = reloadService(conf);
         Field f = CacheEventConfiguration.class.getDeclaredField("includes");
         f.setAccessible(true);
         ((Set) f.get(conf)).add(Object.class);
         f.setAccessible(false);
 
-        conf = rw(conf);
+        conf = reloadService(conf);
     }
 
     @Test(expected = IllegalCacheConfigurationException.class)
     public void testInvalidXML1() throws Exception {
-        conf = rw(conf);
+        conf = reloadService(conf);
         Field f = CacheEventConfiguration.class.getDeclaredField("excludes");
         f.setAccessible(true);
         ((Set) f.get(conf)).add(Object.class);
         f.setAccessible(false);
 
-        conf = rw(conf);
+        conf = reloadService(conf);
     }
 
     @Test(expected = NullPointerException.class)
@@ -189,14 +186,4 @@ public class CacheEventConfigurationTest {
         conf.exclude(CacheEvent.class, Object.class);
     }
 
-    static CacheEventConfiguration rw(CacheEventConfiguration conf) throws Exception {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        CacheConfiguration cc = CacheConfiguration.create();
-        cc.addConfiguration(conf);
-        XmlConfigurator.getInstance().to(cc, os);
-        cc = XmlConfigurator.getInstance().from(
-                new ByteArrayInputStream(os.toByteArray()));
-        return (CacheEventConfiguration) cc
-                .getConfiguration(CacheEventConfiguration.class);
-    }
 }

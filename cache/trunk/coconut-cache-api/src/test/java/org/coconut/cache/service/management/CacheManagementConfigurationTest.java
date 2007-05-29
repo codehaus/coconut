@@ -4,16 +4,14 @@
 package org.coconut.cache.service.management;
 
 import static junit.framework.Assert.assertEquals;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.lang.management.ManagementFactory;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
+import static org.coconut.cache.spi.XmlConfigurator.reloadService;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 
-import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.spi.XmlConfigurator;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -51,42 +49,36 @@ public class CacheManagementConfigurationTest {
 
     @Test
     public void testMBeanServer() {
-        assertEquals(ManagementFactory.getPlatformMBeanServer(), m.getMBeanServer());
+        assertNull(m.getMBeanServer());
         MBeanServer s = MBeanServerFactory.createMBeanServer();
         assertEquals(m, m.setMBeanServer(s));
         assertEquals(s, m.getMBeanServer());
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testMBeanServerNPE() {
-        m.setMBeanServer(null);
+    @Test
+    public void testEnabled() {
+        assertFalse(m.isEnabled());
+        assertEquals(m, m.setEnabled(true));
+        assertTrue(m.isEnabled());
     }
 
     @Test
     public void testXmlNoop() throws Exception {
-        m = rw(m);
+        m = reloadService(m);
         assertEquals(DEFAULT.getDomain(), m.getDomain());
         assertEquals(DEFAULT.getMBeanServer(), m.getMBeanServer());
+        assertFalse(m.isEnabled());
     }
 
     @Test
     public void testXmlJMX() throws Exception {
         m.setDomain("foo.bar");
         m.setMBeanServer(MBeanServerFactory.createMBeanServer());
-        m = rw(m);
+        m.setEnabled(true);
+        m = reloadService(m);
         assertEquals("foo.bar", m.getDomain());
         assertEquals(DEFAULT.getMBeanServer(), m.getMBeanServer());
+        assertTrue(m.isEnabled());
     }
 
-    static CacheManagementConfiguration rw(CacheManagementConfiguration conf)
-            throws Exception {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        CacheConfiguration cc = CacheConfiguration.create();
-        cc.addConfiguration(conf);
-        XmlConfigurator.getInstance().to(cc, os);
-        cc = XmlConfigurator.getInstance().from(
-                new ByteArrayInputStream(os.toByteArray()));
-        return (CacheManagementConfiguration) cc
-                .getConfiguration(CacheManagementConfiguration.class);
-    }
 }
