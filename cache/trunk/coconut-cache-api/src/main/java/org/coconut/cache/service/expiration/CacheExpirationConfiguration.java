@@ -39,6 +39,7 @@ public class CacheExpirationConfiguration<K, V> extends
     /**
      * Creates a new CacheExpirationConfiguration
      */
+    @SuppressWarnings("unchecked")
     public CacheExpirationConfiguration() {
         super(SERVICE_NAME, Arrays.asList(CacheExpirationService.class,
                 CacheExpirationMXBean.class));
@@ -102,7 +103,7 @@ public class CacheExpirationConfiguration<K, V> extends
      * expiration filter is set cache entries are first checked against that filter then
      * against the time based expiration times.
      */
-    public CacheExpirationConfiguration setExpirationFilter(
+    public CacheExpirationConfiguration<K, V> setExpirationFilter(
             Filter<CacheEntry<K, V>> filter) {
         expirationFilter = filter;
         return this;

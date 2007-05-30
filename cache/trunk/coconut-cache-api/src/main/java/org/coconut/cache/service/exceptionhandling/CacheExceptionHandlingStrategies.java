@@ -15,30 +15,26 @@ import org.coconut.core.AttributeMap;
  */
 public class CacheExceptionHandlingStrategies {
 
-	//log, rethrow/or not, shutdown cache, System.exit
-	// logAll
-	// logAndThrow
-	// NoLogJustThrow
-	// ShutdownNow
-	//
-	// ShutdownAndWriteDebugInfo
-	// SystemExit
+    // log, rethrow/or not, shutdown cache, System.exit
+    // logAll
+    // logAndThrow
+    // NoLogJustThrow
+    // ShutdownNow
+    //
+    // ShutdownAndWriteDebugInfo
+    // SystemExit
 
-	
+    public static class DefaultCacheExceptionHandler<K, V> extends
+            AbstractCacheExceptionHandler<K, V> {
 
-	public static class DefaultCacheExceptionHandler<K, V> extends
-			AbstractCacheExceptionHandler<K, V> {
+        /**
+         * @see org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#warning(java.lang.String)
+         */
+        @Override
+        public void warning(String warning) {
+        // TODO Auto-generated method stub
 
-	
+        }
 
-		/**
-		 * @see org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#warning(java.lang.String)
-		 */
-		@Override
-		public void warning(String warning) {
-			// TODO Auto-generated method stub
-			
-		}
-
-	}
+    }
 }

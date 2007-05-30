@@ -6,8 +6,7 @@ package org.coconut.cache.service.management;
 import org.coconut.management.ManagedGroup;
 
 /**
- * This is the main interface for controlling the remote management of a cache
- * at runtime.
+ * This is the main interface for controlling the remote management of a cache at runtime.
  * <p>
  * Currently, you cannot do much with it.
  * 
@@ -16,10 +15,10 @@ import org.coconut.management.ManagedGroup;
  */
 public interface CacheManagementService {
 
-	/**
+    /**
      * Returns the root ManagedGroup.
      * 
      * @return the root ManagedGroup
      */
-	ManagedGroup getRoot();
+    ManagedGroup getRoot();
 }

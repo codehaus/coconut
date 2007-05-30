@@ -10,8 +10,6 @@ import net.jcip.annotations.Immutable;
 import org.coconut.cache.spi.Resources;
 
 /**
- * 
- * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -19,10 +17,9 @@ public class CacheStatistics {
 
     public static final CacheHitStat STAT00 = new ImmutableHitStat(0, 0);
 
-
     /**
-     * Creates new a new HitStat object with the same number of hits and misses
-     * as the specified HitStat.
+     * Creates new a new HitStat object with the same number of hits and misses as the
+     * specified HitStat.
      * 
      * @param copyFrom
      *            the HitStat to copy from
@@ -124,8 +121,8 @@ public class CacheStatistics {
         /** {@inheritDoc} */
         @Override
         public String toString() {
-            return Resources.lookup(CacheHitStat.class, "toString", getHitRatio(),
-                    hits, misses);
+            return Resources.lookup(CacheHitStat.class, "toString", getHitRatio(), hits,
+                    misses);
         }
     }
 }

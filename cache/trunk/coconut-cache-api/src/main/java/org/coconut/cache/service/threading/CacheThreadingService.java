@@ -12,10 +12,10 @@ import java.util.concurrent.ScheduledExecutorService;
  */
 public interface CacheThreadingService {
 
-	void executeDedicated(Class service, Runnable r);
+    void executeDedicated(Class service, Runnable r);
 
-	ExecutorService createExecutorService(Class service);
+    ExecutorService createExecutorService(Class service);
 
-	ScheduledExecutorService createScheduledExecutorService(Class service);
+    ScheduledExecutorService createScheduledExecutorService(Class service);
 
 }

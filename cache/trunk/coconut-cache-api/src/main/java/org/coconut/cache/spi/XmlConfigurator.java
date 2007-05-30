@@ -133,10 +133,13 @@ public class XmlConfigurator {
         readSingleCache(base, doc, base.getServiceTypes(), (Element) n);
     }
 
-    protected <K, V> void readSingleCache(CacheConfiguration<K, V> conf, Document doc,
+    protected <K, V> void readSingleCache(
+            CacheConfiguration<K, V> conf,
+            Document doc,
             Collection<Class<? extends AbstractCacheServiceConfiguration<K, V>>> services,
             Element cache) throws Exception {
-        if (cache.hasAttribute(CACHE_NAME_ATTR) && !cache.getAttribute(CACHE_NAME_ATTR).equals("")) {
+        if (cache.hasAttribute(CACHE_NAME_ATTR)
+                && !cache.getAttribute(CACHE_NAME_ATTR).equals("")) {
             conf.setName(cache.getAttribute(CACHE_NAME_ATTR));
         }
         if (cache.hasAttribute(CACHE_TYPE_ATTR)) {

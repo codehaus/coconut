@@ -20,7 +20,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * This class is used to configure how the cache should handle eviction of elements.
+ * This class is used to configure the eviction subsystem prior to usage.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -28,19 +28,16 @@ import org.w3c.dom.Element;
 public class CacheEvictionConfiguration<K, V> extends
         AbstractCacheServiceConfiguration<K, V> {
 
-    /**
-     * The default maximum capacity of a cache unless otherwise specified.
-     */
+    /** The default maximum capacity of a cache unless otherwise specified. */
     public final static long DEFAULT_MAXIMUM_CAPACITY = Long.MAX_VALUE;
 
-    /**
-     * The default maximum size of a cache unless otherwise specified.
-     */
+    /** The default maximum size of a cache unless otherwise specified. */
     public final static int DEFAULT_MAXIMUM_SIZE = Integer.MAX_VALUE;
 
     /** The short name of this service. */
     public final static String SERVICE_NAME = "eviction";
 
+    /** The default settings, used when xml-serializing this configuration */
     private final static CacheEvictionConfiguration<?, ?> DEFAULT = new CacheEvictionConfiguration<Object, Object>();
 
     private final static String DEFAULT_IDLE_TIME = "default-idle-time";
@@ -53,6 +50,7 @@ public class CacheEvictionConfiguration<K, V> extends
 
     private final static String PREFERABLE_SIZE = "preferable-size";
 
+    /** The default idle time for new elements. */
     private long defaultIdleTimeNs = Long.MAX_VALUE;
 
     private Filter<CacheEntry<K, V>> evictionFilter;
@@ -67,17 +65,30 @@ public class CacheEvictionConfiguration<K, V> extends
 
     private int preferableSize = DEFAULT_MAXIMUM_SIZE;
 
+    /** The replacement policy used for evicting elements. */
     private ReplacementPolicy<?> replacementPolicy;
 
     /** Time between evicts. */
     private long scheduledEvictTime;
 
     /**
-     * @param tag
-     * @param c
+     * Creates a new CacheEvictionConfiguration with default settings.
      */
     public CacheEvictionConfiguration() {
         super(SERVICE_NAME, Arrays.asList(CacheEvictionService.class));
+    }
+
+    /**
+     * @see org.coconut.cache.spi.AbstractCacheServiceConfiguration#fromXML(org.w3c.dom.Document,
+     *      org.w3c.dom.Element)
+     */
+    @Override
+    public void fromXML(Document doc, Element e) throws Exception {
+        maximumCapacity = readLong(getChild(MAXIMUM_CAPACITY, e), maximumCapacity);
+        preferableCapacity = readLong(getChild(PREFERABLE_CAPACITY, e),
+                preferableCapacity);
+        maximumSize = readInt(getChild(MAXIMUM_SIZE, e), maximumSize);
+        preferableSize = readInt(getChild(PREFERABLE_SIZE, e), preferableSize);
     }
 
     /**
@@ -137,11 +148,11 @@ public class CacheEvictionConfiguration<K, V> extends
     }
 
     /**
-     * Returns the specified replacement policy or <tt>null</tt> if none has been
-     * specified.
+     * Returns the configured replacement policy or <tt>null</tt> if none has been
+     * configured.
      * 
-     * @return the specified replacement policy or <tt>null</tt> if none has been
-     *         specified
+     * @return the configured replacement policy or <tt>null</tt> if none has been
+     *         configured
      * @see #setPolicy(ReplacementPolicy)
      */
     public ReplacementPolicy<?> getPolicy() {
@@ -224,12 +235,18 @@ public class CacheEvictionConfiguration<K, V> extends
 
     /**
      * Sets that maximum number of elements that a cache can contain. If the limit is
-     * reached the cache must evict existing elements before adding new elements.
+     * reached the cache must evict existing elements before adding new elements. For
+     * example, if the limit is 10 elements and the cache currently holds 10 elements.
+     * Then, if a user tries to add a new element the cache must choose one of the 10
+     * elements to remove from the cache before it inserting the new element.
      * <p>
-     * The default value is Integer.MAX_VALUE. Which
+     * The default value is Integer.MAX_VALUE. Which roughly translates to no limit on the
+     * number of elements.
      * 
      * @param elements
      *            the maximum capacity.
+     * @throws IllegalAccessException
+     *             if the specified
      */
     public CacheEvictionConfiguration<K, V> setMaximumCapacity(long maximumCapacity) {
         if (maximumCapacity <= 0) {
@@ -241,21 +258,27 @@ public class CacheEvictionConfiguration<K, V> extends
     }
 
     /**
-     * Sets that maximum number of elements that the cache is allowed to contain. If the
-     * limit is reached the cache must evict existing elements before adding new elements.
+     * Sets that maximum number of elements that a cache can hold. If the limit is reached
+     * the cache must evict an existing element(s) before adding a new element. For
+     * example, if the maximum size is 10 and the cache currently holds 10 elements. Then,
+     * if a user tries to add a new element the cache must choose one of the 10 elements
+     * to remove from the cache before it inserts the new element. As an alternative the
+     * cache might choose to keep the 10 existing elements and not add the new element.
+     * For example, if it estimates that the likelihood of requesting anyone of the 10
+     * elements in the near future are higher then the likelihood of requsting the new
+     * element.
      * <p>
-     * To indicate that a cache can hold an unlimited number of items,
-     * {@link Integer#MAX_VALUE} should be specified. This is also refered to as an
-     * unlimited cache.
+     * To indicate that a cache can hold an unlimited number of elements, specify
+     * {@link Integer#MAX_VALUE}. This is also the default value.
      * <p>
-     * If the specified maximum capacity is 0, the cache will never store any elements
+     * If the specified maximum size is 0, the cache will never store any elements
      * internally.
      * 
      * @param maximumSize
      *            the maximum number of elements the cache can hold or Integer.MAX_VALUE
      *            if there is no limit
      * @throws IllegalArgumentException
-     *             if the specified maximum size is negative
+     *             if the specified integer is negative
      */
     public CacheEvictionConfiguration<K, V> setMaximumSize(int maximumSize) {
         if (maximumSize < 0) {
@@ -267,19 +290,28 @@ public class CacheEvictionConfiguration<K, V> extends
     }
 
     /**
-     * Sets the replacement policy that should be used when the cache needs to evict
-     * entries to make room for new entries. The replacement policy will unless otherwise
-     * specified pass instances of {@link org.coconut.cache.CacheEntry} to its
-     * {@link ReplacementPolicy#add(Object)) and {@link ReplacementPolicy#update(int, Object)}
-     * methods.
+     * Sets the replacement policy that decides which of the currently held elements are
+     * evicted in order to make room for new elements. If no replacement policy is
+     * specified the cache may choose which elements to evict anyway possible. Note:
+     * Whatever way it chooses the elements, it must still obey the configured maximum
+     * size and volume.
      * <p>
-     * If no policy has been specified, the cache is free to choose any avilable method to
-     * decide which entries to replace when the maximum size or capacity is reached.
-     * Including choosing elements at random. However
+     * If a cache implementation does not allow the specification of arbitrary
+     * replacements policies. But is tightly coupled with a specific implementation of a
+     * replacement policy. The cache must throw an exception at construction time, if the
+     * users tries to specify any value but <code>null</code>. For example, it is often
+     * impossible to implement a highly concurrent cache while at the same time allowing
+     * users to specify arbitrary implementations of a replacement policy. This
+     * observation is generally refered to as the <code>inheritance anomaly</code>.
+     * <p>
+     * The cache will, unless otherwise specified, pass instances of
+     * {@link org.coconut.cache.CacheEntry} to
+     * {@link ReplacementPolicy#add(Object)) and {@link ReplacementPolicy#update(int,
+     * Object)} .
      * 
      * @param policy
-     *            the replacement policy that should be used when the cache needs to evict
-     *            entries
+     *            the replacement policy that should select which elements to evict when
+     *            the cache is full
      * @return this CacheEvictionConfiguration
      */
     public CacheEvictionConfiguration<K, V> setPolicy(ReplacementPolicy<?> policy) {
@@ -303,19 +335,6 @@ public class CacheEvictionConfiguration<K, V> extends
         }
         preferableSize = elements;
         return this;
-    }
-
-    /**
-     * @see org.coconut.cache.spi.AbstractCacheServiceConfiguration#fromXML(org.w3c.dom.Document,
-     *      org.w3c.dom.Element)
-     */
-    @Override
-    public void fromXML(Document doc, Element e) throws Exception {
-        maximumCapacity = readLong(getChild(MAXIMUM_CAPACITY, e), maximumCapacity);
-        preferableCapacity = readLong(getChild(PREFERABLE_CAPACITY, e),
-                preferableCapacity);
-        maximumSize = readInt(getChild(MAXIMUM_SIZE, e), maximumSize);
-        preferableSize = readInt(getChild(PREFERABLE_SIZE, e), preferableSize);
     }
 
     /**

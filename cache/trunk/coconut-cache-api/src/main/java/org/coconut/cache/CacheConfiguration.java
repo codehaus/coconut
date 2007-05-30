@@ -104,7 +104,7 @@ public final class CacheConfiguration<K, V> {
         // this(DEFAULT_SERVICES);
         serviceTypes = new ArrayList<Class<? extends AbstractCacheServiceConfiguration<K, V>>>(
                 (Collection) DEFAULT_SERVICES);
-        for (Class c: serviceTypes) {
+        for (Class c : serviceTypes) {
             getConfiguration(c);
         }
     }

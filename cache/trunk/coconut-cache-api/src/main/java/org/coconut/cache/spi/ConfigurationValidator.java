@@ -42,8 +42,7 @@ public class ConfigurationValidator {
         boolean isScheduled = e instanceof ScheduledExecutorService;
 
         if (!isScheduled
-                && conf.threading().getScheduledEvictionAtFixedRate(
-                        TimeUnit.NANOSECONDS) > 0) {
+                && conf.threading().getScheduledEvictionAtFixedRate(TimeUnit.NANOSECONDS) > 0) {
             if (e == null) {
                 throw new IllegalCacheConfigurationException(
                         "Cannot schedule evictions, when no executor has been set");

@@ -12,15 +12,14 @@ import java.util.Map;
 import org.coconut.core.AttributeMap;
 
 /**
- * A composite cache loader used for allowing multiple loaders to load a value.
- * The composite loader is constructed using either an array or list of cache
- * loaders. When attempting to load a value through on of the load methods in
- * this class. This loader will first attempt to load the values through the
- * specified cache loader with the array index 0 or the first in the specified
- * list. If this loader return <tt>null</tt> for the given key-value mapping
- * the next loader in the array/list is asked to load the value. This keeps
- * repeating until the last loader has tried loading the value for the key. If
- * this loader also returns <tt>null</tt> this loader will also return
+ * A composite cache loader used for allowing multiple loaders to load a value. The
+ * composite loader is constructed using either an array or list of cache loaders. When
+ * attempting to load a value through on of the load methods in this class. This loader
+ * will first attempt to load the values through the specified cache loader with the array
+ * index 0 or the first in the specified list. If this loader return <tt>null</tt> for
+ * the given key-value mapping the next loader in the array/list is asked to load the
+ * value. This keeps repeating until the last loader has tried loading the value for the
+ * key. If this loader also returns <tt>null</tt> this loader will also return
  * <tt>null</tt>.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
@@ -44,8 +43,8 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V>, Serializab
      * @param loaders
      *            the cache loaders used for loading values.
      * @throws NullPointerException
-     *             if the specified array of cache loaders is <tt>null</tt> or
-     *             if one of the cache loaders in the array is <tt>null</tt>
+     *             if the specified array of cache loaders is <tt>null</tt> or if one of
+     *             the cache loaders in the array is <tt>null</tt>
      */
     public CompositeCacheLoader(CacheLoader<K, V>... loaders) {
         this(Arrays.asList(loaders));
@@ -57,8 +56,8 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V>, Serializab
      * @param loaders
      *            a list of the cache loaders used for loading values.
      * @throws NullPointerException
-     *             if the specified list of cache loaders is <tt>null</tt> or
-     *             if the list contains a <tt>null</tt> element
+     *             if the specified list of cache loaders is <tt>null</tt> or if the
+     *             list contains a <tt>null</tt> element
      */
     @SuppressWarnings("unchecked")
     public CompositeCacheLoader(List<? extends CacheLoader<K, V>> loaders) {
@@ -92,44 +91,43 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V>, Serializab
         }
     }
 
-
-//    /**
-//     * {@inheritDoc}
-//     */
-//    public void loadAll(Collection<LoadRequest<K, V>> loadRequests) {
-//        final HashMap<K, V> result = new HashMap<K, V>(loadRequests.size());
-//        Collection<K> ks = new HashSet<K>(mapsWithAttributes.keySet());
-//        for (CacheLoader<K, V> loader : loaders) {
-//            Map<K, V> map = null;
-//            if (ks.size() > 0) {
-//                try {
-//                    map = loader.loadAll(mapsWithAttributes);
-//                } catch (Exception e) {
-//                    map = loadAllFailed(loader, mapsWithAttributes, e);
-//                }
-//            } else {
-//                // no keys left that we haven't found a value for
-//                break;
-//            }
-//            // map is not null part of the cache loader contract
-//            // assert (map != null);
-//            ks = new HashSet<K>();
-//            result.putAll(map);
-//            // we don't check that map.size==ks.size
-//            // we assume this is the case (part of the contract)
-//            for (Map.Entry<K, V> e : map.entrySet()) {
-//                if (e.getValue() == null) {
-//                    ks.add(e.getKey());
-//                } else {
-//                    result.put(e.getKey(), e.getValue());
-//                }
-//            }
+// /**
+// * {@inheritDoc}
+// */
+// public void loadAll(Collection<LoadRequest<K, V>> loadRequests) {
+// final HashMap<K, V> result = new HashMap<K, V>(loadRequests.size());
+// Collection<K> ks = new HashSet<K>(mapsWithAttributes.keySet());
+// for (CacheLoader<K, V> loader : loaders) {
+// Map<K, V> map = null;
+// if (ks.size() > 0) {
+// try {
+// map = loader.loadAll(mapsWithAttributes);
+// } catch (Exception e) {
+// map = loadAllFailed(loader, mapsWithAttributes, e);
+// }
+// } else {
+// // no keys left that we haven't found a value for
+// break;
+// }
+// // map is not null part of the cache loader contract
+// // assert (map != null);
+// ks = new HashSet<K>();
+// result.putAll(map);
+// // we don't check that map.size==ks.size
+// // we assume this is the case (part of the contract)
+// for (Map.Entry<K, V> e : map.entrySet()) {
+// if (e.getValue() == null) {
+// ks.add(e.getKey());
+// } else {
+// result.put(e.getKey(), e.getValue());
+// }
+// }
 //
-//        }
-//        for (K key : ks) {
-//            result.put(key, noValueFoundForKey(key));
-//        }
-//    }
+// }
+// for (K key : ks) {
+// result.put(key, noValueFoundForKey(key));
+// }
+// }
 
     /**
      * Returns the list of loaders that this composite loader consists of.
@@ -141,13 +139,13 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V>, Serializab
     }
 
     /**
-     * This method handles failures of {@link CacheLoader#loadAll} method.
-     * Override to provide customized handling the default version just makes
-     * sure the original exception is thrown.
+     * This method handles failures of {@link CacheLoader#loadAll} method. Override to
+     * provide customized handling the default version just makes sure the original
+     * exception is thrown.
      * <p>
-     * If this method returns a map it <tt>must</tt> provide a mapping for all
-     * the specified keys. Either to a value or to <tt>null</tt>. Also the
-     * size of the map must be the same as the size of key collection.
+     * If this method returns a map it <tt>must</tt> provide a mapping for all the
+     * specified keys. Either to a value or to <tt>null</tt>. Also the size of the map
+     * must be the same as the size of key collection.
      * 
      * @param loader
      *            the cache loader that threw an exception
@@ -159,7 +157,8 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V>, Serializab
      * @throws Exception
      */
     protected Map<K, V> loadAllFailed(CacheLoader<K, V> loader,
-            Map<? extends K, AttributeMap> mapsWithAttributes, Exception cause) throws Exception {
+            Map<? extends K, AttributeMap> mapsWithAttributes, Exception cause)
+            throws Exception {
         throw cause;
     }
 
@@ -179,11 +178,10 @@ public class CompositeCacheLoader<K, V> implements CacheLoader<K, V>, Serializab
     }
 
     /**
-     * This method decides which value if returned for keys whose values could
-     * not be found in any of the specified loaders. The default value returned
-     * is <tt>null</tt>. Can be overridden, for example, to return a default
-     * value for non existing key->value mappings or throw an exception
-     * indicating an illegal state.
+     * This method decides which value if returned for keys whose values could not be
+     * found in any of the specified loaders. The default value returned is <tt>null</tt>.
+     * Can be overridden, for example, to return a default value for non existing
+     * key->value mappings or throw an exception indicating an illegal state.
      * <p>
      * 
      * @param key

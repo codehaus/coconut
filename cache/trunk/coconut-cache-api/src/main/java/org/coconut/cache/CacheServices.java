@@ -19,12 +19,12 @@ public final class CacheServices {
     public static CacheManagerService lifecycle(Cache<?, ?> cache) {
         return cache.getService(CacheManagerService.class);
     }
-    
+
     @SuppressWarnings("unchecked")
     public static CacheEvictionService eviction(Cache<?, ?> cache) {
         return cache.getService(CacheEvictionService.class);
     }
-    
+
     /**
      * @param cache
      *            the cache for which to return an expiration service

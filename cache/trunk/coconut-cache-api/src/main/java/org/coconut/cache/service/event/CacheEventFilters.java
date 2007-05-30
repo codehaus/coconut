@@ -18,8 +18,8 @@ import org.coconut.filter.Filter;
 import org.coconut.filter.Filters;
 
 /**
- * Factory and utility methods for for creating different types of filters for
- * cache events and entries.
+ * Factory and utility methods for for creating different types of filters for cache
+ * events and entries.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id: CacheFilters.java 265 2007-02-06 23:06:04Z kasper $
@@ -31,8 +31,8 @@ public class CacheEventFilters {
     public static final Filter<?> CACHEEVENT_FILTER = Filters.isType(CacheEvent.class);
 
     /**
-     * A filter that only accepts all instance events (events that are not
-     * instances of {@link CacheItemEvent}).
+     * A filter that only accepts all instance events (events that are not instances of
+     * {@link CacheItemEvent}).
      */
     @SuppressWarnings("unchecked")
     public static final Filter<?> CACHE_INSTANCE_FILTER = Filters.not(Filters
@@ -41,9 +41,9 @@ public class CacheEventFilters {
     /** A filter that only accepts instances of CacheCleared events. */
     public static final Filter CACHE_CLEARED_FILTER = Filters.isType(CacheCleared.class);
 
-//    /** A filter that only accepts instances of CacheStatisticsReset events. */
-//    public static final Filter CACHE_RESET_STATISTICS_FILTER = Filters
-//            .isType(CacheStatisticsReset.class);
+// /** A filter that only accepts instances of CacheStatisticsReset events. */
+// public static final Filter CACHE_RESET_STATISTICS_FILTER = Filters
+// .isType(CacheStatisticsReset.class);
 
     /** A filter that only accepts instances of CacheEvicted events. */
     public static final Filter CACHE_EVICTED_FILTER = Filters.isType(CacheEvicted.class);
@@ -60,22 +60,22 @@ public class CacheEventFilters {
             .isType(ItemAccessed.class);
 
     /**
-     * A {@link org.coconut.filter.Filter} that only accepts instances of
-     * ItemUpdated events.
+     * A {@link org.coconut.filter.Filter} that only accepts instances of ItemUpdated
+     * events.
      */
     public final static Filter CACHEENTRY_REMOVED_FILTER = Filters
             .isType(ItemRemoved.class);
 
     /**
-     * A {@link org.coconut.filter.Filter} that only accepts instances of
-     * ItemUpdated events.
+     * A {@link org.coconut.filter.Filter} that only accepts instances of ItemUpdated
+     * events.
      */
     public final static Filter CACHEENTRY_UPDATED_FILTER = Filters
             .isType(ItemUpdated.class);
 
     /**
-     * A {@link org.coconut.filter.Filter} that only accepts instances of
-     * ItemUpdated events.
+     * A {@link org.coconut.filter.Filter} that only accepts instances of ItemUpdated
+     * events.
      */
     public final static Filter CACHEENTRY_ADDED_FILTER = Filters.isType(ItemAdded.class);
 
@@ -86,21 +86,22 @@ public class CacheEventFilters {
             .transform(CacheEvent.class, "getName");
 
     /**
-     * Returns a Filter that filters {@link org.coconut.cache.CacheEvent}s
-     * originating from a particular cache.
+     * Returns a Filter that filters {@link org.coconut.cache.CacheEvent}s originating
+     * from a particular cache.
      */
     public static <K, V> Filter<CacheEvent<K, V>> cacheEqualsFilter(Cache<K, V> cache) {
         return cacheFilter(Filters.same(cache));
     }
 
     /**
-     * Returns a Filter that filters {@link org.coconut.cache.CacheEvent}s
-     * depending of some property/attribute regarding the originating cache. For
-     * example, the following Filter filters only accepts Cache events where the
-     * size of originating cache size is greater then 10.
+     * Returns a Filter that filters {@link org.coconut.cache.CacheEvent}s depending of
+     * some property/attribute regarding the originating cache. For example, the following
+     * Filter filters only accepts Cache events where the size of originating cache size
+     * is greater then 10.
      * 
      * <pre>
-     * Filter&lt;CacheEvent&lt;Integer, String&gt;&gt; filter = cacheFilter(new Filter&lt;Cache&lt;Integer, String&gt;&gt;() {
+     * Filter&lt;CacheEvent&lt;Integer, String&gt;&gt; filter = cacheFilter(new Filter&lt;Cache&lt;Integer, String&gt;&gt;()
+     * {
      *     public boolean accept(Cache&lt;Integer, String&gt; element) {
      *         return element.size() &gt; 10;
      *     }

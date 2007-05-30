@@ -119,6 +119,11 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      */
     Map<K, V> getAll(Collection<? extends K> keys);
 
+    /**
+     * Returns all registered services within the cache.
+     * 
+     * @return
+     */
     Map<Class<?>, Object> getAllServices();
 
     /**

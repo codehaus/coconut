@@ -22,9 +22,8 @@ public class Loaders {
     /**
      * This method converts the specified cache to a cache loader. Calls to
      * {@link CacheLoader#load(Object)} will be converted to calls to
-     * {@link Cache#get(Object)}. Calls to
-     * {@link CacheLoader#loadAll(Collection)} will be converted to calls to
-     * {@link Cache#getAll(Collection)}
+     * {@link Cache#get(Object)}. Calls to {@link CacheLoader#loadAll(Collection)} will
+     * be converted to calls to {@link Cache#getAll(Collection)}
      * 
      * @param c
      *            the cache to load entries from
@@ -35,10 +34,9 @@ public class Loaders {
     }
 
     /**
-     * Returns a CacheLoader that will return <tt>null</tt> for any key when
-     * invoking {@link CacheLoader#load(Object)}. The
-     * {@link CacheLoader#loadAll(Collection)} method will return a map with a
-     * mapping for each key to <tt>null</tt>.
+     * Returns a CacheLoader that will return <tt>null</tt> for any key when invoking
+     * {@link CacheLoader#load(Object)}. The {@link CacheLoader#loadAll(Collection)}
+     * method will return a map with a mapping for each key to <tt>null</tt>.
      * <p>
      * The returned CacheLoader is serializable.
      * 
@@ -49,23 +47,22 @@ public class Loaders {
     }
 
     /**
-     * Returns a synchronized (thread-safe) CacheLoader backed by the specified
-     * cache loader. In order to guarantee serial access, it is critical that
-     * <strong>all</strong> access to the wrapped CacheLoader is accomplished
-     * through the returned cache loader.
+     * Returns a synchronized (thread-safe) CacheLoader backed by the specified cache
+     * loader. In order to guarantee serial access, it is critical that <strong>all</strong>
+     * access to the wrapped CacheLoader is accomplished through the returned cache
+     * loader.
      * <p>
      * The returned CacheLoader is synchronized through <tt>this</tt>.
      * <p>
      * If the specified cache loader is an instance of an
-     * {@link org.coconut.cache.util.AbstractCacheLoader} the returned cache
-     * loader will also be an instance of AbstractCacheLoader.
+     * {@link org.coconut.cache.util.AbstractCacheLoader} the returned cache loader will
+     * also be an instance of AbstractCacheLoader.
      * <p>
-     * The returned cache loader will be serializable if the specified cache
-     * loader is serializable.
+     * The returned cache loader will be serializable if the specified cache loader is
+     * serializable.
      * 
      * @param loader
-     *            the cache loader to be "wrapped" in a synchronized cache
-     *            loader.
+     *            the cache loader to be "wrapped" in a synchronized cache loader.
      * @return a synchronized cache loader using the specified cache loader.
      */
     public static <K, V> CacheLoader<K, V> synchronizedCacheLoader(
@@ -74,8 +71,8 @@ public class Loaders {
     }
 
     /**
-     * This class wraps a cache in such a way that it can be used as a cache
-     * loader for another cache.
+     * This class wraps a cache in such a way that it can be used as a cache loader for
+     * another cache.
      */
     final static class CacheAsCacheLoader<K, V> implements CacheLoader<K, V>,
             Serializable {

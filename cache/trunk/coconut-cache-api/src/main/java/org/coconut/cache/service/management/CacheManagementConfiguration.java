@@ -78,7 +78,8 @@ public class CacheManagementConfiguration<K, V> extends
      * Create a new CacheManagementConfiguration.
      */
     public CacheManagementConfiguration() {
-        super(SERVICE_NAME, Arrays.asList(CacheManagementService.class, CacheMXBean.class));
+        super(SERVICE_NAME, Arrays
+                .asList(CacheManagementService.class, CacheMXBean.class));
     }
 
     /**
