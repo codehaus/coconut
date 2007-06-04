@@ -9,8 +9,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
-import org.coconut.cache.internal.service.OldInternalCacheService;
-import org.coconut.cache.internal.service.OlfInternalCacheServiceManager;
 import org.coconut.cache.service.servicemanager.AbstractCacheService;
 import org.coconut.cache.spi.XmlConfigurator;
 
@@ -19,7 +17,7 @@ import org.coconut.cache.spi.XmlConfigurator;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class DefaultCacheThreadService<K, V> extends AbstractCacheService implements
-        Executor, OldInternalCacheService, InternalCacheThreadingService {
+        Executor, InternalCacheThreadingService {
 
     private final Executor e;
 
@@ -29,7 +27,7 @@ public class DefaultCacheThreadService<K, V> extends AbstractCacheService implem
      * @param manager
      * @param conf
      */
-    public DefaultCacheThreadService(OlfInternalCacheServiceManager manager,
+    public DefaultCacheThreadService(
             CacheConfiguration<K, V> conf) {
         super("threading");
         this.e = conf.threading().getExecutor();

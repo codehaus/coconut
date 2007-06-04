@@ -3,8 +3,6 @@
  */
 package org.coconut.cache.defaults;
 
-import org.coconut.cache.internal.service.OlfInternalCacheServiceManager;
-import org.coconut.cache.internal.service.attribute.DefaultCacheAttributeService;
 import org.coconut.cache.internal.service.event.DefaultCacheEventService;
 import org.coconut.cache.internal.service.eviction.UnsynchronizedCacheEvictionService;
 import org.coconut.cache.internal.service.expiration.UnsynchronizedCacheExpirationService;

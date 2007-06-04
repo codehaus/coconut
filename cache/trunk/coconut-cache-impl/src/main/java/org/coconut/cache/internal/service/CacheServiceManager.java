@@ -29,7 +29,7 @@ import org.coconut.management.ManagedGroup;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class CacheServiceManager<K, V> implements OlfInternalCacheServiceManager<K, V> {
+public class CacheServiceManager<K, V>  {
 
     private static final int RUNNING = 1;
 
@@ -184,10 +184,6 @@ public class CacheServiceManager<K, V> implements OlfInternalCacheServiceManager
 
     private void shutdownAll() {
         for (Object service : instanciated.values()) {
-            if (service instanceof OldInternalCacheService) {
-
-            }
-            OldInternalCacheService sr = (OldInternalCacheService) service;
             try {
                 // service.shutdown(sr);
             } catch (Exception e) {

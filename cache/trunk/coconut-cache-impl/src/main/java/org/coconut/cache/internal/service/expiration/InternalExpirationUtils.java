@@ -8,10 +8,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.service.DummyCacheService;
-import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationService;
-import org.coconut.core.AttributeMap;
 import org.coconut.filter.Filter;
 
 /**
@@ -26,92 +23,92 @@ public class InternalExpirationUtils {
             CacheExpirationService<K, V> service) {
         return new DelegatedCacheExpirationService<K, V>(service);
     }
-
-    static final class NoCacheExpirationService<K, V> extends DummyCacheService implements
-            InternalExpirationService<K, V> {
-
-        /**
-		 * @param name
-		 */
-		public NoCacheExpirationService() {
-			super(CacheExpirationConfiguration.SERVICE_NAME);
-		}
-
-		/**
-         * @see org.coconut.cache.service.expiration.CacheExpirationService#getDefaultTimeout(java.util.concurrent.TimeUnit)
-         */
-        public long getDefaultTimeToLive(TimeUnit unit) {
-            return CacheExpirationService.NEVER_EXPIRE;
-        }
-
-        /**
-         * @see org.coconut.cache.internal.service.expiration.InternalCacheExpirationService#getExpirationTime(java.lang.Object,
-         *      java.lang.Object,
-         *      org.coconut.cache.service.loading.AttributeMap)
-         */
-        public long innerGetExpirationTime(K key, V value, AttributeMap attributes) {
-            return CacheExpirationService.NEVER_EXPIRE;
-        }
-
-        /**
-         * @see org.coconut.cache.internal.service.expiration.InternalCacheExpirationService#isExpired(org.coconut.cache.CacheEntry)
-         */
-        public boolean innerIsExpired(CacheEntry<K, V> entry) {
-            return false;
-        }
-
-        /**
-         * @see org.coconut.cache.service.expiration.CacheExpirationService#put(java.lang.Object,
-         *      java.lang.Object, long, java.util.concurrent.TimeUnit)
-         */
-        public V put(K key, V value, long expirationTime) {
-            throw new UnsupportedOperationException();
-        }
-
-        /**
-         * @see org.coconut.cache.service.expiration.CacheExpirationService#putAll(java.util.Map,
-         *      long, java.util.concurrent.TimeUnit)
-         */
-        public void putAll(Map<? extends K, ? extends V> t, long timeout) {
-            throw new UnsupportedOperationException();
-        }
-
-        /**
-         * @see org.coconut.cache.service.expiration.CacheExpirationService#setDefaultTimeout(long,
-         *      java.util.concurrent.TimeUnit)
-         */
-        public void setDefaultTimeToLive(long duration, TimeUnit unit) {
-            throw new UnsupportedOperationException();
-        }
-
-        /**
-         * @see org.coconut.cache.service.expiration.CacheExpirationService#setExpirationFilter(org.coconut.filter.Filter)
-         */
-        public void setExpirationFilter(Filter<CacheEntry<K, V>> filter) {
-            throw new UnsupportedOperationException();
-        }
-
-        /**
-         * @see org.coconut.cache.service.expiration.CacheExpirationService#expire(java.lang.Object)
-         */
-        public boolean expire(K key) {
-            throw new UnsupportedOperationException();
-        }
-
-        /**
-         * @see org.coconut.cache.service.expiration.CacheExpirationService#expireAll(java.util.Collection)
-         */
-        public int expireAll(Collection<? extends K> keys) {
-            throw new UnsupportedOperationException();
-        }
-
-        /**
-         * @see org.coconut.cache.service.expiration.CacheExpirationService#expireAll(org.coconut.filter.Filter)
-         */
-        public int expireAll(Filter<? extends CacheEntry<K, V>> filter) {
-            throw new UnsupportedOperationException();
-        }
-    }
+//
+//    static final class NoCacheExpirationService<K, V> extends DummyCacheService implements
+//            InternalExpirationService<K, V> {
+//
+//        /**
+//		 * @param name
+//		 */
+//		public NoCacheExpirationService() {
+//			super(CacheExpirationConfiguration.SERVICE_NAME);
+//		}
+//
+//		/**
+//         * @see org.coconut.cache.service.expiration.CacheExpirationService#getDefaultTimeout(java.util.concurrent.TimeUnit)
+//         */
+//        public long getDefaultTimeToLive(TimeUnit unit) {
+//            return CacheExpirationService.NEVER_EXPIRE;
+//        }
+//
+//        /**
+//         * @see org.coconut.cache.internal.service.expiration.InternalCacheExpirationService#getExpirationTime(java.lang.Object,
+//         *      java.lang.Object,
+//         *      org.coconut.cache.service.loading.AttributeMap)
+//         */
+//        public long innerGetExpirationTime(K key, V value, AttributeMap attributes) {
+//            return CacheExpirationService.NEVER_EXPIRE;
+//        }
+//
+//        /**
+//         * @see org.coconut.cache.internal.service.expiration.InternalCacheExpirationService#isExpired(org.coconut.cache.CacheEntry)
+//         */
+//        public boolean innerIsExpired(CacheEntry<K, V> entry) {
+//            return false;
+//        }
+//
+//        /**
+//         * @see org.coconut.cache.service.expiration.CacheExpirationService#put(java.lang.Object,
+//         *      java.lang.Object, long, java.util.concurrent.TimeUnit)
+//         */
+//        public V put(K key, V value, long expirationTime) {
+//            throw new UnsupportedOperationException();
+//        }
+//
+//        /**
+//         * @see org.coconut.cache.service.expiration.CacheExpirationService#putAll(java.util.Map,
+//         *      long, java.util.concurrent.TimeUnit)
+//         */
+//        public void putAll(Map<? extends K, ? extends V> t, long timeout) {
+//            throw new UnsupportedOperationException();
+//        }
+//
+//        /**
+//         * @see org.coconut.cache.service.expiration.CacheExpirationService#setDefaultTimeout(long,
+//         *      java.util.concurrent.TimeUnit)
+//         */
+//        public void setDefaultTimeToLive(long duration, TimeUnit unit) {
+//            throw new UnsupportedOperationException();
+//        }
+//
+//        /**
+//         * @see org.coconut.cache.service.expiration.CacheExpirationService#setExpirationFilter(org.coconut.filter.Filter)
+//         */
+//        public void setExpirationFilter(Filter<CacheEntry<K, V>> filter) {
+//            throw new UnsupportedOperationException();
+//        }
+//
+//        /**
+//         * @see org.coconut.cache.service.expiration.CacheExpirationService#expire(java.lang.Object)
+//         */
+//        public boolean expire(K key) {
+//            throw new UnsupportedOperationException();
+//        }
+//
+//        /**
+//         * @see org.coconut.cache.service.expiration.CacheExpirationService#expireAll(java.util.Collection)
+//         */
+//        public int expireAll(Collection<? extends K> keys) {
+//            throw new UnsupportedOperationException();
+//        }
+//
+//        /**
+//         * @see org.coconut.cache.service.expiration.CacheExpirationService#expireAll(org.coconut.filter.Filter)
+//         */
+//        public int expireAll(Filter<? extends CacheEntry<K, V>> filter) {
+//            throw new UnsupportedOperationException();
+//        }
+//    }
 
     /**
      * A wrapper class that exposes only the ExecutorService methods of an
