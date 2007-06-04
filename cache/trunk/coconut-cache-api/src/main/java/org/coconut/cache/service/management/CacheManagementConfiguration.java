@@ -219,7 +219,7 @@ public class CacheManagementConfiguration<K, V> extends
      *      org.w3c.dom.Element)
      */
     @Override
-    public void fromXML(Document doc, Element e) throws Exception {
+    protected void fromXML( Element e) throws Exception {
         domain = readValue(getChild(XML_DOMAIN_TAG, e), CacheMXBean.DEFAULT_JMX_DOMAIN);
         enabled = getAttributeBoolean(e, XML_ENABLED_ATTRIBUTE, false);
         registrant = loadOptional(e, XML_REGISTRANT_TAG, ManagedGroupVisitor.class);

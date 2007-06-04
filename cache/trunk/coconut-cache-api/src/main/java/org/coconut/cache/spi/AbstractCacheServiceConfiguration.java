@@ -21,43 +21,60 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
+ * All service bundles should define a Configuration class that is used to configure the
+ * service.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public abstract class AbstractCacheServiceConfiguration<K, V>  {
-
-    private CacheConfiguration<K, V> conf;
-
-    private final List<? extends Class> serviceInterfaces;
-
-    private final String serviceName;
+public abstract class AbstractCacheServiceConfiguration<K, V> {
 
     private final ResourceBundle bundle;
 
+    private CacheConfiguration<K, V> conf;
+
+    private final List<? extends Class<?>> serviceInterfaces;
+
+    private final String serviceName;
+
+    /**
+     * Creates a new AbstractCacheServiceConfiguration.
+     * 
+     * @param serviceName
+     *            the name of the service
+     * @param serviceInterfaces
+     *            the public interfaces that this service should export
+     */
     public AbstractCacheServiceConfiguration(String serviceName,
-            Collection<? extends Class> serviceInterfaces) {
+            Collection<? extends Class<?>> serviceInterfaces) {
         this(serviceName, serviceInterfaces, Resources.DEFAULT_CACHE_BUNDLE);
     }
 
+    /**
+     * Creates a new AbstractCacheServiceConfiguration.
+     * 
+     * @param serviceName
+     *            the name of the service
+     * @param serviceInterfaces
+     *            the public interfaces that this service should export
+     * @param bundle
+     *            a ResourceBundle used for looking up text strings
+     */
     public AbstractCacheServiceConfiguration(String serviceName,
-            Collection<? extends Class> serviceInterfaces, ResourceBundle bundle) {
+            Collection<? extends Class<?>> serviceInterfaces, ResourceBundle bundle) {
         if (serviceName == null) {
             throw new NullPointerException("serviceName is null");
         } else if (serviceInterfaces == null) {
             throw new NullPointerException("serviceInterface is null");
         }
         this.serviceName = serviceName;
-        this.serviceInterfaces = new ArrayList<Class>(serviceInterfaces);
+        this.serviceInterfaces = (List) new ArrayList<Class>(serviceInterfaces);
         this.bundle = bundle;
     }
 
-    protected ResourceBundle getResourceBundle() {
-        return bundle;
-    }
-
     /**
-     * The parent configuration, or <tt>null</tt> if this configuration has not been
-     * registered yet.
+     * The parent {@link CacheConfiguration}, or <tt>null</tt> if this configuration
+     * has not been registered yet.
      */
     public CacheConfiguration<K, V> c() {
         return conf;
@@ -68,14 +85,14 @@ public abstract class AbstractCacheServiceConfiguration<K, V>  {
      * {@link org.coconut.cache.service.expiration.CacheExpirationConfiguration} returns
      * {@link org.coconut.cache.service.expiration.CacheExpirationService}.
      */
-    public final Collection<? extends Class> getServiceInterfaces() {
+    public final Collection<? extends Class<?>> getServiceInterfaces() {
         return Collections.unmodifiableCollection(serviceInterfaces);
     }
 
     /**
      * Returns the unique name of this service. For example,
-     * {@link org.coconut.cache.service.expiration.CacheExpirationConfiguration} returns
-     * 'expiration'
+     * {@link org.coconut.cache.service.expiration.CacheExpirationConfiguration} returns '{@value}
+     * CacheExpirationConfiguration#SERVICE_NAME}'.
      */
     public String getServiceName() {
         return serviceName;
@@ -109,6 +126,36 @@ public abstract class AbstractCacheServiceConfiguration<K, V>  {
         }
     }
 
+    /**
+     * Reads this configuration for XML.
+     * 
+     * @param element
+     *            The XML Element to read the configuration from
+     * @throws Exception
+     *             if the configuration could not be properly read
+     */
+    protected abstract void fromXML(Element element) throws Exception;
+
+    /**
+     * Returns the ResourceBundle that is used by this configuration, or <code>null</code>
+     * if no resource bundle is used.
+     */
+    protected ResourceBundle getResourceBundle() {
+        return bundle;
+    }
+
+    /**
+     * Attempts to lookup a resource bundle entry for the specified key.
+     * 
+     * @param key
+     *            the key to lookup
+     * @return the string matching the key
+     * @throws IllegalStateException
+     *             if no resource bundle has been specified when calling the constructor
+     *             of this class
+     * @throws CacheException
+     *             if no entry could be found for specified key
+     */
     protected String lookup(String key) {
         if (bundle == null) {
             throw new IllegalStateException("No bundle has been defined");
@@ -116,26 +163,26 @@ public abstract class AbstractCacheServiceConfiguration<K, V>  {
         try {
             return bundle.getString(key);
         } catch (MissingResourceException e) {
-            throw new RuntimeException("missing entry for key " + key, e);
+            throw new CacheException(
+                    "Could not find an entry for the specified resource bundle key "
+                            + key, e);
         }
     }
 
-    void setConfiguration(CacheConfiguration<K, V> conf) {
-        this.conf = conf;
-    }
-    
-    protected abstract void fromXML(Document doc, Element parent) throws Exception;
-
     /**
-     * Persists this configuration to xml.
+     * Saves this configuration to xml.
      * 
      * @param doc
      *            the Document to write to
      * @param parent
      *            the top element of this configuration
      * @throws Exception
-     *             this configuration could not be probably persisted
+     *             this configuration could not be probably saved
      */
     protected abstract void toXML(Document doc, Element parent) throws Exception;
+
+    void setConfiguration(CacheConfiguration<K, V> conf) {
+        this.conf = conf;
+    }
 
 }

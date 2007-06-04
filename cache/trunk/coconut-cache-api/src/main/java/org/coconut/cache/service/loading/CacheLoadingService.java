@@ -50,15 +50,7 @@ public interface CacheLoadingService<K, V> {
 
     Future<?> forceLoad(K key, AttributeMap attributes);
 
-    /**
-     * Attempts to reload all entries that are currently held in the cache. *
-     * 
-     * @return a Future representing pending completion of all the loads, and whose
-     *         <tt>get()</tt> method will return <tt>null</tt> upon completion.
-     */
-    Future<?> forceLoadAll();
-
-    Future<?> forceLoadAll(AttributeMap aatributes);
+    Future<?> forceLoadAll(AttributeMap attributes);
 
     Future<?> forceLoadAll(Collection<? extends K> keys);
 
@@ -134,4 +126,12 @@ public interface CacheLoadingService<K, V> {
     Future<?> loadAll(Collection<? extends K> keys);
 
     Future<?> loadAll(Map<K, AttributeMap> mapsWithAttributes);
+
+    /**
+     * Attempts to reload all entries that are currently held in the cache.
+     * 
+     * @return a Future representing pending completion of all the loads, and whose
+     *         <tt>get()</tt> method will return <tt>null</tt> upon completion.
+     */
+    Future<?> reloadAll();
 }

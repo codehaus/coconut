@@ -11,7 +11,7 @@ import org.coconut.cache.service.event.CacheEntryEvent;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, V> {
+abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, V> {
     private final Cache<K, V> cache;
 
     private final CacheEntry<K, V> entry;

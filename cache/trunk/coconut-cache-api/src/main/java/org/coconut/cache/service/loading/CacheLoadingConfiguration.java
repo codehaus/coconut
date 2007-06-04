@@ -149,7 +149,7 @@ public class CacheLoadingConfiguration<K, V> extends
      *      org.w3c.dom.Element)
      */
     @Override
-    public void fromXML(Document doc, Element parent) throws Exception {
+    protected void fromXML(Element parent) throws Exception {
         /* Loader */
         this.loader = loadOptional(parent, LOADER_TAG, CacheLoader.class);
 

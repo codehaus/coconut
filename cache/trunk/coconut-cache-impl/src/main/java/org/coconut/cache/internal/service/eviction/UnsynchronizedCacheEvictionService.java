@@ -154,14 +154,14 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
 
 
     /**
-     * @see org.coconut.cache.service.eviction.CacheEvictionService#getEvictionFilter()
+     * @see org.coconut.cache.service.eviction.CacheEvictionService#getIdleFilter()
      */
     public Filter<? super CacheEntry<K, V>> getIdleFilter() {
         return idleFilter;
     }
 
     /**
-     * @see org.coconut.cache.service.eviction.CacheEvictionService#setEvictionFilter(org.coconut.filter.Filter)
+     * @see org.coconut.cache.service.eviction.CacheEvictionService#setIdleFilter(org.coconut.filter.Filter)
      */
     public void setIdleFilter(Filter<? super CacheEntry<K, V>> filter) {
         idleFilter = filter;

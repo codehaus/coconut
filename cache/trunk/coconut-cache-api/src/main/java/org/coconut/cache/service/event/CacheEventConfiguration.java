@@ -3,15 +3,13 @@
  */
 package org.coconut.cache.service.event;
 
+import static org.coconut.internal.util.XmlUtil.getAttributeBoolean;
 import static org.coconut.internal.util.XmlUtil.getChild;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
@@ -24,11 +22,12 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * All events are enabled per default except AccessedEvent. While this might seem
- * inconsist. The main reason is that it is raised for every single access. And if the
- * cache is running with a 99% read ratio. There is going to be a substantial overhead
- * with enabling AccessedEvents compared to how often this event is usefull. The main
- * reason for excluding certain events is performance.
+ * The configuration object for the Cache Event service bundle. This service is disabled
+ * per default and must be enabled by using #s All events are enabled per default except
+ * AccessedEvent. While this might seem inconsist. The main reason is that it is raised
+ * for every single access. And if the cache is running with a 99% read ratio. There is
+ * going to be a substantial overhead with enabling AccessedEvents compared to how often
+ * this event is usefull. The main reason for excluding certain events is performance.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -37,33 +36,36 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
 
     public static final String SERVICE_NAME = "event";
 
-    public final static String INCLUDES_TAG = "includes";
-
-    public final static String INCLUDE_TAG = "include";
-
-    public final static String EXCLUDES_TAG = "excludes";
-
-    public final static String EXCLUDE_TAG = "exclude";
-
     /** The classes that are excluded per default. */
-    private final static Set<Class> defaultExcludes = new HashSet<Class>();
+    private final static Set<Class<?>> defaultExcludes = new HashSet<Class<?>>();
 
-    private final static Map<String, Class> shortForm = new HashMap<String, Class>();
+    private final static String EXCLUDE_TAG = "exclude";
+
+    private final static String EXCLUDES_TAG = "excludes";
+
+    private final static String INCLUDE_TAG = "include";
+
+    private final static String INCLUDES_TAG = "includes";
+
+    /** XML enabled tag. */
+    private final static String XML_ENABLED_ATTRIBUTE = "enabled";
+
     static {
         defaultExcludes.add(CacheEntryEvent.ItemAccessed.class);
     }
 
+    private boolean enabled;
+
     /** The classes that should be excluded. */
-    private final Set<Class> excludes = new HashSet<Class>();
+    private final Set<Class<?>> excludes = new HashSet<Class<?>>();
 
     /** The classes that should be included. */
-    private final Set<Class> includes = new HashSet<Class>();
-
-    // private boolean removeEventsForClear;
+    private final Set<Class<?>> includes = new HashSet<Class<?>>();
 
     /**
      * Creates a new CacheEventConfiguration with default settings.
      */
+    @SuppressWarnings("unchecked")
     public CacheEventConfiguration() {
         super(SERVICE_NAME, Arrays.asList(CacheEventService.class));
     }
@@ -89,14 +91,28 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
      *             if one or more of the specified classes does not inherit from
      *             CacheEvent
      */
-    public void exclude(Class... classes) throws NullPointerException {
+    public void exclude(Class<?>... classes) throws NullPointerException {
         checkClasses(classes);
         excludes.addAll(Arrays.asList(classes));
     }
 
-    public void include(Class... classes) {
+    public void include(Class<?>... classes) {
         checkClasses(classes);
         includes.addAll(Arrays.asList(classes));
+    }
+
+    /**
+     * Returns <code>true</code> if the event service is enabled for the cache,
+     * otherwise <code>false</code>.
+     * <p>
+     * The default setting is <tt>false</tt>.
+     * 
+     * @return <tt>true</tt> if the event service is enabled for the cache, otherwise
+     *         <tt>false</tt>
+     * @see #setEnabled(boolean)
+     */
+    public boolean isEnabled() {
+        return enabled;
     }
 
     /**
@@ -118,7 +134,22 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
         return isIncluded;
     }
 
-    private void checkClasses(Class[] classes) {
+    /**
+     * Sets whether or not the event service is enabled for the cache. The default value
+     * is <tt>false</tt>.
+     * <p>
+     * 
+     * @param enabled
+     *            whether or not the event service should be enabled for the cache
+     * @return this configuration
+     * @see #isEnabled()
+     */
+    public CacheEventConfiguration setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        return this;
+    }
+
+    private void checkClasses(Class<?>[] classes) {
         if (classes == null) {
             throw new NullPointerException("classes is null");
         }
@@ -130,42 +161,6 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
                 throw new IllegalArgumentException("the specified class (" + classes[i]
                         + ") does not extend " + CacheEvent.class);
             }
-        }
-    }
-
-    private boolean isCovered(Set<Class> set, Class type) {
-        for (Class c : set) {
-            if (type.equals(c) || c.isAssignableFrom(type)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * @see org.coconut.cache.spi.AbstractCacheServiceConfiguration#fromXML(org.w3c.dom.Document,
-     *      org.w3c.dom.Element)
-     */
-    @Override
-    protected void fromXML(Document doc, Element parent) throws DOMException,
-            ClassNotFoundException {
-        Element includes = getChild(INCLUDES_TAG, parent);
-        for (Element e : getChildElements(includes, INCLUDE_TAG)) {
-            Class c = Class.forName(e.getTextContent());
-            if (!CacheEvent.class.isAssignableFrom(c)) {
-                throw new IllegalCacheConfigurationException("Included class "
-                        + c.getCanonicalName() + " does not inherit from CacheEvent");
-            }
-            this.includes.add(c);
-        }
-        Element excludes = getChild(EXCLUDES_TAG, parent);
-        for (Element e : getChildElements(excludes, EXCLUDE_TAG)) {
-            Class c = Class.forName(e.getTextContent());
-            if (!CacheEvent.class.isAssignableFrom(c)) {
-                throw new IllegalCacheConfigurationException("Included class "
-                        + c.getCanonicalName() + " does not inherit from CacheEvent");
-            }
-            this.excludes.add(c);
         }
     }
 
@@ -183,21 +178,58 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
         return l;
     }
 
+    private boolean isCovered(Set<Class<?>> set, Class<?> type) {
+        for (Class<?> c : set) {
+            if (type.equals(c) || c.isAssignableFrom(type)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @see org.coconut.cache.spi.AbstractCacheServiceConfiguration#fromXML(org.w3c.dom.Document,
+     *      org.w3c.dom.Element)
+     */
+    @Override
+    protected void fromXML(Element parent) throws DOMException, ClassNotFoundException {
+        enabled = getAttributeBoolean(parent, XML_ENABLED_ATTRIBUTE, false);
+        Element includes = getChild(INCLUDES_TAG, parent);
+        for (Element e : getChildElements(includes, INCLUDE_TAG)) {
+            Class<?> c = Class.forName(e.getTextContent());
+            if (!CacheEvent.class.isAssignableFrom(c)) {
+                throw new IllegalCacheConfigurationException("Included class "
+                        + c.getCanonicalName() + " does not inherit from CacheEvent");
+            }
+            this.includes.add(c);
+        }
+        Element excludes = getChild(EXCLUDES_TAG, parent);
+        for (Element e : getChildElements(excludes, EXCLUDE_TAG)) {
+            Class<?> c = Class.forName(e.getTextContent());
+            if (!CacheEvent.class.isAssignableFrom(c)) {
+                throw new IllegalCacheConfigurationException("Included class "
+                        + c.getCanonicalName() + " does not inherit from CacheEvent");
+            }
+            this.excludes.add(c);
+        }
+    }
+
     /**
      * @see org.coconut.cache.spi.AbstractCacheServiceConfiguration#toXML(org.w3c.dom.Document,
      *      org.w3c.dom.Element)
      */
     @Override
     protected void toXML(Document doc, Element parent) {
+        parent.setAttribute(XML_ENABLED_ATTRIBUTE, Boolean.toString(enabled));
         add(includes, doc, parent, INCLUDES_TAG, INCLUDE_TAG);
         add(excludes, doc, parent, EXCLUDES_TAG, EXCLUDE_TAG);
     }
 
-    static void add(Set<Class> set, Document doc, Element parent, String parentTag,
+    static void add(Set<Class<?>> set, Document doc, Element parent, String parentTag,
             String tag) {
         if (set.size() > 0) {
             Element e = XmlUtil.add(doc, parentTag, parent);
-            for (Class c : set) {
+            for (Class<?> c : set) {
                 String name = c.getCanonicalName();
                 if (c.getDeclaringClass() != null) {
                     name = name.substring(0, name.length() - c.getSimpleName().length()

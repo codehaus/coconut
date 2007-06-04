@@ -26,10 +26,7 @@ import org.w3c.dom.Node;
  * as XML. Normally users do not use this class but instead rely on
  * {@link CacheConfiguration#create(InputStream)},
  * {@link CacheConfiguration#createAndInstantiate(InputStream)} or
- * {@link CacheConfiguration#createInstantiateAndStart(InputStream)} methods in
- * {@link CacheConfiguration}
- * <p>
- * TODO: Move some of this functionality to an internal package.
+ * {@link CacheConfiguration#createInstantiateAndStart(InputStream)}.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -114,7 +111,7 @@ public class XmlConfigurator {
         AbstractCacheServiceConfiguration<K, V> acsc = service.newInstance();
         Element e = (Element) cache.getElementsByTagName(acsc.getServiceName()).item(0);
         if (e != null) {
-            acsc.fromXML(doc, e);
+            acsc.fromXML(e);
             return acsc;
         }
         return null;
@@ -193,17 +190,5 @@ public class XmlConfigurator {
         f.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
         f.setOutputProperty(OutputKeys.INDENT, "yes");
         f.transform(domSource, result);
-    }
-
-    public static <K, V, T extends AbstractCacheServiceConfiguration<K, V>> T reloadService(
-            T configuration) throws Exception {
-        DocumentBuilder builder = DocumentBuilderFactory.newInstance()
-                .newDocumentBuilder();
-        Document doc = builder.newDocument();
-        Element parent = doc.createElement(CACHE_TAG); // dummy
-        XmlConfigurator xml = new XmlConfigurator();
-        Element e = xml.writeCacheService(doc, configuration);
-        parent.appendChild(e);
-        return (T) xml.readCacheService(doc, parent, (Class) configuration.getClass());
     }
 }

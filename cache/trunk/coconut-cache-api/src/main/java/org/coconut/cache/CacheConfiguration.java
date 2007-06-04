@@ -72,9 +72,6 @@ public final class CacheConfiguration<K, V> {
 
     private final List<AbstractCacheServiceConfiguration> list = new ArrayList<AbstractCacheServiceConfiguration>();
 
-// private final Collection<? extends AbstractCacheServiceConfiguration<K, V>> list = new
-// ArrayList<AbstractCacheServiceConfiguration<K, V>>();
-
     private final Collection<Class<? extends AbstractCacheServiceConfiguration<K, V>>> serviceTypes;
 
     /** The name of the cache. */

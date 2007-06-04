@@ -3,11 +3,6 @@
  */
 package org.coconut.cache.service.exceptionhandling;
 
-import java.util.Map;
-
-import org.coconut.cache.Cache;
-import org.coconut.cache.service.loading.CacheLoader;
-import org.coconut.core.AttributeMap;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -26,15 +21,6 @@ public class CacheExceptionHandlingStrategies {
 
     public static class DefaultCacheExceptionHandler<K, V> extends
             AbstractCacheExceptionHandler<K, V> {
-
-        /**
-         * @see org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#warning(java.lang.String)
-         */
-        @Override
-        public void warning(String warning) {
-        // TODO Auto-generated method stub
-
-        }
 
     }
 }

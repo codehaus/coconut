@@ -4,8 +4,6 @@
 package org.coconut.cache.service.exceptionhandling;
 
 import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 
 import org.coconut.cache.Cache;
@@ -63,7 +61,10 @@ public abstract class AbstractCacheExceptionHandler<K, V> {
 
     public final void unhandledRuntimeException(RuntimeException t) {}
 
-    public abstract void warning(String warning);
+    /**
+     * @param warning
+     */
+    public void warning(String warning) {};
 
     private Logger createLogger() {
         String loggerName = Cache.class.getPackage().getName() + "." + name;

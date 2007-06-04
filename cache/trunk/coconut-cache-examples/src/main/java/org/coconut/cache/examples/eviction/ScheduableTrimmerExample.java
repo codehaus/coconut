@@ -25,7 +25,7 @@ public class ScheduableTrimmerExample {
 
         private final int trimTo;
 
-        public TrimToSize(Cache cache, int threshold, int trimTo) {
+        public TrimToSize(Cache<?,?> cache, int threshold, int trimTo) {
             if (cache == null) {
                 throw new NullPointerException("cache is null");
             } else if (threshold < 0) {

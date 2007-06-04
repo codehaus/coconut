@@ -3,10 +3,9 @@
  */
 package org.coconut.cache.service.exceptionhandling;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 
+import org.apache.commons.logging.Log;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.core.Logger;
 import org.w3c.dom.Document;
@@ -48,11 +47,13 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
      *         log has been set
      * @see #setErrorLog(Log)
      */
-    public Logger getExceptionLog() {
+    public Logger getExceptionLogger() {
         return log;
     }
 
     /**
+     * Sets AbstractCacheExceptionHandler that will handle all exceptions and warnings.
+     * 
      * @param exceptionHandler
      *            the exceptionHandler to set
      */
@@ -62,16 +63,18 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
 
     /**
      * Sets the log that will be used for logging information whenever the cache or any of
-     * its services fails in some way. If no log has been set using this method. The
-     * exception handling service will used the default logger set using
-     * {@link org.coconut.cache.CacheConfiguration#setDefaultLog(Log)}. If no default
-     * logger has been set, output will be sent to {@link System#err}.
+     * its services fails in some way.
+     * <p>
+     * If no logger has been set using this method. The exception handling service will
+     * used the default logger returned from
+     * {@link org.coconut.cache.CacheConfiguration#getDefaultLog()}. If no default logger
+     * has been set, output will be sent to {@link System#err}.
      * 
      * @param log
      *            the log to use for exception handling
      * @return this configuration
      */
-    public CacheExceptionHandlingConfiguration setExceptionLog(Logger log) {
+    public CacheExceptionHandlingConfiguration<K, V> setExceptionLogger(Logger log) {
         this.log = log;
         return this;
     }
@@ -81,8 +84,7 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
      *      org.w3c.dom.Element)
      */
     @Override
-    public void fromXML(Document doc, Element parent) throws Exception {
-    // TODO Auto-generated method stub
+    protected void fromXML(Element parent) throws Exception {
 
     }
 
@@ -92,7 +94,6 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
      */
     @Override
     protected void toXML(Document doc, Element parent) throws Exception {
-    // TODO Auto-generated method stub
 
     }
 }

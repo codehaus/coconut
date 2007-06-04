@@ -86,7 +86,7 @@ public class CacheThreadingConfiguration<K, V> extends
      *      org.w3c.dom.Element)
      */
     @Override
-    public void fromXML(Document doc, Element e) throws Exception {
+    protected void fromXML( Element e) throws Exception {
 
         /* Register */
         if (e.hasAttribute(SHUTDOWN_EXECUTOR_SERVICE_TAG)) {

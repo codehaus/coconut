@@ -41,7 +41,7 @@ public final class CacheSingleton {
     private static String cache_ressource_location = DEFAULT_CACHE_RESSOURCE;
 
     /** The single cache instance. */
-    private static volatile Cache cacheInstance;
+    private static volatile Cache<?, ?> cacheInstance;
 
     /** Whether or not this singleton has been initialized. */
     private static boolean isInitialized;
@@ -78,7 +78,7 @@ public final class CacheSingleton {
             return c;
         }
         lazyInitializeClasspathConfiguration();
-        return cacheInstance;
+        return (Cache) cacheInstance;
     }
 
     /**
@@ -120,7 +120,7 @@ public final class CacheSingleton {
                             + cache_ressource_location + "' on the classpath.");
                 }
                 is = url.openStream();
-                Cache cache = CacheConfiguration.createCache(is);
+                Cache<?, ?> cache = CacheConfiguration.createCache(is);
                 setCache(cache);
                 isInitialized = true;
                 if (is != null) {

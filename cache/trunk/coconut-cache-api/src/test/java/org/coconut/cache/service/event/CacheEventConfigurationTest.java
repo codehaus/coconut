@@ -3,9 +3,9 @@
  */
 package org.coconut.cache.service.event;
 
-import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.*;
 import static junit.framework.Assert.assertTrue;
-import static org.coconut.cache.spi.XmlConfigurator.reloadService;
+import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
 
 import java.lang.reflect.Field;
 import java.util.Set;
@@ -29,6 +29,16 @@ public class CacheEventConfigurationTest {
         conf = new CacheEventConfiguration();
     }
 
+    @Test
+    public void testEnabled() throws Exception {
+        assertFalse(conf.isEnabled());
+        conf = reloadService(conf);
+        assertFalse(conf.isEnabled());
+        assertSame(conf, conf.setEnabled(true));
+        assertTrue(conf.isEnabled());
+        conf = reloadService(conf);
+        assertTrue(conf.isEnabled());
+    }
     @Test
     public void testInitialIncludeExclude() throws Exception {
         assertTrue(conf.isIncluded(CacheEntryEvent.class));

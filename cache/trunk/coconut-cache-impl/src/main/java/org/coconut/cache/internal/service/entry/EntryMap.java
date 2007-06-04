@@ -175,7 +175,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
      * Return properly casted first entry of bin for given hash
      */
     private AbstractCacheEntry<K, V> getFirst(int hash) {
-        AbstractCacheEntry[] tab = table;
+        AbstractCacheEntry<?,?>[] tab = table;
         return (AbstractCacheEntry<K, V>) tab[hash & (tab.length - 1)];
     }
 
@@ -461,7 +461,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             if (entry == null)
                 throw new IllegalStateException();
             checkForConcurrentMod();
-            AbstractCacheEntry e = entry;
+            AbstractCacheEntry<?,?> e = entry;
             entry = null;
             if (cache != null) {
                 cache.remove(e.getKey());

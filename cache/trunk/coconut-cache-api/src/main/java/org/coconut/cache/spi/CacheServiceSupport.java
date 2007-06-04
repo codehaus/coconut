@@ -19,7 +19,6 @@ import java.lang.annotation.Target;
 @Target( { ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Deprecated
 public @interface CacheServiceSupport {
     /**
      * Returns the type of services the cache implementation supports.

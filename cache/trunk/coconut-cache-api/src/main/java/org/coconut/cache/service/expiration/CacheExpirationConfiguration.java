@@ -114,7 +114,7 @@ public class CacheExpirationConfiguration<K, V> extends
      *      org.w3c.dom.Element)
      */
     @Override
-    public void fromXML(Document doc, Element base) throws Exception {
+    protected void fromXML( Element base) throws Exception {
         /* Expiration timeout */
         Element eTime = getChild(DEFAULT_TIMEOUT_TAG, base);
         long time = UnitOfTime.fromElement(eTime, DEFAULT_TIME_UNIT,
@@ -137,7 +137,6 @@ public class CacheExpirationConfiguration<K, V> extends
 
         /* Filter */
         addAndsaveObject(doc, parent, EXPIRATION_FILTER_TAG,
-
         getResourceBundle(), "expiration.saveOfExpirationFilterFailed", expirationFilter);
     }
 }

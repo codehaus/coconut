@@ -3,7 +3,9 @@
  */
 package org.coconut.cache.service.eviction;
 
+import static org.coconut.internal.util.XmlUtil.addAndsaveObject;
 import static org.coconut.internal.util.XmlUtil.getChild;
+import static org.coconut.internal.util.XmlUtil.loadOptional;
 import static org.coconut.internal.util.XmlUtil.readInt;
 import static org.coconut.internal.util.XmlUtil.readLong;
 import static org.coconut.internal.util.XmlUtil.writeInt;
@@ -14,13 +16,15 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.policy.ReplacementPolicy;
+import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.filter.Filter;
+import org.coconut.internal.util.UnitOfTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * This class is used to configure the eviction subsystem prior to usage.
+ * This class is used to configure the eviction service bundle prior to usage.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -42,6 +46,8 @@ public class CacheEvictionConfiguration<K, V> extends
 
     private final static String DEFAULT_IDLE_TIME = "default-idle-time";
 
+    private final static String IDLE_FILTER = "idle-filter";
+
     private final static String MAXIMUM_CAPACITY = "max-capacity";
 
     private final static String MAXIMUM_SIZE = "max-size";
@@ -50,10 +56,10 @@ public class CacheEvictionConfiguration<K, V> extends
 
     private final static String PREFERABLE_SIZE = "preferable-size";
 
+    private final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.NANOSECONDS;
+
     /** The default idle time for new elements. */
     private long defaultIdleTimeNs = Long.MAX_VALUE;
-
-    private Filter<CacheEntry<K, V>> evictionFilter;
 
     private Filter<CacheEntry<K, V>> idleFilter;
 
@@ -79,19 +85,6 @@ public class CacheEvictionConfiguration<K, V> extends
     }
 
     /**
-     * @see org.coconut.cache.spi.AbstractCacheServiceConfiguration#fromXML(org.w3c.dom.Document,
-     *      org.w3c.dom.Element)
-     */
-    @Override
-    public void fromXML(Document doc, Element e) throws Exception {
-        maximumCapacity = readLong(getChild(MAXIMUM_CAPACITY, e), maximumCapacity);
-        preferableCapacity = readLong(getChild(PREFERABLE_CAPACITY, e),
-                preferableCapacity);
-        maximumSize = readInt(getChild(MAXIMUM_SIZE, e), maximumSize);
-        preferableSize = readInt(getChild(PREFERABLE_SIZE, e), preferableSize);
-    }
-
-    /**
      * Returns the default expiration time for entries. If entries never expire,
      * {@link #NEVER_EXPIRE} is returned.
      * 
@@ -106,14 +99,6 @@ public class CacheEvictionConfiguration<K, V> extends
         } else {
             return unit.convert(defaultIdleTimeNs, TimeUnit.NANOSECONDS);
         }
-    }
-
-    /**
-     * Returns the specified expiration filter or <tt>null</tt> if no filter has been
-     * specified.
-     */
-    public Filter<CacheEntry<K, V>> getEvictionFilter() {
-        return evictionFilter;
     }
 
     /**
@@ -200,19 +185,6 @@ public class CacheEvictionConfiguration<K, V> extends
     }
 
     /**
-     * Sets a specific expiration that can be used in <tt>addition</tt> to the time
-     * based expiration filter to check if items has expired. If no filter has been set
-     * items are expired according to their registered expiration time. If an expiration
-     * filter is set cache entries are first checked against that filter then against the
-     * time based expiration times.
-     */
-    public CacheEvictionConfiguration<K, V> setEvictionFilter(
-            Filter<CacheEntry<K, V>> filter) {
-        evictionFilter = filter;
-        return this;
-    }
-
-    /**
      * Sets a filter that the cache can use to determine if a given cache entry should be
      * evicted. Usage of this method only makes sense if the cache stores entries in a
      * background store. For example, a file on the disk.
@@ -224,7 +196,7 @@ public class CacheEvictionConfiguration<K, V> extends
      * 
      * @param filter
      *            the filter to check entries against
-     * @see #getEvictionFilter()
+     * @see #getIdleFilter()
      * @throws UnsupportedOperationException
      *             If this cache does not support setting an eviction filter
      */
@@ -338,6 +310,27 @@ public class CacheEvictionConfiguration<K, V> extends
     }
 
     /**
+     * @see org.coconut.cache.spi.AbstractCacheServiceConfiguration#fromXML(org.w3c.dom.Document,
+     *      org.w3c.dom.Element)
+     */
+    @Override
+    protected void fromXML(Element e) throws Exception {
+        maximumCapacity = readLong(getChild(MAXIMUM_CAPACITY, e), maximumCapacity);
+        preferableCapacity = readLong(getChild(PREFERABLE_CAPACITY, e),
+                preferableCapacity);
+        maximumSize = readInt(getChild(MAXIMUM_SIZE, e), maximumSize);
+        preferableSize = readInt(getChild(PREFERABLE_SIZE, e), preferableSize);
+
+        /* Idle time */
+        Element eTime = getChild(DEFAULT_IDLE_TIME, e);
+        long time = UnitOfTime.fromElement(eTime, DEFAULT_TIME_UNIT,
+                CacheExpirationService.NEVER_EXPIRE);
+        setDefaultIdleTime(time, DEFAULT_TIME_UNIT);
+        /* Idle filter. */
+        idleFilter = loadOptional(e, IDLE_FILTER, Filter.class);
+    }
+
+    /**
      * @see org.coconut.cache.spi.AbstractCacheServiceConfiguration#toXML(org.w3c.dom.Document,
      *      org.w3c.dom.Element)
      */
@@ -349,5 +342,13 @@ public class CacheEvictionConfiguration<K, V> extends
                 .getPreferableCapacity());
         writeInt(doc, base, MAXIMUM_SIZE, maximumSize, DEFAULT.getMaximumSize());
         writeInt(doc, base, PREFERABLE_SIZE, preferableSize, DEFAULT.getPreferableSize());
+
+        /* Expiration Timer */
+        UnitOfTime.toElementCompact(doc, base, DEFAULT_IDLE_TIME, defaultIdleTimeNs,
+                DEFAULT_TIME_UNIT, Long.MAX_VALUE);
+
+        /* Filter */
+        addAndsaveObject(doc, base, IDLE_FILTER, getResourceBundle(),
+                "expiration.saveOfExpirationFilterFailed", idleFilter);
     }
 }

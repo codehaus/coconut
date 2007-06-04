@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheAttributes;
+import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.spi.CacheHelper;
@@ -33,6 +34,14 @@ public class SynchronizedExpirationService<K, V> extends AbstractExpirationServi
     private volatile long defaultTTlVol;
 
     private Filter<CacheEntry<K, V>> expirationFilter;
+
+    @Override
+    public void start(CacheConfiguration<?, ?> configuration,
+            Map<Class<?>, Object> serviceMap) {
+        super.start(configuration, serviceMap);
+        // serviceMap.put(CacheExpirationMXBean, value)
+
+    }
 
     private final CacheHelper<K, V> helper;
 

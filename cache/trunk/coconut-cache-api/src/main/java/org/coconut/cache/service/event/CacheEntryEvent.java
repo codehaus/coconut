@@ -6,7 +6,7 @@ package org.coconut.cache.service.event;
 import org.coconut.cache.CacheEntry;
 
 /**
- * A CacheItemEvent is raised whenever a particular key-value pair in the cache has a
+ * A CacheEntryEvent is raised whenever a particular key-value pair in the cache has a
  * significant change in its state. For example, when an entry has been removed or the
  * value of an entry has been changed.
  * <p>

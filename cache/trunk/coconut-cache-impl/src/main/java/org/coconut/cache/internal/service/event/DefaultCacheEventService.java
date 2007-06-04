@@ -21,7 +21,6 @@ import javax.management.Notification;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.joinpoint.AfterCacheOperation;
 import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
 import org.coconut.cache.internal.service.service.InternalCacheServiceManager;
 import org.coconut.cache.service.event.CacheEntryEvent;
@@ -40,35 +39,38 @@ import org.coconut.filter.Filter;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class DefaultCacheEventService<K, V> extends AbstractInternalCacheService
-        implements CacheEventService<K, V>, AfterCacheOperation<K, V> {
+        implements InternalCacheEventService<K, V> {
+
+    private final boolean doAdd;
+
+    private final boolean doCacheEvict;
+
+    private final boolean doClear;
+
+    private final boolean doEvict;
+
+    private final boolean doExpire;
 
     private final boolean doHit;
 
     private final boolean doMiss;
 
-    private final boolean doAdd;
-
     private final boolean doRemove;
-
-    private final boolean doClear;
 
     private final boolean doUpdate;
 
-    private final boolean doEvict;
-
-    private final boolean doCacheEvict;
-
-    private final boolean doExpire;
-
     private final EventBus<CacheEvent<K, V>> eb = new DefaultEventBus<CacheEvent<K, V>>();
 
-    private final Offerable<CacheEvent<K, V>> offerable;
+    private final boolean isEnabled;
 
     private final InternalCacheServiceManager manager;
+
+    private final Offerable<CacheEvent<K, V>> offerable;
 
     public DefaultCacheEventService(InternalCacheServiceManager manager,
             CacheEventConfiguration co) {
         super(CacheEventConfiguration.SERVICE_NAME);
+        isEnabled = co.isEnabled();
         this.manager = manager;
         this.offerable = eb;
         this.doHit = co.isIncluded(CacheEntryEvent.ItemAccessed.class);
@@ -137,6 +139,35 @@ public class DefaultCacheEventService<K, V> extends AbstractInternalCacheService
         }
     }
 
+    public void afterPut(Cache<K, V> cache, long ignoreStarted,
+            Collection<? extends CacheEntry<K, V>> entries, CacheEntry<K, V> newEntry,
+            CacheEntry<K, V> prev) {
+        doEvictAll(cache, entries);
+        processRemoved(cache, newEntry, prev);
+    }
+
+    /**
+     * @see org.coconut.cache.internal.service.joinpoint.AfterJoinPoint#afterPutAll(org.coconut.cache.Cache,
+     *      long, java.util.Collection, java.util.Collection, java.util.Collection)
+     */
+    public void afterPutAll(Cache<K, V> cache, long ignoreStarted,
+            Collection<? extends CacheEntry<K, V>> evictedEntries,
+            Collection<? extends CacheEntry<K, V>> prev,
+            Collection<? extends CacheEntry> added) {
+        doEvictAll(cache, evictedEntries);
+        CacheEntry[] p = prev.toArray(new CacheEntry[prev.size()]);
+        CacheEntry[] n = added.toArray(new CacheEntry[added.size()]);
+        for (int i = 0; i < p.length; i++) {
+            processRemoved(cache, n[i], p[i]);
+        }
+    }
+
+    public void afterRemove(Cache<K, V> cache, long ignoreStarted, CacheEntry<K, V> entry) {
+        if (doRemove && entry != null) {
+            dispatch(removed(cache, entry));
+        }
+    }
+
     /**
      * @see org.coconut.cache.internal.service.joinpoint.AfterJoinPoint#afterReplace(org.coconut.cache.Cache,
      *      long, java.util.List, org.coconut.cache.CacheEntry,
@@ -158,70 +189,15 @@ public class DefaultCacheEventService<K, V> extends AbstractInternalCacheService
         doEvictAll(cache, evictedEntries);
     }
 
-    public boolean isRemoveEventsFromClear() {
-        return false;
-    }
-
     /**
-     * @see org.coconut.cache.internal.service.joinpoint.AfterJoinPoint#afterPutAll(org.coconut.cache.Cache,
-     *      long, java.util.Collection, java.util.Collection, java.util.Collection)
+     * @see org.coconut.event.EventBus#getSubscribers()
      */
-    public void afterPutAll(Cache<K, V> cache, long ignoreStarted,
-            Collection<? extends CacheEntry<K, V>> evictedEntries,
-            Collection<? extends CacheEntry<K, V>> prev,
-            Collection<? extends CacheEntry> added) {
-        doEvictAll(cache, evictedEntries);
-        CacheEntry[] p = prev.toArray(new CacheEntry[prev.size()]);
-        CacheEntry[] n = added.toArray(new CacheEntry[added.size()]);
-        for (int i = 0; i < p.length; i++) {
-            processRemoved(cache, n[i], p[i]);
-        }
+    public Collection<EventSubscription<CacheEvent<K, V>>> getSubscribers() {
+        return eb.getSubscribers();
     }
 
-    public void afterPut(Cache<K, V> cache, long ignoreStarted,
-            Collection<? extends CacheEntry<K, V>> entries, CacheEntry<K, V> newEntry,
-            CacheEntry<K, V> prev) {
-        doEvictAll(cache, entries);
-        processRemoved(cache, newEntry, prev);
-    }
-
-    public void afterRemove(Cache<K, V> cache, long ignoreStarted, CacheEntry<K, V> entry) {
-        if (doRemove && entry != null) {
-            dispatch(removed(cache, entry));
-        }
-    }
-
-    private void processRemoved(Cache<K, V> cache, CacheEntry<K, V> newEntry,
-            CacheEntry<K, V> prev) {
-        if (prev == null) {
-            if (newEntry != null && doAdd) {
-                dispatch(added(cache, newEntry));
-            }
-        } else if (newEntry == null) {
-            if (doRemove) {
-                dispatch(removed(cache, prev));
-            }
-        } else if (doUpdate) {
-            dispatch(updated(cache, newEntry, prev.getValue()));
-        }
-    }
-
-    private void doEvictAll(Cache<K, V> cache,
-            Iterable<? extends CacheEntry<K, V>> entries) {
-        if (entries != null && doEvict) {
-            for (CacheEntry<K, V> entry : entries) {
-                dispatch(evicted(cache, entry));
-            }
-        }
-    }
-
-    private void doExpireAll(Cache<K, V> cache,
-            Iterable<? extends CacheEntry<K, V>> entries) {
-        if (entries != null && doExpire) {
-            for (CacheEntry<K, V> entry : entries) {
-                dispatch(expired(cache, entry));
-            }
-        }
+    public boolean isEnabled() {
+        return isEnabled;
     }
 
     /**
@@ -230,13 +206,6 @@ public class DefaultCacheEventService<K, V> extends AbstractInternalCacheService
     public boolean offer(CacheEvent<K, V> element) {
         manager.lazyStart(false);
         return eb.offer(element);
-    }
-
-    /**
-     * @see org.coconut.event.EventBus#getSubscribers()
-     */
-    public Collection<EventSubscription<CacheEvent<K, V>>> getSubscribers() {
-        return eb.getSubscribers();
     }
 
     /**
@@ -253,6 +222,14 @@ public class DefaultCacheEventService<K, V> extends AbstractInternalCacheService
     public void process(CacheEvent<K, V> event) {
         manager.lazyStart(false);
         eb.process(event);
+    }
+
+    @Override
+    public void start(CacheConfiguration<?, ?> configuration,
+            Map<Class<?>, Object> serviceMap) {
+        if (isEnabled) {
+            serviceMap.put(CacheEventService.class, this);
+        }
     }
 
     /**
@@ -294,17 +271,44 @@ public class DefaultCacheEventService<K, V> extends AbstractInternalCacheService
         return eb.unsubscribeAll();
     }
 
+    private void doEvictAll(Cache<K, V> cache,
+            Iterable<? extends CacheEntry<K, V>> entries) {
+        if (entries != null && doEvict) {
+            for (CacheEntry<K, V> entry : entries) {
+                dispatch(evicted(cache, entry));
+            }
+        }
+    }
+
+    private void doExpireAll(Cache<K, V> cache,
+            Iterable<? extends CacheEntry<K, V>> entries) {
+        if (entries != null && doExpire) {
+            for (CacheEntry<K, V> entry : entries) {
+                dispatch(expired(cache, entry));
+            }
+        }
+    }
+
+    private void processRemoved(Cache<K, V> cache, CacheEntry<K, V> newEntry,
+            CacheEntry<K, V> prev) {
+        if (prev == null) {
+            if (newEntry != null && doAdd) {
+                dispatch(added(cache, newEntry));
+            }
+        } else if (newEntry == null) {
+            if (doRemove) {
+                dispatch(removed(cache, prev));
+            }
+        } else if (doUpdate) {
+            dispatch(updated(cache, newEntry, prev.getValue()));
+        }
+    }
+
     protected void dispatch(CacheEvent<K, V> event) {
         offerable.offer(event);
     }
 
     public interface NotificationTransformer {
         Notification notification(Object source);
-    }
-
-    @Override
-    public void start(CacheConfiguration<?, ?> configuration,
-            Map<Class<?>, Object> serviceMap) {
-        serviceMap.put(CacheEventService.class, this);
     }
 }

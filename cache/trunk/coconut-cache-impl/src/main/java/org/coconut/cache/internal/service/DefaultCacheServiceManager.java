@@ -19,9 +19,9 @@ public class DefaultCacheServiceManager implements CacheServiceManagerService {
     }
 
     /**
-     * @see org.coconut.cache.service.servicemanager.CacheServiceManagerService#attach(org.coconut.cache.service.servicemanager.CacheService)
+     * @see org.coconut.cache.service.servicemanager.CacheServiceManagerService#registerService(org.coconut.cache.service.servicemanager.CacheService)
      */
-    public void attach(CacheService lifecycle) {
+    public void registerService(CacheService lifecycle) {
         throw new UnsupportedOperationException();
     }
 }

@@ -6,7 +6,7 @@ package org.coconut.cache.service.loading;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
-import static org.coconut.cache.spi.XmlConfigurator.reloadService;
+import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
 import static org.coconut.test.MockTestCase.mockDummy;
 
 import java.util.Collection;

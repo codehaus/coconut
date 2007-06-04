@@ -41,7 +41,7 @@ public class CompositeCacheLoaderTest extends MockTestCase {
     @SuppressWarnings("unchecked")
     public void testConstrutorArray_NullPointerException() {
         try {
-            new CompositeCacheLoader((CacheLoader[]) null);
+            new CacheLoaders.CompositeCacheLoader((CacheLoader[]) null);
             fail("Did not fail with NullPointerException");
         } catch (NullPointerException npe) {
         }
@@ -51,7 +51,7 @@ public class CompositeCacheLoaderTest extends MockTestCase {
     public void testNullInArray() {
         loader1 = mockDummy(CacheLoader.class);
         try {
-            new CompositeCacheLoader(loader1, null);
+            new CacheLoaders.CompositeCacheLoader(loader1, null);
             fail("Did not fail with NullPointerException");
         } catch (NullPointerException npe) {
         }
@@ -63,7 +63,7 @@ public class CompositeCacheLoaderTest extends MockTestCase {
     @SuppressWarnings("unchecked")
     public void testConstrutorList_NullPointerException() {
         try {
-            new CompositeCacheLoader((List) null);
+            new CacheLoaders.CompositeCacheLoader((List) null);
             fail("Did not fail with NullPointerException");
         } catch (NullPointerException npe) {
         }
@@ -72,10 +72,10 @@ public class CompositeCacheLoaderTest extends MockTestCase {
     public void testGetList() {
         loader1 = mockDummy(CacheLoader.class);
         loader2 = mockDummy(CacheLoader.class);
-        CompositeCacheLoader ccl = new CompositeCacheLoader(loader1, loader2);
+        CacheLoaders.CompositeCacheLoader ccl = new CacheLoaders.CompositeCacheLoader(loader1, loader2);
         assertEquals(Arrays.asList(loader1, loader2), ccl.getLoaders());
 
-        ccl = new CompositeCacheLoader(Arrays.asList(loader1, loader2));
+        ccl = new CacheLoaders.CompositeCacheLoader(Arrays.asList(loader1, loader2));
         assertEquals(Arrays.asList(loader1, loader2), ccl.getLoaders());
     }
 
@@ -92,7 +92,7 @@ public class CompositeCacheLoaderTest extends MockTestCase {
 
         m1.expects(once()).method("load").with(eq(3),same(EMPTY_MAP)).will(returnValue(null));
         m2.expects(once()).method("load").with(eq(3),same(EMPTY_MAP)).will(returnValue(null));
-        CompositeCacheLoader<Integer, String> ccl = new CompositeCacheLoader<Integer, String>(
+        CacheLoaders.CompositeCacheLoader<Integer, String> ccl = new CacheLoaders.CompositeCacheLoader<Integer, String>(
                 loader1, loader2);
         assertEquals("A", ccl.load(1, EMPTY_MAP));
         assertEquals("B", ccl.load(2, EMPTY_MAP));
@@ -184,7 +184,7 @@ public class CompositeCacheLoaderTest extends MockTestCase {
 //        assertEquals(Composite.m, result);
 //    }
 
-    static class Composite extends CompositeCacheLoader<Integer, String> {
+    static class Composite extends CacheLoaders.CompositeCacheLoader<Integer, String> {
 
         /**
          * @param loaders

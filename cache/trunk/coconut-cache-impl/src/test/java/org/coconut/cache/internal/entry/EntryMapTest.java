@@ -47,8 +47,8 @@ public class EntryMapTest {
         EntryMap<Integer, String> s = new EntryMap<Integer, String>(false);
         s.put(new EntryStub(-348653132, "a"));
         s.put(new EntryStub(772636595, "b"));
-        AbstractCacheEntry ac1 = s.remove(-348653132);
-        AbstractCacheEntry ac2 = s.remove(772636595);
+        AbstractCacheEntry<?,?> ac1 = s.remove(-348653132);
+        AbstractCacheEntry<?,?> ac2 = s.remove(772636595);
         assertNotNull(ac1);
         assertNotNull(ac2);
     }

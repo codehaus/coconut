@@ -5,7 +5,6 @@
 package org.coconut.cache.defaults;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,7 +21,7 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
 import org.coconut.cache.internal.service.entry.EntryMap;
-import org.coconut.cache.internal.service.event.DefaultCacheEventService;
+import org.coconut.cache.internal.service.event.InternalCacheEventService;
 import org.coconut.cache.internal.service.eviction.InternalCacheEvictionService;
 import org.coconut.cache.internal.service.expiration.UnsynchronizedCacheExpirationService;
 import org.coconut.cache.internal.service.joinpoint.AfterCacheOperation;
@@ -67,7 +66,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
 
     private final EntryMap<K, V> map = new EntryMap<K, V>(false);
 
-    private final AfterCacheOperation<K, V> notifier;
+    private final InternalCacheEventService<K, V> eventService;
 
     private final InternalCacheOperation<K, V> statistics;
 
@@ -89,7 +88,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
                 .getService(UnsynchronizedCacheExpirationService.class);
         loadingService = serviceManager.getService(InternalCacheLoadingService.class);
         evictionService = serviceManager.getService(InternalCacheEvictionService.class);
-        notifier = serviceManager.getService(DefaultCacheEventService.class);
+        eventService = serviceManager.getService(InternalCacheEventService.class);
         statistics = serviceManager.getService(DefaultCacheStatisticsService.class);
         entryFactory = serviceManager.getService(AbstractCacheEntryFactoryService.class);
     }
@@ -123,7 +122,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
             map.clear();
         }
         statistics.afterCacheClear(this, started, size, capacity, list);
-        notifier.afterCacheClear(this, started, size, capacity, list);
+        eventService.afterCacheClear(this, started, size, capacity, list);
     }
 
     /**
@@ -162,7 +161,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         }
         statistics.afterCacheEvict(this, started, map.size(), previousSize, map
                 .capacity(), previousCapacity, evicted, expired);
-        notifier.afterCacheEvict(this, started, map.size(), previousSize, map.capacity(),
+        eventService.afterCacheEvict(this, started, map.size(), previousSize, map.capacity(),
                 previousCapacity, evicted, expired);
     }
 
@@ -216,7 +215,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
             }
         }
         statistics.afterTrimToSize(this, started, l);
-        notifier.afterTrimToSize(this, started, l);
+        eventService.afterTrimToSize(this, started, l);
     }
 
     /**
@@ -314,7 +313,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
             returnMe = newE != null && newE.getPolicyIndex() >= 0 ? newE : null;
         }
         statistics.afterGet(this, started, trimmed, key, prev, returnMe, isExpired);
-        notifier.afterGet(this, started, trimmed, key, prev, returnMe, isExpired);
+        eventService.afterGet(this, started, trimmed, key, prev, returnMe, isExpired);
         return returnMe;
     }
 
@@ -340,7 +339,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
             evictionService.remove(e.getPolicyIndex());
         }
         statistics.afterRemove(this, started, e);
-        notifier.afterRemove(this, started, e);
+        eventService.afterRemove(this, started, e);
         return e;
     }
 
@@ -352,7 +351,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         AbstractCacheEntry<K, V> prev = map.get(key);
         if (putOnlyIfAbsent && prev != null) {
             statistics.afterPut(this, started, null, prev, null);
-            notifier.afterPut(this, started, null, prev, null);
+            eventService.afterPut(this, started, null, prev, null);
             return prev;
         }
         AbstractCacheEntry<K, V> e = entryFactory.createEntry(key, newValue, attributes,
@@ -360,7 +359,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         doPut(e);
         statistics.afterPut(this, started, Collections.EMPTY_LIST, prev, e.getPolicyIndex() >= 0 ? e
                 : null);
-        notifier
+        eventService
                 .afterPut(this, started, trim(), e.getPolicyIndex() >= 0 ? e : null, prev);
         return prev;
     }
@@ -378,13 +377,13 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         if (oldValue == null) {
             if (prev == null) {
                 statistics.afterPut(this, started, null, prev, null);
-                notifier.afterPut(this, started, null, prev, null);
+                eventService.afterPut(this, started, null, prev, null);
                 return null;
             }
         } else {
             if (prev == null || !oldValue.equals(prev.getValue())) {
                 statistics.afterPut(this, started, null, prev, null);
-                notifier.afterPut(this, started, null, prev, null);
+                eventService.afterPut(this, started, null, prev, null);
                 return null;
             }
         }
@@ -394,7 +393,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         doPut(e);
         statistics.afterPut(this, started, trim(), prev, e.getPolicyIndex() >= 0 ? e
                 : null);
-        notifier
+        eventService
                 .afterPut(this, started, trim(), prev, e.getPolicyIndex() >= 0 ? e : null);
         return prev;
     }

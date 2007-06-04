@@ -48,7 +48,7 @@ public class UnsynchronizedCacheExpirationService<K, V> extends
         super(clock, helper, exceptionConfiguration);
         this.helper = helper;
         defaultTTL = conf.getDefaultTimeToLive(TimeUnit.NANOSECONDS);
-        expirationFilter=conf.getExpirationFilter();
+        expirationFilter = conf.getExpirationFilter();
         this.attributeFactory = attributeFactory;
     }
 

@@ -3,6 +3,7 @@
  */
 package org.coconut.cache;
 
+import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
@@ -13,14 +14,18 @@ import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
+@SuppressWarnings("unchecked")
 public final class CacheServices {
 
-    @SuppressWarnings("unchecked")
-    public static CacheServiceManagerService lifecycle(Cache<?, ?> cache) {
+    public static CacheServiceManagerService serviceManager(Cache<?, ?> cache) {
         return cache.getService(CacheServiceManagerService.class);
     }
 
-    @SuppressWarnings("unchecked")
+    
+    public static CacheEventService event(Cache<?, ?> cache) {
+        return cache.getService(CacheEventService.class);
+    }
+
     public static CacheEvictionService eviction(Cache<?, ?> cache) {
         return cache.getService(CacheEvictionService.class);
     }
@@ -30,7 +35,6 @@ public final class CacheServices {
      *            the cache for which to return an expiration service
      * @return a CacheExpirationService
      */
-    @SuppressWarnings("unchecked")
     public static <K, V> CacheExpirationService<K, V> expiration(Cache<K, V> cache) {
         return cache.getService(CacheExpirationService.class);
     }

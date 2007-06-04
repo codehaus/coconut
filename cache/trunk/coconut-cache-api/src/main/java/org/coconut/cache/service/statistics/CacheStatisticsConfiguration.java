@@ -30,7 +30,7 @@ public class CacheStatisticsConfiguration extends AbstractCacheServiceConfigurat
      *      org.w3c.dom.Element)
      */
     @Override
-    public void fromXML(Document doc, Element parent) {
+    protected void fromXML( Element parent) {
 
     }
 

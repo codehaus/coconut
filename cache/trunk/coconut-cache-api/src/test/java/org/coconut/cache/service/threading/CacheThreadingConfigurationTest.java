@@ -32,7 +32,7 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.test.MockTestCase;
 import org.junit.Before;
 import org.junit.Test;
-import static org.coconut.cache.spi.XmlConfigurator.reloadService;
+import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

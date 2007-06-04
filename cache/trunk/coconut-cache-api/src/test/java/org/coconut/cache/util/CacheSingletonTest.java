@@ -46,7 +46,7 @@ public class CacheSingletonTest {
 
 	@Test
 	public void testSetGetDefault() {
-		Cache c = MockTestCase.mockDummy(Cache.class);
+		Cache<?,?> c = MockTestCase.mockDummy(Cache.class);
 		CacheSingleton.setCache(c);
 		assertEquals(c, CacheSingleton.getCache());
 	}
@@ -71,7 +71,7 @@ public class CacheSingletonTest {
 				.getCacheRessourceLocation());
 		CacheSingleton.setCacheRessourceLocation(pck1);
 		assertEquals(pck1, CacheSingleton.getCacheRessourceLocation());
-		Cache c = CacheSingleton.getCache();
+		Cache<?,?> c = CacheSingleton.getCache();
 		assertTrue(c instanceof DummyCache);
 		assertEquals("foobar", c.getName());
 		CacheSingleton.setCacheRessourceLocation(CacheSingleton.DEFAULT_CACHE_RESSOURCE);

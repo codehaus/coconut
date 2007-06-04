@@ -1,16 +1,19 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.cache.service.loading;
+package org.coconut.cache.service.servicemanager;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public interface CacheLoadingMXBean {
-    long getDefaultRefreshTimeMs();
+public interface CacheServiceManagerMXBean {
 
-    void setDefaultRefreshTimeMs(long refreshTimeMs);
+    String RUNNING = "running";
 
-    void reloadAll();
+    String SHUTDOWN = "shutdown";
+
+    String TERMINATED = "terminated";
+
+    CacheServiceInfo[] getInfo();
 }

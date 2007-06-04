@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheAttributes;
+import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
 import org.coconut.cache.internal.spi.CacheHelper;
@@ -32,7 +33,13 @@ public abstract class AbstractExpirationService<K, V> extends
 
 	private final CacheHelper<K, V> helper;
 
-	private final AbstractCacheExceptionHandler<K, V> errorHandler;
+	@Override
+    public void start(CacheConfiguration<?, ?> configuration,
+            Map<Class<?>, Object> serviceMap) {
+	    serviceMap.put(CacheExpirationService.class, this);
+    }
+
+    private final AbstractCacheExceptionHandler<K, V> errorHandler;
 
 	public AbstractExpirationService(Clock clock, CacheHelper<K, V> helper,
 	        CacheExceptionHandlingConfiguration<K, V> exceptionConfiguration) {

@@ -23,10 +23,11 @@ public interface CacheEvictionMXBean {
 
     /**
      * Keeps evicting entries until the size of the cache is equal to the specified size.
-     * If the specified size is greater then the current size no action is taken.
+     * If the specified size is greater then the current size of the cache no action is
+     * taken.
      * 
      * @param size
-     *            the size to trim the cache down to
+     *            the number of elements to trim the cache down to
      * @throws IllegalArgumentException
      *             if the specified size is negative
      */

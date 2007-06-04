@@ -12,6 +12,7 @@ import org.coconut.filter.Filter;
 import org.coconut.management.annotation.ManagedAttribute;
 
 /**
+ * TODO fix example, we have idle time now.
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -19,7 +20,7 @@ class LastAccessExample {
     public static void main(String[] args) throws InterruptedException {
         CacheConfiguration<String, String> conf = CacheConfiguration
                 .create("WebPage-Cache");
-        conf.management();
+        conf.management().setEnabled(true);
         conf.expiration().setExpirationFilter(new LastAccessFilter<String, String>());
         UnsynchronizedCache<String, String> cache = conf.newInstance(UnsynchronizedCache.class);
         Thread.sleep(1000000);

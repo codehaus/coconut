@@ -45,7 +45,7 @@ public class CacheHTTPExample {
         long start = System.nanoTime();
         c.get("http://www.google.com");
         System.out.println(prefix + " Time to read www.google.com: "
-                + (System.nanoTime() - start));
+                + ((System.nanoTime() - start) / 1000000.0) + " ms");
     }
 
 }

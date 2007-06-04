@@ -87,11 +87,11 @@ public class CacheServiceManager<K, V> implements OlfInternalCacheServiceManager
      * @return
      */
     public <T> T getAsCacheService(Class<T> clazz) {
-        if (DefaultCacheEventService.class.isAssignableFrom(clazz)) {
-            if (conf.getConfiguration(CacheEventConfiguration.class) == null) {
-                return (T) new NoOpAfterCacheOperation();
-            }
-        }
+//        if (DefaultCacheEventService.class.isAssignableFrom(clazz)) {
+//            if (conf.getConfiguration(CacheEventConfiguration.class) == null) {
+//                return (T) new NoOpAfterCacheOperation();
+//            }
+//        }
 //        if (InternalCacheEvictionService.class.isAssignableFrom(clazz)) {
 //            if (conf.getConfiguration(CacheEvictionConfiguration.class) == null) {
 //                T t = (T) new UnsynchronizedCacheEvictionService(
@@ -101,11 +101,11 @@ public class CacheServiceManager<K, V> implements OlfInternalCacheServiceManager
 //                return t;
 //            }
 //        }
-        if (AbstractExpirationService.class.isAssignableFrom(clazz)) {
-            if (conf.getConfiguration(CacheExpirationConfiguration.class) == null) {
-                return (T) InternalExpirationUtils.DUMMY;
-            }
-        }
+//        if (AbstractExpirationService.class.isAssignableFrom(clazz)) {
+//            if (conf.getConfiguration(CacheExpirationConfiguration.class) == null) {
+//                return (T) InternalExpirationUtils.DUMMY;
+//            }
+//        }
         T t = (T) container.getComponentInstanceOfType(clazz);
         if (t == null) {
             System.out.println("No service " + clazz);

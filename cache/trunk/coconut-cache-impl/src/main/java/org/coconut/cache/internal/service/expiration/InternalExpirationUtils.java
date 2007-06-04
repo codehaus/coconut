@@ -20,7 +20,7 @@ import org.coconut.filter.Filter;
  */
 public class InternalExpirationUtils {
 
-    public static final InternalExpirationService DUMMY = new NoCacheExpirationService();
+    //public static final InternalExpirationService DUMMY = new NoCacheExpirationService();
 
     static <K, V> CacheExpirationService<K, V> wrap(
             CacheExpirationService<K, V> service) {

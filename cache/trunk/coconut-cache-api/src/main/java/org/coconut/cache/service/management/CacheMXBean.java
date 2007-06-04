@@ -18,7 +18,7 @@ import org.coconut.management.annotation.ManagedOperation;
  * {@link CacheManagementConfiguration#setMBeanServer(MBeanServer)}. This MXBean will be
  * registered under <code>org.coconut.cache:name=$CACHE_NAME$,service=General</code>
  * where <code>$CACHE_NAME$</code> is replaced by the
- * {@link org.coconut.cache.Cache#getName()  name} of the cache.
+ * {@link org.coconut.cache.Cache#getName() name} of the cache.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$

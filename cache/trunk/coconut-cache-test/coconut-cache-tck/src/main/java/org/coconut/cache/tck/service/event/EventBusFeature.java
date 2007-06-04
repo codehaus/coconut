@@ -20,7 +20,6 @@ import static org.coconut.test.CollectionUtils.M9;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.policy.Policies;
 import org.coconut.cache.service.event.CacheEvent;
-import org.coconut.cache.service.event.CacheEventConfiguration;
 import org.coconut.cache.service.event.CacheEventFilters;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemAccessed;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemAdded;
@@ -36,7 +35,7 @@ public class EventBusFeature extends AbstractEventTestBundle {
     @Before
     public void setup() {
         CacheConfiguration conf = CacheConfiguration.create();
-        conf.event().include(CacheEvent.class);
+        conf.event().setEnabled(true).include(CacheEvent.class);
         c = newCache(conf);
         c2 = newCache(conf, 2);
         c0 = newCache(conf, 0);
@@ -224,7 +223,7 @@ public class EventBusFeature extends AbstractEventTestBundle {
     @Test
     public void itemRemovedEvicted() throws Exception {
         c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(3)
-                .c());
+                .c().event().setEnabled(true).c());
         subscribe(CACHEENTRY_REMOVED_FILTER);
         putAll(M1, M2, M3);
         get(M2);
