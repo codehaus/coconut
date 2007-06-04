@@ -342,7 +342,7 @@ public class CacheEvictionConfiguration<K, V> extends
      *      org.w3c.dom.Element)
      */
     @Override
-    public void toXML(Document doc, Element base) throws Exception {
+    protected void toXML(Document doc, Element base) throws Exception {
         writeLong(doc, base, MAXIMUM_CAPACITY, maximumCapacity, DEFAULT
                 .getMaximumCapacity());
         writeLong(doc, base, PREFERABLE_CAPACITY, preferableCapacity, DEFAULT

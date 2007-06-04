@@ -1,7 +1,9 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.cache.spi;
+package org.coconut.cache.service.servicemanager;
+
+import java.util.Map;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
@@ -18,7 +20,8 @@ public interface CacheService {
      */
     String getName();
 
-    void start(CacheConfiguration<?, ?> configuration);
+    void start(CacheConfiguration<?, ?> configuration,
+            Map<Class<?>, Object> serviceRegistrant);
 
     void started(Cache<?, ?> cache);
 

@@ -33,14 +33,13 @@ import org.junit.Test;
 @SuppressWarnings("unchecked")
 public class EventBusFeature extends AbstractEventTestBundle {
 
-    
     @Before
     public void setup() {
         CacheConfiguration conf = CacheConfiguration.create();
-        conf.event();
+        conf.event().include(CacheEvent.class);
         c = newCache(conf);
         c2 = newCache(conf, 2);
-        c0=newCache(conf,0);
+        c0 = newCache(conf, 0);
     }
 
     // /**
@@ -71,8 +70,8 @@ public class EventBusFeature extends AbstractEventTestBundle {
     }
 
     /**
-     * Tests that ItemAccessed events are posted when accessing items in the
-     * cache using get.
+     * Tests that ItemAccessed events are posted when accessing items in the cache using
+     * get.
      * 
      * @throws Exception
      *             test failed
@@ -92,8 +91,8 @@ public class EventBusFeature extends AbstractEventTestBundle {
     }
 
     /**
-     * Tests that ItemAccessed events are posted when accessing items in the
-     * cache using getAll.
+     * Tests that ItemAccessed events are posted when accessing items in the cache using
+     * getAll.
      * 
      * @throws Exception
      *             test failed
@@ -116,8 +115,8 @@ public class EventBusFeature extends AbstractEventTestBundle {
     }
 
     /**
-     * Tests that ItemAdded events are raised when adding elements to the cache
-     * with the put method.
+     * Tests that ItemAdded events are raised when adding elements to the cache with the
+     * put method.
      * 
      * @throws Exception
      *             test failed
@@ -132,8 +131,8 @@ public class EventBusFeature extends AbstractEventTestBundle {
     }
 
     /**
-     * Tests that ItemAdded events are raised when adding elements to the cache
-     * with the putAll method.
+     * Tests that ItemAdded events are raised when adding elements to the cache with the
+     * putAll method.
      * 
      * @throws Exception
      *             test failed
@@ -148,8 +147,8 @@ public class EventBusFeature extends AbstractEventTestBundle {
     }
 
     /**
-     * Tests that ItemUpdated events are raised when changing the value of an
-     * entry in the cache through the put method.
+     * Tests that ItemUpdated events are raised when changing the value of an entry in the
+     * cache through the put method.
      * 
      * @throws Exception
      *             test failed
@@ -167,8 +166,8 @@ public class EventBusFeature extends AbstractEventTestBundle {
     }
 
     /**
-     * Tests that ItemUpdated events are raised when changing the value of an
-     * entry in the cache throgh the putAll method.
+     * Tests that ItemUpdated events are raised when changing the value of an entry in the
+     * cache throgh the putAll method.
      * 
      * @throws Exception
      *             test failed
@@ -186,8 +185,8 @@ public class EventBusFeature extends AbstractEventTestBundle {
     }
 
     /**
-     * Tests that ItemUpdated events are not raised when try to change the
-     * current value to a value that is equal to itself.
+     * Tests that ItemUpdated events are not raised when try to change the current value
+     * to a value that is equal to itself.
      * 
      * @throws Exception
      *             test failed
@@ -208,14 +207,16 @@ public class EventBusFeature extends AbstractEventTestBundle {
         subscribe(CACHEENTRY_REMOVED_FILTER);
 
         remove(M3); // not contained in the cache -> no events
+        assertQueueEmpty();
         remove(M1);
         ItemRemoved<?, ?> r = consumeItem(ItemRemoved.class, M1);
+        assertEquals(M1.getKey(), r.getKey());
         assertFalse(r.hasExpired());
     }
 
     /**
-     * Tests that ItemRemoved events are raised when an item has been evicted
-     * because of lack of space in the cache.
+     * Tests that ItemRemoved events are raised when an item has been evicted because of
+     * lack of space in the cache.
      * 
      * @throws Exception
      *             test failed

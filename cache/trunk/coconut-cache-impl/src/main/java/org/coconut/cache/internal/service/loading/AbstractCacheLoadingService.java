@@ -8,10 +8,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Future;
 
+import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
 import org.coconut.cache.internal.spi.CacheHelper;
+import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingMXBean;
 import org.coconut.cache.service.loading.CacheLoadingService;
@@ -33,12 +35,10 @@ public abstract class AbstractCacheLoadingService<K, V> extends
     private final InternalCacheAttributeService attributeFactory;
 
     @Override
-    public void registerServices(Map<Class, Object> serviceMap) {
+    public void start(CacheConfiguration<?, ?> configuration,
+            Map<Class<?>, Object> serviceMap) {
         serviceMap.put(CacheLoadingService.class, this);
-        //serviceMap.put(CacheLoadingMXBean.class, this);
-        super.registerServices(serviceMap);
     }
-
     AbstractCacheLoadingService(InternalCacheAttributeService attributeFactory,
             CacheHelper<K, V> helper) {
         super(CacheLoadingConfiguration.SERVICE_NAME);

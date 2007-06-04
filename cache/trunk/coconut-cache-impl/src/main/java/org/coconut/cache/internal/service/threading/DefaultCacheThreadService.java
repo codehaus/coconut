@@ -11,7 +11,7 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
 import org.coconut.cache.internal.service.OldInternalCacheService;
 import org.coconut.cache.internal.service.OlfInternalCacheServiceManager;
-import org.coconut.cache.spi.AbstractCacheService;
+import org.coconut.cache.service.servicemanager.AbstractCacheService;
 import org.coconut.cache.spi.XmlConfigurator;
 
 /**

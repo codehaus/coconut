@@ -5,7 +5,7 @@ package org.coconut.cache.internal.service;
 
 import java.util.concurrent.Executor;
 
-import org.coconut.cache.spi.CacheService;
+import org.coconut.cache.service.servicemanager.CacheService;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

@@ -45,23 +45,24 @@ public class Constructors extends CacheTestBundle {
         assertTrue(c.isEmpty());
     }
 
-    @Test
-    public void testMapArgumentConstructor() throws Exception {
-        Constructor con = getClazz().getConstructor(Map.class);
-        Cache c = (Cache) con.newInstance(new HashMap<Integer, String>(c1));
-        assertEquals(1, c.size());
-        assertEquals(M1.getValue(), c.peek(M1.getKey()));
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testNullMapArgumentConstructor() throws Throwable {
-        Constructor con = getClazz().getConstructor(Map.class);
-        try {
-            con.newInstance(new Object[] { null });
-        } catch (InvocationTargetException ite) {
-            throw ite.getCause();
-        }
-    }
+    //no cache with a map constructor anyway
+//    @Test
+//    public void testMapArgumentConstructor() throws Exception {
+//        Constructor con = getClazz().getConstructor(Map.class);
+//        Cache c = (Cache) con.newInstance(new HashMap<Integer, String>(c1));
+//        assertEquals(1, c.size());
+//        assertEquals(M1.getValue(), c.peek(M1.getKey()));
+//    }
+//
+//    @Test(expected = NullPointerException.class)
+//    public void testNullMapArgumentConstructor() throws Throwable {
+//        Constructor con = getClazz().getConstructor(Map.class);
+//        try {
+//            con.newInstance(new Object[] { null });
+//        } catch (InvocationTargetException ite) {
+//            throw ite.getCause();
+//        }
+//    }
 
 //    @SuppressWarnings("unchecked")
 //    @Test

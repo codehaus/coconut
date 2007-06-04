@@ -4,6 +4,7 @@
 package org.coconut.cache.internal.service.service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -24,6 +25,7 @@ public interface InternalCacheServiceManager {
 
 	ServiceStatus getCurrentState();
 
+	Map<Class<?>, Object> getAllPublicServices();
 	/**
      * Returns a list of all the public exposed services.
      * 

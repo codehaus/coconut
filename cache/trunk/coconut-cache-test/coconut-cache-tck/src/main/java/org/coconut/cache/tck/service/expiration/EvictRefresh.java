@@ -28,10 +28,10 @@ public class EvictRefresh extends ExpirationTestBundle {
         AsyncIntegerToStringLoader loader = new AsyncIntegerToStringLoader();
         c = newCache(newConf().setClock(clock).loading().setDefaultRefreshTime(2,
                 TimeUnit.NANOSECONDS).setLoader(loader).c());
-        service.put(M1.getKey(), "AB1", 2, TimeUnit.NANOSECONDS);
-        service.put(M2.getKey(), "AB2", 3, TimeUnit.NANOSECONDS);
-        service.put(M3.getKey(), "AB3", 4, TimeUnit.NANOSECONDS);
-        service.put(M4.getKey(), "AB4", 7, TimeUnit.NANOSECONDS);
+        s().put(M1.getKey(), "AB1", 2, TimeUnit.NANOSECONDS);
+        s().put(M2.getKey(), "AB2", 3, TimeUnit.NANOSECONDS);
+        s().put(M3.getKey(), "AB3", 4, TimeUnit.NANOSECONDS);
+        s().put(M4.getKey(), "AB4", 7, TimeUnit.NANOSECONDS);
 
         incTime(); // time is one
         getAll(M1, M2, M3, M4);
@@ -53,10 +53,10 @@ public class EvictRefresh extends ExpirationTestBundle {
         AsyncIntegerToStringLoader loader = new AsyncIntegerToStringLoader();
         c = newCache(newConf().setClock(clock).loading().setDefaultRefreshTime(2,
                 TimeUnit.NANOSECONDS).setLoader(loader).c());
-        service.put(M1.getKey(), "AB1", 2, TimeUnit.NANOSECONDS);
-        service.put(M2.getKey(), "AB2", 3, TimeUnit.NANOSECONDS);
-        service.put(M3.getKey(), "AB3", 4, TimeUnit.NANOSECONDS);
-        service.put(M4.getKey(), "AB4", 7, TimeUnit.NANOSECONDS);
+        s().put(M1.getKey(), "AB1", 2, TimeUnit.NANOSECONDS);
+        s().put(M2.getKey(), "AB2", 3, TimeUnit.NANOSECONDS);
+        s().put(M3.getKey(), "AB3", 4, TimeUnit.NANOSECONDS);
+        s().put(M4.getKey(), "AB4", 7, TimeUnit.NANOSECONDS);
 
         incTime(); // time is one
         // test no refresh on get
@@ -74,10 +74,10 @@ public class EvictRefresh extends ExpirationTestBundle {
         AsyncIntegerToStringLoader loader = new AsyncIntegerToStringLoader();
         c = newCache(newConf().setClock(clock).loading().setDefaultRefreshTime(2,
                 TimeUnit.NANOSECONDS).setLoader(loader).c());
-        service.put(M1.getKey(), "AB1", 2, TimeUnit.NANOSECONDS);
-        service.put(M2.getKey(), "AB2", 3, TimeUnit.NANOSECONDS);
-        service.put(M3.getKey(), "AB3", 4, TimeUnit.NANOSECONDS);
-        service.put(M4.getKey(), "AB4", 7, TimeUnit.NANOSECONDS);
+        s().put(M1.getKey(), "AB1", 2, TimeUnit.NANOSECONDS);
+        s().put(M2.getKey(), "AB2", 3, TimeUnit.NANOSECONDS);
+        s().put(M3.getKey(), "AB3", 4, TimeUnit.NANOSECONDS);
+        s().put(M4.getKey(), "AB4", 7, TimeUnit.NANOSECONDS);
 
         incTime(); // time is one
         // test no refresh on get

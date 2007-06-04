@@ -147,7 +147,7 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
      *      org.w3c.dom.Element)
      */
     @Override
-    public void fromXML(Document doc, Element parent) throws DOMException,
+    protected void fromXML(Document doc, Element parent) throws DOMException,
             ClassNotFoundException {
         Element includes = getChild(INCLUDES_TAG, parent);
         for (Element e : getChildElements(includes, INCLUDE_TAG)) {
@@ -188,7 +188,7 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
      *      org.w3c.dom.Element)
      */
     @Override
-    public void toXML(Document doc, Element parent) {
+    protected void toXML(Document doc, Element parent) {
         add(includes, doc, parent, INCLUDES_TAG, INCLUDE_TAG);
         add(excludes, doc, parent, EXCLUDES_TAG, EXCLUDE_TAG);
     }

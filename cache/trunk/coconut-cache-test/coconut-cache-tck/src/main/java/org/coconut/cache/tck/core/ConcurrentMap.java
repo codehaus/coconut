@@ -27,8 +27,7 @@ public class ConcurrentMap extends CacheTestBundle {
     public void testPutIfAbsent() {
         assertNull(c0.putIfAbsent(M1.getKey(), M1.getValue()));
         assertEquals(M1.getValue(), c0.get(M1.getKey()));
-        assertEquals(M1.getValue(), c0.putIfAbsent(M1.getKey(),
-                M2.getValue()));
+        assertEquals(M1.getValue(), c0.putIfAbsent(M1.getKey(), M2.getValue()));
         assertFalse(c0.containsValue(M2.getValue()));
     }
 
@@ -75,10 +74,8 @@ public class ConcurrentMap extends CacheTestBundle {
     @Test
     public void testReplace2() {
         assertNull(c1.replace(M2.getKey(), M2.getValue()));
-        assertEquals(M1.getValue(), c2
-                .replace(M1.getKey(), M3.getValue()));
+        assertEquals(M1.getValue(), c2.replace(M1.getKey(), M3.getValue()));
         assertEquals(M3.getValue(), c2.get(M1.getKey()));
-        
         assertNull(c2.replace(M4.getKey(), M4.getValue()));
         assertFalse(c2.containsValue(M4.getValue()));
         assertFalse(c2.containsValue(M1.getValue()));

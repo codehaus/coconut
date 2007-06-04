@@ -204,4 +204,8 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
         return cp.update(index, t);
     }
 
+    public void evict(Object key) {}
+
+    public void evictAll() {}
+
 }

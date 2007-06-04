@@ -167,7 +167,7 @@ public class CacheLoadingConfiguration<K, V> extends
      *      org.w3c.dom.Element)
      */
     @Override
-    public void toXML(Document doc, Element parent) {
+    protected void toXML(Document doc, Element parent) {
         /* Cache Loader */
         addAndsaveObject(doc, parent, LOADER_TAG, getResourceBundle(),
                 "loading.saveOfLoaderFailed", loader);

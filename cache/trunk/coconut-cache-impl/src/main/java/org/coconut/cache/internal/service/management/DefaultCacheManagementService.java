@@ -9,6 +9,7 @@ import javax.management.JMException;
 import javax.management.MBeanServer;
 
 import org.coconut.cache.Cache;
+import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
 import org.coconut.cache.internal.service.service.InternalCacheServiceManager;
 import org.coconut.cache.service.management.CacheMXBean;
@@ -95,6 +96,18 @@ public class DefaultCacheManagementService extends AbstractCacheManagementServic
 	}
 
 	@Override
+    public void start(CacheConfiguration<?, ?> configuration,
+            Map<Class<?>, Object> serviceMap) {
+        if (isEnabled) {
+            serviceMap.put(CacheManagementService.class, new DelegatedManagementService(
+                    this));
+            if (cache != null) {
+                serviceMap.put(CacheMXBean.class, cache);
+            }
+        }
+    }
+
+    @Override
 	public void started(Cache<?, ?> cache) {
 		if (isEnabled) {
 			try {
@@ -104,19 +117,4 @@ public class DefaultCacheManagementService extends AbstractCacheManagementServic
 			}
 		}
 	}
-
-	/**
-     * @see org.coconut.cache.internal.service.service.AbstractInternalCacheService#registerServices(java.util.Map)
-     */
-	@Override
-	public void registerServices(Map<Class, Object> serviceMap) {
-		if (isEnabled) {
-			serviceMap.put(CacheManagementService.class, new DelegatedManagementService(
-					this));
-			if (cache != null) {
-				serviceMap.put(CacheMXBean.class, cache);
-			}
-		}
-	}
-
 }

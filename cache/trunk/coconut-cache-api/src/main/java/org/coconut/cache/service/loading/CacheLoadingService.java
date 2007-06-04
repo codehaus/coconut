@@ -15,6 +15,9 @@ import org.coconut.filter.Filter;
 /**
  * This is the main interface for controlling the remote management of a cache at runtime.
  * <p>
+ * Most of the methods for this service is usefull for preloading the cache with entries
+ * that might be used at later time. Preloading attempts to place data in the cache far
+ * enough in advance to hide the latency of a cache miss.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -22,7 +25,7 @@ import org.coconut.filter.Filter;
 public interface CacheLoadingService<K, V> {
 
     /**
-     * Attempts to reloads all the cache entries that is accepted by the specified filter.
+     * Attempts to reload all the cache entries that is accepted by the specified filter.
      * 
      * @param filter
      *            the filter to test cache entries against
@@ -37,7 +40,8 @@ public interface CacheLoadingService<K, V> {
             Transformer<CacheEntry<K, V>, AttributeMap> attributeTransformer);
 
     /**
-     * Attempts to load an cache entry for the specified key.
+     * Attempts to load a value for the specified key even if a valid mapping for the
+     * specified key is already in the cache.
      * 
      * @param key
      * @return
@@ -62,11 +66,8 @@ public interface CacheLoadingService<K, V> {
 
     // determine how exceptions are thrown from the future
     /**
-     * If a cache entry for the specified key is not already in the cache. This method
-     * will attempt to load the value for the specified key from a configured cache loader .
-     * This method is usefull for preloading the cache with entries that might be used at
-     * later time. Preloading attempts to place data in the cache far enough in advance to
-     * hide the latency of a cache miss.
+     * If a mapping for the specified key is not already in the cache. This method will
+     * attempt to load the value for the specified key from a configured cache loader.
      * <p>
      * A {@link java.util.concurrent.Future} is returned that can be used to check if the
      * loading is complete and to wait for its completion. Cancellation can be performed

@@ -24,39 +24,37 @@ public class ExpirationTestBundle extends CacheTestBundle {
 
     protected Cache<Integer, String> noExpiration;
 
-    protected CacheExpirationService<Integer, String> service;
-
     @Before
     public void setupLoading() {
         noExpiration = c;
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
         c = newCache(cc.expiration().c());
-        service = c.getService(CacheExpirationService.class);
+    }
+
+    public CacheExpirationService<Integer, String> s() {
+        return c.getService(CacheExpirationService.class);
     }
 
     public void assertNoLoadingService() {
         assertNotNull(c.getService(CacheExpirationService.class));
         assertNull(noExpiration.getService(CacheExpirationService.class));
     }
-    
 
     protected void putAll(long timeout, TimeUnit unit,
             Map.Entry<Integer, String>... entries) {
-        service.putAll(CollectionUtils.asMap(entries), timeout, unit);
+        s().putAll(CollectionUtils.asMap(entries), timeout, unit);
     }
-    
 
     protected void putAll(long timeout, Map.Entry<Integer, String>... entries) {
         putAll(timeout, TimeUnit.NANOSECONDS, entries);
     }
-    
 
     protected String put(Map.Entry<Integer, String> e, long timeout, TimeUnit unit) {
-        return service.put(e.getKey(), e.getValue(), timeout, unit);
+        return s().put(e.getKey(), e.getValue(), timeout, unit);
     }
 
     protected String put(Map.Entry<Integer, String> e, long timeout) {
-        return service.put(e.getKey(), e.getValue(), timeout, TimeUnit.MILLISECONDS);
+        return s().put(e.getKey(), e.getValue(), timeout, TimeUnit.MILLISECONDS);
     }
 
 }

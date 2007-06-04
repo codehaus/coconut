@@ -92,7 +92,7 @@ public class UnsynchronizedCacheExpirationService<K, V> extends
     /**
      * @see org.coconut.cache.internal.service.InternalCacheService#registerServices(java.util.Map)
      */
-    public void registerServices(Map<Class, Object> serviceMap) {
+    public void registerServices(Map<Class<?>, Object> serviceMap) {
         super.registerServices(serviceMap);
         serviceMap.put(CacheExpirationMXBean.class, null);
     }

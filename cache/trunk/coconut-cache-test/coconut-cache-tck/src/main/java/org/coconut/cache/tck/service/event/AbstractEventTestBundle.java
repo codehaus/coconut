@@ -58,7 +58,7 @@ public class AbstractEventTestBundle extends CacheTestBundle {
                 System.err.println("Pending event: " + ew.event);
                 ew.toErr();
             }
-            throw new AssertionFailedError("event queue was not empty");
+            throw new AssertionFailedError("event queue was not empty " + events );
         }
     }
 
@@ -120,7 +120,12 @@ public class AbstractEventTestBundle extends CacheTestBundle {
         event.toString(); // just test that it doesn't fail
         return (S) event;
     }
-
+    protected void assertQueueEmpty() {
+        if (events.size()>0) {
+            events.clear();
+            throw new AssertionFailedError("event queue not empty");
+        }
+    }
     protected Integer peekKey() throws InterruptedException {
         ev = events.poll(1, TimeUnit.SECONDS);
         return ((CacheEntryEvent<Integer, String>) ev.event).getKey();

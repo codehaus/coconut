@@ -6,8 +6,11 @@ package org.coconut.cache.service.eviction;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheServices;
+import org.coconut.cache.service.event.CacheEntryEvent;
+import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.filter.Filter;
 
 /**
@@ -44,6 +47,15 @@ public interface CacheEvictionService<K, V> {
      *            key whose mapping is to be evicted from the cache
      */
     void evict(K key);
+
+    /**
+     * This method works analogous to the {@link Cache#clear()} method. Except than
+     * instead of a {@link CacheEvent.CacheCleared} being posted. An
+     * {@link CacheEntryEvent.ItemRemoved} is posted for each element.
+     * 
+     * @see Cache#clear()
+     */
+    void evictAll();
 
     /**
      * @param keys

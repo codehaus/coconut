@@ -100,7 +100,6 @@ public abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAd
         return entry.getValue();
     }
 
-
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -123,8 +122,7 @@ public abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAd
         return new ChangedEvent<K, V>(cache, entry, previous, false);
     }
 
-    static <K, V> CacheEntryEvent<K, V> expired(Cache<K, V> cache,
-            CacheEntry<K, V> entry) {
+    static <K, V> CacheEntryEvent<K, V> expired(Cache<K, V> cache, CacheEntry<K, V> entry) {
         return new RemovedEvent<K, V>(cache, entry, true);
     }
 
@@ -183,13 +181,14 @@ public abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAd
         ChangedEvent(Cache<K, V> cache, CacheEntry<K, V> entry, V previous,
                 boolean isExpired) {
             super(cache, entry);
+            this.previous = previous;
         }
 
         /**
          * @see org.coconut.cache.service.event.CacheEvent#getName()
          */
         public String getName() {
-            return CacheEntryEvent.ItemAdded.NAME;
+            return CacheEntryEvent.ItemUpdated.NAME;
         }
 
         /**

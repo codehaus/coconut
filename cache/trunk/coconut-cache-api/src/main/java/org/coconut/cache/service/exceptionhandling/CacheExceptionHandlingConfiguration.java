@@ -91,7 +91,7 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
      *      org.w3c.dom.Element)
      */
     @Override
-    public void toXML(Document doc, Element parent) throws Exception {
+    protected void toXML(Document doc, Element parent) throws Exception {
     // TODO Auto-generated method stub
 
     }

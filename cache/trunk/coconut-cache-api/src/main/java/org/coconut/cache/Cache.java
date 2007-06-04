@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
+import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.core.AttributeMap;
 
 /**
@@ -55,6 +56,16 @@ import org.coconut.core.AttributeMap;
  *            the type of mapped values
  */
 public interface Cache<K, V> extends ConcurrentMap<K, V> {
+
+    /**
+     * Removes all of the entries from this cache. This is a local operation. Meaning,
+     * that it will not attempt to remove entries that are stored externally, for example,
+     * on disk. The cache will be empty after this call returns.
+     * <p>
+     * When all entries have been removed a single {@link CacheEvent.CacheCleared} will be
+     * raised.
+     */
+    void clear();
 
     /**
      * Performs cleanup of the cache. This might be everything from persisting stale data

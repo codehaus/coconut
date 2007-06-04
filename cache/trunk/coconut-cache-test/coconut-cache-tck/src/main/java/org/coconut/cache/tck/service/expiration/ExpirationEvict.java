@@ -45,7 +45,6 @@ public class ExpirationEvict extends ExpirationTestBundle {
     public void evictSingleElement() {
         c = newCache(newConf().setClock(clock));
         put(M1, 2);
-
         incTime();
         evict();
         assertGet(M1);
@@ -75,6 +74,7 @@ public class ExpirationEvict extends ExpirationTestBundle {
         incTime(); // time3
         evict();
         assertSize(3);
+        
 
         incTime(); // time4
         evict();

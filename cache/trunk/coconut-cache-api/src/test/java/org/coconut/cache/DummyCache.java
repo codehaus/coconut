@@ -237,4 +237,8 @@ public class DummyCache<K, V> implements Cache<K, V> {
 		return null;
 	}
 
+    public Map<Class<?>, Object> getAllServices() {
+        return null;
+    }
+
 }

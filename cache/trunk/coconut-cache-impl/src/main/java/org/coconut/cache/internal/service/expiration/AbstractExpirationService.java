@@ -63,7 +63,7 @@ public abstract class AbstractExpirationService<K, V> extends
 		return helper.expireAll(filter);
 	}
 
-	public void registerServices(Map<Class, Object> map) {
+	public void registerServices(Map<Class<?>, Object> map) {
 		map.put(CacheExpirationService.class, InternalExpirationUtils.wrap(this));
 	}
 

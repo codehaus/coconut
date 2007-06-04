@@ -5,7 +5,9 @@
 package org.coconut.cache.defaults;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -356,10 +358,10 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         AbstractCacheEntry<K, V> e = entryFactory.createEntry(key, newValue, attributes,
                 prev);
         doPut(e);
-        statistics.afterPut(this, started, trim(), prev, e.getPolicyIndex() >= 0 ? e
+        statistics.afterPut(this, started, Collections.EMPTY_LIST, prev, e.getPolicyIndex() >= 0 ? e
                 : null);
         notifier
-                .afterPut(this, started, trim(), prev, e.getPolicyIndex() >= 0 ? e : null);
+                .afterPut(this, started, trim(), e.getPolicyIndex() >= 0 ? e : null, prev);
         return prev;
     }
 
@@ -541,5 +543,9 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
 
         public void trimToSize(int size) {}
 
+    }
+
+    public Map<Class<?>, Object> getAllServices() {
+        return serviceManager.getAllPublicServices();
     }
 }

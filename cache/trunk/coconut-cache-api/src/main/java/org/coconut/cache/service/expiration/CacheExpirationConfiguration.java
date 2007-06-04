@@ -130,7 +130,7 @@ public class CacheExpirationConfiguration<K, V> extends
      *      org.w3c.dom.Element)
      */
     @Override
-    public void toXML(Document doc, Element parent) throws Exception {
+    protected void toXML(Document doc, Element parent) throws Exception {
         /* Expiration Timer */
         UnitOfTime.toElementCompact(doc, parent, DEFAULT_TIMEOUT_TAG, defaultTimeToLive,
                 DEFAULT_TIME_UNIT, Long.MAX_VALUE);

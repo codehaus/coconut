@@ -33,10 +33,10 @@ public class ExpirationWithCacheLoader extends ExpirationTestBundle {
      */
     @Test
     public void loadingOfExpiredEntries() {
-        service.put(M1.getKey(), "~A", 1, TimeUnit.NANOSECONDS);
-        service.put(M2.getKey(), "~B", 1, TimeUnit.NANOSECONDS);
-        service.put(M3.getKey(), "~C", 1, TimeUnit.NANOSECONDS);
-        service.put(M4.getKey(), "~D", 1, TimeUnit.NANOSECONDS);
+        s().put(M1.getKey(), "~A", 1, TimeUnit.NANOSECONDS);
+        s().put(M2.getKey(), "~B", 1, TimeUnit.NANOSECONDS);
+        s().put(M3.getKey(), "~C", 1, TimeUnit.NANOSECONDS);
+        s().put(M4.getKey(), "~D", 1, TimeUnit.NANOSECONDS);
         assertEquals("~A", c.get(M1.getKey()));
         assertGet(M1);
         assertGetAll(M2, M3);

@@ -39,7 +39,7 @@ public class CacheStatisticsConfiguration extends AbstractCacheServiceConfigurat
      *      org.w3c.dom.Element)
      */
     @Override
-    public void toXML(Document doc, Element parent) {
+    protected void toXML(Document doc, Element parent) {
 
     }
 

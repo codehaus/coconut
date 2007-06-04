@@ -230,7 +230,7 @@ public class CacheManagementConfiguration<K, V> extends
      * @see org.coconut.cache.service.spi.AbstractCacheConfiguration#toXML(org.w3c.dom.Element)
      */
     @Override
-    public void toXML(Document doc, Element base) {
+    protected void toXML(Document doc, Element base) {
         base.setAttribute(XML_ENABLED_ATTRIBUTE, Boolean.toString(enabled));
 
         /* Domain */

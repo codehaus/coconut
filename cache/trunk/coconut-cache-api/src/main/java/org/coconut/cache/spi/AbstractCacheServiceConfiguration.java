@@ -24,8 +24,7 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public abstract class AbstractCacheServiceConfiguration<K, V> extends
-        XmlCacheConfigurator {
+public abstract class AbstractCacheServiceConfiguration<K, V>  {
 
     private CacheConfiguration<K, V> conf;
 
@@ -124,4 +123,19 @@ public abstract class AbstractCacheServiceConfiguration<K, V> extends
     void setConfiguration(CacheConfiguration<K, V> conf) {
         this.conf = conf;
     }
+    
+    protected abstract void fromXML(Document doc, Element parent) throws Exception;
+
+    /**
+     * Persists this configuration to xml.
+     * 
+     * @param doc
+     *            the Document to write to
+     * @param parent
+     *            the top element of this configuration
+     * @throws Exception
+     *             this configuration could not be probably persisted
+     */
+    protected abstract void toXML(Document doc, Element parent) throws Exception;
+
 }

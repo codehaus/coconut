@@ -32,7 +32,7 @@ public class ExpirationConcurrent extends ExpirationTestBundle {
             Cache<Integer, String> c = newCache(cc.expiration().c().setClock(
                     Clock.DEFAULT_CLOCK));
             long earlyStart = Clock.DEFAULT_CLOCK.relativeTime();
-            service.put(M1.getKey(), M1.getValue(), s, TimeUnit.NANOSECONDS);
+            s().put(M1.getKey(), M1.getValue(), s, TimeUnit.NANOSECONDS);
             long lateStart = Clock.DEFAULT_CLOCK.relativeTime();
             for (;;) {
                 long earlyNow = Clock.DEFAULT_CLOCK.relativeTime();
@@ -65,7 +65,7 @@ public class ExpirationConcurrent extends ExpirationTestBundle {
         final Cache<Integer, String> c = newCache(cc.loading().setLoader(loader).c()
                 .setClock(Clock.DEFAULT_CLOCK));
 
-        service.put(M1.getKey(), "ZXCW", 1, TimeUnit.NANOSECONDS);
+        s().put(M1.getKey(), "ZXCW", 1, TimeUnit.NANOSECONDS);
 
         // assert c.peek(M1.getValue()) ==null
 
@@ -98,7 +98,7 @@ public class ExpirationConcurrent extends ExpirationTestBundle {
         final Cache<Integer, String> c = newCache(cc.loading().setLoader(loader).c()
                 .setClock(Clock.DEFAULT_CLOCK));
 
-        service.put(M1.getKey(), "ZXCW", 1, TimeUnit.NANOSECONDS);
+        s().put(M1.getKey(), "ZXCW", 1, TimeUnit.NANOSECONDS);
 
         // assert c.peek(M1.getValue()) ==null
         Runnable r = new Runnable() {

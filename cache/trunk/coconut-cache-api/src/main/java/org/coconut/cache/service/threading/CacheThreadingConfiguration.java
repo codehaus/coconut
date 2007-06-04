@@ -242,7 +242,7 @@ public class CacheThreadingConfiguration<K, V> extends
      *      org.w3c.dom.Element)
      */
     @Override
-    public void toXML(Document doc, Element base) throws Exception {
+    protected void toXML(Document doc, Element base) throws Exception {
         /* Register */
         Executor e = executor;
         if (e != DEFAULT.getExecutor()) {

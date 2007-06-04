@@ -5,7 +5,6 @@ package org.coconut.cache.internal.spi;
 
 import java.util.Map;
 
-import org.coconut.cache.spi.CacheExecutorRunnable;
 import org.coconut.core.AttributeMap;
 
 /**
