@@ -5,7 +5,7 @@ package org.coconut.event;
 
 import java.util.concurrent.Executor;
 
-import org.coconut.core.Log;
+import org.coconut.core.Logger;
 import org.coconut.event.spi.EventBusErrorHandler;
 import org.coconut.filter.matcher.FilterMatcher;
 
@@ -29,7 +29,7 @@ public class EventBusConfiguration<E> {
 
     private FilterMatcher<?, E> filterMatcher;
 
-    private Log log;
+    private Logger log;
 
     private Executor e;
 

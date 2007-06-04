@@ -79,10 +79,10 @@ public interface EventBus<E> extends Offerable<E>, EventProcessor<E> {
      * is in progress.
      * 
      * @param events
-     *            the event to process
-     * @return a boolean indicating if all events was accepted.
+     *            the events to process
+     * @return a boolean indicating if all events was succesfully processed.
      */
-    boolean offerAll(Collection<? extends E> c);
+    boolean offerAll(Collection<? extends E> events);
 
     /**
      * Returns all subscribers that is registered for this EventBus.

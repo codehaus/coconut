@@ -5,10 +5,10 @@ package org.coconut.event.spi;
 
 import java.text.MessageFormat;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import org.coconut.core.Log;
-import org.coconut.core.util.Logs;
+
+import org.coconut.core.Logger;
+import org.coconut.core.Loggers;
 import org.coconut.event.EventBus;
 import org.coconut.event.EventSubscription;
 
@@ -17,7 +17,7 @@ import org.coconut.event.EventSubscription;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class EventBusErrorHandler<E> {
-    private Log logger;
+    private Logger logger;
 
     private boolean isInitialized;
 
@@ -30,7 +30,7 @@ public class EventBusErrorHandler<E> {
     /**
      * @param default_logger2
      */
-    public EventBusErrorHandler(Log logger) {
+    public EventBusErrorHandler(Logger logger) {
         synchronized (this) {
             isInitialized = true;
         }
@@ -59,7 +59,7 @@ public class EventBusErrorHandler<E> {
         return false;
     }
 
-    public Log getLogger() {
+    public Logger getLogger() {
         checkInitialized();
         return logger;
     }
@@ -68,9 +68,9 @@ public class EventBusErrorHandler<E> {
         if (!isInitialized) {
             isInitialized = true;
             String loggerName = EventBus.class.getPackage().getName() + "." + name;
-            Logger l = Logger.getLogger(loggerName);
+            java.util.logging.Logger l = java.util.logging.Logger.getLogger(loggerName);
             String infoMsg = Ressources.getString("AbstractEventBus.default_logger");
-            logger = Logs.JDK.from(l);
+            logger = Loggers.JDK.from(l);
             logger.info(MessageFormat.format(infoMsg, name, loggerName));
             l.setLevel(Level.SEVERE);
             isInitialized = true;
