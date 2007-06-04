@@ -5,7 +5,7 @@ package org.coconut.cache.spi;
 
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.management.CacheMXBean;
+import org.coconut.cache.service.management.CacheMXBean;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

@@ -17,18 +17,18 @@ import org.coconut.cache.tck.util.IntegerToStringLoader;
 public class UnlTest {
     public static void maing(String[] args) {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
-        cc.backend().setBackend(new IntegerToStringLoader());
+    //    cc.backend().setBackend(new IntegerToStringLoader());
         UnsynchronizedCache uc = new UnsynchronizedCache(cc);
 
-        uc.load(3);
+     //   uc.load(3);
         System.out.println(uc.get(5));
-        System.out.println(uc.getHitStat());
+//        System.out.println(uc.getHitStat());
         // 
     }
 
     public static void main(String[] args) throws InterruptedException {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
-        cc.backend().setBackend(new IntegerToStringLoader());
+     //   cc.backend().setBackend(new IntegerToStringLoader());
         cc.eviction().setMaximumSize(10000);
         cc.eviction().setPolicy(Policies.newLRU());
         UnsynchronizedCache uc = new UnsynchronizedCache(cc);
@@ -47,8 +47,8 @@ public class UnlTest {
         }
         System.out.println(uc.size());
         System.out.println(System.nanoTime() - start);
-        System.out.println(uc.getHitStat());
-        System.out.println(uc.getGroup());
+//        System.out.println(uc.getHitStat());
+//        System.out.println(uc.getGroup());
     }
 
     public static void mains(String[] args) {

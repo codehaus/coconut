@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.CacheQuery;
+import org.coconut.cache.service.querying.CacheQuery;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

@@ -11,8 +11,8 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.CacheLoader;
 import org.coconut.cache.defaults.UnsynchronizedCache;
+import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.filter.Filter;
 
 /**
@@ -55,7 +55,7 @@ public class HmmTest {
     public static void main2(String[] args) throws InterruptedException {
         CacheConfiguration cc = CacheConfiguration.create();
 
-        cc.expiration().setDefaultTimeout(24 * 60 * 60, TimeUnit.SECONDS);
+        cc.expiration().setDefaultTimeToLive(24 * 60 * 60, TimeUnit.SECONDS);
         // cc.backend().setLoader(new ErrorCacheLoader());
         // cc.backend().setStore(new SysoutStore<Object, Object>(null));
         Cache c = cc.newInstance(UnsynchronizedCache.class);

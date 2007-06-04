@@ -8,7 +8,7 @@ import java.io.FileOutputStream;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.core.util.Logs;
+import org.coconut.core.Loggers;
 import org.coconut.filter.Filter;
 
 /**
@@ -20,7 +20,7 @@ public class XMLConfiguratorTest2 {
     public static void main(String[] args) throws Exception {
         CacheConfiguration cc = CacheConfiguration.create();
         cc.setName("MyCache");
-        cc.setErrorHandler(new CacheErrorHandler(Logs.JDK.from("o.g.s")));
+        cc.setErrorHandler(new CacheErrorHandler(Loggers.JDK.from("o.g.s")));
         cc.expiration().setDefaultTimeout(180, TimeUnit.SECONDS);
         cc.expiration().setRefreshInterval(3, TimeUnit.SECONDS);
         cc.expiration().setFilter(new MyFilter());

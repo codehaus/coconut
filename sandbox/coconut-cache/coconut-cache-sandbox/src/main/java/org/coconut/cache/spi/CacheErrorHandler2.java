@@ -7,8 +7,9 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.CacheErrorHandler;
 import org.coconut.cache.CacheException;
-import org.coconut.cache.CacheLoader;
+import org.coconut.cache.service.loading.CacheLoader;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

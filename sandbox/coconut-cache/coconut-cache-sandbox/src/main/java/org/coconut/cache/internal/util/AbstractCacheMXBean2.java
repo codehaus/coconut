@@ -9,8 +9,8 @@ import javax.management.MBeanNotificationInfo;
 import javax.management.NotCompliantMBeanException;
 import javax.management.Notification;
 
-import org.coconut.cache.CacheEntryEvent;
-import org.coconut.cache.CacheEvent;
+import org.coconut.cache.service.event.CacheEntryEvent;
+import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.spi.AbstractCache;
 import org.coconut.core.EventProcessor;
 import org.coconut.core.Transformer;
@@ -21,7 +21,7 @@ import org.coconut.filter.Filters;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class AbstractCacheMXBean2<K,V> extends WrapperCacheMXBean implements EventProcessor<CacheEvent<K, V>> {
+public class AbstractCacheMXBean2<K,V> implements EventProcessor<CacheEvent<K, V>> {
 
     private final EventBus<CacheEvent<K, V>> bus;
 
@@ -33,7 +33,6 @@ public class AbstractCacheMXBean2<K,V> extends WrapperCacheMXBean implements Eve
      */
     public AbstractCacheMXBean2(AbstractCache cache, EventBus bus, Properties messages)
             throws NotCompliantMBeanException {
-        super(cache);
         this.bus = bus;
     }
 

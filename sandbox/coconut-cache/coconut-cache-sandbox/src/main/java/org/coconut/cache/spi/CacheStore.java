@@ -6,7 +6,7 @@ package org.coconut.cache.spi;
 import java.util.Collection;
 import java.util.Map;
 
-import org.coconut.cache.CacheLoader;
+import org.coconut.cache.service.loading.CacheLoader;
 
 /**
  * Interface responsible for storing entries.

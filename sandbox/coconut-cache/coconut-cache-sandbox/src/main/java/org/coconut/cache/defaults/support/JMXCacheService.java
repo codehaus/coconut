@@ -5,7 +5,6 @@
 package org.coconut.cache.defaults.support;
 
 import java.lang.management.ManagementFactory;
-import java.util.Properties;
 
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.InstanceNotFoundException;
@@ -17,11 +16,7 @@ import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.internal.util.WrapperCacheMXBean;
-import org.coconut.cache.management.CacheMXBean;
-import org.coconut.cache.spi.AbstractCache;
-import org.coconut.event.EventBus;
+import org.coconut.cache.service.management.CacheMXBean;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
@@ -62,7 +57,6 @@ public class JMXCacheService {
     public static void registerCache(Cache c, ObjectName name, MBeanServer mbs)
             throws InstanceAlreadyExistsException, MBeanRegistrationException,
             NotCompliantMBeanException {
-        final WrapperCacheMXBean cache;
 
 //        if (c instanceof AbstractCache) {
 //     //       EventBus eb = ((AbstractCache) c).jmxRegistrant();

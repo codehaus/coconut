@@ -9,12 +9,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.spi.CacheSupport;
+import org.coconut.cache.service.event.CacheEvent;
+import org.coconut.cache.service.statistics.CacheHitStat;
 import org.coconut.cache.spi.CacheUtil;
+import org.coconut.cache.spi.annotations.CacheSupport;
 import org.coconut.event.EventBus;
 import org.coconut.filter.Filter;
 
@@ -99,7 +100,7 @@ public class Caches2 {
         }
 
         /** {@inheritDoc} */
-        public Cache.HitStat getHitStat() {
+        public CacheHitStat<K, V> getHitStat() {
             return CacheUtil.STAT00;
         }
 
@@ -306,10 +307,7 @@ public class Caches2 {
         // return new CacheEntrySynchronousCache<K, V>();
         return null;
     }
-    public static boolean supportsJMX(Cache<?, ?> cache) {
-        return cache.getClass().isAnnotationPresent(CacheSupport.class)
-                && cache.getClass().getAnnotation(CacheSupport.class).JMXSupport();
-    }
+
     public static Filter<CacheEntry> checkUpdateTime(String cronExpression) {
         return null;
     }

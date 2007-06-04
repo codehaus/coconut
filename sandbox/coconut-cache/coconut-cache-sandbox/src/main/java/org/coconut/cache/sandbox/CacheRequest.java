@@ -16,5 +16,13 @@ public class CacheRequest {
         int numberOfEntries();
     }
     
+    public interface ClearCacheRequest {
+        
+    }
+    
+    public interface ResetStatisticsRequest {
+        
+    }
+    
     
 }
