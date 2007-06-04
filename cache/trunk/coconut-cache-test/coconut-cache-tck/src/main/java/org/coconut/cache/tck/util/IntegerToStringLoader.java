@@ -16,8 +16,9 @@ import org.coconut.core.AttributeMap;
  */
 public class IntegerToStringLoader implements CacheLoader<Integer, String> {
 
+
     /**
-     * @see org.coconut.cache.util.AbstractCacheLoader#load(java.lang.Object)
+     * @see org.coconut.cache.service.loading.CacheLoader#load(java.lang.Object, org.coconut.core.AttributeMap)
      */
     public String load(Integer key, AttributeMap ignore) {
         if (1 <= key && key <= 5) {

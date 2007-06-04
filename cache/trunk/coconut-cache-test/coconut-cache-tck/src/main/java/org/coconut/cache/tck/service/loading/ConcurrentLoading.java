@@ -53,9 +53,6 @@ public class ConcurrentLoading extends CacheTestBundle {
 
     class SleepLoader implements CacheLoader<Integer, String> {
 
-        /**
-         * @see org.coconut.cache.util.AbstractCacheLoader#load(java.lang.Object)
-         */
         public String load(Integer key, AttributeMap ignore) {
             try {
                 Thread.sleep(key.intValue());

@@ -21,7 +21,7 @@ public class MutableLoader implements CacheLoader<Integer, String> {
     private AtomicReference<String> ref = new AtomicReference<String>();
 
     /**
-     * @see org.coconut.cache.util.AbstractCacheLoader#load(java.lang.Object)
+     * @see org.coconut.cache.service.loading.CacheLoader#load(java.lang.Object, org.coconut.core.AttributeMap)
      */
     public String load(Integer key, AttributeMap ignore) {
         return ref.get();
