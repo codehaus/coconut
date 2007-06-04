@@ -148,12 +148,12 @@ public enum UnitOfTime {
     }
 
     public static long fromElement(Element e, TimeUnit unit, long defaultTime) {
-    	if (e!=null) {
-    		return fromElement(e, unit);
-    	}else {
-    	return defaultTime;
-    	}
-    }
+		if (e != null) {
+			return fromElement(e, unit);
+		} else {
+			return defaultTime;
+		}
+	}
     public static long fromElement(Element e, TimeUnit unit) {
         long val = Long.parseLong(e.getTextContent());
         UnitOfTime from = UnitOfTime.fromSymbol(e.getAttribute("time-unit"));

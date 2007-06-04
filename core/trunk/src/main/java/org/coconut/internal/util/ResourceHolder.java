@@ -18,7 +18,6 @@ public class ResourceHolder {
     
     public final ResourceBundle ressourceBundle;
 
-
     static {
         Locale def = Locale.getDefault();
         Locale loc = Locale.getDefault();
@@ -36,15 +35,29 @@ public class ResourceHolder {
         Locale.setDefault(def);
         LOCALE = loc;
     }
-
+    public static ResourceBundle lookup(String name) {
+    	return ResourceBundle.getBundle(name, LOCALE);
+    }
     public ResourceHolder(String name) {
         ressourceBundle = ResourceBundle.getBundle(name, LOCALE);
     }
     public static ResourceHolder fromPackage(Class c) {
     	return new ResourceHolder(c.getPackage().getName());
     }
+    
+    public static String lookup(ResourceBundle bundle,
+    		String key, Object... o) {
+        String lookup = getString(bundle,key);
+        if (o != null && o.length > 0) {
+            MessageFormat mf = new MessageFormat(lookup, LOCALE);
+            return mf.format(o);
+        } else {
+            return lookup;
+        }
+    }
+    
     public String lookup(String key, Object... o) {
-        String lookup = getString(key);
+        String lookup = getString(ressourceBundle,key);
         if (o != null && o.length > 0) {
             MessageFormat mf = new MessageFormat(lookup, LOCALE);
             return mf.format(o);
@@ -53,13 +66,23 @@ public class ResourceHolder {
         }
     }
 
+    public static String lookupKey(ResourceBundle bundle, String key, Object... o) {
+        String lookup = getString(bundle,key);
+        if (o != null && o.length > 0) {
+            MessageFormat mf = new MessageFormat(lookup, LOCALE);
+            return mf.format(o);
+        } else {
+            return lookup;
+        }
+    }
+    
     public  String lookup(Class c, String key, Object... o) {
         return lookup(c.getCanonicalName() + "." + key.replace(' ', '_'), o);
     }
 
-    private  String getString(String key) {
+    private static  String getString(ResourceBundle bundle, String key) {
         try {
-            return ressourceBundle.getString(key);
+            return bundle.getString(key);
         } catch (MissingResourceException e) {
 //            System.out.println(key + " = TODO Fillout");
 

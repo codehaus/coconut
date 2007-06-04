@@ -4,6 +4,7 @@
 package org.coconut.internal.util;
 
 import java.lang.reflect.Constructor;
+import java.util.ResourceBundle;
 
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
@@ -15,7 +16,29 @@ import org.w3c.dom.Node;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class XmlUtil {
-	private final static ResourceHolder RH=ResourceHolder.fromPackage(XmlUtil.class);
+	//private final static ResourceHolder RH = ResourceHolder.fromPackage(XmlUtil.class);
+
+	public static <T> T getAttribute(Element e, String name, T defaultValue) {
+		if (!e.hasAttribute(name)) {
+			return defaultValue;
+		} else {
+			return (T) e.getAttribute(name);
+		}
+	}
+	public static boolean getAttributeBoolean(Element e, String name, boolean defaultValue) {
+		if (!e.hasAttribute(name)) {
+			return defaultValue;
+		} else {
+			return Boolean.parseBoolean(e.getAttribute(name));
+		}
+	}
+	public static String readValue(Element e, String defaultValue) {
+		if (e!=null) {
+			return e.getTextContent();
+		} else {
+			return defaultValue;
+		}
+	}
 	public static Element addAndSetText(Document doc, String name, Element parent,
 			String text) {
 		Element ee = doc.createElement(name);
@@ -59,59 +82,64 @@ public class XmlUtil {
 	}
 
 	public static boolean addAndsaveObject(Document doc, Element parent,
-			String elementName, String comment, Object o) {
+			String elementName, ResourceBundle bundle, String comment, Object o) {
 		if (o != null) {
 			Element e = add(doc, elementName, parent);
-			return saveObject(doc, e, comment, o);
+			return saveObject(doc, e, bundle, comment, o);
 
 		}
 		return false;
 	}
 
-	public static boolean saveObject(Document doc, Element e, String comment, Object o) {
-		return saveObject(doc, e, comment, "type", o);
+	public static boolean saveObject(Document doc, Element e, ResourceBundle bundle,
+			String comment, Object o) {
+		return saveObject(doc, e, bundle, comment, "type", o);
 	}
 
 	public static boolean saveObject(Document doc, Element parent, String tagName,
+			ResourceBundle bundle, String comment, Object o, Object defaultObject) {
+		if (o != defaultObject && o != null && !o.equals(defaultObject)) {
+			return saveObject(doc, add(doc, tagName, parent), bundle, comment, "type", o);
+		}
+		return false;
+	}
+
+	public static boolean saveObject(Document doc, Element e, ResourceBundle bundle,
 			String comment, Object o, Object defaultObject) {
 		if (o != defaultObject && o != null && !o.equals(defaultObject)) {
-			return saveObject(doc, add(doc, tagName, parent), comment, "type", o);
+			return saveObject(doc, e, bundle, comment, "type", o);
 		}
 		return false;
 	}
 
-	public static boolean saveObject(Document doc, Element e, String comment, Object o,
-			Object defaultObject) {
-		if (o != defaultObject && o != null && !o.equals(defaultObject)) {
-			return saveObject(doc, e, comment, "type", o);
-		}
-		return false;
-	}
-
-	public static boolean saveObject(Document doc, Element e, String comment,
-			String atrbName, Object o) {
+	public static boolean saveObject(Document doc, Element e, ResourceBundle bundle,
+			String comment, String atrbName, Object o) {
 		Constructor c = null;
 		try {
 			c = o.getClass().getConstructor(null);
 			e.setAttribute(atrbName, o.getClass().getName());
 			return true;
 		} catch (NoSuchMethodException e1) {
-			addComment(doc, comment, e.getParentNode(), o.getClass());
+			addComment(doc, bundle, comment, e.getParentNode(), o.getClass());
 			e.getParentNode().removeChild(e);
 		}
 		return false;
 	}
 
-	public static void addComment(Document doc, String comment, Node e, Object... o) {
-		String c = RH.lookup(XmlUtil.class, comment, o);
+	public static void addComment(Document doc, ResourceBundle bundle, String comment,
+			Node e, Object... o) {
+		String c=ResourceHolder.lookupKey(bundle, comment, o);
 		Comment eee = doc.createComment(c);
 		e.appendChild(eee);
 	}
-	public static void addComment(ResourceHolder rh,Document doc, String comment, Node e, Object... o) {
+
+	public static void addComment(ResourceHolder rh, Document doc, String comment,
+			Node e, Object... o) {
 		String c = rh.lookup(XmlUtil.class, comment, o);
 		Comment eee = doc.createComment(c);
 		e.appendChild(eee);
 	}
+
 	public static <T> T loadOptional(Element parent, String tagName, Class<T> type)
 			throws Exception {
 		Element e = getChild(tagName, parent);
