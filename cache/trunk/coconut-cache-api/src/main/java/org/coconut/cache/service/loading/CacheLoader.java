@@ -56,15 +56,9 @@ import org.coconut.core.AttributeMap;
  * Only the following methods on a Cache instance will trigger the cache loader:
  * {@link Cache#get(Object)}, {@link Cache#getAll(Collection)},
  * {@link Cache#load(Object)}, {@link Cache#loadAll(Collection)}.
- * <p>
- * By overriding {@link org.coconut.cache.util.AbstractCacheLoader} only the
- * {@link CacheLoader#load(Object) load} method needs to be implemented. Some cache
- * implementations might use this information for optimization.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id$
- * @see org.coconut.cache.util.AbstractCacheLoader
- * @see org.coconut.cache.store.CacheStore
  * @param <K>
  *            the type of keys used for loading values
  * @param <V>

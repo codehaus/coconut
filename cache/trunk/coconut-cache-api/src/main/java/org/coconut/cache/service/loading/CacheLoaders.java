@@ -57,10 +57,6 @@ public class CacheLoaders {
      * <p>
      * The returned CacheLoader is synchronized through <tt>this</tt>.
      * <p>
-     * If the specified cache loader is an instance of an
-     * {@link org.coconut.cache.util.AbstractCacheLoader} the returned cache loader will
-     * also be an instance of AbstractCacheLoader.
-     * <p>
      * The returned cache loader will be serializable if the specified cache loader is
      * serializable.
      * 
