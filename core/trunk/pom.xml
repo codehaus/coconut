@@ -57,4 +57,22 @@
 
     </plugins>
   </reporting>
+        <repositories>
+    <repository>
+    <id>codehaus.snapshots</id>
+    <name>Codehaus Snapshot Repository</name>
+    <url>http://snapshots.repository.codehaus.org/</url>
+    <releases>
+    <enabled>true</enabled>
+    </releases>
+    </repository>
+    <repository>
+    <id>codehaus.releases</id>
+    <name>Codehaus Repository</name>
+    <url>http://repository.codehaus.org/</url>
+    <releases>
+    <enabled>true</enabled>
+    </releases>
+    </repository>
+    </repositories>
 </project>
