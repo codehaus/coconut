@@ -37,7 +37,7 @@
       <dependency>
         <groupId>org.coconut.event</groupId>
         <artifactId>coconut-event-impl</artifactId>
-        <version>1.0-alpha1-SNAPSHOT</version>
+        <version>1.0-alpha3-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.coconut.test</groupId>
@@ -70,20 +70,20 @@
   <inceptionYear>2004</inceptionYear>
   <distributionManagement>
     <repository>
-      <id>coconut-release</id>
+      <id>codehaus.org</id>
       <name>Coconut's release repository</name>
-      <url>dav:https://dav.codehaus.org/repository/coconut/</url>
+      <url>dav:https://dav.codehaus.org/repository/coconut</url>
     </repository>
     <snapshotRepository>
-      <id>coconut-snapshot</id>
+      <id>codehaus.org</id>
       <name>Coconut's snapshot repository</name>
       <url>
-        dav:https://dav.codehaus.org/snapshots.repository/coconut/
+        dav:https://dav.codehaus.org/snapshots.repository/coconut
       </url>
     </snapshotRepository>
     <site>
-      <id>coconut-website</id>
-      <url>dav:https://dav.codehaus.org/coconut/</url>
+      <id>codehaus.org</id>
+      <url>dav:https://dav.codehaus.org/coconut</url>
     </site>
   </distributionManagement>
   <developers>
@@ -215,5 +215,6 @@
     </releases>
     </repository>
     </repositories>
+    
   -->
 </project>
