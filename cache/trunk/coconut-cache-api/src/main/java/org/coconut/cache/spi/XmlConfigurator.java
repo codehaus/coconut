@@ -112,9 +112,8 @@ public class XmlConfigurator {
         Element e = (Element) cache.getElementsByTagName(acsc.getServiceName()).item(0);
         if (e != null) {
             acsc.fromXML(e);
-            return acsc;
         }
-        return null;
+        return acsc;
     }
 
     protected <K, V> void readDocument(CacheConfiguration<K, V> base, Document doc)
@@ -155,7 +154,11 @@ public class XmlConfigurator {
             AbstractCacheServiceConfiguration<?, ?> configuration) throws Exception {
         Element ee = doc.createElement(configuration.getServiceName());
         configuration.toXML(doc, ee);
-        return ee;
+        if (ee.hasAttributes() || ee.hasChildNodes()) {
+            return ee;
+        } else {
+            return null;
+        }
     }
 
     protected void writeDocument(CacheConfiguration<?, ?> configuration, Document doc)
@@ -178,7 +181,10 @@ public class XmlConfigurator {
         }
         /* writeService other configurations */
         for (AbstractCacheServiceConfiguration<?, ?> p : cc.getConfigurations()) {
-            cache.appendChild(writeCacheService(doc, p));
+            Element n = writeCacheService(doc, p);
+            if (n != null) {
+                cache.appendChild(n);
+            }
         }
     }
 

@@ -220,7 +220,7 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
      */
     @Override
     protected void toXML(Document doc, Element parent) {
-        parent.setAttribute(XML_ENABLED_ATTRIBUTE, Boolean.toString(enabled));
+        XmlUtil.writeBooleanAttribute(parent, XML_ENABLED_ATTRIBUTE, enabled, false);
         add(includes, doc, parent, INCLUDES_TAG, INCLUDE_TAG);
         add(excludes, doc, parent, EXCLUDES_TAG, EXCLUDE_TAG);
     }

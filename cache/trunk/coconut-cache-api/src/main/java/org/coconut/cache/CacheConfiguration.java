@@ -120,14 +120,20 @@ public final class CacheConfiguration<K, V> {
         if (conf == null) {
             throw new NullPointerException("conf is null");
         }
-        for (AbstractCacheServiceConfiguration c : list) {
-            if (c.getClass().isAssignableFrom(conf.getClass())
-                    || conf.getClass().isAssignableFrom(c.getClass())) {
-                throw new IllegalArgumentException(
-                        "A service of the specified type is already registered");
-            }
-        }
+//        if (conf.getClass().getName().contains("Event")) {
+//            System.out.println("adding " + conf.getClass());
+//            new Exception().printStackTrace();
+//            }
+//        for (AbstractCacheServiceConfiguration c : list) {
+//            if (c.getClass().isAssignableFrom(conf.getClass())
+//                    || conf.getClass().isAssignableFrom(c.getClass())) {
+//                throw new IllegalArgumentException(
+//                        "A service of the specified type is already registered (type = "
+//                                + conf.getClass());
+//            }
+//        }
         list.add(conf);
+
         return conf;
     }
 

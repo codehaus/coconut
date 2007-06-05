@@ -79,11 +79,11 @@ public class UnsynchronizedCacheServiceManager extends
      */
     public void prestart() {
         if (status == ServiceStatus.NOTRUNNING) {
-            List<AbstractInternalCacheService> l = container
-                    .getComponentInstancesOfType(AbstractInternalCacheService.class);
+            List<AbstractCacheService> l = container
+                    .getComponentInstancesOfType(AbstractCacheService.class);
 
             List<ServiceInfo> info = new ArrayList<ServiceInfo>();
-            for (AbstractInternalCacheService a : l) {
+            for (AbstractCacheService a : l) {
                 info.add(new ServiceInfo(a));
             }
             for (ServiceInfo si : info) {
@@ -98,11 +98,11 @@ public class UnsynchronizedCacheServiceManager extends
     }
 
     static class ServiceInfo {
-        ServiceInfo(AbstractInternalCacheService service) {
+        ServiceInfo(AbstractCacheService service) {
             this.service = service;
         }
 
-        final AbstractInternalCacheService service;
+        final AbstractCacheService service;
 
         private ServiceStatus status = ServiceStatus.NOTRUNNING;
 

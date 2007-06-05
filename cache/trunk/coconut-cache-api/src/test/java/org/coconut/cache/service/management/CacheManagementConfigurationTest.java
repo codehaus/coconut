@@ -75,6 +75,7 @@ public class CacheManagementConfigurationTest {
         m.setDomain("foo.bar");
         m.setMBeanServer(MBeanServerFactory.createMBeanServer());
         m.setEnabled(true);
+        //System.out.println(m);
         m = reloadService(m);
         assertEquals("foo.bar", m.getDomain());
         assertEquals(DEFAULT.getMBeanServer(), m.getMBeanServer());

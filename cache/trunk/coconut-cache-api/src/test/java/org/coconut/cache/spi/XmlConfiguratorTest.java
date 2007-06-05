@@ -131,7 +131,9 @@ public class XmlConfiguratorTest {
         Element parent = doc.createElement(XmlConfigurator.CACHE_TAG); // dummy
         XmlConfigurator xml = new XmlConfigurator();
         Element e = xml.writeCacheService(doc, configuration);
-        parent.appendChild(e);
+        if (e != null) {
+            parent.appendChild(e);
+        }
         return (T) xml.readCacheService(doc, parent, (Class) configuration.getClass());
     }
 }

@@ -11,71 +11,91 @@ import java.util.Map;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.internal.spi.CacheHelper;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.AbstractCacheService;
+import org.coconut.core.Offerable;
 import org.coconut.management.ManagedGroup;
 import org.coconut.test.MockTestCase;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
+import org.jmock.integration.junit4.JUnit4Mockery;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
+@RunWith(JMock.class)
 public class UnsynchronizedCacheServiceTest {
 
-	@Test
-	public void testServiceConstructor() {
-		Cache<?,?> c = MockTestCase.mockDummy(Cache.class);
-		CacheConfiguration<?,?> conf = CacheConfiguration.create();
-		UnsynchronizedCacheServiceManager m = new UnsynchronizedCacheServiceManager(c,
-				null,conf);
-		assertEquals(ServiceStatus.NOTRUNNING, m.getCurrentState());
-		assertFalse(m.isRunning());
-	}
+    Mockery context = new JUnit4Mockery();
 
-	@Test
-	public void testServiceStartNoServices() {
-		Cache<?,?> c = MockTestCase.mockDummy(Cache.class);
-		CacheConfiguration<?,?> conf = CacheConfiguration.create();
-		UnsynchronizedCacheServiceManager m = new UnsynchronizedCacheServiceManager(c,
-		        null,conf);
-		m.prestart();
-		assertEquals(ServiceStatus.RUNNING, m.getCurrentState());
-		assertEquals(0, m.getPublicServices().size());
-	}
+    Cache<?, ?> cache;
 
-	@Test
-	public void testServiceStartDummyService() {
-		Cache<?,?> c = MockTestCase.mockDummy(Cache.class);
-		CacheConfiguration<?,?> conf = CacheConfiguration.create();
-		InternalCacheServiceManager m = new UnsynchronizedCacheServiceManager(c,
-		        null,conf);
-		m.registerService(CacheManagementService.class, MyManagementService.class);
-		m.prestart();
-		assertEquals(ServiceStatus.RUNNING, m.getCurrentState());
-		assertEquals(2, m.getPublicServices().size());
-		assertTrue(m.hasPublicService(Integer.class));
-		assertTrue(m.hasPublicService(String.class));
-		assertEquals(5, m.getPublicService(Integer.class));
-		assertEquals("jjj", m.getPublicService(String.class));
-	}
+    @Before
+    public void testToHandler() {
+        cache = context.mock(Cache.class);
+        context.checking(new Expectations() {
+            {
+               one(cache).getName();
+            }
+        });
+    }
 
-	public static class MyManagementService extends AbstractCacheService implements
-			CacheManagementService {
+    @Test
+    public void testServiceConstructor() {
+        CacheConfiguration<?, ?> conf = CacheConfiguration.create();
+        UnsynchronizedCacheServiceManager m = new UnsynchronizedCacheServiceManager(cache,
+               MockTestCase.mockDummy(CacheHelper.class), conf);
+        assertEquals(ServiceStatus.NOTRUNNING, m.getCurrentState());
+        assertFalse(m.isRunning());
+    }
 
-		/**
+    @Test
+    public void testServiceStartNoServices() {
+        CacheConfiguration<?, ?> conf = CacheConfiguration.create();
+        UnsynchronizedCacheServiceManager m = new UnsynchronizedCacheServiceManager(cache,
+                MockTestCase.mockDummy(CacheHelper.class), conf);
+        m.prestart();
+        assertEquals(ServiceStatus.RUNNING, m.getCurrentState());
+        assertEquals(0, m.getPublicServices().size());
+    }
+
+    @Test
+    public void testServiceStartDummyService() {
+        CacheConfiguration<?, ?> conf = CacheConfiguration.create();
+        InternalCacheServiceManager m = new UnsynchronizedCacheServiceManager(cache, MockTestCase.mockDummy(CacheHelper.class),
+                conf);
+        m.registerService(CacheManagementService.class, MyManagementService.class);
+        m.prestart();
+        assertEquals(ServiceStatus.RUNNING, m.getCurrentState());
+        assertEquals(2, m.getPublicServices().size());
+        assertTrue(m.hasPublicService(Integer.class));
+        assertTrue(m.hasPublicService(String.class));
+        assertEquals(5, m.getPublicService(Integer.class));
+        assertEquals("jjj", m.getPublicService(String.class));
+    }
+
+    public static class MyManagementService extends AbstractCacheService implements
+            CacheManagementService {
+
+        /**
          * @param name
          */
-		public MyManagementService() {
-			super("myService");
-		}
+        public MyManagementService() {
+            super("myService");
+        }
 
-		/**
-		 * @see org.coconut.cache.service.management.CacheManagementService#getRoot()
-		 */
-		public ManagedGroup getRoot() {
-			return null;
-		}
+        /**
+         * @see org.coconut.cache.service.management.CacheManagementService#getRoot()
+         */
+        public ManagedGroup getRoot() {
+            return null;
+        }
 
         @Override
         public void start(CacheConfiguration<?, ?> configuration,
@@ -83,5 +103,5 @@ public class UnsynchronizedCacheServiceTest {
             serviceMap.put(Integer.class, 5);
             serviceMap.put(String.class, "jjj");
         }
-	}
+    }
 }

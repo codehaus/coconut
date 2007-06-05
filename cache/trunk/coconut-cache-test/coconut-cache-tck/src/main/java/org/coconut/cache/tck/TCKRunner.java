@@ -11,7 +11,6 @@ import java.util.List;
 import net.jcip.annotations.ThreadSafe;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.defaults.UnsynchronizedCache;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
@@ -59,8 +58,15 @@ public class TCKRunner extends Runner {
 
     private CompositeRunner composite;
 
-// TODO Remove
-    static Class<? extends Cache> tt = UnsynchronizedCache.class;
+    static Class<? extends Cache> tt;
+
+    static {
+        try {
+            tt = (Class<? extends Cache>) Class.forName("org.coconut.cache.defaults.UnsynchronizedCache");
+        } catch (ClassNotFoundException e) {
+            // ignore
+        }
+    }
 
     @SuppressWarnings("unchecked")
     public TCKRunner(Class<? extends Cache> klass) throws Throwable {

@@ -20,6 +20,7 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
+import org.coconut.internal.util.XmlUtil;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedGroupVisitor;
 import org.w3c.dom.Document;
@@ -231,7 +232,7 @@ public class CacheManagementConfiguration<K, V> extends
      */
     @Override
     protected void toXML(Document doc, Element base) {
-        base.setAttribute(XML_ENABLED_ATTRIBUTE, Boolean.toString(enabled));
+        XmlUtil.writeBooleanAttribute(base, XML_ENABLED_ATTRIBUTE, enabled, false);
 
         /* Domain */
         if (!domain.equals(CacheMXBean.DEFAULT_JMX_DOMAIN)) {
