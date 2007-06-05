@@ -93,4 +93,23 @@
     <module>coconut-cache-policies</module>
     <module>coconut-cache-test</module>
   </modules>
+  
+      <repositories>
+    <repository>
+    <id>apache.snapshots</id>
+    <name>Codehaus Snapshot Repository</name>
+    <url>http://snapshots.repository.codehaus.org/</url>
+    <releases>
+    <enabled>true</enabled>
+    </releases>
+    </repository>
+    <repository>
+    <id>apache.snapshots</id>
+    <name>Codehaus Repository</name>
+    <url>http://repository.codehaus.org/</url>
+    <releases>
+    <enabled>true</enabled>
+    </releases>
+    </repository>
+    </repositories>
 </project>
