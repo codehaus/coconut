@@ -508,6 +508,9 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
          */
         public void putAll(Map<? extends K, ? extends V> keyValues,
                 Map<? extends K, AttributeMap> attributes) {
+            for (Map.Entry<? extends K,? extends V> e : keyValues.entrySet()) {
+                put(e.getKey(),e.getValue(), attributes.get(e.getKey()));
+            }
         // TODO Auto-generated method stub
 
         }
