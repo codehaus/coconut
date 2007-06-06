@@ -7,7 +7,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses( { BasicCache.class, BasicMap.class, ClearRemove.class,
         ConcurrentMap.class, Constructors.class, Put.class, EntrySet.class,
         EntrySetModifying.class, KeySet.class, KeySetModifying.class, Values.class,
-        ValuesModifying.class, })
+        ValuesModifying.class })
 public class CoreSuite {
 
 }

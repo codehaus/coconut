@@ -3,7 +3,6 @@
  */
 package org.coconut.cache.tck;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,10 +16,7 @@ import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.spi.CacheServiceSupport;
 import org.coconut.cache.tck.core.CoreSuite;
 import org.coconut.cache.tck.eviction.CacheEntryToPolicy;
-import org.coconut.cache.tck.eviction.SerializablePolicyEviction;
 import org.coconut.cache.tck.eviction.SimplePolicyEviction;
-import org.coconut.cache.tck.other.NoSerialization;
-import org.coconut.cache.tck.other.Serialization;
 import org.coconut.cache.tck.service.event.EventSuite;
 import org.coconut.cache.tck.service.expiration.ExpirationSuite;
 import org.coconut.cache.tck.service.loading.LoadingSuite;
@@ -89,12 +85,6 @@ public class CacheTCKRunner extends Runner {
         }
         if (services.contains(CacheEventService.class)) {
             composite.add(new Suite(EventSuite.class));
-        }
-        if (Serializable.class.isAssignableFrom(tt)) {
-            composite.add(new TestClassRunner(Serialization.class));
-            composite.add(new TestClassRunner(SerializablePolicyEviction.class));
-        } else {
-            composite.add(new TestClassRunner(NoSerialization.class));
         }
 
         composite.add(new TestClassRunner(CacheEntryToPolicy.class));

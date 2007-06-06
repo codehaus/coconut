@@ -13,7 +13,6 @@ import net.jcip.annotations.ThreadSafe;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
-import org.coconut.cache.defaults.AbstractCache;
 
 /**
  * This class gives access to a cache or cache manager as a singleton.
@@ -30,8 +29,7 @@ import org.coconut.cache.defaults.AbstractCache;
 public final class CacheSingleton {
     /**
      * The <tt>default</tt> location of the cache configuration file which is used if no
-     * cache has been set programmatically using {@link #setSingleCache(Cache)},
-     * {@link #addCache(AbstractCache)} or {@link #addCache(Cache, String)}.
+     * cache has been set programmatically using {@link #setSingleCache(Cache)}.
      */
     public final static String DEFAULT_CACHE_RESSOURCE = "coconut-cache.xml";
 
