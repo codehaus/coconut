@@ -23,6 +23,7 @@ class LastAccessExample {
         conf.management().setEnabled(true);
         conf.expiration().setExpirationFilter(new LastAccessFilter<String, String>());
         UnsynchronizedCache<String, String> cache = conf.newInstance(UnsynchronizedCache.class);
+        cache.getAllServices();
         Thread.sleep(1000000);
     }
 

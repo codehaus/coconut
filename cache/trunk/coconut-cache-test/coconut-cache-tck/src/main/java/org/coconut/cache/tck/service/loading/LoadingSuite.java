@@ -5,6 +5,4 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses( { Loading.class, FutureLoading.class })
-public class LoadingSuite {
-
-}
+public class LoadingSuite {}

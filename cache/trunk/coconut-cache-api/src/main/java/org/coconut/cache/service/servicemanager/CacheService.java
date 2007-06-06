@@ -39,9 +39,17 @@ public interface CacheService {
      * @param cache
      *            the cache where this service is registered
      */
-    void start(Cache<?, ?> cache);
+    void start(Map<Class<?>, Object> allServiceMap);
+
+    /**
+     * All services has started succesfully, and the cache is ready for use.
+     * 
+     * @param cache
+     */
+    void started(Cache<?, ?> cache);
 
     void shutdown(Executor e);
+
     // void shutdownNow(Cache<?, ?> c);
 
     /**

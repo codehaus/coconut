@@ -3,17 +3,20 @@ package org.coconut.cache.tck;
 import java.util.HashMap;
 import java.util.Map;
 
+import junit.framework.Assert;
+
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
+import org.coconut.cache.service.management.CacheMXBean;
+import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.statistics.CacheHitStat;
+import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.core.Clock.DeterministicClock;
 import org.coconut.test.CollectionUtils;
 import org.junit.Before;
-
-import junit.framework.Assert;
 
 public class AbstractCacheTCKTestBundle extends Assert {
     protected Cache<Integer, String> c;
@@ -40,6 +43,10 @@ public class AbstractCacheTCKTestBundle extends Assert {
     @SuppressWarnings("unchecked")
     protected CacheConfiguration<Integer, String> newConf() {
         return CacheConfiguration.create();
+    }
+
+    protected Cache<Integer, String> newCache(AbstractCacheServiceConfiguration<?, ?> conf) {
+        return (Cache) conf.c().newInstance(CacheTCKRunner.tt);
     }
 
     protected Cache<Integer, String> newCache(CacheConfiguration<?, ?> conf) {
@@ -218,5 +225,13 @@ public class AbstractCacheTCKTestBundle extends Assert {
 
     protected CacheLoadingService<Integer, String> loading() {
         return c.getService(CacheLoadingService.class);
+    }
+
+    protected CacheManagementService management() {
+        return c.getService(CacheManagementService.class);
+    }
+
+    protected CacheMXBean managementMXBean() {
+        return c.getService(CacheMXBean.class);
     }
 }

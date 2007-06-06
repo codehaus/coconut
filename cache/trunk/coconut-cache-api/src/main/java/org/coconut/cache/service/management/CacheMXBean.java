@@ -39,7 +39,6 @@ public interface CacheMXBean {
      * 
      * @return the current number of elements in the cache
      */
-    @ManagedAttribute(description = "The number of elements contained in the cache")
     int getSize();
 
     /**
@@ -49,7 +48,6 @@ public interface CacheMXBean {
      * 
      * @return the current number of elements in the cache
      */
-    @ManagedAttribute(description = "The total size of all elements contained in the cache")
     long getCapacity();
 
     /**
@@ -59,7 +57,6 @@ public interface CacheMXBean {
      * 
      * @return the name of the cache
      */
-    @ManagedAttribute(description = "The name of the cache")
     String getName();
 
     /**
@@ -68,7 +65,6 @@ public interface CacheMXBean {
      * Calling this method is equivalent to calling
      * {@link org.coconut.cache.Cache#clear()}.
      */
-    @ManagedOperation(description = "Clears the cache")
     void clear();
 
     /**
@@ -77,6 +73,5 @@ public interface CacheMXBean {
      * Calling this method is equivalent to calling
      * {@link org.coconut.cache.Cache#evict()}.
      */
-    @ManagedOperation(description = "Evicts expired entries and performs housekeeping on the cache")
     void evict();
 }

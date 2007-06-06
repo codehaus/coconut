@@ -547,6 +547,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
     }
 
     public Map<Class<?>, Object> getAllServices() {
+        checkStarted();
         return serviceManager.getAllPublicServices();
     }
 }

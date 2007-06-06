@@ -3,6 +3,7 @@
  */
 package org.coconut.cache.internal.service.management;
 
+import java.lang.management.ManagementFactory;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
@@ -81,7 +82,9 @@ public class DefaultCacheManagementService extends AbstractCacheManagementServic
         }
 
         MBeanServer server = managementConfiguration.getMBeanServer();
-
+        if (server == null) {
+            server = ManagementFactory.getPlatformMBeanServer();
+        }
         if (managementConfiguration.getRegistrant() == null) {
             registrant = Managements.register(server, domain, "name", "service", "group");
         } else {
@@ -100,7 +103,6 @@ public class DefaultCacheManagementService extends AbstractCacheManagementServic
     public ManagedGroup getRoot() {
         if (isEnabled) {
             // TODO im not sure we need to lazy start
-            manager.lazyStart(false);
             return group;
         } else {
             throw new UnsupportedOperationException(
@@ -140,7 +142,7 @@ public class DefaultCacheManagementService extends AbstractCacheManagementServic
      * @see org.coconut.cache.service.servicemanager.AbstractCacheService#start(org.coconut.cache.Cache)
      */
     @Override
-    public void start(Cache<?, ?> cache) {
+    public void started(Cache<?, ?> cache) {
         if (isEnabled) {
             try {
                 registrant.visitManagedGroup(group);

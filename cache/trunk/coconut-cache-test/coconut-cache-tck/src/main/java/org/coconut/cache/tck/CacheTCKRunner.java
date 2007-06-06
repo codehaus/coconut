@@ -13,6 +13,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
+import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.spi.CacheServiceSupport;
 import org.coconut.cache.tck.core.CoreSuite;
 import org.coconut.cache.tck.eviction.CacheEntryToPolicy;
@@ -20,6 +21,7 @@ import org.coconut.cache.tck.eviction.SimplePolicyEviction;
 import org.coconut.cache.tck.service.event.EventSuite;
 import org.coconut.cache.tck.service.expiration.ExpirationSuite;
 import org.coconut.cache.tck.service.loading.LoadingSuite;
+import org.coconut.cache.tck.service.management.ManagementSuite;
 import org.junit.Test;
 import org.junit.internal.runners.CompositeRunner;
 import org.junit.internal.runners.InitializationError;
@@ -86,7 +88,9 @@ public class CacheTCKRunner extends Runner {
         if (services.contains(CacheEventService.class)) {
             composite.add(new Suite(EventSuite.class));
         }
-
+        if (services.contains(CacheManagementService.class)) {
+            composite.add(new Suite(ManagementSuite.class));
+        }
         composite.add(new TestClassRunner(CacheEntryToPolicy.class));
         composite.add(new TestClassRunner(SimplePolicyEviction.class));
     }

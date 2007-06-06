@@ -87,11 +87,14 @@ public class UnsynchronizedCacheServiceManager extends
                 info.add(new ServiceInfo(a));
             }
             for (ServiceInfo si : info) {
-                si.start(conf);
+                si.initialize(conf);
+                publicServices.putAll(si.getPublicService());
+            }
+            for (ServiceInfo si : info) {
+                si.start(publicServices);
             }
             for (ServiceInfo si : info) {
                 si.started(cache);
-                publicServices.putAll(si.getPublicService());
             }
             status = ServiceStatus.RUNNING;
         }
@@ -108,12 +111,16 @@ public class UnsynchronizedCacheServiceManager extends
 
         private final Map<Class<?>, Object> published = new HashMap<Class<?>, Object>();
 
-        void start(CacheConfiguration conf) {
+        void initialize(CacheConfiguration conf) {
             service.initialize(conf, published);
         }
 
-        void started(Cache c) {
+        void start(Map c) {
             service.start(c);
+        }
+
+        void started(Cache c) {
+            service.started(c);
         }
 
         Map<Class<?>, Object> getPublicService() {

@@ -52,7 +52,7 @@ public abstract class AbstractCacheService implements CacheService {
 // }
 
     /**
-     * @see org.coconut.cache.service.servicemanager.CacheLifecycle#start(org.coconut.cache.CacheConfiguration)
+     * @see org.coconut.cache.service.servicemanager.CacheLifecycle#initialize(org.coconut.cache.CacheConfiguration)
      */
     public void initialize(CacheConfiguration<?, ?> configuration,
             Map<Class<?>, Object> serviceMap) {
@@ -62,10 +62,15 @@ public abstract class AbstractCacheService implements CacheService {
     /**
      * @see org.coconut.cache.service.servicemanager.CacheService#start(org.coconut.cache.Cache)
      */
-    public void start(Cache<?, ?> cache) {
+    public void start(Map<Class<?>, Object> allServices) {
     // do nothing
     }
-
+    /**
+     * @see org.coconut.cache.service.servicemanager.CacheService#start(org.coconut.cache.Cache)
+     */
+    public void started(Cache<?, ?> cache) {
+    // do nothing
+    }
     /**
      * @see org.coconut.cache.service.servicemanager.CacheService#shutdown(java.util.concurrent.Executor)
      */
