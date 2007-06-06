@@ -13,7 +13,7 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.tck.CommonCacheTestBundle;
-import org.coconut.cache.tck.util.IntegerToStringLoader;
+import org.coconut.cache.tck.testutil.IntegerToStringLoader;
 import org.junit.Test;
 
 /**

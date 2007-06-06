@@ -10,8 +10,7 @@ import static org.coconut.test.CollectionUtils.M3;
 import static org.coconut.test.CollectionUtils.M4;
 import static org.coconut.test.CollectionUtils.M5;
 
-import org.coconut.cache.tck.util.CacheEntryFilter;
-import org.junit.Before;
+import org.coconut.cache.tck.testutil.CacheEntryFilter;
 import org.junit.Test;
 
 /**
@@ -21,13 +20,7 @@ import org.junit.Test;
  * @version $Id$
  */
 @SuppressWarnings("unchecked")
-public class ExpirationEvict extends ExpirationTestBundle {
-
-    @Before
-    public void setUpCache() {
-        c = newCache(newConf().setClock(clock));
-        fillItUp();
-    }
+public class ExpirationEvict extends AbstractExpirationTestBundle {
 
     private void fillItUp() {
         put(M1, 2);
@@ -38,8 +31,7 @@ public class ExpirationEvict extends ExpirationTestBundle {
     }
 
     /**
-     * Test that the expiration status of an element is checked when we call
-     * evict.
+     * Test that the expiration status of an element is checked when we call evict.
      */
     @Test
     public void evictSingleElement() {
@@ -56,11 +48,12 @@ public class ExpirationEvict extends ExpirationTestBundle {
     }
 
     /**
-     * Simple tests that just tests a lot of elements each expiring at different
-     * times.
+     * Simple tests that just tests a lot of elements each expiring at different times.
      */
     @Test
     public void evictManyElements() {
+        c = newCache(newConf().setClock(clock));
+        fillItUp();
         assertSize(5);
 
         incTime(); // time1
@@ -74,7 +67,6 @@ public class ExpirationEvict extends ExpirationTestBundle {
         incTime(); // time3
         evict();
         assertSize(3);
-        
 
         incTime(); // time4
         evict();

@@ -17,7 +17,7 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.event.CacheEntryEvent;
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.event.CacheEventService;
-import org.coconut.cache.tck.AbstractCacheTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
 import org.coconut.core.EventProcessor;
 import org.coconut.event.EventSubscription;
 import org.coconut.filter.Filter;
@@ -28,7 +28,7 @@ import org.junit.Before;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class AbstractEventTestBundle extends AbstractCacheTestBundle {
+public class AbstractEventTestBundle extends AbstractCacheTCKTestBundle {
 
     static final CacheConfiguration<Integer, String> INCLUDE_ALL_CONFIGURATION;
     

@@ -10,7 +10,7 @@ import java.util.concurrent.Future;
 import org.junit.Test;
 
 
-public class FutureLoading extends LoadingTestBundle {
+public class FutureLoading extends AbstractLoadingTestBundle {
 
     /**
      * cancel of a completed loading fails
@@ -21,7 +21,7 @@ public class FutureLoading extends LoadingTestBundle {
     @Test
     public void testCancelAfterRun() throws InterruptedException,
             ExecutionException {
-        Future<?> task = service.load(0);
+        Future<?> task = loading().load(0);
         task.get();
         assertFalse(task.cancel(false));
         assertTrue(task.isDone());
@@ -37,7 +37,7 @@ public class FutureLoading extends LoadingTestBundle {
     @Test
     public void testCancelAfterRun2() throws InterruptedException,
             ExecutionException {
-        Future<?> task = service.load(0);
+        Future<?> task = loading().load(0);
         task.get();
         assertFalse(task.cancel(true));
         assertTrue(task.isDone());

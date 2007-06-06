@@ -9,7 +9,7 @@ import static org.coconut.test.CollectionUtils.M3;
 
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.tck.CommonCacheTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,11 +18,11 @@ import org.junit.Test;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 @SuppressWarnings("unchecked")
-public class ExpirationWithDefaultTimeout extends CommonCacheTestBundle {
+public class ExpirationWithDefaultTimeout extends AbstractCacheTCKTestBundle {
     @Before
     public void setUpCaches() {
         c = newCache(newConf().setClock(clock).expiration().setDefaultTimeToLive(10,
-                TimeUnit.NANOSECONDS).c());
+                TimeUnit.MILLISECONDS).c());
     }
 
     /**
@@ -31,6 +31,7 @@ public class ExpirationWithDefaultTimeout extends CommonCacheTestBundle {
     @Test
     public void simpleExpirationPut() {
         put(M1);
+        assertGet(M1);
         incTime(5);
         assertGet(M1);
         incTime(5);

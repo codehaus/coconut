@@ -11,7 +11,7 @@ import static org.coconut.test.CollectionUtils.M5;
 
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.tck.util.CacheEntryFilter;
+import org.coconut.cache.tck.testutil.CacheEntryFilter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,7 +22,7 @@ import org.junit.Test;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 @SuppressWarnings("unchecked")
-public class ExpirationFilterBased extends ExpirationTestBundle {
+public class ExpirationFilterBased extends AbstractExpirationTestBundle {
 
     private CacheEntryFilter f;
 

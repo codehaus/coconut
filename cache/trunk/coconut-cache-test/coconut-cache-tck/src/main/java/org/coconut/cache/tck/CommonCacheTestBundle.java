@@ -13,7 +13,7 @@ import org.junit.Before;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Header$
  */
-public abstract class CommonCacheTestBundle extends AbstractCacheTestBundle {
+public abstract class CommonCacheTestBundle extends AbstractCacheTCKTestBundle {
     protected Cache<Integer, String> c0;
 
     protected Cache<Integer, String> c1;

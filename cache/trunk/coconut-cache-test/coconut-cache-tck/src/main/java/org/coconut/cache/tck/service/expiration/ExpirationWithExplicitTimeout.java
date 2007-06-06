@@ -11,6 +11,7 @@ import static org.coconut.test.CollectionUtils.M3;
 import static org.coconut.test.CollectionUtils.M4;
 import static org.coconut.test.CollectionUtils.M5;
 
+import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,16 +19,16 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class ExpirationWithExplicitTimeout extends ExpirationTestBundle {
+public class ExpirationWithExplicitTimeout extends AbstractExpirationTestBundle {
     @Before
     public void setUpCaches() {
         c = newCache(newConf().setClock(clock));
     }
-    
+
     /**
-     * Simple tests that just tests a lot of elements each expiring at different
-     * times. size() is normally a constant time operation so we need to 'touch'
-     * all elements by calling getAll(all elements) before they expired.
+     * Simple tests that just tests a lot of elements each expiring at different times.
+     * size() is normally a constant time operation so we need to 'touch' all elements by
+     * calling getAll(all elements) before they expired.
      */
     @Test
     public void manyElements() {
@@ -61,10 +62,10 @@ public class ExpirationWithExplicitTimeout extends ExpirationTestBundle {
         c.getAll(M1_TO_M5_KEY_SET);
         assertSize(0);
     }
-    
+
     /**
-     * Tests that when inserting (put) an element that already exist in the
-     * cache the expiration time of that element is overridden.
+     * Tests that when inserting (put) an element that already exist in the cache the
+     * expiration time of that element is overridden.
      */
     @Test
     public void overrideEviction() {
@@ -80,12 +81,13 @@ public class ExpirationWithExplicitTimeout extends ExpirationTestBundle {
     }
 
     /**
-     * Tests that the expiration of putAll (with default timeout) are done
-     * according to the relative time at insertation and not from 0.
+     * Tests that the expiration of putAll (with default timeout) are done according to
+     * the relative time at insertation and not from 0.
      */
-    @Test
+    //@Test()
+    //TODO enable
     public void relativePutAllDefaultTimeOut() {
-        c = c0;
+        c = newCache(0);
         putAll(M1, M2);
 
         incTime(5);
@@ -102,6 +104,7 @@ public class ExpirationWithExplicitTimeout extends ExpirationTestBundle {
         incTime(1);
         assertNullGet(M3, M4);
     }
+
     @Test
     public void mapOperationsDoNotTimeout() {
         put(M1, 2);

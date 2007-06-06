@@ -10,7 +10,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.tck.CommonCacheTestBundle;
-import org.coconut.cache.tck.util.IntegerToStringLoader;
+import org.coconut.cache.tck.testutil.IntegerToStringLoader;
 import org.coconut.test.CollectionUtils;
 import org.junit.Before;
 
@@ -31,18 +31,18 @@ public class ExpirationTestBundle extends CommonCacheTestBundle {
         c = newCache(cc.expiration().c());
     }
 
-    public CacheExpirationService<Integer, String> s() {
-        return c.getService(CacheExpirationService.class);
-    }
 
     public void assertNoLoadingService() {
         assertNotNull(c.getService(CacheExpirationService.class));
         assertNull(noExpiration.getService(CacheExpirationService.class));
     }
 
+    public CacheExpirationService<Integer, String> expiration() {
+        return c.getService(CacheExpirationService.class);
+    }
     protected void putAll(long timeout, TimeUnit unit,
             Map.Entry<Integer, String>... entries) {
-        s().putAll(CollectionUtils.asMap(entries), timeout, unit);
+        expiration().putAll(CollectionUtils.asMap(entries), timeout, unit);
     }
 
     protected void putAll(long timeout, Map.Entry<Integer, String>... entries) {
@@ -50,11 +50,11 @@ public class ExpirationTestBundle extends CommonCacheTestBundle {
     }
 
     protected String put(Map.Entry<Integer, String> e, long timeout, TimeUnit unit) {
-        return s().put(e.getKey(), e.getValue(), timeout, unit);
+        return expiration().put(e.getKey(), e.getValue(), timeout, unit);
     }
 
     protected String put(Map.Entry<Integer, String> e, long timeout) {
-        return s().put(e.getKey(), e.getValue(), timeout, TimeUnit.MILLISECONDS);
+        return expiration().put(e.getKey(), e.getValue(), timeout, TimeUnit.MILLISECONDS);
     }
 
 }

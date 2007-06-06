@@ -9,7 +9,7 @@ import static org.coconut.test.CollectionUtils.M2;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.tck.other.CacheEntryBundle;
-import org.coconut.cache.tck.service.loading.LoadingTestBundle;
+import org.coconut.cache.tck.service.loading.AbstractLoadingTestBundle;
 import org.junit.Test;
 
 /**
@@ -26,7 +26,7 @@ public class LoadingCacheEntry extends CacheEntryBundle {
         CacheConfiguration<Integer, String> conf = CacheConfiguration.create();
         conf.setClock(clock);
         conf.loading().setLoader(
-                LoadingTestBundle.DEFAULT_LOADER);
+                AbstractLoadingTestBundle.DEFAULT_LOADER);
         c = newCache(conf);
         clock.setTimestamp(10);
         get(M1);
@@ -38,7 +38,7 @@ public class LoadingCacheEntry extends CacheEntryBundle {
         CacheConfiguration<Integer, String> conf = CacheConfiguration.create();
         conf.setClock(clock);
         conf.loading().setLoader(
-                LoadingTestBundle.DEFAULT_LOADER);
+                AbstractLoadingTestBundle.DEFAULT_LOADER);
         c = newCache(conf);
         clock.setTimestamp(10);
         get(M1);
@@ -50,7 +50,7 @@ public class LoadingCacheEntry extends CacheEntryBundle {
         CacheConfiguration<Integer, String> conf = CacheConfiguration.create();
         conf.setClock(clock);
         conf.loading().setLoader(
-                LoadingTestBundle.DEFAULT_LOADER);
+                AbstractLoadingTestBundle.DEFAULT_LOADER);
         c = newCache(conf);
         clock.setTimestamp(10);
         get(M1);

@@ -23,7 +23,7 @@ import org.junit.Test;
  * @version $Id$
  */
 @SuppressWarnings("unchecked")
-public class Loading extends LoadingTestBundle {
+public class Loading extends AbstractLoadingTestBundle {
 
     @Test
     public void testSimpleLoading() {
@@ -99,7 +99,7 @@ public class Loading extends LoadingTestBundle {
 
     @Test(expected = NullPointerException.class)
     public void testLoadNullPointer() {
-        service.load(null);
+        loading().load(null);
     }
 
 //    @Test
@@ -116,7 +116,7 @@ public class Loading extends LoadingTestBundle {
 
     @Test(expected = NullPointerException.class)
     public void testLoadAllNullPointer() {
-        service.loadAll((Map) null);
+        loading().loadAll((Map) null);
     }
 
 //    /**

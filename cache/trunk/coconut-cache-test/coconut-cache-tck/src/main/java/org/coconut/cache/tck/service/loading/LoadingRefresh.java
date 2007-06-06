@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.cache.tck.service.expiration;
+package org.coconut.cache.tck.service.loading;
 
 import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M2;
@@ -10,14 +10,14 @@ import static org.coconut.test.CollectionUtils.M4;
 
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.tck.util.AsyncIntegerToStringLoader;
+import org.coconut.cache.tck.testutil.AsyncIntegerToStringLoader;
 import org.junit.Test;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class EvictRefresh extends ExpirationTestBundle {
+public class LoadingRefresh extends AbstractLoadingTestBundle {
     /**
      * Test refresh window
      */
@@ -26,11 +26,11 @@ public class EvictRefresh extends ExpirationTestBundle {
     public void refreshWindowSingleElement() throws Exception {
         AsyncIntegerToStringLoader loader = new AsyncIntegerToStringLoader();
         c = newCache(newConf().setClock(clock).loading().setDefaultRefreshTime(2,
-                TimeUnit.NANOSECONDS).setLoader(loader).c());
-        s().put(M1.getKey(), "AB1", 2, TimeUnit.NANOSECONDS);
-        s().put(M2.getKey(), "AB2", 3, TimeUnit.NANOSECONDS);
-        s().put(M3.getKey(), "AB3", 4, TimeUnit.NANOSECONDS);
-        s().put(M4.getKey(), "AB4", 7, TimeUnit.NANOSECONDS);
+                TimeUnit.MILLISECONDS).setLoader(loader).c());
+        expiration().put(M1.getKey(), "AB1", 2, TimeUnit.MILLISECONDS);
+        expiration().put(M2.getKey(), "AB2", 3, TimeUnit.MILLISECONDS);
+        expiration().put(M3.getKey(), "AB3", 4, TimeUnit.MILLISECONDS);
+        expiration().put(M4.getKey(), "AB4", 7, TimeUnit.MILLISECONDS);
 
         incTime(); // time is one
         getAll(M1, M2, M3, M4);
@@ -52,10 +52,10 @@ public class EvictRefresh extends ExpirationTestBundle {
         AsyncIntegerToStringLoader loader = new AsyncIntegerToStringLoader();
         c = newCache(newConf().setClock(clock).loading().setDefaultRefreshTime(2,
                 TimeUnit.NANOSECONDS).setLoader(loader).c());
-        s().put(M1.getKey(), "AB1", 2, TimeUnit.NANOSECONDS);
-        s().put(M2.getKey(), "AB2", 3, TimeUnit.NANOSECONDS);
-        s().put(M3.getKey(), "AB3", 4, TimeUnit.NANOSECONDS);
-        s().put(M4.getKey(), "AB4", 7, TimeUnit.NANOSECONDS);
+        expiration().put(M1.getKey(), "AB1", 2, TimeUnit.NANOSECONDS);
+        expiration().put(M2.getKey(), "AB2", 3, TimeUnit.NANOSECONDS);
+        expiration().put(M3.getKey(), "AB3", 4, TimeUnit.NANOSECONDS);
+        expiration().put(M4.getKey(), "AB4", 7, TimeUnit.NANOSECONDS);
 
         incTime(); // time is one
         // test no refresh on get
@@ -73,10 +73,10 @@ public class EvictRefresh extends ExpirationTestBundle {
         AsyncIntegerToStringLoader loader = new AsyncIntegerToStringLoader();
         c = newCache(newConf().setClock(clock).loading().setDefaultRefreshTime(2,
                 TimeUnit.NANOSECONDS).setLoader(loader).c());
-        s().put(M1.getKey(), "AB1", 2, TimeUnit.NANOSECONDS);
-        s().put(M2.getKey(), "AB2", 3, TimeUnit.NANOSECONDS);
-        s().put(M3.getKey(), "AB3", 4, TimeUnit.NANOSECONDS);
-        s().put(M4.getKey(), "AB4", 7, TimeUnit.NANOSECONDS);
+        expiration().put(M1.getKey(), "AB1", 2, TimeUnit.NANOSECONDS);
+        expiration().put(M2.getKey(), "AB2", 3, TimeUnit.NANOSECONDS);
+        expiration().put(M3.getKey(), "AB3", 4, TimeUnit.NANOSECONDS);
+        expiration().put(M4.getKey(), "AB4", 7, TimeUnit.NANOSECONDS);
 
         incTime(); // time is one
         // test no refresh on get
