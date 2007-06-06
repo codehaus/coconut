@@ -41,6 +41,7 @@ public interface ManagedGroup {
      */
 	ManagedGroup add(Object o);
 
+	Collection<?> getObjects();
 	/**
      * Adds a child group.
      * 
@@ -103,5 +104,5 @@ public interface ManagedGroup {
      * 
      * @throws Exception
      */
-	void unregisterAll() throws JMException;
+	void unregister() throws JMException;
 }
