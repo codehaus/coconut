@@ -3,7 +3,9 @@
  */
 package org.coconut.cache.internal.service.management;
 
+import org.coconut.cache.Cache;
 import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
+import org.coconut.cache.service.management.CacheMXBean;
 import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.management.ManagedGroup;
@@ -29,6 +31,9 @@ public abstract class AbstractCacheManagementService extends AbstractInternalCac
          * @param name
          */
 		public DelegatedManagementService(CacheManagementService service) {
+		    if (service == null) {
+                throw new NullPointerException("service is null");
+            }
 			this.delegate = service;
 		}
 
@@ -38,5 +43,36 @@ public abstract class AbstractCacheManagementService extends AbstractInternalCac
 		public ManagedGroup getRoot() {
 			return delegate.getRoot();
 		}
+	}
+	
+	static class CacheMXBeanWrapper implements CacheMXBean {
+	    private final Cache<?,?> cache;
+
+        CacheMXBeanWrapper(Cache<?, ?> cache) {
+            if (cache == null) {
+                throw new NullPointerException("cache is null");
+            }
+            this.cache = cache;
+        }
+
+        public void clear() {
+            cache.clear();
+        }
+
+        public void evict() {
+            cache.evict();
+        }
+
+        public long getCapacity() {
+            return cache.getCapacity();
+        }
+
+        public String getName() {
+            return cache.getName();
+        }
+
+        public int getSize() {
+            return cache.size();
+        }
 	}
 }

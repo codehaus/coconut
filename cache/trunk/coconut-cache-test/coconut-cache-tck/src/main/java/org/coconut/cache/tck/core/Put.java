@@ -12,7 +12,7 @@ import static org.coconut.test.CollectionUtils.M5;
 import static org.coconut.test.CollectionUtils.MNAN1;
 import static org.coconut.test.CollectionUtils.asMap;
 
-import org.coconut.cache.tck.CacheTestBundle;
+import org.coconut.cache.tck.CommonCacheTestBundle;
 import org.junit.Test;
 
 /**
@@ -21,7 +21,7 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class Put extends CacheTestBundle {
+public class Put extends CommonCacheTestBundle {
 
     @Test
     public void testPut() {

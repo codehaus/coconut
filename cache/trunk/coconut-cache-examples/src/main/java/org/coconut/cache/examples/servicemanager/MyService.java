@@ -18,7 +18,7 @@ public class MyService extends AbstractCacheService {
     }
 
     @Override
-    public void start(CacheConfiguration<?, ?> configuration,
+    public void initialize(CacheConfiguration<?, ?> configuration,
             Map<Class<?>, Object> serviceMap) {
         if (configuration.management().isEnabled()) {
             configuration.management().getRoot().addChild("ServiceName",

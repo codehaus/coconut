@@ -6,7 +6,7 @@ package org.coconut.cache.tck.service.loading;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingService;
-import org.coconut.cache.tck.CacheTestBundle;
+import org.coconut.cache.tck.CommonCacheTestBundle;
 import org.coconut.cache.tck.util.IntegerToStringLoader;
 import org.junit.Before;
 
@@ -14,7 +14,7 @@ import org.junit.Before;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class LoadingTestBundle extends CacheTestBundle {
+public class LoadingTestBundle extends CommonCacheTestBundle {
 
     public static final IntegerToStringLoader DEFAULT_LOADER = new IntegerToStringLoader();
 

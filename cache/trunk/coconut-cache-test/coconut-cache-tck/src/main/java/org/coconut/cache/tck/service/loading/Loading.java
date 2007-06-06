@@ -13,14 +13,9 @@ import static org.coconut.test.CollectionUtils.M5;
 import static org.coconut.test.CollectionUtils.M6;
 import static org.coconut.test.CollectionUtils.M7;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
-import org.coconut.cache.tck.CacheTestBundle;
-import org.junit.Before;
 import org.junit.Test;
 
 /**

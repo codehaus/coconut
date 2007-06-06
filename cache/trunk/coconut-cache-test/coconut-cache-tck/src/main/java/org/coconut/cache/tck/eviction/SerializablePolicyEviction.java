@@ -5,11 +5,10 @@
 package org.coconut.cache.tck.eviction;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.policy.Policies;
-import org.coconut.cache.tck.CacheTestBundle;
+import org.coconut.cache.tck.CommonCacheTestBundle;
 import org.coconut.cache.tck.other.Serialization;
 import org.junit.Test;
 
@@ -19,7 +18,7 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class SerializablePolicyEviction extends CacheTestBundle {
+public class SerializablePolicyEviction extends CommonCacheTestBundle {
 
     @Test
     public void testSerializable() throws IOException, ClassNotFoundException {

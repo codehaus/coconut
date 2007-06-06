@@ -6,7 +6,6 @@ package org.coconut.cache.internal.service.entry;
 import java.util.Map;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

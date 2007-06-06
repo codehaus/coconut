@@ -13,6 +13,7 @@ import net.jcip.annotations.ThreadSafe;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
+import org.coconut.cache.defaults.AbstractCache;
 
 /**
  * This class gives access to a cache or cache manager as a singleton.

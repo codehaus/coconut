@@ -4,16 +4,12 @@
 
 package org.coconut.cache.tck.core;
 
-import static org.coconut.test.CollectionUtils.M1;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.tck.CacheTestBundle;
+import org.coconut.cache.tck.CommonCacheTestBundle;
 import org.junit.Test;
 
 /**
@@ -24,7 +20,7 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class Constructors extends CacheTestBundle {
+public class Constructors extends CommonCacheTestBundle {
 
     @SuppressWarnings("unchecked")
     private Class<Cache> getClazz() {

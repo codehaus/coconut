@@ -56,6 +56,8 @@ public class CacheEvictionConfiguration<K, V> extends
 
     private final static String PREFERABLE_SIZE = "preferable-size";
 
+    private final static String SCHEDULE_EVICT_TAG = "schedule-evict";
+
     private final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.NANOSECONDS;
 
     /** The default idle time for new elements. */
@@ -74,8 +76,7 @@ public class CacheEvictionConfiguration<K, V> extends
     /** The replacement policy used for evicting elements. */
     private ReplacementPolicy<?> replacementPolicy;
 
-    /** Time between evicts. */
-    private long scheduledEvictTime;
+    private long scheduleEvictionAtFixedRateNanos = Long.MAX_VALUE;
 
     /**
      * Creates a new CacheEvictionConfiguration with default settings.
@@ -150,6 +151,13 @@ public class CacheEvictionConfiguration<K, V> extends
 
     public int getPreferableSize() {
         return preferableSize;
+    }
+
+    public long getScheduledEvictionAtFixedRate(TimeUnit unit) {
+        if (unit == null) {
+            throw new NullPointerException("unit is null");
+        }
+        return unit.convert(scheduleEvictionAtFixedRateNanos, TimeUnit.NANOSECONDS);
     }
 
     /**
@@ -310,6 +318,25 @@ public class CacheEvictionConfiguration<K, V> extends
     }
 
     /**
+     * 0 = automatic.
+     * <p>
+     * This requires that the CacheThreadingConfiguration isEnabled.
+     * 
+     * @param period
+     * @param unit
+     * @return
+     */
+    public CacheEvictionConfiguration<K, V> setScheduledEvictionAtFixedRate(long period,
+            TimeUnit unit) {
+        if (period < 0) {
+            throw new IllegalArgumentException("period must be 0 or greater, was "
+                    + period);
+        }
+        scheduleEvictionAtFixedRateNanos = unit.toNanos(period);
+        return this;
+    }
+
+    /**
      * @see org.coconut.cache.spi.AbstractCacheServiceConfiguration#fromXML(org.w3c.dom.Document,
      *      org.w3c.dom.Element)
      */
@@ -320,6 +347,12 @@ public class CacheEvictionConfiguration<K, V> extends
                 preferableCapacity);
         maximumSize = readInt(getChild(MAXIMUM_SIZE, e), maximumSize);
         preferableSize = readInt(getChild(PREFERABLE_SIZE, e), preferableSize);
+
+        /* Eviction time */
+        Element evictionTime = getChild(SCHEDULE_EVICT_TAG, e);
+        long timee = UnitOfTime.fromElement(evictionTime, DEFAULT_TIME_UNIT,
+                CacheExpirationService.NEVER_EXPIRE);
+        setScheduledEvictionAtFixedRate(timee, DEFAULT_TIME_UNIT);
 
         /* Idle time */
         Element eTime = getChild(DEFAULT_IDLE_TIME, e);
@@ -343,9 +376,14 @@ public class CacheEvictionConfiguration<K, V> extends
         writeInt(doc, base, MAXIMUM_SIZE, maximumSize, DEFAULT.getMaximumSize());
         writeInt(doc, base, PREFERABLE_SIZE, preferableSize, DEFAULT.getPreferableSize());
 
-        /* Expiration Timer */
+        /* EvictionTime Timer */
         UnitOfTime.toElementCompact(doc, base, DEFAULT_IDLE_TIME, defaultIdleTimeNs,
-                DEFAULT_TIME_UNIT, Long.MAX_VALUE);
+                DEFAULT_TIME_UNIT, DEFAULT.defaultIdleTimeNs);
+
+        /* Expiration Timer */
+        UnitOfTime.toElementCompact(doc, base, SCHEDULE_EVICT_TAG,
+                scheduleEvictionAtFixedRateNanos, DEFAULT_TIME_UNIT,
+                DEFAULT.scheduleEvictionAtFixedRateNanos);
 
         /* Filter */
         addAndsaveObject(doc, base, IDLE_FILTER, getResourceBundle(),

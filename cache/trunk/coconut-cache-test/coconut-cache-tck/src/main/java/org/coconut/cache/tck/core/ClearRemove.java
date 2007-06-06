@@ -8,10 +8,10 @@ import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.MNAN1;
 import static org.coconut.test.CollectionUtils.MNAN2;
 
-import org.coconut.cache.tck.CacheTestBundle;
+import org.coconut.cache.tck.CommonCacheTestBundle;
 import org.junit.Test;
 
-public class ClearRemove extends CacheTestBundle {
+public class ClearRemove extends CommonCacheTestBundle {
 
     /**
      * clear removes all pairs

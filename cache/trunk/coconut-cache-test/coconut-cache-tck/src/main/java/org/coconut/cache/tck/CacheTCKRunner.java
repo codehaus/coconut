@@ -32,7 +32,7 @@ import org.coconut.cache.tck.eviction.SerializablePolicyEviction;
 import org.coconut.cache.tck.eviction.SimplePolicyEviction;
 import org.coconut.cache.tck.other.NoSerialization;
 import org.coconut.cache.tck.other.Serialization;
-import org.coconut.cache.tck.service.event.EventBusFeature;
+import org.coconut.cache.tck.service.event.EventSuite;
 import org.coconut.cache.tck.service.expiration.ExpirationEvict;
 import org.coconut.cache.tck.service.expiration.ExpirationFilterBased;
 import org.coconut.cache.tck.service.expiration.ExpirationTimeBased;
@@ -47,12 +47,13 @@ import org.junit.internal.runners.TestIntrospector;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.Suite;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class TCKRunner extends Runner {
+public class CacheTCKRunner extends Runner {
 
     private final Class<? extends Cache> klass;
 
@@ -62,6 +63,7 @@ public class TCKRunner extends Runner {
 
     static {
         try {
+            //sets default test class if available
             tt = (Class<? extends Cache>) Class.forName("org.coconut.cache.defaults.UnsynchronizedCache");
         } catch (ClassNotFoundException e) {
             // ignore
@@ -69,9 +71,9 @@ public class TCKRunner extends Runner {
     }
 
     @SuppressWarnings("unchecked")
-    public TCKRunner(Class<? extends Cache> klass) throws Throwable {
+    public CacheTCKRunner(Class<? extends Cache> klass) throws Throwable {
         this.klass = klass;
-        tt = klass.getAnnotation(TCKClassTester.class).value();
+        tt = klass.getAnnotation(CacheTCKClassSpecifier.class).value();
         composite = new CompositeRunner(klass.getName());
         addTests(composite);
         // only add the test class itself if it contains tests
@@ -105,7 +107,7 @@ public class TCKRunner extends Runner {
         // composite.add(new TestClassRunner(NoHitStat.class));
         // }
         if (services.contains(CacheEventService.class)) {
-            composite.add(new TestClassRunner(EventBusFeature.class));
+            composite.add(new Suite(EventSuite.class));
         }
         if (Serializable.class.isAssignableFrom(tt)) {
             composite.add(new TestClassRunner(Serialization.class));

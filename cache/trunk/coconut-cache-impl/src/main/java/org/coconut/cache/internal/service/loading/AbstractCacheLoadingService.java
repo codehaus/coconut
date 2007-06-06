@@ -13,9 +13,7 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
 import org.coconut.cache.internal.spi.CacheHelper;
-import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
-import org.coconut.cache.service.loading.CacheLoadingMXBean;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Transformer;
@@ -35,7 +33,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends
     private final InternalCacheAttributeService attributeFactory;
 
     @Override
-    public void start(CacheConfiguration<?, ?> configuration,
+    public void initialize(CacheConfiguration<?, ?> configuration,
             Map<Class<?>, Object> serviceMap) {
         serviceMap.put(CacheLoadingService.class, this);
     }

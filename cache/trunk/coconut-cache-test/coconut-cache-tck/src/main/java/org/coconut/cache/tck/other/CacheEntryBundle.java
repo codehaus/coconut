@@ -8,14 +8,14 @@ import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M2;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.tck.CacheTestBundle;
+import org.coconut.cache.tck.CommonCacheTestBundle;
 import org.junit.Test;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class CacheEntryBundle extends CacheTestBundle {
+public class CacheEntryBundle extends CommonCacheTestBundle {
 
     @Test
     public void testCacheEntry() {

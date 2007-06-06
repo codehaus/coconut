@@ -24,7 +24,6 @@ import org.coconut.cache.internal.service.entry.EntryMap;
 import org.coconut.cache.internal.service.event.InternalCacheEventService;
 import org.coconut.cache.internal.service.eviction.InternalCacheEvictionService;
 import org.coconut.cache.internal.service.expiration.UnsynchronizedCacheExpirationService;
-import org.coconut.cache.internal.service.joinpoint.AfterCacheOperation;
 import org.coconut.cache.internal.service.joinpoint.InternalCacheOperation;
 import org.coconut.cache.internal.service.loading.InternalCacheLoadingService;
 import org.coconut.cache.internal.service.service.InternalCacheServiceManager;

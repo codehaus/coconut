@@ -14,7 +14,6 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.spi.CacheHelper;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.AbstractCacheService;
-import org.coconut.core.Offerable;
 import org.coconut.management.ManagedGroup;
 import org.coconut.test.MockTestCase;
 import org.jmock.Expectations;
@@ -98,7 +97,7 @@ public class UnsynchronizedCacheServiceTest {
         }
 
         @Override
-        public void start(CacheConfiguration<?, ?> configuration,
+        public void initialize(CacheConfiguration<?, ?> configuration,
                 Map<Class<?>, Object> serviceMap) {
             serviceMap.put(Integer.class, 5);
             serviceMap.put(String.class, "jjj");

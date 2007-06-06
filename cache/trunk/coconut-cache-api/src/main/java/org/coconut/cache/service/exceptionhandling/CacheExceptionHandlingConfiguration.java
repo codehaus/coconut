@@ -5,6 +5,7 @@ package org.coconut.cache.service.exceptionhandling;
 
 import java.util.Collections;
 
+import org.apache.commons.logging.Log;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.core.Logger;
 import org.w3c.dom.Document;

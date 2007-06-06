@@ -9,7 +9,7 @@ import static org.coconut.test.CollectionUtils.M2;
 import static org.coconut.test.CollectionUtils.M3;
 import static org.coconut.test.CollectionUtils.M4;
 
-import org.coconut.cache.tck.CacheTestBundle;
+import org.coconut.cache.tck.CommonCacheTestBundle;
 import org.junit.Test;
 
 /**
@@ -18,7 +18,7 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class ConcurrentMap extends CacheTestBundle {
+public class ConcurrentMap extends CommonCacheTestBundle {
 
     /**
      * Tests the putIfAbsent(K key, V value) method.

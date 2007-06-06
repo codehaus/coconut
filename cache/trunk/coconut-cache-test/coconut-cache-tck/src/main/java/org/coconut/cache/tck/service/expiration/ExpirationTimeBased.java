@@ -11,7 +11,6 @@ import static org.coconut.test.CollectionUtils.M5;
 
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.tck.CacheTestBundle;
 import org.junit.Before;
 import org.junit.Test;
 /**

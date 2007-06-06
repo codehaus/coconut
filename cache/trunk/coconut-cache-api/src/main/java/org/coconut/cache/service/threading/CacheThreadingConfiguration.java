@@ -63,22 +63,18 @@ public class CacheThreadingConfiguration<K, V> extends
 
     public final static String SHUTDOWN_EXECUTOR_SERVICE_TAG = "shutdown-executor-service";
 
-    public final static String SCHEDULE_EVICT_TAG = "schedule-evict";
-
     private final static Class DEFAULT_REH = ThreadPoolExecutor.AbortPolicy.class;
 
     private boolean shutdownExecutor;
 
     private Executor executor;
 
-    long scheduleEvictionAtFixedRateNanos = 0;
-
     /**
      * @param tag
      * @param c
      */
     public CacheThreadingConfiguration() {
-        super(SERVICE_NAME, Arrays.asList(CacheThreadingService.class));
+        super(SERVICE_NAME, Arrays.asList(Class.class));
     }
 
     /**
@@ -94,11 +90,6 @@ public class CacheThreadingConfiguration<K, V> extends
                     .getAttribute(SHUTDOWN_EXECUTOR_SERVICE_TAG)));
         }
 
-        Element evict = getChild(SCHEDULE_EVICT_TAG, e);
-        if (evict != null) {
-            long timeout = UnitOfTime.fromElement(evict, TimeUnit.NANOSECONDS);
-            setScheduledEvictionAtFixedRate(timeout, TimeUnit.NANOSECONDS);
-        }
         Element threadPool = getChild(EXECUTOR_TAG, e);
         Element sceduledThreadPool = getChild(SCHEDULED_EXECUTOR_TAG, e);
         Element common = threadPool == null ? sceduledThreadPool : threadPool;
@@ -135,16 +126,16 @@ public class CacheThreadingConfiguration<K, V> extends
                     timeout = UnitOfTime.fromAttributes(threadPool, TimeUnit.NANOSECONDS,
                             "keepAlive", "keepAliveUnit");
                 }
-                BlockingQueue q = new LinkedBlockingQueue();
+                BlockingQueue q = new LinkedBlockingQueue<Object>();
 
                 Element bq = getChild("array-queue", threadPool);
                 if (bq != null) {
                     int capacity = Integer.parseInt(bq.getAttribute("size"));
-                    q = new ArrayBlockingQueue(capacity);
+                    q = new ArrayBlockingQueue<Object>(capacity);
                 }
                 Element pq = getChild("priorityQueue", threadPool);
                 if (pq != null) {
-                    Comparator c = null;
+                    Comparator<?> c = null;
                     if (pq.hasAttribute("type")) {
                         c = loadObject(pq, Comparator.class);
                     }
@@ -194,18 +185,18 @@ public class CacheThreadingConfiguration<K, V> extends
 
         /* Queue */
         if (!isScheduled) {
-            Class c = tpe.getQueue().getClass();
+            Class<?> c = tpe.getQueue().getClass();
             if (c.equals(ArrayBlockingQueue.class)) {
-                ArrayBlockingQueue q = (ArrayBlockingQueue) tpe.getQueue();
+                ArrayBlockingQueue<?> q = (ArrayBlockingQueue) tpe.getQueue();
                 Element abq = add(doc, "array-queue", exTag);
                 abq.setAttribute("size", Integer.toString(q.size()
                         + q.remainingCapacity()));
             } else if (c.equals(LinkedBlockingQueue.class)) {
                 // default
             } else if (c.equals(PriorityBlockingQueue.class)) {
-                PriorityBlockingQueue q = (PriorityBlockingQueue) tpe.getQueue();
+                PriorityBlockingQueue<?> q = (PriorityBlockingQueue) tpe.getQueue();
                 Element qElement = add(doc, "priorityQueue", exTag);
-                Comparator comp = q.comparator();
+                Comparator<?> comp = q.comparator();
                 if (comp != null
                         && !saveObject(doc, qElement, getResourceBundle(),
                                 "threading.cannotPersistComperator", comp)) {
@@ -260,12 +251,6 @@ public class CacheThreadingConfiguration<K, V> extends
                     .toString(getShutdownExecutorService()));
         }
 
-        /* Refresh Timer */
-        long evict = getScheduledEvictionAtFixedRate(TimeUnit.NANOSECONDS);
-        if (evict != DEFAULT.getScheduledEvictionAtFixedRate(TimeUnit.NANOSECONDS)) {
-            UnitOfTime.toElementCompact(add(doc, SCHEDULE_EVICT_TAG, base), evict,
-                    TimeUnit.NANOSECONDS);
-        }
 
     }
 
@@ -273,9 +258,6 @@ public class CacheThreadingConfiguration<K, V> extends
         return executor;
     }
 
-    public long getScheduledEvictionAtFixedRate(TimeUnit unit) {
-        return unit.convert(scheduleEvictionAtFixedRateNanos, TimeUnit.NANOSECONDS);
-    }
 
     public boolean getShutdownExecutorService() {
         return shutdownExecutor;
@@ -286,15 +268,6 @@ public class CacheThreadingConfiguration<K, V> extends
         return this;
     }
 
-    public CacheThreadingConfiguration setScheduledEvictionAtFixedRate(long period,
-            TimeUnit unit) {
-        if (period < 0) {
-            throw new IllegalArgumentException("period must be 0 or greater, was "
-                    + period);
-        }
-        scheduleEvictionAtFixedRateNanos = unit.toNanos(period);
-        return this;
-    }
 
     public CacheThreadingConfiguration setShutdownExecutorService(boolean shutdown) {
         shutdownExecutor = shutdown;

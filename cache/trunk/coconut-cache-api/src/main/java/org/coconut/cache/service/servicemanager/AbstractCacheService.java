@@ -4,6 +4,7 @@
 package org.coconut.cache.service.servicemanager;
 
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
@@ -34,34 +35,42 @@ public abstract class AbstractCacheService implements CacheService {
         return name;
     }
 
-//    /**
-//     * Registers all the public services this service exposes. For example, an expiration
-//     * service would use:
-//     * 
-//     * <pre>
-//     * Map&lt;Class, Object&gt; serviceMap = null;
-//     * serviceMap.put(CacheExpirationMXBean.class, null);
-//     * serviceMap.put(CacheExpirationService.class, null);
-//     * </pre>
-//     * 
-//     * @param serviceMap
-//     */
-//    public void registerServices(Map<Class<?>, Object> serviceMap) {
-//    // ignore
-//    }
+// /**
+// * Registers all the public services this service exposes. For example, an expiration
+// * service would use:
+// *
+// * <pre>
+// * Map&lt;Class, Object&gt; serviceMap = null;
+// * serviceMap.put(CacheExpirationMXBean.class, null);
+// * serviceMap.put(CacheExpirationService.class, null);
+// * </pre>
+// *
+// * @param serviceMap
+// */
+// public void registerServices(Map<Class<?>, Object> serviceMap) {
+// // ignore
+// }
 
     /**
      * @see org.coconut.cache.service.servicemanager.CacheLifecycle#start(org.coconut.cache.CacheConfiguration)
      */
-    public void start(CacheConfiguration<?, ?> configuration,Map<Class<?>, Object> serviceMap) {
+    public void initialize(CacheConfiguration<?, ?> configuration,
+            Map<Class<?>, Object> serviceMap) {
     // do nothing
     }
 
     /**
-     * @see org.coconut.cache.service.servicemanager.CacheService#started(org.coconut.cache.Cache)
+     * @see org.coconut.cache.service.servicemanager.CacheService#start(org.coconut.cache.Cache)
      */
-    public void started(Cache<?, ?> cache) {
+    public void start(Cache<?, ?> cache) {
     // do nothing
+    }
+
+    /**
+     * @see org.coconut.cache.service.servicemanager.CacheService#shutdown(java.util.concurrent.Executor)
+     */
+    public void shutdown(Executor e) {
+    // ignore
     }
 
     /**

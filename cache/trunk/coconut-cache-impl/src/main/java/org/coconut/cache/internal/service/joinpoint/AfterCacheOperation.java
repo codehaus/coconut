@@ -4,7 +4,6 @@
 package org.coconut.cache.internal.service.joinpoint;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;

@@ -13,10 +13,11 @@ import java.util.concurrent.TimeUnit;
 import junit.framework.AssertionFailedError;
 
 import org.coconut.cache.Cache;
+import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.event.CacheEntryEvent;
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.event.CacheEventService;
-import org.coconut.cache.tck.CacheTestBundle;
+import org.coconut.cache.tck.AbstractCacheTestBundle;
 import org.coconut.core.EventProcessor;
 import org.coconut.event.EventSubscription;
 import org.coconut.filter.Filter;
@@ -27,7 +28,15 @@ import org.junit.Before;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class AbstractEventTestBundle extends CacheTestBundle {
+public class AbstractEventTestBundle extends AbstractCacheTestBundle {
+
+    static final CacheConfiguration<Integer, String> INCLUDE_ALL_CONFIGURATION;
+    
+    static {
+        INCLUDE_ALL_CONFIGURATION = CacheConfiguration.create();
+        INCLUDE_ALL_CONFIGURATION.event().setEnabled(true).include(CacheEvent.class);
+    }
+    
     LinkedBlockingQueue<EventWrapper> events;
 
     private EventProcessor<CacheEvent<Integer, String>> eventHandler;
@@ -83,7 +92,7 @@ public class AbstractEventTestBundle extends CacheTestBundle {
         }
     }
 
-    protected EventSubscription subscribe(Filter f) {
+    protected EventSubscription<?> subscribe(Filter f) {
         EventSubscription s = c.getService(CacheEventService.class).subscribe(
                 eventHandler, f);
         assertNotNull(s);

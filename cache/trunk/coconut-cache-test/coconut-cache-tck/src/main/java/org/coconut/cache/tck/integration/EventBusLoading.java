@@ -11,7 +11,6 @@ import static org.coconut.test.CollectionUtils.M4;
 import static org.coconut.test.CollectionUtils.M6;
 
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.service.event.CacheEventConfiguration;
 import org.coconut.cache.service.event.CacheEventFilters;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemAccessed;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemAdded;

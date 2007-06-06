@@ -109,11 +109,11 @@ public class UnsynchronizedCacheServiceManager extends
         private final Map<Class<?>, Object> published = new HashMap<Class<?>, Object>();
 
         void start(CacheConfiguration conf) {
-            service.start(conf, published);
+            service.initialize(conf, published);
         }
 
         void started(Cache c) {
-            service.started(c);
+            service.start(c);
         }
 
         Map<Class<?>, Object> getPublicService() {

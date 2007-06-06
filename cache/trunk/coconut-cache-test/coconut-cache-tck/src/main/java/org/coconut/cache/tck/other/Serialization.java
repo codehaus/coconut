@@ -14,7 +14,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.tck.CacheTestBundle;
+import org.coconut.cache.tck.CommonCacheTestBundle;
 import org.junit.Test;
 
 /**
@@ -24,7 +24,7 @@ import org.junit.Test;
  * @version $Id$
  */
 @SuppressWarnings("unchecked")
-public class Serialization extends CacheTestBundle {
+public class Serialization extends CommonCacheTestBundle {
 
     public static Cache<Integer,String> serializeAndUnserialize(Cache<Integer,String> c) throws IOException, ClassNotFoundException {
         ByteArrayOutputStream bout = new ByteArrayOutputStream(20000);

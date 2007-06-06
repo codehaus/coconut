@@ -1,66 +1,32 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the Apache 2.0 License, see http://coconut.codehaus.org/license.
- */
-
 package org.coconut.cache.tck;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import junit.framework.Assert;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.statistics.CacheHitStat;
-import org.coconut.cache.tck.util.IntegerToStringLoader;
 import org.coconut.core.Clock.DeterministicClock;
 import org.coconut.test.CollectionUtils;
 import org.junit.Before;
 
-/**
- * This is base class that all test bundle should extend.
- * 
- * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Header$
- */
-public abstract class CacheTestBundle extends Assert {
+import junit.framework.Assert;
+
+public class AbstractCacheTestBundle extends Assert {
+    protected Cache<Integer, String> c;
 
     protected DeterministicClock clock;
 
-    protected Cache<Integer, String> c;
-
-    protected Cache<Integer, String> c0;
-
-    protected Cache<Integer, String> c1;
-
-    protected Cache<Integer, String> c2;
-
-    protected Cache<Integer, String> c3;
-
-    protected Cache<Integer, String> c4;
-
-    protected Cache<Integer, String> c5;
-
-    protected Cache<Integer, String> c6;
-
     @Before
-    public void setUp() throws Exception {
+    public void setupClock() throws Exception {
         clock = new DeterministicClock();
-        c0 = newCache(0);
-        c1 = newCache(1);
-        c2 = newCache(2);
-        c3 = newCache(3);
-        c4 = newCache(4);
-        c5 = newCache(5);
-        c6 = newCache(6);
     }
-
+    
     final Cache<Integer, String> newCache(int entries) {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
         cc.setClock(clock);
-        Cache<Integer, String> c = cc.newInstance(TCKRunner.tt);
+        Cache<Integer, String> c = cc.newInstance(CacheTCKRunner.tt);
         c.putAll(createMap(entries));
         return c;
     }
@@ -71,11 +37,11 @@ public abstract class CacheTestBundle extends Assert {
     }
 
     protected Cache<Integer, String> newCache(CacheConfiguration<?, ?> conf) {
-        return (Cache) conf.newInstance(TCKRunner.tt);
+        return (Cache) conf.newInstance(CacheTCKRunner.tt);
     }
 
     protected Cache<Integer, String> newCache(CacheConfiguration<?, ?> conf, int entries) {
-        Cache<Integer,String> cache= newCache(conf);
+        Cache<Integer, String> cache = newCache(conf);
         cache.putAll((Map) createMap(entries));
         return cache;
     }
@@ -213,9 +179,6 @@ public abstract class CacheTestBundle extends Assert {
         c.putAll(CollectionUtils.asMap(entries));
     }
 
-    // protected CacheQuery<Integer, String> keyQuery(Filter<Integer> filter) {
-    // return CacheFilters.queryByKey(c, filter);
-    // }
 
     protected void incTime() {
         clock.incrementTimestamp(1);
@@ -224,7 +187,6 @@ public abstract class CacheTestBundle extends Assert {
     protected void incTime(int amount) {
         clock.incrementTimestamp(amount);
     }
-
     /**
      * Assert method for hit statistics.
      * 
@@ -243,4 +205,5 @@ public abstract class CacheTestBundle extends Assert {
         Assert.assertEquals(hits, hitstat.getNumberOfHits());
         Assert.assertEquals(misses, hitstat.getNumberOfMisses());
     }
+
 }

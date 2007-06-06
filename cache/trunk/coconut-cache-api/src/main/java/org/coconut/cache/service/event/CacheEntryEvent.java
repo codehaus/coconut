@@ -3,6 +3,7 @@
  */
 package org.coconut.cache.service.event;
 
+import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 
 /**

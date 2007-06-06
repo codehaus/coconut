@@ -184,6 +184,7 @@ public class CompositeCacheLoaderTest extends MockTestCase {
 //        assertEquals(Composite.m, result);
 //    }
 
+    @SuppressWarnings("serial")
     static class Composite extends CacheLoaders.CompositeCacheLoader<Integer, String> {
 
         /**
@@ -216,9 +217,9 @@ public class CompositeCacheLoaderTest extends MockTestCase {
         protected Map<Integer, String> loadAllFailed(CacheLoader<Integer, String> loader,
                 Map<? extends Integer, AttributeMap> keys, Exception cause)
                 throws Exception {
-            assertEquals(this.loader, loader);
-            assertEquals(this.keys, keys);
-            assertEquals(this.cause, cause);
+            assertEquals(Composite.loader, loader);
+            assertEquals(Composite.keys, keys);
+            assertEquals(Composite.cause, cause);
             return m;
         }
 
@@ -229,9 +230,9 @@ public class CompositeCacheLoaderTest extends MockTestCase {
         @Override
         protected String loadFailed(CacheLoader<Integer, String> loader, Integer key,
                 Exception cause) throws Exception {
-            assertEquals(this.loader, loader);
-            assertEquals(this.keys.iterator().next(), key);
-            assertEquals(this.cause, cause);
+            assertEquals(Composite.loader, loader);
+            assertEquals(Composite.keys.iterator().next(), key);
+            assertEquals(Composite.cause, cause);
             return "foo";
         }
 

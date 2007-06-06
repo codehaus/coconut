@@ -19,6 +19,7 @@ import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
+import org.coconut.cache.CacheException;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.internal.util.XmlUtil;
 import org.coconut.management.ManagedGroup;
@@ -39,8 +40,8 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class CacheManagementConfiguration<K, V> extends
-        AbstractCacheServiceConfiguration<K, V> {
+public class CacheManagementConfiguration extends
+        AbstractCacheServiceConfiguration {
 
     /** The short name of this service. */
     public static final String SERVICE_NAME = "management";
@@ -220,7 +221,7 @@ public class CacheManagementConfiguration<K, V> extends
      *      org.w3c.dom.Element)
      */
     @Override
-    protected void fromXML( Element e) throws Exception {
+    protected void fromXML(Element e) throws Exception {
         domain = readValue(getChild(XML_DOMAIN_TAG, e), CacheMXBean.DEFAULT_JMX_DOMAIN);
         enabled = getAttributeBoolean(e, XML_ENABLED_ATTRIBUTE, false);
         registrant = loadOptional(e, XML_REGISTRANT_TAG, ManagedGroupVisitor.class);

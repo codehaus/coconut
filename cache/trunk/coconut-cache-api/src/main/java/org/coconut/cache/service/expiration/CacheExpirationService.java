@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.filter.Filter;
 
 /**

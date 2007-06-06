@@ -4,9 +4,12 @@
 package org.coconut.cache.internal.service.management;
 
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import javax.management.JMException;
 import javax.management.MBeanServer;
+
+import net.jcip.annotations.ThreadSafe;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
@@ -23,98 +26,127 @@ import org.coconut.management.defaults.DefaultManagedGroup;
 /**
  * <p>
  * This service does not implements CacheMXBean because of a name clash between
- * {@link AbstractCacheManagementService#getName()} and
- * {@link CacheMXBean#getName()}
+ * {@link AbstractCacheManagementService#getName()} and {@link CacheMXBean#getName()}
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
+@ThreadSafe
 public class DefaultCacheManagementService extends AbstractCacheManagementService {
 
-	private final String domain;
+    private final CacheMXBean cacheMXBean;
 
-	private final ManagedGroup group;
+    private final String domain;
 
-	private final InternalCacheServiceManager manager;
+    private final ManagedGroup group;
 
-	private final ManagedGroupVisitor registrant;
+    private final boolean isEnabled;
 
-	private final boolean isEnabled;
+    private final InternalCacheServiceManager manager;
 
-	private final Cache cache;
+    private final ManagedGroupVisitor registrant;
 
-	public DefaultCacheManagementService(InternalCacheServiceManager manager,
-			CacheManagementConfiguration cmc, Cache cache, String name) {
-		this.manager = manager;
-		isEnabled = cmc.isEnabled();
-		domain = cmc.getDomain();
-		if (cmc.getRoot() == null) {
-			group = new DefaultManagedGroup(name,
-					"This group contains all managed Cache services", false);
-		} else {
-			group = cmc.getRoot();
-		}
+    /**
+     * Creates a new DefaultCacheManagementService.
+     * 
+     * @param serviceManager
+     *            The cache service manager
+     * @param managementConfiguration
+     *            the configuration of the Cache Management service
+     * @param cache
+     *            the cache for which to expose MBeans
+     * @param name
+     *            the name of the cache
+     */
+    public DefaultCacheManagementService(InternalCacheServiceManager serviceManager,
+            CacheManagementConfiguration managementConfiguration,
+            Cache<?, ?> cache, String name) {
+        if (serviceManager == null) {
+            throw new NullPointerException("serviceManager is null");
+        } else if (managementConfiguration == null) {
+            throw new NullPointerException("managementConfiguration is null");
+        } else if (cache == null) {
+            throw new NullPointerException("cache is null");
+        } else if (name == null) {
+            throw new NullPointerException("name is null");
+        }
+        this.manager = serviceManager;
+        isEnabled = managementConfiguration.isEnabled();
+        domain = managementConfiguration.getDomain();
+        if (managementConfiguration.getRoot() == null) {
+            group = new DefaultManagedGroup(name,
+                    "This group contains all managed Cache services", false);
+        } else {
+            group = managementConfiguration.getRoot();
+        }
 
-		MBeanServer server = cmc.getMBeanServer();
+        MBeanServer server = managementConfiguration.getMBeanServer();
 
-		if (cmc.getRegistrant() == null) {
-			registrant = Managements.register(server, domain, "name", "service", "group");
-		} else {
-			registrant = cmc.getRegistrant();
-		}
+        if (managementConfiguration.getRegistrant() == null) {
+            registrant = Managements.register(server, domain, "name", "service", "group");
+        } else {
+            registrant = managementConfiguration.getRegistrant();
+        }
 
-		if (cache instanceof CacheMXBean) {
-			this.cache = cache;
-			ManagedGroup g = group.addChild("General",
-					"General cache attributes and operations");
-			g.add(cache);
-		} else {
-			this.cache = null;
-		}
-	}
+        cacheMXBean = new CacheMXBeanWrapper(cache);
+        ManagedGroup g = group.addChild("General",
+                "General cache attributes and operations");
+        g.add(cacheMXBean);
+    }
 
-	/**
+    /**
      * @see org.coconut.cache.service.management.CacheManagementService#getRoot()
      */
-	public ManagedGroup getRoot() {
-		if (isEnabled) {
-			manager.lazyStart(false);// todo im not sure we need this one
-			return group;
-		} else {
-			// throw exception??
-			return null;
-		}
-	}
+    public ManagedGroup getRoot() {
+        if (isEnabled) {
+            // TODO im not sure we need to lazy start
+            manager.lazyStart(false);
+            return group;
+        } else {
+            throw new UnsupportedOperationException(
+                    "The service does not support this operation");
+        }
+    }
 
-	/**
-     * @see org.coconut.cache.internal.service.CacheServiceLifecycle#shutdown(org.coconut.cache.internal.service.ShutdownCallback)
+    /**
+     * @see org.coconut.cache.service.servicemanager.AbstractCacheService#initialize(org.coconut.cache.CacheConfiguration,
+     *      java.util.Map)
      */
-	public void shutdown() throws JMException {
-		if (isEnabled) {
-			group.unregister();
-		}
-	}
-
-	@Override
-    public void start(CacheConfiguration<?, ?> configuration,
+    @Override
+    public void initialize(CacheConfiguration<?, ?> configuration,
             Map<Class<?>, Object> serviceMap) {
         if (isEnabled) {
             serviceMap.put(CacheManagementService.class, new DelegatedManagementService(
                     this));
-            if (cache != null) {
-                serviceMap.put(CacheMXBean.class, cache);
+            serviceMap.put(CacheMXBean.class, cacheMXBean);
+        }
+    }
+
+    /**
+     * @see org.coconut.cache.internal.service.CacheServiceLifecycle#shutdown(org.coconut.cache.internal.service.ShutdownCallback)
+     */
+    @Override
+    public void shutdown(Executor e) {
+        if (isEnabled) {
+            try {
+                group.unregister();
+            } catch (JMException jme) {
+                throw new CacheException(jme);
             }
         }
     }
 
+    /**
+     * @see org.coconut.cache.service.servicemanager.AbstractCacheService#start(org.coconut.cache.Cache)
+     */
     @Override
-	public void started(Cache<?, ?> cache) {
-		if (isEnabled) {
-			try {
-				registrant.visitManagedGroup(group);
-			} catch (JMException e) {
-				throw new CacheException(e);
-			}
-		}
-	}
+    public void start(Cache<?, ?> cache) {
+        if (isEnabled) {
+            try {
+                registrant.visitManagedGroup(group);
+            } catch (JMException e) {
+                throw new CacheException(e);
+            }
+        }
+    }
 }

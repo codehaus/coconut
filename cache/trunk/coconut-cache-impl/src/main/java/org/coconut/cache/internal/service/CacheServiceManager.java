@@ -12,15 +12,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.internal.service.event.DefaultCacheEventService;
-import org.coconut.cache.internal.service.eviction.UnsynchronizedCacheEvictionService;
-import org.coconut.cache.internal.service.eviction.InternalCacheEvictionService;
-import org.coconut.cache.internal.service.expiration.AbstractExpirationService;
-import org.coconut.cache.internal.service.expiration.InternalExpirationUtils;
-import org.coconut.cache.internal.service.joinpoint.NoOpAfterCacheOperation;
-import org.coconut.cache.service.event.CacheEventConfiguration;
-import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
-import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.internal.picocontainer.defaults.DefaultPicoContainer;
 import org.coconut.management.ManagedGroup;

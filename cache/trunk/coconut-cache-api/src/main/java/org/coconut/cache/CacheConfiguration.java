@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 
 import net.jcip.annotations.NotThreadSafe;
 
+import org.apache.commons.logging.Log;
 import org.coconut.cache.service.event.CacheEventConfiguration;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
@@ -331,7 +332,7 @@ public final class CacheConfiguration<K, V> {
      * 
      * @return a CacheManagementConfiguration
      */
-    public CacheManagementConfiguration<K, V> management() {
+    public CacheManagementConfiguration management() {
         return lazyCreate(CacheManagementConfiguration.class);
     }
 

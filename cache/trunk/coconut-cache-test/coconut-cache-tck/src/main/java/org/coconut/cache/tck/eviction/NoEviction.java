@@ -4,9 +4,7 @@
 
 package org.coconut.cache.tck.eviction;
 
-import java.util.concurrent.TimeUnit;
-
-import org.coconut.cache.tck.CacheTestBundle;
+import org.coconut.cache.tck.CommonCacheTestBundle;
 import org.junit.Test;
 
 /**
@@ -15,7 +13,7 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class NoEviction extends CacheTestBundle {
+public class NoEviction extends CommonCacheTestBundle {
     @Test
     public void testNoEvict() {
         for (int i = 0; i < 10; i++) {

@@ -1,11 +1,15 @@
 package org.coconut.cache.tck.service.event;
 
+import static org.coconut.cache.service.event.CacheEventFilters.CACHEENTRY_ACCESSED_FILTER;
+import static org.coconut.test.CollectionUtils.M1;
+import static org.coconut.test.CollectionUtils.M2;
+
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.event.CacheEventService;
-import org.coconut.cache.tck.CacheTestBundle;
+import org.coconut.event.EventSubscription;
 import org.junit.Test;
 
-public class EventConfigurationEnabling extends CacheTestBundle  {
+public class EventServiceGeneral extends AbstractEventTestBundle{
 
     @Test
     public void testNotEnabled() {
@@ -31,5 +35,16 @@ public class EventConfigurationEnabling extends CacheTestBundle  {
         assertTrue(c.getAllServices().containsKey(CacheEventService.class));
         Object cs = c.getAllServices().get(CacheEventService.class);
         assertSame(cs, c.getService(CacheEventService.class));
+    }
+    @Test
+    public void testUnsubscribe() throws Exception {
+        c = newCache(INCLUDE_ALL_CONFIGURATION, 0);
+        EventSubscription<?> s = subscribe(CACHEENTRY_ACCESSED_FILTER);
+        c.get(M1.getKey());
+        assertEquals(1, getPendingEvents());
+        s.unsubscribe();
+        c.get(M2.getKey());
+        assertEquals(1, getPendingEvents());
+        consumeItem(); // take event
     }
 }

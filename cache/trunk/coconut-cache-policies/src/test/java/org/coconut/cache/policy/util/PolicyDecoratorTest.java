@@ -3,9 +3,7 @@
  */
 package org.coconut.cache.policy.util;
 
-import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.test.MockTestCase;
-import org.jmock.Mock;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

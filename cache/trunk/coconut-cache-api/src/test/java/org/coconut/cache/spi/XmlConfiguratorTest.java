@@ -9,13 +9,11 @@ import static junit.framework.Assert.assertNull;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.core.Logger;
-import org.coconut.core.Loggers;
 import org.coconut.test.MockTestCase;
 import org.junit.Before;
 import org.junit.Test;

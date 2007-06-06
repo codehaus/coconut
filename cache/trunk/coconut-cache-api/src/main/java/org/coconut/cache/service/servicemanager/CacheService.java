@@ -4,6 +4,7 @@
 package org.coconut.cache.service.servicemanager;
 
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
@@ -20,12 +21,33 @@ public interface CacheService {
      */
     String getName();
 
-    void start(CacheConfiguration<?, ?> configuration,
-            Map<Class<?>, Object> serviceRegistrant);
+    /**
+     * Initializes the service.
+     * 
+     * @param configuration
+     *            the CacheConfiguration for the cache
+     * @param serviceMap
+     *            a map that can be used to add public services
+     */
+    void initialize(CacheConfiguration<?, ?> configuration,
+            Map<Class<?>, Object> serviceMap);
 
-    void started(Cache<?, ?> cache);
+    /**
+     * Start the service. The specified cache can be used to retrieve other cache
+     * services.
+     * 
+     * @param cache
+     *            the cache where this service is registered
+     */
+    void start(Cache<?, ?> cache);
 
-    // void shutdown(Cache<?, ?> c);
+    void shutdown(Executor e);
     // void shutdownNow(Cache<?, ?> c);
+
+    /**
+     * Method invoked when the Cache has terminated. Note: To properly nest multiple
+     * overridings, subclasses should generally invoke <tt>super.terminated</tt> within
+     * this method.
+     */
     void terminated();
 }

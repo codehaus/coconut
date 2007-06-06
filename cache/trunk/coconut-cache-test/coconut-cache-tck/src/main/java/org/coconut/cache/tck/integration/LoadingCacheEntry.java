@@ -7,7 +7,6 @@ import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M2;
 
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.tck.other.CacheEntryBundle;
 import org.coconut.cache.tck.service.loading.LoadingTestBundle;

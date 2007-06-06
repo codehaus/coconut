@@ -8,6 +8,7 @@ import static junit.framework.Assert.assertNull;
 import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
 
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.policy.Policies;
 import org.coconut.cache.policy.ReplacementPolicy;
@@ -19,11 +20,24 @@ import org.junit.Test;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class CacheEvictionConfigurationTest {
-    CacheEvictionConfiguration<Number, Collection> ee;
+    private CacheEvictionConfiguration<Number, Collection<?>> ee;
+
+    private CacheEvictionConfiguration<Number, Collection<?>> DEFAULT = new CacheEvictionConfiguration<Number, Collection<?>>();
 
     @Before
     public void setUp() {
-        ee = new CacheEvictionConfiguration();
+        ee = new CacheEvictionConfiguration<Number, Collection<?>>();
+    }
+
+    @Test
+    public void testScheduledEvictionAtFixedRate() {
+        assertEquals(ee, ee.setScheduledEvictionAtFixedRate(4, TimeUnit.MICROSECONDS));
+        assertEquals(4000, ee.getScheduledEvictionAtFixedRate(TimeUnit.NANOSECONDS));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetScheduledEvictionAtFixedRateIAE() {
+        ee.setScheduledEvictionAtFixedRate(-1, TimeUnit.MICROSECONDS);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -45,7 +59,7 @@ public class CacheEvictionConfigurationTest {
     @Test
     public void testPolicy() {
         assertNull(ee.getPolicy());
-        ReplacementPolicy p = Policies.newClock();
+        ReplacementPolicy<?> p = Policies.newClock();
         assertEquals(ee, ee.setPolicy(p));
         assertEquals(p, ee.getPolicy());
     }
@@ -73,6 +87,8 @@ public class CacheEvictionConfigurationTest {
         assertEquals(Integer.MAX_VALUE, ee.getPreferableSize());
         assertEquals(Long.MAX_VALUE, ee.getMaximumCapacity());
         assertEquals(Long.MAX_VALUE, ee.getPreferableCapacity());
+        assertEquals(DEFAULT.getScheduledEvictionAtFixedRate(TimeUnit.NANOSECONDS), ee
+                .getScheduledEvictionAtFixedRate(TimeUnit.NANOSECONDS));
     }
 
     @Test
@@ -81,11 +97,14 @@ public class CacheEvictionConfigurationTest {
         ee.setPreferableSize(2);
         ee.setMaximumCapacity(3);
         ee.setPreferableCapacity(4);
+        ee.setScheduledEvictionAtFixedRate(360000, TimeUnit.MILLISECONDS);
         ee = reloadService(ee);
         assertEquals(1, ee.getMaximumSize());
         assertEquals(2, ee.getPreferableSize());
         assertEquals(3, ee.getMaximumCapacity());
         assertEquals(4, ee.getPreferableCapacity());
+        assertEquals(360, ee.getScheduledEvictionAtFixedRate(TimeUnit.SECONDS));
+
     }
 
     @Test

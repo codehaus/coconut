@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.policy.paging.LRUPolicy;
-import org.coconut.cache.tck.CacheTestBundle;
+import org.coconut.cache.tck.CommonCacheTestBundle;
 import org.junit.Test;
 
 /**
@@ -23,7 +23,7 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class CacheEntryToPolicy extends CacheTestBundle {
+public class CacheEntryToPolicy extends CommonCacheTestBundle {
 
     private Cache<Integer, String> c;
 

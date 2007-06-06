@@ -7,10 +7,10 @@ package org.coconut.cache.tck.core;
 import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M5;
 
-import org.coconut.cache.tck.CacheTestBundle;
+import org.coconut.cache.tck.CommonCacheTestBundle;
 import org.junit.Test;
 
-public class BasicMap extends CacheTestBundle {
+public class BasicMap extends CommonCacheTestBundle {
 
     /**
      * size returns the correct values.

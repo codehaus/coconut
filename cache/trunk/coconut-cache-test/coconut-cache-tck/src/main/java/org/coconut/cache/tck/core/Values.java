@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.coconut.cache.tck.CacheTestBundle;
+import org.coconut.cache.tck.CommonCacheTestBundle;
 import org.junit.Test;
 
 /**
@@ -22,7 +22,7 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class Values extends CacheTestBundle {
+public class Values extends CommonCacheTestBundle {
 
     @Test(expected = NullPointerException.class)
     public void testAdd() {

@@ -4,7 +4,6 @@
 
 package org.coconut.cache.tck.util;
 
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
 

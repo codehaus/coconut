@@ -8,12 +8,11 @@ import static org.coconut.test.CollectionUtils.M4;
 import static org.coconut.test.CollectionUtils.M5;
 
 import java.util.Arrays;
-import java.util.concurrent.Future;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
-import org.coconut.cache.tck.CacheTestBundle;
+import org.coconut.cache.tck.CommonCacheTestBundle;
 import org.coconut.cache.tck.util.IntegerToStringLoader;
 import org.junit.Test;
 
@@ -21,7 +20,7 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class LoadingStatistics extends CacheTestBundle {
+public class LoadingStatistics extends CommonCacheTestBundle {
 
     /**
      * Tests that loading of elements does not does not affect the cache

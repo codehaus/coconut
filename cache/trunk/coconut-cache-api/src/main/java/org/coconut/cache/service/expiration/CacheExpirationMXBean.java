@@ -3,6 +3,8 @@
  */
 package org.coconut.cache.service.expiration;
 
+import java.lang.management.ManagementFactory;
+
 import org.coconut.management.annotation.ManagedAttribute;
 
 /**

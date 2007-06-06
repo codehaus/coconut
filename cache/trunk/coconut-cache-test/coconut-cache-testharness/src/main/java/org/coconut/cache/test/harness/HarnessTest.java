@@ -11,7 +11,6 @@ import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.policy.paging.RandomPolicy;
 import org.coconut.cache.service.event.CacheEntryEvent;
 import org.coconut.cache.service.event.CacheEvent;
-import org.coconut.cache.service.event.CacheEventConfiguration;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
 import org.coconut.core.EventProcessor;

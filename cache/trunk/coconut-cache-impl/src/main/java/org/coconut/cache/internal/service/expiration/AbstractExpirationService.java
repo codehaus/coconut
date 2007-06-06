@@ -34,7 +34,7 @@ public abstract class AbstractExpirationService<K, V> extends
 	private final CacheHelper<K, V> helper;
 
 	@Override
-    public void start(CacheConfiguration<?, ?> configuration,
+    public void initialize(CacheConfiguration<?, ?> configuration,
             Map<Class<?>, Object> serviceMap) {
 	    serviceMap.put(CacheExpirationService.class, this);
     }

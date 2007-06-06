@@ -16,6 +16,6 @@ import org.coconut.cache.Cache;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface TCKClassTester {
+public @interface CacheTCKClassSpecifier {
     Class<? extends Cache> value();
 }

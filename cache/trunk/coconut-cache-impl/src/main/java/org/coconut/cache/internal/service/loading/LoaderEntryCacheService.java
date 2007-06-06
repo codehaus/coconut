@@ -3,10 +3,6 @@
  */
 package org.coconut.cache.internal.service.loading;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Future;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

@@ -3,25 +3,9 @@
  */
 package org.coconut.cache.tck.integration;
 
-import static org.coconut.cache.service.event.CacheEventFilters.CACHEENTRY_REMOVED_FILTER;
-import static org.coconut.test.CollectionUtils.M1;
-import static org.coconut.test.CollectionUtils.M2;
-import static org.coconut.test.CollectionUtils.M3;
-
-import java.util.concurrent.TimeUnit;
-
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.service.event.CacheEvent;
-import org.coconut.cache.service.event.CacheEventConfiguration;
-import org.coconut.cache.service.event.CacheEventFilters;
-import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
-import org.coconut.cache.service.expiration.CacheExpirationService;
-import org.coconut.cache.service.statistics.CacheStatisticsConfiguration;
-import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.tck.service.event.AbstractEventTestBundle;
-import org.coconut.test.CollectionUtils;
 import org.junit.Before;
-import org.junit.Test;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

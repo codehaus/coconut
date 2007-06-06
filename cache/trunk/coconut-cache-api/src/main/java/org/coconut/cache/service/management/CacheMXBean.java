@@ -4,6 +4,8 @@
 
 package org.coconut.cache.service.management;
 
+import javax.management.MBeanServer;
+
 import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.annotation.ManagedOperation;
 

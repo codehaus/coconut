@@ -12,7 +12,6 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.spi.CacheHelper;
-import org.coconut.cache.service.exceptionhandling.AbstractCacheExceptionHandler;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationMXBean;
@@ -36,9 +35,9 @@ public class SynchronizedExpirationService<K, V> extends AbstractExpirationServi
     private Filter<CacheEntry<K, V>> expirationFilter;
 
     @Override
-    public void start(CacheConfiguration<?, ?> configuration,
+    public void initialize(CacheConfiguration<?, ?> configuration,
             Map<Class<?>, Object> serviceMap) {
-        super.start(configuration, serviceMap);
+        super.initialize(configuration, serviceMap);
         // serviceMap.put(CacheExpirationMXBean, value)
 
     }

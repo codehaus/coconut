@@ -11,7 +11,6 @@ import static org.coconut.test.CollectionUtils.M3;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.service.event.CacheEventConfiguration;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.tck.service.event.AbstractEventTestBundle;

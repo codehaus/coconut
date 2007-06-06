@@ -3,7 +3,8 @@
  */
 package org.coconut.cache.service.event;
 
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertSame;
 import static junit.framework.Assert.assertTrue;
 import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
 
@@ -168,7 +169,7 @@ public class CacheEventConfigurationTest {
 
     @Test(expected = NullPointerException.class)
     public void includeNPE() {
-        conf.include(null);
+        conf.include((Class<?>) null);
     }
 
     @Test(expected = NullPointerException.class)
@@ -188,7 +189,7 @@ public class CacheEventConfigurationTest {
 
     @Test(expected = NullPointerException.class)
     public void excludeNPE1() {
-        conf.exclude(null);
+        conf.exclude((Class<?>) null);
     }
 
     @Test(expected = IllegalArgumentException.class)

@@ -9,7 +9,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -21,7 +20,6 @@ import org.coconut.cache.service.exceptionhandling.AbstractCacheExceptionHandler
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationService;
-import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.AttributeMaps;
 import org.coconut.core.Clock;

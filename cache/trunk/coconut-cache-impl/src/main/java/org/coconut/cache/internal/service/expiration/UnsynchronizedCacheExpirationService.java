@@ -11,7 +11,6 @@ import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.spi.CacheHelper;
-import org.coconut.cache.service.exceptionhandling.AbstractCacheExceptionHandler;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationMXBean;

@@ -4,7 +4,7 @@
 package org.coconut.cache.test.harness.impl;
 
 import org.coconut.cache.defaults.UnsynchronizedCache;
-import org.coconut.cache.tck.TCKClassTester;
+import org.coconut.cache.tck.CacheTCKClassSpecifier;
 import org.coconut.cache.test.harness.CacheHarnessRunner;
 import org.junit.runner.RunWith;
 
@@ -15,7 +15,7 @@ import org.junit.runner.RunWith;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 @RunWith(CacheHarnessRunner.class)
-@TCKClassTester(UnsynchronizedCache.class)
+@CacheTCKClassSpecifier(UnsynchronizedCache.class)
 public class UnsynchronizedCacheHarnessTest {
 
 }

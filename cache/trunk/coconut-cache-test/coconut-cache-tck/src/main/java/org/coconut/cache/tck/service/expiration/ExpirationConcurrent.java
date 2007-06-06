@@ -11,7 +11,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.tck.CacheTestBundle;
 import org.coconut.cache.tck.util.CountdownLatchLoader;
 import org.coconut.core.Clock;
 

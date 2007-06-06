@@ -4,14 +4,10 @@
 package org.coconut.cache.service.eviction;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheServices;
-import org.coconut.cache.service.event.CacheEntryEvent;
-import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.filter.Filter;
 
 /**

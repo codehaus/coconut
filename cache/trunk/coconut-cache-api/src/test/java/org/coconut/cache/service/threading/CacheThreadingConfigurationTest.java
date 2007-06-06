@@ -7,9 +7,8 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
+import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.Comparator;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executor;
@@ -28,11 +27,9 @@ import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy;
 import java.util.concurrent.ThreadPoolExecutor.DiscardOldestPolicy;
 import java.util.concurrent.ThreadPoolExecutor.DiscardPolicy;
 
-import org.coconut.cache.CacheConfiguration;
 import org.coconut.test.MockTestCase;
 import org.junit.Before;
 import org.junit.Test;
-import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -40,8 +37,7 @@ import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
  */
 public class CacheThreadingConfigurationTest {
 
-    CacheThreadingConfiguration t;
-
+    CacheThreadingConfiguration<?,?> t;
 
     CacheThreadingConfiguration DEFAULT = new CacheThreadingConfiguration();
 
@@ -69,19 +65,6 @@ public class CacheThreadingConfigurationTest {
         assertTrue(t.getShutdownExecutorService());
     }
 
-    @Test
-    public void testScheduledEvictionAtFixedRate() {
-        t.setExecutor(ses);
-        assertEquals(t, t.setScheduledEvictionAtFixedRate(4, TimeUnit.MICROSECONDS));
-        assertEquals(4000, t.getScheduledEvictionAtFixedRate(TimeUnit.NANOSECONDS));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testSetScheduledEvictionAtFixedRateIAE() {
-        t.setExecutor(ses);
-        t.setScheduledEvictionAtFixedRate(-1, TimeUnit.MICROSECONDS);
-    }
-
     // @Test(expected = IllegalStateException.class)
     // public void testSetScheduledEvictionAtFixedRateISE1() {
     // t.setScheduledEvictionAtFixedRate(4, TimeUnit.MICROSECONDS);
@@ -93,27 +76,20 @@ public class CacheThreadingConfigurationTest {
     // t.setScheduledEvictionAtFixedRate(4, TimeUnit.MICROSECONDS);
     // }
 
-
     @Test
     public void testNoop() throws Exception {
         t = reloadService(t);
         assertNull(t.getExecutor());
-        assertEquals(DEFAULT.getScheduledEvictionAtFixedRate(
-                TimeUnit.NANOSECONDS), t.getScheduledEvictionAtFixedRate(
-                TimeUnit.NANOSECONDS));
-        assertEquals(DEFAULT.getShutdownExecutorService(), t
-                .getShutdownExecutorService());
+        assertEquals(DEFAULT.getShutdownExecutorService(), t.getShutdownExecutorService());
     }
 
     @Test
     public void testThreading() throws Exception {
         t.setShutdownExecutorService(!DEFAULT.getShutdownExecutorService());
-        t.setScheduledEvictionAtFixedRate(360000, TimeUnit.MILLISECONDS);
         t.setExecutor(MockTestCase.mockDummy(Executor.class));
         t = reloadService(t);
         assertEquals(!DEFAULT.getShutdownExecutorService(), t
                 .getShutdownExecutorService());
-        assertEquals(360, t.getScheduledEvictionAtFixedRate(TimeUnit.SECONDS));
         assertNull(t.getExecutor());
     }
 
@@ -312,8 +288,7 @@ public class CacheThreadingConfigurationTest {
          * @see java.util.concurrent.RejectedExecutionHandler#rejectedExecution(java.lang.Runnable,
          *      java.util.concurrent.ThreadPoolExecutor)
          */
-        public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
-        }
+        public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {}
     }
 
     public static class MyREH1 implements RejectedExecutionHandler {
@@ -322,8 +297,7 @@ public class CacheThreadingConfigurationTest {
          * @see java.util.concurrent.RejectedExecutionHandler#rejectedExecution(java.lang.Runnable,
          *      java.util.concurrent.ThreadPoolExecutor)
          */
-        public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
-        }
+        public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {}
     }
 
     public static class Tf1 implements ThreadFactory {

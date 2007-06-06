@@ -6,7 +6,6 @@ package org.coconut.cache.internal.service.eviction;
 import java.util.List;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.management.annotation.ManagedAttribute;
 
 /**

@@ -14,8 +14,12 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 
 /**
- * This class is used to validate instances of CacheConfiguration at runtime.
- * While a lot of checks can be made 
+ * This class is used to validate instances of CacheConfiguration at runtime. While a lot
+ * of checks can be made
+ * <p>
+ * 1.Make sure we check that if eviction-scheduling is enabled that a
+ * CacheThreadingService is enabled.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -42,7 +46,7 @@ public class ConfigurationValidator {
         boolean isScheduled = e instanceof ScheduledExecutorService;
 
         if (!isScheduled
-                && conf.threading().getScheduledEvictionAtFixedRate(TimeUnit.NANOSECONDS) > 0) {
+                && conf.eviction().getScheduledEvictionAtFixedRate(TimeUnit.NANOSECONDS) != Long.MAX_VALUE) {
             if (e == null) {
                 throw new IllegalCacheConfigurationException(
                         "Cannot schedule evictions, when no executor has been set");

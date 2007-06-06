@@ -4,24 +4,7 @@
 
 package org.coconut.cache.defaults;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
-import static org.coconut.test.CollectionUtils.M1;
-import static org.coconut.test.CollectionUtils.M1_TO_M5_KEY_SET;
-import static org.coconut.test.CollectionUtils.M1_TO_M5_MAP;
-import static org.coconut.test.CollectionUtils.M5;
-import static org.coconut.test.CollectionUtils.M6;
-
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.coconut.cache.Cache;
-import org.coconut.cache.tck.TCKClassTester;
 import org.junit.Before;
 import org.junit.Test;
 

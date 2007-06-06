@@ -6,7 +6,7 @@ package org.coconut.cache.test.harness;
 import net.jcip.annotations.ThreadSafe;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.tck.TCKClassTester;
+import org.coconut.cache.tck.CacheTCKClassSpecifier;
 import org.junit.Test;
 import org.junit.internal.runners.CompositeRunner;
 import org.junit.internal.runners.InitializationError;
@@ -31,7 +31,7 @@ public class CacheHarnessRunner extends Runner {
     @SuppressWarnings("unchecked")
     public CacheHarnessRunner(Class<? extends Cache> klass) throws Throwable {
         this.klass = klass;
-        tt = klass.getAnnotation(TCKClassTester.class).value();
+        tt = klass.getAnnotation(CacheTCKClassSpecifier.class).value();
         composite = new CompositeRunner(klass.getName());
         addTests(composite);
         // only add the test class itself if it contains tests

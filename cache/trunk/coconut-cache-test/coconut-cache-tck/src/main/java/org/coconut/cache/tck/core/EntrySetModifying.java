@@ -16,10 +16,10 @@ import static org.coconut.test.CollectionUtils.MNAN4;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.coconut.cache.tck.CacheTestBundle;
+import org.coconut.cache.tck.CommonCacheTestBundle;
 import org.junit.Test;
 
-public class EntrySetModifying extends CacheTestBundle {
+public class EntrySetModifying extends CommonCacheTestBundle {
 
 
     /**
