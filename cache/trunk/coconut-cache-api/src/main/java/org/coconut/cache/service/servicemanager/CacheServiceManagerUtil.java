@@ -32,7 +32,7 @@ public class CacheServiceManagerUtil {
         final Cache c = null;
 
         ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
-        CacheServices.serviceManager(c).registerService(
+        CacheServices.servicemanager(c).registerService(
                 CacheServiceManagerUtil.wrapExecutorService(ses, "Daily Cache Clearing"));
         ses.scheduleWithFixedDelay(new Runnable() {
             public void run() {
@@ -76,7 +76,7 @@ public class CacheServiceManagerUtil {
     public static ScheduledFuture<?> registerSingleThreadSchedulingService(Cache<?, ?> c,
             String name, Runnable command, long initialDelay, long delay, TimeUnit unit) {
         ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
-        CacheServices.serviceManager(c).registerService(
+        CacheServices.servicemanager(c).registerService(
                 CacheServiceManagerUtil.wrapExecutorService(ses, "Daily Cache Clearing"));
         return ses.scheduleWithFixedDelay(command, initialDelay, 60 * 60 * 24,
                 TimeUnit.SECONDS);

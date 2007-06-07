@@ -37,9 +37,7 @@ public class ExpirationTestBundle extends CommonCacheTestBundle {
         assertNull(noExpiration.getService(CacheExpirationService.class));
     }
 
-    public CacheExpirationService<Integer, String> expiration() {
-        return c.getService(CacheExpirationService.class);
-    }
+
     protected void putAll(long timeout, TimeUnit unit,
             Map.Entry<Integer, String>... entries) {
         expiration().putAll(CollectionUtils.asMap(entries), timeout, unit);

@@ -78,8 +78,6 @@ public interface CacheExpirationService<K, V> {
      */
     long getDefaultTimeToLive(TimeUnit unit);
 
-    Filter<CacheEntry<K, V>> getExpirationFilter();
-
     /**
      * Associates the specified value with the specified key in this cache (optional
      * operation). If the cache previously contained a mapping for this key, the old value
@@ -158,14 +156,5 @@ public interface CacheExpirationService<K, V> {
      * @see #getDefaultTimeToLive(TimeUnit)
      */
     void setDefaultTimeToLive(long timeToLive, TimeUnit unit);
-
-    /**
-     * Sets a filter that the cache can use to determine if a given cache entry is
-     * expired.
-     * 
-     * @param filter
-     * @see #getExpirationFilter()
-     */
-    void setExpirationFilter(Filter<CacheEntry<K, V>> filter);
 
 }

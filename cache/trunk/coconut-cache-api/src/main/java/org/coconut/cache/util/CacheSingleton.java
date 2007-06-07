@@ -45,6 +45,8 @@ public final class CacheSingleton {
     /** Whether or not this singleton has been initialized. */
     private static boolean isInitialized;
 
+    private static CacheException initializationException;
+
     /** Cannot instantiate. */
     private CacheSingleton() {}
 
@@ -92,23 +94,29 @@ public final class CacheSingleton {
 
     /**
      * Sets the single cache used. The cache instance can be retrieved, possible by
-     * another thread, by callong {@link #getSingleCache()}.
+     * another thread, by callong {@link #getCache()}.
      * 
      * @param cache
      *            the cache to keep a singleton reference for
      */
     public synchronized static void setCache(Cache<?, ?> cache) {
+        //We probably want to able to set the cache to null
+        //when we are done with it (So we can GC the cache)
         if (cache == null) {
             throw new NullPointerException("cache is null");
         }
         cacheInstance = cache;
         isInitialized = true;
+        initializationException = null;
     }
 
     /**
      * Tries to load the configuration from the classpath.
      */
     static synchronized void lazyInitializeClasspathConfiguration() {
+        if (initializationException != null) {
+            throw initializationException;
+        }
         if (!isInitialized) {
             InputStream is = null;
             try {
@@ -131,7 +139,9 @@ public final class CacheSingleton {
                 }
 
             } catch (Exception e) {
-                throw new CacheException("Cache could not be instantiated", e);
+                initializationException = new CacheException(
+                        "Cache could not be instantiated", e);
+                throw initializationException;
             }
         }
     }

@@ -3,6 +3,8 @@
  */
 package org.coconut.cache.service.servicemanager;
 
+import java.util.concurrent.TimeUnit;
+
 
 /**
  * Move getAll services to here?
@@ -11,4 +13,9 @@ package org.coconut.cache.service.servicemanager;
  */
 public interface CacheServiceManagerService {
     void registerService(CacheService lifecycle);
+    
+    boolean    awaitTermination(long timeout, TimeUnit unit);
+    boolean    isShutdown();
+    boolean    isTerminated();
+    void   shutdown();
 }

@@ -46,7 +46,11 @@ public abstract class AbstractCacheManagementService extends AbstractInternalCac
         }
     }
 
-    static class CacheMXBeanWrapper implements CacheMXBean {
+    /**
+     * <p>
+     * Must be a public class to allow reflection.
+     */
+    public static class CacheMXBeanWrapper implements CacheMXBean {
         private final Cache<?, ?> cache;
 
         CacheMXBeanWrapper(Cache<?, ?> cache) {

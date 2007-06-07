@@ -120,7 +120,6 @@ public class DefaultCacheManagementService extends AbstractCacheManagementServic
         if (isEnabled) {
             serviceMap.put(CacheManagementService.class, new DelegatedManagementService(
                     this));
-            serviceMap.put(CacheMXBean.class, cacheMXBean);
         }
     }
 

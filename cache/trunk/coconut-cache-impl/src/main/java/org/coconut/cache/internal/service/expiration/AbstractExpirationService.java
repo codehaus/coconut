@@ -151,6 +151,7 @@ public abstract class AbstractExpirationService<K, V> extends
 
     abstract void doPutAll(Map<? extends K, ? extends V> t, long timeToLiveNano);
 
+    abstract Filter<?> getExpirationFilter();
     String getExpirationFilterAsString() {
         Object o = getExpirationFilter();
         if (o == null) {
@@ -172,7 +173,7 @@ public abstract class AbstractExpirationService<K, V> extends
     final long readTTLAttribute(K key, AttributeMap attributes) {
         long time = CacheExpirationService.DEFAULT_EXPIRATION;
         if (attributes != null) {
-            time = attributes.getLong(CacheAttributes.TIME_TO_LIVE_NANO);
+            time = attributes.getLong(CacheAttributes.TIME_TO_LIVE_NS);
             if (time < 0) {
                 errorHandler
                         .warning("'The specified attribute map, contained an invalid attribute. "
@@ -275,14 +276,6 @@ public abstract class AbstractExpirationService<K, V> extends
         public long getDefaultTimeToLive(TimeUnit unit) {
             return service.getDefaultTimeToLive(unit);
         }
-
-        /**
-         * @see org.coconut.cache.service.expiration.CacheExpirationService#getExpirationFilter()
-         */
-        public Filter<CacheEntry<K, V>> getExpirationFilter() {
-            return service.getExpirationFilter();
-        }
-
         /**
          * @see org.coconut.cache.service.expiration.CacheExpirationService#put(java.lang.Object,
          *      java.lang.Object, long, java.util.concurrent.TimeUnit)
@@ -307,12 +300,6 @@ public abstract class AbstractExpirationService<K, V> extends
             service.setDefaultTimeToLive(timeToLive, unit);
         }
 
-        /**
-         * @see org.coconut.cache.service.expiration.CacheExpirationService#setExpirationFilter(org.coconut.filter.Filter)
-         */
-        public void setExpirationFilter(Filter<CacheEntry<K, V>> filter) {
-            service.setExpirationFilter(filter);
-        }
     }
 
 }

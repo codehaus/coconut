@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
 
 import net.jcip.annotations.NotThreadSafe;
 
@@ -56,7 +57,8 @@ import org.coconut.filter.Filter;
 @CacheServiceSupport( { CacheEventService.class, CacheEvictionService.class,
         CacheExpirationService.class, CacheLoadingService.class,
         CacheStatisticsService.class })
-public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
+public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
+        ConcurrentMap<K, V> {
     private final InternalCacheEvictionService<K, V, AbstractCacheEntry<K, V>> evictionService;
 
     private final UnsynchronizedCacheExpirationService<K, V> expiration;

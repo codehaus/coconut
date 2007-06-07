@@ -1,13 +1,21 @@
 package org.coconut.cache.tck;
 
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.management.MBeanServer;
+import javax.management.MBeanServerInvocationHandler;
 
 import junit.framework.Assert;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.CacheServices;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.management.CacheMXBean;
@@ -15,6 +23,7 @@ import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.statistics.CacheHitStat;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.core.Clock.DeterministicClock;
+import org.coconut.management.ManagedGroup;
 import org.coconut.test.CollectionUtils;
 import org.junit.Before;
 
@@ -86,8 +95,11 @@ public class AbstractCacheTCKTestBundle extends Assert {
     protected String put(Map.Entry<Integer, String> e) {
         return c.put(e.getKey(), e.getValue());
     }
+    protected String put(Integer key, String value) {
+        return put(key, value);
+    }
 
-    protected void evict() {
+    protected final void evict() {
         c.evict();
     }
 
@@ -219,19 +231,46 @@ public class AbstractCacheTCKTestBundle extends Assert {
         Assert.assertEquals(misses, hitstat.getNumberOfMisses());
     }
 
-    protected CacheExpirationService<Integer, String> expiration() {
+    protected final CacheExpirationService<Integer, String> expiration() {
         return c.getService(CacheExpirationService.class);
     }
 
-    protected CacheLoadingService<Integer, String> loading() {
+    protected final CacheLoadingService<Integer, String> loading() {
         return c.getService(CacheLoadingService.class);
     }
 
-    protected CacheManagementService management() {
+    protected final CacheManagementService management() {
         return c.getService(CacheManagementService.class);
     }
+    
 
-    protected CacheMXBean managementMXBean() {
-        return c.getService(CacheMXBean.class);
+    protected <T> T findMXBean(Class<T> clazz) throws IOException {
+        return findMXBean(ManagementFactory.getPlatformMBeanServer(), clazz);
+    }
+
+    protected <T> T findMXBean(MBeanServer server, Class<T> clazz) throws IOException {
+        Collection<ManagedGroup> found = new ArrayList<ManagedGroup>();
+        doFindMXBeans(found, CacheServices.management(c).getRoot(), clazz);
+        if (found.size() == 0) {
+            throw new IllegalArgumentException("Did not find any service " + clazz);
+        } else if (found.size() == 1) {
+            T proxy = MBeanServerInvocationHandler.newProxyInstance(server, found
+                    .iterator().next().getObjectName(), clazz, false);
+            return proxy;
+        } else {
+            throw new IllegalArgumentException("Duplicate service " + clazz);
+        }
+    }
+
+    private static <T> void doFindMXBeans(Collection<ManagedGroup> col,
+            ManagedGroup group, Class<T> c) throws IOException {
+        for (ManagedGroup mg : group.getChildren()) {
+            for (Object o : mg.getObjects()) {
+                if (c.isAssignableFrom(o.getClass())) {
+                    col.add(mg);
+                }
+            }
+            doFindMXBeans(col, mg, c);
+        }
     }
 }

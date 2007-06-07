@@ -8,6 +8,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
 import org.coconut.cache.service.event.CacheEvent;
+import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
+import org.coconut.cache.service.exceptionhandling.AbstractCacheExceptionHandler;
+import org.coconut.cache.service.loading.CacheLoader;
+import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.core.AttributeMap;
 
 /**
@@ -24,17 +28,18 @@ import org.coconut.core.AttributeMap;
  * <p>
  * The three collection views, which allow a cache's contents to be viewed as a set of
  * keys, collection of values, or set of key-value mappings only shows values contained in
- * the actual cache not any values that is stored in any CacheLoader. Furthermore, the
- * cache will <tt>not</tt> attempt to fetch updated values for entries that has expired
- * when calling methods on any of the collection views.
+ * the actual cache not any values that is stored in any backend store. Furthermore, the
+ * cache will <tt>not</tt> check whether or not an entry has expired when calling
+ * methods on any of the collection views. As a result the cache might return values that
+ * have expired.
  * <p>
  * All general-purpose <tt>Cache</tt> implementation classes should provide two
  * "standard" constructors: a void (no arguments) constructor, which creates an empty
  * cache with default settings, and a constructor with a single argument of type
  * {@link CacheConfiguration}. There is no way to enforce this recommendation (as
  * interfaces cannot contain constructors) but all of the general-purpose cache
- * implementations in Coconut Cache comply. Unlike the java.util.Map which this class
- * extends. A constructor taking a single map is not required.
+ * implementations in Coconut Cache comply. Unlike its super class {@link java.util.Map},
+ * a constructor taking a single map is not required.
  * <p>
  * Cache implementations generally do not define element-based versions of the
  * <tt>equals</tt> and <tt>hashCode</tt> methods, but instead inherit the
@@ -58,9 +63,9 @@ import org.coconut.core.AttributeMap;
 public interface Cache<K, V> extends ConcurrentMap<K, V> {
 
     /**
-     * Removes all of the entries from this cache. This is a local operation. Meaning,
-     * that it will not attempt to remove entries that are stored externally, for example,
-     * on disk. The cache will be empty after this call returns.
+     * Removes all of the entries from this cache. This method will not attempt to remove
+     * entries that are stored externally, for example, on disk. The cache will be empty
+     * after this call returns.
      * <p>
      * When all entries have been removed a single {@link CacheEvent.CacheCleared} will be
      * raised.
@@ -74,32 +79,38 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * threads when accessing entries in the cache through {@link #get(Object)} or
      * {@link #getAll(Collection)}.
      * <p>
-     * Unless otherwise specified calling this method is the responsibility of the user.
-     * The typical usage is to create a single thread that periodically runs this method.
-     * <p>
-     * Implementations that block (stop-the-world) all other concurrent access to the
-     * cache by calling this method should clearly specified it.
+     * Regular eviction is typically scheduled through
+     * {@link CacheEvictionConfiguration#setScheduledEvictionAtFixedRate(long, java.util.concurrent.TimeUnit)}
+     * If this is not set it is the responsibility of the user to regular call this
+     * method.
      */
     void evict();
 
     /**
-     * Works as {@link java.util.Map#get(Object)} with the following modification.
+     * Works as {@link java.util.Map#get(Object)} with the following modifications.
      * <p>
-     * If no mapping exists for the specified key and the cache has a backend cache or a
-     * cache loader. The cache will transparently attempt to load a value for the
-     * specified key through the backend.
+     * If the cache has a configured {@link CacheLoader}. And no mapping exists for the
+     * specified key or the specific mapping has expired. The cache will transparently
+     * attempt to load a value for the specified key through the cache loader.
+     * <p>
+     * If cache statistics is enabled the hit/miss. Hits on the actual entry.
+     * <p>
      * 
      * @param key
      *            key whose associated value is to be returned.
-     * @return the value to which this map maps the specified key
+     * @return the value to which this cache maps the specified key
      * @throws ClassCastException
-     *             if the key is of an inappropriate type for this map (optional).
+     *             if the key is of an inappropriate type for this cache (optional).
      * @throws NullPointerException
-     *             if the key is <tt>null</tt>
+     *             if the specified key is <tt>null</tt>
      * @throws CacheException
-     *             if the backend store failed while trying to load a value (optional). An
-     *             implementation might choose to return null instead
+     *             if the backend cache loader failed while trying to load a value
+     *             (optional). A cache might be configured to return null instead
      * @see Map#get(Object)
+     * @see CacheLoadingConfiguration#setLoader(CacheLoader)
+     * @see AbstractCacheExceptionHandler#loadFailed(Cache,
+     *      org.coconut.cache.service.loading.CacheLoader, Object, AttributeMap, boolean,
+     *      Throwable)
      */
     V get(Object key);
 
@@ -126,7 +137,10 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      *             type for this cache (optional).
      * @throws NullPointerException
      *             if the specified collection of keys is <tt>null</tt> or the specified
-     *             collection contains <tt>null</tt>
+     *             collection contains a <tt>null</tt>
+     * @throws CacheException
+     *             if the backend cache loader failed while trying to load a value
+     *             (optional). A cache might be configured to return null instead
      */
     Map<K, V> getAll(Collection<? extends K> keys);
 
@@ -138,8 +152,8 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     Map<Class<?>, Object> getAllServices();
 
     /**
-     * Returns the current capacity of this cache. If the current capacity of the is
-     * greater then Long.MAX_VALUE, this method returns Long.MAX_VALUE.
+     * Returns the current capacity of this cache. If the current capacity of is greater
+     * then Long.MAX_VALUE, this method returns Long.MAX_VALUE.
      * 
      * @return the current capacity of this cache
      */
@@ -149,12 +163,14 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * Retrieves a {@link CacheEntry} for the specified key (optional). If no entry exists
      * for the specified key any configured cache backend is asked to try and fetch an
      * entry for the key.
-     * <p>
      * 
      * @param key
      *            whose associated cache entry is to be returned.
      * @return the cache entry to which this cache maps the specified key, or
      *         <tt>null</tt> if the cache contains no mapping for this key.
+     * @throws CacheException
+     *             if the backend cache loader failed while trying to load a value
+     *             (optional). A cache might be configured to return null instead
      * @throws ClassCastException
      *             if the key is of an inappropriate type for this cache (optional).
      * @throws NullPointerException
@@ -226,7 +242,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * entry.
      * 
      * @param key
-     *            key whose associated value is to be returned.
+     *            key whose associated cache entry is to be returned.
      * @return the cache entry to which this cache maps the specified key, or
      *         <tt>null</tt> if the cache contains no mapping for this key.
      * @throws ClassCastException
@@ -260,7 +276,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      *             if some aspect of this key or value prevents it from being stored in
      *             this cache.
      * @throws NullPointerException
-     *             if specified key or value is <tt>null</tt>.
+     *             if either the specified key, value or attributes is <tt>null</tt>.
      * @see Map#put(Object, Object)
      */
     V put(K key, V value, AttributeMap attributes);

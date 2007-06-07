@@ -170,10 +170,10 @@ public class DefaultCacheExpirationServiceTest {
                 new AttributeMaps.DefaultAttributeMap()));
 
         AttributeMap dam = new AttributeMaps.DefaultAttributeMap();
-        dam.putLong(CacheAttributes.TIME_TO_LIVE_NANO,
+        dam.putLong(CacheAttributes.TIME_TO_LIVE_NS,
                 CacheExpirationService.NEVER_EXPIRE);
         assertEquals(Long.MAX_VALUE, s.innerGetExpirationTime(null, null, dam));
-        dam.putLong(CacheAttributes.TIME_TO_LIVE_NANO, TimeUnit.MILLISECONDS.toNanos(5));
+        dam.putLong(CacheAttributes.TIME_TO_LIVE_NS, TimeUnit.MILLISECONDS.toNanos(5));
         assertEquals(5l, s.innerGetExpirationTime(null, null, dam));
 
         s.setDefaultTimeToLive(10, TimeUnit.MILLISECONDS);
@@ -196,7 +196,7 @@ public class DefaultCacheExpirationServiceTest {
         };
         initialize();
         AttributeMap dam = new AttributeMaps.DefaultAttributeMap();
-        dam.putLong(CacheAttributes.TIME_TO_LIVE_NANO, -1);
+        dam.putLong(CacheAttributes.TIME_TO_LIVE_NS, -1);
         s.innerGetExpirationTime(123, null, dam);
 
         assertTrue(ref.get().contains("-1"));

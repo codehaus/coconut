@@ -63,14 +63,6 @@ public interface CacheEvictionService<K, V> {
     long getDefaultIdleTime(TimeUnit unit);
 
     /**
-     * Returns the configured idle filter or <code>null</code> if no filter has been
-     * configured.
-     * 
-     * @return
-     */
-    Filter<? super CacheEntry<K, V>> getIdleFilter();
-
-    /**
      * Sets the default time idle time for new objects that are added to the cache.
      * 
      * @param timeToLive
@@ -85,24 +77,6 @@ public interface CacheEvictionService<K, V> {
      * @see #getDefaultTimeToLive(TimeUnit)
      */
     void setDefaultIdleTime(long idleTime, TimeUnit unit);
-
-    /**
-     * Sets a filter that the cache can use to determine if a given cache entry should be
-     * evicted. Usage of this method only makes sense if the cache stores entries in a
-     * background store. For example, a file on the disk.
-     * <p>
-     * This method is similar to the #setExpirationFilter(Filter) except that this is only
-     * used as a tempory
-     * <p>
-     * If this cache does
-     * 
-     * @param filter
-     *            the filter to check entries against
-     * @see #getIdleFilter()
-     * @throws UnsupportedOperationException
-     *             If this cache does not support setting an eviction filter
-     */
-    void setIdleFilter(Filter<? super CacheEntry<K, V>> filter);
 
     // TODO copy javadoc from MXBean
     void trimToSize(int size);

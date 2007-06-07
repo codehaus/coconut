@@ -112,7 +112,7 @@ public class UnsynchronizedCacheExpirationService<K, V> extends
         AttributeMap map = attributeFactory.createMap();
         long ttlNano = timeToLiveNano != CacheExpirationService.DEFAULT_EXPIRATION ? timeToLiveNano
                 : defaultTTL;
-        map.put(CacheAttributes.TIME_TO_LIVE_NANO, ttlNano);
+        map.put(CacheAttributes.TIME_TO_LIVE_NS, ttlNano);
         return helper.put(key, value, map);// checks for null key+value
     }
 
@@ -128,7 +128,7 @@ public class UnsynchronizedCacheExpirationService<K, V> extends
         for (Map.Entry<? extends K, ? extends V> entry : t.entrySet()) {
             K key = entry.getKey();
             AttributeMap map = attributeFactory.createMap();
-            map.put(CacheAttributes.TIME_TO_LIVE_NANO, ttlNano);
+            map.put(CacheAttributes.TIME_TO_LIVE_NS, ttlNano);
             attributes.put(key, map);
         }
         helper.putAll(t, attributes);

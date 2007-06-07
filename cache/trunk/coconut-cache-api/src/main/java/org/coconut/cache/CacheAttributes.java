@@ -16,7 +16,7 @@ import org.coconut.core.AttributeMap;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class CacheAttributes implements PolicyAttributes {
+public class CacheAttributes extends PolicyAttributes {
 
     /**
      * Type Map<K,AttributeMap> can be used in getAll/removeAll/
@@ -30,19 +30,31 @@ public class CacheAttributes implements PolicyAttributes {
     /**
      * Whether or not any events will be raised. A Boolean value
      */
-    public static final String POST_EVENT = "post_event";
-
-    public static final String TIME_TO_IDLE_NANO = "time_to_idle_ns";
+    public static final String NO_EVENTS = "post_event";
 
     /**
-     * This key can be used to indicate that how long time a cache entry should live
-     * before it expires. The time-to-live value should be a long and should be measured
-     * in nano seconds. Use {@link java.util.concurrent.TimeUnit} to convert between
-     * different time units.
+     * This key can be used to indicate how long time a cache entry should live in memory
+     * before it is evicted to secondary storage such as a disk. The time-to-idle value
+     * should be a long and should be measured in nano seconds. Use
+     * {@link java.util.concurrent.TimeUnit} to convert between different time units.
      */
-    public static final String TIME_TO_LIVE_NANO = "time_to_live_ns";
+    public static final String TIME_TO_IDLE_NS = "time_to_idle_ns";
 
-    public static final String TIME_TO_REFRESH_NANO = "time_to_refresh_ns";
+    /**
+     * This key can be used to indicate how long time a cache entry should live before it
+     * expires. The time-to-live value should be a long and should be measured in nano
+     * seconds. Use {@link java.util.concurrent.TimeUnit} to convert between different
+     * time units.
+     */
+    public static final String TIME_TO_LIVE_NS = "time_to_live_ns";
+
+    /**
+     * This key can be used to indicate how long time a cache entry should live before it
+     * refreshed from a cacheloader. The time-to-refresh value should be a long and should be
+     * measured in nano seconds. Use {@link java.util.concurrent.TimeUnit} to convert
+     * between different time units.
+     */
+    public static final String TIME_TO_REFRESH_NS = "time_to_refresh_ns";
 
     public static long getTimeToLive(AttributeMap attributes, TimeUnit unit,
             long defaultValue) {
@@ -51,7 +63,8 @@ public class CacheAttributes implements PolicyAttributes {
         } else if (unit == null) {
             throw new NullPointerException("unit is null");
         }
-        long ttl = attributes.getLong(TIME_TO_LIVE_NANO, -1);
+        //TODO what if time is negative
+        long ttl = attributes.getLong(TIME_TO_LIVE_NS, -1);
         if (ttl == -1) {
             return defaultValue;
         } else {
@@ -78,7 +91,7 @@ public class CacheAttributes implements PolicyAttributes {
                 || ttl != CacheExpirationService.DEFAULT_EXPIRATION) {
             ttl = TimeUnit.NANOSECONDS.convert(ttl, unit);
         }
-        attributes.put(TIME_TO_LIVE_NANO, ttl);
+        attributes.put(TIME_TO_LIVE_NS, ttl);
         return attributes;
     }
 }

@@ -6,6 +6,7 @@ package org.coconut.cache;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
+import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 
@@ -18,14 +19,6 @@ import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 @SuppressWarnings("unchecked")
 public final class CacheServices {
 
-    public static CacheManagementService management(Cache<?, ?> cache) {
-        return cache.getService(CacheManagementService.class);
-    }
-    public static CacheServiceManagerService serviceManager(Cache<?, ?> cache) {
-        return cache.getService(CacheServiceManagerService.class);
-    }
-
-    
     public static CacheEventService event(Cache<?, ?> cache) {
         return cache.getService(CacheEventService.class);
     }
@@ -43,8 +36,16 @@ public final class CacheServices {
         return cache.getService(CacheExpirationService.class);
     }
 
-    public static boolean hasExpirationService(Cache<?, ?> cache) {
-        return cache.getService(CacheExpirationService.class) == null;
+    public static CacheLoadingService loading(Cache<?, ?> cache) {
+        return cache.getService(CacheLoadingService.class);
+    }
+
+    public static CacheManagementService management(Cache<?, ?> cache) {
+        return cache.getService(CacheManagementService.class);
+    }
+
+    public static CacheServiceManagerService servicemanager(Cache<?, ?> cache) {
+        return cache.getService(CacheServiceManagerService.class);
     }
 
 }

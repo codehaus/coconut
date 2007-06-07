@@ -3,9 +3,12 @@
  */
 package org.coconut.cache.tck;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import net.jcip.annotations.ThreadSafe;
 
@@ -46,11 +49,15 @@ public class CacheTCKRunner extends Runner {
 
     static {
         try {
-            // sets default test class if available
-            tt = (Class<? extends Cache>) Class
-                    .forName("org.coconut.cache.defaults.UnsynchronizedCache");
+            InputStream is = CacheTCKRunner.class.getClassLoader().getResourceAsStream(
+                    "defaulttest.txt");
+            Properties p = new Properties();
+            p.load(is);
+            tt = (Class<? extends Cache>) Class.forName(p.getProperty("default"));
         } catch (ClassNotFoundException e) {
-            // ignore
+            //ignore
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -77,7 +84,7 @@ public class CacheTCKRunner extends Runner {
             services = Arrays.asList(ss.value());
         }
         boolean isThreadSafe = klass.isAnnotationPresent(ThreadSafe.class);
-        
+
         composite.add(new Suite(CoreSuite.class));
         if (services.contains(CacheLoadingService.class)) {
             composite.add(new Suite(LoadingSuite.class));

@@ -62,11 +62,7 @@ public class LandlordPolicy<T> extends AbstractPolicy<T> {
     }
 
     public int add(T element, AttributeMap attributes) {
-        double cost = attributes.getDouble(PolicyAttributes.COST,
-                ReplacementPolicy.DEFAULT_COST);
-        long size = attributes.getLong(PolicyAttributes.SIZE,
-                ReplacementPolicy.DEFAULT_SIZE);
-        return add(element, size, cost);
+        return add(element, PolicyAttributes.getSize(attributes), PolicyAttributes.getCost(attributes));
     }
 
     public int add(T element, long size, double cost) {

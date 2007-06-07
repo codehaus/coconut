@@ -133,7 +133,7 @@ public class SynchronizedExpirationService<K, V> extends AbstractExpirationServi
         AttributeMap map = attributeFactory.createMap();
         long ttlNano = timeToLiveNano != CacheExpirationService.DEFAULT_EXPIRATION ? timeToLiveNano
                 : defaultTTlVol;
-        map.put(CacheAttributes.TIME_TO_LIVE_NANO, ttlNano);
+        map.put(CacheAttributes.TIME_TO_LIVE_NS, ttlNano);
         return helper.put(key, value, map);// checks for null key+value
     }
 
@@ -149,7 +149,7 @@ public class SynchronizedExpirationService<K, V> extends AbstractExpirationServi
         for (Map.Entry<? extends K, ? extends V> entry : t.entrySet()) {
             K key = entry.getKey();
             AttributeMap map = attributeFactory.createMap();
-            map.put(CacheAttributes.TIME_TO_LIVE_NANO, ttlNano);
+            map.put(CacheAttributes.TIME_TO_LIVE_NS, ttlNano);
             attributes.put(key, map);
         }
         helper.putAll(t, attributes);

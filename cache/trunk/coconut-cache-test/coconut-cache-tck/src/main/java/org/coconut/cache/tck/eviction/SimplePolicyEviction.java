@@ -13,21 +13,21 @@ import static org.coconut.test.CollectionUtils.asSet;
 
 import org.coconut.cache.policy.Policies;
 import org.coconut.cache.policy.paging.LRUPolicy;
-import org.coconut.cache.tck.CommonCacheTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
 import org.junit.Test;
 
-public class SimplePolicyEviction extends CommonCacheTestBundle {
+public class SimplePolicyEviction extends AbstractCacheTCKTestBundle {
 
     @Test
     public void testSimpleSize() {
         c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(5)
                 .c());
         for (int i = 0; i < 5; i++) {
-            c.put(i, Integer.toString(i));
+            put(i, Integer.toString(i));
         }
         assertEquals(5, c.size());
         for (int i = 5; i < 10; i++) {
-            c.put(i, Integer.toString(i));
+            put(i, Integer.toString(i));
             assertEquals(5, c.size());
         }
     }
@@ -130,12 +130,13 @@ public class SimplePolicyEviction extends CommonCacheTestBundle {
 
     // 
     /**
-     * Currently put is ignored with regards to cache policies, but should just
-     * inherit the previous entry.
+     * Currently put is ignored with regards to cache policies, but should just inherit
+     * the previous entry.
      */
     @Test
     public void testPutOverridesPreviousValue() {
-        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(2).c());
+        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(2)
+                .c());
         c.put(M1.getKey(), M1.getValue());
         c.put(M2.getKey(), M2.getValue());
         c.get(M1.getKey());

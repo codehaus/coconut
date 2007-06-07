@@ -18,7 +18,7 @@ public class CacheEntryLoaderExample {
     // START SNIPPET: class
     static class ExpirationLoader implements CacheLoader<Integer, String> {
         public String load(Integer key, AttributeMap attributes) throws Exception {
-            attributes.putLong(CacheAttributes.TIME_TO_LIVE_NANO,
+            attributes.putLong(CacheAttributes.TIME_TO_LIVE_NS,
                     System.currentTimeMillis() + 60 * 60 * 1000);
             return "val=" + key;
         }

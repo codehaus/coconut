@@ -3,6 +3,8 @@
  */
 package org.coconut.cache.internal.service;
 
+import java.util.concurrent.TimeUnit;
+
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.servicemanager.CacheService;
@@ -14,7 +16,8 @@ import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
  */
 public class DefaultCacheServiceManager implements CacheServiceManagerService {
 
-    public static DefaultCacheServiceManager getInstance(Cache c, CacheConfiguration conf) {
+    public static DefaultCacheServiceManager getInstance(Cache<?, ?> c,
+            CacheConfiguration<?, ?> conf) {
         return null;
     }
 
@@ -24,4 +27,18 @@ public class DefaultCacheServiceManager implements CacheServiceManagerService {
     public void registerService(CacheService lifecycle) {
         throw new UnsupportedOperationException();
     }
+
+    public boolean awaitTermination(long timeout, TimeUnit unit) {
+        return false;
+    }
+
+    public boolean isShutdown() {
+        return false;
+    }
+
+    public boolean isTerminated() {
+        return false;
+    }
+
+    public void shutdown() {}
 }
