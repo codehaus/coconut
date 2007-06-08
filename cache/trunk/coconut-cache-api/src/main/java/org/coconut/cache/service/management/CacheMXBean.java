@@ -32,6 +32,7 @@ public interface CacheMXBean {
      */
     static final String DEFAULT_JMX_DOMAIN = "org.coconut.cache";
 
+    public final static String MANAGED_SERVICE_NAME = "General";
     /**
      * Returns the current number of elements in the cache.
      * <p>

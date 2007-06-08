@@ -6,9 +6,7 @@ package org.coconut.cache.service.eviction;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheServices;
-import org.coconut.filter.Filter;
 
 /**
  * This interface contains various eviction-based methods that are available at runtime.
@@ -77,6 +75,12 @@ public interface CacheEvictionService<K, V> {
      * @see #getDefaultTimeToLive(TimeUnit)
      */
     void setDefaultIdleTime(long idleTime, TimeUnit unit);
+
+    /**
+     * Checks all elements in the cache for whether or not they are idle and should be
+     * evicted.
+     */
+    void evictIdleElements();
 
     // TODO copy javadoc from MXBean
     void trimToSize(int size);

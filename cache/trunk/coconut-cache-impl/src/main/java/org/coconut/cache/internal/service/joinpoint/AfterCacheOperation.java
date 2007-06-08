@@ -12,8 +12,8 @@ import org.coconut.cache.CacheEntry;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public interface AfterCacheOperation<K, V> {
 
+public interface AfterCacheOperation<K, V> {
     /**
      * Called after the specified cache was cleared.
      * 
@@ -47,7 +47,7 @@ public interface AfterCacheOperation<K, V> {
     void afterPutAll(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries,
             Collection<? extends CacheEntry<K, V>> prev,
-            Collection<? extends CacheEntry> added);
+            Collection<? extends CacheEntry<K, V>> added);
 
     void afterRemove(Cache<K, V> cache, long started, CacheEntry<K, V> entry);
 

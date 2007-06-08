@@ -52,4 +52,6 @@ public interface CacheHelper<K, V> {
 
     public void evict(Object key);
     public void evictAll(Collection keys);
+
+    void evictIdleElements();
 }

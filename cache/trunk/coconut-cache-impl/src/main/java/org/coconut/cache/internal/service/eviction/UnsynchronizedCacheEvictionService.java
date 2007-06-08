@@ -118,12 +118,12 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
     }
 
     public void setPreferableSize(int size) {
-        this.preferableSize = new CacheEvictionConfiguration().setPreferableSize(size)
-                .getPreferableSize();
+        this.preferableSize = new CacheEvictionConfiguration<K, V>().setPreferableSize(
+                size).getPreferableSize();
     }
 
     public void setMaximumSize(int size) {
-        this.maxSize = new CacheEvictionConfiguration().setMaximumSize(size)
+        this.maxSize = new CacheEvictionConfiguration<K, V>().setMaximumSize(size)
                 .getMaximumSize();
     }
 
@@ -132,8 +132,8 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
     }
 
     public void setMaximumCapacity(long size) {
-        this.maxCapacity = new CacheEvictionConfiguration().setMaximumCapacity(size)
-                .getMaximumCapacity();
+        this.maxCapacity = new CacheEvictionConfiguration<K, V>()
+                .setMaximumCapacity(size).getMaximumCapacity();
     }
 
     public long getPreferableCapacity() {
@@ -141,8 +141,8 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
     }
 
     public void setPreferableCapacity(long size) {
-        this.preferableCapacity = new CacheEvictionConfiguration().setPreferableCapacity(
-                size).getPreferableCapacity();
+        this.preferableCapacity = new CacheEvictionConfiguration<K, V>()
+                .setPreferableCapacity(size).getPreferableCapacity();
     }
 
     /**
@@ -151,7 +151,6 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
     public void clear() {
         cp.clear();
     }
-
 
     /**
      * @see org.coconut.cache.service.eviction.CacheEvictionService#getIdleFilter()
@@ -183,8 +182,8 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
      * @see org.coconut.cache.service.eviction.CacheEvictionService#getDefaultIdleTime(java.util.concurrent.TimeUnit)
      */
     public long getDefaultIdleTime(TimeUnit unit) {
-        return new CacheEvictionConfiguration().setDefaultIdleTime(defaultIdleTimeNS,
-                TimeUnit.NANOSECONDS).getDefaultIdleTime(unit);
+        return new CacheEvictionConfiguration<K, V>().setDefaultIdleTime(
+                defaultIdleTimeNS, TimeUnit.NANOSECONDS).getDefaultIdleTime(unit);
     }
 
     /**
@@ -192,8 +191,8 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
      *      java.util.concurrent.TimeUnit)
      */
     public void setDefaultIdleTime(long idleTime, TimeUnit unit) {
-        defaultIdleTimeNS = new CacheEvictionConfiguration().setDefaultIdleTime(idleTime,
-                unit).getDefaultIdleTime(TimeUnit.NANOSECONDS);
+        defaultIdleTimeNS = new CacheEvictionConfiguration<K, V>().setDefaultIdleTime(
+                idleTime, unit).getDefaultIdleTime(TimeUnit.NANOSECONDS);
     }
 
     /**
@@ -204,8 +203,8 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
         return cp.update(index, t);
     }
 
-    public void evict(Object key) {}
-
     public void evictAll() {}
+
+    public void evict(Object key) {}
 
 }

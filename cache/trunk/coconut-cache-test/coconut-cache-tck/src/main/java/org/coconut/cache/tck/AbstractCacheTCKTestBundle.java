@@ -11,14 +11,15 @@ import javax.management.MBeanServer;
 import javax.management.MBeanServerInvocationHandler;
 
 import junit.framework.Assert;
+import junit.framework.AssertionFailedError;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheServices;
+import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
-import org.coconut.cache.service.management.CacheMXBean;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.statistics.CacheHitStat;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
@@ -58,6 +59,14 @@ public class AbstractCacheTCKTestBundle extends Assert {
         return (Cache) conf.c().newInstance(CacheTCKRunner.tt);
     }
 
+    protected void setCache(AbstractCacheServiceConfiguration<?, ?> conf) {
+        c = newCache(conf);
+    }
+
+    protected void setCache(CacheConfiguration<?, ?> conf) {
+        c = newCache(conf);
+    }
+
     protected Cache<Integer, String> newCache(CacheConfiguration<?, ?> conf) {
         return (Cache) conf.newInstance(CacheTCKRunner.tt);
     }
@@ -88,15 +97,31 @@ public class AbstractCacheTCKTestBundle extends Assert {
         return c.containsValue(e.getValue());
     }
 
+    protected String peek(Integer e) {
+        return c.peek(e);
+    }
+
     protected String peek(Map.Entry<Integer, String> e) {
         return c.peek(e.getKey());
+    }
+
+    protected Collection<Map.Entry<Integer, String>> put(int to) {
+        return put(1, to);
+    }
+
+    protected Collection<Map.Entry<Integer, String>> put(int from, int to) {
+        for (int i = from; i <= to; i++) {
+            c.put(i, "" + (char) (i + 64));
+        }
+        return new ArrayList<Map.Entry<Integer, String>>(c.entrySet());
     }
 
     protected String put(Map.Entry<Integer, String> e) {
         return c.put(e.getKey(), e.getValue());
     }
+
     protected String put(Integer key, String value) {
-        return put(key, value);
+        return c.put(key, value);
     }
 
     protected final void evict() {
@@ -172,6 +197,12 @@ public class AbstractCacheTCKTestBundle extends Assert {
         return c.get(e.getKey());
     }
 
+    protected void touch(Map.Entry<Integer, String>... e) {
+        for (Map.Entry<Integer, String> entry : e) {
+            c.get(entry.getKey());
+        }
+    }
+
     protected CacheEntry<Integer, String> peekEntry(Map.Entry<Integer, String> e) {
         return c.peekEntry(e.getKey());
     }
@@ -235,6 +266,10 @@ public class AbstractCacheTCKTestBundle extends Assert {
         return c.getService(CacheExpirationService.class);
     }
 
+    protected final CacheEvictionService<Integer, String> eviction() {
+        return c.getService(CacheEvictionService.class);
+    }
+
     protected final CacheLoadingService<Integer, String> loading() {
         return c.getService(CacheLoadingService.class);
     }
@@ -242,13 +277,12 @@ public class AbstractCacheTCKTestBundle extends Assert {
     protected final CacheManagementService management() {
         return c.getService(CacheManagementService.class);
     }
-    
 
-    protected <T> T findMXBean(Class<T> clazz) throws IOException {
+    protected <T> T findMXBean(Class<T> clazz) {
         return findMXBean(ManagementFactory.getPlatformMBeanServer(), clazz);
     }
 
-    protected <T> T findMXBean(MBeanServer server, Class<T> clazz) throws IOException {
+    protected <T> T findMXBean(MBeanServer server, Class<T> clazz) {
         Collection<ManagedGroup> found = new ArrayList<ManagedGroup>();
         doFindMXBeans(found, CacheServices.management(c).getRoot(), clazz);
         if (found.size() == 0) {
@@ -263,7 +297,7 @@ public class AbstractCacheTCKTestBundle extends Assert {
     }
 
     private static <T> void doFindMXBeans(Collection<ManagedGroup> col,
-            ManagedGroup group, Class<T> c) throws IOException {
+            ManagedGroup group, Class<T> c) {
         for (ManagedGroup mg : group.getChildren()) {
             for (Object o : mg.getObjects()) {
                 if (c.isAssignableFrom(o.getClass())) {

@@ -59,21 +59,21 @@ import org.coconut.filter.Filter;
         CacheStatisticsService.class })
 public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         ConcurrentMap<K, V> {
+    public final InternalCacheLoadingService<K, V> loadingService;
+
+    private final AbstractCacheEntryFactoryService<K, V> entryFactory;
+
+    private final InternalCacheEventService<K, V> eventService;
+
     private final InternalCacheEvictionService<K, V, AbstractCacheEntry<K, V>> evictionService;
 
     private final UnsynchronizedCacheExpirationService<K, V> expiration;
 
-    public final InternalCacheLoadingService<K, V> loadingService;
-
     private final EntryMap<K, V> map = new EntryMap<K, V>(false);
 
-    private final InternalCacheEventService<K, V> eventService;
+    private final InternalCacheServiceManager serviceManager;
 
     private final InternalCacheOperation<K, V> statistics;
-
-    private final AbstractCacheEntryFactoryService<K, V> entryFactory;
-
-    private final InternalCacheServiceManager serviceManager;
 
     @SuppressWarnings("unchecked")
     public UnsynchronizedCache() {
@@ -92,18 +92,6 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         eventService = serviceManager.getService(InternalCacheEventService.class);
         statistics = serviceManager.getService(DefaultCacheStatisticsService.class);
         entryFactory = serviceManager.getService(AbstractCacheEntryFactoryService.class);
-    }
-
-    /**
-     * @see org.coconut.cache.spi.AbstractCache#getService(java.lang.Class)
-     */
-    public final <T> T getService(Class<T> serviceType) {
-        checkStarted();
-        return serviceManager.getPublicService(serviceType);
-    }
-
-    private void checkStarted() {
-        serviceManager.lazyStart(false);
     }
 
     /**
@@ -166,6 +154,34 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
                 previousCapacity, evicted, expired);
     }
 
+    public Map<Class<?>, Object> getAllServices() {
+        checkStarted();
+        return serviceManager.getAllPublicServices();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public long getCapacity() {
+        return map.capacity();
+    }
+
+    /**
+     * @see org.coconut.cache.spi.AbstractCache#getService(java.lang.Class)
+     */
+    public final <T> T getService(Class<T> serviceType) {
+        checkStarted();
+        return serviceManager.getPublicService(serviceType);
+    }
+
+    /**
+     * @see org.coconut.cache.Cache#hasService(java.lang.Class)
+     */
+    public boolean hasService(Class<?> serviceType) {
+        checkStarted();
+        return serviceManager.hasPublicService(serviceType);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -177,46 +193,9 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     /**
      * {@inheritDoc}
      */
-    public long getCapacity() {
-        return map.capacity();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int size() {
         return map.size();
-    }
-
-    /**
-     * @see org.coconut.cache.spi.AbstractCache#trimToSize(int)
-     */
-    public void trimToSize(int newSize) {
-        checkStarted();
-        if (newSize < 0) {
-            throw new IllegalArgumentException(
-                    "newSize cannot be a negative number, was " + newSize);
-        }
-        long started = statistics.beforeTrimToSize(this);
-        int diff = Math.max(0, map.size() - newSize);
-        List<AbstractCacheEntry<K, V>> l = evictionService.evict(diff);
-        for (AbstractCacheEntry<K, V> entry : l) {
-            map.remove(entry.getKey());
-        }
-        // this happens if we use a null evictionService
-        diff = map.size() - newSize;
-        if (diff > 0) {
-            Iterator<AbstractCacheEntry<K, V>> i = map.iterator();
-            while (diff-- > 0 && i.hasNext()) {
-                AbstractCacheEntry<K, V> e = i.next();
-                l.add(e);
-                evictionService.remove(e.getPolicyIndex());
-                i.remove();
-            }
-        }
-        statistics.afterTrimToSize(this, started, l);
-        eventService.afterTrimToSize(this, started, l);
     }
 
     /**
@@ -225,6 +204,10 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     @Override
     public Collection<V> values() {
         return map.values(this);
+    }
+
+    private void checkStarted() {
+        serviceManager.lazyStart(false);
     }
 
     private AbstractCacheEntry<K, V> doPut(AbstractCacheEntry<K, V> entry) {
@@ -319,29 +302,24 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     }
 
     /**
-     * @see org.coconut.cache.defaults.SupportedCache2#peekEntry(java.lang.Object,
-     *      boolean)
+     * @see org.coconut.cache.defaults.SupportedCache#doGetAll(java.util.Collection)
+     */
+    @Override
+    Map<K, V> doGetAll(Collection<? extends K> keys) {
+        HashMap<K, V> result = new HashMap<K, V>();
+        for (K key : keys) {
+            result.put(key, get(key));
+        }
+        return result;
+    }
+
+
+    /**
+     * @see org.coconut.cache.defaults.AbstractCache#doPeek(java.lang.Object)
      */
     @Override
     AbstractCacheEntry<K, V> doPeek(K key) {
         return map.get(key);
-    }
-
-    /**
-     * @see org.coconut.cache.defaults.SupportedCache#doRemove(java.lang.Object,
-     *      java.lang.Object)
-     */
-    @Override
-    CacheEntry<K, V> doRemove(Object key, Object value) {
-        checkStarted();
-        long started = statistics.beforeRemove(this, key);
-        AbstractCacheEntry<K, V> e = map.remove(key, value);
-        if (e != null) {
-            evictionService.remove(e.getPolicyIndex());
-        }
-        statistics.afterRemove(this, started, e);
-        eventService.afterRemove(this, started, e);
-        return e;
     }
 
     @Override
@@ -363,6 +341,34 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         eventService
                 .afterPut(this, started, trim(), e.getPolicyIndex() >= 0 ? e : null, prev);
         return prev;
+    }
+
+    /**
+     * @see org.coconut.cache.defaults.SupportedCache#doPutAll(java.util.Map,
+     *      org.coconut.core.AttributeMap)
+     */
+    @Override
+    void doPutAll(Map<? extends K, ? extends V> t, AttributeMap attributes) {
+        for (Map.Entry<? extends K, ? extends V> e : t.entrySet()) {
+            doPut(e.getKey(), e.getValue(), false, attributes);
+        }
+    }
+
+    /**
+     * @see org.coconut.cache.defaults.SupportedCache#doRemove(java.lang.Object,
+     *      java.lang.Object)
+     */
+    @Override
+    CacheEntry<K, V> doRemove(Object key, Object value) {
+        checkStarted();
+        long started = statistics.beforeRemove(this, key);
+        AbstractCacheEntry<K, V> e = map.remove(key, value);
+        if (e != null) {
+            evictionService.remove(e.getPolicyIndex());
+        }
+        statistics.afterRemove(this, started, e);
+        eventService.afterRemove(this, started, e);
+        return e;
     }
 
     /**
@@ -400,36 +406,44 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     }
 
     /**
-     * @see org.coconut.cache.defaults.SupportedCache#doPutAll(java.util.Map,
-     *      org.coconut.core.AttributeMap)
+     * @see org.coconut.cache.spi.AbstractCache#trimToSize(int)
      */
-    @Override
-    void doPutAll(Map<? extends K, ? extends V> t, AttributeMap attributes) {
-        for (Map.Entry<? extends K, ? extends V> e : t.entrySet()) {
-            doPut(e.getKey(), e.getValue(), false, attributes);
+    void doTrimToSize(int newSize) {
+        if (newSize < 0) {
+            throw new IllegalArgumentException(
+                    "newSize cannot be a negative number, was " + newSize);
         }
-    }
-
-    /**
-     * @see org.coconut.cache.defaults.SupportedCache#doGetAll(java.util.Collection)
-     */
-    @Override
-    Map<K, V> doGetAll(Collection<? extends K> keys) {
-        HashMap<K, V> result = new HashMap<K, V>();
-        for (K key : keys) {
-            result.put(key, get(key));
+        checkStarted();
+        long started = statistics.beforeTrimToSize(this);
+        int diff = Math.max(0, map.size() - newSize);
+        List<AbstractCacheEntry<K, V>> l = evictionService.evict(diff);
+        for (AbstractCacheEntry<K, V> entry : l) {
+            map.remove(entry.getKey());
         }
-        return result;
-    }
-
-    /**
-     * @see org.coconut.cache.Cache#hasService(java.lang.Class)
-     */
-    public boolean hasService(Class serviceType) {
-        return serviceManager.hasPublicService(serviceType);
+        // this happens if we use a null evictionService
+        diff = map.size() - newSize;
+        if (diff > 0) {
+            Iterator<AbstractCacheEntry<K, V>> i = map.iterator();
+            while (diff-- > 0 && i.hasNext()) {
+                AbstractCacheEntry<K, V> e = i.next();
+                l.add(e);
+                evictionService.remove(e.getPolicyIndex());
+                i.remove();
+            }
+        }
+        statistics.afterTrimToSize(this, started, l);
+        eventService.afterTrimToSize(this, started, l);
     }
 
     class MyHelper implements CacheHelper<K, V> {
+
+        public void evict(Object key) {
+            remove(key);
+        }
+
+        public void evictAll(Collection keys) {}
+
+        public void evictIdleElements() {}
 
         /**
          * @see org.coconut.cache.internal.spi.CacheHelper#expire(java.lang.Object)
@@ -476,7 +490,6 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
          * @see org.coconut.cache.internal.spi.CacheHelper#getCache()
          */
         public Cache<K, V> getCache() {
-            // TODO Auto-generated method stub
             return UnsynchronizedCache.this;
         }
 
@@ -517,6 +530,12 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
 
         }
 
+        public void trimToCapacity(long capacity) {}
+
+        public void trimToSize(int size) {
+            doTrimToSize(size);
+        }
+
         /**
          * @see org.coconut.cache.internal.spi.CacheHelper#valueLoaded(java.lang.Object,
          *      java.lang.Object, org.coconut.core.AttributeMap)
@@ -536,20 +555,5 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
 
         }
 
-        public void evict(Object key) {
-            remove(key);
-        }
-
-        public void evictAll(Collection keys) {}
-
-        public void trimToCapacity(long capacity) {}
-
-        public void trimToSize(int size) {}
-
-    }
-
-    public Map<Class<?>, Object> getAllServices() {
-        checkStarted();
-        return serviceManager.getAllPublicServices();
     }
 }

@@ -59,8 +59,8 @@ public class Managements {
                 mg.register(server, on);
             }
             for (ManagedGroup group : mg.getChildren()) {
-                prefix += "," + levels[level + 1] + "=" + group.getName();
-                visitManagedGroup(group, prefix, level + 1);
+                String p = prefix + "," + levels[level + 1] + "=" + group.getName();
+                visitManagedGroup(group, p, level + 1);
             }
         }
 

@@ -4,6 +4,7 @@
 package org.coconut.management.defaults;
 
 import javax.management.IntrospectionException;
+import javax.management.MBeanException;
 import javax.management.MBeanOperationInfo;
 import javax.management.ReflectionException;
 
@@ -27,7 +28,7 @@ abstract class AbstractOperation {
 		this.description = description;
 	}
 	abstract MBeanOperationInfo getInfo() throws IntrospectionException;
-	abstract Object invoke(Object... arguments) throws ReflectionException;
+	abstract Object invoke(Object... arguments) throws MBeanException, ReflectionException;
 	
 	abstract String[] getSignature();
 }

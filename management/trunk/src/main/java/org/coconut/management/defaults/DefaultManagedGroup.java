@@ -162,6 +162,9 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
             throws AttributeNotFoundException {
         AbstractAttribute att = attributes.get(attribute);
         if (att == null) {
+            for (String aa : attributes.keySet()) {
+                System.out.println(aa);
+            }
             throw new AttributeNotFoundException("Attribute " + attribute
                     + " could not be found");
         }
@@ -258,7 +261,7 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
     private static String capitalize(String s) {
         if (s.length() == 0)
             return s;
-        return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
+        return s.substring(0, 1).toUpperCase() + s.substring(1);
     }
 
     public Collection<?> getObjects() {

@@ -27,9 +27,8 @@ public class ConcurrentCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
      * @param version
      */
     public ConcurrentCacheEntry(AbstractCacheEntryFactoryService<K, V> service, K key,
-            V value, double cost, long creationTime, long lastUpdateTime, long size,
-            long version) {
-        super(key, value, cost, creationTime, lastUpdateTime, size, version);
+            V value, double cost, long creationTime, long lastUpdateTime, long size) {
+        super(key, value, cost, creationTime, lastUpdateTime, size);
         this.service = service;
 
     }

@@ -35,8 +35,6 @@ import org.coconut.management.defaults.DefaultManagedGroup;
 @ThreadSafe
 public class DefaultCacheManagementService extends AbstractCacheManagementService {
 
-    private final CacheMXBean cacheMXBean;
-
     private final String domain;
 
     private final ManagedGroup group;
@@ -60,8 +58,8 @@ public class DefaultCacheManagementService extends AbstractCacheManagementServic
      *            the name of the cache
      */
     public DefaultCacheManagementService(InternalCacheServiceManager serviceManager,
-            CacheManagementConfiguration managementConfiguration,
-            Cache<?, ?> cache, String name) {
+            CacheManagementConfiguration managementConfiguration, Cache<?, ?> cache,
+            String name) {
         if (serviceManager == null) {
             throw new NullPointerException("serviceManager is null");
         } else if (managementConfiguration == null) {
@@ -91,10 +89,9 @@ public class DefaultCacheManagementService extends AbstractCacheManagementServic
             registrant = managementConfiguration.getRegistrant();
         }
 
-        cacheMXBean = new CacheMXBeanWrapper(cache);
-        ManagedGroup g = group.addChild("General",
+        ManagedGroup g = group.addChild(CacheMXBean.MANAGED_SERVICE_NAME,
                 "General cache attributes and operations");
-        g.add(cacheMXBean);
+        g.add(new DelegatedCacheMXBean(cache));
     }
 
     /**
@@ -118,8 +115,8 @@ public class DefaultCacheManagementService extends AbstractCacheManagementServic
     public void initialize(CacheConfiguration<?, ?> configuration,
             Map<Class<?>, Object> serviceMap) {
         if (isEnabled) {
-            serviceMap.put(CacheManagementService.class, new DelegatedManagementService(
-                    this));
+            serviceMap.put(CacheManagementService.class,
+                    new DelegatedCacheManagementService(this));
         }
     }
 

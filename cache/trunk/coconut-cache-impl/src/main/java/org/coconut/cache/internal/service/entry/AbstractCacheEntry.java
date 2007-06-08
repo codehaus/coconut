@@ -79,8 +79,6 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
 
     private final V value;
 
-    private final long version;
-
     AbstractCacheEntry<K, V> next;
 
     /**
@@ -88,7 +86,7 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
      * @param value
      */
     AbstractCacheEntry(K key, V value, double cost, long creationTime,
-            long lastUpdateTime, long size, long version) {
+            long lastUpdateTime, long size) {
         if (value == null) {
             throw new NullPointerException("value is null");
         }
@@ -99,9 +97,7 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         this.creationTime = creationTime;
         this.lastUpdateTime = lastUpdateTime;
         this.size = size;
-        this.version = version;
-
-    }
+     }
 
     @Override
     public boolean equals(Object o) {
@@ -157,12 +153,6 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         return value;
     }
 
-    /**
-     * @return the version
-     */
-    public long getVersion() {
-        return version;
-    }
 
     @Override
     public int hashCode() {

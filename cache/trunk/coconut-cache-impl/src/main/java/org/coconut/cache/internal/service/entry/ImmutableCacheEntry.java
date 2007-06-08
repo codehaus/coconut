@@ -27,8 +27,6 @@ public class ImmutableCacheEntry<K, V> implements CacheEntry<K, V> {
 
 	private final long lastUpdateTime;
 
-	private final long version;
-
 	private final double cost;
 
 	private final long size;
@@ -47,7 +45,6 @@ public class ImmutableCacheEntry<K, V> implements CacheEntry<K, V> {
 		this.lastUpdateTime = entry.getLastUpdateTime();
 		this.size = entry.getSize();
 		this.value = entry.getValue();
-		this.version = entry.getVersion();
 	}
 
 	@Override

@@ -33,8 +33,8 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
             throw new NullPointerException("configuration is null");
         }
         ConfigurationValidator.getInstance().verify(conf, (Class) getClass());
-       // this.name = conf.getName();
-         String name = conf.getName();
+        // this.name = conf.getName();
+        String name = conf.getName();
         if (name == null) {
             this.name = UUID.randomUUID().toString();
         } else {
@@ -248,12 +248,13 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
     abstract Map<K, V> doGetAll(Collection<? extends K> keys);
 
     /**
-     * Peeks an entry for the specified key. The returned AbstractCacheEntry is not meant
-     * to published.
+     * Peeks an entry for the specified non-null key. The returned AbstractCacheEntry must
+     * not be published.
      * 
      * @param key
      *            the key for which to peek for
-     * @return an AbstractCacheEntry if an exists for the specified key, otherwise null.
+     * @return an AbstractCacheEntry if an exists for the specified key, otherwise
+     *         <code>null</code>
      */
     abstract AbstractCacheEntry<K, V> doPeek(K key);
 

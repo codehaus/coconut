@@ -4,14 +4,20 @@
 package org.coconut.cache.internal.service.eviction;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
 import org.coconut.cache.internal.spi.CacheHelper;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.service.eviction.CacheEvictionMXBean;
 import org.coconut.cache.service.eviction.CacheEvictionService;
+import org.coconut.cache.service.management.CacheManagementService;
+import org.coconut.management.ManagedGroup;
+import org.coconut.management.annotation.ManagedAttribute;
+import org.coconut.management.annotation.ManagedOperation;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -28,6 +34,30 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
     public AbstractEvictionService(CacheHelper<K, V> helper) {
         super(CacheEvictionConfiguration.SERVICE_NAME);
         this.helper = helper;
+    }
+
+    /**
+     * @see org.coconut.cache.service.servicemanager.AbstractCacheService#initialize(org.coconut.cache.CacheConfiguration,
+     *      java.util.Map)
+     */
+    @Override
+    public void initialize(CacheConfiguration<?, ?> configuration,
+            Map<Class<?>, Object> serviceMap) {
+        serviceMap.put(CacheEvictionService.class,
+                new DelegatedCacheEvictionService<K, V>(this));
+    }
+
+    @Override
+    public void start(Map<Class<?>, Object> allServices) {
+        CacheManagementService cms = (CacheManagementService) allServices
+                .get(CacheManagementService.class);
+        if (cms != null) {
+            ManagedGroup group = cms.getRoot();
+            ManagedGroup g = group.addChild(CacheEvictionConfiguration.SERVICE_NAME,
+                    "Cache Eviction attributes and operations");
+            g.add(new DelegatedCacheEvictionMXBean(this));
+        }
+        super.start(allServices);
     }
 
     /**
@@ -65,10 +95,128 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
         helper.evict(key);
     }
 
+    
+    public void evictIdleElements() {
+        helper.evictIdleElements();
+    }
+    
     /**
      * @see org.coconut.cache.service.eviction.CacheEvictionService#evictAll(java.util.Collection)
      */
     public void evictAll(Collection<? extends K> keys) {
         helper.evictAll(keys);
+    }
+
+    public static class DelegatedCacheEvictionService<K, V> implements
+            CacheEvictionService<K, V> {
+        private final CacheEvictionService<K, V> service;
+
+        DelegatedCacheEvictionService(CacheEvictionService<K, V> service) {
+            if (service == null) {
+                throw new NullPointerException("service is null");
+            }
+            this.service = service;
+        }
+
+        public void evict(K key) {
+            service.evict(key);
+        }
+
+        public void evictAll(Collection<? extends K> keys) {
+            service.evictAll(keys);
+        }
+
+        public long getDefaultIdleTime(TimeUnit unit) {
+            return service.getDefaultIdleTime(unit);
+        }
+
+        public long getMaximumCapacity() {
+            return service.getMaximumCapacity();
+        }
+
+        public int getMaximumSize() {
+            return service.getMaximumSize();
+        }
+
+        public void setDefaultIdleTime(long idleTime, TimeUnit unit) {
+            service.setDefaultIdleTime(idleTime, unit);
+        }
+
+        public void setMaximumCapacity(long maximumCapacity) {
+            service.setMaximumCapacity(maximumCapacity);
+        }
+
+        public void setMaximumSize(int maximumSize) {
+            service.setMaximumSize(maximumSize);
+        }
+
+        public void trimToCapacity(long capacity) {
+            service.trimToCapacity(capacity);
+        }
+
+        public void trimToSize(int size) {
+            service.trimToSize(size);
+        }
+
+        public void evictIdleElements() {
+            service.evictIdleElements();
+        }
+    }
+
+    /**
+     * <p>
+     * Must be a public class to allow reflection.
+     */
+    public static class DelegatedCacheEvictionMXBean implements CacheEvictionMXBean {
+        private final CacheEvictionService<?, ?> service;
+
+        DelegatedCacheEvictionMXBean(CacheEvictionService<?, ?> service) {
+            if (service == null) {
+                throw new NullPointerException("service is null");
+            }
+            this.service = service;
+        }
+
+        @ManagedAttribute(description = "The default time to idle for cache entries in milliseconds")
+        public long getDefaultIdleTimeMs() {
+            return service.getDefaultIdleTime(TimeUnit.MILLISECONDS);
+        }
+
+        @ManagedAttribute(description = "The maximum capacity of the cache")
+        public long getMaximumCapacity() {
+            return service.getMaximumCapacity();
+        }
+
+        @ManagedAttribute(description = "The maximum size of the cache")
+        public int getMaximumSize() {
+            return service.getMaximumSize();
+        }
+
+        public void setDefaultIdleTimeMs(long idleTimeMs) {
+            service.setDefaultIdleTime(idleTimeMs, TimeUnit.MILLISECONDS);
+        }
+
+        public void setMaximumCapacity(long maximumCapacity) {
+            service.setMaximumCapacity(maximumCapacity);
+        }
+
+        public void setMaximumSize(int maximumSize) {
+            service.setMaximumSize(maximumSize);
+        }
+
+        @ManagedOperation(description = "Trims the cache to the specified capacity")
+        public void trimToCapacity(long capacity) {
+            service.trimToCapacity(capacity);
+        }
+
+        @ManagedOperation(description = "Trims the cache to the specified size")
+        public void trimToSize(int size) {
+            service.trimToSize(size);
+        }
+        
+        @ManagedOperation(description = "Evict all elements that idle")
+        public void evictIdleElements() {
+            service.evictIdleElements();
+        }
     }
 }

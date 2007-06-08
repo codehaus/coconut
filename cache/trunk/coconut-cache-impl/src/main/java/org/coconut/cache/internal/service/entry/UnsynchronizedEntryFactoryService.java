@@ -45,7 +45,7 @@ public class UnsynchronizedEntryFactoryService<K, V> extends
         long creationTime = getCreationTime(key, value, attributes, existing);
         long lastUpdate = getLastModified(key, value, attributes, existing);
         UnsynchronizedCacheEntry<K, V> newEntry = new UnsynchronizedCacheEntry<K, V>(
-                this, key, value, cost, creationTime, lastUpdate, size, 0l);
+                this, key, value, cost, creationTime, lastUpdate, size);
         newEntry.setExpirationTime(expirationTime);
         // TODO Auto-generated method stub
         if (existing != null) {

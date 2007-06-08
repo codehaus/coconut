@@ -24,7 +24,9 @@ import org.coconut.core.AttributeMap;
  * <p>
  * Currently only two implementations exist. Both of them are entirely held in memory:
  * {@link org.coconut.cache.defaults.UnsynchronizedCache} and
- * {@link org.coconut.cache.defaults.SynchronizedCache}.
+ * {@link org.coconut.cache.defaults.SynchronizedCache}. However, both disk-based and
+ * distributed implementations are on the drawing board. As a consequence the javadoc
+ * makes frequent references to external caches even though no implementations exist yet.
  * <p>
  * The three collection views, which allow a cache's contents to be viewed as a set of
  * keys, collection of values, or set of key-value mappings only shows values contained in
@@ -41,15 +43,15 @@ import org.coconut.core.AttributeMap;
  * implementations in Coconut Cache comply. Unlike its super class {@link java.util.Map},
  * a constructor taking a single map is not required.
  * <p>
- * Cache implementations generally do not define element-based versions of the
+ * Generally, Cache implementations do not define element-based versions of the
  * <tt>equals</tt> and <tt>hashCode</tt> methods, but instead inherit the
  * identity-based versions from class <tt>Object</tt>. Nore, are they generally
  * serializable.
  * <p>
- * Unlike {@link java.util.HashMap}, a <tt>cache</tt> does NOT allow <tt>null</tt> to
- * be used as a key or value. It is the authors belief that allowing null values (or keys)
- * does more harm then good, by masking what are almost always usage errors. If nulls are
- * absolutely needed the <a
+ * Unlike {@link java.util.HashMap}, a instance of <tt>Cache</tt> does NOT allow
+ * <tt>null</tt> to be used as a key or value. It is the authors belief that allowing
+ * null values (or keys) does more harm then good, by masking what are almost always usage
+ * errors. If nulls are absolutely needed the <a
  * href="http://today.java.net/today/2004/12/10/refactor.pdf">Null Object Pattern</a> can
  * be used as an alternative.
  * 

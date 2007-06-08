@@ -39,7 +39,7 @@ public class CacheEvictionConfiguration<K, V> extends
     public final static int DEFAULT_MAXIMUM_SIZE = Integer.MAX_VALUE;
 
     /** The short name of this service. */
-    public final static String SERVICE_NAME = "eviction";
+    public final static String SERVICE_NAME = "Eviction";
 
     /** The default settings, used when xml-serializing this configuration */
     private final static CacheEvictionConfiguration<?, ?> DEFAULT = new CacheEvictionConfiguration<Object, Object>();

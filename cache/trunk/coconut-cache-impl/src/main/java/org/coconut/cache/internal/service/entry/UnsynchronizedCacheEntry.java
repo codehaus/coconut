@@ -19,9 +19,8 @@ public class UnsynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
      * @param version
      */
     public UnsynchronizedCacheEntry(AbstractCacheEntryFactoryService<K, V> service, K key,
-            V value, double cost, long creationTime, long lastUpdateTime, long size,
-            long version) {
-        super(key, value, cost, creationTime, lastUpdateTime, size, version);
+            V value, double cost, long creationTime, long lastUpdateTime, long size) {
+        super(key, value, cost, creationTime, lastUpdateTime, size);
         this.service = service;
 //        this.expirationTime = expirationTime;
 //        this.hits = hits;
@@ -36,6 +35,9 @@ public class UnsynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
 
     long lastAccessTime;
 
+    long idleTime;
+    
+    long refreshTime;
     /**
      * @see org.coconut.cache.CacheEntry#getExpirationTime()
      */

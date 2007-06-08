@@ -3,9 +3,6 @@
  */
 package org.coconut.cache.service.eviction;
 
-import org.coconut.management.annotation.ManagedAttribute;
-import org.coconut.management.annotation.ManagedOperation;
-
 /**
  * The management interface for the eviction engine of a cache.
  * 
@@ -13,13 +10,6 @@ import org.coconut.management.annotation.ManagedOperation;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public interface CacheEvictionMXBean {
-
-    /**
-     * Calls the the {@link #toString()} method on the specified idle filter and returns
-     * the value. If no idle filter has been specified "null" is returned.
-     */
-    @ManagedAttribute(defaultValue = "ExpirationFilter", description = "toString() on the defined expiration filter")
-    String getIdleFilterAsString();
 
     /**
      * Keeps evicting entries until the size of the cache is equal to the specified size.
@@ -31,7 +21,6 @@ public interface CacheEvictionMXBean {
      * @throws IllegalArgumentException
      *             if the specified size is negative
      */
-    @ManagedOperation(description = "Trims the cache to the specified size")
     void trimToSize(int size);
 
     /**
@@ -44,7 +33,6 @@ public interface CacheEvictionMXBean {
      * @throws IllegalArgumentException
      *             if the specified capacity is negative
      */
-    @ManagedOperation(description = "Trims the cache to the specified capacity")
     void trimToCapacity(long capacity);
 
     /**
@@ -55,7 +43,6 @@ public interface CacheEvictionMXBean {
      *         limit.
      * @see #setMaximumCapacity(long)
      */
-    @ManagedAttribute(description = "The maximum capacity of the cache")
     long getMaximumCapacity();
 
     /**
@@ -67,7 +54,6 @@ public interface CacheEvictionMXBean {
      * @see #setMaximumSize(int)
      * @see #getSize
      */
-    @ManagedAttribute(description = "The maximum size of the cache")
     int getMaximumSize();
 
     /**
@@ -115,7 +101,6 @@ public interface CacheEvictionMXBean {
      * @return the default idle time in milliseconds
      * @see CacheEvictionService#getDefaultIdleTime(java.util.concurrent.TimeUnit)
      */
-    @ManagedAttribute(description = "The default time to idle for cache entries in milliseconds")
     long getDefaultIdleTimeMs();
 
     /**
@@ -128,4 +113,10 @@ public interface CacheEvictionMXBean {
      * @see CacheEvictionService#setDefaultIdleTime(long, java.util.concurrent.TimeUnit)
      */
     void setDefaultIdleTimeMs(long idleTimeMs);
+    
+    /**
+     * Checks all elements in the cache for whether or not they are idle and should be
+     * evicted.
+     */
+    void evictIdleElements();
 }

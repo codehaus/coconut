@@ -153,10 +153,10 @@ public class DefaultCacheEventService<K, V> extends AbstractInternalCacheService
     public void afterPutAll(Cache<K, V> cache, long ignoreStarted,
             Collection<? extends CacheEntry<K, V>> evictedEntries,
             Collection<? extends CacheEntry<K, V>> prev,
-            Collection<? extends CacheEntry> added) {
+            Collection<? extends CacheEntry<K,V>> added) {
         doEvictAll(cache, evictedEntries);
-        CacheEntry[] p = prev.toArray(new CacheEntry[prev.size()]);
-        CacheEntry[] n = added.toArray(new CacheEntry[added.size()]);
+        CacheEntry<K,V>[] p = prev.toArray(new CacheEntry[prev.size()]);
+        CacheEntry<K,V>[] n = added.toArray(new CacheEntry[added.size()]);
         for (int i = 0; i < p.length; i++) {
             processRemoved(cache, n[i], p[i]);
         }

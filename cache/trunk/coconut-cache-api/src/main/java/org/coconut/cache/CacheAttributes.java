@@ -42,16 +42,16 @@ public class CacheAttributes extends PolicyAttributes {
 
     /**
      * This key can be used to indicate how long time a cache entry should live before it
-     * expires. The time-to-live value should be a long and should be measured in nano
-     * seconds. Use {@link java.util.concurrent.TimeUnit} to convert between different
-     * time units.
+     * expires. The time-to-live value should be a long between 1 and
+     * {@link Long#MAX_VALUE} and should be measured in nanoseconds. Use
+     * {@link java.util.concurrent.TimeUnit} to convert between different time units.
      */
     public static final String TIME_TO_LIVE_NS = "time_to_live_ns";
 
     /**
      * This key can be used to indicate how long time a cache entry should live before it
-     * refreshed from a cacheloader. The time-to-refresh value should be a long and should be
-     * measured in nano seconds. Use {@link java.util.concurrent.TimeUnit} to convert
+     * refreshed from a cacheloader. The time-to-refresh value should be a long and should
+     * be measured in nano seconds. Use {@link java.util.concurrent.TimeUnit} to convert
      * between different time units.
      */
     public static final String TIME_TO_REFRESH_NS = "time_to_refresh_ns";
@@ -63,16 +63,13 @@ public class CacheAttributes extends PolicyAttributes {
         } else if (unit == null) {
             throw new NullPointerException("unit is null");
         }
-        //TODO what if time is negative
-        long ttl = attributes.getLong(TIME_TO_LIVE_NS, -1);
-        if (ttl == -1) {
+        long ttl = attributes.getLong(TIME_TO_LIVE_NS);
+        if (ttl == 0) {
             return defaultValue;
+        } else if (ttl == Long.MAX_VALUE) {
+            return Long.MAX_VALUE;
         } else {
-            if (ttl != CacheExpirationService.NEVER_EXPIRE
-                    || ttl != CacheExpirationService.DEFAULT_EXPIRATION) {
-                ttl = unit.convert(ttl, TimeUnit.NANOSECONDS);
-            }
-            return ttl;
+            return unit.convert(ttl, TimeUnit.NANOSECONDS);
         }
     }
 
@@ -86,12 +83,14 @@ public class CacheAttributes extends PolicyAttributes {
         } else if (unit == null) {
             throw new NullPointerException("unit is null");
         }
-        long ttl = timeToLive;
-        if (ttl != CacheExpirationService.NEVER_EXPIRE
-                || ttl != CacheExpirationService.DEFAULT_EXPIRATION) {
-            ttl = TimeUnit.NANOSECONDS.convert(ttl, unit);
+        if (timeToLive == 0) {
+            // ignore
+        } else if (timeToLive == Long.MAX_VALUE) {
+            attributes.putLong(TIME_TO_LIVE_NS, Long.MAX_VALUE);
+        } else {
+            long ttl = TimeUnit.NANOSECONDS.convert(timeToLive, unit);
+            attributes.putLong(TIME_TO_LIVE_NS, ttl);
         }
-        attributes.put(TIME_TO_LIVE_NS, ttl);
         return attributes;
     }
 }

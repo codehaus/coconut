@@ -25,13 +25,13 @@ public abstract class AbstractCacheManagementService extends AbstractInternalCac
         super(CacheManagementConfiguration.SERVICE_NAME);
     }
 
-    static class DelegatedManagementService implements CacheManagementService {
+    static class DelegatedCacheManagementService implements CacheManagementService {
         private final CacheManagementService delegate;
 
         /**
          * @param name
          */
-        public DelegatedManagementService(CacheManagementService service) {
+        public DelegatedCacheManagementService(CacheManagementService service) {
             if (service == null) {
                 throw new NullPointerException("service is null");
             }
@@ -50,10 +50,10 @@ public abstract class AbstractCacheManagementService extends AbstractInternalCac
      * <p>
      * Must be a public class to allow reflection.
      */
-    public static class CacheMXBeanWrapper implements CacheMXBean {
+    public static class DelegatedCacheMXBean implements CacheMXBean {
         private final Cache<?, ?> cache;
 
-        CacheMXBeanWrapper(Cache<?, ?> cache) {
+        DelegatedCacheMXBean(Cache<?, ?> cache) {
             if (cache == null) {
                 throw new NullPointerException("cache is null");
             }

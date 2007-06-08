@@ -316,14 +316,13 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractInternalC
         return System.nanoTime();
     }
 
-    public long afterPutAll(Cache<K, V> cache, long start,
+    public void afterPutAll(Cache<K, V> cache, long start,
             Collection<? extends CacheEntry<K, V>> entries,
             Collection<? extends CacheEntry<K, V>> entries2,
             Collection<? extends CacheEntry<K, V>> entries3) {
         long time = System.nanoTime() - start;
         entryPutTime.report(time);
         entryPutCount.addAndGet(entries.size());
-        return time;
     }
 
     public long entryPutStop(long start) {
@@ -458,19 +457,6 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractInternalC
     public void afterPut(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries,
             CacheEntry<K, V> oldEntry, CacheEntry<K, V> newEntry) {
-    // TODO Auto-generated method stub
-
-    }
-
-    /**
-     * @see org.coconut.cache.internal.service.joinpoint.AfterJoinPoint#afterPutAll(org.coconut.cache.Cache,
-     *      long, java.util.Collection, java.util.Collection,
-     *      java.util.Collection)
-     */
-    public void afterPutAll(Cache<K, V> cache, long started,
-            Collection<? extends CacheEntry<K, V>> evictedEntries,
-            Collection<? extends CacheEntry<K, V>> prev,
-            Collection<? extends CacheEntry> added) {
     // TODO Auto-generated method stub
 
     }

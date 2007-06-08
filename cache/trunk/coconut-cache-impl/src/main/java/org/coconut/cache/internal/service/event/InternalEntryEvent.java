@@ -319,13 +319,6 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, 
         }
 
         /**
-         * @see org.coconut.cache.CacheEntry#getVersion()
-         */
-        public long getVersion() {
-            throw new UnsupportedOperationException();
-        }
-
-        /**
          * @see java.util.Map.Entry#getKey()
          */
         public K getKey() {

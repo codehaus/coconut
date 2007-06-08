@@ -31,20 +31,18 @@ public class UnsynchronizedCacheServiceManager extends
 
     public final DefaultPicoContainer container = new DefaultPicoContainer();
 
-    private final Cache cache;
+    private final Cache<?, ?> cache;
 
-    private final Map<Class, Object> publicServices = new HashMap<Class, Object>();
+    private final Map<Class<?>, Object> publicServices = new HashMap<Class<?>, Object>();
 
-    private final Map<Class, Class> defaultServices = new HashMap<Class, Class>();
-
-    public UnsynchronizedCacheServiceManager(Cache cache, CacheHelper helper,
+    public UnsynchronizedCacheServiceManager(Cache<?, ?> cache, CacheHelper<?, ?> helper,
             CacheConfiguration<?, ?> conf) {
         this.conf = conf;
         this.cache = cache;
         initializePicoContainer(cache, helper, conf);
     }
 
-    private void initializePicoContainer(Cache cache, CacheHelper helper,
+    private void initializePicoContainer(Cache<?, ?> cache, CacheHelper<?, ?> helper,
             CacheConfiguration<?, ?> conf) {
         container.registerComponentInstance(this);
         container.registerComponentInstance(cache.getName());
@@ -55,7 +53,7 @@ public class UnsynchronizedCacheServiceManager extends
         container.registerComponentImplementation(DefaultCacheAttributeService.class);
         container
                 .registerComponentImplementation(UnsynchronizedEntryFactoryService.class);
-        for (AbstractCacheServiceConfiguration c : conf.getConfigurations()) {
+        for (AbstractCacheServiceConfiguration<?, ?> c : conf.getConfigurations()) {
             container.registerComponentInstance(c);
         }
     }
@@ -119,7 +117,7 @@ public class UnsynchronizedCacheServiceManager extends
             service.start(c);
         }
 
-        void started(Cache c) {
+        void started(Cache<?,?> c) {
             service.started(c);
         }
 
@@ -128,19 +126,18 @@ public class UnsynchronizedCacheServiceManager extends
         }
     }
 
-    public void registerService(Class type,
-            Class<? extends AbstractCacheService> service) {
+    public void registerService(Class type, Class<? extends AbstractCacheService> service) {
         if (status != ServiceStatus.NOTRUNNING) {
             throw new IllegalStateException(
                     "CacheServiceManager has already been started");
         }
         ComponentAdapter ca = container.getComponentAdapter(type);
-//        if (ca != null
-//                && DummyCacheService.class.isAssignableFrom(ca
-//                        .getComponentImplementation())) {
-//            // unregister dummy
-//            container.unregisterComponent(type);
-//        }
+// if (ca != null
+// && DummyCacheService.class.isAssignableFrom(ca
+// .getComponentImplementation())) {
+// // unregister dummy
+// container.unregisterComponent(type);
+// }
         container.registerComponentImplementation(type, service);
     }
 
@@ -175,8 +172,7 @@ public class UnsynchronizedCacheServiceManager extends
     /**
      * @see org.coconut.cache.internal.service.service.InternalCacheServiceManager#registerService(java.lang.Class)
      */
-    public void registerServices(
-            Class<? extends AbstractCacheService>... services) {
+    public void registerServices(Class<? extends AbstractCacheService>... services) {
         for (Class<? extends AbstractCacheService> service : services) {
             registerService(service, service);
         }
