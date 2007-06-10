@@ -34,7 +34,7 @@ The repository is organised into the following components.
                    and coconut-management
                    svn co https://svn.codehaus.org/coconut/trunks to work on trunk
                    
-- site                     (not currently present) This is where the web site for www.coconut.org is generated from.
+- site             (not currently present) This is where the web site for www.coconut.org is generated from.
 
 
 
