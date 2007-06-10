@@ -15,14 +15,14 @@ import javax.management.ObjectName;
  */
 public class Managements {
 
-    public static <T> T narrow(ManagedGroup group, Class<? extends T> c) {
-        return null;
-    }
-
-    public static Object wrap(Object o, String name, String description, Method m,
-            Object... parameters) {
-        return null;
-    }
+//    public static <T> T narrow(ManagedGroup group, Class<? extends T> c) {
+//        return null;
+//    }
+//
+//    public static Object wrap(Object o, String name, String description, Method m,
+//            Object... parameters) {
+//        return null;
+//    }
 
     public static ManagedGroupVisitor register(MBeanServer server, String domain,
             String... levels) {

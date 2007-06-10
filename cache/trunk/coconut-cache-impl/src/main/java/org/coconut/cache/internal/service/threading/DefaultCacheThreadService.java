@@ -19,7 +19,7 @@ import org.coconut.cache.spi.XmlConfigurator;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class DefaultCacheThreadService<K, V> extends AbstractCacheService implements
-        Executor, InternalCacheThreadingService {
+         InternalCacheThreadingService {
 
     private final CacheExecutorFactory executorFactory;
     /**
@@ -75,12 +75,6 @@ public class DefaultCacheThreadService<K, V> extends AbstractCacheService implem
         return executorFactory != null;
     }
 
-    /**
-     * @see java.util.concurrent.Executor#execute(java.lang.Runnable)
-     */
-    public void execute(Runnable command) {
-       // e.execute(command);
-    }
 
     /**
      * @see org.coconut.cache.internal.service.threading.InternalThreadManager#executeShutdown(org.coconut.cache.internal.service.InternalCacheService,

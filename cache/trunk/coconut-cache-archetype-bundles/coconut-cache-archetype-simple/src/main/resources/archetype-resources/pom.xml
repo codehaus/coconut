@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Written by Kasper Nielsen and released to the public domain, as explained at
+  http://creativecommons.org/licenses/publicdomain
+-->
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>${groupId}</groupId>
+  <artifactId>${artifactId}</artifactId>
+  <packaging>jar</packaging>
+  <version>${version}</version>
+  <name>A custom project using Coconut Cache</name>
+  <url>http://www.myorganization.org</url>
+  <dependencies>
+    <dependency>
+      <groupId>org.coconut.cache</groupId>
+      <version>1.0-alpha3-SNAPSHOT</version>
+      <artifactId>coconut-cache-impl</artifactId>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+      <!-- The following is included to create a single jar -->
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id><!-- this is used for inheritance merges -->
+            <phase>package</phase><!-- append to the packaging phase. -->
+            <goals>
+              <goal>attached</goal><!-- goals == mojos -->
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

@@ -9,6 +9,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -99,19 +100,24 @@ public class NoThreadingCacheService extends AbstractInternalCacheService implem
                 }
 
                 public <T> Future<T> submit(Callable<T> task) {
-                    return null;
+                    FutureTask<T> ft=new FutureTask<T>(task);
+                    ft.run();
+                    return ft;
                 }
 
                 public Future<?> submit(Runnable task) {
-                    task.run();
-                    return null;
+                    FutureTask<?> ft=new FutureTask(task,null);
+                    ft.run();
+                    return ft;
                 }
 
                 public <T> Future<T> submit(Runnable task, T result) {
                     return null;
                 }
 
-                public void execute(Runnable command) {}};
+                public void execute(Runnable command) {
+                    command.run();
+                }};
         }
 
         @Override

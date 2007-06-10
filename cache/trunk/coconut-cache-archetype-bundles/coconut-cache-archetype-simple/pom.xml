@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.coconut.cache.archetype</groupId>
+    <artifactId>coconut-cache-archetype</artifactId>
+    <version>1.0-alpha3-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>coconut-cache-archetype-simple</artifactId>
+  <name>Coconut Cache Archetype Simple</name>
+  <description>Coconut Cache Archetype Simple</description>
+  <packaging>maven-plugin</packaging>
+</project>

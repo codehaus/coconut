@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.coconut.cache</groupId>
+    <artifactId>coconut-cache-parent</artifactId>
+    <version>1.0-alpha3-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>coconut-cache-examples</artifactId>
+  <name>Coconut Cache Examples</name>
+  <description>Common eviction cache policies</description>
+
+  <dependencies>
+    <!-- We use the main coconut cache distribution -->
+    <dependency>
+      <groupId>org.coconut.cache</groupId>
+      <artifactId>coconut-cache</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+    </dependency>
+  </dependencies>
+</project>
