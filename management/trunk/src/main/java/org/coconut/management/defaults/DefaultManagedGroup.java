@@ -38,6 +38,11 @@ import org.coconut.management.annotation.ManagedOperation;
 
 public class DefaultManagedGroup extends AbstractManagedGroup implements DynamicMBean {
 
+    @Override
+    public String toString() {
+        return "Name= " + getName() + ", Description =" + getDescription();
+    }
+
     private final Class<?> mbeanInterface = null;
 
     // private final MBeanIntrospector<M> introspector;

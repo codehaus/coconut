@@ -45,6 +45,17 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
      * @param serviceInterfaces
      *            the public interfaces that this service should export
      */
+    public AbstractCacheServiceConfiguration(String serviceName) {
+        this(serviceName, Collections.EMPTY_LIST);
+    }
+    /**
+     * Creates a new AbstractCacheServiceConfiguration.
+     * 
+     * @param serviceName
+     *            the name of the service
+     * @param serviceInterfaces
+     *            the public interfaces that this service should export
+     */
     public AbstractCacheServiceConfiguration(String serviceName,
             Collection<? extends Class<?>> serviceInterfaces) {
         this(serviceName, serviceInterfaces, Resources.DEFAULT_CACHE_BUNDLE);

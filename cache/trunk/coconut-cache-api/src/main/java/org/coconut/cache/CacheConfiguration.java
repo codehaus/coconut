@@ -25,7 +25,7 @@ import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.cache.service.statistics.CacheStatisticsConfiguration;
-import org.coconut.cache.service.threading.CacheThreadingConfiguration;
+import org.coconut.cache.service.threading.CacheExecutorConfiguration;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.cache.spi.ConfigurationValidator;
 import org.coconut.cache.spi.XmlConfigurator;
@@ -88,7 +88,7 @@ public final class CacheConfiguration<K, V> {
         services.add(CacheLoadingConfiguration.class);
         services.add(CacheExpirationConfiguration.class);
         services.add(CacheExceptionHandlingConfiguration.class);
-        services.add(CacheThreadingConfiguration.class);
+        services.add(CacheExecutorConfiguration.class);
         services.add(CacheEvictionConfiguration.class);
         DEFAULT_SERVICES = Collections.unmodifiableList(services);
     }
@@ -341,8 +341,8 @@ public final class CacheConfiguration<K, V> {
      * 
      * @return a CacheThreadingConfiguration
      */
-    public CacheThreadingConfiguration<K, V> threading() {
-        return lazyCreate(CacheThreadingConfiguration.class);
+    public CacheExecutorConfiguration<K, V> threading() {
+        return lazyCreate(CacheExecutorConfiguration.class);
     }
 
     /**

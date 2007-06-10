@@ -8,17 +8,19 @@ import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.core.AttributeMap;
 
 /**
- * A simple cache loader used for testing. Will return 1->A, 2->B, 3->C, 4->D,
- * 5->E and <code>null</code> for any other key.
+ * A simple cache loader used for testing. Will return 1->A, 2->B, 3->C, 4->D, 5->E and
+ * <code>null</code> for any other key.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: IntegerToStringLoader.java 341 2007-06-10 09:54:42Z kasper $
  */
 public class IntegerToStringLoader implements CacheLoader<Integer, String> {
 
+    public static final IntegerToStringLoader INSTANCE = new IntegerToStringLoader();
 
     /**
-     * @see org.coconut.cache.service.loading.CacheLoader#load(java.lang.Object, org.coconut.core.AttributeMap)
+     * @see org.coconut.cache.service.loading.CacheLoader#load(java.lang.Object,
+     *      org.coconut.core.AttributeMap)
      */
     public String load(Integer key, AttributeMap ignore) {
         if (1 <= key && key <= 5) {

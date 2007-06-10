@@ -31,6 +31,7 @@ public class ManagementCacheMXBean extends AbstractCacheTCKTestBundle {
         mxBean = findMXBean(mbs, CacheMXBean.class);
     }
 
+    
     @Test
     public void getName() throws IOException {
         c = newCache(newConf().setName("foo").management().setEnabled(true)

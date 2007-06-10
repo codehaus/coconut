@@ -10,6 +10,8 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
 import org.coconut.cache.service.servicemanager.AbstractCacheService;
+import org.coconut.cache.service.threading.CacheServiceExecutor;
+import org.coconut.cache.service.threading.CacheExecutorFactory;
 import org.coconut.cache.spi.XmlConfigurator;
 
 /**
@@ -19,10 +21,7 @@ import org.coconut.cache.spi.XmlConfigurator;
 public class DefaultCacheThreadService<K, V> extends AbstractCacheService implements
         Executor, InternalCacheThreadingService {
 
-    private final Executor e;
-
-    private final boolean shutdownOnExit;
-
+    private final CacheExecutorFactory executorFactory;
     /**
      * @param manager
      * @param conf
@@ -30,8 +29,7 @@ public class DefaultCacheThreadService<K, V> extends AbstractCacheService implem
     public DefaultCacheThreadService(
             CacheConfiguration<K, V> conf) {
         super("threading");
-        this.e = conf.threading().getExecutor();
-        this.shutdownOnExit = conf.threading().getShutdownExecutorService();
+        executorFactory=conf.threading().getExecutorFactory();
         String s = (String) conf.getProperty(XmlConfigurator.CACHE_INSTANCE_TYPE);
         Class c = null;
         try {
@@ -49,8 +47,8 @@ public class DefaultCacheThreadService<K, V> extends AbstractCacheService implem
      * @see org.coconut.cache.internal.service.AbstractCacheService#shutdown(java.lang.Runnable)
      */
     public void shutdown(Executor callback) /* throws Exception */{
-        if (shutdownOnExit && e instanceof ThreadPoolExecutor) {
-            final ThreadPoolExecutor tpe = (ThreadPoolExecutor) e;
+        if (true) {
+            final ThreadPoolExecutor tpe = (ThreadPoolExecutor) null;
             tpe.shutdown();
             if (!tpe.isTerminated()) {
                 Runnable r = new Runnable() {
@@ -74,14 +72,14 @@ public class DefaultCacheThreadService<K, V> extends AbstractCacheService implem
      * @see org.coconut.cache.internal.service.threading.InternalThreadManager#isEnabled()
      */
     public boolean isAsync() {
-        return e != null;
+        return executorFactory != null;
     }
 
     /**
      * @see java.util.concurrent.Executor#execute(java.lang.Runnable)
      */
     public void execute(Runnable command) {
-        e.execute(command);
+       // e.execute(command);
     }
 
     /**
@@ -112,6 +110,10 @@ public class DefaultCacheThreadService<K, V> extends AbstractCacheService implem
     public boolean isDummy() {
         // TODO Auto-generated method stub
         return false;
+    }
+
+    public CacheServiceExecutor getExecutor(Class<?> service) {
+        throw new UnsupportedOperationException();
     }
 
 }

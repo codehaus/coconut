@@ -4,10 +4,16 @@
 package org.coconut.cache.internal.service.loading;
 
 import java.util.Map;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
+import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.CacheServices;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.service.expiration.AbstractExpirationService;
 import org.coconut.cache.internal.service.threading.InternalCacheThreadingService;
@@ -19,6 +25,7 @@ import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfigu
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
+import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
 import org.coconut.filter.Filter;
@@ -45,24 +52,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
 
     private Filter<CacheEntry<K, V>> reloadFilter;
 
-    private final InternalCacheThreadingService threadManager;
-
-    public DefaultCacheLoaderService(final Clock clock,
-            InternalCacheAttributeService attributeFactory,
-            CacheExceptionHandlingConfiguration<K, V> errorHandler,
-            CacheLoader<K, V> loadConf,
-            final InternalCacheThreadingService threadManager,
-            AbstractExpirationService<K, V> expirationService,
-            final CacheHelper<K, V> cache) {
-        super(attributeFactory, cache);
-        this.clock = clock;
-        this.errorHandler = errorHandler.getExceptionHandler();
-        this.loader = loadConf;
-        this.threadManager = threadManager;
-        this.cache = cache;
-        this.expirationService = expirationService;
-    }
-
+    private final Executor loadExecutor;
     /**
      * @param clock
      * @param errorHandler
@@ -79,10 +69,10 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
             AbstractExpirationService<K, V> expirationService,
             final CacheHelper<K, V> cache) {
         super(attributeFactory, cache);
-        this.clock = clock;
         this.errorHandler = errorHandler.getExceptionHandler();
+        this.clock = clock;
         this.loader = loadConf.getLoader();
-        this.threadManager = threadManager;
+        this.loadExecutor = threadManager.getExecutor(CacheLoadingService.class).createExecutorService();
         this.cache = cache;
         this.expirationService = expirationService;
     }
@@ -96,10 +86,18 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
 
     Future<?> doLoad(K key, AttributeMap attributes) {
         LoadValueRunnable lvr = new LoadValueRunnable<K, V>(this, loader, key, attributes);
-        threadManager.execute(lvr);
+        loadExecutor.execute(lvr);
         return lvr;
     }
 
+    public static <K, V> ScheduledFuture<?> scheduleLoad(final Cache<K, V> cache,
+            final K key, ScheduledExecutorService ses) {
+        return ses.schedule(new Runnable() {
+            public void run() {
+                CacheServices.loading(cache).load(key);
+            }
+        }, 100, TimeUnit.DAYS);
+    }
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#loadAll(java.util.Map)
      */
@@ -107,7 +105,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         LoadValuesRunnable lvr = new LoadValuesRunnable<K, V>(this, loader,
                 mapsWithAttributes);
         FutureTask<V> ft = new FutureTask<V>(lvr, null);
-        threadManager.execute(ft);
+        loadExecutor.execute(ft);
         return ft;
     }
 

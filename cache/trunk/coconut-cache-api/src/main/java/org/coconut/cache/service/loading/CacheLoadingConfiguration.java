@@ -46,7 +46,13 @@ public class CacheLoadingConfiguration<K, V> extends
         super(SERVICE_NAME, Arrays.asList(CacheLoadingService.class,
                 CacheLoadingMXBean.class));
     }
-
+    public CacheLoadingConfiguration(CacheLoader<K,V> loader) {
+        this();
+        if (loader == null) {
+            throw new NullPointerException("loader is null");
+        }
+        setLoader(loader);
+    }
     /**
      * Returns the CacheLoader that the cache should use for loading new key-value
      * bindings. If this method returns <code>null</code> no initial loader will be set.
