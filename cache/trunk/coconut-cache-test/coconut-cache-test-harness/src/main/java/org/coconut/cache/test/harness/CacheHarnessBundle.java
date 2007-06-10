@@ -14,7 +14,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.statistics.CacheHitStat;
-import org.coconut.cache.tck.testutil.IntegerToStringLoader;
+import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.core.Clock.DeterministicClock;
 import org.coconut.test.CollectionUtils;
 import org.junit.Before;

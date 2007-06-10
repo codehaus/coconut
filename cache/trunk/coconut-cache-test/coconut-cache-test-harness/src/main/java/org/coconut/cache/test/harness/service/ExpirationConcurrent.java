@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.tck.service.expiration.ExpirationTestBundle;
-import org.coconut.cache.tck.testutil.CountdownLatchLoader;
+import org.coconut.cache.test.util.CountdownLatchLoader;
 import org.coconut.core.Clock;
 
 public class ExpirationConcurrent extends ExpirationTestBundle {

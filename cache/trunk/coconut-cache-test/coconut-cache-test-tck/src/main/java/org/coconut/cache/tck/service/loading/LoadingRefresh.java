@@ -10,7 +10,7 @@ import static org.coconut.test.CollectionUtils.M4;
 
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.tck.testutil.AsyncIntegerToStringLoader;
+import org.coconut.cache.test.util.AsyncIntegerToStringLoader;
 import org.junit.Test;
 
 /**

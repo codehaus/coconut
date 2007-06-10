@@ -9,8 +9,8 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationService;
-import org.coconut.cache.tck.CommonCacheTestBundle;
-import org.coconut.cache.tck.testutil.IntegerToStringLoader;
+import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.test.CollectionUtils;
 import org.junit.Before;
 
@@ -18,7 +18,7 @@ import org.junit.Before;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class ExpirationTestBundle extends CommonCacheTestBundle {
+public class ExpirationTestBundle extends AbstractCacheTCKTestBundle {
 
     public static final IntegerToStringLoader DEFAULT_LOADER = new IntegerToStringLoader();
 

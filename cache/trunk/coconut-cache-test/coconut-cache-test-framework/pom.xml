@@ -2,12 +2,12 @@
 <project>
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.coconut.cache</groupId>
-    <artifactId>coconut-cache-test</artifactId>
+    <groupId>org.coconut.cache.test</groupId>
+    <artifactId>coconut-cache-test-parent</artifactId>
     <version>1.0-alpha3-SNAPSHOT</version>
   </parent>
 
-  <artifactId>coconut-cache-testframework</artifactId>
+  <artifactId>coconut-cache-test-framework</artifactId>
   <name>Coconut Cache TCK</name>
   <description>Coconut Cache Test Compatibility Kit</description>
 

@@ -15,7 +15,7 @@ import static org.coconut.test.CollectionUtils.MNAN2;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.coconut.cache.tck.CommonCacheTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
 import org.junit.Test;
 
 /**
@@ -24,93 +24,94 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class ValuesModifying extends CommonCacheTestBundle {
+public class ValuesModifying extends AbstractCacheTCKTestBundle {
 
     /**
      * clear removes all pairs
      */
     @Test
     public void testClear() {
-        assertEquals(c5.values().size(), 5);
-        assertFalse(c5.values().isEmpty());
-        assertEquals(c5.size(), 5);
-        assertFalse(c5.isEmpty());
+        c = newCache(5);
+        assertEquals(c.values().size(), 5);
+        assertFalse(c.values().isEmpty());
+        assertEquals(c.size(), 5);
+        assertFalse(c.isEmpty());
 
-        c5.values().clear();
+        c.values().clear();
 
-        assertEquals(c5.values().size(), 0);
-        assertTrue(c5.values().isEmpty());
-        assertEquals(c5.size(), 0);
-        assertTrue(c5.isEmpty());
+        assertEquals(c.values().size(), 0);
+        assertTrue(c.values().isEmpty());
+        assertEquals(c.size(), 0);
+        assertTrue(c.isEmpty());
     }
 
     @Test(expected = NullPointerException.class)
     public void testRemoveNullPointerException() {
-        c0.values().remove(null);
+        newCache().values().remove(null);
     }
 
     @Test(expected = NullPointerException.class)
     public void testRemove2NullPointerException() {
-        c5.values().remove(null);
+        newCache(5).values().remove(null);
     }
 
     @Test
     public void testRemove() {
-        assertFalse(c0.values().remove(MNAN2.getValue()));
-        assertFalse(c0.values().remove(MNAN1.getValue()));
-
-        assertTrue(c5.values().remove(M1.getValue()));
-        assertEquals(4, c5.size());
-        assertFalse(c5.values().contains(M1.getValue()));
-
-        assertTrue(c1.values().remove(M1.getValue()));
-        assertTrue(c1.isEmpty());
+        c = newCache();
+        assertFalse(c.values().remove(MNAN2.getValue()));
+        assertFalse(c.values().remove(MNAN1.getValue()));
+        c = newCache(5);
+        assertTrue(c.values().remove(M1.getValue()));
+        assertEquals(4, c.size());
+        assertFalse(c.values().contains(M1.getValue()));
+        c = newCache(1);
+        assertTrue(c.values().remove(M1.getValue()));
+        assertTrue(c.isEmpty());
     }
 
     @Test
     public void testRemoveAll() {
-        assertFalse(c5.values().removeAll(Arrays.asList("F", "H")));
-        assertTrue(c5.values()
-                .removeAll(Arrays.asList("F", M2.getValue(), "H")));
-        assertEquals(4, c5.size());
-        assertFalse(c5.values().contains(M2.getValue()));
-        assertTrue(c5.values().removeAll(
-                Arrays.asList(M1.getValue(), M4.getValue())));
-        assertFalse(c5.values().contains(M4.getValue()));
-        assertFalse(c5.values().contains(M1.getValue()));
-        assertEquals(2, c5.size());
+        c = newCache(5);
+        assertFalse(c.values().removeAll(Arrays.asList("F", "H")));
+        assertTrue(c.values().removeAll(Arrays.asList("F", M2.getValue(), "H")));
+        assertEquals(4, c.size());
+        assertFalse(c.values().contains(M2.getValue()));
+        assertTrue(c.values().removeAll(Arrays.asList(M1.getValue(), M4.getValue())));
+        assertFalse(c.values().contains(M4.getValue()));
+        assertFalse(c.values().contains(M1.getValue()));
+        assertEquals(2, c.size());
     }
 
     @Test(expected = NullPointerException.class)
     public void testRemoveAllNullPointerException() {
-        c0.values().removeAll(null);
+        newCache().values().removeAll(null);
     }
 
     @Test(expected = NullPointerException.class)
     public void testRemoveAll2NullPointerException() {
-        c5.values().removeAll(null);
+        newCache(5).values().removeAll(null);
     }
 
     @Test
     public void testRetainAll() {
-        c1.values().retainAll(Collections.singleton(M1.getValue()));
-        assertEquals(1, c1.size());
+        c = newCache(1);
+        c.values().retainAll(Collections.singleton(M1.getValue()));
+        assertEquals(1, c.size());
 
-        c1.values().retainAll(Collections.singleton(M2.getValue()));
-        assertEquals(0, c1.size());
-
-        c5.values().retainAll(
-                Arrays.asList(M1.getValue(), "F", M3.getValue(), "G", M5
-                        .getValue()));
-        assertEquals(3, c5.size());
-        assertTrue(c5.values().contains(M1.getValue())
-                && c5.values().contains(M3.getValue())
-                && c5.values().contains(M5.getValue()));
+        c.values().retainAll(Collections.singleton(M2.getValue()));
+        assertEquals(0, c.size());
+        c = newCache(5);
+        c.values().retainAll(
+                Arrays.asList(M1.getValue(), "F", M3.getValue(), "G", M5.getValue()));
+        assertEquals(3, c.size());
+        assertTrue(c.values().contains(M1.getValue())
+                && c.values().contains(M3.getValue())
+                && c.values().contains(M5.getValue()));
 
     }
 
     @Test(expected = NullPointerException.class)
     public void testRetainAllNullPointerException() {
-        c5.values().retainAll(null);
+        newCache(5).values().retainAll(null);
     }
 }

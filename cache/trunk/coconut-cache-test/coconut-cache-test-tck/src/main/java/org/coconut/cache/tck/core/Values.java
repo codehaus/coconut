@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.coconut.cache.tck.CommonCacheTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
 import org.junit.Test;
 
 /**
@@ -22,12 +22,12 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class Values extends CommonCacheTestBundle {
+public class Values extends AbstractCacheTCKTestBundle {
 
     @Test(expected = NullPointerException.class)
     public void testAdd() {
         try {
-            c0.values().add(null);
+            newCache().values().add(null);
         } catch (UnsupportedOperationException e) {
             throw new NullPointerException(); // OK
         }
@@ -36,7 +36,7 @@ public class Values extends CommonCacheTestBundle {
     @Test(expected = NullPointerException.class)
     public void testAddAll() {
         try {
-            c0.values().addAll(null);
+            newCache().values().addAll(null);
         } catch (UnsupportedOperationException e) {
             throw new NullPointerException(); // OK
         }
@@ -44,7 +44,7 @@ public class Values extends CommonCacheTestBundle {
 
     @Test(expected = UnsupportedOperationException.class)
     public void testAddAllUnsupportedOperationException() {
-        c0.values().addAll(Collections.singleton("A"));
+        newCache().values().addAll(Collections.singleton("A"));
     }
 
     /**
@@ -52,15 +52,17 @@ public class Values extends CommonCacheTestBundle {
      */
     @Test
     public void testContains() {
-        assertTrue(c5.values().contains("A"));
-        assertFalse(c5.values().contains("Z"));
-        assertFalse(c5.values().contains("F"));
+        c = newCache(5);
+        assertTrue(c.values().contains("A"));
+        assertFalse(c.values().contains("Z"));
+        assertFalse(c.values().contains("F"));
     }
 
     @Test
     public void testContainsAll() {
-        assertTrue(c5.values().containsAll(Arrays.asList("A", "E")));
-        assertFalse(c5.values().containsAll(Arrays.asList("A", "F")));
+        c = newCache(5);
+        assertTrue(c.values().containsAll(Arrays.asList("A", "E")));
+        assertFalse(c.values().containsAll(Arrays.asList("A", "F")));
     }
 
     /**
@@ -68,7 +70,7 @@ public class Values extends CommonCacheTestBundle {
      */
     @Test(expected = NullPointerException.class)
     public void testContainsNullPointerException() {
-        c5.values().contains(null);
+        newCache(5).values().contains(null);
     }
 
     /**
@@ -76,7 +78,7 @@ public class Values extends CommonCacheTestBundle {
      */
     @Test(expected = NullPointerException.class)
     public void testContainsAllNullPointerException() {
-        c5.values().containsAll(null);
+        newCache(5).values().containsAll(null);
     }
 
     /**
@@ -84,7 +86,7 @@ public class Values extends CommonCacheTestBundle {
      */
     @Test(expected = NullPointerException.class)
     public void testContainsAllInNullPointerException() {
-        c5.values().containsAll(Arrays.asList(M1.getValue(), null));
+        newCache(5).values().containsAll(Arrays.asList(M1.getValue(), null));
     }
 
     /**
@@ -93,30 +95,31 @@ public class Values extends CommonCacheTestBundle {
     @Test
     public void testEquals() {
         // assertTrue(c5.values().equals(c5.values()));
-
-        assertFalse(c0.values().equals(null));
-        assertFalse(c0.values().equals(c1.values()));
-
-        assertFalse(c5.values().equals(null));
-        assertFalse(c5.values().equals(c4.values()));
-        assertFalse(c5.values().equals(c6.values()));
+        c = newCache();
+        assertFalse(c.values().equals(null));
+        assertFalse(c.values().equals(newCache(1).values()));
+        c = newCache(5);
+        assertFalse(c.values().equals(null));
+        assertFalse(c.values().equals(newCache(4).values()));
+        assertFalse(c.values().equals(newCache(6).values()));
     }
 
     @Test
     public void testHashCode() {
-        // assertEquals(c5.values().hashCode(), c5.values().hashCode());
+    // assertEquals(c5.values().hashCode(), c5.values().hashCode());
     }
 
     @Test
     @SuppressWarnings("unused")
     public void testIterator() {
         int count = 0;
-
-        for (String entry : c0.values()) {
+        c = newCache();
+        for (String entry : c.values()) {
             count++;
         }
+        c = newCache(5);
         assertEquals(0, count);
-        Iterator<String> iter = c5.values().iterator();
+        Iterator<String> iter = c.values().iterator();
         while (iter.hasNext()) {
             assertTrue(M1_TO_M5_VALUES.contains(iter.next()));
             count++;
@@ -129,8 +132,8 @@ public class Values extends CommonCacheTestBundle {
      */
     @Test
     public void testSize() {
-        assertEquals(0, c0.values().size());
-        assertEquals(5, c5.values().size());
+        assertEquals(0, newCache().values().size());
+        assertEquals(5, newCache(5).values().size());
     }
 
     /**
@@ -138,26 +141,26 @@ public class Values extends CommonCacheTestBundle {
      */
     @Test
     public void testIsEmpty() {
-        assertTrue(c0.values().isEmpty());
-        assertFalse(c5.values().isEmpty());
+        assertTrue(newCache().values().isEmpty());
+        assertFalse(newCache(5).values().isEmpty());
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void testToArray() {
-        assertEquals(new HashSet(), new HashSet(Arrays.asList(c0.values()
+        c = newCache();
+        assertEquals(new HashSet(), new HashSet(Arrays.asList(c.values().toArray())));
+        assertEquals(new HashSet(), new HashSet(Arrays.asList(c.values().toArray(
+                new String[0]))));
+        c = newCache(5);
+
+        assertEquals(new HashSet(M1_TO_M5_VALUES), new HashSet(Arrays.asList(c.values()
                 .toArray())));
 
-        assertEquals(new HashSet(M1_TO_M5_VALUES), new HashSet(Arrays.asList(c5
-                .values().toArray())));
-
-        assertEquals(new HashSet(), new HashSet(Arrays.asList(c0.values()
+        assertEquals(new HashSet(M1_TO_M5_VALUES), new HashSet(Arrays.asList(c.values()
                 .toArray(new String[0]))));
-
-        assertEquals(new HashSet(M1_TO_M5_VALUES), new HashSet(Arrays.asList(c5
-                .values().toArray(new String[0]))));
-        assertEquals(new HashSet(M1_TO_M5_VALUES), new HashSet(Arrays.asList(c5
-                .values().toArray(new String[5]))));
+        assertEquals(new HashSet(M1_TO_M5_VALUES), new HashSet(Arrays.asList(c.values()
+                .toArray(new String[5]))));
     }
 
 }

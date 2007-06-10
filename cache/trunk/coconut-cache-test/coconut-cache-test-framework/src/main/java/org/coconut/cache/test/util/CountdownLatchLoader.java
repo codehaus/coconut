@@ -2,7 +2,7 @@
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.cache.tck.testutil;
+package org.coconut.cache.test.util;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;

@@ -4,7 +4,7 @@
 
 package org.coconut.cache.tck.eviction;
 
-import org.coconut.cache.tck.CommonCacheTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
 import org.junit.Test;
 
 /**
@@ -13,13 +13,14 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class NoEviction extends CommonCacheTestBundle {
+public class NoEviction extends AbstractCacheTCKTestBundle {
     @Test
     public void testNoEvict() {
+        c = newCache();
         for (int i = 0; i < 10; i++) {
-            c0.put(i, Integer.toString(i));
+            put(i, Integer.toString(i));
         }
-        c0.evict();
-        assertEquals(10, c0.size());
+        evict();
+        assertSize(10);
     }
 }

@@ -11,8 +11,8 @@ import static org.coconut.test.CollectionUtils.M4;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.tck.service.expiration.ExpirationTestBundle;
-import org.coconut.cache.tck.testutil.CacheEntryFilter;
-import org.coconut.cache.tck.testutil.IntegerToStringLoader;
+import org.coconut.cache.test.util.CacheEntryFilter;
+import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.junit.Before;
 import org.junit.Test;
 

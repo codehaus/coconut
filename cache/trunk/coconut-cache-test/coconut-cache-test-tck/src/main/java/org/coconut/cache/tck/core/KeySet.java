@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.coconut.cache.tck.CommonCacheTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
 import org.junit.Test;
 
 /**
@@ -22,12 +22,12 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class KeySet extends CommonCacheTestBundle {
+public class KeySet extends AbstractCacheTCKTestBundle {
 
     @Test(expected = NullPointerException.class)
     public void testAdd() {
         try {
-            c0.keySet().add(null);
+            newCache().keySet().add(null);
         } catch (UnsupportedOperationException e) {
             throw new NullPointerException(); // OK
         }
@@ -36,7 +36,7 @@ public class KeySet extends CommonCacheTestBundle {
     @Test(expected = NullPointerException.class)
     public void testAddAll() {
         try {
-            c0.keySet().addAll(null);
+            newCache().keySet().addAll(null);
         } catch (UnsupportedOperationException e) {
             throw new NullPointerException(); // OK
         }
@@ -44,7 +44,7 @@ public class KeySet extends CommonCacheTestBundle {
 
     @Test(expected = UnsupportedOperationException.class)
     public void testAddAllUnsupportedOperationException() {
-        c0.keySet().addAll(Collections.singleton(1));
+        newCache().keySet().addAll(Collections.singleton(1));
     }
 
     /**
@@ -52,15 +52,17 @@ public class KeySet extends CommonCacheTestBundle {
      */
     @Test
     public void testContains() {
-        assertTrue(c5.keySet().contains(1));
-        assertFalse(c5.keySet().contains(1111));
-        assertFalse(c5.keySet().contains(6));
+        c=newCache(5);
+        assertTrue(c.keySet().contains(1));
+        assertFalse(c.keySet().contains(1111));
+        assertFalse(c.keySet().contains(6));
     }
 
     @Test
     public void testContainsAll() {
-        assertTrue(c5.keySet().containsAll(Arrays.asList(1, 5)));
-        assertFalse(c5.keySet().containsAll(Arrays.asList(1, 6)));
+        c=newCache(5);
+        assertTrue(c.keySet().containsAll(Arrays.asList(1, 5)));
+        assertFalse(c.keySet().containsAll(Arrays.asList(1, 6)));
     }
 
     /**
@@ -68,7 +70,7 @@ public class KeySet extends CommonCacheTestBundle {
      */
     @Test(expected = NullPointerException.class)
     public void testContainsNullPointerException() {
-        c5.keySet().contains(null);
+        newCache(5).keySet().contains(null);
     }
 
     /**
@@ -76,7 +78,7 @@ public class KeySet extends CommonCacheTestBundle {
      */
     @Test(expected = NullPointerException.class)
     public void testContainsAllNullPointerException() {
-        c5.keySet().containsAll(null);
+        newCache(5).keySet().containsAll(null);
     }
 
     /**
@@ -84,7 +86,7 @@ public class KeySet extends CommonCacheTestBundle {
      */
     @Test(expected = NullPointerException.class)
     public void testContainsAllInNullPointerException() {
-        c5.keySet().containsAll(Arrays.asList(M1.getKey(), null));
+        newCache(5).keySet().containsAll(Arrays.asList(M1.getKey(), null));
     }
 
     /**
@@ -93,30 +95,31 @@ public class KeySet extends CommonCacheTestBundle {
     @Test
     public void testEquals() {
         // assertTrue(c5.values().equals(c5.values()));
-
-        assertFalse(c0.keySet().equals(null));
-        assertFalse(c0.keySet().equals(c1.keySet()));
-
-        assertFalse(c5.keySet().equals(null));
-        assertFalse(c5.keySet().equals(c4.keySet()));
-        assertFalse(c5.keySet().equals(c6.keySet()));
+        c=newCache();
+        assertFalse(c.keySet().equals(null));
+        assertFalse(c.keySet().equals(newCache(1).keySet()));
+        c=newCache(5);
+        assertFalse(c.keySet().equals(null));
+        assertFalse(c.keySet().equals(newCache(4).keySet()));
+        assertFalse(c.keySet().equals(newCache(6).keySet()));
     }
 
     @Test
     public void testHashCode() {
-        // assertEquals(c5.values().hashCode(), c5.values().hashCode());
+    // assertEquals(c5.values().hashCode(), c5.values().hashCode());
     }
 
     @Test
-    @SuppressWarnings("unused") 
+    @SuppressWarnings("unused")
     public void testIterator() {
         int count = 0;
-
-        for (Integer entry : c0.keySet()) {
+        c=newCache();
+        for (Integer entry : c.keySet()) {
             count++;
         }
         assertEquals(0, count);
-        Iterator<Integer> iter = c5.keySet().iterator();
+        c=newCache(5);
+        Iterator<Integer> iter = c.keySet().iterator();
         while (iter.hasNext()) {
             assertTrue(M1_TO_M5_KEY_SET.contains(iter.next()));
             count++;
@@ -129,8 +132,8 @@ public class KeySet extends CommonCacheTestBundle {
      */
     @Test
     public void testSize() {
-        assertEquals(0, c0.keySet().size());
-        assertEquals(5, c5.keySet().size());
+        assertEquals(0, newCache().keySet().size());
+        assertEquals(5, newCache(5).keySet().size());
     }
 
     /**
@@ -138,25 +141,26 @@ public class KeySet extends CommonCacheTestBundle {
      */
     @Test
     public void testIsEmpty() {
-        assertTrue(c0.keySet().isEmpty());
-        assertFalse(c5.keySet().isEmpty());
+        
+        assertTrue(newCache().keySet().isEmpty());
+        assertFalse(newCache(5).keySet().isEmpty());
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void testToArray() {
-        assertEquals(new HashSet(), new HashSet(Arrays.asList(c0.keySet()
+        c = newCache();
+        assertEquals(new HashSet(), new HashSet(Arrays.asList(c.keySet().toArray())));
+
+        assertEquals(new HashSet(), new HashSet(Arrays.asList(c.keySet().toArray(
+                new Integer[0]))));
+        c = newCache(5);
+        assertEquals(new HashSet(M1_TO_M5_KEY_SET), new HashSet(Arrays.asList(c.keySet()
                 .toArray())));
 
-        assertEquals(new HashSet(M1_TO_M5_KEY_SET), new HashSet(Arrays
-                .asList(c5.keySet().toArray())));
-
-        assertEquals(new HashSet(), new HashSet(Arrays.asList(c0.keySet()
+        assertEquals(new HashSet(M1_TO_M5_KEY_SET), new HashSet(Arrays.asList(c.keySet()
                 .toArray(new Integer[0]))));
-
-        assertEquals(new HashSet(M1_TO_M5_KEY_SET), new HashSet(Arrays
-                .asList(c5.keySet().toArray(new Integer[0]))));
-        assertEquals(new HashSet(M1_TO_M5_KEY_SET), new HashSet(Arrays
-                .asList(c5.keySet().toArray(new Integer[5]))));
+        assertEquals(new HashSet(M1_TO_M5_KEY_SET), new HashSet(Arrays.asList(c.keySet()
+                .toArray(new Integer[5]))));
     }
 }

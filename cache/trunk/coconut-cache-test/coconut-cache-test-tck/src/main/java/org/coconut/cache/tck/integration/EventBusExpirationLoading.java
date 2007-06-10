@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.tck.service.event.AbstractEventTestBundle;
-import org.coconut.cache.tck.testutil.IntegerToStringLoader;
+import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.test.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;

@@ -16,90 +16,94 @@ import static org.coconut.test.CollectionUtils.MNAN4;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.coconut.cache.tck.CommonCacheTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
 import org.junit.Test;
 
-public class EntrySetModifying extends CommonCacheTestBundle {
-
+public class EntrySetModifying extends AbstractCacheTCKTestBundle {
 
     /**
      * clear removes all pairs
      */
     @Test
     public void testClear() {
-        assertEquals(c5.entrySet().size(), 5);
-        assertFalse(c5.entrySet().isEmpty());
-        assertEquals(c5.size(), 5);
-        assertFalse(c5.isEmpty());
+        c = newCache(5);
+        assertEquals(c.entrySet().size(), 5);
+        assertFalse(c.entrySet().isEmpty());
+        assertEquals(c.size(), 5);
+        assertFalse(c.isEmpty());
 
-        c5.entrySet().clear();
+        c.entrySet().clear();
 
-        assertEquals(c5.entrySet().size(), 0);
-        assertTrue(c5.entrySet().isEmpty());
-        assertEquals(c5.size(), 0);
-        assertTrue(c5.isEmpty());
+        assertEquals(c.entrySet().size(), 0);
+        assertTrue(c.entrySet().isEmpty());
+        assertEquals(c.size(), 0);
+        assertTrue(c.isEmpty());
     }
 
     @Test
     public void testRemove() {
-        assertFalse(c0.entrySet().remove(1));
-        assertFalse(c0.entrySet().remove(MNAN1));
+        c = newCache();
+        assertFalse(c.entrySet().remove(1));
+        assertFalse(c.entrySet().remove(MNAN1));
+        c = newCache(5);
+        assertTrue(c.entrySet().remove(M1));
+        assertEquals(4, c.size());
+        assertFalse(c.entrySet().contains(M1));
 
-        assertTrue(c5.entrySet().remove(M1));
-        assertEquals(4, c5.size());
-        assertFalse(c5.entrySet().contains(M1));
-
-        assertTrue(c1.entrySet().remove(M1));
-        assertTrue(c1.isEmpty());
+        c = newCache(1);
+        assertTrue(c.entrySet().remove(M1));
+        assertTrue(c.isEmpty());
     }
-    
+
     @Test(expected = NullPointerException.class)
     public void testRemoveNullPointerException() {
-        c0.entrySet().remove(null);
+        newCache().entrySet().remove(null);
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void testRemoveAll() {
-        assertFalse(c5.entrySet().removeAll(Arrays.asList(MNAN1, MNAN2)));
-        assertTrue(c5.entrySet().removeAll(Arrays.asList(MNAN1, M2, MNAN2)));
-        assertEquals(4, c5.size());
-        assertFalse(c5.entrySet().contains(M2));
-        assertTrue(c5.entrySet().removeAll(Arrays.asList(M1, M4)));
-        assertFalse(c5.entrySet().contains(M4));
-        assertFalse(c5.entrySet().contains(M1));
-        assertEquals(2, c5.size());
+        c = newCache(5);
+        assertFalse(c.entrySet().removeAll(Arrays.asList(MNAN1, MNAN2)));
+        assertTrue(c.entrySet().removeAll(Arrays.asList(MNAN1, M2, MNAN2)));
+        assertEquals(4, c.size());
+        assertFalse(c.entrySet().contains(M2));
+        assertTrue(c.entrySet().removeAll(Arrays.asList(M1, M4)));
+        assertFalse(c.entrySet().contains(M4));
+        assertFalse(c.entrySet().contains(M1));
+        assertEquals(2, c.size());
     }
 
     @Test(expected = NullPointerException.class)
     public void testRemoveAllNullPointerException() {
-        c0.entrySet().removeAll(null);
+        newCache().entrySet().removeAll(null);
     }
 
     @Test(expected = NullPointerException.class)
     public void testRemoveAll2NullPointerException() {
-        c5.entrySet().removeAll(null);
+        newCache(5).entrySet().removeAll(null);
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void testRetainAll() {
-        c1.entrySet().retainAll(Collections.singleton(M1));
-        assertEquals(1, c1.size());
+        c = newCache(1);
+        c.entrySet().retainAll(Collections.singleton(M1));
+        assertEquals(1, c.size());
 
-        c1.entrySet().retainAll(Collections.singleton(M2));
-        assertEquals(0, c1.size());
-
-        c5.entrySet().retainAll(Arrays.asList(M1, MNAN2, M3, MNAN4, M5));
-        assertEquals(3, c5.size());
-        assertTrue(c5.entrySet().contains(M1) && c5.entrySet().contains(M3)
-                && c5.entrySet().contains(M5));
+        c.entrySet().retainAll(Collections.singleton(M2));
+        assertEquals(0, c.size());
+        c = newCache(5);
+        c.entrySet().retainAll(Arrays.asList(M1, MNAN2, M3, MNAN4, M5));
+        assertEquals(3, c.size());
+        assertTrue(c.entrySet().contains(M1) && c.entrySet().contains(M3)
+                && c.entrySet().contains(M5));
 
     }
 
     @Test(expected = NullPointerException.class)
     public void testRetainAllNullPointerException() {
-        c5.entrySet().retainAll(null);
+        newCache(5).entrySet().retainAll(null);
     }
 
 }

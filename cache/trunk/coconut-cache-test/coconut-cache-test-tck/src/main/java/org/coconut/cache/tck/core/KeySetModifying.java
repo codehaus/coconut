@@ -15,7 +15,7 @@ import static org.coconut.test.CollectionUtils.MNAN2;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.coconut.cache.tck.CommonCacheTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
 import org.junit.Test;
 
 /**
@@ -24,95 +24,97 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class KeySetModifying extends CommonCacheTestBundle {
+public class KeySetModifying extends AbstractCacheTCKTestBundle {
 
     /**
      * clear removes all pairs
      */
     @Test
     public void testClear() {
-        assertEquals(c5.keySet().size(), 5);
-        assertFalse(c5.keySet().isEmpty());
-        assertEquals(c5.size(), 5);
-        assertFalse(c5.isEmpty());
+        c = newCache(5);
+        assertEquals(c.keySet().size(), 5);
+        assertFalse(c.keySet().isEmpty());
+        assertEquals(c.size(), 5);
+        assertFalse(c.isEmpty());
 
-        c5.keySet().clear();
+        c.keySet().clear();
 
-        assertEquals(c5.keySet().size(), 0);
-        assertTrue(c5.keySet().isEmpty());
-        assertEquals(c5.size(), 0);
-        assertTrue(c5.isEmpty());
+        assertEquals(c.keySet().size(), 0);
+        assertTrue(c.keySet().isEmpty());
+        assertEquals(c.size(), 0);
+        assertTrue(c.isEmpty());
     }
 
     @Test(expected = NullPointerException.class)
     public void testRemoveNullPointerException() {
-        c0.keySet().remove(null);
+        newCache(0).keySet().remove(null);
     }
 
     @Test(expected = NullPointerException.class)
     public void testRemove2NullPointerException() {
-        c5.keySet().remove(null);
+        newCache(5).keySet().remove(null);
     }
-    
+
     @Test
     public void testRemove() {
-        assertFalse(c0.keySet().remove(MNAN2.getKey()));
-        assertFalse(c0.keySet().remove(MNAN1.getKey()));
+        c = newCache(0);
+        assertFalse(c.keySet().remove(MNAN2.getKey()));
+        assertFalse(c.keySet().remove(MNAN1.getKey()));
 
-        assertTrue(c5.keySet().remove(M1.getKey()));
-        assertEquals(4, c5.size());
-        assertFalse(c5.keySet().contains(M1.getKey()));
+        c = newCache(5);
+        assertTrue(c.keySet().remove(M1.getKey()));
+        assertEquals(4, c.size());
+        assertFalse(c.keySet().contains(M1.getKey()));
 
-        assertTrue(c1.keySet().remove(M1.getKey()));
-        assertTrue(c1.isEmpty());
+        c = newCache(1);
+        assertTrue(c.keySet().remove(M1.getKey()));
+        assertTrue(c.isEmpty());
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void testRemoveAll() {
-        assertFalse(c5.keySet().removeAll(Arrays.asList("F", "H")));
-        assertTrue(c5.keySet()
-                .removeAll(Arrays.asList("F", M2.getKey(), "H")));
-        assertEquals(4, c5.size());
-        assertFalse(c5.keySet().contains(M2.getKey()));
-        assertTrue(c5.keySet().removeAll(
-                Arrays.asList(M1.getKey(), M4.getKey())));
-        assertFalse(c5.keySet().contains(M4.getKey()));
-        assertFalse(c5.keySet().contains(M1.getKey()));
-        assertEquals(2, c5.size());
+        c = newCache(5);
+        assertFalse(c.keySet().removeAll(Arrays.asList("F", "H")));
+        assertTrue(c.keySet().removeAll(Arrays.asList("F", M2.getKey(), "H")));
+        assertEquals(4, c.size());
+        assertFalse(c.keySet().contains(M2.getKey()));
+        assertTrue(c.keySet().removeAll(Arrays.asList(M1.getKey(), M4.getKey())));
+        assertFalse(c.keySet().contains(M4.getKey()));
+        assertFalse(c.keySet().contains(M1.getKey()));
+        assertEquals(2, c.size());
     }
 
     @Test(expected = NullPointerException.class)
     public void testRemoveAllNullPointerException() {
-        c0.keySet().removeAll(null);
+        newCache(0).keySet().removeAll(null);
     }
 
     @Test(expected = NullPointerException.class)
     public void testRemoveAll2NullPointerException() {
-        c5.keySet().removeAll(null);
+        newCache(5).keySet().removeAll(null);
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void testRetainAll() {
-        c1.keySet().retainAll(Collections.singleton(M1.getKey()));
-        assertEquals(1, c1.size());
+        c = newCache(1);
+        c.keySet().retainAll(Collections.singleton(M1.getKey()));
+        assertEquals(1, c.size());
 
-        c1.keySet().retainAll(Collections.singleton(M2.getKey()));
-        assertEquals(0, c1.size());
-
-        c5.keySet().retainAll(
-                Arrays.asList(M1.getKey(), "F", M3.getKey(), "G", M5
-                        .getKey()));
-        assertEquals(3, c5.size());
-        assertTrue(c5.keySet().contains(M1.getKey())
-                && c5.keySet().contains(M3.getKey())
-                && c5.keySet().contains(M5.getKey()));
+        c.keySet().retainAll(Collections.singleton(M2.getKey()));
+        assertEquals(0, c.size());
+        c = newCache(5);
+        c.keySet().retainAll(
+                Arrays.asList(M1.getKey(), "F", M3.getKey(), "G", M5.getKey()));
+        assertEquals(3, c.size());
+        assertTrue(c.keySet().contains(M1.getKey()) && c.keySet().contains(M3.getKey())
+                && c.keySet().contains(M5.getKey()));
 
     }
 
     @Test(expected = NullPointerException.class)
     public void testRetainAllNullPointerException() {
-        c5.keySet().retainAll(null);
+        newCache(5).keySet().retainAll(null);
     }
 }

@@ -2,7 +2,7 @@
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.cache.tck.testutil;
+package org.coconut.cache.test.util;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -14,7 +14,7 @@ import org.coconut.core.AttributeMap;
  * <code>null</code> for any other key.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id$
+ * @version $Id: MutableLoader.java 341 2007-06-10 09:54:42Z kasper $
  */
 public class MutableLoader implements CacheLoader<Integer, String> {
 

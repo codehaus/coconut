@@ -9,7 +9,8 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.tck.CommonCacheTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.CacheTCKRunner;
 import org.junit.Test;
 
 /**
@@ -20,11 +21,11 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class Constructors extends CommonCacheTestBundle {
+public class Constructors extends AbstractCacheTCKTestBundle {
 
     @SuppressWarnings("unchecked")
     private Class<Cache> getClazz() {
-        return (Class<Cache>) c0.getClass();
+        return (Class<Cache>) newCache().getClass();
     }
 
     /**

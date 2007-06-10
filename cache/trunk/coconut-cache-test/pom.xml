@@ -30,5 +30,6 @@
   </reporting>
   <modules>
     <module>coconut-cache-test-tck</module>
+    <module>coconut-cache-test-framework</module>
   </modules>
 </project>

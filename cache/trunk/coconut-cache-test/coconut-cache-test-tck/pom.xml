@@ -22,5 +22,10 @@
       <artifactId>coconut-cache-policies</artifactId>
       <version>${project.version}</version>
     </dependency>
+            <dependency>
+      <groupId>org.coconut.cache.test</groupId>
+      <artifactId>coconut-cache-test-framework</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 </project>

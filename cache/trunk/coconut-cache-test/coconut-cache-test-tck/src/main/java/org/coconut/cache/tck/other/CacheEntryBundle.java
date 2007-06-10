@@ -8,20 +8,21 @@ import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M2;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.tck.CommonCacheTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
 import org.junit.Test;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class CacheEntryBundle extends CommonCacheTestBundle {
+public class CacheEntryBundle extends AbstractCacheTCKTestBundle {
 
     @Test
     public void testCacheEntry() {
-        assertNull(c0.getEntry(M1.getKey()));
-
-        CacheEntry<Integer, String> ce = c1.getEntry(M1.getKey());
+        c=newCache(0);
+        assertNull(c.getEntry(M1.getKey()));
+        c=newCache(1);
+        CacheEntry<Integer, String> ce = c.getEntry(M1.getKey());
         assertEquals(M1.getKey(), ce.getKey());
         assertEquals(M1.getValue(), ce.getValue());
     }
@@ -105,7 +106,7 @@ public class CacheEntryBundle extends CommonCacheTestBundle {
 
     @Test
     public void testHits() {
-        c = c1;
+        c = newCache(1);
         CacheEntry<Integer, String> ce = getEntry(M1);
         assertEquals(0l, ce.getHits());
 

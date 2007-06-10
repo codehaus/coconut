@@ -12,7 +12,8 @@ import static org.coconut.test.CollectionUtils.M5;
 import static org.coconut.test.CollectionUtils.MNAN1;
 import static org.coconut.test.CollectionUtils.asMap;
 
-import org.coconut.cache.tck.CommonCacheTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -21,60 +22,63 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class Put extends CommonCacheTestBundle {
+public class Put extends AbstractCacheTCKTestBundle {
+
+    @Before
+    public void setup() {
+        c = newCache();
+    }
 
     @Test
     public void testPut() {
-        c0.put(1, "B");
-        assertEquals(1, c0.size());
-        c0.put(1, "C");
-        assertEquals(1, c0.size());
-        assertEquals("C", c0.get(1));
+        c.put(1, "B");
+        assertEquals(1, c.size());
+        c.put(1, "C");
+        assertEquals(1, c.size());
+        assertEquals("C", c.get(1));
     }
 
     @Test(expected = NullPointerException.class)
     public void testPutKeyNull() {
-        c0.put(null, "A");
+        c.put(null, "A");
     }
 
     @Test(expected = NullPointerException.class)
     public void testPutValueNull() {
-        c0.put(1, null);
+        c.put(1, null);
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void testPutAll() {
-        c0.putAll(asMap(M1, M5));
-        assertEquals(2, c0.size());
-        assertTrue(c0.entrySet().contains(M1));
-        assertTrue(c0.entrySet().contains(M5));
+        c.putAll(asMap(M1, M5));
+        assertEquals(2, c.size());
+        assertTrue(c.entrySet().contains(M1));
+        assertTrue(c.entrySet().contains(M5));
 
-        c0.putAll(asMap(M1, M5));
-        assertEquals(2, c0.size());
+        c.putAll(asMap(M1, M5));
+        assertEquals(2, c.size());
 
-        c0.putAll(asMap(MNAN1, M4));
-        assertEquals(3, c0.size());
-        assertFalse(c0.entrySet().contains(M1));
+        c.putAll(asMap(MNAN1, M4));
+        assertEquals(3, c.size());
+        assertFalse(c.entrySet().contains(M1));
 
     }
 
     @Test(expected = NullPointerException.class)
     public void testPutAllNull() {
-        c0.putAll(null);
+        putAll(null);
     }
 
     @SuppressWarnings("unchecked")
     @Test(expected = NullPointerException.class)
     public void testPutAllNullKeyMapping() {
-        c0.putAll(asMap(M1, M1_NULL_VALUE));
+        c.putAll(asMap(M1, M1_NULL_VALUE));
     }
 
     @SuppressWarnings("unchecked")
     @Test(expected = NullPointerException.class)
     public void testPutAllNullValueMapping() {
-        c0.putAll(asMap(M1, M1_KEY_NULL));
-
+        c.putAll(asMap(M1, M1_KEY_NULL));
     }
-
 }

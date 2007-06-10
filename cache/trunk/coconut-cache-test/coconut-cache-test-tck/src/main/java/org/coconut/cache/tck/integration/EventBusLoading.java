@@ -15,7 +15,7 @@ import org.coconut.cache.service.event.CacheEventFilters;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemAccessed;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemAdded;
 import org.coconut.cache.tck.service.event.AbstractEventTestBundle;
-import org.coconut.cache.tck.testutil.IntegerToStringLoader;
+import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.junit.Before;
 import org.junit.Test;
 

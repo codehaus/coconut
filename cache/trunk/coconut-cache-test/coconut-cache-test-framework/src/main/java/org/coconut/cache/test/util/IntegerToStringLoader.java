@@ -2,7 +2,7 @@
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.cache.tck.testutil;
+package org.coconut.cache.test.util;
 
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.core.AttributeMap;
@@ -12,7 +12,7 @@ import org.coconut.core.AttributeMap;
  * 5->E and <code>null</code> for any other key.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id$
+ * @version $Id: IntegerToStringLoader.java 341 2007-06-10 09:54:42Z kasper $
  */
 public class IntegerToStringLoader implements CacheLoader<Integer, String> {
 

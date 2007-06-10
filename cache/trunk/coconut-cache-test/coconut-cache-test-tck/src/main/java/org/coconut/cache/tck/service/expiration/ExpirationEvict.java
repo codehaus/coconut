@@ -10,7 +10,7 @@ import static org.coconut.test.CollectionUtils.M3;
 import static org.coconut.test.CollectionUtils.M4;
 import static org.coconut.test.CollectionUtils.M5;
 
-import org.coconut.cache.tck.testutil.CacheEntryFilter;
+import org.coconut.cache.test.util.CacheEntryFilter;
 import org.junit.Test;
 
 /**
