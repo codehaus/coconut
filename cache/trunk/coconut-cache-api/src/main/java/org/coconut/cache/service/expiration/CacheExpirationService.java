@@ -97,7 +97,7 @@ public interface CacheExpirationService<K, V> {
      * @param value
      *            value to be associated with the specified key.
      * @param expirationTime
-     *            the time from now to when the element can be expired
+     *            the time from now to when the element must be expired
      * @param unit
      *            the time unit of the timeout parameter.
      * @return previous value associated with specified key, or <tt>null</tt> if there
@@ -124,7 +124,7 @@ public interface CacheExpirationService<K, V> {
      * @param t
      *            Mappings to be stored in this cache.
      * @param timeout
-     *            the time from now to when the elements can be expired
+     *            the time from now to when the elements must be expired
      * @param unit
      *            the time unit of the timeout parameter.
      * @throws UnsupportedOperationException

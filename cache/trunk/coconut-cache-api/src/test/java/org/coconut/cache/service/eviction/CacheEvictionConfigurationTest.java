@@ -10,8 +10,8 @@ import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.policy.Policies;
-import org.coconut.cache.policy.ReplacementPolicy;
+import org.coconut.cache.ReplacementPolicy;
+import org.coconut.test.MockTestCase;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -59,7 +59,7 @@ public class CacheEvictionConfigurationTest {
     @Test
     public void testPolicy() {
         assertNull(ee.getPolicy());
-        ReplacementPolicy<?> p = Policies.newClock();
+        ReplacementPolicy<?> p =MockTestCase.mockDummy(ReplacementPolicy.class);
         assertEquals(ee, ee.setPolicy(p));
         assertEquals(p, ee.getPolicy());
     }

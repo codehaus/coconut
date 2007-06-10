@@ -32,8 +32,6 @@ import org.coconut.management.annotation.ManagedAttribute;
 public interface CacheExpirationMXBean {
     long getDefaultTimeToLiveMs();
 
-    String getFilterAsString();
-
     void setDefaultTimeToLiveMs(long timeToLiveMs);
 
 }

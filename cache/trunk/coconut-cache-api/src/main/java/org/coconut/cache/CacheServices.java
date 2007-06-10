@@ -19,11 +19,11 @@ import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 @SuppressWarnings("unchecked")
 public final class CacheServices {
 
-    public static CacheEventService event(Cache<?, ?> cache) {
+    public static <K, V> CacheEventService<K, V> event(Cache<?, ?> cache) {
         return cache.getService(CacheEventService.class);
     }
 
-    public static CacheEvictionService eviction(Cache<?, ?> cache) {
+    public static <K, V> CacheEvictionService<K, V> eviction(Cache<?, ?> cache) {
         return cache.getService(CacheEvictionService.class);
     }
 
@@ -36,7 +36,7 @@ public final class CacheServices {
         return cache.getService(CacheExpirationService.class);
     }
 
-    public static CacheLoadingService loading(Cache<?, ?> cache) {
+    public static <K, V> CacheLoadingService<K, V> loading(Cache<?, ?> cache) {
         return cache.getService(CacheLoadingService.class);
     }
 

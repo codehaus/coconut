@@ -25,7 +25,7 @@ import org.w3c.dom.Element;
 public class CacheExpirationConfiguration<K, V> extends
         AbstractCacheServiceConfiguration<K, V> {
 
-    public final static String SERVICE_NAME = "expiration";
+    public final static String SERVICE_NAME = "Expiration";
 
     private final static String DEFAULT_TIMEOUT_TAG = "default-timetolive";
 

@@ -5,6 +5,7 @@
 package org.coconut.cache.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
@@ -30,9 +31,9 @@ public class CacheSingletonTest {
 
 	@After
 	public void after() throws Exception {
-		Field f = CacheSingleton.class.getDeclaredField("isInitialized");
+		Field f = CacheSingleton.class.getDeclaredField("status");
 		f.setAccessible(true);
-		f.setBoolean(null, false);
+		f.setInt(null, 0);
 
 		f = CacheSingleton.class.getDeclaredField("cacheInstance");
 		f.setAccessible(true);
@@ -51,9 +52,9 @@ public class CacheSingletonTest {
 		assertEquals(c, CacheSingleton.getCache());
 	}
 
-	@Test(expected = NullPointerException.class)
-	public void testSetNPE() {
+	public void testSetNull() {
 		CacheSingleton.setCache(null);
+		assertNull(CacheSingleton.getCache());
 	}
 
 	@Test

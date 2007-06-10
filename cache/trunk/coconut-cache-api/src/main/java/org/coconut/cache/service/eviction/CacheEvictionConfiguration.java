@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.policy.ReplacementPolicy;
+import org.coconut.cache.ReplacementPolicy;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.filter.Filter;

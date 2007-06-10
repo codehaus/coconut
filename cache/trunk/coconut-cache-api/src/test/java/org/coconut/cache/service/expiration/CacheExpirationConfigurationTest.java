@@ -64,7 +64,13 @@ public class CacheExpirationConfigurationTest {
     public void testDefaultExpirationNPE() {
         conf.setDefaultTimeToLive(1, null);
     }
-
+    @Test
+    public void testExpirationFilter() {
+        assertNull(conf.getExpirationFilter());
+        assertEquals(conf, conf.setExpirationFilter(f));
+        assertEquals(f, conf.getExpirationFilter());
+    }
+    
     @Test
     public void testExpiration() throws Exception {
         conf.setDefaultTimeToLive(60, TimeUnit.SECONDS);

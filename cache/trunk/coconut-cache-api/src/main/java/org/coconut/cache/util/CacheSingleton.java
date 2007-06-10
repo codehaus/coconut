@@ -43,7 +43,7 @@ public final class CacheSingleton {
     private static volatile Cache<?, ?> cacheInstance;
 
     /** Whether or not this singleton has been initialized. */
-    private static boolean isInitialized;
+    private static int status;
 
     private static CacheException initializationException;
 
@@ -94,19 +94,19 @@ public final class CacheSingleton {
 
     /**
      * Sets the single cache used. The cache instance can be retrieved, possible by
-     * another thread, by callong {@link #getCache()}.
+     * another thread, by callong {@link #getCache()}. Pass <code>null</code> to this
+     * method to clear the singleton reference to a cache
      * 
      * @param cache
      *            the cache to keep a singleton reference for
      */
     public synchronized static void setCache(Cache<?, ?> cache) {
-        //We probably want to able to set the cache to null
-        //when we are done with it (So we can GC the cache)
-        if (cache == null) {
-            throw new NullPointerException("cache is null");
-        }
         cacheInstance = cache;
-        isInitialized = true;
+        if (cache == null) {
+            status = 2;
+        } else {
+            status = 1;
+        }
         initializationException = null;
     }
 
@@ -117,7 +117,7 @@ public final class CacheSingleton {
         if (initializationException != null) {
             throw initializationException;
         }
-        if (!isInitialized) {
+        if (status == 0) {
             InputStream is = null;
             try {
                 URL url = Thread.currentThread().getContextClassLoader().getResource(
@@ -129,7 +129,7 @@ public final class CacheSingleton {
                 is = url.openStream();
                 Cache<?, ?> cache = CacheConfiguration.createCache(is);
                 setCache(cache);
-                isInitialized = true;
+                status = 1;
                 if (is != null) {
                     try {
                         is.close();
