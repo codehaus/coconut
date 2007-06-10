@@ -20,13 +20,13 @@
     </dependency>
   </dependencies>
   <modules>
-    <module>coconut-cache-test-adapter-api</module>
-    <module>coconut-cache-test-adapter-all</module>
-    <module>coconut-cache-test-adapter-ehcache</module>
-    <module>coconut-cache-test-adapter-jbosscache</module>
-    <module>coconut-cache-test-adapter-jcs</module>
-    <module>coconut-cache-test-adapter-map</module>
-    <module>coconut-cache-test-adapter-oscache</module>
-    <module>coconut-cache-test-adapter-whirlycache</module>
+    <module>test-adapter-api</module>
+    <module>test-adapter-all</module>
+    <module>test-adapter-ehcache</module>
+    <module>test-adapter-jbosscache</module>
+    <module>test-adapter-jcs</module>
+    <module>test-adapter-map</module>
+    <module>test-adapter-oscache</module>
+    <module>test-adapter-whirlycache</module>
   </modules>
 </project>

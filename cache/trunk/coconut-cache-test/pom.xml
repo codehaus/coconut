@@ -29,6 +29,6 @@
     </plugins>
   </reporting>
   <modules>
-    <module>coconut-cache-tck</module>
+    <module>coconut-cache-test-tck</module>
   </modules>
 </project>
