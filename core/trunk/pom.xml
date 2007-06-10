@@ -10,8 +10,7 @@
   <artifactId>coconut-core</artifactId>
   <name>Coconut Core Classes</name>
   <description>
-    This library contains class that are used across all Coconut
-    projects
+    This library contains class that are used across all Coconut projects
   </description>
 
   <dependencies>
@@ -50,30 +49,29 @@
         </configuration>
       </plugin>
     </plugins>
-    
+
   </build>
 
   <reporting>
     <plugins>
-
     </plugins>
   </reporting>
-        <repositories>
+  <repositories>
     <repository>
-    <id>codehaus.snapshots</id>
-    <name>Codehaus Snapshot Repository</name>
-    <url>http://snapshots.repository.codehaus.org/</url>
-    <releases>
-    <enabled>true</enabled>
-    </releases>
+      <id>codehaus.snapshots</id>
+      <name>Codehaus Snapshot Repository</name>
+      <url>http://snapshots.repository.codehaus.org/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
     </repository>
     <repository>
-    <id>codehaus.releases</id>
-    <name>Codehaus Repository</name>
-    <url>http://repository.codehaus.org/</url>
-    <releases>
-    <enabled>true</enabled>
-    </releases>
+      <id>codehaus.releases</id>
+      <name>Codehaus Repository</name>
+      <url>http://repository.codehaus.org/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
     </repository>
-    </repositories>
+  </repositories>
 </project>
