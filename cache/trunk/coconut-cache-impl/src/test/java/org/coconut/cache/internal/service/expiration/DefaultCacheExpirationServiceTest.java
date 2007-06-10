@@ -87,55 +87,6 @@ public class DefaultCacheExpirationServiceTest {
     }
 
     @Test
-    public void testSetGetFilter() {
-        assertNull(s.getExpirationFilter());
-        s.setExpirationFilter(TRUE);
-        assertSame(TRUE, s.getExpirationFilter());
-        conf = new CacheExpirationConfiguration<Integer, String>()
-                .setExpirationFilter(FALSE);
-        initialize();
-        assertSame(FALSE, s.getExpirationFilter());
-    }
-
-    @Test
-    public void testSetGetDefaultTimeToLive() {
-        assertEquals(CacheExpirationService.NEVER_EXPIRE, s
-                .getDefaultTimeToLive(TimeUnit.NANOSECONDS));
-        assertEquals(CacheExpirationService.NEVER_EXPIRE, s
-                .getDefaultTimeToLive(TimeUnit.SECONDS));
-        assertEquals(CacheExpirationService.NEVER_EXPIRE, s.getDefaultTimeToLiveMs());
-
-        s.setDefaultTimeToLive(2 * 1000, TimeUnit.MILLISECONDS);
-        assertEquals(2 * 1000 * 1000 * 1000l, s
-                .getDefaultTimeToLive(TimeUnit.NANOSECONDS));
-        assertEquals(2l, s.getDefaultTimeToLive(TimeUnit.SECONDS));
-        assertEquals(2000l, s.getDefaultTimeToLiveMs());
-
-        conf = new CacheExpirationConfiguration<Integer, String>().setDefaultTimeToLive(
-                5, TimeUnit.SECONDS);
-        initialize();
-        assertEquals(5 * 1000 * 1000 * 1000l, s
-                .getDefaultTimeToLive(TimeUnit.NANOSECONDS));
-        assertEquals(5l, s.getDefaultTimeToLive(TimeUnit.SECONDS));
-        assertEquals(5000l, s.getDefaultTimeToLiveMs());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testSetDefaultTimeToLiveIAE() {
-        s.setDefaultTimeToLive(0, TimeUnit.MICROSECONDS);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testSetDefaultTimeToLiveNPE() {
-        s.setDefaultTimeToLive(123, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testSetDefaultTimeToLiveMsIAE() {
-        s.setDefaultTimeToLiveMs(0);
-    }
-
-    @Test
     public void testIsExpired_Time() {
         clock.setTimestamp(9);
         assertFalse(s.innerIsExpired(expireAt10));
@@ -148,43 +99,28 @@ public class DefaultCacheExpirationServiceTest {
         assertFalse(s.innerIsExpired(neverExpire));
     }
 
-    @Test
-    public void testIsExpired_Filters() {
-        s.setExpirationFilter(TRUE);
-        assertTrue(s.innerIsExpired(neverExpire));
-        s.setExpirationFilter(FALSE);
-        assertFalse(s.innerIsExpired(neverExpire));
-    }
-
-    @Test
-    public void testIsExpired_TimeAndFilter() {
-        s.setExpirationFilter(FALSE);
-        clock.setTimestamp(400);
-        assertTrue(s.innerIsExpired(expireAt10));
-    }
-
-    @Test
-    public void testGetExpirationTime() {
-        assertEquals(Long.MAX_VALUE, s.innerGetExpirationTime(null, null, null));
-        assertEquals(Long.MAX_VALUE, s.innerGetExpirationTime(null, null,
-                new AttributeMaps.DefaultAttributeMap()));
-
-        AttributeMap dam = new AttributeMaps.DefaultAttributeMap();
-        dam.putLong(CacheAttributes.TIME_TO_LIVE_NS,
-                CacheExpirationService.NEVER_EXPIRE);
-        assertEquals(Long.MAX_VALUE, s.innerGetExpirationTime(null, null, dam));
-        dam.putLong(CacheAttributes.TIME_TO_LIVE_NS, TimeUnit.MILLISECONDS.toNanos(5));
-        assertEquals(5l, s.innerGetExpirationTime(null, null, dam));
-
-        s.setDefaultTimeToLive(10, TimeUnit.MILLISECONDS);
-        assertEquals(10l, s.innerGetExpirationTime(null, null,
-                new AttributeMaps.DefaultAttributeMap()));
-        assertEquals(5l, s.innerGetExpirationTime(null, null, dam));
-        assertEquals(10l, s.innerGetExpirationTime(null, null, null));
-        clock.setTimestamp(50);
-        assertEquals(60l, s.innerGetExpirationTime(null, null, null));
-
-    }
+//    @Test
+//    public void testGetExpirationTime() {
+//        assertEquals(Long.MAX_VALUE, s.innerGetExpirationTime(null, null, null));
+//        assertEquals(Long.MAX_VALUE, s.innerGetExpirationTime(null, null,
+//                new AttributeMaps.DefaultAttributeMap()));
+//
+//        AttributeMap dam = new AttributeMaps.DefaultAttributeMap();
+//        dam.putLong(CacheAttributes.TIME_TO_LIVE_NS,
+//                CacheExpirationService.NEVER_EXPIRE);
+//        assertEquals(Long.MAX_VALUE, s.innerGetExpirationTime(null, null, dam));
+//        dam.putLong(CacheAttributes.TIME_TO_LIVE_NS, TimeUnit.MILLISECONDS.toNanos(5));
+//        assertEquals(5l, s.innerGetExpirationTime(null, null, dam));
+//
+//        s.setDefaultTimeToLive(10, TimeUnit.MILLISECONDS);
+//        assertEquals(10l, s.innerGetExpirationTime(null, null,
+//                new AttributeMaps.DefaultAttributeMap()));
+//        assertEquals(5l, s.innerGetExpirationTime(null, null, dam));
+//        assertEquals(10l, s.innerGetExpirationTime(null, null, null));
+//        clock.setTimestamp(50);
+//        assertEquals(60l, s.innerGetExpirationTime(null, null, null));
+//
+//    }
 
     @Test
     public void testErrorHandler() {
@@ -197,10 +133,10 @@ public class DefaultCacheExpirationServiceTest {
         initialize();
         AttributeMap dam = new AttributeMaps.DefaultAttributeMap();
         dam.putLong(CacheAttributes.TIME_TO_LIVE_NS, -1);
-        s.innerGetExpirationTime(123, null, dam);
+        //s.innerGetExpirationTime(123, null, dam);
 
-        assertTrue(ref.get().contains("-1"));
-        assertTrue(ref.get().contains("123"));
+//        assertTrue(ref.get().contains("-1"));
+//        assertTrue(ref.get().contains("123"));
     }
 
     static class AbstractTester<K, V> extends AbstractCacheExceptionHandler<K, V> {

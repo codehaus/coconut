@@ -9,6 +9,18 @@ package org.coconut.cache.internal.service.entry;
  */
 public class UnsynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
 
+    private final AbstractCacheEntryFactoryService<K, V> service;
+
+    long expirationTime;
+
+    long hits;
+
+    long idleTime;
+
+    long lastAccessTime;
+
+    long refreshTime;
+    
     /**
      * @param key
      * @param value
@@ -26,18 +38,11 @@ public class UnsynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
 //        this.hits = hits;
 //        this.lastAccessTime = lastAccessTime;
     }
+    public void accessed() {
+        lastAccessTime = service.getAccessTimeStamp(this);
+        hits++;
+    }
 
-    private final AbstractCacheEntryFactoryService<K, V> service;
-
-    long expirationTime;
-
-    long hits;
-
-    long lastAccessTime;
-
-    long idleTime;
-    
-    long refreshTime;
     /**
      * @see org.coconut.cache.CacheEntry#getExpirationTime()
      */
@@ -57,11 +62,6 @@ public class UnsynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
      */
     public long getLastAccessTime() {
         return lastAccessTime;
-    }
-
-    public void accessed() {
-        lastAccessTime = service.getAccessTimeStamp(this);
-        hits++;
     }
 
     /**

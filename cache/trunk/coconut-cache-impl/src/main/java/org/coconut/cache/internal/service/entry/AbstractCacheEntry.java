@@ -46,22 +46,6 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
     }
 
 
-    //
-    // static <K, V> long getVersion(CacheEntry<K, V> takeFrom, CacheEntry<K, V>
-    // existing,
-    // CacheErrorHandler<K, V> errorHandler) {
-    // if (takeFrom != null
-    // && takeFrom.getVersion() != DefaultCacheEntry.DEFAULT_VERSION) {
-    // long version = takeFrom.getVersion();
-    // if (version > 0) {
-    // return version;
-    // }
-    // errorHandler.warning("'Must specify a positive version was version= "
-    // + version + " for key = " + takeFrom.getKey());
-    // }
-    // return existing == null ? 1 : existing.getVersion() + 1;
-    // }
-
     private final double cost;
 
     private final long creationTime;
@@ -201,39 +185,4 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
     public void setPolicyIndex(int index) {
         this.policyIndex = index;
     }
-
-//    static <K, V> AbstractCacheEntry<K, V> newEntry(EntryFactory<K, V> f,
-//            SupportedCache<K, V> cache, AbstractCacheExpirationService<K, V> service,
-//            CacheEntry<K, V> entry, AbstractCacheEntry<K, V> existing, K key, V value,
-//            long expirationTimeMilli, boolean isExpired3) {
-//        K k = entry == null ? key : entry.getKey();
-//        V v = entry == null ? value : entry.getValue();
-//        if (v == null) {
-//            throw new NullPointerException("value is null");
-//        }
-//        double cost = getCost(entry, cache.getErrorHandler());
-//        long creationTime =0;
-//            
-//            
-//            //getCreationTime(entry, existing, cache.getClock(), cache
-//            //    .getErrorHandler());
-//        long size = getSize(entry, cache.getErrorHandler());
-//        long expTime =0;
-//            
-//            //getExpirationTime(entry, expirationTimeMilli, service
-//            //    .getDefaultTimeToLiveMs(), cache.getClock(), cache.getErrorHandler());
-//        long lastAccessTime = getLastAccessTime(entry, existing, cache.getClock(), cache
-//                .getErrorHandler());
-//        long hits = getHits(entry, existing, cache.getErrorHandler());
-//        long version = cache.getNextVersion();
-//        AbstractCacheEntry<K, V> me = f.createNew(cache, k, v, cost, creationTime,
-//                expTime, hits, lastAccessTime, cache.getClock().timestamp(), size,
-//                version);
-//
-//        return me;
-//    }
-
-
-
-
 }

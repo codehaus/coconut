@@ -85,16 +85,8 @@ public class SynchronizedExpirationService<K, V> extends AbstractExpirationServi
      * @see org.coconut.cache.internal.service.expiration.InternalCacheExpirationService#getExpirationTime(java.lang.Object,
      *      java.lang.Object, org.coconut.cache.service.loading.AttributeMap)
      */
-    public long innerGetExpirationTime(K key, V value, AttributeMap attributes) {
-        long time = readTTLAttribute(key, attributes);
-        if (time == CacheExpirationService.DEFAULT_EXPIRATION) {
-            time = defaultTTL;
-        }
-        if (time == CacheExpirationService.NEVER_EXPIRE) {
-            return CacheExpirationService.NEVER_EXPIRE;
-        } else {
-            return clock.getDeadlineFromNow(time, TimeUnit.NANOSECONDS);
-        }
+    public long innerGetExpirationTime() {
+        return defaultTTL;
     }
 
     /**

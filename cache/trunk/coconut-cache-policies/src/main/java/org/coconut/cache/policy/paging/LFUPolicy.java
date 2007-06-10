@@ -9,9 +9,9 @@ import java.util.List;
 
 import net.jcip.annotations.NotThreadSafe;
 
-import org.coconut.cache.policy.PolicyAttributes;
-import org.coconut.cache.policy.ReplacementPolicy;
-import org.coconut.cache.policy.spi.AbstractPolicy;
+import org.coconut.cache.CacheAttributes;
+import org.coconut.cache.ReplacementPolicy;
+import org.coconut.cache.spi.AbstractPolicy;
 import org.coconut.core.AttributeMap;
 import org.coconut.internal.util.IndexedHeap;
 
@@ -70,7 +70,11 @@ public class LFUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
      * @{inheritDoc}
      */
     public int add(T data, AttributeMap map) {
-        long hits = map.getLong(PolicyAttributes.HITS, 1);
+        //TODO
+        //we need to figure out hits are calculated
+        //do we +1 to the hit count?
+        //or has it already been incremented?
+        long hits = map.getLong(CacheAttributes.HITS, 1);
         return add(data, hits);
     }
 
@@ -86,7 +90,7 @@ public class LFUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
     }
 
     /**
-     * @see org.coconut.cache.policy.ReplacementPolicy#clear()
+     * @see org.coconut.cache.ReplacementPolicy#clear()
      */
     public void clear() {
         while (evictNext() != null) {

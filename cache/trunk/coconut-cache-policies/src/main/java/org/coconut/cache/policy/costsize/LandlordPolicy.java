@@ -11,16 +11,15 @@ import java.util.List;
 
 import net.jcip.annotations.NotThreadSafe;
 
-import org.coconut.cache.policy.PolicyAttributes;
-import org.coconut.cache.policy.ReplacementPolicy;
-import org.coconut.cache.policy.spi.AbstractPolicy;
+import org.coconut.cache.CacheAttributes;
+import org.coconut.cache.spi.AbstractPolicy;
 import org.coconut.core.AttributeMap;
 
 @NotThreadSafe
 public class LandlordPolicy<T> extends AbstractPolicy<T> {
 
     /**
-     * @see org.coconut.cache.policy.spi.AbstractPolicy#getSize()
+     * @see org.coconut.cache.spi.AbstractPolicy#getSize()
      */
     public int getSize() {
         return size;
@@ -62,7 +61,7 @@ public class LandlordPolicy<T> extends AbstractPolicy<T> {
     }
 
     public int add(T element, AttributeMap attributes) {
-        return add(element, PolicyAttributes.getSize(attributes), PolicyAttributes.getCost(attributes));
+        return add(element, CacheAttributes.getSize(attributes), CacheAttributes.getCost(attributes));
     }
 
     public int add(T element, long size, double cost) {
@@ -85,7 +84,7 @@ public class LandlordPolicy<T> extends AbstractPolicy<T> {
     }
 
     /**
-     * @see org.coconut.cache.policy.ReplacementPolicy#clear()
+     * @see org.coconut.cache.ReplacementPolicy#clear()
      */
     public void clear() {
         while (evictNext() != null) {
@@ -230,7 +229,7 @@ public class LandlordPolicy<T> extends AbstractPolicy<T> {
     }
 
     /**
-     * @see org.coconut.cache.policy.ReplacementPolicy#update(int,
+     * @see org.coconut.cache.ReplacementPolicy#update(int,
      *      java.lang.Object)
      */
     public boolean update(int index, T newElement, AttributeMap attributes) {

@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 
+import org.coconut.cache.ReplacementPolicy;
 import org.coconut.cache.policy.paging.ClockPolicy;
 import org.coconut.cache.policy.paging.FIFOPolicy;
 import org.coconut.cache.policy.paging.LFUPolicy;

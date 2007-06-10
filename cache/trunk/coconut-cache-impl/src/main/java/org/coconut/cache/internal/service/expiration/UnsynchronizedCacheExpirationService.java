@@ -61,7 +61,7 @@ public class UnsynchronizedCacheExpirationService<K, V> extends
     /**
      * @see org.coconut.cache.service.expiration.CacheExpirationService#getExpirationFilter()
      */
-    public Filter<CacheEntry<K, V>> getExpirationFilter() {
+    Filter<CacheEntry<K, V>> getExpirationFilter() {
         return expirationFilter;
     }
 
@@ -69,16 +69,9 @@ public class UnsynchronizedCacheExpirationService<K, V> extends
      * @see org.coconut.cache.internal.service.expiration.InternalCacheExpirationService#getExpirationTime(java.lang.Object,
      *      java.lang.Object, org.coconut.cache.service.loading.AttributeMap)
      */
-    public long innerGetExpirationTime(K key, V value, AttributeMap attributes) {
-        long time = readTTLAttribute(key, attributes);
-        if (time == CacheExpirationService.DEFAULT_EXPIRATION) {
-            time = defaultTTL;
-        }
-        if (time == CacheExpirationService.NEVER_EXPIRE) {
-            return CacheExpirationService.NEVER_EXPIRE;
-        } else {
-            return clock.getDeadlineFromNow(time, TimeUnit.NANOSECONDS);
-        }
+    public long innerGetExpirationTime() {
+        return defaultTTL;
+        
     }
 
     /**
@@ -94,13 +87,6 @@ public class UnsynchronizedCacheExpirationService<K, V> extends
      */
     public final void setDefaultTimeToLive(long timeToLive, TimeUnit unit) {
         defaultTTL = verifyTTL(timeToLive, unit);
-    }
-
-    /**
-     * @see org.coconut.cache.service.expiration.CacheExpirationService#setExpirationFilter(org.coconut.filter.Filter)
-     */
-    public void setExpirationFilter(Filter<CacheEntry<K, V>> filter) {
-        this.expirationFilter = filter;
     }
 
     /**

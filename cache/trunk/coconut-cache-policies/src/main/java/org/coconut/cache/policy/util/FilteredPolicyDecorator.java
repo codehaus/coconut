@@ -3,8 +3,8 @@
  */
 package org.coconut.cache.policy.util;
 
-import org.coconut.cache.policy.PolicyAttributes;
-import org.coconut.cache.policy.ReplacementPolicy;
+import org.coconut.cache.CacheAttributes;
+import org.coconut.cache.ReplacementPolicy;
 import org.coconut.core.AttributeMap;
 
 /**
@@ -73,7 +73,7 @@ public class FilteredPolicyDecorator<T> extends PolicyDecorator<T> {
          * @see org.coconut.filter.Filter#accept(java.lang.Object)
          */
         public boolean accept(T t, AttributeMap attributes) {
-            double cost = PolicyAttributes.getCost(attributes);
+            double cost = CacheAttributes.getCost(attributes);
             return cost >= minimumCost;
         }
     }
@@ -100,7 +100,7 @@ public class FilteredPolicyDecorator<T> extends PolicyDecorator<T> {
          * @see org.coconut.filter.Filter#accept(java.lang.Object)
          */
         public boolean accept(T t, AttributeMap attributes) {
-            long size = PolicyAttributes.getSize(attributes);
+            long size = CacheAttributes.getSize(attributes);
             return size <= threshold;
         }
     }

@@ -4,7 +4,6 @@
 package org.coconut.cache.internal.service.expiration;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.core.AttributeMap;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -13,5 +12,5 @@ import org.coconut.core.AttributeMap;
 public interface InternalExpirationService<K, V> {
 	boolean innerIsExpired(CacheEntry<K, V> entry);
 
-	long innerGetExpirationTime(K key, V value, AttributeMap attributes);
+	long innerGetExpirationTime();
 }

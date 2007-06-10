@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.coconut.cache.spi.AbstractPolicy;
 import org.coconut.core.AttributeMap;
 import org.junit.Test;
 
@@ -59,7 +60,7 @@ public class AbstraktPolicyTest {
         int addCount = 0;
 
         /**
-         * @see org.coconut.cache.policy.ReplacementPolicy#add(java.lang.Object)
+         * @see org.coconut.cache.ReplacementPolicy#add(java.lang.Object)
          */
         public int add(String element, AttributeMap ignore) {
             list.add(element);
@@ -67,56 +68,56 @@ public class AbstraktPolicyTest {
         }
 
         /**
-         * @see org.coconut.cache.policy.ReplacementPolicy#clear()
+         * @see org.coconut.cache.ReplacementPolicy#clear()
          */
         public void clear() {
             throw new UnsupportedOperationException();
         }
 
         /**
-         * @see org.coconut.cache.policy.ReplacementPolicy#evictNext()
+         * @see org.coconut.cache.ReplacementPolicy#evictNext()
          */
         public String evictNext() {
             return list.poll();
         }
 
         /**
-         * @see org.coconut.cache.policy.ReplacementPolicy#getSize()
+         * @see org.coconut.cache.ReplacementPolicy#getSize()
          */
         public int getSize() {
             return list.size();
         }
 
         /**
-         * @see org.coconut.cache.policy.ReplacementPolicy#peek()
+         * @see org.coconut.cache.ReplacementPolicy#peek()
          */
         public String peek() {
             throw new UnsupportedOperationException();
         }
 
         /**
-         * @see org.coconut.cache.policy.ReplacementPolicy#peekAll()
+         * @see org.coconut.cache.ReplacementPolicy#peekAll()
          */
         public List<String> peekAll() {
             throw new UnsupportedOperationException();
         }
 
         /**
-         * @see org.coconut.cache.policy.ReplacementPolicy#remove(int)
+         * @see org.coconut.cache.ReplacementPolicy#remove(int)
          */
         public String remove(int index) {
             throw new UnsupportedOperationException();
         }
 
         /**
-         * @see org.coconut.cache.policy.ReplacementPolicy#touch(int)
+         * @see org.coconut.cache.ReplacementPolicy#touch(int)
          */
         public void touch(int index) {
             throw new UnsupportedOperationException();
         }
 
         /**
-         * @see org.coconut.cache.policy.ReplacementPolicy#update(int,
+         * @see org.coconut.cache.ReplacementPolicy#update(int,
          *      java.lang.Object)
          */
         public boolean update(int index, String newElement, AttributeMap ignore) {

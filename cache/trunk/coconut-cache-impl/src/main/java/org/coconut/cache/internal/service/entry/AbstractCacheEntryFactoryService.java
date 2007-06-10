@@ -3,10 +3,12 @@
  */
 package org.coconut.cache.internal.service.entry;
 
+import java.util.concurrent.TimeUnit;
+
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.policy.PolicyAttributes;
-import org.coconut.cache.policy.ReplacementPolicy;
+import org.coconut.cache.ReplacementPolicy;
+import org.coconut.cache.internal.service.expiration.AbstractExpirationService;
 import org.coconut.cache.service.exceptionhandling.AbstractCacheExceptionHandler;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
 import org.coconut.core.AttributeMap;
@@ -21,10 +23,14 @@ public abstract class AbstractCacheEntryFactoryService<K, V> {
 
     private final AbstractCacheExceptionHandler<K, V> errorHandler;
 
+    private final AbstractExpirationService<K, V> expirationService;
+
     public AbstractCacheEntryFactoryService(Clock clock,
-            CacheExceptionHandlingConfiguration<K, V> conf) {
+            CacheExceptionHandlingConfiguration<K, V> conf,
+            AbstractExpirationService<K, V> expirationService) {
         this.clock = clock;
         this.errorHandler = conf.getExceptionHandler();
+        this.expirationService = expirationService;
     }
 
     public V putVersion(K key, V value, long version) {
@@ -35,37 +41,39 @@ public abstract class AbstractCacheEntryFactoryService<K, V> {
             AttributeMap attributes, AbstractCacheEntry<K, V> existing);
 
     long getSize(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
-        long size = attributes.getLong(PolicyAttributes.SIZE,
-                ReplacementPolicy.DEFAULT_SIZE);
-        if (size < 0) {
-            errorHandler.warning("negative size (size = " + size
-                    + ") was added for key = " + key);
-            size = ReplacementPolicy.DEFAULT_SIZE;
+        try {
+            return CacheAttributes.getSize(attributes);
+        } catch (IllegalArgumentException iae) {
+            errorHandler.warning(iae.getMessage() + " was added for key = " + key);
+            return ReplacementPolicy.DEFAULT_SIZE;
         }
-        return size;
+    }
+
+    long getTimeToLive(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
+        long time = expirationService.innerGetExpirationTime();
+        try {
+            time = CacheAttributes.getTimeToLive(attributes, TimeUnit.NANOSECONDS, time);
+        } catch (IllegalArgumentException iae) {
+            errorHandler.warning(iae.getMessage() + " was added for key = " + key);
+        }
+        return clock.getDeadlineFromNow(time, TimeUnit.NANOSECONDS);
     }
 
     double getCost(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
-        double cost = attributes.getDouble(PolicyAttributes.COST,
-                ReplacementPolicy.DEFAULT_COST);
-        if (Double.isNaN(cost)) {
-            errorHandler.warning("invalid cost (cost = NaN) was added for key = " + key);
-            cost = ReplacementPolicy.DEFAULT_COST;
+        try {
+            return CacheAttributes.getCost(attributes);
+        } catch (IllegalArgumentException iae) {
+            errorHandler.warning(iae.getMessage() + " was added for key = " + key);
+            return ReplacementPolicy.DEFAULT_COST;
         }
-        return cost;
     }
 
     long getLastModified(K key, V value, AttributeMap attributes,
             CacheEntry<K, V> existing) {
-        long time = attributes.getLong(CacheAttributes.LAST_MODIFIED_TIME);
-        if (time < 0) {
-            errorHandler.warning("Must specify a positive modification time [Attribute="
-                    + CacheAttributes.LAST_MODIFIED_TIME + " , modificationtime = "
-                    + time + " for key = " + key);
-        }
-        if (time > 0) {
-            return time;
-        } else {
+        try {
+            return CacheAttributes.getLastModified(attributes, clock);
+        } catch (IllegalArgumentException iae) {
+            errorHandler.warning(iae.getMessage() + " was added for key = " + key);
             return clock.timestamp();
         }
     }

@@ -15,17 +15,13 @@ import org.coconut.core.Clock;
  */
 public class UnsynchronizedEntryFactoryService<K, V> extends
         AbstractCacheEntryFactoryService<K, V> {
-
-    private AbstractExpirationService<K, V> expirationService;
-
     private final InternalCacheAttributeService attributeService;
 
     public UnsynchronizedEntryFactoryService(Clock clock,
             CacheExceptionHandlingConfiguration<K, V> conf,
             InternalCacheAttributeService attributeService,
             AbstractExpirationService<K, V> expirationService) {
-        super(clock, conf);
-        this.expirationService = expirationService;
+        super(clock, conf, expirationService);
         this.attributeService = attributeService;
     }
 
@@ -38,16 +34,16 @@ public class UnsynchronizedEntryFactoryService<K, V> extends
         if (attributes == null) {
             attributes = attributeService.createMap();
         }
-        long expirationTime = expirationService.innerGetExpirationTime(key, value,
-                attributes);
+        long expirationTime = getTimeToLive(key, value, attributes, existing);
         double cost = getCost(key, value, attributes, existing);
         long size = getSize(key, value, attributes, existing);
         long creationTime = getCreationTime(key, value, attributes, existing);
         long lastUpdate = getLastModified(key, value, attributes, existing);
+
         UnsynchronizedCacheEntry<K, V> newEntry = new UnsynchronizedCacheEntry<K, V>(
                 this, key, value, cost, creationTime, lastUpdate, size);
         newEntry.setExpirationTime(expirationTime);
-        // TODO Auto-generated method stub
+
         if (existing != null) {
             newEntry.setPolicyIndex(existing.getPolicyIndex());
         }

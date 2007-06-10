@@ -9,8 +9,8 @@ import java.util.List;
 
 import net.jcip.annotations.NotThreadSafe;
 
-import org.coconut.cache.policy.ReplacementPolicy;
-import org.coconut.cache.policy.spi.AbstractPolicy;
+import org.coconut.cache.ReplacementPolicy;
+import org.coconut.cache.spi.AbstractPolicy;
 import org.coconut.core.AttributeMap;
 
 /**
@@ -68,14 +68,14 @@ public class LIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolic
     }
 
     /**
-     * @see org.coconut.cache.policy.ReplacementPolicy#add(T)
+     * @see org.coconut.cache.ReplacementPolicy#add(T)
      */
     public int add(T data, AttributeMap ignore) {
         return policy.add(data, ignore);
     }
 
     /**
-     * @see org.coconut.cache.policy.ReplacementPolicy#clear()
+     * @see org.coconut.cache.ReplacementPolicy#clear()
      */
     public void clear() {
         while (evictNext() != null) {
@@ -92,7 +92,7 @@ public class LIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolic
     }
 
     /**
-     * @see org.coconut.cache.policy.ReplacementPolicy#evictNext()
+     * @see org.coconut.cache.ReplacementPolicy#evictNext()
      */
     public T evictNext() {
         return policy.evictNext();
@@ -108,21 +108,21 @@ public class LIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolic
     }
 
     /**
-     * @see org.coconut.cache.policy.ReplacementPolicy#peek()
+     * @see org.coconut.cache.ReplacementPolicy#peek()
      */
     public T peek() {
         return policy.peek();
     }
 
     /**
-     * @see org.coconut.cache.policy.ReplacementPolicy#peekAll()
+     * @see org.coconut.cache.ReplacementPolicy#peekAll()
      */
     public List<T> peekAll() {
         return policy.peekAll();
     }
 
     /**
-     * @see org.coconut.cache.policy.ReplacementPolicy#remove(int)
+     * @see org.coconut.cache.ReplacementPolicy#remove(int)
      */
     public T remove(int index) {
         return policy.remove(index);
@@ -137,14 +137,14 @@ public class LIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolic
     }
 
     /**
-     * @see org.coconut.cache.policy.ReplacementPolicy#touch(int)
+     * @see org.coconut.cache.ReplacementPolicy#touch(int)
      */
     public void touch(int index) {
         // ignore touch
     }
 
     /**
-     * @see org.coconut.cache.policy.ReplacementPolicy#update(int,
+     * @see org.coconut.cache.ReplacementPolicy#update(int,
      *      java.lang.Object)
      */
     public boolean update(int index, T newElement, AttributeMap ignore) {

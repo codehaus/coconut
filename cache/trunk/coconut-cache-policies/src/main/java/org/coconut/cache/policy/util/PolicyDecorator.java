@@ -6,7 +6,7 @@ package org.coconut.cache.policy.util;
 
 import java.util.List;
 
-import org.coconut.cache.policy.ReplacementPolicy;
+import org.coconut.cache.ReplacementPolicy;
 import org.coconut.core.AttributeMap;
 
 /**
@@ -100,7 +100,7 @@ public class PolicyDecorator<T> implements ReplacementPolicy<T> {
     }
 
     /**
-     * @see org.coconut.cache.policy.ReplacementPolicy#add(java.lang.Object,
+     * @see org.coconut.cache.ReplacementPolicy#add(java.lang.Object,
      *      org.coconut.core.AttributeMap)
      */
     public int add(T element, AttributeMap attributes) {
@@ -108,7 +108,7 @@ public class PolicyDecorator<T> implements ReplacementPolicy<T> {
     }
 
     /**
-     * @see org.coconut.cache.policy.ReplacementPolicy#update(int,
+     * @see org.coconut.cache.ReplacementPolicy#update(int,
      *      java.lang.Object, org.coconut.core.AttributeMap)
      */
     public boolean update(int index, T newElement, AttributeMap attributes) {

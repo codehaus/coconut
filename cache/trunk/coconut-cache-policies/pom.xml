@@ -15,6 +15,11 @@
       <groupId>org.coconut.core</groupId>
       <artifactId>coconut-core</artifactId>
     </dependency>
+        <dependency>
+      <groupId>org.coconut.cache</groupId>
+      <artifactId>coconut-cache-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
   <!-- 
   <reporting>

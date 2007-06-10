@@ -12,8 +12,10 @@ import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheServices;
+import org.coconut.cache.internal.service.eviction.AbstractEvictionService.DelegatedCacheEvictionMXBean;
 import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
 import org.coconut.cache.internal.spi.CacheHelper;
+import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.service.exceptionhandling.AbstractCacheExceptionHandler;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
@@ -24,6 +26,7 @@ import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
 import org.coconut.filter.Filter;
 import org.coconut.filter.Filters;
+import org.coconut.management.ManagedGroup;
 import org.coconut.management.annotation.ManagedAttribute;
 
 /**
@@ -41,7 +44,10 @@ public abstract class AbstractExpirationService<K, V> extends
         CacheManagementService cms = (CacheManagementService) allServices
                 .get(CacheManagementService.class);
         if (cms != null) {
-            cms.getRoot().add(new DelegatedCacheExpirationMXBean(this));
+            ManagedGroup group = cms.getRoot();
+            ManagedGroup g = group.addChild(CacheExpirationConfiguration.SERVICE_NAME,
+                    "Cache Expiration attributes and operations");
+            g.add(new DelegatedCacheExpirationMXBean(this));
         }
         super.start(allServices);
     }
@@ -170,21 +176,6 @@ public abstract class AbstractExpirationService<K, V> extends
                 .isPassed(expTime);
     }
 
-    final long readTTLAttribute(K key, AttributeMap attributes) {
-        long time = CacheExpirationService.DEFAULT_EXPIRATION;
-        if (attributes != null) {
-            time = attributes.getLong(CacheAttributes.TIME_TO_LIVE_NS);
-            if (time < 0) {
-                errorHandler
-                        .warning("'The specified attribute map, contained an invalid attribute. "
-                                + " Must specify a positive expirationTime, was [expirationTime= "
-                                + time + " for key = " + key);
-                time = CacheExpirationService.DEFAULT_EXPIRATION;
-            }
-        }
-        return time;
-    }
-
     /**
      * Checks that the specified arguments are valid or throws an runtime exception.
      * 
@@ -213,7 +204,7 @@ public abstract class AbstractExpirationService<K, V> extends
     /**
      * A wrapper class that exposes only the ExecutorService methods of an implementation.
      */
-    static class DelegatedCacheExpirationMXBean implements CacheExpirationMXBean {
+    public static class DelegatedCacheExpirationMXBean implements CacheExpirationMXBean {
         private final AbstractExpirationService<?, ?> service;
 
         DelegatedCacheExpirationMXBean(AbstractExpirationService<?, ?> service) {
@@ -226,11 +217,6 @@ public abstract class AbstractExpirationService<K, V> extends
         @ManagedAttribute(description = "The default time to live for cache entries in milliseconds")
         public long getDefaultTimeToLiveMs() {
             return service.getDefaultTimeToLive(TimeUnit.MILLISECONDS);
-        }
-
-        @ManagedAttribute(description = "toString() on the defined expiration filter")
-        public String getFilterAsString() {
-            return service.getExpirationFilterAsString();
         }
 
         public void setDefaultTimeToLiveMs(long timeToLiveMs) {
