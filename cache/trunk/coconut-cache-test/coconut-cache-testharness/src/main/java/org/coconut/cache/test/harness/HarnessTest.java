@@ -7,7 +7,7 @@ import java.util.HashSet;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.policy.ReplacementPolicy;
+import org.coconut.cache.ReplacementPolicy;
 import org.coconut.cache.policy.paging.RandomPolicy;
 import org.coconut.cache.service.event.CacheEntryEvent;
 import org.coconut.cache.service.event.CacheEvent;

@@ -11,7 +11,6 @@ import static org.coconut.test.CollectionUtils.M3;
 import static org.coconut.test.CollectionUtils.M4;
 import static org.coconut.test.CollectionUtils.M5;
 
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -134,9 +133,6 @@ public class ExpirationWithExplicitTimeout extends AbstractExpirationTestBundle 
         // replace1
         // replace2
     }
-
-    // TODO tests these, actually we should be able to only tests these for the
-    // strict protocol, other strategies are "sub" strategy of strict
 
     // map operations
     // containsValue

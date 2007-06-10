@@ -5,7 +5,7 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses( { ExpirationEvict.class, ExpirationFilterBased.class,
-        ExpirationPutWithTimeouts.class, ExpirationServiceGeneral.class,
+        ExpirationPutWithTimeouts.class, ExpirationService.class,
         ExpirationWithDefaultTimeout.class, ExpirationWithExplicitTimeout.class })
 public class ExpirationSuite {
 
