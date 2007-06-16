@@ -18,7 +18,19 @@
     <module>coconut-event</module>
     <module>coconut-management</module>
   </modules>
-    <repositories>
+  <reporting>
+  
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <aggregate>true</aggregate>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+  <repositories>
     <repository>
       <id>codehaus.snapshots</id>
       <name>Codehaus Snapshot Repository</name>
