@@ -2,7 +2,7 @@
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.cache.tck.other;
+package org.coconut.cache.tck.cacheentry;
 
 import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M2;
@@ -13,7 +13,7 @@ import org.junit.Test;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id$
+ * @version $Id: CacheEntryBundle.java 344 2007-06-10 11:09:38Z kasper $
  */
 public class CacheEntryBundle extends AbstractCacheTCKTestBundle {
 
@@ -26,36 +26,6 @@ public class CacheEntryBundle extends AbstractCacheTCKTestBundle {
         assertEquals(M1.getKey(), ce.getKey());
         assertEquals(M1.getValue(), ce.getValue());
     }
-
-    /**
-     * Tests that timestamp is set for creation date. Furthermore test that
-     * creation date is not updated when replacing existing values.
-     */
-    @Test
-    public void testCreationDate() {
-        c = newCache(newConf().setClock(clock));
-        clock.setTimestamp(10);
-        put(M1);
-        assertEquals(10l, getEntry(M1).getCreationTime());
-        clock.incrementTimestamp();
-        put(M1);
-        assertEquals(10l, getEntry(M1).getCreationTime());
-        clock.incrementTimestamp();
-        c.put(M1.getKey(), M2.getValue());
-        assertEquals(10l, getEntry(M1).getCreationTime());
-
-        // Test for putAll
-        c = newCache(newConf().setClock(clock));
-        clock.setTimestamp(10);
-        putAll(M1, M2);
-        assertEquals(10l, getEntry(M1).getCreationTime());
-        assertEquals(10l, getEntry(M2).getCreationTime());
-        clock.incrementTimestamp();
-        putAll(M1, M2);
-        assertEquals(10l, getEntry(M1).getCreationTime());
-        assertEquals(10l, getEntry(M2).getCreationTime());
-    }
-
 
     @Test
     public void testLastUpdateTime() {

@@ -2,7 +2,7 @@
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.cache.tck.eviction;
+package org.coconut.cache.tck.service.eviction;
 
 import static org.coconut.test.CollectionUtils.M1;
 
@@ -17,29 +17,25 @@ import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
 import org.junit.Test;
 
 /**
- * Tests that an instance of a CacheEntry is passed to the specified cache
- * policy.
+ * Tests that an instance of a CacheEntry is passed to the specified cache policy.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
 public class CacheEntryToPolicy extends AbstractCacheTCKTestBundle {
 
-    private Cache<Integer, String> c;
-
-    private BlockingQueue q = new LinkedBlockingQueue();
+    private BlockingQueue<Object> q = new LinkedBlockingQueue<Object>();
 
     @SuppressWarnings("unchecked")
     @Test
     public void testIsCacheEntry() throws InterruptedException {
-        c = newCache(newConf().eviction().setPolicy(new PolicyMock())
-                .setMaximumSize(5).c());
+        c = newCache(newConf().eviction().setPolicy(new PolicyMock()).setMaximumSize(5)
+                .c());
 
         c.put(M1.getKey(), M1.getValue());
 
         Object o = q.poll(1, TimeUnit.SECONDS);
-        assertNotNull("No object was handed off to the queue from PolicyMock",
-                o);
+        assertNotNull("No object was handed off to the queue from PolicyMock", o);
         assertTrue(o instanceof CacheEntry);
         CacheEntry<Integer, String> ce = (CacheEntry<Integer, String>) o;
         assertSame(M1.getKey(), ce.getKey());

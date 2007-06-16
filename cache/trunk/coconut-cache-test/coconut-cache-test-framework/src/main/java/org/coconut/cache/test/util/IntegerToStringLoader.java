@@ -4,6 +4,8 @@
 
 package org.coconut.cache.test.util;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.core.AttributeMap;
 
@@ -16,13 +18,17 @@ import org.coconut.core.AttributeMap;
  */
 public class IntegerToStringLoader implements CacheLoader<Integer, String> {
 
-    public static final IntegerToStringLoader INSTANCE = new IntegerToStringLoader();
+    private final AtomicLong totalLoads = new AtomicLong();
 
+    public long getNumberOfLoads() {
+        return totalLoads.get();
+    }
     /**
      * @see org.coconut.cache.service.loading.CacheLoader#load(java.lang.Object,
      *      org.coconut.core.AttributeMap)
      */
-    public String load(Integer key, AttributeMap ignore) {
+    public String load(Integer key, AttributeMap ignore) throws Exception {
+        totalLoads.incrementAndGet();
         if (1 <= key && key <= 5) {
             return "" + (char) (key + 64);
         } else {

@@ -1,5 +1,7 @@
 package org.coconut.cache.tck.service.loading;
 
+import java.util.Map;
+
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
@@ -12,12 +14,26 @@ public class AbstractLoadingTestBundle extends AbstractCacheTCKTestBundle {
 
     protected Cache<Integer, String> noLoadableCache;
 
+    protected IntegerToStringLoader loader;
+
     @Before
     public void setupLoading() {
         noLoadableCache = c;
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
-        c = newCache(cc.loading().setLoader(new IntegerToStringLoader()).c());
+        loader = new IntegerToStringLoader();
+        c = newCache(cc.loading().setLoader(loader).c());
+    }
+
+    public void loadAndAwait(Map.Entry<Integer, String> e) {
+        loading().load(e.getKey());
     }
     
-   
+    public void loadAllAndAwait(Map.Entry<Integer, String>... e) {
+        throw new UnsupportedOperationException();
+    }
+
+    public void loadAndAwait(Integer key) {
+        loading().load(key);
+    }
+
 }

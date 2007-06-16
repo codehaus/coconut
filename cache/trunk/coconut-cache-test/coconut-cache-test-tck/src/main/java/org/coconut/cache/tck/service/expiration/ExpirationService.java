@@ -34,7 +34,7 @@ public class ExpirationService extends AbstractCacheTCKTestBundle {
 
     @Test(expected = IllegalArgumentException.class)
     public void testSetDefaultTimeToLiveIAE() {
-        expiration().setDefaultTimeToLive(0, TimeUnit.MICROSECONDS);
+        expiration().setDefaultTimeToLive(-1, TimeUnit.MICROSECONDS);
     }
 
     @Test(expected = NullPointerException.class)

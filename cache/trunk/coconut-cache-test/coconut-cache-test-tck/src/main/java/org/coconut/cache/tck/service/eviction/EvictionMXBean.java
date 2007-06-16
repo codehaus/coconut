@@ -83,33 +83,6 @@ public class EvictionMXBean extends AbstractCacheTCKTestBundle {
     }
 
     /**
-     * Tests default idle time.
-     */
-    @Test
-    public void defaultIdleTime() {
-        assertEquals(DEFAULT.getDefaultIdleTime(TimeUnit.MILLISECONDS), mxBean
-                .getDefaultIdleTimeMs());
-        mxBean.setDefaultIdleTimeMs(1000);
-        assertEquals(1000, mxBean.getDefaultIdleTimeMs());
-        assertEquals(1000 * 1000, eviction().getDefaultIdleTime(TimeUnit.MICROSECONDS));
-
-        // start value
-        c = newCache(newConf().setName("foo").management().setEnabled(true)
-                .setMBeanServer(mbs).c().eviction().setDefaultIdleTime(1800,
-                        TimeUnit.SECONDS));
-        mxBean = findMXBean(mbs, CacheEvictionMXBean.class);
-        assertEquals(1800 * 1000, mxBean.getDefaultIdleTimeMs());
-
-        // Exception
-        try {
-            mxBean.setDefaultIdleTimeMs(-1);
-            fail("Did not throw exception");
-        } catch (RuntimeMBeanException e) {
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
-        }
-    }
-
-    /**
      * Tests trimToSize.
      */
     @Test

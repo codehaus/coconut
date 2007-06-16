@@ -1,6 +1,5 @@
 package org.coconut.cache.tck;
 
-import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,7 +10,6 @@ import javax.management.MBeanServer;
 import javax.management.MBeanServerInvocationHandler;
 
 import junit.framework.Assert;
-import junit.framework.AssertionFailedError;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
