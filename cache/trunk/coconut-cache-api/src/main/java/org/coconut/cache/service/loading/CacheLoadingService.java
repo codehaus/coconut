@@ -6,6 +6,7 @@ package org.coconut.cache.service.loading;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
 import org.coconut.core.AttributeMap;
@@ -24,6 +25,33 @@ import org.coconut.filter.Filter;
  */
 public interface CacheLoadingService<K, V> {
 
+    /**
+     * Returns the default expiration time for entries. If entries never expire,
+     * {@link #NEVER_EXPIRE} is returned.
+     * 
+     * @param unit
+     *            the time unit that should be used for returning the default expiration
+     * @return the default expiration time for entries, or {@link #NEVER_EXPIRE} if
+     *         entries never expire
+     */
+    long getDefaultTimeToRefresh(TimeUnit unit);
+    
+    /**
+     * Sets the default expiration time for new objetcs that are added to the cache. If no
+     * default expiration time has been set, entries will never expire.
+     * 
+     * @param timeToLive
+     *            the time from insertion to the point where the entry should expire
+     * @param unit
+     *            the time unit of the timeToLive argument
+     * @throws IllegalArgumentException
+     *             if the specified time to live is negative (<0)
+     * @throws NullPointerException
+     *             if the specified time unit is <tt>null</tt>
+     * @see #getDefaultTimeToLive(TimeUnit)
+     */
+    void setDefaultTimeToRefresh(long timeToLive, TimeUnit unit);
+    
     /**
      * Attempts to reload all the cache entries that is accepted by the specified filter.
      * 

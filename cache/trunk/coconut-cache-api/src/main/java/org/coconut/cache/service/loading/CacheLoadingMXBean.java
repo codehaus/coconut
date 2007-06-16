@@ -8,9 +8,9 @@ package org.coconut.cache.service.loading;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public interface CacheLoadingMXBean {
-    long getDefaultRefreshTimeMs();
+    long getDefaultTimeToRefreshMs();
 
-    void setDefaultRefreshTimeMs(long refreshTimeMs);
+    void setDefaultTimeToRefreshMs(long defaultTimeToRefreshMs);
 
     void reloadAll();
 }

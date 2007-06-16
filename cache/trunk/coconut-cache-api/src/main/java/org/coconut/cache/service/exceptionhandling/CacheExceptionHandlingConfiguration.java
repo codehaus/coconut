@@ -28,7 +28,7 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
      * @param serviceInterface
      */
     public CacheExceptionHandlingConfiguration() {
-        super(SERVICE_NAME, Collections.EMPTY_LIST);
+        super(SERVICE_NAME);
     }
 
     /**

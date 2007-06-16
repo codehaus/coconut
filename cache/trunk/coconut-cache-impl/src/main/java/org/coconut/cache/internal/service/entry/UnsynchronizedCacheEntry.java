@@ -31,9 +31,10 @@ public class UnsynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
      * @param version
      */
     public UnsynchronizedCacheEntry(AbstractCacheEntryFactoryService<K, V> service, K key,
-            V value, double cost, long creationTime, long lastUpdateTime, long size) {
+            V value, double cost, long creationTime, long lastUpdateTime, long size, long refreshTime) {
         super(key, value, cost, creationTime, lastUpdateTime, size);
         this.service = service;
+        this.refreshTime=refreshTime;
 //        this.expirationTime = expirationTime;
 //        this.hits = hits;
 //        this.lastAccessTime = lastAccessTime;
@@ -86,6 +87,10 @@ public class UnsynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
      */
     void setLastAccessTime(long lastAccessTime) {
         this.lastAccessTime = lastAccessTime;
+    }
+    @Override
+    public long getRefreshTime() {
+        return refreshTime;
     }
 
 }

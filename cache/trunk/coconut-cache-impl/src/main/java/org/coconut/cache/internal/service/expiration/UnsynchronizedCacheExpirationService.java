@@ -46,7 +46,7 @@ public class UnsynchronizedCacheExpirationService<K, V> extends
             InternalCacheAttributeService attributeFactory) {
         super(clock, helper, exceptionConfiguration);
         this.helper = helper;
-        defaultTTL = conf.getDefaultTimeToLive(TimeUnit.NANOSECONDS);
+        defaultTTL = getDefaultTimeToLive(conf);
         expirationFilter = conf.getExpirationFilter();
         this.attributeFactory = attributeFactory;
     }
@@ -71,7 +71,7 @@ public class UnsynchronizedCacheExpirationService<K, V> extends
      */
     public long innerGetExpirationTime() {
         return defaultTTL;
-        
+
     }
 
     /**
@@ -98,7 +98,7 @@ public class UnsynchronizedCacheExpirationService<K, V> extends
         AttributeMap map = attributeFactory.createMap();
         long ttlNano = timeToLiveNano != CacheExpirationService.DEFAULT_EXPIRATION ? timeToLiveNano
                 : defaultTTL;
-        map.put(CacheAttributes.TIME_TO_LIVE_NS, ttlNano);
+        CacheAttributes.setTimeToLive(map, ttlNano, TimeUnit.NANOSECONDS);
         return helper.put(key, value, map);// checks for null key+value
     }
 

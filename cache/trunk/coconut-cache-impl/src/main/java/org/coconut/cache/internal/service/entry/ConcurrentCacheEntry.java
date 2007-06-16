@@ -73,4 +73,9 @@ public class ConcurrentCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
     public void setHits(long hits) {
         this.hits = hits;
     }
+
+    @Override
+    public long getRefreshTime() {
+        throw new UnsupportedOperationException();
+    }
 }

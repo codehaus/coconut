@@ -67,7 +67,7 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
      */
     @SuppressWarnings("unchecked")
     public CacheEventConfiguration() {
-        super(SERVICE_NAME, Arrays.asList(CacheEventService.class));
+        super(SERVICE_NAME);
     }
 
     /**

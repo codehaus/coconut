@@ -1,160 +1,140 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the Apache 2.0 License, see http://coconut.codehaus.org/license.
- */
 package org.coconut.cache.service.loading;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
-import static org.coconut.test.MockTestCase.mockDummy;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.service.expiration.CacheExpirationConfigurationTest.MyFilter2;
 import org.coconut.core.AttributeMap;
 import org.coconut.filter.Filter;
 import org.coconut.filter.Filters;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
- */
-
-@SuppressWarnings("unchecked")
 public class CacheLoadingConfigurationTest {
+    static CacheLoadingConfiguration<Integer, String> DEFAULT = new CacheLoadingConfiguration<Integer, String>();
 
-    CacheLoadingConfiguration conf;
+    private CacheLoadingConfiguration<Integer, String> conf;
 
-    static CacheLoadingConfiguration DEFAULT = new CacheLoadingConfiguration();
+    private final static Filter<CacheEntry<Integer, String>> DEFAULT_FILTER = Filters
+            .trueFilter();
+
+    private final static CacheLoader<Integer, String> DEFAULT_LOADER = new LoadableCacheLoader();
 
     @Before
     public void setUp() {
-        conf = new CacheLoadingConfiguration();
+        conf = new CacheLoadingConfiguration<Integer, String>();
+    }
+
+    /**
+     * Test default time to live. The default is that entries never needs to be refreshed.
+     */
+    @Test
+    public void testDefaultTimeToRefresh() {
+        // initial values
+        assertEquals(0, conf.getDefaultTimeToRefresh(TimeUnit.NANOSECONDS));
+        assertEquals(0, conf.getDefaultTimeToRefresh(TimeUnit.SECONDS));
+
+        assertEquals(conf, conf.setDefaultTimeToRefresh(2, TimeUnit.SECONDS));
+
+        assertEquals(2l, conf.getDefaultTimeToRefresh(TimeUnit.SECONDS));
+        assertEquals(2l * 1000, conf.getDefaultTimeToRefresh(TimeUnit.MILLISECONDS));
+        assertEquals(2l * 1000 * 1000, conf
+                .getDefaultTimeToRefresh(TimeUnit.MICROSECONDS));
+        assertEquals(2l * 1000 * 1000 * 1000, conf
+                .getDefaultTimeToRefresh(TimeUnit.NANOSECONDS));
+
+        conf.setDefaultTimeToRefresh(Long.MAX_VALUE, TimeUnit.MICROSECONDS);
+        assertEquals(Long.MAX_VALUE, conf.getDefaultTimeToRefresh(TimeUnit.SECONDS));
+    }
+
+    @Test
+    public void testDefaultTimeToRefreshXML() throws Exception {
+        conf = reloadService(conf);
+        assertEquals(0, conf.getDefaultTimeToRefresh(TimeUnit.NANOSECONDS));
+        assertEquals(0, conf.getDefaultTimeToRefresh(TimeUnit.SECONDS));
+
+        conf.setDefaultTimeToRefresh(60, TimeUnit.SECONDS);
+        conf = reloadService(conf);
+        assertEquals(60 * 1000, conf.getDefaultTimeToRefresh(TimeUnit.MILLISECONDS));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testDefaultTimeToLiveIAE() {
+        conf.setDefaultTimeToRefresh(-1, TimeUnit.MICROSECONDS);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testDefaultTimeToLiveNPE() {
+        conf.setDefaultTimeToRefresh(1, null);
+    }
+
+    @Test
+    public void testExpirationFilter() {
+        assertNull(conf.getRefreshFilter());
+        assertEquals(conf, conf.setRefreshFilter(DEFAULT_FILTER));
+        assertEquals(DEFAULT_FILTER, conf.getRefreshFilter());
+    }
+
+    @Test
+    public void testExpirationFilterXML() throws Exception {
+        conf = reloadService(conf);
+        assertNull(conf.getRefreshFilter());
+
+        conf.setRefreshFilter(new LoadableFilter());
+        conf = reloadService(conf);
+        assertTrue(conf.getRefreshFilter() instanceof LoadableFilter);
+
+        conf.setRefreshFilter(new NonLoadableFilter());
+        conf = reloadService(conf);
+        assertNull(conf.getRefreshFilter());
     }
 
     @Test
     public void testLoader() {
-        CacheLoader<Number, Collection> cl = mockDummy(CacheLoader.class);
-
         assertNull(conf.getLoader());
-        // assertFalse(conf.backend().hasBackend());
-
-        assertEquals(conf, conf.setLoader(cl));
-
-        assertEquals(cl, conf.getLoader());
-        // assertTrue(conf.hasBackend());
-
-        // narrow bounds
-        CacheLoader<Number, List> clI = mockDummy(CacheLoader.class);
-
-        assertEquals(conf, conf.setLoader(clI));
-
-        assertEquals(clI, conf.getLoader());
+        assertEquals(conf, conf.setLoader(DEFAULT_LOADER));
+        assertEquals(DEFAULT_LOADER, conf.getLoader());
     }
 
-    // assertTrue(conf.hasBackend());
-
     @Test
-    public void testNoop() throws Exception {
+    public void testLoaderXML() throws Exception {
         conf = reloadService(conf);
         assertNull(conf.getLoader());
-        assertEquals(Long.MAX_VALUE, conf.getDefaultRefreshTime(TimeUnit.MILLISECONDS));
-        assertNull(conf.getRefreshFilter());
-    }
 
-    @Test
-    public void testBackend() throws Exception {
-        conf.setLoader(new MyBackend1());
-        // System.out.println(conf);
+        conf.setLoader(new LoadableCacheLoader());
         conf = reloadService(conf);
-        assertTrue(conf.getLoader() instanceof MyBackend1);
-    }
+        assertTrue(conf.getLoader() instanceof LoadableCacheLoader);
 
-    @Test
-    public void testBackendFail() throws Exception {
-        conf.setLoader(new MyBackend2(""));
+        conf.setLoader(new NonLoadableCacheLoader());
         conf = reloadService(conf);
         assertNull(conf.getLoader());
     }
 
-    @Test
-    public void testIgnoreFilters() throws Exception {
-        conf.setRefreshFilter(new MyFilter4());
-        conf = reloadService(conf);
-        assertNull(conf.getRefreshFilter());
+    public static class LoadableFilter implements Filter<CacheEntry<Integer, String>> {
+        public boolean accept(CacheEntry<Integer, String> element) {
+            return false;
+        }
     }
 
-    @Test
-    public void testInitialValues() {
-        assertNull(conf.getRefreshFilter());
-        assertEquals(Long.MAX_VALUE, conf.getDefaultRefreshTime(TimeUnit.NANOSECONDS));
+    public class NonLoadableFilter implements Filter<CacheEntry<Integer, String>> {
+        public boolean accept(CacheEntry<Integer, String> element) {
+            return false;
+        }
     }
 
-    Filter<CacheEntry> f = Filters.TRUE;
-
-    @Test
-    public void testReload() throws Exception {
-        conf.setDefaultRefreshTime(120, TimeUnit.SECONDS);
-        conf.setRefreshFilter(new MyFilter2());
-        conf = reloadService(conf);
-        assertTrue(conf.getRefreshFilter() instanceof MyFilter2);
-        assertEquals(120 * 1000, conf.getDefaultRefreshTime(TimeUnit.MILLISECONDS));
-    }
-
-    @Test
-    public void testNoop2() throws Exception {
-        conf = reloadService(conf);
-        assertNull(conf.getRefreshFilter());
-        assertEquals(Long.MAX_VALUE, conf.getDefaultRefreshTime(TimeUnit.NANOSECONDS));
-    }
-
-    @Test
-    public void testReloadFilter() {
-        assertEquals(conf, conf.setRefreshFilter(f));
-        assertEquals(f, conf.getRefreshFilter());
-    }
-
-    @Test
-    public void testReloadInterval() {
-
-        assertEquals(conf, conf.setDefaultRefreshTime(1, TimeUnit.SECONDS));
-        assertEquals(1 * 1000 * 1000 * 1000, conf
-                .getDefaultRefreshTime(TimeUnit.NANOSECONDS));
-
-        conf.setDefaultRefreshTime(5, TimeUnit.MICROSECONDS);
-        assertEquals(5000, conf.getDefaultRefreshTime(TimeUnit.NANOSECONDS));
-
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testReloadIntervalNPE() {
-        conf.setDefaultRefreshTime(1000, null);
-    }
-
-    public static class MyBackend1 implements CacheLoader<Integer, String> {
-        /**
-         * @see org.coconut.cache.CacheLoader#load(java.lang.Object)
-         */
+    public static class LoadableCacheLoader implements CacheLoader<Integer, String> {
         public String load(Integer key, AttributeMap attributes) throws Exception {
             return null;
         }
     }
 
-    public static class MyBackend2 extends MyBackend1 {
-        public MyBackend2(Object foo) {}
-    }
-
-    static class MyFilter4 implements Filter {
-        private MyFilter4() {}
-
-        public boolean accept(Object element) {
-            return false;
+    public class NonLoadableCacheLoader implements CacheLoader<Integer, String> {
+        public String load(Integer key, AttributeMap attributes) throws Exception {
+            return null;
         }
     }
 }

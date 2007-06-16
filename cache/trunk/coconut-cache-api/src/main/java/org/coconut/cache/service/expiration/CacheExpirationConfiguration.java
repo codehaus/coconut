@@ -7,12 +7,13 @@ import static org.coconut.internal.util.XmlUtil.addAndsaveObject;
 import static org.coconut.internal.util.XmlUtil.getChild;
 import static org.coconut.internal.util.XmlUtil.loadOptional;
 
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
+import org.coconut.core.AttributeMaps.DefaultAttributeMap;
 import org.coconut.filter.Filter;
 import org.coconut.internal.util.UnitOfTime;
 import org.w3c.dom.Document;
@@ -33,7 +34,11 @@ public class CacheExpirationConfiguration<K, V> extends
 
     private final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.NANOSECONDS;
 
-    private long defaultTimeToLive = CacheExpirationService.NEVER_EXPIRE;
+    /** The default settings, used when xml-serializing this configuration */
+    private final static CacheExpirationConfiguration<?, ?> DEFAULT = new CacheExpirationConfiguration<Object, Object>();
+
+    
+    private long defaultTimeToLive;
 
     private Filter<CacheEntry<K, V>> expirationFilter;
 
@@ -42,8 +47,7 @@ public class CacheExpirationConfiguration<K, V> extends
      */
     @SuppressWarnings("unchecked")
     public CacheExpirationConfiguration() {
-        super(SERVICE_NAME, Arrays.asList(CacheExpirationService.class,
-                CacheExpirationMXBean.class));
+        super(SERVICE_NAME);
     }
 
     public long getDefaultTimeToLive(TimeUnit unit) {
@@ -82,7 +86,7 @@ public class CacheExpirationConfiguration<K, V> extends
      */
     public CacheExpirationConfiguration<K, V> setDefaultTimeToLive(long timeToLive,
             TimeUnit unit) {
-        if (timeToLive <= 0) {
+        if (timeToLive < 0) {
             throw new IllegalArgumentException("timeToLive must be greather then 0, was "
                     + timeToLive);
         } else if (unit == null) {
@@ -134,7 +138,7 @@ public class CacheExpirationConfiguration<K, V> extends
     protected void toXML(Document doc, Element parent) throws Exception {
         /* Expiration Timer */
         UnitOfTime.toElementCompact(doc, parent, DEFAULT_TIMEOUT_TAG, defaultTimeToLive,
-                DEFAULT_TIME_UNIT, Long.MAX_VALUE);
+                DEFAULT_TIME_UNIT, DEFAULT.defaultTimeToLive);
 
         /* Filter */
         addAndsaveObject(doc, parent, EXPIRATION_FILTER_TAG,

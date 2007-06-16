@@ -3,8 +3,6 @@
  */
 package org.coconut.cache.service.statistics;
 
-import java.util.Arrays;
-
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -23,7 +21,7 @@ public class CacheStatisticsConfiguration extends AbstractCacheServiceConfigurat
      * @param tag
      */
     public CacheStatisticsConfiguration() {
-        super(SERVICE_NAME, Arrays.asList(CacheStatisticsService.class));
+        super(SERVICE_NAME);
     }
 
     /**

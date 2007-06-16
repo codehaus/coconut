@@ -52,6 +52,11 @@ public abstract class AbstractExpirationService<K, V> extends
         super.start(allServices);
     }
 
+    static long getDefaultTimeToLive(CacheExpirationConfiguration<?, ?> conf) {
+        long tmp = conf.getDefaultTimeToLive(TimeUnit.NANOSECONDS);
+        return tmp == 0 ? Long.MAX_VALUE : tmp;
+    }
+
     private final CacheHelper<K, V> helper;
 
     @Override
@@ -105,20 +110,7 @@ public abstract class AbstractExpirationService<K, V> extends
         return removeAll((Filter) Filters.trueFilter());
     }
 
-    /**
-     * @see org.coconut.cache.service.expiration.CacheExpirationMXBean#getDefaultExpirationMs()
-     */
-    public final long getDefaultTimeToLiveMs() {
-        return getDefaultTimeToLive(TimeUnit.MILLISECONDS);
-    }
-
-    /**
-     * @see org.coconut.cache.service.expiration.CacheExpirationMXBean#setDefaultTimeout(long)
-     */
-    public final void setDefaultTimeToLiveMs(long timeToLiveMs) {
-        setDefaultTimeToLive(timeToLiveMs, TimeUnit.MILLISECONDS);
-    }
-
+    // TODO don't include I think...
     public final V put(K key, V value, long timeToLive, TimeUnit unit) {
         if (timeToLive < 0) {
             throw new IllegalArgumentException("timeToLive must not be negative, was "
@@ -134,6 +126,7 @@ public abstract class AbstractExpirationService<K, V> extends
         return doPut(key, value, ttl);
     }
 
+    // TODO don't include I think...
     /**
      * @see org.coconut.cache.service.expiration.CacheExpirationService#putAll(java.util.Map,
      *      long, java.util.concurrent.TimeUnit)
@@ -158,6 +151,7 @@ public abstract class AbstractExpirationService<K, V> extends
     abstract void doPutAll(Map<? extends K, ? extends V> t, long timeToLiveNano);
 
     abstract Filter<?> getExpirationFilter();
+
     String getExpirationFilterAsString() {
         Object o = getExpirationFilter();
         if (o == null) {
@@ -262,6 +256,7 @@ public abstract class AbstractExpirationService<K, V> extends
         public long getDefaultTimeToLive(TimeUnit unit) {
             return service.getDefaultTimeToLive(unit);
         }
+
         /**
          * @see org.coconut.cache.service.expiration.CacheExpirationService#put(java.lang.Object,
          *      java.lang.Object, long, java.util.concurrent.TimeUnit)

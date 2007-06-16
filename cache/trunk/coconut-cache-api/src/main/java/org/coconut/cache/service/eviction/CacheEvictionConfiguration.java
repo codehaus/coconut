@@ -3,22 +3,17 @@
  */
 package org.coconut.cache.service.eviction;
 
-import static org.coconut.internal.util.XmlUtil.addAndsaveObject;
 import static org.coconut.internal.util.XmlUtil.getChild;
-import static org.coconut.internal.util.XmlUtil.loadOptional;
 import static org.coconut.internal.util.XmlUtil.readInt;
 import static org.coconut.internal.util.XmlUtil.readLong;
 import static org.coconut.internal.util.XmlUtil.writeInt;
 import static org.coconut.internal.util.XmlUtil.writeLong;
 
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.CacheEntry;
 import org.coconut.cache.ReplacementPolicy;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
-import org.coconut.filter.Filter;
 import org.coconut.internal.util.UnitOfTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -44,10 +39,6 @@ public class CacheEvictionConfiguration<K, V> extends
     /** The default settings, used when xml-serializing this configuration */
     private final static CacheEvictionConfiguration<?, ?> DEFAULT = new CacheEvictionConfiguration<Object, Object>();
 
-    private final static String DEFAULT_IDLE_TIME = "default-idle-time";
-
-    private final static String IDLE_FILTER = "idle-filter";
-
     private final static String MAXIMUM_CAPACITY = "max-capacity";
 
     private final static String MAXIMUM_SIZE = "max-size";
@@ -60,54 +51,26 @@ public class CacheEvictionConfiguration<K, V> extends
 
     private final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.NANOSECONDS;
 
-    /** The default idle time for new elements. */
-    private long defaultIdleTimeNs = Long.MAX_VALUE;
+    private long maximumCapacity;
 
-    private Filter<CacheEntry<K, V>> idleFilter;
+    private int maximumSize;
 
-    private long maximumCapacity = DEFAULT_MAXIMUM_CAPACITY;
+    private long preferableCapacity;
 
-    private int maximumSize = DEFAULT_MAXIMUM_SIZE;
-
-    private long preferableCapacity = DEFAULT_MAXIMUM_CAPACITY;
-
-    private int preferableSize = DEFAULT_MAXIMUM_SIZE;
+    private int preferableSize;
 
     /** The replacement policy used for evicting elements. */
     private ReplacementPolicy<?> replacementPolicy;
 
-    private long scheduleEvictionAtFixedRateNanos = Long.MAX_VALUE;
+    private long scheduleEvictionAtFixedRateNanos;
 
     /**
      * Creates a new CacheEvictionConfiguration with default settings.
      */
     public CacheEvictionConfiguration() {
-        super(SERVICE_NAME, Arrays.asList(CacheEvictionService.class));
+        super(SERVICE_NAME);
     }
 
-    /**
-     * Returns the default expiration time for entries. If entries never expire,
-     * {@link #NEVER_EXPIRE} is returned.
-     * 
-     * @param unit
-     *            the time unit that should be used for returning the default expiration
-     * @return the default expiration time for entries, or {@link #NEVER_EXPIRE} if
-     *         entries never expire
-     */
-    public long getDefaultIdleTime(TimeUnit unit) {
-        if (defaultIdleTimeNs == Long.MAX_VALUE) {
-            return Long.MAX_VALUE;
-        } else {
-            return unit.convert(defaultIdleTimeNs, TimeUnit.NANOSECONDS);
-        }
-    }
-
-    /**
-     * @return
-     */
-    public Filter<CacheEntry<K, V>> getIdleFilter() {
-        return idleFilter;
-    }
 
     /**
      * Returns the maximum allowed capacity of the cache or {@link Long#MAX_VALUE} if
@@ -160,58 +123,6 @@ public class CacheEvictionConfiguration<K, V> extends
         return unit.convert(scheduleEvictionAtFixedRateNanos, TimeUnit.NANOSECONDS);
     }
 
-    /**
-     * Sets the default time idle time for new objects that are added to the cache. Items
-     * are evicted according to their idle time on a best effort basis.
-     * 
-     * @param idleTime
-     *            the time from insertion to the point where the entry should be evicted
-     *            from the cache
-     * @param unit
-     *            the time unit of the timeToLive argument
-     * @throws IllegalArgumentException
-     *             if the specified time to live is negative (<0)
-     * @throws NullPointerException
-     *             if the specified time unit is <tt>null</tt>
-     * @see #getDefaultTimeToLive(TimeUnit)
-     */
-    public CacheEvictionConfiguration<K, V> setDefaultIdleTime(long idleTime,
-            TimeUnit unit) {
-        if (idleTime <= 0) {
-            throw new IllegalArgumentException("idleTime must be greather then 0, was "
-                    + idleTime);
-        } else if (unit == null) {
-            throw new NullPointerException("unit is null");
-        }
-        if (idleTime == Long.MAX_VALUE) {
-            defaultIdleTimeNs = Long.MAX_VALUE;
-            // don't convert relative to time unit
-        } else {
-            defaultIdleTimeNs = unit.toNanos(idleTime);
-        }
-        return this;
-    }
-
-    /**
-     * Sets a filter that the cache can use to determine if a given cache entry should be
-     * evicted. Usage of this method only makes sense if the cache stores entries in a
-     * background store. For example, a file on the disk.
-     * <p>
-     * This method is similar to the #setExpirationFilter(Filter) except that this is only
-     * used as a tempory
-     * <p>
-     * If this cache does
-     * 
-     * @param filter
-     *            the filter to check entries against
-     * @see #getIdleFilter()
-     * @throws UnsupportedOperationException
-     *             If this cache does not support setting an eviction filter
-     */
-    public CacheEvictionConfiguration<K, V> setIdleFilter(Filter<CacheEntry<K, V>> filter) {
-        idleFilter = filter;
-        return this;
-    }
 
     /**
      * Sets that maximum number of elements that a cache can contain. If the limit is
@@ -353,14 +264,6 @@ public class CacheEvictionConfiguration<K, V> extends
         long timee = UnitOfTime.fromElement(evictionTime, DEFAULT_TIME_UNIT,
                 CacheExpirationService.NEVER_EXPIRE);
         setScheduledEvictionAtFixedRate(timee, DEFAULT_TIME_UNIT);
-
-        /* Idle time */
-        Element eTime = getChild(DEFAULT_IDLE_TIME, e);
-        long time = UnitOfTime.fromElement(eTime, DEFAULT_TIME_UNIT,
-                CacheExpirationService.NEVER_EXPIRE);
-        setDefaultIdleTime(time, DEFAULT_TIME_UNIT);
-        /* Idle filter. */
-        idleFilter = loadOptional(e, IDLE_FILTER, Filter.class);
     }
 
     /**
@@ -376,17 +279,10 @@ public class CacheEvictionConfiguration<K, V> extends
         writeInt(doc, base, MAXIMUM_SIZE, maximumSize, DEFAULT.getMaximumSize());
         writeInt(doc, base, PREFERABLE_SIZE, preferableSize, DEFAULT.getPreferableSize());
 
-        /* EvictionTime Timer */
-        UnitOfTime.toElementCompact(doc, base, DEFAULT_IDLE_TIME, defaultIdleTimeNs,
-                DEFAULT_TIME_UNIT, DEFAULT.defaultIdleTimeNs);
-
         /* Expiration Timer */
         UnitOfTime.toElementCompact(doc, base, SCHEDULE_EVICT_TAG,
                 scheduleEvictionAtFixedRateNanos, DEFAULT_TIME_UNIT,
                 DEFAULT.scheduleEvictionAtFixedRateNanos);
 
-        /* Filter */
-        addAndsaveObject(doc, base, IDLE_FILTER, getResourceBundle(),
-                "expiration.saveOfExpirationFilterFailed", idleFilter);
     }
 }

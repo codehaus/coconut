@@ -115,6 +115,7 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         return creationTime;
     }
 
+    public abstract long getRefreshTime();
     public K getKey() {
         return key;
     }

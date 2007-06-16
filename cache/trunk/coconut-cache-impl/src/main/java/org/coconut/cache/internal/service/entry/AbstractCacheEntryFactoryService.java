@@ -9,6 +9,7 @@ import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.ReplacementPolicy;
 import org.coconut.cache.internal.service.expiration.AbstractExpirationService;
+import org.coconut.cache.internal.service.loading.AbstractCacheLoadingService;
 import org.coconut.cache.service.exceptionhandling.AbstractCacheExceptionHandler;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
 import org.coconut.core.AttributeMap;
@@ -25,12 +26,16 @@ public abstract class AbstractCacheEntryFactoryService<K, V> {
 
     private final AbstractExpirationService<K, V> expirationService;
 
+    private final AbstractCacheLoadingService<K, V> loadingService;
+
     public AbstractCacheEntryFactoryService(Clock clock,
             CacheExceptionHandlingConfiguration<K, V> conf,
-            AbstractExpirationService<K, V> expirationService) {
+            AbstractExpirationService<K, V> expirationService,
+            AbstractCacheLoadingService<K, V> loadingService) {
         this.clock = clock;
         this.errorHandler = conf.getExceptionHandler();
         this.expirationService = expirationService;
+        this.loadingService = loadingService;
     }
 
     public V putVersion(K key, V value, long version) {
@@ -76,6 +81,16 @@ public abstract class AbstractCacheEntryFactoryService<K, V> {
             errorHandler.warning(iae.getMessage() + " was added for key = " + key);
             return clock.timestamp();
         }
+    }
+
+    long getTimeToRefresh(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
+        long time = loadingService.innerGetRefreshTime();
+        try {
+            time = CacheAttributes.getTimeToRefresh(attributes, TimeUnit.NANOSECONDS, time);
+        } catch (IllegalArgumentException iae) {
+            errorHandler.warning(iae.getMessage() + " was added for key = " + key);
+        }
+        return clock.getDeadlineFromNow(time, TimeUnit.NANOSECONDS);
     }
 
     long getCreationTime(K key, V value, AttributeMap attributes,

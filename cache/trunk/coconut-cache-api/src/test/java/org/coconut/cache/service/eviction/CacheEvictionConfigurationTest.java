@@ -42,7 +42,7 @@ public class CacheEvictionConfigurationTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testMaximumCapacity() {
-        assertEquals(Long.MAX_VALUE, ee.getMaximumCapacity());
+        assertEquals(0, ee.getMaximumCapacity());
         assertEquals(ee, ee.setMaximumCapacity(4));
         assertEquals(4, ee.getMaximumCapacity());
         ee.setMaximumCapacity(0);
@@ -50,7 +50,7 @@ public class CacheEvictionConfigurationTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testMaximumSize() {
-        assertEquals(Integer.MAX_VALUE, ee.getMaximumSize());
+        assertEquals(0, ee.getMaximumSize());
         assertEquals(ee, ee.setMaximumSize(4));
         assertEquals(4, ee.getMaximumSize());
         ee.setMaximumSize(-1);
@@ -66,7 +66,7 @@ public class CacheEvictionConfigurationTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testPreferableCapacity() {
-        assertEquals(Long.MAX_VALUE, ee.getPreferableCapacity());
+        assertEquals(0, ee.getPreferableCapacity());
         assertEquals(ee, ee.setPreferableCapacity(4));
         assertEquals(4, ee.getPreferableCapacity());
         ee.setPreferableCapacity(0);
@@ -74,7 +74,7 @@ public class CacheEvictionConfigurationTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testPreferableSize() {
-        assertEquals(Integer.MAX_VALUE, ee.getPreferableSize());
+        assertEquals(0, ee.getPreferableSize());
         assertEquals(ee, ee.setPreferableSize(4));
         assertEquals(4, ee.getPreferableSize());
         ee.setPreferableSize(-1);
@@ -83,10 +83,10 @@ public class CacheEvictionConfigurationTest {
     @Test
     public void testNoop() throws Exception {
         ee = reloadService(ee);
-        assertEquals(Integer.MAX_VALUE, ee.getMaximumSize());
-        assertEquals(Integer.MAX_VALUE, ee.getPreferableSize());
-        assertEquals(Long.MAX_VALUE, ee.getMaximumCapacity());
-        assertEquals(Long.MAX_VALUE, ee.getPreferableCapacity());
+        assertEquals(0, ee.getMaximumSize());
+        assertEquals(0, ee.getPreferableSize());
+        assertEquals(0, ee.getMaximumCapacity());
+        assertEquals(0, ee.getPreferableCapacity());
         assertEquals(DEFAULT.getScheduledEvictionAtFixedRate(TimeUnit.NANOSECONDS), ee
                 .getScheduledEvictionAtFixedRate(TimeUnit.NANOSECONDS));
     }
@@ -113,9 +113,9 @@ public class CacheEvictionConfigurationTest {
         ee.setMaximumSize(2);
         ee = reloadService(ee);
         assertEquals(2, ee.getMaximumSize());
-        assertEquals(Integer.MAX_VALUE, ee.getPreferableSize());
-        assertEquals(Long.MAX_VALUE, ee.getMaximumCapacity());
-        assertEquals(Long.MAX_VALUE, ee.getPreferableCapacity());
+        assertEquals(0, ee.getPreferableSize());
+        assertEquals(0, ee.getMaximumCapacity());
+        assertEquals(0, ee.getPreferableCapacity());
 //        
 // ee = CacheConfiguration.create();
 // ee.setPreferableSize(3);

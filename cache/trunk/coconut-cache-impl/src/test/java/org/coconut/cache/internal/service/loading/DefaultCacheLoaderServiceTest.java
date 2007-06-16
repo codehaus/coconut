@@ -73,6 +73,7 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
 
     DefaultCacheLoaderService<Integer, String> service;
 
+    CacheLoadingConfiguration<Integer, String> loadingConf;
     public void setUp() {
         loaderMock1 = mock(CacheLoader.class);
         loaderProxy1 = (CacheLoader) loaderMock1.proxy();
@@ -87,6 +88,8 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
         cacheHelperMock = mock(CacheHelper.class);
         cacheHelperProxy = (CacheHelper) cacheHelperMock.proxy();
         myExecutor = new MyExecutor();
+        loadingConf=new CacheLoadingConfiguration<Integer, String> ();
+        loadingConf.setLoader(loaderProxy1);
     }
 
     public void testIgnore() {
@@ -94,7 +97,7 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
     }
     public void atestLoadBlocking() {
         DefaultCacheLoaderService<Integer, String> dcls = new DefaultCacheLoaderService<Integer, String>(
-                null, null, null, new CacheLoadingConfiguration<Integer, String> (loaderProxy1), null, null, null);
+                null, null, null, loadingConf, null, null, null);
 
         loaderMock1.expects(once()).method("load").with(eq(3), same(attributes)).will(
                 returnValue("boo"));
@@ -108,7 +111,7 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
 
     public void atestLoadBlockingError() {
         DefaultCacheLoaderService<Integer, String> dcls = new DefaultCacheLoaderService<Integer, String>(
-                null, null, errorHandlerProxy, new CacheLoadingConfiguration<Integer, String> (loaderProxy1), null, null, null);
+                null, null, errorHandlerProxy, loadingConf, null, null, null);
 
         loaderMock1.expects(once()).method("load").with(eq(4), same(attributes)).will(
                 throwException(e));
@@ -120,7 +123,7 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
 
     public void atestLoadAllBlocking() {
         DefaultCacheLoaderService<Integer, String> dcls = new DefaultCacheLoaderService<Integer, String>(
-                null, null, null, new CacheLoadingConfiguration<Integer, String> (loaderProxy1), null, null, null);
+                null, null, null, loadingConf, null, null, null);
 
         loaderMock1.expects(once()).method("loadAll").with(eq(keys1)).will(
                 returnValue(map2));
@@ -133,7 +136,7 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
 
     public void atestLoadAllBlockingError() {
         DefaultCacheLoaderService<Integer, String> dcls = new DefaultCacheLoaderService<Integer, String>(
-                null, null, errorHandlerProxy, new CacheLoadingConfiguration<Integer, String> (loaderProxy1), null, null, null);
+                null, null, errorHandlerProxy, loadingConf, null, null, null);
 
         loaderMock1.expects(once()).method("loadAll").with(eq(keys1)).will(
                 throwException(e));
@@ -146,7 +149,7 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
 
     public void atestLoad() throws InterruptedException, ExecutionException {
         DefaultCacheLoaderService<Integer, String> dcls = new DefaultCacheLoaderService<Integer, String>(
-                null, null, errorHandlerProxy, new CacheLoadingConfiguration<Integer, String> (loaderProxy1), myExecutor, null,
+                null, null, errorHandlerProxy, loadingConf, myExecutor, null,
                 cacheHelperProxy);
 
         loaderMock1.expects(once()).method("load").with(eq(1), ANYTHING).will(
@@ -174,7 +177,7 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
 
     public void atestLoadError() throws InterruptedException, ExecutionException {
         DefaultCacheLoaderService<Integer, String> dcls = new DefaultCacheLoaderService<Integer, String>(
-                null, null, errorHandlerProxy, new CacheLoadingConfiguration<Integer, String> (loaderProxy1), myExecutor, null,
+                null, null, errorHandlerProxy, loadingConf, myExecutor, null,
                 cacheHelperProxy);
 
         loaderMock1.expects(once()).method("load").with(eq(1), ANYTHING).will(
@@ -220,7 +223,7 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
     //tests has been removed because CacheLoader does not define a loadAll method anymore
     public void aloadAll() throws InterruptedException, ExecutionException {
         DefaultCacheLoaderService<Integer, String> dcls = new DefaultCacheLoaderService<Integer, String>(
-                null, null, errorHandlerProxy,new CacheLoadingConfiguration<Integer, String> (loaderProxy1), myExecutor, null,
+                null, null, errorHandlerProxy,loadingConf, myExecutor, null,
                 cacheHelperProxy);
         // result null
         loaderMock1.expects(once()).method("loadAll").with(same(keys1)).will(
@@ -248,7 +251,7 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
 
     public void atestLoadAllError() throws InterruptedException, ExecutionException {
         DefaultCacheLoaderService<Integer, String> dcls = new DefaultCacheLoaderService<Integer, String>(
-                null, null, errorHandlerProxy, new CacheLoadingConfiguration<Integer, String> (loaderProxy1), myExecutor, null,
+                null, null, errorHandlerProxy, loadingConf, myExecutor, null,
                 cacheHelperProxy);
 
         loaderMock1.expects(once()).method("loadAll").with(eq(realKeys)).will(

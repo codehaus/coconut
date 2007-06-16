@@ -5,7 +5,6 @@ package org.coconut.cache.internal.service.eviction;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
@@ -36,6 +35,22 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
         this.helper = helper;
     }
 
+    static int getInitialMaximumSize(CacheEvictionConfiguration<?, ?> conf) {
+        int tmp = conf.getMaximumSize();
+        return tmp == 0 ? Integer.MAX_VALUE : tmp;
+    }
+    static long getInitialMaximumCapacity(CacheEvictionConfiguration<?, ?> conf) {
+        long tmp = conf.getMaximumCapacity();
+        return tmp == 0 ? Long.MAX_VALUE : tmp;
+    }
+    static int getPreferableSize(CacheEvictionConfiguration<?, ?> conf) {
+        int tmp = conf.getPreferableSize();
+        return tmp == 0 ? Integer.MAX_VALUE : tmp;
+    }
+    static long getPreferableCapacity(CacheEvictionConfiguration<?, ?> conf) {
+        long tmp = conf.getPreferableCapacity();
+        return tmp == 0 ? Long.MAX_VALUE : tmp;
+    }
     /**
      * @see org.coconut.cache.service.servicemanager.AbstractCacheService#initialize(org.coconut.cache.CacheConfiguration,
      *      java.util.Map)
@@ -60,19 +75,20 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
         super.start(allServices);
     }
 
-    /**
-     * @see org.coconut.cache.service.eviction.CacheEvictionMXBean#getDefaultIdleTimeMs()
-     */
-    public long getDefaultIdleTimeMs() {
-        return getDefaultIdleTime(TimeUnit.MILLISECONDS);
-    }
-
-    /**
-     * @see org.coconut.cache.service.eviction.CacheEvictionMXBean#setDefaultIdleTimeMs(long)
-     */
-    public void setDefaultIdleTimeMs(long idleTimeMs) {
-        setDefaultIdleTime(idleTimeMs, TimeUnit.MILLISECONDS);
-    }
+// /**
+// * @see org.coconut.cache.service.eviction.CacheEvictionMXBean#getDefaultIdleTimeMs()
+// */
+// public long getDefaultIdleTimeMs() {
+// return getDefaultIdleTime(TimeUnit.MILLISECONDS);
+// }
+//
+// /**
+// * @see
+// org.coconut.cache.service.eviction.CacheEvictionMXBean#setDefaultIdleTimeMs(long)
+// */
+// public void setDefaultIdleTimeMs(long idleTimeMs) {
+// setDefaultIdleTime(idleTimeMs, TimeUnit.MILLISECONDS);
+// }
 
     /**
      * @see org.coconut.cache.service.eviction.CacheEvictionMXBean#trimToCapacity(long)
@@ -95,11 +111,10 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
         helper.evict(key);
     }
 
-    
     public void evictIdleElements() {
         helper.evictIdleElements();
     }
-    
+
     /**
      * @see org.coconut.cache.service.eviction.CacheEvictionService#evictAll(java.util.Collection)
      */
@@ -118,17 +133,17 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
             this.service = service;
         }
 
-        public void evict(K key) {
-            service.evict(key);
-        }
-
-        public void evictAll(Collection<? extends K> keys) {
-            service.evictAll(keys);
-        }
-
-        public long getDefaultIdleTime(TimeUnit unit) {
-            return service.getDefaultIdleTime(unit);
-        }
+// public void evict(K key) {
+// service.evict(key);
+// }
+//
+// public void evictAll(Collection<? extends K> keys) {
+// service.evictAll(keys);
+// }
+//
+// public long getDefaultIdleTime(TimeUnit unit) {
+// return service.getDefaultIdleTime(unit);
+// }
 
         public long getMaximumCapacity() {
             return service.getMaximumCapacity();
@@ -138,9 +153,10 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
             return service.getMaximumSize();
         }
 
-        public void setDefaultIdleTime(long idleTime, TimeUnit unit) {
-            service.setDefaultIdleTime(idleTime, unit);
-        }
+//
+// public void setDefaultIdleTime(long idleTime, TimeUnit unit) {
+// service.setDefaultIdleTime(idleTime, unit);
+// }
 
         public void setMaximumCapacity(long maximumCapacity) {
             service.setMaximumCapacity(maximumCapacity);
@@ -157,10 +173,10 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
         public void trimToSize(int size) {
             service.trimToSize(size);
         }
-
-        public void evictIdleElements() {
-            service.evictIdleElements();
-        }
+//
+// public void evictIdleElements() {
+// service.evictIdleElements();
+// }
     }
 
     /**
@@ -177,10 +193,11 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
             this.service = service;
         }
 
-        @ManagedAttribute(description = "The default time to idle for cache entries in milliseconds")
-        public long getDefaultIdleTimeMs() {
-            return service.getDefaultIdleTime(TimeUnit.MILLISECONDS);
-        }
+// @ManagedAttribute(description = "The default time to idle for cache entries in
+// milliseconds")
+// public long getDefaultIdleTimeMs() {
+// return service.getDefaultIdleTime(TimeUnit.MILLISECONDS);
+// }
 
         @ManagedAttribute(description = "The maximum capacity of the cache")
         public long getMaximumCapacity() {
@@ -192,9 +209,9 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
             return service.getMaximumSize();
         }
 
-        public void setDefaultIdleTimeMs(long idleTimeMs) {
-            service.setDefaultIdleTime(idleTimeMs, TimeUnit.MILLISECONDS);
-        }
+// public void setDefaultIdleTimeMs(long idleTimeMs) {
+// service.setDefaultIdleTime(idleTimeMs, TimeUnit.MILLISECONDS);
+// }
 
         public void setMaximumCapacity(long maximumCapacity) {
             service.setMaximumCapacity(maximumCapacity);
@@ -213,10 +230,10 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
         public void trimToSize(int size) {
             service.trimToSize(size);
         }
-        
-        @ManagedOperation(description = "Evict all elements that idle")
-        public void evictIdleElements() {
-            service.evictIdleElements();
-        }
+
+// @ManagedOperation(description = "Evict all elements that idle")
+// public void evictIdleElements() {
+// service.evictIdleElements();
+// }
     }
 }

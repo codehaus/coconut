@@ -4,9 +4,6 @@
 
 package org.coconut.cache.service.loading;
 
-import java.util.Collection;
-
-import org.coconut.cache.Cache;
 import org.coconut.core.AttributeMap;
 
 /**
@@ -15,9 +12,7 @@ import org.coconut.core.AttributeMap;
  * and if that is not the case; create the value and add it to the cache. A cache
  * implementation can use a cache loader for lazily creating values for missing entries
  * making this process transparant for the user. A cache loader is also sometimes referred
- * to as a cache backend. Another type of a cache backend is the cache store
- * {@link org.coconut.cache.store.CacheStore} which allows persisting values in addition
- * to retrieving them.
+ * to as a cache backend.
  * <p>
  * Usage example, a loader that for each key (String) loads the file for that given path.
  * 
@@ -49,16 +44,14 @@ import org.coconut.core.AttributeMap;
  * </pre>
  * 
  * <p>
+ * TODO write something about attribute map.
+ * <p>
  * Cache loader instances <tt>MUST</tt> be thread-safe. Allowing multiple threads to
  * simultaneous create or load new values.
  * <p>
  * Any <tt>cache</tt> implementation that makes use of cache loaders should, for
  * performance reasons, make sure that if two threads are simultaneous requesting a value
  * for the same key. Only one of them do the actual loading.
- * <p>
- * Only the following methods on a Cache instance will trigger the cache loader:
- * {@link Cache#get(Object)}, {@link Cache#getAll(Collection)},
- * {@link Cache#load(Object)}, {@link Cache#loadAll(Collection)}.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id$
@@ -75,7 +68,8 @@ public interface CacheLoader<K, V> {
      * @param key
      *            the key whose associated value is to be returned.
      * @param attributes
-     *            a map of attributes that can be updated by the cache loader with
+     *            a map of attributes that can the loader can inspect for attributes
+     *            needed while loading or it can be updated by the cache loader with
      *            additional attributes
      * @return the value to which this key is mapped, or null if no such mapping exist.
      * @throws Exception

@@ -4,10 +4,6 @@
 package org.coconut.cache.spi;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -33,8 +29,6 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
 
     private CacheConfiguration<K, V> conf;
 
-    private final List<? extends Class<?>> serviceInterfaces;
-
     private final String serviceName;
 
     /**
@@ -42,23 +36,9 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
      * 
      * @param serviceName
      *            the name of the service
-     * @param serviceInterfaces
-     *            the public interfaces that this service should export
      */
     public AbstractCacheServiceConfiguration(String serviceName) {
-        this(serviceName, Collections.EMPTY_LIST);
-    }
-    /**
-     * Creates a new AbstractCacheServiceConfiguration.
-     * 
-     * @param serviceName
-     *            the name of the service
-     * @param serviceInterfaces
-     *            the public interfaces that this service should export
-     */
-    public AbstractCacheServiceConfiguration(String serviceName,
-            Collection<? extends Class<?>> serviceInterfaces) {
-        this(serviceName, serviceInterfaces, Resources.DEFAULT_CACHE_BUNDLE);
+        this(serviceName,  Resources.DEFAULT_CACHE_BUNDLE);
     }
 
     /**
@@ -72,14 +52,11 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
      *            a ResourceBundle used for looking up text strings
      */
     public AbstractCacheServiceConfiguration(String serviceName,
-            Collection<? extends Class<?>> serviceInterfaces, ResourceBundle bundle) {
+           ResourceBundle bundle) {
         if (serviceName == null) {
             throw new NullPointerException("serviceName is null");
-        } else if (serviceInterfaces == null) {
-            throw new NullPointerException("serviceInterface is null");
         }
         this.serviceName = serviceName;
-        this.serviceInterfaces = (List) new ArrayList<Class>(serviceInterfaces);
         this.bundle = bundle;
     }
 
@@ -89,15 +66,6 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
      */
     public CacheConfiguration<K, V> c() {
         return conf;
-    }
-
-    /**
-     * Returns the service interface for this configuration. For example,
-     * {@link org.coconut.cache.service.expiration.CacheExpirationConfiguration} returns
-     * {@link org.coconut.cache.service.expiration.CacheExpirationService}.
-     */
-    public final Collection<? extends Class<?>> getServiceInterfaces() {
-        return Collections.unmodifiableCollection(serviceInterfaces);
     }
 
     /**

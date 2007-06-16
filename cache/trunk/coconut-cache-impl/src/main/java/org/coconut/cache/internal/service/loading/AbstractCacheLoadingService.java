@@ -7,12 +7,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
+import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
 import org.coconut.cache.internal.spi.CacheHelper;
+import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.core.AttributeMap;
@@ -37,6 +40,12 @@ public abstract class AbstractCacheLoadingService<K, V> extends
             Map<Class<?>, Object> serviceMap) {
         serviceMap.put(CacheLoadingService.class, this);
     }
+    
+    static long getDefaultTimeToRefresh(CacheLoadingConfiguration<?, ?> conf) {
+        long tmp = conf.getDefaultTimeToRefresh(TimeUnit.NANOSECONDS);
+        return tmp == 0 ? Long.MAX_VALUE : tmp;
+    }
+    
     AbstractCacheLoadingService(InternalCacheAttributeService attributeFactory,
             CacheHelper<K, V> helper) {
         super(CacheLoadingConfiguration.SERVICE_NAME);
@@ -46,6 +55,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends
 
     public abstract boolean canLoad();
 
+    public abstract long innerGetRefreshTime();
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#load(java.lang.Object)
      */
@@ -114,7 +124,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends
 
     public abstract V loadBlocking(K key, AttributeMap attributes);
 
-    public abstract void reloadIfNeeded(CacheEntry<K, V> entry);
+    public abstract void reloadIfNeeded(AbstractCacheEntry<K, V> entry);
 
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#load(java.lang.Object,

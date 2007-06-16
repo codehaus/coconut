@@ -15,6 +15,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheServices;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
+import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.expiration.AbstractExpirationService;
 import org.coconut.cache.internal.service.threading.InternalCacheThreadingService;
 import org.coconut.cache.internal.service.util.ExtendableFutureTask;
@@ -50,9 +51,10 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
 
     private long reloadExpirationTime;
 
-    private Filter<CacheEntry<K, V>> reloadFilter;
+    private final Filter<CacheEntry<K, V>> reloadFilter;
 
     private final Executor loadExecutor;
+
     /**
      * @param clock
      * @param errorHandler
@@ -72,7 +74,10 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         this.errorHandler = errorHandler.getExceptionHandler();
         this.clock = clock;
         this.loader = loadConf.getLoader();
-        this.loadExecutor = threadManager.getExecutor(CacheLoadingService.class).createExecutorService();
+        this.loadExecutor = threadManager.getExecutor(CacheLoadingService.class)
+                .createExecutorService();
+        this.reloadExpirationTime = getDefaultTimeToRefresh(loadConf);
+        this.reloadFilter = loadConf.getRefreshFilter();
         this.cache = cache;
         this.expirationService = expirationService;
     }
@@ -98,6 +103,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
             }
         }, 100, TimeUnit.DAYS);
     }
+
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#loadAll(java.util.Map)
      */
@@ -157,24 +163,20 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         return loadBlocking(loader, key, attributes);
     }
 
-    public boolean needsReload(CacheEntry<K, V> entry) {
+    public boolean needsReload(AbstractCacheEntry<K, V> entry) {
         if (loader == null) {
             return false;
         }
-        long reloadAheadTime = reloadExpirationTime;
-        if (reloadAheadTime < 0
-                || entry.getExpirationTime() == CacheExpirationService.NEVER_EXPIRE) {
-            return false;
-        }
-        Filter<CacheEntry<K, V>> filter = reloadFilter;
-        if (filter != null && filter.accept(entry)) {
+        if (reloadFilter != null && reloadFilter.accept(entry)) {
             return true;
         }
-        long refTime = entry.getLastUpdateTime() + reloadAheadTime;
-        return clock.isPassed(refTime);
+        long expTime = entry.getRefreshTime();
+        return expTime == CacheExpirationService.NEVER_EXPIRE ? false : clock
+                .isPassed(expTime);
+
     }
 
-    public void reloadIfNeeded(CacheEntry<K, V> entry) {
+    public void reloadIfNeeded(AbstractCacheEntry<K, V> entry) {
         if (needsReload(entry)) {
             load(entry.getKey());
         }
@@ -305,5 +307,16 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
     public boolean isDummy() {
         return false;
     }
+
+    @Override
+    public long innerGetRefreshTime() {
+        return reloadExpirationTime;
+    }
+
+    public long getDefaultTimeToRefresh(TimeUnit unit) {
+        return 0;
+    }
+
+    public void setDefaultTimeToRefresh(long timeToLive, TimeUnit unit) {}
 
 }

@@ -18,7 +18,7 @@ public class ReloadEntryExample {
     public static void main(String[] args) {
         // START SNIPPET: class
         CacheConfiguration<String, String> cc = CacheConfiguration.create();
-        cc.loading().setDefaultRefreshTime(55 * 60, TimeUnit.SECONDS);
+        cc.loading().setDefaultTimeToRefresh(55 * 60, TimeUnit.SECONDS);
         Cache<String, String> cache = cc.newInstance(UnsynchronizedCache.class);
         cache.getService(CacheExpirationService.class).put("key", "value", 60 * 60,
                 TimeUnit.SECONDS);

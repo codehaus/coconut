@@ -17,7 +17,6 @@ import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
 import org.coconut.cache.internal.service.service.InternalCacheServiceManager;
 import org.coconut.cache.internal.util.Resources;
 import org.coconut.cache.service.statistics.CacheHitStat;
-import org.coconut.cache.service.statistics.CacheStatistics;
 import org.coconut.core.Clock;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.annotation.ManagedAttribute;
@@ -333,7 +332,7 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractInternalC
     }
 
     public CacheHitStat getHitStat() {
-        return CacheStatistics.newImmutableHitStat(entryGetHitCount.get(),
+        return new CacheHitStat(entryGetHitCount.get(),
                 entryGetMissCount.get());
     }
 

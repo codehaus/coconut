@@ -12,9 +12,7 @@ import static org.coconut.internal.util.XmlUtil.loadOptional;
 import static org.coconut.internal.util.XmlUtil.readValue;
 
 import java.lang.management.ManagementFactory;
-import java.util.Arrays;
 
-import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -40,14 +38,10 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class CacheManagementConfiguration extends
-        AbstractCacheServiceConfiguration {
+public class CacheManagementConfiguration extends AbstractCacheServiceConfiguration {
 
     /** The short name of this service. */
     public static final String SERVICE_NAME = "management";
-
-    /** The default registrant used to register cache services. */
-    public final static ManagedGroupVisitor DEFAULT_REGISTRANT = null;
 
     /** XML domain tag. */
     private final static String XML_DOMAIN_TAG = "domain";
@@ -62,10 +56,10 @@ public class CacheManagementConfiguration extends
     private final static String XML_ROOT_GROUP_TAG = "rootgroup";
 
     /** The domain to register managed beans under. */
-    private String domain = CacheMXBean.DEFAULT_JMX_DOMAIN;
+    private String domain;
 
     /** Whether or not JMX management is enabled. */
-    private boolean enabled = false;
+    private boolean enabled; // default false
 
     /** The MBeanServer to register the managed beans under */
     private MBeanServer mBeanServer;
@@ -80,8 +74,7 @@ public class CacheManagementConfiguration extends
      * Create a new CacheManagementConfiguration.
      */
     public CacheManagementConfiguration() {
-        super(SERVICE_NAME, Arrays
-                .asList(CacheManagementService.class, CacheMXBean.class));
+        super(SERVICE_NAME);
     }
 
     /**
@@ -144,9 +137,6 @@ public class CacheManagementConfiguration extends
      *             if the specified domain is not valid domain name
      */
     public CacheManagementConfiguration setDomain(String domain) {
-        if (domain == null) {
-            throw new NullPointerException("domain is null");
-        }
         try {
             new ObjectName(domain + ":type=foo");
         } catch (MalformedObjectNameException e) {
@@ -200,8 +190,9 @@ public class CacheManagementConfiguration extends
      * @param registrant
      * @see #getRegistrant()
      */
-    public void setRegistrant(ManagedGroupVisitor registrant) {
+    public CacheManagementConfiguration setRegistrant(ManagedGroupVisitor registrant) {
         this.registrant = registrant;
+        return this;
     }
 
     /**
@@ -212,8 +203,9 @@ public class CacheManagementConfiguration extends
      * @param root
      * @see #getRoot()
      */
-    public void setRoot(ManagedGroup root) {
+    public CacheManagementConfiguration setRoot(ManagedGroup root) {
         this.root = root;
+        return this;
     }
 
     /**
@@ -226,6 +218,13 @@ public class CacheManagementConfiguration extends
         enabled = getAttributeBoolean(e, XML_ENABLED_ATTRIBUTE, false);
         registrant = loadOptional(e, XML_REGISTRANT_TAG, ManagedGroupVisitor.class);
         root = loadOptional(e, XML_ROOT_GROUP_TAG, ManagedGroup.class);
+        if (getAttributeBoolean(e, "usePlatformMBeanServer", false)) {
+            // This is bit whacked but we need it for consistency sake
+            // sick configuration->ParentCache with custom MBeanServer
+            // child wants to us platform MBeanServer, if set the
+            // child server to null, it will use parents customer MBeanServer
+            mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        }
     }
 
     /**
@@ -236,7 +235,7 @@ public class CacheManagementConfiguration extends
         XmlUtil.writeBooleanAttribute(base, XML_ENABLED_ATTRIBUTE, enabled, false);
 
         /* Domain */
-        if (!domain.equals(CacheMXBean.DEFAULT_JMX_DOMAIN)) {
+        if (domain != null && !domain.equals(CacheMXBean.DEFAULT_JMX_DOMAIN)) {
             addAndSetText(doc, XML_DOMAIN_TAG, base, domain);
         }
 
@@ -251,48 +250,11 @@ public class CacheManagementConfiguration extends
         }
 
         /* Registrant */
-        addAndsaveObject(doc, base, XML_ROOT_GROUP_TAG, getResourceBundle(),
+        addAndsaveObject(doc, base, XML_REGISTRANT_TAG, getResourceBundle(),
                 "management.saveOfRegistrantFailed", registrant);
 
         /* Registrant */
-        addAndsaveObject(doc, base, XML_REGISTRANT_TAG, getResourceBundle(),
+        addAndsaveObject(doc, base, XML_ROOT_GROUP_TAG, getResourceBundle(),
                 "management.saveOfRootGroupFailed", root);
-    }
-
-    static class DefaultRegistrant implements ManagedGroupVisitor {
-        private final String rootDomain = "foo";
-
-        private final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-
-        /**
-         * @see org.coconut.management.ManagedGroupVisitor#visitManagedGroup(org.coconut.management.ManagedGroup)
-         */
-        public void visitManagedGroup(ManagedGroup mg) throws JMException {
-            String name = "foo";
-            try {
-                register(mg, name);
-                for (ManagedGroup g : mg.getChildren()) {
-                    visitManagedGroup(g);
-                }
-            } catch (JMException jme) {
-                // attempt to unregister all
-                throw jme;
-            }
-        }
-
-        /**
-         * @see org.coconut.management.ManagedGroupVisitor#visitManagedObject(org.coconut.management.ManagedGroup,
-         *      java.lang.Object)
-         */
-        public void visitManagedObject(ManagedGroup group, Object o) throws JMException {
-        // ignore
-        }
-
-        private ManagedGroup register(ManagedGroup group, String name) throws JMException {
-            ObjectName on = new ObjectName(name);
-            server.registerMBean(name, on);
-            return group;
-        }
-
     }
 }

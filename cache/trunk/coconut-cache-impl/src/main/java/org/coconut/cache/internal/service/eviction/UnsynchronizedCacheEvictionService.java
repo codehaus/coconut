@@ -34,19 +34,16 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
 
     private long defaultIdleTimeNS;
 
-    // private long
     // @SuppressWarnings("unchecked")
     public UnsynchronizedCacheEvictionService(CacheEvictionConfiguration<K, V> conf,
             CacheHelper<K, V> helper) {
         super(helper);
         cp = conf.getPolicy() == null ? Policies.newLRU() : (ReplacementPolicy) conf
                 .getPolicy();
-        maxSize = conf.getMaximumSize();
-        maxCapacity = conf.getMaximumCapacity();
-        preferableCapacity = conf.getPreferableCapacity();
-        preferableSize = conf.getPreferableSize();
-        defaultIdleTimeNS = conf.getDefaultIdleTime(TimeUnit.NANOSECONDS);
-        idleFilter = conf.getIdleFilter();
+        maxSize = getInitialMaximumSize(conf);
+        maxCapacity = getInitialMaximumCapacity(conf);
+        preferableCapacity = getPreferableCapacity(conf);
+        preferableSize = getPreferableSize(conf);
     }
 
     public T evictNext() {
@@ -176,23 +173,6 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
         } else {
             return f.toString();
         }
-    }
-
-    /**
-     * @see org.coconut.cache.service.eviction.CacheEvictionService#getDefaultIdleTime(java.util.concurrent.TimeUnit)
-     */
-    public long getDefaultIdleTime(TimeUnit unit) {
-        return new CacheEvictionConfiguration<K, V>().setDefaultIdleTime(
-                defaultIdleTimeNS, TimeUnit.NANOSECONDS).getDefaultIdleTime(unit);
-    }
-
-    /**
-     * @see org.coconut.cache.service.eviction.CacheEvictionService#setDefaultIdleTime(long,
-     *      java.util.concurrent.TimeUnit)
-     */
-    public void setDefaultIdleTime(long idleTime, TimeUnit unit) {
-        defaultIdleTimeNS = new CacheEvictionConfiguration<K, V>().setDefaultIdleTime(
-                idleTime, unit).getDefaultIdleTime(TimeUnit.NANOSECONDS);
     }
 
     /**

@@ -64,15 +64,11 @@ public class LandlordPolicy<T> extends AbstractPolicy<T> {
         return add(element, CacheAttributes.getSize(attributes), CacheAttributes.getCost(attributes));
     }
 
-    public int add(T element, long size, double cost) {
+
+    private int add(T element, long size, double cost) {
         if (element == null) {
             throw new NullPointerException("element is null");
-        } else if (size <= 0) {
-            throw new IllegalArgumentException(
-                    "size must be a positive number (>0), was " + size);
-        } else if (Double.isNaN(cost)) {
-            throw new IllegalArgumentException("cost is NaN");
-        }
+        } 
         int index = this.size++;
         if (this.size >= objects.length)
             grow(this.size);
@@ -82,7 +78,6 @@ public class LandlordPolicy<T> extends AbstractPolicy<T> {
         this.objectCredit[index] = cost;
         return index;
     }
-
     /**
      * @see org.coconut.cache.ReplacementPolicy#clear()
      */

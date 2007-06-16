@@ -285,6 +285,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
             }
         } else {
             isHit = true;
+            //TODO check if expired...
             loadingService.reloadIfNeeded(prev);
             prev.incrementHits();
             prev.accessed();
@@ -541,8 +542,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
          *      java.lang.Object, org.coconut.core.AttributeMap)
          */
         public void valueLoaded(K key, V value, AttributeMap attributes) {
-        // TODO Auto-generated method stub
-
+            doPut(key, value, false, attributes);
         }
 
         /**

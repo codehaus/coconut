@@ -163,7 +163,7 @@ public class CacheConfigurationTest {
 		conf.newInstance(ACache.class);
 	}
 
-	@Test(expected = InvocationTargetException.class)
+	@Test(expected = ArithmeticException.class)
 	public void testNewInstanceConstructorThrows() throws Throwable {
 		try {
 			conf.newInstance(DummyCache2.class);

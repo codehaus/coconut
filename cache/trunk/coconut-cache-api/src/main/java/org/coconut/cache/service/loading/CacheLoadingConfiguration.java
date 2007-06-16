@@ -7,7 +7,6 @@ import static org.coconut.internal.util.XmlUtil.addAndsaveObject;
 import static org.coconut.internal.util.XmlUtil.getChild;
 import static org.coconut.internal.util.XmlUtil.loadOptional;
 
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
@@ -21,8 +20,6 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-// currentNoMap to specify load attributes???, perhaps specify a
-// refreshTransformer??(y)
 public class CacheLoadingConfiguration<K, V> extends
         AbstractCacheServiceConfiguration<K, V> {
 
@@ -34,25 +31,18 @@ public class CacheLoadingConfiguration<K, V> extends
 
     private final static String REFRESH_FILTER_TAG = "refresh-filter";
 
-    private final static String REFRESH_INTERVAL_TAG = "refresh-time";
+    private final static String REFRESH_INTERVAL_TAG = "default-time-to-refresh";
 
-    private long defaultRefreshInterval = Long.MAX_VALUE;
+    private long defaultTimeToRefresh;
 
     private Filter<CacheEntry<K, V>> refreshFilter;
 
     private CacheLoader<? super K, ? extends V> loader;
 
     public CacheLoadingConfiguration() {
-        super(SERVICE_NAME, Arrays.asList(CacheLoadingService.class,
-                CacheLoadingMXBean.class));
+        super(SERVICE_NAME);
     }
-    public CacheLoadingConfiguration(CacheLoader<K,V> loader) {
-        this();
-        if (loader == null) {
-            throw new NullPointerException("loader is null");
-        }
-        setLoader(loader);
-    }
+
     /**
      * Returns the CacheLoader that the cache should use for loading new key-value
      * bindings. If this method returns <code>null</code> no initial loader will be set.
@@ -73,11 +63,11 @@ public class CacheLoadingConfiguration<K, V> extends
      * @return
      * @see #setReloadInterval(long, TimeUnit)
      */
-    public long getDefaultRefreshTime(TimeUnit unit) {
-        if (defaultRefreshInterval == Long.MAX_VALUE) {
+    public long getDefaultTimeToRefresh(TimeUnit unit) {
+        if (defaultTimeToRefresh == Long.MAX_VALUE) {
             return Long.MAX_VALUE;
         } else {
-            return unit.convert(defaultRefreshInterval, DEFAULT_TIME_UNIT);
+            return unit.convert(defaultTimeToRefresh, DEFAULT_TIME_UNIT);
         }
     }
 
@@ -97,18 +87,18 @@ public class CacheLoadingConfiguration<K, V> extends
      *            the unit of the interval
      * @return this Expiration
      */
-    public CacheLoadingConfiguration<K, V> setDefaultRefreshTime(long interval,
+    public CacheLoadingConfiguration<K, V> setDefaultTimeToRefresh(long interval,
             TimeUnit unit) {
         if (unit == null) {
             throw new NullPointerException("unit is null");
-        } else if (interval <= 0) {
+        } else if (interval < 0) {
             throw new IllegalArgumentException("interval must be a positive number");
         }
 
         if (interval == Long.MAX_VALUE) {
-            defaultRefreshInterval = interval;
+            defaultTimeToRefresh = interval;
         } else {
-            defaultRefreshInterval = DEFAULT_TIME_UNIT.convert(interval, unit);
+            defaultTimeToRefresh = DEFAULT_TIME_UNIT.convert(interval, unit);
         }
         return this;
     }
@@ -162,7 +152,7 @@ public class CacheLoadingConfiguration<K, V> extends
         /* Refresh timer */
         Element eTime = getChild(REFRESH_INTERVAL_TAG, parent);
         long time = UnitOfTime.fromElement(eTime, DEFAULT_TIME_UNIT, Long.MAX_VALUE);
-        setDefaultRefreshTime(time, DEFAULT_TIME_UNIT);
+        setDefaultTimeToRefresh(time, DEFAULT_TIME_UNIT);
 
         /* Refresh Filter */
         refreshFilter = loadOptional(parent, REFRESH_FILTER_TAG, Filter.class);
@@ -180,7 +170,7 @@ public class CacheLoadingConfiguration<K, V> extends
 
         /* Refresh Timer */
         UnitOfTime.toElementCompact(doc, parent, REFRESH_INTERVAL_TAG,
-                defaultRefreshInterval, DEFAULT_TIME_UNIT, Long.MAX_VALUE);
+                defaultTimeToRefresh, DEFAULT_TIME_UNIT, 0);
 
         /* Refresh Filter */
         addAndsaveObject(doc, parent, REFRESH_FILTER_TAG, getResourceBundle(),

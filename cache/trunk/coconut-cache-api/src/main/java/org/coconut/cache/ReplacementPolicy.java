@@ -54,8 +54,6 @@ public interface ReplacementPolicy<T> {
 
     public static final long DEFAULT_SIZE = 1;
 
-    public static final long DEFAULT_HITS = 0;
-
     /**
      * Removes all elements from this policy.
      */
@@ -81,12 +79,11 @@ public interface ReplacementPolicy<T> {
 
     /**
      * Adds the specified element to the replacement policy. If the policy accepts the
-     * element a positive integer is returned. This integer is reference to the element
+     * element a non-negative integer is returned. This integer is reference to the element
      * and must be used when referencing the element. A negative return value indicates
      * that the policy has rejected the entry. Any replacement policy is allowed to reject
      * entries. For example, LRU-Size which rejects entries over a certain size.
      * <p>
-     * TODO can return 0????
      * 
      * @param element
      *            the element to add to the replacement policy

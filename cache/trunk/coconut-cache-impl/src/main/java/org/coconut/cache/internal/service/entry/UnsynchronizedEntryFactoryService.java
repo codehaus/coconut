@@ -5,6 +5,7 @@ package org.coconut.cache.internal.service.entry;
 
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.service.expiration.AbstractExpirationService;
+import org.coconut.cache.internal.service.loading.AbstractCacheLoadingService;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
@@ -20,8 +21,9 @@ public class UnsynchronizedEntryFactoryService<K, V> extends
     public UnsynchronizedEntryFactoryService(Clock clock,
             CacheExceptionHandlingConfiguration<K, V> conf,
             InternalCacheAttributeService attributeService,
-            AbstractExpirationService<K, V> expirationService) {
-        super(clock, conf, expirationService);
+            AbstractExpirationService<K, V> expirationService,
+            AbstractCacheLoadingService<K, V> loadingService) {
+        super(clock, conf, expirationService, loadingService);
         this.attributeService = attributeService;
     }
 
@@ -39,9 +41,9 @@ public class UnsynchronizedEntryFactoryService<K, V> extends
         long size = getSize(key, value, attributes, existing);
         long creationTime = getCreationTime(key, value, attributes, existing);
         long lastUpdate = getLastModified(key, value, attributes, existing);
-
+        long refreshTime = getTimeToRefresh(key, value, attributes, existing);
         UnsynchronizedCacheEntry<K, V> newEntry = new UnsynchronizedCacheEntry<K, V>(
-                this, key, value, cost, creationTime, lastUpdate, size);
+                this, key, value, cost, creationTime, lastUpdate, size, refreshTime);
         newEntry.setExpirationTime(expirationTime);
 
         if (existing != null) {

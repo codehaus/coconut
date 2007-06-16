@@ -71,7 +71,12 @@ public class DefaultCacheManagementService extends AbstractCacheManagementServic
         }
         this.manager = serviceManager;
         isEnabled = managementConfiguration.isEnabled();
-        domain = managementConfiguration.getDomain();
+        if (managementConfiguration.getDomain() == null) {
+            domain = CacheMXBean.DEFAULT_JMX_DOMAIN;
+        } else {
+            domain = managementConfiguration.getDomain();
+        }
+
         if (managementConfiguration.getRoot() == null) {
             group = new DefaultManagedGroup(name,
                     "This group contains all managed Cache services", false);

@@ -2,7 +2,7 @@ package org.coconut.cache.internal.service.loading;
 
 import java.util.Map;
 
-import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.core.AttributeMap;
 
 /**
@@ -12,7 +12,7 @@ import org.coconut.core.AttributeMap;
 public interface InternalCacheLoadingService<K, V> {
     boolean isDummy();
 
-    void reloadIfNeeded(CacheEntry<K, V> entry);
+    void reloadIfNeeded(AbstractCacheEntry<K, V> entry);
 
     /**
      * @param key
