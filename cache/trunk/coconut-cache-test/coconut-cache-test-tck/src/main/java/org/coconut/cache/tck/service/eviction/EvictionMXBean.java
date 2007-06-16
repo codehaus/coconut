@@ -1,7 +1,5 @@
 package org.coconut.cache.tck.service.eviction;
 
-import java.util.concurrent.TimeUnit;
-
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.RuntimeMBeanException;
@@ -37,7 +35,7 @@ public class EvictionMXBean extends AbstractCacheTCKTestBundle {
      */
     @Test
     public void maximumCapacity() {
-        assertEquals(DEFAULT.getMaximumCapacity(), mxBean.getMaximumCapacity());
+        assertEquals(Long.MAX_VALUE, mxBean.getMaximumCapacity());
         mxBean.setMaximumCapacity(1000);
         assertEquals(1000, mxBean.getMaximumCapacity());
         assertEquals(1000, eviction().getMaximumCapacity());
@@ -62,7 +60,7 @@ public class EvictionMXBean extends AbstractCacheTCKTestBundle {
      */
     @Test
     public void maximumSize() {
-        assertEquals(DEFAULT.getMaximumSize(), mxBean.getMaximumSize());
+        assertEquals(Integer.MAX_VALUE, mxBean.getMaximumSize());
         mxBean.setMaximumSize(1000);
         assertEquals(1000, mxBean.getMaximumSize());
         assertEquals(1000, eviction().getMaximumSize());

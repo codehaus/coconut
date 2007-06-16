@@ -8,9 +8,9 @@ package org.coconut.cache.internal.service.service;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public abstract class AbstractInternalCacheServiceManager implements
-		InternalCacheServiceManager {
+        InternalCacheServiceManager {
 
-	public boolean isRunning() {
-		return getCurrentState() == ServiceStatus.RUNNING;
-	}
+    public boolean isRunning() {
+        return getCurrentState() == ServiceStatus.RUNNING;
+    }
 }

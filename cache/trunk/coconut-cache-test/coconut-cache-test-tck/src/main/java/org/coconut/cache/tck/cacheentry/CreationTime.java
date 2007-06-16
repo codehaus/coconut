@@ -1,14 +1,17 @@
 package org.coconut.cache.tck.cacheentry;
 
-import static org.coconut.test.CollectionUtils.*;
+import static org.coconut.test.CollectionUtils.M1;
+import static org.coconut.test.CollectionUtils.M2;
+import static org.coconut.test.CollectionUtils.M3;
+import static org.coconut.test.CollectionUtils.M4;
 import static org.coconut.test.CollectionUtils.M8;
 
 import java.util.Map;
 
 import org.coconut.cache.CacheAttributes;
-import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.core.AttributeMap;
 import org.junit.Test;
 
@@ -75,12 +78,18 @@ public class CreationTime extends AbstractCacheTCKTestBundle {
 
         put(M1);
         assertPeekAndGet(M1, 10);
-        
+
         clock.incrementTimestamp();
         c.clear();
         put(M1);
         assertPeekAndGet(M1, 11);
     }
+
+    /**
+     * Tests that timestamp is set for creation date when loading values
+     */
+    @Test
+    public void testCreationDateLoader() {}
 
     /**
      * Tests that creation time can propagate via the attribute map provided to a cache
@@ -89,6 +98,7 @@ public class CreationTime extends AbstractCacheTCKTestBundle {
     @SuppressWarnings("unchecked")
     @Test
     public void testCreationTimeCacheLoader() {
+
         c = newCache(newConf().loading().setLoader(new MyLoader()));
 
         assertGet(M1);
@@ -100,5 +110,13 @@ public class CreationTime extends AbstractCacheTCKTestBundle {
         getAll(M3, M4);
         assertPeekAndGet(M3, 4);
         assertPeekAndGet(M4, 5);
+    }
+
+    public void testCreationTimeCacheLoaderNoCreationTime() {
+        clock.setTimestamp(10);
+        c = newCache(newConf().setClock(clock).loading().setLoader(
+                new IntegerToStringLoader()));
+        get(M1);
+        assertEquals(10l, getEntry(M1).getCreationTime());
     }
 }

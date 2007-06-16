@@ -17,6 +17,7 @@ import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
 import org.coconut.cache.internal.service.service.InternalCacheServiceManager;
 import org.coconut.cache.internal.util.Resources;
 import org.coconut.cache.service.statistics.CacheHitStat;
+import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.core.Clock;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.annotation.ManagedAttribute;
@@ -31,8 +32,9 @@ import org.coconut.management.annotation.ManagedAttribute;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public final class DefaultCacheStatisticsService<K, V> extends AbstractInternalCacheService
-        implements InternalCacheOperation<K, V> {
+public final class DefaultCacheStatisticsService<K, V> extends
+        AbstractInternalCacheService implements InternalCacheOperation<K, V>,
+        CacheStatisticsService {
 
     // number of loads, loaded elements, number of queries,
     // number of added, number of new elements
@@ -194,6 +196,16 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractInternalC
         cacheClearCount.incrementAndGet();
     }
 
+    /**
+     * @see org.coconut.cache.service.servicemanager.AbstractCacheService#initialize(org.coconut.cache.CacheConfiguration,
+     *      java.util.Map)
+     */
+    @Override
+    public void initialize(CacheConfiguration<?, ?> configuration,
+            Map<Class<?>, Object> serviceMap) {
+        serviceMap.put(CacheStatisticsService.class, this);
+    }
+
     public long beforeCacheEvict(Cache<K, V> cache) {
         return System.nanoTime();
     }
@@ -251,7 +263,7 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractInternalC
         // we might also want to keep statistics about byte hit count..
         // and cost hit count...
         // total hit cost / total miss cost
-        boolean isHit = !isExpired && prev != null && newE == null;
+        boolean isHit = !isExpired && prev != null;
 
         if (prev == null) {
             if (newE == null) {
@@ -332,8 +344,7 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractInternalC
     }
 
     public CacheHitStat getHitStat() {
-        return new CacheHitStat(entryGetHitCount.get(),
-                entryGetMissCount.get());
+        return new CacheHitStat(entryGetHitCount.get(), entryGetMissCount.get());
     }
 
     public Collection<Object> getMetrics() {
@@ -510,11 +521,7 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractInternalC
 
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.InternalCacheService#isDummy()
-     */
-    public boolean isDummy() {
-        // TODO Auto-generated method stub
-        return false;
+    public void resetStatistics() {
+        cacheReset();
     }
 }

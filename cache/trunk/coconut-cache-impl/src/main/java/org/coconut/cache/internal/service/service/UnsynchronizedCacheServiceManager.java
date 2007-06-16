@@ -24,7 +24,7 @@ import org.coconut.internal.picocontainer.defaults.DefaultPicoContainer;
  */
 public class UnsynchronizedCacheServiceManager extends
         AbstractInternalCacheServiceManager {
-
+    
     private ServiceStatus status = ServiceStatus.NOTRUNNING;
 
     private final CacheConfiguration<?, ?> conf;

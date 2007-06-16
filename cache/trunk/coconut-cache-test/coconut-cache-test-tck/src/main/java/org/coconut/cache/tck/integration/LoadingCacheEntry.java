@@ -18,20 +18,6 @@ import org.junit.Test;
  */
 public class LoadingCacheEntry extends ExpirationTestBundle {
 
-    /**
-     * Tests that timestamp is set for creation date when loading values
-     */
-    @Test
-    public void testCreationDateFromLoader() {
-        CacheConfiguration<Integer, String> conf = CacheConfiguration.create();
-        conf.setClock(clock);
-        conf.loading().setLoader(AbstractLoadingTestBundle.DEFAULT_LOADER);
-        c = newCache(conf);
-        clock.setTimestamp(10);
-        get(M1);
-        assertEquals(10l, getEntry(M1).getCreationTime());
-    }
-
     @Test
     public void testLastUpdateFromLoader() {
         CacheConfiguration<Integer, String> conf = CacheConfiguration.create();

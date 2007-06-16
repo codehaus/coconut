@@ -10,14 +10,13 @@ import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
 import org.coconut.core.AttributeMap;
 import org.junit.Test;
 
-public class SizeOfElement extends AbstractCacheTCKTestBundle {
+public class Size extends AbstractCacheTCKTestBundle {
 
     static class MyLoader implements CacheLoader<Integer, String> {
         private int totalCount;
 
         public String load(Integer key, AttributeMap attributes) throws Exception {
             CacheAttributes.setSize(attributes, key + 1 + totalCount);
-            System.out.println("loaded " + key);
             totalCount++;
             return "" + (char) (key + 64);
         }
@@ -34,10 +33,11 @@ public class SizeOfElement extends AbstractCacheTCKTestBundle {
         assertEquals(5, getEntry(M3).getSize());
         
         assertGet(M6);
-        assertEquals(11, getEntry(M6).getSize());
+        assertEquals(9, getEntry(M6).getSize());
+        
         c.clear();
         assertGet(M1);
-        assertEquals(8, getEntry(M1).getSize());
+        assertEquals(5, getEntry(M1).getSize());
     }
 
     @SuppressWarnings("unchecked")

@@ -35,6 +35,8 @@ import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
+import org.coconut.cache.service.management.CacheManagementService;
+import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.spi.CacheServiceSupport;
 import org.coconut.core.AttributeMap;
@@ -56,6 +58,7 @@ import org.coconut.filter.Filter;
 @NotThreadSafe
 @CacheServiceSupport( { CacheEventService.class, CacheEvictionService.class,
         CacheExpirationService.class, CacheLoadingService.class,
+        CacheManagementService.class, CacheServiceManagerService.class,
         CacheStatisticsService.class })
 public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         ConcurrentMap<K, V> {
@@ -150,8 +153,8 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         }
         statistics.afterCacheEvict(this, started, map.size(), previousSize, map
                 .capacity(), previousCapacity, evicted, expired);
-        eventService.afterCacheEvict(this, started, map.size(), previousSize, map.capacity(),
-                previousCapacity, evicted, expired);
+        eventService.afterCacheEvict(this, started, map.size(), previousSize, map
+                .capacity(), previousCapacity, evicted, expired);
     }
 
     public Map<Class<?>, Object> getAllServices() {
@@ -285,7 +288,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
             }
         } else {
             isHit = true;
-            //TODO check if expired...
+            // TODO check if expired...
             loadingService.reloadIfNeeded(prev);
             prev.incrementHits();
             prev.accessed();
@@ -314,7 +317,6 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         return result;
     }
 
-
     /**
      * @see org.coconut.cache.defaults.AbstractCache#doPeek(java.lang.Object)
      */
@@ -337,10 +339,10 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         AbstractCacheEntry<K, V> e = entryFactory.createEntry(key, newValue, attributes,
                 prev);
         doPut(e);
-        statistics.afterPut(this, started, Collections.EMPTY_LIST, prev, e.getPolicyIndex() >= 0 ? e
-                : null);
-        eventService
-                .afterPut(this, started, trim(), e.getPolicyIndex() >= 0 ? e : null, prev);
+        statistics.afterPut(this, started, Collections.EMPTY_LIST, prev, e
+                .getPolicyIndex() >= 0 ? e : null);
+        eventService.afterPut(this, started, trim(), e.getPolicyIndex() >= 0 ? e : null,
+                prev);
         return prev;
     }
 
@@ -401,8 +403,8 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         doPut(e);
         statistics.afterPut(this, started, trim(), prev, e.getPolicyIndex() >= 0 ? e
                 : null);
-        eventService
-                .afterPut(this, started, trim(), prev, e.getPolicyIndex() >= 0 ? e : null);
+        eventService.afterPut(this, started, trim(), prev, e.getPolicyIndex() >= 0 ? e
+                : null);
         return prev;
     }
 
@@ -524,10 +526,10 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
          */
         public void putAll(Map<? extends K, ? extends V> keyValues,
                 Map<? extends K, AttributeMap> attributes) {
-            for (Map.Entry<? extends K,? extends V> e : keyValues.entrySet()) {
-                put(e.getKey(),e.getValue(), attributes.get(e.getKey()));
+            for (Map.Entry<? extends K, ? extends V> e : keyValues.entrySet()) {
+                put(e.getKey(), e.getValue(), attributes.get(e.getKey()));
             }
-        // TODO Auto-generated method stub
+            // TODO Auto-generated method stub
 
         }
 

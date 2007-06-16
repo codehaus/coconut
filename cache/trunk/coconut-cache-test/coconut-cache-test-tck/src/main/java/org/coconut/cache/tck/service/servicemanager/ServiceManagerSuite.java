@@ -4,7 +4,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses( { ServiceManagerOnCache.class})
+@Suite.SuiteClasses( { ServiceManagerOnCache.class, ServiceManagerService.class })
 public class ServiceManagerSuite {
 
 }

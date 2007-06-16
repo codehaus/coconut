@@ -1,8 +1,7 @@
 package org.coconut.cache.tck.service.eviction;
 
-import java.util.concurrent.TimeUnit;
-
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
+import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,12 +20,17 @@ public class EvictionService extends AbstractCacheTCKTestBundle {
         c = newCache();
     }
 
+    @Test
+    public void testServiceAvailable() {
+        assertNotNull(c.getService(CacheEvictionService.class));
+    }
+
     /**
      * Tests maximum capacity.
      */
     @Test
     public void maximumCapacity() {
-        assertEquals(DEFAULT.getMaximumCapacity(), eviction().getMaximumCapacity());
+        assertEquals(Long.MAX_VALUE, eviction().getMaximumCapacity());
         eviction().setMaximumCapacity(1000);
         assertEquals(1000, eviction().getMaximumCapacity());
 
@@ -48,7 +52,7 @@ public class EvictionService extends AbstractCacheTCKTestBundle {
      */
     @Test
     public void maximumSize() {
-        assertEquals(DEFAULT.getMaximumSize(), eviction().getMaximumSize());
+        assertEquals(Integer.MAX_VALUE, eviction().getMaximumSize());
         eviction().setMaximumSize(1000);
         assertEquals(1000, eviction().getMaximumSize());
 

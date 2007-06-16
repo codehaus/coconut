@@ -210,7 +210,7 @@ public class CacheAttributes {
      *            the map of attributes to set the cost attribute in
      * @param cost
      *            the cost to set the cost attribute to
-     * @return the specified AttributeMap
+     * @return the specified attribute map
      * @throws NullPointerException
      *             if the specified attributeMap is <code>null</code>
      * @throws IllegalArgumentException

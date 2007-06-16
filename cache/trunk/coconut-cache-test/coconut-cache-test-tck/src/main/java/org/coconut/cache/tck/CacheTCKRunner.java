@@ -14,18 +14,24 @@ import net.jcip.annotations.ThreadSafe;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.service.event.CacheEventService;
+import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.management.CacheManagementService;
+import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
+import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.spi.CacheServiceSupport;
 import org.coconut.cache.tck.cacheentry.CacheEntrySuite;
 import org.coconut.cache.tck.core.CoreSuite;
 import org.coconut.cache.tck.service.event.EventSuite;
 import org.coconut.cache.tck.service.eviction.CacheEntryToPolicy;
+import org.coconut.cache.tck.service.eviction.EvictionSuite;
 import org.coconut.cache.tck.service.eviction.SimplePolicyEviction;
 import org.coconut.cache.tck.service.expiration.ExpirationSuite;
 import org.coconut.cache.tck.service.loading.LoadingSuite;
 import org.coconut.cache.tck.service.management.ManagementSuite;
+import org.coconut.cache.tck.service.servicemanager.ServiceManagerSuite;
+import org.coconut.cache.tck.service.statistics.StatisticsSuite;
 import org.junit.Test;
 import org.junit.internal.runners.CompositeRunner;
 import org.junit.internal.runners.InitializationError;
@@ -56,7 +62,7 @@ public class CacheTCKRunner extends Runner {
             p.load(is);
             tt = (Class<? extends Cache>) Class.forName(p.getProperty("default"));
         } catch (ClassNotFoundException e) {
-            //ignore
+            // ignore
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -84,25 +90,29 @@ public class CacheTCKRunner extends Runner {
         if (ss != null) {
             services = Arrays.asList(ss.value());
         }
-        boolean isThreadSafe = klass.isAnnotationPresent(ThreadSafe.class);
-
         composite.add(new Suite(CacheEntrySuite.class));
         composite.add(new Suite(CoreSuite.class));
-        
-        if (services.contains(CacheLoadingService.class)) {
-            composite.add(new Suite(LoadingSuite.class));
+        if (services.contains(CacheEventService.class)) {
+            composite.add(new Suite(EventSuite.class));
+        }
+        if (services.contains(CacheEvictionService.class)) {
+            composite.add(new Suite(EvictionSuite.class));
         }
         if (services.contains(CacheExpirationService.class)) {
             composite.add(new Suite(ExpirationSuite.class));
         }
-        if (services.contains(CacheEventService.class)) {
-            composite.add(new Suite(EventSuite.class));
+        if (services.contains(CacheLoadingService.class)) {
+            composite.add(new Suite(LoadingSuite.class));
         }
         if (services.contains(CacheManagementService.class)) {
             composite.add(new Suite(ManagementSuite.class));
         }
-        composite.add(new TestClassRunner(CacheEntryToPolicy.class));
-        composite.add(new TestClassRunner(SimplePolicyEviction.class));
+        if (services.contains(CacheServiceManagerService.class)) {
+            composite.add(new Suite(ServiceManagerSuite.class));
+        }
+        if (services.contains(CacheStatisticsService.class)) {
+            composite.add(new Suite(StatisticsSuite.class));
+        }
     }
 
     /**

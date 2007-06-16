@@ -6,9 +6,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses( { EvictionMXBean.class, EvictionService.class,
         EvictionNoPolicy.class, EvictionLRU.class, EvictionLandlord.class,
-        EvictionClock.class
-
-})
+        EvictionClock.class, CacheEntryToPolicy.class, SimplePolicyEviction.class })
 public class EvictionSuite {
 
     // special support

@@ -20,6 +20,7 @@ import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.statistics.CacheHitStat;
+import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.core.Clock.DeterministicClock;
 import org.coconut.management.ManagedGroup;
@@ -267,7 +268,9 @@ public class AbstractCacheTCKTestBundle extends Assert {
     protected final CacheEvictionService<Integer, String> eviction() {
         return c.getService(CacheEvictionService.class);
     }
-
+    protected final CacheStatisticsService statistics() {
+        return c.getService(CacheStatisticsService.class);
+    }
     protected final CacheLoadingService<Integer, String> loading() {
         return c.getService(CacheLoadingService.class);
     }

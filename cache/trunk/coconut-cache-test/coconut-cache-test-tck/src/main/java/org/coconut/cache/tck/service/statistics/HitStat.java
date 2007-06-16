@@ -9,7 +9,6 @@ import static org.coconut.test.CollectionUtils.M2;
 import static org.coconut.test.CollectionUtils.M3;
 import static org.coconut.test.CollectionUtils.M4;
 import static org.coconut.test.CollectionUtils.M5;
-import static org.coconut.test.CollectionUtils.asList;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -18,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.coconut.cache.service.statistics.CacheStatisticsService;
+import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
 import org.junit.Test;
 
 /**
@@ -32,7 +32,7 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class HitStat extends StatisticsTestBundle {
+public class HitStat extends AbstractCacheTCKTestBundle {
 
     /**
      * Tests that reset hitstat works.
@@ -40,7 +40,7 @@ public class HitStat extends StatisticsTestBundle {
     @SuppressWarnings("unchecked")
     @Test
     public void resetHitstat() {
-        c= newCache(1);
+        c = newCache(1);
         CacheStatisticsService service = c.getService(CacheStatisticsService.class);
         assertGet(M1); // hit
         assertNullGet(M2); // miss
@@ -63,13 +63,14 @@ public class HitStat extends StatisticsTestBundle {
      */
     @Test
     public void getHitStat() {
-        c= newCache(1);
+        c = newCache(1);
 
         get(M2);
-        assertHitstat(0, 0, 1, service.getHitStat());
+        assertHitstat(0, 0, 1, statistics()
+                .getHitStat());
 
         get(M1);
-        assertHitstat(0.5f, 1, 1, service.getHitStat());
+        assertHitstat(0.5f, 1, 1, statistics().getHitStat());
     }
 
     /**
@@ -77,10 +78,10 @@ public class HitStat extends StatisticsTestBundle {
      */
     @Test
     public void peekHitstat() {
-        c= newCache(1);
+        c = newCache(1);
         assertNotNull(peek(M1)); // hit
         assertNull(peek(M2)); // miss
-        assertHitstat(Float.NaN, 0, 0, service.getHitStat());
+        assertHitstat(Float.NaN, 0, 0, statistics().getHitStat());
     }
 
     /**
@@ -107,7 +108,7 @@ public class HitStat extends StatisticsTestBundle {
         c = newCache(1);
         get(M1);
         remove(M1);
-        assertHitstat(1f, 1, 0, service.getHitStat());
+        assertHitstat(1f, 1, 0, statistics().getHitStat());
     }
 
     /**
@@ -138,7 +139,7 @@ public class HitStat extends StatisticsTestBundle {
      */
     @Test
     public void testValues() {
-        c= newCache(4);
+        c = newCache(4);
         Collection<String> values = c.values();
         values.contains(M1.getValue());
         values.contains(M5.getValue());
@@ -163,7 +164,7 @@ public class HitStat extends StatisticsTestBundle {
      */
     @Test
     public void testKeySet() {
-        c= newCache(4);
+        c = newCache(4);
         Set<Integer> keys = c.keySet();
         keys.contains(M1.getKey());
         keys.contains(M5.getKey());
@@ -190,7 +191,7 @@ public class HitStat extends StatisticsTestBundle {
     @SuppressWarnings("unchecked")
     @Test
     public void testEntrySet() {
-        c= newCache(4);
+        c = newCache(4);
         Set<Map.Entry<Integer, String>> entrySet = c.entrySet();
         entrySet.contains(M1);
         entrySet.contains(M5);
