@@ -9,7 +9,7 @@ public class CacheExecutorConfiguration<K, V> extends
 
     public static final String SERVICE_NAME = "CacheExecutor";
 
-    private CacheExecutorFactory executorFactory;
+    private CacheThreadManager executorFactory;
     public CacheExecutorConfiguration() {
         super(SERVICE_NAME);
     }
@@ -22,12 +22,12 @@ public class CacheExecutorConfiguration<K, V> extends
     protected void toXML(Document doc, Element parent) throws Exception {}
 
 
-    public CacheExecutorFactory getExecutorFactory() {
+    public CacheThreadManager getExecutorFactory() {
         return executorFactory;
     }
 
 
-    public void setExecutorFactory(CacheExecutorFactory executorFactory) {
+    public void setExecutorFactory(CacheThreadManager executorFactory) {
         this.executorFactory = executorFactory;
     }
 

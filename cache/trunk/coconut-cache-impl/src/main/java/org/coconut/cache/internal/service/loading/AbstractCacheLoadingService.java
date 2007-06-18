@@ -31,31 +31,66 @@ public abstract class AbstractCacheLoadingService<K, V> extends
         AbstractInternalCacheService implements CacheLoadingService<K, V>,
         InternalCacheLoadingService<K, V> {
 
-    private final CacheHelper<K, V> helper;
-
     private final InternalCacheAttributeService attributeFactory;
 
-    @Override
-    public void initialize(CacheConfiguration<?, ?> configuration,
-            Map<Class<?>, Object> serviceMap) {
-        serviceMap.put(CacheLoadingService.class, this);
-    }
-    
-    static long getDefaultTimeToRefresh(CacheLoadingConfiguration<?, ?> conf) {
-        long tmp = conf.getDefaultTimeToRefresh(TimeUnit.NANOSECONDS);
-        return tmp == 0 ? Long.MAX_VALUE : tmp;
-    }
-    
+    private final CacheHelper<K, V> helper;
+
     AbstractCacheLoadingService(InternalCacheAttributeService attributeFactory,
             CacheHelper<K, V> helper) {
         super(CacheLoadingConfiguration.SERVICE_NAME);
         this.attributeFactory = attributeFactory;
         this.helper = helper;
     }
+    
+    /**
+     * @see org.coconut.cache.service.loading.CacheLoadingService#filteredLoad(org.coconut.filter.Filter)
+     */
+    public final Future<?> filteredLoad(Filter<? super CacheEntry<K, V>> filter) {
+        if (filter == null) {
+            throw new NullPointerException("filter is null");
+        }
+        Collection<? extends K> keys = helper.filterKeys(filter);
+        return forceLoadAll(keys);
+    }
+    
+    /**
+     * @see org.coconut.cache.service.loading.CacheLoadingService#filteredLoad(org.coconut.filter.Filter,
+     *      org.coconut.core.AttributeMap)
+     */
+    public final Future<?> filteredLoad(Filter<? super CacheEntry<K, V>> filter,
+            AttributeMap defaultAttributes) {
+        if (filter == null) {
+            throw new NullPointerException("filter is null");
+        } else if (defaultAttributes == null) {
+            throw new NullPointerException("defaultAttributes is null");
+        }
+        Collection<? extends K> keys = helper.filterKeys(filter);
+        HashMap<K, AttributeMap> map = new HashMap<K, AttributeMap>();
+        for (K key : keys) {
+            map.put(key, defaultAttributes);
+        }
+        return forceLoadAll(map);
+    }
 
-    public abstract boolean canLoad();
-
-    public abstract long innerGetRefreshTime();
+    /**
+     * @see org.coconut.cache.service.loading.CacheLoadingService#filteredLoad(org.coconut.filter.Filter,
+     *      org.coconut.core.Transformer)
+     */
+    public final Future<?> filteredLoad(Filter<? super CacheEntry<K, V>> filter,
+            Transformer<CacheEntry<K, V>, AttributeMap> attributeTransformer) {
+        if (filter == null) {
+            throw new NullPointerException("filter is null");
+        } else if (attributeTransformer == null) {
+            throw new NullPointerException("defaultAttributes is null");
+        }
+        Collection<? extends CacheEntry<K, V>> keys = helper.filter(filter);
+        HashMap<K, AttributeMap> map = new HashMap<K, AttributeMap>();
+        for (CacheEntry<K, V> entry : keys) {
+            AttributeMap atr = attributeTransformer.transform(entry);
+            map.put(entry.getKey(), atr);
+        }
+        return forceLoadAll(map);
+    }
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#load(java.lang.Object)
      */
@@ -69,13 +104,6 @@ public abstract class AbstractCacheLoadingService<K, V> extends
      */
     public final Future<?> forceLoad(K key, AttributeMap attributes) {
         return doLoad(key, attributes, true);
-    }
-
-    /**
-     * @see org.coconut.cache.service.loading.CacheLoadingService#reloadAll()
-     */
-    public final Future<?> reloadAll() {
-        return filteredLoad(Filters.trueFilter());
     }
 
     /**
@@ -98,6 +126,14 @@ public abstract class AbstractCacheLoadingService<K, V> extends
     public final Future<?> forceLoadAll(Map<K, AttributeMap> mapsWithAttributes) {
         return doLoadAll(mapsWithAttributes, true);
     }
+
+    @Override
+    public void initialize(CacheConfiguration<?, ?> configuration,
+            Map<Class<?>, Object> serviceMap) {
+        serviceMap.put(CacheLoadingService.class, this);
+    }
+
+    public abstract long innerGetRefreshTime();
 
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#load(java.lang.Object)
@@ -122,9 +158,12 @@ public abstract class AbstractCacheLoadingService<K, V> extends
         return doLoadAll(mapsWithAttributes, false);
     }
 
-    public abstract V loadBlocking(K key, AttributeMap attributes);
-
-    public abstract void reloadIfNeeded(AbstractCacheEntry<K, V> entry);
+    /**
+     * @see org.coconut.cache.service.loading.CacheLoadingService#reloadAll()
+     */
+    public final Future<?> reloadAll() {
+        return filteredLoad(Filters.trueFilter());
+    }
 
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#load(java.lang.Object,
@@ -207,53 +246,8 @@ public abstract class AbstractCacheLoadingService<K, V> extends
 
     abstract Future<?> doLoad(Map<? extends K, AttributeMap> keysWithAttributes);
 
-    /**
-     * @see org.coconut.cache.service.loading.CacheLoadingService#filteredLoad(org.coconut.filter.Filter)
-     */
-    public final Future<?> filteredLoad(Filter<? super CacheEntry<K, V>> filter) {
-        if (filter == null) {
-            throw new NullPointerException("filter is null");
-        }
-        Collection<? extends K> keys = helper.filterKeys(filter);
-        return forceLoadAll(keys);
-    }
-
-    /**
-     * @see org.coconut.cache.service.loading.CacheLoadingService#filteredLoad(org.coconut.filter.Filter,
-     *      org.coconut.core.AttributeMap)
-     */
-    public final Future<?> filteredLoad(Filter<? super CacheEntry<K, V>> filter,
-            AttributeMap defaultAttributes) {
-        if (filter == null) {
-            throw new NullPointerException("filter is null");
-        } else if (defaultAttributes == null) {
-            throw new NullPointerException("defaultAttributes is null");
-        }
-        Collection<? extends K> keys = helper.filterKeys(filter);
-        HashMap<K, AttributeMap> map = new HashMap<K, AttributeMap>();
-        for (K key : keys) {
-            map.put(key, defaultAttributes);
-        }
-        return forceLoadAll(map);
-    }
-
-    /**
-     * @see org.coconut.cache.service.loading.CacheLoadingService#filteredLoad(org.coconut.filter.Filter,
-     *      org.coconut.core.Transformer)
-     */
-    public final Future<?> filteredLoad(Filter<? super CacheEntry<K, V>> filter,
-            Transformer<CacheEntry<K, V>, AttributeMap> attributeTransformer) {
-        if (filter == null) {
-            throw new NullPointerException("filter is null");
-        } else if (attributeTransformer == null) {
-            throw new NullPointerException("defaultAttributes is null");
-        }
-        Collection<? extends CacheEntry<K, V>> keys = helper.filter(filter);
-        HashMap<K, AttributeMap> map = new HashMap<K, AttributeMap>();
-        for (CacheEntry<K, V> entry : keys) {
-            AttributeMap atr = attributeTransformer.transform(entry);
-            map.put(entry.getKey(), atr);
-        }
-        return forceLoadAll(map);
+    static long getDefaultTimeToRefresh(CacheLoadingConfiguration<?, ?> conf) {
+        long tmp = conf.getDefaultTimeToRefresh(TimeUnit.NANOSECONDS);
+        return tmp == 0 ? Long.MAX_VALUE : tmp;
     }
 }

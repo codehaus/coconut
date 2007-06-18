@@ -24,8 +24,10 @@ public abstract class AbstractCacheExceptionHandler<K, V> {
 
     private String name;
 
-    public void eventDeliveryFailed(Cache<K, V> cache, CacheEvent<K, V> event,
-            EventSubscription<CacheEvent<K, V>> destination, Throwable cause) {}
+    public boolean eventDeliveryFailed(Cache<K, V> cache, CacheEvent<K, V> event,
+            EventSubscription<CacheEvent<K, V>> destination, Throwable cause) {
+        return false;
+    }
 
     public final synchronized String getCacheName() {
         return name;
@@ -44,11 +46,16 @@ public abstract class AbstractCacheExceptionHandler<K, V> {
     }
 
     public V loadFailed(Cache<K, V> cache, CacheLoader<? super K, ?> loader, K key,
-            AttributeMap map, boolean isAsync, Throwable cause) {
+            AttributeMap map, boolean isGet, Throwable cause) {
         return null;
     }
 
     public final synchronized void setCacheName(String name) {
+        if (name == null) {
+            throw new NullPointerException("name is null");
+        } else if (this.name != null) {
+            throw new IllegalStateException("Cache name has already been set");
+        }
         this.name = name;
     }
 
@@ -59,28 +66,24 @@ public abstract class AbstractCacheExceptionHandler<K, V> {
         this.logger = logger;
     }
 
-    public final void unhandledRuntimeException(RuntimeException t) {}
+    public void unhandledRuntimeException(RuntimeException t) {}
 
     /**
      * @param warning
      */
     public void warning(String warning) {};
 
-    private Logger createLogger() {
-        String loggerName = Cache.class.getPackage().getName() + "." + name;
-        java.util.logging.Logger l = java.util.logging.Logger.getLogger(loggerName);
-        String infoMsg = Resources
-                .lookup(AbstractCacheExceptionHandler.class, "noLogger");
-        Logger logger = Loggers.JDK.from(l);
-        l.setLevel(Level.ALL);
-        logger.info(MessageFormat.format(infoMsg, name, loggerName));
-        l.setLevel(Level.SEVERE);
-        return logger;
-    }
-
     private synchronized Logger initializeLogger() {
         if (logger == null) {
-            logger = createLogger();
+            String loggerName = Cache.class.getPackage().getName() + "." + name;
+            java.util.logging.Logger l = java.util.logging.Logger.getLogger(loggerName);
+            String infoMsg = Resources.lookup(AbstractCacheExceptionHandler.class,
+                    "noLogger");
+            Logger logger = Loggers.JDK.from(l);
+            l.setLevel(Level.ALL);
+            logger.info(MessageFormat.format(infoMsg, name, loggerName));
+            l.setLevel(Level.SEVERE);
+            return logger;
         }
         return logger;
     }

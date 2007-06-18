@@ -8,11 +8,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class CacheExecutorUtil {
 
-    public static CacheExecutorFactory sharedExecutorFactory() {
+    public static CacheThreadManager sharedExecutorFactory() {
         return null;
     }
 
-    public static class DefaultCacheExceptionHandler<K, V> extends CacheServiceExecutor {
+    public static class DefaultCacheExceptionHandler<K, V> extends CacheServiceThreadManage {
 
         Class service;
 

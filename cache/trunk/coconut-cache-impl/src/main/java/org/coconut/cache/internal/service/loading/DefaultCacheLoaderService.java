@@ -3,6 +3,7 @@
  */
 package org.coconut.cache.internal.service.loading;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
@@ -16,13 +17,12 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheServices;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
-import org.coconut.cache.internal.service.expiration.AbstractExpirationService;
+import org.coconut.cache.internal.service.expiration.DefaultCacheExpirationService;
 import org.coconut.cache.internal.service.threading.InternalCacheThreadingService;
 import org.coconut.cache.internal.service.util.ExtendableFutureTask;
 import org.coconut.cache.internal.spi.CacheHelper;
 import org.coconut.cache.internal.spi.ExtendedExecutorRunnable;
 import org.coconut.cache.service.exceptionhandling.AbstractCacheExceptionHandler;
-import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
@@ -43,9 +43,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
 
     private final AbstractCacheExceptionHandler<K, V> errorHandler;
 
-    private final AbstractExpirationService<K, V> expirationService;
-
-    private final IsValidEntry isValid = new IsValidEntry();
+    private final DefaultCacheExpirationService<K, V> expirationService;
 
     private final CacheLoader<? super K, ? extends V> loader;
 
@@ -65,13 +63,13 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
      */
     public DefaultCacheLoaderService(final Clock clock,
             InternalCacheAttributeService attributeFactory,
-            CacheExceptionHandlingConfiguration<K, V> errorHandler,
+            AbstractCacheExceptionHandler<K, V> exceptionHandler,
             CacheLoadingConfiguration<K, V> loadConf,
             final InternalCacheThreadingService threadManager,
-            AbstractExpirationService<K, V> expirationService,
+            DefaultCacheExpirationService<K, V> expirationService,
             final CacheHelper<K, V> cache) {
         super(attributeFactory, cache);
-        this.errorHandler = errorHandler.getExceptionHandler();
+        this.errorHandler = exceptionHandler;
         this.clock = clock;
         this.loader = loadConf.getLoader();
         this.loadExecutor = threadManager.getExecutor(CacheLoadingService.class)
@@ -82,26 +80,10 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         this.expirationService = expirationService;
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.loading.InternalCacheLoadingService#canLoad()
-     */
-    public boolean canLoad() {
-        return true;
-    }
-
     Future<?> doLoad(K key, AttributeMap attributes) {
         LoadValueRunnable lvr = new LoadValueRunnable<K, V>(this, loader, key, attributes);
         loadExecutor.execute(lvr);
         return lvr;
-    }
-
-    public static <K, V> ScheduledFuture<?> scheduleLoad(final Cache<K, V> cache,
-            final K key, ScheduledExecutorService ses) {
-        return ses.schedule(new Runnable() {
-            public void run() {
-                CacheServices.loading(cache).load(key);
-            }
-        }, 100, TimeUnit.DAYS);
     }
 
     /**
@@ -119,8 +101,11 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
      * @see org.coconut.cache.internal.service.loading.InternalCacheLoadingService#loadBlocking(java.lang.Object,
      *      org.coconut.core.AttributeMap)
      */
-    public V loadBlocking(CacheLoader<? super K, ? extends V> loader, K key,
+    private V loadBlocking(CacheLoader<? super K, ? extends V> loader, K key,
             AttributeMap attributes) {
+        if (loader == null) {
+            return null;
+        }
         V v = null;
         try {
             v = loader.load(key, attributes);
@@ -146,11 +131,9 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
     public Map<? super K, ? extends V> loadAllBlocking(
             CacheLoader<? super K, ? extends V> loader,
             Map<? extends K, AttributeMap> keys) {
-        Map<? super K, ? extends V> map = null;
-        try {
-            map = null; // loader.loadAll(keys);
-        } catch (Exception e) {
-            // map = errorHandler.loadAllFailed(loader, keys, false, e);
+        Map<K, V> map = new HashMap<K, V>();
+        for (Map.Entry<? extends K, AttributeMap> entry : keys.entrySet()) {
+            map.put(entry.getKey(), loadBlocking(entry.getKey(), entry.getValue()));
         }
         return map;
     }
@@ -180,17 +163,6 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         if (needsReload(entry)) {
             load(entry.getKey());
         }
-    }
-
-    class IsValidEntry implements Filter<CacheEntry> {
-
-        /**
-         * @see org.coconut.filter.Filter#accept(java.lang.Object)
-         */
-        public boolean accept(CacheEntry element) {
-            return element == null ? false : !expirationService.innerIsExpired(element);
-        }
-
     }
 
     static class LoadValueRunnable<K, V> extends ExtendableFutureTask implements
@@ -245,12 +217,14 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
             try {
                 v = loader.load(key, attributes);
             } catch (Exception e) {
-                v = loaderService.errorHandler.loadFailed(loaderService.cache.getCache(),
-                        loader, key, attributes, true, e);
+                try {
+                    v = loaderService.errorHandler.loadFailed(loaderService.cache
+                            .getCache(), loader, key, attributes, true, e);
+                } catch (RuntimeException re) {
+                    loaderService.errorHandler.unhandledRuntimeException(re);
+                }
             }
-            if (v != null) {
-                loaderService.cache.valueLoaded(key, v, attributes);
-            }
+            loaderService.cache.valueLoaded(key, v, attributes);
             return null;
         }
     }

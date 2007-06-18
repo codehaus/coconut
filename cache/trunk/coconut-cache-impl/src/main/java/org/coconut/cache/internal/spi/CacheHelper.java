@@ -36,7 +36,7 @@ public interface CacheHelper<K, V> {
     Object getMutex();
 
     V put(K key, V value, AttributeMap attributes);
-
+    void putAll(Map<? extends K, ? extends V> keyValues);
     void putAll(Map<? extends K, ? extends V> keyValues,
             Map<? extends K, AttributeMap> attributes);
 

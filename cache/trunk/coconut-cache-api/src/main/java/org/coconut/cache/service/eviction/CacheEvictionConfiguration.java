@@ -71,7 +71,6 @@ public class CacheEvictionConfiguration<K, V> extends
         super(SERVICE_NAME);
     }
 
-
     /**
      * Returns the maximum allowed capacity of the cache or {@link Long#MAX_VALUE} if
      * there is no limit.
@@ -117,12 +116,12 @@ public class CacheEvictionConfiguration<K, V> extends
     }
 
     public long getScheduledEvictionAtFixedRate(TimeUnit unit) {
-        if (unit == null) {
-            throw new NullPointerException("unit is null");
+        if (scheduleEvictionAtFixedRateNanos == Long.MAX_VALUE) {
+            return Long.MAX_VALUE;
+        } else {
+            return unit.convert(scheduleEvictionAtFixedRateNanos, TimeUnit.NANOSECONDS);
         }
-        return unit.convert(scheduleEvictionAtFixedRateNanos, TimeUnit.NANOSECONDS);
     }
-
 
     /**
      * Sets that maximum number of elements that a cache can contain. If the limit is
@@ -140,9 +139,9 @@ public class CacheEvictionConfiguration<K, V> extends
      *             if the specified
      */
     public CacheEvictionConfiguration<K, V> setMaximumCapacity(long maximumCapacity) {
-        if (maximumCapacity <= 0) {
-            throw new IllegalArgumentException("capacity must greater then 0, was "
-                    + maximumCapacity);
+        if (maximumCapacity < 0) {
+            throw new IllegalArgumentException(
+                    "capacity must be a non-negative number, was " + maximumCapacity);
         }
         this.maximumCapacity = maximumCapacity;
         return this;
@@ -211,7 +210,7 @@ public class CacheEvictionConfiguration<K, V> extends
     }
 
     public CacheEvictionConfiguration<K, V> setPreferableCapacity(long capacity) {
-        if (capacity <= 0) {
+        if (capacity < 0) {
             throw new IllegalArgumentException("capacity must greater then 0, was "
                     + capacity);
         }

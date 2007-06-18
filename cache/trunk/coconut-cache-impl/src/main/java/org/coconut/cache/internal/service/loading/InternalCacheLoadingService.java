@@ -10,7 +10,6 @@ import org.coconut.core.AttributeMap;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public interface InternalCacheLoadingService<K, V> {
-    boolean isDummy();
 
     void reloadIfNeeded(AbstractCacheEntry<K, V> entry);
 
@@ -19,8 +18,8 @@ public interface InternalCacheLoadingService<K, V> {
      *            the key for which a corresponding value should be loaded
      * @param attributes
      *            a list of attributes that should be passed to cache loader
-     * @return a corresponding value for the specified key, or <tt>null</tt>
-     *         if no such value exist
+     * @return a corresponding value for the specified key, or <tt>null</tt> if no such
+     *         value exist
      */
     V loadBlocking(K key, AttributeMap attributes);
 

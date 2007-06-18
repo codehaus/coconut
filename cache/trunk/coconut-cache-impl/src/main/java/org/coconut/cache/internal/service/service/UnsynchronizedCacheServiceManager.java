@@ -13,8 +13,11 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.attribute.DefaultCacheAttributeService;
 import org.coconut.cache.internal.service.entry.UnsynchronizedEntryFactoryService;
 import org.coconut.cache.internal.spi.CacheHelper;
+import org.coconut.cache.service.exceptionhandling.AbstractCacheExceptionHandler;
+import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlers;
 import org.coconut.cache.service.servicemanager.AbstractCacheService;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
+import org.coconut.core.Logger;
 import org.coconut.internal.picocontainer.ComponentAdapter;
 import org.coconut.internal.picocontainer.defaults.DefaultPicoContainer;
 
@@ -24,7 +27,7 @@ import org.coconut.internal.picocontainer.defaults.DefaultPicoContainer;
  */
 public class UnsynchronizedCacheServiceManager extends
         AbstractInternalCacheServiceManager {
-    
+
     private ServiceStatus status = ServiceStatus.NOTRUNNING;
 
     private final CacheConfiguration<?, ?> conf;
@@ -50,6 +53,20 @@ public class UnsynchronizedCacheServiceManager extends
         container.registerComponentInstance(helper);
         container.registerComponentInstance(conf);
         container.registerComponentInstance(conf.getClock());
+        AbstractCacheExceptionHandler<?, ?> h = conf.exceptionHandling()
+                .getExceptionHandler();
+        if (h == null) {
+            h = CacheExceptionHandlers.defaultExceptionHandler();
+        }
+        h.setCacheName(cache.getName());
+        Logger l = conf.exceptionHandling().getExceptionLogger();
+        if (l == null) {
+            l = conf.getDefaultLog();
+        }
+        if (l != null) {
+            h.setLogger(l);
+        }
+        container.registerComponentInstance(h);
         container.registerComponentImplementation(DefaultCacheAttributeService.class);
         container
                 .registerComponentImplementation(UnsynchronizedEntryFactoryService.class);
@@ -117,7 +134,7 @@ public class UnsynchronizedCacheServiceManager extends
             service.start(c);
         }
 
-        void started(Cache<?,?> c) {
+        void started(Cache<?, ?> c) {
             service.started(c);
         }
 

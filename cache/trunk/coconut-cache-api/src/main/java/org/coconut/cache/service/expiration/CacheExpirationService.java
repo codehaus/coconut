@@ -39,13 +39,6 @@ public interface CacheExpirationService<K, V> {
     long NEVER_EXPIRE = Long.MAX_VALUE;
 
     /**
-     * Expires all the entries currently located in the cache.
-     * 
-     * @return the number of entries that was expired
-     */
-    int removeAll();
-
-    /**
      * Attempts to expire all of the mappings for the specified collection of keys. The
      * effect of this call is equivalent to that of calling {@link #expire(Object)} on
      * this service once for each key in the specified collection. However, in some cases
@@ -156,5 +149,4 @@ public interface CacheExpirationService<K, V> {
      * @see #getDefaultTimeToLive(TimeUnit)
      */
     void setDefaultTimeToLive(long timeToLive, TimeUnit unit);
-
 }

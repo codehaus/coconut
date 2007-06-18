@@ -6,6 +6,7 @@ package org.coconut.internal.util;
 import java.lang.reflect.Constructor;
 import java.util.ResourceBundle;
 
+import org.coconut.core.Logger;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -74,6 +75,18 @@ public class XmlUtil {
         }
     }
 
+    public static void writeLogger(Document doc, Element base, String element,
+            Logger logger) {
+        if (logger != null) {
+            LogHelper.saveLogger(doc, base, element, logger, "could not save logger");
+        }
+    }
+
+    public static Logger readLogger(Element base, String element) {
+        Element e = getChild(element, base);
+        return e == null ? null : LogHelper.readLog(e);
+    }
+
     public static void writeInt(Document doc, Element base, String name, int value,
             int defaultInt) {
         if (value != defaultInt) {
@@ -96,7 +109,6 @@ public class XmlUtil {
         if (o != null) {
             Element e = add(doc, elementName, parent);
             return saveObject(doc, e, bundle, comment, o);
-
         }
         return false;
     }

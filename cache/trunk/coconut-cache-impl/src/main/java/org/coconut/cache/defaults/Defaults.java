@@ -5,7 +5,7 @@ package org.coconut.cache.defaults;
 
 import org.coconut.cache.internal.service.event.DefaultCacheEventService;
 import org.coconut.cache.internal.service.eviction.UnsynchronizedCacheEvictionService;
-import org.coconut.cache.internal.service.expiration.UnsynchronizedCacheExpirationService;
+import org.coconut.cache.internal.service.expiration.DefaultCacheExpirationService;
 import org.coconut.cache.internal.service.loading.DefaultCacheLoaderService;
 import org.coconut.cache.internal.service.management.DefaultCacheManagementService;
 import org.coconut.cache.internal.service.service.InternalCacheServiceManager;
@@ -23,7 +23,7 @@ final class Defaults {
             InternalCacheServiceManager serviceManager) {
         serviceManager.registerServices(DefaultCacheStatisticsService.class);
         serviceManager.registerServices(UnsynchronizedCacheEvictionService.class);
-        serviceManager.registerServices(UnsynchronizedCacheExpirationService.class);
+        serviceManager.registerServices(DefaultCacheExpirationService.class);
         serviceManager.registerServices(DefaultCacheLoaderService.class);
         serviceManager.registerServices(DefaultCacheManagementService.class);
         serviceManager.registerServices(DefaultCacheEventService.class);

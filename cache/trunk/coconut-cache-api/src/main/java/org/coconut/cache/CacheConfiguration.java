@@ -324,7 +324,15 @@ public final class CacheConfiguration<K, V> {
     public CacheLoadingConfiguration<K, V> loading() {
         return lazyCreate(CacheLoadingConfiguration.class);
     }
-
+    /**
+     * Returns a configuration object that can be used to control how loading is done in
+     * the cache.
+     * 
+     * @return a CacheLoadingConfiguration
+     */
+    public CacheExceptionHandlingConfiguration<K, V> exceptionHandling() {
+        return lazyCreate(CacheExceptionHandlingConfiguration.class);
+    }
     /**
      * Returns a configuration object that can be used to control how services are
      * remotely managed.

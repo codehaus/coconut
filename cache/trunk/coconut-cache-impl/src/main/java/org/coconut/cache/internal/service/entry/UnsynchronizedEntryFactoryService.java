@@ -4,9 +4,9 @@
 package org.coconut.cache.internal.service.entry;
 
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
-import org.coconut.cache.internal.service.expiration.AbstractExpirationService;
+import org.coconut.cache.internal.service.expiration.DefaultCacheExpirationService;
 import org.coconut.cache.internal.service.loading.AbstractCacheLoadingService;
-import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
+import org.coconut.cache.service.exceptionhandling.AbstractCacheExceptionHandler;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
 
@@ -19,11 +19,11 @@ public class UnsynchronizedEntryFactoryService<K, V> extends
     private final InternalCacheAttributeService attributeService;
 
     public UnsynchronizedEntryFactoryService(Clock clock,
-            CacheExceptionHandlingConfiguration<K, V> conf,
+            AbstractCacheExceptionHandler<K, V> exceptionHandler,
             InternalCacheAttributeService attributeService,
-            AbstractExpirationService<K, V> expirationService,
+            DefaultCacheExpirationService<K, V> expirationService,
             AbstractCacheLoadingService<K, V> loadingService) {
-        super(clock, conf, expirationService, loadingService);
+        super(clock, exceptionHandler, expirationService, loadingService);
         this.attributeService = attributeService;
     }
 

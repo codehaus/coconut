@@ -15,16 +15,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
-import org.coconut.cache.service.threading.CacheServiceExecutor;
+import org.coconut.cache.service.threading.CacheServiceThreadManage;
 import org.coconut.cache.service.threading.CacheExecutorConfiguration;
-import org.coconut.cache.service.threading.CacheExecutorFactory;
+import org.coconut.cache.service.threading.CacheThreadManager;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class NoThreadingCacheService extends AbstractInternalCacheService implements
-        InternalCacheThreadingService, CacheExecutorFactory {
+        InternalCacheThreadingService, CacheThreadManager {
 
     /**
      * @param name
@@ -47,11 +47,11 @@ public class NoThreadingCacheService extends AbstractInternalCacheService implem
         command.run();// ??
     }
 
-    public CacheServiceExecutor createCacheExecutor(Class<?> service) {
+    public CacheServiceThreadManage createCacheExecutor(Class<?> service) {
         return new SameThreadCacheExecutor();
     }
 
-    static class SameThreadCacheExecutor extends CacheServiceExecutor {
+    static class SameThreadCacheExecutor extends CacheServiceThreadManage {
 
         @Override
         public ExecutorService createExecutorService() {
@@ -135,7 +135,7 @@ public class NoThreadingCacheService extends AbstractInternalCacheService implem
 
     }
 
-    public CacheServiceExecutor getExecutor(Class<?> service) {
+    public CacheServiceThreadManage getExecutor(Class<?> service) {
         return new SameThreadCacheExecutor();
     }
 }

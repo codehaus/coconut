@@ -36,7 +36,6 @@ public class CacheExpirationConfiguration<K, V> extends
 
     /** The default settings, used when xml-serializing this configuration */
     private final static CacheExpirationConfiguration<?, ?> DEFAULT = new CacheExpirationConfiguration<Object, Object>();
-
     
     private long defaultTimeToLive;
 

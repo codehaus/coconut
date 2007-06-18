@@ -20,6 +20,7 @@ public class ExpirationPutWithTimeouts extends AbstractExpirationTestBundle {
     public void setupCache() {
         c = newCache();
     }
+
     @Test
     public void testExpirationDate() {
         clock.setTimestamp(10);
@@ -57,7 +58,7 @@ public class ExpirationPutWithTimeouts extends AbstractExpirationTestBundle {
 
     @Test(expected = NullPointerException.class)
     public void testPutTimeoutNull() {
-        expiration().put(1, "A", CacheExpirationService.DEFAULT_EXPIRATION, null);
+        expiration().put(1, "A", 123, null);
     }
 
     @Test
@@ -89,15 +90,15 @@ public class ExpirationPutWithTimeouts extends AbstractExpirationTestBundle {
 
     @Test(expected = IllegalArgumentException.class)
     public void testPutAllTimeoutNegativeTimeout() {
-        expiration().putAll(new HashMap<Integer, String>(), -1, TimeUnit.SECONDS);
-        fail("Did not throw IllegalArgumentException");
+        Map<Integer, String> m = new HashMap<Integer, String>();
+        m.put(0, "A");
+        expiration().putAll(m, -1, TimeUnit.SECONDS);
     }
 
     @Test(expected = NullPointerException.class)
     public void testPutAllTimeoutNull() {
-        expiration().putAll(new HashMap<Integer, String>(),
-                CacheExpirationService.DEFAULT_EXPIRATION, null);
-
+        Map<Integer, String> m = new HashMap<Integer, String>();
+        m.put(0, "A");
+        expiration().putAll(m, 22, null);
     }
-
 }

@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.ReplacementPolicy;
-import org.coconut.cache.internal.service.expiration.AbstractExpirationService;
+import org.coconut.cache.internal.service.expiration.DefaultCacheExpirationService;
 import org.coconut.cache.internal.service.loading.AbstractCacheLoadingService;
 import org.coconut.cache.service.exceptionhandling.AbstractCacheExceptionHandler;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
@@ -24,16 +24,16 @@ public abstract class AbstractCacheEntryFactoryService<K, V> {
 
     private final AbstractCacheExceptionHandler<K, V> errorHandler;
 
-    private final AbstractExpirationService<K, V> expirationService;
+    private final DefaultCacheExpirationService<K, V> expirationService;
 
     private final AbstractCacheLoadingService<K, V> loadingService;
 
     public AbstractCacheEntryFactoryService(Clock clock,
-            CacheExceptionHandlingConfiguration<K, V> conf,
-            AbstractExpirationService<K, V> expirationService,
+            AbstractCacheExceptionHandler<K, V> exceptionHandler,
+            DefaultCacheExpirationService<K, V> expirationService,
             AbstractCacheLoadingService<K, V> loadingService) {
         this.clock = clock;
-        this.errorHandler = conf.getExceptionHandler();
+        this.errorHandler = exceptionHandler;
         this.expirationService = expirationService;
         this.loadingService = loadingService;
     }

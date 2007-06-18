@@ -24,7 +24,7 @@ import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService
 import org.coconut.cache.internal.service.entry.EntryMap;
 import org.coconut.cache.internal.service.event.InternalCacheEventService;
 import org.coconut.cache.internal.service.eviction.InternalCacheEvictionService;
-import org.coconut.cache.internal.service.expiration.UnsynchronizedCacheExpirationService;
+import org.coconut.cache.internal.service.expiration.DefaultCacheExpirationService;
 import org.coconut.cache.internal.service.joinpoint.InternalCacheOperation;
 import org.coconut.cache.internal.service.loading.InternalCacheLoadingService;
 import org.coconut.cache.internal.service.service.InternalCacheServiceManager;
@@ -70,7 +70,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
 
     private final InternalCacheEvictionService<K, V, AbstractCacheEntry<K, V>> evictionService;
 
-    private final UnsynchronizedCacheExpirationService<K, V> expiration;
+    private final DefaultCacheExpirationService<K, V> expiration;
 
     private final EntryMap<K, V> map = new EntryMap<K, V>(false);
 
@@ -88,8 +88,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         super(conf);
         serviceManager = new UnsynchronizedCacheServiceManager(this, new MyHelper(), conf);
         Defaults.initializeUnsynchronizedCache(serviceManager);
-        expiration = serviceManager
-                .getService(UnsynchronizedCacheExpirationService.class);
+        expiration = serviceManager.getService(DefaultCacheExpirationService.class);
         loadingService = serviceManager.getService(InternalCacheLoadingService.class);
         evictionService = serviceManager.getService(InternalCacheEvictionService.class);
         eventService = serviceManager.getService(InternalCacheEventService.class);
@@ -544,7 +543,9 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
          *      java.lang.Object, org.coconut.core.AttributeMap)
          */
         public void valueLoaded(K key, V value, AttributeMap attributes) {
-            doPut(key, value, false, attributes);
+            if (value != null) {
+                doPut(key, value, false, attributes);
+            }
         }
 
         /**
@@ -555,6 +556,10 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
                 Map<? extends K, AttributeMap> keys) {
         // TODO Auto-generated method stub
 
+        }
+
+        public void putAll(Map<? extends K, ? extends V> keyValues) {
+            UnsynchronizedCache.this.putAll(keyValues);
         }
 
     }

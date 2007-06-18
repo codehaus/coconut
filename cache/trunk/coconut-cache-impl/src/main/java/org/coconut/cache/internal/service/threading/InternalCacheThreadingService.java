@@ -5,7 +5,7 @@ package org.coconut.cache.internal.service.threading;
 
 import java.util.concurrent.Executor;
 
-import org.coconut.cache.service.threading.CacheServiceExecutor;
+import org.coconut.cache.service.threading.CacheServiceThreadManage;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -14,5 +14,5 @@ import org.coconut.cache.service.threading.CacheServiceExecutor;
 public interface InternalCacheThreadingService {
     boolean isActive();
     
-    CacheServiceExecutor getExecutor(Class<?> service);
+    CacheServiceThreadManage getExecutor(Class<?> service);
 }

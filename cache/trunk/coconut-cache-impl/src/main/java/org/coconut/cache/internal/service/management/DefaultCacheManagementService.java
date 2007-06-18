@@ -10,12 +10,10 @@ import java.util.concurrent.Executor;
 import javax.management.JMException;
 import javax.management.MBeanServer;
 
-import net.jcip.annotations.ThreadSafe;
-
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
-import org.coconut.cache.internal.service.service.InternalCacheServiceManager;
+import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
 import org.coconut.cache.service.management.CacheMXBean;
 import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.cache.service.management.CacheManagementService;
@@ -25,78 +23,63 @@ import org.coconut.management.Managements;
 import org.coconut.management.defaults.DefaultManagedGroup;
 
 /**
- * <p>
- * This service does not implements CacheMXBean because of a name clash between
- * {@link AbstractCacheManagementService#getName()} and {@link CacheMXBean#getName()}
+ * The default implementation of {@link CacheManagementService}. All methods exposed
+ * through the CacheManagementService interface can be invoked in a thread safe manner.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-@ThreadSafe
-public class DefaultCacheManagementService extends AbstractCacheManagementService {
+public class DefaultCacheManagementService extends AbstractInternalCacheService implements
+        CacheManagementService {
 
-    private final String domain;
+    /** The Managed root group. */
+    private final ManagedGroup root;
 
-    private final ManagedGroup group;
-
+    /** Whether or not this service is enabled. */
     private final boolean isEnabled;
 
-    private final InternalCacheServiceManager manager;
-
+    /** Used to register all services. */
     private final ManagedGroupVisitor registrant;
 
     /**
      * Creates a new DefaultCacheManagementService.
      * 
-     * @param serviceManager
-     *            The cache service manager
-     * @param managementConfiguration
+     * @param configuration
      *            the configuration of the Cache Management service
-     * @param cache
-     *            the cache for which to expose MBeans
-     * @param name
+     * @param cacheName
      *            the name of the cache
      */
-    public DefaultCacheManagementService(InternalCacheServiceManager serviceManager,
-            CacheManagementConfiguration managementConfiguration, Cache<?, ?> cache,
-            String name) {
-        if (serviceManager == null) {
-            throw new NullPointerException("serviceManager is null");
-        } else if (managementConfiguration == null) {
-            throw new NullPointerException("managementConfiguration is null");
-        } else if (cache == null) {
+    public DefaultCacheManagementService(CacheManagementConfiguration configuration,
+            String cacheName) {
+        super(CacheManagementConfiguration.SERVICE_NAME);
+        if (configuration == null) {
+            throw new NullPointerException("configuration is null");
+        } else if (cacheName == null) {
             throw new NullPointerException("cache is null");
-        } else if (name == null) {
-            throw new NullPointerException("name is null");
-        }
-        this.manager = serviceManager;
-        isEnabled = managementConfiguration.isEnabled();
-        if (managementConfiguration.getDomain() == null) {
-            domain = CacheMXBean.DEFAULT_JMX_DOMAIN;
-        } else {
-            domain = managementConfiguration.getDomain();
         }
 
-        if (managementConfiguration.getRoot() == null) {
-            group = new DefaultManagedGroup(name,
-                    "This group contains all managed Cache services", false);
-        } else {
-            group = managementConfiguration.getRoot();
-        }
+        /* Set IsEnabled */
+        isEnabled = configuration.isEnabled();
 
-        MBeanServer server = managementConfiguration.getMBeanServer();
-        if (server == null) {
-            server = ManagementFactory.getPlatformMBeanServer();
-        }
-        if (managementConfiguration.getRegistrant() == null) {
+        /* Set Management Root */
+        ManagedGroup tmpRoot = configuration.getRoot();
+        root = tmpRoot == null ? new DefaultManagedGroup(cacheName,
+                "This group contains all managed Cache services", false) : tmpRoot;
+
+        /* Set Registrant */
+        if (configuration.getRegistrant() == null) {
+            MBeanServer server = configuration.getMBeanServer();
+            if (server == null) {
+                server = ManagementFactory.getPlatformMBeanServer();
+            }
+            String domain = configuration.getDomain();
+            if (domain == null) {
+                domain = CacheMXBean.DEFAULT_JMX_DOMAIN;
+            }
             registrant = Managements.register(server, domain, "name", "service", "group");
         } else {
-            registrant = managementConfiguration.getRegistrant();
+            registrant = configuration.getRegistrant();
         }
-
-        ManagedGroup g = group.addChild(CacheMXBean.MANAGED_SERVICE_NAME,
-                "General cache attributes and operations");
-        g.add(new DelegatedCacheMXBean(cache));
     }
 
     /**
@@ -104,11 +87,10 @@ public class DefaultCacheManagementService extends AbstractCacheManagementServic
      */
     public ManagedGroup getRoot() {
         if (isEnabled) {
-            // TODO im not sure we need to lazy start
-            return group;
+            return root;
         } else {
             throw new UnsupportedOperationException(
-                    "The service does not support this operation");
+                    "This service does not support this operation");
         }
     }
 
@@ -120,8 +102,8 @@ public class DefaultCacheManagementService extends AbstractCacheManagementServic
     public void initialize(CacheConfiguration<?, ?> configuration,
             Map<Class<?>, Object> serviceMap) {
         if (isEnabled) {
-            serviceMap.put(CacheManagementService.class,
-                    new DelegatedCacheManagementService(this));
+            serviceMap.put(CacheManagementService.class, ManagementUtils
+                    .wrapService(this));
         }
     }
 
@@ -132,7 +114,7 @@ public class DefaultCacheManagementService extends AbstractCacheManagementServic
     public void shutdown(Executor e) {
         if (isEnabled) {
             try {
-                group.unregister();
+                root.unregister();
             } catch (JMException jme) {
                 throw new CacheException(jme);
             }
@@ -145,8 +127,12 @@ public class DefaultCacheManagementService extends AbstractCacheManagementServic
     @Override
     public void started(Cache<?, ?> cache) {
         if (isEnabled) {
+            ManagedGroup g = root.addChild(CacheMXBean.MANAGED_SERVICE_NAME,
+                    "General cache attributes and operations");
+            g.add(ManagementUtils.wrapMXBean(cache));
+
             try {
-                registrant.visitManagedGroup(group);
+                registrant.visitManagedGroup(root);
             } catch (JMException e) {
                 throw new CacheException(e);
             }

@@ -5,12 +5,16 @@ package org.coconut.cache.service.eviction;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertSame;
 import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
 
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.cache.CacheEntry;
 import org.coconut.cache.ReplacementPolicy;
+import org.coconut.filter.Filter;
+import org.coconut.filter.Filters;
 import org.coconut.test.MockTestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,106 +24,162 @@ import org.junit.Test;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class CacheEvictionConfigurationTest {
-    private CacheEvictionConfiguration<Number, Collection<?>> ee;
+    private final static Filter<CacheEntry<Integer, String>> DEFAULT_FILTER = Filters
+            .trueFilter();
 
-    private CacheEvictionConfiguration<Number, Collection<?>> DEFAULT = new CacheEvictionConfiguration<Number, Collection<?>>();
+    static CacheEvictionConfiguration<Integer, String> DEFAULT = new CacheEvictionConfiguration<Integer, String>();
+
+    private CacheEvictionConfiguration<Integer, String> conf;
 
     @Before
     public void setUp() {
-        ee = new CacheEvictionConfiguration<Number, Collection<?>>();
+        conf = new CacheEvictionConfiguration<Integer, String>();
     }
 
     @Test
-    public void testScheduledEvictionAtFixedRate() {
-        assertEquals(ee, ee.setScheduledEvictionAtFixedRate(4, TimeUnit.MICROSECONDS));
-        assertEquals(4000, ee.getScheduledEvictionAtFixedRate(TimeUnit.NANOSECONDS));
+    public void testPreferableCapacity() {
+        assertEquals(0, conf.getPreferableCapacity());
+        assertSame(conf, conf.setPreferableCapacity(4));
+        assertEquals(4, conf.getPreferableCapacity());
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testSetScheduledEvictionAtFixedRateIAE() {
-        ee.setScheduledEvictionAtFixedRate(-1, TimeUnit.MICROSECONDS);
+    public void testPreferableCapacityIAE() {
+        conf.setPreferableCapacity(-1);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
+    public void testPreferableCapacityXML() throws Exception {
+        conf = reloadService(conf);
+        assertEquals(0, conf.getPreferableCapacity());
+        assertSame(conf, conf.setPreferableCapacity(Long.MAX_VALUE));
+
+        conf = reloadService(conf);
+        assertEquals(Long.MAX_VALUE, conf.getPreferableCapacity());
+    }
+
+    @Test
     public void testMaximumCapacity() {
-        assertEquals(0, ee.getMaximumCapacity());
-        assertEquals(ee, ee.setMaximumCapacity(4));
-        assertEquals(4, ee.getMaximumCapacity());
-        ee.setMaximumCapacity(0);
+        assertEquals(0, conf.getMaximumCapacity());
+        assertSame(conf, conf.setMaximumCapacity(4));
+        assertEquals(4, conf.getMaximumCapacity());
     }
 
     @Test(expected = IllegalArgumentException.class)
+    public void testMaximumCapacityIAE() {
+        conf.setMaximumCapacity(-1);
+    }
+
+    @Test
+    public void testMaximumCapacityXML() throws Exception {
+        conf = reloadService(conf);
+        assertEquals(0, conf.getMaximumCapacity());
+        assertSame(conf, conf.setMaximumCapacity(Long.MAX_VALUE));
+
+        conf = reloadService(conf);
+        assertEquals(Long.MAX_VALUE, conf.getMaximumCapacity());
+    }
+
+    @Test
     public void testMaximumSize() {
-        assertEquals(0, ee.getMaximumSize());
-        assertEquals(ee, ee.setMaximumSize(4));
-        assertEquals(4, ee.getMaximumSize());
-        ee.setMaximumSize(-1);
+        assertEquals(0, conf.getMaximumSize());
+        assertSame(conf, conf.setMaximumSize(4));
+        assertEquals(4, conf.getMaximumSize());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testMaximumSizeIAE() {
+        conf.setMaximumSize(-1);
+    }
+
+    @Test
+    public void testMaximumSizeXML() throws Exception {
+        conf = reloadService(conf);
+        assertEquals(0, conf.getMaximumSize());
+        assertSame(conf, conf.setMaximumSize(Integer.MAX_VALUE));
+
+        conf = reloadService(conf);
+        assertEquals(Integer.MAX_VALUE, conf.getMaximumSize());
+    }
+
+    @Test
+    public void testPreferableSize() {
+        assertEquals(0, conf.getPreferableSize());
+        assertSame(conf, conf.setPreferableSize(4));
+        assertEquals(4, conf.getPreferableSize());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testPreferableSizeIAE() {
+        conf.setPreferableSize(-1);
+    }
+
+    @Test
+    public void testPreferableSizeXML() throws Exception {
+        conf = reloadService(conf);
+        assertEquals(0, conf.getPreferableSize());
+        assertSame(conf, conf.setPreferableSize(Integer.MAX_VALUE));
+
+        conf = reloadService(conf);
+        assertEquals(Integer.MAX_VALUE, conf.getPreferableSize());
     }
 
     @Test
     public void testPolicy() {
-        assertNull(ee.getPolicy());
-        ReplacementPolicy<?> p =MockTestCase.mockDummy(ReplacementPolicy.class);
-        assertEquals(ee, ee.setPolicy(p));
-        assertEquals(p, ee.getPolicy());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testPreferableCapacity() {
-        assertEquals(0, ee.getPreferableCapacity());
-        assertEquals(ee, ee.setPreferableCapacity(4));
-        assertEquals(4, ee.getPreferableCapacity());
-        ee.setPreferableCapacity(0);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testPreferableSize() {
-        assertEquals(0, ee.getPreferableSize());
-        assertEquals(ee, ee.setPreferableSize(4));
-        assertEquals(4, ee.getPreferableSize());
-        ee.setPreferableSize(-1);
+        ReplacementPolicy<?> p = MockTestCase.mockDummy(ReplacementPolicy.class);
+        assertNull(conf.getPolicy());
+        assertEquals(conf, conf.setPolicy(p));
+        assertEquals(p, conf.getPolicy());
     }
 
     @Test
-    public void testNoop() throws Exception {
-        ee = reloadService(ee);
-        assertEquals(0, ee.getMaximumSize());
-        assertEquals(0, ee.getPreferableSize());
-        assertEquals(0, ee.getMaximumCapacity());
-        assertEquals(0, ee.getPreferableCapacity());
-        assertEquals(DEFAULT.getScheduledEvictionAtFixedRate(TimeUnit.NANOSECONDS), ee
+    public void testPolicyXML() {
+    // TODO
+    }
+
+    /**
+     * Test default time to live. The default is that entries never needs to be refreshed.
+     */
+    @Test
+    public void testEvictSchedule() {
+// initial values
+        assertEquals(0, conf.getScheduledEvictionAtFixedRate(TimeUnit.NANOSECONDS));
+        assertEquals(0, conf.getScheduledEvictionAtFixedRate(TimeUnit.SECONDS));
+
+        assertEquals(conf, conf.setScheduledEvictionAtFixedRate(2, TimeUnit.SECONDS));
+
+        assertEquals(2l, conf.getScheduledEvictionAtFixedRate(TimeUnit.SECONDS));
+        assertEquals(2l * 1000, conf
+                .getScheduledEvictionAtFixedRate(TimeUnit.MILLISECONDS));
+        assertEquals(2l * 1000 * 1000, conf
+                .getScheduledEvictionAtFixedRate(TimeUnit.MICROSECONDS));
+        assertEquals(2l * 1000 * 1000 * 1000, conf
                 .getScheduledEvictionAtFixedRate(TimeUnit.NANOSECONDS));
+
+        conf.setScheduledEvictionAtFixedRate(Long.MAX_VALUE, TimeUnit.MICROSECONDS);
+        assertEquals(Long.MAX_VALUE, conf
+                .getScheduledEvictionAtFixedRate(TimeUnit.SECONDS));
     }
 
     @Test
-    public void testEviction() throws Exception {
-        ee.setMaximumSize(1);
-        ee.setPreferableSize(2);
-        ee.setMaximumCapacity(3);
-        ee.setPreferableCapacity(4);
-        ee.setScheduledEvictionAtFixedRate(360000, TimeUnit.MILLISECONDS);
-        ee = reloadService(ee);
-        assertEquals(1, ee.getMaximumSize());
-        assertEquals(2, ee.getPreferableSize());
-        assertEquals(3, ee.getMaximumCapacity());
-        assertEquals(4, ee.getPreferableCapacity());
-        assertEquals(360, ee.getScheduledEvictionAtFixedRate(TimeUnit.SECONDS));
+    public void testDefaultTimeToLiveXML() throws Exception {
+        conf = reloadService(conf);
+        assertEquals(0, conf.getScheduledEvictionAtFixedRate(TimeUnit.NANOSECONDS));
+        assertEquals(0, conf.getScheduledEvictionAtFixedRate(TimeUnit.SECONDS));
 
+        conf.setScheduledEvictionAtFixedRate(60, TimeUnit.SECONDS);
+        conf = reloadService(conf);
+        assertEquals(60 * 1000, conf
+                .getScheduledEvictionAtFixedRate(TimeUnit.MILLISECONDS));
     }
 
-    @Test
-    public void testCornerCase() throws Exception {
-        // coverage mostly
-        ee.setMaximumSize(2);
-        ee = reloadService(ee);
-        assertEquals(2, ee.getMaximumSize());
-        assertEquals(0, ee.getPreferableSize());
-        assertEquals(0, ee.getMaximumCapacity());
-        assertEquals(0, ee.getPreferableCapacity());
-//        
-// ee = CacheConfiguration.create();
-// ee.setPreferableSize(3);
-// ee = rw(ee);
-// assertEquals(3, ee.getPreferableSize());
+    @Test(expected = IllegalArgumentException.class)
+    public void testDefaultTimeToLiveIAE() {
+        conf.setScheduledEvictionAtFixedRate(-1, TimeUnit.MICROSECONDS);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testDefaultTimeToLiveNPE() {
+        conf.setScheduledEvictionAtFixedRate(1, null);
     }
 }

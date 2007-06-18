@@ -3,7 +3,10 @@
  */
 package org.coconut.cache.service.exceptionhandling;
 
-import java.util.Collections;
+import static org.coconut.internal.util.XmlUtil.addAndsaveObject;
+import static org.coconut.internal.util.XmlUtil.loadOptional;
+import static org.coconut.internal.util.XmlUtil.readLogger;
+import static org.coconut.internal.util.XmlUtil.writeLogger;
 
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.core.Logger;
@@ -18,10 +21,14 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
         AbstractCacheServiceConfiguration<K, V> {
     public static final String SERVICE_NAME = "exceptionhandling";
 
-    private AbstractCacheExceptionHandler<K, V> exceptionHandler = new CacheExceptionHandlingStrategies.DefaultCacheExceptionHandler<K, V>();
+    private final static String EXCEPTION_LOGGER_TAG = "exception-logger";
+
+    private final static String EXCEPTION_HANDLER_TAG = "exception-handler";
+
+    private AbstractCacheExceptionHandler<K, V> exceptionHandler;
 
     /** The default exception log to log to. */
-    private Logger log;
+    private Logger logger;
 
     /**
      * @param serviceName
@@ -32,7 +39,11 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
     }
 
     /**
+     * Returns the exception handler that should be used to handle all exceptions and
+     * warnings or <code>null</code> if it has been defined.
+     * 
      * @return the exceptionHandler
+     * @see #setExceptionHandler(AbstractCacheExceptionHandler)
      */
     public AbstractCacheExceptionHandler<K, V> getExceptionHandler() {
         return exceptionHandler;
@@ -47,17 +58,21 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
      * @see #setErrorLog(Logger)
      */
     public Logger getExceptionLogger() {
-        return log;
+        return logger;
     }
 
     /**
-     * Sets AbstractCacheExceptionHandler that will handle all exceptions and warnings.
+     * Sets the exception handler that should be used to handle all exceptions and
+     * warnings. If no exception handler is set using this method the cache should, unless
+     * it specifies otherwise, use an instance of
+     * {@link CacheExceptionHandlers.CacheExceptionHandlers}
      * 
      * @param exceptionHandler
-     *            the exceptionHandler to set
+     *            the exceptionHandler to use for handling exceptions and warnings
      */
-    public void setExceptionHandler(AbstractCacheExceptionHandler<K, V> exceptionHandler) {
+    public CacheExceptionHandlingConfiguration<K, V> setExceptionHandler(AbstractCacheExceptionHandler<K, V> exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
+        return this;
     }
 
     /**
@@ -74,7 +89,7 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
      * @return this configuration
      */
     public CacheExceptionHandlingConfiguration<K, V> setExceptionLogger(Logger log) {
-        this.log = log;
+        this.logger = log;
         return this;
     }
 
@@ -82,9 +97,15 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
      * @see org.coconut.cache.spi.AbstractCacheServiceConfiguration#fromXML(org.w3c.dom.Document,
      *      org.w3c.dom.Element)
      */
+    @SuppressWarnings("unchecked")
     @Override
     protected void fromXML(Element parent) throws Exception {
+        /* Exception Logger */
+        logger = readLogger(parent, EXCEPTION_LOGGER_TAG);
 
+        /* Exception Handler */
+        exceptionHandler = loadOptional(parent, EXCEPTION_HANDLER_TAG,
+                AbstractCacheExceptionHandler.class);
     }
 
     /**
@@ -93,7 +114,12 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
      */
     @Override
     protected void toXML(Document doc, Element parent) throws Exception {
+        /* Exception Logger */
+        writeLogger(doc, parent, EXCEPTION_LOGGER_TAG, logger);
+
+        /* Exception Handler */
+        addAndsaveObject(doc, parent, EXCEPTION_HANDLER_TAG, getResourceBundle(),
+                "exceptionhandling.saveOfExceptionHandlerFailed", exceptionHandler);
 
     }
-
 }

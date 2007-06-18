@@ -1,31 +1,29 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the Apache 2.0 License, see http://coconut.codehaus.org/license.
- */
 package org.coconut.cache.internal.service.management;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
 import org.coconut.cache.service.management.CacheMXBean;
-import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.annotation.ManagedOperation;
 
 /**
+ * 
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public abstract class AbstractCacheManagementService extends AbstractInternalCacheService
-        implements CacheManagementService {
-    /**
-     * 
-     */
-    public AbstractCacheManagementService() {
-        super(CacheManagementConfiguration.SERVICE_NAME);
+public class ManagementUtils {
+
+    public static CacheManagementService wrapService(CacheManagementService service) {
+        return new DelegatedCacheManagementService(service);
     }
 
-    static class DelegatedCacheManagementService implements CacheManagementService {
+    public static CacheMXBean wrapMXBean(Cache<?, ?> service) {
+        return new DelegatedCacheMXBean(service);
+    }
+
+    public static final class DelegatedCacheManagementService implements CacheManagementService {
         private final CacheManagementService delegate;
 
         /**
@@ -50,10 +48,10 @@ public abstract class AbstractCacheManagementService extends AbstractInternalCac
      * <p>
      * Must be a public class to allow reflection.
      */
-    public static class DelegatedCacheMXBean implements CacheMXBean {
+    public static final class DelegatedCacheMXBean implements CacheMXBean {
         private final Cache<?, ?> cache;
 
-        DelegatedCacheMXBean(Cache<?, ?> cache) {
+        public DelegatedCacheMXBean(Cache<?, ?> cache) {
             if (cache == null) {
                 throw new NullPointerException("cache is null");
             }

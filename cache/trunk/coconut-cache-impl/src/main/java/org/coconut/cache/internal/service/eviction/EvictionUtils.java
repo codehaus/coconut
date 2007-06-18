@@ -1,0 +1,138 @@
+package org.coconut.cache.internal.service.eviction;
+
+import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.internal.service.expiration.ExpirationUtils.DelegatedCacheExpirationMXBean;
+import org.coconut.cache.internal.service.expiration.ExpirationUtils.DelegatedCacheExpirationService;
+import org.coconut.cache.service.eviction.CacheEvictionMXBean;
+import org.coconut.cache.service.eviction.CacheEvictionService;
+import org.coconut.cache.service.expiration.CacheExpirationMXBean;
+import org.coconut.cache.service.expiration.CacheExpirationService;
+import org.coconut.management.annotation.ManagedAttribute;
+import org.coconut.management.annotation.ManagedOperation;
+
+public class EvictionUtils {
+    
+    public static <K, V> CacheEvictionService<K, V> wrapService(
+            CacheEvictionService<K, V> service) {
+        return new DelegatedCacheEvictionService<K, V>(service);
+    }
+
+    public static CacheEvictionMXBean wrapMXBean(CacheEvictionService<?, ?> service) {
+        return new DelegatedCacheEvictionMXBean(service);
+    }
+
+    /**
+     * Must be a public class to allow reflection.
+     */
+    public static class DelegatedCacheEvictionMXBean implements CacheEvictionMXBean {
+        private final CacheEvictionService<?, ?> service;
+
+        DelegatedCacheEvictionMXBean(CacheEvictionService<?, ?> service) {
+            if (service == null) {
+                throw new NullPointerException("service is null");
+            }
+            this.service = service;
+        }
+
+        @ManagedAttribute(description = "The maximum capacity of the cache")
+        public long getMaximumCapacity() {
+            return service.getMaximumCapacity();
+        }
+
+        @ManagedAttribute(description = "The maximum size of the cache")
+        public int getMaximumSize() {
+            return service.getMaximumSize();
+        }
+
+        public void setMaximumCapacity(long maximumCapacity) {
+            service.setMaximumCapacity(maximumCapacity);
+        }
+
+        public void setMaximumSize(int maximumSize) {
+            service.setMaximumSize(maximumSize);
+        }
+
+        @ManagedOperation(description = "Trims the cache to the specified capacity")
+        public void trimToCapacity(long capacity) {
+            service.trimToCapacity(capacity);
+        }
+
+        @ManagedOperation(description = "Trims the cache to the specified size")
+        public void trimToSize(int size) {
+            service.trimToSize(size);
+        }
+
+    }
+
+    public static class DelegatedCacheEvictionService<K, V> implements
+            CacheEvictionService<K, V> {
+        private final CacheEvictionService<K, V> service;
+
+        DelegatedCacheEvictionService(CacheEvictionService<K, V> service) {
+            if (service == null) {
+                throw new NullPointerException("service is null");
+            }
+            this.service = service;
+        }
+
+        public long getMaximumCapacity() {
+            return service.getMaximumCapacity();
+        }
+
+        public int getMaximumSize() {
+            return service.getMaximumSize();
+        }
+
+        public void setMaximumCapacity(long maximumCapacity) {
+            service.setMaximumCapacity(maximumCapacity);
+        }
+
+        public void setMaximumSize(int maximumSize) {
+            service.setMaximumSize(maximumSize);
+        }
+
+        public void trimToCapacity(long capacity) {
+            service.trimToCapacity(capacity);
+        }
+
+        public void trimToSize(int size) {
+            service.trimToSize(size);
+        }
+
+    }
+
+    // @ManagedAttribute(description = "The default time to idle for cache entries in
+    // milliseconds")
+    // public long getDefaultIdleTimeMs() {
+    // return service.getDefaultIdleTime(TimeUnit.MILLISECONDS);
+    // }
+
+    // public void setDefaultIdleTimeMs(long idleTimeMs) {
+    // service.setDefaultIdleTime(idleTimeMs, TimeUnit.MILLISECONDS);
+    // }
+
+    // @ManagedOperation(description = "Evict all elements that idle")
+    // public void evictIdleElements() {
+    // service.evictIdleElements();
+    // }
+
+    // public void evict(K key) {
+    // service.evict(key);
+    // }
+    //
+    // public void evictAll(Collection<? extends K> keys) {
+    // service.evictAll(keys);
+    // }
+    //
+    // public long getDefaultIdleTime(TimeUnit unit) {
+    // return service.getDefaultIdleTime(unit);
+    // }
+    //
+    // public void setDefaultIdleTime(long idleTime, TimeUnit unit) {
+    // service.setDefaultIdleTime(idleTime, unit);
+    // }
+    //
+    // public void evictIdleElements() {
+    // service.evictIdleElements();
+    // }
+}
