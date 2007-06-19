@@ -14,25 +14,27 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
+ * This class is used to configure the exception handling service bundle prior to usage.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class CacheExceptionHandlingConfiguration<K, V> extends
         AbstractCacheServiceConfiguration<K, V> {
+    /** The name of this service. */
     public static final String SERVICE_NAME = "exceptionhandling";
 
     private final static String EXCEPTION_LOGGER_TAG = "exception-logger";
 
     private final static String EXCEPTION_HANDLER_TAG = "exception-handler";
 
-    private AbstractCacheExceptionHandler<K, V> exceptionHandler;
+    private CacheExceptionHandler<K, V> exceptionHandler;
 
     /** The default exception log to log to. */
     private Logger logger;
 
     /**
-     * @param serviceName
-     * @param serviceInterface
+     * Creates a new CacheExceptionHandlingConfiguration.
      */
     public CacheExceptionHandlingConfiguration() {
         super(SERVICE_NAME);
@@ -43,9 +45,9 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
      * warnings or <code>null</code> if it has been defined.
      * 
      * @return the exceptionHandler
-     * @see #setExceptionHandler(AbstractCacheExceptionHandler)
+     * @see #setExceptionHandler(CacheExceptionHandler)
      */
-    public AbstractCacheExceptionHandler<K, V> getExceptionHandler() {
+    public CacheExceptionHandler<K, V> getExceptionHandler() {
         return exceptionHandler;
     }
 
@@ -70,7 +72,8 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
      * @param exceptionHandler
      *            the exceptionHandler to use for handling exceptions and warnings
      */
-    public CacheExceptionHandlingConfiguration<K, V> setExceptionHandler(AbstractCacheExceptionHandler<K, V> exceptionHandler) {
+    public CacheExceptionHandlingConfiguration<K, V> setExceptionHandler(
+            CacheExceptionHandler<K, V> exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
         return this;
     }
@@ -105,7 +108,7 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
 
         /* Exception Handler */
         exceptionHandler = loadOptional(parent, EXCEPTION_HANDLER_TAG,
-                AbstractCacheExceptionHandler.class);
+                CacheExceptionHandler.class);
     }
 
     /**

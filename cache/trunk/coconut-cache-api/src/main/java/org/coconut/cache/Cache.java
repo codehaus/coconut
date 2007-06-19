@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
-import org.coconut.cache.service.exceptionhandling.AbstractCacheExceptionHandler;
+import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.core.AttributeMap;
@@ -110,7 +110,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      *             (optional). A cache might be configured to return null instead
      * @see Map#get(Object)
      * @see CacheLoadingConfiguration#setLoader(CacheLoader)
-     * @see AbstractCacheExceptionHandler#loadFailed(Cache,
+     * @see CacheExceptionHandler#loadFailed(Cache,
      *      org.coconut.cache.service.loading.CacheLoader, Object, AttributeMap, boolean,
      *      Throwable)
      */

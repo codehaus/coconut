@@ -57,9 +57,9 @@ public class CacheExceptionHandlingConfigurationTest {
     }
 
     public static class LoadableAbstractCacheExceptionHandler extends
-            AbstractCacheExceptionHandler<Integer, String> {}
+            CacheExceptionHandler<Integer, String> {}
 
     public class NonLoadableAbstractCacheExceptionHandler extends
-            AbstractCacheExceptionHandler<Integer, String> {}
+            CacheExceptionHandler<Integer, String> {}
 
 }

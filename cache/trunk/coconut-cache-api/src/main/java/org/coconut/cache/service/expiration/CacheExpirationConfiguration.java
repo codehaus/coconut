@@ -11,15 +11,15 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
-import org.coconut.core.AttributeMaps.DefaultAttributeMap;
 import org.coconut.filter.Filter;
 import org.coconut.internal.util.UnitOfTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
+ * This class is used to configure the expiration service bundle prior to usage.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -36,7 +36,7 @@ public class CacheExpirationConfiguration<K, V> extends
 
     /** The default settings, used when xml-serializing this configuration */
     private final static CacheExpirationConfiguration<?, ?> DEFAULT = new CacheExpirationConfiguration<Object, Object>();
-    
+
     private long defaultTimeToLive;
 
     private Filter<CacheEntry<K, V>> expirationFilter;
@@ -118,7 +118,7 @@ public class CacheExpirationConfiguration<K, V> extends
      *      org.w3c.dom.Element)
      */
     @Override
-    protected void fromXML( Element base) throws Exception {
+    protected void fromXML(Element base) throws Exception {
         /* Expiration timeout */
         Element eTime = getChild(DEFAULT_TIMEOUT_TAG, base);
         long time = UnitOfTime.fromElement(eTime, DEFAULT_TIME_UNIT,
@@ -140,7 +140,7 @@ public class CacheExpirationConfiguration<K, V> extends
                 DEFAULT_TIME_UNIT, DEFAULT.defaultTimeToLive);
 
         /* Filter */
-        addAndsaveObject(doc, parent, EXPIRATION_FILTER_TAG,
-        getResourceBundle(), "expiration.saveOfExpirationFilterFailed", expirationFilter);
+        addAndsaveObject(doc, parent, EXPIRATION_FILTER_TAG, getResourceBundle(),
+                "expiration.saveOfExpirationFilterFailed", expirationFilter);
     }
 }

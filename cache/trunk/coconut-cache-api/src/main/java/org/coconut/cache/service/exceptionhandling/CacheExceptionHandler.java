@@ -16,10 +16,13 @@ import org.coconut.core.Loggers;
 import org.coconut.event.EventSubscription;
 
 /**
+ * An CacheExceptionHandler defines how all exceptions that occur within a cache should be
+ * handled.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public abstract class AbstractCacheExceptionHandler<K, V> {
+public abstract class CacheExceptionHandler<K, V> {
     private volatile Logger logger;
 
     private String name;
@@ -29,6 +32,9 @@ public abstract class AbstractCacheExceptionHandler<K, V> {
         return false;
     }
 
+    /**
+     * @return
+     */
     public final synchronized String getCacheName() {
         return name;
     }
@@ -77,8 +83,7 @@ public abstract class AbstractCacheExceptionHandler<K, V> {
         if (logger == null) {
             String loggerName = Cache.class.getPackage().getName() + "." + name;
             java.util.logging.Logger l = java.util.logging.Logger.getLogger(loggerName);
-            String infoMsg = Resources.lookup(AbstractCacheExceptionHandler.class,
-                    "noLogger");
+            String infoMsg = Resources.lookup(CacheExceptionHandler.class, "noLogger");
             Logger logger = Loggers.JDK.from(l);
             l.setLevel(Level.ALL);
             logger.info(MessageFormat.format(infoMsg, name, loggerName));

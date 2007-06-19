@@ -10,17 +10,19 @@ import org.coconut.core.AttributeMap;
 import org.coconut.event.EventSubscription;
 
 /**
+ * Currently this class only defines one standard exception.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class CacheExceptionHandlers {
 
-    public static <K, V> AbstractCacheExceptionHandler<K, V> defaultExceptionHandler() {
+    public static <K, V> CacheExceptionHandler<K, V> defaultExceptionHandler() {
         return new DefaultCacheExceptionHandler<K, V>();
     }
 
     public static class DefaultCacheExceptionHandler<K, V> extends
-            AbstractCacheExceptionHandler<K, V> {
+            CacheExceptionHandler<K, V> {
 
         @Override
         public boolean eventDeliveryFailed(Cache<K, V> cache, CacheEvent<K, V> event,

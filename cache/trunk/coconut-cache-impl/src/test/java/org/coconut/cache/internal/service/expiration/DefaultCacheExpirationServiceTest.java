@@ -12,7 +12,7 @@ import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.spi.CacheHelper;
-import org.coconut.cache.service.exceptionhandling.AbstractCacheExceptionHandler;
+import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.core.AttributeMap;
@@ -45,7 +45,7 @@ public class DefaultCacheExpirationServiceTest {
     private CacheHelper<Integer, String> helper = new JUnit4Mockery()
             .mock(CacheHelper.class);
 
-    private AbstractCacheExceptionHandler<Integer, String> errorHandler;
+    private CacheExceptionHandler<Integer, String> errorHandler;
 
     private InternalCacheAttributeService attributeFactory = new JUnit4Mockery()
             .mock(InternalCacheAttributeService.class);
@@ -132,7 +132,7 @@ public class DefaultCacheExpirationServiceTest {
 // assertTrue(ref.get().contains("123"));
     }
 
-    static class AbstractTester<K, V> extends AbstractCacheExceptionHandler<K, V> {
+    static class AbstractTester<K, V> extends CacheExceptionHandler<K, V> {
 
         /**
          * @see org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#warning(java.lang.String)

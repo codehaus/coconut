@@ -4,12 +4,12 @@
 
 package org.coconut.cache;
 
-import org.coconut.cache.service.exceptionhandling.AbstractCacheExceptionHandler;
+import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 
 /**
  * <code>CacheException</code> is the main exception thrown by Coconut Cache. How and
  * when a Cache throws these exceptions can be controlled by using a specific
- * {@link AbstractCacheExceptionHandler}.
+ * {@link CacheExceptionHandler}.
  */
 public class CacheException extends RuntimeException {
 

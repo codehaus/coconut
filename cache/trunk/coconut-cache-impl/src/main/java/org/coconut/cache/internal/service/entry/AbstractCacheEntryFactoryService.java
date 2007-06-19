@@ -10,7 +10,7 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.cache.ReplacementPolicy;
 import org.coconut.cache.internal.service.expiration.DefaultCacheExpirationService;
 import org.coconut.cache.internal.service.loading.AbstractCacheLoadingService;
-import org.coconut.cache.service.exceptionhandling.AbstractCacheExceptionHandler;
+import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
@@ -22,14 +22,14 @@ import org.coconut.core.Clock;
 public abstract class AbstractCacheEntryFactoryService<K, V> {
     private final Clock clock;
 
-    private final AbstractCacheExceptionHandler<K, V> errorHandler;
+    private final CacheExceptionHandler<K, V> errorHandler;
 
     private final DefaultCacheExpirationService<K, V> expirationService;
 
     private final AbstractCacheLoadingService<K, V> loadingService;
 
     public AbstractCacheEntryFactoryService(Clock clock,
-            AbstractCacheExceptionHandler<K, V> exceptionHandler,
+            CacheExceptionHandler<K, V> exceptionHandler,
             DefaultCacheExpirationService<K, V> expirationService,
             AbstractCacheLoadingService<K, V> loadingService) {
         this.clock = clock;

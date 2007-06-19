@@ -22,7 +22,7 @@ import org.coconut.cache.internal.service.threading.InternalCacheThreadingServic
 import org.coconut.cache.internal.service.util.ExtendableFutureTask;
 import org.coconut.cache.internal.spi.CacheHelper;
 import org.coconut.cache.internal.spi.ExtendedExecutorRunnable;
-import org.coconut.cache.service.exceptionhandling.AbstractCacheExceptionHandler;
+import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
@@ -41,7 +41,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
 
     private final Clock clock;
 
-    private final AbstractCacheExceptionHandler<K, V> errorHandler;
+    private final CacheExceptionHandler<K, V> errorHandler;
 
     private final DefaultCacheExpirationService<K, V> expirationService;
 
@@ -63,7 +63,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
      */
     public DefaultCacheLoaderService(final Clock clock,
             InternalCacheAttributeService attributeFactory,
-            AbstractCacheExceptionHandler<K, V> exceptionHandler,
+            CacheExceptionHandler<K, V> exceptionHandler,
             CacheLoadingConfiguration<K, V> loadConf,
             final InternalCacheThreadingService threadManager,
             DefaultCacheExpirationService<K, V> expirationService,

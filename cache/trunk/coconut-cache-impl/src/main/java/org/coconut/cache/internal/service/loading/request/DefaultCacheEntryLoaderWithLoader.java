@@ -4,7 +4,7 @@
 package org.coconut.cache.internal.service.loading.request;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.service.exceptionhandling.AbstractCacheExceptionHandler;
+import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.EventProcessor;
@@ -16,7 +16,7 @@ import org.coconut.core.EventProcessor;
 public class DefaultCacheEntryLoaderWithLoader<K, V> extends
         DefaultCacheEntryLoader<K, V> implements Runnable {
 
-    private final AbstractCacheExceptionHandler<K, V> errorHandler;
+    private final CacheExceptionHandler<K, V> errorHandler;
 
     private final CacheLoader<K, V> loader;
 
@@ -28,7 +28,7 @@ public class DefaultCacheEntryLoaderWithLoader<K, V> extends
      */
     DefaultCacheEntryLoaderWithLoader(EventProcessor<? super LoadRequest<K, V>> eh,
             Cache<K, V> cache, CacheLoader<K, V> loader,
-            AbstractCacheExceptionHandler<K, V> errorHandler, K key, AttributeMap attributes) {
+            CacheExceptionHandler<K, V> errorHandler, K key, AttributeMap attributes) {
         super(eh, cache, key, attributes);
         this.loader = loader;
         this.errorHandler = errorHandler;

@@ -13,7 +13,7 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.attribute.DefaultCacheAttributeService;
 import org.coconut.cache.internal.service.entry.UnsynchronizedEntryFactoryService;
 import org.coconut.cache.internal.spi.CacheHelper;
-import org.coconut.cache.service.exceptionhandling.AbstractCacheExceptionHandler;
+import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlers;
 import org.coconut.cache.service.servicemanager.AbstractCacheService;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
@@ -53,7 +53,7 @@ public class UnsynchronizedCacheServiceManager extends
         container.registerComponentInstance(helper);
         container.registerComponentInstance(conf);
         container.registerComponentInstance(conf.getClock());
-        AbstractCacheExceptionHandler<?, ?> h = conf.exceptionHandling()
+        CacheExceptionHandler<?, ?> h = conf.exceptionHandling()
                 .getExceptionHandler();
         if (h == null) {
             h = CacheExceptionHandlers.defaultExceptionHandler();
