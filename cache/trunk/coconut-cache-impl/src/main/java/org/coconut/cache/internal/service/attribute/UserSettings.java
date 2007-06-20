@@ -1,7 +1,5 @@
 package org.coconut.cache.internal.service.attribute;
 
-import org.coconut.cache.CacheEntry;
-import org.coconut.filter.Filter;
 
 /**
  * but but but but whyyy?

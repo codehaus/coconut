@@ -11,7 +11,7 @@ import java.util.Map;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.internal.spi.CacheHelper;
+import org.coconut.cache.internal.service.CacheHelper;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.AbstractCacheService;
 import org.coconut.management.ManagedGroup;

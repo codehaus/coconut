@@ -22,7 +22,7 @@ public class CacheEntryFilter implements Filter<CacheEntry<Integer, String>> {
     private volatile CacheEntry<Integer, String> lastEntry;
 
     /**
-     * @see org.coconut.filter.Filter#accept(E)
+     * @see org.coconut.filter.Filter#accept(java.lang.Object)
      */
     public boolean accept(CacheEntry<Integer, String> element) {
         lastEntry = element;

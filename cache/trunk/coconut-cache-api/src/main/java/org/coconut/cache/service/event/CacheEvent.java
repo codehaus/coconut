@@ -12,7 +12,7 @@ import org.coconut.cache.Cache;
  * <ul>
  * <li> <strong>Entry events</strong>, which concerns a particular key-value pair in the
  * cache. For example, an event indicating that a particular key-value has been removed.
- * Entry events all inherit from {@link CacheItemEvent}.
+ * Entry events all inherit from {@link CacheEntryEvent}.
  * <li> <strong>Instance events</strong> which are general events concerning a particular
  * cache <tt>instance</tt>. For example, that the cache has been cleared and all values
  * removed. Instance events all inherit from {@link CacheEvent}.

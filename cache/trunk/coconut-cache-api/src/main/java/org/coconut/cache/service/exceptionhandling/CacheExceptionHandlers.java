@@ -3,7 +3,6 @@
  */
 package org.coconut.cache.service.exceptionhandling;
 
-import org.coconut.cache.Cache;
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.core.AttributeMap;

@@ -7,8 +7,8 @@ package org.coconut.cache;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 
 /**
- * <code>CacheException</code> is the main exception thrown by Coconut Cache. How and
- * when a Cache throws these exceptions can be controlled by using a specific
+ * <code>CacheException</code> is the main exception thrown by Coconut Cache. When a
+ * Cache throws these exceptions can be controlled by using a specific
  * {@link CacheExceptionHandler}.
  */
 public class CacheException extends RuntimeException {
@@ -19,14 +19,14 @@ public class CacheException extends RuntimeException {
     /**
      * Constructs a new cache exception with <code>null</code> as its detail message.
      * The cause is not initialized, and may subsequently be initialized by a call to
-     * {@link #initCause}.
+     * {@link Throwable#initCause}.
      */
     public CacheException() {}
 
     /**
      * Constructs a new cache exception with the specified detail message. The cause is
      * not initialized, and may subsequently be initialized by a call to
-     * {@link #initCause}.
+     * {@link Throwable#initCause}.
      * 
      * @param message
      *            the detail message. The detail message is saved for later retrieval by

@@ -8,8 +8,8 @@ import java.util.Map;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.service.CacheHelper;
 import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
-import org.coconut.cache.internal.spi.CacheHelper;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.service.eviction.CacheEvictionMXBean;
 import org.coconut.cache.service.eviction.CacheEvictionService;

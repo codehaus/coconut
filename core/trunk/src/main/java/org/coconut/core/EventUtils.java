@@ -4,6 +4,7 @@
 
 package org.coconut.core;
 
+import java.beans.EventHandler;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.Queue;

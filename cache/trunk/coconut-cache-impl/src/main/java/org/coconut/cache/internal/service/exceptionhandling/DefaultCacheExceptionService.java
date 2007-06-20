@@ -7,7 +7,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
-import org.coconut.cache.spi.Resources;
+import org.coconut.cache.spi.CacheSPI;
 import org.coconut.core.Logger;
 import org.coconut.core.Loggers;
 
@@ -45,7 +45,7 @@ public class DefaultCacheExceptionService<K, V> implements CacheExceptionService
             String name = cache.getName();
             String loggerName = Cache.class.getPackage().getName() + "." + name;
             java.util.logging.Logger l = java.util.logging.Logger.getLogger(loggerName);
-            String infoMsg = Resources.lookup(CacheExceptionHandler.class, "noLogger");
+            String infoMsg = CacheSPI.lookup(CacheExceptionHandler.class, "noLogger");
             Logger logger = Loggers.JDK.from(l);
             l.setLevel(Level.ALL);
             logger.info(MessageFormat.format(infoMsg, name, loggerName));

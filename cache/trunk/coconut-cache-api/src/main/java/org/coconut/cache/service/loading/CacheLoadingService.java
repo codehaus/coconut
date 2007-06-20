@@ -27,11 +27,11 @@ public interface CacheLoadingService<K, V> {
 
     /**
      * Returns the default expiration time for entries. If entries never expire,
-     * {@link #NEVER_EXPIRE} is returned.
+     * {@link Long#MAX_VALUE} is returned.
      * 
      * @param unit
      *            the time unit that should be used for returning the default expiration
-     * @return the default expiration time for entries, or {@link #NEVER_EXPIRE} if
+     * @return the default expiration time for entries, or {value Long#MAX_VALUE} if
      *         entries never expire
      */
     long getDefaultTimeToRefresh(TimeUnit unit);
@@ -48,7 +48,7 @@ public interface CacheLoadingService<K, V> {
      *             if the specified time to live is negative (<0)
      * @throws NullPointerException
      *             if the specified time unit is <tt>null</tt>
-     * @see #getDefaultTimeToLive(TimeUnit)
+     * @see #getDefaultTimeToRefresh(TimeUnit)
      */
     void setDefaultTimeToRefresh(long timeToLive, TimeUnit unit);
 
@@ -135,7 +135,7 @@ public interface CacheLoadingService<K, V> {
      * <p>
      * The methods on the returned {@link java.util.concurrent.Future} are all
      * <tt>bulk</tt> operations that operate on the entire keyset.
-     * {@link java.util.concurrent.Future#cancel(Boolean)} will attempt to cancel the
+     * {@link java.util.concurrent.Future#cancel(boolean)} will attempt to cancel the
      * loading of all entries.{@link java.util.concurrent.Future#get()} will not return
      * until all entries has been loaded.
      * <p>

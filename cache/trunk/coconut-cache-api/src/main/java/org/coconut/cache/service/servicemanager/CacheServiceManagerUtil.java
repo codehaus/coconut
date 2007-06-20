@@ -123,16 +123,6 @@ public class CacheServiceManagerUtil {
             service.execute(command);
         }
 
-        /**
-         * @param <T>
-         * @param tasks
-         * @param timeout
-         * @param unit
-         * @return
-         * @throws InterruptedException
-         * @see java.util.concurrent.ExecutorService#invokeAll(java.util.Collection, long,
-         *      java.util.concurrent.TimeUnit)
-         */
         public List invokeAll(Collection tasks, long timeout, TimeUnit unit)
                 throws InterruptedException {
             // we can't generify this method if we want to
@@ -141,57 +131,33 @@ public class CacheServiceManagerUtil {
             return service.invokeAll(tasks, timeout, unit);
         }
 
-        /**
-         * @param <T>
-         * @param tasks
-         * @return
-         * @throws InterruptedException
-         * @see java.util.concurrent.ExecutorService#invokeAll(java.util.Collection)
-         */
+
         public List invokeAll(Collection tasks) throws InterruptedException {
             return service.invokeAll(tasks);
         }
 
-        /**
-         * @param <T>
-         * @param tasks
-         * @param timeout
-         * @param unit
-         * @return
-         * @throws InterruptedException
-         * @throws ExecutionException
-         * @throws TimeoutException
-         * @see java.util.concurrent.ExecutorService#invokeAny(java.util.Collection, long,
-         *      java.util.concurrent.TimeUnit)
-         */
+
         public Object invokeAny(Collection tasks, long timeout, TimeUnit unit)
                 throws InterruptedException, ExecutionException, TimeoutException {
             return service.invokeAny(tasks, timeout, unit);
         }
 
-        /**
-         * @param <T>
-         * @param tasks
-         * @return
-         * @throws InterruptedException
-         * @throws ExecutionException
-         * @see java.util.concurrent.ExecutorService#invokeAny(java.util.Collection)
-         */
+
         public Object invokeAny(Collection tasks) throws InterruptedException,
                 ExecutionException {
             return service.invokeAny(tasks);
         }
 
+  
         /**
-         * @return
          * @see java.util.concurrent.ExecutorService#isShutdown()
          */
         public boolean isShutdown() {
             return service.isShutdown();
         }
 
+
         /**
-         * @return
          * @see java.util.concurrent.ExecutorService#isTerminated()
          */
         public boolean isTerminated() {
@@ -206,17 +172,14 @@ public class CacheServiceManagerUtil {
         }
 
         /**
-         * @return
          * @see java.util.concurrent.ExecutorService#shutdownNow()
          */
         public List<Runnable> shutdownNow() {
             return service.shutdownNow();
         }
 
+
         /**
-         * @param <T>
-         * @param task
-         * @return
          * @see java.util.concurrent.ExecutorService#submit(java.util.concurrent.Callable)
          */
         public <T> Future<T> submit(Callable<T> task) {
@@ -224,20 +187,14 @@ public class CacheServiceManagerUtil {
         }
 
         /**
-         * @param <T>
-         * @param task
-         * @param result
-         * @return
-         * @see java.util.concurrent.ExecutorService#submit(java.lang.Runnable,
-         *      java.lang.Object)
+         * @see java.util.concurrent.ExecutorService#submit(java.lang.Runnable, java.lang.Object)
          */
         public <T> Future<T> submit(Runnable task, T result) {
             return service.submit(task, result);
         }
 
+
         /**
-         * @param task
-         * @return
          * @see java.util.concurrent.ExecutorService#submit(java.lang.Runnable)
          */
         public Future<?> submit(Runnable task) {
@@ -245,7 +202,7 @@ public class CacheServiceManagerUtil {
         }
 
         /**
-         * @see org.coconut.cache.service.servicemanager.CacheLifecycle#shutdown(org.coconut.cache.Cache)
+         * @param ignore
          */
         public void shutdown(Cache<?, ?> ignore) {
             service.shutdown();

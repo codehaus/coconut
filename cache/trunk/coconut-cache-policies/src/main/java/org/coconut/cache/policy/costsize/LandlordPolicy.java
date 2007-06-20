@@ -108,7 +108,6 @@ public class LandlordPolicy<T> extends AbstractPolicy<T> {
     /**
      * Classical description from paper.
      * 
-     * @return
      */
     public Collection<T> evictAllZeros() {
         if (size == 0) {

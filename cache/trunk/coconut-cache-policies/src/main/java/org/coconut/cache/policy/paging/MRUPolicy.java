@@ -50,7 +50,7 @@ public class MRUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
     /**
      * Constructs a new MRUPolicy with a specified initial size.
      * 
-     * @param size
+     * @param initialCapacity
      *            the initial size of the internal list, must be 0 or greater
      * @throws IllegalArgumentException
      *             if the specified size is a negative number
@@ -72,17 +72,15 @@ public class MRUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
         list = new IndexedStack<T>(policy.list);
     }
 
+
     /**
-     * {@inheritDoc}
-     * @see org.coconut.cache.ReplacementPolicy#add(int)
+     * @see org.coconut.cache.ReplacementPolicy#add(java.lang.Object, org.coconut.core.AttributeMap)
      */
     public int add(T data, AttributeMap ignore) {
         return list.add(data);
     }
 
-    /**
-     * @see java.lang.Object#clone()
-     */
+
     @Override
     public MRUPolicy<T> clone() {
         return new MRUPolicy<T>(this);

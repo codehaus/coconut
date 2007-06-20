@@ -10,8 +10,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.service.CacheHelper;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
-import org.coconut.cache.internal.spi.CacheHelper;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;

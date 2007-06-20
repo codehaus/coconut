@@ -3,8 +3,7 @@
  */
 package org.coconut.internal.util;
 
-import static org.coconut.internal.util.XmlUtil.add;
-
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.w3c.dom.Document;

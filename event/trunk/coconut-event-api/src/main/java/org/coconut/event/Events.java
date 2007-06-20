@@ -60,9 +60,6 @@ public class Events {
      * Returns a collection of all the subscribers that would recieve a
      * specified event if it was posted to the eventbus.
      * 
-     * @param bus
-     * @param event
-     * @return
      */
     public static <E> Collection<EventSubscription<E>> matchSubscriberEvent(
             EventBus<E> bus, E event) {

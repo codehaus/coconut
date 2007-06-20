@@ -11,15 +11,13 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.service.CacheHelper;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
 import org.coconut.cache.internal.service.expiration.DefaultCacheExpirationService;
 import org.coconut.cache.internal.service.threading.InternalCacheThreadingService;
 import org.coconut.cache.internal.service.util.ExtendableFutureTask;
-import org.coconut.cache.internal.spi.CacheHelper;
-import org.coconut.cache.internal.spi.ExtendedExecutorRunnable;
-import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
@@ -162,8 +160,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         }
     }
 
-    static class LoadValueRunnable<K, V> extends ExtendableFutureTask implements
-            ExtendedExecutorRunnable.LoadKey<K> {
+    static class LoadValueRunnable<K, V> extends ExtendableFutureTask {
         private final AttributeMap attributes;
 
         private final K key;
@@ -193,13 +190,6 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         }
 
         /**
-         * @see org.coconut.cache.internal.spi.ExtendedExecutorRunnable.LoadKey#getAttributeMap()
-         */
-        public AttributeMap getAttributes() {
-            return attributes;
-        }
-
-        /**
          * @see org.coconut.cache.spi.AsyncCacheLoader.LoadKeyRunnable#getKey()
          */
         public K getKey() {
@@ -223,7 +213,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         }
     }
 
-    static class LoadValuesRunnable<K, V> implements ExtendedExecutorRunnable.LoadKeys<K> {
+    static class LoadValuesRunnable<K, V> implements Runnable {
         private final Map<? extends K, AttributeMap> keysWithAttributes;
 
         private final CacheLoader<? super K, ? extends V> loader;

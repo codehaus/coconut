@@ -9,8 +9,6 @@ import static org.coconut.test.CollectionUtils.M2;
 import static org.coconut.test.CollectionUtils.M3;
 import static org.coconut.test.CollectionUtils.M4;
 
-import java.util.Map;
-
 import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
 import org.junit.Test;
 

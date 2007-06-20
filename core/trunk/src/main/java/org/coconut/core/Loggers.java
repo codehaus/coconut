@@ -6,6 +6,8 @@ package org.coconut.core;
 
 import java.io.PrintStream;
 
+import org.apache.commons.logging.Log;
+
 /**
  * This class is used for creating {@link Log} wrappers from popular logging
  * frameworks such as <a
@@ -71,7 +73,7 @@ public final class Loggers {
         /**
          * Wraps a Log4j logger.
          * 
-         * @param log
+         * @param logger
          *            the Log4j logger
          * @return a wrapped Log4j logger
          */
@@ -209,8 +211,9 @@ public final class Loggers {
             }
         }
 
+
         /**
-         * @see org.coconut.core.util.Logs.AbstractLogger#getName()
+         * @see org.coconut.core.Loggers.AbstractLogger#getName()
          */
         @Override
         public String getName() {
@@ -311,10 +314,6 @@ public final class Loggers {
             return from(org.apache.commons.logging.LogFactory.getLog(clazz));
         }
 
-        /**
-         * @param string
-         * @return
-         */
         public static Logger from(String name) {
             return from(org.apache.commons.logging.LogFactory.getLog(name));
         }
@@ -355,9 +354,9 @@ public final class Loggers {
             }
         }
 
+
         /**
-         * @see org.coconut.core.Log#log(org.coconut.core.Log.Level,
-         *      java.lang.String)
+         * @see org.coconut.core.Logger#log(org.coconut.core.Logger.Level, java.lang.String)
          */
         public void log(Level level, String message) {
             switch (level) {
@@ -381,9 +380,9 @@ public final class Loggers {
             }
         }
 
+
         /**
-         * @see org.coconut.core.Log#log(org.coconut.core.Log.Level,
-         *      java.lang.String, java.lang.Throwable)
+         * @see org.coconut.core.Logger#log(org.coconut.core.Logger.Level, java.lang.String, java.lang.Throwable)
          */
         public void log(Level level, String message, Throwable cause) {
             switch (level) {
@@ -408,7 +407,7 @@ public final class Loggers {
         }
 
         /**
-         * @see org.coconut.core.util.Logs.AbstractLogger#getName()
+         * @see org.coconut.core.Loggers.AbstractLogger#getName()
          */
         @Override
         public String getName() {

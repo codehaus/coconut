@@ -19,6 +19,7 @@ import net.jcip.annotations.NotThreadSafe;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.service.CacheHelper;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
 import org.coconut.cache.internal.service.entry.EntryMap;
@@ -30,7 +31,6 @@ import org.coconut.cache.internal.service.loading.InternalCacheLoadingService;
 import org.coconut.cache.internal.service.service.InternalCacheServiceManager;
 import org.coconut.cache.internal.service.service.UnsynchronizedCacheServiceManager;
 import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsService;
-import org.coconut.cache.internal.spi.CacheHelper;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
@@ -448,7 +448,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         public void evictIdleElements() {}
 
         /**
-         * @see org.coconut.cache.internal.spi.CacheHelper#expire(java.lang.Object)
+         * @see org.coconut.cache.internal.service.CacheHelper#expire(java.lang.Object)
          */
         public boolean expire(K key) {
             // TODO Auto-generated method stub
@@ -456,7 +456,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         }
 
         /**
-         * @see org.coconut.cache.internal.spi.CacheHelper#expireAll(java.util.Collection)
+         * @see org.coconut.cache.internal.service.CacheHelper#expireAll(java.util.Collection)
          */
         public int expireAll(Collection<? extends K> collection) {
             // TODO Auto-generated method stub
@@ -464,7 +464,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         }
 
         /**
-         * @see org.coconut.cache.internal.spi.CacheHelper#expireAll(org.coconut.filter.Filter)
+         * @see org.coconut.cache.internal.service.CacheHelper#expireAll(org.coconut.filter.Filter)
          */
         public int expireAll(Filter<? extends CacheEntry<K, V>> filter) {
             // TODO Auto-generated method stub
@@ -472,7 +472,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         }
 
         /**
-         * @see org.coconut.cache.internal.spi.CacheHelper#filter(org.coconut.filter.Filter)
+         * @see org.coconut.cache.internal.service.CacheHelper#filter(org.coconut.filter.Filter)
          */
         public Collection<? extends CacheEntry<K, V>> filter(
                 Filter<? super CacheEntry<K, V>> filter) {
@@ -481,7 +481,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         }
 
         /**
-         * @see org.coconut.cache.internal.spi.CacheHelper#filterKeys(org.coconut.filter.Filter)
+         * @see org.coconut.cache.internal.service.CacheHelper#filterKeys(org.coconut.filter.Filter)
          */
         public Collection<? extends K> filterKeys(Filter<? super CacheEntry<K, V>> filter) {
             // TODO Auto-generated method stub
@@ -489,21 +489,21 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         }
 
         /**
-         * @see org.coconut.cache.internal.spi.CacheHelper#getCache()
+         * @see org.coconut.cache.internal.service.CacheHelper#getCache()
          */
         public Cache<K, V> getCache() {
             return UnsynchronizedCache.this;
         }
 
         /**
-         * @see org.coconut.cache.internal.spi.CacheHelper#getMutex()
+         * @see org.coconut.cache.internal.service.CacheHelper#getMutex()
          */
         public Object getMutex() {
             throw new UnsupportedOperationException("synchronization not available");
         }
 
         /**
-         * @see org.coconut.cache.internal.spi.CacheHelper#isValid(java.lang.Object)
+         * @see org.coconut.cache.internal.service.CacheHelper#isValid(java.lang.Object)
          */
         public boolean isValid(K key) {
             // TODO Auto-generated method stub
@@ -511,7 +511,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         }
 
         /**
-         * @see org.coconut.cache.internal.spi.CacheHelper#put(java.lang.Object,
+         * @see org.coconut.cache.internal.service.CacheHelper#put(java.lang.Object,
          *      java.lang.Object, org.coconut.core.AttributeMap)
          */
         public V put(K key, V value, AttributeMap attributes) {
@@ -520,7 +520,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         }
 
         /**
-         * @see org.coconut.cache.internal.spi.CacheHelper#putAll(java.util.Map,
+         * @see org.coconut.cache.internal.service.CacheHelper#putAll(java.util.Map,
          *      java.util.Map)
          */
         public void putAll(Map<? extends K, ? extends V> keyValues,
@@ -539,7 +539,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         }
 
         /**
-         * @see org.coconut.cache.internal.spi.CacheHelper#valueLoaded(java.lang.Object,
+         * @see org.coconut.cache.internal.service.CacheHelper#valueLoaded(java.lang.Object,
          *      java.lang.Object, org.coconut.core.AttributeMap)
          */
         public void valueLoaded(K key, V value, AttributeMap attributes) {
@@ -549,7 +549,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         }
 
         /**
-         * @see org.coconut.cache.internal.spi.CacheHelper#valuesLoaded(java.util.Map,
+         * @see org.coconut.cache.internal.service.CacheHelper#valuesLoaded(java.util.Map,
          *      java.util.Map)
          */
         public void valuesLoaded(Map<? super K, ? extends V> values,

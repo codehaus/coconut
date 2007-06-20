@@ -25,7 +25,8 @@ public interface InternalCacheAttributeService {
      * 
      * @param copyFrom
      *            the map to copy entries from
-     * @return
+     * @return a new AttributeMap populated containing the entries specified in
+     * the provided attribute map
      */
 	AttributeMap createMap(AttributeMap copyFrom);
 }

@@ -10,7 +10,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.policy.paging.LRUPolicy;
 import org.coconut.cache.tck.AbstractCacheTCKTestBundle;

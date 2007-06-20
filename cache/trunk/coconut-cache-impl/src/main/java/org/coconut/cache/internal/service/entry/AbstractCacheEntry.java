@@ -6,8 +6,6 @@ package org.coconut.cache.internal.service.entry;
 import java.util.Map;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
-import org.coconut.core.Clock;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

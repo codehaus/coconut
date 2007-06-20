@@ -8,6 +8,7 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.event.CacheEntryEvent;
 
 /**
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -28,72 +29,67 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, 
         return cache;
     }
 
+
     /**
-     * @return
-     * @see org.coconut.cache.policy.PolicyObject#getCost()
+     * @see org.coconut.cache.CacheEntry#getCost()
      */
     public double getCost() {
         return entry.getCost();
     }
 
-    /**
-     * @return
-     * @see org.coconut.cache.CacheEntry#getCreationTime()
-     */
     public long getCreationTime() {
         return entry.getCreationTime();
     }
 
     /**
-     * @return
      * @see org.coconut.cache.CacheEntry#getExpirationTime()
      */
     public long getExpirationTime() {
         return entry.getExpirationTime();
     }
 
+
     /**
-     * @return
-     * @see org.coconut.cache.policy.PolicyObject#getHits()
+     * @see org.coconut.cache.CacheEntry#getHits()
      */
     public long getHits() {
         return entry.getHits();
     }
 
+
     /**
-     * @return
      * @see java.util.Map.Entry#getKey()
      */
     public K getKey() {
         return entry.getKey();
     }
 
+
     /**
-     * @return
      * @see org.coconut.cache.CacheEntry#getLastAccessTime()
      */
     public long getLastAccessTime() {
         return entry.getLastAccessTime();
     }
 
+
     /**
-     * @return
      * @see org.coconut.cache.CacheEntry#getLastUpdateTime()
      */
     public long getLastUpdateTime() {
         return entry.getLastUpdateTime();
     }
 
+
     /**
-     * @return
-     * @see org.coconut.cache.policy.PolicyObject#getSize()
+     * @see org.coconut.cache.CacheEntry#getSize()
      */
     public long getSize() {
         return entry.getSize();
     }
 
+
     /**
-     * @return
      * @see java.util.Map.Entry#getValue()
      */
     public V getValue() {
@@ -339,23 +335,26 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, 
             throw new UnsupportedOperationException();
         }
 
+
         /**
-         * @see org.coconut.cache.policy.PolicyObject#getCost()
+         * @see org.coconut.cache.CacheEntry#getCost()
          */
         public double getCost() {
             throw new UnsupportedOperationException();
         }
 
+        
         /**
-         * @see org.coconut.cache.policy.PolicyObject#getHits()
+         * @see org.coconut.cache.CacheEntry#getHits()
          */
         public long getHits() {
             // TODO Auto-generated method stub
             return 0;
         }
 
+
         /**
-         * @see org.coconut.cache.policy.PolicyObject#getSize()
+         * @see org.coconut.cache.CacheEntry#getSize()
          */
         public long getSize() {
             throw new UnsupportedOperationException();

@@ -51,7 +51,7 @@ public class FIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolic
     /**
      * Constructs a new FifoPolicy with a specified initial size.
      * 
-     * @param size
+     * @param initialCapacity
      *            the initial size of the internal list, must be 0 or greater
      * @throws IllegalArgumentException
      *             if the specified size is a negative number
@@ -65,14 +65,14 @@ public class FIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolic
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#add(T)
+     * @see org.coconut.cache.ReplacementPolicy#add(java.lang.Object, org.coconut.core.AttributeMap)
      */
     public int add(T data, AttributeMap attributes) {
         return policy.add(data, attributes);
     }
 
     /**
-     * @see java.lang.Object#clone()
+     * @inheritDoc
      */
     @Override
     public FIFOPolicy<T> clone() {

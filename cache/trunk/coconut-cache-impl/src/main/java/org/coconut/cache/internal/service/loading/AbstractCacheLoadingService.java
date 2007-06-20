@@ -11,11 +11,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.service.CacheHelper;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
-import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
-import org.coconut.cache.internal.spi.CacheHelper;
-import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.core.AttributeMap;

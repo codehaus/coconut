@@ -10,7 +10,6 @@ import java.lang.reflect.InvocationTargetException;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
-import org.coconut.cache.tck.CacheTCKRunner;
 import org.junit.Test;
 
 /**

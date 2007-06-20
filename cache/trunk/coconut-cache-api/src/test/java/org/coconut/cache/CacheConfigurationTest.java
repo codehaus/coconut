@@ -12,7 +12,6 @@ import static junit.framework.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
 import org.coconut.cache.spi.XmlConfigurator;
@@ -160,13 +159,13 @@ public class CacheConfigurationTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testNewInstanceAbstractClass() throws Exception {
-		conf.newInstance(ACache.class);
+		conf.newInstance(CannotInstantiateAbstractCache.class);
 	}
 
 	@Test(expected = ArithmeticException.class)
 	public void testNewInstanceConstructorThrows() throws Throwable {
 		try {
-			conf.newInstance(DummyCache2.class);
+			conf.newInstance(ConstructorThrowingCache.class);
 		} catch (IllegalArgumentException e) {
 			throw e.getCause();
 		}
@@ -175,7 +174,7 @@ public class CacheConfigurationTest {
 	@Test(expected = IllegalAccessException.class)
 	public void testNewInstanceConstructorThrows2() throws Throwable {
 		try {
-			conf.newInstance(DummyCache3.class);
+			conf.newInstance(PrivateConstructorCache.class);
 		} catch (IllegalArgumentException e) {
 			throw e.getCause();
 		}
@@ -189,33 +188,33 @@ public class CacheConfigurationTest {
 	// conf.toString();
 	// }
 
-	public static abstract class ACache extends DummyCache {
+	public static abstract class CannotInstantiateAbstractCache extends DummyCache {
 
 		/**
          * @param configuration
          */
-		public ACache(CacheConfiguration configuration) {
+		public CannotInstantiateAbstractCache(CacheConfiguration configuration) {
 			super(configuration);
 		}
 	}
 
-	public static class DummyCache2 extends DummyCache {
+	public static class ConstructorThrowingCache extends DummyCache {
 
 		/**
          * @param configuration
          */
-		public DummyCache2(CacheConfiguration configuration) {
+		public ConstructorThrowingCache(CacheConfiguration configuration) {
 			super(configuration);
 			throw new ArithmeticException();
 		}
 	}
 
-	public static class DummyCache3 extends DummyCache {
+	public static class PrivateConstructorCache extends DummyCache {
 
 		/**
          * @param configuration
          */
-		private DummyCache3(CacheConfiguration configuration) {
+		private PrivateConstructorCache(CacheConfiguration configuration) {
 			super(configuration);
 		}
 	}

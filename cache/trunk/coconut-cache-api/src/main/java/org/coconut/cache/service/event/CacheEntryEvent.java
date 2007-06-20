@@ -5,6 +5,7 @@ package org.coconut.cache.service.event;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.service.loading.CacheLoadingService;
 
 /**
  * A CacheEntryEvent is raised whenever a particular key-value pair in the cache has a
@@ -41,9 +42,8 @@ public interface CacheEntryEvent<K, V> extends CacheEvent<K, V>, CacheEntry<K, V
      * method. Calling {@link Cache#peek(Object)} or {@link Cache#peekEntry(Object)} on a
      * cache will not result in an ItemAccessed event being raised.
      * <p>
-     * If the item is a miss ({@link isHit()} returns false) and the cache succesfully
-     * loads a new cache entry. The {@link #getValue()} will return the new value and
-     * {@link #getEntry()} will return the new cache entry.
+     * If the item is a miss ({@link #isHit()} returns false) and the cache succesfully
+     * loads a new cache entry. The {@link #getValue()} will return the new value.
      * <p>
      * NOTE: This event can be fairly expensive in terms of performance to subscribe for,
      * as it is raised on every access to cache.
@@ -63,7 +63,7 @@ public interface CacheEntryEvent<K, V> extends CacheEvent<K, V>, CacheEntry<K, V
     /**
      * This event indicates that an entry has been added to the cache. This normally
      * happens either explicitly by using {@link Cache#put(Object, Object)} or implicitly
-     * by calling {@link Cache#get(Object)} or {@link Cache#load(Object)} and letting the
+     * by calling {@link Cache#get(Object)} or {@link CacheLoadingService#load(Object)} and letting the
      * cache loader fetch the value.
      */
     interface ItemAdded<K, V> extends CacheEntryEvent<K, V> {

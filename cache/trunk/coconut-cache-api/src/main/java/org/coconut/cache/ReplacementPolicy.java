@@ -6,6 +6,7 @@ package org.coconut.cache;
 
 import java.util.List;
 
+import org.coconut.cache.policy.Policies;
 import org.coconut.core.AttributeMap;
 
 /**
@@ -13,46 +14,28 @@ import org.coconut.core.AttributeMap;
  * from the cache when the free space is insufficient for accommodating an item to be
  * cached. Normally users should not need to implement this interface, only if they want
  * to implement new replacement polices. This library comes with a number of predefined
- * replacement policies, see {@link Polices} for the most commonly used policies.
+ * replacement policies, see {@link Policies} for the most commonly used policies.
  * <p>
  * For performance reasons cache policies are not expected to be thread-safe. Instead, any
- * cache implementation must maintain thread safety. A thread-safe replacement policy can
- * be obtained from an existing non thread-safe replacement policy by using
- * {@link Policies#synchronizedReplacementPolicy(ReplacementPolicy)}.
- * <p>
- * {@link org.coconut.cache.policy.concurrent} contains a number of specialized concurrent
- * replacement policies. Note: because of their highly concurrent nature they do not
- * implement this interface.
- * <p>
- * The <code>ReplacementPolicy</code> interface does not support policies which dependes
- * on arbitrary cost or arbitrary size. That is, only paging is supported by this
- * particular interface. Instead use the {@link CostSizePolicy} interface, which uses the
- * size and cost of refetching to determine which objects to evict.
- * {@link org.coconut.cache.policy.costsize} contains a number of policies that makes
- * effective decisions in selecting cache objects for eviction based on their size and the
- * cost of retrieving them again.
+ * cache implementation using a replacement policy must maintain thread safety.
  * <p>
  * All general-purpose <tt>ReplacementPolicy</tt> implementation classes should provide
  * a a void (no arguments) constructor. There is no way to enforce this recommendation (as
  * interfaces cannot contain constructors) but all of the general-purpose replacement
  * policy implementations available in this library comply.
  * <p>
- * We use an <tt>int</tt> to represent pointer to entries because it has a lower memory
- * footprint then using objects. While this is no problem for a cache with one single
- * policy the overhead can be significant when using an adaptable caching strategy where
- * we monitor tens or hundreds of polices. Furthermore we observe that (as a general rule)
- * most entries that are evicted from a cache are the entries that have not been accessed
- * for the longest time. Hence these objects are most often in the tenure GC area.
+ * We use an <tt>int</tt> to represent a pointer to all entries because it has a lower
+ * memory footprint then using objects. While this is no problem for a cache with one
+ * single policy the overhead can be significant when using an adaptable caching strategy
+ * where we monitor tens or hundreds of polices. Furthermore, we observe that (as a general
+ * rule) most entries that are evicted from a cache are the entries that have not been
+ * accessed for the longest time. Hence these objects are most often in the tenure GC
+ * area.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id: ReplacementPolicy.java 336 2007-06-07 21:51:46Z kasper $
  */
 public interface ReplacementPolicy<T> {
-
-    /** The default cost of fetching an element if no cost is specified. */
-    public static final double DEFAULT_COST = 1.0;
-
-    public static final long DEFAULT_SIZE = 1;
 
     /**
      * Removes all elements from this policy.
@@ -143,10 +126,10 @@ public interface ReplacementPolicy<T> {
      * are being held by the policy.
      * <p>
      * If the policy makes any guarantees as to what order its elements are evicted, this
-     * method must return the elements in the same order. For example, non deterministic
-     * policies might evict entries in another order then specified by this method.
+     * method <tt>must</tt> return the elements in the same order. However, non deterministic
+     * policies may return elements in any order from this method.
      * <p>
-     * Be aware that this can be a very expensive operation. For complicated policies
+     * Be aware that this might be an expensive operation. For complicated policies
      * where we lazyly calculate which element should be evicted next. A complete copy of
      * the policys internal datastructures might need to be created.
      * 
@@ -155,7 +138,7 @@ public interface ReplacementPolicy<T> {
     T peek();
 
     /**
-     * Returns the number of elements in the policy.
+     * Returns the current number of elements contained within this policy.
      */
     int getSize();
 }

@@ -3,8 +3,6 @@
  */
 package org.coconut.cache.internal.service.threading;
 
-import java.util.concurrent.Executor;
-
 import org.coconut.cache.service.threading.CacheServiceThreadManager;
 
 /**

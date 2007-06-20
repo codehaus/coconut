@@ -4,7 +4,6 @@
 package org.coconut.management.defaults;
 
 import org.coconut.management.annotation.ManagedAttribute;
-import org.coconut.management.annotation.ManagedOperation;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

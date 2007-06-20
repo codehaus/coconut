@@ -197,8 +197,9 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         return removed == null ? null : removed.getValue();
     }
 
+
     /**
-     * @see org.coconut.cache.spi.AbstractCache#remove(java.lang.Object, java.lang.Object)
+     * @see java.util.concurrent.ConcurrentMap#remove(java.lang.Object, java.lang.Object)
      */
     public final boolean remove(Object key, Object value) {
         if (key == null) {
@@ -209,9 +210,9 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         return doRemove(key, value) != null;
     }
 
+    
     /**
-     * @see org.coconut.cache.spi.AbstractCache#replace(java.lang.Object,
-     *      java.lang.Object)
+     * @see java.util.concurrent.ConcurrentMap#replace(java.lang.Object, java.lang.Object)
      */
     public final V replace(K key, V value) {
         if (key == null) {

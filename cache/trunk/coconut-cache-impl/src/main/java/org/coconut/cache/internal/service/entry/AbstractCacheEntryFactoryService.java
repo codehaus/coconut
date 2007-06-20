@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.ReplacementPolicy;
 import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
 import org.coconut.cache.internal.service.expiration.DefaultCacheExpirationService;
 import org.coconut.cache.internal.service.loading.AbstractCacheLoadingService;
@@ -50,7 +49,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> {
         } catch (IllegalArgumentException iae) {
             errorHandler.getExceptionHandler().warning(errorHandler.createContext(),
                     iae.getMessage() + " was added for key = " + key);
-            return ReplacementPolicy.DEFAULT_SIZE;
+            return CacheAttributes.DEFAULT_SIZE;
         }
     }
 
@@ -71,7 +70,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> {
         } catch (IllegalArgumentException iae) {
             errorHandler.getExceptionHandler().warning(errorHandler.createContext(),
                     iae.getMessage() + " was added for key = " + key);
-            return ReplacementPolicy.DEFAULT_COST;
+            return CacheAttributes.DEFAULT_COST;
         }
     }
 

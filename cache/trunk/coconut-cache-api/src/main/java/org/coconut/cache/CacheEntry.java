@@ -6,6 +6,9 @@ package org.coconut.cache;
 
 import java.util.Map;
 
+import org.coconut.cache.service.expiration.CacheExpirationService;
+import org.coconut.cache.service.loading.CacheLoadingService;
+
 /**
  * A <tt>CacheEntry</tt> describes a value-key mapping much like
  * {@link java.util.Map.Entry}. However, this interface extends it with information about
@@ -41,7 +44,7 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V> {
      * store the element.
      * 
      * @return the size of the element. If the size of the object cannot be determined
-     *         {@link org.coconut.cache.policy.CostSizePolicy#DEFAULT_SIZE} should be
+     *         {@link org.coconut.cache.CacheAttributes#DEFAULT_SIZE} should be
      *         returned
      */
     long getSize();
@@ -59,9 +62,8 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V> {
      * However, this is often the case.
      * 
      * @return the expected cost of fetching this element or
-     *         {@link org.coconut.cache.policy.CostSizePolicy#DEFAULT_COST} if no cost is
+     *         {@link org.coconut.cache.CacheAttributes#DEFAULT_COST} if no cost is
      *         associated with this element
-     * @see org.coconut.cache.policy.CostSizePolicy
      */
     double getCost();
 
@@ -91,7 +93,7 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V> {
      * 
      * @return the difference, measured in milliseconds, between the time at which the
      *         current value of the cache entry will expire and January 1, 1970 UTC.
-     * @see CacheConfiguration.ExpirationStrategy
+     * @see CacheExpirationService
      */
     long getExpirationTime();
 
@@ -99,7 +101,7 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V> {
      * Returns the time at which the specific cache entry was last accessed in
      * milliseconds (optional operation). If the value has never been requested, for
      * example, if the entry has been added to the cache due to a call on
-     * {@link Cache#load(Object)} this method returns <tt>0</tt>.
+     * {@link CacheLoadingService#load(Object)} this method returns <tt>0</tt>.
      * 
      * @return the difference, measured in milliseconds, between the time at which the
      *         entry was last accessed and January 1, 1970 UTC. Or <tt>0</tt> if it has
@@ -115,14 +117,4 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V> {
      *         entry was last updated and January 1, 1970 UTC.
      */
     long getLastUpdateTime();
-
-// /**
-// * Returns a version counter. An implementation may use timestamps for this
-// * or an incrementing number. Timestamps usually have issues with
-// * granularity and are harder to use across clusteres or threads, so an
-// * incrementing counter is often safer.
-// *
-// * @return the version of the current entry
-// */
-// long getVersion();
 }

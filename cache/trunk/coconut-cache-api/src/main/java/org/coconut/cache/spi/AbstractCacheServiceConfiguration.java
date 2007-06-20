@@ -38,7 +38,7 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
      *            the name of the service
      */
     public AbstractCacheServiceConfiguration(String serviceName) {
-        this(serviceName,  Resources.DEFAULT_CACHE_BUNDLE);
+        this(serviceName,  CacheSPI.DEFAULT_CACHE_BUNDLE);
     }
 
     /**
@@ -96,7 +96,7 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
             if (conf.getClass().getPackage().getName().startsWith(
                     Cache.class.getPackage().getName())) {
                 // speciel exception for Coconut Cache implementations.
-                throw new CacheException(Resources.getHighlyIrregular(), e);
+                throw new CacheException(CacheSPI.HIGHLY_IRREGULAR, e);
             } else {
                 throw new CacheException(
                         "A String representation of this package could not be obtained, because it could not be serialized to XML",

@@ -6,8 +6,6 @@ package org.coconut.cache;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.lang.management.CompilationMXBean;
-import java.lang.management.ManagementFactory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -29,7 +27,7 @@ import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.cache.service.statistics.CacheStatisticsConfiguration;
 import org.coconut.cache.service.threading.CacheExecutorConfiguration;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
-import org.coconut.cache.spi.ConfigurationValidator;
+import org.coconut.cache.spi.CacheSPI;
 import org.coconut.cache.spi.XmlConfigurator;
 import org.coconut.core.Clock;
 import org.coconut.core.Logger;
@@ -67,22 +65,6 @@ import org.coconut.core.Logger;
 public final class CacheConfiguration<K, V> {
     public final static List<Class<? extends AbstractCacheServiceConfiguration>> DEFAULT_SERVICES;
 
-    /** A Map of additional properties. */
-    private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
-
-    /** The default logger for the cache. */
-    private Logger defaultLogger;
-
-    private final List<AbstractCacheServiceConfiguration> list = new ArrayList<AbstractCacheServiceConfiguration>();
-
-    private final Collection<Class<? extends AbstractCacheServiceConfiguration<K, V>>> serviceTypes;
-
-    /** The name of the cache. */
-    private String name;
-
-    /** The clock that should be used for timing. */
-    private Clock timingStrategy = Clock.DEFAULT_CLOCK;
-
     static {
         List services = new ArrayList();
         services.add(CacheEventConfiguration.class);
@@ -96,9 +78,25 @@ public final class CacheConfiguration<K, V> {
         DEFAULT_SERVICES = Collections.unmodifiableList(services);
     }
 
+    /** A Map of additional properties. */
+    private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
+
+    /** The clock that should be used for timing. */
+    private Clock clock = Clock.DEFAULT_CLOCK;
+
+    /** The default logger for the cache. */
+    private Logger defaultLogger;
+
+    private final List<AbstractCacheServiceConfiguration> list = new ArrayList<AbstractCacheServiceConfiguration>();
+
+    /** The name of the cache. */
+    private String name;
+
+    private final Collection<Class<? extends AbstractCacheServiceConfiguration<K, V>>> serviceTypes;
+
     /**
      * Creates a new Configuration with default settings. CacheConfiguration instances
-     * should be created using the {@link #newConf()} method.
+     * should be created using the {@link #create()} method.
      */
     public CacheConfiguration() {
         // this(DEFAULT_SERVICES);
@@ -127,32 +125,44 @@ public final class CacheConfiguration<K, V> {
         return conf;
     }
 
-    public Collection<Class<? extends AbstractCacheServiceConfiguration<K, V>>> getServiceTypes() {
-        return (Collection) DEFAULT_SERVICES;
+    /**
+     * Returns a configuration object that can be used to control what types of events are
+     * raised whenever something interesting happens in the cache.
+     * 
+     * @return a CacheEventConfiguration
+     */
+    public CacheEventConfiguration event() {
+        return lazyCreate(CacheEventConfiguration.class);
     }
 
     /**
-     * Returns the {@link org.coconut.core.Clock} that the cache should use.
+     * Returns a service that can be used to configure maximum size, replacement policies,
+     * and more for the cache.
      * 
-     * @return the Clock that the cache should use
-     * @see #setClock(Clock)
+     * @return a CacheEvictionConfiguration
      */
-    public Clock getClock() {
-        return timingStrategy;
+    public CacheEvictionConfiguration<K, V> eviction() {
+        return lazyCreate(CacheEvictionConfiguration.class);
     }
 
-    private <T extends AbstractCacheServiceConfiguration> T getConfiguration(
-            Class<T> serviceConfigurationType) {
-        T t = getConfigurationOfType(serviceConfigurationType);
-        if (t == null) {
-            t = lazyCreate(serviceConfigurationType);
-            if (t == null) {
-                throw new IllegalArgumentException(
-                        "Unknown service configuration, type ="
-                                + serviceConfigurationType);
-            }
-        }
-        return t;
+    /**
+     * Returns a configuration object that can be used to control how loading is done in
+     * the cache.
+     * 
+     * @return a CacheLoadingConfiguration
+     */
+    public CacheExceptionHandlingConfiguration<K, V> exceptionHandling() {
+        return lazyCreate(CacheExceptionHandlingConfiguration.class);
+    }
+
+    /**
+     * Returns a configuration object that can be used to control how and when elements in
+     * the cache expires.
+     * 
+     * @return a CacheExpirationConfiguration
+     */
+    public CacheExpirationConfiguration<K, V> expiration() {
+        return lazyCreate(CacheExpirationConfiguration.class);
     }
 
     /**
@@ -162,6 +172,16 @@ public final class CacheConfiguration<K, V> {
      */
     public List<AbstractCacheServiceConfiguration> getAllConfigurations() {
         return new ArrayList<AbstractCacheServiceConfiguration>(list);
+    }
+
+    /**
+     * Returns the {@link org.coconut.core.Clock} that the cache should use.
+     * 
+     * @return the Clock that the cache should use
+     * @see #setClock(Clock)
+     */
+    public Clock getClock() {
+        return clock;
     }
 
     /**
@@ -234,6 +254,30 @@ public final class CacheConfiguration<K, V> {
         return result == null ? defaultValue : result;
     }
 
+    public Collection<Class<? extends AbstractCacheServiceConfiguration<K, V>>> getServiceTypes() {
+        return (Collection) DEFAULT_SERVICES;
+    }
+
+    /**
+     * Returns a configuration object that can be used to control how loading is done in
+     * the cache.
+     * 
+     * @return a CacheLoadingConfiguration
+     */
+    public CacheLoadingConfiguration<K, V> loading() {
+        return lazyCreate(CacheLoadingConfiguration.class);
+    }
+
+    /**
+     * Returns a configuration object that can be used to control how services are
+     * remotely managed.
+     * 
+     * @return a CacheManagementConfiguration
+     */
+    public CacheManagementConfiguration management() {
+        return lazyCreate(CacheManagementConfiguration.class);
+    }
+
     /**
      * Creates a new cache instance of the specified type using this configuration.
      * 
@@ -278,76 +322,6 @@ public final class CacheConfiguration<K, V> {
     }
 
     /**
-     * Returns a configuration object that can be used to control what types of events are
-     * raised whenever something interesting happens in the cache.
-     * 
-     * @return a CacheEventConfiguration
-     */
-    public CacheEventConfiguration event() {
-        return lazyCreate(CacheEventConfiguration.class);
-    }
-
-    /**
-     * Returns a service that can be used to configure maximum size, replacement policies,
-     * and more for the cache.
-     * 
-     * @return a CacheEvictionConfiguration
-     */
-    public CacheEvictionConfiguration<K, V> eviction() {
-        return lazyCreate(CacheEvictionConfiguration.class);
-    }
-
-    /**
-     * Returns a configuration object that can be used to control how and when elements in
-     * the cache expires.
-     * 
-     * @return a CacheExpirationConfiguration
-     */
-    public CacheExpirationConfiguration<K, V> expiration() {
-        return lazyCreate(CacheExpirationConfiguration.class);
-    }
-
-    /**
-     * Returns a configuration object that can be used to control how loading is done in
-     * the cache.
-     * 
-     * @return a CacheLoadingConfiguration
-     */
-    public CacheLoadingConfiguration<K, V> loading() {
-        return lazyCreate(CacheLoadingConfiguration.class);
-    }
-
-    /**
-     * Returns a configuration object that can be used to control how loading is done in
-     * the cache.
-     * 
-     * @return a CacheLoadingConfiguration
-     */
-    public CacheExceptionHandlingConfiguration<K, V> exceptionHandling() {
-        return lazyCreate(CacheExceptionHandlingConfiguration.class);
-    }
-
-    /**
-     * Returns a configuration object that can be used to control how services are
-     * remotely managed.
-     * 
-     * @return a CacheManagementConfiguration
-     */
-    public CacheManagementConfiguration management() {
-        return lazyCreate(CacheManagementConfiguration.class);
-    }
-
-    /**
-     * Returns a configuration object that can be used to control how all the various
-     * threads running with coconut.
-     * 
-     * @return a CacheThreadingConfiguration
-     */
-    public CacheExecutorConfiguration<K, V> threading() {
-        return lazyCreate(CacheExecutorConfiguration.class);
-    }
-
-    /**
      * Sets the {@link org.coconut.core.Clock} that the cache should use. Normally users
      * should not need to set this, only if they want to provide another timing mechanism
      * then the built-in {@link java.lang.System#currentTimeMillis()}. For example, a
@@ -364,7 +338,7 @@ public final class CacheConfiguration<K, V> {
         if (timingStrategy == null) {
             throw new NullPointerException("timingStrategy is null");
         }
-        this.timingStrategy = timingStrategy;
+        this.clock = timingStrategy;
         return this;
     }
 
@@ -376,7 +350,7 @@ public final class CacheConfiguration<K, V> {
      * <p>
      * Coconut Caches strives to be very conservertive about what is logged. That is, if
      * it is not log as little as possible. That is, We actually advise running with log
-     * at {@link Logger.Level.INFO} level even in production.
+     * at {@link Logger.Level#Info} level even in production.
      * 
      * @param logger
      *            the log to use
@@ -439,6 +413,16 @@ public final class CacheConfiguration<K, V> {
     }
 
     /**
+     * Returns a configuration object that can be used to control how all the various
+     * threads running with coconut.
+     * 
+     * @return a CacheThreadingConfiguration
+     */
+    public CacheExecutorConfiguration<K, V> threading() {
+        return lazyCreate(CacheExecutorConfiguration.class);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -475,6 +459,20 @@ public final class CacheConfiguration<K, V> {
         return (T) addConfiguration(acsc);
     }
 
+    private <T extends AbstractCacheServiceConfiguration> T getConfiguration(
+            Class<T> serviceConfigurationType) {
+        T t = getConfigurationOfType(serviceConfigurationType);
+        if (t == null) {
+            t = lazyCreate(serviceConfigurationType);
+            if (t == null) {
+                throw new IllegalArgumentException(
+                        "Unknown service configuration, type ="
+                                + serviceConfigurationType);
+            }
+        }
+        return t;
+    }
+
     private <T extends AbstractCacheServiceConfiguration> T getConfigurationOfType(
             Class<T> serviceConfigurationType) {
         for (AbstractCacheServiceConfiguration o : list) {
@@ -491,8 +489,7 @@ public final class CacheConfiguration<K, V> {
             createConfiguration(c);
             conf = getConfiguration(c);
         }
-        // bit of a hack
-        ConfigurationValidator.initializeConfiguration(conf, this);
+        CacheSPI.initializeConfiguration(conf, this);
         return conf;
     }
 
@@ -564,7 +561,7 @@ public final class CacheConfiguration<K, V> {
     public static <K, V> CacheConfiguration<K, V> createConfiguration(InputStream xmlDoc)
             throws Exception {
         CacheConfiguration<K, V> conf = CacheConfiguration.create();
-        new XmlConfigurator().read(conf, xmlDoc);
+        new XmlConfigurator().readInto(conf, xmlDoc);
         return conf;
     }
 }

@@ -23,7 +23,7 @@ import org.w3c.dom.Node;
 
 /**
  * XmlConfigurator is used to load and save {@link org.coconut.cache.CacheConfiguration}
- * as XML. Normally users do not use this class but instead rely on
+ * as XML. Normally users should not rely on this class but instead use
  * {@link CacheConfiguration#create(InputStream)},
  * {@link CacheConfiguration#createAndInstantiate(InputStream)} or
  * {@link CacheConfiguration#createInstantiateAndStart(InputStream)}.
@@ -59,16 +59,17 @@ public class XmlConfigurator {
 
     /**
      * Reads the XML configuration from the specified InputStream and populates the
-     * specified CacheConfiguration.
+     * specified CacheConfiguration with the options.
      * 
      * @param configuration
-     *            the CacheConfiguration to populate
+     *            the CacheConfiguration to read value into
      * @param stream
      *            the InputStream to load the configuration from
      * @throws Exception
-     *             some Exception prevented the CacheConfiguration from being populated
+     *             some Exception prevented the CacheConfiguration from being properly
+     *             populated
      */
-    public <K, V> void read(CacheConfiguration<K, V> configuration, InputStream stream)
+    public <K, V> void readInto(CacheConfiguration<K, V> configuration, InputStream stream)
             throws Exception {
         if (configuration == null) {
             throw new NullPointerException("configuration is null");

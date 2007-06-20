@@ -5,8 +5,6 @@ package org.coconut.cache.service.expiration;
 
 import java.lang.management.ManagementFactory;
 
-import org.coconut.management.annotation.ManagedAttribute;
-
 /**
  * The management interface for the expiration system of a Cache.
  * <p>

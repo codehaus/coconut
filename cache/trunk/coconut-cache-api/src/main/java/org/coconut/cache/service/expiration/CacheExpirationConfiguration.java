@@ -68,10 +68,8 @@ public class CacheExpirationConfiguration<K, V> extends
     /**
      * Sets the default expiration time for elements added to the cache. Elements added
      * using the {@link Cache#put(Object, Object)} will expire at
-     * <tt>time_of_insert + default_expiration_time</tt>. Expired elements are handled
-     * accordingly to the {@link ExpirationStrategy} set for the cache using
-     * {@link #setFilter(Filter)}. The default expiration is infinite, that is elements
-     * never expires..
+     * <tt>time_of_insert + default_expiration_time</tt>. The default expiration is
+     * infinite, that is elements never expires..
      * 
      * @param timeToLive
      *            the default time to live for elements added to the cache, must be

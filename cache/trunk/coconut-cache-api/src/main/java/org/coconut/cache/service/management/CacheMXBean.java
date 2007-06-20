@@ -6,9 +6,6 @@ package org.coconut.cache.service.management;
 
 import javax.management.MBeanServer;
 
-import org.coconut.management.annotation.ManagedAttribute;
-import org.coconut.management.annotation.ManagedOperation;
-
 /**
  * The management interface for a {@link org.coconut.cache.Cache}. Some cache
  * implementations might define additional methods in addition to those defined in this

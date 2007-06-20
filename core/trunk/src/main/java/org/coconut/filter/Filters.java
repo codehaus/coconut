@@ -164,7 +164,7 @@ public class Filters {
         }
 
         /**
-         * @see org.coconut.filter.CompositeFilter#getFilters()
+         * @see org.coconut.filter.spi.CompositeFilter#getFilters()
          */
         @SuppressWarnings("unchecked")
         public List<Filter<E>> getFilters() {
@@ -193,7 +193,6 @@ public class Filters {
          * Returns whether the operands must be evaluated left and then right
          * (strict) or if each of them can be evaluated indenpendently.
          * 
-         * @return
          */
         public boolean isStrict() {
             return isStrict;
@@ -740,7 +739,7 @@ public class Filters {
         }
 
         /**
-         * @see org.coconut.filter.CompositeFilter#getFilters()
+         * @see org.coconut.filter.spi.CompositeFilter#getFilters()
          */
         public List<Filter<E>> getFilters() {
             return Arrays.asList(filter);
@@ -796,7 +795,7 @@ public class Filters {
         }
 
         /**
-         * @see org.coconut.filter.CompositeFilter#getFilters()
+         * @see org.coconut.filter.spi.CompositeFilter#getFilters()
          */
         @SuppressWarnings("unchecked")
         public List<Filter<E>> getFilters() {
@@ -964,7 +963,7 @@ public class Filters {
         }
 
         /**
-         * @see org.coconut.filter.CompositeFilter#getFilters()
+         * @see org.coconut.filter.spi.CompositeFilter#getFilters()
          */
         public List<Filter<E>> getFilters() {
             return Arrays.asList(left, right);

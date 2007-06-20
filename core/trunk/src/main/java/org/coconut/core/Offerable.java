@@ -7,7 +7,6 @@ package org.coconut.core;
 /**
  * An Offerable represents anything that you can put items into.
  * 
- * @see EventHandlers
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id$
  */

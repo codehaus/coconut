@@ -47,7 +47,7 @@ public final class Transformers {
         /**
          * Returns additional parameters that
          * 
-         * @return
+         * @return additional parameters that
          */
         Object[] getParameters();
     }
@@ -358,7 +358,7 @@ public final class Transformers {
         }
 
         /**
-         * @see org.coconut.core.Transformer#transform(null)
+         * @see org.coconut.core.Transformer#transform(java.lang.Object)
          */
         public T transform(F from) {
             if (from == null) {
@@ -434,7 +434,7 @@ public final class Transformers {
         }
 
         /**
-         * @see org.coconut.core.Transformer#transform(F)
+         * @see org.coconut.core.Transformer#transform(java.lang.Object)
          */
         @SuppressWarnings("unchecked")
         public Object transform(Object from) {

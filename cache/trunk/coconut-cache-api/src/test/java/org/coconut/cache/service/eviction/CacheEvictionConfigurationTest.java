@@ -8,7 +8,6 @@ import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertSame;
 import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
 
-import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;

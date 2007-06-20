@@ -67,7 +67,6 @@ import org.coconut.filter.Filter;
  * eventbus
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @see Bus
  */
 public interface EventBus<E> extends Offerable<E>, EventProcessor<E> {
 

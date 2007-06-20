@@ -7,6 +7,7 @@ import static org.coconut.internal.util.XmlUtil.addAndsaveObject;
 import static org.coconut.internal.util.XmlUtil.getChild;
 import static org.coconut.internal.util.XmlUtil.loadOptional;
 
+import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
@@ -56,12 +57,12 @@ public class CacheLoadingConfiguration<K, V> extends
     }
 
     /**
-     * Returns the reload interval in the specified timeunit.
+     * Returns the refresh interval in the specified timeunit.
      * 
      * @param unit
      *            the unit of time to return the reload interval in
-     * @return
-     * @see #setReloadInterval(long, TimeUnit)
+     * @return the refresh interval in the specified timeunit.
+     * @see #setDefaultTimeToRefresh(long, TimeUnit)
      */
     public long getDefaultTimeToRefresh(TimeUnit unit) {
         if (defaultTimeToRefresh == Long.MAX_VALUE) {
@@ -111,9 +112,6 @@ public class CacheLoadingConfiguration<K, V> extends
      * @param loader
      *            the loader to set
      * @return the current CacheConfiguration
-     * @throws IllegalStateException
-     *             if an extended loader has already been set, using
-     *             {@link #setExtendedBackend(CacheLoader)}
      */
     public CacheLoadingConfiguration<K, V> setLoader(
             CacheLoader<? super K, ? extends V> loader) {
@@ -124,10 +122,10 @@ public class CacheLoadingConfiguration<K, V> extends
     /**
      * Sets a function ({@link Filter}) that is used for determining if an element
      * should be reloaded. The filter is checked on each call to
-     * {@link org.coconut.cache.Cache#get(Object)),{@link org.coconut.cache.Cache#getAll(Collection)),
-     * {@link org.coconut.cache.Cache#getEntry(Object)) if a mapping exist for specified key(s).
-     * Furthermore it is called for all entries within the cache on calls to
-     * {@link org.coconut.cache.Cache#evict()).
+     * {@link org.coconut.cache.Cache#get(Object)},{@link org.coconut.cache.Cache#getAll(Collection)},
+     * {@link org.coconut.cache.Cache#getEntry(Object)} if a mapping exist for specified
+     * key(s). Furthermore it is called for all entries within the cache on calls to
+     * {@link org.coconut.cache.Cache#evict()}.
      * <p>
      * 
      * @param filter

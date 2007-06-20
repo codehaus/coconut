@@ -20,7 +20,6 @@ import javax.management.ObjectName;
 
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedGroupVisitor;
-import org.coconut.test.MockTestCase;
 import org.junit.Before;
 import org.junit.Test;
 

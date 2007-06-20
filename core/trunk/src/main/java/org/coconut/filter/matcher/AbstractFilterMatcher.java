@@ -37,19 +37,17 @@ public abstract class AbstractFilterMatcher<K, E> implements FilterMatcher<K, E>
         return map.entrySet();
     }
 
+
     /**
-     * @param key
-     * @return
-     * @see java.util.concurrent.ConcurrentHashMap#containsKey(java.lang.Object)
+     * @see java.util.Map#containsKey(java.lang.Object)
      */
     public boolean containsKey(Object key) {
         return map.containsKey(key);
     }
 
+
     /**
-     * @param value
-     * @return
-     * @see java.util.concurrent.ConcurrentHashMap#containsValue(java.lang.Object)
+     * @see java.util.Map#containsValue(java.lang.Object)
      */
     public boolean containsValue(Object value) {
         return map.containsValue(value);
@@ -57,34 +55,31 @@ public abstract class AbstractFilterMatcher<K, E> implements FilterMatcher<K, E>
 
 
     /**
-     * @param o
-     * @return
-     * @see java.util.AbstractMap#equals(java.lang.Object)
+     * @see java.lang.Object#equals(java.lang.Object)
      */
     public boolean equals(Object o) {
         return map.equals(o);
     }
 
+
     /**
-     * @param key
-     * @return
-     * @see java.util.concurrent.ConcurrentHashMap#get(java.lang.Object)
+     * @see java.util.Map#get(java.lang.Object)
      */
     public Filter<? super E> get(Object key) {
         return map.get(key);
     }
 
+
     /**
-     * @return
-     * @see java.util.AbstractMap#hashCode()
+     * @see java.lang.Object#hashCode()
      */
     public int hashCode() {
         return map.hashCode();
     }
 
+
     /**
-     * @return
-     * @see java.util.concurrent.ConcurrentHashMap#isEmpty()
+     * @see java.util.Map#isEmpty()
      */
     public boolean isEmpty() {
         return map.isEmpty();
@@ -92,19 +87,14 @@ public abstract class AbstractFilterMatcher<K, E> implements FilterMatcher<K, E>
 
 
     /**
-     * @return
-     * @see java.util.concurrent.ConcurrentHashMap#keySet()
+     * @see java.util.Map#keySet()
      */
     public Set<K> keySet() {
         return map.keySet();
     }
 
     /**
-     * @param key
-     * @param value
-     * @return
-     * @see java.util.concurrent.ConcurrentHashMap#put(java.lang.Object,
-     *      java.lang.Object)
+     * @see java.util.Map#put(java.lang.Object, java.lang.Object)
      */
     public Filter<? super E> put(K key, Filter<? super E> value) {
         return map.put(key, value);
@@ -118,35 +108,33 @@ public abstract class AbstractFilterMatcher<K, E> implements FilterMatcher<K, E>
         map.putAll(t);
     }
 
+
     /**
-     * @param key
-     * @return
-     * @see java.util.concurrent.ConcurrentHashMap#remove(java.lang.Object)
+     * @see java.util.Map#remove(java.lang.Object)
      */
     public Filter<? super E> remove(Object key) {
         return map.remove(key);
     }
 
 
+
     /**
-     * @return
-     * @see java.util.concurrent.ConcurrentHashMap#size()
+     * @see java.util.Map#size()
      */
     public int size() {
         return map.size();
     }
 
+
     /**
-     * @return
-     * @see java.util.AbstractMap#toString()
+     * @see java.lang.Object#toString()
      */
     public String toString() {
         return map.toString();
     }
 
     /**
-     * @return
-     * @see java.util.concurrent.ConcurrentHashMap#values()
+     * @see java.util.Map#values()
      */
     public Collection<Filter<? super E>> values() {
         return map.values();

@@ -4,10 +4,6 @@
 
 package org.coconut.cache.service.loading;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
-
 import org.coconut.core.AttributeMap;
 
 /**

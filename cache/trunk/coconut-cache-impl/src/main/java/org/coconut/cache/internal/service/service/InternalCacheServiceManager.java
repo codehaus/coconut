@@ -31,7 +31,7 @@ public interface InternalCacheServiceManager {
 	/**
      * Returns a list of all the public exposed services.
      * 
-     * @return
+     * @return a list of all the public exposed services
      */
 	List getPublicServices();
 

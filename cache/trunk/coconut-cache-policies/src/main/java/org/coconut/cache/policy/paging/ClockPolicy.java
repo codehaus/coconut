@@ -56,7 +56,7 @@ public class ClockPolicy<T> extends AbstractPolicy<T> implements ReplacementPoli
     }
     
     /**
-     * @see java.lang.Object#clone()
+     * @inheritDoc
      */
     public ClockPolicy<T> clone() {
         return new ClockPolicy<T>(this);

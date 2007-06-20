@@ -20,7 +20,7 @@ public interface AttributedEvent {
      * As a general rule a sequence id is a positiv number.
      * <p>
      * If for some reason it is impossible to generate a sequence id or if it is
-     * not needed, {@link LONG.MIN_VALUE} should be returned.
+     * not needed, {@link Long#MIN_VALUE} should be returned.
      */
     String SEQUENCE_ID = "sequence_id"; // type long
 

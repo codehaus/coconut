@@ -6,7 +6,6 @@ import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.RuntimeMBeanException;
 
-import org.coconut.cache.service.eviction.CacheEvictionMXBean;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationMXBean;
 import org.junit.Before;

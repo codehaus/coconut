@@ -3,13 +3,6 @@
  */
 package org.coconut.cache.spi;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import net.jcip.annotations.ThreadSafe;
-
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 
@@ -78,11 +71,6 @@ public class ConfigurationValidator {
             // we only swallow IllegalCacheConfiguration exceptions
         }
         return false;
-    }
-
-    public static void initializeConfiguration(AbstractCacheServiceConfiguration c,
-            CacheConfiguration conf) {
-        c.setConfiguration(conf);
     }
 
 }

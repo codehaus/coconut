@@ -21,16 +21,11 @@ import org.coconut.management.annotation.ManagedOperation;
 public abstract class LongCounter 
       {
 
-    /**
-     * @param numberType
-     */
+
     public LongCounter(String name) {
         //super(name, "No Description of " + name);
     }
 
-    /**
-     * @param numberType
-     */
     public LongCounter(String name, String description) {
         //super(name, description);
     }
@@ -186,19 +181,14 @@ public abstract class LongCounter
             this.mutex = mutex;
         }
 
-        /**
-         * @see org.coconut.metric.impl.LongCounter#doubleValue()
-         */
-     
+
         public double doubleValue() {
             synchronized (mutex) {
                 return (double) value;
             }
         }
 
-        /**
-         * @see org.coconut.metric.impl.LongCounter#floatValue()
-         */
+
       
         public float floatValue() {
             synchronized (mutex) {
@@ -206,9 +196,7 @@ public abstract class LongCounter
             }
         }
 
-        /**
-         * @see org.coconut.metric.impl.LongCounter#intValue()
-         */
+
     
         public int intValue() {
             synchronized (mutex) {
@@ -216,9 +204,7 @@ public abstract class LongCounter
             }
         }
 
-        /**
-         * @see org.coconut.metric.impl.LongCounter#longValue()
-         */
+ 
 
         public long longValue() {
             synchronized (mutex) {
@@ -226,9 +212,6 @@ public abstract class LongCounter
             }
         }
 
-        /**
-         * @see org.coconut.metric.impl.LongCounter#reset()
-         */
         @Override
         public void reset() {
             synchronized (mutex) {
@@ -249,9 +232,7 @@ public abstract class LongCounter
             }
         }
 
-        /**
-         * @see org.coconut.metric.impl.LongCounter#decrementAndGet()
-         */
+
         @Override
         public long decrementAndGet() {
             synchronized (mutex) {
@@ -259,9 +240,7 @@ public abstract class LongCounter
             }
         }
 
-        /**
-         * @see org.coconut.metric.impl.LongCounter#get()
-         */
+
         @Override
         public long get() {
             synchronized (mutex) {
@@ -269,9 +248,7 @@ public abstract class LongCounter
             }
         }
 
-        /**
-         * @see org.coconut.metric.impl.LongCounter#getAndAdd(long)
-         */
+
         @Override
         public long getAndAdd(long delta) {
             synchronized (mutex) {
@@ -281,9 +258,7 @@ public abstract class LongCounter
             }
         }
 
-        /**
-         * @see org.coconut.metric.impl.LongCounter#getAndDecrement()
-         */
+
         @Override
         public long getAndDecrement() {
             synchronized (mutex) {
@@ -291,9 +266,7 @@ public abstract class LongCounter
             }
         }
 
-        /**
-         * @see org.coconut.metric.impl.LongCounter#getAndIncrement()
-         */
+
         @Override
         public long getAndIncrement() {
             synchronized (mutex) {
@@ -301,9 +274,7 @@ public abstract class LongCounter
             }
         }
 
-        /**
-         * @see org.coconut.metric.impl.LongCounter#getAndSet(long)
-         */
+
         @Override
         public long getAndSet(long newValue) {
             synchronized (mutex) {
@@ -313,9 +284,7 @@ public abstract class LongCounter
             }
         }
 
-        /**
-         * @see org.coconut.metric.impl.LongCounter#incrementAndGet()
-         */
+
         @Override
         public long incrementAndGet() {
             synchronized (mutex) {
@@ -323,9 +292,7 @@ public abstract class LongCounter
             }
         }
 
-        /**
-         * @see org.coconut.metric.impl.LongCounter#set(long)
-         */
+
         @Override
         public void set(long newValue) {
             synchronized (mutex) {
@@ -333,9 +300,7 @@ public abstract class LongCounter
             }
         }
 
-        /**
-         * @see org.coconut.metric.MetricHub#addEventHandler(org.coconut.core.EventHandler)
-         */
+
         public EventProcessor<? super LongCounter> addEventProcessor(
                 EventProcessor<? super LongCounter> e) {
             synchronized (mutex) {
@@ -344,9 +309,7 @@ public abstract class LongCounter
             }
         }
 
-        /**
-         * @see org.coconut.metric.MetricHub#getEventHandlers()
-         */
+
         public List<EventProcessor<? super LongCounter>> getEventProcessors() {
             synchronized (mutex) {
                 return new ArrayList<EventProcessor<? super LongCounter>>(Arrays
@@ -354,9 +317,6 @@ public abstract class LongCounter
             }
         }
 
-        /**
-         * @see org.coconut.metric.MetricUpdateBus#removeEventHandler(org.coconut.core.EventHandler)
-         */
         public boolean removeEventProcessor(EventProcessor<?> e) {
             synchronized (mutex) {
                 EventProcessor<? super LongCounter>[] prev = array;
@@ -519,9 +479,7 @@ public abstract class LongCounter
             l.set(newValue);
         }
 
-        /**
-         * @see org.coconut.metric.MetricHub#addEventHandler(org.coconut.core.EventHandler)
-         */
+
         public EventProcessor<? super LongCounter> addEventProcessor(
                 EventProcessor<? super LongCounter> e) {
             synchronized (mutex) {
@@ -530,9 +488,7 @@ public abstract class LongCounter
             }
         }
 
-        /**
-         * @see org.coconut.metric.MetricHub#getEventHandlers()
-         */
+
         public List<EventProcessor<? super LongCounter>> getEventProcessors() {
             synchronized (mutex) {
                 return new ArrayList<EventProcessor<? super LongCounter>>(Arrays
@@ -540,9 +496,7 @@ public abstract class LongCounter
             }
         }
 
-        /**
-         * @see org.coconut.metric.MetricUpdateBus#removeEventHandler(org.coconut.core.EventHandler)
-         */
+
         public boolean removeEventProcessor(EventProcessor<?> e) {
             synchronized (mutex) {
                 EventProcessor<? super LongCounter>[] prev = array;
@@ -567,41 +521,29 @@ public abstract class LongCounter
             super(name, description);
         }
 
-        /**
-         * @see org.coconut.metric.impl.LongCounter#doubleValue()
-         */
+
      
         public double doubleValue() {
             return (double) value;
         }
 
-        /**
-         * @see org.coconut.metric.impl.LongCounter#floatValue()
-         */
-       
+
         public float floatValue() {
             return (float) value;
         }
 
-        /**
-         * @see org.coconut.metric.impl.LongCounter#intValue()
-         */
+
 
         public int intValue() {
             return (int) value;
         }
 
-        /**
-         * @see org.coconut.metric.impl.LongCounter#longValue()
-         */
+
     
         public long longValue() {
             return value;
         }
 
-        /**
-         * @see org.coconut.metric.impl.LongCounter#reset()
-         */
         @Override
         public void reset() {
             value = 0;
@@ -630,9 +572,7 @@ public abstract class LongCounter
             return value;
         }
 
-        /**
-         * @see org.coconut.metric.impl.LongCounter#decrementAndGet()
-         */
+
         @Override
         public long decrementAndGet() {
             --value;
@@ -640,17 +580,13 @@ public abstract class LongCounter
             return value;
         }
 
-        /**
-         * @see org.coconut.metric.impl.LongCounter#get()
-         */
+
         @Override
         public long get() {
             return value;
         }
 
-        /**
-         * @see org.coconut.metric.impl.LongCounter#getAndAdd(long)
-         */
+
         @Override
         public long getAndAdd(long delta) {
             long prev = value;
@@ -659,27 +595,21 @@ public abstract class LongCounter
             return prev;
         }
 
-        /**
-         * @see org.coconut.metric.impl.LongCounter#getAndDecrement()
-         */
+
         @Override
         public long getAndDecrement() {
             update();
             return value--;
         }
 
-        /**
-         * @see org.coconut.metric.impl.LongCounter#getAndIncrement()
-         */
+
         @Override
         public long getAndIncrement() {
             update();
             return value++;
         }
 
-        /**
-         * @see org.coconut.metric.impl.LongCounter#getAndSet(long)
-         */
+
         @Override
         public long getAndSet(long newValue) {
             long prev = value;
@@ -688,9 +618,7 @@ public abstract class LongCounter
             return prev;
         }
 
-        /**
-         * @see org.coconut.metric.impl.LongCounter#incrementAndGet()
-         */
+
         @Override
         public long incrementAndGet() {
             ++value;
@@ -698,18 +626,13 @@ public abstract class LongCounter
             return value;
         }
 
-        /**
-         * @see org.coconut.metric.impl.LongCounter#set(long)
-         */
+
         @Override
         public void set(long newValue) {
             value = newValue;
             update();
         }
 
-        /**
-         * @see org.coconut.metric.MetricHub#addEventHandler(org.coconut.core.EventHandler)
-         */
         public EventProcessor<? super LongCounter> addEventProcessor(
                 EventProcessor<? super LongCounter> e) {
             array = add(array, e);
@@ -717,16 +640,12 @@ public abstract class LongCounter
 
         }
 
-        /**
-         * @see org.coconut.metric.MetricHub#getEventHandlers()
-         */
+
         public List<EventProcessor<? super LongCounter>> getEventProcessors() {
             return new ArrayList<EventProcessor<? super LongCounter>>(Arrays.asList(array));
         }
 
-        /**
-         * @see org.coconut.metric.MetricUpdateBus#removeEventHandler(org.coconut.core.EventHandler)
-         */
+
         public boolean removeEventProcessor(EventProcessor<?> e) {
             EventProcessor<? super LongCounter>[] prev = array;
             array = remove(array, e);
@@ -734,11 +653,6 @@ public abstract class LongCounter
         }
     }
 
-    /**
-     * @param string
-     * @param string2
-     * @return
-     */
     public static LongCounter newConcurrent(String string, String string2) {
         return new ConcurrentLongCounter(string, string2);
     }

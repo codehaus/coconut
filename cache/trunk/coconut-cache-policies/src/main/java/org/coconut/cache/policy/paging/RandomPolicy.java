@@ -55,7 +55,7 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
     /**
      * Constructs a new RandomPolicy with a specified initial size.
      * 
-     * @param size
+     * @param initialCapacity
      *            the initial size of the internal list, must be 0 or greater
      * @throws IllegalArgumentException
      *             if the specified size is a negative number
@@ -95,8 +95,9 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
         System.arraycopy(h.data, 0, data, 0, h.data.length);
     }
 
+
     /**
-     * @see org.coconut.cache.CachePolicy#add(null)
+     * @see org.coconut.cache.ReplacementPolicy#add(java.lang.Object, org.coconut.core.AttributeMap)
      */
     public int add(T newData, AttributeMap ignore) {
         if (nextEntryIndex >= threshold - 1)

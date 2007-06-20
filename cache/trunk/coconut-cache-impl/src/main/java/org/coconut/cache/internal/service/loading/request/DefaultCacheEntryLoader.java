@@ -22,6 +22,10 @@ public class DefaultCacheEntryLoader<K, V> extends ExtendableFutureTask<V> imple
 
     private final EventProcessor<? super LoadRequest<K, V>> req;
 
+    public AttributeMap getAttributes() {
+        return attributes;
+    }
+
     /**
      * @param loader
      * @param key
@@ -36,13 +40,6 @@ public class DefaultCacheEntryLoader<K, V> extends ExtendableFutureTask<V> imple
         this.key = key;
         this.cache = cache;
         this.attributes = attributes;
-    }
-
-    /**
-     * @see org.coconut.cache.internal.spi.ExtendedExecutorRunnable.LoadKey#getAttributeMap()
-     */
-    public AttributeMap getAttributes() {
-        return attributes;
     }
 
     /**

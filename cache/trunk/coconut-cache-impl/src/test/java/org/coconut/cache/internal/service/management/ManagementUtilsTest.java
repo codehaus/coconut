@@ -1,5 +1,8 @@
 package org.coconut.cache.internal.service.management;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+
 import org.coconut.cache.Cache;
 import org.coconut.cache.service.management.CacheMXBean;
 import org.coconut.cache.service.management.CacheManagementService;
@@ -8,7 +11,6 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class ManagementUtilsTest {
     Mockery context = new JUnit4Mockery();

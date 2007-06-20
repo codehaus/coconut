@@ -57,7 +57,7 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
      * 
      * @return the log that is used for exception handling, or <tt>null</tt> if no such
      *         log has been set
-     * @see #setErrorLog(Logger)
+     * @see #setExceptionLogger(Logger)
      */
     public Logger getExceptionLogger() {
         return logger;
@@ -67,7 +67,7 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
      * Sets the exception handler that should be used to handle all exceptions and
      * warnings. If no exception handler is set using this method the cache should, unless
      * it specifies otherwise, use an instance of
-     * {@link CacheExceptionHandlers.CacheExceptionHandlers}
+     * {@link CacheExceptionHandlers#defaultExceptionHandler()}
      * 
      * @param exceptionHandler
      *            the exceptionHandler to use for handling exceptions and warnings

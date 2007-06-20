@@ -1,11 +1,12 @@
 package org.coconut.cache.examples.general;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class HelloworldExampleTest {
     @Test

@@ -70,14 +70,19 @@ public class CacheAttributes {
      */
     public static final String TIME_TO_REFRESH_NS = "time_to_refresh_ns";
 
+    /** The default cost of fetching an element if no cost is specified. */
+    public static final double DEFAULT_COST = 1.0;
+
+    public static final long DEFAULT_SIZE = 1;
+
     /**
      * Returns the value that the specified AttributeMap maps the {@link #COST} attribute
-     * to or {@link ReplacementPolicy#DEFAULT_COST} if no such mapping exist.
+     * to or {@link CacheAttributes#DEFAULT_COST} if no such mapping exist.
      * 
      * @param attributeMap
      *            the map to retrieve the value of the cost attribute from
      * @return returns the value that the specified AttributeMap maps the cost attribute
-     *         to or {@value ReplacementPolicy#DEFAULT_COST} if no such mapping exist
+     *         to or {@value CacheAttributes#DEFAULT_COST} if no such mapping exist
      * @throws NullPointerException
      *             if the specified attributeMap is <code>null</code>
      * @throws IllegalArgumentException
@@ -91,7 +96,7 @@ public class CacheAttributes {
         if (attributeMap == null) {
             throw new NullPointerException("attributes is null");
         }
-        double cost = attributeMap.getDouble(COST, ReplacementPolicy.DEFAULT_COST);
+        double cost = attributeMap.getDouble(COST, CacheAttributes.DEFAULT_COST);
         if (Double.isNaN(cost)) {
             throw new IllegalArgumentException("invalid cost (cost = Nan)");
         } else if (Double.isInfinite(cost)) {
@@ -193,12 +198,12 @@ public class CacheAttributes {
 
     /**
      * Returns the value that the specified AttributeMap maps the {@link #SIZE} attribute
-     * to or {@link ReplacementPolicy#DEFAULT_SIZE} if no such mapping exist.
+     * to or {@link CacheAttributes#DEFAULT_SIZE} if no such mapping exist.
      * 
      * @param attributeMap
      *            the map to retrieve the value of the size attribute from
      * @return returns the value that the specified AttributeMap maps the size attribute
-     *         to or {@value ReplacementPolicy#DEFAULT_SIZE} if no such mapping exist
+     *         to or {@value CacheAttributes#DEFAULT_SIZE} if no such mapping exist
      * @throws NullPointerException
      *             if the specified attributeMap is <code>null</code>
      * @throws IllegalArgumentException
@@ -210,7 +215,7 @@ public class CacheAttributes {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
         }
-        long size = attributes.getLong(SIZE, ReplacementPolicy.DEFAULT_SIZE);
+        long size = attributes.getLong(SIZE, CacheAttributes.DEFAULT_SIZE);
         if (size < 0) {
             throw new IllegalArgumentException("invalid size (size = " + size + ")");
         }

@@ -2,10 +2,8 @@ package org.coconut.management;
 
 import java.lang.management.ManagementFactory;
 
-import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
-import javax.management.ObjectName;
 
 import org.coconut.management.defaults.AttributedStub1;
 import org.coconut.management.defaults.DefaultManagedGroup;

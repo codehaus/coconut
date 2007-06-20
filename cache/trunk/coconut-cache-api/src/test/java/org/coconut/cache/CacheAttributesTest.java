@@ -27,16 +27,16 @@ public class CacheAttributesTest {
         context.checking(new Expectations() {
             {
                 one(attributes).getDouble(CacheAttributes.COST,
-                        ReplacementPolicy.DEFAULT_COST);
+                        CacheAttributes.DEFAULT_COST);
                 will(returnValue(0.5));
                 one(attributes).getDouble(CacheAttributes.COST,
-                        ReplacementPolicy.DEFAULT_COST);
+                        CacheAttributes.DEFAULT_COST);
                 will(returnValue(-45.3));
             }
         });
         assertEquals(0.5, CacheAttributes.getCost(attributes));
         assertEquals(-45.3, CacheAttributes.getCost(attributes));
-        assertEquals(ReplacementPolicy.DEFAULT_COST, CacheAttributes
+        assertEquals(CacheAttributes.DEFAULT_COST, CacheAttributes
                 .getCost(AttributeMaps.EMPTY_MAP));
     }
 
@@ -46,7 +46,7 @@ public class CacheAttributesTest {
         context.checking(new Expectations() {
             {
                 one(attributes).getDouble(CacheAttributes.COST,
-                        ReplacementPolicy.DEFAULT_COST);
+                        CacheAttributes.DEFAULT_COST);
                 will(returnValue(Double.NaN));
             }
         });
@@ -59,7 +59,7 @@ public class CacheAttributesTest {
         context.checking(new Expectations() {
             {
                 one(attributes).getDouble(CacheAttributes.COST,
-                        ReplacementPolicy.DEFAULT_COST);
+                        CacheAttributes.DEFAULT_COST);
                 will(returnValue(Double.POSITIVE_INFINITY));
             }
         });
@@ -72,7 +72,7 @@ public class CacheAttributesTest {
         context.checking(new Expectations() {
             {
                 one(attributes).getDouble(CacheAttributes.COST,
-                        ReplacementPolicy.DEFAULT_COST);
+                        CacheAttributes.DEFAULT_COST);
                 will(returnValue(Double.NEGATIVE_INFINITY));
             }
         });
@@ -334,16 +334,16 @@ public class CacheAttributesTest {
         context.checking(new Expectations() {
             {
                 one(attributes).getLong(CacheAttributes.SIZE,
-                        ReplacementPolicy.DEFAULT_SIZE);
+                        CacheAttributes.DEFAULT_SIZE);
                 will(returnValue(0l));
                 one(attributes).getLong(CacheAttributes.SIZE,
-                        ReplacementPolicy.DEFAULT_SIZE);
+                        CacheAttributes.DEFAULT_SIZE);
                 will(returnValue(1000l));
             }
         });
         assertEquals(0l, CacheAttributes.getSize(attributes));
         assertEquals(1000l, CacheAttributes.getSize(attributes));
-        assertEquals(ReplacementPolicy.DEFAULT_SIZE, CacheAttributes
+        assertEquals(CacheAttributes.DEFAULT_SIZE, CacheAttributes
                 .getSize(AttributeMaps.EMPTY_MAP));
     }
     
@@ -353,7 +353,7 @@ public class CacheAttributesTest {
         context.checking(new Expectations() {
             {
                 one(attributes).getLong(CacheAttributes.SIZE,
-                        ReplacementPolicy.DEFAULT_SIZE);
+                        CacheAttributes.DEFAULT_SIZE);
                 will(returnValue(-1l));
             }
         });

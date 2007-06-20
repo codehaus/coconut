@@ -3,6 +3,7 @@
  */
 package org.coconut.cache.service.eviction;
 
+
 /**
  * The management interface for the eviction engine of a cache.
  * 
@@ -52,7 +53,7 @@ public interface CacheEvictionMXBean {
      * @return the maximum number of elements that this cache can hold or
      *         {@link Integer#MAX_VALUE} if no such limit exist
      * @see #setMaximumSize(int)
-     * @see #getSize
+     * @see {@link java.util.Map#size()}
      */
     int getMaximumSize();
 

@@ -34,7 +34,7 @@ public class CacheEventFilters {
 
     /**
      * A filter that only accepts all instance events (events that are not instances of
-     * {@link CacheItemEvent}).
+     * {@link CacheEntryEvent}).
      */
     @SuppressWarnings("unchecked")
     public static final Filter<?> CACHE_INSTANCE_FILTER = Filters.not(Filters

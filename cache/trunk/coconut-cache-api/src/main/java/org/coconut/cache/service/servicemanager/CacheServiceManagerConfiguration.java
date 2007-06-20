@@ -43,7 +43,7 @@ public class CacheServiceManagerConfiguration {
      *            the key to attach the specified instance to
      * @param instance
      *            the instance to map the specified key to
-     * @return
+     * @return this configuration
      * @throws IllegalArgumentException
      *             If an instance has already been registered with the specified key
      * @throws NullPointerException

@@ -5,6 +5,7 @@ package org.coconut.management;
 
 import java.util.Collection;
 
+import javax.management.InstanceAlreadyExistsException;
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -50,7 +51,6 @@ public interface ManagedGroup {
      *            the name of the group. Cannot be the empty string
      * @param description
      *            the description of the group
-     * @return
      * @throws NullPointerException
      *             if the specified name or description is null
      * @throws IllegalArgumentException
@@ -64,16 +64,12 @@ public interface ManagedGroup {
     /**
      * Returns the objectname this group is registered under, or <code>null</code> if it
      * has not yet been registered.
-     * 
-     * @return
      */
     ObjectName getObjectName();
 
     /**
      * Return the MBeanServer this group is registered with or <tt>null</tt> if this
      * group is not registered.
-     * 
-     * @return
      */
     MBeanServer getServer();
 
@@ -87,9 +83,6 @@ public interface ManagedGroup {
      */
     Collection<ManagedGroup> getChildren();
 
-    /**
-     * @return
-     */
     ManagedGroup getParent();
 
     /**
@@ -109,7 +102,7 @@ public interface ManagedGroup {
     /**
      * If any sub groups has registered these will also be unregistered.
      * 
-     * @throws Exception
+     * @throws JMException
      */
     void unregister() throws JMException;
 }

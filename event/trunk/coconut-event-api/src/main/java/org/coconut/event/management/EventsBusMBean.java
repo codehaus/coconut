@@ -3,6 +3,10 @@
  */
 package org.coconut.event.management;
 
+import java.util.Collection;
+
+import org.coconut.event.EventBus;
+
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */

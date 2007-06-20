@@ -7,9 +7,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
+import org.coconut.cache.service.event.CacheEntryEvent;
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
-import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.core.AttributeMap;
@@ -110,9 +110,6 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      *             (optional). A cache might be configured to return null instead
      * @see Map#get(Object)
      * @see CacheLoadingConfiguration#setLoader(CacheLoader)
-     * @see CacheExceptionHandler#loadFailed(Cache,
-     *      org.coconut.cache.service.loading.CacheLoader, Object, AttributeMap, boolean,
-     *      Throwable)
      */
     V get(Object key);
 
@@ -149,7 +146,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     /**
      * Returns all registered services within the cache.
      * 
-     * @return
+     * @return a map of all registered services
      */
     Map<Class<?>, Object> getAllServices();
 
@@ -200,7 +197,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @return a service of the specified type
      * @throws CacheException
      *             if no service of the specified type is registered
-     * @see org.coconut.cache.service.CacheServices
+     * @see org.coconut.cache.CacheServices
      */
     <T> T getService(Class<T> serviceType);
 
@@ -218,7 +215,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * This method works analogoes to the {@link java.util.Map#get(Object)} method.
      * However, it will not try to fetch missing items, it will only return a value if it
      * actually exists in the cache. Furthermore, it will not effect the statistics
-     * gathered by the cache and no {@link CacheItemEvent.ItemAccessed} event will be
+     * gathered by the cache and no {@link CacheEntryEvent.ItemAccessed} event will be
      * raised. Finally, even if the item is expired it will still be returned.
      * <p>
      * All implementations of this method should take care to assure that a call to peek

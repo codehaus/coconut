@@ -71,7 +71,7 @@ public class XmlConfiguratorTest {
 
     @Test(expected = NullPointerException.class)
     public void from_NPE1() throws Exception {
-        new XmlConfigurator().read(null, new ByteArrayInputStream(new byte[0]));
+        new XmlConfigurator().readInto(null, new ByteArrayInputStream(new byte[0]));
     }
 
     @Test(expected = NullPointerException.class)
@@ -118,7 +118,7 @@ public class XmlConfiguratorTest {
      * This method is used for saving and reloading a configuration object.
      * 
      * @param configuration
-     * @return
+     * @return the reloaded configuration
      * @throws Exception
      */
     public static <K, V, T extends AbstractCacheServiceConfiguration<K, V>> T reloadService(

@@ -9,7 +9,7 @@ package org.coconut.core;
  * using this for coconut-cache is to avoid dependencies on any external logging
  * libraries.
  * <p>
- * Use {@link coconut.cache.util.Logs}to create wrappers from popular logging
+ * Use {@link org.coconut.core.Loggers}to create wrappers from popular logging
  * frameworks such as <a
  * href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/logging/package-summary.html">
  * Standard JDK logging </a>, <a

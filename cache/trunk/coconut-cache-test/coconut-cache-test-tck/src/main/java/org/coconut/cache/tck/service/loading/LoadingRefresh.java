@@ -3,15 +3,15 @@
  */
 package org.coconut.cache.tck.service.loading;
 
-import static org.coconut.test.CollectionUtils.*;
+import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M2;
 import static org.coconut.test.CollectionUtils.M3;
 import static org.coconut.test.CollectionUtils.M4;
+import static org.coconut.test.CollectionUtils.M5;
 
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheAttributes;
-import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.test.util.AsyncIntegerToStringLoader;
 import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.core.AttributeMap;

@@ -10,15 +10,12 @@ import java.util.Map;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.internal.service.CacheHelper;
 import org.coconut.cache.internal.service.attribute.DefaultCacheAttributeService;
 import org.coconut.cache.internal.service.entry.UnsynchronizedEntryFactoryService;
 import org.coconut.cache.internal.service.exceptionhandling.DefaultCacheExceptionService;
-import org.coconut.cache.internal.spi.CacheHelper;
-import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
-import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlers;
 import org.coconut.cache.service.servicemanager.AbstractCacheService;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
-import org.coconut.core.Logger;
 import org.coconut.internal.picocontainer.ComponentAdapter;
 import org.coconut.internal.picocontainer.defaults.DefaultPicoContainer;
 

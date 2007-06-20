@@ -73,10 +73,6 @@ public class CacheServiceManager<K, V>  {
         }
     }
 
-    /**
-     * @param names
-     * @return
-     */
     public <T> T getAsCacheService(Class<T> clazz) {
 //        if (DefaultCacheEventService.class.isAssignableFrom(clazz)) {
 //            if (conf.getConfiguration(CacheEventConfiguration.class) == null) {
@@ -249,16 +245,11 @@ public class CacheServiceManager<K, V>  {
 
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.InternalCacheServiceManager#hasService(java.lang.Class)
-     */
+
     public boolean hasService(Class serviceType) {
         return false;
     }
 
-	/**
-	 * @see org.coconut.cache.internal.service.OlfInternalCacheServiceManager#registerInstance(java.lang.Class, java.lang.Object)
-	 */
 	public void registerInstance(Class type, Object instance) {
 		// TODO Auto-generated method stub
 		

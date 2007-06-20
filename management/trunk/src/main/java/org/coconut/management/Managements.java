@@ -3,8 +3,6 @@
  */
 package org.coconut.management;
 
-import java.lang.reflect.Method;
-
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;

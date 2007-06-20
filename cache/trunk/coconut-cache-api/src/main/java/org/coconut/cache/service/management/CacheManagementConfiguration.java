@@ -95,18 +95,11 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
         return mBeanServer;
     }
 
-    /**
-     * @return
-     * @see #setRegistrant(ManagedGroupVisitor)
-     */
+
     public ManagedGroupVisitor getRegistrant() {
         return registrant;
     }
 
-    /**
-     * @return
-     * @see #setRoot(ManagedGroup)
-     */
     public ManagedGroup getRoot() {
         return root;
     }
@@ -128,7 +121,7 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
      * Sets the specific domain that this cache should register under. If no domain is
      * specified the cache will use {@link CacheMXBean#DEFAULT_JMX_DOMAIN}.
      * 
-     * @param name
+     * @param domain
      *            the domain name
      * @return this configuration
      * @throws NullPointerException
@@ -185,7 +178,7 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
      * cache service or any other special thing. You can use this method to specify a
      * special registrant that will visit each cache service.
      * <p>
-     * If no registrant is specified {@link #DEFAULT_REGISTRANT} will be used.
+     * If no registrant is specified a default registrant will be used.
      * 
      * @param registrant
      * @see #getRegistrant()

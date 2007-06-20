@@ -5,7 +5,7 @@ public interface CacheThreadManager {
      * Returns a CacheServiceThreadManager for the specified service.
      * 
      * @param service
-     * @return
-     */
+     * @return a CacheServiceThreadManager for the specified service
+     */ 
     CacheServiceThreadManager createCacheExecutor(Class<?> service);
 }

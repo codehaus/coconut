@@ -44,7 +44,7 @@ public class LIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolic
     /**
      * Constructs a new LFUPolicy with a specified initial size.
      * 
-     * @param size
+     * @param initialCapacity
      *            the initial size of the internal list, must be 0 or greater
      * @throws IllegalArgumentException
      *             if the specified size is a negative number
@@ -67,8 +67,9 @@ public class LIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolic
         this.policy = new LRUPolicy<T>(policy.policy);
     }
 
+
     /**
-     * @see org.coconut.cache.ReplacementPolicy#add(T)
+     * @see org.coconut.cache.ReplacementPolicy#add(java.lang.Object, org.coconut.core.AttributeMap)
      */
     public int add(T data, AttributeMap ignore) {
         return policy.add(data, ignore);
@@ -83,9 +84,6 @@ public class LIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolic
         }
     }
 
-    /**
-     * @see java.lang.Object#clone()
-     */
     @Override
     public LIFOPolicy<T> clone() {
         return new LIFOPolicy<T>(this);
@@ -144,8 +142,7 @@ public class LIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolic
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#update(int,
-     *      java.lang.Object)
+     * {@inheritDoc}
      */
     public boolean update(int index, T newElement, AttributeMap ignore) {
         return policy.update(index, newElement, ignore);

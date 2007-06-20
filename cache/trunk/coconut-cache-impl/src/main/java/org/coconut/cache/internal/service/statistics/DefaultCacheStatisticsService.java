@@ -15,7 +15,7 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.joinpoint.InternalCacheOperation;
 import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
 import org.coconut.cache.internal.service.service.InternalCacheServiceManager;
-import org.coconut.cache.internal.util.Resources;
+import org.coconut.cache.internal.service.util.Resources;
 import org.coconut.cache.service.statistics.CacheHitStat;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.core.Clock;

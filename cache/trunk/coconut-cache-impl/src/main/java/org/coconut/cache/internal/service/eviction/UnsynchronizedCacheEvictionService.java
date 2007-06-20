@@ -5,11 +5,10 @@ package org.coconut.cache.internal.service.eviction;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.ReplacementPolicy;
-import org.coconut.cache.internal.spi.CacheHelper;
+import org.coconut.cache.internal.service.CacheHelper;
 import org.coconut.cache.policy.Policies;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.filter.Filter;

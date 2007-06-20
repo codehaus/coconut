@@ -133,10 +133,8 @@ public class CacheEvictionConfiguration<K, V> extends
      * The default value is Integer.MAX_VALUE. Which roughly translates to no limit on the
      * number of elements.
      * 
-     * @param elements
+     * @param maximumCapacity
      *            the maximum capacity.
-     * @throws IllegalAccessException
-     *             if the specified
      */
     public CacheEvictionConfiguration<K, V> setMaximumCapacity(long maximumCapacity) {
         if (maximumCapacity < 0) {
@@ -195,9 +193,8 @@ public class CacheEvictionConfiguration<K, V> extends
      * observation is generally refered to as the <code>inheritance anomaly</code>.
      * <p>
      * The cache will, unless otherwise specified, pass instances of
-     * {@link org.coconut.cache.CacheEntry} to
-     * {@link ReplacementPolicy#add(Object)) and {@link ReplacementPolicy#update(int,
-     * Object)} .
+     * {@link org.coconut.cache.CacheEntry} to {@link ReplacementPolicy#add(Object)} and
+     * {@link ReplacementPolicy#update(int, Object)}
      * 
      * @param policy
      *            the replacement policy that should select which elements to evict when
@@ -234,7 +231,7 @@ public class CacheEvictionConfiguration<K, V> extends
      * 
      * @param period
      * @param unit
-     * @return
+     * @return this configuration
      */
     public CacheEvictionConfiguration<K, V> setScheduledEvictionAtFixedRate(long period,
             TimeUnit unit) {

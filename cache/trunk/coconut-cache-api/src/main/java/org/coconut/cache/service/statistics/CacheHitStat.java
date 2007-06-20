@@ -3,12 +3,12 @@
  */
 package org.coconut.cache.service.statistics;
 
-import org.coconut.cache.spi.Resources;
+import org.coconut.cache.spi.CacheSPI;
 
 /**
  * The class holds the hit statistics for a cache.
  * <p>
- * TODO: make sure it is JMX compatible.
+ * TODO: make sure this class is JMX compatible.
  */
 public class CacheHitStat {
     public static final CacheHitStat STAT00 = new CacheHitStat(0, 0);
@@ -95,7 +95,9 @@ public class CacheHitStat {
     @Override
     public String toString() {
         // We probably can't use a resource bundle, if it needs to be JMX compatible
-        return Resources.lookup(CacheHitStat.class, "toString", getHitRatio(), hits,
+        // or we could check if the string was available, otherwise resort to a default
+        // test.
+        return CacheSPI.lookup(CacheHitStat.class, "toString", getHitRatio(), hits,
                 misses);
     }
 

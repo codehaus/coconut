@@ -51,8 +51,8 @@ public class IndexedHeap<T> implements Serializable {
     /**
      * Constructs a new heap with a specified initial size.
      * 
-     * @param intialSize
-     *            the initial sie
+     * @param initialCapacity
+     *            the initial capacity
      */
     @SuppressWarnings("unchecked")
     public IndexedHeap(int initialCapacity) {
@@ -319,7 +319,6 @@ public class IndexedHeap<T> implements Serializable {
      * Returns an ordered list of elements contained in the heap. The first
      * element in the list is the top of the heap th as applied by all elements.
      * 
-     * @return
      */
     public List<T> peekAll() {
         ArrayList<T> col = new ArrayList<T>(numberOfElements);

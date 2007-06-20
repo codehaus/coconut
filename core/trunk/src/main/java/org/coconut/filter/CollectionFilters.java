@@ -149,12 +149,6 @@ public final class CollectionFilters {
 
         private final Filter<T> filter;
 
-        /**
-         * Creates a new EqualsFilter
-         * 
-         * @param object
-         *            the object to compare against.
-         */
         public TransformerFilter(final Transformer<F, T> transformer, Filter<T> filter) {
             if (transformer == null) {
                 throw new NullPointerException("transformer is null");
@@ -178,7 +172,6 @@ public final class CollectionFilters {
          * Returns the transformer that will transform the object before
          * applying the filter on it.
          * 
-         * @return
          */
         public Transformer<F, T> getTransformer() {
             return transformer;

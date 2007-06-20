@@ -10,8 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-import net.jcip.annotations.ThreadSafe;
-
 import org.coconut.cache.Cache;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.eviction.CacheEvictionService;
@@ -24,9 +22,7 @@ import org.coconut.cache.spi.CacheServiceSupport;
 import org.coconut.cache.tck.cacheentry.CacheEntrySuite;
 import org.coconut.cache.tck.core.CoreSuite;
 import org.coconut.cache.tck.service.event.EventSuite;
-import org.coconut.cache.tck.service.eviction.CacheEntryToPolicy;
 import org.coconut.cache.tck.service.eviction.EvictionSuite;
-import org.coconut.cache.tck.service.eviction.SimplePolicyEviction;
 import org.coconut.cache.tck.service.expiration.ExpirationSuite;
 import org.coconut.cache.tck.service.loading.LoadingSuite;
 import org.coconut.cache.tck.service.management.ManagementSuite;

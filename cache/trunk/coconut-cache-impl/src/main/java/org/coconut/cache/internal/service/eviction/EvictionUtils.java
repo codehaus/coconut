@@ -1,12 +1,7 @@
 package org.coconut.cache.internal.service.eviction;
 
-import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.internal.service.expiration.ExpirationUtils.DelegatedCacheExpirationMXBean;
-import org.coconut.cache.internal.service.expiration.ExpirationUtils.DelegatedCacheExpirationService;
 import org.coconut.cache.service.eviction.CacheEvictionMXBean;
 import org.coconut.cache.service.eviction.CacheEvictionService;
-import org.coconut.cache.service.expiration.CacheExpirationMXBean;
-import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.annotation.ManagedOperation;
 
