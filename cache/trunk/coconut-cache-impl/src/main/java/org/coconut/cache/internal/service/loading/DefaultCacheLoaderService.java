@@ -8,15 +8,12 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.CacheServices;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
+import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
 import org.coconut.cache.internal.service.expiration.DefaultCacheExpirationService;
 import org.coconut.cache.internal.service.threading.InternalCacheThreadingService;
 import org.coconut.cache.internal.service.util.ExtendableFutureTask;
@@ -41,7 +38,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
 
     private final Clock clock;
 
-    private final CacheExceptionHandler<K, V> errorHandler;
+    private final CacheExceptionService<K, V> errorHandler;
 
     private final DefaultCacheExpirationService<K, V> expirationService;
 
@@ -63,13 +60,13 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
      */
     public DefaultCacheLoaderService(final Clock clock,
             InternalCacheAttributeService attributeFactory,
-            CacheExceptionHandler<K, V> exceptionHandler,
+            CacheExceptionService<K, V> exceptionService,
             CacheLoadingConfiguration<K, V> loadConf,
             final InternalCacheThreadingService threadManager,
             DefaultCacheExpirationService<K, V> expirationService,
             final CacheHelper<K, V> cache) {
         super(attributeFactory, cache);
-        this.errorHandler = exceptionHandler;
+        this.errorHandler = exceptionService;
         this.clock = clock;
         this.loader = loadConf.getLoader();
         this.loadExecutor = threadManager.getExecutor(CacheLoadingService.class)
@@ -110,8 +107,8 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         try {
             v = loader.load(key, attributes);
         } catch (Exception e) {
-            v = errorHandler.loadFailed(cache.getCache(), loader, key, attributes, false,
-                    e);
+            v = errorHandler.getExceptionHandler().loadFailed(
+                    errorHandler.createContext(), loader, key, attributes, false, e);
         }
         return v;
     }
@@ -217,12 +214,9 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
             try {
                 v = loader.load(key, attributes);
             } catch (Exception e) {
-                try {
-                    v = loaderService.errorHandler.loadFailed(loaderService.cache
-                            .getCache(), loader, key, attributes, true, e);
-                } catch (RuntimeException re) {
-                    loaderService.errorHandler.unhandledRuntimeException(re);
-                }
+                v = loaderService.errorHandler.getExceptionHandler().loadFailed(
+                        loaderService.errorHandler.createContext(), loader, key,
+                        attributes, true, e);
             }
             loaderService.cache.valueLoaded(key, v, attributes);
             return null;

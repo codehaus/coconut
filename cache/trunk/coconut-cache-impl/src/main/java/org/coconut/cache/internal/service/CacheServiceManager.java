@@ -50,7 +50,7 @@ public class CacheServiceManager<K, V>  {
         container.registerComponentInstance(cache);
         container.registerComponentInstance(conf);
         container.registerComponentInstance(conf.getClock());
-        for (AbstractCacheServiceConfiguration c : conf.getConfigurations()) {
+        for (AbstractCacheServiceConfiguration c : conf.getAllConfigurations()) {
             container.registerComponentInstance(c);
         }
         this.conf = conf;

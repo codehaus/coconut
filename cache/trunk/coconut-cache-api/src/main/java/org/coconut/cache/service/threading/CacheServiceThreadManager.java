@@ -3,7 +3,7 @@ package org.coconut.cache.service.threading;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
-public abstract class CacheServiceThreadManage {
+public abstract class CacheServiceThreadManager {
     
     /**
      * Returns a dedicated executor. A dedicated executor is used for running very long
@@ -17,9 +17,5 @@ public abstract class CacheServiceThreadManage {
     public abstract ExecutorService createExecutorService();
 
     public abstract ScheduledExecutorService createScheduledExecutorService();
-    
-    /**
-     * Called when the service has shut down.
-     */
-    public abstract void shutdown();
+ 
 }

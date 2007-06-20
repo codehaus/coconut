@@ -109,9 +109,9 @@ public class XmlConfiguratorTest {
 
     @Test
     public void testCustomLog() throws Exception {
-        conf.setDefaultLog(MockTestCase.mockDummy(Logger.class));
+        conf.setDefaultLogger(MockTestCase.mockDummy(Logger.class));
         conf = rw(conf);
-        assertNull(conf.getDefaultLog());
+        assertNull(conf.getDefaultLogger());
     }
 
     /**

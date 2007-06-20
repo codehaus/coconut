@@ -180,7 +180,7 @@ public class XmlConfigurator {
                     .toString());
         }
         /* writeService other configurations */
-        for (AbstractCacheServiceConfiguration<?, ?> p : cc.getConfigurations()) {
+        for (AbstractCacheServiceConfiguration<?, ?> p : cc.getAllConfigurations()) {
             Element n = writeCacheService(doc, p);
             if (n != null) {
                 cache.appendChild(n);

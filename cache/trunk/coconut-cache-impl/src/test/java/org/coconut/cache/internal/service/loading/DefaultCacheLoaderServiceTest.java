@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
 import org.coconut.cache.internal.service.threading.InternalCacheThreadingService;
 import org.coconut.cache.internal.spi.CacheHelper;
 import org.coconut.cache.internal.spi.ExtendedExecutorRunnable;
@@ -17,7 +18,7 @@ import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlers;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
-import org.coconut.cache.service.threading.CacheServiceThreadManage;
+import org.coconut.cache.service.threading.CacheServiceThreadManager;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.AttributeMaps;
 import org.coconut.test.MockTestCase;
@@ -65,7 +66,7 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
 
     Mock errorHandlerMock;
 
-    CacheExceptionHandler<Integer, String> errorHandlerProxy;
+    CacheExceptionService<Integer, String> errorHandlerProxy;
 
     Mock cacheHelperMock;
 
@@ -80,8 +81,8 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
         loaderMock2 = mock(CacheLoader.class);
         loaderProxy2 = (CacheLoader) loaderMock2.proxy();
 
-        errorHandlerMock = mock(CacheExceptionHandler.class);
-        errorHandlerProxy = CacheExceptionHandlers.defaultExceptionHandler();
+        errorHandlerMock = mock(CacheExceptionService.class);
+        errorHandlerProxy = (CacheExceptionService) errorHandlerMock.proxy();
 
         cacheHelperMock = mock(CacheHelper.class);
         cacheHelperProxy = (CacheHelper) cacheHelperMock.proxy();
@@ -320,7 +321,7 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
             throw new UnsupportedOperationException();
         }
 
-        public CacheServiceThreadManage getExecutor(Class<?> service) {
+        public CacheServiceThreadManager getExecutor(Class<?> service) {
             throw new UnsupportedOperationException();
         }
 

@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
-import org.coconut.cache.service.threading.CacheServiceThreadManage;
+import org.coconut.cache.service.threading.CacheServiceThreadManager;
 import org.coconut.cache.service.threading.CacheExecutorConfiguration;
 import org.coconut.cache.service.threading.CacheThreadManager;
 
@@ -47,11 +47,11 @@ public class NoThreadingCacheService extends AbstractInternalCacheService implem
         command.run();// ??
     }
 
-    public CacheServiceThreadManage createCacheExecutor(Class<?> service) {
+    public CacheServiceThreadManager createCacheExecutor(Class<?> service) {
         return new SameThreadCacheExecutor();
     }
 
-    static class SameThreadCacheExecutor extends CacheServiceThreadManage {
+    static class SameThreadCacheExecutor extends CacheServiceThreadManager {
 
         @Override
         public ExecutorService createExecutorService() {
@@ -130,12 +130,9 @@ public class NoThreadingCacheService extends AbstractInternalCacheService implem
             throw new UnsupportedOperationException();
         }
 
-        @Override
-        public void shutdown() {}
-
     }
 
-    public CacheServiceThreadManage getExecutor(Class<?> service) {
+    public CacheServiceThreadManager getExecutor(Class<?> service) {
         return new SameThreadCacheExecutor();
     }
 }

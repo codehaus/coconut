@@ -12,6 +12,7 @@ import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.spi.CacheHelper;
+import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationService;
@@ -134,14 +135,19 @@ public class DefaultCacheExpirationServiceTest {
 
     static class AbstractTester<K, V> extends CacheExceptionHandler<K, V> {
 
-        /**
-         * @see org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#warning(java.lang.String)
-         */
         @Override
-        public void warning(String warning) {
-        // TODO Auto-generated method stub
+        public void handleError(CacheExceptionContext<K, V> context, Error cause) {}
 
-        }
+        @Override
+        public void handleException(CacheExceptionContext<K, V> context, Exception cause) {}
+
+        @Override
+        public void handleRuntimeException(CacheExceptionContext<K, V> context,
+                RuntimeException cause) {}
+
+        @Override
+        public void warning(CacheExceptionContext<K, V> context, String warning) {}
+
 
     }
 }

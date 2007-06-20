@@ -48,12 +48,12 @@ public class CacheConfigurationTest {
 
 	@Test
 	public void testSetDefaultLogger() {
-		assertNull(conf.getDefaultLog());
+		assertNull(conf.getDefaultLogger());
 		Logger log = Loggers.nullLog();
-		assertEquals(conf, conf.setDefaultLog(log));
-		assertSame(log, conf.getDefaultLog());
-		conf.setDefaultLog(null);
-		assertNull(conf.getDefaultLog());
+		assertEquals(conf, conf.setDefaultLogger(log));
+		assertSame(log, conf.getDefaultLogger());
+		conf.setDefaultLogger(null);
+		assertNull(conf.getDefaultLogger());
 	}
 
 	@Test

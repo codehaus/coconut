@@ -12,7 +12,7 @@ public class CacheExecutorUtil {
         return null;
     }
 
-    public static class DefaultCacheExceptionHandler<K, V> extends CacheServiceThreadManage {
+    public static class DefaultCacheExceptionHandler<K, V> extends CacheServiceThreadManager {
 
         Class service;
 
@@ -46,9 +46,6 @@ public class CacheExecutorUtil {
             Executors.newSingleThreadExecutor(
                     new DefaultThreadFactory(service.getSimpleName())).execute(r);
         }
-        @Override
-        public void shutdown() {}
-
     }
 
     static class DefaultThreadFactory implements ThreadFactory {

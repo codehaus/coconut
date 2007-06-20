@@ -3,93 +3,66 @@
  */
 package org.coconut.cache.service.exceptionhandling;
 
-import java.text.MessageFormat;
-import java.util.logging.Level;
-
-import org.coconut.cache.Cache;
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.loading.CacheLoader;
-import org.coconut.cache.spi.Resources;
 import org.coconut.core.AttributeMap;
-import org.coconut.core.Logger;
-import org.coconut.core.Loggers;
 import org.coconut.event.EventSubscription;
 
 /**
- * An CacheExceptionHandler defines how all exceptions that occur within a cache should be
- * handled.
+ * The purpose of this class is to have one central place where all exceptions are
+ * handled. This class is abstract but CacheHandlers defines a number of default exception
+ * handling policies. An exception handling policy where any exception that occurs within
+ * the cache will shutdow cache will be shutdowned
+ * <p>
+ * There are 4 basis <tt>General</tt> methods for handling exceptions. handleException,
+ * handleRuntimeException, handleError. handleException is called when the system catches
+ * a checked exception. For example, if a call to load fails with some exception. In most
+ * situations these should just be logged and the cache should continue as nothing has
+ * happend. handleRuntimeExceptions. If a runtime exception occurs within the cache it is
+ * normally a serious situation. This could, for example, be some user provided callback
+ * that fails in some mysterious way. Or even worse that the cache implementation contains
+ * a bug. Of course, this is highly unlikely if using one of the default. Finally there is
+ * handleError, a call to this method indicates serious problems that a reasonable
+ * application should not try to handle.
+ * <p>
+ * This class also contains a handleWarning. This always indicates a non-critical problem
+ * that should be fixed. For example, if a CacheLoader tries to set the size of a newly
+ * loaded element to a negative number.
+ * <p>
+ * In addition to these 4 general methods there are also a number of specialized methods
+ * such as .... The idea is that all common exception points has a corresponding method in
+ * CacheExceptionHandler. For example, whenever an exception occurs while loading an
+ * element in a cache loader the #load method is call. In addition to the exception that
+ * was raised a number of additional information is provided to this method. For example,
+ * the key for which the load failed, the cache in which the cache occured as well as
+ * other relevant information. The default implementation provided in this class just
+ * calls the handleException method with the provided exception.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public abstract class CacheExceptionHandler<K, V> {
-    private volatile Logger logger;
-
-    private String name;
-
-    public boolean eventDeliveryFailed(Cache<K, V> cache, CacheEvent<K, V> event,
-            EventSubscription<CacheEvent<K, V>> destination, Throwable cause) {
-        return false;
-    }
-
-    /**
-     * @return
-     */
-    public final synchronized String getCacheName() {
-        return name;
-    }
-
-    public final Logger getLogger() {
-        Logger l = logger;
-        if (l != null) {
-            return l;
-        }
-        return initializeLogger();
-    }
-
-    public final boolean hasLogger() {
-        return logger != null;
-    }
-
-    public V loadFailed(Cache<K, V> cache, CacheLoader<? super K, ?> loader, K key,
-            AttributeMap map, boolean isGet, Throwable cause) {
+    public V loadFailed(CacheExceptionContext<K, V> context,
+            CacheLoader<? super K, ?> loader, K key, AttributeMap map, boolean isGet,
+            Exception cause) {
+        handleException(context, cause);
         return null;
     }
 
-    public final synchronized void setCacheName(String name) {
-        if (name == null) {
-            throw new NullPointerException("name is null");
-        } else if (this.name != null) {
-            throw new IllegalStateException("Cache name has already been set");
-        }
-        this.name = name;
+    public boolean eventDeliveryFailed(CacheExceptionContext<K, V> context,
+            CacheEvent<K, V> event, EventSubscription<CacheEvent<K, V>> destination,
+            RuntimeException cause) {
+        handleRuntimeException(context, cause);
+        return false;
     }
 
-    public final synchronized void setLogger(Logger logger) {
-        if (logger == null) {
-            throw new NullPointerException("logger is null");
-        }
-        this.logger = logger;
-    }
+    public abstract void handleException(CacheExceptionContext<K, V> context,
+            Exception cause);
 
-    public void unhandledRuntimeException(RuntimeException t) {}
+    public abstract void handleRuntimeException(CacheExceptionContext<K, V> context,
+            RuntimeException cause);
 
-    /**
-     * @param warning
-     */
-    public void warning(String warning) {};
+    public abstract void handleError(CacheExceptionContext<K, V> context, Error cause);
 
-    private synchronized Logger initializeLogger() {
-        if (logger == null) {
-            String loggerName = Cache.class.getPackage().getName() + "." + name;
-            java.util.logging.Logger l = java.util.logging.Logger.getLogger(loggerName);
-            String infoMsg = Resources.lookup(CacheExceptionHandler.class, "noLogger");
-            Logger logger = Loggers.JDK.from(l);
-            l.setLevel(Level.ALL);
-            logger.info(MessageFormat.format(infoMsg, name, loggerName));
-            l.setLevel(Level.SEVERE);
-            return logger;
-        }
-        return logger;
-    }
+    public abstract void warning(CacheExceptionContext<K, V> context, String warning);
 }

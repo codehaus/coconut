@@ -41,7 +41,6 @@ public class UnsynchronizedCacheServiceTest {
         context.checking(new Expectations() {
             {
                one(cache).getName();
-               one(cache).getName();
             }
         });
     }

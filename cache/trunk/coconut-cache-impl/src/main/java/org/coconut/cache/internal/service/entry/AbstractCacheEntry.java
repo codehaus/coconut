@@ -17,34 +17,6 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
 
     public static final long DEFAULT_HIT_COUNT = -1;
     public static final long DEFAULT_LAST_ACCESS_TIME = 0;
-    static <K, V> long getHits(CacheEntry<K, V> takeFrom, CacheEntry<K, V> existing,
-            CacheExceptionHandler<K, V> errorHandler) {
-        if (takeFrom != null && takeFrom.getHits() !=  DEFAULT_HIT_COUNT) {
-            long hits = takeFrom.getHits();
-            if (hits >= 0) {
-                return hits;
-            }
-            errorHandler.warning("'Must specify a positive hitcount was hitcount= "
-                    + hits + " for key = " + takeFrom.getKey());
-        }
-        return existing == null ? 0 : existing.getHits();
-    }
-
-    static <K, V> long getLastAccessTime(CacheEntry<K, V> takeFrom,
-            CacheEntry<K, V> existing, Clock clock, CacheExceptionHandler<K, V> errorHandler) {
-        if (takeFrom != null
-                && takeFrom.getLastAccessTime() != DEFAULT_LAST_ACCESS_TIME) {
-            long time = takeFrom.getLastAccessTime();
-            if (time > 0) {
-                return time;
-            }
-            errorHandler
-                    .warning("'Must specify a positive lastaccess time was lastaccesstime= "
-                            + time + " for key = " + takeFrom.getKey());
-        }
-        return existing == null ? 0 : existing.getLastAccessTime();
-    }
-
 
     private final double cost;
 

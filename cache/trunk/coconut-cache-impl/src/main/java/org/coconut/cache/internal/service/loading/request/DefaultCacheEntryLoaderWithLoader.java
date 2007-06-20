@@ -43,7 +43,8 @@ public class DefaultCacheEntryLoaderWithLoader<K, V> extends
         try {
             v = loader.load(getKey(), getAttributes());
         } catch (Exception e) {
-            v = errorHandler.loadFailed(super.getCache(),loader, getKey(), getAttributes(), true, e);
+            throw new Error("fixme");
+          //  v = errorHandler.loadFailed(super.getCache(),loader, getKey(), getAttributes(), true, e);
         }
         return v;
     }

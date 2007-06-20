@@ -6,6 +6,8 @@ package org.coconut.cache;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.lang.management.CompilationMXBean;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -41,15 +43,17 @@ import org.coconut.core.Logger;
  * cache has a maximum of 1000 elements and uses a least-recently-used policy to determine
  * which elements to evict when the specified maximum size has been reached. Elements will
  * automatically expired after having been in the cache for 1 hour. Finally, the cache is
- * registered as a mbean with the platform mbean server using the name of the cache.
+ * registered as a mbean with the
+ * {@link java.lang.management.ManagementFactory#getPlatformMBeanServer platform
+ * <tt>MBeanServer</tt>} using the name of the cache.
  * 
  * <pre>
- * CacheConfiguration&lt;String, Integer&gt; cc = newConf();
+ * CacheConfiguration&lt;String, Integer&gt; cc = CacheConfiguration.create();
  * cc.setName(&quot;MyCache&quot;);
  * cc.eviction().setPolicy(Policies.newLRU()).setMaximumSize(1000);
- * cc.expiration().setDefaultTimeout(60 * 60, TimeUnit.SECONDS);
- * cc.management().setRegister(true);
- * Cache&lt;String, Integer&gt; instance = cc.newInstance(Select_A_Cache_Impl);
+ * cc.expiration().setDefaultTimeToLive(60 * 60, TimeUnit.SECONDS);
+ * cc.management().setEnabled(true);
+ * Cache&lt;String, Integer&gt; instance = cc.newInstance(Select_A_Cache_Impl.class);
  * </pre>
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -61,7 +65,6 @@ import org.coconut.core.Logger;
  */
 @NotThreadSafe
 public final class CacheConfiguration<K, V> {
-
     public final static List<Class<? extends AbstractCacheServiceConfiguration>> DEFAULT_SERVICES;
 
     /** A Map of additional properties. */
@@ -120,20 +123,7 @@ public final class CacheConfiguration<K, V> {
         if (conf == null) {
             throw new NullPointerException("conf is null");
         }
-// if (conf.getClass().getName().contains("Event")) {
-// System.out.println("adding " + conf.getClass());
-// new Exception().printStackTrace();
-// }
-// for (AbstractCacheServiceConfiguration c : list) {
-// if (c.getClass().isAssignableFrom(conf.getClass())
-// || conf.getClass().isAssignableFrom(c.getClass())) {
-// throw new IllegalArgumentException(
-// "A service of the specified type is already registered (type = "
-// + conf.getClass());
-// }
-// }
         list.add(conf);
-
         return conf;
     }
 
@@ -151,7 +141,7 @@ public final class CacheConfiguration<K, V> {
         return timingStrategy;
     }
 
-    public <T extends AbstractCacheServiceConfiguration> T getConfiguration(
+    private <T extends AbstractCacheServiceConfiguration> T getConfiguration(
             Class<T> serviceConfigurationType) {
         T t = getConfigurationOfType(serviceConfigurationType);
         if (t == null) {
@@ -166,11 +156,11 @@ public final class CacheConfiguration<K, V> {
     }
 
     /**
-     * Returns a list of all registered configuration objects.
+     * Returns a list of all configuration objects.
      * 
-     * @return a list of all registered configuration objects
+     * @return a list of all configuration objects
      */
-    public List<AbstractCacheServiceConfiguration> getConfigurations() {
+    public List<AbstractCacheServiceConfiguration> getAllConfigurations() {
         return new ArrayList<AbstractCacheServiceConfiguration>(list);
     }
 
@@ -180,8 +170,9 @@ public final class CacheConfiguration<K, V> {
      * 
      * @return the default log configured for this cache or null if no default log has
      *         been configured
+     * @see #setDefaultLogger(Logger)
      */
-    public Logger getDefaultLog() {
+    public Logger getDefaultLogger() {
         return defaultLogger;
     }
 
@@ -280,7 +271,8 @@ public final class CacheConfiguration<K, V> {
         } catch (IllegalAccessException e) {
             throw new IllegalArgumentException("Could not create instance of " + type, e);
         } catch (InvocationTargetException e) {
-            throw new IllegalArgumentException("Constructor threw exception", e.getCause());
+            throw new IllegalArgumentException("Constructor threw exception", e
+                    .getCause());
         }
         return cache;
     }
@@ -324,6 +316,7 @@ public final class CacheConfiguration<K, V> {
     public CacheLoadingConfiguration<K, V> loading() {
         return lazyCreate(CacheLoadingConfiguration.class);
     }
+
     /**
      * Returns a configuration object that can be used to control how loading is done in
      * the cache.
@@ -333,6 +326,7 @@ public final class CacheConfiguration<K, V> {
     public CacheExceptionHandlingConfiguration<K, V> exceptionHandling() {
         return lazyCreate(CacheExceptionHandlingConfiguration.class);
     }
+
     /**
      * Returns a configuration object that can be used to control how services are
      * remotely managed.
@@ -387,9 +381,9 @@ public final class CacheConfiguration<K, V> {
      * @param logger
      *            the log to use
      * @return this configuration
-     * @see #getDefaultLog()
+     * @see #getDefaultLogger()
      */
-    public CacheConfiguration<K, V> setDefaultLog(Logger logger) {
+    public CacheConfiguration<K, V> setDefaultLogger(Logger logger) {
         this.defaultLogger = logger;
         return this;
     }
@@ -491,7 +485,7 @@ public final class CacheConfiguration<K, V> {
         return null;
     }
 
-    protected <T extends AbstractCacheServiceConfiguration> T lazyCreate(Class<T> c) {
+    private <T extends AbstractCacheServiceConfiguration> T lazyCreate(Class<T> c) {
         T conf = getConfigurationOfType(c);
         if (conf == null) {
             createConfiguration(c);
@@ -516,7 +510,8 @@ public final class CacheConfiguration<K, V> {
     }
 
     /**
-     * Creates a new CacheConfiguration with the specified name.
+     * Creates a new CacheConfiguration where name of the cache will be the specified
+     * name.
      * 
      * @param name
      *            the name of the cache
@@ -533,14 +528,14 @@ public final class CacheConfiguration<K, V> {
     }
 
     /**
-     * Loads a cache configuration from the provided stream, and instantiates a new cache
-     * on the basis of the configuration.
+     * Loads a cache configuration from the provided input stream, and instantiates a new
+     * cache on the basis of the configuration.
      * 
      * @param xmlDoc
      *            an InputStream where the configuration can be read from
      * @return and cache instance reflecting the specified configuration
      * @throws Exception
-     *             the cache could not be constructed for some reason *
+     *             the cache could not be constructed for some reason
      * @param <K>
      *            the type of keys that should be maintained by the cache
      * @param <V>

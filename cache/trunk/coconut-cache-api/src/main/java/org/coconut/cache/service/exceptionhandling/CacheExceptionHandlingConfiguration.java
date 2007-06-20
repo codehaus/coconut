@@ -84,7 +84,7 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
      * <p>
      * If no logger has been set using this method. The exception handling service will
      * used the default logger returned from
-     * {@link org.coconut.cache.CacheConfiguration#getDefaultLog()}. If no default logger
+     * {@link org.coconut.cache.CacheConfiguration#getDefaultLogger()}. If no default logger
      * has been set, output will be sent to {@link System#err}.
      * 
      * @param log

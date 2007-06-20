@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
 import org.coconut.cache.service.servicemanager.AbstractCacheService;
-import org.coconut.cache.service.threading.CacheServiceThreadManage;
+import org.coconut.cache.service.threading.CacheServiceThreadManager;
 import org.coconut.cache.service.threading.CacheThreadManager;
 import org.coconut.cache.spi.XmlConfigurator;
 
@@ -106,7 +106,7 @@ public class DefaultCacheThreadService<K, V> extends AbstractCacheService implem
         return false;
     }
 
-    public CacheServiceThreadManage getExecutor(Class<?> service) {
+    public CacheServiceThreadManager getExecutor(Class<?> service) {
         throw new UnsupportedOperationException();
     }
 

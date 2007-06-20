@@ -9,8 +9,15 @@ import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
 
 /**
- * This class maintains a number of common attribute keys. At the moment this is very much
- * work in progress.
+ * This main purpose of this cache is to set and retrieve the predefined cache attributes
+ * from an AttributeMap in a typesafe manner. Currently these attributes can only be used
+ * in load(Object, AttributeMap). See CacheLoader for an example.
+ * <p>
+ * The following is a list of the default provided attributes The main purpose of a cache
+ * attribute is to support custom metadata associated with each element in the cache.
+ * interface. An individual element of metadata associated with a program element, for
+ * example a method, is commonly referred to as an attribute. These attributes are
+ * inserted at compile time and then can be retrieved later at runtime.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -65,12 +72,12 @@ public class CacheAttributes {
 
     /**
      * Returns the value that the specified AttributeMap maps the {@link #COST} attribute
-     * maps to or {@link ReplacementPolicy#DEFAULT_COST} if no such mapping exist.
+     * to or {@link ReplacementPolicy#DEFAULT_COST} if no such mapping exist.
      * 
      * @param attributeMap
-     *            the map of attributes to retrieve the cost from
-     * @return returns the value that specified AttributeMap maps the cost attribute to or
-     *         {@value ReplacementPolicy#DEFAULT_COST} if no such mapping exist
+     *            the map to retrieve the value of the cost attribute from
+     * @return returns the value that the specified AttributeMap maps the cost attribute
+     *         to or {@value ReplacementPolicy#DEFAULT_COST} if no such mapping exist
      * @throws NullPointerException
      *             if the specified attributeMap is <code>null</code>
      * @throws IllegalArgumentException
@@ -104,6 +111,25 @@ public class CacheAttributes {
         return hits;
     }
 
+    /**
+     * Returns the value that the specified AttributeMap maps the {@link #CREATION_TIME}
+     * attribute to or the return value from a call to {@link Clock#timestamp()} on the
+     * specified clock if no such mapping exist.
+     * 
+     * @param attributeMap
+     *            the map to retrieve the value of the creation time attribute from
+     * @return returns the value that the specified AttributeMap maps the
+     *         {@link #CREATION_TIME} attribute to or the return value from a call to
+     *         {@link Clock#timestamp()} on the specified clock if no such mapping exist.
+     * @throws NullPointerException
+     *             if the specified attributeMap or clock is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if the specified attributeMap returns a negative number or if the
+     *             specified clock returns a negative number when calling
+     *             {@link Clock#timestamp()}
+     * @see #setCreationTime(AttributeMap, long)
+     * @see #CREATION_TIME
+     */
     public static long getCreationTime(AttributeMap attributes, Clock clock) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
@@ -125,6 +151,25 @@ public class CacheAttributes {
         return time;
     }
 
+    /**
+     * Returns the value that the specified AttributeMap maps the
+     * {@link #LAST_MODIFIED_TIME} attribute to or the return value from a call to
+     * {@link Clock#timestamp()} on the specified clock if no such mapping exist.
+     * 
+     * @param attributeMap
+     *            the map to retrieve the value of the creation time attribute from
+     * @return returns the value that the specified AttributeMap maps the
+     *         {@link #LAST_MODIFIED_TIME} attribute to or the return value from a call to
+     *         {@link Clock#timestamp()} on the specified clock if no such mapping exist.
+     * @throws NullPointerException
+     *             if the specified attributeMap or clock is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if the specified attributeMap returns a negative number or if the
+     *             specified clock returns a negative number when calling
+     *             {@link Clock#timestamp()}
+     * @see #setLastModifiedTime(AttributeMap, long)
+     * @see #LAST_MODIFIED_TIME
+     */
     public static long getLastModified(AttributeMap attributes, Clock clock) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
@@ -146,6 +191,21 @@ public class CacheAttributes {
         return time;
     }
 
+    /**
+     * Returns the value that the specified AttributeMap maps the {@link #SIZE} attribute
+     * to or {@link ReplacementPolicy#DEFAULT_SIZE} if no such mapping exist.
+     * 
+     * @param attributeMap
+     *            the map to retrieve the value of the size attribute from
+     * @return returns the value that the specified AttributeMap maps the size attribute
+     *         to or {@value ReplacementPolicy#DEFAULT_SIZE} if no such mapping exist
+     * @throws NullPointerException
+     *             if the specified attributeMap is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if the specified attributeMap returns a negative number
+     * @see #setSize(AttributeMap, long)
+     * @see #SIZE
+     */
     public static long getSize(AttributeMap attributes) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
@@ -157,6 +217,29 @@ public class CacheAttributes {
         return size;
     }
 
+    /**
+     * Returns the value that the specified AttributeMap maps the {@link #TIME_TO_LIVE_NS}
+     * attribute to or the default specified value if no such mapping exist.
+     * 
+     * @param attributeMap
+     *            the map to retrieve the value of the time to live attribute from
+     * @param unit
+     *            the unit that the time should be returned in
+     * @param the
+     *            value that should be returned if a value for time to live attribute
+     *            could not be found
+     * @return returns the value that the specified AttributeMap maps the
+     *         {@link #LAST_MODIFIED_TIME} attribute to or the return value from a call to
+     *         {@link Clock#timestamp()} on the specified clock if no such mapping exist.
+     * @throws NullPointerException
+     *             if the specified attributeMap or clock is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if the specified attributeMap returns a negative number or if the
+     *             specified clock returns a negative number when calling
+     *             {@link Clock#timestamp()}
+     * @see #setLastModifiedTime(AttributeMap, long)
+     * @see #LAST_MODIFIED_TIME
+     */
     public static long getTimeToLive(AttributeMap attributes, TimeUnit unit,
             long defaultValue) {
         if (attributes == null) {
