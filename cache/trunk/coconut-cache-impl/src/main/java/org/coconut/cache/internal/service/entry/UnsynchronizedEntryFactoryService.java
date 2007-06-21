@@ -28,8 +28,7 @@ public class UnsynchronizedEntryFactoryService<K, V> extends
     }
 
     /**
-     * @see org.coconut.cache.internal.service.entry.CacheEntryFactoryService#createEntry(java.lang.Object,
-     *      java.lang.Object, org.coconut.core.AttributeMap, org.coconut.cache.CacheEntry)
+     * @see org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService#createEntry(java.lang.Object, java.lang.Object, org.coconut.core.AttributeMap, org.coconut.cache.internal.service.entry.AbstractCacheEntry)
      */
     public AbstractCacheEntry<K, V> createEntry(K key, V value, AttributeMap attributes,
             AbstractCacheEntry<K, V> existing) {

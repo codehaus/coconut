@@ -13,6 +13,12 @@ import org.coconut.cache.CacheConfiguration;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
+/**
+ * 
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ */
 public abstract class AbstractCacheService implements CacheService {
 
     private final String name;
@@ -51,23 +57,23 @@ public abstract class AbstractCacheService implements CacheService {
 // // ignore
 // }
 
+
     /**
-     * @see org.coconut.cache.service.servicemanager.CacheLifecycle#initialize(org.coconut.cache.CacheConfiguration)
+     * @see org.coconut.cache.service.servicemanager.CacheService#initialize(org.coconut.cache.CacheConfiguration, java.util.Map)
      */
     public void initialize(CacheConfiguration<?, ?> configuration,
             Map<Class<?>, Object> serviceMap) {
     // do nothing
     }
 
+
     /**
-     * @see org.coconut.cache.service.servicemanager.CacheService#start(org.coconut.cache.Cache)
+     * @see org.coconut.cache.service.servicemanager.CacheService#start(java.util.Map)
      */
     public void start(Map<Class<?>, Object> allServices) {
     // do nothing
     }
-    /**
-     * @see org.coconut.cache.service.servicemanager.CacheService#start(org.coconut.cache.Cache)
-     */
+
     public void started(Cache<?, ?> cache) {
     // do nothing
     }
@@ -79,7 +85,7 @@ public abstract class AbstractCacheService implements CacheService {
     }
 
     /**
-     * @see org.coconut.cache.service.servicemanager.CacheLifecycle#terminated()
+     * @see org.coconut.cache.service.servicemanager.CacheService#terminated()
      */
     public void terminated() {
     // do nothing

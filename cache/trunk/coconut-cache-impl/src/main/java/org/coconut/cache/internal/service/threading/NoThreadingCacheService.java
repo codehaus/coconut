@@ -26,9 +26,6 @@ import org.coconut.cache.service.threading.CacheThreadManager;
 public class NoThreadingCacheService extends AbstractInternalCacheService implements
         InternalCacheThreadingService, CacheThreadManager {
 
-    /**
-     * @param name
-     */
     public NoThreadingCacheService() {
         super(CacheExecutorConfiguration.SERVICE_NAME);
     }

@@ -46,8 +46,6 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
      * 
      * @param serviceName
      *            the name of the service
-     * @param serviceInterfaces
-     *            the public interfaces that this service should export
      * @param bundle
      *            a ResourceBundle used for looking up text strings
      */
@@ -90,7 +88,7 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
             Element root = doc.createElement(serviceName);
             doc.appendChild(root);
             toXML(doc, root);
-            new XmlConfigurator().prettyprint(doc, sos);
+            XmlConfigurator.prettyprint(doc, sos);
             return new String(sos.toByteArray());
         } catch (Exception e) {
             if (conf.getClass().getPackage().getName().startsWith(

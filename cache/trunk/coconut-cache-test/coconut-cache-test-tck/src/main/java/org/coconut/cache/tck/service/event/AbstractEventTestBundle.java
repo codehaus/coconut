@@ -28,6 +28,7 @@ import org.junit.Before;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
+@SuppressWarnings("unchecked")
 public class AbstractEventTestBundle extends AbstractCacheTCKTestBundle {
 
     static final CacheConfiguration<Integer, String> INCLUDE_ALL_CONFIGURATION;
@@ -150,7 +151,7 @@ public class AbstractEventTestBundle extends AbstractCacheTCKTestBundle {
         S event = consumeItem(c, type);
         assertEquals(key, event.getKey());
         assertEquals(value, event.getValue());
-        return (S) event;
+        return event;
     }
 
     protected void consumeItems(Class<? extends CacheEntryEvent> type,

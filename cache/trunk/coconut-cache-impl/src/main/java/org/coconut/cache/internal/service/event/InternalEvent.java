@@ -105,9 +105,6 @@ class InternalEvent {
             return CacheEvent.CacheCleared.NAME;
         }
 
-        /**
-         * @see org.coconut.cache.service.event.CacheEvent.CacheCleared#getPreviousCapacity()
-         */
         public long getPreviousCapacity() {
             return previousCapacity;
         }

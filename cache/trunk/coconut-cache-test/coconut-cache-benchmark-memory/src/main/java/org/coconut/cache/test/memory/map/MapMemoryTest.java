@@ -15,9 +15,6 @@ import org.coconut.cache.test.memory.MemoryTest;
 public abstract class MapMemoryTest implements MemoryTest {
 	private final CacheAdapterFactory factory;
 
-	/**
-     * @param c
-     */
 	public MapMemoryTest(final CacheAdapterFactory factory) {
 		if (factory == null) {
 			throw new NullPointerException("factory is null");
@@ -28,26 +25,14 @@ public abstract class MapMemoryTest implements MemoryTest {
 	class MapMemorySession implements MemorySession {
 		private final CacheTestAdapter adapter;
 
-		/**
-         * @see org.coconut.cache.test.memory.map.MemorySession#setup()
-         */
 		public void setup() {}
 
-		/**
-         * @see org.coconut.cache.test.memory.map.MemorySession#teardown()
-         */
 		public void teardown() {}
 
-		/**
-         * @param map
-         */
 		public MapMemorySession(final CacheTestAdapter adapter) {
 			this.adapter = adapter;
 		}
 
-		/**
-         * @see org.coconut.cache.test.memory.map.MemorySession#run(int)
-         */
 		public void run(int iterations) throws Exception {
 			doRun(adapter, iterations);
 		}

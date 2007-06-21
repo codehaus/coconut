@@ -3,8 +3,6 @@ package org.coconut.cache.tck.service.management;
 import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M2;
 
-import java.io.IOException;
-
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 
@@ -25,7 +23,7 @@ public class ManagementCacheMXBean extends AbstractCacheTCKTestBundle {
     //ObjName=org.coconut.cache:name=343434, service=General
     
     @Before
-    public void setup() throws IOException {
+    public void setup()  {
         mbs = MBeanServerFactory.createMBeanServer();
         c = newCache(newConf().management().setEnabled(true).setMBeanServer(mbs).c());
         mxBean = findMXBean(mbs, CacheMXBean.class);
@@ -33,7 +31,7 @@ public class ManagementCacheMXBean extends AbstractCacheTCKTestBundle {
 
     
     @Test
-    public void getName() throws IOException {
+    public void getName() {
         c = newCache(newConf().setName("foo").management().setEnabled(true)
                 .setMBeanServer(mbs));
         mxBean = findMXBean(mbs, CacheMXBean.class);
@@ -76,7 +74,7 @@ public class ManagementCacheMXBean extends AbstractCacheTCKTestBundle {
     }
 
     @Test
-    public void evictTest() throws IOException {
+    public void evictTest() {
         mxBean.evict();
     }
 

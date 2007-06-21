@@ -138,7 +138,7 @@ public class XmlUtil {
             String comment, String atrbName, Object o) {
         Constructor c = null;
         try {
-            c = o.getClass().getConstructor(null);
+            c = o.getClass().getConstructor((Class) null);
             e.setAttribute(atrbName, o.getClass().getName());
             return true;
         } catch (NoSuchMethodException e1) {
@@ -178,7 +178,7 @@ public class XmlUtil {
                 System.out.println("Class name='" + c + "'");
                 throw e1;
             }
-            Constructor<T> con = clazz.getConstructor(null);
+            Constructor<T> con = clazz.getConstructor((Class) null);
             return con.newInstance();
         }
         return null;

@@ -48,14 +48,6 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
 
     private final Executor loadExecutor;
 
-    /**
-     * @param clock
-     * @param errorHandler
-     * @param loader
-     * @param threadManager
-     * @param cache
-     * @param asyncLoader
-     */
     public DefaultCacheLoaderService(final Clock clock,
             InternalCacheAttributeService attributeFactory,
             CacheExceptionService<K, V> exceptionService,
@@ -189,9 +181,6 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
             this.attributes = attributes;
         }
 
-        /**
-         * @see org.coconut.cache.spi.AsyncCacheLoader.LoadKeyRunnable#getKey()
-         */
         public K getKey() {
             return key;
         }
@@ -238,9 +227,6 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
             this.loaderService = loaderService;
         }
 
-        /**
-         * @see org.coconut.cache.spi.AsyncCacheLoader.LoadKeyRunnable#getKey()
-         */
         public Map<? extends K, AttributeMap> getKeys() {
             return keysWithAttributes;
         }

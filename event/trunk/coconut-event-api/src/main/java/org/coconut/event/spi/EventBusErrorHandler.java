@@ -28,7 +28,7 @@ public class EventBusErrorHandler<E> {
     }
 
     /**
-     * @param default_logger2
+     * @param logger
      */
     public EventBusErrorHandler(Logger logger) {
         synchronized (this) {

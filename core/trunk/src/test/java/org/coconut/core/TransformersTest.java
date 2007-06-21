@@ -32,7 +32,7 @@ public class TransformersTest {
 
     @Test(expected = NullPointerException.class)
     public void testArrayNPE() {
-        t(null);
+        t((Transformer) null);
     }
 
     @Test

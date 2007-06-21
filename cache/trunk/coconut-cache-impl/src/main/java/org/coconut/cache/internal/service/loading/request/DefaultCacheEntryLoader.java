@@ -42,16 +42,10 @@ public class DefaultCacheEntryLoader<K, V> extends ExtendableFutureTask<V> imple
         this.attributes = attributes;
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.loading.BulkCacheLoader.LoadRequest#getCache()
-     */
     public Cache<K, V> getCache() {
         return cache;
     }
 
-    /**
-     * @see org.coconut.cache.spi.AsyncCacheLoader.LoadKeyRunnable#getKey()
-     */
     public K getKey() {
         return key;
     }

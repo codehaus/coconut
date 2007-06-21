@@ -31,10 +31,6 @@ public final class ImmutableCacheEntry<K, V> implements CacheEntry<K, V> {
 
 	private final long size;
 
-	/**
-     * @param key
-     * @param value
-     */
 	public ImmutableCacheEntry(AbstractCacheEntry<K, V> entry) {
 		this.cost = entry.getCost();
 		this.creationTime = entry.getCreationTime();

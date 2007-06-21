@@ -117,7 +117,7 @@ public final class EventUtils {
     /**
      * Wraps an {@link java.util.Queue} in an {@link EventHandler}.
      * 
-     * @param Queue
+     * @param queue
      *            the queue to wrap
      * @return an EventHandler wrapping an Queue
      * @throws NullPointerException

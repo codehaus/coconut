@@ -86,7 +86,6 @@ public interface EventBus<E> extends Offerable<E>, EventProcessor<E> {
     /**
      * Returns all subscribers that is registered for this EventBus.
      * 
-     * @see Subscription
      * @return all subscribers that is registered for this EventBus
      */
     Collection<EventSubscription<E>> getSubscribers();
@@ -135,7 +134,7 @@ public interface EventBus<E> extends Offerable<E>, EventProcessor<E> {
      *            the filter that will be used to test against events
      * @param name
      *            the name of the subscription as returned by
-     *            {@link Subscription#getName()}
+     *            {@link EventSubscription#getName()}
      * @return a subscription that can be used to cancel any further
      *         notifications
      * @throws IllegalArgumentException

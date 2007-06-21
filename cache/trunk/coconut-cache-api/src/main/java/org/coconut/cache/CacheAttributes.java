@@ -121,7 +121,7 @@ public class CacheAttributes {
      * attribute to or the return value from a call to {@link Clock#timestamp()} on the
      * specified clock if no such mapping exist.
      * 
-     * @param attributeMap
+     * @param attributes
      *            the map to retrieve the value of the creation time attribute from
      * @return returns the value that the specified AttributeMap maps the
      *         {@link #CREATION_TIME} attribute to or the return value from a call to
@@ -161,7 +161,7 @@ public class CacheAttributes {
      * {@link #LAST_MODIFIED_TIME} attribute to or the return value from a call to
      * {@link Clock#timestamp()} on the specified clock if no such mapping exist.
      * 
-     * @param attributeMap
+     * @param attributes
      *            the map to retrieve the value of the creation time attribute from
      * @return returns the value that the specified AttributeMap maps the
      *         {@link #LAST_MODIFIED_TIME} attribute to or the return value from a call to
@@ -200,7 +200,7 @@ public class CacheAttributes {
      * Returns the value that the specified AttributeMap maps the {@link #SIZE} attribute
      * to or {@link CacheAttributes#DEFAULT_SIZE} if no such mapping exist.
      * 
-     * @param attributeMap
+     * @param attributes
      *            the map to retrieve the value of the size attribute from
      * @return returns the value that the specified AttributeMap maps the size attribute
      *         to or {@value CacheAttributes#DEFAULT_SIZE} if no such mapping exist
@@ -226,11 +226,11 @@ public class CacheAttributes {
      * Returns the value that the specified AttributeMap maps the {@link #TIME_TO_LIVE_NS}
      * attribute to or the default specified value if no such mapping exist.
      * 
-     * @param attributeMap
+     * @param attributes
      *            the map to retrieve the value of the time to live attribute from
      * @param unit
      *            the unit that the time should be returned in
-     * @param the
+     * @param defaultValue the
      *            value that should be returned if a value for time to live attribute
      *            could not be found
      * @return returns the value that the specified AttributeMap maps the
@@ -294,7 +294,7 @@ public class CacheAttributes {
     /**
      * Sets a value for the {@link #COST} attribute in the specified AttributeMap.
      * 
-     * @param attributeMap
+     * @param attributes
      *            the map of attributes to set the cost attribute in
      * @param cost
      *            the cost to set the cost attribute to

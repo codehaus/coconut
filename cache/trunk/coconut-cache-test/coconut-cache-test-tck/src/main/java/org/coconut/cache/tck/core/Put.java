@@ -12,6 +12,8 @@ import static org.coconut.test.CollectionUtils.M5;
 import static org.coconut.test.CollectionUtils.MNAN1;
 import static org.coconut.test.CollectionUtils.asMap;
 
+import java.util.Map;
+
 import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
 import org.junit.Before;
 import org.junit.Test;
@@ -67,7 +69,7 @@ public class Put extends AbstractCacheTCKTestBundle {
 
     @Test(expected = NullPointerException.class)
     public void testPutAllNull() {
-        putAll(null);
+        putAll((Map.Entry) null);
     }
 
     @SuppressWarnings("unchecked")

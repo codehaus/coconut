@@ -40,7 +40,7 @@ public interface CacheExpirationService<K, V> {
 
     /**
      * Attempts to expire all of the mappings for the specified collection of keys. The
-     * effect of this call is equivalent to that of calling {@link #expire(Object)} on
+     * effect of this call is equivalent to that of calling {@link org.coconut.cache.Cache#remove(Object)} on
      * this service once for each key in the specified collection. However, in some cases
      * it can be much faster to expire several cache items at once, for example, if some
      * of the values must also be expired on a remote host.
@@ -76,7 +76,7 @@ public interface CacheExpirationService<K, V> {
      * operation). If the cache previously contained a mapping for this key, the old value
      * is replaced by the specified value. (A cache <tt>c</tt> is said to contain a
      * mapping for a key <tt>k</tt> if and only if
-     * {@link #containsKey(Object) c.containsKey(k)} would return <tt>true</tt>.))
+     * {@link org.coconut.cache.Cache#containsKey(Object) c.containsKey(k)} would return <tt>true</tt>.))
      * <p>
      * It is often more effective to specify a {@link CacheLoader} that implicitly loads
      * values then to explicitly add them to cache using the various <tt>put</tt> and

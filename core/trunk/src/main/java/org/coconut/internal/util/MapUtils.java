@@ -78,15 +78,13 @@ public class MapUtils {
         }
 
         /**
-         * @see java.util.Map$Entry#getKey()
+         * @see java.util.Map.Entry#getKey()
          */
         public K getKey() {
             return key;
         }
 
-        /**
-         * @see java.util.Map$Entry#getDouble()
-         */
+
         public V getValue() {
             return value;
         }
@@ -100,9 +98,6 @@ public class MapUtils {
                     ^ (value == null ? 0 : value.hashCode());
         }
 
-        /**
-         * @see java.util.Map$Entry#setValue(V)
-         */
         public V setValue(V value) {
             throw new UnsupportedOperationException();
         }

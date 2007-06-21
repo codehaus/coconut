@@ -24,7 +24,6 @@ public class ConcurrentCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
      * @param creationTime
      * @param lastUpdateTime
      * @param size
-     * @param version
      */
     public ConcurrentCacheEntry(AbstractCacheEntryFactoryService<K, V> service, K key,
             V value, double cost, long creationTime, long lastUpdateTime, long size) {
@@ -58,17 +57,11 @@ public class ConcurrentCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
         lastAccessedTime = service.getAccessTimeStamp(this);
     }
 
-    /**
-     * @see org.coconut.cache.defaults.memory.CacheEntryImpl#setExpirationTime(long)
-     */
     @Override
     public void setExpirationTime(long time) {
         this.expirationTime = time;
     }
 
-    /**
-     * @see org.coconut.cache.defaults.memory.CacheEntryImpl#setHits(long)
-     */
     @Override
     public void setHits(long hits) {
         this.hits = hits;

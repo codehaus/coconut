@@ -13,9 +13,6 @@ import org.coconut.cache.service.loading.CacheLoader;
  */
 public abstract class AbstractCacheLoader<K, V> implements CacheLoader<K, V> {
 
-	/**
-     * @see org.coconut.cache.internal.service.loading.BulkCacheLoader#loadAll(java.util.Collection)
-     */
 	public final void loadAll(Collection<LoadRequest<K, V>> loadRequests) {
 		for (LoadRequest<K, V> req : loadRequests) {
 			V result = null;

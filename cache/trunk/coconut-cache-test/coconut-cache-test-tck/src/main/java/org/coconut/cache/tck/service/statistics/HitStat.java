@@ -26,8 +26,6 @@ import org.junit.Test;
  * get() and getAll(). As a consequence working with the entryset, valueset or keyset of a
  * cache does not influence the statistics gathered by the cache.
  * <p>
- * If the cache does not support keep any kind of cache statistics {@link NoHitStat} can
- * be used instead.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$

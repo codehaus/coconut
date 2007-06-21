@@ -169,7 +169,7 @@ public class OpenHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMa
      */
     private HashEntry<K, V> getFirst(int hash) {
         HashEntry[] tab = table;
-        return (HashEntry<K, V>) tab[hash & (tab.length - 1)];
+        return tab[hash & (tab.length - 1)];
     }
 
     public void clear() {

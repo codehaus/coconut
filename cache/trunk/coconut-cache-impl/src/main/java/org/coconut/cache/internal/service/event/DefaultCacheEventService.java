@@ -97,8 +97,7 @@ public class DefaultCacheEventService<K, V> extends AbstractInternalCacheService
     }
 
     /**
-     * @see org.coconut.cache.internal.service.joinpoint.AfterJoinPoint#afterCacheEvict(org.coconut.cache.Cache,
-     *      long, java.util.Collection, java.util.Collection)
+     * @see org.coconut.cache.internal.service.joinpoint.AfterCacheOperation#afterCacheEvict(org.coconut.cache.Cache, long, int, int, long, long, java.util.Collection, java.util.Collection)
      */
     public void afterCacheEvict(Cache<K, V> cache, long started, int size,
             int previousSize, long capacity, long previousCapacity,
@@ -111,9 +110,9 @@ public class DefaultCacheEventService<K, V> extends AbstractInternalCacheService
         }
     }
 
+
     /**
-     * @see org.coconut.cache.internal.service.joinpoint.AfterJoinPoint#afterGet(org.coconut.cache.Cache,
-     *      long, org.coconut.cache.CacheEntry, org.coconut.cache.CacheEntry, boolean)
+     * @see org.coconut.cache.internal.service.joinpoint.AfterCacheOperation#afterGet(org.coconut.cache.Cache, long, java.util.Collection, java.lang.Object, org.coconut.cache.CacheEntry, org.coconut.cache.CacheEntry, boolean)
      */
     public void afterGet(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries, K key,
@@ -146,9 +145,9 @@ public class DefaultCacheEventService<K, V> extends AbstractInternalCacheService
         processRemoved(cache, newEntry, prev);
     }
 
+
     /**
-     * @see org.coconut.cache.internal.service.joinpoint.AfterJoinPoint#afterPutAll(org.coconut.cache.Cache,
-     *      long, java.util.Collection, java.util.Collection, java.util.Collection)
+     * @see org.coconut.cache.internal.service.joinpoint.AfterCacheOperation#afterPutAll(org.coconut.cache.Cache, long, java.util.Collection, java.util.Collection, java.util.Collection)
      */
     public void afterPutAll(Cache<K, V> cache, long ignoreStarted,
             Collection<? extends CacheEntry<K, V>> evictedEntries,
@@ -168,10 +167,9 @@ public class DefaultCacheEventService<K, V> extends AbstractInternalCacheService
         }
     }
 
+
     /**
-     * @see org.coconut.cache.internal.service.joinpoint.AfterJoinPoint#afterReplace(org.coconut.cache.Cache,
-     *      long, java.util.List, org.coconut.cache.CacheEntry,
-     *      org.coconut.cache.CacheEntry)
+     * @see org.coconut.cache.internal.service.joinpoint.AfterCacheOperation#afterReplace(org.coconut.cache.Cache, long, java.util.Collection, org.coconut.cache.CacheEntry, org.coconut.cache.CacheEntry)
      */
     public void afterReplace(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries,
@@ -180,9 +178,9 @@ public class DefaultCacheEventService<K, V> extends AbstractInternalCacheService
         processRemoved(cache, newEntry, oldEntry);
     }
 
+
     /**
-     * @see org.coconut.cache.internal.service.joinpoint.AfterJoinPoint#afterTrimToSize(org.coconut.cache.Cache,
-     *      long, java.util.Collection)
+     * @see org.coconut.cache.internal.service.joinpoint.AfterCacheOperation#afterTrimToSize(org.coconut.cache.Cache, long, java.util.Collection)
      */
     public void afterTrimToSize(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries) {

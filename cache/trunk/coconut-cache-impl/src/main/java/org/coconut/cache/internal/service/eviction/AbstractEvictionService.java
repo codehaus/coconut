@@ -90,9 +90,7 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
         helper.trimToSize(size);
     }
 
-    /**
-     * @see org.coconut.cache.service.eviction.CacheEvictionService#evict(java.lang.Object)
-     */
+
     public void evict(Object key) {
         helper.evict(key);
     }
@@ -101,9 +99,7 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
         helper.evictIdleElements();
     }
 
-    /**
-     * @see org.coconut.cache.service.eviction.CacheEvictionService#evictAll(java.util.Collection)
-     */
+
     public void evictAll(Collection<? extends K> keys) {
         helper.evictAll(keys);
     }

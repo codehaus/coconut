@@ -28,9 +28,7 @@ public class LongSamplingCounter {
        
     }
 
-    /**
-     * @see org.coconut.metric.spi.AbstractLongMetricReporter#report(long)
-     */
+
     public synchronized void report(long value) {
         if (value < low) {
             low = value;
@@ -43,9 +41,7 @@ public class LongSamplingCounter {
         samplings++;
     }
 
-    /**
-     * @see org.coconut.metric.MetricReporter#reset()
-     */
+
     // @ManagedOperation(defaultValue = "reset", description = "Resets all
     // variables to their initial value")
     public synchronized void reset() {

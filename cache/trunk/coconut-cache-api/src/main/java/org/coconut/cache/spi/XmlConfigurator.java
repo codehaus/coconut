@@ -24,9 +24,7 @@ import org.w3c.dom.Node;
 /**
  * XmlConfigurator is used to load and save {@link org.coconut.cache.CacheConfiguration}
  * as XML. Normally users should not rely on this class but instead use
- * {@link CacheConfiguration#create(InputStream)},
- * {@link CacheConfiguration#createAndInstantiate(InputStream)} or
- * {@link CacheConfiguration#createInstantiateAndStart(InputStream)}.
+ * {@link CacheConfiguration#createConfiguration(InputStream)}.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $

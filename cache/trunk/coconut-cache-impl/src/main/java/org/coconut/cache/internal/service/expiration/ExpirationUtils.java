@@ -85,14 +85,14 @@ public class ExpirationUtils {
         }
 
         /**
-         * @see org.coconut.cache.service.expiration.CacheExpirationService#expireAll(java.util.Collection)
+         * @see org.coconut.cache.service.expiration.CacheExpirationService#removeAll(java.util.Collection)
          */
         public int removeAll(Collection<? extends K> keys) {
             return service.removeAll(keys);
         }
 
         /**
-         * @see org.coconut.cache.service.expiration.CacheExpirationService#expireAll(org.coconut.filter.Filter)
+         * @see org.coconut.cache.service.expiration.CacheExpirationService#removeAll(org.coconut.filter.Filter)
          */
         public int removeAll(Filter<? extends CacheEntry<K, V>> filter) {
             return service.removeAll(filter);
@@ -105,17 +105,17 @@ public class ExpirationUtils {
             return service.getDefaultTimeToLive(unit);
         }
 
+
         /**
-         * @see org.coconut.cache.service.expiration.CacheExpirationService#put(java.lang.Object,
-         *      java.lang.Object, long, java.util.concurrent.TimeUnit)
+         * @see org.coconut.cache.service.expiration.CacheExpirationService#put(java.lang.Object, java.lang.Object, long, java.util.concurrent.TimeUnit)
          */
         public V put(K key, V value, long expirationTime, TimeUnit unit) {
             return service.put(key, value, expirationTime, unit);
         }
 
+
         /**
-         * @see org.coconut.cache.service.expiration.CacheExpirationService#putAll(java.util.Map,
-         *      long, java.util.concurrent.TimeUnit)
+         * @see org.coconut.cache.service.expiration.CacheExpirationService#putAll(java.util.Map, long, java.util.concurrent.TimeUnit)
          */
         public void putAll(Map<? extends K, ? extends V> t, long timeout, TimeUnit unit) {
             service.putAll(t, timeout, unit);

@@ -367,7 +367,7 @@ public enum UnitOfTime {
      * @param timeout the minimum time to sleep. If less than
      * or equal to zero, do not sleep at all.
      * @throws InterruptedException if interrupted while sleeping.
-     * @see Thread#sleep
+     * @see Thread#sleep(long)
      */
     public void sleep(long timeout) throws InterruptedException {
         if (timeout > 0) {

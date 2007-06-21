@@ -23,8 +23,10 @@ public class LoadingService extends AbstractCacheTCKTestBundle {
     @SuppressWarnings("unchecked")
     @Test
     public void testConfigured() {
-        c = newCache(newConf().loading().setLoader(MockTestCase.mockDummy(CacheLoader.class)));
+        c = newCache(newConf().loading().setLoader(
+                MockTestCase.mockDummy(CacheLoader.class)));
         assertTrue(c.hasService(CacheLoadingService.class));
-        assertTrue(c.getService(CacheLoadingService.class) instanceof CacheLoadingService);
+        // check that it doesn't fail with a classcast exception
+        c.getService(CacheLoadingService.class);
     }
 }

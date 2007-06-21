@@ -67,9 +67,9 @@ public class DefaultCacheExpirationService<K, V> extends AbstractInternalCacheSe
         }
     }
 
+
     /**
-     * @see org.coconut.cache.service.expiration.CacheExpirationService#putAll(java.util.Map,
-     *      long, java.util.concurrent.TimeUnit)
+     * @see org.coconut.cache.service.expiration.CacheExpirationService#putAll(java.util.Map, long, java.util.concurrent.TimeUnit)
      */
     public void putAll(Map<? extends K, ? extends V> t, long timeToLive, TimeUnit unit) {
         if (timeToLive == CacheExpirationService.DEFAULT_EXPIRATION) {
@@ -87,14 +87,14 @@ public class DefaultCacheExpirationService<K, V> extends AbstractInternalCacheSe
     }
 
     /**
-     * @see org.coconut.cache.service.expiration.CacheExpirationService#expireAll(java.util.Collection)
+     * @see org.coconut.cache.service.expiration.CacheExpirationService#removeAll(java.util.Collection)
      */
     public int removeAll(Collection<? extends K> keys) {
         return helper.expireAll(keys);
     }
 
     /**
-     * @see org.coconut.cache.service.expiration.CacheExpirationService#expireAll(org.coconut.filter.Filter)
+     * @see org.coconut.cache.service.expiration.CacheExpirationService#removeAll(org.coconut.filter.Filter)
      */
     public int removeAll(Filter<? extends CacheEntry<K, V>> filter) {
         return helper.expireAll(filter);
@@ -113,9 +113,6 @@ public class DefaultCacheExpirationService<K, V> extends AbstractInternalCacheSe
         super.start(allServices);
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.expiration.InternalCacheExpirationService#isExpired(org.coconut.cache.CacheEntry)
-     */
     public boolean innerIsExpired(CacheEntry<K, V> entry) {
         return ExpirationUtils.isExpired(entry, clock, expirationFilter);
     }

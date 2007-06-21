@@ -19,10 +19,8 @@ public class ExpirationConcurrent extends ExpirationTestBundle {
 
     /**
      * Test the Strict policy.
-     * 
-     * @throws InterruptedException
      */
-    public void testStrict() throws InterruptedException {
+    public void testStrict() {
         long s = 1024;
         int gets = 0;
         int failures = 0;

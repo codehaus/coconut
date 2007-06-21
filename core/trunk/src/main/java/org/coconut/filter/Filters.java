@@ -1028,7 +1028,7 @@ public class Filters {
         for (int i = 0; i < filter.length; i++) {
             filter[i] = Filters.equal(elements[i]);
         }
-        return any((Filter[]) filter);
+        return any(filter);
     }
 
     @SuppressWarnings("unchecked")
@@ -1037,7 +1037,7 @@ public class Filters {
         for (int i = 0; i < cbf.length; i++) {
             cbf[i] = isType(clazz[i]);
         }
-        return Filters.any((Filter[]) cbf);
+        return Filters.any( cbf);
     }
 
     public static <E> Filter<E> between(E first, E second) {

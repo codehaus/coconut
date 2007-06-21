@@ -17,6 +17,12 @@ import org.coconut.filter.Filters;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
+/**
+ * @param <E>
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ */
 public abstract class AbstractEventBus<E> implements EventBus<E> {
 
     private final static String SUBSCRIPTION_NAME_PREFIX = "Subscription-";
@@ -41,9 +47,6 @@ public abstract class AbstractEventBus<E> implements EventBus<E> {
         return conf;
     }
 
-    /**
-     * @see org.coconut.core.EventHandler#handle(java.lang.Object)
-     */
     public void process(E event) {
         offer(event);
     }
@@ -58,8 +61,9 @@ public abstract class AbstractEventBus<E> implements EventBus<E> {
         return inform(element);
     }
 
+
     /**
-     * @see org.coconut.event.bus.EventBus#subscribe(org.coconut.core.EventHandler)
+     * @see org.coconut.event.EventBus#subscribe(org.coconut.core.EventProcessor)
      */
     public EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler) {
         return subscribe(eventHandler, Filters.trueFilter());

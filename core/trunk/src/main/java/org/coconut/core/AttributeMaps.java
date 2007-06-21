@@ -251,26 +251,32 @@ public class AttributeMaps {
         }
     }
 
+    /**
+     * 
+     * 
+     * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+     * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+     */
     public static class DefaultAttributeMap extends HashMap<String, Object> implements
             AttributeMap {
         
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -5954819329578687686L;
+
         public DefaultAttributeMap() {
         }
         
         public DefaultAttributeMap(AttributeMap am) {
             super(am);
         }
+
         /**
-         * @see org.coconut.cache.service.loading.AttributeMap#getLong(java.lang.String)
+         * @see org.coconut.core.AttributeMap#getLong(java.lang.String)
          */
         public long getLong(String key) {
             return getLong(key, 0);
         }
 
-        /**
-         * @see org.coconut.cache.service.loading.AttributeMap#putLong(java.lang.String,
-         *      long)
-         */
         public void putLong(String key, long value) {
             put(key, value);
         }

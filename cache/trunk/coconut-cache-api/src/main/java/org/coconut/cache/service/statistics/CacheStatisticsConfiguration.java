@@ -17,9 +17,6 @@ public class CacheStatisticsConfiguration extends AbstractCacheServiceConfigurat
     // add own counters???
     public static final String SERVICE_NAME = "statistics";
 
-    /**
-     * @param tag
-     */
     public CacheStatisticsConfiguration() {
         super(SERVICE_NAME);
     }

@@ -29,7 +29,7 @@ import org.coconut.cache.CacheException;
 public final class CacheSingleton {
     /**
      * The <tt>default</tt> location of the cache configuration file which is used if no
-     * cache has been set programmatically using {@link #setSingleCache(Cache)}.
+     * cache has been set programmatically using {@link #setCache(Cache)}.
      */
     public final static String DEFAULT_CACHE_RESSOURCE = "coconut-cache.xml";
 

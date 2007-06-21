@@ -82,7 +82,7 @@ public class CacheEventFilters {
             .transform(CacheEvent.class, "getName");
 
     /**
-     * Returns a Filter that filters {@link org.coconut.cache.CacheEvent}s originating
+     * Returns a Filter that filters {@link CacheEvent}s originating
      * from a particular cache.
      */
     public static <K, V> Filter<CacheEvent<K, V>> cacheEqualsFilter(Cache<K, V> cache) {
@@ -90,7 +90,7 @@ public class CacheEventFilters {
     }
 
     /**
-     * Returns a Filter that filters {@link org.coconut.cache.CacheEvent}s depending of
+     * Returns a Filter that filters {@link CacheEvent}s depending of
      * some property/attribute regarding the originating cache. For example, the following
      * Filter filters only accepts Cache events where the size of originating cache size
      * is greater then 10.

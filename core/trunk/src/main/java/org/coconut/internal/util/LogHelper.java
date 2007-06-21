@@ -31,10 +31,6 @@ public class LogHelper {
 
 	private final static String LOG4J = "log4j";
 
-
-	/**
-     * @see org.coconut.cache.spi.xml.AbstractPersister#read()
-     */
 	public static Logger readLog(Element log) {
 		if (log != null) {
 			String type = log.getAttribute(LOG_TYPE_ATRB);

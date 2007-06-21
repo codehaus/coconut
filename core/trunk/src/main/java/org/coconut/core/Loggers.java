@@ -81,7 +81,7 @@ public final class Loggers {
             return new Log4JLogger(logger);
         }
 
-        public static Logger from(Class clazz) {
+        public static Logger from(Class<?> clazz) {
             return from(org.apache.log4j.Logger.getLogger(clazz));
         }
 
@@ -310,7 +310,7 @@ public final class Loggers {
             return new CommonsLogger(log);
         }
 
-        public static Logger from(Class clazz) {
+        public static Logger from(Class<?> clazz) {
             return from(org.apache.commons.logging.LogFactory.getLog(clazz));
         }
 
@@ -433,7 +433,7 @@ public final class Loggers {
             return new JDKLogger(log);
         }
 
-        public static Logger from(Class clazz) {
+        public static Logger from(Class<?> clazz) {
             return from(clazz.getName());
         }
 

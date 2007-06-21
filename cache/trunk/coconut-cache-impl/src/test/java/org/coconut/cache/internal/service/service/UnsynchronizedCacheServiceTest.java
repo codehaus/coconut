@@ -82,9 +82,6 @@ public class UnsynchronizedCacheServiceTest {
     public static class MyManagementService extends AbstractCacheService implements
             CacheManagementService {
 
-        /**
-         * @param name
-         */
         public MyManagementService() {
             super("myService");
         }

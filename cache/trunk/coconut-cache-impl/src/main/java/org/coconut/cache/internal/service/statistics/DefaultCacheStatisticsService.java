@@ -372,9 +372,6 @@ public final class DefaultCacheStatisticsService<K, V> extends
         return Resources.lookup(DefaultCacheStatisticsService.class, key.toLowerCase());
     }
 
-    /**
-     * @see org.coconut.apm.Apm#configureJMX(org.coconut.apm.spi.JMXConfigurator)
-     */
     public void addTo(ManagedGroup dg) {
         ManagedGroup m = dg.addChild("Statistics", "");
 
@@ -451,19 +448,12 @@ public final class DefaultCacheStatisticsService<K, V> extends
         }
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.joinpoint.InternalCacheJoinpoint#cacheClearNeedRemoved()
-     */
     public boolean needElementsAfterClear() {
         // TODO Auto-generated method stub
         return false;
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.joinpoint.AfterJoinPoint#afterPut(org.coconut.cache.Cache,
-     *      long, java.util.Collection, org.coconut.cache.CacheEntry,
-     *      org.coconut.cache.CacheEntry)
-     */
+
     public void afterPut(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries,
             CacheEntry<K, V> oldEntry, CacheEntry<K, V> newEntry) {
@@ -471,52 +461,37 @@ public final class DefaultCacheStatisticsService<K, V> extends
 
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.joinpoint.AfterJoinPoint#afterTrimToSize(org.coconut.cache.Cache,
-     *      long, java.util.Collection)
-     */
+
     public void afterTrimToSize(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries) {
     // TODO Auto-generated method stub
 
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.joinpoint.BeforeJoinPoint#beforePutAll(org.coconut.cache.Cache,
-     *      java.util.Map)
-     */
+
     public long beforePutAll(Cache<K, V> cache, Map<? extends K, ? extends V> map) {
         // TODO Auto-generated method stub
         return 0;
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.joinpoint.BeforeJoinPoint#beforeReplace(org.coconut.cache.Cache,
-     *      java.lang.Object, java.lang.Object, java.lang.Object)
-     */
+
     public long beforeReplace(Cache<K, V> cache, K key, V oldValue, V newValue) {
         // TODO Auto-generated method stub
         return 0;
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.joinpoint.BeforeJoinPoint#beforeTrimToSize(org.coconut.cache.Cache)
-     */
+
     public long beforeTrimToSize(Cache<K, V> cache) {
         // TODO Auto-generated method stub
         return 0;
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.CacheServiceLifecycle#doStart()
-     */
+
     public void doStart() {
         started = System.currentTimeMillis();
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.CacheServiceLifecycle#shutdown(org.coconut.cache.internal.service.ShutdownCallback)
-     */
+
     public void shutdown(Executor callback) {
 
     }

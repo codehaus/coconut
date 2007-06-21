@@ -20,9 +20,6 @@ public class MapMemoryOverheadTest {
         this.c = c;
     }
 
-    /**
-     * @see org.coconut.cache.policy.concurrent.OverHeadTester#create(int)
-     */
     public void test(MemoryTestResult runs) throws Exception {
         runs.start();
         for (int i = 0; i < runs.getTotal(); i++) {

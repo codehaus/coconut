@@ -60,9 +60,6 @@ public class UnsynchronizedCacheServiceManager extends
         }
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.InternalCacheServiceManager#lazyStart(boolean)
-     */
     public void lazyStart(boolean failIfShutdown) {
         prestart();
     }
@@ -171,9 +168,7 @@ public class UnsynchronizedCacheServiceManager extends
         return t;
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.service.InternalCacheServiceManager#registerService(java.lang.Class)
-     */
+
     public void registerServices(Class<? extends AbstractCacheService>... services) {
         for (Class<? extends AbstractCacheService> service : services) {
             registerService(service, service);
@@ -192,6 +187,6 @@ public class UnsynchronizedCacheServiceManager extends
     }
 
     public Map<Class<?>, Object> getAllPublicServices() {
-        return new HashMap<Class<?>, Object>((Map) publicServices);
+        return new HashMap<Class<?>, Object>(publicServices);
     }
 }

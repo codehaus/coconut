@@ -72,7 +72,7 @@ public class AbstractCacheTCKTestBundle extends Assert {
 
     protected Cache<Integer, String> newCache(CacheConfiguration<?, ?> conf, int entries) {
         Cache<Integer, String> cache = newCache(conf);
-        cache.putAll((Map) createMap(entries));
+        cache.putAll(createMap(entries));
         return cache;
     }
 

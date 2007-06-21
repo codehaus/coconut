@@ -26,6 +26,12 @@ import org.coconut.filter.matcher.FilterMatcher;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
+/**
+ * @param <E>
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ */
 public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<E> {
 
     final FilterMatcher<DefaultEventSubscription<E>, E> indexer;
@@ -54,18 +60,12 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
         }
     }
 
-    /**
-     * @see org.coconut.event.bus.EventBus#getSubscribers()
-     */
     @SuppressWarnings("unchecked")
     public List<EventSubscription<E>> getSubscribers() {
         return Collections.unmodifiableList(new ArrayList(subscribers.values()));
     }
 
-    /**
-     * @see org.coconut.event.bus.EventBus#subscribe(org.coconut.core.EventHandler,
-     *      org.coconut.filter.Filter)
-     */
+
     public EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler,
             Filter<? super E> filter) {
         if (eventHandler == null) {
@@ -92,10 +92,7 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
         }
     }
 
-    /**
-     * @see org.coconut.event.bus.EventBus#subscribe(org.coconut.core.EventHandler,
-     *      org.coconut.filter.Filter, java.lang.String)
-     */
+
     public EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler,
             Filter<? super E> filter, String name) {
         if (eventHandler == null) {
@@ -120,9 +117,6 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
         }
     }
 
-    /**
-     * @see org.coconut.event.bus.EventBus#unsubscribeAll()
-     */
     public Collection<EventSubscription<E>> unsubscribeAll() {
         lock.lock();
         try {

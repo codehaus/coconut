@@ -3,7 +3,6 @@
  */
 package org.coconut.cache.internal.service.loading;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -25,11 +24,10 @@ import org.jmock.core.Constraint;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
+@SuppressWarnings({ "unchecked", "serial" })
 public class DefaultCacheLoaderServiceTest extends MockTestCase {
 
     private final static AttributeMap attributes = mockDummy(AttributeMap.class);
-
-    private final static Collection<Integer> keys = mockDummy(Collection.class);
 
     private final static Map<Integer, AttributeMap> keys1 = mockDummy(Map.class);
 

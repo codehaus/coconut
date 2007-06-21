@@ -28,7 +28,6 @@ public class UnsynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
      * @param creationTime
      * @param lastUpdateTime
      * @param size
-     * @param version
      */
     public UnsynchronizedCacheEntry(AbstractCacheEntryFactoryService<K, V> service, K key,
             V value, double cost, long creationTime, long lastUpdateTime, long size, long refreshTime) {

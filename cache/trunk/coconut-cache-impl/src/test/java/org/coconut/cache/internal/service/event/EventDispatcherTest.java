@@ -9,16 +9,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.service.event.CacheEntryEvent;
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.core.EventProcessor;
 import org.coconut.core.EventUtils;
 import org.coconut.test.MockTestCase;
 
-@SuppressWarnings("unused")
+@SuppressWarnings("unchecked")
 public class EventDispatcherTest extends MockTestCase {
 
-    Cache c;
+    Cache<?,?> c;
 
     BlockingQueue<CacheEvent<Integer, String>> events;
 
@@ -33,7 +32,7 @@ public class EventDispatcherTest extends MockTestCase {
 
     private <S> S consumeItem(Class<? extends CacheEvent> type, long sequenceId) {
         try {
-            CacheEvent event = events.poll(1, TimeUnit.SECONDS);
+            CacheEvent<Integer,String> event = events.poll(1, TimeUnit.SECONDS);
             if (event == null) {
                 throw new NullPointerException("event is null");
             }
@@ -55,13 +54,13 @@ public class EventDispatcherTest extends MockTestCase {
         }
     }
 
-    private <S> S consumeItem(Class<? extends CacheEntryEvent> type,
-            Integer key, String value, long sequenceId) {
-        CacheEntryEvent<?,?> event = consumeItem(type, sequenceId);
-        assertEquals(key, event.getKey());
-        assertEquals(value, event.getValue());
-        return (S) event;
-    }
+//    private <S> S consumeItem(Class<? extends CacheEntryEvent> type,
+//            Integer key, String value, long sequenceId) {
+//        CacheEntryEvent<?,?> event = consumeItem(type, sequenceId);
+//        assertEquals(key, event.getKey());
+//        assertEquals(value, event.getValue());
+//        return (S) event;
+//    }
     
     public void testNoTests() {
         

@@ -23,7 +23,6 @@ public class DefaultCacheThreadService<K, V> extends AbstractCacheService implem
 
     private final CacheThreadManager executorFactory;
     /**
-     * @param manager
      * @param conf
      */
     public DefaultCacheThreadService(
@@ -43,12 +42,9 @@ public class DefaultCacheThreadService<K, V> extends AbstractCacheService implem
         // : ThreadUtils.SAME_THREAD_EXECUTOR
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.AbstractCacheService#shutdown(java.lang.Runnable)
-     */
     public void shutdown(Executor callback) /* throws Exception */{
         if (true) {
-            final ThreadPoolExecutor tpe = (ThreadPoolExecutor) null;
+            final ThreadPoolExecutor tpe =  null;
             tpe.shutdown();
             if (!tpe.isTerminated()) {
                 Runnable r = new Runnable() {
@@ -68,43 +64,27 @@ public class DefaultCacheThreadService<K, V> extends AbstractCacheService implem
         }
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.threading.InternalThreadManager#isEnabled()
-     */
     public boolean isAsync() {
         return executorFactory != null;
     }
 
 
-    /**
-     * @see org.coconut.cache.internal.service.threading.InternalThreadManager#executeShutdown(org.coconut.cache.internal.service.InternalCacheService,
-     *      java.lang.Runnable)
-     */
+
     public void executeShutdown(Runnable r) {
         new Thread(r).start();
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.CacheServiceLifecycle#doStart()
-     */
+
     public void doStart() {
     // ignore
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.threading.InternalCacheThreadingService#isActive()
-     */
+
     public boolean isActive() {
         return isAsync();
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.InternalCacheService#isDummy()
-     */
-    public boolean isDummy() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+
 
     public CacheServiceThreadManager getExecutor(Class<?> service) {
         throw new UnsupportedOperationException();

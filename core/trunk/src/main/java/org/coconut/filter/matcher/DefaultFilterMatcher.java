@@ -24,9 +24,6 @@ public class DefaultFilterMatcher<K, E> extends AbstractFilterMatcher<K, E> {
         super(map);
     }
 
-    /**
-     * @see org.coconut.filter.spi.FilterIndexer#match(java.lang.Object)
-     */
     @SuppressWarnings("unchecked")
     public List<K> match(E event) {
         List<K> al = null;

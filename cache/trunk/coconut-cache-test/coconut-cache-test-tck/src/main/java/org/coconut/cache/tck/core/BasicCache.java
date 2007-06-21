@@ -26,7 +26,7 @@ public class BasicCache extends AbstractCacheTCKTestBundle {
     @Test(expected = NullPointerException.class)
     public void getAllNullFails() {
         c = newCache(5);
-        getAll(null);
+        getAll((Map.Entry) null);
     }
 
     @Test(expected = NullPointerException.class)

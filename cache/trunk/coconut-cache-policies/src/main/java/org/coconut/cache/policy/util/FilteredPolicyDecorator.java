@@ -29,9 +29,6 @@ public class FilteredPolicyDecorator<T> extends PolicyDecorator<T> {
         this.filter = filter;
     }
 
-    /**
-     * @see org.coconut.cache.policy.util.ReplacementPolicyDecorator#add(java.lang.Object)
-     */
     @Override
     public int add(T data, AttributeMap attributes) {
         if (filter.accept(data, attributes)) {
@@ -45,10 +42,6 @@ public class FilteredPolicyDecorator<T> extends PolicyDecorator<T> {
         return filter;
     }
 
-    /**
-     * @see org.coconut.cache.policy.util.ReplacementPolicyDecorator#update(int,
-     *      java.lang.Object)
-     */
     @Override
     public boolean update(int index, T newElement, AttributeMap attributes) {
         if (filter.accept(newElement, attributes)) {
@@ -63,7 +56,7 @@ public class FilteredPolicyDecorator<T> extends PolicyDecorator<T> {
         private final double minimumCost;
 
         /**
-         * @param threshold
+         * @param minimumCost
          */
         public CostFilter(final double minimumCost) {
             this.minimumCost = minimumCost;

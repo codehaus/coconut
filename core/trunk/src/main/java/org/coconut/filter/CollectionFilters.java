@@ -105,7 +105,7 @@ public final class CollectionFilters {
     }
 
     public static <E> List<E> filterList(List<E> list, Class<E> filter) {
-        return (List<E>) filterList(list, Filters.isType(filter));
+        return filterList(list, Filters.isType(filter));
     }
 
     public static <E> List<E> filterList(List<E> list, Filter<E> filter) {

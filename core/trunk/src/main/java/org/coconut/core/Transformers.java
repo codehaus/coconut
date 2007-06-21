@@ -30,6 +30,7 @@ import org.coconut.internal.asm.Type;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
+@SuppressWarnings("unchecked")
 public final class Transformers {
     ///CLOVER:OFF
     /** Cannot instantiate. */
@@ -135,7 +136,7 @@ public final class Transformers {
             Class c = sl.defineClass(name, generateTransformer(name, method));
             Constructor cons;
             try {
-                cons = c.getConstructor((Class[]) method.getParameterTypes());
+                cons = c.getConstructor(method.getParameterTypes());
             } catch (NoSuchMethodException e) {
                 throw new IllegalStateException(
                         "No Constructor Found. This is a serious bug in the underlying framework. This should never happen",

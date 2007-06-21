@@ -225,8 +225,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
     }
 
     /**
-     * @see org.coconut.cache.spi.AbstractCache#replace(java.lang.Object,
-     *      java.lang.Object, java.lang.Object)
+     * @see java.util.concurrent.ConcurrentMap#replace(java.lang.Object, java.lang.Object, java.lang.Object)
      */
     public final boolean replace(K key, V oldValue, V newValue) {
         if (key == null) {

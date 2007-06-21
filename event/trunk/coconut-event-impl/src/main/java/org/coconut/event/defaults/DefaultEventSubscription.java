@@ -38,28 +38,28 @@ class DefaultEventSubscription<E> extends ReentrantReadWriteLock implements
     }
 
     /**
-     * @see org.coconut.event.bus.Subscription#cancel()
+     * @see org.coconut.event.EventSubscription#unsubscribe()
      */
     public void unsubscribe() {
         bus.cancel(this);
     }
 
     /**
-     * @see org.coconut.event.bus.Subscription#getListener()
+     * @see org.coconut.event.EventSubscription#getEventProcessor()
      */
     public EventProcessor<? super E> getEventProcessor() {
         return destination;
     }
 
     /**
-     * @see org.coconut.event.bus.Subscription#getFilter()
+     * @see org.coconut.event.EventSubscription#getFilter()
      */
     public Filter<? super E> getFilter() {
         return filter;
     }
 
     /**
-     * @see org.coconut.event.bus.Subscription#getName()
+     * @see org.coconut.event.EventSubscription#getName()
      */
     public String getName() {
         return name;

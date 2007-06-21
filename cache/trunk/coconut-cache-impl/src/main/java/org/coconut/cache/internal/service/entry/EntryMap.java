@@ -970,8 +970,9 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
         }
 
+
         /**
-         * @see org.coconut.cache.defaults.EntryMap.Values#removeAll(java.util.Collection)
+         * @see org.coconut.cache.internal.service.entry.EntryMap.Values#removeAll(java.util.Collection)
          */
         @Override
         public boolean removeAll(Collection<?> c) {

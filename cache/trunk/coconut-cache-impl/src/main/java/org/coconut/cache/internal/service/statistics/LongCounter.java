@@ -184,7 +184,7 @@ public abstract class LongCounter
 
         public double doubleValue() {
             synchronized (mutex) {
-                return (double) value;
+                return  value;
             }
         }
 
@@ -192,7 +192,7 @@ public abstract class LongCounter
       
         public float floatValue() {
             synchronized (mutex) {
-                return (float) value;
+                return value;
             }
         }
 
@@ -524,12 +524,12 @@ public abstract class LongCounter
 
      
         public double doubleValue() {
-            return (double) value;
+            return value;
         }
 
 
         public float floatValue() {
-            return (float) value;
+            return value;
         }
 
 

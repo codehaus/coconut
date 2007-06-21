@@ -112,7 +112,7 @@ public class CacheServiceManager<K, V>  {
     public <T> T getService(Class<T> type) {
         Object cs = instanciated.get(type);
         if (cs == null) {
-            cs = (Object) container.getComponentInstanceOfType(type);
+            cs = container.getComponentInstanceOfType(type);
             instanciated.put(type, cs);
         }
         return (T) cs;

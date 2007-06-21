@@ -8,9 +8,6 @@ public abstract class CacheServiceThreadManager {
     /**
      * Returns a dedicated executor. A dedicated executor is used for running very long
      * runnables. For example, an Evict thread that does it own sleeping.
-     * 
-     * @param service
-     * @return
      */
     public abstract void executeDedicated(Runnable r);
 

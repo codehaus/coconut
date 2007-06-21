@@ -27,7 +27,7 @@ public class ManagementUtils {
         private final CacheManagementService delegate;
 
         /**
-         * @param name
+         * @param service
          */
         public DelegatedCacheManagementService(CacheManagementService service) {
             if (service == null) {

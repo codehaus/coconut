@@ -17,6 +17,14 @@ import org.coconut.filter.Filter;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
+/**
+ * @param <K>
+ * @param <V>
+ * @param <T>
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ */
 public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>> extends
         AbstractEvictionService<K, V, T> {
     private final ReplacementPolicy<T> cp;
@@ -146,32 +154,6 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
      */
     public void clear() {
         cp.clear();
-    }
-
-    /**
-     * @see org.coconut.cache.service.eviction.CacheEvictionService#getIdleFilter()
-     */
-    public Filter<? super CacheEntry<K, V>> getIdleFilter() {
-        return idleFilter;
-    }
-
-    /**
-     * @see org.coconut.cache.service.eviction.CacheEvictionService#setIdleFilter(org.coconut.filter.Filter)
-     */
-    public void setIdleFilter(Filter<? super CacheEntry<K, V>> filter) {
-        idleFilter = filter;
-    }
-
-    /**
-     * @see org.coconut.cache.service.eviction.CacheEvictionMXBean#getEvictionFilterAsString()
-     */
-    public String getIdleFilterAsString() {
-        Filter<? super CacheEntry<K, V>> f = idleFilter;
-        if (f == null) {
-            return "null";
-        } else {
-            return f.toString();
-        }
     }
 
     /**

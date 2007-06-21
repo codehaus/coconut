@@ -55,6 +55,13 @@ import org.coconut.filter.Filter;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
+/**
+ * @param <K>
+ * @param <V>
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id$
+ */
 @NotThreadSafe
 @CacheServiceSupport( { CacheEventService.class, CacheEvictionService.class,
         CacheExpirationService.class, CacheLoadingService.class,
@@ -124,9 +131,6 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         return map.entrySetPublic(this);
     }
 
-    /**
-     * @see org.coconut.cache.spi.AbstractCache#evict()
-     */
     public void evict() {
         checkStarted();
         long started = statistics.beforeCacheEvict(this);
@@ -168,9 +172,6 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         return map.capacity();
     }
 
-    /**
-     * @see org.coconut.cache.spi.AbstractCache#getService(java.lang.Class)
-     */
     public final <T> T getService(Class<T> serviceType) {
         checkStarted();
         return serviceManager.getPublicService(serviceType);

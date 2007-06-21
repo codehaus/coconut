@@ -235,7 +235,7 @@ public class ClockPolicy<T> extends AbstractPolicy<T> implements ReplacementPoli
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#add(T)
+     * @see org.coconut.cache.ReplacementPolicy#add(java.lang.Object, org.coconut.core.AttributeMap)
      */
     public int add(T data, AttributeMap ignore) {
         return policy.add(data);

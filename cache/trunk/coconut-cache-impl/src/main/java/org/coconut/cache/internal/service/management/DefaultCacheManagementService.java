@@ -107,8 +107,9 @@ public class DefaultCacheManagementService extends AbstractInternalCacheService 
         }
     }
 
+
     /**
-     * @see org.coconut.cache.internal.service.CacheServiceLifecycle#shutdown(org.coconut.cache.internal.service.ShutdownCallback)
+     * @see org.coconut.cache.service.servicemanager.AbstractCacheService#shutdown(java.util.concurrent.Executor)
      */
     @Override
     public void shutdown(Executor e) {
@@ -122,7 +123,7 @@ public class DefaultCacheManagementService extends AbstractInternalCacheService 
     }
 
     /**
-     * @see org.coconut.cache.service.servicemanager.AbstractCacheService#start(org.coconut.cache.Cache)
+     * @see org.coconut.cache.service.servicemanager.AbstractCacheService#started(org.coconut.cache.Cache)
      */
     @Override
     public void started(Cache<?, ?> cache) {

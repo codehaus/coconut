@@ -26,7 +26,7 @@ import org.w3c.dom.Element;
  */
 public class XmlConfiguratorTest {
 
-    CacheConfiguration conf;
+    CacheConfiguration<?,?> conf;
 
     @Before
     public void setup() {
@@ -52,7 +52,7 @@ public class XmlConfiguratorTest {
                 XmlConfigurator.CACHE_INSTANCE_TYPE));
     }
 
-    static CacheConfiguration rw(CacheConfiguration conf) throws Exception {
+    static CacheConfiguration<?,?> rw(CacheConfiguration<?,?> conf) throws Exception {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         new XmlConfigurator().write(conf, os);
         return CacheConfiguration.createConfiguration(new ByteArrayInputStream(os

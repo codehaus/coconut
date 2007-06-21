@@ -25,13 +25,7 @@ class IntrospectedAttribute extends AbstractAttribute {
 
 	private final Object o;
 
-	/**
-     * @param name
-     * @param string
-     * @param o2
-     * @param reader
-     * @param writer
-     */
+
 	public IntrospectedAttribute(String attribute, String description, Object o,
 			Method reader, Method writer) {
 		super(attribute, description);
@@ -52,7 +46,7 @@ class IntrospectedAttribute extends AbstractAttribute {
 
 	Object getValue() throws MBeanException, ReflectionException {
 		try {
-			return getter.invoke(o, null);
+			return getter.invoke(o, (Object) null);
 		} catch (InvocationTargetException e) {
 			Throwable t = e.getTargetException();
 			if (t instanceof RuntimeException) {
@@ -74,7 +68,7 @@ class IntrospectedAttribute extends AbstractAttribute {
 			throw new ReflectionException(e, "Exception thrown trying to"
 					+ " invoke the getter for the attribute " + attribute);
 		} catch (Error e) {
-			throw new RuntimeErrorException((Error) e,
+			throw new RuntimeErrorException( e,
 					"Error thrown trying to invoke the getter " + " for the attribute "
 							+ attribute);
 		}

@@ -47,56 +47,56 @@ public abstract class AbstractManagedGroup implements ManagedGroup {
 	}
 
 	/**
-     * @see org.coconut.jmx.ManagedGroup#getChildren()
-     */
+	 * @see org.coconut.management.ManagedGroup#getChildren()
+	 */
 	public Collection<ManagedGroup> getChildren() {
 		return new ArrayList<ManagedGroup>(map.values());
 	}
 
 	/**
-     * @see org.coconut.jmx.ManagedGroup#getDescription()
+     * @see org.coconut.management.ManagedGroup#getDescription()
      */
 	public String getDescription() {
 		return description;
 	}
 
 	/**
-     * @see org.coconut.jmx.ManagedGroup#getName()
+     * @see org.coconut.management.ManagedGroup#getName()
      */
 	public String getName() {
 		return name;
 	}
 
 	/**
-     * @see org.coconut.jmx.ManagedGroup#getObjectName()
+     * @see org.coconut.management.ManagedGroup#getObjectName()
      */
 	public synchronized ObjectName getObjectName() {
 		return objectName;
 	}
 
 	/**
-     * @see org.coconut.jmx.ManagedGroup#getParent()
+     * @see org.coconut.management.ManagedGroup#getParent()
      */
 	public synchronized ManagedGroup getParent() {
 		return parent;
 	}
 
 	/**
-     * @see org.coconut.jmx.ManagedGroup#getServer()
+     * @see org.coconut.management.ManagedGroup#getServer()
      */
 	public synchronized MBeanServer getServer() {
 		return server;
 	}
 
 	/**
-     * @see org.coconut.jmx.ManagedGroup#isRegistered()
+     * @see org.coconut.management.ManagedGroup#isRegistered()
      */
 	public boolean isRegistered() {
 		return getObjectName() != null;
 	}
 
 	/**
-     * @see org.coconut.jmx.ManagedGroup#register(javax.management.MBeanServer,
+     * @see org.coconut.management.ManagedGroup#register(javax.management.MBeanServer,
      *      javax.management.ObjectName)
      */
 	public synchronized void register(MBeanServer service, ObjectName name)
@@ -107,7 +107,7 @@ public abstract class AbstractManagedGroup implements ManagedGroup {
 	}
 
 	/**
-     * @see org.coconut.jmx.ManagedGroup#remove()
+     * @see org.coconut.management.ManagedGroup#remove()
      */
 	public synchronized void remove() {
 		if (parent != null) {
@@ -117,7 +117,7 @@ public abstract class AbstractManagedGroup implements ManagedGroup {
 	}
 
 	/**
-     * @see org.coconut.jmx.ManagedGroup#unregister()
+     * @see org.coconut.management.ManagedGroup#unregister()
      */
 	public synchronized void unregister() throws JMException {
 		server.unregisterMBean(objectName);
@@ -126,7 +126,7 @@ public abstract class AbstractManagedGroup implements ManagedGroup {
 	}
 
 	/**
-     * @see org.coconut.jmx.ManagedGroup#addNewGroup(java.lang.String,
+     * @see org.coconut.management.ManagedGroup#addNewGroup(java.lang.String,
      *      java.lang.String)
      */
 	synchronized ManagedGroup addNewGroup(AbstractManagedGroup group) {

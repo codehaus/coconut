@@ -70,17 +70,11 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
         super(name, description);
     }
 
-    /**
-     * @see org.coconut.jmx.ManagedGroup#addNewGroup(java.lang.String, java.lang.String)
-     */
     public synchronized ManagedGroup addChild(String name, String description) {
         DefaultManagedGroup g = new DefaultManagedGroup(name, description);
         return super.addNewGroup(g);
     }
 
-    /**
-     * @see org.coconut.jmx.ManagedGroup#add(java.lang.Object)
-     */
     public synchronized ManagedGroup add(Object o) {
         if (o == null) {
             throw new NullPointerException("o is null");
@@ -231,10 +225,6 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
                 .toArray(new MBeanAttributeInfo[0]), null, lo
                 .toArray(new MBeanOperationInfo[0]), null);
         return mbeanInfo;
-    }
-
-    private synchronized void initialize() {
-
     }
 
     /**

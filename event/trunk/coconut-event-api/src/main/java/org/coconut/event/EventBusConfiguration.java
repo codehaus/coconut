@@ -5,7 +5,6 @@ package org.coconut.event;
 
 import java.util.concurrent.Executor;
 
-import org.apache.commons.logging.Log;
 import org.coconut.core.Logger;
 import org.coconut.event.spi.EventBusErrorHandler;
 import org.coconut.filter.matcher.FilterMatcher;
@@ -30,17 +29,9 @@ public class EventBusConfiguration<E> {
 
     private FilterMatcher<?, E> filterMatcher;
 
-    private Logger log;
-
-    private Executor e;
-
     private boolean reentrant = false;
 
     private EventBusErrorHandler<E> errorHandler;
-
-    public void setAsync(Executor e) {
-        this.e = e;
-    }
 
     public void setCheckReentrant(boolean check) {
         this.reentrant = check;
@@ -54,7 +45,6 @@ public class EventBusConfiguration<E> {
      * 
      * @return the log configured for the cache, or <tt>null</tt> if no log is
      *         configured
-     * @see #setLog(Log)
      */
     public EventBusErrorHandler<E> getErrorHandler() {
         return errorHandler;
@@ -64,11 +54,9 @@ public class EventBusConfiguration<E> {
      * Sets the log that the cache should use for logging anomalies and errors.
      * If no log is set the cache will redirect all output to dev/null
      * 
-     * @param log
-     *            the log to use
      * @return this configuration
-     * @see org.coconut.core.Logs
-     * @see org.coconut.core.Log
+     * @see org.coconut.core.Loggers
+     * @see org.coconut.core.Logger
      * @throws NullPointerException
      *             if log is <tt>null</tt>
      */

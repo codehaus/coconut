@@ -14,7 +14,7 @@ public class SynchronizedCacheTest {
     Cache sc;
 
     @Before
-    public void setup() throws InterruptedException {
+    public void setup() {
        // sc = new SynchronizedCache(M1_TO_M5_MAP);
     }
 

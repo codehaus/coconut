@@ -61,7 +61,7 @@ public class LoadingUtils {
         private final CacheLoadingService<K, V> delegate;
 
         /**
-         * @param name
+         * @param service
          */
         public DelegatedCacheLoadingService(CacheLoadingService<K, V> service) {
             if (service == null) {

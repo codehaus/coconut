@@ -20,7 +20,7 @@ public class CacheExecutorUtil {
             this.service = service;
         }
         /**
-         * @see org.coconut.cache.service.threading2.CacheExecutorServiceFactory#createExecutorService(java.lang.Class)
+         * @see org.coconut.cache.service.threading.CacheServiceThreadManager#createExecutorService()
          */
         @Override
         public ExecutorService createExecutorService() {
@@ -28,19 +28,12 @@ public class CacheExecutorUtil {
                     .getSimpleName()));
         }
 
-        /**
-         * @see org.coconut.cache.service.threading2.CacheExecutorServiceFactory#createScheduledExecutorService(java.lang.Class)
-         */
         @Override
         public ScheduledExecutorService createScheduledExecutorService() {
             // TODO Auto-generated method stub
             return null;
         }
 
-        /**
-         * @see org.coconut.cache.service.threading2.CacheExecutorServiceFactory#executeDedicated(java.lang.Class,
-         *      java.lang.Runnable)
-         */
         @Override
         public void executeDedicated(Runnable r) {
             Executors.newSingleThreadExecutor(
