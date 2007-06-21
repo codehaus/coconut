@@ -149,17 +149,17 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
                 returnValue("boo"));
         cacheHelperMock.expects(once()).method("valueLoaded").with(eq(1), eq("boo"),
                 ANYTHING);
-        Future f = dcls.load(1);
-        assertNotNull(f);
-        f.get();
+//        Future f = dcls.load(1);
+//        assertNotNull(f);
+//        f.get();
 
         loaderMock1.expects(once()).method("load").with(eq(2), same(attributes)).will(
                 returnValue("foo"));
         cacheHelperMock.expects(once()).method("valueLoaded").with(eq(2), eq("foo"),
                 same(attributes));
-        Future f1 = dcls.load(2, attributes);
-        assertNotNull(f1);
-        f1.get();
+//        Future f1 = dcls.load(2, attributes);
+//        assertNotNull(f1);
+//        f1.get();
 
 //        assertTrue(myExecutor.r instanceof ExtendedExecutorRunnable.LoadKey);
 //        ExtendedExecutorRunnable.LoadKey loadKey = (LoadKey) myExecutor.r;
@@ -180,9 +180,9 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
                 new Constraint[] { same(loaderProxy1), eq(1), same(attributes), eq(true),
                         same(e) }).will(returnValue("boo"));
 
-        Future f = dcls.load(1, attributes);
-        assertNotNull(f);
-        f.get();
+//        Future f = dcls.load(1, attributes);
+//        assertNotNull(f);
+//        f.get();
 
         // no add of value if cacheerrorhandler returns null
         loaderMock1.expects(once()).method("load").with(eq(1), ANYTHING).will(
@@ -191,9 +191,9 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
                 new Constraint[] { same(loaderProxy1), eq(1), same(attributes), eq(true),
                         same(e) }).will(returnValue(null));
 
-        Future f1 = dcls.load(1, attributes);
-        assertNotNull(f1);
-        f1.get();
+//        Future f1 = dcls.load(1, attributes);
+//        assertNotNull(f1);
+//        f1.get();
 
         // test cache errorhandler throws CacheException
         loaderMock1.expects(once()).method("load").with(eq(1), ANYTHING).will(
@@ -202,99 +202,99 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
                 new Constraint[] { same(loaderProxy1), eq(1), same(attributes), eq(true),
                         same(e) }).will(throwException(re));
 
-        Future f2 = dcls.load(1, attributes);
-        assertNotNull(f2);
-        try {
-            f2.get();
-            fail("Should fail with ExecutionException");
-        } catch (ExecutionException e) {
-            assertSame(re, e.getCause());
-        }
+//        Future f2 = dcls.load(1, attributes);
+//        assertNotNull(f2);
+//        try {
+//            f2.get();
+//            fail("Should fail with ExecutionException");
+//        } catch (ExecutionException e) {
+//            assertSame(re, e.getCause());
+//        }
     }
 
-    //tests has been removed because CacheLoader does not define a loadAll method anymore
-    public void aloadAll() throws InterruptedException, ExecutionException {
-        DefaultCacheLoaderService<Integer, String> dcls = new DefaultCacheLoaderService<Integer, String>(
-                null, null, errorHandlerProxy,loadingConf, myExecutor, null,
-                cacheHelperProxy);
-        // result null
-        loaderMock1.expects(once()).method("loadAll").with(same(keys1)).will(
-                returnValue(null));
-        Future f = dcls.loadAll(keys1);
-        assertNotNull(f);
-        f.get();
-
-        // result empty
-        loaderMock1.expects(once()).method("loadAll").with(same(keys1)).will(
-                returnValue(map2));
-        Future f1 = dcls.loadAll(keys1);
-        assertNotNull(f1);
-        f1.get();
-
-        map2.put(1, "foo");
-        loaderMock1.expects(once()).method("loadAll").with(same(keys1)).will(
-                returnValue(map2));
-        cacheHelperMock.expects(once()).method("valuesLoaded").with(same(map2),
-                same(keys1));
-        Future f2 = dcls.loadAll(keys1);
-        assertNotNull(f2);
-        f2.get();
-    }
-
-    public void atestLoadAllError() throws InterruptedException, ExecutionException {
-        DefaultCacheLoaderService<Integer, String> dcls = new DefaultCacheLoaderService<Integer, String>(
-                null, null, errorHandlerProxy, loadingConf, myExecutor, null,
-                cacheHelperProxy);
-
-        loaderMock1.expects(once()).method("loadAll").with(eq(realKeys)).will(
-                throwException(e));
-        cacheHelperMock.expects(once()).method("valuesLoaded").with(same(map2),
-                eq(realKeys));
-        errorHandlerMock.expects(once()).method("loadAllFailed").with(
-                new Constraint[] { same(loaderProxy1), eq(realKeys), eq(true), same(e) })
-                .will(returnValue(map2));
-
-        Future f = dcls.loadAll(realKeys);
-        assertNotNull(f);
-        f.get();
-
-        // no add of value if cacheerrorhandler returns null
-        loaderMock1.expects(once()).method("loadAll").with(eq(realKeys)).will(
-                throwException(e));
-        errorHandlerMock.expects(once()).method("loadAllFailed").with(
-                new Constraint[] { same(loaderProxy1), eq(realKeys), eq(true), same(e) })
-                .will(returnValue(null));
-
-        Future f1 = dcls.loadAll(realKeys);
-        assertNotNull(f1);
-        f1.get();
-
-        // no add of value if map size==0
-        loaderMock1.expects(once()).method("loadAll").with(eq(realKeys)).will(
-                throwException(e));
-        errorHandlerMock.expects(once()).method("loadAllFailed").with(
-                new Constraint[] { same(loaderProxy1), eq(realKeys), eq(true), same(e) })
-                .will(returnValue(new HashMap()));
-
-        Future f2 = dcls.loadAll(realKeys);
-        assertNotNull(f2);
-        f2.get();
-
-        // test cache errorhandler throws CacheException
-        loaderMock1.expects(once()).method("loadAll").with(eq(realKeys)).will(
-                throwException(e));
-        errorHandlerMock.expects(once()).method("loadAllFailed").with(
-                new Constraint[] { same(loaderProxy1), eq(realKeys), eq(true), same(e) })
-                .will(throwException(re));
-        Future f3 = dcls.loadAll(realKeys);
-        assertNotNull(f2);
-        try {
-            f3.get();
-            fail("Should fail with ExecutionException");
-        } catch (ExecutionException e) {
-            assertSame(re, e.getCause());
-        }
-    }
+//    //tests has been removed because CacheLoader does not define a loadAll method anymore
+//    public void aloadAll() throws InterruptedException, ExecutionException {
+//        DefaultCacheLoaderService<Integer, String> dcls = new DefaultCacheLoaderService<Integer, String>(
+//                null, null, errorHandlerProxy,loadingConf, myExecutor, null,
+//                cacheHelperProxy);
+//        // result null
+//        loaderMock1.expects(once()).method("loadAll").with(same(keys1)).will(
+//                returnValue(null));
+//        Future f = dcls.loadAll(keys1);
+//        assertNotNull(f);
+//        f.get();
+//
+//        // result empty
+//        loaderMock1.expects(once()).method("loadAll").with(same(keys1)).will(
+//                returnValue(map2));
+//        Future f1 = dcls.loadAll(keys1);
+//        assertNotNull(f1);
+//        f1.get();
+//
+//        map2.put(1, "foo");
+//        loaderMock1.expects(once()).method("loadAll").with(same(keys1)).will(
+//                returnValue(map2));
+//        cacheHelperMock.expects(once()).method("valuesLoaded").with(same(map2),
+//                same(keys1));
+//        Future f2 = dcls.loadAll(keys1);
+//        assertNotNull(f2);
+//        f2.get();
+//    }
+//
+//    public void atestLoadAllError() throws InterruptedException, ExecutionException {
+//        DefaultCacheLoaderService<Integer, String> dcls = new DefaultCacheLoaderService<Integer, String>(
+//                null, null, errorHandlerProxy, loadingConf, myExecutor, null,
+//                cacheHelperProxy);
+//
+//        loaderMock1.expects(once()).method("loadAll").with(eq(realKeys)).will(
+//                throwException(e));
+//        cacheHelperMock.expects(once()).method("valuesLoaded").with(same(map2),
+//                eq(realKeys));
+//        errorHandlerMock.expects(once()).method("loadAllFailed").with(
+//                new Constraint[] { same(loaderProxy1), eq(realKeys), eq(true), same(e) })
+//                .will(returnValue(map2));
+//
+//        Future f = dcls.loadAll(realKeys);
+//        assertNotNull(f);
+//        f.get();
+//
+//        // no add of value if cacheerrorhandler returns null
+//        loaderMock1.expects(once()).method("loadAll").with(eq(realKeys)).will(
+//                throwException(e));
+//        errorHandlerMock.expects(once()).method("loadAllFailed").with(
+//                new Constraint[] { same(loaderProxy1), eq(realKeys), eq(true), same(e) })
+//                .will(returnValue(null));
+//
+//        Future f1 = dcls.loadAll(realKeys);
+//        assertNotNull(f1);
+//        f1.get();
+//
+//        // no add of value if map size==0
+//        loaderMock1.expects(once()).method("loadAll").with(eq(realKeys)).will(
+//                throwException(e));
+//        errorHandlerMock.expects(once()).method("loadAllFailed").with(
+//                new Constraint[] { same(loaderProxy1), eq(realKeys), eq(true), same(e) })
+//                .will(returnValue(new HashMap()));
+//
+//        Future f2 = dcls.loadAll(realKeys);
+//        assertNotNull(f2);
+//        f2.get();
+//
+//        // test cache errorhandler throws CacheException
+//        loaderMock1.expects(once()).method("loadAll").with(eq(realKeys)).will(
+//                throwException(e));
+//        errorHandlerMock.expects(once()).method("loadAllFailed").with(
+//                new Constraint[] { same(loaderProxy1), eq(realKeys), eq(true), same(e) })
+//                .will(throwException(re));
+//        Future f3 = dcls.loadAll(realKeys);
+//        assertNotNull(f2);
+//        try {
+//            f3.get();
+//            fail("Should fail with ExecutionException");
+//        } catch (ExecutionException e) {
+//            assertSame(re, e.getCause());
+//        }
+//    }
 
     static class MyExecutor implements InternalCacheThreadingService {
         Runnable r;

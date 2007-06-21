@@ -136,7 +136,7 @@ public final class Transformers {
             Class c = sl.defineClass(name, generateTransformer(name, method));
             Constructor cons;
             try {
-                cons = c.getConstructor(method.getParameterTypes());
+                cons = c.getConstructor((Class[]) method.getParameterTypes());
             } catch (NoSuchMethodException e) {
                 throw new IllegalStateException(
                         "No Constructor Found. This is a serious bug in the underlying framework. This should never happen",

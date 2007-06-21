@@ -43,19 +43,19 @@ public abstract class AbstractCacheLoadingService<K, V> extends
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#filteredLoad(org.coconut.filter.Filter)
      */
-    public final Future<?> filteredLoad(Filter<? super CacheEntry<K, V>> filter) {
+    public final void filteredLoad(Filter<? super CacheEntry<K, V>> filter) {
         if (filter == null) {
             throw new NullPointerException("filter is null");
         }
         Collection<? extends K> keys = helper.filterKeys(filter);
-        return forceLoadAll(keys);
+        forceLoadAll(keys);
     }
     
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#filteredLoad(org.coconut.filter.Filter,
      *      org.coconut.core.AttributeMap)
      */
-    public final Future<?> filteredLoad(Filter<? super CacheEntry<K, V>> filter,
+    public final void filteredLoad(Filter<? super CacheEntry<K, V>> filter,
             AttributeMap defaultAttributes) {
         if (filter == null) {
             throw new NullPointerException("filter is null");
@@ -67,14 +67,14 @@ public abstract class AbstractCacheLoadingService<K, V> extends
         for (K key : keys) {
             map.put(key, defaultAttributes);
         }
-        return forceLoadAll(map);
+        forceLoadAll(map);
     }
 
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#filteredLoad(org.coconut.filter.Filter,
      *      org.coconut.core.Transformer)
      */
-    public final Future<?> filteredLoad(Filter<? super CacheEntry<K, V>> filter,
+    public final void filteredLoad(Filter<? super CacheEntry<K, V>> filter,
             Transformer<CacheEntry<K, V>, AttributeMap> attributeTransformer) {
         if (filter == null) {
             throw new NullPointerException("filter is null");
@@ -87,42 +87,42 @@ public abstract class AbstractCacheLoadingService<K, V> extends
             AttributeMap atr = attributeTransformer.transform(entry);
             map.put(entry.getKey(), atr);
         }
-        return forceLoadAll(map);
+        forceLoadAll(map);
     }
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#load(java.lang.Object)
      */
-    public final Future<?> forceLoad(K key) {
-        return doLoad(key, true);
+    public final void forceLoad(K key) {
+         doLoad(key, true);
     }
 
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#forceLoad(java.lang.Object,
      *      org.coconut.core.AttributeMap)
      */
-    public final Future<?> forceLoad(K key, AttributeMap attributes) {
-        return doLoad(key, attributes, true);
+    public final void forceLoad(K key, AttributeMap attributes) {
+         doLoad(key, attributes, true);
     }
 
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#forceLoadAll(org.coconut.core.AttributeMap)
      */
-    public final Future<?> forceLoadAll(AttributeMap attributes) {
-        return filteredLoad(Filters.trueFilter(), attributes);
+    public final void forceLoadAll(AttributeMap attributes) {
+         filteredLoad(Filters.trueFilter(), attributes);
     }
 
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#forceLoadAll(java.util.Collection)
      */
-    public final Future<?> forceLoadAll(Collection<? extends K> keys) {
-        return doLoadAll(keys, true);
+    public final void forceLoadAll(Collection<? extends K> keys) {
+        doLoadAll(keys, true);
     }
 
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#forceLoadAll(java.util.Map)
      */
-    public final Future<?> forceLoadAll(Map<K, AttributeMap> mapsWithAttributes) {
-        return doLoadAll(mapsWithAttributes, true);
+    public final void forceLoadAll(Map<K, AttributeMap> mapsWithAttributes) {
+        doLoadAll(mapsWithAttributes, true);
     }
 
     @Override
@@ -136,31 +136,31 @@ public abstract class AbstractCacheLoadingService<K, V> extends
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#load(java.lang.Object)
      */
-    public final Future<?> load(K key) {
-        return doLoad(key, false);
+    public final void load(K key) {
+        doLoad(key, false);
     }
 
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#load(java.lang.Object,
      *      org.coconut.core.AttributeMap)
      */
-    public Future<?> load(K key, AttributeMap attributes) {
-        return doLoad(key, attributes, false);
+    public void load(K key, AttributeMap attributes) {
+         doLoad(key, attributes, false);
     }
 
-    public final Future<?> loadAll(Collection<? extends K> keys) {
-        return doLoadAll(keys, false);
+    public final void loadAll(Collection<? extends K> keys) {
+         doLoadAll(keys, false);
     }
 
-    public final Future<?> loadAll(Map<K, AttributeMap> mapsWithAttributes) {
-        return doLoadAll(mapsWithAttributes, false);
+    public final void loadAll(Map<K, AttributeMap> mapsWithAttributes) {
+         doLoadAll(mapsWithAttributes, false);
     }
 
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#reloadAll()
      */
-    public final Future<?> reloadAll() {
-        return filteredLoad(Filters.trueFilter());
+    public final void reloadAll() {
+        filteredLoad(Filters.trueFilter());
     }
 
     /**

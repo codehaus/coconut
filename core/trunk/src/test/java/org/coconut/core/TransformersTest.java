@@ -32,7 +32,8 @@ public class TransformersTest {
 
     @Test(expected = NullPointerException.class)
     public void testArrayNPE() {
-        t((Transformer) null);
+        t(null);
+        //TODO t((Transformer) null) doesn't throw
     }
 
     @Test

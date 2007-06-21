@@ -70,62 +70,62 @@ public class LoadingUtils {
             this.delegate = service;
         }
 
-        public Future<?> filteredLoad(Filter<? super CacheEntry<K, V>> filter,
+        public void filteredLoad(Filter<? super CacheEntry<K, V>> filter,
                 AttributeMap defaultAttributes) {
-            return delegate.filteredLoad(filter, defaultAttributes);
+            delegate.filteredLoad(filter, defaultAttributes);
         }
 
-        public Future<?> filteredLoad(Filter<? super CacheEntry<K, V>> filter,
+        public void filteredLoad(Filter<? super CacheEntry<K, V>> filter,
                 Transformer<CacheEntry<K, V>, AttributeMap> attributeTransformer) {
-            return delegate.filteredLoad(filter, attributeTransformer);
+            delegate.filteredLoad(filter, attributeTransformer);
         }
 
-        public Future<?> filteredLoad(Filter<? super CacheEntry<K, V>> filter) {
-            return delegate.filteredLoad(filter);
+        public void filteredLoad(Filter<? super CacheEntry<K, V>> filter) {
+             delegate.filteredLoad(filter);
         }
 
-        public Future<?> forceLoad(K key, AttributeMap attributes) {
-            return delegate.forceLoad(key, attributes);
+        public void forceLoad(K key, AttributeMap attributes) {
+             delegate.forceLoad(key, attributes);
         }
 
-        public Future<?> forceLoad(K key) {
-            return delegate.forceLoad(key);
+        public void forceLoad(K key) {
+             delegate.forceLoad(key);
         }
 
-        public Future<?> forceLoadAll(AttributeMap attributes) {
-            return delegate.forceLoadAll(attributes);
+        public void forceLoadAll(AttributeMap attributes) {
+             delegate.forceLoadAll(attributes);
         }
 
-        public Future<?> forceLoadAll(Collection<? extends K> keys) {
-            return delegate.forceLoadAll(keys);
+        public void forceLoadAll(Collection<? extends K> keys) {
+             delegate.forceLoadAll(keys);
         }
 
-        public Future<?> forceLoadAll(Map<K, AttributeMap> mapsWithAttributes) {
-            return delegate.forceLoadAll(mapsWithAttributes);
+        public void forceLoadAll(Map<K, AttributeMap> mapsWithAttributes) {
+             delegate.forceLoadAll(mapsWithAttributes);
         }
 
         public long getDefaultTimeToRefresh(TimeUnit unit) {
-            return delegate.getDefaultTimeToRefresh(unit);
+             return delegate.getDefaultTimeToRefresh(unit);
         }
 
-        public Future<?> load(K key, AttributeMap attributes) {
-            return delegate.load(key, attributes);
+        public void load(K key, AttributeMap attributes) {
+             delegate.load(key, attributes);
         }
 
-        public Future<?> load(K key) {
-            return delegate.load(key);
+        public void load(K key) {
+            delegate.load(key);
         }
 
-        public Future<?> loadAll(Collection<? extends K> keys) {
-            return delegate.loadAll(keys);
+        public void loadAll(Collection<? extends K> keys) {
+             delegate.loadAll(keys);
         }
 
-        public Future<?> loadAll(Map<K, AttributeMap> mapsWithAttributes) {
-            return delegate.loadAll(mapsWithAttributes);
+        public void loadAll(Map<K, AttributeMap> mapsWithAttributes) {
+             delegate.loadAll(mapsWithAttributes);
         }
 
-        public Future<?> reloadAll() {
-            return delegate.reloadAll();
+        public void reloadAll() {
+             delegate.reloadAll();
         }
 
         public void setDefaultTimeToRefresh(long timeToLive, TimeUnit unit) {

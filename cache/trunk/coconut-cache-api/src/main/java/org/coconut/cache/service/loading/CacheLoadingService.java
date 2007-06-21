@@ -59,12 +59,12 @@ public interface CacheLoadingService<K, V> {
      *            the filter to test cache entries against
      * @return A future indicating pending load of all the entries
      */
-    Future<?> filteredLoad(Filter<? super CacheEntry<K, V>> filter);
+    void filteredLoad(Filter<? super CacheEntry<K, V>> filter);
 
-    Future<?> filteredLoad(Filter<? super CacheEntry<K, V>> filter,
+    void filteredLoad(Filter<? super CacheEntry<K, V>> filter,
             AttributeMap defaultAttributes);
 
-    Future<?> filteredLoad(Filter<? super CacheEntry<K, V>> filter,
+    void filteredLoad(Filter<? super CacheEntry<K, V>> filter,
             Transformer<CacheEntry<K, V>, AttributeMap> attributeTransformer);
 
     /**
@@ -81,15 +81,15 @@ public interface CacheLoadingService<K, V> {
      * @throws NullPointerException
      *             if the specified key is <tt>null</tt>
      */
-    Future<?> forceLoad(K key);
+    void forceLoad(K key);
 
-    Future<?> forceLoad(K key, AttributeMap attributes);
+    void forceLoad(K key, AttributeMap attributes);
 
-    Future<?> forceLoadAll(AttributeMap attributes);
+    void forceLoadAll(AttributeMap attributes);
 
-    Future<?> forceLoadAll(Collection<? extends K> keys);
+    void forceLoadAll(Collection<? extends K> keys);
 
-    Future<?> forceLoadAll(Map<K, AttributeMap> mapsWithAttributes);
+    void forceLoadAll(Map<K, AttributeMap> mapsWithAttributes);
 
     /**
      * If a mapping for the specified key is not already in the cache. This method will
@@ -120,9 +120,9 @@ public interface CacheLoadingService<K, V> {
      * @throws NullPointerException
      *             if the specified key is <tt>null</tt>
      */
-    Future<?> load(K key);
+    void load(K key);
 
-    Future<?> load(K key, AttributeMap attributes);
+    void load(K key, AttributeMap attributes);
 
     /**
      * Attempts to asynchronously load the values to which this cache maps the specified
@@ -151,9 +151,9 @@ public interface CacheLoadingService<K, V> {
      *             if the specified collection of keys is <tt>null</tt> or the specified
      *             collection contains <tt>null</tt> values
      */
-    Future<?> loadAll(Collection<? extends K> keys);
+    void loadAll(Collection<? extends K> keys);
 
-    Future<?> loadAll(Map<K, AttributeMap> mapsWithAttributes);
+    void loadAll(Map<K, AttributeMap> mapsWithAttributes);
 
     /**
      * Attempts to reload all entries that are currently held in the cache.
@@ -161,5 +161,5 @@ public interface CacheLoadingService<K, V> {
      * @return a Future representing pending completion of all the loads, and whose
      *         <tt>get()</tt> method will return <tt>null</tt> upon completion.
      */
-    Future<?> reloadAll();
+    void reloadAll();
 }

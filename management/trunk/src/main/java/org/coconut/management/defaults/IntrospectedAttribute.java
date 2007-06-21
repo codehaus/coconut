@@ -46,7 +46,7 @@ class IntrospectedAttribute extends AbstractAttribute {
 
 	Object getValue() throws MBeanException, ReflectionException {
 		try {
-			return getter.invoke(o, (Object) null);
+			return getter.invoke(o, null);
 		} catch (InvocationTargetException e) {
 			Throwable t = e.getTargetException();
 			if (t instanceof RuntimeException) {

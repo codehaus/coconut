@@ -12,37 +12,37 @@ import org.junit.Test;
 
 public class FutureLoading extends AbstractLoadingTestBundle {
 
-    /**
-     * cancel of a completed loading fails
-     * 
-     * @throws ExecutionException
-     * @throws InterruptedException
-     */
-    @Test
-    public void testCancelAfterRun() throws InterruptedException,
-            ExecutionException {
-        Future<?> task = loading().load(0);
-        task.get();
-        assertFalse(task.cancel(false));
-        assertTrue(task.isDone());
-        assertFalse(task.isCancelled());
-    }
-
-    /**
-     * cancel of a completed loading fails
-     * 
-     * @throws ExecutionException
-     * @throws InterruptedException
-     */
-    @Test
-    public void testCancelAfterRun2() throws InterruptedException,
-            ExecutionException {
-        Future<?> task = loading().load(0);
-        task.get();
-        assertFalse(task.cancel(true));
-        assertTrue(task.isDone());
-        assertFalse(task.isCancelled());
-    }
+//    /**
+//     * cancel of a completed loading fails
+//     * 
+//     * @throws ExecutionException
+//     * @throws InterruptedException
+//     */
+//    @Test
+//    public void testCancelAfterRun() throws InterruptedException,
+//            ExecutionException {
+//        Future<?> task = loading().load(0);
+//        task.get();
+//        assertFalse(task.cancel(false));
+//        assertTrue(task.isDone());
+//        assertFalse(task.isCancelled());
+//    }
+//
+//    /**
+//     * cancel of a completed loading fails
+//     * 
+//     * @throws ExecutionException
+//     * @throws InterruptedException
+//     */
+//    @Test
+//    public void testCancelAfterRun2() throws InterruptedException,
+//            ExecutionException {
+//        Future<?> task = loading().load(0);
+//        task.get();
+//        assertFalse(task.cancel(true));
+//        assertTrue(task.isDone());
+//        assertFalse(task.isCancelled());
+//    }
     
 
 //  /**

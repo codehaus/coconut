@@ -6,7 +6,6 @@ package org.coconut.cache;
 
 import java.util.List;
 
-import org.coconut.cache.policy.Policies;
 import org.coconut.core.AttributeMap;
 
 /**
@@ -14,7 +13,7 @@ import org.coconut.core.AttributeMap;
  * from the cache when the free space is insufficient for accommodating an item to be
  * cached. Normally users should not need to implement this interface, only if they want
  * to implement new replacement polices. This library comes with a number of predefined
- * replacement policies, see {@link Policies} for the most commonly used policies.
+ * replacement policies, see {@link org.coconut.cache.policy.Policies} for the most commonly used policies.
  * <p>
  * For performance reasons cache policies are not expected to be thread-safe. Instead, any
  * cache implementation using a replacement policy must maintain thread safety.

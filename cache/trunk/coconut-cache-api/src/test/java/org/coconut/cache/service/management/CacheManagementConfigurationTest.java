@@ -137,16 +137,14 @@ public class CacheManagementConfigurationTest {
 
     @Test
     public void testRootXML() throws Exception {
-        ManagedGroup lmg = new LoadableManagedGroup();
-        ManagedGroup nlmg = new NonLoadableManagedGroup();
         m = reloadService(m);// root should still be null
         assertNull(m.getRoot());
 
-        assertSame(m, m.setRoot(lmg));
+        assertSame(m, m.setRoot(new LoadableManagedGroup()));
         m = reloadService(m);// root should be an instance of LoadableManagedGroup
         assertTrue(m.getRoot() instanceof LoadableManagedGroup);
 
-        assertSame(m, m.setRoot(nlmg));
+        assertSame(m, m.setRoot(new NonLoadableManagedGroup()));
         m = reloadService(m);// root should be null, can't save the mocked class
         assertNull(m.getRoot());
     }
