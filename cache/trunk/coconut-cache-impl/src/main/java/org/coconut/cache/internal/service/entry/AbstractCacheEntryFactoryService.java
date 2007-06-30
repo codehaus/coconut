@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.service.attribute.DefaultAttributes;
 import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
 import org.coconut.cache.internal.service.expiration.DefaultCacheExpirationService;
 import org.coconut.cache.internal.service.loading.AbstractCacheLoadingService;
@@ -53,8 +54,8 @@ public abstract class AbstractCacheEntryFactoryService<K, V> {
         }
     }
 
-    long getTimeToLive(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
-        long time = expirationService.innerGetExpirationTime();
+    long getTimeToLive(DefaultAttributes atr, K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
+        long time = atr.getExpirationTimeNanos();
         try {
             time = CacheAttributes.getTimeToLive(attributes, TimeUnit.NANOSECONDS, time);
         } catch (IllegalArgumentException iae) {
@@ -85,9 +86,9 @@ public abstract class AbstractCacheEntryFactoryService<K, V> {
         }
     }
 
-    long getTimeToRefresh(K key, V value, AttributeMap attributes,
+    long getTimeToRefresh(DefaultAttributes atr, K key, V value, AttributeMap attributes,
             CacheEntry<K, V> existing) {
-        long time = loadingService.innerGetRefreshTime();
+        long time = atr.getTimeToRefreshNanos();
         try {
             time = CacheAttributes.getTimeToRefresh(attributes, TimeUnit.NANOSECONDS,
                     time);

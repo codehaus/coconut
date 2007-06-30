@@ -13,11 +13,9 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.CacheHelper;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
-import org.coconut.cache.internal.service.attribute.UserSettings;
 import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationService;
-import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.AttributeMaps;
 import org.coconut.core.Clock;
@@ -30,25 +28,27 @@ import org.coconut.management.ManagedGroup;
  */
 public class DefaultCacheExpirationService<K, V> extends AbstractInternalCacheService
         implements CacheExpirationService<K, V> {
+
+    /** Responsible for creating attribute maps. */
     private final InternalCacheAttributeService attributeFactory;
 
+    /** The user specified expiration filter. */
     private final Filter<CacheEntry<K, V>> expirationFilter;
 
     private final CacheHelper<K, V> helper;
 
     private final Clock clock;
 
-    private final UserSettings<K, V> settings = new Dummy();
-
     public DefaultCacheExpirationService(Clock clock, CacheHelper<K, V> helper,
             CacheExpirationConfiguration<K, V> conf,
             InternalCacheAttributeService attributeFactory) {
         super(CacheExpirationConfiguration.SERVICE_NAME);
-        settings.setExpirationTimeNanos(ExpirationUtils.getInitialTimeToLive(conf));
         expirationFilter = conf.getExpirationFilter();
         this.clock = clock;
         this.helper = helper;
         this.attributeFactory = attributeFactory;
+        attributeFactory.update().setExpirationTimeNanos(
+                ExpirationUtils.getInitialTimeToLive(conf));
     }
 
     @Override
@@ -67,9 +67,9 @@ public class DefaultCacheExpirationService<K, V> extends AbstractInternalCacheSe
         }
     }
 
-
     /**
-     * @see org.coconut.cache.service.expiration.CacheExpirationService#putAll(java.util.Map, long, java.util.concurrent.TimeUnit)
+     * @see org.coconut.cache.service.expiration.CacheExpirationService#putAll(java.util.Map,
+     *      long, java.util.concurrent.TimeUnit)
      */
     public void putAll(Map<? extends K, ? extends V> t, long timeToLive, TimeUnit unit) {
         if (timeToLive == CacheExpirationService.DEFAULT_EXPIRATION) {
@@ -100,48 +100,31 @@ public class DefaultCacheExpirationService<K, V> extends AbstractInternalCacheSe
         return helper.expireAll(filter);
     }
 
-    @Override
-    public void start(Map<Class<?>, Object> allServices) {
-        CacheManagementService cms = (CacheManagementService) allServices
-                .get(CacheManagementService.class);
-        if (cms != null) {
-            ManagedGroup group = cms.getRoot();
-            ManagedGroup g = group.addChild(CacheExpirationConfiguration.SERVICE_NAME,
-                    "Cache Expiration attributes and operations");
-            g.add(ExpirationUtils.wrapMXBean(this));
-        }
-        super.start(allServices);
-    }
-
-    public boolean innerIsExpired(CacheEntry<K, V> entry) {
+    public boolean isExpired(CacheEntry<K, V> entry) {
         return ExpirationUtils.isExpired(entry, clock, expirationFilter);
     }
 
-    public long innerGetExpirationTime() {
-        return getDefaultTimeToLive(TimeUnit.NANOSECONDS);
-    }
-
+    /**
+     * @see org.coconut.cache.service.expiration.CacheExpirationService#getDefaultTimeToLive(java.util.concurrent.TimeUnit)
+     */
     public long getDefaultTimeToLive(TimeUnit unit) {
-        return ExpirationUtils.convertNanosToExpirationTime(settings
+        return ExpirationUtils.convertNanosToExpirationTime(attributeFactory.update()
                 .getExpirationTimeNanos(), unit);
     }
 
+    /**
+     * @see org.coconut.cache.service.expiration.CacheExpirationService#setDefaultTimeToLive(long,
+     *      java.util.concurrent.TimeUnit)
+     */
     public void setDefaultTimeToLive(long timeToLive, TimeUnit unit) {
-        settings.setExpirationTimeNanos(ExpirationUtils.convertExpirationTimeToNanos(
-                timeToLive, unit));
-
+        attributeFactory.update().setExpirationTimeNanos(
+                ExpirationUtils.convertExpirationTimeToNanos(timeToLive, unit));
     }
 
-    class Dummy implements UserSettings {
-
-        private long goo;
-
-        public long getExpirationTimeNanos() {
-            return goo;
-        }
-
-        public void setExpirationTimeNanos(long nanos) {
-            this.goo = nanos;
-        }
+    @Override
+    protected void registerMXBeans(ManagedGroup root) {
+        ManagedGroup g = root.addChild(CacheExpirationConfiguration.SERVICE_NAME,
+                "Cache Expiration attributes and operations");
+        g.add(ExpirationUtils.wrapMXBean(this));
     }
 }

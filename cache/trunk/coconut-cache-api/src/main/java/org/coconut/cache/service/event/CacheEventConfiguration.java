@@ -23,11 +23,14 @@ import org.w3c.dom.NodeList;
 
 /**
  * The configuration object for the Cache Event service bundle. This service is disabled
- * per default and must be enabled by using #s All events are enabled per default except
- * AccessedEvent. While this might seem inconsist. The main reason is that it is raised
- * for every single access. And if the cache is running with a 99% read ratio. There is
- * going to be a substantial overhead with enabling AccessedEvents compared to how often
- * this event is usefull. The main reason for excluding certain events is performance.
+ * per default and must be enabled by using {@link #setEnabled(boolean)} to
+ * <code>true</code>.
+ * <p>
+ * All events will be raised per default except ItemAccessed. While this might seem
+ * inconsistent there is performance drawback for having this event enabled per default.
+ * If the cache is running with a 99% read ratio there will be a substantial overhead of
+ * notifying all listeners on each each cache access. Instead, it must be manually enabled
+ * by calling ...some code...
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -232,6 +235,9 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
             for (Class<?> c : set) {
                 String name = c.getCanonicalName();
                 if (c.getDeclaringClass() != null) {
+                    //TODO: Gad vide hvordan vores normal XMLUtil serializarings
+                    //rutiner klare en indre klasse??
+                    
                     name = name.substring(0, name.length() - c.getSimpleName().length()
                             - 1)
                             + "$" + c.getSimpleName();

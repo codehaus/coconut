@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.CacheHelper;
+import org.coconut.cache.internal.service.attribute.DefaultCacheAttributeService;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
@@ -48,8 +49,7 @@ public class DefaultCacheExpirationServiceTest {
 
     private CacheExceptionHandler<Integer, String> errorHandler;
 
-    private InternalCacheAttributeService attributeFactory = new JUnit4Mockery()
-            .mock(InternalCacheAttributeService.class);
+    private InternalCacheAttributeService attributeFactory = new DefaultCacheAttributeService();
 
     private static final CacheEntry<Integer, String> neverExpire;
 
@@ -83,14 +83,14 @@ public class DefaultCacheExpirationServiceTest {
     @Test
     public void testIsExpired_Time() {
         clock.setTimestamp(9);
-        assertFalse(s.innerIsExpired(expireAt10));
-        assertFalse(s.innerIsExpired(neverExpire));
+        assertFalse(s.isExpired(expireAt10));
+        assertFalse(s.isExpired(neverExpire));
         clock.setTimestamp(10);
-        assertTrue(s.innerIsExpired(expireAt10));
-        assertFalse(s.innerIsExpired(neverExpire));
+        assertTrue(s.isExpired(expireAt10));
+        assertFalse(s.isExpired(neverExpire));
         clock.setTimestamp(Long.MAX_VALUE);
-        assertTrue(s.innerIsExpired(expireAt10));
-        assertFalse(s.innerIsExpired(neverExpire));
+        assertTrue(s.isExpired(expireAt10));
+        assertFalse(s.isExpired(neverExpire));
     }
 
 // @Test

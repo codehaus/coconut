@@ -45,7 +45,7 @@ public class ManagementService extends AbstractCacheTCKTestBundle {
         assertNotNull(findChild(mg, CacheExpirationConfiguration.SERVICE_NAME));
         assertNotNull(findChild(mg, CacheMXBean.MANAGED_SERVICE_NAME));
     }
-
+    
     private static ManagedGroup findChild(ManagedGroup mg, String name) {
         for (ManagedGroup m : mg.getChildren()) {
             if (m.getName().equals(name)) {

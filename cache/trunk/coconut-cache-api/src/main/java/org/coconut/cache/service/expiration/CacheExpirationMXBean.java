@@ -4,9 +4,10 @@
 package org.coconut.cache.service.expiration;
 
 import java.lang.management.ManagementFactory;
+import java.util.concurrent.TimeUnit;
 
 /**
- * The management interface for the expiration system of a Cache.
+ * The management interface for the expiration service.
  * <p>
  * A Cache has a single instance of the implementation class of this interface. This
  * instance implementing this interface is an <a
@@ -30,6 +31,16 @@ import java.lang.management.ManagementFactory;
 public interface CacheExpirationMXBean {
     long getDefaultTimeToLiveMs();
 
+    /**
+     * Sets the default expiration time in milliseconds for new objects that are added to
+     * the cache. If no default expiration time has been set, entries will never expire.
+     * 
+     * @param timeToLiveMs
+     *            the time from insertion to the point where the entry should expire in
+     *            milliseconds
+     * @throws IllegalArgumentException
+     *             if the specified time to live is negative (<0)
+     * @see #getDefaultTimeToLiveMs(TimeUnit)
+     */
     void setDefaultTimeToLiveMs(long timeToLiveMs);
-
 }

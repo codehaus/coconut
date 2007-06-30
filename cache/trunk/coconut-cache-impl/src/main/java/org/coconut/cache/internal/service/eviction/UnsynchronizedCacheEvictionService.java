@@ -11,17 +11,8 @@ import org.coconut.cache.ReplacementPolicy;
 import org.coconut.cache.internal.service.CacheHelper;
 import org.coconut.cache.policy.Policies;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
-import org.coconut.filter.Filter;
 
 /**
- * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
- */
-/**
- * @param <K>
- * @param <V>
- * @param <T>
- * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -37,20 +28,16 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
 
     private long preferableCapacity;
 
-    private Filter<? super CacheEntry<K, V>> idleFilter;
-
-    private long defaultIdleTimeNS;
-
     // @SuppressWarnings("unchecked")
     public UnsynchronizedCacheEvictionService(CacheEvictionConfiguration<K, V> conf,
             CacheHelper<K, V> helper) {
         super(helper);
         cp = conf.getPolicy() == null ? Policies.newLRU() : (ReplacementPolicy) conf
                 .getPolicy();
-        maxSize = getInitialMaximumSize(conf);
-        maxCapacity = getInitialMaximumCapacity(conf);
-        preferableCapacity = getPreferableCapacity(conf);
-        preferableSize = getPreferableSize(conf);
+        maxSize = EvictionUtils.getInitialMaximumSize(conf);
+        maxCapacity = EvictionUtils.getInitialMaximumCapacity(conf);
+        preferableCapacity = EvictionUtils.getPreferableCapacity(conf);
+        preferableSize = EvictionUtils.getPreferableSize(conf);
     }
 
     public T evictNext() {

@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
 
+import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.CacheHelper;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
@@ -25,14 +25,13 @@ import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
 import org.coconut.filter.Filter;
+import org.coconut.management.ManagedGroup;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService<K, V> {
-
-    final CacheHelper<K, V> cache;
 
     private final Clock clock;
 
@@ -42,11 +41,11 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
 
     private final CacheLoader<? super K, ? extends V> loader;
 
-    private long reloadExpirationTime;
+    private final Executor loadExecutor;
 
     private final Filter<CacheEntry<K, V>> reloadFilter;
 
-    private final Executor loadExecutor;
+    final CacheHelper<K, V> cache;
 
     public DefaultCacheLoaderService(final Clock clock,
             InternalCacheAttributeService attributeFactory,
@@ -61,54 +60,18 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         this.loader = loadConf.getLoader();
         this.loadExecutor = threadManager.getExecutor(CacheLoadingService.class)
                 .createExecutorService();
-        this.reloadExpirationTime = getDefaultTimeToRefresh(loadConf);
+        attributeFactory.update().setTimeToFreshNanos( LoadingUtils.getInitialTimeToRefrehs(loadConf));
         this.reloadFilter = loadConf.getRefreshFilter();
         this.cache = cache;
         this.expirationService = expirationService;
     }
 
-    Future<?> doLoad(K key, AttributeMap attributes) {
-        LoadValueRunnable lvr = new LoadValueRunnable<K, V>(this, loader, key, attributes);
-        loadExecutor.execute(lvr);
-        return lvr;
-    }
-
-    /**
-     * @see org.coconut.cache.service.loading.CacheLoadingService#loadAll(java.util.Map)
-     */
-    Future<?> doLoad(Map<? extends K, AttributeMap> mapsWithAttributes) {
-        LoadValuesRunnable lvr = new LoadValuesRunnable<K, V>(this, loader,
-                mapsWithAttributes);
-        FutureTask<V> ft = new FutureTask<V>(lvr, null);
-        loadExecutor.execute(ft);
-        return ft;
-    }
-
-    /**
-     * @see org.coconut.cache.internal.service.loading.InternalCacheLoadingService#loadBlocking(java.lang.Object,
-     *      org.coconut.core.AttributeMap)
-     */
-    private V loadBlocking(CacheLoader<? super K, ? extends V> loader, K key,
-            AttributeMap attributes) {
-        if (loader == null) {
-            return null;
+    @Override
+    public void initialize(CacheConfiguration<?, ?> configuration,
+            Map<Class<?>, Object> serviceMap) {
+        if (loader != null) {
+            serviceMap.put(CacheLoadingService.class, LoadingUtils.wrapService(this));
         }
-        V v = null;
-        try {
-            v = loader.load(key, attributes);
-        } catch (Exception e) {
-            v = errorHandler.getExceptionHandler().loadFailed(
-                    errorHandler.createContext(), loader, key, attributes, false, e);
-        }
-        return v;
-    }
-
-    /**
-     * @see org.coconut.cache.internal.service.loading.InternalCacheLoadingService#loadBlocking(java.lang.Object,
-     *      org.coconut.core.AttributeMap)
-     */
-    public Map<? super K, ? extends V> loadAllBlocking(Map<? extends K, AttributeMap> keys) {
-        return loadAllBlocking(loader, keys);
     }
 
     /**
@@ -123,6 +86,14 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
             map.put(entry.getKey(), loadBlocking(entry.getKey(), entry.getValue()));
         }
         return map;
+    }
+
+    /**
+     * @see org.coconut.cache.internal.service.loading.InternalCacheLoadingService#loadBlocking(java.lang.Object,
+     *      org.coconut.core.AttributeMap)
+     */
+    public Map<? super K, ? extends V> loadAllBlocking(Map<? extends K, AttributeMap> keys) {
+        return loadAllBlocking(loader, keys);
     }
 
     /**
@@ -150,6 +121,50 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         if (needsReload(entry)) {
             load(entry.getKey());
         }
+    }
+
+    /**
+     * @see org.coconut.cache.internal.service.loading.InternalCacheLoadingService#loadBlocking(java.lang.Object,
+     *      org.coconut.core.AttributeMap)
+     */
+    private V loadBlocking(CacheLoader<? super K, ? extends V> loader, K key,
+            AttributeMap attributes) {
+        V v = null;
+        if (loader != null) {
+            try {
+                v = loader.load(key, attributes);
+            } catch (Exception e) {
+                v = errorHandler.getExceptionHandler().loadFailed(
+                        errorHandler.createContext(), loader, key, attributes, false, e);
+            }
+        }
+        return v;
+    }
+
+    @Override
+    protected void registerMXBeans(ManagedGroup root) {
+        if (loader != null) {
+            ManagedGroup g = root.addChild(CacheLoadingConfiguration.SERVICE_NAME,
+                    "Cache Loading attributes and operations");
+            g.add(LoadingUtils.wrapMXBean(this));
+        }
+    }
+
+    Future<?> doLoad(K key, AttributeMap attributes) {
+        LoadValueRunnable lvr = new LoadValueRunnable<K, V>(this, loader, key, attributes);
+        loadExecutor.execute(lvr);
+        return lvr;
+    }
+
+    /**
+     * @see org.coconut.cache.service.loading.CacheLoadingService#loadAll(java.util.Map)
+     */
+    Future<?> doLoad(Map<? extends K, AttributeMap> mapsWithAttributes) {
+        LoadValuesRunnable lvr = new LoadValuesRunnable<K, V>(this, loader,
+                mapsWithAttributes);
+        FutureTask<V> ft = new FutureTask<V>(lvr, null);
+        loadExecutor.execute(ft);
+        return ft;
     }
 
     static class LoadValueRunnable<K, V> extends ExtendableFutureTask {
@@ -181,10 +196,6 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
             this.attributes = attributes;
         }
 
-        public K getKey() {
-            return key;
-        }
-
         /**
          * @see java.lang.Runnable#run()
          */
@@ -200,8 +211,12 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
             loaderService.cache.valueLoaded(key, v, attributes);
             return null;
         }
-    }
 
+        public K getKey() {
+            return key;
+        }
+    }
+    
     static class LoadValuesRunnable<K, V> implements Runnable {
         private final Map<? extends K, AttributeMap> keysWithAttributes;
 
@@ -247,20 +262,5 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
             }
         }
     }
-
-    public boolean isDummy() {
-        return false;
-    }
-
-    @Override
-    public long innerGetRefreshTime() {
-        return reloadExpirationTime;
-    }
-
-    public long getDefaultTimeToRefresh(TimeUnit unit) {
-        return 0;
-    }
-
-    public void setDefaultTimeToRefresh(long timeToLive, TimeUnit unit) {}
 
 }

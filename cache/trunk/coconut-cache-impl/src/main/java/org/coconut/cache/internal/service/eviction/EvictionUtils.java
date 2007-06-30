@@ -1,5 +1,6 @@
 package org.coconut.cache.internal.service.eviction;
 
+import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.service.eviction.CacheEvictionMXBean;
 import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.management.annotation.ManagedAttribute;
@@ -96,6 +97,26 @@ public class EvictionUtils {
 
     }
 
+    static int getInitialMaximumSize(CacheEvictionConfiguration<?, ?> conf) {
+        int tmp = conf.getMaximumSize();
+        return tmp == 0 ? Integer.MAX_VALUE : tmp;
+    }
+
+    static long getInitialMaximumCapacity(CacheEvictionConfiguration<?, ?> conf) {
+        long tmp = conf.getMaximumCapacity();
+        return tmp == 0 ? Long.MAX_VALUE : tmp;
+    }
+
+    static int getPreferableSize(CacheEvictionConfiguration<?, ?> conf) {
+        int tmp = conf.getPreferableSize();
+        return tmp == 0 ? Integer.MAX_VALUE : tmp;
+    }
+
+    static long getPreferableCapacity(CacheEvictionConfiguration<?, ?> conf) {
+        long tmp = conf.getPreferableCapacity();
+        return tmp == 0 ? Long.MAX_VALUE : tmp;
+    }
+    
     // @ManagedAttribute(description = "The default time to idle for cache entries in
     // milliseconds")
     // public long getDefaultIdleTimeMs() {

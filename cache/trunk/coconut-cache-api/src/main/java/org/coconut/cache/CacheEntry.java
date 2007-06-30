@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
+import org.coconut.core.AttributeMap;
 
 /**
  * A <tt>CacheEntry</tt> describes a value-key mapping much like
@@ -36,6 +37,8 @@ import org.coconut.cache.service.loading.CacheLoadingService;
  */
 public interface CacheEntry<K, V> extends Map.Entry<K, V> {
 
+    AttributeMap getAttributes();
+    
     /**
      * Returns the size of this element. Implementations are free to include overhead of
      * storing the element or just the size of the element itself.

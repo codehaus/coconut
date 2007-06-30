@@ -12,6 +12,8 @@ import org.coconut.core.AttributeMaps;
  */
 public class DefaultCacheAttributeService implements InternalCacheAttributeService {
 
+    private Dummy dummy=new Dummy();
+    
 	public AttributeMap createMap() {
 		return new AttributeMaps.DefaultAttributeMap();
 	}
@@ -20,4 +22,29 @@ public class DefaultCacheAttributeService implements InternalCacheAttributeServi
 		return new AttributeMaps.DefaultAttributeMap(copyFrom);
 	}
 
+    public DefaultAttributes update() {
+        return dummy;
+    }
+
+    class Dummy implements DefaultAttributes {
+
+        private long goo;
+
+        private long refresh;
+        public long getExpirationTimeNanos() {
+            return goo;
+        }
+
+        public void setExpirationTimeNanos(long nanos) {
+            this.goo = nanos;
+        }
+
+        public long getTimeToRefreshNanos() {
+            return refresh;
+        }
+
+        public void setTimeToFreshNanos(long nanos) {
+            this.refresh=nanos;
+        }
+    }
 }

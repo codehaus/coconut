@@ -16,11 +16,9 @@ public class ExpirationUtils {
 
     public static long getInitialTimeToLive(CacheExpirationConfiguration<?, ?> conf) {
         long tmp = conf.getDefaultTimeToLive(TimeUnit.NANOSECONDS);
-        if (tmp == 0) {
-            tmp = Long.MAX_VALUE;
-        }
-        return tmp;
+        return tmp == 0 ? Long.MAX_VALUE : tmp;
     }
+    
     public static long convertNanosToExpirationTime(long timeToLiveNanos, TimeUnit unit) {
         return new CacheExpirationConfiguration().setDefaultTimeToLive(timeToLiveNanos,
                 TimeUnit.NANOSECONDS).getDefaultTimeToLive(unit);

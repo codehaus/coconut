@@ -28,19 +28,23 @@ public class UnsynchronizedEntryFactoryService<K, V> extends
     }
 
     /**
-     * @see org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService#createEntry(java.lang.Object, java.lang.Object, org.coconut.core.AttributeMap, org.coconut.cache.internal.service.entry.AbstractCacheEntry)
+     * @see org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService#createEntry(java.lang.Object,
+     *      java.lang.Object, org.coconut.core.AttributeMap,
+     *      org.coconut.cache.internal.service.entry.AbstractCacheEntry)
      */
     public AbstractCacheEntry<K, V> createEntry(K key, V value, AttributeMap attributes,
             AbstractCacheEntry<K, V> existing) {
         if (attributes == null) {
             attributes = attributeService.createMap();
         }
-        long expirationTime = getTimeToLive(key, value, attributes, existing);
+        long expirationTime = getTimeToLive(attributeService.update(), key, value,
+                attributes, existing);
         double cost = getCost(key, value, attributes, existing);
         long size = getSize(key, value, attributes, existing);
         long creationTime = getCreationTime(key, value, attributes, existing);
         long lastUpdate = getLastModified(key, value, attributes, existing);
-        long refreshTime = getTimeToRefresh(key, value, attributes, existing);
+        long refreshTime = getTimeToRefresh(attributeService.update(), key, value,
+                attributes, existing);
         UnsynchronizedCacheEntry<K, V> newEntry = new UnsynchronizedCacheEntry<K, V>(
                 this, key, value, cost, creationTime, lastUpdate, size, refreshTime);
         newEntry.setExpirationTime(expirationTime);

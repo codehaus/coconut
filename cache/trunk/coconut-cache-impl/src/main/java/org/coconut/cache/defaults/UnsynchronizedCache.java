@@ -26,7 +26,6 @@ import org.coconut.cache.internal.service.entry.EntryMap;
 import org.coconut.cache.internal.service.event.InternalCacheEventService;
 import org.coconut.cache.internal.service.eviction.InternalCacheEvictionService;
 import org.coconut.cache.internal.service.expiration.DefaultCacheExpirationService;
-import org.coconut.cache.internal.service.joinpoint.InternalCacheOperation;
 import org.coconut.cache.internal.service.loading.InternalCacheLoadingService;
 import org.coconut.cache.internal.service.service.InternalCacheServiceManager;
 import org.coconut.cache.internal.service.service.UnsynchronizedCacheServiceManager;
@@ -83,7 +82,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
 
     private final InternalCacheServiceManager serviceManager;
 
-    private final InternalCacheOperation<K, V> statistics;
+    private final DefaultCacheStatisticsService<K, V> statistics;
 
     @SuppressWarnings("unchecked")
     public UnsynchronizedCache() {
@@ -142,7 +141,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
                     .hasNext();) {
                 AbstractCacheEntry<K, V> m = iterator.next();
                 loadingService.reloadIfNeeded(m);
-                if (expiration.innerIsExpired(m)) {
+                if (expiration.isExpired(m)) {
                     expired.add(m);
                     evictionService.remove(m.getPolicyIndex());
                     iterator.remove();
@@ -270,7 +269,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
                     trimmed = trim();
                 }
             }
-        } else if (expiration.innerIsExpired(prev)) {
+        } else if (expiration.isExpired(prev)) {
             isExpired = true;
             AttributeMap attributes = new DefaultAttributeMap();
             V newValue = loadingService.loadBlocking(key, attributes);

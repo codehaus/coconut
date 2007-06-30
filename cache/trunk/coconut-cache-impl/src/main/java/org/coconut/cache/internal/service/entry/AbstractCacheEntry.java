@@ -6,12 +6,17 @@ package org.coconut.cache.internal.service.entry;
 import java.util.Map;
 
 import org.coconut.cache.CacheEntry;
+import org.coconut.core.AttributeMap;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
+
+    public AttributeMap getAttributes() {
+       return null;
+    }
 
     public static final long DEFAULT_HIT_COUNT = -1;
     public static final long DEFAULT_LAST_ACCESS_TIME = 0;

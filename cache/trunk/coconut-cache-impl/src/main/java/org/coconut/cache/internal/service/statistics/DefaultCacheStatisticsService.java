@@ -12,7 +12,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.joinpoint.InternalCacheOperation;
 import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
 import org.coconut.cache.internal.service.service.InternalCacheServiceManager;
 import org.coconut.cache.internal.service.util.Resources;
@@ -33,7 +32,7 @@ import org.coconut.management.annotation.ManagedAttribute;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public final class DefaultCacheStatisticsService<K, V> extends
-        AbstractInternalCacheService implements InternalCacheOperation<K, V>,
+        AbstractInternalCacheService implements 
         CacheStatisticsService {
 
     // number of loads, loaded elements, number of queries,

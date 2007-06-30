@@ -11,7 +11,10 @@ import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 
 /**
- * A utility class to get hold of cache services in an easy and typesafe manner.
+ * A utility class to get hold of different cache services in an easy and typesafe manner.
+ * 
+ * <pre>
+ * </pre>
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -19,11 +22,11 @@ import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 @SuppressWarnings("unchecked")
 public final class CacheServices {
 
-    public static <K, V> CacheEventService<K, V> event(Cache<?, ?> cache) {
+    public static <K, V> CacheEventService<K, V> event(Cache<K, V> cache) {
         return cache.getService(CacheEventService.class);
     }
 
-    public static <K, V> CacheEvictionService<K, V> eviction(Cache<?, ?> cache) {
+    public static <K, V> CacheEvictionService<K, V> eviction(Cache<K, V> cache) {
         return cache.getService(CacheEvictionService.class);
     }
 
@@ -36,7 +39,7 @@ public final class CacheServices {
         return cache.getService(CacheExpirationService.class);
     }
 
-    public static <K, V> CacheLoadingService<K, V> loading(Cache<?, ?> cache) {
+    public static <K, V> CacheLoadingService<K, V> loading(Cache<K, V> cache) {
         return cache.getService(CacheLoadingService.class);
     }
 

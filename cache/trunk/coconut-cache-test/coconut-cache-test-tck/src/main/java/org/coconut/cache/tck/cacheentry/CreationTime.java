@@ -4,6 +4,7 @@ import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M2;
 import static org.coconut.test.CollectionUtils.M3;
 import static org.coconut.test.CollectionUtils.M4;
+import static org.coconut.test.CollectionUtils.M5;
 import static org.coconut.test.CollectionUtils.M8;
 
 import java.util.Map;
@@ -15,6 +16,12 @@ import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.core.AttributeMap;
 import org.junit.Test;
 
+/**
+ * Tests that the creation time attribute of cache entries are working properly.
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ */
 public class CreationTime extends AbstractCacheTCKTestBundle {
     static class MyLoader implements CacheLoader<Integer, String> {
         public String load(Integer key, AttributeMap attributes) throws Exception {
@@ -26,6 +33,9 @@ public class CreationTime extends AbstractCacheTCKTestBundle {
     void assertPeekAndGet(Map.Entry<Integer, String> entry, long creationTime) {
         assertEquals(creationTime, peekEntry(entry).getCreationTime());
         assertEquals(creationTime, getEntry(entry).getCreationTime());
+        // TODO Enable when cachenetry.attributes is working
+        // assertEquals(creationTime, CacheAttributes.getCreationTime(getEntry(entry)
+        // .getAttributes()));
     }
 
     /**
@@ -33,7 +43,7 @@ public class CreationTime extends AbstractCacheTCKTestBundle {
      * is not updated when replacing existing values.
      */
     @Test
-    public void testCreationDatePut() {
+    public void put() {
         clock.setTimestamp(10);
         c = newCache(newConf().setClock(clock));
 
@@ -52,8 +62,11 @@ public class CreationTime extends AbstractCacheTCKTestBundle {
         assertPeekAndGet(M2, 12);
     }
 
+    /**
+     * as {@link #put()} except that we use {@link Map#putAll(Map)} instead
+     */
     @Test
-    public void testCreationDatePutAll() {
+    public void putAll() {
         clock.setTimestamp(10);
         c = newCache(newConf().setClock(clock));
 
@@ -71,8 +84,80 @@ public class CreationTime extends AbstractCacheTCKTestBundle {
         assertPeekAndGet(M4, 11);
     }
 
+    /**
+     * as {@link #put()} except that we use
+     * {@link java.util.ConcurrentMap#putIfAbsent(Map)} instead
+     */
     @Test
-    public void testClear() {
+    public void putIfAbsent() {
+        clock.setTimestamp(10);
+        c = newCache(newConf().setClock(clock));
+
+        putIfAbsent(M1);
+        assertPeekAndGet(M1, 10);
+
+        clock.incrementTimestamp();
+        putIfAbsent(M1);
+        assertPeekAndGet(M1, 10);
+
+        clock.incrementTimestamp();
+        putIfAbsent(M1.getKey(), M2.getValue());
+        assertPeekAndGet(M1, 10);
+
+        putIfAbsent(M2);
+        assertPeekAndGet(M2, 12);
+    }
+
+    /**
+     * as {@link #put()} except that we use
+     * {@link java.util.ConcurrentMap#putIfAbsent(Map)} instead
+     */
+    @Test
+    public void replace() {
+        clock.setTimestamp(10);
+        c = newCache(newConf().setClock(clock));
+
+        put(M1);
+        assertPeekAndGet(M1, 10);
+
+        clock.incrementTimestamp();
+        replace(M1);
+        assertPeekAndGet(M1, 10);
+
+        clock.incrementTimestamp();
+        replace(M1.getKey(), M2.getValue());
+        assertPeekAndGet(M1, 10);
+        
+        replace(M1.getKey(), M2.getValue(),M3.getValue());
+        assertPeekAndGet(M1, 10);
+        
+        replace(M1.getKey(), M5.getValue(),M4.getValue());
+        assertPeekAndGet(M1, 10);
+
+    }
+    
+    /**
+     * Tests that remove will force new elements to have a new timestamp.
+     */
+    @Test
+    public void remove() {
+        clock.setTimestamp(10);
+        c = newCache(newConf().setClock(clock));
+
+        put(M1);
+        assertPeekAndGet(M1, 10);
+
+        clock.incrementTimestamp();
+        remove(M1);
+        put(M1);
+        assertPeekAndGet(M1, 11);
+    }
+
+    /**
+     * Tests that clear will force new elements to have a new timestamp.
+     */
+    @Test
+    public void clear() {
         clock.setTimestamp(10);
         c = newCache(newConf().setClock(clock));
 
@@ -89,7 +174,13 @@ public class CreationTime extends AbstractCacheTCKTestBundle {
      * Tests that timestamp is set for creation date when loading values
      */
     @Test
-    public void testCreationDateLoader() {}
+    public void loadedNoAttribute() {
+        clock.setTimestamp(10);
+        c = newCache(newConf().setClock(clock).loading().setLoader(
+                new IntegerToStringLoader()));
+        get(M1);
+        assertEquals(10l, getEntry(M1).getCreationTime());
+    }
 
     /**
      * Tests that creation time can propagate via the attribute map provided to a cache
@@ -97,8 +188,7 @@ public class CreationTime extends AbstractCacheTCKTestBundle {
      */
     @SuppressWarnings("unchecked")
     @Test
-    public void testCreationTimeCacheLoader() {
-
+    public void loadedAttribute() {
         c = newCache(newConf().loading().setLoader(new MyLoader()));
 
         assertGet(M1);
@@ -112,11 +202,4 @@ public class CreationTime extends AbstractCacheTCKTestBundle {
         assertPeekAndGet(M4, 5);
     }
 
-    public void testCreationTimeCacheLoaderNoCreationTime() {
-        clock.setTimestamp(10);
-        c = newCache(newConf().setClock(clock).loading().setLoader(
-                new IntegerToStringLoader()));
-        get(M1);
-        assertEquals(10l, getEntry(M1).getCreationTime());
-    }
 }

@@ -29,4 +29,6 @@ public interface InternalCacheAttributeService {
      * the provided attribute map
      */
 	AttributeMap createMap(AttributeMap copyFrom);
+	
+	DefaultAttributes update();
 }

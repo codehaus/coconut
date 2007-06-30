@@ -13,7 +13,6 @@ import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.service.eviction.CacheEvictionMXBean;
 import org.coconut.cache.service.eviction.CacheEvictionService;
-import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.management.ManagedGroup;
 
 /**
@@ -33,26 +32,6 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
         this.helper = helper;
     }
 
-    static int getInitialMaximumSize(CacheEvictionConfiguration<?, ?> conf) {
-        int tmp = conf.getMaximumSize();
-        return tmp == 0 ? Integer.MAX_VALUE : tmp;
-    }
-
-    static long getInitialMaximumCapacity(CacheEvictionConfiguration<?, ?> conf) {
-        long tmp = conf.getMaximumCapacity();
-        return tmp == 0 ? Long.MAX_VALUE : tmp;
-    }
-
-    static int getPreferableSize(CacheEvictionConfiguration<?, ?> conf) {
-        int tmp = conf.getPreferableSize();
-        return tmp == 0 ? Integer.MAX_VALUE : tmp;
-    }
-
-    static long getPreferableCapacity(CacheEvictionConfiguration<?, ?> conf) {
-        long tmp = conf.getPreferableCapacity();
-        return tmp == 0 ? Long.MAX_VALUE : tmp;
-    }
-
     /**
      * @see org.coconut.cache.service.servicemanager.AbstractCacheService#initialize(org.coconut.cache.CacheConfiguration,
      *      java.util.Map)
@@ -64,16 +43,10 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
     }
 
     @Override
-    public void start(Map<Class<?>, Object> allServices) {
-        CacheManagementService cms = (CacheManagementService) allServices
-                .get(CacheManagementService.class);
-        if (cms != null) {
-            ManagedGroup group = cms.getRoot();
-            ManagedGroup g = group.addChild(CacheEvictionConfiguration.SERVICE_NAME,
-                    "Cache Eviction attributes and operations");
-            g.add(EvictionUtils.wrapMXBean(this));
-        }
-        super.start(allServices);
+    protected void registerMXBeans(ManagedGroup root) {
+        ManagedGroup g = root.addChild(CacheEvictionConfiguration.SERVICE_NAME,
+                "Cache Eviction attributes and operations");
+        g.add(EvictionUtils.wrapMXBean(this));
     }
 
     /**
@@ -90,7 +63,6 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
         helper.trimToSize(size);
     }
 
-
     public void evict(Object key) {
         helper.evict(key);
     }
@@ -98,7 +70,6 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
     public void evictIdleElements() {
         helper.evictIdleElements();
     }
-
 
     public void evictAll(Collection<? extends K> keys) {
         helper.evictAll(keys);

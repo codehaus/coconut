@@ -18,7 +18,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * This class is used to configure the expiration service bundle prior to usage.
+ * This class is used to configure the expiration service prior to usage.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -26,6 +26,7 @@ import org.w3c.dom.Element;
 public class CacheExpirationConfiguration<K, V> extends
         AbstractCacheServiceConfiguration<K, V> {
 
+    /** The name of this service. */
     public final static String SERVICE_NAME = "Expiration";
 
     private final static String DEFAULT_TIMEOUT_TAG = "default-timetolive";

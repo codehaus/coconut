@@ -13,7 +13,9 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.CacheHelper;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
+import org.coconut.cache.internal.service.expiration.ExpirationUtils;
 import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
+import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.core.AttributeMap;
@@ -39,7 +41,22 @@ public abstract class AbstractCacheLoadingService<K, V> extends
         this.attributeFactory = attributeFactory;
         this.helper = helper;
     }
-    
+    /**
+     * @see org.coconut.cache.service.expiration.CacheExpirationService#getDefaultTimeToLive(java.util.concurrent.TimeUnit)
+     */
+    public long getDefaultTimeToRefresh(TimeUnit unit) {
+        return LoadingUtils.convertNanosToRefreshTime(attributeFactory.update()
+                .getTimeToRefreshNanos(), unit);
+    }
+
+    /**
+     * @see org.coconut.cache.service.expiration.CacheExpirationService#setDefaultTimeToLive(long,
+     *      java.util.concurrent.TimeUnit)
+     */
+    public void setDefaultTimeToRefresh(long timeToRefresh, TimeUnit unit) {
+        attributeFactory.update().setTimeToFreshNanos(
+                LoadingUtils.convertRefreshTimeToNanos(timeToRefresh, unit));
+    }
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#filteredLoad(org.coconut.filter.Filter)
      */
@@ -125,13 +142,6 @@ public abstract class AbstractCacheLoadingService<K, V> extends
         doLoadAll(mapsWithAttributes, true);
     }
 
-    @Override
-    public void initialize(CacheConfiguration<?, ?> configuration,
-            Map<Class<?>, Object> serviceMap) {
-        serviceMap.put(CacheLoadingService.class, this);
-    }
-
-    public abstract long innerGetRefreshTime();
 
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#load(java.lang.Object)
@@ -243,9 +253,4 @@ public abstract class AbstractCacheLoadingService<K, V> extends
     abstract Future<?> doLoad(K key, AttributeMap map);
 
     abstract Future<?> doLoad(Map<? extends K, AttributeMap> keysWithAttributes);
-
-    static long getDefaultTimeToRefresh(CacheLoadingConfiguration<?, ?> conf) {
-        long tmp = conf.getDefaultTimeToRefresh(TimeUnit.NANOSECONDS);
-        return tmp == 0 ? Long.MAX_VALUE : tmp;
-    }
 }

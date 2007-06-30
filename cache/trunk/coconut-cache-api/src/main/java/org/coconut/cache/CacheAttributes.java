@@ -136,16 +136,11 @@ public class CacheAttributes {
      * @see #CREATION_TIME
      */
     public static long getCreationTime(AttributeMap attributes, Clock clock) {
-        if (attributes == null) {
-            throw new NullPointerException("attributes is null");
-        } else if (clock == null) {
+        if (clock == null) {
             throw new NullPointerException("clock is null");
         }
-        long time = attributes.getLong(CacheAttributes.CREATION_TIME);
-        if (time < 0) {
-            throw new IllegalArgumentException(
-                    "creationTime was negative (creationTime = " + time + ")");
-        } else if (time == 0) {
+        long time = getCreationTime(attributes);
+        if (time == 0) {
             time = clock.timestamp();
             if (time < 0) {
                 throw new IllegalArgumentException(
@@ -155,7 +150,17 @@ public class CacheAttributes {
         }
         return time;
     }
-
+    public static long getCreationTime(AttributeMap attributes) {
+        if (attributes == null) {
+            throw new NullPointerException("attributes is null");
+        }
+        long time = attributes.getLong(CacheAttributes.CREATION_TIME);
+        if (time < 0) {
+            throw new IllegalArgumentException(
+                    "creationTime was negative (creationTime = " + time + ")");
+        }
+        return time;
+    }
     /**
      * Returns the value that the specified AttributeMap maps the
      * {@link #LAST_MODIFIED_TIME} attribute to or the return value from a call to

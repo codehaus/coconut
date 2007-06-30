@@ -3,7 +3,13 @@
  */
 package org.coconut.cache.internal.service.service;
 
+import java.util.Map;
+
+import org.coconut.cache.internal.service.loading.LoadingUtils;
+import org.coconut.cache.service.loading.CacheLoadingConfiguration;
+import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.AbstractCacheService;
+import org.coconut.management.ManagedGroup;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -18,4 +24,18 @@ public abstract class AbstractInternalCacheService extends AbstractCacheService 
 		super(name);
 	}
 
+    @Override
+    public void start(Map<Class<?>, Object> allServices) {
+        CacheManagementService cms = (CacheManagementService) allServices
+                .get(CacheManagementService.class);
+        if (cms != null) {
+            ManagedGroup group = cms.getRoot();
+            registerMXBeans(group);
+        }
+        super.start(allServices);
+    }
+    
+    protected void registerMXBeans(ManagedGroup root) {
+        
+    }
 }

@@ -2,15 +2,13 @@ package org.coconut.cache.internal.service.loading;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.management.ManagementUtils.DelegatedCacheMXBean;
+import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
+import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingMXBean;
 import org.coconut.cache.service.loading.CacheLoadingService;
-import org.coconut.cache.service.management.CacheMXBean;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Transformer;
 import org.coconut.filter.Filter;
@@ -23,8 +21,8 @@ public class LoadingUtils {
         return new DelegatedCacheLoadingService<K, V>(service);
     }
 
-    public static CacheMXBean wrapMXBean(Cache<?, ?> service) {
-        return new DelegatedCacheMXBean(service);
+    public static CacheLoadingMXBean wrapMXBean(CacheLoadingService<?, ?> service) {
+        return new DelegatedCacheLoadingMXBean(service);
     }
 
     /**
@@ -131,5 +129,23 @@ public class LoadingUtils {
         public void setDefaultTimeToRefresh(long timeToLive, TimeUnit unit) {
             delegate.setDefaultTimeToRefresh(timeToLive, unit);
         }
+    }
+    
+    public static long convertNanosToRefreshTime(long timeToRefreshNanos, TimeUnit unit) {
+        return new CacheLoadingConfiguration().setDefaultTimeToRefresh(timeToRefreshNanos,
+                TimeUnit.NANOSECONDS).getDefaultTimeToRefresh(unit);
+    }
+
+    public static long convertRefreshTimeToNanos(long timeToRefresh, TimeUnit unit) {
+        return new CacheLoadingConfiguration().setDefaultTimeToRefresh(timeToRefresh, unit)
+                .getDefaultTimeToRefresh(TimeUnit.NANOSECONDS);
+    }
+    
+    public static long getInitialTimeToRefrehs(CacheLoadingConfiguration<?, ?> conf) {
+        long tmp = conf.getDefaultTimeToRefresh(TimeUnit.NANOSECONDS);
+        if (tmp == 0) {
+            tmp = Long.MAX_VALUE;
+        }
+        return tmp;
     }
 }

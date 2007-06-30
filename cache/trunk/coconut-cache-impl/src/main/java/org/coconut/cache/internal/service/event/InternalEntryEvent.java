@@ -6,6 +6,7 @@ package org.coconut.cache.internal.service.event;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.event.CacheEntryEvent;
+import org.coconut.core.AttributeMap;
 
 /**
  * 
@@ -13,6 +14,10 @@ import org.coconut.cache.service.event.CacheEntryEvent;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, V> {
+    public AttributeMap getAttributes() {
+        throw new UnsupportedOperationException();
+    }
+
     private final Cache<K, V> cache;
 
     private final CacheEntry<K, V> entry;
@@ -348,7 +353,6 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, 
          * @see org.coconut.cache.CacheEntry#getHits()
          */
         public long getHits() {
-            // TODO Auto-generated method stub
             return 0;
         }
 
@@ -357,6 +361,10 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, 
          * @see org.coconut.cache.CacheEntry#getSize()
          */
         public long getSize() {
+            throw new UnsupportedOperationException();
+        }
+
+        public AttributeMap getAttributes() {
             throw new UnsupportedOperationException();
         }
     }

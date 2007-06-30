@@ -7,12 +7,12 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
 import org.junit.Test;
 
-public class Hits  extends AbstractCacheTCKTestBundle{
+public class Hits extends AbstractCacheTCKTestBundle {
     @Test
     public void dummyTest() {
-        
+
     }
-    
+
     public void testHits() {
         c = newCache(1);
         CacheEntry<Integer, String> ce = getEntry(M1);

@@ -23,8 +23,11 @@ import org.coconut.management.Managements;
 import org.coconut.management.defaults.DefaultManagedGroup;
 
 /**
- * The default implementation of {@link CacheManagementService}. All methods exposed
+ * The default implementation of the {@link CacheManagementService} interface. All methods exposed
  * through the CacheManagementService interface can be invoked in a thread safe manner.
+ * <p>
+ * NOTICE: This is an internal class and should not be directly referred. No guarantee is
+ * made to the compatibility of this class between different releases of Coconut Cache.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -55,7 +58,7 @@ public class DefaultCacheManagementService extends AbstractInternalCacheService 
         if (configuration == null) {
             throw new NullPointerException("configuration is null");
         } else if (cacheName == null) {
-            throw new NullPointerException("cache is null");
+            throw new NullPointerException("cacheName is null");
         }
 
         /* Set IsEnabled */
@@ -83,6 +86,15 @@ public class DefaultCacheManagementService extends AbstractInternalCacheService 
     }
 
     /**
+     * Returns whether or not this service is enabled.
+     * 
+     * @return whether or not this service is enabled
+     */
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    /**
      * @see org.coconut.cache.service.management.CacheManagementService#getRoot()
      */
     public ManagedGroup getRoot() {
@@ -106,7 +118,6 @@ public class DefaultCacheManagementService extends AbstractInternalCacheService 
                     .wrapService(this));
         }
     }
-
 
     /**
      * @see org.coconut.cache.service.servicemanager.AbstractCacheService#shutdown(java.util.concurrent.Executor)

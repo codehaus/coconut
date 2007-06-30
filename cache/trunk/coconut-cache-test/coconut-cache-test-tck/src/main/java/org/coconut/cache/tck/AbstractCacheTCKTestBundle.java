@@ -118,7 +118,21 @@ public class AbstractCacheTCKTestBundle extends Assert {
     protected String put(Map.Entry<Integer, String> e) {
         return c.put(e.getKey(), e.getValue());
     }
-
+    protected String replace(Map.Entry<Integer, String> e) {
+        return c.replace(e.getKey(), e.getValue());
+    }
+    protected String replace(Integer key, String value) {
+        return c.replace(key, value);
+    }
+    protected boolean replace(Integer key, String oldValue, String newValue) {
+        return c.replace(key, oldValue,newValue);
+    }
+    protected String putIfAbsent(Map.Entry<Integer, String> e) {
+        return c.putIfAbsent(e.getKey(), e.getValue());
+    }
+    protected String putIfAbsent(Integer key, String value) {
+        return c.putIfAbsent(key, value);
+    }
     protected String put(Integer key, String value) {
         return c.put(key, value);
     }
