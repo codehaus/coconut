@@ -58,6 +58,12 @@ public class EvictionUtils {
             service.trimToSize(size);
         }
 
+//        @ManagedAttribute(defaultValue = "Preferable Size", description = "The preferable size of the cache")
+//        int getPreferableSize();
+
+//        @ManagedAttribute(defaultValue = "Preferable Capacity", description = "The preferable capacity of the cache")
+        //long getPreferableCapacity();
+
     }
 
     public static class DelegatedCacheEvictionService<K, V> implements

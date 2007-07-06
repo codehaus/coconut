@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingMXBean;
 import org.coconut.cache.service.loading.CacheLoadingService;
@@ -15,7 +14,7 @@ import org.coconut.filter.Filter;
 import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.annotation.ManagedOperation;
 
-public class LoadingUtils {
+class LoadingUtils {
     public static <K, V> CacheLoadingService<K, V> wrapService(
             CacheLoadingService<K, V> service) {
         return new DelegatedCacheLoadingService<K, V>(service);
@@ -79,35 +78,35 @@ public class LoadingUtils {
         }
 
         public void filteredLoad(Filter<? super CacheEntry<K, V>> filter) {
-             delegate.filteredLoad(filter);
+            delegate.filteredLoad(filter);
         }
 
         public void forceLoad(K key, AttributeMap attributes) {
-             delegate.forceLoad(key, attributes);
+            delegate.forceLoad(key, attributes);
         }
 
         public void forceLoad(K key) {
-             delegate.forceLoad(key);
+            delegate.forceLoad(key);
         }
 
         public void forceLoadAll(AttributeMap attributes) {
-             delegate.forceLoadAll(attributes);
+            delegate.forceLoadAll(attributes);
         }
 
         public void forceLoadAll(Collection<? extends K> keys) {
-             delegate.forceLoadAll(keys);
+            delegate.forceLoadAll(keys);
         }
 
         public void forceLoadAll(Map<K, AttributeMap> mapsWithAttributes) {
-             delegate.forceLoadAll(mapsWithAttributes);
+            delegate.forceLoadAll(mapsWithAttributes);
         }
 
         public long getDefaultTimeToRefresh(TimeUnit unit) {
-             return delegate.getDefaultTimeToRefresh(unit);
+            return delegate.getDefaultTimeToRefresh(unit);
         }
 
         public void load(K key, AttributeMap attributes) {
-             delegate.load(key, attributes);
+            delegate.load(key, attributes);
         }
 
         public void load(K key) {
@@ -115,32 +114,32 @@ public class LoadingUtils {
         }
 
         public void loadAll(Collection<? extends K> keys) {
-             delegate.loadAll(keys);
+            delegate.loadAll(keys);
         }
 
         public void loadAll(Map<K, AttributeMap> mapsWithAttributes) {
-             delegate.loadAll(mapsWithAttributes);
+            delegate.loadAll(mapsWithAttributes);
         }
 
         public void reloadAll() {
-             delegate.reloadAll();
+            delegate.reloadAll();
         }
 
         public void setDefaultTimeToRefresh(long timeToLive, TimeUnit unit) {
             delegate.setDefaultTimeToRefresh(timeToLive, unit);
         }
     }
-    
+
     public static long convertNanosToRefreshTime(long timeToRefreshNanos, TimeUnit unit) {
-        return new CacheLoadingConfiguration().setDefaultTimeToRefresh(timeToRefreshNanos,
-                TimeUnit.NANOSECONDS).getDefaultTimeToRefresh(unit);
+        return new CacheLoadingConfiguration().setDefaultTimeToRefresh(
+                timeToRefreshNanos, TimeUnit.NANOSECONDS).getDefaultTimeToRefresh(unit);
     }
 
     public static long convertRefreshTimeToNanos(long timeToRefresh, TimeUnit unit) {
-        return new CacheLoadingConfiguration().setDefaultTimeToRefresh(timeToRefresh, unit)
-                .getDefaultTimeToRefresh(TimeUnit.NANOSECONDS);
+        return new CacheLoadingConfiguration().setDefaultTimeToRefresh(timeToRefresh,
+                unit).getDefaultTimeToRefresh(TimeUnit.NANOSECONDS);
     }
-    
+
     public static long getInitialTimeToRefrehs(CacheLoadingConfiguration<?, ?> conf) {
         long tmp = conf.getDefaultTimeToRefresh(TimeUnit.NANOSECONDS);
         if (tmp == 0) {

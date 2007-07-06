@@ -61,7 +61,7 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
     /** Whether or not JMX management is enabled. */
     private boolean enabled; // default false
 
-    /** The MBeanServer to register the managed beans under */
+    /** The MBeanServer to register the managed beans under. */
     private MBeanServer mBeanServer;
 
     /** The visitor to use for registration of the managed beans. */
@@ -95,11 +95,22 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
         return mBeanServer;
     }
 
-
+    /**
+     * Returns the configured registrant.
+     * 
+     * @return the configured registrant
+     * @see #setRegistrant(ManagedGroupVisitor)
+     */
     public ManagedGroupVisitor getRegistrant() {
         return registrant;
     }
 
+    /**
+     * Returns the configured root.
+     * 
+     * @return the configured root
+     * @see #setRoot(ManagedGroup)
+     */
     public ManagedGroup getRoot() {
         return root;
     }
@@ -181,6 +192,8 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
      * If no registrant is specified a default registrant will be used.
      * 
      * @param registrant
+     *            the registrant
+     * @return this configuration
      * @see #getRegistrant()
      */
     public CacheManagementConfiguration setRegistrant(ManagedGroupVisitor registrant) {
@@ -194,6 +207,8 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
      * crazy you can use this method.
      * 
      * @param root
+     *            the root to set
+     * @return this configuration
      * @see #getRoot()
      */
     public CacheManagementConfiguration setRoot(ManagedGroup root) {
@@ -202,8 +217,7 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
     }
 
     /**
-     * @see org.coconut.cache.service.spi.AbstractCacheConfiguration#fromXML(org.w3c.dom.Document,
-     *      org.w3c.dom.Element)
+     * {@inheritDoc}
      */
     @Override
     protected void fromXML(Element e) throws Exception {
@@ -221,7 +235,7 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
     }
 
     /**
-     * @see org.coconut.cache.service.spi.AbstractCacheConfiguration#toXML(org.w3c.dom.Element)
+     * {@inheritDoc}
      */
     @Override
     protected void toXML(Document doc, Element base) {

@@ -20,12 +20,15 @@ import org.w3c.dom.Element;
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @param <K>
+ *            the type of keys maintained by the cache
+ * @param <V>
+ *            the type of mapped values
  */
 public class CacheLoadingConfiguration<K, V> extends
         AbstractCacheServiceConfiguration<K, V> {
 
-    private final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.NANOSECONDS;
-
+    /** The name of this service. */
     public static final String SERVICE_NAME = "loading";
 
     private final static String LOADER_TAG = "loader";
@@ -34,26 +37,16 @@ public class CacheLoadingConfiguration<K, V> extends
 
     private final static String REFRESH_INTERVAL_TAG = "default-time-to-refresh";
 
-    private long defaultTimeToRefresh;
+    private final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.NANOSECONDS;
 
-    private Filter<CacheEntry<K, V>> refreshFilter;
+    private long defaultTimeToRefresh;
 
     private CacheLoader<? super K, ? extends V> loader;
 
+    private Filter<CacheEntry<K, V>> refreshFilter;
+
     public CacheLoadingConfiguration() {
         super(SERVICE_NAME);
-    }
-
-    /**
-     * Returns the CacheLoader that the cache should use for loading new key-value
-     * bindings. If this method returns <code>null</code> no initial loader will be set.
-     */
-    public CacheLoader<? super K, ? extends V> getLoader() {
-        return loader;
-    }
-
-    public Filter<CacheEntry<K, V>> getRefreshFilter() {
-        return refreshFilter;
     }
 
     /**
@@ -70,6 +63,18 @@ public class CacheLoadingConfiguration<K, V> extends
         } else {
             return unit.convert(defaultTimeToRefresh, DEFAULT_TIME_UNIT);
         }
+    }
+
+    /**
+     * Returns the CacheLoader that the cache should use for loading new key-value
+     * bindings. If this method returns <code>null</code> no initial loader will be set.
+     */
+    public CacheLoader<? super K, ? extends V> getLoader() {
+        return loader;
+    }
+
+    public Filter<CacheEntry<K, V>> getRefreshFilter() {
+        return refreshFilter;
     }
 
     /**
@@ -139,8 +144,7 @@ public class CacheLoadingConfiguration<K, V> extends
     }
 
     /**
-     * @see org.coconut.cache.spi.AbstractCacheServiceConfiguration#fromXML(org.w3c.dom.Document,
-     *      org.w3c.dom.Element)
+     * {@inheritDoc}
      */
     @Override
     protected void fromXML(Element parent) throws Exception {
@@ -157,8 +161,7 @@ public class CacheLoadingConfiguration<K, V> extends
     }
 
     /**
-     * @see org.coconut.cache.spi.AbstractCacheServiceConfiguration#toXML(org.w3c.dom.Document,
-     *      org.w3c.dom.Element)
+     * {@inheritDoc}
      */
     @Override
     protected void toXML(Document doc, Element parent) {

@@ -15,15 +15,19 @@ public class CacheStatisticsConfiguration extends AbstractCacheServiceConfigurat
 
     
     // add own counters???
+    /** The short name of this service. */
     public static final String SERVICE_NAME = "statistics";
 
+    /** Creates a new CacheStatisticsConfiguration. */
     public CacheStatisticsConfiguration() {
         super(SERVICE_NAME);
     }
 
+//    public void setKeepStatisticsOnIndividualItems(boolean keepStatistics) {
+//        
+//    }
     /**
-     * @see org.coconut.cache.spi.AbstractCacheServiceConfiguration#fromXML(org.w3c.dom.Document,
-     *      org.w3c.dom.Element)
+     * {@inheritDoc}
      */
     @Override
     protected void fromXML( Element parent) {
@@ -31,15 +35,11 @@ public class CacheStatisticsConfiguration extends AbstractCacheServiceConfigurat
     }
 
     /**
-     * @see org.coconut.cache.spi.AbstractCacheServiceConfiguration#toXML(org.w3c.dom.Document,
-     *      org.w3c.dom.Element)
+     * {@inheritDoc}
      */
     @Override
     protected void toXML(Document doc, Element parent) {
 
     }
 
-    public void setKeepStatisticsOnIndividualItems(boolean keepStatistics) {
-        
-    }
 }

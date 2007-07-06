@@ -7,8 +7,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.filter.Filter;
 
 /**
@@ -20,6 +20,10 @@ import org.coconut.filter.Filter;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @param <K>
+ *            the type of keys maintained by the cache containing this service
+ * @param <V>
+ *            the type of mapped values
  */
 public interface CacheExpirationService<K, V> {
 
@@ -40,14 +44,15 @@ public interface CacheExpirationService<K, V> {
 
     /**
      * Attempts to expire all of the mappings for the specified collection of keys. The
-     * effect of this call is equivalent to that of calling {@link org.coconut.cache.Cache#remove(Object)} on
-     * this service once for each key in the specified collection. However, in some cases
-     * it can be much faster to expire several cache items at once, for example, if some
-     * of the values must also be expired on a remote host.
+     * effect of this call is equivalent to that of calling
+     * {@link org.coconut.cache.Cache#remove(Object)} on this service once for each key in
+     * the specified collection. However, in some cases it can be much faster to expire
+     * several cache items at once, for example, if some of the values must also be
+     * expired on a remote host.
      * 
      * @param keys
      *            a collection of keys whose associated mappings are to be expired.
-     * @return the number of entries that was expired
+     * @return the number of entries that was removed
      */
     int removeAll(Collection<? extends K> keys);
 
@@ -56,43 +61,34 @@ public interface CacheExpirationService<K, V> {
      * 
      * @param filter
      *            the filter to match entries against
-     * @return the number of entries that was expired
+     * @return the number of entries that was removed
      */
-    int removeAll(Filter<? extends CacheEntry<K, V>> filter);
+    int removeFiltered(Filter<? super CacheEntry<K, V>> filter);
 
     /**
-     * Returns the default expiration time for entries. If entries never expire,
-     * {@link #NEVER_EXPIRE} is returned.
+     * Returns the default time to live for entries that are added to the cache. If
+     * entries do not expire by default, {@link Long#MAX_VALUE} is returned.
      * 
      * @param unit
      *            the time unit that should be used for returning the default expiration
-     * @return the default expiration time for entries, or {@link #NEVER_EXPIRE} if
-     *         entries never expire
+     * @return the default time to live for entries that are added to the cache, or
+     *         {@link Long#MAX_VALUE} if entries do not expire by default
      */
     long getDefaultTimeToLive(TimeUnit unit);
 
     /**
-     * Associates the specified value with the specified key in this cache (optional
-     * operation). If the cache previously contained a mapping for this key, the old value
-     * is replaced by the specified value. (A cache <tt>c</tt> is said to contain a
-     * mapping for a key <tt>k</tt> if and only if
-     * {@link org.coconut.cache.Cache#containsKey(Object) c.containsKey(k)} would return <tt>true</tt>.))
-     * <p>
-     * It is often more effective to specify a {@link CacheLoader} that implicitly loads
-     * values then to explicitly add them to cache using the various <tt>put</tt> and
-     * <tt>putAll</tt> methods.
-     * <p>
-     * If a backend store is configured for the cache. The value might be stored in this
-     * store.
+     * Works as {@link Cache#put(Object, Object)} except that entry added will expire
+     * after the specified time to live. The specified time to live will override the
+     * default value returned by {@link #getDefaultTimeToLive(TimeUnit)}
      * 
      * @param key
      *            key with which the specified value is to be associated.
      * @param value
      *            value to be associated with the specified key.
-     * @param expirationTime
-     *            the time from now to when the element must be expired
+     * @param timeToLive
+     *            the time from now to when the element will expired
      * @param unit
-     *            the time unit of the timeout parameter.
+     *            the time unit of the timeToLive parameter.
      * @return previous value associated with specified key, or <tt>null</tt> if there
      *         was no mapping for key.
      * @throws UnsupportedOperationException
@@ -106,7 +102,7 @@ public interface CacheExpirationService<K, V> {
      * @throws NullPointerException
      *             if the specified key, value or timeunit is <tt>null</tt>.
      */
-    V put(K key, V value, long expirationTime, TimeUnit unit);
+    V put(K key, V value, long timeToLive, TimeUnit unit);
 
     /**
      * Copies all of the mappings from the specified map to this cache (optional

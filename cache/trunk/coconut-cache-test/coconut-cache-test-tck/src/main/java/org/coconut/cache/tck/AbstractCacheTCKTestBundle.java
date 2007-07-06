@@ -322,4 +322,12 @@ public class AbstractCacheTCKTestBundle extends Assert {
             doFindMXBeans(col, mg, c);
         }
     }
+    
+    protected void loadAndAwait(Map.Entry<Integer, String> e) {
+        loading().load(e.getKey());
+    }
+    
+    public void loadAndAwait(Integer key) {
+        loading().load(key);
+    }
 }

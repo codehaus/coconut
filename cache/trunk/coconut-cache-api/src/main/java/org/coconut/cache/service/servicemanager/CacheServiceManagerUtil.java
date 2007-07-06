@@ -10,43 +10,22 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheServices;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class CacheServiceManagerUtil {
-
-    public static void main(String[] args) {
-        CacheConfiguration<?, ?> conf = CacheConfiguration.create();
-
-        final Cache c = null;
-
-        ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
-        CacheServices.servicemanager(c).registerService(
-                CacheServiceManagerUtil.wrapExecutorService(ses, "Daily Cache Clearing"));
-        ses.scheduleWithFixedDelay(new Runnable() {
-            public void run() {
-                c.clear();
-            }
-        }, 0, 60 * 60 * 24, TimeUnit.SECONDS);
-
-        CacheServiceManagerUtil.registerSingleThreadSchedulingService(c,
-                "Daily Cache Clearing", new Runnable() {
-                    public void run() {
-                        c.clear();
-                    }
-                }, 0, 60 * 60 * 24, TimeUnit.SECONDS);
-    }
+public final class CacheServiceManagerUtil {
+    
+    /** Cannot instantiate. */
+    private CacheServiceManagerUtil() {}
 
     /**
      * Creates and executes a periodic action that becomes enabled first after the given
@@ -72,6 +51,15 @@ public class CacheServiceManagerUtil {
      *             if command is null
      * @throws IllegalArgumentException
      *             if delay less than or equal to zero
+     */
+    /**
+     * @param c ss
+     * @param name ss 
+     * @param command ss
+     * @param initialDelay ss
+     * @param delay ss
+     * @param unit ss
+     * @return ss
      */
     public static ScheduledFuture<?> registerSingleThreadSchedulingService(Cache<?, ?> c,
             String name, Runnable command, long initialDelay, long delay, TimeUnit unit) {
@@ -107,8 +95,7 @@ public class CacheServiceManagerUtil {
         }
 
         /**
-         * @see java.util.concurrent.ExecutorService#awaitTermination(long,
-         *      java.util.concurrent.TimeUnit)
+         * {@inheritDoc}
          */
         public boolean awaitTermination(long timeout, TimeUnit unit)
                 throws InterruptedException {
@@ -116,13 +103,15 @@ public class CacheServiceManagerUtil {
         }
 
         /**
-         * @param command
-         * @see java.util.concurrent.Executor#execute(java.lang.Runnable)
+         * {@inheritDoc}
          */
         public void execute(Runnable command) {
             service.execute(command);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public List invokeAll(Collection tasks, long timeout, TimeUnit unit)
                 throws InterruptedException {
             // we can't generify this method if we want to
@@ -131,78 +120,80 @@ public class CacheServiceManagerUtil {
             return service.invokeAll(tasks, timeout, unit);
         }
 
-
+        /**
+         * {@inheritDoc}
+         */
         public List invokeAll(Collection tasks) throws InterruptedException {
             return service.invokeAll(tasks);
         }
 
-
+        /**
+         * {@inheritDoc}
+         */
         public Object invokeAny(Collection tasks, long timeout, TimeUnit unit)
                 throws InterruptedException, ExecutionException, TimeoutException {
             return service.invokeAny(tasks, timeout, unit);
         }
 
-
+        /**
+         * {@inheritDoc}
+         */
         public Object invokeAny(Collection tasks) throws InterruptedException,
                 ExecutionException {
             return service.invokeAny(tasks);
         }
 
-  
         /**
-         * @see java.util.concurrent.ExecutorService#isShutdown()
+         * {@inheritDoc}
          */
         public boolean isShutdown() {
             return service.isShutdown();
         }
 
-
         /**
-         * @see java.util.concurrent.ExecutorService#isTerminated()
+         * {@inheritDoc}
          */
         public boolean isTerminated() {
             return service.isTerminated();
         }
 
         /**
-         * @see java.util.concurrent.ExecutorService#shutdown()
+         * {@inheritDoc}
          */
         public void shutdown() {
             service.shutdown();
         }
 
         /**
-         * @see java.util.concurrent.ExecutorService#shutdownNow()
+         * {@inheritDoc}
          */
         public List<Runnable> shutdownNow() {
             return service.shutdownNow();
         }
 
-
         /**
-         * @see java.util.concurrent.ExecutorService#submit(java.util.concurrent.Callable)
+         * {@inheritDoc}
          */
         public <T> Future<T> submit(Callable<T> task) {
             return service.submit(task);
         }
 
         /**
-         * @see java.util.concurrent.ExecutorService#submit(java.lang.Runnable, java.lang.Object)
+         * {@inheritDoc}
          */
         public <T> Future<T> submit(Runnable task, T result) {
             return service.submit(task, result);
         }
 
-
         /**
-         * @see java.util.concurrent.ExecutorService#submit(java.lang.Runnable)
+         * {@inheritDoc}
          */
         public Future<?> submit(Runnable task) {
             return service.submit(task);
         }
 
         /**
-         * @param ignore
+         * {@inheritDoc}
          */
         public void shutdown(Cache<?, ?> ignore) {
             service.shutdown();

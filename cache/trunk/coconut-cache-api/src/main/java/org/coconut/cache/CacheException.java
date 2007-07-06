@@ -1,7 +1,6 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-
 package org.coconut.cache;
 
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
@@ -10,6 +9,9 @@ import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
  * <code>CacheException</code> is the main exception thrown by Coconut Cache. When a
  * Cache throws these exceptions can be controlled by using a specific
  * {@link CacheExceptionHandler}.
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id$
  */
 public class CacheException extends RuntimeException {
 

@@ -12,15 +12,15 @@ import org.coconut.core.AttributeMaps;
  */
 public class DefaultCacheAttributeService implements InternalCacheAttributeService {
 
-    private Dummy dummy=new Dummy();
-    
-	public AttributeMap createMap() {
-		return new AttributeMaps.DefaultAttributeMap();
-	}
+    private Dummy dummy = new Dummy();
 
-	public AttributeMap createMap(AttributeMap copyFrom) {
-		return new AttributeMaps.DefaultAttributeMap(copyFrom);
-	}
+    public AttributeMap createMap() {
+        return new AttributeMaps.DefaultAttributeMap();
+    }
+
+    public AttributeMap createMap(AttributeMap copyFrom) {
+        return new AttributeMaps.DefaultAttributeMap(copyFrom);
+    }
 
     public DefaultAttributes update() {
         return dummy;
@@ -31,6 +31,9 @@ public class DefaultCacheAttributeService implements InternalCacheAttributeServi
         private long goo;
 
         private long refresh;
+
+        private int maximumSize;
+
         public long getExpirationTimeNanos() {
             return goo;
         }
@@ -44,7 +47,15 @@ public class DefaultCacheAttributeService implements InternalCacheAttributeServi
         }
 
         public void setTimeToFreshNanos(long nanos) {
-            this.refresh=nanos;
+            this.refresh = nanos;
+        }
+
+        public int getMaximumSize() {
+            return maximumSize;
+        }
+
+        public void setMaximumSize(int maximumSize) {
+            this.maximumSize = maximumSize;
         }
     }
 }

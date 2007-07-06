@@ -16,8 +16,10 @@ import org.coconut.cache.Cache;
  */
 public class CacheServiceManagerConfiguration {
 
+    /** The set of registered services. */
     private final Set<CacheService> services = new HashSet<CacheService>();
 
+    /** Any additional services attached to the cache. */
     private final Map<Class<?>, Object> attached = new HashMap<Class<?>, Object>();
 
 // private final Set<EventProcessor<? super Cache<?, ?>>> startedNotifier = new
@@ -38,6 +40,9 @@ public class CacheServiceManagerConfiguration {
      * Cache&lt;?,?&gt; c;
      * assert &quot;fooboo&quot; = c.getService(String.class);
      * </pre>
+     * 
+     * If the specified key conflicts with key-type of any of the build in service an
+     * exception will be thrown when the cache is constructed.
      * 
      * @param key
      *            the key to attach the specified instance to
@@ -62,6 +67,13 @@ public class CacheServiceManagerConfiguration {
         return this;
     }
 
+    /**
+     * Adds the specified service to lifecycle of the cache.
+     * 
+     * @param service
+     *            the service to add
+     * @return this configuration
+     */
     public CacheServiceManagerConfiguration addService(CacheService service) {
         if (service == null) {
             throw new NullPointerException("service is null");

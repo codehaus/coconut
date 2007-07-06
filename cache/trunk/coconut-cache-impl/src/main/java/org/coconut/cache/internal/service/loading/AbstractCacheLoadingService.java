@@ -9,13 +9,10 @@ import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.CacheHelper;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
-import org.coconut.cache.internal.service.expiration.ExpirationUtils;
 import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
-import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.core.AttributeMap;
@@ -41,6 +38,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends
         this.attributeFactory = attributeFactory;
         this.helper = helper;
     }
+
     /**
      * @see org.coconut.cache.service.expiration.CacheExpirationService#getDefaultTimeToLive(java.util.concurrent.TimeUnit)
      */
@@ -57,6 +55,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends
         attributeFactory.update().setTimeToFreshNanos(
                 LoadingUtils.convertRefreshTimeToNanos(timeToRefresh, unit));
     }
+
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#filteredLoad(org.coconut.filter.Filter)
      */
@@ -67,7 +66,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends
         Collection<? extends K> keys = helper.filterKeys(filter);
         forceLoadAll(keys);
     }
-    
+
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#filteredLoad(org.coconut.filter.Filter,
      *      org.coconut.core.AttributeMap)
@@ -106,11 +105,12 @@ public abstract class AbstractCacheLoadingService<K, V> extends
         }
         forceLoadAll(map);
     }
+
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#load(java.lang.Object)
      */
     public final void forceLoad(K key) {
-         doLoad(key, true);
+        doLoad(key, true);
     }
 
     /**
@@ -118,14 +118,14 @@ public abstract class AbstractCacheLoadingService<K, V> extends
      *      org.coconut.core.AttributeMap)
      */
     public final void forceLoad(K key, AttributeMap attributes) {
-         doLoad(key, attributes, true);
+        doLoad(key, attributes, true);
     }
 
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#forceLoadAll(org.coconut.core.AttributeMap)
      */
     public final void forceLoadAll(AttributeMap attributes) {
-         filteredLoad(Filters.trueFilter(), attributes);
+        filteredLoad(Filters.trueFilter(), attributes);
     }
 
     /**
@@ -142,7 +142,6 @@ public abstract class AbstractCacheLoadingService<K, V> extends
         doLoadAll(mapsWithAttributes, true);
     }
 
-
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#load(java.lang.Object)
      */
@@ -155,15 +154,15 @@ public abstract class AbstractCacheLoadingService<K, V> extends
      *      org.coconut.core.AttributeMap)
      */
     public void load(K key, AttributeMap attributes) {
-         doLoad(key, attributes, false);
+        doLoad(key, attributes, false);
     }
 
     public final void loadAll(Collection<? extends K> keys) {
-         doLoadAll(keys, false);
+        doLoadAll(keys, false);
     }
 
     public final void loadAll(Map<K, AttributeMap> mapsWithAttributes) {
-         doLoadAll(mapsWithAttributes, false);
+        doLoadAll(mapsWithAttributes, false);
     }
 
     /**
@@ -177,35 +176,33 @@ public abstract class AbstractCacheLoadingService<K, V> extends
      * @see org.coconut.cache.service.loading.CacheLoadingService#load(java.lang.Object,
      *      org.coconut.core.AttributeMap)
      */
-    private Future<?> doLoad(K key, AttributeMap attributes, boolean force) {
+    private void doLoad(K key, AttributeMap attributes, boolean force) {
         if (key == null) {
             throw new NullPointerException("key is null");
         } else if (attributes == null) {
             throw new NullPointerException("attributes is null");
         }
         if (force || !helper.isValid(key)) {
-            return doLoad(key, attributeFactory.createMap(attributes));
+            doLoad(key, attributeFactory.createMap(attributes));
         }
-        return null;
     }
 
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#forceLoad(java.lang.Object)
      */
-    private Future<?> doLoad(K key, boolean forceLoad) {
+    private void doLoad(K key, boolean forceLoad) {
         if (key == null) {
             throw new NullPointerException("key is null");
         }
         if (forceLoad || !helper.isValid(key)) {
-            return doLoad(key, attributeFactory.createMap());
+            doLoad(key, attributeFactory.createMap());
         }
-        return null;
     }
 
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#loadAll(java.util.Collection)
      */
-    private Future<?> doLoadAll(Collection<? extends K> keys, boolean forceLoad) {
+    private void doLoadAll(Collection<? extends K> keys, boolean forceLoad) {
         if (keys == null) {
             throw new NullPointerException("keys is null");
         }
@@ -219,15 +216,14 @@ public abstract class AbstractCacheLoadingService<K, V> extends
             }
         }
         if (map.size() > 0) {
-            return doLoad(map);
+            doLoad(map);
         }
-        return null;
     }
 
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#loadAll(java.util.Map)
      */
-    private Future<?> doLoadAll(Map<K, AttributeMap> keysWithAttributes, boolean forceLoad) {
+    private void doLoadAll(Map<K, AttributeMap> keysWithAttributes, boolean forceLoad) {
         if (keysWithAttributes == null) {
             throw new NullPointerException("keysWithAttributes is null");
         }
@@ -245,12 +241,11 @@ public abstract class AbstractCacheLoadingService<K, V> extends
             }
         }
         if (map.size() > 0) {
-            return doLoad(map);
+            doLoad(map);
         }
-        return null;
     }
 
-    abstract Future<?> doLoad(K key, AttributeMap map);
+    abstract void doLoad(K key, AttributeMap map);
 
-    abstract Future<?> doLoad(Map<? extends K, AttributeMap> keysWithAttributes);
+    abstract void doLoad(Map<? extends K, AttributeMap> keysWithAttributes);
 }

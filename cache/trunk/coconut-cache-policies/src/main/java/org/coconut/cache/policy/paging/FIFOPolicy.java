@@ -125,8 +125,7 @@ public class FIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolic
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#update(int,
-     *      java.lang.Object)
+     * @see org.coconut.cache.ReplacementPolicy#update(int, java.lang.Object, org.coconut.core.AttributeMap)
      */
     public boolean update(int index, T newElement, AttributeMap ignore) {
         return policy.update(index, newElement, ignore);

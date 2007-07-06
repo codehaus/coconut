@@ -66,7 +66,7 @@ public interface CacheEvictionMXBean {
      * To indicate that a cache can have an unlimited capacity, {@link Long#MAX_VALUE}
      * should be specified.
      * 
-     * @param elements
+     * @param maximumCapacity
      *            the maximum capacity.
      * @throws IllegalArgumentException
      *             if the specified maximum capacity is negative

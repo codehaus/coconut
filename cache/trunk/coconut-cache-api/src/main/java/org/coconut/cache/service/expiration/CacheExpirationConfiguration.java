@@ -22,6 +22,10 @@ import org.w3c.dom.Element;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @param <K>
+ *            the type of keys maintained by the cache
+ * @param <V>
+ *            the type of mapped values
  */
 public class CacheExpirationConfiguration<K, V> extends
         AbstractCacheServiceConfiguration<K, V> {
@@ -29,21 +33,26 @@ public class CacheExpirationConfiguration<K, V> extends
     /** The name of this service. */
     public final static String SERVICE_NAME = "Expiration";
 
+    /** The XML default time to live tag. */
     private final static String DEFAULT_TIMEOUT_TAG = "default-timetolive";
 
+    /** The XML expiration filter tag. */
     private final static String EXPIRATION_FILTER_TAG = "filter";
 
-    private final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.NANOSECONDS;
+    /** The default TimeUnit uses in this service. */
+    private final static TimeUnit DEFAULT_TIME_UNIT = TimeUnit.NANOSECONDS;
 
-    /** The default settings, used when xml-serializing this configuration */
+    /** The default settings, used when xml-serializing this configuration. */
     private final static CacheExpirationConfiguration<?, ?> DEFAULT = new CacheExpirationConfiguration<Object, Object>();
 
+    /** The default time to live. */
     private long defaultTimeToLive;
 
+    /** The expiration filter. */
     private Filter<CacheEntry<K, V>> expirationFilter;
 
     /**
-     * Creates a new CacheExpirationConfiguration
+     * Creates a new CacheExpirationConfiguration.
      */
     @SuppressWarnings("unchecked")
     public CacheExpirationConfiguration() {
@@ -113,8 +122,7 @@ public class CacheExpirationConfiguration<K, V> extends
     }
 
     /**
-     * @see org.coconut.cache.spi.AbstractCacheServiceConfiguration#fromXML(org.w3c.dom.Document,
-     *      org.w3c.dom.Element)
+     * {@inheritDoc}
      */
     @Override
     protected void fromXML(Element base) throws Exception {
@@ -129,8 +137,7 @@ public class CacheExpirationConfiguration<K, V> extends
     }
 
     /**
-     * @see org.coconut.cache.spi.AbstractCacheServiceConfiguration#toXML(org.w3c.dom.Document,
-     *      org.w3c.dom.Element)
+     * {@inheritDoc}
      */
     @Override
     protected void toXML(Document doc, Element parent) throws Exception {

@@ -37,8 +37,6 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
 
     private final CacheExceptionService<K, V> errorHandler;
 
-    private final DefaultCacheExpirationService<K, V> expirationService;
-
     private final CacheLoader<? super K, ? extends V> loader;
 
     private final Executor loadExecutor;
@@ -52,7 +50,6 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
             CacheExceptionService<K, V> exceptionService,
             CacheLoadingConfiguration<K, V> loadConf,
             final InternalCacheThreadingService threadManager,
-            DefaultCacheExpirationService<K, V> expirationService,
             final CacheHelper<K, V> cache) {
         super(attributeFactory, cache);
         this.errorHandler = exceptionService;
@@ -63,7 +60,6 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         attributeFactory.update().setTimeToFreshNanos( LoadingUtils.getInitialTimeToRefrehs(loadConf));
         this.reloadFilter = loadConf.getRefreshFilter();
         this.cache = cache;
-        this.expirationService = expirationService;
     }
 
     @Override
@@ -135,7 +131,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
                 v = loader.load(key, attributes);
             } catch (Exception e) {
                 v = errorHandler.getExceptionHandler().loadFailed(
-                        errorHandler.createContext(), loader, key, attributes, false, e);
+                        errorHandler.createContext(), loader, key, attributes, true, e);
             }
         }
         return v;
@@ -150,21 +146,19 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         }
     }
 
-    Future<?> doLoad(K key, AttributeMap attributes) {
+    void doLoad(K key, AttributeMap attributes) {
         LoadValueRunnable lvr = new LoadValueRunnable<K, V>(this, loader, key, attributes);
         loadExecutor.execute(lvr);
-        return lvr;
     }
 
     /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#loadAll(java.util.Map)
      */
-    Future<?> doLoad(Map<? extends K, AttributeMap> mapsWithAttributes) {
+    void doLoad(Map<? extends K, AttributeMap> mapsWithAttributes) {
         LoadValuesRunnable lvr = new LoadValuesRunnable<K, V>(this, loader,
                 mapsWithAttributes);
         FutureTask<V> ft = new FutureTask<V>(lvr, null);
         loadExecutor.execute(ft);
-        return ft;
     }
 
     static class LoadValueRunnable<K, V> extends ExtendableFutureTask {
@@ -206,7 +200,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
             } catch (Exception e) {
                 v = loaderService.errorHandler.getExceptionHandler().loadFailed(
                         loaderService.errorHandler.createContext(), loader, key,
-                        attributes, true, e);
+                        attributes, false, e);
             }
             loaderService.cache.valueLoaded(key, v, attributes);
             return null;
@@ -250,7 +244,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
          * @see java.lang.Runnable#run()
          */
         public void run() {
-            Map<? super K, ? extends V> map = null;
+            Map<? extends K, ? extends V> map = null;
             try {
                 map = null; // loader.loadAll(keysWithAttributes);
             } catch (Exception e) {

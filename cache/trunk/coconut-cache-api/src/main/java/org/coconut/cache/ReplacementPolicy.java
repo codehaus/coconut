@@ -13,7 +13,8 @@ import org.coconut.core.AttributeMap;
  * from the cache when the free space is insufficient for accommodating an item to be
  * cached. Normally users should not need to implement this interface, only if they want
  * to implement new replacement polices. This library comes with a number of predefined
- * replacement policies, see {@link org.coconut.cache.policy.Policies} for the most commonly used policies.
+ * replacement policies, see {@link org.coconut.cache.policy.Policies} for the most
+ * commonly used policies.
  * <p>
  * For performance reasons cache policies are not expected to be thread-safe. Instead, any
  * cache implementation using a replacement policy must maintain thread safety.
@@ -26,9 +27,9 @@ import org.coconut.core.AttributeMap;
  * We use an <tt>int</tt> to represent a pointer to all entries because it has a lower
  * memory footprint then using objects. While this is no problem for a cache with one
  * single policy the overhead can be significant when using an adaptable caching strategy
- * where we monitor tens or hundreds of polices. Furthermore, we observe that (as a general
- * rule) most entries that are evicted from a cache are the entries that have not been
- * accessed for the longest time. Hence these objects are most often in the tenure GC
+ * where we monitor tens or hundreds of polices. Furthermore, we observe that (as a
+ * general rule) most entries that are evicted from a cache are the entries that have not
+ * been accessed for the longest time. Hence these objects are most often in the tenure GC
  * area.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
@@ -45,8 +46,8 @@ public interface ReplacementPolicy<T> {
      * The entry with the specified index was updated with a new value. This new element
      * should be referenced instead of the previous element.
      * <p>
-     * IMPORTANT: The previous element must be removed by the replacement policy no matter
-     * what.
+     * IMPORTANT: The previous element must be removed by the replacement policy even if
+     * the new element cannot be accepted.
      * 
      * @param index
      *            the index of the previous element
@@ -57,14 +58,24 @@ public interface ReplacementPolicy<T> {
      */
     boolean update(int index, T newElement);
 
+    /**
+     * Works
+     * 
+     * @param index
+     *            the index of the previous element
+     * @param newElement
+     *            the new element that should replace the previous element
+     * @return <tt>true</tt> if the policy accepted the new element, otherwise
+     *         <tt>false</tt>
+     */
     boolean update(int index, T newElement, AttributeMap attributes);
 
     /**
      * Adds the specified element to the replacement policy. If the policy accepts the
-     * element a non-negative integer is returned. This integer is reference to the element
-     * and must be used when referencing the element. A negative return value indicates
-     * that the policy has rejected the entry. Any replacement policy is allowed to reject
-     * entries. For example, LRU-Size which rejects entries over a certain size.
+     * element a non-negative integer is returned. This integer is reference to the
+     * element and must be used when referencing the element. A negative return value
+     * indicates that the policy has rejected the entry. Any replacement policy is allowed
+     * to reject entries. For example, LRU-Size which rejects entries over a certain size.
      * <p>
      * 
      * @param element
@@ -125,12 +136,12 @@ public interface ReplacementPolicy<T> {
      * are being held by the policy.
      * <p>
      * If the policy makes any guarantees as to what order its elements are evicted, this
-     * method <tt>must</tt> return the elements in the same order. However, non deterministic
-     * policies may return elements in any order from this method.
+     * method <tt>must</tt> return the elements in the same order. However, non
+     * deterministic policies may return elements in any order from this method.
      * <p>
-     * Be aware that this might be an expensive operation. For complicated policies
-     * where we lazyly calculate which element should be evicted next. A complete copy of
-     * the policys internal datastructures might need to be created.
+     * Be aware that this might be an expensive operation. For complicated policies where
+     * we lazyly calculate which element should be evicted next. A complete copy of the
+     * policys internal datastructures might need to be created.
      * 
      * @return the next element that should be evicted
      */

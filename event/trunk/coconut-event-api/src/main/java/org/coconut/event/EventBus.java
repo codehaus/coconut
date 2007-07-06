@@ -58,7 +58,6 @@ import org.coconut.filter.Filter;
  * <b>Transactional delivery:</b>
  * <p>
  * Most implementations does not have any transactional gurantees.
- * </ul>
  * listeners in the same order as they where submitted. (Events bliver ikke
  * "overhalet" af andre events i offer metoden. Eller de bliver alle leveret i
  * samme order for all listeners

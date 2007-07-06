@@ -1,7 +1,6 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-
 package org.coconut.cache.service.management;
 
 import javax.management.MBeanServer;
@@ -30,7 +29,7 @@ public interface CacheMXBean {
     static final String DEFAULT_JMX_DOMAIN = "org.coconut.cache";
 
     /**
-     * This is service name this interface will be registered under
+     * This is service name this interface will be registered under.
      */
     final static String MANAGED_SERVICE_NAME = "General";
 

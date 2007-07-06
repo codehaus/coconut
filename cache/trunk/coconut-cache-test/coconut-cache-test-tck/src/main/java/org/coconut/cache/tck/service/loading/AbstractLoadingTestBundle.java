@@ -24,16 +24,7 @@ public class AbstractLoadingTestBundle extends AbstractCacheTCKTestBundle {
         c = newCache(cc.loading().setLoader(loader).c());
     }
 
-    public void loadAndAwait(Map.Entry<Integer, String> e) {
-        loading().load(e.getKey());
-    }
-    
     public void loadAllAndAwait(Map.Entry<Integer, String>... e) {
         throw new UnsupportedOperationException();
     }
-
-    public void loadAndAwait(Integer key) {
-        loading().load(key);
-    }
-
 }

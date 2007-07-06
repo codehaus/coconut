@@ -234,8 +234,7 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#update(int,
-     *      java.lang.Object)
+     * @see org.coconut.cache.ReplacementPolicy#update(int, java.lang.Object, org.coconut.core.AttributeMap)
      */
     public boolean update(int index, T newElement, AttributeMap ignore) {
         data[references[index]] = newElement;

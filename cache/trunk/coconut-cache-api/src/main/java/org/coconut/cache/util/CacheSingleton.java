@@ -45,6 +45,7 @@ public final class CacheSingleton {
     /** Whether or not this singleton has been initialized. */
     private static int status;
 
+    /** Any exception that arose while initializing the contained cache. */
     private static CacheException initializationException;
 
     /** Cannot instantiate. */

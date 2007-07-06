@@ -1,7 +1,6 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-
 package org.coconut.cache.service.event;
 
 import org.coconut.cache.Cache;
@@ -22,6 +21,10 @@ import org.coconut.cache.Cache;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id$
+ * @param <K>
+ *            the type of keys maintained by the cache
+ * @param <V>
+ *            the type of mapped values
  */
 @SuppressWarnings("hiding")
 public interface CacheEvent<K, V> {
@@ -37,7 +40,7 @@ public interface CacheEvent<K, V> {
 
     /**
      * Returns a unique name that can be used to identify the
-     * <tt>type<tt> of the event. This is usual a display friendly name.
+     * <tt>type</tt> of the event. This is usual a display friendly name.
      * 
      * @return a unique name that can be used to identify the type of the event
      */
@@ -70,12 +73,16 @@ public interface CacheEvent<K, V> {
         /**
          * Returns the current number of elements contained in the cache after evict has
          * been called.
+         * @return the current number of elements contained in the cache after evict has
+         * been called 
          */
         int getCurrentSize();
 
         /**
          * Return the previous number of elements contained in the cache before the call
          * to evict.
+         * @return the previous number of elements contained in the cache before the call
+         * to evict
          */
         int getPreviousSize();
     }

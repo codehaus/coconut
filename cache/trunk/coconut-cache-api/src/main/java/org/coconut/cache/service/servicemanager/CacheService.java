@@ -44,7 +44,7 @@ public interface CacheService {
     /**
      * All services has started succesfully, and the cache is ready for use.
      * 
-     * @param cache
+     * @param cache the cache that was started
      */
     void started(Cache<?, ?> cache);
 

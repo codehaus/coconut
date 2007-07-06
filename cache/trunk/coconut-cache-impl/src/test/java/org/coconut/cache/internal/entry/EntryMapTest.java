@@ -53,12 +53,6 @@ public class EntryMapTest {
         assertNotNull(ac2);
     }
 
-    public void testNotsd() {
-        // HashMap<K, V>
-        while (testNots())
-            ;
-    }
-
     public boolean testNots() {
         EntryMap<Integer, String> s = new EntryMap<Integer, String>(false);
         Random r = new Random();

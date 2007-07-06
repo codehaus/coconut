@@ -5,8 +5,6 @@ package org.coconut.cache.internal.service.service;
 
 import java.util.Map;
 
-import org.coconut.cache.internal.service.loading.LoadingUtils;
-import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.AbstractCacheService;
 import org.coconut.management.ManagedGroup;

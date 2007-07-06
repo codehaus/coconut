@@ -24,13 +24,17 @@
   <reporting>
     <excludeDefaults>true</excludeDefaults>
     <plugins>
+    <!-- 
       <plugin>
         <artifactId>maven-clover-plugin</artifactId>
         <configuration>
           <generateHistorical>true</generateHistorical>
+          <licenseLocation>
+            ${user.home}/licenses/coconut-clover.license
+          </licenseLocation>
         </configuration>
       </plugin>
-
+ -->
 
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -42,47 +46,47 @@
   </reporting>
   <build>
     <plugins>
-    <!--
-      <plugin>
+      <!--
+        <plugin>
         <artifactId>maven-clover-plugin</artifactId>
         <configuration>
-          <jdk>1.5</jdk>
-          <excludes>
-          -->
-            <!--         <exclude>**/tck/**/*.java</exclude> -->
-            <!--
-          </excludes>
-          <licenseLocation>
-            ${user.home}/licenses/coconut-clover.license
-          </licenseLocation>
-          <flushPolicy>threaded</flushPolicy>
-          <flushInterval>100</flushInterval>
-          <targetPercentage>0%</targetPercentage>
+        <jdk>1.5</jdk>
+        <excludes>
+      -->
+      <!--         <exclude>**/tck/**/*.java</exclude> -->
+      <!--
+        </excludes>
+        <licenseLocation>
+        ${user.home}/licenses/coconut-clover.license
+        </licenseLocation>
+        <flushPolicy>threaded</flushPolicy>
+        <flushInterval>100</flushInterval>
+        <targetPercentage>0%</targetPercentage>
         </configuration>
         <executions>
-          <execution>
-            <id>main</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>instrument</goal>
-              <goal>aggregate</goal>
-              <goal>check</goal>
-              <goal>log</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>site</id>
-            <phase>pre-site</phase>
-            <goals>
-              <goal>instrument</goal>
-              <goal>aggregate</goal>
-
-              <goal>save-history</goal>
-
-            </goals>
-          </execution>
+        <execution>
+        <id>main</id>
+        <phase>verify</phase>
+        <goals>
+        <goal>instrument</goal>
+        <goal>aggregate</goal>
+        <goal>check</goal>
+        <goal>log</goal>
+        </goals>
+        </execution>
+        <execution>
+        <id>site</id>
+        <phase>pre-site</phase>
+        <goals>
+        <goal>instrument</goal>
+        <goal>aggregate</goal>
+        
+        <goal>save-history</goal>
+        
+        </goals>
+        </execution>
         </executions>
-      </plugin>
+        </plugin>
       -->
     </plugins>
   </build>
@@ -90,27 +94,27 @@
     <module>coconut-cache-api</module>
     <module>coconut-cache-impl</module>
     <module>coconut-cache-standalone</module>
-    <module>coconut-cache-examples</module> 
+    <module>coconut-cache-examples</module>
     <module>coconut-cache-policies</module>
     <module>coconut-cache-test</module>
   </modules>
-  
-      <repositories>
+
+  <repositories>
     <repository>
-    <id>apache.snapshots</id>
-    <name>Codehaus Snapshot Repository</name>
-    <url>http://snapshots.repository.codehaus.org/</url>
-    <releases>
-    <enabled>true</enabled>
-    </releases>
+      <id>apache.snapshots</id>
+      <name>Codehaus Snapshot Repository</name>
+      <url>http://snapshots.repository.codehaus.org/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
     </repository>
     <repository>
-    <id>apache.snapshots</id>
-    <name>Codehaus Repository</name>
-    <url>http://repository.codehaus.org/</url>
-    <releases>
-    <enabled>true</enabled>
-    </releases>
+      <id>apache.snapshots</id>
+      <name>Codehaus Repository</name>
+      <url>http://repository.codehaus.org/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
     </repository>
-    </repositories>
+  </repositories>
 </project>

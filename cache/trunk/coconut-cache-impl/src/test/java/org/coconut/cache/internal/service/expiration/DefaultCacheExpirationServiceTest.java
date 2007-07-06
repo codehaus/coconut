@@ -76,7 +76,7 @@ public class DefaultCacheExpirationServiceTest {
     }
 
     private void initialize() {
-        s = new DefaultCacheExpirationService<Integer, String>(clock, helper, conf,
+        s = new DefaultCacheExpirationService<Integer, String>(null, clock, helper, conf,
                 attributeFactory);
     }
 
@@ -146,8 +146,7 @@ public class DefaultCacheExpirationServiceTest {
                 RuntimeException cause) {}
 
         @Override
-        public void warning(CacheExceptionContext<K, V> context, String warning) {}
-
+        public void handleWarning(CacheExceptionContext<K, V> context, String warning) {}
 
     }
 }

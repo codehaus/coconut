@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.cache.Cache;
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
@@ -39,13 +40,16 @@ public class DefaultCacheExpirationService<K, V> extends AbstractInternalCacheSe
 
     private final Clock clock;
 
-    public DefaultCacheExpirationService(Clock clock, CacheHelper<K, V> helper,
-            CacheExpirationConfiguration<K, V> conf,
+    private final Cache<K, V> cache;
+
+    public DefaultCacheExpirationService(Cache<K, V> cache, Clock clock,
+            CacheHelper<K, V> helper, CacheExpirationConfiguration<K, V> conf,
             InternalCacheAttributeService attributeFactory) {
         super(CacheExpirationConfiguration.SERVICE_NAME);
-        expirationFilter = conf.getExpirationFilter();
         this.clock = clock;
+        this.cache = cache;
         this.helper = helper;
+        this.expirationFilter = conf.getExpirationFilter();
         this.attributeFactory = attributeFactory;
         attributeFactory.update().setExpirationTimeNanos(
                 ExpirationUtils.getInitialTimeToLive(conf));
@@ -59,7 +63,7 @@ public class DefaultCacheExpirationService<K, V> extends AbstractInternalCacheSe
 
     public V put(K key, V value, long timeToLive, TimeUnit unit) {
         if (timeToLive == CacheExpirationService.DEFAULT_EXPIRATION) {
-            return helper.put(key, value, AttributeMaps.EMPTY_MAP);
+            return cache.put(key, value);
         } else {
             AttributeMap map = attributeFactory.createMap();
             CacheAttributes.setTimeToLive(map, timeToLive, unit);
@@ -73,7 +77,7 @@ public class DefaultCacheExpirationService<K, V> extends AbstractInternalCacheSe
      */
     public void putAll(Map<? extends K, ? extends V> t, long timeToLive, TimeUnit unit) {
         if (timeToLive == CacheExpirationService.DEFAULT_EXPIRATION) {
-            helper.putAll(t);
+            cache.putAll(t);
         } else {
             HashMap<K, AttributeMap> attributes = new HashMap<K, AttributeMap>();
             for (Map.Entry<? extends K, ? extends V> entry : t.entrySet()) {
@@ -90,14 +94,14 @@ public class DefaultCacheExpirationService<K, V> extends AbstractInternalCacheSe
      * @see org.coconut.cache.service.expiration.CacheExpirationService#removeAll(java.util.Collection)
      */
     public int removeAll(Collection<? extends K> keys) {
-        return helper.expireAll(keys);
+        return helper.removeAll(keys);
     }
 
     /**
-     * @see org.coconut.cache.service.expiration.CacheExpirationService#removeAll(org.coconut.filter.Filter)
+     * @see org.coconut.cache.service.expiration.CacheExpirationService#removeFiltered(org.coconut.filter.Filter)
      */
-    public int removeAll(Filter<? extends CacheEntry<K, V>> filter) {
-        return helper.expireAll(filter);
+    public int removeFiltered(Filter<? super CacheEntry<K, V>> filter) {
+        return helper.removeAllFiltered(filter);
     }
 
     public boolean isExpired(CacheEntry<K, V> entry) {
@@ -117,8 +121,9 @@ public class DefaultCacheExpirationService<K, V> extends AbstractInternalCacheSe
      *      java.util.concurrent.TimeUnit)
      */
     public void setDefaultTimeToLive(long timeToLive, TimeUnit unit) {
+        long time = ExpirationUtils.convertExpirationTimeToNanos(timeToLive, unit);
         attributeFactory.update().setExpirationTimeNanos(
-                ExpirationUtils.convertExpirationTimeToNanos(timeToLive, unit));
+                time == 0 ? Long.MAX_VALUE : time);
     }
 
     @Override

@@ -3,52 +3,119 @@
  */
 package org.coconut.cache.service.exceptionhandling;
 
+import org.coconut.cache.Cache;
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.loading.CacheLoader;
+import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.core.AttributeMap;
 import org.coconut.event.EventSubscription;
 
 /**
- * The purpose of this class is to have one central place where all exceptions are
- * handled. This class is abstract but CacheHandlers defines a number of default exception
- * handling policies. An exception handling policy where any exception that occurs within
- * the cache will shutdow cache will be shutdowned
+ * The purpose of this class is to have one central place where all exceptions that arise
+ * within a cache or one of its associated services are handled. One implementation of
+ * this class might shutdown the cache on any exception. This is often usefull in
+ * development environments. Another implementation might just log the exception and
+ * continue serving other requests. To allow for easily extending this class with new
+ * methods at a later time this class is an abstract class instead of an interface.
+ * {@link CacheExceptionHandlers} defines a number of predefined exception handlers.
  * <p>
- * There are 4 basis <tt>General</tt> methods for handling exceptions. handleException,
- * handleRuntimeException, handleError. handleException is called when the system catches
- * a checked exception. For example, if a call to load fails with some exception. In most
+ * There are 4 basis <tt>general</tt> methods for handling failures occuring in the
+ * cache.
+ * <ul>
+ * <li>{@link #handleError(CacheExceptionContext, Error)} which is called, on a best
+ * effort basis, whenever an Error is raised within the cache. No reasonable application
+ * should not try to handle this, except for writing as much debug information as
+ * possible.
+ * <li>{@link #handleException(CacheExceptionContext, Exception)} which is called
+ * whenever a condition arises that a reasonable application might want to handle. For
+ * example, if a {@link CacheLoader} fails to load a value for some specified key. In most
  * situations these should just be logged and the cache should continue as nothing has
- * happend. handleRuntimeExceptions. If a runtime exception occurs within the cache it is
- * normally a serious situation. This could, for example, be some user provided callback
- * that fails in some mysterious way. Or even worse that the cache implementation contains
- * a bug. Of course, this is highly unlikely if using one of the default. Finally there is
- * handleError, a call to this method indicates serious problems that a reasonable
- * application should not try to handle.
+ * happend.
+ * <li>{@link #handleRuntimeException(CacheExceptionContext, RuntimeException)} which is
+ * called when a programmatic error arises from which an application cannot normally
+ * recover. This could, for example, be some user provided callback that fails in some
+ * mysterious way. Or even worse that the cache implementation contains a bug. Of course,
+ * this is highly unlikely if using one of the default implementation provided by Coconut
+ * Cache;).
+ * <li>{@link #handleWarning(CacheExceptionContext, String)} which is called whenever a
+ * some kind of inconsistency arrises in the system. Normally this always indicates a
+ * non-critical problem that should be fixed at some time. For example, if a CacheLoader
+ * tries to set the creation time of a newly loaded element to a negative value.
+ * </ul>
  * <p>
- * This class also contains a handleWarning. This always indicates a non-critical problem
- * that should be fixed. For example, if a CacheLoader tries to set the size of a newly
- * loaded element to a negative number.
- * <p>
- * In addition to these 4 general methods there are also a number of specialized methods
- * such as .... The idea is that all common exception points has a corresponding method in
- * CacheExceptionHandler. For example, whenever an exception occurs while loading an
- * element in a cache loader the #load method is call. In addition to the exception that
- * was raised a number of additional information is provided to this method. For example,
- * the key for which the load failed, the cache in which the cache occured as well as
- * other relevant information. The default implementation provided in this class just
- * calls the handleException method with the provided exception.
+ * In addition to these general methods there are also a number of <tt>specialized</tt>
+ * methods that handle a particular type of failure. The idea is that all common exception
+ * points has a corresponding method in CacheExceptionHandler. For example, whenever an
+ * exception occurs while loading an element in a cache loader the
+ * {@link #loadFailed(CacheExceptionContext, CacheLoader, Object, AttributeMap, boolean, Exception)}
+ * method is called. In addition to the exception that was raised a number of additional
+ * information is provided to this method. For example, the key for which the load failed,
+ * the cache in which the cache occured as well as other relevant information. The default
+ * implementation provided in this class just calls the
+ * {@link #handleException(CacheExceptionContext, Exception)} method with the provided
+ * exception.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @param <K>
+ *            the type of keys maintained by the cache
+ * @param <V>
+ *            the type of mapped values
  */
 public abstract class CacheExceptionHandler<K, V> {
+
+    /**
+     * Called whenever a CacheLoader fails while trying to load a value.
+     * <p>
+     * If this method chooses to throw a {@link RuntimeException} and the cache loader was
+     * invoked through a synchronous method, for example, {@link Cache#get(Object)} the
+     * exception will be propagated to the callee. There should be no reason for this
+     * method to throw an exception if the cache loader was asynchronously invoked, for
+     * example, through any of the load methods on {@link CacheLoadingService}. Because
+     * nobody will ever see the exception.
+     * 
+     * @param context
+     *            an CacheExceptionContext containing the default logger configured for
+     *            this cache
+     * @param loader
+     *            the cacheloader that failed to load a value
+     * @param key
+     *            the key for which the load failed
+     * @param map
+     *            a map of attributes used while trying to load
+     * @param isSynchronous
+     *            <code>true</code> if the load was triggered by a call to any of the
+     *            get methods on {@link Cache} , false if was triggered by a call any of
+     *            the load methods on {@link CacheLoadingService}
+     * @param cause
+     *            the exception that was raised.
+     * @return a value that can be used instead of the value that couldn't be loaded. If
+     *         <code>null</code> returned no entry will be added to the cache for the
+     *         given key
+     */
     public V loadFailed(CacheExceptionContext<K, V> context,
-            CacheLoader<? super K, ?> loader, K key, AttributeMap map, boolean isGet,
-            Exception cause) {
+            CacheLoader<? super K, ?> loader, K key, AttributeMap map,
+            boolean isSynchronous, Exception cause) {
+        // TODO whould we call handleRuntimeException if the cause is an runtime
+        // exception?
         handleException(context, cause);
         return null;
     }
 
+    /**
+     * A delivery of an event failed.
+     * 
+     * @param context
+     *            an CacheExceptionContext containing the default logger configured for
+     *            this cache
+     * @param event
+     *            the event that was delivered
+     * @param destination
+     *            the subscribtion where the delivery failed
+     * @param cause
+     *            the failure that occured
+     * @return true if the subscription should be cancelled, otherwise false
+     */
     public boolean eventDeliveryFailed(CacheExceptionContext<K, V> context,
             CacheEvent<K, V> event, EventSubscription<CacheEvent<K, V>> destination,
             RuntimeException cause) {
@@ -56,13 +123,49 @@ public abstract class CacheExceptionHandler<K, V> {
         return false;
     }
 
+    /**
+     * Handles an exception.
+     * 
+     * @param context
+     *            an CacheExceptionContext containing the default logger configured for
+     *            this cache
+     * @param cause
+     *            the exception to handle
+     */
     public abstract void handleException(CacheExceptionContext<K, V> context,
             Exception cause);
 
+    /**
+     * Handles a runtime exception.
+     * 
+     * @param context
+     *            an CacheExceptionContext containing the default logger configured for
+     *            this cache
+     * @param cause
+     *            the runtime exception to handle
+     */
     public abstract void handleRuntimeException(CacheExceptionContext<K, V> context,
             RuntimeException cause);
 
+    /**
+     * Handles an error.
+     * 
+     * @param context
+     *            an CacheExceptionContext containing the default logger configured for
+     *            this cache
+     * @param cause
+     *            the error to handle
+     */
     public abstract void handleError(CacheExceptionContext<K, V> context, Error cause);
 
-    public abstract void warning(CacheExceptionContext<K, V> context, String warning);
+    /**
+     * Handles a warning.
+     * 
+     * @param context
+     *            an CacheExceptionContext containing the default logger configured for
+     *            this cache
+     * @param warning
+     *            the warning to handle
+     */
+    public abstract void handleWarning(CacheExceptionContext<K, V> context, String warning);
 }

@@ -14,20 +14,27 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * This class is used to configure the exception handling service bundle prior to usage.
+ * This class is used to configure the exception handling service prior to usage.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @param <K>
+ *            the type of keys maintained by the cache
+ * @param <V>
+ *            the type of mapped values
  */
 public class CacheExceptionHandlingConfiguration<K, V> extends
         AbstractCacheServiceConfiguration<K, V> {
     /** The name of this service. */
     public static final String SERVICE_NAME = "exceptionhandling";
 
+    /** The XML tag used to save the exception logger. */
     private final static String EXCEPTION_LOGGER_TAG = "exception-logger";
 
+    /** The XML tag used to save the exception handler. */
     private final static String EXCEPTION_HANDLER_TAG = "exception-handler";
 
+    /** The exception handler used for handling erroneous conditions in the cache. */
     private CacheExceptionHandler<K, V> exceptionHandler;
 
     /** The default exception log to log to. */
@@ -44,7 +51,7 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
      * Returns the exception handler that should be used to handle all exceptions and
      * warnings or <code>null</code> if it has been defined.
      * 
-     * @return the exceptionHandler
+     * @return the exceptionHandler that is configured for the cache
      * @see #setExceptionHandler(CacheExceptionHandler)
      */
     public CacheExceptionHandler<K, V> getExceptionHandler() {
@@ -65,12 +72,16 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
 
     /**
      * Sets the exception handler that should be used to handle all exceptions and
-     * warnings. If no exception handler is set using this method the cache should, unless
-     * it specifies otherwise, use an instance of
-     * {@link CacheExceptionHandlers#defaultExceptionHandler()}
+     * warnings. If no exception handler is set using this method the cache should use the
+     * one specified to {@link CacheConfiguration#setDefaultLogger(Logger). If a logger
+     * has not been set using that method either. The cache will, unless otherwise
+     * specified, use an instance of
+     * {@link CacheExceptionHandlers#defaultLoggingExceptionHandler()} to handle
+     * exceptions.
      * 
      * @param exceptionHandler
      *            the exceptionHandler to use for handling exceptions and warnings
+     * @return this configuration
      */
     public CacheExceptionHandlingConfiguration<K, V> setExceptionHandler(
             CacheExceptionHandler<K, V> exceptionHandler) {
@@ -84,8 +95,8 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
      * <p>
      * If no logger has been set using this method. The exception handling service will
      * used the default logger returned from
-     * {@link org.coconut.cache.CacheConfiguration#getDefaultLogger()}. If no default logger
-     * has been set, output will be sent to {@link System#err}.
+     * {@link org.coconut.cache.CacheConfiguration#getDefaultLogger()}. If no default
+     * logger has been set, output will be sent to {@link System#err}.
      * 
      * @param log
      *            the log to use for exception handling
@@ -97,8 +108,7 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
     }
 
     /**
-     * @see org.coconut.cache.spi.AbstractCacheServiceConfiguration#fromXML(org.w3c.dom.Document,
-     *      org.w3c.dom.Element)
+     * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -112,8 +122,7 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
     }
 
     /**
-     * @see org.coconut.cache.spi.AbstractCacheServiceConfiguration#toXML(org.w3c.dom.Document,
-     *      org.w3c.dom.Element)
+     * {@inheritDoc}
      */
     @Override
     protected void toXML(Document doc, Element parent) throws Exception {

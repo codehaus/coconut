@@ -22,7 +22,7 @@ import org.coconut.core.Clock;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class CacheAttributes {
+public final class CacheAttributes {
 
     /**
      * This attribute key can be used to indicate the <tt>cost</tt> of retrieving or
@@ -41,16 +41,17 @@ public class CacheAttributes {
      */
     public static final String CREATION_TIME = "creation_time";
 
+    /** Indicates the number of hits for a cache element. */
     public static final String HITS = "hits";
 
+    /** Indicates when a cache element was last modified. */
     public static final String LAST_MODIFIED_TIME = "last_modified";
 
     /**
      * This attribute key can be used to indicate the size of an element. The mapped value
      * must be <tt>long</tt> between 1 and {@link Long#MAX_VALUE}.
-     */
-    /*
-     * It might make sense to allow a size of 0 indicating free storage.
+     * <p>
+     * TODO It might make sense to allow a size of 0 indicating free storage.
      */
     public static final String SIZE = "size";
 
@@ -73,13 +74,17 @@ public class CacheAttributes {
     /** The default cost of fetching an element if no cost is specified. */
     public static final double DEFAULT_COST = 1.0;
 
+    /** The default size of a cache element if no size is specified. */
     public static final long DEFAULT_SIZE = 1;
+
+    /** Cannot instantiate. */
+    private CacheAttributes() {}
 
     /**
      * Returns the value that the specified AttributeMap maps the {@link #COST} attribute
      * to or {@link CacheAttributes#DEFAULT_COST} if no such mapping exist.
      * 
-     * @param attributeMap
+     * @param attributes
      *            the map to retrieve the value of the cost attribute from
      * @return returns the value that the specified AttributeMap maps the cost attribute
      *         to or {@value CacheAttributes#DEFAULT_COST} if no such mapping exist
@@ -92,11 +97,11 @@ public class CacheAttributes {
      * @see #setCost(AttributeMap, double)
      * @see #COST
      */
-    public static double getCost(AttributeMap attributeMap) {
-        if (attributeMap == null) {
+    public static double getCost(AttributeMap attributes) {
+        if (attributes == null) {
             throw new NullPointerException("attributes is null");
         }
-        double cost = attributeMap.getDouble(COST, CacheAttributes.DEFAULT_COST);
+        double cost = attributes.getDouble(COST, CacheAttributes.DEFAULT_COST);
         if (Double.isNaN(cost)) {
             throw new IllegalArgumentException("invalid cost (cost = Nan)");
         } else if (Double.isInfinite(cost)) {
@@ -105,6 +110,13 @@ public class CacheAttributes {
         return cost;
     }
 
+    /**
+     * Returns the number of hits. TODO finish
+     * 
+     * @param attributes
+     *            the map to retrieve the value of the hit attribute from
+     * @return the number of hits
+     */
     public static long getHits(AttributeMap attributes) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
@@ -123,6 +135,8 @@ public class CacheAttributes {
      * 
      * @param attributes
      *            the map to retrieve the value of the creation time attribute from
+     * @param clock
+     *            the clock to retrieve the timestamp from
      * @return returns the value that the specified AttributeMap maps the
      *         {@link #CREATION_TIME} attribute to or the return value from a call to
      *         {@link Clock#timestamp()} on the specified clock if no such mapping exist.
@@ -150,6 +164,7 @@ public class CacheAttributes {
         }
         return time;
     }
+
     public static long getCreationTime(AttributeMap attributes) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
@@ -161,6 +176,7 @@ public class CacheAttributes {
         }
         return time;
     }
+
     /**
      * Returns the value that the specified AttributeMap maps the
      * {@link #LAST_MODIFIED_TIME} attribute to or the return value from a call to
@@ -168,6 +184,8 @@ public class CacheAttributes {
      * 
      * @param attributes
      *            the map to retrieve the value of the creation time attribute from
+     * @param clock
+     *            the clock to retrieve the timestamp from
      * @return returns the value that the specified AttributeMap maps the
      *         {@link #LAST_MODIFIED_TIME} attribute to or the return value from a call to
      *         {@link Clock#timestamp()} on the specified clock if no such mapping exist.
@@ -235,8 +253,8 @@ public class CacheAttributes {
      *            the map to retrieve the value of the time to live attribute from
      * @param unit
      *            the unit that the time should be returned in
-     * @param defaultValue the
-     *            value that should be returned if a value for time to live attribute
+     * @param defaultValue
+     *            the value that should be returned if a value for time to live attribute
      *            could not be found
      * @return returns the value that the specified AttributeMap maps the
      *         {@link #LAST_MODIFIED_TIME} attribute to or the return value from a call to
@@ -273,6 +291,17 @@ public class CacheAttributes {
         }
     }
 
+    /**
+     * TODO fill out.
+     * 
+     * @param attributes
+     *            the map to retrieve the value of the time to live attribute from
+     * @param unit
+     *            the unit that the time should be returned in
+     * @param defaultValue
+     *            the value that should be returned if a value for time to live attribute
+     *            could not be found
+     */
     public static long getTimeToRefresh(AttributeMap attributes, TimeUnit unit,
             long defaultValue) {
         if (attributes == null) {

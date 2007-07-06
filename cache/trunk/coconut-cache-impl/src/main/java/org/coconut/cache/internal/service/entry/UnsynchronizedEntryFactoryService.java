@@ -43,10 +43,12 @@ public class UnsynchronizedEntryFactoryService<K, V> extends
         long size = getSize(key, value, attributes, existing);
         long creationTime = getCreationTime(key, value, attributes, existing);
         long lastUpdate = getLastModified(key, value, attributes, existing);
+        long hits=getHits(key, value, attributes, existing);
         long refreshTime = getTimeToRefresh(attributeService.update(), key, value,
                 attributes, existing);
         UnsynchronizedCacheEntry<K, V> newEntry = new UnsynchronizedCacheEntry<K, V>(
                 this, key, value, cost, creationTime, lastUpdate, size, refreshTime);
+        newEntry.setHits(hits);
         newEntry.setExpirationTime(expirationTime);
 
         if (existing != null) {

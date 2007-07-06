@@ -1,7 +1,6 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-
 package org.coconut.cache.service.event;
 
 import org.coconut.cache.Cache;
@@ -24,13 +23,15 @@ import org.coconut.filter.Filters;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id: CacheFilters.java 265 2007-02-06 23:06:04Z kasper $
  */
-public class CacheEventFilters {
+public final class CacheEventFilters {
 
     /** A filter that only accepts instances of CacheCleared events. */
-    public static final Filter<?> CACHE_CLEARED_FILTER = Filters.isType(CacheCleared.class);
+    public static final Filter<?> CACHE_CLEARED_FILTER = Filters
+            .isType(CacheCleared.class);
 
     /** A filter that only accepts instances of CacheEvicted events. */
-    public static final Filter<?> CACHE_EVICTED_FILTER = Filters.isType(CacheEvicted.class);
+    public static final Filter<?> CACHE_EVICTED_FILTER = Filters
+            .isType(CacheEvicted.class);
 
     /**
      * A filter that only accepts all instance events (events that are not instances of
@@ -48,7 +49,8 @@ public class CacheEventFilters {
      * A {@link org.coconut.filter.Filter} that only accepts instances of ItemUpdated
      * events.
      */
-    public final static Filter<?> CACHEENTRY_ADDED_FILTER = Filters.isType(ItemAdded.class);
+    public final static Filter<?> CACHEENTRY_ADDED_FILTER = Filters
+            .isType(ItemAdded.class);
 
     /**
      * A {@link org.coconut.filter.Filter} that only accepts instances of ItemUpdated
@@ -75,34 +77,60 @@ public class CacheEventFilters {
 
     public static final Filter<?> CACHEEVENT_FILTER = Filters.isType(CacheEvent.class);
 
-    private final static Transformer<CacheEvent, Cache<?,?>> EVENT_TO_CACHE_TRANSFORMER = Transformers
+    /** A transformer that extracts the cache from the specified {@link CacheEvent}. */
+    private final static Transformer<CacheEvent, Cache<?, ?>> EVENT_TO_CACHE_TRANSFORMER = Transformers
             .transform(CacheEvent.class, "getCache");
 
+    /**
+     * A transformer that extracts the name of the cache from the specified
+     * {@link CacheEvent}.
+     */
     private final static Transformer<CacheEvent, String> EVENT_TO_NAME_TRANSFORMER = Transformers
             .transform(CacheEvent.class, "getName");
 
+    /** Cannot instantiate. */
+    private CacheEventFilters() {}
+
     /**
-     * Returns a Filter that filters {@link CacheEvent}s originating
-     * from a particular cache.
+     * Returns a {@link Filter} that only accepts {@link CacheEvent}s that originate from
+     * the specified cache.
+     * 
+     * @param cache
+     *            the cache that the cache events must originate from to be accepted
+     * @return a Filter that only accepts cache events that originate from the specified
+     *         cache
+     * @param <K>
+     *            the type of keys maintained by the cache
+     * @param <V>
+     *            the type of mapped values
      */
     public static <K, V> Filter<CacheEvent<K, V>> cacheEqualsFilter(Cache<K, V> cache) {
         return cacheFilter(Filters.same(cache));
     }
 
     /**
-     * Returns a Filter that filters {@link CacheEvent}s depending of
-     * some property/attribute regarding the originating cache. For example, the following
-     * Filter filters only accepts Cache events where the size of originating cache size
-     * is greater then 10.
+     * Returns a {@link Filter} that accepts {@link CacheEvent}s depending on some
+     * property regarding the originating cache. For example, the following Filter only
+     * accepts Cache events where the size of the originating cache size is greater then
+     * 10.
      * 
      * <pre>
      * Filter&lt;CacheEvent&lt;Integer, String&gt;&gt; filter = cacheFilter(new Filter&lt;Cache&lt;Integer, String&gt;&gt;()
      * {
-     *     public boolean accept(Cache&lt;Integer, String&gt; element) {
-     *         return element.size() &gt; 10;
+     *     public boolean accept(Cache&lt;Integer, String&gt; cache) {
+     *         return cache.size() &gt; 10;
      *     }
      * });
      * </pre>
+     * 
+     * @param filter
+     *            the Filter to check the cache against
+     * @return a filter that accepts cache events depending on some property regarding the
+     *         originating cache
+     * @param <K>
+     *            the type of keys maintained by the cache
+     * @param <V>
+     *            the type of mapped values
      */
     @SuppressWarnings("unchecked")
     public static <K, V> Filter<CacheEvent<K, V>> cacheFilter(Filter<Cache<K, V>> filter) {
@@ -110,6 +138,19 @@ public class CacheEventFilters {
                 (Transformer) EVENT_TO_CACHE_TRANSFORMER, filter);
     }
 
+    /**
+     * Returns a {@link Filter} that only accepts {@link CacheEvent}s where
+     * {@link CacheEvent#getName()} matches the specified filter.
+     * 
+     * @param filter
+     *            the filter the name should be checked against
+     * @return a Filter that only accepts cache events that originate from the specified
+     *         cache
+     * @param <K>
+     *            the type of keys maintained by the cache
+     * @param <V>
+     *            the type of mapped values
+     */
     @SuppressWarnings("unchecked")
     public static <K, V> Filter<CacheEvent<K, V>> cacheName(Filter<String> filter) {
         return CollectionFilters.transformFilter((Transformer) EVENT_TO_NAME_TRANSFORMER,

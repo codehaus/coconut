@@ -25,9 +25,9 @@ public abstract class MapMemoryTest implements MemoryTest {
 	class MapMemorySession implements MemorySession {
 		private final CacheTestAdapter adapter;
 
-		public void setup() {}
+		public void setupSession() {}
 
-		public void teardown() {}
+		public void teardownSession() {}
 
 		public MapMemorySession(final CacheTestAdapter adapter) {
 			this.adapter = adapter;

@@ -254,6 +254,37 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     /**
      * Associates the specified value with the specified key in this cache (optional
      * operation). If the cache previously contained a mapping for this key, the old value
+     * is replaced by the specified value. (A cache <tt>c</tt> is said to contain a
+     * mapping for a key <tt>k</tt> if and only if
+     * {@link org.coconut.cache.Cache#containsKey(Object) c.containsKey(k)} would return
+     * <tt>true</tt>.))
+     * <p>
+     * It is often more effective to specify a {@link CacheLoader} that implicitly loads
+     * values then to explicitly add them to cache using the various <tt>put</tt> and
+     * <tt>putAll</tt> methods.
+     * 
+     * @param key
+     *            key with which the specified value is to be associated.
+     * @param value
+     *            value to be associated with the specified key.
+     * @return previous value associated with specified key, or <tt>null</tt> if there
+     *         was no mapping for key.
+     * @throws UnsupportedOperationException
+     *             if the <tt>put</tt> operation is not supported by this cache.
+     * @throws ClassCastException
+     *             if the class of the specified key or value prevents it from being
+     *             stored in this cache.
+     * @throws IllegalArgumentException
+     *             if some aspect of this key or value prevents it from being stored in
+     *             this cache.
+     * @throws NullPointerException
+     *             if the specified key or value is <tt>null</tt>.
+     */
+    V put(K key, V value);
+
+    /**
+     * Associates the specified value with the specified key in this cache (optional
+     * operation). If the cache previously contained a mapping for this key, the old value
      * is replaced by the specified value. (A cache <tt>m</tt> is said to contain a
      * mapping for a key <tt>k</tt> if and only if
      * {@link #containsKey(Object) m.containsKey(k)} would return <tt>true</tt>.))

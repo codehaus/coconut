@@ -8,7 +8,6 @@ import static org.coconut.test.CollectionUtils.M2;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingService;
-import org.coconut.cache.tck.service.expiration.ExpirationTestBundle;
 import org.coconut.cache.tck.service.loading.AbstractLoadingTestBundle;
 import org.junit.Test;
 

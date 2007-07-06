@@ -1,7 +1,6 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-
 package org.coconut.cache;
 
 import java.util.Map;
@@ -34,11 +33,21 @@ import org.coconut.core.AttributeMap;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
+ * @param <K>
+ *            the type of keys maintained by the cache
+ * @param <V>
+ *            the type of mapped values
  */
 public interface CacheEntry<K, V> extends Map.Entry<K, V> {
 
+    /**
+     * Returns an immutable {@link AttributeMap} with all the attributes for this cache
+     * entry.
+     * 
+     * @return an AttributeMap with all the attributes for this cache entry
+     */
     AttributeMap getAttributes();
-    
+
     /**
      * Returns the size of this element. Implementations are free to include overhead of
      * storing the element or just the size of the element itself.
@@ -47,8 +56,7 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V> {
      * store the element.
      * 
      * @return the size of the element. If the size of the object cannot be determined
-     *         {@link org.coconut.cache.CacheAttributes#DEFAULT_SIZE} should be
-     *         returned
+     *         {@link org.coconut.cache.CacheAttributes#DEFAULT_SIZE} should be returned
      */
     long getSize();
 

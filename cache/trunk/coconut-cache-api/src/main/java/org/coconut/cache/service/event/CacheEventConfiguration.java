@@ -37,26 +37,32 @@ import org.w3c.dom.NodeList;
  */
 public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
 
+    /** The name of this service. */
     public static final String SERVICE_NAME = "event";
 
     /** The classes that are excluded per default. */
-    private final static Set<Class<?>> defaultExcludes = new HashSet<Class<?>>();
+    private final static Set<Class<?>> DEFAULT_EXCLUDES = new HashSet<Class<?>>();
 
+    /** The XML exclude tag. */
     private final static String EXCLUDE_TAG = "exclude";
 
+    /** The XML excludes tag. */
     private final static String EXCLUDES_TAG = "excludes";
 
+    /** The XML include tag. */
     private final static String INCLUDE_TAG = "include";
 
+    /** The XML includes tag. */
     private final static String INCLUDES_TAG = "includes";
 
-    /** XML enabled tag. */
+    /** the XML enabled tag. */
     private final static String XML_ENABLED_ATTRIBUTE = "enabled";
 
     static {
-        defaultExcludes.add(CacheEntryEvent.ItemAccessed.class);
+        DEFAULT_EXCLUDES.add(CacheEntryEvent.ItemAccessed.class);
     }
 
+    /** Whether or not this service is enabled. */
     private boolean enabled;
 
     /** The classes that should be excluded. */
@@ -93,15 +99,26 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
      * @throws IllegalArgumentException
      *             if one or more of the specified classes does not inherit from
      *             CacheEvent
+     * @return this configuration
      */
-    public void exclude(Class<?>... classes) throws NullPointerException {
+    public CacheEventConfiguration exclude(Class<?>... classes)
+            throws NullPointerException {
         checkClasses(classes);
         excludes.addAll(Arrays.asList(classes));
+        return this;
     }
 
-    public void include(Class<?>... classes) {
+    /**
+     * Includes the specified event types.
+     * 
+     * @param classes
+     *            the classes that should be included.
+     * @return this configuration
+     */
+    public CacheEventConfiguration include(Class<?>... classes) {
         checkClasses(classes);
         includes.addAll(Arrays.asList(classes));
+        return this;
     }
 
     /**
@@ -131,7 +148,7 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
         if (clazz == null) {
             throw new NullPointerException("clazz is null");
         }
-        boolean isIncluded = !isCovered(defaultExcludes, clazz);
+        boolean isIncluded = !isCovered(DEFAULT_EXCLUDES, clazz);
         isIncluded &= !isCovered(excludes, clazz);
         isIncluded |= isCovered(includes, clazz);
         return isIncluded;
@@ -152,6 +169,12 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
         return this;
     }
 
+    /**
+     * Checks that the specified classes are proper cache event classes.
+     * 
+     * @param classes
+     *            the classes to check
+     */
     private void checkClasses(Class<?>[] classes) {
         if (classes == null) {
             throw new NullPointerException("classes is null");
@@ -167,6 +190,12 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
         }
     }
 
+    /**
+     * Returns the child xml elements for the specified tag.
+     * @param e the parent
+     * @param name the name of the tag
+     * @return all the child elements matching the tag
+     */
     private List<Element> getChildElements(Element e, String name) {
         List<Element> l = new ArrayList<Element>();
         if (e != null) {
@@ -181,6 +210,16 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
         return l;
     }
 
+    /**
+     * Checks to see if the specified class is covered in the specified set of classes.
+     * 
+     * @param set
+     *            the set of classes to check against
+     * @param type
+     *            the type to check
+     * @return true if the specified class is covered in the specified set, otherwise
+     *         false
+     */
     private boolean isCovered(Set<Class<?>> set, Class<?> type) {
         for (Class<?> c : set) {
             if (type.equals(c) || c.isAssignableFrom(type)) {
@@ -191,8 +230,7 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
     }
 
     /**
-     * @see org.coconut.cache.spi.AbstractCacheServiceConfiguration#fromXML(org.w3c.dom.Document,
-     *      org.w3c.dom.Element)
+     * {@inheritDoc}
      */
     @Override
     protected void fromXML(Element parent) throws DOMException, ClassNotFoundException {
@@ -218,8 +256,7 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
     }
 
     /**
-     * @see org.coconut.cache.spi.AbstractCacheServiceConfiguration#toXML(org.w3c.dom.Document,
-     *      org.w3c.dom.Element)
+     * {@inheritDoc}
      */
     @Override
     protected void toXML(Document doc, Element parent) {
@@ -228,6 +265,20 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
         add(excludes, doc, parent, EXCLUDES_TAG, EXCLUDE_TAG);
     }
 
+    /**
+     * Adds the specified set of classes to specified parent tag.
+     * 
+     * @param set
+     *            the set of classes
+     * @param doc
+     *            the document to add to
+     * @param parent
+     *            the parent element
+     * @param parentTag
+     *            the name of the parent tag.
+     * @param tag
+     *            the tag that each class should be added under
+     */
     static void add(Set<Class<?>> set, Document doc, Element parent, String parentTag,
             String tag) {
         if (set.size() > 0) {
@@ -235,9 +286,8 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
             for (Class<?> c : set) {
                 String name = c.getCanonicalName();
                 if (c.getDeclaringClass() != null) {
-                    //TODO: Gad vide hvordan vores normal XMLUtil serializarings
-                    //rutiner klare en indre klasse??
-                    
+                    // TODO: Gad vide hvordan vores normal XMLUtil serializarings
+                    // rutiner klare en indre klasse??
                     name = name.substring(0, name.length() - c.getSimpleName().length()
                             - 1)
                             + "$" + c.getSimpleName();

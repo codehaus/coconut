@@ -104,7 +104,7 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
     }
 
     /**
-     * Reads this configuration for XML.
+     * Reads this configuration from an XML element.
      * 
      * @param element
      *            The XML Element to read the configuration from

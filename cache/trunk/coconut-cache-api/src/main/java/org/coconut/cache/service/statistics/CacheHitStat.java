@@ -9,14 +9,18 @@ import org.coconut.cache.spi.CacheSPI;
  * The class holds the hit statistics for a cache.
  * <p>
  * TODO: make sure this class is JMX compatible.
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class CacheHitStat {
+    /** A CacheHitStat with 0 hits and 0 misses. */
     public static final CacheHitStat STAT00 = new CacheHitStat(0, 0);
 
-    /** The number of cache hits */
+    /** The number of cache hits. */
     private final long hits;
 
-    /** The number of cache misses */
+    /** The number of cache misses. */
     private final long misses;
 
     /**
@@ -100,5 +104,4 @@ public class CacheHitStat {
         return CacheSPI.lookup(CacheHitStat.class, "toString", getHitRatio(), hits,
                 misses);
     }
-
 }

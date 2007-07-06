@@ -72,7 +72,7 @@ public class CacheExceptionHandlingConfigurationTest {
                 CacheExceptionContext<Integer, String> context, RuntimeException cause) {}
 
         @Override
-        public void warning(CacheExceptionContext<Integer, String> context, String warning) {}}
+        public void handleWarning(CacheExceptionContext<Integer, String> context, String warning) {}}
 
     public class NonLoadableAbstractCacheExceptionHandler extends
             CacheExceptionHandler<Integer, String> {
@@ -90,6 +90,6 @@ public class CacheExceptionHandlingConfigurationTest {
                 CacheExceptionContext<Integer, String> context, RuntimeException cause) {}
 
         @Override
-        public void warning(CacheExceptionContext<Integer, String> context, String warning) {}}
+        public void handleWarning(CacheExceptionContext<Integer, String> context, String warning) {}}
 
 }

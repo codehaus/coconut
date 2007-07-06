@@ -22,8 +22,6 @@ import java.lang.annotation.Target;
 public @interface CacheServiceSupport {
     /**
      * Returns the type of services the cache implementation supports.
-     * 
-     * @return the type of services the cache implementation supports
      */
     Class[] value();
 }

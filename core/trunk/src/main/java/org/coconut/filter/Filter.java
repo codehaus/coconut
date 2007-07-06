@@ -18,7 +18,7 @@ package org.coconut.filter;
  * 
  * A number of files can then be tested against this filter accepting only the
  * files that are directories. A Filter should be stateless. Furthermore an
- * application of the <tt>accept<tt> method should not have any side effects.
+ * application of the <tt>accept</tt> method should not have any side effects.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id: Filter.java 36 2006-08-22 09:59:45Z kasper $

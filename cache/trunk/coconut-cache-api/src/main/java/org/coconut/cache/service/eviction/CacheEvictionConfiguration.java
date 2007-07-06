@@ -23,6 +23,10 @@ import org.w3c.dom.Element;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @param <K>
+ *            the type of keys maintained by the cache
+ * @param <V>
+ *            the type of mapped values
  */
 public class CacheEvictionConfiguration<K, V> extends
         AbstractCacheServiceConfiguration<K, V> {
@@ -244,8 +248,7 @@ public class CacheEvictionConfiguration<K, V> extends
     }
 
     /**
-     * @see org.coconut.cache.spi.AbstractCacheServiceConfiguration#fromXML(org.w3c.dom.Document,
-     *      org.w3c.dom.Element)
+     * {@inheritDoc}
      */
     @Override
     protected void fromXML(Element e) throws Exception {
@@ -263,8 +266,7 @@ public class CacheEvictionConfiguration<K, V> extends
     }
 
     /**
-     * @see org.coconut.cache.spi.AbstractCacheServiceConfiguration#toXML(org.w3c.dom.Document,
-     *      org.w3c.dom.Element)
+     * {@inheritDoc}
      */
     @Override
     protected void toXML(Document doc, Element base) throws Exception {

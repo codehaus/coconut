@@ -6,7 +6,6 @@ package org.coconut.cache.internal.service.eviction;
 import java.util.List;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.management.annotation.ManagedAttribute;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -14,10 +13,8 @@ import org.coconut.management.annotation.ManagedAttribute;
  */
 public interface InternalCacheEvictionService<K, V, T extends CacheEntry<K, V>> {
 
-    @ManagedAttribute(defaultValue = "Preferable Size", description = "The preferable size of the cache")
     int getPreferableSize();
 
-    @ManagedAttribute(defaultValue = "Preferable Capacity", description = "The preferable capacity of the cache")
     long getPreferableCapacity();
 
     /**
@@ -42,4 +39,11 @@ public interface InternalCacheEvictionService<K, V, T extends CacheEntry<K, V>> 
     boolean isSizeBreached(int size);
 
     int add(T t);
+    
+//methods when we have a some storage
+    //public void evict(Object key);
+
+    //public void evictAll(Collection keys) {}
+
+    //public void evictIdleElements() {}
 }

@@ -3,29 +3,74 @@ package org.coconut.cache.tck.cacheentry;
 import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M2;
 
-import org.coconut.cache.CacheEntry;
+import org.coconut.cache.CacheAttributes;
+import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.test.util.IntegerToStringLoader;
+import org.coconut.core.AttributeMap;
 import org.junit.Test;
 
 public class Hits extends AbstractCacheTCKTestBundle {
-    @Test
-    public void dummyTest() {
-
+    static class MyLoader implements CacheLoader<Integer, String> {
+        public String load(Integer key, AttributeMap attributes) throws Exception {
+            CacheAttributes.setHits(attributes, key + 1);
+            return "" + (char) (key + 64);
+        }
     }
 
-    public void testHits() {
-        c = newCache(1);
-        CacheEntry<Integer, String> ce = getEntry(M1);
-        assertEquals(0l, ce.getHits());
+    @Test
+    public void get() {
+        c = newCache(2);
+        assertEquals(0l, peekEntry(M1).getHits());
+        assertEquals(0l, peekEntry(M2).getHits());
 
         get(M1);
-        assertEquals(1l, ce.getHits());
+        assertEquals(1l, peekEntry(M1).getHits());
+        assertEquals(0l, peekEntry(M2).getHits());
 
+        get(M1);
         getAll(M1, M2);
-        assertEquals(2l, ce.getHits());
-
-        peek(M1);
-        assertEquals(2l, ce.getHits());
+        assertEquals(3l, peekEntry(M1).getHits());
+        assertEquals(1l, peekEntry(M2).getHits());
     }
 
+    @Test
+    public void getEntry() {
+        c = newCache(2);
+
+        getEntry(M1);
+        assertEquals(1l, peekEntry(M1).getHits());
+        assertEquals(0l, peekEntry(M2).getHits());
+
+        getEntry(M1);
+        getEntry(M2);
+        getEntry(M1);
+        assertEquals(3l, peekEntry(M1).getHits());
+        assertEquals(1l, peekEntry(M2).getHits());
+    }
+
+    @Test
+    public void loadedNoAttributes() {
+        c = newCache(newConf().loading().setLoader(new IntegerToStringLoader()));
+
+        loadAndAwait(M1);
+        assertEquals(0l, peekEntry(M1).getHits());
+        get(M1);
+        assertEquals(1l, peekEntry(M1).getHits());
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void loadedAttribute() {
+        c = newCache(newConf().loading().setLoader(new MyLoader()));
+        loadAndAwait(M1);
+        get(M2);
+        assertEquals(2l, peekEntry(M1).getHits());
+        assertEquals(4l, peekEntry(M2).getHits());
+
+        get(M1);
+        getAll(M1, M2);
+        assertEquals(4l, peekEntry(M1).getHits());
+        assertEquals(5l, peekEntry(M2).getHits());
+    }
 }

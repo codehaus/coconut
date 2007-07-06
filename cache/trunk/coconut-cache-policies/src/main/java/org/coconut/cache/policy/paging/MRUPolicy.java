@@ -136,9 +136,9 @@ public class MRUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
         list.touch(index);
     }
 
+
     /**
-     * @see org.coconut.cache.ReplacementPolicy#update(int,
-     *      java.lang.Object)
+     * @see org.coconut.cache.ReplacementPolicy#update(int, java.lang.Object, org.coconut.core.AttributeMap)
      */
     public boolean update(int index, T newElement, AttributeMap ignore) {
         list.replace(index, newElement);

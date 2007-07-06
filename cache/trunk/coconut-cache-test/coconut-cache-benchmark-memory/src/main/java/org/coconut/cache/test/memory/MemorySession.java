@@ -8,9 +8,9 @@ package org.coconut.cache.test.memory;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public interface MemorySession {
-	void setup() throws Exception;
+	void setupSession() throws Exception;
 
 	void run(int iterations) throws Exception;
 
-	void teardown() throws Exception;
+	void teardownSession() throws Exception;
 }

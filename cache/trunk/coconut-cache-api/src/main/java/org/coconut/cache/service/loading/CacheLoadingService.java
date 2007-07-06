@@ -5,7 +5,6 @@ package org.coconut.cache.service.loading;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
@@ -22,6 +21,10 @@ import org.coconut.filter.Filter;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @param <K>
+ *            the type of keys maintained by the cache containing this service
+ * @param <V>
+ *            the type of mapped values
  */
 public interface CacheLoadingService<K, V> {
 
@@ -57,7 +60,6 @@ public interface CacheLoadingService<K, V> {
      * 
      * @param filter
      *            the filter to test cache entries against
-     * @return A future indicating pending load of all the entries
      */
     void filteredLoad(Filter<? super CacheEntry<K, V>> filter);
 
@@ -74,8 +76,6 @@ public interface CacheLoadingService<K, V> {
      * 
      * @param key
      *            whose associated value is to be loaded.
-     * @return a Future representing pending completion of the load, and whose
-     *         <tt>get()</tt> method will return <tt>null</tt> upon completion.
      * @throws ClassCastException
      *             if the key is of an inappropriate type for this cache (optional).
      * @throws NullPointerException
@@ -113,8 +113,6 @@ public interface CacheLoadingService<K, V> {
      * 
      * @param key
      *            whose associated value is to be loaded.
-     * @return a Future representing pending completion of the load, and whose
-     *         <tt>get()</tt> method will return <tt>null</tt> upon completion.
      * @throws ClassCastException
      *             if the key is of an inappropriate type for this cache (optional).
      * @throws NullPointerException
@@ -157,9 +155,6 @@ public interface CacheLoadingService<K, V> {
 
     /**
      * Attempts to reload all entries that are currently held in the cache.
-     * 
-     * @return a Future representing pending completion of all the loads, and whose
-     *         <tt>get()</tt> method will return <tt>null</tt> upon completion.
      */
     void reloadAll();
 }

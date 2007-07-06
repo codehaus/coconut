@@ -33,26 +33,26 @@ public class XmlConfigurator {
 
     /**
      * The key for which the type of the cache is specified in
-     * CacheConfiguration.getProperty()
+     * CacheConfiguration.getProperty().
      */
     public static final String CACHE_INSTANCE_TYPE = "org.coconut.cache.type";
 
-    /** The current version of the XML schema */
+    /** The current version of the XML schema. */
     public static final String CURRENT_VERSION = "0.0.4";
 
-    /** The name of cache */
+    /** The name of cache. */
     static final String CACHE_NAME_ATTR = "name";
 
-    /** The root tag for a cache instance */
+    /** The root tag for a cache instance. */
     static final String CACHE_TAG = "cache";
 
-    /** The type of the cache */
+    /** The type of the cache. */
     static final String CACHE_TYPE_ATTR = "type";
 
-    /** The root tag */
+    /** The root tag. */
     static final String CONFIG_TAG = "cache-config";
 
-    /** The cache-config->version tag */
+    /** The cache-config->version tag. */
     static final String CONFIG_VERSION_ATTR = "version";
 
     /**

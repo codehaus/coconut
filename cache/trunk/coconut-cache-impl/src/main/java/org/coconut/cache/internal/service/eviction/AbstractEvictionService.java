@@ -3,7 +3,6 @@
  */
 package org.coconut.cache.internal.service.eviction;
 
-import java.util.Collection;
 import java.util.Map;
 
 import org.coconut.cache.CacheConfiguration;
@@ -62,17 +61,4 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
     public void trimToSize(int size) {
         helper.trimToSize(size);
     }
-
-    public void evict(Object key) {
-        helper.evict(key);
-    }
-
-    public void evictIdleElements() {
-        helper.evictIdleElements();
-    }
-
-    public void evictAll(Collection<? extends K> keys) {
-        helper.evictAll(keys);
-    }
-
 }

@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.service.event;
@@ -32,6 +32,10 @@ import org.coconut.cache.service.loading.CacheLoadingService;
  * @see CacheEventConfiguration
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
+ * @param <K>
+ *            the type of keys maintained by the cache
+ * @param <V>
+ *            the type of mapped values
  */
 @SuppressWarnings("hiding")
 public interface CacheEntryEvent<K, V> extends CacheEvent<K, V>, CacheEntry<K, V> {
@@ -53,9 +57,11 @@ public interface CacheEntryEvent<K, V> extends CacheEvent<K, V>, CacheEntry<K, V
         String NAME = "cacheitem.Accessed";
 
         /**
-         * Whether or not the requested entry was allready in the cache. If the entry was
+         * Whether or not the requested entry was already in the cache. If the entry was
          * not in the cache {@link #getValue()} will return <code>null</code>. TODO
          * what about if it is loaded??? isn't there a value then.
+         * 
+         * @return whether or not the requested entry was already in the cache
          */
         boolean isHit();
     }
@@ -63,8 +69,8 @@ public interface CacheEntryEvent<K, V> extends CacheEvent<K, V>, CacheEntry<K, V
     /**
      * This event indicates that an entry has been added to the cache. This normally
      * happens either explicitly by using {@link Cache#put(Object, Object)} or implicitly
-     * by calling {@link Cache#get(Object)} or {@link CacheLoadingService#load(Object)} and letting the
-     * cache loader fetch the value.
+     * by calling {@link Cache#get(Object)} or {@link CacheLoadingService#load(Object)}
+     * and letting the cache loader fetch the value.
      */
     interface ItemAdded<K, V> extends CacheEntryEvent<K, V> {
 
@@ -116,6 +122,8 @@ public interface CacheEntryEvent<K, V> extends CacheEvent<K, V>, CacheEntry<K, V
         /**
          * Returns true if the item was removed because the timeout value specified for
          * the item had been reached. Otherwise returns false.
+         * 
+         * @return whether or not the value was implicitly removed
          */
         boolean hasExpired();
 
@@ -141,12 +149,18 @@ public interface CacheEntryEvent<K, V> extends CacheEvent<K, V>, CacheEntry<K, V
          * <code>null</code>, but this must be clearly specified. The reason for this
          * is that if there exist a entry for the particular in a background store it will
          * need to fetched before this event can be posted.
+         * 
+         * @return the value that was previously associated with the specified key, or
+         *         <tt>null</tt> if there was no mapping for the key.
          */
         V getPreviousValue();
 
         /**
          * Returns true if the item was updated because the timeout value specified for
          * the item had been reached. Otherwise returns false.
+         * 
+         * @return true if the item was updated because the timeout value specified for
+         *         the item had been reached. Otherwise returns false.
          */
         boolean hasExpired();
     }
