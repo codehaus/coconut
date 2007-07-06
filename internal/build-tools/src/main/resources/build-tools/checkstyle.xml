@@ -113,10 +113,11 @@
     <!--module name="IllegalToken"/-->
     <module name="IllegalTokenText" />
 
+<!-- 
     <module name="IllegalType">
       <property name="severity" value="warning" />
     </module>
-
+ -->
     <!--
       Checkstyle 4 check
       <module name="ImportControl"/>

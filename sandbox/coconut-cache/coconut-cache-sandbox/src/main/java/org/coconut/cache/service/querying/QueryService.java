@@ -6,8 +6,21 @@ package org.coconut.cache.service.querying;
 import org.coconut.cache.CacheEntry;
 import org.coconut.filter.Filter;
 
+
 /**
- * 
+ * it should be possible to create cursors when querying the database:
+    queryService.enableCursoring();
+
+    This will also allow us to do pagination
+
+    implementation details:
+    we need to keep track of a double linked list for each cacheentry.
+    much like linkedhashmap.
+
+    NOTE: If we need to sort the entries it is a whole other story....
+   
+    Query example
+    Query top 10 hits
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $

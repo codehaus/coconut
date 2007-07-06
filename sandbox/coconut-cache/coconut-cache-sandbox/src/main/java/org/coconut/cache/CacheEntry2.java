@@ -22,4 +22,15 @@ public interface CacheEntry2 extends CacheEntry{
      * doing lifetime and will not be persisted.
      */
     // Map<String, Object> getAttributes();
+    
+
+ // /**
+ // * Returns a version counter. An implementation may use timestamps for this
+ // * or an incrementing number. Timestamps usually have issues with
+ // * granularity and are harder to use across clusteres or threads, so an
+ // * incrementing counter is often safer.
+ // *
+ // * @return the version of the current entry
+ // */
+ // long getVersion();
 }

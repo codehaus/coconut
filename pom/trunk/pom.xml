@@ -123,7 +123,7 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
           <excludePackageNames>
-            *.internal.*:*.tck.*:*.test.*
+            *.internal.*:*.tck.*:*.test.*:*.jcip.*:*.examples.*
           </excludePackageNames>
           <aggregate>true</aggregate>
           <links>
@@ -176,6 +176,7 @@
           <effort>Max</effort>
         </configuration>
       </plugin>
+      <!-- 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clover-plugin</artifactId>
@@ -187,6 +188,7 @@
           <jdk>1.5</jdk>
         </configuration>
       </plugin>
+       -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>

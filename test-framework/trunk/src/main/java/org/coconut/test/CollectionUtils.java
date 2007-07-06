@@ -66,6 +66,8 @@ public class CollectionUtils {
 
     public static final Map.Entry<Integer, String> MNAN4 = newEntry(4, "C");
 
+    public static final Collection<Integer> keysWithNull=Arrays.asList(1,2,null,4);
+
     public static Map.Entry<Integer, String> newEntry(Integer key, String value) {
         return new ImmutableMapEntry<Integer, String>(key, value);
 
