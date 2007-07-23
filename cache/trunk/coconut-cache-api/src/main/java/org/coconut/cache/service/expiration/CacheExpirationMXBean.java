@@ -29,18 +29,27 @@ import java.util.concurrent.TimeUnit;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public interface CacheExpirationMXBean {
+    
+    /**
+     * Returns the default time to live in milliseconds for new elements that are added to
+     * the cache.
+     * 
+     * @return the default time to live in milliseconds for new elements that are added to
+     *         the cache
+     */
     long getDefaultTimeToLiveMs();
 
     /**
-     * Sets the default expiration time in milliseconds for new objects that are added to
-     * the cache. If no default expiration time has been set, entries will never expire.
+     * Sets the default time to live in milliseconds for new elements that are added to
+     * the cache.
      * 
      * @param timeToLiveMs
-     *            the time from insertion to the point where the entry should expire in
-     *            milliseconds
+     *            the time from insertion or update to the point where the entry should
+     *            expire in milliseconds
      * @throws IllegalArgumentException
      *             if the specified time to live is negative (<0)
      * @see #getDefaultTimeToLiveMs(TimeUnit)
+     * @see CacheExpirationConfiguration#setDefaultTimeToLive(long, TimeUnit)
      */
     void setDefaultTimeToLiveMs(long timeToLiveMs);
 }

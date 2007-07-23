@@ -1,3 +1,6 @@
+/* Written by Kasper Nielsen and released to the public domain, as explained at
+ * http://creativecommons.org/licenses/publicdomain
+ */
 package org.coconut.cache.examples.loading;
 
 import java.util.concurrent.ScheduledExecutorService;

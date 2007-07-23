@@ -17,6 +17,9 @@ import org.junit.runner.notification.RunNotifier;
  */
 public class MyTestMethodRunner extends TestMethodRunner {
 
+	private static final Runtime RUNTIME = Runtime.getRuntime();
+	public volatile int foo;
+	
 	/**
      * @param test
      * @param method
@@ -27,9 +30,6 @@ public class MyTestMethodRunner extends TestMethodRunner {
 			Description description) {
 		super(test, method, notifier, description);
 	}
-	private static final Runtime RUNTIME = Runtime.getRuntime();
-	
-	public volatile int foo;
 	/**
      * @see org.junit.internal.runners.TestMethodRunner#executeMethodBody()
      */

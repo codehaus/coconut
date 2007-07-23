@@ -22,20 +22,11 @@ import org.coconut.internal.util.IndexedStack;
 @NotThreadSafe
 public class MRUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy<T>, Serializable {
 
-    /**
-     * @see org.coconut.cache.ReplacementPolicy#clear()
-     */
-    public void clear() {
-        while (evictNext() != null) {
-            /* ignore */
-        }
-    }
+    /** A unique policy name. */
+    public static final String NAME = "MRU";
 
     /** serialVersionUID */
     private static final long serialVersionUID = 7334611172293116644L;
-
-    /** A unique policy name. */
-    public static final String NAME = "MRU";
 
     /** The list used for bookkeeping. */
     private final IndexedStack<T> list;
@@ -72,12 +63,21 @@ public class MRUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
         list = new IndexedStack<T>(policy.list);
     }
 
-
     /**
      * @see org.coconut.cache.ReplacementPolicy#add(java.lang.Object, org.coconut.core.AttributeMap)
      */
     public int add(T data, AttributeMap ignore) {
         return list.add(data);
+    }
+
+
+    /**
+     * @see org.coconut.cache.ReplacementPolicy#clear()
+     */
+    public void clear() {
+        while (evictNext() != null) {
+            /* ignore */
+        }
     }
 
 

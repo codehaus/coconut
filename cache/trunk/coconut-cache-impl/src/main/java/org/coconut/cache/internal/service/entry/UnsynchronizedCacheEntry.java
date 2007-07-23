@@ -9,8 +9,6 @@ package org.coconut.cache.internal.service.entry;
  */
 public class UnsynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
 
-    private final AbstractCacheEntryFactoryService<K, V> service;
-
     long expirationTime;
 
     long hits;
@@ -20,7 +18,9 @@ public class UnsynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
     long lastAccessTime;
 
     long refreshTime;
-    
+
+    private final AbstractCacheEntryFactoryService<K, V> service;
+
     /**
      * @param key
      * @param value
@@ -29,15 +29,17 @@ public class UnsynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
      * @param lastUpdateTime
      * @param size
      */
-    public UnsynchronizedCacheEntry(AbstractCacheEntryFactoryService<K, V> service, K key,
-            V value, double cost, long creationTime, long lastUpdateTime, long size, long refreshTime) {
+    public UnsynchronizedCacheEntry(AbstractCacheEntryFactoryService<K, V> service,
+            K key, V value, double cost, long creationTime, long lastUpdateTime,
+            long size, long refreshTime) {
         super(key, value, cost, creationTime, lastUpdateTime, size);
         this.service = service;
-        this.refreshTime=refreshTime;
-//        this.expirationTime = expirationTime;
-//        this.hits = hits;
-//        this.lastAccessTime = lastAccessTime;
+        this.refreshTime = refreshTime;
+// this.expirationTime = expirationTime;
+// this.hits = hits;
+// this.lastAccessTime = lastAccessTime;
     }
+
     public void accessed() {
         lastAccessTime = service.getAccessTimeStamp(this);
         hits++;
@@ -87,6 +89,7 @@ public class UnsynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
     void setLastAccessTime(long lastAccessTime) {
         this.lastAccessTime = lastAccessTime;
     }
+
     @Override
     public long getRefreshTime() {
         return refreshTime;

@@ -132,6 +132,6 @@ public class XmlConfiguratorTest {
         if (e != null) {
             parent.appendChild(e);
         }
-        return (T) xml.readCacheService(doc, parent, (Class) configuration.getClass());
+        return (T) xml.readCacheService(parent, (Class) configuration.getClass());
     }
 }

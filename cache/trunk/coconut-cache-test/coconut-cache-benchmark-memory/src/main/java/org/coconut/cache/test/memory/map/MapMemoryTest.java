@@ -25,13 +25,13 @@ public abstract class MapMemoryTest implements MemoryTest {
 	class MapMemorySession implements MemorySession {
 		private final CacheTestAdapter adapter;
 
+        public MapMemorySession(final CacheTestAdapter adapter) {
+            this.adapter = adapter;
+        }
 		public void setupSession() {}
 
 		public void teardownSession() {}
 
-		public MapMemorySession(final CacheTestAdapter adapter) {
-			this.adapter = adapter;
-		}
 
 		public void run(int iterations) throws Exception {
 			doRun(adapter, iterations);

@@ -26,9 +26,9 @@ public class CacheExpirationConfigurationTest {
 
     static CacheExpirationConfiguration<Integer, String> DEFAULT = new CacheExpirationConfiguration<Integer, String>();
 
-    private CacheExpirationConfiguration<Integer, String> conf;
-
     private final static Filter<CacheEntry<Integer, String>> DEFAULT_FILTER = Filters.trueFilter();
+
+    private CacheExpirationConfiguration<Integer, String> conf;
 
     @Before
     public void setUp() {

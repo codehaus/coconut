@@ -13,33 +13,34 @@ import org.coconut.core.AttributeMaps;
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: AbstractPolicy.java 280 2007-03-30 15:40:50Z kasper $
+ * @param <T>
+ *            the type of objects contained within the replacement policy
  */
 public abstract class AbstractPolicy<T> implements ReplacementPolicy<T> {
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#add(java.lang.Object)
+     * {@inheritDoc}
      */
     public int add(T element) {
         return add(element, AttributeMaps.EMPTY_MAP);
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#update(int,
-     *      java.lang.Object)
+     * {@inheritDoc}
      */
     public boolean update(int index, T newElement) {
         return update(index, newElement, AttributeMaps.EMPTY_MAP);
     }
 
     /**
-     * Adds all the elements to the policy. The elements will be added
-     * accordingly to the returning order of the iterator.
+     * Adds all the elements to the policy. The elements will be added accordingly to the
+     * returning order of the iterator.
      * 
      * @param items
      *            the elements to add
-     * @return the references of each element that was added. The first element
-     *         returned by the lists iterator will have index 0 in the array.
-     *         The last element returned by the iterator will have index
+     * @return the references of each element that was added. The first element returned
+     *         by the lists iterator will have index 0 in the array. The last element
+     *         returned by the iterator will have index
      */
     public int[] addAll(List<T> items) {
         int[] result = new int[items.size()];
@@ -55,8 +56,8 @@ public abstract class AbstractPolicy<T> implements ReplacementPolicy<T> {
      * 
      * @param number
      *            the number of entries to evict
-     * @return a list containing the elements that was evicted in the order they
-     *         where evicted
+     * @return a list containing the elements that was evicted in the order they where
+     *         evicted
      */
     public List<T> evict(final int number) {
         if (number <= 0) {

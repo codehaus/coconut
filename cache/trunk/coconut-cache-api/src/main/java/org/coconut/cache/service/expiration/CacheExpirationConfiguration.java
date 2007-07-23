@@ -59,6 +59,14 @@ public class CacheExpirationConfiguration<K, V> extends
         super(SERVICE_NAME);
     }
 
+    /**
+     * Returns the default configured time to live in the specified time unit.
+     * 
+     * @param unit
+     *            the time unit to return the time to live in
+     * @return the default configured time to live
+     * @see #setDefaultTimeToLive(long, TimeUnit)
+     */
     public long getDefaultTimeToLive(TimeUnit unit) {
         if (defaultTimeToLive == CacheExpirationService.NEVER_EXPIRE) {
             return CacheExpirationService.NEVER_EXPIRE;
@@ -68,8 +76,11 @@ public class CacheExpirationConfiguration<K, V> extends
     }
 
     /**
-     * Returns the specified expiration filter or <tt>null</tt> if no filter has been
-     * specified.
+     * Returns the configured expiration filter or <tt>null</tt> if no filter has been
+     * configured.
+     * 
+     * @return the configured expiration filter or null if no filter has been configured
+     * @see #setExpirationFilter(Filter)
      */
     public Filter<CacheEntry<K, V>> getExpirationFilter() {
         return expirationFilter;
@@ -90,6 +101,7 @@ public class CacheExpirationConfiguration<K, V> extends
      *             if specified timeToLive is a non positive number
      * @throws NullPointerException
      *             if the specified unit is <tt>null</tt>
+     * @return this configuration
      */
     public CacheExpirationConfiguration<K, V> setDefaultTimeToLive(long timeToLive,
             TimeUnit unit) {
@@ -110,10 +122,14 @@ public class CacheExpirationConfiguration<K, V> extends
 
     /**
      * Sets a specific expiration filter that can be used in <tt>addition</tt> to the
-     * time based expiration filter to check if items has expired. If no filter has been
+     * time based expiration check to see if an element has expired. If no filter has been
      * set items are expired according to their registered expiration time. If an
      * expiration filter is set cache entries are first checked against that filter then
      * against the time based expiration times.
+     * 
+     * @param filter
+     *            the filter to use for checking expired elements
+     * @return this configuration
      */
     public CacheExpirationConfiguration<K, V> setExpirationFilter(
             Filter<CacheEntry<K, V>> filter) {

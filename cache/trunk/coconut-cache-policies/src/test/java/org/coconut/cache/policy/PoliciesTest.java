@@ -21,7 +21,7 @@ import org.junit.Test;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Revision$
+ * @version $Id$
  */
 public class PoliciesTest {
 

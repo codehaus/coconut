@@ -1,5 +1,5 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the Apache 2.0 License, see http://coconut.codehaus.org/license.
+/* Written by Kasper Nielsen and released to the public domain, as explained at
+ * http://creativecommons.org/licenses/publicdomain
  */
 package org.coconut.cache.examples.management;
 

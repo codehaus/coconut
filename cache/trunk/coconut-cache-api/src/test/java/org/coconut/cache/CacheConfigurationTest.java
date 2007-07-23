@@ -209,7 +209,7 @@ public class CacheConfigurationTest {
 		}
 	}
 
-	public static class PrivateConstructorCache extends DummyCache {
+	public static final class PrivateConstructorCache extends DummyCache {
 
 		/**
          * @param configuration

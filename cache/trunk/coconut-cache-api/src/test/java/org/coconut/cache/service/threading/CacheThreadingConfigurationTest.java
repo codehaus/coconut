@@ -16,14 +16,14 @@ import org.junit.Test;
  */
 public class CacheThreadingConfigurationTest {
 
-    CacheExecutorConfiguration<?,?> t;
-
-    CacheExecutorConfiguration DEFAULT = new CacheExecutorConfiguration();
-
     private final static Executor e = Executors.newCachedThreadPool();
 
     private final static ScheduledExecutorService ses = Executors
             .newSingleThreadScheduledExecutor();
+
+    CacheExecutorConfiguration<?,?> t;
+
+    CacheExecutorConfiguration DEFAULT = new CacheExecutorConfiguration();
 
     @Before
     public void setUp() {

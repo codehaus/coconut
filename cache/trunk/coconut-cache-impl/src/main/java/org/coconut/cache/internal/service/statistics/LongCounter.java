@@ -328,11 +328,11 @@ public abstract class LongCounter
 
     final static class ConcurrentLongCounter extends LongCounter {
 
+        private final static boolean doUpdate = true;
+
         private final AtomicLong l = new AtomicLong();
 
         private volatile EventProcessor<? super LongCounter>[] array = new EventProcessor[0];
-
-        private final static boolean doUpdate = true;
 
         private final Object mutex = new Object();
 

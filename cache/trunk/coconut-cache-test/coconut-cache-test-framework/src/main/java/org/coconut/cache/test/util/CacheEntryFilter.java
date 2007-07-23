@@ -17,7 +17,7 @@ import org.coconut.filter.Filter;
  */
 public class CacheEntryFilter implements Filter<CacheEntry<Integer, String>> {
 
-    private volatile boolean accept = false;
+    private volatile boolean accept;
 
     private volatile CacheEntry<Integer, String> lastEntry;
 

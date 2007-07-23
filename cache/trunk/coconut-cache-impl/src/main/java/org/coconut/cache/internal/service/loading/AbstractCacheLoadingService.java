@@ -166,9 +166,9 @@ public abstract class AbstractCacheLoadingService<K, V> extends
     }
 
     /**
-     * @see org.coconut.cache.service.loading.CacheLoadingService#reloadAll()
+     * @see org.coconut.cache.service.loading.CacheLoadingService#forceLoadAll()
      */
-    public final void reloadAll() {
+    public final void forceLoadAll() {
         filteredLoad(Filters.trueFilter());
     }
 

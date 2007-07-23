@@ -16,17 +16,18 @@ import org.coconut.core.AttributeMap;
 /**
  * A FIFO based replacement policy.
  * 
- * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id$
  */
 @NotThreadSafe
 public class FIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy<T>,
         Serializable, Cloneable {
 
-    /** serialVersionUID. */
-    private static final long serialVersionUID = -8585661504028685651L;
-
     /** A unique policy name. */
     public static final String NAME = "FIFO";
+
+    /** serialVersionUID. */
+    private static final long serialVersionUID = -8585661504028685651L;
 
     /** Use a MRU policy for ordering, ignoring touch to elements. */
     private final MRUPolicy<T> policy;

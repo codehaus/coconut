@@ -31,20 +31,27 @@ public class CacheLoadingConfiguration<K, V> extends
     /** The name of this service. */
     public static final String SERVICE_NAME = "loading";
 
+    /** The XML tag for the cache loader. */
     private final static String LOADER_TAG = "loader";
 
+    /** The XML tag for the refresh filter. */
     private final static String REFRESH_FILTER_TAG = "refresh-filter";
 
+    /** The XML tag for the refresh interval. */
     private final static String REFRESH_INTERVAL_TAG = "default-time-to-refresh";
 
-    private final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.NANOSECONDS;
-
+    /** The default time to refresh. */
     private long defaultTimeToRefresh;
 
+    /** The cache loader. */
     private CacheLoader<? super K, ? extends V> loader;
 
+    /** The refresh filter. */
     private Filter<CacheEntry<K, V>> refreshFilter;
 
+    /**
+     * Creates a new CacheLoadingConfiguration.
+     */
     public CacheLoadingConfiguration() {
         super(SERVICE_NAME);
     }
@@ -61,18 +68,26 @@ public class CacheLoadingConfiguration<K, V> extends
         if (defaultTimeToRefresh == Long.MAX_VALUE) {
             return Long.MAX_VALUE;
         } else {
-            return unit.convert(defaultTimeToRefresh, DEFAULT_TIME_UNIT);
+            return unit.convert(defaultTimeToRefresh, TimeUnit.NANOSECONDS);
         }
     }
 
     /**
-     * Returns the CacheLoader that the cache should use for loading new key-value
-     * bindings. If this method returns <code>null</code> no initial loader will be set.
+     * Returns the CacheLoader that the cache should use for loading cache elements.
+     * 
+     * @return the configured cache loader for the cache
+     * @see #setLoader(CacheLoader)
      */
     public CacheLoader<? super K, ? extends V> getLoader() {
         return loader;
     }
 
+    /**
+     * Returns the configured refresh filter.
+     * 
+     * @return the configured refresh filter
+     * @see #setRefreshFilter(Filter)
+     */
     public Filter<CacheEntry<K, V>> getRefreshFilter() {
         return refreshFilter;
     }
@@ -90,8 +105,8 @@ public class CacheLoadingConfiguration<K, V> extends
      * @param interval
      *            the i
      * @param unit
-     *            the unit of the interval
-     * @return this Expiration
+     *            the time unit of the interval
+     * @return this configuration
      */
     public CacheLoadingConfiguration<K, V> setDefaultTimeToRefresh(long interval,
             TimeUnit unit) {
@@ -104,7 +119,7 @@ public class CacheLoadingConfiguration<K, V> extends
         if (interval == Long.MAX_VALUE) {
             defaultTimeToRefresh = interval;
         } else {
-            defaultTimeToRefresh = DEFAULT_TIME_UNIT.convert(interval, unit);
+            defaultTimeToRefresh = TimeUnit.NANOSECONDS.convert(interval, unit);
         }
         return this;
     }
@@ -153,8 +168,8 @@ public class CacheLoadingConfiguration<K, V> extends
 
         /* Refresh timer */
         Element eTime = getChild(REFRESH_INTERVAL_TAG, parent);
-        long time = UnitOfTime.fromElement(eTime, DEFAULT_TIME_UNIT, Long.MAX_VALUE);
-        setDefaultTimeToRefresh(time, DEFAULT_TIME_UNIT);
+        long time = UnitOfTime.fromElement(eTime, TimeUnit.NANOSECONDS, Long.MAX_VALUE);
+        setDefaultTimeToRefresh(time, TimeUnit.NANOSECONDS);
 
         /* Refresh Filter */
         refreshFilter = loadOptional(parent, REFRESH_FILTER_TAG, Filter.class);
@@ -171,7 +186,7 @@ public class CacheLoadingConfiguration<K, V> extends
 
         /* Refresh Timer */
         UnitOfTime.toElementCompact(doc, parent, REFRESH_INTERVAL_TAG,
-                defaultTimeToRefresh, DEFAULT_TIME_UNIT, 0);
+                defaultTimeToRefresh, TimeUnit.NANOSECONDS, 0);
 
         /* Refresh Filter */
         addAndsaveObject(doc, parent, REFRESH_FILTER_TAG, getResourceBundle(),

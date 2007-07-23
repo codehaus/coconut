@@ -1,3 +1,6 @@
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
+ */
 package org.coconut.cache.internal.service.loading;
 
 import java.util.Collection;
@@ -48,8 +51,8 @@ class LoadingUtils {
         }
 
         @ManagedOperation(description = "reload all mappings")
-        public void reloadAll() {
-            service.reloadAll();
+        public void forceLoadAll() {
+            service.forceLoadAll();
         }
     }
 
@@ -121,8 +124,8 @@ class LoadingUtils {
             delegate.loadAll(mapsWithAttributes);
         }
 
-        public void reloadAll() {
-            delegate.reloadAll();
+        public void forceLoadAll() {
+            delegate.forceLoadAll();
         }
 
         public void setDefaultTimeToRefresh(long timeToLive, TimeUnit unit) {

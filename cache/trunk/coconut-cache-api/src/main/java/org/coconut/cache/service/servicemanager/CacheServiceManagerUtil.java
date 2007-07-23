@@ -23,7 +23,7 @@ import org.coconut.cache.CacheServices;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public final class CacheServiceManagerUtil {
-    
+
     /** Cannot instantiate. */
     private CacheServiceManagerUtil() {}
 
@@ -53,12 +53,18 @@ public final class CacheServiceManagerUtil {
      *             if delay less than or equal to zero
      */
     /**
-     * @param c ss
-     * @param name ss 
-     * @param command ss
-     * @param initialDelay ss
-     * @param delay ss
-     * @param unit ss
+     * @param c
+     *            ss
+     * @param name
+     *            ss
+     * @param command
+     *            ss
+     * @param initialDelay
+     *            ss
+     * @param delay
+     *            ss
+     * @param unit
+     *            ss
      * @return ss
      */
     public static ScheduledFuture<?> registerSingleThreadSchedulingService(Cache<?, ?> c,
@@ -82,14 +88,19 @@ public final class CacheServiceManagerUtil {
     public static class WrappedExecutorService extends AbstractCacheService implements
             ExecutorService {
 
+        /** The {@link ExecutorService} we are wrapping. */
         private final ExecutorService service;
 
+        /**
+         * @param service
+         *            the ExecutorService to wrap
+         * @param name
+         *            the name of the service
+         */
         WrappedExecutorService(ExecutorService service, String name) {
             super(name);
             if (service == null) {
                 throw new NullPointerException("service is null");
-            } else if (name == null) {
-                throw new NullPointerException("name is null");
             }
             this.service = service;
         }

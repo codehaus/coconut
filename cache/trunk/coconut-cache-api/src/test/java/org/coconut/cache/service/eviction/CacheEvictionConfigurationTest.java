@@ -23,10 +23,11 @@ import org.junit.Test;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class CacheEvictionConfigurationTest {
-    private final static Filter<CacheEntry<Integer, String>> DEFAULT_FILTER = Filters
-            .trueFilter();
 
     static CacheEvictionConfiguration<Integer, String> DEFAULT = new CacheEvictionConfiguration<Integer, String>();
+
+    private final static Filter<CacheEntry<Integer, String>> DEFAULT_FILTER = Filters
+            .trueFilter();
 
     private CacheEvictionConfiguration<Integer, String> conf;
 

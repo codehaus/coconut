@@ -18,13 +18,6 @@ import org.coconut.core.AttributeMap;
 @NotThreadSafe
 public class LandlordPolicy<T> extends AbstractPolicy<T> {
 
-    /**
-     * @see org.coconut.cache.spi.AbstractPolicy#getSize()
-     */
-    public int getSize() {
-        return size;
-    }
-
     private double[] objectCost;
 
     private double[] objectCredit;
@@ -64,20 +57,6 @@ public class LandlordPolicy<T> extends AbstractPolicy<T> {
         return add(element, CacheAttributes.getSize(attributes), CacheAttributes.getCost(attributes));
     }
 
-
-    private int add(T element, long size, double cost) {
-        if (element == null) {
-            throw new NullPointerException("element is null");
-        } 
-        int index = this.size++;
-        if (this.size >= objects.length)
-            grow(this.size);
-        this.objects[index] = element;
-        this.objectSize[index] = size;
-        this.objectCost[index] = cost;
-        this.objectCredit[index] = cost;
-        return index;
-    }
     /**
      * @see org.coconut.cache.ReplacementPolicy#clear()
      */
@@ -87,23 +66,6 @@ public class LandlordPolicy<T> extends AbstractPolicy<T> {
         }
     }
 
-    private int evict() {
-        double delta = Double.MAX_VALUE;
-        int foundZero = -1;
-        for (int i = 0; i < size; i++) {
-            delta = Math.min(delta, objectCredit[i] / objectSize[i]);
-        }
-        for (int i = 0; i < size; i++) {
-            objectCredit[i] -= delta * objectSize[i];
-            if (objectCredit[i] <= 0) {
-                objectCredit[i] = 0;
-                if (foundZero == -1) {
-                    foundZero = i; // first element found
-                }
-            }
-        }
-        return foundZero;
-    }
 
     /**
      * Classical description from paper.
@@ -123,7 +85,6 @@ public class LandlordPolicy<T> extends AbstractPolicy<T> {
             return l;
         }
     }
-
     public T evictNext() {
         if (size == 0) {
             return null;
@@ -142,20 +103,11 @@ public class LandlordPolicy<T> extends AbstractPolicy<T> {
         }
     }
 
-    private void grow(int requestedSize) {
-        int newlen = objects.length;
-        if (requestedSize < newlen) // don't need to grow
-            return;
-        if (requestedSize == Integer.MAX_VALUE)
-            throw new OutOfMemoryError();
-        while (newlen <= requestedSize) {
-            if (newlen >= Integer.MAX_VALUE / 2) // avoid overflow
-                newlen = Integer.MAX_VALUE;
-            else
-                newlen <<= 1; // Double up baby
-        }
-
-        setSize(newlen);
+    /**
+     * @see org.coconut.cache.spi.AbstractPolicy#getSize()
+     */
+    public int getSize() {
+        return size;
     }
 
     public T peek() {
@@ -185,27 +137,6 @@ public class LandlordPolicy<T> extends AbstractPolicy<T> {
         return t;
     }
 
-    protected double resetCredit(double currentCredit, double cost) {
-        // todo find optimal formula
-        return (cost - currentCredit) / 2;
-    }
-
-    @SuppressWarnings("unchecked")
-    private void setSize(int newlen) {
-        Object[] newData = new Object[newlen];
-        long[] newSize = new long[newlen];
-        double[] newCost = new double[newlen];
-        double[] newCredit = new double[newlen];
-        System.arraycopy(objects, 0, newData, 0, objects.length);
-        System.arraycopy(objectSize, 0, newSize, 0, objectSize.length);
-        System.arraycopy(objectCost, 0, newCost, 0, objectCost.length);
-        System.arraycopy(objectCredit, 0, newCredit, 0, objectCredit.length);
-        objects = (T[]) newData;
-        objectSize = newSize;
-        objectCredit = newCredit;
-        objectCost = newCost;
-    }
-
     public int size() {
         return size;
     }
@@ -232,5 +163,74 @@ public class LandlordPolicy<T> extends AbstractPolicy<T> {
         // We should also check if cost size has changed...
         // If not there is no need to update placement
         return true;
+    }
+
+    private int add(T element, long size, double cost) {
+        if (element == null) {
+            throw new NullPointerException("element is null");
+        } 
+        int index = this.size++;
+        if (this.size >= objects.length)
+            grow(this.size);
+        this.objects[index] = element;
+        this.objectSize[index] = size;
+        this.objectCost[index] = cost;
+        this.objectCredit[index] = cost;
+        return index;
+    }
+
+    private int evict() {
+        double delta = Double.MAX_VALUE;
+        int foundZero = -1;
+        for (int i = 0; i < size; i++) {
+            delta = Math.min(delta, objectCredit[i] / objectSize[i]);
+        }
+        for (int i = 0; i < size; i++) {
+            objectCredit[i] -= delta * objectSize[i];
+            if (objectCredit[i] <= 0) {
+                objectCredit[i] = 0;
+                if (foundZero == -1) {
+                    foundZero = i; // first element found
+                }
+            }
+        }
+        return foundZero;
+    }
+
+    private void grow(int requestedSize) {
+        int newlen = objects.length;
+        if (requestedSize < newlen) // don't need to grow
+            return;
+        if (requestedSize == Integer.MAX_VALUE)
+            throw new OutOfMemoryError();
+        while (newlen <= requestedSize) {
+            if (newlen >= Integer.MAX_VALUE / 2) // avoid overflow
+                newlen = Integer.MAX_VALUE;
+            else
+                newlen <<= 1; // Double up baby
+        }
+
+        setSize(newlen);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void setSize(int newlen) {
+        Object[] newData = new Object[newlen];
+        long[] newSize = new long[newlen];
+        double[] newCost = new double[newlen];
+        double[] newCredit = new double[newlen];
+        System.arraycopy(objects, 0, newData, 0, objects.length);
+        System.arraycopy(objectSize, 0, newSize, 0, objectSize.length);
+        System.arraycopy(objectCost, 0, newCost, 0, objectCost.length);
+        System.arraycopy(objectCredit, 0, newCredit, 0, objectCredit.length);
+        objects = (T[]) newData;
+        objectSize = newSize;
+        objectCredit = newCredit;
+        objectCost = newCost;
+    }
+
+    protected double resetCredit(double currentCredit, double cost) {
+        // todo find optimal formula
+        return (cost - currentCredit) / 2;
     }
 }

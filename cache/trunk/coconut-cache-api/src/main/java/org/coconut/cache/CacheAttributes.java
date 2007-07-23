@@ -5,19 +5,18 @@ package org.coconut.cache;
 
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.cache.service.expiration.CacheExpirationService;
+import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
 
 /**
- * This main purpose of this cache is to set and retrieve the predefined cache attributes
- * from an AttributeMap in a typesafe manner. Currently these attributes can only be used
- * in load(Object, AttributeMap). See CacheLoader for an example.
+ * The main purpose of a cache attribute is to support custom metadata associated with
+ * each element in the cache. This cache can used set and retrieve predefined cache
+ * attributes from an AttributeMap in a typesafe manner. Currently these attributes can
+ * only be used in load(Object, AttributeMap). See {@link CacheLoader} for an example.
  * <p>
- * The following is a list of the default provided attributes The main purpose of a cache
- * attribute is to support custom metadata associated with each element in the cache.
- * interface. An individual element of metadata associated with a program element, for
- * example a method, is commonly referred to as an attribute. These attributes are
- * inserted at compile time and then can be retrieved later at runtime.
+ * The following is a list of the default provided attributes
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -58,8 +57,10 @@ public final class CacheAttributes {
     /**
      * This key can be used to indicate how long time a cache entry should live before it
      * expires. The time-to-live value should be a long between 1 and
-     * {@link Long#MAX_VALUE} and should be measured in nanoseconds. Use
+     * {@link Long#MAX_VALUE} measured in nanoseconds. Use
      * {@link java.util.concurrent.TimeUnit} to convert between different time units.
+     * 
+     * @see CacheExpirationService
      */
     public static final String TIME_TO_LIVE_NS = "time_to_live_ns";
 
@@ -139,7 +140,7 @@ public final class CacheAttributes {
      *            the clock to retrieve the timestamp from
      * @return returns the value that the specified AttributeMap maps the
      *         {@link #CREATION_TIME} attribute to or the return value from a call to
-     *         {@link Clock#timestamp()} on the specified clock if no such mapping exist.
+     *         {@link Clock#timestamp()} on the specified clock if no such mapping exist
      * @throws NullPointerException
      *             if the specified attributeMap or clock is <code>null</code>
      * @throws IllegalArgumentException
@@ -165,6 +166,21 @@ public final class CacheAttributes {
         return time;
     }
 
+    /**
+     * Returns the value that the specified AttributeMap maps the {@link #CREATION_TIME}
+     * attribute to .
+     * 
+     * @param attributes
+     *            the map to retrieve the value of the creation time attribute from
+     * @return returns the value that the specified AttributeMap maps the
+     *         {@link #CREATION_TIME} attribute to
+     * @throws NullPointerException
+     *             if the specified attributeMap is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if the specified attributeMap returns a negative number
+     * @see #setCreationTime(AttributeMap, long)
+     * @see #CREATION_TIME
+     */
     public static long getCreationTime(AttributeMap attributes) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
@@ -188,7 +204,7 @@ public final class CacheAttributes {
      *            the clock to retrieve the timestamp from
      * @return returns the value that the specified AttributeMap maps the
      *         {@link #LAST_MODIFIED_TIME} attribute to or the return value from a call to
-     *         {@link Clock#timestamp()} on the specified clock if no such mapping exist.
+     *         {@link Clock#timestamp()} on the specified clock if no such mapping exist
      * @throws NullPointerException
      *             if the specified attributeMap or clock is <code>null</code>
      * @throws IllegalArgumentException
@@ -254,19 +270,17 @@ public final class CacheAttributes {
      * @param unit
      *            the unit that the time should be returned in
      * @param defaultValue
-     *            the value that should be returned if a value for time to live attribute
-     *            could not be found
+     *            the value that should be returned if a mapping for the time to live
+     *            attribute does not exist in the specified attribute map
      * @return returns the value that the specified AttributeMap maps the
-     *         {@link #LAST_MODIFIED_TIME} attribute to or the return value from a call to
-     *         {@link Clock#timestamp()} on the specified clock if no such mapping exist.
+     *         {@link #TIME_TO_LIVE_NS} attribute to default specified value if no such
+     *         mapping exist
      * @throws NullPointerException
-     *             if the specified attributeMap or clock is <code>null</code>
+     *             if the specified attributeMap is <code>null</code>
      * @throws IllegalArgumentException
-     *             if the specified attributeMap returns a negative number or if the
-     *             specified clock returns a negative number when calling
-     *             {@link Clock#timestamp()}
-     * @see #setLastModifiedTime(AttributeMap, long)
-     * @see #LAST_MODIFIED_TIME
+     *             if the specified attributeMap returns a negative number
+     * @see #setTimeToLive(AttributeMap, long, TimeUnit)
+     * @see #TIME_TO_LIVE_NS
      */
     public static long getTimeToLive(AttributeMap attributes, TimeUnit unit,
             long defaultValue) {
@@ -341,7 +355,6 @@ public final class CacheAttributes {
      * @see #getCost(AttributeMap)
      * @see #COST
      */
-
     public static AttributeMap setCost(AttributeMap attributes, double cost) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
@@ -366,6 +379,20 @@ public final class CacheAttributes {
         return attributes;
     }
 
+    /**
+     * Sets a value for the {@link #CREATION_TIME} attribute in the specified AttributeMap.
+     * 
+     * @param attributes
+     *            the map of attributes to set the creation time attribute in
+     * @param creationTime the creation time
+     * @return the specified attribute map
+     * @throws NullPointerException
+     *             if the specified attributeMap is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if the specified creation time is a negative number
+     * @see #getCreationTime(AttributeMap)
+     * @see #CREATION_TIME
+     */
     public static AttributeMap setCreationTime(AttributeMap attributes, long creationTime) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
@@ -377,6 +404,21 @@ public final class CacheAttributes {
         return attributes;
     }
 
+    /**
+     * Sets a value for the {@link #SIZE} attribute in the specified AttributeMap.
+     * 
+     * @param attributes
+     *            the map of attributes to set the size attribute in
+     * @param size
+     *            the size to set the size attribute to
+     * @return the specified attribute map
+     * @throws NullPointerException
+     *             if the specified attributeMap is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if the specified size is a negative number
+     * @see #getSize(AttributeMap)
+     * @see #SIZE
+     */
     public static AttributeMap setSize(AttributeMap attributes, long size) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
@@ -397,6 +439,42 @@ public final class CacheAttributes {
         return attributes;
     }
 
+    /**
+     * Sets a value for the {@link #COST} attribute in the specified AttributeMap.
+     * 
+     * @param attributes
+     *            the map of attributes to set the cost attribute in
+     * @param cost
+     *            the cost to set the cost attribute to
+     * @return the specified attribute map
+     * @throws NullPointerException
+     *             if the specified attributeMap is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if the specified cost is {@link Double#NaN},
+     *             {@link Double#NEGATIVE_INFINITY} or {@link Double#POSITIVE_INFINITY}
+     * @see #getCost(AttributeMap)
+     * @see #COST
+     */
+
+
+    /**
+     * Sets a value for the {@link #TIME_TO_LIVE_NS} attribute in the specified
+     * AttributeMap.
+     * 
+     * @param attributes
+     *            the map of attributes to set the cost attribute in
+     * @param timeToLive
+     *            the time to live
+     * @param unit
+     *            the unit of the specified time to live
+     * @return the specified attribute map
+     * @throws NullPointerException
+     *             if the specified attributeMap or time unit is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if the specified time to live is a negative number
+     * @see #getTimeToLive(AttributeMap, TimeUnit, long)
+     * @see #TIME_TO_LIVE_NS
+     */
     public static AttributeMap setTimeToLive(AttributeMap attributes, long timeToLive,
             TimeUnit unit) {
         if (attributes == null) {
@@ -418,22 +496,41 @@ public final class CacheAttributes {
         return attributes;
     }
 
-    public static AttributeMap setTimeToRefresh(AttributeMap attributes, long timeToLive,
+
+    /**
+     * Sets a value for the {@link #TIME_TO_REFRESH_NS} attribute in the specified
+     * AttributeMap.
+     * 
+     * @param attributes
+     *            the map of attributes to set the cost attribute in
+     * @param timeToRefresh
+     *            the time to refresh
+     * @param unit
+     *            the unit of the specified time to refresh
+     * @return the specified attribute map
+     * @throws NullPointerException
+     *             if the specified attributeMap or time unit is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if the specified time to refresh is a negative number
+     * @see #getTimeToRefresh(AttributeMap, TimeUnit, long)
+     * @see #TIME_TO_REFRESH_NS
+     */
+    public static AttributeMap setTimeToRefresh(AttributeMap attributes, long timeToRefresh,
             TimeUnit unit) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
-        } else if (timeToLive < 0) {
+        } else if (timeToRefresh < 0) {
             throw new IllegalArgumentException("timeToRefresh must not be negative, was "
-                    + timeToLive);
+                    + timeToRefresh);
         } else if (unit == null) {
             throw new NullPointerException("unit is null");
         }
-        if (timeToLive == 0) {
+        if (timeToRefresh == 0) {
             // ignore
-        } else if (timeToLive == Long.MAX_VALUE) {
+        } else if (timeToRefresh == Long.MAX_VALUE) {
             attributes.putLong(TIME_TO_REFRESH_NS, Long.MAX_VALUE);
         } else {
-            long ttl = TimeUnit.NANOSECONDS.convert(timeToLive, unit);
+            long ttl = TimeUnit.NANOSECONDS.convert(timeToRefresh, unit);
             attributes.putLong(TIME_TO_REFRESH_NS, ttl);
         }
         return attributes;

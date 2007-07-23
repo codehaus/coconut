@@ -21,14 +21,21 @@ import org.w3c.dom.Element;
  * service.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $ *
+ * @param <K>
+ *            the type of keys maintained by the cache
+ * @param <V>
+ *            the type of mapped values
  */
 public abstract class AbstractCacheServiceConfiguration<K, V> {
 
+    /** The default resource bundle used to look up resources. */
     private final ResourceBundle bundle;
 
+    /** The parent cache configuration. */
     private CacheConfiguration<K, V> conf;
 
+    /** The short name of this service. */
     private final String serviceName;
 
     /**
@@ -38,7 +45,7 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
      *            the name of the service
      */
     public AbstractCacheServiceConfiguration(String serviceName) {
-        this(serviceName,  CacheSPI.DEFAULT_CACHE_BUNDLE);
+        this(serviceName, CacheSPI.DEFAULT_CACHE_BUNDLE);
     }
 
     /**
@@ -49,8 +56,7 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
      * @param bundle
      *            a ResourceBundle used for looking up text strings
      */
-    public AbstractCacheServiceConfiguration(String serviceName,
-           ResourceBundle bundle) {
+    public AbstractCacheServiceConfiguration(String serviceName, ResourceBundle bundle) {
         if (serviceName == null) {
             throw new NullPointerException("serviceName is null");
         }
@@ -59,8 +65,8 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
     }
 
     /**
-     * The parent {@link CacheConfiguration}, or <tt>null</tt> if this configuration
-     * has not been registered yet.
+     * @return the parent {@link CacheConfiguration}, or <tt>null</tt> if this
+     *         configuration has not been registered yet.
      */
     public CacheConfiguration<K, V> c() {
         return conf;
@@ -70,13 +76,15 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
      * Returns the unique name of this service. For example,
      * {@link org.coconut.cache.service.expiration.CacheExpirationConfiguration} returns '{@value}
      * CacheExpirationConfiguration#SERVICE_NAME}'.
+     * 
+     * @return the unique name of this service
      */
     public String getServiceName() {
         return serviceName;
     }
 
     /**
-     * @see java.lang.Object#toString()
+     * {@inheritDoc}
      */
     @Override
     public String toString() {
@@ -114,8 +122,8 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
     protected abstract void fromXML(Element element) throws Exception;
 
     /**
-     * Returns the ResourceBundle that is used by this configuration, or <code>null</code>
-     * if no resource bundle is used.
+     * @return the ResourceBundle that is used by this configuration, or <code>null</code>
+     *         if no resource bundle is used.
      */
     protected ResourceBundle getResourceBundle() {
         return bundle;
@@ -158,8 +166,13 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
      */
     protected abstract void toXML(Document doc, Element parent) throws Exception;
 
+    /**
+     * Sets the parent cache configuration which is available when calling {@link #c()}.
+     * 
+     * @param conf
+     *            the parent cache configuration
+     */
     void setConfiguration(CacheConfiguration<K, V> conf) {
         this.conf = conf;
     }
-
 }

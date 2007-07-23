@@ -36,8 +36,8 @@ public interface CacheService {
      * Start the service. The specified cache can be used to retrieve other cache
      * services.
      * 
-     * @param cache
-     *            the cache where this service is registered
+     * @param allServiceMap
+     *            a map of registered service
      */
     void start(Map<Class<?>, Object> allServiceMap);
 

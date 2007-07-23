@@ -18,17 +18,18 @@ import org.coconut.internal.util.IndexedHeap;
 /**
  * A LFU based replacement policy.
  * 
- * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id$
  */
 @NotThreadSafe
 public class LFUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy<T>,
         Serializable, Cloneable {
 
-    /** serialVersionUID */
-    private static final long serialVersionUID = -6697601242550775282L;
-
     /** A unique policy name. */
     public static final String NAME = "LFU";
+
+    /** serialVersionUID. */
+    private static final long serialVersionUID = -6697601242550775282L;
 
     /** The internal heap used for bookkeeping. */
     private final IndexedHeap<T> heap;

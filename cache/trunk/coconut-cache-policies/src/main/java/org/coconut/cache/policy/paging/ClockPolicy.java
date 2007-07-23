@@ -20,7 +20,8 @@ import org.coconut.internal.util.IndexedList;
  * introduced CLOCK in 1968 as a one-bit approximation to LRU in the Multics
  * system.
  * 
- * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id$
  */
 @NotThreadSafe
 public class ClockPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy<T>,
@@ -76,7 +77,7 @@ public class ClockPolicy<T> extends AbstractPolicy<T> implements ReplacementPoli
         /**
          * Constructs a new ClockPolicy by copying an existing ClockPolicy.
          * 
-         * @param copyFrom
+         * @param other
          *            the clock policy to copy from
          */
         InnerClockPolicy(InnerClockPolicy other) {

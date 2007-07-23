@@ -1,3 +1,6 @@
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
+ */
 package org.coconut.cache.internal.service.management;
 
 import org.coconut.cache.Cache;
@@ -23,7 +26,7 @@ public class ManagementUtils {
      * Wraps a CacheManagementService implementation such that only methods from the
      * CacheManagementService interface is exposed.
      * 
-     * @param servicec
+     * @param service
      *            the CacheManagementService to wrap
      * @return a wrapped service that only exposes CacheManagementService methods
      */

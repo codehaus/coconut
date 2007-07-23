@@ -57,7 +57,7 @@ public class AbstraktPolicyTest {
 
         LinkedList<String> list = new LinkedList<String>();
 
-        int addCount = 0;
+        int addCount;
 
         /**
          * @see org.coconut.cache.ReplacementPolicy#add(java.lang.Object)

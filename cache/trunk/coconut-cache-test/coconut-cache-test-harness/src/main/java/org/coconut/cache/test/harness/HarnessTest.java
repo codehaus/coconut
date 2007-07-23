@@ -22,6 +22,8 @@ import org.junit.Test;
  */
 public class HarnessTest extends CacheHarnessBundle {
 
+    private static int last = (int) (System.currentTimeMillis() ^ (System.nanoTime() >>> 32));
+
     int CACHE_SIZE = 50000;
 
     @Test
@@ -98,7 +100,6 @@ public class HarnessTest extends CacheHarnessBundle {
         System.out.println(iters);
     }
 
-    private static int last = (int) (System.currentTimeMillis() ^ (System.nanoTime() >>> 32));
 
     static int nextInt() {
         int y = last;

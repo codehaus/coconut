@@ -14,12 +14,11 @@ import org.coconut.core.AttributeMap;
  */
 public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
 
-    public AttributeMap getAttributes() {
-       return null;
-    }
-
     public static final long DEFAULT_HIT_COUNT = -1;
+
     public static final long DEFAULT_LAST_ACCESS_TIME = 0;
+    
+    AbstractCacheEntry<K, V> next;
 
     private final double cost;
 
@@ -38,7 +37,6 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
 
     private final V value;
 
-    AbstractCacheEntry<K, V> next;
 
     /**
      * @param key
@@ -58,6 +56,12 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         this.size = size;
      }
 
+    public abstract void accessed();
+
+    public void entryRemoved() {
+
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Map.Entry))
@@ -76,13 +80,16 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         return false;
     }
 
+    public AttributeMap getAttributes() {
+       return null;
+    }
+
     /**
      * @return the cost
      */
     public double getCost() {
         return cost;
     }
-
     /**
      * @return the creationTime
      */
@@ -90,7 +97,10 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         return creationTime;
     }
 
-    public abstract long getRefreshTime();
+    public int getHash() {
+        return hash;
+    }
+
     public K getKey() {
         return key;
     }
@@ -101,6 +111,17 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
     public long getLastUpdateTime() {
         return lastUpdateTime;
     }
+
+
+    public AbstractCacheEntry<K, V> getNext() {
+        return next;
+    }
+
+    public int getPolicyIndex() {
+        return policyIndex;
+    }
+
+    public abstract long getRefreshTime();
 
     /**
      * @return the size
@@ -113,37 +134,9 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         return value;
     }
 
-
     @Override
     public int hashCode() {
         return key.hashCode() ^ value.hashCode();
-    }
-
-    public V setValue(V v) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String toString() {
-        return getKey() + "=" + getValue() + " (policyIndex= " + getPolicyIndex() + ")";
-    }
-
-    public void entryRemoved() {
-
-    }
-
-    public abstract void accessed();
-
-    public int getHash() {
-        return hash;
-    }
-
-    public AbstractCacheEntry<K, V> getNext() {
-        return next;
-    }
-
-    public int getPolicyIndex() {
-        return policyIndex;
     }
 
     public void incrementHits() {
@@ -160,5 +153,14 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
 
     public void setPolicyIndex(int index) {
         this.policyIndex = index;
+    }
+
+    public V setValue(V v) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String toString() {
+        return getKey() + "=" + getValue() + " (policyIndex= " + getPolicyIndex() + ")";
     }
 }

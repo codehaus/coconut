@@ -1,3 +1,6 @@
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
+ */
 package org.coconut.cache.tck.service.loading;
 
 import java.util.concurrent.TimeUnit;
@@ -13,11 +16,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class LoadingMXBean extends AbstractLoadingTestBundle {
+
+    static CacheLoadingConfiguration<?, ?> DEFAULT = new CacheLoadingConfiguration();
+
     CacheLoadingMXBean mxBean;
 
     MBeanServer mbs;
-
-    static CacheLoadingConfiguration<?, ?> DEFAULT = new CacheLoadingConfiguration();
 
     // TODO
     // We should test for a default objectname

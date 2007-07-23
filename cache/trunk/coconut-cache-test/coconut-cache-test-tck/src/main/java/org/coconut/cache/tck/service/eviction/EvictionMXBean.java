@@ -1,3 +1,6 @@
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
+ */
 package org.coconut.cache.tck.service.eviction;
 
 import javax.management.MBeanServer;
@@ -12,11 +15,11 @@ import org.junit.Test;
 
 public class EvictionMXBean extends AbstractCacheTCKTestBundle {
 
+    static CacheEvictionConfiguration<?, ?> DEFAULT = new CacheEvictionConfiguration();
+
     CacheEvictionMXBean mxBean;
 
     MBeanServer mbs;
-
-    static CacheEvictionConfiguration<?, ?> DEFAULT = new CacheEvictionConfiguration();
 
     // TODO
     // We should test for a default objectname
@@ -89,11 +92,11 @@ public class EvictionMXBean extends AbstractCacheTCKTestBundle {
         assertSize(5);
         mxBean.trimToSize(3);
         assertSize(3);
-        put(10,15);
+        put(10, 15);
         assertSize(9);
         mxBean.trimToSize(1);
         assertSize(1);
-        
+
         // Exception
         try {
             mxBean.trimToSize(-1);
@@ -105,11 +108,11 @@ public class EvictionMXBean extends AbstractCacheTCKTestBundle {
 
     @Test
     public void trimToCapacity() {
-        //TODO implement
+    // TODO implement
     }
-    
+
     @Test
     public void evictIdleElements() {
-        //TODO implement
+    // TODO implement
     }
 }

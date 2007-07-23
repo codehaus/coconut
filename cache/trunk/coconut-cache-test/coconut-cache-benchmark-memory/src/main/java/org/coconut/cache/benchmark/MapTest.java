@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 @RunWith(MyRunner.class)
 public class MapTest {
 
-	Object s = null;
+	Object s;
 
 	@Test
 	public void testHashMap() {

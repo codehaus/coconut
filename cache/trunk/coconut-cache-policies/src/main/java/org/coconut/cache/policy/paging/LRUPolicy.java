@@ -18,8 +18,8 @@ import org.coconut.internal.util.IndexedList;
  * A Least Recently Used replacement policy discards the least recently used
  * items first.
  * 
- * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
- * @version $id$
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id$
  */
 @NotThreadSafe
 public class LRUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy<T>, Serializable {

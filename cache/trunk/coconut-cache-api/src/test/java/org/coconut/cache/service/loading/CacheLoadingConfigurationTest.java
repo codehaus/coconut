@@ -1,3 +1,6 @@
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
+ */
 package org.coconut.cache.service.loading;
 
 import static junit.framework.Assert.assertEquals;
@@ -15,14 +18,15 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class CacheLoadingConfigurationTest {
-    static CacheLoadingConfiguration<Integer, String> DEFAULT = new CacheLoadingConfiguration<Integer, String>();
 
-    private CacheLoadingConfiguration<Integer, String> conf;
+    static CacheLoadingConfiguration<Integer, String> DEFAULT = new CacheLoadingConfiguration<Integer, String>();
 
     private final static Filter<CacheEntry<Integer, String>> DEFAULT_FILTER = Filters
             .trueFilter();
 
     private final static CacheLoader<Integer, String> DEFAULT_LOADER = new LoadableCacheLoader();
+
+    private CacheLoadingConfiguration<Integer, String> conf;
 
     @Before
     public void setUp() {

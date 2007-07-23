@@ -19,11 +19,14 @@ public final class CacheSPI {
 
     public static final String HIGHLY_IRREGULAR = "This is a highly irregular exception, and most likely means that some classes are missing";
 
-    private static final String BUNDLE_NAME = "org.coconut.cache.messages";//$NON-NLS-1$
+    static final String BUNDLE_NAME = "org.coconut.cache.messages";//$NON-NLS-1$
 
     static final ResourceBundle DEFAULT_CACHE_BUNDLE = ResourceHolder.lookup(BUNDLE_NAME);
 
     private static final ResourceHolder RESOURCE_HOLDER = new ResourceHolder(BUNDLE_NAME);
+
+    /** Cannot instantiate. */
+    private CacheSPI() {}
 
     public static String lookup(Class<?> c, String key, Object... o) {
         return RESOURCE_HOLDER.lookup(c, key, o);

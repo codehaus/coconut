@@ -12,11 +12,8 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.filter.Filter;
 
 /**
- * A service used to control the expiration of objects in the cache.
- * <p>
- * Entries are checked for expiration when calling ...
- * <p>
- * Rename to CacheInvalidationService???
+ * A service used to control the expiration of cache elements at runtime. See the package
+ * documentation for a detailed explanation of the expiration service.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -78,7 +75,7 @@ public interface CacheExpirationService<K, V> {
 
     /**
      * Works as {@link Cache#put(Object, Object)} except that entry added will expire
-     * after the specified time to live. The specified time to live will override the
+     * after the specified time to live. The specified time to live will override any
      * default value returned by {@link #getDefaultTimeToLive(TimeUnit)}
      * 
      * @param key
@@ -131,8 +128,8 @@ public interface CacheExpirationService<K, V> {
     void putAll(Map<? extends K, ? extends V> t, long timeout, TimeUnit unit);
 
     /**
-     * Sets the default expiration time for new objetcs that are added to the cache. If no
-     * default expiration time has been set, entries will never expire.
+     * Sets the default expiration time for new elements that are added to the cache. If
+     * no default expiration time has been set, entries will never expire.
      * 
      * @param timeToLive
      *            the time from insertion to the point where the entry should expire

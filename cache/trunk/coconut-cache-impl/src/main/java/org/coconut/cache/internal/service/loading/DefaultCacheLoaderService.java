@@ -33,6 +33,8 @@ import org.coconut.management.ManagedGroup;
  */
 public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService<K, V> {
 
+    final CacheHelper<K, V> cache;
+
     private final Clock clock;
 
     private final CacheExceptionService<K, V> errorHandler;
@@ -42,8 +44,6 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
     private final Executor loadExecutor;
 
     private final Filter<CacheEntry<K, V>> reloadFilter;
-
-    final CacheHelper<K, V> cache;
 
     public DefaultCacheLoaderService(final Clock clock,
             InternalCacheAttributeService attributeFactory,

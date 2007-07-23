@@ -34,6 +34,9 @@ import org.junit.Test;
  */
 public class DefaultCacheExpirationServiceTest {
 
+    private static final CacheEntry<Integer, String> neverExpire;
+
+    private static final CacheEntry<Integer, String> expireAt10;
     private final Filter<CacheEntry<Integer, String>> TRUE = Filters.trueFilter();
 
     private final Filter<CacheEntry<Integer, String>> FALSE = Filters.falseFilter();
@@ -51,9 +54,6 @@ public class DefaultCacheExpirationServiceTest {
 
     private InternalCacheAttributeService attributeFactory = new DefaultCacheAttributeService();
 
-    private static final CacheEntry<Integer, String> neverExpire;
-
-    private static final CacheEntry<Integer, String> expireAt10;
     static {
         CacheEntry dd = new JUnit4Mockery().mock(CacheEntry.class);
 

@@ -1,17 +1,16 @@
-/*
- * Written by Kasper Nielsen and released to the public domain, as explained at
+/* Written by Kasper Nielsen and released to the public domain, as explained at
  * http://creativecommons.org/licenses/publicdomain
  */
-package org.coconut.cache.examples.guides.quickstart;
+package org.coconut.cache.examples.loading;
 
-//START SNIPPET: UrlLoader
+//START SNIPPET: SimpleUrlLoader
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.core.AttributeMap;
-public class UrlLoader implements CacheLoader<String, String> {
+public class SimpleUrlLoader implements CacheLoader<String, String> {
     public String load(String key, AttributeMap ignore) throws Exception {
         BufferedReader in = new BufferedReader(new InputStreamReader(new URL(key)
                 .openStream()));
@@ -24,4 +23,4 @@ public class UrlLoader implements CacheLoader<String, String> {
         return sb.toString();
     }
 }
-//END SNIPPET: UrlLoader
+//END SNIPPET: SimpleUrlLoader

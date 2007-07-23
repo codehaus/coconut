@@ -17,16 +17,20 @@ import org.coconut.cache.policy.paging.RandomPolicy;
 import org.coconut.filter.Filter;
 
 /**
- * Factory methods for different
- * {@link org.coconut.cache.ReplacementPolicy} implementations. This
- * class provides shortcuts for the specific implementations of policies defined
- * in <tt>coconut.cache.policy</tt>.
+ * Factory methods for different {@link org.coconut.cache.ReplacementPolicy}
+ * implementations. This class provides shortcuts for the specific implementations of
+ * policies defined in <tt>coconut.cache.policy</tt>.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
 public final class Policies {
 
+    ///CLOVER:OFF
+    /** Cannot instantiate. */
+    private Policies() {}
+    ///CLOVER:ON
+    
     /**
      * Returns a new
      * {@link org.coconut.cache.policy.paging.ClockPolicy Clock Replacement Policy}.
@@ -89,8 +93,7 @@ public final class Policies {
 
     /**
      * Returns a new
-     * {@link org.coconut.cache.policy.paging.RandomPolicy Random Replacement
-     * Policy}.
+     * {@link org.coconut.cache.policy.paging.RandomPolicy Random Replacement Policy}.
      * 
      * @return a new Random policy
      */
@@ -98,22 +101,18 @@ public final class Policies {
         return new RandomPolicy<E>();
     }
 
-
     public static <K, V> ReplacementPolicy<? extends Map.Entry<K, V>> filteredMapKeyPolicy(
             ReplacementPolicy policy, Filter<? extends K> filter) {
         return null;
-        //return new FilteredPolicyDecorator(policy, CollectionFilters.keyFilter(filter));
+        // return new FilteredPolicyDecorator(policy,
+        // CollectionFilters.keyFilter(filter));
     }
 
     public static <K, V> ReplacementPolicy<? extends Map.Entry<K, V>> filteredMapValuePolicy(
             ReplacementPolicy policy, Filter<? extends V> filter) {
         return null;
-        //return new FilteredPolicyDecorator(policy, CollectionFilters.valueFilter(filter));
+        // return new FilteredPolicyDecorator(policy,
+        // CollectionFilters.valueFilter(filter));
     }
 
-    ///CLOVER:OFF
-    /** Cannot instantiate. */
-    private Policies() {
-    }
-    ///CLOVER:ON
 }

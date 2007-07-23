@@ -19,7 +19,9 @@ import org.coconut.core.AttributeMap;
  * This implementation works by wrapping an LRU replacement policy and ignoring
  * any calls to touch.
  * 
- * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id$
+ * @param <T> the type objects maintained by this policy 
  */
 @NotThreadSafe
 public class LIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy<T>,
@@ -28,7 +30,7 @@ public class LIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolic
     /** A unique policy name. */
     public static final String NAME = "LIFO";
 
-    /** serialVersionUID */
+    /** serialVersionUID. */
     private static final long serialVersionUID = 6547391198048004043L;
 
     /** The wrapped LRU list. */

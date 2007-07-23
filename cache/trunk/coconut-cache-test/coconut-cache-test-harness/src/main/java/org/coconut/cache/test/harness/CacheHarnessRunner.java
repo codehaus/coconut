@@ -22,11 +22,11 @@ import org.junit.runner.notification.RunNotifier;
  */
 public class CacheHarnessRunner extends Runner {
 
+    static Class<? extends Cache> tt;
+
     private final Class<? extends Cache> klass;
 
     private CompositeRunner composite;
-
-    static Class<? extends Cache> tt;
 
     @SuppressWarnings("unchecked")
     public CacheHarnessRunner(Class<? extends Cache> klass) throws Throwable {

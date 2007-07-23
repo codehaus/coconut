@@ -63,7 +63,7 @@ import org.coconut.core.Logger;
  */
 @NotThreadSafe
 public final class CacheConfiguration<K, V> {
-    public final static List<Class<? extends AbstractCacheServiceConfiguration>> DEFAULT_SERVICES;
+    private final static List<Class<? extends AbstractCacheServiceConfiguration>> DEFAULT_SERVICES;
 
     static {
         List services = new ArrayList();

@@ -26,15 +26,15 @@ import org.coconut.internal.picocontainer.defaults.DefaultPicoContainer;
 public class UnsynchronizedCacheServiceManager extends
         AbstractInternalCacheServiceManager {
 
-    private ServiceStatus status = ServiceStatus.NOTRUNNING;
-
-    private final CacheConfiguration<?, ?> conf;
-
     public final DefaultPicoContainer container = new DefaultPicoContainer();
 
     private final Cache<?, ?> cache;
 
+    private final CacheConfiguration<?, ?> conf;
+
     private final Map<Class<?>, Object> publicServices = new HashMap<Class<?>, Object>();
+
+    private ServiceStatus status = ServiceStatus.NOTRUNNING;
 
     public UnsynchronizedCacheServiceManager(Cache<?, ?> cache, CacheHelper<?, ?> helper,
             CacheConfiguration<?, ?> conf) {
@@ -43,25 +43,8 @@ public class UnsynchronizedCacheServiceManager extends
         initializePicoContainer(cache, helper, conf);
     }
 
-    private void initializePicoContainer(Cache<?, ?> cache, CacheHelper<?, ?> helper,
-            CacheConfiguration<?, ?> conf) {
-        container.registerComponentInstance(this);
-        container.registerComponentInstance(cache.getName());
-        container.registerComponentInstance(cache);
-        container.registerComponentInstance(helper);
-        container.registerComponentInstance(conf);
-        container.registerComponentInstance(conf.getClock());
-        container.registerComponentImplementation(DefaultCacheExceptionService.class);
-        container.registerComponentImplementation(DefaultCacheAttributeService.class);
-        container
-                .registerComponentImplementation(UnsynchronizedEntryFactoryService.class);
-        for (AbstractCacheServiceConfiguration<?, ?> c : conf.getAllConfigurations()) {
-            container.registerComponentInstance(c);
-        }
-    }
-
-    public void lazyStart(boolean failIfShutdown) {
-        prestart();
+    public Map<Class<?>, Object> getAllPublicServices() {
+        return new HashMap<Class<?>, Object>(publicServices);
     }
 
     /**
@@ -69,6 +52,49 @@ public class UnsynchronizedCacheServiceManager extends
      */
     public ServiceStatus getCurrentState() {
         return status;
+    }
+
+    /**
+     * @see org.coconut.cache.internal.service.service.InternalCacheServiceManager#getPublicService(java.lang.Class)
+     */
+    public <T> T getPublicService(Class<T> type) {
+        lazyStart(false);
+        T t = (T) publicServices.get(type);
+        if (t == null) {
+            throw new IllegalArgumentException("Unknown service " + type);
+        }
+        return t;
+    }
+
+    /**
+     * @see org.coconut.cache.internal.service.service.InternalCacheServiceManager#getPublicServices()
+     */
+    public List getPublicServices() {
+        lazyStart(false);
+        return new ArrayList(publicServices.values());
+    }
+
+    /**
+     * @see org.coconut.cache.internal.service.service.InternalCacheServiceManager#getService(java.lang.Class)
+     */
+    public <T> T getService(Class<T> type) {
+        T service = (T) container.getComponentInstanceOfType(type);
+        if (service == null) {
+            throw new IllegalArgumentException("Unknown service " + type);
+        }
+        return service;
+    }
+
+    /**
+     * @see org.coconut.cache.internal.service.service.InternalCacheServiceManager#hasPublicService(java.lang.Class)
+     */
+    public boolean hasPublicService(Class type) {
+        lazyStart(false);
+        return publicServices.containsKey(type);
+    }
+
+    public void lazyStart(boolean failIfShutdown) {
+        prestart();
     }
 
     /**
@@ -97,34 +123,6 @@ public class UnsynchronizedCacheServiceManager extends
         }
     }
 
-    static class ServiceInfo {
-        ServiceInfo(AbstractCacheService service) {
-            this.service = service;
-        }
-
-        final AbstractCacheService service;
-
-        private ServiceStatus status = ServiceStatus.NOTRUNNING;
-
-        private final Map<Class<?>, Object> published = new HashMap<Class<?>, Object>();
-
-        void initialize(CacheConfiguration conf) {
-            service.initialize(conf, published);
-        }
-
-        void start(Map c) {
-            service.start(c);
-        }
-
-        void started(Cache<?, ?> c) {
-            service.started(c);
-        }
-
-        Map<Class<?>, Object> getPublicService() {
-            return published;
-        }
-    }
-
     public void registerService(Class type, Class<? extends AbstractCacheService> service) {
         if (status != ServiceStatus.NOTRUNNING) {
             throw new IllegalStateException(
@@ -140,34 +138,6 @@ public class UnsynchronizedCacheServiceManager extends
         container.registerComponentImplementation(type, service);
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.service.InternalCacheServiceManager#getPublicServices()
-     */
-    public List getPublicServices() {
-        lazyStart(false);
-        return new ArrayList(publicServices.values());
-    }
-
-    /**
-     * @see org.coconut.cache.internal.service.service.InternalCacheServiceManager#hasPublicService(java.lang.Class)
-     */
-    public boolean hasPublicService(Class type) {
-        lazyStart(false);
-        return publicServices.containsKey(type);
-    }
-
-    /**
-     * @see org.coconut.cache.internal.service.service.InternalCacheServiceManager#getPublicService(java.lang.Class)
-     */
-    public <T> T getPublicService(Class<T> type) {
-        lazyStart(false);
-        T t = (T) publicServices.get(type);
-        if (t == null) {
-            throw new IllegalArgumentException("Unknown service " + type);
-        }
-        return t;
-    }
-
 
     public void registerServices(Class<? extends AbstractCacheService>... services) {
         for (Class<? extends AbstractCacheService> service : services) {
@@ -175,18 +145,49 @@ public class UnsynchronizedCacheServiceManager extends
         }
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.service.InternalCacheServiceManager#getService(java.lang.Class)
-     */
-    public <T> T getService(Class<T> type) {
-        T service = (T) container.getComponentInstanceOfType(type);
-        if (service == null) {
-            throw new IllegalArgumentException("Unknown service " + type);
+    private void initializePicoContainer(Cache<?, ?> cache, CacheHelper<?, ?> helper,
+            CacheConfiguration<?, ?> conf) {
+        container.registerComponentInstance(this);
+        container.registerComponentInstance(cache.getName());
+        container.registerComponentInstance(cache);
+        container.registerComponentInstance(helper);
+        container.registerComponentInstance(conf);
+        container.registerComponentInstance(conf.getClock());
+        container.registerComponentImplementation(DefaultCacheExceptionService.class);
+        container.registerComponentImplementation(DefaultCacheAttributeService.class);
+        container
+                .registerComponentImplementation(UnsynchronizedEntryFactoryService.class);
+        for (AbstractCacheServiceConfiguration<?, ?> c : conf.getAllConfigurations()) {
+            container.registerComponentInstance(c);
         }
-        return service;
     }
 
-    public Map<Class<?>, Object> getAllPublicServices() {
-        return new HashMap<Class<?>, Object>(publicServices);
+    static class ServiceInfo {
+
+        final AbstractCacheService service;
+
+        private final Map<Class<?>, Object> published = new HashMap<Class<?>, Object>();
+
+        private ServiceStatus status = ServiceStatus.NOTRUNNING;
+
+        ServiceInfo(AbstractCacheService service) {
+            this.service = service;
+        }
+
+        Map<Class<?>, Object> getPublicService() {
+            return published;
+        }
+
+        void initialize(CacheConfiguration conf) {
+            service.initialize(conf, published);
+        }
+
+        void start(Map c) {
+            service.start(c);
+        }
+
+        void started(Cache<?, ?> c) {
+            service.started(c);
+        }
     }
 }

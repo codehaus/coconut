@@ -16,22 +16,41 @@ import org.coconut.core.AttributeMap;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class DummyCache<K, V> implements Cache<K, V> {
-    private String name;
-
-    /**
-     * @see org.coconut.cache.Cache#hasService(java.lang.Class)
-     */
-    public boolean hasService(Class<?> serviceType) {
-        return false;
-    }
-
     public volatile boolean isStarted;
+
+    private String name;
 
     /**
      * @param configuration
      */
     public DummyCache(CacheConfiguration<?, ?> configuration) {
         this.name = configuration.getName();
+    }
+
+    /**
+     * @see java.util.Map#clear()
+     */
+    public void clear() {}
+
+    /**
+     * @see java.util.Map#containsKey(java.lang.Object)
+     */
+    public boolean containsKey(Object key) {
+        return false;
+    }
+
+    /**
+     * @see java.util.Map#containsValue(java.lang.Object)
+     */
+    public boolean containsValue(Object value) {
+        return false;
+    }
+
+    /**
+     * @see java.util.Map#entrySet()
+     */
+    public Set<java.util.Map.Entry<K, V>> entrySet() {
+        return null;
     }
 
     /**
@@ -50,6 +69,10 @@ public class DummyCache<K, V> implements Cache<K, V> {
      * @see org.coconut.cache.Cache#getAll(java.util.Collection)
      */
     public Map<K, V> getAll(Collection<? extends K> keys) {
+        return null;
+    }
+
+    public Map<Class<?>, Object> getAllServices() {
         return null;
     }
 
@@ -82,6 +105,27 @@ public class DummyCache<K, V> implements Cache<K, V> {
     }
 
     /**
+     * @see org.coconut.cache.Cache#hasService(java.lang.Class)
+     */
+    public boolean hasService(Class<?> serviceType) {
+        return false;
+    }
+
+    /**
+     * @see java.util.Map#isEmpty()
+     */
+    public boolean isEmpty() {
+        return false;
+    }
+
+    /**
+     * @see java.util.Map#keySet()
+     */
+    public Set<K> keySet() {
+        return null;
+    }
+
+    /**
      * @see org.coconut.cache.Cache#peek(java.lang.Object)
      */
     public V peek(K key) {
@@ -96,6 +140,13 @@ public class DummyCache<K, V> implements Cache<K, V> {
     }
 
     /**
+     * @see java.util.Map#put(java.lang.Object, java.lang.Object)
+     */
+    public V put(K key, V value) {
+        return null;
+    }
+
+    /**
      * @see org.coconut.cache.Cache#put(java.lang.Object, java.lang.Object,
      *      org.coconut.core.AttributeMap)
      */
@@ -104,10 +155,22 @@ public class DummyCache<K, V> implements Cache<K, V> {
     }
 
     /**
+     * @see java.util.Map#putAll(java.util.Map)
+     */
+    public void putAll(Map<? extends K, ? extends V> t) {}
+
+    /**
      * @see java.util.concurrent.ConcurrentMap#putIfAbsent(java.lang.Object,
      *      java.lang.Object)
      */
     public V putIfAbsent(K key, V value) {
+        return null;
+    }
+
+    /**
+     * @see java.util.Map#remove(java.lang.Object)
+     */
+    public V remove(Object key) {
         return null;
     }
 
@@ -134,65 +197,6 @@ public class DummyCache<K, V> implements Cache<K, V> {
     }
 
     /**
-     * @see java.util.Map#clear()
-     */
-    public void clear() {}
-
-    /**
-     * @see java.util.Map#containsKey(java.lang.Object)
-     */
-    public boolean containsKey(Object key) {
-        return false;
-    }
-
-    /**
-     * @see java.util.Map#containsValue(java.lang.Object)
-     */
-    public boolean containsValue(Object value) {
-        return false;
-    }
-
-    /**
-     * @see java.util.Map#entrySet()
-     */
-    public Set<java.util.Map.Entry<K, V>> entrySet() {
-        return null;
-    }
-
-    /**
-     * @see java.util.Map#isEmpty()
-     */
-    public boolean isEmpty() {
-        return false;
-    }
-
-    /**
-     * @see java.util.Map#keySet()
-     */
-    public Set<K> keySet() {
-        return null;
-    }
-
-    /**
-     * @see java.util.Map#put(java.lang.Object, java.lang.Object)
-     */
-    public V put(K key, V value) {
-        return null;
-    }
-
-    /**
-     * @see java.util.Map#putAll(java.util.Map)
-     */
-    public void putAll(Map<? extends K, ? extends V> t) {}
-
-    /**
-     * @see java.util.Map#remove(java.lang.Object)
-     */
-    public V remove(Object key) {
-        return null;
-    }
-
-    /**
      * @see java.util.Map#size()
      */
     public int size() {
@@ -203,10 +207,6 @@ public class DummyCache<K, V> implements Cache<K, V> {
      * @see java.util.Map#values()
      */
     public Collection<V> values() {
-        return null;
-    }
-
-    public Map<Class<?>, Object> getAllServices() {
         return null;
     }
 

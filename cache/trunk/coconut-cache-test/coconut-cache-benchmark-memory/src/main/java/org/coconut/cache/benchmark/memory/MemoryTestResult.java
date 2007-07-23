@@ -8,16 +8,16 @@ package org.coconut.cache.benchmark.memory;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class MemoryTestResult {
-
     private static final Runtime RUNTIME = Runtime.getRuntime();
-
-    private long startMemory;
 
     long memoryUse;
 
+    Object[] refs;
+
+    private long startMemory;
+
     private int iterations;
 
-    Object[] refs;
 
     MemoryTestResult(int testCounts, int iterations) {
         refs = new Object[testCounts];

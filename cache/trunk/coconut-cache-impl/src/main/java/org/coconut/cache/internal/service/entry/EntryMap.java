@@ -85,36 +85,6 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
     private final boolean isThreadSafe;
 
     // Collection<AbstractCacheEntry<K, V>> entries;
-
-    /* ---------------- Small Utilities -------------- */
-
-    /**
-     * Applies a supplemental hash function to a given hashCode, which defends
-     * against poor quality hash functions. This is critical because this class
-     * uses power-of-two length hash tables, that otherwise encounter collisions
-     * for hashCodes that do not differ in lower bits.
-     */
-    static int hash(int h) {
-        // This function ensures that hashCodes that differ only by
-        // constant multiples at each bit position have a bounded
-        // number of collisions (approximately 8 at default load factor).
-        h ^= (h >>> 20) ^ (h >>> 12);
-        return h ^ (h >>> 7) ^ (h >>> 4);
-    }
-
-    /**
-     * Returns the table entry that should be used for key with given hash
-     * 
-     * @param hash
-     *            the hash code for the key
-     * @return the table entry
-     */
-    static int indexFor(int hash, int tableLength) {
-        return hash & (tableLength - 1);
-    }
-
-    /* ---------------- Inner Classes -------------- */
-
     /**
      * Creates a new, empty map with a default initial capacity, and load
      * factor.
@@ -122,6 +92,8 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
     public EntryMap(boolean isThreadSafe) {
         this(isThreadSafe, DEFAULT_INITIAL_CAPACITY);
     }
+
+
 
     /**
      * Creates a new, empty map with the specified initial capacity, and with
@@ -170,6 +142,36 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
         table = new AbstractCacheEntry[16];
         this.isThreadSafe = isThreadSafe;
     }
+
+    
+    /* ---------------- Small Utilities -------------- */
+
+    /**
+     * Applies a supplemental hash function to a given hashCode, which defends
+     * against poor quality hash functions. This is critical because this class
+     * uses power-of-two length hash tables, that otherwise encounter collisions
+     * for hashCodes that do not differ in lower bits.
+     */
+    static int hash(int h) {
+        // This function ensures that hashCodes that differ only by
+        // constant multiples at each bit position have a bounded
+        // number of collisions (approximately 8 at default load factor).
+        h ^= (h >>> 20) ^ (h >>> 12);
+        return h ^ (h >>> 7) ^ (h >>> 4);
+    }
+
+    /**
+     * Returns the table entry that should be used for key with given hash
+     * 
+     * @param hash
+     *            the hash code for the key
+     * @return the table entry
+     */
+    static int indexFor(int hash, int tableLength) {
+        return hash & (tableLength - 1);
+    }
+
+    /* ---------------- Inner Classes -------------- */
 
     /**
      * Return properly casted first entry of bin for given hash
@@ -424,6 +426,10 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
     }
 
     static abstract class BaseIterator<K, V, E> implements Iterator<E> {
+
+        final EntryMap<K, ?> map;
+
+        final Map<K, ?> cache;
         private AbstractCacheEntry<K, V> entry;
 
         private int expectedModCount;
@@ -432,9 +438,6 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
 
         private AbstractCacheEntry<K, V> nextEntry;
 
-        final EntryMap<K, ?> map;
-
-        final Map<K, ?> cache;
 
         BaseIterator(Map<K, ?> cache, EntryMap<K, ?> map) {
             expectedModCount = map.modCount;
@@ -987,6 +990,10 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
 
         final Map<K, V> cache;
 
+        Values(Map<K, V> cache, EntryMap<K, V> map) {
+            this.map = map;
+            this.cache = cache;
+        }
         /**
          * @see java.util.AbstractCollection#removeAll(java.util.Collection)
          */
@@ -998,10 +1005,6 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             return super.removeAll(c);
         }
 
-        Values(Map<K, V> cache, EntryMap<K, V> map) {
-            this.map = map;
-            this.cache = cache;
-        }
 
         @Override
         public boolean remove(Object o) {

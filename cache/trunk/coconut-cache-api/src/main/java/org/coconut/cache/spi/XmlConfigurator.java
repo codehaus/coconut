@@ -66,6 +66,10 @@ public class XmlConfigurator {
      * @throws Exception
      *             some Exception prevented the CacheConfiguration from being properly
      *             populated
+     * @param <K>
+     *            the type of keys maintained by the cache
+     * @param <V>
+     *            the type of mapped values
      */
     public <K, V> void readInto(CacheConfiguration<K, V> configuration, InputStream stream)
             throws Exception {
@@ -103,8 +107,24 @@ public class XmlConfigurator {
         prettyprint(doc, stream);
     }
 
+    /**
+     * Reads the configuration of a specified service type from the specified XML element.
+     * 
+     * @param cache
+     *            the xml element from where to read the configuration of the specified
+     *            service type
+     * @param service
+     *            the type of service configuration we are loading
+     * @return the service configuration that was read
+     * @throws Exception
+     *             something when wrong while reading parsing the xml element
+     * @param <K>
+     *            the type of keys maintained by the cache
+     * @param <V>
+     *            the type of mapped values
+     */
     protected <K, V> AbstractCacheServiceConfiguration<K, V> readCacheService(
-            Document doc, Element cache,
+            Element cache,
             Class<? extends AbstractCacheServiceConfiguration<K, V>> service)
             throws Exception {
         AbstractCacheServiceConfiguration<K, V> acsc = service.newInstance();
@@ -125,12 +145,11 @@ public class XmlConfigurator {
                             + doc.getDocumentURI());
         }
         Node n = root.getElementsByTagName("cache").item(0);
-        readSingleCache(base, doc, base.getServiceTypes(), (Element) n);
+        readSingleCache(base, base.getServiceTypes(), (Element) n);
     }
 
     protected <K, V> void readSingleCache(
             CacheConfiguration<K, V> conf,
-            Document doc,
             Collection<Class<? extends AbstractCacheServiceConfiguration<K, V>>> services,
             Element cache) throws Exception {
         if (cache.hasAttribute(CACHE_NAME_ATTR)
@@ -142,7 +161,7 @@ public class XmlConfigurator {
                     .getAttribute(CACHE_TYPE_ATTR));
         }
         for (Class<? extends AbstractCacheServiceConfiguration<K, V>> c : services) {
-            AbstractCacheServiceConfiguration<K, V> acsc = readCacheService(doc, cache, c);
+            AbstractCacheServiceConfiguration<K, V> acsc = readCacheService(cache, c);
             if (acsc != null) {
                 conf.addConfiguration(acsc);
             }
@@ -187,6 +206,16 @@ public class XmlConfigurator {
         }
     }
 
+    /**
+     * Pretty prints the specified XML document to the specified OutputStream.
+     * 
+     * @param doc
+     *            the xml document to pretty print
+     * @param stream
+     *            the to print the document to
+     * @throws TransformerException
+     *             the document could not be pretty printed
+     */
     static void prettyprint(Document doc, OutputStream stream)
             throws TransformerException {
         DOMSource domSource = new DOMSource(doc);

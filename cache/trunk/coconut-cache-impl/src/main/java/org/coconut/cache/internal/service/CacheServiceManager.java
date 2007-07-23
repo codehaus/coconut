@@ -37,7 +37,7 @@ public class CacheServiceManager<K, V>  {
 
     private final CacheConfiguration<K, V> conf;
 
-    public final Map<Class, Object> instanciated = new ConcurrentHashMap<Class, Object>();
+    private final Map<Class, Object> instanciated = new ConcurrentHashMap<Class, Object>();
 
     private final AtomicInteger runState = new AtomicInteger();
 

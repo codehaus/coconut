@@ -44,11 +44,11 @@ import org.junit.runners.Suite;
  */
 public class CacheTCKRunner extends Runner {
 
+    static Class<? extends Cache> tt;
+
     private final Class<? extends Cache> klass;
 
     private CompositeRunner composite;
-
-    static Class<? extends Cache> tt;
 
     static {
         try {

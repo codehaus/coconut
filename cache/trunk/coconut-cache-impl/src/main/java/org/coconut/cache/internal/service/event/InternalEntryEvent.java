@@ -14,10 +14,6 @@ import org.coconut.core.AttributeMap;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, V> {
-    public AttributeMap getAttributes() {
-        throw new UnsupportedOperationException();
-    }
-
     private final Cache<K, V> cache;
 
     private final CacheEntry<K, V> entry;
@@ -25,6 +21,10 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, 
     InternalEntryEvent(Cache<K, V> cache, CacheEntry<K, V> entry) {
         this.cache = cache;
         this.entry = entry;
+    }
+
+    public AttributeMap getAttributes() {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -101,6 +101,13 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, 
         return entry.getValue();
     }
 
+    /**
+     * @see java.util.Map.Entry#setValue(java.lang.Object)
+     */
+    public V setValue(V value) {
+        return entry.setValue(value);
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -112,42 +119,6 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, 
         builder.append(getValue());
         builder.append("]");
         return builder.toString();
-    }
-
-    static <K, V> CacheEntryEvent<K, V> added(Cache<K, V> cache, CacheEntry<K, V> entry) {
-        return new AddedEvent<K, V>(cache, entry);
-    }
-
-    static <K, V> CacheEntryEvent<K, V> updated(Cache<K, V> cache,
-            CacheEntry<K, V> entry, V previous) {
-        return new ChangedEvent<K, V>(cache, entry, previous, false);
-    }
-
-    static <K, V> CacheEntryEvent<K, V> expired(Cache<K, V> cache, CacheEntry<K, V> entry) {
-        return new RemovedEvent<K, V>(cache, entry, true);
-    }
-
-    static <K, V> CacheEntryEvent<K, V> evicted(Cache<K, V> cache, CacheEntry<K, V> entry) {
-        return new RemovedEvent<K, V>(cache, entry, false);
-    }
-
-    static <K, V> CacheEntryEvent<K, V> removed(Cache<K, V> cache, CacheEntry<K, V> entry) {
-        return new RemovedEvent<K, V>(cache, entry, false);
-    }
-
-    static <K, V> CacheEntryEvent<K, V> miss(Cache<K, V> cache, K key) {
-        return new MissEvent<K, V>(cache, key);
-    }
-
-    static <K, V> CacheEntryEvent<K, V> hit(Cache<K, V> cache, CacheEntry<K, V> entry) {
-        return new HitEvent<K, V>(cache, entry);
-    }
-
-    /**
-     * @see java.util.Map.Entry#setValue(java.lang.Object)
-     */
-    public V setValue(V value) {
-        return entry.setValue(value);
     }
 
     static class AddedEvent<K, V> extends InternalEntryEvent<K, V> implements
@@ -207,36 +178,6 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, 
         }
     }
 
-    static class RemovedEvent<K, V> extends InternalEntryEvent<K, V> implements
-            CacheEntryEvent.ItemRemoved<K, V> {
-
-        private boolean hasExpired;
-
-        /**
-         * @param cache
-         * @param entry
-         */
-        RemovedEvent(Cache<K, V> cache, CacheEntry<K, V> entry, boolean hasExpired) {
-            super(cache, entry);
-            this.hasExpired = hasExpired;
-        }
-
-        /**
-         * @see org.coconut.cache.service.event.CacheEvent#getName()
-         */
-        public String getName() {
-            return CacheEntryEvent.ItemRemoved.NAME;
-        }
-
-        /**
-         * @see org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved#hasExpired()
-         */
-        public boolean hasExpired() {
-            return hasExpired;
-        }
-
-    }
-
     static class HitEvent<K, V> extends InternalEntryEvent<K, V> implements
             CacheEntryEvent.ItemAccessed<K, V> {
         /**
@@ -273,15 +214,8 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, 
             this.key = key;
         }
 
-        /**
-         * @see org.coconut.cache.service.event.CacheEvent#getName()
-         */
-        public String getName() {
-            return CacheEntryEvent.ItemAccessed.NAME;
-        }
-
-        public boolean isHit() {
-            return false;
+        public AttributeMap getAttributes() {
+            throw new UnsupportedOperationException();
         }
 
         /**
@@ -289,6 +223,13 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, 
          */
         public Cache<K, V> getCache() {
             return cache;
+        }
+
+        /**
+         * @see org.coconut.cache.CacheEntry#getCost()
+         */
+        public double getCost() {
+            throw new UnsupportedOperationException();
         }
 
         /**
@@ -306,6 +247,20 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, 
         }
 
         /**
+         * @see org.coconut.cache.CacheEntry#getHits()
+         */
+        public long getHits() {
+            return 0;
+        }
+
+        /**
+         * @see java.util.Map.Entry#getKey()
+         */
+        public K getKey() {
+            return key;
+        }
+
+        /**
          * @see org.coconut.cache.CacheEntry#getLastAccessTime()
          */
         public long getLastAccessTime() {
@@ -320,40 +275,10 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, 
         }
 
         /**
-         * @see java.util.Map.Entry#getKey()
+         * @see org.coconut.cache.service.event.CacheEvent#getName()
          */
-        public K getKey() {
-            return key;
-        }
-
-        /**
-         * @see java.util.Map.Entry#getValue()
-         */
-        public V getValue() {
-            return null;
-        }
-
-        /**
-         * @see java.util.Map.Entry#setValue(java.lang.Object)
-         */
-        public V setValue(V value) {
-            throw new UnsupportedOperationException();
-        }
-
-
-        /**
-         * @see org.coconut.cache.CacheEntry#getCost()
-         */
-        public double getCost() {
-            throw new UnsupportedOperationException();
-        }
-
-        
-        /**
-         * @see org.coconut.cache.CacheEntry#getHits()
-         */
-        public long getHits() {
-            return 0;
+        public String getName() {
+            return CacheEntryEvent.ItemAccessed.NAME;
         }
 
 
@@ -364,8 +289,83 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, 
             throw new UnsupportedOperationException();
         }
 
-        public AttributeMap getAttributes() {
+        
+        /**
+         * @see java.util.Map.Entry#getValue()
+         */
+        public V getValue() {
+            return null;
+        }
+
+
+        public boolean isHit() {
+            return false;
+        }
+
+        /**
+         * @see java.util.Map.Entry#setValue(java.lang.Object)
+         */
+        public V setValue(V value) {
             throw new UnsupportedOperationException();
         }
+    }
+
+    static class RemovedEvent<K, V> extends InternalEntryEvent<K, V> implements
+            CacheEntryEvent.ItemRemoved<K, V> {
+
+        private boolean hasExpired;
+
+        /**
+         * @param cache
+         * @param entry
+         */
+        RemovedEvent(Cache<K, V> cache, CacheEntry<K, V> entry, boolean hasExpired) {
+            super(cache, entry);
+            this.hasExpired = hasExpired;
+        }
+
+        /**
+         * @see org.coconut.cache.service.event.CacheEvent#getName()
+         */
+        public String getName() {
+            return CacheEntryEvent.ItemRemoved.NAME;
+        }
+
+        /**
+         * @see org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved#hasExpired()
+         */
+        public boolean hasExpired() {
+            return hasExpired;
+        }
+
+    }
+
+    static <K, V> CacheEntryEvent<K, V> added(Cache<K, V> cache, CacheEntry<K, V> entry) {
+        return new AddedEvent<K, V>(cache, entry);
+    }
+
+    static <K, V> CacheEntryEvent<K, V> evicted(Cache<K, V> cache, CacheEntry<K, V> entry) {
+        return new RemovedEvent<K, V>(cache, entry, false);
+    }
+
+    static <K, V> CacheEntryEvent<K, V> expired(Cache<K, V> cache, CacheEntry<K, V> entry) {
+        return new RemovedEvent<K, V>(cache, entry, true);
+    }
+
+    static <K, V> CacheEntryEvent<K, V> hit(Cache<K, V> cache, CacheEntry<K, V> entry) {
+        return new HitEvent<K, V>(cache, entry);
+    }
+
+    static <K, V> CacheEntryEvent<K, V> miss(Cache<K, V> cache, K key) {
+        return new MissEvent<K, V>(cache, key);
+    }
+
+    static <K, V> CacheEntryEvent<K, V> removed(Cache<K, V> cache, CacheEntry<K, V> entry) {
+        return new RemovedEvent<K, V>(cache, entry, false);
+    }
+
+    static <K, V> CacheEntryEvent<K, V> updated(Cache<K, V> cache,
+            CacheEntry<K, V> entry, V previous) {
+        return new ChangedEvent<K, V>(cache, entry, previous, false);
     }
 }

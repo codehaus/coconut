@@ -22,9 +22,6 @@ public class DefaultCacheEntryLoader<K, V> extends ExtendableFutureTask<V> imple
 
     private final EventProcessor<? super LoadRequest<K, V>> req;
 
-    public AttributeMap getAttributes() {
-        return attributes;
-    }
 
     /**
      * @param loader
@@ -42,6 +39,11 @@ public class DefaultCacheEntryLoader<K, V> extends ExtendableFutureTask<V> imple
         this.attributes = attributes;
     }
 
+
+    public AttributeMap getAttributes() {
+        return attributes;
+    }
+    
     public Cache<K, V> getCache() {
         return cache;
     }

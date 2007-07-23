@@ -20,12 +20,6 @@ public class AsyncIntegerToStringLoader extends IntegerToStringLoader implements
     private List<Integer> keysLoader = Collections
             .synchronizedList(new LinkedList<Integer>());
 
-    final static Runnable DUMMY_RUNNABLE = new Runnable() {
-
-        public void run() {
-            // do nothing
-        }
-    };
 
     public List<Integer> getLoadedKeys() {
         return new ArrayList<Integer>(keysLoader);

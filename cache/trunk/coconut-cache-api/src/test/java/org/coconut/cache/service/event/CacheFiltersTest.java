@@ -12,8 +12,7 @@ import org.jmock.Mock;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: CacheFiltersCacheFilterTest.java 203 2007-01-25 19:43:03Z
- *          kasper $
+ * @version $Id$
  */
 @SuppressWarnings("unchecked")
 public class CacheFiltersTest extends MockTestCase {

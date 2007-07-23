@@ -17,9 +17,9 @@ import org.coconut.cache.ReplacementPolicy;
  * @version $Id$
  */
 public final class PolicyTestUtils {
+    static final Integer[] values;
 
     private PolicyTestUtils() {}
-    static final Integer[] values;
 
     static {
         values = new Integer[1000];

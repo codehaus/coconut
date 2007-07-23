@@ -18,12 +18,16 @@ import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.core.AttributeMap;
-import org.coconut.core.AttributeMaps;
 import org.coconut.core.Clock;
 import org.coconut.filter.Filter;
 import org.coconut.management.ManagedGroup;
 
 /**
+ * The default implementation of {@link CacheExpirationService}. This implementation can
+ * be used in a multi-threaded environment if {@link Cache}, {@link CacheHelper} and
+ * {@link InternalCacheAttributeService} that is specified at construction time are
+ * thread-safe.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -38,6 +42,7 @@ public class DefaultCacheExpirationService<K, V> extends AbstractInternalCacheSe
 
     private final CacheHelper<K, V> helper;
 
+    /** The clock used to get the current time. */
     private final Clock clock;
 
     private final Cache<K, V> cache;
@@ -52,15 +57,21 @@ public class DefaultCacheExpirationService<K, V> extends AbstractInternalCacheSe
         this.expirationFilter = conf.getExpirationFilter();
         this.attributeFactory = attributeFactory;
         attributeFactory.update().setExpirationTimeNanos(
-                ExpirationUtils.getInitialTimeToLive(conf));
+                ExpirationUtils.getInitialTimeToLiveNS(conf));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void initialize(CacheConfiguration<?, ?> configuration,
             Map<Class<?>, Object> serviceMap) {
         serviceMap.put(CacheExpirationService.class, ExpirationUtils.wrapService(this));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public V put(K key, V value, long timeToLive, TimeUnit unit) {
         if (timeToLive == CacheExpirationService.DEFAULT_EXPIRATION) {
             return cache.put(key, value);
@@ -72,8 +83,7 @@ public class DefaultCacheExpirationService<K, V> extends AbstractInternalCacheSe
     }
 
     /**
-     * @see org.coconut.cache.service.expiration.CacheExpirationService#putAll(java.util.Map,
-     *      long, java.util.concurrent.TimeUnit)
+     * {@inheritDoc}
      */
     public void putAll(Map<? extends K, ? extends V> t, long timeToLive, TimeUnit unit) {
         if (timeToLive == CacheExpirationService.DEFAULT_EXPIRATION) {
@@ -91,25 +101,28 @@ public class DefaultCacheExpirationService<K, V> extends AbstractInternalCacheSe
     }
 
     /**
-     * @see org.coconut.cache.service.expiration.CacheExpirationService#removeAll(java.util.Collection)
+     * {@inheritDoc}
      */
     public int removeAll(Collection<? extends K> keys) {
         return helper.removeAll(keys);
     }
 
     /**
-     * @see org.coconut.cache.service.expiration.CacheExpirationService#removeFiltered(org.coconut.filter.Filter)
+     * {@inheritDoc}
      */
     public int removeFiltered(Filter<? super CacheEntry<K, V>> filter) {
         return helper.removeAllFiltered(filter);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean isExpired(CacheEntry<K, V> entry) {
         return ExpirationUtils.isExpired(entry, clock, expirationFilter);
     }
 
     /**
-     * @see org.coconut.cache.service.expiration.CacheExpirationService#getDefaultTimeToLive(java.util.concurrent.TimeUnit)
+     * {@inheritDoc}
      */
     public long getDefaultTimeToLive(TimeUnit unit) {
         return ExpirationUtils.convertNanosToExpirationTime(attributeFactory.update()
@@ -117,8 +130,7 @@ public class DefaultCacheExpirationService<K, V> extends AbstractInternalCacheSe
     }
 
     /**
-     * @see org.coconut.cache.service.expiration.CacheExpirationService#setDefaultTimeToLive(long,
-     *      java.util.concurrent.TimeUnit)
+     * {@inheritDoc}
      */
     public void setDefaultTimeToLive(long timeToLive, TimeUnit unit) {
         long time = ExpirationUtils.convertExpirationTimeToNanos(timeToLive, unit);
@@ -126,10 +138,13 @@ public class DefaultCacheExpirationService<K, V> extends AbstractInternalCacheSe
                 time == 0 ? Long.MAX_VALUE : time);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void registerMXBeans(ManagedGroup root) {
         ManagedGroup g = root.addChild(CacheExpirationConfiguration.SERVICE_NAME,
                 "Cache Expiration attributes and operations");
-        g.add(ExpirationUtils.wrapMXBean(this));
+        g.add(ExpirationUtils.wrapAsMXBean(this));
     }
 }

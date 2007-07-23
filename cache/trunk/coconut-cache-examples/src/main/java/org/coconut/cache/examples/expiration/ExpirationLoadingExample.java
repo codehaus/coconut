@@ -1,7 +1,9 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the Apache 2.0 License, see http://coconut.codehaus.org/license.
+/* Written by Kasper Nielsen and released to the public domain, as explained at
+ * http://creativecommons.org/licenses/publicdomain
  */
 package org.coconut.cache.examples.expiration;
+
+import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheAttributes;
@@ -14,13 +16,12 @@ import org.coconut.core.AttributeMap;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class CacheEntryLoaderExample {
+public class ExpirationLoadingExample {
     // START SNIPPET: class
     static class ExpirationLoader implements CacheLoader<Integer, String> {
         public String load(Integer key, AttributeMap attributes) throws Exception {
-            attributes.putLong(CacheAttributes.TIME_TO_LIVE_NS,
-                    System.currentTimeMillis() + 60 * 60 * 1000);
-            return "val=" + key;
+            CacheAttributes.setTimeToLive(attributes, 60 * 60, TimeUnit.SECONDS);
+            return "some value";
         }
     }
 
@@ -28,7 +29,7 @@ public class CacheEntryLoaderExample {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
         cc.loading().setLoader(new ExpirationLoader());
         Cache<Integer, String> cache = cc.newInstance(UnsynchronizedCache.class);
-        cache.get(4); // item will expire after 1 hour (60 * 60 * 1000)
+        cache.get(4); // item will expire after 1 hour (60 * 60 seconds)
     }
     // END SNIPPET: class
 }
