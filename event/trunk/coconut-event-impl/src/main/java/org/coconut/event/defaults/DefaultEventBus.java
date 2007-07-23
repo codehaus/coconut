@@ -46,9 +46,6 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
         this(EventBusConfiguration.DEFAULT_CONFIGURATION);
     }
 
-    protected void cancel(EventSubscription<E> aes) {
-
-    }
     
     public DefaultEventBus(EventBusConfiguration<E> conf) {
         super(conf);
@@ -60,6 +57,9 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
         }
     }
 
+    protected void cancel(EventSubscription<E> aes) {
+
+    }
     @SuppressWarnings("unchecked")
     public List<EventSubscription<E>> getSubscribers() {
         return Collections.unmodifiableList(new ArrayList(subscribers.values()));

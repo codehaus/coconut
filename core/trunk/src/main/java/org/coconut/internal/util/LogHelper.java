@@ -14,14 +14,6 @@ import org.w3c.dom.Element;
  */
 public class LogHelper {
 
-    public static Logger fromLog4j(String name) {
-        return Loggers.Log4j.from(name);
-    }
-    
-    public static Logger fromCommons(String name) {
-        return Loggers.Commons.from(name);
-    }
-    
 
 	public final static String LOG_TYPE_ATRB = "type";
 
@@ -31,6 +23,15 @@ public class LogHelper {
 
 	private final static String LOG4J = "log4j";
 
+
+    public static Logger fromLog4j(String name) {
+        return Loggers.Log4j.from(name);
+    }
+    
+    public static Logger fromCommons(String name) {
+        return Loggers.Commons.from(name);
+    }
+    
 	public static Logger readLog(Element log) {
 		if (log != null) {
 			String type = log.getAttribute(LOG_TYPE_ATRB);

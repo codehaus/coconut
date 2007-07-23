@@ -38,17 +38,12 @@ import org.coconut.management.annotation.ManagedOperation;
 
 public class DefaultManagedGroup extends AbstractManagedGroup implements DynamicMBean {
 
-    @Override
-    public String toString() {
-        return "Name= " + getName() + ", Description =" + getDescription();
-    }
-
-    private final Class<?> mbeanInterface = null;
+    private final Map<String, AbstractAttribute> attributes = new ConcurrentHashMap<String, AbstractAttribute>();
 
     // private final MBeanIntrospector<M> introspector;
     private volatile MBeanInfo mbeanInfo;
 
-    private final Map<String, AbstractAttribute> attributes = new ConcurrentHashMap<String, AbstractAttribute>();
+    private final Class<?> mbeanInterface = null;
 
     private final Map<String, List<AbstractOperation>> ops = new ConcurrentHashMap<String, List<AbstractOperation>>();
 
@@ -68,11 +63,6 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
      */
     public DefaultManagedGroup(String name, String description, boolean register) {
         super(name, description);
-    }
-
-    public synchronized ManagedGroup addChild(String name, String description) {
-        DefaultManagedGroup g = new DefaultManagedGroup(name, description);
-        return super.addNewGroup(g);
     }
 
     public synchronized ManagedGroup add(Object o) {
@@ -133,41 +123,9 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
         return this;
     }
 
-    private String filterString(Object o, String str) {
-        // if (o instanceof Named) {
-        // Named n = (Named) o;
-        // str = str.replace("$name", n.getName());
-        // // System.out.println(n.getName());
-        // }
-        // if (o instanceof Described) {
-        // Described n = (Described) o;
-        // str = str.replace("$description", n.getDescription());
-        // }
-        return str;
-    }
-
-    public Object invoke(String actionName, Object[] params, String[] signature)
-            throws MBeanException, ReflectionException {
-        List<AbstractOperation> aa = ops.get(actionName);
-        if (aa != null) {
-            for (AbstractOperation ao : aa) {
-                return ao.invoke(params);
-            }
-        }
-        return null;
-    }
-
-    private AbstractAttribute findAttribute(String attribute)
-            throws AttributeNotFoundException {
-        AbstractAttribute att = attributes.get(attribute);
-        if (att == null) {
-            for (String aa : attributes.keySet()) {
-                System.out.println(aa);
-            }
-            throw new AttributeNotFoundException("Attribute " + attribute
-                    + " could not be found");
-        }
-        return att;
+    public synchronized ManagedGroup addChild(String name, String description) {
+        DefaultManagedGroup g = new DefaultManagedGroup(name, description);
+        return super.addNewGroup(g);
     }
 
     /**
@@ -227,6 +185,21 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
         return mbeanInfo;
     }
 
+    public Collection<?> getObjects() {
+        return new ArrayList(os);
+    }
+
+    public Object invoke(String actionName, Object[] params, String[] signature)
+            throws MBeanException, ReflectionException {
+        List<AbstractOperation> aa = ops.get(actionName);
+        if (aa != null) {
+            for (AbstractOperation ao : aa) {
+                return ao.invoke(params);
+            }
+        }
+        return null;
+    }
+
     /**
      * @see javax.management.DynamicMBean#setAttribute(javax.management.Attribute)
      */
@@ -253,13 +226,40 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
         return result;
     }
 
+    @Override
+    public String toString() {
+        return "Name= " + getName() + ", Description =" + getDescription();
+    }
+
+    private String filterString(Object o, String str) {
+        // if (o instanceof Named) {
+        // Named n = (Named) o;
+        // str = str.replace("$name", n.getName());
+        // // System.out.println(n.getName());
+        // }
+        // if (o instanceof Described) {
+        // Described n = (Described) o;
+        // str = str.replace("$description", n.getDescription());
+        // }
+        return str;
+    }
+
+    private AbstractAttribute findAttribute(String attribute)
+            throws AttributeNotFoundException {
+        AbstractAttribute att = attributes.get(attribute);
+        if (att == null) {
+            for (String aa : attributes.keySet()) {
+                System.out.println(aa);
+            }
+            throw new AttributeNotFoundException("Attribute " + attribute
+                    + " could not be found");
+        }
+        return att;
+    }
+
     private static String capitalize(String s) {
         if (s.length() == 0)
             return s;
         return s.substring(0, 1).toUpperCase() + s.substring(1);
-    }
-
-    public Collection<?> getObjects() {
-        return new ArrayList(os);
     }
 }

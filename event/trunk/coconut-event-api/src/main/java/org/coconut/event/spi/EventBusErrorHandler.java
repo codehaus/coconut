@@ -17,6 +17,9 @@ import org.coconut.event.EventSubscription;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class EventBusErrorHandler<E> {
+    public static final EventBusErrorHandler DEFAULT = new EventBusErrorHandler();
+
+    
     private Logger logger;
 
     private boolean isInitialized;
@@ -37,7 +40,6 @@ public class EventBusErrorHandler<E> {
         this.logger = logger;
     }
 
-    public static final EventBusErrorHandler DEFAULT = new EventBusErrorHandler();
 
     public void setCacheName(String name) {
         this.name = name;

@@ -216,7 +216,7 @@ public class Filters_ComparisonTest {
         }
     }
 
-    static class Dummy {
+    static final class Dummy {
         static final Dummy D1 = new Dummy(1);
 
         static final Dummy D2 = new Dummy(2);

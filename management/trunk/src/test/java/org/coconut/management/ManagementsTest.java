@@ -1,3 +1,6 @@
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
+ */
 package org.coconut.management;
 
 import java.lang.management.ManagementFactory;
@@ -16,7 +19,7 @@ public class ManagementsTest {
 
     private int initCount;
 
-    DefaultManagedGroup dmg;
+    private DefaultManagedGroup dmg;
 
     @Before
     public void setup() {

@@ -21,25 +21,18 @@ public class EventBusConfiguration<E> {
      */
     public static final EventBusConfiguration DEFAULT_CONFIGURATION = newConf();
 
-    public static <E> EventBusConfiguration<E> newConf() {
-        return new EventBusConfiguration<E>();
-    }
-    
     public EventBusConfiguration conf;
+    
+    private EventBusErrorHandler<E> errorHandler;
 
     private FilterMatcher<?, E> filterMatcher;
 
-    private boolean reentrant = false;
-
-    private EventBusErrorHandler<E> errorHandler;
-
-    public void setCheckReentrant(boolean check) {
-        this.reentrant = check;
-    }
+    private boolean reentrant;
 
     public boolean getCheckReentrant() {
         return reentrant;
     }
+
     /**
      * Returns the log configured for the cache.
      * 
@@ -48,6 +41,16 @@ public class EventBusConfiguration<E> {
      */
     public EventBusErrorHandler<E> getErrorHandler() {
         return errorHandler;
+    }
+
+    /**
+     * @return the filterMatcher
+     */
+    public FilterMatcher<?, E> getFilterMatcher() {
+        return filterMatcher;
+    }
+    public void setCheckReentrant(boolean check) {
+        this.reentrant = check;
     }
     
     /**
@@ -69,16 +72,13 @@ public class EventBusConfiguration<E> {
     }
 
     /**
-     * @return the filterMatcher
-     */
-    public FilterMatcher<?, E> getFilterMatcher() {
-        return filterMatcher;
-    }
-
-    /**
      * @param filterMatcher the filterMatcher to set
      */
     public void setFilterMatcher(FilterMatcher<?, E> filterMatcher) {
         this.filterMatcher = filterMatcher;
+    }
+
+    public static <E> EventBusConfiguration<E> newConf() {
+        return new EventBusConfiguration<E>();
     }
 }

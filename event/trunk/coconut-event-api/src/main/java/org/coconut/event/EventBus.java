@@ -127,7 +127,7 @@ public interface EventBus<E> extends Offerable<E>, EventProcessor<E> {
      * accepted by the specified filter. This method also specifies the name of
      * the subscription which is usefull for remote monitoring and controlling.
      * 
-     * @param eventHandler
+     * @param listener
      *            the event handler that will be notified of a published event.
      * @param filter
      *            the filter that will be used to test against events

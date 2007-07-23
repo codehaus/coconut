@@ -87,9 +87,7 @@ public interface ManagedGroup {
 
     /**
      * @param service
-     * @param name *
-     * @throws InstanceAlreadyExistsException
-     *             This group is already under the control of a MBean server.
+     * @param objectName *
      * @throws JMException
      */
     void register(MBeanServer service, ObjectName objectName) throws JMException;

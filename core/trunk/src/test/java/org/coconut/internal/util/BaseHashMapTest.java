@@ -1,5 +1,5 @@
-/**
- * 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.internal.util;
 
@@ -215,6 +215,7 @@ public class BaseHashMapTest extends TestCase {
         Iterator it = s.iterator();
         while (it.hasNext()) {
             Map.Entry e = (Map.Entry) it.next();
+            //assertTrue((e.equals(m1)));
             assertTrue((e.getKey().equals(one) && e.getValue().equals("A"))
                     || (e.getKey().equals(two) && e.getValue().equals("B"))
                     || (e.getKey().equals(three) && e.getValue().equals("C"))

@@ -35,12 +35,13 @@ public class ResourceHolder {
         Locale.setDefault(def);
         LOCALE = loc;
     }
-    public static ResourceBundle lookup(String name) {
-    	return ResourceBundle.getBundle(name, LOCALE);
-    }
     public ResourceHolder(String name) {
         ressourceBundle = ResourceBundle.getBundle(name, LOCALE);
     }
+    public static ResourceBundle lookup(String name) {
+    	return ResourceBundle.getBundle(name, LOCALE);
+    }
+
     public static ResourceHolder fromPackage(Class c) {
     	return new ResourceHolder(c.getPackage().getName());
     }
