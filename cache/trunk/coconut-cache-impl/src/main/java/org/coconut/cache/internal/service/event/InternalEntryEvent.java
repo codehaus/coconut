@@ -22,92 +22,66 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, 
         this.cache = cache;
         this.entry = entry;
     }
-
+    /** {@inheritDoc} */
     public AttributeMap getAttributes() {
         throw new UnsupportedOperationException();
     }
 
-    /**
-     * @see org.coconut.cache.service.event.CacheEvent#getCache()
-     */
+    /** {@inheritDoc} */
     public Cache<K, V> getCache() {
         return cache;
     }
 
 
-    /**
-     * @see org.coconut.cache.CacheEntry#getCost()
-     */
+    /** {@inheritDoc} */
     public double getCost() {
         return entry.getCost();
     }
-
+    /** {@inheritDoc} */
     public long getCreationTime() {
         return entry.getCreationTime();
     }
 
-    /**
-     * @see org.coconut.cache.CacheEntry#getExpirationTime()
-     */
+    /** {@inheritDoc} */
     public long getExpirationTime() {
         return entry.getExpirationTime();
     }
 
-
-    /**
-     * @see org.coconut.cache.CacheEntry#getHits()
-     */
+    /** {@inheritDoc} */
     public long getHits() {
         return entry.getHits();
     }
 
-
-    /**
-     * @see java.util.Map.Entry#getKey()
-     */
+    /** {@inheritDoc} */
     public K getKey() {
         return entry.getKey();
     }
 
-
-    /**
-     * @see org.coconut.cache.CacheEntry#getLastAccessTime()
-     */
+    /** {@inheritDoc} */
     public long getLastAccessTime() {
         return entry.getLastAccessTime();
     }
 
-
-    /**
-     * @see org.coconut.cache.CacheEntry#getLastUpdateTime()
-     */
+    /** {@inheritDoc} */
     public long getLastUpdateTime() {
         return entry.getLastUpdateTime();
     }
 
-
-    /**
-     * @see org.coconut.cache.CacheEntry#getSize()
-     */
+    /** {@inheritDoc} */
     public long getSize() {
         return entry.getSize();
     }
 
-
-    /**
-     * @see java.util.Map.Entry#getValue()
-     */
+    /** {@inheritDoc} */
     public V getValue() {
         return entry.getValue();
     }
 
-    /**
-     * @see java.util.Map.Entry#setValue(java.lang.Object)
-     */
+    /** {@inheritDoc} */
     public V setValue(V value) {
         return entry.setValue(value);
     }
-
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -132,9 +106,7 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, 
             super(cache, entry);
         }
 
-        /**
-         * @see org.coconut.cache.service.event.CacheEvent#getName()
-         */
+        /** {@inheritDoc} */
         public String getName() {
             return CacheEntryEvent.ItemAdded.NAME;
         }
@@ -156,23 +128,17 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, 
             this.previous = previous;
         }
 
-        /**
-         * @see org.coconut.cache.service.event.CacheEvent#getName()
-         */
+        /** {@inheritDoc} */
         public String getName() {
             return CacheEntryEvent.ItemUpdated.NAME;
         }
 
-        /**
-         * @see org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated#getPreviousValue()
-         */
+        /** {@inheritDoc} */
         public V getPreviousValue() {
             return previous;
         }
 
-        /**
-         * @see org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated#hasExpired()
-         */
+        /** {@inheritDoc} */
         public boolean hasExpired() {
             return isExpired;
         }
@@ -188,13 +154,11 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, 
             super(cache, entry);
         }
 
-        /**
-         * @see org.coconut.cache.service.event.CacheEvent#getName()
-         */
+        /** {@inheritDoc} */
         public String getName() {
             return CacheEntryEvent.ItemAccessed.NAME;
         }
-
+        /** {@inheritDoc} */
         public boolean isHit() {
             return true;
         }
@@ -213,98 +177,72 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, 
             this.cache = cache;
             this.key = key;
         }
-
+        /** {@inheritDoc} */
         public AttributeMap getAttributes() {
             throw new UnsupportedOperationException();
         }
 
-        /**
-         * @see org.coconut.cache.service.event.CacheEvent#getCache()
-         */
+        /** {@inheritDoc} */
         public Cache<K, V> getCache() {
             return cache;
         }
 
-        /**
-         * @see org.coconut.cache.CacheEntry#getCost()
-         */
+        /** {@inheritDoc} */
         public double getCost() {
             throw new UnsupportedOperationException();
         }
 
-        /**
-         * @see org.coconut.cache.CacheEntry#getCreationTime()
-         */
+        /** {@inheritDoc} */
         public long getCreationTime() {
             throw new UnsupportedOperationException();
         }
 
-        /**
-         * @see org.coconut.cache.CacheEntry#getExpirationTime()
-         */
+        /** {@inheritDoc} */
         public long getExpirationTime() {
             throw new UnsupportedOperationException();
         }
 
-        /**
-         * @see org.coconut.cache.CacheEntry#getHits()
-         */
+        /** {@inheritDoc} */
         public long getHits() {
             return 0;
         }
 
-        /**
-         * @see java.util.Map.Entry#getKey()
-         */
+        /** {@inheritDoc} */
         public K getKey() {
             return key;
         }
 
-        /**
-         * @see org.coconut.cache.CacheEntry#getLastAccessTime()
-         */
+        /** {@inheritDoc} */
         public long getLastAccessTime() {
             throw new UnsupportedOperationException();
         }
 
-        /**
-         * @see org.coconut.cache.CacheEntry#getLastUpdateTime()
-         */
+        /** {@inheritDoc} */
         public long getLastUpdateTime() {
             throw new UnsupportedOperationException();
         }
 
-        /**
-         * @see org.coconut.cache.service.event.CacheEvent#getName()
-         */
+        /** {@inheritDoc} */
         public String getName() {
             return CacheEntryEvent.ItemAccessed.NAME;
         }
 
-
-        /**
-         * @see org.coconut.cache.CacheEntry#getSize()
-         */
+        /** {@inheritDoc} */
         public long getSize() {
             throw new UnsupportedOperationException();
         }
 
-        
-        /**
-         * @see java.util.Map.Entry#getValue()
-         */
+        /** {@inheritDoc} */
         public V getValue() {
             return null;
         }
 
-
+        /** {@inheritDoc} */
         public boolean isHit() {
             return false;
         }
 
-        /**
-         * @see java.util.Map.Entry#setValue(java.lang.Object)
-         */
+        /** {@inheritDoc} */
         public V setValue(V value) {
             throw new UnsupportedOperationException();
         }
@@ -324,16 +262,12 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, 
             this.hasExpired = hasExpired;
         }
 
-        /**
-         * @see org.coconut.cache.service.event.CacheEvent#getName()
-         */
+        /** {@inheritDoc} */
         public String getName() {
             return CacheEntryEvent.ItemRemoved.NAME;
         }
 
-        /**
-         * @see org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved#hasExpired()
-         */
+        /** {@inheritDoc} */
         public boolean hasExpired() {
             return hasExpired;
         }

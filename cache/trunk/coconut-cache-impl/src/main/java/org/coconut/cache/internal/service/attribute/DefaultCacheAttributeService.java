@@ -14,14 +14,17 @@ public class DefaultCacheAttributeService implements InternalCacheAttributeServi
 
     private Dummy dummy = new Dummy();
 
+    /** {@inheritDoc} */
     public AttributeMap createMap() {
         return new AttributeMaps.DefaultAttributeMap();
     }
 
+    /** {@inheritDoc} */
     public AttributeMap createMap(AttributeMap copyFrom) {
         return new AttributeMaps.DefaultAttributeMap(copyFrom);
     }
 
+    /** {@inheritDoc} */
     public DefaultAttributes update() {
         return dummy;
     }
@@ -34,26 +37,32 @@ public class DefaultCacheAttributeService implements InternalCacheAttributeServi
 
         private int maximumSize;
 
+        /** {@inheritDoc} */
         public long getExpirationTimeNanos() {
             return goo;
         }
 
+        /** {@inheritDoc} */
         public void setExpirationTimeNanos(long nanos) {
             this.goo = nanos;
         }
 
+        /** {@inheritDoc} */
         public long getTimeToRefreshNanos() {
             return refresh;
         }
 
+        /** {@inheritDoc} */
         public void setTimeToFreshNanos(long nanos) {
             this.refresh = nanos;
         }
 
+        /** {@inheritDoc} */
         public int getMaximumSize() {
             return maximumSize;
         }
 
+        /** {@inheritDoc} */
         public void setMaximumSize(int maximumSize) {
             this.maximumSize = maximumSize;
         }

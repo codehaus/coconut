@@ -11,7 +11,7 @@ package org.coconut.management.annotation;
  */
 public @interface ManagedParameter {
     /**
-     * The name of the attribute
+     * The name of the attribute.
      */
     String defaultValue();
 }

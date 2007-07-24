@@ -31,7 +31,7 @@ class ReflectionOperation extends AbstractOperation {
     }
 
     /**
-     * @see org.coconut.jmx.defaults.AbstractOperation#invoke()
+     * {@inheritDoc}
      */
     @Override
     Object invoke(Object... objects) throws MBeanException, ReflectionException {
@@ -57,7 +57,7 @@ class ReflectionOperation extends AbstractOperation {
     }
 
     /**
-     * @see org.coconut.jmx.defaults.AbstractOperation#signature()
+     * {@inheritDoc}
      */
     @Override
     String[] getSignature() {
@@ -66,7 +66,7 @@ class ReflectionOperation extends AbstractOperation {
     }
 
     /**
-     * @see org.coconut.management.defaults.AbstractOperation#getInfo()
+     * {@inheritDoc}
      */
     @Override
     MBeanOperationInfo getInfo() throws IntrospectionException {

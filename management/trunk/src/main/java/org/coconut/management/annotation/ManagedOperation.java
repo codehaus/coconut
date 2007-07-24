@@ -23,12 +23,12 @@ import java.lang.annotation.Target;
 public @interface ManagedOperation {
 
     /**
-     * The name of the attribute
+     * The name of the attribute.
      */
     String defaultValue() default "";
 
     /**
-     * The description of the atttribute
+     * The description of the atttribute.
      */
     String description() default "";
 }

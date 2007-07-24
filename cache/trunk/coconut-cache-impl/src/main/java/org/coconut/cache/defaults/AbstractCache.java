@@ -25,15 +25,21 @@ import org.coconut.internal.util.CollectionUtils;
 public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         Cache<K, V> {
 
+    /** The name of the cache. */
     private final String name;
 
+    /**
+     * Creates a new AbstractCache from the specified configuration.
+     * 
+     * @param conf
+     *            the cache configuration to create the cache from
+     */
     @SuppressWarnings("unchecked")
     AbstractCache(CacheConfiguration<K, V> conf) {
         if (conf == null) {
             throw new NullPointerException("configuration is null");
         }
         ConfigurationValidator.getInstance().verify(conf, (Class) getClass());
-        // this.name = conf.getName();
         String name = conf.getName();
         if (name == null) {
             this.name = UUID.randomUUID().toString();
@@ -42,17 +48,13 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     public boolean containsKey(Object key) {
         return peek((K) key) != null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean containsValue(Object value) {
         if (value == null) {
             throw new NullPointerException("value is null");
@@ -75,9 +77,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         return e == null ? null : e.getValue();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public Map<K, V> getAll(Collection<? extends K> keys) {
         if (keys == null) {
             throw new NullPointerException("keys is null");
@@ -90,9 +90,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         return doGetAll(keys);
     }
 
-    /**
-     * @see org.coconut.cache.Cache#getEntry(java.lang.Object)
-     */
+    /** {@inheritDoc} */
     public final CacheEntry<K, V> getEntry(K key) {
         if (key == null) {
             throw new NullPointerException("key is null");
@@ -101,23 +99,17 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         return entry == null ? null : new ImmutableCacheEntry<K, V>(entry);
     }
 
-    /**
-     * @see org.coconut.cache.Cache#getName()
-     */
+    /** {@inheritDoc} */
     public String getName() {
         return name;
     }
 
-    /**
-     * Just a helper method to allow easy access from bean inspectors.
-     */
+    /** @return the size of the cache */
     public int getSize() {
         return size();
     }
 
-    /**
-     * @see org.coconut.cache.Cache#peek(java.lang.Object)
-     */
+    /** {@inheritDoc} */
     public final V peek(K key) {
         if (key == null) {
             throw new NullPointerException("key is null");
@@ -126,9 +118,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         return e == null ? null : e.getValue();
     }
 
-    /**
-     * @see org.coconut.cache.Cache#peekEntry(java.lang.Object)
-     */
+    /** {@inheritDoc} */
     public final CacheEntry<K, V> peekEntry(K key) {
         if (key == null) {
             throw new NullPointerException("key is null");
@@ -137,17 +127,12 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         return entry == null ? null : new ImmutableCacheEntry<K, V>(entry);
     }
 
-    /**
-     * @see java.util.AbstractMap#put(java.lang.Object, java.lang.Object)
-     */
+    /** {@inheritDoc} */
     public final V put(K key, V value) {
         return put(key, value, AttributeMaps.EMPTY_MAP);
     }
 
-    /**
-     * @see org.coconut.cache.Cache#put(java.lang.Object, java.lang.Object,
-     *      org.coconut.core.AttributeMap)
-     */
+    /** {@inheritDoc} */
     public V put(K key, V value, AttributeMap attributes) {
         if (key == null) {
             throw new NullPointerException("key is null");
@@ -160,9 +145,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         return prev == null ? null : prev.getValue();
     }
 
-    /**
-     * @see java.util.AbstractMap#putAll(java.util.Map)
-     */
+    /** {@inheritDoc} */
     public final void putAll(Map<? extends K, ? extends V> m) {
         if (m == null) {
             throw new NullPointerException("m is null");
@@ -171,10 +154,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         doPutAll(m, null);
     }
 
-    /**
-     * @see java.util.concurrent.ConcurrentMap#putIfAbsent(java.lang.Object,
-     *      java.lang.Object)
-     */
+    /** {@inheritDoc} */
     public final V putIfAbsent(K key, V value) {
         if (key == null) {
             throw new NullPointerException("key is null");
@@ -185,9 +165,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         return prev == null ? null : prev.getValue();
     }
 
-    /**
-     * @see java.util.AbstractMap#remove(java.lang.Object)
-     */
+    /** {@inheritDoc} */
     @Override
     public final V remove(Object key) {
         if (key == null) {
@@ -197,10 +175,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         return removed == null ? null : removed.getValue();
     }
 
-
-    /**
-     * @see java.util.concurrent.ConcurrentMap#remove(java.lang.Object, java.lang.Object)
-     */
+    /** {@inheritDoc} */
     public final boolean remove(Object key, Object value) {
         if (key == null) {
             throw new NullPointerException("key is null");
@@ -210,10 +185,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         return doRemove(key, value) != null;
     }
 
-    
-    /**
-     * @see java.util.concurrent.ConcurrentMap#replace(java.lang.Object, java.lang.Object)
-     */
+    /** {@inheritDoc} */
     public final V replace(K key, V value) {
         if (key == null) {
             throw new NullPointerException("key is null");
@@ -224,9 +196,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         return prev == null ? null : prev.getValue();
     }
 
-    /**
-     * @see java.util.concurrent.ConcurrentMap#replace(java.lang.Object, java.lang.Object, java.lang.Object)
-     */
+    /** {@inheritDoc} */
     public final boolean replace(K key, V oldValue, V newValue) {
         if (key == null) {
             throw new NullPointerException("key is null");

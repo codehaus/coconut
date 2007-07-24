@@ -71,9 +71,7 @@ public final class ManagementUtils {
             this.delegate = service;
         }
 
-        /**
-         * @see org.coconut.cache.service.management.CacheManagementService#getRoot()
-         */
+        /** {@inheritDoc} */
         public ManagedGroup getRoot() {
             return delegate.getRoot();
         }
@@ -99,41 +97,31 @@ public final class ManagementUtils {
             this.cache = cache;
         }
 
-        /**
-         * @see org.coconut.cache.service.management.CacheMXBean#clear()
-         */
+        /** {@inheritDoc} */
         @ManagedOperation(description = "Clears the cache")
         public void clear() {
             cache.clear();
         }
 
-        /**
-         * @see org.coconut.cache.service.management.CacheMXBean#evict()
-         */
+        /** {@inheritDoc} */
         @ManagedOperation(description = "Evicts expired entries and performs housekeeping on the cache")
         public void evict() {
             cache.evict();
         }
 
-        /**
-         * @see org.coconut.cache.service.management.CacheMXBean#getCapacity()
-         */
+        /** {@inheritDoc} */
         @ManagedAttribute(description = "The total size of all elements contained in the cache")
         public long getCapacity() {
             return cache.getCapacity();
         }
 
-        /**
-         * @see org.coconut.cache.service.management.CacheMXBean#getName()
-         */
+        /** {@inheritDoc} */
         @ManagedAttribute(description = "The name of the cache")
         public String getName() {
             return cache.getName();
         }
 
-        /**
-         * @see org.coconut.cache.service.management.CacheMXBean#getSize()
-         */
+        /** {@inheritDoc} */
         @ManagedAttribute(description = "The number of elements contained in the cache")
         public int getSize() {
             return cache.size();

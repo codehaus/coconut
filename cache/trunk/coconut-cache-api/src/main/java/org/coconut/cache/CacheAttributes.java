@@ -24,9 +24,9 @@ import org.coconut.core.Clock;
 public final class CacheAttributes {
 
     /**
-     * This attribute key can be used to indicate the <tt>cost</tt> of retrieving or
-     * calculating an element. The mapped value must can be any <tt>double</tt> value
-     * except {@link Double#NaN}, {@link Double#NEGATIVE_INFINITY} or
+     * The <tt>Cost</tt> attribute indicates the <tt>cost</tt> of retrieving or
+     * calculating an element. The mapped value must be of a type <tt>double</tt> and
+     * can be any value except {@link Double#NaN}, {@link Double#NEGATIVE_INFINITY} or
      * {@link Double#POSITIVE_INFINITY}
      * 
      * @see #setCost(AttributeMap, double)
@@ -35,25 +35,43 @@ public final class CacheAttributes {
     public static final String COST = "cost";
 
     /**
-     * This attribute key can be used to indicate the creation time of a cache element.
-     * The mapped value must be <tt>long</tt> between 1 and {@link Long#MAX_VALUE}.
+     * The <tt>Creation time</tt> attribute indicates the creation time of a cache
+     * element. The mapped value must be of a type <tt>long</tt> between 1 and
+     * {@link Long#MAX_VALUE}.
+     * 
      * @see #setCreationTime(AttributeMap, long)
      * @see #getCreationTime(AttributeMap)
      * @see #getCreationTime(AttributeMap, Clock)
      */
     public static final String CREATION_TIME = "creation_time";
 
-    /** Indicates the number of hits for a cache element. */
+    /**
+     * The <tt>Hits</tt> attribute indicates the number of hits for a cache element. The
+     * mapped value must be of a type <tt>long</tt> between 0 and {@link Long#MAX_VALUE}.
+     * 
+     * @see #setHits(AttributeMap, long)
+     * @see #getHits(AttributeMap)
+     */
     public static final String HITS = "hits";
 
-    /** Indicates when a cache element was last modified. */
+    /**
+     * The <tt>Last modified time</tt> attribute indicates when a cache element was last
+     * modified. The mapped value must be of a type <tt>long</tt> between 1 and
+     * {@link Long#MAX_VALUE}.
+     * 
+     * @see #setLastModifiedTime(AttributeMap, long)
+     * @see #getLastModified(AttributeMap, Clock)
+     */
     public static final String LAST_MODIFIED_TIME = "last_modified";
 
     /**
-     * This attribute key can be used to indicate the size of an element. The mapped value
-     * must be <tt>long</tt> between 1 and {@link Long#MAX_VALUE}.
+     * The <tt>Size</tt> attribute indicates the <tt>size</tt> of a cache element. The
+     * mapped value must be of a type <tt>long</tt> between 1 and {@link Long#MAX_VALUE}.
      * <p>
      * TODO It might make sense to allow a size of 0 indicating free storage.
+     * 
+     * @see #setSize(AttributeMap, long)
+     * @see #getSize(AttributeMap)
      */
     public static final String SIZE = "size";
 
@@ -115,11 +133,14 @@ public final class CacheAttributes {
     }
 
     /**
-     * Returns the number of hits. TODO finish
+     * Returns the number of hits for the {@link #HITS} attribute.
      * 
      * @param attributes
      *            the map to retrieve the value of the hit attribute from
      * @return the number of hits
+     * @throws IllegalArgumentException
+     *             if the specified attributeMap returns a negative number for the HITS
+     *             attribute
      */
     public static long getHits(AttributeMap attributes) {
         if (attributes == null) {
@@ -462,6 +483,21 @@ public final class CacheAttributes {
         return attributes;
     }
 
+    /**
+     * Sets a value for the {@link #HITS} attribute in the specified AttributeMap.
+     * 
+     * @param attributes
+     *            the map of attributes to set the cost attribute in
+     * @param hits
+     *            the number of hits to set the hit attribute to
+     * @return the specified attribute map
+     * @throws NullPointerException
+     *             if the specified attributeMap is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if the specified hits is negative
+     * @see #getHits(AttributeMap)
+     * @see #HITS
+     */
     public static AttributeMap setHits(AttributeMap attributes, long hits) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
@@ -471,23 +507,6 @@ public final class CacheAttributes {
         attributes.putLong(HITS, hits);
         return attributes;
     }
-
-    /**
-     * Sets a value for the {@link #COST} attribute in the specified AttributeMap.
-     * 
-     * @param attributes
-     *            the map of attributes to set the cost attribute in
-     * @param cost
-     *            the cost to set the cost attribute to
-     * @return the specified attribute map
-     * @throws NullPointerException
-     *             if the specified attributeMap is <code>null</code>
-     * @throws IllegalArgumentException
-     *             if the specified cost is {@link Double#NaN},
-     *             {@link Double#NEGATIVE_INFINITY} or {@link Double#POSITIVE_INFINITY}
-     * @see #getCost(AttributeMap)
-     * @see #COST
-     */
 
     /**
      * Sets a value for the {@link #TIME_TO_LIVE_NS} attribute in the specified

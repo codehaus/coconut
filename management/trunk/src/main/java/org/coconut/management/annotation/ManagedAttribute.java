@@ -24,12 +24,12 @@ import java.lang.annotation.Target;
 public @interface ManagedAttribute {
 
     /**
-     * The name of the attribute
+     * The name of the attribute.
      */
     String defaultValue() default "$methodname";
 
     /**
-     * The description of the atttribute
+     * The description of the atttribute.
      */
     String description() default "";
 

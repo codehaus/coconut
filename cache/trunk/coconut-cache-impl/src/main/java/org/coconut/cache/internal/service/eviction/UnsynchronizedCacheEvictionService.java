@@ -40,16 +40,19 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
         preferableSize = EvictionUtils.getPreferableSize(conf);
     }
 
+    /** {@inheritDoc} */
     public T evictNext() {
         return cp.evictNext();
     }
 
+    /** {@inheritDoc} */
     public void remove(int index) {
         if (cp != null) {
             cp.remove(index);
         }
     }
 
+    /** {@inheritDoc} */
     public void touch(int index) {
         if (index < 0) {
             throw new IllegalArgumentException(
@@ -60,10 +63,7 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
         }
     }
 
-    public boolean isEnabled() {
-        return cp != null;
-    }
-
+    /** {@inheritDoc} */
     public List<T> evict(int count) {
         List<T> list = new ArrayList<T>();
         while (count-- > 0) {
@@ -73,6 +73,7 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
         return list;
     }
 
+    /** {@inheritDoc} */
     public List<T> evict(int size, long capacity) {
         ArrayList<T> list = new ArrayList<T>();
         int diffSize = size - maxSize;
@@ -85,14 +86,17 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
         return list;
     }
 
+    /** {@inheritDoc} */
     public boolean isCapacityBreached(long capacity) {
         return capacity > maxCapacity;
     }
 
+    /** {@inheritDoc} */
     public boolean isSizeBreached(int size) {
         return size > maxSize;
     }
 
+    /** {@inheritDoc} */
     public int add(T t) {
         if (maxCapacity == 0) {
             return -1;
@@ -100,59 +104,57 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
         return cp.add(t);
     }
 
+    /** {@inheritDoc} */
     public int getMaximumSize() {
         return maxSize;
     }
 
+    /** {@inheritDoc} */
     public int getPreferableSize() {
         return preferableSize;
     }
 
+    /** {@inheritDoc} */
     public void setPreferableSize(int size) {
         this.preferableSize = new CacheEvictionConfiguration<K, V>().setPreferableSize(
                 size).getPreferableSize();
     }
 
+    /** {@inheritDoc} */
     public void setMaximumSize(int size) {
         this.maxSize = new CacheEvictionConfiguration<K, V>().setMaximumSize(size)
                 .getMaximumSize();
     }
 
+    /** {@inheritDoc} */
     public long getMaximumCapacity() {
         return maxCapacity;
     }
 
+    /** {@inheritDoc} */
     public void setMaximumCapacity(long size) {
         this.maxCapacity = new CacheEvictionConfiguration<K, V>()
                 .setMaximumCapacity(size).getMaximumCapacity();
     }
 
+    /** {@inheritDoc} */
     public long getPreferableCapacity() {
         return preferableCapacity;
     }
 
+    /** {@inheritDoc} */
     public void setPreferableCapacity(long size) {
         this.preferableCapacity = new CacheEvictionConfiguration<K, V>()
                 .setPreferableCapacity(size).getPreferableCapacity();
     }
 
-    /**
-     * 
-     */
+    /** {@inheritDoc} */
     public void clear() {
         cp.clear();
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.eviction.InternalCacheEvictionService#replace(int,
-     *      org.coconut.cache.CacheEntry)
-     */
+    /** {@inheritDoc} */
     public boolean replace(int index, T t) {
         return cp.update(index, t);
     }
-
-    public void evictAll() {}
-
-    public void evict(Object key) {}
-
 }

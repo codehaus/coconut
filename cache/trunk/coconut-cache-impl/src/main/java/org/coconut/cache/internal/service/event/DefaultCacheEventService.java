@@ -84,6 +84,7 @@ public class DefaultCacheEventService<K, V> extends AbstractInternalCacheService
         this.doUpdate = co.isIncluded(CacheEntryEvent.ItemUpdated.class);
     }
 
+    /** {@inheritDoc} */
     public void afterCacheClear(Cache<K, V> cache, long ignoreStarted, int size,
             long capacity, Collection<? extends CacheEntry<K, V>> entries) {
         if (entries != null && doRemove) {
@@ -96,9 +97,7 @@ public class DefaultCacheEventService<K, V> extends AbstractInternalCacheService
         }
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.joinpoint.AfterCacheOperation#afterCacheEvict(org.coconut.cache.Cache, long, int, int, long, long, java.util.Collection, java.util.Collection)
-     */
+    /** {@inheritDoc} */
     public void afterCacheEvict(Cache<K, V> cache, long started, int size,
             int previousSize, long capacity, long previousCapacity,
             Collection<? extends CacheEntry<K, V>> evicted,
@@ -110,10 +109,7 @@ public class DefaultCacheEventService<K, V> extends AbstractInternalCacheService
         }
     }
 
-
-    /**
-     * @see org.coconut.cache.internal.service.joinpoint.AfterCacheOperation#afterGet(org.coconut.cache.Cache, long, java.util.Collection, java.lang.Object, org.coconut.cache.CacheEntry, org.coconut.cache.CacheEntry, boolean)
-     */
+    /** {@inheritDoc} */
     public void afterGet(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries, K key,
             CacheEntry<K, V> prev, CacheEntry<K, V> newEntry, boolean isExpired) {
@@ -138,6 +134,7 @@ public class DefaultCacheEventService<K, V> extends AbstractInternalCacheService
         }
     }
 
+    /** {@inheritDoc} */
     public void afterPut(Cache<K, V> cache, long ignoreStarted,
             Collection<? extends CacheEntry<K, V>> entries, CacheEntry<K, V> newEntry,
             CacheEntry<K, V> prev) {
@@ -145,32 +142,27 @@ public class DefaultCacheEventService<K, V> extends AbstractInternalCacheService
         processRemoved(cache, newEntry, prev);
     }
 
-
-    /**
-     * @see org.coconut.cache.internal.service.joinpoint.AfterCacheOperation#afterPutAll(org.coconut.cache.Cache, long, java.util.Collection, java.util.Collection, java.util.Collection)
-     */
+    /** {@inheritDoc} */
     public void afterPutAll(Cache<K, V> cache, long ignoreStarted,
             Collection<? extends CacheEntry<K, V>> evictedEntries,
             Collection<? extends CacheEntry<K, V>> prev,
-            Collection<? extends CacheEntry<K,V>> added) {
+            Collection<? extends CacheEntry<K, V>> added) {
         doEvictAll(cache, evictedEntries);
-        CacheEntry<K,V>[] p = prev.toArray(new CacheEntry[prev.size()]);
-        CacheEntry<K,V>[] n = added.toArray(new CacheEntry[added.size()]);
+        CacheEntry<K, V>[] p = prev.toArray(new CacheEntry[prev.size()]);
+        CacheEntry<K, V>[] n = added.toArray(new CacheEntry[added.size()]);
         for (int i = 0; i < p.length; i++) {
             processRemoved(cache, n[i], p[i]);
         }
     }
 
+    /** {@inheritDoc} */
     public void afterRemove(Cache<K, V> cache, long ignoreStarted, CacheEntry<K, V> entry) {
         if (doRemove && entry != null) {
             dispatch(removed(cache, entry));
         }
     }
 
-
-    /**
-     * @see org.coconut.cache.internal.service.joinpoint.AfterCacheOperation#afterReplace(org.coconut.cache.Cache, long, java.util.Collection, org.coconut.cache.CacheEntry, org.coconut.cache.CacheEntry)
-     */
+    /** {@inheritDoc} */
     public void afterReplace(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries,
             CacheEntry<K, V> oldEntry, CacheEntry<K, V> newEntry) {
@@ -178,50 +170,18 @@ public class DefaultCacheEventService<K, V> extends AbstractInternalCacheService
         processRemoved(cache, newEntry, oldEntry);
     }
 
-
-    /**
-     * @see org.coconut.cache.internal.service.joinpoint.AfterCacheOperation#afterTrimToSize(org.coconut.cache.Cache, long, java.util.Collection)
-     */
+    /** {@inheritDoc} */
     public void afterTrimToSize(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries) {
         doEvictAll(cache, evictedEntries);
     }
 
-    /**
-     * @see org.coconut.event.EventBus#getSubscribers()
-     */
+    /** {@inheritDoc} */
     public Collection<EventSubscription<CacheEvent<K, V>>> getSubscribers() {
         return eb.getSubscribers();
     }
 
-    public boolean isEnabled() {
-        return isEnabled;
-    }
-
-    /**
-     * @see org.coconut.core.Offerable#offer(java.lang.Object)
-     */
-    public boolean offer(CacheEvent<K, V> element) {
-        manager.lazyStart(false);
-        return eb.offer(element);
-    }
-
-    /**
-     * @see org.coconut.event.EventBus#offerAll(java.util.Collection)
-     */
-    public boolean offerAll(Collection<? extends CacheEvent<K, V>> c) {
-        manager.lazyStart(false);
-        return eb.offerAll(c);
-    }
-
-    /**
-     * @see org.coconut.core.EventProcessor#process(java.lang.Object)
-     */
-    public void process(CacheEvent<K, V> event) {
-        manager.lazyStart(false);
-        eb.process(event);
-    }
-
+    /** {@inheritDoc} */
     @Override
     public void initialize(CacheConfiguration<?, ?> configuration,
             Map<Class<?>, Object> serviceMap) {
@@ -230,19 +190,37 @@ public class DefaultCacheEventService<K, V> extends AbstractInternalCacheService
         }
     }
 
-    /**
-     * @see org.coconut.cache.service.event.CacheEventService#subscribe(org.coconut.core.EventProcessor)
-     */
+    /** {@inheritDoc} */
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    /** {@inheritDoc} */
+    public boolean offer(CacheEvent<K, V> element) {
+        manager.lazyStart(false);
+        return eb.offer(element);
+    }
+
+    /** {@inheritDoc} */
+    public boolean offerAll(Collection<? extends CacheEvent<K, V>> c) {
+        manager.lazyStart(false);
+        return eb.offerAll(c);
+    }
+
+    /** {@inheritDoc} */
+    public void process(CacheEvent<K, V> event) {
+        manager.lazyStart(false);
+        eb.process(event);
+    }
+
+    /** {@inheritDoc} */
     public EventSubscription<CacheEvent<K, V>> subscribe(
             EventProcessor<? super CacheEvent<K, V>> eventHandler) {
         manager.lazyStart(false);
         return eb.subscribe(eventHandler);
     }
 
-    /**
-     * @see org.coconut.cache.service.event.CacheEventService#subscribe(org.coconut.core.EventProcessor,
-     *      org.coconut.filter.Filter)
-     */
+    /** {@inheritDoc} */
     public EventSubscription<CacheEvent<K, V>> subscribe(
             EventProcessor<? super CacheEvent<K, V>> eventHandler,
             Filter<? super CacheEvent<K, V>> filter) {
@@ -250,10 +228,7 @@ public class DefaultCacheEventService<K, V> extends AbstractInternalCacheService
         return eb.subscribe(eventHandler, filter);
     }
 
-    /**
-     * @see org.coconut.event.EventBus#subscribe(org.coconut.core.EventProcessor,
-     *      org.coconut.filter.Filter, java.lang.String)
-     */
+    /** {@inheritDoc} */
     public EventSubscription<CacheEvent<K, V>> subscribe(
             EventProcessor<? super CacheEvent<K, V>> listener,
             Filter<? super CacheEvent<K, V>> filter, String name) {
@@ -261,9 +236,7 @@ public class DefaultCacheEventService<K, V> extends AbstractInternalCacheService
         return eb.subscribe(listener, filter, name);
     }
 
-    /**
-     * @see org.coconut.cache.service.event.CacheEventService#unsubscribeAll()
-     */
+    /** {@inheritDoc} */
     public Collection<EventSubscription<CacheEvent<K, V>>> unsubscribeAll() {
         manager.lazyStart(false);
         return eb.unsubscribeAll();

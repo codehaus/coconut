@@ -14,71 +14,34 @@ final class InternalEvent {
 
     /** Cannot instantiate. */
     private InternalEvent() {}
-    
-    static <K, V> CacheEvent<K, V> evicted(Cache<K, V> cache, int currentSize,
-            int previousSize, long currentCapacity, long previousCapacity) {
-        return new Evicted<K, V>(cache, currentSize, previousSize);
-    }
 
-    static <K, V> CacheEvent<K, V> cleared(Cache<K, V> cache, int previousSize,
-            long previousCapacity) {
-        return new Cleared<K, V>(cache, previousSize, previousCapacity);
-    }
-
-    static class Evicted<K, V> implements CacheEvent.CacheEvicted<K, V> {
+    /**
+     * The default implementation of the cache cleared event.
+     * 
+     * @param <K>
+     *            the type of keys maintained by the cache
+     * @param <V>
+     *            the type of values maintained by the cache
+     */
+    static class Cleared<K, V> implements CacheEvent.CacheCleared<K, V> {
+        /** The cache that was cleared. */
         private final Cache<K, V> cache;
 
-        private final int previousSize;
-
-        private final int currentSize;
-
-        public Evicted(final Cache<K, V> cache, final int previousSize,
-                final int currentSize) {
-            this.cache = cache;
-            this.previousSize = previousSize;
-            this.currentSize = currentSize;
-        }
-
-        /**
-         * @see org.coconut.cache.service.event.CacheEvent.CacheEvicted#getCurrentSize()
-         */
-        public int getCurrentSize() {
-            return currentSize;
-        }
-
-        /**
-         * @see org.coconut.cache.service.event.CacheEvent.CacheEvicted#getPreviousSize()
-         */
-        public int getPreviousSize() {
-            return previousSize;
-        }
-
-        /**
-         * @see org.coconut.cache.service.event.CacheEvent#getCache()
-         */
-        public Cache<K, V> getCache() {
-            return cache;
-        }
-
-        /**
-         * @see org.coconut.cache.service.event.CacheEvent#getName()
-         */
-        public String getName() {
-            return CacheEvent.CacheEvicted.NAME;
-        }
-    }
-
-    static class Cleared<K, V> implements CacheEvent.CacheCleared<K, V> {
-        private final int previousSize;
-
+        /** The capacity of the cache before it was cleared. */
         private final long previousCapacity;
 
-        private final Cache<K, V> cache;
+        /** The size of the cache before it was cleared. */
+        private final int previousSize;
 
         /**
+         * Creates a new Cleared event.
+         * 
          * @param previousSize
+         *            the size of the cache before it was cleared
          * @param previousCapacity
+         *            the capacity of the cache before it was cleared
          * @param cache
+         *            the cache that was cleared
          */
         public Cleared(final Cache<K, V> cache, final int previousSize,
                 final long previousCapacity) {
@@ -87,30 +50,83 @@ final class InternalEvent {
             this.cache = cache;
         }
 
-        /**
-         * @see org.coconut.cache.service.event.CacheEvent.CacheCleared#getPreviousSize()
-         */
-        public int getPreviousSize() {
-            return previousSize;
-        }
-
-        /**
-         * @see org.coconut.cache.service.event.CacheEvent#getCache()
-         */
+        /** {@inheritDoc} */
         public Cache<K, V> getCache() {
             return cache;
         }
 
-        /**
-         * @see org.coconut.cache.service.event.CacheEvent#getName()
-         */
+        /** {@inheritDoc} */
         public String getName() {
             return CacheEvent.CacheCleared.NAME;
         }
 
+        /** {@inheritDoc} */
         public long getPreviousCapacity() {
             return previousCapacity;
         }
 
+        /** {@inheritDoc} */
+        public int getPreviousSize() {
+            return previousSize;
+        }
+
+    }
+
+    static class Evicted<K, V> implements CacheEvent.CacheEvicted<K, V> {
+        private final Cache<K, V> cache;
+
+        private final int currentSize;
+
+        private final int previousSize;
+
+        public Evicted(final Cache<K, V> cache, final int previousSize,
+                final int currentSize) {
+            this.cache = cache;
+            this.previousSize = previousSize;
+            this.currentSize = currentSize;
+        }
+
+        /** {@inheritDoc} */
+        public Cache<K, V> getCache() {
+            return cache;
+        }
+
+        /** {@inheritDoc} */
+        public int getCurrentSize() {
+            return currentSize;
+        }
+
+        /** {@inheritDoc} */
+        public String getName() {
+            return CacheEvent.CacheEvicted.NAME;
+        }
+
+        /** {@inheritDoc} */
+        public int getPreviousSize() {
+            return previousSize;
+        }
+    }
+
+    /**
+     * @param previousSize
+     *            the size of the cache before it was cleared
+     * @param previousCapacity
+     *            the capacity of the cache before it was cleared
+     * @param cache
+     *            the cache that was cleared
+     * @param <K>
+     *            the type of keys maintained by the cache
+     * @param <V>
+     *            the type of values maintained by the cache
+     * @return a Cleared event from the specified parameters
+     */
+    static <K, V> CacheEvent<K, V> cleared(Cache<K, V> cache, int previousSize,
+            long previousCapacity) {
+        return new Cleared<K, V>(cache, previousSize, previousCapacity);
+    }
+
+    static <K, V> CacheEvent<K, V> evicted(Cache<K, V> cache, int currentSize,
+            int previousSize, long currentCapacity, long previousCapacity) {
+        return new Evicted<K, V>(cache, currentSize, previousSize);
     }
 }

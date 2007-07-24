@@ -10,10 +10,10 @@ import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.annotation.ManagedOperation;
 
 public final class EvictionUtils {
-    
+
     /** Cannot instantiate. */
     private EvictionUtils() {}
-    
+
     public static <K, V> CacheEvictionService<K, V> wrapService(
             CacheEvictionService<K, V> service) {
         return new DelegatedCacheEvictionService<K, V>(service);
@@ -36,39 +36,47 @@ public final class EvictionUtils {
             this.service = service;
         }
 
+        /** {@inheritDoc} */
         @ManagedAttribute(description = "The maximum capacity of the cache")
         public long getMaximumCapacity() {
             return service.getMaximumCapacity();
         }
 
+        /** {@inheritDoc} */
         @ManagedAttribute(description = "The maximum size of the cache")
         public int getMaximumSize() {
             return service.getMaximumSize();
         }
 
+        /** {@inheritDoc} */
         public void setMaximumCapacity(long maximumCapacity) {
             service.setMaximumCapacity(maximumCapacity);
         }
 
+        /** {@inheritDoc} */
         public void setMaximumSize(int maximumSize) {
             service.setMaximumSize(maximumSize);
         }
 
+        /** {@inheritDoc} */
         @ManagedOperation(description = "Trims the cache to the specified capacity")
         public void trimToCapacity(long capacity) {
             service.trimToCapacity(capacity);
         }
 
+        /** {@inheritDoc} */
         @ManagedOperation(description = "Trims the cache to the specified size")
         public void trimToSize(int size) {
             service.trimToSize(size);
         }
 
-//        @ManagedAttribute(defaultValue = "Preferable Size", description = "The preferable size of the cache")
-//        int getPreferableSize();
+// @ManagedAttribute(defaultValue = "Preferable Size", description = "The preferable size
+// of the cache")
+// int getPreferableSize();
 
-//        @ManagedAttribute(defaultValue = "Preferable Capacity", description = "The preferable capacity of the cache")
-        //long getPreferableCapacity();
+// @ManagedAttribute(defaultValue = "Preferable Capacity", description = "The preferable
+// capacity of the cache")
+        // long getPreferableCapacity();
 
     }
 
@@ -83,26 +91,32 @@ public final class EvictionUtils {
             this.service = service;
         }
 
+        /** {@inheritDoc} */
         public long getMaximumCapacity() {
             return service.getMaximumCapacity();
         }
 
+        /** {@inheritDoc} */
         public int getMaximumSize() {
             return service.getMaximumSize();
         }
 
+        /** {@inheritDoc} */
         public void setMaximumCapacity(long maximumCapacity) {
             service.setMaximumCapacity(maximumCapacity);
         }
 
+        /** {@inheritDoc} */
         public void setMaximumSize(int maximumSize) {
             service.setMaximumSize(maximumSize);
         }
 
+        /** {@inheritDoc} */
         public void trimToCapacity(long capacity) {
             service.trimToCapacity(capacity);
         }
 
+        /** {@inheritDoc} */
         public void trimToSize(int size) {
             service.trimToSize(size);
         }
@@ -128,7 +142,7 @@ public final class EvictionUtils {
         long tmp = conf.getPreferableCapacity();
         return tmp == 0 ? Long.MAX_VALUE : tmp;
     }
-    
+
     // @ManagedAttribute(description = "The default time to idle for cache entries in
     // milliseconds")
     // public long getDefaultIdleTimeMs() {

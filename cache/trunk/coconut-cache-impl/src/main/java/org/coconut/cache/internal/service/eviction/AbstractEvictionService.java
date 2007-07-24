@@ -31,16 +31,14 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
         this.helper = helper;
     }
 
-    /**
-     * @see org.coconut.cache.service.servicemanager.AbstractCacheService#initialize(org.coconut.cache.CacheConfiguration,
-     *      java.util.Map)
-     */
+    /** {@inheritDoc} */
     @Override
     public void initialize(CacheConfiguration<?, ?> configuration,
             Map<Class<?>, Object> serviceMap) {
         serviceMap.put(CacheEvictionService.class, EvictionUtils.wrapService(this));
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void registerMXBeans(ManagedGroup root) {
         ManagedGroup g = root.addChild(CacheEvictionConfiguration.SERVICE_NAME,
@@ -48,16 +46,12 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
         g.add(EvictionUtils.wrapMXBean(this));
     }
 
-    /**
-     * @see org.coconut.cache.service.eviction.CacheEvictionMXBean#trimToCapacity(long)
-     */
+    /** {@inheritDoc} */
     public void trimToCapacity(long capacity) {
         helper.trimToCapacity(capacity);
     }
 
-    /**
-     * @see org.coconut.cache.service.eviction.CacheEvictionMXBean#trimToSize(int)
-     */
+    /** {@inheritDoc} */
     public void trimToSize(int size) {
         helper.trimToSize(size);
     }

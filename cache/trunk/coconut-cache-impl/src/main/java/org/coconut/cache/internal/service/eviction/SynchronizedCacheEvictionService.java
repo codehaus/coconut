@@ -19,9 +19,7 @@ public class SynchronizedCacheEvictionService<K,V> extends UnsynchronizedCacheEv
         this.mutex = c;
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.eviction.UnsynchronizedCacheEvictionService#getMaximumCapacity()
-     */
+    /** {@inheritDoc} */
     @Override
     public long getMaximumCapacity() {
         synchronized (mutex) {
@@ -29,9 +27,7 @@ public class SynchronizedCacheEvictionService<K,V> extends UnsynchronizedCacheEv
         }
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.eviction.UnsynchronizedCacheEvictionService#getMaximumSize()
-     */
+    /** {@inheritDoc} */
     @Override
     public int getMaximumSize() {
         synchronized (mutex) {
@@ -39,9 +35,7 @@ public class SynchronizedCacheEvictionService<K,V> extends UnsynchronizedCacheEv
         }
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.eviction.UnsynchronizedCacheEvictionService#setMaximumCapacity(long)
-     */
+    /** {@inheritDoc} */
     @Override
     public void setMaximumCapacity(long size) {
         synchronized (mutex) {
@@ -49,9 +43,7 @@ public class SynchronizedCacheEvictionService<K,V> extends UnsynchronizedCacheEv
         }
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.eviction.UnsynchronizedCacheEvictionService#setMaximumSize(int)
-     */
+    /** {@inheritDoc} */
     @Override
     public void setMaximumSize(int size) {
         synchronized (mutex) {
@@ -59,9 +51,7 @@ public class SynchronizedCacheEvictionService<K,V> extends UnsynchronizedCacheEv
         }
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.eviction.UnsynchronizedCacheEvictionService#getPreferableCapacity()
-     */
+    /** {@inheritDoc} */
     @Override
     public long getPreferableCapacity() {
         synchronized (mutex) {
@@ -69,9 +59,7 @@ public class SynchronizedCacheEvictionService<K,V> extends UnsynchronizedCacheEv
         }
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.eviction.UnsynchronizedCacheEvictionService#getPreferableSize()
-     */
+    /** {@inheritDoc} */
     @Override
     public int getPreferableSize() {
         synchronized (mutex) {
@@ -79,9 +67,7 @@ public class SynchronizedCacheEvictionService<K,V> extends UnsynchronizedCacheEv
         }
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.eviction.UnsynchronizedCacheEvictionService#setPreferableCapacity(long)
-     */
+    /** {@inheritDoc} */
     @Override
     public void setPreferableCapacity(long size) {
         synchronized (mutex) {
@@ -89,9 +75,7 @@ public class SynchronizedCacheEvictionService<K,V> extends UnsynchronizedCacheEv
         }
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.eviction.UnsynchronizedCacheEvictionService#setPreferableSize(int)
-     */
+    /** {@inheritDoc} */
     @Override
     public void setPreferableSize(int size) {
         synchronized (mutex) {

@@ -15,14 +15,19 @@ import javax.management.JMException;
 public interface ManagedGroupVisitor {
     /**
      * @param mg
+     *            the managed group to visit
      * @throws JMException
+     *             an exception occured while visiting the managed group
      */
     void visitManagedGroup(ManagedGroup mg) throws JMException;
 
     /**
      * @param group
+     *            the managed group to visit
      * @param o
+     *            the managed object to visit
      * @throws JMException
+     *             an exception occured while visiting the managed object
      */
     void visitManagedObject(ManagedGroup group, Object o) throws JMException;
 }

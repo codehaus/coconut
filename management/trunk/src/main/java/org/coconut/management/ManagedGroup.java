@@ -5,7 +5,6 @@ package org.coconut.management;
 
 import java.util.Collection;
 
-import javax.management.InstanceAlreadyExistsException;
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -22,7 +21,7 @@ public interface ManagedGroup {
     /**
      * Returns the unique name of this group.
      * 
-     * @Return the unique name of this group.
+     * @return the unique name of this group.
      */
     String getName();
 
@@ -62,19 +61,19 @@ public interface ManagedGroup {
     boolean isRegistered();
 
     /**
-     * Returns the objectname this group is registered under, or <code>null</code> if it
+     * @return the objectname this group is registered under, or <code>null</code> if it
      * has not yet been registered.
      */
     ObjectName getObjectName();
 
     /**
-     * Return the MBeanServer this group is registered with or <tt>null</tt> if this
-     * group is not registered.
+     * @return the MBeanServer this group is registered with or <tt>null</tt> if this
+     *         group is not registered.
      */
     MBeanServer getServer();
 
     /**
-     * Returns the description of this group
+     * @eturn the description of this group.
      */
     String getDescription();
 
@@ -86,11 +85,14 @@ public interface ManagedGroup {
     ManagedGroup getParent();
 
     /**
-     * @param service
-     * @param objectName *
+     * @param server
+     *            the mbean server where this group should be registered
+     * @param objectName
+     *            the objectname of this group
      * @throws JMException
+     *             if the mbean could not be properly registered
      */
-    void register(MBeanServer service, ObjectName objectName) throws JMException;
+    void register(MBeanServer server, ObjectName objectName) throws JMException;
 
     /**
      * Remove this group from its parent.
@@ -98,9 +100,10 @@ public interface ManagedGroup {
     void remove();
 
     /**
-     * If any sub groups has registered these will also be unregistered.
+     * If any sub groups has been registered these will also be unregistered.
      * 
      * @throws JMException
+     *             if the mbean could not be properly unregistered
      */
     void unregister() throws JMException;
 }

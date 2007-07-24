@@ -113,8 +113,8 @@ public class XmlConfigurator {
      * @param cache
      *            the xml element from where to read the configuration of the specified
      *            service type
-     * @param service
-     *            the type of service configuration we are loading
+     * @param configurationObject
+     *            the configuration object we are loading into
      * @return the service configuration that was read
      * @throws Exception
      *             something when wrong while reading parsing the xml element
@@ -124,15 +124,12 @@ public class XmlConfigurator {
      *            the type of mapped values
      */
     protected <K, V> AbstractCacheServiceConfiguration<K, V> readCacheService(
-            Element cache,
-            AbstractCacheServiceConfiguration<K, V> acsc )
-            throws Exception {
-        //= service.newInstance();
-        Element e = (Element) cache.getElementsByTagName(acsc.getServiceName()).item(0);
+            Element cache, AbstractCacheServiceConfiguration<K, V> configurationObject) throws Exception {
+        Element e = (Element) cache.getElementsByTagName(configurationObject.getServiceName()).item(0);
         if (e != null) {
-            acsc.fromXML(e);
+            configurationObject.fromXML(e);
         }
-        return acsc;
+        return configurationObject;
     }
 
     protected <K, V> void readDocument(CacheConfiguration<K, V> base, Document doc)
@@ -145,13 +142,11 @@ public class XmlConfigurator {
                             + doc.getDocumentURI());
         }
         Node n = root.getElementsByTagName("cache").item(0);
-        readSingleCache(base, base.getAllConfigurations(), (Element) n);
+        readSingleCache(base, (Element) n);
     }
 
-    protected <K, V> void readSingleCache(
-            CacheConfiguration<K, V> conf,
-            Collection<AbstractCacheServiceConfiguration<K,V>> services,
-            Element cache) throws Exception {
+    protected <K, V> void readSingleCache(CacheConfiguration<K, V> conf, Element cache)
+            throws Exception {
         if (cache.hasAttribute(CACHE_NAME_ATTR)
                 && !cache.getAttribute(CACHE_NAME_ATTR).equals("")) {
             conf.setName(cache.getAttribute(CACHE_NAME_ATTR));
@@ -160,11 +155,8 @@ public class XmlConfigurator {
             conf.setProperty(XmlConfigurator.CACHE_INSTANCE_TYPE, cache
                     .getAttribute(CACHE_TYPE_ATTR));
         }
-        for (AbstractCacheServiceConfiguration<K, V> c : services) {
-            AbstractCacheServiceConfiguration<K, V> acsc = readCacheService(cache, c);
-//            if (acsc != null) {
-//                conf.addConfiguration(acsc);
-//            }
+        for (AbstractCacheServiceConfiguration<K, V> c : conf.getAllConfigurations()) {
+            readCacheService(cache, c);
         }
     }
 

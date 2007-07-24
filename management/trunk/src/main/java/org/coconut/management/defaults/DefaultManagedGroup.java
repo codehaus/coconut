@@ -35,7 +35,6 @@ import org.coconut.management.annotation.ManagedOperation;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-
 public class DefaultManagedGroup extends AbstractManagedGroup implements DynamicMBean {
 
     private final Map<String, AbstractAttribute> attributes = new ConcurrentHashMap<String, AbstractAttribute>();
@@ -51,20 +50,17 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
 
     /**
      * @param name
+     *            the name of this group
      * @param description
+     *            the description of this group
      */
     public DefaultManagedGroup(String name, String description) {
         super(name, description);
     }
 
     /**
-     * @param name
-     * @param description
+     * {@inheritDoc}
      */
-    public DefaultManagedGroup(String name, String description, boolean register) {
-        super(name, description);
-    }
-
     public synchronized ManagedGroup add(Object o) {
         if (o == null) {
             throw new NullPointerException("o is null");
@@ -123,13 +119,16 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public synchronized ManagedGroup addChild(String name, String description) {
         DefaultManagedGroup g = new DefaultManagedGroup(name, description);
         return super.addNewGroup(g);
     }
 
     /**
-     * @see javax.management.DynamicMBean#getAttribute(java.lang.String)
+     * {@inheritDoc}
      */
     public Object getAttribute(String attribute) throws AttributeNotFoundException,
             MBeanException, ReflectionException {
@@ -138,7 +137,7 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
     }
 
     /**
-     * @see javax.management.DynamicMBean#getAttributes(java.lang.String[])
+     * {@inheritDoc}
      */
     public final AttributeList getAttributes(String[] attributes) {
         final AttributeList result = new AttributeList(attributes.length);
@@ -154,7 +153,7 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
     }
 
     /**
-     * @see javax.management.DynamicMBean#getMBeanInfo()
+     * {@inheritDoc}
      */
     public MBeanInfo getMBeanInfo() {
         if (mbeanInfo != null) {
@@ -185,10 +184,16 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
         return mbeanInfo;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Collection<?> getObjects() {
         return new ArrayList(os);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Object invoke(String actionName, Object[] params, String[] signature)
             throws MBeanException, ReflectionException {
         List<AbstractOperation> aa = ops.get(actionName);
@@ -201,7 +206,7 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
     }
 
     /**
-     * @see javax.management.DynamicMBean#setAttribute(javax.management.Attribute)
+     * {@inheritDoc}
      */
     public void setAttribute(Attribute attribute) throws AttributeNotFoundException,
             InvalidAttributeValueException, MBeanException, ReflectionException {
@@ -210,7 +215,7 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
     }
 
     /**
-     * @see javax.management.DynamicMBean#setAttributes(javax.management.AttributeList)
+     * {@inheritDoc}
      */
     public final AttributeList setAttributes(AttributeList attributes) {
         final AttributeList result = new AttributeList(attributes.size());
@@ -226,6 +231,9 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
         return result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return "Name= " + getName() + ", Description =" + getDescription();

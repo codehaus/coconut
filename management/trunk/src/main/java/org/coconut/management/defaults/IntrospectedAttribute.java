@@ -34,16 +34,15 @@ class IntrospectedAttribute extends AbstractAttribute {
 		this.setter = writer;
 	}
 
-	/**
-     * @param name
-     * @param description
-     * @param type
-     * @param number
+    /**
+     * {@inheritDoc}
      */
 	MBeanAttributeInfo getInfo() throws IntrospectionException {
 		return new MBeanAttributeInfo(attribute, description, getter, setter);
 	}
-
+    /**
+     * {@inheritDoc}
+     */
 	Object getValue() throws MBeanException, ReflectionException {
 		try {
 			return getter.invoke(o, null);
@@ -73,7 +72,9 @@ class IntrospectedAttribute extends AbstractAttribute {
 							+ attribute);
 		}
 	}
-
+    /**
+     * {@inheritDoc}
+     */
 	Object setValue(Object o) throws ReflectionException, MBeanException {
 		try {
 			setter.invoke(this.o, o);
@@ -105,18 +106,16 @@ class IntrospectedAttribute extends AbstractAttribute {
 		// return re;
 	}
 
-	/**
-     * @see org.coconut.management.defaults.AbstractAttribute#hasGetter()
+    /**
+     * {@inheritDoc}
      */
-	@Override
 	boolean hasGetter() {
 		return getter != null;
 	}
 
-	/**
-     * @see org.coconut.management.defaults.AbstractAttribute#hasSetter()
+    /**
+     * {@inheritDoc}
      */
-	@Override
 	boolean hasSetter() {
 		return setter != null;
 	}

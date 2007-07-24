@@ -17,11 +17,15 @@ import org.coconut.filter.Filter;
 import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.annotation.ManagedOperation;
 
+/**
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ */
 final class LoadingUtils {
 
     /** Cannot instantiate. */
     private LoadingUtils() {}
-    
+
     public static <K, V> CacheLoadingService<K, V> wrapService(
             CacheLoadingService<K, V> service) {
         return new DelegatedCacheLoadingService<K, V>(service);
@@ -45,15 +49,24 @@ final class LoadingUtils {
             this.service = service;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @ManagedAttribute(description = "The default time to live for cache entries in milliseconds")
         public long getDefaultTimeToRefreshMs() {
             return service.getDefaultTimeToRefresh(TimeUnit.MILLISECONDS);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public void setDefaultTimeToRefreshMs(long timeToLiveMs) {
             service.setDefaultTimeToRefresh(timeToLiveMs, TimeUnit.MILLISECONDS);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @ManagedOperation(description = "reload all mappings")
         public void forceLoadAll() {
             service.forceLoadAll();
@@ -74,64 +87,109 @@ final class LoadingUtils {
             this.delegate = service;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public void filteredLoad(Filter<? super CacheEntry<K, V>> filter,
                 AttributeMap defaultAttributes) {
             delegate.filteredLoad(filter, defaultAttributes);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public void filteredLoad(Filter<? super CacheEntry<K, V>> filter,
                 Transformer<CacheEntry<K, V>, AttributeMap> attributeTransformer) {
             delegate.filteredLoad(filter, attributeTransformer);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public void filteredLoad(Filter<? super CacheEntry<K, V>> filter) {
             delegate.filteredLoad(filter);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public void forceLoad(K key, AttributeMap attributes) {
             delegate.forceLoad(key, attributes);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public void forceLoad(K key) {
             delegate.forceLoad(key);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public void forceLoadAll(AttributeMap attributes) {
             delegate.forceLoadAll(attributes);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public void forceLoadAll(Collection<? extends K> keys) {
             delegate.forceLoadAll(keys);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public void forceLoadAll(Map<K, AttributeMap> mapsWithAttributes) {
             delegate.forceLoadAll(mapsWithAttributes);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public long getDefaultTimeToRefresh(TimeUnit unit) {
             return delegate.getDefaultTimeToRefresh(unit);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public void load(K key, AttributeMap attributes) {
             delegate.load(key, attributes);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public void load(K key) {
             delegate.load(key);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public void loadAll(Collection<? extends K> keys) {
             delegate.loadAll(keys);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public void loadAll(Map<K, AttributeMap> mapsWithAttributes) {
             delegate.loadAll(mapsWithAttributes);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public void forceLoadAll() {
             delegate.forceLoadAll();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public void setDefaultTimeToRefresh(long timeToLive, TimeUnit unit) {
             delegate.setDefaultTimeToRefresh(timeToLive, unit);
         }

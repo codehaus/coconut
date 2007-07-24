@@ -67,7 +67,7 @@ public class DefaultCacheManagementService extends AbstractInternalCacheService 
         /* Set Management Root */
         ManagedGroup tmpRoot = configuration.getRoot();
         root = tmpRoot == null ? new DefaultManagedGroup(cacheName,
-                "This group contains all managed Cache services", false) : tmpRoot;
+                "This group contains all managed Cache services") : tmpRoot;
 
         /* Set Registrant */
         if (configuration.getRegistrant() == null) {
@@ -95,7 +95,7 @@ public class DefaultCacheManagementService extends AbstractInternalCacheService 
     }
 
     /**
-     * @see org.coconut.cache.service.management.CacheManagementService#getRoot()
+     * {@inheritDoc}
      */
     public ManagedGroup getRoot() {
         if (isEnabled) {
@@ -107,8 +107,7 @@ public class DefaultCacheManagementService extends AbstractInternalCacheService 
     }
 
     /**
-     * @see org.coconut.cache.service.servicemanager.AbstractCacheService#initialize(org.coconut.cache.CacheConfiguration,
-     *      java.util.Map)
+     * {@inheritDoc}
      */
     @Override
     public void initialize(CacheConfiguration<?, ?> configuration,
@@ -120,7 +119,7 @@ public class DefaultCacheManagementService extends AbstractInternalCacheService 
     }
 
     /**
-     * @see org.coconut.cache.service.servicemanager.AbstractCacheService#shutdown(java.util.concurrent.Executor)
+     * {@inheritDoc}
      */
     @Override
     public void shutdown(Executor e) {
@@ -134,7 +133,7 @@ public class DefaultCacheManagementService extends AbstractInternalCacheService 
     }
 
     /**
-     * @see org.coconut.cache.service.servicemanager.AbstractCacheService#started(org.coconut.cache.Cache)
+     * {@inheritDoc}
      */
     @Override
     public void started(Cache<?, ?> cache) {
