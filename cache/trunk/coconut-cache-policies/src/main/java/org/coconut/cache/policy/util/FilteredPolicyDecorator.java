@@ -13,15 +13,27 @@ import org.coconut.core.AttributeMap;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @param <T>
+ *            the type of data maintained by the policy
  */
 public class FilteredPolicyDecorator<T> extends PolicyDecorator<T> {
 
-    private final PolicyFilter<T> filter;
+    /** The policy filter we are decorating. */
+    private final AttributedFilter<T> filter;
 
     /**
+     * Creates a new FilteredPolicyDecorator from the specified replacement policy and
+     * policy filter.
+     * 
      * @param policy
+     *            the replacement to decorate
+     * @param filter
+     *            the policy filter that decides if the specified element should be
+     *            accepted
+     * @throws NullPointerException
+     *             if the specified policy or filter is <code>null</code>
      */
-    public FilteredPolicyDecorator(ReplacementPolicy<T> policy, PolicyFilter<T> filter) {
+    public FilteredPolicyDecorator(ReplacementPolicy<T> policy, AttributedFilter<T> filter) {
         super(policy);
         if (filter == null) {
             throw new NullPointerException("filter is null");
@@ -29,6 +41,9 @@ public class FilteredPolicyDecorator<T> extends PolicyDecorator<T> {
         this.filter = filter;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int add(T data, AttributeMap attributes) {
         if (filter.accept(data, attributes)) {
@@ -38,10 +53,9 @@ public class FilteredPolicyDecorator<T> extends PolicyDecorator<T> {
         }
     }
 
-    public PolicyFilter<T> getFilter() {
-        return filter;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean update(int index, T newElement, AttributeMap attributes) {
         if (filter.accept(newElement, attributes)) {
@@ -52,18 +66,35 @@ public class FilteredPolicyDecorator<T> extends PolicyDecorator<T> {
         }
     }
 
-    static class CostFilter<T> implements PolicyFilter<T> {
+    /**
+     * Returns the attributed filter that is being used.
+     * 
+     * @return the attributed filter that is being used
+     */
+    protected AttributedFilter<T> getFilter() {
+        return filter;
+    }
+
+    /**
+     * @param <T>
+     *            the type of elements accepted by this filter
+     */
+    static class MinimumCostFilter<T> implements AttributedFilter<T> {
+        /** The minimum cost of an element that will be accepted. */
         private final double minimumCost;
 
         /**
+         * Creates a new MinimumCostFilter.
+         * 
          * @param minimumCost
+         *            the minimum cost of an element that will be accepted by this filter
          */
-        public CostFilter(final double minimumCost) {
+        public MinimumCostFilter(final double minimumCost) {
             this.minimumCost = minimumCost;
         }
 
         /**
-         * @see org.coconut.filter.Filter#accept(java.lang.Object)
+         * {@inheritDoc}
          */
         public boolean accept(T t, AttributeMap attributes) {
             double cost = CacheAttributes.getCost(attributes);
@@ -71,26 +102,30 @@ public class FilteredPolicyDecorator<T> extends PolicyDecorator<T> {
         }
     }
 
-    interface PolicyFilter<T> {
-        boolean accept(T t, AttributeMap attributes);
-    }
-
-    static class SizeFilter<T> implements PolicyFilter<T> {
+    /**
+     * @param <T>
+     *            the type of elements accepted by this filter
+     */
+    static class MaximumSizeFilter<T> implements AttributedFilter<T> {
+        /** The maximum size of an element that will be accepted. */
         private final long threshold;
 
         /**
-         * @param threshold
+         * Creates a new MaximumSizeFilter.
+         * 
+         * @param maximumSize
+         *            the maximum size of an element that will be accepted by this filter
          */
-        public SizeFilter(final long threshold) {
-            if (threshold <= 0) {
+        public MaximumSizeFilter(final long maximumSize) {
+            if (maximumSize <= 0) {
                 throw new IllegalArgumentException(
-                        "threshold must be a positive number, was " + threshold);
+                        "threshold must be a positive number, was " + maximumSize);
             }
-            this.threshold = threshold;
+            this.threshold = maximumSize;
         }
 
         /**
-         * @see org.coconut.filter.Filter#accept(java.lang.Object)
+         * {@inheritDoc}
          */
         public boolean accept(T t, AttributeMap attributes) {
             long size = CacheAttributes.getSize(attributes);
@@ -98,25 +133,47 @@ public class FilteredPolicyDecorator<T> extends PolicyDecorator<T> {
         }
     }
 
+    /**
+     * This method return a replacement policy that decorates another replacement policy
+     * rejecting any elements whose retrievel cost is less then a specified minimum cost.
+     * 
+     * @param policy
+     *            the replacement policy to wrap
+     * @param minimumCost
+     *            the minimum cost of an element that will be accepted by the returned
+     *            replacement policy
+     * @return a replacement policy that will reject any elements that are larger then the
+     *         specified maximum size
+     * @param <T>
+     *            the type of elements accepted by the replacement policy
+     */
     public static <T> ReplacementPolicy<T> costRejector(ReplacementPolicy<T> policy,
             double minimumCost) {
-        return new FilteredPolicyDecorator<T>(policy, new CostFilter(minimumCost));
+        return new FilteredPolicyDecorator<T>(policy, new MinimumCostFilter(minimumCost));
     }
 
     /**
-     * This replacement decorates another cache policy rejecting any documents larger than
-     * a certain threshold size.
+     * This method return a replacement policy that decorates another replacement policy
+     * rejecting any elements whose size is larger than the specified maximum size.
      * <p>
      * This policy is based on a ACM SIGCOMM '96 paper: <a
      * href="http://ei.cs.vt.edu/~succeed/96sigcomm/">Removal Policies in Network Caches
      * for World-Wide Web Documents</a> by Stephen Williams et al. However, this version
      * is generalized for any replacement policies not just LRU.
-     * <p>
-     * If no cache policy is specified in the constructors a LRU replacement policy is
-     * being wrapped (as in the original paper).
+     * 
+     * @param policy
+     *            the replacement policy to wrap
+     * @param maximumSize
+     *            the maximum size of any element that will be accepted by the returned
+     *            policy
+     * @return a replacement policy that will reject any elements that are larger then the
+     *         specified maximum size
+     * @param <T>
+     *            the type of elements accepted by the replacement policy
      */
     public static <T> ReplacementPolicy<T> sizeRejector(ReplacementPolicy<T> policy,
             long maximumSize) {
-        return new FilteredPolicyDecorator<T>(policy, new SizeFilter<T>(maximumSize));
+        return new FilteredPolicyDecorator<T>(policy, new MaximumSizeFilter<T>(
+                maximumSize));
     }
 }

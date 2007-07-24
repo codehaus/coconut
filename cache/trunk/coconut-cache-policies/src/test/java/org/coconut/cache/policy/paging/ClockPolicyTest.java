@@ -25,7 +25,7 @@ public class ClockPolicyTest {
     ClockPolicy<Integer> policy;
 
     @Before
-    public void setup() {
+    public void setUp() {
         policy = new ClockPolicy<Integer>();
     }
 
@@ -241,7 +241,7 @@ public class ClockPolicyTest {
         assertEquals(123, policy.evict(5).get(4).intValue());
     }
     /**
-     * Test that toString doesn't fail
+     * Test that toString doesn't fail.
      */
     @Test
     public void testToString() {

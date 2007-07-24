@@ -16,12 +16,13 @@ import org.coconut.core.AttributeMap;
 import org.coconut.internal.util.IndexedList;
 
 /**
- * <a href="http://larch-www.lcs.mit.edu:8001/~corbato/">Frank Corbató</a>
- * introduced CLOCK in 1968 as a one-bit approximation to LRU in the Multics
- * system.
+ * <a href="http://larch-www.lcs.mit.edu:8001/~corbato/">Frank Corbató</a> introduced
+ * CLOCK in 1968 as a one-bit approximation to LRU in the Multics system.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
+ * @param <T>
+ *            the type of data maintained by this policy
  */
 @NotThreadSafe
 public class ClockPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy<T>,
@@ -30,39 +31,135 @@ public class ClockPolicy<T> extends AbstractPolicy<T> implements ReplacementPoli
     /** A unique policy name. */
     public static final String NAME = "Clock";
 
-    /** serialVersionUID */
+    /** serialVersionUID. */
     private static final long serialVersionUID = -861463593222316896L;
 
+    /** The wrapped inner clock policy. */
     private final InnerClockPolicy<T> policy;
 
+    /**
+     * Constructs a new ClockPolicy with an initial size of 100.
+     */
     public ClockPolicy() {
         this(100);
     }
 
+    /**
+     * Constructs a new ClockPolicy by copying an existing ClockPolicy.
+     * 
+     * @param other
+     *            the ClockPolicy policy to copy from
+     */
     public ClockPolicy(ClockPolicy other) {
         policy = new InnerClockPolicy<T>(other.policy);
     }
 
+    /**
+     * Constructs a new LFUPolicy with a specified initial size.
+     * 
+     * @param initialCapacity
+     *            the initial size of the internal list, must be 0 or greater
+     * @throws IllegalArgumentException
+     *             if the specified size is a negative number
+     */
     public ClockPolicy(int initialCapacity) {
         policy = new InnerClockPolicy<T>(initialCapacity);
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#clear()
+     * {@inheritDoc}
+     */
+    public int add(T data, AttributeMap ignore) {
+        return policy.add(data);
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public void clear() {
         while (evictNext() != null) {
             /* ignore */
         }
     }
-    
+
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public ClockPolicy<T> clone() {
         return new ClockPolicy<T>(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public T evictNext() {
+        return policy.evictNext();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getSize() {
+        return policy.getSize();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public T peek() {
+        return policy.peek();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<T> peekAll() {
+        return policy.peekAll();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public T remove() {
+        return policy.removeFirst();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public T remove(int index) {
+        return policy.remove(index);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "Clock Policy with " + getSize() + " entries";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void touch(int index) {
+        policy.touch(index);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean update(int index, T newElement, AttributeMap ignore) {
+        policy.replace(index, newElement);
+        return false;
+    }
+
+    /**
+     * An inner class used for maintaining the clock datastructure.
+     * 
+     * @param <T>
+     *            the type of data maintained by this policy
+     */
     static class InnerClockPolicy<T> extends IndexedList<T> implements Serializable {
 
         /** serialVersionUID. */
@@ -91,8 +188,7 @@ public class ClockPolicy<T> extends AbstractPolicy<T> implements ReplacementPoli
          * Constructs a new ClockPolicy with a specified initial size.
          * 
          * @param initialCapacity
-         *            the initial capacity for this policy, must be bigger then
-         *            0.
+         *            the initial capacity for this policy, must be bigger then 0.
          * @throws IllegalArgumentException
          *             if <tt>initialCapacity</tt> is less than 1
          */
@@ -103,7 +199,7 @@ public class ClockPolicy<T> extends AbstractPolicy<T> implements ReplacementPoli
         }
 
         /**
-         * @see org.coconut.cache.ReplacementPolicy#evictNext()
+         * {@inheritDoc}
          */
         public T evictNext() {
             if (currentEntryIndex == 0) {
@@ -139,35 +235,7 @@ public class ClockPolicy<T> extends AbstractPolicy<T> implements ReplacementPoli
         }
 
         /**
-         * @see org.coconut.internal.IndexedList#innerAdd(int)
-         */
-        protected void innerAdd(int index) {
-            if (currentEntryIndex == 1) // first element
-                handPosition = index;
-        }
-
-        /**
-         * @see org.coconut.internal.IndexedList#innerRemove(int)
-         */
-        protected void innerRemove(int index) {
-            bits[index] = 0; // lazy recycle
-            if (index == handPosition)
-                handPosition = next[index];
-        }
-
-        /**
-         * @see org.coconut.internal.IndexedList#innerResize(int)
-         */
-        protected void innerResize(int newSize) {
-            super.innerResize(newSize);
-            int[] oldBits = bits;
-            bits = new int[newSize];
-            System.arraycopy(oldBits, 0, bits, 0, Math.min(oldBits.length, freeEntries.length));
-
-        }
-
-        /**
-         * @see org.coconut.cache.ReplacementPolicy#peek()
+         * {@inheritDoc}
          */
         public T peek() {
             if (currentEntryIndex == 0) {
@@ -178,7 +246,7 @@ public class ClockPolicy<T> extends AbstractPolicy<T> implements ReplacementPoli
         }
 
         /**
-         * @see org.coconut.cache.ReplacementPolicy#peekAll()
+         * {@inheritDoc}
          */
         public List<T> peekAll() {
             ArrayList<T> col = new ArrayList<T>(currentEntryIndex);
@@ -212,76 +280,39 @@ public class ClockPolicy<T> extends AbstractPolicy<T> implements ReplacementPoli
         }
 
         /**
-         * @see org.coconut.cache.ReplacementPolicy#touch(int)
+         * {@inheritDoc}
          */
         public void touch(int index) {
             bits[index] = 1;
         }
-    }
 
-    public T remove() {
-        return policy.removeFirst();
-    }
+        /**
+         * {@inheritDoc}
+         */
+        protected void innerAdd(int index) {
+            if (currentEntryIndex == 1) // first element
+                handPosition = index;
+        }
 
-    public int getSize() {
-        return policy.getSize();
-    }
+        /**
+         * {@inheritDoc}
+         */
+        protected void innerRemove(int index) {
+            bits[index] = 0; // lazy recycle
+            if (index == handPosition)
+                handPosition = next[index];
+        }
 
-    /**
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return "Clock Policy with " + getSize() + " entries";
-    }
+        /**
+         * {@inheritDoc}
+         */
+        protected void innerResize(int newSize) {
+            super.innerResize(newSize);
+            int[] oldBits = bits;
+            bits = new int[newSize];
+            System.arraycopy(oldBits, 0, bits, 0, Math.min(oldBits.length,
+                    freeEntries.length));
 
-    /**
-     * @see org.coconut.cache.ReplacementPolicy#add(java.lang.Object, org.coconut.core.AttributeMap)
-     */
-    public int add(T data, AttributeMap ignore) {
-        return policy.add(data);
-    }
-
-    /**
-     * @see org.coconut.cache.ReplacementPolicy#touch(int)
-     */
-    public void touch(int index) {
-        policy.touch(index);
-    }
-
-    /**
-     * @see org.coconut.cache.ReplacementPolicy#evictNext()
-     */
-    public T evictNext() {
-        return policy.evictNext();
-    }
-
-    /**
-     * @see org.coconut.cache.ReplacementPolicy#remove(int)
-     */
-    public T remove(int index) {
-        return policy.remove(index);
-    }
-
-    /**
-     * @see org.coconut.cache.ReplacementPolicy#peekAll()
-     */
-    public List<T> peekAll() {
-        return policy.peekAll();
-    }
-
-    /**
-     * @see org.coconut.cache.ReplacementPolicy#peek()
-     */
-    public T peek() {
-        return policy.peek();
-    }
-
-    /**
-     * @see org.coconut.cache.ReplacementPolicy#update(int, java.lang.Object, org.coconut.core.AttributeMap)
-     */
-    public boolean update(int index, T newElement, AttributeMap ignore) {
-        policy.replace(index, newElement);
-        return false;
+        }
     }
 }

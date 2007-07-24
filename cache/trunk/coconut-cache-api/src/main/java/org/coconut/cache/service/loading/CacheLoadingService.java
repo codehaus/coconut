@@ -175,8 +175,14 @@ public interface CacheLoadingService<K, V> {
      */
     void loadAll(Collection<? extends K> keys);
 
+    /**
+     * @param mapsWithAttributes
+     *            a map with keys that should be loaded and a corresponding attribute map
+     */
     void loadAll(Map<K, AttributeMap> mapsWithAttributes);
 
+    //void loadAll() -> load all expired or needs refresh
+    
     /**
      * Sets the default expiration time for new objetcs that are added to the cache. If no
      * default expiration time has been set, entries will never expire.

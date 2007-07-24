@@ -25,7 +25,7 @@ public class LRUPolicyTest {
     LRUPolicy<Integer> policy;
 
     @Before
-    public void setup() {
+    public void setUp() {
         policy = new LRUPolicy<Integer>();
     }
 
@@ -125,7 +125,7 @@ public class LRUPolicyTest {
     }
 
     /**
-     * Test that toString doesn't fail
+     * Test that toString doesn't fail.
      */
     @Test
     public void testToString() {

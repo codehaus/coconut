@@ -17,15 +17,19 @@ import org.coconut.internal.util.IndexedStack;
 /**
  * A MRU based replacement policy.
  * 
- * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id$
+ * @param <T>
+ *            the type of data maintained by this policy
  */
 @NotThreadSafe
-public class MRUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy<T>, Serializable {
+public class MRUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy<T>,
+        Serializable {
 
     /** A unique policy name. */
     public static final String NAME = "MRU";
 
-    /** serialVersionUID */
+    /** serialVersionUID. */
     private static final long serialVersionUID = 7334611172293116644L;
 
     /** The list used for bookkeeping. */
@@ -48,7 +52,8 @@ public class MRUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
      */
     public MRUPolicy(int initialCapacity) throws IllegalArgumentException {
         if (initialCapacity < 0) {
-            throw new IllegalArgumentException("initialCapacity must be a positive number or 0");
+            throw new IllegalArgumentException(
+                    "initialCapacity must be a positive number or 0");
         }
         list = new IndexedStack<T>(initialCapacity);
     }
@@ -64,15 +69,14 @@ public class MRUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#add(java.lang.Object, org.coconut.core.AttributeMap)
+     * {@inheritDoc}
      */
     public int add(T data, AttributeMap ignore) {
         return list.add(data);
     }
 
-
     /**
-     * @see org.coconut.cache.ReplacementPolicy#clear()
+     * {@inheritDoc}
      */
     public void clear() {
         while (evictNext() != null) {
@@ -80,49 +84,50 @@ public class MRUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
         }
     }
 
-
-    @Override
+    /**
+     * {@inheritDoc}
+     */
     public MRUPolicy<T> clone() {
         return new MRUPolicy<T>(this);
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#evictNext()
+     * {@inheritDoc}
      */
     public T evictNext() {
         return list.remove();
     }
 
     /**
-     * @return the number of entries in currently held by the policy.
+     * {@inheritDoc}
      */
     public int getSize() {
         return list.getSize();
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#peek()
+     * {@inheritDoc}
      */
     public T peek() {
         return list.peek();
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#peekAll()
+     * {@inheritDoc}
      */
     public List<T> peekAll() {
         return list.peekAll();
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#remove(int)
+     * {@inheritDoc}
      */
     public T remove(int index) {
         return list.remove(index);
     }
 
     /**
-     * @see java.lang.Object#toString()
+     * {@inheritDoc}
      */
     @Override
     public String toString() {
@@ -130,15 +135,14 @@ public class MRUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#touch(int)
+     * {@inheritDoc}
      */
     public void touch(int index) {
         list.touch(index);
     }
 
-
     /**
-     * @see org.coconut.cache.ReplacementPolicy#update(int, java.lang.Object, org.coconut.core.AttributeMap)
+     * {@inheritDoc}
      */
     public boolean update(int index, T newElement, AttributeMap ignore) {
         list.replace(index, newElement);

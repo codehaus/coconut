@@ -6,7 +6,6 @@ package org.coconut.cache.internal.service.loading;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
 import org.coconut.cache.CacheConfiguration;
@@ -15,7 +14,6 @@ import org.coconut.cache.internal.service.CacheHelper;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
-import org.coconut.cache.internal.service.expiration.DefaultCacheExpirationService;
 import org.coconut.cache.internal.service.threading.InternalCacheThreadingService;
 import org.coconut.cache.internal.service.util.ExtendableFutureTask;
 import org.coconut.cache.service.expiration.CacheExpirationService;
@@ -30,11 +28,16 @@ import org.coconut.management.ManagedGroup;
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @param <K>
+ *            the type of keys maintained by the cache containing this service
+ * @param <V>
+ *            the type of mapped values
  */
 public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService<K, V> {
 
     final CacheHelper<K, V> cache;
 
+    /** A clock used to check if an entry needs to be refreshed. */
     private final Clock clock;
 
     private final CacheExceptionService<K, V> errorHandler;
@@ -62,6 +65,9 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         this.cache = cache;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void initialize(CacheConfiguration<?, ?> configuration,
             Map<Class<?>, Object> serviceMap) {
@@ -71,8 +77,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
     }
 
     /**
-     * @see org.coconut.cache.internal.service.loading.InternalCacheLoadingService#loadBlocking(java.lang.Object,
-     *      org.coconut.core.AttributeMap)
+     * {@inheritDoc}
      */
     public Map<? super K, ? extends V> loadAllBlocking(
             CacheLoader<? super K, ? extends V> loader,
@@ -85,16 +90,14 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
     }
 
     /**
-     * @see org.coconut.cache.internal.service.loading.InternalCacheLoadingService#loadBlocking(java.lang.Object,
-     *      org.coconut.core.AttributeMap)
+     * {@inheritDoc}
      */
     public Map<? super K, ? extends V> loadAllBlocking(Map<? extends K, AttributeMap> keys) {
         return loadAllBlocking(loader, keys);
     }
 
     /**
-     * @see org.coconut.cache.internal.service.loading.InternalCacheLoadingService#loadBlocking(java.lang.Object,
-     *      org.coconut.core.AttributeMap)
+     * {@inheritDoc}
      */
     public V loadBlocking(K key, AttributeMap attributes) {
         return loadBlocking(loader, key, attributes);
@@ -137,6 +140,9 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         return v;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void registerMXBeans(ManagedGroup root) {
         if (loader != null) {
@@ -146,13 +152,16 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     void doLoad(K key, AttributeMap attributes) {
         LoadValueRunnable lvr = new LoadValueRunnable<K, V>(this, loader, key, attributes);
         loadExecutor.execute(lvr);
     }
 
     /**
-     * @see org.coconut.cache.service.loading.CacheLoadingService#loadAll(java.util.Map)
+     * {@inheritDoc}
      */
     void doLoad(Map<? extends K, AttributeMap> mapsWithAttributes) {
         LoadValuesRunnable lvr = new LoadValuesRunnable<K, V>(this, loader,
@@ -191,7 +200,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         }
 
         /**
-         * @see java.lang.Runnable#run()
+         * {@inheritDoc}
          */
         public Object call() {
             V v = null;
@@ -241,7 +250,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         }
 
         /**
-         * @see java.lang.Runnable#run()
+         * {@inheritDoc}
          */
         public void run() {
             Map<? extends K, ? extends V> map = null;

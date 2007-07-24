@@ -9,29 +9,30 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
+ * A future that is always done.
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @param <V>
+ *            The result type returned by this Future's <tt>get</tt> method
  */
 public class DoneFuture<V> implements Future<V> {
 
-    public static Future DONE = new DoneFuture();
-
     /**
-     * @see java.util.concurrent.Future#cancel(boolean)
+     * {@inheritDoc}
      */
     public boolean cancel(boolean mayInterruptIfRunning) {
         return false;
     }
 
     /**
-     * @see java.util.concurrent.Future#get()
+     * {@inheritDoc}
      */
     public V get() throws InterruptedException, ExecutionException {
         return null;
     }
 
     /**
-     * @see java.util.concurrent.Future#get(long, java.util.concurrent.TimeUnit)
+     * {@inheritDoc}
      */
     public V get(long timeout, TimeUnit unit) throws InterruptedException,
             ExecutionException, TimeoutException {
@@ -39,14 +40,14 @@ public class DoneFuture<V> implements Future<V> {
     }
 
     /**
-     * @see java.util.concurrent.Future#isCancelled()
+     * {@inheritDoc}
      */
     public boolean isCancelled() {
         return false;
     }
 
     /**
-     * @see java.util.concurrent.Future#isDone()
+     * {@inheritDoc}
      */
     public boolean isDone() {
         return true;

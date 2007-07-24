@@ -55,7 +55,7 @@ public class DefaultCacheThreadService<K, V> extends AbstractCacheService implem
                                         .awaitTermination(Long.MAX_VALUE,
                                                 TimeUnit.NANOSECONDS);
                             }
-                        } catch (InterruptedException ignore) {}
+                        } catch (InterruptedException ignore) {/* ignore */}
                     }
                 };
                 callback.execute(r);

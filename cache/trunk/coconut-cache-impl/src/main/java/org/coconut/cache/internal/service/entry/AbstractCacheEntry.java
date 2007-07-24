@@ -9,15 +9,21 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.core.AttributeMap;
 
 /**
+ * A basis implementation of the {@link CacheEntry} interface.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @param <K>
+ *            the type of keys maintained by the cache
+ * @param <V>
+ *            the type of mapped values
  */
 public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
 
     public static final long DEFAULT_HIT_COUNT = -1;
 
     public static final long DEFAULT_LAST_ACCESS_TIME = 0;
-    
+
     AbstractCacheEntry<K, V> next;
 
     private final double cost;
@@ -37,7 +43,6 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
 
     private final V value;
 
-
     /**
      * @param key
      * @param value
@@ -54,7 +59,7 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         this.creationTime = creationTime;
         this.lastUpdateTime = lastUpdateTime;
         this.size = size;
-     }
+    }
 
     public abstract void accessed();
 
@@ -81,7 +86,7 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
     }
 
     public AttributeMap getAttributes() {
-       return null;
+        return null;
     }
 
     /**
@@ -90,6 +95,7 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
     public double getCost() {
         return cost;
     }
+
     /**
      * @return the creationTime
      */
@@ -111,7 +117,6 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
     public long getLastUpdateTime() {
         return lastUpdateTime;
     }
-
 
     public AbstractCacheEntry<K, V> getNext() {
         return next;

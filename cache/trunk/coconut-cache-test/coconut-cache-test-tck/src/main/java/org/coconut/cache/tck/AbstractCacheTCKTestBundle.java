@@ -47,7 +47,7 @@ public class AbstractCacheTCKTestBundle extends Assert {
     protected final Cache<Integer, String> newCache(int entries) {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
         cc.setClock(clock);
-        Cache<Integer, String> c = cc.newInstance(CacheTCKRunner.tt);
+        Cache<Integer, String> c = cc.newCacheInstance(CacheTCKRunner.tt);
         c.putAll(createMap(entries));
         return c;
     }
@@ -58,7 +58,7 @@ public class AbstractCacheTCKTestBundle extends Assert {
     }
 
     protected Cache<Integer, String> newCache(AbstractCacheServiceConfiguration<?, ?> conf) {
-        return (Cache) conf.c().newInstance(CacheTCKRunner.tt);
+        return (Cache) conf.c().newCacheInstance(CacheTCKRunner.tt);
     }
 
     protected void setCache(AbstractCacheServiceConfiguration<?, ?> conf) {
@@ -70,7 +70,7 @@ public class AbstractCacheTCKTestBundle extends Assert {
     }
 
     protected Cache<Integer, String> newCache(CacheConfiguration<?, ?> conf) {
-        return (Cache) conf.newInstance(CacheTCKRunner.tt);
+        return (Cache) conf.newCacheInstance(CacheTCKRunner.tt);
     }
 
     protected Cache<Integer, String> newCache(CacheConfiguration<?, ?> conf, int entries) {

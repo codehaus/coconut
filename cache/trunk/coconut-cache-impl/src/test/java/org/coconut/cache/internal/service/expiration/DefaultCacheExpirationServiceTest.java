@@ -34,9 +34,9 @@ import org.junit.Test;
  */
 public class DefaultCacheExpirationServiceTest {
 
-    private static final CacheEntry<Integer, String> neverExpire;
+    private static final CacheEntry<Integer, String> NEVER_EXPIRE;
 
-    private static final CacheEntry<Integer, String> expireAt10;
+    private static final CacheEntry<Integer, String> EXPIRE_AT_10;
     private final Filter<CacheEntry<Integer, String>> TRUE = Filters.trueFilter();
 
     private final Filter<CacheEntry<Integer, String>> FALSE = Filters.falseFilter();
@@ -61,14 +61,14 @@ public class DefaultCacheExpirationServiceTest {
         Mock n = m.mock(CacheEntry.class);
         n.stubs().method("getExpirationTime").will(
                 m.returnValue(CacheExpirationService.NEVER_EXPIRE));
-        neverExpire = (CacheEntry<Integer, String>) n.proxy();
+        NEVER_EXPIRE = (CacheEntry<Integer, String>) n.proxy();
         n = m.mock(CacheEntry.class);
         n.stubs().method("getExpirationTime").will(m.returnValue(10l));
-        expireAt10 = (CacheEntry<Integer, String>) n.proxy();
+        EXPIRE_AT_10 = (CacheEntry<Integer, String>) n.proxy();
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         clock = new Clock.DeterministicClock();
         conf = new CacheExpirationConfiguration<Integer, String>();
         errorHandler = new AbstractTester<Integer, String>();
@@ -83,14 +83,14 @@ public class DefaultCacheExpirationServiceTest {
     @Test
     public void testIsExpired_Time() {
         clock.setTimestamp(9);
-        assertFalse(s.isExpired(expireAt10));
-        assertFalse(s.isExpired(neverExpire));
+        assertFalse(s.isExpired(EXPIRE_AT_10));
+        assertFalse(s.isExpired(NEVER_EXPIRE));
         clock.setTimestamp(10);
-        assertTrue(s.isExpired(expireAt10));
-        assertFalse(s.isExpired(neverExpire));
+        assertTrue(s.isExpired(EXPIRE_AT_10));
+        assertFalse(s.isExpired(NEVER_EXPIRE));
         clock.setTimestamp(Long.MAX_VALUE);
-        assertTrue(s.isExpired(expireAt10));
-        assertFalse(s.isExpired(neverExpire));
+        assertTrue(s.isExpired(EXPIRE_AT_10));
+        assertFalse(s.isExpired(NEVER_EXPIRE));
     }
 
 // @Test

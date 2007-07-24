@@ -18,8 +18,11 @@ import org.coconut.cache.internal.service.threading.NoThreadingCacheService;
  */
 final class Defaults {
 
+    /** Cannot instantiate. */
+    private Defaults() {}
+
     @SuppressWarnings("unchecked")
-	static <K, V> void initializeUnsynchronizedCache(
+    static <K, V> void initializeUnsynchronizedCache(
             InternalCacheServiceManager serviceManager) {
         serviceManager.registerServices(DefaultCacheStatisticsService.class);
         serviceManager.registerServices(UnsynchronizedCacheEvictionService.class);

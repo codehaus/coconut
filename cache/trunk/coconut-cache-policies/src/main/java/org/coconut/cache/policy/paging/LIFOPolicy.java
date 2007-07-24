@@ -16,12 +16,13 @@ import org.coconut.core.AttributeMap;
 /**
  * A LIFO based replacement policy.
  * <p>
- * This implementation works by wrapping an LRU replacement policy and ignoring
- * any calls to touch.
+ * This implementation works by wrapping an LRU replacement policy and ignoring any calls
+ * to touch.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
- * @param <T> the type objects maintained by this policy 
+ * @param <T>
+ *            the type of data maintained by this policy
  */
 @NotThreadSafe
 public class LIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy<T>,
@@ -69,16 +70,15 @@ public class LIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolic
         this.policy = new LRUPolicy<T>(policy.policy);
     }
 
-
     /**
-     * @see org.coconut.cache.ReplacementPolicy#add(java.lang.Object, org.coconut.core.AttributeMap)
+     * {@inheritDoc}
      */
     public int add(T data, AttributeMap ignore) {
         return policy.add(data, ignore);
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#clear()
+     * {@inheritDoc}
      */
     public void clear() {
         while (evictNext() != null) {
@@ -86,50 +86,51 @@ public class LIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolic
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public LIFOPolicy<T> clone() {
         return new LIFOPolicy<T>(this);
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#evictNext()
+     * {@inheritDoc}
      */
     public T evictNext() {
         return policy.evictNext();
     }
 
     /**
-     * Returns the number of elements contained in this policy.
-     * 
-     * @return the number of elements contained in this policy.
+     * {@inheritDoc}
      */
     public int getSize() {
         return policy.getSize();
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#peek()
+     * {@inheritDoc}
      */
     public T peek() {
         return policy.peek();
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#peekAll()
+     * {@inheritDoc}
      */
     public List<T> peekAll() {
         return policy.peekAll();
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#remove(int)
+     * {@inheritDoc}
      */
     public T remove(int index) {
         return policy.remove(index);
     }
 
     /**
-     * @see java.lang.Object#toString()
+     * {@inheritDoc}
      */
     @Override
     public String toString() {
@@ -137,10 +138,10 @@ public class LIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolic
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#touch(int)
+     * {@inheritDoc}
      */
     public void touch(int index) {
-        // ignore touch
+    // ignore touch
     }
 
     /**

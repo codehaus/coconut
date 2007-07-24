@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class AtomicDouble extends Number {
 
-    /** serialVersionUID */
+    /** serialVersionUID. */
     private static final long serialVersionUID = 3159267328827547102L;
 
     /* The AtomicLong we are wrapping */

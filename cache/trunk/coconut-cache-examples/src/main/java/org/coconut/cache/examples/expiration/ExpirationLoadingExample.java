@@ -28,7 +28,7 @@ public class ExpirationLoadingExample {
     public static void main(String[] args) {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
         cc.loading().setLoader(new ExpirationLoader());
-        Cache<Integer, String> cache = cc.newInstance(UnsynchronizedCache.class);
+        Cache<Integer, String> cache = cc.newCacheInstance(UnsynchronizedCache.class);
         cache.get(4); // item will expire after 1 hour (60 * 60 seconds)
     }
     // END SNIPPET: class

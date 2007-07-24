@@ -19,7 +19,7 @@ import org.coconut.core.Callback;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public abstract class ExtendableFutureTask<V> implements Runnable, Future<V>, Callback<V> {
-    /** Synchronization control for FutureTask */
+    /** Synchronization control for FutureTask. */
     private final Sync sync = new Sync();
 
     public boolean cancel(boolean mayInterruptIfRunning) {
@@ -27,40 +27,43 @@ public abstract class ExtendableFutureTask<V> implements Runnable, Future<V>, Ca
     }
 
     /**
-     * @see org.coconut.core.Callback#completed(java.lang.Object)
+     * {@inheritDoc}
      */
     public void completed(V result) {
         set(result);
     }
 
     /**
-     * @see org.coconut.core.Callback#failed(java.lang.Throwable)
+     * {@inheritDoc}
      */
     public void failed(Throwable cause) {
         setException(cause);
     }
 
     /**
-     * @throws CancellationException
-     *             {@inheritDoc}
+     * {@inheritDoc}
      */
     public V get() throws InterruptedException, ExecutionException {
         return sync.innerGet();
     }
 
     /**
-     * @throws CancellationException
-     *             {@inheritDoc}
+     * {@inheritDoc}
      */
     public V get(long timeout, TimeUnit unit) throws InterruptedException,
             ExecutionException, TimeoutException {
         return sync.innerGet(unit.toNanos(timeout));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public boolean isCancelled() {
         return sync.innerIsCancelled();
     }
-
+    /**
+     * {@inheritDoc}
+     */
     public boolean isDone() {
         return sync.innerIsDone();
     }
@@ -133,24 +136,24 @@ public abstract class ExtendableFutureTask<V> implements Runnable, Future<V>, Ca
      * prefixed with "inner". Uses AQS sync state to represent run status
      */
     private final class Sync extends AbstractQueuedSynchronizer {
-        /** State value representing that task was cancelled */
+        /** State value representing that task was cancelled. */
         private static final int CANCELLED = 4;
 
-        /** State value representing that task ran */
+        /** State value representing that task ran. */
         private static final int RAN = 2;
 
-        /** State value representing that task is ready to run */
+        /** State value representing that task is ready to run. */
         private static final int READY = 0;
 
-        /** State value representing that task is running */
+        /** State value representing that task is running. */
         private static final int RUNNING = 1;
 
         private static final long serialVersionUID = -7828117401763700385L;
 
-        /** The exception to throw from get() */
+        /** The exception to throw from get(). */
         private Throwable exception;
 
-        /** The result to return from get() */
+        /** The result to return from get(). */
         private V result;
 
         /**
@@ -165,7 +168,7 @@ public abstract class ExtendableFutureTask<V> implements Runnable, Future<V>, Ca
         }
 
         /**
-         * Implements AQS base acquire to succeed if ran or cancelled
+         * Implements AQS base acquire to succeed if ran or cancelled.
          */
         protected int tryAcquireShared(int ignore) {
             return innerIsDone() ? 1 : -1;

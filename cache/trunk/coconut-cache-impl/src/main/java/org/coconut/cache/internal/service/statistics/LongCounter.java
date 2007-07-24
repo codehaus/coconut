@@ -328,7 +328,7 @@ public abstract class LongCounter
 
     final static class ConcurrentLongCounter extends LongCounter {
 
-        private final static boolean doUpdate = true;
+        private final static boolean DO_UPDATE = true;
 
         private final AtomicLong l = new AtomicLong();
 
@@ -351,7 +351,7 @@ public abstract class LongCounter
         }
 
         private void update() {
-            if (doUpdate) {
+            if (DO_UPDATE) {
                 EventProcessor<? super LongCounter>[] a = array;
                 if (a.length > 0) {
                     for (int i = 0; i < a.length; i++) {

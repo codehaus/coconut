@@ -129,12 +129,6 @@ public class UnsynchronizedCacheServiceManager extends
                     "CacheServiceManager has already been started");
         }
         ComponentAdapter ca = container.getComponentAdapter(type);
-// if (ca != null
-// && DummyCacheService.class.isAssignableFrom(ca
-// .getComponentImplementation())) {
-// // unregister dummy
-// container.unregisterComponent(type);
-// }
         container.registerComponentImplementation(type, service);
     }
 

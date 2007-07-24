@@ -25,7 +25,7 @@ public class MRUPolicyTest {
     MRUPolicy<Integer> policy;
 
     @Before
-    public void setup() {
+    public void setUp() {
         policy = new MRUPolicy<Integer>();
     }
     /**
@@ -124,7 +124,7 @@ public class MRUPolicyTest {
     }
 
     /**
-     * Test that toString doesn't fail
+     * Test that toString doesn't fail.
      */
     @Test
     public void testToString() {

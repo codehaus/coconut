@@ -15,14 +15,16 @@ import org.coconut.core.AttributeMap;
 import org.coconut.internal.util.IndexedList;
 
 /**
- * A Least Recently Used replacement policy discards the least recently used
- * items first.
+ * A Least Recently Used replacement policy discards the least recently used items first.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
+ * @param <T>
+ *            the type of data maintained by this policy
  */
 @NotThreadSafe
-public class LRUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy<T>, Serializable {
+public class LRUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy<T>,
+        Serializable {
 
     /** A unique policy name. */
     public static final String NAME = "LRU";
@@ -75,6 +77,13 @@ public class LRUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
     /**
      * {@inheritDoc}
      */
+    public void clear() {
+        list.clear();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public LRUPolicy<T> clone() {
         return new LRUPolicy<T>(this);
@@ -88,7 +97,7 @@ public class LRUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
     }
 
     /**
-     * Returns the number of elements in the policy.
+     * {@inheritDoc}
      */
     public int getSize() {
         return list.getSize();
@@ -136,9 +145,5 @@ public class LRUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
     public boolean update(int index, T newElement, AttributeMap ignore) {
         list.replace(index, newElement);
         return true; // LRU never rejects an entry
-    }
-
-    public void clear() {
-        list.clear();
     }
 }

@@ -11,7 +11,7 @@ public class SetNameExample {
     public static void main(String[] args) {
         CacheConfiguration<String, String> cc = CacheConfiguration.create();
         cc.setName("MyCache");
-        UnsynchronizedCache<String, String> c = cc.newInstance(UnsynchronizedCache.class);
+        UnsynchronizedCache<String, String> c = cc.newCacheInstance(UnsynchronizedCache.class);
         System.out.println(c);
     }
 }

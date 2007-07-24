@@ -19,9 +19,14 @@ public final class Resources {
 
     private static final ResourceHolder RESOURCE_HOLDER = new ResourceHolder(
             BUNDLE_NAME);
-
+    
+    /** Cannot instantiate. */
+    private Resources() {}
+    
     public static String lookup(Class c, String key, Object... o) {
         return RESOURCE_HOLDER.lookup(c, key, o);
     }
+    
+
 }
 

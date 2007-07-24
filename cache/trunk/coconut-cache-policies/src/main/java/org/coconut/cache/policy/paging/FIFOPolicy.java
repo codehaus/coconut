@@ -18,6 +18,8 @@ import org.coconut.core.AttributeMap;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
+ * @param <T>
+ *            the type of data maintained by this policy
  */
 @NotThreadSafe
 public class FIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy<T>,
@@ -66,14 +68,21 @@ public class FIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolic
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#add(java.lang.Object, org.coconut.core.AttributeMap)
+     * {@inheritDoc}
      */
     public int add(T data, AttributeMap attributes) {
         return policy.add(data, attributes);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     */
+    public void clear() {
+        policy.clear();
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public FIFOPolicy<T> clone() {
@@ -81,44 +90,42 @@ public class FIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolic
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#evictNext()
+     * {@inheritDoc}
      */
     public T evictNext() {
         return policy.evictNext();
     }
 
     /**
-     * Returns the number of elements contained in this policy.
-     * 
-     * @return the number of elements contained in this policy.
+     * {@inheritDoc}
      */
     public int getSize() {
         return policy.getSize();
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#peek()
+     * {@inheritDoc}
      */
     public T peek() {
         return policy.peek();
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#peekAll()
+     * {@inheritDoc}
      */
     public List<T> peekAll() {
         return policy.peekAll();
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#remove(int)
+     * {@inheritDoc}
      */
     public T remove(int index) {
         return policy.remove(index);
     }
 
     /**
-     * @see java.lang.Object#toString()
+     * {@inheritDoc}
      */
     @Override
     public String toString() {
@@ -126,23 +133,16 @@ public class FIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolic
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#update(int, java.lang.Object, org.coconut.core.AttributeMap)
+     * {@inheritDoc}
+     */
+    public void touch(int index) {
+    // ignore
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public boolean update(int index, T newElement, AttributeMap ignore) {
         return policy.update(index, newElement, ignore);
-    }
-
-    /**
-     * @see org.coconut.cache.ReplacementPolicy#touch(int)
-     */
-    public void touch(int index) {
-        // ignore
-    }
-
-    /**
-     * @see org.coconut.cache.ReplacementPolicy#clear()
-     */
-    public void clear() {
-        policy.clear();
     }
 }

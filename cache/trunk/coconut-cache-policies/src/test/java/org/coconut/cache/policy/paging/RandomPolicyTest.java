@@ -28,7 +28,7 @@ public class RandomPolicyTest {
     RandomPolicy<Integer> policy;
 
     @Before
-    public void setup() {
+    public void setUp() {
         policy = new RandomPolicy<Integer>();
     }
 

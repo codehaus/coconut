@@ -20,8 +20,11 @@ import org.coconut.management.annotation.ManagedOperation;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class ManagementUtils {
+public final class ManagementUtils {
 
+    /** Cannot instantiate. */
+    private ManagementUtils() {}
+    
     /**
      * Wraps a CacheManagementService implementation such that only methods from the
      * CacheManagementService interface is exposed.
@@ -56,7 +59,7 @@ public class ManagementUtils {
 
         /**
          * Creates a wrapped DelegatedCacheManagementService from the specified
-         * implementation
+         * implementation.
          * 
          * @param service
          *            the DelegatedCacheManagementService to wrap
@@ -84,7 +87,7 @@ public class ManagementUtils {
         private final Cache<?, ?> cache;
 
         /**
-         * Creates a new
+         * Creates a new.
          * 
          * @param cache
          *            the cache to wrap

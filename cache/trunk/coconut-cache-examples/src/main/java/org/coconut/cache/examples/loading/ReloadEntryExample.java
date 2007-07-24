@@ -19,7 +19,7 @@ public class ReloadEntryExample {
         // START SNIPPET: class
         CacheConfiguration<String, String> cc = CacheConfiguration.create();
         cc.loading().setDefaultTimeToRefresh(55 * 60, TimeUnit.SECONDS);
-        Cache<String, String> cache = cc.newInstance(UnsynchronizedCache.class);
+        Cache<String, String> cache = cc.newCacheInstance(UnsynchronizedCache.class);
         cache.getService(CacheExpirationService.class).put("key", "value", 60 * 60,
                 TimeUnit.SECONDS);
         // element will expire after 1 hours, but should be reloaded 5 minutes

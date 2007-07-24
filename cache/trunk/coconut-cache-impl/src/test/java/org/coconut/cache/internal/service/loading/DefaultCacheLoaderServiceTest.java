@@ -26,26 +26,26 @@ import org.jmock.core.Constraint;
 @SuppressWarnings({ "unchecked", "serial" })
 public class DefaultCacheLoaderServiceTest extends MockTestCase {
 
-    private final static AttributeMap attributes = mockDummy(AttributeMap.class);
+    private final static AttributeMap ATTRIBUTES = mockDummy(AttributeMap.class);
 
-    private final static Map<Integer, AttributeMap> keys1 = mockDummy(Map.class);
+    private final static Map<Integer, AttributeMap> KEYS1 = mockDummy(Map.class);
 
-    private final static Map<Integer, AttributeMap> keys2 = mockDummy(Map.class);
+    private final static Map<Integer, AttributeMap> KEYS2 = mockDummy(Map.class);
 
-    private final static Map<Integer, AttributeMap> realKeys = new HashMap() {
+    private final static Map<Integer, AttributeMap> REAL_KEYS = new HashMap() {
         {
             put(3, new AttributeMaps.DefaultAttributeMap());
             put(5, new AttributeMaps.DefaultAttributeMap());
         }
     };
 
-    private final static Map<Integer, String> map2 = new HashMap<Integer, String>();
+    private final static Map<Integer, String> MAP2 = new HashMap<Integer, String>();
 
-    private final static Map<Integer, String> map3 = new HashMap<Integer, String>();
+    private final static Map<Integer, String> MAP3 = new HashMap<Integer, String>();
 
-    private final static Exception e = new Exception();
+    private final static Exception E = new Exception();
 
-    private final static RuntimeException re = new RuntimeException();
+    private final static RuntimeException RE = new RuntimeException();
 
     MyExecutor myExecutor;
 
@@ -91,12 +91,12 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
         DefaultCacheLoaderService<Integer, String> dcls = new DefaultCacheLoaderService<Integer, String>(
                 null, null, null, loadingConf, null, null);
 
-        loaderMock1.expects(once()).method("load").with(eq(3), same(attributes)).will(
+        loaderMock1.expects(once()).method("load").with(eq(3), same(ATTRIBUTES)).will(
                 returnValue("boo"));
 
-        assertEquals("boo", dcls.loadBlocking(3, attributes));
+        assertEquals("boo", dcls.loadBlocking(3, ATTRIBUTES));
 
-        loaderMock2.expects(once()).method("load").with(eq(5), same(attributes)).will(
+        loaderMock2.expects(once()).method("load").with(eq(5), same(ATTRIBUTES)).will(
                 returnValue("foo"));
        // assertEquals("foo", dcls.loadBlocking(loaderProxy2, 5, attributes));
     }
@@ -105,38 +105,38 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
         DefaultCacheLoaderService<Integer, String> dcls = new DefaultCacheLoaderService<Integer, String>(
                 null, null, errorHandlerProxy, loadingConf, null,  null);
 
-        loaderMock1.expects(once()).method("load").with(eq(4), same(attributes)).will(
-                throwException(e));
+        loaderMock1.expects(once()).method("load").with(eq(4), same(ATTRIBUTES)).will(
+                throwException(E));
         errorHandlerMock.expects(once()).method("loadFailed").with(
-                new Constraint[] { same(loaderProxy1), eq(4), same(attributes),
-                        eq(false), same(e) }).will(returnValue("voo"));
-        assertEquals("voo", dcls.loadBlocking(4, attributes));
+                new Constraint[] { same(loaderProxy1), eq(4), same(ATTRIBUTES),
+                        eq(false), same(E) }).will(returnValue("voo"));
+        assertEquals("voo", dcls.loadBlocking(4, ATTRIBUTES));
     }
 
     public void atestLoadAllBlocking() {
         DefaultCacheLoaderService<Integer, String> dcls = new DefaultCacheLoaderService<Integer, String>(
                 null, null, null, loadingConf, null, null);
 
-        loaderMock1.expects(once()).method("loadAll").with(eq(keys1)).will(
-                returnValue(map2));
-        assertSame(map2, dcls.loadAllBlocking(keys1));
+        loaderMock1.expects(once()).method("loadAll").with(eq(KEYS1)).will(
+                returnValue(MAP2));
+        assertSame(MAP2, dcls.loadAllBlocking(KEYS1));
 
-        loaderMock2.expects(once()).method("loadAll").with(eq(keys2)).will(
-                returnValue(map2));
-        assertEquals(map2, dcls.loadAllBlocking(loaderProxy2, keys2));
+        loaderMock2.expects(once()).method("loadAll").with(eq(KEYS2)).will(
+                returnValue(MAP2));
+        assertEquals(MAP2, dcls.loadAllBlocking(loaderProxy2, KEYS2));
     }
 
     public void atestLoadAllBlockingError() {
         DefaultCacheLoaderService<Integer, String> dcls = new DefaultCacheLoaderService<Integer, String>(
                 null, null, errorHandlerProxy, loadingConf, null,  null);
 
-        loaderMock1.expects(once()).method("loadAll").with(eq(keys1)).will(
-                throwException(e));
+        loaderMock1.expects(once()).method("loadAll").with(eq(KEYS1)).will(
+                throwException(E));
 
         errorHandlerMock.expects(once()).method("loadAllFailed").with(
-                new Constraint[] { same(loaderProxy1), same(keys1), eq(false), same(e) })
-                .will(returnValue(map2));
-        assertEquals(map2, dcls.loadAllBlocking(keys1));
+                new Constraint[] { same(loaderProxy1), same(KEYS1), eq(false), same(E) })
+                .will(returnValue(MAP2));
+        assertEquals(MAP2, dcls.loadAllBlocking(KEYS1));
     }
 
     public void atestLoad() throws InterruptedException, ExecutionException {
@@ -152,10 +152,10 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
 //        assertNotNull(f);
 //        f.get();
 
-        loaderMock1.expects(once()).method("load").with(eq(2), same(attributes)).will(
+        loaderMock1.expects(once()).method("load").with(eq(2), same(ATTRIBUTES)).will(
                 returnValue("foo"));
         cacheHelperMock.expects(once()).method("valueLoaded").with(eq(2), eq("foo"),
-                same(attributes));
+                same(ATTRIBUTES));
 //        Future f1 = dcls.load(2, attributes);
 //        assertNotNull(f1);
 //        f1.get();
@@ -172,12 +172,12 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
                 cacheHelperProxy);
 
         loaderMock1.expects(once()).method("load").with(eq(1), ANYTHING).will(
-                throwException(e));
+                throwException(E));
         cacheHelperMock.expects(once()).method("valueLoaded").with(eq(1), eq("boo"),
                 ANYTHING);
         errorHandlerMock.expects(once()).method("loadFailed").with(
-                new Constraint[] { same(loaderProxy1), eq(1), same(attributes), eq(true),
-                        same(e) }).will(returnValue("boo"));
+                new Constraint[] { same(loaderProxy1), eq(1), same(ATTRIBUTES), eq(true),
+                        same(E) }).will(returnValue("boo"));
 
 //        Future f = dcls.load(1, attributes);
 //        assertNotNull(f);
@@ -185,10 +185,10 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
 
         // no add of value if cacheerrorhandler returns null
         loaderMock1.expects(once()).method("load").with(eq(1), ANYTHING).will(
-                throwException(e));
+                throwException(E));
         errorHandlerMock.expects(once()).method("loadFailed").with(
-                new Constraint[] { same(loaderProxy1), eq(1), same(attributes), eq(true),
-                        same(e) }).will(returnValue(null));
+                new Constraint[] { same(loaderProxy1), eq(1), same(ATTRIBUTES), eq(true),
+                        same(E) }).will(returnValue(null));
 
 //        Future f1 = dcls.load(1, attributes);
 //        assertNotNull(f1);
@@ -196,10 +196,10 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
 
         // test cache errorhandler throws CacheException
         loaderMock1.expects(once()).method("load").with(eq(1), ANYTHING).will(
-                throwException(e));
+                throwException(E));
         errorHandlerMock.expects(once()).method("loadFailed").with(
-                new Constraint[] { same(loaderProxy1), eq(1), same(attributes), eq(true),
-                        same(e) }).will(throwException(re));
+                new Constraint[] { same(loaderProxy1), eq(1), same(ATTRIBUTES), eq(true),
+                        same(E) }).will(throwException(RE));
 
 //        Future f2 = dcls.load(1, attributes);
 //        assertNotNull(f2);

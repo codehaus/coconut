@@ -1,13 +1,12 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-
 package org.coconut.cache.service.loading;
 
 import org.coconut.core.AttributeMap;
 
 /**
- * A <code>CacheLoader</code> is used for transparant loading or creation of values by a
+ * A <code>CacheLoader</code> is used for transparent loading or creation of values by a
  * cache. Instead of the user first checking if a value for a given key exist in the cache
  * and if that is not the case; create the value and add it to the cache. A cache
  * implementation can use a cache loader for lazily creating values for missing entries

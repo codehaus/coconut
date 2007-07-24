@@ -18,11 +18,10 @@ import org.coconut.management.annotation.ManagedAttribute;
  */
 class LastAccessExample {
     public static void main(String[] args) throws InterruptedException {
-        CacheConfiguration<String, String> conf = CacheConfiguration
-                .create("WebPage-Cache");
+        CacheConfiguration<String, String> conf = CacheConfiguration.create("WebPage-Cache");
         conf.management().setEnabled(true);
         conf.expiration().setExpirationFilter(new LastAccessFilter<String, String>());
-        UnsynchronizedCache<String, String> cache = conf.newInstance(UnsynchronizedCache.class);
+        UnsynchronizedCache<String, String> cache = conf.newCacheInstance(UnsynchronizedCache.class);
         cache.getAllServices();
         Thread.sleep(1000000);
     }

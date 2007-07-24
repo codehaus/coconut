@@ -25,7 +25,7 @@ public class LIFOPolicyTest {
     LIFOPolicy<Integer> policy;
 
     @Before
-    public void setup() {
+    public void setUp() {
         policy = new LIFOPolicy<Integer>();
     }
 
@@ -123,7 +123,7 @@ public class LIFOPolicyTest {
     }
 
     /**
-     * Test that toString doesn't fail
+     * Test that toString doesn't fail.
      */
     @Test
     public void testToString() {

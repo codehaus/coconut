@@ -22,7 +22,7 @@ public class DateSampler implements Runnable {
     private final Clock clock;
 
     /**
-     * Creates a new {@value class}
+     * Creates a new {@value class}.
      * 
      * @param name
      *            the name of the apm
@@ -39,7 +39,7 @@ public class DateSampler implements Runnable {
 
     /**
      * Sets the last update to the value of
-     * {@link org.coconut.core.Clock#timestamp() }
+     * {@link org.coconut.core.Clock#timestamp() }.
      */
     public void run() {
         last = clock.timestamp();

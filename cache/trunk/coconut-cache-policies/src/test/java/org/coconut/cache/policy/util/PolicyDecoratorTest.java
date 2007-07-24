@@ -25,7 +25,7 @@ public class PolicyDecoratorTest extends MockTestCase {
             new PolicyDecorator(null);
             fail("should throw NullPointerException");
         } catch (NullPointerException ok) {
-
+            /* ignore */
         }
     }
 }

@@ -16,9 +16,9 @@ import org.junit.Test;
  */
 public class CacheThreadingConfigurationTest {
 
-    private final static Executor e = Executors.newCachedThreadPool();
+    private final static Executor E = Executors.newCachedThreadPool();
 
-    private final static ScheduledExecutorService ses = Executors
+    private final static ScheduledExecutorService SES = Executors
             .newSingleThreadScheduledExecutor();
 
     CacheExecutorConfiguration<?,?> t;

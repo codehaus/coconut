@@ -29,7 +29,7 @@ public class XmlConfiguratorTest {
     CacheConfiguration<?,?> conf;
 
     @Before
-    public void setup() {
+    public void setUp() {
         conf = CacheConfiguration.create();
     }
 
@@ -38,7 +38,7 @@ public class XmlConfiguratorTest {
         String noNamed = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
                 + "<cache-config version=\"" + XmlConfigurator.CURRENT_VERSION + "\">"
                 + "<cache/></cache-config>";
-        assertNull(CacheConfiguration.createConfiguration(
+        assertNull(CacheConfiguration.loadConfigurationFrom(
                 new ByteArrayInputStream(noNamed.getBytes())).getName());
     }
 
@@ -47,7 +47,7 @@ public class XmlConfiguratorTest {
         String noNamed = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
                 + "<cache-config version=\"" + XmlConfigurator.CURRENT_VERSION + "\">"
                 + "<cache type=\"foo\"/></cache-config>";
-        assertEquals("foo", CacheConfiguration.createConfiguration(
+        assertEquals("foo", CacheConfiguration.loadConfigurationFrom(
                 new ByteArrayInputStream(noNamed.getBytes())).getProperty(
                 XmlConfigurator.CACHE_INSTANCE_TYPE));
     }
@@ -55,7 +55,7 @@ public class XmlConfiguratorTest {
     static CacheConfiguration<?,?> rw(CacheConfiguration<?,?> conf) throws Exception {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         new XmlConfigurator().write(conf, os);
-        return CacheConfiguration.createConfiguration(new ByteArrayInputStream(os
+        return CacheConfiguration.loadConfigurationFrom(new ByteArrayInputStream(os
                 .toByteArray()));
     }
 
@@ -76,7 +76,7 @@ public class XmlConfiguratorTest {
 
     @Test(expected = NullPointerException.class)
     public void from_NPE2() throws Exception {
-        CacheConfiguration.createConfiguration(null);
+        CacheConfiguration.loadConfigurationFrom(null);
     }
 
 // @Test
@@ -132,6 +132,6 @@ public class XmlConfiguratorTest {
         if (e != null) {
             parent.appendChild(e);
         }
-        return (T) xml.readCacheService(parent, (Class) configuration.getClass());
+        return (T) xml.readCacheService(parent, configuration);
     }
 }

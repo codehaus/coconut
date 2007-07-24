@@ -25,7 +25,7 @@ public class FIFOPolicyTest {
     FIFOPolicy<Integer> policy;
 
     @Before
-    public void setup() {
+    public void setUp() {
         policy = new FIFOPolicy<Integer>();
     }
 
@@ -125,7 +125,7 @@ public class FIFOPolicyTest {
     }
 
     /**
-     * Test that toString doesn't fail
+     * Test that toString doesn't fail.
      */
     @Test
     public void testToString() {

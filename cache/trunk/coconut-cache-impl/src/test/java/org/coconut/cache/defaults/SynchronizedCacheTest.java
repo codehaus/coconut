@@ -14,7 +14,7 @@ public class SynchronizedCacheTest {
     Cache sc;
 
     @Before
-    public void setup() {
+    public void setUp() {
        // sc = new SynchronizedCache(M1_TO_M5_MAP);
     }
 

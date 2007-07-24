@@ -13,8 +13,8 @@ import org.coconut.core.Clock;
 /**
  * The main purpose of a cache attribute is to support custom metadata associated with
  * each element in the cache. This cache can used set and retrieve predefined cache
- * attributes from an AttributeMap in a typesafe manner. Currently these attributes can
- * only be used in load(Object, AttributeMap). See {@link CacheLoader} for an example.
+ * attributes from an AttributeMap in a typesafe manner. Currently these attributes are
+ * only in use for cache loaders. See {@link CacheLoader} for examples.
  * <p>
  * The following is a list of the default provided attributes
  * 
@@ -37,6 +37,9 @@ public final class CacheAttributes {
     /**
      * This attribute key can be used to indicate the creation time of a cache element.
      * The mapped value must be <tt>long</tt> between 1 and {@link Long#MAX_VALUE}.
+     * @see #setCreationTime(AttributeMap, long)
+     * @see #getCreationTime(AttributeMap)
+     * @see #getCreationTime(AttributeMap, Clock)
      */
     public static final String CREATION_TIME = "creation_time";
 
@@ -306,15 +309,27 @@ public final class CacheAttributes {
     }
 
     /**
-     * TODO fill out.
+     * Returns the value that the specified AttributeMap maps the
+     * {@link #TIME_TO_REFRESH_NS} attribute to or the default specified value if no such
+     * mapping exist.
      * 
      * @param attributes
-     *            the map to retrieve the value of the time to live attribute from
+     *            the map to retrieve the value of the time to refresh attribute from
      * @param unit
      *            the unit that the time should be returned in
      * @param defaultValue
-     *            the value that should be returned if a value for time to live attribute
-     *            could not be found
+     *            the value that should be returned if a mapping for the time to live
+     *            attribute does not exist in the specified attribute map
+     * @return returns the value that the specified AttributeMap maps the
+     *         {@link #TIME_TO_REFRESH_NS} attribute to, or the default specified value if
+     *         no such mapping exist
+     * @throws NullPointerException
+     *             if the specified attributeMap is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if the specified attributeMap returns a negative number for the time to
+     *             refresh attribute
+     * @see #setTimeToRefresh(AttributeMap, long, TimeUnit)
+     * @see #TIME_TO_REFRESH_NS
      */
     public static long getTimeToRefresh(AttributeMap attributes, TimeUnit unit,
             long defaultValue) {
@@ -367,6 +382,22 @@ public final class CacheAttributes {
         return attributes;
     }
 
+    /**
+     * Sets a value for the {@link #LAST_MODIFIED_TIME} attribute in the specified
+     * AttributeMap.
+     * 
+     * @param attributes
+     *            the map of attributes to set the last modified time attribute in
+     * @param lastModifiedTime
+     *            the last modified time
+     * @return the specified attribute map
+     * @throws NullPointerException
+     *             if the specified attributeMap is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if the specified last modified time is a negative number
+     * @see #getLastModified(AttributeMap, Clock)
+     * @see #LAST_MODIFIED_TIME
+     */
     public static AttributeMap setLastModifiedTime(AttributeMap attributes,
             long lastModifiedTime) {
         if (attributes == null) {
@@ -380,11 +411,13 @@ public final class CacheAttributes {
     }
 
     /**
-     * Sets a value for the {@link #CREATION_TIME} attribute in the specified AttributeMap.
+     * Sets a value for the {@link #CREATION_TIME} attribute in the specified
+     * AttributeMap.
      * 
      * @param attributes
      *            the map of attributes to set the creation time attribute in
-     * @param creationTime the creation time
+     * @param creationTime
+     *            the creation time
      * @return the specified attribute map
      * @throws NullPointerException
      *             if the specified attributeMap is <code>null</code>
@@ -456,7 +489,6 @@ public final class CacheAttributes {
      * @see #COST
      */
 
-
     /**
      * Sets a value for the {@link #TIME_TO_LIVE_NS} attribute in the specified
      * AttributeMap.
@@ -496,7 +528,6 @@ public final class CacheAttributes {
         return attributes;
     }
 
-
     /**
      * Sets a value for the {@link #TIME_TO_REFRESH_NS} attribute in the specified
      * AttributeMap.
@@ -515,8 +546,8 @@ public final class CacheAttributes {
      * @see #getTimeToRefresh(AttributeMap, TimeUnit, long)
      * @see #TIME_TO_REFRESH_NS
      */
-    public static AttributeMap setTimeToRefresh(AttributeMap attributes, long timeToRefresh,
-            TimeUnit unit) {
+    public static AttributeMap setTimeToRefresh(AttributeMap attributes,
+            long timeToRefresh, TimeUnit unit) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
         } else if (timeToRefresh < 0) {

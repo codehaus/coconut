@@ -117,7 +117,7 @@ public class CacheConfigurationTest {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		new XmlConfigurator().write(conf, os);
 
-		Cache c = CacheConfiguration.createCache(new ByteArrayInputStream(os
+		Cache c = CacheConfiguration.loadCacheFrom(new ByteArrayInputStream(os
 				.toByteArray()));
 		assertTrue(c instanceof DummyCache);
 		assertEquals("foo", ((DummyCache) c).getName());
@@ -135,7 +135,7 @@ public class CacheConfigurationTest {
 	public void testNewInstance() throws Exception {
 		conf.setName("foo");
 
-		Cache c = conf.newInstance(DummyCache.class);
+		Cache c = conf.newCacheInstance(DummyCache.class);
 		assertTrue(c instanceof DummyCache);
 		assertEquals("foo", ((DummyCache) c).getName());
 		assertFalse(((DummyCache) c).isStarted);
@@ -149,23 +149,23 @@ public class CacheConfigurationTest {
 
 	@Test(expected = NullPointerException.class)
 	public void testNewInstanceNPE() throws Exception {
-		conf.newInstance(null);
+		conf.newCacheInstance(null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testNewInstanceNoConstructor() throws Exception {
-		conf.newInstance(MockTestCase.mockDummy(Cache.class).getClass());
+		conf.newCacheInstance(MockTestCase.mockDummy(Cache.class).getClass());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testNewInstanceAbstractClass() throws Exception {
-		conf.newInstance(CannotInstantiateAbstractCache.class);
+		conf.newCacheInstance(CannotInstantiateAbstractCache.class);
 	}
 
 	@Test(expected = ArithmeticException.class)
 	public void testNewInstanceConstructorThrows() throws Throwable {
 		try {
-			conf.newInstance(ConstructorThrowingCache.class);
+			conf.newCacheInstance(ConstructorThrowingCache.class);
 		} catch (IllegalArgumentException e) {
 			throw e.getCause();
 		}
@@ -174,7 +174,7 @@ public class CacheConfigurationTest {
 	@Test(expected = IllegalAccessException.class)
 	public void testNewInstanceConstructorThrows2() throws Throwable {
 		try {
-			conf.newInstance(PrivateConstructorCache.class);
+			conf.newCacheInstance(PrivateConstructorCache.class);
 		} catch (IllegalArgumentException e) {
 			throw e.getCause();
 		}

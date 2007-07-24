@@ -161,7 +161,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
     }
 
     /**
-     * Returns the table entry that should be used for key with given hash
+     * Returns the table entry that should be used for key with given hash.
      * 
      * @param hash
      *            the hash code for the key
@@ -174,7 +174,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
     /* ---------------- Inner Classes -------------- */
 
     /**
-     * Return properly casted first entry of bin for given hash
+     * Return properly casted first entry of bin for given hash.
      */
     private AbstractCacheEntry<K, V> getFirst(int hash) {
         AbstractCacheEntry<?,?>[] tab = table;

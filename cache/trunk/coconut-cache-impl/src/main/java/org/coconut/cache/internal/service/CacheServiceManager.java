@@ -26,7 +26,7 @@ public class CacheServiceManager<K, V>  {
 
     private static final int SHUTDOWN = 1 << 1;
 
-    private static final RuntimePermission shutdownPerm = new RuntimePermission(
+    private static final RuntimePermission SHUTDOWN_PERM = new RuntimePermission(
             "modifyCache");
 
     private static final int STOP = 1 << 2;
@@ -160,7 +160,7 @@ public class CacheServiceManager<K, V>  {
     private void checkShutdownAccess() {
         SecurityManager security = System.getSecurityManager();
         if (security != null) {
-            security.checkPermission(shutdownPerm);
+            security.checkPermission(SHUTDOWN_PERM);
         }
     }
 

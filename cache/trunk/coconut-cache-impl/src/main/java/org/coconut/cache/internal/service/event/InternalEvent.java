@@ -10,8 +10,11 @@ import org.coconut.cache.service.event.CacheEvent;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-class InternalEvent {
+final class InternalEvent {
 
+    /** Cannot instantiate. */
+    private InternalEvent() {}
+    
     static <K, V> CacheEvent<K, V> evicted(Cache<K, V> cache, int currentSize,
             int previousSize, long currentCapacity, long previousCapacity) {
         return new Evicted<K, V>(cache, currentSize, previousSize);

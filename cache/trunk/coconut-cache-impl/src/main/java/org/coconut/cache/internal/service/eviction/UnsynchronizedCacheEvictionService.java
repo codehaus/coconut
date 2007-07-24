@@ -65,7 +65,7 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
     }
 
     public List<T> evict(int count) {
-        ArrayList<T> list = new ArrayList<T>();
+        List<T> list = new ArrayList<T>();
         while (count-- > 0) {
             T e = evictNext();
             list.add(e);

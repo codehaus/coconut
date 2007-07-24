@@ -24,7 +24,7 @@ public class ExpirationAndRefreshing {
         cc.loading().setLoader(new StockQuoteLoader());
         cc.loading().setDefaultTimeToRefresh(60, TimeUnit.SECONDS);
         cc.expiration().setDefaultTimeToLive(5 * 60, TimeUnit.SECONDS);
-        Cache<String, String> cache = cc.newInstance(UnsynchronizedCache.class);
+        Cache<String, String> cache = cc.newCacheInstance(UnsynchronizedCache.class);
         System.out.println(cache.get("SUNW")); //will return the quote for Sun
     }
 }

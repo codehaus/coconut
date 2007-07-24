@@ -24,7 +24,7 @@ import org.w3c.dom.Node;
 /**
  * XmlConfigurator is used to load and save {@link org.coconut.cache.CacheConfiguration}
  * as XML. Normally users should not rely on this class but instead use
- * {@link CacheConfiguration#createConfiguration(InputStream)}.
+ * {@link CacheConfiguration#loadConfigurationFrom(InputStream)}.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -125,9 +125,9 @@ public class XmlConfigurator {
      */
     protected <K, V> AbstractCacheServiceConfiguration<K, V> readCacheService(
             Element cache,
-            Class<? extends AbstractCacheServiceConfiguration<K, V>> service)
+            AbstractCacheServiceConfiguration<K, V> acsc )
             throws Exception {
-        AbstractCacheServiceConfiguration<K, V> acsc = service.newInstance();
+        //= service.newInstance();
         Element e = (Element) cache.getElementsByTagName(acsc.getServiceName()).item(0);
         if (e != null) {
             acsc.fromXML(e);
@@ -145,12 +145,12 @@ public class XmlConfigurator {
                             + doc.getDocumentURI());
         }
         Node n = root.getElementsByTagName("cache").item(0);
-        readSingleCache(base, base.getServiceTypes(), (Element) n);
+        readSingleCache(base, base.getAllConfigurations(), (Element) n);
     }
 
     protected <K, V> void readSingleCache(
             CacheConfiguration<K, V> conf,
-            Collection<Class<? extends AbstractCacheServiceConfiguration<K, V>>> services,
+            Collection<AbstractCacheServiceConfiguration<K,V>> services,
             Element cache) throws Exception {
         if (cache.hasAttribute(CACHE_NAME_ATTR)
                 && !cache.getAttribute(CACHE_NAME_ATTR).equals("")) {
@@ -160,11 +160,11 @@ public class XmlConfigurator {
             conf.setProperty(XmlConfigurator.CACHE_INSTANCE_TYPE, cache
                     .getAttribute(CACHE_TYPE_ATTR));
         }
-        for (Class<? extends AbstractCacheServiceConfiguration<K, V>> c : services) {
+        for (AbstractCacheServiceConfiguration<K, V> c : services) {
             AbstractCacheServiceConfiguration<K, V> acsc = readCacheService(cache, c);
-            if (acsc != null) {
-                conf.addConfiguration(acsc);
-            }
+//            if (acsc != null) {
+//                conf.addConfiguration(acsc);
+//            }
         }
     }
 

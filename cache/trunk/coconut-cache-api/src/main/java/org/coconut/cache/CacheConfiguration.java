@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -63,20 +64,14 @@ import org.coconut.core.Logger;
  */
 @NotThreadSafe
 public final class CacheConfiguration<K, V> {
-    private final static List<Class<? extends AbstractCacheServiceConfiguration>> DEFAULT_SERVICES;
 
-    static {
-        List services = new ArrayList();
-        services.add(CacheEventConfiguration.class);
-        services.add(CacheManagementConfiguration.class);
-        services.add(CacheStatisticsConfiguration.class);
-        services.add(CacheLoadingConfiguration.class);
-        services.add(CacheExpirationConfiguration.class);
-        services.add(CacheExceptionHandlingConfiguration.class);
-        services.add(CacheExecutorConfiguration.class);
-        services.add(CacheEvictionConfiguration.class);
-        DEFAULT_SERVICES = Collections.unmodifiableList(services);
-    }
+    /** A list of all default service configuration types. */
+    private final static List<Class<? extends AbstractCacheServiceConfiguration>> DEFAULT_SERVICES = Arrays
+            .asList(CacheEventConfiguration.class, CacheManagementConfiguration.class,
+                    CacheStatisticsConfiguration.class, CacheLoadingConfiguration.class,
+                    CacheExpirationConfiguration.class,
+                    CacheExceptionHandlingConfiguration.class,
+                    CacheExecutorConfiguration.class, CacheEvictionConfiguration.class);
 
     /** A Map of additional properties. */
     private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
@@ -87,28 +82,27 @@ public final class CacheConfiguration<K, V> {
     /** The default logger for the cache. */
     private Logger defaultLogger;
 
-    private final List<AbstractCacheServiceConfiguration> list = new ArrayList<AbstractCacheServiceConfiguration>();
+    /** A collection of instantiated service configuration objects. */
+    private final Collection<AbstractCacheServiceConfiguration> list = new ArrayList<AbstractCacheServiceConfiguration>();
 
     /** The name of the cache. */
     private String name;
-
-    private final Collection<Class<? extends AbstractCacheServiceConfiguration<K, V>>> serviceTypes;
 
     /**
      * Creates a new Configuration with default settings. CacheConfiguration instances
      * should be created using the {@link #create()} method.
      */
     public CacheConfiguration() {
-        // this(DEFAULT_SERVICES);
-        serviceTypes = new ArrayList<Class<? extends AbstractCacheServiceConfiguration<K, V>>>(
-                (Collection) DEFAULT_SERVICES);
-        for (Class c : serviceTypes) {
+        for (Class c : DEFAULT_SERVICES) {
             getConfiguration(c);
         }
     }
 
     /**
+     * Adds an instantiated configuration object.
+     * 
      * @param <T>
+     *            the type of configuration added
      * @param conf
      *            the configuration object that should be registered
      * @return the specified configuration object
@@ -121,6 +115,7 @@ public final class CacheConfiguration<K, V> {
         if (conf == null) {
             throw new NullPointerException("conf is null");
         }
+        //TODO check if instance of same type exists.
         list.add(conf);
         return conf;
     }
@@ -166,12 +161,12 @@ public final class CacheConfiguration<K, V> {
     }
 
     /**
-     * Returns a list of all configuration objects.
+     * Returns a collection of all service configuration objects.
      * 
-     * @return a list of all configuration objects
+     * @return a collection of all service configuration objects
      */
-    public List<AbstractCacheServiceConfiguration> getAllConfigurations() {
-        return new ArrayList<AbstractCacheServiceConfiguration>(list);
+    public Collection<AbstractCacheServiceConfiguration<K, V>> getAllConfigurations() {
+        return (Collection) new ArrayList<AbstractCacheServiceConfiguration>(list);
     }
 
     /**
@@ -254,10 +249,6 @@ public final class CacheConfiguration<K, V> {
         return result == null ? defaultValue : result;
     }
 
-    public Collection<Class<? extends AbstractCacheServiceConfiguration<K, V>>> getServiceTypes() {
-        return (Collection) DEFAULT_SERVICES;
-    }
-
     /**
      * Returns a configuration object that can be used to control how loading is done in
      * the cache.
@@ -292,7 +283,7 @@ public final class CacheConfiguration<K, V> {
      * @param <T>
      *            the type of cache to create
      */
-    public <T extends Cache<K, V>> T newInstance(Class<? extends Cache> type)
+    public <T extends Cache<K, V>> T newCacheInstance(Class<? extends Cache> type)
             throws IllegalArgumentException {
         if (type == null) {
             throw new NullPointerException("clazz is null");
@@ -437,28 +428,6 @@ public final class CacheConfiguration<K, V> {
 
     }
 
-    /**
-     * Returns a configuration object of the specified type.
-     * 
-     * @param <T>
-     *            the type of the configuration object
-     * @param configurationType
-     *            the type of the configuration object
-     * @return an instance of the specified configuration object type
-     */
-    private <T extends AbstractCacheServiceConfiguration> T createConfiguration(
-            Class<T> configurationType) {
-        AbstractCacheServiceConfiguration acsc;
-        try {
-            acsc = configurationType.newInstance();
-        } catch (InstantiationException e) {
-            throw new IllegalArgumentException(e);
-        } catch (IllegalAccessException e) {
-            throw new IllegalArgumentException(e);
-        }
-        return (T) addConfiguration(acsc);
-    }
-
     private <T extends AbstractCacheServiceConfiguration> T getConfiguration(
             Class<T> serviceConfigurationType) {
         T t = getConfigurationOfType(serviceConfigurationType);
@@ -486,7 +455,15 @@ public final class CacheConfiguration<K, V> {
     private <T extends AbstractCacheServiceConfiguration> T lazyCreate(Class<T> c) {
         T conf = getConfigurationOfType(c);
         if (conf == null) {
-            createConfiguration(c);
+            AbstractCacheServiceConfiguration acsc;
+            try {
+                acsc = c.newInstance();
+            } catch (InstantiationException e) {
+                throw new IllegalArgumentException(e);
+            } catch (IllegalAccessException e) {
+                throw new IllegalArgumentException(e);
+            }
+            addConfiguration(acsc);
             conf = getConfiguration(c);
         }
         CacheSPI.initializeConfiguration(conf, this);
@@ -538,9 +515,9 @@ public final class CacheConfiguration<K, V> {
      * @param <V>
      *            the type of mapped values
      */
-    public static <K, V> Cache<K, V> createCache(InputStream xmlDoc) throws Exception {
-        CacheConfiguration<K, V> conf = createConfiguration(xmlDoc);
-        return conf.newInstance((Class) Class.forName(conf.getProperty(
+    public static <K, V> Cache<K, V> loadCacheFrom(InputStream xmlDoc) throws Exception {
+        CacheConfiguration<K, V> conf = loadConfigurationFrom(xmlDoc);
+        return conf.newCacheInstance((Class) Class.forName(conf.getProperty(
                 XmlConfigurator.CACHE_INSTANCE_TYPE).toString()));
     }
 
@@ -558,7 +535,7 @@ public final class CacheConfiguration<K, V> {
      * @param <V>
      *            the type of mapped values
      */
-    public static <K, V> CacheConfiguration<K, V> createConfiguration(InputStream xmlDoc)
+    public static <K, V> CacheConfiguration<K, V> loadConfigurationFrom(InputStream xmlDoc)
             throws Exception {
         CacheConfiguration<K, V> conf = CacheConfiguration.create();
         new XmlConfigurator().readInto(conf, xmlDoc);

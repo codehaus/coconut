@@ -43,7 +43,7 @@ public class CacheFiltersTest extends MockTestCase {
         try {
             CacheEventFilters.cacheFilter(Filters.equal(c)).accept(null);
             fail("Did not fail with NullPointerException");
-        } catch (NullPointerException npe) {
+        } catch (NullPointerException npe) {/* ignore */
         }
     }
 
@@ -51,7 +51,7 @@ public class CacheFiltersTest extends MockTestCase {
         try {
             CacheEventFilters.cacheFilter(null);
             fail("Did not fail with NullPointerException");
-        } catch (NullPointerException npe) {
+        } catch (NullPointerException npe) {/* ignore */
         }
     }
 
@@ -77,7 +77,7 @@ public class CacheFiltersTest extends MockTestCase {
         try {
             CacheEventFilters.cacheName(null);
             fail("Did not fail with NullPointerException");
-        } catch (NullPointerException npe) {
+        } catch (NullPointerException npe) {/* ignore */
         }
     }
 }

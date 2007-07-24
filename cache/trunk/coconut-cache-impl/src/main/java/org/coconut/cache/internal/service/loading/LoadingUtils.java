@@ -17,7 +17,11 @@ import org.coconut.filter.Filter;
 import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.annotation.ManagedOperation;
 
-class LoadingUtils {
+final class LoadingUtils {
+
+    /** Cannot instantiate. */
+    private LoadingUtils() {}
+    
     public static <K, V> CacheLoadingService<K, V> wrapService(
             CacheLoadingService<K, V> service) {
         return new DelegatedCacheLoadingService<K, V>(service);

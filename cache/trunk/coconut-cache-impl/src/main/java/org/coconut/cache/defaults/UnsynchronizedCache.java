@@ -83,11 +83,22 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
 
     private final DefaultCacheStatisticsService<K, V> statistics;
 
+    /**
+     * Creates a new UnsynchronizedCache with a default configuration.
+     */
     @SuppressWarnings("unchecked")
     public UnsynchronizedCache() {
         this((CacheConfiguration) CacheConfiguration.create());
     }
 
+    /**
+     * Creates a new UnsynchronizedCache from the specified configuration.
+     * 
+     * @param conf
+     *            the configuration to create the cache from
+     * @throws NullPointerException
+     *             if the specified configuration is <code>null</code>
+     */
     @SuppressWarnings("unchecked")
     public UnsynchronizedCache(CacheConfiguration<K, V> conf) {
         super(conf);
@@ -129,6 +140,9 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         return map.entrySetPublic(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void evict() {
         checkStarted();
         long started = statistics.beforeCacheEvict(this);
@@ -158,6 +172,9 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
                 .capacity(), previousCapacity, evicted, expired);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Map<Class<?>, Object> getAllServices() {
         checkStarted();
         return serviceManager.getAllPublicServices();
@@ -170,13 +187,16 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         return map.capacity();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public final <T> T getService(Class<T> serviceType) {
         checkStarted();
         return serviceManager.getPublicService(serviceType);
     }
 
     /**
-     * @see org.coconut.cache.Cache#hasService(java.lang.Class)
+     * {@inheritDoc}
      */
     public boolean hasService(Class<?> serviceType) {
         checkStarted();
@@ -246,7 +266,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     }
 
     /**
-     * @see org.coconut.cache.defaults.SupportedCache#doGet(java.lang.Object)
+     * {@inheritDoc}
      */
     AbstractCacheEntry<K, V> doGet(K key) {
         checkStarted();
@@ -288,7 +308,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
             isHit = true;
             // TODO check if expired...
             loadingService.reloadIfNeeded(prev);
-           // prev.incrementHits();
+            // prev.incrementHits();
             prev.accessed();
             evictionService.touch(prev.getPolicyIndex());
         }
@@ -322,6 +342,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     AbstractCacheEntry<K, V> doPeek(K key) {
         return map.get(key);
     }
+
     /**
      * {@inheritDoc}
      */
@@ -435,10 +456,9 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     }
 
     /**
-     *  A helper class.
+     * A helper class.
      */
     class MyHelper implements CacheHelper<K, V> {
-
 
         /**
          * {@inheritDoc}
@@ -487,7 +507,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
          */
         public Collection<? extends K> filterKeys(Filter<? super CacheEntry<K, V>> filter) {
             checkStarted();
-            ArrayList<K> l=new ArrayList<K>();
+            ArrayList<K> l = new ArrayList<K>();
             for (CacheEntry<K, V> ce : map) {
                 if (filter.accept(ce)) {
                     l.add(ce.getKey());

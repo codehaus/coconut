@@ -231,6 +231,8 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
             // child wants to us platform MBeanServer, if set the
             // child server to null, it will use parents customer MBeanServer
             mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        } else {
+            mBeanServer = null;
         }
     }
 

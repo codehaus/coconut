@@ -128,7 +128,7 @@ public final class CacheSingleton {
                             + cache_ressource_location + "' on the classpath.");
                 }
                 is = url.openStream();
-                Cache<?, ?> cache = CacheConfiguration.createCache(is);
+                Cache<?, ?> cache = CacheConfiguration.loadCacheFrom(is);
                 setCache(cache);
                 status = 1;
                 if (is != null) {

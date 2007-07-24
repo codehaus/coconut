@@ -6,7 +6,6 @@ package org.coconut.cache.internal.service.loading;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
@@ -23,6 +22,10 @@ import org.coconut.filter.Filters;
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @param <K>
+ *            the type of keys maintained by the cache containing this service
+ * @param <V>
+ *            the type of mapped values
  */
 public abstract class AbstractCacheLoadingService<K, V> extends
         AbstractInternalCacheService implements CacheLoadingService<K, V>,

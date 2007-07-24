@@ -140,7 +140,7 @@ public abstract class CacheHarnessBundle extends Assert {
     }
 
     protected Cache<Integer, String> newCache(CacheConfiguration<Integer, String> conf) {
-        return conf.newInstance(CacheHarnessRunner.tt);
+        return conf.newCacheInstance(CacheHarnessRunner.tt);
     }
 
     @SuppressWarnings("unchecked")
@@ -216,7 +216,7 @@ public abstract class CacheHarnessBundle extends Assert {
     final Cache<Integer, String> newCache(int entries) {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
         cc.setClock(clock);
-        Cache<Integer, String> c=cc.newInstance(CacheHarnessRunner.tt);
+        Cache<Integer, String> c=cc.newCacheInstance(CacheHarnessRunner.tt);
         c.putAll(createMap(entries));
         return c;
 

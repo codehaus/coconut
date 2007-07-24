@@ -25,9 +25,9 @@ import org.junit.Test;
  * @version $Id$
  */
 public class CacheSingletonTest {
-	private final static String pck1 = "org/coconut/cache/util/CacheSingleton1.xml";
+	private final static String PCK1 = "org/coconut/cache/util/CacheSingleton1.xml";
 
-	private final static String pck2 = "org/coconut/cache/util/CacheSingleton2.xml";
+	private final static String PCK2 = "org/coconut/cache/util/CacheSingleton2.xml";
 
 	@After
 	public void after() throws Exception {
@@ -70,8 +70,8 @@ public class CacheSingletonTest {
 	public void testInitializeFromClasspathGetSingleCache() {
 		assertEquals(CacheSingleton.DEFAULT_CACHE_RESSOURCE, CacheSingleton
 				.getCacheRessourceLocation());
-		CacheSingleton.setCacheRessourceLocation(pck1);
-		assertEquals(pck1, CacheSingleton.getCacheRessourceLocation());
+		CacheSingleton.setCacheRessourceLocation(PCK1);
+		assertEquals(PCK1, CacheSingleton.getCacheRessourceLocation());
 		Cache<?,?> c = CacheSingleton.getCache();
 		assertTrue(c instanceof DummyCache);
 		assertEquals("foobar", c.getName());
@@ -80,7 +80,7 @@ public class CacheSingletonTest {
 
 	@Test(expected = CacheException.class)
 	public void testInitializeFromClasspathNoTypeInfo() {
-		CacheSingleton.setCacheRessourceLocation(pck2);
+		CacheSingleton.setCacheRessourceLocation(PCK2);
 		CacheSingleton.getCache();
 	}
 }

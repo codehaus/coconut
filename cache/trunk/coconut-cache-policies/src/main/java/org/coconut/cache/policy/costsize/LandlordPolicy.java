@@ -1,7 +1,6 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-
 package org.coconut.cache.policy.costsize;
 
 import java.util.ArrayList;
@@ -15,6 +14,12 @@ import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.spi.AbstractPolicy;
 import org.coconut.core.AttributeMap;
 
+/**
+ * @param <T>
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id$
+ */
 @NotThreadSafe
 public class LandlordPolicy<T> extends AbstractPolicy<T> {
 
@@ -53,12 +58,16 @@ public class LandlordPolicy<T> extends AbstractPolicy<T> {
         System.arraycopy(landlord.objectCredit, 0, objectCredit, 0, objectCredit.length);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public int add(T element, AttributeMap attributes) {
-        return add(element, CacheAttributes.getSize(attributes), CacheAttributes.getCost(attributes));
+        return add(element, CacheAttributes.getSize(attributes), CacheAttributes
+                .getCost(attributes));
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#clear()
+     * {@inheritDoc}
      */
     public void clear() {
         while (evictNext() != null) {
@@ -66,10 +75,8 @@ public class LandlordPolicy<T> extends AbstractPolicy<T> {
         }
     }
 
-
     /**
      * Classical description from paper.
-     * 
      */
     public Collection<T> evictAllZeros() {
         if (size == 0) {
@@ -85,6 +92,10 @@ public class LandlordPolicy<T> extends AbstractPolicy<T> {
             return l;
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
     public T evictNext() {
         if (size == 0) {
             return null;
@@ -104,11 +115,16 @@ public class LandlordPolicy<T> extends AbstractPolicy<T> {
     }
 
     /**
-     * @see org.coconut.cache.spi.AbstractPolicy#getSize()
+     * {@inheritDoc}
      */
+
     public int getSize() {
         return size;
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     public T peek() {
         if (size == 0) {
@@ -118,6 +134,10 @@ public class LandlordPolicy<T> extends AbstractPolicy<T> {
             return landlord.evictNext();
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
 
     public List<T> peekAll() {
         ArrayList<T> l = new ArrayList<T>(size);
@@ -130,6 +150,10 @@ public class LandlordPolicy<T> extends AbstractPolicy<T> {
         return l;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+
     public T remove(int i) {
         // todo check range
         T t = objects[i];
@@ -137,10 +161,9 @@ public class LandlordPolicy<T> extends AbstractPolicy<T> {
         return t;
     }
 
-    public int size() {
-        return size;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     public void touch(int entry) {
         // TODO translate entry
         int i = entry;
@@ -154,8 +177,7 @@ public class LandlordPolicy<T> extends AbstractPolicy<T> {
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#update(int,
-     *      java.lang.Object)
+     * {@inheritDoc}
      */
     public boolean update(int index, T newElement, AttributeMap attributes) {
         objects[index] = newElement;
@@ -168,7 +190,7 @@ public class LandlordPolicy<T> extends AbstractPolicy<T> {
     private int add(T element, long size, double cost) {
         if (element == null) {
             throw new NullPointerException("element is null");
-        } 
+        }
         int index = this.size++;
         if (this.size >= objects.length)
             grow(this.size);

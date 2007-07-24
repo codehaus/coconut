@@ -9,19 +9,24 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class CacheExecutorUtil {
+public final class CacheExecutorUtil {
+
+    /** Cannot instantiate. */
+    private CacheExecutorUtil() {}
 
     public static CacheThreadManager sharedExecutorFactory() {
         return null;
     }
 
-    public static class DefaultCacheExceptionHandler<K, V> extends CacheServiceThreadManager {
+    public static class DefaultCacheExceptionHandler<K, V> extends
+            CacheServiceThreadManager {
 
         Class service;
 
         DefaultCacheExceptionHandler(Class service) {
             this.service = service;
         }
+
         /**
          * @see org.coconut.cache.service.threading.CacheServiceThreadManager#createExecutorService()
          */
@@ -45,7 +50,7 @@ public class CacheExecutorUtil {
     }
 
     static class DefaultThreadFactory implements ThreadFactory {
-        static final AtomicInteger poolNumber = new AtomicInteger(1);
+        static final AtomicInteger POOL_NUMBER = new AtomicInteger(1);
 
         final ThreadGroup group;
 
@@ -57,7 +62,7 @@ public class CacheExecutorUtil {
             SecurityManager s = System.getSecurityManager();
             group = (s != null) ? s.getThreadGroup() : Thread.currentThread()
                     .getThreadGroup();
-            namePrefix = name + "-" + poolNumber.getAndIncrement();
+            namePrefix = name + "-" + POOL_NUMBER.getAndIncrement();
         }
 
         public Thread newThread(Runnable r) {

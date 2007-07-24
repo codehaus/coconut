@@ -20,6 +20,8 @@ import org.coconut.internal.util.IndexedHeap;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
+ * @param <T>
+ *            the type of data maintained by this policy
  */
 @NotThreadSafe
 public class LFUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy<T>,
@@ -68,19 +70,28 @@ public class LFUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
     }
 
     /**
-     * @{inheritDoc}
+     * {@inheritDoc}
      */
     public int add(T data, AttributeMap map) {
-        //TODO
-        //we need to figure out hits are calculated
-        //do we +1 to the hit count?
-        //or has it already been incremented?
+        // TODO
+        // we need to figure out hits are calculated
+        // do we +1 to the hit count?
+        // or has it already been incremented?
         long hits = map.getLong(CacheAttributes.HITS, 1);
         return add(data, hits);
     }
 
     /**
-     * @{inheritDoc}
+     * Similar to {@link #add(Object)} but also takes the number of hits for specified
+     * data.
+     * 
+     * @param data
+     *            the element to add to the replacement policy
+     * @param hits
+     *            the number of hits for the data
+     * @return a positive index that can be used to reference the element in the
+     *         replacement policy. A negative number is returned if the element is not
+     *         accepted into the replacement policy
      */
     public int add(T data, long hits) {
         if (hits < 0) {
@@ -100,7 +111,7 @@ public class LFUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
     }
 
     /**
-     * @{inheritDoc}
+     * {@inheritDoc}
      */
     @Override
     public LFUPolicy<T> clone() {
@@ -108,42 +119,42 @@ public class LFUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
     }
 
     /**
-     * @{inheritDoc}
+     * {@inheritDoc}
      */
     public T evictNext() {
         return heap.poll();
     }
 
     /**
-     * @{inheritDoc}
+     * {@inheritDoc}
      */
     public int getSize() {
         return heap.size();
     }
 
     /**
-     * @{inheritDoc}
+     * {@inheritDoc}
      */
     public T peek() {
         return heap.peek();
     }
 
     /**
-     * @{inheritDoc}
+     * {@inheritDoc}
      */
     public List<T> peekAll() {
         return heap.peekAll();
     }
 
     /**
-     * @{inheritDoc}
+     * {@inheritDoc}
      */
     public T remove(int index) {
         return heap.remove(index);
     }
 
     /**
-     * @{inheritDoc}
+     * {@inheritDoc}
      */
     @Override
     public String toString() {
@@ -151,24 +162,23 @@ public class LFUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
     }
 
     /**
-     * @{inheritDoc}
+     * {@inheritDoc}
      */
     public void touch(int index) {
-        // TODO what if instanceof PolicyObject?
-        // use getHits()?
         heap.changePriorityDelta(index, 1);
     }
 
     /**
-     * @{inheritDoc}
+     * {@inheritDoc}
      */
     public boolean update(int index, T newElement) {
         // TODO what about hits for newElement
         heap.replace(index, newElement);
         return true;
     }
+
     /**
-     * @{inheritDoc}
+     * {@inheritDoc}
      */
     public boolean update(int index, T newElement, AttributeMap map) {
         // TODO what about hits for newElement

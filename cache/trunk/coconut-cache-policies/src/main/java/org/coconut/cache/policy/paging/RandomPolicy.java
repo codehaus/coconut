@@ -19,7 +19,10 @@ import org.coconut.core.AttributeMap;
 /**
  * This cache policy is not safe for concurrent access.
  * 
- * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id$
+ * @param <T>
+ *            the type of data maintained by this policy
  */
 @NotThreadSafe
 public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy<T>,
@@ -31,18 +34,22 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
     /** serialVersionUID. */
     private static final long serialVersionUID = -7065776518426915749L;
 
-    public T[] data;
+    /** The data that is kept. */
+    private T[] data;
 
+    /** A list of free indexes in the data variable. */
     private int[] freeEntries;
 
+    /** The index of the next entry that is added. */
     private int nextEntryIndex;
 
+    /** A pointer from a public reference to an internal reference. */
     private int[] references;
 
     /** The source of randomness. */
     private final Random rnd = new Random();
 
-    /** The maximum number of elements, is automatically resized */
+    /** The maximum number of elements, is automatically resized. */
     private int threshold;
 
     /**
@@ -77,8 +84,8 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
     }
 
     /**
-     * Constructs a new RandomPolicy by copying an existing. The copy is not
-     * required to use the same source of randomness.
+     * Constructs a new RandomPolicy by copying an existing. The copy is not required to
+     * use the same source of randomness.
      * 
      * @param h
      *            the policy to copy
@@ -95,9 +102,8 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
         System.arraycopy(h.data, 0, data, 0, h.data.length);
     }
 
-
     /**
-     * @see org.coconut.cache.ReplacementPolicy#add(java.lang.Object, org.coconut.core.AttributeMap)
+     * {@inheritDoc}
      */
     public int add(T newData, AttributeMap ignore) {
         if (nextEntryIndex >= threshold - 1)
@@ -110,11 +116,11 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
         // update previous tail to point at new
         references[newIndex] = nextEntryIndex++;
 
-        return newIndex; 
+        return newIndex;
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#clear()
+     * {@inheritDoc}
      */
     public void clear() {
         while (evictNext() != null) {
@@ -123,7 +129,7 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#evictNext()
+     * {@inheritDoc}
      */
     public T evictNext() {
         if (nextEntryIndex == 0) {
@@ -135,21 +141,19 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
         }
     }
 
-    private int getRandomElement() {
-        return rnd.nextInt(nextEntryIndex - 1);
-    }
-
     /**
-     * @return the number of entries in currently held by the policy.
+     * {@inheritDoc}
      */
-
     public int getSize() {
         return nextEntryIndex;
     }
 
     /**
-     * Removes a random element.
+     * Returns a random element. The element will not necessarily be the one that is
+     * removed the next time.
      * 
+     * @return a random element or <code>null</code> if the policy does not contain any
+     *         elements
      * @see org.coconut.cache.ReplacementPolicy#evictNext()
      */
     public T peek() {
@@ -163,9 +167,10 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
     }
 
     /**
-     * This method return a random sorted list of all the elements. Multiple
-     * invocations of this method will most likely return different results.
+     * This method return a random sorted list of all the elements. Multiple invocations
+     * of this method will most likely return different results.
      * 
+     * @return a list of all elements contained in this policy in some random order
      * @see org.coconut.cache.ReplacementPolicy#peekAll()
      */
     @SuppressWarnings("unchecked")
@@ -178,7 +183,7 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#remove(int)
+     * {@inheritDoc}
      */
     public T remove(int index) {
         if (index > data.length - 1 || references[index] == -1)
@@ -186,6 +191,35 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
         return removeIndexed(references[index]);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public void touch(int index) {
+    // ignore
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean update(int index, T newElement, AttributeMap ignore) {
+        data[references[index]] = newElement;
+        return true; // Random never rejects an entry
+    }
+
+    /**
+     * @return a random element index
+     */
+    private int getRandomElement() {
+        return rnd.nextInt(nextEntryIndex - 1);
+    }
+
+    /**
+     * Removes an element from the specified index.
+     * 
+     * @param remove
+     *            the index of the element to remove
+     * @return the element that was removed
+     */
     private T removeIndexed(int remove) {
         references[freeEntries[remove]] = -1;
         T removeMe = data[remove];
@@ -205,6 +239,12 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
         return removeMe;
     }
 
+    /**
+     * Resizes the internal datastructure.
+     * 
+     * @param newSize
+     *            the new size of the internal arrays
+     */
     @SuppressWarnings("unchecked")
     private void resize(int newSize) {
         threshold = newSize + 1;
@@ -226,28 +266,13 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
         System.arraycopy(oldData, 0, data, 0, Math.min(oldData.length, data.length));
     }
 
-    /**
-     * @see org.coconut.cache.ReplacementPolicy#touch(int)
-     */
-    public void touch(int index) {
-        // ignore
-    }
-
-    /**
-     * @see org.coconut.cache.ReplacementPolicy#update(int, java.lang.Object, org.coconut.core.AttributeMap)
-     */
-    public boolean update(int index, T newElement, AttributeMap ignore) {
-        data[references[index]] = newElement;
-        return true; // Random never rejects an entry
-    }
-
-//    // /CLOVER:OFF
-//    public void print() {
-//        for (int i = 0; i < threshold; i++) {
-//            System.out.println(i + " " + references[i] + " " + freeEntries[i]
-//                    + " Data: (" + data[i] + ")");
-//        }
-//    }
-//    // /CLOVER:ON
+// // /CLOVER:OFF
+// public void print() {
+// for (int i = 0; i < threshold; i++) {
+// System.out.println(i + " " + references[i] + " " + freeEntries[i]
+// + " Data: (" + data[i] + ")");
+// }
+// }
+// // /CLOVER:ON
 
 }

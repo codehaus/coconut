@@ -14,7 +14,7 @@ public class ReadGoogle {
     public static void main(String[] args) {
         CacheConfiguration<String, String> cc = CacheConfiguration.create();
         cc.loading().setLoader(new UrlLoader());
-        UnsynchronizedCache<String, String> c = cc.newInstance(UnsynchronizedCache.class);
+        UnsynchronizedCache<String, String> c = cc.newCacheInstance(UnsynchronizedCache.class);
         readGoogle(c, "Not Cached : ");
         readGoogle(c, "Cached     : ");
     }

@@ -17,21 +17,21 @@ import org.coconut.cache.ReplacementPolicy;
  * @version $Id$
  */
 public final class PolicyTestUtils {
-    static final Integer[] values;
+    static final Integer[] VALUES;
 
     private PolicyTestUtils() {}
 
     static {
-        values = new Integer[1000];
-        for (int i = 0; i < values.length; i++) {
-            values[i] = i;
+        VALUES = new Integer[1000];
+        for (int i = 0; i < VALUES.length; i++) {
+            VALUES[i] = i;
         }
     }
 
     public static int[] addToPolicy(ReplacementPolicy<Integer> policy, int start, int stop) {
         int[] result = new int[stop - start + 1];
         for (int i = start; i <= stop; i++) {
-            result[i] = policy.add(values[i]);
+            result[i] = policy.add(VALUES[i]);
         }
         return result;
     } 

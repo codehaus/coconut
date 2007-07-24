@@ -9,7 +9,10 @@ import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.annotation.ManagedOperation;
 
-public class EvictionUtils {
+public final class EvictionUtils {
+    
+    /** Cannot instantiate. */
+    private EvictionUtils() {}
     
     public static <K, V> CacheEvictionService<K, V> wrapService(
             CacheEvictionService<K, V> service) {

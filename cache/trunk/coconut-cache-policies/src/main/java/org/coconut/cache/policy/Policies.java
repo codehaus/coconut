@@ -30,12 +30,14 @@ public final class Policies {
     /** Cannot instantiate. */
     private Policies() {}
     ///CLOVER:ON
-    
+
     /**
      * Returns a new
      * {@link org.coconut.cache.policy.paging.ClockPolicy Clock Replacement Policy}.
      * 
      * @return a new Clock policy
+     * @param <E>
+     *            the type of data maintained by the policy
      */
     public static <E> ReplacementPolicy<E> newClock() {
         return new ClockPolicy<E>();
@@ -46,6 +48,8 @@ public final class Policies {
      * {@link org.coconut.cache.policy.paging.FIFOPolicy FIFO Replacement Policy}.
      * 
      * @return a new FIFO policy
+     * @param <E>
+     *            the type of data maintained by the policy
      */
     public static <E> ReplacementPolicy<E> newFIFO() {
         return new FIFOPolicy<E>();
@@ -56,6 +60,8 @@ public final class Policies {
      * {@link org.coconut.cache.policy.paging.LIFOPolicy LIFO Replacement Policy}.
      * 
      * @return a new LIFO policy
+     * @param <E>
+     *            the type of data maintained by the policy
      */
     public static <E> ReplacementPolicy<E> newLIFO() {
         return new LIFOPolicy<E>();
@@ -66,6 +72,8 @@ public final class Policies {
      * {@link org.coconut.cache.policy.paging.LFUPolicy LFU Replacement Policy}.
      * 
      * @return a new LFU policy
+     * @param <E>
+     *            the type of data maintained by the policy
      */
     public static <E> ReplacementPolicy<E> newLFU() {
         return new LFUPolicy<E>();
@@ -76,6 +84,8 @@ public final class Policies {
      * {@link org.coconut.cache.policy.paging.LRUPolicy LRU Replacement Policy}.
      * 
      * @return a new LRU policy
+     * @param <E>
+     *            the type of data maintained by the policy
      */
     public static <E> ReplacementPolicy<E> newLRU() {
         return new LRUPolicy<E>();
@@ -86,6 +96,8 @@ public final class Policies {
      * {@link org.coconut.cache.policy.paging.MRUPolicy MRU Replacement Policy}.
      * 
      * @return a new MRU policy
+     * @param <E>
+     *            the type of data maintained by the policy
      */
     public static <E> ReplacementPolicy<E> newMRU() {
         return new MRUPolicy<E>();
@@ -96,23 +108,24 @@ public final class Policies {
      * {@link org.coconut.cache.policy.paging.RandomPolicy Random Replacement Policy}.
      * 
      * @return a new Random policy
+     * @param <E>
+     *            the type of data maintained by the policy
      */
     public static <E> ReplacementPolicy<E> newRandom() {
         return new RandomPolicy<E>();
     }
-
+    
     public static <K, V> ReplacementPolicy<? extends Map.Entry<K, V>> filteredMapKeyPolicy(
             ReplacementPolicy policy, Filter<? extends K> filter) {
-        return null;
+        throw new UnsupportedOperationException();
         // return new FilteredPolicyDecorator(policy,
         // CollectionFilters.keyFilter(filter));
     }
 
     public static <K, V> ReplacementPolicy<? extends Map.Entry<K, V>> filteredMapValuePolicy(
             ReplacementPolicy policy, Filter<? extends V> filter) {
-        return null;
+        throw new UnsupportedOperationException();
         // return new FilteredPolicyDecorator(policy,
         // CollectionFilters.valueFilter(filter));
     }
-
 }

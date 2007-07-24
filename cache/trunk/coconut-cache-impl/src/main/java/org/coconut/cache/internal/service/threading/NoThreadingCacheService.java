@@ -52,69 +52,8 @@ public class NoThreadingCacheService extends AbstractInternalCacheService implem
 
         @Override
         public ExecutorService createExecutorService() {
-            return new ExecutorService() {
+            return new SameThreadExecutorService();
 
-                public boolean awaitTermination(long timeout, TimeUnit unit)
-                        throws InterruptedException {
-                    return false;
-                }
-
-                public <T> List<Future<T>> invokeAll(
-                        Collection<? extends Callable<T>> tasks)
-                        throws InterruptedException {
-                    return null;
-                }
-
-                public <T> List<Future<T>> invokeAll(
-                        Collection<? extends Callable<T>> tasks, long timeout,
-                        TimeUnit unit) throws InterruptedException {
-                    return null;
-                }
-
-                public <T> T invokeAny(Collection<? extends Callable<T>> tasks)
-                        throws InterruptedException, ExecutionException {
-                    return null;
-                }
-
-                public <T> T invokeAny(Collection<? extends Callable<T>> tasks,
-                        long timeout, TimeUnit unit) throws InterruptedException,
-                        ExecutionException, TimeoutException {
-                    return null;
-                }
-
-                public boolean isShutdown() {
-                    return false;
-                }
-
-                public boolean isTerminated() {
-                    return false;
-                }
-
-                public void shutdown() {}
-
-                public List<Runnable> shutdownNow() {
-                    return null;
-                }
-
-                public <T> Future<T> submit(Callable<T> task) {
-                    FutureTask<T> ft=new FutureTask<T>(task);
-                    ft.run();
-                    return ft;
-                }
-
-                public Future<?> submit(Runnable task) {
-                    FutureTask<?> ft=new FutureTask(task,null);
-                    ft.run();
-                    return ft;
-                }
-
-                public <T> Future<T> submit(Runnable task, T result) {
-                    return null;
-                }
-
-                public void execute(Runnable command) {
-                    command.run();
-                }};
         }
 
         @Override
@@ -132,4 +71,67 @@ public class NoThreadingCacheService extends AbstractInternalCacheService implem
     public CacheServiceThreadManager getExecutor(Class<?> service) {
         return new SameThreadCacheExecutor();
     }
+
+    static class SameThreadExecutorService implements ExecutorService {
+        public boolean awaitTermination(long timeout, TimeUnit unit)
+                throws InterruptedException {
+            return false;
+        }
+
+        public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks)
+                throws InterruptedException {
+            return null;
+        }
+
+        public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks,
+                long timeout, TimeUnit unit) throws InterruptedException {
+            return null;
+        }
+
+        public <T> T invokeAny(Collection<? extends Callable<T>> tasks)
+                throws InterruptedException, ExecutionException {
+            return null;
+        }
+
+        public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout,
+                TimeUnit unit) throws InterruptedException, ExecutionException,
+                TimeoutException {
+            return null;
+        }
+
+        public boolean isShutdown() {
+            return false;
+        }
+
+        public boolean isTerminated() {
+            return false;
+        }
+
+        public void shutdown() {}
+
+        public List<Runnable> shutdownNow() {
+            return null;
+        }
+
+        public <T> Future<T> submit(Callable<T> task) {
+            FutureTask<T> ft = new FutureTask<T>(task);
+            ft.run();
+            return ft;
+        }
+
+        public Future<?> submit(Runnable task) {
+            FutureTask<?> ft = new FutureTask(task, null);
+            ft.run();
+            return ft;
+        }
+
+        public <T> Future<T> submit(Runnable task, T result) {
+            return null;
+        }
+
+        public void execute(Runnable command) {
+            command.run();
+        }
+    };
+
 }
