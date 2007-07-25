@@ -6,6 +6,8 @@ package org.coconut.filter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -17,7 +19,7 @@ import org.coconut.filter.spi.CompositeFilter;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class Filters {
+public final class Filters {
     /** A filter that always return False. */
     public static final Filters.FalseFilter FALSE = Filters.FalseFilter.INSTANCE;
 
@@ -27,20 +29,21 @@ public class Filters {
     public static final Filters.TrueFilter TRUE = Filters.TrueFilter.INSTANCE;
 
     /**
-     * A Filter that tests that <tt>all</tt> of the supplied Filters accepts a
-     * given element.
+     * A Filter that tests that <tt>all</tt> of the supplied Filters accepts a given
+     * element.
      */
     final static class AllFilter<E> implements Filter<E>, CompositeFilter<E>,
             Iterable<Filter<E>>, Serializable {
 
-        /** Default <code>serialVersionUID</code> */
+        /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = -8945752276662769791L;
 
+        /** All the filters that are being checked. */
         private final Filter<E>[] filters;
 
         /**
-         * Constructs a new AllFilter. The Filter will use a copy of the array
-         * of supplied filters.
+         * Constructs a new AllFilter. The Filter will use a copy of the array of supplied
+         * filters.
          * 
          * @param filters
          *            the filters to test
@@ -82,16 +85,12 @@ public class Filters {
             return new ArrayList<Filter<E>>(Arrays.asList(filters));
         }
 
-        /**
-         * @see java.lang.Iterable#iterator()
-         */
+        /** {@inheritDoc} */
         public Iterator<Filter<E>> iterator() {
             return Arrays.asList(filters).iterator();
         }
 
-        /**
-         * @see java.lang.Object#toString()
-         */
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             if (filters.length == 0) {
@@ -115,8 +114,8 @@ public class Filters {
     }
 
     /**
-     * A Filter that performs a logical exclusive AND on two supplied filters.
-     * The filter TODO check focs for javas and.
+     * A Filter that performs a logical exclusive AND on two supplied filters. The filter
+     * TODO check focs for javas and.
      */
     final static class AndFilter<E> implements Filter<E>, CompositeFilter<E>,
             Serializable {
@@ -156,16 +155,12 @@ public class Filters {
             this.isStrict = isStrict;
         }
 
-        /**
-         * @see org.coconut.filter.Filter#accept(Object)
-         */
+        /** {@inheritDoc} */
         public boolean accept(E element) {
             return left.accept(element) && right.accept(element);
         }
 
-        /**
-         * @see org.coconut.filter.spi.CompositeFilter#getFilters()
-         */
+        /** {@inheritDoc} */
         @SuppressWarnings("unchecked")
         public List<Filter<E>> getFilters() {
             return Arrays.asList(left, right);
@@ -190,30 +185,27 @@ public class Filters {
         }
 
         /**
-         * Returns whether the operands must be evaluated left and then right
-         * (strict) or if each of them can be evaluated indenpendently.
-         * 
+         * Returns whether the operands must be evaluated left and then right (strict) or
+         * if each of them can be evaluated indenpendently.
          */
         public boolean isStrict() {
             return isStrict;
         }
 
-        /**
-         * @see java.lang.Object#toString()
-         */
+        /** {@inheritDoc} */
         public String toString() {
             return "(" + left + ") && (" + right + ")";
         }
     }
 
     /**
-     * A Filter that tests that at least one of the supplied filters accepts a
-     * given element.
+     * A Filter that tests that at least one of the supplied filters accepts a given
+     * element.
      */
     final static class AnyFilter<E> implements Filter<E>, CompositeFilter<E>,
             Iterable<Filter<E>>, Serializable {
 
-        /** Default <code>serialVersionUID</code> */
+        /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 3257282517878192437L;
 
         private final Filter<E>[] filters;
@@ -233,9 +225,7 @@ public class Filters {
             }
         }
 
-        /**
-         * @see org.coconut.filter.Filter#accept(Object)
-         */
+        /** {@inheritDoc} */
         public boolean accept(E element) {
             for (Filter<E> filter : filters) {
                 if (filter.accept(element)) {
@@ -254,16 +244,12 @@ public class Filters {
             return new ArrayList<Filter<E>>(Arrays.asList(filters));
         }
 
-        /**
-         * @see java.lang.Iterable#iterator()
-         */
+        /** {@inheritDoc} */
         public Iterator<Filter<E>> iterator() {
             return Arrays.asList(filters).iterator();
         }
 
-        /**
-         * @see java.lang.Object#toString()
-         */
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             if (filters.length == 0) {
@@ -287,8 +273,8 @@ public class Filters {
     }
 
     /**
-     * A Filter that accepts all elements that are {@link Object#equals equal}
-     * to the specified object.
+     * A Filter that accepts all elements that are {@link Object#equals equal} to the
+     * specified object.
      */
     final static class EqualsFilter<E> implements Filter<E>, Serializable {
 
@@ -299,7 +285,7 @@ public class Filters {
         private final E object;
 
         /**
-         * Creates a new EqualsFilter
+         * Creates a new EqualsFilter.
          * 
          * @param object
          *            the object to compare against.
@@ -314,8 +300,8 @@ public class Filters {
         }
 
         /**
-         * Accepts all elements that are {@link Object#equals equal} to the
-         * specified object.
+         * Accepts all elements that are {@link Object#equals equal} to the specified
+         * object.
          * 
          * @param element
          *            the element to test against.
@@ -335,9 +321,7 @@ public class Filters {
             return object;
         }
 
-        /**
-         * @see java.lang.Object#toString()
-         */
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             return "equals " + object;
@@ -346,8 +330,7 @@ public class Filters {
 
     /**
      * A Filter that always returns <tt>false</tt>. Use {@link #INSTANCE} or
-     * {@link org.coconut.filter.Filters#FALSE} to get an instance of this
-     * Filter.
+     * {@link org.coconut.filter.Filters#FALSE} to get an instance of this Filter.
      * 
      * @see TrueFilter
      */
@@ -356,26 +339,24 @@ public class Filters {
         /** The one and only instance. */
         static final FalseFilter INSTANCE = new FalseFilter();
 
-        /** Default <code>serialVersionUID</code> */
+        /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = -3048464662394104180L;
 
-        private FalseFilter() {/* Private Constructor */
-        }
+        /** Construct a new FalseFilter. */
+        private FalseFilter() {}
 
         /**
-         * Returns <tt>false</tt> for all elements passed to this method.
+         * Returns <tt>false</tt> for any element passed to this method.
          * 
          * @param element
          *            the element to test
-         * @return <tt>false</tt> for all elements passed to this method
+         * @return <tt>false</tt> for any element passed to this method
          */
         public boolean accept(Object element) {
             return false;
         }
 
-        /**
-         * @see java.lang.Object#toString()
-         */
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             return "false";
@@ -407,8 +388,8 @@ public class Filters {
         }
 
         /**
-         * Creates a new Filter that accepts all elements that have the same
-         * object identity as the element supplied.
+         * Creates a new Filter that accepts all elements that have the same object
+         * identity as the element supplied.
          * 
          * @param object
          *            the objetc to compare with.
@@ -424,9 +405,7 @@ public class Filters {
             this.comparator = comparator;
         }
 
-        /**
-         * @see org.coconut.filter.Filter#accept(Object)
-         */
+        /** {@inheritDoc} */
         @SuppressWarnings("unchecked")
         public boolean accept(E element) {
             if (comparator == null) {
@@ -450,9 +429,7 @@ public class Filters {
             return object;
         }
 
-        /**
-         * @see java.lang.Object#toString()
-         */
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             return "$x > " + object;
@@ -473,8 +450,8 @@ public class Filters {
         private final E object;
 
         /**
-         * Creates a new Filter that accepts all elements that have the same
-         * object identity as the element supplied.
+         * Creates a new Filter that accepts all elements that have the same object
+         * identity as the element supplied.
          * 
          * @param object
          *            the objetc to compare with.
@@ -501,9 +478,7 @@ public class Filters {
             this.comparator = null;
         }
 
-        /**
-         * @see org.coconut.filter.Filter#accept(Object)
-         */
+        /** {@inheritDoc} */
         @SuppressWarnings("unchecked")
         public boolean accept(E element) {
             if (comparator == null) {
@@ -527,9 +502,7 @@ public class Filters {
             return object;
         }
 
-        /**
-         * @see java.lang.Object#toString()
-         */
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             return " >= " + object;
@@ -561,8 +534,8 @@ public class Filters {
         }
 
         /**
-         * Creates a new Filter that accepts all elements that have the same
-         * object identity as the element supplied.
+         * Creates a new Filter that accepts all elements that have the same object
+         * identity as the element supplied.
          * 
          * @param object
          *            the objetc to compare with.
@@ -578,9 +551,7 @@ public class Filters {
             this.comparator = comparator;
         }
 
-        /**
-         * @see org.coconut.filter.Filter#accept(Object)
-         */
+        /** {@inheritDoc} */
         @SuppressWarnings("unchecked")
         public boolean accept(E element) {
             if (comparator == null) {
@@ -604,9 +575,7 @@ public class Filters {
             return object;
         }
 
-        /**
-         * @see java.lang.Object#toString()
-         */
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             return "$x < " + object;
@@ -627,8 +596,8 @@ public class Filters {
         private final E object;
 
         /**
-         * Creates a new Filter that accepts all elements that have the same
-         * object identity as the element supplied.
+         * Creates a new Filter that accepts all elements that have the same object
+         * identity as the element supplied.
          * 
          * @param object
          *            the objetc to compare with.
@@ -654,9 +623,7 @@ public class Filters {
             this.comparator = null;
         }
 
-        /**
-         * @see org.coconut.filter.Filter#accept(Object)
-         */
+        /** {@inheritDoc} */
         @SuppressWarnings("unchecked")
         public boolean accept(E element) {
             if (comparator == null) {
@@ -680,9 +647,7 @@ public class Filters {
             return object;
         }
 
-        /**
-         * @see java.lang.Object#toString()
-         */
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             return " <= " + object;
@@ -690,8 +655,8 @@ public class Filters {
     }
 
     /**
-     * A Filter that test that a supplied Filter does <tt>not</tt> accept a
-     * given Element.
+     * A Filter that test that a supplied Filter does <tt>not</tt> accept a given
+     * Element.
      */
     final static class NotFilter<E> implements Filter<E>, CompositeFilter<E>,
             Serializable {
@@ -716,10 +681,10 @@ public class Filters {
         }
 
         /**
-         * Returns a boolean representing the logical NOT value of the supplied
-         * Filter. If the specified Filters accept() method returns
-         * <tt>true</tt>, this method returns <tt>false</tt>; if it is
-         * <tt>false</tt>, this method returns <tt>true</tt>.
+         * Returns a boolean representing the logical NOT value of the supplied Filter. If
+         * the specified Filters accept() method returns <tt>true</tt>, this method
+         * returns <tt>false</tt>; if it is <tt>false</tt>, this method returns
+         * <tt>true</tt>.
          * 
          * @param element
          *            the element to test
@@ -745,9 +710,7 @@ public class Filters {
             return Arrays.asList(filter);
         }
 
-        /**
-         * @see java.lang.Object#toString()
-         */
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             return "!(" + filter + ")";
@@ -787,9 +750,7 @@ public class Filters {
             this.right = right;
         }
 
-        /**
-         * @see org.coconut.filter.Filter#accept(Object)
-         */
+        /** {@inheritDoc} */
         public boolean accept(final E element) {
             return left.accept(element) || right.accept(element);
         }
@@ -820,9 +781,7 @@ public class Filters {
             return right;
         }
 
-        /**
-         * @see java.lang.Object#toString()
-         */
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             return "(" + left + ") or (" + right + ")";
@@ -830,8 +789,8 @@ public class Filters {
     }
 
     /**
-     * A filter that accepts all elements that have the same object identity as
-     * the one specified.
+     * A filter that accepts all elements that have the same object identity as the one
+     * specified.
      * 
      * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
      * @version $Id: Filters.java 36 2006-08-22 09:59:45Z kasper $
@@ -845,8 +804,8 @@ public class Filters {
         private final E object;
 
         /**
-         * Creates a new Filter that accepts all elements that have the same
-         * object identity as the element supplied.
+         * Creates a new Filter that accepts all elements that have the same object
+         * identity as the element supplied.
          * 
          * @param object
          *            the objetc to compare with.
@@ -858,9 +817,7 @@ public class Filters {
             this.object = object;
         }
 
-        /**
-         * @see org.coconut.filter.Filter#accept(Object)
-         */
+        /** {@inheritDoc} */
         public boolean accept(E element) {
             return object == element;
         }
@@ -874,9 +831,7 @@ public class Filters {
             return object;
         }
 
-        /**
-         * @see java.lang.Object#toString()
-         */
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             return "is (==) " + object;
@@ -885,8 +840,7 @@ public class Filters {
 
     /**
      * A Filter that always returns <tt>true</tt>. Use {@link #INSTANCE} or
-     * {@link org.coconut.filter.Filters#TRUE} to get an instance of this
-     * Filter.
+     * {@link org.coconut.filter.Filters#TRUE} to get an instance of this Filter.
      * 
      * @see FalseFilter
      */
@@ -895,26 +849,24 @@ public class Filters {
         /** The TrueFilter instance. */
         static final TrueFilter INSTANCE = new TrueFilter();
 
-        /** Default <code>serialVersionUID</code> */
+        /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 3258129137502925875L;
 
-        private TrueFilter() {/* Private Constructor */
-        }
+        /** Construct a new TrueFilter. */
+        private TrueFilter() {}
 
         /**
-         * Returns <tt>true</tt> for all elements passed to this method.
+         * Returns <tt>true</tt> for any element passed to this method.
          * 
          * @param element
          *            the element to test
-         * @return <tt>true</tt> for all elements passed to this method
+         * @return <tt>true</tt> for any element passed to this method
          */
         public boolean accept(Object element) {
             return true;
         }
 
-        /**
-         * @see java.lang.Object#toString()
-         */
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             return "true";
@@ -922,13 +874,12 @@ public class Filters {
     }
 
     /**
-     * A Filter that performs a logical exclusive OR (XOR) on two supplied
-     * filters.
+     * A Filter that performs a logical exclusive OR (XOR) on two supplied filters.
      */
     final static class XorFilter<E> implements CompositeFilter<E>, Filter<E>,
             Serializable {
 
-        /** Default <code>serialVersionUID</code> */
+        /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 1155267141991954303L;
 
         /** The left side operand. */
@@ -955,16 +906,12 @@ public class Filters {
             this.right = right;
         }
 
-        /**
-         * @see org.coconut.filter.Filter#accept(Object)
-         */
+        /** {@inheritDoc} */
         public boolean accept(E element) {
             return left.accept(element) ^ right.accept(element);
         }
 
-        /**
-         * @see org.coconut.filter.spi.CompositeFilter#getFilters()
-         */
+        /** {@inheritDoc} */
         public List<Filter<E>> getFilters() {
             return Arrays.asList(left, right);
         }
@@ -987,9 +934,7 @@ public class Filters {
             return right;
         }
 
-        /**
-         * @see java.lang.Object#toString()
-         */
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             return "(" + left + ") xor (" + right + ")";
@@ -997,9 +942,8 @@ public class Filters {
     }
 
     /**
-     * Returns a Filter that only accepts an element if <tt>all</tt> the
-     * filters accept the element. The Filter will use a copy of the array of
-     * supplied filters.
+     * Returns a Filter that only accepts an element if <tt>all</tt> the filters accept
+     * the element. The Filter will use a copy of the array of supplied filters.
      * 
      * @param filters
      *            the filters to test
@@ -1037,7 +981,7 @@ public class Filters {
         for (int i = 0; i < cbf.length; i++) {
             cbf[i] = isType(clazz[i]);
         }
-        return Filters.any( cbf);
+        return Filters.any(cbf);
     }
 
     public static <E> Filter<E> between(E first, E second) {
@@ -1045,8 +989,8 @@ public class Filters {
     }
 
     /**
-     * Returns a Filter that accepts all elements that are
-     * {@link Object#equals equal} to the specified object.
+     * Returns a Filter that accepts all elements that are {@link Object#equals equal} to
+     * the specified object.
      * 
      * @param object
      *            the object we test against.
@@ -1115,6 +1059,26 @@ public class Filters {
         return new Filters.SameFilter<E>(element);
     }
 
+    /**
+     * Returns the true filter. This filter is serializable.
+     * <p>
+     * This example illustrates the type-safe way to obtain a true filter:
+     * 
+     * <pre>
+     * Filter&lt;String&gt; s = Filters.trueFilter();
+     * </pre>
+     * 
+     * Implementation note: Implementations of this method need not create a separate
+     * <tt>filter</tt> object for each call. Using this method is likely to have
+     * comparable cost to using the like-named field. (Unlike this method, the field does
+     * not provide type safety.)
+     * 
+     * @see #TRUE
+     * @return a filter that returns <tt>true</tt> for any element passed to the
+     *         {@link Filter#accept(Object)} method.
+     * @param <E>
+     *            the type of elements accepted by the filter
+     */
     @SuppressWarnings("unchecked")
     public static <E> Filter<E> trueFilter() {
         return TRUE;

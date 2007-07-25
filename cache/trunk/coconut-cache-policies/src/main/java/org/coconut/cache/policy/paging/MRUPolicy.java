@@ -9,7 +9,6 @@ import java.util.List;
 
 import net.jcip.annotations.NotThreadSafe;
 
-import org.coconut.cache.ReplacementPolicy;
 import org.coconut.cache.spi.AbstractPolicy;
 import org.coconut.core.AttributeMap;
 import org.coconut.internal.util.IndexedStack;
@@ -23,8 +22,7 @@ import org.coconut.internal.util.IndexedStack;
  *            the type of data maintained by this policy
  */
 @NotThreadSafe
-public class MRUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy<T>,
-        Serializable {
+public class MRUPolicy<T> extends AbstractPolicy<T> implements Serializable {
 
     /** A unique policy name. */
     public static final String NAME = "MRU";

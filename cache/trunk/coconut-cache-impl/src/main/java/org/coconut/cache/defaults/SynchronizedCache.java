@@ -25,7 +25,8 @@ import org.coconut.cache.spi.CacheServiceSupport;
 @CacheServiceSupport( { CacheEventService.class, CacheManagementService.class })
 public class SynchronizedCache<K, V> extends UnsynchronizedCache<K, V> implements
         CacheMXBean {
-
+    //this class only override UnsynchronizedCache to make it compile when
+    //we change the Cache interface
     @SuppressWarnings("unchecked")
     protected void registerServices(CacheServiceManager<K, V> csm,
             CacheConfiguration<K, V> conf) {

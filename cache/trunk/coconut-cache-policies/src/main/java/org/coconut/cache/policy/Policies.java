@@ -6,7 +6,6 @@ package org.coconut.cache.policy;
 
 import java.util.Map;
 
-import org.coconut.cache.ReplacementPolicy;
 import org.coconut.cache.policy.paging.ClockPolicy;
 import org.coconut.cache.policy.paging.FIFOPolicy;
 import org.coconut.cache.policy.paging.LFUPolicy;
@@ -17,7 +16,7 @@ import org.coconut.cache.policy.paging.RandomPolicy;
 import org.coconut.filter.Filter;
 
 /**
- * Factory methods for different {@link org.coconut.cache.ReplacementPolicy}
+ * Factory methods for different {@link org.coconut.cache.policy.ReplacementPolicy}
  * implementations. This class provides shortcuts for the specific implementations of
  * policies defined in <tt>coconut.cache.policy</tt>.
  * 

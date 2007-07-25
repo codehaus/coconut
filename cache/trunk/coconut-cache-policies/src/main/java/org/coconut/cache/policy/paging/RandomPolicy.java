@@ -12,7 +12,6 @@ import java.util.Random;
 
 import net.jcip.annotations.NotThreadSafe;
 
-import org.coconut.cache.ReplacementPolicy;
 import org.coconut.cache.spi.AbstractPolicy;
 import org.coconut.core.AttributeMap;
 
@@ -25,8 +24,7 @@ import org.coconut.core.AttributeMap;
  *            the type of data maintained by this policy
  */
 @NotThreadSafe
-public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy<T>,
-        Serializable, Cloneable {
+public class RandomPolicy<T> extends AbstractPolicy<T> implements Serializable, Cloneable {
 
     /** A unique policy name. */
     public static final String NAME = "Random";
@@ -154,7 +152,7 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
      * 
      * @return a random element or <code>null</code> if the policy does not contain any
      *         elements
-     * @see org.coconut.cache.ReplacementPolicy#evictNext()
+     * @see org.coconut.cache.policy.ReplacementPolicy#evictNext()
      */
     public T peek() {
         if (nextEntryIndex == 0) {
@@ -171,7 +169,7 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements ReplacementPol
      * of this method will most likely return different results.
      * 
      * @return a list of all elements contained in this policy in some random order
-     * @see org.coconut.cache.ReplacementPolicy#peekAll()
+     * @see org.coconut.cache.policy.ReplacementPolicy#peekAll()
      */
     @SuppressWarnings("unchecked")
     public List<T> peekAll() {

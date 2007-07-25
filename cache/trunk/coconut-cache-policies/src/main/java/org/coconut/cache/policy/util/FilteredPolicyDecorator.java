@@ -4,7 +4,7 @@
 package org.coconut.cache.policy.util;
 
 import org.coconut.cache.CacheAttributes;
-import org.coconut.cache.ReplacementPolicy;
+import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.core.AttributeMap;
 
 /**

@@ -3,7 +3,6 @@
  */
 package org.coconut.cache.service.eviction;
 
-
 /**
  * The management interface for the eviction engine of a cache.
  * 
@@ -84,7 +83,7 @@ public interface CacheEvictionMXBean {
      * unlimited cache.
      * <p>
      * If the specified maximum capacity is 0, the cache will never store any elements
-     * internally.
+     * internally. This can sometimes be useful while testing.
      * 
      * @param maximumSize
      *            the maximum number of elements the cache can hold or Integer.MAX_VALUE

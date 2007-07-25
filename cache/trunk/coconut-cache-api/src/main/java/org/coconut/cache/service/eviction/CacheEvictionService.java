@@ -45,5 +45,24 @@ public interface CacheEvictionService<K, V> {
 
     void setMaximumCapacity(long maximumCapacity);
 
+    /**
+     * Sets that maximum number of elements that the cache is allowed to contain. If the
+     * limit is reached the cache must evict existing elements before adding new elements.
+     * <p>
+     * To indicate that a cache can hold an unlimited number of items,
+     * {@link Integer#MAX_VALUE} should be specified. This is also refered to as an
+     * unlimited cache.
+     * <p>
+     * If the specified maximum capacity is 0, the cache will never store any elements
+     * internally. This can sometimes be useful while testing.
+     * 
+     * @param maximumSize
+     *            the maximum number of elements the cache can hold or Integer.MAX_VALUE
+     *            if there is no limit
+     * @throws IllegalArgumentException
+     *             if the specified maximum size is negative
+     * @throws UnsupportedOperationException
+     *             if the cache does not support changing the maximum size at runtime
+     */
     void setMaximumSize(int maximumSize);
 }

@@ -15,16 +15,22 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public abstract class Clock {
 
+    /** An instance of the {@link DefaultClock}. */
     public static final Clock DEFAULT_CLOCK = new DefaultClock();
 
+    /**
+     * 
+     */
     static class DefaultClock extends Clock implements Serializable {
-        /** serialVersionUID */
+        /** serialVersionUID. */
         private static final long serialVersionUID = -3343971832371995608L;
 
+        /** {@inheritDoc} */
         public long timestamp() {
             return System.currentTimeMillis();
         }
 
+        /** {@inheritDoc} */
         public long relativeTime() {
             return System.nanoTime();
         }
@@ -45,6 +51,7 @@ public abstract class Clock {
 
         private final AtomicLong relativeTime = new AtomicLong();
 
+        /** {@inheritDoc} */
         @Override
         public long timestamp() {
             return timestamp.get();
@@ -66,6 +73,7 @@ public abstract class Clock {
             timestamp.addAndGet(amount);
         }
 
+        /** {@inheritDoc} */
         @Override
         public long relativeTime() {
             return relativeTime.get();

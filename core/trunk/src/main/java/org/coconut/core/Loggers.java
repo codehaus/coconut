@@ -9,8 +9,8 @@ import java.io.PrintStream;
 import org.apache.commons.logging.Log;
 
 /**
- * This class is used for creating {@link Log} wrappers from popular logging
- * frameworks such as <a
+ * This class is used for creating {@link Log} wrappers from popular logging frameworks
+ * such as <a
  * href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/logging/package-summary.html">
  * Standard JDK logging </a>, <a
  * href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/logging/package-summary.html">
@@ -19,13 +19,15 @@ import org.apache.commons.logging.Log;
  * commons logging </a>.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
+ * @version $Id$
  */
 public final class Loggers {
-    ///CLOVER:OFF
+    // /CLOVER:OFF
     /** Cannot instantiate. */
     private Loggers() {}
-    ///CLOVER:ON
-    
+
+    // /CLOVER:ON
+
     /**
      * Creates a new Log that ignores any input.
      * 
@@ -36,8 +38,8 @@ public final class Loggers {
     }
 
     /**
-     * Creates a new Log that ignores any input below the specified level. Any
-     * logging messages on this level or above it, will be logged to system.out
+     * Creates a new Log that ignores any input below the specified level. Any logging
+     * messages on this level or above it, will be logged to system.out
      * 
      * @return a system.out logger
      */
@@ -54,8 +56,8 @@ public final class Loggers {
     }
 
     public static String getName(Logger log) {
-        return log instanceof Loggers.AbstractLogger ? ((Loggers.AbstractLogger) log).getName()
-                : null;
+        return log instanceof Loggers.AbstractLogger ? ((Loggers.AbstractLogger) log)
+                .getName() : null;
     }
 
     /**
@@ -66,10 +68,11 @@ public final class Loggers {
      * </pre>
      */
     public final static class Log4j {
-        ///CLOVER:OFF
+        // /CLOVER:OFF
         /** Cannot instantiate. */
         private Log4j() {}
-        ///CLOVER:ON
+
+        // /CLOVER:ON
         /**
          * Wraps a Log4j logger.
          * 
@@ -102,74 +105,75 @@ public final class Loggers {
     }
 
     static abstract class AbstractLogger implements Logger {
+        /** {@inheritDoc} */
         public boolean isDebugEnabled() {
             return isEnabled(Level.Debug);
         }
-
+        /** {@inheritDoc} */
         public boolean isErrorEnabled() {
             return isEnabled(Level.Error);
         }
-
+        /** {@inheritDoc} */
         public boolean isFatalEnabled() {
             return isEnabled(Level.Fatal);
         }
-
+        /** {@inheritDoc} */
         public boolean isInfoEnabled() {
             return isEnabled(Level.Info);
         }
-
+        /** {@inheritDoc} */
         public boolean isTraceEnabled() {
             return isEnabled(Level.Trace);
         }
-
+        /** {@inheritDoc} */
         public boolean isWarnEnabled() {
             return isEnabled(Level.Warn);
         }
-
+        /** {@inheritDoc} */
         public void trace(String message) {
             log(Level.Trace, message);
         }
-
+        /** {@inheritDoc} */
         public void trace(String message, Throwable cause) {
             log(Level.Trace, message, cause);
         }
-
+        /** {@inheritDoc} */
         public void debug(String message) {
             log(Level.Debug, message);
         }
-
+        /** {@inheritDoc} */
         public void debug(String message, Throwable cause) {
             log(Level.Debug, message, cause);
         }
-
+        /** {@inheritDoc} */
         public void info(String message) {
             log(Level.Info, message);
         }
-
+        /** {@inheritDoc} */
         public void info(String message, Throwable cause) {
             log(Level.Info, message, cause);
         }
-
+        /** {@inheritDoc} */
         public void warn(String message) {
             log(Level.Warn, message);
         }
-
+        /** {@inheritDoc} */
         public void warn(String message, Throwable cause) {
             log(Level.Warn, message, cause);
         }
-
+        /** {@inheritDoc} */
         public void error(String message) {
             log(Level.Error, message);
         }
-
+        /** {@inheritDoc} */
         public void error(String message, Throwable cause) {
             log(Level.Error, message, cause);
         }
-
+        /** {@inheritDoc} */
         public void fatal(String message) {
             log(Level.Fatal, message);
         }
-
+        /** {@inheritDoc} */
         public void fatal(String message, Throwable cause) {
             log(Level.Fatal, message, cause);
         }
@@ -194,15 +198,15 @@ public final class Loggers {
             this.level = level;
             this.stream = stream;
         }
-
+        /** {@inheritDoc} */
         public boolean isEnabled(Level level) {
             return this.level <= level.getLevel();
         }
-
+        /** {@inheritDoc} */
         public void log(Logger.Level l, String message) {
             log(l, message, null);
         }
-
+        /** {@inheritDoc} */
         public void log(Logger.Level l, String message, Throwable cause) {
             if (stream != null && level <= l.getLevel()) {
                 stream.println(message);
@@ -211,10 +215,7 @@ public final class Loggers {
             }
         }
 
-
-        /**
-         * @see org.coconut.core.Loggers.AbstractLogger#getName()
-         */
+        /** {@inheritDoc} */
         @Override
         public String getName() {
             return "simple";
@@ -227,15 +228,15 @@ public final class Loggers {
         JDKLogger(java.util.logging.Logger log) {
             this.log = log;
         }
-
+        /** {@inheritDoc} */
         public boolean isEnabled(Level level) {
             return log.isLoggable(from(level));
         }
-
+        /** {@inheritDoc} */
         public void log(Logger.Level level, String message) {
             log.log(from(level), message);
         }
-
+        /** {@inheritDoc} */
         public void log(Logger.Level level, String message, Throwable cause) {
             log.log(from(level), message, cause);
         }
@@ -266,15 +267,15 @@ public final class Loggers {
         Log4JLogger(org.apache.log4j.Logger log) {
             this.log = log;
         }
-
+        /** {@inheritDoc} */
         public boolean isEnabled(Level level) {
             return log.isEnabledFor(from(level));
         }
-
+        /** {@inheritDoc} */
         public void log(Logger.Level level, String message) {
             log(level, message, null);
         }
-
+        /** {@inheritDoc} */
         public void log(Logger.Level level, String message, Throwable cause) {
             log.log(from(level), message, cause);
         }
@@ -293,7 +294,7 @@ public final class Loggers {
                 return org.apache.log4j.Level.WARN;
             }
         }
-
+        /** {@inheritDoc} */
         public String getName() {
             return log.getName();
         }
@@ -301,10 +302,11 @@ public final class Loggers {
 
     public final static class Commons {
 
-        ///CLOVER:OFF
+        // /CLOVER:OFF
         /** Cannot instantiate. */
         private Commons() {}
-        ///CLOVER:ON
+
+        // /CLOVER:ON
 
         public static Logger from(org.apache.commons.logging.Log log) {
             return new CommonsLogger(log);
@@ -337,6 +339,7 @@ public final class Loggers {
             this.log = log;
         }
 
+        /** {@inheritDoc} */
         public boolean isEnabled(Level level) {
             switch (level) {
             case Debug:
@@ -354,61 +357,53 @@ public final class Loggers {
             }
         }
 
-
-        /**
-         * @see org.coconut.core.Logger#log(org.coconut.core.Logger.Level, java.lang.String)
-         */
+        /** {@inheritDoc} */
         public void log(Level level, String message) {
             switch (level) {
             case Debug:
                 log.debug(message);
-                break;
+            break;
             case Error:
                 log.error(message);
-                break;
+            break;
             case Fatal:
                 log.fatal(message);
-                break;
+            break;
             case Info:
                 log.info(message);
-                break;
+            break;
             case Trace:
                 log.trace(message);
-                break;
+            break;
             default /* Warn */:
                 log.warn(message);
             }
         }
 
-
-        /**
-         * @see org.coconut.core.Logger#log(org.coconut.core.Logger.Level, java.lang.String, java.lang.Throwable)
-         */
+        /** {@inheritDoc} */
         public void log(Level level, String message, Throwable cause) {
             switch (level) {
             case Debug:
                 log.debug(message, cause);
-                break;
+            break;
             case Error:
                 log.error(message, cause);
-                break;
+            break;
             case Fatal:
                 log.fatal(message, cause);
-                break;
+            break;
             case Info:
                 log.info(message, cause);
-                break;
+            break;
             case Trace:
                 log.trace(message, cause);
-                break;
+            break;
             default /* Warn */:
                 log.warn(message, cause);
             }
         }
 
-        /**
-         * @see org.coconut.core.Loggers.AbstractLogger#getName()
-         */
+        /** {@inheritDoc} */
         @Override
         public String getName() {
             if (log instanceof org.apache.commons.logging.impl.Jdk14Logger) {
@@ -424,11 +419,12 @@ public final class Loggers {
     }
 
     public final static class JDK {
-        ///CLOVER:OFF
+        // /CLOVER:OFF
         /** Cannot instantiate. */
         private JDK() {}
-        ///CLOVER:ON
-        
+
+        // /CLOVER:ON
+
         public static Logger from(java.util.logging.Logger log) {
             return new JDKLogger(log);
         }

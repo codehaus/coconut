@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 
 import net.jcip.annotations.NotThreadSafe;
 
@@ -53,13 +54,11 @@ import org.coconut.internal.util.CollectionUtils;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
- */
-/**
  * @param <K>
+ *            the type of keys maintained by this cache
  * @param <V>
- * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id$
- */
+ *            the type of mapped values
+*/
 @NotThreadSafe
 @CacheServiceSupport( { CacheEventService.class, CacheEvictionService.class,
         CacheExpirationService.class, CacheLoadingService.class,
@@ -67,6 +66,7 @@ import org.coconut.internal.util.CollectionUtils;
         CacheStatisticsService.class })
 public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         ConcurrentMap<K, V> {
+
     public final InternalCacheLoadingService<K, V> loadingService;
 
     private final AbstractCacheEntryFactoryService<K, V> entryFactory;
@@ -112,9 +112,13 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         entryFactory = serviceManager.getService(AbstractCacheEntryFactoryService.class);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
+    public boolean awaitTermination(long timeout, TimeUnit unit)
+            throws InterruptedException {
+        return serviceManager.awaitTermination(timeout, unit);
+    }
+
+    /** {@inheritDoc} */
     public void clear() {
         checkStarted();
         long started = statistics.beforeCacheClear(this);
@@ -132,17 +136,13 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         eventService.afterCacheClear(this, started, size, capacity, list);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Set<Entry<K, V>> entrySet() {
         return map.entrySetPublic(this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void evict() {
         checkStarted();
         long started = statistics.beforeCacheEvict(this);
@@ -172,56 +172,62 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
                 .capacity(), previousCapacity, evicted, expired);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public Map<Class<?>, Object> getAllServices() {
         checkStarted();
         return serviceManager.getAllPublicServices();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public long getCapacity() {
         return map.capacity();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public final <T> T getService(Class<T> serviceType) {
         checkStarted();
         return serviceManager.getPublicService(serviceType);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean hasService(Class<?> serviceType) {
         checkStarted();
         return serviceManager.hasPublicService(serviceType);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
+    public boolean isShutdown() {
+        return serviceManager.isShutdown();
+    }
+
+    /** {@inheritDoc} */
+    public boolean isStarted() {
+        return serviceManager.isStarted();
+    }
+
+    /** {@inheritDoc} */
+    public boolean isTerminated() {
+        return serviceManager.isTerminated();
+    }
+
+    /** {@inheritDoc} */
     @Override
     public Set<K> keySet() {
         return map.keySet(this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
+    public void shutdown() {
+        serviceManager.shutdown();
+    }
+
+    /** {@inheritDoc} */
     @Override
     public int size() {
         return map.size();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public Collection<V> values() {
         return map.values(this);
@@ -265,9 +271,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         return list;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     AbstractCacheEntry<K, V> doGet(K key) {
         checkStarted();
         boolean isHit = false;
@@ -323,9 +327,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         return returnMe;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     Map<K, V> doGetAll(Collection<? extends K> keys) {
         HashMap<K, V> result = new HashMap<K, V>();
@@ -335,17 +337,13 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     AbstractCacheEntry<K, V> doPeek(K key) {
         return map.get(key);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     CacheEntry<K, V> doPut(K key, V newValue, boolean putOnlyIfAbsent,
             AttributeMap attributes) {
@@ -367,9 +365,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         return prev;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     void doPutAll(Map<? extends K, ? extends V> t, AttributeMap attributes) {
         for (Map.Entry<? extends K, ? extends V> e : t.entrySet()) {
@@ -377,9 +373,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     CacheEntry<K, V> doRemove(Object key, Object value) {
         checkStarted();
@@ -393,9 +387,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         return e;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     CacheEntry<K, V> doReplace(K key, V oldValue, V newValue, AttributeMap attributes) {
         checkStarted();
@@ -425,9 +417,6 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         return prev;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     void doTrimToSize(int newSize) {
         if (newSize < 0) {
             throw new IllegalArgumentException(
@@ -455,10 +444,53 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         eventService.afterTrimToSize(this, started, l);
     }
 
-    /**
-     * A helper class.
-     */
+    /** A helper class. */
     class MyHelper implements CacheHelper<K, V> {
+
+        /** {@inheritDoc} */
+        public Collection<? extends CacheEntry<K, V>> filter(
+                Filter<? super CacheEntry<K, V>> filter) {
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        public Collection<? extends K> filterKeys(Filter<? super CacheEntry<K, V>> filter) {
+            checkStarted();
+            ArrayList<K> l = new ArrayList<K>();
+            for (CacheEntry<K, V> ce : map) {
+                if (filter.accept(ce)) {
+                    l.add(ce.getKey());
+                }
+            }
+            return l;
+        }
+
+        /** {@inheritDoc} */
+        public Object getMutex() {
+            throw new UnsupportedOperationException("synchronization not available");
+        }
+
+        /** {@inheritDoc} */
+        public boolean isValid(K key) {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        /** {@inheritDoc} */
+        public V put(K key, V value, AttributeMap attributes) {
+            CacheEntry<K, V> prev = doPut(key, value, false, attributes);
+            return prev == null ? null : prev.getValue();
+        }
+
+        /** {@inheritDoc} */
+        public void putAll(Map<? extends K, ? extends V> keyValues,
+                Map<? extends K, AttributeMap> attributes) {
+            for (Map.Entry<? extends K, ? extends V> e : keyValues.entrySet()) {
+                put(e.getKey(), e.getValue(), attributes.get(e.getKey()));
+            }
+            // TODO Auto-generated method stub
+
+        }
 
         /**
          * {@inheritDoc}
@@ -483,9 +515,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
             return count;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public int removeAllFiltered(Filter<? super CacheEntry<K, V>> filter) {
             if (filter == null) {
                 throw new NullPointerException("filter is null");
@@ -494,87 +524,22 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
             return removeAll(filterKeys(filter));
         }
 
-        /**
-         * {@inheritDoc}
-         */
-        public Collection<? extends CacheEntry<K, V>> filter(
-                Filter<? super CacheEntry<K, V>> filter) {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public Collection<? extends K> filterKeys(Filter<? super CacheEntry<K, V>> filter) {
-            checkStarted();
-            ArrayList<K> l = new ArrayList<K>();
-            for (CacheEntry<K, V> ce : map) {
-                if (filter.accept(ce)) {
-                    l.add(ce.getKey());
-                }
-            }
-            return l;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public Object getMutex() {
-            throw new UnsupportedOperationException("synchronization not available");
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public boolean isValid(K key) {
-            // TODO Auto-generated method stub
-            return false;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public V put(K key, V value, AttributeMap attributes) {
-            CacheEntry<K, V> prev = doPut(key, value, false, attributes);
-            return prev == null ? null : prev.getValue();
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void putAll(Map<? extends K, ? extends V> keyValues,
-                Map<? extends K, AttributeMap> attributes) {
-            for (Map.Entry<? extends K, ? extends V> e : keyValues.entrySet()) {
-                put(e.getKey(), e.getValue(), attributes.get(e.getKey()));
-            }
-            // TODO Auto-generated method stub
-
-        }
-
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public void trimToCapacity(long capacity) {}
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public void trimToSize(int size) {
             doTrimToSize(size);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public void valueLoaded(K key, V value, AttributeMap attributes) {
             if (value != null) {
                 doPut(key, value, false, attributes);
             }
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public void valuesLoaded(Map<? extends K, ? extends V> values,
                 Map<? extends K, AttributeMap> keys) {
             for (Map.Entry<? extends K, ? extends V> entry : values.entrySet()) {

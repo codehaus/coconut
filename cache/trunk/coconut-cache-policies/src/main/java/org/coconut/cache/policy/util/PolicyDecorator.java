@@ -6,7 +6,7 @@ package org.coconut.cache.policy.util;
 
 import java.util.List;
 
-import org.coconut.cache.ReplacementPolicy;
+import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.core.AttributeMap;
 
 /**

@@ -41,37 +41,28 @@ public abstract class AbstractCacheService implements CacheService {
         this.name = name;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public final String getName() {
         return name;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
+    public void initialize(CacheConfiguration<?, ?> configuration) {}
+
+    /** {@inheritDoc} */
     public void initialize(CacheConfiguration<?, ?> configuration,
             Map<Class<?>, Object> serviceMap) {}
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void start(Map<Class<?>, Object> allServices) {}
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void started(Cache<?, ?> cache) {}
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void shutdown(Executor e) {}
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void terminated() {}
 
 }

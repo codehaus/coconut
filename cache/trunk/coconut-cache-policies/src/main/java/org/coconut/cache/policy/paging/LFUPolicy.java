@@ -10,7 +10,6 @@ import java.util.List;
 import net.jcip.annotations.NotThreadSafe;
 
 import org.coconut.cache.CacheAttributes;
-import org.coconut.cache.ReplacementPolicy;
 import org.coconut.cache.spi.AbstractPolicy;
 import org.coconut.core.AttributeMap;
 import org.coconut.internal.util.IndexedHeap;
@@ -24,8 +23,7 @@ import org.coconut.internal.util.IndexedHeap;
  *            the type of data maintained by this policy
  */
 @NotThreadSafe
-public class LFUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy<T>,
-        Serializable, Cloneable {
+public class LFUPolicy<T> extends AbstractPolicy<T> implements Serializable, Cloneable {
 
     /** A unique policy name. */
     public static final String NAME = "LFU";
@@ -102,7 +100,7 @@ public class LFUPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy
     }
 
     /**
-     * @see org.coconut.cache.ReplacementPolicy#clear()
+     * @see org.coconut.cache.policy.ReplacementPolicy#clear()
      */
     public void clear() {
         while (evictNext() != null) {

@@ -11,7 +11,7 @@ import static org.coconut.internal.util.XmlUtil.writeLong;
 
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.ReplacementPolicy;
+import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.internal.util.UnitOfTime;
@@ -43,29 +43,37 @@ public class CacheEvictionConfiguration<K, V> extends
     /** The default settings, used when xml-serializing this configuration. */
     private final static CacheEvictionConfiguration<?, ?> DEFAULT = new CacheEvictionConfiguration<Object, Object>();
 
+    /** XML tag for maximum capacity. */
     private final static String MAXIMUM_CAPACITY = "max-capacity";
 
+    /** XML tag for maximum size. */
     private final static String MAXIMUM_SIZE = "max-size";
 
+    /** XML tag for preferable capacity. */
     private final static String PREFERABLE_CAPACITY = "preferable-capacity";
 
+    /** XML tag for preferable size. */
     private final static String PREFERABLE_SIZE = "preferable-size";
 
+    /** XML tag for scheduled eviction. */
     private final static String SCHEDULE_EVICT_TAG = "schedule-evict";
 
-    private final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.NANOSECONDS;
-
+    /** The maximum capacity of the cache. */
     private long maximumCapacity;
 
+    /** The maximum size of the cache. */
     private int maximumSize;
 
+    /** The preferable capacity of the cache. */
     private long preferableCapacity;
 
+    /** The preferable size of the cache. */
     private int preferableSize;
 
     /** The replacement policy used for evicting elements. */
     private ReplacementPolicy<?> replacementPolicy;
 
+    /** The delay between evictions. */
     private long scheduleEvictionAtFixedRateNanos;
 
     /**
@@ -139,6 +147,7 @@ public class CacheEvictionConfiguration<K, V> extends
      * 
      * @param maximumCapacity
      *            the maximum capacity.
+     * @return this configuration
      */
     public CacheEvictionConfiguration<K, V> setMaximumCapacity(long maximumCapacity) {
         if (maximumCapacity < 0) {
@@ -171,6 +180,7 @@ public class CacheEvictionConfiguration<K, V> extends
      *            if there is no limit
      * @throws IllegalArgumentException
      *             if the specified integer is negative
+     * @return this configuration
      */
     public CacheEvictionConfiguration<K, V> setMaximumSize(int maximumSize) {
         if (maximumSize < 0) {
@@ -235,6 +245,7 @@ public class CacheEvictionConfiguration<K, V> extends
      * 
      * @param period
      * @param unit
+     *            the time unit of the specified period
      * @return this configuration
      */
     public CacheEvictionConfiguration<K, V> setScheduledEvictionAtFixedRate(long period,
@@ -260,9 +271,9 @@ public class CacheEvictionConfiguration<K, V> extends
 
         /* Eviction time */
         Element evictionTime = getChild(SCHEDULE_EVICT_TAG, e);
-        long timee = UnitOfTime.fromElement(evictionTime, DEFAULT_TIME_UNIT,
+        long timee = UnitOfTime.fromElement(evictionTime, TimeUnit.NANOSECONDS,
                 CacheExpirationService.NEVER_EXPIRE);
-        setScheduledEvictionAtFixedRate(timee, DEFAULT_TIME_UNIT);
+        setScheduledEvictionAtFixedRate(timee, TimeUnit.NANOSECONDS);
     }
 
     /**
@@ -279,7 +290,7 @@ public class CacheEvictionConfiguration<K, V> extends
 
         /* Expiration Timer */
         UnitOfTime.toElementCompact(doc, base, SCHEDULE_EVICT_TAG,
-                scheduleEvictionAtFixedRateNanos, DEFAULT_TIME_UNIT,
+                scheduleEvictionAtFixedRateNanos, TimeUnit.NANOSECONDS,
                 DEFAULT.scheduleEvictionAtFixedRateNanos);
 
     }

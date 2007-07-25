@@ -9,14 +9,15 @@ package org.coconut.core;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id$
+ * @param <E>
+ *            the type of elements the offer method accepts
  */
 public interface Offerable<E> {
 
     /**
-     * Inserts the specified element into the underlying data structure, if
-     * possible. Some implementations may impose insertion restrictions (for
-     * example capacity bounds), which can fail to insert an element by
-     * returning false. 
+     * Inserts the specified element into the underlying data structure, if possible. Some
+     * implementations may impose insertion restrictions (for example capacity bounds),
+     * which can fail to insert an element by returning false.
      * 
      * @param element
      *            the element to add.

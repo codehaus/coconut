@@ -6,6 +6,7 @@ package org.coconut.cache;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.coconut.core.AttributeMap;
 
@@ -209,5 +210,24 @@ public class DummyCache<K, V> implements Cache<K, V> {
     public Collection<V> values() {
         return null;
     }
+
+    public boolean awaitTermination(long timeout, TimeUnit unit)
+            throws InterruptedException {
+        return false;
+    }
+
+    public boolean isShutdown() {
+        return false;
+    }
+
+    public boolean isStarted() {
+        return false;
+    }
+
+    public boolean isTerminated() {
+        return false;
+    }
+
+    public void shutdown() {}
 
 }

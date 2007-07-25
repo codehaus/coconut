@@ -7,9 +7,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.CacheLifecycle;
 import org.coconut.cache.internal.service.CacheHelper;
 import org.coconut.cache.internal.service.attribute.DefaultCacheAttributeService;
 import org.coconut.cache.internal.service.entry.UnsynchronizedEntryFactoryService;
@@ -132,7 +134,6 @@ public class UnsynchronizedCacheServiceManager extends
         container.registerComponentImplementation(type, service);
     }
 
-
     public void registerServices(Class<? extends AbstractCacheService>... services) {
         for (Class<? extends AbstractCacheService> service : services) {
             registerService(service, service);
@@ -153,6 +154,23 @@ public class UnsynchronizedCacheServiceManager extends
                 .registerComponentImplementation(UnsynchronizedEntryFactoryService.class);
         for (AbstractCacheServiceConfiguration<?, ?> c : conf.getAllConfigurations()) {
             container.registerComponentInstance(c);
+        }
+    }
+
+    static class LifecycleHolder {
+        private final CacheLifecycle lifecycle;
+
+        LifecycleHolder(CacheLifecycle lifecycle) {
+            this.lifecycle = lifecycle;
+        }
+        void initialize(CacheConfiguration conf) {
+            lifecycle.initialize(conf);
+        }
+        public void started(Cache<?, ?> cache) {
+            lifecycle.started(cache);
+        }
+        public void terminated() {
+            lifecycle.terminated();
         }
     }
 
@@ -184,4 +202,23 @@ public class UnsynchronizedCacheServiceManager extends
             service.started(c);
         }
     }
+
+    public boolean awaitTermination(long timeout, TimeUnit unit)
+            throws InterruptedException {
+        return false;
+    }
+
+    public boolean isShutdown() {
+        return false;
+    }
+
+    public boolean isStarted() {
+        return false;
+    }
+
+    public boolean isTerminated() {
+        return false;
+    }
+
+    public void shutdown() {}
 }

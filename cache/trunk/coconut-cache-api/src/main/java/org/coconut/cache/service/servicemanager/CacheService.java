@@ -8,12 +8,13 @@ import java.util.concurrent.Executor;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.CacheLifecycle;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public interface CacheService {
+public interface CacheService extends CacheLifecycle{
     /**
      * Returns the readable name of the service.
      * 
@@ -41,21 +42,8 @@ public interface CacheService {
      */
     void start(Map<Class<?>, Object> allServiceMap);
 
-    /**
-     * All services has started succesfully, and the cache is ready for use.
-     * 
-     * @param cache the cache that was started
-     */
-    void started(Cache<?, ?> cache);
 
     void shutdown(Executor e);
 
     // void shutdownNow(Cache<?, ?> c);
-
-    /**
-     * Method invoked when the Cache has terminated. Note: To properly nest multiple
-     * overridings, subclasses should generally invoke <tt>super.terminated</tt> within
-     * this method.
-     */
-    void terminated();
 }

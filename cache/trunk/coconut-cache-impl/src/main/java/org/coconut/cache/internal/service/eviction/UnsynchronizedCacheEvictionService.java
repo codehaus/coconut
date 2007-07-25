@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.ReplacementPolicy;
 import org.coconut.cache.internal.service.CacheHelper;
 import org.coconut.cache.policy.Policies;
+import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 
 /**

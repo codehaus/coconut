@@ -9,7 +9,6 @@ import java.util.List;
 
 import net.jcip.annotations.NotThreadSafe;
 
-import org.coconut.cache.ReplacementPolicy;
 import org.coconut.cache.spi.AbstractPolicy;
 import org.coconut.core.AttributeMap;
 
@@ -22,8 +21,7 @@ import org.coconut.core.AttributeMap;
  *            the type of data maintained by this policy
  */
 @NotThreadSafe
-public class FIFOPolicy<T> extends AbstractPolicy<T> implements ReplacementPolicy<T>,
-        Serializable, Cloneable {
+public class FIFOPolicy<T> extends AbstractPolicy<T> implements Serializable, Cloneable {
 
     /** A unique policy name. */
     public static final String NAME = "FIFO";

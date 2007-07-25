@@ -11,7 +11,7 @@ import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.ReplacementPolicy;
+import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.filter.Filter;
 import org.coconut.filter.Filters;
 import org.coconut.test.MockTestCase;

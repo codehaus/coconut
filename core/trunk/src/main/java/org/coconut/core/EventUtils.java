@@ -11,21 +11,21 @@ import java.util.Queue;
 
 /**
  * Factory and utility methods for {@link Callback}, {@link EventHandler} and
- * {@link Offerable} classes defined in this package. This class supports the
- * following kinds of methods:
+ * {@link Offerable} classes defined in this package. This class supports the following
+ * kinds of methods:
  * <ul>
- * <li>Methods that create and return an {@link Offerable} that performs common
- * tasks.
+ * <li>Methods that create and return an {@link Offerable} that performs common tasks.
  * </ul>
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
 public final class EventUtils {
-    ///CLOVER:OFF
+    // /CLOVER:OFF
     /** Cannot instantiate. */
     private EventUtils() {}
-    ///CLOVER:ON
+
+    // /CLOVER:ON
 
     static class IgnoreTrueOfferable<E> implements Offerable<E>, Serializable {
         /** serialVersionUID */
@@ -133,22 +133,24 @@ public final class EventUtils {
     }
 
     /**
-     * Returns an {@link Offerable} that returns <tt>false</tt> for any
-     * element that is offered to it.
+     * Returns an {@link Offerable} that returns <tt>false</tt> for any element that is
+     * offered to it.
      * 
-     * @return an {@link Offerable}that returns <tt>false</tt> for any
-     *         element that is offered to it.
+     * @return an offerable that returns <tt>false</tt> for any element that is offered
+     *         to it.
+     * @param <E>
+     *            the type of elements accepted by the offerable
      */
     public static <E> Offerable<E> ignoreFalse() {
         return new IgnoreFalseOfferable<E>();
     }
 
     /**
-     * Returns an {@link Offerable}that returns <tt>true</tt> for any element
-     * that is offered to it.
+     * Returns an {@link Offerable}that returns <tt>true</tt> for any element that is
+     * offered to it.
      * 
-     * @return an {@link Offerable}that returns <tt>true</tt> for any element
-     *         that is offered to it.
+     * @return an {@link Offerable}that returns <tt>true</tt> for any element that is
+     *         offered to it.
      */
     public static <E> Offerable<E> ignoreTrue() {
         return new IgnoreTrueOfferable<E>();

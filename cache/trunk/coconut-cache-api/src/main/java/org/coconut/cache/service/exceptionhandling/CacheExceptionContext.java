@@ -18,6 +18,7 @@ import org.coconut.core.Logger;
  *            the type of mapped values
  */
 public abstract class CacheExceptionContext<K, V> {
+    
     /**
      * Returns the cache in which the failure occured.
      * 

@@ -23,7 +23,7 @@ public class AtomicDouble extends Number {
     /** serialVersionUID. */
     private static final long serialVersionUID = 3159267328827547102L;
 
-    /* The AtomicLong we are wrapping */
+    /** The AtomicLong we are wrapping. */
     private final AtomicLong al;
 
     //Replace AtomicLong with AtomicReference, much faster..
@@ -207,30 +207,22 @@ public class AtomicDouble extends Number {
         return Double.toString(get());
     }
 
-    /**
-     * @see java.lang.Number#intValue()
-     */
+    /** {@inheritDoc} */
     public int intValue() {
         return (int) get();
     }
 
-    /**
-     * @see java.lang.Number#longValue()
-     */
+    /** {@inheritDoc} */
     public long longValue() {
         return (long) get();
     }
 
-    /**
-     * @see java.lang.Number#floatValue()
-     */
+    /** {@inheritDoc} */
     public float floatValue() {
         return (float) get();
     }
 
-    /**
-     * @see java.lang.Number#doubleValue()
-     */
+    /** {@inheritDoc} */
     public double doubleValue() {
         return get();
     }
