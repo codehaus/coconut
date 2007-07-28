@@ -10,7 +10,7 @@ import org.coconut.filter.Filter;
 
 /**
  * A FilterMatcher can be used to query a large number of filters to obtain all
- * those that will match a particular object
+ * those that will match a particular object.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $

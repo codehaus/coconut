@@ -3,8 +3,16 @@
  */
 package org.coconut.internal.util;
 
+import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.util.ResourceBundle;
+
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.coconut.core.Logger;
 import org.w3c.dom.Comment;
@@ -16,9 +24,12 @@ import org.w3c.dom.Node;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class XmlUtil {
+public final class XmlUtil {
     // private final static ResourceHolder RH = ResourceHolder.fromPackage(XmlUtil.class);
-
+    ///CLOVER:OFF
+    /** Cannot instantiate. */
+    private XmlUtil() {}
+    ///CLOVER:ON
     public static <T> T getAttribute(Element e, String name, T defaultValue) {
         if (!e.hasAttribute(name)) {
             return defaultValue;
@@ -138,7 +149,7 @@ public class XmlUtil {
             String comment, String atrbName, Object o) {
         Constructor c = null;
         try {
-            c = o.getClass().getConstructor( null);
+            c = o.getClass().getConstructor(null);
             e.setAttribute(atrbName, o.getClass().getName());
             return true;
         } catch (NoSuchMethodException e1) {
@@ -178,7 +189,7 @@ public class XmlUtil {
                 System.out.println("Class name='" + c + "'");
                 throw e1;
             }
-            Constructor<T> con = clazz.getConstructor( null);
+            Constructor<T> con = clazz.getConstructor(null);
             return con.newInstance();
         }
         return null;
@@ -206,4 +217,23 @@ public class XmlUtil {
         return ee;
     }
 
+    /**
+     * Pretty prints the specified XML document to the specified OutputStream.
+     * 
+     * @param doc
+     *            the xml document to pretty print
+     * @param stream
+     *            the to print the document to
+     * @throws TransformerException
+     *             the document could not be pretty printed
+     */
+    public static void prettyprint(Document doc, OutputStream stream)
+            throws TransformerException {
+        DOMSource domSource = new DOMSource(doc);
+        StreamResult result = new StreamResult(stream);
+        Transformer f = TransformerFactory.newInstance().newTransformer();
+        f.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+        f.setOutputProperty(OutputKeys.INDENT, "yes");
+        f.transform(domSource, result);
+    }
 }

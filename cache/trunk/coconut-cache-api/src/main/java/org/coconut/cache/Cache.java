@@ -26,8 +26,9 @@ import org.coconut.core.AttributeMap;
  * Currently only two implementations exist. Both of them are entirely held in memory:
  * {@link org.coconut.cache.defaults.UnsynchronizedCache} and
  * {@link org.coconut.cache.defaults.SynchronizedCache}. However, both disk-based and
- * distributed implementations are on the drawing board. As a consequence the javadoc
- * makes frequent references to external caches even though no implementations exist yet.
+ * distributed implementations are on the drawing board. As a consequence the
+ * documentation might make references to external caches even though no implementations
+ * exist yet.
  * <p>
  * The three collection views, which allow a cache's contents to be viewed as a set of
  * keys, collection of values, or set of key-value mappings only shows values contained in
@@ -152,12 +153,12 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     Map<Class<?>, Object> getAllServices();
 
     /**
-     * Returns the current capacity of this cache. If the current capacity of is greater
-     * then Long.MAX_VALUE, this method returns Long.MAX_VALUE.
+     * Returns the current volume of this cache. If the current volume of this cache is
+     * greater then Long.MAX_VALUE, this method returns Long.MAX_VALUE.
      * 
-     * @return the current capacity of this cache
+     * @return the current volume of this cache
      */
-    long getCapacity();
+    long getVolume();
 
     /**
      * Retrieves a {@link CacheEntry} for the specified key (optional). If no entry exists
@@ -220,7 +221,8 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * raised. Finally, even if the item is expired it will still be returned.
      * <p>
      * All implementations of this method should take care to assure that a call to peek
-     * does not have any side effects on the cache or any retrived value.
+     * does not have any side effects. For example, it should not raise any kind of events
+     * or schedule expired elements for reload.
      * 
      * @param key
      *            key whose associated value is to be returned.
@@ -236,10 +238,6 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     /**
      * This method works analogoes to the {@link #peek(Object)} method. However, it will
      * return a cache entry instead of just the value.
-     * <p>
-     * Just like {@link #peek(Object)} any implementation of this method should take care
-     * to assure that the call does not have any side effects on the cache or any retrived
-     * entry.
      * 
      * @param key
      *            key whose associated cache entry is to be returned.
@@ -345,6 +343,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * or <tt>shutdownNow</tt> was called first.
      * <p>
      * TODO decide if we will have a shutdownNow method.
+     * 
      * @return <tt>true</tt> if all tasks have completed following shut down
      */
     boolean isTerminated();

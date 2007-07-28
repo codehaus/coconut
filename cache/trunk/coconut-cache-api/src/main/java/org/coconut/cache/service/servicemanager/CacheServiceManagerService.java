@@ -13,12 +13,4 @@ import java.util.concurrent.TimeUnit;
  */
 public interface CacheServiceManagerService {
     <T extends CacheService> T registerService(T lifecycle);
-
-    boolean awaitTermination(long timeout, TimeUnit unit);
-
-    boolean isShutdown();
-
-    boolean isTerminated();
-
-    void shutdown();
 }

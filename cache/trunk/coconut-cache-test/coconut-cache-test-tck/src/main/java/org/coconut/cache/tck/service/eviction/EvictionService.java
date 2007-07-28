@@ -33,13 +33,13 @@ public class EvictionService extends AbstractCacheTCKTestBundle {
      */
     @Test
     public void maximumCapacity() {
-        assertEquals(Long.MAX_VALUE, eviction().getMaximumCapacity());
-        eviction().setMaximumCapacity(1000);
-        assertEquals(1000, eviction().getMaximumCapacity());
+        assertEquals(Long.MAX_VALUE, eviction().getMaximumVolume());
+        eviction().setMaximumVolume(1000);
+        assertEquals(1000, eviction().getMaximumVolume());
 
         // start value
-        c = newCache(newConf().eviction().setMaximumCapacity(5000));
-        assertEquals(5000, eviction().getMaximumCapacity());
+        c = newCache(newConf().eviction().setMaximumVolume(5000));
+        assertEquals(5000, eviction().getMaximumVolume());
     }
 
     /**
@@ -47,7 +47,7 @@ public class EvictionService extends AbstractCacheTCKTestBundle {
      */
     @Test(expected = IllegalArgumentException.class)
     public void maximumCapacityIAE() {
-        eviction().setMaximumCapacity(-1);
+        eviction().setMaximumVolume(-1);
     }
 
     /**

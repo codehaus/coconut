@@ -38,20 +38,20 @@ public class EvictionMXBean extends AbstractCacheTCKTestBundle {
      */
     @Test
     public void maximumCapacity() {
-        assertEquals(Long.MAX_VALUE, mxBean.getMaximumCapacity());
-        mxBean.setMaximumCapacity(1000);
-        assertEquals(1000, mxBean.getMaximumCapacity());
-        assertEquals(1000, eviction().getMaximumCapacity());
+        assertEquals(Long.MAX_VALUE, mxBean.getMaximumVolume());
+        mxBean.setMaximumVolume(1000);
+        assertEquals(1000, mxBean.getMaximumVolume());
+        assertEquals(1000, eviction().getMaximumVolume());
 
         // start value
         c = newCache(newConf().setName("foo").management().setEnabled(true)
-                .setMBeanServer(mbs).c().eviction().setMaximumCapacity(5000));
+                .setMBeanServer(mbs).c().eviction().setMaximumVolume(5000));
         mxBean = findMXBean(mbs, CacheEvictionMXBean.class);
-        assertEquals(5000, mxBean.getMaximumCapacity());
+        assertEquals(5000, mxBean.getMaximumVolume());
 
         // Exception
         try {
-            mxBean.setMaximumCapacity(-1);
+            mxBean.setMaximumVolume(-1);
             fail("Did not throw exception");
         } catch (RuntimeMBeanException e) {
             assertTrue(e.getCause() instanceof IllegalArgumentException);

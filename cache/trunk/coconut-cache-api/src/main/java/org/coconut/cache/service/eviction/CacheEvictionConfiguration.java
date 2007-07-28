@@ -31,8 +31,8 @@ import org.w3c.dom.Element;
 public class CacheEvictionConfiguration<K, V> extends
         AbstractCacheServiceConfiguration<K, V> {
 
-    /** The default maximum capacity of a cache unless otherwise specified. */
-    public final static long DEFAULT_MAXIMUM_CAPACITY = Long.MAX_VALUE;
+    /** The default maximum volume of a cache unless otherwise specified. */
+    public final static long DEFAULT_MAXIMUM_VOLUME = Long.MAX_VALUE;
 
     /** The default maximum size of a cache unless otherwise specified. */
     public final static int DEFAULT_MAXIMUM_SIZE = Integer.MAX_VALUE;
@@ -43,14 +43,14 @@ public class CacheEvictionConfiguration<K, V> extends
     /** The default settings, used when xml-serializing this configuration. */
     private final static CacheEvictionConfiguration<?, ?> DEFAULT = new CacheEvictionConfiguration<Object, Object>();
 
-    /** XML tag for maximum capacity. */
-    private final static String MAXIMUM_CAPACITY = "max-capacity";
+    /** XML tag for maximum volume. */
+    private final static String MAXIMUM_VOLUME = "max-volume";
 
     /** XML tag for maximum size. */
     private final static String MAXIMUM_SIZE = "max-size";
 
-    /** XML tag for preferable capacity. */
-    private final static String PREFERABLE_CAPACITY = "preferable-capacity";
+    /** XML tag for preferable volume. */
+    private final static String PREFERABLE_VOLUME = "preferable-volume";
 
     /** XML tag for preferable size. */
     private final static String PREFERABLE_SIZE = "preferable-size";
@@ -58,14 +58,14 @@ public class CacheEvictionConfiguration<K, V> extends
     /** XML tag for scheduled eviction. */
     private final static String SCHEDULE_EVICT_TAG = "schedule-evict";
 
-    /** The maximum capacity of the cache. */
-    private long maximumCapacity;
+    /** The maximum volume of the cache. */
+    private long maximumVolume;
 
     /** The maximum size of the cache. */
     private int maximumSize;
 
-    /** The preferable capacity of the cache. */
-    private long preferableCapacity;
+    /** The preferable volume of the cache. */
+    private long preferableVolume;
 
     /** The preferable size of the cache. */
     private int preferableSize;
@@ -84,15 +84,15 @@ public class CacheEvictionConfiguration<K, V> extends
     }
 
     /**
-     * Returns the maximum allowed capacity of the cache or {@link Long#MAX_VALUE} if
+     * Returns the maximum allowed volume of the cache or {@link Long#MAX_VALUE} if
      * there is no limit.
      * 
-     * @return the maximum allowed capacity of the cache or Long.MAX_VALUE if there is no
+     * @return the maximum allowed volume of the cache or Long.MAX_VALUE if there is no
      *         limit.
-     * @see #setMaximumCapacity(long)
+     * @see #setMaximumVolume(long)
      */
-    public long getMaximumCapacity() {
-        return maximumCapacity;
+    public long getMaximumVolume() {
+        return maximumVolume;
     }
 
     /**
@@ -119,8 +119,8 @@ public class CacheEvictionConfiguration<K, V> extends
         return replacementPolicy;
     }
 
-    public long getPreferableCapacity() {
-        return preferableCapacity;
+    public long getPreferableVolume() {
+        return preferableVolume;
     }
 
     public int getPreferableSize() {
@@ -145,16 +145,16 @@ public class CacheEvictionConfiguration<K, V> extends
      * The default value is Integer.MAX_VALUE. Which roughly translates to no limit on the
      * number of elements.
      * 
-     * @param maximumCapacity
-     *            the maximum capacity.
+     * @param maximumVolume
+     *            the maximum volume.
      * @return this configuration
      */
-    public CacheEvictionConfiguration<K, V> setMaximumCapacity(long maximumCapacity) {
-        if (maximumCapacity < 0) {
+    public CacheEvictionConfiguration<K, V> setMaximumVolume(long maximumVolume) {
+        if (maximumVolume < 0) {
             throw new IllegalArgumentException(
-                    "capacity must be a non-negative number, was " + maximumCapacity);
+                    "maximumVolume must be a non-negative number, was " + maximumVolume);
         }
-        this.maximumCapacity = maximumCapacity;
+        this.maximumVolume = maximumVolume;
         return this;
     }
 
@@ -220,12 +220,12 @@ public class CacheEvictionConfiguration<K, V> extends
         return this;
     }
 
-    public CacheEvictionConfiguration<K, V> setPreferableCapacity(long capacity) {
-        if (capacity < 0) {
-            throw new IllegalArgumentException("capacity must greater then 0, was "
-                    + capacity);
+    public CacheEvictionConfiguration<K, V> setPreferableVolume(long volume) {
+        if (volume < 0) {
+            throw new IllegalArgumentException("volume must greater then 0, was "
+                    + volume);
         }
-        preferableCapacity = capacity;
+        preferableVolume = volume;
         return this;
     }
 
@@ -263,9 +263,9 @@ public class CacheEvictionConfiguration<K, V> extends
      */
     @Override
     protected void fromXML(Element e) throws Exception {
-        maximumCapacity = readLong(getChild(MAXIMUM_CAPACITY, e), maximumCapacity);
-        preferableCapacity = readLong(getChild(PREFERABLE_CAPACITY, e),
-                preferableCapacity);
+        maximumVolume = readLong(getChild(MAXIMUM_VOLUME, e), maximumVolume);
+        preferableVolume = readLong(getChild(PREFERABLE_VOLUME, e),
+                preferableVolume);
         maximumSize = readInt(getChild(MAXIMUM_SIZE, e), maximumSize);
         preferableSize = readInt(getChild(PREFERABLE_SIZE, e), preferableSize);
 
@@ -281,10 +281,10 @@ public class CacheEvictionConfiguration<K, V> extends
      */
     @Override
     protected void toXML(Document doc, Element base) throws Exception {
-        writeLong(doc, base, MAXIMUM_CAPACITY, maximumCapacity, DEFAULT
-                .getMaximumCapacity());
-        writeLong(doc, base, PREFERABLE_CAPACITY, preferableCapacity, DEFAULT
-                .getPreferableCapacity());
+        writeLong(doc, base, MAXIMUM_VOLUME, maximumVolume, DEFAULT
+                .getMaximumVolume());
+        writeLong(doc, base, PREFERABLE_VOLUME, preferableVolume, DEFAULT
+                .getPreferableVolume());
         writeInt(doc, base, MAXIMUM_SIZE, maximumSize, DEFAULT.getMaximumSize());
         writeInt(doc, base, PREFERABLE_SIZE, preferableSize, DEFAULT.getPreferableSize());
 

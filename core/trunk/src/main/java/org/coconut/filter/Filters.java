@@ -22,11 +22,16 @@ import org.coconut.filter.spi.CompositeFilter;
 public final class Filters {
     /** A filter that always return False. */
     public static final Filters.FalseFilter FALSE = Filters.FalseFilter.INSTANCE;
-
+    
     public final static IsTypeFilter IS_NUMBER = isType(Number.class);
 
     /** A filter that always return True. */
     public static final Filters.TrueFilter TRUE = Filters.TrueFilter.INSTANCE;
+
+    ///CLOVER:OFF
+    /** Cannot instantiate. */
+    private Filters() {}
+    ///CLOVER:ON
 
     /**
      * A Filter that tests that <tt>all</tt> of the supplied Filters accepts a given
@@ -120,7 +125,7 @@ public final class Filters {
     final static class AndFilter<E> implements Filter<E>, CompositeFilter<E>,
             Serializable {
 
-        /** Default <code>serialVersionUID</code> */
+        /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 6981902451700512606L;
 
         private final boolean isStrict;
@@ -278,7 +283,7 @@ public final class Filters {
      */
     final static class EqualsFilter<E> implements Filter<E>, Serializable {
 
-        /** Default <code>serialVersionUID</code> */
+        /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 3761971557773620791L;
 
         /** The object to compare with. */
@@ -336,11 +341,11 @@ public final class Filters {
      */
     final static class FalseFilter implements Filter, Serializable {
 
-        /** The one and only instance. */
-        static final FalseFilter INSTANCE = new FalseFilter();
-
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = -3048464662394104180L;
+
+        /** The one and only instance. */
+        static final FalseFilter INSTANCE = new FalseFilter();
 
         /** Construct a new FalseFilter. */
         private FalseFilter() {}
@@ -368,12 +373,12 @@ public final class Filters {
      */
     final static class GreaterThenFilter<E> implements Filter<E>, Serializable {
 
-        /** <code>serialVersionUID</code> */
+        /** <code>serialVersionUID</code>. */
         private static final long serialVersionUID = -6815218477296552273L;
 
         private final Comparator comparator;
 
-        /** The object to compare against */
+        /** The object to compare against. */
         private final E object;
 
         public GreaterThenFilter(E object) {
@@ -441,12 +446,12 @@ public final class Filters {
      */
     final static class GreaterThenOrEqualFilter<E> implements Filter<E>, Serializable {
 
-        /** <code>serialVersionUID</code> */
+        /** <code>serialVersionUID</code>. */
         private static final long serialVersionUID = -6815218477296552273L;
 
         private final Comparator comparator;
 
-        /** The object to compare against */
+        /** The object to compare against. */
         private final E object;
 
         /**
@@ -514,12 +519,12 @@ public final class Filters {
      */
     final static class LessThenFilter<E> implements Filter<E>, Serializable {
 
-        /** <code>serialVersionUID</code> */
+        /** <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 1330339174193813467L;
 
         private final Comparator comparator;
 
-        /** The object to compare against */
+        /** The object to compare against. */
         private final E object;
 
         public LessThenFilter(E object) {
@@ -587,12 +592,12 @@ public final class Filters {
      */
     final static class LessThenOrEqualFilter<E> implements Filter<E>, Serializable {
 
-        /** <code>serialVersionUID</code> */
+        /** <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 1330339174193813467L;
 
         private final Comparator comparator;
 
-        /** The object to compare against */
+        /** The object to compare against. */
         private final E object;
 
         /**
@@ -661,10 +666,10 @@ public final class Filters {
     final static class NotFilter<E> implements Filter<E>, CompositeFilter<E>,
             Serializable {
 
-        /** Default <code>serialVersionUID</code> */
+        /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = -5117781730584740429L;
 
-        /** The Filter to negate */
+        /** The Filter to negate. */
         private final Filter<E> filter;
 
         /**
@@ -722,7 +727,7 @@ public final class Filters {
      */
     final static class OrFilter<E> implements Filter<E>, CompositeFilter<E>, Serializable {
 
-        /** Default <code>serialVersionUID</code> */
+        /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 7602293335100183390L;
 
         /** The left side operand. */
@@ -797,10 +802,10 @@ public final class Filters {
      */
     final static class SameFilter<E> implements Filter<E>, Serializable {
 
-        /** Default <code>serialVersionUID</code> */
+        /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 3761971557773620791L;
 
-        /** The object to compare against */
+        /** The object to compare against. */
         private final E object;
 
         /**
@@ -846,11 +851,11 @@ public final class Filters {
      */
     final static class TrueFilter implements Filter, Serializable {
 
-        /** The TrueFilter instance. */
-        static final TrueFilter INSTANCE = new TrueFilter();
-
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 3258129137502925875L;
+
+        /** The TrueFilter instance. */
+        static final TrueFilter INSTANCE = new TrueFilter();
 
         /** Construct a new TrueFilter. */
         private TrueFilter() {}

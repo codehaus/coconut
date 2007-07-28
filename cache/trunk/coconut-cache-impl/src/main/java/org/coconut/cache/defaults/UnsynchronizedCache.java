@@ -179,7 +179,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     }
 
     /** {@inheritDoc} */
-    public long getCapacity() {
+    public long getVolume() {
         return map.capacity();
     }
 

@@ -12,7 +12,8 @@ import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 
 /**
  * A utility class to get hold of different cache services in an easy and typesafe manner.
- * For example, the following will return {@link CacheEvictionService} for a given cache.
+ * For example, the following will return the {@link CacheEvictionService} for a given
+ * cache.
  * 
  * <pre>
  * Cache&lt;Integer, String&gt; cache = somecache;

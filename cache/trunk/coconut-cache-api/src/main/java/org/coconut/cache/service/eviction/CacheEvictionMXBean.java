@@ -24,26 +24,26 @@ public interface CacheEvictionMXBean {
     void trimToSize(int size);
 
     /**
-     * Keeps evicting entries until the capacity of the cache is equal to the specified
-     * capacity. If the specified capacity is greater then the current capacity no action
+     * Keeps evicting entries until the volume of the cache is equal to the specified
+     * volume. If the specified volume is greater then the current volume no action
      * is taken.
      * 
-     * @param capacity
-     *            the capacity to trim the cache down to
+     * @param volume
+     *            the volume to trim the cache down to
      * @throws IllegalArgumentException
-     *             if the specified capacity is negative
+     *             if the specified volume is negative
      */
-    void trimToCapacity(long capacity);
+    void trimToVolume(long volume);
 
     /**
-     * Returns the maximum allowed capacity of the cache or {@link Long#MAX_VALUE} if
+     * Returns the maximum allowed volume of the cache or {@link Long#MAX_VALUE} if
      * there is no limit.
      * 
-     * @return the maximum allowed capacity of the cache or Long.MAX_VALUE if there is no
+     * @return the maximum allowed volume of the cache or Long.MAX_VALUE if there is no
      *         limit.
-     * @see #setMaximumCapacity(long)
+     * @see #setMaximumVolume(long)
      */
-    long getMaximumCapacity();
+    long getMaximumVolume();
 
     /**
      * Returns the maximum number of elements that this cache can hold. If the cache has
@@ -57,22 +57,22 @@ public interface CacheEvictionMXBean {
     int getMaximumSize();
 
     /**
-     * Sets that maximum capacity of the cache. This feature is only usefull if per
-     * element sizing is enabled. In which case the total capacity of the cache is the sum
+     * Sets that maximum volume of the cache. This feature is only usefull if per
+     * element sizing is enabled. In which case the total volume of the cache is the sum
      * of all the elements size. If the limit is reached the cache must evict existing
      * elements before adding new elements.
      * <p>
-     * To indicate that a cache can have an unlimited capacity, {@link Long#MAX_VALUE}
+     * To indicate that a cache can have an unlimited volume, {@link Long#MAX_VALUE}
      * should be specified.
      * 
-     * @param maximumCapacity
-     *            the maximum capacity.
+     * @param maximumVolume
+     *            the maximum volume.
      * @throws IllegalArgumentException
-     *             if the specified maximum capacity is negative
+     *             if the specified maximum volume is negative
      * @throws UnsupportedOperationException
-     *             if the cache does not support changing the maximum capacity at runtime
+     *             if the cache does not support changing the maximum volume at runtime
      */
-    void setMaximumCapacity(long maximumCapacity);
+    void setMaximumVolume(long maximumVolume);
 
     /**
      * Sets that maximum number of elements that the cache is allowed to contain. If the
@@ -82,7 +82,7 @@ public interface CacheEvictionMXBean {
      * {@link Integer#MAX_VALUE} should be specified. This is also refered to as an
      * unlimited cache.
      * <p>
-     * If the specified maximum capacity is 0, the cache will never store any elements
+     * If the specified maximum size is 0, the cache will never store any elements
      * internally. This can sometimes be useful while testing.
      * 
      * @param maximumSize

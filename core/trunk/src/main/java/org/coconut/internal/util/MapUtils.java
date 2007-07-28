@@ -14,8 +14,13 @@ import java.util.Map.Entry;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class MapUtils {
+public final class MapUtils {
 
+    ///CLOVER:OFF
+    /** Cannot instantiate. */
+    private MapUtils() {}
+    ///CLOVER:ON
+    
     public static <K, V> Map.Entry<K, V> newMapEntry(K key, V value) {
         return new ImmutableMapEntry<K, V>(key, value);
     }

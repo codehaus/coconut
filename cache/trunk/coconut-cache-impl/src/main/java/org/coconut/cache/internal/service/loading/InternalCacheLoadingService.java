@@ -11,6 +11,10 @@ import org.coconut.core.AttributeMap;
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @param <K>
+ *            the type of keys maintained by this service
+ * @param <V>
+ *            the type of mapped values
  */
 public interface InternalCacheLoadingService<K, V> {
 

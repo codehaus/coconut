@@ -12,24 +12,27 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class LogHelper {
+public final class LogHelper {
 
-
+    ///CLOVER:ON
 	public final static String LOG_TYPE_ATRB = "type";
-
-	private final static String COMMONS_LOGGING = "commons";
+    private final static String COMMONS_LOGGING = "commons";
 
 	private final static String JDK_LOGGING = "jul";
 
 	private final static String LOG4J = "log4j";
 
+	///CLOVER:OFF
+    /** Cannot instantiate. */
+    private LogHelper() {}
 
-    public static Logger fromLog4j(String name) {
-        return Loggers.Log4j.from(name);
-    }
-    
+
     public static Logger fromCommons(String name) {
         return Loggers.Commons.from(name);
+    }
+    
+    public static Logger fromLog4j(String name) {
+        return Loggers.Log4j.from(name);
     }
     
 	public static Logger readLog(Element log) {

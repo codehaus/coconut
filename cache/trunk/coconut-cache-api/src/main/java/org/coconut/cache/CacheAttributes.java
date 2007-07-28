@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoader;
+import org.coconut.cache.tck.cacheentry.Cost;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
 
@@ -93,10 +94,10 @@ public final class CacheAttributes {
      */
     public static final String TIME_TO_REFRESH_NS = "time_to_refresh_ns";
 
-    /** The default cost of fetching an element if no cost is specified. */
+    /** The default value of the {@link #COST} attribute. */
     public static final double DEFAULT_COST = 1.0;
 
-    /** The default size of a cache element if no size is specified. */
+    /** The default value of the {@link #SIZE} attribute. */
     public static final long DEFAULT_SIZE = 1;
 
     /** Cannot instantiate. */

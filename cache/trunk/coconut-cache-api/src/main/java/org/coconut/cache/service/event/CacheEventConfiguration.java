@@ -23,14 +23,14 @@ import org.w3c.dom.NodeList;
 
 /**
  * The configuration object for the Cache Event service bundle. This service is disabled
- * per default and must be enabled by using {@link #setEnabled(boolean)} to
+ * per default and must be enabled by setting {@link #setEnabled(boolean)} to
  * <code>true</code>.
  * <p>
  * All events will be raised per default except ItemAccessed. While this might seem
  * inconsistent there is performance drawback for having this event enabled per default.
  * If the cache is running with a 99% read ratio there will be a substantial overhead of
- * notifying all listeners on each each cache access. Instead, it must be manually enabled
- * by calling ...some code...
+ * notifying all listeners on each cache access. Instead, it must be manually enabled by
+ * calling ...some code...
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -192,8 +192,11 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
 
     /**
      * Returns the child xml elements for the specified tag.
-     * @param e the parent
-     * @param name the name of the tag
+     * 
+     * @param e
+     *            the parent
+     * @param name
+     *            the name of the tag
      * @return all the child elements matching the tag
      */
     private List<Element> getChildElements(Element e, String name) {

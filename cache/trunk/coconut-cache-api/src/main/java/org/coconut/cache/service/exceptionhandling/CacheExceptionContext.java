@@ -8,7 +8,9 @@ import org.coconut.core.Logger;
 
 /**
  * A CacheExceptionContext is provided by the cache to all of the exception-handle methods
- * defined in {@link CacheExceptionHandler} whenever any exception occures.
+ * defined in {@link CacheExceptionHandler} whenever an exceptional state is raised.
+ * <p>
+ * Users will most likely never need to create instances of this class.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -18,7 +20,7 @@ import org.coconut.core.Logger;
  *            the type of mapped values
  */
 public abstract class CacheExceptionContext<K, V> {
-    
+
     /**
      * Returns the cache in which the failure occured.
      * 

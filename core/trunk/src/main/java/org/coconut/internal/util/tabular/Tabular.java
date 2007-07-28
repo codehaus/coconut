@@ -5,6 +5,7 @@
 package org.coconut.internal.util.tabular;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -14,7 +15,7 @@ public class Tabular {
 
     //private char separator = '*';
 
-    private final ArrayList<ArrayList<String>> columns = new ArrayList<ArrayList<String>>();
+    private final List<ArrayList<String>> columns = new ArrayList<ArrayList<String>>();
 
     private int currentRow ;
 

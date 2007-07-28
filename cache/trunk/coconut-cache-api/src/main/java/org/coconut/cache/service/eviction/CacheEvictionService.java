@@ -35,15 +35,15 @@ import org.coconut.cache.CacheServices;
 public interface CacheEvictionService<K, V> {
     
     // TODO copy javadoc from MXBean
-    void trimToSize(int size);
+    void trimToSize(int newSize);
 
-    void trimToCapacity(long capacity);
+    void trimToVolume(long newVolume);
 
-    long getMaximumCapacity();
+    long getMaximumVolume();
 
     int getMaximumSize();
 
-    void setMaximumCapacity(long maximumCapacity);
+    void setMaximumVolume(long maximumVolume);
 
     /**
      * Sets that maximum number of elements that the cache is allowed to contain. If the
@@ -53,7 +53,7 @@ public interface CacheEvictionService<K, V> {
      * {@link Integer#MAX_VALUE} should be specified. This is also refered to as an
      * unlimited cache.
      * <p>
-     * If the specified maximum capacity is 0, the cache will never store any elements
+     * If the specified maximum size is 0, the cache will never store any elements
      * internally. This can sometimes be useful while testing.
      * 
      * @param maximumSize

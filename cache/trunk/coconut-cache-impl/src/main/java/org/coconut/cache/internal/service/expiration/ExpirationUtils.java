@@ -65,9 +65,9 @@ final class ExpirationUtils {
      * 
      * @param service
      *            the expiration service we want to wrap
-     * @return
+     * @return a wrapped service that only exposes CacheExpirationService methods 
      * @param <K>
-     *            the type of keys maintained by the cache
+     *            the type of keys maintained by the specified service
      * @param <V>
      *            the type of mapped values
      */

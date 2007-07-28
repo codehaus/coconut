@@ -5,18 +5,12 @@ package org.coconut.cache.spi;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Collection;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.internal.util.XmlUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -104,7 +98,7 @@ public class XmlConfigurator {
                 .newDocumentBuilder();
         Document doc = builder.newDocument();
         writeDocument(configuration, doc);
-        prettyprint(doc, stream);
+        XmlUtil.prettyprint(doc, stream);
     }
 
     /**
@@ -196,25 +190,5 @@ public class XmlConfigurator {
                 cache.appendChild(n);
             }
         }
-    }
-
-    /**
-     * Pretty prints the specified XML document to the specified OutputStream.
-     * 
-     * @param doc
-     *            the xml document to pretty print
-     * @param stream
-     *            the to print the document to
-     * @throws TransformerException
-     *             the document could not be pretty printed
-     */
-    static void prettyprint(Document doc, OutputStream stream)
-            throws TransformerException {
-        DOMSource domSource = new DOMSource(doc);
-        StreamResult result = new StreamResult(stream);
-        Transformer f = TransformerFactory.newInstance().newTransformer();
-        f.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-        f.setOutputProperty(OutputKeys.INDENT, "yes");
-        f.transform(domSource, result);
     }
 }

@@ -10,20 +10,26 @@ import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @param <K>
+ *            the type of keys maintained by the cache
+ * @param <V>
+ *            the type of mapped values
  */
-public class SynchronizedCacheEvictionService<K,V> extends UnsynchronizedCacheEvictionService {
+public class SynchronizedCacheEvictionService<K, V> extends
+        UnsynchronizedCacheEvictionService {
     private final Cache mutex;
 
-    public SynchronizedCacheEvictionService(Cache c, CacheEvictionConfiguration conf,CacheHelper<K, V> helper) {
-        super(conf,helper);
+    public SynchronizedCacheEvictionService(Cache c, CacheEvictionConfiguration conf,
+            CacheHelper<K, V> helper) {
+        super(conf, helper);
         this.mutex = c;
     }
 
     /** {@inheritDoc} */
     @Override
-    public long getMaximumCapacity() {
+    public long getMaximumVolume() {
         synchronized (mutex) {
-            return super.getMaximumCapacity();
+            return super.getMaximumVolume();
         }
     }
 
@@ -37,9 +43,9 @@ public class SynchronizedCacheEvictionService<K,V> extends UnsynchronizedCacheEv
 
     /** {@inheritDoc} */
     @Override
-    public void setMaximumCapacity(long size) {
+    public void setMaximumVolume(long size) {
         synchronized (mutex) {
-            super.setMaximumCapacity(size);
+            super.setMaximumVolume(size);
         }
     }
 

@@ -3,12 +3,13 @@
  */
 package org.coconut.cache.internal.service.management;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import org.coconut.cache.service.management.CacheManagementConfiguration;
-import org.coconut.cache.service.management.CacheManagementService;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class DefaultCacheManagementServiceTest {
     Mockery context = new JUnit4Mockery();
@@ -31,6 +32,10 @@ public class DefaultCacheManagementServiceTest {
         assertEquals(CacheManagementConfiguration.SERVICE_NAME, dcms.getName());
     }
 
+    /**
+     * A default instance of CacheManagementConfiguration is not enabled. The getRoot()
+     * method should throw an UnsupportedOperationException
+     */
     @Test(expected = UnsupportedOperationException.class)
     public void notEnabledUOE() {
         new DefaultCacheManagementService(new CacheManagementConfiguration(), "MyCache")

@@ -111,8 +111,8 @@ public final class ManagementUtils {
 
         /** {@inheritDoc} */
         @ManagedAttribute(description = "The total size of all elements contained in the cache")
-        public long getCapacity() {
-            return cache.getCapacity();
+        public long getVolume() {
+            return cache.getVolume();
         }
 
         /** {@inheritDoc} */

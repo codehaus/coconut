@@ -13,31 +13,28 @@ import java.util.concurrent.Executor;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class ThreadUtils {
-    public final static Executor SAME_THREAD_EXECUTOR = new SameThreadExecutor();
-
+public final class ThreadUtils {
+    
     /**
      * A {@link java.util.concurrent.Callable} that returns <code>null</code>
      * on every invocation of {@link Callable#call}.
      */
     public final static Callable NULL_CALLABLE = new NullCallable();
-    
-    /**
-     * A {@link java.util.concurrent.Callable} that returns <code>null</code>
-     * on every invocation of {@link java.util.concurrent.Callable#call}.
-     */
-    @SuppressWarnings("unchecked")
-    public static <V> Callable<V> nullCallable() {
-        return NULL_CALLABLE;
-    }
-    
 
+    
+    public final static Executor SAME_THREAD_EXECUTOR = new SameThreadExecutor();
+
+    ///CLOVER:OFF
+    /** Cannot instantiate. */
+    private ThreadUtils() {}
+    ///CLOVER:ON
+    
     /**
      * A {@link java.util.concurrent.Callable} that returns <code>null</code>
      * on every invocation of {@link #call}.
      */
     final static class NullCallable<V> implements Callable<V>, Serializable {
-        /** serialVersionUID */
+        /** serialVersionUID. */
         private static final long serialVersionUID = 4869209484084557763L;
 
         /** {@inheritDoc} */
@@ -49,7 +46,7 @@ public class ThreadUtils {
 
     static class SameThreadExecutor implements Executor, Serializable {
 
-        /** serialVersionUID */
+        /** serialVersionUID. */
         private static final long serialVersionUID = -6365439666830575122L;
 
         /**
@@ -58,5 +55,15 @@ public class ThreadUtils {
         public void execute(Runnable command) {
             command.run();
         }
+    }
+    
+
+    /**
+     * A {@link java.util.concurrent.Callable} that returns <code>null</code>
+     * on every invocation of {@link java.util.concurrent.Callable#call}.
+     */
+    @SuppressWarnings("unchecked")
+    public static <V> Callable<V> nullCallable() {
+        return NULL_CALLABLE;
     }
 }

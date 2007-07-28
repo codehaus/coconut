@@ -50,11 +50,11 @@ public class ManagementCacheMXBean extends AbstractCacheTCKTestBundle {
 
     @Test
     public void getCapacity() {
-        assertEquals(c.getCapacity(), mxBean.getCapacity());
+        assertEquals(c.getVolume(), mxBean.getVolume());
         put(M1);
         put(M2);
-        assertEquals(2, mxBean.getCapacity());
-        assertEquals(c.getCapacity(), mxBean.getCapacity());
+        assertEquals(2, mxBean.getVolume());
+        assertEquals(c.getVolume(), mxBean.getVolume());
     }
 
     @Test

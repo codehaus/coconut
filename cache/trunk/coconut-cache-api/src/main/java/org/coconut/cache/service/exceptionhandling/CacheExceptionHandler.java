@@ -4,6 +4,8 @@
 package org.coconut.cache.service.exceptionhandling;
 
 import org.coconut.cache.Cache;
+import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.CacheLifecycle;
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingService;
@@ -100,6 +102,11 @@ public abstract class CacheExceptionHandler<K, V> {
         // exception?
         handleException(context, cause);
         return null;
+    }
+
+    public boolean initializingFailed(CacheConfiguration<K, V> configuration,
+            CacheLifecycle component, Exception cause) {
+        return false;
     }
 
     /**

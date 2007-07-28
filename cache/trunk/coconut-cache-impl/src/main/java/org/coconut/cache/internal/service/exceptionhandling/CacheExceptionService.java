@@ -11,12 +11,23 @@ import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @param <K>
+ *            the type of keys maintained by the cache
+ * @param <V>
+ *            the type of mapped values
  */
 public interface CacheExceptionService<K, V> {
+    /**
+     * Returns the CacheExceptionHandler configured for this cache.
+     * 
+     * @return the CacheExceptionHandler configured for this cache
+     */
     CacheExceptionHandler<K, V> getExceptionHandler();
 
     /**
-     * Create a new CacheExceptionContext.
+     * Creates and returns a new CacheExceptionContext.
+     * 
+     * @return a new CacheExceptionContext.
      */
     CacheExceptionContext<K, V> createContext();
 }

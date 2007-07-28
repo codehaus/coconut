@@ -13,6 +13,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
+import org.coconut.internal.util.XmlUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -96,7 +97,7 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
             Element root = doc.createElement(serviceName);
             doc.appendChild(root);
             toXML(doc, root);
-            XmlConfigurator.prettyprint(doc, sos);
+            XmlUtil.prettyprint(doc, sos);
             return new String(sos.toByteArray());
         } catch (Exception e) {
             if (conf.getClass().getPackage().getName().startsWith(

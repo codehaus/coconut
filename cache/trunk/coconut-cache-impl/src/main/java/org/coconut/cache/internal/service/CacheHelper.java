@@ -6,7 +6,6 @@ package org.coconut.cache.internal.service;
 import java.util.Collection;
 import java.util.Map;
 
-import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.core.AttributeMap;
 import org.coconut.filter.Filter;

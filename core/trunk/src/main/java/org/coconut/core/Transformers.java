@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -46,7 +47,7 @@ public final class Transformers {
         Method getMethod();
 
         /**
-         * Returns additional parameters that
+         * Returns additional parameters that.
          * 
          * @return additional parameters that
          */
@@ -54,7 +55,7 @@ public final class Transformers {
     }
 
     /**
-     * This class is serializable is all provided parameters are serializable
+     * This class is serializable is all provided parameters are serializable.
      */
     static final class ASMBasedTransformer<F, T> implements DynamicTransformer<F, T>,
             Serializable {
@@ -326,41 +327,31 @@ public final class Transformers {
                     && ((ASMBasedTransformer) obj).m.equals(m);
         }
 
-        /**
-         * @see org.coconut.core.Transformers.DynamicTransformer#getMethod()
-         */
+        /** {@inheritDoc} */
         public Method getMethod() {
             return m;
         }
 
-        /**
-         * @see org.coconut.core.Transformers.DynamicTransformer#getParameters()
-         */
+        /** {@inheritDoc} */
         public Object[] getParameters() {
             Object[] parameters = t.getParameters();
             return parameters == null ? EMPTY_ARRAY : parameters;
         }
 
-        /**
-         * @see java.lang.Object#hashCode()
-         */
+        /** {@inheritDoc} */
         @Override
         public int hashCode() {
             return m.hashCode();
         }
 
-        /**
-         * @see java.lang.Object#toString()
-         */
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             return "Dynamic transformer (" + m.getDeclaringClass().getCanonicalName()
                     + " -> " + m.getReturnType().getCanonicalName() + ")";
         }
 
-        /**
-         * @see org.coconut.core.Transformer#transform(java.lang.Object)
-         */
+        /** {@inheritDoc} */
         public T transform(F from) {
             if (from == null) {
                 throw new NullPointerException("from is null");
@@ -396,9 +387,7 @@ public final class Transformers {
             s.writeObject(t.getParameters());
         }
 
-        /**
-         * @see java.lang.Object#clone()
-         */
+        /** {@inheritDoc} */
         @Override
         protected Object clone() {
             return new ASMBasedTransformer<F, T>(this);
@@ -406,10 +395,10 @@ public final class Transformers {
     }
 
     /**
-     * TODO describe
+     * TODO describe.
      */
     final static class ArrayTransformer implements Transformer, Serializable, Cloneable {
-        /** serialVersionUID */
+        /** serialVersionUID. */
         private static final long serialVersionUID = 4920880113547573214L;
 
         private final Transformer<Object, Object>[] t;
@@ -417,26 +406,24 @@ public final class Transformers {
         ArrayTransformer(Transformer<Object, Object>[] t) {
             this.t = t;
         }
-
+        /** {@inheritDoc} */
         @Override
         public boolean equals(Object obj) {
             return (obj instanceof ArrayTransformer)
                     && Arrays.equals(t, ((ArrayTransformer) obj).t);
         }
-
+        /** {@inheritDoc} */
         @Override
         public int hashCode() {
             return Arrays.hashCode(t);
         }
-
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             return Arrays.toString(t);
         }
 
-        /**
-         * @see org.coconut.core.Transformer#transform(java.lang.Object)
-         */
+        /** {@inheritDoc} */
         @SuppressWarnings("unchecked")
         public Object transform(Object from) {
             Object o = from;
@@ -450,7 +437,7 @@ public final class Transformers {
     final static class PassThroughTransformer<K> implements Transformer<K, K>,
             Serializable {
 
-        /** serialVersionUID */
+        /** serialVersionUID. */
         private static final long serialVersionUID = -8159540593935721003L;
 
         /**
@@ -535,7 +522,7 @@ public final class Transformers {
         int pLength = parameters == null ? 1 : parameters.length;
         // Object[] params = parameters == null ? new Object[] { null }
         // : parameters;
-        ArrayList<Method> list = new ArrayList<Method>();
+        List<Method> list = new ArrayList<Method>();
         boolean foundName = false; // did we find any method with right name
         boolean foundNullPrimitiveMethod = false;
         for (Method m : fromClass.getMethods()) {

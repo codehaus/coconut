@@ -14,14 +14,33 @@ import org.coconut.cache.spi.CacheSPI;
 import org.coconut.core.Logger;
 import org.coconut.core.Loggers;
 
-public class DefaultCacheExceptionService<K, V> implements CacheExceptionService<K, V>{
+/**
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @param <K>
+ *            the type of keys maintained by this cache
+ * @param <V>
+ *            the type of mapped values
+ */
+public class DefaultCacheExceptionService<K, V> implements CacheExceptionService<K, V> {
 
+    /** The cache for which this DefaultCacheExceptionService is registered. */
     private final Cache<K, V> cache;
 
-    private volatile Logger logger;
-
+    /** The CacheExceptionHandler configured for this cache. */
     private final CacheExceptionHandler<K, V> exceptionHandler;
 
+    /** The logger to log exceptions to. */
+    private volatile Logger logger;
+
+    /**
+     * Creates a new DefaultCacheExceptionService.
+     * 
+     * @param cache
+     *            the cache that is using this service
+     * @param configuration
+     *            the configuration of CacheExceptionService
+     */
     public DefaultCacheExceptionService(Cache<K, V> cache,
             CacheExceptionHandlingConfiguration<K, V> configuration) {
         this.cache = cache;
@@ -29,35 +48,7 @@ public class DefaultCacheExceptionService<K, V> implements CacheExceptionService
         this.exceptionHandler = configuration.getExceptionHandler();
     }
 
-    private Logger getLogger() {
-        Logger l = logger;
-        if (l != null) {
-            return l;
-        }
-        return initializeLogger();
-    }
-
-    public CacheExceptionHandler<K, V> getExceptionHandler() {
-        //TODO we really should wrap it in something that catches all runtime exceptions
-        //thrown by the handler methods.
-        return exceptionHandler;
-    }
-
-    private synchronized Logger initializeLogger() {
-        if (logger == null) {
-            String name = cache.getName();
-            String loggerName = Cache.class.getPackage().getName() + "." + name;
-            java.util.logging.Logger l = java.util.logging.Logger.getLogger(loggerName);
-            String infoMsg = CacheSPI.lookup(CacheExceptionHandler.class, "noLogger");
-            Logger logger = Loggers.JDK.from(l);
-            l.setLevel(Level.ALL);
-            logger.info(MessageFormat.format(infoMsg, name, loggerName));
-            l.setLevel(Level.SEVERE);
-            return logger;
-        }
-        return logger;
-    }
-
+    /** {@inheritDoc} */
     public CacheExceptionContext<K, V> createContext() {
         return new CacheExceptionContext<K, V>() {
 
@@ -71,5 +62,40 @@ public class DefaultCacheExceptionService<K, V> implements CacheExceptionService
                 return cache;
             }
         };
+    }
+
+    /** {@inheritDoc} */
+    public CacheExceptionHandler<K, V> getExceptionHandler() {
+        // TODO we really should wrap it in something that catches all runtime exceptions
+        // thrown by the handler methods.
+        return exceptionHandler;
+    }
+
+    /**
+     * Returns the exception logger configured for this cache. Or initializes the default
+     * logger if no logger has been defined and the default logger has not already been
+     * initialized
+     * 
+     * @return the exception logger
+     */
+    private Logger getLogger() {
+        Logger l = logger;
+        if (l != null) {
+            return l;
+        }
+        synchronized (this) {
+            if (logger == null) {
+                String name = cache.getName();
+                String loggerName = Cache.class.getPackage().getName() + "." + name;
+                java.util.logging.Logger jucLogger = java.util.logging.Logger
+                        .getLogger(loggerName);
+                String infoMsg = CacheSPI.lookup(CacheExceptionHandler.class, "noLogger");
+                jucLogger.setLevel(Level.ALL);
+                jucLogger.info(MessageFormat.format(infoMsg, name, loggerName));
+                jucLogger.setLevel(Level.SEVERE);
+                logger = Loggers.JDK.from(jucLogger);
+            }
+            return logger;
+        }
     }
 }

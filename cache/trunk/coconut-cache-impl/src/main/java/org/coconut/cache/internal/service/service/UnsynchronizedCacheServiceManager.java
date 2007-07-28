@@ -16,10 +16,13 @@ import org.coconut.cache.internal.service.CacheHelper;
 import org.coconut.cache.internal.service.attribute.DefaultCacheAttributeService;
 import org.coconut.cache.internal.service.entry.UnsynchronizedEntryFactoryService;
 import org.coconut.cache.internal.service.exceptionhandling.DefaultCacheExceptionService;
+import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.AbstractCacheService;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.internal.picocontainer.ComponentAdapter;
 import org.coconut.internal.picocontainer.defaults.DefaultPicoContainer;
+import org.coconut.management.ManagedGroup;
+import org.coconut.management.ManagedObject;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -45,20 +48,17 @@ public class UnsynchronizedCacheServiceManager extends
         initializePicoContainer(cache, helper, conf);
     }
 
+    /** {@inheritDoc} */
     public Map<Class<?>, Object> getAllPublicServices() {
         return new HashMap<Class<?>, Object>(publicServices);
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.service.InternalCacheServiceManager#getCurrentState()
-     */
+    /** {@inheritDoc} */
     public ServiceStatus getCurrentState() {
         return status;
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.service.InternalCacheServiceManager#getPublicService(java.lang.Class)
-     */
+    /** {@inheritDoc} */
     public <T> T getPublicService(Class<T> type) {
         lazyStart(false);
         T t = (T) publicServices.get(type);
@@ -68,17 +68,13 @@ public class UnsynchronizedCacheServiceManager extends
         return t;
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.service.InternalCacheServiceManager#getPublicServices()
-     */
+    /** {@inheritDoc} */
     public List getPublicServices() {
         lazyStart(false);
         return new ArrayList(publicServices.values());
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.service.InternalCacheServiceManager#getService(java.lang.Class)
-     */
+    /** {@inheritDoc} */
     public <T> T getService(Class<T> type) {
         T service = (T) container.getComponentInstanceOfType(type);
         if (service == null) {
@@ -87,21 +83,18 @@ public class UnsynchronizedCacheServiceManager extends
         return service;
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.service.InternalCacheServiceManager#hasPublicService(java.lang.Class)
-     */
+    /** {@inheritDoc} */
     public boolean hasPublicService(Class type) {
         lazyStart(false);
         return publicServices.containsKey(type);
     }
 
+    /** {@inheritDoc} */
     public void lazyStart(boolean failIfShutdown) {
         prestart();
     }
 
-    /**
-     * @see org.coconut.cache.internal.service.service.InternalCacheServiceManager#prestart()
-     */
+    /** {@inheritDoc} */
     public void prestart() {
         if (status == ServiceStatus.NOTRUNNING) {
             List<AbstractCacheService> l = container
@@ -118,6 +111,13 @@ public class UnsynchronizedCacheServiceManager extends
             for (ServiceInfo si : info) {
                 si.start(publicServices);
             }
+            CacheManagementService cms = (CacheManagementService) publicServices
+                    .get(CacheManagementService.class);
+            if (cms != null) {
+                for (ServiceInfo si : info) {
+                    si.registerMBeans(cms.getRoot());
+                }
+            }
             for (ServiceInfo si : info) {
                 si.started(cache);
             }
@@ -125,6 +125,7 @@ public class UnsynchronizedCacheServiceManager extends
         }
     }
 
+    /** {@inheritDoc} */
     public void registerService(Class type, Class<? extends AbstractCacheService> service) {
         if (status != ServiceStatus.NOTRUNNING) {
             throw new IllegalStateException(
@@ -134,6 +135,7 @@ public class UnsynchronizedCacheServiceManager extends
         container.registerComponentImplementation(type, service);
     }
 
+    /** {@inheritDoc} */
     public void registerServices(Class<? extends AbstractCacheService>... services) {
         for (Class<? extends AbstractCacheService> service : services) {
             registerService(service, service);
@@ -163,12 +165,15 @@ public class UnsynchronizedCacheServiceManager extends
         LifecycleHolder(CacheLifecycle lifecycle) {
             this.lifecycle = lifecycle;
         }
-        void initialize(CacheConfiguration conf) {
+
+        void initialize(CacheConfiguration conf) throws Exception {
             lifecycle.initialize(conf);
         }
+
         public void started(Cache<?, ?> cache) {
             lifecycle.started(cache);
         }
+
         public void terminated() {
             lifecycle.terminated();
         }
@@ -198,27 +203,38 @@ public class UnsynchronizedCacheServiceManager extends
             service.start(c);
         }
 
+        void registerMBeans(ManagedGroup parent) {
+            if (service instanceof ManagedObject) {
+                ((ManagedObject) service).manage(parent);
+            }
+        }
+
         void started(Cache<?, ?> c) {
             service.started(c);
         }
     }
 
+    /** {@inheritDoc} */
     public boolean awaitTermination(long timeout, TimeUnit unit)
             throws InterruptedException {
         return false;
     }
 
+    /** {@inheritDoc} */
     public boolean isShutdown() {
         return false;
     }
 
+    /** {@inheritDoc} */
     public boolean isStarted() {
         return false;
     }
 
+    /** {@inheritDoc} */
     public boolean isTerminated() {
         return false;
     }
 
+    /** {@inheritDoc} */
     public void shutdown() {}
 }

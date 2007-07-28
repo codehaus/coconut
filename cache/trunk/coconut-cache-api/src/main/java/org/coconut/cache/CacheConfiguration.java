@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import net.jcip.annotations.NotThreadSafe;
@@ -90,7 +91,7 @@ public final class CacheConfiguration<K, V> {
 
     /**
      * Creates a new Configuration with default settings. CacheConfiguration instances
-     * should be created using the {@link #create()} method.
+     * should be created using the {@link #create()} or {@link #create(String)} method.
      */
     public CacheConfiguration() {
         for (Class c : DEFAULT_SERVICES) {
@@ -115,7 +116,7 @@ public final class CacheConfiguration<K, V> {
         if (conf == null) {
             throw new NullPointerException("conf is null");
         }
-        //TODO check if instance of same type exists.
+        // TODO check if instance of same type exists.
         list.add(conf);
         return conf;
     }
@@ -196,6 +197,7 @@ public final class CacheConfiguration<K, V> {
      * 
      * @return the name of the cache, or <tt>null</tt> if no name has been set.
      * @see #setName(String)
+     * @see Cache#getName()
      */
     public String getName() {
         return name;
@@ -286,7 +288,7 @@ public final class CacheConfiguration<K, V> {
     public <T extends Cache<K, V>> T newCacheInstance(Class<? extends Cache> type)
             throws IllegalArgumentException {
         if (type == null) {
-            throw new NullPointerException("clazz is null");
+            throw new NullPointerException("type is null");
         }
         T cache = null;
         Constructor<T> c = null;
@@ -294,15 +296,16 @@ public final class CacheConfiguration<K, V> {
             c = (Constructor<T>) type.getDeclaredConstructor(CacheConfiguration.class);
         } catch (NoSuchMethodException e) {
             throw new IllegalArgumentException(
-                    "Could not create cache instance, no public contructor taking a single CacheConfiguration instance",
-                    e);
+                    "Could not create cache instance, no public contructor "
+                            + "taking a single CacheConfiguration instance for the specified class [class = "
+                            + type + "]", e);
         }
         try {
             cache = c.newInstance(this);
         } catch (InstantiationException e) {
             throw new IllegalArgumentException(
-                    "Could not create cache instance, specified clazz " + type
-                            + ") is an interface or abstract class", e);
+                    "Could not create cache instance, specified clazz [class = " + type
+                            + "] is an interface or an abstract class", e);
         } catch (IllegalAccessException e) {
             throw new IllegalArgumentException("Could not create instance of " + type, e);
         } catch (InvocationTargetException e) {
@@ -315,36 +318,36 @@ public final class CacheConfiguration<K, V> {
     /**
      * Sets the {@link org.coconut.core.Clock} that the cache should use. Normally users
      * should not need to set this, only if they want to provide another timing mechanism
-     * then the built-in {@link java.lang.System#currentTimeMillis()}. For example, a
-     * custom NTP protocol.
-     * <p>
+     * then the built-in {@link java.lang.System#currentTimeMillis()} and
+     * {@link java.lang.System#nanoTime()}. For example, a custom NTP protocol.
      * 
-     * @param timingStrategy
-     *            the Timer to use
+     * @param clock
+     *            the Clock to use
      * @return this configuration
      * @throws NullPointerException
-     *             if the supplied timingStrategy is <tt>null</tt>
+     *             if the specified clock is <tt>null</tt>
      */
-    public CacheConfiguration<K, V> setClock(Clock timingStrategy) {
-        if (timingStrategy == null) {
-            throw new NullPointerException("timingStrategy is null");
+    public CacheConfiguration<K, V> setClock(Clock clock) {
+        if (clock == null) {
+            throw new NullPointerException("clock is null");
         }
-        this.clock = timingStrategy;
+        this.clock = clock;
         return this;
     }
 
     /**
      * Sets the default loggger for this cache. If for some reason the cache or one of its
-     * services needs to notify users of some kind of event this logger should be used. a
-     * service needs to log information and no special logger has been set for the
-     * service. This log should be used.
+     * services needs to notify users of some kind of events this logger should be used.
+     * Some services might allow to set a special logger. For example, for logging timing
+     * informations, auditting, ... etc. In this case this special logger will take
+     * precedence over this specified logger when logging for the service.
      * <p>
-     * Coconut Caches strives to be very conservertive about what is logged. That is, if
-     * it is not log as little as possible. That is, We actually advise running with log
-     * at {@link Logger.Level#Info} level even in production.
+     * All available caches in Coconut Cache strives to be very conservertive about what
+     * is logged, log as little as possible. That is, we actually recommend running with
+     * log level set at {@link Logger.Level#Info} even in production.
      * 
      * @param logger
-     *            the log to use
+     *            the logger to use
      * @return this configuration
      * @see #getDefaultLogger()
      */
@@ -357,14 +360,19 @@ public final class CacheConfiguration<K, V> {
      * Sets the name of the cache. The name should be unique among other configured
      * caches. The name must consists only of alphanumeric characters and '_' or '-'.
      * <p>
-     * If no name is set in the configuration, any cache implementation must generate an
-     * (unique) name for the cache. How exactly the name is generated is implementation
-     * specific.
+     * If no name is set in the configuration, any cache implementation must generate a
+     * name for the cache. How exactly the name is generated is implementation specific.
+     * But the recommended way is to use {@link UUID#randomUUID()} to generate an pseudo
+     * random name.
      * 
      * @param name
      *            the name of the cache
      * @return this configuration
+     * @throws IllegalArgumentException
+     *             if the specified name is the empty string or if the name contains other
+     *             characters then alphanumeric characters and '_' or '-'
      * @see #getName()
+     * @see Cache#getName()
      */
     public CacheConfiguration<K, V> setName(String name) {
         if ("".equals(name)) {
@@ -393,7 +401,7 @@ public final class CacheConfiguration<K, V> {
      * @see #getProperty(String)
      * @see #getProperty(String, Object)
      * @throws NullPointerException
-     *             if key is <tt>null</tt>
+     *             if the specified key is <tt>null</tt>
      */
     public CacheConfiguration<K, V> setProperty(String key, Object value) {
         if (key == null) {
@@ -404,8 +412,8 @@ public final class CacheConfiguration<K, V> {
     }
 
     /**
-     * Returns a configuration object that can be used to control how all the various
-     * threads running with coconut.
+     * Returns a configuration object that can be used to control how asynchronous tasks
+     * are run within a cache.
      * 
      * @return a CacheThreadingConfiguration
      */
@@ -413,16 +421,15 @@ public final class CacheConfiguration<K, V> {
         return lazyCreate(CacheExecutorConfiguration.class);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         ByteArrayOutputStream sos = new ByteArrayOutputStream();
         try {
             new XmlConfigurator().write(this, sos);
         } catch (Exception e) {
-            throw new CacheException("This is highly irregular, please report", e);
+            throw new CacheException(
+                    "This is a highly irregular exception, please report", e);
         }
         return new String(sos.toByteArray());
 
@@ -473,7 +480,7 @@ public final class CacheConfiguration<K, V> {
     /**
      * Creates a new CacheConfiguration with default settings.
      * 
-     * @return a new CacheConfiguration
+     * @return a new CacheConfiguration with default settings
      * @param <K>
      *            the type of keys that should be maintained by the cache
      * @param <V>
@@ -484,7 +491,7 @@ public final class CacheConfiguration<K, V> {
     }
 
     /**
-     * Creates a new CacheConfiguration where name of the cache will be the specified
+     * Creates a new CacheConfiguration where the name of the cache will be the specified
      * name.
      * 
      * @param name
@@ -502,8 +509,8 @@ public final class CacheConfiguration<K, V> {
     }
 
     /**
-     * Loads a cache configuration from the provided input stream, and instantiates a new
-     * cache on the basis of the configuration.
+     * Loads a XML based cache configuration from the specified input stream, and
+     * instantiates a new cache on the basis of the configuration.
      * 
      * @param xmlDoc
      *            an InputStream where the configuration can be read from
@@ -529,7 +536,8 @@ public final class CacheConfiguration<K, V> {
      *            an InputStream where the configuration can be read from
      * @return a CacheConfiguration reflecting the xml configuration
      * @throws Exception
-     *             some Exception prevented the CacheConfiguration from being populated
+     *             some Exception prevented the CacheConfiguration from being read and
+     *             populated
      * @param <K>
      *            the type of keys that should be maintained by the cache
      * @param <V>

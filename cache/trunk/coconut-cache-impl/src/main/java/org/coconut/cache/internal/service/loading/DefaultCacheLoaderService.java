@@ -24,6 +24,7 @@ import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
 import org.coconut.filter.Filter;
 import org.coconut.management.ManagedGroup;
+import org.coconut.management.ManagedObject;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -33,7 +34,8 @@ import org.coconut.management.ManagedGroup;
  * @param <V>
  *            the type of mapped values
  */
-public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService<K, V> {
+public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService<K, V>
+        implements ManagedObject {
 
     final CacheHelper<K, V> cache;
 
@@ -60,7 +62,8 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         this.loader = loadConf.getLoader();
         this.loadExecutor = threadManager.getExecutor(CacheLoadingService.class)
                 .createExecutorService();
-        attributeFactory.update().setTimeToFreshNanos( LoadingUtils.getInitialTimeToRefrehs(loadConf));
+        attributeFactory.update().setTimeToFreshNanos(
+                LoadingUtils.getInitialTimeToRefrehs(loadConf));
         this.reloadFilter = loadConf.getRefreshFilter();
         this.cache = cache;
     }
@@ -140,29 +143,22 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         return v;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void registerMXBeans(ManagedGroup root) {
+    /** {@inheritDoc} */
+    public void manage(ManagedGroup parent) {
         if (loader != null) {
-            ManagedGroup g = root.addChild(CacheLoadingConfiguration.SERVICE_NAME,
+            ManagedGroup g = parent.addChild(CacheLoadingConfiguration.SERVICE_NAME,
                     "Cache Loading attributes and operations");
             g.add(LoadingUtils.wrapMXBean(this));
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     void doLoad(K key, AttributeMap attributes) {
         LoadValueRunnable lvr = new LoadValueRunnable<K, V>(this, loader, key, attributes);
         loadExecutor.execute(lvr);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc}*/
     void doLoad(Map<? extends K, AttributeMap> mapsWithAttributes) {
         LoadValuesRunnable lvr = new LoadValuesRunnable<K, V>(this, loader,
                 mapsWithAttributes);
@@ -219,7 +215,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
             return key;
         }
     }
-    
+
     static class LoadValuesRunnable<K, V> implements Runnable {
         private final Map<? extends K, AttributeMap> keysWithAttributes;
 

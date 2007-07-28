@@ -38,46 +38,46 @@ public class CacheEvictionConfigurationTest {
 
     @Test
     public void testPreferableCapacity() {
-        assertEquals(0, conf.getPreferableCapacity());
-        assertSame(conf, conf.setPreferableCapacity(4));
-        assertEquals(4, conf.getPreferableCapacity());
+        assertEquals(0, conf.getPreferableVolume());
+        assertSame(conf, conf.setPreferableVolume(4));
+        assertEquals(4, conf.getPreferableVolume());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testPreferableCapacityIAE() {
-        conf.setPreferableCapacity(-1);
+        conf.setPreferableVolume(-1);
     }
 
     @Test
     public void testPreferableCapacityXML() throws Exception {
         conf = reloadService(conf);
-        assertEquals(0, conf.getPreferableCapacity());
-        assertSame(conf, conf.setPreferableCapacity(Long.MAX_VALUE));
+        assertEquals(0, conf.getPreferableVolume());
+        assertSame(conf, conf.setPreferableVolume(Long.MAX_VALUE));
 
         conf = reloadService(conf);
-        assertEquals(Long.MAX_VALUE, conf.getPreferableCapacity());
+        assertEquals(Long.MAX_VALUE, conf.getPreferableVolume());
     }
 
     @Test
     public void testMaximumCapacity() {
-        assertEquals(0, conf.getMaximumCapacity());
-        assertSame(conf, conf.setMaximumCapacity(4));
-        assertEquals(4, conf.getMaximumCapacity());
+        assertEquals(0, conf.getMaximumVolume());
+        assertSame(conf, conf.setMaximumVolume(4));
+        assertEquals(4, conf.getMaximumVolume());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testMaximumCapacityIAE() {
-        conf.setMaximumCapacity(-1);
+        conf.setMaximumVolume(-1);
     }
 
     @Test
     public void testMaximumCapacityXML() throws Exception {
         conf = reloadService(conf);
-        assertEquals(0, conf.getMaximumCapacity());
-        assertSame(conf, conf.setMaximumCapacity(Long.MAX_VALUE));
+        assertEquals(0, conf.getMaximumVolume());
+        assertSame(conf, conf.setMaximumVolume(Long.MAX_VALUE));
 
         conf = reloadService(conf);
-        assertEquals(Long.MAX_VALUE, conf.getMaximumCapacity());
+        assertEquals(Long.MAX_VALUE, conf.getMaximumVolume());
     }
 
     @Test

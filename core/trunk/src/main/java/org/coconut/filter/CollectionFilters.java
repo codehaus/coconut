@@ -141,7 +141,7 @@ public final class CollectionFilters {
      */
     final static class TransformerFilter<F, T> implements Filter<F>, Serializable {
 
-        /** serialVersionUID */
+        /** serialVersionUID. */
         private static final long serialVersionUID = -6292758840373110577L;
 
         /** The object to compare with. */
@@ -217,7 +217,7 @@ public final class CollectionFilters {
         /** A default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 3256440304922996793L;
 
-        /** The class we are testing against */
+        /** The class we are testing against. */
         private final Class<?> theClass;
 
         /**
@@ -258,7 +258,7 @@ public final class CollectionFilters {
     }
 
     final static class IsNullFilter implements Filter, Serializable {
-        /** serialVersionUID */
+        /** serialVersionUID. */
         private static final long serialVersionUID = 6280765768913457567L;
 
         public boolean accept(Object element) {
@@ -275,10 +275,10 @@ public final class CollectionFilters {
     }
 
     final static class NotNullAndFilter<T> implements Filter<T>, Serializable {
-        /** serialVersionUID */
+        /** serialVersionUID. */
         private static final long serialVersionUID = -324206595097699714L;
 
-        /** the other filter */
+        /** the other filter. */
         private final Filter<T> filter;
 
         public NotNullAndFilter(Filter<T> filter) {

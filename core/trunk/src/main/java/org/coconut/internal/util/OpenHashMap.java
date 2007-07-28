@@ -151,7 +151,7 @@ public class OpenHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMa
     }
 
     /**
-     * Returns the table entry that should be used for key with given hash
+     * Returns the table entry that should be used for key with given hash.
      * 
      * @param hash
      *            the hash code for the key
@@ -165,7 +165,7 @@ public class OpenHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMa
     /* ---------------- Methods -------------- */
 
     /**
-     * Return properly casted first entry of bin for given hash
+     * Return properly casted first entry of bin for given hash.
      */
     private HashEntry<K, V> getFirst(int hash) {
         HashEntry[] tab = table;

@@ -78,9 +78,9 @@ public class DummyCache<K, V> implements Cache<K, V> {
     }
 
     /**
-     * @see org.coconut.cache.Cache#getCapacity()
+     * @see org.coconut.cache.Cache#getVolume()
      */
-    public long getCapacity() {
+    public long getVolume() {
         return 0;
     }
 

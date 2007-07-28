@@ -118,7 +118,7 @@ public class IndexedHeap<T> implements Serializable {
     }
     /**
      * Retrieves and removes the top of this heap, or <code>null</code> if
-     * this heap is empty
+     * this heap is empty.
      * 
      * @return the top of the heap, or <code>null</code> if this heap is empty
      */
@@ -321,7 +321,7 @@ public class IndexedHeap<T> implements Serializable {
      * 
      */
     public List<T> peekAll() {
-        ArrayList<T> col = new ArrayList<T>(numberOfElements);
+        List<T> col = new ArrayList<T>(numberOfElements);
         IndexedHeap<T> h = new IndexedHeap<T>(this);
         T t = h.poll();
         while (t != null) {

@@ -13,8 +13,13 @@ import java.util.concurrent.TimeUnit;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class Queues {
+public final class Queues {
 
+    ///CLOVER:OFF
+    /** Cannot instantiate. */
+    private Queues() {}
+    ///CLOVER:ON
+    
     public static <T> BlockingQueue<T> noOutputSide(BlockingQueue<T> bq) {
         return new NoOutputSide<T>(bq); // should peek work??
     }

@@ -15,6 +15,10 @@ import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @param <K>
+ *            the type of keys maintained by the cache
+ * @param <V>
+ *            the type of mapped values
  */
 public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>> extends
         AbstractEvictionService<K, V, T> {
@@ -34,10 +38,10 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
         super(helper);
         cp = conf.getPolicy() == null ? Policies.newLRU() : (ReplacementPolicy) conf
                 .getPolicy();
-        maxSize = EvictionUtils.getInitialMaximumSize(conf);
-        maxCapacity = EvictionUtils.getInitialMaximumCapacity(conf);
-        preferableCapacity = EvictionUtils.getPreferableCapacity(conf);
-        preferableSize = EvictionUtils.getPreferableSize(conf);
+        maxSize = EvictionUtils.getMaximumSizeFromConfiguration(conf);
+        maxCapacity = EvictionUtils.getMaximumVolumeFromConfiguration(conf);
+        preferableCapacity = EvictionUtils.getPreferableVolumeFromConfiguration(conf);
+        preferableSize = EvictionUtils.getPreferableSizeFromConfiguration(conf);
     }
 
     /** {@inheritDoc} */
@@ -127,14 +131,14 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
     }
 
     /** {@inheritDoc} */
-    public long getMaximumCapacity() {
+    public long getMaximumVolume() {
         return maxCapacity;
     }
 
     /** {@inheritDoc} */
-    public void setMaximumCapacity(long size) {
+    public void setMaximumVolume(long size) {
         this.maxCapacity = new CacheEvictionConfiguration<K, V>()
-                .setMaximumCapacity(size).getMaximumCapacity();
+                .setMaximumVolume(size).getMaximumVolume();
     }
 
     /** {@inheritDoc} */
@@ -145,7 +149,7 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
     /** {@inheritDoc} */
     public void setPreferableCapacity(long size) {
         this.preferableCapacity = new CacheEvictionConfiguration<K, V>()
-                .setPreferableCapacity(size).getPreferableCapacity();
+                .setPreferableVolume(size).getPreferableVolume();
     }
 
     /** {@inheritDoc} */

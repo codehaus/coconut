@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Clock is a
+ * Clock is a.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -44,7 +44,7 @@ public abstract class Clock {
      */
     public static class DeterministicClock extends Clock implements Serializable {
 
-        /** serialVersionUID */
+        /** serialVersionUID. */
         private static final long serialVersionUID = -7045902747103949579L;
 
         private final AtomicLong timestamp = new AtomicLong();

@@ -11,7 +11,7 @@ import java.util.List;
 import net.jcip.annotations.NotThreadSafe;
 
 /**
- * A PolicyStack
+ * A PolicyStack.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
@@ -175,7 +175,7 @@ public class IndexedStack<T> implements Serializable{
     }
 
     public List<T> peekAll() {
-        ArrayList<T> col = new ArrayList<T>(getSize());
+        List<T> col = new ArrayList<T>(getSize());
         int head = next[0];
         while (head != 0) {
             col.add(data[head]);

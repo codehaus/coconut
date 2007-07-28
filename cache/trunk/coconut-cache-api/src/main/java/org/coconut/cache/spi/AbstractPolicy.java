@@ -18,16 +18,12 @@ import org.coconut.core.AttributeMaps;
  */
 public abstract class AbstractPolicy<T> implements ReplacementPolicy<T> {
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int add(T element) {
         return add(element, AttributeMaps.EMPTY_MAP);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean update(int index, T newElement) {
         return update(index, newElement, AttributeMaps.EMPTY_MAP);
     }

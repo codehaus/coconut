@@ -81,23 +81,23 @@ public class Size extends AbstractCacheTCKTestBundle {
     public void cacheCapacity() {
         c = newCache(newConf().loading().setLoader(new MyLoader()));
         assertGet(M1);
-        assertEquals(2, c.getCapacity());
+        assertEquals(2, c.getVolume());
         assertGet(M3);
-        assertEquals(7, c.getCapacity());
+        assertEquals(7, c.getVolume());
         remove(M1);
-        assertEquals(5, c.getCapacity());
+        assertEquals(5, c.getVolume());
         assertGet(M6);
-        assertEquals(14, c.getCapacity());
+        assertEquals(14, c.getVolume());
         assertEquals(2, c.size());// element size unaffected
         c.clear();
-        assertEquals(0, c.getCapacity());
+        assertEquals(0, c.getVolume());
 
         c = newCache();
         put(M1);
-        assertEquals(1, c.getCapacity());
+        assertEquals(1, c.getVolume());
         putAll(M1, M2);
-        assertEquals(2, c.getCapacity());
+        assertEquals(2, c.getVolume());
         c.clear();
-        assertEquals(0, c.getCapacity());
+        assertEquals(0, c.getVolume());
     }
 }

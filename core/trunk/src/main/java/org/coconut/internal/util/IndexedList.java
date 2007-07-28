@@ -11,7 +11,7 @@ import java.util.List;
 import net.jcip.annotations.NotThreadSafe;
 
 /**
- * A PolicyList
+ * A PolicyList.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
@@ -137,7 +137,7 @@ public class IndexedList<T> implements Serializable {
     }
 
     public List<T> peekAll() {
-        ArrayList<T> col = new ArrayList<T>(currentEntryIndex);
+        List<T> col = new ArrayList<T>(currentEntryIndex);
         int head = next[0];
         while (head != 0) {
             col.add(data[head]);

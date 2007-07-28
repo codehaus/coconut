@@ -50,7 +50,7 @@ public class ManagementUtilsTest {
             {
                 one(mock).clear();
                 one(mock).evict();
-                one(mock).getCapacity();
+                one(mock).getVolume();
                 will(returnValue(1l));
                 one(mock).getName();
                 will(returnValue("fooName"));
@@ -61,7 +61,7 @@ public class ManagementUtilsTest {
         CacheMXBean mxBean = ManagementUtils.wrapMXBean(mock);
         mxBean.clear();
         mxBean.evict();
-        assertEquals(1l, mxBean.getCapacity());
+        assertEquals(1l, mxBean.getVolume());
         assertEquals("fooName", mxBean.getName());
         assertEquals(2, mxBean.getSize());
     }

@@ -7,7 +7,13 @@ package org.coconut.internal.util;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class ClassUtils {
+public final class ClassUtils {
+    
+    ///CLOVER:OFF
+    /** Cannot instantiate. */
+    private ClassUtils() {}
+    ///CLOVER:ON
+    
     public static Class fromPrimitive(Class c) {
         if (c.equals(Integer.TYPE)) {
             return Integer.class;

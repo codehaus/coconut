@@ -9,37 +9,37 @@ import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.annotation.ManagedOperation;
 
-public final class EvictionUtils {
+/**
+ * Various utilities used for the eviction service.
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ */
+final class EvictionUtils {
 
     /** Cannot instantiate. */
     private EvictionUtils() {}
 
-    public static <K, V> CacheEvictionService<K, V> wrapService(
-            CacheEvictionService<K, V> service) {
-        return new DelegatedCacheEvictionService<K, V>(service);
-    }
-
-    public static CacheEvictionMXBean wrapMXBean(CacheEvictionService<?, ?> service) {
-        return new DelegatedCacheEvictionMXBean(service);
-    }
-
     /**
-     * Must be a public class to allow reflection.
+     * This class wraps CacheEvictionService as a CacheEvictionMXBean.
+     * <p>
+     * Must be a public class to allow for reflection.
      */
     public static class DelegatedCacheEvictionMXBean implements CacheEvictionMXBean {
+        /** The service we are wrapping. */
         private final CacheEvictionService<?, ?> service;
 
+        /**
+         * Creates a new CacheEvictionMXBean by wrapping a CacheEvictionService.
+         * 
+         * @param service
+         *            the service to wrap.
+         */
         DelegatedCacheEvictionMXBean(CacheEvictionService<?, ?> service) {
             if (service == null) {
                 throw new NullPointerException("service is null");
             }
             this.service = service;
-        }
-
-        /** {@inheritDoc} */
-        @ManagedAttribute(description = "The maximum capacity of the cache")
-        public long getMaximumCapacity() {
-            return service.getMaximumCapacity();
         }
 
         /** {@inheritDoc} */
@@ -49,8 +49,9 @@ public final class EvictionUtils {
         }
 
         /** {@inheritDoc} */
-        public void setMaximumCapacity(long maximumCapacity) {
-            service.setMaximumCapacity(maximumCapacity);
+        @ManagedAttribute(description = "The maximum capacity of the cache")
+        public long getMaximumVolume() {
+            return service.getMaximumVolume();
         }
 
         /** {@inheritDoc} */
@@ -59,9 +60,8 @@ public final class EvictionUtils {
         }
 
         /** {@inheritDoc} */
-        @ManagedOperation(description = "Trims the cache to the specified capacity")
-        public void trimToCapacity(long capacity) {
-            service.trimToCapacity(capacity);
+        public void setMaximumVolume(long maximumCapacity) {
+            service.setMaximumVolume(maximumCapacity);
         }
 
         /** {@inheritDoc} */
@@ -70,20 +70,29 @@ public final class EvictionUtils {
             service.trimToSize(size);
         }
 
-// @ManagedAttribute(defaultValue = "Preferable Size", description = "The preferable size
-// of the cache")
-// int getPreferableSize();
-
-// @ManagedAttribute(defaultValue = "Preferable Capacity", description = "The preferable
-// capacity of the cache")
-        // long getPreferableCapacity();
-
+        /** {@inheritDoc} */
+        @ManagedOperation(description = "Trims the cache to the specified volume")
+        public void trimToVolume(long capacity) {
+            service.trimToVolume(capacity);
+        }
     }
 
-    public static class DelegatedCacheEvictionService<K, V> implements
+    /**
+     * This class wraps a CacheEvictionService implementation, only exposing the public
+     * methods in CacheEvictionService.
+     */
+    static class DelegatedCacheEvictionService<K, V> implements
             CacheEvictionService<K, V> {
+        /** The CacheEvictionService we are wrapping. */
         private final CacheEvictionService<K, V> service;
 
+        /**
+         * Creates a new DelegatedCacheEvictionService from the specified
+         * CacheEvictionService instance.
+         * 
+         * @param service
+         *            the CacheEvictionService to wrap.
+         */
         DelegatedCacheEvictionService(CacheEvictionService<K, V> service) {
             if (service == null) {
                 throw new NullPointerException("service is null");
@@ -92,18 +101,13 @@ public final class EvictionUtils {
         }
 
         /** {@inheritDoc} */
-        public long getMaximumCapacity() {
-            return service.getMaximumCapacity();
-        }
-
-        /** {@inheritDoc} */
         public int getMaximumSize() {
             return service.getMaximumSize();
         }
 
         /** {@inheritDoc} */
-        public void setMaximumCapacity(long maximumCapacity) {
-            service.setMaximumCapacity(maximumCapacity);
+        public long getMaximumVolume() {
+            return service.getMaximumVolume();
         }
 
         /** {@inheritDoc} */
@@ -112,8 +116,8 @@ public final class EvictionUtils {
         }
 
         /** {@inheritDoc} */
-        public void trimToCapacity(long capacity) {
-            service.trimToCapacity(capacity);
+        public void setMaximumVolume(long maximumCapacity) {
+            service.setMaximumVolume(maximumCapacity);
         }
 
         /** {@inheritDoc} */
@@ -121,37 +125,88 @@ public final class EvictionUtils {
             service.trimToSize(size);
         }
 
+        /** {@inheritDoc} */
+        public void trimToVolume(long volume) {
+            service.trimToVolume(volume);
+        }
+
     }
 
-    static int getInitialMaximumSize(CacheEvictionConfiguration<?, ?> conf) {
+    /**
+     * Wraps a CacheEvictionService as a CacheEvictionMXBean.
+     * 
+     * @param service
+     *            the CacheEvictionService to wrap
+     * @return the wrapped CacheEvictionMXBean
+     */
+    public static CacheEvictionMXBean wrapMXBean(CacheEvictionService<?, ?> service) {
+        return new DelegatedCacheEvictionMXBean(service);
+    }
+
+    /**
+     * Wraps a CacheEvictionService implementation such that only methods from the
+     * CacheEvictionService interface is exposed.
+     * 
+     * @param service
+     *            the CacheEvictionService to wrap
+     * @return a wrapped service that only exposes CacheEvictionService methods
+     * @param <K>
+     *            the type of keys maintained by the specified service
+     * @param <V>
+     *            the type of mapped values
+     */
+    public static <K, V> CacheEvictionService<K, V> wrapService(
+            CacheEvictionService<K, V> service) {
+        return new DelegatedCacheEvictionService<K, V>(service);
+    }
+
+    /**
+     * Returns the maximum size configured in the specified configuration.
+     * 
+     * @param conf
+     *            the configuration to read the maximum size from
+     * @return the maximum size configured in the specified configuration
+     */
+    static int getMaximumSizeFromConfiguration(CacheEvictionConfiguration<?, ?> conf) {
         int tmp = conf.getMaximumSize();
         return tmp == 0 ? Integer.MAX_VALUE : tmp;
     }
 
-    static long getInitialMaximumCapacity(CacheEvictionConfiguration<?, ?> conf) {
-        long tmp = conf.getMaximumCapacity();
+    /**
+     * Returns the maximum volume configured in the specified configuration.
+     * 
+     * @param conf
+     *            the configuration to read the maximum volume from
+     * @return the maximum volume configured in the specified configuration
+     */
+    static long getMaximumVolumeFromConfiguration(CacheEvictionConfiguration<?, ?> conf) {
+        long tmp = conf.getMaximumVolume();
         return tmp == 0 ? Long.MAX_VALUE : tmp;
     }
 
-    static int getPreferableSize(CacheEvictionConfiguration<?, ?> conf) {
+    /**
+     * Returns the preferable size configured in the specified configuration.
+     * 
+     * @param conf
+     *            the configuration to read the preferable size from
+     * @return the preferable size configured in the specified configuration
+     */
+    static int getPreferableSizeFromConfiguration(CacheEvictionConfiguration<?, ?> conf) {
         int tmp = conf.getPreferableSize();
         return tmp == 0 ? Integer.MAX_VALUE : tmp;
     }
 
-    static long getPreferableCapacity(CacheEvictionConfiguration<?, ?> conf) {
-        long tmp = conf.getPreferableCapacity();
+    /**
+     * Returns the preferable volume configured in the specified configuration.
+     * 
+     * @param conf
+     *            the configuration to read the preferable volume from
+     * @return the preferable volume configured in the specified configuration
+     */
+    static long getPreferableVolumeFromConfiguration(CacheEvictionConfiguration<?, ?> conf) {
+        long tmp = conf.getPreferableVolume();
         return tmp == 0 ? Long.MAX_VALUE : tmp;
     }
-
-    // @ManagedAttribute(description = "The default time to idle for cache entries in
-    // milliseconds")
-    // public long getDefaultIdleTimeMs() {
-    // return service.getDefaultIdleTime(TimeUnit.MILLISECONDS);
-    // }
-
-    // public void setDefaultIdleTimeMs(long idleTimeMs) {
-    // service.setDefaultIdleTime(idleTimeMs, TimeUnit.MILLISECONDS);
-    // }
 
     // @ManagedOperation(description = "Evict all elements that idle")
     // public void evictIdleElements() {
@@ -166,13 +221,7 @@ public final class EvictionUtils {
     // service.evictAll(keys);
     // }
     //
-    // public long getDefaultIdleTime(TimeUnit unit) {
-    // return service.getDefaultIdleTime(unit);
-    // }
-    //
-    // public void setDefaultIdleTime(long idleTime, TimeUnit unit) {
-    // service.setDefaultIdleTime(idleTime, unit);
-    // }
+
     //
     // public void evictIdleElements() {
     // service.evictIdleElements();

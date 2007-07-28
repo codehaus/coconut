@@ -13,14 +13,20 @@ import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.service.eviction.CacheEvictionMXBean;
 import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.management.ManagedGroup;
+import org.coconut.management.ManagedObject;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @param <K>
+ *            the type of keys maintained by this service
+ * @param <V>
+ *            the type of mapped values
  */
 public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> extends
         AbstractInternalCacheService implements InternalCacheEvictionService<K, V, T>,
-        CacheEvictionService<K, V>, CacheEvictionMXBean {
+        CacheEvictionService<K, V>, CacheEvictionMXBean, ManagedObject {
+
     private final CacheHelper<K, V> helper;
 
     /**
@@ -39,15 +45,14 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void registerMXBeans(ManagedGroup root) {
-        ManagedGroup g = root.addChild(CacheEvictionConfiguration.SERVICE_NAME,
+    public void manage(ManagedGroup parent) {
+        ManagedGroup g = parent.addChild(CacheEvictionConfiguration.SERVICE_NAME,
                 "Cache Eviction attributes and operations");
         g.add(EvictionUtils.wrapMXBean(this));
     }
 
     /** {@inheritDoc} */
-    public void trimToCapacity(long capacity) {
+    public void trimToVolume(long capacity) {
         helper.trimToCapacity(capacity);
     }
 
