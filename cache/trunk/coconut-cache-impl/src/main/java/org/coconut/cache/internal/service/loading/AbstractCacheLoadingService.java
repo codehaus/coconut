@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.CacheHelper;
+import org.coconut.cache.internal.service.InternalCacheSupport;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
@@ -33,10 +33,10 @@ public abstract class AbstractCacheLoadingService<K, V> extends
 
     private final InternalCacheAttributeService attributeFactory;
 
-    private final CacheHelper<K, V> helper;
+    private final InternalCacheSupport<K, V> helper;
 
     AbstractCacheLoadingService(InternalCacheAttributeService attributeFactory,
-            CacheHelper<K, V> helper) {
+            InternalCacheSupport<K, V> helper) {
         super(CacheLoadingConfiguration.SERVICE_NAME);
         this.attributeFactory = attributeFactory;
         this.helper = helper;

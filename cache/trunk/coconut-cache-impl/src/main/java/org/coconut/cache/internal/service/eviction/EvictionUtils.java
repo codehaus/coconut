@@ -132,7 +132,6 @@ final class EvictionUtils {
         public void trimToVolume(long volume) {
             service.trimToVolume(volume);
         }
-
     }
 
     /**

@@ -1,7 +1,6 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-
 package org.coconut.cache.tck.service.loading;
 
 import static org.coconut.test.CollectionUtils.M1;
@@ -55,7 +54,7 @@ public class ExplicitLoading extends AbstractLoadingTestBundle {
     @Test
     public void load() {
         loading().load(M1.getKey());
-        awaitLoad();
+        awaitAllLoads();
         assertNotNull(loader.getLatestAttributeMap());
         assertEquals(1, loader.getNumberOfLoads());
         assertPeek(M1);
@@ -64,7 +63,7 @@ public class ExplicitLoading extends AbstractLoadingTestBundle {
     @Test
     public void loadWithAttributes() {
         loading().load(M1.getKey(), ATR_FOO);
-        awaitLoad();
+        awaitAllLoads();
         assertEquals(1, loader.getNumberOfLoads());
         assertNotNull(loader.getLatestAttributeMap());
         assertNotSame(loader.getLatestAttributeMap(), ATR_FOO);
@@ -75,7 +74,7 @@ public class ExplicitLoading extends AbstractLoadingTestBundle {
     @Test
     public void loadAndGet() {
         loading().load(M1.getKey());
-        awaitLoad();
+        awaitAllLoads();
         assertEquals(1, loader.getNumberOfLoads());
         assertGet(M1);// value is kept
         assertEquals(1, loader.getNumberOfLoads());
@@ -84,27 +83,27 @@ public class ExplicitLoading extends AbstractLoadingTestBundle {
     @Test
     public void loadTwice() {
         loading().load(M1.getKey());
-        awaitLoad();
+        awaitAllLoads();
         assertEquals(1, loader.getNumberOfLoads());
         loading().load(M1.getKey());
-        awaitLoad();
+        awaitAllLoads();
         assertEquals(1, loader.getNumberOfLoads());
     }
 
     @Test
     public void loadWithAttributesTwice() {
         loading().load(M1.getKey());
-        awaitLoad();
+        awaitAllLoads();
         assertEquals(1, loader.getNumberOfLoads());
         loading().load(M1.getKey(), ATR_FO1);
-        awaitLoad();
+        awaitAllLoads();
         assertEquals(1, loader.getNumberOfLoads());
     }
 
     @Test
     public void loadAll() {
         loading().loadAll(Arrays.asList(M1.getKey(), M2.getKey()));
-        awaitLoad();
+        awaitAllLoads();
         assertEquals(2, loader.getNumberOfLoads());
         assertGet(M1);// value is kept
         assertGet(M2);// value is kept
@@ -114,13 +113,13 @@ public class ExplicitLoading extends AbstractLoadingTestBundle {
     @Test
     public void loadAllTwice() {
         loading().load(M1.getKey());
-        awaitLoad();
+        awaitAllLoads();
         assertEquals(1, loader.getNumberOfLoads());
         loading().loadAll(Arrays.asList(M1.getKey(), M2.getKey()));
-        awaitLoad();
+        awaitAllLoads();
         assertEquals(2, loader.getNumberOfLoads());
         loading().loadAll(Arrays.asList(M1.getKey(), M2.getKey()));
-        awaitLoad();
+        awaitAllLoads();
         assertEquals(2, loader.getNumberOfLoads());
     }
 
@@ -135,7 +134,7 @@ public class ExplicitLoading extends AbstractLoadingTestBundle {
         req.put(1, am1);
         req.put(2, am2);
         loading().loadAll(req);
-        awaitLoad();
+        awaitAllLoads();
         assertEquals(2, loader.getNumberOfLoads());
         assertEquals("a1", get(1));
         assertEquals("a2", get(2));
@@ -145,7 +144,7 @@ public class ExplicitLoading extends AbstractLoadingTestBundle {
     @Test
     public void loadAllWithAttributesTwice() {
         loading().load(M1.getKey());
-        awaitLoad();
+        awaitAllLoads();
         assertEquals(1, loader.getNumberOfLoads());
 
         AttributeMap am1 = new AttributeMaps.DefaultAttributeMap();
@@ -157,7 +156,7 @@ public class ExplicitLoading extends AbstractLoadingTestBundle {
         req.put(M1.getKey(), am1);
         req.put(2, am2);
         loading().loadAll(req);
-        awaitLoad();
+        awaitAllLoads();
         assertEquals(2, loader.getNumberOfLoads());
         assertGet(M1);
         assertEquals("a2", get(2));

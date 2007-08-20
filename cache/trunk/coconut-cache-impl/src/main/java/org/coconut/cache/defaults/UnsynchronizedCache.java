@@ -19,7 +19,7 @@ import net.jcip.annotations.NotThreadSafe;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.CacheHelper;
+import org.coconut.cache.internal.service.InternalCacheSupport;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
 import org.coconut.cache.internal.service.entry.EntryMap;
@@ -102,8 +102,8 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     @SuppressWarnings("unchecked")
     public UnsynchronizedCache(CacheConfiguration<K, V> conf) {
         super(conf);
-        serviceManager = new UnsynchronizedCacheServiceManager(this, new MyHelper(), conf);
-        Defaults.initializeUnsynchronizedCache(serviceManager);
+        serviceManager = new UnsynchronizedCacheServiceManager(this, new Support(), conf);
+        Defaults.initializeUnsynchronizedCache(conf, serviceManager);
         expiration = serviceManager.getService(DefaultCacheExpirationService.class);
         loadingService = serviceManager.getService(InternalCacheLoadingService.class);
         evictionService = serviceManager.getService(InternalCacheEvictionService.class);
@@ -471,7 +471,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     }
 
     /** A helper class. */
-    class MyHelper implements CacheHelper<K, V> {
+    class Support implements InternalCacheSupport<K, V> {
 
         /** {@inheritDoc} */
         public Collection<? extends CacheEntry<K, V>> filter(
@@ -547,7 +547,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         }
 
         /** {@inheritDoc} */
-        public void trimToCapacity(long capacity) {
+        public void trimToVolume(long capacity) {
             throw new UnsupportedOperationException();
         }
 

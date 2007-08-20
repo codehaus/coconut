@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.CacheHelper;
+import org.coconut.cache.internal.service.InternalCacheSupport;
 import org.coconut.cache.internal.service.attribute.DefaultCacheAttributeService;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
@@ -47,8 +47,8 @@ public class DefaultCacheExpirationServiceTest {
 
     private DefaultCacheExpirationService<Integer, String> s;
 
-    private CacheHelper<Integer, String> helper = new JUnit4Mockery()
-            .mock(CacheHelper.class);
+    private InternalCacheSupport<Integer, String> helper = new JUnit4Mockery()
+            .mock(InternalCacheSupport.class);
 
     private CacheExceptionHandler<Integer, String> errorHandler;
 

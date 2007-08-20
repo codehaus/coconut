@@ -14,7 +14,7 @@ import org.coconut.filter.Filter;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public interface CacheHelper<K, V> {
+public interface InternalCacheSupport<K, V> {
 
     /**
      * Called whenever a cacheloader has asynchronously loaded an element.
@@ -47,7 +47,7 @@ public interface CacheHelper<K, V> {
 
     Collection<? extends CacheEntry<K, V>> filter(Filter<? super CacheEntry<K, V>> filter);
 
-    void trimToCapacity(long capacity);
+    void trimToVolume(long capacity);
 
     void trimToSize(int size);
 }

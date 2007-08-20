@@ -4,13 +4,13 @@
 
 package org.coconut.cache.defaults;
 
-import org.coconut.cache.tck.CacheTCKClassSpecifier;
+import org.coconut.cache.tck.CacheTCKImplementationSpecifier;
 import org.coconut.cache.tck.CacheTCKRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(CacheTCKRunner.class)
-@CacheTCKClassSpecifier(UnsynchronizedCache.class)
+@CacheTCKImplementationSpecifier(UnsynchronizedCache.class)
 public class UnsynchronizedCacheTest {
 
     @Test

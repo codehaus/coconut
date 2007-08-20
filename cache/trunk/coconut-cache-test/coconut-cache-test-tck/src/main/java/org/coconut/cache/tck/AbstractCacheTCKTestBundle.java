@@ -31,6 +31,12 @@ import org.coconut.management.ManagedGroup;
 import org.coconut.test.CollectionUtils;
 import org.junit.Before;
 
+/**
+ * All Cache tests should 
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ */
 public class AbstractCacheTCKTestBundle extends Assert {
     protected Cache<Integer, String> c;
 

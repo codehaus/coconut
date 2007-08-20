@@ -4,7 +4,7 @@
 package org.coconut.cache.internal.service.eviction;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.internal.service.CacheHelper;
+import org.coconut.cache.internal.service.InternalCacheSupport;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 
 /**
@@ -20,7 +20,7 @@ public class SynchronizedCacheEvictionService<K, V> extends
     private final Cache mutex;
 
     public SynchronizedCacheEvictionService(Cache c, CacheEvictionConfiguration conf,
-            CacheHelper<K, V> helper) {
+            InternalCacheSupport<K, V> helper) {
         super(conf, helper);
         this.mutex = c;
     }

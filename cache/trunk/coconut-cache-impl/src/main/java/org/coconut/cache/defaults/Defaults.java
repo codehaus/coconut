@@ -3,6 +3,7 @@
  */
 package org.coconut.cache.defaults;
 
+import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.event.DefaultCacheEventService;
 import org.coconut.cache.internal.service.eviction.UnsynchronizedCacheEvictionService;
 import org.coconut.cache.internal.service.expiration.DefaultCacheExpirationService;
@@ -22,7 +23,7 @@ final class Defaults {
     private Defaults() {}
 
     @SuppressWarnings("unchecked")
-    static <K, V> void initializeUnsynchronizedCache(
+    static <K, V> void initializeUnsynchronizedCache(CacheConfiguration<K, V> conf,
             InternalCacheServiceManager serviceManager) {
         serviceManager.registerServices(DefaultCacheStatisticsService.class);
         serviceManager.registerServices(UnsynchronizedCacheEvictionService.class);

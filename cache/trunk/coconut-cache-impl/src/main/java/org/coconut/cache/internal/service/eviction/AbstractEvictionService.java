@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.CacheHelper;
+import org.coconut.cache.internal.service.InternalCacheSupport;
 import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.service.eviction.CacheEvictionMXBean;
@@ -27,12 +27,12 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
         AbstractInternalCacheService implements InternalCacheEvictionService<K, V, T>,
         CacheEvictionService<K, V>, CacheEvictionMXBean, ManagedObject {
 
-    private final CacheHelper<K, V> helper;
+    private final InternalCacheSupport<K, V> helper;
 
     /**
      * 
      */
-    public AbstractEvictionService(CacheHelper<K, V> helper) {
+    public AbstractEvictionService(InternalCacheSupport<K, V> helper) {
         super(CacheEvictionConfiguration.SERVICE_NAME);
         this.helper = helper;
     }
@@ -53,7 +53,7 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
 
     /** {@inheritDoc} */
     public void trimToVolume(long capacity) {
-        helper.trimToCapacity(capacity);
+        helper.trimToVolume(capacity);
     }
 
     /** {@inheritDoc} */

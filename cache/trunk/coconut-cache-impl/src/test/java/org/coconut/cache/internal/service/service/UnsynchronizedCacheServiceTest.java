@@ -11,7 +11,7 @@ import java.util.Map;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.internal.service.CacheHelper;
+import org.coconut.cache.internal.service.InternalCacheSupport;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.AbstractCacheService;
 import org.coconut.management.ManagedGroup;
@@ -49,7 +49,7 @@ public class UnsynchronizedCacheServiceTest {
     public void testServiceConstructor() {
         CacheConfiguration<?, ?> conf = CacheConfiguration.create();
         UnsynchronizedCacheServiceManager m = new UnsynchronizedCacheServiceManager(
-                cache, MockTestCase.mockDummy(CacheHelper.class), conf);
+                cache, MockTestCase.mockDummy(InternalCacheSupport.class), conf);
         assertEquals(ServiceStatus.NOTRUNNING, m.getCurrentState());
         assertFalse(m.isRunning());
     }
@@ -58,7 +58,7 @@ public class UnsynchronizedCacheServiceTest {
     public void testServiceStartNoServices() {
         CacheConfiguration<?, ?> conf = CacheConfiguration.create();
         UnsynchronizedCacheServiceManager m = new UnsynchronizedCacheServiceManager(
-                cache, MockTestCase.mockDummy(CacheHelper.class), conf);
+                cache, MockTestCase.mockDummy(InternalCacheSupport.class), conf);
         m.prestart();
         assertEquals(ServiceStatus.RUNNING, m.getCurrentState());
         assertEquals(0, m.getPublicServices().size());
@@ -68,7 +68,7 @@ public class UnsynchronizedCacheServiceTest {
     public void testServiceStartDummyService() {
         CacheConfiguration<?, ?> conf = CacheConfiguration.create();
         InternalCacheServiceManager m = new UnsynchronizedCacheServiceManager(cache,
-                MockTestCase.mockDummy(CacheHelper.class), conf);
+                MockTestCase.mockDummy(InternalCacheSupport.class), conf);
         m.registerService(CacheManagementService.class, MyManagementService.class);
         m.prestart();
         assertEquals(ServiceStatus.RUNNING, m.getCurrentState());

@@ -7,12 +7,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheLifecycle;
-import org.coconut.cache.internal.service.CacheHelper;
+import org.coconut.cache.internal.service.InternalCacheSupport;
 import org.coconut.cache.internal.service.attribute.DefaultCacheAttributeService;
 import org.coconut.cache.internal.service.entry.UnsynchronizedEntryFactoryService;
 import org.coconut.cache.internal.service.exceptionhandling.DefaultCacheExceptionService;
@@ -46,7 +47,7 @@ public class UnsynchronizedCacheServiceManager extends
     
     private final List<ServiceHolder> externalServices = new ArrayList<ServiceHolder>();
 
-    public UnsynchronizedCacheServiceManager(Cache<?, ?> cache, CacheHelper<?, ?> helper,
+    public UnsynchronizedCacheServiceManager(Cache<?, ?> cache, InternalCacheSupport<?, ?> helper,
             CacheConfiguration<?, ?> conf) {
         this.conf = conf;
         this.cache = cache;
@@ -160,7 +161,7 @@ public class UnsynchronizedCacheServiceManager extends
         }
     }
 
-    private void initializePicoContainer(Cache<?, ?> cache, CacheHelper<?, ?> helper,
+    private void initializePicoContainer(Cache<?, ?> cache, InternalCacheSupport<?, ?> helper,
             CacheConfiguration<?, ?> conf) {
         container.registerComponentInstance(this);
         container.registerComponentInstance(cache.getName());

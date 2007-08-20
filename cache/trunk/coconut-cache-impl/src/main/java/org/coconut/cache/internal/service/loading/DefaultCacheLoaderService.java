@@ -10,7 +10,7 @@ import java.util.concurrent.FutureTask;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.CacheHelper;
+import org.coconut.cache.internal.service.InternalCacheSupport;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
@@ -37,7 +37,7 @@ import org.coconut.management.ManagedObject;
 public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService<K, V>
         implements ManagedObject {
 
-    final CacheHelper<K, V> cache;
+    final InternalCacheSupport<K, V> cache;
 
     /** A clock used to check if an entry needs to be refreshed. */
     private final Clock clock;
@@ -55,7 +55,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
             CacheExceptionService<K, V> exceptionService,
             CacheLoadingConfiguration<K, V> loadConf,
             final InternalCacheThreadingService threadManager,
-            final CacheHelper<K, V> cache) {
+            final InternalCacheSupport<K, V> cache) {
         super(attributeFactory, cache);
         this.errorHandler = exceptionService;
         this.clock = clock;

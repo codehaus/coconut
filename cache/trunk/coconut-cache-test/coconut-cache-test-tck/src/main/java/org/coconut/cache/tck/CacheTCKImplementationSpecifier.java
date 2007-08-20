@@ -11,11 +11,13 @@ import java.lang.annotation.Target;
 import org.coconut.cache.Cache;
 
 /**
+ * This class is used to indicate the implementing class of a {@link Cache}.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface CacheTCKClassSpecifier {
+public @interface CacheTCKImplementationSpecifier {
     Class<? extends Cache> value();
 }

@@ -9,23 +9,41 @@ import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
 import org.coconut.test.MockTestCase;
 import org.junit.Test;
 
+/**
+ * Tests whether or not the cache loading service is available.
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ */
+@SuppressWarnings("unchecked")
 public class LoadingService extends AbstractCacheTCKTestBundle {
 
+    /**
+     * Tests that a cache that has no configured cache loader. Does not have
+     * {@link CacheLoadingService} available.
+     */
     @Test
-    public void testNonConfigured() {
+    public void noLoadingServiceIfNoLoaderConfigured() {
         c = newCache();
         assertFalse(c.hasService(CacheLoadingService.class));
     }
 
+    /**
+     * Tests that a cache that has no configured cache loader. Does not have
+     * {@link CacheLoadingService} available.
+     */
     @Test(expected = IllegalArgumentException.class)
-    public void testNonConfiguredIAE() {
+    public void getLoadingServiceFailIfNoLoaderConfigured() {
         c = newCache();
         c.getService(CacheLoadingService.class);
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * Tests that a cache that has a configured cache loader. Will have a
+     * {@link CacheLoadingService} available.
+     */
     @Test
-    public void testConfigured() {
+    public void hasAndGetLoadingService() {
         c = newCache(newConf().loading().setLoader(
                 MockTestCase.mockDummy(CacheLoader.class)));
         assertTrue(c.hasService(CacheLoadingService.class));

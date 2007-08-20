@@ -11,7 +11,6 @@ import javax.management.JMException;
 import javax.management.MBeanServer;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
 import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
 import org.coconut.cache.service.management.CacheMXBean;

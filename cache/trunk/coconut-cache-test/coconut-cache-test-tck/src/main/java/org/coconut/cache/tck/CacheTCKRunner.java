@@ -67,7 +67,7 @@ public class CacheTCKRunner extends Runner {
     @SuppressWarnings("unchecked")
     public CacheTCKRunner(Class<? extends Cache> klass) throws Throwable {
         this.klass = klass;
-        tt = klass.getAnnotation(CacheTCKClassSpecifier.class).value();
+        tt = klass.getAnnotation(CacheTCKImplementationSpecifier.class).value();
         composite = new CompositeRunner(klass.getName());
         addTests(composite);
         // only add the test class itself if it contains tests

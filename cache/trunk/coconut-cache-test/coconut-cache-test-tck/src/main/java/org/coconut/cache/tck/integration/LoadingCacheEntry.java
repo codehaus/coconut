@@ -9,6 +9,7 @@ import static org.coconut.test.CollectionUtils.M2;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.tck.service.loading.AbstractLoadingTestBundle;
+import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.junit.Test;
 
 /**
@@ -21,7 +22,7 @@ public class LoadingCacheEntry extends ExpirationTestBundle {
     public void testLastUpdateFromLoader() {
         CacheConfiguration<Integer, String> conf = CacheConfiguration.create();
         conf.setClock(clock);
-        conf.loading().setLoader(AbstractLoadingTestBundle.DEFAULT_LOADER);
+        conf.loading().setLoader(new IntegerToStringLoader());
         c = newCache(conf);
         clock.setTimestamp(10);
         get(M1);
@@ -32,7 +33,7 @@ public class LoadingCacheEntry extends ExpirationTestBundle {
     public void testAccessFromLoader() {
         CacheConfiguration<Integer, String> conf = CacheConfiguration.create();
         conf.setClock(clock);
-        conf.loading().setLoader(AbstractLoadingTestBundle.DEFAULT_LOADER);
+        conf.loading().setLoader(new IntegerToStringLoader());
         c = newCache(conf);
         clock.setTimestamp(10);
         get(M1);

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.CacheHelper;
+import org.coconut.cache.internal.service.InternalCacheSupport;
 import org.coconut.cache.policy.Policies;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
@@ -34,7 +34,7 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
 
     // @SuppressWarnings("unchecked")
     public UnsynchronizedCacheEvictionService(CacheEvictionConfiguration<K, V> conf,
-            CacheHelper<K, V> helper) {
+            InternalCacheSupport<K, V> helper) {
         super(helper);
         cp = conf.getPolicy() == null ? Policies.newLRU() : (ReplacementPolicy) conf
                 .getPolicy();

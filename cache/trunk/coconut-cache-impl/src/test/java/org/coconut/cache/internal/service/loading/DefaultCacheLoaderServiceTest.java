@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import org.coconut.cache.internal.service.CacheHelper;
+import org.coconut.cache.internal.service.InternalCacheSupport;
 import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
 import org.coconut.cache.internal.service.threading.InternalCacheThreadingService;
 import org.coconut.cache.service.loading.CacheLoader;
@@ -63,7 +63,7 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
 
     Mock cacheHelperMock;
 
-    CacheHelper<Integer, String> cacheHelperProxy;
+    InternalCacheSupport<Integer, String> cacheHelperProxy;
 
     DefaultCacheLoaderService<Integer, String> service;
 
@@ -77,8 +77,8 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
         errorHandlerMock = mock(CacheExceptionService.class);
         errorHandlerProxy = (CacheExceptionService) errorHandlerMock.proxy();
 
-        cacheHelperMock = mock(CacheHelper.class);
-        cacheHelperProxy = (CacheHelper) cacheHelperMock.proxy();
+        cacheHelperMock = mock(InternalCacheSupport.class);
+        cacheHelperProxy = (InternalCacheSupport) cacheHelperMock.proxy();
         myExecutor = new MyExecutor();
         loadingConf=new CacheLoadingConfiguration<Integer, String> ();
         loadingConf.setLoader(loaderProxy1);

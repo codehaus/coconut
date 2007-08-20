@@ -27,6 +27,11 @@ public final class AttributeMaps {
     private AttributeMaps() {}
     ///CLOVER:ON
 
+    public static AttributeMap from(String name, Object value) {
+        DefaultAttributeMap map = new DefaultAttributeMap();
+        map.put(name, value);
+        return map;
+    }
     /**
      * The default implementation of an {@link AttributeMap}.
      */

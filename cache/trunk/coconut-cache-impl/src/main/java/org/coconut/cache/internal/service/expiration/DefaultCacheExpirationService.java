@@ -12,7 +12,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.CacheHelper;
+import org.coconut.cache.internal.service.InternalCacheSupport;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
@@ -25,7 +25,7 @@ import org.coconut.management.ManagedObject;
 
 /**
  * The default implementation of {@link CacheExpirationService}. This implementation can
- * be used in a multi-threaded environment if {@link Cache}, {@link CacheHelper} and
+ * be used in a multi-threaded environment if {@link Cache}, {@link InternalCacheSupport} and
  * {@link InternalCacheAttributeService} that is specified at construction time are
  * thread-safe.
  * <p>
@@ -48,7 +48,7 @@ public class DefaultCacheExpirationService<K, V> extends AbstractInternalCacheSe
     /** The user specified expiration filter. */
     private final Filter<CacheEntry<K, V>> expirationFilter;
 
-    private final CacheHelper<K, V> helper;
+    private final InternalCacheSupport<K, V> helper;
 
     /** The clock used to get the current time. */
     private final Clock clock;
@@ -56,7 +56,7 @@ public class DefaultCacheExpirationService<K, V> extends AbstractInternalCacheSe
     private final Cache<K, V> cache;
 
     public DefaultCacheExpirationService(Cache<K, V> cache, Clock clock,
-            CacheHelper<K, V> helper, CacheExpirationConfiguration<K, V> conf,
+            InternalCacheSupport<K, V> helper, CacheExpirationConfiguration<K, V> conf,
             InternalCacheAttributeService attributeFactory) {
         super(CacheExpirationConfiguration.SERVICE_NAME);
         this.clock = clock;
