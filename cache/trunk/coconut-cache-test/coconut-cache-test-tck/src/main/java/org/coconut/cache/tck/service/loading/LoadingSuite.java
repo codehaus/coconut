@@ -7,5 +7,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses( { ImplicitLoading.class, ExplicitLoading.class, LoadingMXBean.class })
+@Suite.SuiteClasses( { ImplicitLoading.class, ExplicitLoading.class,
+        ExplicitForcedLoading.class, LoadingMXBean.class })
 public class LoadingSuite {}

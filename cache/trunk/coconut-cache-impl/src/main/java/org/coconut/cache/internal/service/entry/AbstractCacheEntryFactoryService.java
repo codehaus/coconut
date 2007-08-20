@@ -15,10 +15,17 @@ import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
 
 /**
+ * An AbstractCacheEntryFactoryService is responsible for creating cache entry instances.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @param <K>
+ *            the type of keys maintained by the cache
+ * @param <V>
+ *            the type of mapped values
  */
 public abstract class AbstractCacheEntryFactoryService<K, V> {
+    /** Used for calculating timestamps. */
     private final Clock clock;
 
     private final CacheExceptionService<K, V> errorHandler;
@@ -27,6 +34,15 @@ public abstract class AbstractCacheEntryFactoryService<K, V> {
 
     private final AbstractCacheLoadingService<K, V> loadingService;
 
+    /**
+     * Creates a new AbstractCacheEntryFactoryService.
+     * 
+     * @param clock
+     *            the clock used to calculate time stamps
+     * @param exceptionHandler
+     * @param expirationService
+     * @param loadingService
+     */
     public AbstractCacheEntryFactoryService(Clock clock,
             CacheExceptionService<K, V> exceptionHandler,
             DefaultCacheExpirationService<K, V> expirationService,
@@ -37,60 +53,105 @@ public abstract class AbstractCacheEntryFactoryService<K, V> {
         this.loadingService = loadingService;
     }
 
-    public V putVersion(K key, V value, long version) {
-        return value;
-    }
-
+    /**
+     * Creates a new cache entry from the specified key, value, attribute map and existing
+     * cache entry.
+     * 
+     * @param key
+     *            the key of the cache entry that should be added
+     * @param value
+     *            the value of the cache entry that should be added
+     * @param attributes
+     *            the attributemap for the new cache entry
+     * @param existing
+     *            the existing cache entry, or null if this is a new entry
+     * @return a new cache entry from the specified key, value, attribute map and existing
+     *         cache entry
+     */
     public abstract AbstractCacheEntry<K, V> createEntry(K key, V value,
             AttributeMap attributes, AbstractCacheEntry<K, V> existing);
 
+    /**
+     * Calculates the size of the element that was added.
+     * 
+     * @param key
+     *            the key of the cache entry
+     * @param value
+     *            the value of the cache entry
+     * @param attributes
+     *            a map of cache entry attributes
+     * @param existing
+     *            the existing cache entry, or null if this is a new entry
+     * @return the size of the element that was added
+     */
     long getSize(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
         try {
             return CacheAttributes.getSize(attributes);
         } catch (IllegalArgumentException iae) {
-            errorHandler.getExceptionHandler().handleWarning(errorHandler.createContext(),
+            errorHandler.getExceptionHandler().handleWarning(
+                    errorHandler.createContext(),
                     iae.getMessage() + " was added for key = " + key);
             return CacheAttributes.DEFAULT_SIZE;
         }
     }
 
-    long getTimeToLive(DefaultAttributes atr, K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
+    long getTimeToLive(DefaultAttributes atr, K key, V value, AttributeMap attributes,
+            CacheEntry<K, V> existing) {
         long time = atr.getExpirationTimeNanos();
         try {
             time = CacheAttributes.getTimeToLive(attributes, TimeUnit.NANOSECONDS, time);
         } catch (IllegalArgumentException iae) {
-            errorHandler.getExceptionHandler().handleWarning(errorHandler.createContext(),
+            errorHandler.getExceptionHandler().handleWarning(
+                    errorHandler.createContext(),
                     iae.getMessage() + " was added for key = " + key);
         }
-        return clock.getDeadlineFromNow(time, TimeUnit.NANOSECONDS);
+
+        return time == Long.MAX_VALUE ? Long.MAX_VALUE : clock.getDeadlineFromNow(time,
+                TimeUnit.NANOSECONDS);
     }
 
+    /**
+     * Calculates the cost of the element that was added.
+     * 
+     * @param key
+     *            the key of the cache entry
+     * @param value
+     *            the value of the cache entry
+     * @param attributes
+     *            a map of cache entry attributes
+     * @param existing
+     *            the existing cache entry, or null if this is a new entry
+     * @return the cost of the element that was added
+     */
     double getCost(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
         try {
             return CacheAttributes.getCost(attributes);
         } catch (IllegalArgumentException iae) {
-            errorHandler.getExceptionHandler().handleWarning(errorHandler.createContext(),
+            errorHandler.getExceptionHandler().handleWarning(
+                    errorHandler.createContext(),
                     iae.getMessage() + " was added for key = " + key);
             return CacheAttributes.DEFAULT_COST;
         }
     }
 
-    long getHits(K key, V value, AttributeMap attributes,
-            CacheEntry<K, V> existing) {
+    long getHits(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
         try {
             return CacheAttributes.getHits(attributes);
         } catch (IllegalArgumentException iae) {
-            errorHandler.getExceptionHandler().handleWarning(errorHandler.createContext(),
+            errorHandler.getExceptionHandler().handleWarning(
+                    errorHandler.createContext(),
                     iae.getMessage() + " was added for key = " + key);
             return clock.timestamp();
         }
     }
+
     long getLastModified(K key, V value, AttributeMap attributes,
             CacheEntry<K, V> existing) {
         try {
             return CacheAttributes.getLastModified(attributes, clock);
         } catch (IllegalArgumentException iae) {
-            errorHandler.getExceptionHandler().handleWarning(errorHandler.createContext(),
+            errorHandler.getExceptionHandler().handleWarning(
+                    errorHandler.createContext(),
                     iae.getMessage() + " was added for key = " + key);
             return clock.timestamp();
         }
@@ -103,7 +164,8 @@ public abstract class AbstractCacheEntryFactoryService<K, V> {
             time = CacheAttributes.getTimeToRefresh(attributes, TimeUnit.NANOSECONDS,
                     time);
         } catch (IllegalArgumentException iae) {
-            errorHandler.getExceptionHandler().handleWarning(errorHandler.createContext(),
+            errorHandler.getExceptionHandler().handleWarning(
+                    errorHandler.createContext(),
                     iae.getMessage() + " was added for key = " + key);
         }
         return clock.getDeadlineFromNow(time, TimeUnit.NANOSECONDS);

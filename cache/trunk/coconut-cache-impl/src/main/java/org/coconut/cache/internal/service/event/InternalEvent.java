@@ -71,7 +71,14 @@ final class InternalEvent {
         }
 
     }
-
+    /**
+     * The default implementation of the cache Evicted event.
+     * 
+     * @param <K>
+     *            the type of keys maintained by the cache
+     * @param <V>
+     *            the type of values maintained by the cache
+     */
     static class Evicted<K, V> implements CacheEvent.CacheEvicted<K, V> {
         private final Cache<K, V> cache;
 

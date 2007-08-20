@@ -26,6 +26,7 @@ import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfigu
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.management.CacheManagementConfiguration;
+import org.coconut.cache.service.servicemanager.CacheServiceManagerConfiguration;
 import org.coconut.cache.service.statistics.CacheStatisticsConfiguration;
 import org.coconut.cache.service.threading.CacheExecutorConfiguration;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
@@ -272,7 +273,19 @@ public final class CacheConfiguration<K, V> {
     }
 
     /**
+     * Returns a service manager configuration object .
+     * 
+     * @return a CacheManagementConfiguration
+     */
+    public CacheServiceManagerConfiguration serviceManager() {
+        return lazyCreate(CacheServiceManagerConfiguration.class);
+    }
+    
+    /**
      * Creates a new cache instance of the specified type using this configuration.
+     * <p>
+     * The behavior of this operation is undefined if this configuration is modified while
+     * the operation is in progress.
      * 
      * @param type
      *            the type of cache that should be created

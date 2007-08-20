@@ -72,8 +72,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
      * {@inheritDoc}
      */
     @Override
-    public void initialize(CacheConfiguration<?, ?> configuration,
-            Map<Class<?>, Object> serviceMap) {
+    public void registerServices(Map<Class<?>, Object> serviceMap) {
         if (loader != null) {
             serviceMap.put(CacheLoadingService.class, LoadingUtils.wrapService(this));
         }
@@ -158,7 +157,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         loadExecutor.execute(lvr);
     }
 
-    /** {@inheritDoc}*/
+    /** {@inheritDoc} */
     void doLoad(Map<? extends K, AttributeMap> mapsWithAttributes) {
         LoadValuesRunnable lvr = new LoadValuesRunnable<K, V>(this, loader,
                 mapsWithAttributes);
@@ -249,16 +248,20 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
          * {@inheritDoc}
          */
         public void run() {
-            Map<? extends K, ? extends V> map = null;
-            try {
-                map = null; // loader.loadAll(keysWithAttributes);
-            } catch (Exception e) {
-// map = loaderService.errorHandler.loadAllFailed(loader,
-// keysWithAttributes, true, e);
+            for (Map.Entry<? extends K, AttributeMap> entry : keysWithAttributes.entrySet()) {
+                K key = entry.getKey();
+                AttributeMap attributes = entry.getValue();
+                V v = null;
+                try {
+                    v = loader.load(key, attributes);
+                } catch (Exception e) {
+                    v = loaderService.errorHandler.getExceptionHandler().loadFailed(
+                            loaderService.errorHandler.createContext(), loader, key,
+                            attributes, false, e);
+                }
+                loaderService.cache.valueLoaded(key, v, attributes);
             }
-            if (map != null && map.size() > 0) {
-                loaderService.cache.valuesLoaded(map, keysWithAttributes);
-            }
+
         }
     }
 

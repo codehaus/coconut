@@ -8,11 +8,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.service.event.CacheEntryEvent;
-import org.coconut.cache.service.event.CacheEvent;
-import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
-import org.coconut.cache.service.loading.CacheLoader;
-import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.core.AttributeMap;
 
 /**
@@ -67,12 +62,27 @@ import org.coconut.core.AttributeMap;
 public interface Cache<K, V> extends ConcurrentMap<K, V> {
 
     /**
+     * Blocks until all tasks have completed execution after a shutdown request, or the
+     * timeout occurs, or the current thread is interrupted, whichever happens first.
+     * 
+     * @param timeout
+     *            the maximum time to wait
+     * @param unit
+     *            the time unit of the timeout argument
+     * @return <tt>true</tt> if this cache terminated and <tt>false</tt> if the
+     *         timeout elapsed before termination
+     * @throws InterruptedException
+     *             if interrupted while waiting
+     */
+    boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException;
+
+    /**
      * Removes all of the entries from this cache. This method will not attempt to remove
      * entries that are stored externally, for example, on disk. The cache will be empty
      * after this call returns.
      * <p>
-     * When all entries have been removed a single {@link CacheEvent.CacheCleared} will be
-     * raised.
+     * When all entries have been removed a single
+     * {@link org.coconut.cache.service.event.CacheEvent.CacheCleared} will be raised.
      */
     void clear();
 
@@ -84,7 +94,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * {@link #getAll(Collection)}.
      * <p>
      * Regular eviction is typically scheduled through
-     * {@link CacheEvictionConfiguration#setScheduledEvictionAtFixedRate(long, java.util.concurrent.TimeUnit)}
+     * {@link org.coconut.cache.service.eviction.CacheEvictionConfiguration#setScheduledEvictionAtFixedRate(long, java.util.concurrent.TimeUnit)}
      * If this is not set it is the responsibility of the user to regular call this
      * method.
      */
@@ -93,12 +103,17 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     /**
      * Works as {@link java.util.Map#get(Object)} with the following modifications.
      * <p>
-     * If the cache has a configured {@link CacheLoader}. And no mapping exists for the
-     * specified key or the specific mapping has expired. The cache will transparently
-     * attempt to load a value for the specified key through the cache loader.
+     * If the cache has a configured {@link org.coconut.cache.service.loading.CacheLoader}.
+     * And no mapping exists for the specified key or the specific mapping has expired.
+     * The cache will transparently attempt to load a value for the specified key through
+     * the cache loader.
      * <p>
-     * If cache statistics is enabled the hit/miss. Hits on the actual entry.
+     * The number of cache hits will increase by 1 if the cache loader is not consulted
+     * when using this method (mapping is already present and not expired). Otherwise the
+     * number of misses will be increased by 1.
      * <p>
+     * If the <tt><A HREF="service/event/package-summary.html"><CODE>event</CODE></A></tt>
+     * service is enabled the following events may be raised.
      * 
      * @param key
      *            key whose associated value is to be returned.
@@ -107,11 +122,15 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      *             if the key is of an inappropriate type for this cache (optional).
      * @throws NullPointerException
      *             if the specified key is <tt>null</tt>
+     * @throws IllegalArgumentException
+     *             if the cache has already been shutdown, see
+     *             {@link org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#cacheWasShutdown(org.coconut.cache.service.exceptionhandling.CacheExceptionContext, String)}
      * @throws CacheException
      *             if the backend cache loader failed while trying to load a value
-     *             (optional). A cache might be configured to return null instead
+     *             (optional). See
+     *             {@link org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#loadFailed(org.coconut.cache.service.exceptionhandling.CacheExceptionContext, org.coconut.cache.service.loading.CacheLoader, Object, AttributeMap, boolean, Exception)}
      * @see Map#get(Object)
-     * @see CacheLoadingConfiguration#setLoader(CacheLoader)
+     * @see org.coconut.cache.service.loading.CacheLoadingConfiguration#setLoader(org.coconut.cache.service.loading.CacheLoader)
      */
     V get(Object key);
 
@@ -153,6 +172,55 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     Map<Class<?>, Object> getAllServices();
 
     /**
+     * <p>
+     * Works as {@link #get(Object)} with the following modification.
+     * <p>
+     * An immutable cache entry is returned.
+     * 
+     * @param key
+     *            whose associated cache entry is to be returned.
+     * @return the cache entry to which this cache maps the specified key, or
+     *         <tt>null</tt> if the cache contains no mapping for this key.
+     * @throws ClassCastException
+     *             if the key is of an inappropriate type for this cache (optional).
+     * @throws NullPointerException
+     *             if the specified key is <tt>null</tt>
+     * @throws IllegalArgumentException
+     *             if the cache has already been shutdown, see
+     *             {@link org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#cacheWasShutdown(org.coconut.cache.service.exceptionhandling.CacheExceptionContext, String)}
+     * @throws CacheException
+     *             if the backend cache loader failed while trying to load a value
+     *             (optional). See
+     *             {@link org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#loadFailed(org.coconut.cache.service.exceptionhandling.CacheExceptionContext, org.coconut.cache.service.loading.CacheLoader, Object, AttributeMap, boolean, Exception)}
+     */
+    CacheEntry<K, V> getEntry(K key);
+
+    /**
+     * Returns the name of the cache. If no name has been specified while configuring the
+     * cache. The cache must choose a may return any valid name.
+     * 
+     * @return the name of the cache
+     */
+    String getName();
+
+    /**
+     * Returns a service of the specified type or throws a CacheException if no such
+     * service exists.
+     * 
+     * @param <T>
+     *            the type of service to retrieve
+     * @param serviceType
+     *            the type of service to retrieve
+     * @return a service of the specified type
+     * @throws CacheException
+     *             if no service of the specified type exist
+     * @see org.coconut.cache.CacheServices
+     * @see #hasService(Class)
+     * @see #getAllServices()
+     */
+    <T> T getService(Class<T> serviceType);
+
+    /**
      * Returns the current volume of this cache. If the current volume of this cache is
      * greater then Long.MAX_VALUE, this method returns Long.MAX_VALUE.
      * 
@@ -161,68 +229,54 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     long getVolume();
 
     /**
-     * Retrieves a {@link CacheEntry} for the specified key (optional). If no entry exists
-     * for the specified key any configured cache backend is asked to try and fetch an
-     * entry for the key.
-     * 
-     * @param key
-     *            whose associated cache entry is to be returned.
-     * @return the cache entry to which this cache maps the specified key, or
-     *         <tt>null</tt> if the cache contains no mapping for this key.
-     * @throws CacheException
-     *             if the backend cache loader failed while trying to load a value
-     *             (optional). A cache might be configured to return null instead
-     * @throws ClassCastException
-     *             if the key is of an inappropriate type for this cache (optional).
-     * @throws NullPointerException
-     *             if the specified key is <tt>null</tt>
-     * @throws UnsupportedOperationException
-     *             if the cache does not cache entries
-     */
-    CacheEntry<K, V> getEntry(K key);
-
-    /**
-     * Returns the name of the cache. If no name has been specified while constructing the
-     * cache a random name should be generated.
-     * 
-     * @return the name of the cache
-     */
-    String getName();
-
-    /**
-     * Returns a service of the specified type.
-     * 
-     * @param <T>
-     *            the type of service to retrieve
-     * @param serviceType
-     *            the type of service to retrieve
-     * @return a service of the specified type
-     * @throws CacheException
-     *             if no service of the specified type is registered
-     * @see org.coconut.cache.CacheServices
-     */
-    <T> T getService(Class<T> serviceType);
-
-    /**
      * Returns whether or not this cache contains a service of the specified type.
      * 
      * @param serviceType
      *            the type of service
-     * @return true if this has a service of the specified type registered, otherwise
-     *         false
+     * @return true if this cache has a service of the specified type registered,
+     *         otherwise false
+     * @see #getService(Class)
+     * @see #getAllServices()
      */
     boolean hasService(Class<?> serviceType);
 
     /**
-     * This method works analogoes to the {@link java.util.Map#get(Object)} method.
+     * Returns <tt>true</tt> if this cache has been shut down.
+     * 
+     * @return <tt>true</tt> if this cache has been shut down
+     */
+    boolean isShutdown();
+
+    /**
+     * Returns <tt>true</tt> if this cache has been started.
+     * 
+     * @return <tt>true</tt> if this cache has been started
+     */
+    boolean isStarted();
+
+    /**
+     * Returns <tt>true</tt> if all tasks have completed following shut down. Note that
+     * <tt>isTerminated</tt> is never <tt>true</tt> unless either <tt>shutdown</tt>
+     * or <tt>shutdownNow</tt> was called first.
+     * 
+     * @return <tt>true</tt> if all tasks have completed following shut down
+     */
+    boolean isTerminated();
+
+    /**
+     * This method works analogoes to the {@link get(Object)} method with the following
+     * modifications.
+     * <p>
      * However, it will not try to fetch missing items, it will only return a value if it
      * actually exists in the cache. Furthermore, it will not effect the statistics
-     * gathered by the cache and no {@link CacheEntryEvent.ItemAccessed} event will be
-     * raised. Finally, even if the item is expired it will still be returned.
+     * gathered by the cache and no
+     * {@link org.coconut.cache.service.event.CacheEntryEvent.CacheEntryEvent.ItemAccessed}
+     * event will be raised. Finally, even if the item is expired it will still be
+     * returned.
      * <p>
      * All implementations of this method should take care to assure that a call to peek
-     * does not have any side effects. For example, it should not raise any kind of events
-     * or schedule expired elements for reload.
+     * does not have any unforseen side effects. For example, it should not modify some
+     * state in addition to returning a value or not returning a value.
      * 
      * @param key
      *            key whose associated value is to be returned.
@@ -258,8 +312,9 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * {@link org.coconut.cache.Cache#containsKey(Object) c.containsKey(k)} would return
      * <tt>true</tt>.))
      * <p>
-     * It is often more effective to specify a {@link CacheLoader} that implicitly loads
-     * values then to explicitly add them to cache using the various <tt>put</tt> and
+     * It is often more effective to specify a
+     * {@link org.coconut.cache.service.loading.CacheLoader} that implicitly loads values
+     * then to explicitly add them to cache using the various <tt>put</tt> and
      * <tt>putAll</tt> methods.
      * 
      * @param key
@@ -311,9 +366,10 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     V put(K key, V value, AttributeMap attributes);
 
     /**
-     * Initiates an orderly shutdown of the cache. In which previously submitted tasks are
-     * executed, but no new tasks will be accepted. Invocation has no additional effect if
-     * already shut down.
+     * Initiates an orderly shutdown of the cache. In which currently running tasks, such
+     * as cache loading will be executed, but no new tasks will be started and no values
+     * will be added to the cache. Invocation has no additional effect if already shut
+     * down.
      * 
      * @throws SecurityException
      *             if a security manager exists and shutting down this Cache may
@@ -324,42 +380,20 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     void shutdown();
 
     /**
-     * Returns <tt>true</tt> if this cache has been started.
-     * 
-     * @return <tt>true</tt> if this cache has been started
-     */
-    boolean isStarted();
-
-    /**
-     * Returns <tt>true</tt> if this cache has been shut down.
-     * 
-     * @return <tt>true</tt> if this cache has been shut down
-     */
-    boolean isShutdown();
-
-    /**
-     * Returns <tt>true</tt> if all tasks have completed following shut down. Note that
-     * <tt>isTerminated</tt> is never <tt>true</tt> unless either <tt>shutdown</tt>
-     * or <tt>shutdownNow</tt> was called first.
+     * Attempts to stop all actively executing tasks within the cache and halts the
+     * processing of waiting tasks. Invocation has no additional effect if already shut
+     * down.
      * <p>
-     * TODO decide if we will have a shutdownNow method.
+     * There are no guarantees beyond best-effort attempts to stop processing actively
+     * executing tasks in the cache. For example, typical implementations will cancel via
+     * {@link Thread#interrupt}, so any task that fails to respond to interrupts may
+     * never terminate.
      * 
-     * @return <tt>true</tt> if all tasks have completed following shut down
+     * @throws SecurityException
+     *             if a security manager exists and shutting down this Cache may
+     *             manipulate threads that the caller is not permitted to modify because
+     *             it does not hold {@link java.lang.RuntimePermission}<tt>("modifyThread")</tt>,
+     *             or the security manager's <tt>checkAccess</tt> method denies access.
      */
-    boolean isTerminated();
-
-    /**
-     * Blocks until all tasks have completed execution after a shutdown request, or the
-     * timeout occurs, or the current thread is interrupted, whichever happens first.
-     * 
-     * @param timeout
-     *            the maximum time to wait
-     * @param unit
-     *            the time unit of the timeout argument
-     * @return <tt>true</tt> if this cache terminated and <tt>false</tt> if the
-     *         timeout elapsed before termination
-     * @throws InterruptedException
-     *             if interrupted while waiting
-     */
-    boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException;
+    void shutdownNow();
 }

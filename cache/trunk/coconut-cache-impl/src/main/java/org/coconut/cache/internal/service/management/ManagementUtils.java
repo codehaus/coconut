@@ -85,7 +85,7 @@ public final class ManagementUtils {
         private final Cache<?, ?> cache;
 
         /**
-         * Creates a new.
+         * Creates a new DelegatedCacheMXBean.
          * 
          * @param cache
          *            the cache to wrap

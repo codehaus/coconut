@@ -418,7 +418,7 @@ public final class DefaultCacheStatisticsService<K, V> extends
      *      java.util.Map)
      */
     @Override
-    public void initialize(CacheConfiguration<?, ?> configuration,
+    public void registerServices(
             Map<Class<?>, Object> serviceMap) {
         serviceMap.put(CacheStatisticsService.class, this);
     }

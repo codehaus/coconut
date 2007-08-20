@@ -183,7 +183,7 @@ public class DefaultCacheEventService<K, V> extends AbstractInternalCacheService
 
     /** {@inheritDoc} */
     @Override
-    public void initialize(CacheConfiguration<?, ?> configuration,
+    public void registerServices(
             Map<Class<?>, Object> serviceMap) {
         if (isEnabled) {
             serviceMap.put(CacheEventService.class, this);

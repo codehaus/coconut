@@ -58,7 +58,7 @@ import org.coconut.internal.util.CollectionUtils;
  *            the type of keys maintained by this cache
  * @param <V>
  *            the type of mapped values
-*/
+ */
 @NotThreadSafe
 @CacheServiceSupport( { CacheEventService.class, CacheEvictionService.class,
         CacheExpirationService.class, CacheLoadingService.class,
@@ -67,8 +67,6 @@ import org.coconut.internal.util.CollectionUtils;
 public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         ConcurrentMap<K, V> {
 
-    public final InternalCacheLoadingService<K, V> loadingService;
-
     private final AbstractCacheEntryFactoryService<K, V> entryFactory;
 
     private final InternalCacheEventService<K, V> eventService;
@@ -76,6 +74,8 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     private final InternalCacheEvictionService<K, V, AbstractCacheEntry<K, V>> evictionService;
 
     private final DefaultCacheExpirationService<K, V> expiration;
+
+    private final InternalCacheLoadingService<K, V> loadingService;
 
     private final EntryMap<K, V> map = new EntryMap<K, V>(false);
 
@@ -120,7 +120,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
 
     /** {@inheritDoc} */
     public void clear() {
-        checkStarted();
+        checkRunning("clear");
         long started = statistics.beforeCacheClear(this);
         int size = map.size();
         long capacity = map.capacity();
@@ -139,12 +139,13 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     /** {@inheritDoc} */
     @Override
     public Set<Entry<K, V>> entrySet() {
+        checkRunning("collectionview");
         return map.entrySetPublic(this);
     }
 
     /** {@inheritDoc} */
     public void evict() {
-        checkStarted();
+        checkRunning("evict");
         long started = statistics.beforeCacheEvict(this);
         int previousSize = map.size();
         long previousCapacity = map.capacity();
@@ -174,24 +175,22 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
 
     /** {@inheritDoc} */
     public Map<Class<?>, Object> getAllServices() {
-        checkStarted();
         return serviceManager.getAllPublicServices();
     }
 
     /** {@inheritDoc} */
-    public long getVolume() {
-        return map.capacity();
-    }
-
-    /** {@inheritDoc} */
     public final <T> T getService(Class<T> serviceType) {
-        checkStarted();
         return serviceManager.getPublicService(serviceType);
     }
 
     /** {@inheritDoc} */
+    public long getVolume() {
+        checkRunning("size");
+        return map.capacity();
+    }
+
+    /** {@inheritDoc} */
     public boolean hasService(Class<?> serviceType) {
-        checkStarted();
         return serviceManager.hasPublicService(serviceType);
     }
 
@@ -213,7 +212,15 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     /** {@inheritDoc} */
     @Override
     public Set<K> keySet() {
+        checkRunning("collectionview");
         return map.keySet(this);
+    }
+
+    /**
+     * Prestarts the Cache.
+     */
+    public void prestart() {
+        serviceManager.lazyStart(false);
     }
 
     /** {@inheritDoc} */
@@ -222,18 +229,29 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     }
 
     /** {@inheritDoc} */
+    public void shutdownNow() {
+        serviceManager.shutdownNow();
+    }
+
+    /** {@inheritDoc} */
     @Override
     public int size() {
+        checkRunning("size");
         return map.size();
     }
 
     /** {@inheritDoc} */
     @Override
     public Collection<V> values() {
+        checkRunning("collectionview");
         return map.values(this);
     }
 
-    private void checkStarted() {
+    private void checkRunning() {
+        serviceManager.lazyStart(false);
+    }
+
+    private void checkRunning(String operation) {
         serviceManager.lazyStart(false);
     }
 
@@ -273,7 +291,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
 
     /** {@inheritDoc} */
     AbstractCacheEntry<K, V> doGet(K key) {
-        checkStarted();
+        checkRunning("get");
         boolean isHit = false;
         boolean isExpired = false;
         long started = statistics.beforeGet(this, key);
@@ -330,6 +348,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     /** {@inheritDoc} */
     @Override
     Map<K, V> doGetAll(Collection<? extends K> keys) {
+        checkRunning("get");
         HashMap<K, V> result = new HashMap<K, V>();
         for (K key : keys) {
             result.put(key, get(key));
@@ -340,6 +359,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     /** {@inheritDoc} */
     @Override
     AbstractCacheEntry<K, V> doPeek(K key) {
+        checkRunning("get");
         return map.get(key);
     }
 
@@ -347,7 +367,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     @Override
     CacheEntry<K, V> doPut(K key, V newValue, boolean putOnlyIfAbsent,
             AttributeMap attributes) {
-        checkStarted();
+        checkRunning("put");
         long started = statistics.beforePut(this, key, newValue);
         AbstractCacheEntry<K, V> prev = map.get(key);
         if (putOnlyIfAbsent && prev != null) {
@@ -368,6 +388,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     /** {@inheritDoc} */
     @Override
     void doPutAll(Map<? extends K, ? extends V> t, AttributeMap attributes) {
+        checkRunning("put");
         for (Map.Entry<? extends K, ? extends V> e : t.entrySet()) {
             doPut(e.getKey(), e.getValue(), false, attributes);
         }
@@ -376,7 +397,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     /** {@inheritDoc} */
     @Override
     CacheEntry<K, V> doRemove(Object key, Object value) {
-        checkStarted();
+        checkRunning("remove");
         long started = statistics.beforeRemove(this, key);
         AbstractCacheEntry<K, V> e = map.remove(key, value);
         if (e != null) {
@@ -390,7 +411,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     /** {@inheritDoc} */
     @Override
     CacheEntry<K, V> doReplace(K key, V oldValue, V newValue, AttributeMap attributes) {
-        checkStarted();
+        checkRunning("put");
         long started = statistics.beforePut(this, key, newValue);
         AbstractCacheEntry<K, V> prev = map.get(key);
         if (oldValue == null) {
@@ -417,12 +438,17 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         return prev;
     }
 
+    /**
+     * Trims the cache down to the specified size.
+     * 
+     * @param newSize
+     */
     void doTrimToSize(int newSize) {
         if (newSize < 0) {
             throw new IllegalArgumentException(
                     "newSize cannot be a negative number, was " + newSize);
         }
-        checkStarted();
+        checkRunning();
         long started = statistics.beforeTrimToSize(this);
         int numberToTrim = Math.max(0, map.size() - newSize);
         List<AbstractCacheEntry<K, V>> l = evictionService.evict(numberToTrim);
@@ -455,7 +481,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
 
         /** {@inheritDoc} */
         public Collection<? extends K> filterKeys(Filter<? super CacheEntry<K, V>> filter) {
-            checkStarted();
+            checkRunning();
             ArrayList<K> l = new ArrayList<K>();
             for (CacheEntry<K, V> ce : map) {
                 if (filter.accept(ce)) {
@@ -472,8 +498,8 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
 
         /** {@inheritDoc} */
         public boolean isValid(K key) {
-            // TODO Auto-generated method stub
-            return false;
+            AbstractCacheEntry<K, V> e = map.get(key);
+            return e != null && !expiration.isExpired(e);
         }
 
         /** {@inheritDoc} */
@@ -488,19 +514,15 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
             for (Map.Entry<? extends K, ? extends V> e : keyValues.entrySet()) {
                 put(e.getKey(), e.getValue(), attributes.get(e.getKey()));
             }
-            // TODO Auto-generated method stub
-
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public int removeAll(Collection<? extends K> collection) {
             if (collection == null) {
                 throw new NullPointerException("collection is null");
             }
             CollectionUtils.checkCollectionForNulls(collection);
-            checkStarted();
+            checkRunning("put");
             int count = 0;
             for (K key : collection) {
                 long started = statistics.beforeRemove(UnsynchronizedCache.this, key);
@@ -520,12 +542,14 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
             if (filter == null) {
                 throw new NullPointerException("filter is null");
             }
-            checkStarted();
+            checkRunning();
             return removeAll(filterKeys(filter));
         }
 
         /** {@inheritDoc} */
-        public void trimToCapacity(long capacity) {}
+        public void trimToCapacity(long capacity) {
+            throw new UnsupportedOperationException();
+        }
 
         /** {@inheritDoc} */
         public void trimToSize(int size) {

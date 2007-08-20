@@ -229,5 +229,5 @@ public class DummyCache<K, V> implements Cache<K, V> {
     }
 
     public void shutdown() {}
-
+    public void shutdownNow() {}
 }

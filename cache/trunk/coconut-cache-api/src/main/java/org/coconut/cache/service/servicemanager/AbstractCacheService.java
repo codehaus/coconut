@@ -50,10 +50,6 @@ public abstract class AbstractCacheService implements CacheService {
     public void initialize(CacheConfiguration<?, ?> configuration) {}
 
     /** {@inheritDoc} */
-    public void initialize(CacheConfiguration<?, ?> configuration,
-            Map<Class<?>, Object> serviceMap) {}
-
-    /** {@inheritDoc} */
     public void start(Map<Class<?>, Object> allServices) {}
 
     /** {@inheritDoc} */
@@ -64,5 +60,7 @@ public abstract class AbstractCacheService implements CacheService {
 
     /** {@inheritDoc} */
     public void terminated() {}
+    /** {@inheritDoc} */
+    public void registerServices(Map<Class<?>, Object> serviceMap) {}
 
 }

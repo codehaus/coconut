@@ -17,6 +17,9 @@ import org.coconut.management.annotation.ManagedAttribute;
 
 /**
  * Various utility classes for expiration service implementation.
+ * <p>
+ * NOTICE: This is an internal class and should not be directly referred. No guarantee is
+ * made to the compatibility of this class between different releases of Coconut Cache.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -39,6 +42,17 @@ final class ExpirationUtils {
         return tmp == 0 ? Long.MAX_VALUE : tmp;
     }
 
+    /**
+     * Converts the specified timeToLiveNanos.
+     * 
+     * @param timeToLiveNanos
+     * @param unit
+     * @return
+     * @throws IllegalArgumentException
+     *             if the specified timeToLiveNanos is a non positive number
+     * @throws NullPointerException
+     *             if the specified unit is <tt>null</tt>
+     */
     public static long convertNanosToExpirationTime(long timeToLiveNanos, TimeUnit unit) {
         return new CacheExpirationConfiguration().setDefaultTimeToLive(timeToLiveNanos,
                 TimeUnit.NANOSECONDS).getDefaultTimeToLive(unit);
@@ -49,6 +63,22 @@ final class ExpirationUtils {
                 .getDefaultTimeToLive(TimeUnit.NANOSECONDS);
     }
 
+    /**
+     * Checks if the specified cache entry is expired.
+     * 
+     * @param entry
+     *            the cache entry to check for expiration
+     * @param clock
+     *            the clock that is used to check the expiration time
+     * @param filter
+     *            an additional filter that is used to check the expiration status of the
+     *            cache entry. This filter may be <code>null</code>
+     * @return <code>true</code> if the cache entry is expired, otherwise false
+     * @param <K>
+     *            the type of keys maintained by the cache
+     * @param <V>
+     *            the type of mapped values
+     */
     public static <K, V> boolean isExpired(CacheEntry<K, V> entry, Clock clock,
             Filter<CacheEntry<K, V>> filter) {
         if (filter != null && filter.accept(entry)) {
@@ -65,7 +95,7 @@ final class ExpirationUtils {
      * 
      * @param service
      *            the expiration service we want to wrap
-     * @return a wrapped service that only exposes CacheExpirationService methods 
+     * @return a wrapped service that only exposes CacheExpirationService methods
      * @param <K>
      *            the type of keys maintained by the specified service
      * @param <V>
@@ -108,17 +138,13 @@ final class ExpirationUtils {
             this.service = service;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         @ManagedAttribute(description = "The default time to live for cache entries in milliseconds")
         public long getDefaultTimeToLiveMs() {
             return service.getDefaultTimeToLive(TimeUnit.MILLISECONDS);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public void setDefaultTimeToLiveMs(long timeToLiveMs) {
             service.setDefaultTimeToLive(timeToLiveMs, TimeUnit.MILLISECONDS);
         }
@@ -144,47 +170,34 @@ final class ExpirationUtils {
             this.service = service;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public int removeAll(Collection<? extends K> keys) {
             return service.removeAll(keys);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public int removeFiltered(Filter<? super CacheEntry<K, V>> filter) {
             return service.removeFiltered(filter);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public long getDefaultTimeToLive(TimeUnit unit) {
             return service.getDefaultTimeToLive(unit);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public V put(K key, V value, long expirationTime, TimeUnit unit) {
             return service.put(key, value, expirationTime, unit);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public void putAll(Map<? extends K, ? extends V> t, long timeout, TimeUnit unit) {
             service.putAll(t, timeout, unit);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public void setDefaultTimeToLive(long timeToLive, TimeUnit unit) {
             service.setDefaultTimeToLive(timeToLive, unit);
         }
-
     }
 }

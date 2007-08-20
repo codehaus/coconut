@@ -14,7 +14,7 @@ import org.coconut.cache.CacheLifecycle;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public interface CacheService extends CacheLifecycle{
+public interface CacheService extends CacheLifecycle {
     /**
      * Returns the readable name of the service.
      * 
@@ -25,13 +25,10 @@ public interface CacheService extends CacheLifecycle{
     /**
      * Initializes the service.
      * 
-     * @param configuration
-     *            the CacheConfiguration for the cache
      * @param serviceMap
      *            a map that can be used to add public services
      */
-    void initialize(CacheConfiguration<?, ?> configuration,
-            Map<Class<?>, Object> serviceMap);
+    void registerServices(Map<Class<?>, Object> serviceMap);
 
     /**
      * Start the service. The specified cache can be used to retrieve other cache
@@ -41,7 +38,6 @@ public interface CacheService extends CacheLifecycle{
      *            a map of registered service
      */
     void start(Map<Class<?>, Object> allServiceMap);
-
 
     void shutdown(Executor e);
 

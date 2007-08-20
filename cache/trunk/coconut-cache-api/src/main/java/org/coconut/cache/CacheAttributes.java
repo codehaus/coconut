@@ -5,9 +5,6 @@ package org.coconut.cache;
 
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.service.expiration.CacheExpirationService;
-import org.coconut.cache.service.loading.CacheLoader;
-import org.coconut.cache.tck.cacheentry.Cost;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
 
@@ -15,7 +12,7 @@ import org.coconut.core.Clock;
  * The main purpose of a cache attribute is to support custom metadata associated with
  * each element in the cache. This cache can used set and retrieve predefined cache
  * attributes from an AttributeMap in a typesafe manner. Currently these attributes are
- * only in use for cache loaders. See {@link CacheLoader} for examples.
+ * only in use for cache loaders. See {@link org.coconut.cache.service.loading.CacheLoader} for examples.
  * <p>
  * The following is a list of the default provided attributes
  * 
@@ -82,7 +79,7 @@ public final class CacheAttributes {
      * {@link Long#MAX_VALUE} measured in nanoseconds. Use
      * {@link java.util.concurrent.TimeUnit} to convert between different time units.
      * 
-     * @see CacheExpirationService
+     * @see org.coconut.cache.service.expiration.CacheExpirationService
      */
     public static final String TIME_TO_LIVE_NS = "time_to_live_ns";
 

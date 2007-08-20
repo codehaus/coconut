@@ -3,18 +3,25 @@
  */
 package org.coconut.cache.service.servicemanager;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.coconut.cache.Cache;
+import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class CacheServiceManagerConfiguration {
+public class CacheServiceManagerConfiguration extends AbstractCacheServiceConfiguration {
+
+    /** The short name of this service. */
+    public static final String SERVICE_NAME = "serviceManager";
 
     /** The set of registered services. */
     private final Set<CacheService> services = new HashSet<CacheService>();
@@ -27,7 +34,12 @@ public class CacheServiceManagerConfiguration {
 
     // private final Set<EventProcessor<? super Cache<?, ?>>> terminatedNotifier = new
     // HashSet<EventProcessor<? super Cache<?, ?>>>();
-
+    /**
+     * Create a new CacheManagementConfiguration.
+     */
+    public CacheServiceManagerConfiguration() {
+        super(SERVICE_NAME);
+    }
     /**
      * Attaches the specified instance to the service map of the cache. This object can
      * then later be retrived by calling {@link Cache#getService(Class)}.
@@ -81,6 +93,15 @@ public class CacheServiceManagerConfiguration {
         services.add(service);
         return this;
     }
+
+    public Set<CacheService> getAllServices() {
+        return new HashSet(services);
+    }
+    @Override
+    protected void fromXML(Element element) throws Exception {}
+
+    @Override
+    protected void toXML(Document doc, Element parent) throws Exception {}
 
 // public CacheServiceManagerConfiguration addStartNotifier(
 // EventProcessor<? super Cache<?, ?>> hook) {

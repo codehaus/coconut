@@ -26,8 +26,14 @@ public class AbstractLoadingTestBundle extends AbstractCacheTCKTestBundle {
         loader = new IntegerToStringLoader();
         c = newCache(cc.loading().setLoader(loader).c());
     }
-
+    public void awaitLoad() {
+        //only unsync now
+        //when sync hook up with AbstractCacheTCKTestBundle.threadHelper
+    }
+    
     public void loadAllAndAwait(Map.Entry<Integer, String>... e) {
         throw new UnsupportedOperationException();
     }
+    
+    
 }

@@ -258,9 +258,7 @@ public class CacheEvictionConfiguration<K, V> extends
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc}  */
     @Override
     protected void fromXML(Element e) throws Exception {
         maximumVolume = readLong(getChild(MAXIMUM_VOLUME, e), maximumVolume);
@@ -276,9 +274,7 @@ public class CacheEvictionConfiguration<K, V> extends
         setScheduledEvictionAtFixedRate(timee, TimeUnit.NANOSECONDS);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     protected void toXML(Document doc, Element base) throws Exception {
         writeLong(doc, base, MAXIMUM_VOLUME, maximumVolume, DEFAULT

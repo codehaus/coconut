@@ -3,10 +3,27 @@
  */
 package org.coconut.cache.internal.service.service;
 
+
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public enum ServiceStatus {
-	NOTRUNNING, RUNNING, SHUTDOWN, STOP, TIDYING, TERMINATED;
+    NOTRUNNING, RUNNING, SHUTDOWN, STOP, TIDYING, TERMINATED;
+
+    public boolean isStarted() {
+        return this != NOTRUNNING;
+    }
+
+    public boolean isShutdown() {
+        return this != RUNNING && this != NOTRUNNING;
+    }
+
+    public boolean isTerminating() {
+        return this == SHUTDOWN || this == STOP;
+    }
+
+    public boolean isTerminated() {
+        return this == TERMINATED;
+    }
 }

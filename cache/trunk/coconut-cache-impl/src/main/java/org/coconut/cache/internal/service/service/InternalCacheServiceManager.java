@@ -55,7 +55,7 @@ public interface InternalCacheServiceManager {
      *         denies access.
      */
     void shutdown();
-    
+    void shutdownNow();
     /**
      * Returns <tt>true</tt> if this cache has been started.
      *

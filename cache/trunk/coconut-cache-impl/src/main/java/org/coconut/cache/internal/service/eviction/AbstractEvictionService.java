@@ -39,7 +39,7 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
 
     /** {@inheritDoc} */
     @Override
-    public void initialize(CacheConfiguration<?, ?> configuration,
+    public void registerServices(
             Map<Class<?>, Object> serviceMap) {
         serviceMap.put(CacheEvictionService.class, EvictionUtils.wrapService(this));
     }

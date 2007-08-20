@@ -82,9 +82,9 @@ public class ExpirationWithDefaultTimeout extends AbstractCacheTCKTestBundle {
     }
 
     /**
-     * Tests that when inserting (putAll) an element that already exist in the
-     * cache (inserted with the default expiration timeout) the expiration time
-     * of that element is overridden.
+     * Tests that when inserting (putAll) an element that already exist in the cache
+     * (inserted with the default expiration timeout) the expiration time of that element
+     * is overridden.
      */
     @Test
     public void overrideDefaultExpiration() {
@@ -122,8 +122,8 @@ public class ExpirationWithDefaultTimeout extends AbstractCacheTCKTestBundle {
     }
 
     /**
-     * Tests that peek has no side effecs, peek should not check for expiration
-     * of elements.
+     * Tests that peek has no side effecs, peek should not check for expiration of
+     * elements.
      */
     @Test
     public void peekNoSideEffects() {
@@ -136,4 +136,16 @@ public class ExpirationWithDefaultTimeout extends AbstractCacheTCKTestBundle {
         assertNull(c.peekEntry(M1.getKey()));
     }
 
+    /**
+     * Tests that expiration time never, is upheld.
+     */
+    @Test
+    public void testExpirationCornerCase() {
+        c = newCache(newConf().setClock(clock));
+        put(M1);
+        clock.setTimestamp(Long.MAX_VALUE - 1);
+        assertGet(M1);
+        clock.setTimestamp(Long.MAX_VALUE);
+        assertGet(M1);
+    }
 }

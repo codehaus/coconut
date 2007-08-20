@@ -18,6 +18,7 @@ import org.coconut.cache.internal.service.entry.UnsynchronizedEntryFactoryServic
 import org.coconut.cache.internal.service.exceptionhandling.DefaultCacheExceptionService;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.AbstractCacheService;
+import org.coconut.cache.service.servicemanager.CacheService;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.internal.picocontainer.ComponentAdapter;
 import org.coconut.internal.picocontainer.defaults.DefaultPicoContainer;
@@ -41,10 +42,17 @@ public class UnsynchronizedCacheServiceManager extends
 
     private ServiceStatus status = ServiceStatus.NOTRUNNING;
 
+    private final List<ServiceHolder> internalServices = new ArrayList<ServiceHolder>();
+    
+    private final List<ServiceHolder> externalServices = new ArrayList<ServiceHolder>();
+
     public UnsynchronizedCacheServiceManager(Cache<?, ?> cache, CacheHelper<?, ?> helper,
             CacheConfiguration<?, ?> conf) {
         this.conf = conf;
         this.cache = cache;
+        for (CacheService a : conf.serviceManager().getAllServices()) {
+            externalServices.add(new ServiceHolder(a));
+        }
         initializePicoContainer(cache, helper, conf);
     }
 
@@ -98,33 +106,43 @@ public class UnsynchronizedCacheServiceManager extends
     public void prestart() {
         if (status == ServiceStatus.NOTRUNNING) {
             List<AbstractCacheService> l = container
-                    .getComponentInstancesOfType(AbstractCacheService.class);
+                    .getComponentInstancesOfType(AbstractInternalCacheService.class);
 
-            List<ServiceInfo> info = new ArrayList<ServiceInfo>();
             for (AbstractCacheService a : l) {
-                info.add(new ServiceInfo(a));
+                internalServices.add(new ServiceHolder(a));
             }
-            for (ServiceInfo si : info) {
+            for (ServiceHolder si : internalServices) {
                 si.initialize(conf);
                 publicServices.putAll(si.getPublicService());
+                // TODO; check if we have conflicting services
             }
-            for (ServiceInfo si : info) {
+            for (ServiceHolder si : internalServices) {
                 si.start(publicServices);
             }
+            //register mbeans
             CacheManagementService cms = (CacheManagementService) publicServices
                     .get(CacheManagementService.class);
             if (cms != null) {
-                for (ServiceInfo si : info) {
+                for (ServiceHolder si : internalServices) {
                     si.registerMBeans(cms.getRoot());
                 }
             }
-            for (ServiceInfo si : info) {
+            
+            //started
+            for (ServiceHolder si : internalServices) {
                 si.started(cache);
             }
             status = ServiceStatus.RUNNING;
         }
     }
 
+    private void start() {
+        // get all registered internal cache services
+
+    }
+    private void safeTerminateAll() {
+        
+    }
     /** {@inheritDoc} */
     public void registerService(Class type, Class<? extends AbstractCacheService> service) {
         if (status != ServiceStatus.NOTRUNNING) {
@@ -159,35 +177,13 @@ public class UnsynchronizedCacheServiceManager extends
         }
     }
 
-    static class LifecycleHolder {
-        private final CacheLifecycle lifecycle;
+    static class ServiceHolder {
 
-        LifecycleHolder(CacheLifecycle lifecycle) {
-            this.lifecycle = lifecycle;
-        }
-
-        void initialize(CacheConfiguration conf) throws Exception {
-            lifecycle.initialize(conf);
-        }
-
-        public void started(Cache<?, ?> cache) {
-            lifecycle.started(cache);
-        }
-
-        public void terminated() {
-            lifecycle.terminated();
-        }
-    }
-
-    static class ServiceInfo {
-
-        final AbstractCacheService service;
+        final CacheLifecycle service;
 
         private final Map<Class<?>, Object> published = new HashMap<Class<?>, Object>();
 
-        private ServiceStatus status = ServiceStatus.NOTRUNNING;
-
-        ServiceInfo(AbstractCacheService service) {
+        ServiceHolder(CacheLifecycle service) {
             this.service = service;
         }
 
@@ -196,11 +192,16 @@ public class UnsynchronizedCacheServiceManager extends
         }
 
         void initialize(CacheConfiguration conf) {
-            service.initialize(conf, published);
+            service.initialize(conf);
+            if (service instanceof CacheService) {
+                ((CacheService) service).registerServices(published);
+            }
         }
 
         void start(Map c) {
-            service.start(c);
+            if (service instanceof CacheService) {
+                ((CacheService) service).start(c);
+            }
         }
 
         void registerMBeans(ManagedGroup parent) {
@@ -217,24 +218,31 @@ public class UnsynchronizedCacheServiceManager extends
     /** {@inheritDoc} */
     public boolean awaitTermination(long timeout, TimeUnit unit)
             throws InterruptedException {
-        return false;
+        return isTerminated();
     }
 
     /** {@inheritDoc} */
     public boolean isShutdown() {
-        return false;
+        return status.isShutdown();
     }
 
     /** {@inheritDoc} */
     public boolean isStarted() {
-        return false;
+        return status.isStarted();
     }
 
     /** {@inheritDoc} */
     public boolean isTerminated() {
-        return false;
+        return status.isTerminated();
     }
 
     /** {@inheritDoc} */
-    public void shutdown() {}
+    public void shutdown() {
+        status = ServiceStatus.TERMINATED;
+    }
+
+    /** {@inheritDoc} */
+    public void shutdownNow() {
+        shutdown();// synchronous shutdown
+    }
 }

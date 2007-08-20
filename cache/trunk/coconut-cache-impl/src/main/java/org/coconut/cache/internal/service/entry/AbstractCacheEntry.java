@@ -10,6 +10,9 @@ import org.coconut.core.AttributeMap;
 
 /**
  * A basis implementation of the {@link CacheEntry} interface.
+ * <p>
+ * NOTICE: This is an internal class and should not be directly referred. No guarantee is
+ * made to the compatibility of this class between different releases of Coconut Cache.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -20,32 +23,48 @@ import org.coconut.core.AttributeMap;
  */
 public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
 
-    public static final long DEFAULT_HIT_COUNT = -1;
-
-    public static final long DEFAULT_LAST_ACCESS_TIME = 0;
-
+    /** The next cache entry in the hash map. */
     AbstractCacheEntry<K, V> next;
 
+    /** The cost of this cache entry. */
     private final double cost;
 
+    /** The creation time of this cache entry. */
     private final long creationTime;
 
+    /** The hash of the key. */
     private final int hash;
 
+    /** The key of this cache entry. */
     private final K key;
 
+    /** The time this entry was last updated. */
     private final long lastUpdateTime;
 
     /** the index in cache policy, is -1 if not used or initialized. */
     private int policyIndex = -1;
 
+    /** The size of the cache entry. */
     private final long size;
 
+    /** The value of the cache entry. */
     private final V value;
 
     /**
+     * Creates a new AbstractCacheEntry.
+     * 
      * @param key
+     *            the key of the cache entry
      * @param value
+     *            the value of the cache entry
+     * @param cost
+     *            the cost of the cache entry
+     * @param creationTime
+     *            the creation time of the cache entry
+     * @param lastUpdateTime
+     *            the last update time of this cache entry
+     * @param size
+     *            the size of the cache entry
      */
     AbstractCacheEntry(K key, V value, double cost, long creationTime,
             long lastUpdateTime, long size) {
@@ -89,16 +108,12 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         return null;
     }
 
-    /**
-     * @return the cost
-     */
+    /** {@inheritDoc} */
     public double getCost() {
         return cost;
     }
 
-    /**
-     * @return the creationTime
-     */
+    /** {@inheritDoc} */
     public long getCreationTime() {
         return creationTime;
     }
@@ -106,7 +121,7 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
     public int getHash() {
         return hash;
     }
-
+    /** {@inheritDoc} */
     public K getKey() {
         return key;
     }
@@ -121,24 +136,22 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
     public AbstractCacheEntry<K, V> getNext() {
         return next;
     }
-
+    /** {@inheritDoc} */
     public int getPolicyIndex() {
         return policyIndex;
     }
-
+  
     public abstract long getRefreshTime();
 
-    /**
-     * @return the size
-     */
+    /** {@inheritDoc} */
     public long getSize() {
         return size;
     }
-
+    /** {@inheritDoc} */
     public V getValue() {
         return value;
     }
-
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return key.hashCode() ^ value.hashCode();
@@ -163,7 +176,7 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
     public V setValue(V v) {
         throw new UnsupportedOperationException();
     }
-
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return getKey() + "=" + getValue() + " (policyIndex= " + getPolicyIndex() + ")";

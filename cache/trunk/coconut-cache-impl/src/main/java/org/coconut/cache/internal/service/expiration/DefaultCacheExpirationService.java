@@ -28,6 +28,9 @@ import org.coconut.management.ManagedObject;
  * be used in a multi-threaded environment if {@link Cache}, {@link CacheHelper} and
  * {@link InternalCacheAttributeService} that is specified at construction time are
  * thread-safe.
+ * <p>
+ * NOTICE: This is an internal class and should not be directly referred. No guarantee is
+ * made to the compatibility of this class between different releases of Coconut Cache.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -67,8 +70,7 @@ public class DefaultCacheExpirationService<K, V> extends AbstractInternalCacheSe
 
     /** {@inheritDoc} */
     @Override
-    public void initialize(CacheConfiguration<?, ?> configuration,
-            Map<Class<?>, Object> serviceMap) {
+    public void registerServices(Map<Class<?>, Object> serviceMap) {
         serviceMap.put(CacheExpirationService.class, ExpirationUtils.wrapService(this));
     }
 

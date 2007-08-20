@@ -25,6 +25,7 @@ import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.statistics.CacheHitStat;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
+import org.coconut.cache.test.util.ThreadServiceTestHelper;
 import org.coconut.core.Clock.DeterministicClock;
 import org.coconut.management.ManagedGroup;
 import org.coconut.test.CollectionUtils;
@@ -35,6 +36,8 @@ public class AbstractCacheTCKTestBundle extends Assert {
 
     protected DeterministicClock clock;
 
+    protected ThreadServiceTestHelper threadHelper;
+    
     @Before
     public void setupClock() throws Exception {
         clock = new DeterministicClock();
@@ -48,7 +51,9 @@ public class AbstractCacheTCKTestBundle extends Assert {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
         cc.setClock(clock);
         Cache<Integer, String> c = cc.newCacheInstance(CacheTCKRunner.tt);
-        c.putAll(createMap(entries));
+        if (entries > 0) {
+            c.putAll(createMap(entries));
+        }
         return c;
     }
 
@@ -208,7 +213,10 @@ public class AbstractCacheTCKTestBundle extends Assert {
             assertEquals(entry.getValue(), CollectionUtils.getValue(entry.getKey()));
         }
     }
-
+    protected String get(int key) {
+        return c.get(key);
+    }
+    
     protected String get(Map.Entry<Integer, String> e) {
         return c.get(e.getKey());
     }

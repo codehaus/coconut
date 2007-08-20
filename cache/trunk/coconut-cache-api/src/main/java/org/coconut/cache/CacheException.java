@@ -3,11 +3,9 @@
  */
 package org.coconut.cache;
 
-import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
-
 /**
  * <code>CacheException</code> is the main exception thrown by Coconut Cache. For better
- * control of when exceptions are thrown see {@link CacheExceptionHandler}.
+ * control of when exceptions are thrown see {@link org.coconut.cache.service.exceptionhandling.CacheExceptionHandler}.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$

@@ -5,8 +5,6 @@ package org.coconut.cache;
 
 import java.util.Map;
 
-import org.coconut.cache.service.expiration.CacheExpirationService;
-import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.core.AttributeMap;
 
 /**
@@ -104,7 +102,7 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V> {
      * 
      * @return the difference, measured in milliseconds, between the time at which the
      *         current value of the cache entry will expire and January 1, 1970 UTC.
-     * @see CacheExpirationService
+     * @see org.coconut.cache.service.expiration.CacheExpirationService
      */
     long getExpirationTime();
 
@@ -112,7 +110,7 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V> {
      * Returns the time at which the specific cache entry was last accessed in
      * milliseconds (optional operation). If the value has never been requested, for
      * example, if the entry has been added to the cache due to a call on
-     * {@link CacheLoadingService#load(Object)} this method returns <tt>0</tt>.
+     * {@link org.coconut.cache.service.loading.CacheLoadingService#load(Object)} this method returns <tt>0</tt>.
      * 
      * @return the difference, measured in milliseconds, between the time at which the
      *         entry was last accessed and January 1, 1970 UTC. Or <tt>0</tt> if it has

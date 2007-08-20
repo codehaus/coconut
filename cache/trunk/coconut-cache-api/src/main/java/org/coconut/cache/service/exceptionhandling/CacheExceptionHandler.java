@@ -104,9 +104,39 @@ public abstract class CacheExceptionHandler<K, V> {
         return null;
     }
 
-    public boolean initializingFailed(CacheConfiguration<K, V> configuration,
-            CacheLifecycle component, Exception cause) {
-        return false;
+    /**
+     * This method is called when the
+     * {@link CacheLifecycle#initialize(CacheConfiguration)} method of a cache service
+     * fails.
+     * <p>
+     * The {@link CacheLifecycle#initialize(CacheConfiguration)} method is always called
+     * from the constructor of the cache. And the default implementation of this method will
+     * let the cause of failure be propagated to the constructor callee.
+     * 
+     * @param configuration
+     *            the configuration of the cache
+     * @param service
+     *            the service that failed
+     * @param cause
+     *            the cause of the failure
+     */
+    public void lifecycleInitializationFailed(CacheConfiguration<K, V> configuration,
+            CacheLifecycle service, RuntimeException cause) {
+    }
+
+    public void cacheWasShutdown(CacheExceptionContext<K, V> context, String method) {
+    // THE cache in the context should be shielded in someway, so we don't cause some kind
+    // of recursion??? because calling any method on the cache will throw a new exception
+    // and so one....
+    // perhaps only getName should be available.
+    // throw new CacheShutdownException();Should we create this one?Or just illegal state
+    // or throw new IllegalStateException() <- me like
+
+    // All cache methods should have throws IllegalStateException if the cache has been
+    // shutdown (optional)
+
+    // all calls to this methods are synchronous (initiated by the user)
+    // so no need to log anything
     }
 
     /**
