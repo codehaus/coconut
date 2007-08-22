@@ -5,7 +5,6 @@ package org.coconut.cache.internal.service.eviction;
 
 import java.util.Map;
 
-import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.InternalCacheSupport;
 import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
@@ -16,6 +15,11 @@ import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedObject;
 
 /**
+ * 
+ * <p>
+ * NOTICE: This is an internal class and should not be directly referred. No guarantee is
+ * made to the compatibility of this class between different releases of Coconut Cache.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  * @param <K>
@@ -27,10 +31,14 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
         AbstractInternalCacheService implements InternalCacheEvictionService<K, V, T>,
         CacheEvictionService<K, V>, CacheEvictionMXBean, ManagedObject {
 
+    /** An InternalCacheSupport used for trimming the cache. */
     private final InternalCacheSupport<K, V> helper;
 
     /**
+     * Creates a new AbstractEvictionService.
      * 
+     * @param helper
+     *            the InternalCacheSupport for the cache
      */
     public AbstractEvictionService(InternalCacheSupport<K, V> helper) {
         super(CacheEvictionConfiguration.SERVICE_NAME);
@@ -39,8 +47,7 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
 
     /** {@inheritDoc} */
     @Override
-    public void registerServices(
-            Map<Class<?>, Object> serviceMap) {
+    public void registerServices(Map<Class<?>, Object> serviceMap) {
         serviceMap.put(CacheEvictionService.class, EvictionUtils.wrapService(this));
     }
 

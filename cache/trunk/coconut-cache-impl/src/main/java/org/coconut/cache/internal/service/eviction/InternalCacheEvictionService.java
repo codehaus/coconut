@@ -8,6 +8,11 @@ import java.util.List;
 import org.coconut.cache.CacheEntry;
 
 /**
+ * 
+ * 
+ * <p>
+ * NOTICE: This is an internal class and should not be directly referred. No guarantee is
+ * made to the compatibility of this class between different releases of Coconut Cache.
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  * @param <K>

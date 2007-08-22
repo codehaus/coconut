@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
@@ -33,19 +32,19 @@ import org.coconut.management.ManagedObject;
 public class UnsynchronizedCacheServiceManager extends
         AbstractInternalCacheServiceManager {
 
-    public final DefaultPicoContainer container = new DefaultPicoContainer();
+    private final DefaultPicoContainer container = new DefaultPicoContainer();
 
     private final Cache<?, ?> cache;
 
     private final CacheConfiguration<?, ?> conf;
 
-    private final Map<Class<?>, Object> publicServices = new HashMap<Class<?>, Object>();
-
-    private ServiceStatus status = ServiceStatus.NOTRUNNING;
+    private final List<ServiceHolder> externalServices = new ArrayList<ServiceHolder>();
 
     private final List<ServiceHolder> internalServices = new ArrayList<ServiceHolder>();
+
+    private final Map<Class<?>, Object> publicServices = new HashMap<Class<?>, Object>();
     
-    private final List<ServiceHolder> externalServices = new ArrayList<ServiceHolder>();
+    private ServiceStatus status = ServiceStatus.NOTRUNNING;
 
     public UnsynchronizedCacheServiceManager(Cache<?, ?> cache, InternalCacheSupport<?, ?> helper,
             CacheConfiguration<?, ?> conf) {
@@ -55,6 +54,12 @@ public class UnsynchronizedCacheServiceManager extends
             externalServices.add(new ServiceHolder(a));
         }
         initializePicoContainer(cache, helper, conf);
+    }
+
+    /** {@inheritDoc} */
+    public boolean awaitTermination(long timeout, TimeUnit unit)
+            throws InterruptedException {
+        return isTerminated();
     }
 
     /** {@inheritDoc} */
@@ -99,6 +104,19 @@ public class UnsynchronizedCacheServiceManager extends
     }
 
     /** {@inheritDoc} */
+    public boolean isShutdown() {
+        return status.isShutdown();
+    }
+
+    /** {@inheritDoc} */
+    public boolean isStarted() {
+        return status.isStarted();
+    }
+    /** {@inheritDoc} */
+    public boolean isTerminated() {
+        return status.isTerminated();
+    }
+    /** {@inheritDoc} */
     public void lazyStart(boolean failIfShutdown) {
         prestart();
     }
@@ -137,13 +155,6 @@ public class UnsynchronizedCacheServiceManager extends
         }
     }
 
-    private void start() {
-        // get all registered internal cache services
-
-    }
-    private void safeTerminateAll() {
-        
-    }
     /** {@inheritDoc} */
     public void registerService(Class type, Class<? extends AbstractCacheService> service) {
         if (status != ServiceStatus.NOTRUNNING) {
@@ -159,6 +170,16 @@ public class UnsynchronizedCacheServiceManager extends
         for (Class<? extends AbstractCacheService> service : services) {
             registerService(service, service);
         }
+    }
+
+    /** {@inheritDoc} */
+    public void shutdown() {
+        status = ServiceStatus.TERMINATED;
+    }
+
+    /** {@inheritDoc} */
+    public void shutdownNow() {
+        shutdown();// synchronous shutdown
     }
 
     private void initializePicoContainer(Cache<?, ?> cache, InternalCacheSupport<?, ?> helper,
@@ -180,9 +201,9 @@ public class UnsynchronizedCacheServiceManager extends
 
     static class ServiceHolder {
 
-        final CacheLifecycle service;
-
         private final Map<Class<?>, Object> published = new HashMap<Class<?>, Object>();
+
+        final CacheLifecycle service;
 
         ServiceHolder(CacheLifecycle service) {
             this.service = service;
@@ -199,51 +220,20 @@ public class UnsynchronizedCacheServiceManager extends
             }
         }
 
-        void start(Map c) {
-            if (service instanceof CacheService) {
-                ((CacheService) service).start(c);
-            }
-        }
-
         void registerMBeans(ManagedGroup parent) {
             if (service instanceof ManagedObject) {
                 ((ManagedObject) service).manage(parent);
             }
         }
 
+        void start(Map c) {
+            if (service instanceof CacheService) {
+                ((CacheService) service).start(c);
+            }
+        }
+
         void started(Cache<?, ?> c) {
             service.started(c);
         }
-    }
-
-    /** {@inheritDoc} */
-    public boolean awaitTermination(long timeout, TimeUnit unit)
-            throws InterruptedException {
-        return isTerminated();
-    }
-
-    /** {@inheritDoc} */
-    public boolean isShutdown() {
-        return status.isShutdown();
-    }
-
-    /** {@inheritDoc} */
-    public boolean isStarted() {
-        return status.isStarted();
-    }
-
-    /** {@inheritDoc} */
-    public boolean isTerminated() {
-        return status.isTerminated();
-    }
-
-    /** {@inheritDoc} */
-    public void shutdown() {
-        status = ServiceStatus.TERMINATED;
-    }
-
-    /** {@inheritDoc} */
-    public void shutdownNow() {
-        shutdown();// synchronous shutdown
     }
 }

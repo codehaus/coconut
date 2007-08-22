@@ -63,7 +63,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         this.loadExecutor = threadManager.getExecutor(CacheLoadingService.class)
                 .createExecutorService();
         attributeFactory.update().setTimeToFreshNanos(
-                LoadingUtils.getInitialTimeToRefrehs(loadConf));
+                LoadingUtils.getInitialTimeToRefresh(loadConf));
         this.reloadFilter = loadConf.getRefreshFilter();
         this.cache = cache;
     }

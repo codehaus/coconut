@@ -18,6 +18,11 @@ import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.annotation.ManagedOperation;
 
 /**
+ * Various utilities used for the loading service.
+ * <p>
+ * NOTICE: This is an internal class and should not be directly referred. No guarantee is
+ * made to the compatibility of this class between different releases of Coconut Cache.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -26,22 +31,97 @@ final class LoadingUtils {
     /** Cannot instantiate. */
     private LoadingUtils() {}
 
-    public static <K, V> CacheLoadingService<K, V> wrapService(
-            CacheLoadingService<K, V> service) {
-        return new DelegatedCacheLoadingService<K, V>(service);
+    /**
+     * Converts the specified timeToRefresh in nanoseconds to the specified unit. This conversion
+     * routine will handle the special meaning of {@link Long#MAX_VALUE}.
+     * 
+     * @param timeToRefreshNanos the time in nanoseconds to convert
+     * @param unit the unit to convert to
+     * @return the converted value
+     * @throws NullPointerException
+     *             if the specified unit is <tt>null</tt>
+     * @throws IllegalArgumentException
+     *             if the specified timeToRefreshNanos is negative
+     */
+    public static long convertNanosToRefreshTime(long timeToRefreshNanos, TimeUnit unit) {
+        return new CacheLoadingConfiguration().setDefaultTimeToRefresh(
+                timeToRefreshNanos, TimeUnit.NANOSECONDS).getDefaultTimeToRefresh(unit);
     }
 
+    /**
+     * Converts the specified timeToRefresh in the specified unit to nanoseconds. This
+     * conversion routine will handle the special meaning of {@link Long#MAX_VALUE}.
+     * 
+     * @param timeToRefresh the time to convert from
+     * @param unit the unit to convert from
+     * @return the converted value
+     * @throws NullPointerException
+     *             if the specified unit is <tt>null</tt>
+     * @throws IllegalArgumentException
+     *             if the specified interval is negative
+     */
+    public static long convertRefreshTimeToNanos(long timeToRefresh, TimeUnit unit) {
+        return new CacheLoadingConfiguration().setDefaultTimeToRefresh(timeToRefresh,
+                unit).getDefaultTimeToRefresh(TimeUnit.NANOSECONDS);
+    }
+
+    /**
+     * Returns the time to refresh in nanoseconds from the specified cache loading
+     * configuration. Currently this is similar to
+     * {@link #convertRefreshTimeToNanos(long, TimeUnit)}, however when we get tree
+     * caching working 0 will mean that the time to refresh must be inherited from the
+     * parent.
+     * 
+     * @param conf
+     *            the CacheLoadingConfiguration to fetch the refresh time from
+     * @return the configured refresh time
+     */
+    public static long getInitialTimeToRefresh(CacheLoadingConfiguration<?, ?> conf) {
+        long tmp = conf.getDefaultTimeToRefresh(TimeUnit.NANOSECONDS);
+        if (tmp == 0) {
+            tmp = Long.MAX_VALUE;
+        }
+        return tmp;
+    }
+
+    /**
+     * Wraps a CacheLoadingService in a CacheLoadingMXBean.
+     * 
+     * @param service
+     *            the CacheLoadingService to wrap
+     * @return the wrapped CacheLoadingMXBean
+     */
     public static CacheLoadingMXBean wrapMXBean(CacheLoadingService<?, ?> service) {
         return new DelegatedCacheLoadingMXBean(service);
     }
 
     /**
-     * <p>
-     * Must be a public class to allow reflection.
+     * Wraps a CacheLoadingService implementation such that only methods from the
+     * CacheLoadingService interface is exposed.
+     * 
+     * @param service
+     *            the CacheLoadingService to wrap
+     * @return a wrapped service that only exposes CacheLoadingService methods
+     */
+    public static <K, V> CacheLoadingService<K, V> wrapService(
+            CacheLoadingService<K, V> service) {
+        return new DelegatedCacheLoadingService<K, V>(service);
+    }
+
+    /**
+     * A class that exposes a {@link CacheLoadingService} as a {@link CacheLoadingMXBean}.
      */
     public static final class DelegatedCacheLoadingMXBean implements CacheLoadingMXBean {
+
+        /** The CacheLoadingService that is wrapped. */
         private final CacheLoadingService<?, ?> service;
 
+        /**
+         * Creates a new DelegatedCacheLoadingMXBean.
+         * 
+         * @param service
+         *            the CacheLoadingService to wrap
+         */
         public DelegatedCacheLoadingMXBean(CacheLoadingService<?, ?> service) {
             if (service == null) {
                 throw new NullPointerException("service is null");
@@ -49,36 +129,39 @@ final class LoadingUtils {
             this.service = service;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
+        @ManagedOperation(description = "reload all mappings")
+        public void forceLoadAll() {
+            service.forceLoadAll();
+        }
+
+        /** {@inheritDoc} */
         @ManagedAttribute(description = "The default time to live for cache entries in milliseconds")
         public long getDefaultTimeToRefreshMs() {
             return service.getDefaultTimeToRefresh(TimeUnit.MILLISECONDS);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public void setDefaultTimeToRefreshMs(long timeToLiveMs) {
             service.setDefaultTimeToRefresh(timeToLiveMs, TimeUnit.MILLISECONDS);
         }
-
-        /**
-         * {@inheritDoc}
-         */
-        @ManagedOperation(description = "reload all mappings")
-        public void forceLoadAll() {
-            service.forceLoadAll();
-        }
     }
 
+    /**
+     * A wrapper class that exposes only the CacheLoadingService methods of a
+     * CacheLoadingService implementation.
+     */
     public static final class DelegatedCacheLoadingService<K, V> implements
             CacheLoadingService<K, V> {
+
+        /** The CacheLoadingService that is wrapped. */
         private final CacheLoadingService<K, V> delegate;
 
         /**
+         * Creates a wrapped CacheLoadingService from the specified implementation.
+         * 
          * @param service
+         *            the CacheLoadingService to wrap
          */
         public DelegatedCacheLoadingService(CacheLoadingService<K, V> service) {
             if (service == null) {
@@ -87,129 +170,81 @@ final class LoadingUtils {
             this.delegate = service;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
+        public void filteredLoad(Filter<? super CacheEntry<K, V>> filter) {
+            delegate.filteredLoad(filter);
+        }
+
+        /** {@inheritDoc} */
         public void filteredLoad(Filter<? super CacheEntry<K, V>> filter,
                 AttributeMap defaultAttributes) {
             delegate.filteredLoad(filter, defaultAttributes);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public void filteredLoad(Filter<? super CacheEntry<K, V>> filter,
                 Transformer<CacheEntry<K, V>, AttributeMap> attributeTransformer) {
             delegate.filteredLoad(filter, attributeTransformer);
         }
 
-        /**
-         * {@inheritDoc}
-         */
-        public void filteredLoad(Filter<? super CacheEntry<K, V>> filter) {
-            delegate.filteredLoad(filter);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void forceLoad(K key, AttributeMap attributes) {
-            delegate.forceLoad(key, attributes);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public void forceLoad(K key) {
             delegate.forceLoad(key);
         }
 
-        /**
-         * {@inheritDoc}
-         */
-        public void forceLoadAll(AttributeMap attributes) {
-            delegate.forceLoadAll(attributes);
+        /** {@inheritDoc} */
+        public void forceLoad(K key, AttributeMap attributes) {
+            delegate.forceLoad(key, attributes);
         }
 
-        /**
-         * {@inheritDoc}
-         */
-        public void forceLoadAll(Collection<? extends K> keys) {
-            delegate.forceLoadAll(keys);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void forceLoadAll(Map<K, AttributeMap> mapsWithAttributes) {
-            delegate.forceLoadAll(mapsWithAttributes);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public long getDefaultTimeToRefresh(TimeUnit unit) {
-            return delegate.getDefaultTimeToRefresh(unit);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void load(K key, AttributeMap attributes) {
-            delegate.load(key, attributes);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void load(K key) {
-            delegate.load(key);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void loadAll(Collection<? extends K> keys) {
-            delegate.loadAll(keys);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void loadAll(Map<K, AttributeMap> mapsWithAttributes) {
-            delegate.loadAll(mapsWithAttributes);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public void forceLoadAll() {
             delegate.forceLoadAll();
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
+        public void forceLoadAll(AttributeMap attributes) {
+            delegate.forceLoadAll(attributes);
+        }
+
+        /** {@inheritDoc} */
+        public void forceLoadAll(Collection<? extends K> keys) {
+            delegate.forceLoadAll(keys);
+        }
+
+        /** {@inheritDoc} */
+        public void forceLoadAll(Map<K, AttributeMap> mapsWithAttributes) {
+            delegate.forceLoadAll(mapsWithAttributes);
+        }
+
+        /** {@inheritDoc} */
+        public long getDefaultTimeToRefresh(TimeUnit unit) {
+            return delegate.getDefaultTimeToRefresh(unit);
+        }
+
+        /** {@inheritDoc} */
+        public void load(K key) {
+            delegate.load(key);
+        }
+
+        /** {@inheritDoc} */
+        public void load(K key, AttributeMap attributes) {
+            delegate.load(key, attributes);
+        }
+
+        /** {@inheritDoc} */
+        public void loadAll(Collection<? extends K> keys) {
+            delegate.loadAll(keys);
+        }
+
+        /** {@inheritDoc} */
+        public void loadAll(Map<K, AttributeMap> mapsWithAttributes) {
+            delegate.loadAll(mapsWithAttributes);
+        }
+
+        /** {@inheritDoc} */
         public void setDefaultTimeToRefresh(long timeToLive, TimeUnit unit) {
             delegate.setDefaultTimeToRefresh(timeToLive, unit);
         }
-    }
-
-    public static long convertNanosToRefreshTime(long timeToRefreshNanos, TimeUnit unit) {
-        return new CacheLoadingConfiguration().setDefaultTimeToRefresh(
-                timeToRefreshNanos, TimeUnit.NANOSECONDS).getDefaultTimeToRefresh(unit);
-    }
-
-    public static long convertRefreshTimeToNanos(long timeToRefresh, TimeUnit unit) {
-        return new CacheLoadingConfiguration().setDefaultTimeToRefresh(timeToRefresh,
-                unit).getDefaultTimeToRefresh(TimeUnit.NANOSECONDS);
-    }
-
-    public static long getInitialTimeToRefrehs(CacheLoadingConfiguration<?, ?> conf) {
-        long tmp = conf.getDefaultTimeToRefresh(TimeUnit.NANOSECONDS);
-        if (tmp == 0) {
-            tmp = Long.MAX_VALUE;
-        }
-        return tmp;
     }
 }

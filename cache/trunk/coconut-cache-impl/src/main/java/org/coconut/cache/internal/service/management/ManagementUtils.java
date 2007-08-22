@@ -26,6 +26,17 @@ final class ManagementUtils {
     private ManagementUtils() {}
     
     /**
+     * Wraps a Cache in a CacheMXBean.
+     * 
+     * @param service
+     *            the Cache to wrap
+     * @return the wrapped CacheMXBean
+     */
+    public static CacheMXBean wrapMXBean(Cache<?, ?> service) {
+        return new DelegatedCacheMXBean(service);
+    }
+
+    /**
      * Wraps a CacheManagementService implementation such that only methods from the
      * CacheManagementService interface is exposed.
      * 
@@ -38,17 +49,6 @@ final class ManagementUtils {
     }
 
     /**
-     * Wraps a Cache in a CacheMXBean.
-     * 
-     * @param service
-     *            the Cache to wrap
-     * @return the wrapped CacheMXBean
-     */
-    public static CacheMXBean wrapMXBean(Cache<?, ?> service) {
-        return new DelegatedCacheMXBean(service);
-    }
-
-    /**
      * A wrapper class that exposes only the CacheManagementService methods of a
      * CacheManagementService implementation.
      */
@@ -58,11 +58,11 @@ final class ManagementUtils {
         private final CacheManagementService delegate;
 
         /**
-         * Creates a wrapped DelegatedCacheManagementService from the specified
+         * Creates a wrapped CacheManagementService from the specified
          * implementation.
          * 
          * @param service
-         *            the DelegatedCacheManagementService to wrap
+         *            the CacheManagementService to wrap
          */
         public DelegatedCacheManagementService(CacheManagementService service) {
             if (service == null) {
@@ -110,12 +110,6 @@ final class ManagementUtils {
         }
 
         /** {@inheritDoc} */
-        @ManagedAttribute(description = "The total size of all elements contained in the cache")
-        public long getVolume() {
-            return cache.getVolume();
-        }
-
-        /** {@inheritDoc} */
         @ManagedAttribute(description = "The name of the cache")
         public String getName() {
             return cache.getName();
@@ -125,6 +119,12 @@ final class ManagementUtils {
         @ManagedAttribute(description = "The number of elements contained in the cache")
         public int getSize() {
             return cache.size();
+        }
+
+        /** {@inheritDoc} */
+        @ManagedAttribute(description = "The total size of all elements contained in the cache")
+        public long getVolume() {
+            return cache.getVolume();
         }
     }
 }

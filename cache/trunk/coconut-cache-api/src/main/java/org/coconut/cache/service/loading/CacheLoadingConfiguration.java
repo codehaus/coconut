@@ -103,19 +103,22 @@ public class CacheLoadingConfiguration<K, V> extends
      * </pre>
      * 
      * @param interval
-     *            the i
+     *            the interval between refreshes
      * @param unit
      *            the time unit of the interval
      * @return this configuration
+     * @throws NullPointerException
+     *             if the specified unit is <tt>null</tt>
+     * @throws IllegalArgumentException
+     *             if the specified interval is negative
      */
     public CacheLoadingConfiguration<K, V> setDefaultTimeToRefresh(long interval,
             TimeUnit unit) {
         if (unit == null) {
             throw new NullPointerException("unit is null");
         } else if (interval < 0) {
-            throw new IllegalArgumentException("interval must be a positive number");
+            throw new IllegalArgumentException("interval must be a non negative number");
         }
-
         if (interval == Long.MAX_VALUE) {
             defaultTimeToRefresh = interval;
         } else {
@@ -158,9 +161,7 @@ public class CacheLoadingConfiguration<K, V> extends
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     protected void fromXML(Element parent) throws Exception {
         /* Loader */
@@ -175,9 +176,7 @@ public class CacheLoadingConfiguration<K, V> extends
         refreshFilter = loadOptional(parent, REFRESH_FILTER_TAG, Filter.class);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     protected void toXML(Document doc, Element parent) {
         /* Cache Loader */

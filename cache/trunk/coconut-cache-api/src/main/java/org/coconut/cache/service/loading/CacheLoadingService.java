@@ -97,8 +97,47 @@ public interface CacheLoadingService<K, V> {
      */
     void forceLoadAll(AttributeMap attributes);
 
+    /**
+     * For all keys in the specified collection . This method will attempt to load the
+     * value for the key from the configured cache loader. The effect of this call is
+     * equivalent to that of calling {@link #forceLoad(Object)} once for each key in the
+     * specified collection. However, This operation may be more efficient than repeatedly
+     * calling {@link #forceLoad(Object)} for each key.
+     * <p>
+     * The behavior of this operation is unspecified if the specified collection is
+     * modified while the operation is in progress.
+     * 
+     * @param keys
+     *            whose associated values is to be loaded.
+     * @throws ClassCastException
+     *             if any of the keys in the specified collection are of an inappropriate
+     *             type for this cache (optional).
+     * @throws NullPointerException
+     *             if the specified collection of keys is <tt>null</tt> or the specified
+     *             collection contains a <tt>null</tt> value
+     */
     void forceLoadAll(Collection<? extends K> keys);
 
+    /**
+     * For all keys and corresponding AttributeMap in the specified map. This method will
+     * attempt to load the value for the key and AttributeMap from the configured cache
+     * loader. The effect of this call is equivalent to that of calling
+     * {@link #forceLoad(Object, AttributeMap)} once for each entry in the specified map.
+     * However, This operation may be more efficient than repeatedly calling
+     * {@link #forceLoad(Object, AttributeMap)}.
+     * <p>
+     * The behavior of this operation is unspecified if the specified collection is
+     * modified while the operation is in progress.
+     * 
+     * @param mapsWithAttributes
+     *            a map of keys that should be loaded with an associated AttributeMap
+     * @throws ClassCastException
+     *             if any of the keys in the specified map are of an inappropriate type
+     *             for this cache (optional).
+     * @throws NullPointerException
+     *             if the specified map is <tt>null</tt> or any of the keys in the map
+     *             is <tt>null</tt>
+     */
     void forceLoadAll(Map<K, AttributeMap> mapsWithAttributes);
 
     /**
@@ -136,15 +175,15 @@ public interface CacheLoadingService<K, V> {
 
     /**
      * This method works analogous to the {@link #load(Object)} method. Except that all
-     * the attributes available in the the specified attribute map. Will parsed along to
-     * the {@link CacheLoader#load(Object, AttributeMap)} method of the configured cache
-     * loader.
+     * the attributes available in the the specified attribute map. Will be parsed along
+     * to the {@link CacheLoader#load(Object, AttributeMap)} method of the configured
+     * cache loader.
      * 
      * @param key
      *            whose associated value is to be loaded.
      * @param attributes
      *            a map of attributes that will be available in the attribute map parsed
-     *            to {@link CacheLoader#load(Object, AttributeMap)} method of the
+     *            to the {@link CacheLoader#load(Object, AttributeMap)} method of the
      *            configured cache loader
      * @throws ClassCastException
      *             if the key is of an inappropriate type for this cache (optional).
@@ -154,12 +193,12 @@ public interface CacheLoadingService<K, V> {
     void load(K key, AttributeMap attributes);
 
     /**
-     * For all keys in the specified collection and where a mapping from the key is not
-     * already in the cache. This method will attempt to load the value for the key from
-     * the configured cache loader. The effect of this call is equivalent to that of
+     * For all keys in the specified collection and where a valid mapping from the key is
+     * not already in the cache. This method will attempt to load the value for the key
+     * from the configured cache loader. The effect of this call is equivalent to that of
      * calling {@link #load(Object)} once for each key in the specified collection.
-     * However, it might be possible for some implementations to do take advantage of bulk
-     * loading.
+     * However, This operation may be more efficient than repeatedly calling
+     * {@link #load(Object)} for each key.
      * <p>
      * The behavior of this operation is unspecified if the specified collection is
      * modified while the operation is in progress.
@@ -181,8 +220,8 @@ public interface CacheLoadingService<K, V> {
      */
     void loadAll(Map<K, AttributeMap> mapsWithAttributes);
 
-    //void loadAll() -> load all expired or needs refresh
-    
+    // void loadAll() -> load all expired or needs refresh
+
     /**
      * Sets the default expiration time for new objetcs that are added to the cache. If no
      * default expiration time has been set, entries will never expire.

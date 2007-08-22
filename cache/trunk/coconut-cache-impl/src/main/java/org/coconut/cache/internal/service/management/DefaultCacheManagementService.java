@@ -22,8 +22,9 @@ import org.coconut.management.Managements;
 import org.coconut.management.defaults.DefaultManagedGroup;
 
 /**
- * The default implementation of the {@link CacheManagementService} interface. All methods exposed
- * through the CacheManagementService interface can be invoked in a thread safe manner.
+ * The default implementation of the {@link CacheManagementService} interface. All methods
+ * exposed through the CacheManagementService interface can be invoked in a thread safe
+ * manner.
  * <p>
  * NOTICE: This is an internal class and should not be directly referred. No guarantee is
  * made to the compatibility of this class between different releases of Coconut Cache.
@@ -93,9 +94,7 @@ public class DefaultCacheManagementService extends AbstractInternalCacheService 
         return isEnabled;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public ManagedGroup getRoot() {
         if (isEnabled) {
             return root;
@@ -105,21 +104,16 @@ public class DefaultCacheManagementService extends AbstractInternalCacheService 
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
-    public void registerServices(
-            Map<Class<?>, Object> serviceMap) {
+    public void registerServices(Map<Class<?>, Object> serviceMap) {
         if (isEnabled) {
             serviceMap.put(CacheManagementService.class, ManagementUtils
                     .wrapService(this));
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void shutdown(Executor e) {
         if (isEnabled) {
@@ -131,9 +125,7 @@ public class DefaultCacheManagementService extends AbstractInternalCacheService 
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void started(Cache<?, ?> cache) {
         if (isEnabled) {

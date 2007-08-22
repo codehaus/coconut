@@ -13,6 +13,10 @@ import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 
 /**
+ * <p>
+ * NOTICE: This is an internal class and should not be directly referred. No guarantee is
+ * made to the compatibility of this class between different releases of Coconut Cache.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  * @param <K>
@@ -137,8 +141,8 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
 
     /** {@inheritDoc} */
     public void setMaximumVolume(long size) {
-        this.maxCapacity = new CacheEvictionConfiguration<K, V>()
-                .setMaximumVolume(size).getMaximumVolume();
+        this.maxCapacity = new CacheEvictionConfiguration<K, V>().setMaximumVolume(size)
+                .getMaximumVolume();
     }
 
     /** {@inheritDoc} */
