@@ -9,8 +9,8 @@ import java.util.List;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.InternalCacheSupport;
 import org.coconut.cache.policy.Policies;
-import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
+import org.coconut.cache.spi.ReplacementPolicy;
 
 /**
  * <p>

@@ -7,7 +7,6 @@ package org.coconut.cache.spi;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.core.AttributeMaps;
 
 /**

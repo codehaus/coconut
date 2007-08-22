@@ -13,10 +13,11 @@ import org.coconut.cache.policy.paging.LIFOPolicy;
 import org.coconut.cache.policy.paging.LRUPolicy;
 import org.coconut.cache.policy.paging.MRUPolicy;
 import org.coconut.cache.policy.paging.RandomPolicy;
+import org.coconut.cache.spi.ReplacementPolicy;
 import org.coconut.filter.Filter;
 
 /**
- * Factory methods for different {@link org.coconut.cache.policy.ReplacementPolicy}
+ * Factory methods for different {@link org.coconut.cache.spi.ReplacementPolicy}
  * implementations. This class provides shortcuts for the specific implementations of
  * policies defined in <tt>coconut.cache.policy</tt>.
  * 

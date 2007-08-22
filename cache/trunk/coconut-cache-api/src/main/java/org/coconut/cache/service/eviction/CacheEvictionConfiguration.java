@@ -11,9 +11,9 @@ import static org.coconut.internal.util.XmlUtil.writeLong;
 
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
+import org.coconut.cache.spi.ReplacementPolicy;
 import org.coconut.internal.util.UnitOfTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

@@ -7,12 +7,12 @@ import java.util.HashSet;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.policy.paging.RandomPolicy;
 import org.coconut.cache.service.event.CacheEntryEvent;
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
+import org.coconut.cache.spi.ReplacementPolicy;
 import org.coconut.core.EventProcessor;
 import org.junit.Test;
 

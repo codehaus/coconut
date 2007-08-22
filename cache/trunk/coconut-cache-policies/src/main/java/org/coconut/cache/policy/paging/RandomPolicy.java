@@ -152,7 +152,7 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements Serializable, 
      * 
      * @return a random element or <code>null</code> if the policy does not contain any
      *         elements
-     * @see org.coconut.cache.policy.ReplacementPolicy#evictNext()
+     * @see org.coconut.cache.spi.ReplacementPolicy#evictNext()
      */
     public T peek() {
         if (nextEntryIndex == 0) {
@@ -169,7 +169,7 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements Serializable, 
      * of this method will most likely return different results.
      * 
      * @return a list of all elements contained in this policy in some random order
-     * @see org.coconut.cache.policy.ReplacementPolicy#peekAll()
+     * @see org.coconut.cache.spi.ReplacementPolicy#peekAll()
      */
     @SuppressWarnings("unchecked")
     public List<T> peekAll() {

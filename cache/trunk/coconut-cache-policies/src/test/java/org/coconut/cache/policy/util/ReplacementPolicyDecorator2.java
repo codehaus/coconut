@@ -11,7 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.coconut.cache.policy.ReplacementPolicy;
+import org.coconut.cache.spi.ReplacementPolicy;
 import org.coconut.test.MockTestCase;
 import org.jmock.Mock;
 import org.jmock.builder.ArgumentsMatchBuilder;
