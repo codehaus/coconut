@@ -118,7 +118,7 @@ public class DefaultCacheEventService<K, V> extends AbstractInternalCacheService
                 dispatch(miss(cache, key));
             }
             if (newEntry != null && doAdd) {
-                dispatch(added(cache, newEntry));
+                dispatch(added(cache, newEntry, true));
             }
         } else {
             if (isExpired) {
@@ -263,7 +263,7 @@ public class DefaultCacheEventService<K, V> extends AbstractInternalCacheService
             CacheEntry<K, V> prev) {
         if (prev == null) {
             if (newEntry != null && doAdd) {
-                dispatch(added(cache, newEntry));
+                dispatch(added(cache, newEntry, true));
             }
         } else if (newEntry == null) {
             if (doRemove) {

@@ -5,6 +5,7 @@ package org.coconut.cache.internal.service.event;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.service.event.CacheEvent;
+import org.coconut.internal.util.ObjectUtils;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -45,6 +46,9 @@ final class InternalEvent {
          */
         public Cleared(final Cache<K, V> cache, final int previousSize,
                 final long previousCapacity) {
+            if (cache == null) {
+                throw new NullPointerException("cache is null");
+            }
             this.previousSize = previousSize;
             this.previousCapacity = previousCapacity;
             this.cache = cache;
@@ -70,7 +74,33 @@ final class InternalEvent {
             return previousSize;
         }
 
+        /** {@inheritDoc} */
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof CacheEvent.CacheCleared
+                    && equals((CacheEvent.CacheCleared) obj);
+        }
+
+        public boolean equals(CacheEvent.CacheCleared<K, V> event) {
+            return cache.equals(event.getCache()) && getName() == event.getName()
+                    && getPreviousSize() == event.getPreviousSize()
+                    && getPreviousCapacity() == event.getPreviousCapacity();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public int hashCode() {
+            return cache.hashCode() ^ previousSize;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString() {
+            return getName() + " [previousSize = " + getPreviousSize()
+                    + " , previousCapacity = " + getPreviousCapacity() + "]";
+        }
     }
+
     /**
      * The default implementation of the cache Evicted event.
      * 
@@ -115,20 +145,22 @@ final class InternalEvent {
     }
 
     /**
+     * Creates a new {@link CacheCleared} event from the specified parameters.
+     * 
      * @param previousSize
      *            the size of the cache before it was cleared
      * @param previousCapacity
      *            the capacity of the cache before it was cleared
      * @param cache
      *            the cache that was cleared
+     * @return a Cleared event from the specified parameters
      * @param <K>
      *            the type of keys maintained by the cache
      * @param <V>
      *            the type of values maintained by the cache
-     * @return a Cleared event from the specified parameters
      */
-    static <K, V> CacheEvent<K, V> cleared(Cache<K, V> cache, int previousSize,
-            long previousCapacity) {
+    static <K, V> CacheEvent.CacheCleared<K, V> cleared(Cache<K, V> cache,
+            int previousSize, long previousCapacity) {
         return new Cleared<K, V>(cache, previousSize, previousCapacity);
     }
 

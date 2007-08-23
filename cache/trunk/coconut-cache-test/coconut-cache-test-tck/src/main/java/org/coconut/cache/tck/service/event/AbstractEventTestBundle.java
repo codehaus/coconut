@@ -42,8 +42,6 @@ public class AbstractEventTestBundle extends AbstractCacheTCKTestBundle {
 
     private EventProcessor<CacheEvent<Integer, String>> eventHandler;
 
-    private long prevId;
-
     private EventWrapper ev;
 
     protected int getPendingEvents() {
@@ -98,10 +96,6 @@ public class AbstractEventTestBundle extends AbstractCacheTCKTestBundle {
                 eventHandler, f);
         assertNotNull(s);
         return s;
-    }
-
-    protected boolean checkStrict() {
-        return false;
     }
 
     protected void consumeItem() throws Exception {

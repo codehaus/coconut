@@ -9,7 +9,7 @@ import java.util.List;
 
 import net.jcip.annotations.NotThreadSafe;
 
-import org.coconut.cache.spi.AbstractPolicy;
+import org.coconut.cache.policy.spi.AbstractPolicy;
 import org.coconut.core.AttributeMap;
 
 /**

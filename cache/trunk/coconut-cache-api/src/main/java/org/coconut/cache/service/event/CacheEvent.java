@@ -60,6 +60,8 @@ public interface CacheEvent<K, V> {
          * @return the number of elements that was in the cache before it was cleared
          */
         int getPreviousSize();
+        
+        long getPreviousCapacity();
     }
 
     /**

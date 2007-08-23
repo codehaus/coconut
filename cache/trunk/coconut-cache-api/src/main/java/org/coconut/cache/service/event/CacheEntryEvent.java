@@ -3,6 +3,8 @@
  */
 package org.coconut.cache.service.event;
 
+import java.util.Map;
+
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.loading.CacheLoadingService;
@@ -38,7 +40,8 @@ import org.coconut.cache.service.loading.CacheLoadingService;
  *            the type of mapped values
  */
 @SuppressWarnings("hiding")
-public interface CacheEntryEvent<K, V> extends CacheEvent<K, V>, CacheEntry<K, V> {
+public interface CacheEntryEvent<K, V> extends CacheEvent<K, V>,/* CacheEntry<K,V */
+        Map.Entry<K, V> {
 
     /**
      * This event indicates that an entry in the cache was accessed. This happens through
@@ -76,6 +79,8 @@ public interface CacheEntryEvent<K, V> extends CacheEvent<K, V>, CacheEntry<K, V
 
         /** The unique name of this event. */
         String NAME = "cacheitem.Added";
+
+        boolean isLoaded();
     }
 
     // /**
@@ -154,6 +159,8 @@ public interface CacheEntryEvent<K, V> extends CacheEvent<K, V>, CacheEntry<K, V
          *         <tt>null</tt> if there was no mapping for the key.
          */
         V getPreviousValue();
+
+        boolean isLoaded();
 
         /**
          * Returns true if the item was updated because the timeout value specified for

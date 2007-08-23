@@ -10,7 +10,7 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.internal.util.ResourceHolder;
 
 /**
- * This is an class used internally. It should never be referenced by other classes
+ * This class is used internally. It should not be referenced by user code.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$

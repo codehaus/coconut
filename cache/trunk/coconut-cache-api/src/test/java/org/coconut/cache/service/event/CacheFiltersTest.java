@@ -33,7 +33,7 @@ public class CacheFiltersTest extends MockTestCase {
         Cache c2 = (Cache) mock(Cache.class).proxy();
         mock.expects(once()).method("getCache").will(returnValue(c));
         mock2.expects(once()).method("getCache").will(returnValue(c2));
-        Filter<CacheEvent> f = CacheEventFilters.cacheEqualsFilter(c);
+        Filter<CacheEvent> f = CacheEventFilters.cacheSameFilter(c);
         assertTrue(f.accept((CacheEvent) mock.proxy()));
         assertFalse(f.accept((CacheEvent) mock2.proxy()));
     }

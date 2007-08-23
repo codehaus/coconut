@@ -29,6 +29,5 @@ public class CacheWorkerConfiguration {
 	public void setUncaughtExceptionHandler(
 			Thread.UncaughtExceptionHandler handler) {
 		ThreadPoolExecutor tpe=null;
-		tpe.set
 	}
 }

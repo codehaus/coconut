@@ -6,14 +6,14 @@ package org.coconut.cache.internal.service.event;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.event.CacheEntryEvent;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemAdded;
 import org.coconut.core.AttributeMap;
 
 /**
- * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, V> {
+abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
     private final Cache<K, V> cache;
 
     private final CacheEntry<K, V> entry;
@@ -22,6 +22,7 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, 
         this.cache = cache;
         this.entry = entry;
     }
+
     /** {@inheritDoc} */
     public AttributeMap getAttributes() {
         throw new UnsupportedOperationException();
@@ -32,11 +33,11 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, 
         return cache;
     }
 
-
     /** {@inheritDoc} */
     public double getCost() {
         return entry.getCost();
     }
+
     /** {@inheritDoc} */
     public long getCreationTime() {
         return entry.getCreationTime();
@@ -81,6 +82,7 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, 
     public V setValue(V value) {
         return entry.setValue(value);
     }
+
     /** {@inheritDoc} */
     @Override
     public String toString() {
@@ -95,21 +97,53 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, 
         return builder.toString();
     }
 
+    private boolean equals(CacheEntryEvent<K, V> event) {
+        return this.getKey().equals(event.getKey())
+                && this.getValue().equals(event.getValue());
+    }
+
+    public int hashCode() {
+        return getKey().hashCode();
+    }
+
     static class AddedEvent<K, V> extends InternalEntryEvent<K, V> implements
             CacheEntryEvent.ItemAdded<K, V> {
+
+        private final boolean wasLoaded;
 
         /**
          * @param cache
          * @param entry
          */
-        AddedEvent(Cache<K, V> cache, CacheEntry<K, V> entry) {
+        AddedEvent(Cache<K, V> cache, CacheEntry<K, V> entry, boolean wasLoaded) {
             super(cache, entry);
+            this.wasLoaded = wasLoaded;
         }
 
         /** {@inheritDoc} */
         public String getName() {
             return CacheEntryEvent.ItemAdded.NAME;
         }
+
+        /** {@inheritDoc} */
+        public boolean isLoaded() {
+            return wasLoaded;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof CacheEntryEvent.ItemAdded) {
+                CacheEntryEvent.ItemAdded<K, V> event = (ItemAdded<K, V>) obj;
+                return super.equals(event) && isLoaded() == event.isLoaded();
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return super.hashCode() ^ getName().hashCode();
+        }
+
     }
 
     static class ChangedEvent<K, V> extends InternalEntryEvent<K, V> implements
@@ -142,6 +176,11 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, 
         public boolean hasExpired() {
             return isExpired;
         }
+
+        /** {@inheritDoc} */
+        public boolean isLoaded() {
+            return false;
+        }
     }
 
     static class HitEvent<K, V> extends InternalEntryEvent<K, V> implements
@@ -158,6 +197,7 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, 
         public String getName() {
             return CacheEntryEvent.ItemAccessed.NAME;
         }
+
         /** {@inheritDoc} */
         public boolean isHit() {
             return true;
@@ -177,6 +217,7 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, 
             this.cache = cache;
             this.key = key;
         }
+
         /** {@inheritDoc} */
         public AttributeMap getAttributes() {
             throw new UnsupportedOperationException();
@@ -274,8 +315,9 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent.ItemAdded<K, 
 
     }
 
-    static <K, V> CacheEntryEvent<K, V> added(Cache<K, V> cache, CacheEntry<K, V> entry) {
-        return new AddedEvent<K, V>(cache, entry);
+    static <K, V> CacheEntryEvent.ItemAdded<K, V> added(Cache<K, V> cache, CacheEntry<K, V> entry,
+            boolean isLoaded) {
+        return new AddedEvent<K, V>(cache, entry, isLoaded);
     }
 
     static <K, V> CacheEntryEvent<K, V> evicted(Cache<K, V> cache, CacheEntry<K, V> entry) {

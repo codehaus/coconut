@@ -104,7 +104,7 @@ public final class CacheEventFilters {
      * @param <V>
      *            the type of mapped values
      */
-    public static <K, V> Filter<CacheEvent<K, V>> cacheEqualsFilter(Cache<K, V> cache) {
+    public static <K, V> Filter<CacheEvent<K, V>> cacheSameFilter(Cache<K, V> cache) {
         return cacheFilter(Filters.same(cache));
     }
 
