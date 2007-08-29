@@ -147,13 +147,13 @@ public class DummyCache<K, V> implements Cache<K, V> {
         return null;
     }
 
-    /**
-     * @see org.coconut.cache.Cache#put(java.lang.Object, java.lang.Object,
-     *      org.coconut.core.AttributeMap)
-     */
-    public V put(K key, V value, AttributeMap attributes) {
-        return null;
-    }
+//    /**
+//     * @see org.coconut.cache.Cache#put(java.lang.Object, java.lang.Object,
+//     *      org.coconut.core.AttributeMap)
+//     */
+//    public V put(K key, V value, AttributeMap attributes) {
+//        return null;
+//    }
 
     /**
      * @see java.util.Map#putAll(java.util.Map)

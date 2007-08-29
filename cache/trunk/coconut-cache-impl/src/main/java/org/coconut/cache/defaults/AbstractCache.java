@@ -137,7 +137,7 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
     }
 
     /** {@inheritDoc} */
-    public V put(K key, V value, AttributeMap attributes) {
+    V put(K key, V value, AttributeMap attributes) {
         if (key == null) {
             throw new NullPointerException("key is null");
         } else if (value == null) {

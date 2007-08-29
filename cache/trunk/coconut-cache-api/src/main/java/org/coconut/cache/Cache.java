@@ -336,34 +336,34 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      */
     V put(K key, V value);
 
-    /**
-     * Associates the specified value with the specified key in this cache (optional
-     * operation). If the cache previously contained a mapping for this key, the old value
-     * is replaced by the specified value. (A cache <tt>m</tt> is said to contain a
-     * mapping for a key <tt>k</tt> if and only if
-     * {@link #containsKey(Object) m.containsKey(k)} would return <tt>true</tt>.))
-     * 
-     * @param key
-     *            key with which the specified value is to be associated.
-     * @param value
-     *            value to be associated with the specified key.
-     * @param attributes
-     *            a map of additional attributes
-     * @return previous value associated with specified key, or <tt>null</tt> if there
-     *         was no mapping for key.
-     * @throws UnsupportedOperationException
-     *             if the <tt>put</tt> operation is not supported by this cache.
-     * @throws ClassCastException
-     *             if the class of the specified key or value prevents it from being
-     *             stored in this cache.
-     * @throws IllegalArgumentException
-     *             if some aspect of this key or value prevents it from being stored in
-     *             this cache.
-     * @throws NullPointerException
-     *             if either the specified key, value or attributes is <tt>null</tt>.
-     * @see Map#put(Object, Object)
-     */
-    V put(K key, V value, AttributeMap attributes);
+//    /**
+//     * Associates the specified value with the specified key in this cache (optional
+//     * operation). If the cache previously contained a mapping for this key, the old value
+//     * is replaced by the specified value. (A cache <tt>m</tt> is said to contain a
+//     * mapping for a key <tt>k</tt> if and only if
+//     * {@link #containsKey(Object) m.containsKey(k)} would return <tt>true</tt>.))
+//     * 
+//     * @param key
+//     *            key with which the specified value is to be associated.
+//     * @param value
+//     *            value to be associated with the specified key.
+//     * @param attributes
+//     *            a map of additional attributes
+//     * @return previous value associated with specified key, or <tt>null</tt> if there
+//     *         was no mapping for key.
+//     * @throws UnsupportedOperationException
+//     *             if the <tt>put</tt> operation is not supported by this cache.
+//     * @throws ClassCastException
+//     *             if the class of the specified key or value prevents it from being
+//     *             stored in this cache.
+//     * @throws IllegalArgumentException
+//     *             if some aspect of this key or value prevents it from being stored in
+//     *             this cache.
+//     * @throws NullPointerException
+//     *             if either the specified key, value or attributes is <tt>null</tt>.
+//     * @see Map#put(Object, Object)
+//     */
+//    V put(K key, V value, AttributeMap attributes);
 
     /**
      * Initiates an orderly shutdown of the cache. In which currently running tasks, such
