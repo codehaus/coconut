@@ -42,8 +42,6 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
     // private final MBeanIntrospector<M> introspector;
     private volatile MBeanInfo mbeanInfo;
 
-    private final Class<?> mbeanInterface = null;
-
     private final Map<String, List<AbstractOperation>> ops = new ConcurrentHashMap<String, List<AbstractOperation>>();
 
     private final Set<Object> os = new CopyOnWriteArraySet<Object>();

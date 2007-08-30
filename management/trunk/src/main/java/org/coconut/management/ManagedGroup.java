@@ -101,7 +101,7 @@ public interface ManagedGroup {
 
     /**
      * If any sub groups has been registered these will also be unregistered.
-     * 
+     * Kasper: No they shouldn't
      * @throws JMException
      *             if the mbean could not be properly unregistered
      */

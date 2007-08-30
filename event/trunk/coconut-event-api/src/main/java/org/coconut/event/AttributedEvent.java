@@ -3,7 +3,7 @@
  */
 package org.coconut.event;
 
-import java.util.Map;
+import org.coconut.core.AttributeMap;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -11,23 +11,6 @@ import java.util.Map;
  */
 public interface AttributedEvent {
 
-   String CPU_TIME = "cpu_time"; // type long
-
-    /**
-     * Returns the sequence id of the object. Usually used for maintaining a
-     * ordered collection of events.
-     * <p>
-     * As a general rule a sequence id is a positiv number.
-     * <p>
-     * If for some reason it is impossible to generate a sequence id or if it is
-     * not needed, {@link Long#MIN_VALUE} should be returned.
-     */
-    String SEQUENCE_ID = "sequence_id"; // type long
-
-    String TIMESTAMP = "timstamp"; // type long
-
-    String WALLCLOCK_TIME = "wallclock_time"; // type long
-
-    Map<String, Object> getAttributes();
+    AttributeMap getAttributes();
 
 }

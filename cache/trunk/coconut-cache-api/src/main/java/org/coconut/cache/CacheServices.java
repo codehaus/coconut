@@ -9,6 +9,7 @@ import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
+import org.coconut.cache.service.statistics.CacheStatisticsService;
 
 /**
  * A utility class to get hold of different cache services in an easy and typesafe manner.
@@ -110,5 +111,16 @@ public final class CacheServices {
      */
     public static CacheServiceManagerService servicemanager(Cache<?, ?> cache) {
         return cache.getService(CacheServiceManagerService.class);
+    }
+
+    /**
+     * Return the statistics service for the specified cache.
+     * 
+     * @param cache
+     *            the cache for which to return the statistics service
+     * @return the statistics service for the cache
+     */
+    public static CacheStatisticsService statistics(Cache<?, ?> cache) {
+        return cache.getService(CacheStatisticsService.class);
     }
 }

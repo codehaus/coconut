@@ -17,7 +17,7 @@ import org.coconut.internal.util.ResourceHolder;
  */
 public final class CacheSPI {
 
-    public static final String HIGHLY_IRREGULAR = "This is a highly irregular exception, and most likely means that some classes are missing";
+    public static final String HIGHLY_IRREGULAR = "This is a highly irregular exception, and most likely means that the jar containing this class is corrupt";
 
     static final String BUNDLE_NAME = "org.coconut.cache.messages";//$NON-NLS-1$
 

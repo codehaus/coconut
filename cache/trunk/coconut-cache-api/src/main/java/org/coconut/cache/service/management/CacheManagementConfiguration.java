@@ -31,9 +31,6 @@ import org.w3c.dom.Element;
  * <p>
  * Remote management (JMX) is turned off by default and you need to call
  * {@link #setEnabled(boolean)} to enable it before construction the cache.
- * <p>
- * If for some reason the cache fails to properly register with the MBeanServer at startup
- * time a {@link CacheException} will be thrown and the cache instance will be terminated.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
