@@ -6,14 +6,11 @@ package org.coconut.cache.tck.cacheentry;
 import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M2;
 
-import org.coconut.cache.CacheAttributes;
-import org.coconut.cache.service.loading.CacheLoader;
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.IntegerToStringLoader;
-import org.coconut.core.AttributeMap;
 import org.junit.Test;
 
-public class LastAccessedTime extends AbstractCacheTCKTestBundle {
+public class LastAccessedTime extends AbstractCacheTCKTest {
 
     @Test
     public void get() {

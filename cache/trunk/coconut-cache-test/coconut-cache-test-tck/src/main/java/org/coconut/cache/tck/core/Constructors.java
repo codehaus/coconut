@@ -9,18 +9,17 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;
 
 /**
- * This test tests that the three required constructors are present, a no
- * argument constructor, a constructor taking a map and one taking a
- * CacheConfiguration.
+ * This test tests that the two required constructors are present, a no argument
+ * constructor and one taking a CacheConfiguration.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class Constructors extends AbstractCacheTCKTestBundle {
+public class Constructors extends AbstractCacheTCKTest {
 
     @SuppressWarnings("unchecked")
     private Class<Cache> getClazz() {
@@ -41,38 +40,8 @@ public class Constructors extends AbstractCacheTCKTestBundle {
         assertTrue(c.isEmpty());
     }
 
-    //no cache with a map constructor anyway
-//    @Test
-//    public void testMapArgumentConstructor() throws Exception {
-//        Constructor con = getClazz().getConstructor(Map.class);
-//        Cache c = (Cache) con.newInstance(new HashMap<Integer, String>(c1));
-//        assertEquals(1, c.size());
-//        assertEquals(M1.getValue(), c.peek(M1.getKey()));
-//    }
-//
-//    @Test(expected = NullPointerException.class)
-//    public void testNullMapArgumentConstructor() throws Throwable {
-//        Constructor con = getClazz().getConstructor(Map.class);
-//        try {
-//            con.newInstance(new Object[] { null });
-//        } catch (InvocationTargetException ite) {
-//            throw ite.getCause();
-//        }
-//    }
-
-//    @SuppressWarnings("unchecked")
-//    @Test
-//    public void testCacheConfigurationArgumentConstructor() throws Exception {
-//        Constructor con = getClazz().getConstructor(CacheConfiguration.class);
-//        Cache c = (Cache) con.newInstance(CacheConfiguration.create()
-//                .setInitialMap(new HashMap<Integer, String>(c1)));
-//        assertEquals(1, c.size());
-//        assertEquals(M1.getValue(), c.peek(M1.getKey()));
-//    }
-
     @Test(expected = NullPointerException.class)
-    public void testNullCacheConfigurationArgumentConstructor()
-            throws Throwable {
+    public void testNullCacheConfigurationArgumentConstructor() throws Throwable {
         Constructor con = getClazz().getConstructor(CacheConfiguration.class);
         try {
             con.newInstance(new Object[] { null });

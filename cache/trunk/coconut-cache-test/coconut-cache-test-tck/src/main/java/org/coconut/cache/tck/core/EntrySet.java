@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;
 
 /**
@@ -25,7 +25,7 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class EntrySet extends AbstractCacheTCKTestBundle {
+public class EntrySet extends AbstractCacheTCKTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void testAdd() {

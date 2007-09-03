@@ -16,10 +16,10 @@ import static org.coconut.test.CollectionUtils.MNAN4;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;
 
-public class EntrySetModifying extends AbstractCacheTCKTestBundle {
+public class EntrySetModifying extends AbstractCacheTCKTest {
 
     /**
      * clear removes all pairs

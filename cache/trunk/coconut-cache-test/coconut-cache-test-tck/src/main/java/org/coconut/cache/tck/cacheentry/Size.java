@@ -13,7 +13,7 @@ import java.util.Map;
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.loading.CacheLoader;
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.core.AttributeMap;
 import org.junit.Test;
 
@@ -23,7 +23,7 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class Size extends AbstractCacheTCKTestBundle {
+public class Size extends AbstractCacheTCKTest {
 
     static class MyLoader implements CacheLoader<Integer, String> {
         private int totalCount;

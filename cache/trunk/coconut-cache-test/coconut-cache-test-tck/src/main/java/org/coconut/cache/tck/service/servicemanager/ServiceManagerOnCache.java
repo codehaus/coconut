@@ -3,10 +3,10 @@
  */
 package org.coconut.cache.tck.service.servicemanager;
 
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;
 
-public class ServiceManagerOnCache extends AbstractCacheTCKTestBundle {
+public class ServiceManagerOnCache extends AbstractCacheTCKTest {
 
     @Test
     public void testUnknownService() {

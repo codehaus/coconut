@@ -28,7 +28,7 @@ import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerConfiguration;
 import org.coconut.cache.service.statistics.CacheStatisticsConfiguration;
-import org.coconut.cache.service.threading.CacheExecutorConfiguration;
+import org.coconut.cache.service.worker.CacheWorkerConfiguration;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.cache.spi.CacheSPI;
 import org.coconut.cache.spi.XmlConfigurator;
@@ -73,7 +73,7 @@ public final class CacheConfiguration<K, V> {
                     CacheStatisticsConfiguration.class, CacheLoadingConfiguration.class,
                     CacheExpirationConfiguration.class,
                     CacheExceptionHandlingConfiguration.class,
-                    CacheExecutorConfiguration.class, CacheEvictionConfiguration.class);
+                    CacheWorkerConfiguration.class, CacheEvictionConfiguration.class);
 
     /** A Map of additional properties. */
     private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
@@ -280,7 +280,7 @@ public final class CacheConfiguration<K, V> {
     public CacheServiceManagerConfiguration serviceManager() {
         return lazyCreate(CacheServiceManagerConfiguration.class);
     }
-    
+
     /**
      * Creates a new cache instance of the specified type using this configuration.
      * <p>
@@ -430,8 +430,8 @@ public final class CacheConfiguration<K, V> {
      * 
      * @return a CacheThreadingConfiguration
      */
-    public CacheExecutorConfiguration<K, V> threading() {
-        return lazyCreate(CacheExecutorConfiguration.class);
+    public CacheWorkerConfiguration worker() {
+        return lazyCreate(CacheWorkerConfiguration.class);
     }
 
     /** {@inheritDoc} */

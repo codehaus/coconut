@@ -6,10 +6,10 @@ package org.coconut.cache.tck.service.expiration;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.test.CollectionUtils;
 
-class AbstractExpirationTestBundle extends AbstractCacheTCKTestBundle {
+class AbstractExpirationTestBundle extends AbstractCacheTCKTest {
 
     protected void putAll(long timeout, TimeUnit unit,
             Map.Entry<Integer, String>... entries) {

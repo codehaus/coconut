@@ -9,11 +9,11 @@ import javax.management.RuntimeMBeanException;
 
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.service.eviction.CacheEvictionMXBean;
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Before;
 import org.junit.Test;
 
-public class EvictionMXBean extends AbstractCacheTCKTestBundle {
+public class EvictionMXBean extends AbstractCacheTCKTest {
 
     static CacheEvictionConfiguration<?, ?> DEFAULT = new CacheEvictionConfiguration();
 

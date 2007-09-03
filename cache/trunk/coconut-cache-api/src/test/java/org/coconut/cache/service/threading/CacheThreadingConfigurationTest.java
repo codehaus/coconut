@@ -21,14 +21,14 @@ public class CacheThreadingConfigurationTest {
     private final static ScheduledExecutorService SES = Executors
             .newSingleThreadScheduledExecutor();
 
-    CacheExecutorConfiguration<?,?> t;
-
-    CacheExecutorConfiguration DEFAULT = new CacheExecutorConfiguration();
-
-    @Before
-    public void setUp() {
-        t = new CacheExecutorConfiguration();
-    }
+//    CacheExecutorConfiguration<?,?> t;
+//
+//    CacheExecutorConfiguration DEFAULT = new CacheExecutorConfiguration();
+//
+//    @Before
+//    public void setUp() {
+//        t = new CacheExecutorConfiguration();
+//    }
 
     @Test
     public void testNothing() {

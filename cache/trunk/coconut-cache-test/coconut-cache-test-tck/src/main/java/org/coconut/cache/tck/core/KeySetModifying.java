@@ -15,7 +15,7 @@ import static org.coconut.test.CollectionUtils.MNAN2;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;
 
 /**
@@ -24,7 +24,7 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class KeySetModifying extends AbstractCacheTCKTestBundle {
+public class KeySetModifying extends AbstractCacheTCKTest {
 
     /**
      * clear removes all pairs

@@ -9,7 +9,7 @@ import static org.coconut.test.CollectionUtils.M2;
 import static org.coconut.test.CollectionUtils.M3;
 import static org.coconut.test.CollectionUtils.M4;
 
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;
 
 /**
@@ -18,7 +18,7 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class ConcurrentMap extends AbstractCacheTCKTestBundle {
+public class ConcurrentMap extends AbstractCacheTCKTest {
 
     /**
      * This method is used because we are not to sure about whether or not cache should

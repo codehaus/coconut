@@ -3,6 +3,7 @@
  */
 package org.coconut.cache.tck.cacheentry;
 
+import static org.coconut.cache.CacheAttributes.DEFAULT_COST;
 import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M2;
 import static org.coconut.test.CollectionUtils.M3;
@@ -11,12 +12,24 @@ import static org.coconut.test.CollectionUtils.M6;
 import java.util.Map;
 
 import org.coconut.cache.CacheAttributes;
+import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.loading.CacheLoader;
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
+import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.core.AttributeMap;
 import org.junit.Test;
 
-public class Cost extends AbstractCacheTCKTestBundle {
+/**
+ * Tests {@link CacheEntry#getCost()}.
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ */
+public class Cost extends AbstractCacheTCKTest {
+
+    /**
+     * A loader that sets the cost attribute
+     */
     static class MyLoader implements CacheLoader<Integer, String> {
         private int totalCount;
 
@@ -27,45 +40,73 @@ public class Cost extends AbstractCacheTCKTestBundle {
         }
     }
 
-    
-    void assertPeekAndGet(Map.Entry<Integer, String> entry, double cost) {
-        assertEquals(cost, peekEntry(entry).getCost());
-        assertEquals(cost, getEntry(entry).getCost());
-        // TODO Enable when cachenetry.attributes is working
-        // assertEquals(modificationTime,
-        // CacheAttributes.getLastUpdateTime(getEntry(entry)
-        // .getAttributes()));
-    }
-
     /**
-     * Tests default size of 1.
+     * Tests default cost of 1 for new entries.
      */
     @SuppressWarnings("unchecked")
     @Test
     public void put() {
         c = newCache();
         put(M1);
-        assertPeekAndGet(M1, 1);
+        assertCostEquals(M1, DEFAULT_COST);
         putAll(M1, M2);
-        assertPeekAndGet(M1, 1);
-        assertPeekAndGet(M2, 1);
+        assertCostEquals(M1, DEFAULT_COST);
+        assertCostEquals(M2, DEFAULT_COST);
     }
-    @SuppressWarnings("unchecked")
+
+    /**
+     * Tests that loaded valus has a default cost of 1.
+     */
     @Test
     public void loaded() {
+        c = newCache(newConf().loading().setLoader(new IntegerToStringLoader()));
+        assertGet(M1);
+        assertCostEquals(M1, DEFAULT_COST);
+    }
+
+    /**
+     * Test a cache loader where entries has a specific cost.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void loadedCost() {
         c = newCache(newConf().loading().setLoader(new MyLoader()));
         assertGet(M1);
-        assertPeekAndGet(M1, 1.5);
+        assertCostEquals(M1, 1.5);
 
         assertGet(M3);
-        assertPeekAndGet(M3, 4.5);
+        assertCostEquals(M3, 4.5);
 
         assertGet(M6);
-        assertPeekAndGet(M6, 8.5);
+        assertCostEquals(M6, 8.5);
 
         c.clear();
         assertGet(M1);
-        assertPeekAndGet(M1, 4.5);
+        assertCostEquals(M1, 4.5);
+
+        // tests that a loaded value will override the cost
+        loading().forceLoad(M1.getKey());
+        awaitAllLoads();
+        assertCostEquals(M1, 5.5);
     }
 
+    /**
+     * Tests that put overrides the cost of an existing item.
+     */
+    @Test
+    public void putOverride() {
+        c = newCache(newConf().loading().setLoader(new MyLoader()));
+        assertGet(M1);
+        assertCostEquals(M1, 1.5);
+        put(M1);
+        assertCostEquals(M1, DEFAULT_COST);
+    }
+    
+    /**
+     * Asserts that the entry has the specified cost.
+     */
+    private void assertCostEquals(Map.Entry<Integer, String> entry, double cost) {
+        assertEquals(cost, peekEntry(entry).getCost());
+        assertEquals(cost, getEntry(entry).getCost());
+    }
 }

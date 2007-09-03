@@ -6,10 +6,10 @@ package org.coconut.cache.tck.cacheentry;
 import static org.coconut.test.CollectionUtils.*;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;
 
-public class KeyValue extends AbstractCacheTCKTestBundle {
+public class KeyValue extends AbstractCacheTCKTest {
 
     @Test
     public void get() {

@@ -28,8 +28,8 @@ public interface CacheStatisticsService {
 
     /**
      * Returns the current <tt>hit statistics</tt> for the cache (optional operation).
-     * The returned object is a immutable snapshot that only reflects the current state of
-     * the cache at the calling time.
+     * The returned object is an immutable snapshot that reflects the state of the cache
+     * at the calling time.
      * 
      * @return the current hit statistics
      * @throws UnsupportedOperationException

@@ -14,7 +14,7 @@ import java.util.Map;
 
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.service.loading.CacheLoader;
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.core.AttributeMap;
 import org.junit.Test;
@@ -25,20 +25,16 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class CreationTime extends AbstractCacheTCKTestBundle {
+public class CreationTime extends AbstractCacheTCKTest {
+
+    /**
+     * A loader that sets the creation time attribute
+     */
     static class MyLoader implements CacheLoader<Integer, String> {
         public String load(Integer key, AttributeMap attributes) throws Exception {
             CacheAttributes.setCreationTime(attributes, key + 1);
             return "" + (char) (key + 64);
         }
-    }
-
-    void assertPeekAndGet(Map.Entry<Integer, String> entry, long creationTime) {
-        assertEquals(creationTime, peekEntry(entry).getCreationTime());
-        assertEquals(creationTime, getEntry(entry).getCreationTime());
-        // TODO Enable when cachenetry.attributes is working
-        // assertEquals(creationTime, CacheAttributes.getCreationTime(getEntry(entry)
-        // .getAttributes()));
     }
 
     /**
@@ -130,15 +126,15 @@ public class CreationTime extends AbstractCacheTCKTestBundle {
         clock.incrementTimestamp();
         replace(M1.getKey(), M2.getValue());
         assertPeekAndGet(M1, 10);
-        
-        replace(M1.getKey(), M2.getValue(),M3.getValue());
+
+        replace(M1.getKey(), M2.getValue(), M3.getValue());
         assertPeekAndGet(M1, 10);
-        
-        replace(M1.getKey(), M5.getValue(),M4.getValue());
+
+        replace(M1.getKey(), M5.getValue(), M4.getValue());
         assertPeekAndGet(M1, 10);
 
     }
-    
+
     /**
      * Tests that remove will force new elements to have a new timestamp.
      */
@@ -203,6 +199,14 @@ public class CreationTime extends AbstractCacheTCKTestBundle {
         getAll(M3, M4);
         assertPeekAndGet(M3, 4);
         assertPeekAndGet(M4, 5);
+    }
+
+    private void assertPeekAndGet(Map.Entry<Integer, String> entry, long creationTime) {
+        assertEquals(creationTime, peekEntry(entry).getCreationTime());
+        assertEquals(creationTime, getEntry(entry).getCreationTime());
+        // Enable when cachenetry.attributes is working
+        // assertEquals(creationTime, CacheAttributes.getCreationTime(getEntry(entry)
+        // .getAttributes()));
     }
 
 }

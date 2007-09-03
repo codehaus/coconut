@@ -11,9 +11,9 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.InternalCacheSupport;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
-import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingService;
+import org.coconut.cache.service.servicemanager.AbstractCacheService;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Transformer;
 import org.coconut.filter.Filter;
@@ -27,9 +27,8 @@ import org.coconut.filter.Filters;
  * @param <V>
  *            the type of mapped values
  */
-public abstract class AbstractCacheLoadingService<K, V> extends
-        AbstractInternalCacheService implements CacheLoadingService<K, V>,
-        InternalCacheLoadingService<K, V> {
+public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheService
+        implements CacheLoadingService<K, V>, InternalCacheLoadingService<K, V> {
 
     private final InternalCacheAttributeService attributeFactory;
 

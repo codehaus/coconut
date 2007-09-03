@@ -37,7 +37,7 @@ import org.junit.Before;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class AbstractCacheTCKTestBundle extends Assert {
+public class AbstractCacheTCKTest extends Assert {
     protected Cache<Integer, String> c;
 
     protected DeterministicClock clock;
@@ -45,7 +45,7 @@ public class AbstractCacheTCKTestBundle extends Assert {
     protected ThreadServiceTestHelper threadHelper;
     
     @Before
-    public void setupClock() throws Exception {
+    public void setupClock() {
         clock = new DeterministicClock();
     }
 
@@ -346,5 +346,13 @@ public class AbstractCacheTCKTestBundle extends Assert {
     
     public void loadAndAwait(Integer key) {
         loading().load(key);
+    }
+    
+    /**
+     * Await all loads that currently active.
+     */
+    protected void awaitAllLoads() {
+    // only unsync now
+    // when sync hook up with AbstractCacheTCKTestBundle.threadHelper
     }
 }

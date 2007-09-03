@@ -11,11 +11,11 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.tck.integration.ExpirationTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.CountdownLatchLoader;
 import org.coconut.core.Clock;
 
-public class ExpirationConcurrent extends ExpirationTestBundle {
+public class ExpirationConcurrent extends AbstractCacheTCKTest {
 
     /**
      * Test the Strict policy.

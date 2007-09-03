@@ -1,7 +1,7 @@
 package org.coconut.cache.tck.lifecycle;
 
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 
-public class ServiceLifecycle extends AbstractCacheTCKTestBundle {
+public class ServiceLifecycle extends AbstractCacheTCKTest {
 
 }

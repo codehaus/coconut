@@ -39,6 +39,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Suite;
 
 /**
+ * This class is responsible for running TCK cache tests. Use <code>@RunWith</code> to indicate a test should run with CacheTCKRunner.
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -50,10 +51,16 @@ public class CacheTCKRunner extends Runner {
 
     private CompositeRunner composite;
 
+    /**
+     * If the file test-tck/src/main/resources/defaulttestclass exists. We will try to
+     * open it and read which cache implementation should be tested by default.
+     * <p>
+     * This is very usefull if you just want to run a subset of the tests in an IDE.
+     */
     static {
         try {
             InputStream is = CacheTCKRunner.class.getClassLoader().getResourceAsStream(
-                    "defaulttest.txt");
+                    "defaulttestclass");
             Properties p = new Properties();
             p.load(is);
             tt = (Class<? extends Cache>) Class.forName(p.getProperty("default"));
@@ -64,20 +71,35 @@ public class CacheTCKRunner extends Runner {
         }
     }
 
+    /**
+     * Creates a new CacheTCKRunner
+     * 
+     * @param klass
+     *            the class to test
+     * @throws Exception
+     *             could not create this class
+     */
     @SuppressWarnings("unchecked")
-    public CacheTCKRunner(Class<? extends Cache> klass) throws Throwable {
+    public CacheTCKRunner(Class<? extends Cache> klass) throws Exception {
         this.klass = klass;
         tt = klass.getAnnotation(CacheTCKImplementationSpecifier.class).value();
         composite = new CompositeRunner(klass.getName());
-        addTests(composite);
+        addTests(tt, composite);
         // only add the test class itself if it contains tests
         if (new TestIntrospector(klass).getTestMethods(Test.class).size() > 0) {
             composite.add(new TestClassRunner(klass));
         }
     }
 
-    private void addTests(CompositeRunner runner) throws InitializationError {
-        if (!tt.isAnnotationPresent(CacheServiceSupport.class)) {
+    /**
+     * Decides which tests to run for the configured cache test class
+     * 
+     * @param runner
+     * @throws InitializationError
+     */
+    protected void addTests(Class<? extends Cache> cacheClass, CompositeRunner runner)
+            throws Exception {
+        if (!cacheClass.isAnnotationPresent(CacheServiceSupport.class)) {
             throw new IllegalStateException(
                     "Cache implementation must have a CacheServiceSupport annotation");
         }
@@ -86,42 +108,38 @@ public class CacheTCKRunner extends Runner {
         if (ss != null) {
             services = Arrays.asList(ss.value());
         }
-        composite.add(new Suite(CacheEntrySuite.class));
-        composite.add(new Suite(CoreSuite.class));
+        runner.add(new Suite(CacheEntrySuite.class));
+        runner.add(new Suite(CoreSuite.class));
         if (services.contains(CacheEventService.class)) {
-            composite.add(new Suite(EventSuite.class));
+            runner.add(new Suite(EventSuite.class));
         }
         if (services.contains(CacheEvictionService.class)) {
-            composite.add(new Suite(EvictionSuite.class));
+            runner.add(new Suite(EvictionSuite.class));
         }
         if (services.contains(CacheExpirationService.class)) {
-            composite.add(new Suite(ExpirationSuite.class));
+            runner.add(new Suite(ExpirationSuite.class));
         }
         if (services.contains(CacheLoadingService.class)) {
-            composite.add(new Suite(LoadingSuite.class));
+            runner.add(new Suite(LoadingSuite.class));
         }
         if (services.contains(CacheManagementService.class)) {
-            composite.add(new Suite(ManagementSuite.class));
+            runner.add(new Suite(ManagementSuite.class));
         }
         if (services.contains(CacheServiceManagerService.class)) {
-            composite.add(new Suite(ServiceManagerSuite.class));
+            runner.add(new Suite(ServiceManagerSuite.class));
         }
         if (services.contains(CacheStatisticsService.class)) {
-            composite.add(new Suite(StatisticsSuite.class));
+            runner.add(new Suite(StatisticsSuite.class));
         }
     }
 
-    /**
-     * @see org.junit.runner.Runner#getDescription()
-     */
+    /** {@inheritDoc} */
     @Override
     public Description getDescription() {
         return composite.getDescription();
     }
 
-    /**
-     * @see org.junit.runner.Runner#run(org.junit.runner.notification.RunNotifier)
-     */
+    /** {@inheritDoc} */
     @Override
     public void run(RunNotifier not) {
         composite.run(not);

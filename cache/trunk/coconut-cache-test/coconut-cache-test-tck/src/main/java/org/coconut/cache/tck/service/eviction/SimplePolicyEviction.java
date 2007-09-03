@@ -13,10 +13,10 @@ import static org.coconut.test.CollectionUtils.asSet;
 
 import org.coconut.cache.policy.Policies;
 import org.coconut.cache.policy.paging.LRUPolicy;
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;
 
-public class SimplePolicyEviction extends AbstractCacheTCKTestBundle {
+public class SimplePolicyEviction extends AbstractCacheTCKTest {
 
     @Test
     public void testSimpleSize() {

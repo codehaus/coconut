@@ -4,7 +4,7 @@
 
 package org.coconut.cache.tck.service.eviction;
 
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;
 
 /**
@@ -13,7 +13,7 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class NoEviction extends AbstractCacheTCKTestBundle {
+public class NoEviction extends AbstractCacheTCKTest {
     @Test
     public void testNoEvict() {
         c = newCache();

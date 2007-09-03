@@ -19,5 +19,10 @@ import org.coconut.cache.Cache;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface CacheTCKImplementationSpecifier {
+    /**
+     * Returns the class of the cache implementation that should be tested.
+     * 
+     * @return the class of the cache implementation that should be tested
+     */
     Class<? extends Cache> value();
 }

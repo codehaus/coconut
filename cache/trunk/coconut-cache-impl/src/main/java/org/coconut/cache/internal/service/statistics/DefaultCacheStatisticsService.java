@@ -12,9 +12,9 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
 import org.coconut.cache.internal.service.service.InternalCacheServiceManager;
 import org.coconut.cache.internal.service.util.Resources;
+import org.coconut.cache.service.servicemanager.AbstractCacheService;
 import org.coconut.cache.service.statistics.CacheHitStat;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.core.Clock;
@@ -31,9 +31,8 @@ import org.coconut.management.annotation.ManagedAttribute;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public final class DefaultCacheStatisticsService<K, V> extends
-        AbstractInternalCacheService implements 
-        CacheStatisticsService {
+public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheService
+        implements CacheStatisticsService {
 
     // number of loads, loaded elements, number of queries,
     // number of added, number of new elements
@@ -75,7 +74,6 @@ public final class DefaultCacheStatisticsService<K, V> extends
     public final static String ENTRY_REMOVE_COUNTER = "Cache removes";
 
     public final static String ENTRY_REMOVE_TIMER = "Cache remove times";
-
 
     volatile long started;
 
@@ -418,27 +416,22 @@ public final class DefaultCacheStatisticsService<K, V> extends
      *      java.util.Map)
      */
     @Override
-    public void registerServices(
-            Map<Class<?>, Object> serviceMap) {
+    public void registerServices(Map<Class<?>, Object> serviceMap) {
         serviceMap.put(CacheStatisticsService.class, this);
     }
-
 
     public boolean needElementsAfterClear() {
         // TODO Auto-generated method stub
         return false;
     }
 
-
     public void resetStatistics() {
         cacheReset();
     }
 
-
     public void shutdown(Executor callback) {
 
     }
-
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -454,11 +447,9 @@ public final class DefaultCacheStatisticsService<K, V> extends
         return sb.toString();
     }
 
-
     private String getDesc(String key) {
         return Resources.lookup(DefaultCacheStatisticsService.class, key.toLowerCase());
     }
-
 
     public class CacheRatio {
         @ManagedAttribute(defaultValue = "cache hit ratio")
@@ -472,7 +463,6 @@ public final class DefaultCacheStatisticsService<K, V> extends
             return ((float) hits) / sum;
         }
     }
-
 
     public class CacheRatioCost {
         @ManagedAttribute(defaultValue = "cache hit ratio")

@@ -4,10 +4,9 @@
 
 package org.coconut.cache.tck.lifecycle;
 
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;
 
 /**
@@ -16,7 +15,7 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: BasicCache.java 363 2007-06-21 04:05:34Z kasper $
  */
-public class Lifecycle extends AbstractCacheTCKTestBundle {
+public class Lifecycle extends AbstractCacheTCKTest {
 
     @Test
     public void initialStatus() {

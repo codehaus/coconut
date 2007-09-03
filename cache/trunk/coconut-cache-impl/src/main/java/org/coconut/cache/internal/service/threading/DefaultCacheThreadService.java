@@ -28,7 +28,8 @@ public class DefaultCacheThreadService<K, V> extends AbstractCacheService implem
     public DefaultCacheThreadService(
             CacheConfiguration<K, V> conf) {
         super("threading");
-        executorFactory=conf.threading().getExecutorFactory();
+        executorFactory=null;
+        //conf.worker().getWorkerManager().createExecutorService(null);
         String s = (String) conf.getProperty(XmlConfigurator.CACHE_INSTANCE_TYPE);
         Class c = null;
         try {

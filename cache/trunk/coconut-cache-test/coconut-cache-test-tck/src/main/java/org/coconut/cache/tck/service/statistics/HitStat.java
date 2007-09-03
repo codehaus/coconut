@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.coconut.cache.service.statistics.CacheStatisticsService;
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;
 
 /**
@@ -30,7 +30,7 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class HitStat extends AbstractCacheTCKTestBundle {
+public class HitStat extends AbstractCacheTCKTest {
 
     /**
      * Tests that reset hitstat works.

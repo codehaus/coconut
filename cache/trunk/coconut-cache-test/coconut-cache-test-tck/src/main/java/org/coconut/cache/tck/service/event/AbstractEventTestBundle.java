@@ -17,7 +17,7 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.event.CacheEntryEvent;
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.event.CacheEventService;
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.core.EventProcessor;
 import org.coconut.event.EventSubscription;
 import org.coconut.filter.Filter;
@@ -29,7 +29,7 @@ import org.junit.Before;
  * @version $Id$
  */
 @SuppressWarnings("unchecked")
-public class AbstractEventTestBundle extends AbstractCacheTCKTestBundle {
+public class AbstractEventTestBundle extends AbstractCacheTCKTest {
 
     static final CacheConfiguration<Integer, String> INCLUDE_ALL_CONFIGURATION;
     

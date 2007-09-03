@@ -12,7 +12,7 @@ import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlers;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
 import org.coconut.cache.service.loading.CacheLoader;
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Logger;
@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(JMock.class)
-public class ExceptionHandling extends AbstractCacheTCKTestBundle {
+public class ExceptionHandling extends AbstractCacheTCKTest {
     private static Exception e = new Exception();
 
     Mockery context = new JUnit4Mockery();

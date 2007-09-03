@@ -20,12 +20,12 @@ import javax.management.Notification;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
 import org.coconut.cache.internal.service.service.InternalCacheServiceManager;
 import org.coconut.cache.service.event.CacheEntryEvent;
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.event.CacheEventConfiguration;
 import org.coconut.cache.service.event.CacheEventService;
+import org.coconut.cache.service.servicemanager.AbstractCacheService;
 import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
 import org.coconut.event.EventBus;
@@ -37,8 +37,8 @@ import org.coconut.filter.Filter;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class DefaultCacheEventService<K, V> extends AbstractInternalCacheService
-        implements InternalCacheEventService<K, V> {
+public class DefaultCacheEventService<K, V> extends AbstractCacheService implements
+        InternalCacheEventService<K, V> {
 
     private final boolean doAdd;
 
@@ -182,8 +182,7 @@ public class DefaultCacheEventService<K, V> extends AbstractInternalCacheService
 
     /** {@inheritDoc} */
     @Override
-    public void registerServices(
-            Map<Class<?>, Object> serviceMap) {
+    public void registerServices(Map<Class<?>, Object> serviceMap) {
         if (isEnabled) {
             serviceMap.put(CacheEventService.class, this);
         }

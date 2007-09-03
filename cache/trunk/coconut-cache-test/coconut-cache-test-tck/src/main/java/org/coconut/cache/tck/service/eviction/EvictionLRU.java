@@ -14,11 +14,11 @@ import static org.coconut.test.CollectionUtils.M8;
 import static org.coconut.test.CollectionUtils.M9;
 
 import org.coconut.cache.policy.Policies;
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Before;
 import org.junit.Test;
 @SuppressWarnings("unchecked")
-public class EvictionLRU extends AbstractCacheTCKTestBundle {
+public class EvictionLRU extends AbstractCacheTCKTest {
 
     //TODO check some loading
     @Before

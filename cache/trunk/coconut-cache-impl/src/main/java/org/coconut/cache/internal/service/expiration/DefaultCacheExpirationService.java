@@ -13,9 +13,9 @@ import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.InternalCacheSupport;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
-import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationService;
+import org.coconut.cache.service.servicemanager.AbstractCacheService;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
 import org.coconut.filter.Filter;
@@ -24,8 +24,8 @@ import org.coconut.management.ManagedObject;
 
 /**
  * The default implementation of {@link CacheExpirationService}. This implementation can
- * be used in a multi-threaded environment if {@link Cache}, {@link InternalCacheSupport} and
- * {@link InternalCacheAttributeService} that is specified at construction time are
+ * be used in a multi-threaded environment if {@link Cache}, {@link InternalCacheSupport}
+ * and {@link InternalCacheAttributeService} that is specified at construction time are
  * thread-safe.
  * <p>
  * NOTICE: This is an internal class and should not be directly referred. No guarantee is
@@ -38,8 +38,8 @@ import org.coconut.management.ManagedObject;
  * @param <V>
  *            the type of mapped values
  */
-public class DefaultCacheExpirationService<K, V> extends AbstractInternalCacheService
-        implements CacheExpirationService<K, V>, ManagedObject {
+public class DefaultCacheExpirationService<K, V> extends AbstractCacheService implements
+        CacheExpirationService<K, V>, ManagedObject {
 
     /** Responsible for creating attribute maps. */
     private final InternalCacheAttributeService attributeFactory;

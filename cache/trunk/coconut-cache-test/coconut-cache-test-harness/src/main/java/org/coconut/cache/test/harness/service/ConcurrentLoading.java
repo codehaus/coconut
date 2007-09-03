@@ -7,10 +7,10 @@ package org.coconut.cache.test.harness.service;
 import junit.framework.AssertionFailedError;
 
 import org.coconut.cache.service.loading.CacheLoader;
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.core.AttributeMap;
 
-public class ConcurrentLoading extends AbstractCacheTCKTestBundle {
+public class ConcurrentLoading extends AbstractCacheTCKTest {
 
 //     /**
 //         * cancel(true) interrupts a running task

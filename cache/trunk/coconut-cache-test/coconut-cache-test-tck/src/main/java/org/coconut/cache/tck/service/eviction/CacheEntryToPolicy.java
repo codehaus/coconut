@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.policy.paging.LRUPolicy;
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;
 
 /**
@@ -21,7 +21,7 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class CacheEntryToPolicy extends AbstractCacheTCKTestBundle {
+public class CacheEntryToPolicy extends AbstractCacheTCKTest {
 
     private BlockingQueue<Object> q = new LinkedBlockingQueue<Object>();
 

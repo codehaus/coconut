@@ -12,17 +12,17 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;
 
 /**
  * Tests non modifying actions for a caches value set
- * {@link org.coconut.cache.Cache#values()}
+ * {@link org.coconut.cache.Cache#values()}.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class Values extends AbstractCacheTCKTestBundle {
+public class Values extends AbstractCacheTCKTest {
 
     @Test(expected = NullPointerException.class)
     public void testAdd() {

@@ -14,20 +14,19 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
+import org.coconut.cache.service.servicemanager.AbstractCacheService;
 import org.coconut.cache.service.threading.CacheServiceThreadManager;
-import org.coconut.cache.service.threading.CacheExecutorConfiguration;
-import org.coconut.cache.service.threading.CacheThreadManager;
+import org.coconut.cache.service.worker.CacheWorkerConfiguration;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class NoThreadingCacheService extends AbstractInternalCacheService implements
-        InternalCacheThreadingService, CacheThreadManager {
+public class NoThreadingCacheService extends AbstractCacheService implements
+        InternalCacheThreadingService {
 
     public NoThreadingCacheService() {
-        super(CacheExecutorConfiguration.SERVICE_NAME);
+        super(CacheWorkerConfiguration.SERVICE_NAME);
     }
 
     /**

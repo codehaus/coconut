@@ -10,11 +10,11 @@ import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 
 import org.coconut.cache.service.management.CacheMXBean;
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ManagementCacheMXBean extends AbstractCacheTCKTestBundle {
+public class ManagementCacheMXBean extends AbstractCacheTCKTest {
 
     CacheMXBean mxBean;
 

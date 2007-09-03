@@ -125,7 +125,7 @@ public class UnsynchronizedCacheServiceManager extends
     public void prestart() {
         if (status == ServiceStatus.NOTRUNNING) {
             List<AbstractCacheService> l = container
-                    .getComponentInstancesOfType(AbstractInternalCacheService.class);
+                    .getComponentInstancesOfType(AbstractCacheService.class);
 
             for (AbstractCacheService a : l) {
                 internalServices.add(new ServiceHolder(a));

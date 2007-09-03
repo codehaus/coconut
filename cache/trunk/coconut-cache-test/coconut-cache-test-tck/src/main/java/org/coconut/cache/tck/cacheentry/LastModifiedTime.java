@@ -14,12 +14,12 @@ import java.util.Map;
 
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.service.loading.CacheLoader;
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.core.AttributeMap;
 import org.junit.Test;
 
-public class LastModifiedTime extends AbstractCacheTCKTestBundle {
+public class LastModifiedTime extends AbstractCacheTCKTest {
     static class MyLoader implements CacheLoader<Integer, String> {
         public String load(Integer key, AttributeMap attributes) throws Exception {
             CacheAttributes.setLastModifiedTime(attributes, key + 1);

@@ -5,7 +5,7 @@ package org.coconut.cache.tck.service.eviction;
 
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.service.eviction.CacheEvictionService;
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,7 +15,7 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class EvictionService extends AbstractCacheTCKTestBundle {
+public class EvictionService extends AbstractCacheTCKTest {
     static CacheEvictionConfiguration<?, ?> DEFAULT = new CacheEvictionConfiguration();
 
     @Before

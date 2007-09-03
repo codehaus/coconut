@@ -5,14 +5,14 @@ package org.coconut.cache.tck.service.expiration;
 
 import java.util.Map;
 
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.filter.CollectionFilters;
 import org.coconut.filter.Filter;
 import org.coconut.filter.Filters;
 import org.coconut.test.CollectionUtils;
 import org.junit.Test;
 
-public class RemoveAllAndFiltered extends AbstractCacheTCKTestBundle {
+public class RemoveAllAndFiltered extends AbstractCacheTCKTest {
 
     @Test(expected = NullPointerException.class)
     public void testRemoveAllNullPointerException() {

@@ -9,11 +9,11 @@ import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.management.CacheMXBean;
 import org.coconut.cache.service.management.CacheManagementService;
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.management.ManagedGroup;
 import org.junit.Test;
 
-public class ManagementService extends AbstractCacheTCKTestBundle {
+public class ManagementService extends AbstractCacheTCKTest {
 
     @Test
     public void testNonConfigured() {

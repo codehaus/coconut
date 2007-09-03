@@ -12,10 +12,10 @@ import javax.management.MBeanServer;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheException;
-import org.coconut.cache.internal.service.service.AbstractInternalCacheService;
 import org.coconut.cache.service.management.CacheMXBean;
 import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.cache.service.management.CacheManagementService;
+import org.coconut.cache.service.servicemanager.AbstractCacheService;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedGroupVisitor;
 import org.coconut.management.Managements;
@@ -32,7 +32,7 @@ import org.coconut.management.defaults.DefaultManagedGroup;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class DefaultCacheManagementService extends AbstractInternalCacheService implements
+public class DefaultCacheManagementService extends AbstractCacheService implements
         CacheManagementService {
 
     /** The Managed root group. */

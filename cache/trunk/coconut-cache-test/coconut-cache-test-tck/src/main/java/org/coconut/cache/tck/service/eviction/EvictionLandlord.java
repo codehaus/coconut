@@ -3,10 +3,10 @@
  */
 package org.coconut.cache.tck.service.eviction;
 
-import org.coconut.cache.tck.AbstractCacheTCKTestBundle;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;
 
-public class EvictionLandlord extends AbstractCacheTCKTestBundle {
+public class EvictionLandlord extends AbstractCacheTCKTest {
     @Test
     public void testLandlord() {
         
