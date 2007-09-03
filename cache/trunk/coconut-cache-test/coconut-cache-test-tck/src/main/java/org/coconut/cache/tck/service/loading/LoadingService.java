@@ -25,7 +25,7 @@ public class LoadingService extends AbstractCacheTCKTest {
     @Test
     public void noLoadingServiceIfNoLoaderConfigured() {
         c = newCache();
-        assertFalse(c.hasService(CacheLoadingService.class));
+        assertFalse(services().hasService(CacheLoadingService.class));
     }
 
     /**
@@ -46,7 +46,7 @@ public class LoadingService extends AbstractCacheTCKTest {
     public void hasAndGetLoadingService() {
         c = newCache(newConf().loading().setLoader(
                 MockTestCase.mockDummy(CacheLoader.class)));
-        assertTrue(c.hasService(CacheLoadingService.class));
+        assertTrue(services().hasService(CacheLoadingService.class));
         // check that it doesn't fail with a classcast exception
         c.getService(CacheLoadingService.class);
     }

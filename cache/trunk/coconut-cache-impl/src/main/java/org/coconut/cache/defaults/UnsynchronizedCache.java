@@ -104,12 +104,12 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         super(conf);
         serviceManager = new UnsynchronizedCacheServiceManager(this, new Support(), conf);
         Defaults.initializeUnsynchronizedCache(conf, serviceManager);
-        expiration = serviceManager.getService(DefaultCacheExpirationService.class);
-        loadingService = serviceManager.getService(InternalCacheLoadingService.class);
-        evictionService = serviceManager.getService(InternalCacheEvictionService.class);
-        eventService = serviceManager.getService(InternalCacheEventService.class);
-        statistics = serviceManager.getService(DefaultCacheStatisticsService.class);
-        entryFactory = serviceManager.getService(AbstractCacheEntryFactoryService.class);
+        expiration = serviceManager.getInternalService(DefaultCacheExpirationService.class);
+        loadingService = serviceManager.getInternalService(InternalCacheLoadingService.class);
+        evictionService = serviceManager.getInternalService(InternalCacheEvictionService.class);
+        eventService = serviceManager.getInternalService(InternalCacheEventService.class);
+        statistics = serviceManager.getInternalService(DefaultCacheStatisticsService.class);
+        entryFactory = serviceManager.getInternalService(AbstractCacheEntryFactoryService.class);
     }
 
     /** {@inheritDoc} */
@@ -174,11 +174,6 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     }
 
     /** {@inheritDoc} */
-    public Map<Class<?>, Object> getAllServices() {
-        return serviceManager.getAllPublicServices();
-    }
-
-    /** {@inheritDoc} */
     public final <T> T getService(Class<T> serviceType) {
         return serviceManager.getPublicService(serviceType);
     }
@@ -187,11 +182,6 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     public long getVolume() {
         checkRunning("size");
         return map.capacity();
-    }
-
-    /** {@inheritDoc} */
-    public boolean hasService(Class<?> serviceType) {
-        return serviceManager.hasPublicService(serviceType);
     }
 
     /** {@inheritDoc} */

@@ -18,7 +18,7 @@ public class ManagementService extends AbstractCacheTCKTest {
     @Test
     public void testNonConfigured() {
         c = newCache();
-        assertFalse(c.hasService(CacheManagementService.class));
+        assertFalse(services().hasService(CacheManagementService.class));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -31,7 +31,7 @@ public class ManagementService extends AbstractCacheTCKTest {
     public void testConfigured() {
         c = newCache(newConf().management().setEnabled(true).setMBeanServer(
                 MBeanServerFactory.createMBeanServer()));
-        assertTrue(c.hasService(CacheManagementService.class));
+        assertTrue(services().hasService(CacheManagementService.class));
         assertTrue(c.getService(CacheManagementService.class) instanceof CacheManagementService);
     }
 
@@ -39,9 +39,8 @@ public class ManagementService extends AbstractCacheTCKTest {
     public void testGetRoot() {
         c = newCache(newConf().management().setEnabled(true).setMBeanServer(
                 MBeanServerFactory.createMBeanServer()));
-        CacheManagementService cms = c.getService(CacheManagementService.class);
-        assertNotNull(cms.getRoot());
-        ManagedGroup mg = cms.getRoot();
+        assertNotNull(management().getRoot());
+        ManagedGroup mg = management().getRoot();
         assertNull(mg.getParent());
         assertEquals(3, mg.getChildren().size());
         assertNotNull(findChild(mg, CacheEvictionConfiguration.SERVICE_NAME));

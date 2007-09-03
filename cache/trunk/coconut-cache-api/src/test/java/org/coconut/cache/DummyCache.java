@@ -73,9 +73,6 @@ public class DummyCache<K, V> implements Cache<K, V> {
         return null;
     }
 
-    public Map<Class<?>, Object> getAllServices() {
-        return null;
-    }
 
     /**
      * @see org.coconut.cache.Cache#getVolume()
@@ -103,13 +100,6 @@ public class DummyCache<K, V> implements Cache<K, V> {
      */
     public <T> T getService(Class<T> serviceType) {
         return null;
-    }
-
-    /**
-     * @see org.coconut.cache.Cache#hasService(java.lang.Class)
-     */
-    public boolean hasService(Class<?> serviceType) {
-        return false;
     }
 
     /**

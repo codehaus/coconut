@@ -18,8 +18,8 @@ public class EventServiceGeneral extends AbstractEventTestBundle{
     public void testNotEnabled() {
         CacheConfiguration<?, ?> conf = CacheConfiguration.create();
         c = newCache(conf);
-        assertFalse(c.hasService(CacheEventService.class));
-        assertFalse(c.getAllServices().containsKey(CacheEventService.class));
+        assertFalse(services().hasService(CacheEventService.class));
+        assertFalse(services().getAllServices().containsKey(CacheEventService.class));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -34,9 +34,9 @@ public class EventServiceGeneral extends AbstractEventTestBundle{
         CacheConfiguration<?, ?> conf = CacheConfiguration.create();
         conf.event().setEnabled(true);
         c = newCache(conf);
-        assertTrue(c.hasService(CacheEventService.class));
-        assertTrue(c.getAllServices().containsKey(CacheEventService.class));
-        Object cs = c.getAllServices().get(CacheEventService.class);
+        assertTrue(services().hasService(CacheEventService.class));
+        assertTrue(services().getAllServices().containsKey(CacheEventService.class));
+        Object cs = services().getAllServices().get(CacheEventService.class);
         assertSame(cs, c.getService(CacheEventService.class));
     }
     @Test

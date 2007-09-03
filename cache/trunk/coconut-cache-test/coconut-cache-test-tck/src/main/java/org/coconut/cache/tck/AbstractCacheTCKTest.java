@@ -18,6 +18,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheServices;
+import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
@@ -310,6 +311,10 @@ public class AbstractCacheTCKTest extends Assert {
         return c.getService(CacheManagementService.class);
     }
 
+    protected final CacheServiceManagerService services() {
+        return c.getService(CacheServiceManagerService.class);
+    }
+    
     protected <T> T findMXBean(Class<T> clazz) {
         return findMXBean(ManagementFactory.getPlatformMBeanServer(), clazz);
     }

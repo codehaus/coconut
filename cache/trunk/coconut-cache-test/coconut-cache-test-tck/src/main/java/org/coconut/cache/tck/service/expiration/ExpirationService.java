@@ -25,7 +25,7 @@ public class ExpirationService extends AbstractCacheTCKTest {
 
     @Test
     public void expirationServiceAvailable() {
-        assertTrue(c.hasService(CacheExpirationService.class));
+        assertTrue(services().hasService(CacheExpirationService.class));
         assertNotNull(c.getService(CacheExpirationService.class));
     }
 

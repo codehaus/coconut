@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.core.AttributeMap;
 
 /**
@@ -165,13 +166,6 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     Map<K, V> getAll(Collection<? extends K> keys);
 
     /**
-     * Returns all registered services within the cache.
-     * 
-     * @return a map of all registered services
-     */
-    Map<Class<?>, Object> getAllServices();
-
-    /**
      * <p>
      * Works as {@link #get(Object)} with the following modification.
      * <p>
@@ -216,7 +210,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      *             if no service of the specified type exist
      * @see org.coconut.cache.CacheServices
      * @see #hasService(Class)
-     * @see #getAllServices()
+     * @see CacheServiceManagerService#getAllServices()
      */
     <T> T getService(Class<T> serviceType);
 
@@ -227,18 +221,6 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @return the current volume of this cache
      */
     long getVolume();
-
-    /**
-     * Returns whether or not this cache contains a service of the specified type.
-     * 
-     * @param serviceType
-     *            the type of service
-     * @return true if this cache has a service of the specified type registered,
-     *         otherwise false
-     * @see #getService(Class)
-     * @see #getAllServices()
-     */
-    boolean hasService(Class<?> serviceType);
 
     /**
      * Returns <tt>true</tt> if this cache has been shut down.

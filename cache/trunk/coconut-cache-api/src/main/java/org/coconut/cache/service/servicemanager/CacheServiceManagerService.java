@@ -3,7 +3,7 @@
  */
 package org.coconut.cache.service.servicemanager;
 
-import java.util.concurrent.TimeUnit;
+import java.util.Map;
 
 /**
  * Move getAll services to here?
@@ -12,5 +12,26 @@ import java.util.concurrent.TimeUnit;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public interface CacheServiceManagerService {
+
+    /**
+     * Returns whether or not this cache contains a service of the specified type.
+     * 
+     * @param serviceType
+     *            the type of service
+     * @return true if this cache has a service of the specified type registered,
+     *         otherwise false
+     * @see #getInternalService(Class)
+     * @see CacheServiceManagerService#getAllServices()
+     */
+    boolean hasService(Class<?> serviceType);
+    
+    /**
+     * Returns all registered services within the cache.
+     * 
+     * @return a map of all registered services
+     */
+    Map<Class<?>, Object> getAllServices();
+    
+    
     <T extends CacheService> T registerService(T lifecycle);
 }

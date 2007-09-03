@@ -34,12 +34,12 @@ public interface InternalCacheServiceManager {
      * 
      * @return a list of all the public exposed services
      */
-	List getPublicServices();
+	List getAllServices();
 
-	<T> T getService(Class<T> type);
+	<T> T getInternalService(Class<T> type);
 	<T> T getPublicService(Class<T> type);
 
-	boolean hasPublicService(Class type);
+	boolean hasService(Class type);
 	
     /**
      * Initiates an orderly shutdown of the cache. In which previously submitted

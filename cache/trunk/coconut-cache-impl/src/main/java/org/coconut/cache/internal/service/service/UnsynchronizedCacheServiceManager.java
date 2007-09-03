@@ -19,6 +19,7 @@ import org.coconut.cache.internal.service.exceptionhandling.DefaultCacheExceptio
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.AbstractCacheService;
 import org.coconut.cache.service.servicemanager.CacheService;
+import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.internal.picocontainer.ComponentAdapter;
 import org.coconut.internal.picocontainer.defaults.DefaultPicoContainer;
@@ -54,6 +55,7 @@ public class UnsynchronizedCacheServiceManager extends
             externalServices.add(new ServiceHolder(a));
         }
         initializePicoContainer(cache, helper, conf);
+        publicServices.put(CacheServiceManagerService.class, new ServiceManagerServiceImpl() );
     }
 
     /** {@inheritDoc} */
@@ -83,13 +85,13 @@ public class UnsynchronizedCacheServiceManager extends
     }
 
     /** {@inheritDoc} */
-    public List getPublicServices() {
+    public List getAllServices() {
         lazyStart(false);
         return new ArrayList(publicServices.values());
     }
 
     /** {@inheritDoc} */
-    public <T> T getService(Class<T> type) {
+    public <T> T getInternalService(Class<T> type) {
         T service = (T) container.getComponentInstanceOfType(type);
         if (service == null) {
             throw new IllegalArgumentException("Unknown service " + type);
@@ -98,7 +100,7 @@ public class UnsynchronizedCacheServiceManager extends
     }
 
     /** {@inheritDoc} */
-    public boolean hasPublicService(Class type) {
+    public boolean hasService(Class type) {
         lazyStart(false);
         return publicServices.containsKey(type);
     }
@@ -235,5 +237,22 @@ public class UnsynchronizedCacheServiceManager extends
         void started(Cache<?, ?> c) {
             service.started(c);
         }
+    }
+    
+    //hack
+    class ServiceManagerServiceImpl implements CacheServiceManagerService {
+
+        public Map<Class<?>, Object> getAllServices() {
+            return UnsynchronizedCacheServiceManager.this.getAllPublicServices();
+        }
+
+        public boolean hasService(Class<?> serviceType) {
+            return UnsynchronizedCacheServiceManager.this.hasService(serviceType);
+        }
+
+        public <T extends CacheService> T registerService(T lifecycle) {
+            throw new UnsupportedOperationException();
+        }
+        
     }
 }

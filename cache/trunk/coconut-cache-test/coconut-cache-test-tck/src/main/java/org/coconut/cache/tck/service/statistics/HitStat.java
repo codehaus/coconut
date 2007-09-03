@@ -39,12 +39,11 @@ public class HitStat extends AbstractCacheTCKTest {
     @Test
     public void resetHitstat() {
         c = newCache(1);
-        CacheStatisticsService service = c.getService(CacheStatisticsService.class);
         assertGet(M1); // hit
         assertNullGet(M2); // miss
-        assertHitstat(0.5f, 1, 1, service.getHitStat());
-        service.resetStatistics();
-        assertHitstat(Float.NaN, 0, 0, service.getHitStat());
+        assertHitstat(0.5f, 1, 1, statistics().getHitStat());
+        statistics().resetStatistics();
+        assertHitstat(Float.NaN, 0, 0, statistics().getHitStat());
     }
 
     /**

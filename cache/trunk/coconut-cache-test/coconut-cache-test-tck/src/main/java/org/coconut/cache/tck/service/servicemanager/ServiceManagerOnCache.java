@@ -11,7 +11,7 @@ public class ServiceManagerOnCache extends AbstractCacheTCKTest {
     @Test
     public void testUnknownService() {
         c = newCache();
-        assertFalse(c.hasService(Object.class));
+        assertFalse(services().hasService(Object.class));
     }
     
     @Test(expected = IllegalArgumentException.class)
