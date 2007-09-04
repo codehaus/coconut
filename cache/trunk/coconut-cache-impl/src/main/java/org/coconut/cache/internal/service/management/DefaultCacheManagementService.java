@@ -115,7 +115,7 @@ public class DefaultCacheManagementService extends AbstractCacheService implemen
 
     /** {@inheritDoc} */
     @Override
-    public void shutdown(Executor e) {
+    public void shutdown() {
         if (isEnabled) {
             try {
                 root.unregister();
@@ -132,7 +132,6 @@ public class DefaultCacheManagementService extends AbstractCacheService implemen
             ManagedGroup g = root.addChild(CacheMXBean.MANAGED_SERVICE_NAME,
                     "General cache attributes and operations");
             g.add(ManagementUtils.wrapMXBean(cache));
-
             try {
                 registrant.visitManagedGroup(root);
             } catch (JMException e) {

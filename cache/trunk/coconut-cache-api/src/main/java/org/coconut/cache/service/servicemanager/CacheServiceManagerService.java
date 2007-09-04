@@ -24,14 +24,28 @@ public interface CacheServiceManagerService {
      * @see CacheServiceManagerService#getAllServices()
      */
     boolean hasService(Class<?> serviceType);
-    
+
     /**
      * Returns all registered services within the cache.
      * 
      * @return a map of all registered services
      */
     Map<Class<?>, Object> getAllServices();
-    
-    
+
     <T extends CacheService> T registerService(T lifecycle);
+
+    /* Needs to connect to some remote server. */
+    //Future must return null on completion
+    //void asynchronousStartup(Future );
+    
+    /**
+     * If a service has to block while shutting  cannot be completly shutdown
+     * Must be called
+     * @param service
+     * @param service2
+     * @throws IllegalStateException
+     *             if this method is called before shutdown has been called on the cache
+     *             or if it called after it has been terminated
+     */
+    void asynchronousShutdown(AsynchronousShutdownService service2);
 }

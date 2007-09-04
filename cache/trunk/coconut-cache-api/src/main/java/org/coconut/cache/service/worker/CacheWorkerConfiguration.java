@@ -1,6 +1,6 @@
 package org.coconut.cache.service.worker;
 
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.w3c.dom.Document;
@@ -10,22 +10,20 @@ public class CacheWorkerConfiguration extends AbstractCacheServiceConfiguration 
 
     public static final String SERVICE_NAME = "worker";
 
-    private CacheWorkerManager executorFactory;
+    private CacheWorkerManager cacheWorkerManager;
+
+    private Thread.UncaughtExceptionHandler handler;
 
     public CacheWorkerConfiguration() {
         super(SERVICE_NAME);
     }
 
-    private CacheWorkerManager workerFactory;
-
-    private Thread.UncaughtExceptionHandler handler;
-
-    public CacheWorkerManager getWorkerManager() {
-        return workerFactory;
+    public Thread.UncaughtExceptionHandler getUncaughtExceptionHandler() {
+        return handler;
     }
 
-    public void setWorkerManager(CacheWorkerManager workerFactory) {
-        this.workerFactory = workerFactory;
+    public CacheWorkerManager getWorkerManager() {
+        return cacheWorkerManager;
     }
 
     /**
@@ -39,8 +37,15 @@ public class CacheWorkerConfiguration extends AbstractCacheServiceConfiguration 
      * 
      * @param handler
      */
-    public void setUncaughtExceptionHandler(Thread.UncaughtExceptionHandler handler) {
-        ThreadPoolExecutor tpe = null;
+    public CacheWorkerConfiguration setUncaughtExceptionHandler(
+            Thread.UncaughtExceptionHandler handler) {
+        this.handler = handler;
+        return this;
+    }
+
+    public CacheWorkerConfiguration setWorkerManager(CacheWorkerManager workerFactory) {
+        this.cacheWorkerManager = workerFactory;
+        return this;
     }
 
     /** {@inheritDoc} */

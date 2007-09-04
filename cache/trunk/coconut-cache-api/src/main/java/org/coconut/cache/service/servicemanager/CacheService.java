@@ -8,13 +8,12 @@ import java.util.concurrent.Executor;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.CacheLifecycle;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public interface CacheService extends CacheLifecycle {
+public interface CacheService {
     /**
      * Returns the readable name of the service.
      * 
@@ -23,12 +22,30 @@ public interface CacheService extends CacheLifecycle {
     String getName();
 
     /**
+     * Initializes the object. This is the first method in the cache lifecycle that is
+     * called.
+     * <p>
+     * This method will be called from within the constructor of the cache. Any runtime
+     * exception thrown by this method will not be handled.
+     * <p>
+     * TODO: do we call terminated, for components whose initialize method has already
+     * been run, but where another components initialize method fails.
+     * 
+     * @param configuration
+     *            the CacheConfiguration for the cache that this object belongs to
+     */
+    void initialize(CacheConfiguration<?, ?> configuration);
+
+    /**
      * Initializes the service.
      * 
      * @param serviceMap
      *            a map that can be used to add public services
      */
     void registerServices(Map<Class<?>, Object> serviceMap);
+
+    void shutdown();
+    
 
     /**
      * Start the service. The specified cache can be used to retrieve other cache
@@ -39,7 +56,21 @@ public interface CacheService extends CacheLifecycle {
      */
     void start(Map<Class<?>, Object> allServiceMap);
 
-    void shutdown(Executor e);
+    /**
+     * All services have been intialized correctly, and the cache is ready for use.
+     * 
+     * @param cache
+     *            the cache that was started
+     */
+    void started(Cache<?, ?> cache);
 
-    // void shutdownNow(Cache<?, ?> c);
+    /**
+     * This method is invoked as the last method in this lifecycle interface and is called
+     * when the cache and all of it services has been succesfully shutdown.
+     * <p>
+     * Method invoked when the Cache has terminated. Note: To properly nest multiple
+     * overridings, subclasses should generally invoke <tt>super.terminated</tt> within
+     * this method.
+     */
+    void terminated();
 }

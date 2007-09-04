@@ -11,13 +11,13 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.CacheLifecycle;
 import org.coconut.cache.internal.service.InternalCacheSupport;
 import org.coconut.cache.internal.service.attribute.DefaultCacheAttributeService;
 import org.coconut.cache.internal.service.entry.UnsynchronizedEntryFactoryService;
 import org.coconut.cache.internal.service.exceptionhandling.DefaultCacheExceptionService;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.AbstractCacheService;
+import org.coconut.cache.service.servicemanager.AsynchronousShutdownService;
 import org.coconut.cache.service.servicemanager.CacheService;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
@@ -205,9 +205,9 @@ public class UnsynchronizedCacheServiceManager extends
 
         private final Map<Class<?>, Object> published = new HashMap<Class<?>, Object>();
 
-        final CacheLifecycle service;
+        final CacheService service;
 
-        ServiceHolder(CacheLifecycle service) {
+        ServiceHolder(CacheService service) {
             this.service = service;
         }
 
@@ -217,9 +217,7 @@ public class UnsynchronizedCacheServiceManager extends
 
         void initialize(CacheConfiguration conf) {
             service.initialize(conf);
-            if (service instanceof CacheService) {
-                ((CacheService) service).registerServices(published);
-            }
+            service.registerServices(published);
         }
 
         void registerMBeans(ManagedGroup parent) {
@@ -229,9 +227,7 @@ public class UnsynchronizedCacheServiceManager extends
         }
 
         void start(Map c) {
-            if (service instanceof CacheService) {
-                ((CacheService) service).start(c);
-            }
+            service.start(c);
         }
 
         void started(Cache<?, ?> c) {
@@ -253,6 +249,9 @@ public class UnsynchronizedCacheServiceManager extends
         public <T extends CacheService> T registerService(T lifecycle) {
             throw new UnsupportedOperationException();
         }
+
+        public void asynchronousShutdown(
+                AsynchronousShutdownService service2) {}
         
     }
 }

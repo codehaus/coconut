@@ -50,17 +50,17 @@ public abstract class AbstractCacheService implements CacheService {
     public void initialize(CacheConfiguration<?, ?> configuration) {}
 
     /** {@inheritDoc} */
+    public void registerServices(Map<Class<?>, Object> serviceMap) {}
+
+    /** {@inheritDoc} */
+    public void shutdown() {}
+
+    /** {@inheritDoc} */
     public void start(Map<Class<?>, Object> allServices) {}
 
     /** {@inheritDoc} */
     public void started(Cache<?, ?> cache) {}
-
-    /** {@inheritDoc} */
-    public void shutdown(Executor e) {}
-
+    
     /** {@inheritDoc} */
     public void terminated() {}
-    /** {@inheritDoc} */
-    public void registerServices(Map<Class<?>, Object> serviceMap) {}
-
 }
