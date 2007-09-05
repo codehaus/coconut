@@ -27,8 +27,8 @@ import org.coconut.cache.internal.service.event.InternalCacheEventService;
 import org.coconut.cache.internal.service.eviction.InternalCacheEvictionService;
 import org.coconut.cache.internal.service.expiration.DefaultCacheExpirationService;
 import org.coconut.cache.internal.service.loading.InternalCacheLoadingService;
-import org.coconut.cache.internal.service.service.InternalCacheServiceManager;
-import org.coconut.cache.internal.service.service.UnsynchronizedCacheServiceManager;
+import org.coconut.cache.internal.service.servicemanager.CacheServiceManager;
+import org.coconut.cache.internal.service.servicemanager.UnsynchronizedCacheServiceManager;
 import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsService;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.eviction.CacheEvictionService;
@@ -79,7 +79,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
 
     private final EntryMap<K, V> map = new EntryMap<K, V>(false);
 
-    private final InternalCacheServiceManager serviceManager;
+    private final CacheServiceManager serviceManager;
 
     private final DefaultCacheStatisticsService<K, V> statistics;
 
@@ -175,7 +175,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
 
     /** {@inheritDoc} */
     public final <T> T getService(Class<T> serviceType) {
-        return serviceManager.getPublicService(serviceType);
+        return serviceManager.getService(serviceType);
     }
 
     /** {@inheritDoc} */

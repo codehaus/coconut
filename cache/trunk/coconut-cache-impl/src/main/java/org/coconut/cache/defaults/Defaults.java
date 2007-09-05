@@ -9,7 +9,7 @@ import org.coconut.cache.internal.service.eviction.UnsynchronizedCacheEvictionSe
 import org.coconut.cache.internal.service.expiration.DefaultCacheExpirationService;
 import org.coconut.cache.internal.service.loading.DefaultCacheLoaderService;
 import org.coconut.cache.internal.service.management.DefaultCacheManagementService;
-import org.coconut.cache.internal.service.service.InternalCacheServiceManager;
+import org.coconut.cache.internal.service.servicemanager.CacheServiceManager;
 import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsService;
 import org.coconut.cache.internal.service.threading.NoThreadingCacheService;
 
@@ -24,7 +24,7 @@ final class Defaults {
 
     @SuppressWarnings("unchecked")
     static <K, V> void initializeUnsynchronizedCache(CacheConfiguration<K, V> conf,
-            InternalCacheServiceManager serviceManager) {
+            CacheServiceManager serviceManager) {
         serviceManager.registerServices(DefaultCacheStatisticsService.class);
         serviceManager.registerServices(UnsynchronizedCacheEvictionService.class);
         serviceManager.registerServices(DefaultCacheExpirationService.class);

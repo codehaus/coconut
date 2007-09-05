@@ -25,19 +25,19 @@ public class CacheServiceManagerUtilTest {
         final Cache c = null;
 
         ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
-        CacheServices.servicemanager(c).registerService(
-                CacheServiceManagerUtil.wrapExecutorService(ses, "Daily Cache Clearing"));
-        ses.scheduleWithFixedDelay(new Runnable() {
-            public void run() {
-                c.clear();
-            }
-        }, 0, 60 * 60 * 24, TimeUnit.SECONDS);
-
-        CacheServiceManagerUtil.registerSingleThreadSchedulingService(c,
-                "Daily Cache Clearing", new Runnable() {
-                    public void run() {
-                        c.clear();
-                    }
-                }, 0, 60 * 60 * 24, TimeUnit.SECONDS);
+//        conf.serviceManager().addService(
+//                CacheServiceManagerUtil.wrapExecutorService(ses, "Daily Cache Clearing");
+//        ses.scheduleWithFixedDelay(new Runnable() {
+//            public void run() {
+//                c.clear();
+//            }
+//        }, 0, 60 * 60 * 24, TimeUnit.SECONDS);
+//
+//        CacheServiceManagerUtil.registerSingleThreadSchedulingService(c,
+//                "Daily Cache Clearing", new Runnable() {
+//                    public void run() {
+//                        c.clear();
+//                    }
+//                }, 0, 60 * 60 * 24, TimeUnit.SECONDS);
     }
 }

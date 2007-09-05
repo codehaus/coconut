@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.service.InternalCacheServiceManager;
+import org.coconut.cache.internal.service.servicemanager.CacheServiceManager;
 import org.coconut.cache.internal.service.util.Resources;
 import org.coconut.cache.service.servicemanager.AbstractCacheService;
 import org.coconut.cache.service.statistics.CacheHitStat;
@@ -126,7 +126,7 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheServ
 
     private final LongSamplingCounter entryRemoveTime;
 
-    public DefaultCacheStatisticsService(InternalCacheServiceManager manager,
+    public DefaultCacheStatisticsService(CacheServiceManager manager,
             CacheConfiguration<K, V> conf) {
         super("statistics");
         Clock c = Clock.DEFAULT_CLOCK;

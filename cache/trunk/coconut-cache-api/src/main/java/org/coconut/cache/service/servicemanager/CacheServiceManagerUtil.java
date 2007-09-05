@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.coconut.cache.Cache;
+import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheServices;
 
 /**
@@ -29,7 +30,7 @@ public final class CacheServiceManagerUtil {
 
     /**
      * Creates and executes a periodic action that becomes enabled first after the given
-     * initial delay, and subsequently with the given delay between the termination of one
+     * initial delay (FROM CACHE START), and subsequently with the given delay between the termination of one
      * execution and the commencement of the next. If any execution of the task encounters
      * an exception, subsequent executions are suppressed. Otherwise, the task will only
      * terminate via cancellation or termination of the executor.
@@ -67,10 +68,10 @@ public final class CacheServiceManagerUtil {
      *            ss
      * @return ss
      */
-    public static ScheduledFuture<?> registerSingleThreadSchedulingService(Cache<?, ?> c,
+    public static ScheduledFuture<?> registerSingleThreadSchedulingService(CacheConfiguration<?, ?> c,
             String name, Runnable command, long initialDelay, long delay, TimeUnit unit) {
         ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
-        CacheServices.servicemanager(c).registerService(
+        c.serviceManager().addService(
                 CacheServiceManagerUtil.wrapExecutorService(ses, "Daily Cache Clearing"));
         return ses.scheduleWithFixedDelay(command, initialDelay, 60 * 60 * 24,
                 TimeUnit.SECONDS);

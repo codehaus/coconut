@@ -32,7 +32,8 @@ public interface CacheServiceManagerService {
      */
     Map<Class<?>, Object> getAllServices();
 
-    <T extends CacheService> T registerService(T lifecycle);
+    //cannot register services at runtime for now
+    //<T extends CacheService> T registerService(T lifecycle);
 
     /* Needs to connect to some remote server. */
     //Future must return null on completion
@@ -47,5 +48,5 @@ public interface CacheServiceManagerService {
      *             if this method is called before shutdown has been called on the cache
      *             or if it called after it has been terminated
      */
-    void asynchronousShutdown(AsynchronousShutdownService service2);
+    void shutdownServiceAsynchronously(AsynchronousShutdownService service2);
 }
