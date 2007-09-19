@@ -242,7 +242,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     }
 
     private void checkRunning(String operation) {
-        serviceManager.lazyStart(false);
+        serviceManager.lazyStart(true);
     }
 
     private AbstractCacheEntry<K, V> doPut(AbstractCacheEntry<K, V> entry) {

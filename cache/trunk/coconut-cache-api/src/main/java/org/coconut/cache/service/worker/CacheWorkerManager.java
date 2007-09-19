@@ -29,11 +29,16 @@ public abstract class CacheWorkerManager {
     }
 
     /**
+     * Returns a ExecutorService that can be used to asynchronously execute tasks for the
+     * specified service.
+     * 
      * @param service
      *            the service for which an ExecutorService should be returned
      * @param properties
-     *            a list of properties
-     * @return
+     *            a list of properties that is passed to the concrete implementation of
+     *            the cache worker manager
+     * @return a ExecutorService that can be used to asynchronously execute tasks for the
+     *         specified service
      */
     public abstract ExecutorService getExecutorService(Class<?> service,
             AttributeMap attributes);
@@ -45,13 +50,4 @@ public abstract class CacheWorkerManager {
     public abstract ScheduledExecutorService getScheduledExecutorService(
             Class<?> service, AttributeMap attributes);
 
-    public void executeDedicated(Class<?> service, Runnable r) {
-        executeDedicated(service, r, AttributeMaps.EMPTY_MAP);
-    }
-
-    /**
-     * Executes the {@link Runnable} in a dedicated thread.
-     */
-    public abstract void executeDedicated(Class<?> service, Runnable r,
-            AttributeMap attributes);
 }

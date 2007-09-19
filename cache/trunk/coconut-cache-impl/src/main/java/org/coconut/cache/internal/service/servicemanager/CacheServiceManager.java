@@ -1,12 +1,11 @@
 package org.coconut.cache.internal.service.servicemanager;
 
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.service.servicemanager.AbstractCacheService;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 
-public interface CacheServiceManager extends CacheServiceManagerService{
+public interface CacheServiceManager extends CacheServiceManagerService {
     /**
      * Blocks until all tasks have completed execution after a shutdown request, or the
      * timeout occurs, or the current thread is interrupted, whichever happens first.
@@ -44,28 +43,29 @@ public interface CacheServiceManager extends CacheServiceManagerService{
      * @return <tt>true</tt> if all tasks have completed following shut down
      */
     boolean isTerminated();
-    
+
     void start();
-    
+
     <T> T getInternalService(Class<T> type);
 
     <T> T getService(Class<T> type);
+
     void registerServices(Class<? extends AbstractCacheService>... service);
 
     void lazyStart(boolean failIfShutdown);
+
     /**
-     * Initiates an orderly shutdown of the cache. In which previously submitted
-     * tasks are executed, but no new tasks will be accepted.
-     * Invocation has no additional effect if already shut down.
-     *
-     * @throws SecurityException if a security manager exists and
-     *         shutting down this Cache may manipulate
-     *         threads that the caller is not permitted to modify
-     *         because it does not hold {@link
-     *         java.lang.RuntimePermission}<tt>("modifyThread")</tt>,
-     *         or the security manager's <tt>checkAccess</tt> method
-     *         denies access.
+     * Initiates an orderly shutdown of the cache. In which previously submitted tasks are
+     * executed, but no new tasks will be accepted. Invocation has no additional effect if
+     * already shut down.
+     * 
+     * @throws SecurityException
+     *             if a security manager exists and shutting down this Cache may
+     *             manipulate threads that the caller is not permitted to modify because
+     *             it does not hold {@link java.lang.RuntimePermission}<tt>("modifyThread")</tt>,
+     *             or the security manager's <tt>checkAccess</tt> method denies access.
      */
     void shutdown();
+
     void shutdownNow();
 }

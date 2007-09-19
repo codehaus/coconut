@@ -1,17 +1,14 @@
 package org.coconut.cache.internal.service.servicemanager;
 
+import static org.junit.Assert.assertFalse;
+
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.InternalCacheSupport;
-import org.coconut.cache.internal.service.servicemanager.UnsynchronizedPicoCacheServiceManager;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class UnsynchronizedPicoCacheServiceManagerTest {
     Mockery context = new JUnit4Mockery();
@@ -40,6 +37,14 @@ public class UnsynchronizedPicoCacheServiceManagerTest {
         assertFalse(m.isTerminated());
     }
     
-    
+//    //@Test
+//    public void testShutdown() {
+//        CacheConfiguration<?, ?> conf = CacheConfiguration.create();
+//        UnsynchronizedCacheServiceManager m = new UnsynchronizedCacheServiceManager(
+//                cache, helper, conf);
+//        assertFalse(m.isStarted());
+//        assertFalse(m.isShutdown());
+//        assertFalse(m.isTerminated());
+//    }
     
 }

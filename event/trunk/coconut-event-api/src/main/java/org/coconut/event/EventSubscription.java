@@ -50,7 +50,7 @@ public interface EventSubscription<E> {
 
     /**
      * Returns whether or not this subscription is still active.
-     * 
+     * //boolean isSubscribed() instead??
      * @return
      */
     boolean isActive();

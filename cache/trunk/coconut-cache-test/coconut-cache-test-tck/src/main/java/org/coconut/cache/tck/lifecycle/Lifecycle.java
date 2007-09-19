@@ -25,34 +25,62 @@ public class Lifecycle extends AbstractCacheTCKTest {
         assertFalse(c.isShutdown());
     }
 
+    private void startCache() {
+        //we don't have anything better to start with right now 
+        c.put(1, "foo");
+    }
     @Test
     public void lazyStart() {
         c = newCache();
-        c.put(1, "foo");
+        startCache();
         assertTrue(c.isStarted());
         assertFalse(c.isTerminated());
         assertFalse(c.isShutdown());
     }
 
     @Test
-    public void shutdown() {
+    public void shutdown() throws InterruptedException {
         c = newCache();
-        c.put(1, "foo");
+        startCache();
         assertTrue(c.isStarted());
+        assertFalse(c.isShutdown());
         c.shutdown();
         assertTrue(c.isStarted());
         assertTrue(c.isShutdown());
     }
-    
+
+    @Test
+    public void shutdownNow() throws InterruptedException {
+        c = newCache();
+        startCache();
+        assertTrue(c.isStarted());
+        assertFalse(c.isShutdown());
+        c.shutdownNow();
+        assertTrue(c.isStarted());
+        assertTrue(c.isShutdown());
+    }
+
     @Test
     public void shutdownTerminated() throws InterruptedException {
         c = newCache();
-        c.put(1, "foo");
+        startCache();
         assertTrue(c.isStarted());
         c.shutdown();
         assertTrue(c.awaitTermination(10, TimeUnit.SECONDS));
         assertTrue(c.isStarted());
         assertTrue(c.isShutdown());
         assertTrue(c.isTerminated());
-     }
+    }
+
+    @Test
+    public void shutdownNowTerminated() throws InterruptedException {
+        c = newCache();
+        startCache();
+        assertTrue(c.isStarted());
+        c.shutdownNow();
+        assertTrue(c.awaitTermination(10, TimeUnit.SECONDS));
+        assertTrue(c.isStarted());
+        assertTrue(c.isShutdown());
+        assertTrue(c.isTerminated());
+    }
 }

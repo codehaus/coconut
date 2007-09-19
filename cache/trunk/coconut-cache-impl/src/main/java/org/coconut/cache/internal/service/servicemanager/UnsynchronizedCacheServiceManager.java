@@ -116,7 +116,11 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
 
     /** {@inheritDoc} */
     public void lazyStart(boolean failIfShutdown) {
+        if (failIfShutdown && status.isShutdown()) {
+            throw new IllegalStateException("Cache has been shutdown");
+        }
         prestart();
+        
     }
 
     /** {@inheritDoc} */
