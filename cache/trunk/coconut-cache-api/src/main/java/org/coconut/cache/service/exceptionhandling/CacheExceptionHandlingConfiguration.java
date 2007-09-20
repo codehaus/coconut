@@ -107,9 +107,7 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     @Override
     protected void fromXML(Element parent) throws Exception {
@@ -121,9 +119,7 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
                 CacheExceptionHandler.class);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     protected void toXML(Document doc, Element parent) throws Exception {
         /* Exception Logger */

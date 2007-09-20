@@ -8,18 +8,18 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.FutureTask;
 
-import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.InternalCacheSupport;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
-import org.coconut.cache.internal.service.threading.InternalCacheThreadingService;
 import org.coconut.cache.internal.service.util.ExtendableFutureTask;
+import org.coconut.cache.internal.service.worker.CacheWorkerService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingService;
+import org.coconut.cache.service.worker.CacheWorkerManager;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
 import org.coconut.filter.Filter;
@@ -37,7 +37,7 @@ import org.coconut.management.ManagedObject;
 public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService<K, V>
         implements ManagedObject {
 
-    final InternalCacheSupport<K, V> cache;
+    private final InternalCacheSupport<K, V> cache;
 
     /** A clock used to check if an entry needs to be refreshed. */
     private final Clock clock;
@@ -54,23 +54,19 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
             InternalCacheAttributeService attributeFactory,
             CacheExceptionService<K, V> exceptionService,
             CacheLoadingConfiguration<K, V> loadConf,
-            final InternalCacheThreadingService threadManager,
-            final InternalCacheSupport<K, V> cache) {
+            final CacheWorkerService threadManager, final InternalCacheSupport<K, V> cache) {
         super(attributeFactory, cache);
         this.errorHandler = exceptionService;
         this.clock = clock;
         this.loader = loadConf.getLoader();
-        this.loadExecutor = threadManager.getExecutor(CacheLoadingService.class)
-                .createExecutorService();
+        this.loadExecutor = threadManager.getManager().getExecutorService(CacheLoadingService.class);
         attributeFactory.update().setTimeToFreshNanos(
                 LoadingUtils.getInitialTimeToRefresh(loadConf));
         this.reloadFilter = loadConf.getRefreshFilter();
         this.cache = cache;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public void registerServices(Map<Class<?>, Object> serviceMap) {
         if (loader != null) {
@@ -78,9 +74,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public Map<? super K, ? extends V> loadAllBlocking(
             CacheLoader<? super K, ? extends V> loader,
             Map<? extends K, AttributeMap> keys) {
@@ -91,16 +85,12 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         return map;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public Map<? super K, ? extends V> loadAllBlocking(Map<? extends K, AttributeMap> keys) {
         return loadAllBlocking(loader, keys);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public V loadBlocking(K key, AttributeMap attributes) {
         return loadBlocking(loader, key, attributes);
     }
@@ -194,9 +184,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
             this.attributes = attributes;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public Object call() {
             V v = null;
             try {
@@ -244,11 +232,10 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
             return keysWithAttributes;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public void run() {
-            for (Map.Entry<? extends K, AttributeMap> entry : keysWithAttributes.entrySet()) {
+            for (Map.Entry<? extends K, AttributeMap> entry : keysWithAttributes
+                    .entrySet()) {
                 K key = entry.getKey();
                 AttributeMap attributes = entry.getValue();
                 V v = null;

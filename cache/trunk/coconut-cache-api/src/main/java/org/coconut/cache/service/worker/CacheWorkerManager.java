@@ -24,7 +24,7 @@ public abstract class CacheWorkerManager {
      * @return a ExecutorService that can be used to asynchronously execute tasks for the
      *         specified service
      */
-    public ExecutorService getExecutorService(Class<?> service) {
+    public final ExecutorService getExecutorService(Class<?> service) {
         return getExecutorService(service, AttributeMaps.EMPTY_MAP);
     }
 
@@ -43,7 +43,7 @@ public abstract class CacheWorkerManager {
     public abstract ExecutorService getExecutorService(Class<?> service,
             AttributeMap attributes);
 
-    public ScheduledExecutorService getScheduledExecutorService(Class<?> service) {
+    public final ScheduledExecutorService getScheduledExecutorService(Class<?> service) {
         return getScheduledExecutorService(service, AttributeMaps.EMPTY_MAP);
     }
 

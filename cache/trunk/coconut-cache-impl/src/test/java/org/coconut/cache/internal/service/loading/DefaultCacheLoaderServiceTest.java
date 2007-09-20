@@ -6,13 +6,15 @@ package org.coconut.cache.internal.service.loading;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.coconut.cache.internal.service.InternalCacheSupport;
 import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
-import org.coconut.cache.internal.service.threading.InternalCacheThreadingService;
+import org.coconut.cache.internal.service.worker.CacheWorkerService;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
-import org.coconut.cache.service.threading.CacheServiceThreadManager;
+import org.coconut.cache.service.worker.CacheWorkerManager;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.AttributeMaps;
 import org.coconut.test.MockTestCase;
@@ -295,7 +297,7 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
 //        }
 //    }
 
-    static class MyExecutor implements InternalCacheThreadingService {
+    static class MyExecutor implements CacheWorkerService {
         Runnable r;
 
         /**
@@ -313,8 +315,18 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
             throw new UnsupportedOperationException();
         }
 
-        public CacheServiceThreadManager getExecutor(Class<?> service) {
-            throw new UnsupportedOperationException();
+        public CacheWorkerManager getManager() {
+            return new CacheWorkerManager(){
+                @Override
+                public ExecutorService getExecutorService(Class<?> service,
+                        AttributeMap attributes) {
+                    return MockTestCase.mockDummy(ExecutorService.class);
+                }
+                @Override
+                public ScheduledExecutorService getScheduledExecutorService(
+                        Class<?> service, AttributeMap attributes) {
+                    return MockTestCase.mockDummy(ScheduledExecutorService.class);
+                }};
         }
 
     }

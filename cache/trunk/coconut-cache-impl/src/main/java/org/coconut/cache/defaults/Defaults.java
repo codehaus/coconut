@@ -11,7 +11,7 @@ import org.coconut.cache.internal.service.loading.DefaultCacheLoaderService;
 import org.coconut.cache.internal.service.management.DefaultCacheManagementService;
 import org.coconut.cache.internal.service.servicemanager.CacheServiceManager;
 import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsService;
-import org.coconut.cache.internal.service.threading.NoThreadingCacheService;
+import org.coconut.cache.internal.service.worker.UnsynchronizedCacheWorkerService;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -31,6 +31,6 @@ final class Defaults {
         serviceManager.registerServices(DefaultCacheLoaderService.class);
         serviceManager.registerServices(DefaultCacheManagementService.class);
         serviceManager.registerServices(DefaultCacheEventService.class);
-        serviceManager.registerServices(NoThreadingCacheService.class);
+        serviceManager.registerServices(UnsynchronizedCacheWorkerService.class);
     }
 }

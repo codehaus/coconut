@@ -3,19 +3,16 @@
  */
 package org.coconut.cache.service.worker;
 
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertSame;
 import static junit.framework.Assert.assertTrue;
 import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.CacheEntry;
 import org.coconut.core.AttributeMap;
-import org.coconut.filter.Filter;
-import org.coconut.filter.Filters;
 import org.junit.Before;
 import org.junit.Test;
 

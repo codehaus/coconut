@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.cache.internal.service.threading;
+package org.coconut.cache.internal.service.worker;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -10,18 +10,16 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
 import org.coconut.cache.service.servicemanager.AbstractCacheService;
-import org.coconut.cache.service.threading.CacheServiceThreadManager;
-import org.coconut.cache.service.threading.CacheThreadManager;
+import org.coconut.cache.service.worker.CacheWorkerManager;
 import org.coconut.cache.spi.XmlConfigurator;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class DefaultCacheThreadService<K, V> extends AbstractCacheService implements
-         InternalCacheThreadingService {
+public class DefaultCacheThreadService<K, V> extends AbstractCacheService  {
 
-    private final CacheThreadManager executorFactory;
+    private final CacheWorkerManager executorFactory;
     /**
      * @param conf
      */
@@ -85,10 +83,5 @@ public class DefaultCacheThreadService<K, V> extends AbstractCacheService implem
         return isAsync();
     }
 
-
-
-    public CacheServiceThreadManager getExecutor(Class<?> service) {
-        throw new UnsupportedOperationException();
-    }
 
 }

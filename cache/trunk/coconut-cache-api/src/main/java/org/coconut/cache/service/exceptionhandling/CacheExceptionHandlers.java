@@ -41,9 +41,7 @@ public final class CacheExceptionHandlers {
     public static class DefaultLoggingExceptionHandler<K, V> extends
             CacheExceptionHandler<K, V> {
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         @Override
         public void handleError(CacheExceptionContext<K, V> context, Error cause) {
             context.defaultLogger().fatal(
@@ -51,15 +49,11 @@ public final class CacheExceptionHandlers {
             throw cause;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         @Override
         public void handleException(CacheExceptionContext<K, V> context, Exception cause) {}
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         @Override
         public void handleRuntimeException(CacheExceptionContext<K, V> context,
                 RuntimeException cause) {
@@ -67,17 +61,13 @@ public final class CacheExceptionHandlers {
                     "An unexpected failure occured inside the cache", cause);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         @Override
         public void handleWarning(CacheExceptionContext<K, V> context, String warning) {
             context.defaultLogger().warn(warning);
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         @Override
         public boolean eventDeliveryFailed(CacheExceptionContext<K, V> context,
                 CacheEvent<K, V> event, EventSubscription<CacheEvent<K, V>> destination,
@@ -88,9 +78,7 @@ public final class CacheExceptionHandlers {
             return false;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         @Override
         public V loadFailed(CacheExceptionContext<K, V> context,
                 CacheLoader<? super K, ?> loader, K key, AttributeMap map, boolean isGet,
