@@ -1,0 +1,85 @@
+package org.coconut.cache.test.util;
+
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import junit.framework.Assert;
+
+import org.coconut.cache.Cache;
+import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.service.servicemanager.CacheLifecycle;
+
+public class AbstractLifecycleVerifier implements CacheLifecycle {
+
+    private final AtomicInteger step = new AtomicInteger();
+
+    private CacheConfiguration<?, ?> conf;
+
+    private Cache<?, ?> c;
+
+    public AbstractLifecycleVerifier() {
+
+    }
+
+    public AbstractLifecycleVerifier(Cache<?, ?> c, CacheConfiguration<?, ?> conf) {
+        this.c = c;
+        this.conf = conf;
+    }
+
+    public String getName() {
+        return "noname";
+    }
+
+    public void assertNotStarted() {
+        Assert.assertEquals(0, step.get());
+    }
+
+    public void assertInStartedPhase() {
+        Assert.assertEquals(4, step.get());
+    }
+
+    public void assertShutdownOrTerminatedPhase() {
+        int state = step.get();
+        Assert.assertTrue(state == 5 || state == 6);
+    }
+
+
+    public void initialize(CacheConfiguration<?, ?> configuration) {
+        Assert.assertEquals(0, step.getAndIncrement());
+        if (conf != null) {
+            Assert.assertEquals(conf, configuration);
+        }
+        conf = configuration;
+        // System.out.println("1-initialized");
+    }
+
+    public void registerServices(Map<Class<?>, Object> serviceMap) {
+        Assert.assertEquals(1, step.getAndIncrement());
+        Assert.assertEquals(0, serviceMap.size());
+        // System.out.println("2-register");
+    }
+
+    public void shutdown() {
+        Assert.assertEquals(4, step.getAndIncrement());
+        // System.out.println("5-shutdown");
+    }
+
+    public void start(Map<Class<?>, Object> allServiceMap) {
+        Assert.assertEquals(2, step.getAndIncrement());
+        // System.out.println("3-start");
+    }
+
+    public void started(Cache<?, ?> cache) {
+        Assert.assertEquals(3, step.getAndIncrement());
+        if (c != null) {
+            Assert.assertEquals(c, cache);
+        }
+        c = cache;
+        // System.out.println("4-started");
+    }
+
+    public void terminated() {
+        Assert.assertEquals(5, step.getAndIncrement());
+        // System.out.println("6-terminated");
+    }
+}

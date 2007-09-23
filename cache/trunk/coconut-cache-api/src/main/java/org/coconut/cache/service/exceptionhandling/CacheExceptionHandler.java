@@ -8,7 +8,7 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingService;
-import org.coconut.cache.service.servicemanager.CacheService;
+import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.core.AttributeMap;
 import org.coconut.event.EventSubscription;
 
@@ -106,10 +106,10 @@ public abstract class CacheExceptionHandler<K, V> {
 
     /**
      * This method is called when the
-     * {@link CacheService#initialize(CacheConfiguration)} method of a cache service
+     * {@link CacheLifecycle#initialize(CacheConfiguration)} method of a cache service
      * fails.
      * <p>
-     * The {@link CacheService#initialize(CacheConfiguration)} method is always called
+     * The {@link CacheLifecycle#initialize(CacheConfiguration)} method is always called
      * from the constructor of the cache. And the default implementation of this method will
      * let the cause of failure be propagated to the constructor callee.
      * 
@@ -121,7 +121,7 @@ public abstract class CacheExceptionHandler<K, V> {
      *            the cause of the failure
      */
     public void lifecycleInitializationFailed(CacheConfiguration<K, V> configuration,
-            CacheService service, RuntimeException cause) {
+            CacheLifecycle service, RuntimeException cause) {
     }
 
     public void cacheWasShutdown(CacheExceptionContext<K, V> context, String method) {
