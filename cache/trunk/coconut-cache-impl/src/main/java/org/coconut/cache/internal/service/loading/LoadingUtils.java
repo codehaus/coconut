@@ -171,23 +171,6 @@ final class LoadingUtils {
         }
 
         /** {@inheritDoc} */
-        public void filteredLoad(Filter<? super CacheEntry<K, V>> filter) {
-            delegate.filteredLoad(filter);
-        }
-
-        /** {@inheritDoc} */
-        public void filteredLoad(Filter<? super CacheEntry<K, V>> filter,
-                AttributeMap defaultAttributes) {
-            delegate.filteredLoad(filter, defaultAttributes);
-        }
-
-        /** {@inheritDoc} */
-        public void filteredLoad(Filter<? super CacheEntry<K, V>> filter,
-                Transformer<CacheEntry<K, V>, AttributeMap> attributeTransformer) {
-            delegate.filteredLoad(filter, attributeTransformer);
-        }
-
-        /** {@inheritDoc} */
         public void forceLoad(K key) {
             delegate.forceLoad(key);
         }

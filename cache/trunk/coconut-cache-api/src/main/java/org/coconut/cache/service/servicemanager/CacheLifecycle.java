@@ -4,7 +4,6 @@
 package org.coconut.cache.service.servicemanager;
 
 import java.util.Map;
-import java.util.concurrent.Executor;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
@@ -13,7 +12,7 @@ import org.coconut.cache.CacheConfiguration;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public interface CacheService {
+public interface CacheLifecycle {
     /**
      * Returns the readable name of the service.
      * 
@@ -44,9 +43,6 @@ public interface CacheService {
      */
     void registerServices(Map<Class<?>, Object> serviceMap);
 
-    void shutdown();
-    
-
     /**
      * Start the service. The specified cache can be used to retrieve other cache
      * services.
@@ -64,13 +60,11 @@ public interface CacheService {
      */
     void started(Cache<?, ?> cache);
 
+    void shutdown();
+
     /**
      * This method is invoked as the last method in this lifecycle interface and is called
      * when the cache and all of it services has been succesfully shutdown.
-     * <p>
-     * Method invoked when the Cache has terminated. Note: To properly nest multiple
-     * overridings, subclasses should generally invoke <tt>super.terminated</tt> within
-     * this method.
      */
     void terminated();
 }

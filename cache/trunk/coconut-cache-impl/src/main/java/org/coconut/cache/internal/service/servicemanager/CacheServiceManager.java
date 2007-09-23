@@ -2,7 +2,7 @@ package org.coconut.cache.internal.service.servicemanager;
 
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.service.servicemanager.AbstractCacheService;
+import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 
 public interface CacheServiceManager extends CacheServiceManagerService {
@@ -50,7 +50,7 @@ public interface CacheServiceManager extends CacheServiceManagerService {
 
     <T> T getService(Class<T> type);
 
-    void registerServices(Class<? extends AbstractCacheService>... service);
+    void registerServices(Class<? extends AbstractCacheLifecycle>... service);
 
     void lazyStart(boolean failIfShutdown);
 

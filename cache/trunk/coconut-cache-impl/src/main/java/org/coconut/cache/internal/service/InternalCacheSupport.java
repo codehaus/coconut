@@ -50,4 +50,6 @@ public interface InternalCacheSupport<K, V> {
     void trimToVolume(long capacity);
 
     void trimToSize(int size);
+    
+    void forceLoadAll(AttributeMap attributes);
 }

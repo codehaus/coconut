@@ -19,6 +19,7 @@ import net.jcip.annotations.NotThreadSafe;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.CacheServices;
 import org.coconut.cache.internal.service.InternalCacheSupport;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
@@ -104,12 +105,17 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         super(conf);
         serviceManager = new UnsynchronizedCacheServiceManager(this, new Support(), conf);
         Defaults.initializeUnsynchronizedCache(conf, serviceManager);
-        expiration = serviceManager.getInternalService(DefaultCacheExpirationService.class);
-        loadingService = serviceManager.getInternalService(InternalCacheLoadingService.class);
-        evictionService = serviceManager.getInternalService(InternalCacheEvictionService.class);
+        expiration = serviceManager
+                .getInternalService(DefaultCacheExpirationService.class);
+        loadingService = serviceManager
+                .getInternalService(InternalCacheLoadingService.class);
+        evictionService = serviceManager
+                .getInternalService(InternalCacheEvictionService.class);
         eventService = serviceManager.getInternalService(InternalCacheEventService.class);
-        statistics = serviceManager.getInternalService(DefaultCacheStatisticsService.class);
-        entryFactory = serviceManager.getInternalService(AbstractCacheEntryFactoryService.class);
+        statistics = serviceManager
+                .getInternalService(DefaultCacheStatisticsService.class);
+        entryFactory = serviceManager
+                .getInternalService(AbstractCacheEntryFactoryService.class);
     }
 
     /** {@inheritDoc} */
@@ -558,6 +564,19 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
                 Map<? extends K, AttributeMap> keys) {
             for (Map.Entry<? extends K, ? extends V> entry : values.entrySet()) {
                 doPut(entry.getKey(), entry.getValue(), false, keys.get(entry.getKey()));
+            }
+        }
+
+        public void forceLoadAll(AttributeMap attributes) {
+            Collection<K> keys = new ArrayList(keySet());
+            if (attributes.size() == 0) {
+                CacheServices.loading(UnsynchronizedCache.this).forceLoadAll(keys);
+            } else {
+                HashMap<K, AttributeMap> map = new HashMap<K, AttributeMap>();
+                for (K key : keys) {
+                    map.put(key, attributes);
+                }
+                CacheServices.loading(UnsynchronizedCache.this).forceLoadAll(map);
             }
         }
     }

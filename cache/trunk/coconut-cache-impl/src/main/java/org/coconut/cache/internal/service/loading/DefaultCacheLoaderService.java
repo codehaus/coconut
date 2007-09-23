@@ -3,8 +3,12 @@
  */
 package org.coconut.cache.internal.service.loading;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.FutureTask;
 
@@ -13,13 +17,13 @@ import org.coconut.cache.internal.service.InternalCacheSupport;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
+import org.coconut.cache.internal.service.servicemanager.CompositeService;
 import org.coconut.cache.internal.service.util.ExtendableFutureTask;
 import org.coconut.cache.internal.service.worker.CacheWorkerService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingService;
-import org.coconut.cache.service.worker.CacheWorkerManager;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
 import org.coconut.filter.Filter;
@@ -35,7 +39,7 @@ import org.coconut.management.ManagedObject;
  *            the type of mapped values
  */
 public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService<K, V>
-        implements ManagedObject {
+        implements ManagedObject, CompositeService {
 
     private final InternalCacheSupport<K, V> cache;
 
@@ -59,7 +63,8 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         this.errorHandler = exceptionService;
         this.clock = clock;
         this.loader = loadConf.getLoader();
-        this.loadExecutor = threadManager.getManager().getExecutorService(CacheLoadingService.class);
+        this.loadExecutor = threadManager.getManager().getExecutorService(
+                CacheLoadingService.class);
         attributeFactory.update().setTimeToFreshNanos(
                 LoadingUtils.getInitialTimeToRefresh(loadConf));
         this.reloadFilter = loadConf.getRefreshFilter();
@@ -250,6 +255,14 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
             }
 
         }
+    }
+
+    public Collection<?> getChildServices() {
+        return Arrays.asList(loader, reloadFilter);
+    }
+
+    public void forceLoadAll(AttributeMap attributes) {
+        cache.forceLoadAll(attributes);
     }
 
 }

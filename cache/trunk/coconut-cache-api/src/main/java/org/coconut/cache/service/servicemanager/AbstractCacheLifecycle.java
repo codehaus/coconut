@@ -4,18 +4,17 @@
 package org.coconut.cache.service.servicemanager;
 
 import java.util.Map;
-import java.util.concurrent.Executor;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 
 /**
- * An abstract base class for implementing a {@link CacheService}. By ex
+ * An abstract base class for implementing a {@link CacheLifecycle}. By ex
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public abstract class AbstractCacheService implements CacheService {
+public abstract class AbstractCacheLifecycle implements CacheLifecycle {
 
     /** The name of the service. */
     private final String name;
@@ -24,7 +23,7 @@ public abstract class AbstractCacheService implements CacheService {
      * Creates a new AbstractCacheService with the same service name as the name of the
      * parent Class extending this class.
      */
-    public AbstractCacheService() {
+    public AbstractCacheLifecycle() {
         name = getClass().getSimpleName();
     }
 
@@ -34,7 +33,7 @@ public abstract class AbstractCacheService implements CacheService {
      * @param name
      *            the name of the cache service
      */
-    public AbstractCacheService(String name) {
+    public AbstractCacheLifecycle(String name) {
         if (name == null) {
             throw new NullPointerException("name is null");
         }
@@ -53,14 +52,14 @@ public abstract class AbstractCacheService implements CacheService {
     public void registerServices(Map<Class<?>, Object> serviceMap) {}
 
     /** {@inheritDoc} */
-    public void shutdown() {}
-
-    /** {@inheritDoc} */
     public void start(Map<Class<?>, Object> allServices) {}
 
     /** {@inheritDoc} */
     public void started(Cache<?, ?> cache) {}
-    
+
+    /** {@inheritDoc} */
+    public void shutdown() {}
+
     /** {@inheritDoc} */
     public void terminated() {}
 }

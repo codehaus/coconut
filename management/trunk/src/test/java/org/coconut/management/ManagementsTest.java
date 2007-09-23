@@ -35,7 +35,7 @@ public class ManagementsTest {
         dmg.add(o);
         dmg.addChild("bahoo", "desc2").add(new AttributedStub1());
         
-        ManagedGroupVisitor mgv = Managements.register(server,
+        ManagedVisitor mgv = Managements.register(server,
                 "org.coconut.management.test", "l1", "l2", "l3");
         mgv.visitManagedGroup(dmg);
 

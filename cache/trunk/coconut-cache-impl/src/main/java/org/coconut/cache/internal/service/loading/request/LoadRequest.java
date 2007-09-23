@@ -3,7 +3,6 @@
  */
 package org.coconut.cache.internal.service.loading.request;
 
-import org.coconut.cache.Cache;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Callback;
 
@@ -16,7 +15,6 @@ import org.coconut.core.Callback;
  *            the type of values returned when loading
  */
 public interface LoadRequest<K, V> extends Callback<V> {
-//    Cache<K, V> getCache();
 
     /**
      * Returns the key for which a corresponding value should be loaded.

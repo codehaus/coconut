@@ -22,7 +22,7 @@ public class Managements {
 //        return null;
 //    }
 
-    public static ManagedGroupVisitor register(MBeanServer server, String domain,
+    public static ManagedVisitor register(MBeanServer server, String domain,
             String... levels) {
         if (server == null) {
             throw new NullPointerException("server is null");
@@ -32,7 +32,7 @@ public class Managements {
         return new GroupVisitor(server, domain, levels);
     }
 
-    static class GroupVisitor implements ManagedGroupVisitor {
+    static class GroupVisitor implements ManagedVisitor {
         private final MBeanServer server;
 
         private final String domain;

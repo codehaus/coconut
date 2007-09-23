@@ -13,15 +13,14 @@ import org.coconut.cache.service.loading.CacheLoader;
  */
 public abstract class AbstractCacheLoader<K, V> implements CacheLoader<K, V> {
 
-	public final void loadAll(Collection<LoadRequest<K, V>> loadRequests) {
-		for (LoadRequest<K, V> req : loadRequests) {
-			V result = null;
-			try {
-				result = load(req.getKey(), req.getAttributes());
-			} catch (Exception e) {
-				req.completed(result);
-			}
-		}
-	}
-
+    public final void loadAll(Collection<LoadRequest<K, V>> loadRequests) {
+        for (LoadRequest<K, V> req : loadRequests) {
+            try {
+                V result = load(req.getKey(), req.getAttributes());
+                req.completed(result);
+            } catch (Exception e) {
+                req.failed(e);
+            }
+        }
+    }
 }

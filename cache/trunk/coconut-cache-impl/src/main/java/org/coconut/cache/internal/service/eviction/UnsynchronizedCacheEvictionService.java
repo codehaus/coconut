@@ -4,6 +4,8 @@
 package org.coconut.cache.internal.service.eviction;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.coconut.cache.CacheEntry;
@@ -164,5 +166,9 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
     /** {@inheritDoc} */
     public boolean replace(int index, T t) {
         return cp.update(index, t);
+    }
+    
+    public Collection<?> getChildServices() {
+        return Arrays.asList(cp);
     }
 }

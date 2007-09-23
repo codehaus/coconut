@@ -9,19 +9,21 @@ import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.RuntimeMBeanException;
 
-import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingMXBean;
-import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Tests the CacheLoadingMXBean interface
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ */
 public class LoadingMXBean extends AbstractLoadingTestBundle {
 
-    static CacheLoadingConfiguration<?, ?> DEFAULT = new CacheLoadingConfiguration();
+    private CacheLoadingMXBean mxBean;
 
-    CacheLoadingMXBean mxBean;
-
-    MBeanServer mbs;
+    private MBeanServer mbs;
 
     // TODO
     // We should test for a default objectname
@@ -31,8 +33,8 @@ public class LoadingMXBean extends AbstractLoadingTestBundle {
     @Before
     public void setup() {
         mbs = MBeanServerFactory.createMBeanServer();
-        c = newCache(newConf().loading().setLoader(new IntegerToStringLoader()).c()
-                .management().setEnabled(true).setMBeanServer(mbs).c());
+        c = newCache(newConf().loading().setLoader(loader).c().management().setEnabled(
+                true).setMBeanServer(mbs).c());
         mxBean = findMXBean(mbs, CacheLoadingMXBean.class);
     }
 
@@ -41,8 +43,7 @@ public class LoadingMXBean extends AbstractLoadingTestBundle {
      */
     @Test
     public void defaultIdleTime() {
-        assertEquals(Long.MAX_VALUE, mxBean
-                .getDefaultTimeToRefreshMs());
+        assertEquals(Long.MAX_VALUE, mxBean.getDefaultTimeToRefreshMs());
         mxBean.setDefaultTimeToRefreshMs(1000);
         assertEquals(1000, mxBean.getDefaultTimeToRefreshMs());
         assertEquals(1000 * 1000, loading()
@@ -50,7 +51,7 @@ public class LoadingMXBean extends AbstractLoadingTestBundle {
 
         // start value
         c = newCache(newConf().setName("foo").management().setEnabled(true)
-                .setMBeanServer(mbs).c().loading().setLoader(new IntegerToStringLoader())
+                .setMBeanServer(mbs).c().loading().setLoader(loader)
                 .setDefaultTimeToRefresh(1800, TimeUnit.SECONDS));
         mxBean = findMXBean(mbs, CacheLoadingMXBean.class);
         assertEquals(1800 * 1000, mxBean.getDefaultTimeToRefreshMs());
@@ -62,5 +63,19 @@ public class LoadingMXBean extends AbstractLoadingTestBundle {
         } catch (RuntimeMBeanException e) {
             assertTrue(e.getCause() instanceof IllegalArgumentException);
         }
+    }
+
+    /**
+     * Tests force load all.
+     */
+    @Test
+    public void testForceLoadAll() {
+        mxBean.forceLoadAll();
+        assertEquals("A", c.get(1));
+        assertEquals("B", c.get(2));
+        loader.setBase(1);
+        mxBean.forceLoadAll();
+        assertEquals("B", c.peek(1));
+        assertEquals("C", c.peek(2));
     }
 }

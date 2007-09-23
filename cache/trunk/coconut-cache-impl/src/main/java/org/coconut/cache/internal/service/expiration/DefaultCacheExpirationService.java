@@ -3,6 +3,7 @@
  */
 package org.coconut.cache.internal.service.expiration;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,9 +14,10 @@ import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.InternalCacheSupport;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
+import org.coconut.cache.internal.service.servicemanager.CompositeService;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationService;
-import org.coconut.cache.service.servicemanager.AbstractCacheService;
+import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
 import org.coconut.filter.Filter;
@@ -38,8 +40,8 @@ import org.coconut.management.ManagedObject;
  * @param <V>
  *            the type of mapped values
  */
-public class DefaultCacheExpirationService<K, V> extends AbstractCacheService implements
-        CacheExpirationService<K, V>, ManagedObject {
+public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle implements
+        CacheExpirationService<K, V>, ManagedObject, CompositeService {
 
     /** Responsible for creating attribute maps. */
     private final InternalCacheAttributeService attributeFactory;
@@ -133,5 +135,9 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheService im
         ManagedGroup g = parent.addChild(CacheExpirationConfiguration.SERVICE_NAME,
                 "Cache Expiration attributes and operations");
         g.add(ExpirationUtils.wrapAsMXBean(this));
+    }
+
+    public Collection<?> getChildServices() {
+        return Arrays.asList(expirationFilter);
     }
 }

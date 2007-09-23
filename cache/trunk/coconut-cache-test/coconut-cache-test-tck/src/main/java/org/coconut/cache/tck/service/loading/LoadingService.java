@@ -10,7 +10,7 @@ import org.coconut.test.MockTestCase;
 import org.junit.Test;
 
 /**
- * Tests whether or not the cache loading service is available.
+ * Tests whether or not the cache loading service is available at runtime.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -19,7 +19,7 @@ import org.junit.Test;
 public class LoadingService extends AbstractCacheTCKTest {
 
     /**
-     * Tests that a cache that has no configured cache loader. Does not have
+     * Tests that if a cache has no configured cache loader there is no
      * {@link CacheLoadingService} available.
      */
     @Test
@@ -29,7 +29,7 @@ public class LoadingService extends AbstractCacheTCKTest {
     }
 
     /**
-     * Tests that a cache that has no configured cache loader. Does not have
+     * Tests that if a cache has no configured cache loader there is no
      * {@link CacheLoadingService} available.
      */
     @Test(expected = IllegalArgumentException.class)
@@ -48,6 +48,8 @@ public class LoadingService extends AbstractCacheTCKTest {
                 MockTestCase.mockDummy(CacheLoader.class)));
         assertTrue(services().hasService(CacheLoadingService.class));
         // check that it doesn't fail with a classcast exception
-        c.getService(CacheLoadingService.class);
+        assertNotNull(c.getService(CacheLoadingService.class));
+        assertTrue(services().getAllServices().containsKey(CacheLoadingService.class));
+        assertTrue(services().getAllServices().get(CacheLoadingService.class) instanceof CacheLoadingService);
     }
 }

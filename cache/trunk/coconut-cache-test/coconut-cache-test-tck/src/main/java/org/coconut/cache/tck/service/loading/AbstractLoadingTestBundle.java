@@ -3,7 +3,6 @@
  */
 package org.coconut.cache.tck.service.loading;
 
-import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.IntegerToStringLoader;
@@ -19,7 +18,7 @@ import org.junit.Before;
  */
 public class AbstractLoadingTestBundle extends AbstractCacheTCKTest {
 
-    protected IntegerToStringLoader loader;
+    IntegerToStringLoader loader;
 
     @Before
     public void setupLoading() {

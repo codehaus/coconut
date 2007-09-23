@@ -4,6 +4,8 @@
 package org.coconut.cache.internal.service.management;
 
 import java.lang.management.ManagementFactory;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
@@ -12,12 +14,13 @@ import javax.management.MBeanServer;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheException;
+import org.coconut.cache.internal.service.servicemanager.CompositeService;
 import org.coconut.cache.service.management.CacheMXBean;
 import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.cache.service.management.CacheManagementService;
-import org.coconut.cache.service.servicemanager.AbstractCacheService;
+import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.management.ManagedGroup;
-import org.coconut.management.ManagedGroupVisitor;
+import org.coconut.management.ManagedVisitor;
 import org.coconut.management.Managements;
 import org.coconut.management.defaults.DefaultManagedGroup;
 
@@ -32,8 +35,8 @@ import org.coconut.management.defaults.DefaultManagedGroup;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class DefaultCacheManagementService extends AbstractCacheService implements
-        CacheManagementService {
+public class DefaultCacheManagementService extends AbstractCacheLifecycle implements
+        CacheManagementService, CompositeService {
 
     /** The Managed root group. */
     private final ManagedGroup root;
@@ -42,7 +45,7 @@ public class DefaultCacheManagementService extends AbstractCacheService implemen
     private final boolean isEnabled;
 
     /** Used to register all services. */
-    private final ManagedGroupVisitor registrant;
+    private final ManagedVisitor registrant;
 
     /**
      * Creates a new DefaultCacheManagementService.
@@ -138,5 +141,9 @@ public class DefaultCacheManagementService extends AbstractCacheService implemen
                 throw new CacheException(e);
             }
         }
+    }
+
+    public Collection<?> getChildServices() {
+        return Arrays.asList(root, registrant);
     }
 }

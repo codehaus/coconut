@@ -6,13 +6,13 @@ package org.coconut.cache.examples.servicemanager;
 import java.util.Map;
 
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.service.servicemanager.AbstractCacheService;
+import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class MyService extends AbstractCacheService {
+public class MyService extends AbstractCacheLifecycle {
     public MyService(String name) {
         super(name);
     }

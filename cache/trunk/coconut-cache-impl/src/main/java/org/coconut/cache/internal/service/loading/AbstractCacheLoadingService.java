@@ -13,8 +13,9 @@ import org.coconut.cache.internal.service.InternalCacheSupport;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingService;
-import org.coconut.cache.service.servicemanager.AbstractCacheService;
+import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.core.AttributeMap;
+import org.coconut.core.AttributeMaps;
 import org.coconut.core.Transformer;
 import org.coconut.filter.Filter;
 import org.coconut.filter.Filters;
@@ -27,7 +28,7 @@ import org.coconut.filter.Filters;
  * @param <V>
  *            the type of mapped values
  */
-public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheService
+public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLifecycle
         implements CacheLoadingService<K, V>, InternalCacheLoadingService<K, V> {
 
     private final InternalCacheAttributeService attributeFactory;
@@ -59,56 +60,6 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheSer
     }
 
     /**
-     * @see org.coconut.cache.service.loading.CacheLoadingService#filteredLoad(org.coconut.filter.Filter)
-     */
-    public final void filteredLoad(Filter<? super CacheEntry<K, V>> filter) {
-        if (filter == null) {
-            throw new NullPointerException("filter is null");
-        }
-        Collection<? extends K> keys = helper.filterKeys(filter);
-        forceLoadAll(keys);
-    }
-
-    /**
-     * @see org.coconut.cache.service.loading.CacheLoadingService#filteredLoad(org.coconut.filter.Filter,
-     *      org.coconut.core.AttributeMap)
-     */
-    public final void filteredLoad(Filter<? super CacheEntry<K, V>> filter,
-            AttributeMap defaultAttributes) {
-        if (filter == null) {
-            throw new NullPointerException("filter is null");
-        } else if (defaultAttributes == null) {
-            throw new NullPointerException("defaultAttributes is null");
-        }
-        Collection<? extends K> keys = helper.filterKeys(filter);
-        HashMap<K, AttributeMap> map = new HashMap<K, AttributeMap>();
-        for (K key : keys) {
-            map.put(key, defaultAttributes);
-        }
-        forceLoadAll(map);
-    }
-
-    /**
-     * @see org.coconut.cache.service.loading.CacheLoadingService#filteredLoad(org.coconut.filter.Filter,
-     *      org.coconut.core.Transformer)
-     */
-    public final void filteredLoad(Filter<? super CacheEntry<K, V>> filter,
-            Transformer<CacheEntry<K, V>, AttributeMap> attributeTransformer) {
-        if (filter == null) {
-            throw new NullPointerException("filter is null");
-        } else if (attributeTransformer == null) {
-            throw new NullPointerException("defaultAttributes is null");
-        }
-        Collection<? extends CacheEntry<K, V>> keys = helper.filter(filter);
-        HashMap<K, AttributeMap> map = new HashMap<K, AttributeMap>();
-        for (CacheEntry<K, V> entry : keys) {
-            AttributeMap atr = attributeTransformer.transform(entry);
-            map.put(entry.getKey(), atr);
-        }
-        forceLoadAll(map);
-    }
-
-    /**
      * @see org.coconut.cache.service.loading.CacheLoadingService#load(java.lang.Object)
      */
     public final void forceLoad(K key) {
@@ -121,13 +72,6 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheSer
      */
     public final void forceLoad(K key, AttributeMap attributes) {
         doLoad(key, attributes, true);
-    }
-
-    /**
-     * @see org.coconut.cache.service.loading.CacheLoadingService#forceLoadAll(org.coconut.core.AttributeMap)
-     */
-    public final void forceLoadAll(AttributeMap attributes) {
-        filteredLoad(Filters.trueFilter(), attributes);
     }
 
     /**
@@ -171,7 +115,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheSer
      * @see org.coconut.cache.service.loading.CacheLoadingService#forceLoadAll()
      */
     public final void forceLoadAll() {
-        filteredLoad(Filters.trueFilter());
+        forceLoadAll(AttributeMaps.EMPTY_MAP);
     }
 
     /**

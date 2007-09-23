@@ -14,6 +14,7 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses( { ExplicitForcedLoading.class, ExplicitLoading.class,
-        FilteredLoading.class, ImplicitLoading.class, LoadingMXBean.class,
+        ImplicitLoading.class, LoadingLazyStart.class, LoadingLifecycleIntegration.class,
+        LoadingManagementIntegration.class, LoadingMXBean.class, LoadingRefresh.class,
         LoadingService.class })
 public class LoadingSuite {}

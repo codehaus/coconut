@@ -32,24 +32,11 @@ import org.coconut.filter.Filter;
 public interface CacheLoadingService<K, V> {
 
     /**
-     * Attempts to reload all the cache entries where the {@link Filter#accept(Object)}
-     * method of the specified filter returns true .
-     * 
-     * @param filter
-     *            the filter to test cache entries against
-     */
-    void filteredLoad(Filter<? super CacheEntry<K, V>> filter);
-
-    void filteredLoad(Filter<? super CacheEntry<K, V>> filter,
-            AttributeMap defaultAttributes);
-
-    void filteredLoad(Filter<? super CacheEntry<K, V>> filter,
-            Transformer<CacheEntry<K, V>, AttributeMap> attributeTransformer);
-
-    /**
      * This method works analogous to the {@link #load(Object)} method. Except, that it
      * will attempt to load a new value for the specified key even if a valid mapping for
      * the specified key is already in the cache.
+     * <p>
+     * If this cache has been shutdown calls to this method is ignored.
      * 
      * @param key
      *            whose associated value is to be loaded.
@@ -63,7 +50,9 @@ public interface CacheLoadingService<K, V> {
     /**
      * This method works analogous to the {@link #load(Object, AttributeMap)} method.
      * Except, that it will attempt to load a new value for the specified key even if a
-     * valid mapping for the specified key is already in the cache.
+     * valid mapping for the specified key is already in the cache. 
+     * <p>
+     * If this cache has been shutdown calls to this method is ignored.
      * 
      * @param key
      *            whose associated value is to be loaded.
@@ -81,12 +70,16 @@ public interface CacheLoadingService<K, V> {
     /**
      * Attempts to reload all entries that are currently held in the cache from the
      * configured cache loader.
+     * <p>
+     * If this cache has been shutdown calls to this method is ignored.
      */
     void forceLoadAll();
 
     /**
      * Attempts to reload all entries that are currently held in the cache from the
      * configured cache loader.
+     * <p>
+     * If this cache has been shutdown calls to this method is ignored.
      * 
      * @param attributes
      *            a map of attributes that will be available in the attribute map parsed
@@ -106,7 +99,8 @@ public interface CacheLoadingService<K, V> {
      * <p>
      * The behavior of this operation is unspecified if the specified collection is
      * modified while the operation is in progress.
-     * 
+     * <p>
+     * If this cache has been shutdown calls to this method is ignored.
      * @param keys
      *            whose associated values is to be loaded.
      * @throws ClassCastException
@@ -128,7 +122,8 @@ public interface CacheLoadingService<K, V> {
      * <p>
      * The behavior of this operation is unspecified if the specified collection is
      * modified while the operation is in progress.
-     * 
+     * <p>
+     * If this cache has been shutdown calls to this method is ignored.
      * @param mapsWithAttributes
      *            a map of keys that should be loaded with an associated AttributeMap
      * @throws ClassCastException
@@ -163,7 +158,8 @@ public interface CacheLoadingService<K, V> {
      * implementation that is not thread-safe (ie supposed to be accessed by a single
      * thread only) will need to load the value before returning from this method. Because
      * it cannot allow a background thread to set the value once loaded.
-     * 
+     * <p>
+     * If this cache has been shutdown calls to this method is ignored.
      * @param key
      *            whose associated value is to be loaded.
      * @throws ClassCastException
@@ -178,7 +174,8 @@ public interface CacheLoadingService<K, V> {
      * the attributes available in the the specified attribute map. Will be parsed along
      * to the {@link CacheLoader#load(Object, AttributeMap)} method of the configured
      * cache loader.
-     * 
+     * <p>
+     * If this cache has been shutdown calls to this method is ignored.
      * @param key
      *            whose associated value is to be loaded.
      * @param attributes
@@ -202,7 +199,8 @@ public interface CacheLoadingService<K, V> {
      * <p>
      * The behavior of this operation is unspecified if the specified collection is
      * modified while the operation is in progress.
-     * 
+     * <p>
+     * If this cache has been shutdown calls to this method is ignored.
      * @param keys
      *            whose associated values is to be loaded.
      * @throws ClassCastException
@@ -215,6 +213,8 @@ public interface CacheLoadingService<K, V> {
     void loadAll(Collection<? extends K> keys);
 
     /**
+     * <p>
+     * If this cache has been shutdown calls to this method is ignored.
      * @param mapsWithAttributes
      *            a map with keys that should be loaded and a corresponding attribute map
      */

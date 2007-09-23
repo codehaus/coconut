@@ -5,11 +5,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.coconut.cache.internal.service.servicemanager.CacheServiceManager;
-import org.coconut.cache.service.servicemanager.AbstractCacheService;
+import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.worker.CacheWorkerManager;
 import org.coconut.core.AttributeMap;
 
-public class SynchronizedCacheWorkerService extends AbstractCacheService implements
+public class SynchronizedCacheWorkerService extends AbstractCacheLifecycle implements
         CacheWorkerService {
 
     private final SameThreadCacheWorker worker = new SameThreadCacheWorker();

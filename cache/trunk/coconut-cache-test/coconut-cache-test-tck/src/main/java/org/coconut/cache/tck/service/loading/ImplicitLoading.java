@@ -15,8 +15,16 @@ import static org.coconut.test.CollectionUtils.M7;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.coconut.cache.Cache;
 import org.junit.Test;
 
+/**
+ * Tests loading through one of the {@link Cache#get(Object)} or
+ * {@link Cache#getAll(java.util.Collection)} methods.
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ */
 public class ImplicitLoading extends AbstractLoadingTestBundle {
 
     @Test
@@ -66,9 +74,7 @@ public class ImplicitLoading extends AbstractLoadingTestBundle {
         s.put(7, null);
 
         assertEquals(s, getAll(M1, M2, M6, M7));
-
         assertSize(2);
-
         assertPeek(M1, M2);
     }
 

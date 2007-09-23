@@ -14,7 +14,7 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.servicemanager.CacheServiceManager;
 import org.coconut.cache.internal.service.util.Resources;
-import org.coconut.cache.service.servicemanager.AbstractCacheService;
+import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.statistics.CacheHitStat;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.core.Clock;
@@ -31,7 +31,7 @@ import org.coconut.management.annotation.ManagedAttribute;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheService
+public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLifecycle
         implements CacheStatisticsService {
 
     // number of loads, loaded elements, number of queries,
@@ -412,7 +412,7 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheServ
     }
 
     /**
-     * @see org.coconut.cache.service.servicemanager.AbstractCacheService#initialize(org.coconut.cache.CacheConfiguration,
+     * @see org.coconut.cache.service.servicemanager.AbstractCacheLifecycle#initialize(org.coconut.cache.CacheConfiguration,
      *      java.util.Map)
      */
     @Override

@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
-import org.coconut.cache.service.servicemanager.AbstractCacheService;
+import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.worker.CacheWorkerManager;
 import org.coconut.cache.spi.XmlConfigurator;
 
@@ -17,7 +17,7 @@ import org.coconut.cache.spi.XmlConfigurator;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class DefaultCacheThreadService<K, V> extends AbstractCacheService  {
+public class DefaultCacheThreadService<K, V> extends AbstractCacheLifecycle  {
 
     private final CacheWorkerManager executorFactory;
     /**

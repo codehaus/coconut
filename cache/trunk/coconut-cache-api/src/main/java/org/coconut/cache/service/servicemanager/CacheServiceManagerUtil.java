@@ -86,7 +86,7 @@ public final class CacheServiceManagerUtil {
         return new WrappedExecutorService(service, name);
     }
 
-    public static class WrappedExecutorService extends AbstractCacheService implements
+    public static class WrappedExecutorService extends AbstractCacheLifecycle implements
             ExecutorService {
 
         /** The {@link ExecutorService} we are wrapping. */

@@ -24,7 +24,7 @@ public class CacheServiceManagerConfiguration extends AbstractCacheServiceConfig
     public static final String SERVICE_NAME = "serviceManager";
 
     /** The set of registered services. */
-    private final Set<CacheService> services = new HashSet<CacheService>();
+    private final Set<CacheLifecycle> services = new HashSet<CacheLifecycle>();
 
     /** Any additional services attached to the cache. */
     private final Map<Class<?>, Object> attached = new HashMap<Class<?>, Object>();
@@ -86,7 +86,7 @@ public class CacheServiceManagerConfiguration extends AbstractCacheServiceConfig
      *            the service to add
      * @return this configuration
      */
-    public CacheServiceManagerConfiguration addService(CacheService service) {
+    public CacheServiceManagerConfiguration addService(CacheLifecycle service) {
         if (service == null) {
             throw new NullPointerException("service is null");
         }
@@ -94,7 +94,7 @@ public class CacheServiceManagerConfiguration extends AbstractCacheServiceConfig
         return this;
     }
 
-    public Set<CacheService> getAllServices() {
+    public Set<CacheLifecycle> getAllServices() {
         return new HashSet(services);
     }
     @Override

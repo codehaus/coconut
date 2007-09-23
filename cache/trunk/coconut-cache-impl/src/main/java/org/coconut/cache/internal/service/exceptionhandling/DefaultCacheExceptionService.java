@@ -4,9 +4,12 @@
 package org.coconut.cache.internal.service.exceptionhandling;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.logging.Level;
 
 import org.coconut.cache.Cache;
+import org.coconut.cache.internal.service.servicemanager.CompositeService;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
@@ -27,7 +30,8 @@ import org.coconut.core.Loggers;
  * @param <V>
  *            the type of mapped values
  */
-public class DefaultCacheExceptionService<K, V> implements CacheExceptionService<K, V> {
+public class DefaultCacheExceptionService<K, V> implements CacheExceptionService<K, V>,
+        CompositeService {
 
     /** The cache for which this DefaultCacheExceptionService is registered. */
     private final Cache<K, V> cache;
@@ -102,5 +106,9 @@ public class DefaultCacheExceptionService<K, V> implements CacheExceptionService
             }
             return logger;
         }
+    }
+
+    public Collection<?> getChildServices() {
+        return Arrays.asList(exceptionHandler, logger);
     }
 }

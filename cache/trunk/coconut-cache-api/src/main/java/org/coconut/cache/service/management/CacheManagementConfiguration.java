@@ -21,7 +21,7 @@ import org.coconut.cache.CacheException;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.internal.util.XmlUtil;
 import org.coconut.management.ManagedGroup;
-import org.coconut.management.ManagedGroupVisitor;
+import org.coconut.management.ManagedVisitor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -62,7 +62,7 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
     private MBeanServer mBeanServer;
 
     /** The visitor to use for registration of the managed beans. */
-    private ManagedGroupVisitor registrant;
+    private ManagedVisitor registrant;
 
     /** The top level ManagedGroup, all other services are registed under this. */
     private ManagedGroup root;
@@ -96,9 +96,9 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
      * Returns the configured registrant.
      * 
      * @return the configured registrant
-     * @see #setRegistrant(ManagedGroupVisitor)
+     * @see #setRegistrant(ManagedVisitor)
      */
-    public ManagedGroupVisitor getRegistrant() {
+    public ManagedVisitor getRegistrant() {
         return registrant;
     }
 
@@ -193,7 +193,7 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
      * @return this configuration
      * @see #getRegistrant()
      */
-    public CacheManagementConfiguration setRegistrant(ManagedGroupVisitor registrant) {
+    public CacheManagementConfiguration setRegistrant(ManagedVisitor registrant) {
         this.registrant = registrant;
         return this;
     }
@@ -220,7 +220,7 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
     protected void fromXML(Element e) throws Exception {
         domain = readValue(getChild(XML_DOMAIN_TAG, e), CacheMXBean.DEFAULT_JMX_DOMAIN);
         enabled = getAttributeBoolean(e, XML_ENABLED_ATTRIBUTE, false);
-        registrant = loadOptional(e, XML_REGISTRANT_TAG, ManagedGroupVisitor.class);
+        registrant = loadOptional(e, XML_REGISTRANT_TAG, ManagedVisitor.class);
         root = loadOptional(e, XML_ROOT_GROUP_TAG, ManagedGroup.class);
         if (getAttributeBoolean(e, "usePlatformMBeanServer", false)) {
             // This is bit whacked but we need it for consistency sake

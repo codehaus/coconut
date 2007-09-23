@@ -19,7 +19,7 @@ import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 
 import org.coconut.management.ManagedGroup;
-import org.coconut.management.ManagedGroupVisitor;
+import org.coconut.management.ManagedVisitor;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -105,7 +105,7 @@ public class CacheManagementConfigurationTest {
 
     @Test
     public void testRegistrant() {
-        ManagedGroupVisitor mgv = new LoadableManagedGroupVisitor();
+        ManagedVisitor mgv = new LoadableManagedGroupVisitor();
         assertNull(m.getRegistrant());
         assertSame(m, m.setRegistrant(mgv));
         assertSame(mgv, m.getRegistrant());
@@ -113,8 +113,8 @@ public class CacheManagementConfigurationTest {
 
     @Test
     public void testRegistrantXML() throws Exception {
-        ManagedGroupVisitor lmg = new LoadableManagedGroupVisitor();
-        ManagedGroupVisitor nlmg = new NonLoadableManagedGroupVisitor();
+        ManagedVisitor lmg = new LoadableManagedGroupVisitor();
+        ManagedVisitor nlmg = new NonLoadableManagedGroupVisitor();
         m = reloadService(m);// root should still be null
         assertNull(m.getRegistrant());
 
@@ -200,7 +200,7 @@ public class CacheManagementConfigurationTest {
 
     }
 
-    public static class LoadableManagedGroupVisitor implements ManagedGroupVisitor {
+    public static class LoadableManagedGroupVisitor implements ManagedVisitor {
 
         public void visitManagedGroup(ManagedGroup mg) throws JMException {}
 
@@ -259,7 +259,7 @@ public class CacheManagementConfigurationTest {
 
     }
 
-    public class NonLoadableManagedGroupVisitor implements ManagedGroupVisitor {
+    public class NonLoadableManagedGroupVisitor implements ManagedVisitor {
 
         public void visitManagedGroup(ManagedGroup mg) throws JMException {}
 

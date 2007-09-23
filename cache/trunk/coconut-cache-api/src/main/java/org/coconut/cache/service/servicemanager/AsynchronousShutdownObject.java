@@ -2,7 +2,7 @@ package org.coconut.cache.service.servicemanager;
 
 import java.util.concurrent.TimeUnit;
 
-public interface AsynchronousShutdownService {
+public interface AsynchronousShutdownObject {
 
     /**
      * Blocks until all tasks have completed execution after a shutdown request, or the

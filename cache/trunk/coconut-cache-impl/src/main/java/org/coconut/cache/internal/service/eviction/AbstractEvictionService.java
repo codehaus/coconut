@@ -7,15 +7,15 @@ import java.util.Map;
 
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.InternalCacheSupport;
+import org.coconut.cache.internal.service.servicemanager.CompositeService;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.service.eviction.CacheEvictionMXBean;
 import org.coconut.cache.service.eviction.CacheEvictionService;
-import org.coconut.cache.service.servicemanager.AbstractCacheService;
+import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedObject;
 
 /**
- * 
  * <p>
  * NOTICE: This is an internal class and should not be directly referred. No guarantee is
  * made to the compatibility of this class between different releases of Coconut Cache.
@@ -28,8 +28,8 @@ import org.coconut.management.ManagedObject;
  *            the type of mapped values
  */
 public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> extends
-        AbstractCacheService implements InternalCacheEvictionService<K, V, T>,
-        CacheEvictionService<K, V>, CacheEvictionMXBean, ManagedObject {
+        AbstractCacheLifecycle implements InternalCacheEvictionService<K, V, T>,
+        CacheEvictionService<K, V>, CacheEvictionMXBean, ManagedObject, CompositeService {
 
     /** An InternalCacheSupport used for trimming the cache. */
     private final InternalCacheSupport<K, V> helper;

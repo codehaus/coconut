@@ -34,11 +34,14 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
         c.evict();
     }
 
+    @Test
+    public void testNothing() {
+        
+    }
     /**
      * Test refresh window
      */
     @SuppressWarnings("unchecked")
-    @Test
     public void defaultRefreshTime() throws Exception {
         IntegerToStringLoader loader = new IntegerToStringLoader();
         c = newCache(newConf().setClock(clock).loading().setDefaultTimeToRefresh(2,
@@ -71,7 +74,7 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
      * @throws Exception
      */
     @SuppressWarnings("unchecked")
-    @Test
+
     public void explicitRefreshTimeCacheLoader() throws Exception {
         MyLoader loader = new MyLoader();
         c = newCache(newConf().setClock(clock).loading().setLoader(loader).c());
