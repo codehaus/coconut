@@ -5,17 +5,12 @@
 package org.coconut.cache.tck.core;
 
 import static org.coconut.test.CollectionUtils.M1;
-import static org.coconut.test.CollectionUtils.M1_KEY_NULL;
-import static org.coconut.test.CollectionUtils.M1_NULL_VALUE;
 import static org.coconut.test.CollectionUtils.M4;
 import static org.coconut.test.CollectionUtils.M5;
-import static org.coconut.test.CollectionUtils.MNAN1;
-import static org.coconut.test.CollectionUtils.asMap;
+import static org.coconut.test.CollectionUtils.asList;
 
-import java.util.Map;
-
+import org.coconut.cache.Cache;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -26,13 +21,9 @@ import org.junit.Test;
  */
 public class Put extends AbstractCacheTCKTest {
 
-    @Before
-    public void setup() {
-        c = newCache();
-    }
-
     @Test
-    public void testPut() {
+    public void put() {
+        c = newCache();
         c.put(1, "B");
         assertEquals(1, c.size());
         c.put(1, "C");
@@ -40,47 +31,42 @@ public class Put extends AbstractCacheTCKTest {
         assertEquals("C", c.get(1));
     }
 
+    /**
+     * {@link Cache#put(Object, Object)} lazy starts the cache.
+     */
+    @Test
+    public void putLazyStart() {
+        c = newCache();
+        assertFalse(c.isStarted());
+        c.put(1, "B");
+        checkLazystart();
+    }
+
+    /**
+     * {@link Cache#containsKey()} should not fail when cache is shutdown.
+     * 
+     * @throws InterruptedException
+     *             was interrupted
+     */
+    @Test(expected = IllegalStateException.class)
+    public void putShutdownISE() {
+        c = newCache(5);
+        assertTrue(c.isStarted());
+        c.shutdown();
+
+        // should fail
+        c.put(1, "B");
+    }
+
     @Test(expected = NullPointerException.class)
-    public void testPutKeyNull() {
+    public void putKeyNPE() {
+        c = newCache();
         c.put(null, "A");
     }
 
     @Test(expected = NullPointerException.class)
-    public void testPutValueNull() {
+    public void putValueNPE() {
+        c = newCache();
         c.put(1, null);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testPutAll() {
-        c.putAll(asMap(M1, M5));
-        assertEquals(2, c.size());
-        assertTrue(c.entrySet().contains(M1));
-        assertTrue(c.entrySet().contains(M5));
-
-        c.putAll(asMap(M1, M5));
-        assertEquals(2, c.size());
-
-        c.putAll(asMap(MNAN1, M4));
-        assertEquals(3, c.size());
-        assertFalse(c.entrySet().contains(M1));
-
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testPutAllNull() {
-        putAll((Map.Entry) null);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test(expected = NullPointerException.class)
-    public void testPutAllNullKeyMapping() {
-        c.putAll(asMap(M1, M1_NULL_VALUE));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test(expected = NullPointerException.class)
-    public void testPutAllNullValueMapping() {
-        c.putAll(asMap(M1, M1_KEY_NULL));
     }
 }

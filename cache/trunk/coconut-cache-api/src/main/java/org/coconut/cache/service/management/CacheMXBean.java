@@ -67,12 +67,4 @@ public interface CacheMXBean {
      * {@link org.coconut.cache.Cache#clear()}.
      */
     void clear();
-
-    /**
-     * Evict expired items and do any necessary housekeeping.
-     * <p>
-     * Calling this method is equivalent to calling
-     * {@link org.coconut.cache.Cache#evict()}.
-     */
-    void evict();
 }

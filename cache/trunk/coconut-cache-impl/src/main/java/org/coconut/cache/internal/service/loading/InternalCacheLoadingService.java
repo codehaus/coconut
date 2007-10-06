@@ -6,6 +6,7 @@ package org.coconut.cache.internal.service.loading;
 import java.util.Map;
 
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
+import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.core.AttributeMap;
 
 /**
@@ -16,9 +17,9 @@ import org.coconut.core.AttributeMap;
  * @param <V>
  *            the type of mapped values
  */
-public interface InternalCacheLoadingService<K, V> {
+public interface InternalCacheLoadingService<K, V> extends CacheLoadingService<K, V> {
 
-    void reloadIfNeeded(AbstractCacheEntry<K, V> entry);
+    boolean reloadIfNeeded(AbstractCacheEntry<K, V> entry);
 
     /**
      * @param key

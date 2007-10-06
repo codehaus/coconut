@@ -103,6 +103,9 @@ public class AbstractCacheTCKTest extends Assert {
         return map;
     }
 
+    protected void checkLazystart() {
+        assertTrue(c.isStarted());
+    }
     protected boolean containsKey(Map.Entry<Integer, String> e) {
         return c.containsKey(e.getKey());
     }
@@ -152,10 +155,6 @@ public class AbstractCacheTCKTest extends Assert {
         return c.put(key, value);
     }
 
-    protected final void evict() {
-        c.evict();
-    }
-
     protected String remove(Map.Entry<Integer, String> e) {
         return c.remove(e.getKey());
     }
@@ -178,6 +177,12 @@ public class AbstractCacheTCKTest extends Assert {
         }
     }
 
+    protected void assertNullPeek(String msg, Map.Entry<Integer, String>... e) {
+        for (Map.Entry<Integer, String> entry : e) {
+            assertNull(msg, peek(entry));
+        }
+    }
+    
     protected void assertNullPeek(Map.Entry<Integer, String>... e) {
         for (Map.Entry<Integer, String> entry : e) {
             assertNull(peek(entry));

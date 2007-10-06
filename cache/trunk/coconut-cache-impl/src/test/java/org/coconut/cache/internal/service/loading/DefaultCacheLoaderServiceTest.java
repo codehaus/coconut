@@ -329,5 +329,13 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
                 }};
         }
 
+        public ExecutorService getExecutorService(Class<?> service) {
+            return MockTestCase.mockDummy(ExecutorService.class);
+        }
+
+        public ScheduledExecutorService getScheduledExecutorService(Class<?> service) {
+            return MockTestCase.mockDummy(ScheduledExecutorService.class);
+        }
+
     }
 }

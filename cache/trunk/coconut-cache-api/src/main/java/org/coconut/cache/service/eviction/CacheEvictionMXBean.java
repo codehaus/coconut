@@ -25,8 +25,8 @@ public interface CacheEvictionMXBean {
 
     /**
      * Keeps evicting entries until the volume of the cache is equal to the specified
-     * volume. If the specified volume is greater then the current volume no action
-     * is taken.
+     * volume. If the specified volume is greater then the current volume no action is
+     * taken.
      * 
      * @param volume
      *            the volume to trim the cache down to
@@ -36,8 +36,8 @@ public interface CacheEvictionMXBean {
     void trimToVolume(long volume);
 
     /**
-     * Returns the maximum allowed volume of the cache or {@link Long#MAX_VALUE} if
-     * there is no limit.
+     * Returns the maximum allowed volume of the cache or {@link Long#MAX_VALUE} if there
+     * is no limit.
      * 
      * @return the maximum allowed volume of the cache or Long.MAX_VALUE if there is no
      *         limit.
@@ -57,10 +57,9 @@ public interface CacheEvictionMXBean {
     int getMaximumSize();
 
     /**
-     * Sets that maximum volume of the cache. This feature is only usefull if per
-     * element sizing is enabled. In which case the total volume of the cache is the sum
-     * of all the elements size. If the limit is reached the cache must evict existing
-     * elements before adding new elements.
+     * Sets that maximum volume of the cache. The total volume of the cache is the sum of
+     * all the individual element sizes. If the limit is reached the cache must evict
+     * existing elements before adding new elements.
      * <p>
      * To indicate that a cache can have an unlimited volume, {@link Long#MAX_VALUE}
      * should be specified.
@@ -79,8 +78,7 @@ public interface CacheEvictionMXBean {
      * limit is reached the cache must evict existing elements before adding new elements.
      * <p>
      * To indicate that a cache can hold an unlimited number of items,
-     * {@link Integer#MAX_VALUE} should be specified. This is also refered to as an
-     * unlimited cache.
+     * {@link Integer#MAX_VALUE} should be specified.
      * <p>
      * If the specified maximum size is 0, the cache will never store any elements
      * internally. This can sometimes be useful while testing.

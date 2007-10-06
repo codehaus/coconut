@@ -11,7 +11,6 @@ import static org.coconut.cache.internal.service.event.InternalEntryEvent.miss;
 import static org.coconut.cache.internal.service.event.InternalEntryEvent.removed;
 import static org.coconut.cache.internal.service.event.InternalEntryEvent.updated;
 import static org.coconut.cache.internal.service.event.InternalEvent.cleared;
-import static org.coconut.cache.internal.service.event.InternalEvent.evicted;
 
 import java.util.Collection;
 import java.util.Map;
@@ -41,8 +40,6 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
         InternalCacheEventService<K, V> {
 
     private final boolean doAdd;
-
-    private final boolean doCacheEvict;
 
     private final boolean doClear;
 
@@ -77,7 +74,6 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
         this.doAdd = co.isIncluded(CacheEntryEvent.ItemAdded.class);
         this.doClear = co.isIncluded(CacheEvent.CacheCleared.class);
         this.doRemove = co.isIncluded(CacheEntryEvent.ItemRemoved.class);
-        this.doCacheEvict = co.isIncluded(CacheEvent.CacheEvicted.class);
         this.doExpire = co.isIncluded(CacheEntryEvent.ItemRemoved.class);
         this.doEvict = co.isIncluded(CacheEntryEvent.ItemRemoved.class);
         this.doUpdate = co.isIncluded(CacheEntryEvent.ItemUpdated.class);
@@ -103,9 +99,6 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
             Collection<? extends CacheEntry<K, V>> expired) {
         doEvictAll(cache, evicted);
         doExpireAll(cache, expired);
-        if (doCacheEvict) {
-            dispatch(evicted(cache, size, previousSize, capacity, previousCapacity));
-        }
     }
 
     /** {@inheritDoc} */
@@ -279,5 +272,10 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
 
     public interface NotificationTransformer {
         Notification notification(Object source);
+    }
+
+    public void afterPurge(Cache<K, V> cache,
+            Collection<? extends CacheEntry<K, V>> expired) {
+        doExpireAll(cache, expired);
     }
 }

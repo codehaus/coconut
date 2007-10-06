@@ -84,22 +84,11 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * <p>
      * When all entries have been removed a single
      * {@link org.coconut.cache.service.event.CacheEvent.CacheCleared} will be raised.
+     * 
+     * @throws IllegalStateException
+     *             if the cache has been shutdown
      */
     void clear();
-
-    /**
-     * Performs cleanup of the cache. This might be everything from persisting stale data
-     * to disk to adapting the cache with a better eviction policy given the current
-     * access pattern. This is done to avoid paying the cost upfront by application
-     * threads when accessing entries in the cache through {@link #get(Object)} or
-     * {@link #getAll(Collection)}.
-     * <p>
-     * Regular eviction is typically scheduled through
-     * {@link org.coconut.cache.service.eviction.CacheEvictionConfiguration#setScheduledEvictionAtFixedRate(long, java.util.concurrent.TimeUnit)}
-     * If this is not set it is the responsibility of the user to regular call this
-     * method.
-     */
-    void evict();
 
     /**
      * Works as {@link java.util.Map#get(Object)} with the following modifications.
@@ -109,9 +98,8 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * The cache will transparently attempt to load a value for the specified key through
      * the cache loader.
      * <p>
-     * The number of cache hits will increase by 1 if the cache loader is not consulted
-     * when using this method (mapping is already present and not expired). Otherwise the
-     * number of misses will be increased by 1.
+     * The number of cache hits will increase by 1 if a valid mapping is present.
+     * Otherwise the number of cache misses will be increased by 1.
      * <p>
      * If the <tt><A HREF="service/event/package-summary.html"><CODE>event</CODE></A></tt>
      * service is enabled the following events may be raised.
@@ -126,9 +114,10 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @throws IllegalArgumentException
      *             if the cache has already been shutdown, see
      *             {@link org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#cacheWasShutdown(org.coconut.cache.service.exceptionhandling.CacheExceptionContext, String)}
+     * @throws IllegalStateException
+     *             if the cache has been shutdown
      * @throws CacheException
-     *             if the backend cache loader failed while trying to load a value
-     *             (optional). See
+     *             if the cache loader failed while trying to load a value (optional). See
      *             {@link org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#loadFailed(org.coconut.cache.service.exceptionhandling.CacheExceptionContext, org.coconut.cache.service.loading.CacheLoader, Object, AttributeMap, boolean, Exception)}
      * @see Map#get(Object)
      * @see org.coconut.cache.service.loading.CacheLoadingConfiguration#setLoader(org.coconut.cache.service.loading.CacheLoader)
@@ -159,6 +148,8 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @throws NullPointerException
      *             if the specified collection of keys is <tt>null</tt> or the specified
      *             collection contains a <tt>null</tt>
+     * @throws IllegalStateException
+     *             if the cache has been shutdown
      * @throws CacheException
      *             if the backend cache loader failed while trying to load a value
      *             (optional). A cache might be configured to return null instead
@@ -179,6 +170,8 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      *             if the key is of an inappropriate type for this cache (optional).
      * @throws NullPointerException
      *             if the specified key is <tt>null</tt>
+     * @throws IllegalStateException
+     *             if the cache has been shutdown
      * @throws IllegalArgumentException
      *             if the cache has already been shutdown, see
      *             {@link org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#cacheWasShutdown(org.coconut.cache.service.exceptionhandling.CacheExceptionContext, String)}
@@ -287,6 +280,20 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     CacheEntry<K, V> peekEntry(K key);
 
     /**
+     * Attempts to expire all of the mappings for the specified collection of keys. The
+     * effect of this call is equivalent to that of calling
+     * {@link org.coconut.cache.Cache#remove(Object)} on this service once for each key in
+     * the specified collection. However, in some cases it can be much faster to remove
+     * several cache items at once, for example, if some of the values must also be
+     * removed on a remote host.
+     * 
+     * @param keys
+     *            a collection of keys whose associated mappings are to be removed.
+     * @return the number of entries that was removed
+     */
+    int removeAll(Collection<? extends K> keys);
+
+    /**
      * Associates the specified value with the specified key in this cache (optional
      * operation). If the cache previously contained a mapping for this key, the old value
      * is replaced by the specified value. (A cache <tt>c</tt> is said to contain a
@@ -313,39 +320,12 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @throws IllegalArgumentException
      *             if some aspect of this key or value prevents it from being stored in
      *             this cache.
+     * @throws IllegalStateException
+     *             if the cache has been shutdown
      * @throws NullPointerException
      *             if the specified key or value is <tt>null</tt>.
      */
     V put(K key, V value);
-
-//    /**
-//     * Associates the specified value with the specified key in this cache (optional
-//     * operation). If the cache previously contained a mapping for this key, the old value
-//     * is replaced by the specified value. (A cache <tt>m</tt> is said to contain a
-//     * mapping for a key <tt>k</tt> if and only if
-//     * {@link #containsKey(Object) m.containsKey(k)} would return <tt>true</tt>.))
-//     * 
-//     * @param key
-//     *            key with which the specified value is to be associated.
-//     * @param value
-//     *            value to be associated with the specified key.
-//     * @param attributes
-//     *            a map of additional attributes
-//     * @return previous value associated with specified key, or <tt>null</tt> if there
-//     *         was no mapping for key.
-//     * @throws UnsupportedOperationException
-//     *             if the <tt>put</tt> operation is not supported by this cache.
-//     * @throws ClassCastException
-//     *             if the class of the specified key or value prevents it from being
-//     *             stored in this cache.
-//     * @throws IllegalArgumentException
-//     *             if some aspect of this key or value prevents it from being stored in
-//     *             this cache.
-//     * @throws NullPointerException
-//     *             if either the specified key, value or attributes is <tt>null</tt>.
-//     * @see Map#put(Object, Object)
-//     */
-//    V put(K key, V value, AttributeMap attributes);
 
     /**
      * Initiates an orderly shutdown of the cache. In which currently running tasks, such

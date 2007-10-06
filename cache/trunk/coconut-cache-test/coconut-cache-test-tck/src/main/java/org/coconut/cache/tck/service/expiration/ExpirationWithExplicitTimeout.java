@@ -71,11 +71,11 @@ public class ExpirationWithExplicitTimeout extends AbstractExpirationTestBundle 
         put(M3, 100);
         // M3,M4 expires as time=4
         incTime(4);
-        evict();
+        purge();
         assertGet(M3);
         assertNullGet(M4);
         incTime(96);
-        evict();
+        purge();
         assertNullGet(M3);
     }
 
@@ -93,12 +93,12 @@ public class ExpirationWithExplicitTimeout extends AbstractExpirationTestBundle 
         putAll(M3, M4);
 
         incTime(5);
-        evict();
+        purge();
         assertNullGet(M1, M2);
         assertGet(M3, M4);
 
         incTime(5);
-        evict();
+        purge();
 
         incTime(1);
         assertNullGet(M3, M4);

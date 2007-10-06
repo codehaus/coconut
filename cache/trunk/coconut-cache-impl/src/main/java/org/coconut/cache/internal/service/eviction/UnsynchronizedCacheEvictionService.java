@@ -46,8 +46,8 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
                 .getPolicy();
         maxSize = EvictionUtils.getMaximumSizeFromConfiguration(conf);
         maxCapacity = EvictionUtils.getMaximumVolumeFromConfiguration(conf);
-        preferableCapacity = EvictionUtils.getPreferableVolumeFromConfiguration(conf);
-        preferableSize = EvictionUtils.getPreferableSizeFromConfiguration(conf);
+//        preferableCapacity = EvictionUtils.getPreferableVolumeFromConfiguration(conf);
+//        preferableSize = EvictionUtils.getPreferableSizeFromConfiguration(conf);
     }
 
     /** {@inheritDoc} */
@@ -119,16 +119,16 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
         return maxSize;
     }
 
-    /** {@inheritDoc} */
-    public int getPreferableSize() {
-        return preferableSize;
-    }
-
-    /** {@inheritDoc} */
-    public void setPreferableSize(int size) {
-        this.preferableSize = new CacheEvictionConfiguration<K, V>().setPreferableSize(
-                size).getPreferableSize();
-    }
+//    /** {@inheritDoc} */
+//    public int getPreferableSize() {
+//        return preferableSize;
+//    }
+//
+//    /** {@inheritDoc} */
+//    public void setPreferableSize(int size) {
+//        this.preferableSize = new CacheEvictionConfiguration<K, V>().setPreferableSize(
+//                size).getPreferableSize();
+//    }
 
     /** {@inheritDoc} */
     public void setMaximumSize(int size) {
@@ -152,11 +152,11 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
         return preferableCapacity;
     }
 
-    /** {@inheritDoc} */
-    public void setPreferableCapacity(long size) {
-        this.preferableCapacity = new CacheEvictionConfiguration<K, V>()
-                .setPreferableVolume(size).getPreferableVolume();
-    }
+//    /** {@inheritDoc} */
+//    public void setPreferableCapacity(long size) {
+//        this.preferableCapacity = new CacheEvictionConfiguration<K, V>()
+//                .setPreferableVolume(size).getPreferableVolume();
+//    }
 
     /** {@inheritDoc} */
     public void clear() {

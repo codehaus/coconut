@@ -7,6 +7,16 @@ import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+/**
+ * This class is used to configure the worker service prior to usage.
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @param <K>
+ *            the type of keys maintained by the cache
+ * @param <V>
+ *            the type of mapped values
+ */
 public class CacheWorkerConfiguration extends AbstractCacheServiceConfiguration {
 
     /** The name of this service. */
@@ -15,8 +25,12 @@ public class CacheWorkerConfiguration extends AbstractCacheServiceConfiguration 
     /** The XML tag for the cache worker manager. */
     private final static String CACHE_WORKER_MANAGER_TAG = "cache-worker-manager";
 
+    /** The cache worker manager to use. */
     private CacheWorkerManager cacheWorkerManager;
 
+    /**
+     * Creates a new instance of CacheWorkerConfiguration.
+     */
     public CacheWorkerConfiguration() {
         super(SERVICE_NAME);
     }
@@ -33,10 +47,12 @@ public class CacheWorkerConfiguration extends AbstractCacheServiceConfiguration 
     }
 
     /**
-     * Sets the CacheWorkerManager used by the cache. If no CacheWorkerManager is set??
+     * Sets the CacheWorkerManager used by the cache. If no CacheWorkerManager the cache
+     * will create a worker manager to use.
      * 
      * @param workerManager
-     * @return
+     *            the worker manager to use for the cache
+     * @return this configuration
      */
     public CacheWorkerConfiguration setWorkerManager(CacheWorkerManager workerManager) {
         this.cacheWorkerManager = workerManager;

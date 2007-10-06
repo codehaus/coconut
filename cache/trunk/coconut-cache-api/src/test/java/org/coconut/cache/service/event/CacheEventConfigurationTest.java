@@ -50,7 +50,6 @@ public class CacheEventConfigurationTest {
 
         assertTrue(conf.isIncluded(CacheEvent.class));
         assertTrue(conf.isIncluded(CacheEvent.CacheCleared.class));
-        assertTrue(conf.isIncluded(CacheEvent.CacheEvicted.class));
         // assertTrue(conf.isIncluded(CacheEvent.CacheStatisticsReset.class));
         conf = reloadService(conf);
         assertTrue(conf.isIncluded(CacheEntryEvent.class));
@@ -61,7 +60,6 @@ public class CacheEventConfigurationTest {
 
         assertTrue(conf.isIncluded(CacheEvent.class));
         assertTrue(conf.isIncluded(CacheEvent.CacheCleared.class));
-        assertTrue(conf.isIncluded(CacheEvent.CacheEvicted.class));
         // assertTrue(conf.isIncluded(CacheEvent.CacheStatisticsReset.class));
     }
 

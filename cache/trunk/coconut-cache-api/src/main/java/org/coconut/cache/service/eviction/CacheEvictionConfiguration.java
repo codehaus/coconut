@@ -9,17 +9,13 @@ import static org.coconut.internal.util.XmlUtil.readLong;
 import static org.coconut.internal.util.XmlUtil.writeInt;
 import static org.coconut.internal.util.XmlUtil.writeLong;
 
-import java.util.concurrent.TimeUnit;
-
-import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.cache.spi.ReplacementPolicy;
-import org.coconut.internal.util.UnitOfTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * This class is used to configure the eviction service bundle prior to usage.
+ * This class is used to configure the eviction service prior to usage.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -49,32 +45,14 @@ public class CacheEvictionConfiguration<K, V> extends
     /** XML tag for maximum size. */
     private final static String MAXIMUM_SIZE = "max-size";
 
-    /** XML tag for preferable volume. */
-    private final static String PREFERABLE_VOLUME = "preferable-volume";
-
-    /** XML tag for preferable size. */
-    private final static String PREFERABLE_SIZE = "preferable-size";
-
-    /** XML tag for scheduled eviction. */
-    private final static String SCHEDULE_EVICT_TAG = "schedule-evict";
-
     /** The maximum volume of the cache. */
     private long maximumVolume;
 
     /** The maximum size of the cache. */
     private int maximumSize;
 
-    /** The preferable volume of the cache. */
-    private long preferableVolume;
-
-    /** The preferable size of the cache. */
-    private int preferableSize;
-
     /** The replacement policy used for evicting elements. */
     private ReplacementPolicy<?> replacementPolicy;
-
-    /** The delay between evictions. */
-    private long scheduleEvictionAtFixedRateNanos;
 
     /**
      * Creates a new CacheEvictionConfiguration with default settings.
@@ -84,8 +62,8 @@ public class CacheEvictionConfiguration<K, V> extends
     }
 
     /**
-     * Returns the maximum allowed volume of the cache or {@link Long#MAX_VALUE} if
-     * there is no limit.
+     * Returns the maximum allowed volume of the cache or {@link Long#MAX_VALUE} if there
+     * is no limit.
      * 
      * @return the maximum allowed volume of the cache or Long.MAX_VALUE if there is no
      *         limit.
@@ -119,21 +97,6 @@ public class CacheEvictionConfiguration<K, V> extends
         return replacementPolicy;
     }
 
-    public long getPreferableVolume() {
-        return preferableVolume;
-    }
-
-    public int getPreferableSize() {
-        return preferableSize;
-    }
-
-    public long getScheduledEvictionAtFixedRate(TimeUnit unit) {
-        if (scheduleEvictionAtFixedRateNanos == Long.MAX_VALUE) {
-            return Long.MAX_VALUE;
-        } else {
-            return unit.convert(scheduleEvictionAtFixedRateNanos, TimeUnit.NANOSECONDS);
-        }
-    }
 
     /**
      * Sets that maximum number of elements that a cache can contain. If the limit is
@@ -220,74 +183,17 @@ public class CacheEvictionConfiguration<K, V> extends
         return this;
     }
 
-    public CacheEvictionConfiguration<K, V> setPreferableVolume(long volume) {
-        if (volume < 0) {
-            throw new IllegalArgumentException("volume must greater then 0, was "
-                    + volume);
-        }
-        preferableVolume = volume;
-        return this;
-    }
-
-    public CacheEvictionConfiguration<K, V> setPreferableSize(int elements) {
-        if (elements < 0) {
-            throw new IllegalArgumentException(
-                    "number of maximum elements must be 0 or greater, was " + elements);
-        }
-        preferableSize = elements;
-        return this;
-    }
-
-    /**
-     * 0 = automatic.
-     * <p>
-     * This requires that the CacheThreadingConfiguration isEnabled.
-     * 
-     * @param period
-     * @param unit
-     *            the time unit of the specified period
-     * @return this configuration
-     */
-    public CacheEvictionConfiguration<K, V> setScheduledEvictionAtFixedRate(long period,
-            TimeUnit unit) {
-        if (period < 0) {
-            throw new IllegalArgumentException("period must be 0 or greater, was "
-                    + period);
-        }
-        scheduleEvictionAtFixedRateNanos = unit.toNanos(period);
-        return this;
-    }
-
-    /** {@inheritDoc}  */
+    /** {@inheritDoc} */
     @Override
     protected void fromXML(Element e) throws Exception {
-        maximumVolume = readLong(getChild(MAXIMUM_VOLUME, e), maximumVolume);
-        preferableVolume = readLong(getChild(PREFERABLE_VOLUME, e),
-                preferableVolume);
         maximumSize = readInt(getChild(MAXIMUM_SIZE, e), maximumSize);
-        preferableSize = readInt(getChild(PREFERABLE_SIZE, e), preferableSize);
-
-        /* Eviction time */
-        Element evictionTime = getChild(SCHEDULE_EVICT_TAG, e);
-        long timee = UnitOfTime.fromElement(evictionTime, TimeUnit.NANOSECONDS,
-                CacheExpirationService.NEVER_EXPIRE);
-        setScheduledEvictionAtFixedRate(timee, TimeUnit.NANOSECONDS);
+        maximumVolume = readLong(getChild(MAXIMUM_VOLUME, e), maximumVolume);
     }
 
     /** {@inheritDoc} */
     @Override
     protected void toXML(Document doc, Element base) throws Exception {
-        writeLong(doc, base, MAXIMUM_VOLUME, maximumVolume, DEFAULT
-                .getMaximumVolume());
-        writeLong(doc, base, PREFERABLE_VOLUME, preferableVolume, DEFAULT
-                .getPreferableVolume());
+        writeLong(doc, base, MAXIMUM_VOLUME, maximumVolume, DEFAULT.getMaximumVolume());
         writeInt(doc, base, MAXIMUM_SIZE, maximumSize, DEFAULT.getMaximumSize());
-        writeInt(doc, base, PREFERABLE_SIZE, preferableSize, DEFAULT.getPreferableSize());
-
-        /* Expiration Timer */
-        UnitOfTime.toElementCompact(doc, base, SCHEDULE_EVICT_TAG,
-                scheduleEvictionAtFixedRateNanos, TimeUnit.NANOSECONDS,
-                DEFAULT.scheduleEvictionAtFixedRateNanos);
-
     }
 }

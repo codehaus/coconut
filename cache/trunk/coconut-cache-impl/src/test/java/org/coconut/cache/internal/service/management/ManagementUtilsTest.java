@@ -49,7 +49,6 @@ public class ManagementUtilsTest {
         context.checking(new Expectations() {
             {
                 one(mock).clear();
-                one(mock).evict();
                 one(mock).getVolume();
                 will(returnValue(1l));
                 one(mock).getName();
@@ -60,7 +59,6 @@ public class ManagementUtilsTest {
         });
         CacheMXBean mxBean = ManagementUtils.wrapMXBean(mock);
         mxBean.clear();
-        mxBean.evict();
         assertEquals(1l, mxBean.getVolume());
         assertEquals("fooName", mxBean.getName());
         assertEquals(2, mxBean.getSize());

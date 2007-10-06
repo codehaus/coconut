@@ -14,6 +14,7 @@ import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.core.Clock;
 import org.coconut.filter.Filter;
 import org.coconut.management.annotation.ManagedAttribute;
+import org.coconut.management.annotation.ManagedOperation;
 
 /**
  * Various utility classes for expiration service implementation.
@@ -148,6 +149,11 @@ final class ExpirationUtils {
         public void setDefaultTimeToLiveMs(long timeToLiveMs) {
             service.setDefaultTimeToLive(timeToLiveMs, TimeUnit.MILLISECONDS);
         }
+        /** {@inheritDoc} */
+        @ManagedOperation(description = "Removes all expired items from the cache")
+        public void purgeExpired() {
+            service.purgeExpired();
+        }
     }
 
     /**
@@ -171,16 +177,6 @@ final class ExpirationUtils {
         }
 
         /** {@inheritDoc} */
-        public int removeAll(Collection<? extends K> keys) {
-            return service.removeAll(keys);
-        }
-
-        /** {@inheritDoc} */
-        public int removeFiltered(Filter<? super CacheEntry<K, V>> filter) {
-            return service.removeFiltered(filter);
-        }
-
-        /** {@inheritDoc} */
         public long getDefaultTimeToLive(TimeUnit unit) {
             return service.getDefaultTimeToLive(unit);
         }
@@ -198,6 +194,11 @@ final class ExpirationUtils {
         /** {@inheritDoc} */
         public void setDefaultTimeToLive(long timeToLive, TimeUnit unit) {
             service.setDefaultTimeToLive(timeToLive, unit);
+        }
+
+        /** {@inheritDoc} */
+        public void purgeExpired() {
+            service.purgeExpired();
         }
     }
 }

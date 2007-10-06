@@ -32,11 +32,13 @@ final class LoadingUtils {
     private LoadingUtils() {}
 
     /**
-     * Converts the specified timeToRefresh in nanoseconds to the specified unit. This conversion
-     * routine will handle the special meaning of {@link Long#MAX_VALUE}.
+     * Converts the specified timeToRefresh in nanoseconds to the specified unit. This
+     * conversion routine will handle the special meaning of {@link Long#MAX_VALUE}.
      * 
-     * @param timeToRefreshNanos the time in nanoseconds to convert
-     * @param unit the unit to convert to
+     * @param timeToRefreshNanos
+     *            the time in nanoseconds to convert
+     * @param unit
+     *            the unit to convert to
      * @return the converted value
      * @throws NullPointerException
      *             if the specified unit is <tt>null</tt>
@@ -52,8 +54,10 @@ final class LoadingUtils {
      * Converts the specified timeToRefresh in the specified unit to nanoseconds. This
      * conversion routine will handle the special meaning of {@link Long#MAX_VALUE}.
      * 
-     * @param timeToRefresh the time to convert from
-     * @param unit the unit to convert from
+     * @param timeToRefresh
+     *            the time to convert from
+     * @param unit
+     *            the unit to convert from
      * @return the converted value
      * @throws NullPointerException
      *             if the specified unit is <tt>null</tt>
@@ -145,6 +149,12 @@ final class LoadingUtils {
         public void setDefaultTimeToRefreshMs(long timeToLiveMs) {
             service.setDefaultTimeToRefresh(timeToLiveMs, TimeUnit.MILLISECONDS);
         }
+
+        /** {@inheritDoc} */
+        @ManagedOperation(description = "Attempts to reload all entries that are either expired or which needs refreshing")
+        public void loadAll() {
+            service.loadAll();
+        }
     }
 
     /**
@@ -228,6 +238,11 @@ final class LoadingUtils {
         /** {@inheritDoc} */
         public void setDefaultTimeToRefresh(long timeToLive, TimeUnit unit) {
             delegate.setDefaultTimeToRefresh(timeToLive, unit);
+        }
+
+        /** {@inheritDoc} */
+        public void loadAll() {
+            delegate.loadAll();
         }
     }
 }

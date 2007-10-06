@@ -33,16 +33,68 @@ import org.coconut.cache.CacheServices;
  *            the type of mapped values
  */
 public interface CacheEvictionService<K, V> {
-    
-    // TODO copy javadoc from MXBean
-    void trimToSize(int newSize);
 
-    void trimToVolume(long newVolume);
 
+    /**
+     * Keeps evicting entries until the size of the cache is equal to the specified size.
+     * If the specified size is greater then the current size of the cache no action is
+     * taken.
+     * 
+     * @param size
+     *            the number of elements to trim the cache down to
+     * @throws IllegalArgumentException
+     *             if the specified size is negative
+     */
+    void trimToSize(int size);
+
+    /**
+     * Keeps evicting entries until the volume of the cache is equal to the specified
+     * volume. If the specified volume is greater then the current volume no action is
+     * taken.
+     * 
+     * @param volume
+     *            the volume to trim the cache down to
+     * @throws IllegalArgumentException
+     *             if the specified volume is negative
+     */
+    void trimToVolume(long volume);
+
+    /**
+     * Returns the maximum allowed volume of the cache or {@link Long#MAX_VALUE} if there
+     * is no limit.
+     * 
+     * @return the maximum allowed volume of the cache or Long.MAX_VALUE if there is no
+     *         limit.
+     * @see #setMaximumVolume(long)
+     */
     long getMaximumVolume();
 
+    /**
+     * Returns the maximum number of elements that this cache can hold. If the cache has
+     * no upper limit {@link Integer#MAX_VALUE} is returned.
+     * 
+     * @return the maximum number of elements that this cache can hold or
+     *         {@link Integer#MAX_VALUE} if no such limit exist
+     * @see #setMaximumSize(int)
+     * @see {@link java.util.Map#size()}
+     */
     int getMaximumSize();
 
+    /**
+     * Sets that maximum volume of the cache. The total volume of the cache is the sum of
+     * all the individual element sizes. If the limit is reached the cache must evict
+     * existing elements before adding new elements.
+     * <p>
+     * To indicate that a cache can have an unlimited volume, {@link Long#MAX_VALUE}
+     * should be specified.
+     * 
+     * @param maximumVolume
+     *            the maximum volume.
+     * @throws IllegalArgumentException
+     *             if the specified maximum volume is negative
+     * @throws UnsupportedOperationException
+     *             if the cache does not support changing the maximum volume at runtime
+     */
     void setMaximumVolume(long maximumVolume);
 
     /**
@@ -50,8 +102,7 @@ public interface CacheEvictionService<K, V> {
      * limit is reached the cache must evict existing elements before adding new elements.
      * <p>
      * To indicate that a cache can hold an unlimited number of items,
-     * {@link Integer#MAX_VALUE} should be specified. This is also refered to as an
-     * unlimited cache.
+     * {@link Integer#MAX_VALUE} should be specified.
      * <p>
      * If the specified maximum size is 0, the cache will never store any elements
      * internally. This can sometimes be useful while testing.

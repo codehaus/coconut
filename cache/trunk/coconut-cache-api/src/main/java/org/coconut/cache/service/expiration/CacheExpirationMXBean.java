@@ -29,7 +29,12 @@ import java.util.concurrent.TimeUnit;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public interface CacheExpirationMXBean {
-    
+
+    /**
+     * Removes all expired items from the cache.
+     */
+    void purgeExpired();
+
     /**
      * Returns the default time to live in milliseconds for new elements that are added to
      * the cache.

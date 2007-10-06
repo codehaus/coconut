@@ -6,13 +6,13 @@ package org.coconut.cache.service.statistics;
 import org.coconut.cache.CacheEntry;
 
 /**
+ * This is the main interface for controlling the statistics service of a cache at
+ * runtime.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public interface CacheStatisticsService {
-    // keep time
-    // detailed statistics
-    // get Long counters und so weiter...
 
     /**
      * Resets the hit ratio.
@@ -36,5 +36,4 @@ public interface CacheStatisticsService {
      *             if gathering of statistics is not supported by this cache.
      */
     CacheHitStat getHitStat();
-
 }

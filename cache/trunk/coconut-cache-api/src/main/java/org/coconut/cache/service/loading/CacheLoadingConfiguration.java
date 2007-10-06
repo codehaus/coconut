@@ -10,6 +10,7 @@ import static org.coconut.internal.util.XmlUtil.loadOptional;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.filter.Filter;
@@ -97,7 +98,7 @@ public class CacheLoadingConfiguration<K, V> extends
     /**
      * Sets the default refresh interval relative to the last update of the element. For
      * example, if all elements should be refreshed 1 hour after they have been added to
-     * cache by default, you might use:
+     * cache by default, one might use:
      * 
      * <pre>
      * CacheLoadingConfiguration clc;
@@ -130,23 +131,24 @@ public class CacheLoadingConfiguration<K, V> extends
     }
 
     /**
-     * Sets the loader that should be used for loading new elements into the cache. If the
-     * specified loader is <code>null</code> no loader will be used for loading new
-     * key-value bindings. All values must then put into the cache by using put or putAll.
+     * Sets the cache loader that should be used for loading new elements into the cache.
+     * If the specified loader is <code>null</code> no loader will be used for loading
+     * new key-value bindings. All values must then put into the cache by using on of the
+     * caches {@link Cache#put(Object, Object)} methods.
      * 
-     * @param loader
-     *            the loader to set
+     * @param cacheLoader
+     *            the cache loader to set
      * @return the current CacheConfiguration
      */
     public CacheLoadingConfiguration<K, V> setLoader(
-            CacheLoader<? super K, ? extends V> loader) {
-        this.loader = loader;
+            CacheLoader<? super K, ? extends V> cacheLoader) {
+        this.loader = cacheLoader;
         return this;
     }
 
     /**
      * Sets a function ({@link Filter}) that is used for determining if an element
-     * should be reloaded. The filter is checked on each call to
+     * should be refreshed. The filter is checked on each call to
      * {@link org.coconut.cache.Cache#get(Object)},{@link org.coconut.cache.Cache#getAll(Collection)},
      * {@link org.coconut.cache.Cache#getEntry(Object)} if a mapping exist for specified
      * key(s). Furthermore it is called for all entries within the cache on calls to

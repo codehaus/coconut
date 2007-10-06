@@ -63,29 +63,4 @@ public interface CacheEvent<K, V> {
         
         long getPreviousCapacity();
     }
-
-    /**
-     * An event indicating that {@link Cache#evict()} was called on a particular
-     * {@link Cache}.
-     */
-    interface CacheEvicted<K, V> extends CacheEvent<K, V> {
-        /** The unique name of the event. */
-        String NAME = "cache.evicted";
-
-        /**
-         * Returns the current number of elements contained in the cache after evict has
-         * been called.
-         * @return the current number of elements contained in the cache after evict has
-         * been called 
-         */
-        int getCurrentSize();
-
-        /**
-         * Return the previous number of elements contained in the cache before the call
-         * to evict.
-         * @return the previous number of elements contained in the cache before the call
-         * to evict
-         */
-        int getPreviousSize();
-    }
 }

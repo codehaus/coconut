@@ -19,14 +19,6 @@ public class LifecycleShutdown extends AbstractCacheTCKTest {
     }
     
     @Test(expected = IllegalStateException.class)
-    public void shutdownClearISE() {
-        c = newCache();
-        startCache();
-        c.shutdown();
-        c.clear(); //hmm?
-    }
-    
-    @Test(expected = IllegalStateException.class)
     public void shutdownContainsKeyISE() {
         c = newCache();
         startCache();
@@ -35,17 +27,13 @@ public class LifecycleShutdown extends AbstractCacheTCKTest {
         c.shutdown();
         assertFalse(c.containsKey(1)); //hmm
         
-        c.clear();
-        
         c.containsKey(1);
         c.containsValue("d");
         
         c.entrySet();//hmm empty set?
         c.keySet();
         c.values();
-        
-        
-        c.evict(); //hmm ignore?
+
         
         c.get(1); //hmm null?
         c.getAll(null); //hmm empty map?

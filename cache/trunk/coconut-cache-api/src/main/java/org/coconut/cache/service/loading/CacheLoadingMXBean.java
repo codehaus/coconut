@@ -3,8 +3,15 @@
  */
 package org.coconut.cache.service.loading;
 
+import org.coconut.cache.service.management.CacheManagementConfiguration;
+
 /**
  * The management interface for the loading service.
+ * <p>
+ * This managed bean is only available at runtime if a cache loader has been set using
+ * {@link CacheLoadingConfiguration#setLoader(CacheLoader)} and
+ * {@link CacheManagementConfiguration#setEnabled(boolean)} has been set to
+ * <code>true</code>.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -37,4 +44,9 @@ public interface CacheLoadingMXBean {
      * Attempts to reload all entries that are currently held in the cache.
      */
     void forceLoadAll();
+
+    /**
+     * Attempts to reload all entries that are either expired or which needs refreshing.
+     */
+    void loadAll();
 }

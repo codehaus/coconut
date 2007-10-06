@@ -15,7 +15,7 @@ import org.coconut.event.EventSubscription;
 /**
  * The purpose of this class is to have one central place where all exceptions that arise
  * within a cache or one of its associated services are handled. One implementation of
- * this class might shutdown the cache on any exception. This is often usefull in
+ * this class might shutdown the cache for any raised exception. This is often usefull in
  * development environments. Another implementation might just log the exception and
  * continue serving other requests. To allow for easily extending this class with new
  * methods at a later time this class is an abstract class instead of an interface.
@@ -110,8 +110,8 @@ public abstract class CacheExceptionHandler<K, V> {
      * fails.
      * <p>
      * The {@link CacheLifecycle#initialize(CacheConfiguration)} method is always called
-     * from the constructor of the cache. And the default implementation of this method will
-     * let the cause of failure be propagated to the constructor callee.
+     * from the constructor of the cache. And the default implementation of this method
+     * will let the cause of failure be propagated to the constructor callee.
      * 
      * @param configuration
      *            the configuration of the cache
@@ -121,8 +121,7 @@ public abstract class CacheExceptionHandler<K, V> {
      *            the cause of the failure
      */
     public void lifecycleInitializationFailed(CacheConfiguration<K, V> configuration,
-            CacheLifecycle service, RuntimeException cause) {
-    }
+            CacheLifecycle service, RuntimeException cause) {}
 
     public void cacheWasShutdown(CacheExceptionContext<K, V> context, String method) {
     // THE cache in the context should be shielded in someway, so we don't cause some kind

@@ -51,7 +51,10 @@ public final class CacheExceptionHandlers {
 
         /** {@inheritDoc} */
         @Override
-        public void handleException(CacheExceptionContext<K, V> context, Exception cause) {}
+        public void handleException(CacheExceptionContext<K, V> context, Exception cause) {
+            context.defaultLogger().fatal(
+                    "An unexpected failure occured inside the cache", cause);
+        }
 
         /** {@inheritDoc} */
         @Override

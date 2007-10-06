@@ -40,6 +40,12 @@ public class Constructors extends AbstractCacheTCKTest {
         assertTrue(c.isEmpty());
     }
 
+    /**
+     * Tests that the cache implementation has a single constructor taking a
+     * CacheConfiguration.
+     * 
+     * @throws Throwable
+     */
     @Test(expected = NullPointerException.class)
     public void testNullCacheConfigurationArgumentConstructor() throws Throwable {
         Constructor con = getClazz().getConstructor(CacheConfiguration.class);

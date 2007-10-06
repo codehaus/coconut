@@ -7,19 +7,17 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.CacheEntry;
 import org.coconut.core.AttributeMap;
-import org.coconut.core.Transformer;
-import org.coconut.filter.Filter;
 
 /**
- * This is the main interface for controlling the cache loader of a cache at runtime.
+ * This is the main interface for controlling the cache loading service of a cache at
+ * runtime.
  * <p>
- * Most of the methods for this service is usefull for preloading the cache with entries
- * that might be used at later time. Preloading attempts to place data in the cache far
+ * Most of the methods for this service is usefull for prefetching the cache with entries
+ * that might be used at later time. Prefetching attempts to place data in the cache far
  * enough in advance to hide the latency of a cache miss.
  * <p>
- * This service is only available if a cache loader has been set using
+ * This service is only available at runtime if a cache loader has been set using
  * {@link CacheLoadingConfiguration#setLoader(CacheLoader)}.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -50,7 +48,7 @@ public interface CacheLoadingService<K, V> {
     /**
      * This method works analogous to the {@link #load(Object, AttributeMap)} method.
      * Except, that it will attempt to load a new value for the specified key even if a
-     * valid mapping for the specified key is already in the cache. 
+     * valid mapping for the specified key is already in the cache.
      * <p>
      * If this cache has been shutdown calls to this method is ignored.
      * 
@@ -74,6 +72,11 @@ public interface CacheLoadingService<K, V> {
      * If this cache has been shutdown calls to this method is ignored.
      */
     void forceLoadAll();
+
+    /**
+     * Attempts to reload all entries that are either expired or which needs refreshing.
+     */
+    void loadAll();
 
     /**
      * Attempts to reload all entries that are currently held in the cache from the
@@ -101,6 +104,7 @@ public interface CacheLoadingService<K, V> {
      * modified while the operation is in progress.
      * <p>
      * If this cache has been shutdown calls to this method is ignored.
+     * 
      * @param keys
      *            whose associated values is to be loaded.
      * @throws ClassCastException
@@ -124,6 +128,7 @@ public interface CacheLoadingService<K, V> {
      * modified while the operation is in progress.
      * <p>
      * If this cache has been shutdown calls to this method is ignored.
+     * 
      * @param mapsWithAttributes
      *            a map of keys that should be loaded with an associated AttributeMap
      * @throws ClassCastException
@@ -136,13 +141,13 @@ public interface CacheLoadingService<K, V> {
     void forceLoadAll(Map<K, AttributeMap> mapsWithAttributes);
 
     /**
-     * Returns the default expiration time for entries. If entries never expire,
+     * Returns the default refresh time for entries. If entries are never refreshed,
      * {@link Long#MAX_VALUE} is returned.
      * 
      * @param unit
-     *            the time unit that should be used for returning the default expiration
-     * @return the default expiration time for entries, or {value Long#MAX_VALUE} if
-     *         entries never expire
+     *            the time unit that should be used for returning the default refresh time
+     * @return the default refresh time for entries, or {value Long#MAX_VALUE} if entries
+     *         never needs refreshing
      */
     long getDefaultTimeToRefresh(TimeUnit unit);
 
@@ -157,9 +162,10 @@ public interface CacheLoadingService<K, V> {
      * Unless otherwise specified the loading is done asynchronously. Any cache
      * implementation that is not thread-safe (ie supposed to be accessed by a single
      * thread only) will need to load the value before returning from this method. Because
-     * it cannot allow a background thread to set the value once loaded.
+     * it cannot allow a background thread to add the value to cache once loaded.
      * <p>
      * If this cache has been shutdown calls to this method is ignored.
+     * 
      * @param key
      *            whose associated value is to be loaded.
      * @throws ClassCastException
@@ -171,11 +177,12 @@ public interface CacheLoadingService<K, V> {
 
     /**
      * This method works analogous to the {@link #load(Object)} method. Except that all
-     * the attributes available in the the specified attribute map. Will be parsed along
-     * to the {@link CacheLoader#load(Object, AttributeMap)} method of the configured
-     * cache loader.
+     * the attributes in the the specified attribute map will be parsed along to the
+     * {@link CacheLoader#load(Object, AttributeMap)} method of the configured cache
+     * loader.
      * <p>
      * If this cache has been shutdown calls to this method is ignored.
+     * 
      * @param key
      *            whose associated value is to be loaded.
      * @param attributes
@@ -201,6 +208,7 @@ public interface CacheLoadingService<K, V> {
      * modified while the operation is in progress.
      * <p>
      * If this cache has been shutdown calls to this method is ignored.
+     * 
      * @param keys
      *            whose associated values is to be loaded.
      * @throws ClassCastException
@@ -215,26 +223,25 @@ public interface CacheLoadingService<K, V> {
     /**
      * <p>
      * If this cache has been shutdown calls to this method is ignored.
+     * 
      * @param mapsWithAttributes
      *            a map with keys that should be loaded and a corresponding attribute map
      */
     void loadAll(Map<K, AttributeMap> mapsWithAttributes);
 
-    // void loadAll() -> load all expired or needs refresh
-
     /**
-     * Sets the default expiration time for new objetcs that are added to the cache. If no
-     * default expiration time has been set, entries will never expire.
+     * Sets the default refresh time for new objects that are added to the cache. If no
+     * default refresh time has been set, entries will never be refreshed.
      * 
-     * @param timeToLive
-     *            the time from insertion to the point where the entry should expire
+     * @param timeToRefresh
+     *            the time from insertion to the point where the entry should be refreshed
      * @param unit
-     *            the time unit of the timeToLive argument
+     *            the time unit of the timeToRefresh argument
      * @throws IllegalArgumentException
      *             if the specified time to live is negative (<0)
      * @throws NullPointerException
      *             if the specified time unit is <tt>null</tt>
      * @see #getDefaultTimeToRefresh(TimeUnit)
      */
-    void setDefaultTimeToRefresh(long timeToLive, TimeUnit unit);
+    void setDefaultTimeToRefresh(long timeToRefresh, TimeUnit unit);
 }

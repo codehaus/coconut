@@ -10,7 +10,6 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.event.CacheEventService;
 
 /**
- * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -22,7 +21,7 @@ public interface InternalCacheEventService<K, V> extends CacheEventService<K, V>
      * @return whether or not the cache event service is enabled
      */
     boolean isEnabled();
-    
+
     /**
      * Called after the specified cache was cleared.
      * 
@@ -44,6 +43,8 @@ public interface InternalCacheEventService<K, V> extends CacheEventService<K, V>
             long capacity, long previousCapacity,
             Collection<? extends CacheEntry<K, V>> evicted,
             Collection<? extends CacheEntry<K, V>> expired);
+
+    void afterPurge(Cache<K, V> cache, Collection<? extends CacheEntry<K, V>> expired);
 
     void afterGet(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries, K key,

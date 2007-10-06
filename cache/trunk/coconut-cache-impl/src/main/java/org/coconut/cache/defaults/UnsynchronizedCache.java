@@ -232,14 +232,14 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     /** {@inheritDoc} */
     @Override
     public int size() {
-        checkRunning("size");
+        checkRunning("size", false);
         return map.size();
     }
 
     /** {@inheritDoc} */
     @Override
     public Collection<V> values() {
-        checkRunning("collectionview");
+        checkRunning("collectionview", false);
         return map.values(this);
     }
 
@@ -248,7 +248,11 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     }
 
     private void checkRunning(String operation) {
-        serviceManager.lazyStart(true);
+        checkRunning(operation, true);
+    }
+
+    private void checkRunning(String operation, boolean op) {
+        serviceManager.lazyStart(op);
     }
 
     private AbstractCacheEntry<K, V> doPut(AbstractCacheEntry<K, V> entry) {
@@ -355,7 +359,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     /** {@inheritDoc} */
     @Override
     AbstractCacheEntry<K, V> doPeek(K key) {
-        checkRunning("get");
+        checkRunning("get", false);
         return map.get(key);
     }
 
@@ -466,6 +470,27 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         eventService.afterTrimToSize(this, started, l);
     }
 
+    /** {@inheritDoc} */
+    public int removeAll(Collection<? extends K> collection) {
+        if (collection == null) {
+            throw new NullPointerException("collection is null");
+        }
+        CollectionUtils.checkCollectionForNulls(collection);
+        checkRunning("put");
+        int count = 0;
+        for (K key : collection) {
+            long started = statistics.beforeRemove(UnsynchronizedCache.this, key);
+            AbstractCacheEntry<K, V> e = map.remove(key, null);
+            if (e != null) {
+                evictionService.remove(e.getPolicyIndex());
+                count++;
+            }
+            statistics.afterRemove(UnsynchronizedCache.this, started, e);
+            eventService.afterRemove(UnsynchronizedCache.this, started, e);
+        }
+        return count;
+    }
+
     /** A helper class. */
     class Support implements InternalCacheSupport<K, V> {
 
@@ -513,36 +538,6 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         }
 
         /** {@inheritDoc} */
-        public int removeAll(Collection<? extends K> collection) {
-            if (collection == null) {
-                throw new NullPointerException("collection is null");
-            }
-            CollectionUtils.checkCollectionForNulls(collection);
-            checkRunning("put");
-            int count = 0;
-            for (K key : collection) {
-                long started = statistics.beforeRemove(UnsynchronizedCache.this, key);
-                AbstractCacheEntry<K, V> e = map.remove(key, null);
-                if (e != null) {
-                    evictionService.remove(e.getPolicyIndex());
-                    count++;
-                }
-                statistics.afterRemove(UnsynchronizedCache.this, started, e);
-                eventService.afterRemove(UnsynchronizedCache.this, started, e);
-            }
-            return count;
-        }
-
-        /** {@inheritDoc} */
-        public int removeAllFiltered(Filter<? super CacheEntry<K, V>> filter) {
-            if (filter == null) {
-                throw new NullPointerException("filter is null");
-            }
-            checkRunning();
-            return removeAll(filterKeys(filter));
-        }
-
-        /** {@inheritDoc} */
         public void trimToVolume(long capacity) {
             throw new UnsupportedOperationException();
         }
@@ -577,6 +572,30 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
                     map.put(key, attributes);
                 }
                 CacheServices.loading(UnsynchronizedCache.this).forceLoadAll(map);
+            }
+        }
+
+        public void purgeExpired() {
+            List<AbstractCacheEntry<K, V>> expired = new ArrayList<AbstractCacheEntry<K, V>>();
+            for (Iterator<AbstractCacheEntry<K, V>> i = map.iterator(); i.hasNext();) {
+                AbstractCacheEntry<K, V> entry = i.next();
+                if (expiration.isExpired(entry)) {
+                    expired.add(entry);
+                    evictionService.remove(entry.getPolicyIndex());
+                    i.remove();
+                }
+            }
+            eventService.afterPurge(UnsynchronizedCache.this, expired);
+        }
+
+        public void loadAll(AttributeMap attributes) {
+            for (Iterator<AbstractCacheEntry<K, V>> i = map.iterator(); i.hasNext();) {
+                AbstractCacheEntry<K, V> entry = i.next();
+                if (!loadingService.reloadIfNeeded(entry)) {
+                    if (expiration.isExpired(entry)) {
+                        loadingService.load(entry.getKey());
+                    }
+                }
             }
         }
     }

@@ -104,12 +104,6 @@ final class ManagementUtils {
         }
 
         /** {@inheritDoc} */
-        @ManagedOperation(description = "Evicts expired entries and performs housekeeping on the cache")
-        public void evict() {
-            cache.evict();
-        }
-
-        /** {@inheritDoc} */
         @ManagedAttribute(description = "The name of the cache")
         public String getName() {
             return cache.getName();

@@ -5,7 +5,6 @@ package org.coconut.cache.internal.service.event;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.service.event.CacheEvent;
-import org.coconut.internal.util.ObjectUtils;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -101,49 +100,73 @@ final class InternalEvent {
         }
     }
 
-    /**
-     * The default implementation of the cache Evicted event.
-     * 
-     * @param <K>
-     *            the type of keys maintained by the cache
-     * @param <V>
-     *            the type of values maintained by the cache
-     */
-    static class Evicted<K, V> implements CacheEvent.CacheEvicted<K, V> {
-        private final Cache<K, V> cache;
-
-        private final int currentSize;
-
-        private final int previousSize;
-
-        public Evicted(final Cache<K, V> cache, final int previousSize,
-                final int currentSize) {
-            this.cache = cache;
-            this.previousSize = previousSize;
-            this.currentSize = currentSize;
-        }
-
-        /** {@inheritDoc} */
-        public Cache<K, V> getCache() {
-            return cache;
-        }
-
-        /** {@inheritDoc} */
-        public int getCurrentSize() {
-            return currentSize;
-        }
-
-        /** {@inheritDoc} */
-        public String getName() {
-            return CacheEvent.CacheEvicted.NAME;
-        }
-
-        /** {@inheritDoc} */
-        public int getPreviousSize() {
-            return previousSize;
-        }
-    }
-
+//    /**
+//     * The default implementation of the cache Evicted event.
+//     * 
+//     * @param <K>
+//     *            the type of keys maintained by the cache
+//     * @param <V>
+//     *            the type of values maintained by the cache
+//     */
+//    static class Evicted<K, V> implements CacheEvent.CacheEvicted<K, V> {
+//        private final Cache<K, V> cache;
+//
+//        private final int currentSize;
+//
+//        private final int previousSize;
+//
+//        public Evicted(final Cache<K, V> cache, final int previousSize,
+//                final int currentSize) {
+//            this.cache = cache;
+//            this.previousSize = previousSize;
+//            this.currentSize = currentSize;
+//        }
+//
+//        /** {@inheritDoc} */
+//        public Cache<K, V> getCache() {
+//            return cache;
+//        }
+//
+//        /** {@inheritDoc} */
+//        public int getCurrentSize() {
+//            return currentSize;
+//        }
+//
+//        /** {@inheritDoc} */
+//        public String getName() {
+//            return CacheEvent.CacheEvicted.NAME;
+//        }
+//
+//        /** {@inheritDoc} */
+//        public int getPreviousSize() {
+//            return previousSize;
+//        }
+//    }
+//
+//    /**
+//     * An event indicating that {@link Cache#evict()} was called on a particular
+//     * {@link Cache}.
+//     */
+//    interface CacheEvicted<K, V> extends CacheEvent<K, V> {
+//        /** The unique name of the event. */
+//        String NAME = "cache.evicted";
+//
+//        /**
+//         * Returns the current number of elements contained in the cache after evict has
+//         * been called.
+//         * @return the current number of elements contained in the cache after evict has
+//         * been called 
+//         */
+//        int getCurrentSize();
+//
+//        /**
+//         * Return the previous number of elements contained in the cache before the call
+//         * to evict.
+//         * @return the previous number of elements contained in the cache before the call
+//         * to evict
+//         */
+//        int getPreviousSize();
+//    }
     /**
      * Creates a new {@link CacheCleared} event from the specified parameters.
      * 
@@ -162,10 +185,5 @@ final class InternalEvent {
     static <K, V> CacheEvent.CacheCleared<K, V> cleared(Cache<K, V> cache,
             int previousSize, long previousCapacity) {
         return new Cleared<K, V>(cache, previousSize, previousCapacity);
-    }
-
-    static <K, V> CacheEvent<K, V> evicted(Cache<K, V> cache, int currentSize,
-            int previousSize, long currentCapacity, long previousCapacity) {
-        return new Evicted<K, V>(cache, currentSize, previousSize);
     }
 }

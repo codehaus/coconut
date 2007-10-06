@@ -62,35 +62,35 @@ public class SynchronizedCacheEvictionService<K, V> extends
         }
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public long getPreferableCapacity() {
-        synchronized (mutex) {
-            return super.getPreferableCapacity();
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public int getPreferableSize() {
-        synchronized (mutex) {
-            return super.getPreferableSize();
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void setPreferableCapacity(long size) {
-        synchronized (mutex) {
-            super.setPreferableCapacity(size);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void setPreferableSize(int size) {
-        synchronized (mutex) {
-            super.setPreferableSize(size);
-        }
-    }
+//    /** {@inheritDoc} */
+//    @Override
+//    public long getPreferableCapacity() {
+//        synchronized (mutex) {
+//            return super.getPreferableCapacity();
+//        }
+//    }
+//
+//    /** {@inheritDoc} */
+//    @Override
+//    public int getPreferableSize() {
+//        synchronized (mutex) {
+//            return super.getPreferableSize();
+//        }
+//    }
+//
+//    /** {@inheritDoc} */
+//    @Override
+//    public void setPreferableCapacity(long size) {
+//        synchronized (mutex) {
+//            super.setPreferableCapacity(size);
+//        }
+//    }
+//
+//    /** {@inheritDoc} */
+//    @Override
+//    public void setPreferableSize(int size) {
+//        synchronized (mutex) {
+//            super.setPreferableSize(size);
+//        }
+//    }
 }

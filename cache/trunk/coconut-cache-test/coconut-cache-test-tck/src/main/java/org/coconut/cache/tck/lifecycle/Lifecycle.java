@@ -26,9 +26,10 @@ public class Lifecycle extends AbstractCacheTCKTest {
     }
 
     private void startCache() {
-        //we don't have anything better to start with right now 
+        // we don't have anything better to start with right now
         c.put(1, "foo");
     }
+
     @Test
     public void lazyStart() {
         c = newCache();
@@ -36,6 +37,14 @@ public class Lifecycle extends AbstractCacheTCKTest {
         assertTrue(c.isStarted());
         assertFalse(c.isTerminated());
         assertFalse(c.isShutdown());
+    }
+
+    @Test
+    public void shutdownNoOp() throws InterruptedException {
+        c = newCache();
+        c.shutdown();
+        assertTrue(c.isShutdown());
+        // TODO c is started???
     }
 
     @Test

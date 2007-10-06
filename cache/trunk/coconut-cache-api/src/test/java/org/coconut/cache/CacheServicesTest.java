@@ -5,6 +5,7 @@ package org.coconut.cache;
 
 import static org.junit.Assert.assertSame;
 
+import org.coconut.cache.internal.service.worker.CacheWorkerService;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
@@ -133,6 +134,20 @@ public class CacheServicesTest {
             }
         });
         CacheStatisticsService ces = CacheServices.statistics(cache);
+        assertSame(service, ces);
+    }
+    
+    @Test
+    public void workerService() {
+        final CacheWorkerService service = MockTestCase
+                .mockDummy(CacheWorkerService.class);
+        context.checking(new Expectations() {
+            {
+                one(cache).getService(CacheWorkerService.class);
+                will(returnValue(service));
+            }
+        });
+        CacheWorkerService ces = CacheServices.worker(cache);
         assertSame(service, ces);
     }
 }

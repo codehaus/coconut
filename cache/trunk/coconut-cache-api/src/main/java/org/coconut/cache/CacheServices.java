@@ -3,6 +3,7 @@
  */
 package org.coconut.cache;
 
+import org.coconut.cache.internal.service.worker.CacheWorkerService;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
@@ -122,5 +123,16 @@ public final class CacheServices {
      */
     public static CacheStatisticsService statistics(Cache<?, ?> cache) {
         return cache.getService(CacheStatisticsService.class);
+    }
+    
+    /**
+     * Return the worker service for the specified cache.
+     * 
+     * @param cache
+     *            the cache for which to return the worker service
+     * @return the worker service for the cache
+     */
+    public static CacheWorkerService worker(Cache<?, ?> cache) {
+        return cache.getService(CacheWorkerService.class);
     }
 }

@@ -8,13 +8,18 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
+ * This class is used to configure the statistics service prior to usage. Currently there
+ * isn't much functionality to configure.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @param <K>
+ *            the type of keys maintained by the cache
+ * @param <V>
+ *            the type of mapped values
  */
 public class CacheStatisticsConfiguration extends AbstractCacheServiceConfiguration {
 
-    
-    // add own counters???
     /** The short name of this service. */
     public static final String SERVICE_NAME = "statistics";
 
@@ -23,23 +28,15 @@ public class CacheStatisticsConfiguration extends AbstractCacheServiceConfigurat
         super(SERVICE_NAME);
     }
 
-//    public void setKeepStatisticsOnIndividualItems(boolean keepStatistics) {
+// public void setKeepStatisticsOnIndividualItems(boolean keepStatistics) {
 //        
-//    }
-    /**
-     * {@inheritDoc}
-     */
+// }
+    /** {@inheritDoc} */
     @Override
-    protected void fromXML( Element parent) {
+    protected void fromXML(Element parent) {}
 
-    }
-
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
-    protected void toXML(Document doc, Element parent) {
-
-    }
+    protected void toXML(Document doc, Element parent) {}
 
 }

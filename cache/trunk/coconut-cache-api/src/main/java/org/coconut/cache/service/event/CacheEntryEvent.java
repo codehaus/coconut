@@ -6,7 +6,6 @@ package org.coconut.cache.service.event;
 import java.util.Map;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.loading.CacheLoadingService;
 
 /**
@@ -16,7 +15,6 @@ import org.coconut.cache.service.loading.CacheLoadingService;
  * <p>
  * Currently 4 standard events are supported.
  * <ul>
- * <li>{@link ItemAccessed}</li>: is raised whenever an entry is accessed through ..
  * <li>{@link ItemAdded}</li>
  * <li>{@link ItemRemoved}</li>
  * <li>{@link ItemUpdated}</li>

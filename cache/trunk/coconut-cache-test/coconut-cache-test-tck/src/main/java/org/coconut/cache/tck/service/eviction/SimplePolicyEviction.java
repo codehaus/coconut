@@ -192,7 +192,7 @@ public class SimplePolicyEviction extends AbstractCacheTCKTest {
             c.put(i, Integer.toString(i));
         }
         clock.incrementRelativeTime(3);
-        c.evict();
+        expiration().purgeExpired();
         // ?? need to figure out how to handle puts
     }
 

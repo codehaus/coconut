@@ -111,10 +111,6 @@ public abstract class CacheHarnessBundle extends Assert {
         return c.containsValue(e.getValue());
     }
 
-    protected void evict() {
-        c.evict();
-    }
-
     protected String get(Map.Entry<Integer, String> e) {
         return c.get(e.getKey());
     }

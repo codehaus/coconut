@@ -3,7 +3,6 @@
  */
 package org.coconut.cache.service.servicemanager;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -40,6 +39,7 @@ public class CacheServiceManagerConfiguration extends AbstractCacheServiceConfig
     public CacheServiceManagerConfiguration() {
         super(SERVICE_NAME);
     }
+
     /**
      * Attaches the specified instance to the service map of the cache. This object can
      * then later be retrived by calling {@link Cache#getService(Class)}.
@@ -53,7 +53,7 @@ public class CacheServiceManagerConfiguration extends AbstractCacheServiceConfig
      * assert &quot;fooboo&quot; = c.getService(String.class);
      * </pre>
      * 
-     * If the specified key conflicts with key-type of any of the build in service an
+     * If the specified key conflicts with the key-type of any of the build in service an
      * exception will be thrown when the cache is constructed.
      * 
      * @param key
@@ -97,6 +97,7 @@ public class CacheServiceManagerConfiguration extends AbstractCacheServiceConfig
     public Set<CacheLifecycle> getAllServices() {
         return new HashSet(services);
     }
+
     @Override
     protected void fromXML(Element element) throws Exception {}
 

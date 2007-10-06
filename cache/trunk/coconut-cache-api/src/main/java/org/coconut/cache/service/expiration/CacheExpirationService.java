@@ -40,27 +40,9 @@ public interface CacheExpirationService<K, V> {
     long NEVER_EXPIRE = Long.MAX_VALUE;
 
     /**
-     * Attempts to expire all of the mappings for the specified collection of keys. The
-     * effect of this call is equivalent to that of calling
-     * {@link org.coconut.cache.Cache#remove(Object)} on this service once for each key in
-     * the specified collection. However, in some cases it can be much faster to expire
-     * several cache items at once, for example, if some of the values must also be
-     * expired on a remote host.
-     * 
-     * @param keys
-     *            a collection of keys whose associated mappings are to be expired.
-     * @return the number of entries that was removed
+     * Removes all expired items from the cache.
      */
-    int removeAll(Collection<? extends K> keys);
-
-    /**
-     * Attempts to expire all of the mappings that match the specified filter.
-     * 
-     * @param filter
-     *            the filter to match entries against
-     * @return the number of entries that was removed
-     */
-    int removeFiltered(Filter<? super CacheEntry<K, V>> filter);
+    void purgeExpired();
 
     /**
      * Returns the default time to live for entries that are added to the cache. If
@@ -93,6 +75,8 @@ public interface CacheExpirationService<K, V> {
      * @throws ClassCastException
      *             if the class of the specified key or value prevents it from being
      *             stored in this cache.
+     * @throws IllegalStateException
+     *             if the cache has been shutdown
      * @throws IllegalArgumentException
      *             if some aspect of this key or value prevents it from being stored in
      *             this cache.
@@ -118,6 +102,8 @@ public interface CacheExpirationService<K, V> {
      * @throws ClassCastException
      *             if the class of a key or value in the specified map prevents it from
      *             being stored in this cache.
+     * @throws IllegalStateException
+     *             if the cache has been shutdown
      * @throws IllegalArgumentException
      *             some aspect of a key or value in the specified map prevents it from
      *             being stored in this cache.

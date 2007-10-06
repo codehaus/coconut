@@ -186,29 +186,29 @@ final class EvictionUtils {
         return tmp == 0 ? Long.MAX_VALUE : tmp;
     }
 
-    /**
-     * Returns the preferable size configured in the specified configuration.
-     * 
-     * @param conf
-     *            the configuration to read the preferable size from
-     * @return the preferable size configured in the specified configuration
-     */
-    static int getPreferableSizeFromConfiguration(CacheEvictionConfiguration<?, ?> conf) {
-        int tmp = conf.getPreferableSize();
-        return tmp == 0 ? Integer.MAX_VALUE : tmp;
-    }
-
-    /**
-     * Returns the preferable volume configured in the specified configuration.
-     * 
-     * @param conf
-     *            the configuration to read the preferable volume from
-     * @return the preferable volume configured in the specified configuration
-     */
-    static long getPreferableVolumeFromConfiguration(CacheEvictionConfiguration<?, ?> conf) {
-        long tmp = conf.getPreferableVolume();
-        return tmp == 0 ? Long.MAX_VALUE : tmp;
-    }
+//    /**
+//     * Returns the preferable size configured in the specified configuration.
+//     * 
+//     * @param conf
+//     *            the configuration to read the preferable size from
+//     * @return the preferable size configured in the specified configuration
+//     */
+//    static int getPreferableSizeFromConfiguration(CacheEvictionConfiguration<?, ?> conf) {
+//        int tmp = conf.getPreferableSize();
+//        return tmp == 0 ? Integer.MAX_VALUE : tmp;
+//    }
+//
+//    /**
+//     * Returns the preferable volume configured in the specified configuration.
+//     * 
+//     * @param conf
+//     *            the configuration to read the preferable volume from
+//     * @return the preferable volume configured in the specified configuration
+//     */
+//    static long getPreferableVolumeFromConfiguration(CacheEvictionConfiguration<?, ?> conf) {
+//        long tmp = conf.getPreferableVolume();
+//        return tmp == 0 ? Long.MAX_VALUE : tmp;
+//    }
 
     // @ManagedOperation(description = "Evict all elements that idle")
     // public void evictIdleElements() {

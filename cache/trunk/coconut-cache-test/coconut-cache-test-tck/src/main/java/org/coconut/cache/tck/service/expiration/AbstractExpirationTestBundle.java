@@ -27,4 +27,8 @@ class AbstractExpirationTestBundle extends AbstractCacheTCKTest {
     protected String put(Map.Entry<Integer, String> e, long timeout) {
         return expiration().put(e.getKey(), e.getValue(), timeout, TimeUnit.MILLISECONDS);
     }
+    
+    protected void purge() {
+        expiration().purgeExpired();
+    }
 }

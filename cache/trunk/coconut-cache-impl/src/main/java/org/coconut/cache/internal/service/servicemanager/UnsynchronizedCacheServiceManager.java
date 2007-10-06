@@ -179,7 +179,8 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
 
     /** {@inheritDoc} */
     public void shutdown() {
-        if (status==RunState.RUNNING) {
+        if (status==RunState.RUNNING || status==RunState.NOTRUNNING) {
+            cache.clear();
             status =RunState.SHUTDOWN;
             for (ServiceHolder si : internalServices) {
                 si.shutdown();

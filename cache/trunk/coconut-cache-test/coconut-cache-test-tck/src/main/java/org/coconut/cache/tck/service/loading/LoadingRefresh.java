@@ -31,7 +31,7 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
     }
 
     protected void loadThoseNeedsRefresh() {
-        c.evict();
+        loading().loadAll();
     }
 
     @Test
@@ -120,7 +120,7 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
 
         incTime(); // time is one
         // test no refresh on get
-        c.evict();
+        loading().loadAll();
         assertEquals(2, loader.getLoadedKeys().size());
         waitAndAssertGet(M1, M2);
 

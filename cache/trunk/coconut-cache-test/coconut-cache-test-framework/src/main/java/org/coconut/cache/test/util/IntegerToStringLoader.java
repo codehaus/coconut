@@ -37,6 +37,9 @@ public class IntegerToStringLoader implements CacheLoader<Integer, String> {
         this.base = base;
     }
 
+    public void incBase() {
+        base++;
+    }
     public long getNumberOfLoads() {
         return totalLoads.get();
     }

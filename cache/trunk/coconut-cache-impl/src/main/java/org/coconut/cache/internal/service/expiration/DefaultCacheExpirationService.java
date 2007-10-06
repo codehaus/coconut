@@ -46,15 +46,15 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
     /** Responsible for creating attribute maps. */
     private final InternalCacheAttributeService attributeFactory;
 
-    /** The user specified expiration filter. */
-    private final Filter<CacheEntry<K, V>> expirationFilter;
-
-    private final InternalCacheSupport<K, V> helper;
+    private final Cache<K, V> cache;
 
     /** The clock used to get the current time. */
     private final Clock clock;
 
-    private final Cache<K, V> cache;
+    /** The user specified expiration filter. */
+    private final Filter<CacheEntry<K, V>> expirationFilter;
+
+    private final InternalCacheSupport<K, V> helper;
 
     public DefaultCacheExpirationService(Cache<K, V> cache, Clock clock,
             InternalCacheSupport<K, V> helper, CacheExpirationConfiguration<K, V> conf,
@@ -70,9 +70,31 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
     }
 
     /** {@inheritDoc} */
-    @Override
-    public void registerServices(Map<Class<?>, Object> serviceMap) {
-        serviceMap.put(CacheExpirationService.class, ExpirationUtils.wrapService(this));
+    public Collection<?> getChildServices() {
+        return Arrays.asList(expirationFilter);
+    }
+
+    /** {@inheritDoc} */
+    public long getDefaultTimeToLive(TimeUnit unit) {
+        return ExpirationUtils.convertNanosToExpirationTime(attributeFactory.update()
+                .getExpirationTimeNanos(), unit);
+    }
+
+    /** {@inheritDoc} */
+    public boolean isExpired(CacheEntry<K, V> entry) {
+        return ExpirationUtils.isExpired(entry, clock, expirationFilter);
+    }
+
+    /** {@inheritDoc} */
+    public void manage(ManagedGroup parent) {
+        ManagedGroup g = parent.addChild(CacheExpirationConfiguration.SERVICE_NAME,
+                "Cache Expiration attributes and operations");
+        g.add(ExpirationUtils.wrapAsMXBean(this));
+    }
+
+    /** {@inheritDoc} */
+    public void purgeExpired() {
+        helper.purgeExpired();
     }
 
     /** {@inheritDoc} */
@@ -103,24 +125,9 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
     }
 
     /** {@inheritDoc} */
-    public int removeAll(Collection<? extends K> keys) {
-        return helper.removeAll(keys);
-    }
-
-    /** {@inheritDoc} */
-    public int removeFiltered(Filter<? super CacheEntry<K, V>> filter) {
-        return helper.removeAllFiltered(filter);
-    }
-
-    /** {@inheritDoc} */
-    public boolean isExpired(CacheEntry<K, V> entry) {
-        return ExpirationUtils.isExpired(entry, clock, expirationFilter);
-    }
-
-    /** {@inheritDoc} */
-    public long getDefaultTimeToLive(TimeUnit unit) {
-        return ExpirationUtils.convertNanosToExpirationTime(attributeFactory.update()
-                .getExpirationTimeNanos(), unit);
+    @Override
+    public void registerServices(Map<Class<?>, Object> serviceMap) {
+        serviceMap.put(CacheExpirationService.class, ExpirationUtils.wrapService(this));
     }
 
     /** {@inheritDoc} */
@@ -128,16 +135,5 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
         long time = ExpirationUtils.convertExpirationTimeToNanos(timeToLive, unit);
         attributeFactory.update().setExpirationTimeNanos(
                 time == 0 ? Long.MAX_VALUE : time);
-    }
-
-    /** {@inheritDoc} */
-    public void manage(ManagedGroup parent) {
-        ManagedGroup g = parent.addChild(CacheExpirationConfiguration.SERVICE_NAME,
-                "Cache Expiration attributes and operations");
-        g.add(ExpirationUtils.wrapAsMXBean(this));
-    }
-
-    public Collection<?> getChildServices() {
-        return Arrays.asList(expirationFilter);
     }
 }

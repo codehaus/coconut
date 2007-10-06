@@ -22,9 +22,9 @@ import org.coconut.cache.CacheEntry;
  */
 public interface InternalCacheEvictionService<K, V, T extends CacheEntry<K, V>> {
 
-    int getPreferableSize();
+//    int getPreferableSize();
 
-    long getPreferableCapacity();
+//    long getPreferableCapacity();
 
     /**
      * Clears the expiration policy.

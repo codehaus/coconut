@@ -3,6 +3,7 @@
  */
 package org.coconut.cache.internal.service.loading;
 
+import java.beans.Expression;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,6 +26,7 @@ import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.core.AttributeMap;
+import org.coconut.core.AttributeMaps;
 import org.coconut.core.Clock;
 import org.coconut.filter.Filter;
 import org.coconut.management.ManagedGroup;
@@ -63,8 +65,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
         this.errorHandler = exceptionService;
         this.clock = clock;
         this.loader = loadConf.getLoader();
-        this.loadExecutor = threadManager.getManager().getExecutorService(
-                CacheLoadingService.class);
+        this.loadExecutor = threadManager.getExecutorService(CacheLoadingService.class);
         attributeFactory.update().setTimeToFreshNanos(
                 LoadingUtils.getInitialTimeToRefresh(loadConf));
         this.reloadFilter = loadConf.getRefreshFilter();
@@ -113,10 +114,12 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
 
     }
 
-    public void reloadIfNeeded(AbstractCacheEntry<K, V> entry) {
-        if (needsReload(entry)) {
-            load(entry.getKey());
+    public boolean reloadIfNeeded(AbstractCacheEntry<K, V> entry) {
+        boolean needsReload = needsReload(entry);
+        if (needsReload) {
+            forceLoad(entry.getKey());
         }
+        return needsReload;
     }
 
     /**
@@ -263,6 +266,10 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
 
     public void forceLoadAll(AttributeMap attributes) {
         cache.forceLoadAll(attributes);
+    }
+
+    public void loadAll() {
+        cache.loadAll(AttributeMaps.EMPTY_MAP);
     }
 
 }

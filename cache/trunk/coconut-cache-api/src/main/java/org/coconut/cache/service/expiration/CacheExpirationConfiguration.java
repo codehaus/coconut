@@ -137,9 +137,7 @@ public class CacheExpirationConfiguration<K, V> extends
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     protected void fromXML(Element base) throws Exception {
         /* Expiration timeout */
@@ -152,9 +150,7 @@ public class CacheExpirationConfiguration<K, V> extends
         expirationFilter = loadOptional(base, EXPIRATION_FILTER_TAG, Filter.class);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     protected void toXML(Document doc, Element parent) throws Exception {
         /* Expiration Timer */

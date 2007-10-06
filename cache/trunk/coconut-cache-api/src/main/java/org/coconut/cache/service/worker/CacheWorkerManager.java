@@ -4,7 +4,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.coconut.core.AttributeMap;
-import org.coconut.core.AttributeMaps;
 
 /**
  * This class is reponsible for creating {@link ExecutorService}'s that are used to
@@ -20,19 +19,6 @@ public abstract class CacheWorkerManager {
      * specified service.
      * 
      * @param service
-     *            the service to return an ExecutorService for
-     * @return a ExecutorService that can be used to asynchronously execute tasks for the
-     *         specified service
-     */
-    public final ExecutorService getExecutorService(Class<?> service) {
-        return getExecutorService(service, AttributeMaps.EMPTY_MAP);
-    }
-
-    /**
-     * Returns a ExecutorService that can be used to asynchronously execute tasks for the
-     * specified service.
-     * 
-     * @param service
      *            the service for which an ExecutorService should be returned
      * @param properties
      *            a list of properties that is passed to the concrete implementation of
@@ -42,10 +28,6 @@ public abstract class CacheWorkerManager {
      */
     public abstract ExecutorService getExecutorService(Class<?> service,
             AttributeMap attributes);
-
-    public final ScheduledExecutorService getScheduledExecutorService(Class<?> service) {
-        return getScheduledExecutorService(service, AttributeMaps.EMPTY_MAP);
-    }
 
     public abstract ScheduledExecutorService getScheduledExecutorService(
             Class<?> service, AttributeMap attributes);

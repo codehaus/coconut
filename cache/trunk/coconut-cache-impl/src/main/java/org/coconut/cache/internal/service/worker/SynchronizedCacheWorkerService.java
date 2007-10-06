@@ -9,8 +9,7 @@ import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.worker.CacheWorkerManager;
 import org.coconut.core.AttributeMap;
 
-public class SynchronizedCacheWorkerService extends AbstractCacheLifecycle implements
-        CacheWorkerService {
+public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService {
 
     private final SameThreadCacheWorker worker = new SameThreadCacheWorker();
 

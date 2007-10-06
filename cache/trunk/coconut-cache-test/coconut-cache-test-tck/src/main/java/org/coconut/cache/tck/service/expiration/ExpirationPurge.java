@@ -20,7 +20,7 @@ import org.junit.Test;
  * @version $Id$
  */
 @SuppressWarnings("unchecked")
-public class ExpirationEvict extends AbstractExpirationTestBundle {
+public class ExpirationPurge extends AbstractExpirationTestBundle {
 
     private void fillItUp() {
         put(M1, 2);
@@ -38,12 +38,12 @@ public class ExpirationEvict extends AbstractExpirationTestBundle {
         c = newCache(newConf().setClock(clock));
         put(M1, 2);
         incTime();
-        evict();
+        purge();
         assertGet(M1);
 
         incTime();
-        evict();
-        assertNullGet("Element M1 was not expired and removed", M1);
+        purge();
+        assertNullPeek("Element M1 was not expired and removed", M1);
         assertSize(0);
     }
 
@@ -57,27 +57,27 @@ public class ExpirationEvict extends AbstractExpirationTestBundle {
         assertSize(5);
 
         incTime(); // time1
-        evict();
+        purge();
         assertSize(5);
 
         incTime(); // time2
-        evict();
+        purge();
         assertSize(4);
 
         incTime(); // time3
-        evict();
+        purge();
         assertSize(3);
 
         incTime(); // time4
-        evict();
+        purge();
         assertSize(1);
 
         incTime(); // time5
-        evict();
+        purge();
         assertSize(1);
 
         incTime(); // time6
-        evict();
+        purge();
         assertSize(0);
     }
 
@@ -91,11 +91,11 @@ public class ExpirationEvict extends AbstractExpirationTestBundle {
         fillItUp();
 
         incTime(3);
-        evict();
+        purge();
         assertSize(3); // time still has influence
 
         f.setAccept(true);
-        evict();
+        purge();
         assertSize(0);
     }
 }

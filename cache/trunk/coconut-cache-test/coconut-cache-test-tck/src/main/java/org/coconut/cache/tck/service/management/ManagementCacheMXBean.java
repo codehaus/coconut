@@ -76,9 +76,4 @@ public class ManagementCacheMXBean extends AbstractCacheTCKTest {
         assertEquals(0, c.size());
     }
 
-    @Test
-    public void evictTest() {
-        mxBean.evict();
-    }
-
 }

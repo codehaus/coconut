@@ -30,10 +30,6 @@ public interface InternalCacheSupport<K, V> {
     void valuesLoaded(Map<? extends K, ? extends V> values,
             Map<? extends K, AttributeMap> keys);
 
-    int removeAll(Collection<? extends K> collection);
-
-    int removeAllFiltered(Filter<? super CacheEntry<K, V>> filter);
-
     Object getMutex();
 
     V put(K key, V value, AttributeMap attributes);
@@ -52,4 +48,8 @@ public interface InternalCacheSupport<K, V> {
     void trimToSize(int size);
     
     void forceLoadAll(AttributeMap attributes);
+    
+    void loadAll(AttributeMap attributes);
+    
+    void purgeExpired();
 }
