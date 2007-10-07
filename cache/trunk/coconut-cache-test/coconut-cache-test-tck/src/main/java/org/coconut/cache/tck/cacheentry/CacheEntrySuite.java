@@ -8,8 +8,9 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses( { Attributes.class, Cost.class, CreationTime.class,
-        ExpirationTime.class, Hits.class, KeyValue.class, LastAccessedTime.class,
-        LastModifiedTime.class, RefreshTime.class, Size.class })
+        ExpirationTime.class, GetEntry.class, Hits.class, KeyValue.class,
+        LastAccessedTime.class, LastModifiedTime.class, PeekEntry.class,
+        RefreshTime.class, Size.class })
 public class CacheEntrySuite {
 
 }

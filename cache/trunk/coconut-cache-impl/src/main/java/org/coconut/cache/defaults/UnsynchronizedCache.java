@@ -143,7 +143,6 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     }
 
     /** {@inheritDoc} */
-    @Override
     public Set<Entry<K, V>> entrySet() {
         checkRunning("collectionview");
         return map.entrySetPublic(this);
@@ -206,7 +205,6 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     }
 
     /** {@inheritDoc} */
-    @Override
     public Set<K> keySet() {
         checkRunning("collectionview");
         return map.keySet(this);
@@ -230,14 +228,12 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     }
 
     /** {@inheritDoc} */
-    @Override
     public int size() {
         checkRunning("size", false);
         return map.size();
     }
 
     /** {@inheritDoc} */
-    @Override
     public Collection<V> values() {
         checkRunning("collectionview", false);
         return map.values(this);

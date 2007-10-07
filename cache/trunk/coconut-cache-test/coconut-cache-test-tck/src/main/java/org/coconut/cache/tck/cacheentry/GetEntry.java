@@ -1,7 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the Apache 2.0 License, see http://coconut.codehaus.org/license.
- */
-package org.coconut.cache.tck.core;
+package org.coconut.cache.tck.cacheentry;
 
 import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M5;
@@ -17,18 +14,18 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class Get extends AbstractCacheTCKTest {
+public class GetEntry extends AbstractCacheTCKTest {
 
-    /**
-     * Test simple get.
-     */
     @Test
-    public void get() {
+    public void getEntry() {
         c = newCache(5);
-        assertEquals(M1.getValue(), c.get(M1.getKey()));
-        assertEquals(M5.getValue(), c.get(M5.getKey()));
-        assertNull(c.get(M6.getKey()));
+        assertNull(c.getEntry(6));
+        assertEquals(M1.getValue(), c.getEntry(M1.getKey()).getValue());
+        assertEquals(M1.getKey(), c.getEntry(M1.getKey()).getKey());
+        assertEquals(M5.getValue(), c.getEntry(M5.getKey()).getValue());
+        assertEquals(M5.getKey(), c.getEntry(M5.getKey()).getKey());
     }
+
 
     /**
      * {@link Cache#get} lazy starts the cache.
@@ -37,7 +34,7 @@ public class Get extends AbstractCacheTCKTest {
     public void getLazyStart() {
         c = newCache(0);
         assertFalse(c.isStarted());
-        c.get(M6.getKey());
+        c.getEntry(M6.getKey());
         checkLazystart();
     }
 
@@ -47,7 +44,7 @@ public class Get extends AbstractCacheTCKTest {
     @Test(expected = NullPointerException.class)
     public void getNPE() {
         c = newCache(5);
-        c.get(null);
+        c.getEntry(null);
     }
 
     /**
@@ -63,7 +60,7 @@ public class Get extends AbstractCacheTCKTest {
         c.shutdown();
 
         // should fail
-        c.get(M1.getKey());
+        c.getEntry(M1.getKey());
     }
 
 }

@@ -5,8 +5,10 @@ package org.coconut.cache.defaults;
 
 import java.util.AbstractMap;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
+import java.util.Map.Entry;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
@@ -26,8 +28,7 @@ import org.coconut.internal.util.CollectionUtils;
  * @param <V>
  *            the type of mapped values
  */
-public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
-        Cache<K, V> {
+public abstract class AbstractCache<K, V> implements Cache<K, V> {
 
     /** The name of the cache. */
     private final String name;
@@ -114,6 +115,11 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
     }
 
     /** {@inheritDoc} */
+    public boolean isEmpty() {
+        return size() == 0;
+    }
+
+    /** {@inheritDoc} */
     public final V peek(K key) {
         if (key == null) {
             throw new NullPointerException("key is null");
@@ -137,19 +143,6 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
     }
 
     /** {@inheritDoc} */
-    V put(K key, V value, AttributeMap attributes) {
-        if (key == null) {
-            throw new NullPointerException("key is null");
-        } else if (value == null) {
-            throw new NullPointerException("value is null");
-        } else if (attributes == null) {
-            throw new NullPointerException("attributes is null");
-        }
-        CacheEntry<K, V> prev = doPut(key, value, false, attributes);
-        return prev == null ? null : prev.getValue();
-    }
-
-    /** {@inheritDoc} */
     public final void putAll(Map<? extends K, ? extends V> m) {
         if (m == null) {
             throw new NullPointerException("m is null");
@@ -170,7 +163,6 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
     }
 
     /** {@inheritDoc} */
-    @Override
     public final V remove(Object key) {
         if (key == null) {
             throw new NullPointerException("key is null");
@@ -198,6 +190,37 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
         }
         CacheEntry<K, V> prev = doReplace(key, null, value, null);
         return prev == null ? null : prev.getValue();
+    }
+
+    /**
+     * Returns a string representation of this map. The string representation consists of
+     * a list of key-value mappings in the order returned by the map's <tt>entrySet</tt>
+     * view's iterator, enclosed in braces (<tt>"{}"</tt>). Adjacent mappings are
+     * separated by the characters <tt>", "</tt> (comma and space). Each key-value
+     * mapping is rendered as the key followed by an equals sign (<tt>"="</tt>)
+     * followed by the associated value. Keys and values are converted to strings as by
+     * {@link String#valueOf(Object)}.
+     * 
+     * @return a string representation of this map
+     */
+    public String toString() {
+        Iterator<Entry<K, V>> i = entrySet().iterator();
+        if (!i.hasNext())
+            return "{}";
+
+        StringBuilder sb = new StringBuilder();
+        sb.append('{');
+        for (;;) {
+            Entry<K, V> e = i.next();
+            K key = e.getKey();
+            V value = e.getValue();
+            sb.append(key == this ? "(this Cache)" : key);
+            sb.append('=');
+            sb.append(value == this ? "(this Cache)" : value);
+            if (!i.hasNext())
+                return sb.append('}').toString();
+            sb.append(", ");
+        }
     }
 
     /** {@inheritDoc} */
@@ -231,10 +254,23 @@ public abstract class AbstractCache<K, V> extends AbstractMap<K, V> implements
     abstract CacheEntry<K, V> doPut(K key, V newValue, boolean putOnlyIfAbsent,
             AttributeMap attributes);
 
-    abstract CacheEntry<K, V> doReplace(K key, V oldValue, V newValue,
-            AttributeMap attributes);
-
     abstract void doPutAll(Map<? extends K, ? extends V> t, AttributeMap attributes);
 
     abstract CacheEntry<K, V> doRemove(Object key, Object value);
+
+    abstract CacheEntry<K, V> doReplace(K key, V oldValue, V newValue,
+            AttributeMap attributes);
+
+    /** {@inheritDoc} */
+    V put(K key, V value, AttributeMap attributes) {
+        if (key == null) {
+            throw new NullPointerException("key is null");
+        } else if (value == null) {
+            throw new NullPointerException("value is null");
+        } else if (attributes == null) {
+            throw new NullPointerException("attributes is null");
+        }
+        CacheEntry<K, V> prev = doPut(key, value, false, attributes);
+        return prev == null ? null : prev.getValue();
+    }
 }
