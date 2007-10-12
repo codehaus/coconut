@@ -7,6 +7,7 @@ import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.AbstractLifecycleVerifier;
 import org.coconut.cache.test.util.IntegerToStringLoader;
+import org.coconut.cache.test.util.lifecycle.LifecycleFilter;
 import org.coconut.core.AttributeMap;
 import org.coconut.filter.Filter;
 import org.junit.Before;
@@ -27,25 +28,20 @@ public class LoadingLifecycleIntegration extends AbstractCacheTCKTest {
 
         loader.assertNotStarted();
         loading().load(M1.getKey());// lazy start
-        loader.assertInStartedPhase();
-        c.shutdown();
-        loader.assertShutdownOrTerminatedPhase();
-        c.shutdown();
+        loader.shutdownAndAssert(c);
     }
 
     @Test
     public void filter() {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
-        MyFilter filter = new MyFilter();
+        LifecycleFilter filter = new LifecycleFilter();
         c = newCache(cc.loading().setRefreshFilter(filter).setLoader(
                 new IntegerToStringLoader()).c());
 
         filter.assertNotStarted();
         loading().load(M1.getKey());// lazy start
         filter.assertInStartedPhase();
-        c.shutdown();
-        filter.assertShutdownOrTerminatedPhase();
-        c.shutdown();
+        filter.shutdownAndAssert(c);
     }
 
     static class MyLoader extends AbstractLifecycleVerifier implements CacheLoader {
@@ -54,9 +50,4 @@ public class LoadingLifecycleIntegration extends AbstractCacheTCKTest {
         }
     }
 
-    static class MyFilter extends AbstractLifecycleVerifier implements Filter {
-        public boolean accept(Object element) {
-            return false;
-        }
-    }
 }

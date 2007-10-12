@@ -61,4 +61,28 @@ public class ExpirationService extends AbstractCacheTCKTest {
     public void illegalTimeToLive() {
         expiration().setDefaultTimeToLive(-1, TimeUnit.NANOSECONDS);
     }
+    
+    /**
+     * {@link CacheExpirationService#setDefaultTimeToLive(long, TimeUnit) and CacheExpirationService#getDefaultTimeToLive(TimeUnit) should not fail when cache is shutdown.
+     * 
+     * @throws InterruptedException
+     *             was interrupted
+     */
+    @Test
+    public void setGetShutdown() throws InterruptedException {
+        c = newCache(5);
+        assertTrue(c.isStarted());
+        c.shutdown();
+
+        //should not fail while shutdown
+        expiration().setDefaultTimeToLive(2 * 1000, TimeUnit.MILLISECONDS);
+        assertEquals(2 * 1000 * 1000 * 1000l, expiration().getDefaultTimeToLive(
+                TimeUnit.NANOSECONDS));
+
+        assertTrue(c.awaitTermination(1, TimeUnit.SECONDS));
+        //should not fail while terminated
+        expiration().setDefaultTimeToLive(2 * 1000, TimeUnit.MILLISECONDS);
+        assertEquals(2 * 1000 * 1000 * 1000l, expiration().getDefaultTimeToLive(
+                TimeUnit.NANOSECONDS));
+    }
 }

@@ -3,31 +3,37 @@
  */
 package org.coconut.cache.tck.service.expiration;
 
+import static org.coconut.test.CollectionUtils.M1;
+
 import java.util.concurrent.TimeUnit;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
+import javax.management.MBeanServerInvocationHandler;
+import javax.management.ObjectName;
 import javax.management.RuntimeMBeanException;
 
+import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationMXBean;
 import org.junit.Before;
 import org.junit.Test;
 
 public class ExpirationMXBean extends AbstractExpirationTestBundle {
+
     private CacheExpirationMXBean mxBean;
 
     private MBeanServer mbs;
 
-    // TODO
-    // We should test for a default objectname
-    // a.la. for cache named foo
-    // ObjName=org.coconut.cache:name=343434, service=General
-
     @Before
-    public void setup() {
+    public void setup() throws Exception {
         mbs = MBeanServerFactory.createMBeanServer();
-        c = newCache(newConf().management().setEnabled(true).setMBeanServer(mbs).c());
-        mxBean = findMXBean(mbs, CacheExpirationMXBean.class);
+        c = newCache(newConf().setClock(clock).setName("managementtest").management()
+                .setEnabled(true).setMBeanServer(mbs).c());
+        ObjectName on = new ObjectName("org.coconut.cache:name=managementtest,service="
+                + CacheExpirationConfiguration.SERVICE_NAME);
+        prestart();
+        mxBean = MBeanServerInvocationHandler.newProxyInstance(mbs, on,
+                CacheExpirationMXBean.class, false);
     }
 
     /**
@@ -43,6 +49,22 @@ public class ExpirationMXBean extends AbstractExpirationTestBundle {
     }
 
     /**
+     * Test purgeExpired.
+     */
+    @Test
+    public void purge() {
+        put(M1, 2);
+        incTime();
+        mxBean.purgeExpired();
+        assertGet(M1);
+
+        incTime();
+        mxBean.purgeExpired();
+        assertNullPeek("Element M1 was not expired and removed", M1);
+        assertSize(0);
+    }
+
+    /**
      * Tests default idle time.
      */
     @Test
@@ -50,7 +72,7 @@ public class ExpirationMXBean extends AbstractExpirationTestBundle {
         mxBean.setDefaultTimeToLiveMs(0);
         assertEquals(Long.MAX_VALUE, mxBean.getDefaultTimeToLiveMs());
     }
-    
+
     @Test
     public void withStartValue() {
         c = newCache(newConf().setName("foo").management().setEnabled(true)
@@ -59,7 +81,7 @@ public class ExpirationMXBean extends AbstractExpirationTestBundle {
         mxBean = findMXBean(mbs, CacheExpirationMXBean.class);
         assertEquals(1800 * 1000, mxBean.getDefaultTimeToLiveMs());
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void illegalTimeToLive() throws Throwable {
         try {

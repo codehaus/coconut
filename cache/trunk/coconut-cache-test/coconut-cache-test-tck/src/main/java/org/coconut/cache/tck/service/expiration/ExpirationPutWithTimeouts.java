@@ -4,12 +4,13 @@
 
 package org.coconut.cache.tck.service.expiration;
 
-import static org.coconut.test.CollectionUtils.M1;
+import static org.coconut.test.CollectionUtils.*;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.cache.Cache;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,6 +29,33 @@ public class ExpirationPutWithTimeouts extends AbstractExpirationTestBundle {
         assertEquals(15l, getEntry(M1).getExpirationTime());
         put(M1, 10);
         assertEquals(20l, getEntry(M1).getExpirationTime());
+    }
+
+    /**
+     * {@link CacheExpirationService#put(Object, Object, long, TimeUnit) lazy starts the cache.
+     */
+    @Test
+    public void putLazyStart() {
+        c = newCache();
+        assertFalse(c.isStarted());
+        put(M1, 5);
+        checkLazystart();
+    }
+
+    /**
+     * {@link CacheExpirationService#put(Object, Object, long, TimeUnit) should  fail when cache is shutdown.
+     * 
+     * @throws InterruptedException
+     *             was interrupted
+     */
+    @Test(expected = IllegalStateException.class)
+    public void putShutdownISE() {
+        c = newCache(5);
+        assertTrue(c.isStarted());
+        c.shutdown();
+
+        // should fail
+        put(M1, 5);
     }
 
     @Test
@@ -61,9 +89,42 @@ public class ExpirationPutWithTimeouts extends AbstractExpirationTestBundle {
         expiration().put(1, "A", 123, null);
     }
 
+    /**
+     * {@link CacheExpirationService#putAll(Map, long, TimeUnit) lazy starts the cache.
+     */
+    @Test
+    public void putAllLazyStart() {
+        c = newCache();
+        assertFalse(c.isStarted());
+        putAll(5, M1, M2);
+        checkLazystart();
+    }
+
+    /**
+     * {@link CacheExpirationService#putAll(Map, long, TimeUnit) should  fail when cache is shutdown.
+     * 
+     * @throws InterruptedException
+     *             was interrupted
+     */
+    @Test(expected = IllegalStateException.class)
+    public void putAllShutdownISE() {
+        c = newCache(5);
+        assertTrue(c.isStarted());
+        c.shutdown();
+
+        // should fail
+        putAll(5, M1, M2);
+    }
+
     @Test
     public void testPutAllTimeout() {
-    // TODO add
+        clock.setTimestamp(10);
+        putAll(5, M1, M2);
+        assertEquals(15l, getEntry(M1).getExpirationTime());
+        assertEquals(15l, getEntry(M2).getExpirationTime());
+        putAll(10, M1);
+        assertEquals(20l, getEntry(M1).getExpirationTime());
+        assertEquals(15l, getEntry(M2).getExpirationTime());
     }
 
     @Test(expected = NullPointerException.class)

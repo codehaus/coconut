@@ -11,7 +11,10 @@ import static org.coconut.test.CollectionUtils.M5;
 
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.test.util.CacheEntryFilter;
+import org.coconut.cache.test.util.lifecycle.LifecycleFilter;
+import org.coconut.cache.test.util.managed.ManagedFilter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,14 +25,14 @@ import org.junit.Test;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 @SuppressWarnings("unchecked")
-public class ExpirationFilterBased extends AbstractExpirationTestBundle {
+public class ExpirationFilter extends AbstractExpirationTestBundle {
 
     private CacheEntryFilter f;
 
     @Before
     public void setUpCaches() {
         f = new CacheEntryFilter();
-        c = newCache(newConf().expiration().setExpirationFilter(f).c());
+        c = newCache(newConf().expiration().setExpirationFilter(f));
     }
 
     /**
@@ -39,7 +42,7 @@ public class ExpirationFilterBased extends AbstractExpirationTestBundle {
     public void testFilterGet() {
         put(M1);
         assertGet(M1);
-        f.setAccept(true);
+        f.setAccept(true);// All entries have expired
         assertNullGet(M1);
         f.assertLastEquals(M1);
     }
@@ -51,7 +54,7 @@ public class ExpirationFilterBased extends AbstractExpirationTestBundle {
     public void testFilterGetEntry() {
         put(M2);
         assertGetEntry(M2);
-        f.setAccept(true);
+        f.setAccept(true);// All entries have expired
         assertNullGet(M2);
         assertNull(c.getEntry(M2.getKey()));
     }
@@ -66,15 +69,20 @@ public class ExpirationFilterBased extends AbstractExpirationTestBundle {
         f.setAccept(true);
         assertNullGet(M3, M4);
         assertSize(1);
+        f.setAccept(false);
+        assertGet(M5);
+        assertSize(1);
+        f.setAccept(true);
         assertNullGet(M5);
         assertSize(0);
     }
 
     /**
-     * Tests that time based expiration still works even though a filter is
-     * defined.
+     * Tests that time based expiration still works even though a filter is defined.
      */
+    @Test
     public void testFilterAndTimeExpiration() {
+        c = newCache(newConf().setClock(clock).expiration().setExpirationFilter(f));
         put(M1, 5);
         put(M2, 7);
         incTime(5);
@@ -85,12 +93,13 @@ public class ExpirationFilterBased extends AbstractExpirationTestBundle {
     }
 
     /**
-     * Tests that default time based expiration still works even though a filter
-     * is defined.
+     * Tests that default time based expiration still works even though a filter is
+     * defined.
      */
+    @Test
     public void testFilterAndDefaultTimeExpiration() {
-        c = newCache(newConf().expiration().setExpirationFilter(f).c().setClock(clock).expiration()
-                .setDefaultTimeToLive(5, TimeUnit.NANOSECONDS).c());
+        c = newCache(newConf().setClock(clock).expiration().setExpirationFilter(f)
+                .setDefaultTimeToLive(5, TimeUnit.MILLISECONDS).c());
         put(M1);
         put(M2);
         assertGet(M1, M2);
@@ -98,5 +107,33 @@ public class ExpirationFilterBased extends AbstractExpirationTestBundle {
         assertNullGet(M1);
         f.setAccept(true);
         assertNullGet(M2);
+    }
+
+    /**
+     * Tests that a expiration filter implementing ManagedObject is managed.
+     */
+    @Test
+    public void managedObject() {
+        CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
+        cc.management().setEnabled(true);
+        ManagedFilter filter = new ManagedFilter();
+        c = newCache(cc.expiration().setExpirationFilter(filter).c());
+        prestart();
+        assertNotNull(filter.getManagedGroup());
+    }
+
+    /**
+     * Tests that a expiration filter implementing CacheLifecycle is attached to the
+     * cache's lifecycle.
+     */
+    @Test
+    public void lifecycle() {
+        CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
+        LifecycleFilter filter = new LifecycleFilter();
+        c = newCache(cc.expiration().setExpirationFilter(filter));
+        filter.assertNotStarted();
+        prestart();
+        filter.assertInStartedPhase();
+        filter.shutdownAndAssert(c);
     }
 }

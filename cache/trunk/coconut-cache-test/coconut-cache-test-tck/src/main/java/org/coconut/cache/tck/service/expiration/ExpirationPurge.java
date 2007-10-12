@@ -10,6 +10,9 @@ import static org.coconut.test.CollectionUtils.M3;
 import static org.coconut.test.CollectionUtils.M4;
 import static org.coconut.test.CollectionUtils.M5;
 
+import java.util.concurrent.TimeUnit;
+
+import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.test.util.CacheEntryFilter;
 import org.junit.Test;
 
@@ -98,4 +101,36 @@ public class ExpirationPurge extends AbstractExpirationTestBundle {
         purge();
         assertSize(0);
     }
+    
+    /**
+     * {@link CacheExpirationService#purgeExpired()} lazy starts the cache.
+     */
+    @Test
+    public void purgeLazyStart() {
+        c = newCache(0);
+        assertFalse(c.isStarted());
+        purge();
+        checkLazystart();
+    }
+
+    /**
+     * {@link CacheExpirationService#purgeExpired()} should not fail when cache is shutdown.
+     * 
+     * @throws InterruptedException
+     *             was interrupted
+     */
+    @Test
+    public void sizeShutdown() throws InterruptedException {
+        c = newCache(5);
+        assertTrue(c.isStarted());
+        c.shutdown();
+
+        // should not fail, but result is undefined until terminated
+        purge();
+
+        assertTrue(c.awaitTermination(1, TimeUnit.SECONDS));
+
+        purge();
+    }
+
 }

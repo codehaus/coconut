@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.test.CollectionUtils;
 
-class AbstractExpirationTestBundle extends AbstractCacheTCKTest {
+public class AbstractExpirationTestBundle extends AbstractCacheTCKTest {
 
     protected void putAll(long timeout, TimeUnit unit,
             Map.Entry<Integer, String>... entries) {
@@ -17,7 +17,7 @@ class AbstractExpirationTestBundle extends AbstractCacheTCKTest {
     }
 
     protected void putAll(long timeout, Map.Entry<Integer, String>... entries) {
-        putAll(timeout, TimeUnit.NANOSECONDS, entries);
+        putAll(timeout, TimeUnit.MILLISECONDS, entries);
     }
 
     protected String put(Map.Entry<Integer, String> e, long timeout, TimeUnit unit) {

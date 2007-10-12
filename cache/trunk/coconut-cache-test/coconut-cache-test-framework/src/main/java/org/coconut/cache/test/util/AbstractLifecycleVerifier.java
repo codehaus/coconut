@@ -1,6 +1,7 @@
 package org.coconut.cache.test.util;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.framework.Assert;
@@ -42,7 +43,20 @@ public class AbstractLifecycleVerifier implements CacheLifecycle {
         int state = step.get();
         Assert.assertTrue(state == 5 || state == 6);
     }
-
+    public void assertTerminatedPhase() {
+        int state = step.get();
+        Assert.assertTrue( state == 6);
+    }
+    public void shutdownAndAssert(Cache<?,?> c) {
+        c.shutdown();
+        assertShutdownOrTerminatedPhase();
+        try {
+            c.awaitTermination(5, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            throw new IllegalStateException(e);
+        }
+        assertTerminatedPhase();
+    }
 
     public void initialize(CacheConfiguration<?, ?> configuration) {
         Assert.assertEquals(0, step.getAndIncrement());

@@ -3,11 +3,6 @@
  */
 package org.coconut.cache.tck.core;
 
-import static org.coconut.test.CollectionUtils.M1;
-import static org.coconut.test.CollectionUtils.M4;
-import static org.coconut.test.CollectionUtils.M5;
-import static org.coconut.test.CollectionUtils.asList;
-
 import org.coconut.cache.Cache;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;
@@ -42,7 +37,7 @@ public class Put extends AbstractCacheTCKTest {
     }
 
     /**
-     * {@link Cache#containsKey()} should not fail when cache is shutdown.
+     * {@link Cache#containsKey()} should  fail when cache is shutdown.
      * 
      * @throws InterruptedException
      *             was interrupted

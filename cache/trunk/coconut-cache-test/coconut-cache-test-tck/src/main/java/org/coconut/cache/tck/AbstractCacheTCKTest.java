@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerInvocationHandler;
+import javax.management.ObjectName;
 
 import junit.framework.Assert;
 
@@ -33,7 +34,7 @@ import org.coconut.test.CollectionUtils;
 import org.junit.Before;
 
 /**
- * All Cache tests should 
+ * All Cache tests should
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -44,12 +45,15 @@ public class AbstractCacheTCKTest extends Assert {
     protected DeterministicClock clock;
 
     protected ThreadServiceTestHelper threadHelper;
-    
+
     @Before
     public void setupClock() {
         clock = new DeterministicClock();
     }
 
+    protected void prestart() {
+        c.size();
+    }
     protected Cache<Integer, String> newCache() {
         return newCache(0);
     }
@@ -106,6 +110,7 @@ public class AbstractCacheTCKTest extends Assert {
     protected void checkLazystart() {
         assertTrue(c.isStarted());
     }
+
     protected boolean containsKey(Map.Entry<Integer, String> e) {
         return c.containsKey(e.getKey());
     }
@@ -136,21 +141,27 @@ public class AbstractCacheTCKTest extends Assert {
     protected String put(Map.Entry<Integer, String> e) {
         return c.put(e.getKey(), e.getValue());
     }
+
     protected String replace(Map.Entry<Integer, String> e) {
         return c.replace(e.getKey(), e.getValue());
     }
+
     protected String replace(Integer key, String value) {
         return c.replace(key, value);
     }
+
     protected boolean replace(Integer key, String oldValue, String newValue) {
-        return c.replace(key, oldValue,newValue);
+        return c.replace(key, oldValue, newValue);
     }
+
     protected String putIfAbsent(Map.Entry<Integer, String> e) {
         return c.putIfAbsent(e.getKey(), e.getValue());
     }
+
     protected String putIfAbsent(Integer key, String value) {
         return c.putIfAbsent(key, value);
     }
+
     protected String put(Integer key, String value) {
         return c.put(key, value);
     }
@@ -182,7 +193,7 @@ public class AbstractCacheTCKTest extends Assert {
             assertNull(msg, peek(entry));
         }
     }
-    
+
     protected void assertNullPeek(Map.Entry<Integer, String>... e) {
         for (Map.Entry<Integer, String> entry : e) {
             assertNull(peek(entry));
@@ -225,10 +236,11 @@ public class AbstractCacheTCKTest extends Assert {
             assertEquals(entry.getValue(), CollectionUtils.getValue(entry.getKey()));
         }
     }
+
     protected String get(int key) {
         return c.get(key);
     }
-    
+
     protected String get(Map.Entry<Integer, String> e) {
         return c.get(e.getKey());
     }
@@ -305,9 +317,11 @@ public class AbstractCacheTCKTest extends Assert {
     protected final CacheEvictionService<Integer, String> eviction() {
         return c.getService(CacheEvictionService.class);
     }
+
     protected final CacheStatisticsService statistics() {
         return c.getService(CacheStatisticsService.class);
     }
+
     protected final CacheLoadingService<Integer, String> loading() {
         return c.getService(CacheLoadingService.class);
     }
@@ -319,7 +333,7 @@ public class AbstractCacheTCKTest extends Assert {
     protected final CacheServiceManagerService services() {
         return c.getService(CacheServiceManagerService.class);
     }
-    
+
     protected <T> T findMXBean(Class<T> clazz) {
         return findMXBean(ManagementFactory.getPlatformMBeanServer(), clazz);
     }
@@ -330,8 +344,10 @@ public class AbstractCacheTCKTest extends Assert {
         if (found.size() == 0) {
             throw new IllegalArgumentException("Did not find any service " + clazz);
         } else if (found.size() == 1) {
-            T proxy = MBeanServerInvocationHandler.newProxyInstance(server, found
-                    .iterator().next().getObjectName(), clazz, false);
+            ObjectName on = found.iterator().next().getObjectName();
+            //System.out.println(on);
+            T proxy = MBeanServerInvocationHandler.newProxyInstance(server, on, clazz,
+                    false);
             return proxy;
         } else {
             throw new IllegalArgumentException("Duplicate service " + clazz);
@@ -349,15 +365,15 @@ public class AbstractCacheTCKTest extends Assert {
             doFindMXBeans(col, mg, c);
         }
     }
-    
+
     protected void loadAndAwait(Map.Entry<Integer, String> e) {
         loading().load(e.getKey());
     }
-    
+
     public void loadAndAwait(Integer key) {
         loading().load(key);
     }
-    
+
     /**
      * Await all loads that currently active.
      */

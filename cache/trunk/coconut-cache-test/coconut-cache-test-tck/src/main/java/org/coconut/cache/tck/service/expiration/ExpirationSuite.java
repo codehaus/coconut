@@ -7,8 +7,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses( { ExpirationPurge.class, ExpirationFilterBased.class,
-        ExpirationMXBean.class, ExpirationPutWithTimeouts.class, ExpirationService.class,
+@Suite.SuiteClasses( { ExpirationFilter.class, ExpirationMXBean.class,
+        ExpirationPurge.class, ExpirationPutWithTimeouts.class, ExpirationService.class,
         ExpirationWithDefaultTimeout.class, ExpirationWithExplicitTimeout.class })
 public class ExpirationSuite {
 
