@@ -54,6 +54,7 @@ public class AbstractCacheTCKTest extends Assert {
     protected void prestart() {
         c.size();
     }
+
     protected Cache<Integer, String> newCache() {
         return newCache(0);
     }
@@ -87,6 +88,11 @@ public class AbstractCacheTCKTest extends Assert {
 
     protected Cache<Integer, String> newCache(CacheConfiguration<?, ?> conf) {
         return (Cache) conf.newCacheInstance(CacheTCKRunner.tt);
+    }
+
+    protected Cache<Integer, String> newCache(
+            AbstractCacheServiceConfiguration<?, ?> conf, int entries) {
+        return newCache(conf.c(), entries);
     }
 
     protected Cache<Integer, String> newCache(CacheConfiguration<?, ?> conf, int entries) {
@@ -345,7 +351,7 @@ public class AbstractCacheTCKTest extends Assert {
             throw new IllegalArgumentException("Did not find any service " + clazz);
         } else if (found.size() == 1) {
             ObjectName on = found.iterator().next().getObjectName();
-            //System.out.println(on);
+            // System.out.println(on);
             T proxy = MBeanServerInvocationHandler.newProxyInstance(server, on, clazz,
                     false);
             return proxy;

@@ -24,6 +24,6 @@ public class AbstractLoadingTestBundle extends AbstractCacheTCKTest {
     public void setupLoading() {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
         loader = new IntegerToStringLoader();
-        c = newCache(cc.loading().setLoader(loader).c());
+        c = newCache(cc.loading().setLoader(loader));
     }
 }

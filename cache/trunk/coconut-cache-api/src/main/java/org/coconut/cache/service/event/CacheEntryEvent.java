@@ -13,21 +13,12 @@ import org.coconut.cache.service.loading.CacheLoadingService;
  * significant change in its state. For example, when an entry has been removed or the
  * value of an entry has been changed.
  * <p>
- * Currently 4 standard events are supported.
+ * Currently 3 standard events are supported.
  * <ul>
  * <li>{@link ItemAdded}</li>
  * <li>{@link ItemRemoved}</li>
  * <li>{@link ItemUpdated}</li>
  * </ul>
- * <p>
- * Since most usages of a cache has a very high read/write ratio. {@link ItemAccessed} are
- * not posted with the default cache configuration. However, they can be enabled by using:
- * 
- * <pre>
- * CacheConfiguration&lt;?, ?&gt; conf = CacheConfiguration.create();
- * CacheEventConfiguration cec = conf.getServiceConfiguration(CacheEventConfiguration.class);
- * cec.include(CacheEntryEvent.ItemAccessed.class);
- * </pre>
  * 
  * @see CacheEventConfiguration
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -39,33 +30,7 @@ import org.coconut.cache.service.loading.CacheLoadingService;
  */
 @SuppressWarnings("hiding")
 public interface CacheEntryEvent<K, V> extends CacheEvent<K, V>,/* CacheEntry<K,V */
-        Map.Entry<K, V> {
-
-    /**
-     * This event indicates that an entry in the cache was accessed. This happens through
-     * either the {@link Cache#get(Object)} or {@link Cache#getAll(java.util.Collection)}
-     * method. Calling {@link Cache#peek(Object)} or {@link Cache#peekEntry(Object)} on a
-     * cache will not result in an ItemAccessed event being raised.
-     * <p>
-     * If the item is a miss ({@link #isHit()} returns false) and the cache succesfully
-     * loads a new cache entry. The {@link #getValue()} will return the new value.
-     * <p>
-     * NOTE: This event can be fairly expensive in terms of performance to subscribe for,
-     * as it is raised on every access to cache.
-     */
-    interface ItemAccessed<K, V> extends CacheEntryEvent<K, V> {
-        /** The unique name of this event. */
-        String NAME = "cacheitem.Accessed";
-
-        /**
-         * Whether or not the requested entry was already in the cache. If the entry was
-         * not in the cache {@link #getValue()} will return <code>null</code>. TODO
-         * what about if it is loaded??? isn't there a value then.
-         * 
-         * @return whether or not the requested entry was already in the cache
-         */
-        boolean isHit();
-    }
+Map.Entry<K, V> {
 
     /**
      * This event indicates that an entry has been added to the cache. This normally
@@ -138,6 +103,9 @@ public interface CacheEntryEvent<K, V> extends CacheEvent<K, V>,/* CacheEntry<K,
      * This event indicates that the value of an existing entry entry was changed.
      * Normally this happens when using the put() method or when an entry expires and the
      * cache automatically loads an updated value from the specified cache loader.
+     * <p>
+     * TODO: even if a given mapping is updated with the same value this event should
+     * still fire.
      */
     interface ItemUpdated<K, V> extends CacheEntryEvent<K, V> {
 

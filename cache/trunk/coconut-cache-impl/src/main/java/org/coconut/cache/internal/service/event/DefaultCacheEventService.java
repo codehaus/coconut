@@ -6,8 +6,6 @@ package org.coconut.cache.internal.service.event;
 import static org.coconut.cache.internal.service.event.InternalEntryEvent.added;
 import static org.coconut.cache.internal.service.event.InternalEntryEvent.evicted;
 import static org.coconut.cache.internal.service.event.InternalEntryEvent.expired;
-import static org.coconut.cache.internal.service.event.InternalEntryEvent.hit;
-import static org.coconut.cache.internal.service.event.InternalEntryEvent.miss;
 import static org.coconut.cache.internal.service.event.InternalEntryEvent.removed;
 import static org.coconut.cache.internal.service.event.InternalEntryEvent.updated;
 import static org.coconut.cache.internal.service.event.InternalEvent.cleared;
@@ -47,10 +45,6 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
 
     private final boolean doExpire;
 
-    private final boolean doHit;
-
-    private final boolean doMiss;
-
     private final boolean doRemove;
 
     private final boolean doUpdate;
@@ -69,8 +63,6 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
         isEnabled = co.isEnabled();
         this.manager = manager;
         this.offerable = eb;
-        this.doHit = co.isIncluded(CacheEntryEvent.ItemAccessed.class);
-        this.doMiss = doHit;
         this.doAdd = co.isIncluded(CacheEntryEvent.ItemAdded.class);
         this.doClear = co.isIncluded(CacheEvent.CacheCleared.class);
         this.doRemove = co.isIncluded(CacheEntryEvent.ItemRemoved.class);
@@ -84,7 +76,7 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
             long capacity, Collection<? extends CacheEntry<K, V>> entries) {
         if (entries != null && doRemove) {
             for (CacheEntry<K, V> entry : entries) {
-                removed(cache, entry);
+                removed(cache, entry, false);
             }
         }
         if (doClear) {
@@ -102,34 +94,9 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
     }
 
     /** {@inheritDoc} */
-    public void afterGet(Cache<K, V> cache, long started,
-            Collection<? extends CacheEntry<K, V>> evictedEntries, K key,
-            CacheEntry<K, V> prev, CacheEntry<K, V> newEntry, boolean isExpired) {
-        doEvictAll(cache, evictedEntries);
-        if (prev == null) {
-            if (doMiss) {
-                dispatch(miss(cache, key));
-            }
-            if (newEntry != null && doAdd) {
-                dispatch(added(cache, newEntry, true));
-            }
-        } else {
-            if (isExpired) {
-                if (doMiss) {
-                    dispatch(miss(cache, key));
-                }
-            } else {
-                if (doHit) {
-                    dispatch(hit(cache, prev));
-                }
-            }
-        }
-    }
-
-    /** {@inheritDoc} */
     public void afterPut(Cache<K, V> cache, long ignoreStarted,
-            Collection<? extends CacheEntry<K, V>> entries, CacheEntry<K, V> newEntry,
-            CacheEntry<K, V> prev) {
+            Collection<? extends CacheEntry<K, V>> entries, CacheEntry<K, V> prev,
+            CacheEntry<K, V> newEntry) {
         doEvictAll(cache, entries);
         processRemoved(cache, newEntry, prev);
     }
@@ -148,9 +115,29 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
     }
 
     /** {@inheritDoc} */
+    public void afterGet(Cache<K, V> cache, long started,
+            Collection<? extends CacheEntry<K, V>> evictedEntries, K key,
+            CacheEntry<K, V> prev, CacheEntry<K, V> newEntry, boolean isExpired) {
+        doEvictAll(cache, evictedEntries);
+        if (newEntry == null) {
+            if (isExpired && prev != null && doRemove) {
+                // removed expiration
+                dispatch(removed(cache, prev, true));
+            }
+        } else {
+            if (newEntry != prev && prev != null && doUpdate) {
+                dispatch(updated(cache, newEntry, prev.getValue(), true, isExpired));
+            }
+            if (prev == null && doAdd) {
+                dispatch(added(cache, newEntry, true));
+            }
+        }
+    }
+
+    /** {@inheritDoc} */
     public void afterRemove(Cache<K, V> cache, long ignoreStarted, CacheEntry<K, V> entry) {
         if (doRemove && entry != null) {
-            dispatch(removed(cache, entry));
+            dispatch(removed(cache, entry, false));
         }
     }
 
@@ -255,14 +242,14 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
             CacheEntry<K, V> prev) {
         if (prev == null) {
             if (newEntry != null && doAdd) {
-                dispatch(added(cache, newEntry, true));
+                dispatch(added(cache, newEntry, false));
             }
         } else if (newEntry == null) {
             if (doRemove) {
-                dispatch(removed(cache, prev));
+                dispatch(removed(cache, prev, false));
             }
         } else if (doUpdate) {
-            dispatch(updated(cache, newEntry, prev.getValue()));
+            dispatch(updated(cache, newEntry, prev.getValue(), false, false));
         }
     }
 

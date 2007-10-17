@@ -9,7 +9,10 @@ import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.RuntimeMBeanException;
 
+import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.loading.CacheLoadingMXBean;
+import org.coconut.cache.test.util.IntegerToStringLoader;
+import org.coconut.filter.Filter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -77,5 +80,29 @@ public class LoadingMXBean extends AbstractLoadingTestBundle {
         mxBean.forceLoadAll();
         assertEquals("B", c.peek(1));
         assertEquals("C", c.peek(2));
+    }
+
+    /**
+     * Tests load all.
+     */
+    @Test
+    public void testLoadAll() {
+        IntegerToStringLoader loader = new IntegerToStringLoader();
+        c = newCache(newConf().loading().setRefreshFilter(new RefreshFilter()).setLoader(
+                loader).c().management().setEnabled(true).setMBeanServer(mbs));
+        mxBean = findMXBean(mbs, CacheLoadingMXBean.class);
+        mxBean.loadAll();
+        assertEquals("A", c.get(1));
+        assertEquals("B", c.get(2));
+        loader.setBase(2);
+        mxBean.loadAll();
+        assertEquals("C", c.peek(1));
+        assertEquals("B", c.peek(2));
+    }
+
+    static class RefreshFilter implements Filter<CacheEntry<Integer, String>> {
+        public boolean accept(CacheEntry<Integer, String> element) {
+            return element.getKey().equals(1);
+        }
     }
 }

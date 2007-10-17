@@ -64,7 +64,7 @@ final class InternalEvent {
         }
 
         /** {@inheritDoc} */
-        public long getPreviousCapacity() {
+        public long getPreviousVolume() {
             return previousCapacity;
         }
 
@@ -83,7 +83,7 @@ final class InternalEvent {
         public boolean equals(CacheEvent.CacheCleared<K, V> event) {
             return cache.equals(event.getCache()) && getName() == event.getName()
                     && getPreviousSize() == event.getPreviousSize()
-                    && getPreviousCapacity() == event.getPreviousCapacity();
+                    && getPreviousVolume() == event.getPreviousVolume();
         }
 
         /** {@inheritDoc} */
@@ -96,7 +96,7 @@ final class InternalEvent {
         @Override
         public String toString() {
             return getName() + " [previousSize = " + getPreviousSize()
-                    + " , previousCapacity = " + getPreviousCapacity() + "]";
+                    + " , previousCapacity = " + getPreviousVolume() + "]";
         }
     }
 

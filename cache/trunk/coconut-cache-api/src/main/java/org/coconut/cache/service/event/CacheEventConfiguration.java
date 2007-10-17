@@ -58,10 +58,6 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
     /** the XML enabled tag. */
     private final static String XML_ENABLED_ATTRIBUTE = "enabled";
 
-    static {
-        DEFAULT_EXCLUDES.add(CacheEntryEvent.ItemAccessed.class);
-    }
-
     /** Whether or not this service is enabled. */
     private boolean enabled;
 

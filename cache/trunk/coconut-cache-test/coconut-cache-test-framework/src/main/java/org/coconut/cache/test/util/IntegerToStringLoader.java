@@ -33,6 +33,12 @@ public class IntegerToStringLoader implements CacheLoader<Integer, String> {
 
     private volatile int base;
 
+    private volatile boolean doReturnNull;
+
+    public void setDoReturnNull(boolean doReturnNull) {
+        this.doReturnNull = doReturnNull;
+    }
+
     public void setBase(int base) {
         this.base = base;
     }
@@ -40,6 +46,7 @@ public class IntegerToStringLoader implements CacheLoader<Integer, String> {
     public void incBase() {
         base++;
     }
+
     public long getNumberOfLoads() {
         return totalLoads.get();
     }
@@ -53,9 +60,7 @@ public class IntegerToStringLoader implements CacheLoader<Integer, String> {
         return latch;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String load(Integer key, AttributeMap ignore) throws Exception {
         latestKey = key;
         latestMap = ignore;
@@ -67,7 +72,7 @@ public class IntegerToStringLoader implements CacheLoader<Integer, String> {
         if (ignore != null && ignore.containsKey(RESULT_ATTRIBUTE_KEY)) {
             return (String) ignore.get(RESULT_ATTRIBUTE_KEY);
         }
-        if (1 <= key && key <= 5) {
+        if (1 <= key && key <= 5 && !doReturnNull) {
             return "" + (char) (key + 64 + base);
         } else {
             return null;

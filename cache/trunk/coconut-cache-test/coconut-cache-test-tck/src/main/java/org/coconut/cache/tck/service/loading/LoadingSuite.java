@@ -13,8 +13,8 @@ import org.junit.runners.Suite;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses( { ExplicitForcedLoading.class, ExplicitLoading.class,
-        ImplicitLoading.class, LoadingLazyStart.class, LoadingLifecycleIntegration.class,
-        LoadingManagementIntegration.class, LoadingMXBean.class, LoadingRefresh.class,
-        LoadingService.class })
+@Suite.SuiteClasses( { ExpirationWithCacheLoader.class, ExplicitForcedLoading.class,
+        ExplicitLoading.class, ImplicitLoading.class, LoadingLazyStart.class,
+        LoadingCacheLoader.class, LoadingMXBean.class, LoadingRefresh.class,
+        LoadingService.class, RefreshFilter.class })
 public class LoadingSuite {}

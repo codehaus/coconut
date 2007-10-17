@@ -6,7 +6,6 @@ package org.coconut.cache.internal.service.event;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.event.CacheEntryEvent;
-import org.coconut.cache.service.event.CacheEntryEvent.ItemAdded;
 import org.coconut.core.AttributeMap;
 
 /**
@@ -150,6 +149,8 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
             CacheEntryEvent.ItemUpdated<K, V> {
         private boolean isExpired;
 
+        private boolean isLoaded;
+
         private V previous;
 
         /**
@@ -157,9 +158,11 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
          * @param entry
          */
         ChangedEvent(Cache<K, V> cache, CacheEntry<K, V> entry, V previous,
-                boolean isExpired) {
+                boolean isExpired, boolean isLoaded) {
             super(cache, entry);
             this.previous = previous;
+            this.isExpired = isExpired;
+            this.isLoaded = isLoaded;
         }
 
         /** {@inheritDoc} */
@@ -179,113 +182,7 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
 
         /** {@inheritDoc} */
         public boolean isLoaded() {
-            return false;
-        }
-    }
-
-    static class HitEvent<K, V> extends InternalEntryEvent<K, V> implements
-            CacheEntryEvent.ItemAccessed<K, V> {
-        /**
-         * @param cache
-         * @param entry
-         */
-        HitEvent(Cache<K, V> cache, CacheEntry<K, V> entry) {
-            super(cache, entry);
-        }
-
-        /** {@inheritDoc} */
-        public String getName() {
-            return CacheEntryEvent.ItemAccessed.NAME;
-        }
-
-        /** {@inheritDoc} */
-        public boolean isHit() {
-            return true;
-        }
-    }
-
-    static class MissEvent<K, V> implements CacheEntryEvent.ItemAccessed<K, V> {
-        private final Cache<K, V> cache;
-
-        private final K key;
-
-        /**
-         * @param cache
-         * @param entry
-         */
-        MissEvent(Cache<K, V> cache, K key) {
-            this.cache = cache;
-            this.key = key;
-        }
-
-        /** {@inheritDoc} */
-        public AttributeMap getAttributes() {
-            throw new UnsupportedOperationException();
-        }
-
-        /** {@inheritDoc} */
-        public Cache<K, V> getCache() {
-            return cache;
-        }
-
-        /** {@inheritDoc} */
-        public double getCost() {
-            throw new UnsupportedOperationException();
-        }
-
-        /** {@inheritDoc} */
-        public long getCreationTime() {
-            throw new UnsupportedOperationException();
-        }
-
-        /** {@inheritDoc} */
-        public long getExpirationTime() {
-            throw new UnsupportedOperationException();
-        }
-
-        /** {@inheritDoc} */
-        public long getHits() {
-            return 0;
-        }
-
-        /** {@inheritDoc} */
-        public K getKey() {
-            return key;
-        }
-
-        /** {@inheritDoc} */
-        public long getLastAccessTime() {
-            throw new UnsupportedOperationException();
-        }
-
-        /** {@inheritDoc} */
-        public long getLastUpdateTime() {
-            throw new UnsupportedOperationException();
-        }
-
-        /** {@inheritDoc} */
-        public String getName() {
-            return CacheEntryEvent.ItemAccessed.NAME;
-        }
-
-        /** {@inheritDoc} */
-        public long getSize() {
-            throw new UnsupportedOperationException();
-        }
-
-        /** {@inheritDoc} */
-        public V getValue() {
-            return null;
-        }
-
-        /** {@inheritDoc} */
-        public boolean isHit() {
-            return false;
-        }
-
-        /** {@inheritDoc} */
-        public V setValue(V value) {
-            throw new UnsupportedOperationException();
+            return isLoaded;
         }
     }
 
@@ -315,8 +212,8 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
 
     }
 
-    static <K, V> CacheEntryEvent.ItemAdded<K, V> added(Cache<K, V> cache, CacheEntry<K, V> entry,
-            boolean isLoaded) {
+    static <K, V> CacheEntryEvent.ItemAdded<K, V> added(Cache<K, V> cache,
+            CacheEntry<K, V> entry, boolean isLoaded) {
         return new AddedEvent<K, V>(cache, entry, isLoaded);
     }
 
@@ -328,20 +225,21 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
         return new RemovedEvent<K, V>(cache, entry, true);
     }
 
-    static <K, V> CacheEntryEvent<K, V> hit(Cache<K, V> cache, CacheEntry<K, V> entry) {
-        return new HitEvent<K, V>(cache, entry);
-    }
+// static <K, V> CacheEntryEvent<K, V> hit(Cache<K, V> cache, CacheEntry<K, V> entry) {
+// return new HitEvent<K, V>(cache, entry);
+// }
+//
+// static <K, V> CacheEntryEvent<K, V> miss(Cache<K, V> cache, K key) {
+// return new MissEvent<K, V>(cache, key);
+// }
 
-    static <K, V> CacheEntryEvent<K, V> miss(Cache<K, V> cache, K key) {
-        return new MissEvent<K, V>(cache, key);
-    }
-
-    static <K, V> CacheEntryEvent<K, V> removed(Cache<K, V> cache, CacheEntry<K, V> entry) {
-        return new RemovedEvent<K, V>(cache, entry, false);
+    static <K, V> CacheEntryEvent<K, V> removed(Cache<K, V> cache,
+            CacheEntry<K, V> entry, boolean isExpired) {
+        return new RemovedEvent<K, V>(cache, entry, isExpired);
     }
 
     static <K, V> CacheEntryEvent<K, V> updated(Cache<K, V> cache,
-            CacheEntry<K, V> entry, V previous) {
-        return new ChangedEvent<K, V>(cache, entry, previous, false);
+            CacheEntry<K, V> entry, V previous, boolean isLoaded, boolean isExpired) {
+        return new ChangedEvent<K, V>(cache, entry, previous, isLoaded, isExpired);
     }
 }

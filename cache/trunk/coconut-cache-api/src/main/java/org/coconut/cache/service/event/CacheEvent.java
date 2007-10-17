@@ -61,6 +61,6 @@ public interface CacheEvent<K, V> {
          */
         int getPreviousSize();
         
-        long getPreviousCapacity();
+        long getPreviousVolume();
     }
 }

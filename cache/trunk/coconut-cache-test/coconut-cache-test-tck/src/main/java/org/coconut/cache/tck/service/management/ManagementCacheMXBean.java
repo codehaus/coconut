@@ -8,6 +8,8 @@ import static org.coconut.test.CollectionUtils.M2;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
+import javax.management.MBeanServerInvocationHandler;
+import javax.management.ObjectName;
 
 import org.coconut.cache.service.management.CacheMXBean;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
@@ -20,19 +22,18 @@ public class ManagementCacheMXBean extends AbstractCacheTCKTest {
 
     MBeanServer mbs;
 
-    //TODO
-    //We should test for a default objectname
-    //a.la. for cache named foo 
-    //ObjName=org.coconut.cache:name=343434, service=General
-    
     @Before
-    public void setup()  {
+    public void setup() throws Exception {
         mbs = MBeanServerFactory.createMBeanServer();
-        c = newCache(newConf().management().setEnabled(true).setMBeanServer(mbs).c());
-        mxBean = findMXBean(mbs, CacheMXBean.class);
+        c = newCache(newConf().setName("managementtest").management().setEnabled(true)
+                .setMBeanServer(mbs).c());
+        ObjectName on = new ObjectName("org.coconut.cache:name=managementtest,service="
+                + CacheMXBean.MANAGED_SERVICE_NAME);
+        prestart();
+        mxBean = MBeanServerInvocationHandler.newProxyInstance(mbs, on,
+                CacheMXBean.class, false);
     }
 
-    
     @Test
     public void getName() {
         c = newCache(newConf().setName("foo").management().setEnabled(true)

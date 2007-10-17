@@ -13,11 +13,24 @@ public class EventCacheCleared extends AbstractEventTestBundle {
     public void testCleared() throws Exception {
         c = newCache(INCLUDE_ALL_CONFIGURATION, 2);
         assertNotNull(subscribe(CacheEventFilters.CACHE_CLEARED_FILTER));
-        c.put(1, "B"); // sequenceid=1
-        c.put(5, "F"); // sequenceid=2
+        c.put(1, "B");
+        c.put(5, "F");
         c.clear();
         CacheEvent.CacheCleared<?, ?> cleared = consumeItem(c,
                 CacheEvent.CacheCleared.class);
         assertEquals(3, cleared.getPreviousSize());
+    }
+    
+    @Test
+    public void testClearedRemoved() throws Exception {
+        c = newCache(INCLUDE_ALL_CONFIGURATION, 2);
+        c.put(1, "B");
+        c.put(5, "F");
+        assertNotNull(subscribe(CacheEventFilters.CACHEEVENT_FILTER));
+        c.clear();
+        CacheEvent.CacheCleared<?, ?> cleared = consumeItem(c,
+                CacheEvent.CacheCleared.class);
+        assertEquals(3, cleared.getPreviousSize());
+        assertEquals(3, cleared.getPreviousVolume());
     }
 }

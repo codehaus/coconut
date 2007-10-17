@@ -368,7 +368,6 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         AbstractCacheEntry<K, V> prev = map.get(key);
         if (putOnlyIfAbsent && prev != null) {
             statistics.afterPut(this, started, null, prev, null);
-            eventService.afterPut(this, started, null, prev, null);
             return prev;
         }
         AbstractCacheEntry<K, V> e = entryFactory.createEntry(key, newValue, attributes,
@@ -376,8 +375,8 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         doPut(e);
         statistics.afterPut(this, started, Collections.EMPTY_LIST, prev, e
                 .getPolicyIndex() >= 0 ? e : null);
-        eventService.afterPut(this, started, trim(), e.getPolicyIndex() >= 0 ? e : null,
-                prev);
+        eventService.afterPut(this, started, trim(), prev, e.getPolicyIndex() >= 0 ? e
+                : null);
         return prev;
     }
 
@@ -419,7 +418,6 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         } else {
             if (prev == null || !oldValue.equals(prev.getValue())) {
                 statistics.afterPut(this, started, null, prev, null);
-                eventService.afterPut(this, started, null, prev, null);
                 return null;
             }
         }

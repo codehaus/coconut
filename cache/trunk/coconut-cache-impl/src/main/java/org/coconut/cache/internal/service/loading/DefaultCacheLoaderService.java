@@ -3,13 +3,10 @@
  */
 package org.coconut.cache.internal.service.loading;
 
-import java.beans.Expression;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.FutureTask;
 
@@ -271,5 +268,4 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
     public void loadAll() {
         cache.loadAll(AttributeMaps.EMPTY_MAP);
     }
-
 }

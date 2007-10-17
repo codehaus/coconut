@@ -12,9 +12,11 @@ import static org.coconut.test.CollectionUtils.M5;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheAttributes;
+import org.coconut.cache.CacheEntry;
 import org.coconut.cache.test.util.AsyncIntegerToStringLoader;
 import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.core.AttributeMap;
+import org.coconut.filter.Filter;
 import org.junit.Test;
 
 /**
@@ -145,6 +147,29 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
         waitAndAssertGet(M1, M2);
         assertEquals("AB3", get(M3));
         assertEquals("AB4", get(M4));
+    }
+    
+    /**
+     * Tests load all.
+     */
+    @Test
+    public void testLoadAll() {
+        IntegerToStringLoader loader = new IntegerToStringLoader();
+        c = newCache(newConf().loading().setRefreshFilter(new RefreshFilter()).setLoader(
+                loader));
+        loading().loadAll();
+        assertEquals("A", c.get(1));
+        assertEquals("B", c.get(2));
+        loader.setBase(2);
+        loading().loadAll();
+        assertEquals("C", c.peek(1));
+        assertEquals("B", c.peek(2));
+    }
+
+    static class RefreshFilter implements Filter<CacheEntry<Integer, String>> {
+        public boolean accept(CacheEntry<Integer, String> element) {
+            return element.getKey().equals(1);
+        }
     }
 
 }

@@ -3,12 +3,12 @@
  */
 package org.coconut.cache.tck.service.event;
 
-import org.coconut.cache.tck.service.event.integration.EventIntegrationSuite;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses( { EventServiceGeneral.class, EventEntryAdded.class,
-        EventEntryGet.class, EventEntryRemoved.class, EventEntryUpdated.class,
-        EventCacheCleared.class, EventIntegrationSuite.class })
+@Suite.SuiteClasses( { EventCacheCleared.class, EventGet.class, EventPut.class,
+        EventRemove.class, EventReplace.class, EventServiceEviction.class,
+        EventServiceExpiration.class, EventServiceGeneral.class,
+        EventServiceLoading.class })
 public class EventSuite {}

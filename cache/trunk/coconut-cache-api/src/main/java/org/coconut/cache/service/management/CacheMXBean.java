@@ -31,7 +31,7 @@ public interface CacheMXBean {
     /**
      * This is service name this interface will be registered under.
      */
-    final static String MANAGED_SERVICE_NAME = "General";
+    final static String MANAGED_SERVICE_NAME = "general";
 
     /**
      * Returns the current number of elements in the cache.

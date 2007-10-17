@@ -349,6 +349,7 @@ public final class CacheAttributes {
      *             refresh attribute
      * @see #setTimeToRefresh(AttributeMap, long, TimeUnit)
      * @see #TIME_TO_REFRESH_NS
+     * 
      */
     public static long getTimeToRefresh(AttributeMap attributes, TimeUnit unit,
             long defaultValue) {

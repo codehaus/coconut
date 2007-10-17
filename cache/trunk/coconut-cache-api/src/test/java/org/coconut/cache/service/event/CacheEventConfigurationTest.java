@@ -40,10 +40,11 @@ public class CacheEventConfigurationTest {
         conf = reloadService(conf);
         assertTrue(conf.isEnabled());
     }
+
     @Test
     public void testInitialIncludeExclude() throws Exception {
         assertTrue(conf.isIncluded(CacheEntryEvent.class));
-        assertFalse(conf.isIncluded(CacheEntryEvent.ItemAccessed.class));
+// assertFalse(conf.isIncluded(CacheEntryEvent.ItemAccessed.class));
         assertTrue(conf.isIncluded(CacheEntryEvent.ItemAdded.class));
         assertTrue(conf.isIncluded(CacheEntryEvent.ItemRemoved.class));
         assertTrue(conf.isIncluded(CacheEntryEvent.ItemUpdated.class));
@@ -53,7 +54,7 @@ public class CacheEventConfigurationTest {
         // assertTrue(conf.isIncluded(CacheEvent.CacheStatisticsReset.class));
         conf = reloadService(conf);
         assertTrue(conf.isIncluded(CacheEntryEvent.class));
-        assertFalse(conf.isIncluded(CacheEntryEvent.ItemAccessed.class));
+// assertFalse(conf.isIncluded(CacheEntryEvent.ItemAccessed.class));
         assertTrue(conf.isIncluded(CacheEntryEvent.ItemAdded.class));
         assertTrue(conf.isIncluded(CacheEntryEvent.ItemRemoved.class));
         assertTrue(conf.isIncluded(CacheEntryEvent.ItemUpdated.class));
@@ -67,14 +68,14 @@ public class CacheEventConfigurationTest {
     public void testIncludeExclude1() throws Exception {
         conf.exclude(CacheEvent.class);
         assertFalse(conf.isIncluded(CacheEntryEvent.class));
-        assertFalse(conf.isIncluded(CacheEntryEvent.ItemAccessed.class));
+// assertFalse(conf.isIncluded(CacheEntryEvent.ItemAccessed.class));
         assertFalse(conf.isIncluded(CacheEntryEvent.ItemUpdated.class));
 
         assertFalse(conf.isIncluded(CacheEvent.class));
         // assertFalse(conf.isIncluded(CacheEvent.CacheStatisticsReset.class));
         conf = reloadService(conf);
         assertFalse(conf.isIncluded(CacheEntryEvent.class));
-        assertFalse(conf.isIncluded(CacheEntryEvent.ItemAccessed.class));
+// assertFalse(conf.isIncluded(CacheEntryEvent.ItemAccessed.class));
         assertFalse(conf.isIncluded(CacheEntryEvent.ItemUpdated.class));
 
         assertFalse(conf.isIncluded(CacheEvent.class));
@@ -85,14 +86,14 @@ public class CacheEventConfigurationTest {
     public void testIncludeExclude2() throws Exception {
         conf.exclude(CacheEntryEvent.class);
         assertFalse(conf.isIncluded(CacheEntryEvent.class));
-        assertFalse(conf.isIncluded(CacheEntryEvent.ItemAccessed.class));
+//      assertFalse(conf.isIncluded(CacheEntryEvent.ItemAccessed.class));
         assertFalse(conf.isIncluded(CacheEntryEvent.ItemUpdated.class));
 
         assertTrue(conf.isIncluded(CacheEvent.class));
         // assertTrue(conf.isIncluded(CacheEvent.CacheStatisticsReset.class));
         conf = reloadService(conf);
         assertFalse(conf.isIncluded(CacheEntryEvent.class));
-        assertFalse(conf.isIncluded(CacheEntryEvent.ItemAccessed.class));
+// assertFalse(conf.isIncluded(CacheEntryEvent.ItemAccessed.class));
         assertFalse(conf.isIncluded(CacheEntryEvent.ItemUpdated.class));
 
         assertTrue(conf.isIncluded(CacheEvent.class));
@@ -104,14 +105,14 @@ public class CacheEventConfigurationTest {
         conf.exclude(CacheEvent.class);
         conf.include(CacheEntryEvent.class);
         assertTrue(conf.isIncluded(CacheEntryEvent.class));
-        assertTrue(conf.isIncluded(CacheEntryEvent.ItemAccessed.class));
+// assertTrue(conf.isIncluded(CacheEntryEvent.ItemAccessed.class));
         assertTrue(conf.isIncluded(CacheEntryEvent.ItemUpdated.class));
 
         assertFalse(conf.isIncluded(CacheEvent.class));
         // assertFalse(conf.isIncluded(CacheEvent.CacheStatisticsReset.class));
         conf = reloadService(conf);
         assertTrue(conf.isIncluded(CacheEntryEvent.class));
-        assertTrue(conf.isIncluded(CacheEntryEvent.ItemAccessed.class));
+// assertTrue(conf.isIncluded(CacheEntryEvent.ItemAccessed.class));
         assertTrue(conf.isIncluded(CacheEntryEvent.ItemUpdated.class));
 
         assertFalse(conf.isIncluded(CacheEvent.class));
@@ -121,17 +122,17 @@ public class CacheEventConfigurationTest {
     @Test
     public void testIncludeExclude4() throws Exception {
         conf.exclude(CacheEntryEvent.class);
-        conf.include(CacheEntryEvent.ItemAccessed.class);
+// conf.include(CacheEntryEvent.ItemAccessed.class);
 
         assertFalse(conf.isIncluded(CacheEntryEvent.class));
-        assertTrue(conf.isIncluded(CacheEntryEvent.ItemAccessed.class));
+// assertTrue(conf.isIncluded(CacheEntryEvent.ItemAccessed.class));
         assertFalse(conf.isIncluded(CacheEntryEvent.ItemUpdated.class));
 
         assertTrue(conf.isIncluded(CacheEvent.class));
         // assertTrue(conf.isIncluded(CacheEvent.CacheStatisticsReset.class));
         conf = reloadService(conf);
         assertFalse(conf.isIncluded(CacheEntryEvent.class));
-        assertTrue(conf.isIncluded(CacheEntryEvent.ItemAccessed.class));
+// assertTrue(conf.isIncluded(CacheEntryEvent.ItemAccessed.class));
         assertFalse(conf.isIncluded(CacheEntryEvent.ItemUpdated.class));
 
         assertTrue(conf.isIncluded(CacheEvent.class));

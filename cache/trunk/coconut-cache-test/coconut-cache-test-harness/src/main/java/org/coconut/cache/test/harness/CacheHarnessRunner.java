@@ -43,7 +43,7 @@ public class CacheHarnessRunner extends Runner {
     private void addTests(CompositeRunner runner) throws InitializationError {
         boolean isThreadSafe = klass.isAnnotationPresent(ThreadSafe.class);
 
-        composite.add(new TestClassRunner(HarnessTest.class));
+        composite.add(new TestClassRunner(org.coconut.cache.test.harness.sequential.Mix.class));
         // all cache implementations supports eviction
 
     }

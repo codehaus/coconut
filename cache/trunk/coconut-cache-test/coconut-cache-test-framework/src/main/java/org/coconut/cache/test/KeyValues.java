@@ -13,35 +13,43 @@ import java.util.Random;
  */
 public class KeyValues {
 
-	private final static long randomSeed = 2342723;
+    private final static long randomSeed = 2342723;
 
-	private final static int MAXIMUM_ELEMENTS = 100000;
+    private final static int MAXIMUM_ELEMENTS = 100000;
 
-	private final static String[] keys = new String[100000];
+    private final static String[] keys = new String[100000];
 
-	private final static Integer[] values;
+    private final static Integer[] values;
 
-	static {
-		Random rnd = new Random(randomSeed);
-		ArrayList<Integer> list = new ArrayList<Integer>(MAXIMUM_ELEMENTS);
-		
-		for (int i = 0; i < MAXIMUM_ELEMENTS; i++) {
-			list.add(i);
-		}
-		Collections.shuffle(list, rnd);
-		
-		values = list.toArray(new Integer[MAXIMUM_ELEMENTS]);
-		for (int i = 0; i < values.length; i++) {
-			keys[i] = Integer.toHexString(values[i]);
-		}
+    static {
+        Random rnd = new Random(randomSeed);
+        ArrayList<Integer> list = new ArrayList<Integer>(MAXIMUM_ELEMENTS);
 
-	}
+        for (int i = 0; i < MAXIMUM_ELEMENTS; i++) {
+            list.add(i);
+        }
+        Collections.shuffle(list, rnd);
 
-	public static Integer getInt(int i) {
-		return values[i];
-	}
+        values = list.toArray(new Integer[MAXIMUM_ELEMENTS]);
+        for (int i = 0; i < values.length; i++) {
+            keys[i] = Integer.toHexString(values[i]);
+        }
 
-	public static String getString(int i) {
-		return keys[i];
-	}
+    }
+
+    public static Integer getInt(int i) {
+        return values[i];
+    }
+
+    public static Integer getIntMod(long i) {
+        return values[(int) (Math.abs(i % MAXIMUM_ELEMENTS))] ;
+    }
+
+    public static String getString(int i) {
+        return keys[i];
+    }
+    
+    public static String getStringMod(int i) {
+        return keys[(int) (Math.abs(i % MAXIMUM_ELEMENTS))] ;
+    }
 }

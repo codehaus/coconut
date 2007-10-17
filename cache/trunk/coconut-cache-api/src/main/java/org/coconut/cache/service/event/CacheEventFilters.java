@@ -4,7 +4,6 @@
 package org.coconut.cache.service.event;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.service.event.CacheEntryEvent.ItemAccessed;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemAdded;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated;
@@ -35,10 +34,6 @@ public final class CacheEventFilters {
     @SuppressWarnings("unchecked")
     public static final Filter<?> CACHE_INSTANCE_FILTER = Filters.not(Filters
             .isType(CacheEntryEvent.class));
-
-    /** A filter that only accepts instances of ItemAccessed events. */
-    public final static Filter<?> CACHEENTRY_ACCESSED_FILTER = Filters
-            .isType(ItemAccessed.class);
 
     /**
      * A {@link org.coconut.filter.Filter} that only accepts instances of ItemUpdated
