@@ -9,6 +9,7 @@ import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.management.CacheMXBean;
 import org.coconut.cache.service.management.CacheManagementService;
+import org.coconut.cache.service.statistics.CacheStatisticsConfiguration;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.management.ManagedGroup;
 import org.junit.Test;
@@ -42,9 +43,10 @@ public class ManagementService extends AbstractCacheTCKTest {
         assertNotNull(management().getRoot());
         ManagedGroup mg = management().getRoot();
         assertNull(mg.getParent());
-        assertEquals(3, mg.getChildren().size());
+        assertEquals(4, mg.getChildren().size());
         assertNotNull(findChild(mg, CacheEvictionConfiguration.SERVICE_NAME));
         assertNotNull(findChild(mg, CacheExpirationConfiguration.SERVICE_NAME));
+        assertNotNull(findChild(mg, CacheStatisticsConfiguration.SERVICE_NAME));
         assertNotNull(findChild(mg, CacheMXBean.MANAGED_SERVICE_NAME));
     }
     

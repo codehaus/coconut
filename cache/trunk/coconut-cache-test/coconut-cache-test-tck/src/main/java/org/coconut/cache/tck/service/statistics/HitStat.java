@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;
 
@@ -33,26 +32,19 @@ import org.junit.Test;
 public class HitStat extends AbstractCacheTCKTest {
 
     /**
-     * Tests that reset hitstat works.
-     */
-    @SuppressWarnings("unchecked")
-    @Test
-    public void resetHitstat() {
-        c = newCache(1);
-        assertGet(M1); // hit
-        assertNullGet(M2); // miss
-        assertHitstat(0.5f, 1, 1, statistics().getHitStat());
-        statistics().resetStatistics();
-        assertHitstat(Float.NaN, 0, 0, statistics().getHitStat());
-    }
-
-    /**
-     * Tests that the initial hit stat is 0 misses, 0 hits and -1 for the ratio.
+     * Tests that getAll affects the hit statistics of a cache.
      */
     @Test
-    public void initialHitStat() {
-    // assertHitstat(Float.NaN, 0, 0, c0.getHitStat());
-    // assertHitstat(Float.NaN, 0, 0, c1.getHitStat());
+    public void getAllHitStat() {
+        c = newCache(0);
+        getAll(M1, M2, M3, M4);
+        assertHitstat(0, 0, 4);
+        c = newCache(2);
+        getAll(M1, M2, M3, M4);
+        assertHitstat(0.50f, 2, 2);
+        c = newCache(4);
+        getAll(M1, M2, M3, M4);
+        assertHitstat(1, 4, 0);
     }
 
     /**
@@ -61,13 +53,22 @@ public class HitStat extends AbstractCacheTCKTest {
     @Test
     public void getHitStat() {
         c = newCache(1);
-
         get(M2);
-        assertHitstat(0, 0, 1, statistics()
-                .getHitStat());
+        assertHitstat(0, 0, 1);
 
         get(M1);
-        assertHitstat(0.5f, 1, 1, statistics().getHitStat());
+        assertHitstat(0.5f, 1, 1);
+    }
+
+    /**
+     * Tests that the initial hit stat is 0 misses, 0 hits and -1 for the ratio.
+     */
+    @Test
+    public void initialHitStat() {
+        c = newCache(0);
+        assertHitstat(Float.NaN, 0, 0);
+        c = newCache(5);
+        assertHitstat(Float.NaN, 0, 0);
     }
 
     /**
@@ -78,23 +79,7 @@ public class HitStat extends AbstractCacheTCKTest {
         c = newCache(1);
         assertNotNull(peek(M1)); // hit
         assertNull(peek(M2)); // miss
-        assertHitstat(Float.NaN, 0, 0, statistics().getHitStat());
-    }
-
-    /**
-     * Tests that getAll affects the hit statistics of a cache.
-     */
-    @Test
-    public void getAllHitStat() {
-        c = newCache(0);
-        getAll(M1, M2, M3, M4);
-        // assertHitstat(0, 0, 4, c0.getHitStat());
-        c = newCache(2);
-        getAll(M1, M2, M3, M4);
-        // assertHitstat(0.50f, 2, 2, c2.getHitStat());
-        c = newCache(4);
-        getAll(M1, M2, M3, M4);
-        // assertHitstat(1, 4, 0, c4.getHitStat());
+        assertHitstat(Float.NaN, 0, 0);
     }
 
     /**
@@ -105,28 +90,77 @@ public class HitStat extends AbstractCacheTCKTest {
         c = newCache(1);
         get(M1);
         remove(M1);
-        assertHitstat(1f, 1, 0, statistics().getHitStat());
+        assertHitstat(1f, 1, 0);
+    }
+
+    @Test
+    public void replace() {
+    // TODO test replace methods
     }
 
     /**
-     * Tests that various methods does not affect the number of hits/misses.
+     * Tests that reset hitstat works.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void resetHitstat() {
+        c = newCache(1);
+        assertGet(M1); // hit
+        assertNullGet(M2); // miss
+        assertHitstat(0.5f, 1, 1);
+        statistics().resetStatistics();
+        assertHitstat(Float.NaN, 0, 0);
+    }
+
+    /**
+     * Test that the use of a caches entryset does not affect the cache statistics
+     * gathered.
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testEntrySet() {
+        c = newCache(4);
+        Set<Map.Entry<Integer, String>> entrySet = c.entrySet();
+        entrySet.contains(M1);
+        entrySet.contains(M5);
+        entrySet.equals(entrySet);
+        entrySet.isEmpty();
+        for (Iterator<Map.Entry<Integer, String>> iter = entrySet.iterator(); iter
+                .hasNext();) {
+            iter.next();
+        }
+        entrySet.remove(M4);
+        entrySet.removeAll(Arrays.asList(M4, M3));
+        entrySet.retainAll(Arrays.asList(M2, M3));
+        entrySet.size();
+        entrySet.toArray();
+        entrySet.toArray(new Map.Entry[4]);
+        entrySet.toString();
+        // assertHitstat(Float.NaN, 0, 0, c4.getHitStat());
+    }
+
+    /**
+     * Test that the use of a caches keyset does not affect the cache statistics gathered.
      */
     @Test
-    public void variousMethods() {
+    public void testKeySet() {
         c = newCache(4);
-        c.containsKey(M3.getKey());
-        c.containsKey(M5.getKey());
-
-        c.containsValue(M3.getValue());
-        c.containsValue(M5.getValue());
-
-        c.equals(c);
-
-        c.hashCode();
-        c.isEmpty();
-
-        c.size();
-        c.toString();
+        Set<Integer> keys = c.keySet();
+        keys.contains(M1.getKey());
+        keys.contains(M5.getKey());
+        keys.equals(keys);
+        keys.isEmpty();
+        keys.hashCode();
+        for (Iterator<Integer> iter = keys.iterator(); iter.hasNext();) {
+            iter.next();
+        }
+        keys.remove(M4.getKey());
+        keys.removeAll(Arrays.asList(M4.getKey(), M3.getKey()));
+        keys.retainAll(Arrays.asList(M2.getKey(), M3.getKey()));
+        keys.size();
+        keys.toArray();
+        keys.toArray(new Integer[4]);
+        keys.toString();
         // assertHitstat(Float.NaN, 0, 0, c4.getHitStat());
     }
 
@@ -157,60 +191,25 @@ public class HitStat extends AbstractCacheTCKTest {
     }
 
     /**
-     * Test that the use of a caches keyset does not affect the cache statistics gathered.
+     * Tests that various methods does not affect the number of hits/misses.
      */
     @Test
-    public void testKeySet() {
+    public void variousMethods() {
         c = newCache(4);
-        Set<Integer> keys = c.keySet();
-        keys.contains(M1.getKey());
-        keys.contains(M5.getKey());
-        keys.equals(keys);
-        keys.isEmpty();
-        keys.hashCode();
-        for (Iterator<Integer> iter = keys.iterator(); iter.hasNext();) {
-            iter.next();
-        }
-        keys.remove(M4.getKey());
-        keys.removeAll(Arrays.asList(M4.getKey(), M3.getKey()));
-        keys.retainAll(Arrays.asList(M2.getKey(), M3.getKey()));
-        keys.size();
-        keys.toArray();
-        keys.toArray(new Integer[4]);
-        keys.toString();
-        // assertHitstat(Float.NaN, 0, 0, c4.getHitStat());
-    }
+        c.containsKey(M3.getKey());
+        c.containsKey(M5.getKey());
 
-    /**
-     * Test that the use of a caches entryset does not affect the cache statistics
-     * gathered.
-     */
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testEntrySet() {
-        c = newCache(4);
-        Set<Map.Entry<Integer, String>> entrySet = c.entrySet();
-        entrySet.contains(M1);
-        entrySet.contains(M5);
-        entrySet.equals(entrySet);
-        entrySet.isEmpty();
-        for (Iterator<Map.Entry<Integer, String>> iter = entrySet.iterator(); iter
-                .hasNext();) {
-            iter.next();
-        }
-        entrySet.remove(M4);
-        entrySet.removeAll(Arrays.asList(M4, M3));
-        entrySet.retainAll(Arrays.asList(M2, M3));
-        entrySet.size();
-        entrySet.toArray();
-        entrySet.toArray(new Map.Entry[4]);
-        entrySet.toString();
-        // assertHitstat(Float.NaN, 0, 0, c4.getHitStat());
-    }
+        c.containsValue(M3.getValue());
+        c.containsValue(M5.getValue());
 
-    @Test
-    public void replace() {
-    // TODO test replace methods
+        c.equals(c);
+
+        c.hashCode();
+        c.isEmpty();
+
+        c.size();
+        c.toString();
+        // assertHitstat(Float.NaN, 0, 0, c4.getHitStat());
     }
 
 }

@@ -59,7 +59,7 @@ public class AbstractCacheTCKTest extends Assert {
         return newCache(0);
     }
 
-    protected final Cache<Integer, String> newCache(int entries) {
+    protected Cache<Integer, String> newCache(int entries) {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
         cc.setClock(clock);
         Cache<Integer, String> c = cc.newCacheInstance(CacheTCKRunner.tt);
@@ -296,7 +296,6 @@ public class AbstractCacheTCKTest extends Assert {
     protected void incTime(int amount) {
         clock.incrementTimestamp(amount);
     }
-
     /**
      * Assert method for hit statistics.
      * 
@@ -306,11 +305,9 @@ public class AbstractCacheTCKTest extends Assert {
      *            the expected number of hits
      * @param misses
      *            the expected number of misses
-     * @param hitstat
-     *            the HitStat to compare against
      */
-    protected static void assertHitstat(float ratio, long hits, long misses,
-            CacheHitStat hitstat) {
+    protected void assertHitstat(float ratio, long hits, long misses) {
+        CacheHitStat hitstat = statistics().getHitStat();
         Assert.assertEquals(ratio, hitstat.getHitRatio(), 0.0001);
         Assert.assertEquals(hits, hitstat.getNumberOfHits());
         Assert.assertEquals(misses, hitstat.getNumberOfMisses());

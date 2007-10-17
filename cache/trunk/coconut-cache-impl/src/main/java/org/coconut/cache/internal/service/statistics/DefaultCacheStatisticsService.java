@@ -16,9 +16,11 @@ import org.coconut.cache.internal.service.servicemanager.CacheServiceManager;
 import org.coconut.cache.internal.service.util.Resources;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.statistics.CacheHitStat;
+import org.coconut.cache.service.statistics.CacheStatisticsConfiguration;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.core.Clock;
 import org.coconut.management.ManagedGroup;
+import org.coconut.management.ManagedObject;
 import org.coconut.management.annotation.ManagedAttribute;
 
 /**
@@ -32,7 +34,7 @@ import org.coconut.management.annotation.ManagedAttribute;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLifecycle
-        implements CacheStatisticsService {
+        implements CacheStatisticsService, ManagedObject {
 
     // number of loads, loaded elements, number of queries,
     // number of added, number of new elements
@@ -179,6 +181,13 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
                 getDesc(ENTRY_REMOVE_COUNTER));
         entryRemoveTime = new LongSamplingCounter(ENTRY_REMOVE_TIMER,
                 getDesc(ENTRY_REMOVE_TIMER));
+    }
+
+    /** {@inheritDoc} */
+    public void manage(ManagedGroup parent) {
+        ManagedGroup g = parent.addChild(CacheStatisticsConfiguration.SERVICE_NAME,
+                "Cache Statistics attributes and operations");
+        g.add(StatisticsUtils.wrapMXBean(this));
     }
 
     public void addTo(ManagedGroup dg) {

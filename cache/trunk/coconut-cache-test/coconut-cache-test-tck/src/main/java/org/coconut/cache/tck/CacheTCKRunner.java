@@ -24,6 +24,7 @@ import org.coconut.cache.tck.core.CoreSuite;
 import org.coconut.cache.tck.lifecycle.LifecycleSuite;
 import org.coconut.cache.tck.service.event.EventSuite;
 import org.coconut.cache.tck.service.eviction.EvictionSuite;
+import org.coconut.cache.tck.service.exceptionhandling.ExceptionHandlingSuite;
 import org.coconut.cache.tck.service.expiration.ExpirationSuite;
 import org.coconut.cache.tck.service.loading.LoadingSuite;
 import org.coconut.cache.tck.service.management.ManagementSuite;
@@ -112,6 +113,7 @@ public class CacheTCKRunner extends Runner {
         runner.add(new Suite(CacheEntrySuite.class));
         runner.add(new Suite(CoreSuite.class));
         runner.add(new Suite(LifecycleSuite.class));
+        runner.add(new Suite(ExceptionHandlingSuite.class));
         if (services.contains(CacheEventService.class)) {
             runner.add(new Suite(EventSuite.class));
         }

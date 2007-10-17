@@ -4,6 +4,7 @@ import org.coconut.cache.service.statistics.CacheHitStat;
 import org.coconut.cache.service.statistics.CacheStatisticsMXBean;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.management.annotation.ManagedAttribute;
+import org.coconut.management.annotation.ManagedOperation;
 
 /**
  * Various utility classes for statistics service implementation.
@@ -15,6 +16,17 @@ import org.coconut.management.annotation.ManagedAttribute;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class StatisticsUtils {
+
+    /**
+     * Wraps a CacheLoadingService in a CacheLoadingMXBean.
+     * 
+     * @param service
+     *            the CacheLoadingService to wrap
+     * @return the wrapped CacheLoadingMXBean
+     */
+    public static CacheStatisticsMXBean wrapMXBean(CacheStatisticsService service) {
+        return new DelegatedCacheStatisticsMXBean(service);
+    }
 
     /**
      * A wrapper class that exposes an ExecutorService as a CacheExpirationMXBean.
@@ -56,7 +68,7 @@ public class StatisticsUtils {
         }
 
         /** {@inheritDoc} */
-        @ManagedAttribute(description = "Resets the cache statistics")
+        @ManagedOperation(description = "Resets the cache statistics")
         public void resetStatistics() {
             service.resetStatistics();
         }
