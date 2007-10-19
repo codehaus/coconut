@@ -41,7 +41,7 @@ public class EntryMapTest {
 
     @Test
     public void testNotsa() {
-        EntryMap<Integer, String> s = new EntryMap<Integer, String>(false);
+        EntryMap<Integer, String> s = new EntryMap<Integer, String>(null,false);
         s.put(new EntryStub(-348653132, "a"));
         s.put(new EntryStub(772636595, "b"));
         AbstractCacheEntry<?,?> ac1 = s.remove(-348653132);
@@ -51,7 +51,7 @@ public class EntryMapTest {
     }
 
     public boolean testNots() {
-        EntryMap<Integer, String> s = new EntryMap<Integer, String>(false);
+        EntryMap<Integer, String> s = new EntryMap<Integer, String>(null,false);
         Random r = new Random();
         ArrayList<Integer> al = new ArrayList<Integer>();
         for (int i = 0; i < 30; i++) {

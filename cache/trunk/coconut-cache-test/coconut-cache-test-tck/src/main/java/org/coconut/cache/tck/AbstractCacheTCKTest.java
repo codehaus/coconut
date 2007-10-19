@@ -143,7 +143,15 @@ public class AbstractCacheTCKTest extends Assert {
         }
         return new ArrayList<Map.Entry<Integer, String>>(c.entrySet());
     }
-
+    protected Collection<Map.Entry<Integer, String>> putAll(int from, int to) {
+        Map<Integer,String> m=new HashMap<Integer,String>();
+        for (int i = from; i <= to; i++) {
+            m.put(i, "" + (char) (i + 64));
+        }
+        c.putAll(m);
+        return new ArrayList<Map.Entry<Integer, String>>(c.entrySet());
+    }
+    
     protected String put(Map.Entry<Integer, String> e) {
         return c.put(e.getKey(), e.getValue());
     }

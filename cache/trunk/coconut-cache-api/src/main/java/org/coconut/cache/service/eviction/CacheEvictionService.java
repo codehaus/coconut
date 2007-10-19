@@ -34,11 +34,12 @@ import org.coconut.cache.CacheServices;
  */
 public interface CacheEvictionService<K, V> {
 
-
     /**
      * Keeps evicting entries until the size of the cache is equal to the specified size.
      * If the specified size is greater then the current size of the cache no action is
      * taken.
+     * <p>
+     * If the cache has been shutdown calls to this method is ignored.
      * 
      * @param size
      *            the number of elements to trim the cache down to
@@ -51,6 +52,8 @@ public interface CacheEvictionService<K, V> {
      * Keeps evicting entries until the volume of the cache is equal to the specified
      * volume. If the specified volume is greater then the current volume no action is
      * taken.
+     * <p>
+     * If the cache has been shutdown calls to this method is ignored.
      * 
      * @param volume
      *            the volume to trim the cache down to

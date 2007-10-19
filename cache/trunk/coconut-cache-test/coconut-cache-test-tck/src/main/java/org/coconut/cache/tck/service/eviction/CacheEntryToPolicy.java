@@ -27,7 +27,7 @@ public class CacheEntryToPolicy extends AbstractCacheTCKTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testIsCacheEntry() throws InterruptedException {
+    public void isCacheEntry() throws InterruptedException {
         c = newCache(newConf().eviction().setPolicy(new PolicyMock()).setMaximumSize(5)
                 .c());
 
@@ -43,12 +43,10 @@ public class CacheEntryToPolicy extends AbstractCacheTCKTest {
 
     @SuppressWarnings( { "serial", "unchecked" })
     class PolicyMock extends LRUPolicy {
-
         @Override
         public int add(Object data) {
             q.add(data);
             return super.add(data);
         }
-
     }
 }

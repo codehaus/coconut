@@ -52,4 +52,7 @@ public interface InternalCacheSupport<K, V> {
     void loadAll(AttributeMap attributes);
     
     void purgeExpired();
+    
+    void checkRunning(String operation);
+    void checkRunning(String operation, boolean shutdown);
 }

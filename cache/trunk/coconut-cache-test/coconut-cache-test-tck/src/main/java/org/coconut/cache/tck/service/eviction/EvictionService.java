@@ -94,4 +94,12 @@ public class EvictionService extends AbstractCacheTCKTest {
     public void trimToSizeIAE() {
         eviction().trimToSize(-1);
     }
+    
+    /**
+     * Tests trimToVolume IllegalArgumentException.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void trimToVolumeIAE() {
+        eviction().trimToVolume(-1);
+    }
 }

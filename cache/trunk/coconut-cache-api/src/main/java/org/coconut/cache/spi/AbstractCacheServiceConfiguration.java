@@ -120,7 +120,9 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
      * @throws Exception
      *             if the configuration could not be properly read
      */
-    protected abstract void fromXML(Element element) throws Exception;
+    protected void fromXML(Element element) throws Exception {
+        
+    }
 
     /**
      * @return the ResourceBundle that is used by this configuration, or <code>null</code>
@@ -165,7 +167,9 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
      * @throws Exception
      *             this configuration could not be probably saved
      */
-    protected abstract void toXML(Document doc, Element parent) throws Exception;
+    protected void toXML(Document doc, Element parent) throws Exception {
+        
+    }
 
     /**
      * Sets the parent cache configuration which is available when calling {@link #c()}.

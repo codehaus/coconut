@@ -3,16 +3,19 @@
  */
 package org.coconut.cache.tck.service.event;
 
-import static org.coconut.cache.service.event.CacheEventFilters.CACHEENTRY_REMOVED_FILTER;
+import static org.coconut.cache.service.event.CacheEventFilters.*;
 import static org.coconut.cache.service.event.CacheEventFilters.CACHEENTRY_UPDATED_FILTER;
 import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M2;
 import static org.coconut.test.CollectionUtils.M3;
+import static org.coconut.test.CollectionUtils.M4;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
+import org.coconut.cache.service.event.CacheEntryEvent.*;
 import org.coconut.cache.tck.service.event.AbstractEventTestBundle;
 import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.test.CollectionUtils;
@@ -37,10 +40,8 @@ public class EventServiceExpiration extends AbstractEventTestBundle {
     public void itemRemovedExpired() throws Exception {
         c = newCache(newConf().setClock(clock).event().setEnabled(true));
         subscribe(CACHEENTRY_REMOVED_FILTER);
-        expiration().put(M1.getKey(), M1.getValue(), 1,
-                TimeUnit.MILLISECONDS);
-        expiration().putAll(CollectionUtils.asMap(M2, M3),
-                2, TimeUnit.MILLISECONDS);
+        expiration().put(M1.getKey(), M1.getValue(), 1, TimeUnit.MILLISECONDS);
+        expiration().putAll(CollectionUtils.asMap(M2, M3), 2, TimeUnit.MILLISECONDS);
 
         clock.incrementTimestamp();
         expiration().purgeExpired();
@@ -52,39 +53,36 @@ public class EventServiceExpiration extends AbstractEventTestBundle {
         clock.incrementTimestamp(1);
         expiration().purgeExpired();
 
-        r = consumeItem(ItemRemoved.class, M2);
-        assertTrue(r.hasExpired());
-        r = consumeItem(ItemRemoved.class, M3);
-        assertTrue(r.hasExpired());
+        Collection<ItemRemoved> removed = consumeItems(ItemRemoved.class, M3, M2);
+        for (ItemRemoved i : removed) {
+            assertTrue(i.hasExpired());
+        }
+
     }
-    
 
     @Test
     public void itemUpdatedExpiredWithLoading() throws Exception {
         c = newCache(newConf().setClock(clock).loading().setLoader(
                 new IntegerToStringLoader()).c().event().setEnabled(true));
-        subscribe(CACHEENTRY_UPDATED_FILTER);
-        expiration().put(M1.getKey(), M1.getValue(), 1,
-                TimeUnit.NANOSECONDS);
-        expiration().putAll(CollectionUtils.asMap(M2, M3),
-                3, TimeUnit.NANOSECONDS);
+        expiration().put(M1.getKey(), M1.getValue(), 1, TimeUnit.MILLISECONDS);
+        expiration().putAll(CollectionUtils.asMap(M2, M3), 3, TimeUnit.MILLISECONDS);
+        subscribe(CACHEENTRYEVENT_FILTER);
+        clock.incrementTimestamp(2);
+        assertEquals(3, c.size());
 
-        clock.incrementRelativeTime(2);
-        // TODO evict loads new values???
-        // most caches will probably have background loading.
-        // evict will behave as loadAll()??????
-        // in this way we can support both
+        c.getAll(Arrays.asList(M1.getKey(), M2.getKey(), M3.getKey()));
+        ItemUpdated<?, ?> r = consumeItem(ItemUpdated.class, M1);
+        assertTrue(r.hasExpired());
+        assertTrue(r.isLoaded());
 
-        // assertEquals(3, c.size());
-        // ItemRemoved<?, ?> r = consumeItem(c, ItemRemoved.class, M1);
-        // assertTrue(r.hasExpired());
-        //
-        // clock.incrementRelativeTime(2);
-        // c.evict();
-        // r = consumeItem(c, ItemRemoved.class, M2);
-        // assertTrue(r.hasExpired());
-        // r = consumeItem(c, ItemRemoved.class, M3);
-        // assertTrue(r.hasExpired());
+        clock.incrementTimestamp(2);
+        c.getAll(Arrays.asList(M1.getKey(), M2.getKey(), M3.getKey()));
+
+        Collection<ItemUpdated> removed = consumeItems(ItemUpdated.class, M2, M3);
+        for (ItemUpdated i : removed) {
+            assertTrue(i.hasExpired());
+            assertTrue(i.isLoaded());
+        }
 
     }
 }

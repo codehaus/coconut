@@ -66,7 +66,7 @@ public class ContainsKey extends AbstractCacheTCKTest {
 
         assertTrue(c.awaitTermination(1, TimeUnit.SECONDS));
 
-        boolean containsKey = c.containsKey("A");
+        boolean containsKey = c.containsKey(1);
         assertFalse(containsKey);// cache should be empty
     }
 

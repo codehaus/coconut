@@ -14,6 +14,8 @@ import org.coconut.cache.CacheEntry;
  */
 public interface CacheStatisticsService {
 
+    // TODO IllegalStateException or ignore calls to this method??
+    // TODO force statup?
     /**
      * Resets the hit ratio.
      * <p>

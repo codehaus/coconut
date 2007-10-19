@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.service.InternalCacheSupport;
 
 /**
  * This class is partly adopted from ConcurrentHashMap.
@@ -27,21 +28,21 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
     /* ---------------- Constants -------------- */
 
     /**
-     * The default initial capacity for this table, used when not otherwise
-     * specified in a constructor.
+     * The default initial capacity for this table, used when not otherwise specified in a
+     * constructor.
      */
     static final int DEFAULT_INITIAL_CAPACITY = 16;
 
     /**
-     * The default load factor for this table, used when not otherwise specified
-     * in a constructor.
+     * The default load factor for this table, used when not otherwise specified in a
+     * constructor.
      */
     static final float DEFAULT_LOAD_FACTOR = 0.75f;
 
     /**
-     * The maximum capacity, used if a higher value is implicitly specified by
-     * either of the constructors with arguments. MUST be a power of two <= 1<<30
-     * to ensure that entries are indexable using ints.
+     * The maximum capacity, used if a higher value is implicitly specified by either of
+     * the constructors with arguments. MUST be a power of two <= 1<<30 to ensure that
+     * entries are indexable using ints.
      */
     static final int MAXIMUM_CAPACITY = 1 << 30;
 
@@ -58,8 +59,8 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
     final float loadFactor;
 
     /**
-     * Number of updates that alter the size of the table. This is used during
-     * bulk-read methods to make sure they see a consistent snapshot.
+     * Number of updates that alter the size of the table. This is used during bulk-read
+     * methods to make sure they see a consistent snapshot.
      */
     int modCount;
 
@@ -71,8 +72,8 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
     long capacity;
 
     /**
-     * The table is rehashed when its size exceeds this threshold. (The value of
-     * this field is always (int)(capacity * loadFactor).)
+     * The table is rehashed when its size exceeds this threshold. (The value of this
+     * field is always (int)(capacity * loadFactor).)
      */
     int threshold;
 
@@ -84,47 +85,46 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
 
     private final boolean isThreadSafe;
 
+    private final InternalCacheSupport<K, V> ics;
+
     // Collection<AbstractCacheEntry<K, V>> entries;
     /**
-     * Creates a new, empty map with a default initial capacity, and load
-     * factor.
+     * Creates a new, empty map with a default initial capacity, and load factor.
      */
-    public EntryMap(boolean isThreadSafe) {
-        this(isThreadSafe, DEFAULT_INITIAL_CAPACITY);
+    public EntryMap(InternalCacheSupport<K, V> ics, boolean isThreadSafe) {
+        this(ics, isThreadSafe, DEFAULT_INITIAL_CAPACITY);
     }
 
-
-
     /**
-     * Creates a new, empty map with the specified initial capacity, and with
-     * default load factor.
+     * Creates a new, empty map with the specified initial capacity, and with default load
+     * factor.
      * 
      * @param initialCapacity
-     *            the initial capacity. The implementation performs internal
-     *            sizing to accommodate this many elements.
+     *            the initial capacity. The implementation performs internal sizing to
+     *            accommodate this many elements.
      * @throws IllegalArgumentException
      *             if the initial capacity of elements is negative.
      */
-    public EntryMap(boolean isThreadSafe, int initialCapacity) {
-        this(isThreadSafe, initialCapacity, DEFAULT_LOAD_FACTOR);
+    public EntryMap(InternalCacheSupport<K, V> ics, boolean isThreadSafe,
+            int initialCapacity) {
+        this(ics, isThreadSafe, initialCapacity, DEFAULT_LOAD_FACTOR);
     }
 
     /**
-     * Creates a new, empty map with the specified initial capacity, and load
-     * factor.
+     * Creates a new, empty map with the specified initial capacity, and load factor.
      * 
      * @param initialCapacity
-     *            the initial capacity. The implementation performs internal
-     *            sizing to accommodate this many elements.
+     *            the initial capacity. The implementation performs internal sizing to
+     *            accommodate this many elements.
      * @param loadFactor
-     *            the load factor threshold, used to control resizing. Resizing
-     *            may be performed when the average number of elements per bin
-     *            exceeds this threshold.
+     *            the load factor threshold, used to control resizing. Resizing may be
+     *            performed when the average number of elements per bin exceeds this
+     *            threshold.
      * @throws IllegalArgumentException
-     *             if the initial capacity is negative or the load factor is
-     *             nonpositive.
+     *             if the initial capacity is negative or the load factor is nonpositive.
      */
-    public EntryMap(boolean isThreadSafe, int initialCapacity, float loadFactor) {
+    public EntryMap(InternalCacheSupport<K, V> ics, boolean isThreadSafe,
+            int initialCapacity, float loadFactor) {
         if (initialCapacity < 0) {
             throw new IllegalArgumentException("initialCapacity must be >=0, was "
                     + initialCapacity);
@@ -136,21 +136,20 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
         if (initialCapacity > MAXIMUM_CAPACITY) {
             initialCapacity = MAXIMUM_CAPACITY;
         }
-
+        this.ics = ics;
         this.loadFactor = loadFactor;
         threshold = (int) (16 * loadFactor);
         table = new AbstractCacheEntry[16];
         this.isThreadSafe = isThreadSafe;
     }
 
-    
     /* ---------------- Small Utilities -------------- */
 
     /**
-     * Applies a supplemental hash function to a given hashCode, which defends
-     * against poor quality hash functions. This is critical because this class
-     * uses power-of-two length hash tables, that otherwise encounter collisions
-     * for hashCodes that do not differ in lower bits.
+     * Applies a supplemental hash function to a given hashCode, which defends against
+     * poor quality hash functions. This is critical because this class uses power-of-two
+     * length hash tables, that otherwise encounter collisions for hashCodes that do not
+     * differ in lower bits.
      */
     static int hash(int h) {
         // This function ensures that hashCodes that differ only by
@@ -177,7 +176,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
      * Return properly casted first entry of bin for given hash.
      */
     private AbstractCacheEntry<K, V> getFirst(int hash) {
-        AbstractCacheEntry<?,?>[] tab = table;
+        AbstractCacheEntry<?, ?>[] tab = table;
         return (AbstractCacheEntry<K, V>) tab[hash & (tab.length - 1)];
     }
 
@@ -260,8 +259,8 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
 
     public AbstractCacheEntry<K, V> get(Object key) {
         // DONE
-        int hash = hash(key.hashCode());
         if (size != 0) {
+            int hash = hash(key.hashCode());
             AbstractCacheEntry<K, V> e = getFirst(hash);
             while (e != null) {
                 if (e.getHash() == hash && key.equals(e.getKey())) {
@@ -283,10 +282,10 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
     public Set<K> keySet(ConcurrentMap<K, V> cache) {
         Set<K> ks = keySet;
         if (isThreadSafe) {
-            return (ks != null) ? ks : (keySet = new KeySet<K, V>(cache, this));
-        } else {
             return (ks != null) ? ks
                     : (keySet = new KeySetSynchronized<K, V>(cache, this));
+        } else {
+            return (ks != null) ? ks : (keySet = new KeySet<K, V>(cache, this));
         }
     }
 
@@ -380,10 +379,10 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
     public Collection<V> values(Map<K, V> cache) {
         Collection<V> vs = values;
         if (isThreadSafe) {
-            return (vs != null) ? vs : (values = new Values<K, V>(cache, this));
-        } else {
             return (vs != null) ? vs
                     : (values = new ValuesSynchronized<K, V>(cache, this));
+        } else {
+            return (vs != null) ? vs : (values = new Values<K, V>(cache, this));
         }
     }
 
@@ -430,6 +429,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
         final EntryMap<K, ?> map;
 
         final Map<K, ?> cache;
+
         private AbstractCacheEntry<K, V> entry;
 
         private int expectedModCount;
@@ -437,7 +437,6 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
         private int index;
 
         private AbstractCacheEntry<K, V> nextEntry;
-
 
         BaseIterator(Map<K, ?> cache, EntryMap<K, ?> map) {
             expectedModCount = map.modCount;
@@ -464,7 +463,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             if (entry == null)
                 throw new IllegalStateException();
             checkForConcurrentMod();
-            AbstractCacheEntry<?,?> e = entry;
+            AbstractCacheEntry<?, ?> e = entry;
             entry = null;
             if (cache != null) {
                 cache.remove(e.getKey());
@@ -624,6 +623,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
             if (!(o instanceof Map.Entry))
                 return false;
+            map.ics.checkRunning("contains",false);
             Map.Entry<?, ?> e = (Map.Entry<?, ?>) o;
             AbstractCacheEntry<K, V> ace = map.get(e.getKey());
             V v = ace != null ? ace.getValue() : null;
@@ -636,6 +636,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
          */
         @Override
         public Iterator<CacheEntry<K, V>> iterator() {
+            map.ics.checkRunning("iterator");
             if (copyEntries) {
                 return new EntrySetCopyIterator<K, V>(cache, map);
             } else {
@@ -650,6 +651,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
             if (!(o instanceof Map.Entry))
                 return false;
+            map.ics.checkRunning("remove");
             Map.Entry<?, ?> e = (Map.Entry<?, ?>) o;
             return cache.remove(e.getKey(), e.getValue());
         }
@@ -683,6 +685,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
          */
         @Override
         public boolean containsAll(Collection<?> c) {
+            map.ics.checkRunning("contains",false);
             return noCopySet == null ? super.containsAll(c) : noCopySet.containsAll(c);
         }
 
@@ -699,6 +702,9 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
          */
         @Override
         public Object[] toArray() {
+            if (size() == 0) {
+                return new Object[0];
+            }
             return noCopySet == null ? super.toArray() : noCopySet.toArray();
         }
 
@@ -707,6 +713,9 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
          */
         @Override
         public <T> T[] toArray(T[] a) {
+            if (size() == 0) {
+                return a;
+            }
             return noCopySet == null ? super.toArray(a) : noCopySet.toArray(a);
         }
 
@@ -877,6 +886,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
          */
         @Override
         public Iterator<K> iterator() {
+            map.ics.checkRunning("iterator");
             return new KeyIterator<K, V>(cache, map);
         }
 
@@ -894,6 +904,22 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
                 throw new NullPointerException("o is null");
             }
             return cache.remove(o) != null;
+        }
+
+        @Override
+        public Object[] toArray() {
+            if (size() == 0) {
+                return new Object[0];
+            }
+            return super.toArray();
+        }
+
+        @Override
+        public <T> T[] toArray(T[] a) {
+            if (size() == 0) {
+                return a;
+            }
+            return super.toArray(a);
         }
     }
 
@@ -973,7 +999,6 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
         }
 
-
         /**
          * @see org.coconut.cache.internal.service.entry.EntryMap.Values#removeAll(java.util.Collection)
          */
@@ -994,6 +1019,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             this.map = map;
             this.cache = cache;
         }
+
         /**
          * @see java.util.AbstractCollection#removeAll(java.util.Collection)
          */
@@ -1004,7 +1030,6 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
             return super.removeAll(c);
         }
-
 
         @Override
         public boolean remove(Object o) {
@@ -1029,6 +1054,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
          */
         @Override
         public Iterator<V> iterator() {
+            map.ics.checkRunning("iterator");
             return new ValueIterator<K, V>(cache, map);
         }
 

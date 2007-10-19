@@ -3,12 +3,10 @@
  */
 package org.coconut.cache.defaults;
 
-import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
-import java.util.Map.Entry;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
@@ -63,6 +61,9 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     public boolean containsValue(Object value) {
         if (value == null) {
             throw new NullPointerException("value is null");
+        }
+        if (size() == 0) {
+            return false;
         }
         for (V entry : values()) {
             if (value.equals(entry)) {

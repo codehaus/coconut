@@ -31,7 +31,7 @@ public interface ManagedGroup {
      * 
      * @param o
      *            the object to add
-     * @return the object that was added
+     * @return this group
      * @throws NullPointerException
      *             if the specified object is <tt>null</tt>
      * @throws IllegalArgumentException
@@ -58,11 +58,16 @@ public interface ManagedGroup {
      */
     ManagedGroup addChild(String name, String description);
 
+    /**
+     * Returns whether or not this group has been registered with a {@link MBeanServer}.
+     * 
+     * @return
+     */
     boolean isRegistered();
 
     /**
      * @return the objectname this group is registered under, or <code>null</code> if it
-     * has not yet been registered.
+     *         has not yet been registered.
      */
     ObjectName getObjectName();
 
@@ -91,6 +96,8 @@ public interface ManagedGroup {
      *            the objectname of this group
      * @throws JMException
      *             if the mbean could not be properly registered
+     * @throws IllegalStateException
+     *             if this group has already been registered with a {@link MBeanServer}
      */
     void register(MBeanServer server, ObjectName objectName) throws JMException;
 
@@ -100,8 +107,9 @@ public interface ManagedGroup {
     void remove();
 
     /**
-     * If any sub groups has been registered these will also be unregistered.
-     * Kasper: No they shouldn't
+     * Unregisters this group from the registered {@link MBeanServer} server. Any child
+     * groups will not be unregistered.
+     * 
      * @throws JMException
      *             if the mbean could not be properly unregistered
      */

@@ -4,8 +4,6 @@
 package org.coconut.cache.service.statistics;
 
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * This class is used to configure the statistics service prior to usage. Currently there
@@ -27,16 +25,4 @@ public class CacheStatisticsConfiguration extends AbstractCacheServiceConfigurat
     public CacheStatisticsConfiguration() {
         super(SERVICE_NAME);
     }
-
-// public void setKeepStatisticsOnIndividualItems(boolean keepStatistics) {
-//        
-// }
-    /** {@inheritDoc} */
-    @Override
-    protected void fromXML(Element parent) {}
-
-    /** {@inheritDoc} */
-    @Override
-    protected void toXML(Document doc, Element parent) {}
-
 }

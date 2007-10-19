@@ -39,7 +39,6 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
 
     private final Map<String, AbstractAttribute> attributes = new ConcurrentHashMap<String, AbstractAttribute>();
 
-    // private final MBeanIntrospector<M> introspector;
     private volatile MBeanInfo mbeanInfo;
 
     private final Map<String, List<AbstractOperation>> ops = new ConcurrentHashMap<String, List<AbstractOperation>>();

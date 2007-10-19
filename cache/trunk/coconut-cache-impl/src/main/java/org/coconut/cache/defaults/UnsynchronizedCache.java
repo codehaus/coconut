@@ -78,7 +78,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
 
     private final InternalCacheLoadingService<K, V> loadingService;
 
-    private final EntryMap<K, V> map = new EntryMap<K, V>(false);
+    private final EntryMap<K, V> map;
 
     private final CacheServiceManager serviceManager;
 
@@ -103,7 +103,8 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
     @SuppressWarnings("unchecked")
     public UnsynchronizedCache(CacheConfiguration<K, V> conf) {
         super(conf);
-        serviceManager = new UnsynchronizedCacheServiceManager(this, new Support(), conf);
+        Support s = new Support();
+        serviceManager = new UnsynchronizedCacheServiceManager(this, s, conf);
         Defaults.initializeUnsynchronizedCache(conf, serviceManager);
         expiration = serviceManager
                 .getInternalService(DefaultCacheExpirationService.class);
@@ -116,6 +117,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
                 .getInternalService(DefaultCacheStatisticsService.class);
         entryFactory = serviceManager
                 .getInternalService(AbstractCacheEntryFactoryService.class);
+        map = new EntryMap<K, V>(s, false);
     }
 
     /** {@inheritDoc} */
@@ -144,7 +146,6 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
 
     /** {@inheritDoc} */
     public Set<Entry<K, V>> entrySet() {
-        checkRunning("collectionview");
         return map.entrySetPublic(this);
     }
 
@@ -206,7 +207,6 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
 
     /** {@inheritDoc} */
     public Set<K> keySet() {
-        checkRunning("collectionview");
         return map.keySet(this);
     }
 
@@ -235,7 +235,6 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
 
     /** {@inheritDoc} */
     public Collection<V> values() {
-        checkRunning("collectionview", false);
         return map.values(this);
     }
 
@@ -274,7 +273,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
             }
             list.add(e);
         }
-        while (evictionService.isCapacityBreached(map.capacity())) {
+        while (evictionService.isVolumeBreached(map.capacity())) {
             AbstractCacheEntry<K, V> e = evictionService.evictNext();
             map.remove(e.getKey());
             if (list == null) {
@@ -432,6 +431,14 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         return prev;
     }
 
+    void doTrimToVolume(long newVolume) {
+        if (newVolume < 0) {
+            throw new IllegalArgumentException(
+                    "newVolume cannot be a negative number, was " + newVolume);
+        }
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Trims the cache down to the specified size.
      * 
@@ -496,7 +503,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
 
         /** {@inheritDoc} */
         public Collection<? extends K> filterKeys(Filter<? super CacheEntry<K, V>> filter) {
-            checkRunning();
+            UnsynchronizedCache.this.checkRunning();
             ArrayList<K> l = new ArrayList<K>();
             for (CacheEntry<K, V> ce : map) {
                 if (filter.accept(ce)) {
@@ -532,8 +539,8 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
         }
 
         /** {@inheritDoc} */
-        public void trimToVolume(long capacity) {
-            throw new UnsupportedOperationException();
+        public void trimToVolume(long newVolume) {
+            doTrimToVolume(newVolume);
         }
 
         /** {@inheritDoc} */
@@ -591,6 +598,14 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> implements
                     }
                 }
             }
+        }
+
+        public void checkRunning(String operation) {
+            UnsynchronizedCache.this.checkRunning(operation);
+        }
+        
+        public void checkRunning(String operation, boolean shutdown) {
+            UnsynchronizedCache.this.checkRunning(operation,shutdown);
         }
     }
 }

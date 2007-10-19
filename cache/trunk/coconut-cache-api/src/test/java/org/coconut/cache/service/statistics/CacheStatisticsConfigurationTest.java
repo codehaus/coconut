@@ -3,37 +3,21 @@
  */
 package org.coconut.cache.service.statistics;
 
+import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
+
 import org.junit.Test;
 
 /**
- * 
- * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class CacheStatisticsConfigurationTest  {
-    
-    @Test 
-    public void dummyTest() {
-        
+public class CacheStatisticsConfigurationTest {
+
+    private CacheStatisticsConfiguration conf;
+
+    @Test
+    public void xmlTest() throws Exception {
+        conf = new CacheStatisticsConfiguration();
+        conf = reloadService(conf);
     }
-//    CacheConfiguration<Number, Collection> conf;
-//    CacheConfiguration.Statistics s;
-//    @Before
-//    public void setUp() {
-//        conf = CacheConfiguration.create();
-//        s=conf.statistics();
-//    }
-//
-//    @Test
-//    public void testExpiration() {
-//        assertEquals(conf, conf.statistics().c());
-//    }
-//    
-//    @Test
-//    public void testEnabled() {
-//        assertTrue(s.isEnabled());
-//        assertEquals(s, s.setEnabled(false));
-//        assertFalse(s.isEnabled());
-//    }
 }

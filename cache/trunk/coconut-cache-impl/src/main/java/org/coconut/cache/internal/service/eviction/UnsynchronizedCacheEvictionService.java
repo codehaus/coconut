@@ -97,7 +97,7 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
     }
 
     /** {@inheritDoc} */
-    public boolean isCapacityBreached(long capacity) {
+    public boolean isVolumeBreached(long capacity) {
         return capacity > maxCapacity;
     }
 

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.cache.service.event.CacheEntryEvent;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.core.AttributeMap;
 
@@ -78,20 +79,24 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException;
 
     /**
-     * Removes all of the entries from this cache. This method will not attempt to remove
-     * entries that are stored externally, for example, on disk. The cache will be empty
-     * after this call returns.
+     * Removes all entries from this cache. This method will not attempt to remove entries
+     * that are stored externally, for example, on disk. The cache will be empty after
+     * this call returns.
      * <p>
-     * When all entries have been removed a single
-     * {@link org.coconut.cache.service.event.CacheEvent.CacheCleared} will be raised.
+     * A {@link CacheEntryEvent.ItemRemoved} event will be raised for each mapping that is
+     * removed when the cache is cleared. When all entries have been removed from the
+     * cache a single {@link org.coconut.cache.service.event.CacheEvent.CacheCleared} will
+     * be raised.
      * 
      * @throws IllegalStateException
      *             if the cache has been shutdown
+     * @throws UnsupportedOperationException
+     *             if the <tt>clear</tt> operation is not supported by this cache
      */
     void clear();
 
     /**
-     * Works as {@link java.util.Map#get(Object)} with the following modifications.
+     * Works as {@link #get(Object)} with the following modifications.
      * <p>
      * If the cache has a configured {@link org.coconut.cache.service.loading.CacheLoader}.
      * And no mapping exists for the specified key or the specific mapping has expired.
@@ -152,7 +157,8 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      *             if the cache has been shutdown
      * @throws CacheException
      *             if the backend cache loader failed while trying to load a value
-     *             (optional). A cache might be configured to return null instead
+     *             (optional). A cache might be configured to return <code>null</code>
+     *             instead
      */
     Map<K, V> getAll(Collection<? extends K> keys);
 
@@ -214,6 +220,17 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @return the current volume of this cache
      */
     long getVolume();
+
+    /**
+     * Returns <tt>true</tt> if this cache contains no elements.
+     * <p>
+     * If this cache has not been started a call to this method will automatically start
+     * it.
+     * <p>
+     * This method will always return <tt>true<tt/> if this cache has been shutdown. 
+     * @return <tt>true</tt> if this cache contains no elements
+     */
+    boolean isEmpty();
 
     /**
      * Returns <tt>true</tt> if this cache has been shut down.
@@ -280,20 +297,6 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     CacheEntry<K, V> peekEntry(K key);
 
     /**
-     * Attempts to expire all of the mappings for the specified collection of keys. The
-     * effect of this call is equivalent to that of calling
-     * {@link org.coconut.cache.Cache#remove(Object)} on this service once for each key in
-     * the specified collection. However, in some cases it can be much faster to remove
-     * several cache items at once, for example, if some of the values must also be
-     * removed on a remote host.
-     * 
-     * @param keys
-     *            a collection of keys whose associated mappings are to be removed.
-     * @return the number of entries that was removed
-     */
-    int removeAll(Collection<? extends K> keys);
-
-    /**
      * Associates the specified value with the specified key in this cache (optional
      * operation). If the cache previously contained a mapping for this key, the old value
      * is replaced by the specified value. (A cache <tt>c</tt> is said to contain a
@@ -328,6 +331,218 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     V put(K key, V value);
 
     /**
+     * Copies all of the mappings from the specified map to this cache (optional
+     * operation). The effect of this call is equivalent to that of calling
+     * {@link #put(Object,Object) put(k, v)} on this cache once for each mapping from key
+     * <tt>k</tt> to value <tt>v</tt> in the specified map. The behavior of this
+     * operation is undefined if the specified map is modified while the operation is in
+     * progress.
+     * 
+     * @param m
+     *            mappings to be stored in this cache
+     * @throws UnsupportedOperationException
+     *             if the <tt>putAll</tt> operation is not supported by this cache
+     * @throws ClassCastException
+     *             if the class of a key or value in the specified map prevents it from
+     *             being stored in this cache
+     * @throws NullPointerException
+     *             if the specified map is null or if specified map contains null keys or
+     *             values
+     * @throws IllegalStateException
+     *             if the cache has been shutdown
+     * @throws IllegalArgumentException
+     *             if some property of a key or value in the specified map prevents it
+     *             from being stored in this cache
+     */
+    void putAll(Map<? extends K, ? extends V> m);
+
+    /**
+     * If the specified key is not already associated with a value, associate it with the
+     * given value. This is equivalent to
+     * 
+     * <pre>
+     * if (!cache.containsKey(key))
+     *     return cache.put(key, value);
+     * else
+     *     return cache.get(key);
+     * </pre>
+     * 
+     * except that the action is performed atomically.
+     * 
+     * @param key
+     *            key with which the specified value is to be associated
+     * @param value
+     *            value to be associated with the specified key
+     * @return the previous value associated with the specified key, or <tt>null</tt> if
+     *         there was no mapping for the key.
+     * @throws UnsupportedOperationException
+     *             if the <tt>put</tt> operation is not supported by this cache
+     * @throws ClassCastException
+     *             if the class of the specified key or value prevents it from being
+     *             stored in this cache
+     * @throws IllegalStateException
+     *             if the cache has been shutdown
+     * @throws NullPointerException
+     *             if the specified key or value is null
+     * @throws IllegalArgumentException
+     *             if some property of the specified key or value prevents it from being
+     *             stored in this cache
+     */
+    V putIfAbsent(K key, V value);
+
+    /**
+     * Removes the mapping for a key from this map if it is present (optional operation).
+     * More formally, if this map contains a mapping from key <tt>k</tt> to value
+     * <tt>v</tt> such that <code>(key==null ?  k==null : key.equals(k))</code>, that
+     * mapping is removed. (The map can contain at most one such mapping.)
+     * <p>
+     * Returns the value to which this map previously associated the key, or <tt>null</tt>
+     * if the map contained no mapping for the key.
+     * <p>
+     * If this map permits null values, then a return value of <tt>null</tt> does not
+     * <i>necessarily</i> indicate that the map contained no mapping for the key; it's
+     * also possible that the map explicitly mapped the key to <tt>null</tt>.
+     * <p>
+     * The map will not contain a mapping for the specified key once the call returns.
+     * 
+     * @param key
+     *            key whose mapping is to be removed from the map
+     * @return the previous value associated with <tt>key</tt>, or <tt>null</tt> if
+     *         there was no mapping for <tt>key</tt>.
+     * @throws UnsupportedOperationException
+     *             if the <tt>remove</tt> operation is not supported by this map
+     * @throws IllegalStateException
+     *             if the cache has been shutdown
+     * @throws ClassCastException
+     *             if the key is of an inappropriate type for this map (optional)
+     * @throws NullPointerException
+     *             if the specified key is null
+     */
+    V remove(Object key);
+
+    /**
+     * Removes the entry for a key only if currently mapped to a given value. This is
+     * equivalent to
+     * 
+     * <pre>
+     * if (cache.containsKey(key) &amp;&amp; cache.get(key).equals(value)) {
+     *     cache.remove(key);
+     *     return true;
+     * } else
+     *     return false;
+     * </pre>
+     * 
+     * except that the action is performed atomically.
+     * 
+     * @param key
+     *            key with which the specified value is associated
+     * @param value
+     *            value expected to be associated with the specified key
+     * @return <tt>true</tt> if the value was removed
+     * @throws UnsupportedOperationException
+     *             if the <tt>remove</tt> operation is not supported by this cache
+     * @throws IllegalStateException
+     *             if the cache has been shutdown
+     * @throws ClassCastException
+     *             if the key or value is of an inappropriate type for this cache (optional)
+     * @throws NullPointerException
+     *             if the specified key or value is null
+     */
+    boolean remove(Object key, Object value);
+
+    /**
+     * Attempts to expire all of the mappings for the specified collection of keys. The
+     * effect of this call is equivalent to that of calling
+     * {@link org.coconut.cache.Cache#remove(Object)} on this service once for each key in
+     * the specified collection. However, in some cases it can be much faster to remove
+     * several cache items at once, for example, if some of the values must also be
+     * removed on a remote host.
+     * 
+     * @param keys
+     *            a collection of keys whose associated mappings are to be removed.
+     * @return the number of entries that was removed
+     * @throws UnsupportedOperationException
+     *             if the <tt>remove</tt> operation is not supported by this cache.
+     * @throws IllegalStateException
+     *             if the cache has been shutdown
+     * @throws NullPointerException
+     *             if the specified collection or any of its containing keys are
+     *             <tt>null</tt>.
+     */
+    int removeAll(Collection<? extends K> keys);
+
+    /**
+     * Replaces the entry for a key only if currently mapped to some value. This is
+     * equivalent to
+     * 
+     * <pre>
+     * if (cache.containsKey(key)) {
+     *     return cache.put(key, value);
+     * } else
+     *     return null;
+     * </pre>
+     * 
+     * except that the action is performed atomically.
+     * 
+     * @param key
+     *            key with which the specified value is associated
+     * @param value
+     *            value to be associated with the specified key
+     * @return the previous value associated with the specified key, or <tt>null</tt> if
+     *         there was no mapping for the key.
+     * @throws UnsupportedOperationException
+     *             if the <tt>put</tt> operation is not supported by this cache
+     * @throws ClassCastException
+     *             if the class of the specified key or value prevents it from being
+     *             stored in this cache
+     * @throws IllegalStateException
+     *             if the cache has been shutdown
+     * @throws NullPointerException
+     *             if the specified key or value is null
+     * @throws IllegalArgumentException
+     *             if some property of the specified key or value prevents it from being
+     *             stored in this cache
+     */
+    V replace(K key, V value);
+    
+
+    /**
+     * Replaces the entry for a key only if currently mapped to a given value. This is
+     * equivalent to
+     * 
+     * <pre>
+     * if (cache.containsKey(key) &amp;&amp; cache.get(key).equals(oldValue)) {
+     *     cache.put(key, newValue);
+     *     return true;
+     * } else
+     *     return false;
+     * </pre>
+     * 
+     * except that the action is performed atomically.
+     * 
+     * @param key
+     *            key with which the specified value is associated
+     * @param oldValue
+     *            value expected to be associated with the specified key
+     * @param newValue
+     *            value to be associated with the specified key
+     * @return <tt>true</tt> if the value was replaced
+     * @throws UnsupportedOperationException
+     *             if the <tt>put</tt> operation is not supported by this cache
+     * @throws ClassCastException
+     *             if the class of a specified key or value prevents it from being stored
+     *             in this cache
+     * @throws NullPointerException
+     *             if a specified key or value is null
+     * @throws IllegalStateException
+     *             if the cache has been shutdown
+     * @throws IllegalArgumentException
+     *             if some property of a specified key or value prevents it from being
+     *             stored in this cache
+     */
+    boolean replace(K key, V oldValue, V newValue);
+
+    /**
      * Initiates an orderly shutdown of the cache. In which currently running tasks, such
      * as cache loading will be executed, but no new tasks will be started and no values
      * will be added to the cache. Invocation has no additional effect if already shut
@@ -358,4 +573,52 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      *             or the security manager's <tt>checkAccess</tt> method denies access.
      */
     void shutdownNow();
+
+    /**
+     * Returns the number of elements in this cache. If the cache contains more than
+     * <tt>Integer.MAX_VALUE</tt> elements, returns <tt>Integer.MAX_VALUE</tt>.
+     * <p>
+     * If this cache has not been started a call to this method will automatically start
+     * it.
+     * <p>
+     * This method will always return <tt>0<tt/> if this cache has been shutdown.
+     * @return the number of elements in this cache
+     */
+    int size();
+
+    //TODO contains->does not check expiration status
+    /**
+     * Returns <tt>true</tt> if this cache contains a mapping for the specified key. More
+     * formally, returns <tt>true</tt> if and only if this map contains a mapping for a
+     * key <tt>k</tt> such that <tt>(key==null ? k==null : key.equals(k))</tt>.
+     * (There can be at most one such mapping.)
+     * 
+     * @param key
+     *            key whose presence in this cache is to be tested
+     * @return <tt>true</tt> if this cache contains a mapping for the specified key
+     * @throws ClassCastException
+     *             if the key is of an inappropriate type for this cache (optional)
+     * @throws NullPointerException
+     *             if the specified key is null
+     */
+    boolean containsKey(Object key);
+
+    /**
+     * Returns <tt>true</tt> if this cache maps one or more keys to the specified value.
+     * More formally, returns <tt>true</tt> if and only if this cache contains at least
+     * one mapping to a value <tt>v</tt> such that
+     * <tt>(value==null ? v==null : value.equals(v))</tt>. This operation will probably
+     * require time linear in the cache size for most implementations of the <tt>Cache</tt>
+     * interface.
+     * 
+     * @param value
+     *            value whose presence in this cache is to be tested
+     * @return <tt>true</tt> if this cache maps one or more keys to the specified value
+     * @throws ClassCastException
+     *             if the value is of an inappropriate type for this cache (optional)
+     * @throws NullPointerException
+     *             if the specified value is null
+     */
+    boolean containsValue(Object value);
+
 }

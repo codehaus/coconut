@@ -159,6 +159,13 @@ public abstract class CacheExceptionHandler<K, V> {
         return false;
     }
 
+    public void handleThrowable(CacheExceptionContext<K, V> context,
+            Exception cause) {
+        //if instance of runtimeException ->
+        //else if instance of Exception
+        //else if Instance of Error
+        //else ->wrap in CacheException and callRuntimeException (cache exception)
+    }
     /**
      * Handles an exception.
      * 

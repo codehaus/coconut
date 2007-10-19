@@ -26,6 +26,11 @@ public class ConfigurationValidator {
         return DEFAULT;
     }
 
+    /**
+     * Verifies the CacheConfiguration for the specified type of 
+     * @param conf
+     * @param type
+     */
     public void verify(CacheConfiguration<?, ?> conf, Class<? extends Cache> type) {
         // preferable capacity>maxCapacity?
         // preferable size>maxSize?

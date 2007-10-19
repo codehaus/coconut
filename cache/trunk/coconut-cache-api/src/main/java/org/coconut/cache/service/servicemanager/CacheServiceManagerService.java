@@ -6,7 +6,6 @@ package org.coconut.cache.service.servicemanager;
 import java.util.Map;
 
 /**
- * Move getAll services to here?
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -32,22 +31,23 @@ public interface CacheServiceManagerService {
      */
     Map<Class<?>, Object> getAllServices();
 
-    //cannot register services at runtime for now
-    //<T extends CacheService> T registerService(T lifecycle);
+    // cannot register services at runtime for now
+    // <T extends CacheService> T registerService(T lifecycle);
 
     /* Needs to connect to some remote server. */
-    //Future must return null on completion
-    //void asynchronousStartup(Future );
-    
-    //void preStart();//prestarts the cache
-    
+    // Future must return null on completion
+    // void asynchronousStartup(Future );
+    // void preStart();//prestarts the cache
     /**
-     * If a service has to block while shutting  cannot be completly shutdown
-     * Must be called
+     * If a service has to block while shutting cannot be completly shutdown Must be
+     * called
+     * 
      * @param service
      * @throws IllegalStateException
      *             if this method is called before shutdown has been called on the cache
-     *             or if it called after it has been terminated
+     *             or if it called after it has been terminated *
+     * @throws UnsupportedOperationException
+     *             if services cannot be shutdown asynchronously
      */
     void shutdownServiceAsynchronously(AsynchronousShutdownObject service);
 }
