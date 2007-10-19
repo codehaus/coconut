@@ -12,10 +12,6 @@ import org.junit.runner.RunWith;
 @RunWith(CacheTCKRunner.class)
 @CacheTCKImplementationSpecifier(UnsynchronizedCache.class)
 public class UnsynchronizedCacheTest {
-
     @Test
-    public void none() {
-        
-    }
-    
+    public void dummy() {}
 }

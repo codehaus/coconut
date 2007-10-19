@@ -1038,7 +1038,21 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
             return super.remove(o);
         }
+        @Override
+        public Object[] toArray() {
+            if (size() == 0) {
+                return new Object[0];
+            }
+            return super.toArray();
+        }
 
+        @Override
+        public <T> T[] toArray(T[] a) {
+            if (size() == 0) {
+                return a;
+            }
+            return super.toArray(a);
+        }
         @Override
         public void clear() {
             cache.clear();
