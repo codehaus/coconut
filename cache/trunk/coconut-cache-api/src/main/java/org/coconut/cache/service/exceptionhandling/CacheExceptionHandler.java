@@ -5,6 +5,7 @@ package org.coconut.cache.service.exceptionhandling;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.CacheException;
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingService;
@@ -98,9 +99,7 @@ public abstract class CacheExceptionHandler<K, V> {
     public V loadFailed(CacheExceptionContext<K, V> context,
             CacheLoader<? super K, ?> loader, K key, AttributeMap map,
             boolean isSynchronous, Exception cause) {
-        // TODO whould we call handleRuntimeException if the cause is an runtime
-        // exception?
-        handleException(context, cause);
+        handleThrowable(context, cause);
         return null;
     }
 
@@ -123,21 +122,6 @@ public abstract class CacheExceptionHandler<K, V> {
     public void lifecycleInitializationFailed(CacheConfiguration<K, V> configuration,
             CacheLifecycle service, RuntimeException cause) {}
 
-    public void cacheWasShutdown(CacheExceptionContext<K, V> context, String method) {
-    // THE cache in the context should be shielded in someway, so we don't cause some kind
-    // of recursion??? because calling any method on the cache will throw a new exception
-    // and so one....
-    // perhaps only getName should be available.
-    // throw new CacheShutdownException();Should we create this one?Or just illegal state
-    // or throw new IllegalStateException() <- me like
-
-    // All cache methods should have throws IllegalStateException if the cache has been
-    // shutdown (optional)
-
-    // all calls to this methods are synchronous (initiated by the user)
-    // so no need to log anything
-    }
-
     /**
      * A delivery of an event failed.
      * 
@@ -159,13 +143,19 @@ public abstract class CacheExceptionHandler<K, V> {
         return false;
     }
 
-    public void handleThrowable(CacheExceptionContext<K, V> context,
-            Exception cause) {
-        //if instance of runtimeException ->
-        //else if instance of Exception
-        //else if Instance of Error
-        //else ->wrap in CacheException and callRuntimeException (cache exception)
+    protected void handleThrowable(CacheExceptionContext<K, V> context, Throwable cause) {
+        if (cause instanceof RuntimeException) {
+            handleRuntimeException(context, (RuntimeException) cause);
+        } else if (cause instanceof Exception) {
+            handleException(context, (Exception) cause);
+        } else if (cause instanceof Error) {
+            handleError(context, (Error) cause);
+        } else {
+            // hmm
+            handleRuntimeException(context, new CacheException(cause));
+        }
     }
+
     /**
      * Handles an exception.
      * 
@@ -175,7 +165,7 @@ public abstract class CacheExceptionHandler<K, V> {
      * @param cause
      *            the exception to handle
      */
-    public abstract void handleException(CacheExceptionContext<K, V> context,
+    protected abstract void handleException(CacheExceptionContext<K, V> context,
             Exception cause);
 
     /**
@@ -187,7 +177,7 @@ public abstract class CacheExceptionHandler<K, V> {
      * @param cause
      *            the runtime exception to handle
      */
-    public abstract void handleRuntimeException(CacheExceptionContext<K, V> context,
+    protected abstract void handleRuntimeException(CacheExceptionContext<K, V> context,
             RuntimeException cause);
 
     /**
@@ -199,7 +189,7 @@ public abstract class CacheExceptionHandler<K, V> {
      * @param cause
      *            the error to handle
      */
-    public abstract void handleError(CacheExceptionContext<K, V> context, Error cause);
+    protected abstract void handleError(CacheExceptionContext<K, V> context, Error cause);
 
     /**
      * Handles a warning.
@@ -210,5 +200,6 @@ public abstract class CacheExceptionHandler<K, V> {
      * @param warning
      *            the warning to handle
      */
-    public abstract void handleWarning(CacheExceptionContext<K, V> context, String warning);
+    public abstract void handleWarning(CacheExceptionContext<K, V> context,
+            String warning);
 }

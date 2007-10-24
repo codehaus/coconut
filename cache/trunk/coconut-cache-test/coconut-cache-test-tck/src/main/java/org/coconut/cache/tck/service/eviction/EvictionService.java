@@ -32,7 +32,7 @@ public class EvictionService extends AbstractCacheTCKTest {
      * Tests maximum capacity.
      */
     @Test
-    public void maximumCapacity() {
+    public void maximumVolume() {
         assertEquals(Long.MAX_VALUE, eviction().getMaximumVolume());
         eviction().setMaximumVolume(1000);
         assertEquals(1000, eviction().getMaximumVolume());

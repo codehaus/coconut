@@ -127,78 +127,6 @@ public class CacheManagementConfigurationTest {
         assertNull(m.getRegistrant());
     }
 
-    @Test
-    public void testRoot() throws Exception {
-        ManagedGroup mg = new LoadableManagedGroup();
-        assertNull(m.getRoot());
-        assertSame(m, m.setRoot(mg));
-        assertSame(mg, m.getRoot());
-    }
-
-    @Test
-    public void testRootXML() throws Exception {
-        m = reloadService(m);// root should still be null
-        assertNull(m.getRoot());
-
-        assertSame(m, m.setRoot(new LoadableManagedGroup()));
-        m = reloadService(m);// root should be an instance of LoadableManagedGroup
-        assertTrue(m.getRoot() instanceof LoadableManagedGroup);
-
-        assertSame(m, m.setRoot(new NonLoadableManagedGroup()));
-        m = reloadService(m);// root should be null, can't save the mocked class
-        assertNull(m.getRoot());
-    }
-
-    public static class LoadableManagedGroup implements ManagedGroup {
-
-        public ManagedGroup add(Object o) {
-            return null;
-        }
-
-        public ManagedGroup addChild(String name, String description) {
-            return null;
-        }
-
-        public Collection<ManagedGroup> getChildren() {
-            return null;
-        }
-
-        public String getDescription() {
-            return null;
-        }
-
-        public String getName() {
-            return null;
-        }
-
-        public ObjectName getObjectName() {
-            return null;
-        }
-
-        public Collection<?> getObjects() {
-            return null;
-        }
-
-        public ManagedGroup getParent() {
-            return null;
-        }
-
-        public MBeanServer getServer() {
-            return null;
-        }
-
-        public boolean isRegistered() {
-            return false;
-        }
-
-        public void register(MBeanServer service, ObjectName objectName)
-                throws JMException {}
-
-        public void remove() {}
-
-        public void unregister() throws JMException {}
-
-    }
 
     public static class LoadableManagedGroupVisitor implements ManagedVisitor {
 
@@ -208,56 +136,6 @@ public class CacheManagementConfigurationTest {
 
     }
 
-    public class NonLoadableManagedGroup implements ManagedGroup {
-
-        public ManagedGroup add(Object o) {
-            return null;
-        }
-
-        public ManagedGroup addChild(String name, String description) {
-            return null;
-        }
-
-        public Collection<ManagedGroup> getChildren() {
-            return null;
-        }
-
-        public String getDescription() {
-            return null;
-        }
-
-        public String getName() {
-            return null;
-        }
-
-        public ObjectName getObjectName() {
-            return null;
-        }
-
-        public Collection<?> getObjects() {
-            return null;
-        }
-
-        public ManagedGroup getParent() {
-            return null;
-        }
-
-        public MBeanServer getServer() {
-            return null;
-        }
-
-        public boolean isRegistered() {
-            return false;
-        }
-
-        public void register(MBeanServer service, ObjectName objectName)
-                throws JMException {}
-
-        public void remove() {}
-
-        public void unregister() throws JMException {}
-
-    }
 
     public class NonLoadableManagedGroupVisitor implements ManagedVisitor {
 

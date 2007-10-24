@@ -5,6 +5,7 @@ package org.coconut.cache;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
@@ -94,6 +95,41 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      *             if the <tt>clear</tt> operation is not supported by this cache
      */
     void clear();
+
+    // TODO contains->does not check expiration status
+    /**
+     * Returns <tt>true</tt> if this cache contains a mapping for the specified key.
+     * More formally, returns <tt>true</tt> if and only if this map contains a mapping
+     * for a key <tt>k</tt> such that <tt>(key==null ? k==null : key.equals(k))</tt>.
+     * (There can be at most one such mapping.)
+     * 
+     * @param key
+     *            key whose presence in this cache is to be tested
+     * @return <tt>true</tt> if this cache contains a mapping for the specified key
+     * @throws ClassCastException
+     *             if the key is of an inappropriate type for this cache (optional)
+     * @throws NullPointerException
+     *             if the specified key is null
+     */
+    boolean containsKey(Object key);
+
+    /**
+     * Returns <tt>true</tt> if this cache maps one or more keys to the specified value.
+     * More formally, returns <tt>true</tt> if and only if this cache contains at least
+     * one mapping to a value <tt>v</tt> such that
+     * <tt>(value==null ? v==null : value.equals(v))</tt>. This operation will probably
+     * require time linear in the cache size for most implementations of the
+     * <tt>Cache</tt> interface.
+     * 
+     * @param value
+     *            value whose presence in this cache is to be tested
+     * @return <tt>true</tt> if this cache maps one or more keys to the specified value
+     * @throws ClassCastException
+     *             if the value is of an inappropriate type for this cache (optional)
+     * @throws NullPointerException
+     *             if the specified value is null
+     */
+    boolean containsValue(Object value);
 
     /**
      * Works as {@link #get(Object)} with the following modifications.
@@ -254,6 +290,28 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @return <tt>true</tt> if all tasks have completed following shut down
      */
     boolean isTerminated();
+
+    /**
+     * Returns a {@link Set} view of the keys contained in this cache. The set is backed
+     * by the cache, so changes to the cache are reflected in the set, and vice-versa. If
+     * the map is modified while an iteration over the set is in progress (except through
+     * the iterator's own <tt>remove</tt> operation), the results of the iteration are
+     * undefined. The set supports element removal, which removes the corresponding
+     * mapping from the map, via the <tt>Iterator.remove</tt>, <tt>Set.remove</tt>,
+     * <tt>removeAll</tt>, <tt>retainAll</tt>, and <tt>clear</tt> operations. It
+     * does not support the <tt>add</tt> or <tt>addAll</tt> operations.
+     * <p>
+     * Unlike {@link Cache#get(Object)} no methods on the view checks if an element has
+     * expired. For example, iterating though key set the view might return a key for an
+     * expired element.
+     * <p>
+     * If the cache has been shutdown calls to tt>Iterator.remove</tt>, <tt>Collection.remove</tt>,
+     * <tt>removeAll</tt>, <tt>retainAll</tt> and <tt>clear</tt> operation will
+     * throw an IllegalStateException.
+     * 
+     * @return a set view of the keys contained in this cache
+     */
+    Set<K> keySet();
 
     /**
      * This method works analogoes to the {@link get(Object)} method with the following
@@ -444,7 +502,8 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @throws IllegalStateException
      *             if the cache has been shutdown
      * @throws ClassCastException
-     *             if the key or value is of an inappropriate type for this cache (optional)
+     *             if the key or value is of an inappropriate type for this cache
+     *             (optional)
      * @throws NullPointerException
      *             if the specified key or value is null
      */
@@ -504,7 +563,6 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      *             stored in this cache
      */
     V replace(K key, V value);
-    
 
     /**
      * Replaces the entry for a key only if currently mapped to a given value. This is
@@ -557,6 +615,30 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     void shutdown();
 
     /**
+     * Returns a {@link Set} view of the mappings contained in this cache. The set is
+     * backed by the cache, so changes to the cache are reflected in the set, and
+     * vice-versa. If the cache is modified while an iteration over the set is in progress
+     * (except through the iterator's own <tt>remove</tt> operation, or through the
+     * <tt>setValue</tt> operation on a map entry returned by the iterator) the results
+     * of the iteration are undefined. The set supports element removal, which removes the
+     * corresponding mapping from the cache, via the <tt>Iterator.remove</tt>,
+     * <tt>Set.remove</tt>, <tt>removeAll</tt>, <tt>retainAll</tt> and
+     * <tt>clear</tt> operations. It does not support the <tt>add</tt> or
+     * <tt>addAll</tt> operations.
+     * <p>
+     * Unlike {@link Cache#get(Object)} no methods on the view checks if an element has
+     * expired. For example, iterating though values the view might return an expired
+     * element.
+     * <p>
+     * If the cache has been shutdown calls to tt>Iterator.remove</tt>, <tt>Collection.remove</tt>,
+     * <tt>removeAll</tt>, <tt>retainAll</tt> and <tt>clear</tt> operation will
+     * throw an IllegalStateException.
+     * 
+     * @return a set view of the mappings contained in this map
+     */
+    Set<Map.Entry<K, V>> entrySet();
+
+    /**
      * Attempts to stop all actively executing tasks within the cache and halts the
      * processing of waiting tasks. Invocation has no additional effect if already shut
      * down.
@@ -586,39 +668,27 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      */
     int size();
 
-    //TODO contains->does not check expiration status
     /**
-     * Returns <tt>true</tt> if this cache contains a mapping for the specified key. More
-     * formally, returns <tt>true</tt> if and only if this map contains a mapping for a
-     * key <tt>k</tt> such that <tt>(key==null ? k==null : key.equals(k))</tt>.
-     * (There can be at most one such mapping.)
+     * Returns a {@link Collection} view of the values contained in this cache. The
+     * collection is backed by the cache, so changes to the cache are reflected in the
+     * collection, and vice-versa. If the cache is modified while an iteration over the
+     * collection is in progress (except through the iterator's own <tt>remove</tt>
+     * operation), the results of the iteration are undefined. The collection supports
+     * element removal, which removes the corresponding mapping from the cache, via the
+     * <tt>Iterator.remove</tt>, <tt>Collection.remove</tt>, <tt>removeAll</tt>,
+     * <tt>retainAll</tt> and <tt>clear</tt> operations. It does not support the
+     * <tt>add</tt> or <tt>addAll</tt> operations.
+     * <p>
+     * Unlike {@link Cache#get(Object)} no methods on the view checks if an element has
+     * expired. For example, iterating though values the view might return an expired
+     * element.
+     * <p>
+     * If the cache has been shutdown calls to tt>Iterator.remove</tt>, <tt>Collection.remove</tt>,
+     * <tt>removeAll</tt>, <tt>retainAll</tt> and <tt>clear</tt> operation will
+     * throw an IllegalStateException.
      * 
-     * @param key
-     *            key whose presence in this cache is to be tested
-     * @return <tt>true</tt> if this cache contains a mapping for the specified key
-     * @throws ClassCastException
-     *             if the key is of an inappropriate type for this cache (optional)
-     * @throws NullPointerException
-     *             if the specified key is null
+     * @return a collection view of the values contained in this cache
      */
-    boolean containsKey(Object key);
-
-    /**
-     * Returns <tt>true</tt> if this cache maps one or more keys to the specified value.
-     * More formally, returns <tt>true</tt> if and only if this cache contains at least
-     * one mapping to a value <tt>v</tt> such that
-     * <tt>(value==null ? v==null : value.equals(v))</tt>. This operation will probably
-     * require time linear in the cache size for most implementations of the <tt>Cache</tt>
-     * interface.
-     * 
-     * @param value
-     *            value whose presence in this cache is to be tested
-     * @return <tt>true</tt> if this cache maps one or more keys to the specified value
-     * @throws ClassCastException
-     *             if the value is of an inappropriate type for this cache (optional)
-     * @throws NullPointerException
-     *             if the specified value is null
-     */
-    boolean containsValue(Object value);
+    Collection<V> values();
 
 }

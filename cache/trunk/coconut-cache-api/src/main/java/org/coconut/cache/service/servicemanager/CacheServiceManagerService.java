@@ -31,13 +31,6 @@ public interface CacheServiceManagerService {
      */
     Map<Class<?>, Object> getAllServices();
 
-    // cannot register services at runtime for now
-    // <T extends CacheService> T registerService(T lifecycle);
-
-    /* Needs to connect to some remote server. */
-    // Future must return null on completion
-    // void asynchronousStartup(Future );
-    // void preStart();//prestarts the cache
     /**
      * If a service has to block while shutting cannot be completly shutdown Must be
      * called

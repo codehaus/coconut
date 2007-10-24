@@ -3,13 +3,10 @@
  */
 package org.coconut.cache.service.expiration;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheEntry;
-import org.coconut.filter.Filter;
 
 /**
  * A service used to control the expiration of cache elements at runtime. See the package

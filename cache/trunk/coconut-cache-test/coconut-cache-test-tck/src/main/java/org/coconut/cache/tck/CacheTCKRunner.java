@@ -21,7 +21,6 @@ import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.spi.CacheServiceSupport;
 import org.coconut.cache.tck.cacheentry.CacheEntrySuite;
 import org.coconut.cache.tck.core.CoreSuite;
-import org.coconut.cache.tck.lifecycle.LifecycleSuite;
 import org.coconut.cache.tck.service.event.EventSuite;
 import org.coconut.cache.tck.service.eviction.EvictionSuite;
 import org.coconut.cache.tck.service.exceptionhandling.ExceptionHandlingSuite;
@@ -48,8 +47,6 @@ import org.junit.runners.Suite;
 public class CacheTCKRunner extends Runner {
 
     static Class<? extends Cache> tt;
-
-    private final Class<? extends Cache> klass;
 
     private CompositeRunner composite;
 
@@ -83,7 +80,6 @@ public class CacheTCKRunner extends Runner {
      */
     @SuppressWarnings("unchecked")
     public CacheTCKRunner(Class<? extends Cache> klass) throws Exception {
-        this.klass = klass;
         tt = klass.getAnnotation(CacheTCKImplementationSpecifier.class).value();
         composite = new CompositeRunner(klass.getName());
         addTests(tt, composite);
@@ -112,7 +108,6 @@ public class CacheTCKRunner extends Runner {
         }
         runner.add(new Suite(CacheEntrySuite.class));
         runner.add(new Suite(CoreSuite.class));
-        runner.add(new Suite(LifecycleSuite.class));
         runner.add(new Suite(ExceptionHandlingSuite.class));
         if (services.contains(CacheEventService.class)) {
             runner.add(new Suite(EventSuite.class));

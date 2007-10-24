@@ -18,9 +18,9 @@ import org.junit.Test;
 
 public class ManagementCacheMXBean extends AbstractCacheTCKTest {
 
-    CacheMXBean mxBean;
+    private CacheMXBean mxBean;
 
-    MBeanServer mbs;
+    private MBeanServer mbs;
 
     @Before
     public void setup() throws Exception {

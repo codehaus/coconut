@@ -12,10 +12,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.internal.service.InternalCacheSupport;
 import org.coconut.cache.internal.service.attribute.DefaultCacheAttributeService;
 import org.coconut.cache.internal.service.entry.UnsynchronizedEntryFactoryService;
 import org.coconut.cache.internal.service.exceptionhandling.DefaultCacheExceptionService;
+import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.AsynchronousShutdownObject;
@@ -42,6 +42,8 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
 
     private final List<ServiceHolder> externalServices = new ArrayList<ServiceHolder>();
 
+    private final List<ManagedObject> managedObjects = new ArrayList<ManagedObject>();
+
     private final List<ServiceHolder> internalServices = new ArrayList<ServiceHolder>();
 
     private final Map<Class<?>, Object> publicServices = new HashMap<Class<?>, Object>();
@@ -52,8 +54,13 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
             InternalCacheSupport<?, ?> helper, CacheConfiguration<?, ?> conf) {
         this.conf = conf;
         this.cache = cache;
-        for (CacheLifecycle a : conf.serviceManager().getAllServices()) {
-            externalServices.add(new ServiceHolder(a));
+        for (Object o : conf.serviceManager().getObjects()) {
+            if (o instanceof CacheLifecycle) {
+                externalServices.add(new ServiceHolder((CacheLifecycle) o));
+            }
+            if (o instanceof ManagedObject) {
+                managedObjects.add((ManagedObject) o);
+            }
         }
         initializePicoContainer(cache, helper, conf);
         publicServices.put(CacheServiceManagerService.class, ServiceManagerUtil
@@ -139,7 +146,15 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
                 publicServices.putAll(si.getPublicService());
                 // TODO; check if we have conflicting services
             }
+            for (ServiceHolder si : externalServices) {
+                si.initialize(conf);
+                publicServices.putAll(si.getPublicService());
+                // TODO; check if we have conflicting services
+            }
             for (ServiceHolder si : internalServices) {
+                si.start(publicServices);
+            }
+            for (ServiceHolder si : externalServices) {
                 si.start(publicServices);
             }
             // register mbeans
@@ -147,12 +162,25 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
                     .get(CacheManagementService.class);
             if (cms != null) {
                 for (ServiceHolder si : internalServices) {
-                    si.registerMBeans(cms.getRoot());
+                    if (si.service instanceof ManagedObject) {
+                        ((ManagedObject) si.service).manage(cms);
+                    }
+                    si.registerMBeans(cms);
                 }
-            }
+                for (ServiceHolder si : externalServices) {
+                    si.registerMBeans(cms);
+                }
+                for (ManagedObject si : managedObjects) {
+                    si.manage(cms);
 
+                }
+
+            }
             // started
             for (ServiceHolder si : internalServices) {
+                si.started(cache);
+            }
+            for (ServiceHolder si : externalServices) {
                 si.started(cache);
             }
             status = RunState.RUNNING;
@@ -179,13 +207,19 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
 
     /** {@inheritDoc} */
     public void shutdown() {
-        if (status==RunState.RUNNING || status==RunState.NOTRUNNING) {
+        if (status == RunState.RUNNING || status == RunState.NOTRUNNING) {
             cache.clear();
-            status =RunState.SHUTDOWN;
+            status = RunState.SHUTDOWN;
             for (ServiceHolder si : internalServices) {
                 si.shutdown();
             }
+            for (ServiceHolder si : externalServices) {
+                si.shutdown();
+            }
             for (ServiceHolder si : internalServices) {
+                si.terminated();
+            }
+            for (ServiceHolder si : externalServices) {
                 si.terminated();
             }
             status = RunState.TERMINATED;
@@ -221,6 +255,7 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
         private final Collection<ServiceHolder> children = new ArrayList<ServiceHolder>();
 
         private final Collection<ManagedObject> managedChildren = new ArrayList<ManagedObject>();
+
         final CacheLifecycle service;
 
         ServiceHolder(CacheLifecycle service) {
@@ -250,9 +285,6 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
         }
 
         void registerMBeans(ManagedGroup parent) {
-            if (service instanceof ManagedObject) {
-                ((ManagedObject) service).manage(parent);
-            }
             for (ManagedObject cl : managedChildren) {
                 cl.manage(parent);
             }

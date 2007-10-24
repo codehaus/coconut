@@ -34,7 +34,14 @@ public class AbstractLifecycleVerifier implements CacheLifecycle {
     public void assertNotStarted() {
         Assert.assertEquals(0, step.get());
     }
-
+    
+    public void assertState(int state) {
+        Assert.assertEquals(state, step.get());
+    }
+    public int getState() {
+        return step.get();
+    }
+    
     public void assertInStartedPhase() {
         Assert.assertEquals(4, step.get());
     }

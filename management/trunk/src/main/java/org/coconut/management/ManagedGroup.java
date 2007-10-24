@@ -34,6 +34,8 @@ public interface ManagedGroup {
      * @return this group
      * @throws NullPointerException
      *             if the specified object is <tt>null</tt>
+     * @throws IllegalStateException
+     *             if this group has already been register with a {@link MBeanServer}
      * @throws IllegalArgumentException
      *             if the object has already been registered, if it contains no methods or
      *             operations?, or if operations or methods with the same name has already

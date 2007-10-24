@@ -13,23 +13,11 @@ import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;
 
 /**
- * 
- * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class EntrySetHashCodeEquals extends AbstractCacheTCKTest {
 
-    /**
-     * isEmpty is true of empty map and false for non-empty.
-     */
-    @Test
-    public void nothing() {
-       
- 
-    }
-    
-    
     /**
      * Maps with same contents are equal
      */
@@ -51,9 +39,51 @@ public class EntrySetHashCodeEquals extends AbstractCacheTCKTest {
         assertFalse(c.entrySet().equals(newCache(6).entrySet()));
     }
 
+    /**
+     * {@link Cache#containsKey()} should not fail when cache is shutdown.
+     * 
+     * @throws InterruptedException
+     *             was interrupted
+     */
+    @Test
+    public void equalsShutdown() throws InterruptedException {
+        c = newCache(5);
+        assertTrue(c.isStarted());
+        c.shutdown();
+
+        // should not fail, but result is undefined until terminated
+        c.entrySet().equals(new HashSet());
+
+        assertTrue(c.awaitTermination(1, TimeUnit.SECONDS));
+
+        boolean equals = c.entrySet().equals(new HashSet());
+        assertTrue(equals);// cache should be empty
+    }
+
     @Test
     public void testHashCode() {
         assertEquals(M1_TO_M5_SET.hashCode(), newCache(5).entrySet().hashCode());
         assertEquals(new HashSet().hashCode(), newCache().entrySet().hashCode());
     }
+
+    /**
+     * {@link Cache#containsKey()} should not fail when cache is shutdown.
+     * 
+     * @throws InterruptedException
+     *             was interrupted
+     */
+    // @Test TODO fix
+    public void hashCodeShutdown() throws InterruptedException {
+        c = newCache(5);
+        assertTrue(c.isStarted());
+        c.shutdown();
+
+        // should not fail, but result is undefined until terminated
+        c.entrySet().hashCode();
+
+        assertTrue(c.awaitTermination(1, TimeUnit.SECONDS));
+
+        assertEquals(c.entrySet().hashCode(), new HashSet().hashCode());// cache should be
+    }
+
 }

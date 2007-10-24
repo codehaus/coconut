@@ -40,8 +40,8 @@ public class ManagementService extends AbstractCacheTCKTest {
     public void testGetRoot() {
         c = newCache(newConf().management().setEnabled(true).setMBeanServer(
                 MBeanServerFactory.createMBeanServer()));
-        assertNotNull(management().getRoot());
-        ManagedGroup mg = management().getRoot();
+        assertNotNull(management());
+        ManagedGroup mg = management();
         assertNull(mg.getParent());
         assertEquals(4, mg.getChildren().size());
         assertNotNull(findChild(mg, CacheEvictionConfiguration.SERVICE_NAME));

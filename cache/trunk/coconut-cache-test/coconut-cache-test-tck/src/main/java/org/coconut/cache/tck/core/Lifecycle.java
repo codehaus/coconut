@@ -2,7 +2,7 @@
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.cache.tck.lifecycle;
+package org.coconut.cache.tck.core;
 
 import java.util.concurrent.TimeUnit;
 

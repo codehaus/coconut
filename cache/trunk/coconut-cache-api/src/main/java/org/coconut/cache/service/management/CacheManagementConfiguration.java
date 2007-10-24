@@ -17,10 +17,8 @@ import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
-import org.coconut.cache.CacheException;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.internal.util.XmlUtil;
-import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedVisitor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -49,9 +47,6 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
     /** XML registrant tag. */
     private final static String XML_REGISTRANT_TAG = "registrant";
 
-    /** XML rootgroup tag. */
-    private final static String XML_ROOT_GROUP_TAG = "rootgroup";
-
     /** The domain to register managed beans under. */
     private String domain;
 
@@ -64,8 +59,6 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
     /** The visitor to use for registration of the managed beans. */
     private ManagedVisitor registrant;
 
-    /** The top level ManagedGroup, all other services are registed under this. */
-    private ManagedGroup root;
 
     /**
      * Create a new CacheManagementConfiguration.
@@ -102,15 +95,6 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
         return registrant;
     }
 
-    /**
-     * Returns the configured root.
-     * 
-     * @return the configured root
-     * @see #setRoot(ManagedGroup)
-     */
-    public ManagedGroup getRoot() {
-        return root;
-    }
 
     /**
      * Returns true if management is enabled for the cache, otherwise false.
@@ -198,20 +182,7 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
         return this;
     }
 
-    /**
-     * Sets that ManagedGroup that each cache service will register with. Normal usage of
-     * this cache does not involve using this method. But if you need to do something
-     * crazy you can use this method.
-     * 
-     * @param root
-     *            the root to set
-     * @return this configuration
-     * @see #getRoot()
-     */
-    public CacheManagementConfiguration setRoot(ManagedGroup root) {
-        this.root = root;
-        return this;
-    }
+
 
     /**
      * {@inheritDoc}
@@ -221,7 +192,6 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
         domain = readValue(getChild(XML_DOMAIN_TAG, e), CacheMXBean.DEFAULT_JMX_DOMAIN);
         enabled = getAttributeBoolean(e, XML_ENABLED_ATTRIBUTE, false);
         registrant = loadOptional(e, XML_REGISTRANT_TAG, ManagedVisitor.class);
-        root = loadOptional(e, XML_ROOT_GROUP_TAG, ManagedGroup.class);
         if (getAttributeBoolean(e, "usePlatformMBeanServer", false)) {
             // This is bit whacked but we need it for consistency sake
             // sick configuration->ParentCache with custom MBeanServer
@@ -259,8 +229,5 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
         addAndsaveObject(doc, base, XML_REGISTRANT_TAG, getResourceBundle(),
                 "management.saveOfRegistrantFailed", registrant);
 
-        /* Registrant */
-        addAndsaveObject(doc, base, XML_ROOT_GROUP_TAG, getResourceBundle(),
-                "management.saveOfRootGroupFailed", root);
     }
 }

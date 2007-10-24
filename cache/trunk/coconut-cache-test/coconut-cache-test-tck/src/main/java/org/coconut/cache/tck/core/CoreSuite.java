@@ -12,9 +12,9 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses( { Clear.class, Constructors.class, ContainsKey.class,
         ContainsValue.class, EntrySetSuite.class, EqualsHashcode.class, Get.class,
-        GetAll.class, IsEmpty.class, KeySetSuite.class, Peek.class, Put.class,
-        PutAll.class, PutIfAbsent.class, Remove.class, RemoveAll.class, Replace.class,
-        Size.class, ToString.class, ValuesSuite.class })
+        GetAll.class, IsEmpty.class, KeySetSuite.class, Lifecycle.class, Peek.class,
+        Put.class, PutAll.class, PutIfAbsent.class, Remove.class, RemoveAll.class,
+        Replace.class, Size.class, ToString.class, ValuesSuite.class })
 public class CoreSuite {
 
 }

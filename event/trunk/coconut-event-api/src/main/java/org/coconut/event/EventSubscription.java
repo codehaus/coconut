@@ -46,10 +46,9 @@ public interface EventSubscription<E> {
     void unsubscribe();
 
     /**
-     * Returns whether or not this subscription is still active. //boolean isSubscribed()
-     * instead??
+     * Returns whether or not this subscription is still active.
      * 
      * @return
      */
-    boolean isActive();
+    boolean isValid();
 }

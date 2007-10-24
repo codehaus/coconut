@@ -6,8 +6,8 @@ package org.coconut.cache.internal.service.eviction;
 import java.util.Map;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.InternalCacheSupport;
 import org.coconut.cache.internal.service.servicemanager.CompositeService;
+import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.service.eviction.CacheEvictionMXBean;
 import org.coconut.cache.service.eviction.CacheEvictionService;

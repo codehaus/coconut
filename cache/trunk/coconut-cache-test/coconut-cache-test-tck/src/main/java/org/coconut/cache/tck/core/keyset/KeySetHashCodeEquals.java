@@ -3,6 +3,10 @@
  */
 package org.coconut.cache.tck.core.keyset;
 
+import java.util.HashSet;
+import java.util.concurrent.TimeUnit;
+
+import org.coconut.cache.Cache;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;
 
@@ -30,6 +34,29 @@ public class KeySetHashCodeEquals extends AbstractCacheTCKTest {
         assertFalse(c.keySet().equals(newCache(6).keySet()));
     }
 
+    /**
+     * {@link Cache#containsKey()} should not fail when cache is shutdown.
+     * 
+     * @throws InterruptedException
+     *             was interrupted
+     */
+    @Test
+    public void equalsShutdown() throws InterruptedException {
+        c = newCache(5);
+        assertTrue(c.isStarted());
+        c.shutdown();
+
+        // should not fail, but result is undefined until terminated
+        c.keySet().equals(new HashSet());
+
+        assertTrue(c.awaitTermination(1, TimeUnit.SECONDS));
+
+        boolean equals = c.keySet().equals(new HashSet());
+        assertTrue(equals);// cache should be empty
+    }
+    
+    //TODO test hashCode shutdown
+    
     @Test
     public void testHashCode() {
     // assertEquals(c5.values().hashCode(), c5.values().hashCode());

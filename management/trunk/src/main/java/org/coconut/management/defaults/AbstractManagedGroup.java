@@ -19,121 +19,123 @@ import org.coconut.management.ManagedGroup;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public abstract class AbstractManagedGroup implements ManagedGroup {
-	final static Pattern NAME_PATTERN = Pattern
-			.compile("[\\da-zA-Z\\x5F\\x2D]*(\\x2E([\\da-z\\x5F\\x2D])+)*");
+    final static Pattern NAME_PATTERN = Pattern
+            .compile("[\\da-zA-Z\\x5F\\x2D]*(\\x2E([\\da-z\\x5F\\x2D])+)*");
 
-	private final String description;
+    private final String description;
 
-	private final ConcurrentHashMap<String, AbstractManagedGroup> map = new ConcurrentHashMap<String, AbstractManagedGroup>();
+    private final ConcurrentHashMap<String, AbstractManagedGroup> map = new ConcurrentHashMap<String, AbstractManagedGroup>();
 
-	private final String name;
+    private final String name;
 
-	private ObjectName objectName;
+    private ObjectName objectName;
 
-	private AbstractManagedGroup parent;
+    private AbstractManagedGroup parent;
 
-	private MBeanServer server;
+    private MBeanServer server;
 
-	AbstractManagedGroup(String name, String description) {
-		if (name == null) {
-			throw new NullPointerException("name is null");
-		} else if (name.length() == 0) {
-			throw new IllegalArgumentException("cannot specify the empty string as name");
-		} else if (!NAME_PATTERN.matcher(name).matches()) {
-			throw new IllegalArgumentException("not a valid name, was " + name);
-		}
-		this.name = name;
-		this.description = description;
-	}
-
-    /**
-     * {@inheritDoc}
-     */
-	public Collection<ManagedGroup> getChildren() {
-		return new ArrayList<ManagedGroup>(map.values());
-	}
+    AbstractManagedGroup(String name, String description) {
+        if (name == null) {
+            throw new NullPointerException("name is null");
+        } else if (name.length() == 0) {
+            throw new IllegalArgumentException("cannot specify the empty string as name");
+        } else if (!NAME_PATTERN.matcher(name).matches()) {
+            throw new IllegalArgumentException("not a valid name, was " + name);
+        }
+        this.name = name;
+        this.description = description;
+    }
 
     /**
      * {@inheritDoc}
      */
-	public String getDescription() {
-		return description;
-	}
+    public Collection<ManagedGroup> getChildren() {
+        return new ArrayList<ManagedGroup>(map.values());
+    }
 
     /**
      * {@inheritDoc}
      */
-	public String getName() {
-		return name;
-	}
+    public String getDescription() {
+        return description;
+    }
 
     /**
      * {@inheritDoc}
      */
-	public synchronized ObjectName getObjectName() {
-		return objectName;
-	}
+    public String getName() {
+        return name;
+    }
 
     /**
      * {@inheritDoc}
      */
-	public synchronized ManagedGroup getParent() {
-		return parent;
-	}
+    public synchronized ObjectName getObjectName() {
+        return objectName;
+    }
 
     /**
      * {@inheritDoc}
      */
-	public synchronized MBeanServer getServer() {
-		return server;
-	}
+    public synchronized ManagedGroup getParent() {
+        return parent;
+    }
 
     /**
      * {@inheritDoc}
      */
-	public boolean isRegistered() {
-		return getObjectName() != null;
-	}
+    public synchronized MBeanServer getServer() {
+        return server;
+    }
 
     /**
      * {@inheritDoc}
      */
-	public synchronized void register(MBeanServer service, ObjectName name)
-			throws JMException {
-		service.registerMBean(this, name);
-		this.server = service;
-		this.objectName = name;
-	}
+    public boolean isRegistered() {
+        return getObjectName() != null;
+    }
 
     /**
      * {@inheritDoc}
      */
-	public synchronized void remove() {
-		if (parent != null) {
-			parent.map.remove(getName());
-			parent = null;
-		}
-	}
+    public synchronized void register(MBeanServer service, ObjectName name)
+            throws JMException {
+        service.registerMBean(this, name);
+        this.server = service;
+        this.objectName = name;
+    }
 
     /**
      * {@inheritDoc}
      */
-	public synchronized void unregister() throws JMException {
-		server.unregisterMBean(objectName);
-		objectName = null;
-		server = null;
-	}
+    public synchronized void remove() {
+        if (parent != null) {
+            parent.map.remove(getName());
+            parent = null;
+        }
+    }
 
     /**
      * {@inheritDoc}
      */
-	synchronized ManagedGroup addNewGroup(AbstractManagedGroup group) {
-		if (map.containsKey(group.getName())) {
-			throw new IllegalArgumentException();
-		}
-		map.put(group.getName(), group);
-		group.parent = this;
-		return group;
-	}
+    public synchronized void unregister() throws JMException {
+        if (objectName != null) {
+            server.unregisterMBean(objectName);
+        }
+        objectName = null;
+        server = null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    synchronized ManagedGroup addNewGroup(AbstractManagedGroup group) {
+        if (map.containsKey(group.getName())) {
+            throw new IllegalArgumentException();
+        }
+        map.put(group.getName(), group);
+        group.parent = this;
+        return group;
+    }
 
 }

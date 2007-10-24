@@ -107,7 +107,7 @@ public class CacheEvictionConfiguration<K, V> extends
      * <p>
      * The default value is Integer.MAX_VALUE. Which roughly translates to no limit on the
      * number of elements.
-     * 
+     * TODO fix
      * @param maximumVolume
      *            the maximum volume.
      * @return this configuration

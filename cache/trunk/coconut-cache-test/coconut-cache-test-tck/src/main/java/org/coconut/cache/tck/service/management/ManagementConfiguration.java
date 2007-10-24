@@ -12,7 +12,7 @@ import org.junit.Test;
 public class ManagementConfiguration extends AbstractCacheTCKTest {
 
     @Test
-    public void testDomain() throws Exception {
+    public void domain() throws Exception {
         MBeanServer mbs = MBeanServerFactory.createMBeanServer();
         c = newCache(newConf().setName("managementtest").management().setEnabled(true)
                 .setMBeanServer(mbs).setDomain("com.acme"));

@@ -7,10 +7,10 @@ import java.lang.management.ManagementFactory;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.Executor;
 
 import javax.management.JMException;
 import javax.management.MBeanServer;
+import javax.management.ObjectName;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheException;
@@ -68,9 +68,8 @@ public class DefaultCacheManagementService extends AbstractCacheLifecycle implem
         isEnabled = configuration.isEnabled();
 
         /* Set Management Root */
-        ManagedGroup tmpRoot = configuration.getRoot();
-        root = tmpRoot == null ? new DefaultManagedGroup(cacheName,
-                "This group contains all managed Cache services") : tmpRoot;
+        root = new DefaultManagedGroup(cacheName,
+                "This group contains all managed Cache services");
 
         /* Set Registrant */
         if (configuration.getRegistrant() == null) {
@@ -145,5 +144,53 @@ public class DefaultCacheManagementService extends AbstractCacheLifecycle implem
 
     public Collection<?> getChildServices() {
         return Arrays.asList(root, registrant);
+    }
+
+    public ManagedGroup add(Object o) {
+        return root.add(o);
+    }
+
+    public ManagedGroup addChild(String name, String description) {
+        return root.addChild(name, description);
+    }
+
+    public Collection<ManagedGroup> getChildren() {
+        return root.getChildren();
+    }
+
+    public String getDescription() {
+        return root.getDescription();
+    }
+
+    public ObjectName getObjectName() {
+        return root.getObjectName();
+    }
+
+    public Collection<?> getObjects() {
+        return root.getObjects();
+    }
+
+    public ManagedGroup getParent() {
+        return root.getParent();
+    }
+
+    public MBeanServer getServer() {
+        return root.getServer();
+    }
+
+    public boolean isRegistered() {
+        return root.isRegistered();
+    }
+
+    public void register(MBeanServer server, ObjectName objectName) throws JMException {
+        root.register(server, objectName);
+    }
+
+    public void remove() {
+        root.remove();
+    }
+
+    public void unregister() throws JMException {
+        root.unregister();
     }
 }

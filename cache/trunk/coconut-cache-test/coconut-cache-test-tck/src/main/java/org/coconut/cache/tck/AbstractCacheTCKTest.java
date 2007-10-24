@@ -19,11 +19,12 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheServices;
-import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
+import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.management.CacheManagementService;
+import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.statistics.CacheHitStat;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
@@ -325,6 +326,10 @@ public class AbstractCacheTCKTest extends Assert {
         return c.getService(CacheExpirationService.class);
     }
 
+    protected final CacheEventService<Integer, String> event() {
+        return c.getService(CacheEventService.class);
+    }
+    
     protected final CacheEvictionService<Integer, String> eviction() {
         return c.getService(CacheEvictionService.class);
     }
@@ -351,7 +356,7 @@ public class AbstractCacheTCKTest extends Assert {
 
     protected <T> T findMXBean(MBeanServer server, Class<T> clazz) {
         Collection<ManagedGroup> found = new ArrayList<ManagedGroup>();
-        doFindMXBeans(found, CacheServices.management(c).getRoot(), clazz);
+        doFindMXBeans(found, CacheServices.management(c), clazz);
         if (found.size() == 0) {
             throw new IllegalArgumentException("Did not find any service " + clazz);
         } else if (found.size() == 1) {

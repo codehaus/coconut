@@ -11,11 +11,11 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.FutureTask;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.InternalCacheSupport;
 import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
 import org.coconut.cache.internal.service.servicemanager.CompositeService;
+import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.internal.service.util.ExtendableFutureTask;
 import org.coconut.cache.internal.service.worker.CacheWorkerService;
 import org.coconut.cache.service.expiration.CacheExpirationService;

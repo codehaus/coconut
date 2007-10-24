@@ -28,7 +28,7 @@ final class InternalEvent {
         private final Cache<K, V> cache;
 
         /** The capacity of the cache before it was cleared. */
-        private final long previousCapacity;
+        private final long previousVolume;
 
         /** The size of the cache before it was cleared. */
         private final int previousSize;
@@ -38,18 +38,24 @@ final class InternalEvent {
          * 
          * @param previousSize
          *            the size of the cache before it was cleared
-         * @param previousCapacity
+         * @param previousVolume
          *            the capacity of the cache before it was cleared
          * @param cache
          *            the cache that was cleared
          */
-        public Cleared(final Cache<K, V> cache, final int previousSize,
-                final long previousCapacity) {
+        Cleared(final Cache<K, V> cache, final int previousSize,
+                final long previousVolume) {
             if (cache == null) {
                 throw new NullPointerException("cache is null");
+            } else if (previousVolume < 0) {
+                throw new IllegalArgumentException(
+                        "previousVolume must a non negative number");
+            } else if (previousSize < 0) {
+                throw new IllegalArgumentException(
+                        "previousSize must a non negative number");
             }
             this.previousSize = previousSize;
-            this.previousCapacity = previousCapacity;
+            this.previousVolume = previousVolume;
             this.cache = cache;
         }
 
@@ -65,7 +71,7 @@ final class InternalEvent {
 
         /** {@inheritDoc} */
         public long getPreviousVolume() {
-            return previousCapacity;
+            return previousVolume;
         }
 
         /** {@inheritDoc} */
@@ -89,7 +95,7 @@ final class InternalEvent {
         /** {@inheritDoc} */
         @Override
         public int hashCode() {
-            return cache.hashCode() ^ previousSize;
+            return (int) (previousVolume ^ (previousVolume >>> 32)) ^ previousSize;
         }
 
         /** {@inheritDoc} */
@@ -100,79 +106,79 @@ final class InternalEvent {
         }
     }
 
-//    /**
-//     * The default implementation of the cache Evicted event.
-//     * 
-//     * @param <K>
-//     *            the type of keys maintained by the cache
-//     * @param <V>
-//     *            the type of values maintained by the cache
-//     */
-//    static class Evicted<K, V> implements CacheEvent.CacheEvicted<K, V> {
-//        private final Cache<K, V> cache;
+// /**
+// * The default implementation of the cache Evicted event.
+// *
+// * @param <K>
+// * the type of keys maintained by the cache
+// * @param <V>
+// * the type of values maintained by the cache
+// */
+// static class Evicted<K, V> implements CacheEvent.CacheEvicted<K, V> {
+// private final Cache<K, V> cache;
 //
-//        private final int currentSize;
+// private final int currentSize;
 //
-//        private final int previousSize;
+// private final int previousSize;
 //
-//        public Evicted(final Cache<K, V> cache, final int previousSize,
-//                final int currentSize) {
-//            this.cache = cache;
-//            this.previousSize = previousSize;
-//            this.currentSize = currentSize;
-//        }
+// public Evicted(final Cache<K, V> cache, final int previousSize,
+// final int currentSize) {
+// this.cache = cache;
+// this.previousSize = previousSize;
+// this.currentSize = currentSize;
+// }
 //
-//        /** {@inheritDoc} */
-//        public Cache<K, V> getCache() {
-//            return cache;
-//        }
+// /** {@inheritDoc} */
+// public Cache<K, V> getCache() {
+// return cache;
+// }
 //
-//        /** {@inheritDoc} */
-//        public int getCurrentSize() {
-//            return currentSize;
-//        }
+// /** {@inheritDoc} */
+// public int getCurrentSize() {
+// return currentSize;
+// }
 //
-//        /** {@inheritDoc} */
-//        public String getName() {
-//            return CacheEvent.CacheEvicted.NAME;
-//        }
+// /** {@inheritDoc} */
+// public String getName() {
+// return CacheEvent.CacheEvicted.NAME;
+// }
 //
-//        /** {@inheritDoc} */
-//        public int getPreviousSize() {
-//            return previousSize;
-//        }
-//    }
+// /** {@inheritDoc} */
+// public int getPreviousSize() {
+// return previousSize;
+// }
+// }
 //
-//    /**
-//     * An event indicating that {@link Cache#evict()} was called on a particular
-//     * {@link Cache}.
-//     */
-//    interface CacheEvicted<K, V> extends CacheEvent<K, V> {
-//        /** The unique name of the event. */
-//        String NAME = "cache.evicted";
+// /**
+// * An event indicating that {@link Cache#evict()} was called on a particular
+// * {@link Cache}.
+// */
+// interface CacheEvicted<K, V> extends CacheEvent<K, V> {
+// /** The unique name of the event. */
+// String NAME = "cache.evicted";
 //
-//        /**
-//         * Returns the current number of elements contained in the cache after evict has
-//         * been called.
-//         * @return the current number of elements contained in the cache after evict has
-//         * been called 
-//         */
-//        int getCurrentSize();
+// /**
+// * Returns the current number of elements contained in the cache after evict has
+// * been called.
+// * @return the current number of elements contained in the cache after evict has
+// * been called
+// */
+// int getCurrentSize();
 //
-//        /**
-//         * Return the previous number of elements contained in the cache before the call
-//         * to evict.
-//         * @return the previous number of elements contained in the cache before the call
-//         * to evict
-//         */
-//        int getPreviousSize();
-//    }
+// /**
+// * Return the previous number of elements contained in the cache before the call
+// * to evict.
+// * @return the previous number of elements contained in the cache before the call
+// * to evict
+// */
+// int getPreviousSize();
+// }
     /**
      * Creates a new {@link CacheCleared} event from the specified parameters.
      * 
      * @param previousSize
      *            the size of the cache before it was cleared
-     * @param previousCapacity
+     * @param previousVolume
      *            the capacity of the cache before it was cleared
      * @param cache
      *            the cache that was cleared
@@ -183,7 +189,7 @@ final class InternalEvent {
      *            the type of values maintained by the cache
      */
     static <K, V> CacheEvent.CacheCleared<K, V> cleared(Cache<K, V> cache,
-            int previousSize, long previousCapacity) {
-        return new Cleared<K, V>(cache, previousSize, previousCapacity);
+            int previousSize, long previousVolume) {
+        return new Cleared<K, V>(cache, previousSize, previousVolume);
     }
 }

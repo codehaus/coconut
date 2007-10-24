@@ -30,12 +30,12 @@ public class ManagementUtilsTest {
         final ManagedGroup dummy = context.mock(ManagedGroup.class);
         context.checking(new Expectations() {
             {
-                one(mock).getRoot();
+                one(mock).add("foo");
                 will(returnValue(dummy));
             }
         });
         CacheManagementService service = ManagementUtils.wrapService(mock);
-        assertSame(dummy, service.getRoot());
+        assertEquals(dummy, service.add("foo"));
     }
 
     @Test(expected = NullPointerException.class)

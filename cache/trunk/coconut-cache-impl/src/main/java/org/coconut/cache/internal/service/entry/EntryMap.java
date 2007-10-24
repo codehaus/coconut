@@ -15,7 +15,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.InternalCacheSupport;
+import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 
 /**
  * This class is partly adopted from ConcurrentHashMap.

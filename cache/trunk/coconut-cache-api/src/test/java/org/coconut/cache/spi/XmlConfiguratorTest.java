@@ -26,7 +26,7 @@ import org.w3c.dom.Element;
  */
 public class XmlConfiguratorTest {
 
-    CacheConfiguration<?,?> conf;
+    CacheConfiguration<?, ?> conf;
 
     @Before
     public void setUp() {
@@ -52,7 +52,7 @@ public class XmlConfiguratorTest {
                 XmlConfigurator.CACHE_INSTANCE_TYPE));
     }
 
-    static CacheConfiguration<?,?> rw(CacheConfiguration<?,?> conf) throws Exception {
+    static CacheConfiguration<?, ?> rw(CacheConfiguration<?, ?> conf) throws Exception {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         new XmlConfigurator().write(conf, os);
         return CacheConfiguration.loadConfigurationFrom(new ByteArrayInputStream(os
@@ -114,6 +114,11 @@ public class XmlConfiguratorTest {
         assertNull(conf.getDefaultLogger());
     }
 
+    public static <K, V, T extends AbstractCacheServiceConfiguration<K, V>> T reloadService(
+            T configuration) throws Exception {
+        return reloadService(configuration, configuration);
+    }
+
     /**
      * This method is used for saving and reloading a configuration object.
      * 
@@ -122,7 +127,7 @@ public class XmlConfiguratorTest {
      * @throws Exception
      */
     public static <K, V, T extends AbstractCacheServiceConfiguration<K, V>> T reloadService(
-            T configuration) throws Exception {
+            T configuration, T configuration2) throws Exception {
         DocumentBuilder builder = DocumentBuilderFactory.newInstance()
                 .newDocumentBuilder();
         Document doc = builder.newDocument();
@@ -132,6 +137,6 @@ public class XmlConfiguratorTest {
         if (e != null) {
             parent.appendChild(e);
         }
-        return (T) xml.readCacheService(parent, configuration);
+        return (T) xml.readCacheService(parent, configuration2);
     }
 }

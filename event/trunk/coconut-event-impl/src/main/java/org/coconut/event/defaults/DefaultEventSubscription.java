@@ -66,9 +66,9 @@ class DefaultEventSubscription<E> extends ReentrantReadWriteLock implements
     }
 
     /**
-     * @see org.coconut.event.EventSubscription#isActive()
+     * @see org.coconut.event.EventSubscription#isValid()
      */
-    public boolean isActive() {
+    public boolean isValid() {
         return isActive;
     }
 

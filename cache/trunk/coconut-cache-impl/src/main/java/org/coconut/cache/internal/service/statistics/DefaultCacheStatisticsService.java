@@ -13,7 +13,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.servicemanager.CacheServiceManager;
-import org.coconut.cache.internal.service.util.Resources;
+import org.coconut.cache.internal.service.spi.Resources;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.statistics.CacheHitStat;
 import org.coconut.cache.service.statistics.CacheStatisticsConfiguration;

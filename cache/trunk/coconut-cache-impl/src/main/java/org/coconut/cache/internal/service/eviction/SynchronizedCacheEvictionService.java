@@ -4,7 +4,7 @@
 package org.coconut.cache.internal.service.eviction;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.internal.service.InternalCacheSupport;
+import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 
 /**

@@ -61,8 +61,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     public boolean containsValue(Object value) {
         if (value == null) {
             throw new NullPointerException("value is null");
-        }
-        if (size() == 0) {
+        } else if (size() == 0) {
             return false;
         }
         for (V entry : values()) {

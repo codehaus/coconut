@@ -17,12 +17,12 @@ public class MyService extends AbstractCacheLifecycle {
         super(name);
     }
 
-    @Override
-    public void initialize(CacheConfiguration<?, ?> configuration) {
-        if (configuration.management().isEnabled()) {
-            configuration.management().getRoot().addChild("ServiceName",
-                    "Description of service");
-        }
-    }
+//    @Override
+//    public void initialize(CacheConfiguration<?, ?> configuration) {
+//        if (configuration.management().isEnabled()) {
+//            configuration.management().getRoot().addChild("ServiceName",
+//                    "Description of service");
+//        }
+//    }
 
 }

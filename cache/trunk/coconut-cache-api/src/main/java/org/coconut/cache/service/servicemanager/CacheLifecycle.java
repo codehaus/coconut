@@ -13,12 +13,6 @@ import org.coconut.cache.CacheConfiguration;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public interface CacheLifecycle {
-    /**
-     * Returns the readable name of the service.
-     * 
-     * @return the readable name of the service
-     */
-    String getName();
 
     /**
      * Initializes the object. This is the first method in the cache lifecycle that is
@@ -63,8 +57,9 @@ public interface CacheLifecycle {
     void shutdown();
 
     /**
-     * This method is invoked as the last method in this lifecycle interface and is called
-     * when the cache and all of it services has been succesfully shutdown.
+     * Method invoked when the cache has terminated. This method is invoked as the last
+     * method in this lifecycle interface and is called when the cache and all of it
+     * services has been succesfully shutdown.
      */
     void terminated();
 }

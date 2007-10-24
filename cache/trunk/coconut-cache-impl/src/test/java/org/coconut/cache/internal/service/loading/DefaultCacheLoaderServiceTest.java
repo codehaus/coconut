@@ -9,8 +9,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.coconut.cache.internal.service.InternalCacheSupport;
 import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
+import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.internal.service.worker.CacheWorkerService;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
@@ -309,7 +309,7 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
         }
 
         /**
-         * @see org.coconut.cache.internal.service.threading.InternalCacheThreadingService#isActive()
+         * @see org.coconut.cache.internal.service.threading.InternalCacheThreadingService#isValid()
          */
         public boolean isActive() {
             throw new UnsupportedOperationException();

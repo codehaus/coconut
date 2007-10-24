@@ -20,7 +20,6 @@ import net.jcip.annotations.NotThreadSafe;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheServices;
-import org.coconut.cache.internal.service.InternalCacheSupport;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
 import org.coconut.cache.internal.service.entry.EntryMap;
@@ -30,6 +29,7 @@ import org.coconut.cache.internal.service.expiration.DefaultCacheExpirationServi
 import org.coconut.cache.internal.service.loading.InternalCacheLoadingService;
 import org.coconut.cache.internal.service.servicemanager.CacheServiceManager;
 import org.coconut.cache.internal.service.servicemanager.UnsynchronizedCacheServiceManager;
+import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsService;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.eviction.CacheEvictionService;

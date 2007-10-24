@@ -3,6 +3,12 @@
  */
 package org.coconut.cache.internal.service.management;
 
+import java.util.Collection;
+
+import javax.management.JMException;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+
 import org.coconut.cache.Cache;
 import org.coconut.cache.service.management.CacheMXBean;
 import org.coconut.cache.service.management.CacheManagementService;
@@ -72,8 +78,57 @@ final class ManagementUtils {
         }
 
         /** {@inheritDoc} */
-        public ManagedGroup getRoot() {
-            return delegate.getRoot();
+        public ManagedGroup add(Object o) {
+            return delegate.add(o);
+        }
+        /** {@inheritDoc} */
+        public ManagedGroup addChild(String name, String description) {
+            return delegate.addChild(name, description);
+        }
+        /** {@inheritDoc} */
+        public Collection<ManagedGroup> getChildren() {
+            return delegate.getChildren();
+        }
+        /** {@inheritDoc} */
+        public String getDescription() {
+            return delegate.getDescription();
+        }
+        /** {@inheritDoc} */
+        public String getName() {
+            return delegate.getName();
+        }
+        /** {@inheritDoc} */
+        public ObjectName getObjectName() {
+            return delegate.getObjectName();
+        }
+        /** {@inheritDoc} */
+        public Collection<?> getObjects() {
+            return delegate.getObjects();
+        }
+        /** {@inheritDoc} */
+        public ManagedGroup getParent() {
+            return delegate.getParent();
+        }
+        /** {@inheritDoc} */
+        public MBeanServer getServer() {
+            return delegate.getServer();
+        }
+        /** {@inheritDoc} */
+        public boolean isRegistered() {
+            return delegate.isRegistered();
+        }
+        /** {@inheritDoc} */
+        public void register(MBeanServer server, ObjectName objectName)
+                throws JMException {
+            delegate.register(server, objectName);
+        }
+        /** {@inheritDoc} */
+        public void remove() {
+            delegate.remove();
+        }
+        /** {@inheritDoc} */
+        public void unregister() throws JMException {
+            delegate.unregister();
         }
     }
 

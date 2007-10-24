@@ -3,15 +3,22 @@
  */
 package org.coconut.cache.service.servicemanager;
 
+import static org.coconut.internal.util.XmlUtil.addAndsaveObject;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.coconut.cache.Cache;
+import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
+import org.coconut.internal.util.XmlUtil;
+import org.coconut.management.ManagedGroup;
+import org.coconut.management.ManagedObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -22,22 +29,62 @@ public class CacheServiceManagerConfiguration extends AbstractCacheServiceConfig
     /** The short name of this service. */
     public static final String SERVICE_NAME = "serviceManager";
 
-    /** The set of registered services. */
-    private final Set<CacheLifecycle> services = new HashSet<CacheLifecycle>();
+    /** The XML tag for the cache loader. */
+    private final static String SERVICE_TAG = "service";
 
     /** Any additional services attached to the cache. */
-    private final Map<Class<?>, Object> attached = new HashMap<Class<?>, Object>();
+    private final Map<Object, Boolean> registeredServices = new HashMap<Object, Boolean>();
 
-// private final Set<EventProcessor<? super Cache<?, ?>>> startedNotifier = new
-// HashSet<EventProcessor<? super Cache<?, ?>>>();
-
-    // private final Set<EventProcessor<? super Cache<?, ?>>> terminatedNotifier = new
-    // HashSet<EventProcessor<? super Cache<?, ?>>>();
     /**
      * Create a new CacheManagementConfiguration.
      */
     public CacheServiceManagerConfiguration() {
         super(SERVICE_NAME);
+    }
+
+    /**
+     * Registers a object for the cache. Only objects of type {@link CacheLifecycle} or
+     * {@link ManagedObject}, are valid. If the object is of type {@link CacheLifecycle}
+     * the cache will invoke the respectic lifecycle methods on the object. If the object
+     * is of type {@link ManagedObject} and management is enabled for the cache (see
+     * {@link CacheManagementConfiguration#setEnabled(boolean)}). It will be registered
+     * with a {@link ManagedGroup}.
+     * 
+     * @param o
+     *            the object to register
+     * @return this configuration
+     * @throws IllegalArgumentException
+     *             in case of an argument of invalid type or if the object has already
+     *             been registered.
+     */
+    public CacheServiceManagerConfiguration add(Object o) {
+        if (o == null) {
+            throw new NullPointerException("o is null");
+        } else if (registeredServices.containsKey(o)) {
+            throw new IllegalArgumentException("Object has already been registered");
+        } else if (!(o instanceof CacheLifecycle || o instanceof ManagedObject)) {
+            throw new IllegalArgumentException(
+                    "Object must be an instance of CacheLifecycle or ManagedObject");
+        }
+        registeredServices.put(o, false);
+        return this;
+
+    }
+
+//
+// public CacheServiceManagerConfiguration addService(Object o) {
+// if (o == null) {
+// throw new NullPointerException("o is null");
+// } else if (registeredServices.containsKey(o)) {
+// throw new IllegalArgumentException("Object has already been registered");
+// }
+// registeredServices.put(o, true);
+// return this;
+//
+// }
+
+    public Collection<Object> getObjects() {
+        return new ArrayList(registeredServices.keySet());
     }
 
     /**
@@ -66,53 +113,33 @@ public class CacheServiceManagerConfiguration extends AbstractCacheServiceConfig
      * @throws NullPointerException
      *             if the specified key or instance is null
      */
-    public CacheServiceManagerConfiguration attach(Class<?> key, Object instance) {
-        if (key == null) {
-            throw new NullPointerException("key is null");
-        } else if (instance == null) {
-            throw new NullPointerException("instance is null");
-        } else if (attached.containsKey(key)) {
-            throw new IllegalArgumentException(
-                    "An instance for the specified key is already registered, key=" + key);
+// public CacheServiceManagerConfiguration attach(Class<?> key, Object instance) {
+// if (key == null) {
+// throw new NullPointerException("key is null");
+// } else if (instance == null) {
+// throw new NullPointerException("instance is null");
+// } else if (attached.containsKey(key)) {
+// throw new IllegalArgumentException(
+// "An instance for the specified key is already registered, key=" + key);
+// }
+// attached.put(key, instance);
+// return this;
+// }
+    @Override
+    protected void fromXML(Element element) throws Exception {
+        NodeList nl = element.getElementsByTagName(SERVICE_TAG);
+        for (int i = 0; i < nl.getLength(); i++) {
+            Object o = XmlUtil.loadObject((Element) nl.item(i), Object.class);
+            add(o);
         }
-        attached.put(key, instance);
-        return this;
-    }
-
-    /**
-     * Adds the specified service to lifecycle of the cache.
-     * 
-     * @param service
-     *            the service to add
-     * @return this configuration
-     */
-    public CacheServiceManagerConfiguration addService(CacheLifecycle service) {
-        if (service == null) {
-            throw new NullPointerException("service is null");
-        }
-        services.add(service);
-        return this;
-    }
-
-    public Set<CacheLifecycle> getAllServices() {
-        return new HashSet(services);
     }
 
     @Override
-    protected void fromXML(Element element) throws Exception {}
-
-    @Override
-    protected void toXML(Document doc, Element parent) throws Exception {}
-
-// public CacheServiceManagerConfiguration addStartNotifier(
-// EventProcessor<? super Cache<?, ?>> hook) {
-// startedNotifier.add(hook);
-// return this;
-// }
-//
-// public CacheServiceManagerConfiguration addTerminationNotifier(
-// EventProcessor<? super Cache<?, ?>> hook) {
-// terminatedNotifier.add(hook);
-// return this;
-// }
+    protected void toXML(Document doc, Element parent) throws Exception {
+        for (Object o : getObjects()) {
+            addAndsaveObject(doc, parent, SERVICE_TAG, getResourceBundle(),
+                    "loading.saveOfLoaderFailed", o);
+        }
+    }
+   
 }

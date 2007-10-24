@@ -6,11 +6,11 @@ package org.coconut.cache.defaults;
 import net.jcip.annotations.ThreadSafe;
 
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.internal.service.CacheServiceManager;
 import org.coconut.cache.internal.service.event.DefaultCacheEventService;
 import org.coconut.cache.internal.service.eviction.UnsynchronizedCacheEvictionService;
 import org.coconut.cache.internal.service.loading.DefaultCacheLoaderService;
 import org.coconut.cache.internal.service.management.DefaultCacheManagementService;
+import org.coconut.cache.internal.service.spi.CacheServiceManager;
 import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsService;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.management.CacheMXBean;
