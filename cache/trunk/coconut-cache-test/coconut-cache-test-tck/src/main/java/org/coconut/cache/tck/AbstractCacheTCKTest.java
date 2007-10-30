@@ -317,9 +317,9 @@ public class AbstractCacheTCKTest extends Assert {
      */
     protected void assertHitstat(float ratio, long hits, long misses) {
         CacheHitStat hitstat = statistics().getHitStat();
-        Assert.assertEquals(ratio, hitstat.getHitRatio(), 0.0001);
         Assert.assertEquals(hits, hitstat.getNumberOfHits());
         Assert.assertEquals(misses, hitstat.getNumberOfMisses());
+        Assert.assertEquals(ratio, hitstat.getHitRatio(), 0.0001);
     }
 
     protected final CacheExpirationService<Integer, String> expiration() {

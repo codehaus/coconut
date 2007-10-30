@@ -17,8 +17,8 @@ import org.coconut.core.AttributeMap;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class DummyCache<K, V> implements Cache<K, V> {
-    public int removeAll(Collection<? extends K> keys) {
-        return 0;
+    public void removeAll(Collection<? extends K> keys) {
+        
     }
     public volatile boolean isStarted;
 

@@ -67,13 +67,13 @@ public class Hits extends AbstractCacheTCKTest {
     public void loadedAttribute() {
         c = newCache(newConf().loading().setLoader(new MyLoader()));
         loadAndAwait(M1);
-        get(M2);
         assertEquals(2l, peekEntry(M1).getHits());
-        assertEquals(4l, peekEntry(M2).getHits());
+        get(M2);
+        assertEquals(3l, peekEntry(M2).getHits());
 
         get(M1);
         getAll(M1, M2);
         assertEquals(4l, peekEntry(M1).getHits());
-        assertEquals(5l, peekEntry(M2).getHits());
+        assertEquals(4l, peekEntry(M2).getHits());
     }
 }

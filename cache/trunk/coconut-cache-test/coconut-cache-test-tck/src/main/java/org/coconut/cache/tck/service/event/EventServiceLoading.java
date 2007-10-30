@@ -44,7 +44,8 @@ public class EventServiceLoading extends AbstractEventTestBundle {
     public void forceLoad() throws Exception {
         subscribe(CacheEventFilters.CACHEENTRYEVENT_FILTER);
         loading().forceLoad(1);
-        consumeItem(ItemAdded.class, M1);
+        ItemAdded added=consumeItem(ItemAdded.class, M1);
+      //  assertTrue(added.isLoaded());
         loader.incBase();
         loading().forceLoad(1);
         consumeItem(ItemUpdated.class, M1.getKey(), M2.getValue());

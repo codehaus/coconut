@@ -12,6 +12,8 @@ import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import net.jcip.annotations.GuardedBy;
+
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheException;
 import org.coconut.cache.internal.service.servicemanager.CompositeService;
@@ -46,6 +48,10 @@ public class DefaultCacheManagementService extends AbstractCacheLifecycle implem
 
     /** Used to register all services. */
     private final ManagedVisitor registrant;
+
+    /** Whether or not this service has been shutdown. */
+    @GuardedBy("this")
+    private boolean isShutdown;
 
     /**
      * Creates a new DefaultCacheManagementService.
@@ -108,7 +114,7 @@ public class DefaultCacheManagementService extends AbstractCacheLifecycle implem
 
     /** {@inheritDoc} */
     @Override
-    public void registerServices(Map<Class<?>, Object> serviceMap) {
+    public synchronized void registerServices(Map<Class<?>, Object> serviceMap) {
         if (isEnabled) {
             serviceMap.put(CacheManagementService.class, ManagementUtils
                     .wrapService(this));
@@ -117,7 +123,8 @@ public class DefaultCacheManagementService extends AbstractCacheLifecycle implem
 
     /** {@inheritDoc} */
     @Override
-    public void shutdown() {
+    public synchronized void shutdown() {
+        isShutdown = true;
         if (isEnabled) {
             try {
                 root.unregister();
@@ -129,7 +136,7 @@ public class DefaultCacheManagementService extends AbstractCacheLifecycle implem
 
     /** {@inheritDoc} */
     @Override
-    public void started(Cache<?, ?> cache) {
+    public synchronized void started(Cache<?, ?> cache) {
         if (isEnabled) {
             ManagedGroup g = root.addChild(CacheMXBean.MANAGED_SERVICE_NAME,
                     "General cache attributes and operations");
@@ -146,51 +153,63 @@ public class DefaultCacheManagementService extends AbstractCacheLifecycle implem
         return Arrays.asList(root, registrant);
     }
 
-    public ManagedGroup add(Object o) {
+    public synchronized ManagedGroup add(Object o) {
+        checkShutdown();
         return root.add(o);
     }
 
-    public ManagedGroup addChild(String name, String description) {
+    public synchronized ManagedGroup addChild(String name, String description) {
+        checkShutdown();
         return root.addChild(name, description);
     }
 
-    public Collection<ManagedGroup> getChildren() {
+    public synchronized Collection<ManagedGroup> getChildren() {
         return root.getChildren();
     }
 
-    public String getDescription() {
+    public synchronized String getDescription() {
         return root.getDescription();
     }
 
-    public ObjectName getObjectName() {
+    public synchronized ObjectName getObjectName() {
         return root.getObjectName();
     }
 
-    public Collection<?> getObjects() {
+    public synchronized Collection<?> getObjects() {
         return root.getObjects();
     }
 
-    public ManagedGroup getParent() {
+    public synchronized ManagedGroup getParent() {
         return root.getParent();
     }
 
-    public MBeanServer getServer() {
+    public synchronized MBeanServer getServer() {
         return root.getServer();
     }
 
-    public boolean isRegistered() {
+    public synchronized boolean isRegistered() {
         return root.isRegistered();
     }
 
-    public void register(MBeanServer server, ObjectName objectName) throws JMException {
+    public synchronized void register(MBeanServer server, ObjectName objectName)
+            throws JMException {
+        checkShutdown();
         root.register(server, objectName);
     }
 
-    public void remove() {
+    public synchronized void remove() {
+        checkShutdown();
         root.remove();
     }
 
-    public void unregister() throws JMException {
+    public synchronized void unregister() throws JMException {
+        checkShutdown();
         root.unregister();
+    }
+
+    private void checkShutdown() {
+        if (isShutdown) {
+            throw new IllegalStateException("Cache has been shutdown");
+        }
     }
 }

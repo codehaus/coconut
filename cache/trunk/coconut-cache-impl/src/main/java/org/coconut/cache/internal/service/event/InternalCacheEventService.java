@@ -46,6 +46,8 @@ public interface InternalCacheEventService<K, V> extends CacheEventService<K, V>
 
     void afterPurge(Cache<K, V> cache, Collection<? extends CacheEntry<K, V>> expired);
 
+    void dexpired(Cache<K, V> cache, long started, CacheEntry<K, V> entry);
+    
     void afterGet(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries, K key,
             CacheEntry<K, V> prev, CacheEntry<K, V> newEntry, boolean isExpired);

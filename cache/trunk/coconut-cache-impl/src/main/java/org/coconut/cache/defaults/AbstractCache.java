@@ -7,15 +7,18 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.entry.ImmutableCacheEntry;
+import org.coconut.cache.internal.service.servicemanager.CacheServiceManager;
 import org.coconut.cache.spi.ConfigurationValidator;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.AttributeMaps;
+import org.coconut.core.Clock;
 import org.coconut.internal.util.CollectionUtils;
 
 /**
@@ -31,6 +34,8 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     /** The name of the cache. */
     private final String name;
 
+    private final Clock clock;
+
     /**
      * Creates a new AbstractCache from the specified configuration.
      * 
@@ -44,6 +49,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         }
         ConfigurationValidator.getInstance().verify(conf, (Class) getClass());
         String name = conf.getName();
+        clock = conf.getClock();
         if (name == null) {
             this.name = UUID.randomUUID().toString();
         } else {
@@ -51,10 +57,59 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         }
     }
 
+    abstract CacheServiceManager getServiceManager();
+
+    Clock getClock() {
+        return clock;
+    }
+
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     public boolean containsKey(Object key) {
         return peek((K) key) != null;
+    }
+
+    /** {@inheritDoc} */
+    public final <T> T getService(Class<T> serviceType) {
+        return getServiceManager().getService(serviceType);
+    }
+
+    /** {@inheritDoc} */
+    public boolean isShutdown() {
+        return getServiceManager().isShutdown();
+    }
+
+    /** {@inheritDoc} */
+    public void shutdown() {
+        getServiceManager().shutdown();
+    }
+
+    /** {@inheritDoc} */
+    public boolean awaitTermination(long timeout, TimeUnit unit)
+            throws InterruptedException {
+        return getServiceManager().awaitTermination(timeout, unit);
+    }
+
+    /**
+     * Prestarts the Cache.
+     */
+    public void prestart() {
+        getServiceManager().lazyStart(false);
+    }
+
+    /** {@inheritDoc} */
+    public void shutdownNow() {
+        getServiceManager().shutdownNow();
+    }
+
+    /** {@inheritDoc} */
+    public boolean isStarted() {
+        return getServiceManager().isStarted();
+    }
+
+    /** {@inheritDoc} */
+    public boolean isTerminated() {
+        return getServiceManager().isTerminated();
     }
 
     /** {@inheritDoc} */

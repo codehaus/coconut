@@ -5,8 +5,11 @@ package org.coconut.cache.internal.service.loading;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
+import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingMXBean;
 import org.coconut.cache.service.loading.CacheLoadingService;
@@ -240,6 +243,84 @@ final class LoadingUtils {
         /** {@inheritDoc} */
         public void loadAll() {
             delegate.loadAll();
+        }
+    }
+
+    static <K, V> Callable<AbstractCacheEntry<K, V>> loadValue(
+            final AbstractCacheLoadingService<K, V> loaderService, final K key,
+            AttributeMap attributes) {
+        return new LoadValueRunnable<K, V>(loaderService, key, attributes);
+    }
+
+    static class LoadValueRunnable<K, V> implements Callable<AbstractCacheEntry<K, V>> {
+        private final AttributeMap attributes;
+
+        private final K key;
+
+        private final AbstractCacheLoadingService<K, V> loaderService;
+
+        /**
+         * @param loader
+         * @param key
+         * @param callback
+         */
+        LoadValueRunnable(final AbstractCacheLoadingService<K, V> loaderService,
+                final K key, AttributeMap attributes) {
+            if (key == null) {
+                throw new NullPointerException("key is null");
+            }
+            this.key = key;
+            this.loaderService = loaderService;
+            this.attributes = attributes;
+        }
+
+        /** {@inheritDoc} */
+        public AbstractCacheEntry<K, V> call() {
+            return loaderService.loadAddToCache(key, attributes, false);
+        }
+
+        public K getKey() {
+            return key;
+        }
+    }
+
+    static class LoadValuesRunnable<K, V> implements Runnable {
+        private final Map<? extends K, AttributeMap> keysWithAttributes;
+
+        private final CacheLoader<? super K, ? extends V> loader;
+
+        private final AbstractCacheLoadingService<K, V> loaderService;
+
+        /**
+         * @param loader
+         * @param key
+         * @param callback
+         */
+        LoadValuesRunnable(final AbstractCacheLoadingService<K, V> loaderService,
+                final CacheLoader<? super K, ? extends V> loader,
+                Map<? extends K, AttributeMap> keysWithAttributes) {
+            if (loader == null) {
+                throw new NullPointerException("loader is null");
+            } else if (keysWithAttributes == null) {
+                throw new NullPointerException("key is null");
+            }
+            this.loader = loader;
+            this.keysWithAttributes = keysWithAttributes;
+            this.loaderService = loaderService;
+        }
+
+        public Map<? extends K, AttributeMap> getKeys() {
+            return keysWithAttributes;
+        }
+
+        /** {@inheritDoc} */
+        public void run() {
+            for (Map.Entry<? extends K, AttributeMap> entry : keysWithAttributes
+                    .entrySet()) {
+                K key = entry.getKey();
+                AttributeMap attributes = entry.getValue();
+                loaderService.doLoad(loader, key, attributes, false);
+            }
         }
     }
 }

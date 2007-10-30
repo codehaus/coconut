@@ -84,8 +84,7 @@ public final class CacheExceptionHandlers {
         /** {@inheritDoc} */
         @Override
         public V loadFailed(CacheExceptionContext<K, V> context,
-                CacheLoader<? super K, ?> loader, K key, AttributeMap map, boolean isGet,
-                Exception cause) {
+                CacheLoader<? super K, ?> loader, K key, AttributeMap map, Exception cause) {
             context.defaultLogger().error("Could not load value (key =" + key + ")",
                     cause);
             return null;

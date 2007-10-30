@@ -34,14 +34,14 @@ public class RemoveAll extends AbstractCacheTCKTest {
     @Test
     public void removeAll() {
         c = newCache();
-        assertEquals(0, c.removeAll(CollectionUtils.asList(2, 3)));
+        c.removeAll(CollectionUtils.asList(2, 3));
 
         c = newCache(5);
-        assertEquals(2, c.removeAll(CollectionUtils.asList(2, 3)));
+        c.removeAll(CollectionUtils.asList(2, 3));
         assertSize(3);
 
         c = newCache(5);
-        assertEquals(1, c.removeAll(CollectionUtils.asList(5, 6)));
+        c.removeAll(CollectionUtils.asList(5, 6));
         assertSize(4);
     }
 

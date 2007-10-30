@@ -97,8 +97,7 @@ public abstract class CacheExceptionHandler<K, V> {
      *         given key
      */
     public V loadFailed(CacheExceptionContext<K, V> context,
-            CacheLoader<? super K, ?> loader, K key, AttributeMap map,
-            boolean isSynchronous, Exception cause) {
+            CacheLoader<? super K, ?> loader, K key, AttributeMap map, Exception cause) {
         handleThrowable(context, cause);
         return null;
     }
@@ -200,6 +199,5 @@ public abstract class CacheExceptionHandler<K, V> {
      * @param warning
      *            the warning to handle
      */
-    public abstract void handleWarning(CacheExceptionContext<K, V> context,
-            String warning);
+    public abstract void handleWarning(CacheExceptionContext<K, V> context, String warning);
 }

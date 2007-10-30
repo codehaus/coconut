@@ -248,6 +248,24 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
         entryExpiredCount.addAndGet(expired.size());
     }
 
+    public void afterMiss(Cache<K, V> cache, long started, K key,
+            CacheEntry<K, V> previousEntry, CacheEntry<K, V> newEntry, boolean isExpired) {
+        
+        long time = System.nanoTime() - started;
+        entryGetMissTime.report(time);
+        entryGetMissCount.incrementAndGet();
+    }
+
+    public void afterHit(Cache<K, V> cache, long started, K key, CacheEntry<K, V> entry) {
+        long time = System.nanoTime() - started;
+        entryGetHitTime.report(time);
+        entryGetHitCount.incrementAndGet();
+        double cost = entry.getCost();
+        entryGetHitCostCount.addAndGet(cost);
+        long size = entry.getSize();
+        entryGetHitSizeCount.addAndGet(size);
+    }
+
     public void afterGet(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries, K key,
             CacheEntry<K, V> prev, CacheEntry<K, V> newE, boolean isExpired) {

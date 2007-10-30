@@ -96,7 +96,7 @@ public abstract class Clock {
     public abstract long relativeTime();
 
     public boolean isPassed(long timestamp) {
-        return timestamp() >= timestamp;
+        return isPassed(timestamp(), timestamp);
     }
 
     public long getDeadlineFromNow(long timeout, TimeUnit unit) {
@@ -105,5 +105,9 @@ public abstract class Clock {
 
     public long getDeadlineFromNow(long timeoutMS) {
         return timestamp() + timeoutMS;
+    }
+
+    public static boolean isPassed(long currentTimeStamp, long timeStampToCheck) {
+        return currentTimeStamp >= timeStampToCheck;
     }
 }

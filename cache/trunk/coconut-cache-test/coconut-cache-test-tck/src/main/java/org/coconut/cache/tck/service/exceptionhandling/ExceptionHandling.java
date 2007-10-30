@@ -77,7 +77,7 @@ public class ExceptionHandling extends AbstractCacheTCKTest {
         @Override
         public String loadFailed(CacheExceptionContext<Integer, String> context,
                 CacheLoader<? super Integer, ?> loader, Integer key, AttributeMap map,
-                boolean isGet, Exception cause) {
+                Exception cause) {
             assertSame(logger, context.defaultLogger());
             return "foo";
         }
@@ -92,14 +92,13 @@ public class ExceptionHandling extends AbstractCacheTCKTest {
                     public String loadFailed(
                             CacheExceptionContext<Integer, String> context,
                             CacheLoader<? super Integer, ?> loader, Integer key,
-                            AttributeMap map, boolean isGet, Exception cause) {
+                            AttributeMap map, Exception cause) {
                         try {
                             assertNotNull(context);
                             assertSame(logger, context.defaultLogger());
                             assertSame(c, context.getCache());
                             assertEquals(10, key.intValue());
                             assertNotNull(map);
-                            assertFalse(isGet);
                             assertSame(e, cause);
                         } catch (Error t) {
                             failure = t;
@@ -107,8 +106,7 @@ public class ExceptionHandling extends AbstractCacheTCKTest {
                         }
                         return "foo";
                     }
-                }
-        ).setExceptionLogger(logger).c().loading().setLoader(loader));
+                }).setExceptionLogger(logger).c().loading().setLoader(loader));
         loadAndAwait(M1);
         assertSize(1);
         loadAndAwait(10);
@@ -127,14 +125,13 @@ public class ExceptionHandling extends AbstractCacheTCKTest {
                     public String loadFailed(
                             CacheExceptionContext<Integer, String> context,
                             CacheLoader<? super Integer, ?> loader, Integer key,
-                            AttributeMap map, boolean isGet, Exception cause) {
+                            AttributeMap map, Exception cause) {
                         try {
                             assertNotNull(context);
                             assertSame(logger, context.defaultLogger());
                             assertSame(c, context.getCache());
                             assertEquals(10, key.intValue());
                             assertNotNull(map);
-                            assertTrue(isGet);
                             assertSame(e, cause);
                         } catch (Error t) {
                             failure = t;

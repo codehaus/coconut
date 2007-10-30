@@ -32,6 +32,14 @@ public final class AttributeMaps {
         map.put(name, value);
         return map;
     }
+    
+    public static <K> Map<K, AttributeMap> toMap(Collection<? extends K> keys, AttributeMap attributes) {
+        HashMap<K, AttributeMap> map = new HashMap<K, AttributeMap>();
+        for (K key : keys) {
+            map.put(key, attributes);
+        }
+        return map;
+    }
     /**
      * The default implementation of an {@link AttributeMap}.
      */

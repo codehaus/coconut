@@ -85,6 +85,10 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
         return ExpirationUtils.isExpired(entry, clock, expirationFilter);
     }
 
+    public Filter<CacheEntry<K, V>> getExpirationFilter() {
+        return expirationFilter;
+    }
+
     /** {@inheritDoc} */
     public void manage(ManagedGroup parent) {
         ManagedGroup g = parent.addChild(CacheExpirationConfiguration.SERVICE_NAME,

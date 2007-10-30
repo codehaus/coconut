@@ -265,4 +265,8 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
             Collection<? extends CacheEntry<K, V>> expired) {
         doExpireAll(cache, expired);
     }
+
+    public void dexpired(Cache<K, V> cache, long started, CacheEntry<K, V> entry) {
+        dispatch(removed(cache, entry, true));
+    }
 }

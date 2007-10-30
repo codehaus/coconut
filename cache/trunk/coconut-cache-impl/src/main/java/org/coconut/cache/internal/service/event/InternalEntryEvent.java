@@ -133,7 +133,7 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
         public boolean equals(Object obj) {
             if (obj instanceof CacheEntryEvent.ItemAdded) {
                 CacheEntryEvent.ItemAdded<K, V> event = (ItemAdded<K, V>) obj;
-                return super.equals(event) && isLoaded() == event.isLoaded();
+                return super.equals(event); // && isLoaded() == event.isLoaded();
             }
             return false;
         }

@@ -41,9 +41,11 @@ public class ManagementCacheMXBean extends AbstractCacheTCKTest {
         mxBean = findMXBean(mbs, CacheMXBean.class);
         assertEquals("foo", mxBean.getName());
         assertEquals(c.getName(), mxBean.getName());
-
     }
-
+    
+    /**
+     * Hmm tests what?
+     */
     @Test
     public void getNameUninitialized() {
         assertEquals(c.getName(), mxBean.getName());

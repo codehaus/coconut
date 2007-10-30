@@ -9,6 +9,8 @@ import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import net.jcip.annotations.ThreadSafe;
+
 import org.coconut.cache.Cache;
 import org.coconut.cache.service.management.CacheMXBean;
 import org.coconut.cache.service.management.CacheManagementService;
@@ -30,9 +32,11 @@ final class ManagementUtils {
 
     /** Cannot instantiate. */
     private ManagementUtils() {}
-    
+
     /**
      * Wraps a Cache in a CacheMXBean.
+     * <p>
+     * The returned CacheMXBean will be thread-safe if the specified cache is thread-safe.
      * 
      * @param service
      *            the Cache to wrap
@@ -54,6 +58,133 @@ final class ManagementUtils {
         return new DelegatedCacheManagementService(service);
     }
 
+    public static ManagedGroup synchronizedGroup(ManagedGroup service,
+            Object mutex) {
+        return new SynchronizedCacheManagementService(service, mutex);
+    }
+
+    @ThreadSafe
+    public static final class SynchronizedCacheManagementService implements ManagedGroup {
+        /** The CacheManagementService that is wrapped. */
+        private final ManagedGroup delegate;
+
+        /** The mutex to synchronized on. */
+        private final Object mutex;
+
+        /**
+         * Creates a wrapped CacheManagementService from the specified implementation.
+         * 
+         * @param service
+         *            the CacheManagementService to wrap
+         */
+        public SynchronizedCacheManagementService(ManagedGroup service, Object mutex) {
+            if (service == null) {
+                throw new NullPointerException("service is null");
+            } else if (service == null) {
+                throw new NullPointerException("mutex is null");
+            }
+            this.delegate = service;
+            this.mutex = mutex;
+        }
+
+        /** {@inheritDoc} */
+        public ManagedGroup add(Object o) {
+            synchronized (mutex) {
+                return delegate.add(o);
+            }
+        }
+
+        /** {@inheritDoc} */
+        public ManagedGroup addChild(String name, String description) {
+            synchronized (mutex) {
+                return delegate.addChild(name, description);
+            }
+        }
+
+        /** {@inheritDoc} */
+        public Collection<ManagedGroup> getChildren() {
+            synchronized (mutex) {
+                return delegate.getChildren();
+            }
+        }
+
+        /** {@inheritDoc} */
+        public String getDescription() {
+            synchronized (mutex) {
+                return delegate.getDescription();
+            }
+        }
+
+        /** {@inheritDoc} */
+        public String getName() {
+            synchronized (mutex) {
+                return delegate.getName();
+            }
+        }
+
+        /** {@inheritDoc} */
+        public ObjectName getObjectName() {
+            synchronized (mutex) {
+                return delegate.getObjectName();
+            }
+        }
+
+        /** {@inheritDoc} */
+        public Collection<?> getObjects() {
+            synchronized (mutex) {
+                return delegate.getObjects();
+            }
+        }
+
+        /** {@inheritDoc} */
+        public ManagedGroup getParent() {
+            synchronized (mutex) {
+                return delegate.getParent();
+            }
+        }
+
+        /** {@inheritDoc} */
+        public MBeanServer getServer() {
+            synchronized (mutex) {
+                return delegate.getServer();
+            }
+        }
+
+        /** {@inheritDoc} */
+        public boolean isRegistered() {
+            synchronized (mutex) {
+                return delegate.isRegistered();
+            }
+        }
+
+        /** {@inheritDoc} */
+        public void register(MBeanServer server, ObjectName objectName)
+                throws JMException {
+            synchronized (mutex) {
+                delegate.register(server, objectName);
+            }
+        }
+
+        /** {@inheritDoc} */
+        public void remove() {
+            synchronized (mutex) {
+                delegate.remove();
+            }
+        }
+
+        /** {@inheritDoc} */
+        public void unregister() throws JMException {
+            synchronized (mutex) {
+                delegate.unregister();
+            }
+        }
+    }
+
+    /**
+     * A wrapper class that exposes only the CacheManagementService methods of a
+     * CacheManagementService implementation.
+     */
+
     /**
      * A wrapper class that exposes only the CacheManagementService methods of a
      * CacheManagementService implementation.
@@ -64,8 +195,7 @@ final class ManagementUtils {
         private final CacheManagementService delegate;
 
         /**
-         * Creates a wrapped CacheManagementService from the specified
-         * implementation.
+         * Creates a wrapped CacheManagementService from the specified implementation.
          * 
          * @param service
          *            the CacheManagementService to wrap
@@ -81,51 +211,63 @@ final class ManagementUtils {
         public ManagedGroup add(Object o) {
             return delegate.add(o);
         }
+
         /** {@inheritDoc} */
         public ManagedGroup addChild(String name, String description) {
             return delegate.addChild(name, description);
         }
+
         /** {@inheritDoc} */
         public Collection<ManagedGroup> getChildren() {
             return delegate.getChildren();
         }
+
         /** {@inheritDoc} */
         public String getDescription() {
             return delegate.getDescription();
         }
+
         /** {@inheritDoc} */
         public String getName() {
             return delegate.getName();
         }
+
         /** {@inheritDoc} */
         public ObjectName getObjectName() {
             return delegate.getObjectName();
         }
+
         /** {@inheritDoc} */
         public Collection<?> getObjects() {
             return delegate.getObjects();
         }
+
         /** {@inheritDoc} */
         public ManagedGroup getParent() {
             return delegate.getParent();
         }
+
         /** {@inheritDoc} */
         public MBeanServer getServer() {
             return delegate.getServer();
         }
+
         /** {@inheritDoc} */
         public boolean isRegistered() {
             return delegate.isRegistered();
         }
+
         /** {@inheritDoc} */
         public void register(MBeanServer server, ObjectName objectName)
                 throws JMException {
             delegate.register(server, objectName);
         }
+
         /** {@inheritDoc} */
         public void remove() {
             delegate.remove();
         }
+
         /** {@inheritDoc} */
         public void unregister() throws JMException {
             delegate.unregister();

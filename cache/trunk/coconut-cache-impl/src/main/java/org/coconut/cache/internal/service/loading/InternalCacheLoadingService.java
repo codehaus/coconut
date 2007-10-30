@@ -3,11 +3,10 @@
  */
 package org.coconut.cache.internal.service.loading;
 
-import java.util.Map;
-
+import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.service.loading.CacheLoadingService;
-import org.coconut.core.AttributeMap;
+import org.coconut.filter.Filter;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -19,18 +18,12 @@ import org.coconut.core.AttributeMap;
  */
 public interface InternalCacheLoadingService<K, V> extends CacheLoadingService<K, V> {
 
-    boolean reloadIfNeeded(AbstractCacheEntry<K, V> entry);
-
+    Filter<CacheEntry<K,V>> getRefreshFilter();
+    
     /**
-     * @param key
-     *            the key for which a corresponding value should be loaded
-     * @param attributes
-     *            a list of attributes that should be passed to cache loader
-     * @return a corresponding value for the specified key, or <tt>null</tt> if no such
-     *         value exist
+     * 
+     * @param entry
+     * @return
      */
-    V loadBlocking(K key, AttributeMap attributes);
-
-    Map<? super K, ? extends V> loadAllBlocking(
-            Map<? extends K, AttributeMap> keysWithAttributes);
+    AbstractCacheEntry<K,V> loadBlocking(K key);
 }

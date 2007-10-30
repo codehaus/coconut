@@ -46,58 +46,42 @@ public abstract class AbstractManagedGroup implements ManagedGroup {
         this.description = description;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public Collection<ManagedGroup> getChildren() {
         return new ArrayList<ManagedGroup>(map.values());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getDescription() {
         return description;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public String getName() {
         return name;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public synchronized ObjectName getObjectName() {
         return objectName;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public synchronized ManagedGroup getParent() {
         return parent;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public synchronized MBeanServer getServer() {
         return server;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean isRegistered() {
         return getObjectName() != null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public synchronized void register(MBeanServer service, ObjectName name)
             throws JMException {
         service.registerMBean(this, name);
@@ -105,9 +89,7 @@ public abstract class AbstractManagedGroup implements ManagedGroup {
         this.objectName = name;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public synchronized void remove() {
         if (parent != null) {
             parent.map.remove(getName());
@@ -115,9 +97,7 @@ public abstract class AbstractManagedGroup implements ManagedGroup {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public synchronized void unregister() throws JMException {
         if (objectName != null) {
             server.unregisterMBean(objectName);
@@ -126,9 +106,7 @@ public abstract class AbstractManagedGroup implements ManagedGroup {
         server = null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     synchronized ManagedGroup addNewGroup(AbstractManagedGroup group) {
         if (map.containsKey(group.getName())) {
             throw new IllegalArgumentException();

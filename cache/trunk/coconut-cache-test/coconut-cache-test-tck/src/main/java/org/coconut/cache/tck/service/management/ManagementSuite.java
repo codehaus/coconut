@@ -8,5 +8,5 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses( { ManagementCacheMXBean.class, ManagementConfiguration.class,
-        ManagementService.class })
+        ManagementService.class, ManagementShutdown.class })
 public class ManagementSuite {}

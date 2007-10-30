@@ -519,7 +519,6 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * 
      * @param keys
      *            a collection of keys whose associated mappings are to be removed.
-     * @return the number of entries that was removed
      * @throws UnsupportedOperationException
      *             if the <tt>remove</tt> operation is not supported by this cache.
      * @throws IllegalStateException
@@ -528,7 +527,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      *             if the specified collection or any of its containing keys are
      *             <tt>null</tt>.
      */
-    int removeAll(Collection<? extends K> keys);
+    void removeAll(Collection<? extends K> keys);
 
     /**
      * Replaces the entry for a key only if currently mapped to some value. This is

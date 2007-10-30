@@ -43,7 +43,7 @@ Map.Entry<K, V> {
         /** The unique name of this event. */
         String NAME = "cacheitem.Added";
 
-        boolean isLoaded();
+        //boolean isLoaded();
     }
 
     // /**
@@ -126,7 +126,7 @@ Map.Entry<K, V> {
          */
         V getPreviousValue();
 
-        boolean isLoaded();
+      //  boolean isLoaded();
 
         /**
          * Returns true if the item was updated because the timeout value specified for

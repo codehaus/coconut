@@ -89,61 +89,61 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
     public void testIgnore() {
         
     }
-    public void atestLoadBlocking() {
-        DefaultCacheLoaderService<Integer, String> dcls = new DefaultCacheLoaderService<Integer, String>(
-                null, null, null, loadingConf, null, null);
+//    public void atestLoadBlocking() {
+//        DefaultCacheLoaderService<Integer, String> dcls = new DefaultCacheLoaderService<Integer, String>(
+//                null, null, null, loadingConf, null, null);
+//
+//        loaderMock1.expects(once()).method("load").with(eq(3), same(ATTRIBUTES)).will(
+//                returnValue("boo"));
+//
+//        assertEquals("boo", dcls.loadBlocking(3, ATTRIBUTES));
+//
+//        loaderMock2.expects(once()).method("load").with(eq(5), same(ATTRIBUTES)).will(
+//                returnValue("foo"));
+//       // assertEquals("foo", dcls.loadBlocking(loaderProxy2, 5, attributes));
+//    }
+//
+//    public void atestLoadBlockingError() {
+//        DefaultCacheLoaderService<Integer, String> dcls = new DefaultCacheLoaderService<Integer, String>(
+//                null, null, errorHandlerProxy, loadingConf, null,  null);
+//
+//        loaderMock1.expects(once()).method("load").with(eq(4), same(ATTRIBUTES)).will(
+//                throwException(E));
+//        errorHandlerMock.expects(once()).method("loadFailed").with(
+//                new Constraint[] { same(loaderProxy1), eq(4), same(ATTRIBUTES),
+//                        eq(false), same(E) }).will(returnValue("voo"));
+//        assertEquals("voo", dcls.loadBlocking(4, ATTRIBUTES));
+//    }
 
-        loaderMock1.expects(once()).method("load").with(eq(3), same(ATTRIBUTES)).will(
-                returnValue("boo"));
-
-        assertEquals("boo", dcls.loadBlocking(3, ATTRIBUTES));
-
-        loaderMock2.expects(once()).method("load").with(eq(5), same(ATTRIBUTES)).will(
-                returnValue("foo"));
-       // assertEquals("foo", dcls.loadBlocking(loaderProxy2, 5, attributes));
-    }
-
-    public void atestLoadBlockingError() {
-        DefaultCacheLoaderService<Integer, String> dcls = new DefaultCacheLoaderService<Integer, String>(
-                null, null, errorHandlerProxy, loadingConf, null,  null);
-
-        loaderMock1.expects(once()).method("load").with(eq(4), same(ATTRIBUTES)).will(
-                throwException(E));
-        errorHandlerMock.expects(once()).method("loadFailed").with(
-                new Constraint[] { same(loaderProxy1), eq(4), same(ATTRIBUTES),
-                        eq(false), same(E) }).will(returnValue("voo"));
-        assertEquals("voo", dcls.loadBlocking(4, ATTRIBUTES));
-    }
-
-    public void atestLoadAllBlocking() {
-        DefaultCacheLoaderService<Integer, String> dcls = new DefaultCacheLoaderService<Integer, String>(
-                null, null, null, loadingConf, null, null);
-
-        loaderMock1.expects(once()).method("loadAll").with(eq(KEYS1)).will(
-                returnValue(MAP2));
-        assertSame(MAP2, dcls.loadAllBlocking(KEYS1));
-
-        loaderMock2.expects(once()).method("loadAll").with(eq(KEYS2)).will(
-                returnValue(MAP2));
-        assertEquals(MAP2, dcls.loadAllBlocking(loaderProxy2, KEYS2));
-    }
-
-    public void atestLoadAllBlockingError() {
-        DefaultCacheLoaderService<Integer, String> dcls = new DefaultCacheLoaderService<Integer, String>(
-                null, null, errorHandlerProxy, loadingConf, null,  null);
-
-        loaderMock1.expects(once()).method("loadAll").with(eq(KEYS1)).will(
-                throwException(E));
-
-        errorHandlerMock.expects(once()).method("loadAllFailed").with(
-                new Constraint[] { same(loaderProxy1), same(KEYS1), eq(false), same(E) })
-                .will(returnValue(MAP2));
-        assertEquals(MAP2, dcls.loadAllBlocking(KEYS1));
-    }
+//    public void atestLoadAllBlocking() {
+//        DefaultCacheLoaderService<Integer, String> dcls = new DefaultCacheLoaderService<Integer, String>(
+//                null, null, null, loadingConf, null, null);
+//
+//        loaderMock1.expects(once()).method("loadAll").with(eq(KEYS1)).will(
+//                returnValue(MAP2));
+//        assertSame(MAP2, dcls.loadAllBlocking(KEYS1));
+//
+//        loaderMock2.expects(once()).method("loadAll").with(eq(KEYS2)).will(
+//                returnValue(MAP2));
+//        assertEquals(MAP2, dcls.loadAllBlocking(loaderProxy2, KEYS2));
+//    }
+//
+//    public void atestLoadAllBlockingError() {
+//        DefaultCacheLoaderService<Integer, String> dcls = new DefaultCacheLoaderService<Integer, String>(
+//                null, null, errorHandlerProxy, loadingConf, null,  null);
+//
+//        loaderMock1.expects(once()).method("loadAll").with(eq(KEYS1)).will(
+//                throwException(E));
+//
+//        errorHandlerMock.expects(once()).method("loadAllFailed").with(
+//                new Constraint[] { same(loaderProxy1), same(KEYS1), eq(false), same(E) })
+//                .will(returnValue(MAP2));
+//        assertEquals(MAP2, dcls.loadAllBlocking(KEYS1));
+//    }
 
     public void atestLoad() throws InterruptedException, ExecutionException {
         DefaultCacheLoaderService<Integer, String> dcls = new DefaultCacheLoaderService<Integer, String>(
-                null, null, errorHandlerProxy, loadingConf, myExecutor, 
+                null, errorHandlerProxy, loadingConf, myExecutor, 
                 cacheHelperProxy);
 
         loaderMock1.expects(once()).method("load").with(eq(1), ANYTHING).will(
@@ -170,7 +170,7 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
 
     public void atestLoadError() throws InterruptedException, ExecutionException {
         DefaultCacheLoaderService<Integer, String> dcls = new DefaultCacheLoaderService<Integer, String>(
-                null, null, errorHandlerProxy, loadingConf, myExecutor, 
+                 null, errorHandlerProxy, loadingConf, myExecutor, 
                 cacheHelperProxy);
 
         loaderMock1.expects(once()).method("load").with(eq(1), ANYTHING).will(

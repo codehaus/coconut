@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.service.loading.LoadSupport;
 import org.coconut.core.AttributeMap;
 import org.coconut.filter.Filter;
 
@@ -14,21 +15,7 @@ import org.coconut.filter.Filter;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public interface InternalCacheSupport<K, V> {
-
-    /**
-     * Called whenever a cacheloader has asynchronously loaded an element.
-     * 
-     * @param key
-     *            the
-     * @param value
-     *            the value that was loaded, possible <code>null</code>
-     * @param attributes
-     */
-    void valueLoaded(K key, V value, AttributeMap attributes);
-
-    void valuesLoaded(Map<? extends K, ? extends V> values,
-            Map<? extends K, AttributeMap> keys);
+public interface InternalCacheSupport<K, V> extends LoadSupport<K, V> {
 
     Object getMutex();
 
@@ -37,22 +24,13 @@ public interface InternalCacheSupport<K, V> {
     void putAll(Map<? extends K, ? extends V> keyValues,
             Map<? extends K, AttributeMap> attributes);
 
-    boolean isValid(K key);
-
-    Collection<? extends K> filterKeys(Filter<? super CacheEntry<K, V>> filter);
-
-    Collection<? extends CacheEntry<K, V>> filter(Filter<? super CacheEntry<K, V>> filter);
-
     void trimToVolume(long capacity);
 
     void trimToSize(int size);
-    
-    void forceLoadAll(AttributeMap attributes);
-    
-    void loadAll(AttributeMap attributes);
-    
+
     void purgeExpired();
-    
+
     void checkRunning(String operation);
+
     void checkRunning(String operation, boolean shutdown);
 }

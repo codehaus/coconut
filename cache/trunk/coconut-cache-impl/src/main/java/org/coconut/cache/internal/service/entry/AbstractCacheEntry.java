@@ -6,7 +6,10 @@ package org.coconut.cache.internal.service.entry;
 import java.util.Map;
 
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.core.AttributeMap;
+import org.coconut.core.Clock;
+import org.coconut.filter.Filter;
 
 /**
  * A basis implementation of the {@link CacheEntry} interface.
@@ -121,6 +124,7 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
     public int getHash() {
         return hash;
     }
+
     /** {@inheritDoc} */
     public K getKey() {
         return key;
@@ -136,21 +140,24 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
     public AbstractCacheEntry<K, V> getNext() {
         return next;
     }
+
     /** {@inheritDoc} */
     public int getPolicyIndex() {
         return policyIndex;
     }
-  
+
     public abstract long getRefreshTime();
 
     /** {@inheritDoc} */
     public long getSize() {
         return size;
     }
+
     /** {@inheritDoc} */
     public V getValue() {
         return value;
     }
+
     /** {@inheritDoc} */
     @Override
     public int hashCode() {
@@ -176,6 +183,26 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
     public V setValue(V v) {
         throw new UnsupportedOperationException();
     }
+
+
+    public boolean needsRefresh(Filter<CacheEntry<K, V>> filter, long timestamp) {
+        if (filter != null && filter.accept(this)) {
+            return true;
+        }
+        long refreshTime = getRefreshTime();
+        return refreshTime == CacheExpirationService.NEVER_EXPIRE ? false : Clock
+                .isPassed(timestamp, refreshTime);
+    }
+
+    public boolean isExpired(Filter<CacheEntry<K, V>> filter, long timestamp) {
+        if (filter != null && filter.accept(this)) {
+            return true;
+        }
+        long expTime = getExpirationTime();
+        return expTime == CacheExpirationService.NEVER_EXPIRE ? false : Clock.isPassed(
+                timestamp, expTime);
+    }
+
     /** {@inheritDoc} */
     @Override
     public String toString() {
