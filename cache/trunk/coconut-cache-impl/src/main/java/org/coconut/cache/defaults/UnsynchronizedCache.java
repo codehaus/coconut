@@ -248,7 +248,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
                 eventService.dexpired(this, started, entry);
             }
             AbstractCacheEntry<K, V> existing = entry;
-            entry = loadingService.loadBlocking(key);
+            entry = loadingService.loadBlocking(key, AttributeMaps.EMPTY_MAP);
             statistics.afterMiss(this, started, key, existing, entry, isExpired);
         }
         return entry;

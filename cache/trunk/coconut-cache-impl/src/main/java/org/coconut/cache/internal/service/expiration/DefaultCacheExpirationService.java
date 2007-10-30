@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
+import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
 import org.coconut.cache.internal.service.servicemanager.CompositeService;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
@@ -27,7 +27,7 @@ import org.coconut.management.ManagedObject;
 /**
  * The default implementation of {@link CacheExpirationService}. This implementation can
  * be used in a multi-threaded environment if {@link Cache}, {@link InternalCacheSupport}
- * and {@link InternalCacheAttributeService} that is specified at construction time are
+ * and {@link AbstractCacheEntryFactoryService} that is specified at construction time are
  * thread-safe.
  * <p>
  * NOTICE: This is an internal class and should not be directly referred. No guarantee is
@@ -44,7 +44,7 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
         CacheExpirationService<K, V>, ManagedObject, CompositeService {
 
     /** Responsible for creating attribute maps. */
-    private final InternalCacheAttributeService attributeFactory;
+    private final AbstractCacheEntryFactoryService attributeFactory;
 
     private final Cache<K, V> cache;
 
@@ -58,7 +58,7 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
 
     public DefaultCacheExpirationService(Cache<K, V> cache, Clock clock,
             InternalCacheSupport<K, V> helper, CacheExpirationConfiguration<K, V> conf,
-            InternalCacheAttributeService attributeFactory) {
+            AbstractCacheEntryFactoryService attributeFactory) {
         super(CacheExpirationConfiguration.SERVICE_NAME);
         this.clock = clock;
         this.cache = cache;
@@ -81,12 +81,13 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
     }
 
     /** {@inheritDoc} */
-    public boolean isExpired(CacheEntry<K, V> entry) {
-        return ExpirationUtils.isExpired(entry, clock, expirationFilter);
-    }
-
     public Filter<CacheEntry<K, V>> getExpirationFilter() {
         return expirationFilter;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isExpired(CacheEntry<K, V> entry) {
+        return ExpirationUtils.isExpired(entry, clock, expirationFilter);
     }
 
     /** {@inheritDoc} */

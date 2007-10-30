@@ -7,11 +7,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.attribute.DefaultAttributes;
 import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
-import org.coconut.cache.internal.service.expiration.DefaultCacheExpirationService;
-import org.coconut.cache.internal.service.loading.AbstractCacheLoadingService;
 import org.coconut.core.AttributeMap;
+import org.coconut.core.AttributeMaps;
 import org.coconut.core.Clock;
 
 /**
@@ -30,10 +28,52 @@ public abstract class AbstractCacheEntryFactoryService<K, V> {
 
     private final CacheExceptionService<K, V> errorHandler;
 
-    private final DefaultCacheExpirationService<K, V> expirationService;
+    private Dummy dummy = new Dummy();
 
-    private final AbstractCacheLoadingService<K, V> loadingService;
 
+    /** {@inheritDoc} */
+    public DefaultAttributes update() {
+        return dummy;
+    }
+
+    class Dummy implements DefaultAttributes {
+
+        private long goo;
+
+        private long refresh;
+
+        private int maximumSize;
+
+        /** {@inheritDoc} */
+        public long getExpirationTimeNanos() {
+            return goo;
+        }
+
+        /** {@inheritDoc} */
+        public void setExpirationTimeNanos(long nanos) {
+            this.goo = nanos;
+        }
+
+        /** {@inheritDoc} */
+        public long getTimeToRefreshNanos() {
+            return refresh;
+        }
+
+        /** {@inheritDoc} */
+        public void setTimeToFreshNanos(long nanos) {
+            this.refresh = nanos;
+        }
+
+        /** {@inheritDoc} */
+        public int getMaximumSize() {
+            return maximumSize;
+        }
+
+        /** {@inheritDoc} */
+        public void setMaximumSize(int maximumSize) {
+            this.maximumSize = maximumSize;
+        }
+    }
     /**
      * Creates a new AbstractCacheEntryFactoryService.
      * 
@@ -44,15 +84,32 @@ public abstract class AbstractCacheEntryFactoryService<K, V> {
      * @param loadingService
      */
     public AbstractCacheEntryFactoryService(Clock clock,
-            CacheExceptionService<K, V> exceptionHandler,
-            DefaultCacheExpirationService<K, V> expirationService,
-            AbstractCacheLoadingService<K, V> loadingService) {
+            CacheExceptionService<K, V> exceptionHandler) {
         this.clock = clock;
         this.errorHandler = exceptionHandler;
-        this.expirationService = expirationService;
-        this.loadingService = loadingService;
     }
 
+    /**
+     * Creates a new empty AttributeMap.
+     * 
+     * @return a new empty AttributeMap
+     */
+    public AttributeMap createMap() {
+        return new AttributeMaps.DefaultAttributeMap();
+    }
+
+    /**
+     * Creates a new AttributeMap populated containing the entries specified in
+     * the provided attribute map.
+     * 
+     * @param copyFrom
+     *            the map to copy entries from
+     * @return a new AttributeMap populated containing the entries specified in
+     * the provided attribute map
+     */
+    public AttributeMap createMap(AttributeMap copyFrom) {
+        return new AttributeMaps.DefaultAttributeMap(copyFrom);
+    }
     /**
      * Creates a new cache entry from the specified key, value, attribute map and existing
      * cache entry.

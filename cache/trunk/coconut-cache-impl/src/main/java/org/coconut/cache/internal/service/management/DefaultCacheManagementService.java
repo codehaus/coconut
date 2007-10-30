@@ -33,6 +33,8 @@ import org.coconut.management.defaults.DefaultManagedGroup;
  * <p>
  * NOTICE: This is an internal class and should not be directly referred. No guarantee is
  * made to the compatibility of this class between different releases of Coconut Cache.
+ * <p>
+ * This is class is thread-safe.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -74,8 +76,8 @@ public class DefaultCacheManagementService extends AbstractCacheLifecycle implem
         isEnabled = configuration.isEnabled();
 
         /* Set Management Root */
-        root = new DefaultManagedGroup(cacheName,
-                "This group contains all managed Cache services");
+        root = ManagementUtils.synchronizedGroup(new DefaultManagedGroup(cacheName,
+                "This group contains all managed Cache services"), this);
 
         /* Set Registrant */
         if (configuration.getRegistrant() == null) {
@@ -124,10 +126,10 @@ public class DefaultCacheManagementService extends AbstractCacheLifecycle implem
     /** {@inheritDoc} */
     @Override
     public synchronized void shutdown() {
-        isShutdown = true;
         if (isEnabled) {
             try {
                 root.unregister();
+                isShutdown = true;
             } catch (JMException jme) {
                 throw new CacheException(jme);
             }
@@ -149,65 +151,72 @@ public class DefaultCacheManagementService extends AbstractCacheLifecycle implem
         }
     }
 
+    /** {@inheritDoc} */
     public Collection<?> getChildServices() {
         return Arrays.asList(root, registrant);
     }
 
-    public synchronized ManagedGroup add(Object o) {
-        checkShutdown();
+    /** {@inheritDoc} */
+    public ManagedGroup add(Object o) {
         return root.add(o);
     }
 
-    public synchronized ManagedGroup addChild(String name, String description) {
-        checkShutdown();
+    /** {@inheritDoc} */
+    public ManagedGroup addChild(String name, String description) {
         return root.addChild(name, description);
     }
 
-    public synchronized Collection<ManagedGroup> getChildren() {
+    /** {@inheritDoc} */
+    public Collection<ManagedGroup> getChildren() {
         return root.getChildren();
     }
 
-    public synchronized String getDescription() {
+    /** {@inheritDoc} */
+    public String getDescription() {
         return root.getDescription();
     }
 
-    public synchronized ObjectName getObjectName() {
+    /** {@inheritDoc} */
+    public ObjectName getObjectName() {
         return root.getObjectName();
     }
 
-    public synchronized Collection<?> getObjects() {
+    /** {@inheritDoc} */
+    public Collection<?> getObjects() {
         return root.getObjects();
     }
 
-    public synchronized ManagedGroup getParent() {
+    /** {@inheritDoc} */
+    public ManagedGroup getParent() {
         return root.getParent();
     }
 
-    public synchronized MBeanServer getServer() {
+    /** {@inheritDoc} */
+    public MBeanServer getServer() {
         return root.getServer();
     }
 
-    public synchronized boolean isRegistered() {
+    /** {@inheritDoc} */
+    public boolean isRegistered() {
         return root.isRegistered();
     }
 
-    public synchronized void register(MBeanServer server, ObjectName objectName)
-            throws JMException {
-        checkShutdown();
+    /** {@inheritDoc} */
+    public void register(MBeanServer server, ObjectName objectName) throws JMException {
         root.register(server, objectName);
     }
 
-    public synchronized void remove() {
-        checkShutdown();
+    /** {@inheritDoc} */
+    public void remove() {
         root.remove();
     }
 
-    public synchronized void unregister() throws JMException {
-        checkShutdown();
+    /** {@inheritDoc} */
+    public void unregister() throws JMException {
         root.unregister();
     }
 
-    private void checkShutdown() {
+    void checkShutdown() {
         if (isShutdown) {
             throw new IllegalStateException("Cache has been shutdown");
         }

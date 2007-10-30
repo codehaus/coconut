@@ -456,10 +456,6 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
         cacheReset();
     }
 
-    public void shutdown(Executor callback) {
-
-    }
-
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("hits: ");

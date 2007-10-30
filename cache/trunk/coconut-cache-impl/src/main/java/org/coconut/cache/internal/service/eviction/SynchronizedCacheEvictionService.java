@@ -22,12 +22,12 @@ import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
  */
 public class SynchronizedCacheEvictionService<K, V> extends
         UnsynchronizedCacheEvictionService {
-    private final Cache mutex;
+    private final Object mutex;
 
     public SynchronizedCacheEvictionService(Cache c, CacheEvictionConfiguration conf,
             InternalCacheSupport<K, V> helper) {
         super(conf, helper);
-        this.mutex = c;
+        this.mutex = helper.getMutex();
     }
 
     /** {@inheritDoc} */
@@ -61,36 +61,4 @@ public class SynchronizedCacheEvictionService<K, V> extends
             super.setMaximumSize(size);
         }
     }
-
-//    /** {@inheritDoc} */
-//    @Override
-//    public long getPreferableCapacity() {
-//        synchronized (mutex) {
-//            return super.getPreferableCapacity();
-//        }
-//    }
-//
-//    /** {@inheritDoc} */
-//    @Override
-//    public int getPreferableSize() {
-//        synchronized (mutex) {
-//            return super.getPreferableSize();
-//        }
-//    }
-//
-//    /** {@inheritDoc} */
-//    @Override
-//    public void setPreferableCapacity(long size) {
-//        synchronized (mutex) {
-//            super.setPreferableCapacity(size);
-//        }
-//    }
-//
-//    /** {@inheritDoc} */
-//    @Override
-//    public void setPreferableSize(int size) {
-//        synchronized (mutex) {
-//            super.setPreferableSize(size);
-//        }
-//    }
 }

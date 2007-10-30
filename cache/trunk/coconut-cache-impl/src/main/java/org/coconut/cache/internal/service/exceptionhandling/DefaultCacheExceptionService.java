@@ -104,11 +104,12 @@ public class DefaultCacheExceptionService<K, V> implements CacheExceptionService
                 jucLogger.setLevel(Level.SEVERE);
                 logger = Loggers.JDK.from(jucLogger);
             }
-            return logger;
         }
+        return logger;
     }
 
     public Collection<?> getChildServices() {
         return Arrays.asList(exceptionHandler, logger);
     }
 }
+

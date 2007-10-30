@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
+import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
 import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
@@ -21,7 +21,7 @@ import org.coconut.management.ManagedGroup;
 
 public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLifecycle
         implements CacheLoadingService<K, V>, InternalCacheLoadingService<K, V> {
-    private final InternalCacheAttributeService attributeFactory;
+    private final AbstractCacheEntryFactoryService<K, V> attributeFactory;
 
     private final CacheExceptionService<K, V> exceptionHandler;
 
@@ -33,7 +33,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
 
     public AbstractCacheLoadingService(
             CacheLoadingConfiguration<K, V> loadingConfiguration,
-            InternalCacheAttributeService attributeFactory,
+            AbstractCacheEntryFactoryService attributeFactory,
             CacheExceptionService<K, V> exceptionHandler, LoadSupport<K, V> loadSupport) {
         this.loader = loadingConfiguration.getLoader();
         reloadFilter = loadingConfiguration.getRefreshFilter();
@@ -54,7 +54,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
         } else if (attributes == null) {
             throw new NullPointerException("attributes is null");
         }
-        doLoad(key, attributes);
+        loadAsync(key, attributes);
     }
 
     /** {@inheritDoc} */
@@ -80,14 +80,14 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
             }
             map.put(key, AttributeMaps.EMPTY_MAP);
         }
-        asyncLoadAll(map);
+        loadAllAsync(map);
     }
 
     public final void forceLoadAll(Map<K, AttributeMap> mapsWithAttributes) {
         if (mapsWithAttributes == null) {
             throw new NullPointerException("mapsWithAttributes is null");
         }
-        asyncLoadAll(mapsWithAttributes);
+        loadAllAsync(mapsWithAttributes);
     }
 
     public Collection<?> getChildServices() {
@@ -174,17 +174,10 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
                 LoadingUtils.convertRefreshTimeToNanos(timeToRefresh, unit));
     }
 
-    void asyncLoadAll(Map<K, AttributeMap> mapsWithAttributes) {
+    public void loadAllAsync(Map<K, AttributeMap> mapsWithAttributes) {
         for (Map.Entry<K, AttributeMap> e : mapsWithAttributes.entrySet()) {
-            doLoad(e.getKey(), e.getValue());
+            loadAsync(e.getKey(), e.getValue());
         }
-    }
-
-    AbstractCacheEntry<K, V> loadAddToCache(K key, AttributeMap attributes,
-            boolean isSynchronous) {
-        V v = doLoad(loader, key, attributes, false);
-        return loadSupport.valueLoaded(key, v, attributes);
-
     }
 
     final V doLoad(CacheLoader<? super K, ? extends V> loader, K key,
@@ -202,13 +195,18 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
         return v;
     }
 
-    abstract void doLoad(K key, AttributeMap attributes);
-
     final CacheExceptionService<K, V> getExceptionHandler() {
         return exceptionHandler;
     }
 
     final CacheLoader<? super K, ? extends V> getLoader() {
         return loader;
+    }
+
+    AbstractCacheEntry<K, V> loadAndAddToCache(K key, AttributeMap attributes,
+            boolean isSynchronous) {
+        V v = doLoad(loader, key, attributes, false);
+        return loadSupport.valueLoaded(key, v, attributes);
+
     }
 }

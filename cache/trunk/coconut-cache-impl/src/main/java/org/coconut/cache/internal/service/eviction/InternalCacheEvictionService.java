@@ -6,13 +6,13 @@ package org.coconut.cache.internal.service.eviction;
 import java.util.List;
 
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.service.eviction.CacheEvictionService;
 
 /**
- * 
- * 
  * <p>
  * NOTICE: This is an internal class and should not be directly referred. No guarantee is
  * made to the compatibility of this class between different releases of Coconut Cache.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  * @param <K>
@@ -20,12 +20,8 @@ import org.coconut.cache.CacheEntry;
  * @param <V>
  *            the type of mapped values
  */
-public interface InternalCacheEvictionService<K, V, T extends CacheEntry<K, V>> {
-
-//    int getPreferableSize();
-
-//    long getPreferableCapacity();
-
+public interface InternalCacheEvictionService<K, V, T extends CacheEntry<K, V>> extends
+        CacheEvictionService<K, V> {
     /**
      * Clears the expiration policy.
      */
@@ -48,11 +44,16 @@ public interface InternalCacheEvictionService<K, V, T extends CacheEntry<K, V>> 
     boolean isSizeBreached(int size);
 
     int add(T t);
-    
-//methods when we have a some storage
-    //public void evict(Object key);
 
-    //public void evictAll(Collection keys) {}
+// methods when we have a some storage
+    // public void evict(Object key);
 
-    //public void evictIdleElements() {}
+    // public void evictAll(Collection keys) {}
+
+    // public void evictIdleElements() {}
+
+// int getPreferableSize();
+
+// long getPreferableCapacity();
+
 }

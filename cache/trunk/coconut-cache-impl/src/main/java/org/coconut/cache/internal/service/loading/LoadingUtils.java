@@ -276,7 +276,7 @@ final class LoadingUtils {
 
         /** {@inheritDoc} */
         public AbstractCacheEntry<K, V> call() {
-            return loaderService.loadAddToCache(key, attributes, false);
+            return loaderService.loadAndAddToCache(key, attributes, false);
         }
 
         public K getKey() {

@@ -12,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.internal.service.attribute.DefaultCacheAttributeService;
 import org.coconut.cache.internal.service.entry.UnsynchronizedEntryFactoryService;
 import org.coconut.cache.internal.service.exceptionhandling.DefaultCacheExceptionService;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
@@ -240,7 +239,6 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
         container.registerComponentInstance(conf);
         container.registerComponentInstance(conf.getClock());
         container.registerComponentImplementation(DefaultCacheExceptionService.class);
-        container.registerComponentImplementation(DefaultCacheAttributeService.class);
         container
                 .registerComponentImplementation(UnsynchronizedEntryFactoryService.class);
         for (AbstractCacheServiceConfiguration<?, ?> c : conf.getAllConfigurations()) {

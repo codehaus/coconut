@@ -30,13 +30,9 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
         AbstractEvictionService<K, V, T> {
     private final ReplacementPolicy<T> cp;
 
-    private int maxSize;
-
-    private int preferableSize;
-
     private long maxCapacity;
 
-    private long preferableCapacity;
+    private int maxSize;
 
     // @SuppressWarnings("unchecked")
     public UnsynchronizedCacheEvictionService(CacheEvictionConfiguration<K, V> conf,
@@ -46,31 +42,19 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
                 .getPolicy();
         maxSize = EvictionUtils.getMaximumSizeFromConfiguration(conf);
         maxCapacity = EvictionUtils.getMaximumVolumeFromConfiguration(conf);
-//        preferableCapacity = EvictionUtils.getPreferableVolumeFromConfiguration(conf);
-//        preferableSize = EvictionUtils.getPreferableSizeFromConfiguration(conf);
     }
 
     /** {@inheritDoc} */
-    public T evictNext() {
-        return cp.evictNext();
+    public int add(T t) {
+        if (maxCapacity == 0) {
+            return -1;
+        }
+        return cp.add(t);
     }
 
     /** {@inheritDoc} */
-    public void remove(int index) {
-        if (cp != null) {
-            cp.remove(index);
-        }
-    }
-
-    /** {@inheritDoc} */
-    public void touch(int index) {
-        if (index < 0) {
-            throw new IllegalArgumentException(
-                    "index must be a non negative number, was " + index);
-        }
-        if (cp != null) {
-            cp.touch(index);
-        }
+    public void clear() {
+        cp.clear();
     }
 
     /** {@inheritDoc} */
@@ -97,43 +81,17 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
     }
 
     /** {@inheritDoc} */
-    public boolean isVolumeBreached(long capacity) {
-        return capacity > maxCapacity;
+    public T evictNext() {
+        return cp.evictNext();
     }
 
-    /** {@inheritDoc} */
-    public boolean isSizeBreached(int size) {
-        return size > maxSize;
-    }
-
-    /** {@inheritDoc} */
-    public int add(T t) {
-        if (maxCapacity == 0) {
-            return -1;
-        }
-        return cp.add(t);
+    public Collection<?> getChildServices() {
+        return Arrays.asList(cp);
     }
 
     /** {@inheritDoc} */
     public int getMaximumSize() {
         return maxSize;
-    }
-
-//    /** {@inheritDoc} */
-//    public int getPreferableSize() {
-//        return preferableSize;
-//    }
-//
-//    /** {@inheritDoc} */
-//    public void setPreferableSize(int size) {
-//        this.preferableSize = new CacheEvictionConfiguration<K, V>().setPreferableSize(
-//                size).getPreferableSize();
-//    }
-
-    /** {@inheritDoc} */
-    public void setMaximumSize(int size) {
-        this.maxSize = new CacheEvictionConfiguration<K, V>().setMaximumSize(size)
-                .getMaximumSize();
     }
 
     /** {@inheritDoc} */
@@ -142,33 +100,47 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
     }
 
     /** {@inheritDoc} */
-    public void setMaximumVolume(long size) {
-        this.maxCapacity = new CacheEvictionConfiguration<K, V>().setMaximumVolume(size)
-                .getMaximumVolume();
+    public boolean isSizeBreached(int size) {
+        return size > maxSize;
     }
 
     /** {@inheritDoc} */
-    public long getPreferableCapacity() {
-        return preferableCapacity;
+    public boolean isVolumeBreached(long capacity) {
+        return capacity > maxCapacity;
     }
 
-//    /** {@inheritDoc} */
-//    public void setPreferableCapacity(long size) {
-//        this.preferableCapacity = new CacheEvictionConfiguration<K, V>()
-//                .setPreferableVolume(size).getPreferableVolume();
-//    }
-
     /** {@inheritDoc} */
-    public void clear() {
-        cp.clear();
+    public void remove(int index) {
+        if (cp != null) {
+            cp.remove(index);
+        }
     }
 
     /** {@inheritDoc} */
     public boolean replace(int index, T t) {
         return cp.update(index, t);
     }
+
+    /** {@inheritDoc} */
+    public void setMaximumSize(int size) {
+        this.maxSize = new CacheEvictionConfiguration<K, V>().setMaximumSize(size)
+                .getMaximumSize();
+    }
+
+    /** {@inheritDoc} */
+    public void setMaximumVolume(long size) {
+        this.maxCapacity = new CacheEvictionConfiguration<K, V>().setMaximumVolume(size)
+                .getMaximumVolume();
+    }
     
-    public Collection<?> getChildServices() {
-        return Arrays.asList(cp);
+    /** {@inheritDoc} */
+    public void touch(int index) {
+        if (index < 0) {
+            throw new IllegalArgumentException(
+                    "index must be a non negative number, was " + index);
+        }
+        if (cp != null) {
+            cp.touch(index);
+        }
     }
 }

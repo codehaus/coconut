@@ -5,7 +5,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
-import javax.management.MBeanServerInvocationHandler;
 import javax.management.ObjectName;
 
 import org.coconut.cache.service.management.CacheMXBean;
@@ -41,6 +40,19 @@ public class ManagementShutdown extends AbstractCacheTCKTest {
         management().add(new Op());
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void childAddShutdownISE() {
+        ManagedGroup mg = management().getChildren().iterator().next();
+        c.shutdown();
+        mg.add(new Op());
+    }
+    @Test(expected = IllegalStateException.class)
+    public void childAddChildShutdownISE() {
+        ManagedGroup mg = management().getChildren().iterator().next();
+        c.shutdown();
+        // generate unique name
+        mg.addChild("name" + System.nanoTime(), "description");
+    }
     @Test(expected = IllegalStateException.class)
     public void addChildShutdownISE() {
         c.shutdown();

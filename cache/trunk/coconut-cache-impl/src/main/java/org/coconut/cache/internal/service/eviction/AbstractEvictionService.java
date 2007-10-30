@@ -29,20 +29,20 @@ import org.coconut.management.ManagedObject;
  */
 public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> extends
         AbstractCacheLifecycle implements InternalCacheEvictionService<K, V, T>,
-        CacheEvictionService<K, V>, CacheEvictionMXBean, ManagedObject, CompositeService {
+        CacheEvictionMXBean, ManagedObject, CompositeService {
 
-    /** An InternalCacheSupport used for trimming the cache. */
-    private final InternalCacheSupport<K, V> helper;
+    /** An EvictionSupport instance used for trimming the cache. */
+    private final EvictionSupport helper;
 
     /**
      * Creates a new AbstractEvictionService.
      * 
-     * @param helper
+     * @param evictionSupport
      *            the InternalCacheSupport for the cache
      */
-    public AbstractEvictionService(InternalCacheSupport<K, V> helper) {
+    public AbstractEvictionService(EvictionSupport evictionSupport) {
         super(CacheEvictionConfiguration.SERVICE_NAME);
-        this.helper = helper;
+        this.helper = evictionSupport;
     }
 
     /** {@inheritDoc} */

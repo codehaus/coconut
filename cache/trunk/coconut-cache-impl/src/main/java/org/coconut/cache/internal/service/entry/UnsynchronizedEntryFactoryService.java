@@ -3,10 +3,7 @@
  */
 package org.coconut.cache.internal.service.entry;
 
-import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
-import org.coconut.cache.internal.service.expiration.DefaultCacheExpirationService;
-import org.coconut.cache.internal.service.loading.AbstractCacheLoadingService;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
 
@@ -16,15 +13,10 @@ import org.coconut.core.Clock;
  */
 public class UnsynchronizedEntryFactoryService<K, V> extends
         AbstractCacheEntryFactoryService<K, V> {
-    private final InternalCacheAttributeService attributeService;
 
     public UnsynchronizedEntryFactoryService(Clock clock,
-            CacheExceptionService<K, V> exceptionHandler,
-            InternalCacheAttributeService attributeService,
-            DefaultCacheExpirationService<K, V> expirationService,
-            AbstractCacheLoadingService<K, V> loadingService) {
-        super(clock, exceptionHandler, expirationService, loadingService);
-        this.attributeService = attributeService;
+            CacheExceptionService<K, V> exceptionHandler) {
+        super(clock, exceptionHandler);
     }
 
     /**
@@ -35,16 +27,16 @@ public class UnsynchronizedEntryFactoryService<K, V> extends
     public AbstractCacheEntry<K, V> createEntry(K key, V value, AttributeMap attributes,
             AbstractCacheEntry<K, V> existing) {
         if (attributes == null) {
-            attributes = attributeService.createMap();
+            attributes = createMap();
         }
-        long expirationTime = getTimeToLive(attributeService.update(), key, value,
+        long expirationTime = getTimeToLive(update(), key, value,
                 attributes, existing);
         double cost = getCost(key, value, attributes, existing);
         long size = getSize(key, value, attributes, existing);
         long creationTime = getCreationTime(key, value, attributes, existing);
         long lastUpdate = getLastModified(key, value, attributes, existing);
         long hits=getHits(key, value, attributes, existing);
-        long refreshTime = getTimeToRefresh(attributeService.update(), key, value,
+        long refreshTime = getTimeToRefresh(update(), key, value,
                 attributes, existing);
         UnsynchronizedCacheEntry<K, V> newEntry = new UnsynchronizedCacheEntry<K, V>(
                 this, key, value, cost, creationTime, lastUpdate, size, refreshTime);

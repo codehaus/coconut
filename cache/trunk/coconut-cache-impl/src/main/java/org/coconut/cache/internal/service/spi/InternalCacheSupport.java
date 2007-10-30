@@ -3,19 +3,18 @@
  */
 package org.coconut.cache.internal.service.spi;
 
-import java.util.Collection;
 import java.util.Map;
 
-import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.service.eviction.EvictionSupport;
 import org.coconut.cache.internal.service.loading.LoadSupport;
 import org.coconut.core.AttributeMap;
-import org.coconut.filter.Filter;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public interface InternalCacheSupport<K, V> extends LoadSupport<K, V> {
+public interface InternalCacheSupport<K, V> extends LoadSupport<K, V>,
+        EvictionSupport {
 
     Object getMutex();
 
@@ -23,10 +22,6 @@ public interface InternalCacheSupport<K, V> extends LoadSupport<K, V> {
 
     void putAll(Map<? extends K, ? extends V> keyValues,
             Map<? extends K, AttributeMap> attributes);
-
-    void trimToVolume(long capacity);
-
-    void trimToSize(int size);
 
     void purgeExpired();
 

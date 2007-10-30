@@ -3,9 +3,12 @@
  */
 package org.coconut.cache.internal.service.loading;
 
+import java.util.Map;
+
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.service.loading.CacheLoadingService;
+import org.coconut.core.AttributeMap;
 import org.coconut.filter.Filter;
 
 /**
@@ -18,12 +21,15 @@ import org.coconut.filter.Filter;
  */
 public interface InternalCacheLoadingService<K, V> extends CacheLoadingService<K, V> {
 
-    Filter<CacheEntry<K,V>> getRefreshFilter();
-    
+    Filter<CacheEntry<K, V>> getRefreshFilter();
+
     /**
-     * 
      * @param entry
      * @return
      */
-    AbstractCacheEntry<K,V> loadBlocking(K key);
+    AbstractCacheEntry<K, V> loadBlocking(K key, AttributeMap attributes);
+
+    void loadAsync(K key, AttributeMap attributes);
+
+    void loadAllAsync(Map<K, AttributeMap> mapsWithAttributes);
 }

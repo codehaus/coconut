@@ -8,8 +8,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.FutureTask;
 
-import org.coconut.cache.internal.service.attribute.InternalCacheAttributeService;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
+import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
 import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
 import org.coconut.cache.internal.service.servicemanager.CompositeService;
 import org.coconut.cache.internal.service.worker.CacheWorkerService;
@@ -29,12 +29,11 @@ import org.coconut.management.ManagedObject;
 public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService<K, V>
         implements ManagedObject, CompositeService {
 
-    private final InternalCacheAttributeService attributeFactory;
+    private final AbstractCacheEntryFactoryService attributeFactory;
 
     private final Executor loadExecutor;
 
-    public DefaultCacheLoaderService(
-            InternalCacheAttributeService attributeFactory,
+    public DefaultCacheLoaderService(AbstractCacheEntryFactoryService attributeFactory,
             CacheExceptionService<K, V> exceptionService,
             CacheLoadingConfiguration<K, V> loadConf,
             final CacheWorkerService threadManager, final LoadSupport<K, V> cache) {
@@ -45,24 +44,21 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
                 LoadingUtils.getInitialTimeToRefresh(loadConf));
     }
 
-
-    @Override
-    void doLoad(K key, AttributeMap attributes) {
-        loadFuture(key, attributes);
+    public void loadAsync(K key, AttributeMap attributes) {
+        loadExecutor.execute(createFuture(key, attributes));
     }
 
-    FutureTask<AbstractCacheEntry<K, V>> loadFuture(K key, AttributeMap attributes) {
+    FutureTask<AbstractCacheEntry<K, V>> createFuture(K key, AttributeMap attributes) {
         AttributeMap map = attributeFactory.createMap(attributes);
         Callable<AbstractCacheEntry<K, V>> r = LoadingUtils.loadValue(this, key, map);
         FutureTask<AbstractCacheEntry<K, V>> ft = new FutureTask<AbstractCacheEntry<K, V>>(
                 r);
-        loadExecutor.execute(ft);
         return ft;
     }
 
-    public AbstractCacheEntry<K, V> loadBlocking(K key) {
-        AttributeMap map = attributeFactory.createMap();
-        FutureTask<AbstractCacheEntry<K, V>> ft = loadFuture(key, map);
+    public AbstractCacheEntry<K, V> loadBlocking(K key, AttributeMap attributes) {
+        FutureTask<AbstractCacheEntry<K, V>> ft = createFuture(key, attributes);
+        loadExecutor.execute(ft);
         try {
             return ft.get();
         } catch (InterruptedException e) {
