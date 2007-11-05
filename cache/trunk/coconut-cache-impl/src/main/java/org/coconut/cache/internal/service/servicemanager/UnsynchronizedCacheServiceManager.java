@@ -338,5 +338,4 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
         return t;
     }
 
-    public void start() {}
 }

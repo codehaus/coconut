@@ -59,7 +59,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     }
 
     /** {@inheritDoc} */
-    public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+    public final boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
         return getServiceManager().awaitTermination(timeout, unit);
     }
 
@@ -95,7 +95,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     }
 
     /** {@inheritDoc} */
-    public Map<K, V> getAll(Collection<? extends K> keys) {
+    public final Map<K, V> getAll(Collection<? extends K> keys) {
         if (keys == null) {
             throw new NullPointerException("keys is null");
         }
@@ -113,7 +113,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     }
 
     /** {@inheritDoc} */
-    public String getName() {
+    public final String getName() {
         return name;
     }
 
@@ -123,22 +123,22 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     }
 
     /** {@inheritDoc} */
-    public boolean isEmpty() {
+    public final boolean isEmpty() {
         return size() == 0;
     }
 
     /** {@inheritDoc} */
-    public boolean isShutdown() {
+    public final boolean isShutdown() {
         return getServiceManager().isShutdown();
     }
 
     /** {@inheritDoc} */
-    public boolean isStarted() {
+    public final boolean isStarted() {
         return getServiceManager().isStarted();
     }
 
     /** {@inheritDoc} */
-    public boolean isTerminated() {
+    public final boolean isTerminated() {
         return getServiceManager().isTerminated();
     }
 
@@ -169,7 +169,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
 
     /** {@inheritDoc} */
     public final V put(K key, V value) {
-        return put(key, value, AttributeMaps.EMPTY_MAP);
+        return put(key, value, AttributeMaps.EMPTY_MAP, false);
     }
 
     /** {@inheritDoc} */
@@ -178,18 +178,12 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
             throw new NullPointerException("m is null");
         }
         CollectionUtils.checkMapForNulls(m);
-        doPutAll(m, AttributeMaps.toMap(m.keySet(), AttributeMaps.EMPTY_MAP));
+        doPutAll(m, AttributeMaps.toMap(m.keySet(), AttributeMaps.EMPTY_MAP), false);
     }
 
     /** {@inheritDoc} */
     public final V putIfAbsent(K key, V value) {
-        if (key == null) {
-            throw new NullPointerException("key is null");
-        } else if (value == null) {
-            throw new NullPointerException("value is null");
-        }
-        CacheEntry<K, V> prev = doPut(key, value, true, null);
-        return prev == null ? null : prev.getValue();
+        return put(key, value, AttributeMaps.EMPTY_MAP, true);
     }
 
     /** {@inheritDoc} */
@@ -236,25 +230,25 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     }
 
     /** {@inheritDoc} */
-    public void shutdown() {
+    public final void shutdown() {
         getServiceManager().shutdown();
     }
 
     /** {@inheritDoc} */
-    public void shutdownNow() {
+    public final void shutdownNow() {
         getServiceManager().shutdownNow();
     }
 
     /**
-     * Returns a string representation of this map. The string representation consists of
-     * a list of key-value mappings in the order returned by the map's <tt>entrySet</tt>
-     * view's iterator, enclosed in braces (<tt>"{}"</tt>). Adjacent mappings are
-     * separated by the characters <tt>", "</tt> (comma and space). Each key-value
-     * mapping is rendered as the key followed by an equals sign (<tt>"="</tt>)
+     * Returns a string representation of this cache. The string representation consists
+     * of a list of key-value mappings in the order returned by the caches
+     * <tt>entrySet</tt> view's iterator, enclosed in braces (<tt>"{}"</tt>).
+     * Adjacent mappings are separated by the characters <tt>", "</tt> (comma and
+     * space). Each key-value mapping is rendered as the key followed by an equals sign (<tt>"="</tt>)
      * followed by the associated value. Keys and values are converted to strings as by
      * {@link String#valueOf(Object)}.
      * 
-     * @return a string representation of this map
+     * @return a string representation of this cache
      */
     public String toString() {
         Iterator<Entry<K, V>> i = entrySet().iterator();
@@ -291,10 +285,21 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
      */
     abstract AbstractCacheEntry<K, V> doPeek(K key);
 
-    abstract CacheEntry<K, V> doPut(K key, V newValue, boolean putOnlyIfAbsent,
-            AttributeMap attributes);
+    /**
+     * Adds a non-null key and non-value to the cache.
+     * 
+     * @param key
+     * @param value
+     * @param putOnlyIfAbsent
+     * @param attributes
+     * @return the previous entry mapping to the key or <code>null</code> if an no
+     *         mapping existed
+     */
+    abstract CacheEntry<K, V> doPut(K key, V newValue, AttributeMap attributes,
+            boolean putOnlyIfAbsent, boolean returnNewEntry);
 
-    abstract void doPutAll(Map<? extends K, ? extends V> t, Map<? extends K, AttributeMap> attributes);
+    abstract void doPutAll(Map<? extends K, ? extends V> t,
+            Map<? extends K, AttributeMap> attributes, boolean fromLoader);
 
     abstract CacheEntry<K, V> doRemove(Object key, Object value);
 
@@ -304,10 +309,14 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         return clock;
     }
 
+    /**
+     * Returns the service manager used by the cache.
+     * 
+     * @return the service manager used by the cache
+     */
     abstract CacheServiceManager getServiceManager();
 
-    /** {@inheritDoc} */
-    V put(K key, V value, AttributeMap attributes) {
+    V put(K key, V value, AttributeMap attributes, boolean putOnlyIfAbsent) {
         if (key == null) {
             throw new NullPointerException("key is null");
         } else if (value == null) {
@@ -315,7 +324,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         } else if (attributes == null) {
             throw new NullPointerException("attributes is null");
         }
-        CacheEntry<K, V> prev = doPut(key, value, false, attributes);
+        CacheEntry<K, V> prev = doPut(key, value, attributes, putOnlyIfAbsent, false);
         return prev == null ? null : prev.getValue();
     }
 }

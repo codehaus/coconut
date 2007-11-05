@@ -38,10 +38,15 @@ public class ManagementUtilsTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void testWrapServiceNPE() {
+    public void wrapServiceNPE() {
         ManagementUtils.wrapService(null);
     }
 
+    @Test(expected = NullPointerException.class)
+    public void testWrapServiceNPE() {
+        ManagementUtils.synchronizedGroup(null, null);
+    }
+    
     @Test
     public void testWrapMXBean() {
         final Cache mock = context.mock(Cache.class);

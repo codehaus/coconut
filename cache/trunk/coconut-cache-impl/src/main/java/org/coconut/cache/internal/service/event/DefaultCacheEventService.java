@@ -71,16 +71,15 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
         this.doUpdate = co.isIncluded(CacheEntryEvent.ItemUpdated.class);
     }
 
-    /** {@inheritDoc} */
-    public void afterCacheClear(Cache<K, V> cache, long ignoreStarted, int size, long capacity,
-            Collection<? extends CacheEntry<K, V>> entries) {
+    public void afterCacheClear(Cache<K, V> cache, long timestamp,
+            Collection<? extends CacheEntry<K, V>> entries, long previousVolume) {
         if (entries != null && doRemove) {
             for (CacheEntry<K, V> entry : entries) {
                 removed(cache, entry, false);
             }
         }
         if (doClear) {
-            dispatch(cleared(cache, size, capacity));
+            dispatch(cleared(cache, entries.size(), previousVolume));
         }
     }
 
@@ -164,8 +163,9 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
     }
 
     /** {@inheritDoc} */
-    public void afterTrimToSize(Cache<K, V> cache, long started,
-            Collection<? extends CacheEntry<K, V>> evictedEntries) {
+    public void afterTrimCache(Cache<K, V> cache, long started,
+            Collection<? extends CacheEntry<K, V>> evictedEntries, int previousSize, int newSize,
+            long previousVolume, long newVolume) {
         doEvictAll(cache, evictedEntries);
     }
 

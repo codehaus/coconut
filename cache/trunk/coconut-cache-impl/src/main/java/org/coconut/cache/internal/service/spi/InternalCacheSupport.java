@@ -16,8 +16,6 @@ import org.coconut.core.AttributeMap;
 public interface InternalCacheSupport<K, V> extends LoadSupport<K, V>,
         EvictionSupport {
 
-    Object getMutex();
-
     V put(K key, V value, AttributeMap attributes);
 
     void putAll(Map<? extends K, ? extends V> keyValues,

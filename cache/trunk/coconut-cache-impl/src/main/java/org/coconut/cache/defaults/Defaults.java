@@ -10,6 +10,7 @@ import org.coconut.cache.internal.service.expiration.DefaultCacheExpirationServi
 import org.coconut.cache.internal.service.loading.DefaultCacheLoaderService;
 import org.coconut.cache.internal.service.management.DefaultCacheManagementService;
 import org.coconut.cache.internal.service.servicemanager.CacheServiceManager;
+import org.coconut.cache.internal.service.spi.DefaultCacheListener;
 import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsService;
 import org.coconut.cache.internal.service.worker.UnsynchronizedCacheWorkerService;
 
@@ -26,6 +27,7 @@ final class Defaults {
     static <K, V> void initializeUnsynchronizedCache(CacheConfiguration<K, V> conf,
             CacheServiceManager serviceManager) {
         serviceManager.registerServices(DefaultCacheStatisticsService.class);
+        serviceManager.registerServices(DefaultCacheListener.class);
         serviceManager.registerServices(UnsynchronizedCacheEvictionService.class);
         serviceManager.registerServices(DefaultCacheExpirationService.class);
         serviceManager.registerServices(DefaultCacheLoaderService.class);

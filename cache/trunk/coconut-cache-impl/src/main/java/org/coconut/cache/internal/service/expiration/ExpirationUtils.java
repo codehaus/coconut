@@ -27,7 +27,9 @@ import org.coconut.management.annotation.ManagedOperation;
 final class ExpirationUtils {
 
     /** Cannot instantiate. */
+    // /CLOVER:OFF
     private ExpirationUtils() {}
+    // /CLOVER:ON
 
     /**
      * Returns the initial time to live in nanoseconds from the specified expiration
@@ -85,36 +87,39 @@ final class ExpirationUtils {
             return true;
         }
         long expTime = entry.getExpirationTime();
-        return expTime == CacheExpirationService.NEVER_EXPIRE ? false : clock
-                .isPassed(expTime);
+        return expTime == CacheExpirationService.NEVER_EXPIRE ? false : clock.isPassed(expTime);
     }
 
     /**
      * Wraps the specified CacheExpirationService implementation only exposing the methods
      * available in the {@link CacheExpirationService} interface.
      * 
-     * @param service
+     * @param expirationService
      *            the expiration service we want to wrap
      * @return a wrapped service that only exposes CacheExpirationService methods
      * @param <K>
      *            the type of keys maintained by the specified service
      * @param <V>
      *            the type of mapped values
+     * @throws NullPointerException
+     *             if the specified expiration is <code>null</code>
      */
     public static <K, V> CacheExpirationService<K, V> wrapService(
-            CacheExpirationService<K, V> service) {
-        return new DelegatedCacheExpirationService<K, V>(service);
+            CacheExpirationService<K, V> expirationService) {
+        return new DelegatedCacheExpirationService<K, V>(expirationService);
     }
 
     /**
      * Wraps a {@link CacheExpirationService} as a {@link CacheExpirationMXBean}.
      * 
-     * @param service
+     * @param expirationService
      *            the service to wrap
      * @return a wrapped CacheExpirationMXBean
+     * @throws NullPointerException
+     *             if the specified expiration is <code>null</code>
      */
-    public static CacheExpirationMXBean wrapAsMXBean(CacheExpirationService<?, ?> service) {
-        return new DelegatedCacheExpirationMXBean(service);
+    public static CacheExpirationMXBean wrapAsMXBean(CacheExpirationService<?, ?> expirationService) {
+        return new DelegatedCacheExpirationMXBean(expirationService);
     }
 
     /**
@@ -128,14 +133,14 @@ final class ExpirationUtils {
          * Creates a new DelegatedCacheExpirationMXBean from the specified expiration
          * service.
          * 
-         * @param service
+         * @param expirationService
          *            the expiration service to wrap
          */
-        public DelegatedCacheExpirationMXBean(CacheExpirationService<?, ?> service) {
-            if (service == null) {
-                throw new NullPointerException("service is null");
+        public DelegatedCacheExpirationMXBean(CacheExpirationService<?, ?> expirationService) {
+            if (expirationService == null) {
+                throw new NullPointerException("expirationService is null");
             }
-            this.service = service;
+            this.service = expirationService;
         }
 
         /** {@inheritDoc} */
@@ -148,6 +153,7 @@ final class ExpirationUtils {
         public void setDefaultTimeToLiveMs(long timeToLiveMs) {
             service.setDefaultTimeToLive(timeToLiveMs, TimeUnit.MILLISECONDS);
         }
+
         /** {@inheritDoc} */
         @ManagedOperation(description = "Removes all expired items from the cache")
         public void purgeExpired() {
@@ -162,42 +168,45 @@ final class ExpirationUtils {
     public static class DelegatedCacheExpirationService<K, V> implements
             CacheExpirationService<K, V> {
         /** The expiration service we are wrapping. */
-        private final CacheExpirationService<K, V> service;
+        private final CacheExpirationService<K, V> delegate;
 
         /**
          * Creates a new DelegatedCacheExpirationService from the specified expiration
          * service.
          * 
-         * @param service
+         * @param expirationService
          *            the expiration service to wrap
          */
-        public DelegatedCacheExpirationService(CacheExpirationService<K, V> service) {
-            this.service = service;
+        public DelegatedCacheExpirationService(CacheExpirationService<K, V> expirationService) {
+            if (expirationService == null) {
+                throw new NullPointerException("expirationService is null");
+            }
+            this.delegate = expirationService;
         }
 
         /** {@inheritDoc} */
         public long getDefaultTimeToLive(TimeUnit unit) {
-            return service.getDefaultTimeToLive(unit);
+            return delegate.getDefaultTimeToLive(unit);
         }
 
         /** {@inheritDoc} */
         public V put(K key, V value, long expirationTime, TimeUnit unit) {
-            return service.put(key, value, expirationTime, unit);
+            return delegate.put(key, value, expirationTime, unit);
         }
 
         /** {@inheritDoc} */
         public void putAll(Map<? extends K, ? extends V> t, long timeout, TimeUnit unit) {
-            service.putAll(t, timeout, unit);
+            delegate.putAll(t, timeout, unit);
         }
 
         /** {@inheritDoc} */
         public void setDefaultTimeToLive(long timeToLive, TimeUnit unit) {
-            service.setDefaultTimeToLive(timeToLive, unit);
+            delegate.setDefaultTimeToLive(timeToLive, unit);
         }
 
         /** {@inheritDoc} */
         public void purgeExpired() {
-            service.purgeExpired();
+            delegate.purgeExpired();
         }
     }
 }

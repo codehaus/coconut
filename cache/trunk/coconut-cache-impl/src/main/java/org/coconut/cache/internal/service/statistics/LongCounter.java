@@ -18,16 +18,14 @@ import org.coconut.management.annotation.ManagedOperation;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public abstract class LongCounter 
-      {
-
+public abstract class LongCounter {
 
     public LongCounter(String name) {
-        //super(name, "No Description of " + name);
+    // super(name, "No Description of " + name);
     }
 
     public LongCounter(String name, String description) {
-        //super(name, description);
+    // super(name, description);
     }
 
     public static LongCounter newUnsynchronized(String name, String description) {
@@ -121,7 +119,7 @@ public abstract class LongCounter
     /**
      * @see org.coconut.metric.spi.SingleJMXNumber#getNumberClass()
      */
-  
+
     protected final Class<? extends Number> getNumberClass() {
         return Long.TYPE;
     }
@@ -129,7 +127,7 @@ public abstract class LongCounter
     /**
      * @see org.coconut.metric.spi.AbstractManagedNumber#getValue()
      */
- 
+
     protected final Number getValue() {
         return get();
     }
@@ -139,14 +137,11 @@ public abstract class LongCounter
         set(0);
     }
 
-
-
     public void process(Number n) {
         set(n.longValue());
     }
 
-    static EventProcessor<? super LongCounter>[] add(
-            EventProcessor<? super LongCounter>[] prev,
+    static EventProcessor<? super LongCounter>[] add(EventProcessor<? super LongCounter>[] prev,
             EventProcessor<? super LongCounter> add) {
         ArrayList<EventProcessor<? super LongCounter>> al = new ArrayList<EventProcessor<? super LongCounter>>(
                 Arrays.asList(prev));
@@ -154,8 +149,7 @@ public abstract class LongCounter
         return al.toArray(new EventProcessor[prev.length + 1]);
     }
 
-    static EventProcessor<? super LongCounter>[] remove(
-            EventProcessor<? super LongCounter>[] prev,
+    static EventProcessor<? super LongCounter>[] remove(EventProcessor<? super LongCounter>[] prev,
             EventProcessor<?> remove) {
         ArrayList<EventProcessor<? super LongCounter>> al = new ArrayList<EventProcessor<? super LongCounter>>(
                 Arrays.asList(prev));
@@ -181,30 +175,23 @@ public abstract class LongCounter
             this.mutex = mutex;
         }
 
-
         public double doubleValue() {
             synchronized (mutex) {
-                return  value;
+                return value;
             }
         }
 
-
-      
         public float floatValue() {
             synchronized (mutex) {
                 return value;
             }
         }
 
-
-    
         public int intValue() {
             synchronized (mutex) {
                 return (int) value;
             }
         }
-
- 
 
         public long longValue() {
             synchronized (mutex) {
@@ -232,7 +219,6 @@ public abstract class LongCounter
             }
         }
 
-
         @Override
         public long decrementAndGet() {
             synchronized (mutex) {
@@ -240,14 +226,12 @@ public abstract class LongCounter
             }
         }
 
-
         @Override
         public long get() {
             synchronized (mutex) {
                 return value;
             }
         }
-
 
         @Override
         public long getAndAdd(long delta) {
@@ -258,7 +242,6 @@ public abstract class LongCounter
             }
         }
 
-
         @Override
         public long getAndDecrement() {
             synchronized (mutex) {
@@ -266,14 +249,12 @@ public abstract class LongCounter
             }
         }
 
-
         @Override
         public long getAndIncrement() {
             synchronized (mutex) {
                 return value++;
             }
         }
-
 
         @Override
         public long getAndSet(long newValue) {
@@ -284,7 +265,6 @@ public abstract class LongCounter
             }
         }
 
-
         @Override
         public long incrementAndGet() {
             synchronized (mutex) {
@@ -292,14 +272,12 @@ public abstract class LongCounter
             }
         }
 
-
         @Override
         public void set(long newValue) {
             synchronized (mutex) {
                 value = newValue;
             }
         }
-
 
         public EventProcessor<? super LongCounter> addEventProcessor(
                 EventProcessor<? super LongCounter> e) {
@@ -309,11 +287,9 @@ public abstract class LongCounter
             }
         }
 
-
         public List<EventProcessor<? super LongCounter>> getEventProcessors() {
             synchronized (mutex) {
-                return new ArrayList<EventProcessor<? super LongCounter>>(Arrays
-                        .asList(array));
+                return new ArrayList<EventProcessor<? super LongCounter>>(Arrays.asList(array));
             }
         }
 
@@ -343,7 +319,6 @@ public abstract class LongCounter
         ConcurrentLongCounter(String name, String description) {
             super(name, description);
         }
-
 
         @ManagedOperation(defaultValue = "reset $name", description = "Sets the value of $name to 0")
         public synchronized void reset() {
@@ -479,7 +454,6 @@ public abstract class LongCounter
             l.set(newValue);
         }
 
-
         public EventProcessor<? super LongCounter> addEventProcessor(
                 EventProcessor<? super LongCounter> e) {
             synchronized (mutex) {
@@ -488,14 +462,11 @@ public abstract class LongCounter
             }
         }
 
-
         public List<EventProcessor<? super LongCounter>> getEventProcessors() {
             synchronized (mutex) {
-                return new ArrayList<EventProcessor<? super LongCounter>>(Arrays
-                        .asList(array));
+                return new ArrayList<EventProcessor<? super LongCounter>>(Arrays.asList(array));
             }
         }
-
 
         public boolean removeEventProcessor(EventProcessor<?> e) {
             synchronized (mutex) {
@@ -521,25 +492,18 @@ public abstract class LongCounter
             super(name, description);
         }
 
-
-     
         public double doubleValue() {
             return value;
         }
-
 
         public float floatValue() {
             return value;
         }
 
-
-
         public int intValue() {
             return (int) value;
         }
 
-
-    
         public long longValue() {
             return value;
         }
@@ -572,7 +536,6 @@ public abstract class LongCounter
             return value;
         }
 
-
         @Override
         public long decrementAndGet() {
             --value;
@@ -580,12 +543,10 @@ public abstract class LongCounter
             return value;
         }
 
-
         @Override
         public long get() {
             return value;
         }
-
 
         @Override
         public long getAndAdd(long delta) {
@@ -595,20 +556,17 @@ public abstract class LongCounter
             return prev;
         }
 
-
         @Override
         public long getAndDecrement() {
             update();
             return value--;
         }
 
-
         @Override
         public long getAndIncrement() {
             update();
             return value++;
         }
-
 
         @Override
         public long getAndSet(long newValue) {
@@ -618,14 +576,12 @@ public abstract class LongCounter
             return prev;
         }
 
-
         @Override
         public long incrementAndGet() {
             ++value;
             update();
             return value;
         }
-
 
         @Override
         public void set(long newValue) {
@@ -640,11 +596,9 @@ public abstract class LongCounter
 
         }
 
-
         public List<EventProcessor<? super LongCounter>> getEventProcessors() {
             return new ArrayList<EventProcessor<? super LongCounter>>(Arrays.asList(array));
         }
-
 
         public boolean removeEventProcessor(EventProcessor<?> e) {
             EventProcessor<? super LongCounter>[] prev = array;

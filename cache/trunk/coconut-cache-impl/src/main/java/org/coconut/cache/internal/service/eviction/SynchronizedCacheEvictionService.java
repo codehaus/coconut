@@ -27,7 +27,7 @@ public class SynchronizedCacheEvictionService<K, V> extends
     public SynchronizedCacheEvictionService(Cache c, CacheEvictionConfiguration conf,
             InternalCacheSupport<K, V> helper) {
         super(conf, helper);
-        this.mutex = helper.getMutex();
+        this.mutex = c;
     }
 
     /** {@inheritDoc} */

@@ -44,8 +44,6 @@ public interface CacheServiceManager extends CacheServiceManagerService {
      */
     boolean isTerminated();
 
-    void start();
-
     <T> T getInternalService(Class<T> type);
 
     <T> T getService(Class<T> type);

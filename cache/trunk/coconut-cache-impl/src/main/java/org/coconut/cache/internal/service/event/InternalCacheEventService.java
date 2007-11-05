@@ -29,46 +29,45 @@ public interface InternalCacheEventService<K, V> extends CacheEventService<K, V>
      * 
      * @param cache
      *            the cache that was cleared
-     * @param started
-     *            the time at which the clear was started
-     * @param previousSize
-     *            the previous size of the cache
-     * @param previousCapacity
-     *            the previous capacity of the cache
+     * @param timestamp
+     *            the timestamp that was returned by {@link #beforeCacheClear(Cache)}
      * @param entries
-     *            the entries that was removed. (<tt>null</tt> is allowed)
+     *            the entries that was removed
+     * @param previousVolume
+     *            the previous volume of the cache
      */
-    void afterCacheClear(Cache<K, V> cache, long started, int previousSize,
-            long previousCapacity, Collection<? extends CacheEntry<K, V>> entries);
+    void afterCacheClear(Cache<K, V> cache, long timestamp,
+            Collection<? extends CacheEntry<K, V>> entries, long previousVolume);
 
     void afterCacheEvict(Cache<K, V> cache, long started, int size, int previousSize,
-            long capacity, long previousCapacity,
-            Collection<? extends CacheEntry<K, V>> evicted,
+            long capacity, long previousCapacity, Collection<? extends CacheEntry<K, V>> evicted,
             Collection<? extends CacheEntry<K, V>> expired);
 
     void afterPurge(Cache<K, V> cache, Collection<? extends CacheEntry<K, V>> expired);
 
     void dexpired(Cache<K, V> cache, long started, CacheEntry<K, V> entry);
-    
+
     void afterGet(Cache<K, V> cache, long started,
-            Collection<? extends CacheEntry<K, V>> evictedEntries, K key,
-            CacheEntry<K, V> prev, CacheEntry<K, V> newEntry, boolean isExpired);
+            Collection<? extends CacheEntry<K, V>> evictedEntries, K key, CacheEntry<K, V> prev,
+            CacheEntry<K, V> newEntry, boolean isExpired);
 
     void afterPut(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries,
-                    AbstractCacheEntry<K, V> oldEntry, AbstractCacheEntry<K, V> newEntry);
+            AbstractCacheEntry<K, V> oldEntry, AbstractCacheEntry<K, V> newEntry);
 
     void afterPutAll(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries,
-            Map<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>> newPrevEntries);    void afterRemove(Cache<K, V> cache, long started, CacheEntry<K, V> entry);
+            Map<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>> newPrevEntries);
+
+    void afterRemove(Cache<K, V> cache, long started, CacheEntry<K, V> entry);
 
     void afterRemoveAll(Cache<K, V> cache, long started, Collection<CacheEntry<K, V>> entries);
-    
+
     void afterReplace(Cache<K, V> cache, long started,
-            Collection<? extends CacheEntry<K, V>> evictedEntries,
-            CacheEntry<K, V> oldEntry, CacheEntry<K, V> newEntry);
+            Collection<? extends CacheEntry<K, V>> evictedEntries, CacheEntry<K, V> oldEntry,
+            CacheEntry<K, V> newEntry);
 
-    void afterTrimToSize(Cache<K, V> cache, long started,
-            Collection<? extends CacheEntry<K, V>> evictedEntries);
-
+    void afterTrimCache(Cache<K, V> cache, long started,
+            Collection<? extends CacheEntry<K, V>> evictedEntries, int previousSize, int newSize,
+            long previousVolume, long newVolume);
 }

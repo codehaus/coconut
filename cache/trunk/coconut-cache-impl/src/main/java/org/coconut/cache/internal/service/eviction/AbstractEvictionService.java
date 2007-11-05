@@ -59,11 +59,11 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
 
     /** {@inheritDoc} */
     public void trimToVolume(long capacity) {
-        helper.trimToVolume(capacity);
+        helper.trimCache(Integer.MAX_VALUE, capacity);
     }
 
     /** {@inheritDoc} */
     public void trimToSize(int size) {
-        helper.trimToSize(size);
+        helper.trimCache(size, Long.MAX_VALUE);
     }
 }

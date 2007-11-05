@@ -210,8 +210,8 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
         remove.add(entryRemoveTime);
     }
 
-    public void afterCacheClear(Cache<K, V> cache, long start, int size, long capacity,
-            Collection<? extends CacheEntry<K, V>> removed) {
+    public void afterCacheClear(Cache<K, V> cache, long start, Collection<? extends CacheEntry<K, V>> removed, long capacity
+            ) {
         long time = System.nanoTime() - start;
         // TODO what about removed?
         cacheClearLast.run();
@@ -329,15 +329,13 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
         entryPutCount.incrementAndGet();
     }
 
-    public long afterTrim(Cache<K, V> cache, int previousSize, long previousVolume, int size,
-            long volume) {
-        return 0;
-    }
 
-    public void afterTrimToSize(Cache<K, V> cache, long started,
-            Collection<? extends CacheEntry<K, V>> evictedEntries) {
+    public void afterTrimCache(Cache<K, V> cache, long started,
+            Collection<? extends CacheEntry<K, V>> evictedEntries, int previousSize, int newSize,
+            long previousVolume, long newVolume) {
 
     }
+
 
     public long beforeCacheClear(Cache<K, V> cache) {
         return System.nanoTime();

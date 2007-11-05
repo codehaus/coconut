@@ -32,8 +32,10 @@ import org.coconut.management.annotation.ManagedOperation;
 final class ManagementUtils {
 
     /** Cannot instantiate. */
+    // /CLOVER:OFF
     private ManagementUtils() {}
-
+    // /CLOVER:ON
+    
     public static ManagedGroup synchronizedGroup(ManagedGroup service,
             DefaultCacheManagementService mutex) {
         return new SynchronizedCacheManagementService(service, mutex);
@@ -68,22 +70,21 @@ final class ManagementUtils {
      * A wrapper class that exposes only the CacheManagementService methods of a
      * CacheManagementService implementation.
      */
-    public static final class DelegatedCacheManagementService implements
-            CacheManagementService {
+    public static final class DelegatedCacheManagementService implements CacheManagementService {
         /** The CacheManagementService that is wrapped. */
         private final CacheManagementService delegate;
 
         /**
          * Creates a wrapped CacheManagementService from the specified implementation.
          * 
-         * @param service
+         * @param managementService
          *            the CacheManagementService to wrap
          */
-        public DelegatedCacheManagementService(CacheManagementService service) {
-            if (service == null) {
-                throw new NullPointerException("service is null");
+        public DelegatedCacheManagementService(CacheManagementService managementService) {
+            if (managementService == null) {
+                throw new NullPointerException("managementService is null");
             }
-            this.delegate = service;
+            this.delegate = managementService;
         }
 
         /** {@inheritDoc} */
@@ -137,8 +138,7 @@ final class ManagementUtils {
         }
 
         /** {@inheritDoc} */
-        public void register(MBeanServer server, ObjectName objectName)
-                throws JMException {
+        public void register(MBeanServer server, ObjectName objectName) throws JMException {
             delegate.register(server, objectName);
         }
 
@@ -237,8 +237,8 @@ final class ManagementUtils {
         public ManagedGroup addChild(String name, String description) {
             synchronized (root) {
                 root.checkShutdown();
-                ManagedGroup mg = new SynchronizedCacheManagementService(delegate
-                        .addChild(name, description), root);
+                ManagedGroup mg = new SynchronizedCacheManagementService(delegate.addChild(name,
+                        description), root);
                 col.add(mg);
                 return mg;
             }
@@ -301,8 +301,7 @@ final class ManagementUtils {
         }
 
         /** {@inheritDoc} */
-        public void register(MBeanServer server, ObjectName objectName)
-                throws JMException {
+        public void register(MBeanServer server, ObjectName objectName) throws JMException {
             synchronized (root) {
                 root.checkShutdown();
                 delegate.register(server, objectName);
