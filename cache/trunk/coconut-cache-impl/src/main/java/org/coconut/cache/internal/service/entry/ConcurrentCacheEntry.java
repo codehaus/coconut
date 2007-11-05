@@ -17,6 +17,8 @@ public class ConcurrentCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
 
     private volatile long lastAccessedTime;
 
+    private volatile long refreshTime;
+
     /**
      * @param key
      * @param value
@@ -26,10 +28,13 @@ public class ConcurrentCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
      * @param size
      */
     public ConcurrentCacheEntry(AbstractCacheEntryFactoryService<K, V> service, K key,
-            V value, double cost, long creationTime, long lastUpdateTime, long size) {
+            V value, double cost, long creationTime, long lastUpdateTime, long size,
+            long refreshTime, long expirationTime, long hits) {
         super(key, value, cost, creationTime, lastUpdateTime, size);
         this.service = service;
-
+        this.refreshTime = refreshTime;
+        this.expirationTime = expirationTime;
+        this.hits = hits;
     }
 
     /**
@@ -55,20 +60,25 @@ public class ConcurrentCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
 
     public void accessed() {
         lastAccessedTime = service.getAccessTimeStamp(this);
+        hits++;
     }
 
     @Override
-    public void setExpirationTime(long time) {
+    void setExpirationTime(long time) {
         this.expirationTime = time;
     }
 
     @Override
-    public void setHits(long hits) {
+    void setHits(long hits) {
         this.hits = hits;
+    }
+
+    void setRefreshTime(long refreshTime) {
+        this.refreshTime = refreshTime;
     }
 
     @Override
     public long getRefreshTime() {
-        throw new UnsupportedOperationException();
+        return refreshTime;
     }
 }

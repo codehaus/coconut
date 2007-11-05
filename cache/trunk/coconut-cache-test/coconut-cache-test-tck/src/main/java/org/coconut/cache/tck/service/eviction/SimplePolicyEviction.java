@@ -14,14 +14,14 @@ import static org.coconut.test.CollectionUtils.asSet;
 import org.coconut.cache.policy.Policies;
 import org.coconut.cache.policy.paging.LRUPolicy;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
+import org.coconut.core.AttributeMap;
 import org.junit.Test;
 
 public class SimplePolicyEviction extends AbstractCacheTCKTest {
 
     @Test
     public void testSimpleSize() {
-        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(5)
-                .c());
+        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(5).c());
         for (int i = 0; i < 5; i++) {
             put(i, Integer.toString(i));
         }
@@ -34,8 +34,7 @@ public class SimplePolicyEviction extends AbstractCacheTCKTest {
 
     @Test
     public void testEviction() {
-        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(5)
-                .c());
+        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(5).c());
         for (int i = 0; i < 5; i++) {
             c.put(i, Integer.toString(i));
         }
@@ -54,8 +53,7 @@ public class SimplePolicyEviction extends AbstractCacheTCKTest {
 
     @Test
     public void testTouch() {
-        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(10)
-                .c());
+        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(10).c());
         for (int i = 0; i < 10; i++) {
             c.put(i, Integer.toString(i));
         }
@@ -80,8 +78,7 @@ public class SimplePolicyEviction extends AbstractCacheTCKTest {
 
     @Test
     public void testPeek() {
-        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(5)
-                .c());
+        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(5).c());
         for (int i = 0; i < 5; i++) {
             c.put(i, Integer.toString(i));
         }
@@ -102,25 +99,40 @@ public class SimplePolicyEviction extends AbstractCacheTCKTest {
     @Test
     public void testRejectEntry() {
         RejectEntriesPolicy rep = new RejectEntriesPolicy();
-        c = newCache(newConf().eviction().setPolicy(rep).setMaximumSize(5).c().setClock(
-                clock));
+        c = newCache(newConf().eviction().setPolicy(rep).setMaximumSize(5).c().setClock(clock));
 
         c.put(1, "A");
-        rep.reject = true;
+        rep.rejectAdd = true;
         c.put(2, "B");
-        rep.reject = false;
+        rep.rejectAdd = false;
         c.put(3, "C");
         assertEquals(2, c.size());
+        assertFalse(c.containsKey(2));
+    }
+
+    @Test
+    public void testRejectReplaceEntry() {
+        RejectEntriesPolicy rep = new RejectEntriesPolicy();
+        c = newCache(newConf().eviction().setPolicy(rep).setMaximumSize(5).c().setClock(clock));
+
+        c.put(1, "A");
+        c.put(2, "B");
+        c.put(2, "C");
+        assertEquals(2, c.size());
+        rep.rejectUpdate = true;
+        //TODO should probably also this this for loading 
+        c.put(2, "D");
+        assertEquals(1, c.size());
         assertFalse(c.containsKey(2));
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void testRejectEntryPutAll() {
-        c = newCache(newConf().eviction().setPolicy(new Reject2EntriesPolicy())
-                .setMaximumSize(5).c().setClock(clock));
+        c = newCache(newConf().eviction().setPolicy(new Reject2EntriesPolicy()).setMaximumSize(5)
+                .c().setClock(clock));
         // the reject2EntriesPolicy is kind of a hack until we are
-        // clear with one goes into add() for the policy
+        // clear what type og object goes into add() for the policy
         c.putAll(asMap(M1, M2, M3));
         assertEquals(2, c.size());
         assertFalse(c.containsKey(2));
@@ -135,8 +147,7 @@ public class SimplePolicyEviction extends AbstractCacheTCKTest {
      */
     @Test
     public void testPutOverridesPreviousValue() {
-        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(2)
-                .c());
+        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(2).c());
         c.put(M1.getKey(), M1.getValue());
         c.put(M2.getKey(), M2.getValue());
         c.get(M1.getKey());
@@ -148,8 +159,7 @@ public class SimplePolicyEviction extends AbstractCacheTCKTest {
 
     @Test
     public void testPutAllOverridesPreviousValue() {
-        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(3)
-                .c());
+        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(3).c());
         put(M1);
         put(M2);
         put(M3);
@@ -172,8 +182,7 @@ public class SimplePolicyEviction extends AbstractCacheTCKTest {
 
     @Test
     public void testRemoveEntry() {
-        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(2)
-                .c());
+        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(2).c());
         c.put(M1.getKey(), M1.getValue());
         c.put(M2.getKey(), M2.getValue());
         c.get(M1.getKey());
@@ -185,8 +194,8 @@ public class SimplePolicyEviction extends AbstractCacheTCKTest {
     public void testExpiration() {
         // cross check with expiration.
 
-        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(5)
-                .c().setClock(clock));
+        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(5).c()
+                .setClock(clock));
 
         for (int i = 0; i < 5; i++) {
             c.put(i, Integer.toString(i));
@@ -198,14 +207,25 @@ public class SimplePolicyEviction extends AbstractCacheTCKTest {
 
     @SuppressWarnings( { "unchecked", "serial" })
     static class RejectEntriesPolicy extends LRUPolicy {
-        boolean reject;
+        volatile boolean rejectAdd;
+
+        volatile boolean rejectUpdate;
 
         @Override
-        public int add(Object data) {
-            if (!reject) {
-                return super.add(data);
+        public int add(Object data, AttributeMap ignore) {
+            if (!rejectAdd) {
+                return super.add(data, ignore);
             } else {
                 return -1;
+            }
+        }
+
+        @Override
+        public boolean update(int index, Object newElement, AttributeMap ignore) {
+            if (!rejectUpdate) {
+                return super.update(index, newElement, ignore);
+            } else {
+                return false;
             }
         }
     }
@@ -213,11 +233,11 @@ public class SimplePolicyEviction extends AbstractCacheTCKTest {
     @SuppressWarnings( { "unchecked", "serial" })
     static class Reject2EntriesPolicy extends LRUPolicy {
         @Override
-        public int add(Object data) {
+        public int add(Object data, AttributeMap ignore) {
             if (data.equals(2) || data.equals(M2)) {
                 return -1;
             } else {
-                return super.add(data);
+                return super.add(data, ignore);
             }
         }
     }

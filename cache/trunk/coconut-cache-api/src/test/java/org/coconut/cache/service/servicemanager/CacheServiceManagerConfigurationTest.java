@@ -1,17 +1,14 @@
 package org.coconut.cache.service.servicemanager;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
 
-import org.coconut.cache.service.loading.CacheLoadingConfigurationTest.LoadableCacheLoader;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedObject;
 import org.coconut.test.MockTestCase;
 import org.junit.Before;
 import org.junit.Test;
-import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
 
 public class CacheServiceManagerConfigurationTest {
 

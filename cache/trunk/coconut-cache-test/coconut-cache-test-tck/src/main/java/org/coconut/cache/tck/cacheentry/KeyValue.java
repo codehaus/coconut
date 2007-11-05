@@ -3,7 +3,8 @@
  */
 package org.coconut.cache.tck.cacheentry;
 
-import static org.coconut.test.CollectionUtils.*;
+import static org.coconut.test.CollectionUtils.M1;
+import static org.coconut.test.CollectionUtils.M2;
 
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.tck.AbstractCacheTCKTest;

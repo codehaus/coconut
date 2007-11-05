@@ -47,7 +47,7 @@ public class FilteredPolicyDecorator<T> extends PolicyDecorator<T> {
     @Override
     public int add(T data, AttributeMap attributes) {
         if (filter.accept(data, attributes)) {
-            return super.add(data);
+            return super.add(data, attributes);
         } else {
             return -1;
         }
@@ -59,7 +59,7 @@ public class FilteredPolicyDecorator<T> extends PolicyDecorator<T> {
     @Override
     public boolean update(int index, T newElement, AttributeMap attributes) {
         if (filter.accept(newElement, attributes)) {
-            return super.update(index, newElement);
+            return super.update(index, newElement, attributes);
         } else {
             remove(index);
             return false;

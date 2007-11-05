@@ -69,7 +69,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
      */
     int size;
 
-    long capacity;
+    long volume;
 
     /**
      * The table is rehashed when its size exceeds this threshold. (The value of this
@@ -189,7 +189,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
                 tab[i] = null;
             }
             size = 0;
-            capacity = 0;
+            volume = 0;
         }
         return s;
     }
@@ -314,7 +314,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             } else {
                 prev.next = entry;
             }
-            capacity -= oldValue.getSize();
+            volume -= oldValue.getSize();
         } else {
             oldValue = null;
             ++modCount;
@@ -322,7 +322,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             entry.next = first;
             size++;
         }
-        capacity += entry.getSize();
+        volume += entry.getSize();
         return oldValue;
 
     }
@@ -348,7 +348,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
                 if (value == null || value.equals(e.getValue())) {
                     modCount++;
                     size--;
-                    capacity -= e.getSize();
+                    volume -= e.getSize();
                     if (prev == e)
                         table[index] = next;
                     else
@@ -369,8 +369,8 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
         return size;
     }
 
-    public long capacity() {
-        return capacity;
+    public long volume() {
+        return volume;
     }
 
     /**

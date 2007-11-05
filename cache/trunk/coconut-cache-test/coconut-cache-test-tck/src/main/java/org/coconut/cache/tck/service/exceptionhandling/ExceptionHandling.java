@@ -5,7 +5,6 @@ package org.coconut.cache.tck.service.exceptionhandling;
 
 import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M2;
-import junit.framework.AssertionFailedError;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
@@ -33,6 +32,7 @@ public class ExceptionHandling extends AbstractCacheTCKTest {
 
     private Throwable failure;
 
+    
     @Test
     public void defaultLogger() {
         final Logger logger = context.mock(Logger.class);

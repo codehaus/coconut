@@ -3,9 +3,6 @@
  */
 package org.coconut.cache.examples.servicemanager;
 
-import java.util.Map;
-
-import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 
 /**

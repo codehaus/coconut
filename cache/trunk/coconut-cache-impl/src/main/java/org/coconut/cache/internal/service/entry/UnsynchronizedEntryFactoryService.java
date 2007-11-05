@@ -14,11 +14,34 @@ import org.coconut.core.Clock;
 public class UnsynchronizedEntryFactoryService<K, V> extends
         AbstractCacheEntryFactoryService<K, V> {
 
+    private long defaultExpirationTime;
+
+    private long defaultRefreshTime;
+
+    /** {@inheritDoc} */
+    public long getExpirationTimeNanos() {
+        return defaultExpirationTime;
+    }
+
+    /** {@inheritDoc} */
+    public void setExpirationTimeNanos(long nanos) {
+        this.defaultExpirationTime = nanos;
+    }
+
+    /** {@inheritDoc} */
+    public long getTimeToRefreshNanos() {
+        return defaultRefreshTime;
+    }
+
+    /** {@inheritDoc} */
+    public void setTimeToFreshNanos(long nanos) {
+        this.defaultRefreshTime = nanos;
+    }
+    
     public UnsynchronizedEntryFactoryService(Clock clock,
             CacheExceptionService<K, V> exceptionHandler) {
         super(clock, exceptionHandler);
     }
-
     /**
      * @see org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService#createEntry(java.lang.Object,
      *      java.lang.Object, org.coconut.core.AttributeMap,
@@ -29,15 +52,13 @@ public class UnsynchronizedEntryFactoryService<K, V> extends
         if (attributes == null) {
             attributes = createMap();
         }
-        long expirationTime = getTimeToLive(update(), key, value,
-                attributes, existing);
+        long expirationTime = getTimeToLive(defaultExpirationTime, key, value, attributes, existing);
         double cost = getCost(key, value, attributes, existing);
         long size = getSize(key, value, attributes, existing);
         long creationTime = getCreationTime(key, value, attributes, existing);
         long lastUpdate = getLastModified(key, value, attributes, existing);
-        long hits=getHits(key, value, attributes, existing);
-        long refreshTime = getTimeToRefresh(update(), key, value,
-                attributes, existing);
+        long hits = getHits(key, value, attributes, existing);
+        long refreshTime = getTimeToRefresh(defaultRefreshTime, key, value, attributes, existing);
         UnsynchronizedCacheEntry<K, V> newEntry = new UnsynchronizedCacheEntry<K, V>(
                 this, key, value, cost, creationTime, lastUpdate, size, refreshTime);
         newEntry.setHits(hits);

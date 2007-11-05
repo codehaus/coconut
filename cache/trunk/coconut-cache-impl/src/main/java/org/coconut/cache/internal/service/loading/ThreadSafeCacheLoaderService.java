@@ -4,7 +4,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.FutureTask;
 
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
-import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
+import org.coconut.cache.internal.service.entry.InternalCacheEntryService;
 import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
 import org.coconut.cache.internal.service.worker.CacheWorkerService;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
@@ -14,7 +14,7 @@ public class ThreadSafeCacheLoaderService<K, V> extends DefaultCacheLoaderServic
 
     private final ConcurrentHashMap<K, FutureTask<AbstractCacheEntry<K, V>>> futures = new ConcurrentHashMap<K, FutureTask<AbstractCacheEntry<K, V>>>();
 
-    public ThreadSafeCacheLoaderService(AbstractCacheEntryFactoryService attributeFactory,
+    public ThreadSafeCacheLoaderService(InternalCacheEntryService attributeFactory,
             CacheExceptionService<K, V> exceptionService,
             CacheLoadingConfiguration<K, V> loadConf, CacheWorkerService threadManager,
             LoadSupport<K, V> cache) {

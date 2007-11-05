@@ -13,6 +13,7 @@ import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.policy.Policies;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.spi.ReplacementPolicy;
+import org.coconut.core.AttributeMaps;
 
 /**
  * <p>
@@ -30,7 +31,7 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
         AbstractEvictionService<K, V, T> {
     private final ReplacementPolicy<T> cp;
 
-    private long maxCapacity;
+    private long maxVolume;
 
     private int maxSize;
 
@@ -41,15 +42,15 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
         cp = conf.getPolicy() == null ? Policies.newLRU() : (ReplacementPolicy) conf
                 .getPolicy();
         maxSize = EvictionUtils.getMaximumSizeFromConfiguration(conf);
-        maxCapacity = EvictionUtils.getMaximumVolumeFromConfiguration(conf);
+        maxVolume = EvictionUtils.getMaximumVolumeFromConfiguration(conf);
     }
 
     /** {@inheritDoc} */
     public int add(T t) {
-        if (maxCapacity == 0) {
+        if (maxVolume == 0) {
             return -1;
         }
-        return cp.add(t);
+        return cp.add(t, AttributeMaps.EMPTY_MAP);
     }
 
     /** {@inheritDoc} */
@@ -71,7 +72,7 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
     public List<T> evict(int size, long capacity) {
         ArrayList<T> list = new ArrayList<T>();
         int diffSize = size - maxSize;
-        long diffCapacity = capacity - maxCapacity;
+        long diffCapacity = capacity - maxVolume;
         while (diffSize-- > 0 || diffCapacity > 0) {
             T e = evictNext();
             list.add(e);
@@ -96,7 +97,7 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
 
     /** {@inheritDoc} */
     public long getMaximumVolume() {
-        return maxCapacity;
+        return maxVolume;
     }
 
     /** {@inheritDoc} */
@@ -106,7 +107,11 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
 
     /** {@inheritDoc} */
     public boolean isVolumeBreached(long capacity) {
-        return capacity > maxCapacity;
+        return capacity > maxVolume;
+    }
+
+    public boolean isSizeOrVolumeBreached(int size, long volume) {
+        return isSizeBreached(size) || isVolumeBreached(volume);
     }
 
     /** {@inheritDoc} */
@@ -118,7 +123,7 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
 
     /** {@inheritDoc} */
     public boolean replace(int index, T t) {
-        return cp.update(index, t);
+        return cp.update(index, t,AttributeMaps.EMPTY_MAP);
     }
 
     /** {@inheritDoc} */
@@ -129,10 +134,10 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
 
     /** {@inheritDoc} */
     public void setMaximumVolume(long size) {
-        this.maxCapacity = new CacheEvictionConfiguration<K, V>().setMaximumVolume(size)
+        this.maxVolume = new CacheEvictionConfiguration<K, V>().setMaximumVolume(size)
                 .getMaximumVolume();
     }
-    
+
     /** {@inheritDoc} */
     public void touch(int index) {
         if (index < 0) {
@@ -143,4 +148,5 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
             cp.touch(index);
         }
     }
+
 }

@@ -10,7 +10,6 @@ import static org.coconut.test.CollectionUtils.M5;
 import java.util.Arrays;
 
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.junit.Test;

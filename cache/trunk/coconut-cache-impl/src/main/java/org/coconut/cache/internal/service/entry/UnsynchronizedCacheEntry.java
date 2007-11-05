@@ -13,8 +13,6 @@ public class UnsynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
 
     long hits;
 
-    long idleTime;
-
     long lastAccessTime;
 
     long refreshTime;

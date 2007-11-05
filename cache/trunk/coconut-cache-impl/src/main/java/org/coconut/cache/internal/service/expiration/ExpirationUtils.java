@@ -3,7 +3,6 @@
  */
 package org.coconut.cache.internal.service.expiration;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 

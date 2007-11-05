@@ -3,9 +3,11 @@
  */
 package org.coconut.cache.tck.service.loading;
 
-import static org.coconut.test.CollectionUtils.*;
-import static org.coconut.test.CollectionUtils.M2;
 import static org.coconut.core.AttributeMaps.from;
+import static org.coconut.test.CollectionUtils.M1;
+import static org.coconut.test.CollectionUtils.M2;
+import static org.coconut.test.CollectionUtils.M3;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;

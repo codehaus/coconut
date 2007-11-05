@@ -3,7 +3,7 @@
  */
 package org.coconut.cache.tck.core.values;
 
-import static org.coconut.test.CollectionUtils.*;
+import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M2;
 import static org.coconut.test.CollectionUtils.M4;
 import static org.coconut.test.CollectionUtils.MNAN1;
@@ -13,7 +13,6 @@ import java.util.Arrays;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
-import org.coconut.test.CollectionUtils;
 import org.junit.Test;
 
 /**

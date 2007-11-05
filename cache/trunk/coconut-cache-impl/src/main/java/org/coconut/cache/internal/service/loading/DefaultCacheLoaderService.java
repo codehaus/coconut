@@ -9,7 +9,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.FutureTask;
 
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
-import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
+import org.coconut.cache.internal.service.entry.InternalCacheEntryService;
 import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
 import org.coconut.cache.internal.service.servicemanager.CompositeService;
 import org.coconut.cache.internal.service.worker.CacheWorkerService;
@@ -29,18 +29,18 @@ import org.coconut.management.ManagedObject;
 public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService<K, V>
         implements ManagedObject, CompositeService {
 
-    private final AbstractCacheEntryFactoryService attributeFactory;
+    private final InternalCacheEntryService attributeFactory;
 
     private final Executor loadExecutor;
 
-    public DefaultCacheLoaderService(AbstractCacheEntryFactoryService attributeFactory,
+    public DefaultCacheLoaderService(InternalCacheEntryService attributeFactory,
             CacheExceptionService<K, V> exceptionService,
             CacheLoadingConfiguration<K, V> loadConf,
             final CacheWorkerService threadManager, final LoadSupport<K, V> cache) {
         super(loadConf, attributeFactory, exceptionService, cache);
         this.attributeFactory = attributeFactory;
         this.loadExecutor = threadManager.getExecutorService(CacheLoadingService.class);
-        attributeFactory.update().setTimeToFreshNanos(
+        attributeFactory.setTimeToFreshNanos(
                 LoadingUtils.getInitialTimeToRefresh(loadConf));
     }
 

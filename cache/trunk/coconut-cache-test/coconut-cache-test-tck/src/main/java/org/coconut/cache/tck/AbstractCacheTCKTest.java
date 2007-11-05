@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerInvocationHandler;
@@ -390,6 +391,14 @@ public class AbstractCacheTCKTest extends Assert {
         loading().load(key);
     }
 
+    protected void shutdownAndAwait() {
+        c.shutdown();
+        try {
+            assertTrue(c.awaitTermination(5, TimeUnit.SECONDS));
+        } catch (InterruptedException e) {
+            throw new AssertionError(e);
+        }
+    }
     /**
      * Await all loads that currently active.
      */

@@ -22,58 +22,14 @@ import org.coconut.core.Clock;
  * @param <V>
  *            the type of mapped values
  */
-public abstract class AbstractCacheEntryFactoryService<K, V> {
+public abstract class AbstractCacheEntryFactoryService<K, V> implements
+        InternalCacheEntryService<K, V> {
+
     /** Used for calculating timestamps. */
     private final Clock clock;
 
     private final CacheExceptionService<K, V> errorHandler;
 
-    private Dummy dummy = new Dummy();
-
-
-    /** {@inheritDoc} */
-    public DefaultAttributes update() {
-        return dummy;
-    }
-
-    class Dummy implements DefaultAttributes {
-
-        private long goo;
-
-        private long refresh;
-
-        private int maximumSize;
-
-        /** {@inheritDoc} */
-        public long getExpirationTimeNanos() {
-            return goo;
-        }
-
-        /** {@inheritDoc} */
-        public void setExpirationTimeNanos(long nanos) {
-            this.goo = nanos;
-        }
-
-        /** {@inheritDoc} */
-        public long getTimeToRefreshNanos() {
-            return refresh;
-        }
-
-        /** {@inheritDoc} */
-        public void setTimeToFreshNanos(long nanos) {
-            this.refresh = nanos;
-        }
-
-        /** {@inheritDoc} */
-        public int getMaximumSize() {
-            return maximumSize;
-        }
-
-        /** {@inheritDoc} */
-        public void setMaximumSize(int maximumSize) {
-            this.maximumSize = maximumSize;
-        }
-    }
     /**
      * Creates a new AbstractCacheEntryFactoryService.
      * 
@@ -99,17 +55,18 @@ public abstract class AbstractCacheEntryFactoryService<K, V> {
     }
 
     /**
-     * Creates a new AttributeMap populated containing the entries specified in
-     * the provided attribute map.
+     * Creates a new AttributeMap populated containing the entries specified in the
+     * provided attribute map.
      * 
      * @param copyFrom
      *            the map to copy entries from
-     * @return a new AttributeMap populated containing the entries specified in
-     * the provided attribute map
+     * @return a new AttributeMap populated containing the entries specified in the
+     *         provided attribute map
      */
     public AttributeMap createMap(AttributeMap copyFrom) {
         return new AttributeMaps.DefaultAttributeMap(copyFrom);
     }
+
     /**
      * Creates a new cache entry from the specified key, value, attribute map and existing
      * cache entry.
@@ -125,8 +82,6 @@ public abstract class AbstractCacheEntryFactoryService<K, V> {
      * @return a new cache entry from the specified key, value, attribute map and existing
      *         cache entry
      */
-    public abstract AbstractCacheEntry<K, V> createEntry(K key, V value,
-            AttributeMap attributes, AbstractCacheEntry<K, V> existing);
 
     /**
      * Calculates the size of the element that was added.
@@ -152,19 +107,19 @@ public abstract class AbstractCacheEntryFactoryService<K, V> {
         }
     }
 
-    long getTimeToLive(DefaultAttributes atr, K key, V value, AttributeMap attributes,
+    long getTimeToLive(long expirationTimeNanos, K key, V value, AttributeMap attributes,
             CacheEntry<K, V> existing) {
-        long time = atr.getExpirationTimeNanos();
         try {
-            time = CacheAttributes.getTimeToLive(attributes, TimeUnit.NANOSECONDS, time);
+            expirationTimeNanos = CacheAttributes.getTimeToLive(attributes,
+                    TimeUnit.NANOSECONDS, expirationTimeNanos);
         } catch (IllegalArgumentException iae) {
             errorHandler.getExceptionHandler().handleWarning(
                     errorHandler.createContext(),
                     iae.getMessage() + " was added for key = " + key);
         }
 
-        return time == Long.MAX_VALUE ? Long.MAX_VALUE : clock.getDeadlineFromNow(time,
-                TimeUnit.NANOSECONDS);
+        return expirationTimeNanos == Long.MAX_VALUE ? Long.MAX_VALUE : clock
+                .getDeadlineFromNow(expirationTimeNanos, TimeUnit.NANOSECONDS);
     }
 
     /**
@@ -214,18 +169,17 @@ public abstract class AbstractCacheEntryFactoryService<K, V> {
         }
     }
 
-    long getTimeToRefresh(DefaultAttributes atr, K key, V value, AttributeMap attributes,
+    long getTimeToRefresh(long refreshTimeNanos, K key, V value, AttributeMap attributes,
             CacheEntry<K, V> existing) {
-        long time = atr.getTimeToRefreshNanos();
         try {
-            time = CacheAttributes.getTimeToRefresh(attributes, TimeUnit.NANOSECONDS,
-                    time);
+            refreshTimeNanos = CacheAttributes.getTimeToRefresh(attributes, TimeUnit.NANOSECONDS,
+                    refreshTimeNanos);
         } catch (IllegalArgumentException iae) {
             errorHandler.getExceptionHandler().handleWarning(
                     errorHandler.createContext(),
                     iae.getMessage() + " was added for key = " + key);
         }
-        return clock.getDeadlineFromNow(time, TimeUnit.NANOSECONDS);
+        return clock.getDeadlineFromNow(refreshTimeNanos, TimeUnit.NANOSECONDS);
     }
 
     long getCreationTime(K key, V value, AttributeMap attributes,

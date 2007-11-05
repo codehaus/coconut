@@ -4,7 +4,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.coconut.cache.service.worker.CacheWorkerManager;
-import org.coconut.core.AttributeMaps;
 
 public interface CacheWorkerService {
 

@@ -3,7 +3,6 @@
  */
 package org.coconut.cache.tck.core.values;
 
-import java.util.Collection;
 import java.util.Set;
 
 import org.coconut.cache.tck.AbstractCacheTCKTest;

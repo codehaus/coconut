@@ -120,7 +120,7 @@ public class ExpirationPurge extends AbstractExpirationTestBundle {
      *             was interrupted
      */
     @Test
-    public void sizeShutdown() throws InterruptedException {
+    public void purgeShutdown() throws InterruptedException {
         c = newCache(5);
         assertTrue(c.isStarted());
         c.shutdown();

@@ -9,6 +9,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses( { EvictionMXBean.class, EvictionService.class,
         EvictionNoPolicy.class, EvictionLRU.class, CacheEntryToPolicy.class,
+        EvictionTrimming.class,
         SimplePolicyEviction.class })
 public class EvictionSuite {
 

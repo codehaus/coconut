@@ -3,20 +3,19 @@
  */
 package org.coconut.cache.tck.service.event;
 
-import static org.coconut.cache.service.event.CacheEventFilters.*;
-import static org.coconut.cache.service.event.CacheEventFilters.CACHEENTRY_UPDATED_FILTER;
+import static org.coconut.cache.service.event.CacheEventFilters.CACHEENTRYEVENT_FILTER;
+import static org.coconut.cache.service.event.CacheEventFilters.CACHEENTRY_REMOVED_FILTER;
 import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M2;
 import static org.coconut.test.CollectionUtils.M3;
-import static org.coconut.test.CollectionUtils.M4;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.service.event.CacheEntryEvent.*;
-import org.coconut.cache.tck.service.event.AbstractEventTestBundle;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated;
 import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.test.CollectionUtils;
 import org.junit.Before;

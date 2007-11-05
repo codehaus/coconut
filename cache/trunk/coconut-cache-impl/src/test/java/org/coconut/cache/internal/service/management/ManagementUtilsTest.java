@@ -4,7 +4,6 @@
 package org.coconut.cache.internal.service.management;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.service.management.CacheMXBean;

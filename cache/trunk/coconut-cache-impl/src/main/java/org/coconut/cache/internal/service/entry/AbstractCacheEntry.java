@@ -121,7 +121,7 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         return creationTime;
     }
 
-    public int getHash() {
+    int getHash() {
         return hash;
     }
 
@@ -137,7 +137,7 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         return lastUpdateTime;
     }
 
-    public AbstractCacheEntry<K, V> getNext() {
+    AbstractCacheEntry<K, V> getNext() {
         return next;
     }
 
@@ -146,7 +146,7 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         return policyIndex;
     }
 
-    public abstract long getRefreshTime();
+    abstract long getRefreshTime();
 
     /** {@inheritDoc} */
     public long getSize() {
@@ -168,9 +168,9 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         setHits(getHits() + 1);
     }
 
-    public abstract void setExpirationTime(long time);
+    abstract void setExpirationTime(long time);
 
-    public abstract void setHits(long hits);
+    abstract void setHits(long hits);
 
     public void setNext(AbstractCacheEntry<K, V> entry) {
         next = entry;

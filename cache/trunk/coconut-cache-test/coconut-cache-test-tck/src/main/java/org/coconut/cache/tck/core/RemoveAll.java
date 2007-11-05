@@ -3,13 +3,6 @@
  */
 package org.coconut.cache.tck.core;
 
-import static org.coconut.test.CollectionUtils.M1;
-import static org.coconut.test.CollectionUtils.M2;
-import static org.coconut.test.CollectionUtils.M5;
-import static org.coconut.test.CollectionUtils.MNAN1;
-import static org.coconut.test.CollectionUtils.MNAN2;
-import static org.coconut.test.CollectionUtils.asMap;
-
 import org.coconut.cache.Cache;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.test.CollectionUtils;

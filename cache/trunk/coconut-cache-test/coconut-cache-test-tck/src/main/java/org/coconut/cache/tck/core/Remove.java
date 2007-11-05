@@ -10,7 +10,6 @@ import static org.coconut.test.CollectionUtils.MNAN2;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
-import org.coconut.test.CollectionUtils;
 import org.junit.Test;
 
 public class Remove extends AbstractCacheTCKTest {

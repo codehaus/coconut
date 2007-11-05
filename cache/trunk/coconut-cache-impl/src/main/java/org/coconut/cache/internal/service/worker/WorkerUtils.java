@@ -3,22 +3,8 @@
  */
 package org.coconut.cache.internal.service.worker;
 
-import java.util.Collection;
-import java.util.Map;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import org.coconut.cache.CacheEntry;
-import org.coconut.cache.service.loading.CacheLoadingConfiguration;
-import org.coconut.cache.service.loading.CacheLoadingMXBean;
-import org.coconut.cache.service.loading.CacheLoadingService;
-import org.coconut.cache.service.worker.CacheWorkerManager;
-import org.coconut.core.AttributeMap;
-import org.coconut.core.Transformer;
-import org.coconut.filter.Filter;
-import org.coconut.management.annotation.ManagedAttribute;
-import org.coconut.management.annotation.ManagedOperation;
 
 /**
  * Various utilities used for the worker service.

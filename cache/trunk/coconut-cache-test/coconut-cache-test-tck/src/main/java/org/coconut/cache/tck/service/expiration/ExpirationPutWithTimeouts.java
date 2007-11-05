@@ -4,13 +4,13 @@
 
 package org.coconut.cache.tck.service.expiration;
 
-import static org.coconut.test.CollectionUtils.*;
+import static org.coconut.test.CollectionUtils.M1;
+import static org.coconut.test.CollectionUtils.M2;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.Cache;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -69,14 +69,22 @@ public class ExpirationPutWithTimeouts extends AbstractExpirationTestBundle {
 
     @Test(expected = NullPointerException.class)
     public void testPutTimeoutKeyNull() {
-        expiration().put(null, "A", CacheExpirationService.DEFAULT_EXPIRATION,
-                TimeUnit.SECONDS);
+        expiration().put(null, "A", CacheExpirationService.DEFAULT_EXPIRATION, TimeUnit.SECONDS);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testPutTimeoutKeyNull2() {
+        expiration().put(null, "A", CacheExpirationService.NEVER_EXPIRE, TimeUnit.SECONDS);
     }
 
     @Test(expected = NullPointerException.class)
     public void testPutTimeoutValueNull() {
-        expiration().put(1, null, CacheExpirationService.DEFAULT_EXPIRATION,
-                TimeUnit.SECONDS);
+        expiration().put(1, null, CacheExpirationService.DEFAULT_EXPIRATION, TimeUnit.SECONDS);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testPutTimeoutValueNull2() {
+        expiration().put(1, null, CacheExpirationService.NEVER_EXPIRE, TimeUnit.SECONDS);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -129,8 +137,7 @@ public class ExpirationPutWithTimeouts extends AbstractExpirationTestBundle {
 
     @Test(expected = NullPointerException.class)
     public void testPutTimeoutMapNull() {
-        expiration().putAll(null, CacheExpirationService.DEFAULT_EXPIRATION,
-                TimeUnit.SECONDS);
+        expiration().putAll(null, CacheExpirationService.DEFAULT_EXPIRATION, TimeUnit.SECONDS);
     }
 
     @Test(expected = NullPointerException.class)

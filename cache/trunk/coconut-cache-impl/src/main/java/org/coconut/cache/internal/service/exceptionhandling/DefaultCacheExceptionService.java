@@ -4,14 +4,12 @@
 package org.coconut.cache.internal.service.exceptionhandling;
 
 import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.logging.Level;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.internal.service.servicemanager.CompositeService;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
+import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlers;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
 import org.coconut.cache.spi.CacheSPI;
 import org.coconut.core.Logger;
@@ -30,8 +28,7 @@ import org.coconut.core.Loggers;
  * @param <V>
  *            the type of mapped values
  */
-public class DefaultCacheExceptionService<K, V> implements CacheExceptionService<K, V>,
-        CompositeService {
+public class DefaultCacheExceptionService<K, V> implements CacheExceptionService<K, V> {
 
     /** The cache for which this DefaultCacheExceptionService is registered. */
     private final Cache<K, V> cache;
@@ -54,7 +51,11 @@ public class DefaultCacheExceptionService<K, V> implements CacheExceptionService
             CacheExceptionHandlingConfiguration<K, V> configuration) {
         this.cache = cache;
         this.logger = configuration.getExceptionLogger();
-        this.exceptionHandler = configuration.getExceptionHandler();
+        if (configuration.getExceptionHandler() != null) {
+            this.exceptionHandler = configuration.getExceptionHandler();
+        } else {
+            this.exceptionHandler = new CacheExceptionHandlers.DefaultLoggingExceptionHandler<K, V>();
+        }
     }
 
     /** {@inheritDoc} */
@@ -96,8 +97,7 @@ public class DefaultCacheExceptionService<K, V> implements CacheExceptionService
             if (logger == null) {
                 String name = cache.getName();
                 String loggerName = Cache.class.getPackage().getName() + "." + name;
-                java.util.logging.Logger jucLogger = java.util.logging.Logger
-                        .getLogger(loggerName);
+                java.util.logging.Logger jucLogger = java.util.logging.Logger.getLogger(loggerName);
                 String infoMsg = CacheSPI.lookup(CacheExceptionHandler.class, "noLogger");
                 jucLogger.setLevel(Level.ALL);
                 jucLogger.info(MessageFormat.format(infoMsg, name, loggerName));
@@ -107,9 +107,4 @@ public class DefaultCacheExceptionService<K, V> implements CacheExceptionService
         }
         return logger;
     }
-
-    public Collection<?> getChildServices() {
-        return Arrays.asList(exceptionHandler, logger);
-    }
 }
-

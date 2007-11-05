@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.core.AttributeMap;
-
 /**
  * A dummy implementation of a {@link Cache}.
  * 

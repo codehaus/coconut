@@ -3,9 +3,6 @@
  */
 package org.coconut.event;
 
-import java.util.concurrent.Executor;
-
-import org.coconut.core.Logger;
 import org.coconut.event.spi.EventBusErrorHandler;
 import org.coconut.filter.matcher.FilterMatcher;
 

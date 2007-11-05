@@ -17,6 +17,7 @@ import javax.management.Notification;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.servicemanager.CacheServiceManager;
 import org.coconut.cache.service.event.CacheEntryEvent;
 import org.coconut.cache.service.event.CacheEvent;
@@ -57,8 +58,7 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
 
     private final Offerable<CacheEvent<K, V>> offerable;
 
-    public DefaultCacheEventService(CacheServiceManager manager,
-            CacheEventConfiguration co) {
+    public DefaultCacheEventService(CacheServiceManager manager, CacheEventConfiguration co) {
         super(CacheEventConfiguration.SERVICE_NAME);
         isEnabled = co.isEnabled();
         this.manager = manager;
@@ -72,8 +72,8 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
     }
 
     /** {@inheritDoc} */
-    public void afterCacheClear(Cache<K, V> cache, long ignoreStarted, int size,
-            long capacity, Collection<? extends CacheEntry<K, V>> entries) {
+    public void afterCacheClear(Cache<K, V> cache, long ignoreStarted, int size, long capacity,
+            Collection<? extends CacheEntry<K, V>> entries) {
         if (entries != null && doRemove) {
             for (CacheEntry<K, V> entry : entries) {
                 removed(cache, entry, false);
@@ -85,9 +85,8 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
     }
 
     /** {@inheritDoc} */
-    public void afterCacheEvict(Cache<K, V> cache, long started, int size,
-            int previousSize, long capacity, long previousCapacity,
-            Collection<? extends CacheEntry<K, V>> evicted,
+    public void afterCacheEvict(Cache<K, V> cache, long started, int size, int previousSize,
+            long capacity, long previousCapacity, Collection<? extends CacheEntry<K, V>> evicted,
             Collection<? extends CacheEntry<K, V>> expired) {
         doEvictAll(cache, evicted);
         doExpireAll(cache, expired);
@@ -95,29 +94,44 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
 
     /** {@inheritDoc} */
     public void afterPut(Cache<K, V> cache, long ignoreStarted,
-            Collection<? extends CacheEntry<K, V>> entries, CacheEntry<K, V> prev,
-            CacheEntry<K, V> newEntry) {
+            Collection<? extends CacheEntry<K, V>> entries, AbstractCacheEntry<K, V> prev,
+            AbstractCacheEntry<K, V> newEntry) {
         doEvictAll(cache, entries);
-        processRemoved(cache, newEntry, prev);
+
+        put(cache, prev, newEntry);
+
+    }
+
+    void put(Cache<K, V> cache, AbstractCacheEntry<K, V> prev, AbstractCacheEntry<K, V> newEntry) {
+        if (prev == null) {
+            if (doAdd && newEntry != null && newEntry.getPolicyIndex() >= 0) {
+                dispatch(added(cache, newEntry, false));
+            }
+        } else if (prev.getPolicyIndex() >= 0 && newEntry != null
+                && newEntry.getPolicyIndex() == -1) {
+            if (doRemove) {
+                dispatch(removed(cache, prev, false));
+            }
+        } else if (doUpdate) {
+            dispatch(updated(cache, newEntry, prev.getValue(), false, false));
+        }
     }
 
     /** {@inheritDoc} */
     public void afterPutAll(Cache<K, V> cache, long ignoreStarted,
             Collection<? extends CacheEntry<K, V>> evictedEntries,
-            Collection<? extends CacheEntry<K, V>> prev,
-            Collection<? extends CacheEntry<K, V>> added) {
+            Map<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>> entries) {
         doEvictAll(cache, evictedEntries);
-        CacheEntry<K, V>[] p = prev.toArray(new CacheEntry[prev.size()]);
-        CacheEntry<K, V>[] n = added.toArray(new CacheEntry[added.size()]);
-        for (int i = 0; i < p.length; i++) {
-            processRemoved(cache, n[i], p[i]);
+        for (Map.Entry<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>> entry : entries
+                .entrySet()) {
+            put(cache, entry.getValue(), entry.getKey());
         }
     }
 
     /** {@inheritDoc} */
     public void afterGet(Cache<K, V> cache, long started,
-            Collection<? extends CacheEntry<K, V>> evictedEntries, K key,
-            CacheEntry<K, V> prev, CacheEntry<K, V> newEntry, boolean isExpired) {
+            Collection<? extends CacheEntry<K, V>> evictedEntries, K key, CacheEntry<K, V> prev,
+            CacheEntry<K, V> newEntry, boolean isExpired) {
         doEvictAll(cache, evictedEntries);
         if (newEntry == null) {
             if (isExpired && prev != null && doRemove) {
@@ -143,8 +157,8 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
 
     /** {@inheritDoc} */
     public void afterReplace(Cache<K, V> cache, long started,
-            Collection<? extends CacheEntry<K, V>> evictedEntries,
-            CacheEntry<K, V> oldEntry, CacheEntry<K, V> newEntry) {
+            Collection<? extends CacheEntry<K, V>> evictedEntries, CacheEntry<K, V> oldEntry,
+            CacheEntry<K, V> newEntry) {
         doEvictAll(cache, evictedEntries);
         processRemoved(cache, newEntry, oldEntry);
     }
@@ -220,8 +234,7 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
         return eb.unsubscribeAll();
     }
 
-    private void doEvictAll(Cache<K, V> cache,
-            Iterable<? extends CacheEntry<K, V>> entries) {
+    private void doEvictAll(Cache<K, V> cache, Iterable<? extends CacheEntry<K, V>> entries) {
         if (entries != null && doEvict) {
             for (CacheEntry<K, V> entry : entries) {
                 dispatch(evicted(cache, entry));
@@ -229,8 +242,7 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
         }
     }
 
-    private void doExpireAll(Cache<K, V> cache,
-            Iterable<? extends CacheEntry<K, V>> entries) {
+    private void doExpireAll(Cache<K, V> cache, Iterable<? extends CacheEntry<K, V>> entries) {
         if (entries != null && doExpire) {
             for (CacheEntry<K, V> entry : entries) {
                 dispatch(expired(cache, entry));
@@ -238,8 +250,7 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
         }
     }
 
-    private void processRemoved(Cache<K, V> cache, CacheEntry<K, V> newEntry,
-            CacheEntry<K, V> prev) {
+    private void processRemoved(Cache<K, V> cache, CacheEntry<K, V> newEntry, CacheEntry<K, V> prev) {
         if (prev == null) {
             if (newEntry != null && doAdd) {
                 dispatch(added(cache, newEntry, false));
@@ -261,12 +272,18 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
         Notification notification(Object source);
     }
 
-    public void afterPurge(Cache<K, V> cache,
-            Collection<? extends CacheEntry<K, V>> expired) {
+    public void afterPurge(Cache<K, V> cache, Collection<? extends CacheEntry<K, V>> expired) {
         doExpireAll(cache, expired);
     }
 
     public void dexpired(Cache<K, V> cache, long started, CacheEntry<K, V> entry) {
         dispatch(removed(cache, entry, true));
+    }
+
+    public void afterRemoveAll(Cache<K, V> cache, long started, Collection<CacheEntry<K, V>> entries) {
+        for (CacheEntry<K, V> entry : entries) {
+            afterRemove(cache, started, entry);
+        }
+
     }
 }

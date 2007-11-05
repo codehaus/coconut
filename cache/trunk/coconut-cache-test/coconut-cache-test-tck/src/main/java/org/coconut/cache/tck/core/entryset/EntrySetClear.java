@@ -3,7 +3,6 @@
  */
 package org.coconut.cache.tck.core.entryset;
 
-import java.util.Map;
 import java.util.Set;
 
 import org.coconut.cache.tck.AbstractCacheTCKTest;

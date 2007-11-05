@@ -5,11 +5,9 @@ package org.coconut.cache.service.servicemanager;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.CacheServices;
 import org.junit.Test;
 
 public class CacheServiceManagerUtilTest {

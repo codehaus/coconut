@@ -49,87 +49,53 @@ public class PolicyDecorator<T> implements ReplacementPolicy<T> {
         return policy;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public int add(T data) {
-        return policy.add(data);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public T evictNext() {
         return policy.evictNext();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public T peek() {
         return policy.peek();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public List<T> peekAll() {
         return policy.peekAll();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public T remove(int index) {
         return policy.remove(index);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void touch(int index) {
         policy.touch(index);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void clear() {
         policy.clear();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean update(int index, T newElement) {
-        return policy.update(index, newElement);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return policy.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getSize() {
         return policy.getSize();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int add(T element, AttributeMap attributes) {
         return add(element, attributes);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean update(int index, T newElement, AttributeMap attributes) {
         return update(index, newElement, attributes);
     }

@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
-import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
+import org.coconut.cache.internal.service.entry.InternalCacheEntryService;
 import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
@@ -21,7 +21,7 @@ import org.coconut.management.ManagedGroup;
 
 public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLifecycle
         implements CacheLoadingService<K, V>, InternalCacheLoadingService<K, V> {
-    private final AbstractCacheEntryFactoryService<K, V> attributeFactory;
+    private final InternalCacheEntryService attributeFactory;
 
     private final CacheExceptionService<K, V> exceptionHandler;
 
@@ -33,7 +33,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
 
     public AbstractCacheLoadingService(
             CacheLoadingConfiguration<K, V> loadingConfiguration,
-            AbstractCacheEntryFactoryService attributeFactory,
+            InternalCacheEntryService attributeFactory,
             CacheExceptionService<K, V> exceptionHandler, LoadSupport<K, V> loadSupport) {
         this.loader = loadingConfiguration.getLoader();
         reloadFilter = loadingConfiguration.getRefreshFilter();
@@ -96,7 +96,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
 
     /** {@inheritDoc} */
     public long getDefaultTimeToRefresh(TimeUnit unit) {
-        return LoadingUtils.convertNanosToRefreshTime(attributeFactory.update()
+        return LoadingUtils.convertNanosToRefreshTime(attributeFactory
                 .getTimeToRefreshNanos(), unit);
     }
 
@@ -170,7 +170,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
 
     /** {@inheritDoc} */
     public void setDefaultTimeToRefresh(long timeToRefresh, TimeUnit unit) {
-        attributeFactory.update().setTimeToFreshNanos(
+        attributeFactory.setTimeToFreshNanos(
                 LoadingUtils.convertRefreshTimeToNanos(timeToRefresh, unit));
     }
 

@@ -11,12 +11,10 @@ import static junit.framework.Assert.assertTrue;
 import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
 
 import java.lang.management.ManagementFactory;
-import java.util.Collection;
 
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
-import javax.management.ObjectName;
 
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedVisitor;

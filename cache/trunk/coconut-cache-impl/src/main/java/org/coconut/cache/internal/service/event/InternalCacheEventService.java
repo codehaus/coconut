@@ -4,9 +4,11 @@
 package org.coconut.cache.internal.service.event;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.service.event.CacheEventService;
 
 /**
@@ -54,15 +56,14 @@ public interface InternalCacheEventService<K, V> extends CacheEventService<K, V>
 
     void afterPut(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries,
-            CacheEntry<K, V> oldEntry, CacheEntry<K, V> newEntry);
+                    AbstractCacheEntry<K, V> oldEntry, AbstractCacheEntry<K, V> newEntry);
 
     void afterPutAll(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries,
-            Collection<? extends CacheEntry<K, V>> prev,
-            Collection<? extends CacheEntry<K, V>> added);
+            Map<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>> newPrevEntries);    void afterRemove(Cache<K, V> cache, long started, CacheEntry<K, V> entry);
 
-    void afterRemove(Cache<K, V> cache, long started, CacheEntry<K, V> entry);
-
+    void afterRemoveAll(Cache<K, V> cache, long started, Collection<CacheEntry<K, V>> entries);
+    
     void afterReplace(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries,
             CacheEntry<K, V> oldEntry, CacheEntry<K, V> newEntry);

@@ -4,15 +4,9 @@
 package org.coconut.cache.tck.service.event;
 
 import static org.coconut.cache.service.event.CacheEventFilters.CACHEENTRYEVENT_FILTER;
-import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M2;
 import static org.coconut.test.CollectionUtils.M3;
-import static org.coconut.test.CollectionUtils.M4;
 
-import java.util.Arrays;
-import java.util.Collection;
-
-import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated;
 import org.junit.Test;
 

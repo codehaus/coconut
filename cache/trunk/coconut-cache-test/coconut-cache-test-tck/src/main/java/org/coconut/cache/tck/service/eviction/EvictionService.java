@@ -72,34 +72,4 @@ public class EvictionService extends AbstractCacheTCKTest {
         eviction().setMaximumSize(-1);
     }
 
-    /**
-     * Tests trimToSize.
-     */
-    @Test
-    public void trimToSize() {
-        put(5);
-        assertSize(5);
-        eviction().trimToSize(3);
-        assertSize(3);
-        put(10, 15);
-        assertSize(9);
-        eviction().trimToSize(1);
-        assertSize(1);
-    }
-
-    /**
-     * Tests trimToSize IllegalArgumentException.
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void trimToSizeIAE() {
-        eviction().trimToSize(-1);
-    }
-    
-    /**
-     * Tests trimToVolume IllegalArgumentException.
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void trimToVolumeIAE() {
-        eviction().trimToVolume(-1);
-    }
 }

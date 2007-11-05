@@ -44,18 +44,8 @@ public interface ReplacementPolicy<T> {
      * element and must be used when referencing the element. A negative return value
      * indicates that the policy has rejected the entry. Any replacement policy is allowed
      * to reject entries. For example, LRU-Size which rejects entries over a certain size.
-     * 
-     * @param element
-     *            the element to add to the replacement policy
-     * @return a positive index that can be used to reference the element in the
-     *         replacement policy. A negative number is returned if the element is not
-     *         accepted into the replacement policy
-     */
-    int add(T element);
-
-    /**
-     * Similar to {@link #add(Object)} but also takes an {@link AttributeMap} as parameter
-     * which can contain various properties for the added element.
+     * Also takes an {@link AttributeMap} as parameter which can contain various
+     * properties for the added element.
      * 
      * @param element
      *            the element to add to the replacement policy
@@ -94,8 +84,8 @@ public interface ReplacementPolicy<T> {
      * method <tt>must</tt> return the elements in the same order. However, non
      * deterministic policies may return elements in any order from this method.
      * <p>
-     * Be aware that this might be an expensive operation. For complicated policies where
-     * we lazyly calculate which element should be evicted next. A complete copy of the
+     * NOTE: This might be an expensive operation. For complicated policies where we
+     * lazyly calculate which element should be evicted next. A complete copy of the
      * policys internal datastructures might need to be created.
      * 
      * @return the next element that should be evicted
@@ -110,9 +100,9 @@ public interface ReplacementPolicy<T> {
      * method must return the elements in the same order. For example, non deterministic
      * policies might evict entries in another order then specified by this method.
      * <p>
-     * Be aware that this can be a very expensive operation. For implementations where we
-     * lazily calculate which element should be evicted next. An implementation of this
-     * method might need to create a full copy of all internal data structures.
+     * NOTE: This can be a very expensive operation. For implementations where we lazily
+     * calculate which element should be evicted next. An implementation of this method
+     * might need to create a full copy of all internal data structures.
      * 
      * @return a list containing all the elements in the order they will be evicted.
      */
@@ -142,17 +132,7 @@ public interface ReplacementPolicy<T> {
      * <p>
      * IMPORTANT: The previous element must be removed by the replacement policy even if
      * the new element cannot be accepted.
-     * 
-     * @param index
-     *            the index of the previous element
-     * @param newElement
-     *            the new element that should replace the previous element
-     * @return <tt>true</tt> if the policy accepted the new element, otherwise
-     *         <tt>false</tt>
-     */
-    boolean update(int index, T newElement);
-
-    /**
+     * <p>
      * Similar to {@link #update(int, Object)} but also takes an {@link AttributeMap} as
      * parameter which can contain various properties for the added element.
      * 

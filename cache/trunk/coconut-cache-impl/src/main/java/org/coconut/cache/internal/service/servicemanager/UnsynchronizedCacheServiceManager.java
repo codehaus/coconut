@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.entry.UnsynchronizedEntryFactoryService;
+import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
 import org.coconut.cache.internal.service.exceptionhandling.DefaultCacheExceptionService;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.service.management.CacheManagementService;
@@ -222,6 +223,9 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
                 si.terminated();
             }
             status = RunState.TERMINATED;
+            CacheExceptionService ces = (CacheExceptionService) container
+                    .getComponentInstanceOfType(CacheExceptionService.class);
+            ces.getExceptionHandler().terminated();
         }
     }
 
@@ -244,6 +248,9 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
         for (AbstractCacheServiceConfiguration<?, ?> c : conf.getAllConfigurations()) {
             container.registerComponentInstance(c);
         }
+        CacheExceptionService ces = (CacheExceptionService) container
+                .getComponentInstanceOfType(CacheExceptionService.class);
+        ces.getExceptionHandler().initialize(conf);
     }
 
     static class ServiceHolder {

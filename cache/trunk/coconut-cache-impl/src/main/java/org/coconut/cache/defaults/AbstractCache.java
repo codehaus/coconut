@@ -31,10 +31,11 @@ import org.coconut.internal.util.CollectionUtils;
  */
 public abstract class AbstractCache<K, V> implements Cache<K, V> {
 
+    /** The default clock for this cache. */
+    private final Clock clock;
+
     /** The name of the cache. */
     private final String name;
-
-    private final Clock clock;
 
     /**
      * Creates a new AbstractCache from the specified configuration.
@@ -57,59 +58,15 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         }
     }
 
-    abstract CacheServiceManager getServiceManager();
-
-    Clock getClock() {
-        return clock;
+    /** {@inheritDoc} */
+    public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+        return getServiceManager().awaitTermination(timeout, unit);
     }
 
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     public boolean containsKey(Object key) {
         return peek((K) key) != null;
-    }
-
-    /** {@inheritDoc} */
-    public final <T> T getService(Class<T> serviceType) {
-        return getServiceManager().getService(serviceType);
-    }
-
-    /** {@inheritDoc} */
-    public boolean isShutdown() {
-        return getServiceManager().isShutdown();
-    }
-
-    /** {@inheritDoc} */
-    public void shutdown() {
-        getServiceManager().shutdown();
-    }
-
-    /** {@inheritDoc} */
-    public boolean awaitTermination(long timeout, TimeUnit unit)
-            throws InterruptedException {
-        return getServiceManager().awaitTermination(timeout, unit);
-    }
-
-    /**
-     * Prestarts the Cache.
-     */
-    public void prestart() {
-        getServiceManager().lazyStart(false);
-    }
-
-    /** {@inheritDoc} */
-    public void shutdownNow() {
-        getServiceManager().shutdownNow();
-    }
-
-    /** {@inheritDoc} */
-    public boolean isStarted() {
-        return getServiceManager().isStarted();
-    }
-
-    /** {@inheritDoc} */
-    public boolean isTerminated() {
-        return getServiceManager().isTerminated();
     }
 
     /** {@inheritDoc} */
@@ -142,11 +99,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         if (keys == null) {
             throw new NullPointerException("keys is null");
         }
-        for (K key : keys) {
-            if (key == null) {
-                throw new NullPointerException("Collection of keys contains a null");
-            }
-        }
+        CollectionUtils.checkCollectionForNulls(keys);
         return doGetAll(keys);
     }
 
@@ -164,14 +117,29 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         return name;
     }
 
-    /** @return the size of the cache */
-    public int getSize() {
-        return size();
+    /** {@inheritDoc} */
+    public final <T> T getService(Class<T> serviceType) {
+        return getServiceManager().getService(serviceType);
     }
 
     /** {@inheritDoc} */
     public boolean isEmpty() {
         return size() == 0;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isShutdown() {
+        return getServiceManager().isShutdown();
+    }
+
+    /** {@inheritDoc} */
+    public boolean isStarted() {
+        return getServiceManager().isStarted();
+    }
+
+    /** {@inheritDoc} */
+    public boolean isTerminated() {
+        return getServiceManager().isTerminated();
     }
 
     /** {@inheritDoc} */
@@ -192,6 +160,13 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         return entry == null ? null : new ImmutableCacheEntry<K, V>(entry);
     }
 
+    /**
+     * Prestarts the Cache.
+     */
+    public void prestart() {
+        getServiceManager().lazyStart(false);
+    }
+
     /** {@inheritDoc} */
     public final V put(K key, V value) {
         return put(key, value, AttributeMaps.EMPTY_MAP);
@@ -203,7 +178,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
             throw new NullPointerException("m is null");
         }
         CollectionUtils.checkMapForNulls(m);
-        doPutAll(m, null);
+        doPutAll(m, AttributeMaps.toMap(m.keySet(), AttributeMaps.EMPTY_MAP));
     }
 
     /** {@inheritDoc} */
@@ -247,6 +222,29 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         return prev == null ? null : prev.getValue();
     }
 
+    /** {@inheritDoc} */
+    public final boolean replace(K key, V oldValue, V newValue) {
+        if (key == null) {
+            throw new NullPointerException("key is null");
+        } else if (oldValue == null) {
+            throw new NullPointerException("oldValue is null");
+        } else if (newValue == null) {
+            throw new NullPointerException("newValue is null");
+        }
+        CacheEntry<K, V> prev = doReplace(key, oldValue, newValue, null);
+        return prev != null;
+    }
+
+    /** {@inheritDoc} */
+    public void shutdown() {
+        getServiceManager().shutdown();
+    }
+
+    /** {@inheritDoc} */
+    public void shutdownNow() {
+        getServiceManager().shutdownNow();
+    }
+
     /**
      * Returns a string representation of this map. The string representation consists of
      * a list of key-value mappings in the order returned by the map's <tt>entrySet</tt>
@@ -278,19 +276,6 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         }
     }
 
-    /** {@inheritDoc} */
-    public final boolean replace(K key, V oldValue, V newValue) {
-        if (key == null) {
-            throw new NullPointerException("key is null");
-        } else if (oldValue == null) {
-            throw new NullPointerException("oldValue is null");
-        } else if (newValue == null) {
-            throw new NullPointerException("newValue is null");
-        }
-        CacheEntry<K, V> prev = doReplace(key, oldValue, newValue, null);
-        return prev != null;
-    }
-
     abstract AbstractCacheEntry<K, V> doGet(K key);
 
     abstract Map<K, V> doGetAll(Collection<? extends K> keys);
@@ -309,12 +294,17 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     abstract CacheEntry<K, V> doPut(K key, V newValue, boolean putOnlyIfAbsent,
             AttributeMap attributes);
 
-    abstract void doPutAll(Map<? extends K, ? extends V> t, AttributeMap attributes);
+    abstract void doPutAll(Map<? extends K, ? extends V> t, Map<? extends K, AttributeMap> attributes);
 
     abstract CacheEntry<K, V> doRemove(Object key, Object value);
 
-    abstract CacheEntry<K, V> doReplace(K key, V oldValue, V newValue,
-            AttributeMap attributes);
+    abstract CacheEntry<K, V> doReplace(K key, V oldValue, V newValue, AttributeMap attributes);
+
+    Clock getClock() {
+        return clock;
+    }
+
+    abstract CacheServiceManager getServiceManager();
 
     /** {@inheritDoc} */
     V put(K key, V value, AttributeMap attributes) {

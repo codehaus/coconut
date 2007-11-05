@@ -4,16 +4,7 @@
 package org.coconut.cache.tck.core;
 
 import static org.coconut.test.CollectionUtils.M1;
-import static org.coconut.test.CollectionUtils.M1_KEY_NULL;
-import static org.coconut.test.CollectionUtils.M1_NULL_VALUE;
 import static org.coconut.test.CollectionUtils.M2;
-import static org.coconut.test.CollectionUtils.M4;
-import static org.coconut.test.CollectionUtils.M5;
-import static org.coconut.test.CollectionUtils.MNAN1;
-import static org.coconut.test.CollectionUtils.asList;
-import static org.coconut.test.CollectionUtils.asMap;
-
-import java.util.Map;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.tck.AbstractCacheTCKTest;

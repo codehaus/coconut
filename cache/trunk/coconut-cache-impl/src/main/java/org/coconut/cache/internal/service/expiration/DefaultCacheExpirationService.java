@@ -13,6 +13,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
+import org.coconut.cache.internal.service.entry.InternalCacheEntryService;
 import org.coconut.cache.internal.service.servicemanager.CompositeService;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
@@ -44,7 +45,7 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
         CacheExpirationService<K, V>, ManagedObject, CompositeService {
 
     /** Responsible for creating attribute maps. */
-    private final AbstractCacheEntryFactoryService attributeFactory;
+    private final InternalCacheEntryService attributeFactory;
 
     private final Cache<K, V> cache;
 
@@ -58,15 +59,15 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
 
     public DefaultCacheExpirationService(Cache<K, V> cache, Clock clock,
             InternalCacheSupport<K, V> helper, CacheExpirationConfiguration<K, V> conf,
-            AbstractCacheEntryFactoryService attributeFactory) {
+            InternalCacheEntryService attributeFactory) {
         super(CacheExpirationConfiguration.SERVICE_NAME);
         this.clock = clock;
         this.cache = cache;
         this.helper = helper;
         this.expirationFilter = conf.getExpirationFilter();
         this.attributeFactory = attributeFactory;
-        attributeFactory.update().setExpirationTimeNanos(
-                ExpirationUtils.getInitialTimeToLiveNS(conf));
+        attributeFactory.setExpirationTimeNanos(ExpirationUtils
+                .getInitialTimeToLiveNS(conf));
     }
 
     /** {@inheritDoc} */
@@ -76,7 +77,7 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
 
     /** {@inheritDoc} */
     public long getDefaultTimeToLive(TimeUnit unit) {
-        return ExpirationUtils.convertNanosToExpirationTime(attributeFactory.update()
+        return ExpirationUtils.convertNanosToExpirationTime(attributeFactory
                 .getExpirationTimeNanos(), unit);
     }
 
@@ -138,7 +139,7 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
     /** {@inheritDoc} */
     public void setDefaultTimeToLive(long timeToLive, TimeUnit unit) {
         long time = ExpirationUtils.convertExpirationTimeToNanos(timeToLive, unit);
-        attributeFactory.update().setExpirationTimeNanos(
+        attributeFactory.setExpirationTimeNanos(
                 time == 0 ? Long.MAX_VALUE : time);
     }
 }

@@ -15,7 +15,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
-import org.coconut.test.ImmutableMapEntry;
 import org.junit.Test;
 
 public class EventRemove extends AbstractEventTestBundle {

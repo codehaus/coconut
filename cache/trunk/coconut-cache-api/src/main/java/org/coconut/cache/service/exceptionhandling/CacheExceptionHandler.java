@@ -102,6 +102,14 @@ public abstract class CacheExceptionHandler<K, V> {
         return null;
     }
 
+    public void initialize(CacheConfiguration<K, V> configuration) {
+
+    }
+
+    public void terminated() {
+
+    }
+
     /**
      * This method is called when the
      * {@link CacheLifecycle#initialize(CacheConfiguration)} method of a cache service

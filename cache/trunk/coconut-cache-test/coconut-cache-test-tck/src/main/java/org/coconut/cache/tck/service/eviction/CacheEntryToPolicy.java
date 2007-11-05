@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.policy.paging.LRUPolicy;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
+import org.coconut.core.AttributeMap;
 import org.junit.Test;
 
 /**
@@ -28,8 +29,7 @@ public class CacheEntryToPolicy extends AbstractCacheTCKTest {
     @SuppressWarnings("unchecked")
     @Test
     public void isCacheEntry() throws InterruptedException {
-        c = newCache(newConf().eviction().setPolicy(new PolicyMock()).setMaximumSize(5)
-                .c());
+        c = newCache(newConf().eviction().setPolicy(new PolicyMock()).setMaximumSize(5).c());
 
         c.put(M1.getKey(), M1.getValue());
 
@@ -44,9 +44,9 @@ public class CacheEntryToPolicy extends AbstractCacheTCKTest {
     @SuppressWarnings( { "serial", "unchecked" })
     class PolicyMock extends LRUPolicy {
         @Override
-        public int add(Object data) {
+        public int add(Object data, AttributeMap ignore) {
             q.add(data);
-            return super.add(data);
+            return super.add(data, ignore);
         }
     }
 }

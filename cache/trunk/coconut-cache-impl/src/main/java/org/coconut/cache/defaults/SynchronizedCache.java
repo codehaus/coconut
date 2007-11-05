@@ -13,7 +13,6 @@ import org.coconut.cache.internal.service.management.DefaultCacheManagementServi
 import org.coconut.cache.internal.service.spi.CacheServiceManager;
 import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsService;
 import org.coconut.cache.service.event.CacheEventService;
-import org.coconut.cache.service.management.CacheMXBean;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.spi.CacheServiceSupport;
 
@@ -23,8 +22,7 @@ import org.coconut.cache.spi.CacheServiceSupport;
  */
 @ThreadSafe
 @CacheServiceSupport( { CacheEventService.class, CacheManagementService.class })
-public class SynchronizedCache<K, V> extends UnsynchronizedCache<K, V> implements
-        CacheMXBean {
+public class SynchronizedCache<K, V> extends UnsynchronizedCache<K, V>  {
     //this class only override UnsynchronizedCache to make it compile when
     //we change the Cache interface
     @SuppressWarnings("unchecked")
