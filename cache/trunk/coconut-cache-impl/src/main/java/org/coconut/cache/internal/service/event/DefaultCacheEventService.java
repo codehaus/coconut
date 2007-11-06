@@ -50,7 +50,7 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
 
     private final boolean doUpdate;
 
-    private final EventBus<CacheEvent<K, V>> eb = new DefaultEventBus<CacheEvent<K, V>>();
+    private final CacheEventBus<CacheEvent<K, V>> eb = new CacheEventBus<CacheEvent<K, V>>();
 
     private final boolean isEnabled;
 
@@ -285,5 +285,10 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
             afterRemove(cache, started, entry);
         }
 
+    }
+
+    @Override
+    public void shutdown() {
+        eb.setShutdown();
     }
 }

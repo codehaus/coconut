@@ -74,9 +74,9 @@ public interface EventBus<E> extends Offerable<E>, EventProcessor<E> {
     boolean offerAll(Collection<? extends E> events);
 
     /**
-     * Returns all subscribers that is registered for this EventBus.
+     * Returns all subscribers that are registered for this EventBus.
      * 
-     * @return all subscribers that is registered for this EventBus
+     * @return all subscribers that are registered for this EventBus
      */
     Collection<EventSubscription<E>> getSubscribers();
 

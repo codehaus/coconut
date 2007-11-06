@@ -21,6 +21,39 @@ import org.coconut.predicate.Predicate;
  *            the type of mapped values
  */
 public interface CacheEventService<K, V> extends EventBus<CacheEvent<K, V>> {
+
+    /**
+     * Inserts the specified element into the underlying data structure, if possible. Some
+     * implementations may impose insertion restrictions (for example capacity bounds),
+     * which can fail to insert an element by returning false.
+     * 
+     * @param element
+     *            the element to add.
+     * @return <tt>true</tt> if it was possible to add the element to the data
+     *         structure, else <tt>false</tt>
+     * @throws NullPointerException
+     *             if the specified element is <tt>null</tt>
+     */
+    boolean offer(CacheEvent<K, V> event);
+
+    /**
+     * Handles an event.
+     * 
+     * @param event
+     *            The event that the EventHandler must process
+     * @throws ClassCastException
+     *             the class of the specified element prevents it from handled by this
+     *             event-handler.
+     * @throws NullPointerException
+     *             if the specified element is null
+     * @throws IllegalArgumentException
+     *             some aspect of this element prevents it from being handled by this
+     *             event-handler.
+     * @throws IllegalStateException
+     *             if the cache has been shutdown
+     */
+    void process(CacheEvent<K, V> event);
+
     /**
      * A failure encountered while attempting to offering elements to an event bus may
      * result in some elements having already been processed. when the associated
@@ -30,15 +63,13 @@ public interface CacheEventService<K, V> extends EventBus<CacheEvent<K, V>> {
      * @param events
      *            the events to process
      * @return a boolean indicating if all events was succesfully processed.
-     * @throws IllegalStateException
-     *             if the cache has been shutdown
      */
     boolean offerAll(Collection<? extends CacheEvent<K, V>> events);
 
     /**
-     * Returns all subscribers that is registered for this EventBus.
+     * Returns all subscribers that are registered for this EventBus.
      * 
-     * @return all subscribers that is registered for this EventBus
+     * @return all subscribers that are registered for this EventBus
      */
     Collection<EventSubscription<CacheEvent<K, V>>> getSubscribers();
 

@@ -28,7 +28,6 @@ import org.coconut.predicate.matcher.PredicateMatcher;
  */
 /**
  * @param <E>
- * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -46,25 +45,23 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
         this(EventBusConfiguration.DEFAULT_CONFIGURATION);
     }
 
-    
     public DefaultEventBus(EventBusConfiguration<E> conf) {
         super(conf);
         if (conf.getFilterMatcher() == null) {
             indexer = new DefaultPredicateMatcher<DefaultEventSubscription<E>, E>();
         } else {
-            indexer = (PredicateMatcher<DefaultEventSubscription<E>, E>) conf
-                    .getFilterMatcher();
+            indexer = (PredicateMatcher<DefaultEventSubscription<E>, E>) conf.getFilterMatcher();
         }
     }
 
     protected void cancel(EventSubscription<E> aes) {
 
     }
+
     @SuppressWarnings("unchecked")
     public List<EventSubscription<E>> getSubscribers() {
         return Collections.unmodifiableList(new ArrayList(subscribers.values()));
     }
-
 
     public EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler,
             Predicate<? super E> filter) {
@@ -77,8 +74,7 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
         try {
             for (;;) {
                 String name = getNextName(eventHandler, filter);
-                DefaultEventSubscription<E> s = newSubscription(eventHandler, filter,
-                        name);
+                DefaultEventSubscription<E> s = newSubscription(eventHandler, filter, name);
                 // this will only fail if somebody has registered some stage
                 // with a specified name starting with SUBSCRIPTION_NAME_PREFIX
                 if (subscribers.putIfAbsent(name, s) == null) {
@@ -91,7 +87,6 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
             lock.unlock();
         }
     }
-
 
     public EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler,
             Predicate<? super E> filter, String name) {
@@ -120,8 +115,8 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
     public Collection<EventSubscription<E>> unsubscribeAll() {
         lock.lock();
         try {
-            Collection<EventSubscription<E>> c = new ArrayList<EventSubscription<E>>(
-                    subscribers.size());
+            Collection<EventSubscription<E>> c = new ArrayList<EventSubscription<E>>(subscribers
+                    .size());
             for (DefaultEventSubscription<E> s : subscribers.values()) {
                 unsubscribed(s);
             }
@@ -172,7 +167,7 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
         s.unsubscribe();
     }
 
-    protected boolean doInform(final E element) {
+    protected boolean doInform(final E element, boolean doThrow) {
         for (DefaultEventSubscription<E> s : indexer.match(element)) {
             ReadLock rl = s.readLock();
             rl.lock();

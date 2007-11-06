@@ -7,8 +7,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses( { EventCacheCleared.class, EventGet.class, EventPut.class,
-        EventRemove.class, EventReplace.class, EventServiceEviction.class,
-        EventServiceExpiration.class, EventServiceGeneral.class,
+@Suite.SuiteClasses( { EventBusShutdownLazyStart.class, EventCacheCleared.class, EventGet.class,
+        EventPut.class, EventRemove.class, EventReplace.class, EventServiceBus.class,
+        EventServiceEviction.class, EventServiceExpiration.class, EventServiceGeneral.class,
         EventServiceLoading.class })
 public class EventSuite {}

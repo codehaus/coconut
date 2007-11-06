@@ -72,7 +72,7 @@ public class ConfigurationValidator {
         try {
             verify(conf, type);
             return true;
-        } catch (IllegalCacheConfigurationException e) {
+        } catch (IllegalStateException e) {
             // we only swallow IllegalCacheConfiguration exceptions
         }
         return false;

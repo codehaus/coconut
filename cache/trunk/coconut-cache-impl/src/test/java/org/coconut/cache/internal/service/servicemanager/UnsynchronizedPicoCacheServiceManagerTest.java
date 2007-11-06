@@ -6,10 +6,13 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
 import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+@RunWith(JMock.class)
 public class UnsynchronizedPicoCacheServiceManagerTest {
     Mockery context = new JUnit4Mockery();
 
