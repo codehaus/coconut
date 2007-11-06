@@ -153,11 +153,11 @@ public class LoopHelpers {
         static final AtomicLong seq = new AtomicLong( -715159705);
         private long seed;
 
-        SimpleRandom(long s) {
+        public SimpleRandom(long s) {
             seed = s;
         }
 
-        SimpleRandom() {
+        public SimpleRandom() {
             seed = System.nanoTime() + seq.getAndAdd(129);
         }
 
