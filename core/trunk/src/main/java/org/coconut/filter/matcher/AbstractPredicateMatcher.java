@@ -7,20 +7,20 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import org.coconut.filter.Filter;
+import org.coconut.filter.Predicate;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public abstract class AbstractFilterMatcher<K, E> implements FilterMatcher<K, E> {
-    private final Map<K, Filter<? super E>> map;
+public abstract class AbstractPredicateMatcher<K, E> implements PredicateMatcher<K, E> {
+    private final Map<K, Predicate<? super E>> map;
 
-    public AbstractFilterMatcher(Map<K, Filter<? super E>> map) {
+    public AbstractPredicateMatcher(Map<K, Predicate<? super E>> map) {
         this.map = map;
     }
 
-    protected Map<K,Filter<? super E>> getMap() {
+    protected Map<K,Predicate<? super E>> getMap() {
         return map;
     }
     
@@ -30,7 +30,7 @@ public abstract class AbstractFilterMatcher<K, E> implements FilterMatcher<K, E>
     }
    
     /** {@inheritDoc} */
-    public Set<java.util.Map.Entry<K, Filter<? super E>>> entrySet() {
+    public Set<java.util.Map.Entry<K, Predicate<? super E>>> entrySet() {
         return map.entrySet();
     }
 
@@ -50,7 +50,7 @@ public abstract class AbstractFilterMatcher<K, E> implements FilterMatcher<K, E>
     }
 
     /** {@inheritDoc} */
-    public Filter<? super E> get(Object key) {
+    public Predicate<? super E> get(Object key) {
         return map.get(key);
     }
 
@@ -70,17 +70,17 @@ public abstract class AbstractFilterMatcher<K, E> implements FilterMatcher<K, E>
     }
 
     /** {@inheritDoc} */
-    public Filter<? super E> put(K key, Filter<? super E> value) {
+    public Predicate<? super E> put(K key, Predicate<? super E> value) {
         return map.put(key, value);
     }
 
     /** {@inheritDoc} */
-    public void putAll(Map<? extends K, ? extends Filter<? super E>> t) {
+    public void putAll(Map<? extends K, ? extends Predicate<? super E>> t) {
         map.putAll(t);
     }
 
     /** {@inheritDoc} */
-    public Filter<? super E> remove(Object key) {
+    public Predicate<? super E> remove(Object key) {
         return map.remove(key);
     }
 
@@ -95,7 +95,7 @@ public abstract class AbstractFilterMatcher<K, E> implements FilterMatcher<K, E>
     }
 
     /** {@inheritDoc} */
-    public Collection<Filter<? super E>> values() {
+    public Collection<Predicate<? super E>> values() {
         return map.values();
     }
 

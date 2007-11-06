@@ -11,13 +11,13 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 
-import org.coconut.filter.FileFilters.FileInDirectoryFilter;
+import org.coconut.filter.FilePredicates.FileInDirectoryFilter;
 import org.junit.Test;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-public class FileFilters_InDirectoryTest {
+public class FilePredicates_InDirectoryTest {
 
     @Test
     public void testFilter() throws IOException {
@@ -29,9 +29,9 @@ public class FileFilters_InDirectoryTest {
                 .getParentFile());
         assertFalse(filter.getIncludeSubdirectories());
         assertEquals(f.getParentFile(), filter.getDirectory());
-        assertTrue(filter.accept(f));
-        assertTrue(filter.accept(childDir));
-        assertFalse(filter.accept(childFile));
+        assertTrue(filter.evaluate(f));
+        assertTrue(filter.evaluate(childDir));
+        assertFalse(filter.evaluate(childFile));
         f.delete();
         childDir.delete();
         childFile.delete();
@@ -51,10 +51,10 @@ public class FileFilters_InDirectoryTest {
         FileInDirectoryFilter filter = new FileInDirectoryFilter(childDir, true);
         assertTrue(filter.getIncludeSubdirectories());
         assertEquals(childDir, filter.getDirectory());
-        assertFalse(filter.accept(f));
-        assertFalse(filter.accept(childDir));
-        assertTrue(filter.accept(childFile));
-        assertTrue(filter.accept(childChildDir));
+        assertFalse(filter.evaluate(f));
+        assertFalse(filter.evaluate(childDir));
+        assertTrue(filter.evaluate(childFile));
+        assertTrue(filter.evaluate(childChildDir));
         f.delete();
         childFile.delete();
         childDir.delete();
@@ -105,7 +105,7 @@ public class FileFilters_InDirectoryTest {
         FileInDirectoryFilter filter = new FileInDirectoryFilter(f
                 .getParentFile());
         try {
-            filter.accept(null);
+            filter.evaluate(null);
         } finally {
             f.delete();
         }

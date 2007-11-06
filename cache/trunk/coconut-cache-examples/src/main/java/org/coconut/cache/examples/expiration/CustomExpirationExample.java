@@ -7,12 +7,12 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.defaults.UnsynchronizedCache;
-import org.coconut.filter.Filter;
+import org.coconut.filter.Predicate;
 
 public class CustomExpirationExample {
     // START SNIPPET: class
-    static class CustomExpirationFilter<K, V> implements Filter<CacheEntry<K, V>> {
-        public boolean accept(CacheEntry<K, V> entry) {
+    static class CustomExpirationFilter<K, V> implements Predicate<CacheEntry<K, V>> {
+        public boolean evaluate(CacheEntry<K, V> entry) {
             long delta = System.currentTimeMillis() - entry.getLastAccessTime();
             return delta > 60 * 60 * 1000;
             // return true to indicate that the entry has expired

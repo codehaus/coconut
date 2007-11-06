@@ -6,7 +6,7 @@ package org.coconut.filter.matcher;
 import java.util.List;
 import java.util.Map;
 
-import org.coconut.filter.Filter;
+import org.coconut.filter.Predicate;
 
 /**
  * A FilterMatcher can be used to query a large number of filters to obtain all
@@ -15,7 +15,7 @@ import org.coconut.filter.Filter;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public interface FilterMatcher<K, E> extends Map<K, Filter<? super E>> {
+public interface PredicateMatcher<K, E> extends Map<K, Predicate<? super E>> {
 
     /**
      * This method will return the registered keys for all those filters that

@@ -29,7 +29,7 @@ import org.coconut.core.Offerable;
 import org.coconut.event.EventBus;
 import org.coconut.event.EventSubscription;
 import org.coconut.event.defaults.DefaultEventBus;
-import org.coconut.filter.Filter;
+import org.coconut.filter.Predicate;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -215,7 +215,7 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
     /** {@inheritDoc} */
     public EventSubscription<CacheEvent<K, V>> subscribe(
             EventProcessor<? super CacheEvent<K, V>> eventHandler,
-            Filter<? super CacheEvent<K, V>> filter) {
+            Predicate<? super CacheEvent<K, V>> filter) {
         manager.lazyStart(false);
         return eb.subscribe(eventHandler, filter);
     }
@@ -223,7 +223,7 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
     /** {@inheritDoc} */
     public EventSubscription<CacheEvent<K, V>> subscribe(
             EventProcessor<? super CacheEvent<K, V>> listener,
-            Filter<? super CacheEvent<K, V>> filter, String name) {
+            Predicate<? super CacheEvent<K, V>> filter, String name) {
         manager.lazyStart(false);
         return eb.subscribe(listener, filter, name);
     }

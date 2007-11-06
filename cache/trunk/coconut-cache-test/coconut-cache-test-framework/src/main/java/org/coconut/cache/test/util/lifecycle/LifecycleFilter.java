@@ -1,10 +1,10 @@
 package org.coconut.cache.test.util.lifecycle;
 
 import org.coconut.cache.test.util.AbstractLifecycleVerifier;
-import org.coconut.filter.Filter;
+import org.coconut.filter.Predicate;
 
-public class LifecycleFilter extends AbstractLifecycleVerifier implements Filter {
-    public boolean accept(Object element) {
+public class LifecycleFilter extends AbstractLifecycleVerifier implements Predicate {
+    public boolean evaluate(Object element) {
         return false;
     }
 }

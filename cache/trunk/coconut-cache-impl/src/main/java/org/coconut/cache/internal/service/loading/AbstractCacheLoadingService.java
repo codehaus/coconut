@@ -16,7 +16,7 @@ import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.AttributeMaps;
-import org.coconut.filter.Filter;
+import org.coconut.filter.Predicate;
 import org.coconut.management.ManagedGroup;
 
 public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLifecycle
@@ -29,7 +29,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
 
     private final LoadSupport<K, V> loadSupport;
 
-    private final Filter<CacheEntry<K, V>> reloadFilter;
+    private final Predicate<CacheEntry<K, V>> reloadFilter;
 
     public AbstractCacheLoadingService(
             CacheLoadingConfiguration<K, V> loadingConfiguration,
@@ -100,7 +100,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
                 .getTimeToRefreshNanos(), unit);
     }
 
-    public Filter<CacheEntry<K, V>> getRefreshFilter() {
+    public Predicate<CacheEntry<K, V>> getRefreshFilter() {
         return reloadFilter;
     }
 

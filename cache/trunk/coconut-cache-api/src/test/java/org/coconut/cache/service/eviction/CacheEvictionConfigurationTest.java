@@ -10,8 +10,8 @@ import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
 
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.spi.ReplacementPolicy;
-import org.coconut.filter.Filter;
-import org.coconut.filter.Filters;
+import org.coconut.filter.Predicate;
+import org.coconut.filter.Predicates;
 import org.coconut.test.MockTestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,8 +24,8 @@ public class CacheEvictionConfigurationTest {
 
     static CacheEvictionConfiguration<Integer, String> DEFAULT = new CacheEvictionConfiguration<Integer, String>();
 
-    private final static Filter<CacheEntry<Integer, String>> DEFAULT_FILTER = Filters
-            .trueFilter();
+    private final static Predicate<CacheEntry<Integer, String>> DEFAULT_FILTER = Predicates
+            .truePredicate();
 
     private CacheEvictionConfiguration<Integer, String> conf;
 

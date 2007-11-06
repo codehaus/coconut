@@ -22,7 +22,7 @@ import org.junit.runner.RunWith;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 @RunWith(JMock.class)
-public class CollectionFiltersTest {
+public class CollectionPredicatesTest {
 
 	Mockery context = new JUnit4Mockery();
 
@@ -50,9 +50,9 @@ public class CollectionFiltersTest {
 				will(returnValue(2));
 			}
 		});
-		Filter<Map.Entry<Integer, String>> f = CollectionFilters.keyEqualsFilter(1);
-		assertTrue(f.accept(e1));
-		assertFalse(f.accept(e2));
+		Predicate<Map.Entry<Integer, String>> f = CollectionPredicates.keyEqualsFilter(1);
+		assertTrue(f.evaluate(e1));
+		assertFalse(f.evaluate(e2));
 	}
 
 	@Test
@@ -68,10 +68,10 @@ public class CollectionFiltersTest {
 
 			}
 		});
-		Filter<Map.Entry<Integer, String>> f = CollectionFilters.anyKeyEquals(1, 2);
-		assertTrue(f.accept(e1));
-		assertTrue(f.accept(e2));
-		assertFalse(f.accept(e3));
+		Predicate<Map.Entry<Integer, String>> f = CollectionPredicates.anyKeyEquals(1, 2);
+		assertTrue(f.evaluate(e1));
+		assertTrue(f.evaluate(e2));
+		assertFalse(f.evaluate(e3));
 	}
 
 	@Test
@@ -87,11 +87,11 @@ public class CollectionFiltersTest {
 
 			}
 		});
-		Filter<Map.Entry<Integer, String>> f = CollectionFilters
+		Predicate<Map.Entry<Integer, String>> f = CollectionPredicates
 				.anyKeyInCollection(Arrays.asList(1, 2));
-		assertTrue(f.accept(e1));
-		assertTrue(f.accept(e2));
-		assertFalse(f.accept(e3));
+		assertTrue(f.evaluate(e1));
+		assertTrue(f.evaluate(e2));
+		assertFalse(f.evaluate(e3));
 	}
 
 	@Test
@@ -104,17 +104,17 @@ public class CollectionFiltersTest {
 				will(returnValue("B"));
 			}
 		});
-		Filter<Map.Entry<Integer, String>> f = CollectionFilters.valueEqualsFilter("A");
-		assertTrue(f.accept(e1));
-		assertFalse(f.accept(e2));
+		Predicate<Map.Entry<Integer, String>> f = CollectionPredicates.valueEqualsFilter("A");
+		assertTrue(f.evaluate(e1));
+		assertFalse(f.evaluate(e2));
 	}
 
 	@Test
 	public void testNullFilter() {
-		Filter f = CollectionFilters.isNull();
-		assertTrue(f.accept(null));
-		assertFalse(f.accept(1));
-		assertFalse(f.accept(f));
+		Predicate f = CollectionPredicates.isNull();
+		assertTrue(f.evaluate(null));
+		assertFalse(f.evaluate(1));
+		assertFalse(f.evaluate(f));
 	}
 
 	@Test
@@ -129,10 +129,10 @@ public class CollectionFiltersTest {
 				will(returnValue("C"));
 			}
 		});
-		Filter<Map.Entry<Integer, String>> f = CollectionFilters.anyValueEquals("A", "B");
-		assertTrue(f.accept(e1));
-		assertTrue(f.accept(e2));
-		assertFalse(f.accept(e3));
+		Predicate<Map.Entry<Integer, String>> f = CollectionPredicates.anyValueEquals("A", "B");
+		assertTrue(f.evaluate(e1));
+		assertTrue(f.evaluate(e2));
+		assertFalse(f.evaluate(e3));
 	}
 
 	public void testAnyValueInCollectionFilter() {
@@ -146,11 +146,11 @@ public class CollectionFiltersTest {
 				will(returnValue("C"));
 			}
 		});
-		Filter<Map.Entry<Integer, String>> f = CollectionFilters
+		Predicate<Map.Entry<Integer, String>> f = CollectionPredicates
 				.anyValueInCollection(Arrays.asList("A", "B"));
-		assertTrue(f.accept(e1));
-		assertTrue(f.accept(e2));
-		assertFalse(f.accept(e3));
+		assertTrue(f.evaluate(e1));
+		assertTrue(f.evaluate(e2));
+		assertFalse(f.evaluate(e3));
 	}
 
 }

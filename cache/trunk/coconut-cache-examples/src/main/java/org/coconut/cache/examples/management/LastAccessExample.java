@@ -8,7 +8,7 @@ import net.jcip.annotations.ThreadSafe;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.defaults.UnsynchronizedCache;
-import org.coconut.filter.Filter;
+import org.coconut.filter.Predicate;
 import org.coconut.management.annotation.ManagedAttribute;
 
 /**
@@ -27,10 +27,10 @@ class LastAccessExample {
     }
 
     @ThreadSafe
-    public static class LastAccessFilter<K, V> implements Filter<CacheEntry<K, V>> {
+    public static class LastAccessFilter<K, V> implements Predicate<CacheEntry<K, V>> {
         private volatile int seconds = 60 * 60;// initial 1 hour
 
-        public boolean accept(CacheEntry<K, V> entry) {
+        public boolean evaluate(CacheEntry<K, V> entry) {
             long delta = System.currentTimeMillis()
                     - Math.max(entry.getCreationTime(), entry.getLastAccessTime());
             // return true to indicate that the entry should be refreshed

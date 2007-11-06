@@ -12,20 +12,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.coconut.filter.Filters.AnyFilter;
+import org.coconut.filter.Predicates.AnyPredicate;
 import org.junit.Test;
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id: FiltersTest.java 36 2006-08-22 09:59:45Z kasper $
  */
-public class FiltersTest {
+public class PredicatesTest {
 
     @Test 
     public void testAnyEqualsFilter() {
-        AnyFilter<String> filter = Filters.anyEquals("1", "2");
-        assertTrue(filter.accept("1"));
-        assertTrue(filter.accept("2"));
-        assertFalse(filter.accept("3"));
+        AnyPredicate<String> filter = Predicates.anyEquals("1", "2");
+        assertTrue(filter.evaluate("1"));
+        assertTrue(filter.evaluate("2"));
+        assertFalse(filter.evaluate("3"));
     }
     @Test 
     public void testFilterCollection() {
@@ -34,7 +34,7 @@ public class FiltersTest {
         c.add("2");
         c.add("3");
         c.add("4");
-        c = CollectionFilters.filter(c, Filters.anyEquals("2", "3"));
+        c = CollectionPredicates.filter(c, Predicates.anyEquals("2", "3"));
         assertEquals(2, c.size());
         assertTrue(c.contains("2"));
         assertTrue(c.contains("3"));
@@ -46,7 +46,7 @@ public class FiltersTest {
         c.add("2");
         c.add("3");
         c.add("4");
-        c = CollectionFilters.filterList(c, Filters.anyEquals("2", "3"));
+        c = CollectionPredicates.filterList(c, Predicates.anyEquals("2", "3"));
         assertEquals(2, c.size());
         assertTrue(c.contains("2"));
         assertTrue(c.contains("3"));

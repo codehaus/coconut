@@ -8,27 +8,27 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.coconut.filter.CollectionFilters.IsTypeFilter;
+import org.coconut.filter.CollectionPredicates.IsTypePredicate;
 import org.junit.Test;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id: FiltersIsAssignableFromTest.java 36 2006-08-22 09:59:45Z kasper $
  */
-public class FiltersIsAssignableFromTest  {
+public class PredicatesIsAssignableFromTest  {
 
     @Test
     public void testFilter() {
-        IsTypeFilter filter = Filters.isType(Number.class);
+        IsTypePredicate filter = Predicates.isType(Number.class);
         assertEquals(Number.class, filter.getFilteredClass());
-        assertTrue(filter.accept(Integer.valueOf(0)));
-        assertTrue(filter.accept(Long.valueOf(0)));
-        assertFalse(filter.accept(new Object()));
+        assertTrue(filter.evaluate(Integer.valueOf(0)));
+        assertTrue(filter.evaluate(Long.valueOf(0)));
+        assertFalse(filter.evaluate(new Object()));
     }
 
     @Test(expected = NullPointerException.class)
     public void testNull() {
-        Filters.isType(null);
+        Predicates.isType(null);
     }
 
 }

@@ -16,7 +16,7 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.cache.test.util.AsyncIntegerToStringLoader;
 import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.core.AttributeMap;
-import org.coconut.filter.Filter;
+import org.coconut.filter.Predicate;
 import org.junit.Test;
 
 /**
@@ -166,8 +166,8 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
         assertEquals("B", c.peek(2));
     }
 
-    static class RefreshFilter implements Filter<CacheEntry<Integer, String>> {
-        public boolean accept(CacheEntry<Integer, String> element) {
+    static class RefreshFilter implements Predicate<CacheEntry<Integer, String>> {
+        public boolean evaluate(CacheEntry<Integer, String> element) {
             return element.getKey().equals(1);
         }
     }

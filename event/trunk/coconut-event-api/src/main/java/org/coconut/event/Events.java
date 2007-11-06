@@ -9,8 +9,8 @@ import java.util.concurrent.Callable;
 
 import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
-import org.coconut.filter.CollectionFilters;
-import org.coconut.filter.Filter;
+import org.coconut.filter.CollectionPredicates;
+import org.coconut.filter.Predicate;
 
 
 /**
@@ -37,12 +37,12 @@ public class Events {
      * @param eventHandler
      *            the EventHandler to filter on
      */
-    public static <E> Filter<EventSubscription<E>> getListenerFilter(
+    public static <E> Predicate<EventSubscription<E>> getListenerFilter(
             EventProcessor<E> eventHandler) {
         return new EventListenerFilter<E>(eventHandler);
     }
 
-    public static <E> Filter<EventSubscription<E>> getEventTypeFilter(E event) {
+    public static <E> Predicate<EventSubscription<E>> getEventTypeFilter(E event) {
         return new EventMatchFilter<E>(event);
     }
 
@@ -67,8 +67,8 @@ public class Events {
     }
 
     public static <E> Collection<EventSubscription<E>> findSubscribers(
-            EventBus<E> bus, Filter<EventSubscription<E>> filter) {
-        return CollectionFilters.filter(bus.getSubscribers(), filter);
+            EventBus<E> bus, Predicate<EventSubscription<E>> filter) {
+        return CollectionPredicates.filter(bus.getSubscribers(), filter);
     }
 
     public static <E> Runnable offerAsRunnable(final E element,
@@ -118,7 +118,7 @@ public class Events {
         }
     }
 
-    static class EventListenerFilter<E> implements Filter<EventSubscription<E>>,
+    static class EventListenerFilter<E> implements Predicate<EventSubscription<E>>,
             Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = 4194707549593512350L;
@@ -137,14 +137,14 @@ public class Events {
         }
 
         /**
-         * @see org.coconut.filter.Filter#accept(java.lang.Object)
+         * @see org.coconut.filter.Predicate#evaluate(java.lang.Object)
          */
-        public boolean accept(EventSubscription<E> element) {
+        public boolean evaluate(EventSubscription<E> element) {
             return handler.equals(element.getEventProcessor());
         }
     }
 
-    private static class EventMatchFilter<E> implements Filter<EventSubscription<E>> {
+    private static class EventMatchFilter<E> implements Predicate<EventSubscription<E>> {
         private final E event;
 
         /**
@@ -155,10 +155,10 @@ public class Events {
         }
 
         /**
-         * @see org.coconut.filter.Filter#accept(java.lang.Object)
+         * @see org.coconut.filter.Predicate#evaluate(java.lang.Object)
          */
-        public boolean accept(EventSubscription<E> element) {
-            return element.getFilter().accept(event);
+        public boolean evaluate(EventSubscription<E> element) {
+            return element.getFilter().evaluate(event);
         }
     }
 }

@@ -12,8 +12,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
 import org.coconut.core.AttributeMap;
-import org.coconut.filter.Filter;
-import org.coconut.filter.Filters;
+import org.coconut.filter.Predicate;
+import org.coconut.filter.Predicates;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,8 +21,8 @@ public class CacheLoadingConfigurationTest {
 
     static CacheLoadingConfiguration<Integer, String> DEFAULT = new CacheLoadingConfiguration<Integer, String>();
 
-    private final static Filter<CacheEntry<Integer, String>> DEFAULT_FILTER = Filters
-            .trueFilter();
+    private final static Predicate<CacheEntry<Integer, String>> DEFAULT_FILTER = Predicates
+            .truePredicate();
 
     private final static CacheLoader<Integer, String> DEFAULT_LOADER = new LoadableCacheLoader();
 
@@ -118,14 +118,14 @@ public class CacheLoadingConfigurationTest {
         assertNull(conf.getLoader());
     }
 
-    public static class LoadableFilter implements Filter<CacheEntry<Integer, String>> {
-        public boolean accept(CacheEntry<Integer, String> element) {
+    public static class LoadableFilter implements Predicate<CacheEntry<Integer, String>> {
+        public boolean evaluate(CacheEntry<Integer, String> element) {
             return false;
         }
     }
 
-    public class NonLoadableFilter implements Filter<CacheEntry<Integer, String>> {
-        public boolean accept(CacheEntry<Integer, String> element) {
+    public class NonLoadableFilter implements Predicate<CacheEntry<Integer, String>> {
+        public boolean evaluate(CacheEntry<Integer, String> element) {
             return false;
         }
     }

@@ -10,8 +10,8 @@ import org.coconut.core.EventProcessor;
 import org.coconut.event.EventBus;
 import org.coconut.event.EventBusConfiguration;
 import org.coconut.event.EventSubscription;
-import org.coconut.filter.Filter;
-import org.coconut.filter.Filters;
+import org.coconut.filter.Predicate;
+import org.coconut.filter.Predicates;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -66,7 +66,7 @@ public abstract class AbstractEventBus<E> implements EventBus<E> {
      * @see org.coconut.event.EventBus#subscribe(org.coconut.core.EventProcessor)
      */
     public EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler) {
-        return subscribe(eventHandler, Filters.trueFilter());
+        return subscribe(eventHandler, Predicates.truePredicate());
     }
 
     public boolean offerAll(Collection<? extends E> c) {
@@ -108,7 +108,7 @@ public abstract class AbstractEventBus<E> implements EventBus<E> {
     protected abstract boolean doInform(E element);
 
     protected String getNextName(EventProcessor<? super E> eventHandler,
-            Filter<? super E> filter) {
+            Predicate<? super E> filter) {
         return SUBSCRIPTION_NAME_PREFIX + idGenerator.incrementAndGet();
     }
 

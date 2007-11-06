@@ -17,9 +17,9 @@ import org.coconut.event.EventBus;
 import org.coconut.event.EventBusConfiguration;
 import org.coconut.event.EventSubscription;
 import org.coconut.event.spi.AbstractEventBus;
-import org.coconut.filter.Filter;
-import org.coconut.filter.matcher.DefaultFilterMatcher;
-import org.coconut.filter.matcher.FilterMatcher;
+import org.coconut.filter.Predicate;
+import org.coconut.filter.matcher.DefaultPredicateMatcher;
+import org.coconut.filter.matcher.PredicateMatcher;
 
 /**
  * The order of subscribers are maintained.
@@ -34,7 +34,7 @@ import org.coconut.filter.matcher.FilterMatcher;
  */
 public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<E> {
 
-    final FilterMatcher<DefaultEventSubscription<E>, E> indexer;
+    final PredicateMatcher<DefaultEventSubscription<E>, E> indexer;
 
     private final Lock lock = new ReentrantLock();
 
@@ -50,9 +50,9 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
     public DefaultEventBus(EventBusConfiguration<E> conf) {
         super(conf);
         if (conf.getFilterMatcher() == null) {
-            indexer = new DefaultFilterMatcher<DefaultEventSubscription<E>, E>();
+            indexer = new DefaultPredicateMatcher<DefaultEventSubscription<E>, E>();
         } else {
-            indexer = (FilterMatcher<DefaultEventSubscription<E>, E>) conf
+            indexer = (PredicateMatcher<DefaultEventSubscription<E>, E>) conf
                     .getFilterMatcher();
         }
     }
@@ -67,7 +67,7 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
 
 
     public EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler,
-            Filter<? super E> filter) {
+            Predicate<? super E> filter) {
         if (eventHandler == null) {
             throw new NullPointerException("eventHandler is null");
         } else if (filter == null) {
@@ -94,7 +94,7 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
 
 
     public EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler,
-            Filter<? super E> filter, String name) {
+            Predicate<? super E> filter, String name) {
         if (eventHandler == null) {
             throw new NullPointerException("eventHandler is null");
         } else if (filter == null) {
@@ -186,7 +186,7 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
     }
 
     DefaultEventSubscription<E> newSubscription(EventProcessor<? super E> eventHandler,
-            Filter<? super E> filter, String name) {
+            Predicate<? super E> filter, String name) {
         return new DefaultEventSubscription<E>(this, name, eventHandler, filter);
     }
 }

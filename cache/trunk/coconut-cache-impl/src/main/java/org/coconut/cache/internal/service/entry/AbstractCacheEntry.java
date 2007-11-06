@@ -9,7 +9,7 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
-import org.coconut.filter.Filter;
+import org.coconut.filter.Predicate;
 
 /**
  * A basis implementation of the {@link CacheEntry} interface.
@@ -185,8 +185,8 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
     }
 
 
-    public boolean needsRefresh(Filter<CacheEntry<K, V>> filter, long timestamp) {
-        if (filter != null && filter.accept(this)) {
+    public boolean needsRefresh(Predicate<CacheEntry<K, V>> filter, long timestamp) {
+        if (filter != null && filter.evaluate(this)) {
             return true;
         }
         long refreshTime = getRefreshTime();
@@ -194,8 +194,8 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
                 .isPassed(timestamp, refreshTime);
     }
 
-    public boolean isExpired(Filter<CacheEntry<K, V>> filter, long timestamp) {
-        if (filter != null && filter.accept(this)) {
+    public boolean isExpired(Predicate<CacheEntry<K, V>> filter, long timestamp) {
+        if (filter != null && filter.evaluate(this)) {
             return true;
         }
         long expTime = getExpirationTime();

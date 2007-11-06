@@ -12,7 +12,7 @@ import javax.management.RuntimeMBeanException;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.loading.CacheLoadingMXBean;
 import org.coconut.cache.test.util.IntegerToStringLoader;
-import org.coconut.filter.Filter;
+import org.coconut.filter.Predicate;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -100,8 +100,8 @@ public class LoadingMXBean extends AbstractLoadingTestBundle {
         assertEquals("B", c.peek(2));
     }
 
-    static class RefreshFilter implements Filter<CacheEntry<Integer, String>> {
-        public boolean accept(CacheEntry<Integer, String> element) {
+    static class RefreshFilter implements Predicate<CacheEntry<Integer, String>> {
+        public boolean evaluate(CacheEntry<Integer, String> element) {
             return element.getKey().equals(1);
         }
     }

@@ -5,8 +5,8 @@
 package org.coconut.cache.service.event;
 
 import org.coconut.cache.Cache;
-import org.coconut.filter.Filter;
-import org.coconut.filter.Filters;
+import org.coconut.filter.Predicate;
+import org.coconut.filter.Predicates;
 import org.coconut.test.MockTestCase;
 import org.jmock.Mock;
 
@@ -20,10 +20,10 @@ public class CacheFiltersTest extends MockTestCase {
     public void testCacheFilter() {
         Mock mock = mock(CacheEvent.class);
         Cache c = (Cache) mock(Cache.class).proxy();
-        Filter f = Filters.equal(c);
+        Predicate f = Predicates.equal(c);
         mock.expects(once()).method("getCache").will(returnValue(c));
-        Filter<CacheEvent> filter = CacheEventFilters.cacheFilter(f);
-        assertTrue(filter.accept((CacheEvent) mock.proxy()));
+        Predicate<CacheEvent> filter = CacheEventFilters.cacheFilter(f);
+        assertTrue(filter.evaluate((CacheEvent) mock.proxy()));
     }
 
     public void testCacheEqualsFilter() {
@@ -33,15 +33,15 @@ public class CacheFiltersTest extends MockTestCase {
         Cache c2 = (Cache) mock(Cache.class).proxy();
         mock.expects(once()).method("getCache").will(returnValue(c));
         mock2.expects(once()).method("getCache").will(returnValue(c2));
-        Filter<CacheEvent> f = CacheEventFilters.cacheSameFilter(c);
-        assertTrue(f.accept((CacheEvent) mock.proxy()));
-        assertFalse(f.accept((CacheEvent) mock2.proxy()));
+        Predicate<CacheEvent> f = CacheEventFilters.cacheSameFilter(c);
+        assertTrue(f.evaluate((CacheEvent) mock.proxy()));
+        assertFalse(f.evaluate((CacheEvent) mock2.proxy()));
     }
 
     public void testAcceptNull() {
         Cache<Integer, Integer> c = (Cache) mock(Cache.class).proxy();
         try {
-            CacheEventFilters.cacheFilter(Filters.equal(c)).accept(null);
+            CacheEventFilters.cacheFilter(Predicates.equal(c)).evaluate(null);
             fail("Did not fail with NullPointerException");
         } catch (NullPointerException npe) {/* ignore */
         }
@@ -57,10 +57,10 @@ public class CacheFiltersTest extends MockTestCase {
 
     public void testNameFilter() {
         Mock mock = mock(CacheEvent.class);
-        Filter<String> f = Filters.equal("TT");
+        Predicate<String> f = Predicates.equal("TT");
         mock.expects(once()).method("getName").will(returnValue("TT"));
-        Filter<CacheEvent<Integer, String>> filter = CacheEventFilters.cacheName(f);
-        assertTrue(filter.accept((CacheEvent) mock.proxy()));
+        Predicate<CacheEvent<Integer, String>> filter = CacheEventFilters.cacheName(f);
+        assertTrue(filter.evaluate((CacheEvent) mock.proxy()));
     }
 
     public void testNameEqualsFilter() {
@@ -68,9 +68,9 @@ public class CacheFiltersTest extends MockTestCase {
         Mock mock2 = mock(CacheEvent.class);
         mock.expects(once()).method("getName").will(returnValue("T1"));
         mock2.expects(once()).method("getName").will(returnValue("T2"));
-        Filter<CacheEvent<Integer, String>> f = CacheEventFilters.cacheName(Filters.equal("T1"));
-        assertTrue(f.accept((CacheEvent) mock.proxy()));
-        assertFalse(f.accept((CacheEvent) mock2.proxy()));
+        Predicate<CacheEvent<Integer, String>> f = CacheEventFilters.cacheName(Predicates.equal("T1"));
+        assertTrue(f.evaluate((CacheEvent) mock.proxy()));
+        assertFalse(f.evaluate((CacheEvent) mock2.proxy()));
     }
 
     public void testNotNull() {

@@ -12,11 +12,11 @@ import java.io.Serializable;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public final class StringFilters {
+public final class StringPredicates {
 
     // /CLOVER:OFF
     /** Cannot instantiate. */
-    private StringFilters() {}
+    private StringPredicates() {}
 
     // /CLOVER:ON
 
@@ -31,7 +31,7 @@ public final class StringFilters {
      * @throws NullPointerException
      *             if the specified charSequence is <code>null</code>
      */
-    public static Filter<String> contains(CharSequence charSequence) {
+    public static Predicate<String> contains(CharSequence charSequence) {
         return new ContainsFilter(charSequence);
     }
 
@@ -45,14 +45,14 @@ public final class StringFilters {
      * @throws NullPointerException
      *             if the specified String is <code>null</code>
      */
-    public static Filter<String> startsWith(String startsWith) {
+    public static Predicate<String> startsWith(String startsWith) {
         return new ContainsFilter(startsWith);
     }
 
     /**
      * A filter that will accept any String that contains the specified CharSequence.
      */
-    static final class ContainsFilter implements Filter<String>, Serializable {
+    static final class ContainsFilter implements Predicate<String>, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = 9017164210753456879L;
 
@@ -75,7 +75,7 @@ public final class StringFilters {
         }
 
         /** {@inheritDoc} */
-        public boolean accept(String element) {
+        public boolean evaluate(String element) {
             return element.contains(charSequence);
         }
 
@@ -102,7 +102,7 @@ public final class StringFilters {
     /**
      * A filter that will accept any String that starts with the specified String.
      */
-    static final class StartsWithFilter implements Filter<String>, Serializable {
+    static final class StartsWithFilter implements Predicate<String>, Serializable {
 
         /** serialVersionUID. */
         private static final long serialVersionUID = -4403651350378953066L;
@@ -126,7 +126,7 @@ public final class StringFilters {
         }
 
         /** {@inheritDoc} */
-        public boolean accept(String element) {
+        public boolean evaluate(String element) {
             return element.startsWith(startsWith);
         }
     }

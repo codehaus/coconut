@@ -21,7 +21,7 @@ import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.core.EventProcessor;
 import org.coconut.event.EventSubscription;
-import org.coconut.filter.Filter;
+import org.coconut.filter.Predicate;
 import org.junit.After;
 import org.junit.Before;
 
@@ -98,7 +98,7 @@ public class AbstractEventTestBundle extends AbstractCacheTCKTest {
         }
     }
 
-    protected EventSubscription<?> subscribe(Filter f) {
+    protected EventSubscription<?> subscribe(Predicate f) {
         EventSubscription s = c.getService(CacheEventService.class).subscribe(
                 eventHandler, f);
         assertNotNull(s);

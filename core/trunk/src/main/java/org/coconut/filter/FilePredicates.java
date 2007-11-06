@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.Serializable;
 
-import org.coconut.filter.spi.FilterAcceptTypesAnnotation;
+import org.coconut.filter.spi.PredicateAcceptTypesAnnotation;
 
 /**
  * This file contains common file Filters used in Coconut.
@@ -16,17 +16,16 @@ import org.coconut.filter.spi.FilterAcceptTypesAnnotation;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: FileFilters.java 36 2006-08-22 09:59:45Z kasper $
  */
-public final class FileFilters {
+public final class FilePredicates {
 
     // /CLOVER:OFF
     /** Cannot instantiate. */
-    private FileFilters() {}
+    private FilePredicates() {}
 
     // /CLOVER:ON
 
     /**
-     * Returns a Filter that accepts all {@link java.io.File Files} that are
-     * readable.
+     * Returns a Filter that accepts all {@link java.io.File Files} that are readable.
      * 
      * @return a Filter that accepts all files that are readable
      */
@@ -37,9 +36,8 @@ public final class FileFilters {
     /**
      * A Filter that accepts all {@link java.io.File Files} that are readable.
      */
-    @FilterAcceptTypesAnnotation(File.class)
-    final static class FileCanReadFilter implements Filter<File>, FileFilter,
-            Serializable {
+    @PredicateAcceptTypesAnnotation(File.class)
+    final static class FileCanReadFilter implements Predicate<File>, FileFilter, Serializable {
 
         /** A default instance of a FileCanReadFilter. */
         public static final FileCanReadFilter INSTANCE = new FileCanReadFilter();
@@ -50,11 +48,14 @@ public final class FileFilters {
         /** Same hashcode for every Filter of this type. */
         private static final int HASHCODE = FileCanReadFilter.class.getName().hashCode();
 
-        /**
-         * {@inheritDoc}
-         */
-        public boolean accept(File file) {
+        /** {@inheritDoc} */
+        public boolean evaluate(File file) {
             return file.canRead();
+        }
+
+        /** {@inheritDoc} */
+        public boolean accept(File path) {
+            return evaluate(path);
         }
 
         /**
@@ -85,15 +86,13 @@ public final class FileFilters {
     /**
      * A Filter that accepts all {@link java.io.File Files} that are writable.
      * <p>
-     * Instead of constructing a new instance of this class, use
-     * {@link #INSTANCE}.
+     * Instead of constructing a new instance of this class, use {@link #INSTANCE}.
      * 
      * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
      * @version $Id: FileFilters.java 36 2006-08-22 09:59:45Z kasper $
      */
-    @FilterAcceptTypesAnnotation(File.class)
-    final static class FileCanWriteFilter implements Filter<File>, FileFilter,
-            Serializable {
+    @PredicateAcceptTypesAnnotation(File.class)
+    final static class FileCanWriteFilter implements Predicate<File>, FileFilter, Serializable {
 
         /** A default instance of a FileCanReadFilter. */
         public static final FileCanWriteFilter INSTANCE = new FileCanWriteFilter();
@@ -104,10 +103,15 @@ public final class FileFilters {
         /** Same hashcode for every Filter of this type. */
         private static final int HASHCODE = FileCanReadFilter.class.getName().hashCode();
 
+        /** {@inheritDoc} */
+        public boolean accept(File path) {
+            return evaluate(path);
+        }
+
         /**
          * {@inheritDoc}
          */
-        public boolean accept(File file) {
+        public boolean evaluate(File file) {
             return file.canWrite();
         }
 
@@ -140,14 +144,13 @@ public final class FileFilters {
     /**
      * A Filter that accepts all {@link java.io.File Files} that exists.
      * <p>
-     * Instead of constructing a new instance of this class, use
-     * {@link #INSTANCE}.
+     * Instead of constructing a new instance of this class, use {@link #INSTANCE}.
      * 
      * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
      * @version $Id: FileFilters.java 36 2006-08-22 09:59:45Z kasper $
      */
-    @FilterAcceptTypesAnnotation(File.class)
-    final static class FileExistsFilter implements Filter<File>, FileFilter, Serializable {
+    @PredicateAcceptTypesAnnotation(File.class)
+    final static class FileExistsFilter implements Predicate<File>, FileFilter, Serializable {
 
         /** A default instance of a FileExistsFilter. */
         public static final FileExistsFilter INSTANCE = new FileExistsFilter();
@@ -158,10 +161,15 @@ public final class FileFilters {
         /** Same hashcode for every Filter of this type. */
         private static final int HASHCODE = FileExistsFilter.class.getName().hashCode();
 
+        /** {@inheritDoc} */
+        public boolean accept(File path) {
+            return evaluate(path);
+        }
+
         /**
          * {@inheritDoc}
          */
-        public boolean accept(File file) {
+        public boolean evaluate(File file) {
             return file.exists();
         }
 
@@ -191,16 +199,14 @@ public final class FileFilters {
     }
 
     /**
-     * A Filter that accepts all {@link java.io.File Files} with a given
-     * extension.
+     * A Filter that accepts all {@link java.io.File Files} with a given extension.
      * <p>
      * 
      * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
      * @version $Id: FileFilters.java 36 2006-08-22 09:59:45Z kasper $
      */
-    @FilterAcceptTypesAnnotation(File.class)
-    final static class FileExtensionFilter implements Filter<File>, FileFilter,
-            Serializable {
+    @PredicateAcceptTypesAnnotation(File.class)
+    final static class FileExtensionFilter implements Predicate<File>, FileFilter, Serializable {
 
         /** A predifined casesensitive Filter that looks for all .java files. */
         public static final FileExtensionFilter EXT_JAVA = new FileExtensionFilter("java");
@@ -260,6 +266,11 @@ public final class FileFilters {
             return extension;
         }
 
+        /** {@inheritDoc} */
+        public boolean accept(File path) {
+            return evaluate(path);
+        }
+
         /**
          * Returns whether or not this filter is case sensitive.
          * 
@@ -272,7 +283,7 @@ public final class FileFilters {
         /**
          * {@inheritDoc}
          */
-        public boolean accept(File file) {
+        public boolean evaluate(File file) {
             if (file == null) {
                 throw new NullPointerException("file is null");
             }
@@ -316,15 +327,14 @@ public final class FileFilters {
          * 
          * @param filter
          *            reference filter with which to compare.
-         * @return <tt>true</tt> if this object is the same as the filter
-         *         argument; <tt>false</tt> otherwise.
+         * @return <tt>true</tt> if this object is the same as the filter argument;
+         *         <tt>false</tt> otherwise.
          */
         public boolean equals(FileExtensionFilter filter) {
             if (isCaseSensitive) {
                 return filter.isCaseSensitive && extension.equals(filter.extension);
             } else {
-                return !filter.isCaseSensitive
-                        && extension.equalsIgnoreCase(filter.extension);
+                return !filter.isCaseSensitive && extension.equalsIgnoreCase(filter.extension);
             }
         }
 
@@ -342,15 +352,14 @@ public final class FileFilters {
     }
 
     /**
-     * A Filter that accepts all {@link java.io.File Files} that are contained
-     * in a particular directory possible including subdirectories.
+     * A Filter that accepts all {@link java.io.File Files} that are contained in a
+     * particular directory possible including subdirectories.
      * 
      * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
      * @version $Id: FileFilters.java 36 2006-08-22 09:59:45Z kasper $
      */
-    @FilterAcceptTypesAnnotation(File.class)
-    final static class FileInDirectoryFilter implements Filter<File>, FileFilter,
-            Serializable {
+    @PredicateAcceptTypesAnnotation(File.class)
+    final static class FileInDirectoryFilter implements Predicate<File>, FileFilter, Serializable {
 
         /** A default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 3258411750712883504L;
@@ -379,8 +388,7 @@ public final class FileFilters {
          * @param includeSubdirectories
          *            whether or not to include subdirectories.
          */
-        public FileInDirectoryFilter(final File directory,
-                final boolean includeSubdirectories) {
+        public FileInDirectoryFilter(final File directory, final boolean includeSubdirectories) {
             if (directory == null) {
                 throw new NullPointerException("directory is null");
             }
@@ -409,10 +417,15 @@ public final class FileFilters {
             return includeSubdirectories;
         }
 
+        /** {@inheritDoc} */
+        public boolean accept(File path) {
+            return evaluate(path);
+        }
+
         /**
          * {@inheritDoc}
          */
-        public boolean accept(File file) {
+        public boolean evaluate(File file) {
             if (file == null) {
                 throw new NullPointerException("file is null");
             }
@@ -437,8 +450,7 @@ public final class FileFilters {
         @Override
         public String toString() {
             if (includeSubdirectories) {
-                return "file in directory '" + directory
-                        + "' or any of it subdirectories";
+                return "file in directory '" + directory + "' or any of it subdirectories";
             } else {
                 return "file in directory '" + directory + "'";
             }
@@ -458,8 +470,8 @@ public final class FileFilters {
          * 
          * @param filter
          *            reference filter with which to compare.
-         * @return <tt>true</tt> if this object is the same as the filter
-         *         argument; <tt>false</tt> otherwise.
+         * @return <tt>true</tt> if this object is the same as the filter argument;
+         *         <tt>false</tt> otherwise.
          */
         public boolean equals(FileInDirectoryFilter filter) {
             return includeSubdirectories == filter.includeSubdirectories
@@ -483,15 +495,13 @@ public final class FileFilters {
     /**
      * A Filter that accepts all {@link java.io.File Files} that are hidden.
      * <p>
-     * Instead of constructing a new instance of this class, use
-     * {@link #INSTANCE}.
+     * Instead of constructing a new instance of this class, use {@link #INSTANCE}.
      * 
      * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
      * @version $Id: FileFilters.java 36 2006-08-22 09:59:45Z kasper $
      */
-    @FilterAcceptTypesAnnotation(File.class)
-    final static class FileIsHiddenFilter implements Filter<File>, FileFilter,
-            Serializable {
+    @PredicateAcceptTypesAnnotation(File.class)
+    final static class FileIsHiddenFilter implements Predicate<File>, FileFilter, Serializable {
 
         /** The default FileIsHiddenFilter instance. */
         public static final FileIsHiddenFilter INSTANCE = new FileIsHiddenFilter();
@@ -505,8 +515,13 @@ public final class FileFilters {
         /**
          * {@inheritDoc}
          */
-        public boolean accept(File file) {
+        public boolean evaluate(File file) {
             return file.isHidden();
+        }
+
+        /** {@inheritDoc} */
+        public boolean accept(File path) {
+            return evaluate(path);
         }
 
         /**
@@ -535,17 +550,15 @@ public final class FileFilters {
     }
 
     /**
-     * A Filter that accepts all {@link java.io.File Files} that are a
-     * directory.
+     * A Filter that accepts all {@link java.io.File Files} that are a directory.
      * <p>
-     * Instead of constructing a new instance of this class, use
-     * {@link #INSTANCE}.
+     * Instead of constructing a new instance of this class, use {@link #INSTANCE}.
      * 
      * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
      * @version $Id: FileFilters.java 36 2006-08-22 09:59:45Z kasper $
      */
-    @FilterAcceptTypesAnnotation(File.class)
-    final static class FileIsDirectoryFilter implements Filter<File>, Serializable {
+    @PredicateAcceptTypesAnnotation(File.class)
+    final static class FileIsDirectoryFilter implements Predicate<File>, Serializable {
 
         /** The default FileIsDirectoryFilter instance. */
         public static final FileIsDirectoryFilter INSTANCE = new FileIsDirectoryFilter();
@@ -554,13 +567,12 @@ public final class FileFilters {
         private static final long serialVersionUID = 3258126947053024568L;
 
         /** Same hashcode for every Filter of this type. */
-        private static final int HASHCODE = FileIsDirectoryFilter.class.getName()
-                .hashCode();
+        private static final int HASHCODE = FileIsDirectoryFilter.class.getName().hashCode();
 
         /**
          * {@inheritDoc}
          */
-        public boolean accept(File file) {
+        public boolean evaluate(File file) {
             return file.isDirectory();
         }
 

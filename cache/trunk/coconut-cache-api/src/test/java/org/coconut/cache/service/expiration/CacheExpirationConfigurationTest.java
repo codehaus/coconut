@@ -11,8 +11,8 @@ import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.filter.Filter;
-import org.coconut.filter.Filters;
+import org.coconut.filter.Predicate;
+import org.coconut.filter.Predicates;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,7 +26,7 @@ public class CacheExpirationConfigurationTest {
 
     static CacheExpirationConfiguration<Integer, String> DEFAULT = new CacheExpirationConfiguration<Integer, String>();
 
-    private final static Filter<CacheEntry<Integer, String>> DEFAULT_FILTER = Filters.trueFilter();
+    private final static Predicate<CacheEntry<Integer, String>> DEFAULT_FILTER = Predicates.truePredicate();
 
     private CacheExpirationConfiguration<Integer, String> conf;
 
@@ -104,14 +104,14 @@ public class CacheExpirationConfigurationTest {
         assertNull(conf.getExpirationFilter());
     }
 
-    public static class LoadableFilter implements Filter<CacheEntry<Integer, String>> {
-        public boolean accept(CacheEntry<Integer, String> element) {
+    public static class LoadableFilter implements Predicate<CacheEntry<Integer, String>> {
+        public boolean evaluate(CacheEntry<Integer, String> element) {
             return false;
         }
     }
 
-    public class NonLoadableFilter implements Filter<CacheEntry<Integer, String>> {
-        public boolean accept(CacheEntry<Integer, String> element) {
+    public class NonLoadableFilter implements Predicate<CacheEntry<Integer, String>> {
+        public boolean evaluate(CacheEntry<Integer, String> element) {
             return false;
         }
     }

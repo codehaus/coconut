@@ -7,7 +7,7 @@ package org.coconut.core;
 import java.io.IOException;
 
 public class GeneratedTransformerMock implements
-        GeneratedTransformerMockInterface, Transformer<String, Long> {
+        GeneratedTransformerMockInterface, Mapper<String, Long> {
     public String method() {
         return "m";
     }
@@ -123,7 +123,7 @@ public class GeneratedTransformerMock implements
         return Long.parseLong(from) + i2.longValue();
     }
 
-    public Long transform(String from) {
+    public Long map(String from) {
         return Long.parseLong(from);
     }
 

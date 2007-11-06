@@ -11,7 +11,7 @@ import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationMXBean;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.core.Clock;
-import org.coconut.filter.Filter;
+import org.coconut.filter.Predicate;
 import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.annotation.ManagedOperation;
 
@@ -82,8 +82,8 @@ final class ExpirationUtils {
      *            the type of mapped values
      */
     public static <K, V> boolean isExpired(CacheEntry<K, V> entry, Clock clock,
-            Filter<CacheEntry<K, V>> filter) {
-        if (filter != null && filter.accept(entry)) {
+            Predicate<CacheEntry<K, V>> filter) {
+        if (filter != null && filter.evaluate(entry)) {
             return true;
         }
         long expTime = entry.getExpirationTime();

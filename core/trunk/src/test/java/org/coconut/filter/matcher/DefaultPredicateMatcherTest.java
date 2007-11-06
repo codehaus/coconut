@@ -9,25 +9,25 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
-import org.coconut.filter.StringFilters;
+import org.coconut.filter.StringPredicates;
 import org.junit.Test;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class DefaultFilterMatcherTest {
+public class DefaultPredicateMatcherTest {
 
     @Test
     public void testDefaultFilterMatcher() {
-        DefaultFilterMatcher<Integer, String> m = new DefaultFilterMatcher<Integer, String>();
+        DefaultPredicateMatcher<Integer, String> m = new DefaultPredicateMatcher<Integer, String>();
         assertEquals(0, m.match("foo").size());
-        assertNull(m.put(1, StringFilters.startsWith("bo")));
-        assertEquals(StringFilters.startsWith("bo"), m.put(1, StringFilters
+        assertNull(m.put(1, StringPredicates.startsWith("bo")));
+        assertEquals(StringPredicates.startsWith("bo"), m.put(1, StringPredicates
                 .startsWith("fo")));
-        assertNull(m.put(2, StringFilters.startsWith("f")));
-        assertNull(m.put(3, StringFilters.startsWith("foo")));
-        assertNull(m.put(4, StringFilters.startsWith("foof")));
+        assertNull(m.put(2, StringPredicates.startsWith("f")));
+        assertNull(m.put(3, StringPredicates.startsWith("foo")));
+        assertNull(m.put(4, StringPredicates.startsWith("foof")));
 
         assertEquals(3, m.match("foo").size());
         assertTrue(m.match("foo").containsAll(Arrays.asList(1, 2, 3)));

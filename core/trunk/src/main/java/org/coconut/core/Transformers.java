@@ -38,7 +38,7 @@ public final class Transformers {
     private Transformers() {}
     ///CLOVER:ON
     
-    public interface DynamicTransformer<F, T> extends Transformer<F, T> {
+    public interface DynamicTransformer<F, T> extends Mapper<F, T> {
         /**
          * Returns the method that is being called from the dynamic transformer.
          * 
@@ -250,7 +250,7 @@ public final class Transformers {
             }
             // generate the actual transform method
             {
-                MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "transform", "("
+                MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "map", "("
                         + from + ")" + to, null, null);
                 mv.visitCode();
                 Label l0 = new Label();
@@ -286,7 +286,7 @@ public final class Transformers {
             // generate type less transform method
             {
                 MethodVisitor mv = cw.visitMethod(Opcodes.ACC_PUBLIC + Opcodes.ACC_BRIDGE
-                        + Opcodes.ACC_SYNTHETIC, "transform",
+                        + Opcodes.ACC_SYNTHETIC, "map",
                         "(Ljava/lang/Object;)Ljava/lang/Object;", null, null);
                 mv.visitCode();
                 Label l0 = new Label();
@@ -296,7 +296,7 @@ public final class Transformers {
                 mv.visitVarInsn(Opcodes.ALOAD, 1);
                 mv.visitTypeInsn(Opcodes.CHECKCAST, Type.getInternalName(m
                         .getDeclaringClass()));
-                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, className, "transform", "("
+                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, className, "map", "("
                         + from + ")" + to);
                 mv.visitTypeInsn(Opcodes.CHECKCAST, "java/lang/Object");
                 mv.visitInsn(Opcodes.ARETURN);
@@ -352,11 +352,11 @@ public final class Transformers {
         }
 
         /** {@inheritDoc} */
-        public T transform(F from) {
+        public T map(F from) {
             if (from == null) {
                 throw new NullPointerException("from is null");
             }
-            return t.transform(from);
+            return t.map(from);
         }
 
         /**
@@ -397,13 +397,13 @@ public final class Transformers {
     /**
      * TODO describe.
      */
-    final static class ArrayTransformer implements Transformer, Serializable, Cloneable {
+    final static class ArrayTransformer implements Mapper, Serializable, Cloneable {
         /** serialVersionUID. */
         private static final long serialVersionUID = 4920880113547573214L;
 
-        private final Transformer<Object, Object>[] t;
+        private final Mapper<Object, Object>[] t;
 
-        ArrayTransformer(Transformer<Object, Object>[] t) {
+        ArrayTransformer(Mapper<Object, Object>[] t) {
             this.t = t;
         }
         /** {@inheritDoc} */
@@ -425,52 +425,52 @@ public final class Transformers {
 
         /** {@inheritDoc} */
         @SuppressWarnings("unchecked")
-        public Object transform(Object from) {
+        public Object map(Object from) {
             Object o = from;
             for (int i = 0; i < t.length; i++) {
-                o = t[i].transform(o);
+                o = t[i].map(o);
             }
             return o;
         }
     }
 
-    final static class PassThroughTransformer<K> implements Transformer<K, K>,
+    final static class PassThroughTransformer<K> implements Mapper<K, K>,
             Serializable {
 
         /** serialVersionUID. */
         private static final long serialVersionUID = -8159540593935721003L;
 
         /**
-         * @see org.coconut.core.Transformer#transform(java.lang.Object)
+         * @see org.coconut.core.Mapper#map(java.lang.Object)
          */
-        public K transform(K element) {
+        public K map(K element) {
             return element;
         }
     }
 
-    public static <K, V> Transformer<Map.Entry<K, V>, K> mapEntryToKey() {
-        return (Transformer) transform(Map.Entry.class, "getKey");
+    public static <K, V> Mapper<Map.Entry<K, V>, K> mapEntryToKey() {
+        return (Mapper) transform(Map.Entry.class, "getKey");
     }
 
-    public static <K, V> Transformer<Map.Entry<K, V>, V> mapEntryToValue() {
-        return (Transformer) transform(Map.Entry.class, "getValue");
+    public static <K, V> Mapper<Map.Entry<K, V>, V> mapEntryToValue() {
+        return (Mapper) transform(Map.Entry.class, "getValue");
     }
 
-    public static <K> Transformer<K, K> passThroughTransformer() {
+    public static <K> Mapper<K, K> passThroughTransformer() {
         return new PassThroughTransformer<K>();
     }
 
-    public static <F, T> Transformer<F, T> reflect(Class<F> type, String method)
+    public static <F, T> Mapper<F, T> reflect(Class<F> type, String method)
             throws SecurityException, NoSuchMethodException {
         return reflect(type, method, null);
     }
 
     @SuppressWarnings("unchecked")
-    public static <F, T> Transformer<F, T> reflect(Class<F> type, String method,
+    public static <F, T> Mapper<F, T> reflect(Class<F> type, String method,
             Class<T> to) throws SecurityException, NoSuchMethodException {
         final Method m = type.getMethod(method, new Class[] {});
-        return new Transformer<F, T>() {
-            public T transform(F from) {
+        return new Mapper<F, T>() {
+            public T map(F from) {
                 try {
                     return (T) m.invoke(from, (Object[]) null);
                 } catch (Exception e) {
@@ -481,7 +481,7 @@ public final class Transformers {
     }
 
     @SuppressWarnings("unchecked")
-    public static <F, T> Transformer<F, T> t(Transformer... transformers) {
+    public static <F, T> Mapper<F, T> t(Mapper... transformers) {
         if (transformers == null) {
             throw new NullPointerException("transformers is null");
         } else if (transformers.length == 1) {
@@ -656,10 +656,10 @@ public final class Transformers {
     }
 
     public static <F, T> Collection<T> transformCollection(Collection<? extends F> col,
-            Transformer<F, T> t) {
+            Mapper<F, T> t) {
         ArrayList<T> list = new ArrayList<T>(col.size());
         for (F f : col) {
-            list.add(t.transform(f));
+            list.add(t.map(f));
         }
         return list;
     }

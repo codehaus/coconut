@@ -6,21 +6,21 @@ package org.coconut.cache.examples.loading;
 import java.util.Calendar;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.filter.Filter;
+import org.coconut.filter.Predicate;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 // START SNIPPET: class
-public class Reload2200FilterExample<K, V> implements Filter<CacheEntry<K, V>> {
+public class Reload2200FilterExample<K, V> implements Predicate<CacheEntry<K, V>> {
     private volatile long nextRefreshTime = getNextUpdateTime();
 
     private volatile long refreshTime = getNextUpdateTime();
 
     // TODO Right now the first invocation will force a reload of all items
 
-    public boolean accept(CacheEntry<K, V> entry) {
+    public boolean evaluate(CacheEntry<K, V> entry) {
         long now = System.currentTimeMillis();
         if (now > nextRefreshTime) {
             refreshTime = nextRefreshTime;

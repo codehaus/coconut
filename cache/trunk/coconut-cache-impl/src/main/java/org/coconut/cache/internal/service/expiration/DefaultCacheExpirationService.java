@@ -21,7 +21,7 @@ import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
-import org.coconut.filter.Filter;
+import org.coconut.filter.Predicate;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedObject;
 
@@ -53,7 +53,7 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
     private final Clock clock;
 
     /** The user specified expiration filter. */
-    private final Filter<CacheEntry<K, V>> expirationFilter;
+    private final Predicate<CacheEntry<K, V>> expirationFilter;
 
     private final InternalCacheSupport<K, V> helper;
 
@@ -82,7 +82,7 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
     }
 
     /** {@inheritDoc} */
-    public Filter<CacheEntry<K, V>> getExpirationFilter() {
+    public Predicate<CacheEntry<K, V>> getExpirationFilter() {
         return expirationFilter;
     }
 

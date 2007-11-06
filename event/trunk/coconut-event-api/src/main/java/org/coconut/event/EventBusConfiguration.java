@@ -4,7 +4,7 @@
 package org.coconut.event;
 
 import org.coconut.event.spi.EventBusErrorHandler;
-import org.coconut.filter.matcher.FilterMatcher;
+import org.coconut.filter.matcher.PredicateMatcher;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -22,7 +22,7 @@ public class EventBusConfiguration<E> {
     
     private EventBusErrorHandler<E> errorHandler;
 
-    private FilterMatcher<?, E> filterMatcher;
+    private PredicateMatcher<?, E> filterMatcher;
 
     private boolean reentrant;
 
@@ -43,7 +43,7 @@ public class EventBusConfiguration<E> {
     /**
      * @return the filterMatcher
      */
-    public FilterMatcher<?, E> getFilterMatcher() {
+    public PredicateMatcher<?, E> getFilterMatcher() {
         return filterMatcher;
     }
     public void setCheckReentrant(boolean check) {
@@ -71,7 +71,7 @@ public class EventBusConfiguration<E> {
     /**
      * @param filterMatcher the filterMatcher to set
      */
-    public void setFilterMatcher(FilterMatcher<?, E> filterMatcher) {
+    public void setFilterMatcher(PredicateMatcher<?, E> filterMatcher) {
         this.filterMatcher = filterMatcher;
     }
 

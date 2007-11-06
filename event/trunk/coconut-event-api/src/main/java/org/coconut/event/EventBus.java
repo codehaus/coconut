@@ -7,7 +7,7 @@ import java.util.Collection;
 
 import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
-import org.coconut.filter.Filter;
+import org.coconut.filter.Predicate;
 
 /**
  * An event bus is an api for the publish/subscribe messaging paradigm. Publishers post
@@ -109,7 +109,7 @@ public interface EventBus<E> extends Offerable<E>, EventProcessor<E> {
      * @return a subscription that can be used to cancel any further notifications
      */
     EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler,
-            Filter<? super E> filter);
+            Predicate<? super E> filter);
 
     /**
      * Creates an subscription that will be notified for any event that is accepted by the
@@ -128,5 +128,5 @@ public interface EventBus<E> extends Offerable<E>, EventProcessor<E> {
      *             if the specified name is not unique within all the subscriptions
      */
     EventSubscription<E> subscribe(EventProcessor<? super E> listener,
-            Filter<? super E> filter, String name);
+            Predicate<? super E> filter, String name);
 }

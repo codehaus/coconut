@@ -6,7 +6,7 @@ package org.coconut.filter.spi;
 
 import java.util.List;
 
-import org.coconut.filter.Filter;
+import org.coconut.filter.Predicate;
 
 /**
  * This interface should be implemented by filters that wrap other filters.
@@ -14,10 +14,10 @@ import org.coconut.filter.Filter;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: CompositeFilter.java 36 2006-08-22 09:59:45Z kasper $
  */
-public interface CompositeFilter<E> {
+public interface CompositePredicate<E> {
 
     /**
      * Returns all the filters that are used for the accept method.
      */
-    List<Filter<E>> getFilters();
+    List<Predicate<E>> getPredicates();
 }

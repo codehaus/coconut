@@ -5,11 +5,11 @@
 package org.coconut.core;
 
 /**
- * Used for transforming objects from one type to another. For example the following
- * transformer transforms a String into a Long.
+ * An object with a function accepting objects of type T and returning those of type U For
+ * example the following transformer transforms a String into a Long.
  * 
  * <pre>
- * class StringToLongTransformer implements Transformer&lt;String, Long&gt; {
+ * class StringToLongMapper implements Mapper&lt;String, Long&gt; {
  *     public Long transform(String str) {
  *         return Long.parseLong(str);
  *     }
@@ -17,7 +17,7 @@ package org.coconut.core;
  * </pre>
  * 
  * <p>
- * Transformers are often applied together with {@link org.coconut.filter.Filter filters}
+ * Transformers are often applied together with {@link org.coconut.filter.Predicate filters}
  * to extract information on objects.
  * <p>
  * The {@link Transformers} class supports easy construction of dynamic transformers
@@ -30,7 +30,7 @@ package org.coconut.core;
  * @param <T>
  *            the type we are transforming to
  */
-public interface Transformer<F, T> {
+public interface Mapper<T, U> {
 
     /**
      * Transforms an element from one type to another.
@@ -48,5 +48,5 @@ public interface Transformer<F, T> {
      *             some aspect of this element prevents it from being transformed by this
      *             transformer.
      */
-    T transform(F from);
+    U map(T from);
 }

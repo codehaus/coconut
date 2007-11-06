@@ -9,22 +9,22 @@ import static org.junit.Assert.assertEquals;
 import java.util.Map;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.filter.Filter;
+import org.coconut.filter.Predicate;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: ExpirationFilter.java 142 2006-10-18 19:02:07Z kasper $
  */
-public class CacheEntryFilter implements Filter<CacheEntry<Integer, String>> {
+public class CacheEntryFilter implements Predicate<CacheEntry<Integer, String>> {
 
     private volatile boolean accept;
 
     private volatile CacheEntry<Integer, String> lastEntry;
 
     /**
-     * @see org.coconut.filter.Filter#accept(java.lang.Object)
+     * @see org.coconut.filter.Predicate#evaluate(java.lang.Object)
      */
-    public boolean accept(CacheEntry<Integer, String> element) {
+    public boolean evaluate(CacheEntry<Integer, String> element) {
         lastEntry = element;
         return accept;
     }

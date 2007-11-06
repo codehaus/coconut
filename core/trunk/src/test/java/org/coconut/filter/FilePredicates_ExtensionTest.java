@@ -10,13 +10,13 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
-import org.coconut.filter.FileFilters.FileExtensionFilter;
+import org.coconut.filter.FilePredicates.FileExtensionFilter;
 import org.junit.Test;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-public class FileFilters_ExtensionTest  {
+public class FilePredicates_ExtensionTest  {
 
     @Test
     public void testFilterConstructor1() {
@@ -37,17 +37,17 @@ public class FileFilters_ExtensionTest  {
     @Test
     public void testCaseSensitive() {
         FileExtensionFilter filter = new FileExtensionFilter("xml", true);
-        assertTrue(filter.accept(new File("/fo.xml")));
-        assertFalse(filter.accept(new File("/fo.Xml")));
-        assertFalse(filter.accept(new File("/a")));
+        assertTrue(filter.evaluate(new File("/fo.xml")));
+        assertFalse(filter.evaluate(new File("/fo.Xml")));
+        assertFalse(filter.evaluate(new File("/a")));
     }
 
     @Test
     public void testCaseInsensitive() {
         FileExtensionFilter filter = new FileExtensionFilter("JAVAjava", false);
-        assertTrue(filter.accept(new File("/fo.JAVAjava")));
-        assertTrue(filter.accept(new File("/fo.jAvAJaVa")));
-        assertFalse(filter.accept(new File("/l")));
+        assertTrue(filter.evaluate(new File("/fo.JAVAjava")));
+        assertTrue(filter.evaluate(new File("/fo.jAvAJaVa")));
+        assertFalse(filter.evaluate(new File("/l")));
         filter.toString();
     }
 
@@ -87,7 +87,7 @@ public class FileFilters_ExtensionTest  {
 
     @Test(expected = NullPointerException.class)
     public void testFileExtensionFilterNullAccept() {
-        FileExtensionFilter.EXT_JAVA.accept(null);
+        FileExtensionFilter.EXT_JAVA.evaluate(null);
     }
 
 }

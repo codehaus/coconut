@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
-import org.coconut.filter.Filter;
+import org.coconut.filter.Predicate;
 import org.coconut.internal.util.UnitOfTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -50,7 +50,7 @@ public class CacheLoadingConfiguration<K, V> extends
     private CacheLoader<? super K, ? extends V> loader;
 
     /** The refresh filter. */
-    private Filter<CacheEntry<K, V>> refreshFilter;
+    private Predicate<CacheEntry<K, V>> refreshFilter;
 
     /**
      * Creates a new CacheLoadingConfiguration.
@@ -89,9 +89,9 @@ public class CacheLoadingConfiguration<K, V> extends
      * Returns the configured refresh filter.
      * 
      * @return the configured refresh filter
-     * @see #setRefreshFilter(Filter)
+     * @see #setRefreshFilter(Predicate)
      */
-    public Filter<CacheEntry<K, V>> getRefreshFilter() {
+    public Predicate<CacheEntry<K, V>> getRefreshFilter() {
         return refreshFilter;
     }
 
@@ -147,7 +147,7 @@ public class CacheLoadingConfiguration<K, V> extends
     }
 
     /**
-     * Sets a function ({@link Filter}) that is used for determining if an element
+     * Sets a function ({@link Predicate}) that is used for determining if an element
      * should be refreshed. The filter is checked on each call to
      * {@link org.coconut.cache.Cache#get(Object)},{@link org.coconut.cache.Cache#getAll(Collection)},
      * {@link org.coconut.cache.Cache#getEntry(Object)} if a mapping exist for specified
@@ -160,7 +160,7 @@ public class CacheLoadingConfiguration<K, V> extends
      * @return this configuration
      */
     public CacheLoadingConfiguration<K, V> setRefreshFilter(
-            Filter<CacheEntry<K, V>> filter) {
+            Predicate<CacheEntry<K, V>> filter) {
         refreshFilter = filter;
         return this;
     }
@@ -177,7 +177,7 @@ public class CacheLoadingConfiguration<K, V> extends
         setDefaultTimeToRefresh(time, TimeUnit.NANOSECONDS);
 
         /* Refresh Filter */
-        refreshFilter = loadOptional(parent, REFRESH_FILTER_TAG, Filter.class);
+        refreshFilter = loadOptional(parent, REFRESH_FILTER_TAG, Predicate.class);
     }
 
     /** {@inheritDoc} */

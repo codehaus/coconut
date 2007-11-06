@@ -14,7 +14,7 @@ import org.coconut.cache.policy.paging.LRUPolicy;
 import org.coconut.cache.policy.paging.MRUPolicy;
 import org.coconut.cache.policy.paging.RandomPolicy;
 import org.coconut.cache.spi.ReplacementPolicy;
-import org.coconut.filter.Filter;
+import org.coconut.filter.Predicate;
 
 /**
  * Factory methods for different {@link org.coconut.cache.spi.ReplacementPolicy}
@@ -116,14 +116,14 @@ public final class Policies {
     }
     
     public static <K, V> ReplacementPolicy<? extends Map.Entry<K, V>> filteredMapKeyPolicy(
-            ReplacementPolicy policy, Filter<? extends K> filter) {
+            ReplacementPolicy policy, Predicate<? extends K> filter) {
         throw new UnsupportedOperationException();
         // return new FilteredPolicyDecorator(policy,
         // CollectionFilters.keyFilter(filter));
     }
 
     public static <K, V> ReplacementPolicy<? extends Map.Entry<K, V>> filteredMapValuePolicy(
-            ReplacementPolicy policy, Filter<? extends V> filter) {
+            ReplacementPolicy policy, Predicate<? extends V> filter) {
         throw new UnsupportedOperationException();
         // return new FilteredPolicyDecorator(policy,
         // CollectionFilters.valueFilter(filter));

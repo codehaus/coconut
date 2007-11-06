@@ -17,7 +17,7 @@ import org.coconut.cache.policy.paging.MRUPolicy;
 import org.coconut.cache.policy.paging.RandomPolicy;
 import org.coconut.cache.spi.ReplacementPolicy;
 import org.coconut.core.AttributeMaps;
-import org.coconut.filter.Filters;
+import org.coconut.filter.Predicates;
 import org.junit.Test;
 
 /**
@@ -43,12 +43,12 @@ public class PoliciesTest {
         hm.put(1, 2);
         hm.put(3, 4);
         ReplacementPolicy rp = Policies.filteredMapKeyPolicy(Policies.newClock(),
-                Filters.equal(1));
+                Predicates.equal(1));
         assertTrue(rp.add(hm.entrySet().toArray()[0], AttributeMaps.EMPTY_MAP) > 0);
         assertTrue(rp.add(hm.entrySet().toArray()[1], AttributeMaps.EMPTY_MAP) < 0);
         
         ReplacementPolicy rp1 =Policies.filteredMapValuePolicy(Policies.newClock(),
-                Filters.equal(2));
+                Predicates.equal(2));
         assertTrue(rp1.add(hm.entrySet().toArray()[0], AttributeMaps.EMPTY_MAP) > 0);
         assertTrue(rp1.add(hm.entrySet().toArray()[1], AttributeMaps.EMPTY_MAP) < 0);
 

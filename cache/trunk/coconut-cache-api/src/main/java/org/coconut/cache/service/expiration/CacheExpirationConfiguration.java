@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
-import org.coconut.filter.Filter;
+import org.coconut.filter.Predicate;
 import org.coconut.internal.util.UnitOfTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -49,7 +49,7 @@ public class CacheExpirationConfiguration<K, V> extends
     private long defaultTimeToLive;
 
     /** The expiration filter. */
-    private Filter<CacheEntry<K, V>> expirationFilter;
+    private Predicate<CacheEntry<K, V>> expirationFilter;
 
     /**
      * Creates a new CacheExpirationConfiguration.
@@ -80,9 +80,9 @@ public class CacheExpirationConfiguration<K, V> extends
      * configured.
      * 
      * @return the configured expiration filter or null if no filter has been configured
-     * @see #setExpirationFilter(Filter)
+     * @see #setExpirationFilter(Predicate)
      */
-    public Filter<CacheEntry<K, V>> getExpirationFilter() {
+    public Predicate<CacheEntry<K, V>> getExpirationFilter() {
         return expirationFilter;
     }
 
@@ -132,7 +132,7 @@ public class CacheExpirationConfiguration<K, V> extends
      * @return this configuration
      */
     public CacheExpirationConfiguration<K, V> setExpirationFilter(
-            Filter<CacheEntry<K, V>> filter) {
+            Predicate<CacheEntry<K, V>> filter) {
         expirationFilter = filter;
         return this;
     }
@@ -147,7 +147,7 @@ public class CacheExpirationConfiguration<K, V> extends
         setDefaultTimeToLive(time, DEFAULT_TIME_UNIT);
 
         /* Expiration Filter */
-        expirationFilter = loadOptional(base, EXPIRATION_FILTER_TAG, Filter.class);
+        expirationFilter = loadOptional(base, EXPIRATION_FILTER_TAG, Predicate.class);
     }
 
     /** {@inheritDoc} */

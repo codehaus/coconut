@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.coconut.filter.Filter;
-import org.coconut.filter.Filters;
+import org.coconut.filter.Predicate;
+import org.coconut.filter.Predicates;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JUnit4Mockery;
@@ -25,7 +25,7 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class AbstraktFilterMatcherTest {
+public class AbstraktPredicateMatcherTest {
 
 	static final Map m1 = Collections.EMPTY_MAP;
 
@@ -39,7 +39,7 @@ public class AbstraktFilterMatcherTest {
 	public void testAbstraktFilterMatcher() throws Exception {
 		final Map m = context.mock(Map.class);
 
-		final AbstractFilterMatcher<Integer, Filter> afm = new DummyMatcher<Integer, Filter>(
+		final AbstractPredicateMatcher<Integer, Predicate> afm = new DummyMatcher<Integer, Predicate>(
 				m);
 		context.checking(new Expectations() {
 			{
@@ -55,7 +55,7 @@ public class AbstraktFilterMatcherTest {
 				will(returnValue(s1));
 
 				one(m).get(2);
-				will(returnValue(Filters.TRUE));
+				will(returnValue(Predicates.TRUE));
 
 				one(m).isEmpty();
 				will(returnValue(true));
@@ -63,13 +63,13 @@ public class AbstraktFilterMatcherTest {
 				one(m).keySet();
 				will(returnValue(s1));
 
-				one(m).put(3, Filters.IS_NUMBER);
-				will(returnValue(Filters.TRUE));
+				one(m).put(3, Predicates.IS_NUMBER);
+				will(returnValue(Predicates.TRUE));
 
 				one(m).putAll(Collections.EMPTY_MAP);
 
 				one(m).remove(4);
-				will(returnValue(Filters.FALSE));
+				will(returnValue(Predicates.FALSE));
 
 				one(m).size();
 				will(returnValue(12));
@@ -82,13 +82,13 @@ public class AbstraktFilterMatcherTest {
 		assertTrue(afm.containsKey(1));
 		assertTrue(afm.containsValue("A"));
 		assertSame(s1, afm.entrySet());
-		assertEquals(Filters.TRUE, afm.get(2));
+		assertEquals(Predicates.TRUE, afm.get(2));
 		assertEquals(m, afm.getMap());
 		assertTrue(afm.isEmpty());
 		assertSame(s1, afm.keySet());
-		assertSame(Filters.TRUE, afm.put(3, Filters.IS_NUMBER));
+		assertSame(Predicates.TRUE, afm.put(3, Predicates.IS_NUMBER));
 		afm.putAll(Collections.EMPTY_MAP);
-		assertSame(Filters.FALSE, afm.remove(4));
+		assertSame(Predicates.FALSE, afm.remove(4));
 		assertEquals(12, afm.size());
 		assertSame(l1, afm.values());
 		
@@ -106,23 +106,23 @@ public class AbstraktFilterMatcherTest {
 		assertFalse(dm.equals(Collections.EMPTY_MAP));
 	}
 
-	static class DummyMatcher<K, V> extends AbstractFilterMatcher<K, V> {
+	static class DummyMatcher<K, V> extends AbstractPredicateMatcher<K, V> {
 		DummyMatcher(Map m) {
 			super(m);
 		}
 
 		/**
-         * @see org.coconut.filter.matcher.FilterMatcher#match(java.lang.Object)
+         * @see org.coconut.filter.matcher.PredicateMatcher#match(java.lang.Object)
          */
 		public List<K> match(V object) {
 			throw new UnsupportedOperationException();
 		}
 
 		/**
-         * @see org.coconut.filter.matcher.AbstractFilterMatcher#getMap()
+         * @see org.coconut.filter.matcher.AbstractPredicateMatcher#getMap()
          */
 		@Override
-		protected Map<K, Filter<? super V>> getMap() {
+		protected Map<K, Predicate<? super V>> getMap() {
 			return super.getMap();
 		}
 	}

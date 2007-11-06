@@ -5,9 +5,9 @@ package org.coconut.cache.examples.policy;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.policy.Policies;
-import org.coconut.filter.Filter;
-import org.coconut.filter.Filters;
-import org.coconut.filter.StringFilters;
+import org.coconut.filter.Predicate;
+import org.coconut.filter.Predicates;
+import org.coconut.filter.StringPredicates;
 
 /**
  * The following example create a cache configuration that uses a LRU
@@ -22,7 +22,7 @@ import org.coconut.filter.StringFilters;
 public class CachePolicyDecoratorExample {
     public static void main(String[] args) {
         CacheConfiguration<String, ?> conf = CacheConfiguration.create();
-        Filter<String> f = Filters.not(StringFilters.startsWith("https"));
+        Predicate<String> f = Predicates.not(StringPredicates.startsWith("https"));
         conf.eviction().setPolicy(Policies.filteredMapKeyPolicy(Policies.newLRU(), f));
     }
 }

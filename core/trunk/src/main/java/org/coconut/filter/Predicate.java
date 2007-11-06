@@ -24,7 +24,7 @@ package org.coconut.filter;
  * @param <E>
  *            the type of elements acccepted by the accept method
  */
-public interface Filter<E> {
+public interface Predicate<E> {
 
     /**
      * Tests the given element for acceptance.
@@ -43,5 +43,5 @@ public interface Filter<E> {
      *             some aspect of this element prevents it from being evaluated by this
      *             filter.
      */
-    boolean accept(E element);
+    boolean evaluate(E element);
 }

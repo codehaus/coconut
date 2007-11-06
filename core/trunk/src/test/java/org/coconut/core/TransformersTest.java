@@ -18,14 +18,14 @@ import org.junit.Test;
  */
 public class TransformersTest {
 
-    private static final Transformer t1 = new Transformer<String, String>() {
-        public String transform(String from) {
+    private static final Mapper t1 = new Mapper<String, String>() {
+        public String map(String from) {
             return from.substring(0, 3);
         }
     };
 
-    private static final Transformer t2 = new Transformer<String, Integer>() {
-        public Integer transform(String from) {
+    private static final Mapper t2 = new Mapper<String, Integer>() {
+        public Integer map(String from) {
             return Integer.parseInt(from);
         }
     };
@@ -43,17 +43,17 @@ public class TransformersTest {
 
     @Test
     public void testArrayManyArg() {
-        Transformer t = t(t1, t2);
+        Mapper t = t(t1, t2);
         assertEquals(t(t1, t2).hashCode(), t.hashCode());
         assertEquals(t(t1, t2), t);
         assertFalse(t(t2, t1).equals(t));
-        assertEquals(Arrays.toString(new Transformer[] { t1, t2 }), t.toString());
+        assertEquals(Arrays.toString(new Mapper[] { t1, t2 }), t.toString());
 
-        assertEquals(123, t.transform("123243234"));
+        assertEquals(123, t.map("123243234"));
     }
 
     @Test
     public void testPassThroughTransformer() {
-        assertEquals("123", passThroughTransformer().transform("123"));
+        assertEquals("123", passThroughTransformer().map("123"));
     }
 }

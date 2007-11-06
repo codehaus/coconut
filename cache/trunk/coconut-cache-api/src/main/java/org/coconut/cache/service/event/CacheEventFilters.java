@@ -8,11 +8,11 @@ import org.coconut.cache.service.event.CacheEntryEvent.ItemAdded;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated;
 import org.coconut.cache.service.event.CacheEvent.CacheCleared;
-import org.coconut.core.Transformer;
+import org.coconut.core.Mapper;
 import org.coconut.core.Transformers;
-import org.coconut.filter.CollectionFilters;
-import org.coconut.filter.Filter;
-import org.coconut.filter.Filters;
+import org.coconut.filter.CollectionPredicates;
+import org.coconut.filter.Predicate;
+import org.coconut.filter.Predicates;
 
 /**
  * Factory and utility methods for for creating different types of filters for cache
@@ -24,7 +24,7 @@ import org.coconut.filter.Filters;
 public final class CacheEventFilters {
 
     /** A filter that only accepts instances of CacheCleared events. */
-    public static final Filter<?> CACHE_CLEARED_FILTER = Filters
+    public static final Predicate<?> CACHE_CLEARED_FILTER = Predicates
             .isType(CacheCleared.class);
 
     /**
@@ -32,57 +32,57 @@ public final class CacheEventFilters {
      * {@link CacheEntryEvent}).
      */
     @SuppressWarnings("unchecked")
-    public static final Filter<?> CACHE_INSTANCE_FILTER = Filters.not(Filters
+    public static final Predicate<?> CACHE_INSTANCE_FILTER = Predicates.not(Predicates
             .isType(CacheEntryEvent.class));
 
     /**
-     * A {@link org.coconut.filter.Filter} that only accepts instances of ItemUpdated
+     * A {@link org.coconut.filter.Predicate} that only accepts instances of ItemUpdated
      * events.
      */
-    public final static Filter<?> CACHEENTRY_ADDED_FILTER = Filters
+    public final static Predicate<?> CACHEENTRY_ADDED_FILTER = Predicates
             .isType(ItemAdded.class);
 
     /**
-     * A {@link org.coconut.filter.Filter} that only accepts instances of ItemUpdated
+     * A {@link org.coconut.filter.Predicate} that only accepts instances of ItemUpdated
      * events.
      */
-    public final static Filter<?> CACHEENTRY_REMOVED_FILTER = Filters
+    public final static Predicate<?> CACHEENTRY_REMOVED_FILTER = Predicates
             .isType(ItemRemoved.class);
 
     /**
-     * A {@link org.coconut.filter.Filter} that only accepts instances of ItemUpdated
+     * A {@link org.coconut.filter.Predicate} that only accepts instances of ItemUpdated
      * events.
      */
-    public final static Filter<?> CACHEENTRY_UPDATED_FILTER = Filters
+    public final static Predicate<?> CACHEENTRY_UPDATED_FILTER = Predicates
             .isType(ItemUpdated.class);
 
     /**
-     * A {@link org.coconut.filter.Filter} that will accept all instances of
+     * A {@link org.coconut.filter.Predicate} that will accept all instances of
      * CacheItemEvent.
      */
-    public final static Filter<?> CACHEENTRYEVENT_FILTER = Filters
+    public final static Predicate<?> CACHEENTRYEVENT_FILTER = Predicates
             .isType(CacheEntryEvent.class);
 
     /** A filter that only accepts instances of CacheEvent events. */
 
-    public static final Filter<?> CACHEEVENT_FILTER = Filters.isType(CacheEvent.class);
+    public static final Predicate<?> CACHEEVENT_FILTER = Predicates.isType(CacheEvent.class);
 
     /** A transformer that extracts the cache from the specified {@link CacheEvent}. */
-    private final static Transformer<CacheEvent, Cache<?, ?>> EVENT_TO_CACHE_TRANSFORMER = Transformers
+    private final static Mapper<CacheEvent, Cache<?, ?>> EVENT_TO_CACHE_TRANSFORMER = Transformers
             .transform(CacheEvent.class, "getCache");
 
     /**
      * A transformer that extracts the name of the cache from the specified
      * {@link CacheEvent}.
      */
-    private final static Transformer<CacheEvent, String> EVENT_TO_NAME_TRANSFORMER = Transformers
+    private final static Mapper<CacheEvent, String> EVENT_TO_NAME_TRANSFORMER = Transformers
             .transform(CacheEvent.class, "getName");
 
     /** Cannot instantiate. */
     private CacheEventFilters() {}
 
     /**
-     * Returns a {@link Filter} that only accepts {@link CacheEvent}s that originate from
+     * Returns a {@link Predicate} that only accepts {@link CacheEvent}s that originate from
      * the specified cache.
      * 
      * @param cache
@@ -94,12 +94,12 @@ public final class CacheEventFilters {
      * @param <V>
      *            the type of mapped values
      */
-    public static <K, V> Filter<CacheEvent<K, V>> cacheSameFilter(Cache<K, V> cache) {
-        return cacheFilter(Filters.same(cache));
+    public static <K, V> Predicate<CacheEvent<K, V>> cacheSameFilter(Cache<K, V> cache) {
+        return cacheFilter(Predicates.same(cache));
     }
 
     /**
-     * Returns a {@link Filter} that accepts {@link CacheEvent}s depending on some
+     * Returns a {@link Predicate} that accepts {@link CacheEvent}s depending on some
      * property regarding the originating cache. For example, the following Filter only
      * accepts Cache events where the size of the originating cache size is greater then
      * 10.
@@ -123,13 +123,13 @@ public final class CacheEventFilters {
      *            the type of mapped values
      */
     @SuppressWarnings("unchecked")
-    public static <K, V> Filter<CacheEvent<K, V>> cacheFilter(Filter<Cache<K, V>> filter) {
-        return CollectionFilters.transformFilter(
-                (Transformer) EVENT_TO_CACHE_TRANSFORMER, filter);
+    public static <K, V> Predicate<CacheEvent<K, V>> cacheFilter(Predicate<Cache<K, V>> filter) {
+        return CollectionPredicates.transformFilter(
+                (Mapper) EVENT_TO_CACHE_TRANSFORMER, filter);
     }
 
     /**
-     * Returns a {@link Filter} that only accepts {@link CacheEvent}s where
+     * Returns a {@link Predicate} that only accepts {@link CacheEvent}s where
      * {@link CacheEvent#getName()} matches the specified filter.
      * 
      * @param filter
@@ -142,8 +142,8 @@ public final class CacheEventFilters {
      *            the type of mapped values
      */
     @SuppressWarnings("unchecked")
-    public static <K, V> Filter<CacheEvent<K, V>> cacheName(Filter<String> filter) {
-        return CollectionFilters.transformFilter((Transformer) EVENT_TO_NAME_TRANSFORMER,
+    public static <K, V> Predicate<CacheEvent<K, V>> cacheName(Predicate<String> filter) {
+        return CollectionPredicates.transformFilter((Mapper) EVENT_TO_NAME_TRANSFORMER,
                 filter);
     }
 

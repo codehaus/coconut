@@ -7,7 +7,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.coconut.core.EventProcessor;
 import org.coconut.event.EventSubscription;
-import org.coconut.filter.Filter;
+import org.coconut.filter.Predicate;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -19,7 +19,7 @@ class DefaultEventSubscription<E> extends ReentrantReadWriteLock implements
 
     private final EventProcessor<? super E> destination;
 
-    private final Filter<? super E> filter;
+    private final Predicate<? super E> filter;
 
     private final String name;
 
@@ -30,7 +30,7 @@ class DefaultEventSubscription<E> extends ReentrantReadWriteLock implements
      * @param filter
      */
     DefaultEventSubscription(DefaultEventBus<E> bus, final String name,
-            final EventProcessor<? super E> destination, final Filter<? super E> filter) {
+            final EventProcessor<? super E> destination, final Predicate<? super E> filter) {
         this.bus = bus;
         this.name = name;
         this.destination = destination;
@@ -54,7 +54,7 @@ class DefaultEventSubscription<E> extends ReentrantReadWriteLock implements
     /**
      * @see org.coconut.event.EventSubscription#getFilter()
      */
-    public Filter<? super E> getFilter() {
+    public Predicate<? super E> getFilter() {
         return filter;
     }
 

@@ -18,8 +18,8 @@ import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.AttributeMaps;
 import org.coconut.core.Clock;
-import org.coconut.filter.Filter;
-import org.coconut.filter.Filters;
+import org.coconut.filter.Predicate;
+import org.coconut.filter.Predicates;
 import org.coconut.test.MockTestCase;
 import org.jmock.Mock;
 import org.jmock.integration.junit4.JUnit4Mockery;
@@ -35,9 +35,9 @@ public class DefaultCacheExpirationServiceTest {
     private static final CacheEntry<Integer, String> NEVER_EXPIRE;
 
     private static final CacheEntry<Integer, String> EXPIRE_AT_10;
-    private final Filter<CacheEntry<Integer, String>> TRUE = Filters.trueFilter();
+    private final Predicate<CacheEntry<Integer, String>> TRUE = Predicates.truePredicate();
 
-    private final Filter<CacheEntry<Integer, String>> FALSE = Filters.falseFilter();
+    private final Predicate<CacheEntry<Integer, String>> FALSE = Predicates.falsePredicate();
 
     private CacheExpirationConfiguration<Integer, String> conf;
 

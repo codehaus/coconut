@@ -9,7 +9,7 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.core.AttributeMap;
-import org.coconut.filter.Filter;
+import org.coconut.filter.Predicate;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -21,7 +21,7 @@ import org.coconut.filter.Filter;
  */
 public interface InternalCacheLoadingService<K, V> extends CacheLoadingService<K, V> {
 
-    Filter<CacheEntry<K, V>> getRefreshFilter();
+    Predicate<CacheEntry<K, V>> getRefreshFilter();
 
     /**
      * @param entry

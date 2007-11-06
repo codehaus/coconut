@@ -4,7 +4,7 @@
 package org.coconut.event;
 
 import org.coconut.core.EventProcessor;
-import org.coconut.filter.Filter;
+import org.coconut.filter.Predicate;
 
 /**
  * This interface represent a subscription of a particular sets of events by its filter
@@ -37,7 +37,7 @@ public interface EventSubscription<E> {
      * 
      * @return the filter that is used for this subscription
      */
-    Filter<? super E> getFilter();
+    Predicate<? super E> getFilter();
 
     /**
      * Cancels the subscription. After this method has returned no further events will be

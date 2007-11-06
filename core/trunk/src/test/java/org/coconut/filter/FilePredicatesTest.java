@@ -11,23 +11,23 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 
-import org.coconut.filter.FileFilters.FileCanReadFilter;
-import org.coconut.filter.FileFilters.FileCanWriteFilter;
-import org.coconut.filter.FileFilters.FileExistsFilter;
-import org.coconut.filter.FileFilters.FileIsDirectoryFilter;
-import org.coconut.filter.FileFilters.FileIsHiddenFilter;
+import org.coconut.filter.FilePredicates.FileCanReadFilter;
+import org.coconut.filter.FilePredicates.FileCanWriteFilter;
+import org.coconut.filter.FilePredicates.FileExistsFilter;
+import org.coconut.filter.FilePredicates.FileIsDirectoryFilter;
+import org.coconut.filter.FilePredicates.FileIsHiddenFilter;
 import org.junit.Test;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  */
-public class FileFiltersTest {
+public class FilePredicatesTest {
 
     @Test
     public void testFileCanReadFilter() throws IOException {
-        Filter<File> filter = FileFilters.canRead();
+        Predicate<File> filter = FilePredicates.canRead();
         File f = File.createTempFile("ttt", "ttt");
-        assertEquals(filter.accept(f), f.canRead());
+        assertEquals(filter.evaluate(f), f.canRead());
         f.delete();
 
         assertEquals(filter, filter);
@@ -38,9 +38,9 @@ public class FileFiltersTest {
 
     @Test
     public void testFileCanWriteFilter() throws IOException {
-        Filter<File> filter = FileCanWriteFilter.INSTANCE;
+        Predicate<File> filter = FileCanWriteFilter.INSTANCE;
         File f = File.createTempFile("ttt", "ttt");
-        assertTrue(filter.accept(f));
+        assertTrue(filter.evaluate(f));
         assertTrue(f.setReadOnly());
         // TODO Does not appear to be working under linux
         // assertFalse(filter.accept(f));
@@ -55,11 +55,11 @@ public class FileFiltersTest {
 
     @Test
     public void testFileExistsFilter() throws IOException {
-        Filter<File> filter = FileExistsFilter.INSTANCE;
+        Predicate<File> filter = FileExistsFilter.INSTANCE;
         File f = File.createTempFile("ttt", "ttt");
-        assertTrue(filter.accept(f));
+        assertTrue(filter.evaluate(f));
         f.delete();
-        assertFalse(filter.accept(f));
+        assertFalse(filter.evaluate(f));
         assertEquals(filter, filter);
         assertEquals(filter, new FileExistsFilter());
         assertEquals(filter.hashCode(), new FileExistsFilter().hashCode());
@@ -69,10 +69,10 @@ public class FileFiltersTest {
 
     @Test
     public void testFileIsDirectoryFilter() throws IOException {
-        Filter<File> filter = FileIsDirectoryFilter.INSTANCE;
+        Predicate<File> filter = FileIsDirectoryFilter.INSTANCE;
         File f = File.createTempFile("ttt", "ttt");
-        assertFalse(filter.accept(f));
-        assertTrue(filter.accept(f.getParentFile()));
+        assertFalse(filter.evaluate(f));
+        assertTrue(filter.evaluate(f.getParentFile()));
         f.delete();
 
         assertEquals(filter, filter);
@@ -83,9 +83,9 @@ public class FileFiltersTest {
 
     @Test
     public void testFileIsHiddenFilter() throws IOException {
-        Filter<File> filter = FileIsHiddenFilter.INSTANCE;
+        Predicate<File> filter = FileIsHiddenFilter.INSTANCE;
         File f = File.createTempFile("ttt", "ttt");
-        assertEquals(filter.accept(f), f.isHidden());
+        assertEquals(filter.evaluate(f), f.isHidden());
         f.delete();
 
         assertEquals(filter, filter);

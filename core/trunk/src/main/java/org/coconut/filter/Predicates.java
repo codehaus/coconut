@@ -10,69 +10,69 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import org.coconut.filter.CollectionFilters.IsTypeFilter;
-import org.coconut.filter.spi.CompositeFilter;
+import org.coconut.filter.CollectionPredicates.IsTypePredicate;
+import org.coconut.filter.spi.CompositePredicate;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public final class Filters {
-    /** A filter that always return False. */
-    public static final Filters.FalseFilter FALSE = Filters.FalseFilter.INSTANCE;
+public final class Predicates {
+    /** A predicate that always return False. */
+    public static final Predicates.FalsePredicate FALSE = Predicates.FalsePredicate.INSTANCE;
     
-    public final static IsTypeFilter IS_NUMBER = isType(Number.class);
+    public final static IsTypePredicate IS_NUMBER = isType(Number.class);
 
-    /** A filter that always return True. */
-    public static final Filters.TrueFilter TRUE = Filters.TrueFilter.INSTANCE;
+    /** A predicate that always return True. */
+    public static final Predicates.TruePredicate TRUE = Predicates.TruePredicate.INSTANCE;
 
     ///CLOVER:OFF
     /** Cannot instantiate. */
-    private Filters() {}
+    private Predicates() {}
     ///CLOVER:ON
 
     /**
-     * A Filter that tests that <tt>all</tt> of the supplied Filters accepts a given
+     * A Predicate that tests that <tt>all</tt> of the supplied Predicates accepts a given
      * element.
      */
-    final static class AllFilter<E> implements Filter<E>, CompositeFilter<E>,
-            Iterable<Filter<E>>, Serializable {
+    final static class AllPredicate<E> implements Predicate<E>, CompositePredicate<E>,
+            Iterable<Predicate<E>>, Serializable {
 
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = -8945752276662769791L;
 
-        /** All the filters that are being checked. */
-        private final Filter<E>[] filters;
+        /** All the predicates that are being checked. */
+        private final Predicate<E>[] predicates;
 
         /**
-         * Constructs a new AllFilter. The Filter will use a copy of the array of supplied
-         * filters.
+         * Constructs a new AllPredicate. The Predicate will use a copy of the array of supplied
+         * predicates.
          * 
-         * @param filters
-         *            the filters to test
+         * @param predicates
+         *            the predicates to test
          */
         @SuppressWarnings("unchecked")
-        public AllFilter(final Filter<? super E>[] filters) {
-            this.filters = new Filter[filters.length];
-            System.arraycopy(filters, 0, this.filters, 0, filters.length);
-            for (int i = 0; i < this.filters.length; i++) {
-                if (this.filters[i] == null) {
-                    throw new NullPointerException("filters contained a null on index = "
+        public AllPredicate(final Predicate<? super E>[] predicates) {
+            this.predicates = new Predicate[predicates.length];
+            System.arraycopy(predicates, 0, this.predicates, 0, predicates.length);
+            for (int i = 0; i < this.predicates.length; i++) {
+                if (this.predicates[i] == null) {
+                    throw new NullPointerException("predicates contained a null on index = "
                             + i);
                 }
             }
         }
 
         /**
-         * Returns <tt>true</tt> if all supplied Filters accepts the element.
+         * Returns <tt>true</tt> if all supplied Predicates accepts the element.
          * 
          * @param element
          *            the element to test
-         * @return <tt>true</tt> if all supplied Filters accepts the element.
+         * @return <tt>true</tt> if all supplied Predicates accepts the element.
          */
-        public boolean accept(E element) {
-            for (Filter<E> filter : filters) {
-                if (!filter.accept(element)) {
+        public boolean evaluate(E element) {
+            for (Predicate<E> predicate : predicates) {
+                if (!predicate.evaluate(element)) {
                     return false;
                 }
             }
@@ -80,34 +80,34 @@ public final class Filters {
         }
 
         /**
-         * Returns the filters we are testing against.
+         * Returns the predicates we are testing against.
          * 
-         * @return the filters we are testing against
+         * @return the predicates we are testing against
          */
-        public List<Filter<E>> getFilters() {
-            return new ArrayList<Filter<E>>(Arrays.asList(filters));
+        public List<Predicate<E>> getPredicates() {
+            return new ArrayList<Predicate<E>>(Arrays.asList(predicates));
         }
 
         /** {@inheritDoc} */
-        public Iterator<Filter<E>> iterator() {
-            return Arrays.asList(filters).iterator();
+        public Iterator<Predicate<E>> iterator() {
+            return Arrays.asList(predicates).iterator();
         }
 
         /** {@inheritDoc} */
         @Override
         public String toString() {
-            if (filters.length == 0) {
+            if (predicates.length == 0) {
                 return "";
-            } else if (filters.length == 1) {
-                return filters[0].toString();
+            } else if (predicates.length == 1) {
+                return predicates[0].toString();
             } else {
                 StringBuilder builder = new StringBuilder();
                 builder.append("((");
-                builder.append(filters[0]);
+                builder.append(predicates[0]);
                 builder.append(")");
-                for (int i = 1; i < filters.length; i++) {
+                for (int i = 1; i < predicates.length; i++) {
                     builder.append(" and (");
-                    builder.append(filters[i]);
+                    builder.append(predicates[i]);
                     builder.append(")");
                 }
                 builder.append(")");
@@ -117,10 +117,10 @@ public final class Filters {
     }
 
     /**
-     * A Filter that performs a logical exclusive AND on two supplied filters. The filter
+     * A Predicate that performs a logical exclusive AND on two supplied predicates. The predicate
      * TODO check focs for javas and.
      */
-    final static class AndFilter<E> implements Filter<E>, CompositeFilter<E>,
+    final static class AndPredicate<E> implements Predicate<E>, CompositePredicate<E>,
             Serializable {
 
         /** Default <code>serialVersionUID</code>. */
@@ -129,24 +129,24 @@ public final class Filters {
         private final boolean isStrict;
 
         /** The left side operand. */
-        private final Filter<E> left;
+        private final Predicate<E> left;
 
         /** The right side operand. */
-        private final Filter<E> right;
+        private final Predicate<E> right;
 
         /**
-         * Constructs a new <code>AndFilter</code>.
+         * Constructs a new <code>AndPredicate</code>.
          * 
          * @param left
          *            the left side operand
          * @param right
          *            the right side operand
          */
-        public AndFilter(final Filter<E> left, final Filter<E> right) {
+        public AndPredicate(final Predicate<E> left, final Predicate<E> right) {
             this(left, right, true);
         }
 
-        public AndFilter(final Filter<E> left, final Filter<E> right, boolean isStrict) {
+        public AndPredicate(final Predicate<E> left, final Predicate<E> right, boolean isStrict) {
             if (left == null) {
                 throw new NullPointerException("left is null");
             }
@@ -159,13 +159,13 @@ public final class Filters {
         }
 
         /** {@inheritDoc} */
-        public boolean accept(E element) {
-            return left.accept(element) && right.accept(element);
+        public boolean evaluate(E element) {
+            return left.evaluate(element) && right.evaluate(element);
         }
 
         /** {@inheritDoc} */
         @SuppressWarnings("unchecked")
-        public List<Filter<E>> getFilters() {
+        public List<Predicate<E>> getPredicates() {
             return Arrays.asList(left, right);
         }
 
@@ -174,7 +174,7 @@ public final class Filters {
          * 
          * @return the left side operand.
          */
-        public Filter<E> getLeftFilter() {
+        public Predicate<E> getLeftPredicate() {
             return left;
         }
 
@@ -183,7 +183,7 @@ public final class Filters {
          * 
          * @return the right side operand.
          */
-        public Filter<E> getRightFilter() {
+        public Predicate<E> getRightPredicate() {
             return right;
         }
 
@@ -202,36 +202,36 @@ public final class Filters {
     }
 
     /**
-     * A Filter that tests that at least one of the supplied filters accepts a given
+     * A Predicate that tests that at least one of the supplied predicates accepts a given
      * element.
      */
-    final static class AnyFilter<E> implements Filter<E>, CompositeFilter<E>,
-            Iterable<Filter<E>>, Serializable {
+    final static class AnyPredicate<E> implements Predicate<E>, CompositePredicate<E>,
+            Iterable<Predicate<E>>, Serializable {
 
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 3257282517878192437L;
 
-        private final Filter<E>[] filters;
+        private final Predicate<E>[] predicates;
 
         /**
-         * @param filters
+         * @param predicates
          */
         @SuppressWarnings("unchecked")
-        public AnyFilter(final Filter<? super E>[] filters) {
-            this.filters = new Filter[filters.length];
-            System.arraycopy(filters, 0, this.filters, 0, filters.length);
-            for (int i = 0; i < this.filters.length; i++) {
-                if (this.filters[i] == null) {
-                    throw new NullPointerException("filters contained a null on index = "
+        public AnyPredicate(final Predicate<? super E>[] predicates) {
+            this.predicates = new Predicate[predicates.length];
+            System.arraycopy(predicates, 0, this.predicates, 0, predicates.length);
+            for (int i = 0; i < this.predicates.length; i++) {
+                if (this.predicates[i] == null) {
+                    throw new NullPointerException("predicates contained a null on index = "
                             + i);
                 }
             }
         }
 
         /** {@inheritDoc} */
-        public boolean accept(E element) {
-            for (Filter<E> filter : filters) {
-                if (filter.accept(element)) {
+        public boolean evaluate(E element) {
+            for (Predicate<E> predicate : predicates) {
+                if (predicate.evaluate(element)) {
                     return true;
                 }
             }
@@ -239,34 +239,34 @@ public final class Filters {
         }
 
         /**
-         * Returns the filters we are testing against.
+         * Returns the predicates we are testing against.
          * 
-         * @return the filters we are testing against
+         * @return the predicates we are testing against
          */
-        public List<Filter<E>> getFilters() {
-            return new ArrayList<Filter<E>>(Arrays.asList(filters));
+        public List<Predicate<E>> getPredicates() {
+            return new ArrayList<Predicate<E>>(Arrays.asList(predicates));
         }
 
         /** {@inheritDoc} */
-        public Iterator<Filter<E>> iterator() {
-            return Arrays.asList(filters).iterator();
+        public Iterator<Predicate<E>> iterator() {
+            return Arrays.asList(predicates).iterator();
         }
 
         /** {@inheritDoc} */
         @Override
         public String toString() {
-            if (filters.length == 0) {
+            if (predicates.length == 0) {
                 return "";
-            } else if (filters.length == 1) {
-                return filters[0].toString();
+            } else if (predicates.length == 1) {
+                return predicates[0].toString();
             } else {
                 StringBuilder builder = new StringBuilder();
                 builder.append("((");
-                builder.append(filters[0]);
+                builder.append(predicates[0]);
                 builder.append(")");
-                for (int i = 1; i < filters.length; i++) {
+                for (int i = 1; i < predicates.length; i++) {
                     builder.append(" or (");
-                    builder.append(filters[i]);
+                    builder.append(predicates[i]);
                     builder.append(")");
                 }
                 builder.append(")");
@@ -276,10 +276,10 @@ public final class Filters {
     }
 
     /**
-     * A Filter that accepts all elements that are {@link Object#equals equal} to the
+     * A Predicate that accepts all elements that are {@link Object#equals equal} to the
      * specified object.
      */
-    final static class EqualsFilter<E> implements Filter<E>, Serializable {
+    final static class EqualsPredicate<E> implements Predicate<E>, Serializable {
 
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 3761971557773620791L;
@@ -288,14 +288,14 @@ public final class Filters {
         private final E object;
 
         /**
-         * Creates a new EqualsFilter.
+         * Creates a new EqualsPredicate.
          * 
          * @param object
          *            the object to compare against.
          * @throws NullPointerException
          *             if the specified object is null
          */
-        public EqualsFilter(final E object) throws NullPointerException {
+        public EqualsPredicate(final E object) throws NullPointerException {
             if (object == null) {
                 throw new NullPointerException("element is null");
             }
@@ -308,10 +308,10 @@ public final class Filters {
          * 
          * @param element
          *            the element to test against.
-         * @return <code>true</code> if the filter accepts the element;
+         * @return <code>true</code> if the predicate accepts the element;
          *         <code>false</code> otherwise.
          */
-        public boolean accept(E element) {
+        public boolean evaluate(E element) {
             return object.equals(element);
         }
 
@@ -332,21 +332,21 @@ public final class Filters {
     }
 
     /**
-     * A Filter that always returns <tt>false</tt>. Use {@link #INSTANCE} or
-     * {@link org.coconut.filter.Filters#FALSE} to get an instance of this Filter.
+     * A Predicate that always returns <tt>false</tt>. Use {@link #INSTANCE} or
+     * {@link org.coconut.predicate.Predicates#FALSE} to get an instance of this Predicate.
      * 
-     * @see TrueFilter
+     * @see TruePredicate
      */
-    final static class FalseFilter implements Filter, Serializable {
+    final static class FalsePredicate implements Predicate, Serializable {
 
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = -3048464662394104180L;
 
         /** The one and only instance. */
-        static final FalseFilter INSTANCE = new FalseFilter();
+        static final FalsePredicate INSTANCE = new FalsePredicate();
 
-        /** Construct a new FalseFilter. */
-        private FalseFilter() {}
+        /** Construct a new FalsePredicate. */
+        private FalsePredicate() {}
 
         /**
          * Returns <tt>false</tt> for any element passed to this method.
@@ -355,7 +355,7 @@ public final class Filters {
          *            the element to test
          * @return <tt>false</tt> for any element passed to this method
          */
-        public boolean accept(Object element) {
+        public boolean evaluate(Object element) {
             return false;
         }
 
@@ -367,9 +367,9 @@ public final class Filters {
     }
 
     /**
-     * A greather-then filter as per Comparable/Comparator contract.
+     * A greather-then predicate as per Comparable/Comparator contract.
      */
-    final static class GreaterThenFilter<E> implements Filter<E>, Serializable {
+    final static class GreaterThenPredicate<E> implements Predicate<E>, Serializable {
 
         /** <code>serialVersionUID</code>. */
         private static final long serialVersionUID = -6815218477296552273L;
@@ -379,7 +379,7 @@ public final class Filters {
         /** The object to compare against. */
         private final E object;
 
-        public GreaterThenFilter(E object) {
+        public GreaterThenPredicate(E object) {
             if (object == null) {
                 throw new NullPointerException("element is null");
             }
@@ -391,13 +391,13 @@ public final class Filters {
         }
 
         /**
-         * Creates a new Filter that accepts all elements that have the same object
+         * Creates a new Predicate that accepts all elements that have the same object
          * identity as the element supplied.
          * 
          * @param object
          *            the objetc to compare with.
          */
-        public GreaterThenFilter(E object, final Comparator<? extends E> comparator) {
+        public GreaterThenPredicate(E object, final Comparator<? extends E> comparator) {
             if (object == null) {
                 throw new NullPointerException("element is null");
             }
@@ -410,7 +410,7 @@ public final class Filters {
 
         /** {@inheritDoc} */
         @SuppressWarnings("unchecked")
-        public boolean accept(E element) {
+        public boolean evaluate(E element) {
             if (comparator == null) {
                 return ((Comparable) object).compareTo(element) < 0;
             } else {
@@ -440,9 +440,9 @@ public final class Filters {
     }
 
     /**
-     * A Greather Then Or Equal filter as per Comparable/Comparator contract.
+     * A Greather Then Or Equal predicate as per Comparable/Comparator contract.
      */
-    final static class GreaterThenOrEqualFilter<E> implements Filter<E>, Serializable {
+    final static class GreaterThenOrEqualPredicate<E> implements Predicate<E>, Serializable {
 
         /** <code>serialVersionUID</code>. */
         private static final long serialVersionUID = -6815218477296552273L;
@@ -453,13 +453,13 @@ public final class Filters {
         private final E object;
 
         /**
-         * Creates a new Filter that accepts all elements that have the same object
+         * Creates a new Predicate that accepts all elements that have the same object
          * identity as the element supplied.
          * 
          * @param object
          *            the objetc to compare with.
          */
-        public GreaterThenOrEqualFilter(E object, final Comparator<? extends E> comparator) {
+        public GreaterThenOrEqualPredicate(E object, final Comparator<? extends E> comparator) {
             if (object == null) {
                 throw new NullPointerException("element is null");
             }
@@ -470,7 +470,7 @@ public final class Filters {
             this.comparator = comparator;
         }
 
-        public <T extends E> GreaterThenOrEqualFilter(T object) {
+        public <T extends E> GreaterThenOrEqualPredicate(T object) {
             if (object == null) {
                 throw new NullPointerException("element is null");
             }
@@ -483,7 +483,7 @@ public final class Filters {
 
         /** {@inheritDoc} */
         @SuppressWarnings("unchecked")
-        public boolean accept(E element) {
+        public boolean evaluate(E element) {
             if (comparator == null) {
                 return ((Comparable) object).compareTo(element) <= 0;
             } else {
@@ -513,9 +513,9 @@ public final class Filters {
     }
 
     /**
-     * A Less Then filter as per Comparable/Comparator contract.
+     * A Less Then predicate as per Comparable/Comparator contract.
      */
-    final static class LessThenFilter<E> implements Filter<E>, Serializable {
+    final static class LessThenPredicate<E> implements Predicate<E>, Serializable {
 
         /** <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 1330339174193813467L;
@@ -525,7 +525,7 @@ public final class Filters {
         /** The object to compare against. */
         private final E object;
 
-        public LessThenFilter(E object) {
+        public LessThenPredicate(E object) {
             if (object == null) {
                 throw new NullPointerException("element is null");
             }
@@ -537,13 +537,13 @@ public final class Filters {
         }
 
         /**
-         * Creates a new Filter that accepts all elements that have the same object
+         * Creates a new Predicate that accepts all elements that have the same object
          * identity as the element supplied.
          * 
          * @param object
          *            the objetc to compare with.
          */
-        public LessThenFilter(E object, final Comparator<? extends E> comparator) {
+        public LessThenPredicate(E object, final Comparator<? extends E> comparator) {
             if (object == null) {
                 throw new NullPointerException("element is null");
             }
@@ -556,7 +556,7 @@ public final class Filters {
 
         /** {@inheritDoc} */
         @SuppressWarnings("unchecked")
-        public boolean accept(E element) {
+        public boolean evaluate(E element) {
             if (comparator == null) {
                 return ((Comparable) object).compareTo(element) > 0;
             } else {
@@ -586,9 +586,9 @@ public final class Filters {
     }
 
     /**
-     * A Less Then filter as per Comparable/Comparator contract.
+     * A Less Then predicate as per Comparable/Comparator contract.
      */
-    final static class LessThenOrEqualFilter<E> implements Filter<E>, Serializable {
+    final static class LessThenOrEqualPredicate<E> implements Predicate<E>, Serializable {
 
         /** <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 1330339174193813467L;
@@ -599,13 +599,13 @@ public final class Filters {
         private final E object;
 
         /**
-         * Creates a new Filter that accepts all elements that have the same object
+         * Creates a new Predicate that accepts all elements that have the same object
          * identity as the element supplied.
          * 
          * @param object
          *            the objetc to compare with.
          */
-        public LessThenOrEqualFilter(E object, final Comparator<? extends E> comparator) {
+        public LessThenOrEqualPredicate(E object, final Comparator<? extends E> comparator) {
             if (object == null) {
                 throw new NullPointerException("element is null");
             } else if (comparator == null) {
@@ -615,7 +615,7 @@ public final class Filters {
             this.comparator = comparator;
         }
 
-        public <T extends E> LessThenOrEqualFilter(T object) {
+        public <T extends E> LessThenOrEqualPredicate(T object) {
             if (object == null) {
                 throw new NullPointerException("element is null");
             }
@@ -628,7 +628,7 @@ public final class Filters {
 
         /** {@inheritDoc} */
         @SuppressWarnings("unchecked")
-        public boolean accept(E element) {
+        public boolean evaluate(E element) {
             if (comparator == null) {
                 return ((Comparable) object).compareTo(element) >= 0;
             } else {
@@ -658,91 +658,91 @@ public final class Filters {
     }
 
     /**
-     * A Filter that test that a supplied Filter does <tt>not</tt> accept a given
+     * A Predicate that test that a supplied Predicate does <tt>not</tt> accept a given
      * Element.
      */
-    final static class NotFilter<E> implements Filter<E>, CompositeFilter<E>,
+    final static class NotPredicate<E> implements Predicate<E>, CompositePredicate<E>,
             Serializable {
 
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = -5117781730584740429L;
 
-        /** The Filter to negate. */
-        private final Filter<E> filter;
+        /** The Predicate to negate. */
+        private final Predicate<E> predicate;
 
         /**
-         * Creates a new Filter that negates the result of the supplied Filter.
+         * Creates a new Predicate that negates the result of the supplied Predicate.
          * 
-         * @param filter
-         *            the filter to negate.
+         * @param predicate
+         *            the predicate to negate.
          */
-        public NotFilter(final Filter<E> filter) {
-            if (filter == null) {
-                throw new NullPointerException("filter is null");
+        public NotPredicate(final Predicate<E> predicate) {
+            if (predicate == null) {
+                throw new NullPointerException("predicate is null");
             }
-            this.filter = filter;
+            this.predicate = predicate;
         }
 
         /**
-         * Returns a boolean representing the logical NOT value of the supplied Filter. If
-         * the specified Filters accept() method returns <tt>true</tt>, this method
+         * Returns a boolean representing the logical NOT value of the supplied Predicate. If
+         * the specified Predicates accept() method returns <tt>true</tt>, this method
          * returns <tt>false</tt>; if it is <tt>false</tt>, this method returns
          * <tt>true</tt>.
          * 
          * @param element
          *            the element to test
-         * @return the logical NOT of the supplied Filter
+         * @return the logical NOT of the supplied Predicate
          */
-        public boolean accept(E element) {
-            return !filter.accept(element);
+        public boolean evaluate(E element) {
+            return !predicate.evaluate(element);
         }
 
         /**
-         * Returns the filter that is being negated.
+         * Returns the predicate that is being negated.
          * 
-         * @return the filter that is being negated.
+         * @return the predicate that is being negated.
          */
-        public Filter<E> getFilter() {
-            return filter;
+        public Predicate<E> getPredicate() {
+            return predicate;
         }
 
         /**
-         * @see org.coconut.filter.spi.CompositeFilter#getFilters()
+         * @see org.coconut.predicate.spi.CompositePredicate#getPredicates()
          */
-        public List<Filter<E>> getFilters() {
-            return Arrays.asList(filter);
+        public List<Predicate<E>> getPredicates() {
+            return Arrays.asList(predicate);
         }
 
         /** {@inheritDoc} */
         @Override
         public String toString() {
-            return "!(" + filter + ")";
+            return "!(" + predicate + ")";
         }
     }
 
     /**
-     * A Filter that performs a logical inclusive OR on two supplied filters.
+     * A Predicate that performs a logical inclusive OR on two supplied predicates.
      */
-    final static class OrFilter<E> implements Filter<E>, CompositeFilter<E>, Serializable {
+    final static class OrPredicate<E> implements Predicate<E>, CompositePredicate<E>, Serializable {
 
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 7602293335100183390L;
 
         /** The left side operand. */
-        private final Filter<E> left;
+        private final Predicate<E> left;
 
         /** The right side operand. */
-        private final Filter<E> right;
+        private final Predicate<E> right;
 
         /**
-         * Constructs a new <code>AndFilter</code>.
+         * Constructs a new <code>AndPredicate</code>.
          * 
          * @param left
          *            the left side operand
          * @param right
          *            the right side operand
          */
-        public OrFilter(final Filter<E> left, final Filter<E> right) {
+        public OrPredicate(final Predicate<E> left, final Predicate<E> right) {
             if (left == null) {
                 throw new NullPointerException("left is null");
             }
@@ -754,15 +754,15 @@ public final class Filters {
         }
 
         /** {@inheritDoc} */
-        public boolean accept(final E element) {
-            return left.accept(element) || right.accept(element);
+        public boolean evaluate(final E element) {
+            return left.evaluate(element) || right.evaluate(element);
         }
 
         /**
-         * @see org.coconut.filter.spi.CompositeFilter#getFilters()
+         * @see org.coconut.predicate.spi.CompositePredicate#getPredicates()
          */
         @SuppressWarnings("unchecked")
-        public List<Filter<E>> getFilters() {
+        public List<Predicate<E>> getPredicates() {
             return Arrays.asList(left, right);
         }
 
@@ -771,7 +771,7 @@ public final class Filters {
          * 
          * @return the left side operand.
          */
-        public Filter<E> getLeftFilter() {
+        public Predicate<E> getLeftPredicate() {
             return left;
         }
 
@@ -780,7 +780,7 @@ public final class Filters {
          * 
          * @return the right side operand.
          */
-        public Filter<E> getRightFilter() {
+        public Predicate<E> getRightPredicate() {
             return right;
         }
 
@@ -792,13 +792,13 @@ public final class Filters {
     }
 
     /**
-     * A filter that accepts all elements that have the same object identity as the one
+     * A predicate that accepts all elements that have the same object identity as the one
      * specified.
      * 
      * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
-     * @version $Id: Filters.java 36 2006-08-22 09:59:45Z kasper $
+     * @version $Id: Predicates.java 36 2006-08-22 09:59:45Z kasper $
      */
-    final static class SameFilter<E> implements Filter<E>, Serializable {
+    final static class SamePredicate<E> implements Predicate<E>, Serializable {
 
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 3761971557773620791L;
@@ -807,13 +807,13 @@ public final class Filters {
         private final E object;
 
         /**
-         * Creates a new Filter that accepts all elements that have the same object
+         * Creates a new Predicate that accepts all elements that have the same object
          * identity as the element supplied.
          * 
          * @param object
          *            the objetc to compare with.
          */
-        public SameFilter(final E object) {
+        public SamePredicate(final E object) {
             if (object == null) {
                 throw new NullPointerException("element is null");
             }
@@ -821,7 +821,7 @@ public final class Filters {
         }
 
         /** {@inheritDoc} */
-        public boolean accept(E element) {
+        public boolean evaluate(E element) {
             return object == element;
         }
 
@@ -842,21 +842,21 @@ public final class Filters {
     }
 
     /**
-     * A Filter that always returns <tt>true</tt>. Use {@link #INSTANCE} or
-     * {@link org.coconut.filter.Filters#TRUE} to get an instance of this Filter.
+     * A Predicate that always returns <tt>true</tt>. Use {@link #INSTANCE} or
+     * {@link org.coconut.predicate.Predicates#TRUE} to get an instance of this Predicate.
      * 
-     * @see FalseFilter
+     * @see FalsePredicate
      */
-    final static class TrueFilter implements Filter, Serializable {
+    final static class TruePredicate implements Predicate, Serializable {
 
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 3258129137502925875L;
 
-        /** The TrueFilter instance. */
-        static final TrueFilter INSTANCE = new TrueFilter();
+        /** The TruePredicate instance. */
+        static final TruePredicate INSTANCE = new TruePredicate();
 
-        /** Construct a new TrueFilter. */
-        private TrueFilter() {}
+        /** Construct a new TruePredicate. */
+        private TruePredicate() {}
 
         /**
          * Returns <tt>true</tt> for any element passed to this method.
@@ -865,7 +865,7 @@ public final class Filters {
          *            the element to test
          * @return <tt>true</tt> for any element passed to this method
          */
-        public boolean accept(Object element) {
+        public boolean evaluate(Object element) {
             return true;
         }
 
@@ -877,29 +877,29 @@ public final class Filters {
     }
 
     /**
-     * A Filter that performs a logical exclusive OR (XOR) on two supplied filters.
+     * A Predicate that performs a logical exclusive OR (XOR) on two supplied predicates.
      */
-    final static class XorFilter<E> implements CompositeFilter<E>, Filter<E>,
+    final static class XorPredicate<E> implements CompositePredicate<E>, Predicate<E>,
             Serializable {
 
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 1155267141991954303L;
 
         /** The left side operand. */
-        private final Filter<E> left;
+        private final Predicate<E> left;
 
         /** The right side operand. */
-        private final Filter<E> right;
+        private final Predicate<E> right;
 
         /**
-         * Constructs a new <code>AndFilter</code>.
+         * Constructs a new <code>AndPredicate</code>.
          * 
          * @param left
          *            the left side operand
          * @param right
          *            the right side operand
          */
-        public XorFilter(final Filter<E> left, final Filter<E> right) {
+        public XorPredicate(final Predicate<E> left, final Predicate<E> right) {
             if (left == null) {
                 throw new NullPointerException("left is null");
             } else if (right == null) {
@@ -910,12 +910,12 @@ public final class Filters {
         }
 
         /** {@inheritDoc} */
-        public boolean accept(E element) {
-            return left.accept(element) ^ right.accept(element);
+        public boolean evaluate(E element) {
+            return left.evaluate(element) ^ right.evaluate(element);
         }
 
         /** {@inheritDoc} */
-        public List<Filter<E>> getFilters() {
+        public List<Predicate<E>> getPredicates() {
             return Arrays.asList(left, right);
         }
 
@@ -924,7 +924,7 @@ public final class Filters {
          * 
          * @return the left side operand.
          */
-        public Filter<E> getLeftFilter() {
+        public Predicate<E> getLeftPredicate() {
             return left;
         }
 
@@ -933,7 +933,7 @@ public final class Filters {
          * 
          * @return the right side operand.
          */
-        public Filter<E> getRightFilter() {
+        public Predicate<E> getRightPredicate() {
             return right;
         }
 
@@ -945,159 +945,159 @@ public final class Filters {
     }
 
     /**
-     * Returns a Filter that only accepts an element if <tt>all</tt> the filters accept
-     * the element. The Filter will use a copy of the array of supplied filters.
+     * Returns a Predicate that only accepts an element if <tt>all</tt> the predicates accept
+     * the element. The Predicate will use a copy of the array of supplied predicates.
      * 
-     * @param filters
-     *            the filters to test
-     * @return a Filter that tests all elements
+     * @param predicates
+     *            the predicates to test
+     * @return a Predicate that tests all elements
      */
-    public static <E> Filters.AllFilter<E> all(Filter<E>... filters) {
-        return new Filters.AllFilter<E>(filters);
+    public static <E> Predicates.AllPredicate<E> all(Predicate<E>... predicates) {
+        return new Predicates.AllPredicate<E>(predicates);
     }
 
-    public static <E> Filters.AndFilter<E> and(Filter<E> left, Filter<E> right) {
-        return new Filters.AndFilter<E>(left, right);
+    public static <E> Predicates.AndPredicate<E> and(Predicate<E> left, Predicate<E> right) {
+        return new Predicates.AndPredicate<E>(left, right);
     }
 
-    public static <E> Filters.AndFilter<E> and(Filter<E> left, Filter<E> right,
+    public static <E> Predicates.AndPredicate<E> and(Predicate<E> left, Predicate<E> right,
             boolean isStrict) {
-        return new Filters.AndFilter<E>(left, right, isStrict);
+        return new Predicates.AndPredicate<E>(left, right, isStrict);
     }
 
-    public static <E> Filters.AnyFilter<E> any(Filter<E>... filters) {
-        return new Filters.AnyFilter<E>(filters);
+    public static <E> Predicates.AnyPredicate<E> any(Predicate<E>... predicates) {
+        return new Predicates.AnyPredicate<E>(predicates);
     }
 
     @SuppressWarnings( { "unchecked" })
-    public static <E> AnyFilter<E> anyEquals(E... elements) {
-        Filters.EqualsFilter[] filter = new Filters.EqualsFilter[elements.length];
-        for (int i = 0; i < filter.length; i++) {
-            filter[i] = Filters.equal(elements[i]);
+    public static <E> AnyPredicate<E> anyEquals(E... elements) {
+        Predicates.EqualsPredicate[] predicate = new Predicates.EqualsPredicate[elements.length];
+        for (int i = 0; i < predicate.length; i++) {
+            predicate[i] = Predicates.equal(elements[i]);
         }
-        return any(filter);
+        return any(predicate);
     }
 
     @SuppressWarnings("unchecked")
-    public static Filters.AnyFilter<IsTypeFilter> anyType(Class... clazz) {
-        IsTypeFilter[] cbf = new IsTypeFilter[clazz.length];
+    public static Predicates.AnyPredicate<IsTypePredicate> anyType(Class... clazz) {
+        IsTypePredicate[] cbf = new IsTypePredicate[clazz.length];
         for (int i = 0; i < cbf.length; i++) {
             cbf[i] = isType(clazz[i]);
         }
-        return Filters.any(cbf);
+        return Predicates.any(cbf);
     }
 
-    public static <E> Filter<E> between(E first, E second) {
-        return and(Filters.greatherThen(first), Filters.lessThen(second));
+    public static <E> Predicate<E> between(E first, E second) {
+        return and(Predicates.greatherThen(first), Predicates.lessThen(second));
     }
 
     /**
-     * Returns a Filter that accepts all elements that are {@link Object#equals equal} to
+     * Returns a Predicate that accepts all elements that are {@link Object#equals equal} to
      * the specified object.
      * 
      * @param object
      *            the object we test against.
-     * @return a new EqualFilter
+     * @return a new EqualPredicate
      * @throws NullPointerException
      *             if the specified object is <code>null</code>
      */
-    public static <E> Filters.EqualsFilter<E> equal(E object) {
-        return new Filters.EqualsFilter<E>(object);
+    public static <E> Predicates.EqualsPredicate<E> equal(E object) {
+        return new Predicates.EqualsPredicate<E>(object);
     }
 
     @SuppressWarnings("unchecked")
-    public static <E> Filter<E> falseFilter() {
+    public static <E> Predicate<E> falsePredicate() {
         return FALSE;
     }
 
-    public static <E> Filters.GreaterThenFilter<E> greatherThen(E element) {
-        return new Filters.GreaterThenFilter<E>(element);
+    public static <E> Predicates.GreaterThenPredicate<E> greatherThen(E element) {
+        return new Predicates.GreaterThenPredicate<E>(element);
     }
 
-    public static <E> Filters.GreaterThenFilter<E> greatherThen(E object,
+    public static <E> Predicates.GreaterThenPredicate<E> greatherThen(E object,
             final Comparator<? extends E> comparator) {
-        return new Filters.GreaterThenFilter<E>(object, comparator);
+        return new Predicates.GreaterThenPredicate<E>(object, comparator);
     }
 
-    public static <E> Filters.GreaterThenOrEqualFilter<E> greatherThenOrEqual(E object) {
-        return new Filters.GreaterThenOrEqualFilter<E>(object);
+    public static <E> Predicates.GreaterThenOrEqualPredicate<E> greatherThenOrEqual(E object) {
+        return new Predicates.GreaterThenOrEqualPredicate<E>(object);
     }
 
-    public static <E> Filters.GreaterThenOrEqualFilter<E> greatherThenOrEqual(E object,
+    public static <E> Predicates.GreaterThenOrEqualPredicate<E> greatherThenOrEqual(E object,
             final Comparator<? extends E> comparator) {
-        return new Filters.GreaterThenOrEqualFilter<E>(object, comparator);
+        return new Predicates.GreaterThenOrEqualPredicate<E>(object, comparator);
     }
 
-    public static IsTypeFilter isType(Class clazz) {
-        return new IsTypeFilter(clazz);
+    public static IsTypePredicate isType(Class clazz) {
+        return new IsTypePredicate(clazz);
     }
 
-    public static <E> Filters.LessThenFilter<E> lessThen(E element) {
-        return new Filters.LessThenFilter<E>(element);
+    public static <E> Predicates.LessThenPredicate<E> lessThen(E element) {
+        return new Predicates.LessThenPredicate<E>(element);
     }
 
-    public static <E> Filters.LessThenFilter<E> lessThen(E object,
+    public static <E> Predicates.LessThenPredicate<E> lessThen(E object,
             final Comparator<? extends E> comparator) {
-        return new Filters.LessThenFilter<E>(object, comparator);
+        return new Predicates.LessThenPredicate<E>(object, comparator);
     }
 
-    public static <E> Filters.LessThenOrEqualFilter<E> lessThenOrEqual(E object) {
-        return new Filters.LessThenOrEqualFilter<E>(object);
+    public static <E> Predicates.LessThenOrEqualPredicate<E> lessThenOrEqual(E object) {
+        return new Predicates.LessThenOrEqualPredicate<E>(object);
     }
 
-    public static <E> Filters.LessThenOrEqualFilter<E> lessThenOrEqual(E object,
+    public static <E> Predicates.LessThenOrEqualPredicate<E> lessThenOrEqual(E object,
             final Comparator<? extends E> comparator) {
-        return new Filters.LessThenOrEqualFilter<E>(object, comparator);
+        return new Predicates.LessThenOrEqualPredicate<E>(object, comparator);
     }
 
-    public static <E> Filters.NotFilter<E> not(Filter<E> filter) {
-        return new Filters.NotFilter<E>(filter);
+    public static <E> Predicates.NotPredicate<E> not(Predicate<E> predicate) {
+        return new Predicates.NotPredicate<E>(predicate);
     }
 
-    public static <E> Filters.OrFilter<E> or(Filter<E> left, Filter<E> right) {
-        return new Filters.OrFilter<E>(left, right);
+    public static <E> Predicates.OrPredicate<E> or(Predicate<E> left, Predicate<E> right) {
+        return new Predicates.OrPredicate<E>(left, right);
     }
 
-    public static <E> Filters.SameFilter<E> same(E element) {
-        return new Filters.SameFilter<E>(element);
+    public static <E> Predicates.SamePredicate<E> same(E element) {
+        return new Predicates.SamePredicate<E>(element);
     }
 
     /**
-     * Returns the true filter. This filter is serializable.
+     * Returns the true predicate. This predicate is serializable.
      * <p>
-     * This example illustrates the type-safe way to obtain a true filter:
+     * This example illustrates the type-safe way to obtain a true predicate:
      * 
      * <pre>
-     * Filter&lt;String&gt; s = Filters.trueFilter();
+     * Predicate&lt;String&gt; s = Predicates.truePredicate();
      * </pre>
      * 
      * Implementation note: Implementations of this method need not create a separate
-     * <tt>filter</tt> object for each call. Using this method is likely to have
+     * <tt>predicate</tt> object for each call. Using this method is likely to have
      * comparable cost to using the like-named field. (Unlike this method, the field does
      * not provide type safety.)
      * 
      * @see #TRUE
-     * @return a filter that returns <tt>true</tt> for any element passed to the
-     *         {@link Filter#accept(Object)} method.
+     * @return a predicate that returns <tt>true</tt> for any element passed to the
+     *         {@link Predicate#evaluate(Object)} method.
      * @param <E>
-     *            the type of elements accepted by the filter
+     *            the type of elements accepted by the predicate
      */
     @SuppressWarnings("unchecked")
-    public static <E> Filter<E> trueFilter() {
+    public static <E> Predicate<E> truePredicate() {
         return TRUE;
     }
 
     /**
-     * This method returns a Filter that performs xor on two other filters.
+     * This method returns a Predicate that performs xor on two other predicates.
      * 
      * @param left
      *            the left hand side of the expression
      * @param right
      *            the right hand side of the expression
-     * @return a Filter that performs xor on two other filters.
+     * @return a Predicate that performs xor on two other predicates.
      */
-    public static <E> Filters.XorFilter<E> xor(Filter<E> left, Filter<E> right) {
-        return new Filters.XorFilter<E>(left, right);
+    public static <E> Predicates.XorPredicate<E> xor(Predicate<E> left, Predicate<E> right) {
+        return new Predicates.XorPredicate<E>(left, right);
     }
 
 }

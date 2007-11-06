@@ -8,7 +8,7 @@ import java.util.Collection;
 import org.coconut.core.EventProcessor;
 import org.coconut.event.EventBus;
 import org.coconut.event.EventSubscription;
-import org.coconut.filter.Filter;
+import org.coconut.filter.Predicate;
 
 /**
  * The CacheEventService can be used to subscribe to CacheEvent's raised by the cache.
@@ -77,7 +77,7 @@ public interface CacheEventService<K, V> extends EventBus<CacheEvent<K, V>> {
      */
     EventSubscription<CacheEvent<K, V>> subscribe(
             EventProcessor<? super CacheEvent<K, V>> eventHandler,
-            Filter<? super CacheEvent<K, V>> filter);
+            Predicate<? super CacheEvent<K, V>> filter);
 
     /**
      * Creates an subscription that will be notified for any event that is accepted by the
@@ -99,5 +99,5 @@ public interface CacheEventService<K, V> extends EventBus<CacheEvent<K, V>> {
      */
     EventSubscription<CacheEvent<K, V>> subscribe(
             EventProcessor<? super CacheEvent<K, V>> listener,
-            Filter<? super CacheEvent<K, V>> filter, String name);
+            Predicate<? super CacheEvent<K, V>> filter, String name);
 }
