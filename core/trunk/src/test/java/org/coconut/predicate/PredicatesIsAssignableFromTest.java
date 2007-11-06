@@ -2,13 +2,14 @@
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.filter;
+package org.coconut.predicate;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.coconut.filter.CollectionPredicates.IsTypePredicate;
+import org.coconut.predicate.Predicates;
+import org.coconut.predicate.CollectionPredicates.IsTypePredicate;
 import org.junit.Test;
 
 /**

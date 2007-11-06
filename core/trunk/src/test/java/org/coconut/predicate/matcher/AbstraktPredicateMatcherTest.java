@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.filter.matcher;
+package org.coconut.predicate.matcher;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.coconut.filter.Predicate;
-import org.coconut.filter.Predicates;
+import org.coconut.predicate.Predicate;
+import org.coconut.predicate.Predicates;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JUnit4Mockery;
@@ -112,14 +112,14 @@ public class AbstraktPredicateMatcherTest {
 		}
 
 		/**
-         * @see org.coconut.filter.matcher.PredicateMatcher#match(java.lang.Object)
+         * @see org.coconut.predicate.matcher.PredicateMatcher#match(java.lang.Object)
          */
 		public List<K> match(V object) {
 			throw new UnsupportedOperationException();
 		}
 
 		/**
-         * @see org.coconut.filter.matcher.AbstractPredicateMatcher#getMap()
+         * @see org.coconut.predicate.matcher.AbstractPredicateMatcher#getMap()
          */
 		@Override
 		protected Map<K, Predicate<? super V>> getMap() {

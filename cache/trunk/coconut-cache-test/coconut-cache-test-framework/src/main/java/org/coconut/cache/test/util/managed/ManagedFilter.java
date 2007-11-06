@@ -1,8 +1,8 @@
 package org.coconut.cache.test.util.managed;
 
-import org.coconut.filter.Predicate;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedObject;
+import org.coconut.predicate.Predicate;
 
 public class ManagedFilter implements ManagedObject, Predicate {
     ManagedGroup g;

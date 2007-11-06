@@ -2,13 +2,13 @@
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.filter;
+package org.coconut.predicate;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.io.Serializable;
 
-import org.coconut.filter.spi.PredicateAcceptTypesAnnotation;
+import org.coconut.predicate.spi.PredicateAcceptTypesAnnotation;
 
 /**
  * This file contains common file Filters used in Coconut.

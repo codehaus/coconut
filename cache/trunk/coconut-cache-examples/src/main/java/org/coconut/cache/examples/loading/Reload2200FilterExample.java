@@ -6,7 +6,7 @@ package org.coconut.cache.examples.loading;
 import java.util.Calendar;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.filter.Predicate;
+import org.coconut.predicate.Predicate;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

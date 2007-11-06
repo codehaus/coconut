@@ -2,7 +2,7 @@
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.filter.spi;
+package org.coconut.predicate.spi;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

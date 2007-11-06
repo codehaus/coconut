@@ -4,7 +4,7 @@
 package org.coconut.event;
 
 import org.coconut.event.spi.EventBusErrorHandler;
-import org.coconut.filter.matcher.PredicateMatcher;
+import org.coconut.predicate.matcher.PredicateMatcher;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

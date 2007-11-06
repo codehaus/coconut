@@ -10,9 +10,9 @@ import org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated;
 import org.coconut.cache.service.event.CacheEvent.CacheCleared;
 import org.coconut.core.Mapper;
 import org.coconut.core.Transformers;
-import org.coconut.filter.CollectionPredicates;
-import org.coconut.filter.Predicate;
-import org.coconut.filter.Predicates;
+import org.coconut.predicate.CollectionPredicates;
+import org.coconut.predicate.Predicate;
+import org.coconut.predicate.Predicates;
 
 /**
  * Factory and utility methods for for creating different types of filters for cache
@@ -36,28 +36,28 @@ public final class CacheEventFilters {
             .isType(CacheEntryEvent.class));
 
     /**
-     * A {@link org.coconut.filter.Predicate} that only accepts instances of ItemUpdated
+     * A {@link org.coconut.predicate.Predicate} that only accepts instances of ItemUpdated
      * events.
      */
     public final static Predicate<?> CACHEENTRY_ADDED_FILTER = Predicates
             .isType(ItemAdded.class);
 
     /**
-     * A {@link org.coconut.filter.Predicate} that only accepts instances of ItemUpdated
+     * A {@link org.coconut.predicate.Predicate} that only accepts instances of ItemUpdated
      * events.
      */
     public final static Predicate<?> CACHEENTRY_REMOVED_FILTER = Predicates
             .isType(ItemRemoved.class);
 
     /**
-     * A {@link org.coconut.filter.Predicate} that only accepts instances of ItemUpdated
+     * A {@link org.coconut.predicate.Predicate} that only accepts instances of ItemUpdated
      * events.
      */
     public final static Predicate<?> CACHEENTRY_UPDATED_FILTER = Predicates
             .isType(ItemUpdated.class);
 
     /**
-     * A {@link org.coconut.filter.Predicate} that will accept all instances of
+     * A {@link org.coconut.predicate.Predicate} that will accept all instances of
      * CacheItemEvent.
      */
     public final static Predicate<?> CACHEENTRYEVENT_FILTER = Predicates

@@ -9,7 +9,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.Map;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.filter.Predicate;
+import org.coconut.predicate.Predicate;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -22,7 +22,7 @@ public class CacheEntryFilter implements Predicate<CacheEntry<Integer, String>> 
     private volatile CacheEntry<Integer, String> lastEntry;
 
     /**
-     * @see org.coconut.filter.Predicate#evaluate(java.lang.Object)
+     * @see org.coconut.predicate.Predicate#evaluate(java.lang.Object)
      */
     public boolean evaluate(CacheEntry<Integer, String> element) {
         lastEntry = element;

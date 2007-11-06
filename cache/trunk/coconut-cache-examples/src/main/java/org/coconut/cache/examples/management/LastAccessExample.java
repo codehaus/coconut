@@ -8,8 +8,8 @@ import net.jcip.annotations.ThreadSafe;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.defaults.UnsynchronizedCache;
-import org.coconut.filter.Predicate;
 import org.coconut.management.annotation.ManagedAttribute;
+import org.coconut.predicate.Predicate;
 
 /**
  * TODO fix example, we have idle time now.

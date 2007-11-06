@@ -16,7 +16,7 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.cache.test.util.AsyncIntegerToStringLoader;
 import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.core.AttributeMap;
-import org.coconut.filter.Predicate;
+import org.coconut.predicate.Predicate;
 import org.junit.Test;
 
 /**

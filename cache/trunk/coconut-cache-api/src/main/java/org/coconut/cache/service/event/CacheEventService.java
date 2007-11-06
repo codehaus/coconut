@@ -8,7 +8,7 @@ import java.util.Collection;
 import org.coconut.core.EventProcessor;
 import org.coconut.event.EventBus;
 import org.coconut.event.EventSubscription;
-import org.coconut.filter.Predicate;
+import org.coconut.predicate.Predicate;
 
 /**
  * The CacheEventService can be used to subscribe to CacheEvent's raised by the cache.

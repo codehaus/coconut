@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.filter;
+package org.coconut.predicate;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -12,8 +12,10 @@ import static org.junit.Assert.fail;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.coconut.filter.Predicates.AllPredicate;
-import org.coconut.filter.Predicates.AnyPredicate;
+import org.coconut.predicate.Predicate;
+import org.coconut.predicate.Predicates;
+import org.coconut.predicate.Predicates.AllPredicate;
+import org.coconut.predicate.Predicates.AnyPredicate;
 import org.junit.Test;
 
 /**

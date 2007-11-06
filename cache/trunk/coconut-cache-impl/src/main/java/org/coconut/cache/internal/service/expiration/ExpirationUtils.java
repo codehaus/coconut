@@ -11,9 +11,9 @@ import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationMXBean;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.core.Clock;
-import org.coconut.filter.Predicate;
 import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.annotation.ManagedOperation;
+import org.coconut.predicate.Predicate;
 
 /**
  * Various utility classes for expiration service implementation.

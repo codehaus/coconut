@@ -9,8 +9,8 @@ import java.util.concurrent.Callable;
 
 import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
-import org.coconut.filter.CollectionPredicates;
-import org.coconut.filter.Predicate;
+import org.coconut.predicate.CollectionPredicates;
+import org.coconut.predicate.Predicate;
 
 
 /**
@@ -137,7 +137,7 @@ public class Events {
         }
 
         /**
-         * @see org.coconut.filter.Predicate#evaluate(java.lang.Object)
+         * @see org.coconut.predicate.Predicate#evaluate(java.lang.Object)
          */
         public boolean evaluate(EventSubscription<E> element) {
             return handler.equals(element.getEventProcessor());
@@ -155,7 +155,7 @@ public class Events {
         }
 
         /**
-         * @see org.coconut.filter.Predicate#evaluate(java.lang.Object)
+         * @see org.coconut.predicate.Predicate#evaluate(java.lang.Object)
          */
         public boolean evaluate(EventSubscription<E> element) {
             return element.getFilter().evaluate(event);

@@ -16,8 +16,8 @@ import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.AttributeMaps;
-import org.coconut.filter.Predicate;
 import org.coconut.management.ManagedGroup;
+import org.coconut.predicate.Predicate;
 
 public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLifecycle
         implements CacheLoadingService<K, V>, InternalCacheLoadingService<K, V> {

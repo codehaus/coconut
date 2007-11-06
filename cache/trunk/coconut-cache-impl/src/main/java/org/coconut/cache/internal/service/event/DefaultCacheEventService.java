@@ -29,7 +29,7 @@ import org.coconut.core.Offerable;
 import org.coconut.event.EventBus;
 import org.coconut.event.EventSubscription;
 import org.coconut.event.defaults.DefaultEventBus;
-import org.coconut.filter.Predicate;
+import org.coconut.predicate.Predicate;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

@@ -17,9 +17,9 @@ import org.coconut.event.EventBus;
 import org.coconut.event.EventBusConfiguration;
 import org.coconut.event.EventSubscription;
 import org.coconut.event.spi.AbstractEventBus;
-import org.coconut.filter.Predicate;
-import org.coconut.filter.matcher.DefaultPredicateMatcher;
-import org.coconut.filter.matcher.PredicateMatcher;
+import org.coconut.predicate.Predicate;
+import org.coconut.predicate.matcher.DefaultPredicateMatcher;
+import org.coconut.predicate.matcher.PredicateMatcher;
 
 /**
  * The order of subscribers are maintained.

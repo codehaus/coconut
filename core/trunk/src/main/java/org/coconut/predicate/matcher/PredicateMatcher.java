@@ -1,12 +1,12 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.filter.matcher;
+package org.coconut.predicate.matcher;
 
 import java.util.List;
 import java.util.Map;
 
-import org.coconut.filter.Predicate;
+import org.coconut.predicate.Predicate;
 
 /**
  * A FilterMatcher can be used to query a large number of filters to obtain all

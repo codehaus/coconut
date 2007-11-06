@@ -1,12 +1,12 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.filter;
+package org.coconut.predicate;
 
-import static org.coconut.filter.Predicates.greatherThen;
-import static org.coconut.filter.Predicates.greatherThenOrEqual;
-import static org.coconut.filter.Predicates.lessThen;
-import static org.coconut.filter.Predicates.lessThenOrEqual;
+import static org.coconut.predicate.Predicates.greatherThen;
+import static org.coconut.predicate.Predicates.greatherThenOrEqual;
+import static org.coconut.predicate.Predicates.lessThen;
+import static org.coconut.predicate.Predicates.lessThenOrEqual;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -19,10 +19,11 @@ import java.util.HashMap;
 
 import junit.framework.AssertionFailedError;
 
-import org.coconut.filter.Predicates.GreaterThenPredicate;
-import org.coconut.filter.Predicates.GreaterThenOrEqualPredicate;
-import org.coconut.filter.Predicates.LessThenPredicate;
-import org.coconut.filter.Predicates.LessThenOrEqualPredicate;
+import org.coconut.predicate.Predicates;
+import org.coconut.predicate.Predicates.GreaterThenOrEqualPredicate;
+import org.coconut.predicate.Predicates.GreaterThenPredicate;
+import org.coconut.predicate.Predicates.LessThenOrEqualPredicate;
+import org.coconut.predicate.Predicates.LessThenPredicate;
 import org.junit.Test;
 
 /**

@@ -17,7 +17,7 @@ package org.coconut.core;
  * </pre>
  * 
  * <p>
- * Transformers are often applied together with {@link org.coconut.filter.Predicate filters}
+ * Transformers are often applied together with {@link org.coconut.predicate.Predicate filters}
  * to extract information on objects.
  * <p>
  * The {@link Transformers} class supports easy construction of dynamic transformers

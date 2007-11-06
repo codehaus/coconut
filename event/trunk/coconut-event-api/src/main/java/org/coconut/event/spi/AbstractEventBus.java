@@ -10,8 +10,8 @@ import org.coconut.core.EventProcessor;
 import org.coconut.event.EventBus;
 import org.coconut.event.EventBusConfiguration;
 import org.coconut.event.EventSubscription;
-import org.coconut.filter.Predicate;
-import org.coconut.filter.Predicates;
+import org.coconut.predicate.Predicate;
+import org.coconut.predicate.Predicates;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

@@ -5,8 +5,8 @@
 package org.coconut.cache.service.event;
 
 import org.coconut.cache.Cache;
-import org.coconut.filter.Predicate;
-import org.coconut.filter.Predicates;
+import org.coconut.predicate.Predicate;
+import org.coconut.predicate.Predicates;
 import org.coconut.test.MockTestCase;
 import org.jmock.Mock;
 

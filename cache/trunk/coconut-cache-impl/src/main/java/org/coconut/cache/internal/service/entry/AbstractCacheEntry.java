@@ -9,7 +9,7 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
-import org.coconut.filter.Predicate;
+import org.coconut.predicate.Predicate;
 
 /**
  * A basis implementation of the {@link CacheEntry} interface.

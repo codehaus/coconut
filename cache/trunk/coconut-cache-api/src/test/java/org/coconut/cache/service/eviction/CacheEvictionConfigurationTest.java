@@ -10,8 +10,8 @@ import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
 
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.spi.ReplacementPolicy;
-import org.coconut.filter.Predicate;
-import org.coconut.filter.Predicates;
+import org.coconut.predicate.Predicate;
+import org.coconut.predicate.Predicates;
 import org.coconut.test.MockTestCase;
 import org.junit.Before;
 import org.junit.Test;

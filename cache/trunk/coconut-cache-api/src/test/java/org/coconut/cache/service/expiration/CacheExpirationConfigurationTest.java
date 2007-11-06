@@ -11,8 +11,8 @@ import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.filter.Predicate;
-import org.coconut.filter.Predicates;
+import org.coconut.predicate.Predicate;
+import org.coconut.predicate.Predicates;
 import org.junit.Before;
 import org.junit.Test;
 

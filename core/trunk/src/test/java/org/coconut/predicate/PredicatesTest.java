@@ -2,7 +2,7 @@
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.filter;
+package org.coconut.predicate;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -12,7 +12,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.coconut.filter.Predicates.AnyPredicate;
+import org.coconut.predicate.CollectionPredicates;
+import org.coconut.predicate.Predicates;
+import org.coconut.predicate.Predicates.AnyPredicate;
 import org.junit.Test;
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>

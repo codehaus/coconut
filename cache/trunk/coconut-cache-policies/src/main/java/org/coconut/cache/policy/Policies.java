@@ -14,7 +14,7 @@ import org.coconut.cache.policy.paging.LRUPolicy;
 import org.coconut.cache.policy.paging.MRUPolicy;
 import org.coconut.cache.policy.paging.RandomPolicy;
 import org.coconut.cache.spi.ReplacementPolicy;
-import org.coconut.filter.Predicate;
+import org.coconut.predicate.Predicate;
 
 /**
  * Factory methods for different {@link org.coconut.cache.spi.ReplacementPolicy}

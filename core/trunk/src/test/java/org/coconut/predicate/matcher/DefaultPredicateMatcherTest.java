@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.filter.matcher;
+package org.coconut.predicate.matcher;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -9,7 +9,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
-import org.coconut.filter.StringPredicates;
+import org.coconut.predicate.StringPredicates;
 import org.junit.Test;
 
 /**

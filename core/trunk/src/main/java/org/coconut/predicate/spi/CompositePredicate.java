@@ -2,11 +2,11 @@
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.filter.spi;
+package org.coconut.predicate.spi;
 
 import java.util.List;
 
-import org.coconut.filter.Predicate;
+import org.coconut.predicate.Predicate;
 
 /**
  * This interface should be implemented by filters that wrap other filters.

@@ -4,7 +4,7 @@
 package org.coconut.event;
 
 import org.coconut.core.EventProcessor;
-import org.coconut.filter.Predicate;
+import org.coconut.predicate.Predicate;
 
 /**
  * This interface represent a subscription of a particular sets of events by its filter

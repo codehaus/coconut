@@ -7,7 +7,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.defaults.UnsynchronizedCache;
-import org.coconut.filter.Predicate;
+import org.coconut.predicate.Predicate;
 
 public class CustomExpirationExample {
     // START SNIPPET: class

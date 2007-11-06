@@ -12,7 +12,7 @@ import javax.management.RuntimeMBeanException;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.loading.CacheLoadingMXBean;
 import org.coconut.cache.test.util.IntegerToStringLoader;
-import org.coconut.filter.Predicate;
+import org.coconut.predicate.Predicate;
 import org.junit.Before;
 import org.junit.Test;
 

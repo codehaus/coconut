@@ -2,7 +2,7 @@
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.filter;
+package org.coconut.predicate;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -11,11 +11,13 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 
-import org.coconut.filter.FilePredicates.FileCanReadFilter;
-import org.coconut.filter.FilePredicates.FileCanWriteFilter;
-import org.coconut.filter.FilePredicates.FileExistsFilter;
-import org.coconut.filter.FilePredicates.FileIsDirectoryFilter;
-import org.coconut.filter.FilePredicates.FileIsHiddenFilter;
+import org.coconut.predicate.FilePredicates;
+import org.coconut.predicate.Predicate;
+import org.coconut.predicate.FilePredicates.FileCanReadFilter;
+import org.coconut.predicate.FilePredicates.FileCanWriteFilter;
+import org.coconut.predicate.FilePredicates.FileExistsFilter;
+import org.coconut.predicate.FilePredicates.FileIsDirectoryFilter;
+import org.coconut.predicate.FilePredicates.FileIsHiddenFilter;
 import org.junit.Test;
 
 /**

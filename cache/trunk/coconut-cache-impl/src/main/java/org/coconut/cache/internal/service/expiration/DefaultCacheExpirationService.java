@@ -21,9 +21,9 @@ import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
-import org.coconut.filter.Predicate;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedObject;
+import org.coconut.predicate.Predicate;
 
 /**
  * The default implementation of {@link CacheExpirationService}. This implementation can
