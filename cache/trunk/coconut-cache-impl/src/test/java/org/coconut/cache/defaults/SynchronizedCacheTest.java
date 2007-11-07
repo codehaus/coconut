@@ -5,11 +5,14 @@
 package org.coconut.cache.defaults;
 
 import org.coconut.cache.Cache;
+import org.coconut.cache.tck.CacheTCKImplementationSpecifier;
+import org.coconut.cache.tck.CacheTCKRunner;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
-// @RunWith(TCKRunner.class)
-//@TCKClassTester(SynchronizedCache.class)
+@RunWith(CacheTCKRunner.class)
+@CacheTCKImplementationSpecifier(SynchronizedCache.class)
 public class SynchronizedCacheTest {
     Cache sc;
 

@@ -68,12 +68,12 @@ import org.coconut.core.Logger;
 public final class CacheConfiguration<K, V> {
 
     /** A list of all default service configuration types. */
-    private final static List<Class<? extends AbstractCacheServiceConfiguration>> DEFAULT_SERVICES = Arrays
+    private final static List<Class<? extends AbstractCacheServiceConfiguration>> DEFAULTS = Arrays
             .asList(CacheEventConfiguration.class, CacheManagementConfiguration.class,
                     CacheStatisticsConfiguration.class, CacheLoadingConfiguration.class,
-                    CacheExpirationConfiguration.class,
-                    CacheExceptionHandlingConfiguration.class,
-                    CacheWorkerConfiguration.class, CacheEvictionConfiguration.class);
+                    CacheExpirationConfiguration.class, CacheExceptionHandlingConfiguration.class,
+                    CacheWorkerConfiguration.class, CacheServiceManagerConfiguration.class,
+                    CacheEvictionConfiguration.class);
 
     /** A Map of additional properties. */
     private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
@@ -95,8 +95,14 @@ public final class CacheConfiguration<K, V> {
      * should be created using the {@link #create()} or {@link #create(String)} method.
      */
     public CacheConfiguration() {
-        for (Class c : DEFAULT_SERVICES) {
-            getConfiguration(c);
+        for (Class<? extends AbstractCacheServiceConfiguration> c : DEFAULTS) {
+            try {
+                AbstractCacheServiceConfiguration a = c.newInstance();
+                addConfiguration(a);
+                CacheSPI.initializeConfiguration(a, this);
+            } catch (Exception e) {
+                throw new CacheException(CacheSPI.HIGHLY_IRREGULAR, e);
+            }
         }
     }
 
@@ -117,7 +123,12 @@ public final class CacheConfiguration<K, V> {
         if (conf == null) {
             throw new NullPointerException("conf is null");
         }
-        // TODO check if instance of same type exists.
+        for (AbstractCacheServiceConfiguration c : list) {
+            if (c.getClass().equals(conf.getClass())) {
+                throw new IllegalArgumentException("A configuration object of type "
+                        + conf.getClass() + " has already been registered");
+            }
+        }
         list.add(conf);
         return conf;
     }
@@ -129,7 +140,7 @@ public final class CacheConfiguration<K, V> {
      * @return a CacheEventConfiguration
      */
     public CacheEventConfiguration event() {
-        return lazyCreate(CacheEventConfiguration.class);
+        return getConfiguration(CacheEventConfiguration.class);
     }
 
     /**
@@ -139,7 +150,7 @@ public final class CacheConfiguration<K, V> {
      * @return a CacheEvictionConfiguration
      */
     public CacheEvictionConfiguration<K, V> eviction() {
-        return lazyCreate(CacheEvictionConfiguration.class);
+        return getConfiguration(CacheEvictionConfiguration.class);
     }
 
     /**
@@ -149,7 +160,7 @@ public final class CacheConfiguration<K, V> {
      * @return a CacheLoadingConfiguration
      */
     public CacheExceptionHandlingConfiguration<K, V> exceptionHandling() {
-        return lazyCreate(CacheExceptionHandlingConfiguration.class);
+        return getConfiguration(CacheExceptionHandlingConfiguration.class);
     }
 
     /**
@@ -159,7 +170,7 @@ public final class CacheConfiguration<K, V> {
      * @return a CacheExpirationConfiguration
      */
     public CacheExpirationConfiguration<K, V> expiration() {
-        return lazyCreate(CacheExpirationConfiguration.class);
+        return getConfiguration(CacheExpirationConfiguration.class);
     }
 
     /**
@@ -211,8 +222,7 @@ public final class CacheConfiguration<K, V> {
      * @see #setProperty(String, Object)
      */
     public Map<String, ?> getProperties() {
-        return Collections.unmodifiableMap(new HashMap<String, Object>(
-                additionalProperties));
+        return Collections.unmodifiableMap(new HashMap<String, Object>(additionalProperties));
     }
 
     /**
@@ -259,7 +269,7 @@ public final class CacheConfiguration<K, V> {
      * @return a CacheLoadingConfiguration
      */
     public CacheLoadingConfiguration<K, V> loading() {
-        return lazyCreate(CacheLoadingConfiguration.class);
+        return getConfiguration(CacheLoadingConfiguration.class);
     }
 
     /**
@@ -269,16 +279,7 @@ public final class CacheConfiguration<K, V> {
      * @return a CacheManagementConfiguration
      */
     public CacheManagementConfiguration management() {
-        return lazyCreate(CacheManagementConfiguration.class);
-    }
-
-    /**
-     * Returns a service manager configuration object .
-     * 
-     * @return a CacheManagementConfiguration
-     */
-    public CacheServiceManagerConfiguration serviceManager() {
-        return lazyCreate(CacheServiceManagerConfiguration.class);
+        return getConfiguration(CacheManagementConfiguration.class);
     }
 
     /**
@@ -322,10 +323,18 @@ public final class CacheConfiguration<K, V> {
         } catch (IllegalAccessException e) {
             throw new IllegalArgumentException("Could not create instance of " + type, e);
         } catch (InvocationTargetException e) {
-            throw new IllegalArgumentException("Constructor threw exception", e
-                    .getCause());
+            throw new IllegalArgumentException("Constructor threw exception", e.getCause());
         }
         return cache;
+    }
+
+    /**
+     * Returns a service manager configuration object .
+     * 
+     * @return a CacheManagementConfiguration
+     */
+    public CacheServiceManagerConfiguration serviceManager() {
+        return getConfiguration(CacheServiceManagerConfiguration.class);
     }
 
     /**
@@ -424,16 +433,6 @@ public final class CacheConfiguration<K, V> {
         return this;
     }
 
-    /**
-     * Returns a configuration object that can be used to control how asynchronous tasks
-     * are run within a cache.
-     * 
-     * @return a CacheThreadingConfiguration
-     */
-    public CacheWorkerConfiguration worker() {
-        return lazyCreate(CacheWorkerConfiguration.class);
-    }
-
     /** {@inheritDoc} */
     @Override
     public String toString() {
@@ -441,53 +440,30 @@ public final class CacheConfiguration<K, V> {
         try {
             new XmlConfigurator().write(this, sos);
         } catch (Exception e) {
-            throw new CacheException(
-                    "This is a highly irregular exception, please report", e);
+            throw new CacheException(CacheSPI.HIGHLY_IRREGULAR, e);
         }
         return new String(sos.toByteArray());
 
     }
 
-    private <T extends AbstractCacheServiceConfiguration> T getConfiguration(
-            Class<T> serviceConfigurationType) {
-        T t = getConfigurationOfType(serviceConfigurationType);
-        if (t == null) {
-            t = lazyCreate(serviceConfigurationType);
-            if (t == null) {
-                throw new IllegalArgumentException(
-                        "Unknown service configuration, type ="
-                                + serviceConfigurationType);
-            }
-        }
-        return t;
+    /**
+     * Returns a configuration object that can be used to control how asynchronous tasks
+     * are run within a cache.
+     * 
+     * @return a CacheThreadingConfiguration
+     */
+    public CacheWorkerConfiguration worker() {
+        return getConfiguration(CacheWorkerConfiguration.class);
     }
 
-    private <T extends AbstractCacheServiceConfiguration> T getConfigurationOfType(
-            Class<T> serviceConfigurationType) {
+    private <T extends AbstractCacheServiceConfiguration> T getConfiguration(Class<T> c) {
         for (AbstractCacheServiceConfiguration o : list) {
-            if (o.getClass().equals(serviceConfigurationType)) {
+            if (o.getClass().equals(c)) {
                 return (T) o;
             }
         }
-        return null;
-    }
-
-    private <T extends AbstractCacheServiceConfiguration> T lazyCreate(Class<T> c) {
-        T conf = getConfigurationOfType(c);
-        if (conf == null) {
-            AbstractCacheServiceConfiguration acsc;
-            try {
-                acsc = c.newInstance();
-            } catch (InstantiationException e) {
-                throw new IllegalArgumentException(e);
-            } catch (IllegalAccessException e) {
-                throw new IllegalArgumentException(e);
-            }
-            addConfiguration(acsc);
-            conf = getConfiguration(c);
-        }
-        CacheSPI.initializeConfiguration(conf, this);
-        return conf;
+        throw new CacheException(CacheSPI.HIGHLY_IRREGULAR
+                + " Unknown service configuration, type =" + c);
     }
 
     /**

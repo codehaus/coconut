@@ -16,6 +16,7 @@ public class CacheEventBus<E> extends DefaultEventBus<E> {
     void setShutdown() {
         s.acquireUninterruptibly(Integer.MAX_VALUE);
         isShutdown = true;
+        unsubscribeAll();
         s.release(Integer.MAX_VALUE);
     }
 

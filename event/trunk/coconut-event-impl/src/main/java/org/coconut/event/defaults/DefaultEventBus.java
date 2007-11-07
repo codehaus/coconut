@@ -119,6 +119,7 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
                     .size());
             for (DefaultEventSubscription<E> s : subscribers.values()) {
                 unsubscribed(s);
+                s.setActive(false);
             }
             subscribers.clear();
             indexer.clear();

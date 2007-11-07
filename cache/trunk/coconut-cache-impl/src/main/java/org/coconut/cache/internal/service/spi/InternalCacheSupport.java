@@ -26,4 +26,6 @@ public interface InternalCacheSupport<K, V> extends LoadSupport<K, V>,
     void checkRunning(String operation);
 
     void checkRunning(String operation, boolean shutdown);
+    
+    String getName();
 }

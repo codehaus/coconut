@@ -96,12 +96,17 @@ public abstract class CacheExceptionHandler<K, V> {
      *         <code>null</code> returned no entry will be added to the cache for the
      *         given key
      */
-    public V loadFailed(CacheExceptionContext<K, V> context,
-            CacheLoader<? super K, ?> loader, K key, AttributeMap map, Exception cause) {
+    public V loadFailed(CacheExceptionContext<K, V> context, CacheLoader<? super K, ?> loader,
+            K key, AttributeMap map, Exception cause) {
         handleThrowable(context, cause);
         return null;
     }
 
+    /**
+     * Should be called from the constructor of the cache.
+     * 
+     * @param configuration
+     */
     public void initialize(CacheConfiguration<K, V> configuration) {
 
     }
@@ -143,9 +148,8 @@ public abstract class CacheExceptionHandler<K, V> {
      *            the failure that occured
      * @return true if the subscription should be cancelled, otherwise false
      */
-    public boolean eventDeliveryFailed(CacheExceptionContext<K, V> context,
-            CacheEvent<K, V> event, EventSubscription<CacheEvent<K, V>> destination,
-            RuntimeException cause) {
+    public boolean eventDeliveryFailed(CacheExceptionContext<K, V> context, CacheEvent<K, V> event,
+            EventSubscription<CacheEvent<K, V>> destination, RuntimeException cause) {
         handleRuntimeException(context, cause);
         return false;
     }
@@ -172,8 +176,7 @@ public abstract class CacheExceptionHandler<K, V> {
      * @param cause
      *            the exception to handle
      */
-    protected abstract void handleException(CacheExceptionContext<K, V> context,
-            Exception cause);
+    protected abstract void handleException(CacheExceptionContext<K, V> context, Exception cause);
 
     /**
      * Handles a runtime exception.

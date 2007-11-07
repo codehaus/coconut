@@ -26,9 +26,7 @@ import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
-import org.coconut.event.EventBus;
 import org.coconut.event.EventSubscription;
-import org.coconut.event.defaults.DefaultEventBus;
 import org.coconut.predicate.Predicate;
 
 /**
@@ -189,26 +187,22 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
 
     /** {@inheritDoc} */
     public boolean offer(CacheEvent<K, V> element) {
-        manager.lazyStart(false);
         return eb.offer(element);
     }
 
     /** {@inheritDoc} */
     public boolean offerAll(Collection<? extends CacheEvent<K, V>> c) {
-        manager.lazyStart(false);
         return eb.offerAll(c);
     }
 
     /** {@inheritDoc} */
     public void process(CacheEvent<K, V> event) {
-        manager.lazyStart(false);
         eb.process(event);
     }
 
     /** {@inheritDoc} */
     public EventSubscription<CacheEvent<K, V>> subscribe(
             EventProcessor<? super CacheEvent<K, V>> eventHandler) {
-        manager.lazyStart(false);
         return eb.subscribe(eventHandler);
     }
 
@@ -216,7 +210,6 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
     public EventSubscription<CacheEvent<K, V>> subscribe(
             EventProcessor<? super CacheEvent<K, V>> eventHandler,
             Predicate<? super CacheEvent<K, V>> filter) {
-        manager.lazyStart(false);
         return eb.subscribe(eventHandler, filter);
     }
 
@@ -224,13 +217,11 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
     public EventSubscription<CacheEvent<K, V>> subscribe(
             EventProcessor<? super CacheEvent<K, V>> listener,
             Predicate<? super CacheEvent<K, V>> filter, String name) {
-        manager.lazyStart(false);
         return eb.subscribe(listener, filter, name);
     }
 
     /** {@inheritDoc} */
     public Collection<EventSubscription<CacheEvent<K, V>>> unsubscribeAll() {
-        manager.lazyStart(false);
         return eb.unsubscribeAll();
     }
 

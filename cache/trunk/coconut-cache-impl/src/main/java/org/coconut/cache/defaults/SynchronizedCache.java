@@ -3,22 +3,595 @@
  */
 package org.coconut.cache.defaults;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import net.jcip.annotations.ThreadSafe;
 
+import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
+import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
+import org.coconut.cache.internal.service.entry.EntryMap;
+import org.coconut.cache.internal.service.entry.InternalCacheEntryService;
+import org.coconut.cache.internal.service.event.DefaultCacheEventService;
+import org.coconut.cache.internal.service.eviction.InternalCacheEvictionService;
+import org.coconut.cache.internal.service.eviction.SynchronizedCacheEvictionService;
+import org.coconut.cache.internal.service.expiration.DefaultCacheExpirationService;
+import org.coconut.cache.internal.service.loading.InternalCacheLoadingService;
+import org.coconut.cache.internal.service.loading.ThreadSafeCacheLoaderService;
+import org.coconut.cache.internal.service.management.DefaultCacheManagementService;
+import org.coconut.cache.internal.service.servicemanager.CacheServiceManager;
+import org.coconut.cache.internal.service.servicemanager.SynchronizedCacheServiceManager;
+import org.coconut.cache.internal.service.servicemanager.UnsynchronizedCacheServiceManager;
+import org.coconut.cache.internal.service.spi.DefaultCacheListener;
+import org.coconut.cache.internal.service.spi.InternalCacheListener;
+import org.coconut.cache.internal.service.spi.InternalCacheSupport;
+import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsService;
+import org.coconut.cache.internal.service.worker.SynchronizedCacheWorkerService;
 import org.coconut.cache.service.event.CacheEventService;
+import org.coconut.cache.service.eviction.CacheEvictionService;
+import org.coconut.cache.service.expiration.CacheExpirationService;
+import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.management.CacheManagementService;
+import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
+import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
+import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.spi.CacheServiceSupport;
+import org.coconut.core.AttributeMap;
+import org.coconut.core.AttributeMaps;
+import org.coconut.internal.util.CollectionUtils;
 
 /**
+ * An unsynchronized cache implementation.
+ * <p>
+ * If multiple threads access this cache concurrently, and at least one of the threads
+ * modifies the cache structurally, it <i>must</i> be synchronized externally. (A
+ * structural modification is any operation that adds, deletes or changes one or more
+ * mappings.) This is typically accomplished by synchronizing on some object that
+ * naturally encapsulates the cache.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @version $Id: UnsynchronizedCache.java 404 2007-11-05 21:15:47Z kasper $
+ * @param <K>
+ *            the type of keys maintained by this cache
+ * @param <V>
+ *            the type of mapped values
  */
 @ThreadSafe
-@CacheServiceSupport( { CacheEventService.class, CacheManagementService.class })
-public class SynchronizedCache<K, V> extends UnsynchronizedCache<K, V>  {
-    //this class only override UnsynchronizedCache to make it compile when
-    //we change the Cache interface
-    
+@CacheServiceSupport( { CacheEventService.class, CacheEvictionService.class,
+        CacheExpirationService.class, CacheLoadingService.class, CacheManagementService.class,
+        CacheServiceManagerService.class, CacheStatisticsService.class })
+public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
+    private final static Collection<Class<? extends AbstractCacheLifecycle>>   DEFAULTS = Arrays.asList(DefaultCacheStatisticsService.class,
+            DefaultCacheListener.class, SynchronizedCacheEvictionService.class,
+            DefaultCacheExpirationService.class, ThreadSafeCacheLoaderService.class,
+            DefaultCacheManagementService.class, DefaultCacheEventService.class,
+            SynchronizedCacheWorkerService.class);
 
+    private final InternalCacheEntryService entryService;
 
+    private final InternalCacheEvictionService<K, V, AbstractCacheEntry<K, V>> evictionService;
+
+    private final DefaultCacheExpirationService<K, V> expirationService;
+
+    private final InternalCacheListener<K, V> listener;
+
+    private final InternalCacheLoadingService<K, V> loadingService;
+
+    private final EntryMap<K, V> map;
+
+    private final CacheServiceManager serviceManager;
+
+    /**
+     * Creates a new UnsynchronizedCache with a default configuration.
+     */
+    @SuppressWarnings("unchecked")
+    public SynchronizedCache() {
+        this((CacheConfiguration) CacheConfiguration.create());
+    }
+
+    /**
+     * Creates a new UnsynchronizedCache from the specified configuration.
+     * 
+     * @param conf
+     *            the configuration to create the cache from
+     * @throws NullPointerException
+     *             if the specified configuration is <code>null</code>
+     */
+    @SuppressWarnings("unchecked")
+    public SynchronizedCache(CacheConfiguration<K, V> conf) {
+        super(conf);
+        Support s = new Support();
+        serviceManager = new SynchronizedCacheServiceManager(this, s, conf, DEFAULTS);
+        listener = serviceManager.getInternalService(InternalCacheListener.class);
+        expirationService = serviceManager.getInternalService(DefaultCacheExpirationService.class);
+        loadingService = serviceManager.getInternalService(InternalCacheLoadingService.class);
+        evictionService = serviceManager.getInternalService(InternalCacheEvictionService.class);
+        entryService = serviceManager.getInternalService(AbstractCacheEntryFactoryService.class);
+        map = new EntryMap<K, V>(s, true);
+    }
+
+    /** {@inheritDoc} */
+    public void clear() {
+        long started = listener.beforeCacheClear(this);
+        Collection<? extends AbstractCacheEntry<K, V>> list = Collections.EMPTY_LIST;
+        int size = 0;
+        long volume = 0;
+
+        synchronized (this) {
+            checkRunning("clear");
+            size = map.size();
+            volume = map.volume();
+            if (size != 0) {
+                list = new ArrayList<AbstractCacheEntry<K, V>>(map.getAll());
+                evictionService.clear();
+                map.clear();
+            }
+        }
+
+        listener.afterCacheClear(this, started, list, volume);
+    }
+
+    /** {@inheritDoc} */
+    public Set<Entry<K, V>> entrySet() {
+        return map.entrySetPublic(this);
+    }
+
+    /** {@inheritDoc} */
+    public synchronized long getVolume() {
+        checkRunning("size", false);
+        return map.volume();
+    }
+
+    /** {@inheritDoc} */
+    public Set<K> keySet() {
+        return map.keySet(this);
+    }
+
+    /** {@inheritDoc} */
+    public void removeAll(Collection<? extends K> keys) {
+        if (keys == null) {
+            throw new NullPointerException("collection is null");
+        }
+        CollectionUtils.checkCollectionForNulls(keys);
+        long started = listener.beforeRemoveAll(this, keys);
+        ArrayList<CacheEntry<K, V>> list = new ArrayList<CacheEntry<K, V>>(keys.size());
+
+        synchronized (this) {
+            checkRunning("put");
+            for (K key : keys) {
+                AbstractCacheEntry<K, V> e = map.remove(key, null);
+                if (e != null) {
+                    evictionService.remove(e.getPolicyIndex());
+                    list.add(e);
+                }
+            }
+        }
+
+        listener.afterRemoveAll(this, started, keys, list);
+    }
+
+    /** {@inheritDoc} */
+    public synchronized int size() {
+        checkRunning("size", false);
+        return map.size();
+    }
+
+    /** {@inheritDoc} */
+    public Collection<V> values() {
+        return map.values(this);
+    }
+
+    /**
+     * @param entry
+     * @return the
+     */
+    private boolean addElement(AbstractCacheEntry<K, V> entry) {
+        if (entry.getPolicyIndex() == -1) { // entry is newly added
+            entry.setPolicyIndex(evictionService.add(entry));
+            if (entry.getPolicyIndex() == -1) {
+                return false; // entry was rejected
+            }
+        } else if (!evictionService.replace(entry.getPolicyIndex(), entry)) {
+            entry.setPolicyIndex(-1);
+            map.remove(entry.getKey());
+            return false;
+        }
+        map.put(entry);
+        return true;
+    }
+
+    private void checkRunning(String operation) {
+        checkRunning(operation, true);
+    }
+
+    private void checkRunning(String operation, boolean op) {
+        serviceManager.lazyStart(op);
+    }
+
+    private List<CacheEntry<K, V>> trimCache() {
+        List<CacheEntry<K, V>> list = null;
+        while (evictionService.isSizeOrVolumeBreached(map.size(), map.volume())) {
+            if (list == null) {
+                list = new ArrayList<CacheEntry<K, V>>(2);
+            }
+            AbstractCacheEntry<K, V> e = evictionService.evictNext();
+            map.remove(e.getKey());
+            list.add(e);
+        }
+        return list == null ? Collections.EMPTY_LIST : list;
+    }
+
+    /** {@inheritDoc} */
+    AbstractCacheEntry<K, V> doGet(K key) {
+        AbstractCacheEntry<K, V> entry = null;
+        boolean isExpired = false;
+        long started = listener.beforeGet(this, key);
+
+        synchronized (this) {
+            checkRunning("get");
+            entry = map.get(key);
+            if (entry != null) {
+                isExpired = expirationService.isExpired(entry);
+                if (isExpired) {
+                    map.remove(key);
+                    evictionService.remove(entry.getPolicyIndex());
+                } else {
+                    // reload if needed??
+                    entry.accessed();
+                    evictionService.touch(entry.getPolicyIndex());
+                }
+            }
+        }
+
+        if (entry != null && !isExpired) {
+            listener.afterHit(this, started, key, entry);
+            return entry;
+        } else {
+            if (isExpired) {
+                listener.dexpired(this, started, entry);
+            }
+            AbstractCacheEntry<K, V> previous = entry;
+            entry = loadingService.loadBlocking(key, AttributeMaps.EMPTY_MAP);
+            listener.afterMiss(this, started, key, previous, entry, isExpired);
+        }
+        return entry;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    Map<K, V> doGetAll(Collection<? extends K> keys) {
+        checkRunning("get");
+        HashMap<K, V> result = new HashMap<K, V>();
+        for (K key : keys) {
+            result.put(key, get(key));
+        }
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    Map<K, V> doGetAll2(Collection<? extends K> keys) {
+        if (keys == null) {
+            throw new NullPointerException("collection is null");
+        }
+        CollectionUtils.checkCollectionForNulls(keys);
+        Collection<K> loadMe = new ArrayList<K>();
+        long started = 0; // statisticsService.beforeGetAll(this, keys);
+        boolean[] isExpired = new boolean[keys.size()];
+        checkRunning("get");
+        HashMap<K, V> result = new HashMap<K, V>();
+        int i = 0;
+        for (K key : keys) {
+            AbstractCacheEntry<K, V> entry = map.get(key);
+            if (entry != null) {
+                isExpired[i] = expirationService.isExpired(entry);
+                if (isExpired[i]) {
+                    map.remove(key);
+                    evictionService.remove(entry.getPolicyIndex());
+                    loadMe.add(key);
+                } else {
+                    // reload if needed??
+                    entry.accessed();
+                    evictionService.touch(entry.getPolicyIndex());
+                    result.put(key, entry.getValue());
+                }
+            } else {
+                loadMe.add(key);
+            }
+            i++;
+        }
+        return result;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    synchronized AbstractCacheEntry<K, V> doPeek(K key) {
+        checkRunning("get", false);
+        return map.get(key);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    AbstractCacheEntry<K, V> doPut(K key, V newValue, AttributeMap attributes,
+            boolean putOnlyIfAbsent, boolean isLoaded) {
+        long started = listener.beforePut(this, key, newValue, isLoaded);
+        Collection<CacheEntry<K, V>> trimmed = Collections.EMPTY_LIST;
+        AbstractCacheEntry<K, V> newEntry = null;
+        AbstractCacheEntry<K, V> prev = null;
+
+        synchronized (this) {
+            checkRunning("put");
+            prev = map.get(key);
+            if (prev == null || !putOnlyIfAbsent) {
+                newEntry = entryService.createEntry(key, newValue, attributes, prev);
+                if (addElement(newEntry)) {
+                    trimmed = trimCache();
+                }
+            }
+        }
+
+        listener.afterPut(this, started, trimmed, prev, newEntry, isLoaded);
+        return isLoaded ? newEntry : prev;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    void doPutAll(Map<? extends K, ? extends V> t, Map<? extends K, AttributeMap> attributes,
+            boolean fromLoader) {
+        long started = listener.beforePutAll(this, t, attributes, fromLoader);
+        Map<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>> newEntries = new HashMap<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>>();
+
+        synchronized (this) {
+            checkRunning("put");
+            for (Map.Entry<? extends K, ? extends V> entry : t.entrySet()) {
+                K key = entry.getKey();
+                V value = entry.getValue();
+                AbstractCacheEntry<K, V> prev = map.get(key);
+                AbstractCacheEntry<K, V> newEntry = entryService.createEntry(key, value, attributes
+                        .get(key), prev);
+                addElement(newEntry);
+                newEntries.put(newEntry, prev);
+            }
+        }
+
+        listener.afterPutAll(this, started, trimCache(), newEntries, fromLoader);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    CacheEntry<K, V> doRemove(Object key, Object value) {
+        long started = listener.beforeRemove(this, key, value);
+        AbstractCacheEntry<K, V> e = null;
+
+        synchronized (this) {
+            checkRunning("remove");
+            e = map.remove(key, value);
+            if (e != null) {
+                evictionService.remove(e.getPolicyIndex());
+            }
+        }
+
+        listener.afterRemove(this, started, e);
+        return e;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    CacheEntry<K, V> doReplace(K key, V oldValue, V newValue, AttributeMap attributes) {
+        long started = listener.beforeReplace(this, key, newValue);
+        Collection<CacheEntry<K, V>> trimmed = Collections.EMPTY_LIST;
+        AbstractCacheEntry<K, V> newEntry = null;
+        AbstractCacheEntry<K, V> prev = null;
+
+        synchronized (this) {
+            checkRunning("put");
+            prev = map.get(key);
+            if (oldValue == null && prev != null || oldValue != null && prev != null
+                    && oldValue.equals(prev.getValue())) {
+                newEntry = entryService.createEntry(key, newValue, attributes, prev);
+                addElement(newEntry);
+                trimmed = trimCache();
+            }
+        }
+
+        listener.afterPut(this, started, trimmed, prev, newEntry);
+        return newEntry == null ? null : prev;
+    }
+
+    CacheServiceManager getServiceManager() {
+        return serviceManager;
+    }
+
+    @Override
+    public synchronized void prestart() {
+        super.prestart();
+    }
+
+    /** A helper class. */
+    class Support implements InternalCacheSupport<K, V> {
+        /** {@inheritDoc} */
+        public void checkRunning(String operation) {
+            SynchronizedCache.this.checkRunning(operation);
+        }
+
+        /** {@inheritDoc} */
+        public void checkRunning(String operation, boolean shutdown) {
+            SynchronizedCache.this.checkRunning(operation, shutdown);
+        }
+        public String getName() {
+            return SynchronizedCache.this.getName();
+        }
+        /** {@inheritDoc} */
+        public void load(K key, AttributeMap attributes) {
+            boolean doLoad = false;
+
+            synchronized (this) {
+                AbstractCacheEntry<K, V> e = map.get(key);
+                doLoad = e == null;
+                if (!doLoad) {
+                    long timestamp = getClock().timestamp();
+                    doLoad = e.isExpired(expirationService.getExpirationFilter(), timestamp)
+                            || e.needsRefresh(loadingService.getRefreshFilter(), timestamp);
+                }
+
+            }
+            if (doLoad) {
+                loadingService.forceLoad(key, attributes);
+            }
+
+        }
+
+        /** {@inheritDoc} */
+        public void loadAll(AttributeMap attributes, boolean force) {
+            final Map<K, AttributeMap> keys;
+            long timestamp = getClock().timestamp();
+
+            synchronized (this) {
+                if (force) {
+                    keys = AttributeMaps.toMap(new ArrayList(keySet()), attributes);
+                } else {
+                    keys = new HashMap<K, AttributeMap>();
+                    for (Iterator<AbstractCacheEntry<K, V>> i = map.iterator(); i.hasNext();) {
+                        AbstractCacheEntry<K, V> e = i.next();
+                        if (e.isExpired(expirationService.getExpirationFilter(), timestamp)
+                                || e.needsRefresh(loadingService.getRefreshFilter(), timestamp)) {
+                            keys.put(e.getKey(), attributes);
+                        }
+                    }
+                }
+            }
+
+            loadingService.forceLoadAll(keys);
+        }
+
+        /** {@inheritDoc} */
+        public void loadAll(Map<K, AttributeMap> attributes) {
+            Map<K, AttributeMap> keys = new HashMap<K, AttributeMap>();
+            long timestamp = getClock().timestamp();
+
+            synchronized (this) {
+                for (Map.Entry<K, AttributeMap> e : attributes.entrySet()) {
+                    AbstractCacheEntry<K, V> ce = map.get(e.getKey());
+                    boolean doLoad = ce == null;
+                    if (!doLoad) {
+                        doLoad = ce.isExpired(expirationService.getExpirationFilter(), timestamp)
+                                || ce.needsRefresh(loadingService.getRefreshFilter(), timestamp);
+                    }
+                    if (doLoad) {
+                        keys.put(e.getKey(), e.getValue());
+                    }
+                }
+            }
+
+            loadingService.forceLoadAll(keys);
+        }
+
+        /** {@inheritDoc} */
+        public void purgeExpired() {
+            List<AbstractCacheEntry<K, V>> expired = new ArrayList<AbstractCacheEntry<K, V>>();
+            long start = listener.beforeCachePurge(SynchronizedCache.this);
+            long timestamp = getClock().timestamp();
+            int size = 0;
+            int newSize = 0;
+            long volume = 0;
+            long newVolume = 0;
+
+            synchronized (this) {
+                size = map.size();
+                volume = map.volume();
+                for (Iterator<AbstractCacheEntry<K, V>> i = map.iterator(); i.hasNext();) {
+                    AbstractCacheEntry<K, V> e = i.next();
+                    if (e.isExpired(expirationService.getExpirationFilter(), timestamp)) {
+                        expired.add(e);
+                        evictionService.remove(e.getPolicyIndex());
+                        i.remove();
+                    }
+                }
+                newSize = map.size();
+                newVolume = map.volume();
+            }
+
+            listener.afterCachePurge(SynchronizedCache.this, start, expired, size, volume, newSize,
+                    newVolume);
+        }
+
+        /** {@inheritDoc} */
+        public V put(K key, V value, AttributeMap attributes) {
+            return SynchronizedCache.this.put(key, value, attributes, false);
+        }
+
+        /** {@inheritDoc} */
+        public void putAll(Map<? extends K, ? extends V> keyValues,
+                Map<? extends K, AttributeMap> attributes) {
+            doPutAll(keyValues, attributes, false);
+        }
+
+        /** {@inheritDoc} */
+        public void trimCache(int toSize, long toVolume) {
+            if (toSize < 0) {
+                throw new IllegalArgumentException("newSize cannot be a negative number, was "
+                        + toSize);
+            } else if (toVolume < 0) {
+                throw new IllegalArgumentException("newVolume cannot be a negative number, was "
+                        + toVolume);
+            }
+            long started = listener.beforeTrim(SynchronizedCache.this, toSize, toVolume);
+            int size = 0;
+            int newSize = 0;
+            long volume = 0;
+            long newVolume = 0;
+            List<AbstractCacheEntry<K, V>> l = Collections.EMPTY_LIST;
+
+            size = map.size();
+            volume = map.volume();
+
+            synchronized (this) {
+                checkRunning("trimming");
+                int numberToTrim = Math.max(0, map.size() - toSize);
+                l = new ArrayList<AbstractCacheEntry<K, V>>(evictionService.evict(numberToTrim));
+                for (AbstractCacheEntry<K, V> entry : l) {
+                    map.remove(entry.getKey());
+                }
+                while (map.volume() > toVolume) {
+                    AbstractCacheEntry<K, V> entry = evictionService.evictNext();
+                    map.remove(entry.getKey());
+                    l.add(entry);
+                }
+                newSize = map.size();
+                newVolume = map.volume();
+            }
+            listener.afterTrimCache(SynchronizedCache.this, started, l, size, newSize, volume,
+                    newVolume);
+        }
+
+        /** {@inheritDoc} */
+        public AbstractCacheEntry<K, V> valueLoaded(K key, V value, AttributeMap attributes) {
+            if (value != null) {
+                return doPut(key, value, attributes, false, true);
+            }
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        public void valuesLoaded(Map<? extends K, ? extends V> values,
+                Map<? extends K, AttributeMap> keys) {
+            HashMap<? extends K, ? extends V> map = new HashMap<K, V>(values);
+            HashMap<? extends K, AttributeMap> attr = new HashMap<K, AttributeMap>(keys);
+            for (Map.Entry<? extends K, ? extends V> entry : values.entrySet()) {
+                if (entry.getValue() == null) {
+                    map.remove(entry.getKey());
+                    attr.remove(entry.getKey());
+                }
+            }
+            doPutAll(map, attr, true);
+        }
+    }
 }

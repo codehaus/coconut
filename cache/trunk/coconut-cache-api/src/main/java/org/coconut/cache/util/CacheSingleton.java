@@ -49,8 +49,10 @@ public final class CacheSingleton {
     private static CacheException initializationException;
 
     /** Cannot instantiate. */
+    // /CLOVER:OFF
     private CacheSingleton() {}
-
+    // /CLOVER:ON
+   
     /**
      * @return the cACHE_RESSOURCE_LOCATION
      */

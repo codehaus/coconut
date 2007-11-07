@@ -11,6 +11,7 @@ import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlers;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
+import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.spi.CacheSPI;
 import org.coconut.core.Logger;
 import org.coconut.core.Loggers;
@@ -28,7 +29,8 @@ import org.coconut.core.Loggers;
  * @param <V>
  *            the type of mapped values
  */
-public class DefaultCacheExceptionService<K, V> implements CacheExceptionService<K, V> {
+public class DefaultCacheExceptionService<K, V> extends AbstractCacheLifecycle implements
+        CacheExceptionService<K, V> {
 
     /** The cache for which this DefaultCacheExceptionService is registered. */
     private final Cache<K, V> cache;

@@ -3,6 +3,7 @@
  */
 package org.coconut.cache.internal.service.entry;
 
+import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
@@ -38,9 +39,9 @@ public class UnsynchronizedEntryFactoryService<K, V> extends
         this.defaultRefreshTime = nanos;
     }
     
-    public UnsynchronizedEntryFactoryService(Clock clock,
+    public UnsynchronizedEntryFactoryService(CacheConfiguration<?, ?> conf,
             CacheExceptionService<K, V> exceptionHandler) {
-        super(clock, exceptionHandler);
+        super(conf.getClock(), exceptionHandler);
     }
     /**
      * @see org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService#createEntry(java.lang.Object,

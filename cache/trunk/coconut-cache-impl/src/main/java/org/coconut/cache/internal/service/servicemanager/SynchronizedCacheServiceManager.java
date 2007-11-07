@@ -1,5 +1,6 @@
 package org.coconut.cache.internal.service.servicemanager;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -9,49 +10,68 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.AsynchronousShutdownObject;
+import org.omg.PortableServer.ThreadPolicy;
 
 public class SynchronizedCacheServiceManager implements CacheServiceManager {
     private final Inner delegate;
 
     private final Object mutex;
 
-    SynchronizedCacheServiceManager(Cache<?, ?> cache, InternalCacheSupport<?, ?> helper,
-            CacheConfiguration<?, ?> conf) {
-        delegate = new Inner(cache, helper, conf);
+    public SynchronizedCacheServiceManager(Cache<?, ?> cache, InternalCacheSupport<?, ?> helper,
+            CacheConfiguration<?, ?> conf,
+            Collection<Class<? extends AbstractCacheLifecycle>> classes) {
+        delegate = new Inner(cache, helper, conf,classes);
         this.mutex = cache;
     }
 
     class Inner extends UnsynchronizedCacheServiceManager {
-        
+        private final Object mutex;
+
         public Inner(Cache<?, ?> cache, InternalCacheSupport<?, ?> helper,
-                CacheConfiguration<?, ?> conf) {
-            super(cache, helper, conf);
+                CacheConfiguration<?, ?> conf,
+                Collection<Class<? extends AbstractCacheLifecycle>> classes) {
+            super(cache, helper, conf, classes);
+            this.mutex = cache;
         }
 
         @Override
         public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+//            ThreadPoolExecutor
             return super.awaitTermination(timeout, unit);
         }
 
         @Override
-        public void shutdown() {
+        public synchronized void shutdown() {
             super.shutdown();
         }
 
         @Override
-        public void shutdownNow() {
-            super.shutdownNow();
+        public synchronized void shutdownNow() {
+            shutdown();
+            for (ServiceHolder sh : super.internalServices) {
+                if (sh.aso != null) {
+                    sh.aso.shutdownNow();
+                }
+            }
+            for (ServiceHolder sh : super.externalServices) {
+                if (sh.aso != null) {
+                    sh.aso.shutdownNow();
+                }
+            }
         }
 
         @Override
         public void shutdownServiceAsynchronously(AsynchronousShutdownObject service2) {
-            super.shutdownServiceAsynchronously(service2);
+            ServiceHolder sh = super.serviceBeingShutdown;
+            if (sh == null) {
+                throw new IllegalStateException();
+            }
+            sh.aso = service2;
         }
     }
 
     public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
-        // TODO impl
-        return false;
+        return delegate.awaitTermination(timeout, unit);
     }
 
     public Map<Class<?>, Object> getAllServices() {
@@ -63,12 +83,6 @@ public class SynchronizedCacheServiceManager implements CacheServiceManager {
     public <T> T getInternalService(Class<T> type) {
         synchronized (mutex) {
             return delegate.getInternalService(type);
-        }
-    }
-
-    public <T> T getPublicService(Class<T> type) {
-        synchronized (mutex) {
-            return delegate.getPublicService(type);
         }
     }
 
@@ -110,22 +124,8 @@ public class SynchronizedCacheServiceManager implements CacheServiceManager {
         delegate.prestart();
     }
 
-    public void registerService(Class type, Class<? extends AbstractCacheLifecycle> service) {
-        synchronized (mutex) {
-            delegate.registerService(type, service);
-        }
-    }
-
-    public void registerServices(Class<? extends AbstractCacheLifecycle>... services) {
-        synchronized (mutex) {
-            delegate.registerServices(services);
-        }
-    }
-
     public void shutdown() {
-        synchronized (mutex) {
-            delegate.shutdown();
-        }
+        delegate.shutdown();
     }
 
     public void shutdownNow() {

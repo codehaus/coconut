@@ -4,8 +4,8 @@
 
 package org.coconut.predicate;
 
-import static org.coconut.core.Transformers.mapEntryToKey;
-import static org.coconut.core.Transformers.mapEntryToValue;
+import static org.coconut.core.Mappers.mapEntryToKey;
+import static org.coconut.core.Mappers.mapEntryToValue;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import java.util.Map;
 
 import org.coconut.core.EventProcessor;
 import org.coconut.core.Mapper;
-import org.coconut.core.Transformers;
+import org.coconut.core.Mappers;
 
 /**
  * Factory and utility methods for Filter.
@@ -139,7 +139,7 @@ public final class CollectionPredicates {
      * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
      * @version $Id: Filters.java 67 2006-09-28 08:07:48Z kasper $
      */
-    final static class TransformerFilter<F, T> implements Predicate<F>, Serializable {
+    final static class TransformerPredicate<F, T> implements Predicate<F>, Serializable {
 
         /** serialVersionUID. */
         private static final long serialVersionUID = -6292758840373110577L;
@@ -149,7 +149,7 @@ public final class CollectionPredicates {
 
         private final Predicate<T> filter;
 
-        public TransformerFilter(final Mapper<F, T> transformer, Predicate<T> filter) {
+        public TransformerPredicate(final Mapper<F, T> transformer, Predicate<T> filter) {
             if (transformer == null) {
                 throw new NullPointerException("transformer is null");
             } else if (filter == null) {
@@ -304,22 +304,22 @@ public final class CollectionPredicates {
 
     public static <F, T> Predicate<F> transformFilter(final Mapper<F, T> transformer,
             Predicate<T> filter) {
-        return new TransformerFilter<F, T>(transformer, filter);
+        return new TransformerPredicate<F, T>(transformer, filter);
     }
 
     public static <E> Predicate<E> transformFilter(Class<E> c, String method, Predicate<?> f) {
-        Mapper<E, ?> t = Transformers.transform(c, method);
-        return new TransformerFilter(t, f);
+        Mapper<E, ?> t = Mappers.transform(c, method);
+        return new TransformerPredicate(t, f);
     }
 
     @SuppressWarnings("unchecked")
     public static <K, V> Predicate<Map.Entry<K, V>> keyFilter(Predicate<K> filter) {
-        return new TransformerFilter(mapEntryToKey(), filter);
+        return new TransformerPredicate(mapEntryToKey(), filter);
     }
 
     @SuppressWarnings("unchecked")
     public static <K, V> Predicate<Map.Entry<K, V>> valueFilter(Predicate<V> filter) {
-        return new TransformerFilter(mapEntryToValue(), filter);
+        return new TransformerPredicate(mapEntryToValue(), filter);
     }
 
     /**

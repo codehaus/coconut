@@ -45,6 +45,7 @@ public abstract class AbstractCacheLifecycle implements CacheLifecycle {
         return name;
     }
 
+    // /CLOVER:OFF
     /** {@inheritDoc} */
     public void initialize(CacheConfiguration<?, ?> configuration) {}
 
@@ -62,4 +63,5 @@ public abstract class AbstractCacheLifecycle implements CacheLifecycle {
 
     /** {@inheritDoc} */
     public void terminated() {}
+    // /CLOVER:ON
 }

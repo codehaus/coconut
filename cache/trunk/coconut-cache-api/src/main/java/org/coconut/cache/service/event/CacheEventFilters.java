@@ -9,7 +9,7 @@ import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated;
 import org.coconut.cache.service.event.CacheEvent.CacheCleared;
 import org.coconut.core.Mapper;
-import org.coconut.core.Transformers;
+import org.coconut.core.Mappers;
 import org.coconut.predicate.CollectionPredicates;
 import org.coconut.predicate.Predicate;
 import org.coconut.predicate.Predicates;
@@ -68,19 +68,21 @@ public final class CacheEventFilters {
     public static final Predicate<?> CACHEEVENT_FILTER = Predicates.isType(CacheEvent.class);
 
     /** A transformer that extracts the cache from the specified {@link CacheEvent}. */
-    private final static Mapper<CacheEvent, Cache<?, ?>> EVENT_TO_CACHE_TRANSFORMER = Transformers
+    private final static Mapper<CacheEvent, Cache<?, ?>> EVENT_TO_CACHE_TRANSFORMER = (Mapper) Mappers
             .transform(CacheEvent.class, "getCache");
 
     /**
      * A transformer that extracts the name of the cache from the specified
      * {@link CacheEvent}.
      */
-    private final static Mapper<CacheEvent, String> EVENT_TO_NAME_TRANSFORMER = Transformers
+    private final static Mapper<CacheEvent, String> EVENT_TO_NAME_TRANSFORMER = (Mapper) Mappers
             .transform(CacheEvent.class, "getName");
 
     /** Cannot instantiate. */
+    // /CLOVER:OFF
     private CacheEventFilters() {}
-
+    // /CLOVER:ON
+    
     /**
      * Returns a {@link Predicate} that only accepts {@link CacheEvent}s that originate from
      * the specified cache.

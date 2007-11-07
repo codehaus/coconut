@@ -15,6 +15,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Collection;
 
+import org.coconut.cache.service.management.CacheManagementConfiguration;
+import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.cache.spi.XmlConfigurator;
 import org.coconut.core.Clock;
 import org.coconut.core.Logger;
@@ -39,6 +41,30 @@ public class CacheConfigurationTest {
         Clock c = new Clock.DeterministicClock();
         assertEquals(conf, conf.setClock(c));
         assertEquals(c, conf.getClock());
+    }
+
+    @Test
+    public void addConfiguration() {
+        MyService s1 = new MyService();
+        assertFalse(conf.getAllConfigurations().contains(s1));
+        conf.addConfiguration(s1);
+        assertTrue(conf.getAllConfigurations().contains(s1));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void addConfigurationNPE() {
+        conf.addConfiguration(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void addConfigurationIAE1() {
+        conf.addConfiguration(new CacheManagementConfiguration());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void addConfigurationIAE2() {
+        conf.addConfiguration(new MyService());
+        conf.addConfiguration(new MyService());
     }
 
     @Test(expected = NullPointerException.class)
@@ -111,15 +137,13 @@ public class CacheConfigurationTest {
 
     @Test
     public void testCreateAndInstantiate() throws Exception {
-        conf.setProperty(XmlConfigurator.CACHE_INSTANCE_TYPE,
-                "org.coconut.cache.DummyCache");
+        conf.setProperty(XmlConfigurator.CACHE_INSTANCE_TYPE, "org.coconut.cache.DummyCache");
         conf.setName("foo");
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         new XmlConfigurator().write(conf, os);
 
-        Cache c = CacheConfiguration.loadCacheFrom(new ByteArrayInputStream(os
-                .toByteArray()));
+        Cache c = CacheConfiguration.loadCacheFrom(new ByteArrayInputStream(os.toByteArray()));
         assertTrue(c instanceof DummyCache);
         assertEquals("foo", ((DummyCache) c).getName());
         assertFalse(((DummyCache) c).isStarted);
@@ -148,13 +172,12 @@ public class CacheConfigurationTest {
 
     }
 
-    
     @Test
     public void createWithName() {
         CacheConfiguration<?, ?> conf = CacheConfiguration.create("foo");
         assertEquals("foo", conf.getName());
     }
-    
+
     @Test
     public void testDefaultService() {
         CacheConfiguration<?, ?> conf = CacheConfiguration.create();
@@ -166,7 +189,7 @@ public class CacheConfigurationTest {
         assertNotNull(conf.management());
         assertNotNull(conf.serviceManager());
         assertNotNull(conf.worker());
-        
+
     }
 
     @Test(expected = NullPointerException.class)
@@ -238,6 +261,12 @@ public class CacheConfigurationTest {
          */
         private PrivateConstructorCache(CacheConfiguration configuration) {
             super(configuration);
+        }
+    }
+
+    public static class MyService extends AbstractCacheServiceConfiguration {
+        public MyService() {
+            super("foo");
         }
     }
 }

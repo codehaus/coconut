@@ -3,8 +3,8 @@
  */
 package org.coconut.core;
 
-import static org.coconut.core.Transformers.passThroughTransformer;
-import static org.coconut.core.Transformers.t;
+import static org.coconut.core.Mappers.passThroughTransformer;
+import static org.coconut.core.Mappers.t;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 

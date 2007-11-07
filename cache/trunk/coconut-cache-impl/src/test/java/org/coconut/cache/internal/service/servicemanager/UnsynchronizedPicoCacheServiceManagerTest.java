@@ -2,6 +2,8 @@ package org.coconut.cache.internal.service.servicemanager;
 
 import static org.junit.Assert.assertFalse;
 
+import java.util.Collections;
+
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
@@ -34,7 +36,7 @@ public class UnsynchronizedPicoCacheServiceManagerTest {
     public void testConstructor() {
         CacheConfiguration<?, ?> conf = CacheConfiguration.create();
         UnsynchronizedCacheServiceManager m = new UnsynchronizedCacheServiceManager(
-                cache, helper, conf);
+                cache, helper, conf, Collections.EMPTY_LIST);
         assertFalse(m.isStarted());
         assertFalse(m.isShutdown());
         assertFalse(m.isTerminated());

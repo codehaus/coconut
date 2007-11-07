@@ -15,20 +15,24 @@ public class ExceptionHandlingLifecycle extends AbstractCacheTCKTest {
 
     @Test
     public void lifecycle() {
-        conf = newConf().exceptionHandling()
-                .setExceptionHandler(new MyExceptionHandler()).c();
+        conf = newConf().exceptionHandling().setExceptionHandler(new MyExceptionHandler()).c();
         c = newCache(conf);
+        assertEquals(
+                "ExceptionHandler.initialize should be called from the constructor of the cache",
+                1, status.get());
+        assertFalse(c.isStarted());
         c.put(1, "dd");
         assertEquals(1, status.get());
         shutdownAndAwait();
-        assertEquals(9, status.get());
+        assertEquals(
+                "ExceptionHandler.initialize should be called after the cache has been shutdown and terminated",
+                9, status.get());
     }
 
     @Test
     public void lifecycleAndService() {
-        conf = newConf().exceptionHandling()
-                .setExceptionHandler(new MyExceptionHandler()).c().serviceManager().add(
-                        new MyService()).c();
+        conf = newConf().exceptionHandling().setExceptionHandler(new MyExceptionHandler()).c()
+                .serviceManager().add(new MyService()).c();
         c = newCache(conf);
         c.put(1, "dd");
         assertEquals(3, status.get());
@@ -36,8 +40,7 @@ public class ExceptionHandlingLifecycle extends AbstractCacheTCKTest {
         assertEquals(15, status.get());
     }
 
-    class MyExceptionHandler extends
-            CacheExceptionHandlers.DefaultLoggingExceptionHandler {
+    class MyExceptionHandler extends CacheExceptionHandlers.DefaultLoggingExceptionHandler {
         @Override
         public void initialize(CacheConfiguration configuration) {
             assertEquals(conf, configuration);

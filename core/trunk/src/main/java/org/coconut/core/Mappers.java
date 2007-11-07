@@ -32,13 +32,13 @@ import org.coconut.internal.asm.Type;
  * @version $Id$
  */
 @SuppressWarnings("unchecked")
-public final class Transformers {
+public final class Mappers {
     ///CLOVER:OFF
     /** Cannot instantiate. */
-    private Transformers() {}
+    private Mappers() {}
     ///CLOVER:ON
     
-    public interface DynamicTransformer<F, T> extends Mapper<F, T> {
+    public interface DynamicMapper<T, U> extends Mapper<T, U> {
         /**
          * Returns the method that is being called from the dynamic transformer.
          * 
@@ -57,7 +57,7 @@ public final class Transformers {
     /**
      * This class is serializable is all provided parameters are serializable.
      */
-    static final class ASMBasedTransformer<F, T> implements DynamicTransformer<F, T>,
+    static final class ASMBasedMapper<F, U> implements DynamicMapper<F, U>,
             Serializable {
 
         // DONE toString method
@@ -84,14 +84,14 @@ public final class Transformers {
         private final static Field F;
 
         private final static SimpleLoader LOADER = new SimpleLoader(
-                ASMBasedTransformer.class.getClassLoader());
+                ASMBasedMapper.class.getClassLoader());
 
         private final static String TRANSFORMER_TYPE_NAME = Type
-                .getInternalName(DynamicTransformer.class);
+                .getInternalName(DynamicMapper.class);
         static {
             Field field = null;
             try {
-                field = ASMBasedTransformer.class.getField("t");
+                field = ASMBasedMapper.class.getField("t");
             } catch (NoSuchFieldException e) { /* not happening */
             }
             F = field;
@@ -99,7 +99,7 @@ public final class Transformers {
 
         private final Method m;
 
-        private final transient DynamicTransformer<F, T> t;
+        private final transient DynamicMapper<F, U> t;
 
         /**
          * Constructs a new transformer by copying an existing
@@ -108,12 +108,12 @@ public final class Transformers {
          * @param transformer
          *            the GeneratedTransformer to copy
          */
-        public ASMBasedTransformer(ASMBasedTransformer<F, T> transformer) {
+        public ASMBasedMapper(ASMBasedMapper<F, U> transformer) {
             this.m = transformer.m;
             this.t = transformer.t;
         }
 
-        private ASMBasedTransformer(Method m, Object... args) {
+        private ASMBasedMapper(Method m, Object... args) {
             t = generateTransformer(m, args);
             this.m = m;
         }
@@ -124,17 +124,17 @@ public final class Transformers {
         }
 
         @SuppressWarnings("unchecked")
-        private static <F, T> DynamicTransformer<F, T> generateTransformer(Method method,
+        private static <F, T> DynamicMapper<F, T> generateTransformer(Method method,
                 Object... args) {
             // TODO rework this classloading sh#t
             ClassLoader cl = method.getDeclaringClass().getClassLoader();
 
             final SimpleLoader sl = cl == null
-                    || cl.equals(ASMBasedTransformer.class.getClassLoader()) ? LOADER
+                    || cl.equals(ASMBasedMapper.class.getClassLoader()) ? LOADER
                     : new SimpleLoader(cl);
 
             final String name = generateClassName(method);
-            Class c = sl.defineClass(name, generateTransformer(name, method));
+            Class c = sl.defineClass(name, generateMapper(name, method));
             Constructor cons;
             try {
                 cons = c.getConstructor((Class[]) method.getParameterTypes());
@@ -143,9 +143,9 @@ public final class Transformers {
                         "No Constructor Found. This is a serious bug in the underlying framework. This should never happen",
                         e);
             }
-            DynamicTransformer<F, T> p = null;
+            DynamicMapper<F, T> p = null;
             try {
-                p = (DynamicTransformer) cons.newInstance(args);
+                p = (DynamicMapper) cons.newInstance(args);
             } catch (Exception e) {
                 throw new IllegalStateException(
                         "This is a serious bug in the underlying framework. This should never happen",
@@ -154,7 +154,7 @@ public final class Transformers {
             return p;
         }
 
-        private static byte[] generateTransformer(String className, Method m) {
+        private static byte[] generateMapper(String className, Method m) {
             Class[] parameters = m.getParameterTypes();
             String from = Type.getDescriptor(m.getDeclaringClass());
             String[] spilt = className.split("/");
@@ -323,8 +323,8 @@ public final class Transformers {
          */
         @Override
         public boolean equals(Object obj) {
-            return (obj instanceof ASMBasedTransformer)
-                    && ((ASMBasedTransformer) obj).m.equals(m);
+            return (obj instanceof ASMBasedMapper)
+                    && ((ASMBasedMapper) obj).m.equals(m);
         }
 
         /** {@inheritDoc} */
@@ -352,7 +352,7 @@ public final class Transformers {
         }
 
         /** {@inheritDoc} */
-        public T map(F from) {
+        public U map(F from) {
             if (from == null) {
                 throw new NullPointerException("from is null");
             }
@@ -370,7 +370,7 @@ public final class Transformers {
                 ClassNotFoundException {
             s.defaultReadObject();
             Object[] args = (Object[]) s.readObject();
-            DynamicTransformer<F, T> dt = generateTransformer(m, args);
+            DynamicMapper<F, U> dt = generateTransformer(m, args);
             boolean prev = F.isAccessible();
             F.setAccessible(true);
             try {
@@ -390,27 +390,27 @@ public final class Transformers {
         /** {@inheritDoc} */
         @Override
         protected Object clone() {
-            return new ASMBasedTransformer<F, T>(this);
+            return new ASMBasedMapper<F, U>(this);
         }
     }
 
     /**
      * TODO describe.
      */
-    final static class ArrayTransformer implements Mapper, Serializable, Cloneable {
+    final static class ArrayMapper implements Mapper, Serializable, Cloneable {
         /** serialVersionUID. */
         private static final long serialVersionUID = 4920880113547573214L;
 
         private final Mapper<Object, Object>[] t;
 
-        ArrayTransformer(Mapper<Object, Object>[] t) {
+        ArrayMapper(Mapper<Object, Object>[] t) {
             this.t = t;
         }
         /** {@inheritDoc} */
         @Override
         public boolean equals(Object obj) {
-            return (obj instanceof ArrayTransformer)
-                    && Arrays.equals(t, ((ArrayTransformer) obj).t);
+            return (obj instanceof ArrayMapper)
+                    && Arrays.equals(t, ((ArrayMapper) obj).t);
         }
         /** {@inheritDoc} */
         @Override
@@ -434,7 +434,7 @@ public final class Transformers {
         }
     }
 
-    final static class PassThroughTransformer<K> implements Mapper<K, K>,
+    final static class PassThroughMapper<K> implements Mapper<K, K>,
             Serializable {
 
         /** serialVersionUID. */
@@ -457,7 +457,7 @@ public final class Transformers {
     }
 
     public static <K> Mapper<K, K> passThroughTransformer() {
-        return new PassThroughTransformer<K>();
+        return new PassThroughMapper<K>();
     }
 
     public static <F, T> Mapper<F, T> reflect(Class<F> type, String method)
@@ -487,12 +487,12 @@ public final class Transformers {
         } else if (transformers.length == 1) {
             return transformers[0];
         } else {
-            return new ArrayTransformer(transformers);
+            return new ArrayMapper(transformers);
         }
     }
 
     @SuppressWarnings("unchecked")
-    public static <F, T> DynamicTransformer<F, T> transform(Class<F> fromClass,
+    public static <F, T> DynamicMapper<F, T> transform(Class<F> fromClass,
             String method, Object... parameters) {
 
         // TODO write warn if they specify parameters=null
@@ -507,7 +507,7 @@ public final class Transformers {
         // Simpel version, looking for a method with no arguments
         if (parameters != null && parameters.length == 0) {
             try {
-                return new ASMBasedTransformer<F, T>(fromClass.getMethod(method,
+                return new ASMBasedMapper<F, T>(fromClass.getMethod(method,
                         (Class[]) null), parameters);
             } catch (NoSuchMethodException e) {
                 throw new IllegalArgumentException("public method " + method
@@ -585,7 +585,7 @@ public final class Transformers {
                     + " with " + pLength + " parameters found for class " + fromClass);
         } else if (list.size() == 1) {
             // only one matching method, we will take it
-            return new ASMBasedTransformer<F, T>(list.get(0), parameters);
+            return new ASMBasedMapper<F, T>(list.get(0), parameters);
         } else {
             // multiple methods with right number of arguments
             // first try and find one where the types of the argument are an
@@ -610,7 +610,7 @@ public final class Transformers {
                         + fromClass);
             } else if (list.size() == 1) {
                 // only one matching method, we will take it
-                return new ASMBasedTransformer<F, T>(list.get(0), parameters);
+                return new ASMBasedMapper<F, T>(list.get(0), parameters);
             } else {
                 // there was multiple matching signature, because of autoboxing
                 throw new IllegalArgumentException("There was no public method called "
@@ -623,7 +623,7 @@ public final class Transformers {
     }
 
     @SuppressWarnings("unchecked")
-    public static <F, T> DynamicTransformer<F, T> transform(Method method,
+    public static <F, T> DynamicMapper<F, T> transform(Method method,
             Object... parameters) {
         if (method == null) {
             throw new NullPointerException("method is null");
@@ -652,7 +652,7 @@ public final class Transformers {
             }
         }
         // check assignability for parameters
-        return new ASMBasedTransformer<F, T>(method, parameters);
+        return new ASMBasedMapper<F, T>(method, parameters);
     }
 
     public static <F, T> Collection<T> transformCollection(Collection<? extends F> col,

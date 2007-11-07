@@ -20,7 +20,7 @@ package org.coconut.core;
  * Transformers are often applied together with {@link org.coconut.predicate.Predicate filters}
  * to extract information on objects.
  * <p>
- * The {@link Transformers} class supports easy construction of dynamic transformers
+ * The {@link Mappers} class supports easy construction of dynamic transformers
  * either via on-the-fly bytecode generation or reflection.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

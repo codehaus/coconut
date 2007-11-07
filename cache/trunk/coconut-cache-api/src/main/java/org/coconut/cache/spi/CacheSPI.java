@@ -26,8 +26,10 @@ public final class CacheSPI {
     private static final ResourceHolder RESOURCE_HOLDER = new ResourceHolder(BUNDLE_NAME);
 
     /** Cannot instantiate. */
+    // /CLOVER:OFF
     private CacheSPI() {}
-
+    // /CLOVER:ON
+    
     public static String lookup(Class<?> c, String key, Object... o) {
         return RESOURCE_HOLDER.lookup(c, key, o);
     }

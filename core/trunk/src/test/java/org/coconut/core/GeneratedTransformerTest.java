@@ -4,11 +4,11 @@
 
 package org.coconut.core;
 
-import static org.coconut.core.Transformers.transform;
+import static org.coconut.core.Mappers.transform;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.coconut.core.Transformers.DynamicTransformer;
+import org.coconut.core.Mappers.DynamicMapper;
 import org.junit.Test;
 
 public class GeneratedTransformerTest {
@@ -98,13 +98,13 @@ public class GeneratedTransformerTest {
     @Test
     public void testNoParameters() {
         assertEquals(0,
-                ((Transformers.ASMBasedTransformer) t("ireturn")).getParameters().length);
+                ((Mappers.ASMBasedMapper) t("ireturn")).getParameters().length);
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void testWithStringParameters() {
-        DynamicTransformer gt = t("string1Arg", "5");
+        DynamicMapper gt = t("string1Arg", "5");
         assertNotNull(gt);
         assertEquals(5l, gt.map(new GeneratedTransformerMockChild()));
 
@@ -121,7 +121,7 @@ public class GeneratedTransformerTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testWithVariousParameters() {
-        DynamicTransformer gt = t("transform", "5", (Object) Integer.valueOf(1), Long
+        DynamicMapper gt = t("transform", "5", (Object) Integer.valueOf(1), Long
                 .valueOf(4l));
         assertNotNull(gt);
         assertEquals(10l, gt.map(new GeneratedTransformerMockChild()));
@@ -132,7 +132,7 @@ public class GeneratedTransformerTest {
 //        t("iarg", 4);
 //    }
 
-    private static <T> DynamicTransformer<GeneratedTransformerMock, T> t(String method,
+    private static <T> DynamicMapper<GeneratedTransformerMock, T> t(String method,
             Object... args) {
         return transform(GeneratedTransformerMock.class, method, args);
     }

@@ -18,8 +18,10 @@ import org.coconut.event.EventSubscription;
 public final class CacheExceptionHandlers {
 
     /** Cannot instantiate. */
+    // /CLOVER:OFF
     private CacheExceptionHandlers() {}
-
+    // /CLOVER:ON
+    
     /**
      * Returns a new instance of {@link DefaultLoggingExceptionHandler}.
      * 

@@ -12,7 +12,8 @@ import org.coconut.core.Clock;
  * The main purpose of a cache attribute is to support custom metadata associated with
  * each element in the cache. This cache can used set and retrieve predefined cache
  * attributes from an AttributeMap in a typesafe manner. Currently these attributes are
- * only in use for cache loaders. See {@link org.coconut.cache.service.loading.CacheLoader} for examples.
+ * only in use for cache loaders. See
+ * {@link org.coconut.cache.service.loading.CacheLoader} for examples.
  * <p>
  * The following is a list of the default provided attributes
  * 
@@ -98,8 +99,10 @@ public final class CacheAttributes {
     public static final long DEFAULT_SIZE = 1;
 
     /** Cannot instantiate. */
+    // /CLOVER:OFF
     private CacheAttributes() {}
-
+    // /CLOVER:ON
+    
     /**
      * Returns the value that the specified AttributeMap maps the {@link #COST} attribute
      * to or {@link CacheAttributes#DEFAULT_COST} if no such mapping exist.
@@ -209,8 +212,8 @@ public final class CacheAttributes {
         }
         long time = attributes.getLong(CacheAttributes.CREATION_TIME);
         if (time < 0) {
-            throw new IllegalArgumentException(
-                    "creationTime was negative (creationTime = " + time + ")");
+            throw new IllegalArgumentException("creationTime was negative (creationTime = " + time
+                    + ")");
         }
         return time;
     }
@@ -244,8 +247,8 @@ public final class CacheAttributes {
         }
         long time = attributes.getLong(CacheAttributes.LAST_MODIFIED_TIME);
         if (time < 0) {
-            throw new IllegalArgumentException(
-                    "lastModified was negative (lastModified = " + time + ")");
+            throw new IllegalArgumentException("lastModified was negative (lastModified = " + time
+                    + ")");
         } else if (time == 0) {
             time = clock.timestamp();
             if (time < 0) {
@@ -304,8 +307,7 @@ public final class CacheAttributes {
      * @see #setTimeToLive(AttributeMap, long, TimeUnit)
      * @see #TIME_TO_LIVE_NS
      */
-    public static long getTimeToLive(AttributeMap attributes, TimeUnit unit,
-            long defaultValue) {
+    public static long getTimeToLive(AttributeMap attributes, TimeUnit unit, long defaultValue) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
         } else if (unit == null) {
@@ -315,8 +317,7 @@ public final class CacheAttributes {
         }
         long ttl = attributes.getLong(TIME_TO_LIVE_NS);
         if (ttl < 0) {
-            throw new IllegalArgumentException("invalid timeToLive (timeToLiveNs = "
-                    + ttl + ")");
+            throw new IllegalArgumentException("invalid timeToLive (timeToLiveNs = " + ttl + ")");
         }
         if (ttl == 0) {
             return defaultValue;
@@ -349,10 +350,8 @@ public final class CacheAttributes {
      *             refresh attribute
      * @see #setTimeToRefresh(AttributeMap, long, TimeUnit)
      * @see #TIME_TO_REFRESH_NS
-     * 
      */
-    public static long getTimeToRefresh(AttributeMap attributes, TimeUnit unit,
-            long defaultValue) {
+    public static long getTimeToRefresh(AttributeMap attributes, TimeUnit unit, long defaultValue) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
         } else if (unit == null) {
@@ -362,8 +361,7 @@ public final class CacheAttributes {
         }
         long ttl = attributes.getLong(TIME_TO_REFRESH_NS);
         if (ttl < 0) {
-            throw new IllegalArgumentException("invalid refreshTime (refreshTimeNs = "
-                    + ttl + ")");
+            throw new IllegalArgumentException("invalid refreshTime (refreshTimeNs = " + ttl + ")");
         }
         if (ttl == 0) {
             return defaultValue;
@@ -418,8 +416,7 @@ public final class CacheAttributes {
      * @see #getLastModified(AttributeMap, Clock)
      * @see #LAST_MODIFIED_TIME
      */
-    public static AttributeMap setLastModifiedTime(AttributeMap attributes,
-            long lastModifiedTime) {
+    public static AttributeMap setLastModifiedTime(AttributeMap attributes, long lastModifiedTime) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
         } else if (lastModifiedTime < 0) {
@@ -525,13 +522,11 @@ public final class CacheAttributes {
      * @see #getTimeToLive(AttributeMap, TimeUnit, long)
      * @see #TIME_TO_LIVE_NS
      */
-    public static AttributeMap setTimeToLive(AttributeMap attributes, long timeToLive,
-            TimeUnit unit) {
+    public static AttributeMap setTimeToLive(AttributeMap attributes, long timeToLive, TimeUnit unit) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
         } else if (timeToLive < 0) {
-            throw new IllegalArgumentException("timeToLive must not be negative, was "
-                    + timeToLive);
+            throw new IllegalArgumentException("timeToLive must not be negative, was " + timeToLive);
         } else if (unit == null) {
             throw new NullPointerException("unit is null");
         }
@@ -564,8 +559,8 @@ public final class CacheAttributes {
      * @see #getTimeToRefresh(AttributeMap, TimeUnit, long)
      * @see #TIME_TO_REFRESH_NS
      */
-    public static AttributeMap setTimeToRefresh(AttributeMap attributes,
-            long timeToRefresh, TimeUnit unit) {
+    public static AttributeMap setTimeToRefresh(AttributeMap attributes, long timeToRefresh,
+            TimeUnit unit) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
         } else if (timeToRefresh < 0) {

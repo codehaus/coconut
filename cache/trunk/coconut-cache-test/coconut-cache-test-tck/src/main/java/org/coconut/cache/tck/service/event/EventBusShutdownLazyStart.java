@@ -5,6 +5,9 @@ import java.util.Collection;
 
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.core.EventProcessor;
+import org.coconut.core.EventUtils;
+import org.coconut.core.Offerable;
+import org.coconut.event.EventSubscription;
 import org.coconut.predicate.Predicates;
 import org.coconut.test.MockTestCase;
 import org.junit.Before;
@@ -15,6 +18,16 @@ public class EventBusShutdownLazyStart extends AbstractEventTestBundle {
     @Before
     public void init() {
         c = newCache(newConf().event().setEnabled(true));
+    }
+
+    @Test
+    public void unsubscribeAllOnShutdown() {
+        EventSubscription es = event().subscribe(EventUtils.ignoreEventHandler());
+        assertTrue(es.isValid());
+        assertEquals(1, event().getSubscribers().size());
+        shutdownAndAwait();
+        assertFalse(es.isValid());
+        assertEquals(0, event().getSubscribers().size());
     }
 
     @Test(expected = IllegalStateException.class)

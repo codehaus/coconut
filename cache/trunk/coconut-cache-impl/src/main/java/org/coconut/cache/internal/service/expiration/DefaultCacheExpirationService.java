@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheAttributes;
+import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
 import org.coconut.cache.internal.service.entry.InternalCacheEntryService;
@@ -57,17 +58,17 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
 
     private final InternalCacheSupport<K, V> helper;
 
-    public DefaultCacheExpirationService(Cache<K, V> cache, Clock clock,
-            InternalCacheSupport<K, V> helper, CacheExpirationConfiguration<K, V> conf,
+    public DefaultCacheExpirationService(Cache<K, V> cache, CacheConfiguration<K, V> conf,
+            InternalCacheSupport<K, V> helper, CacheExpirationConfiguration<K, V> confExpiration,
             InternalCacheEntryService attributeFactory) {
         super(CacheExpirationConfiguration.SERVICE_NAME);
-        this.clock = clock;
+        this.clock = conf.getClock();
         this.cache = cache;
         this.helper = helper;
-        this.expirationFilter = conf.getExpirationFilter();
+        this.expirationFilter = confExpiration.getExpirationFilter();
         this.attributeFactory = attributeFactory;
         attributeFactory.setExpirationTimeNanos(ExpirationUtils
-                .getInitialTimeToLiveNS(conf));
+                .getInitialTimeToLiveNS(confExpiration));
     }
 
     /** {@inheritDoc} */
@@ -139,7 +140,6 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
     /** {@inheritDoc} */
     public void setDefaultTimeToLive(long timeToLive, TimeUnit unit) {
         long time = ExpirationUtils.convertExpirationTimeToNanos(timeToLive, unit);
-        attributeFactory.setExpirationTimeNanos(
-                time == 0 ? Long.MAX_VALUE : time);
+        attributeFactory.setExpirationTimeNanos(time == 0 ? Long.MAX_VALUE : time);
     }
 }

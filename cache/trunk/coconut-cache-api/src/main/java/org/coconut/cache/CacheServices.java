@@ -29,8 +29,10 @@ import org.coconut.cache.service.statistics.CacheStatisticsService;
 public final class CacheServices {
 
     /** Cannot instantiate. */
+    // /CLOVER:OFF
     private CacheServices() {}
-
+    // /CLOVER:ON
+    
     /**
      * Return the event service for the specified cache.
      * 

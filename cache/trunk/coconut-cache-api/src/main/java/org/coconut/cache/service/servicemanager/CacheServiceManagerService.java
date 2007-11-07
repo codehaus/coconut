@@ -19,7 +19,6 @@ public interface CacheServiceManagerService {
      *            the type of service
      * @return true if this cache has a service of the specified type registered,
      *         otherwise false
-     * @see #getInternalService(Class)
      * @see CacheServiceManagerService#getAllServices()
      */
     boolean hasService(Class<?> serviceType);

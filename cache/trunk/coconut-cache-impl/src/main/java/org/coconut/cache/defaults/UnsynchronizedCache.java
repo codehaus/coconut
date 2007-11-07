@@ -5,6 +5,7 @@
 package org.coconut.cache.defaults;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,18 +22,28 @@ import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
 import org.coconut.cache.internal.service.entry.EntryMap;
 import org.coconut.cache.internal.service.entry.InternalCacheEntryService;
+import org.coconut.cache.internal.service.entry.UnsynchronizedEntryFactoryService;
+import org.coconut.cache.internal.service.event.DefaultCacheEventService;
 import org.coconut.cache.internal.service.eviction.InternalCacheEvictionService;
+import org.coconut.cache.internal.service.eviction.UnsynchronizedCacheEvictionService;
+import org.coconut.cache.internal.service.exceptionhandling.DefaultCacheExceptionService;
 import org.coconut.cache.internal.service.expiration.DefaultCacheExpirationService;
+import org.coconut.cache.internal.service.loading.DefaultCacheLoaderService;
 import org.coconut.cache.internal.service.loading.InternalCacheLoadingService;
+import org.coconut.cache.internal.service.management.DefaultCacheManagementService;
 import org.coconut.cache.internal.service.servicemanager.CacheServiceManager;
 import org.coconut.cache.internal.service.servicemanager.UnsynchronizedCacheServiceManager;
+import org.coconut.cache.internal.service.spi.DefaultCacheListener;
 import org.coconut.cache.internal.service.spi.InternalCacheListener;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
+import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsService;
+import org.coconut.cache.internal.service.worker.UnsynchronizedCacheWorkerService;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.management.CacheManagementService;
+import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.spi.CacheServiceSupport;
@@ -61,6 +72,14 @@ import org.coconut.internal.util.CollectionUtils;
         CacheExpirationService.class, CacheLoadingService.class, CacheManagementService.class,
         CacheServiceManagerService.class, CacheStatisticsService.class })
 public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
+
+    /** The default services for this cache. */
+    private final static Collection<Class<? extends AbstractCacheLifecycle>> DEFAULTS = Arrays
+            .asList(DefaultCacheStatisticsService.class, DefaultCacheListener.class,
+                    UnsynchronizedCacheEvictionService.class, DefaultCacheExpirationService.class,
+                    DefaultCacheLoaderService.class, DefaultCacheManagementService.class,
+                    DefaultCacheEventService.class, UnsynchronizedCacheWorkerService.class,
+                    UnsynchronizedEntryFactoryService.class, DefaultCacheExceptionService.class);
 
     private final InternalCacheEntryService entryService;
 
@@ -96,8 +115,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
     public UnsynchronizedCache(CacheConfiguration<K, V> conf) {
         super(conf);
         Support s = new Support();
-        serviceManager = new UnsynchronizedCacheServiceManager(this, s, conf);
-        Defaults.initializeUnsynchronizedCache(conf, serviceManager);
+        serviceManager = new UnsynchronizedCacheServiceManager(this, s, conf, DEFAULTS);
         listener = serviceManager.getInternalService(InternalCacheListener.class);
         expirationService = serviceManager.getInternalService(DefaultCacheExpirationService.class);
         loadingService = serviceManager.getInternalService(InternalCacheLoadingService.class);
@@ -109,11 +127,13 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
     /** {@inheritDoc} */
     public void clear() {
         long started = listener.beforeCacheClear(this);
+        Collection<? extends AbstractCacheEntry<K, V>> list = Collections.EMPTY_LIST;
+        int size = 0;
+        long volume = 0;
 
         checkRunning("clear");
-        int size = map.size();
-        long volume = map.volume();
-        Collection<? extends AbstractCacheEntry<K, V>> list = Collections.EMPTY_LIST;
+        size = map.size();
+        volume = map.volume();
         if (size != 0) {
             list = new ArrayList<AbstractCacheEntry<K, V>>(map.getAll());
             evictionService.clear();
@@ -304,9 +324,10 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         long started = listener.beforePut(this, key, newValue, isLoaded);
         Collection<CacheEntry<K, V>> trimmed = Collections.EMPTY_LIST;
         AbstractCacheEntry<K, V> newEntry = null;
+        AbstractCacheEntry<K, V> prev = null;
 
         checkRunning("put");
-        AbstractCacheEntry<K, V> prev = map.get(key);
+        prev = map.get(key);
         if (prev == null || !putOnlyIfAbsent) {
             newEntry = entryService.createEntry(key, newValue, attributes, prev);
             if (addElement(newEntry)) {
@@ -361,9 +382,10 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         long started = listener.beforeReplace(this, key, newValue);
         Collection<CacheEntry<K, V>> trimmed = Collections.EMPTY_LIST;
         AbstractCacheEntry<K, V> newEntry = null;
+        AbstractCacheEntry<K, V> prev = null;
 
         checkRunning("put");
-        AbstractCacheEntry<K, V> prev = map.get(key);
+        prev = map.get(key);
         if (oldValue == null && prev != null || oldValue != null && prev != null
                 && oldValue.equals(prev.getValue())) {
             newEntry = entryService.createEntry(key, newValue, attributes, prev);
@@ -384,6 +406,10 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         /** {@inheritDoc} */
         public void checkRunning(String operation) {
             UnsynchronizedCache.this.checkRunning(operation);
+        }
+
+        public String getName() {
+            return UnsynchronizedCache.this.getName();
         }
 
         /** {@inheritDoc} */
@@ -449,14 +475,17 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
             loadingService.forceLoadAll(keys);
         }
 
-        /** {@inheritDoc} */
         public void purgeExpired() {
             List<AbstractCacheEntry<K, V>> expired = new ArrayList<AbstractCacheEntry<K, V>>();
             long start = listener.beforeCachePurge(UnsynchronizedCache.this);
             long timestamp = getClock().timestamp();
+            int size = 0;
+            int newSize = 0;
+            long volume = 0;
+            long newVolume = 0;
 
-            int size = map.size();
-            long volume = map.volume();
+            size = map.size();
+            volume = map.volume();
             for (Iterator<AbstractCacheEntry<K, V>> i = map.iterator(); i.hasNext();) {
                 AbstractCacheEntry<K, V> e = i.next();
                 if (e.isExpired(expirationService.getExpirationFilter(), timestamp)) {
@@ -465,8 +494,8 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
                     i.remove();
                 }
             }
-            int newSize = map.size();
-            long newVolume = map.volume();
+            newSize = map.size();
+            newVolume = map.volume();
 
             listener.afterCachePurge(UnsynchronizedCache.this, start, expired, size, volume,
                     newSize, newVolume);
@@ -493,13 +522,18 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
                         + toVolume);
             }
             long started = listener.beforeTrim(UnsynchronizedCache.this, toSize, toVolume);
+            int size = 0;
+            int newSize = 0;
+            long volume = 0;
+            long newVolume = 0;
+            List<AbstractCacheEntry<K, V>> l = Collections.EMPTY_LIST;
+
+            size = map.size();
+            volume = map.volume();
 
             checkRunning("trimming");
-            int previousSize = map.size();
-            long previousVolume = map.volume();
             int numberToTrim = Math.max(0, map.size() - toSize);
-            List<AbstractCacheEntry<K, V>> l = new ArrayList<AbstractCacheEntry<K, V>>(
-                    evictionService.evict(numberToTrim));
+            l = new ArrayList<AbstractCacheEntry<K, V>>(evictionService.evict(numberToTrim));
             for (AbstractCacheEntry<K, V> entry : l) {
                 map.remove(entry.getKey());
             }
@@ -508,11 +542,12 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
                 map.remove(entry.getKey());
                 l.add(entry);
             }
-            int newSize = map.size();
-            long newVolume = map.volume();
+            newSize = map.size();
+            newVolume = map.volume();
 
-            listener.afterTrimCache(UnsynchronizedCache.this, started, l, previousSize, newSize,
-                    previousVolume, newVolume);
+            listener.afterTrimCache(UnsynchronizedCache.this, started, l, size, newSize, volume,
+                    newVolume);
+
         }
 
         /** {@inheritDoc} */

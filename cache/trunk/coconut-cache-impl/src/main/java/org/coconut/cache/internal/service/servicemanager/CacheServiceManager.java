@@ -48,8 +48,6 @@ public interface CacheServiceManager extends CacheServiceManagerService {
 
     <T> T getService(Class<T> type);
 
-    void registerServices(Class<? extends AbstractCacheLifecycle>... service);
-
     void lazyStart(boolean failIfShutdown);
 
     /**
