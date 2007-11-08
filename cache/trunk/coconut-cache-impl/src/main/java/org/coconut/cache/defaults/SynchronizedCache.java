@@ -21,9 +21,12 @@ import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
 import org.coconut.cache.internal.service.entry.EntryMap;
 import org.coconut.cache.internal.service.entry.InternalCacheEntryService;
+import org.coconut.cache.internal.service.entry.SynchronizedEntryFactoryService;
+import org.coconut.cache.internal.service.entry.UnsynchronizedEntryFactoryService;
 import org.coconut.cache.internal.service.event.DefaultCacheEventService;
 import org.coconut.cache.internal.service.eviction.InternalCacheEvictionService;
 import org.coconut.cache.internal.service.eviction.SynchronizedCacheEvictionService;
+import org.coconut.cache.internal.service.exceptionhandling.DefaultCacheExceptionService;
 import org.coconut.cache.internal.service.expiration.DefaultCacheExpirationService;
 import org.coconut.cache.internal.service.loading.InternalCacheLoadingService;
 import org.coconut.cache.internal.service.loading.ThreadSafeCacheLoaderService;
@@ -70,11 +73,12 @@ import org.coconut.internal.util.CollectionUtils;
         CacheExpirationService.class, CacheLoadingService.class, CacheManagementService.class,
         CacheServiceManagerService.class, CacheStatisticsService.class })
 public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
-    private final static Collection<Class<? extends AbstractCacheLifecycle>>   DEFAULTS = Arrays.asList(DefaultCacheStatisticsService.class,
-            DefaultCacheListener.class, SynchronizedCacheEvictionService.class,
-            DefaultCacheExpirationService.class, ThreadSafeCacheLoaderService.class,
-            DefaultCacheManagementService.class, DefaultCacheEventService.class,
-            SynchronizedCacheWorkerService.class);
+    private final static Collection<Class<? extends AbstractCacheLifecycle>> DEFAULTS = Arrays
+            .asList(DefaultCacheStatisticsService.class, DefaultCacheListener.class,
+                    SynchronizedCacheEvictionService.class, DefaultCacheExpirationService.class,
+                    ThreadSafeCacheLoaderService.class, DefaultCacheManagementService.class,
+                    DefaultCacheEventService.class, SynchronizedCacheWorkerService.class,
+                    SynchronizedEntryFactoryService.class,DefaultCacheExceptionService.class);
 
     private final InternalCacheEntryService entryService;
 
@@ -418,17 +422,24 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
     /** A helper class. */
     class Support implements InternalCacheSupport<K, V> {
         /** {@inheritDoc} */
+
         public void checkRunning(String operation) {
-            SynchronizedCache.this.checkRunning(operation);
+            synchronized (SynchronizedCache.this) {
+                SynchronizedCache.this.checkRunning(operation);
+            }
         }
 
         /** {@inheritDoc} */
         public void checkRunning(String operation, boolean shutdown) {
-            SynchronizedCache.this.checkRunning(operation, shutdown);
+            synchronized (SynchronizedCache.this) {
+                SynchronizedCache.this.checkRunning(operation, shutdown);
+            }
         }
+
         public String getName() {
             return SynchronizedCache.this.getName();
         }
+
         /** {@inheritDoc} */
         public void load(K key, AttributeMap attributes) {
             boolean doLoad = false;
@@ -554,7 +565,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
             volume = map.volume();
 
             synchronized (this) {
-                checkRunning("trimming");
+                SynchronizedCache.this.checkRunning("trimming");
                 int numberToTrim = Math.max(0, map.size() - toSize);
                 l = new ArrayList<AbstractCacheEntry<K, V>>(evictionService.evict(numberToTrim));
                 for (AbstractCacheEntry<K, V> entry : l) {

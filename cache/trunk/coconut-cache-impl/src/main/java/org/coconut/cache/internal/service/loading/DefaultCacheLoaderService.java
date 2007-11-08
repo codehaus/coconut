@@ -58,7 +58,7 @@ public class DefaultCacheLoaderService<K, V> extends AbstractCacheLoadingService
 
     public AbstractCacheEntry<K, V> loadBlocking(K key, AttributeMap attributes) {
         FutureTask<AbstractCacheEntry<K, V>> ft = createFuture(key, attributes);
-        loadExecutor.execute(ft);
+        ft.run();
         try {
             return ft.get();
         } catch (InterruptedException e) {

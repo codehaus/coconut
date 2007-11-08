@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
@@ -143,15 +144,23 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
                 si.shutdown();
             }
             serviceBeingShutdown = null;
-            for (ServiceHolder si : internalServices) {
-                si.terminated();
-            }
-            for (ServiceHolder si : externalServices) {
-                si.terminated();
-            }
-            status = RunState.TERMINATED;
-            ces.getExceptionHandler().terminated();
+            tryTerminate();
         }
+    }
+
+    protected void tryTerminate() {
+        doTerminate();
+    }
+
+    protected void doTerminate() {
+        status = RunState.TERMINATED;
+        for (ServiceHolder si : internalServices) {
+            si.terminated();
+        }
+        for (ServiceHolder si : externalServices) {
+            si.terminated();
+        }
+        ces.getExceptionHandler().terminated();
     }
 
     /** {@inheritDoc} */

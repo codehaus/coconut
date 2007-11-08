@@ -17,17 +17,17 @@ import org.coconut.cache.spi.XmlConfigurator;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class DefaultCacheThreadService<K, V> extends AbstractCacheLifecycle  {
+public class DefaultCacheThreadService<K, V> extends AbstractCacheLifecycle {
 
     private final CacheWorkerManager executorFactory;
+
     /**
      * @param conf
      */
-    public DefaultCacheThreadService(
-            CacheConfiguration<K, V> conf) {
+    public DefaultCacheThreadService(CacheConfiguration<K, V> conf) {
         super("threading");
-        executorFactory=null;
-        //conf.worker().getWorkerManager().createExecutorService(null);
+        executorFactory = null;
+        // conf.worker().getWorkerManager().createExecutorService(null);
         String s = (String) conf.getProperty(XmlConfigurator.CACHE_INSTANCE_TYPE);
         Class c = null;
         try {
@@ -43,16 +43,14 @@ public class DefaultCacheThreadService<K, V> extends AbstractCacheLifecycle  {
 
     public void shutdown(Executor callback) /* throws Exception */{
         if (true) {
-            final ThreadPoolExecutor tpe =  null;
+            final ThreadPoolExecutor tpe = null;
             tpe.shutdown();
             if (!tpe.isTerminated()) {
                 Runnable r = new Runnable() {
                     public void run() {
                         try {
                             while (!tpe.isTerminated()) {
-                                tpe
-                                        .awaitTermination(Long.MAX_VALUE,
-                                                TimeUnit.NANOSECONDS);
+                                tpe.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
                             }
                         } catch (InterruptedException ignore) {/* ignore */}
                     }
@@ -67,21 +65,16 @@ public class DefaultCacheThreadService<K, V> extends AbstractCacheLifecycle  {
         return executorFactory != null;
     }
 
-
-
     public void executeShutdown(Runnable r) {
         new Thread(r).start();
     }
-
 
     public void doStart() {
     // ignore
     }
 
-
     public boolean isActive() {
         return isAsync();
     }
-
 
 }

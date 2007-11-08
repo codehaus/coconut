@@ -16,6 +16,8 @@ import javax.management.ObjectName;
 
 import junit.framework.Assert;
 
+import net.jcip.annotations.ThreadSafe;
+
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
@@ -49,197 +51,18 @@ public class AbstractCacheTCKTest extends Assert {
 
     protected ThreadServiceTestHelper threadHelper;
 
+    public void loadAndAwait(Integer key) {
+        loading().load(key);
+        awaitAllLoads();
+    }
+
     @Before
     public void setupClock() {
         clock = new DeterministicClock();
     }
 
-    protected void prestart() {
-        c.size();
-    }
-
-    protected Cache<Integer, String> newCache() {
-        return newCache(0);
-    }
-
-    protected Cache<Integer, String> newCache(int entries) {
-        CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
-        cc.setClock(clock);
-        Cache<Integer, String> c = cc.newCacheInstance(CacheTCKRunner.tt);
-        if (entries > 0) {
-            c.putAll(createMap(entries));
-        }
-        return c;
-    }
-
-    @SuppressWarnings("unchecked")
-    protected CacheConfiguration<Integer, String> newConf() {
-        return CacheConfiguration.create();
-    }
-
-    protected Cache<Integer, String> newCache(AbstractCacheServiceConfiguration<?, ?> conf) {
-        return (Cache) conf.c().newCacheInstance(CacheTCKRunner.tt);
-    }
-
-    protected void setCache(AbstractCacheServiceConfiguration<?, ?> conf) {
-        c = newCache(conf);
-    }
-
-    protected void setCache(CacheConfiguration<?, ?> conf) {
-        c = newCache(conf);
-    }
-
-    protected Cache<Integer, String> newCache(CacheConfiguration<?, ?> conf) {
-        return (Cache) conf.newCacheInstance(CacheTCKRunner.tt);
-    }
-
-    protected Cache<Integer, String> newCache(AbstractCacheServiceConfiguration<?, ?> conf,
-            int entries) {
-        return newCache(conf.c(), entries);
-    }
-
-    protected Cache<Integer, String> newCache(CacheConfiguration<?, ?> conf, int entries) {
-        Cache<Integer, String> cache = newCache(conf);
-        cache.putAll(createMap(entries));
-        return cache;
-    }
-
-    public static Map<Integer, String> createMap(int entries) {
-        if (entries < 0 || entries > 26) {
-            throw new IllegalArgumentException();
-        }
-        Map<Integer, String> map = new HashMap<Integer, String>(entries);
-        for (int i = 1; i <= entries; i++) {
-            map.put(i, "" + (char) (i + 64));
-        }
-
-        return map;
-    }
-
-    protected void checkLazystart() {
-        assertTrue(c.isStarted());
-    }
-
-    protected boolean containsKey(Map.Entry<Integer, String> e) {
-        return c.containsKey(e.getKey());
-    }
-
-    protected boolean containsValue(Map.Entry<Integer, String> e) {
-        return c.containsValue(e.getValue());
-    }
-
-    protected String peek(Integer e) {
-        return c.peek(e);
-    }
-
-    protected String peek(Map.Entry<Integer, String> e) {
-        return c.peek(e.getKey());
-    }
-
-    protected Collection<Map.Entry<Integer, String>> put(int to) {
-        return put(1, to);
-    }
-
-    protected Collection<Map.Entry<Integer, String>> put(int from, int to) {
-        for (int i = from; i <= to; i++) {
-            c.put(i, "" + (char) (i + 64));
-        }
-        return new ArrayList<Map.Entry<Integer, String>>(c.entrySet());
-    }
-
-    protected Collection<Map.Entry<Integer, String>> putAll(int from, int to) {
-        Map<Integer, String> m = new HashMap<Integer, String>();
-        for (int i = from; i <= to; i++) {
-            m.put(i, "" + (char) (i + 64));
-        }
-        c.putAll(m);
-        return new ArrayList<Map.Entry<Integer, String>>(c.entrySet());
-    }
-
-    protected String put(Map.Entry<Integer, String> e) {
-        return c.put(e.getKey(), e.getValue());
-    }
-
-    protected String replace(Map.Entry<Integer, String> e) {
-        return c.replace(e.getKey(), e.getValue());
-    }
-
-    protected String replace(Integer key, String value) {
-        return c.replace(key, value);
-    }
-
-    protected boolean replace(Integer key, String oldValue, String newValue) {
-        return c.replace(key, oldValue, newValue);
-    }
-
-    protected String putIfAbsent(Map.Entry<Integer, String> e) {
-        return c.putIfAbsent(e.getKey(), e.getValue());
-    }
-
-    protected String putIfAbsent(Integer key, String value) {
-        return c.putIfAbsent(key, value);
-    }
-
-    protected String put(Integer key, String value) {
-        return c.put(key, value);
-    }
-
-    protected String remove(Map.Entry<Integer, String> e) {
-        return c.remove(e.getKey());
-    }
-
-    protected void assertSize(int size) {
-        assertEquals(size, c.size());
-    }
-
-    protected void assertNullGet(String msg, Map.Entry<Integer, String> e) {
-        assertNull(msg, get(e));
-    }
-
-    protected void assertNullGet(Map.Entry<Integer, String> e) {
-        assertNullGet(new Map.Entry[] { e });
-    }
-
-    protected void assertNullGet(Map.Entry<Integer, String>... e) {
-        for (Map.Entry<Integer, String> entry : e) {
-            assertNull(get(entry));
-        }
-    }
-
-    protected void assertNullPeek(String msg, Map.Entry<Integer, String>... e) {
-        for (Map.Entry<Integer, String> entry : e) {
-            assertNull(msg, peek(entry));
-        }
-    }
-
-    protected void assertNullPeek(Map.Entry<Integer, String>... e) {
-        for (Map.Entry<Integer, String> entry : e) {
-            assertNull(peek(entry));
-        }
-    }
-
-    protected void assertPeek(Map.Entry<Integer, String>... e) {
-        for (Map.Entry<Integer, String> entry : e) {
-            assertEquals(entry.getValue(), c.peek(entry.getKey()));
-        }
-    }
-
-    protected void assertPeekEntry(Map.Entry<Integer, String>... e) {
-        for (Map.Entry<Integer, String> entry : e) {
-            CacheEntry<Integer, String> ee = c.peekEntry(entry.getKey());
-            assertEquals(ee.getValue(), entry.getValue());
-            assertEquals(ee.getKey(), entry.getKey());
-        }
-    }
-
     protected void assertGet(Map.Entry<Integer, String> e) {
         assertEquals(e.getValue(), c.get(e.getKey()));
-    }
-
-    protected void assertGetEntry(Map.Entry<Integer, String> e) {
-        CacheEntry<Integer, String> ee = c.getEntry(e.getKey());
-        assertEquals(ee.getValue(), e.getValue());
-        assertEquals(ee.getKey(), e.getKey());
     }
 
     protected void assertGet(Map.Entry<Integer, String>... e) {
@@ -255,57 +78,10 @@ public class AbstractCacheTCKTest extends Assert {
         }
     }
 
-    protected String get(int key) {
-        return c.get(key);
-    }
-
-    protected String get(Map.Entry<Integer, String> e) {
-        return c.get(e.getKey());
-    }
-
-    protected void touch(Map.Entry<Integer, String>... e) {
-        for (Map.Entry<Integer, String> entry : e) {
-            c.get(entry.getKey());
-        }
-    }
-
-    protected CacheEntry<Integer, String> peekEntry(Map.Entry<Integer, String> e) {
-        return c.peekEntry(e.getKey());
-    }
-
-    protected CacheEntry<Integer, String> getEntry(Map.Entry<Integer, String> e) {
-        return c.getEntry(e.getKey());
-    }
-
-    protected Map<Integer, String> getAll(Map.Entry<Integer, String>... e) {
-        return c.getAll(CollectionUtils.asMap(e).keySet());
-    }
-
-    protected void waitAndAssertGet(Map.Entry<Integer, String>... e) throws InterruptedException {
-        for (Map.Entry<Integer, String> m : e) {
-            for (int i = 0; i < 100; i++) {
-                if (c.get(m.getKey()).equals(m.getValue())) {
-                    break;
-                } else {
-                    Thread.sleep(15);
-                }
-                if (i == 99) {
-                    throw new AssertionError("Value did not change");
-                }
-            }
-        }
-    }
-
-    protected void putAll(Map.Entry<Integer, String>... entries) {
-        c.putAll(CollectionUtils.asMap(entries));
-    }
-
-    protected void incTime() {
-        clock.incrementTimestamp(1);
-    }
-
-    protected void incTime(int amount) {
-        clock.incrementTimestamp(amount);
+    protected void assertGetEntry(Map.Entry<Integer, String> e) {
+        CacheEntry<Integer, String> ee = c.getEntry(e.getKey());
+        assertEquals(ee.getValue(), e.getValue());
+        assertEquals(ee.getKey(), e.getKey());
     }
 
     /**
@@ -325,8 +101,71 @@ public class AbstractCacheTCKTest extends Assert {
         Assert.assertEquals(ratio, hitstat.getHitRatio(), 0.0001);
     }
 
-    protected final CacheExpirationService<Integer, String> expiration() {
-        return c.getService(CacheExpirationService.class);
+    protected void assertNullGet(Map.Entry<Integer, String> e) {
+        assertNullGet(new Map.Entry[] { e });
+    }
+
+    protected void assertNullGet(Map.Entry<Integer, String>... e) {
+        for (Map.Entry<Integer, String> entry : e) {
+            assertNull(get(entry));
+        }
+    }
+
+    protected void assertNullGet(String msg, Map.Entry<Integer, String> e) {
+        assertNull(msg, get(e));
+    }
+
+    protected void assertNullPeek(Map.Entry<Integer, String>... e) {
+        for (Map.Entry<Integer, String> entry : e) {
+            assertNull(peek(entry));
+        }
+    }
+
+    protected void assertNullPeek(String msg, Map.Entry<Integer, String>... e) {
+        for (Map.Entry<Integer, String> entry : e) {
+            assertNull(msg, peek(entry));
+        }
+    }
+
+    protected void assertPeek(Map.Entry<Integer, String>... e) {
+        for (Map.Entry<Integer, String> entry : e) {
+            assertEquals(entry.getValue(), c.peek(entry.getKey()));
+        }
+    }
+
+    protected void assertPeekEntry(Map.Entry<Integer, String>... e) {
+        for (Map.Entry<Integer, String> entry : e) {
+            CacheEntry<Integer, String> ee = c.peekEntry(entry.getKey());
+            assertEquals(ee.getValue(), entry.getValue());
+            assertEquals(ee.getKey(), entry.getKey());
+        }
+    }
+
+    protected void assertSize(int size) {
+        assertEquals(size, c.size());
+    }
+
+    /**
+     * Await all loads that currently active.
+     */
+    protected void awaitAllLoads() {
+        if (threadHelper != null) {
+            threadHelper.awaitAllIdle();
+        }
+        // only unsync now
+        // when sync hook up with AbstractCacheTCKTestBundle.threadHelper
+    }
+
+    protected void checkLazystart() {
+        assertTrue(c.isStarted());
+    }
+
+    protected boolean containsKey(Map.Entry<Integer, String> e) {
+        return c.containsKey(e.getKey());
+    }
+
+    protected boolean containsValue(Map.Entry<Integer, String> e) {
+        return c.containsValue(e.getValue());
     }
 
     protected final CacheEventService<Integer, String> event() {
@@ -337,20 +176,8 @@ public class AbstractCacheTCKTest extends Assert {
         return c.getService(CacheEvictionService.class);
     }
 
-    protected final CacheStatisticsService statistics() {
-        return c.getService(CacheStatisticsService.class);
-    }
-
-    protected final CacheLoadingService<Integer, String> loading() {
-        return c.getService(CacheLoadingService.class);
-    }
-
-    protected final CacheManagementService management() {
-        return c.getService(CacheManagementService.class);
-    }
-
-    protected final CacheServiceManagerService services() {
-        return c.getService(CacheServiceManagerService.class);
+    protected final CacheExpirationService<Integer, String> expiration() {
+        return c.getService(CacheExpirationService.class);
     }
 
     protected <T> T findMXBean(Class<T> clazz) {
@@ -372,24 +199,174 @@ public class AbstractCacheTCKTest extends Assert {
         }
     }
 
-    private static <T> void doFindMXBeans(Collection<ManagedGroup> col, ManagedGroup group,
-            Class<T> c) {
-        for (ManagedGroup mg : group.getChildren()) {
-            for (Object o : mg.getObjects()) {
-                if (c.isAssignableFrom(o.getClass())) {
-                    col.add(mg);
-                }
-            }
-            doFindMXBeans(col, mg, c);
-        }
+    protected String get(int key) {
+        return c.get(key);
+    }
+
+    protected String get(Map.Entry<Integer, String> e) {
+        return c.get(e.getKey());
+    }
+
+    protected Map<Integer, String> getAll(Map.Entry<Integer, String>... e) {
+        return c.getAll(CollectionUtils.asMap(e).keySet());
+    }
+
+    protected CacheEntry<Integer, String> getEntry(Map.Entry<Integer, String> e) {
+        return c.getEntry(e.getKey());
+    }
+
+    protected void incTime() {
+        clock.incrementTimestamp(1);
+    }
+
+    protected void incTime(int amount) {
+        clock.incrementTimestamp(amount);
     }
 
     protected void loadAndAwait(Map.Entry<Integer, String> e) {
         loading().load(e.getKey());
+        awaitAllLoads();
     }
 
-    public void loadAndAwait(Integer key) {
-        loading().load(key);
+    protected final CacheLoadingService<Integer, String> loading() {
+        return c.getService(CacheLoadingService.class);
+    }
+
+    protected final CacheManagementService management() {
+        return c.getService(CacheManagementService.class);
+    }
+
+    protected Cache<Integer, String> newCache() {
+        return newCache(0);
+    }
+
+    protected Cache<Integer, String> newCache(AbstractCacheServiceConfiguration<?, ?> conf) {
+        return newCache(conf.c());
+    }
+
+    protected Cache<Integer, String> newCache(AbstractCacheServiceConfiguration<?, ?> conf,
+            int entries) {
+        return newCache(conf.c(), entries);
+    }
+
+    protected Cache<Integer, String> newCache(CacheConfiguration<?, ?> conf) {
+        if (CacheTCKRunner.tt.getAnnotation(ThreadSafe.class) != null) {
+            threadHelper = new ThreadServiceTestHelper();
+            conf.worker().setWorkerManager(threadHelper);
+        }
+        return (Cache) conf.newCacheInstance(CacheTCKRunner.tt);
+    }
+
+    protected Cache<Integer, String> newCache(CacheConfiguration<?, ?> conf, int entries) {
+        Cache<Integer, String> cache = newCache(conf);
+        cache.putAll(createMap(entries));
+        return cache;
+    }
+
+    protected Cache<Integer, String> newCache(int entries) {
+        CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
+        cc.setClock(clock);
+        Cache<Integer, String> c = newCache(cc);
+        if (entries > 0) {
+            c.putAll(createMap(entries));
+        }
+        return c;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected CacheConfiguration<Integer, String> newConf() {
+        return CacheConfiguration.create();
+    }
+
+    protected Cache<Integer, String> newStartupFailedCache() {
+        CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
+        cc.serviceManager().add(new FailingService());
+        Cache<Integer, String> c = cc.newCacheInstance(CacheTCKRunner.tt);
+        return c;
+    }
+
+    protected String peek(Integer e) {
+        return c.peek(e);
+    }
+
+    protected String peek(Map.Entry<Integer, String> e) {
+        return c.peek(e.getKey());
+    }
+
+    protected CacheEntry<Integer, String> peekEntry(Map.Entry<Integer, String> e) {
+        return c.peekEntry(e.getKey());
+    }
+
+    protected void prestart() {
+        c.size();
+    }
+
+    protected Collection<Map.Entry<Integer, String>> put(int to) {
+        return put(1, to);
+    }
+
+    protected Collection<Map.Entry<Integer, String>> put(int from, int to) {
+        for (int i = from; i <= to; i++) {
+            c.put(i, "" + (char) (i + 64));
+        }
+        return new ArrayList<Map.Entry<Integer, String>>(c.entrySet());
+    }
+
+    protected String put(Integer key, String value) {
+        return c.put(key, value);
+    }
+
+    protected String put(Map.Entry<Integer, String> e) {
+        return c.put(e.getKey(), e.getValue());
+    }
+
+    protected Collection<Map.Entry<Integer, String>> putAll(int from, int to) {
+        Map<Integer, String> m = new HashMap<Integer, String>();
+        for (int i = from; i <= to; i++) {
+            m.put(i, "" + (char) (i + 64));
+        }
+        c.putAll(m);
+        return new ArrayList<Map.Entry<Integer, String>>(c.entrySet());
+    }
+
+    protected void putAll(Map.Entry<Integer, String>... entries) {
+        c.putAll(CollectionUtils.asMap(entries));
+    }
+
+    protected String putIfAbsent(Integer key, String value) {
+        return c.putIfAbsent(key, value);
+    }
+
+    protected String putIfAbsent(Map.Entry<Integer, String> e) {
+        return c.putIfAbsent(e.getKey(), e.getValue());
+    }
+
+    protected String remove(Map.Entry<Integer, String> e) {
+        return c.remove(e.getKey());
+    }
+
+    protected String replace(Integer key, String value) {
+        return c.replace(key, value);
+    }
+
+    protected boolean replace(Integer key, String oldValue, String newValue) {
+        return c.replace(key, oldValue, newValue);
+    }
+
+    protected String replace(Map.Entry<Integer, String> e) {
+        return c.replace(e.getKey(), e.getValue());
+    }
+
+    protected final CacheServiceManagerService services() {
+        return c.getService(CacheServiceManagerService.class);
+    }
+
+    protected void setCache(AbstractCacheServiceConfiguration<?, ?> conf) {
+        c = newCache(conf);
+    }
+
+    protected void setCache(CacheConfiguration<?, ?> conf) {
+        c = newCache(conf);
     }
 
     protected void shutdownAndAwait() {
@@ -401,19 +378,53 @@ public class AbstractCacheTCKTest extends Assert {
         }
     }
 
-    /**
-     * Await all loads that currently active.
-     */
-    protected void awaitAllLoads() {
-    // only unsync now
-    // when sync hook up with AbstractCacheTCKTestBundle.threadHelper
+    protected final CacheStatisticsService statistics() {
+        return c.getService(CacheStatisticsService.class);
     }
 
-    protected Cache<Integer, String> newStartupFailedCache() {
-        CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
-        cc.serviceManager().add(new FailingService());
-        Cache<Integer, String> c = cc.newCacheInstance(CacheTCKRunner.tt);
-        return c;
+    protected void touch(Map.Entry<Integer, String>... e) {
+        for (Map.Entry<Integer, String> entry : e) {
+            c.get(entry.getKey());
+        }
+    }
+
+    protected void waitAndAssertGet(Map.Entry<Integer, String>... e) throws InterruptedException {
+        for (Map.Entry<Integer, String> m : e) {
+            for (int i = 0; i < 100; i++) {
+                if (c.get(m.getKey()).equals(m.getValue())) {
+                    break;
+                } else {
+                    Thread.sleep(15);
+                }
+                if (i == 99) {
+                    throw new AssertionError("Value did not change");
+                }
+            }
+        }
+    }
+
+    public static Map<Integer, String> createMap(int entries) {
+        if (entries < 0 || entries > 26) {
+            throw new IllegalArgumentException();
+        }
+        Map<Integer, String> map = new HashMap<Integer, String>(entries);
+        for (int i = 1; i <= entries; i++) {
+            map.put(i, "" + (char) (i + 64));
+        }
+
+        return map;
+    }
+
+    private static <T> void doFindMXBeans(Collection<ManagedGroup> col, ManagedGroup group,
+            Class<T> c) {
+        for (ManagedGroup mg : group.getChildren()) {
+            for (Object o : mg.getObjects()) {
+                if (c.isAssignableFrom(o.getClass())) {
+                    col.add(mg);
+                }
+            }
+            doFindMXBeans(col, mg, c);
+        }
     }
 
     static class FailingService extends AbstractCacheLifecycle {

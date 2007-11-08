@@ -1,9 +1,9 @@
 package org.coconut.cache.internal.service.entry;
 
 import org.coconut.cache.Cache;
+import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
 import org.coconut.core.AttributeMap;
-import org.coconut.core.Clock;
 
 public class SynchronizedEntryFactoryService<K, V> extends
         AbstractCacheEntryFactoryService<K, V> {
@@ -14,9 +14,9 @@ public class SynchronizedEntryFactoryService<K, V> extends
 
     private final Object mutex;
 
-    public SynchronizedEntryFactoryService(Clock clock,
+    public SynchronizedEntryFactoryService(CacheConfiguration<?, ?> conf,
             CacheExceptionService<K, V> exceptionHandler, Cache<K, V> mutex) {
-        super(clock, exceptionHandler);
+        super(conf.getClock(), exceptionHandler);
         this.mutex = mutex;
     }
 

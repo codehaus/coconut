@@ -158,10 +158,12 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
         c = newCache(newConf().loading().setRefreshFilter(new RefreshFilter()).setLoader(
                 loader));
         loading().loadAll();
+        awaitAllLoads();
         assertEquals("A", c.get(1));
         assertEquals("B", c.get(2));
         loader.setBase(2);
         loading().loadAll();
+        awaitAllLoads();
         assertEquals("C", c.peek(1));
         assertEquals("B", c.peek(2));
     }

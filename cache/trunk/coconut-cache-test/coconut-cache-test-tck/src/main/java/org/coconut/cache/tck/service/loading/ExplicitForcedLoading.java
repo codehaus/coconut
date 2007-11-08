@@ -158,6 +158,7 @@ public class ExplicitForcedLoading extends AbstractLoadingTestBundle {
         assertEquals("a2", get(2));
         assertEquals(3, loader.getNumberOfLoads());
         loading().forceLoadAll(req);
+        awaitAllLoads();
         assertEquals(5, loader.getNumberOfLoads());
     }
 
@@ -181,8 +182,8 @@ public class ExplicitForcedLoading extends AbstractLoadingTestBundle {
         awaitAllLoads();
         assertEquals(3, loader.getNumberOfLoads());
         loading().forceLoadAll();
-        assertGet(M1, M2, M3);
         awaitAllLoads();
+        assertGet(M1, M2, M3);
         assertEquals(6, loader.getNumberOfLoads());
     }
     

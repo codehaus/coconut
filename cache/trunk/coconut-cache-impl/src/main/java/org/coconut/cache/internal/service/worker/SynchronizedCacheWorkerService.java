@@ -4,12 +4,25 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.coconut.cache.internal.service.servicemanager.CacheServiceManager;
+import org.coconut.cache.service.worker.CacheWorkerConfiguration;
 import org.coconut.cache.service.worker.CacheWorkerManager;
 import org.coconut.core.AttributeMap;
 
 public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService {
 
-    private final SameThreadCacheWorker worker = new SameThreadCacheWorker();
+    private final CacheWorkerManager worker;
+
+    private final CacheServiceManager csm;
+
+    public SynchronizedCacheWorkerService(CacheWorkerConfiguration conf, CacheServiceManager csm) {
+        this.csm = csm;
+        if (conf.getWorkerManager() == null) {
+            worker = new SameThreadCacheWorker();
+        } else {
+            worker = conf.getWorkerManager();
+        }
+    }
 
     public CacheWorkerManager getManager() {
         return worker;
@@ -20,13 +33,11 @@ public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService {
         private final ExecutorService es;
 
         SameThreadCacheWorker() {
-            es = Executors.newCachedThreadPool(new WorkerUtils.DefaultThreadFactory(
-                    "cache"));
+            es = Executors.newCachedThreadPool(new WorkerUtils.DefaultThreadFactory("cache"));
         }
 
         @Override
-        public ExecutorService getExecutorService(Class<?> service,
-                AttributeMap attributes) {
+        public ExecutorService getExecutorService(Class<?> service, AttributeMap attributes) {
             return es;
         }
 

@@ -79,7 +79,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
 
     Set<K> keySet;
 
-    Set<CacheEntry<K, V>> entrySet;
+    Set<Map.Entry<K, V>> entrySet;
 
     Collection<V> values;
 
@@ -105,8 +105,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
      * @throws IllegalArgumentException
      *             if the initial capacity of elements is negative.
      */
-    public EntryMap(InternalCacheSupport<K, V> ics, boolean isThreadSafe,
-            int initialCapacity) {
+    public EntryMap(InternalCacheSupport<K, V> ics, boolean isThreadSafe, int initialCapacity) {
         this(ics, isThreadSafe, initialCapacity, DEFAULT_LOAD_FACTOR);
     }
 
@@ -123,15 +122,14 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
      * @throws IllegalArgumentException
      *             if the initial capacity is negative or the load factor is nonpositive.
      */
-    public EntryMap(InternalCacheSupport<K, V> ics, boolean isThreadSafe,
-            int initialCapacity, float loadFactor) {
+    public EntryMap(InternalCacheSupport<K, V> ics, boolean isThreadSafe, int initialCapacity,
+            float loadFactor) {
         if (initialCapacity < 0) {
             throw new IllegalArgumentException("initialCapacity must be >=0, was "
                     + initialCapacity);
         }
         if (loadFactor <= 0 || Float.isNaN(loadFactor)) {
-            throw new IllegalArgumentException("load factor must be >0, was "
-                    + loadFactor);
+            throw new IllegalArgumentException("load factor must be >0, was " + loadFactor);
         }
         if (initialCapacity > MAXIMUM_CAPACITY) {
             initialCapacity = MAXIMUM_CAPACITY;
@@ -235,22 +233,19 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
      * @see java.util.AbstractMap#entrySet()
      */
     public Set<Map.Entry<K, V>> entrySetPublic(ConcurrentMap<K, V> cache) {
-        return (Set) entrySet(cache, true);
-    }
-
-    /**
-     * @see java.util.AbstractMap#entrySet()
-     */
-    public Set<CacheEntry<K, V>> entrySet(ConcurrentMap<K, V> cache, boolean copyEntries) {
-        Set<CacheEntry<K, V>> es = entrySet;
-        return (es != null) ? es
-                : (entrySet = isThreadSafe ? new EntrySetSynchronized<K, V>(cache, this,
-                        copyEntries) : new EntrySet<K, V>(cache, this, copyEntries));
+        if (isThreadSafe) {
+            synchronized (cache) {
+                return (entrySet != null) ? entrySet : (entrySet = (Set) new EntrySetSynchronized<K, V>(cache,
+                        this, false));
+            }
+        } else {
+            return (entrySet != null) ? entrySet : (entrySet = (Set) new EntrySet<K, V>(cache,
+                    this, false));
+        }
     }
 
     public Collection<? extends AbstractCacheEntry<K, V>> getAll() {
-        ArrayList<AbstractCacheEntry<K, V>> list = new ArrayList<AbstractCacheEntry<K, V>>(
-                size);
+        ArrayList<AbstractCacheEntry<K, V>> list = new ArrayList<AbstractCacheEntry<K, V>>(size);
         for (AbstractCacheEntry<K, V> e : this) {
             list.add(e);
         }
@@ -280,12 +275,13 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
      * @see java.util.AbstractMap#keySet()
      */
     public Set<K> keySet(ConcurrentMap<K, V> cache) {
-        Set<K> ks = keySet;
         if (isThreadSafe) {
-            return (ks != null) ? ks
-                    : (keySet = new KeySetSynchronized<K, V>(cache, this));
+            synchronized (cache) {
+                return (keySet != null) ? keySet : (keySet = new KeySetSynchronized<K, V>(cache,
+                        this));
+            }
         } else {
-            return (ks != null) ? ks : (keySet = new KeySet<K, V>(cache, this));
+            return (keySet != null) ? keySet : (keySet = new KeySet<K, V>(cache, this));
         }
     }
 
@@ -377,12 +373,13 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
      * @see java.util.AbstractMap#values()
      */
     public Collection<V> values(Map<K, V> cache) {
-        Collection<V> vs = values;
         if (isThreadSafe) {
-            return (vs != null) ? vs
-                    : (values = new ValuesSynchronized<K, V>(cache, this));
+            synchronized (cache) {
+                return (values != null) ? values : (values = new ValuesSynchronized<K, V>(cache,
+                        this));
+            }
         } else {
-            return (vs != null) ? vs : (values = new Values<K, V>(cache, this));
+            return (values != null) ? values : (values = new Values<K, V>(cache, this));
         }
     }
 
@@ -506,8 +503,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
     static class EntrySetSynchronized<K, V> extends EntrySet<K, V> {
         private final Object mutex;
 
-        EntrySetSynchronized(ConcurrentMap<K, V> cache, EntryMap<K, V> map,
-                boolean copyEntries) {
+        EntrySetSynchronized(ConcurrentMap<K, V> cache, EntryMap<K, V> map, boolean copyEntries) {
             super(cache, map, copyEntries);
             this.mutex = cache;
         }
@@ -592,6 +588,20 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
         }
 
+        @Override
+        public boolean contains(Object o) {
+            synchronized (mutex) {
+                return super.contains(o);
+            }
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            synchronized (mutex) {
+                return super.remove(o);
+            }
+        }
+
     }
 
     static class EntrySet<K, V> extends AbstractSet<CacheEntry<K, V>> {
@@ -623,7 +633,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
             if (!(o instanceof Map.Entry))
                 return false;
-            map.ics.checkRunning("contains",false);
+            map.ics.checkRunning("contains", false);
             Map.Entry<?, ?> e = (Map.Entry<?, ?>) o;
             AbstractCacheEntry<K, V> ace = map.get(e.getKey());
             V v = ace != null ? ace.getValue() : null;
@@ -685,7 +695,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
          */
         @Override
         public boolean containsAll(Collection<?> c) {
-            map.ics.checkRunning("contains",false);
+            map.ics.checkRunning("contains", false);
             return noCopySet == null ? super.containsAll(c) : noCopySet.containsAll(c);
         }
 
@@ -736,8 +746,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
         }
     }
 
-    static class EntrySetIterator<K, V> extends
-            BaseIterator<K, V, AbstractCacheEntry<K, V>> {
+    static class EntrySetIterator<K, V> extends BaseIterator<K, V, AbstractCacheEntry<K, V>> {
         EntrySetIterator(Map<K, V> cache, EntryMap<K, V> map) {
             super(cache, map);
         }
@@ -1038,6 +1047,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
             return super.remove(o);
         }
+
         @Override
         public Object[] toArray() {
             if (size() == 0) {
@@ -1053,6 +1063,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
             return super.toArray(a);
         }
+
         @Override
         public void clear() {
             cache.clear();

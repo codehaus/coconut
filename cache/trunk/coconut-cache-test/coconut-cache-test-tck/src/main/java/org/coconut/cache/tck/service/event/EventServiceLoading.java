@@ -38,53 +38,59 @@ public class EventServiceLoading extends AbstractEventTestBundle {
         c = newCache(conf);
     }
 
-
-
     @Test
     public void forceLoad() throws Exception {
         subscribe(CacheEventFilters.CACHEENTRYEVENT_FILTER);
         loading().forceLoad(1);
-        ItemAdded added=consumeItem(ItemAdded.class, M1);
-      //  assertTrue(added.isLoaded());
+        awaitAllLoads();
+        ItemAdded added = consumeItem(ItemAdded.class, M1);
+        // assertTrue(added.isLoaded());
         loader.incBase();
         loading().forceLoad(1);
+        awaitAllLoads();
         consumeItem(ItemUpdated.class, M1.getKey(), M2.getValue());
         loading().forceLoadAll(Arrays.asList(1, 2));
-
+        awaitAllLoads();
         // the order might vary
         consumeItem(ItemUpdated.class, M1.getKey(), M2.getValue());
         consumeItem(ItemAdded.class, M2.getKey(), M3.getValue());
 
         loader.incBase();
         loading().forceLoadAll();
+        awaitAllLoads();
         consumeItem(ItemUpdated.class, M1.getKey(), M3.getValue());
         consumeItem(ItemUpdated.class, M2.getKey(), M4.getValue());
-       
+
     }
 
     @Test
     public void load() throws Exception {
         subscribe(CacheEventFilters.CACHEENTRYEVENT_FILTER);
         loading().load(1);
+        awaitAllLoads();
         consumeItem(ItemAdded.class, M1);
         loader.incBase();
         loading().load(1);// does not trigger load
+        awaitAllLoads();
         loading().loadAll(Arrays.asList(1, 2));
+        awaitAllLoads();
         consumeItem(ItemAdded.class, M2.getKey(), M3.getValue());
         loader.incBase();
         loading().loadAll();
+        awaitAllLoads();
     }
-    
 
     @Test
     public void loadRefresh() throws Exception {
         subscribe(CacheEventFilters.CACHEENTRYEVENT_FILTER);
         loading().setDefaultTimeToRefresh(1, TimeUnit.MILLISECONDS);
         loading().load(1);
+        awaitAllLoads();
         consumeItem(ItemAdded.class, M1);
         incTime(1);
         loader.incBase();
         loading().loadAll();
+        awaitAllLoads();
         consumeItem(ItemUpdated.class, M1.getKey(), M2.getValue());
     }
 

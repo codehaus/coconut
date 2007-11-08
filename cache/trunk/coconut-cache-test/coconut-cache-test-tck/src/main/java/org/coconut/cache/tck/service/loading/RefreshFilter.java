@@ -31,6 +31,7 @@ public class RefreshFilter extends AbstractLoadingTestBundle {
         f.setAccept(true);// All entries should be refreshed
         loader.setBase(2);
         loading().loadAll();
+        awaitAllLoads();
         assertEquals(loader.getNumberOfLoads(), 2);
         assertEquals(M3.getValue(), get(M1.getKey()));
     }
@@ -47,6 +48,7 @@ public class RefreshFilter extends AbstractLoadingTestBundle {
         loader.setBase(2);
         loader.setDoReturnNull(true);
         loading().loadAll();
+        awaitAllLoads();
         assertEquals(loader.getNumberOfLoads(), 2);
         assertGet(M1);
     }

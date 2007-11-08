@@ -74,10 +74,12 @@ public class LoadingMXBean extends AbstractLoadingTestBundle {
     @Test
     public void testForceLoadAll() {
         mxBean.forceLoadAll();
+        awaitAllLoads();
         assertEquals("A", c.get(1));
         assertEquals("B", c.get(2));
         loader.setBase(1);
         mxBean.forceLoadAll();
+        awaitAllLoads();
         assertEquals("B", c.peek(1));
         assertEquals("C", c.peek(2));
     }
@@ -92,10 +94,12 @@ public class LoadingMXBean extends AbstractLoadingTestBundle {
                 loader).c().management().setEnabled(true).setMBeanServer(mbs));
         mxBean = findMXBean(mbs, CacheLoadingMXBean.class);
         mxBean.loadAll();
+        awaitAllLoads();
         assertEquals("A", c.get(1));
         assertEquals("B", c.get(2));
         loader.setBase(2);
         mxBean.loadAll();
+        awaitAllLoads();
         assertEquals("C", c.peek(1));
         assertEquals("B", c.peek(2));
     }

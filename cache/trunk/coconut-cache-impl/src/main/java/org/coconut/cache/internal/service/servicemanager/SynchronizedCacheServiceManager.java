@@ -1,16 +1,19 @@
 package org.coconut.cache.internal.service.servicemanager;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.AsynchronousShutdownObject;
-import org.omg.PortableServer.ThreadPolicy;
 
 public class SynchronizedCacheServiceManager implements CacheServiceManager {
     private final Inner delegate;
@@ -20,12 +23,21 @@ public class SynchronizedCacheServiceManager implements CacheServiceManager {
     public SynchronizedCacheServiceManager(Cache<?, ?> cache, InternalCacheSupport<?, ?> helper,
             CacheConfiguration<?, ?> conf,
             Collection<Class<? extends AbstractCacheLifecycle>> classes) {
-        delegate = new Inner(cache, helper, conf,classes);
+        delegate = new Inner(cache, helper, conf, classes);
         this.mutex = cache;
     }
 
     class Inner extends UnsynchronizedCacheServiceManager {
         private final Object mutex;
+
+        private final ReentrantLock mainLock = new ReentrantLock();
+
+        private final CopyOnWriteArrayList<ServiceHolder> missing = new CopyOnWriteArrayList<ServiceHolder>();
+
+        /**
+         * Wait condition to support awaitTermination
+         */
+        private final Condition termination = mainLock.newCondition();
 
         public Inner(Cache<?, ?> cache, InternalCacheSupport<?, ?> helper,
                 CacheConfiguration<?, ?> conf,
@@ -36,37 +48,99 @@ public class SynchronizedCacheServiceManager implements CacheServiceManager {
 
         @Override
         public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
-//            ThreadPoolExecutor
-            return super.awaitTermination(timeout, unit);
+            long nanos = unit.toNanos(timeout);
+            final ReentrantLock mainLock = this.mainLock;
+            mainLock.lock();
+            try {
+                for (;;) {
+                    if (isTerminated())
+                        return true;
+                    if (nanos <= 0)
+                        return false;
+                    nanos = termination.awaitNanos(nanos);
+                }
+            } finally {
+                mainLock.unlock();
+            }
         }
 
+        protected void tryTerminate() {
+            for (Iterator<ServiceHolder> iterator = missing.iterator(); iterator.hasNext();) {
+                if (iterator.next().aso.isTerminated()) {
+                    iterator.remove();
+                }
+            }
+            if (missing.size() == 0) {
+                super.doTerminate();
+            } else {
+                if (shutdownThread == null) {
+                    shutdownThread = new Thread(new Runnable() {
+                        public void run() {
+                            for (;;) {
+                                if (missing.size() == 0) {
+                                    doTerminate();
+                                    return;
+                                }
+                                for (ServiceHolder sh : missing) {
+                                    try {
+                                        sh.aso.awaitTermination(60, TimeUnit.SECONDS);
+                                    } catch (InterruptedException e) {
+                                        // ignore???
+                                    }
+                                }
+                                tryTerminate();
+                            }
+                        }
+                    }, "cache shutdown thread");
+                    shutdownThread.start();
+                }
+            }
+        }
+
+        protected void doTerminate() {
+            synchronized (mutex) {
+                super.doTerminate();
+                shutdownThread = null;
+            }
+        }
+
+        private Thread shutdownThread;
+
         @Override
-        public synchronized void shutdown() {
-            super.shutdown();
+        public void shutdown() {
+            synchronized (mutex) {
+                super.shutdown();
+            }
         }
 
         @Override
         public synchronized void shutdownNow() {
-            shutdown();
-            for (ServiceHolder sh : super.internalServices) {
-                if (sh.aso != null) {
-                    sh.aso.shutdownNow();
+            synchronized (mutex) {
+                shutdown();
+                for (ServiceHolder sh : super.internalServices) {
+                    if (sh.aso != null && !sh.aso.isTerminated()) {
+                        sh.aso.shutdownNow();
+                    }
                 }
-            }
-            for (ServiceHolder sh : super.externalServices) {
-                if (sh.aso != null) {
-                    sh.aso.shutdownNow();
+                for (ServiceHolder sh : super.externalServices) {
+                    if (sh.aso != null && !sh.aso.isTerminated()) {
+                        sh.aso.shutdownNow();
+                    }
                 }
+                tryTerminate();
             }
         }
 
         @Override
         public void shutdownServiceAsynchronously(AsynchronousShutdownObject service2) {
-            ServiceHolder sh = super.serviceBeingShutdown;
-            if (sh == null) {
-                throw new IllegalStateException();
+            synchronized (mutex) {
+                ServiceHolder sh = super.serviceBeingShutdown;
+                if (sh == null) {
+                    throw new IllegalStateException();
+                }
+                sh.aso = service2;
+                missing.add(sh);
             }
-            sh.aso = service2;
         }
     }
 
