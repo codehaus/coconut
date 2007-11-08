@@ -120,17 +120,12 @@ public class SynchronizedCacheServiceManager implements CacheServiceManager {
         delegate.lazyStart(failIfShutdown);
     }
 
-    public void prestart() {
-        delegate.prestart();
-    }
-
     public void shutdown() {
         delegate.shutdown();
     }
 
     public void shutdownNow() {
         delegate.shutdownNow();
-
     }
 
     public void shutdownServiceAsynchronously(AsynchronousShutdownObject service2) {

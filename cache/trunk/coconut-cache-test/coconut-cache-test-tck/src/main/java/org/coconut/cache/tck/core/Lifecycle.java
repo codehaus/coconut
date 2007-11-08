@@ -40,15 +40,18 @@ public class Lifecycle extends AbstractCacheTCKTest {
     }
 
     @Test
-    public void shutdownNoOp() throws InterruptedException {
+    public void shutdownNoOp() {
         c = newCache();
         c.shutdown();
         assertTrue(c.isShutdown());
+        c.shutdown();
+        assertTrue(c.isShutdown());
         // TODO c is started???
+
     }
 
     @Test
-    public void shutdown() throws InterruptedException {
+    public void shutdown() {
         c = newCache();
         startCache();
         assertTrue(c.isStarted());
@@ -59,7 +62,7 @@ public class Lifecycle extends AbstractCacheTCKTest {
     }
 
     @Test
-    public void shutdownNow() throws InterruptedException {
+    public void shutdownNow()  {
         c = newCache();
         startCache();
         assertTrue(c.isStarted());

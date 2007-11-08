@@ -13,6 +13,17 @@ public class ExceptionHandlingLifecycle extends AbstractCacheTCKTest {
 
     private CacheConfiguration conf;
 
+    @Test(expected = IllegalMonitorStateException.class)
+    public void lifecycleIMSE() throws Throwable {
+        conf = newConf().exceptionHandling().setExceptionHandler(new ErroneousExceptionHandler())
+                .c();
+        try {
+            c = newCache(conf);
+        } catch (IllegalArgumentException iae) {
+            throw iae.getCause();
+        }
+    }
+
     @Test
     public void lifecycle() {
         conf = newConf().exceptionHandling().setExceptionHandler(new MyExceptionHandler()).c();
@@ -38,6 +49,13 @@ public class ExceptionHandlingLifecycle extends AbstractCacheTCKTest {
         assertEquals(3, status.get());
         shutdownAndAwait();
         assertEquals(15, status.get());
+    }
+
+    class ErroneousExceptionHandler extends CacheExceptionHandlers.DefaultLoggingExceptionHandler {
+        @Override
+        public void initialize(CacheConfiguration configuration) {
+            throw new IllegalMonitorStateException();
+        }
     }
 
     class MyExceptionHandler extends CacheExceptionHandlers.DefaultLoggingExceptionHandler {

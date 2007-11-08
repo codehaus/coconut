@@ -11,7 +11,7 @@ public enum RunState {
     NOTRUNNING, RUNNING, SHUTDOWN, STOP, TIDYING, TERMINATED, COULD_NOT_START;
 
     public boolean isStarted() {
-        return this != NOTRUNNING;
+        return this != NOTRUNNING && this != COULD_NOT_START;
     }
 
     public boolean isShutdown() {

@@ -3,6 +3,8 @@
  */
 package org.coconut.cache.tck.service.servicemanager;
 
+import org.coconut.cache.CacheException;
+import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;
 
@@ -13,10 +15,18 @@ public class ServiceManagerOnCache extends AbstractCacheTCKTest {
         c = newCache();
         assertFalse(services().hasService(Object.class));
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void testNonConfiguredIAE() {
         c = newCache();
         c.getService(Object.class);
     }
+
+    @Test
+    public void serviceManagerAvailable() {
+        c = newCache();
+        c.getService(CacheServiceManagerService.class);
+    }
+
+
 }

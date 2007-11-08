@@ -103,17 +103,19 @@ public abstract class CacheExceptionHandler<K, V> {
     }
 
     /**
-     * Should be called from the constructor of the cache.
+     * Called to initialize the CacheExceptionHandler. This method should be called from
+     * within the constructor of the cache. Exceptions thrown by this method should not be
+     * handled by the cache.
      * 
      * @param configuration
+     *            the configuration of the cache
      */
-    public void initialize(CacheConfiguration<K, V> configuration) {
+    public void initialize(CacheConfiguration<K, V> configuration) {}
 
-    }
-
-    public void terminated() {
-
-    }
+    /**
+     * Called as the last action by the cache once it has terminated.
+     */
+    public void terminated() {}
 
     /**
      * This method is called when the
@@ -131,8 +133,9 @@ public abstract class CacheExceptionHandler<K, V> {
      * @param cause
      *            the cause of the failure
      */
-    public void lifecycleInitializationFailed(CacheConfiguration<K, V> configuration,
-            CacheLifecycle service, RuntimeException cause) {}
+    public void cacheStartupFailed(CacheConfiguration<K, V> configuration,
+            CacheLifecycle service, RuntimeException cause) {
+    }
 
     /**
      * A delivery of an event failed.

@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.CacheException;
 import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.service.management.CacheManagementService;
@@ -31,11 +32,15 @@ import org.coconut.management.ManagedObject;
 public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManager implements
         CacheServiceManagerService {
 
+    private final CacheExceptionService ces;
+
     private final DefaultPicoContainer container = new DefaultPicoContainer();
 
     private final List<ManagedObject> managedObjects = new ArrayList<ManagedObject>();
 
     private final Map<Class<?>, Object> publicServices = new HashMap<Class<?>, Object>();
+
+    private RuntimeException startupException;
 
     private RunState status = RunState.NOTRUNNING;
 
@@ -68,11 +73,11 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
         for (Class<? extends AbstractCacheLifecycle> cla : classes) {
             container.registerComponentImplementation(cla);
         }
-     
+
         publicServices.put(CacheServiceManagerService.class, ServiceManagerUtil.wrapService(this));
-        
+
         /* Initialize Exception Service */
-        CacheExceptionService ces = (CacheExceptionService) container
+        ces = (CacheExceptionService) container
                 .getComponentInstanceOfType(CacheExceptionService.class);
         ces.getExceptionHandler().initialize(conf);
     }
@@ -108,92 +113,27 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
 
     /** {@inheritDoc} */
     public boolean hasService(Class<?> type) {
-        lazyStart(false);
         return publicServices.containsKey(type);
     }
 
     /** {@inheritDoc} */
-    public boolean isShutdown() {
-        return status.isShutdown();
-    }
-
-    /** {@inheritDoc} */
-    public boolean isStarted() {
-        return status.isStarted();
-    }
-
-    /** {@inheritDoc} */
-    public boolean isTerminated() {
-        return status.isTerminated();
-    }
-
-    /** {@inheritDoc} */
     public void lazyStart(boolean failIfShutdown) {
-        if (failIfShutdown && status.isShutdown()) {
-            throw new IllegalStateException("Cache has been shutdown");
-        }
-        prestart();
-    }
-
-    /** {@inheritDoc} */
-    public void prestart() {
-        if (status == RunState.NOTRUNNING) {
-            List<AbstractCacheLifecycle> l = container
-                    .getComponentInstancesOfType(AbstractCacheLifecycle.class);
-
-            for (AbstractCacheLifecycle a : l) {
-                internalServices.add(new ServiceHolder(a, true));
+        if (status != RunState.RUNNING) {
+            if (startupException != null) {
+                throw startupException;
+            } else if (status == RunState.NOTRUNNING) {
+                doStart();
+            } else if (failIfShutdown && status.isShutdown()) {
+                throw new IllegalStateException("Cache has been shutdown");
             }
-            for (ServiceHolder si : internalServices) {
-                si.initialize(getConf());
-                publicServices.putAll(si.getPublicService());
-                // TODO; check if we have conflicting services
-            }
-            for (ServiceHolder si : externalServices) {
-                si.initialize(getConf());
-                publicServices.putAll(si.getPublicService());
-                // TODO; check if we have conflicting services
-            }
-            for (ServiceHolder si : internalServices) {
-                si.start(publicServices);
-            }
-            for (ServiceHolder si : externalServices) {
-                si.start(publicServices);
-            }
-            // register mbeans
-            CacheManagementService cms = (CacheManagementService) publicServices
-                    .get(CacheManagementService.class);
-            if (cms != null) {
-                for (ServiceHolder si : internalServices) {
-                    if (si.service instanceof ManagedObject) {
-                        ((ManagedObject) si.service).manage(cms);
-                    }
-                    si.registerMBeans(cms);
-                }
-                for (ServiceHolder si : externalServices) {
-                    si.registerMBeans(cms);
-                }
-                for (ManagedObject si : managedObjects) {
-                    si.manage(cms);
-
-                }
-
-            }
-            // started
-            for (ServiceHolder si : internalServices) {
-                si.started(getCache());
-            }
-            for (ServiceHolder si : externalServices) {
-                si.started(getCache());
-            }
-            status = RunState.RUNNING;
-            setConf(null); // Conf can be GC'ed now
         }
     }
 
     /** {@inheritDoc} */
     public void shutdown() {
-        if (status == RunState.RUNNING || status == RunState.NOTRUNNING) {
+        if (status == RunState.NOTRUNNING) {
+            status = RunState.TERMINATED;
+        } else if (status == RunState.RUNNING) {
             getCache().clear();
             status = RunState.SHUTDOWN;
             for (ServiceHolder si : internalServices) {
@@ -210,8 +150,6 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
                 si.terminated();
             }
             status = RunState.TERMINATED;
-            CacheExceptionService ces = (CacheExceptionService) container
-                    .getComponentInstanceOfType(CacheExceptionService.class);
             ces.getExceptionHandler().terminated();
         }
     }
@@ -223,6 +161,73 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
 
     public void shutdownServiceAsynchronously(AsynchronousShutdownObject service) {
         throw new UnsupportedOperationException();
+    }
+
+    private void doStart() {
+        List<AbstractCacheLifecycle> l = container
+                .getComponentInstancesOfType(AbstractCacheLifecycle.class);
+
+        for (AbstractCacheLifecycle a : l) {
+            internalServices.add(new ServiceHolder(a, true));
+        }
+        try {
+            for (ServiceHolder si : internalServices) {
+                si.initialize(getConf());
+                publicServices.putAll(si.getPublicService());
+                // TODO; check if we have conflicting services
+            }
+            for (ServiceHolder si : externalServices) {
+                si.initialize(getConf());
+                publicServices.putAll(si.getPublicService());
+                // TODO; check if we have conflicting services
+            }
+            for (ServiceHolder si : internalServices) {
+                si.start(publicServices);
+            }
+            for (ServiceHolder si : externalServices) {
+                si.start(publicServices);
+            }
+
+            // register mbeans
+            CacheManagementService cms = (CacheManagementService) publicServices
+                    .get(CacheManagementService.class);
+            if (cms != null) {
+                for (ServiceHolder si : internalServices) {
+                    if (si.service instanceof ManagedObject) {
+                        ((ManagedObject) si.service).manage(cms);
+                    }
+                    si.registerMBeans(cms);
+                }
+                for (ServiceHolder si : externalServices) {
+                    si.registerMBeans(cms);
+                }
+                for (ManagedObject si : managedObjects) {
+                    si.manage(cms);
+                }
+
+            }
+            // started
+            for (ServiceHolder si : internalServices) {
+                si.started(getCache());
+            }
+            for (ServiceHolder si : externalServices) {
+                si.started(getCache());
+            }
+
+        } catch (RuntimeException re) {
+            startupException = new CacheException("Could not start cache", re);
+            status = RunState.COULD_NOT_START;
+            ces.getExceptionHandler().terminated();
+            throw startupException;
+        } catch (Error er) {
+            startupException = new CacheException("Could not start cache", er);
+            status = RunState.COULD_NOT_START;
+            ces.getExceptionHandler().terminated();
+            throw er;
+        } finally {
+            setConf(null); // Conf can be GC'ed now
+        }
+        status = RunState.RUNNING;
     }
 
     /** {@inheritDoc} */

@@ -25,6 +25,7 @@ import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.management.CacheManagementService;
+import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.statistics.CacheHitStat;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
@@ -92,8 +93,8 @@ public class AbstractCacheTCKTest extends Assert {
         return (Cache) conf.newCacheInstance(CacheTCKRunner.tt);
     }
 
-    protected Cache<Integer, String> newCache(
-            AbstractCacheServiceConfiguration<?, ?> conf, int entries) {
+    protected Cache<Integer, String> newCache(AbstractCacheServiceConfiguration<?, ?> conf,
+            int entries) {
         return newCache(conf.c(), entries);
     }
 
@@ -145,15 +146,16 @@ public class AbstractCacheTCKTest extends Assert {
         }
         return new ArrayList<Map.Entry<Integer, String>>(c.entrySet());
     }
+
     protected Collection<Map.Entry<Integer, String>> putAll(int from, int to) {
-        Map<Integer,String> m=new HashMap<Integer,String>();
+        Map<Integer, String> m = new HashMap<Integer, String>();
         for (int i = from; i <= to; i++) {
             m.put(i, "" + (char) (i + 64));
         }
         c.putAll(m);
         return new ArrayList<Map.Entry<Integer, String>>(c.entrySet());
     }
-    
+
     protected String put(Map.Entry<Integer, String> e) {
         return c.put(e.getKey(), e.getValue());
     }
@@ -279,8 +281,7 @@ public class AbstractCacheTCKTest extends Assert {
         return c.getAll(CollectionUtils.asMap(e).keySet());
     }
 
-    protected void waitAndAssertGet(Map.Entry<Integer, String>... e)
-            throws InterruptedException {
+    protected void waitAndAssertGet(Map.Entry<Integer, String>... e) throws InterruptedException {
         for (Map.Entry<Integer, String> m : e) {
             for (int i = 0; i < 100; i++) {
                 if (c.get(m.getKey()).equals(m.getValue())) {
@@ -306,6 +307,7 @@ public class AbstractCacheTCKTest extends Assert {
     protected void incTime(int amount) {
         clock.incrementTimestamp(amount);
     }
+
     /**
      * Assert method for hit statistics.
      * 
@@ -330,7 +332,7 @@ public class AbstractCacheTCKTest extends Assert {
     protected final CacheEventService<Integer, String> event() {
         return c.getService(CacheEventService.class);
     }
-    
+
     protected final CacheEvictionService<Integer, String> eviction() {
         return c.getService(CacheEvictionService.class);
     }
@@ -363,16 +365,15 @@ public class AbstractCacheTCKTest extends Assert {
         } else if (found.size() == 1) {
             ObjectName on = found.iterator().next().getObjectName();
             // System.out.println(on);
-            T proxy = MBeanServerInvocationHandler.newProxyInstance(server, on, clazz,
-                    false);
+            T proxy = MBeanServerInvocationHandler.newProxyInstance(server, on, clazz, false);
             return proxy;
         } else {
             throw new IllegalArgumentException("Duplicate service " + clazz);
         }
     }
 
-    private static <T> void doFindMXBeans(Collection<ManagedGroup> col,
-            ManagedGroup group, Class<T> c) {
+    private static <T> void doFindMXBeans(Collection<ManagedGroup> col, ManagedGroup group,
+            Class<T> c) {
         for (ManagedGroup mg : group.getChildren()) {
             for (Object o : mg.getObjects()) {
                 if (c.isAssignableFrom(o.getClass())) {
@@ -399,11 +400,28 @@ public class AbstractCacheTCKTest extends Assert {
             throw new AssertionError(e);
         }
     }
+
     /**
      * Await all loads that currently active.
      */
     protected void awaitAllLoads() {
     // only unsync now
     // when sync hook up with AbstractCacheTCKTestBundle.threadHelper
+    }
+
+    protected Cache<Integer, String> newStartupFailedCache() {
+        CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
+        cc.serviceManager().add(new FailingService());
+        Cache<Integer, String> c = cc.newCacheInstance(CacheTCKRunner.tt);
+        return c;
+    }
+
+    static class FailingService extends AbstractCacheLifecycle {
+
+        @Override
+        public void started(Cache<?, ?> cache) {
+            throw new IllegalMonitorStateException();
+        }
+
     }
 }
