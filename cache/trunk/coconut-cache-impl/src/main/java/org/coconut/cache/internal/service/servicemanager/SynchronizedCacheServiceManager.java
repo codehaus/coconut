@@ -15,7 +15,7 @@ import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.AsynchronousShutdownObject;
 
-public class SynchronizedCacheServiceManager implements CacheServiceManager {
+public class SynchronizedCacheServiceManager implements InternalCacheServiceManager {
     private final Inner delegate;
 
     private final Object mutex;

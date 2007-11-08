@@ -14,7 +14,7 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.entry.ImmutableCacheEntry;
-import org.coconut.cache.internal.service.servicemanager.CacheServiceManager;
+import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
 import org.coconut.cache.spi.ConfigurationValidator;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.AttributeMaps;
@@ -314,7 +314,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
      * 
      * @return the service manager used by the cache
      */
-    abstract CacheServiceManager getServiceManager();
+    abstract InternalCacheServiceManager getServiceManager();
 
     V put(K key, V value, AttributeMap attributes, boolean putOnlyIfAbsent) {
         if (key == null) {

@@ -7,7 +7,7 @@ import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.core.AttributeMaps;
 
 public abstract class AbstractCacheWorkerService extends AbstractCacheLifecycle implements
-        CacheWorkerService {
+        InternalCacheWorkerService {
 
     /**
      * Returns a ExecutorService that can be used to asynchronously execute tasks for the

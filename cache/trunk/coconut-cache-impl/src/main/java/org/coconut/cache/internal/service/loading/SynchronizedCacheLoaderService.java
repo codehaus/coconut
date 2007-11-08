@@ -8,8 +8,8 @@ import java.util.concurrent.FutureTask;
 
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.entry.InternalCacheEntryService;
-import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
-import org.coconut.cache.internal.service.worker.CacheWorkerService;
+import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
+import org.coconut.cache.internal.service.worker.InternalCacheWorkerService;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.core.AttributeMap;
@@ -23,8 +23,8 @@ public class SynchronizedCacheLoaderService<K, V> extends AbstractCacheLoadingSe
     private final Executor loadExecutor;
 
     public SynchronizedCacheLoaderService(InternalCacheEntryService attributeFactory,
-            CacheExceptionService<K, V> exceptionService, CacheLoadingConfiguration<K, V> loadConf,
-            final CacheWorkerService threadManager, final LoadSupport<K, V> cache) {
+            InternalCacheExceptionService<K, V> exceptionService, CacheLoadingConfiguration<K, V> loadConf,
+            final InternalCacheWorkerService threadManager, final LoadSupport<K, V> cache) {
         super(loadConf, attributeFactory, exceptionService, cache);
         this.attributeFactory = attributeFactory;
         this.loadExecutor = threadManager.getExecutorService(CacheLoadingService.class);

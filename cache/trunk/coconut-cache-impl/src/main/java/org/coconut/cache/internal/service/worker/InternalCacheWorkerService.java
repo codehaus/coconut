@@ -5,7 +5,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.coconut.cache.service.worker.CacheWorkerManager;
 
-public interface CacheWorkerService {
+public interface InternalCacheWorkerService {
 
     ExecutorService getExecutorService(Class<?> service);
 

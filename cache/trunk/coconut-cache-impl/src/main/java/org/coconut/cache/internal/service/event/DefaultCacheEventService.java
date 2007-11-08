@@ -18,7 +18,7 @@ import javax.management.Notification;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
-import org.coconut.cache.internal.service.servicemanager.CacheServiceManager;
+import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
 import org.coconut.cache.service.event.CacheEntryEvent;
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.event.CacheEventConfiguration;
@@ -52,11 +52,11 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
 
     private final boolean isEnabled;
 
-    private final CacheServiceManager manager;
+    private final InternalCacheServiceManager manager;
 
     private final Offerable<CacheEvent<K, V>> offerable;
 
-    public DefaultCacheEventService(CacheServiceManager manager, CacheEventConfiguration co) {
+    public DefaultCacheEventService(InternalCacheServiceManager manager, CacheEventConfiguration co) {
         super(CacheEventConfiguration.SERVICE_NAME);
         isEnabled = co.isEnabled();
         this.manager = manager;

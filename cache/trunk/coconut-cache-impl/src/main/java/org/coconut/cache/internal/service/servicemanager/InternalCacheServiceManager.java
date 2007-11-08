@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 
-public interface CacheServiceManager extends CacheServiceManagerService {
+public interface InternalCacheServiceManager extends CacheServiceManagerService {
     /**
      * Blocks until all tasks have completed execution after a shutdown request, or the
      * timeout occurs, or the current thread is interrupted, whichever happens first.

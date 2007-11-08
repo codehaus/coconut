@@ -7,7 +7,7 @@ package org.coconut.cache.internal.service.entry;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class ConcurrentCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
+public class SynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
 
     private final AbstractCacheEntryFactoryService<K, V> service;
 
@@ -27,7 +27,7 @@ public class ConcurrentCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
      * @param lastUpdateTime
      * @param size
      */
-    public ConcurrentCacheEntry(AbstractCacheEntryFactoryService<K, V> service, K key,
+    public SynchronizedCacheEntry(AbstractCacheEntryFactoryService<K, V> service, K key,
             V value, double cost, long creationTime, long lastUpdateTime, long size,
             long refreshTime, long expirationTime, long hits) {
         super(key, value, cost, creationTime, lastUpdateTime, size);

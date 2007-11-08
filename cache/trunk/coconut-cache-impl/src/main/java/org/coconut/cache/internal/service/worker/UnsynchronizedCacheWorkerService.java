@@ -6,7 +6,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.internal.service.servicemanager.CacheServiceManager;
+import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
 import org.coconut.cache.service.worker.CacheWorkerManager;
 import org.coconut.core.AttributeMap;
 
@@ -14,9 +14,9 @@ public class UnsynchronizedCacheWorkerService extends AbstractCacheWorkerService
 
     private final SameThreadCacheWorker worker = new SameThreadCacheWorker();
 
-    private final CacheServiceManager csm;
+    private final InternalCacheServiceManager csm;
 
-    public UnsynchronizedCacheWorkerService(CacheServiceManager csm) {
+    public UnsynchronizedCacheWorkerService(InternalCacheServiceManager csm) {
         this.csm = csm;
     }
 

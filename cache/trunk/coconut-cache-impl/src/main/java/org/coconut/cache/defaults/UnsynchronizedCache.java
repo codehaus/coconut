@@ -28,13 +28,13 @@ import org.coconut.cache.internal.service.eviction.InternalCacheEvictionService;
 import org.coconut.cache.internal.service.eviction.UnsynchronizedCacheEvictionService;
 import org.coconut.cache.internal.service.exceptionhandling.DefaultCacheExceptionService;
 import org.coconut.cache.internal.service.expiration.DefaultCacheExpirationService;
+import org.coconut.cache.internal.service.listener.DefaultCacheListener;
+import org.coconut.cache.internal.service.listener.InternalCacheListener;
 import org.coconut.cache.internal.service.loading.InternalCacheLoadingService;
 import org.coconut.cache.internal.service.loading.UnsynchronizedCacheLoaderService;
 import org.coconut.cache.internal.service.management.DefaultCacheManagementService;
-import org.coconut.cache.internal.service.servicemanager.CacheServiceManager;
+import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
 import org.coconut.cache.internal.service.servicemanager.UnsynchronizedCacheServiceManager;
-import org.coconut.cache.internal.service.spi.DefaultCacheListener;
-import org.coconut.cache.internal.service.spi.InternalCacheListener;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsService;
 import org.coconut.cache.internal.service.worker.UnsynchronizedCacheWorkerService;
@@ -93,7 +93,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
 
     private final EntryMap<K, V> map;
 
-    private final CacheServiceManager serviceManager;
+    private final InternalCacheServiceManager serviceManager;
 
     /**
      * Creates a new UnsynchronizedCache with a default configuration.
@@ -348,7 +348,9 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         long started = listener.beforePutAll(this, t, attributes, fromLoader);
         Map<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>> newEntries = new HashMap<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>>();
 
-        checkRunning("put");
+        if (!checkRunning("put", !fromLoader) && fromLoader) {
+            return null;
+        }
         for (Map.Entry<? extends K, ? extends V> entry : t.entrySet()) {
             K key = entry.getKey();
             V value = entry.getValue();
@@ -405,7 +407,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         return newEntry == null ? null : prev;
     }
 
-    CacheServiceManager getServiceManager() {
+    InternalCacheServiceManager getServiceManager() {
         return serviceManager;
     }
 
@@ -429,6 +431,9 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         public void load(K key, AttributeMap attributes) {
             boolean doLoad = false;
 
+            if (!UnsynchronizedCache.this.checkRunning("load", false)) {
+                return;
+            }
             AbstractCacheEntry<K, V> e = map.get(key);
             doLoad = e == null;
             if (!doLoad) {
@@ -447,6 +452,9 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
             final Map<K, AttributeMap> keys;
             long timestamp = getClock().timestamp();
 
+            if (!UnsynchronizedCache.this.checkRunning("load", false)) {
+                return;
+            }
             if (force) {
                 keys = AttributeMaps.toMap(new ArrayList(keySet()), attributes);
             } else {
@@ -468,6 +476,9 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
             Map<K, AttributeMap> keys = new HashMap<K, AttributeMap>();
             long timestamp = getClock().timestamp();
 
+            if (!UnsynchronizedCache.this.checkRunning("load", false)) {
+                return;
+            }
             for (Map.Entry<K, AttributeMap> e : attributes.entrySet()) {
                 AbstractCacheEntry<K, V> ce = map.get(e.getKey());
                 boolean doLoad = ce == null;

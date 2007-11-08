@@ -4,7 +4,7 @@
 package org.coconut.cache.internal.service.entry;
 
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
+import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
 
@@ -40,7 +40,7 @@ public class UnsynchronizedEntryFactoryService<K, V> extends
     }
     
     public UnsynchronizedEntryFactoryService(CacheConfiguration<?, ?> conf,
-            CacheExceptionService<K, V> exceptionHandler) {
+            InternalCacheExceptionService<K, V> exceptionHandler) {
         super(conf.getClock(), exceptionHandler);
     }
     /**

@@ -9,9 +9,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
+import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
-import org.coconut.cache.internal.service.worker.CacheWorkerService;
+import org.coconut.cache.internal.service.worker.InternalCacheWorkerService;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingService;
@@ -62,7 +62,7 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
 
     Mock errorHandlerMock;
 
-    CacheExceptionService<Integer, String> errorHandlerProxy;
+    InternalCacheExceptionService<Integer, String> errorHandlerProxy;
 
     Mock cacheHelperMock;
 
@@ -77,8 +77,8 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
         loaderMock2 = mock(CacheLoader.class);
         loaderProxy2 = (CacheLoader) loaderMock2.proxy();
 
-        errorHandlerMock = mock(CacheExceptionService.class);
-        errorHandlerProxy = (CacheExceptionService) errorHandlerMock.proxy();
+        errorHandlerMock = mock(InternalCacheExceptionService.class);
+        errorHandlerProxy = (InternalCacheExceptionService) errorHandlerMock.proxy();
 
         cacheHelperMock = mock(InternalCacheSupport.class);
         cacheHelperProxy = (InternalCacheSupport) cacheHelperMock.proxy();
@@ -298,7 +298,7 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
 //        }
 //    }
 
-    static class MyExecutor implements CacheWorkerService {
+    static class MyExecutor implements InternalCacheWorkerService {
         Runnable r;
 
         /**

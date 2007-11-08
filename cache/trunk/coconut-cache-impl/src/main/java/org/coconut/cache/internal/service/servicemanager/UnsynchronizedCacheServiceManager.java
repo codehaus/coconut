@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
-import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
+import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
@@ -33,7 +33,7 @@ import org.coconut.management.ManagedObject;
 public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManager implements
         CacheServiceManagerService {
 
-    private final CacheExceptionService ces;
+    private final InternalCacheExceptionService ces;
 
     private final DefaultPicoContainer container = new DefaultPicoContainer();
 
@@ -78,8 +78,8 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
         publicServices.put(CacheServiceManagerService.class, ServiceManagerUtil.wrapService(this));
 
         /* Initialize Exception Service */
-        ces = (CacheExceptionService) container
-                .getComponentInstanceOfType(CacheExceptionService.class);
+        ces = (InternalCacheExceptionService) container
+                .getComponentInstanceOfType(InternalCacheExceptionService.class);
         ces.getExceptionHandler().initialize(conf);
     }
 

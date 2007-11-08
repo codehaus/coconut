@@ -17,7 +17,7 @@ import org.coconut.core.Logger;
 import org.coconut.core.Loggers;
 
 /**
- * The default implementation of the {@link CacheExceptionService}.
+ * The default implementation of the {@link InternalCacheExceptionService}.
  * <p>
  * NOTICE: This is an internal class and should not be directly referred. No guarantee is
  * made to the compatibility of this class between different releases of Coconut Cache.
@@ -30,7 +30,7 @@ import org.coconut.core.Loggers;
  *            the type of mapped values
  */
 public class DefaultCacheExceptionService<K, V> extends AbstractCacheLifecycle implements
-        CacheExceptionService<K, V> {
+        InternalCacheExceptionService<K, V> {
 
     /** The cache for which this DefaultCacheExceptionService is registered. */
     private final Cache<K, V> cache;

@@ -19,7 +19,7 @@ import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
  * @param <V>
  *            the type of mapped values
  */
-public interface CacheExceptionService<K, V> {
+public interface InternalCacheExceptionService<K, V> {
     /**
      * Returns the CacheExceptionHandler configured for this cache.
      * 

@@ -1,4 +1,4 @@
-package org.coconut.cache.internal.service.spi;
+package org.coconut.cache.internal.service.listener;
 
 import java.util.Collection;
 import java.util.Map;

@@ -2,7 +2,7 @@ package org.coconut.cache.internal.service.entry;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
+import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.core.AttributeMap;
 
 public class SynchronizedEntryFactoryService<K, V> extends
@@ -15,7 +15,7 @@ public class SynchronizedEntryFactoryService<K, V> extends
     private final Object mutex;
 
     public SynchronizedEntryFactoryService(CacheConfiguration<?, ?> conf,
-            CacheExceptionService<K, V> exceptionHandler, Cache<K, V> mutex) {
+            InternalCacheExceptionService<K, V> exceptionHandler, Cache<K, V> mutex) {
         super(conf.getClock(), exceptionHandler);
         this.mutex = mutex;
     }
@@ -39,7 +39,7 @@ public class SynchronizedEntryFactoryService<K, V> extends
         long hits = getHits(key, value, attributes, existing);
         long refreshTime = getTimeToRefresh(defaultRefreshTime, key, value, attributes,
                 existing);
-        ConcurrentCacheEntry<K, V> newEntry = new ConcurrentCacheEntry<K, V>(this, key,
+        SynchronizedCacheEntry<K, V> newEntry = new SynchronizedCacheEntry<K, V>(this, key,
                 value, cost, creationTime, lastUpdate, size, refreshTime, expirationTime,
                 hits);
 

@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.entry.InternalCacheEntryService;
-import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
+import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.cache.internal.service.servicemanager.CompositeService;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
@@ -31,7 +31,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
         InternalCacheLoadingService<K, V>, CompositeService, ManagedObject {
     private final InternalCacheEntryService attributeFactory;
 
-    private final CacheExceptionService<K, V> exceptionHandler;
+    private final InternalCacheExceptionService<K, V> exceptionHandler;
 
     private final CacheLoader<? super K, ? extends V> loader;
 
@@ -41,7 +41,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
 
     public AbstractCacheLoadingService(CacheLoadingConfiguration<K, V> loadingConfiguration,
             InternalCacheEntryService attributeFactory,
-            CacheExceptionService<K, V> exceptionHandler, LoadSupport<K, V> loadSupport) {
+            InternalCacheExceptionService<K, V> exceptionHandler, LoadSupport<K, V> loadSupport) {
         attributeFactory.setTimeToFreshNanos(LoadingUtils
                 .getInitialTimeToRefresh(loadingConfiguration));
         this.loader = loadingConfiguration.getLoader();
@@ -205,11 +205,11 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
     }
 
     /**
-     * Returns the {@link CacheExceptionService} configured for this service.
+     * Returns the {@link InternalCacheExceptionService} configured for this service.
      * 
      * @return the CacheExceptionService configured for this service
      */
-    final CacheExceptionService<K, V> getExceptionHandler() {
+    final InternalCacheExceptionService<K, V> getExceptionHandler() {
         return exceptionHandler;
     }
 

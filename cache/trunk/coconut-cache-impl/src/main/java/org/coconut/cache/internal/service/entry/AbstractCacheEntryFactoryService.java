@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
+import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.AttributeMaps;
@@ -29,7 +29,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
     /** Used for calculating timestamps. */
     private final Clock clock;
 
-    private final CacheExceptionService<K, V> errorHandler;
+    private final InternalCacheExceptionService<K, V> errorHandler;
 
     /**
      * Creates a new AbstractCacheEntryFactoryService.
@@ -41,7 +41,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
      * @param loadingService
      */
     public AbstractCacheEntryFactoryService(Clock clock,
-            CacheExceptionService<K, V> exceptionHandler) {
+            InternalCacheExceptionService<K, V> exceptionHandler) {
         this.clock = clock;
         this.errorHandler = exceptionHandler;
     }
