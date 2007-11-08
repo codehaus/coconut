@@ -112,6 +112,12 @@ final class LoadingUtils {
         return new DelegatedCacheLoadingService<K, V>(service);
     }
 
+    static <K, V> Callable<AbstractCacheEntry<K, V>> loadValue(
+            final AbstractCacheLoadingService<K, V> loaderService, final K key,
+            AttributeMap attributes) {
+        return new LoadValueRunnable<K, V>(loaderService, key, attributes);
+    }
+
     /**
      * A class that exposes a {@link CacheLoadingService} as a {@link CacheLoadingMXBean}.
      */
@@ -146,14 +152,14 @@ final class LoadingUtils {
         }
 
         /** {@inheritDoc} */
-        public void setDefaultTimeToRefreshMs(long timeToLiveMs) {
-            service.setDefaultTimeToRefresh(timeToLiveMs, TimeUnit.MILLISECONDS);
-        }
-
-        /** {@inheritDoc} */
         @ManagedOperation(description = "Attempts to reload all entries that are either expired or which needs refreshing")
         public void loadAll() {
             service.loadAll();
+        }
+
+        /** {@inheritDoc} */
+        public void setDefaultTimeToRefreshMs(long timeToLiveMs) {
+            service.setDefaultTimeToRefresh(timeToLiveMs, TimeUnit.MILLISECONDS);
         }
     }
 
@@ -226,6 +232,16 @@ final class LoadingUtils {
         }
 
         /** {@inheritDoc} */
+        public void loadAll() {
+            delegate.loadAll();
+        }
+
+        /** {@inheritDoc} */
+        public void loadAll(AttributeMap attributes) {
+            delegate.loadAll(attributes);
+        }
+
+        /** {@inheritDoc} */
         public void loadAll(Collection<? extends K> keys) {
             delegate.loadAll(keys);
         }
@@ -234,22 +250,10 @@ final class LoadingUtils {
         public void loadAll(Map<K, AttributeMap> mapsWithAttributes) {
             delegate.loadAll(mapsWithAttributes);
         }
-
         /** {@inheritDoc} */
         public void setDefaultTimeToRefresh(long timeToLive, TimeUnit unit) {
             delegate.setDefaultTimeToRefresh(timeToLive, unit);
         }
-
-        /** {@inheritDoc} */
-        public void loadAll() {
-            delegate.loadAll();
-        }
-    }
-
-    static <K, V> Callable<AbstractCacheEntry<K, V>> loadValue(
-            final AbstractCacheLoadingService<K, V> loaderService, final K key,
-            AttributeMap attributes) {
-        return new LoadValueRunnable<K, V>(loaderService, key, attributes);
     }
 
     static class LoadValueRunnable<K, V> implements Callable<AbstractCacheEntry<K, V>> {
@@ -319,7 +323,8 @@ final class LoadingUtils {
                     .entrySet()) {
                 K key = entry.getKey();
                 AttributeMap attributes = entry.getValue();
-                loaderService.doLoad(loader, key, attributes, false);
+                throw new UnsupportedOperationException();
+//                loaderService.doLoad(loader, key, attributes, false);
             }
         }
     }

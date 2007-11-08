@@ -58,21 +58,24 @@ public class RefreshFilter extends AbstractLoadingTestBundle {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
         cc.management().setEnabled(true);
         ManagedFilter filter = new ManagedFilter();
-        c = newCache(cc.loading().setRefreshFilter(filter).setLoader(
-                new IntegerToStringLoader()).c());
+        c = newCache(cc.loading().setRefreshFilter(filter).setLoader(new IntegerToStringLoader())
+                .c());
         prestart();
-        assertNotNull(filter.getManagedGroup());
+        assertNotNull(
+                "The Filter extends ManagedObject, and its manage() method should have been invoked",
+                filter.getManagedGroup());
     }
 
     @Test
     public void filterLifecycle() {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
         LifecycleFilter filter = new LifecycleFilter();
-        c = newCache(cc.loading().setRefreshFilter(filter).setLoader(
-                new IntegerToStringLoader()).c());
+        c = newCache(cc.loading().setRefreshFilter(filter).setLoader(new IntegerToStringLoader())
+                .c());
 
         filter.assertNotStarted();
         loading().load(M1.getKey());// lazy start
+        awaitAllLoads();
         filter.assertInStartedPhase();
         filter.shutdownAndAssert(c);
     }

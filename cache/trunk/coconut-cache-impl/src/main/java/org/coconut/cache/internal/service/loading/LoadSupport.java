@@ -7,6 +7,12 @@ import org.coconut.core.AttributeMap;
 
 public interface LoadSupport<K, V> {
 
+    /**
+     * @param key
+     *            the key to load
+     * @param attributes
+     *            a map of attributes
+     */
     void load(K key, AttributeMap attributes);
 
     void loadAll(AttributeMap attributes, boolean force);
@@ -24,7 +30,7 @@ public interface LoadSupport<K, V> {
      */
     AbstractCacheEntry<K, V> valueLoaded(K key, V value, AttributeMap attributes);
 
-    void valuesLoaded(Map<? extends K, ? extends V> values,
+    Map<K, AbstractCacheEntry<K, V>> valuesLoaded(Map<? extends K, ? extends V> values,
             Map<? extends K, AttributeMap> keys);
 
 }

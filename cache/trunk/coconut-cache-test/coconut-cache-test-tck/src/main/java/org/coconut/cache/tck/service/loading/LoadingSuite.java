@@ -15,6 +15,6 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses( { ExpirationWithCacheLoader.class, ExplicitForcedLoading.class,
         ExplicitLoading.class, ImplicitLoading.class, LoadingLazyStart.class,
-        LoadingCacheLoader.class, LoadingMXBean.class, LoadingRefresh.class,
-        LoadingService.class, RefreshFilter.class })
+        LoadingCacheLoader.class, LoadingMXBean.class, LoadingRefresh.class, LoadingService.class,
+        LoadingShutdown.class, RefreshFilter.class })
 public class LoadingSuite {}

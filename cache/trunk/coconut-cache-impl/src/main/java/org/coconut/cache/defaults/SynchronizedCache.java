@@ -22,18 +22,16 @@ import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService
 import org.coconut.cache.internal.service.entry.EntryMap;
 import org.coconut.cache.internal.service.entry.InternalCacheEntryService;
 import org.coconut.cache.internal.service.entry.SynchronizedEntryFactoryService;
-import org.coconut.cache.internal.service.entry.UnsynchronizedEntryFactoryService;
 import org.coconut.cache.internal.service.event.DefaultCacheEventService;
 import org.coconut.cache.internal.service.eviction.InternalCacheEvictionService;
 import org.coconut.cache.internal.service.eviction.SynchronizedCacheEvictionService;
 import org.coconut.cache.internal.service.exceptionhandling.DefaultCacheExceptionService;
 import org.coconut.cache.internal.service.expiration.DefaultCacheExpirationService;
 import org.coconut.cache.internal.service.loading.InternalCacheLoadingService;
-import org.coconut.cache.internal.service.loading.ThreadSafeCacheLoaderService;
+import org.coconut.cache.internal.service.loading.SynchronizedCacheLoaderService;
 import org.coconut.cache.internal.service.management.DefaultCacheManagementService;
 import org.coconut.cache.internal.service.servicemanager.CacheServiceManager;
 import org.coconut.cache.internal.service.servicemanager.SynchronizedCacheServiceManager;
-import org.coconut.cache.internal.service.servicemanager.UnsynchronizedCacheServiceManager;
 import org.coconut.cache.internal.service.spi.DefaultCacheListener;
 import org.coconut.cache.internal.service.spi.InternalCacheListener;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
@@ -76,9 +74,9 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
     private final static Collection<Class<? extends AbstractCacheLifecycle>> DEFAULTS = Arrays
             .asList(DefaultCacheStatisticsService.class, DefaultCacheListener.class,
                     SynchronizedCacheEvictionService.class, DefaultCacheExpirationService.class,
-                    ThreadSafeCacheLoaderService.class, DefaultCacheManagementService.class,
+                    SynchronizedCacheLoaderService.class, DefaultCacheManagementService.class,
                     DefaultCacheEventService.class, SynchronizedCacheWorkerService.class,
-                    SynchronizedEntryFactoryService.class,DefaultCacheExceptionService.class);
+                    SynchronizedEntryFactoryService.class, DefaultCacheExceptionService.class);
 
     private final InternalCacheEntryService entryService;
 
@@ -213,12 +211,12 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
         return true;
     }
 
-    private void checkRunning(String operation) {
-        checkRunning(operation, true);
+    private boolean checkRunning(String operation) {
+        return checkRunning(operation, true);
     }
 
-    private void checkRunning(String operation, boolean op) {
-        serviceManager.lazyStart(op);
+    private boolean checkRunning(String operation, boolean op) {
+        return serviceManager.lazyStart(op);
     }
 
     private List<CacheEntry<K, V>> trimCache() {
@@ -332,7 +330,9 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
         AbstractCacheEntry<K, V> prev = null;
 
         synchronized (this) {
-            checkRunning("put");
+            if (!checkRunning("put", !isLoaded) && isLoaded) {
+                return null;
+            }
             prev = map.get(key);
             if (prev == null || !putOnlyIfAbsent) {
                 newEntry = entryService.createEntry(key, newValue, attributes, prev);
@@ -348,8 +348,8 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
 
     /** {@inheritDoc} */
     @Override
-    void doPutAll(Map<? extends K, ? extends V> t, Map<? extends K, AttributeMap> attributes,
-            boolean fromLoader) {
+    Map<K, AbstractCacheEntry<K, V>> doPutAll(Map<? extends K, ? extends V> t,
+            Map<? extends K, AttributeMap> attributes, boolean fromLoader) {
         long started = listener.beforePutAll(this, t, attributes, fromLoader);
         Map<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>> newEntries = new HashMap<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>>();
 
@@ -367,6 +367,11 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
         }
 
         listener.afterPutAll(this, started, trimCache(), newEntries, fromLoader);
+        HashMap<K, AbstractCacheEntry<K, V>> result = new HashMap<K, AbstractCacheEntry<K, V>>();
+        for (AbstractCacheEntry<K, V> ace : newEntries.keySet()) {
+            result.put(ace.getKey(), ace);
+        }
+        return result;
     }
 
     /** {@inheritDoc} */
@@ -592,7 +597,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
         }
 
         /** {@inheritDoc} */
-        public void valuesLoaded(Map<? extends K, ? extends V> values,
+        public Map<K, AbstractCacheEntry<K, V>> valuesLoaded(Map<? extends K, ? extends V> values,
                 Map<? extends K, AttributeMap> keys) {
             HashMap<? extends K, ? extends V> map = new HashMap<K, V>(values);
             HashMap<? extends K, AttributeMap> attr = new HashMap<K, AttributeMap>(keys);
@@ -602,7 +607,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
                     attr.remove(entry.getKey());
                 }
             }
-            doPutAll(map, attr, true);
+            return doPutAll(map, attr, true);
         }
     }
 }

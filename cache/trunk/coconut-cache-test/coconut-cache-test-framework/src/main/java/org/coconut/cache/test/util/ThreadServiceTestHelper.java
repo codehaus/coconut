@@ -1,7 +1,10 @@
 package org.coconut.cache.test.util;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.SynchronousQueue;
@@ -17,7 +20,6 @@ public class ThreadServiceTestHelper extends CacheWorkerManager {
 
     private Semaphore awaits = new Semaphore(PERMITS);
 
-
     public void awaitAllIdle() {
         awaits.acquireUninterruptibly(PERMITS);
         awaits.release(PERMITS);
@@ -26,18 +28,33 @@ public class ThreadServiceTestHelper extends CacheWorkerManager {
     private class MyRunnable implements Runnable {
         private final Runnable r;
 
+        private final Exception calledFrom;
+
         public MyRunnable(Runnable r) {
             this.r = r;
+            this.calledFrom = new Exception();
         }
 
         public void run() {
             try {
                 r.run();
-            } finally {
+                if (r instanceof Future) {
+                    Future ft = ((FutureTask) r);
+                    if (ft.isDone()) {
+                        try {
+                            ft.get();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            calledFrom.printStackTrace();
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }finally {
                 awaits.release();
             }
         }
-
     }
 
     @Override

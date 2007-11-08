@@ -298,7 +298,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     abstract CacheEntry<K, V> doPut(K key, V newValue, AttributeMap attributes,
             boolean putOnlyIfAbsent, boolean returnNewEntry);
 
-    abstract void doPutAll(Map<? extends K, ? extends V> t,
+    abstract Map<K, AbstractCacheEntry<K, V>> doPutAll(Map<? extends K, ? extends V> t,
             Map<? extends K, AttributeMap> attributes, boolean fromLoader);
 
     abstract CacheEntry<K, V> doRemove(Object key, Object value);

@@ -14,6 +14,7 @@ import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.internal.service.worker.CacheWorkerService;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
+import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.worker.CacheWorkerManager;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.AttributeMaps;
@@ -67,7 +68,7 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
 
     InternalCacheSupport<Integer, String> cacheHelperProxy;
 
-    DefaultCacheLoaderService<Integer, String> service;
+    CacheLoadingService<Integer, String> service;
 
     CacheLoadingConfiguration<Integer, String> loadingConf;
     public void setUp() {
@@ -142,7 +143,7 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
 //    }
 
     public void atestLoad() throws InterruptedException, ExecutionException {
-        DefaultCacheLoaderService<Integer, String> dcls = new DefaultCacheLoaderService<Integer, String>(
+        CacheLoadingService<Integer, String> dcls = new SynchronizedCacheLoaderService<Integer, String>(
                 null, errorHandlerProxy, loadingConf, myExecutor, 
                 cacheHelperProxy);
 
@@ -169,7 +170,7 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
     }
 
     public void atestLoadError() throws InterruptedException, ExecutionException {
-        DefaultCacheLoaderService<Integer, String> dcls = new DefaultCacheLoaderService<Integer, String>(
+        CacheLoadingService<Integer, String> dcls = new SynchronizedCacheLoaderService<Integer, String>(
                  null, errorHandlerProxy, loadingConf, myExecutor, 
                 cacheHelperProxy);
 

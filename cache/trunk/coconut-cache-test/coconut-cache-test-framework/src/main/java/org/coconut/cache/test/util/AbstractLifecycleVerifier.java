@@ -48,7 +48,7 @@ public class AbstractLifecycleVerifier implements CacheLifecycle {
 
     public void assertShutdownOrTerminatedPhase() {
         int state = step.get();
-        Assert.assertTrue(state == 5 || state == 6);
+        Assert.assertTrue("state was " + state , state == 5 || state == 6);
     }
     public void assertTerminatedPhase() {
         int state = step.get();

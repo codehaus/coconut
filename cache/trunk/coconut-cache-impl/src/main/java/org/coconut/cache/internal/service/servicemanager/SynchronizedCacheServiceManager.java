@@ -190,8 +190,8 @@ public class SynchronizedCacheServiceManager implements CacheServiceManager {
         }
     }
 
-    public void lazyStart(boolean failIfShutdown) {
-        delegate.lazyStart(failIfShutdown);
+    public boolean lazyStart(boolean failIfShutdown) {
+        return delegate.lazyStart(failIfShutdown);
     }
 
     public void shutdown() {

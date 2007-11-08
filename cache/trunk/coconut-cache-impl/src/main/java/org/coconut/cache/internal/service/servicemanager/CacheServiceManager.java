@@ -48,7 +48,7 @@ public interface CacheServiceManager extends CacheServiceManagerService {
 
     <T> T getService(Class<T> type);
 
-    void lazyStart(boolean failIfShutdown);
+    boolean lazyStart(boolean failIfShutdown);
 
     /**
      * Initiates an orderly shutdown of the cache. In which previously submitted tasks are

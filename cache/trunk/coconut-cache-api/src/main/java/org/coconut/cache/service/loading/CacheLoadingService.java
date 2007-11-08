@@ -74,11 +74,6 @@ public interface CacheLoadingService<K, V> {
     void forceLoadAll();
 
     /**
-     * Attempts to reload all entries that are either expired or which needs refreshing.
-     */
-    void loadAll();
-
-    /**
      * Attempts to reload all entries that are currently held in the cache from the
      * configured cache loader.
      * <p>
@@ -195,6 +190,25 @@ public interface CacheLoadingService<K, V> {
      *             if the specified key or attribute map is <tt>null</tt>
      */
     void load(K key, AttributeMap attributes);
+
+    /**
+     * Attempts to reload all entries that are either expired or which needs refreshing.
+     */
+    void loadAll();
+
+    /**
+     * Attempts to reload all entries that are either expired or which needs refreshing.
+     * <p>
+     * If this cache has been shutdown calls to this method is ignored.
+     * 
+     * @param attributes
+     *            a map of attributes that will be available in the attribute map parsed
+     *            to {@link CacheLoader#load(Object, AttributeMap)} method of the
+     *            configured cache loader
+     * @throws NullPointerException
+     *             if the specified attribute map is <tt>null</tt>
+     */
+    void loadAll(AttributeMap attributes);
 
     /**
      * For all keys in the specified collection and where a valid mapping from the key is

@@ -28,8 +28,8 @@ import org.coconut.cache.internal.service.eviction.InternalCacheEvictionService;
 import org.coconut.cache.internal.service.eviction.UnsynchronizedCacheEvictionService;
 import org.coconut.cache.internal.service.exceptionhandling.DefaultCacheExceptionService;
 import org.coconut.cache.internal.service.expiration.DefaultCacheExpirationService;
-import org.coconut.cache.internal.service.loading.DefaultCacheLoaderService;
 import org.coconut.cache.internal.service.loading.InternalCacheLoadingService;
+import org.coconut.cache.internal.service.loading.UnsynchronizedCacheLoaderService;
 import org.coconut.cache.internal.service.management.DefaultCacheManagementService;
 import org.coconut.cache.internal.service.servicemanager.CacheServiceManager;
 import org.coconut.cache.internal.service.servicemanager.UnsynchronizedCacheServiceManager;
@@ -77,7 +77,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
     private final static Collection<Class<? extends AbstractCacheLifecycle>> DEFAULTS = Arrays
             .asList(DefaultCacheStatisticsService.class, DefaultCacheListener.class,
                     UnsynchronizedCacheEvictionService.class, DefaultCacheExpirationService.class,
-                    DefaultCacheLoaderService.class, DefaultCacheManagementService.class,
+                    UnsynchronizedCacheLoaderService.class, DefaultCacheManagementService.class,
                     DefaultCacheEventService.class, UnsynchronizedCacheWorkerService.class,
                     UnsynchronizedEntryFactoryService.class, DefaultCacheExceptionService.class);
 
@@ -210,12 +210,12 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         return true;
     }
 
-    private void checkRunning(String operation) {
-        checkRunning(operation, true);
+    private boolean checkRunning(String operation) {
+        return checkRunning(operation, true);
     }
 
-    private void checkRunning(String operation, boolean op) {
-        serviceManager.lazyStart(op);
+    private boolean checkRunning(String operation, boolean op) {
+        return serviceManager.lazyStart(op);
     }
 
     private List<CacheEntry<K, V>> trimCache() {
@@ -326,7 +326,9 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         AbstractCacheEntry<K, V> newEntry = null;
         AbstractCacheEntry<K, V> prev = null;
 
-        checkRunning("put");
+        if (!checkRunning("put", !isLoaded) && isLoaded) {
+            return null;
+        }
         prev = map.get(key);
         if (prev == null || !putOnlyIfAbsent) {
             newEntry = entryService.createEntry(key, newValue, attributes, prev);
@@ -341,8 +343,8 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
 
     /** {@inheritDoc} */
     @Override
-    void doPutAll(Map<? extends K, ? extends V> t, Map<? extends K, AttributeMap> attributes,
-            boolean fromLoader) {
+    Map<K, AbstractCacheEntry<K, V>> doPutAll(Map<? extends K, ? extends V> t,
+            Map<? extends K, AttributeMap> attributes, boolean fromLoader) {
         long started = listener.beforePutAll(this, t, attributes, fromLoader);
         Map<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>> newEntries = new HashMap<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>>();
 
@@ -358,6 +360,12 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         }
 
         listener.afterPutAll(this, started, trimCache(), newEntries, fromLoader);
+
+        HashMap<K, AbstractCacheEntry<K, V>> result = new HashMap<K, AbstractCacheEntry<K, V>>();
+        for (AbstractCacheEntry<K, V> ace : newEntries.keySet()) {
+            result.put(ace.getKey(), ace);
+        }
+        return result;
     }
 
     /** {@inheritDoc} */
@@ -559,7 +567,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         }
 
         /** {@inheritDoc} */
-        public void valuesLoaded(Map<? extends K, ? extends V> values,
+        public Map<K, AbstractCacheEntry<K, V>> valuesLoaded(Map<? extends K, ? extends V> values,
                 Map<? extends K, AttributeMap> keys) {
             HashMap<? extends K, ? extends V> map = new HashMap<K, V>(values);
             HashMap<? extends K, AttributeMap> attr = new HashMap<K, AttributeMap>(keys);
@@ -569,7 +577,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
                     attr.remove(entry.getKey());
                 }
             }
-            doPutAll(map, attr, true);
+            return doPutAll(map, attr, true);
         }
     }
 }

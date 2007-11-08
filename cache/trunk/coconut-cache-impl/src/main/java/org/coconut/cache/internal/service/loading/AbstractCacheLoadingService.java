@@ -10,6 +10,7 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.entry.InternalCacheEntryService;
 import org.coconut.cache.internal.service.exceptionhandling.CacheExceptionService;
+import org.coconut.cache.internal.service.servicemanager.CompositeService;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingService;
@@ -17,10 +18,17 @@ import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.AttributeMaps;
 import org.coconut.management.ManagedGroup;
+import org.coconut.management.ManagedObject;
 import org.coconut.predicate.Predicate;
 
-public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLifecycle
-        implements CacheLoadingService<K, V>, InternalCacheLoadingService<K, V> {
+/**
+ * An abstract implementation of CacheLoadingService.
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ */
+public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLifecycle implements
+        InternalCacheLoadingService<K, V>, CompositeService, ManagedObject {
     private final InternalCacheEntryService attributeFactory;
 
     private final CacheExceptionService<K, V> exceptionHandler;
@@ -31,10 +39,11 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
 
     private final Predicate<CacheEntry<K, V>> reloadFilter;
 
-    public AbstractCacheLoadingService(
-            CacheLoadingConfiguration<K, V> loadingConfiguration,
+    public AbstractCacheLoadingService(CacheLoadingConfiguration<K, V> loadingConfiguration,
             InternalCacheEntryService attributeFactory,
             CacheExceptionService<K, V> exceptionHandler, LoadSupport<K, V> loadSupport) {
+        attributeFactory.setTimeToFreshNanos(LoadingUtils
+                .getInitialTimeToRefresh(loadingConfiguration));
         this.loader = loadingConfiguration.getLoader();
         reloadFilter = loadingConfiguration.getRefreshFilter();
         this.loadSupport = loadSupport;
@@ -62,6 +71,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
         forceLoadAll(AttributeMaps.EMPTY_MAP);
     }
 
+    /** {@inheritDoc} */
     public final void forceLoadAll(AttributeMap attributes) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
@@ -69,6 +79,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
         loadSupport.loadAll(attributes, true);
     }
 
+    /** {@inheritDoc} */
     public final void forceLoadAll(Collection<? extends K> keys) {
         if (keys == null) {
             throw new NullPointerException("keys is null");
@@ -83,6 +94,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
         loadAllAsync(map);
     }
 
+    /** {@inheritDoc} */
     public final void forceLoadAll(Map<K, AttributeMap> mapsWithAttributes) {
         if (mapsWithAttributes == null) {
             throw new NullPointerException("mapsWithAttributes is null");
@@ -90,16 +102,18 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
         loadAllAsync(mapsWithAttributes);
     }
 
+    /** {@inheritDoc} */
     public Collection<?> getChildServices() {
         return Arrays.asList(loader, reloadFilter);
     }
 
     /** {@inheritDoc} */
     public long getDefaultTimeToRefresh(TimeUnit unit) {
-        return LoadingUtils.convertNanosToRefreshTime(attributeFactory
-                .getTimeToRefreshNanos(), unit);
+        return LoadingUtils.convertNanosToRefreshTime(attributeFactory.getTimeToRefreshNanos(),
+                unit);
     }
 
+    /** {@inheritDoc} */
     public Predicate<CacheEntry<K, V>> getRefreshFilter() {
         return reloadFilter;
     }
@@ -119,10 +133,12 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
         loadSupport.load(key, attributes);
     }
 
+    /** {@inheritDoc} */
     public final void loadAll() {
-        loadSupport.loadAll(AttributeMaps.EMPTY_MAP, false);
+        loadAll(AttributeMaps.EMPTY_MAP);
     }
 
+    /** {@inheritDoc} */
     public final void loadAll(AttributeMap attributes) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
@@ -130,6 +146,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
         loadSupport.loadAll(attributes, false);
     }
 
+    /** {@inheritDoc} */
     public final void loadAll(Collection<? extends K> keys) {
         if (keys == null) {
             throw new NullPointerException("keys is null");
@@ -144,11 +161,19 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
         loadSupport.loadAll(map);
     }
 
+    /** {@inheritDoc} */
     public final void loadAll(Map<K, AttributeMap> mapsWithAttributes) {
         if (mapsWithAttributes == null) {
             throw new NullPointerException("mapsWithAttributes is null");
         }
         loadSupport.loadAll(mapsWithAttributes);
+    }
+
+    /** {@inheritDoc} */
+    public void loadAllAsync(Map<K, AttributeMap> mapsWithAttributes) {
+        for (Map.Entry<K, AttributeMap> e : mapsWithAttributes.entrySet()) {
+            loadAsync(e.getKey(), e.getValue());
+        }
     }
 
     /** {@inheritDoc} */
@@ -169,44 +194,53 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
     }
 
     /** {@inheritDoc} */
+    public void loadAsync(K key, AttributeMap attributes) {
+        loadBlocking(key, attributes);// Load blocking as default
+    }
+
+    /** {@inheritDoc} */
     public void setDefaultTimeToRefresh(long timeToRefresh, TimeUnit unit) {
-        attributeFactory.setTimeToFreshNanos(
-                LoadingUtils.convertRefreshTimeToNanos(timeToRefresh, unit));
+        attributeFactory.setTimeToFreshNanos(LoadingUtils.convertRefreshTimeToNanos(timeToRefresh,
+                unit));
     }
 
-    public void loadAllAsync(Map<K, AttributeMap> mapsWithAttributes) {
-        for (Map.Entry<K, AttributeMap> e : mapsWithAttributes.entrySet()) {
-            loadAsync(e.getKey(), e.getValue());
-        }
+    /**
+     * Returns the {@link CacheExceptionService} configured for this service.
+     * 
+     * @return the CacheExceptionService configured for this service
+     */
+    final CacheExceptionService<K, V> getExceptionHandler() {
+        return exceptionHandler;
     }
 
-    final V doLoad(CacheLoader<? super K, ? extends V> loader, K key,
-            AttributeMap attributes, boolean isSynchronous) {
+    /**
+     * Returns the {@link CacheLoader} configured for this service.
+     * 
+     * @return the CacheLoader configured for this service
+     */
+    final CacheLoader<? super K, ? extends V> getLoader() {
+        return loader;
+    }
+
+    /**
+     * @param key
+     *            the key for which a value should be loaded
+     * @param attributes
+     *            an AttributeMap for the load
+     * @param isSynchronous
+     *            Whether or not this is synchronous operation (user waits on the result)
+     * @return the cache entry that was added to the cache or null if no entry was added
+     */
+    AbstractCacheEntry<K, V> loadAndAddToCache(K key, AttributeMap attributes, boolean isSynchronous) {
         V v = null;
         if (loader != null) {
             try {
                 v = loader.load(key, attributes);
             } catch (Exception e) {
-                v = getExceptionHandler().getExceptionHandler()
-                        .loadFailed(getExceptionHandler().createContext(), loader, key,
-                                attributes, e);
+                v = getExceptionHandler().getExceptionHandler().loadFailed(
+                        getExceptionHandler().createContext(), loader, key, attributes, e);
             }
         }
-        return v;
-    }
-
-    final CacheExceptionService<K, V> getExceptionHandler() {
-        return exceptionHandler;
-    }
-
-    final CacheLoader<? super K, ? extends V> getLoader() {
-        return loader;
-    }
-
-    AbstractCacheEntry<K, V> loadAndAddToCache(K key, AttributeMap attributes,
-            boolean isSynchronous) {
-        V v = doLoad(loader, key, attributes, false);
         return loadSupport.valueLoaded(key, v, attributes);
-
     }
 }

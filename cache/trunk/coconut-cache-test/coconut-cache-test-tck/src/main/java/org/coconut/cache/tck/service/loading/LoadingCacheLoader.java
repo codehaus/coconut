@@ -27,9 +27,9 @@ public class LoadingCacheLoader extends AbstractLoadingTestBundle {
 
         loader.assertNotStarted();
         loading().load(M1.getKey());// lazy start
+        awaitAllLoads();
         loader.shutdownAndAssert(c);
     }
-
 
     @Test
     public void loadingManagement() {

@@ -16,7 +16,7 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class LoadingLazyStart extends AbstractLoadingTestBundle {
+public class LoadingShutdown extends AbstractLoadingTestBundle {
 
     static Map<Integer, AttributeMap> M = new HashMap<Integer, AttributeMap>();
 
@@ -27,79 +27,99 @@ public class LoadingLazyStart extends AbstractLoadingTestBundle {
 
     @Test
     public void load() {
-        assertFalse(c.isStarted());
         loading().load(1);
-        assertTrue(c.isStarted());
+        awaitAllLoads();
+        shutdownAndAwait();
+        loading().load(1);
+        awaitAllLoads();
     }
 
     @Test
     public void loadAtr() {
-        assertFalse(c.isStarted());
         loading().load(1, AttributeMaps.EMPTY_MAP);
-        assertTrue(c.isStarted());
+        awaitAllLoads();
+        shutdownAndAwait();
+        loading().load(1, AttributeMaps.EMPTY_MAP);
+        awaitAllLoads();
     }
 
     @Test
     public void loadAllCol() {
-        assertFalse(c.isStarted());
         loading().loadAll(Arrays.asList(1, 2));
-        assertTrue(c.isStarted());
+        awaitAllLoads();
+        shutdownAndAwait();
+        loading().loadAll(Arrays.asList(1, 2));
+        awaitAllLoads();
     }
 
     @Test
     public void loadAllMapAtr() {
-        assertFalse(c.isStarted());
         loading().loadAll(M);
-        assertTrue(c.isStarted());
+        awaitAllLoads();
+        shutdownAndAwait();
+        loading().loadAll(M);
+        awaitAllLoads();
     }
 
     @Test
     public void forceLoad() {
-        assertFalse(c.isStarted());
         loading().forceLoad(1);
-        assertTrue(c.isStarted());
+        awaitAllLoads();
+        shutdownAndAwait();
+        loading().forceLoad(1);
+        awaitAllLoads();
     }
 
     @Test
     public void forceLoadAtr() {
-        assertFalse(c.isStarted());
         loading().forceLoad(1, AttributeMaps.EMPTY_MAP);
-        assertTrue(c.isStarted());
+        awaitAllLoads();
+        shutdownAndAwait();
+        loading().forceLoad(1, AttributeMaps.EMPTY_MAP);
+        awaitAllLoads();
     }
 
     @Test
     public void forceLoadAllCol() {
-        assertFalse(c.isStarted());
         loading().forceLoadAll(Arrays.asList(1, 2));
-        assertTrue(c.isStarted());
+        awaitAllLoads();
+        shutdownAndAwait();
+        loading().forceLoadAll(Arrays.asList(1, 2));
+        awaitAllLoads();
     }
-
     @Test
     public void loadAllAtr() {
-        assertFalse(c.isStarted());
         loading().loadAll(AttributeMaps.EMPTY_MAP);
-        assertTrue(c.isStarted());
+        awaitAllLoads();
+        shutdownAndAwait();
+        loading().loadAll(AttributeMaps.EMPTY_MAP);
+        awaitAllLoads();
     }
-
     @Test
     public void forceLoadAllAtr() {
-        assertFalse(c.isStarted());
         loading().forceLoadAll(AttributeMaps.EMPTY_MAP);
-        assertTrue(c.isStarted());
+        awaitAllLoads();
+        shutdownAndAwait();
+        loading().forceLoadAll(AttributeMaps.EMPTY_MAP);
+        awaitAllLoads();
     }
 
     @Test
     public void forceLoadAllMapAtr() {
-        assertFalse(c.isStarted());
         loading().forceLoadAll(M);
-        assertTrue(c.isStarted());
+        awaitAllLoads();
+        shutdownAndAwait();
+        loading().forceLoadAll(M);
+        awaitAllLoads();
     }
 
     @Test
     public void forceLoadAll() {
-        assertFalse(c.isStarted());
         loading().forceLoadAll();
-        assertTrue(c.isStarted());
+        awaitAllLoads();
+        shutdownAndAwait();
+        loading().forceLoadAll();
+        awaitAllLoads();
     }
 
 }

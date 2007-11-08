@@ -9,6 +9,8 @@ import static org.coconut.test.CollectionUtils.M3;
 import static org.coconut.test.CollectionUtils.M4;
 import static org.coconut.test.CollectionUtils.M5;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheAttributes;
@@ -16,6 +18,7 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.cache.test.util.AsyncIntegerToStringLoader;
 import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.core.AttributeMap;
+import org.coconut.core.AttributeMaps;
 import org.coconut.predicate.Predicate;
 import org.junit.Test;
 
@@ -167,7 +170,23 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
         assertEquals("C", c.peek(1));
         assertEquals("B", c.peek(2));
     }
+    @Test
+    public void loadAllWithAttributes() {
+        AttributeMap am1 = new AttributeMaps.DefaultAttributeMap();
+        am1.put(IntegerToStringLoader.RESULT_ATTRIBUTE_KEY, "a1");
+        AttributeMap am2 = new AttributeMaps.DefaultAttributeMap();
+        am2.put(IntegerToStringLoader.RESULT_ATTRIBUTE_KEY, "a2");
 
+        Map<Integer, AttributeMap> req = new HashMap<Integer, AttributeMap>();
+        req.put(1, am1);
+        req.put(2, am2);
+        loading().loadAll(req);
+        awaitAllLoads();
+        assertEquals(2, loader.getNumberOfLoads());
+        assertEquals("a1", get(1));
+        assertEquals("a2", get(2));
+        assertEquals(2, loader.getNumberOfLoads());
+    }
     static class RefreshFilter implements Predicate<CacheEntry<Integer, String>> {
         public boolean evaluate(CacheEntry<Integer, String> element) {
             return element.getKey().equals(1);
