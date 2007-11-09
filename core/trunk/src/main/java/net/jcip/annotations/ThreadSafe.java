@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
  * interleaving of those actions by the runtime, and without requiring any
  * additional synchronization or coordination on the part of the caller.
  * 
- * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @version $Id$
  */
 @Documented
 @Target(ElementType.TYPE)

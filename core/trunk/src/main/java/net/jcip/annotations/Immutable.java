@@ -34,7 +34,7 @@ import java.lang.annotation.Target;
  * <p>
  * Immutable objects are inherently thread-safe; they may be passed between
  * threads or published without synchronization.
- * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @version $Id$
  */
 @Documented
 @Target(ElementType.TYPE)

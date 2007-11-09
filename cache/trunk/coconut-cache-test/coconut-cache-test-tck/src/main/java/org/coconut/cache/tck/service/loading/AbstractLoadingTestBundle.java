@@ -14,7 +14,7 @@ import org.junit.Before;
  * {@link IntegerToStringLoader} cache loader.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: ExplicitLoading.java 374 2007-08-20 18:29:36Z kasper $
+ * @version $Id$
  */
 public class AbstractLoadingTestBundle extends AbstractCacheTCKTest {
 

@@ -15,7 +15,7 @@ import org.junit.Test;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: CacheEntryMapTest.java 186 2007-01-24 12:30:38Z kasper $
+ * @version $Id$
  */
 public class EntryMapTest {
 

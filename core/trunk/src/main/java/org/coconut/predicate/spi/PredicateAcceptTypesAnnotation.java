@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  * the Filter will accept without throwing ClassCastException.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
- * @version $Id: FilterAcceptTypesAnnotation.java 36 2006-08-22 09:59:45Z kasper $
+ * @version $Id$
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

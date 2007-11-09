@@ -19,7 +19,7 @@ import org.coconut.predicate.Predicates;
  * events and entries.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
- * @version $Id: CacheFilters.java 265 2007-02-06 23:06:04Z kasper $
+ * @version $Id$
  */
 public final class CacheEventFilters {
 

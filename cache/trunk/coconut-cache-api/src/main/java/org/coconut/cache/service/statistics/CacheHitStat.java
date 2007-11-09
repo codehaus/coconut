@@ -11,7 +11,7 @@ import org.coconut.cache.spi.CacheSPI;
  * TODO: make sure this class is JMX compatible.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @version $Id$
  */
 public class CacheHitStat {
     /** A CacheHitStat with 0 hits and 0 misses. */

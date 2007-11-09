@@ -10,7 +10,7 @@ import org.coconut.predicate.Predicate;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @version $Id$
  */
 // START SNIPPET: class
 public class Reload2200FilterExample<K, V> implements Predicate<CacheEntry<K, V>> {

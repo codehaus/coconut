@@ -15,7 +15,7 @@ import org.junit.Test;
  * {@link org.coconut.cache.Cache#keySet()}
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: KeySet.java 392 2007-10-07 11:24:10Z kasper $
+ * @version $Id$
  */
 public class KeySetHashCodeEquals extends AbstractCacheTCKTest {
 

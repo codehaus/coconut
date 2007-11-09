@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * Clock is a.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @version $Id$
  */
 public abstract class Clock {
 
@@ -40,7 +40,7 @@ public abstract class Clock {
      * DeterministicClock is useful for testing components that rely on time.
      * 
      * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
-     * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+     * @version $Id$
      */
     public static class DeterministicClock extends Clock implements Serializable {
 

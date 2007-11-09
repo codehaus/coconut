@@ -11,7 +11,7 @@ import org.coconut.predicate.Predicate;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @version $Id$
  */
 public abstract class AbstractPredicateMatcher<K, E> implements PredicateMatcher<K, E> {
     private final Map<K, Predicate<? super E>> map;

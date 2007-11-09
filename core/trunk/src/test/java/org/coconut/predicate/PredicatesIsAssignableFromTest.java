@@ -14,7 +14,7 @@ import org.junit.Test;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
- * @version $Id: FiltersIsAssignableFromTest.java 36 2006-08-22 09:59:45Z kasper $
+ * @version $Id$
  */
 public class PredicatesIsAssignableFromTest  {
 

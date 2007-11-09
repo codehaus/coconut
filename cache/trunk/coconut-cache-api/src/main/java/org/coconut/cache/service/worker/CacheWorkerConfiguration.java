@@ -11,7 +11,7 @@ import org.w3c.dom.Element;
  * This class is used to configure the worker service prior to usage.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @version $Id$
  * @param <K>
  *            the type of keys maintained by the cache
  * @param <V>

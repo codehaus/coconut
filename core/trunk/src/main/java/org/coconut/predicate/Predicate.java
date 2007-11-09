@@ -20,7 +20,7 @@ package org.coconut.predicate;
  * <tt>accept</tt> method should not have any side effects.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
- * @version $Id: Filter.java 36 2006-08-22 09:59:45Z kasper $
+ * @version $Id$
  * @param <E>
  *            the type of elements acccepted by the accept method
  */

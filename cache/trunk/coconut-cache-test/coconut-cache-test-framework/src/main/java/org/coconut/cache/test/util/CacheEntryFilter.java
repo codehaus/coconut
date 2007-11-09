@@ -13,7 +13,7 @@ import org.coconut.predicate.Predicate;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: ExpirationFilter.java 142 2006-10-18 19:02:07Z kasper $
+ * @version $Id$
  */
 public class CacheEntryFilter implements Predicate<CacheEntry<Integer, String>> {
 

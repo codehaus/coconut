@@ -23,7 +23,7 @@ import org.coconut.cache.service.statistics.CacheStatisticsService;
  * </pre>
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @version $Id$
  */
 @SuppressWarnings("unchecked")
 public final class CacheServices {
@@ -31,14 +31,17 @@ public final class CacheServices {
     /** Cannot instantiate. */
     // /CLOVER:OFF
     private CacheServices() {}
+
     // /CLOVER:ON
-    
+
     /**
-     * Return the event service for the specified cache.
+     * Returns the event service for the specified cache.
      * 
      * @param cache
      *            the cache for which to return the event service
-     * @return the event service for the cache *
+     * @return the event service for the cache
+     * @throws IllegalArgumentException
+     *             if no event service is available for the specified cache
      * @param <K>
      *            the type of keys maintained by the specified cache
      * @param <V>
@@ -49,11 +52,13 @@ public final class CacheServices {
     }
 
     /**
-     * Return the eviction service for the specified cache.
+     * Returns the eviction service for the specified cache.
      * 
      * @param cache
      *            the cache for which to return the eviction service
      * @return the eviction service for the cache
+     * @throws IllegalArgumentException
+     *             if no eviction service is available for the specified cache
      * @param <K>
      *            the type of keys maintained by the specified cache
      * @param <V>
@@ -64,11 +69,13 @@ public final class CacheServices {
     }
 
     /**
-     * Return the expiration service for the specified cache.
+     * Returns the expiration service for the specified cache.
      * 
      * @param cache
      *            the cache for which to return the expiration service
      * @return the expiration service for the cache
+     * @throws IllegalArgumentException
+     *             if no expiration service is available for the specified cache
      * @param <K>
      *            the type of keys maintained by the specified cache
      * @param <V>
@@ -79,11 +86,13 @@ public final class CacheServices {
     }
 
     /**
-     * Return the loading service for the specified cache.
+     * Returns the loading service for the specified cache.
      * 
      * @param cache
      *            the cache for which to return the loading service
      * @return the loading service for the cache
+     * @throws IllegalArgumentException
+     *             if no loading service is available for the specified cache
      * @param <K>
      *            the type of keys maintained by the specified cache
      * @param <V>
@@ -94,46 +103,41 @@ public final class CacheServices {
     }
 
     /**
-     * Return the management service for the specified cache.
+     * Returns the management service for the specified cache.
      * 
      * @param cache
      *            the cache for which to return the management service
      * @return the management service for the cache
+     * @throws IllegalArgumentException
+     *             if no management service is available for the specified cache
      */
     public static CacheManagementService management(Cache<?, ?> cache) {
         return cache.getService(CacheManagementService.class);
     }
 
     /**
-     * Return the servicemanager service for the specified cache.
+     * Returns the servicemanager service for the specified cache.
      * 
      * @param cache
      *            the cache for which to return the servicemanager service
      * @return the servicemanager service for the cache
+     * @throws IllegalArgumentException
+     *             if no servicemanager service is available for the specified cache
      */
     public static CacheServiceManagerService servicemanager(Cache<?, ?> cache) {
         return cache.getService(CacheServiceManagerService.class);
     }
 
     /**
-     * Return the statistics service for the specified cache.
+     * Returns the statistics service for the specified cache.
      * 
      * @param cache
      *            the cache for which to return the statistics service
      * @return the statistics service for the cache
+     * @throws IllegalArgumentException
+     *             if no statistics service is available for the specified cache
      */
     public static CacheStatisticsService statistics(Cache<?, ?> cache) {
         return cache.getService(CacheStatisticsService.class);
     }
-    
-//    /**
-//     * Return the worker service for the specified cache.
-//     * 
-//     * @param cache
-//     *            the cache for which to return the worker service
-//     * @return the worker service for the cache
-//     */
-//    public static CacheWorkerService worker(Cache<?, ?> cache) {
-//        return cache.getService(CacheWorkerService.class);
-//    }
 }

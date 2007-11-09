@@ -9,7 +9,7 @@ import org.coconut.cache.CacheConfiguration;
  * This method is thrown if the a {@link CacheConfiguration} is invalid in some way.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @version $Id$
  */
 public class IllegalCacheConfigurationException extends IllegalStateException {
 

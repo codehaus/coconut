@@ -10,7 +10,7 @@ import org.junit.runners.Suite;
  * A test suite consisting of all loading service test classes.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @version $Id$
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses( { ExpirationWithCacheLoader.class, ExplicitForcedLoading.class,

@@ -25,7 +25,7 @@ import org.coconut.predicate.Predicate;
  * An abstract implementation of CacheLoadingService.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @version $Id$
  */
 public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLifecycle implements
         InternalCacheLoadingService<K, V>, CompositeService, ManagedObject {

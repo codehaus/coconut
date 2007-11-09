@@ -23,7 +23,7 @@ import org.junit.Test;
  * Tests all forcedLoad* methods of {@link CacheLoadingService}
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: ExplicitLoading.java 355 2007-06-16 08:05:33Z kasper $
+ * @version $Id$
  */
 public class ExplicitForcedLoading extends AbstractLoadingTestBundle {
 

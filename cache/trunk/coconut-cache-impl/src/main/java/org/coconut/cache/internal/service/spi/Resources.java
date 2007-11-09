@@ -10,7 +10,7 @@ import org.coconut.internal.util.ResourceHolder;
  * matter what the default locale is, unless org.coconut.cache.lang is set.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: Ressources.java 212 2007-01-30 10:03:55Z kasper $
+ * @version $Id$
  */
 public final class Resources {
 

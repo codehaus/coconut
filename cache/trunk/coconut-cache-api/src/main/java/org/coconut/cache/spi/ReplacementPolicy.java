@@ -32,7 +32,7 @@ import org.coconut.core.AttributeMap;
  * area.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
- * @version $Id: ReplacementPolicy.java 336 2007-06-07 21:51:46Z kasper $
+ * @version $Id$
  * @param <T>
  *            the type of data maintained by this policy
  */

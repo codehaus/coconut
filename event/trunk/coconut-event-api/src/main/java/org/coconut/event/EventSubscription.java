@@ -32,7 +32,7 @@ public interface EventSubscription<E> {
     EventProcessor<? super E> getEventProcessor();
 
     /**
-     * Returns the filter that is used for this subscription or <tt>null</tt> all events
+     * Returns the predicate that is used for this subscription or <tt>null</tt> all events
      * are accepted.
      * 
      * @return the filter that is used for this subscription

@@ -42,7 +42,7 @@ import org.junit.runners.Suite;
 /**
  * This class is responsible for running TCK cache tests. Use <code>@RunWith</code> to indicate a test should run with CacheTCKRunner.
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @version $Id$
  */
 public class CacheTCKRunner extends Runner {
 

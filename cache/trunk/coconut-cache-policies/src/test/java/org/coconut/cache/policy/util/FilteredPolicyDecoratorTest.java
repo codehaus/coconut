@@ -8,7 +8,7 @@ import org.coconut.test.MockTestCase;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: ThresholdPolicyTest.java 38 2006-08-22 10:09:08Z kasper $
+ * @version $Id$
  */
 @SuppressWarnings("unchecked")
 public class FilteredPolicyDecoratorTest extends MockTestCase {

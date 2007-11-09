@@ -20,7 +20,7 @@ import org.junit.Test;
  * Tests the modifying functions of a keySet().
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: KeySetModifying.java 392 2007-10-07 11:24:10Z kasper $
+ * @version $Id$
  */
 public class KeySetRemove extends AbstractCacheTCKTest {
 

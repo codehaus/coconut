@@ -60,7 +60,7 @@ import org.coconut.internal.util.CollectionUtils;
  * naturally encapsulates the cache.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: UnsynchronizedCache.java 404 2007-11-05 21:15:47Z kasper $
+ * @version $Id$
  * @param <K>
  *            the type of keys maintained by this cache
  * @param <V>
@@ -462,7 +462,6 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
                     doLoad = e.isExpired(expirationService.getExpirationFilter(), timestamp)
                             || e.needsRefresh(loadingService.getRefreshFilter(), timestamp);
                 }
-
             }
             if (doLoad) {
                 loadingService.forceLoad(key, attributes);
@@ -577,11 +576,10 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
             long newVolume = 0;
             List<AbstractCacheEntry<K, V>> l = Collections.EMPTY_LIST;
 
-            size = map.size();
-            volume = map.volume();
-
             synchronized (this) {
                 SynchronizedCache.this.checkRunning("trimming");
+                size = map.size();
+                volume = map.volume();
                 int numberToTrim = Math.max(0, map.size() - toSize);
                 l = new ArrayList<AbstractCacheEntry<K, V>>(evictionService.evict(numberToTrim));
                 for (AbstractCacheEntry<K, V> entry : l) {

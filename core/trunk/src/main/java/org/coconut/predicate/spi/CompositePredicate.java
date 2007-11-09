@@ -12,7 +12,7 @@ import org.coconut.predicate.Predicate;
  * This interface should be implemented by filters that wrap other filters.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: CompositeFilter.java 36 2006-08-22 09:59:45Z kasper $
+ * @version $Id$
  */
 public interface CompositePredicate<E> {
 

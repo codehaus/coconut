@@ -15,7 +15,7 @@ import org.coconut.predicate.Predicate;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: Events.java 212 2007-01-30 10:03:55Z kasper $
+ * @version $Id$
  */
 public class Events {
 

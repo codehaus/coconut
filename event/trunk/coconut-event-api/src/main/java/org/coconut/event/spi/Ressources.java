@@ -15,7 +15,7 @@ import java.util.ResourceBundle;
  * is set.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: Ressources.java 124 2006-10-10 16:55:26Z kasper $
+ * @version $Id$
  */
 final class Ressources {
     private static final String BUNDLE_NAME = "org.coconut.event.messages";//$NON-NLS-1$

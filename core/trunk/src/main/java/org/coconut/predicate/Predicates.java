@@ -15,7 +15,7 @@ import org.coconut.predicate.spi.CompositePredicate;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @version $Id$
  */
 public final class Predicates {
     /** A predicate that always return False. */
@@ -796,7 +796,7 @@ public final class Predicates {
      * specified.
      * 
      * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
-     * @version $Id: Predicates.java 36 2006-08-22 09:59:45Z kasper $
+     * @version $Id$
      */
     final static class SamePredicate<E> implements Predicate<E>, Serializable {
 

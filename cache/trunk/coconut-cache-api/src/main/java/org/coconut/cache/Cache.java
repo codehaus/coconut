@@ -56,7 +56,7 @@ import org.coconut.core.AttributeMap;
  * be used as an alternative.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: Cache.java 130 2006-10-11 13:00:46Z kasper $
+ * @version $Id$
  * @param <K>
  *            the type of keys maintained by this cache
  * @param <V>
@@ -241,7 +241,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @param serviceType
      *            the type of service to retrieve
      * @return a service of the specified type
-     * @throws CacheException
+     * @throws IllegalArgumentException
      *             if no service of the specified type exist
      * @see org.coconut.cache.CacheServices
      * @see #hasService(Class)

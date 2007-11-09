@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
  *      JMX Specification.</a>
  * @see <a href="package-summary.html#examples"> Ways to Access MXBeans</a>
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @version $Id$
  */
 public interface CacheExpirationMXBean {
     /**

@@ -37,7 +37,6 @@ import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceMan
 import org.coconut.cache.internal.service.servicemanager.UnsynchronizedCacheServiceManager;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsService;
-import org.coconut.cache.internal.service.worker.UnsynchronizedCacheWorkerService;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
@@ -78,8 +77,8 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
             .asList(DefaultCacheStatisticsService.class, DefaultCacheListener.class,
                     UnsynchronizedCacheEvictionService.class, DefaultCacheExpirationService.class,
                     UnsynchronizedCacheLoaderService.class, DefaultCacheManagementService.class,
-                    DefaultCacheEventService.class, UnsynchronizedCacheWorkerService.class,
-                    UnsynchronizedEntryFactoryService.class, DefaultCacheExceptionService.class);
+                    DefaultCacheEventService.class, UnsynchronizedEntryFactoryService.class,
+                    DefaultCacheExceptionService.class);
 
     private final InternalCacheEntryService entryService;
 

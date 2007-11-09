@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
  * that might otherwise be assumed to be thread-safe, despite the fact that it
  * is a bad idea to assume a class is thread-safe without good reason.
  * 
- * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @version $Id$
  * @see ThreadSafe
  */
 @Documented

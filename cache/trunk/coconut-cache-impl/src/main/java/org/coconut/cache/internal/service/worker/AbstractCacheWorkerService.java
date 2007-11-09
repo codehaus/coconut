@@ -4,6 +4,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
+import org.coconut.cache.service.worker.CacheWorkerManager;
 import org.coconut.core.AttributeMaps;
 
 public abstract class AbstractCacheWorkerService extends AbstractCacheLifecycle implements
@@ -22,8 +23,9 @@ public abstract class AbstractCacheWorkerService extends AbstractCacheLifecycle 
         return getManager().getExecutorService(service, AttributeMaps.EMPTY_MAP);
     }
 
-    public ScheduledExecutorService getScheduledExecutorService(Class<?> service) {
+    public final ScheduledExecutorService getScheduledExecutorService(Class<?> service) {
         return getManager().getScheduledExecutorService(service, AttributeMaps.EMPTY_MAP);
     }
-
+    
+    abstract CacheWorkerManager getManager();
 }

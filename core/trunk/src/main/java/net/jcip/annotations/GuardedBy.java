@@ -41,7 +41,7 @@ import java.lang.annotation.Target;
  * <li> <code>class-name.class</code> : The Class object for the specified
  * class should be used as the lock object. </li>
  * </ul>
- * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @version $Id$
  */
 @Target( { ElementType.FIELD, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)

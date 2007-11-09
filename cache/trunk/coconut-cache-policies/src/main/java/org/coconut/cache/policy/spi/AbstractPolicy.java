@@ -12,7 +12,7 @@ import org.coconut.core.AttributeMaps;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: AbstractPolicy.java 280 2007-03-30 15:40:50Z kasper $
+ * @version $Id$
  * @param <T>
  *            the type of objects contained within the replacement policy
  */

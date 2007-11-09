@@ -14,7 +14,7 @@ import org.coconut.predicate.spi.PredicateAcceptTypesAnnotation;
  * This file contains common file Filters used in Coconut.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: FileFilters.java 36 2006-08-22 09:59:45Z kasper $
+ * @version $Id$
  */
 public final class FilePredicates {
 
@@ -89,7 +89,7 @@ public final class FilePredicates {
      * Instead of constructing a new instance of this class, use {@link #INSTANCE}.
      * 
      * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
-     * @version $Id: FileFilters.java 36 2006-08-22 09:59:45Z kasper $
+     * @version $Id$
      */
     @PredicateAcceptTypesAnnotation(File.class)
     final static class FileCanWriteFilter implements Predicate<File>, FileFilter, Serializable {
@@ -147,7 +147,7 @@ public final class FilePredicates {
      * Instead of constructing a new instance of this class, use {@link #INSTANCE}.
      * 
      * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
-     * @version $Id: FileFilters.java 36 2006-08-22 09:59:45Z kasper $
+     * @version $Id$
      */
     @PredicateAcceptTypesAnnotation(File.class)
     final static class FileExistsFilter implements Predicate<File>, FileFilter, Serializable {
@@ -203,7 +203,7 @@ public final class FilePredicates {
      * <p>
      * 
      * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
-     * @version $Id: FileFilters.java 36 2006-08-22 09:59:45Z kasper $
+     * @version $Id$
      */
     @PredicateAcceptTypesAnnotation(File.class)
     final static class FileExtensionFilter implements Predicate<File>, FileFilter, Serializable {
@@ -356,7 +356,7 @@ public final class FilePredicates {
      * particular directory possible including subdirectories.
      * 
      * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
-     * @version $Id: FileFilters.java 36 2006-08-22 09:59:45Z kasper $
+     * @version $Id$
      */
     @PredicateAcceptTypesAnnotation(File.class)
     final static class FileInDirectoryFilter implements Predicate<File>, FileFilter, Serializable {
@@ -498,7 +498,7 @@ public final class FilePredicates {
      * Instead of constructing a new instance of this class, use {@link #INSTANCE}.
      * 
      * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
-     * @version $Id: FileFilters.java 36 2006-08-22 09:59:45Z kasper $
+     * @version $Id$
      */
     @PredicateAcceptTypesAnnotation(File.class)
     final static class FileIsHiddenFilter implements Predicate<File>, FileFilter, Serializable {
@@ -555,7 +555,7 @@ public final class FilePredicates {
      * Instead of constructing a new instance of this class, use {@link #INSTANCE}.
      * 
      * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
-     * @version $Id: FileFilters.java 36 2006-08-22 09:59:45Z kasper $
+     * @version $Id$
      */
     @PredicateAcceptTypesAnnotation(File.class)
     final static class FileIsDirectoryFilter implements Predicate<File>, Serializable {

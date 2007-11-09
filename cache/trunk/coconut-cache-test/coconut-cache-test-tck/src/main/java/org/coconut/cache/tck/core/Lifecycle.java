@@ -13,7 +13,7 @@ import org.junit.Test;
  * Test basic functionality of a Cache. This test should be applicable for any cache.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: BasicCache.java 363 2007-06-21 04:05:34Z kasper $
+ * @version $Id$
  */
 public class Lifecycle extends AbstractCacheTCKTest {
 

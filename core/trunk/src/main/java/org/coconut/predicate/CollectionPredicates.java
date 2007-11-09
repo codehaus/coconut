@@ -23,7 +23,7 @@ import org.coconut.core.Mappers;
  * Factory and utility methods for Filter.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
- * @version $Id: Filters.java 67 2006-09-28 08:07:48Z kasper $
+ * @version $Id$
  */
 public final class CollectionPredicates {
 
@@ -137,7 +137,7 @@ public final class CollectionPredicates {
 
     /**
      * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
-     * @version $Id: Filters.java 67 2006-09-28 08:07:48Z kasper $
+     * @version $Id$
      */
     final static class TransformerPredicate<F, T> implements Predicate<F>, Serializable {
 
@@ -207,7 +207,7 @@ public final class CollectionPredicates {
      * class that implements the interface.
      * 
      * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
-     * @version $Id: Filters.java 67 2006-09-28 08:07:48Z kasper $
+     * @version $Id$
      */
     final static class IsTypePredicate implements Predicate, Serializable {
 

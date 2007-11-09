@@ -14,7 +14,7 @@ import org.coconut.core.AttributeMap;
  * <code>null</code> for any other key.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: MutableLoader.java 341 2007-06-10 09:54:42Z kasper $
+ * @version $Id$
  */
 public class MutableLoader implements CacheLoader<Integer, String> {
 
