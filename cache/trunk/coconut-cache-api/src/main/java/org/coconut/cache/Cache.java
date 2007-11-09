@@ -56,8 +56,6 @@ import org.coconut.core.AttributeMap;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
- * @see $HeadURL:
- *      https://svn.codehaus.org/coconut/cache/trunk/coconut-cache-api/src/main/java/org/coconut/cache/Cache.java $
  * @param <K>
  *            the type of keys maintained by this cache
  * @param <V>
@@ -134,6 +132,30 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     boolean containsValue(Object value);
 
     /**
+     * Returns a {@link Set} view of the mappings contained in this cache. The set is
+     * backed by the cache, so changes to the cache are reflected in the set, and
+     * vice-versa. If the cache is modified while an iteration over the set is in progress
+     * (except through the iterator's own <tt>remove</tt> operation, or through the
+     * <tt>setValue</tt> operation on a map entry returned by the iterator) the results
+     * of the iteration are undefined. The set supports element removal, which removes the
+     * corresponding mapping from the cache, via the <tt>Iterator.remove</tt>,
+     * <tt>Set.remove</tt>, <tt>removeAll</tt>, <tt>retainAll</tt> and
+     * <tt>clear</tt> operations. It does not support the <tt>add</tt> or
+     * <tt>addAll</tt> operations.
+     * <p>
+     * Unlike {@link Cache#get(Object)} no methods on the view checks if an element has
+     * expired. For example, iterating though values the view might return an expired
+     * element.
+     * <p>
+     * If the cache has been shutdown calls to <tt>Iterator.remove</tt>,
+     * <tt>Collection.remove</tt>, <tt>removeAll</tt>, <tt>retainAll</tt> and
+     * <tt>clear</tt> operation will throw an IllegalStateException.
+     * 
+     * @return a set view of the mappings contained in this map
+     */
+    Set<Map.Entry<K, V>> entrySet();
+
+    /**
      * Works as {@link #get(Object)} with the following modifications.
      * <p>
      * If the cache has a configured {@link org.coconut.cache.service.loading.CacheLoader}.
@@ -155,13 +177,12 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @throws NullPointerException
      *             if the specified key is <tt>null</tt>
      * @throws IllegalArgumentException
-     *             if the cache has already been shutdown, see
-     *             {@link org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#cacheWasShutdown(org.coconut.cache.service.exceptionhandling.CacheExceptionContext, String)}
+     *             if the cache has already been shutdown
      * @throws IllegalStateException
      *             if the cache has been shutdown
      * @throws CacheException
      *             if the cache loader failed while trying to load a value (optional). See
-     *             {@link org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#loadFailed(org.coconut.cache.service.exceptionhandling.CacheExceptionContext, org.coconut.cache.service.loading.CacheLoader, Object, AttributeMap, boolean, Exception)}
+     *             {@link org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#loadFailed(org.coconut.cache.service.exceptionhandling.CacheExceptionContext, org.coconut.cache.service.loading.CacheLoader, Object, AttributeMap, Exception)}
      * @see Map#get(Object)
      * @see org.coconut.cache.service.loading.CacheLoadingConfiguration#setLoader(org.coconut.cache.service.loading.CacheLoader)
      */
@@ -217,12 +238,11 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @throws IllegalStateException
      *             if the cache has been shutdown
      * @throws IllegalArgumentException
-     *             if the cache has already been shutdown, see
-     *             {@link org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#cacheWasShutdown(org.coconut.cache.service.exceptionhandling.CacheExceptionContext, String)}
+     *             if the cache has already been shutdown
      * @throws CacheException
      *             if the backend cache loader failed while trying to load a value
      *             (optional). See
-     *             {@link org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#loadFailed(org.coconut.cache.service.exceptionhandling.CacheExceptionContext, org.coconut.cache.service.loading.CacheLoader, Object, AttributeMap, boolean, Exception)}
+     *             {@link org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#loadFailed(org.coconut.cache.service.exceptionhandling.CacheExceptionContext, org.coconut.cache.service.loading.CacheLoader, Object, AttributeMap, Exception)}
      */
     CacheEntry<K, V> getEntry(K key);
 
@@ -246,7 +266,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @throws IllegalArgumentException
      *             if no service of the specified type exist
      * @see org.coconut.cache.CacheServices
-     * @see #hasService(Class)
+     * @see CacheServiceManagerService#hasService(Class)
      * @see CacheServiceManagerService#getAllServices()
      */
     <T> T getService(Class<T> serviceType);
@@ -265,7 +285,8 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * If this cache has not been started a call to this method will automatically start
      * it.
      * <p>
-     * This method will always return <tt>true<tt/> if this cache has been shutdown. 
+     * This method will always return <tt>true</tt> if this cache has been shutdown.
+     * 
      * @return <tt>true</tt> if this cache contains no elements
      */
     boolean isEmpty();
@@ -307,23 +328,21 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * expired. For example, iterating though key set the view might return a key for an
      * expired element.
      * <p>
-     * If the cache has been shutdown calls to tt>Iterator.remove</tt>, <tt>Collection.remove</tt>,
-     * <tt>removeAll</tt>, <tt>retainAll</tt> and <tt>clear</tt> operation will
-     * throw an IllegalStateException.
+     * If the cache has been shutdown calls to <tt>Iterator.remove</tt>,
+     * <tt>Collection.remove</tt>, <tt>removeAll</tt>, <tt>retainAll</tt> and
+     * <tt>clear</tt> operation will throw an IllegalStateException.
      * 
      * @return a set view of the keys contained in this cache
      */
     Set<K> keySet();
 
     /**
-     * This method works analogoes to the {@link get(Object)} method with the following
+     * This method works analogoes to the {@link #get(Object)} method with the following
      * modifications.
      * <p>
      * However, it will not try to fetch missing items, it will only return a value if it
      * actually exists in the cache. Furthermore, it will not effect the statistics
-     * gathered by the cache and no
-     * {@link org.coconut.cache.service.event.CacheEntryEvent.CacheEntryEvent.ItemAccessed}
-     * event will be raised. Finally, even if the item is expired it will still be
+     * gathered by the cache. Finally, even if the item is expired it will still be
      * returned.
      * <p>
      * All implementations of this method should take care to assure that a call to peek
@@ -616,30 +635,6 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     void shutdown();
 
     /**
-     * Returns a {@link Set} view of the mappings contained in this cache. The set is
-     * backed by the cache, so changes to the cache are reflected in the set, and
-     * vice-versa. If the cache is modified while an iteration over the set is in progress
-     * (except through the iterator's own <tt>remove</tt> operation, or through the
-     * <tt>setValue</tt> operation on a map entry returned by the iterator) the results
-     * of the iteration are undefined. The set supports element removal, which removes the
-     * corresponding mapping from the cache, via the <tt>Iterator.remove</tt>,
-     * <tt>Set.remove</tt>, <tt>removeAll</tt>, <tt>retainAll</tt> and
-     * <tt>clear</tt> operations. It does not support the <tt>add</tt> or
-     * <tt>addAll</tt> operations.
-     * <p>
-     * Unlike {@link Cache#get(Object)} no methods on the view checks if an element has
-     * expired. For example, iterating though values the view might return an expired
-     * element.
-     * <p>
-     * If the cache has been shutdown calls to tt>Iterator.remove</tt>, <tt>Collection.remove</tt>,
-     * <tt>removeAll</tt>, <tt>retainAll</tt> and <tt>clear</tt> operation will
-     * throw an IllegalStateException.
-     * 
-     * @return a set view of the mappings contained in this map
-     */
-    Set<Map.Entry<K, V>> entrySet();
-
-    /**
      * Attempts to stop all actively executing tasks within the cache and halts the
      * processing of waiting tasks. Invocation has no additional effect if already shut
      * down.
@@ -664,7 +659,8 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * If this cache has not been started a call to this method will automatically start
      * it.
      * <p>
-     * This method will always return <tt>0<tt/> if this cache has been shutdown.
+     * This method will always return <tt>0</tt> if this cache has been shutdown.
+     * 
      * @return the number of elements in this cache
      */
     int size();
@@ -684,9 +680,9 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * expired. For example, iterating though values the view might return an expired
      * element.
      * <p>
-     * If the cache has been shutdown calls to tt>Iterator.remove</tt>, <tt>Collection.remove</tt>,
-     * <tt>removeAll</tt>, <tt>retainAll</tt> and <tt>clear</tt> operation will
-     * throw an IllegalStateException.
+     * If the cache has been shutdown calls to <tt>Iterator.remove</tt>,
+     * <tt>Collection.remove</tt>, <tt>removeAll</tt>, <tt>retainAll</tt> and
+     * <tt>clear</tt> operation will throw an IllegalStateException.
      * 
      * @return a collection view of the values contained in this cache
      */

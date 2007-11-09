@@ -31,7 +31,6 @@ import org.coconut.core.AttributeMap;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
- * @see $HeadURL$
  * @param <K>
  *            the type of keys maintained by the cache
  * @param <V>

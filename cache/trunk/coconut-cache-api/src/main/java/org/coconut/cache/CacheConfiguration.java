@@ -58,7 +58,6 @@ import org.coconut.core.Logger;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
- * @see $HeadURL$
  * @param <K>
  *            the type of keys that should be maintained by the cache
  * @param <V>
@@ -101,7 +100,7 @@ public final class CacheConfiguration<K, V> {
                 addConfiguration(a);
                 CacheSPI.initializeConfiguration(a, this);
             } catch (Exception e) {
-                throw new CacheException(CacheSPI.HIGHLY_IRREGULAR, e);
+                throw new CacheException(CacheSPI.HIGHLY_IRREGULAR_MSG, e);
             }
         }
     }
@@ -466,6 +465,7 @@ public final class CacheConfiguration<K, V> {
      * string can used as input to {@link #loadConfigurationFrom(InputStream)} or to
      * create a similar configuration.
      * 
+     * @return a XML-based string representation of this configuration
      * @see java.lang.Object#toString()
      */
     @Override

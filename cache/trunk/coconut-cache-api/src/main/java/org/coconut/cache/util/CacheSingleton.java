@@ -24,8 +24,6 @@ import org.coconut.cache.CacheException;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
- * @see $HeadURL:
- *      https://svn.codehaus.org/coconut/cache/trunk/coconut-cache-api/src/main/java/org/coconut/cache/CacheException.java $
  */
 @ThreadSafe
 public final class CacheSingleton {
@@ -119,6 +117,9 @@ public final class CacheSingleton {
         cache_ressource_location = location;
     }
 
+    /**
+     * Shutdowns the cache and clears the reference.
+     */
     public synchronized static void shutdownAndClearCache() {
         if (cacheInstance != null) {
             // we want to clear the reference even if the cache shutdown fails

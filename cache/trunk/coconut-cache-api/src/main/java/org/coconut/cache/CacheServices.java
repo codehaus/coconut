@@ -24,7 +24,6 @@ import org.coconut.cache.service.statistics.CacheStatisticsService;
  *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
- * @see $HeadURL$
  */
 @SuppressWarnings("unchecked")
 public final class CacheServices {

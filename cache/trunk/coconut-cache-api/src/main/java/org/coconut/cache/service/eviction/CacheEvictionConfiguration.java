@@ -170,8 +170,8 @@ public class CacheEvictionConfiguration<K, V> extends
      * observation is generally refered to as the <code>inheritance anomaly</code>.
      * <p>
      * The cache will, unless otherwise specified, pass instances of
-     * {@link org.coconut.cache.CacheEntry} to {@link ReplacementPolicy#add(Object)} and
-     * {@link ReplacementPolicy#update(int, Object)}
+     * {@link org.coconut.cache.CacheEntry} to {@link ReplacementPolicy#add(Object, org.coconut.core.AttributeMap)} and
+     * {@link ReplacementPolicy#update(int, Object, org.coconut.core.AttributeMap)}
      * 
      * @param policy
      *            the replacement policy that should select which elements to evict when

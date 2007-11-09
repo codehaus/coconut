@@ -11,37 +11,56 @@ import static org.junit.Assert.assertSame;
 import org.junit.Test;
 
 /**
+ * Tests the {@link IllegalCacheConfigurationException} class.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id$
+ * @version $Id: IllegalCacheConfigurationExceptionTest.java 419 2007-11-09 09:09:31Z
+ *          kasper $
  */
 public class IllegalCacheConfigurationExceptionTest {
+
+    /**
+     * Tests
+     * {@link IllegalCacheConfigurationException#IllegalCacheConfigurationException()}.
+     */
     @Test
-    public void testCacheException1() {
+    public void illegalCacheConfigurationException() {
         IllegalCacheConfigurationException e = new IllegalCacheConfigurationException();
         assertNull(e.getCause());
         assertNull(e.getMessage());
     }
 
+    /**
+     * Tests
+     * {@link IllegalCacheConfigurationException#IllegalCacheConfigurationException(Throwable)}.
+     */
     @Test
-    public void testCacheException2() {
+    public void illegalCacheConfigurationException1a() {
         IllegalCacheConfigurationException e = new IllegalCacheConfigurationException("a");
         assertNull(e.getCause());
         assertEquals("a", e.getMessage());
     }
 
+    /**
+     * Tests
+     * {@link IllegalCacheConfigurationException#IllegalCacheConfigurationException(Throwable)}.
+     */
     @Test
-    public void testCacheException3() {
+    public void illegalCacheConfigurationException1b() {
         NullPointerException npe = new NullPointerException();
         IllegalCacheConfigurationException e = new IllegalCacheConfigurationException(npe);
         assertSame(npe, e.getCause());
         assertNotNull(e.getMessage());
     }
 
+    /**
+     * Tests
+     * {@link IllegalCacheConfigurationException#IllegalCacheConfigurationException(String, Throwable)}.
+     */
     @Test
-    public void testCacheException4() {
+    public void illegalCacheConfigurationException2() {
         NullPointerException npe = new NullPointerException();
-        IllegalCacheConfigurationException e = new IllegalCacheConfigurationException(
-                "a", npe);
+        IllegalCacheConfigurationException e = new IllegalCacheConfigurationException("a", npe);
         assertSame(npe, e.getCause());
         assertEquals("a", e.getMessage());
     }

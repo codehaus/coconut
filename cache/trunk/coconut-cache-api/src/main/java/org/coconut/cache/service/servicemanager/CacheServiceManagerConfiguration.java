@@ -10,7 +10,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.coconut.cache.Cache;
 import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.internal.util.XmlUtil;
@@ -68,63 +67,18 @@ public class CacheServiceManagerConfiguration extends AbstractCacheServiceConfig
         }
         registeredServices.put(o, false);
         return this;
-
     }
 
-//
-// public CacheServiceManagerConfiguration addService(Object o) {
-// if (o == null) {
-// throw new NullPointerException("o is null");
-// } else if (registeredServices.containsKey(o)) {
-// throw new IllegalArgumentException("Object has already been registered");
-// }
-// registeredServices.put(o, true);
-// return this;
-//
-// }
-
+    /**
+     * Returns the objects that have been registered through {@link #add(Object)}.
+     * 
+     * @return the objects that have been registered
+     */
     public Collection<Object> getObjects() {
         return new ArrayList(registeredServices.keySet());
     }
 
-    /**
-     * Attaches the specified instance to the service map of the cache. This object can
-     * then later be retrived by calling {@link Cache#getService(Class)}.
-     * 
-     * <pre>
-     * CacheServiceManagerConfiguration csmc;
-     * csmc.attach(String.class, &quot;fooboo&quot;);
-     * 
-     * ...later..
-     * Cache&lt;?,?&gt; c;
-     * assert &quot;fooboo&quot; = c.getService(String.class);
-     * </pre>
-     * 
-     * If the specified key conflicts with the key-type of any of the build in service an
-     * exception will be thrown when the cache is constructed.
-     * 
-     * @param key
-     *            the key to attach the specified instance to
-     * @param instance
-     *            the instance to map the specified key to
-     * @return this configuration
-     * @throws IllegalArgumentException
-     *             If an instance has already been registered with the specified key
-     * @throws NullPointerException
-     *             if the specified key or instance is null
-     */
-// public CacheServiceManagerConfiguration attach(Class<?> key, Object instance) {
-// if (key == null) {
-// throw new NullPointerException("key is null");
-// } else if (instance == null) {
-// throw new NullPointerException("instance is null");
-// } else if (attached.containsKey(key)) {
-// throw new IllegalArgumentException(
-// "An instance for the specified key is already registered, key=" + key);
-// }
-// attached.put(key, instance);
-// return this;
-// }
+    /** {@inheritDoc} */
     @Override
     protected void fromXML(Element element) throws Exception {
         NodeList nl = element.getElementsByTagName(SERVICE_TAG);
@@ -134,6 +88,7 @@ public class CacheServiceManagerConfiguration extends AbstractCacheServiceConfig
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void toXML(Document doc, Element parent) throws Exception {
         for (Object o : getObjects()) {
@@ -141,5 +96,4 @@ public class CacheServiceManagerConfiguration extends AbstractCacheServiceConfig
                     "loading.saveOfLoaderFailed", o);
         }
     }
-   
 }

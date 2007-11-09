@@ -73,7 +73,7 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
     /**
      * Sets the exception handler that should be used to handle all exceptions and
      * warnings. If no exception handler is set using this method the cache should use the
-     * one specified to {@link CacheConfiguration#setDefaultLogger(Logger). If a logger
+     * one specified to {@link org.coconut.cache.CacheConfiguration#setDefaultLogger(Logger)}. If a logger
      * has not been set using that method either. The cache will, unless otherwise
      * specified, use an instance of
      * {@link CacheExceptionHandlers#defaultLoggingExceptionHandler()} to handle

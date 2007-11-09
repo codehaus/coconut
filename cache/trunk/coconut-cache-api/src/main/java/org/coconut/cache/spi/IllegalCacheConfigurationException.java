@@ -3,31 +3,33 @@
  */
 package org.coconut.cache.spi;
 
+import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.CacheException;
 
 /**
- * This method is thrown if the a {@link CacheConfiguration} is invalid in some way.
+ * This method is thrown by the constructor of a {@link Cache} if the
+ * {@link CacheConfiguration} is invalid in some way.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
- * @see $HeadURL$
  */
-public class IllegalCacheConfigurationException extends RuntimeException {
+public class IllegalCacheConfigurationException extends CacheException {
 
     /** serialVersionUID. */
     private static final long serialVersionUID = -1695400915732143052L;
 
     /**
-     * Constructs a new IllegalCacheConfigurationException exception with <code>null</code> as
-     * its detail message. The cause is not initialized, and may subsequently be
-     * initialized by a call to {@link Throwable#initCause}.
+     * Constructs a new IllegalCacheConfigurationException exception with
+     * <code>null</code> as its detail message. The cause is not initialized, and may
+     * subsequently be initialized by a call to {@link Throwable#initCause}.
      */
     public IllegalCacheConfigurationException() {}
 
     /**
-     * Constructs a new IllegalCacheConfigurationException exception with the specified detail
-     * message. The cause is not initialized, and may subsequently be initialized by a
-     * call to {@link Throwable#initCause}.
+     * Constructs a new IllegalCacheConfigurationException exception with the specified
+     * detail message. The cause is not initialized, and may subsequently be initialized
+     * by a call to {@link Throwable#initCause}.
      * 
      * @param message
      *            the detail message. The detail message is saved for later retrieval by
@@ -38,8 +40,8 @@ public class IllegalCacheConfigurationException extends RuntimeException {
     }
 
     /**
-     * Constructs a new IllegalCacheConfigurationException exception with the specified detail
-     * message and cause.
+     * Constructs a new IllegalCacheConfigurationException exception with the specified
+     * detail message and cause.
      * <p>
      * Note that the detail message associated with <code>cause</code> is <i>not </i>
      * automatically incorporated in this cache exception's detail message.
@@ -57,9 +59,9 @@ public class IllegalCacheConfigurationException extends RuntimeException {
     }
 
     /**
-     * Constructs a new IllegalCacheConfigurationException exception with the specified cause and
-     * a detail message of <tt>(cause==null ? null : cause.toString())</tt> (which
-     * typically contains the class and detail message of <tt>cause</tt>). This
+     * Constructs a new IllegalCacheConfigurationException exception with the specified
+     * cause and a detail message of <tt>(cause==null ? null : cause.toString())</tt>
+     * (which typically contains the class and detail message of <tt>cause</tt>). This
      * constructor is useful for cache exceptions that are little more than wrappers for
      * other throwables.
      * 

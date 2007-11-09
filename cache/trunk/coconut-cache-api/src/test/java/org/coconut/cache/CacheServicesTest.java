@@ -26,7 +26,6 @@ import org.junit.runner.RunWith;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
- * @see $HeadURL$
  */
 @SuppressWarnings("unchecked")
 @RunWith(JMock.class)

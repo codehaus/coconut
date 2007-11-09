@@ -1,3 +1,6 @@
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
+ */
 package org.coconut.cache.service.worker;
 
 import java.util.concurrent.ExecutorService;
@@ -20,16 +23,27 @@ public abstract class CacheWorkerManager {
      * 
      * @param service
      *            the service for which an ExecutorService should be returned
-     * @param properties
-     *            a list of properties that is passed to the concrete implementation of
-     *            the cache worker manager
+     * @param attributes
+     *            a map of attributes that is passed to the concrete implementation of the
+     *            cache worker manager
      * @return a ExecutorService that can be used to asynchronously execute tasks for the
      *         specified service
      */
-    public abstract ExecutorService getExecutorService(Class<?> service,
-            AttributeMap attributes);
+    public abstract ExecutorService getExecutorService(Class<?> service, AttributeMap attributes);
 
-    public abstract ScheduledExecutorService getScheduledExecutorService(
-            Class<?> service, AttributeMap attributes);
+    /**
+     * Returns a ScheduledExecutorService that can be used to asynchronously schedule
+     * tasks for the specified service.
+     * 
+     * @param service
+     *            the service for which an ScheduledExecutorService should be returned
+     * @param attributes
+     *            a map of attributes that is passed to the concrete implementation of the
+     *            cache worker manager
+     * @return a ScheduledExecutorService that can be used to asynchronously schedule
+     * tasks for the specified service
+     */
+    public abstract ScheduledExecutorService getScheduledExecutorService(Class<?> service,
+            AttributeMap attributes);
 
 }

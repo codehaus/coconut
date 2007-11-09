@@ -18,12 +18,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * All service bundles should define a Configuration class that is used to configure the
- * service.
+ * All services should define a Configuration class that is used to configure the service.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id$ 
- * @see $HeadURL$
+ * @version $Id$
  * @param <K>
  *            the type of keys maintained by the cache
  * @param <V>
@@ -92,8 +90,7 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
     public String toString() {
         ByteArrayOutputStream sos = new ByteArrayOutputStream();
         try {
-            DocumentBuilder builder = DocumentBuilderFactory.newInstance()
-                    .newDocumentBuilder();
+            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             Document doc = builder.newDocument();
             Element root = doc.createElement(serviceName);
             doc.appendChild(root);
@@ -104,7 +101,7 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
             if (conf.getClass().getPackage().getName().startsWith(
                     Cache.class.getPackage().getName())) {
                 // speciel exception for Coconut Cache implementations.
-                throw new CacheException(CacheSPI.HIGHLY_IRREGULAR, e);
+                throw new CacheException(CacheSPI.HIGHLY_IRREGULAR_MSG, e);
             } else {
                 throw new CacheException(
                         "A String representation of this package could not be obtained, because it could not be serialized to XML",
@@ -121,9 +118,7 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
      * @throws Exception
      *             if the configuration could not be properly read
      */
-    protected void fromXML(Element element) throws Exception {
-        
-    }
+    protected void fromXML(Element element) throws Exception {}
 
     /**
      * @return the ResourceBundle that is used by this configuration, or <code>null</code>
@@ -153,8 +148,7 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
             return bundle.getString(key);
         } catch (MissingResourceException e) {
             throw new CacheException(
-                    "Could not find an entry for the specified resource bundle key "
-                            + key, e);
+                    "Could not find an entry for the specified resource bundle key " + key, e);
         }
     }
 
@@ -168,9 +162,7 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
      * @throws Exception
      *             this configuration could not be probably saved
      */
-    protected void toXML(Document doc, Element parent) throws Exception {
-        
-    }
+    protected void toXML(Document doc, Element parent) throws Exception {}
 
     /**
      * Sets the parent cache configuration which is available when calling {@link #c()}.

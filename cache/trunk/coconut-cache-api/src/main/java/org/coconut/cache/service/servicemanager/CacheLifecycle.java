@@ -54,6 +54,9 @@ public interface CacheLifecycle {
      */
     void started(Cache<?, ?> cache);
 
+    /**
+     * The cache has been shutdown.
+     */
     void shutdown();
 
     /**

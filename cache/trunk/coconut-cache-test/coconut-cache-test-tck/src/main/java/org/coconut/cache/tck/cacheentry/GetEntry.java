@@ -48,10 +48,8 @@ public class GetEntry extends AbstractCacheTCKTest {
     }
 
     /**
-     * {@link Cache#containsKey()} should not fail when cache is shutdown.
+     * {@link Cache#getEntry(Object)} should not fail when cache is shutdown.
      * 
-     * @throws InterruptedException
-     *             was interrupted
      */
     @Test(expected = IllegalStateException.class)
     public void getShutdownISE() {

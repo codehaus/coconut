@@ -50,7 +50,7 @@ import org.coconut.event.EventSubscription;
  * methods that handle a particular type of failure. The idea is that all common exception
  * points has a corresponding method in CacheExceptionHandler. For example, whenever an
  * exception occurs while loading an element in a cache loader the
- * {@link #loadFailed(CacheExceptionContext, CacheLoader, Object, AttributeMap, boolean, Exception)}
+ * {@link #loadFailed(CacheExceptionContext, CacheLoader, Object, AttributeMap, Exception)}
  * method is called. In addition to the exception that was raised a number of additional
  * information is provided to this method. For example, the key for which the load failed,
  * the cache in which the cache occured as well as other relevant information. The default
@@ -86,10 +86,6 @@ public abstract class CacheExceptionHandler<K, V> {
      *            the key for which the load failed
      * @param map
      *            a map of attributes used while trying to load
-     * @param isSynchronous
-     *            <code>true</code> if the load was triggered by a call to any of the
-     *            get methods on {@link Cache} , false if was triggered by a call any of
-     *            the load methods on {@link CacheLoadingService}
      * @param cause
      *            the exception that was raised.
      * @return a value that can be used instead of the value that couldn't be loaded. If
@@ -133,9 +129,8 @@ public abstract class CacheExceptionHandler<K, V> {
      * @param cause
      *            the cause of the failure
      */
-    public void cacheStartupFailed(CacheConfiguration<K, V> configuration,
-            CacheLifecycle service, RuntimeException cause) {
-    }
+    public void cacheStartupFailed(CacheConfiguration<K, V> configuration, CacheLifecycle service,
+            RuntimeException cause) {}
 
     /**
      * A delivery of an event failed.
@@ -157,6 +152,15 @@ public abstract class CacheExceptionHandler<K, V> {
         return false;
     }
 
+    /**
+     * Handles the generic throwable.
+     * 
+     * @param context
+     *            an CacheExceptionContext containing the default logger configured for
+     *            this cache
+     * @param cause
+     *            the throwable to handle
+     */
     protected void handleThrowable(CacheExceptionContext<K, V> context, Throwable cause) {
         if (cause instanceof RuntimeException) {
             handleRuntimeException(context, (RuntimeException) cause);

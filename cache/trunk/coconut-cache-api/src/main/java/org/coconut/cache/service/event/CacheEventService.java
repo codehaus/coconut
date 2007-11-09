@@ -27,8 +27,8 @@ public interface CacheEventService<K, V> extends EventBus<CacheEvent<K, V>> {
      * implementations may impose insertion restrictions (for example capacity bounds),
      * which can fail to insert an element by returning false.
      * 
-     * @param element
-     *            the element to add.
+     * @param event
+     *            the event to add.
      * @return <tt>true</tt> if it was possible to add the element to the data
      *         structure, else <tt>false</tt>
      * @throws NullPointerException

@@ -179,9 +179,7 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     protected void fromXML(Element e) throws Exception {
         domain = readValue(getChild(XML_DOMAIN_TAG, e), CacheMXBean.DEFAULT_JMX_DOMAIN);
@@ -198,9 +196,7 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     protected void toXML(Document doc, Element base) {
         XmlUtil.writeBooleanAttribute(base, XML_ENABLED_ATTRIBUTE, enabled, false);

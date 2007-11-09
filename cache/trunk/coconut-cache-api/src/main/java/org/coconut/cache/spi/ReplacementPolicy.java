@@ -33,7 +33,6 @@ import org.coconut.core.AttributeMap;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id$
- * @see $HeadURL$
  * @param <T>
  *            the type of data maintained by this policy
  */
@@ -134,8 +133,6 @@ public interface ReplacementPolicy<T> {
      * IMPORTANT: The previous element must be removed by the replacement policy even if
      * the new element cannot be accepted.
      * <p>
-     * Similar to {@link #update(int, Object)} but also takes an {@link AttributeMap} as
-     * parameter which can contain various properties for the added element.
      * 
      * @param index
      *            the index of the previous element

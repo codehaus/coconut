@@ -61,6 +61,11 @@ public interface CacheEvent<K, V> {
          */
         int getPreviousSize();
         
+        /**
+         * Returns the volume of the cache before it was cleared.
+         * 
+         * @return the volume of the cache before it was cleared
+         */
         long getPreviousVolume();
     }
 }

@@ -30,8 +30,6 @@ import org.junit.Test;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
- * @see $HeadURL:
- *      https://svn.codehaus.org/coconut/cache/trunk/coconut-cache-api/src/test/java/org/coconut/cache/CacheServicesTest.java $
  */
 @SuppressWarnings("unchecked")
 public class CacheConfigurationTest {
@@ -194,7 +192,7 @@ public class CacheConfigurationTest {
     }
 
     /**
-     * Tests that {@link CacheConfiguration#getProperty(String, Object))} throws a
+     * Tests that {@link CacheConfiguration#getProperty(String, Object)} throws a
      * {@link NullPointerException} when invoked with a null argument as the name of the
      * property.
      */
@@ -204,7 +202,7 @@ public class CacheConfigurationTest {
     }
 
     /**
-     * Tests that {@link CacheConfiguration#setProperty(String, Object))} throws a
+     * Tests that {@link CacheConfiguration#setProperty(String, Object)} throws a
      * {@link NullPointerException} when invoked with a null argument as the name of the
      * property.
      */

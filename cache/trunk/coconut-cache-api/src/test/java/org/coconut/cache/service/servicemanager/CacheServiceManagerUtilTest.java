@@ -3,11 +3,6 @@
  */
 package org.coconut.cache.service.servicemanager;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-
-import org.coconut.cache.Cache;
-import org.coconut.cache.CacheConfiguration;
 import org.junit.Test;
 
 public class CacheServiceManagerUtilTest {
@@ -18,11 +13,11 @@ public class CacheServiceManagerUtilTest {
     }
     
     public static void main(String[] args) {
-        CacheConfiguration<?, ?> conf = CacheConfiguration.create();
+ //       CacheConfiguration<?, ?> conf = CacheConfiguration.create();
 
-        final Cache c = null;
+//        final Cache c = null;
 
-        ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
+      //  ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
 //        conf.serviceManager().addService(
 //                CacheServiceManagerUtil.wrapExecutorService(ses, "Daily Cache Clearing");
 //        ses.scheduleWithFixedDelay(new Runnable() {

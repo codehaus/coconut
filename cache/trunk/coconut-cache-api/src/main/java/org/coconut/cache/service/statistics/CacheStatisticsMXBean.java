@@ -16,11 +16,11 @@ public interface CacheStatisticsMXBean {
      * contained in the cache at the time of retrievel.
      * <p>
      * This number is equivalent to that returned by
-     * {@link org.coconut.cache.Cache#getHitStat()}.
+     * {@link CacheStatisticsService#getHitStat()}.
      * 
      * @return the number of hits
      * @see #getNumberOfMisses
-     * @see #resetHitStat
+     * @see #resetStatistics
      */
     long getNumberOfHits();
 
@@ -29,7 +29,7 @@ public interface CacheStatisticsMXBean {
      * already contained in the cache at the time of retrievel.
      * <p>
      * This number is equivalent to that returned by
-     * {@link org.coconut.cache.Cache#getHitStat()}.
+     * {@link CacheStatisticsService#getHitStat()}.
      * 
      * @return the number of cache misses.
      */
@@ -49,7 +49,7 @@ public interface CacheStatisticsMXBean {
      * for the cache.
      * <p>
      * This method is equivalent to calling
-     * {@link org.coconut.cache.Cache#resetStatistics()}.
+     * {@link CacheStatisticsService#resetStatistics()}.
      */
     void resetStatistics();
 }

@@ -148,9 +148,7 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
      * should be refreshed. The filter is checked on each call to
      * {@link org.coconut.cache.Cache#get(Object)},{@link org.coconut.cache.Cache#getAll(Collection)},
      * {@link org.coconut.cache.Cache#getEntry(Object)} if a mapping exist for specified
-     * key(s). Furthermore it is called for all entries within the cache on calls to
-     * {@link org.coconut.cache.Cache#evict()}.
-     * <p>
+     * key(s).
      * 
      * @param filter
      *            the reload filter

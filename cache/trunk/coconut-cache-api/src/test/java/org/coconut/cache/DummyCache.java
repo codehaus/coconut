@@ -15,14 +15,15 @@ import java.util.concurrent.TimeUnit;
  * @version $Id$
  */
 public class DummyCache<K, V> implements Cache<K, V> {
+
     private final String name;
+
     public volatile boolean isStarted;
 
     public DummyCache(CacheConfiguration<?, ?> configuration) {
         this.name = configuration.getName();
     }
 
-    
     /** {@inheritDoc} */
     public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
         return false;
@@ -45,9 +46,6 @@ public class DummyCache<K, V> implements Cache<K, V> {
     public Set<java.util.Map.Entry<K, V>> entrySet() {
         return null;
     }
-
-    /** {@inheritDoc} */
-    public void evict() {}
 
     /** {@inheritDoc} */
     public V get(Object key) {

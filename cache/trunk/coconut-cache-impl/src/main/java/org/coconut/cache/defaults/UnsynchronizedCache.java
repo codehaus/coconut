@@ -275,7 +275,6 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         return result;
     }
 
-    /** {@inheritDoc} */
     Map<K, V> doGetAll2(Collection<? extends K> keys) {
         if (keys == null) {
             throw new NullPointerException("collection is null");

@@ -15,8 +15,6 @@ import org.junit.Test;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
- * @see $HeadURL:
- *      https://svn.codehaus.org/coconut/cache/trunk/coconut-cache-api/src/test/java/org/coconut/cache/CacheServicesTest.java $
  */
 public class CacheExceptionTest {
 
@@ -24,7 +22,7 @@ public class CacheExceptionTest {
      * Tests {@link CacheException#CacheException()}.
      */
     @Test
-    public void testCacheException() {
+    public void cacheException() {
         CacheException e = new CacheException();
         assertNull(e.getCause());
         assertNull(e.getMessage());
@@ -34,7 +32,7 @@ public class CacheExceptionTest {
      * Tests {@link CacheException#CacheException(Throwable)}.
      */
     @Test
-    public void testCacheException1a() {
+    public void cacheException1a() {
         CacheException e = new CacheException("a");
         assertNull(e.getCause());
         assertEquals("a", e.getMessage());
@@ -44,7 +42,7 @@ public class CacheExceptionTest {
      * Tests {@link CacheException#CacheException(Throwable)}.
      */
     @Test
-    public void testCacheException1b() {
+    public void cacheException1b() {
         NullPointerException npe = new NullPointerException();
         CacheException e = new CacheException(npe);
         assertSame(npe, e.getCause());
@@ -55,7 +53,7 @@ public class CacheExceptionTest {
      * Tests {@link CacheException#CacheException(String, Throwable)}.
      */
     @Test
-    public void testCacheException2() {
+    public void cacheException2() {
         NullPointerException npe = new NullPointerException();
         CacheException e = new CacheException("a", npe);
         assertSame(npe, e.getCause());

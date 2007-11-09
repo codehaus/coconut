@@ -6,6 +6,7 @@ package org.coconut.cache.service.servicemanager;
 import java.util.Map;
 
 /**
+ * This is the main interface for controlling the services of a cache at runtime.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
@@ -32,12 +33,12 @@ public interface CacheServiceManagerService {
 
     /**
      * If a service has to block while shutting cannot be completly shutdown Must be
-     * called
+     * called.
      * 
-     * @param service
+     * @param service the service that can be asynchronously shutdown
      * @throws IllegalStateException
      *             if this method is called before shutdown has been called on the cache
-     *             or if it called after it has been terminated *
+     *             or if it called after it has been terminated
      * @throws UnsupportedOperationException
      *             if services cannot be shutdown asynchronously
      */

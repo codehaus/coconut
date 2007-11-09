@@ -40,6 +40,7 @@
   </dependencies>
   <build>
     <plugins>
+     <!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
@@ -49,8 +50,12 @@
           </links>
           <showPackage>false</showPackage>
           <showProtected>true</showProtected>
+                   <quiet>false</quiet>
+          <serialwarn>true</serialwarn>
+          <verbose>true</verbose>
         </configuration>
       </plugin>
+      -->
     </plugins>
   </build>
   <reporting>

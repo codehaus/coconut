@@ -8,10 +8,7 @@ import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertSame;
 import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
 
-import org.coconut.cache.CacheEntry;
 import org.coconut.cache.spi.ReplacementPolicy;
-import org.coconut.predicate.Predicate;
-import org.coconut.predicate.Predicates;
 import org.coconut.test.MockTestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,9 +20,6 @@ import org.junit.Test;
 public class CacheEvictionConfigurationTest {
 
     static CacheEvictionConfiguration<Integer, String> DEFAULT = new CacheEvictionConfiguration<Integer, String>();
-
-    private final static Predicate<CacheEntry<Integer, String>> DEFAULT_FILTER = Predicates
-            .truePredicate();
 
     private CacheEvictionConfiguration<Integer, String> conf;
 

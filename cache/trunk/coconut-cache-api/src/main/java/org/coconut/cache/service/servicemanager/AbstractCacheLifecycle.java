@@ -40,7 +40,9 @@ public abstract class AbstractCacheLifecycle implements CacheLifecycle {
         this.name = name;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Returns the name of this lifecycle.
+     */
     public final String getName() {
         return name;
     }

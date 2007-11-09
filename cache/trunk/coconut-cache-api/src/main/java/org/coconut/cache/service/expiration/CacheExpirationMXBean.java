@@ -40,6 +40,8 @@ public interface CacheExpirationMXBean {
      * 
      * @return the default time to live in milliseconds for new elements that are added to
      *         the cache
+     * @see #setDefaultTimeToLiveMs(long)
+     * @see CacheExpirationConfiguration#getDefaultTimeToLive(TimeUnit)
      */
     long getDefaultTimeToLiveMs();
 
@@ -52,7 +54,7 @@ public interface CacheExpirationMXBean {
      *            expire in milliseconds
      * @throws IllegalArgumentException
      *             if the specified time to live is negative (<0)
-     * @see #getDefaultTimeToLiveMs(TimeUnit)
+     * @see #getDefaultTimeToLiveMs()
      * @see CacheExpirationConfiguration#setDefaultTimeToLive(long, TimeUnit)
      */
     void setDefaultTimeToLiveMs(long timeToLiveMs);
