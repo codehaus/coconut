@@ -11,7 +11,7 @@
     <license>
       <name>The Apache License, Version 2.0</name>
       <url>
-        http://svn.coconut.codehaus.org/browse/~raw,r=233/coconut/LICENSE.txt
+        http://svn.codehaus.org/coconut/LICENSE.txt
       </url>
       <distribution>repo</distribution>
     </license>
@@ -77,9 +77,7 @@
     <snapshotRepository>
       <id>codehaus.org</id>
       <name>Coconut's snapshot repository</name>
-      <url>
-        dav:https://dav.codehaus.org/snapshots.repository/coconut
-      </url>
+      <url>dav:https://dav.codehaus.org/snapshots.repository/coconut</url>
     </snapshotRepository>
     <site>
       <id>codehaus.org</id>
@@ -98,9 +96,7 @@
     </developer>
   </developers>
   <scm>
-    <connection>
-      scm:svn:http://svn.codehaus.org/coconut/trunk/
-    </connection>
+    <connection>scm:svn:http://svn.codehaus.org/coconut/trunk/</connection>
     <developerConnection>
       scm:svn:https://svn.codehaus.org/coconut/trunk
     </developerConnection>
@@ -131,7 +127,6 @@
           </links>
           <showPackage>false</showPackage>
           <showProtected>true</showProtected>
-          <quiet>true</quiet>
         </configuration>
       </plugin>
       <plugin>
@@ -169,34 +164,26 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>findbugs-maven-plugin</artifactId>
-        <version>1.0.0</version>
+<!--         <version>1.1.1</version> -->
         <configuration>
           <xmlOutput>true</xmlOutput>
           <threshold>Normal</threshold>
           <effort>Max</effort>
         </configuration>
       </plugin>
-      <!-- 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-clover-plugin</artifactId>
-        <configuration>
-          <targetPercentage>30%</targetPercentage>
-          <licenseLocation>
-            ${user.home}/licenses/coconut-clover.license
-          </licenseLocation>
-          <jdk>1.5</jdk>
-        </configuration>
-      </plugin>
-       -->
+      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <configuration>
           <configLocation>build-tools/checkstyle.xml</configLocation>
           <headerLocation>build-tools/checkstyle.license</headerLocation>
-          <suppressionsLocation>build-tools/checkstyle-suppressions.xml</suppressionsLocation>
-          <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
+          <suppressionsLocation>
+            build-tools/checkstyle-suppressions.xml
+          </suppressionsLocation>
+          <suppressionsFileExpression>
+            checkstyle.suppressions.file
+          </suppressionsFileExpression>
         </configuration>
       </plugin>
     </plugins>
