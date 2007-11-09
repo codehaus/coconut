@@ -42,6 +42,7 @@ public interface CacheEvictionMXBean {
      * @return the maximum allowed volume of the cache or Long.MAX_VALUE if there is no
      *         limit.
      * @see #setMaximumVolume(long)
+     * @see org.coconut.cache.Cache#getVolume()
      */
     long getMaximumVolume();
 
@@ -52,7 +53,7 @@ public interface CacheEvictionMXBean {
      * @return the maximum number of elements that this cache can hold or
      *         {@link Integer#MAX_VALUE} if no such limit exist
      * @see #setMaximumSize(int)
-     * @see {@link java.util.Map#size()}
+     * @see org.coconut.cache.Cache#size()
      */
     int getMaximumSize();
 

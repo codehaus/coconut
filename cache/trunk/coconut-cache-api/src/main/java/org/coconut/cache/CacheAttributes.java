@@ -105,12 +105,12 @@ public final class CacheAttributes {
 
     /**
      * Returns the value that the specified AttributeMap maps the {@link #COST} attribute
-     * to or {@link CacheAttributes#DEFAULT_COST} if no such mapping exist.
+     * to or {@link #DEFAULT_COST} if no such mapping exist.
      * 
      * @param attributes
      *            the map to retrieve the value of the cost attribute from
      * @return returns the value that the specified AttributeMap maps the cost attribute
-     *         to or {@value CacheAttributes#DEFAULT_COST} if no such mapping exist
+     *         to or {@value #DEFAULT_COST} if no such mapping exist
      * @throws NullPointerException
      *             if the specified attributeMap is <code>null</code>
      * @throws IllegalArgumentException
@@ -262,12 +262,12 @@ public final class CacheAttributes {
 
     /**
      * Returns the value that the specified AttributeMap maps the {@link #SIZE} attribute
-     * to or {@link CacheAttributes#DEFAULT_SIZE} if no such mapping exist.
+     * to or {@link #DEFAULT_SIZE} if no such mapping exist.
      * 
      * @param attributes
      *            the map to retrieve the value of the size attribute from
      * @return returns the value that the specified AttributeMap maps the size attribute
-     *         to or {@value CacheAttributes#DEFAULT_SIZE} if no such mapping exist
+     *         to or {@value #DEFAULT_SIZE} if no such mapping exist
      * @throws NullPointerException
      *             if the specified attributeMap is <code>null</code>
      * @throws IllegalArgumentException
