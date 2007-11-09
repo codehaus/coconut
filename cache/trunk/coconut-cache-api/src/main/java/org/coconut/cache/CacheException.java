@@ -10,8 +10,7 @@ package org.coconut.cache;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
- * @see $HeadURL:
- *      https://svn.codehaus.org/coconut/cache/trunk/coconut-cache-api/src/main/java/org/coconut/cache/CacheServices.java $
+ * @see $HeadURL$
  */
 public class CacheException extends RuntimeException {
 

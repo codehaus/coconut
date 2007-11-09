@@ -18,6 +18,13 @@ import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+/**
+ * Tests the {@link CacheAttributes} class.
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id$
+ * @see $HeadURL$
+ */
 @SuppressWarnings("unchecked")
 @RunWith(JMock.class)
 public class CacheAttributesTest {

@@ -1,7 +1,6 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-
 package org.coconut.cache;
 
 import static junit.framework.Assert.assertEquals;
@@ -15,34 +14,55 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Collection;
 
+import junit.framework.AssertionFailedError;
+
 import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.cache.spi.XmlConfigurator;
 import org.coconut.core.Clock;
 import org.coconut.core.Logger;
-import org.coconut.core.Loggers;
 import org.coconut.test.MockTestCase;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Tests the {@link CacheConfiguration} class.
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id$
+ * @see $HeadURL:
+ *      https://svn.codehaus.org/coconut/cache/trunk/coconut-cache-api/src/test/java/org/coconut/cache/CacheServicesTest.java $
+ */
 @SuppressWarnings("unchecked")
 public class CacheConfigurationTest {
 
     CacheConfiguration<Number, Collection> conf;
 
+    /**
+     * Setup the CacheConfiguration.
+     */
     @Before
     public void setUp() {
         conf = CacheConfiguration.create();
     }
 
+    /**
+     * Tests {@link CacheConfiguration#setClock(Clock)} and
+     * {@link CacheConfiguration#getClock()}.
+     */
     @Test
-    public void testClock() {
-        assertEquals(Clock.DEFAULT_CLOCK, conf.getClock());
+    public void clock() {
+        assertSame(Clock.DEFAULT_CLOCK, conf.getClock());
         Clock c = new Clock.DeterministicClock();
-        assertEquals(conf, conf.setClock(c));
-        assertEquals(c, conf.getClock());
+        assertSame(conf, conf.setClock(c));
+        assertSame(c, conf.getClock());
     }
 
+    /**
+     * Tests that a configuration service added through
+     * {@link CacheConfiguration#addConfiguration(AbstractCacheServiceConfiguration)} is
+     * available when calling {@link CacheConfiguration#getAllConfigurations()}.
+     */
     @Test
     public void addConfiguration() {
         MyService s1 = new MyService();
@@ -51,82 +71,153 @@ public class CacheConfigurationTest {
         assertTrue(conf.getAllConfigurations().contains(s1));
     }
 
+    /**
+     * Tests that
+     * {@link CacheConfiguration#addConfiguration(AbstractCacheServiceConfiguration)}
+     * throws a {@link NullPointerException} when invoked with a null argument.
+     */
     @Test(expected = NullPointerException.class)
     public void addConfigurationNPE() {
         conf.addConfiguration(null);
     }
 
+    /**
+     * Tests that
+     * {@link CacheConfiguration#addConfiguration(AbstractCacheServiceConfiguration)}
+     * throws a {@link IllegalArgumentException} when we try to register a configuration
+     * service that is registered as default.
+     */
     @Test(expected = IllegalArgumentException.class)
-    public void addConfigurationIAE1() {
+    public void addConfigurationIAE() {
         conf.addConfiguration(new CacheManagementConfiguration());
     }
 
+    /**
+     * Tests that
+     * {@link CacheConfiguration#addConfiguration(AbstractCacheServiceConfiguration)}
+     * throws a {@link IllegalArgumentException} when we try to register the same
+     * configuration service twice.
+     */
     @Test(expected = IllegalArgumentException.class)
     public void addConfigurationIAE2() {
-        conf.addConfiguration(new MyService());
+        try {
+            conf.addConfiguration(new MyService());
+        } catch (Throwable t) {
+            throw new AssertionFailedError("Should not throw " + t.getMessage());
+        }
         conf.addConfiguration(new MyService());
     }
 
+    /**
+     * Tests that {@link CacheConfiguration#setClock(Clock)} throws a
+     * {@link NullPointerException} when invoked with a null argument.
+     */
     @Test(expected = NullPointerException.class)
-    public void testClockNPE() {
+    public void clockNPE() {
         conf.setClock(null);
     }
 
+    /**
+     * Tests {@link CacheConfiguration#setDefaultLogger(Logger)} and
+     * {@link CacheConfiguration#getDefaultLogger()}.
+     */
     @Test
-    public void testSetDefaultLogger() {
+    public void defaultLogger() {
         assertNull(conf.getDefaultLogger());
-        Logger log = Loggers.nullLog();
-        assertEquals(conf, conf.setDefaultLogger(log));
+        Logger log = MockTestCase.mockDummy(Logger.class);
+        assertSame(conf, conf.setDefaultLogger(log));
         assertSame(log, conf.getDefaultLogger());
         conf.setDefaultLogger(null);
         assertNull(conf.getDefaultLogger());
     }
 
+    /**
+     * Tests {@link CacheConfiguration#setName(String)} and
+     * {@link CacheConfiguration#getName()}.
+     */
     @Test
-    public void testName() {
+    public void name() {
         assertNull(conf.getName());
-        assertEquals(conf, conf.setName("foo"));
-        assertEquals("foo", conf.getName());
+        assertSame(conf, conf.setName("foo-123_"));
+        assertEquals("foo-123_", conf.getName());
         conf.setName(null);
         assertNull(conf.getName());
     }
 
+    /**
+     * Tests that we cannot use the empty string as the name of a cache.
+     */
     @Test(expected = IllegalArgumentException.class)
-    public void testNameEmptyString() {
+    public void nameNoEmptyStringIAE() {
         conf.setName("");
     }
 
+    /**
+     * Tests that we cannot use an invalid String as the name of the cache.
+     */
     @Test(expected = IllegalArgumentException.class)
-    public void testNameInvalid() {
+    public void nameInvalidIAE() {
         conf.setName("&asdad");
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testProperties() {
+    /**
+     * Tests {@link CacheConfiguration#getProperties()},
+     * {@link CacheConfiguration#getProperty(String)},
+     * {@link CacheConfiguration#getProperty(String, Object)}and
+     * {@link CacheConfiguration#setProperty(String, Object)}.
+     */
+    @Test
+    public void properties() {
         conf.setProperty("a", 1);
         conf.setProperty("b", 2);
         assertEquals(1, conf.getProperty("a"));
         assertEquals(2, conf.getProperty("b"));
         assertNull(conf.getProperty("c"));
+        assertNull(conf.getProperty("c", null));
+        assertEquals(1, conf.getProperties().get("a"));
+        assertEquals(2, conf.getProperties().get("b"));
+        assertNull(conf.getProperties().get("c"));
         assertEquals(2, conf.getProperty("b", 3));
+        assertEquals(2, conf.getProperty("b", null));
         assertEquals(3, conf.getProperty("c", 3));
+        conf.setProperty("b", null);
+        assertNull(conf.getProperty("b"));
+    }
+
+    /**
+     * Tests that {@link CacheConfiguration#getProperty(String)} throws a
+     * {@link NullPointerException} when invoked with a null argument.
+     */
+    @Test(expected = NullPointerException.class)
+    public void propertiesGetNPE() {
         conf.getProperty(null);
     }
 
+    /**
+     * Tests that {@link CacheConfiguration#getProperty(String, Object))} throws a
+     * {@link NullPointerException} when invoked with a null argument as the name of the
+     * property.
+     */
     @Test(expected = NullPointerException.class)
-    public void testProperties2() {
+    public void propertiesGetNPE1() {
+        conf.getProperty(null, "foo");
+    }
+
+    /**
+     * Tests that {@link CacheConfiguration#setProperty(String, Object))} throws a
+     * {@link NullPointerException} when invoked with a null argument as the name of the
+     * property.
+     */
+    @Test(expected = NullPointerException.class)
+    public void propertiesSetNPE() {
         conf.setProperty(null, 1);
     }
 
+    /**
+     * Tests the {@link CacheConfiguration#toString()} method.
+     */
     @Test
-    public void testProperties3() {
-        conf.setProperty("a", 1);
-        conf.setProperty("b", 2);
-        assertEquals(1, conf.getProperties().get("a"));
-    }
-
-    @Test
-    public void testToString() {
+    public void toString_() {
         conf.setName("foo");
         CacheConfiguration conf2 = CacheConfiguration.create();
         conf2.setName("foo");
@@ -179,7 +270,7 @@ public class CacheConfigurationTest {
     }
 
     @Test
-    public void testDefaultService() {
+    public void defaultService() {
         CacheConfiguration<?, ?> conf = CacheConfiguration.create();
         assertNotNull(conf.event());
         assertNotNull(conf.eviction());

@@ -1,7 +1,6 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-
 package org.coconut.cache;
 
 import java.io.ByteArrayOutputStream;
@@ -40,11 +39,11 @@ import org.coconut.core.Logger;
  * general-purpose <tt>Cache</tt> implementation classes should have a constructor with
  * a single argument taking a CacheConfiguration.
  * <p>
- * <b>Usage Examples.</b> The following creates a new cache with the name MyCache. The
- * cache has a maximum of 1000 elements and uses a least-recently-used policy to determine
- * which elements to evict when the specified maximum size has been reached. Elements will
- * automatically expired after having been in the cache for 1 hour. Finally, the cache is
- * registered as a mbean with the
+ * <b>Usage Examples.</b> The following creates a new cache with the name <I>MyCache</I>.
+ * The cache can hold a maximum of 1000 elements and uses a least-recently-used policy to
+ * determine which elements to evict when the specified maximum size has been reached.
+ * Elements will automatically expire after having been in the cache for 1 hour. Finally,
+ * the cache and all of its services are registered as a mbean with the
  * {@link java.lang.management.ManagementFactory#getPlatformMBeanServer platform
  * <tt>MBeanServer</tt>} using the name of the cache.
  * 
@@ -54,11 +53,13 @@ import org.coconut.core.Logger;
  * cc.eviction().setPolicy(Policies.newLRU()).setMaximumSize(1000);
  * cc.expiration().setDefaultTimeToLive(60 * 60, TimeUnit.SECONDS);
  * cc.management().setEnabled(true);
- * Cache&lt;String, Integer&gt; instance = cc.newInstance(Select_A_Cache_Impl.class);
+ * Cache&lt;String, Integer&gt; instance = cc.newInstance(SynchronizedCache.class);
  * </pre>
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
+ * @see $HeadURL:
+ *      https://svn.codehaus.org/coconut/cache/trunk/coconut-cache-api/src/main/java/org/coconut/cache/CacheServices.java $
  * @param <K>
  *            the type of keys that should be maintained by the cache
  * @param <V>
@@ -107,6 +108,34 @@ public final class CacheConfiguration<K, V> {
     }
 
     /**
+     * Creates a new Configuration with default settings and the additional configuration
+     * types specified as parameter.
+     * 
+     * @param additionalConfigurationTypes
+     *            the additional configuration types
+     */
+    protected CacheConfiguration(
+            Collection<Class<? extends AbstractCacheServiceConfiguration>> additionalConfigurationTypes) {
+        this();
+        if (additionalConfigurationTypes == null) {
+            throw new NullPointerException("additionalConfigurationTypes is null");
+        }
+        for (Class<? extends AbstractCacheServiceConfiguration> c : DEFAULTS) {
+            if (c == null) {
+                throw new NullPointerException("collection of service types contained a null");
+            }
+            try {
+                AbstractCacheServiceConfiguration a = c.newInstance();
+                addConfiguration(a);
+                CacheSPI.initializeConfiguration(a, this);
+            } catch (Exception e) {
+                throw new IllegalArgumentException(
+                        "Configuration type could not be registered [class = " + c + "]", e);
+            }
+        }
+    }
+
+    /**
      * Adds an instantiated configuration object.
      * 
      * @param <T>
@@ -135,7 +164,7 @@ public final class CacheConfiguration<K, V> {
 
     /**
      * Returns a configuration object that can be used to control what types of events are
-     * raised whenever something interesting happens in the cache.
+     * raised when state changes in the cache.
      * 
      * @return a CacheEventConfiguration
      */
@@ -145,7 +174,7 @@ public final class CacheConfiguration<K, V> {
 
     /**
      * Returns a service that can be used to configure maximum size, replacement policies,
-     * and more for the cache.
+     * and more settings for the cache.
      * 
      * @return a CacheEvictionConfiguration
      */
@@ -154,10 +183,10 @@ public final class CacheConfiguration<K, V> {
     }
 
     /**
-     * Returns a configuration object that can be used to control how loading is done in
-     * the cache.
+     * Returns a configuration object that can be used to control how exceptions are
+     * handled in the cache.
      * 
-     * @return a CacheLoadingConfiguration
+     * @return a CacheExceptionHandlingConfiguration
      */
     public CacheExceptionHandlingConfiguration<K, V> exceptionHandling() {
         return getConfiguration(CacheExceptionHandlingConfiguration.class);
@@ -193,11 +222,11 @@ public final class CacheConfiguration<K, V> {
     }
 
     /**
-     * Returns the default log configured for this cache or <tt>null</tt> if no default
-     * log has been configured.
+     * Returns the default logger configured for this cache or <tt>null</tt> if no
+     * default logger has been configured.
      * 
-     * @return the default log configured for this cache or null if no default log has
-     *         been configured
+     * @return the default logger configured for this cache or null if no default logger
+     *         has been configured
      * @see #setDefaultLogger(Logger)
      */
     public Logger getDefaultLogger() {
@@ -288,48 +317,46 @@ public final class CacheConfiguration<K, V> {
      * The behavior of this operation is undefined if this configuration is modified while
      * the operation is in progress.
      * 
-     * @param type
+     * @param cacheType
      *            the type of cache that should be created
      * @return a new Cache instance
      * @throws IllegalArgumentException
-     *             if specified class does not contain a public constructor taking a
-     *             single CacheConfiguration argument
+     *             if a cache of the specified type could not be created
      * @throws NullPointerException
-     *             if the specified class is <tt>null</tt> *
+     *             if the specified type is <tt>null</tt>
      * @param <T>
      *            the type of cache to create
      */
-    public <T extends Cache<K, V>> T newCacheInstance(Class<? extends Cache> type)
-            throws IllegalArgumentException {
-        if (type == null) {
+    public <T extends Cache<K, V>> T newCacheInstance(Class<? extends Cache> cacheType) {
+        if (cacheType == null) {
             throw new NullPointerException("type is null");
         }
-        T cache = null;
-        Constructor<T> c = null;
+
+        final Constructor<T> c;
         try {
-            c = (Constructor<T>) type.getDeclaredConstructor(CacheConfiguration.class);
+            c = (Constructor<T>) cacheType.getDeclaredConstructor(CacheConfiguration.class);
         } catch (NoSuchMethodException e) {
             throw new IllegalArgumentException(
                     "Could not create cache instance, no public contructor "
                             + "taking a single CacheConfiguration instance for the specified class [class = "
-                            + type + "]", e);
+                            + cacheType + "]", e);
         }
         try {
-            cache = c.newInstance(this);
+            return c.newInstance(this);
         } catch (InstantiationException e) {
             throw new IllegalArgumentException(
-                    "Could not create cache instance, specified clazz [class = " + type
+                    "Could not create cache instance, specified clazz [class = " + cacheType
                             + "] is an interface or an abstract class", e);
         } catch (IllegalAccessException e) {
-            throw new IllegalArgumentException("Could not create instance of " + type, e);
+            throw new IllegalArgumentException("Could not create instance of " + cacheType, e);
         } catch (InvocationTargetException e) {
             throw new IllegalArgumentException("Constructor threw exception", e.getCause());
         }
-        return cache;
     }
 
     /**
-     * Returns a service manager configuration object .
+     * Returns a configuration object that can be used to add additional services to the
+     * cache.
      * 
      * @return a CacheManagementConfiguration
      */
@@ -342,9 +369,11 @@ public final class CacheConfiguration<K, V> {
      * should not need to set this, only if they want to provide another timing mechanism
      * then the built-in {@link java.lang.System#currentTimeMillis()} and
      * {@link java.lang.System#nanoTime()}. For example, a custom NTP protocol.
+     * <p>
+     * This method is also usefull for tests that rely on exact timing of events
      * 
      * @param clock
-     *            the Clock to use
+     *            the Clock that the cache should use
      * @return this configuration
      * @throws NullPointerException
      *             if the specified clock is <tt>null</tt>
@@ -384,7 +413,7 @@ public final class CacheConfiguration<K, V> {
      * <p>
      * If no name is set in the configuration, any cache implementation must generate a
      * name for the cache. How exactly the name is generated is implementation specific.
-     * But the recommended way is to use {@link UUID#randomUUID()} to generate an pseudo
+     * But the recommended way is to use {@link UUID#randomUUID()} to generate a pseudo
      * random name.
      * 
      * @param name
@@ -433,17 +462,23 @@ public final class CacheConfiguration<K, V> {
         return this;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Returns a XML-based string representation of this configuration. This xml-based
+     * string can used as input to {@link #loadConfigurationFrom(InputStream)} or to
+     * create a similar configuration.
+     * 
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
         ByteArrayOutputStream sos = new ByteArrayOutputStream();
         try {
             new XmlConfigurator().write(this, sos);
         } catch (Exception e) {
-            throw new CacheException(CacheSPI.HIGHLY_IRREGULAR, e);
+            throw new IllegalStateException(
+                    "An xml-based representation of this cache could not be created", e);
         }
         return new String(sos.toByteArray());
-
     }
 
     /**
@@ -456,14 +491,24 @@ public final class CacheConfiguration<K, V> {
         return getConfiguration(CacheWorkerConfiguration.class);
     }
 
-    private <T extends AbstractCacheServiceConfiguration> T getConfiguration(Class<T> c) {
+    /**
+     * Returns a configuration object of the specified type.
+     * 
+     * @param c
+     *            the type of the configuration
+     * @return a configuration objects of the specified type
+     * @throws IllegalStateException
+     *             if no configuration object of the specified type exists
+     * @param <T>
+     *            the type of the configuration
+     */
+    protected <T extends AbstractCacheServiceConfiguration> T getConfiguration(Class<T> c) {
         for (AbstractCacheServiceConfiguration o : list) {
             if (o.getClass().equals(c)) {
                 return (T) o;
             }
         }
-        throw new CacheException(CacheSPI.HIGHLY_IRREGULAR
-                + " Unknown service configuration, type =" + c);
+        throw new IllegalStateException("Unknown service configuration [ type = " + c + "]");
     }
 
     /**
@@ -480,8 +525,8 @@ public final class CacheConfiguration<K, V> {
     }
 
     /**
-     * Creates a new CacheConfiguration where the name of the cache will be the specified
-     * name.
+     * Creates a new CacheConfiguration with default settings and the specified name as
+     * the name of the cache .
      * 
      * @param name
      *            the name of the cache
@@ -498,7 +543,7 @@ public final class CacheConfiguration<K, V> {
     }
 
     /**
-     * Loads a XML based cache configuration from the specified input stream, and
+     * Loads a XML-based cache configuration from the specified input stream, and
      * instantiates a new cache on the basis of the configuration.
      * 
      * @param xmlDoc
@@ -518,14 +563,14 @@ public final class CacheConfiguration<K, V> {
     }
 
     /**
-     * Reads the XML configuration from the specified InputStream and returns a new
+     * Reads the XML-based configuration from the specified InputStream and returns a new
      * populated CacheConfiguration.
      * 
      * @param xmlDoc
      *            an InputStream where the configuration can be read from
      * @return a CacheConfiguration reflecting the xml configuration
      * @throws Exception
-     *             some Exception prevented the CacheConfiguration from being read and
+     *             some issue prevented the CacheConfiguration from being read and
      *             populated
      * @param <K>
      *            the type of keys that should be maintained by the cache

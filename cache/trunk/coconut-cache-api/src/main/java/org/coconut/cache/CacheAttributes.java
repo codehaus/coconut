@@ -19,6 +19,7 @@ import org.coconut.core.Clock;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
+ * @see $HeadURL$
  */
 public final class CacheAttributes {
 

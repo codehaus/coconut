@@ -11,12 +11,16 @@ import org.coconut.core.AttributeMap;
 
 public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService {
 
+    private final String cacheName;
+
     private final CacheWorkerManager worker;
 
     private final InternalCacheServiceManager csm;
 
-    public SynchronizedCacheWorkerService(CacheWorkerConfiguration conf, InternalCacheServiceManager csm) {
+    public SynchronizedCacheWorkerService(String cacheName, CacheWorkerConfiguration conf,
+            InternalCacheServiceManager csm) {
         this.csm = csm;
+        this.cacheName = cacheName;
         if (conf.getWorkerManager() == null) {
             worker = new SameThreadCacheWorker();
         } else {
@@ -33,7 +37,8 @@ public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService {
         private final ExecutorService es;
 
         SameThreadCacheWorker() {
-            es = Executors.newCachedThreadPool(new WorkerUtils.DefaultThreadFactory("cache"));
+            es = Executors.newCachedThreadPool(new WorkerUtils.DefaultThreadFactory("cache-"
+                    + cacheName));
         }
 
         @Override
