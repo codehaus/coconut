@@ -14,6 +14,20 @@ import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.core.AttributeMap;
 
+/**
+ * What to do on cache shutdown.
+ * <p>
+ * Pending loads will be dropped
+ * <p>
+ * ongoing loads will not be terminated on shutdown, but will not be added to the cache
+ * <p>
+ * shutdownNow -> ongoing loads will be interrupted.
+ * 
+ * @param <K>
+ * @param <V>
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id$
+ */
 public class SynchronizedCacheLoaderService<K, V> extends AbstractCacheLoadingService<K, V> {
 
     private final InternalCacheEntryService attributeFactory;
@@ -23,7 +37,8 @@ public class SynchronizedCacheLoaderService<K, V> extends AbstractCacheLoadingSe
     private final Executor loadExecutor;
 
     public SynchronizedCacheLoaderService(InternalCacheEntryService attributeFactory,
-            InternalCacheExceptionService<K, V> exceptionService, CacheLoadingConfiguration<K, V> loadConf,
+            InternalCacheExceptionService<K, V> exceptionService,
+            CacheLoadingConfiguration<K, V> loadConf,
             final InternalCacheWorkerService threadManager, final LoadSupport<K, V> cache) {
         super(loadConf, attributeFactory, exceptionService, cache);
         this.attributeFactory = attributeFactory;
@@ -35,7 +50,7 @@ public class SynchronizedCacheLoaderService<K, V> extends AbstractCacheLoadingSe
     public void loadAsync(K key, AttributeMap attributes) {
         loadExecutor.execute(createFuture(key, attributes));
     }
-    
+
     /** {@inheritDoc} */
     public AbstractCacheEntry<K, V> loadBlocking(K key, AttributeMap attributes) {
         FutureTask<AbstractCacheEntry<K, V>> ft = createFuture(key, attributes);

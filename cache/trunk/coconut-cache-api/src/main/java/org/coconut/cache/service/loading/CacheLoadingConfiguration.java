@@ -28,8 +28,7 @@ import org.w3c.dom.Element;
  * @param <V>
  *            the type of mapped values
  */
-public class CacheLoadingConfiguration<K, V> extends
-        AbstractCacheServiceConfiguration<K, V> {
+public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfiguration<K, V> {
 
     /** The name of this service. */
     public static final String SERVICE_NAME = "loading";
@@ -115,8 +114,7 @@ public class CacheLoadingConfiguration<K, V> extends
      * @throws IllegalArgumentException
      *             if the specified interval is negative
      */
-    public CacheLoadingConfiguration<K, V> setDefaultTimeToRefresh(long interval,
-            TimeUnit unit) {
+    public CacheLoadingConfiguration<K, V> setDefaultTimeToRefresh(long interval, TimeUnit unit) {
         if (unit == null) {
             throw new NullPointerException("unit is null");
         } else if (interval < 0) {
@@ -140,8 +138,7 @@ public class CacheLoadingConfiguration<K, V> extends
      *            the cache loader to set
      * @return the current CacheConfiguration
      */
-    public CacheLoadingConfiguration<K, V> setLoader(
-            CacheLoader<? super K, ? extends V> cacheLoader) {
+    public CacheLoadingConfiguration<K, V> setLoader(CacheLoader<? super K, ? extends V> cacheLoader) {
         this.loader = cacheLoader;
         return this;
     }
@@ -159,8 +156,7 @@ public class CacheLoadingConfiguration<K, V> extends
      *            the reload filter
      * @return this configuration
      */
-    public CacheLoadingConfiguration<K, V> setRefreshFilter(
-            Predicate<CacheEntry<K, V>> filter) {
+    public CacheLoadingConfiguration<K, V> setRefreshFilter(Predicate<CacheEntry<K, V>> filter) {
         refreshFilter = filter;
         return this;
     }
@@ -184,15 +180,15 @@ public class CacheLoadingConfiguration<K, V> extends
     @Override
     protected void toXML(Document doc, Element parent) {
         /* Cache Loader */
-        addAndsaveObject(doc, parent, LOADER_TAG, getResourceBundle(),
-                "loading.saveOfLoaderFailed", loader);
+        addAndsaveObject(doc, parent, LOADER_TAG, getResourceBundle(), getClass(),
+                "saveOfLoaderFailed", loader);
 
         /* Refresh Timer */
-        UnitOfTime.toElementCompact(doc, parent, REFRESH_INTERVAL_TAG,
-                defaultTimeToRefresh, TimeUnit.NANOSECONDS, 0);
+        UnitOfTime.toElementCompact(doc, parent, REFRESH_INTERVAL_TAG, defaultTimeToRefresh,
+                TimeUnit.NANOSECONDS, 0);
 
         /* Refresh Filter */
-        addAndsaveObject(doc, parent, REFRESH_FILTER_TAG, getResourceBundle(),
-                "loading.saveOfFilterFailed", refreshFilter);
+        addAndsaveObject(doc, parent, REFRESH_FILTER_TAG, getResourceBundle(), getClass(),
+                "saveOfFilterFailed", refreshFilter);
     }
 }

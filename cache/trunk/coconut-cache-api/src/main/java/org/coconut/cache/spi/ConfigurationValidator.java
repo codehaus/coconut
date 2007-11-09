@@ -15,6 +15,7 @@ import org.coconut.cache.CacheConfiguration;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
+ * @see $HeadURL$
  */
 public class ConfigurationValidator {
     private final static ConfigurationValidator DEFAULT = new ConfigurationValidator();

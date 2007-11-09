@@ -45,6 +45,12 @@ public final class CacheAttributes {
      */
     public static final String CREATION_TIME = "creation_time";
 
+    /** The default value of the {@link #COST} attribute. */
+    public static final double DEFAULT_COST = 1.0;
+
+    /** The default value of the {@link #SIZE} attribute. */
+    public static final long DEFAULT_SIZE = 1;
+
     /**
      * The <tt>Hits</tt> attribute indicates the number of hits for a cache element. The
      * mapped value must be of a type <tt>long</tt> between 0 and {@link Long#MAX_VALUE}.
@@ -93,17 +99,11 @@ public final class CacheAttributes {
      */
     public static final String TIME_TO_REFRESH_NS = "time_to_refresh_ns";
 
-    /** The default value of the {@link #COST} attribute. */
-    public static final double DEFAULT_COST = 1.0;
-
-    /** The default value of the {@link #SIZE} attribute. */
-    public static final long DEFAULT_SIZE = 1;
-
     /** Cannot instantiate. */
-    // /CLOVER:OFF
+    ///CLOVER:OFF
     private CacheAttributes() {}
-    // /CLOVER:ON
-    
+    ///CLOVER:ON
+
     /**
      * Returns the value that the specified AttributeMap maps the {@link #COST} attribute
      * to or {@link CacheAttributes#DEFAULT_COST} if no such mapping exist.
@@ -135,24 +135,30 @@ public final class CacheAttributes {
     }
 
     /**
-     * Returns the number of hits for the {@link #HITS} attribute.
+     * Returns the value that the specified AttributeMap maps the {@link #CREATION_TIME}
+     * attribute to .
      * 
      * @param attributes
-     *            the map to retrieve the value of the hit attribute from
-     * @return the number of hits
+     *            the map to retrieve the value of the creation time attribute from
+     * @return returns the value that the specified AttributeMap maps the
+     *         {@link #CREATION_TIME} attribute to
+     * @throws NullPointerException
+     *             if the specified attributeMap is <code>null</code>
      * @throws IllegalArgumentException
-     *             if the specified attributeMap returns a negative number for the HITS
-     *             attribute
+     *             if the specified attributeMap returns a negative number
+     * @see #setCreationTime(AttributeMap, long)
+     * @see #CREATION_TIME
      */
-    public static long getHits(AttributeMap attributes) {
+    public static long getCreationTime(AttributeMap attributes) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
         }
-        long hits = attributes.getLong(HITS);
-        if (hits < 0) {
-            throw new IllegalArgumentException("invalid hit count (hits = " + hits + ")");
+        long time = attributes.getLong(CacheAttributes.CREATION_TIME);
+        if (time < 0) {
+            throw new IllegalArgumentException("creationTime was negative (creationTime = " + time
+                    + ")");
         }
-        return hits;
+        return time;
     }
 
     /**
@@ -193,30 +199,24 @@ public final class CacheAttributes {
     }
 
     /**
-     * Returns the value that the specified AttributeMap maps the {@link #CREATION_TIME}
-     * attribute to .
+     * Returns the number of hits for the {@link #HITS} attribute.
      * 
      * @param attributes
-     *            the map to retrieve the value of the creation time attribute from
-     * @return returns the value that the specified AttributeMap maps the
-     *         {@link #CREATION_TIME} attribute to
-     * @throws NullPointerException
-     *             if the specified attributeMap is <code>null</code>
+     *            the map to retrieve the value of the hit attribute from
+     * @return the number of hits
      * @throws IllegalArgumentException
-     *             if the specified attributeMap returns a negative number
-     * @see #setCreationTime(AttributeMap, long)
-     * @see #CREATION_TIME
+     *             if the specified attributeMap returns a negative number for the HITS
+     *             attribute
      */
-    public static long getCreationTime(AttributeMap attributes) {
+    public static long getHits(AttributeMap attributes) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
         }
-        long time = attributes.getLong(CacheAttributes.CREATION_TIME);
-        if (time < 0) {
-            throw new IllegalArgumentException("creationTime was negative (creationTime = " + time
-                    + ")");
+        long hits = attributes.getLong(HITS);
+        if (hits < 0) {
+            throw new IllegalArgumentException("invalid hit count (hits = " + hits + ")");
         }
-        return time;
+        return hits;
     }
 
     /**
@@ -402,33 +402,6 @@ public final class CacheAttributes {
     }
 
     /**
-     * Sets a value for the {@link #LAST_MODIFIED_TIME} attribute in the specified
-     * AttributeMap.
-     * 
-     * @param attributes
-     *            the map of attributes to set the last modified time attribute in
-     * @param lastModifiedTime
-     *            the last modified time
-     * @return the specified attribute map
-     * @throws NullPointerException
-     *             if the specified attributeMap is <code>null</code>
-     * @throws IllegalArgumentException
-     *             if the specified last modified time is a negative number
-     * @see #getLastModified(AttributeMap, Clock)
-     * @see #LAST_MODIFIED_TIME
-     */
-    public static AttributeMap setLastModifiedTime(AttributeMap attributes, long lastModifiedTime) {
-        if (attributes == null) {
-            throw new NullPointerException("attributes is null");
-        } else if (lastModifiedTime < 0) {
-            throw new IllegalArgumentException("invalid creationTime (creationTime = "
-                    + lastModifiedTime + ")");
-        }
-        attributes.putLong(LAST_MODIFIED_TIME, lastModifiedTime);
-        return attributes;
-    }
-
-    /**
      * Sets a value for the {@link #CREATION_TIME} attribute in the specified
      * AttributeMap.
      * 
@@ -456,31 +429,6 @@ public final class CacheAttributes {
     }
 
     /**
-     * Sets a value for the {@link #SIZE} attribute in the specified AttributeMap.
-     * 
-     * @param attributes
-     *            the map of attributes to set the size attribute in
-     * @param size
-     *            the size to set the size attribute to
-     * @return the specified attribute map
-     * @throws NullPointerException
-     *             if the specified attributeMap is <code>null</code>
-     * @throws IllegalArgumentException
-     *             if the specified size is a negative number
-     * @see #getSize(AttributeMap)
-     * @see #SIZE
-     */
-    public static AttributeMap setSize(AttributeMap attributes, long size) {
-        if (attributes == null) {
-            throw new NullPointerException("attributes is null");
-        } else if (size < 0) {
-            throw new IllegalArgumentException("invalid size (size = " + size + ")");
-        }
-        attributes.putLong(SIZE, size);
-        return attributes;
-    }
-
-    /**
      * Sets a value for the {@link #HITS} attribute in the specified AttributeMap.
      * 
      * @param attributes
@@ -502,6 +450,58 @@ public final class CacheAttributes {
             throw new IllegalArgumentException("invalid hits (hits = " + hits + ")");
         }
         attributes.putLong(HITS, hits);
+        return attributes;
+    }
+
+    /**
+     * Sets a value for the {@link #LAST_MODIFIED_TIME} attribute in the specified
+     * AttributeMap.
+     * 
+     * @param attributes
+     *            the map of attributes to set the last modified time attribute in
+     * @param lastModifiedTime
+     *            the last modified time
+     * @return the specified attribute map
+     * @throws NullPointerException
+     *             if the specified attributeMap is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if the specified last modified time is a negative number
+     * @see #getLastModified(AttributeMap, Clock)
+     * @see #LAST_MODIFIED_TIME
+     */
+    public static AttributeMap setLastModifiedTime(AttributeMap attributes, long lastModifiedTime) {
+        if (attributes == null) {
+            throw new NullPointerException("attributes is null");
+        } else if (lastModifiedTime < 0) {
+            throw new IllegalArgumentException("invalid creationTime (creationTime = "
+                    + lastModifiedTime + ")");
+        }
+        attributes.putLong(LAST_MODIFIED_TIME, lastModifiedTime);
+        return attributes;
+    }
+
+    /**
+     * Sets a value for the {@link #SIZE} attribute in the specified AttributeMap.
+     * 
+     * @param attributes
+     *            the map of attributes to set the size attribute in
+     * @param size
+     *            the size to set the size attribute to
+     * @return the specified attribute map
+     * @throws NullPointerException
+     *             if the specified attributeMap is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if the specified size is a negative number
+     * @see #getSize(AttributeMap)
+     * @see #SIZE
+     */
+    public static AttributeMap setSize(AttributeMap attributes, long size) {
+        if (attributes == null) {
+            throw new NullPointerException("attributes is null");
+        } else if (size < 0) {
+            throw new IllegalArgumentException("invalid size (size = " + size + ")");
+        }
+        attributes.putLong(SIZE, size);
         return attributes;
     }
 

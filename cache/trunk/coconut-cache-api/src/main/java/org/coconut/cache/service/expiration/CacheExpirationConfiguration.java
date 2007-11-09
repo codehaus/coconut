@@ -158,7 +158,7 @@ public class CacheExpirationConfiguration<K, V> extends
                 DEFAULT_TIME_UNIT, DEFAULT.defaultTimeToLive);
 
         /* Filter */
-        addAndsaveObject(doc, parent, EXPIRATION_FILTER_TAG, getResourceBundle(),
-                "expiration.saveOfExpirationFilterFailed", expirationFilter);
+        addAndsaveObject(doc, parent, EXPIRATION_FILTER_TAG, getResourceBundle(),getClass(),
+                "saveOfExpirationFilterFailed", expirationFilter);
     }
 }

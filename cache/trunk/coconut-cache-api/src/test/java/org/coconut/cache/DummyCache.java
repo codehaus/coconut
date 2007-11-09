@@ -15,111 +15,96 @@ import java.util.concurrent.TimeUnit;
  * @version $Id$
  */
 public class DummyCache<K, V> implements Cache<K, V> {
-    public void removeAll(Collection<? extends K> keys) {
-        
-    }
+    private final String name;
     public volatile boolean isStarted;
 
-    private String name;
-
-    /**
-     * @param configuration
-     */
     public DummyCache(CacheConfiguration<?, ?> configuration) {
         this.name = configuration.getName();
     }
 
-    /**
-     * @see java.util.Map#clear()
-     */
+    
+    /** {@inheritDoc} */
+    public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+        return false;
+    }
+
+    /** {@inheritDoc} */
     public void clear() {}
 
-    /**
-     * @see java.util.Map#containsKey(java.lang.Object)
-     */
+    /** {@inheritDoc} */
     public boolean containsKey(Object key) {
         return false;
     }
 
-    /**
-     * @see java.util.Map#containsValue(java.lang.Object)
-     */
+    /** {@inheritDoc} */
     public boolean containsValue(Object value) {
         return false;
     }
 
-    /**
-     * @see java.util.Map#entrySet()
-     */
+    /** {@inheritDoc} */
     public Set<java.util.Map.Entry<K, V>> entrySet() {
         return null;
     }
 
-    /**
-     * @see org.coconut.cache.Cache#evict()
-     */
+    /** {@inheritDoc} */
     public void evict() {}
 
-    /**
-     * @see org.coconut.cache.Cache#get(java.lang.Object)
-     */
+    /** {@inheritDoc} */
     public V get(Object key) {
         return null;
     }
 
-    /**
-     * @see org.coconut.cache.Cache#getAll(java.util.Collection)
-     */
+    /** {@inheritDoc} */
     public Map<K, V> getAll(Collection<? extends K> keys) {
         return null;
     }
 
-
-    /**
-     * @see org.coconut.cache.Cache#getVolume()
-     */
-    public long getVolume() {
-        return 0;
-    }
-
-    /**
-     * @see org.coconut.cache.Cache#getEntry(java.lang.Object)
-     */
+    /** {@inheritDoc} */
     public CacheEntry<K, V> getEntry(K key) {
         return null;
     }
 
-    /**
-     * @see org.coconut.cache.Cache#getName()
-     */
+    /** {@inheritDoc} */
     public String getName() {
         return name;
     }
 
-    /**
-     * @see org.coconut.cache.Cache#getService(java.lang.Class)
-     */
+    /** {@inheritDoc} */
     public <T> T getService(Class<T> serviceType) {
         return null;
     }
 
-    /**
-     * @see java.util.Map#isEmpty()
-     */
+    /** {@inheritDoc} */
+    public long getVolume() {
+        return 0;
+    }
+
+    /** {@inheritDoc} */
     public boolean isEmpty() {
         return false;
     }
 
-    /**
-     * @see java.util.Map#keySet()
-     */
+    /** {@inheritDoc} */
+    public boolean isShutdown() {
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isStarted() {
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isTerminated() {
+        return false;
+    }
+
+    /** {@inheritDoc} */
     public Set<K> keySet() {
         return null;
     }
 
-    /**
-     * @see org.coconut.cache.Cache#peek(java.lang.Object)
-     */
+    /** {@inheritDoc} */
     public V peek(K key) {
         return null;
     }
@@ -131,94 +116,57 @@ public class DummyCache<K, V> implements Cache<K, V> {
         return null;
     }
 
-    /**
-     * @see java.util.Map#put(java.lang.Object, java.lang.Object)
-     */
+    /** {@inheritDoc} */
     public V put(K key, V value) {
         return null;
     }
 
-//    /**
-//     * @see org.coconut.cache.Cache#put(java.lang.Object, java.lang.Object,
-//     *      org.coconut.core.AttributeMap)
-//     */
-//    public V put(K key, V value, AttributeMap attributes) {
-//        return null;
-//    }
-
-    /**
-     * @see java.util.Map#putAll(java.util.Map)
-     */
+    /** {@inheritDoc} */
     public void putAll(Map<? extends K, ? extends V> t) {}
 
-    /**
-     * @see java.util.concurrent.ConcurrentMap#putIfAbsent(java.lang.Object,
-     *      java.lang.Object)
-     */
+    /** {@inheritDoc} */
     public V putIfAbsent(K key, V value) {
         return null;
     }
 
-    /**
-     * @see java.util.Map#remove(java.lang.Object)
-     */
+    /** {@inheritDoc} */
     public V remove(Object key) {
         return null;
     }
 
-    /**
-     * @see java.util.concurrent.ConcurrentMap#remove(java.lang.Object, java.lang.Object)
-     */
+    /** {@inheritDoc} */
     public boolean remove(Object key, Object value) {
         return false;
     }
 
-    /**
-     * @see java.util.concurrent.ConcurrentMap#replace(java.lang.Object, java.lang.Object)
-     */
+    /** {@inheritDoc} */
+    public void removeAll(Collection<? extends K> keys) {
+
+    }
+
+    /** {@inheritDoc} */
     public V replace(K key, V value) {
         return null;
     }
 
-    /**
-     * @see java.util.concurrent.ConcurrentMap#replace(java.lang.Object, java.lang.Object,
-     *      java.lang.Object)
-     */
+    /** {@inheritDoc} */
     public boolean replace(K key, V oldValue, V newValue) {
         return false;
     }
 
-    /**
-     * @see java.util.Map#size()
-     */
+    /** {@inheritDoc} */
+    public void shutdown() {}
+
+    /** {@inheritDoc} */
+    public void shutdownNow() {}
+
+    /** {@inheritDoc} */
     public int size() {
         return 0;
     }
 
-    /**
-     * @see java.util.Map#values()
-     */
+    /** {@inheritDoc} */
     public Collection<V> values() {
         return null;
     }
-
-    public boolean awaitTermination(long timeout, TimeUnit unit)
-            throws InterruptedException {
-        return false;
-    }
-
-    public boolean isShutdown() {
-        return false;
-    }
-
-    public boolean isStarted() {
-        return false;
-    }
-
-    public boolean isTerminated() {
-        return false;
-    }
-
-    public void shutdown() {}
-    public void shutdownNow() {}
 }

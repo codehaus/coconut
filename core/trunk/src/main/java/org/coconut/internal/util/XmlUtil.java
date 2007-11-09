@@ -26,10 +26,11 @@ import org.w3c.dom.Node;
  */
 public final class XmlUtil {
     // private final static ResourceHolder RH = ResourceHolder.fromPackage(XmlUtil.class);
-    ///CLOVER:OFF
+    // /CLOVER:OFF
     /** Cannot instantiate. */
     private XmlUtil() {}
-    ///CLOVER:ON
+
+    // /CLOVER:ON
     public static <T> T getAttribute(Element e, String name, T defaultValue) {
         if (!e.hasAttribute(name)) {
             return defaultValue;
@@ -54,8 +55,7 @@ public final class XmlUtil {
         }
     }
 
-    public static Element addAndSetText(Document doc, String name, Element parent,
-            String text) {
+    public static Element addAndSetText(Document doc, String name, Element parent, String text) {
         Element ee = doc.createElement(name);
         parent.appendChild(ee);
         ee.setTextContent(text);
@@ -86,8 +86,7 @@ public final class XmlUtil {
         }
     }
 
-    public static void writeLogger(Document doc, Element base, String element,
-            Logger logger) {
+    public static void writeLogger(Document doc, Element base, String element, Logger logger) {
         if (logger != null) {
             LogHelper.saveLogger(doc, base, element, logger, "could not save logger");
         }
@@ -98,8 +97,7 @@ public final class XmlUtil {
         return e == null ? null : LogHelper.readLog(e);
     }
 
-    public static void writeInt(Document doc, Element base, String name, int value,
-            int defaultInt) {
+    public static void writeInt(Document doc, Element base, String name, int value, int defaultInt) {
         if (value != defaultInt) {
             add(doc, name, base).setTextContent(Integer.toString(value));
         }
@@ -115,8 +113,17 @@ public final class XmlUtil {
         }
     }
 
-    public static boolean addAndsaveObject(Document doc, Element parent,
-            String elementName, ResourceBundle bundle, String comment, Object o) {
+    public static boolean addAndsaveObject(Document doc, Element parent, String elementName,
+            ResourceBundle bundle, Class clazz, String key, Object o) {
+        if (o != null) {
+            Element e = add(doc, elementName, parent);
+            return saveObject(doc, e, bundle, clazz.getSimpleName() + "." + key, o);
+        }
+        return false;
+    }
+
+    public static boolean addAndsaveObject(Document doc, Element parent, String elementName,
+            ResourceBundle bundle, String comment, Object o) {
         if (o != null) {
             Element e = add(doc, elementName, parent);
             return saveObject(doc, e, bundle, comment, o);
@@ -159,15 +166,22 @@ public final class XmlUtil {
         return false;
     }
 
-    public static void addComment(Document doc, ResourceBundle bundle, String comment,
+    public static void addComment(Document doc, ResourceBundle bundle, Class clazz, String comment,
             Node e, Object... o) {
+        String c = ResourceHolder.lookupKey(bundle, clazz.getSimpleName() + "." + comment, o);
+        Comment eee = doc.createComment(c);
+        e.appendChild(eee);
+    }
+
+    public static void addComment(Document doc, ResourceBundle bundle, String comment, Node e,
+            Object... o) {
         String c = ResourceHolder.lookupKey(bundle, comment, o);
         Comment eee = doc.createComment(c);
         e.appendChild(eee);
     }
 
-    public static void addComment(ResourceHolder rh, Document doc, String comment,
-            Node e, Object... o) {
+    public static void addComment(ResourceHolder rh, Document doc, String comment, Node e,
+            Object... o) {
         String c = rh.lookup(XmlUtil.class, comment, o);
         Comment eee = doc.createComment(c);
         e.appendChild(eee);
@@ -227,8 +241,7 @@ public final class XmlUtil {
      * @throws TransformerException
      *             the document could not be pretty printed
      */
-    public static void prettyprint(Document doc, OutputStream stream)
-            throws TransformerException {
+    public static void prettyprint(Document doc, OutputStream stream) throws TransformerException {
         DOMSource domSource = new DOMSource(doc);
         StreamResult result = new StreamResult(stream);
         Transformer f = TransformerFactory.newInstance().newTransformer();

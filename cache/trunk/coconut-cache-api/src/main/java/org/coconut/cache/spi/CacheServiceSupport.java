@@ -15,6 +15,7 @@ import java.lang.annotation.Target;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
+ * @see $HeadURL$
  */
 @Target( { ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)

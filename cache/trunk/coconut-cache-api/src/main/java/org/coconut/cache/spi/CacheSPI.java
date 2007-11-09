@@ -14,6 +14,8 @@ import org.coconut.internal.util.ResourceHolder;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
+ * @see $HeadURL:
+ *      https://svn.codehaus.org/coconut/cache/trunk/coconut-cache-api/src/main/java/org/coconut/cache/CacheException.java $
  */
 public final class CacheSPI {
 
@@ -28,14 +30,19 @@ public final class CacheSPI {
     /** Cannot instantiate. */
     // /CLOVER:OFF
     private CacheSPI() {}
+
     // /CLOVER:ON
-    
+
     public static String lookup(Class<?> c, String key, Object... o) {
-        return RESOURCE_HOLDER.lookup(c, key, o);
+        return RESOURCE_HOLDER.lookup(c.getSimpleName() + "." + key, o);
     }
 
-    public static <K, V> void initializeConfiguration(
-            AbstractCacheServiceConfiguration<K, V> c, CacheConfiguration<K, V> conf) {
+    public static String lookup(String key, Object... o) {
+        return RESOURCE_HOLDER.lookup(key, o);
+    }
+
+    public static <K, V> void initializeConfiguration(AbstractCacheServiceConfiguration<K, V> c,
+            CacheConfiguration<K, V> conf) {
         c.setConfiguration(conf);
     }
 

@@ -58,8 +58,7 @@ import org.coconut.core.Logger;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
- * @see $HeadURL:
- *      https://svn.codehaus.org/coconut/cache/trunk/coconut-cache-api/src/main/java/org/coconut/cache/CacheServices.java $
+ * @see $HeadURL$
  * @param <K>
  *            the type of keys that should be maintained by the cache
  * @param <V>

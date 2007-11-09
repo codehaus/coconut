@@ -59,7 +59,6 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
     /** The visitor to use for registration of the managed beans. */
     private ManagedVisitor registrant;
 
-
     /**
      * Create a new CacheManagementConfiguration.
      */
@@ -95,7 +94,6 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
         return registrant;
     }
 
-
     /**
      * Returns true if management is enabled for the cache, otherwise false.
      * <p>
@@ -126,8 +124,7 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
             new ObjectName(domain + ":type=foo");
         } catch (MalformedObjectNameException e) {
             throw new IllegalArgumentException(
-                    "The specified domain results in an illegal objectname, "
-                            + e.getMessage());
+                    "The specified domain results in an illegal objectname, " + e.getMessage());
         }
         this.domain = domain;
         return this;
@@ -182,8 +179,6 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
         return this;
     }
 
-
-
     /**
      * {@inheritDoc}
      */
@@ -220,14 +215,13 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
             if (mBeanServer == ManagementFactory.getPlatformMBeanServer()) {
                 base.setAttribute("usePlatformMBeanServer", Boolean.toString(true));
             } else {
-                addComment(doc, getResourceBundle(),
-                        "management.cannotPersistMBeanServer", base);
+                addComment(doc, getResourceBundle(), getClass(), "cannotPersistMBeanServer", base);
             }
         }
 
         /* Registrant */
-        addAndsaveObject(doc, base, XML_REGISTRANT_TAG, getResourceBundle(),
-                "management.saveOfRegistrantFailed", registrant);
+        addAndsaveObject(doc, base, XML_REGISTRANT_TAG, getResourceBundle(), getClass(),
+                "saveOfRegistrantFailed", registrant);
 
     }
 }

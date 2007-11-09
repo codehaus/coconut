@@ -16,13 +16,6 @@ import org.coconut.cache.service.event.CacheEventService;
  * @version $Id$
  */
 public interface InternalCacheEventService<K, V> extends CacheEventService<K, V> {
-    /**
-     * Returns <code>true</code> if the Cache Event service is enabled, otherwise
-     * <code>false</code>.
-     * 
-     * @return whether or not the cache event service is enabled
-     */
-    boolean isEnabled();
 
     /**
      * Called after the specified cache was cleared.

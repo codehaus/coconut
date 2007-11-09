@@ -101,7 +101,6 @@ public class CacheHitStat {
         // We probably can't use a resource bundle, if it needs to be JMX compatible
         // or we could check if the string was available, otherwise resort to a default
         // test.
-        return CacheSPI.lookup(CacheHitStat.class, "toString", getHitRatio(), hits,
-                misses);
+        return CacheSPI.lookup(getClass(), "toString", getHitRatio(), hits, misses);
     }
 }

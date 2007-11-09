@@ -115,8 +115,7 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
         logger = readLogger(parent, EXCEPTION_LOGGER_TAG);
 
         /* Exception Handler */
-        exceptionHandler = loadOptional(parent, EXCEPTION_HANDLER_TAG,
-                CacheExceptionHandler.class);
+        exceptionHandler = loadOptional(parent, EXCEPTION_HANDLER_TAG, CacheExceptionHandler.class);
     }
 
     /** {@inheritDoc} */
@@ -126,8 +125,8 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
         writeLogger(doc, parent, EXCEPTION_LOGGER_TAG, logger);
 
         /* Exception Handler */
-        addAndsaveObject(doc, parent, EXCEPTION_HANDLER_TAG, getResourceBundle(),
-                "exceptionhandling.saveOfExceptionHandlerFailed", exceptionHandler);
+        addAndsaveObject(doc, parent, EXCEPTION_HANDLER_TAG, getResourceBundle(), getClass(),
+                "saveOfExceptionHandlerFailed", exceptionHandler);
 
     }
 }

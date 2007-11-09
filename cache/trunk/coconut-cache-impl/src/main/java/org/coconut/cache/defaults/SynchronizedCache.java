@@ -51,13 +51,24 @@ import org.coconut.core.AttributeMaps;
 import org.coconut.internal.util.CollectionUtils;
 
 /**
- * An unsynchronized cache implementation.
+ * An synchronized cache implementation.
  * <p>
- * If multiple threads access this cache concurrently, and at least one of the threads
- * modifies the cache structurally, it <i>must</i> be synchronized externally. (A
- * structural modification is any operation that adds, deletes or changes one or more
- * mappings.) This is typically accomplished by synchronizing on some object that
- * naturally encapsulates the cache.
+ * It is imperative that the user manually synchronize on the cache when iterating over
+ * any of its collection views:
+ * 
+ * <pre>
+ *  Cache c = new SynchronizedCache();
+ *      ...
+ *  Set s = c.keySet();  // Needn't be in synchronized block
+ *      ...
+ *  synchronized(c) {  // Synchronizing on m, not s!
+ *      Iterator i = s.iterator(); // Must be in synchronized block
+ *      while (i.hasNext())
+ *          foo(i.next());
+ *  }
+ * </pre>
+ * 
+ * Failure to follow this advice may result in non-deterministic behavior.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
@@ -71,6 +82,7 @@ import org.coconut.internal.util.CollectionUtils;
         CacheExpirationService.class, CacheLoadingService.class, CacheManagementService.class,
         CacheServiceManagerService.class, CacheStatisticsService.class })
 public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
+    
     private final static Collection<Class<? extends AbstractCacheLifecycle>> DEFAULTS = Arrays
             .asList(DefaultCacheStatisticsService.class, DefaultCacheListener.class,
                     SynchronizedCacheEvictionService.class, DefaultCacheExpirationService.class,

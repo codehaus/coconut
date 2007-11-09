@@ -29,8 +29,7 @@ import org.coconut.cache.service.loading.CacheLoadingService;
  *            the type of mapped values
  */
 @SuppressWarnings("hiding")
-public interface CacheEntryEvent<K, V> extends CacheEvent<K, V>,/* CacheEntry<K,V */
-Map.Entry<K, V> {
+public interface CacheEntryEvent<K, V> extends CacheEvent<K, V>, Map.Entry<K, V> /* CacheEntry<K,V */{
 
     /**
      * This event indicates that an entry has been added to the cache. This normally
@@ -42,38 +41,7 @@ Map.Entry<K, V> {
 
         /** The unique name of this event. */
         String NAME = "cacheitem.Added";
-
-        //boolean isLoaded();
     }
-
-    // /**
-    // * This event indicates that an entry has been moved to secondary storage.
-    // * This normally happens when the threshold of the cache has been reach
-    // and
-    // * a cache policy has decided that the given entry is least likely to be
-    // * accessed in the near future. TODO: when is this usefull????? We
-    // probably
-    // * also need a corresponding event to when the value is loaded into the
-    // * cache again. ItemFetched
-    // */
-    // interface ItemEvicted<K, V> extends CacheItemEvent<K, V> {
-    //
-    // /**
-    // * A {@link org.coconut.filter.Filter} that only accepts instances of
-    // * ItemUpdated events.
-    // */
-    // IsTypeFilter FILTER = Filters.isType(ItemEvicted.class);
-    //
-    // /** The unique name of this event. */
-    // String NAME = "cacheitem.Evicted";
-    //
-    // /**
-    // * Returns the remaining time that the entry will be valid. This method
-    // * will return Long.MAX_VALUE if no expiration time has been set for the
-    // * entry.
-    // */
-    // long getTimeToLive(TimeUnit unit);
-    // }
 
     /**
      * This event indicates that there no longer exists a mapping for a given key. If the
@@ -125,8 +93,6 @@ Map.Entry<K, V> {
          *         <tt>null</tt> if there was no mapping for the key.
          */
         V getPreviousValue();
-
-      //  boolean isLoaded();
 
         /**
          * Returns true if the item was updated because the timeout value specified for

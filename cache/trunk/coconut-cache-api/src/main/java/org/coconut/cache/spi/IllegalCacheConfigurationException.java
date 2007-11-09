@@ -10,21 +10,22 @@ import org.coconut.cache.CacheConfiguration;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
+ * @see $HeadURL$
  */
-public class IllegalCacheConfigurationException extends IllegalStateException {
+public class IllegalCacheConfigurationException extends RuntimeException {
 
     /** serialVersionUID. */
     private static final long serialVersionUID = -1695400915732143052L;
 
     /**
-     * Constructs a new illegal cache configuration exception with <code>null</code> as
+     * Constructs a new IllegalCacheConfigurationException exception with <code>null</code> as
      * its detail message. The cause is not initialized, and may subsequently be
      * initialized by a call to {@link Throwable#initCause}.
      */
     public IllegalCacheConfigurationException() {}
 
     /**
-     * Constructs a new illegal cache configuration exception with the specified detail
+     * Constructs a new IllegalCacheConfigurationException exception with the specified detail
      * message. The cause is not initialized, and may subsequently be initialized by a
      * call to {@link Throwable#initCause}.
      * 
@@ -37,7 +38,7 @@ public class IllegalCacheConfigurationException extends IllegalStateException {
     }
 
     /**
-     * Constructs a new illegal cache configuration exception with the specified detail
+     * Constructs a new IllegalCacheConfigurationException exception with the specified detail
      * message and cause.
      * <p>
      * Note that the detail message associated with <code>cause</code> is <i>not </i>
@@ -56,7 +57,7 @@ public class IllegalCacheConfigurationException extends IllegalStateException {
     }
 
     /**
-     * Constructs a new illegal cache configuration exception with the specified cause and
+     * Constructs a new IllegalCacheConfigurationException exception with the specified cause and
      * a detail message of <tt>(cause==null ? null : cause.toString())</tt> (which
      * typically contains the class and detail message of <tt>cause</tt>). This
      * constructor is useful for cache exceptions that are little more than wrappers for

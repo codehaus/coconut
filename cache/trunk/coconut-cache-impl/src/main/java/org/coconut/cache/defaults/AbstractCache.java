@@ -22,6 +22,9 @@ import org.coconut.core.Clock;
 import org.coconut.internal.util.CollectionUtils;
 
 /**
+ * An abstract implementation of {@link Cache}. Currently not general usable, hence some
+ * methods and constructors have package private access.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -59,7 +62,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     }
 
     /** {@inheritDoc} */
-    public final boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+    public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
         return getServiceManager().awaitTermination(timeout, unit);
     }
 
@@ -86,7 +89,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
 
     /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
-    public final V get(Object key) {
+    public V get(Object key) {
         if (key == null) {
             throw new NullPointerException("key is null");
         }
@@ -95,7 +98,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     }
 
     /** {@inheritDoc} */
-    public final Map<K, V> getAll(Collection<? extends K> keys) {
+    public Map<K, V> getAll(Collection<? extends K> keys) {
         if (keys == null) {
             throw new NullPointerException("keys is null");
         }
@@ -104,7 +107,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     }
 
     /** {@inheritDoc} */
-    public final CacheEntry<K, V> getEntry(K key) {
+    public CacheEntry<K, V> getEntry(K key) {
         if (key == null) {
             throw new NullPointerException("key is null");
         }
@@ -113,37 +116,37 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     }
 
     /** {@inheritDoc} */
-    public final String getName() {
+    public String getName() {
         return name;
     }
 
     /** {@inheritDoc} */
-    public final <T> T getService(Class<T> serviceType) {
+    public <T> T getService(Class<T> serviceType) {
         return getServiceManager().getService(serviceType);
     }
 
     /** {@inheritDoc} */
-    public final boolean isEmpty() {
+    public boolean isEmpty() {
         return size() == 0;
     }
 
     /** {@inheritDoc} */
-    public final boolean isShutdown() {
+    public boolean isShutdown() {
         return getServiceManager().isShutdown();
     }
 
     /** {@inheritDoc} */
-    public final boolean isStarted() {
+    public boolean isStarted() {
         return getServiceManager().isStarted();
     }
 
     /** {@inheritDoc} */
-    public final boolean isTerminated() {
+    public boolean isTerminated() {
         return getServiceManager().isTerminated();
     }
 
     /** {@inheritDoc} */
-    public final V peek(K key) {
+    public V peek(K key) {
         if (key == null) {
             throw new NullPointerException("key is null");
         }
@@ -152,7 +155,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     }
 
     /** {@inheritDoc} */
-    public final CacheEntry<K, V> peekEntry(K key) {
+    public CacheEntry<K, V> peekEntry(K key) {
         if (key == null) {
             throw new NullPointerException("key is null");
         }
@@ -168,12 +171,12 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     }
 
     /** {@inheritDoc} */
-    public final V put(K key, V value) {
+    public V put(K key, V value) {
         return put(key, value, AttributeMaps.EMPTY_MAP, false);
     }
 
     /** {@inheritDoc} */
-    public final void putAll(Map<? extends K, ? extends V> m) {
+    public void putAll(Map<? extends K, ? extends V> m) {
         if (m == null) {
             throw new NullPointerException("m is null");
         }
@@ -182,12 +185,12 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     }
 
     /** {@inheritDoc} */
-    public final V putIfAbsent(K key, V value) {
+    public V putIfAbsent(K key, V value) {
         return put(key, value, AttributeMaps.EMPTY_MAP, true);
     }
 
     /** {@inheritDoc} */
-    public final V remove(Object key) {
+    public V remove(Object key) {
         if (key == null) {
             throw new NullPointerException("key is null");
         }
@@ -196,7 +199,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     }
 
     /** {@inheritDoc} */
-    public final boolean remove(Object key, Object value) {
+    public boolean remove(Object key, Object value) {
         if (key == null) {
             throw new NullPointerException("key is null");
         } else if (value == null) {
@@ -206,7 +209,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     }
 
     /** {@inheritDoc} */
-    public final V replace(K key, V value) {
+    public V replace(K key, V value) {
         if (key == null) {
             throw new NullPointerException("key is null");
         } else if (value == null) {
@@ -217,7 +220,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     }
 
     /** {@inheritDoc} */
-    public final boolean replace(K key, V oldValue, V newValue) {
+    public boolean replace(K key, V oldValue, V newValue) {
         if (key == null) {
             throw new NullPointerException("key is null");
         } else if (oldValue == null) {
@@ -230,12 +233,12 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     }
 
     /** {@inheritDoc} */
-    public final void shutdown() {
+    public void shutdown() {
         getServiceManager().shutdown();
     }
 
     /** {@inheritDoc} */
-    public final void shutdownNow() {
+    public void shutdownNow() {
         getServiceManager().shutdownNow();
     }
 

@@ -15,7 +15,7 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
 
 /**
- * This class gives access to a cache or cache manager as a singleton.
+ * This class gives access to a single cache as a singleton.
  * <p>
  * It is the authors belief that the singleton pattern is usually a poor choice for
  * maintaining a single instance of a component. See, for example,
@@ -24,6 +24,8 @@ import org.coconut.cache.CacheException;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
+ * @see $HeadURL:
+ *      https://svn.codehaus.org/coconut/cache/trunk/coconut-cache-api/src/main/java/org/coconut/cache/CacheException.java $
  */
 @ThreadSafe
 public final class CacheSingleton {
@@ -34,31 +36,28 @@ public final class CacheSingleton {
     public final static String DEFAULT_CACHE_RESSOURCE = "coconut-cache.xml";
 
     /**
-     * The location of the cache configuration file which is used if the caches has not
-     * been set programmatically using {@link #setSingleCache(Cache)}.
+     * The location of the cache configuration file which is used for lazy initializing if
+     * the caches has not been set programmatically using {@link #setSingleCache(Cache)}.
      */
     private static String cache_ressource_location = DEFAULT_CACHE_RESSOURCE;
 
     /** The single cache instance. */
     private static volatile Cache<?, ?> cacheInstance;
 
-    /** Whether or not this singleton has been initialized. */
-    private static int status;
-
-    /** Any exception that arose while initializing the contained cache. */
+    /** Any exception that arose while initializing the cache. */
     private static CacheException initializationException;
+
+    /**
+     * Whether or not this singleton has been initialized. 0 = not initialized, 1 =
+     * initialized, 2 = terminated.
+     */
+    private static int status;
 
     /** Cannot instantiate. */
     // /CLOVER:OFF
     private CacheSingleton() {}
+
     // /CLOVER:ON
-   
-    /**
-     * @return the cACHE_RESSOURCE_LOCATION
-     */
-    public static synchronized String getCacheRessourceLocation() {
-        return cache_ressource_location;
-    }
 
     /**
      * Returns the cache maintained by this singleton. If no cache has been set using
@@ -86,13 +85,10 @@ public final class CacheSingleton {
     }
 
     /**
-     * Sets the location of the configuration that should be used to configure the cache.
-     * 
-     * @param location
-     *            the location of the configuration
+     * @return the cACHE_RESSOURCE_LOCATION
      */
-    public static synchronized void setCacheRessourceLocation(String location) {
-        cache_ressource_location = location;
+    public static synchronized String getCacheRessourceLocation() {
+        return cache_ressource_location;
     }
 
     /**
@@ -111,6 +107,26 @@ public final class CacheSingleton {
             status = 1;
         }
         initializationException = null;
+    }
+
+    /**
+     * Sets the location of the configuration that should be used to configure the cache.
+     * 
+     * @param location
+     *            the location of the configuration
+     */
+    public static synchronized void setCacheRessourceLocation(String location) {
+        cache_ressource_location = location;
+    }
+
+    public synchronized static void shutdownAndClearCache() {
+        if (cacheInstance != null) {
+            // we want to clear the reference even if the cache shutdown fails
+            status = 2;
+            Cache<?, ?> c = cacheInstance;
+            cacheInstance = null;
+            c.shutdown();
+        }
     }
 
     /**
@@ -142,8 +158,7 @@ public final class CacheSingleton {
                 }
 
             } catch (Exception e) {
-                initializationException = new CacheException(
-                        "Cache could not be instantiated", e);
+                initializationException = new CacheException("Cache could not be instantiated", e);
                 throw initializationException;
             }
         }

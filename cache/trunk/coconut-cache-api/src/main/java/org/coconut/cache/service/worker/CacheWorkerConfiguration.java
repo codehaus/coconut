@@ -71,8 +71,8 @@ public class CacheWorkerConfiguration extends AbstractCacheServiceConfiguration 
     @Override
     protected void toXML(Document doc, Element parent) throws Exception {
         /* CacheWorkerManager */
-        addAndsaveObject(doc, parent, CACHE_WORKER_MANAGER_TAG, getResourceBundle(),
-                SERVICE_NAME + ".saveOfCacheWorkerManagerFailed", cacheWorkerManager);
+        addAndsaveObject(doc, parent, CACHE_WORKER_MANAGER_TAG, getResourceBundle(), getClass(),
+                "saveOfCacheWorkerManagerFailed", cacheWorkerManager);
     }
 
 }

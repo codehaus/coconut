@@ -33,6 +33,7 @@ import org.coconut.core.AttributeMap;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id$
+ * @see $HeadURL$
  * @param <T>
  *            the type of data maintained by this policy
  */

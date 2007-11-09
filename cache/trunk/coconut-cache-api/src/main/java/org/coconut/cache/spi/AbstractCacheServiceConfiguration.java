@@ -22,7 +22,8 @@ import org.w3c.dom.Element;
  * service.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id$ *
+ * @version $Id$ 
+ * @see $HeadURL$
  * @param <K>
  *            the type of keys maintained by the cache
  * @param <V>

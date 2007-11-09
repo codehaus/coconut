@@ -25,15 +25,14 @@ import org.coconut.core.AttributeMap;
  * {@link org.coconut.cache.defaults.UnsynchronizedCache} and
  * {@link org.coconut.cache.defaults.SynchronizedCache}. However, both disk-based and
  * distributed implementations are on the drawing board. As a consequence the
- * documentation might make references to external caches even though no implementations
- * exist yet.
+ * documentation might make references to caches with external storage even though no
+ * implementations exist yet.
  * <p>
  * The three collection views, which allow a cache's contents to be viewed as a set of
  * keys, collection of values, or set of key-value mappings only shows values contained in
- * the actual cache not any values that is stored in any backend store. Furthermore, the
- * cache will <tt>not</tt> check whether or not an entry has expired when calling
- * methods on any of the collection views. As a result the cache might return values that
- * have expired.
+ * the actual cache. Furthermore, the cache will <tt>not</tt> check whether or not an
+ * entry has expired when calling methods on any of the collection views. As a result the
+ * cache might return values that have expired.
  * <p>
  * All general-purpose <tt>Cache</tt> implementation classes should provide two
  * "standard" constructors: a void (no arguments) constructor, which creates an empty
@@ -57,7 +56,8 @@ import org.coconut.core.AttributeMap;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
- * @see $HeadURL$
+ * @see $HeadURL:
+ *      https://svn.codehaus.org/coconut/cache/trunk/coconut-cache-api/src/main/java/org/coconut/cache/Cache.java $
  * @param <K>
  *            the type of keys maintained by this cache
  * @param <V>
@@ -66,8 +66,9 @@ import org.coconut.core.AttributeMap;
 public interface Cache<K, V> extends ConcurrentMap<K, V> {
 
     /**
-     * Blocks until all tasks have completed execution after a shutdown request, or the
-     * timeout occurs, or the current thread is interrupted, whichever happens first.
+     * Blocks until all tasks within this cache have completed execution after a shutdown
+     * request, or the timeout occurs, or the current thread is interrupted, whichever
+     * happens first.
      * 
      * @param timeout
      *            the maximum time to wait
