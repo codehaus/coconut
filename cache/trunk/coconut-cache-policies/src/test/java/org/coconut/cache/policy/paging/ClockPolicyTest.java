@@ -108,20 +108,20 @@ public class ClockPolicyTest {
         list.add(2);
         list.add(3);
 
-        assertEquals(1, list.remove().intValue());
+        assertEquals(1, list.evictNext().intValue());
         assertEquals(2, list.getSize());
 
-        assertEquals(2, list.remove().intValue());
+        assertEquals(2, list.evictNext().intValue());
         assertEquals(1, list.getSize());
 
-        assertEquals(3, list.remove().intValue());
+        assertEquals(3, list.evictNext().intValue());
         assertEquals(0, list.getSize());
     }
 
     @Test
     public void testRemoveEmpty() {
         ClockPolicy<Integer> list = new ClockPolicy<Integer>(1);
-        assertNull(list.remove());
+        assertNull(list.evictNext());
     }
 
     /**
@@ -156,11 +156,11 @@ public class ClockPolicyTest {
         assertEquals(1, list.remove(i1).intValue());
         assertEquals(9, list.remove(i9).intValue());
 
-        assertEquals(2, list.remove().intValue());
-        assertEquals(4, list.remove().intValue());
-        assertEquals(5, list.remove().intValue());
-        assertEquals(6, list.remove().intValue());
-        assertEquals(8, list.remove().intValue());
+        assertEquals(2, list.evictNext().intValue());
+        assertEquals(4, list.evictNext().intValue());
+        assertEquals(5, list.evictNext().intValue());
+        assertEquals(6, list.evictNext().intValue());
+        assertEquals(8, list.evictNext().intValue());
         assertEquals(0, list.getSize());
     }
 
