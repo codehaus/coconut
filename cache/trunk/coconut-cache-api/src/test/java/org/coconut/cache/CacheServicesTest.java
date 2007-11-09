@@ -26,11 +26,13 @@ import org.junit.runner.RunWith;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
+ * @see $HeadURL$
  */
 @SuppressWarnings("unchecked")
 @RunWith(JMock.class)
 public class CacheServicesTest {
-    private Mockery context = new JUnit4Mockery();
+    
+    private final Mockery context = new JUnit4Mockery();
 
     private Cache<Integer, String> cache;
 
@@ -39,6 +41,9 @@ public class CacheServicesTest {
         cache = context.mock(Cache.class);
     }
 
+    /**
+     * Tests {@link CacheServices#event(Cache)}.
+     */
     @Test
     public void eventService() {
         final CacheEventService service = MockTestCase.mockDummy(CacheEventService.class);
@@ -52,10 +57,12 @@ public class CacheServicesTest {
         assertSame(service, ces);
     }
 
+    /**
+     * Tests {@link CacheServices#eviction(Cache)}.
+     */
     @Test
     public void evictionService() {
-        final CacheEvictionService service = MockTestCase
-                .mockDummy(CacheEvictionService.class);
+        final CacheEvictionService service = MockTestCase.mockDummy(CacheEvictionService.class);
         context.checking(new Expectations() {
             {
                 one(cache).getService(CacheEvictionService.class);
@@ -66,10 +73,12 @@ public class CacheServicesTest {
         assertSame(service, ces);
     }
 
+    /**
+     * Tests {@link CacheServices#expiration(Cache)}.
+     */
     @Test
     public void expirationService() {
-        final CacheExpirationService service = MockTestCase
-                .mockDummy(CacheExpirationService.class);
+        final CacheExpirationService service = MockTestCase.mockDummy(CacheExpirationService.class);
         context.checking(new Expectations() {
             {
                 one(cache).getService(CacheExpirationService.class);
@@ -80,10 +89,12 @@ public class CacheServicesTest {
         assertSame(service, ces);
     }
 
+    /**
+     * Tests {@link CacheServices#loading(Cache)}.
+     */
     @Test
     public void loadingService() {
-        final CacheLoadingService service = MockTestCase
-                .mockDummy(CacheLoadingService.class);
+        final CacheLoadingService service = MockTestCase.mockDummy(CacheLoadingService.class);
         context.checking(new Expectations() {
             {
                 one(cache).getService(CacheLoadingService.class);
@@ -94,10 +105,12 @@ public class CacheServicesTest {
         assertSame(service, ces);
     }
 
+    /**
+     * Tests {@link CacheServices#management(Cache)}.
+     */
     @Test
     public void managementService() {
-        final CacheManagementService service = MockTestCase
-                .mockDummy(CacheManagementService.class);
+        final CacheManagementService service = MockTestCase.mockDummy(CacheManagementService.class);
         context.checking(new Expectations() {
             {
                 one(cache).getService(CacheManagementService.class);
@@ -108,6 +121,9 @@ public class CacheServicesTest {
         assertSame(service, ces);
     }
 
+    /**
+     * Tests {@link CacheServices#servicemanager(Cache)}.
+     */
     @Test
     public void serviceManagerService() {
         final CacheServiceManagerService service = MockTestCase
@@ -122,10 +138,12 @@ public class CacheServicesTest {
         assertSame(service, ces);
     }
 
+    /**
+     * Tests {@link CacheServices#statistics(Cache)}.
+     */
     @Test
     public void statisticsService() {
-        final CacheStatisticsService service = MockTestCase
-                .mockDummy(CacheStatisticsService.class);
+        final CacheStatisticsService service = MockTestCase.mockDummy(CacheStatisticsService.class);
         context.checking(new Expectations() {
             {
                 one(cache).getService(CacheStatisticsService.class);

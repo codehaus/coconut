@@ -24,16 +24,16 @@ import org.coconut.cache.service.statistics.CacheStatisticsService;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
- * @see $HeadURL$
+ * @see $HeadURL:
+ *      https://svn.codehaus.org/coconut/cache/trunk/coconut-cache-api/src/main/java/org/coconut/cache/CacheServices.java $
  */
 @SuppressWarnings("unchecked")
 public final class CacheServices {
 
     /** Cannot instantiate. */
-    // /CLOVER:OFF
+    ///CLOVER:OFF
     private CacheServices() {}
-
-    // /CLOVER:ON
+    ///CLOVER:ON
 
     /**
      * Returns the event service for the specified cache.
