@@ -48,7 +48,7 @@ public interface EventSubscription<E> {
     /**
      * Returns whether or not this subscription is still active.
      * 
-     * @return
+     * @return whether or not this subscription is still active
      */
     boolean isValid();
 }

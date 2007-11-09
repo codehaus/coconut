@@ -393,7 +393,7 @@ public final class CacheConfiguration<K, V> {
      * <p>
      * All available caches in Coconut Cache strives to be very conservertive about what
      * is logged, log as little as possible. That is, we actually recommend running with
-     * log level set at {@link Logger.Level#Info} even in production.
+     * log level set at {@link org.coconut.core.Logger.Level#Info} even in production.
      * 
      * @param logger
      *            the logger to use

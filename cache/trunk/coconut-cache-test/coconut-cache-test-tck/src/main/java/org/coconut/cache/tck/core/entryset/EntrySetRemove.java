@@ -62,9 +62,6 @@ public class EntrySetRemove extends AbstractCacheTCKTest {
 
     /**
      * {@link Cache#containsKey()} should not fail when cache is shutdown.
-     * 
-     * @throws InterruptedException
-     *             was interrupted
      */
     @Test(expected = IllegalStateException.class)
     public void removeShutdownISE() {
@@ -118,9 +115,6 @@ public class EntrySetRemove extends AbstractCacheTCKTest {
 
     /**
      * {@link Cache#containsKey()} should not fail when cache is shutdown.
-     * 
-     * @throws InterruptedException
-     *             was interrupted
      */
     @Test(expected = IllegalStateException.class)
     public void removeAllShutdownISE() {

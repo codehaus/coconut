@@ -38,9 +38,6 @@ public class Put extends AbstractCacheTCKTest {
 
     /**
      * {@link Cache#containsKey()} should  fail when cache is shutdown.
-     * 
-     * @throws InterruptedException
-     *             was interrupted
      */
     @Test(expected = IllegalStateException.class)
     public void putShutdownISE() {

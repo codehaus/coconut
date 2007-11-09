@@ -118,13 +118,6 @@ public class ClockPolicy<T> extends AbstractPolicy<T> implements Serializable, C
     /**
      * {@inheritDoc}
      */
-    public T remove() {
-        return policy.removeFirst();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public T remove(int index) {
         return policy.remove(index);
     }
@@ -196,9 +189,7 @@ public class ClockPolicy<T> extends AbstractPolicy<T> implements Serializable, C
             bits[0] = 1;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** Evicts the next element. */
         public T evictNext() {
             if (currentEntryIndex == 0) {
                 return null;
@@ -308,8 +299,7 @@ public class ClockPolicy<T> extends AbstractPolicy<T> implements Serializable, C
             super.innerResize(newSize);
             int[] oldBits = bits;
             bits = new int[newSize];
-            System.arraycopy(oldBits, 0, bits, 0, Math.min(oldBits.length,
-                    freeEntries.length));
+            System.arraycopy(oldBits, 0, bits, 0, Math.min(oldBits.length, freeEntries.length));
 
         }
     }

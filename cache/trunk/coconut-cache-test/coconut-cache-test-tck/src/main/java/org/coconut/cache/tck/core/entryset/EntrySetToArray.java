@@ -79,9 +79,6 @@ public class EntrySetToArray extends AbstractCacheTCKTest {
 
     /**
      * {@link Cache#isEmpty()} should not fail when cache is shutdown.
-     * 
-     * @throws InterruptedException
-     *             was interrupted
      */
     @Test
     public void toArrayShutdown1() {

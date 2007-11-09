@@ -64,9 +64,6 @@ public class GetAll extends AbstractCacheTCKTest {
 
     /**
      * {@link Cache#get()} should not fail when cache is shutdown.
-     * 
-     * @throws InterruptedException
-     *             was interrupted
      */
     @Test(expected = IllegalStateException.class)
     public void getAllShutdownISE() {

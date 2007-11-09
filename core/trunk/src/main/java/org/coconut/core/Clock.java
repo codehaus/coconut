@@ -21,7 +21,7 @@ public abstract class Clock {
     /**
      * 
      */
-    static class DefaultClock extends Clock implements Serializable {
+    public final static class DefaultClock extends Clock implements Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -3343971832371995608L;
 

@@ -74,8 +74,8 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
 
     /**
      * Returns the unique name of this service. For example,
-     * {@link org.coconut.cache.service.expiration.CacheExpirationConfiguration} returns '{@value}
-     * CacheExpirationConfiguration#SERVICE_NAME}'.
+     * {@link org.coconut.cache.service.expiration.CacheExpirationConfiguration} returns '{@value
+     * org.coconut.cache.service.expiration.CacheExpirationConfiguration#SERVICE_NAME}'.
      * 
      * @return the unique name of this service
      */
@@ -83,9 +83,7 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
         return serviceName;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         ByteArrayOutputStream sos = new ByteArrayOutputStream();

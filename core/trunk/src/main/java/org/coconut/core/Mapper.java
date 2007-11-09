@@ -25,10 +25,10 @@ package org.coconut.core;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
- * @param <F>
- *            the type we are transforming from
  * @param <T>
- *            the type we are transforming to
+ *            the type we are mapping from
+ * @param <U>
+ *            the type we are mapping to
  */
 public interface Mapper<T, U> {
 

@@ -43,6 +43,11 @@ public interface ManagedGroup {
      */
     ManagedGroup add(Object o);
 
+    /**
+     * Returns the objects that are registered in this group.
+     * 
+     * @return the objects that are registered in this group
+     */
     Collection<?> getObjects();
 
     /**
@@ -52,6 +57,7 @@ public interface ManagedGroup {
      *            the name of the group. Cannot be the empty string
      * @param description
      *            the description of the group
+     * @return this group
      * @throws NullPointerException
      *             if the specified name or description is null
      * @throws IllegalArgumentException
@@ -63,7 +69,7 @@ public interface ManagedGroup {
     /**
      * Returns whether or not this group has been registered with a {@link MBeanServer}.
      * 
-     * @return
+     * @return whether or not this group has been registered with a {@link MBeanServer}
      */
     boolean isRegistered();
 
@@ -80,7 +86,7 @@ public interface ManagedGroup {
     MBeanServer getServer();
 
     /**
-     * @eturn the description of this group.
+     * @return the description of this group.
      */
     String getDescription();
 

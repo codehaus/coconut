@@ -84,7 +84,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * that are stored externally, for example, on disk. The cache will be empty after
      * this call returns.
      * <p>
-     * A {@link CacheEntryEvent.ItemRemoved} event will be raised for each mapping that is
+     * A {@link org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved} event will be raised for each mapping that is
      * removed when the cache is cleared. When all entries have been removed from the
      * cache a single {@link org.coconut.cache.service.event.CacheEvent.CacheCleared} will
      * be raised.

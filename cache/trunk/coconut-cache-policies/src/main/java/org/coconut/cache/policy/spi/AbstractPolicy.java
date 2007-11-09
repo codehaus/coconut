@@ -18,12 +18,31 @@ import org.coconut.core.AttributeMaps;
  */
 public abstract class AbstractPolicy<T> implements ReplacementPolicy<T> {
 
-    /** {@inheritDoc} */
+    /**
+     * Calls {@link ReplacementPolicy#add(Object, org.coconut.core.AttributeMap)} with an
+     * empty attributemap.
+     * 
+     * @param element
+     *            the element to add
+     * @return a positive index that can be used to reference the element in the
+     *         replacement policy. A negative number is returned if the element is not
+     *         accepted into the replacement policy
+     */
     public int add(T element) {
         return add(element, AttributeMaps.EMPTY_MAP);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Calls {@link ReplacementPolicy#update(int, Object, org.coconut.core.AttributeMap)}
+     * with an empty attributemap.
+     * 
+     * @param index
+     *            the index of the previous element
+     * @param newElement
+     *            the new element that should replace the previous element
+     * @return <tt>true</tt> if the policy accepted the new element, otherwise
+     *         <tt>false</tt>
+     */
     public boolean update(int index, T newElement) {
         return update(index, newElement, AttributeMaps.EMPTY_MAP);
     }
@@ -57,8 +76,7 @@ public abstract class AbstractPolicy<T> implements ReplacementPolicy<T> {
      */
     public List<T> evict(final int number) {
         if (number <= 0) {
-            throw new IllegalArgumentException("number must be a positive number, was "
-                    + number);
+            throw new IllegalArgumentException("number must be a positive number, was " + number);
         }
         int count = number;
         // do not use number as initial capacity, might be Integer.MAX_VALUE
