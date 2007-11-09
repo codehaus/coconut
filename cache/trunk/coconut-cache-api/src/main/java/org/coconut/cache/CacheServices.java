@@ -21,7 +21,7 @@ import org.coconut.cache.service.statistics.CacheStatisticsService;
  * CacheEvictionService&lt;Integer, String&gt; service = CacheServices.eviction(cache);
  * service.trimToSize(10);
  * </pre>
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @see $HeadURL$

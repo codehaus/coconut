@@ -26,8 +26,7 @@ import org.junit.runner.RunWith;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
- * @see $HeadURL:
- *      https://svn.codehaus.org/coconut/cache/trunk/coconut-cache-api/src/test/java/org/coconut/cache/CacheServicesTest.java $
+ * @see $HeadURL$
  */
 @SuppressWarnings("unchecked")
 @RunWith(JMock.class)

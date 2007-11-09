@@ -4,11 +4,14 @@
 package org.coconut.cache;
 
 /**
- * <code>CacheException</code> is the main exception thrown by Coconut Cache. For better
- * control of when exceptions are thrown see {@link org.coconut.cache.service.exceptionhandling.CacheExceptionHandler}.
+ * <code>CacheException</code> is the main runtime exception thrown by Coconut Cache.
+ * For control of when exceptions are thrown see
+ * {@link org.coconut.cache.service.exceptionhandling.CacheExceptionHandler}.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
+ * @see $HeadURL:
+ *      https://svn.codehaus.org/coconut/cache/trunk/coconut-cache-api/src/main/java/org/coconut/cache/CacheServices.java $
  */
 public class CacheException extends RuntimeException {
 
@@ -16,55 +19,55 @@ public class CacheException extends RuntimeException {
     private static final long serialVersionUID = 4178832681965556432L;
 
     /**
-     * Constructs a new cache exception with <code>null</code> as its detail message.
+     * Constructs a new CacheException with <code>null</code> as its detailed message.
      * The cause is not initialized, and may subsequently be initialized by a call to
      * {@link Throwable#initCause}.
      */
     public CacheException() {}
 
     /**
-     * Constructs a new cache exception with the specified detail message. The cause is
+     * Constructs a new CacheException with the specified detailed message. The cause is
      * not initialized, and may subsequently be initialized by a call to
      * {@link Throwable#initCause}.
      * 
      * @param message
-     *            the detail message. The detail message is saved for later retrieval by
-     *            the {@link #getMessage()} method.
+     *            the detailed message. The detailed message is saved for later retrieval
+     *            by the {@link #getMessage()} method.
      */
-    public CacheException(final String message) {
+    public CacheException(String message) {
         super(message);
     }
 
     /**
-     * Constructs a new cache exception with the specified detail message and cause.
+     * Constructs a new CacheException with the specified detail message and cause.
      * <p>
-     * Note that the detail message associated with <code>cause</code> is <i>not </i>
-     * automatically incorporated in this cache exception's detail message.
+     * Note that the detailed message associated with <code>cause</code> is <i>not</i>
+     * automatically incorporated in this CacheException's detailed message.
      * 
      * @param message
-     *            the detail message (which is saved for later retrieval by the
+     *            the detailed message (which is saved for later retrieval by the
      *            {@link #getMessage()} method).
      * @param cause
      *            the cause (which is saved for later retrieval by the {@link #getCause()}
      *            method). (A<tt>null</tt> value is permitted, and indicates that the
      *            cause is nonexistent or unknown.)
      */
-    public CacheException(final String message, final Throwable cause) {
+    public CacheException(String message, Throwable cause) {
         super(message, cause);
     }
 
     /**
-     * Constructs a new cache exception with the specified cause and a detail message of
+     * Constructs a new CacheException with the specified cause and a detail message of
      * <tt>(cause==null ? null : cause.toString())</tt> (which typically contains the
      * class and detail message of <tt>cause</tt>). This constructor is useful for
-     * cache exceptions that are little more than wrappers for other throwables.
+     * CacheException that are little more than wrappers for other throwables.
      * 
      * @param cause
      *            the cause (which is saved for later retrieval by the {@link #getCause()}
      *            method). (A <tt>null</tt> value is permitted, and indicates that the
      *            cause is nonexistent or unknown.)
      */
-    public CacheException(final Throwable cause) {
+    public CacheException(Throwable cause) {
         super(cause);
     }
 }
