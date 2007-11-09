@@ -26,16 +26,20 @@ import org.junit.runner.RunWith;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
- * @see $HeadURL$
+ * @see $HeadURL:
+ *      https://svn.codehaus.org/coconut/cache/trunk/coconut-cache-api/src/test/java/org/coconut/cache/CacheServicesTest.java $
  */
 @SuppressWarnings("unchecked")
 @RunWith(JMock.class)
 public class CacheServicesTest {
-    
+
     private final Mockery context = new JUnit4Mockery();
 
     private Cache<Integer, String> cache;
 
+    /**
+     * Setup the cache mock.
+     */
     @Before
     public void setupCache() {
         cache = context.mock(Cache.class);
