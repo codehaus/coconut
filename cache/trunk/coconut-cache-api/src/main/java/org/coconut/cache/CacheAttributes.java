@@ -60,14 +60,14 @@ public final class CacheAttributes {
     public static final String HITS = "hits";
 
     /**
-     * The <tt>Last modified time</tt> attribute indicates when a cache element was last
-     * modified. The mapped value must be of a type <tt>long</tt> between 1 and
+     * The <tt>Last updated time</tt> attribute indicates when a cache element was last
+     * updated. The mapped value must be of a type <tt>long</tt> between 1 and
      * {@link Long#MAX_VALUE}.
      * 
-     * @see #setLastModifiedTime(AttributeMap, long)
-     * @see #getLastModified(AttributeMap, Clock)
+     * @see #setLastUpdated(AttributeMap, long)
+     * @see #getLastUpdated(AttributeMap, Clock)
      */
-    public static final String LAST_MODIFIED_TIME = "last_modified";
+    public static final String LAST_UPDATED_TIME = "last_updated";
 
     /**
      * The <tt>Size</tt> attribute indicates the <tt>size</tt> of a cache element. The
@@ -220,7 +220,7 @@ public final class CacheAttributes {
 
     /**
      * Returns the value that the specified AttributeMap maps the
-     * {@link #LAST_MODIFIED_TIME} attribute to or the return value from a call to
+     * {@link #LAST_UPDATED_TIME} attribute to or the return value from a call to
      * {@link Clock#timestamp()} on the specified clock if no such mapping exist.
      * 
      * @param attributes
@@ -228,7 +228,7 @@ public final class CacheAttributes {
      * @param clock
      *            the clock to retrieve the timestamp from
      * @return returns the value that the specified AttributeMap maps the
-     *         {@link #LAST_MODIFIED_TIME} attribute to or the return value from a call to
+     *         {@link #LAST_UPDATED_TIME} attribute to or the return value from a call to
      *         {@link Clock#timestamp()} on the specified clock if no such mapping exist
      * @throws NullPointerException
      *             if the specified attributeMap or clock is <code>null</code>
@@ -236,24 +236,24 @@ public final class CacheAttributes {
      *             if the specified attributeMap returns a negative number or if the
      *             specified clock returns a negative number when calling
      *             {@link Clock#timestamp()}
-     * @see #setLastModifiedTime(AttributeMap, long)
-     * @see #LAST_MODIFIED_TIME
+     * @see #setLastUpdated(AttributeMap, long)
+     * @see #LAST_UPDATED_TIME
      */
-    public static long getLastModified(AttributeMap attributes, Clock clock) {
+    public static long getLastUpdated(AttributeMap attributes, Clock clock) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
         } else if (clock == null) {
             throw new NullPointerException("clock is null");
         }
-        long time = attributes.getLong(CacheAttributes.LAST_MODIFIED_TIME);
+        long time = attributes.getLong(CacheAttributes.LAST_UPDATED_TIME);
         if (time < 0) {
-            throw new IllegalArgumentException("lastModified was negative (lastModified = " + time
+            throw new IllegalArgumentException("lastUpdated was negative (lastUpdated = " + time
                     + ")");
         } else if (time == 0) {
             time = clock.timestamp();
             if (time < 0) {
                 throw new IllegalArgumentException(
-                        "the timestamp returned by the specified clock was negative (lastModified = "
+                        "the timestamp returned by the specified clock was negative (lastUpdated = "
                                 + time + ")");
             }
         }
@@ -453,29 +453,29 @@ public final class CacheAttributes {
     }
 
     /**
-     * Sets a value for the {@link #LAST_MODIFIED_TIME} attribute in the specified
+     * Sets a value for the {@link #LAST_UPDATED_TIME} attribute in the specified
      * AttributeMap.
      * 
      * @param attributes
-     *            the map of attributes to set the last modified time attribute in
-     * @param lastModifiedTime
-     *            the last modified time
+     *            the map of attributes to set the last updated time attribute in
+     * @param lastUpdated
+     *            the last updated time
      * @return the specified attribute map
      * @throws NullPointerException
      *             if the specified attributeMap is <code>null</code>
      * @throws IllegalArgumentException
-     *             if the specified last modified time is a negative number
-     * @see #getLastModified(AttributeMap, Clock)
-     * @see #LAST_MODIFIED_TIME
+     *             if the specified last updated time is a negative number
+     * @see #getLastUpdated(AttributeMap, Clock)
+     * @see #LAST_UPDATED_TIME
      */
-    public static AttributeMap setLastModifiedTime(AttributeMap attributes, long lastModifiedTime) {
+    public static AttributeMap setLastUpdated(AttributeMap attributes, long lastUpdated) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
-        } else if (lastModifiedTime < 0) {
+        } else if (lastUpdated < 0) {
             throw new IllegalArgumentException("invalid creationTime (creationTime = "
-                    + lastModifiedTime + ")");
+                    + lastUpdated + ")");
         }
-        attributes.putLong(LAST_MODIFIED_TIME, lastModifiedTime);
+        attributes.putLong(LAST_UPDATED_TIME, lastUpdated);
         return attributes;
     }
 

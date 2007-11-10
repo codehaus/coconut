@@ -19,10 +19,10 @@ import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.core.AttributeMap;
 import org.junit.Test;
 
-public class LastModifiedTime extends AbstractCacheTCKTest {
+public class LastUpdatedTime extends AbstractCacheTCKTest {
     static class MyLoader implements CacheLoader<Integer, String> {
         public String load(Integer key, AttributeMap attributes) throws Exception {
-            CacheAttributes.setLastModifiedTime(attributes, key + 1);
+            CacheAttributes.setLastUpdated(attributes, key + 1);
             return "" + (char) (key + 64);
         }
     }

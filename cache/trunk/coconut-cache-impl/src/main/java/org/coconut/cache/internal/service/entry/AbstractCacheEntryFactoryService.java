@@ -156,7 +156,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
 
     long getLastModified(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
         try {
-            return CacheAttributes.getLastModified(attributes, clock);
+            return CacheAttributes.getLastUpdated(attributes, clock);
         } catch (IllegalArgumentException iae) {
             errorHandler.getExceptionHandler().handleWarning(errorHandler.createContext(),
                     iae.getMessage() + " was added for key = " + key);

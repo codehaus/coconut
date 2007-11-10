@@ -19,30 +19,11 @@ public class UnsynchronizedEntryFactoryService<K, V> extends
 
     private long defaultRefreshTime;
 
-    /** {@inheritDoc} */
-    public long getExpirationTimeNanos() {
-        return defaultExpirationTime;
-    }
-
-    /** {@inheritDoc} */
-    public void setExpirationTimeNanos(long nanos) {
-        this.defaultExpirationTime = nanos;
-    }
-
-    /** {@inheritDoc} */
-    public long getTimeToRefreshNanos() {
-        return defaultRefreshTime;
-    }
-
-    /** {@inheritDoc} */
-    public void setTimeToFreshNanos(long nanos) {
-        this.defaultRefreshTime = nanos;
-    }
-    
     public UnsynchronizedEntryFactoryService(CacheConfiguration<?, ?> conf,
             InternalCacheExceptionService<K, V> exceptionHandler) {
         super(conf.getClock(), exceptionHandler);
     }
+
     /**
      * @see org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService#createEntry(java.lang.Object,
      *      java.lang.Object, org.coconut.core.AttributeMap,
@@ -69,5 +50,24 @@ public class UnsynchronizedEntryFactoryService<K, V> extends
             newEntry.setPolicyIndex(existing.getPolicyIndex());
         }
         return newEntry;
+    }
+
+    /** {@inheritDoc} */
+    public long getExpirationTimeNanos() {
+        return defaultExpirationTime;
+    }
+
+    /** {@inheritDoc} */
+    public long getTimeToRefreshNanos() {
+        return defaultRefreshTime;
+    }
+    
+    /** {@inheritDoc} */
+    public void setExpirationTimeNanos(long nanos) {
+        this.defaultExpirationTime = nanos;
+    }
+    /** {@inheritDoc} */
+    public void setTimeToFreshNanos(long nanos) {
+        this.defaultRefreshTime = nanos;
     }
 }

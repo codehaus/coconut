@@ -72,8 +72,7 @@ public class XmlConfigurator {
         } else if (stream == null) {
             throw new NullPointerException("stream is null");
         }
-        Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(
-                stream);
+        Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(stream);
         readDocument(configuration, doc);
     }
 
@@ -87,15 +86,13 @@ public class XmlConfigurator {
      * @throws Exception
      *             some Exception prevented the CacheConfiguration from being serialized
      */
-    public void write(CacheConfiguration<?, ?> configuration, OutputStream stream)
-            throws Exception {
+    public void write(CacheConfiguration<?, ?> configuration, OutputStream stream) throws Exception {
         if (configuration == null) {
             throw new NullPointerException("configuration is null");
         } else if (stream == null) {
             throw new NullPointerException("stream is null");
         }
-        DocumentBuilder builder = DocumentBuilderFactory.newInstance()
-                .newDocumentBuilder();
+        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document doc = builder.newDocument();
         writeDocument(configuration, doc);
         XmlUtil.prettyprint(doc, stream);
@@ -117,43 +114,82 @@ public class XmlConfigurator {
      * @param <V>
      *            the type of mapped values
      */
-    protected <K, V> AbstractCacheServiceConfiguration<K, V> readCacheService(
-            Element cache, AbstractCacheServiceConfiguration<K, V> configurationObject) throws Exception {
-        Element e = (Element) cache.getElementsByTagName(configurationObject.getServiceName()).item(0);
+    protected <K, V> AbstractCacheServiceConfiguration<K, V> readCacheService(Element cache,
+            AbstractCacheServiceConfiguration<K, V> configurationObject) throws Exception {
+        Element e = (Element) cache.getElementsByTagName(configurationObject.getServiceName())
+                .item(0);
         if (e != null) {
             configurationObject.fromXML(e);
         }
         return configurationObject;
     }
 
+    /**
+     * Reads a xml document.
+     * 
+     * @param base
+     *            the cache configuration to add settings on
+     * @param doc
+     *            the xml based document of the cache
+     * @throws Exception
+     *             something went wrong while constructing the cache configuration
+     * @param <K>
+     *            the type of keys maintained by the cache
+     * @param <V>
+     *            the type of mapped values
+     */
     protected <K, V> void readDocument(CacheConfiguration<K, V> base, Document doc)
             throws Exception {
         Element root = doc.getDocumentElement();
         int length = root.getElementsByTagName(CACHE_TAG).getLength();
         if (length == 0) {
-            throw new IllegalStateException(
-                    "No cache is defined in the specified document, "
-                            + doc.getDocumentURI());
+            throw new IllegalStateException("No cache is defined in the specified document, "
+                    + doc.getDocumentURI());
         }
         Node n = root.getElementsByTagName("cache").item(0);
         readSingleCache(base, (Element) n);
     }
 
-    protected <K, V> void readSingleCache(CacheConfiguration<K, V> conf, Element cache)
+    /**
+     * Reads a single cache from a xml document.
+     * 
+     * @param base
+     *            the cache configuration to add settings on
+     * @param cacheElement
+     *            the xml element describing the cache
+     * @throws Exception
+     *             something went wrong while constructing the cache configuration
+     * @param <K>
+     *            the type of keys maintained by the cache
+     * @param <V>
+     *            the type of mapped values
+     */
+    protected <K, V> void readSingleCache(CacheConfiguration<K, V> base, Element cacheElement)
             throws Exception {
-        if (cache.hasAttribute(CACHE_NAME_ATTR)
-                && !cache.getAttribute(CACHE_NAME_ATTR).equals("")) {
-            conf.setName(cache.getAttribute(CACHE_NAME_ATTR));
+        if (cacheElement.hasAttribute(CACHE_NAME_ATTR)
+                && !cacheElement.getAttribute(CACHE_NAME_ATTR).equals("")) {
+            base.setName(cacheElement.getAttribute(CACHE_NAME_ATTR));
         }
-        if (cache.hasAttribute(CACHE_TYPE_ATTR)) {
-            conf.setProperty(XmlConfigurator.CACHE_INSTANCE_TYPE, cache
+        if (cacheElement.hasAttribute(CACHE_TYPE_ATTR)) {
+            base.setProperty(XmlConfigurator.CACHE_INSTANCE_TYPE, cacheElement
                     .getAttribute(CACHE_TYPE_ATTR));
         }
-        for (AbstractCacheServiceConfiguration<K, V> c : conf.getAllConfigurations()) {
-            readCacheService(cache, c);
+        for (AbstractCacheServiceConfiguration<K, V> c : base.getAllConfigurations()) {
+            readCacheService(cacheElement, c);
         }
     }
 
+    /**
+     * Writes a single single service as a xml element.
+     * 
+     * @param doc
+     *            the xml based document to write to
+     * @param configuration
+     *            the service
+     * @return an element containg the configuration of the service
+     * @throws Exception
+     *             something went wrong while writing the cache configuration
+     */
     protected Element writeCacheService(Document doc,
             AbstractCacheServiceConfiguration<?, ?> configuration) throws Exception {
         Element ee = doc.createElement(configuration.getServiceName());
@@ -165,6 +201,16 @@ public class XmlConfigurator {
         }
     }
 
+    /**
+     * Writes a xml document.
+     * 
+     * @param configuration
+     *            the cache configuration to read settings from
+     * @param doc
+     *            the xml based document to write to
+     * @throws Exception
+     *             something went wrong while writing the cache configuration
+     */
     protected void writeDocument(CacheConfiguration<?, ?> configuration, Document doc)
             throws Exception {
         Element root = doc.createElement(CONFIG_TAG);
@@ -176,18 +222,30 @@ public class XmlConfigurator {
         writeSingleCache(configuration, doc, cache);
     }
 
-    protected void writeSingleCache(CacheConfiguration<?, ?> cc, Document doc,
-            Element cache) throws Exception {
-        cache.setAttribute(CACHE_NAME_ATTR, cc.getName());
+    /**
+     * Writes a single cache to a xml document.
+     * 
+     * @param cc
+     *            the cache configuration to read settings from
+     * @param doc
+     *            the xml based document to write to
+     * @param cacheElement
+     *            the xml element to write the cache information to
+     * @throws Exception
+     *             something went wrong while writing the cache configuration
+     */
+    protected void writeSingleCache(CacheConfiguration<?, ?> cc, Document doc, Element cacheElement)
+            throws Exception {
+        cacheElement.setAttribute(CACHE_NAME_ATTR, cc.getName());
         if (cc.getProperties().containsKey(XmlConfigurator.CACHE_INSTANCE_TYPE)) {
-            cache.setAttribute(CACHE_TYPE_ATTR, cc.getProperty(CACHE_INSTANCE_TYPE)
+            cacheElement.setAttribute(CACHE_TYPE_ATTR, cc.getProperty(CACHE_INSTANCE_TYPE)
                     .toString());
         }
         /* writeService other configurations */
         for (AbstractCacheServiceConfiguration<?, ?> p : cc.getAllConfigurations()) {
             Element n = writeCacheService(doc, p);
             if (n != null) {
-                cache.appendChild(n);
+                cacheElement.appendChild(n);
             }
         }
     }

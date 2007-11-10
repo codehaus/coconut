@@ -132,7 +132,6 @@ public interface ReplacementPolicy<T> {
      * <p>
      * IMPORTANT: The previous element must be removed by the replacement policy even if
      * the new element cannot be accepted.
-     * <p>
      * 
      * @param index
      *            the index of the previous element

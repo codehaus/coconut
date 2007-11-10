@@ -32,8 +32,6 @@ public final class ImmutableCacheEntry<K, V> implements CacheEntry<K, V> {
 
     private final long size;
 
-    private final AttributeMap map;
-
     public ImmutableCacheEntry(AbstractCacheEntry<K, V> entry) {
         this.cost = entry.getCost();
         this.creationTime = entry.getCreationTime();
@@ -44,7 +42,6 @@ public final class ImmutableCacheEntry<K, V> implements CacheEntry<K, V> {
         this.lastUpdateTime = entry.getLastUpdateTime();
         this.size = entry.getSize();
         this.value = entry.getValue();
-        this.map = entry.getAttributes();
     }
 
     @Override
@@ -139,9 +136,4 @@ public final class ImmutableCacheEntry<K, V> implements CacheEntry<K, V> {
     public V setValue(V value) {
         throw new UnsupportedOperationException("setValue not supported");
     }
-
-    public AttributeMap getAttributes() {
-        return map;
-    }
-
 }

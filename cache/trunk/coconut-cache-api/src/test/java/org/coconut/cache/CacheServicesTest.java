@@ -31,8 +31,10 @@ import org.junit.runner.RunWith;
 @RunWith(JMock.class)
 public class CacheServicesTest {
 
+    /** The junit mockery. */
     private final Mockery context = new JUnit4Mockery();
 
+    /** The default cache to test upon. */
     private Cache<Integer, String> cache;
 
     /**

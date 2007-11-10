@@ -82,7 +82,7 @@ import org.coconut.internal.util.CollectionUtils;
         CacheExpirationService.class, CacheLoadingService.class, CacheManagementService.class,
         CacheServiceManagerService.class, CacheStatisticsService.class })
 public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
-    
+
     private final static Collection<Class<? extends AbstractCacheLifecycle>> DEFAULTS = Arrays
             .asList(DefaultCacheStatisticsService.class, DefaultCacheListener.class,
                     SynchronizedCacheEvictionService.class, DefaultCacheExpirationService.class,

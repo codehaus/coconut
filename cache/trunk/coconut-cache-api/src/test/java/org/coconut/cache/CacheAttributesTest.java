@@ -211,14 +211,14 @@ public class CacheAttributesTest {
         c.setTimestamp(555);
         context.checking(new Expectations() {
             {
-                one(attributes).getLong(CacheAttributes.LAST_MODIFIED_TIME);
+                one(attributes).getLong(CacheAttributes.LAST_UPDATED_TIME);
                 will(returnValue(23l));
-                one(attributes).getLong(CacheAttributes.LAST_MODIFIED_TIME);
+                one(attributes).getLong(CacheAttributes.LAST_UPDATED_TIME);
                 will(returnValue(0l));
             }
         });
-        assertEquals(23, CacheAttributes.getLastModified(attributes, c));
-        assertEquals(555, CacheAttributes.getLastModified(attributes, c));
+        assertEquals(23, CacheAttributes.getLastUpdated(attributes, c));
+        assertEquals(555, CacheAttributes.getLastUpdated(attributes, c));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -226,11 +226,11 @@ public class CacheAttributesTest {
         final AttributeMap attributes = context.mock(AttributeMap.class);
         context.checking(new Expectations() {
             {
-                one(attributes).getLong(CacheAttributes.LAST_MODIFIED_TIME);
+                one(attributes).getLong(CacheAttributes.LAST_UPDATED_TIME);
                 will(returnValue(-1l));
             }
         });
-        CacheAttributes.getLastModified(attributes, new Clock.DeterministicClock());
+        CacheAttributes.getLastUpdated(attributes, new Clock.DeterministicClock());
     }
 
     /**
@@ -243,44 +243,44 @@ public class CacheAttributesTest {
         final AttributeMap attributes = context.mock(AttributeMap.class);
         context.checking(new Expectations() {
             {
-                one(attributes).getLong(CacheAttributes.LAST_MODIFIED_TIME);
+                one(attributes).getLong(CacheAttributes.LAST_UPDATED_TIME);
                 will(returnValue(0l));
             }
         });
-        CacheAttributes.getLastModified(attributes, c);
+        CacheAttributes.getLastUpdated(attributes, c);
     }
 
     @Test(expected = NullPointerException.class)
     public void lastModifiedTimeGetNPE1() {
-        CacheAttributes.getLastModified(null, new Clock.DeterministicClock());
+        CacheAttributes.getLastUpdated(null, new Clock.DeterministicClock());
     }
 
     @Test(expected = NullPointerException.class)
     public void lastModifiedTimeGetNPE2() {
-        CacheAttributes.getLastModified(AttributeMaps.EMPTY_MAP, null);
+        CacheAttributes.getLastUpdated(AttributeMaps.EMPTY_MAP, null);
     }
 
     @Test
-    public void lastModifiedTimeSet() {
+    public void lastUpdatedTimeSet() {
         final AttributeMap attributes = context.mock(AttributeMap.class);
         context.checking(new Expectations() {
             {
-                one(attributes).putLong(CacheAttributes.LAST_MODIFIED_TIME, 0);
-                one(attributes).putLong(CacheAttributes.LAST_MODIFIED_TIME, Long.MAX_VALUE);
+                one(attributes).putLong(CacheAttributes.LAST_UPDATED_TIME, 0);
+                one(attributes).putLong(CacheAttributes.LAST_UPDATED_TIME, Long.MAX_VALUE);
             }
         });
-        assertSame(attributes, CacheAttributes.setLastModifiedTime(attributes, 0));
-        assertSame(attributes, CacheAttributes.setLastModifiedTime(attributes, Long.MAX_VALUE));
+        assertSame(attributes, CacheAttributes.setLastUpdated(attributes, 0));
+        assertSame(attributes, CacheAttributes.setLastUpdated(attributes, Long.MAX_VALUE));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void lastModifiedSetIAE() {
-        CacheAttributes.setLastModifiedTime(AttributeMaps.EMPTY_MAP, -1);
+    public void lastUpdatedSetIAE() {
+        CacheAttributes.setLastUpdated(AttributeMaps.EMPTY_MAP, -1);
     }
 
     @Test(expected = NullPointerException.class)
-    public void lastModifiedSetNPE() {
-        CacheAttributes.setLastModifiedTime(null, 1);
+    public void lastUpdatedSetNPE() {
+        CacheAttributes.setLastUpdated(null, 1);
     }
     @Test
     public void hitsGet() {

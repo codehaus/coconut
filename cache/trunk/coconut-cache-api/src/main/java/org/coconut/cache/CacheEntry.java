@@ -5,7 +5,7 @@ package org.coconut.cache;
 
 import java.util.Map;
 
-import org.coconut.core.AttributeMap;
+import org.coconut.core.Clock;
 
 /**
  * A <tt>CacheEntry</tt> describes a value-key mapping much like
@@ -14,51 +14,28 @@ import org.coconut.core.AttributeMap;
  * <p>
  * Unless otherwise specified a cache entry obtained from a cache is always an immmutable
  * copy of the existing entry. If the value for a given key is updated while another
- * thread holds a cache entry for the key. It will not be reflected in calls to any of the
- * methods on the cache entry. This is done in order to make sure that all cache entry
- * attributes are consistent.
- * <p>
- * A call to {@link #setValue(Object)} will only update the value of the entry if the
- * version of the cache entry matches the current version of the entry in the cache. For
- * example, if one threads acquires a cache entry with <tt>version = 1</tt> for a key
- * <tt>K</tt>. Another thread then updates the value for <tt>K</tt> resulting in a
- * version bumb to 2. If the first thread now attempts to call {@link #setValue(Object)}
- * on the cache entry (version=1) it will fail. This failure is indicated by returning
- * <tt>null</tt> from setValue instead of returning the existing value.
+ * thread holds a cache entry for the key. It will not be reflected in calls to
+ * {@link #getValue()}.
  * <p>
  * The notion of time, unless otherwise specified by the implementation, is relative to
  * the Unix epoch (on January 1, 1970, 00:00:00 GMT).
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
+ * @see Clock#timestamp()
+ * @see CacheConfiguration#setClock(Clock)
  * @param <K>
  *            the type of keys maintained by the cache
  * @param <V>
  *            the type of mapped values
  */
 public interface CacheEntry<K, V> extends Map.Entry<K, V> {
-
     /**
-     * Returns an immutable {@link AttributeMap} with all the attributes for this cache
-     * entry.
+     * Returns the value corresponding to this entry.
      * 
-     * @return an AttributeMap with all the attributes for this cache entry
-     * @throws UnsupportedOperationException
-     *             if this operation is not supported by the entry
+     * @return the value corresponding to this entry
      */
-    AttributeMap getAttributes();
-
-    /**
-     * Returns the size of this element. Implementations are free to include overhead of
-     * storing the element or just the size of the element itself.
-     * <p>
-     * The size returned does not necessarily represent the actual number of bytes used to
-     * store the element.
-     * 
-     * @return the size of the element. If the size of the object cannot be determined
-     *         {@link org.coconut.cache.CacheAttributes#DEFAULT_SIZE} should be returned
-     */
-    long getSize();
+    V getValue();
 
     /**
      * Returns the expected cost of fetching this element. Assigning costs to an element
@@ -72,18 +49,15 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V> {
      * The cost does not necessarily represent the actual time to fetch the element.
      * However, this is often the case.
      * 
-     * @return the expected cost of fetching this element or
-     *         {@link org.coconut.cache.CacheAttributes#DEFAULT_COST} if no cost is
-     *         associated with this element
+     * @return the expected cost of fetching this element. If the size of the object
+     *         cannot be determined {@link CacheAttributes#DEFAULT_COST} should be
+     *         returned
+     * @see CacheAttributes#setCost(org.coconut.core.AttributeMap, double)
+     * @see CacheAttributes#getCost(org.coconut.core.AttributeMap)
+     * @see CacheAttributes#DEFAULT_COST
+     * @see CacheAttributes#COST
      */
     double getCost();
-
-    /**
-     * Returns the number of times the object has been previously succesfully requested.
-     * 
-     * @return the number of times the object has been previously succesfully requested.
-     */
-    long getHits();
 
     /**
      * Returns the time of creation for the specific cache entry in milliseconds.
@@ -94,19 +68,39 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V> {
      * @return the difference, measured in milliseconds, between the time at which this
      *         entry was created and January 1, 1970 UTC.
      * @see java.util.Date
+     * @see CacheAttributes#setCreationTime(org.coconut.core.AttributeMap, long)
+     * @see CacheAttributes#getCreationTime(org.coconut.core.AttributeMap)
+     * @see CacheAttributes#getCreationTime(org.coconut.core.AttributeMap, Clock)
+     * @see CacheAttributes#CREATION_TIME
      */
     long getCreationTime();
 
     /**
-     * Returns the time at which the current value of the cache entry will expire. Whether
-     * or not expired entries are served is determined by the configuration of the cache.
-     * {@link Long#MAX_VALUE} is returned if the entry will never expire.
+     * Returns the time at which the current value of the cache entry will expire. Expired
+     * entries are never served by the cache. If {@link Long#MAX_VALUE} is returned if the
+     * entry will never expire.
      * 
      * @return the difference, measured in milliseconds, between the time at which the
-     *         current value of the cache entry will expire and January 1, 1970 UTC.
+     *         current value of the cache entry will expire and January 1, 1970 UTC. Or
+     *         {@value Long#MAX_VALUE} if it never expires
      * @see org.coconut.cache.service.expiration.CacheExpirationService
+     * @see CacheAttributes#setTimeToLive(org.coconut.core.AttributeMap, long,
+     *      java.util.concurrent.TimeUnit)
+     * @see CacheAttributes#getTimeToLive(org.coconut.core.AttributeMap,
+     *      java.util.concurrent.TimeUnit, long)
+     * @see CacheAttributes#TIME_TO_LIVE_NS
      */
     long getExpirationTime();
+
+    /**
+     * Returns the number of times the object has been previously succesfully requested.
+     * 
+     * @return the number of times the object has been previously succesfully requested.
+     * @see CacheAttributes#setHits(org.coconut.core.AttributeMap, long)
+     * @see CacheAttributes#getHits(org.coconut.core.AttributeMap)
+     * @see CacheAttributes#HITS
+     */
+    long getHits();
 
     /**
      * Returns the time at which the specific cache entry was last accessed in
@@ -127,6 +121,24 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V> {
      * 
      * @return the difference, measured in milliseconds, between the time at which the
      *         entry was last updated and January 1, 1970 UTC.
+     * @see CacheAttributes#setLastUpdated(org.coconut.core.AttributeMap, long)
+     * @see CacheAttributes#getLastUpdated(org.coconut.core.AttributeMap, Clock)
+     * @see CacheAttributes#LAST_UPDATED_TIME
      */
     long getLastUpdateTime();
+
+    /**
+     * Returns the size of this element. Implementations are free to include overhead of
+     * storing the element or just the size of the element itself.
+     * <p>
+     * The size returned does not necessarily represent the actual number of bytes used to
+     * store the element.
+     * 
+     * @return the size of the element. If the size of the object cannot be determined
+     *         {@link CacheAttributes#DEFAULT_SIZE} should be returned
+     * @see CacheAttributes#setSize(org.coconut.core.AttributeMap, long)
+     * @see CacheAttributes#getSize(org.coconut.core.AttributeMap)
+     * @see CacheAttributes#SIZE
+     */
+    long getSize();
 }

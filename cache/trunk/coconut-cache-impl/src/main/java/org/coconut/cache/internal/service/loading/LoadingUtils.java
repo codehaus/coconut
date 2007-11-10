@@ -287,45 +287,4 @@ final class LoadingUtils {
             return key;
         }
     }
-
-    static class LoadValuesRunnable<K, V> implements Runnable {
-        private final Map<? extends K, AttributeMap> keysWithAttributes;
-
-        private final CacheLoader<? super K, ? extends V> loader;
-
-        private final AbstractCacheLoadingService<K, V> loaderService;
-
-        /**
-         * @param loader
-         * @param key
-         * @param callback
-         */
-        LoadValuesRunnable(final AbstractCacheLoadingService<K, V> loaderService,
-                final CacheLoader<? super K, ? extends V> loader,
-                Map<? extends K, AttributeMap> keysWithAttributes) {
-            if (loader == null) {
-                throw new NullPointerException("loader is null");
-            } else if (keysWithAttributes == null) {
-                throw new NullPointerException("key is null");
-            }
-            this.loader = loader;
-            this.keysWithAttributes = keysWithAttributes;
-            this.loaderService = loaderService;
-        }
-
-        public Map<? extends K, AttributeMap> getKeys() {
-            return keysWithAttributes;
-        }
-
-        /** {@inheritDoc} */
-        public void run() {
-            for (Map.Entry<? extends K, AttributeMap> entry : keysWithAttributes
-                    .entrySet()) {
-                K key = entry.getKey();
-                AttributeMap attributes = entry.getValue();
-                throw new UnsupportedOperationException();
-//                loaderService.doLoad(loader, key, attributes, false);
-            }
-        }
-    }
 }

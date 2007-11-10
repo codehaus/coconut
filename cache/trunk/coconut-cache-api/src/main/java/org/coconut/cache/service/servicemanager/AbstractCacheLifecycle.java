@@ -42,6 +42,7 @@ public abstract class AbstractCacheLifecycle implements CacheLifecycle {
 
     /**
      * Returns the name of this lifecycle.
+     * @return the name of this lifecycle
      */
     public final String getName() {
         return name;

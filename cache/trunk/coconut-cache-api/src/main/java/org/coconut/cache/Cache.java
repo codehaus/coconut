@@ -9,7 +9,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.service.event.CacheEntryEvent;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.core.AttributeMap;
 

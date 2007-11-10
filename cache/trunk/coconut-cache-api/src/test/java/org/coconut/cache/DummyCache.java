@@ -13,13 +13,22 @@ import java.util.concurrent.TimeUnit;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
+ * @param <K>
+ *            the type of keys maintained by this cache
+ * @param <V>
+ *            the type of mapped values
  */
 public class DummyCache<K, V> implements Cache<K, V> {
 
+    /** The name of the cache. */
     private final String name;
 
-    public volatile boolean isStarted;
-
+    /**
+     * Creates a new DummyCache.
+     * 
+     * @param configuration
+     *            the cache configuration
+     */
     public DummyCache(CacheConfiguration<?, ?> configuration) {
         this.name = configuration.getName();
     }
@@ -107,9 +116,7 @@ public class DummyCache<K, V> implements Cache<K, V> {
         return null;
     }
 
-    /**
-     * @see org.coconut.cache.Cache#peekEntry(java.lang.Object)
-     */
+    /** {@inheritDoc} */
     public CacheEntry<K, V> peekEntry(K key) {
         return null;
     }
@@ -166,5 +173,54 @@ public class DummyCache<K, V> implements Cache<K, V> {
     /** {@inheritDoc} */
     public Collection<V> values() {
         return null;
+    }
+
+    /**
+     * A Cache that is abstract.
+     */
+    public static abstract class CannotInstantiateAbstractCache extends DummyCache {
+
+        /**
+         * Create a new CannotInstantiateAbstractCache.
+         * 
+         * @param configuration
+         *            the cache configuration
+         */
+        public CannotInstantiateAbstractCache(CacheConfiguration configuration) {
+            super(configuration);
+        }
+    }
+
+    /**
+     * A Cache that throws an {@link ArithmeticException} in the constructor.
+     */
+    public static class ConstructorThrowingCache extends DummyCache {
+
+        /**
+         * Create a new ConstructorThrowingCache.
+         * 
+         * @param configuration
+         *            the cache configuration
+         */
+        public ConstructorThrowingCache(CacheConfiguration configuration) {
+            super(configuration);
+            throw new ArithmeticException();
+        }
+    }
+
+    /**
+     * A Cache that has a private constructor.
+     */
+    public static final class PrivateConstructorCache extends DummyCache {
+
+        /**
+         * Create a new PrivateConstructorCache.
+         * 
+         * @param configuration
+         *            the cache configuration
+         */
+        private PrivateConstructorCache(CacheConfiguration configuration) {
+            super(configuration);
+        }
     }
 }

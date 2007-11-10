@@ -48,6 +48,8 @@ public class CacheTCKRunner extends Runner {
 
     static Class<? extends Cache> tt;
 
+    Class<? extends Cache> tt2;
+
     private CompositeRunner composite;
 
     /**
@@ -80,7 +82,9 @@ public class CacheTCKRunner extends Runner {
      */
     @SuppressWarnings("unchecked")
     public CacheTCKRunner(Class<? extends Cache> klass) throws Exception {
+        //System.out.println("Testing class" + klass);
         tt = klass.getAnnotation(CacheTCKImplementationSpecifier.class).value();
+        tt2 = tt;
         composite = new CompositeRunner(klass.getName());
         addTests(tt, composite);
         // only add the test class itself if it contains tests
@@ -141,6 +145,8 @@ public class CacheTCKRunner extends Runner {
     /** {@inheritDoc} */
     @Override
     public void run(RunNotifier not) {
+        tt=tt2;
+        System.err.println();
         composite.run(not);
     }
 }

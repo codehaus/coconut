@@ -64,7 +64,7 @@ import org.coconut.core.Logger;
  *            the type of mapped values
  */
 @NotThreadSafe
-public final class CacheConfiguration<K, V> {
+public class CacheConfiguration<K, V> {
 
     /** A list of all default service configuration types. */
     private final static List<Class<? extends AbstractCacheServiceConfiguration>> DEFAULTS = Arrays
@@ -118,7 +118,7 @@ public final class CacheConfiguration<K, V> {
         if (additionalConfigurationTypes == null) {
             throw new NullPointerException("additionalConfigurationTypes is null");
         }
-        for (Class<? extends AbstractCacheServiceConfiguration> c : DEFAULTS) {
+        for (Class<? extends AbstractCacheServiceConfiguration> c : additionalConfigurationTypes) {
             if (c == null) {
                 throw new NullPointerException("collection of service types contained a null");
             }
@@ -329,7 +329,6 @@ public final class CacheConfiguration<K, V> {
         if (cacheType == null) {
             throw new NullPointerException("type is null");
         }
-
         final Constructor<T> c;
         try {
             c = (Constructor<T>) cacheType.getDeclaredConstructor(CacheConfiguration.class);
@@ -496,7 +495,7 @@ public final class CacheConfiguration<K, V> {
      * @param c
      *            the type of the configuration
      * @return a configuration objects of the specified type
-     * @throws IllegalStateException
+     * @throws IllegalArgumentException
      *             if no configuration object of the specified type exists
      * @param <T>
      *            the type of the configuration
@@ -507,7 +506,7 @@ public final class CacheConfiguration<K, V> {
                 return (T) o;
             }
         }
-        throw new IllegalStateException("Unknown service configuration [ type = " + c + "]");
+        throw new IllegalArgumentException("Unknown service configuration [ type = " + c + "]");
     }
 
     /**

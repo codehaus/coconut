@@ -1,11 +1,12 @@
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
+ */
 package org.coconut.cache.internal.service.servicemanager;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 
 public abstract class AbstractCacheServiceManager implements InternalCacheServiceManager {
-
-    abstract RunState getRunState();
 
     private final Cache<?, ?> cache;
 
@@ -16,10 +17,6 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
             throw new NullPointerException("cache is null");
         }
         this.cache = cache;
-    }
-
-    Cache<?, ?> getCache() {
-        return cache;
     }
 
     public boolean isShutdown() {
@@ -34,31 +31,37 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
         return getRunState().isTerminated();
     }
 
+    Cache<?, ?> getCache() {
+        return cache;
+    }
+
     CacheConfiguration getConf() {
         return conf;
     }
+
+    abstract RunState getRunState();
 
     void setConf(CacheConfiguration conf) {
         this.conf = conf;
     }
 
     static enum RunState {
-        NOTRUNNING, RUNNING, SHUTDOWN, STOP, TIDYING, TERMINATED, COULD_NOT_START;
-
-        public boolean isStarted() {
-            return this != NOTRUNNING && this != COULD_NOT_START;
-        }
+        COULD_NOT_START, NOTRUNNING, RUNNING, SHUTDOWN, STOP, TERMINATED, TIDYING;
 
         public boolean isShutdown() {
             return this != RUNNING && this != NOTRUNNING;
         }
 
-        public boolean isTerminating() {
-            return this == SHUTDOWN || this == STOP;
+        public boolean isStarted() {
+            return this != NOTRUNNING && this != COULD_NOT_START;
         }
 
         public boolean isTerminated() {
             return this == TERMINATED || this == COULD_NOT_START;
+        }
+
+        public boolean isTerminating() {
+            return this == SHUTDOWN || this == STOP;
         }
     }
 }

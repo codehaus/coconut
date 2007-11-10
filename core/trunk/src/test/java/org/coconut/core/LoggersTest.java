@@ -146,7 +146,7 @@ public class LoggersTest {
 		try {
 			Loggers.JDK.getAsJDKLogger(Loggers.systemErrLog(Level.Error));
 			fail("Should throw IllegalArgumentException");
-		} catch (IllegalArgumentException iea) {}
+		} catch (IllegalArgumentException iea) {/* OK */}
 	}
 
 	@Test

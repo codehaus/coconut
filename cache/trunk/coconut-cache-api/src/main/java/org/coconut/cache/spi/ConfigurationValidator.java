@@ -17,10 +17,12 @@ import org.coconut.cache.CacheConfiguration;
  * @version $Id$
  */
 public class ConfigurationValidator {
+    /** A default instance of ConfigurationValidator. */
     private final static ConfigurationValidator DEFAULT = new ConfigurationValidator();
 
     /**
      * Returns the default instance of a XmlConfigurator.
+     * @return the default instance of a XmlConfigurator
      */
     public static ConfigurationValidator getInstance() {
         return DEFAULT;

@@ -199,7 +199,7 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
         access.add(entryGetMissCount);
         access.add(entryGetHitTime);
         access.add(entryGetMissTime);
-        access.add(new CacheRatio());
+        //access.add(new CacheRatio());
 
         ManagedGroup put = m.addChild("Put", "");
         put.add(entryPutCount);
@@ -493,42 +493,4 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
         return Resources.lookup(DefaultCacheStatisticsService.class, key.toLowerCase());
     }
 
-    public class CacheRatio {
-        @ManagedAttribute(defaultValue = "cache hit ratio")
-        public double getHitRatio() {
-            long hits = entryGetHitCount.get();
-            long misses = entryGetMissCount.get();
-            final long sum = hits + misses;
-            if (sum == 0) {
-                return Float.NaN;
-            }
-            return ((float) hits) / sum;
-        }
-    }
-
-    public class CacheRatioCost {
-        @ManagedAttribute(defaultValue = "cache hit ratio")
-        public double getHitRatio() {
-            double hits = entryGetHitCostCount.get();
-            double misses = entryGetMissCostCount.get();
-            final double sum = hits + misses;
-            if (sum == 0) {
-                return Float.NaN;
-            }
-            return hits / sum;
-        }
-    }
-
-    public class CacheRatioSize {
-        @ManagedAttribute(defaultValue = "cache hit ratio")
-        public double getHitRatio() {
-            long hits = entryGetHitSizeCount.get();
-            long misses = entryGetMissSizeCount.get();
-            final long sum = hits + misses;
-            if (sum == 0) {
-                return Float.NaN;
-            }
-            return ((float) hits) / sum;
-        }
-    }
 }

@@ -16,13 +16,17 @@ import org.coconut.internal.util.ResourceHolder;
  */
 public final class CacheSPI {
 
+    /** A message indicating a highly irregular error. */
     public static final String HIGHLY_IRREGULAR_MSG = "This is a highly irregular exception, and most likely means that the jar containing this class is corrupt";
 
-    private static final String BUNDLE_NAME = "org.coconut.cache.messages";//$NON-NLS-1$
+    /** A message indicating a highly irregular error. */
+    static final String BUNDLE_NAME = "org.coconut.cache.messages";//$NON-NLS-1$
 
-    private static final ResourceHolder RESOURCE_HOLDER = new ResourceHolder(BUNDLE_NAME);
-
+    /** A message indicating a highly irregular error. */
     static final ResourceBundle DEFAULT_CACHE_BUNDLE = ResourceHolder.lookup(BUNDLE_NAME);
+
+    /** A message indicating a highly irregular error. */
+    private static final ResourceHolder RESOURCE_HOLDER = new ResourceHolder(BUNDLE_NAME);
 
     /** Cannot instantiate. */
     // /CLOVER:OFF
@@ -30,11 +34,35 @@ public final class CacheSPI {
 
     // /CLOVER:ON
 
+    /**
+     * Sets the cacheconfiguration returned by
+     * {@link AbstractCacheServiceConfiguration#c()}.
+     * 
+     * @param c
+     *            the AbstractCacheServiceConfiguration to initialize
+     * @param conf
+     *            the cache configuration
+     * @param <K>
+     *            the type of keys maintained by the cache
+     * @param <V>
+     *            the type of mapped values
+     */
     public static <K, V> void initializeConfiguration(AbstractCacheServiceConfiguration<K, V> c,
             CacheConfiguration<K, V> conf) {
         c.setConfiguration(conf);
     }
 
+    /**
+     * Looksup a message in the default bundle.
+     * 
+     * @param c
+     *            the class looking up the value
+     * @param key
+     *            the message key
+     * @param o
+     *            additional parameters
+     * @return a message from the default bundle.
+     */
     public static String lookup(Class<?> c, String key, Object... o) {
         return RESOURCE_HOLDER.lookup(c.getSimpleName() + "." + key, o);
     }

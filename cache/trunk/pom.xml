@@ -24,7 +24,7 @@
   <reporting>
     <excludeDefaults>true</excludeDefaults>
     <plugins>
-    
+    <!-- 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clover-plugin</artifactId>
@@ -32,7 +32,7 @@
         <contextFilters>constructor</contextFilters>
         </configuration>
       </plugin>
-      
+       -->
     <!-- 
       <plugin>
         <artifactId>maven-clover-plugin</artifactId>
@@ -105,7 +105,7 @@
     <module>coconut-cache-standalone</module>
     <module>coconut-cache-examples</module>
     <module>coconut-cache-policies</module>
-    <module>coconut-cache-test</module>
+<!--     <module>coconut-cache-test</module> -->
   </modules>
 
   <repositories>

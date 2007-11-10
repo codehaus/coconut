@@ -12,6 +12,8 @@ import static junit.framework.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 import junit.framework.AssertionFailedError;
@@ -24,6 +26,8 @@ import org.coconut.core.Logger;
 import org.coconut.test.MockTestCase;
 import org.junit.Before;
 import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Tests the {@link CacheConfiguration} class.
@@ -34,7 +38,8 @@ import org.junit.Test;
 @SuppressWarnings("unchecked")
 public class CacheConfigurationTest {
 
-    CacheConfiguration<Number, Collection> conf;
+    /** The default instanceof a CacheConfiguration. */
+    private CacheConfiguration<Number, Collection> conf;
 
     /**
      * Setup the CacheConfiguration.
@@ -63,10 +68,17 @@ public class CacheConfigurationTest {
      */
     @Test
     public void addConfiguration() {
-        MyService s1 = new MyService();
+        ExtendConfiguration conf = new ExtendConfiguration();
+        SimpleService s1 = new SimpleService();
         assertFalse(conf.getAllConfigurations().contains(s1));
         conf.addConfiguration(s1);
+        assertSame(s1, conf.getConfiguration(SimpleService.class));
         assertTrue(conf.getAllConfigurations().contains(s1));
+        try {
+            conf.getConfiguration(SimpleService2.class);
+            throw new AssertionError("Should fail");
+        } catch (IllegalArgumentException ok) {/** ok */
+        }
     }
 
     /**
@@ -99,11 +111,11 @@ public class CacheConfigurationTest {
     @Test(expected = IllegalArgumentException.class)
     public void addConfigurationIAE2() {
         try {
-            conf.addConfiguration(new MyService());
+            conf.addConfiguration(new SimpleService());
         } catch (Throwable t) {
             throw new AssertionFailedError("Should not throw " + t.getMessage());
         }
-        conf.addConfiguration(new MyService());
+        conf.addConfiguration(new SimpleService());
     }
 
     /**
@@ -224,8 +236,26 @@ public class CacheConfigurationTest {
         assertFalse(conf.toString().equals(conf2.toString()));
     }
 
+    /**
+     * Tests the {@link CacheConfiguration#toString()} throws an
+     * {@link IllegalStateException} when it cannot persist a configuration.
+     */
+    @Test(expected = IllegalStateException.class)
+    public void toStringISE() {
+        conf.setName("foo");
+        conf.addConfiguration(new SimpleServiceAE());
+        conf.toString();
+    }
+
+    /**
+     * Tests that we can create a specific cache instance from a configuration file
+     * {@link CacheConfiguration#loadCacheFrom(java.io.InputStream)} method.
+     * 
+     * @throws Exception
+     *             some exception while constructing the cache
+     */
     @Test
-    public void testCreateAndInstantiate() throws Exception {
+    public void loadCacheFrom() throws Exception {
         conf.setProperty(XmlConfigurator.CACHE_INSTANCE_TYPE, "org.coconut.cache.DummyCache");
         conf.setName("foo");
 
@@ -234,39 +264,35 @@ public class CacheConfigurationTest {
 
         Cache c = CacheConfiguration.loadCacheFrom(new ByteArrayInputStream(os.toByteArray()));
         assertTrue(c instanceof DummyCache);
-        assertEquals("foo", ((DummyCache) c).getName());
-        assertFalse(((DummyCache) c).isStarted);
-
-        // c = CacheConfiguration.createInstantiateAndStart(new
-        // ByteArrayInputStream(os
-        // .toByteArray()));
-        // assertTrue(c instanceof DummyCache);
-        // assertEquals("foo", ((DummyCache) c).getName());
-        // assertTrue(((DummyCache) c).isStarted);
+        assertEquals("foo", c.getName());
     }
 
+    /**
+     * Tests that we can create a specific cache instance from a configuration via the
+     * {@link CacheConfiguration#newCacheInstance(Class)} method.
+     * 
+     * @throws Exception
+     *             some exception while constructing the cache
+     */
     @Test
-    public void testNewInstance() throws Exception {
-        conf.setName("foo");
-
-        Cache c = conf.newCacheInstance(DummyCache.class);
+    public void newInstance() throws Exception {
+        Cache c = conf.setName("foo").newCacheInstance(DummyCache.class);
         assertTrue(c instanceof DummyCache);
-        assertEquals("foo", ((DummyCache) c).getName());
-        assertFalse(((DummyCache) c).isStarted);
-
-        // c = conf.newInstanceAndStart(DummyCache.class);
-        // assertTrue(c instanceof DummyCache);
-        // assertEquals("foo", ((DummyCache) c).getName());
-        // assertTrue(((DummyCache) c).isStarted);
-
+        assertEquals("foo", c.getName());
     }
 
+    /**
+     * Tests the {@link CacheConfiguration#create(String)} method.
+     */
     @Test
     public void createWithName() {
         CacheConfiguration<?, ?> conf = CacheConfiguration.create("foo");
         assertEquals("foo", conf.getName());
     }
 
+    /**
+     * Tests the default service are available.
+     */
     @Test
     public void defaultService() {
         CacheConfiguration<?, ?> conf = CacheConfiguration.create();
@@ -278,84 +304,198 @@ public class CacheConfigurationTest {
         assertNotNull(conf.management());
         assertNotNull(conf.serviceManager());
         assertNotNull(conf.worker());
-
     }
 
+    /**
+     * Tests that {@link CacheConfiguration#newCacheInstance(Class)} throws a
+     * {@link NullPointerException} when invoked with a null argument.
+     * 
+     * @throws Exception
+     *             some exception while constructing the cache
+     */
     @Test(expected = NullPointerException.class)
-    public void testNewInstanceNPE() throws Exception {
+    public void newInstanceNPE() throws Exception {
         conf.newCacheInstance(null);
     }
 
+    /**
+     * Tests that {@link CacheConfiguration#newCacheInstance(Class)} throws a
+     * {@link IllegalArgumentException} when invoked with a class that does not have a
+     * constructor taking a single {@link CacheConfiguration} argument.
+     * 
+     * @throws Exception
+     *             some exception while constructing the cache
+     */
     @Test(expected = IllegalArgumentException.class)
-    public void testNewInstanceNoConstructor() throws Exception {
+    public void newInstanceNoConstructor() throws Exception {
         conf.newCacheInstance(MockTestCase.mockDummy(Cache.class).getClass());
     }
 
+    /**
+     * Tests that {@link CacheConfiguration#newCacheInstance(Class)} throws a
+     * {@link IllegalArgumentException} when invoked with an abstract class.
+     * 
+     * @throws Exception
+     *             some exception while constructing the cache
+     */
     @Test(expected = IllegalArgumentException.class)
-    public void testNewInstanceAbstractClass() throws Exception {
-        conf.newCacheInstance(CannotInstantiateAbstractCache.class);
+    public void newInstanceAbstractClass() throws Exception {
+        conf.newCacheInstance(DummyCache.CannotInstantiateAbstractCache.class);
     }
 
+    /**
+     * Tests that {@link CacheConfiguration#newCacheInstance(Class)} throws a
+     * {@link IllegalArgumentException} when invoked with class that throws an exception
+     * in the constructor.
+     * 
+     * @throws Throwable
+     *             some exception while constructing the cache
+     */
     @Test(expected = ArithmeticException.class)
-    public void testNewInstanceConstructorThrows() throws Throwable {
+    public void newInstanceConstructorThrows() throws Throwable {
         try {
-            conf.newCacheInstance(ConstructorThrowingCache.class);
+            conf.newCacheInstance(DummyCache.ConstructorThrowingCache.class);
         } catch (IllegalArgumentException e) {
             throw e.getCause();
         }
     }
 
+    /**
+     * Tests that {@link CacheConfiguration#newCacheInstance(Class)} throws a
+     * {@link IllegalArgumentException} when invoked with a class where the constructor
+     * taking a single {@link CacheConfiguration} argument is private.
+     * 
+     * @throws Throwable
+     *             some exception while constructing the cache
+     */
     @Test(expected = IllegalAccessException.class)
-    public void testNewInstanceConstructorThrows2() throws Throwable {
+    public void newInstancePrivateConstructorIAE() throws Throwable {
         try {
-            conf.newCacheInstance(PrivateConstructorCache.class);
+            conf.newCacheInstance(DummyCache.PrivateConstructorCache.class);
         } catch (IllegalArgumentException e) {
             throw e.getCause();
         }
     }
 
-    // @Test (expected = CacheException.class)
-    // public void testtoStringError() throws Throwable {
-    // Field f = CacheConfiguration.class.getDeclaredField("domain");
-    // f.setAccessible(true);
-    // f.set(conf, null);
-    // conf.toString();
-    // }
+    /**
+     * Tests that {@link CacheConfiguration#CacheConfiguration(Collection)} throws a
+     * {@link NullPointerException} when invoked with a null argument.
+     */
+    @Test(expected = NullPointerException.class)
+    public void cacheConfigurationNPE() {
+        new CacheConfiguration(null);
+    }
 
-    public static abstract class CannotInstantiateAbstractCache extends DummyCache {
+    /**
+     * Tests that {@link CacheConfiguration#CacheConfiguration(Collection)} throws a
+     * {@link NullPointerException} when invoked with a collection containing a null.
+     */
+    @Test(expected = NullPointerException.class)
+    public void cacheConfigurationColWithNPE() {
+        new CacheConfiguration(Arrays.asList(SimpleService.class, null));
+    }
 
-        /**
-         * @param configuration
-         */
-        public CannotInstantiateAbstractCache(CacheConfiguration configuration) {
-            super(configuration);
+    /**
+     * Tests that {@link CacheConfiguration#CacheConfiguration(Collection)} throws a
+     * {@link IllegalArgumentException} when trying to register the same service twice.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void cacheConfigurationTwoServicesIAE() {
+        new CacheConfiguration(Arrays.asList(SimpleService.class, SimpleService.class));
+    }
+
+    /**
+     * Tests {@link CacheConfiguration#CacheConfiguration(Collection)}.
+     */
+    @Test
+    public void cacheConfiguration() {
+        ExtendConfiguration conf = new ExtendConfiguration(Arrays.asList(SimpleService.class,
+                SimpleService2.class));
+        assertEquals(1, getInstancesOfType(conf.getAllConfigurations(), SimpleService.class).size());
+        assertEquals(1, getInstancesOfType(conf.getAllConfigurations(), SimpleService2.class)
+                .size());
+        assertEquals(0, getInstancesOfType(conf.getAllConfigurations(), SimpleServiceAE.class)
+                .size());
+        assertNotNull(conf.getConfiguration(SimpleService.class));
+        assertNotNull(conf.getConfiguration(SimpleService2.class));
+        try {
+            conf.getConfiguration(SimpleServiceAE.class);
+            throw new AssertionError("Should fail");
+        } catch (IllegalArgumentException ok) {/** ok */
         }
     }
 
-    public static class ConstructorThrowingCache extends DummyCache {
+    private <K> Collection<K> getInstancesOfType(Collection<?> col, Class<K> type) {
+        ArrayList<K> list = new ArrayList<K>();
+        for (Object o : col) {
+            if (o.getClass().equals(type)) {
+                list.add((K) o);
+            }
+        }
+        return list;
+    }
+
+    /**
+     * An extension of CacheConfiguration that exposes {@link #getConfiguration(Class)} as
+     * a public method.
+     */
+    public static class ExtendConfiguration<K, V> extends CacheConfiguration<K, V> {
+
+        /** Create a new ExtendConfiguration. */
+        public ExtendConfiguration() {}
 
         /**
-         * @param configuration
+         * Create a new ExtendConfiguration.
+         * 
+         * @param additionalConfigurationTypes
+         *            service types to instantiate
          */
-        public ConstructorThrowingCache(CacheConfiguration configuration) {
-            super(configuration);
-            throw new ArithmeticException();
+        public ExtendConfiguration(
+                Collection<Class<? extends AbstractCacheServiceConfiguration>> additionalConfigurationTypes) {
+            super(additionalConfigurationTypes);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public <T extends AbstractCacheServiceConfiguration> T getConfiguration(Class<T> c) {
+            return super.getConfiguration(c);
         }
     }
 
-    public static final class PrivateConstructorCache extends DummyCache {
-
-        /**
-         * @param configuration
-         */
-        private PrivateConstructorCache(CacheConfiguration configuration) {
-            super(configuration);
-        }
-    }
-
-    public static class MyService extends AbstractCacheServiceConfiguration {
-        public MyService() {
+    /**
+     * A simple implementation of AbstractCacheServiceConfiguration.
+     */
+    public static class SimpleService extends AbstractCacheServiceConfiguration {
+        /** Creates a new SimpleService with the name 'foo'. */
+        public SimpleService() {
             super("foo");
+        }
+    }
+
+    /**
+     * A simple implementation of AbstractCacheServiceConfiguration.
+     */
+    public static class SimpleService2 extends AbstractCacheServiceConfiguration {
+        /** Creates a new SimpleService2 with the name 'foo1'. */
+        public SimpleService2() {
+            super("foo1");
+        }
+    }
+
+    /**
+     * A simple implementation of AbstractCacheServiceConfiguration that throws an
+     * exception when it is being persisted.
+     */
+    public static class SimpleServiceAE extends AbstractCacheServiceConfiguration {
+        /** Creates a new SimpleServiceAE with the name 'foo2'. */
+        public SimpleServiceAE() {
+            super("foo2");
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected void toXML(Document doc, Element parent) throws Exception {
+            throw new ArithmeticException();
         }
     }
 }
