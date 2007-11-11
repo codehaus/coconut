@@ -22,7 +22,6 @@ import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedObject;
-import org.coconut.management.annotation.ManagedAttribute;
 
 /**
  * possible to disable certain statistics
@@ -462,12 +461,9 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
         return false;
     }
 
-    /**
-     * @see org.coconut.cache.service.servicemanager.AbstractCacheLifecycle#initialize(org.coconut.cache.CacheConfiguration,
-     *      java.util.Map)
-     */
+    /** {@inheritDoc} */
     @Override
-    public void registerServices(Map<Class<?>, Object> serviceMap) {
+    public void initialize(CacheConfiguration<?, ?> configuration, Map<Class<?>, Object> serviceMap) {
         serviceMap.put(CacheStatisticsService.class, this);
     }
 

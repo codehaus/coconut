@@ -9,7 +9,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.defaults.UnsynchronizedCache;
-import org.coconut.cache.service.loading.CacheLoader;
+import org.coconut.cache.service.loading.AbstractCacheLoader;
 import org.coconut.core.AttributeMap;
 
 /**
@@ -18,7 +18,7 @@ import org.coconut.core.AttributeMap;
  */
 public class ExpirationLoadingExample {
     // START SNIPPET: class
-    static class ExpirationLoader implements CacheLoader<Integer, String> {
+    static class ExpirationLoader extends AbstractCacheLoader<Integer, String> {
         public String load(Integer key, AttributeMap attributes) throws Exception {
             CacheAttributes.setTimeToLive(attributes, 60 * 60, TimeUnit.SECONDS);
             return "some value";

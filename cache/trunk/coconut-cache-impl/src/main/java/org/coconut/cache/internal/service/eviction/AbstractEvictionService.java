@@ -5,8 +5,10 @@ package org.coconut.cache.internal.service.eviction;
 
 import java.util.Map;
 
+import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.servicemanager.CompositeService;
+import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.service.eviction.CacheEvictionMXBean;
 import org.coconut.cache.service.eviction.CacheEvictionService;
@@ -46,7 +48,7 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
 
     /** {@inheritDoc} */
     @Override
-    public void registerServices(Map<Class<?>, Object> serviceMap) {
+    public void initialize(CacheConfiguration<?, ?> configuration, Map<Class<?>, Object> serviceMap) {
         serviceMap.put(CacheEvictionService.class, EvictionUtils.wrapService(this));
     }
 

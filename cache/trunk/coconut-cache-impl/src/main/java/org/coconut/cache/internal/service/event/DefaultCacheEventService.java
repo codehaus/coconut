@@ -16,6 +16,7 @@ import java.util.Map;
 import javax.management.Notification;
 
 import org.coconut.cache.Cache;
+import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
@@ -172,17 +173,11 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
         return eb.getSubscribers();
     }
 
-    /** {@inheritDoc} */
     @Override
-    public void registerServices(Map<Class<?>, Object> serviceMap) {
+    public void initialize(CacheConfiguration<?, ?> configuration, Map<Class<?>, Object> serviceMap) {
         if (isEnabled) {
             serviceMap.put(CacheEventService.class, this);
         }
-    }
-
-    /** {@inheritDoc} */
-    public boolean isEnabled() {
-        return isEnabled;
     }
 
     /** {@inheritDoc} */

@@ -130,13 +130,13 @@ public class CacheLoadingConfigurationTest {
         }
     }
 
-    public static class LoadableCacheLoader implements CacheLoader<Integer, String> {
+    public static class LoadableCacheLoader extends AbstractCacheLoader<Integer, String> {
         public String load(Integer key, AttributeMap attributes) throws Exception {
             return null;
         }
     }
 
-    public class NonLoadableCacheLoader implements CacheLoader<Integer, String> {
+    public class NonLoadableCacheLoader extends AbstractCacheLoader<Integer, String> {
         public String load(Integer key, AttributeMap attributes) throws Exception {
             return null;
         }

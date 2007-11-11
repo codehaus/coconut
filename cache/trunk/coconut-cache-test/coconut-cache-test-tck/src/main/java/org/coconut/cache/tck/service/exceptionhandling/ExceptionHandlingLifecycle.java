@@ -3,11 +3,13 @@
  */
 package org.coconut.cache.tck.service.exceptionhandling;
 
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlers;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
+import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;
 
@@ -78,8 +80,9 @@ public class ExceptionHandlingLifecycle extends AbstractCacheTCKTest {
 
     class MyService extends AbstractCacheLifecycle {
         @Override
-        public void initialize(CacheConfiguration configuration) {
-            super.initialize(configuration);
+        public void initialize(CacheConfiguration<?, ?> configuration,
+                Map<Class<?>, Object> serviceMap) {
+            super.initialize(configuration, serviceMap);
             if (status.get() == 1) {
                 status.addAndGet(2);
             }

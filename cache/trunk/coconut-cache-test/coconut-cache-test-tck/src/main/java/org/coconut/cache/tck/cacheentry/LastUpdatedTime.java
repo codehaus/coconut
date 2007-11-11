@@ -13,6 +13,7 @@ import static org.coconut.test.CollectionUtils.M8;
 import java.util.Map;
 
 import org.coconut.cache.CacheAttributes;
+import org.coconut.cache.service.loading.AbstractCacheLoader;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.IntegerToStringLoader;
@@ -20,7 +21,7 @@ import org.coconut.core.AttributeMap;
 import org.junit.Test;
 
 public class LastUpdatedTime extends AbstractCacheTCKTest {
-    static class MyLoader implements CacheLoader<Integer, String> {
+    static class MyLoader extends AbstractCacheLoader<Integer, String> {
         public String load(Integer key, AttributeMap attributes) throws Exception {
             CacheAttributes.setLastUpdated(attributes, key + 1);
             return "" + (char) (key + 64);

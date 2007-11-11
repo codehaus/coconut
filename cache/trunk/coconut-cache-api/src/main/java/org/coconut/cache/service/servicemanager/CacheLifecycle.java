@@ -26,16 +26,10 @@ public interface CacheLifecycle {
      * 
      * @param configuration
      *            the CacheConfiguration for the cache that this object belongs to
+     * @param publicServices
+     *            a map of registered service
      */
-    void initialize(CacheConfiguration<?, ?> configuration);
-
-    /**
-     * Initializes the service.
-     * 
-     * @param serviceMap
-     *            a map that can be used to add public services
-     */
-    void registerServices(Map<Class<?>, Object> serviceMap);
+    void initialize(CacheConfiguration<?, ?> configuration, Map<Class<?>, Object> publicServices);
 
     /**
      * Start the service. The specified cache can be used to retrieve other cache

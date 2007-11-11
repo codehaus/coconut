@@ -6,11 +6,11 @@ package org.coconut.cache.examples.general;
 // START SNIPPET: class
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.defaults.UnsynchronizedCache;
-import org.coconut.cache.service.loading.CacheLoader;
+import org.coconut.cache.service.loading.AbstractCacheLoader;
 import org.coconut.core.AttributeMap;
 
 public class PlusTwoExample {
-    static class Plus2Loader implements CacheLoader<Integer, Integer> {
+    static class Plus2Loader extends AbstractCacheLoader<Integer, Integer> {
         public Integer load(Integer key, AttributeMap ignore) throws Exception {
             return key + 2;
         }

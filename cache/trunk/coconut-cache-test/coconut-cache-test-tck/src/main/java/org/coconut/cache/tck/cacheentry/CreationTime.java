@@ -13,7 +13,7 @@ import static org.coconut.test.CollectionUtils.M8;
 import java.util.Map;
 
 import org.coconut.cache.CacheAttributes;
-import org.coconut.cache.service.loading.CacheLoader;
+import org.coconut.cache.service.loading.AbstractCacheLoader;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.core.AttributeMap;
@@ -30,7 +30,7 @@ public class CreationTime extends AbstractCacheTCKTest {
     /**
      * A loader that sets the creation time attribute
      */
-    static class MyLoader implements CacheLoader<Integer, String> {
+    static class MyLoader extends AbstractCacheLoader<Integer, String> {
         public String load(Integer key, AttributeMap attributes) throws Exception {
             CacheAttributes.setCreationTime(attributes, key + 1);
             return "" + (char) (key + 64);

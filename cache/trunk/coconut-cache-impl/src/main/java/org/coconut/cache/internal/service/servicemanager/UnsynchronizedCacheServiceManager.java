@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
@@ -280,8 +279,7 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
         }
 
         void initialize(CacheConfiguration conf) {
-            service.initialize(conf);
-            service.registerServices(published);
+            service.initialize(conf,published);
             for (ServiceHolder cl : children) {
                 cl.initialize(conf);
             }

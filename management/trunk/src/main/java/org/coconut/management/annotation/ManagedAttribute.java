@@ -11,8 +11,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * An annotation used to mark methods that should be exposed via JMX. Can
- * only be used on JavaBean getters or setters.
+ * An annotation used to mark methods that should be exposed via JMX. Should only be used
+ * on JavaBean getters or setters.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$

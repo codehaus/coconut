@@ -1,6 +1,6 @@
 Coconut Cache - A caching framework.
 
-Last updated 5. June 2007, Copyright 2004-2007 Kasper Nielsen
+Last updated 11. November 2007, Copyright 2004-2007 Kasper Nielsen
 
 This is a small overview of the various projects in Coconut Cache.
 

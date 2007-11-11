@@ -10,6 +10,7 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlers;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
+import org.coconut.cache.service.loading.AbstractCacheLoader;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.IntegerToStringLoader;
@@ -164,7 +165,7 @@ public class ExceptionHandling extends AbstractCacheTCKTest {
         }
     }
 
-    static class FailingLoader implements CacheLoader<Integer, String> {
+    static class FailingLoader extends AbstractCacheLoader<Integer, String> {
         public String load(Integer key, AttributeMap attributes) throws Exception {
             if (key.equals(10)) {
                 throw e;

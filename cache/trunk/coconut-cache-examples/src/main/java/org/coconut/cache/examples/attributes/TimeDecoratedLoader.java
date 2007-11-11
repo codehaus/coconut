@@ -4,10 +4,11 @@
 package org.coconut.cache.examples.attributes;
 
 import org.coconut.cache.CacheAttributes;
+import org.coconut.cache.service.loading.AbstractCacheLoader;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.core.AttributeMap;
 
-public class TimeDecoratedLoader<K, V> implements CacheLoader<K, V> {
+public class TimeDecoratedLoader<K, V> extends AbstractCacheLoader<K, V> {
     private final CacheLoader<K, V> delegator;
 
     public TimeDecoratedLoader(CacheLoader<K, V> delegator) {

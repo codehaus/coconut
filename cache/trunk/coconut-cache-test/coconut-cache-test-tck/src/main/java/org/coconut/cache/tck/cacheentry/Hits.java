@@ -7,14 +7,14 @@ import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M2;
 
 import org.coconut.cache.CacheAttributes;
-import org.coconut.cache.service.loading.CacheLoader;
+import org.coconut.cache.service.loading.AbstractCacheLoader;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.core.AttributeMap;
 import org.junit.Test;
 
 public class Hits extends AbstractCacheTCKTest {
-    static class MyLoader implements CacheLoader<Integer, String> {
+    static class MyLoader extends AbstractCacheLoader<Integer, String> {
         public String load(Integer key, AttributeMap attributes) throws Exception {
             CacheAttributes.setHits(attributes, key + 1);
             return "" + (char) (key + 64);

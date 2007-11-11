@@ -7,10 +7,11 @@ package org.coconut.cache.test.util;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.coconut.cache.service.loading.AbstractCacheLoader;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.core.AttributeMap;
 
-public class CountdownLatchLoader implements CacheLoader<Integer, String> {
+public class CountdownLatchLoader extends AbstractCacheLoader<Integer, String> {
 
     private final AtomicLong loads = new AtomicLong();
 

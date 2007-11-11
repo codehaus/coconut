@@ -6,7 +6,7 @@ package org.coconut.cache.test.util;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.coconut.cache.service.loading.CacheLoader;
+import org.coconut.cache.service.loading.AbstractCacheLoader;
 import org.coconut.core.AttributeMap;
 
 /**
@@ -16,7 +16,7 @@ import org.coconut.core.AttributeMap;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class MutableLoader implements CacheLoader<Integer, String> {
+public class MutableLoader extends AbstractCacheLoader<Integer, String> {
 
     private final AtomicReference<String> ref = new AtomicReference<String>();
 

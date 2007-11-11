@@ -133,9 +133,10 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
 
     /** {@inheritDoc} */
     @Override
-    public void registerServices(Map<Class<?>, Object> serviceMap) {
+    public void initialize(CacheConfiguration<?, ?> configuration, Map<Class<?>, Object> serviceMap) {
         serviceMap.put(CacheExpirationService.class, ExpirationUtils.wrapService(this));
     }
+
 
     /** {@inheritDoc} */
     public void setDefaultTimeToLive(long timeToLive, TimeUnit unit) {

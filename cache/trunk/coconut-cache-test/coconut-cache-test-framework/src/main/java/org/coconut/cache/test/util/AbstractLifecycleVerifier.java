@@ -37,27 +37,30 @@ public class AbstractLifecycleVerifier implements CacheLifecycle {
     public void assertNotStarted() {
         Assert.assertEquals(0, step.get());
     }
-    
+
     public void assertState(int state) {
         Assert.assertEquals(state, step.get());
     }
+
     public int getState() {
         return step.get();
     }
-    
+
     public void assertInStartedPhase() {
         Assert.assertEquals(4, step.get());
     }
 
     public void assertShutdownOrTerminatedPhase() {
         int state = step.get();
-        Assert.assertTrue("state was " + state , state == 5 || state == 6);
+        Assert.assertTrue("state was " + state, state == 5 || state == 6);
     }
+
     public void assertTerminatedPhase() {
         int state = step.get();
-        Assert.assertTrue( state == 6);
+        Assert.assertTrue(state == 6);
     }
-    public void shutdownAndAssert(Cache<?,?> c) {
+
+    public void shutdownAndAssert(Cache<?, ?> c) {
         c.shutdown();
         assertShutdownOrTerminatedPhase();
         try {
@@ -68,19 +71,15 @@ public class AbstractLifecycleVerifier implements CacheLifecycle {
         assertTerminatedPhase();
     }
 
-    public void initialize(CacheConfiguration<?, ?> configuration) {
+    public void initialize(CacheConfiguration<?, ?> configuration, Map<Class<?>, Object> serviceMap) {
         Assert.assertEquals(0, step.getAndIncrement());
         if (conf != null) {
             Assert.assertEquals(conf, configuration);
         }
         conf = configuration;
-        // System.out.println("1-initialized");
-    }
-
-    public void registerServices(Map<Class<?>, Object> serviceMap) {
         Assert.assertEquals(1, step.getAndIncrement());
         Assert.assertEquals(0, serviceMap.size());
-        // System.out.println("2-register");
+        // System.out.println("1-initialized");
     }
 
     public void shutdown() {

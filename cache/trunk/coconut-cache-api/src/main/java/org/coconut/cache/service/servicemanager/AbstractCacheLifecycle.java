@@ -50,10 +50,7 @@ public abstract class AbstractCacheLifecycle implements CacheLifecycle {
 
     // /CLOVER:OFF
     /** {@inheritDoc} */
-    public void initialize(CacheConfiguration<?, ?> configuration) {}
-
-    /** {@inheritDoc} */
-    public void registerServices(Map<Class<?>, Object> serviceMap) {}
+    public void initialize(CacheConfiguration<?, ?> configuration, Map<Class<?>, Object> serviceMap) {}
 
     /** {@inheritDoc} */
     public void start(Map<Class<?>, Object> allServices) {}

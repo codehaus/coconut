@@ -7,7 +7,15 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 
+/**
+ * Defines additional methods to {@link CacheServiceManagerService}. This service is only
+ * available for internal cache services.
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id$
+ */
 public interface InternalCacheServiceManager extends CacheServiceManagerService {
+    
     /**
      * Blocks until all tasks have completed execution after a shutdown request, or the
      * timeout occurs, or the current thread is interrupted, whichever happens first.
@@ -66,5 +74,6 @@ public interface InternalCacheServiceManager extends CacheServiceManagerService 
     void shutdown();
 
     void shutdown(Throwable cause);
+
     void shutdownNow();
 }

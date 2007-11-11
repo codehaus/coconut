@@ -7,7 +7,7 @@ package org.coconut.cache.test.util;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.coconut.cache.service.loading.CacheLoader;
+import org.coconut.cache.service.loading.AbstractCacheLoader;
 import org.coconut.core.AttributeMap;
 
 /**
@@ -17,7 +17,7 @@ import org.coconut.core.AttributeMap;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class IntegerToStringLoader implements CacheLoader<Integer, String> {
+public class IntegerToStringLoader extends AbstractCacheLoader<Integer, String> {
 
     public static final String RESULT_ATTRIBUTE_KEY = "result";
 

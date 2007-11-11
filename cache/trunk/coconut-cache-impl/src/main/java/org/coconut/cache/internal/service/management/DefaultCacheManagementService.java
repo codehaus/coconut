@@ -15,6 +15,7 @@ import javax.management.ObjectName;
 import net.jcip.annotations.GuardedBy;
 
 import org.coconut.cache.Cache;
+import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
 import org.coconut.cache.internal.service.servicemanager.CompositeService;
 import org.coconut.cache.service.management.CacheMXBean;
@@ -116,12 +117,13 @@ public class DefaultCacheManagementService extends AbstractCacheLifecycle implem
 
     /** {@inheritDoc} */
     @Override
-    public synchronized void registerServices(Map<Class<?>, Object> serviceMap) {
+    public synchronized void initialize(CacheConfiguration<?, ?> configuration, Map<Class<?>, Object> serviceMap) {
         if (isEnabled) {
             serviceMap.put(CacheManagementService.class, ManagementUtils
                     .wrapService(this));
         }
     }
+
 
     /** {@inheritDoc} */
     @Override

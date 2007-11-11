@@ -3,6 +3,8 @@
  */
 package org.coconut.cache.service.loading;
 
+import java.util.Collection;
+
 import org.coconut.core.AttributeMap;
 
 /**
@@ -47,7 +49,7 @@ import org.coconut.core.AttributeMap;
  * The load method also provides an attribute map. This map can be used to provide
  * meta-data information to the caller of the {@link #load(Object, AttributeMap)} method.
  * For example, the following cache loader, which retrieves an URL as String. Defines the
- * cost of the element as the number of milliseconds it takes to retrieve the value. 
+ * cost of the element as the number of milliseconds it takes to retrieve the value.
  * 
  * <pre>
  * public static class UrlLoader implements CacheLoader&lt;URL, String&gt; {
@@ -83,6 +85,17 @@ import org.coconut.core.AttributeMap;
  *            the type of values that are loaded
  */
 public interface CacheLoader<K, V> {
+
+    /**
+     * Loads multiple values. This might for be usefull for performance reasons, for
+     * example, if the values are to be retrieved from a remote host.
+     * 
+     * @param loadCallbacks
+     *            a collection of CacheLoaderCallback with details about the elements that
+     *            needs loading
+     */
+    void loadAll(Collection<? extends CacheLoaderCallback<? extends K, ? super V>> loadCallbacks);
+
     /**
      * Loads a single value.
      * 

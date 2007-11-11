@@ -7,10 +7,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.entry.InternalCacheEntryService;
@@ -192,7 +191,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
 
     /** {@inheritDoc} */
     @Override
-    public void registerServices(Map<Class<?>, Object> serviceMap) {
+    public void initialize(CacheConfiguration<?, ?> configuration, Map<Class<?>, Object> serviceMap) {
         if (loader != null) {
             serviceMap.put(CacheLoadingService.class, LoadingUtils.wrapService(this));
         }

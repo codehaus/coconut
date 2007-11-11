@@ -5,8 +5,12 @@ package org.coconut.cache.tck.service.loading;
 
 import static org.coconut.test.CollectionUtils.M1;
 
+import java.util.Collection;
+
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.service.loading.AbstractCacheLoader;
 import org.coconut.cache.service.loading.CacheLoader;
+import org.coconut.cache.service.loading.CacheLoaderCallback;
 import org.coconut.cache.test.util.AbstractLifecycleVerifier;
 import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.core.AttributeMap;
@@ -43,7 +47,7 @@ public class LoadingCacheLoader extends AbstractLoadingTestBundle {
         loading().load(1);
         assertNotNull(loader.g);
     }
-    
+
     static class MyLoader extends IntegerToStringLoader implements ManagedObject {
         ManagedGroup g;
 
@@ -52,10 +56,15 @@ public class LoadingCacheLoader extends AbstractLoadingTestBundle {
         }
     }
 
-
     static class MyLoader2 extends AbstractLifecycleVerifier implements CacheLoader {
         public Object load(Object key, AttributeMap attributes) throws Exception {
             return "1";
+        }
+
+        public final void loadAll(Collection loadRequests) {
+            for (Object req : loadRequests) {
+                ((CacheLoaderCallback) req).completed("1");
+            }
         }
     }
 }
