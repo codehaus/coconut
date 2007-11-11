@@ -41,7 +41,7 @@ public class EntrySetRemove extends AbstractCacheTCKTest {
         assertFalse(c.entrySet().remove(MNAN1));
         c = newCache(5);
         assertTrue(c.entrySet().remove(M1));
-        assertEquals(4, c.size());
+        assertSize(4);
         assertFalse(c.entrySet().contains(M1));
 
         c = newCache(1);
@@ -79,12 +79,12 @@ public class EntrySetRemove extends AbstractCacheTCKTest {
         c = newCache(5);
         assertFalse(c.entrySet().removeAll(Arrays.asList(MNAN1, MNAN2)));
         assertTrue(c.entrySet().removeAll(Arrays.asList(MNAN1, M2, MNAN2)));
-        assertEquals(4, c.size());
+        assertSize(4);
         assertFalse(c.entrySet().contains(M2));
         assertTrue(c.entrySet().removeAll(Arrays.asList(M1, M4)));
         assertFalse(c.entrySet().contains(M4));
         assertFalse(c.entrySet().contains(M1));
-        assertEquals(2, c.size());
+        assertSize(2);
     }
 
     @Test(expected = NullPointerException.class)

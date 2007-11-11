@@ -51,18 +51,9 @@ public class AbstractCacheTCKTest extends Assert {
 
     protected ThreadServiceTestHelper threadHelper;
 
-    public void loadAndAwait(Integer key) {
-        loading().load(key);
-        awaitAllLoads();
-    }
-
     @Before
     public void setupClock() {
         clock = new DeterministicClock();
-    }
-
-    protected void assertGet(Map.Entry<Integer, String> e) {
-        assertEquals(e.getValue(), c.get(e.getKey()));
     }
 
     protected void assertGet(Map.Entry<Integer, String>... e) {
@@ -99,10 +90,6 @@ public class AbstractCacheTCKTest extends Assert {
         Assert.assertEquals(hits, hitstat.getNumberOfHits());
         Assert.assertEquals(misses, hitstat.getNumberOfMisses());
         Assert.assertEquals(ratio, hitstat.getHitRatio(), 0.0001);
-    }
-
-    protected void assertNullGet(Map.Entry<Integer, String> e) {
-        assertNullGet(new Map.Entry[] { e });
     }
 
     protected void assertNullGet(Map.Entry<Integer, String>... e) {
@@ -152,8 +139,6 @@ public class AbstractCacheTCKTest extends Assert {
         if (threadHelper != null) {
             threadHelper.awaitAllIdle();
         }
-        // only unsync now
-        // when sync hook up with AbstractCacheTCKTestBundle.threadHelper
     }
 
     protected void checkLazystart() {
@@ -302,6 +287,7 @@ public class AbstractCacheTCKTest extends Assert {
     }
 
     protected Collection<Map.Entry<Integer, String>> put(int to) {
+        //TODO what is this doing?
         return put(1, to);
     }
 
@@ -385,21 +371,6 @@ public class AbstractCacheTCKTest extends Assert {
     protected void touch(Map.Entry<Integer, String>... e) {
         for (Map.Entry<Integer, String> entry : e) {
             c.get(entry.getKey());
-        }
-    }
-
-    protected void waitAndAssertGet(Map.Entry<Integer, String>... e) throws InterruptedException {
-        for (Map.Entry<Integer, String> m : e) {
-            for (int i = 0; i < 100; i++) {
-                if (c.get(m.getKey()).equals(m.getValue())) {
-                    break;
-                } else {
-                    Thread.sleep(15);
-                }
-                if (i == 99) {
-                    throw new AssertionError("Value did not change");
-                }
-            }
         }
     }
 

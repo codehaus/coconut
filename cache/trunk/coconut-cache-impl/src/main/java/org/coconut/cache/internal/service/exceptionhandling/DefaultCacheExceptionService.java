@@ -7,12 +7,12 @@ import java.text.MessageFormat;
 import java.util.logging.Level;
 
 import org.coconut.cache.Cache;
+import org.coconut.cache.internal.service.spi.Resources;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlers;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
-import org.coconut.cache.spi.CacheSPI;
 import org.coconut.core.Logger;
 import org.coconut.core.Loggers;
 
@@ -52,6 +52,7 @@ public class DefaultCacheExceptionService<K, V> extends AbstractCacheLifecycle i
     public DefaultCacheExceptionService(Cache<K, V> cache,
             CacheExceptionHandlingConfiguration<K, V> configuration) {
         this.cache = cache;
+        // TODO resort to default logger if no exceptionLogger is defined?
         this.logger = configuration.getExceptionLogger();
         if (configuration.getExceptionHandler() != null) {
             this.exceptionHandler = configuration.getExceptionHandler();
@@ -73,6 +74,11 @@ public class DefaultCacheExceptionService<K, V> extends AbstractCacheLifecycle i
             public Cache<K, V> getCache() {
                 return cache;
             }
+
+            @Override
+            public void shutdownCache(Throwable cause) {
+                throw new UnsupportedOperationException();
+            }
         };
     }
 
@@ -88,7 +94,7 @@ public class DefaultCacheExceptionService<K, V> extends AbstractCacheLifecycle i
      * logger if no logger has been defined and the default logger has not already been
      * initialized
      * 
-     * @return the exception logger
+     * @return the exception logger for the cache
      */
     private Logger getLogger() {
         Logger l = logger;
@@ -100,7 +106,7 @@ public class DefaultCacheExceptionService<K, V> extends AbstractCacheLifecycle i
                 String name = cache.getName();
                 String loggerName = Cache.class.getPackage().getName() + "." + name;
                 java.util.logging.Logger jucLogger = java.util.logging.Logger.getLogger(loggerName);
-                String infoMsg = CacheSPI.lookup(CacheExceptionHandler.class, "noLogger");
+                String infoMsg = Resources.lookup(DefaultCacheExceptionService.class, "noLogger");
                 jucLogger.setLevel(Level.ALL);
                 jucLogger.info(MessageFormat.format(infoMsg, name, loggerName));
                 jucLogger.setLevel(Level.SEVERE);

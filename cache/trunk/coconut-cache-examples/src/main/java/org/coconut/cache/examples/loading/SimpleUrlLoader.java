@@ -3,17 +3,17 @@
  */
 package org.coconut.cache.examples.loading;
 
-//START SNIPPET: SimpleUrlLoader
+// START SNIPPET: SimpleUrlLoader
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.core.AttributeMap;
+
 public class SimpleUrlLoader implements CacheLoader<String, String> {
     public String load(String key, AttributeMap ignore) throws Exception {
-        BufferedReader in = new BufferedReader(new InputStreamReader(new URL(key)
-                .openStream()));
+        BufferedReader in = new BufferedReader(new InputStreamReader(new URL(key).openStream()));
         StringBuilder sb = new StringBuilder();
         int str;
         while ((str = in.read()) != -1) {
@@ -23,4 +23,4 @@ public class SimpleUrlLoader implements CacheLoader<String, String> {
         return sb.toString();
     }
 }
-//END SNIPPET: SimpleUrlLoader
+// END SNIPPET: SimpleUrlLoader

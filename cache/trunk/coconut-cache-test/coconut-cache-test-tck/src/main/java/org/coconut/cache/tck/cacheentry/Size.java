@@ -88,7 +88,7 @@ public class Size extends AbstractCacheTCKTest {
         assertEquals(5, c.getVolume());
         assertGet(M6);
         assertEquals(14, c.getVolume());
-        assertEquals(2, c.size());// element size unaffected
+        assertSize(2);// element size unaffected
         c.clear();
         assertEquals(0, c.getVolume());
 

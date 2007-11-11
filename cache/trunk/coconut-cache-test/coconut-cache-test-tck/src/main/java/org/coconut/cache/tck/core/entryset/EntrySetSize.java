@@ -27,7 +27,7 @@ public class EntrySetSize extends AbstractCacheTCKTest {
     }
 
     /**
-     * {@link Cache#size()} lazy starts the cache.
+     * {@link Cache#entrySet()} lazy starts the cache.
      */
     @Test
     public void sizeLazyStart() {

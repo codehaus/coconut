@@ -5,7 +5,6 @@ package org.coconut.cache.internal.service.servicemanager;
 
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 
 public interface InternalCacheServiceManager extends CacheServiceManagerService {
@@ -25,16 +24,16 @@ public interface InternalCacheServiceManager extends CacheServiceManagerService 
     boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException;
 
     /**
-     * Returns <tt>true</tt> if this cache has been shut down.
+     * Returns <tt>true</tt> if the cache has been shut down.
      * 
-     * @return <tt>true</tt> if this cache has been shut down
+     * @return <tt>true</tt> if the cache has been shut down
      */
     boolean isShutdown();
 
     /**
-     * Returns <tt>true</tt> if this cache has been started.
+     * Returns <tt>true</tt> if the cache has been started.
      * 
-     * @return <tt>true</tt> if this cache has been started
+     * @return <tt>true</tt> if the cache has been started
      */
     boolean isStarted();
 
@@ -66,5 +65,6 @@ public interface InternalCacheServiceManager extends CacheServiceManagerService 
      */
     void shutdown();
 
+    void shutdown(Throwable cause);
     void shutdownNow();
 }

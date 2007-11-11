@@ -22,14 +22,14 @@ public class EntrySetClear extends AbstractCacheTCKTest {
         c = newCache(5);
         assertEquals(c.entrySet().size(), 5);
         assertFalse(c.entrySet().isEmpty());
-        assertEquals(c.size(), 5);
+        assertSize(5);
         assertFalse(c.isEmpty());
 
         c.entrySet().clear();
 
         assertEquals(c.entrySet().size(), 0);
         assertTrue(c.entrySet().isEmpty());
-        assertEquals(c.size(), 0);
+        assertSize(0);
         assertTrue(c.isEmpty());
     }
 

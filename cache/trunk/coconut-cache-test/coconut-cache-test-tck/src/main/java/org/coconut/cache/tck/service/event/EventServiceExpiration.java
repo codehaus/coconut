@@ -44,7 +44,7 @@ public class EventServiceExpiration extends AbstractEventTestBundle {
 
         clock.incrementTimestamp();
         expiration().purgeExpired();
-        assertEquals(2, c.size());
+        assertSize(2);
 
         ItemRemoved<?, ?> r = consumeItem(ItemRemoved.class, M1);
         assertTrue(r.hasExpired());
@@ -66,7 +66,7 @@ public class EventServiceExpiration extends AbstractEventTestBundle {
         expiration().putAll(CollectionUtils.asMap(M2, M3), 3, TimeUnit.MILLISECONDS);
         subscribe(CACHEENTRYEVENT_FILTER);
         clock.incrementTimestamp(2);
-        assertEquals(3, c.size());
+        assertSize(3);
 
         c.getAll(Arrays.asList(M1.getKey(), M2.getKey(), M3.getKey()));
         ItemUpdated<?, ?> r = consumeItem(ItemUpdated.class, M1);

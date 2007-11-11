@@ -37,13 +37,13 @@ public class EntrySetRetain extends AbstractCacheTCKTest {
     public void retainAll() {
         c = newCache(1);
         c.entrySet().retainAll(Collections.singleton(M1));
-        assertEquals(1, c.size());
+        assertSize(1);
 
         c.entrySet().retainAll(Collections.singleton(M2));
-        assertEquals(0, c.size());
+        assertSize(0);
         c = newCache(5);
         c.entrySet().retainAll(Arrays.asList(M1, "F", M3, "G", M5));
-        assertEquals(3, c.size());
+        assertSize(3);
         assertTrue(c.entrySet().contains(M1) && c.entrySet().contains(M3)
                 && c.entrySet().contains(M5));
 

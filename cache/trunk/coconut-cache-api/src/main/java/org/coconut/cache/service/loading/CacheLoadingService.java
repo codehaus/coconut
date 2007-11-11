@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.cache.Cache;
+import org.coconut.cache.CacheServices;
 import org.coconut.core.AttributeMap;
 
 /**
@@ -19,7 +21,23 @@ import org.coconut.core.AttributeMap;
  * <p>
  * This service is only available at runtime if a cache loader has been set using
  * {@link CacheLoadingConfiguration#setLoader(CacheLoader)}.
+ * <p>
+ * An instance of this interface can be retrieved by using {@link Cache#getService(Class)}
+ * to look it up.
  * 
+ * <pre>
+ * Cache&lt;?, ?&gt; c = someCache;
+ * CacheEvictionService&lt;?, ?&gt; ces = c.getService(CacheEvictionService.class);
+ * ces.trimToSize(10);
+ * </pre>
+ * 
+ * Or by using {@link CacheServices}
+ * 
+ * <pre>
+ * Cache&lt;?, ?&gt; c = someCache;
+ * CacheEvictionService&lt;?, ?&gt; ces = CacheServices.eviction(c);
+ * ces.setMaximumSize(10000);
+ * </pre> 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>

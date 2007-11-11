@@ -36,4 +36,13 @@ public abstract class CacheExceptionContext<K, V> {
      *         which this failure occured
      */
     public abstract Logger defaultLogger();
+
+    /**
+     * Shutdowns the cache. Either we should only take a runtime exception, or else the
+     * cache needs to wrap the cause in a runtime exception. Well the later is more
+     * flexible, and not that tedios to implement
+     * 
+     * @param cause the cause of the failure
+     */
+    public abstract void shutdownCache(Throwable cause);
 }

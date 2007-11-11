@@ -61,9 +61,9 @@ public class ExpirationPutWithTimeouts extends AbstractExpirationTestBundle {
     @Test
     public void testPutTimeout() {
         expiration().put(1, "B", CacheExpirationService.NEVER_EXPIRE, TimeUnit.SECONDS);
-        assertEquals(1, c.size());
+        assertSize(1);
         expiration().put(1, "C", CacheExpirationService.NEVER_EXPIRE, TimeUnit.SECONDS);
-        assertEquals(1, c.size());
+        assertSize(1);
         assertEquals("C", c.get(1));
     }
 

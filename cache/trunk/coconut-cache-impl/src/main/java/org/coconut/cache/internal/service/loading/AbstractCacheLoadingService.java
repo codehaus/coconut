@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheEntry;
@@ -242,6 +244,9 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
             } catch (Exception e) {
                 v = getExceptionHandler().getExceptionHandler().loadFailed(
                         getExceptionHandler().createContext(), loader, key, attributes, e);
+            } catch (Error e) {
+                e.printStackTrace();
+                throw e;
             }
         }
         return loadSupport.valueLoaded(key, v, attributes);

@@ -50,7 +50,7 @@ public class EventServiceEviction extends AbstractEventTestBundle {
         subscribe(CACHEENTRYEVENT_FILTER);
         rep.rejectAdd = true;
         put(M3);
-        assertEquals(2, c.size());
+        assertSize(2);
     }
     
     @Test
@@ -60,7 +60,7 @@ public class EventServiceEviction extends AbstractEventTestBundle {
 
         c.put(1, "A");
         c.put(2, "B");
-        assertEquals(2, c.size());
+        assertSize(2);
         subscribe(CACHEENTRYEVENT_FILTER);
         rep.rejectUpdate = true;
         c.put(2, "C");

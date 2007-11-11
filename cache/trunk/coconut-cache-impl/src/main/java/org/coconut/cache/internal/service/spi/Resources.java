@@ -23,8 +23,20 @@ public final class Resources {
     private Resources() {}
     // /CLOVER:ON
 
-    public static String lookup(Class c, String key, Object... o) {
-        return RESOURCE_HOLDER.lookup(c, key, o);
+    /**
+     * Looksup a message in the default bundle.
+     * 
+     * @param c
+     *            the class looking up the value
+     * @param key
+     *            the message key
+     * @param o
+     *            additional parameters
+     * @return a message from the default bundle.
+     */
+    public static String lookup(Class<?> c, String key, Object... o) {
+        String k=key.replace(' ', '_');
+        return RESOURCE_HOLDER.lookup(c.getSimpleName() + "." + k, o);
     }
 
 }

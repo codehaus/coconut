@@ -85,7 +85,7 @@ public class ResourceHolder {
         try {
             return bundle.getString(key);
         } catch (MissingResourceException e) {
-//            System.out.println(key + " = TODO Fillout");
+          System.out.println(key + " = TODO Fillout");
 
             throw new RuntimeException("missing entry for key " + key, e);
            //  return "";

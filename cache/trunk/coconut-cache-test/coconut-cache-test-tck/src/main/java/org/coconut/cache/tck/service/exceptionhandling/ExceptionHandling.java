@@ -24,7 +24,13 @@ import org.junit.runner.RunWith;
 
 @RunWith(JMock.class)
 public class ExceptionHandling extends AbstractCacheTCKTest {
-    private static Exception e = new Exception();
+    private static Exception e = new Exception(){
+
+        @Override
+        public void printStackTrace() {
+            throw new UnsupportedOperationException();
+            //super.printStackTrace();
+        }};
 
     Mockery context = new JUnit4Mockery();
 
@@ -109,7 +115,8 @@ public class ExceptionHandling extends AbstractCacheTCKTest {
                 }).setExceptionLogger(logger).c().loading().setLoader(loader));
         loadAndAwait(M1);
         assertSize(1);
-        loadAndAwait(10);
+        loading().load(10);
+        awaitAllLoads();
         assertSize(2);
         assertEquals("foo", c.get(10));
         loadAndAwait(M2);

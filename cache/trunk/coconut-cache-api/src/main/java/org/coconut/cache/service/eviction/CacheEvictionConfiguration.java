@@ -15,7 +15,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * This class is used to configure the eviction service prior to usage.
+ * Used for configuring the eviction service prior to usage.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
@@ -24,32 +24,31 @@ import org.w3c.dom.Element;
  * @param <V>
  *            the type of mapped values
  */
-public class CacheEvictionConfiguration<K, V> extends
-        AbstractCacheServiceConfiguration<K, V> {
-
-    /** The default maximum volume of a cache unless otherwise specified. */
-    public final static long DEFAULT_MAXIMUM_VOLUME = Long.MAX_VALUE;
+public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfiguration<K, V> {
 
     /** The default maximum size of a cache unless otherwise specified. */
     public final static int DEFAULT_MAXIMUM_SIZE = Integer.MAX_VALUE;
 
+    /** The default maximum volume of a cache unless otherwise specified. */
+    public final static long DEFAULT_MAXIMUM_VOLUME = Long.MAX_VALUE;
+
     /** The short name of this service. */
-    public final static String SERVICE_NAME = "Eviction";
+    public final static String SERVICE_NAME = "eviction";
 
     /** The default settings, used when xml-serializing this configuration. */
     private final static CacheEvictionConfiguration<?, ?> DEFAULT = new CacheEvictionConfiguration<Object, Object>();
 
-    /** XML tag for maximum volume. */
-    private final static String MAXIMUM_VOLUME = "max-volume";
-
     /** XML tag for maximum size. */
     private final static String MAXIMUM_SIZE = "max-size";
 
-    /** The maximum volume of the cache. */
-    private long maximumVolume;
+    /** XML tag for maximum volume. */
+    private final static String MAXIMUM_VOLUME = "max-volume";
 
     /** The maximum size of the cache. */
     private int maximumSize;
+
+    /** The maximum volume of the cache. */
+    private long maximumVolume;
 
     /** The replacement policy used for evicting elements. */
     private ReplacementPolicy<?> replacementPolicy;
@@ -62,20 +61,8 @@ public class CacheEvictionConfiguration<K, V> extends
     }
 
     /**
-     * Returns the maximum allowed volume of the cache or {@link Long#MAX_VALUE} if there
-     * is no limit.
-     * 
-     * @return the maximum allowed volume of the cache or Long.MAX_VALUE if there is no
-     *         limit.
-     * @see #setMaximumVolume(long)
-     */
-    public long getMaximumVolume() {
-        return maximumVolume;
-    }
-
-    /**
      * Returns the maximum allowed size of the cache or {@link Integer#MAX_VALUE} if there
-     * is no limit.
+     * is no upper limit.
      * 
      * @return the maximum allowed size of the cache or Integer.MAX_VALUE if there is no
      *         limit.
@@ -83,6 +70,18 @@ public class CacheEvictionConfiguration<K, V> extends
      */
     public int getMaximumSize() {
         return maximumSize;
+    }
+
+    /**
+     * Returns the maximum allowed volume of the cache or {@link Long#MAX_VALUE} if there
+     * is no upper limit.
+     * 
+     * @return the maximum allowed volume of the cache or Long.MAX_VALUE if there is no
+     *         limit.
+     * @see #setMaximumVolume(long)
+     */
+    public long getMaximumVolume() {
+        return maximumVolume;
     }
 
     /**
@@ -97,30 +96,6 @@ public class CacheEvictionConfiguration<K, V> extends
         return replacementPolicy;
     }
 
-
-    /**
-     * Sets that maximum number of elements that a cache can contain. If the limit is
-     * reached the cache must evict existing elements before adding new elements. For
-     * example, if the limit is 10 elements and the cache currently holds 10 elements.
-     * Then, if a user tries to add a new element the cache must choose one of the 10
-     * elements to remove from the cache before it inserting the new element.
-     * <p>
-     * The default value is Integer.MAX_VALUE. Which roughly translates to no limit on the
-     * number of elements.
-     * TODO fix
-     * @param maximumVolume
-     *            the maximum volume.
-     * @return this configuration
-     */
-    public CacheEvictionConfiguration<K, V> setMaximumVolume(long maximumVolume) {
-        if (maximumVolume < 0) {
-            throw new IllegalArgumentException(
-                    "maximumVolume must be a non-negative number, was " + maximumVolume);
-        }
-        this.maximumVolume = maximumVolume;
-        return this;
-    }
-
     /**
      * Sets that maximum number of elements that a cache can hold. If the limit is reached
      * the cache must evict an existing element(s) before adding a new element. For
@@ -129,8 +104,8 @@ public class CacheEvictionConfiguration<K, V> extends
      * to remove from the cache before it inserts the new element. As an alternative the
      * cache might choose to keep the 10 existing elements and not add the new element.
      * For example, if it estimates that the likelihood of requesting anyone of the 10
-     * elements in the near future are higher then the likelihood of requsting the new
-     * element.
+     * elements in the near future are higher then the likelihood of new element being
+     * requested.
      * <p>
      * To indicate that a cache can hold an unlimited number of elements, specify
      * {@link Integer#MAX_VALUE}. This is also the default value.
@@ -155,6 +130,29 @@ public class CacheEvictionConfiguration<K, V> extends
     }
 
     /**
+     * Sets that maximum number of elements that a cache can contain. If the limit is
+     * reached the cache must evict existing elements before adding new elements. For
+     * example, if the limit is 10 elements and the cache currently holds 10 elements.
+     * Then, if a user tries to add a new element the cache must choose one of the 10
+     * elements to remove from the cache before it inserting the new element.
+     * <p>
+     * The default value is Integer.MAX_VALUE. Which roughly translates to no limit on the
+     * number of elements. TODO fix
+     * 
+     * @param maximumVolume
+     *            the maximum volume.
+     * @return this configuration
+     */
+    public CacheEvictionConfiguration<K, V> setMaximumVolume(long maximumVolume) {
+        if (maximumVolume < 0) {
+            throw new IllegalArgumentException("maximumVolume must be a non-negative number, was "
+                    + maximumVolume);
+        }
+        this.maximumVolume = maximumVolume;
+        return this;
+    }
+
+    /**
      * Sets the replacement policy that decides which of the currently held elements are
      * evicted in order to make room for new elements. If no replacement policy is
      * specified the cache may choose which elements to evict anyway possible. Note:
@@ -166,11 +164,13 @@ public class CacheEvictionConfiguration<K, V> extends
      * replacement policy. The cache must throw an exception at construction time, if the
      * users tries to specify any value but <code>null</code>. For example, it is often
      * impossible to implement a highly concurrent cache while at the same time allowing
-     * users to specify arbitrary implementations of a replacement policy. This
-     * observation is generally refered to as the <code>inheritance anomaly</code>.
+     * users to specify arbitrary implementations of a replacement policy. This mismatch
+     * between the inheritance and concurrency is generally refered to as the
+     * <code>inheritance anomaly</code>.
      * <p>
      * The cache will, unless otherwise specified, pass instances of
-     * {@link org.coconut.cache.CacheEntry} to {@link ReplacementPolicy#add(Object, org.coconut.core.AttributeMap)} and
+     * {@link org.coconut.cache.CacheEntry} to
+     * {@link ReplacementPolicy#add(Object, org.coconut.core.AttributeMap)} and
      * {@link ReplacementPolicy#update(int, Object, org.coconut.core.AttributeMap)}
      * 
      * @param policy

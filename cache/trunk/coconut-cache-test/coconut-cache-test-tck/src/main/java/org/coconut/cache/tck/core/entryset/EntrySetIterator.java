@@ -71,7 +71,7 @@ public class EntrySetIterator extends AbstractCacheTCKTest {
                 iter.remove();
             }
         }
-        assertEquals(3, c.size());
+        assertSize(3);
         assertTrue(c.entrySet().contains(M1));
         assertFalse(c.entrySet().contains(M2));
         assertTrue(c.entrySet().contains(M3));

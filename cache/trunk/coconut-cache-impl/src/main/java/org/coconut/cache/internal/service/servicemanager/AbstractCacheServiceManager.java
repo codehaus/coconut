@@ -18,15 +18,15 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
         }
         this.cache = cache;
     }
-
+    /** {@inheritDoc} */
     public boolean isShutdown() {
         return getRunState().isShutdown();
     }
-
+    /** {@inheritDoc} */
     public boolean isStarted() {
         return getRunState().isStarted();
     }
-
+    /** {@inheritDoc} */
     public boolean isTerminated() {
         return getRunState().isTerminated();
     }
@@ -63,5 +63,17 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
         public boolean isTerminating() {
             return this == SHUTDOWN || this == STOP;
         }
+    }
+
+    public void shutdown(Throwable cause) {
+        //First thing we must do is set the exception so later invocations
+        //of methods on the cache will throw it.
+        //after that we might want to try and shutdown the cache
+        //perhaps we can have a terminateCache(Throwable cause)
+        //what about terminatation of services??
+        //lots to think about
+        shutdown();
+        
+        throw new UnsupportedOperationException();
     }
 }

@@ -7,11 +7,29 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
+import org.coconut.cache.CacheServices;
 
 /**
  * A service used to control the expiration of cache elements at runtime. See the package
  * documentation for a detailed explanation of the expiration service.
  * 
+ * <p>
+ * An instance of this interface can be retrieved by using {@link Cache#getService(Class)}
+ * to look it up.
+ * 
+ * <pre>
+ * Cache&lt;?, ?&gt; c = someCache;
+ * CacheEvictionService&lt;?, ?&gt; ces = c.getService(CacheEvictionService.class);
+ * ces.trimToSize(10);
+ * </pre>
+ * 
+ * Or by using {@link CacheServices}
+ * 
+ * <pre>
+ * Cache&lt;?, ?&gt; c = someCache;
+ * CacheEvictionService&lt;?, ?&gt; ces = CacheServices.eviction(c);
+ * ces.setMaximumSize(10000);
+ * </pre>
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>

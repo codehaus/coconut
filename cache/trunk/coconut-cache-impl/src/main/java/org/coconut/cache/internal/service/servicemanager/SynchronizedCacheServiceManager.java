@@ -213,4 +213,9 @@ public class SynchronizedCacheServiceManager implements InternalCacheServiceMana
             return delegate.toString();
         }
     }
+
+    public void shutdown(Throwable cause) {
+       
+        delegate.shutdown(cause);
+    }
 }

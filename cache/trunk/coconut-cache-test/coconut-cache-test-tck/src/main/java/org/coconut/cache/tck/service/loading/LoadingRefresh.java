@@ -192,5 +192,20 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
             return element.getKey().equals(1);
         }
     }
+    
+    protected void waitAndAssertGet(Map.Entry<Integer, String>... e) throws InterruptedException {
+        for (Map.Entry<Integer, String> m : e) {
+            for (int i = 0; i < 100; i++) {
+                if (c.get(m.getKey()).equals(m.getValue())) {
+                    break;
+                } else {
+                    Thread.sleep(15);
+                }
+                if (i == 99) {
+                    throw new AssertionError("Value did not change");
+                }
+            }
+        }
+    }
 
 }

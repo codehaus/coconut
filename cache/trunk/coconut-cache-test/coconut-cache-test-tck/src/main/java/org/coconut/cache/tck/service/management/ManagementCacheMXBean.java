@@ -71,12 +71,12 @@ public class ManagementCacheMXBean extends AbstractCacheTCKTest {
 
     @Test
     public void clear() {
-        assertEquals(0, c.size());
+        assertSize(0);
         put(M1);
         put(M2);
-        assertEquals(2, c.size());
+        assertSize(2);
         mxBean.clear();
-        assertEquals(0, c.size());
+        assertSize(0);
     }
 
 }

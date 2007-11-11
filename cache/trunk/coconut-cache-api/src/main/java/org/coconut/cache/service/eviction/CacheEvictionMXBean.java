@@ -3,48 +3,15 @@
  */
 package org.coconut.cache.service.eviction;
 
+import org.coconut.cache.Cache;
+
 /**
- * The management interface for the eviction engine of a cache.
+ * The management interface for the eviction service.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
 public interface CacheEvictionMXBean {
-
-    /**
-     * Keeps evicting entries until the size of the cache is equal to the specified size.
-     * If the specified size is greater then the current size of the cache no action is
-     * taken.
-     * 
-     * @param size
-     *            the number of elements to trim the cache down to
-     * @throws IllegalArgumentException
-     *             if the specified size is negative
-     */
-    void trimToSize(int size);
-
-    /**
-     * Keeps evicting entries until the volume of the cache is equal to the specified
-     * volume. If the specified volume is greater then the current volume no action is
-     * taken.
-     * 
-     * @param volume
-     *            the volume to trim the cache down to
-     * @throws IllegalArgumentException
-     *             if the specified volume is negative
-     */
-    void trimToVolume(long volume);
-
-    /**
-     * Returns the maximum allowed volume of the cache or {@link Long#MAX_VALUE} if there
-     * is no limit.
-     * 
-     * @return the maximum allowed volume of the cache or Long.MAX_VALUE if there is no
-     *         limit.
-     * @see #setMaximumVolume(long)
-     * @see org.coconut.cache.Cache#getVolume()
-     */
-    long getMaximumVolume();
 
     /**
      * Returns the maximum number of elements that this cache can hold. If the cache has
@@ -53,26 +20,20 @@ public interface CacheEvictionMXBean {
      * @return the maximum number of elements that this cache can hold or
      *         {@link Integer#MAX_VALUE} if no such limit exist
      * @see #setMaximumSize(int)
-     * @see org.coconut.cache.Cache#size()
+     * @see Cache#size()
      */
     int getMaximumSize();
 
     /**
-     * Sets that maximum volume of the cache. The total volume of the cache is the sum of
-     * all the individual element sizes. If the limit is reached the cache must evict
-     * existing elements before adding new elements.
-     * <p>
-     * To indicate that a cache can have an unlimited volume, {@link Long#MAX_VALUE}
-     * should be specified.
+     * Returns the maximum allowed volume of the cache or {@link Long#MAX_VALUE} if there
+     * is no limit.
      * 
-     * @param maximumVolume
-     *            the maximum volume.
-     * @throws IllegalArgumentException
-     *             if the specified maximum volume is negative
-     * @throws UnsupportedOperationException
-     *             if the cache does not support changing the maximum volume at runtime
+     * @return the maximum allowed volume of the cache or {@link Long#MAX_VALUE} if there is no
+     *         limit.
+     * @see #setMaximumVolume(long)
+     * @see Cache#getVolume()
      */
-    void setMaximumVolume(long maximumVolume);
+    long getMaximumVolume();
 
     /**
      * Sets that maximum number of elements that the cache is allowed to contain. If the
@@ -93,4 +54,45 @@ public interface CacheEvictionMXBean {
      *             if the cache does not support changing the maximum size at runtime
      */
     void setMaximumSize(int maximumSize);
+
+    /**
+     * Sets that maximum volume of the cache. The total volume of the cache is the sum of
+     * all the individual element sizes. If the limit is reached the cache must evict
+     * existing elements before adding new elements.
+     * <p>
+     * To indicate that a cache can have an unlimited volume, {@link Long#MAX_VALUE}
+     * should be specified.
+     * 
+     * @param maximumVolume
+     *            the maximum volume.
+     * @throws IllegalArgumentException
+     *             if the specified maximum volume is negative
+     * @throws UnsupportedOperationException
+     *             if the cache does not support changing the maximum volume at runtime
+     */
+    void setMaximumVolume(long maximumVolume);
+
+    /**
+     * Keeps evicting entries until the size of the cache is equal to the specified size.
+     * If the specified size is greater then the current size of the cache no action is
+     * taken.
+     * 
+     * @param size
+     *            the number of elements to trim the cache down to
+     * @throws IllegalArgumentException
+     *             if the specified size is negative
+     */
+    void trimToSize(int size);
+
+    /**
+     * Keeps evicting entries until the volume of the cache is equal to or less then the
+     * specified volume. If the specified volume is greater then the current volume no
+     * action is taken.
+     * 
+     * @param volume
+     *            the volume to trim the cache down to
+     * @throws IllegalArgumentException
+     *             if the specified volume is negative
+     */
+    void trimToVolume(long volume);
 }
