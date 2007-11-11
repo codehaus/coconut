@@ -144,6 +144,11 @@
           <licenseLocation>
             ${user.home}/licenses/coconut-clover.license
           </licenseLocation>
+            <excludes>
+    <exclude>**/tck/service/**/*.java</exclude>
+    <!-- <exclude>**/examples/**/*.java</exclude> -->
+    <!-- <exclude>**/test/**/*.java</exclude>  -->
+  </excludes>
           <jdk>1.5</jdk>
         </configuration>
       </plugin>
