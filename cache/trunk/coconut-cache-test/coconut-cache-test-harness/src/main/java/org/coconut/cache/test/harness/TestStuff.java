@@ -1,6 +1,7 @@
 package org.coconut.cache.test.harness;
 
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.defaults.SynchronizedCache;
 import org.coconut.cache.test.CacheTestRunner;
 import org.coconut.cache.test.operations.CacheOperations;
 import org.coconut.cache.test.operations.LoadingServiceOperations;
@@ -17,7 +18,7 @@ public class TestStuff {
         conf.setProperty(CacheOperations.Clear.NAME, new Float(0.002).toString());
         conf.setProperty(LoadingServiceOperations.ForceLoad.NAME, new Float(0.3).toString());
 
-        CacheTestRunner htr = new CacheTestRunner(conf);
+        CacheTestRunner htr = new CacheTestRunner(conf,SynchronizedCache.class);
         htr.start();
     }
 }

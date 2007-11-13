@@ -18,7 +18,6 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheServices;
-import org.coconut.cache.defaults.SynchronizedCache;
 import org.coconut.cache.test.keys.RandomKeyGenerator;
 import org.coconut.cache.test.operations.CacheOperations;
 import org.coconut.cache.test.operations.LoadingServiceOperations;
@@ -40,17 +39,17 @@ public class CacheTestRunner {
 
     private final Cache c;
 
-    public CacheTestRunner(InputStream conf) throws Exception {
-        this(CacheConfiguration.loadConfigurationFrom(conf));
-    }
-    
-    public CacheTestRunner(String conf) throws Exception {
-        this(CacheConfiguration.loadConfigurationFrom(new FileInputStream(conf)));
+    public CacheTestRunner(InputStream conf, Class<? extends Cache> type) throws Exception {
+        this(CacheConfiguration.loadConfigurationFrom(conf), type);
     }
 
-    public CacheTestRunner(CacheConfiguration<?, ?> conf) {
+    public CacheTestRunner(String conf, Class<? extends Cache> type) throws Exception {
+        this(CacheConfiguration.loadConfigurationFrom(new FileInputStream(conf)), type);
+    }
+
+    public CacheTestRunner(CacheConfiguration<?, ?> conf, Class<? extends Cache> type) {
         this.configuration = conf;
-        c = conf.newCacheInstance(SynchronizedCache.class);
+        c = conf.newCacheInstance(type);
         for (Object o : CacheServices.servicemanager(c).getAllServices().values()) {
             p.registerComponentInstance(o);
         }

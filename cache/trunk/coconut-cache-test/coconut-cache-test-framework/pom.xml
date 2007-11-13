@@ -17,5 +17,9 @@
       <artifactId>coconut-cache-api</artifactId>
       <version>${project.version}</version>
     </dependency>
+        <dependency>
+      <groupId>org.coconut.test</groupId>
+      <artifactId>coconut-test-framework</artifactId>
+    </dependency>
   </dependencies>
 </project>
