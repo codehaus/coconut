@@ -71,5 +71,5 @@ public interface ValueLoader<K, V> {
      * @return the value to which the specified should be mapped, or <tt>null</tt> if the
      *         corresponding value could not be found.
      */
-    V load(K key); /* Throws Exception??????????? */
+    V load(K key);
 }

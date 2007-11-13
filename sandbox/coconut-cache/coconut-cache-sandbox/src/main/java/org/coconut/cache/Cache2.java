@@ -43,5 +43,51 @@ public interface Cache2<K, V> extends Cache<K, V> {
      * href="http://org.coconut.codehaus.org/cache/cache-implementations.html">here</a>.
      */
 
-    List<?> getAllServices();
+    
+
+
+//  /**
+//   * Performs cleanup of the cache. This might be everything from persisting stale data
+//   * to disk to adapting the cache with a better eviction policy given the current
+//   * access pattern. This is done to avoid paying the cost upfront by application
+//   * threads when accessing entries in the cache through {@link #get(Object)} or
+//   * {@link #getAll(Collection)}.
+//   * <p>
+//   * Regular eviction is typically scheduled through
+//   * {@link org.coconut.cache.service.eviction.CacheEvictionConfiguration#setScheduledEvictionAtFixedRate(long, java.util.concurrent.TimeUnit)}
+//   * If this is not set it is the responsibility of the user to regular call this
+//   * method.
+//   */
+//  void evict();
+
+    
+// /**
+// * Associates the specified value with the specified key in this cache (optional
+// * operation). If the cache previously contained a mapping for this key, the old value
+// * is replaced by the specified value. (A cache <tt>m</tt> is said to contain a
+// * mapping for a key <tt>k</tt> if and only if
+// * {@link #containsKey(Object) m.containsKey(k)} would return <tt>true</tt>.))
+// *
+// * @param key
+// * key with which the specified value is to be associated.
+// * @param value
+// * value to be associated with the specified key.
+// * @param attributes
+// * a map of additional attributes
+// * @return previous value associated with specified key, or <tt>null</tt> if there
+// * was no mapping for key.
+// * @throws UnsupportedOperationException
+// * if the <tt>put</tt> operation is not supported by this cache.
+// * @throws ClassCastException
+// * if the class of the specified key or value prevents it from being
+// * stored in this cache.
+// * @throws IllegalArgumentException
+// * if some aspect of this key or value prevents it from being stored in
+// * this cache.
+// * @throws NullPointerException
+// * if either the specified key, value or attributes is <tt>null</tt>.
+// * @see Map#put(Object, Object)
+// */
+// V put(K key, V value, AttributeMap attributes);
+
 }

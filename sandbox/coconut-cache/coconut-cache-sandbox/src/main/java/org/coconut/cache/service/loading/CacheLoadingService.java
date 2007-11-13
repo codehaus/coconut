@@ -8,7 +8,10 @@ import java.util.Map;
 import java.util.concurrent.Future;
 
 import org.coconut.cache.CacheEntry;
+import org.coconut.core.AttributeMap;
 import org.coconut.core.Callback;
+import org.coconut.core.Transformer;
+import org.coconut.filter.Filter;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -16,6 +19,23 @@ import org.coconut.core.Callback;
  */
 public interface CacheLoadingService<K, V> {
 
+
+    /**
+     * Attempts to reload all the cache entries where the {@link Filter#accept(Object)}
+     * method of the specified filter returns true .
+     * 
+     * @param filter
+     *            the filter to test cache entries against
+     */
+    void filteredLoad(Filter<? super CacheEntry<K, V>> filter);
+
+    void filteredLoad(Filter<? super CacheEntry<K, V>> filter,
+            AttributeMap defaultAttributes);
+
+    void filteredLoad(Filter<? super CacheEntry<K, V>> filter,
+            Transformer<CacheEntry<K, V>, AttributeMap> attributeTransformer);
+
+    
     Future<?> load(K key, CacheLoader<K, V> loader);
 
     Future<?> loadAll(Collection<? extends K> keys, CacheLoader<K, V> loader);
