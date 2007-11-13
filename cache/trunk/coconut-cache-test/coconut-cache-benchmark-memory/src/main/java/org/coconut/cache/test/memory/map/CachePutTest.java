@@ -5,7 +5,7 @@ package org.coconut.cache.test.memory.map;
 
 import org.coconut.cache.test.adapter.CacheAdapterFactory;
 import org.coconut.cache.test.adapter.CacheTestAdapter;
-import org.coconut.cache.test.KeyValues;
+import org.coconut.cache.test.keys.KeyValues;
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$

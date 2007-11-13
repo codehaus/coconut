@@ -75,7 +75,7 @@ public class CacheConfiguration<K, V> {
                     CacheEvictionConfiguration.class);
 
     /** A Map of additional properties. */
-    private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    private final Map<String, String> additionalProperties = new HashMap<String, String>();
 
     /** The clock that should be used for timing. */
     private Clock clock = Clock.DEFAULT_CLOCK;
@@ -246,10 +246,10 @@ public class CacheConfiguration<K, V> {
      * Returns a map of additional properties for the cache.
      * 
      * @return a map of additional properties for the cache.
-     * @see #setProperty(String, Object)
+     * @see #setProperty(String, String)
      */
-    public Map<String, ?> getProperties() {
-        return Collections.unmodifiableMap(new HashMap<String, Object>(additionalProperties));
+    public Map<String, String> getProperties() {
+        return Collections.unmodifiableMap(new HashMap<String, String>(additionalProperties));
     }
 
     /**
@@ -263,7 +263,7 @@ public class CacheConfiguration<K, V> {
      * @throws NullPointerException
      *             if key is <tt>null</tt>
      */
-    public Object getProperty(String key) {
+    public String getProperty(String key) {
         return getProperty(key, null);
     }
 
@@ -281,11 +281,11 @@ public class CacheConfiguration<K, V> {
      * @throws NullPointerException
      *             if key is <tt>null</tt>
      */
-    public Object getProperty(String key, Object defaultValue) {
+    public String getProperty(String key, String defaultValue) {
         if (key == null) {
             throw new NullPointerException("key is null");
         }
-        Object result = additionalProperties.get(key);
+        String result = additionalProperties.get(key);
         return result == null ? defaultValue : result;
     }
 
@@ -447,11 +447,11 @@ public class CacheConfiguration<K, V> {
      * @return this configuration
      * @see #getProperties()
      * @see #getProperty(String)
-     * @see #getProperty(String, Object)
+     * @see #getProperty(String, String)
      * @throws NullPointerException
      *             if the specified key is <tt>null</tt>
      */
-    public CacheConfiguration<K, V> setProperty(String key, Object value) {
+    public CacheConfiguration<K, V> setProperty(String key, String value) {
         if (key == null) {
             throw new NullPointerException("key is null");
         }

@@ -36,18 +36,18 @@ public class CacheWorkerConfiguration extends AbstractCacheServiceConfiguration 
 
     /**
      * Returns the CacheWorkerManager or <code>null</code> if no cache worker manager
-     * has been configured.
+     * has been set.
      * 
      * @return the CacheWorkerManager or <code>null</code> if no cache worker manager
-     *         has been configured
+     *         has been set
      */
     public CacheWorkerManager getWorkerManager() {
         return cacheWorkerManager;
     }
 
     /**
-     * Sets the CacheWorkerManager used by the cache. If no CacheWorkerManager the cache
-     * will create a worker manager to use.
+     * Sets the CacheWorkerManager used by the cache. If no CacheWorkerManager is set the
+     * cache will create a worker manager to use.
      * 
      * @param workerManager
      *            the worker manager to use for the cache
@@ -73,5 +73,4 @@ public class CacheWorkerConfiguration extends AbstractCacheServiceConfiguration 
         addAndsaveObject(doc, parent, CACHE_WORKER_MANAGER_TAG, getResourceBundle(), getClass(),
                 "saveOfCacheWorkerManagerFailed", cacheWorkerManager);
     }
-
 }

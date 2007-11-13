@@ -5,6 +5,9 @@ package org.coconut.cache.spi;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -14,6 +17,7 @@ import org.coconut.internal.util.XmlUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * XmlConfigurator is used to load and save {@link org.coconut.cache.CacheConfiguration}
@@ -39,6 +43,14 @@ public class XmlConfigurator {
 
     /** The root tag for a cache instance. */
     static final String CACHE_TAG = "cache";
+
+    /** The properties tag for a cache instance. */
+    static final String PROPERTIES_TAG = "properties";
+
+    /** The property tag for a cache instance. */
+    static final String PROPERTY_TAG = "property";
+
+    static final String PROPERTY_KEY_ATTR = "key";
 
     /** The type of the cache. */
     static final String CACHE_TYPE_ATTR = "type";
@@ -174,6 +186,16 @@ public class XmlConfigurator {
             base.setProperty(XmlConfigurator.CACHE_INSTANCE_TYPE, cacheElement
                     .getAttribute(CACHE_TYPE_ATTR));
         }
+        Element properties = (Element) cacheElement.getElementsByTagName(PROPERTIES_TAG).item(0);
+        if (properties != null) {
+            NodeList list = cacheElement.getElementsByTagName(PROPERTY_TAG);
+            for (int i = 0; i < list.getLength(); i++) {
+                Element e = ((Element) list.item(i));
+                String key = e.getAttribute(PROPERTY_KEY_ATTR);
+                String value = e.getTextContent();
+                base.setProperty(key, value);
+            }
+        }
         for (AbstractCacheServiceConfiguration<K, V> c : base.getAllConfigurations()) {
             readCacheService(cacheElement, c);
         }
@@ -240,6 +262,18 @@ public class XmlConfigurator {
         if (cc.getProperties().containsKey(XmlConfigurator.CACHE_INSTANCE_TYPE)) {
             cacheElement.setAttribute(CACHE_TYPE_ATTR, cc.getProperty(CACHE_INSTANCE_TYPE)
                     .toString());
+        }
+        if (cc.getProperties().size() > 0) {
+            Element ee = doc.createElement(PROPERTIES_TAG);
+
+            for (Map.Entry<String, String> e : new TreeMap<String, String>(cc.getProperties())
+                    .entrySet()) {
+                Element property = doc.createElement(PROPERTY_TAG);
+                property.setAttribute(PROPERTY_KEY_ATTR, e.getKey());
+                property.setTextContent(e.getValue());
+                ee.appendChild(property);
+            }
+            cacheElement.appendChild(ee);
         }
         /* writeService other configurations */
         for (AbstractCacheServiceConfiguration<?, ?> p : cc.getAllConfigurations()) {

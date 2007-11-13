@@ -3,16 +3,25 @@
  */
 package org.coconut.cache.internal.service.worker;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
+import org.coconut.cache.CacheServices;
+import org.coconut.cache.internal.service.servicemanager.CompositeService;
 import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
+import org.coconut.cache.service.servicemanager.AsynchronousShutdownObject;
+import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.worker.CacheWorkerConfiguration;
 import org.coconut.cache.service.worker.CacheWorkerManager;
 import org.coconut.core.AttributeMap;
 
-public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService {
+public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService implements
+        CompositeService {
 
     private final String cacheName;
 
@@ -37,14 +46,13 @@ public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService {
 
     class SameThreadCacheWorker extends CacheWorkerManager {
 
-        private final ExecutorService es;
+        final ExecutorService es;
 
         SameThreadCacheWorker() {
             es = Executors.newCachedThreadPool(new WorkerUtils.DefaultThreadFactory("cache-"
                     + cacheName));
         }
 
-        @Override
         public ExecutorService getExecutorService(Class<?> service, AttributeMap attributes) {
             return es;
         }
@@ -54,6 +62,30 @@ public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService {
                 AttributeMap attributes) {
             throw new UnsupportedOperationException();
         }
+
+        @Override
+        public void shutdown() {
+            es.shutdown();
+            csm.getService(CacheServiceManagerService.class).shutdownServiceAsynchronously(
+                    new AsynchronousShutdownObject() {
+                        public boolean awaitTermination(long timeout, TimeUnit unit)
+                                throws InterruptedException {
+                            return es.awaitTermination(timeout, unit);
+                        }
+
+                        public boolean isTerminated() {
+                            return es.isTerminated();
+                        }
+
+                        public void shutdownNow() {
+                            es.shutdownNow();
+                        }
+                    });
+        }
+    }
+
+    public Collection<?> getChildServices() {
+        return Arrays.asList(worker);
     }
 
 }

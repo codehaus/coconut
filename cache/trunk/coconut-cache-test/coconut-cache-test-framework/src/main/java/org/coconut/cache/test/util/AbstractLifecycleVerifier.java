@@ -21,9 +21,7 @@ public class AbstractLifecycleVerifier implements CacheLifecycle {
 
     private Cache<?, ?> c;
 
-    public AbstractLifecycleVerifier() {
-
-    }
+    public AbstractLifecycleVerifier() {    }
 
     public AbstractLifecycleVerifier(Cache<?, ?> c, CacheConfiguration<?, ?> conf) {
         this.c = c;

@@ -318,12 +318,12 @@ public class DefaultCacheLoaderServiceTest extends MockTestCase {
 
         public CacheWorkerManager getManager() {
             return new CacheWorkerManager(){
-                @Override
+                
                 public ExecutorService getExecutorService(Class<?> service,
                         AttributeMap attributes) {
                     return MockTestCase.mockDummy(ExecutorService.class);
                 }
-                @Override
+                
                 public ScheduledExecutorService getScheduledExecutorService(
                         Class<?> service, AttributeMap attributes) {
                     return MockTestCase.mockDummy(ScheduledExecutorService.class);

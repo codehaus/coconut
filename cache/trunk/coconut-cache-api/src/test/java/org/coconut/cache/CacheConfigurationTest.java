@@ -178,18 +178,18 @@ public class CacheConfigurationTest {
      */
     @Test
     public void properties() {
-        conf.setProperty("a", 1);
-        conf.setProperty("b", 2);
-        assertEquals(1, conf.getProperty("a"));
-        assertEquals(2, conf.getProperty("b"));
+        conf.setProperty("a", "A");
+        conf.setProperty("b", "B");
+        assertEquals("A", conf.getProperty("a"));
+        assertEquals("B", conf.getProperty("b"));
         assertNull(conf.getProperty("c"));
         assertNull(conf.getProperty("c", null));
-        assertEquals(1, conf.getProperties().get("a"));
-        assertEquals(2, conf.getProperties().get("b"));
+        assertEquals("A", conf.getProperties().get("a"));
+        assertEquals("B", conf.getProperties().get("b"));
         assertNull(conf.getProperties().get("c"));
-        assertEquals(2, conf.getProperty("b", 3));
-        assertEquals(2, conf.getProperty("b", null));
-        assertEquals(3, conf.getProperty("c", 3));
+        assertEquals("B", conf.getProperty("b", "C"));
+        assertEquals("B", conf.getProperty("b", null));
+        assertEquals("C", conf.getProperty("c", "C"));
         conf.setProperty("b", null);
         assertNull(conf.getProperty("b"));
     }
@@ -220,7 +220,7 @@ public class CacheConfigurationTest {
      */
     @Test(expected = NullPointerException.class)
     public void propertiesSetNPE() {
-        conf.setProperty(null, 1);
+        conf.setProperty(null, "A");
     }
 
     /**

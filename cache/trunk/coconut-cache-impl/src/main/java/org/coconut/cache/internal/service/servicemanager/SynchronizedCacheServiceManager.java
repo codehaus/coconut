@@ -3,10 +3,11 @@
  */
 package org.coconut.cache.internal.service.servicemanager;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -34,7 +35,7 @@ public class SynchronizedCacheServiceManager implements InternalCacheServiceMana
 
         private final ReentrantLock mainLock = new ReentrantLock();
 
-        private final CopyOnWriteArrayList<ServiceHolder> missing = new CopyOnWriteArrayList<ServiceHolder>();
+        private final List<ServiceHolder> missing = new ArrayList<ServiceHolder>();
 
         /**
          * Wait condition to support awaitTermination
@@ -67,6 +68,7 @@ public class SynchronizedCacheServiceManager implements InternalCacheServiceMana
         }
 
         protected void tryTerminate() {
+            //TODO fix missing, not threadSafe
             for (Iterator<ServiceHolder> iterator = missing.iterator(); iterator.hasNext();) {
                 if (iterator.next().aso.isTerminated()) {
                     iterator.remove();
@@ -119,12 +121,7 @@ public class SynchronizedCacheServiceManager implements InternalCacheServiceMana
         public synchronized void shutdownNow() {
             synchronized (mutex) {
                 shutdown();
-                for (ServiceHolder sh : super.internalServices) {
-                    if (sh.aso != null && !sh.aso.isTerminated()) {
-                        sh.aso.shutdownNow();
-                    }
-                }
-                for (ServiceHolder sh : super.externalServices) {
+                for (ServiceHolder sh : super.services) {
                     if (sh.aso != null && !sh.aso.isTerminated()) {
                         sh.aso.shutdownNow();
                     }

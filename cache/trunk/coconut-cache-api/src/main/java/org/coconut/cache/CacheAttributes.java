@@ -10,12 +10,9 @@ import org.coconut.core.Clock;
 
 /**
  * The main purpose of a cache attribute is to support custom metadata associated with
- * each element in the cache. This cache can used set and retrieve predefined cache
- * attributes from an AttributeMap in a typesafe manner. Currently these attributes are
- * only in use for cache loaders. See
+ * each element in the cache. Currently is only possible to set properties when adding
+ * elements through a cache loader . See
  * {@link org.coconut.cache.service.loading.CacheLoader} for examples.
- * <p>
- * The following is a list of the default provided attributes
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$

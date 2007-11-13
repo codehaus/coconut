@@ -6,6 +6,7 @@ package org.coconut.cache.service.worker;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.core.AttributeMap;
 
 /**
@@ -15,7 +16,15 @@ import org.coconut.core.AttributeMap;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public abstract class CacheWorkerManager {
+public abstract class CacheWorkerManager extends AbstractCacheLifecycle {
+
+    public CacheWorkerManager() {
+        super();
+    }
+
+    public CacheWorkerManager(String name) {
+        super(name);
+    }
 
     /**
      * Returns a ExecutorService that can be used to asynchronously execute tasks for the
@@ -41,7 +50,7 @@ public abstract class CacheWorkerManager {
      *            a map of attributes that is passed to the concrete implementation of the
      *            cache worker manager
      * @return a ScheduledExecutorService that can be used to asynchronously schedule
-     * tasks for the specified service
+     *         tasks for the specified service
      */
     public abstract ScheduledExecutorService getScheduledExecutorService(Class<?> service,
             AttributeMap attributes);

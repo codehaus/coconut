@@ -32,7 +32,7 @@ public class CacheWorkerManagerTest {
 
     class Manager extends CacheWorkerManager {
 
-        @Override
+        
         public ExecutorService getExecutorService(Class<?> service,
                 AttributeMap attributes) {
             s1 = service;
@@ -40,7 +40,7 @@ public class CacheWorkerManagerTest {
             return es;
         }
 
-        @Override
+        
         public ScheduledExecutorService getScheduledExecutorService(Class<?> service,
                 AttributeMap attributes) {
             s2 = service;

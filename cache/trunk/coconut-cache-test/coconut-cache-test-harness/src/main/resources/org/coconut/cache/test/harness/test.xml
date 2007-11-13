@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<cache-config version="0.0.4">
+    <cache name="">
+        <properties>
+            <property key="test.opr.cache.clear">0.0020</property>
+            <property key="test.opr.cache.get">50.0</property>
+            <property key="test.opr.loading.forceLoad">0.3</property>
+            <property key="test.opr.loading.load">1.0</property>
+        </properties>
+        <loading>
+            <loader type="org.coconut.cache.test.util.SimpelLoader"/>
+        </loading>
+        <eviction>
+            <max-size>5000</max-size>
+        </eviction>
+    </cache>
+</cache-config>

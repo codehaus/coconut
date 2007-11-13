@@ -6,7 +6,6 @@ package org.coconut.cache.internal.service.entry;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.core.AttributeMap;
-import org.coconut.core.Clock;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
