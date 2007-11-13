@@ -87,16 +87,6 @@ import org.coconut.core.AttributeMap;
 public interface CacheLoader<K, V> {
 
     /**
-     * Loads multiple values. This might for be usefull for performance reasons, for
-     * example, if the values are to be retrieved from a remote host.
-     * 
-     * @param loadCallbacks
-     *            a collection of CacheLoaderCallback with details about the elements that
-     *            needs loading
-     */
-    void loadAll(Collection<? extends CacheLoaderCallback<? extends K, ? super V>> loadCallbacks);
-
-    /**
      * Loads a single value.
      * 
      * @param key
@@ -110,4 +100,14 @@ public interface CacheLoader<K, V> {
      *             An exception occured while loading or creating the value
      */
     V load(K key, AttributeMap attributes) throws Exception;
+
+    /**
+     * Loads multiple values. This might for be usefull for performance reasons, for
+     * example, if the values are to be retrieved from a remote host.
+     * 
+     * @param loadCallbacks
+     *            a collection of CacheLoaderCallback with details about the elements that
+     *            needs loading
+     */
+    void loadAll(Collection<? extends CacheLoaderCallback<? extends K, ? super V>> loadCallbacks);
 }

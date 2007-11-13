@@ -6,18 +6,16 @@
     <artifactId>coconut-cache-test-parent</artifactId>
     <version>1.0-alpha3-SNAPSHOT</version>
   </parent>
-
   <artifactId>coconut-cache-test-framework</artifactId>
-  <name>Coconut Cache TCK</name>
-  <description>Coconut Cache Test Compatibility Kit</description>
-
+  <name>Coconut Cache Test Framework</name>
+  <description>Coconut Cache Test Framework</description>
   <dependencies>
     <dependency>
       <groupId>org.coconut.cache</groupId>
       <artifactId>coconut-cache-api</artifactId>
       <version>${project.version}</version>
     </dependency>
-        <dependency>
+    <dependency>
       <groupId>org.coconut.test</groupId>
       <artifactId>coconut-test-framework</artifactId>
     </dependency>

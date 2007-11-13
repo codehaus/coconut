@@ -6,11 +6,9 @@
     <artifactId>coconut-event-parent</artifactId>
     <version>1.0-alpha3-SNAPSHOT</version>
   </parent>
-
   <artifactId>coconut-event-impl</artifactId>
-  <name>Coconut Event Impl</name>
-  <description>Impl for Coconut Event</description>
-
+  <name>Coconut Event Implementation</name>
+  <description>Implementation of Coconut Event API</description>
   <dependencies>
     <dependency>
       <groupId>org.coconut.event</groupId>
@@ -18,21 +16,4 @@
       <version>1.0-alpha3-SNAPSHOT</version>
     </dependency>
   </dependencies>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <links>
-            <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
-          </links>
-          <showPackage>false</showPackage>
-          <showProtected>true</showProtected>
-          <quiet>true</quiet>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-
 </project>

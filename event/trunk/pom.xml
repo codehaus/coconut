@@ -4,14 +4,12 @@
   <parent>
     <groupId>org.coconut</groupId>
     <artifactId>coconut-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0-alpha3-SNAPSHOT</version>
   </parent>
-
   <groupId>org.coconut.event</groupId>
   <artifactId>coconut-event-parent</artifactId>
-  <name>Coconut Event Project</name>
+  <name>Coconut Event</name>
   <description>Root Pom for Coconut Event</description>
-  <version>1.0-alpha3-SNAPSHOT</version>
   <packaging>pom</packaging>
   <dependencies>
     <dependency>
@@ -20,7 +18,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
   <modules>
     <module>coconut-event-api</module>
     <module>coconut-event-impl</module>

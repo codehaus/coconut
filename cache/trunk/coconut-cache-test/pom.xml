@@ -18,18 +18,8 @@
       <artifactId>coconut-test-framework</artifactId>
     </dependency>
   </dependencies>
-
-  <reporting>
-    <excludeDefaults>true</excludeDefaults>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>findbugs-maven-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </reporting>
   <modules>
-    <module>coconut-cache-test-tck</module>
     <module>coconut-cache-test-framework</module>
+    <module>coconut-cache-test-tck</module>
   </modules>
 </project>

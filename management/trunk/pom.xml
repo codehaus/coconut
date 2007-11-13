@@ -4,15 +4,12 @@
   <parent>
     <groupId>org.coconut</groupId>
     <artifactId>coconut-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0-alpha3-SNAPSHOT</version>
   </parent>
   <groupId>org.coconut.management</groupId>
   <artifactId>coconut-management</artifactId>
   <name>Coconut Management</name>
-  <description>
-    Coconut  Management Project
-  </description>
-  <version>1.0-alpha1-SNAPSHOT</version>
+  <description>Coconut Management Project</description>
   <packaging>jar</packaging>
   <dependencies>
     <dependency>
