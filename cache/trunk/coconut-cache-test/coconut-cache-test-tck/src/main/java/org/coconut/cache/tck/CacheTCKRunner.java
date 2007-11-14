@@ -58,9 +58,11 @@ public class CacheTCKRunner extends Runner {
         try {
             InputStream is = CacheTCKRunner.class.getClassLoader().getResourceAsStream(
                     "defaulttestclass");
-            Properties p = new Properties();
-            p.load(is);
-            tt = (Class<? extends Cache>) Class.forName(p.getProperty("default"));
+            if (is != null) {
+                Properties p = new Properties();
+                p.load(is);
+                tt = (Class<? extends Cache>) Class.forName(p.getProperty("default"));
+            }
         } catch (ClassNotFoundException e) {
             // ignore, user has not defined a class
         } catch (IOException e) {
