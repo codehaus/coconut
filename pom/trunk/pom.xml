@@ -13,33 +13,33 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  <version>1.0-alpha3-SNAPSHOT</version>
+  <version>1.0-alpha4-SNAPSHOT</version>
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>org.coconut.management</groupId>
         <artifactId>coconut-management</artifactId>
-        <version>1.0-alpha3-SNAPSHOT</version>
+        <version>1.0-alpha4-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.coconut.core</groupId>
         <artifactId>coconut-core</artifactId>
-        <version>1.0-alpha3-SNAPSHOT</version>
+        <version>1.0-alpha4-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.coconut.concurrent</groupId>
         <artifactId>coconut-concurrent</artifactId>
-        <version>1.0-alpha3-SNAPSHOT</version>
+        <version>1.0-alpha4-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.coconut.event</groupId>
         <artifactId>coconut-event-impl</artifactId>
-        <version>1.0-alpha3-SNAPSHOT</version>
+        <version>1.0-alpha4-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.coconut.test</groupId>
         <artifactId>coconut-test-framework</artifactId>
-        <version>1.0-alpha3-SNAPSHOT</version>
+        <version>1.0-alpha4-SNAPSHOT</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -94,10 +94,10 @@
   </developers>
   <scm>
     <connection>
-      scm:svn:http://svn.codehaus.org/coconut/tags/coconut-parent-1.0-alpha3
+      scm:svn:http://svn.codehaus.org/coconut/tags/coconut-parent-1.0-alpha4-SNAPSHOT
     </connection>
     <developerConnection>
-      scm:svn:https://svn.codehaus.org/coconut/tags/coconut-parent-1.0-alpha3
+      scm:svn:https://svn.codehaus.org/coconut/tags/coconut-parent-1.0-alpha4-SNAPSHOT
     </developerConnection>
   </scm>
   <build>
