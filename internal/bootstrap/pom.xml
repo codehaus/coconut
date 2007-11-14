@@ -1,0 +1,79 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.coconut</groupId>
+  <artifactId>coconut-root-pom</artifactId>
+  <packaging>pom</packaging>
+  <name>Coconut</name>
+  <licenses>
+    <license>
+      <name>The Apache License, Version 2.0</name>
+      <url>http://svn.codehaus.org/coconut/LICENSE.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <version>1.0</version>
+  <inceptionYear>2004</inceptionYear>
+  <distributionManagement>
+    <repository>
+      <id>codehaus.org</id>
+      <name>Coconut's release repository</name>
+      <url>dav:https://dav.codehaus.org/repository/coconut</url>
+    </repository>
+    <snapshotRepository>
+      <id>codehaus.org</id>
+      <name>Coconut's snapshot repository</name>
+      <url>dav:https://dav.codehaus.org/snapshots.repository/coconut</url>
+    </snapshotRepository>
+    <site>
+      <id>codehaus.org</id>
+      <url>dav:https://dav.codehaus.org/coconut</url>
+    </site>
+  </distributionManagement>
+  <developers>
+    <developer>
+      <id>kasper</id>
+      <name>Kasper Nielsen</name>
+      <email>kasper@codehaus.org</email>
+      <organization />
+      <roles>
+        <role>Despot</role>
+      </roles>
+    </developer>
+  </developers>
+  <build>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-webdav</artifactId>
+        <!-- <version>1.0-rc1-SNAPSHOT</version> -->
+        <version>1.0-beta-2</version>
+      </extension>
+    </extensions>
+  </build>
+  <organization>
+    <name>Codehaus</name>
+    <url>http://www.codehaus.org/</url>
+  </organization>
+  <repositories>
+    <repository>
+      <id>codehaus.snapshots</id>
+      <name>Codehaus Snapshot Repository</name>
+      <url>http://snapshots.repository.codehaus.org/</url>
+    </repository>
+    <repository>
+      <id>codehaus.releases</id>
+      <name>Codehaus Repository</name>
+      <url>http://repository.codehaus.org/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
+  </repositories>
+  <modules>
+    <module>coconut-internal-asm</module>
+    <module>coconut-internal-picocontainer</module>
+    <module>coconut-build-tools</module>
+  </modules>
+</project>
