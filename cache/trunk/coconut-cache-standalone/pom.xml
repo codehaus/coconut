@@ -9,7 +9,7 @@
 
   <artifactId>coconut-cache</artifactId>
   <name>Coconut Cache</name>
-  <description>Coconut Cache</description>
+  <description>Coconut Cache Standalone (pom) </description>
   <packaging>pom</packaging>
   <dependencies>
     <dependency>

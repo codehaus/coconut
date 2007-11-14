@@ -16,8 +16,14 @@
       <groupId>opensymphony</groupId>
       <artifactId>oscache</artifactId>
       <version>2.4</version>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.jms</groupId>
+          <artifactId>jms</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
-        <dependency>
+    <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <version>1.2.13</version>

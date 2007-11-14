@@ -4,11 +4,11 @@
   <parent>
     <groupId>org.coconut</groupId>
     <artifactId>coconut-parent</artifactId>
-    <version>1.0-alpha3</version>
+    <version>1.0-alpha3-SNAPSHOT</version>
   </parent>
   <groupId>org.coconut.cache</groupId>
   <artifactId>coconut-cache-parent</artifactId>
-  <name>Coconut Cache Project</name>
+  <name>Coconut Cache (pom)</name>
   <description>Root Pom for Coconut Cache</description>
   <packaging>pom</packaging>
   <dependencies>

@@ -4,14 +4,14 @@
   <parent>
     <groupId>org.coconut</groupId>
     <artifactId>coconut-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0-alpha3-SNAPSHOT</version>
   </parent>
   <groupId>org.coconut.cache.test</groupId>
   <artifactId>coconut-cache-test-adapter</artifactId>
   <packaging>pom</packaging>
-  <name>Coconut Cache API</name>
+  <name>Coconut Cache Test Adapters</name>
   <version>1.0</version>
-  <description>API for Coconut Cache</description>
+  <description>Coconut Cache Test Adapters</description>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>

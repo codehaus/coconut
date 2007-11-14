@@ -83,10 +83,10 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * that are stored externally, for example, on disk. The cache will be empty after
      * this call returns.
      * <p>
-     * A {@link org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved} event will be raised for each mapping that is
-     * removed when the cache is cleared. When all entries have been removed from the
-     * cache a single {@link org.coconut.cache.service.event.CacheEvent.CacheCleared} will
-     * be raised.
+     * A {@link org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved} event will be
+     * raised for each mapping that is removed when the cache is cleared. When all entries
+     * have been removed from the cache a single
+     * {@link org.coconut.cache.service.event.CacheEvent.CacheCleared} will be raised.
      * 
      * @throws IllegalStateException
      *             if the cache has been shutdown
@@ -530,9 +530,9 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     boolean remove(Object key, Object value);
 
     /**
-     * Attempts to expire all of the mappings for the specified collection of keys. The
+     * Attempts to remove all of the mappings for the specified collection of keys. The
      * effect of this call is equivalent to that of calling
-     * {@link org.coconut.cache.Cache#remove(Object)} on this service once for each key in
+     * {@link org.coconut.cache.Cache#remove(Object)} on the cache once for each key in
      * the specified collection. However, in some cases it can be much faster to remove
      * several cache items at once, for example, if some of the values must also be
      * removed on a remote host.

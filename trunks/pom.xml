@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.coconut</groupId>
   <artifactId>coconut-modules</artifactId>
-  <name>Coconut Trunks</name>
+  <name>Coconut Modules (pom)</name>
   <description>Builds All Trunks</description>
   <version>1-SNAPSHOT</version>
   <packaging>pom</packaging>
@@ -24,6 +24,7 @@
     <module>coconut-core</module>
     <module>coconut-event</module>
     <module>coconut-management</module>
+    <module>coconut-test</module>
   </modules>
   <reporting>
 

@@ -9,7 +9,7 @@
 
   <groupId>org.coconut.cache.test</groupId>
   <artifactId>coconut-cache-test-parent</artifactId>
-  <name>Coconut Cache Test Project</name>
+  <name>Coconut Cache Test (pom)</name>
   <description>Root Pom for Coconut Cache Test Project</description>
   <packaging>pom</packaging>
   <dependencies>

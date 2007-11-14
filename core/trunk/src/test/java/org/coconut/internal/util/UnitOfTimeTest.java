@@ -10,7 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import org.coconut.test.JSR166TestCase;
+import junit.framework.TestCase;
 
 /**
  * 
@@ -18,7 +18,81 @@ import org.coconut.test.JSR166TestCase;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class UnitOfTimeTest extends JSR166TestCase {
+public class UnitOfTimeTest extends TestCase {
+
+    public static long SHORT_DELAY_MS;
+    public static long SMALL_DELAY_MS;
+    public static long MEDIUM_DELAY_MS;
+    public static long LONG_DELAY_MS;
+
+    /**
+     * Returns the shortest timed delay. This could
+     * be reimplemented to use for example a Property.
+     */
+    protected long getShortDelay() {
+        return 50;
+    }
+
+
+    /**
+     * Sets delays as multiples of SHORT_DELAY.
+     */
+    protected  void setDelays() {
+        SHORT_DELAY_MS = getShortDelay();
+        SMALL_DELAY_MS = SHORT_DELAY_MS * 5;
+        MEDIUM_DELAY_MS = SHORT_DELAY_MS * 10;
+        LONG_DELAY_MS = SHORT_DELAY_MS * 50;
+    }
+
+    /**
+     * Flag set true if any threadAssert methods fail
+     */
+    volatile boolean threadFailed;
+
+    /**
+     * Initializes test to indicate that no thread assertions have failed
+     */
+    public void setUp() {
+        setDelays();
+        threadFailed = false;
+    }
+
+    /**
+     * Triggers test case failure if any thread assertions have failed
+     */
+    public void tearDown() {
+        assertFalse(threadFailed);
+    }
+
+    /**
+     * Fail, also setting status to indicate current testcase should fail
+     */
+    public void threadFail(String reason) {
+        threadFailed = true;
+        fail(reason);
+    }
+    
+    /**
+     * threadFail with message "should throw exception"
+     */
+    public void threadShouldThrow() {
+        threadFailed = true;
+        fail("should throw exception");
+    }
+
+    /**
+     * threadFail with message "Unexpected exception"
+     */
+    public void threadUnexpectedException() {
+        threadFailed = true;
+        fail("Unexpected exception");
+    }
+    /**
+     * fail with message "Unexpected exception"
+     */
+    public void unexpectedException() {
+        fail("Unexpected exception");
+    }
     /**
      * convert correctly converts sample values across the units
      */

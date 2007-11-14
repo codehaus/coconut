@@ -55,7 +55,7 @@ public class DefaultManagedGroupTest {
         AttributedStub1 o = new AttributedStub1();
         dmg.add(o);
         dmg.register(server, ON);
-        assertEquals(initCount + 1, server.getMBeanCount());
+        assertEquals(initCount + 1, server.getMBeanCount().intValue());
         MBeanInfo info = server.getMBeanInfo(ON);
         // System.out.println(info.getAttributes()[0].getName());
         assertEquals(0, info.getAttributes().length);
@@ -82,7 +82,7 @@ public class DefaultManagedGroupTest {
         AttributedStub2 o = new AttributedStub2();
         dmg.add(o);
         dmg.register(server, ON);
-        assertEquals(initCount + 1, server.getMBeanCount());
+        assertEquals(initCount + 1, server.getMBeanCount().intValue());
         MBeanInfo info = server.getMBeanInfo(ON);
         assertEquals(0, info.getAttributes().length);
         assertEquals(0, info.getConstructors().length);
@@ -109,7 +109,7 @@ public class DefaultManagedGroupTest {
         AttributedStub3 o = new AttributedStub3();
         dmg.add(o);
         dmg.register(server, ON);
-        assertEquals(initCount + 1, server.getMBeanCount());
+        assertEquals(initCount + 1, server.getMBeanCount().intValue());
         MBeanInfo info = server.getMBeanInfo(ON);
         assertEquals(1, info.getAttributes().length);
         assertEquals(0, info.getConstructors().length);

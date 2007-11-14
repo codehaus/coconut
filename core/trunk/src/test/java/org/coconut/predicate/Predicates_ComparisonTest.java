@@ -57,7 +57,7 @@ public class Predicates_ComparisonTest {
     @Test
     public void testGreaterThenComparable() {
         GreaterThenPredicate<Integer> f = greatherThen(5);
-        assertEquals(5, f.getObject());
+        assertEquals(5, f.getObject().intValue());
         assertNull(f.getComparator());
 
         assertFalse(f.evaluate(4));
@@ -112,7 +112,7 @@ public class Predicates_ComparisonTest {
     @Test
     public void testGreaterThenOrEqualComparable() {
         GreaterThenOrEqualPredicate<Integer> f = greatherThenOrEqual(5);
-        assertEquals(5, f.getObject());
+        assertEquals(5, f.getObject().intValue());
         assertNull(f.getComparator());
 
         assertFalse(f.evaluate(4));
@@ -167,7 +167,7 @@ public class Predicates_ComparisonTest {
     @Test
     public void testLessThenComparable() {
         LessThenPredicate<Integer> f = lessThen(5);
-        assertEquals(5, f.getObject());
+        assertEquals(5, f.getObject().intValue());
         assertNull(f.getComparator());
 
         assertTrue(f.evaluate(4));
@@ -235,7 +235,7 @@ public class Predicates_ComparisonTest {
     @Test
     public void testLessThenOrEqualComparable() {
         LessThenOrEqualPredicate<Integer> f = lessThenOrEqual(5);
-        assertEquals(5, f.getObject());
+        assertEquals(5, f.getObject().intValue());
         assertNull(f.getComparator());
 
         assertTrue(f.evaluate(4));
