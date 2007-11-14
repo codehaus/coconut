@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.coconut.event</groupId>
     <artifactId>coconut-event-parent</artifactId>
-    <version>1.0-alpha3-SNAPSHOT</version>
+    <version>1.0-alpha4-SNAPSHOT</version>
   </parent>
   <artifactId>coconut-event-api</artifactId>
   <name>Coconut Event API</name>
