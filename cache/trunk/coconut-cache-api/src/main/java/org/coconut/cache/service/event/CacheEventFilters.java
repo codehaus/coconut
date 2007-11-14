@@ -130,6 +130,8 @@ public final class CacheEventFilters {
                 (Mapper) EVENT_TO_CACHE_TRANSFORMER, filter);
     }
 
+    //TODO fix name, to eventName or something, 
+    //It does _not compare the cache name but the event name
     /**
      * Returns a {@link Predicate} that only accepts {@link CacheEvent}s where
      * {@link CacheEvent#getName()} matches the specified filter.

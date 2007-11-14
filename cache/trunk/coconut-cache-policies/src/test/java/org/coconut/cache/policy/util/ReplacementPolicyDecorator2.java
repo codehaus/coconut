@@ -4,23 +4,16 @@
 
 package org.coconut.cache.policy.util;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.coconut.cache.spi.ReplacementPolicy;
-import org.coconut.test.MockTestCase;
-import org.jmock.Mock;
-import org.jmock.builder.ArgumentsMatchBuilder;
-
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class ReplacementPolicyDecorator2 extends MockTestCase {
+public class ReplacementPolicyDecorator2 {
 
     private static Map<Class, Object> types = new HashMap<Class, Object>();
     static {
@@ -34,38 +27,38 @@ public class ReplacementPolicyDecorator2 extends MockTestCase {
 
     public static void main(String[] args) throws Exception {
 
-        new ReplacementPolicyDecorator2().test();
+//        new ReplacementPolicyDecorator2().test();
         // System.out.println(Arrays.toString(m));
     }
 
-    void test() throws Exception {
-        Object returnType = null;
-        Mock mock = mock(ReplacementPolicy.class);
-        Method[] methods = PolicyDecorator.class.getMethods();
-        PolicyDecorator dec = new PolicyDecorator((ReplacementPolicy) mock
-                .proxy());
-        for (Method m : methods) {
-            if (!Modifier.isFinal(m.getModifiers())) {
-                ArgumentsMatchBuilder nmb = mock.expects(once()).method(m.getName());
-                if (!m.getReturnType().equals(Void.TYPE)) {
-                    Object r = types.get(m.getReturnType());
-                    if (r == null) {
-                        throw new IllegalStateException("No return types of " + m.getReturnType()
-                                + " registered");
-                    }
-                    nmb.will(returnValue(r));
-                }
-                returnType = types.get(m.getReturnType());
-                if (m.getParameterTypes().length == 0) {
-                    Object returnValue = m.invoke(dec);
-                    assertEquals(returnValue, returnType);
-                } else {
-                 // nmb.m
-                    System.out.println("could not test " + m);
-                }
-
-            }
-
-        }
-    }
+//    void test() throws Exception {
+//        Object returnType = null;
+//        Mock mock =  mock(ReplacementPolicy.class);
+//        Method[] methods = PolicyDecorator.class.getMethods();
+//        PolicyDecorator dec = new PolicyDecorator((ReplacementPolicy) mock
+//                .proxy());
+//        for (Method m : methods) {
+//            if (!Modifier.isFinal(m.getModifiers())) {
+//                ArgumentsMatchBuilder nmb = mock.expects(once()).method(m.getName());
+//                if (!m.getReturnType().equals(Void.TYPE)) {
+//                    Object r = types.get(m.getReturnType());
+//                    if (r == null) {
+//                        throw new IllegalStateException("No return types of " + m.getReturnType()
+//                                + " registered");
+//                    }
+//             //       nmb.will(returnValue(r));
+//                }
+//                returnType = types.get(m.getReturnType());
+//                if (m.getParameterTypes().length == 0) {
+//                    Object returnValue = m.invoke(dec);
+//               //     assertEquals(returnValue, returnType);
+//                } else {
+//                 // nmb.m
+//                    System.out.println("could not test " + m);
+//                }
+//
+//            }
+//
+//        }
+//    }
 }

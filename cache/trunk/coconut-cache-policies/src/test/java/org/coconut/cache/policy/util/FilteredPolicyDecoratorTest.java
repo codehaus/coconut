@@ -4,15 +4,16 @@
 
 package org.coconut.cache.policy.util;
 
-import org.coconut.test.MockTestCase;
+import org.junit.Test;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
 @SuppressWarnings("unchecked")
-public class FilteredPolicyDecoratorTest extends MockTestCase {
+public class FilteredPolicyDecoratorTest {
 
+    @Test
     public void testNothing() {
         
     }

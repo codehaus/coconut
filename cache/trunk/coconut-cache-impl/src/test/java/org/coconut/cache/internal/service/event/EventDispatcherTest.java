@@ -4,6 +4,10 @@
 
 package org.coconut.cache.internal.service.event;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -13,34 +17,33 @@ import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.core.EventProcessor;
 import org.coconut.core.EventUtils;
 import org.coconut.test.MockTestCase;
+import org.junit.Test;
 
 @SuppressWarnings("unchecked")
-public class EventDispatcherTest extends MockTestCase {
+public class EventDispatcherTest {
 
-    Cache<?,?> c;
+    Cache<?, ?> c;
 
     BlockingQueue<CacheEvent<Integer, String>> events;
 
     EventProcessor<CacheEvent<Integer, String>> eventHandler;
 
     protected void setUp() throws Exception {
-        super.setUp();
-        c = (Cache) mock(Cache.class).proxy();
+        c = MockTestCase.mockDummy(Cache.class);
         events = new LinkedBlockingQueue<CacheEvent<Integer, String>>();
         eventHandler = EventUtils.fromQueue(events);
     }
 
     private <S> S consumeItem(Class<? extends CacheEvent> type, long sequenceId) {
         try {
-            CacheEvent<Integer,String> event = events.poll(1, TimeUnit.SECONDS);
+            CacheEvent<Integer, String> event = events.poll(1, TimeUnit.SECONDS);
             if (event == null) {
                 throw new NullPointerException("event is null");
             }
             assertTrue(type.isAssignableFrom(event.getClass()));
-            assertEquals(c, event.getCache());
-            assertEquals(type.getDeclaredField("NAME").get(null), event
-                    .getName());
-         //   assertEquals(sequenceId, event.getSequenceID());
+            assertSame(c, event.getCache());
+            assertEquals(type.getDeclaredField("NAME").get(null), event.getName());
+            // assertEquals(sequenceId, event.getSequenceID());
             event.toString(); // just test that it doesn't fail
             return (S) event;
         } catch (InterruptedException e) {
@@ -54,17 +57,17 @@ public class EventDispatcherTest extends MockTestCase {
         }
     }
 
-//    private <S> S consumeItem(Class<? extends CacheEntryEvent> type,
-//            Integer key, String value, long sequenceId) {
-//        CacheEntryEvent<?,?> event = consumeItem(type, sequenceId);
-//        assertEquals(key, event.getKey());
-//        assertEquals(value, event.getValue());
-//        return (S) event;
-//    }
-    
+// private <S> S consumeItem(Class<? extends CacheEntryEvent> type,
+// Integer key, String value, long sequenceId) {
+// CacheEntryEvent<?,?> event = consumeItem(type, sequenceId);
+// assertEquals(key, event.getKey());
+// assertEquals(value, event.getValue());
+// return (S) event;
+// }
+
+    @Test
     public void testNoTests() {
-        
+
     }
-    
 
 }

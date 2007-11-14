@@ -22,9 +22,6 @@ import junit.framework.AssertionFailedError;
  */
 public class TestUtil {
 
-    public static void assertEqual(int expected, Integer realValue) {
-        Assert.assertEquals(Integer.valueOf(expected), realValue);
-    }
     public static Object serializeAndUnserialize(Object o) throws IOException,
             ClassNotFoundException {
         ByteArrayOutputStream bout = new ByteArrayOutputStream(20000);

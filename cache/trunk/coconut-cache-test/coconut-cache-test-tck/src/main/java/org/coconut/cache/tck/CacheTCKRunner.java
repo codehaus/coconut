@@ -102,7 +102,6 @@ public class CacheTCKRunner extends Runner {
     @Override
     public void run(RunNotifier not) {
         tt = tt2;
-        System.err.println();
         composite.run(not);
     }
 

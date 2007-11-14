@@ -14,14 +14,11 @@ import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
-import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.AttributeMaps;
 import org.coconut.core.Clock;
 import org.coconut.predicate.Predicate;
 import org.coconut.predicate.Predicates;
-import org.coconut.test.MockTestCase;
-import org.jmock.Mock;
 import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,9 +29,9 @@ import org.junit.Test;
  */
 public class DefaultCacheExpirationServiceTest {
 
-    private static final CacheEntry<Integer, String> NEVER_EXPIRE;
+    private static CacheEntry<Integer, String> NEVER_EXPIRE;
 
-    private static final CacheEntry<Integer, String> EXPIRE_AT_10;
+    private static  CacheEntry<Integer, String> EXPIRE_AT_10;
     private final Predicate<CacheEntry<Integer, String>> TRUE = Predicates.truePredicate();
 
     private final Predicate<CacheEntry<Integer, String>> FALSE = Predicates.falsePredicate();
@@ -55,14 +52,14 @@ public class DefaultCacheExpirationServiceTest {
     static {
         CacheEntry dd = new JUnit4Mockery().mock(CacheEntry.class);
 
-        MockTestCase m = new MockTestCase();
-        Mock n = m.mock(CacheEntry.class);
-        n.stubs().method("getExpirationTime").will(
-                m.returnValue(CacheExpirationService.NEVER_EXPIRE));
-        NEVER_EXPIRE = (CacheEntry<Integer, String>) n.proxy();
-        n = m.mock(CacheEntry.class);
-        n.stubs().method("getExpirationTime").will(m.returnValue(10l));
-        EXPIRE_AT_10 = (CacheEntry<Integer, String>) n.proxy();
+//        MockTestCase m = new MockTestCase();
+//        Mock n = m.mock(CacheEntry.class);
+//        n.stubs().method("getExpirationTime").will(
+//                m.returnValue(CacheExpirationService.NEVER_EXPIRE));
+//        NEVER_EXPIRE = (CacheEntry<Integer, String>) n.proxy();
+//        n = m.mock(CacheEntry.class);
+//        n.stubs().method("getExpirationTime").will(m.returnValue(10l));
+//        EXPIRE_AT_10 = (CacheEntry<Integer, String>) n.proxy();
     }
 
     @Before

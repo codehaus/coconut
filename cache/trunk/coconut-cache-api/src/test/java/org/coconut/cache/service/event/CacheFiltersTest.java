@@ -4,80 +4,93 @@
 
 package org.coconut.cache.service.event;
 
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+
 import org.coconut.cache.Cache;
 import org.coconut.predicate.Predicate;
 import org.coconut.predicate.Predicates;
-import org.coconut.test.MockTestCase;
-import org.jmock.Mock;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
+import org.jmock.integration.junit4.JUnit4Mockery;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
 @SuppressWarnings("unchecked")
-public class CacheFiltersTest extends MockTestCase {
+@RunWith(JMock.class)
+public class CacheFiltersTest {
 
-    public void testCacheFilter() {
-        Mock mock = mock(CacheEvent.class);
-        Cache c = (Cache) mock(Cache.class).proxy();
+    Mockery context = new JUnit4Mockery();
+
+    @Test
+    public void cacheFilter() {
+        final CacheEvent event = context.mock(CacheEvent.class);
+        final Cache c = context.mock(Cache.class);
+        context.checking(new Expectations() {
+            {
+                one(event).getCache();
+                will(returnValue(c));
+            }
+        });
         Predicate f = Predicates.equal(c);
-        mock.expects(once()).method("getCache").will(returnValue(c));
         Predicate<CacheEvent> filter = CacheEventFilters.cacheFilter(f);
-        assertTrue(filter.evaluate((CacheEvent) mock.proxy()));
+        assertTrue(filter.evaluate(event));
     }
 
-    public void testCacheEqualsFilter() {
-        Mock mock = mock(CacheEvent.class);
-        Mock mock2 = mock(CacheEvent.class);
-        Cache c = (Cache) mock(Cache.class).proxy();
-        Cache c2 = (Cache) mock(Cache.class).proxy();
-        mock.expects(once()).method("getCache").will(returnValue(c));
-        mock2.expects(once()).method("getCache").will(returnValue(c2));
+    @Test(expected = NullPointerException.class)
+    public void cacheFilterNPE() {
+        CacheEventFilters.cacheFilter(null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void cacheFilterNPE1() {
+        CacheEventFilters.cacheFilter(Predicates.TRUE).evaluate(null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void cacheNameNPE() {
+        CacheEventFilters.cacheName(null);
+    }
+
+    @Test
+    public void cacheSameFilter() {
+        final CacheEvent event1 = context.mock(CacheEvent.class);
+        final CacheEvent event2 = context.mock(CacheEvent.class);
+        final Cache c = context.mock(Cache.class);
+        context.checking(new Expectations() {
+            {
+                one(event1).getCache();
+                will(returnValue(c));
+                one(event2).getCache();
+                will(returnValue(context.mock(Cache.class)));
+            }
+        });
         Predicate<CacheEvent> f = CacheEventFilters.cacheSameFilter(c);
-        assertTrue(f.evaluate((CacheEvent) mock.proxy()));
-        assertFalse(f.evaluate((CacheEvent) mock2.proxy()));
+        assertTrue(f.evaluate(event1));
+        assertFalse(f.evaluate(event2));
     }
 
-    public void testAcceptNull() {
-        Cache<Integer, Integer> c = (Cache) mock(Cache.class).proxy();
-        try {
-            CacheEventFilters.cacheFilter(Predicates.equal(c)).evaluate(null);
-            fail("Did not fail with NullPointerException");
-        } catch (NullPointerException npe) {/* ignore */
-        }
+    @Test
+    public void cacheNameEqualsFilter() {
+        final CacheEvent event1 = context.mock(CacheEvent.class);
+        final CacheEvent event2 = context.mock(CacheEvent.class);
+        context.checking(new Expectations() {
+            {
+                one(event1).getName();
+                will(returnValue("T1"));
+                one(event2).getName();
+                will(returnValue("T2"));
+            }
+        });
+        Predicate<CacheEvent<Integer, String>> f = CacheEventFilters.cacheName(Predicates
+                .equal("T1"));
+        assertTrue(f.evaluate(event1));
+        assertFalse(f.evaluate(event2));
     }
 
-    public void testNotNull2() {
-        try {
-            CacheEventFilters.cacheFilter(null);
-            fail("Did not fail with NullPointerException");
-        } catch (NullPointerException npe) {/* ignore */
-        }
-    }
-
-    public void testNameFilter() {
-        Mock mock = mock(CacheEvent.class);
-        Predicate<String> f = Predicates.equal("TT");
-        mock.expects(once()).method("getName").will(returnValue("TT"));
-        Predicate<CacheEvent<Integer, String>> filter = CacheEventFilters.cacheName(f);
-        assertTrue(filter.evaluate((CacheEvent) mock.proxy()));
-    }
-
-    public void testNameEqualsFilter() {
-        Mock mock = mock(CacheEvent.class);
-        Mock mock2 = mock(CacheEvent.class);
-        mock.expects(once()).method("getName").will(returnValue("T1"));
-        mock2.expects(once()).method("getName").will(returnValue("T2"));
-        Predicate<CacheEvent<Integer, String>> f = CacheEventFilters.cacheName(Predicates.equal("T1"));
-        assertTrue(f.evaluate((CacheEvent) mock.proxy()));
-        assertFalse(f.evaluate((CacheEvent) mock2.proxy()));
-    }
-
-    public void testNotNull() {
-        try {
-            CacheEventFilters.cacheName(null);
-            fail("Did not fail with NullPointerException");
-        } catch (NullPointerException npe) {/* ignore */
-        }
-    }
 }
