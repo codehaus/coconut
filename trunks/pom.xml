@@ -25,7 +25,6 @@
     <module>coconut-event</module>
     <module>coconut-management</module>
     <module>coconut-test</module>
-    <module>pom</module>
   </modules>
   <reporting>
 
