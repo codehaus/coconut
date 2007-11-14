@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.coconut.cache</groupId>
     <artifactId>coconut-cache-parent</artifactId>
-    <version>1.0-alpha3-SNAPSHOT</version>
+    <version>1.0-alpha4-SNAPSHOT</version>
   </parent>
   <artifactId>coconut-cache-api</artifactId>
   <name>Coconut Cache API</name>
@@ -29,7 +29,7 @@
     <dependency>
       <groupId>org.coconut.event</groupId>
       <artifactId>coconut-event-impl</artifactId>
-      <version>1.0-alpha3-SNAPSHOT</version>
+      <version>1.0-alpha4-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.coconut.management</groupId>

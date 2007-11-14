@@ -14,7 +14,7 @@
   <dependencies>
     <dependency>
       <groupId>org.coconut.cache</groupId>
-      <version>1.0-alpha3-SNAPSHOT</version>
+      <version>1.0-alpha4-SNAPSHOT</version>
       <artifactId>coconut-cache-impl</artifactId>
     </dependency>
   </dependencies>

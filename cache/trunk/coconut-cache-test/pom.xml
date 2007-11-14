@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.coconut.cache</groupId>
     <artifactId>coconut-cache-parent</artifactId>
-    <version>1.0-alpha3-SNAPSHOT</version>
+    <version>1.0-alpha4-SNAPSHOT</version>
   </parent>
 
   <groupId>org.coconut.cache.test</groupId>
