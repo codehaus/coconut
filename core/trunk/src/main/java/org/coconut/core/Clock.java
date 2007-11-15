@@ -47,8 +47,10 @@ public abstract class Clock {
         /** serialVersionUID. */
         private static final long serialVersionUID = -7045902747103949579L;
 
+        /** The current timestamp. */
         private final AtomicLong timestamp = new AtomicLong();
 
+        /** The current relative time. */
         private final AtomicLong relativeTime = new AtomicLong();
 
         /** {@inheritDoc} */
@@ -57,18 +59,32 @@ public abstract class Clock {
             return timestamp.get();
         }
 
+        /** Increments the current timestamp by 1. */
         public void incrementTimestamp() {
             timestamp.incrementAndGet();
         }
 
+        /** Increments the current relative time by 1. */
         public void incrementRelativeTime() {
             relativeTime.incrementAndGet();
         }
 
+        /**
+         * Increments the current relative time by the specified amount.
+         * 
+         * @param amount
+         *            the amount to increment the current relative time with
+         */
         public void incrementRelativeTime(int amount) {
             relativeTime.addAndGet(amount);
         }
 
+        /**
+         * Increments the current timestamp by the specified amount.
+         * 
+         * @param amount
+         *            the amount to increment the current timestamp with
+         */
         public void incrementTimestamp(int amount) {
             timestamp.addAndGet(amount);
         }
@@ -79,12 +95,24 @@ public abstract class Clock {
             return relativeTime.get();
         }
 
-        public void setTimestamp(long amount) {
-            timestamp.set(amount);
+        /**
+         * Sets the current timestamp.
+         * 
+         * @param timestamp
+         *            the timestamp to set
+         */
+        public void setTimestamp(long timestamp) {
+            this.timestamp.set(timestamp);
         }
 
-        public void setRelativeTime(long amount) {
-            relativeTime.set(amount);
+        /**
+         * Sets the current relative time.
+         * 
+         * @param relativeTime
+         *            the relativeTime to set
+         */
+        public void setRelativeTime(long relativeTime) {
+            this.relativeTime.set(relativeTime);
         }
     }
 

@@ -4,5 +4,4 @@ import java.util.Collection;
 
 public interface KeyGenerator<K> {
     K nextKey();
-    Collection<? extends K> nextKeys();
 }

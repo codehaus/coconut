@@ -115,10 +115,10 @@ public abstract class CacheExceptionHandler<K, V> {
 
     /**
      * This method is called when the
-     * {@link CacheLifecycle#initialize(CacheConfiguration)} method of a cache service
+     * {@link CacheLifecycle#initialize(CacheConfiguration, java.util.Map)} method of a cache service
      * fails.
      * <p>
-     * The {@link CacheLifecycle#initialize(CacheConfiguration)} method is always called
+     * The {@link CacheLifecycle#initialize(CacheConfiguration, java.util.Map)} method is always called
      * from the constructor of the cache. And the default implementation of this method
      * will let the cause of failure be propagated to the constructor callee.
      * 

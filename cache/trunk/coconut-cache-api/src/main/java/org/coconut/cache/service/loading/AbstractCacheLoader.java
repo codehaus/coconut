@@ -5,6 +5,8 @@ package org.coconut.cache.service.loading;
 
 import java.util.Collection;
 
+import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
+
 /**
  * An abstract implementation of a {@link CacheLoader}. Use this class if you only need
  * to override the {@link CacheLoader#load(Object, org.coconut.core.AttributeMap)} method.
@@ -16,7 +18,13 @@ import java.util.Collection;
  * @param <V>
  *            the type of values returned when loading
  */
-public abstract class AbstractCacheLoader<K, V> implements CacheLoader<K, V> {
+public abstract class AbstractCacheLoader<K, V> extends AbstractCacheLifecycle implements
+        CacheLoader<K, V> {
+    public AbstractCacheLoader() {}
+
+    public AbstractCacheLoader(String name) {
+        super(name);
+    }
 
     /** {@inheritDoc} */
     public final void loadAll(

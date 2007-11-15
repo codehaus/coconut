@@ -11,9 +11,4 @@ public class RandomKeyGenerator implements KeyGenerator<Integer> {
     public Integer nextKey() {
         return rng.next() % 1000;
     }
-
-    public Collection<? extends Integer> nextKeys() {
-        throw new UnsupportedOperationException();
-    }
-
 }

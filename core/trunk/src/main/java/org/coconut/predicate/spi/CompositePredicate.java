@@ -4,7 +4,7 @@
 
 package org.coconut.predicate.spi;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.coconut.predicate.Predicate;
 
@@ -17,7 +17,7 @@ import org.coconut.predicate.Predicate;
 public interface CompositePredicate<E> {
 
     /**
-     * Returns all the filters that are used for the accept method.
+     * Returns all the predicates that are used for the accept method.
      */
-    List<Predicate<E>> getPredicates();
+    Collection<Predicate<E>> getPredicates();
 }

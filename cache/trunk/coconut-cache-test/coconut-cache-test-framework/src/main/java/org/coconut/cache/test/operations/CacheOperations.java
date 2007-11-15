@@ -41,10 +41,19 @@ public abstract class CacheOperations<K> implements Runnable {
         }
     }
 
+    /**
+     * Invokes the {@link Cache#clear()} method.
+     */
     public static class Clear extends CacheOperations {
         /** The name of this operation. */
         public final static String NAME = PREFIX + "clear";
 
+        /**
+         * Creates a new Clear operation.
+         * 
+         * @param cache
+         *            the cache to invoke the operation on
+         */
         public Clear(Cache cache) {
             super(cache);
         }
@@ -52,6 +61,52 @@ public abstract class CacheOperations<K> implements Runnable {
         /** {@inheritDoc} */
         public void run() {
             cache.clear();
+        }
+    }
+
+    /**
+     * Invokes the {@link Cache#shutdown()} method.
+     */
+    public static class Shutdown extends CacheOperations {
+        /** The name of this operation. */
+        public final static String NAME = PREFIX + "shutdown";
+
+        /**
+         * Creates a new Clear operation.
+         * 
+         * @param cache
+         *            the cache to invoke the operation on
+         */
+        public Shutdown(Cache cache) {
+            super(cache);
+        }
+
+        /** {@inheritDoc} */
+        public void run() {
+            cache.shutdown();
+        }
+    }
+
+    /**
+     * Invokes the {@link Cache#shutdownNow()} method.
+     */
+    public static class ShutdownNow extends CacheOperations {
+        /** The name of this operation. */
+        public final static String NAME = PREFIX + "shutdownNow";
+
+        /**
+         * Creates a new Clear operation.
+         * 
+         * @param cache
+         *            the cache to invoke the operation on
+         */
+        public ShutdownNow(Cache cache) {
+            super(cache);
+        }
+
+        /** {@inheritDoc} */
+        public void run() {
+            cache.shutdown();
         }
     }
 

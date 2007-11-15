@@ -82,7 +82,7 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V> {
      * 
      * @return the difference, measured in milliseconds, between the time at which the
      *         current value of the cache entry will expire and January 1, 1970 UTC. Or
-     *         {@value Long#MAX_VALUE} if it never expires
+     *         {@link Long#MAX_VALUE} if it never expires
      * @see org.coconut.cache.service.expiration.CacheExpirationService
      * @see CacheAttributes#setTimeToLive(org.coconut.core.AttributeMap, long,
      *      java.util.concurrent.TimeUnit)

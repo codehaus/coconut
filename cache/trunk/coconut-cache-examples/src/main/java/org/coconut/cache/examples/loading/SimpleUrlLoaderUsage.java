@@ -4,7 +4,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.defaults.UnsynchronizedCache;
 
-public class UrlLoaderUsageExample {
+public class SimpleUrlLoaderUsage {
     // START SNIPPET: class
     public static void main(String[] args) {
         CacheConfiguration<String, String> conf = CacheConfiguration.create();

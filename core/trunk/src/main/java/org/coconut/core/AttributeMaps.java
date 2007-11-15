@@ -18,33 +18,48 @@ import java.util.Set;
  * @version $Id$
  */
 public final class AttributeMaps {
-    
+
     /** The empty attribute map (immutable). This attribute map is serializable. */
     public final static AttributeMap EMPTY_MAP = new EmptyMap();
 
-    ///CLOVER:OFF
+    // /CLOVER:OFF
     /** Cannot instantiate. */
     private AttributeMaps() {}
-    ///CLOVER:ON
+
+    // /CLOVER:ON
 
     public static AttributeMap from(String name, Object value) {
+        // rename to singleton?? and make immutable.
         DefaultAttributeMap map = new DefaultAttributeMap();
         map.put(name, value);
         return map;
     }
-    
-    public static <K> Map<K, AttributeMap> toMap(Collection<? extends K> keys, AttributeMap attributes) {
+
+    /**
+     * Creates a new {@link Map} where all the specified keys maps to the specified
+     * AttributeMap.
+     * 
+     * @param <K>
+     *            the type of keys
+     * @param keys
+     *            the collection of keys that should map to the specified AttributeMap
+     * @param attributeMap
+     *            the AttributeMap that all the specified keys must map to
+     * @return a new Map where all the specified keys maps to the specified AttributeMap
+     */
+    public static <K> Map<K, AttributeMap> toMap(Collection<? extends K> keys,
+            AttributeMap attributeMap) {
         HashMap<K, AttributeMap> map = new HashMap<K, AttributeMap>();
         for (K key : keys) {
-            map.put(key, attributes);
+            map.put(key, attributeMap);
         }
         return map;
     }
+
     /**
      * The default implementation of an {@link AttributeMap}.
      */
-    public static class DefaultAttributeMap extends HashMap<String, Object> implements
-            AttributeMap {
+    public static class DefaultAttributeMap extends HashMap<String, Object> implements AttributeMap {
 
         /** serialVersionUID. */
         private static final long serialVersionUID = -5954819329578687686L;
@@ -189,8 +204,8 @@ public final class AttributeMaps {
     /**
      * The default implementation of an immutable empty {@link AttributeMap}.
      */
-    static final class EmptyMap extends AbstractMap<String, Object> implements
-            AttributeMap, Serializable {
+    static final class EmptyMap extends AbstractMap<String, Object> implements AttributeMap,
+            Serializable {
 
         /** serialVersionUID. */
         private static final long serialVersionUID = -3037602713439417782L;

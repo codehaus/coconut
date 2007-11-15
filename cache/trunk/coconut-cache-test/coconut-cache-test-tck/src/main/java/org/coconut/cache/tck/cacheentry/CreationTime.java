@@ -12,6 +12,7 @@ import static org.coconut.test.CollectionUtils.M8;
 
 import java.util.Map;
 
+import org.coconut.cache.Cache;
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.service.loading.AbstractCacheLoader;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
@@ -85,7 +86,7 @@ public class CreationTime extends AbstractCacheTCKTest {
 
     /**
      * as {@link #put()} except that we use
-     * {@link java.util.ConcurrentMap#putIfAbsent(Map)} instead
+     * {@link Cache#putIfAbsent(Object, Object)} instead
      */
     @Test
     public void putIfAbsent() {

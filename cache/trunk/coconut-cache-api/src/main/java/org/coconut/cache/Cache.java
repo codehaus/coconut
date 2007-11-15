@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.core.AttributeMap;
 
@@ -87,6 +88,11 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * raised for each mapping that is removed when the cache is cleared. When all entries
      * have been removed from the cache a single
      * {@link org.coconut.cache.service.event.CacheEvent.CacheCleared} will be raised.
+     * <p>
+     * If the reason for clearing the cache is to get rid of stale data another
+     * alternative, if the cache has a CacheLoader defined, might be to use
+     * {@link CacheLoadingService#forceLoadAll()} which will reload all elements that
+     * current in the cache.
      * 
      * @throws IllegalStateException
      *             if the cache has been shutdown
@@ -95,12 +101,14 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      */
     void clear();
 
-    // TODO contains->does not check expiration status
     /**
      * Returns <tt>true</tt> if this cache contains a mapping for the specified key.
      * More formally, returns <tt>true</tt> if and only if this map contains a mapping
      * for a key <tt>k</tt> such that <tt>(key==null ? k==null : key.equals(k))</tt>.
      * (There can be at most one such mapping.)
+     * <p>
+     * This method does not check the expiration status of an element and will return if a
+     * expired element is present in the cache for the specified key.
      * 
      * @param key
      *            key whose presence in this cache is to be tested
@@ -119,6 +127,9 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * <tt>(value==null ? v==null : value.equals(v))</tt>. This operation will probably
      * require time linear in the cache size for most implementations of the
      * <tt>Cache</tt> interface.
+     * <p>
+     * This method does not check the expiration status of an element and will return if a
+     * expired element is present in the cache for the specified value.
      * 
      * @param value
      *            value whose presence in this cache is to be tested
@@ -686,5 +697,4 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @return a collection view of the values contained in this cache
      */
     Collection<V> values();
-
 }
