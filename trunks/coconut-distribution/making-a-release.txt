@@ -8,9 +8,8 @@ The process of making a release is not fully automated yet.
 > mvn -Dmaven.repo.local=coconut-release/release-repo -f coconut-release/pom.xml install source:jar javadoc:javadoc deploy
 
 ************* Build and Upload Distribution **********
-
-mvn -Dmaven.repo.local=coconut-release/release-repo -f coconut-release/coconut-distribution/pom.xml assembly:assembly site:deploy
-
+mvn -Dmaven.repo.local=coconut-release/release-repo -f coconut-release/coconut-distribution/pom.xml assembly:assembly
+mvn -N -Dmaven.repo.local=coconut-release/release-repo -f coconut-release/coconut-distribution/pom.xml site:deploy
 *********** Create clover report, deploy site ********
 > mvn -f coconut-release/pom.xml clover:instrument clover:aggregate clover:clover -P run-clover
 > mvn -N -f coconut-release/pom.xml site:deploy

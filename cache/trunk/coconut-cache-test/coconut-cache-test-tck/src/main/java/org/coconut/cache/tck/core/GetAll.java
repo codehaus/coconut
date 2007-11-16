@@ -53,7 +53,7 @@ public class GetAll extends AbstractCacheTCKTest {
     @Test(expected = NullPointerException.class)
     public void getAllNPE() {
         c = newCache(5);
-        getAll((Map.Entry) null);
+        c.getAll(null);
     }
 
     @Test(expected = NullPointerException.class)

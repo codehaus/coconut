@@ -275,6 +275,8 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @return a service of the specified type
      * @throws IllegalArgumentException
      *             if no service of the specified type exist
+     * @throws NullPointerException
+     *             if the specified service is null
      * @see org.coconut.cache.CacheServices
      * @see CacheServiceManagerService#hasService(Class)
      * @see CacheServiceManagerService#getAllServices()

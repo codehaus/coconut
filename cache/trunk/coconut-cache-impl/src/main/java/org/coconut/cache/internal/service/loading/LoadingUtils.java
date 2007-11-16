@@ -25,11 +25,12 @@ import org.coconut.management.annotation.ManagedOperation;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-final class LoadingUtils {
+public final class LoadingUtils {
 
     /** Cannot instantiate. */
+    // /CLOVER:OFF
     private LoadingUtils() {}
-
+    // /CLOVER:ON
     /**
      * Converts the specified timeToRefresh in nanoseconds to the specified unit. This
      * conversion routine will handle the special meaning of {@link Long#MAX_VALUE}.
@@ -45,8 +46,8 @@ final class LoadingUtils {
      *             if the specified timeToRefreshNanos is negative
      */
     public static long convertNanosToRefreshTime(long timeToRefreshNanos, TimeUnit unit) {
-        return new CacheLoadingConfiguration().setDefaultTimeToRefresh(
-                timeToRefreshNanos, TimeUnit.NANOSECONDS).getDefaultTimeToRefresh(unit);
+        return new CacheLoadingConfiguration().setDefaultTimeToRefresh(timeToRefreshNanos,
+                TimeUnit.NANOSECONDS).getDefaultTimeToRefresh(unit);
     }
 
     /**
@@ -64,8 +65,8 @@ final class LoadingUtils {
      *             if the specified interval is negative
      */
     public static long convertRefreshTimeToNanos(long timeToRefresh, TimeUnit unit) {
-        return new CacheLoadingConfiguration().setDefaultTimeToRefresh(timeToRefresh,
-                unit).getDefaultTimeToRefresh(TimeUnit.NANOSECONDS);
+        return new CacheLoadingConfiguration().setDefaultTimeToRefresh(timeToRefresh, unit)
+                .getDefaultTimeToRefresh(TimeUnit.NANOSECONDS);
     }
 
     /**
@@ -106,8 +107,7 @@ final class LoadingUtils {
      *            the CacheLoadingService to wrap
      * @return a wrapped service that only exposes CacheLoadingService methods
      */
-    public static <K, V> CacheLoadingService<K, V> wrapService(
-            CacheLoadingService<K, V> service) {
+    public static <K, V> CacheLoadingService<K, V> wrapService(CacheLoadingService<K, V> service) {
         return new DelegatedCacheLoadingService<K, V>(service);
     }
 
@@ -249,6 +249,7 @@ final class LoadingUtils {
         public void loadAll(Map<K, AttributeMap> mapsWithAttributes) {
             delegate.loadAll(mapsWithAttributes);
         }
+
         /** {@inheritDoc} */
         public void setDefaultTimeToRefresh(long timeToLive, TimeUnit unit) {
             delegate.setDefaultTimeToRefresh(timeToLive, unit);
@@ -267,8 +268,8 @@ final class LoadingUtils {
          * @param key
          * @param callback
          */
-        LoadValueRunnable(final AbstractCacheLoadingService<K, V> loaderService,
-                final K key, AttributeMap attributes) {
+        LoadValueRunnable(final AbstractCacheLoadingService<K, V> loaderService, final K key,
+                AttributeMap attributes) {
             if (key == null) {
                 throw new NullPointerException("key is null");
             }

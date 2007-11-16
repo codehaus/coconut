@@ -23,6 +23,6 @@ public class CachePolicyDecoratorExample {
     public static void main(String[] args) {
         CacheConfiguration<String, ?> conf = CacheConfiguration.create();
         Predicate<String> f = Predicates.not(StringPredicates.startsWith("https"));
-        conf.eviction().setPolicy(Policies.filteredMapKeyPolicy(Policies.newLRU(), f));
+        //conf.eviction().setPolicy(Policies.filteredMapKeyPolicy(Policies.newLRU(), f));
     }
 }

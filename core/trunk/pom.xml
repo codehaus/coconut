@@ -5,6 +5,7 @@
     <groupId>org.coconut</groupId>
     <artifactId>coconut-parent</artifactId>
     <version>1.0-alpha4-SNAPSHOT</version>
+    <relativePath>../pom/pom.xml</relativePath>
   </parent>
   <groupId>org.coconut.core</groupId>
   <artifactId>coconut-core</artifactId>

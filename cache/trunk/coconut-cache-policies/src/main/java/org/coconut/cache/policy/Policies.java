@@ -114,18 +114,4 @@ public final class Policies {
     public static <E> ReplacementPolicy<E> newRandom() {
         return new RandomPolicy<E>();
     }
-    
-    public static <K, V> ReplacementPolicy<? extends Map.Entry<K, V>> filteredMapKeyPolicy(
-            ReplacementPolicy policy, Predicate<? extends K> filter) {
-        throw new UnsupportedOperationException();
-        // return new FilteredPolicyDecorator(policy,
-        // CollectionFilters.keyFilter(filter));
-    }
-
-    public static <K, V> ReplacementPolicy<? extends Map.Entry<K, V>> filteredMapValuePolicy(
-            ReplacementPolicy policy, Predicate<? extends V> filter) {
-        throw new UnsupportedOperationException();
-        // return new FilteredPolicyDecorator(policy,
-        // CollectionFilters.valueFilter(filter));
-    }
 }

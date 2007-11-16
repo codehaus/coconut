@@ -42,15 +42,15 @@ public class PoliciesTest {
         HashMap hm = new HashMap();
         hm.put(1, 2);
         hm.put(3, 4);
-        ReplacementPolicy rp = Policies.filteredMapKeyPolicy(Policies.newClock(),
-                Predicates.equal(1));
-        assertTrue(rp.add(hm.entrySet().toArray()[0], AttributeMaps.EMPTY_MAP) > 0);
-        assertTrue(rp.add(hm.entrySet().toArray()[1], AttributeMaps.EMPTY_MAP) < 0);
-        
-        ReplacementPolicy rp1 =Policies.filteredMapValuePolicy(Policies.newClock(),
-                Predicates.equal(2));
-        assertTrue(rp1.add(hm.entrySet().toArray()[0], AttributeMaps.EMPTY_MAP) > 0);
-        assertTrue(rp1.add(hm.entrySet().toArray()[1], AttributeMaps.EMPTY_MAP) < 0);
+//        ReplacementPolicy rp = Policies.filteredMapKeyPolicy(Policies.newClock(),
+//                Predicates.equal(1));
+//        assertTrue(rp.add(hm.entrySet().toArray()[0], AttributeMaps.EMPTY_MAP) > 0);
+//        assertTrue(rp.add(hm.entrySet().toArray()[1], AttributeMaps.EMPTY_MAP) < 0);
+//        
+//        ReplacementPolicy rp1 =Policies.filteredMapValuePolicy(Policies.newClock(),
+//                Predicates.equal(2));
+//        assertTrue(rp1.add(hm.entrySet().toArray()[0], AttributeMaps.EMPTY_MAP) > 0);
+//        assertTrue(rp1.add(hm.entrySet().toArray()[1], AttributeMaps.EMPTY_MAP) < 0);
 
     }
 }

@@ -4,6 +4,7 @@
 package org.coconut.cache;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -23,6 +24,13 @@ public class DummyCache<K, V> implements Cache<K, V> {
     /** The name of the cache. */
     private final String name;
 
+    private final HashMap<Class, Object> services = new HashMap<Class, Object>();
+    /**
+     * Creates a new DummyCache with the default constructor.
+     */
+    public DummyCache() {
+        this(CacheConfiguration.create());
+    }
     /**
      * Creates a new DummyCache.
      * 
@@ -31,6 +39,10 @@ public class DummyCache<K, V> implements Cache<K, V> {
      */
     public DummyCache(CacheConfiguration<?, ?> configuration) {
         this.name = configuration.getName();
+    }
+
+    public void addService(Class key, Object service) {
+        services.put(key, service);
     }
 
     /** {@inheritDoc} */
@@ -78,7 +90,7 @@ public class DummyCache<K, V> implements Cache<K, V> {
 
     /** {@inheritDoc} */
     public <T> T getService(Class<T> serviceType) {
-        return null;
+        return (T) services.get(serviceType);
     }
 
     /** {@inheritDoc} */

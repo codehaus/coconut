@@ -20,27 +20,32 @@ public class CacheWorkerManagerTest {
 
     private ExecutorService es = MockTestCase.mockDummy(ExecutorService.class);
 
-    private ScheduledExecutorService ses = MockTestCase
-            .mockDummy(ScheduledExecutorService.class);
+    private ScheduledExecutorService ses = MockTestCase.mockDummy(ScheduledExecutorService.class);
 
     @Test
-    public void test() {
-     //   Manager m = new Manager();
-       // assertSame(es, m.getExecutorService(s1));
-       // assertSame(ses, m.getScheduledExecutorService(s2));
+    public void name() {
+        assertEquals("foo", new Manager("foo").getName());
+        // Manager m = new Manager();
+        // assertSame(es, m.getExecutorService(s1));
+        // assertSame(ses, m.getScheduledExecutorService(s2));
     }
 
     class Manager extends CacheWorkerManager {
 
-        
-        public ExecutorService getExecutorService(Object service,
-                AttributeMap attributes) {
+        public Manager() {
+            super();
+        }
+
+        public Manager(String name) {
+            super(name);
+        }
+
+        public ExecutorService getExecutorService(Object service, AttributeMap attributes) {
             s1 = service;
             assertEquals(0, attributes.size());
             return es;
         }
 
-        
         public ScheduledExecutorService getScheduledExecutorService(Object service,
                 AttributeMap attributes) {
             s2 = service;

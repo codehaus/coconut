@@ -3,10 +3,20 @@
  */
 package org.coconut.cache.tck.core;
 
+import org.coconut.cache.Cache;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;
 
 public class ToString extends AbstractCacheTCKTest {
+
+    /**
+     * Just test that the toString() method works on an empty cache.
+     */
+    @Test
+    public void toStringEmpty() {
+        c = newCache();
+        c.toString();
+    }
 
     /**
      * Just test that the toString() method works.
@@ -24,5 +34,18 @@ public class ToString extends AbstractCacheTCKTest {
             System.out.println(s);
             throw ar;
         }
+    }
+
+    /**
+     * Just test that the toString() does recursively call {@link Cache#toString()} if the
+     * cache is put into itself as a value or a key.
+     */
+    @Test
+    public void toStringCacheInCache() {
+        Cache c = newCache();
+        c.put(c, "foo");
+        c.toString();
+        c.put("foo", c);
+        c.toString();
     }
 }

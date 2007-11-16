@@ -107,11 +107,14 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
     }
 
     /** {@inheritDoc} */
-    public <T> T getService(Class<T> type) {
+    public <T> T getService(Class<T> serviceType) {
+        if (serviceType == null) {
+            throw new NullPointerException("type is null");
+        }
         lazyStart(false);
-        T t = (T) publicServices.get(type);
+        T t = (T) publicServices.get(serviceType);
         if (t == null) {
-            throw new IllegalArgumentException("Unknown service " + type);
+            throw new IllegalArgumentException("Unknown service " + serviceType);
         }
         return t;
     }

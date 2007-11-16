@@ -174,4 +174,14 @@ public class ExplicitLoading extends AbstractLoadingTestBundle {
     public void testLoadAllNPE1() {
         loading().loadAll((Collection) null);
     }
+    
+    @Test(expected = NullPointerException.class)
+    public void loadAllWithAttributesNPE() {
+        loading().loadAll((AttributeMap) null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void loadAllCollectionNPE1() {
+        loading().loadAll(Arrays.asList(1, null));
+    }
 }

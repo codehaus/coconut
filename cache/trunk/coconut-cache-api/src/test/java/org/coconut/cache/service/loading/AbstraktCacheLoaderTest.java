@@ -32,6 +32,11 @@ public class AbstraktCacheLoaderTest {
     Mockery context = new JUnit4Mockery();
 
     @Test
+    public void loadNamedConstructor() {
+        assertEquals("foo", new MyLoader("foo").getName());
+    }
+
+    @Test
     public void loadAll() {
         final CacheLoaderCallback callback = context.mock(CacheLoaderCallback.class);
         context.checking(new Expectations() {
@@ -44,8 +49,8 @@ public class AbstraktCacheLoaderTest {
             }
         });
         new MyLoader().loadAll((Collection) Arrays.asList(callback));
-
     }
+
     @Test
     public void loadAllErr() {
         final CacheLoaderCallback callback = context.mock(CacheLoaderCallback.class);
@@ -60,6 +65,7 @@ public class AbstraktCacheLoaderTest {
         });
         new MyLoader().loadAll((Collection) Arrays.asList(callback));
     }
+
     /**
      * Tests that the signature of CacheLoader Is okay.
      */
@@ -80,6 +86,13 @@ public class AbstraktCacheLoaderTest {
     abstract static class AbstractCacheLoaderCallback<K, V> implements CacheLoaderCallback<K, V> {}
 
     static class MyLoader extends AbstractCacheLoader<Integer, String> {
+        MyLoader() {
+
+        }
+
+        MyLoader(String name) {
+            super(name);
+        }
 
         /** {@inheritDoc} */
         public String load(Integer key, AttributeMap attributes) throws Exception {

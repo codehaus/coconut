@@ -28,5 +28,9 @@ public class ServiceManagerOnCache extends AbstractCacheTCKTest {
         c.getService(CacheServiceManagerService.class);
     }
 
-
+    @Test(expected = NullPointerException.class)
+    public void serviceManagerGetNPE() {
+        c = newCache();
+        c.getService(null);
+    }
 }

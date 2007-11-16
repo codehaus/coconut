@@ -28,6 +28,9 @@ public final class CacheLoaders {
      *         {@link CacheLoadingService#forceLoadAll()} method on the specified cache
      */
     public static <K> Runnable runLoad(Cache<K, ?> fromCache, final K key) {
+        if (key == null) {
+            throw new NullPointerException("key is null");
+        }
         final CacheLoadingService<K, ?> service = CacheServices.loading(fromCache);
         return new Runnable() {
             public void run() {

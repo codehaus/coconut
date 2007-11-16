@@ -186,7 +186,7 @@ public class ExplicitForcedLoading extends AbstractLoadingTestBundle {
         assertGet(M1, M2, M3);
         assertEquals(6, loader.getNumberOfLoads());
     }
-    
+
     @Test
     public void forceLoadAllWithAttributes() {
         loading().forceLoadAll();
@@ -200,4 +200,15 @@ public class ExplicitForcedLoading extends AbstractLoadingTestBundle {
         assertEquals("a3", get(M3.getKey()));
         assertEquals(6, loader.getNumberOfLoads());
     }
+
+    @Test(expected = NullPointerException.class)
+    public void forceLoadAllWithAttributesNPE() {
+        loading().forceLoadAll((AttributeMap) null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void forceLoadAllCollectionNPE1() {
+        loading().forceLoadAll(Arrays.asList(1, null));
+    }
+
 }
