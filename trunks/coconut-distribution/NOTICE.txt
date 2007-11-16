@@ -1,0 +1,5 @@
+This product includes software (ASM) developed by
+The OW2 Consortium (http://www.ow2.org/).
+
+This product includes software (Picocontainer) developed by
+The Codehaus Foundation (http://www.codehaus.org/).

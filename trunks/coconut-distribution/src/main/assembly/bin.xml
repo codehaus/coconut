@@ -1,0 +1,33 @@
+<assembly>
+  <id>bin</id>
+  <baseDirectory>coconut-${version}</baseDirectory>
+  <formats>
+    <format>tar.gz</format>
+    <format>tar.bz2</format>
+    <format>zip</format>
+  </formats>
+  <fileSets>
+    <fileSet>
+      <includes>
+        <include>LICENSE*</include>
+        <include>NOTICE*</include>
+        <include>README*</include>
+        <include>getting-started*</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>coconut-uberjar/target</directory>
+      <includes>
+        <include>coconut-${version}.jar</include>
+      </includes>
+      <outputDirectory></outputDirectory><!-- Do not remove this -->
+    </fileSet>
+    <fileSet>
+      <directory>../target/site/apidocs</directory>
+      <outputDirectory>javadoc</outputDirectory>
+      <includes>
+        <include>**</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+</assembly>

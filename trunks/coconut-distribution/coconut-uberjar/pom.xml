@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>org.coconut</groupId>
+    <artifactId>coconut-parent</artifactId>
+    <version>1.0-alpha4-SNAPSHOT</version>
+    <relativePath>../../pom/pom.xml</relativePath>
+  </parent>
+  <packaging>pom</packaging>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>coconut-uberjar</artifactId>
+  <name>Coconut Uberjar</name>
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2-beta-1</version>
+        <configuration>
+          <descriptor>src/main/assembly/jar-with-dependencies.xml</descriptor>
+          <finalName>coconut-${version}</finalName>
+          <appendAssemblyId>false</appendAssemblyId>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>org.coconut.cache</groupId>
+      <artifactId>coconut-cache-impl</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+
+</project>
