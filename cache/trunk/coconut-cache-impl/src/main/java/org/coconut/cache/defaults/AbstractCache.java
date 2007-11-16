@@ -74,6 +74,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
 
     /** {@inheritDoc} */
     public boolean containsValue(Object value) {
+        //TODO what if shutdown, think we should just return false then
         if (value == null) {
             throw new NullPointerException("value is null");
         } else if (size() == 0) {

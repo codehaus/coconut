@@ -60,7 +60,7 @@ public class ThreadServiceTestHelper extends CacheWorkerManager {
         }
     }
 
-    public ExecutorService getExecutorService(Class<?> service, AttributeMap attributes) {
+    public ExecutorService getExecutorService(Object service, AttributeMap attributes) {
         return new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS,
                 new SynchronousQueue<Runnable>())
         {
@@ -72,7 +72,7 @@ public class ThreadServiceTestHelper extends CacheWorkerManager {
         };
     }
 
-    public ScheduledExecutorService getScheduledExecutorService(Class<?> service,
+    public ScheduledExecutorService getScheduledExecutorService(Object service,
             AttributeMap attributes) {
         throw new UnsupportedOperationException();
     }

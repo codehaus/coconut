@@ -7,10 +7,10 @@ import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 
 /**
- * An exception service available on runtime.
+ * An exception service available as an internal service at runtime.
  * <p>
  * NOTICE: This is an internal class and should not be directly referred. No guarantee is
- * made to the compatibility of this class between different releases of Coconut Cache.
+ * made to the compatibility of this class between different releases.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
@@ -20,6 +20,7 @@ import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
  *            the type of mapped values
  */
 public interface InternalCacheExceptionService<K, V> {
+
     /**
      * Returns the CacheExceptionHandler configured for this cache.
      * 

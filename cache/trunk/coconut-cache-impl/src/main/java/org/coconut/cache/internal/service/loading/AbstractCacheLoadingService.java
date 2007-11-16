@@ -49,10 +49,25 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
         attributeFactory.setTimeToFreshNanos(LoadingUtils
                 .getInitialTimeToRefresh(loadingConfiguration));
         this.loader = loadingConfiguration.getLoader();
-        reloadFilter = loadingConfiguration.getRefreshFilter();
+        reloadFilter = loadingConfiguration.getRefreshPredicate();
         this.loadSupport = loadSupport;
         this.attributeFactory = attributeFactory;
         this.exceptionHandler = exceptionHandler;
+    }
+
+    public V loadAndGet(K key) {
+        // will and probably should count as a cache miss
+        AbstractCacheEntry<K, V> ace = loadBlocking(key);
+        return ace == null ? null : ace.getValue();
+    }
+
+    public V loadAndGet(K key, AttributeMap attributes) {
+        AbstractCacheEntry<K, V> ace = loadBlocking(key, attributes);
+        return ace == null ? null : ace.getValue();
+    }
+
+    AbstractCacheEntry<K, V> loadBlocking(K key) {
+        return loadBlocking(key, AttributeMaps.EMPTY_MAP);
     }
 
     /** {@inheritDoc} */
@@ -118,7 +133,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
     }
 
     /** {@inheritDoc} */
-    public Predicate<CacheEntry<K, V>> getRefreshFilter() {
+    public Predicate<CacheEntry<K, V>> getRefreshPredicate() {
         return reloadFilter;
     }
 

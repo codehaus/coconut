@@ -14,9 +14,9 @@ import org.junit.Test;
 
 public class CacheWorkerManagerTest {
 
-    private Class s1 = String.class;
+    private Object s1 = String.class;
 
-    private Class s2 = Integer.class;
+    private Object s2 = Integer.class;
 
     private ExecutorService es = MockTestCase.mockDummy(ExecutorService.class);
 
@@ -33,7 +33,7 @@ public class CacheWorkerManagerTest {
     class Manager extends CacheWorkerManager {
 
         
-        public ExecutorService getExecutorService(Class<?> service,
+        public ExecutorService getExecutorService(Object service,
                 AttributeMap attributes) {
             s1 = service;
             assertEquals(0, attributes.size());
@@ -41,7 +41,7 @@ public class CacheWorkerManagerTest {
         }
 
         
-        public ScheduledExecutorService getScheduledExecutorService(Class<?> service,
+        public ScheduledExecutorService getScheduledExecutorService(Object service,
                 AttributeMap attributes) {
             s2 = service;
             assertEquals(0, attributes.size());

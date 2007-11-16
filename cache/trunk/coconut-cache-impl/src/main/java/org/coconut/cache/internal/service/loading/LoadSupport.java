@@ -6,8 +6,20 @@ package org.coconut.cache.internal.service.loading;
 import java.util.Map;
 
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
+import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.core.AttributeMap;
 
+/**
+ * This implementation of {@link CacheLoadingService} needs the cache implementation to
+ * support this interface.
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id$
+ * @param <K>
+ *            the type of keys maintained by this service
+ * @param <V>
+ *            the type of mapped values
+ */
 public interface LoadSupport<K, V> {
 
     /**
@@ -23,13 +35,16 @@ public interface LoadSupport<K, V> {
     void loadAll(Map<K, AttributeMap> attributes);
 
     /**
-     * Called whenever a cacheloader has asynchronously loaded an element.
+     * Called whenever a cacheloader has loaded an element.
      * 
      * @param key
-     *            the
+     *            the key for which the value should be added
      * @param value
      *            the value that was loaded, possible <code>null</code>
      * @param attributes
+     *            a list of attributes for the element
+     * @return the AbstractCacheEntry that was added to the cache or <code>null</code>
+     *         if it was not added.
      */
     AbstractCacheEntry<K, V> valueLoaded(K key, V value, AttributeMap attributes);
 

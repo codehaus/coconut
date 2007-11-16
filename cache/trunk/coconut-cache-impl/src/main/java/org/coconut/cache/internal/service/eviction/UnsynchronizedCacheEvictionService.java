@@ -47,6 +47,7 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
 
     /** {@inheritDoc} */
     public int add(T t) {
+        //TODO Test maxSize, maxVolume
         if (maxVolume == 0) {
             return -1;
         }
@@ -86,6 +87,7 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
         return cp.evictNext();
     }
 
+    /** {@inheritDoc} */
     public Collection<?> getChildServices() {
         return Arrays.asList(cp);
     }

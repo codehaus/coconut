@@ -158,7 +158,7 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
     @Test
     public void testLoadAll() {
         IntegerToStringLoader loader = new IntegerToStringLoader();
-        c = newCache(newConf().loading().setRefreshFilter(new RefreshFilter()).setLoader(
+        c = newCache(newConf().loading().setRefreshPredicate(new RefreshFilter()).setLoader(
                 loader));
         loading().loadAll();
         awaitAllLoads();

@@ -21,7 +21,12 @@ import org.coconut.predicate.Predicate;
  */
 public interface InternalCacheLoadingService<K, V> extends CacheLoadingService<K, V> {
 
-    Predicate<CacheEntry<K, V>> getRefreshFilter();
+    /**
+     * Returns the refresh predicate for this service.
+     * 
+     * @return the refresh predicate for this service
+     */
+    Predicate<CacheEntry<K, V>> getRefreshPredicate();
 
     /**
      * @param entry
@@ -29,6 +34,14 @@ public interface InternalCacheLoadingService<K, V> extends CacheLoadingService<K
      */
     AbstractCacheEntry<K, V> loadBlocking(K key, AttributeMap attributes);
 
+    /**
+     * Asynchronously load the value for the specified key and AttributeMap.
+     * 
+     * @param key
+     *            the key for which to asynchronously load a value
+     * @param attributes
+     *            a map of attributes to parse to the cache loader
+     */
     void loadAsync(K key, AttributeMap attributes);
 
     void loadAllAsync(Map<K, AttributeMap> mapsWithAttributes);

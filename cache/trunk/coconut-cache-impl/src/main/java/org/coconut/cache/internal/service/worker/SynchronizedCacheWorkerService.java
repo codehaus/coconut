@@ -53,12 +53,12 @@ public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService i
                     + cacheName));
         }
 
-        public ExecutorService getExecutorService(Class<?> service, AttributeMap attributes) {
+        public ExecutorService getExecutorService(Object service, AttributeMap attributes) {
             return es;
         }
 
         @Override
-        public ScheduledExecutorService getScheduledExecutorService(Class<?> service,
+        public ScheduledExecutorService getScheduledExecutorService(Object service,
                 AttributeMap attributes) {
             throw new UnsupportedOperationException();
         }

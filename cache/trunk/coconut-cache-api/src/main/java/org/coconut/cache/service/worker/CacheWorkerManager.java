@@ -38,7 +38,7 @@ public abstract class CacheWorkerManager extends AbstractCacheLifecycle {
      * @return a ExecutorService that can be used to asynchronously execute tasks for the
      *         specified service
      */
-    public abstract ExecutorService getExecutorService(Class<?> service, AttributeMap attributes);
+    public abstract ExecutorService getExecutorService(Object service, AttributeMap attributes);
 
     /**
      * Returns a ScheduledExecutorService that can be used to asynchronously schedule
@@ -52,7 +52,7 @@ public abstract class CacheWorkerManager extends AbstractCacheLifecycle {
      * @return a ScheduledExecutorService that can be used to asynchronously schedule
      *         tasks for the specified service
      */
-    public abstract ScheduledExecutorService getScheduledExecutorService(Class<?> service,
+    public abstract ScheduledExecutorService getScheduledExecutorService(Object service,
             AttributeMap attributes);
 
 }

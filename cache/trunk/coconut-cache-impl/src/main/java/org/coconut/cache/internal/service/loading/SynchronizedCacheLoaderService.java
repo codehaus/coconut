@@ -33,17 +33,19 @@ import org.coconut.core.AttributeMap;
  */
 public class SynchronizedCacheLoaderService<K, V> extends AbstractCacheLoadingService<K, V> {
 
+    /** InternalCacheEntryService responsible for creating cache entries. */
     private final InternalCacheEntryService attributeFactory;
 
     private final ConcurrentHashMap<K, FutureTask<AbstractCacheEntry<K, V>>> futures = new ConcurrentHashMap<K, FutureTask<AbstractCacheEntry<K, V>>>();
 
+    /** The Executor responsible for doing the actual load. */
     private final Executor loadExecutor;
 
     public SynchronizedCacheLoaderService(InternalCacheEntryService attributeFactory,
             InternalCacheExceptionService<K, V> exceptionService,
             CacheLoadingConfiguration<K, V> loadConf,
-            final InternalCacheWorkerService threadManager, final LoadSupport<K, V> cache) {
-        super(loadConf, attributeFactory, exceptionService, cache);
+            final InternalCacheWorkerService threadManager, final LoadSupport<K, V> loadSupport) {
+        super(loadConf, attributeFactory, exceptionService, loadSupport);
         this.attributeFactory = attributeFactory;
         this.loadExecutor = threadManager.getExecutorService(CacheLoadingService.class);
     }
@@ -87,6 +89,7 @@ public class SynchronizedCacheLoaderService<K, V> extends AbstractCacheLoadingSe
         return future;
     }
 
+    /** {@inheritDoc} */
     @Override
     AbstractCacheEntry<K, V> loadAndAddToCache(K key, AttributeMap attributes, boolean isSynchronous) {
         try {

@@ -37,7 +37,8 @@ import org.coconut.core.AttributeMap;
  * Cache&lt;?, ?&gt; c = someCache;
  * CacheEvictionService&lt;?, ?&gt; ces = CacheServices.eviction(c);
  * ces.setMaximumSize(10000);
- * </pre> 
+ * </pre>
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -48,9 +49,9 @@ import org.coconut.core.AttributeMap;
 public interface CacheLoadingService<K, V> {
 
     /**
-     * This method works analogous to the {@link #load(Object)} method. Except, that it
-     * will attempt to load a new value for the specified key even if a valid mapping for
-     * the specified key is already in the cache.
+     * This method will attempt to load the value, for the specified key, from the
+     * configured cache loader even if a valid mapping for the specified key is already in
+     * the cache.
      * <p>
      * If this cache has been shutdown calls to this method is ignored.
      * 

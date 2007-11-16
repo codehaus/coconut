@@ -9,7 +9,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
-import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingMXBean;
 import org.coconut.cache.service.loading.CacheLoadingService;

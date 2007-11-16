@@ -36,8 +36,8 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
     /** The XML tag for the cache loader. */
     private final static String LOADER_TAG = "loader";
 
-    /** The XML tag for the refresh filter. */
-    private final static String REFRESH_FILTER_TAG = "refresh-filter";
+    /** The XML tag for the refresh predicate. */
+    private final static String REFRESH_PREDICATE_TAG = "refresh-predicate";
 
     /** The XML tag for the refresh interval. */
     private final static String REFRESH_INTERVAL_TAG = "default-time-to-refresh";
@@ -48,8 +48,8 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
     /** The cache loader. */
     private CacheLoader<? super K, ? extends V> loader;
 
-    /** The refresh filter. */
-    private Predicate<CacheEntry<K, V>> refreshFilter;
+    /** The refresh predicate. */
+    private Predicate<CacheEntry<K, V>> refreshPredicate;
 
     /**
      * Creates a new CacheLoadingConfiguration.
@@ -85,13 +85,13 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
     }
 
     /**
-     * Returns the configured refresh filter.
+     * Returns the configured refresh predicate.
      * 
-     * @return the configured refresh filter
-     * @see #setRefreshFilter(Predicate)
+     * @return the configured refresh predicate
+     * @see #setRefreshPredicate(Predicate)
      */
-    public Predicate<CacheEntry<K, V>> getRefreshFilter() {
-        return refreshFilter;
+    public Predicate<CacheEntry<K, V>> getRefreshPredicate() {
+        return refreshPredicate;
     }
 
     /**
@@ -131,8 +131,10 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
     /**
      * Sets the cache loader that should be used for loading new elements into the cache.
      * If the specified loader is <code>null</code> no loader will be used for loading
-     * new key-value bindings. All values must then put into the cache by using on of the
-     * caches {@link Cache#put(Object, Object)} methods.
+     * new key-value bindings. And the {@link CacheLoadingService} will not be available
+     * at runtime. All values must then put into the cache by
+     * {@link Cache#put(Object, Object)}, {@link Cache#putAll(java.util.Map)} or some of
+     * the other put operations.
      * 
      * @param cacheLoader
      *            the cache loader to set
@@ -145,17 +147,19 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
 
     /**
      * Sets a function ({@link Predicate}) that is used for determining if an element
-     * should be refreshed. The filter is checked on each call to
+     * should be refreshed. The predicate is checked on calls to the various load methods
+     * in {@link CacheLoadingService}.
+     * <p>
+     * Some cache implementations might also check the predicate on calls to
      * {@link org.coconut.cache.Cache#get(Object)},{@link org.coconut.cache.Cache#getAll(Collection)},
-     * {@link org.coconut.cache.Cache#getEntry(Object)} if a mapping exist for specified
-     * key(s).
+     * {@link org.coconut.cache.Cache#getEntry(Object)}, but this is not required.
      * 
-     * @param filter
-     *            the reload filter
+     * @param predicate
+     *            the reload predicate
      * @return this configuration
      */
-    public CacheLoadingConfiguration<K, V> setRefreshFilter(Predicate<CacheEntry<K, V>> filter) {
-        refreshFilter = filter;
+    public CacheLoadingConfiguration<K, V> setRefreshPredicate(Predicate<CacheEntry<K, V>> predicate) {
+        refreshPredicate = predicate;
         return this;
     }
 
@@ -171,7 +175,7 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
         setDefaultTimeToRefresh(time, TimeUnit.NANOSECONDS);
 
         /* Refresh Filter */
-        refreshFilter = loadOptional(parent, REFRESH_FILTER_TAG, Predicate.class);
+        refreshPredicate = loadOptional(parent, REFRESH_PREDICATE_TAG, Predicate.class);
     }
 
     /** {@inheritDoc} */
@@ -185,8 +189,8 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
         UnitOfTime.toElementCompact(doc, parent, REFRESH_INTERVAL_TAG, defaultTimeToRefresh,
                 TimeUnit.NANOSECONDS, 0);
 
-        /* Refresh Filter */
-        addAndsaveObject(doc, parent, REFRESH_FILTER_TAG, getResourceBundle(), getClass(),
-                "saveOfFilterFailed", refreshFilter);
+        /* Refresh Predicate */
+        addAndsaveObject(doc, parent, REFRESH_PREDICATE_TAG, getResourceBundle(), getClass(),
+                "saveOfFilterFailed", refreshPredicate);
     }
 }

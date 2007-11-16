@@ -11,21 +11,50 @@
   <artifactId>coconut-modules</artifactId>
   <name>Coconut Modules (pom)</name>
   <description>Builds All Trunks</description>
-  <version>1-SNAPSHOT</version>
   <packaging>pom</packaging>
+  <distributionManagement>
+    <site>
+      <id>codehaus.org</id>
+      <url>dav:https://dav.codehaus.org/coconut</url>
+    </site>
+  </distributionManagement>
   <scm>
     <connection>scm:svn:http://svn.codehaus.org/coconut/trunks/</connection>
     <developerConnection>
       scm:svn:https://svn.codehaus.org/coconut/trunks
     </developerConnection>
   </scm>
-  <modules>
-    <module>coconut-cache</module>
-    <module>coconut-core</module>
-    <module>coconut-event</module>
-    <module>coconut-management</module>
-    <module>coconut-test</module>
-  </modules>
+
+  <profiles>
+    <profile>
+      <id>run-no-clover</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>coconut-cache</module>
+        <module>coconut-core</module>
+        <module>coconut-event</module>
+        <module>coconut-management</module>
+        <module>coconut-test</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>run-clover</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+        <property>
+          <name>clover</name>
+        </property>
+      </activation>
+      <modules>
+        <module>coconut-cache</module>
+        <module>coconut-core</module>
+        <module>coconut-event</module>
+        <module>coconut-management</module>
+      </modules>
+    </profile>
+  </profiles>
   <reporting>
 
     <plugins>

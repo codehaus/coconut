@@ -437,7 +437,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
             if (!doLoad) {
                 long timestamp = getClock().timestamp();
                 doLoad = e.isExpired(expirationService.getExpirationFilter(), timestamp)
-                        || e.needsRefresh(loadingService.getRefreshFilter(), timestamp);
+                        || e.needsRefresh(loadingService.getRefreshPredicate(), timestamp);
             }
 
             if (doLoad) {
@@ -460,7 +460,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
                 for (Iterator<AbstractCacheEntry<K, V>> i = map.iterator(); i.hasNext();) {
                     AbstractCacheEntry<K, V> e = i.next();
                     if (e.isExpired(expirationService.getExpirationFilter(), timestamp)
-                            || e.needsRefresh(loadingService.getRefreshFilter(), timestamp)) {
+                            || e.needsRefresh(loadingService.getRefreshPredicate(), timestamp)) {
                         keys.put(e.getKey(), attributes);
                     }
                 }
@@ -482,7 +482,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
                 boolean doLoad = ce == null;
                 if (!doLoad) {
                     doLoad = ce.isExpired(expirationService.getExpirationFilter(), timestamp)
-                            || ce.needsRefresh(loadingService.getRefreshFilter(), timestamp);
+                            || ce.needsRefresh(loadingService.getRefreshPredicate(), timestamp);
                 }
                 if (doLoad) {
                     keys.put(e.getKey(), e.getValue());

@@ -21,7 +21,7 @@ public class RefreshFilter extends AbstractLoadingTestBundle {
     @Before
     public void setUpCaches() {
         f = new CacheEntryFilter();
-        c = newCache(newConf().loading().setLoader(loader).setRefreshFilter(f));
+        c = newCache(newConf().loading().setLoader(loader).setRefreshPredicate(f));
     }
 
     /**
@@ -61,7 +61,7 @@ public class RefreshFilter extends AbstractLoadingTestBundle {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
         cc.management().setEnabled(true);
         ManagedFilter filter = new ManagedFilter();
-        c = newCache(cc.loading().setRefreshFilter(filter).setLoader(new IntegerToStringLoader())
+        c = newCache(cc.loading().setRefreshPredicate(filter).setLoader(new IntegerToStringLoader())
                 .c());
         prestart();
         assertNotNull(
@@ -73,7 +73,7 @@ public class RefreshFilter extends AbstractLoadingTestBundle {
     public void filterLifecycle() {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
         LifecycleFilter filter = new LifecycleFilter();
-        c = newCache(cc.loading().setRefreshFilter(filter).setLoader(new IntegerToStringLoader())
+        c = newCache(cc.loading().setRefreshPredicate(filter).setLoader(new IntegerToStringLoader())
                 .c());
 
         filter.assertNotStarted();

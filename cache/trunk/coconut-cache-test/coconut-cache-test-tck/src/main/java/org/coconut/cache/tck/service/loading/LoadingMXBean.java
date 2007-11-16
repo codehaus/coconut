@@ -90,7 +90,7 @@ public class LoadingMXBean extends AbstractLoadingTestBundle {
     @Test
     public void testLoadAll() {
         IntegerToStringLoader loader = new IntegerToStringLoader();
-        c = newCache(newConf().loading().setRefreshFilter(new RefreshFilter()).setLoader(
+        c = newCache(newConf().loading().setRefreshPredicate(new RefreshFilter()).setLoader(
                 loader).c().management().setEnabled(true).setMBeanServer(mbs));
         mxBean = findMXBean(mbs, CacheLoadingMXBean.class);
         mxBean.loadAll();

@@ -61,13 +61,13 @@ public class CacheWorkerConfigurationTest {
 
     public static class LoadableCacheWorkerManager extends CacheWorkerManager {
         
-        public ExecutorService getExecutorService(Class<?> service,
+        public ExecutorService getExecutorService(Object service,
                 AttributeMap attributes) {
             return null;
         }
 
         
-        public ScheduledExecutorService getScheduledExecutorService(Class<?> service,
+        public ScheduledExecutorService getScheduledExecutorService(Object service,
                 AttributeMap attributes) {
             return null;
         }
@@ -75,13 +75,13 @@ public class CacheWorkerConfigurationTest {
 
     public class NonLoadableCacheWorkerManager extends CacheWorkerManager {
         
-        public ExecutorService getExecutorService(Class<?> service,
+        public ExecutorService getExecutorService(Object service,
                 AttributeMap attributes) {
             return null;
         }
 
         
-        public ScheduledExecutorService getScheduledExecutorService(Class<?> service,
+        public ScheduledExecutorService getScheduledExecutorService(Object service,
                 AttributeMap attributes) {
             return null;
         }

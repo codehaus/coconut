@@ -19,7 +19,7 @@ import org.coconut.predicate.Predicate;
  * Various utility classes for expiration service implementation.
  * <p>
  * NOTICE: This is an internal class and should not be directly referred. No guarantee is
- * made to the compatibility of this class between different releases of Coconut Cache.
+ * made to the compatibility of this class between different releases.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
@@ -29,6 +29,7 @@ final class ExpirationUtils {
     /** Cannot instantiate. */
     // /CLOVER:OFF
     private ExpirationUtils() {}
+
     // /CLOVER:ON
 
     /**

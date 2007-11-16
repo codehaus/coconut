@@ -61,7 +61,7 @@ import org.coconut.internal.util.CollectionUtils;
  *      ...
  *  Set s = c.keySet();  // Needn't be in synchronized block
  *      ...
- *  synchronized(c) {  // Synchronizing on m, not s!
+ *  synchronized(c) {  // Synchronizing on c, not s!
  *      Iterator i = s.iterator(); // Must be in synchronized block
  *      while (i.hasNext())
  *          foo(i.next());
@@ -154,6 +154,11 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
         listener.afterCacheClear(this, started, list, volume);
     }
 
+    @Override
+    public synchronized boolean containsValue(Object value) {
+        return super.containsValue(value);
+    }
+
     /** {@inheritDoc} */
     public Set<Entry<K, V>> entrySet() {
         return map.entrySetPublic(this);
@@ -168,6 +173,11 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
     /** {@inheritDoc} */
     public Set<K> keySet() {
         return map.keySet(this);
+    }
+
+    @Override
+    public synchronized void prestart() {
+        super.prestart();
     }
 
     /** {@inheritDoc} */
@@ -197,6 +207,11 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
     public synchronized int size() {
         checkRunning("size", false);
         return map.size();
+    }
+
+    @Override
+    public synchronized String toString() {
+        return super.toString();
     }
 
     /** {@inheritDoc} */
@@ -432,11 +447,6 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
         return serviceManager;
     }
 
-    @Override
-    public synchronized void prestart() {
-        super.prestart();
-    }
-
     /** A helper class. */
     class Support implements InternalCacheSupport<K, V> {
         /** {@inheritDoc} */
@@ -471,7 +481,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
                 if (!doLoad) {
                     long timestamp = getClock().timestamp();
                     doLoad = e.isExpired(expirationService.getExpirationFilter(), timestamp)
-                            || e.needsRefresh(loadingService.getRefreshFilter(), timestamp);
+                            || e.needsRefresh(loadingService.getRefreshPredicate(), timestamp);
                 }
             }
             if (doLoad) {
@@ -496,7 +506,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
                     for (Iterator<AbstractCacheEntry<K, V>> i = map.iterator(); i.hasNext();) {
                         AbstractCacheEntry<K, V> e = i.next();
                         if (e.isExpired(expirationService.getExpirationFilter(), timestamp)
-                                || e.needsRefresh(loadingService.getRefreshFilter(), timestamp)) {
+                                || e.needsRefresh(loadingService.getRefreshPredicate(), timestamp)) {
                             keys.put(e.getKey(), attributes);
                         }
                     }
@@ -520,7 +530,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
                     boolean doLoad = ce == null;
                     if (!doLoad) {
                         doLoad = ce.isExpired(expirationService.getExpirationFilter(), timestamp)
-                                || ce.needsRefresh(loadingService.getRefreshFilter(), timestamp);
+                                || ce.needsRefresh(loadingService.getRefreshPredicate(), timestamp);
                     }
                     if (doLoad) {
                         keys.put(e.getKey(), e.getValue());
