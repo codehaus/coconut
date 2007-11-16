@@ -30,7 +30,7 @@
   </parent>
   <packaging>pom</packaging>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>coconut</artifactId>
+  <artifactId>coconut-distribution</artifactId>
   <name>Coconut Distribution</name>
   <distributionManagement>
     <site>

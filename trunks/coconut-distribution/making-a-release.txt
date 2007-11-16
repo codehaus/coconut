@@ -7,9 +7,10 @@ The process of making a release is not fully automated yet.
 > find coconut-release -name 'pom.xml' -exec sed -i 's/1.0-alpha3-SNAPSHOT/1.0-alpha3/g' {} \;
 > mvn -Dmaven.repo.local=coconut-release/release-repo -f coconut-release/pom.xml install source:jar javadoc:javadoc deploy
 
-************* Build and Upload Distribution **********
+************* Build and Upload Distribution + single jar & pom **********
 mvn -Dmaven.repo.local=coconut-release/release-repo -f coconut-release/coconut-distribution/pom.xml assembly:assembly
 mvn -N -Dmaven.repo.local=coconut-release/release-repo -f coconut-release/coconut-distribution/pom.xml site:deploy
+mvn -f coconut-release/coconut-distribution/coconut-uberjar/pom.xml deploy:deploy-file -Dfile=target\coconut-1.0-alpha4-SNAPSHOT.jar -Dversion=1.0-alpha4
 *********** Create clover report, deploy site ********
 > mvn -f coconut-release/pom.xml clover:instrument clover:aggregate clover:clover -P run-clover
 > mvn -N -f coconut-release/pom.xml site:deploy

@@ -21,6 +21,16 @@
     </resources>
     <plugins>
       <plugin>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <url>dav:https://dav.codehaus.org/repository/coconut</url>
+          <repositoryId>codehaus.org</repositoryId>
+          <groupId>org.coconut</groupId>
+          <artifactId>coconut</artifactId>
+          <packaging>jar</packaging>
+        </configuration>
+      </plugin>
+      <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <version>2.2-beta-1</version>
         <configuration>
