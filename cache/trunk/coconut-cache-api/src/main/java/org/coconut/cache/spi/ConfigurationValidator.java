@@ -3,15 +3,15 @@
  */
 package org.coconut.cache.spi;
 
+import java.util.Arrays;
+
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.service.management.CacheManagementService;
 
 /**
  * This class is used to validate instances of CacheConfiguration at runtime. While a lot
  * of checks can be made
- * <p>
- * 1.Make sure we check that if eviction-scheduling is enabled that a
- * CacheThreadingService is enabled.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
@@ -22,10 +22,20 @@ public class ConfigurationValidator {
 
     /**
      * Returns the default instance of a XmlConfigurator.
+     * 
      * @return the default instance of a XmlConfigurator
      */
     public static ConfigurationValidator getInstance() {
         return DEFAULT;
+    }
+
+    private boolean isSupported(Class<? extends Cache> cache, Class<?> service) {
+        CacheServiceSupport support = cache.getAnnotation(CacheServiceSupport.class);
+        if (support == null) {
+            throw new IllegalArgumentException(String.format(
+                    "class '%s' must have a CacheServiceSupport annotation", cache.getName()));
+        }
+        return Arrays.asList(support.value()).contains(service);
     }
 
     /**
@@ -37,9 +47,15 @@ public class ConfigurationValidator {
      *            the type of cache to verify
      */
     public void verify(CacheConfiguration<?, ?> conf, Class<? extends Cache> type) {
-    // preferable capacity>maxCapacity?
-    // preferable size>maxSize?
-    // no policy defined->cache is free to select a policy
+        if (!isSupported(type, CacheManagementService.class) && conf.management().isEnabled()) {
+            throw new IllegalCacheConfigurationException(
+                    "class '"
+                            + type
+                            + "' does not support management (enable via CacheManagementConfiguration.setEnabled())");
+        }
+        // preferable capacity>maxCapacity?
+        // preferable size>maxSize?
+        // no policy defined->cache is free to select a policy
 // Executor e = conf.threading().getExecutor();
 // // if (type.isAnnotationPresent(NotThreadSafe.class)) {
 // // throw new IllegalCacheConfigurationException(
