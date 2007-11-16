@@ -124,29 +124,29 @@ public class CacheTCKRunner extends Runner {
         if (ss != null) {
             services = Arrays.asList(ss.value());
         }
-        runner.add(new Suite(CacheEntrySuite.class));
-        runner.add(new Suite(CoreSuite.class));
-        runner.add(new Suite(ExceptionHandlingSuite.class));
+        runner.add(new ServiceSuite(CacheEntrySuite.class));
+        runner.add(new ServiceSuite(CoreSuite.class));
+        runner.add(new ServiceSuite(ExceptionHandlingSuite.class));
         if (services.contains(CacheEventService.class)) {
-            runner.add(new Suite(EventSuite.class));
+            runner.add(new ServiceSuite(EventSuite.class));
         }
         if (services.contains(CacheEvictionService.class)) {
-            runner.add(new Suite(EvictionSuite.class));
+            runner.add(new ServiceSuite(EvictionSuite.class));
         }
         if (services.contains(CacheExpirationService.class)) {
-            runner.add(new Suite(ExpirationSuite.class));
+            runner.add(new ServiceSuite(ExpirationSuite.class));
         }
         if (services.contains(CacheLoadingService.class)) {
-            runner.add(new Suite(LoadingSuite.class));
+            runner.add(new ServiceSuite(LoadingSuite.class));
         }
         if (services.contains(CacheManagementService.class)) {
-            runner.add(new Suite(ManagementSuite.class));
+            runner.add(new ServiceSuite(ManagementSuite.class));
         }
         if (services.contains(CacheServiceManagerService.class)) {
-            runner.add(new Suite(ServiceManagerSuite.class));
+            runner.add(new ServiceSuite(ServiceManagerSuite.class));
         }
         if (services.contains(CacheStatisticsService.class)) {
-            runner.add(new Suite(StatisticsSuite.class));
+            runner.add(new ServiceSuite(StatisticsSuite.class));
         }
     }
 }

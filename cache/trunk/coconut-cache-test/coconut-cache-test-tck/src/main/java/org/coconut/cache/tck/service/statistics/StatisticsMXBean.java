@@ -17,11 +17,14 @@ import javax.management.ObjectName;
 import junit.framework.Assert;
 
 import org.coconut.cache.Cache;
+import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.statistics.CacheStatisticsConfiguration;
 import org.coconut.cache.service.statistics.CacheStatisticsMXBean;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
+import org.coconut.cache.tck.RequireService;
 import org.junit.Test;
 
+@RequireService( { CacheManagementService.class })
 public class StatisticsMXBean extends AbstractCacheTCKTest {
 
     private CacheStatisticsMXBean mxBean;

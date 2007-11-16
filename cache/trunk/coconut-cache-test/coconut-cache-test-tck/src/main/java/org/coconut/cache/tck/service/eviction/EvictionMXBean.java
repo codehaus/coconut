@@ -9,10 +9,13 @@ import javax.management.RuntimeMBeanException;
 
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.service.eviction.CacheEvictionMXBean;
+import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
+import org.coconut.cache.tck.RequireService;
 import org.junit.Before;
 import org.junit.Test;
 
+@RequireService( { CacheManagementService.class })
 public class EvictionMXBean extends AbstractCacheTCKTest {
 
     static CacheEvictionConfiguration<?, ?> DEFAULT = new CacheEvictionConfiguration();
@@ -44,8 +47,8 @@ public class EvictionMXBean extends AbstractCacheTCKTest {
         assertEquals(1000, eviction().getMaximumVolume());
 
         // start value
-        c = newCache(newConf().setName("foo").management().setEnabled(true)
-                .setMBeanServer(mbs).c().eviction().setMaximumVolume(5000));
+        c = newCache(newConf().setName("foo").management().setEnabled(true).setMBeanServer(mbs).c()
+                .eviction().setMaximumVolume(5000));
         mxBean = findMXBean(mbs, CacheEvictionMXBean.class);
         assertEquals(5000, mxBean.getMaximumVolume());
 
@@ -69,8 +72,8 @@ public class EvictionMXBean extends AbstractCacheTCKTest {
         assertEquals(1000, eviction().getMaximumSize());
 
         // start value
-        c = newCache(newConf().setName("foo").management().setEnabled(true)
-                .setMBeanServer(mbs).c().eviction().setMaximumSize(5000));
+        c = newCache(newConf().setName("foo").management().setEnabled(true).setMBeanServer(mbs).c()
+                .eviction().setMaximumSize(5000));
         mxBean = findMXBean(mbs, CacheEvictionMXBean.class);
         assertEquals(5000, mxBean.getMaximumSize());
 

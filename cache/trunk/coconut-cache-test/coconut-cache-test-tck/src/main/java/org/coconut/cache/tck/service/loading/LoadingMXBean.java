@@ -9,9 +9,15 @@ import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.RuntimeMBeanException;
 
+import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.loading.CacheLoadingMXBean;
+import org.coconut.cache.service.management.CacheManagementService;
+import org.coconut.cache.tck.RequireService;
 import org.coconut.cache.test.util.IntegerToStringLoader;
+import org.coconut.cache.test.util.managed.ManagedFilter;
+import org.coconut.management.ManagedGroup;
+import org.coconut.management.ManagedObject;
 import org.coconut.predicate.Predicate;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +28,7 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
+@RequireService( { CacheManagementService.class })
 public class LoadingMXBean extends AbstractLoadingTestBundle {
 
     private CacheLoadingMXBean mxBean;
@@ -109,4 +116,36 @@ public class LoadingMXBean extends AbstractLoadingTestBundle {
             return element.getKey().equals(1);
         }
     }
+    
+    @Test
+    public void loadingManagement() {
+        CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
+        cc.management().setEnabled(true);
+        MyLoader loader = new MyLoader();
+        c = newCache(cc.loading().setLoader(loader).c());
+        loading().load(1);
+        assertNotNull(loader.g);
+    }
+
+    @Test
+    public void filterManagement() {
+        CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
+        cc.management().setEnabled(true);
+        ManagedFilter filter = new ManagedFilter();
+        c = newCache(cc.loading().setRefreshPredicate(filter).setLoader(new IntegerToStringLoader())
+                .c());
+        prestart();
+        assertNotNull(
+                "The Filter extends ManagedObject, and its manage() method should have been invoked",
+                filter.getManagedGroup());
+    }
+    
+    static class MyLoader extends IntegerToStringLoader implements ManagedObject {
+        ManagedGroup g;
+
+        public void manage(ManagedGroup parent) {
+            g = parent;
+        }
+    }
+
 }

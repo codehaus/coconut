@@ -3,10 +3,11 @@
  */
 package org.coconut.cache.tck.service.expiration;
 
+import org.coconut.cache.tck.ServiceSuite;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-@RunWith(Suite.class)
+@RunWith(ServiceSuite.class)
 @Suite.SuiteClasses( { ExpirationFilter.class, ExpirationMXBean.class,
         ExpirationPurge.class, ExpirationPutWithTimeouts.class, ExpirationService.class,
         ExpirationWithDefaultTimeout.class, ExpirationWithExplicitTimeout.class })

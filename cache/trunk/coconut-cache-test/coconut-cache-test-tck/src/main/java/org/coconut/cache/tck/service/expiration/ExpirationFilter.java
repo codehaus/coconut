@@ -110,19 +110,6 @@ public class ExpirationFilter extends AbstractExpirationTestBundle {
     }
 
     /**
-     * Tests that a expiration filter implementing ManagedObject is managed.
-     */
-    @Test
-    public void managedObject() {
-        CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
-        cc.management().setEnabled(true);
-        ManagedFilter filter = new ManagedFilter();
-        c = newCache(cc.expiration().setExpirationFilter(filter).c());
-        prestart();
-        assertNotNull(filter.getManagedGroup());
-    }
-
-    /**
      * Tests that a expiration filter implementing CacheLifecycle is attached to the
      * cache's lifecycle.
      */

@@ -38,23 +38,6 @@ public class LoadingCacheLoader extends AbstractLoadingTestBundle {
         loader.shutdownAndAssert(c);
     }
 
-    @Test
-    public void loadingManagement() {
-        CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
-        cc.management().setEnabled(true);
-        MyLoader loader = new MyLoader();
-        c = newCache(cc.loading().setLoader(loader).c());
-        loading().load(1);
-        assertNotNull(loader.g);
-    }
-
-    static class MyLoader extends IntegerToStringLoader implements ManagedObject {
-        ManagedGroup g;
-
-        public void manage(ManagedGroup parent) {
-            g = parent;
-        }
-    }
 
     static class MyLoader2 extends AbstractLifecycleVerifier implements CacheLoader {
         public Object load(Object key, AttributeMap attributes) throws Exception {

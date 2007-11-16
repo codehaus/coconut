@@ -32,7 +32,6 @@ import org.coconut.cache.internal.service.listener.DefaultCacheListener;
 import org.coconut.cache.internal.service.listener.InternalCacheListener;
 import org.coconut.cache.internal.service.loading.InternalCacheLoadingService;
 import org.coconut.cache.internal.service.loading.UnsynchronizedCacheLoaderService;
-import org.coconut.cache.internal.service.management.DefaultCacheManagementService;
 import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
 import org.coconut.cache.internal.service.servicemanager.UnsynchronizedCacheServiceManager;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
@@ -41,7 +40,6 @@ import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
-import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
@@ -68,17 +66,16 @@ import org.coconut.internal.util.CollectionUtils;
  */
 @NotThreadSafe
 @CacheServiceSupport( { CacheEventService.class, CacheEvictionService.class,
-        CacheExpirationService.class, CacheLoadingService.class, CacheManagementService.class,
-        CacheServiceManagerService.class, CacheStatisticsService.class })
+        CacheExpirationService.class, CacheLoadingService.class, CacheServiceManagerService.class,
+        CacheStatisticsService.class })
 public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
 
     /** The default services for this cache. */
     private final static Collection<Class<? extends AbstractCacheLifecycle>> DEFAULTS = Arrays
             .asList(DefaultCacheStatisticsService.class, DefaultCacheListener.class,
                     UnsynchronizedCacheEvictionService.class, DefaultCacheExpirationService.class,
-                    UnsynchronizedCacheLoaderService.class, DefaultCacheManagementService.class,
-                    DefaultCacheEventService.class, UnsynchronizedEntryFactoryService.class,
-                    DefaultCacheExceptionService.class);
+                    UnsynchronizedCacheLoaderService.class, DefaultCacheEventService.class,
+                    UnsynchronizedEntryFactoryService.class, DefaultCacheExceptionService.class);
 
     private final InternalCacheEntryService entryService;
 

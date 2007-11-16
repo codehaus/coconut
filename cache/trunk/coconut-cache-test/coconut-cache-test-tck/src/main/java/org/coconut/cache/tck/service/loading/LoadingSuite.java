@@ -3,6 +3,7 @@
  */
 package org.coconut.cache.tck.service.loading;
 
+import org.coconut.cache.tck.ServiceSuite;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -12,7 +13,7 @@ import org.junit.runners.Suite;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-@RunWith(Suite.class)
+@RunWith(ServiceSuite.class)
 @Suite.SuiteClasses( { ExpirationWithCacheLoader.class, ExplicitForcedLoading.class,
         ExplicitLoading.class, ImplicitLoading.class, LoadingLazyStart.class,
         LoadingCacheLoader.class, LoadingMXBean.class, LoadingRefresh.class, LoadingService.class,

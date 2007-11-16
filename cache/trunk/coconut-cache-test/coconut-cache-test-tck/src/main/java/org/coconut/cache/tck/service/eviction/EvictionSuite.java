@@ -3,10 +3,11 @@
  */
 package org.coconut.cache.tck.service.eviction;
 
+import org.coconut.cache.tck.ServiceSuite;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-@RunWith(Suite.class)
+@RunWith(ServiceSuite.class)
 @Suite.SuiteClasses( { EvictionMXBean.class, EvictionService.class,
         EvictionNoPolicy.class, EvictionLRU.class, CacheEntryToPolicy.class,
         EvictionTrimming.class,

@@ -13,11 +13,16 @@ import javax.management.MBeanServerInvocationHandler;
 import javax.management.ObjectName;
 import javax.management.RuntimeMBeanException;
 
+import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationMXBean;
+import org.coconut.cache.service.management.CacheManagementService;
+import org.coconut.cache.tck.RequireService;
+import org.coconut.cache.test.util.managed.ManagedFilter;
 import org.junit.Before;
 import org.junit.Test;
 
+@RequireService( { CacheManagementService.class })
 public class ExpirationMXBean extends AbstractExpirationTestBundle {
 
     private CacheExpirationMXBean mxBean;
@@ -89,5 +94,18 @@ public class ExpirationMXBean extends AbstractExpirationTestBundle {
         } catch (RuntimeMBeanException e) {
             throw e.getCause();
         }
+    }
+    
+    /**
+     * Tests that a expiration filter implementing ManagedObject is managed.
+     */
+    @Test
+    public void managedObject() {
+        CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
+        cc.management().setEnabled(true);
+        ManagedFilter filter = new ManagedFilter();
+        c = newCache(cc.expiration().setExpirationFilter(filter).c());
+        prestart();
+        assertNotNull(filter.getManagedGroup());
     }
 }
