@@ -66,7 +66,6 @@ public class DefaultCacheManagementService extends AbstractCacheLifecycle implem
      */
     public DefaultCacheManagementService(CacheManagementConfiguration configuration,
             String cacheName) {
-        super(CacheManagementConfiguration.SERVICE_NAME);
         if (configuration == null) {
             throw new NullPointerException("configuration is null");
         } else if (cacheName == null) {

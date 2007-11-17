@@ -109,7 +109,8 @@ public abstract class AbstractManagedGroup implements ManagedGroup {
     /** {@inheritDoc} */
     synchronized ManagedGroup addNewGroup(AbstractManagedGroup group) {
         if (map.containsKey(group.getName())) {
-            throw new IllegalArgumentException();
+            System.out.println(map);
+            throw new IllegalArgumentException("Could add group, group with same name has already been added " + group.getName());
         }
         map.put(group.getName(), group);
         group.parent = this;

@@ -3,7 +3,6 @@
  */
 package org.coconut.cache.examples.management;
 
-//START SNIPPET: class
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.defaults.SynchronizedCache;
@@ -11,10 +10,12 @@ import org.coconut.cache.defaults.SynchronizedCache;
 public class EnableManagementCustomDomain {
     public static void main(String[] args) throws InterruptedException {
         CacheConfiguration<String, String> conf = CacheConfiguration.create("ManagementTest");
+        // START SNIPPET: class
         conf.management().setEnabled(true).setDomain("com.acme");
+        // END SNIPPET: class
         Cache<String, String> cache = conf.newCacheInstance(SynchronizedCache.class);
         cache.put("hello", "world");
         Thread.sleep(10 * 60 * 1000); // sleep 10 minutes
     }
 }
-//END SNIPPET: class
+// END SNIPPET: class

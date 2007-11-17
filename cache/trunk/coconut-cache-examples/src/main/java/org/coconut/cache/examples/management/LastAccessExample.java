@@ -7,6 +7,7 @@ import net.jcip.annotations.ThreadSafe;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.defaults.SynchronizedCache;
 import org.coconut.cache.defaults.UnsynchronizedCache;
 import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.predicate.Predicate;
@@ -21,7 +22,7 @@ class LastAccessExample {
         CacheConfiguration<String, String> conf = CacheConfiguration.create("WebPage-Cache");
         conf.management().setEnabled(true);
         conf.expiration().setExpirationFilter(new LastAccessFilter<String, String>());
-        UnsynchronizedCache<String, String> cache = conf.newCacheInstance(UnsynchronizedCache.class);
+        SynchronizedCache<String, String> cache = conf.newCacheInstance(SynchronizedCache.class);
         cache.prestart();
         Thread.sleep(1000000);
     }
@@ -37,11 +38,11 @@ class LastAccessExample {
             return delta > seconds * 1000;
         }
 
+        @ManagedAttribute(defaultValue = "TimeoutAccess", description = "Set expiration time based on last access time")
         public void setSeconds(int seconds) {
             this.seconds = seconds;
         }
 
-        @ManagedAttribute(defaultValue = "TimeoutAccess", description = "Set expiration time based on last access time")
         public int getSeconds() {
             return seconds;
         }

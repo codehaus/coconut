@@ -3,8 +3,11 @@
  */
 package org.coconut.cache.service.loading;
 
+import java.io.Serializable;
+
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheServices;
+import org.coconut.core.AttributeMap;
 
 /**
  * Various {@link CacheLoader} utility classes and functions.
@@ -75,5 +78,21 @@ public final class CacheLoaders {
                 service.loadAll();
             }
         };
+    }
+
+    /**
+     * Returns a CacheLoader that will return <tt>null</tt> as a result for any key.
+     * 
+     * @return a CacheLoader that returns <tt>null</tt> for any key.
+     */
+    public static <K, V> CacheLoader<K, V> nullLoader() {
+        return new NullLoader<K, V>();
+    }
+
+    final static class NullLoader<K, V> extends AbstractCacheLoader<K, V> {
+        /** {@inheritDoc} */
+        public V load(K key, AttributeMap attributes) {
+            return null;
+        }
     }
 }

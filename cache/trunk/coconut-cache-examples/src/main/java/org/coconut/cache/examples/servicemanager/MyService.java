@@ -10,9 +10,7 @@ import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
  * @version $Id$
  */
 public class MyService extends AbstractCacheLifecycle {
-    public MyService(String name) {
-        super(name);
-    }
+
 
 //    @Override
 //    public void initialize(CacheConfiguration<?, ?> configuration) {

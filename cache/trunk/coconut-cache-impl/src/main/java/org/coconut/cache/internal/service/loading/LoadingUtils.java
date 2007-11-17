@@ -145,7 +145,6 @@ public final class LoadingUtils {
         }
 
         /** {@inheritDoc} */
-        @ManagedAttribute(description = "The default time to live for cache entries in milliseconds")
         public long getDefaultTimeToRefreshMs() {
             return service.getDefaultTimeToRefresh(TimeUnit.MILLISECONDS);
         }
@@ -157,6 +156,7 @@ public final class LoadingUtils {
         }
 
         /** {@inheritDoc} */
+        @ManagedAttribute(description = "The default time to live for cache entries in milliseconds")
         public void setDefaultTimeToRefreshMs(long timeToLiveMs) {
             service.setDefaultTimeToRefresh(timeToLiveMs, TimeUnit.MILLISECONDS);
         }

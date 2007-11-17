@@ -10,6 +10,7 @@ import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
+import org.coconut.cache.service.worker.CacheWorkerService;
 
 /**
  * A utility class to get hold of different cache services in an easy and typesafe manner.
@@ -138,5 +139,18 @@ public final class CacheServices {
      */
     public static CacheStatisticsService statistics(Cache<?, ?> cache) {
         return cache.getService(CacheStatisticsService.class);
+    }
+    
+    /**
+     * Returns the worker service for the specified cache.
+     * 
+     * @param cache
+     *            the cache for which to return the worker service
+     * @return the worker service for the cache
+     * @throws IllegalArgumentException
+     *             if no worker service is available for the specified cache
+     */
+    public static CacheWorkerService worker(Cache<?, ?> cache) {
+        return cache.getService(CacheWorkerService.class);
     }
 }

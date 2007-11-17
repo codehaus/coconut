@@ -145,12 +145,12 @@ final class ExpirationUtils {
         }
 
         /** {@inheritDoc} */
-        @ManagedAttribute(description = "The default time to live for cache entries in milliseconds")
         public long getDefaultTimeToLiveMs() {
             return service.getDefaultTimeToLive(TimeUnit.MILLISECONDS);
         }
 
         /** {@inheritDoc} */
+        @ManagedAttribute(description = "The default time to live for cache entries in milliseconds")
         public void setDefaultTimeToLiveMs(long timeToLiveMs) {
             service.setDefaultTimeToLive(timeToLiveMs, TimeUnit.MILLISECONDS);
         }

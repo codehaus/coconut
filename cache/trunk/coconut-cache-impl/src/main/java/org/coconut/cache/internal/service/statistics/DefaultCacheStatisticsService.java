@@ -129,7 +129,6 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
     volatile long started;
 
     public DefaultCacheStatisticsService(InternalCacheServiceManager manager, CacheConfiguration<K, V> conf) {
-        super("statistics");
         Clock c = Clock.DEFAULT_CLOCK;
         // cache counters
 

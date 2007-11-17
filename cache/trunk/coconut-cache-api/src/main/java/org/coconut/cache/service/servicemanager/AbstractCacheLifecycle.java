@@ -16,36 +16,12 @@ import org.coconut.cache.CacheConfiguration;
  */
 public abstract class AbstractCacheLifecycle implements CacheLifecycle {
 
-    /** The name of the service. */
-    private final String name;
-
-    /**
-     * Creates a new AbstractCacheService with the same service name as the name of the
-     * parent Class extending this class.
-     */
-    public AbstractCacheLifecycle() {
-        name = getClass().getSimpleName();
-    }
-
-    /**
-     * Creates a new AbstractCacheService with the specified name.
-     * 
-     * @param name
-     *            the name of the cache service
-     */
-    public AbstractCacheLifecycle(String name) {
-        if (name == null) {
-            throw new NullPointerException("name is null");
-        }
-        this.name = name;
-    }
-
     /**
      * Returns the name of this lifecycle.
      * @return the name of this lifecycle
      */
     public final String getName() {
-        return name;
+        return getClass().getSimpleName();
     }
 
     // /CLOVER:OFF

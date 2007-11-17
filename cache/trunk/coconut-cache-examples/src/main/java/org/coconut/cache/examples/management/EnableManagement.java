@@ -11,6 +11,7 @@ import org.coconut.cache.defaults.SynchronizedCache;
 public class EnableManagement {
     public static void main(String[] args) throws InterruptedException {
         CacheConfiguration<String, String> conf = CacheConfiguration.create("ManagementTest");
+        conf.serviceManager().add(new ScheduledClearManagement());
         conf.management().setEnabled(true);
         Cache<String, String> cache = conf.newCacheInstance(SynchronizedCache.class);
         cache.put("hello", "world");

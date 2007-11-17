@@ -14,21 +14,7 @@ public class AbstraktCacheLifecycleTest {
         assertEquals("MyLifecycle", new MyLifecycle().getName());
     }
 
-    @Test(expected = NullPointerException.class)
-    public void nameNPE() {
-        new MyLifecycle(null);
-    }
-
-    @Test
-    public void name() {
-        assertEquals("foo", new MyLifecycle("foo").getName());
-    }
-
     static class MyLifecycle extends AbstractCacheLifecycle {
-        public MyLifecycle() {}
 
-        public MyLifecycle(String name) {
-            super(name);
-        }
     }
 }

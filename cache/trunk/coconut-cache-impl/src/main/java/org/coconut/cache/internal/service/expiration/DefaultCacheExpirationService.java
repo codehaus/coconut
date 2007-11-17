@@ -61,7 +61,6 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
     public DefaultCacheExpirationService(Cache<K, V> cache, CacheConfiguration<K, V> conf,
             InternalCacheSupport<K, V> helper, CacheExpirationConfiguration<K, V> confExpiration,
             InternalCacheEntryService attributeFactory) {
-        super(CacheExpirationConfiguration.SERVICE_NAME);
         this.clock = conf.getClock();
         this.cache = cache;
         this.helper = helper;

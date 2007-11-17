@@ -8,7 +8,6 @@ import java.util.Map;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.servicemanager.CompositeService;
-import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.service.eviction.CacheEvictionMXBean;
 import org.coconut.cache.service.eviction.CacheEvictionService;
@@ -42,7 +41,6 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
      *            the InternalCacheSupport for the cache
      */
     public AbstractEvictionService(EvictionSupport evictionSupport) {
-        super(CacheEvictionConfiguration.SERVICE_NAME);
         this.helper = evictionSupport;
     }
 

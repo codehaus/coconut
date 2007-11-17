@@ -70,27 +70,38 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
             throw new IllegalArgumentException(e);
         }
         for (PropertyDescriptor pd : bi.getPropertyDescriptors()) {
-            ManagedAttribute ma = null;
+            ManagedAttribute readAttribute = pd.getReadMethod() == null ? null : pd.getReadMethod()
+                    .getAnnotation(ManagedAttribute.class);
+            ManagedAttribute writeAttribute = pd.getWriteMethod() == null ? null : pd
+                    .getWriteMethod().getAnnotation(ManagedAttribute.class);
             Method writer = null;
-
-            if (pd.getReadMethod() != null) {
-                ma = pd.getReadMethod().getAnnotation(ManagedAttribute.class);
-            }
-            Method reader = ma == null ? null : pd.getReadMethod();
-            if (pd.getWriteMethod() != null) {
-                if (ma == null) {
-                    ma = pd.getWriteMethod().getAnnotation(ManagedAttribute.class);
+            Method reader = null;
+            if (readAttribute != null) {
+                if (writeAttribute != null) {
+                    throw new IllegalArgumentException(
+                            "cannot define ManagedAttribute on both setter and getter for "
+                                    + pd.getReadMethod());
                 }
-                writer = ma == null || ma.readOnly() ? null : pd.getWriteMethod();
+                if (readAttribute.writeOnly()) {
+                    throw new IllegalArgumentException("cannot set writeonly on getter "
+                            + pd.getReadMethod());
+                }
+                reader = pd.getReadMethod();
+                writeAttribute = readAttribute;
+            } else if (writeAttribute != null) {
+                writer = pd.getWriteMethod();
+                if (!writeAttribute.writeOnly()) {
+                    reader = pd.getReadMethod();
+                }
             }
             if (reader != null || writer != null) {
-                String name = filterString(o, ma.defaultValue());
+                String name = filterString(o, writeAttribute.defaultValue());
                 if (name.equals("") || name.equals("$methodname")) {
                     name = capitalize(pd.getName());
                 }
-                String description = filterString(o, ma.description());
-                attributes.put(name, new IntrospectedAttribute(name, description, o,
-                        reader, writer));
+                String description = filterString(o, writeAttribute.description());
+                attributes.put(name,
+                        new IntrospectedAttribute(name, description, o, reader, writer));
             }
         }
 
@@ -127,8 +138,8 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
     /**
      * {@inheritDoc}
      */
-    public Object getAttribute(String attribute) throws AttributeNotFoundException,
-            MBeanException, ReflectionException {
+    public Object getAttribute(String attribute) throws AttributeNotFoundException, MBeanException,
+            ReflectionException {
         AbstractAttribute att = findAttribute(attribute);
         return att.getValue();
     }
@@ -175,9 +186,9 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
             }
         }
 
-        mbeanInfo = new MBeanInfo(getName(), getDescription(), l
-                .toArray(new MBeanAttributeInfo[0]), null, lo
-                .toArray(new MBeanOperationInfo[0]), null);
+        mbeanInfo = new MBeanInfo(getName(), getDescription(),
+                l.toArray(new MBeanAttributeInfo[0]), null, lo.toArray(new MBeanOperationInfo[0]),
+                null);
         return mbeanInfo;
     }
 
@@ -249,15 +260,13 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
         return str;
     }
 
-    private AbstractAttribute findAttribute(String attribute)
-            throws AttributeNotFoundException {
+    private AbstractAttribute findAttribute(String attribute) throws AttributeNotFoundException {
         AbstractAttribute att = attributes.get(attribute);
         if (att == null) {
             for (String aa : attributes.keySet()) {
                 System.out.println(aa);
             }
-            throw new AttributeNotFoundException("Attribute " + attribute
-                    + " could not be found");
+            throw new AttributeNotFoundException("Attribute " + attribute + " could not be found");
         }
         return att;
     }

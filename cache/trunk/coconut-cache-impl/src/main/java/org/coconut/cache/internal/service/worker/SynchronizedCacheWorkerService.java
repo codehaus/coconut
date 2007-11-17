@@ -6,22 +6,26 @@ package org.coconut.cache.internal.service.worker;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheServices;
 import org.coconut.cache.internal.service.servicemanager.CompositeService;
 import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
 import org.coconut.cache.service.servicemanager.AsynchronousShutdownObject;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
+import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.service.worker.CacheWorkerConfiguration;
 import org.coconut.cache.service.worker.CacheWorkerManager;
+import org.coconut.cache.service.worker.CacheWorkerService;
 import org.coconut.core.AttributeMap;
 
 public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService implements
-        CompositeService {
+        CompositeService, CacheWorkerService {
 
     private final String cacheName;
 
@@ -43,14 +47,21 @@ public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService i
     public CacheWorkerManager getManager() {
         return worker;
     }
-
+    /** {@inheritDoc} */
+    @Override
+    public void initialize(CacheConfiguration<?, ?> configuration, Map<Class<?>, Object> serviceMap) {
+        serviceMap.put(CacheWorkerService.class, this);
+    }
     class SameThreadCacheWorker extends CacheWorkerManager {
 
         final ExecutorService es;
 
+        final ScheduledExecutorService ses;
+
         SameThreadCacheWorker() {
             es = Executors.newCachedThreadPool(new WorkerUtils.DefaultThreadFactory("cache-"
                     + cacheName));
+            ses = Executors.newScheduledThreadPool(5);
         }
 
         public ExecutorService getExecutorService(Object service, AttributeMap attributes) {
@@ -60,25 +71,28 @@ public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService i
         @Override
         public ScheduledExecutorService getScheduledExecutorService(Object service,
                 AttributeMap attributes) {
-            throw new UnsupportedOperationException();
+            return ses;
         }
 
         @Override
         public void shutdown() {
             es.shutdown();
+            ses.shutdown();
             csm.getService(CacheServiceManagerService.class).shutdownServiceAsynchronously(
                     new AsynchronousShutdownObject() {
                         public boolean awaitTermination(long timeout, TimeUnit unit)
                                 throws InterruptedException {
-                            return es.awaitTermination(timeout, unit);
+                            es.awaitTermination(timeout, unit);
+                            return ses.awaitTermination(timeout, unit);
                         }
 
                         public boolean isTerminated() {
-                            return es.isTerminated();
+                            return es.isTerminated() && ses.isTerminated();
                         }
 
                         public void shutdownNow() {
                             es.shutdownNow();
+                            ses.shutdownNow();
                         }
                     });
         }
@@ -86,6 +100,10 @@ public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService i
 
     public Collection<?> getChildServices() {
         return Arrays.asList(worker);
+    }
+
+    public ScheduledExecutorService getScheduledExecutorService(Object service) {
+        return worker.getScheduledExecutorService(service, null);
     }
 
 }

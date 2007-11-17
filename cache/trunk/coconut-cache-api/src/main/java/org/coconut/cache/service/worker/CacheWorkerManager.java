@@ -18,14 +18,6 @@ import org.coconut.core.AttributeMap;
  */
 public abstract class CacheWorkerManager extends AbstractCacheLifecycle {
 
-    public CacheWorkerManager() {
-        super();
-    }
-
-    public CacheWorkerManager(String name) {
-        super(name);
-    }
-
     /**
      * Returns a ExecutorService that can be used to asynchronously execute tasks for the
      * specified service.

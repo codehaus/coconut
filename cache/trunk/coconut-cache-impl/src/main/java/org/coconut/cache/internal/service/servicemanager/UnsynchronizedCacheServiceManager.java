@@ -167,6 +167,7 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
 
     private void doStart() {
         try {
+            status = RunState.RUNNING;
             for (ServiceHolder si : services) {
                 si.initialize(getConf());
                 publicServices.putAll(si.getPublicService());
@@ -208,7 +209,6 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
         } finally {
             setConf(null); // Conf can be GC'ed now
         }
-        status = RunState.RUNNING;
     }
 
     protected void doTerminate() {

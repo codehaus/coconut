@@ -26,7 +26,7 @@ public class AttributedStub4 {
 		this.integer = integer;
 	}
 
-	@ManagedAttribute(readOnly=true)
+	@ManagedAttribute(writeOnly=true)
 	public String getReadOnlyString() {
 		return readOnlyString;
 	}

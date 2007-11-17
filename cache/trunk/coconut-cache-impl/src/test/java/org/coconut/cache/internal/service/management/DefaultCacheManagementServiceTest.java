@@ -32,7 +32,6 @@ public class DefaultCacheManagementServiceTest {
         DefaultCacheManagementService dcms = new DefaultCacheManagementService(
                 new CacheManagementConfiguration(), "MyCache");
         assertFalse(dcms.isEnabled());
-        assertEquals(CacheManagementConfiguration.SERVICE_NAME, dcms.getName());
     }
 
     /**

@@ -24,21 +24,12 @@ public class CacheWorkerManagerTest {
 
     @Test
     public void name() {
-        assertEquals("foo", new Manager("foo").getName());
         // Manager m = new Manager();
         // assertSame(es, m.getExecutorService(s1));
         // assertSame(ses, m.getScheduledExecutorService(s2));
     }
 
     class Manager extends CacheWorkerManager {
-
-        public Manager() {
-            super();
-        }
-
-        public Manager(String name) {
-            super(name);
-        }
 
         public ExecutorService getExecutorService(Object service, AttributeMap attributes) {
             s1 = service;

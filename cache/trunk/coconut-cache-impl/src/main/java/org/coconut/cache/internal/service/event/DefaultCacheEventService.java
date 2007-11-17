@@ -58,7 +58,6 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
     private final Offerable<CacheEvent<K, V>> offerable;
 
     public DefaultCacheEventService(InternalCacheServiceManager manager, CacheEventConfiguration co) {
-        super(CacheEventConfiguration.SERVICE_NAME);
         isEnabled = co.isEnabled();
         this.manager = manager;
         this.offerable = eb;

@@ -20,11 +20,6 @@ import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
  */
 public abstract class AbstractCacheLoader<K, V> extends AbstractCacheLifecycle implements
         CacheLoader<K, V> {
-    public AbstractCacheLoader() {}
-
-    public AbstractCacheLoader(String name) {
-        super(name);
-    }
 
     /** {@inheritDoc} */
     public final void loadAll(

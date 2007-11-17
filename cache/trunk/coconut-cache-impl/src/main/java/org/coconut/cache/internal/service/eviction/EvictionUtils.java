@@ -46,23 +46,23 @@ final class EvictionUtils {
         }
 
         /** {@inheritDoc} */
-        @ManagedAttribute(description = "The maximum size of the cache")
         public int getMaximumSize() {
             return service.getMaximumSize();
         }
 
         /** {@inheritDoc} */
-        @ManagedAttribute(description = "The maximum capacity of the cache")
         public long getMaximumVolume() {
             return service.getMaximumVolume();
         }
 
         /** {@inheritDoc} */
+        @ManagedAttribute(description = "The maximum size of the cache")
         public void setMaximumSize(int maximumSize) {
             service.setMaximumSize(maximumSize);
         }
 
         /** {@inheritDoc} */
+        @ManagedAttribute(description = "The maximum capacity of the cache")
         public void setMaximumVolume(long maximumCapacity) {
             service.setMaximumVolume(maximumCapacity);
         }

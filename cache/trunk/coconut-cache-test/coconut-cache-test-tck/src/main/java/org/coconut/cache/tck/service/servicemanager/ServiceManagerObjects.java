@@ -4,7 +4,9 @@
 package org.coconut.cache.tck.service.servicemanager;
 
 import java.util.concurrent.TimeUnit;
-
+import static org.coconut.test.CollectionUtils.M1;
+import org.coconut.cache.Cache;
+import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.AbstractLifecycleVerifier;
 import org.coconut.management.ManagedGroup;
@@ -52,6 +54,7 @@ public class ServiceManagerObjects extends AbstractCacheTCKTest {
         c.awaitTermination(5, TimeUnit.SECONDS);
         assertNotNull(l.g);
     }
+
     @Test
     public void managedObjectManagementNotEnabled() throws InterruptedException {
         Mo l = new Mo();
@@ -76,8 +79,14 @@ public class ServiceManagerObjects extends AbstractCacheTCKTest {
         assertNotNull(l.g);
     }
 
+    @Test
+    public void recursiveStart() {
+        setCache(newConf().serviceManager().add(new Put()));
+        get(M1);
+    }
     static class Mo implements ManagedObject {
         ManagedGroup g;
+
         public void manage(ManagedGroup parent) {
             g = parent;
         }
@@ -87,10 +96,20 @@ public class ServiceManagerObjects extends AbstractCacheTCKTest {
 
     static class LifeMo extends AbstractLifecycleVerifier implements ManagedObject {
         ManagedGroup g;
+
         int state;
+
         public void manage(ManagedGroup parent) {
             g = parent;
             state = getState();
+        }
+    }
+
+    static class Put extends AbstractCacheLifecycle {
+
+        @Override
+        public void started(Cache<?, ?> cache) {
+            ((Cache) cache).put(M1.getKey(), M1.getValue());
         }
     }
 }
