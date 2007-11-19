@@ -141,7 +141,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
         long volume = 0;
 
         synchronized (this) {
-            checkRunning("clear");
+            checkRunning("clear", false);
             size = map.size();
             volume = map.volume();
             if (size != 0) {

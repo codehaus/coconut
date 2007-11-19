@@ -46,7 +46,7 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
     }
 
     static enum RunState {
-        COULD_NOT_START, NOTRUNNING, RUNNING, SHUTDOWN, STOP, TERMINATED, TIDYING;
+        COULD_NOT_START, NOTRUNNING, STARTING, RUNNING, SHUTDOWN, STOP, TERMINATED, TIDYING;
 
         public boolean isShutdown() {
             return this != RUNNING && this != NOTRUNNING;

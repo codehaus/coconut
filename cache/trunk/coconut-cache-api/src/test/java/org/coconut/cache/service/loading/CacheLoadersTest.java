@@ -3,8 +3,13 @@
  */
 package org.coconut.cache.service.loading;
 
+import static junit.framework.Assert.assertNull;
+
+import java.util.Arrays;
+
 import org.coconut.cache.Cache;
 import org.coconut.cache.DummyCache;
+import org.coconut.core.AttributeMaps;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
@@ -75,5 +80,23 @@ public class CacheLoadersTest {
             }
         });
         CacheLoaders.runLoadAll(dc).run();
+    }
+
+    /** Tests {@link CacheLoaders#nullLoader()}. */
+    @Test
+    public void nullLoader() throws Exception {
+        CacheLoader<Integer, String> cl = CacheLoaders.nullLoader();
+        assertNull(cl.load(1, AttributeMaps.EMPTY_MAP));
+        final CacheLoaderCallback<Integer, String> callback = context
+                .mock(CacheLoaderCallback.class);
+//        context.checking(new Expectations() {
+//            {
+//                
+//                one(callback).getKey();
+//                will(returnValue("1"));
+//                one(callback).completed(null);
+//            }
+//        });
+//        cl.loadAll(Arrays.asList(callback));
     }
 }

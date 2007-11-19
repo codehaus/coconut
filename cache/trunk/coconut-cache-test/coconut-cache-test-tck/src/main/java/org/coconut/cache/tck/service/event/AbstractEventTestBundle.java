@@ -15,6 +15,7 @@ import junit.framework.AssertionFailedError;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.CacheServices;
 import org.coconut.cache.service.event.CacheEntryEvent;
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.event.CacheEventService;
@@ -98,11 +99,14 @@ public class AbstractEventTestBundle extends AbstractCacheTCKTest {
         }
     }
 
-    protected EventSubscription<?> subscribe(Predicate f) {
-        EventSubscription s = c.getService(CacheEventService.class).subscribe(
-                eventHandler, f);
+    protected EventSubscription<?> subscribe(CacheEventService ces, Predicate f) {
+        EventSubscription s = ces.subscribe(eventHandler, f);
         assertNotNull(s);
         return s;
+    }
+
+    protected EventSubscription<?> subscribe(Predicate f) {
+        return subscribe(CacheServices.event(c), f);
     }
 
     protected void consumeItem() throws Exception {
@@ -157,16 +161,15 @@ public class AbstractEventTestBundle extends AbstractCacheTCKTest {
         return consumeItem(type, entry.getKey(), entry.getValue());
     }
 
-    protected <S extends CacheEntryEvent> S consumeItem(Class<S> type, Integer key,
-            String value) {
+    protected <S extends CacheEntryEvent> S consumeItem(Class<S> type, Integer key, String value) {
         S event = consumeItem(c, type);
         assertEquals(key, event.getKey());
         assertEquals(value, event.getValue());
         return event;
     }
 
-    protected <S extends CacheEntryEvent> java.util.Collection<S> consumeItems(
-            Class<S> type, Map.Entry<Integer, String>... entries) throws Exception {
+    protected <S extends CacheEntryEvent> java.util.Collection<S> consumeItems(Class<S> type,
+            Map.Entry<Integer, String>... entries) throws Exception {
         Map<Integer, S> result = new HashMap<Integer, S>();
         Map<Integer, String> map = asMap(entries);
         while (!map.isEmpty()) {

@@ -12,6 +12,7 @@ import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
+import org.coconut.cache.service.worker.CacheWorkerService;
 import org.coconut.test.MockTestCase;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -155,6 +156,22 @@ public class CacheServicesTest {
             }
         });
         CacheStatisticsService ces = CacheServices.statistics(cache);
+        assertSame(service, ces);
+    }
+    
+    /**
+     * Tests {@link CacheServices#worker(Cache)}.
+     */
+    @Test
+    public void workerService() {
+        final CacheWorkerService service = MockTestCase.mockDummy(CacheWorkerService.class);
+        context.checking(new Expectations() {
+            {
+                one(cache).getService(CacheWorkerService.class);
+                will(returnValue(service));
+            }
+        });
+        CacheWorkerService ces = CacheServices.worker(cache);
         assertSame(service, ces);
     }
 }

@@ -15,7 +15,7 @@ import org.coconut.cache.test.util.AbstractLifecycleVerifier;
 import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.core.AttributeMap;
 import org.coconut.management.ManagedGroup;
-import org.coconut.management.ManagedObject;
+import org.coconut.management.ManagedLifecycle;
 import org.junit.Test;
 
 /**

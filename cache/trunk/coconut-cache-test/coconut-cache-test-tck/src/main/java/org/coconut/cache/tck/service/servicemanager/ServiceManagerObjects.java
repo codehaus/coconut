@@ -10,7 +10,7 @@ import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.AbstractLifecycleVerifier;
 import org.coconut.management.ManagedGroup;
-import org.coconut.management.ManagedObject;
+import org.coconut.management.ManagedLifecycle;
 import org.junit.Test;
 
 public class ServiceManagerObjects extends AbstractCacheTCKTest {
@@ -84,7 +84,7 @@ public class ServiceManagerObjects extends AbstractCacheTCKTest {
         setCache(newConf().serviceManager().add(new Put()));
         get(M1);
     }
-    static class Mo implements ManagedObject {
+    static class Mo implements ManagedLifecycle {
         ManagedGroup g;
 
         public void manage(ManagedGroup parent) {
@@ -94,7 +94,7 @@ public class ServiceManagerObjects extends AbstractCacheTCKTest {
 
     static class Life extends AbstractLifecycleVerifier {}
 
-    static class LifeMo extends AbstractLifecycleVerifier implements ManagedObject {
+    static class LifeMo extends AbstractLifecycleVerifier implements ManagedLifecycle {
         ManagedGroup g;
 
         int state;

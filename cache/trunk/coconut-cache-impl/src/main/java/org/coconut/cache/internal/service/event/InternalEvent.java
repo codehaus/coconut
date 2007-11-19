@@ -23,6 +23,64 @@ final class InternalEvent {
      * @param <V>
      *            the type of values maintained by the cache
      */
+    static class Started<K, V> implements CacheEvent.CacheStarted<K, V> {
+        /** The cache that was cleared. */
+        private final Cache<K, V> cache;
+
+        /**
+         * Creates a new Started event.
+
+         * @param cache
+         *            the cache that was started
+         */
+        Started(final Cache<K, V> cache) {
+            if (cache == null) {
+                throw new NullPointerException("cache is null");
+            }
+            this.cache = cache;
+        }
+
+        /** {@inheritDoc} */
+        public Cache<K, V> getCache() {
+            return cache;
+        }
+
+        /** {@inheritDoc} */
+        public String getName() {
+            return CacheEvent.CacheStarted.NAME;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof CacheEvent.CacheStarted && equals((CacheEvent.CacheStarted) obj);
+        }
+
+        public boolean equals(CacheEvent.CacheStarted<K, V> event) {
+            return cache.equals(event.getCache()) && getName() == event.getName();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public int hashCode() {
+            return cache.hashCode() ^ getName().hashCode();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString() {
+            return getName();
+        }
+    }
+
+    /**
+     * The default implementation of the cache cleared event.
+     * 
+     * @param <K>
+     *            the type of keys maintained by the cache
+     * @param <V>
+     *            the type of values maintained by the cache
+     */
     static class Cleared<K, V> implements CacheEvent.CacheCleared<K, V> {
         /** The cache that was cleared. */
         private final Cache<K, V> cache;
@@ -43,16 +101,13 @@ final class InternalEvent {
          * @param cache
          *            the cache that was cleared
          */
-        Cleared(final Cache<K, V> cache, final int previousSize,
-                final long previousVolume) {
+        Cleared(final Cache<K, V> cache, final int previousSize, final long previousVolume) {
             if (cache == null) {
                 throw new NullPointerException("cache is null");
             } else if (previousVolume < 0) {
-                throw new IllegalArgumentException(
-                        "previousVolume must a non negative number");
+                throw new IllegalArgumentException("previousVolume must a non negative number");
             } else if (previousSize < 0) {
-                throw new IllegalArgumentException(
-                        "previousSize must a non negative number");
+                throw new IllegalArgumentException("previousSize must a non negative number");
             }
             this.previousSize = previousSize;
             this.previousVolume = previousVolume;
@@ -82,8 +137,7 @@ final class InternalEvent {
         /** {@inheritDoc} */
         @Override
         public boolean equals(Object obj) {
-            return obj instanceof CacheEvent.CacheCleared
-                    && equals((CacheEvent.CacheCleared) obj);
+            return obj instanceof CacheEvent.CacheCleared && equals((CacheEvent.CacheCleared) obj);
         }
 
         public boolean equals(CacheEvent.CacheCleared<K, V> event) {
@@ -101,8 +155,8 @@ final class InternalEvent {
         /** {@inheritDoc} */
         @Override
         public String toString() {
-            return getName() + " [previousSize = " + getPreviousSize()
-                    + " , previousCapacity = " + getPreviousVolume() + "]";
+            return getName() + " [previousSize = " + getPreviousSize() + " , previousCapacity = "
+                    + getPreviousVolume() + "]";
         }
     }
 
@@ -188,8 +242,12 @@ final class InternalEvent {
      * @param <V>
      *            the type of values maintained by the cache
      */
-    static <K, V> CacheEvent.CacheCleared<K, V> cleared(Cache<K, V> cache,
-            int previousSize, long previousVolume) {
+    static <K, V> CacheEvent.CacheCleared<K, V> cleared(Cache<K, V> cache, int previousSize,
+            long previousVolume) {
         return new Cleared<K, V>(cache, previousSize, previousVolume);
+    }
+
+    static <K, V> CacheEvent.CacheStarted<K, V> started(Cache<K, V> cache) {
+        return new Started<K, V>(cache);
     }
 }

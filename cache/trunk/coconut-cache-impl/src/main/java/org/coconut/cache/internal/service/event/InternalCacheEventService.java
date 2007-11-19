@@ -63,4 +63,6 @@ public interface InternalCacheEventService<K, V> extends CacheEventService<K, V>
     void afterTrimCache(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries, int previousSize, int newSize,
             long previousVolume, long newVolume);
+
+    void afterStart(Cache<K, V> cache);
 }

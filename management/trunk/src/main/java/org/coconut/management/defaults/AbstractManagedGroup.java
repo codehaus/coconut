@@ -22,9 +22,10 @@ public abstract class AbstractManagedGroup implements ManagedGroup {
     final static Pattern NAME_PATTERN = Pattern
             .compile("[\\da-zA-Z\\x5F\\x2D]*(\\x2E([\\da-z\\x5F\\x2D])+)*");
 
+    /** The description of this group. */
     private final String description;
 
-    private final ConcurrentHashMap<String, AbstractManagedGroup> map = new ConcurrentHashMap<String, AbstractManagedGroup>();
+    private final ConcurrentHashMap<String, AbstractManagedGroup> children = new ConcurrentHashMap<String, AbstractManagedGroup>();
 
     private final String name;
 
@@ -48,7 +49,7 @@ public abstract class AbstractManagedGroup implements ManagedGroup {
 
     /** {@inheritDoc} */
     public Collection<ManagedGroup> getChildren() {
-        return new ArrayList<ManagedGroup>(map.values());
+        return new ArrayList<ManagedGroup>(children.values());
     }
 
     /** {@inheritDoc} */
@@ -77,22 +78,30 @@ public abstract class AbstractManagedGroup implements ManagedGroup {
     }
 
     /** {@inheritDoc} */
-    public boolean isRegistered() {
-        return getObjectName() != null;
+    public synchronized boolean isRegistered() {
+        return objectName != null;
     }
 
     /** {@inheritDoc} */
-    public synchronized void register(MBeanServer service, ObjectName name)
-            throws JMException {
-        service.registerMBean(this, name);
-        this.server = service;
-        this.objectName = name;
+    public synchronized void register(MBeanServer server, ObjectName objectName) throws JMException {
+        if (server == null) {
+            throw new NullPointerException("server is null");
+        } else if (objectName == null) {
+            throw new NullPointerException("objectName is null");
+        } else if (this.objectName != null) {
+            throw new IllegalStateException(
+                    "This group has already been registered [MBeanServer = " + this.server
+                            + ", ObjectName= " + this.objectName + "]");
+        }
+        server.registerMBean(this, objectName); // might fail
+        this.server = server;
+        this.objectName = objectName;
     }
 
     /** {@inheritDoc} */
     public synchronized void remove() {
         if (parent != null) {
-            parent.map.remove(getName());
+            parent.children.remove(getName());
             parent = null;
         }
     }
@@ -106,15 +115,20 @@ public abstract class AbstractManagedGroup implements ManagedGroup {
         server = null;
     }
 
-    /** {@inheritDoc} */
     synchronized ManagedGroup addNewGroup(AbstractManagedGroup group) {
-        if (map.containsKey(group.getName())) {
-            System.out.println(map);
-            throw new IllegalArgumentException("Could add group, group with same name has already been added " + group.getName());
+        if (children.containsKey(group.getName())) {
+            throw new IllegalArgumentException(
+                    "Could not add group, group with same name has already been added "
+                            + group.getName());
         }
-        map.put(group.getName(), group);
+        children.put(group.getName(), group);
         group.parent = this;
         return group;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return "Name= " + getName() + ", Description =" + getDescription();
+    }
 }

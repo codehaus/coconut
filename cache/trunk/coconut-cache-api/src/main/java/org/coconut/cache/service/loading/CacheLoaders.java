@@ -3,8 +3,6 @@
  */
 package org.coconut.cache.service.loading;
 
-import java.io.Serializable;
-
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheServices;
 import org.coconut.core.AttributeMap;

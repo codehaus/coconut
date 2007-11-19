@@ -40,11 +40,12 @@ public class Clear extends AbstractCacheTCKTest {
     }
 
     /**
-     * {@link Cache#clear()} fails when the cache is shutdown.
+     * {@link Cache#clear()} should not fail
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void clearShutdown() {
         c = newCache(5);
+        put(1);
         assertTrue(c.isStarted());
         c.shutdown();
         c.clear();

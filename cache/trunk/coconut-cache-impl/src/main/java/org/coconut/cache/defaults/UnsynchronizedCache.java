@@ -127,7 +127,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         int size = 0;
         long volume = 0;
 
-        checkRunning("clear");
+        checkRunning("clear", false);
         size = map.size();
         volume = map.volume();
         if (size != 0) {

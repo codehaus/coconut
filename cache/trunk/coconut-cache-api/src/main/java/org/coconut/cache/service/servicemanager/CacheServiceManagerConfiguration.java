@@ -14,7 +14,7 @@ import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.internal.util.XmlUtil;
 import org.coconut.management.ManagedGroup;
-import org.coconut.management.ManagedObject;
+import org.coconut.management.ManagedLifecycle;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -43,9 +43,9 @@ public class CacheServiceManagerConfiguration extends AbstractCacheServiceConfig
 
     /**
      * Registers a object for the cache. Only objects of type {@link CacheLifecycle} or
-     * {@link ManagedObject}, are valid. If the object is of type {@link CacheLifecycle}
+     * {@link ManagedLifecycle}, are valid. If the object is of type {@link CacheLifecycle}
      * the cache will invoke the respectic lifecycle methods on the object. If the object
-     * is of type {@link ManagedObject} and management is enabled for the cache (see
+     * is of type {@link ManagedLifecycle} and management is enabled for the cache (see
      * {@link CacheManagementConfiguration#setEnabled(boolean)}). It will be registered
      * with a {@link ManagedGroup}.
      * 
@@ -61,7 +61,7 @@ public class CacheServiceManagerConfiguration extends AbstractCacheServiceConfig
             throw new NullPointerException("o is null");
         } else if (registeredServices.containsKey(o)) {
             throw new IllegalArgumentException("Object has already been registered");
-        } else if (!(o instanceof CacheLifecycle || o instanceof ManagedObject)) {
+        } else if (!(o instanceof CacheLifecycle || o instanceof ManagedLifecycle)) {
             throw new IllegalArgumentException(
                     "Object must be an instance of CacheLifecycle or ManagedObject");
         }

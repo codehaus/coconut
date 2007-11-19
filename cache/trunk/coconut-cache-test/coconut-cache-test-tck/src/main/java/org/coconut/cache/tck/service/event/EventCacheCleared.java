@@ -16,9 +16,25 @@ public class EventCacheCleared extends AbstractEventTestBundle {
         c.put(1, "B");
         c.put(5, "F");
         c.clear();
-        CacheEvent.CacheCleared<?, ?> cleared = consumeItem(c,
-                CacheEvent.CacheCleared.class);
+        CacheEvent.CacheCleared<?, ?> cleared = consumeItem(c, CacheEvent.CacheCleared.class);
         assertEquals(3, cleared.getPreviousSize());
+    }
+
+    @Test
+    public void noClearEvent0() {
+        c = newCache(INCLUDE_ALL_CONFIGURATION);
+        assertNotNull(subscribe(CacheEventFilters.CACHE_CLEARED_FILTER));
+        c.clear();
+    }
+
+    @Test
+    public void noClearEvent0_() throws Exception {
+        c = newCache(INCLUDE_ALL_CONFIGURATION);
+        assertNotNull(subscribe(CacheEventFilters.CACHE_CLEARED_FILTER));
+        c.put(1, "B");
+        c.clear();
+        consumeItem(c, CacheEvent.CacheCleared.class);
+        c.clear();
     }
 
     @Test
@@ -28,8 +44,7 @@ public class EventCacheCleared extends AbstractEventTestBundle {
         c.put(1, "B");
         c.put(5, "F");
         c.keySet().clear();
-        CacheEvent.CacheCleared<?, ?> cleared = consumeItem(c,
-                CacheEvent.CacheCleared.class);
+        CacheEvent.CacheCleared<?, ?> cleared = consumeItem(c, CacheEvent.CacheCleared.class);
         assertEquals(3, cleared.getPreviousSize());
     }
 
@@ -40,8 +55,7 @@ public class EventCacheCleared extends AbstractEventTestBundle {
         c.put(1, "B");
         c.put(5, "F");
         c.entrySet().clear();
-        CacheEvent.CacheCleared<?, ?> cleared = consumeItem(c,
-                CacheEvent.CacheCleared.class);
+        CacheEvent.CacheCleared<?, ?> cleared = consumeItem(c, CacheEvent.CacheCleared.class);
         assertEquals(3, cleared.getPreviousSize());
     }
 
@@ -52,8 +66,7 @@ public class EventCacheCleared extends AbstractEventTestBundle {
         c.put(1, "B");
         c.put(5, "F");
         c.values().clear();
-        CacheEvent.CacheCleared<?, ?> cleared = consumeItem(c,
-                CacheEvent.CacheCleared.class);
+        CacheEvent.CacheCleared<?, ?> cleared = consumeItem(c, CacheEvent.CacheCleared.class);
         assertEquals(3, cleared.getPreviousSize());
     }
 
@@ -64,8 +77,7 @@ public class EventCacheCleared extends AbstractEventTestBundle {
         c.put(5, "F");
         assertNotNull(subscribe(CacheEventFilters.CACHEEVENT_FILTER));
         c.clear();
-        CacheEvent.CacheCleared<?, ?> cleared = consumeItem(c,
-                CacheEvent.CacheCleared.class);
+        CacheEvent.CacheCleared<?, ?> cleared = consumeItem(c, CacheEvent.CacheCleared.class);
         assertEquals(3, cleared.getPreviousSize());
         assertEquals(3, cleared.getPreviousVolume());
     }

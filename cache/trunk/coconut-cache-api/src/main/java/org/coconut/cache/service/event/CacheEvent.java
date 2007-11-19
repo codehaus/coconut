@@ -3,6 +3,8 @@
  */
 package org.coconut.cache.service.event;
 
+import java.util.concurrent.TimeUnit;
+
 import org.coconut.cache.Cache;
 
 /**
@@ -45,6 +47,17 @@ public interface CacheEvent<K, V> {
      * @return a unique name that can be used to identify the type of the event
      */
     String getName();
+
+    interface CacheStarted<K, V> extends CacheEvent<K, V> {
+        /** The unique name of the event. */
+        String NAME = "cache.started";
+    }
+    
+    interface CacheStopped<K, V> extends CacheEvent<K, V> {
+        /** The unique name of the event. */
+        String NAME = "cache.stopped";
+        long getUptime(TimeUnit unit);
+    }
 
     /**
      * An event indicating that a particular {@link Cache} was cleared.

@@ -22,7 +22,7 @@ import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.AttributeMaps;
 import org.coconut.management.ManagedGroup;
-import org.coconut.management.ManagedObject;
+import org.coconut.management.ManagedLifecycle;
 import org.coconut.predicate.Predicate;
 
 /**
@@ -32,7 +32,7 @@ import org.coconut.predicate.Predicate;
  * @version $Id$
  */
 public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLifecycle implements
-        InternalCacheLoadingService<K, V>, CompositeService, ManagedObject {
+        InternalCacheLoadingService<K, V>, CompositeService, ManagedLifecycle {
     private final InternalCacheEntryService attributeFactory;
 
     private final InternalCacheExceptionService<K, V> exceptionHandler;

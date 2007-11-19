@@ -8,6 +8,7 @@ import org.coconut.cache.service.event.CacheEntryEvent.ItemAdded;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated;
 import org.coconut.cache.service.event.CacheEvent.CacheCleared;
+import org.coconut.cache.service.event.CacheEvent.CacheStarted;
 import org.coconut.core.Mapper;
 import org.coconut.core.Mappers;
 import org.coconut.predicate.CollectionPredicates;
@@ -23,6 +24,9 @@ import org.coconut.predicate.Predicates;
  */
 public final class CacheEventFilters {
 
+    /** A filter that only accepts instances of CacheStarted events. */
+    public static final Predicate<?> CACHE_STARTED_FILTER = Predicates
+            .isType(CacheStarted.class);
     /** A filter that only accepts instances of CacheCleared events. */
     public static final Predicate<?> CACHE_CLEARED_FILTER = Predicates
             .isType(CacheCleared.class);
@@ -66,7 +70,7 @@ public final class CacheEventFilters {
     /** A filter that only accepts instances of CacheEvent events. */
 
     public static final Predicate<?> CACHEEVENT_FILTER = Predicates.isType(CacheEvent.class);
-
+    
     /** A transformer that extracts the cache from the specified {@link CacheEvent}. */
     private final static Mapper<CacheEvent, Cache<?, ?>> EVENT_TO_CACHE_TRANSFORMER = (Mapper) Mappers
             .transform(CacheEvent.class, "getCache");

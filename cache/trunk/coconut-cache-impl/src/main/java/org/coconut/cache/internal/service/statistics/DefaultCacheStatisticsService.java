@@ -21,7 +21,7 @@ import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
 import org.coconut.management.ManagedGroup;
-import org.coconut.management.ManagedObject;
+import org.coconut.management.ManagedLifecycle;
 
 /**
  * possible to disable certain statistics
@@ -34,7 +34,7 @@ import org.coconut.management.ManagedObject;
  * @version $Id$
  */
 public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLifecycle implements
-        CacheStatisticsService, ManagedObject {
+        CacheStatisticsService, ManagedLifecycle {
 
     // number of loads, loaded elements, number of queries,
     // number of added, number of new elements

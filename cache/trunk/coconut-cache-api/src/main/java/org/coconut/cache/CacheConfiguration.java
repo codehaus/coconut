@@ -215,7 +215,7 @@ public class CacheConfiguration<K, V> {
      * @return the Clock that the cache should use
      * @see #setClock(Clock)
      */
-    public Clock getClock() {
+    public final Clock getClock() {
         return clock;
     }
 
@@ -238,7 +238,7 @@ public class CacheConfiguration<K, V> {
      * @see #setName(String)
      * @see Cache#getName()
      */
-    public String getName() {
+    public final String getName() {
         return name;
     }
 
@@ -375,7 +375,7 @@ public class CacheConfiguration<K, V> {
      * @throws NullPointerException
      *             if the specified clock is <tt>null</tt>
      */
-    public CacheConfiguration<K, V> setClock(Clock clock) {
+    public final CacheConfiguration<K, V> setClock(Clock clock) {
         if (clock == null) {
             throw new NullPointerException("clock is null");
         }
@@ -422,7 +422,7 @@ public class CacheConfiguration<K, V> {
      * @see #getName()
      * @see Cache#getName()
      */
-    public CacheConfiguration<K, V> setName(String name) {
+    public final CacheConfiguration<K, V> setName(String name) {
         if ("".equals(name)) {
             throw new IllegalArgumentException("cannot set the empty string as name");
         } else if (name != null) {

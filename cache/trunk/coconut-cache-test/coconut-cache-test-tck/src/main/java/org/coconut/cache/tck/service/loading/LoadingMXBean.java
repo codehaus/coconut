@@ -17,7 +17,7 @@ import org.coconut.cache.tck.RequireService;
 import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.cache.test.util.managed.ManagedFilter;
 import org.coconut.management.ManagedGroup;
-import org.coconut.management.ManagedObject;
+import org.coconut.management.ManagedLifecycle;
 import org.coconut.predicate.Predicate;
 import org.junit.Before;
 import org.junit.Test;
@@ -140,7 +140,7 @@ public class LoadingMXBean extends AbstractLoadingTestBundle {
                 filter.getManagedGroup());
     }
     
-    static class MyLoader extends IntegerToStringLoader implements ManagedObject {
+    static class MyLoader extends IntegerToStringLoader implements ManagedLifecycle {
         ManagedGroup g;
 
         public void manage(ManagedGroup parent) {

@@ -8,7 +8,7 @@ import static org.coconut.cache.internal.service.event.InternalEntryEvent.evicte
 import static org.coconut.cache.internal.service.event.InternalEntryEvent.expired;
 import static org.coconut.cache.internal.service.event.InternalEntryEvent.removed;
 import static org.coconut.cache.internal.service.event.InternalEntryEvent.updated;
-import static org.coconut.cache.internal.service.event.InternalEvent.cleared;
+import static org.coconut.cache.internal.service.event.InternalEvent.*;
 
 import java.util.Collection;
 import java.util.Map;
@@ -49,6 +49,10 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
 
     private final boolean doUpdate;
 
+    private final boolean doStart;
+
+    private final boolean doStopped;
+
     private final CacheEventBus<CacheEvent<K, V>> eb = new CacheEventBus<CacheEvent<K, V>>();
 
     private final boolean isEnabled;
@@ -67,6 +71,8 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
         this.doExpire = co.isIncluded(CacheEntryEvent.ItemRemoved.class);
         this.doEvict = co.isIncluded(CacheEntryEvent.ItemRemoved.class);
         this.doUpdate = co.isIncluded(CacheEntryEvent.ItemUpdated.class);
+        this.doStart = co.isIncluded(CacheEvent.CacheStarted.class);
+        this.doStopped = co.isIncluded(CacheEvent.CacheStopped.class);
     }
 
     public void afterCacheClear(Cache<K, V> cache, long timestamp,
@@ -76,7 +82,7 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
                 removed(cache, entry, false);
             }
         }
-        if (doClear) {
+        if (doClear && entries.size() > 0) {
             dispatch(cleared(cache, entries.size(), previousVolume));
         }
     }
@@ -275,5 +281,11 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
     @Override
     public void shutdown() {
         eb.setShutdown();
+    }
+
+    public void afterStart(Cache<K, V> cache) {
+        if (doStart) {
+            dispatch(InternalEvent.started(cache));
+        }
     }
 }

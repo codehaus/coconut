@@ -145,8 +145,8 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
             throw new NullPointerException("clazz is null");
         }
         boolean isIncluded = !isCovered(DEFAULT_EXCLUDES, clazz);
-        isIncluded &= !isCovered(excludes, clazz);
         isIncluded |= isCovered(includes, clazz);
+        isIncluded &= !isCovered(excludes, clazz);
         return isIncluded;
     }
 

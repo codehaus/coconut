@@ -4,10 +4,10 @@
 package org.coconut.cache.test.util.managed;
 
 import org.coconut.management.ManagedGroup;
-import org.coconut.management.ManagedObject;
+import org.coconut.management.ManagedLifecycle;
 import org.coconut.predicate.Predicate;
 
-public class ManagedFilter implements ManagedObject, Predicate {
+public class ManagedFilter implements ManagedLifecycle, Predicate {
     ManagedGroup g;
 
     public void manage(ManagedGroup parent) {

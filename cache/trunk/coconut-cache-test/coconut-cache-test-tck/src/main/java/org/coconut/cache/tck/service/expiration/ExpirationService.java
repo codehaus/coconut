@@ -3,16 +3,19 @@
  */
 package org.coconut.cache.tck.service.expiration;
 
+import static org.coconut.test.CollectionUtils.M1_TO_M5_MAP;
+
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.cache.CacheException;
 import org.coconut.cache.service.expiration.CacheExpirationService;
+import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
- * 
- * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -31,10 +34,10 @@ public class ExpirationService extends AbstractCacheTCKTest {
 
     @Test
     public void testSetGetDefaultTimeToLive() {
-        assertEquals(CacheExpirationService.NEVER_EXPIRE, expiration()
-                .getDefaultTimeToLive(TimeUnit.NANOSECONDS));
-        assertEquals(CacheExpirationService.NEVER_EXPIRE, expiration()
-                .getDefaultTimeToLive(TimeUnit.SECONDS));
+        assertEquals(CacheExpirationService.NEVER_EXPIRE, expiration().getDefaultTimeToLive(
+                TimeUnit.NANOSECONDS));
+        assertEquals(CacheExpirationService.NEVER_EXPIRE, expiration().getDefaultTimeToLive(
+                TimeUnit.SECONDS));
 
         expiration().setDefaultTimeToLive(2 * 1000, TimeUnit.MILLISECONDS);
         assertEquals(2 * 1000 * 1000 * 1000l, expiration().getDefaultTimeToLive(
@@ -61,7 +64,7 @@ public class ExpirationService extends AbstractCacheTCKTest {
     public void illegalTimeToLive() {
         expiration().setDefaultTimeToLive(-1, TimeUnit.NANOSECONDS);
     }
-    
+
     /**
      * {@link CacheExpirationService#setDefaultTimeToLive(long, TimeUnit) and CacheExpirationService#getDefaultTimeToLive(TimeUnit) should not fail when cache is shutdown.
      * 
@@ -74,15 +77,41 @@ public class ExpirationService extends AbstractCacheTCKTest {
         assertTrue(c.isStarted());
         c.shutdown();
 
-        //should not fail while shutdown
+        // should not fail while shutdown
         expiration().setDefaultTimeToLive(2 * 1000, TimeUnit.MILLISECONDS);
         assertEquals(2 * 1000 * 1000 * 1000l, expiration().getDefaultTimeToLive(
                 TimeUnit.NANOSECONDS));
 
         assertTrue(c.awaitTermination(1, TimeUnit.SECONDS));
-        //should not fail while terminated
+        // should not fail while terminated
         expiration().setDefaultTimeToLive(2 * 1000, TimeUnit.MILLISECONDS);
         assertEquals(2 * 1000 * 1000 * 1000l, expiration().getDefaultTimeToLive(
                 TimeUnit.NANOSECONDS));
+    }
+
+    @Test(expected = CacheException.class)
+    public void testIllegalPutCall() {
+        c = newCache(newConf().serviceManager().add(new AbstractCacheLifecycle() {
+            @Override
+            public void start(Map<Class<?>, Object> allServices) {
+                CacheExpirationService ces = (CacheExpirationService) allServices
+                        .get(CacheExpirationService.class);
+                ces.put(1, "foo", 10, TimeUnit.HOURS);// should fail
+            }
+        }));
+        prestart();
+    }
+
+    @Test(expected = CacheException.class)
+    public void testIllegalPutAllCall() {
+        c = newCache(newConf().serviceManager().add(new AbstractCacheLifecycle() {
+            @Override
+            public void start(Map<Class<?>, Object> allServices) {
+                CacheExpirationService ces = (CacheExpirationService) allServices
+                        .get(CacheExpirationService.class);
+                ces.putAll(M1_TO_M5_MAP, 10, TimeUnit.HOURS);// should fail
+            }
+        }));
+        prestart();
     }
 }

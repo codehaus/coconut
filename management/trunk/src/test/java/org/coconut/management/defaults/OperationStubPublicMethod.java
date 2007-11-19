@@ -7,12 +7,12 @@ import org.coconut.management.annotation.ManagedOperation;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id$
+ * @version $Id: AttributedStub1.java 415 2007-11-09 08:25:23Z kasper $
  */
-public class AttributedStub1 {
+public class OperationStubPublicMethod {
 	public int invokeCount;
 
-	@ManagedOperation()
+	@ManagedOperation
 	public void method1() {
 		invokeCount++;
 	}

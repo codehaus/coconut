@@ -100,7 +100,6 @@ public class CacheEventConfigurationTest {
         // assertTrue(conf.isIncluded(CacheEvent.CacheStatisticsReset.class));
     }
 
-    @Test
     public void testIncludeExclude3() throws Exception {
         conf.exclude(CacheEvent.class);
         conf.include(CacheEntryEvent.class);

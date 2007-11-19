@@ -90,5 +90,7 @@ public interface InternalCacheListener<K, V> {
             CacheEntry<K, V> newEntry, boolean isExpired);
 
     void dexpired(Cache<K, V> cache, long started, CacheEntry<K, V> entry);
+
+    void afterStart(Cache<K, V> cache);
     
 }

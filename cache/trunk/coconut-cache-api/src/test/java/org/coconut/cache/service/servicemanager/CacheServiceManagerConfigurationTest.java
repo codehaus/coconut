@@ -8,7 +8,7 @@ import static junit.framework.Assert.assertTrue;
 import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
 
 import org.coconut.management.ManagedGroup;
-import org.coconut.management.ManagedObject;
+import org.coconut.management.ManagedLifecycle;
 import org.coconut.test.MockTestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +29,7 @@ public class CacheServiceManagerConfigurationTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void registerIAE1() {
-        ManagedObject mo = MockTestCase.mockDummy(ManagedObject.class);
+        ManagedLifecycle mo = MockTestCase.mockDummy(ManagedLifecycle.class);
         c.add(mo);
         c.add(mo);
     }
@@ -91,8 +91,8 @@ public class CacheServiceManagerConfigurationTest {
 
     public void register() {
         assertEquals(0, c.getObjects().size());
-        ManagedObject mo = MockTestCase.mockDummy(ManagedObject.class);
-        ManagedObject mo1 = MockTestCase.mockDummy(ManagedObject.class);
+        ManagedLifecycle mo = MockTestCase.mockDummy(ManagedLifecycle.class);
+        ManagedLifecycle mo1 = MockTestCase.mockDummy(ManagedLifecycle.class);
         CacheLifecycle cl = MockTestCase.mockDummy(CacheLifecycle.class);
         CacheLifecycle cl1 = MockTestCase.mockDummy(CacheLifecycle.class);
         c.add(mo);
@@ -106,11 +106,11 @@ public class CacheServiceManagerConfigurationTest {
         assertTrue(c.getObjects().contains(cl1));
     }
 
-    public static class LoadableManagedObject implements ManagedObject {
+    public static class LoadableManagedObject implements ManagedLifecycle {
         public void manage(ManagedGroup parent) {}
     }
 
-    public class NonLoadableManagedObject implements ManagedObject {
+    public class NonLoadableManagedObject implements ManagedLifecycle {
         public void manage(ManagedGroup parent) {}
     }
 

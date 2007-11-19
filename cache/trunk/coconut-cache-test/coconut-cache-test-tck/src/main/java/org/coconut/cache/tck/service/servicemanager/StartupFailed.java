@@ -263,7 +263,7 @@ public class StartupFailed extends AbstractCacheTCKTest {
         c.shutdown();
         c.size(); //does not fail, cache was never started
         try {
-            c.clear();
+            put(1);
             fail("should throw IllegalStateException");
         } catch (IllegalStateException ce) {
             //ignore
@@ -275,7 +275,7 @@ public class StartupFailed extends AbstractCacheTCKTest {
         c.shutdownNow();
         c.size(); //does not fail, cache was never started
         try {
-            c.clear();
+            put(1);
             fail("should throw IllegalStateException");
         } catch (IllegalStateException ce) {
             //ignore

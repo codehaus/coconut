@@ -13,7 +13,7 @@ import org.coconut.cache.service.eviction.CacheEvictionMXBean;
 import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.management.ManagedGroup;
-import org.coconut.management.ManagedObject;
+import org.coconut.management.ManagedLifecycle;
 
 /**
  * <p>
@@ -29,7 +29,7 @@ import org.coconut.management.ManagedObject;
  */
 public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> extends
         AbstractCacheLifecycle implements InternalCacheEvictionService<K, V, T>,
-        CacheEvictionMXBean, ManagedObject, CompositeService {
+        CacheEvictionMXBean, ManagedLifecycle, CompositeService {
 
     /** An EvictionSupport instance used for trimming the cache. */
     private final EvictionSupport helper;

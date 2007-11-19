@@ -88,14 +88,15 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * raised for each mapping that is removed when the cache is cleared. When all entries
      * have been removed from the cache a single
      * {@link org.coconut.cache.service.event.CacheEvent.CacheCleared} will be raised.
+     * This event is only raised if the state of the cache changed (cache was non-empty).
      * <p>
      * If the reason for clearing the cache is to get rid of stale data another
      * alternative, if the cache has a CacheLoader defined, might be to use
      * {@link CacheLoadingService#forceLoadAll()} which will reload all elements that
      * current in the cache.
+     * <p>
+     * If the cache has been shutdown calls to this method is ignored
      * 
-     * @throws IllegalStateException
-     *             if the cache has been shutdown
      * @throws UnsupportedOperationException
      *             if the <tt>clear</tt> operation is not supported by this cache
      */

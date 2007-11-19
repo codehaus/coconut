@@ -277,7 +277,7 @@ public final class AttributeMaps {
 
         /** {@inheritDoc} */
         public float getFloat(String key) {
-            return 0;
+            return 0f;
         }
 
         /** {@inheritDoc} */

@@ -23,7 +23,7 @@ import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
 import org.coconut.management.ManagedGroup;
-import org.coconut.management.ManagedObject;
+import org.coconut.management.ManagedLifecycle;
 import org.coconut.predicate.Predicate;
 
 /**
@@ -43,7 +43,7 @@ import org.coconut.predicate.Predicate;
  *            the type of mapped values
  */
 public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle implements
-        CacheExpirationService<K, V>, ManagedObject, CompositeService {
+        CacheExpirationService<K, V>, ManagedLifecycle, CompositeService {
 
     /** Responsible for creating attribute maps. */
     private final InternalCacheEntryService attributeFactory;

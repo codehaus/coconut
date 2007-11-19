@@ -235,6 +235,9 @@ public class AbstractCacheTCKTest extends Assert {
     }
 
     protected Cache<Integer, String> newCache(CacheConfiguration<?, ?> conf) {
+        if (conf == null) {
+            throw new NullPointerException("conf is null");
+        }
         if (CacheTCKRunner.tt.getAnnotation(ThreadSafe.class) != null) {
             threadHelper = new ThreadServiceTestHelper();
             conf.worker().setWorkerManager(threadHelper);

@@ -4,7 +4,6 @@
 package org.coconut.cache.examples.management;
 
 // START SNIPPET: class
-import java.lang.management.ManagementFactory;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -14,10 +13,10 @@ import org.coconut.cache.CacheServices;
 import org.coconut.cache.Caches;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.management.ManagedGroup;
-import org.coconut.management.ManagedObject;
+import org.coconut.management.ManagedLifecycle;
 import org.coconut.management.annotation.ManagedAttribute;
 
-public class ScheduledClearManagement extends AbstractCacheLifecycle implements ManagedObject {
+public class ScheduledClearManagement extends AbstractCacheLifecycle implements ManagedLifecycle {
     private long scheduleMs;
 
     private Runnable runnable;
@@ -27,7 +26,6 @@ public class ScheduledClearManagement extends AbstractCacheLifecycle implements 
     private ScheduledFuture sf;
 
     public synchronized long getClearScheduleMs() {
-        ManagementFactory
         return scheduleMs;
     }
 

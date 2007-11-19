@@ -136,4 +136,8 @@ public class DefaultCacheListener<K, V> extends AbstractCacheLifecycle implement
         event.dexpired(cache, started, entry);
     }
 
+    public void afterStart(Cache<K, V> cache) {
+        event.afterStart(cache);
+    }
+
 }

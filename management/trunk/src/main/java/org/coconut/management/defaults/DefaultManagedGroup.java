@@ -5,7 +5,6 @@ package org.coconut.management.defaults;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,7 +27,6 @@ import javax.management.MBeanOperationInfo;
 import javax.management.ReflectionException;
 
 import org.coconut.management.ManagedGroup;
-import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.annotation.ManagedOperation;
 
 /**
@@ -37,11 +35,11 @@ import org.coconut.management.annotation.ManagedOperation;
  */
 public class DefaultManagedGroup extends AbstractManagedGroup implements DynamicMBean {
 
-    private final Map<String, AbstractAttribute> attributes = new ConcurrentHashMap<String, AbstractAttribute>();
+    private final Map<String, AbstractManagedAttribute> attributes = new ConcurrentHashMap<String, AbstractManagedAttribute>();
 
     private volatile MBeanInfo mbeanInfo;
 
-    private final Map<String, List<AbstractOperation>> ops = new ConcurrentHashMap<String, List<AbstractOperation>>();
+    private final Map<String, List<AbstractManagedOperation>> ops = new ConcurrentHashMap<String, List<AbstractManagedOperation>>();
 
     private final Set<Object> os = new CopyOnWriteArraySet<Object>();
 
@@ -62,61 +60,28 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
         if (o == null) {
             throw new NullPointerException("o is null");
         }
-        os.add(o);
         BeanInfo bi;
         try {
             bi = Introspector.getBeanInfo(o.getClass());
         } catch (java.beans.IntrospectionException e) {
             throw new IllegalArgumentException(e);
         }
-        for (PropertyDescriptor pd : bi.getPropertyDescriptors()) {
-            ManagedAttribute readAttribute = pd.getReadMethod() == null ? null : pd.getReadMethod()
-                    .getAnnotation(ManagedAttribute.class);
-            ManagedAttribute writeAttribute = pd.getWriteMethod() == null ? null : pd
-                    .getWriteMethod().getAnnotation(ManagedAttribute.class);
-            Method writer = null;
-            Method reader = null;
-            if (readAttribute != null) {
-                if (writeAttribute != null) {
-                    throw new IllegalArgumentException(
-                            "cannot define ManagedAttribute on both setter and getter for "
-                                    + pd.getReadMethod());
-                }
-                if (readAttribute.writeOnly()) {
-                    throw new IllegalArgumentException("cannot set writeonly on getter "
-                            + pd.getReadMethod());
-                }
-                reader = pd.getReadMethod();
-                writeAttribute = readAttribute;
-            } else if (writeAttribute != null) {
-                writer = pd.getWriteMethod();
-                if (!writeAttribute.writeOnly()) {
-                    reader = pd.getReadMethod();
-                }
-            }
-            if (reader != null || writer != null) {
-                String name = filterString(o, writeAttribute.defaultValue());
-                if (name.equals("") || name.equals("$methodname")) {
-                    name = capitalize(pd.getName());
-                }
-                String description = filterString(o, writeAttribute.description());
-                attributes.put(name,
-                        new IntrospectedAttribute(name, description, o, reader, writer));
-            }
-        }
+        attributes.putAll(DefaultManagedAttribute.fromPropertyDescriptors(
+                bi.getPropertyDescriptors(), o));
 
+        
         for (Method m : o.getClass().getMethods()) {
             ManagedOperation mo = m.getAnnotation(ManagedOperation.class);
             if (mo != null) {
-                String name = filterString(o, mo.defaultValue());
+                String name = ManagementUtil.filterString(o, mo.defaultValue());
                 if (name.equals("")) {
                     name = m.getName();
                 }
-                String description = filterString(o, mo.description());
-                AbstractOperation io = new ReflectionOperation(m, o, name, description);
-                List<AbstractOperation> l = ops.get(name);
+                String description = ManagementUtil.filterString(o, mo.description());
+                AbstractManagedOperation io = new DefaultManagedOperation(m, o, name, description);
+                List<AbstractManagedOperation> l = ops.get(name);
                 if (l == null) {
-                    l = new ArrayList<AbstractOperation>();
+                    l = new ArrayList<AbstractManagedOperation>();
                     ops.put(name, l);
                 }
                 l.add(io);
@@ -124,6 +89,7 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
                 // throw new IllegalArgumentException(name);
             }
         }
+        os.add(o);
         return this;
     }
 
@@ -140,7 +106,7 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
      */
     public Object getAttribute(String attribute) throws AttributeNotFoundException, MBeanException,
             ReflectionException {
-        AbstractAttribute att = findAttribute(attribute);
+        AbstractManagedAttribute att = findAttribute(attribute);
         return att.getValue();
     }
 
@@ -168,7 +134,7 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
             return mbeanInfo;
         }
         List<MBeanAttributeInfo> l = new ArrayList<MBeanAttributeInfo>();
-        for (AbstractAttribute aa : attributes.values()) {
+        for (AbstractManagedAttribute aa : attributes.values()) {
             try {
                 l.add(aa.getInfo());
             } catch (IntrospectionException e) {
@@ -176,8 +142,8 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
             }
         }
         List<MBeanOperationInfo> lo = new ArrayList<MBeanOperationInfo>();
-        for (List<AbstractOperation> li : ops.values()) {
-            for (AbstractOperation aa : li) {
+        for (List<AbstractManagedOperation> li : ops.values()) {
+            for (AbstractManagedOperation aa : li) {
                 try {
                     lo.add(aa.getInfo());
                 } catch (IntrospectionException e) {
@@ -204,9 +170,9 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
      */
     public Object invoke(String actionName, Object[] params, String[] signature)
             throws MBeanException, ReflectionException {
-        List<AbstractOperation> aa = ops.get(actionName);
+        List<AbstractManagedOperation> aa = ops.get(actionName);
         if (aa != null) {
-            for (AbstractOperation ao : aa) {
+            for (AbstractManagedOperation ao : aa) {
                 return ao.invoke(params);
             }
         }
@@ -218,7 +184,7 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
      */
     public void setAttribute(Attribute attribute) throws AttributeNotFoundException,
             InvalidAttributeValueException, MBeanException, ReflectionException {
-        AbstractAttribute att = findAttribute(attribute.getName());
+        AbstractManagedAttribute att = findAttribute(attribute.getName());
         att.setValue(attribute.getValue());
     }
 
@@ -239,29 +205,8 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return "Name= " + getName() + ", Description =" + getDescription();
-    }
-
-    private String filterString(Object o, String str) {
-        // if (o instanceof Named) {
-        // Named n = (Named) o;
-        // str = str.replace("$name", n.getName());
-        // // System.out.println(n.getName());
-        // }
-        // if (o instanceof Described) {
-        // Described n = (Described) o;
-        // str = str.replace("$description", n.getDescription());
-        // }
-        return str;
-    }
-
-    private AbstractAttribute findAttribute(String attribute) throws AttributeNotFoundException {
-        AbstractAttribute att = attributes.get(attribute);
+    private AbstractManagedAttribute findAttribute(String attribute) throws AttributeNotFoundException {
+        AbstractManagedAttribute att = attributes.get(attribute);
         if (att == null) {
             for (String aa : attributes.keySet()) {
                 System.out.println(aa);
@@ -269,11 +214,5 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
             throw new AttributeNotFoundException("Attribute " + attribute + " could not be found");
         }
         return att;
-    }
-
-    private static String capitalize(String s) {
-        if (s.length() == 0)
-            return s;
-        return s.substring(0, 1).toUpperCase() + s.substring(1);
     }
 }

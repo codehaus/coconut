@@ -52,7 +52,7 @@ public class DefaultManagedGroupTest {
     @Test
     public void testAttributeStub1() throws JMException {
 
-        AttributedStub1 o = new AttributedStub1();
+        OperationStubPublicMethod o = new OperationStubPublicMethod();
         dmg.add(o);
         dmg.register(server, ON);
         assertEquals(initCount + 1, server.getMBeanCount().intValue());

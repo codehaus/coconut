@@ -9,7 +9,6 @@ import java.lang.reflect.Method;
 import javax.management.IntrospectionException;
 import javax.management.MBeanException;
 import javax.management.MBeanOperationInfo;
-import javax.management.MBeanParameterInfo;
 import javax.management.ReflectionException;
 import javax.management.RuntimeErrorException;
 import javax.management.RuntimeMBeanException;
@@ -18,72 +17,58 @@ import javax.management.RuntimeMBeanException;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-class ReflectionOperation extends AbstractOperation {
+class DefaultManagedOperation extends AbstractManagedOperation {
+    /** The method to invoke when this operation is called. */
     private final Method m;
 
+    /** The object to invoke on. */
     private final Object o;
 
-    ReflectionOperation(Method m, Object o, final String name, final String description) {
+    /**
+     * @param method
+     * @param obj
+     *            the object the specified method should be invoked on
+     * @param name
+     * @param description
+     */
+    DefaultManagedOperation(Method method, Object obj, final String name, final String description) {
         super(name, description);
-        this.m = m;
-        m.getParameterTypes();
-        this.o = o;
+        if (method == null) {
+            throw new NullPointerException("method is null");
+        } else if (obj == null) {
+            throw new NullPointerException("obj is null");
+        }
+        this.m = method;
+        this.o = obj;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     Object invoke(Object... objects) throws MBeanException, ReflectionException {
         try {
             return m.invoke(o, objects);
         } catch (IllegalArgumentException e) {
-            throw new ReflectionException(e);
+            throw new ReflectionException(e);/* Should never happen */
         } catch (IllegalAccessException e) {
-            throw new ReflectionException(e);
+            throw new ReflectionException(e);/* Should never happen */
         } catch (InvocationTargetException e) {
             Throwable t = e.getTargetException();
             if (t instanceof RuntimeException) {
                 final String msg = "RuntimeException thrown in method " + m;
                 throw new RuntimeMBeanException((RuntimeException) t, msg);
             } else if (t instanceof Error) {
-                throw new RuntimeErrorException((Error) t, "Error thrown in the method "
-                        + m);
+                throw new RuntimeErrorException((Error) t, "Error thrown in the method " + m);
             } else {
-                throw new MBeanException((Exception) t, "Exception thrown in the method "
-                        + m);
+                throw new MBeanException((Exception) t, "Exception thrown in the method " + m);
             }
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    String[] getSignature() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     MBeanOperationInfo getInfo() throws IntrospectionException {
-        return new MBeanOperationInfo(name, description, methodSignature(m), m
-                .getReturnType().getName(), MBeanOperationInfo.UNKNOWN);
-    }
-
-    private static MBeanParameterInfo[] methodSignature(Method method) {
-        final Class[] classes = method.getParameterTypes();
-        final MBeanParameterInfo[] params = new MBeanParameterInfo[classes.length];
-
-        for (int i = 0; i < classes.length; i++) {
-            final String pn = "p" + (i + 1);
-            params[i] = new MBeanParameterInfo(pn, classes[i].getName(), "");
-        }
-
-        return params;
+        return new MBeanOperationInfo(getName(), getDescription(), ManagementUtil
+                .methodSignature(m), m.getReturnType().getName(), MBeanOperationInfo.UNKNOWN);
     }
 
 }

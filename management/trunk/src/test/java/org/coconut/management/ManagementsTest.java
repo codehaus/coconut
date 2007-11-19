@@ -8,7 +8,7 @@ import java.lang.management.ManagementFactory;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 
-import org.coconut.management.defaults.AttributedStub1;
+import org.coconut.management.defaults.OperationStubPublicMethod;
 import org.coconut.management.defaults.DefaultManagedGroup;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,9 +31,9 @@ public class ManagementsTest {
 
     @Test
     public void testAttributeStub1() throws Exception {
-        AttributedStub1 o = new AttributedStub1();
+        OperationStubPublicMethod o = new OperationStubPublicMethod();
         dmg.add(o);
-        dmg.addChild("bahoo", "desc2").add(new AttributedStub1());
+        dmg.addChild("bahoo", "desc2").add(new OperationStubPublicMethod());
         
         ManagedVisitor mgv = Managements.register(server,
                 "org.coconut.management.test", "l1", "l2", "l3");
