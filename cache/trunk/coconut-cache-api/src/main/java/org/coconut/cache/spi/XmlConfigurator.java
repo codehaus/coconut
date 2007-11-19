@@ -50,6 +50,7 @@ public class XmlConfigurator {
     /** The property tag for a cache instance. */
     static final String PROPERTY_TAG = "property";
 
+    /** The key attribute for a property tag. */
     static final String PROPERTY_KEY_ATTR = "key";
 
     /** The type of the cache. */

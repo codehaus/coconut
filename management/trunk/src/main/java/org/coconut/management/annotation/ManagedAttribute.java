@@ -26,7 +26,7 @@ public @interface ManagedAttribute {
     /**
      * The name of the attribute.
      */
-    String defaultValue() default "$methodname";
+    String defaultValue() default "";
 
     /**
      * The description of the atttribute.
@@ -34,7 +34,7 @@ public @interface ManagedAttribute {
     String description() default "";
 
     /**
-     * Whether or not this attribute is read only.
+     * Whether or not this attribute is write only. Should only be used on a setter.
      */
-    boolean writeOnly() default false;
+    boolean isWriteOnly() default false;
 }

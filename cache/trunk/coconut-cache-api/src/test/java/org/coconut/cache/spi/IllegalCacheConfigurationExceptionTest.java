@@ -14,8 +14,7 @@ import org.junit.Test;
  * Tests the {@link IllegalCacheConfigurationException} class.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id: IllegalCacheConfigurationExceptionTest.java 419 2007-11-09 09:09:31Z
- *          kasper $
+ * @version $Id$
  */
 public class IllegalCacheConfigurationExceptionTest {
 

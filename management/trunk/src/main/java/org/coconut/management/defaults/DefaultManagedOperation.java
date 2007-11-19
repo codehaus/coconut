@@ -25,13 +25,20 @@ class DefaultManagedOperation extends AbstractManagedOperation {
     private final Object o;
 
     /**
-     * @param method
+     * Creates a new DefaultManagedOperation.
      * @param obj
      *            the object the specified method should be invoked on
+     * @param method
+     *            the method corresponding to the operation
      * @param name
+     *            the name of the operation
      * @param description
+     *            the description of the operation
+     * @throws NullPointerException
+     *             if the specified object, method, name or description is
+     *             <code>null</code>
      */
-    DefaultManagedOperation(Method method, Object obj, final String name, final String description) {
+    DefaultManagedOperation(Object obj, Method method, final String name, final String description) {
         super(name, description);
         if (method == null) {
             throw new NullPointerException("method is null");

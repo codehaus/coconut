@@ -41,21 +41,37 @@ public interface CacheEvent<K, V> {
     Cache<K, V> getCache();
 
     /**
-     * Returns a unique name that can be used to identify the
-     * <tt>type</tt> of the event. This is usual a display friendly name.
+     * Returns a unique name that can be used to identify the <tt>type</tt> of the
+     * event. This is usual a display friendly name.
      * 
      * @return a unique name that can be used to identify the type of the event
      */
     String getName();
 
+    /**
+     * An event indicating that a particular {@link Cache} was started. This is the first
+     * event that is raised in the cache.
+     */
     interface CacheStarted<K, V> extends CacheEvent<K, V> {
         /** The unique name of the event. */
         String NAME = "cache.started";
     }
-    
+
+    /**
+     * An event indicating that a particular {@link Cache} was shutdown. This is the last
+     * event that is raised in the cache.
+     */
     interface CacheStopped<K, V> extends CacheEvent<K, V> {
         /** The unique name of the event. */
         String NAME = "cache.stopped";
+
+        /**
+         * Returns how long time the cache was up and running in the specified timeunit.
+         * 
+         * @param unit
+         *            the timeunit to return the time in.
+         * @return the uptime of the cache
+         */
         long getUptime(TimeUnit unit);
     }
 
@@ -73,7 +89,7 @@ public interface CacheEvent<K, V> {
          * @return the number of elements that was in the cache before it was cleared
          */
         int getPreviousSize();
-        
+
         /**
          * Returns the volume of the cache before it was cleared.
          * 

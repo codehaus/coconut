@@ -4,7 +4,6 @@
 package org.coconut.cache.examples.policy;
 
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.policy.Policies;
 import org.coconut.predicate.Predicate;
 import org.coconut.predicate.Predicates;
 import org.coconut.predicate.StringPredicates;

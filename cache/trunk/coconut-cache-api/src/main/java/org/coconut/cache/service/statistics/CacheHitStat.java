@@ -6,7 +6,7 @@ package org.coconut.cache.service.statistics;
 import org.coconut.cache.spi.CacheSPI;
 
 /**
- * The class holds the hit statistics for a cache.
+ * An immutable class holding the hit statistics for a cache.
  * <p>
  * TODO: make sure this class is JMX compatible.
  * 

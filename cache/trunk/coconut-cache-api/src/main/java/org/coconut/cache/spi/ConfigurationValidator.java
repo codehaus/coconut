@@ -29,6 +29,15 @@ public class ConfigurationValidator {
         return DEFAULT;
     }
 
+    /**
+     * Returns whether or not the specified service is supported by the specified cache.
+     * 
+     * @param cache
+     *            the cache to check
+     * @param service
+     *            the service to check for
+     * @return whether or not the specified service is supported by the specified cache
+     */
     private boolean isSupported(Class<? extends Cache> cache, Class<?> service) {
         CacheServiceSupport support = cache.getAnnotation(CacheServiceSupport.class);
         if (support == null) {
@@ -43,53 +52,18 @@ public class ConfigurationValidator {
      * 
      * @param conf
      *            the configuration to verify
-     * @param type
+     * @param cacheType
      *            the type of cache to verify
+     * @throw IllegalCacheConfigurationException if the cache does not fully support the
+     *        specified configuration
      */
-    public void verify(CacheConfiguration<?, ?> conf, Class<? extends Cache> type) {
-        if (!isSupported(type, CacheManagementService.class) && conf.management().isEnabled()) {
+    public void verify(CacheConfiguration<?, ?> conf, Class<? extends Cache> cacheType) {
+        if (!isSupported(cacheType, CacheManagementService.class) && conf.management().isEnabled()) {
             throw new IllegalCacheConfigurationException(
                     "class '"
-                            + type
+                            + cacheType
                             + "' does not support management (enable via CacheManagementConfiguration.setEnabled())");
         }
-        // preferable capacity>maxCapacity?
-        // preferable size>maxSize?
-        // no policy defined->cache is free to select a policy
-// Executor e = conf.threading().getExecutor();
-// // if (type.isAnnotationPresent(NotThreadSafe.class)) {
-// // throw new IllegalCacheConfigurationException(
-// // "Cannot specify an executor, since this cache is not threadsafe");
-// //
-// // }
-// boolean isScheduled = e instanceof ScheduledExecutorService;
-//
-// if (!isScheduled
-// && conf.eviction().getScheduledEvictionAtFixedRate(TimeUnit.NANOSECONDS) !=
-// Long.MAX_VALUE) {
-// if (e == null) {
-// throw new IllegalCacheConfigurationException(
-// "Cannot schedule evictions, when no executor has been set");
-// } else {
-// throw new IllegalCacheConfigurationException(
-// "The specified executor must of type java.util.concurrent.ScheduledExecutorService to
-// schedule evictions, the type was, "
-// + e.getClass().getCanonicalName());
-// }
-// }
-// boolean isExecutorService = e instanceof ExecutorService;
-// if (!isExecutorService && conf.threading().getShutdownExecutorService()) {
-// throw new IllegalCacheConfigurationException(
-// "Can only shutdown executors of type java.util.concurrent.ExecutorService, the type of
-// the executor was, "
-// + e.getClass().getCanonicalName());
-// }
-// if (!type.isAnnotationPresent(ThreadSafe.class) && e != null) {
-// throw new IllegalCacheConfigurationException(
-// "Cannot specify an Executor when the cache is not thread safe. It must use the
-// net.jcip.annotations.ThreadSafe annotation");
-// }
-
     }
 
     /**

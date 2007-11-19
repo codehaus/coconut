@@ -4,8 +4,8 @@ import java.lang.reflect.Method;
 
 import javax.management.MBeanParameterInfo;
 
-public class ManagementUtil {
-    public static String filterString(Object o, String str) {
+class ManagementUtil {
+    static String filterString(Object o, String str) {
         // if (o instanceof Named) {
         // Named n = (Named) o;
         // str = str.replace("$name", n.getName());

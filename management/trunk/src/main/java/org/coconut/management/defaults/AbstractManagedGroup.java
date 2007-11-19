@@ -15,32 +15,54 @@ import javax.management.ObjectName;
 import org.coconut.management.ManagedGroup;
 
 /**
+ * An abstract implementation of AbstractManagedGroup.
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
 public abstract class AbstractManagedGroup implements ManagedGroup {
-    final static Pattern NAME_PATTERN = Pattern
+    /** The allowed naming pattern of a group. */
+    public final static Pattern GROUP_NAMING_PATTERN = Pattern
             .compile("[\\da-zA-Z\\x5F\\x2D]*(\\x2E([\\da-z\\x5F\\x2D])+)*");
+
+    /** The child groups for this group. */
+    private final ConcurrentHashMap<String, AbstractManagedGroup> childGroups = new ConcurrentHashMap<String, AbstractManagedGroup>();
 
     /** The description of this group. */
     private final String description;
 
-    private final ConcurrentHashMap<String, AbstractManagedGroup> children = new ConcurrentHashMap<String, AbstractManagedGroup>();
-
+    /** The name of this group. */
     private final String name;
 
+    /** The ObjectName this group is registered under. */
     private ObjectName objectName;
 
+    /** The parent of this group. */
     private AbstractManagedGroup parent;
 
+    /** The MBeanServer this group is registered with. */
     private MBeanServer server;
 
+    /**
+     * Creates a new AbstractManagedGroup with the specified name and description.
+     * 
+     * @param name
+     *            the name of the group
+     * @param description
+     *            the description of the group
+     * @throws NullPointerException
+     *             if the specified name or description is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if the specified name does not follow the naming standard of managed
+     *             groups
+     */
     AbstractManagedGroup(String name, String description) {
         if (name == null) {
             throw new NullPointerException("name is null");
+        } else if (description == null) {
+            throw new NullPointerException("description is null");
         } else if (name.length() == 0) {
             throw new IllegalArgumentException("cannot specify the empty string as name");
-        } else if (!NAME_PATTERN.matcher(name).matches()) {
+        } else if (!GROUP_NAMING_PATTERN.matcher(name).matches()) {
             throw new IllegalArgumentException("not a valid name, was " + name);
         }
         this.name = name;
@@ -49,7 +71,7 @@ public abstract class AbstractManagedGroup implements ManagedGroup {
 
     /** {@inheritDoc} */
     public Collection<ManagedGroup> getChildren() {
-        return new ArrayList<ManagedGroup>(children.values());
+        return new ArrayList<ManagedGroup>(childGroups.values());
     }
 
     /** {@inheritDoc} */
@@ -101,9 +123,15 @@ public abstract class AbstractManagedGroup implements ManagedGroup {
     /** {@inheritDoc} */
     public synchronized void remove() {
         if (parent != null) {
-            parent.children.remove(getName());
+            parent.childGroups.remove(getName());
             parent = null;
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return "Name= " + getName() + ", Description =" + getDescription();
     }
 
     /** {@inheritDoc} */
@@ -115,20 +143,22 @@ public abstract class AbstractManagedGroup implements ManagedGroup {
         server = null;
     }
 
-    synchronized ManagedGroup addNewGroup(AbstractManagedGroup group) {
-        if (children.containsKey(group.getName())) {
+    /**
+     * Called by the class extending this class, when a child group is added.
+     * 
+     * @param group
+     *            the group that should be added
+     * @return the group that was added
+     * @throws IllegalArgumentException
+     *             if a group with the specified name has already been added
+     */
+    protected ManagedGroup addNewGroup(AbstractManagedGroup group) {
+        if (childGroups.putIfAbsent(group.getName(), group) != null) {
             throw new IllegalArgumentException(
                     "Could not add group, group with same name has already been added "
                             + group.getName());
         }
-        children.put(group.getName(), group);
         group.parent = this;
         return group;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return "Name= " + getName() + ", Description =" + getDescription();
     }
 }

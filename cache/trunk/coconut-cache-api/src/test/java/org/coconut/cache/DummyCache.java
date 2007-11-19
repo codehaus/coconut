@@ -24,13 +24,16 @@ public class DummyCache<K, V> implements Cache<K, V> {
     /** The name of the cache. */
     private final String name;
 
+    /** A list of service for the cache. */
     private final HashMap<Class, Object> services = new HashMap<Class, Object>();
+
     /**
      * Creates a new DummyCache with the default constructor.
      */
     public DummyCache() {
         this(CacheConfiguration.create());
     }
+
     /**
      * Creates a new DummyCache.
      * 
@@ -41,6 +44,12 @@ public class DummyCache<K, V> implements Cache<K, V> {
         this.name = configuration.getName();
     }
 
+    /**
+     * Adds a service that can later be retrieved from {@link #getService(Class)}.
+     * 
+     * @param key the key of the service
+     * @param service the service to add
+     */
     public void addService(Class key, Object service) {
         services.put(key, service);
     }

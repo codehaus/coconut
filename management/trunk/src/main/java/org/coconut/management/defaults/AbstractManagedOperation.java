@@ -23,7 +23,7 @@ abstract class AbstractManagedOperation {
     private final String name;
 
     /**
-     * Creates a new AbstractOperation with the specified name and description
+     * Creates a new AbstractManagedOperation with the specified name and description.
      * 
      * @param name
      *            the name of the operation

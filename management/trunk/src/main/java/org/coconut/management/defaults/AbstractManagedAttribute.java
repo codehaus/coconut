@@ -15,10 +15,22 @@ import javax.management.ReflectionException;
  * @version $Id$
  */
 abstract class AbstractManagedAttribute {
+    /** The description of the operation. */
     private final String description;
 
+    /** The name of the operation. */
     private final String name;
 
+    /**
+     * Creates a new AbstractManagedAttribute with the specified name and description.
+     * 
+     * @param name
+     *            the name of the attribute
+     * @param description
+     *            the description of the attribute
+     * @throws NullPointerException
+     *             if the specified name or description is <code>null</code>
+     */
     AbstractManagedAttribute(final String name, final String description) {
         if (name == null) {
             throw new NullPointerException("name is null");
@@ -29,21 +41,53 @@ abstract class AbstractManagedAttribute {
         this.description = description;
     }
 
-    public String getDescription() {
+    /**
+     * Returns the description of this attribute.
+     * 
+     * @return the description of this attribute
+     */
+    String getDescription() {
         return description;
     }
 
-    public String getName() {
+    /**
+     * Returns the name of this attribute.
+     * 
+     * @return the name of this attribute
+     */
+    String getName() {
         return name;
     }
 
+    /**
+     * Returns the MBeanAttributeInfo for this attribute.
+     * 
+     * @return the MBeanAttributeInfo for this attribute
+     * @throws IntrospectionException
+     *             could not optain the information for this attribute
+     */
     abstract MBeanAttributeInfo getInfo() throws IntrospectionException;
 
-    abstract boolean hasSetter();
-
-    abstract boolean hasGetter();
-
+    /**
+     * Returns the value of the attribute.
+     *
+     * @return the value of the attribute
+     * @throws MBeanException
+     *             could not get the value of the attribute
+     * @throws ReflectionException
+     *             could not get the value of the attribute
+     */
     abstract Object getValue() throws MBeanException, ReflectionException;
 
-    abstract Object setValue(Object o) throws MBeanException, ReflectionException;
+    /**
+     * Sets the value of the attribute to specified object.
+     * 
+     * @param o
+     *            the value that the attribute should be set to
+     * @throws MBeanException
+     *             could not set the attribute
+     * @throws ReflectionException
+     *             could not set the attribute
+     */
+    abstract void setValue(Object o) throws MBeanException, ReflectionException;
 }

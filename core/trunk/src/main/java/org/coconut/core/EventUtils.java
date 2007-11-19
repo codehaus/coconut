@@ -102,8 +102,7 @@ public final class EventUtils {
      * @param <E>
      *            the types of parameters accepted by the offer method
      */
-    static class Offerable2EventHandlerAdaptor<E> implements EventProcessor<E>,
-            Serializable {
+    static class Offerable2EventHandlerAdaptor<E> implements EventProcessor<E>, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -4293606104983956712L;
 
@@ -174,7 +173,7 @@ public final class EventUtils {
      * @throws NullPointerException
      *             if the supplied offerable is <code>null</code>
      * @param <E>
-     *            the types of parameters accepted by Offerable
+     *            the types of parameters accepted by the specified Offerable
      */
     public static <E> EventProcessor<E> fromOfferable(final Offerable<E> offerable) {
         return new Offerable2EventHandlerAdaptor<E>(offerable);
@@ -188,6 +187,8 @@ public final class EventUtils {
      * @return an EventHandler wrapping an Queue
      * @throws NullPointerException
      *             if the supplied offerable is <code>null</code>
+     * @param <E>
+     *            the types of parameters accepted by the specified Queue
      */
     public static <E> EventProcessor<E> fromQueue(final Queue<E> queue) {
         return new QueueAdaptor<E>(queue);

@@ -14,6 +14,11 @@ import org.coconut.core.AttributeMap;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public final class CacheLoaders {
+    /** Cannot instantiate. */
+    // /CLOVER:OFF
+    private CacheLoaders() {}
+
+    // /CLOVER:ON
 
     /**
      * Returns a Runnable that when invoked will call the
@@ -27,6 +32,8 @@ public final class CacheLoaders {
      *            the key to load
      * @return a Runnable that when invoked will call the
      *         {@link CacheLoadingService#forceLoadAll()} method on the specified cache
+     * @param <K>
+     *            the type of keys used for loading values
      */
     public static <K> Runnable runLoad(Cache<K, ?> fromCache, final K key) {
         if (key == null) {
@@ -82,11 +89,23 @@ public final class CacheLoaders {
      * Returns a CacheLoader that will return <tt>null</tt> as a result for any key.
      * 
      * @return a CacheLoader that returns <tt>null</tt> for any key.
+     * @param <K>
+     *            the type of keys used for loading values
+     * @param <V>
+     *            the type of values that are loaded
      */
     public static <K, V> CacheLoader<K, V> nullLoader() {
         return new NullLoader<K, V>();
     }
 
+    /**
+     * A loader that always return <code>null</code> for any key.
+     * 
+     * @param <K>
+     *            the type of keys used for loading values
+     * @param <V>
+     *            the type of values that are loaded
+     */
     final static class NullLoader<K, V> extends AbstractCacheLoader<K, V> {
         /** {@inheritDoc} */
         public V load(K key, AttributeMap attributes) {

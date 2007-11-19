@@ -54,7 +54,7 @@ public class CacheFiltersTest {
 
     @Test(expected = NullPointerException.class)
     public void cacheNameNPE() {
-        CacheEventFilters.cacheName(null);
+        CacheEventFilters.eventName(null);
     }
 
     @Test
@@ -87,7 +87,7 @@ public class CacheFiltersTest {
                 will(returnValue("T2"));
             }
         });
-        Predicate<CacheEvent<Integer, String>> f = CacheEventFilters.cacheName(Predicates
+        Predicate<CacheEvent<Integer, String>> f = CacheEventFilters.eventName(Predicates
                 .equal("T1"));
         assertTrue(f.evaluate(event1));
         assertFalse(f.evaluate(event2));

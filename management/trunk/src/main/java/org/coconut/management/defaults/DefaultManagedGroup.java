@@ -44,18 +44,23 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
     private final Set<Object> os = new CopyOnWriteArraySet<Object>();
 
     /**
+     * Creates a new DefaultManagedGroup with the specified name and description.
+     * 
      * @param name
-     *            the name of this group
+     *            the name of the group
      * @param description
-     *            the description of this group
+     *            the description of the group
+     * @throws NullPointerException
+     *             if the specified name or description is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if the specified name does not follow the naming standard of managed
+     *             groups
      */
     public DefaultManagedGroup(String name, String description) {
         super(name, description);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public synchronized ManagedGroup add(Object o) {
         if (o == null) {
             throw new NullPointerException("o is null");
@@ -66,10 +71,9 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
         } catch (java.beans.IntrospectionException e) {
             throw new IllegalArgumentException(e);
         }
-        attributes.putAll(DefaultManagedAttribute.fromPropertyDescriptors(
-                bi.getPropertyDescriptors(), o));
+        attributes.putAll(DefaultManagedAttribute.fromPropertyDescriptors(bi
+                .getPropertyDescriptors(), o));
 
-        
         for (Method m : o.getClass().getMethods()) {
             ManagedOperation mo = m.getAnnotation(ManagedOperation.class);
             if (mo != null) {
@@ -78,7 +82,7 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
                     name = m.getName();
                 }
                 String description = ManagementUtil.filterString(o, mo.description());
-                AbstractManagedOperation io = new DefaultManagedOperation(m, o, name, description);
+                AbstractManagedOperation io = new DefaultManagedOperation(o, m, name, description);
                 List<AbstractManagedOperation> l = ops.get(name);
                 if (l == null) {
                     l = new ArrayList<AbstractManagedOperation>();
@@ -93,26 +97,19 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
         return this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public synchronized ManagedGroup addChild(String name, String description) {
         DefaultManagedGroup g = new DefaultManagedGroup(name, description);
         return super.addNewGroup(g);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public Object getAttribute(String attribute) throws AttributeNotFoundException, MBeanException,
             ReflectionException {
-        AbstractManagedAttribute att = findAttribute(attribute);
-        return att.getValue();
+        return findAttribute(attribute).getValue();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public final AttributeList getAttributes(String[] attributes) {
         final AttributeList result = new AttributeList(attributes.length);
         for (String attrName : attributes) {
@@ -126,9 +123,7 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public MBeanInfo getMBeanInfo() {
         if (mbeanInfo != null) {
             return mbeanInfo;
@@ -158,16 +153,12 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
         return mbeanInfo;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public Collection<?> getObjects() {
         return new ArrayList(os);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public Object invoke(String actionName, Object[] params, String[] signature)
             throws MBeanException, ReflectionException {
         List<AbstractManagedOperation> aa = ops.get(actionName);
@@ -179,18 +170,13 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void setAttribute(Attribute attribute) throws AttributeNotFoundException,
             InvalidAttributeValueException, MBeanException, ReflectionException {
-        AbstractManagedAttribute att = findAttribute(attribute.getName());
-        att.setValue(attribute.getValue());
+        findAttribute(attribute.getName()).setValue(attribute.getValue());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public final AttributeList setAttributes(AttributeList attributes) {
         final AttributeList result = new AttributeList(attributes.size());
         for (Object attrObj : attributes) {
@@ -205,12 +191,10 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
         return result;
     }
 
-    private AbstractManagedAttribute findAttribute(String attribute) throws AttributeNotFoundException {
+    private AbstractManagedAttribute findAttribute(String attribute)
+            throws AttributeNotFoundException {
         AbstractManagedAttribute att = attributes.get(attribute);
         if (att == null) {
-            for (String aa : attributes.keySet()) {
-                System.out.println(aa);
-            }
             throw new AttributeNotFoundException("Attribute " + attribute + " could not be found");
         }
         return att;

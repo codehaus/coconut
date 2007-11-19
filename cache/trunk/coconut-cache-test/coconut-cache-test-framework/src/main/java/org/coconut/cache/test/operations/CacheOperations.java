@@ -22,7 +22,6 @@ public abstract class CacheOperations<K> implements Runnable {
     }
 
     public CacheOperations(Cache cache, KeyGenerator<K> keyGenerator) {
-        // System.out.println("new " + getClass());
         this.cache = cache;
         this.keyGenerator = keyGenerator;
     }

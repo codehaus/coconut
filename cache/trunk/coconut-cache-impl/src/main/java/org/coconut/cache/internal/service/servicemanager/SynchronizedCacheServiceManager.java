@@ -38,7 +38,7 @@ public class SynchronizedCacheServiceManager implements InternalCacheServiceMana
         private final List<ServiceHolder> missing = new ArrayList<ServiceHolder>();
 
         /**
-         * Wait condition to support awaitTermination
+         * Wait condition to support awaitTermination.
          */
         private final Condition termination = mainLock.newCondition();
 

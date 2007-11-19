@@ -16,16 +16,16 @@ import org.coconut.cache.CacheServices;
  * 
  * <pre>
  * Cache&lt;?, ?&gt; c = someCache;
- * CacheEvictionService&lt;?, ?&gt; ces = c.getService(CacheEvictionService.class);
- * ces.trimToSize(10);
+ * CacheStatisticsService statistics = c.getService(CacheStatisticsService.class);
+ * statistics.resetStatistics();
  * </pre>
  * 
  * Or by using {@link CacheServices}
  * 
  * <pre>
  * Cache&lt;?, ?&gt; c = someCache;
- * CacheEvictionService&lt;?, ?&gt; ces = CacheServices.eviction(c);
- * ces.setMaximumSize(10000);
+ * CacheStatisticsService statistics = CacheServices.statistics(c);
+ * statistics.getHitStat();
  * </pre>
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$

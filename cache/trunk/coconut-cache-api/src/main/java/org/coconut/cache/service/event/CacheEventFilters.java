@@ -134,8 +134,6 @@ public final class CacheEventFilters {
                 (Mapper) EVENT_TO_CACHE_TRANSFORMER, filter);
     }
 
-    //TODO fix name, to eventName or something, 
-    //It does _not compare the cache name but the event name
     /**
      * Returns a {@link Predicate} that only accepts {@link CacheEvent}s where
      * {@link CacheEvent#getName()} matches the specified filter.
@@ -150,7 +148,7 @@ public final class CacheEventFilters {
      *            the type of mapped values
      */
     @SuppressWarnings("unchecked")
-    public static <K, V> Predicate<CacheEvent<K, V>> cacheName(Predicate<String> filter) {
+    public static <K, V> Predicate<CacheEvent<K, V>> eventName(Predicate<String> filter) {
         return CollectionPredicates.transformFilter((Mapper) EVENT_TO_NAME_TRANSFORMER,
                 filter);
     }

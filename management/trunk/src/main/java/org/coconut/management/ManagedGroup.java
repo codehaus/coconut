@@ -19,13 +19,6 @@ import javax.management.ObjectName;
 public interface ManagedGroup {
 
     /**
-     * Returns the unique name of this group.
-     * 
-     * @return the unique name of this group.
-     */
-    String getName();
-
-    /**
      * Adds an object to the group. The attributes and methods of this object will be
      * added to the aggregated methods and operations of this group.
      * 
@@ -44,13 +37,6 @@ public interface ManagedGroup {
     ManagedGroup add(Object o);
 
     /**
-     * Returns the objects that are registered in this group.
-     * 
-     * @return the objects that are registered in this group
-     */
-    Collection<?> getObjects();
-
-    /**
      * Adds a child group.
      * 
      * @param name
@@ -67,11 +53,22 @@ public interface ManagedGroup {
     ManagedGroup addChild(String name, String description);
 
     /**
-     * Returns whether or not this group has been registered with a {@link MBeanServer}.
-     * 
-     * @return whether or not this group has been registered with a {@link MBeanServer}
+     * Returns all this groups child groups.
+     * @return all this groups child groups
      */
-    boolean isRegistered();
+    Collection<ManagedGroup> getChildren();
+
+    /**
+     * @return the description of this group.
+     */
+    String getDescription();
+
+    /**
+     * Returns the unique name of this group.
+     * 
+     * @return the unique name of this group.
+     */
+    String getName();
 
     /**
      * @return the objectname this group is registered under, or <code>null</code> if it
@@ -80,22 +77,33 @@ public interface ManagedGroup {
     ObjectName getObjectName();
 
     /**
+     * Returns the objects that are registered in this group.
+     * 
+     * @return the objects that are registered in this group
+     */
+    Collection<?> getObjects();
+
+    /**
+     * Returns the parent of this group or <code>null</code> if this group does not have
+     * a parent.
+     * 
+     * @return the parent of this group or <code>null</code> if this group does not have
+     * a parent
+     */
+    ManagedGroup getParent();
+
+    /**
      * @return the MBeanServer this group is registered with or <tt>null</tt> if this
      *         group is not registered.
      */
     MBeanServer getServer();
 
     /**
-     * @return the description of this group.
+     * Returns whether or not this group has been registered with a {@link MBeanServer}.
+     * 
+     * @return whether or not this group has been registered with a {@link MBeanServer}
      */
-    String getDescription();
-
-    /**
-     * Returns all the child groups.
-     */
-    Collection<ManagedGroup> getChildren();
-
-    ManagedGroup getParent();
+    boolean isRegistered();
 
     /**
      * @param server
