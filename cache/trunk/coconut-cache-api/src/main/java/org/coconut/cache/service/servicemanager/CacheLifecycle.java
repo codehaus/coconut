@@ -20,11 +20,8 @@ public interface CacheLifecycle {
      * <p>
      * This method will be called from within the constructor of the cache. Any runtime
      * exception thrown by this method will not be handled.
-     * <p>
-     * TODO: do we call terminated, for components whose initialize method has already
-     * been run, but where another components initialize method fails.
      * 
-     * @param configuration
+     * @param cli
      *            the CacheConfiguration for the cache that this object belongs to
      * @param publicServices
      *            a map of registered service
@@ -32,7 +29,7 @@ public interface CacheLifecycle {
     void initialize(CacheLifecycleInitializer cli);
 
     /**
-     * Start the service. The specified serviceManager can be used to retrieve other
+     * Starts the service. The specified serviceManager can be used to retrieve other
      * services.
      * 
      * @param serviceManager
@@ -41,7 +38,7 @@ public interface CacheLifecycle {
     void start(CacheServiceManagerService serviceManager);
 
     /**
-     * All services have been intialized correctly, and the cache is ready for use.
+     * All services have been initialized correctly, and the cache is ready for use.
      * 
      * @param cache
      *            the cache that was started
@@ -56,7 +53,9 @@ public interface CacheLifecycle {
     /**
      * Method invoked when the cache has terminated. This method is invoked as the last
      * method in this lifecycle interface and is called when the cache and all of it
-     * services has been succesfully shutdown.
+     * services has been succesfully shutdown. This method is also called if the cache
+     * failed to initialize or start. But only if the service was succesfully initialized ({@link #initialize(CacheLifecycleInitializer)}
+     * was run without failing).
      */
     void terminated();
 }

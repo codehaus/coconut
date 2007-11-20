@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
-import org.coconut.internal.util.UnitOfTime;
+import org.coconut.internal.util.XmlUtil;
 import org.coconut.predicate.Predicate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -171,7 +171,7 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
 
         /* Refresh timer */
         Element eTime = getChild(REFRESH_INTERVAL_TAG, parent);
-        long time = UnitOfTime.fromElement(eTime, TimeUnit.NANOSECONDS, Long.MAX_VALUE);
+        long time = XmlUtil.elementTimeUnitRead(eTime, TimeUnit.NANOSECONDS, Long.MAX_VALUE);
         setDefaultTimeToRefresh(time, TimeUnit.NANOSECONDS);
 
         /* Refresh Filter */
@@ -186,7 +186,7 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
                 "saveOfLoaderFailed", loader);
 
         /* Refresh Timer */
-        UnitOfTime.toElementCompact(doc, parent, REFRESH_INTERVAL_TAG, defaultTimeToRefresh,
+        XmlUtil.elementTimeUnitAdd(doc, parent, REFRESH_INTERVAL_TAG, defaultTimeToRefresh,
                 TimeUnit.NANOSECONDS, 0);
 
         /* Refresh Predicate */

@@ -3,6 +3,7 @@
  */
 package org.coconut.cache;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,8 +48,10 @@ public class DummyCache<K, V> implements Cache<K, V> {
     /**
      * Adds a service that can later be retrieved from {@link #getService(Class)}.
      * 
-     * @param key the key of the service
-     * @param service the service to add
+     * @param key
+     *            the key of the service
+     * @param service
+     *            the service to add
      */
     public void addService(Class key, Object service) {
         services.put(key, service);
@@ -215,7 +218,7 @@ public class DummyCache<K, V> implements Cache<K, V> {
     /**
      * A Cache that throws an {@link ArithmeticException} in the constructor.
      */
-    public static class ConstructorThrowingCache extends DummyCache {
+    public static class ConstructorRuntimeThrowingCache extends DummyCache {
 
         /**
          * Create a new ConstructorThrowingCache.
@@ -223,9 +226,45 @@ public class DummyCache<K, V> implements Cache<K, V> {
          * @param configuration
          *            the cache configuration
          */
-        public ConstructorThrowingCache(CacheConfiguration configuration) {
+        public ConstructorRuntimeThrowingCache(CacheConfiguration configuration) {
             super(configuration);
             throw new ArithmeticException();
+        }
+    }
+
+    /**
+     * A Cache that throws an {@link ArithmeticException} in the constructor.
+     */
+    public static class ConstructorErrorThrowingCache extends DummyCache {
+
+        /**
+         * Create a new ConstructorThrowingCache.
+         * 
+         * @param configuration
+         *            the cache configuration
+         */
+        public ConstructorErrorThrowingCache(CacheConfiguration configuration) {
+            super(configuration);
+            throw new AbstractMethodError();
+        }
+    }
+
+    /**
+     * A Cache that throws an {@link ArithmeticException} in the constructor.
+     */
+    public static class ConstructorExceptionThrowingCache extends DummyCache {
+
+        /**
+         * Create a new ConstructorThrowingCache.
+         * 
+         * @param configuration
+         *            the cache configuration
+         * @throws Exception
+         *             construction failed
+         */
+        public ConstructorExceptionThrowingCache(CacheConfiguration configuration) throws Exception {
+            super(configuration);
+            throw new IOException();
         }
     }
 

@@ -6,6 +6,7 @@ package org.coconut.internal.util;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.util.ResourceBundle;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -31,86 +32,18 @@ public final class XmlUtil {
     private XmlUtil() {}
 
     // /CLOVER:ON
-    public static <T> T getAttribute(Element e, String name, T defaultValue) {
-        if (!e.hasAttribute(name)) {
-            return defaultValue;
-        } else {
-            return (T) e.getAttribute(name);
-        }
-    }
 
-    public static boolean getAttributeBoolean(Element e, String name, boolean defaultValue) {
-        if (!e.hasAttribute(name)) {
-            return defaultValue;
-        } else {
-            return Boolean.parseBoolean(e.getAttribute(name));
-        }
-    }
-
-    public static String readValue(Element e, String defaultValue) {
-        if (e != null) {
-            return e.getTextContent();
-        } else {
-            return defaultValue;
-        }
-    }
-
-    public static Element addAndSetText(Document doc, String name, Element parent, String text) {
+    public static Element add(Document doc, String name, Element parent) {
         Element ee = doc.createElement(name);
         parent.appendChild(ee);
-        ee.setTextContent(text);
         return ee;
     }
 
-    public static long readLong(Element e, long defaultLong) {
-        if (e == null) {
-            return defaultLong;
-        } else {
-            String text = e.getTextContent();
-            long result = Long.parseLong(text);
-            return result;
-        }
-    }
-
-    public static void writeLong(Document doc, Element base, String name, long value,
-            long defaultLong) {
-        if (value != defaultLong) {
-            add(doc, name, base).setTextContent(Long.toString(value));
-        }
-    }
-
-    public static void writeBooleanAttribute(Element base, String name, boolean value,
-            boolean defaultInt) {
-        if (value != defaultInt) {
-            base.setAttribute(name, Boolean.toString(value));
-        }
-    }
-
-    public static void writeLogger(Document doc, Element base, String element, Logger logger) {
-        if (logger != null) {
-            LogHelper.saveLogger(doc, base, element, logger, "could not save logger");
-        }
-    }
-
-    public static Logger readLogger(Element base, String element) {
-        Element e = getChild(element, base);
-        return e == null ? null : LogHelper.readLog(e);
-    }
-
-    public static void writeInt(Document doc, Element base, String name, int value, int defaultInt) {
-        if (value != defaultInt) {
-            add(doc, name, base).setTextContent(Integer.toString(value));
-        }
-    }
-
-    public static int readInt(Element e, int defaultInt) {
-        if (e == null) {
-            return defaultInt;
-        } else {
-            String text = e.getTextContent();
-            int result = Integer.parseInt(text);
-            return result;
-        }
+    public static Element add(Document doc, String name, Element parent, String text) {
+        Element ee = doc.createElement(name);
+        ee.setTextContent(text);
+        parent.appendChild(ee);
+        return ee;
     }
 
     public static boolean addAndsaveObject(Document doc, Element parent, String elementName,
@@ -131,39 +64,11 @@ public final class XmlUtil {
         return false;
     }
 
-    public static boolean saveObject(Document doc, Element e, ResourceBundle bundle,
-            String comment, Object o) {
-        return saveObject(doc, e, bundle, comment, "type", o);
-    }
-
-    public static boolean saveObject(Document doc, Element parent, String tagName,
-            ResourceBundle bundle, String comment, Object o, Object defaultObject) {
-        if (o != defaultObject && o != null && !o.equals(defaultObject)) {
-            return saveObject(doc, add(doc, tagName, parent), bundle, comment, "type", o);
-        }
-        return false;
-    }
-
-    public static boolean saveObject(Document doc, Element e, ResourceBundle bundle,
-            String comment, Object o, Object defaultObject) {
-        if (o != defaultObject && o != null && !o.equals(defaultObject)) {
-            return saveObject(doc, e, bundle, comment, "type", o);
-        }
-        return false;
-    }
-
-    public static boolean saveObject(Document doc, Element e, ResourceBundle bundle,
-            String comment, String atrbName, Object o) {
-        Constructor c = null;
-        try {
-            c = o.getClass().getConstructor(null);
-            e.setAttribute(atrbName, o.getClass().getName());
-            return true;
-        } catch (NoSuchMethodException e1) {
-            addComment(doc, bundle, comment, e.getParentNode(), o.getClass());
-            e.getParentNode().removeChild(e);
-        }
-        return false;
+    public static Element addAndSetText(Document doc, String name, Element parent, String text) {
+        Element ee = doc.createElement(name);
+        parent.appendChild(ee);
+        ee.setTextContent(text);
+        return ee;
     }
 
     public static void addComment(Document doc, ResourceBundle bundle, Class clazz, String comment,
@@ -180,17 +85,105 @@ public final class XmlUtil {
         e.appendChild(eee);
     }
 
-    public static void addComment(ResourceHolder rh, Document doc, String comment, Node e,
-            Object... o) {
-        String c = rh.lookup(XmlUtil.class, comment, o);
-        Comment eee = doc.createComment(c);
-        e.appendChild(eee);
+    public static boolean attributeBooleanGet(Element e, String name, boolean defaultValue) {
+        if (!e.hasAttribute(name)) {
+            return defaultValue;
+        } else {
+            return Boolean.parseBoolean(e.getAttribute(name));
+        }
     }
 
-    public static <T> T loadOptional(Element parent, String tagName, Class<T> type)
-            throws Exception {
-        Element e = getChild(tagName, parent);
-        return loadObject(e, type);
+    /**
+     * Sets an attribute on the specified element with the specified name.
+     */
+    public static void attributeBooleanSet(Element base, String name, boolean value,
+            boolean defaultValue) {
+        if (value != defaultValue) {
+            base.setAttribute(name, Boolean.toString(value));
+        }
+    }
+
+    public static int contentIntGet(Element e, int defaultInt) {
+        if (e == null) {
+            return defaultInt;
+        } else {
+            String text = e.getTextContent();
+            int result = Integer.parseInt(text);
+            return result;
+        }
+    }
+
+    public static void contentIntSet(Document doc, Element base, String name, int value,
+            int defaultInt) {
+        if (value != defaultInt) {
+            add(doc, name, base).setTextContent(Integer.toString(value));
+        }
+    }
+
+    public static long contentLongGet(Element e, long defaultLong) {
+        if (e == null) {
+            return defaultLong;
+        } else {
+            String text = e.getTextContent();
+            long result = Long.parseLong(text);
+            return result;
+        }
+    }
+
+    public static void contentLongSet(Document doc, Element base, String name, long value,
+            long defaultLong) {
+        if (value != defaultLong) {
+            add(doc, name, base).setTextContent(Long.toString(value));
+        }
+    }
+
+    public static void elementLoggerAdd(Document doc, Element base, String element, Logger logger) {
+        LogHelper.saveLogger(doc, base, element, logger, "could not save logger");
+    }
+
+    public static Logger elementLoggerRead(Element base, String element) {
+        Element e = getChild(element, base);
+        return e == null ? null : LogHelper.readLog(e);
+    }
+
+    public static void elementTimeUnitAdd(Document doc, Element parent, String name, Long time,
+            TimeUnit unit, long defaultValue) {
+        if (defaultValue != time.longValue()) {
+            Element e = XmlUtil.add(doc, name, parent);
+            long t = time;
+            UnitOfTime b = UnitOfTime.fromTimeUnit(unit);
+            while (b.ordinal() != UnitOfTime.values().length) {
+                UnitOfTime next = UnitOfTime.values()[b.ordinal() + 1];
+                long from = next.convert(t, b);
+                if (t == b.convert(from, next)) {
+                    b = next;
+                    t = from;
+                } else {
+                    break;
+                }
+            }
+            e.setAttribute("time-unit", b.getSymbol());
+            e.setTextContent(Long.toString(t));
+        }
+    }
+
+    public static long elementTimeUnitRead(Element e, TimeUnit unit, long defaultTime) {
+        if (e != null) {
+            long val = Long.parseLong(e.getTextContent());
+            UnitOfTime from = UnitOfTime.fromSiSymbol(e.getAttribute("time-unit"));
+            return UnitOfTime.fromTimeUnit(unit).convert(val, from);
+        } else {
+            return defaultTime;
+        }
+    }
+
+    public static Element getChild(String name, Element e) {
+        for (int i = 0; i < e.getChildNodes().getLength(); i++) {
+            if (e.getChildNodes().item(i).getNodeName().equals(name)) {
+                return (Element) e.getChildNodes().item(i);
+            }
+        }
+        return null;
     }
 
     public static <T> T loadObject(Element e, Class<T> type) throws Exception {
@@ -209,26 +202,10 @@ public final class XmlUtil {
         return null;
     }
 
-    public static Element getChild(String name, Element e) {
-        for (int i = 0; i < e.getChildNodes().getLength(); i++) {
-            if (e.getChildNodes().item(i).getNodeName().equals(name)) {
-                return (Element) e.getChildNodes().item(i);
-            }
-        }
-        return null;
-    }
-
-    public static Element add(Document doc, String name, Element parent) {
-        Element ee = doc.createElement(name);
-        parent.appendChild(ee);
-        return ee;
-    }
-
-    public static Element add(Document doc, String name, Element parent, String text) {
-        Element ee = doc.createElement(name);
-        ee.setTextContent(text);
-        parent.appendChild(ee);
-        return ee;
+    public static <T> T loadOptional(Element parent, String tagName, Class<T> type)
+            throws Exception {
+        Element e = getChild(tagName, parent);
+        return loadObject(e, type);
     }
 
     /**
@@ -248,5 +225,32 @@ public final class XmlUtil {
         f.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
         f.setOutputProperty(OutputKeys.INDENT, "yes");
         f.transform(domSource, result);
+    }
+
+    public static String readValue(Element e, String defaultValue) {
+        if (e != null) {
+            return e.getTextContent();
+        } else {
+            return defaultValue;
+        }
+    }
+
+    public static boolean saveObject(Document doc, Element e, ResourceBundle bundle,
+            String comment, Object o) {
+        return saveObject(doc, e, bundle, comment, "type", o);
+    }
+
+    public static boolean saveObject(Document doc, Element e, ResourceBundle bundle,
+            String comment, String atrbName, Object o) {
+        Constructor c = null;
+        try {
+            c = o.getClass().getConstructor(null);
+            e.setAttribute(atrbName, o.getClass().getName());
+            return true;
+        } catch (NoSuchMethodException e1) {
+            addComment(doc, bundle, comment, e.getParentNode(), o.getClass());
+            e.getParentNode().removeChild(e);
+        }
+        return false;
     }
 }

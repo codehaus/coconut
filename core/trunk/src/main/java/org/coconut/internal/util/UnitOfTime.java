@@ -113,83 +113,12 @@ public enum UnitOfTime {
     final static long C6 = C5 * 24L;
 
     final static long MAX = Long.MAX_VALUE;
-
     
-    public static void toElement(Element e, Long time, TimeUnit unit) {
-		e.setTextContent(Long.toString(time));
-		e.setAttribute("time-unit", UnitOfTime.from(unit).getSymbol());
-	}
-
-	public static void toElementCompact(Document doc, Element parent, String name,
-			Long time, TimeUnit unit, long defaultValue) {
-		if (defaultValue != time.longValue()) {
-			Element e = XmlUtil.add(doc, name, parent);
-			toElementCompact(e, time, unit);
-		}
-	}
-
-        
-    public static void toElementCompact(Element e, Long time, TimeUnit unit) {
-        long t = time;
-        UnitOfTime b = UnitOfTime.from(unit);
-        while (b.ordinal() != UnitOfTime.values().length) {
-            UnitOfTime next = UnitOfTime.values()[b.ordinal() + 1];
-            long from = next.convert(t, b);
-            if (t == b.convert(from, next)) {
-                b = next;
-                t = from;
-            } else {
-                break;
-            }
-        }
-        e.setAttribute("time-unit", b.getSymbol());
-        e.setTextContent(Long.toString(t));
-    }
-
-    public static long fromElement(Element e, TimeUnit unit, long defaultTime) {
-		if (e != null) {
-			return fromElement(e, unit);
-		} else {
-			return defaultTime;
-		}
-	}
-    public static long fromElement(Element e, TimeUnit unit) {
-        long val = Long.parseLong(e.getTextContent());
-        UnitOfTime from = UnitOfTime.fromSymbol(e.getAttribute("time-unit"));
-        return from.convertTo(val, unit);
-    }
-    
-    public static void toElementAttributes(Element e, Long time, TimeUnit unit, String attrTime, String attrUnit) {
-        long t = time;
-        UnitOfTime b = UnitOfTime.from(unit);
-        while (b.ordinal() != UnitOfTime.values().length) {
-            UnitOfTime next = UnitOfTime.values()[b.ordinal() + 1];
-            long from = next.convert(t, b);
-            if (t == b.convert(from, next)) {
-                b = next;
-                t = from;
-            } else {
-                break;
-            }
-        }
-        e.setAttribute(attrTime,Long.toString(t));
-        e.setAttribute(attrUnit,b.getSymbol());
-    }
-    public static long fromAttributes(Element e, TimeUnit unit, String attrTime, String attrUnit) {
-        long val = Long.parseLong(e.getAttribute(attrTime));
-        UnitOfTime from = UnitOfTime.fromSymbol(e.getAttribute(attrUnit));
-        return from.convertTo(val, unit);
-    }
-    
-    public static UnitOfTime from(TimeUnit unit) {
+    public static UnitOfTime fromTimeUnit(TimeUnit unit) {
         return UnitOfTime.values()[unit.ordinal()];
     }
-    
-    public long convertTo(long value, TimeUnit to) {
-        return UnitOfTime.from(to).convert(value, this);
-    }
 
-    public static UnitOfTime fromSymbol(String symbol) {
+    public static UnitOfTime fromSiSymbol(String symbol) {
         for (UnitOfTime b : UnitOfTime.values()) {
             if (b.getSymbol().equals(symbol)) {
                 return b;
@@ -208,6 +137,10 @@ public enum UnitOfTime {
         return d * m;
     }
 
+    /**
+     * Returns the SI symbol of the time unit.
+     * @return the SI symbol of the time unit
+     */
     public abstract String getSymbol();
     /**
      * Convert the given time duration in the given unit to this

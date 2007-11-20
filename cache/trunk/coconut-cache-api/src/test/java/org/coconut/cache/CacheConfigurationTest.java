@@ -12,6 +12,7 @@ import static junit.framework.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -345,16 +346,46 @@ public class CacheConfigurationTest {
 
     /**
      * Tests that {@link CacheConfiguration#newCacheInstance(Class)} throws a
-     * {@link IllegalArgumentException} when invoked with class that throws an exception
-     * in the constructor.
+     * {@link RuntimeException} when invoked with class that throws an RuntimeException in
+     * the constructor.
      * 
      * @throws Throwable
      *             some exception while constructing the cache
      */
     @Test(expected = ArithmeticException.class)
-    public void newInstanceConstructorThrows() throws Throwable {
+    public void newInstanceConstructorRuntimeThrows() throws Throwable {
+        conf.newCacheInstance(DummyCache.ConstructorRuntimeThrowingCache.class);
+    }
+
+    /**
+     * Tests that {@link CacheConfiguration#newCacheInstance(Class)} throws a
+     * {@link Error} when invoked with class that throws an Error in the constructor.
+     * 
+     * @throws Throwable
+     *             some exception while constructing the cache
+     */
+    @Test(expected = AbstractMethodError.class)
+    public void newInstanceConstructorErrorThrows() throws Throwable {
         try {
-            conf.newCacheInstance(DummyCache.ConstructorThrowingCache.class);
+            conf.newCacheInstance(DummyCache.ConstructorErrorThrowingCache.class);
+        } catch (IllegalArgumentException e) {
+            throw e.getCause();
+        }
+    }
+
+    /**
+     * Tests that {@link CacheConfiguration#newCacheInstance(Class)} throws a
+     * {@link IllegalArgumentException} when invoked with class that throws an
+     * {@link Exception} in the constructor.
+     * 
+     * @throws Throwable
+     *             some exception while constructing the cache
+     */
+    @Test(expected = IOException.class)
+    public void newInstanceConstructorExceptionThrows() throws Throwable {
+        try {
+            conf.newCacheInstance(DummyCache.ConstructorExceptionThrowingCache.class);
+            throw new AssertionError("should fail");
         } catch (IllegalArgumentException e) {
             throw e.getCause();
         }

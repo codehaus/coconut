@@ -4,10 +4,10 @@
 package org.coconut.cache.service.eviction;
 
 import static org.coconut.internal.util.XmlUtil.getChild;
-import static org.coconut.internal.util.XmlUtil.readInt;
-import static org.coconut.internal.util.XmlUtil.readLong;
-import static org.coconut.internal.util.XmlUtil.writeInt;
-import static org.coconut.internal.util.XmlUtil.writeLong;
+import static org.coconut.internal.util.XmlUtil.contentIntGet;
+import static org.coconut.internal.util.XmlUtil.contentLongGet;
+import static org.coconut.internal.util.XmlUtil.contentIntSet;
+import static org.coconut.internal.util.XmlUtil.contentLongSet;
 
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.cache.spi.ReplacementPolicy;
@@ -186,14 +186,14 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
     /** {@inheritDoc} */
     @Override
     protected void fromXML(Element e) throws Exception {
-        maximumSize = readInt(getChild(MAXIMUM_SIZE, e), maximumSize);
-        maximumVolume = readLong(getChild(MAXIMUM_VOLUME, e), maximumVolume);
+        maximumSize = contentIntGet(getChild(MAXIMUM_SIZE, e), maximumSize);
+        maximumVolume = contentLongGet(getChild(MAXIMUM_VOLUME, e), maximumVolume);
     }
 
     /** {@inheritDoc} */
     @Override
     protected void toXML(Document doc, Element base) throws Exception {
-        writeLong(doc, base, MAXIMUM_VOLUME, maximumVolume, DEFAULT.getMaximumVolume());
-        writeInt(doc, base, MAXIMUM_SIZE, maximumSize, DEFAULT.getMaximumSize());
+        contentLongSet(doc, base, MAXIMUM_VOLUME, maximumVolume, DEFAULT.getMaximumVolume());
+        contentIntSet(doc, base, MAXIMUM_SIZE, maximumSize, DEFAULT.getMaximumSize());
     }
 }

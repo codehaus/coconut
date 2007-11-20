@@ -1,7 +1,6 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-
 package org.coconut.internal.util;
 
 import static org.junit.Assert.assertEquals;
@@ -10,12 +9,14 @@ import static org.junit.Assert.assertNull;
 import java.util.Random;
 
 import org.junit.Test;
+
 /**
- * Test of PolicyStack.
+ * Various String utils.
  * 
- * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id$
  */
-public class IndexedStackTest  {
+public class IndexedStackTest {
 
     private final Random rnd = new Random();
 

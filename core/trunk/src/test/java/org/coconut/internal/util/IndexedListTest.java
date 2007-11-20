@@ -12,9 +12,10 @@ import java.util.Random;
 import org.junit.Test;
 
 /**
- * Test of PolicyList.
+ * Various String utils. 
  * 
- * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id$
  */
 public class IndexedListTest  {
 

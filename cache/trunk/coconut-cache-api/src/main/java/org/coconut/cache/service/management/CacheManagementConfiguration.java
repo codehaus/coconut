@@ -6,7 +6,7 @@ package org.coconut.cache.service.management;
 import static org.coconut.internal.util.XmlUtil.addAndSetText;
 import static org.coconut.internal.util.XmlUtil.addAndsaveObject;
 import static org.coconut.internal.util.XmlUtil.addComment;
-import static org.coconut.internal.util.XmlUtil.getAttributeBoolean;
+import static org.coconut.internal.util.XmlUtil.attributeBooleanGet;
 import static org.coconut.internal.util.XmlUtil.getChild;
 import static org.coconut.internal.util.XmlUtil.loadOptional;
 import static org.coconut.internal.util.XmlUtil.readValue;
@@ -183,9 +183,9 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
     @Override
     protected void fromXML(Element e) throws Exception {
         domain = readValue(getChild(XML_DOMAIN_TAG, e), CacheMXBean.DEFAULT_JMX_DOMAIN);
-        enabled = getAttributeBoolean(e, XML_ENABLED_ATTRIBUTE, false);
+        enabled = attributeBooleanGet(e, XML_ENABLED_ATTRIBUTE, false);
         registrant = loadOptional(e, XML_REGISTRANT_TAG, ManagedVisitor.class);
-        if (getAttributeBoolean(e, "usePlatformMBeanServer", false)) {
+        if (attributeBooleanGet(e, "usePlatformMBeanServer", false)) {
             // This is bit whacked but we need it for consistency sake
             // sick configuration->ParentCache with custom MBeanServer
             // child wants to us platform MBeanServer, if set the
@@ -199,7 +199,7 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
     /** {@inheritDoc} */
     @Override
     protected void toXML(Document doc, Element base) {
-        XmlUtil.writeBooleanAttribute(base, XML_ENABLED_ATTRIBUTE, enabled, false);
+        XmlUtil.attributeBooleanSet(base, XML_ENABLED_ATTRIBUTE, enabled, false);
 
         /* Domain */
         if (domain != null && !domain.equals(CacheMXBean.DEFAULT_JMX_DOMAIN)) {

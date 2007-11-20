@@ -13,6 +13,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.internal.util.UnitOfTime;
+import org.coconut.internal.util.XmlUtil;
 import org.coconut.predicate.Predicate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -142,7 +143,7 @@ public class CacheExpirationConfiguration<K, V> extends
     protected void fromXML(Element base) throws Exception {
         /* Expiration timeout */
         Element eTime = getChild(DEFAULT_TIMEOUT_TAG, base);
-        long time = UnitOfTime.fromElement(eTime, DEFAULT_TIME_UNIT,
+        long time = XmlUtil.elementTimeUnitRead(eTime, DEFAULT_TIME_UNIT,
                 CacheExpirationService.NEVER_EXPIRE);
         setDefaultTimeToLive(time, DEFAULT_TIME_UNIT);
 
@@ -154,7 +155,7 @@ public class CacheExpirationConfiguration<K, V> extends
     @Override
     protected void toXML(Document doc, Element parent) throws Exception {
         /* Expiration Timer */
-        UnitOfTime.toElementCompact(doc, parent, DEFAULT_TIMEOUT_TAG, defaultTimeToLive,
+        XmlUtil.elementTimeUnitAdd(doc, parent, DEFAULT_TIMEOUT_TAG, defaultTimeToLive,
                 DEFAULT_TIME_UNIT, DEFAULT.defaultTimeToLive);
 
         /* Filter */

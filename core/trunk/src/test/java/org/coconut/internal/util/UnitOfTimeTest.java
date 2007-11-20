@@ -9,11 +9,12 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.concurrent.TimeUnit;
 
 import junit.framework.TestCase;
 
 /**
- * 
+ * Test of {@link UnitOfTime}. 
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
@@ -92,6 +93,43 @@ public class UnitOfTimeTest extends TestCase {
      */
     public void unexpectedException() {
         fail("Unexpected exception");
+    }
+    
+    /**
+     * Tests the SI symbols.
+     */
+    public void testSISymbol() {
+        assertEquals("ns",UnitOfTime.NANOSECONDS.getSymbol());
+        assertEquals("µs",UnitOfTime.MICROSECONDS.getSymbol());
+        assertEquals("ms",UnitOfTime.MILLISECONDS.getSymbol());
+        assertEquals("s",UnitOfTime.SECONDS.getSymbol());
+        assertEquals("min",UnitOfTime.MINUTES.getSymbol());
+        assertEquals("h",UnitOfTime.HOURS.getSymbol());
+        assertEquals("d",UnitOfTime.DAYS.getSymbol());
+    }
+    
+    public void testFromTimeUnit() {
+        assertEquals(UnitOfTime.NANOSECONDS, UnitOfTime.fromTimeUnit(TimeUnit.NANOSECONDS));
+        assertEquals(UnitOfTime.MILLISECONDS, UnitOfTime.fromTimeUnit(TimeUnit.MILLISECONDS));
+        assertEquals(UnitOfTime.MICROSECONDS, UnitOfTime.fromTimeUnit(TimeUnit.MICROSECONDS));
+        assertEquals(UnitOfTime.SECONDS, UnitOfTime.fromTimeUnit(TimeUnit.SECONDS));
+    }
+    /**
+     * Test conversion of SI symbols to UnitOfTime.
+     */
+    public void testFromSISymbol() {
+        assertEquals(UnitOfTime.fromSiSymbol("ns"),UnitOfTime.NANOSECONDS);
+        assertEquals(UnitOfTime.fromSiSymbol("µs"),UnitOfTime.MICROSECONDS);
+        assertEquals(UnitOfTime.fromSiSymbol("ms"),UnitOfTime.MILLISECONDS);
+        assertEquals(UnitOfTime.fromSiSymbol("s"),UnitOfTime.SECONDS);
+        assertEquals(UnitOfTime.fromSiSymbol("min"),UnitOfTime.MINUTES);
+        assertEquals(UnitOfTime.fromSiSymbol("h"),UnitOfTime.HOURS);
+        assertEquals(UnitOfTime.fromSiSymbol("d"),UnitOfTime.DAYS);
+        try {
+            UnitOfTime.fromSiSymbol("mm");
+            fail("Should fail");
+        } catch (IllegalArgumentException ok) {/* ok */}
+        
     }
     /**
      * convert correctly converts sample values across the units

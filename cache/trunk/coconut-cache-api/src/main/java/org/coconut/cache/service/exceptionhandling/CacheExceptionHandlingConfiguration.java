@@ -5,8 +5,8 @@ package org.coconut.cache.service.exceptionhandling;
 
 import static org.coconut.internal.util.XmlUtil.addAndsaveObject;
 import static org.coconut.internal.util.XmlUtil.loadOptional;
-import static org.coconut.internal.util.XmlUtil.readLogger;
-import static org.coconut.internal.util.XmlUtil.writeLogger;
+import static org.coconut.internal.util.XmlUtil.elementLoggerRead;
+import static org.coconut.internal.util.XmlUtil.elementLoggerAdd;
 
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.core.Logger;
@@ -112,7 +112,7 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
     @Override
     protected void fromXML(Element parent) throws Exception {
         /* Exception Logger */
-        logger = readLogger(parent, EXCEPTION_LOGGER_TAG);
+        logger = elementLoggerRead(parent, EXCEPTION_LOGGER_TAG);
 
         /* Exception Handler */
         exceptionHandler = loadOptional(parent, EXCEPTION_HANDLER_TAG, CacheExceptionHandler.class);
@@ -122,7 +122,7 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
     @Override
     protected void toXML(Document doc, Element parent) throws Exception {
         /* Exception Logger */
-        writeLogger(doc, parent, EXCEPTION_LOGGER_TAG, logger);
+        elementLoggerAdd(doc, parent, EXCEPTION_LOGGER_TAG, logger);
 
         /* Exception Handler */
         addAndsaveObject(doc, parent, EXCEPTION_HANDLER_TAG, getResourceBundle(), getClass(),

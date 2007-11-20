@@ -3,7 +3,7 @@
  */
 package org.coconut.cache.service.event;
 
-import static org.coconut.internal.util.XmlUtil.getAttributeBoolean;
+import static org.coconut.internal.util.XmlUtil.attributeBooleanGet;
 import static org.coconut.internal.util.XmlUtil.getChild;
 
 import java.util.ArrayList;
@@ -233,7 +233,7 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
      */
     @Override
     protected void fromXML(Element parent) throws DOMException, ClassNotFoundException {
-        enabled = getAttributeBoolean(parent, XML_ENABLED_ATTRIBUTE, false);
+        enabled = attributeBooleanGet(parent, XML_ENABLED_ATTRIBUTE, false);
         Element includes = getChild(INCLUDES_TAG, parent);
         for (Element e : getChildElements(includes, INCLUDE_TAG)) {
             Class<?> c = Class.forName(e.getTextContent());
@@ -259,7 +259,7 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
      */
     @Override
     protected void toXML(Document doc, Element parent) {
-        XmlUtil.writeBooleanAttribute(parent, XML_ENABLED_ATTRIBUTE, enabled, false);
+        XmlUtil.attributeBooleanSet(parent, XML_ENABLED_ATTRIBUTE, enabled, false);
         add(includes, doc, parent, INCLUDES_TAG, INCLUDE_TAG);
         add(excludes, doc, parent, EXCLUDES_TAG, EXCLUDE_TAG);
     }
