@@ -22,6 +22,7 @@ import org.coconut.cache.service.management.CacheMXBean;
 import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
+import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedVisitor;
 import org.coconut.management.Managements;
@@ -116,9 +117,9 @@ public class DefaultCacheManagementService extends AbstractCacheLifecycle implem
 
     /** {@inheritDoc} */
     @Override
-    public synchronized void initialize(CacheConfiguration<?, ?> configuration, Map<Class<?>, Object> serviceMap) {
+    public synchronized void initialize(CacheLifecycleInitializer cli) {
         if (isEnabled) {
-            serviceMap.put(CacheManagementService.class, ManagementUtils
+            cli.registerService(CacheManagementService.class, ManagementUtils
                     .wrapService(this));
         }
     }

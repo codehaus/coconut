@@ -118,7 +118,7 @@ public class ExpirationFilter extends AbstractExpirationTestBundle {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
         LifecycleFilter filter = new LifecycleFilter();
         c = newCache(cc.expiration().setExpirationFilter(filter));
-        filter.assertNotStarted();
+        filter.assertInitializedButNotStarted();
         prestart();
         filter.assertInStartedPhase();
         filter.shutdownAndAssert(c);

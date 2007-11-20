@@ -12,20 +12,23 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
 
     private volatile CacheConfiguration conf;
 
-    AbstractCacheServiceManager(Cache<?, ?> cache, CacheConfiguration conf) {
+    AbstractCacheServiceManager(Cache<?, ?> cache) {
         if (cache == null) {
             throw new NullPointerException("cache is null");
         }
         this.cache = cache;
     }
+
     /** {@inheritDoc} */
     public boolean isShutdown() {
         return getRunState().isShutdown();
     }
+
     /** {@inheritDoc} */
     public boolean isStarted() {
         return getRunState().isStarted();
     }
+
     /** {@inheritDoc} */
     public boolean isTerminated() {
         return getRunState().isTerminated();
@@ -35,15 +38,12 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
         return cache;
     }
 
-    CacheConfiguration getConf() {
-        return conf;
+    /** {@inheritDoc} */
+    public boolean hasService(Class<?> type) {
+        return getAllServices().containsKey(type);
     }
 
     abstract RunState getRunState();
-
-    void setConf(CacheConfiguration conf) {
-        this.conf = conf;
-    }
 
     static enum RunState {
         COULD_NOT_START, NOTRUNNING, STARTING, RUNNING, SHUTDOWN, STOP, TERMINATED, TIDYING;
@@ -66,14 +66,14 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
     }
 
     public void shutdown(Throwable cause) {
-        //First thing we must do is set the exception so later invocations
-        //of methods on the cache will throw it.
-        //after that we might want to try and shutdown the cache
-        //perhaps we can have a terminateCache(Throwable cause)
-        //what about terminatation of services??
-        //lots to think about
+        // First thing we must do is set the exception so later invocations
+        // of methods on the cache will throw it.
+        // after that we might want to try and shutdown the cache
+        // perhaps we can have a terminateCache(Throwable cause)
+        // what about terminatation of services??
+        // lots to think about
         shutdown();
-        
+
         throw new UnsupportedOperationException();
     }
 }

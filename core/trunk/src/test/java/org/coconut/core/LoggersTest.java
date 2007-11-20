@@ -109,9 +109,9 @@ public class LoggersTest {
 		org.apache.commons.logging.Log ll = Loggers.Commons.getAsCommonsLogger(l);
 		assertTrue(ll instanceof SimpleLog);
 		assertTrue(Loggers.Commons.isCommonsLogger(l));
-		assertFalse(Loggers.Commons.isCommonsLogger(Loggers.systemErrLog(Level.Error)));
+		assertFalse(Loggers.Commons.isCommonsLogger(Loggers.systemErrLogger(Level.Error)));
 		try {
-			Loggers.Commons.getAsCommonsLogger(Loggers.systemErrLog(Level.Error));
+			Loggers.Commons.getAsCommonsLogger(Loggers.systemErrLogger(Level.Error));
 			fail("Should throw IllegalArgumentException");
 		} catch (IllegalArgumentException iea) {}
 	}
@@ -138,13 +138,13 @@ public class LoggersTest {
 		java.util.logging.Logger ll = Loggers.JDK.getAsJDKLogger(l);
 		assertEquals("asv1", ll.getName());
 		assertTrue(Loggers.JDK.isJDKLogger(l));
-		assertFalse(Loggers.JDK.isJDKLogger(Loggers.systemErrLog(Level.Error)));
+		assertFalse(Loggers.JDK.isJDKLogger(Loggers.systemErrLogger(Level.Error)));
 
 		l = Loggers.JDK.from("asv1".getClass());
 		ll = Loggers.JDK.getAsJDKLogger(l);
 		assertEquals("asv1".getClass().getCanonicalName(), ll.getName());
 		try {
-			Loggers.JDK.getAsJDKLogger(Loggers.systemErrLog(Level.Error));
+			Loggers.JDK.getAsJDKLogger(Loggers.systemErrLogger(Level.Error));
 			fail("Should throw IllegalArgumentException");
 		} catch (IllegalArgumentException iea) {/* OK */}
 	}
@@ -185,13 +185,13 @@ public class LoggersTest {
 		org.apache.log4j.Logger ll = Loggers.Log4j.getAsLog4jLogger(l);
 		assertEquals("asv1", ll.getName());
 		assertTrue(Loggers.Log4j.isLog4jLogger(l));
-		assertFalse(Loggers.Log4j.isLog4jLogger(Loggers.systemErrLog(Level.Error)));
+		assertFalse(Loggers.Log4j.isLog4jLogger(Loggers.systemErrLogger(Level.Error)));
 
 		l = Loggers.Log4j.from("asv1".getClass());
 		ll = Loggers.Log4j.getAsLog4jLogger(l);
 		assertEquals("asv1".getClass().getCanonicalName(), ll.getName());
 		try {
-			Loggers.Log4j.getAsLog4jLogger(Loggers.systemErrLog(Level.Error));
+			Loggers.Log4j.getAsLog4jLogger(Loggers.systemErrLogger(Level.Error));
 			fail("Should throw IllegalArgumentException");
 		} catch (IllegalArgumentException iea) {}
 	}
@@ -232,7 +232,7 @@ public class LoggersTest {
 	@Test
 	public void testSimpleLogging() {
 		InnerPrintStream str = InnerPrintStream.get();
-		Logger log = Loggers.systemOutLog(Logger.Level.Trace);
+		Logger log = Loggers.systemOutLogger(Logger.Level.Trace);
 
 		assertEquals("simple", Loggers.getName(log));
 		testLevelOn(log, Logger.Level.Trace.getLevel());
@@ -259,7 +259,7 @@ public class LoggersTest {
 	@Test
 	public void testSimpleLoggingWithException() {
 		InnerPrintStream str = InnerPrintStream.get();
-		Logger log = Loggers.systemOutLog(Logger.Level.Trace);
+		Logger log = Loggers.systemOutLogger(Logger.Level.Trace);
 		Throwable t = new Throwable();
 		int l = t.getStackTrace().length + 1;
 		testLevelOn(log, Logger.Level.Trace.getLevel());
@@ -294,7 +294,7 @@ public class LoggersTest {
 	public void testStaticMethods() {
 		assertNull(Loggers.getName(context.mock(Logger.class)));
 		try {
-			Loggers.printStreamLog(Level.Error, null);
+			Loggers.printStreamLogger(Level.Error, null);
 			fail("Should throw NullPointerException");
 		} catch (NullPointerException npe) {}
 	}

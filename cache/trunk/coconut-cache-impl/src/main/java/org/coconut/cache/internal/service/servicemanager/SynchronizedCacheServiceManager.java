@@ -68,7 +68,7 @@ public class SynchronizedCacheServiceManager implements InternalCacheServiceMana
         }
 
         protected void tryTerminate() {
-            //TODO fix missing, not threadSafe
+            // TODO fix missing, not threadSafe
             for (Iterator<ServiceHolder> iterator = missing.iterator(); iterator.hasNext();) {
                 if (iterator.next().aso.isTerminated()) {
                     iterator.remove();
@@ -102,10 +102,8 @@ public class SynchronizedCacheServiceManager implements InternalCacheServiceMana
         }
 
         protected void doTerminate() {
-            synchronized (mutex) {
-                super.doTerminate();
-                shutdownThread = null;
-            }
+            super.doTerminate();
+            shutdownThread = null;
         }
 
         private Thread shutdownThread;
@@ -212,7 +210,10 @@ public class SynchronizedCacheServiceManager implements InternalCacheServiceMana
     }
 
     public void shutdown(Throwable cause) {
-       
         delegate.shutdown(cause);
+    }
+
+    public synchronized <T> T getServiceFromCache(Class<T> type) {
+        return delegate.getServiceFromCache(type);
     }
 }

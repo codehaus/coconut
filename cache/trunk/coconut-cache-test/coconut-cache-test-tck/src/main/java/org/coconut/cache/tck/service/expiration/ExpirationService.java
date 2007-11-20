@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.CacheException;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
+import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -93,9 +94,9 @@ public class ExpirationService extends AbstractCacheTCKTest {
     public void testIllegalPutCall() {
         c = newCache(newConf().serviceManager().add(new AbstractCacheLifecycle() {
             @Override
-            public void start(Map<Class<?>, Object> allServices) {
-                CacheExpirationService ces = (CacheExpirationService) allServices
-                        .get(CacheExpirationService.class);
+            public void start(CacheServiceManagerService serviceManager) {
+                CacheExpirationService ces = serviceManager
+                        .getService(CacheExpirationService.class);
                 ces.put(1, "foo", 10, TimeUnit.HOURS);// should fail
             }
         }));
@@ -106,9 +107,9 @@ public class ExpirationService extends AbstractCacheTCKTest {
     public void testIllegalPutAllCall() {
         c = newCache(newConf().serviceManager().add(new AbstractCacheLifecycle() {
             @Override
-            public void start(Map<Class<?>, Object> allServices) {
-                CacheExpirationService ces = (CacheExpirationService) allServices
-                        .get(CacheExpirationService.class);
+            public void start(CacheServiceManagerService serviceManager) {
+                CacheExpirationService ces = serviceManager
+                        .getService(CacheExpirationService.class);
                 ces.putAll(M1_TO_M5_MAP, 10, TimeUnit.HOURS);// should fail
             }
         }));

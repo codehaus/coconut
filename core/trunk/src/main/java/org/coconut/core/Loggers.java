@@ -9,7 +9,7 @@ import java.io.PrintStream;
 import org.apache.commons.logging.Log;
 
 /**
- * This class is used for creating {@link Log} wrappers from popular logging frameworks
+ * This class is used for creating {@link Logger} wrappers from popular logging frameworks
  * such as <a
  * href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/logging/package-summary.html">
  * Standard JDK logging </a>, <a href="http://logging.apache.org/log4j/"> Log4j </a> or <a
@@ -26,7 +26,7 @@ public final class Loggers {
     // /CLOVER:ON
 
     /**
-     * Creates a new Log that ignores any input.
+     * Creates a new Logger that ignores any input.
      * 
      * @return a logger that ignores any input.
      */
@@ -35,31 +35,31 @@ public final class Loggers {
     }
 
     /**
-     * Creates a new Log that ignores any input below the specified level. Any logging
+     * Creates a new Logger that ignores any input below the specified level. Any logging
      * messages on this level or above it, will be logged to {@link System#out}.
      * 
      * @param level
      *            the maximum log level to log
      * @return a system.out logger
      */
-    public static Logger systemOutLog(Logger.Level level) {
+    public static Logger systemOutLogger(Logger.Level level) {
         return new SimpleLogger(level.getLevel(), System.out);
     }
 
     /**
-     * Creates a new Log that ignores any input below the specified level. Any logging
+     * Creates a new Logger that ignores any input below the specified level. Any logging
      * messages on this level or above it, will be logged to {@link System#err}.
      * 
      * @param level
      *            the maximum log level to log
      * @return a system.err logger
      */
-    public static Logger systemErrLog(Logger.Level level) {
+    public static Logger systemErrLogger(Logger.Level level) {
         return new SimpleLogger(level.getLevel(), System.err);
     }
 
     /**
-     * Creates a new Log that ignores any input below the specified level. Any logging
+     * Creates a new Logger that ignores any input below the specified level. Any logging
      * messages on this level or above it, will be logged to the specified printstream.
      * 
      * @param level
@@ -67,8 +67,10 @@ public final class Loggers {
      * @param ps
      *            the printstream to output to
      * @return a printstream logger
+     * @throws NullPointerException
+     *             if the specified PrintStream is <code>null</code>
      */
-    public static Logger printStreamLog(Logger.Level level, PrintStream ps) {
+    public static Logger printStreamLogger(Logger.Level level, PrintStream ps) {
         return new SimpleLogger(level.getLevel(), ps);
     }
 
@@ -76,21 +78,21 @@ public final class Loggers {
      * Returns the name of the specified logger or <code>null</code> if the name could
      * not be determinded.
      * 
-     * @param log
+     * @param logger
      *            the logger for which the name should be returned
      * @return the name of the specified logger or <code>null</code> if the name could
      *         not be determinded
      */
-    public static String getName(Logger log) {
-        return log instanceof Loggers.AbstractLogger ? ((Loggers.AbstractLogger) log).getName()
-                : null;
+    public static String getName(Logger logger) {
+        return logger instanceof Loggers.AbstractLogger ? ((Loggers.AbstractLogger) logger)
+                .getName() : null;
     }
 
     /**
-     * This class is used for creating a Log4j wrapper Log.
+     * This class is used for creating Log4j wrapper Loggers.
      * 
      * <pre>
-     * Log log = Logs.Log4j.from(myLog4jLogger);
+     * Logger logger = Loggers.Log4j.from(myLog4jLogger);
      * </pre>
      */
     public final static class Log4j {
@@ -126,18 +128,27 @@ public final class Loggers {
             return from(org.apache.log4j.Logger.getLogger(name));
         }
 
-        public static boolean isLog4jLogger(Logger log) {
-            return log instanceof Log4JLogger;
+        /**
+         * Returns whether or not the specified logger encapsulates a Log4J logger.
+         * 
+         * @param logger
+         * @return
+         */
+        public static boolean isLog4jLogger(Logger logger) {
+            return logger instanceof Log4JLogger;
         }
 
-        public static org.apache.log4j.Logger getAsLog4jLogger(Logger log) {
-            if (!isLog4jLogger(log)) {
+        public static org.apache.log4j.Logger getAsLog4jLogger(Logger logger) {
+            if (!isLog4jLogger(logger)) {
                 throw new IllegalArgumentException("Not a JDK Logger");
             }
-            return ((Log4JLogger) log).log;
+            return ((Log4JLogger) logger).log;
         }
     }
 
+    /**
+     * An AbstractLogger that all logger wrappers extend.
+     */
     static abstract class AbstractLogger implements Logger {
         /** {@inheritDoc} */
         public boolean isDebugEnabled() {
@@ -237,9 +248,14 @@ public final class Loggers {
         public abstract String getName();
     }
 
+    /**
+     * A simple logger that prints logging information to a PrintStream.
+     */
     final static class SimpleLogger extends AbstractLogger {
+        /** The level to log at. */
         private final int level;
 
+        /** The PrintStream to write to. */
         private final PrintStream stream;
 
         SimpleLogger(int level) {
@@ -367,6 +383,9 @@ public final class Loggers {
         }
     }
 
+    /**
+     * Used to access commons logging.
+     */
     public final static class Commons {
 
         // /CLOVER:OFF
@@ -400,8 +419,15 @@ public final class Loggers {
     }
 
     final static class CommonsLogger extends AbstractLogger {
+        /** The commons Log class we are wrapping. */
         private final org.apache.commons.logging.Log log;
 
+        /**
+         * Creates a new Logger by wrapping a commons Log class.
+         * 
+         * @param log
+         *            the log to wrap
+         */
         private CommonsLogger(org.apache.commons.logging.Log log) {
             this.log = log;
         }

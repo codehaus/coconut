@@ -17,6 +17,7 @@ import org.coconut.cache.CacheServices;
 import org.coconut.cache.internal.service.servicemanager.CompositeService;
 import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
 import org.coconut.cache.service.servicemanager.AsynchronousShutdownObject;
+import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.service.worker.CacheWorkerConfiguration;
@@ -49,8 +50,8 @@ public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService i
     }
     /** {@inheritDoc} */
     @Override
-    public void initialize(CacheConfiguration<?, ?> configuration, Map<Class<?>, Object> serviceMap) {
-        serviceMap.put(CacheWorkerService.class, this);
+    public void initialize(CacheLifecycleInitializer cli) {
+        cli.registerService(CacheWorkerService.class, this);
     }
     class SameThreadCacheWorker extends CacheWorkerManager {
 

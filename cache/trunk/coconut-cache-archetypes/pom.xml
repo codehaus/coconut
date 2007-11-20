@@ -7,7 +7,7 @@
     <version>1.0-alpha4-SNAPSHOT</version>
   </parent>
   <groupId>org.coconut.cache.archetype</groupId>
-  <artifactId>coconut-cache-archetype</artifactId>
+  <artifactId>coconut-cache-archetypes</artifactId>
   <name>Coconut Cache Archetypes</name>
   <description>Coconut Cache Archetypes</description>
   <packaging>pom</packaging>

@@ -65,7 +65,7 @@ public class RefreshFilter extends AbstractLoadingTestBundle {
         c = newCache(cc.loading().setRefreshPredicate(filter).setLoader(new IntegerToStringLoader())
                 .c());
 
-        filter.assertNotStarted();
+        filter.assertInitializedButNotStarted();
         loading().load(M1.getKey());// lazy start
         awaitAllLoads();
         filter.assertInStartedPhase();

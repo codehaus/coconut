@@ -12,6 +12,7 @@ import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.service.eviction.CacheEvictionMXBean;
 import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
+import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedLifecycle;
 
@@ -46,8 +47,8 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
 
     /** {@inheritDoc} */
     @Override
-    public void initialize(CacheConfiguration<?, ?> configuration, Map<Class<?>, Object> serviceMap) {
-        serviceMap.put(CacheEvictionService.class, EvictionUtils.wrapService(this));
+    public void initialize(CacheLifecycleInitializer cli) {
+        cli.registerService(CacheEvictionService.class, EvictionUtils.wrapService(this));
     }
 
     /** {@inheritDoc} */

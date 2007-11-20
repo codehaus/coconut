@@ -9,6 +9,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlers;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
+import org.coconut.cache.service.servicemanager.CacheLifecycle;
+import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;
@@ -72,17 +74,16 @@ public class ExceptionHandlingLifecycle extends AbstractCacheTCKTest {
         }
 
         @Override
-        public void terminated() {
-            super.terminated();
+        public void terminated(Map terminationFailures) {
+            super.terminated(terminationFailures);
             status.addAndGet(8);
         }
     }
 
     class MyService extends AbstractCacheLifecycle {
         @Override
-        public void initialize(CacheConfiguration<?, ?> configuration,
-                Map<Class<?>, Object> serviceMap) {
-            super.initialize(configuration, serviceMap);
+        public void initialize(CacheLifecycleInitializer cli) {
+            super.initialize(cli);
             if (status.get() == 1) {
                 status.addAndGet(2);
             }

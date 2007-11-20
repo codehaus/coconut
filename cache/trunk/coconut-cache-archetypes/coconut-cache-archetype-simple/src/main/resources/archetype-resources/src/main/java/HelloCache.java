@@ -5,11 +5,11 @@
 package $package;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.defaults.UnsynchronizedCache;
+import org.coconut.cache.defaults.SynchronizedCache;
 
 public class HelloCache {
     public static void main(String[] args) {
-        Cache<String, String> cache = new UnsynchronizedCache<String, String>();
+        Cache<String, String> cache = new SynchronizedCache<String, String>();
         cache.put("key", "HelloWorld");
         System.out.println(cache.get("key"));
     }

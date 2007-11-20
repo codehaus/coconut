@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.coconut.cache.archetype</groupId>
-    <artifactId>coconut-cache-archetype</artifactId>
+    <artifactId>coconut-cache-archetypes</artifactId>
     <version>1.0-alpha4-SNAPSHOT</version>
   </parent>
   <artifactId>coconut-cache-archetype-simple</artifactId>

@@ -56,7 +56,7 @@ public interface InternalCacheServiceManager extends CacheServiceManagerService 
 
     <T> T getInternalService(Class<T> type);
 
-    <T> T getService(Class<T> type);
+    <T> T getServiceFromCache(Class<T> type);
 
     boolean lazyStart(boolean failIfShutdown);
 

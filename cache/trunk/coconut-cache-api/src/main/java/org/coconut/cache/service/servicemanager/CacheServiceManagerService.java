@@ -34,6 +34,25 @@ import org.coconut.cache.CacheServices;
 public interface CacheServiceManagerService {
 
     /**
+     * Returns a service of the specified type or throws a
+     * {@link IllegalArgumentException} if no such service exists.
+     * 
+     * @param <T>
+     *            the type of service to retrieve
+     * @param serviceType
+     *            the type of service to retrieve
+     * @return a service of the specified type
+     * @throws IllegalArgumentException
+     *             if no service of the specified type exist
+     * @throws NullPointerException
+     *             if the specified service is null
+     * @see org.coconut.cache.CacheServices
+     * @see CacheServiceManagerService#hasService(Class)
+     * @see CacheServiceManagerService#getAllServices()
+     */
+    <T> T getService(Class<T> serviceType);
+    
+    /**
      * Returns whether or not this cache contains a service of the specified type.
      * 
      * @param serviceType

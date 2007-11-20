@@ -266,8 +266,8 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     String getName();
 
     /**
-     * Returns a service of the specified type or throws a CacheException if no such
-     * service exists.
+     * Returns a service of the specified type or throws a
+     * {@link IllegalArgumentException} if no such service exists.
      * 
      * @param <T>
      *            the type of service to retrieve

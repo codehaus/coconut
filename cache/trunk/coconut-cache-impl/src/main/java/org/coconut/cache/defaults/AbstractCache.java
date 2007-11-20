@@ -123,7 +123,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
 
     /** {@inheritDoc} */
     public <T> T getService(Class<T> serviceType) {
-        return getServiceManager().getService(serviceType);
+        return getServiceManager().getServiceFromCache(serviceType);
     }
 
     /** {@inheritDoc} */

@@ -51,6 +51,9 @@ public class AbstractCacheTCKTest extends Assert {
 
     protected ThreadServiceTestHelper threadHelper;
 
+    protected Class<? extends Cache> getCacheType() {
+        return CacheTCKRunner.tt;
+    }
     @Before
     public void setupClock() {
         clock = new DeterministicClock();

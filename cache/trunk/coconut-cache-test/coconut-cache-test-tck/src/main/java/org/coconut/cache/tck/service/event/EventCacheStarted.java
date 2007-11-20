@@ -12,6 +12,7 @@ import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemAdded;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
+import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.predicate.Predicates;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,8 +47,8 @@ public class EventCacheStarted extends AbstractEventTestBundle {
     public class Subscriber extends AbstractCacheLifecycle {
 
         @Override
-        public void start(Map<Class<?>, Object> allServices) {
-            CacheEventService ces = (CacheEventService) allServices.get(CacheEventService.class);
+        public void start(CacheServiceManagerService serviceManager) {
+            CacheEventService ces = serviceManager.getService(CacheEventService.class);
             assertNotNull(subscribe(ces, Predicates.TRUE));
         }
 

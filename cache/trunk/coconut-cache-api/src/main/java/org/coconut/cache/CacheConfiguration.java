@@ -347,7 +347,13 @@ public class CacheConfiguration<K, V> {
         } catch (IllegalAccessException e) {
             throw new IllegalArgumentException("Could not create instance of " + cacheType, e);
         } catch (InvocationTargetException e) {
-            throw new IllegalArgumentException("Constructor threw exception", e.getCause());
+            Throwable cause = e.getCause();
+            if (cause instanceof RuntimeException) {
+                throw (RuntimeException) cause;
+            } else if (cause instanceof Error) {
+                throw (Error) cause;
+            }
+            throw new IllegalArgumentException("Constructor threw exception", cause);
         }
     }
 

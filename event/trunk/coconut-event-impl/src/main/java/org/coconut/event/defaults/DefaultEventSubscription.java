@@ -13,14 +13,14 @@ import org.coconut.predicate.Predicate;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-class DefaultEventSubscription<E> extends ReentrantReadWriteLock implements
-        EventSubscription<E> {
+class DefaultEventSubscription<E> extends ReentrantReadWriteLock implements EventSubscription<E> {
     private final DefaultEventBus<E> bus;
 
     private final EventProcessor<? super E> destination;
 
-    private final Predicate<? super E> filter;
+    private final Predicate<? super E> predicate;
 
+    /** The name of this subscription. */
     private final String name;
 
     private volatile boolean isActive = true;
@@ -34,40 +34,30 @@ class DefaultEventSubscription<E> extends ReentrantReadWriteLock implements
         this.bus = bus;
         this.name = name;
         this.destination = destination;
-        this.filter = filter;
+        this.predicate = filter;
     }
 
-    /**
-     * @see org.coconut.event.EventSubscription#unsubscribe()
-     */
+    /** {@inheritDoc} */
     public void unsubscribe() {
         bus.cancel(this);
     }
 
-    /**
-     * @see org.coconut.event.EventSubscription#getEventProcessor()
-     */
+    /** {@inheritDoc} */
     public EventProcessor<? super E> getEventProcessor() {
         return destination;
     }
 
-    /**
-     * @see org.coconut.event.EventSubscription#getFilter()
-     */
+    /** {@inheritDoc} */
     public Predicate<? super E> getFilter() {
-        return filter;
+        return predicate;
     }
 
-    /**
-     * @see org.coconut.event.EventSubscription#getName()
-     */
+    /** {@inheritDoc} */
     public String getName() {
         return name;
     }
 
-    /**
-     * @see org.coconut.event.EventSubscription#isValid()
-     */
+    /** {@inheritDoc} */
     public boolean isValid() {
         return isActive;
     }

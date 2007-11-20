@@ -18,7 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(JMock.class)
-public class UnsynchronizedPicoCacheServiceManagerTest {
+public class UnsynchronizedCacheServiceManagerTest {
     Mockery context = new JUnit4Mockery();
 
     Cache<?, ?> cache;

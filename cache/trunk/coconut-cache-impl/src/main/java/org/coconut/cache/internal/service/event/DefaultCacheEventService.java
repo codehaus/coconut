@@ -25,6 +25,7 @@ import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.event.CacheEventConfiguration;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
+import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
 import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
 import org.coconut.event.EventSubscription;
@@ -179,9 +180,9 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
     }
 
     @Override
-    public void initialize(CacheConfiguration<?, ?> configuration, Map<Class<?>, Object> serviceMap) {
+    public void initialize(CacheLifecycleInitializer cli) {
         if (isEnabled) {
-            serviceMap.put(CacheEventService.class, this);
+            cli.registerService(CacheEventService.class, this);
         }
     }
 

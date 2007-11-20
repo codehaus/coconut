@@ -32,7 +32,7 @@ public class LoadingCacheLoader extends AbstractLoadingTestBundle {
         MyLoader2 loader = new MyLoader2();
         c = newCache(cc.loading().setLoader(loader).c());
 
-        loader.assertNotStarted();
+        loader.assertInitializedButNotStarted();
         loading().load(M1.getKey());// lazy start
         awaitAllLoads();
         loader.shutdownAndAssert(c);

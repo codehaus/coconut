@@ -3,15 +3,18 @@
  */
 package org.coconut.cache.test.util;
 
-import java.util.Map;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
+
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import junit.framework.Assert;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
+import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
+import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 
 public class AbstractLifecycleVerifier implements CacheLifecycle {
 
@@ -21,23 +24,22 @@ public class AbstractLifecycleVerifier implements CacheLifecycle {
 
     private Cache<?, ?> c;
 
-    public AbstractLifecycleVerifier() {    }
-
-    public AbstractLifecycleVerifier(Cache<?, ?> c, CacheConfiguration<?, ?> conf) {
-        this.c = c;
+    public void setConfigurationToVerify(CacheConfiguration<?, ?> conf) {
         this.conf = conf;
     }
 
     public String getName() {
         return "noname";
     }
-
+    public void assertInitializedButNotStarted() {
+        assertEquals(2, step.get());
+    }
     public void assertNotStarted() {
-        Assert.assertEquals(0, step.get());
+        assertEquals(0, step.get());
     }
 
     public void assertState(int state) {
-        Assert.assertEquals(state, step.get());
+        assertEquals(state, step.get());
     }
 
     public int getState() {
@@ -45,17 +47,17 @@ public class AbstractLifecycleVerifier implements CacheLifecycle {
     }
 
     public void assertInStartedPhase() {
-        Assert.assertEquals(4, step.get());
+        assertEquals(4, step.get());
     }
 
     public void assertShutdownOrTerminatedPhase() {
         int state = step.get();
-        Assert.assertTrue("state was " + state, state == 5 || state == 6);
+        assertTrue("state was " + state, state == 5 || state == 6);
     }
 
     public void assertTerminatedPhase() {
         int state = step.get();
-        Assert.assertTrue(state == 6);
+        assertTrue(state == 6);
     }
 
     public void shutdownAndAssert(Cache<?, ?> c) {
@@ -69,38 +71,42 @@ public class AbstractLifecycleVerifier implements CacheLifecycle {
         assertTerminatedPhase();
     }
 
-    public void initialize(CacheConfiguration<?, ?> configuration, Map<Class<?>, Object> serviceMap) {
-        Assert.assertEquals(0, step.getAndIncrement());
+    public void initialize(CacheLifecycleInitializer cli) {
+        assertNotNull("The CacheLifecycleInitialize that was passed to the initialize method was null",
+                cli);
+        assertNotNull("The configuration that was passed to the initialize method was null",
+                cli.getCacheConfiguration());
+        assertNotNull("The cache type that was passed to the initialize method was null",
+                cli.getCacheType());
+        assertEquals(0, step.getAndIncrement());
         if (conf != null) {
-            Assert.assertEquals(conf, configuration);
+            assertEquals(conf, cli.getCacheConfiguration());
         }
-        conf = configuration;
-        Assert.assertEquals(1, step.getAndIncrement());
-        Assert.assertEquals(0, serviceMap.size());
+        assertEquals(1, step.getAndIncrement());
         // System.out.println("1-initialized");
     }
 
     public void shutdown() {
-        Assert.assertEquals(4, step.getAndIncrement());
+        assertEquals(4, step.getAndIncrement());
         // System.out.println("5-shutdown");
     }
 
-    public void start(Map<Class<?>, Object> allServiceMap) {
-        Assert.assertEquals(2, step.getAndIncrement());
+    public void start(CacheServiceManagerService serviceManager) {
+        assertEquals(2, step.getAndIncrement());
         // System.out.println("3-start");
     }
 
     public void started(Cache<?, ?> cache) {
-        Assert.assertEquals(3, step.getAndIncrement());
+        assertEquals(3, step.getAndIncrement());
         if (c != null) {
-            Assert.assertEquals(c, cache);
+            assertEquals(c, cache);
         }
         c = cache;
         // System.out.println("4-started");
     }
 
     public void terminated() {
-        Assert.assertEquals(5, step.getAndIncrement());
+        assertEquals(5, step.getAndIncrement());
         // System.out.println("6-terminated");
     }
 }

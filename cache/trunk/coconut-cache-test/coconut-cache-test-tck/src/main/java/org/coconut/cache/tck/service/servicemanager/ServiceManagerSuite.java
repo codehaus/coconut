@@ -3,12 +3,14 @@
  */
 package org.coconut.cache.tck.service.servicemanager;
 
+import org.coconut.cache.tck.ServiceSuite;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses( { ServiceManagerOnCache.class, ServiceManagerService.class,
-        StartupFailed.class })
+@RunWith(ServiceSuite.class)
+@Suite.SuiteClasses( { LifecycleInitialize.class, LifecycleStart.class,
+        ServiceManagerManagement.class, ServiceManagerObjects.class, ServiceManagerOnCache.class,
+        ServiceManagerService.class, StartupFailed.class })
 public class ServiceManagerSuite {
 
 }

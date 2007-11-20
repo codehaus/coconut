@@ -3,6 +3,8 @@
  */
 package org.coconut.cache.service.exceptionhandling;
 
+import java.util.Map;
+
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
@@ -99,9 +101,9 @@ public abstract class CacheExceptionHandler<K, V> {
     }
 
     /**
-     * Called to initialize the CacheExceptionHandler. This method should be called from
-     * within the constructor of the cache. Exceptions thrown by this method should not be
-     * handled by the cache.
+     * Called to initialize the CacheExceptionHandler. This method must be called as the
+     * first operation from within the cache from within the constructor of the cache.
+     * Exceptions thrown by this method should not be handled by the cache.
      * 
      * @param configuration
      *            the configuration of the cache
@@ -111,16 +113,16 @@ public abstract class CacheExceptionHandler<K, V> {
     /**
      * Called as the last action by the cache once it has terminated.
      */
-    public void terminated() {}
+    public void terminated(Map<? extends CacheLifecycle, RuntimeException> terminationFailures) {}
 
     /**
      * This method is called when the
-     * {@link CacheLifecycle#initialize(CacheConfiguration, java.util.Map)} method of a cache service
-     * fails.
+     * {@link CacheLifecycle#initialize(CacheConfiguration, java.util.Map)} method of a
+     * cache service fails.
      * <p>
-     * The {@link CacheLifecycle#initialize(CacheConfiguration, java.util.Map)} method is always called
-     * from the constructor of the cache. And the default implementation of this method
-     * will let the cause of failure be propagated to the constructor callee.
+     * The {@link CacheLifecycle#initialize(CacheConfiguration, java.util.Map)} method is
+     * always called from the constructor of the cache. And the default implementation of
+     * this method will let the cause of failure be propagated to the constructor callee.
      * 
      * @param configuration
      *            the configuration of the cache
@@ -129,8 +131,10 @@ public abstract class CacheExceptionHandler<K, V> {
      * @param cause
      *            the cause of the failure
      */
-    public void cacheStartupFailed(CacheConfiguration<K, V> configuration, CacheLifecycle service,
-            RuntimeException cause) {}
+    public void cacheInitializationFailed(CacheConfiguration<K, V> configuration,
+            Class<? extends Cache> cacheType, CacheLifecycle service, RuntimeException cause) {
+        throw cause;
+    }
 
     /**
      * A delivery of an event failed.

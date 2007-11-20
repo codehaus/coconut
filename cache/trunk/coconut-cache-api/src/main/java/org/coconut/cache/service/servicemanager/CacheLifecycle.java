@@ -29,16 +29,16 @@ public interface CacheLifecycle {
      * @param publicServices
      *            a map of registered service
      */
-    void initialize(CacheConfiguration<?, ?> configuration, Map<Class<?>, Object> publicServices);
+    void initialize(CacheLifecycleInitializer cli);
 
     /**
-     * Start the service. The specified cache can be used to retrieve other cache
+     * Start the service. The specified serviceManager can be used to retrieve other
      * services.
      * 
-     * @param allServiceMap
-     *            a map of registered service
+     * @param serviceManager
+     *            the caches service manager
      */
-    void start(Map<Class<?>, Object> allServiceMap);
+    void start(CacheServiceManagerService serviceManager);
 
     /**
      * All services have been intialized correctly, and the cache is ready for use.

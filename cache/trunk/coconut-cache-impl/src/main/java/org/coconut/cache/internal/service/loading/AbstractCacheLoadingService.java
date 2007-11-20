@@ -19,6 +19,7 @@ import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
+import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.AttributeMaps;
 import org.coconut.management.ManagedGroup;
@@ -206,9 +207,9 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
 
     /** {@inheritDoc} */
     @Override
-    public void initialize(CacheConfiguration<?, ?> configuration, Map<Class<?>, Object> serviceMap) {
+    public void initialize(CacheLifecycleInitializer cli) {
         if (loader != null) {
-            serviceMap.put(CacheLoadingService.class, LoadingUtils.wrapService(this));
+            cli.registerService(CacheLoadingService.class, LoadingUtils.wrapService(this));
         }
     }
 

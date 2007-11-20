@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -17,15 +19,16 @@ import org.coconut.cache.CacheException;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.cache.internal.service.listener.InternalCacheListener;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
+import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.AsynchronousShutdownObject;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
+import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.core.Clock;
 import org.coconut.internal.picocontainer.defaults.DefaultPicoContainer;
-import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedLifecycle;
 
 /**
@@ -35,39 +38,36 @@ import org.coconut.management.ManagedLifecycle;
 public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManager implements
         CacheServiceManagerService {
 
-    private final InternalCacheExceptionService ces;
-
-    private final DefaultPicoContainer container = new DefaultPicoContainer();
-
-    private final List<ManagedLifecycle> managedObjects = new ArrayList<ManagedLifecycle>();
-
-    private final Map<Class<?>, Object> publicServices = new HashMap<Class<?>, Object>();
-
-    private RuntimeException startupException;
-
-    private RunState status = RunState.NOTRUNNING;
-
-    private long startupTime;
+    private final CacheExceptionHandler ces;
 
     private final Clock clock;
 
+    private CacheConfiguration conf;
+
+    private final DefaultPicoContainer container = new DefaultPicoContainer();
+
+    private final Map<Class<?>, Object> initializedPublicServices = new HashMap<Class<?>, Object>();
+
+    private final List<ManagedLifecycle> managedObjects = new ArrayList<ManagedLifecycle>();
+
+    private Map<Class<?>, Object> publicServices;
+
+    private RuntimeException startupException;
+
+    private long startupTime;
+
+    private RunState status = RunState.NOTRUNNING;
+
     ServiceHolder serviceBeingShutdown;
 
-    final List<ServiceHolder> services = new ArrayList<ServiceHolder>();
+    final LinkedList<ServiceHolder> services = new LinkedList<ServiceHolder>();
 
     public UnsynchronizedCacheServiceManager(Cache<?, ?> cache, InternalCacheSupport<?, ?> helper,
             CacheConfiguration<?, ?> conf,
             Collection<Class<? extends AbstractCacheLifecycle>> classes) {
-        super(cache, conf);
+        super(cache);
+        this.conf = conf;
         clock = conf.getClock();
-        for (Object o : conf.serviceManager().getObjects()) {
-            if (o instanceof CacheLifecycle) {
-                services.add(new ServiceHolder((CacheLifecycle) o, false));
-            }
-            if (o instanceof ManagedLifecycle) {
-                managedObjects.add((ManagedLifecycle) o);
-            }
-        }
         container.registerComponentInstance(this);
         container.registerComponentInstance(cache.getName());
         container.registerComponentInstance(cache);
@@ -83,14 +83,36 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
                 .getComponentInstancesOfType(AbstractCacheLifecycle.class);
 
         for (AbstractCacheLifecycle a : l) {
+            if (a instanceof CompositeService) {
+                for (Object o : ((CompositeService) a).getChildServices()) {
+                    if (o instanceof CacheLifecycle) {
+                        services.add(new ServiceHolder((CacheLifecycle) o, false));
+                    }
+                    if (o instanceof ManagedLifecycle) {
+                        managedObjects.add((ManagedLifecycle) o);
+                    }
+                }
+            }
             services.add(new ServiceHolder(a, true));
-        }
-        publicServices.put(CacheServiceManagerService.class, ServiceManagerUtil.wrapService(this));
+            if (a instanceof ManagedLifecycle) {
+                managedObjects.add((ManagedLifecycle) a);
+            }
 
+        }
+        // / Get public services
+        for (Object service : conf.serviceManager().getObjects()) {
+            if (service instanceof CacheLifecycle) {
+                services.add(new ServiceHolder((CacheLifecycle) service, false));
+            }
+            if (service instanceof ManagedLifecycle) {
+                managedObjects.add((ManagedLifecycle) service);
+            }
+        }
         /* Initialize Exception Service */
-        ces = (InternalCacheExceptionService) container
-                .getComponentInstanceOfType(InternalCacheExceptionService.class);
-        ces.getExceptionHandler().initialize(conf);
+        ces = ((InternalCacheExceptionService) container
+                .getComponentInstanceOfType(InternalCacheExceptionService.class))
+                .getExceptionHandler();
+        doInitialize();
     }
 
     /** {@inheritDoc} */
@@ -100,7 +122,7 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
 
     /** {@inheritDoc} */
     public Map<Class<?>, Object> getAllServices() {
-        return new HashMap<Class<?>, Object>(publicServices);
+        return publicServices;
     }
 
     /** {@inheritDoc} */
@@ -113,9 +135,9 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
     }
 
     /** {@inheritDoc} */
-    public <T> T getService(Class<T> serviceType) {
+    public <T> T getServiceFromCache(Class<T> serviceType) {
         if (serviceType == null) {
-            throw new NullPointerException("type is null");
+            throw new NullPointerException("serviceType is null");
         }
         lazyStart(false);
         T t = (T) publicServices.get(serviceType);
@@ -126,8 +148,15 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
     }
 
     /** {@inheritDoc} */
-    public boolean hasService(Class<?> type) {
-        return publicServices.containsKey(type);
+    public <T> T getService(Class<T> serviceType) {
+        if (serviceType == null) {
+            throw new NullPointerException("serviceType is null");
+        }
+        T t = (T) publicServices.get(serviceType);
+        if (t == null) {
+            throw new IllegalArgumentException("Unknown service " + serviceType);
+        }
+        return t;
     }
 
     /** {@inheritDoc} */
@@ -175,32 +204,55 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
         throw new UnsupportedOperationException();
     }
 
-    private void doStart() {
-        try {
-            status = RunState.STARTING;
-            for (ServiceHolder si : services) {
-                si.initialize(getConf());
-                publicServices.putAll(si.getPublicService());
+    private void doInitialize() {
+        ces.initialize(conf);
+        initializedPublicServices.put(CacheServiceManagerService.class, ServiceManagerUtil
+                .wrapService(this));
+        for (ServiceHolder si : services) {
+            try {
+                final Map<Class<?>, Object> map = new HashMap<Class<?>, Object>();
+                si.initialize(new CacheLifecycleInitializer() {
+                    public CacheConfiguration<?, ?> getCacheConfiguration() {
+                        return conf;
+                    }
+
+                    public Class<? extends Cache> getCacheType() {
+                        return getCache().getClass();
+                    }
+
+                    public <T> void registerService(Class<T> clazz, T service) {
+                        map.put(clazz, service);
+                    }
+                });
+                initializedPublicServices.putAll(map);
+            } catch (RuntimeException re) {
+                try {
+                    ces.cacheInitializationFailed(conf, getCache().getClass(), si.service, re);
+                } finally {
+                    doTerminate();
+                }
+                throw re;
             }
+        }
+    }
+
+    private void doStart() {
+        status = RunState.STARTING;
+        try {
+            publicServices = Collections.unmodifiableMap(initializedPublicServices);
 
             for (ServiceHolder si : services) {
-                si.start(publicServices);
+                si.start((CacheServiceManagerService) initializedPublicServices
+                        .get(CacheServiceManagerService.class));
             }
 
             // register mbeans
             CacheManagementService cms = (CacheManagementService) publicServices
                     .get(CacheManagementService.class);
             if (cms != null) {
-                for (ServiceHolder si : services) {
-                    if (si.isInternal && si.service instanceof ManagedLifecycle) {
-                        ((ManagedLifecycle) si.service).manage(cms);
-                    }
-                    si.registerMBeans(cms);
-                }
                 for (ManagedLifecycle si : managedObjects) {
                     si.manage(cms);
                 }
-
             }
             status = RunState.RUNNING;
             // started
@@ -213,26 +265,46 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
         } catch (RuntimeException re) {
             startupException = new CacheException("Could not start cache", re);
             status = RunState.COULD_NOT_START;
-            ces.getExceptionHandler().terminated();
+            for (Iterator<ServiceHolder> iterator = services.descendingIterator(); iterator
+                    .hasNext();) {
+                ServiceHolder sh = iterator.next();
+                if (sh.isInitialized()) {
+                    sh.terminated();
+                    // some try catch
+                }
+            }
+            ces.terminated(tryTerminateServices());
             throw startupException;
         } catch (Error er) {
             startupException = new CacheException("Could not start cache", er);
             status = RunState.COULD_NOT_START;
-            ces.getExceptionHandler().terminated();
+            ces.terminated(tryTerminateServices());
             throw er;
         } finally {
-            setConf(null); // Conf can be GC'ed now
+            conf = null; // Conf can be GC'ed now
         }
     }
 
-    protected void doTerminate() {
-        status = RunState.TERMINATED;
-        List<ServiceHolder> shutdown = new ArrayList<ServiceHolder>(services);
-        Collections.reverse(shutdown);
-        for (ServiceHolder si : shutdown) {
-            si.terminated();
+    private Map<CacheLifecycle, RuntimeException> tryTerminateServices() {
+        Map<CacheLifecycle, RuntimeException> m = new HashMap<CacheLifecycle, RuntimeException>();
+        for (Iterator<ServiceHolder> iterator = services.descendingIterator(); iterator.hasNext();) {
+            ServiceHolder sh = iterator.next();
+            if (sh.isInitialized()) {
+                try {
+                    sh.terminated();
+                } catch (RuntimeException e) {
+                    m.put(sh.service, e);
+                }
+            }
         }
-        ces.getExceptionHandler().terminated();
+        return m;
+    }
+
+    protected void doTerminate() {
+        if (status != RunState.COULD_NOT_START) {
+            status = RunState.TERMINATED;
+        }
+        ces.terminated(tryTerminateServices());
     }
 
     protected void tryTerminate() {
@@ -245,14 +317,9 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
     }
 
     class ServiceHolder {
-
-        private final Collection<ServiceHolder> children = new ArrayList<ServiceHolder>();
-
         private final boolean isInternal;
 
-        private final Collection<ManagedLifecycle> managedChildren = new ArrayList<ManagedLifecycle>();
-
-        private final Map<Class<?>, Object> published = new HashMap<Class<?>, Object>();
+        private int state;
 
         volatile AsynchronousShutdownObject aso;
 
@@ -261,66 +328,45 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
         ServiceHolder(CacheLifecycle service, boolean isInternal) {
             this.isInternal = isInternal;
             this.service = service;
-            if (service instanceof CompositeService) {
-                for (Object o : ((CompositeService) service).getChildServices()) {
-                    if (o instanceof CacheLifecycle) {
-                        children.add(new ServiceHolder((CacheLifecycle) o, isInternal));
-                    }
-                    if (o instanceof ManagedLifecycle) {
-                        managedChildren.add((ManagedLifecycle) o);
-                    }
-                }
-            }
         }
 
-        Map<Class<?>, Object> getPublicService() {
-            return published;
+        void initialize(CacheLifecycleInitializer cli) {
+            state = 1;
+            service.initialize(cli);
+            state = 2;
         }
 
-        void initialize(CacheConfiguration conf) {
-            service.initialize(conf, published);
-            for (ServiceHolder cl : children) {
-                cl.initialize(conf);
-            }
+        boolean isInitialized() {
+            return state >= 2;
         }
 
         boolean isInternal() {
             return isInternal;
         }
 
-        void registerMBeans(ManagedGroup parent) {
-            for (ManagedLifecycle cl : managedChildren) {
-                cl.manage(parent);
-            }
-        }
-
         void shutdown() {
+            state = 7;
             serviceBeingShutdown = this;
             service.shutdown();
-            for (ServiceHolder cl : children) {
-                cl.shutdown();
-            }
+            state = 8;
         }
 
-        void start(Map c) {
-            service.start(c);
-            for (ServiceHolder cl : children) {
-                cl.start(c);
-            }
+        void start(CacheServiceManagerService serviceManager) {
+            state = 3;
+            service.start(serviceManager);
+            state = 4;
         }
 
         void started(Cache<?, ?> c) {
+            state = 5;
             service.started(c);
-            for (ServiceHolder cl : children) {
-                cl.started(c);
-            }
+            state = 6;
         }
 
         void terminated() {
+            state = 9;
             service.terminated();
-            for (ServiceHolder cl : children) {
-                cl.terminated();
-            }
+            state = 10;
         }
     }
 }

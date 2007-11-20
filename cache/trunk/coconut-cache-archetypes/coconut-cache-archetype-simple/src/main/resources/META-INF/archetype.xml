@@ -3,8 +3,4 @@
   <sources>
     <source>src/main/java/HelloCache.java</source>
   </sources>
-  <!--
-    <testSources>
-    <source>src/test/java/AppTest.java</source>
-    </testSources>-->
 </archetype>

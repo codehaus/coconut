@@ -3,9 +3,12 @@
  */
 package org.coconut.cache.tck.service.servicemanager;
 
-import java.util.concurrent.TimeUnit;
 import static org.coconut.test.CollectionUtils.M1;
+
+import java.util.concurrent.TimeUnit;
+
 import org.coconut.cache.Cache;
+import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.AbstractLifecycleVerifier;
@@ -37,22 +40,13 @@ public class ServiceManagerObjects extends AbstractCacheTCKTest {
     @Test
     public void lifecycle() {
         Life l = new Life();
-        setCache(newConf().serviceManager().add(l));
-        l.assertNotStarted();
+        CacheConfiguration conf = newConf().serviceManager().add(l).c();
+        l.setConfigurationToVerify(conf);
+        setCache(conf);
+        l.assertInitializedButNotStarted();
         assertFalse(services().hasService(l.getClass()));
         prestart();
         l.shutdownAndAssert(c);
-    }
-
-    @Test
-    public void managedObject() throws InterruptedException {
-        Mo l = new Mo();
-        setCache(newConf().serviceManager().add(l).c().management().setEnabled(true));
-        assertNull(l.g);
-        prestart();
-        c.shutdown();
-        c.awaitTermination(5, TimeUnit.SECONDS);
-        assertNotNull(l.g);
     }
 
     @Test
@@ -67,23 +61,11 @@ public class ServiceManagerObjects extends AbstractCacheTCKTest {
     }
 
     @Test
-    public void lifecycleAndManagedObject() {
-        LifeMo l = new LifeMo();
-        setCache(newConf().serviceManager().add(l).c().management().setEnabled(true));
-        assertNull(l.g);
-        l.assertNotStarted();
-        assertFalse(services().hasService(l.getClass()));
-        prestart();
-        l.shutdownAndAssert(c);
-        assertEquals(3, l.state);
-        assertNotNull(l.g);
-    }
-
-    @Test
     public void recursiveStart() {
         setCache(newConf().serviceManager().add(new Put()));
         get(M1);
     }
+
     static class Mo implements ManagedLifecycle {
         ManagedGroup g;
 

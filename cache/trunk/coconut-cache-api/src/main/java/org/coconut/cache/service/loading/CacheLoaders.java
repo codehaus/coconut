@@ -99,6 +99,53 @@ public final class CacheLoaders {
     }
 
     /**
+     * This method converts the specified cache to a cache loader. Calls to
+     * {@link CacheLoader#load(Object, AttributeMap)} will be converted to calls to
+     * {@link Cache#get(Object)}. Calls to
+     * {@link CacheLoader#loadAll(java.util.Collection)} will be converted to calls to
+     * {@link Cache#getAll(java.util.Collection)}.
+     * 
+     * @param cache
+     *            the cache to load entries from
+     * @return a cache loader that can load values from another cache
+     * @throws NullPointerException
+     *             if the specified cache is <code>null</code>
+     */
+    public static <K, V> CacheLoader<K, V> cacheAsCacheLoader(Cache<K, V> cache) {
+        return new CacheAsCacheLoader<K, V>(cache);
+    }
+
+    /**
+     * This class wraps a cache in such a way that it can be used as a cache loader for
+     * another cache.
+     */
+    final static class CacheAsCacheLoader<K, V> extends AbstractCacheLoader<K, V> {
+
+        /** The cache used as a cache loader. */
+        private final Cache<K, V> cache;
+
+        /**
+         * Creates a new CacheAsCacheLoader.
+         * 
+         * @param cache
+         *            the cache to load values from
+         * @throws NullPointerException
+         *             if the specified cache is <code>null</code>
+         */
+        public CacheAsCacheLoader(Cache<K, V> cache) {
+            if (cache == null) {
+                throw new NullPointerException("cache is null");
+            }
+            this.cache = cache;
+        }
+
+        /** {@inheritDoc} */
+        public V load(K key, AttributeMap attributes) {
+            return cache.get(key);
+        }
+    }
+
+    /**
      * A loader that always return <code>null</code> for any key.
      * 
      * @param <K>

@@ -20,6 +20,7 @@ import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
+import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
 import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
 import org.coconut.management.ManagedGroup;
@@ -132,8 +133,8 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
 
     /** {@inheritDoc} */
     @Override
-    public void initialize(CacheConfiguration<?, ?> configuration, Map<Class<?>, Object> serviceMap) {
-        serviceMap.put(CacheExpirationService.class, ExpirationUtils.wrapService(this));
+    public void initialize(CacheLifecycleInitializer cli) {
+        cli.registerService(CacheExpirationService.class, ExpirationUtils.wrapService(this));
     }
 
 

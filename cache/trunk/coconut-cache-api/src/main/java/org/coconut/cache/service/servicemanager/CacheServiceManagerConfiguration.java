@@ -7,7 +7,7 @@ import static org.coconut.internal.util.XmlUtil.addAndsaveObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.coconut.cache.service.management.CacheManagementConfiguration;
@@ -32,7 +32,7 @@ public class CacheServiceManagerConfiguration extends AbstractCacheServiceConfig
     private final static String SERVICE_TAG = "service";
 
     /** Any additional services attached to the cache. */
-    private final Map<Object, Boolean> registeredServices = new HashMap<Object, Boolean>();
+    private final Map<Object, Boolean> registeredServices = new LinkedHashMap<Object, Boolean>();
 
     /**
      * Create a new CacheManagementConfiguration.
@@ -93,7 +93,7 @@ public class CacheServiceManagerConfiguration extends AbstractCacheServiceConfig
     protected void toXML(Document doc, Element parent) throws Exception {
         for (Object o : getObjects()) {
             addAndsaveObject(doc, parent, SERVICE_TAG, getResourceBundle(),
-                    "loading.saveOfLoaderFailed", o);
+                    "CacheLoadingConfiguration.saveOfLoaderFailed", o);
         }
     }
 }

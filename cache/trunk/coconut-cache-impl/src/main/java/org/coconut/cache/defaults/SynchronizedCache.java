@@ -154,6 +154,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
         listener.afterCacheClear(this, started, list, volume);
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized boolean containsValue(Object value) {
         return super.containsValue(value);
@@ -175,6 +176,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
         return map.keySet(this);
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized void prestart() {
         super.prestart();
@@ -209,6 +211,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
         return map.size();
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized String toString() {
         return super.toString();
@@ -443,6 +446,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
         return newEntry == null ? null : prev;
     }
 
+    /** {@inheritDoc} */
     InternalCacheServiceManager getServiceManager() {
         return serviceManager;
     }
@@ -464,6 +468,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
             }
         }
 
+        /** {@inheritDoc} */
         public String getName() {
             return SynchronizedCache.this.getName();
         }

@@ -413,6 +413,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
             UnsynchronizedCache.this.checkRunning(operation);
         }
 
+        /** {@inheritDoc} */
         public String getName() {
             return UnsynchronizedCache.this.getName();
         }
@@ -488,7 +489,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
 
             loadingService.forceLoadAll(keys);
         }
-
+        /** {@inheritDoc} */
         public void purgeExpired() {
             List<AbstractCacheEntry<K, V>> expired = new ArrayList<AbstractCacheEntry<K, V>>();
             long start = listener.beforeCachePurge(UnsynchronizedCache.this);
