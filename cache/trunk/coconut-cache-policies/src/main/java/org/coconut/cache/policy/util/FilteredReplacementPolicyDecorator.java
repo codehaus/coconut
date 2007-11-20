@@ -16,7 +16,7 @@ import org.coconut.core.AttributeMap;
  * @param <T>
  *            the type of data maintained by the policy
  */
-public class FilteredPolicyDecorator<T> extends PolicyDecorator<T> {
+public class FilteredReplacementPolicyDecorator<T> extends ReplacementPolicyDecorator<T> {
 
     /** The policy filter we are decorating. */
     private final AttributedFilter<T> filter;
@@ -33,7 +33,7 @@ public class FilteredPolicyDecorator<T> extends PolicyDecorator<T> {
      * @throws NullPointerException
      *             if the specified policy or filter is <code>null</code>
      */
-    public FilteredPolicyDecorator(ReplacementPolicy<T> policy, AttributedFilter<T> filter) {
+    public FilteredReplacementPolicyDecorator(ReplacementPolicy<T> policy, AttributedFilter<T> filter) {
         super(policy);
         if (filter == null) {
             throw new NullPointerException("filter is null");
@@ -149,7 +149,7 @@ public class FilteredPolicyDecorator<T> extends PolicyDecorator<T> {
      */
     public static <T> ReplacementPolicy<T> costRejector(ReplacementPolicy<T> policy,
             double minimumCost) {
-        return new FilteredPolicyDecorator<T>(policy, new MinimumCostFilter(minimumCost));
+        return new FilteredReplacementPolicyDecorator<T>(policy, new MinimumCostFilter(minimumCost));
     }
 
     /**
@@ -173,7 +173,7 @@ public class FilteredPolicyDecorator<T> extends PolicyDecorator<T> {
      */
     public static <T> ReplacementPolicy<T> sizeRejector(ReplacementPolicy<T> policy,
             long maximumSize) {
-        return new FilteredPolicyDecorator<T>(policy, new MaximumSizeFilter<T>(
+        return new FilteredReplacementPolicyDecorator<T>(policy, new MaximumSizeFilter<T>(
                 maximumSize));
     }
 }

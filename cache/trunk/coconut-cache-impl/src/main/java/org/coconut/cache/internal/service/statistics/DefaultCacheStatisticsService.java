@@ -129,7 +129,8 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
 
     volatile long started;
 
-    public DefaultCacheStatisticsService(InternalCacheServiceManager manager, CacheConfiguration<K, V> conf) {
+    public DefaultCacheStatisticsService(InternalCacheServiceManager manager,
+            CacheConfiguration<K, V> conf) {
         Clock c = Clock.DEFAULT_CLOCK;
         // cache counters
 
@@ -198,7 +199,7 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
         access.add(entryGetMissCount);
         access.add(entryGetHitTime);
         access.add(entryGetMissTime);
-        //access.add(new CacheRatio());
+        // access.add(new CacheRatio());
 
         ManagedGroup put = m.addChild("Put", "");
         put.add(entryPutCount);
@@ -209,8 +210,8 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
         remove.add(entryRemoveTime);
     }
 
-    public void afterCacheClear(Cache<K, V> cache, long start, Collection<? extends CacheEntry<K, V>> removed, long capacity
-            ) {
+    public void afterCacheClear(Cache<K, V> cache, long start,
+            Collection<? extends CacheEntry<K, V>> removed, long capacity) {
         long time = System.nanoTime() - start;
         // TODO what about removed?
         cacheClearLast.run();
@@ -328,13 +329,11 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
         entryPutCount.incrementAndGet();
     }
 
-
     public void afterTrimCache(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries, int previousSize, int newSize,
             long previousVolume, long newVolume) {
 
     }
-
 
     public long beforeCacheClear(Cache<K, V> cache) {
         return System.nanoTime();
@@ -464,7 +463,7 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
     /** {@inheritDoc} */
     @Override
     public void initialize(CacheLifecycleInitializer cli) {
-        cli.registerService(CacheStatisticsService.class, this);
+        cli.registerService(CacheStatisticsService.class, StatisticsUtils.wrapService(this));
     }
 
     public void resetStatistics() {

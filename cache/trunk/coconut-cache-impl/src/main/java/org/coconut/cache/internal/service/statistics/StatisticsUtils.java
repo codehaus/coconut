@@ -19,6 +19,11 @@ import org.coconut.management.annotation.ManagedOperation;
  * @version $Id$
  */
 public class StatisticsUtils {
+    /** Cannot instantiate. */
+    // /CLOVER:OFF
+    private StatisticsUtils() {}
+
+    // /CLOVER:ON
 
     /**
      * Wraps a CacheLoadingService in a CacheLoadingMXBean.
@@ -29,6 +34,24 @@ public class StatisticsUtils {
      */
     public static CacheStatisticsMXBean wrapMXBean(CacheStatisticsService service) {
         return new DelegatedCacheStatisticsMXBean(service);
+    }
+
+    /**
+     * Wraps the specified CacheStatisticsService implementation only exposing the methods
+     * available in the {@link CacheStatisticsService} interface.
+     * 
+     * @param service
+     *            the statistics service we want to wrap
+     * @return a wrapped service that only exposes CacheStatisticsService methods
+     * @param <K>
+     *            the type of keys maintained by the specified service
+     * @param <V>
+     *            the type of mapped values
+     * @throws NullPointerException
+     *             if the specified service is <code>null</code>
+     */
+    public static <K, V> CacheStatisticsService wrapService(CacheStatisticsService service) {
+        return new DelegatedCacheStatisticsService(service);
     }
 
     /**
@@ -81,8 +104,7 @@ public class StatisticsUtils {
      * A wrapper class that exposes only the CacheStatisticsService methods of an
      * CacheStatisticsService implementation.
      */
-    public static class DelegatedCacheStatisticsService<K, V> implements
-            CacheStatisticsService {
+    public static class DelegatedCacheStatisticsService implements CacheStatisticsService {
         /** The expiration service we are wrapping. */
         private final CacheStatisticsService service;
 

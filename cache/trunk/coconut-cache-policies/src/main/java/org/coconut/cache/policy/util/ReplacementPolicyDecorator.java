@@ -10,7 +10,7 @@ import org.coconut.cache.spi.ReplacementPolicy;
 import org.coconut.core.AttributeMap;
 
 /**
- * A PolicyDecorator is used to decorate an existing ReplacementPolicy with additional
+ * A ReplacementPolicyDecorator is used to decorate an existing ReplacementPolicy with additional
  * behavior. See the description of the <a
  * href="http://en.wikipedia.org/wiki/Decorator_pattern">Decorator Pattern</a> for
  * further information.
@@ -20,7 +20,7 @@ import org.coconut.core.AttributeMap;
  * @param <T>
  *            the type of data maintained by the policy
  */
-public class PolicyDecorator<T> implements ReplacementPolicy<T> {
+public class ReplacementPolicyDecorator<T> implements ReplacementPolicy<T> {
 
     /** The replacement policy we are decorating. */
     private final ReplacementPolicy<T> policy;
@@ -33,25 +33,31 @@ public class PolicyDecorator<T> implements ReplacementPolicy<T> {
      * @throws NullPointerException
      *             if the specified replacement policy is null
      */
-    public PolicyDecorator(ReplacementPolicy<T> policy) {
+    public ReplacementPolicyDecorator(ReplacementPolicy<T> policy) {
         if (policy == null) {
             throw new NullPointerException("policy is null");
         }
         this.policy = policy;
     }
 
-    /**
-     * Returns the replacement policy that is being decorated.
-     * 
-     * @return the replacement policy that is being decorated
-     */
-    protected ReplacementPolicy<T> getPolicy() {
-        return policy;
+    /** {@inheritDoc} */
+    public int add(T element, AttributeMap attributes) {
+        return policy.add(element, attributes);
+    }
+
+    /** {@inheritDoc} */
+    public void clear() {
+        policy.clear();
     }
 
     /** {@inheritDoc} */
     public T evictNext() {
         return policy.evictNext();
+    }
+
+    /** {@inheritDoc} */
+    public int getSize() {
+        return policy.getSize();
     }
 
     /** {@inheritDoc} */
@@ -70,33 +76,27 @@ public class PolicyDecorator<T> implements ReplacementPolicy<T> {
     }
 
     /** {@inheritDoc} */
-    public void touch(int index) {
-        policy.touch(index);
-    }
-
-    /** {@inheritDoc} */
-    public void clear() {
-        policy.clear();
-    }
-
-    /** {@inheritDoc} */
     @Override
     public String toString() {
         return policy.toString();
     }
 
     /** {@inheritDoc} */
-    public int getSize() {
-        return policy.getSize();
-    }
-
-    /** {@inheritDoc} */
-    public int add(T element, AttributeMap attributes) {
-        return add(element, attributes);
+    public void touch(int index) {
+        policy.touch(index);
     }
 
     /** {@inheritDoc} */
     public boolean update(int index, T newElement, AttributeMap attributes) {
-        return update(index, newElement, attributes);
+        return policy.update(index, newElement, attributes);
+    }
+
+    /**
+     * Returns the replacement policy that is being decorated.
+     * 
+     * @return the replacement policy that is being decorated
+     */
+    protected ReplacementPolicy<T> getPolicy() {
+        return policy;
     }
 }

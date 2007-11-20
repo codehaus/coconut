@@ -5,10 +5,8 @@ package org.coconut.event;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.concurrent.Callable;
 
 import org.coconut.core.EventProcessor;
-import org.coconut.core.Offerable;
 import org.coconut.predicate.CollectionPredicates;
 import org.coconut.predicate.Predicate;
 
@@ -69,53 +67,6 @@ public class Events {
     public static <E> Collection<EventSubscription<E>> findSubscribers(
             EventBus<E> bus, Predicate<EventSubscription<E>> filter) {
         return CollectionPredicates.filter(bus.getSubscribers(), filter);
-    }
-
-    public static <E> Runnable offerAsRunnable(final E element,
-            final Offerable<? super E> o) {
-        return new Runnable() {
-            public void run() {
-                o.offer(element);
-            }
-        };
-    }
-
-//    public static <E> Runnable offerAsRunnable(final Callable<E> c,
-//            final Offerable<? super E> o) {
-//        return new Runnable() {
-//            public void run() {
-//                try {
-//                    E e = c.call();
-//                    o.offer(e);
-//                } catch (Exception e) {
-//                    throw new EventBusException(e);
-//                }
-//            }
-//
-//        };
-//    }
-
-    public static <E> Callable<E> asCallable(E element) {
-        return new StaticCallable<E>(element);
-    }
-
-    static class StaticCallable<E> implements Callable<E>, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = 6497274083600963110L;
-
-        /** The object to return on each invocation of call. */
-        private final E object;
-
-        public StaticCallable(final E object) {
-            if (object == null) {
-                throw new NullPointerException("object is null");
-            }
-            this.object = object;
-        }
-
-        public E call() {
-            return object;
-        }
     }
 
     static class EventListenerFilter<E> implements Predicate<EventSubscription<E>>,

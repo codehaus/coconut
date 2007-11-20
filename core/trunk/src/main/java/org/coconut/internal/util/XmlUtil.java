@@ -108,8 +108,7 @@ public final class XmlUtil {
             return defaultInt;
         } else {
             String text = e.getTextContent();
-            int result = Integer.parseInt(text);
-            return result;
+            return Integer.parseInt(text);
         }
     }
 
@@ -125,8 +124,7 @@ public final class XmlUtil {
             return defaultLong;
         } else {
             String text = e.getTextContent();
-            long result = Long.parseLong(text);
-            return result;
+            return Long.parseLong(text);
         }
     }
 

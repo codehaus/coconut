@@ -44,4 +44,36 @@ public class XmlUtilTest {
         assertFalse(XmlUtil.attributeBooleanGet(e, "foo1", false));
     }
 
+    @Test
+    public void contentLongSet() {
+        XmlUtil.contentLongSet(doc, e, "boo", 123l, 321l);
+        assertEquals(1, e.getChildNodes().getLength());
+        assertEquals("123", ((Element) e.getChildNodes().item(0)).getTextContent());
+        XmlUtil.contentLongSet(doc, e, "boo1", 234l, 234l);
+        assertEquals(1, e.getChildNodes().getLength());
+    }
+
+    @Test
+    public void contentLongGet() {
+        assertEquals(123l, XmlUtil.contentLongGet(null, 123l));
+        e.setTextContent(Long.toString(Long.MAX_VALUE));
+        assertEquals(Long.MAX_VALUE, XmlUtil.contentLongGet(e, 0l));
+    }
+
+    @Test
+    public void contentIntGet() {
+        assertEquals(123, XmlUtil.contentIntGet(null, 123));
+        e.setTextContent(Integer.toString(Integer.MAX_VALUE));
+        assertEquals(Integer.MAX_VALUE, XmlUtil.contentIntGet(e, 0));
+    }
+
+    
+    @Test
+    public void contentIntSet() {
+        XmlUtil.contentIntSet(doc, e, "boo", 123, 321);
+        assertEquals(1, e.getChildNodes().getLength());
+        assertEquals("123", ((Element) e.getChildNodes().item(0)).getTextContent());
+        XmlUtil.contentIntSet(doc, e, "boo1", 234, 234);
+        assertEquals(1, e.getChildNodes().getLength());
+    }
 }

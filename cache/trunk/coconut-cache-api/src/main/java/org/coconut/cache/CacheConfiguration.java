@@ -373,7 +373,7 @@ public class CacheConfiguration<K, V> {
      * then the built-in {@link java.lang.System#currentTimeMillis()} and
      * {@link java.lang.System#nanoTime()}. For example, a custom NTP protocol.
      * <p>
-     * This method is also usefull for tests that rely on exact timing of events
+     * This method is also useful for tests that rely on exact timing of events.
      * 
      * @param clock
      *            the Clock that the cache should use
@@ -416,8 +416,8 @@ public class CacheConfiguration<K, V> {
      * <p>
      * If no name is set in the configuration, any cache implementation must generate a
      * name for the cache. How exactly the name is generated is implementation specific.
-     * But the recommended way is to use {@link UUID#randomUUID()} to generate a pseudo
-     * random name.
+     * But the recommended way is to use {@link UUID#randomUUID()} or a similar mechanism
+     * to generate a random name.
      * 
      * @param name
      *            the name of the cache

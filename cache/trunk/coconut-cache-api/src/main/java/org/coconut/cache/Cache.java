@@ -259,9 +259,10 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
 
     /**
      * Returns the name of the cache. If no name has been specified while configuring the
-     * cache. The cache must choose a may return any valid name.
+     * cache. The cache must choose a valid name.
      * 
      * @return the name of the cache
+     * @see CacheConfiguration#setName(String)
      */
     String getName();
 

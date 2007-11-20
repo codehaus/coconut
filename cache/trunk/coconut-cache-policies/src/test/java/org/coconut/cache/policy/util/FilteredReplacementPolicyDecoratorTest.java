@@ -11,7 +11,7 @@ import org.junit.Test;
  * @version $Id$
  */
 @SuppressWarnings("unchecked")
-public class FilteredPolicyDecoratorTest {
+public class FilteredReplacementPolicyDecoratorTest {
 
     @Test
     public void testNothing() {

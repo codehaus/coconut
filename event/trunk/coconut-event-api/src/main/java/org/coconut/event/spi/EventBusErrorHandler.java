@@ -71,7 +71,7 @@ public class EventBusErrorHandler<E> {
             isInitialized = true;
             String loggerName = EventBus.class.getPackage().getName() + "." + name;
             java.util.logging.Logger l = java.util.logging.Logger.getLogger(loggerName);
-            String infoMsg = Ressources.getString("AbstractEventBus.default_logger");
+            String infoMsg ="No logger";
             logger = Loggers.JDK.from(l);
             logger.info(MessageFormat.format(infoMsg, name, loggerName));
             l.setLevel(Level.SEVERE);

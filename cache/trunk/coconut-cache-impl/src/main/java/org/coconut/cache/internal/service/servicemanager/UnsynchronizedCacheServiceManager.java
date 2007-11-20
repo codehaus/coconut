@@ -112,7 +112,7 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
         ces = ((InternalCacheExceptionService) container
                 .getComponentInstanceOfType(InternalCacheExceptionService.class))
                 .getExceptionHandler();
-        doInitialize();
+        initializeServices();
     }
 
     /** {@inheritDoc} */
@@ -204,7 +204,7 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
         throw new UnsupportedOperationException();
     }
 
-    private void doInitialize() {
+    private void initializeServices() {
         ces.initialize(conf);
         initializedPublicServices.put(CacheServiceManagerService.class, ServiceManagerUtil
                 .wrapService(this));
@@ -265,15 +265,7 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
         } catch (RuntimeException re) {
             startupException = new CacheException("Could not start cache", re);
             status = RunState.COULD_NOT_START;
-            for (Iterator<ServiceHolder> iterator = services.descendingIterator(); iterator
-                    .hasNext();) {
-                ServiceHolder sh = iterator.next();
-                if (sh.isInitialized()) {
-                    sh.terminated();
-                    // some try catch
-                }
-            }
-            ces.terminated(tryTerminateServices());
+            doTerminate();
             throw startupException;
         } catch (Error er) {
             startupException = new CacheException("Could not start cache", er);
