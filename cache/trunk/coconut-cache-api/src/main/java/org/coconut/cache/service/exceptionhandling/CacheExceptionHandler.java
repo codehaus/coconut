@@ -13,7 +13,7 @@ import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.core.AttributeMap;
-import org.coconut.event.EventSubscription;
+import org.coconut.event.bus.EventSubscription;
 
 /**
  * The purpose of this class is to have one central place where all exceptions that arise
@@ -117,12 +117,14 @@ public abstract class CacheExceptionHandler<K, V> {
 
     /**
      * This method is called when the
-     * {@link CacheLifecycle#initialize(CacheConfiguration, java.util.Map)} method of a
-     * cache service fails.
+     * {@link CacheLifecycle#initialize(org.coconut.cache.service.servicemanager.CacheLifecycleInitializer)}
+     * method of a cache service fails.
      * <p>
-     * The {@link CacheLifecycle#initialize(CacheConfiguration, java.util.Map)} method is
-     * always called from the constructor of the cache. And the default implementation of
-     * this method will let the cause of failure be propagated to the constructor callee.
+     * The
+     * {@link CacheLifecycle#initialize(org.coconut.cache.service.servicemanager.CacheLifecycleInitializer)}
+     * method is always called from the constructor of the cache. And the default
+     * implementation of this method will let the cause of failure be propagated to the
+     * constructor callee.
      * 
      * @param configuration
      *            the configuration of the cache
@@ -135,7 +137,10 @@ public abstract class CacheExceptionHandler<K, V> {
             Class<? extends Cache> cacheType, CacheLifecycle service, RuntimeException cause) {
         throw cause;
     }
-
+    public void cacheStartFailed(CacheConfiguration<K, V> configuration,
+            Class<? extends Cache> cacheType, CacheLifecycle service, RuntimeException cause) {
+        throw cause;
+    }
     /**
      * A delivery of an event failed.
      * 

@@ -1,17 +1,17 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.event.defaults;
+package org.coconut.event.bus.defaults;
 
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.coconut.core.EventProcessor;
-import org.coconut.event.EventSubscription;
+import org.coconut.event.bus.EventSubscription;
 import org.coconut.predicate.Predicate;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id$
+ * @version $Id: DefaultEventSubscription.java 474 2007-11-20 13:09:23Z kasper $
  */
 class DefaultEventSubscription<E> extends ReentrantReadWriteLock implements EventSubscription<E> {
     private final DefaultEventBus<E> bus;

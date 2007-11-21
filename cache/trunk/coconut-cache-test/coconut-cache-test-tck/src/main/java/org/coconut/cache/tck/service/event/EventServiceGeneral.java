@@ -9,7 +9,7 @@ import static org.coconut.test.CollectionUtils.M2;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.event.CacheEventService;
-import org.coconut.event.EventSubscription;
+import org.coconut.event.bus.EventSubscription;
 import org.junit.Test;
 
 public class EventServiceGeneral extends AbstractEventTestBundle{

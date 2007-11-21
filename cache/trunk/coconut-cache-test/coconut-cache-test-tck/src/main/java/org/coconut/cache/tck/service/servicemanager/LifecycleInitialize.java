@@ -71,7 +71,7 @@ public class LifecycleInitialize extends AbstractCacheTCKTest {
         final AtomicInteger verifier = new AtomicInteger();
         for (int i = 0; i < 10; i++) {
             final int j = i;
-            conf.serviceManager().add(new AbstractCacheLifecycle() {
+            conf.serviceManager().add(new AbstractLifecycleVerifier() {
                 @Override
                 public void initialize(CacheLifecycleInitializer cli) {
                     assertEquals(j, verifier.getAndIncrement());
@@ -94,7 +94,6 @@ public class LifecycleInitialize extends AbstractCacheTCKTest {
             @Override
             public void initialize(CacheLifecycleInitializer cli) {
                 super.initialize(cli);
-                assertEquals(getCacheType(), cli.getCacheType());
                 throw new IllegalMonitorStateException();
             }
         };

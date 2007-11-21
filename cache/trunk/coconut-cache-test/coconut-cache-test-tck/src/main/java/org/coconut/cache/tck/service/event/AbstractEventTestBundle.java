@@ -21,7 +21,7 @@ import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.core.EventProcessor;
-import org.coconut.event.EventSubscription;
+import org.coconut.event.bus.EventSubscription;
 import org.coconut.predicate.Predicate;
 import org.junit.After;
 import org.junit.Before;

@@ -94,7 +94,7 @@ public class DefaultCacheListener<K, V> extends AbstractCacheLifecycle implement
     }
 
     public long beforeTrim(Cache<K, V> cache, int newSize, long newVolume) {
-        return 0;
+        return statistics.beforeTrim(cache, newSize, newVolume);
     }
 
     public long beforeRemove(Cache<K, V> cache, Object key, Object value) {

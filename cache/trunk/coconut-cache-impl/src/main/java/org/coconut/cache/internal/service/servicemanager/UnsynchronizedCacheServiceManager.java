@@ -204,10 +204,11 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Initializes all services.
+     */
     private void initializeServices() {
         ces.initialize(conf);
-        initializedPublicServices.put(CacheServiceManagerService.class, ServiceManagerUtil
-                .wrapService(this));
         for (ServiceHolder si : services) {
             try {
                 final Map<Class<?>, Object> map = new HashMap<Class<?>, Object>();
@@ -236,16 +237,34 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
         }
     }
 
+    private void startServices() {
+        CacheServiceManagerService wrapped = ServiceManagerUtil.wrapService(this);
+        initializedPublicServices.put(CacheServiceManagerService.class, wrapped);
+        publicServices = Collections.unmodifiableMap(initializedPublicServices);
+        for (ServiceHolder si : services) {
+            try {
+                si.start(wrapped);
+            } catch (RuntimeException re) {
+                conf = null;
+                startupException = new CacheException("Could not start the cache", re);
+                status = RunState.COULD_NOT_START;
+                tryShutdownServices();
+                doTerminate();
+                throw startupException;
+            } catch (Error er) {
+                conf = null;
+                startupException = new CacheException("Could not start the cache", er);
+                status = RunState.COULD_NOT_START;
+                throw er;
+            }
+        }
+    }
+    
     private void doStart() {
         status = RunState.STARTING;
+        startServices();
         try {
-            publicServices = Collections.unmodifiableMap(initializedPublicServices);
-
-            for (ServiceHolder si : services) {
-                si.start((CacheServiceManagerService) initializedPublicServices
-                        .get(CacheServiceManagerService.class));
-            }
-
+            
             // register mbeans
             CacheManagementService cms = (CacheManagementService) publicServices
                     .get(CacheManagementService.class);
@@ -276,7 +295,6 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
             conf = null; // Conf can be GC'ed now
         }
     }
-
     private Map<CacheLifecycle, RuntimeException> tryTerminateServices() {
         Map<CacheLifecycle, RuntimeException> m = new HashMap<CacheLifecycle, RuntimeException>();
         for (Iterator<ServiceHolder> iterator = services.descendingIterator(); iterator.hasNext();) {
@@ -284,6 +302,21 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
             if (sh.isInitialized()) {
                 try {
                     sh.terminated();
+                } catch (RuntimeException e) {
+                    m.put(sh.service, e);
+                }
+            }
+        }
+        return m;
+    }
+    
+    private Map<CacheLifecycle, RuntimeException> tryShutdownServices() {
+        Map<CacheLifecycle, RuntimeException> m = new HashMap<CacheLifecycle, RuntimeException>();
+        for (Iterator<ServiceHolder> iterator = services.descendingIterator(); iterator.hasNext();) {
+            ServiceHolder sh = iterator.next();
+            if (sh.isStarted()) {
+                try {
+                    sh.shutdown();
                 } catch (RuntimeException e) {
                     m.put(sh.service, e);
                 }
@@ -331,7 +364,9 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
         boolean isInitialized() {
             return state >= 2;
         }
-
+        boolean isStarted() {
+            return state >= 4;
+        }
         boolean isInternal() {
             return isInternal;
         }

@@ -3,13 +3,13 @@
  */
 package org.coconut.cache.service.management;
 
-import static org.coconut.internal.util.XmlUtil.addAndSetText;
-import static org.coconut.internal.util.XmlUtil.addAndsaveObject;
+import static org.coconut.internal.util.XmlUtil.*;
+import static org.coconut.internal.util.XmlUtil.addTypedElement;
 import static org.coconut.internal.util.XmlUtil.addComment;
 import static org.coconut.internal.util.XmlUtil.attributeBooleanGet;
 import static org.coconut.internal.util.XmlUtil.getChild;
-import static org.coconut.internal.util.XmlUtil.loadOptional;
-import static org.coconut.internal.util.XmlUtil.readValue;
+import static org.coconut.internal.util.XmlUtil.loadChildObject;
+import static org.coconut.internal.util.XmlUtil.contentStringGet;
 
 import java.lang.management.ManagementFactory;
 
@@ -182,9 +182,9 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
     /** {@inheritDoc} */
     @Override
     protected void fromXML(Element e) throws Exception {
-        domain = readValue(getChild(XML_DOMAIN_TAG, e), CacheMXBean.DEFAULT_JMX_DOMAIN);
+        domain = contentStringGet(getChild(XML_DOMAIN_TAG, e), CacheMXBean.DEFAULT_JMX_DOMAIN);
         enabled = attributeBooleanGet(e, XML_ENABLED_ATTRIBUTE, false);
-        registrant = loadOptional(e, XML_REGISTRANT_TAG, ManagedVisitor.class);
+        registrant = loadChildObject(e, XML_REGISTRANT_TAG, ManagedVisitor.class);
         if (attributeBooleanGet(e, "usePlatformMBeanServer", false)) {
             // This is bit whacked but we need it for consistency sake
             // sick configuration->ParentCache with custom MBeanServer
@@ -203,7 +203,7 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
 
         /* Domain */
         if (domain != null && !domain.equals(CacheMXBean.DEFAULT_JMX_DOMAIN)) {
-            addAndSetText(doc, XML_DOMAIN_TAG, base, domain);
+            addElementAndSetContent(doc, XML_DOMAIN_TAG, base, domain);
         }
 
         /* MBeanServer */
@@ -216,7 +216,7 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
         }
 
         /* Registrant */
-        addAndsaveObject(doc, base, XML_REGISTRANT_TAG, getResourceBundle(), getClass(),
+        addTypedElement(doc, base, XML_REGISTRANT_TAG, getResourceBundle(), getClass(),
                 "saveOfRegistrantFailed", registrant);
 
     }

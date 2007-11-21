@@ -51,7 +51,7 @@ public class EventUtils2Test {
 
     @Test
     public void testIgnoreEventHandler() {
-        EventProcessor<?> e = EventUtils.ignoreEventHandler();
+        EventProcessor<?> e = EventUtils.ignoreEventProcessor();
         e.process(null); // ignore
     }
 

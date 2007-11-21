@@ -6,7 +6,7 @@ package org.coconut.cache.service.exceptionhandling;
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.core.AttributeMap;
-import org.coconut.event.EventSubscription;
+import org.coconut.event.bus.EventSubscription;
 
 /**
  * This class should define a number of standard {@link CacheExceptionHandler}s. However,

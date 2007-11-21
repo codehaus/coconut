@@ -43,17 +43,17 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     /**
      * Creates a new AbstractCache from the specified configuration.
      * 
-     * @param conf
+     * @param configuration
      *            the cache configuration to create the cache from
      */
     @SuppressWarnings("unchecked")
-    AbstractCache(CacheConfiguration<K, V> conf) {
-        if (conf == null) {
+    AbstractCache(CacheConfiguration<K, V> configuration) {
+        if (configuration == null) {
             throw new NullPointerException("configuration is null");
         }
-        ConfigurationValidator.getInstance().verify(conf, (Class) getClass());
-        String name = conf.getName();
-        clock = conf.getClock();
+        ConfigurationValidator.getInstance().verify(configuration, (Class) getClass());
+        String name = configuration.getName();
+        clock = configuration.getClock();
         if (name == null) {
             this.name = UUID.randomUUID().toString();
         } else {

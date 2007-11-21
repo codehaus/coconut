@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.event.defaults;
+package org.coconut.event.bus.defaults;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,10 +13,9 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
 
 import org.coconut.core.EventProcessor;
-import org.coconut.event.EventBus;
-import org.coconut.event.EventBusConfiguration;
-import org.coconut.event.EventSubscription;
-import org.coconut.event.spi.AbstractEventBus;
+import org.coconut.event.bus.EventBus;
+import org.coconut.event.bus.EventBusConfiguration;
+import org.coconut.event.bus.EventSubscription;
 import org.coconut.predicate.Predicate;
 import org.coconut.predicate.matcher.DefaultPredicateMatcher;
 import org.coconut.predicate.matcher.PredicateMatcher;
@@ -29,20 +28,18 @@ import org.coconut.predicate.matcher.PredicateMatcher;
 /**
  * @param <E>
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id$
+ * @version $Id: DefaultEventBus.java 415 2007-11-09 08:25:23Z kasper $
  */
 public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<E> {
 
-    final PredicateMatcher<DefaultEventSubscription<E>, E> indexer;
+    private final PredicateMatcher<DefaultEventSubscription<E>, E> indexer;
 
     private final Lock lock = new ReentrantLock();
 
     private final ConcurrentHashMap<String, DefaultEventSubscription<E>> subscribers = new ConcurrentHashMap<String, DefaultEventSubscription<E>>();
 
-    // specify indexer, log, thread pool
-    // management, ...
     public DefaultEventBus() {
-        this(EventBusConfiguration.DEFAULT_CONFIGURATION);
+        this((EventBusConfiguration) EventBusConfiguration.create());
     }
 
     public DefaultEventBus(EventBusConfiguration<E> conf) {
@@ -52,10 +49,6 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
         } else {
             indexer = (PredicateMatcher<DefaultEventSubscription<E>, E>) conf.getFilterMatcher();
         }
-    }
-
-    protected void cancel(EventSubscription<E> aes) {
-
     }
 
     @SuppressWarnings("unchecked")
@@ -129,24 +122,9 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
         }
     }
 
-    /**
-     * @see org.coconut.event.bus.defaults.AbstractEventBus#cancel(org.coconut.event.bus.defaults.AbstractEventBus.DefaultSubscription)
-     */
-    void cancel(DefaultEventSubscription<E> s) {
-        lock.lock();
-        try {
-            s.writeLock().lock();
-            try {
-                subscribers.remove(s.getName());
-                indexer.remove(s);
-                unsubscribed(s);
-                s.setActive(false);
-            } finally {
-                s.writeLock().unlock();
-            }
-        } finally {
-            lock.unlock();
-        }
+    private DefaultEventSubscription<E> newSubscription(EventProcessor<? super E> eventHandler,
+            Predicate<? super E> filter, String name) {
+        return new DefaultEventSubscription<E>(this, name, eventHandler, filter);
     }
 
     protected void deliver(final E element, EventSubscription<E> s) {
@@ -181,8 +159,23 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
         return true;
     }
 
-    DefaultEventSubscription<E> newSubscription(EventProcessor<? super E> eventHandler,
-            Predicate<? super E> filter, String name) {
-        return new DefaultEventSubscription<E>(this, name, eventHandler, filter);
+    /**
+     * @see org.coconut.event.bus.defaults.OldAbstractEventBus#cancel(org.coconut.event.bus.defaults.OldAbstractEventBus.DefaultSubscription)
+     */
+    void cancel(DefaultEventSubscription<E> s) {
+        lock.lock();
+        try {
+            s.writeLock().lock();
+            try {
+                subscribers.remove(s.getName());
+                indexer.remove(s);
+                unsubscribed(s);
+                s.setActive(false);
+            } finally {
+                s.writeLock().unlock();
+            }
+        } finally {
+            lock.unlock();
+        }
     }
 }

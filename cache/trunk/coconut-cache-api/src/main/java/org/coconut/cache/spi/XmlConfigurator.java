@@ -6,7 +6,6 @@ package org.coconut.cache.spi;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;

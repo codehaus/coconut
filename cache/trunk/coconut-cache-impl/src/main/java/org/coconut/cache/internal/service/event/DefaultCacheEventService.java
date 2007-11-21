@@ -8,7 +8,7 @@ import static org.coconut.cache.internal.service.event.InternalEntryEvent.evicte
 import static org.coconut.cache.internal.service.event.InternalEntryEvent.expired;
 import static org.coconut.cache.internal.service.event.InternalEntryEvent.removed;
 import static org.coconut.cache.internal.service.event.InternalEntryEvent.updated;
-import static org.coconut.cache.internal.service.event.InternalEvent.*;
+import static org.coconut.cache.internal.service.event.InternalEvent.cleared;
 
 import java.util.Collection;
 import java.util.Map;
@@ -16,7 +16,6 @@ import java.util.Map;
 import javax.management.Notification;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
@@ -28,7 +27,7 @@ import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
 import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
-import org.coconut.event.EventSubscription;
+import org.coconut.event.bus.EventSubscription;
 import org.coconut.predicate.Predicate;
 
 /**

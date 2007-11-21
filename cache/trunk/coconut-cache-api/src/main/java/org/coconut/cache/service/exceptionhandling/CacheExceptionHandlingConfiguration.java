@@ -3,8 +3,8 @@
  */
 package org.coconut.cache.service.exceptionhandling;
 
-import static org.coconut.internal.util.XmlUtil.addAndsaveObject;
-import static org.coconut.internal.util.XmlUtil.loadOptional;
+import static org.coconut.internal.util.XmlUtil.addTypedElement;
+import static org.coconut.internal.util.XmlUtil.loadChildObject;
 import static org.coconut.internal.util.XmlUtil.elementLoggerRead;
 import static org.coconut.internal.util.XmlUtil.elementLoggerAdd;
 
@@ -115,7 +115,7 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
         logger = elementLoggerRead(parent, EXCEPTION_LOGGER_TAG);
 
         /* Exception Handler */
-        exceptionHandler = loadOptional(parent, EXCEPTION_HANDLER_TAG, CacheExceptionHandler.class);
+        exceptionHandler = loadChildObject(parent, EXCEPTION_HANDLER_TAG, CacheExceptionHandler.class);
     }
 
     /** {@inheritDoc} */
@@ -125,7 +125,7 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
         elementLoggerAdd(doc, parent, EXCEPTION_LOGGER_TAG, logger);
 
         /* Exception Handler */
-        addAndsaveObject(doc, parent, EXCEPTION_HANDLER_TAG, getResourceBundle(), getClass(),
+        addTypedElement(doc, parent, EXCEPTION_HANDLER_TAG, getResourceBundle(), getClass(),
                 "saveOfExceptionHandlerFailed", exceptionHandler);
 
     }

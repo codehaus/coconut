@@ -281,7 +281,7 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
     static void add(Set<Class<?>> set, Document doc, Element parent, String parentTag,
             String tag) {
         if (set.size() > 0) {
-            Element e = XmlUtil.add(doc, parentTag, parent);
+            Element e = XmlUtil.addElement(doc, parentTag, parent);
             for (Class<?> c : set) {
                 String name = c.getCanonicalName();
                 if (c.getDeclaringClass() != null) {
@@ -291,7 +291,7 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
                             - 1)
                             + "$" + c.getSimpleName();
                 }
-                XmlUtil.add(doc, tag, e, name);
+                XmlUtil.addElementAndSetContent(doc, tag, e, name);
             }
         }
     }

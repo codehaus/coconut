@@ -3,7 +3,7 @@
  */
 package org.coconut.cache.service.servicemanager;
 
-import static org.coconut.internal.util.XmlUtil.addAndsaveObject;
+import static org.coconut.internal.util.XmlUtil.addTypedElement;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,11 +43,11 @@ public class CacheServiceManagerConfiguration extends AbstractCacheServiceConfig
 
     /**
      * Registers a object for the cache. Only objects of type {@link CacheLifecycle} or
-     * {@link ManagedLifecycle}, are valid. If the object is of type {@link CacheLifecycle}
-     * the cache will invoke the respectic lifecycle methods on the object. If the object
-     * is of type {@link ManagedLifecycle} and management is enabled for the cache (see
-     * {@link CacheManagementConfiguration#setEnabled(boolean)}). It will be registered
-     * with a {@link ManagedGroup}.
+     * {@link ManagedLifecycle}, are valid. If the object is of type
+     * {@link CacheLifecycle} the cache will invoke the respectic lifecycle methods on the
+     * object. If the object is of type {@link ManagedLifecycle} and management is enabled
+     * for the cache (see {@link CacheManagementConfiguration#setEnabled(boolean)}). It
+     * will be registered with a {@link ManagedGroup}.
      * 
      * @param o
      *            the object to register
@@ -92,8 +92,8 @@ public class CacheServiceManagerConfiguration extends AbstractCacheServiceConfig
     @Override
     protected void toXML(Document doc, Element parent) throws Exception {
         for (Object o : getObjects()) {
-            addAndsaveObject(doc, parent, SERVICE_TAG, getResourceBundle(),
-                    "CacheLoadingConfiguration.saveOfLoaderFailed", o);
+            addTypedElement(doc, parent, SERVICE_TAG, getResourceBundle(),
+                    CacheServiceManagerConfiguration.class, "saveOfLifecycleFailed", o);
         }
     }
 }

@@ -79,11 +79,11 @@ public class ServiceManagerObjects extends AbstractCacheTCKTest {
     static class LifeMo extends AbstractLifecycleVerifier implements ManagedLifecycle {
         ManagedGroup g;
 
-        int state;
+        AbstractLifecycleVerifier.Step state;
 
         public void manage(ManagedGroup parent) {
             g = parent;
-            state = getState();
+            state = getCurrentState();
         }
     }
 

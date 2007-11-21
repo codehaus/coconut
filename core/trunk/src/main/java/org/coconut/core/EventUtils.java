@@ -195,7 +195,7 @@ public final class EventUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <E> EventProcessor<E> ignoreEventHandler() {
+    public static <E> EventProcessor<E> ignoreEventProcessor() {
         return (EventProcessor<E>) fromOfferable(ignoreFalse());
     }
 

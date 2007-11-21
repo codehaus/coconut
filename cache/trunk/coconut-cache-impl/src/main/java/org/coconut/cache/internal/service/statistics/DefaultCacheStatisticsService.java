@@ -174,41 +174,41 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
         entryRemoveTime = new LongSamplingCounter(ENTRY_REMOVE_TIMER, getDesc(ENTRY_REMOVE_TIMER));
     }
 
-    public void addTo(ManagedGroup dg) {
-        ManagedGroup m = dg.addChild("Statistics", "");
-
-        ManagedGroup general = m.addChild("General", "");
-        general.add(cacheStatisticsResetCount);
-        general.add(cacheStatisticsResetLast);
-        general.add(entryExpiredCount);
-
-        ManagedGroup clear = m.addChild("Clear", "");
-        clear.add(cacheClearCount);
-        clear.add(cacheClearLast);
-        clear.add(cacheClearTime);
-
-        ManagedGroup eviction = m.addChild("Eviction", "");
-        eviction.add(cacheEvictCount);
-        eviction.add(cacheEvictLast);
-        eviction.add(cacheEvictTime);
-        eviction.add(entryEvictedCount);
-        eviction.add(entryEvictedTime);
-
-        ManagedGroup access = m.addChild("Access", "Statistics regarding access to the cache");
-        access.add(entryGetHitCount);
-        access.add(entryGetMissCount);
-        access.add(entryGetHitTime);
-        access.add(entryGetMissTime);
-        // access.add(new CacheRatio());
-
-        ManagedGroup put = m.addChild("Put", "");
-        put.add(entryPutCount);
-        put.add(entryPutTime);
-
-        ManagedGroup remove = m.addChild("Remove", "");
-        remove.add(entryRemoveCount);
-        remove.add(entryRemoveTime);
-    }
+// public void addTo(ManagedGroup dg) {
+// ManagedGroup m = dg.addChild("Statistics", "");
+//
+// ManagedGroup general = m.addChild("General", "");
+// general.add(cacheStatisticsResetCount);
+// general.add(cacheStatisticsResetLast);
+// general.add(entryExpiredCount);
+//
+// ManagedGroup clear = m.addChild("Clear", "");
+// clear.add(cacheClearCount);
+// clear.add(cacheClearLast);
+// clear.add(cacheClearTime);
+//
+// ManagedGroup eviction = m.addChild("Eviction", "");
+// eviction.add(cacheEvictCount);
+// eviction.add(cacheEvictLast);
+// eviction.add(cacheEvictTime);
+// eviction.add(entryEvictedCount);
+// eviction.add(entryEvictedTime);
+//
+// ManagedGroup access = m.addChild("Access", "Statistics regarding access to the cache");
+// access.add(entryGetHitCount);
+// access.add(entryGetMissCount);
+// access.add(entryGetHitTime);
+// access.add(entryGetMissTime);
+// // access.add(new CacheRatio());
+//
+// ManagedGroup put = m.addChild("Put", "");
+// put.add(entryPutCount);
+// put.add(entryPutTime);
+//
+// ManagedGroup remove = m.addChild("Remove", "");
+// remove.add(entryRemoveCount);
+// remove.add(entryRemoveTime);
+// }
 
     public void afterCacheClear(Cache<K, V> cache, long start,
             Collection<? extends CacheEntry<K, V>> removed, long capacity) {
@@ -219,55 +219,56 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
         cacheClearCount.incrementAndGet();
     }
 
-    public void afterCacheEvict(Cache<K, V> cache, long started, int size, int previousSize,
-            long capacity, long previousCapacity, Collection<? extends CacheEntry<K, V>> evicted,
-            Collection<? extends CacheEntry<K, V>> expired) {
-        long time = System.nanoTime() - started;
-        cacheEvictLast.run();
-        cacheEvictTime.report(time);
-        cacheEvictCount.incrementAndGet();
-        entryEvictedCount.addAndGet(evicted.size());
-        entryExpiredCount.addAndGet(expired.size());
-    }
+// public void afterCacheEvict(Cache<K, V> cache, long started, int size, int
+// previousSize,
+// long capacity, long previousCapacity, Collection<? extends CacheEntry<K, V>> evicted,
+// Collection<? extends CacheEntry<K, V>> expired) {
+// long time = System.nanoTime() - started;
+// cacheEvictLast.run();
+// cacheEvictTime.report(time);
+// cacheEvictCount.incrementAndGet();
+// entryEvictedCount.addAndGet(evicted.size());
+// entryExpiredCount.addAndGet(expired.size());
+// }
 
-    public void afterGet(Cache<K, V> cache, long started,
-            Collection<? extends CacheEntry<K, V>> evictedEntries, K key, CacheEntry<K, V> prev,
-            CacheEntry<K, V> newE, boolean isExpired) {
-        long time = System.nanoTime() - started;
-
-        // keep statistics about null loads
-
-        // we might also want to keep statistics about byte hit count..
-        // and cost hit count...
-        // total hit cost / total miss cost
-        boolean isHit = !isExpired && prev != null;
-
-        if (prev == null) {
-            if (newE == null) {
-
-            } else {
-
-            }
-        }
-        // TODO fix
-        if (isHit) {
-            entryGetHitTime.report(time);
-            entryGetHitCount.incrementAndGet();
-            double cost = prev.getCost();
-            entryGetHitCostCount.addAndGet(cost);
-            long size = prev.getSize();
-            entryGetHitSizeCount.addAndGet(size);
-        } else {
-            entryGetMissTime.report(time);
-            entryGetMissCount.incrementAndGet();
-            // if (entry != null) {
-            // double cost = entry.getCost();
-            // entryGetMissCostCount.addAndGet(cost);
-            // long size = entry.getSize();
-            // entryGetMissSizeCount.addAndGet(size);
-            // }
-        }
-    }
+// public void afterGet(Cache<K, V> cache, long started,
+// Collection<? extends CacheEntry<K, V>> evictedEntries, K key, CacheEntry<K, V> prev,
+// CacheEntry<K, V> newE, boolean isExpired) {
+// long time = System.nanoTime() - started;
+//
+// // keep statistics about null loads
+//
+// // we might also want to keep statistics about byte hit count..
+// // and cost hit count...
+// // total hit cost / total miss cost
+// boolean isHit = !isExpired && prev != null;
+//
+// if (prev == null) {
+// if (newE == null) {
+//
+// } else {
+//
+// }
+// }
+// // TODO fix
+// if (isHit) {
+// entryGetHitTime.report(time);
+// entryGetHitCount.incrementAndGet();
+// double cost = prev.getCost();
+// entryGetHitCostCount.addAndGet(cost);
+// long size = prev.getSize();
+// entryGetHitSizeCount.addAndGet(size);
+// } else {
+// entryGetMissTime.report(time);
+// entryGetMissCount.incrementAndGet();
+// // if (entry != null) {
+// // double cost = entry.getCost();
+// // entryGetMissCostCount.addAndGet(cost);
+// // long size = entry.getSize();
+// // entryGetMissSizeCount.addAndGet(size);
+// // }
+// }
+// }
 
     public void afterHit(Cache<K, V> cache, long started, K key, CacheEntry<K, V> entry) {
         long time = System.nanoTime() - started;
@@ -287,27 +288,13 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
         entryGetMissCount.incrementAndGet();
     }
 
-    public void afterPutAll(Cache<K, V> cache, long started,
-            Collection<? extends CacheEntry<K, V>> evictedEntries,
-            Map<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>> newPrevEntries) {
-
-    }
-
     public void afterPut(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries, CacheEntry<K, V> oldEntry,
-            CacheEntry<K, V> newEntry) {
-    // TODO Auto-generated method stub
+            CacheEntry<K, V> newEntry) {}
 
-    }
-
-    public void afterPutAll(Cache<K, V> cache, long start,
-            Collection<? extends CacheEntry<K, V>> entries,
-            Collection<? extends CacheEntry<K, V>> entries2,
-            Collection<? extends CacheEntry<K, V>> entries3) {
-        long time = System.nanoTime() - start;
-        entryPutTime.report(time);
-        entryPutCount.addAndGet(entries.size());
-    }
+    public void afterPutAll(Cache<K, V> cache, long started,
+            Collection<? extends CacheEntry<K, V>> evictedEntries,
+            Map<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>> newPrevEntries) {}
 
     public void afterRemove(Cache<K, V> cache, long start, CacheEntry<K, V> removed) {
         long time = System.nanoTime() - start;
@@ -321,25 +308,19 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
         entryRemoveCount.addAndGet(removed.size());
     }
 
-    public void afterReplace(Cache<K, V> cache, long started,
-            Collection<? extends CacheEntry<K, V>> evicted, CacheEntry<K, V> oldEntry,
-            CacheEntry<K, V> newEntry) {
-        long time = System.nanoTime() - started;
-        entryPutTime.report(time);
-        entryPutCount.incrementAndGet();
-    }
+//    public void afterReplace(Cache<K, V> cache, long started,
+//            Collection<? extends CacheEntry<K, V>> evicted, CacheEntry<K, V> oldEntry,
+//            CacheEntry<K, V> newEntry) {
+//        long time = System.nanoTime() - started;
+//        entryPutTime.report(time);
+//        entryPutCount.incrementAndGet();
+//    }
 
     public void afterTrimCache(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries, int previousSize, int newSize,
-            long previousVolume, long newVolume) {
-
-    }
+            long previousVolume, long newVolume) {}
 
     public long beforeCacheClear(Cache<K, V> cache) {
-        return System.nanoTime();
-    }
-
-    public long beforeCacheEvict(Cache<K, V> cache) {
         return System.nanoTime();
     }
 
@@ -359,21 +340,12 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
         return System.nanoTime();
     }
 
-    public long beforePutAll(Cache<K, V> cache, Map<? extends K, ? extends V> map) {
-        // TODO Auto-generated method stub
-        return 0;
+    public long beforePutAll(Cache<K, V> cache, Map<? extends K, ? extends V> t,
+            Map<? extends K, AttributeMap> attributes) {
+        return System.nanoTime();
     }
 
     public long beforeRemove(Cache<K, V> cache, Object key) {
-        return System.nanoTime();
-    }
-
-    public long beforeGetAll(Cache<K, V> cache, Collection<? extends K> keys) {
-        return System.nanoTime();
-    }
-
-    public long beforePutAll(Cache<K, V> cache, Map<? extends K, ? extends V> t,
-            Map<? extends K, AttributeMap> attributes) {
         return System.nanoTime();
     }
 
@@ -381,22 +353,8 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
         return System.nanoTime();
     }
 
-    public long beforeReplace(Cache<K, V> cache) {
-        return System.nanoTime();
-    }
-
-    public long beforeReplace(Cache<K, V> cache, K key, V oldValue, V newValue) {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
     public long beforeTrim(Cache<K, V> cache, int size, long volume) {
         return System.nanoTime();
-    }
-
-    public long beforeTrimToSize(Cache<K, V> cache) {
-        // TODO Auto-generated method stub
-        return 0;
     }
 
     public void cacheReset() {
@@ -410,26 +368,6 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
     public void doStart() {
         started = System.currentTimeMillis();
     }
-
-    public long entryEvictedStart(CacheEntry<K, V> entry) {
-        return System.nanoTime();
-    }
-
-    public long entryEvictedStop(CacheEntry<K, V> entry, long start) {
-        long time = System.nanoTime() - start;
-        entryEvictedTime.report(time);
-        entryEvictedCount.incrementAndGet();
-        return time;
-    }
-
-    public void entryExpired() {
-        entryExpiredCount.incrementAndGet();
-    }
-
-    public void entryExpired(int count) {
-        entryExpiredCount.addAndGet(count);
-    }
-
     public long entryPutStop(long start) {
         long time = System.nanoTime() - start;
         entryPutTime.report(time);
@@ -449,21 +387,16 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
     }
 
     /** {@inheritDoc} */
+    @Override
+    public void initialize(CacheLifecycleInitializer cli) {
+        cli.registerService(CacheStatisticsService.class, StatisticsUtils.wrapService(this));
+    }
+
+    /** {@inheritDoc} */
     public void manage(ManagedGroup parent) {
         ManagedGroup g = parent.addChild(CacheStatisticsConfiguration.SERVICE_NAME,
                 "Cache Statistics attributes and operations");
         g.add(StatisticsUtils.wrapMXBean(this));
-    }
-
-    public boolean needElementsAfterClear() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void initialize(CacheLifecycleInitializer cli) {
-        cli.registerService(CacheStatisticsService.class, StatisticsUtils.wrapService(this));
     }
 
     public void resetStatistics() {

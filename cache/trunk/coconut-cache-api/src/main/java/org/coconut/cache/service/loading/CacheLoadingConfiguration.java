@@ -3,9 +3,9 @@
  */
 package org.coconut.cache.service.loading;
 
-import static org.coconut.internal.util.XmlUtil.addAndsaveObject;
+import static org.coconut.internal.util.XmlUtil.addTypedElement;
 import static org.coconut.internal.util.XmlUtil.getChild;
-import static org.coconut.internal.util.XmlUtil.loadOptional;
+import static org.coconut.internal.util.XmlUtil.loadChildObject;
 
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
@@ -167,7 +167,7 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
     @Override
     protected void fromXML(Element parent) throws Exception {
         /* Loader */
-        this.loader = loadOptional(parent, LOADER_TAG, CacheLoader.class);
+        this.loader = loadChildObject(parent, LOADER_TAG, CacheLoader.class);
 
         /* Refresh timer */
         Element eTime = getChild(REFRESH_INTERVAL_TAG, parent);
@@ -175,14 +175,14 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
         setDefaultTimeToRefresh(time, TimeUnit.NANOSECONDS);
 
         /* Refresh Filter */
-        refreshPredicate = loadOptional(parent, REFRESH_PREDICATE_TAG, Predicate.class);
+        refreshPredicate = loadChildObject(parent, REFRESH_PREDICATE_TAG, Predicate.class);
     }
 
     /** {@inheritDoc} */
     @Override
     protected void toXML(Document doc, Element parent) {
         /* Cache Loader */
-        addAndsaveObject(doc, parent, LOADER_TAG, getResourceBundle(), getClass(),
+        addTypedElement(doc, parent, LOADER_TAG, getResourceBundle(), getClass(),
                 "saveOfLoaderFailed", loader);
 
         /* Refresh Timer */
@@ -190,7 +190,7 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
                 TimeUnit.NANOSECONDS, 0);
 
         /* Refresh Predicate */
-        addAndsaveObject(doc, parent, REFRESH_PREDICATE_TAG, getResourceBundle(), getClass(),
+        addTypedElement(doc, parent, REFRESH_PREDICATE_TAG, getResourceBundle(), getClass(),
                 "saveOfFilterFailed", refreshPredicate);
     }
 }

@@ -86,15 +86,13 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        ByteArrayOutputStream sos = new ByteArrayOutputStream();
         try {
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             Document doc = builder.newDocument();
             Element root = doc.createElement(serviceName);
             doc.appendChild(root);
             toXML(doc, root);
-            XmlUtil.prettyprint(doc, sos);
-            return new String(sos.toByteArray());
+            return XmlUtil.prettyprint(doc);
         } catch (Exception e) {
             if (conf.getClass().getPackage().getName().startsWith(
                     Cache.class.getPackage().getName())) {

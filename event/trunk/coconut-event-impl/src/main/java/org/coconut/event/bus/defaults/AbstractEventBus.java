@@ -1,26 +1,22 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.event.spi;
+package org.coconut.event.bus.defaults;
 
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.coconut.core.EventProcessor;
-import org.coconut.event.EventBus;
-import org.coconut.event.EventBusConfiguration;
-import org.coconut.event.EventSubscription;
+import org.coconut.event.bus.EventBus;
+import org.coconut.event.bus.EventBusConfiguration;
+import org.coconut.event.bus.EventSubscription;
 import org.coconut.predicate.Predicate;
 import org.coconut.predicate.Predicates;
 
 /**
- * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id$
- */
-/**
  * @param <E>
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id$
+ * @version $Id: AbstractEventBus.java 415 2007-11-09 08:25:23Z kasper $
  */
 public abstract class AbstractEventBus<E> implements EventBus<E> {
 
@@ -30,9 +26,14 @@ public abstract class AbstractEventBus<E> implements EventBus<E> {
 
     private final AtomicLong idGenerator = new AtomicLong();
 
-    public AbstractEventBus(EventBusConfiguration<E> conf) {
-        if (conf.getCheckReentrant()) {
+    AbstractEventBus(EventBusConfiguration<E> configuration) {
+        if (configuration == null) {
+            throw new NullPointerException("configuration is null");
+        }
+        if (configuration.getCheckReentrant()) {
             allowReentrance = new ThreadLocal<Boolean>();
+            allowReentrance.set(false);
+            throw new UnsupportedOperationException("check reentrant not supported yet");
         } else {
             allowReentrance = null;
         }
@@ -111,29 +112,23 @@ public abstract class AbstractEventBus<E> implements EventBus<E> {
         }
     }
 
-    protected void cancel(EventSubscription<E> aes) {
+    void cancel(EventSubscription<E> aes) {}
 
-    }
+    abstract boolean doInform(E element, boolean doThrow);
 
-    protected abstract boolean doInform(E element, boolean doThrow);
-
-    protected boolean doInformAll(Collection<? extends E> col, boolean doThrow) {
+    boolean doInformAll(Collection<? extends E> col, boolean doThrow) {
         boolean ok = true;
         for (E element : col) {
-            ok &= inform(element,doThrow);
+            ok &= inform(element, doThrow);
         }
         return ok;
     }
 
-    protected String getNextName(EventProcessor<? super E> eventHandler, Predicate<? super E> filter) {
+    String getNextName(EventProcessor<? super E> eventHandler, Predicate<? super E> predicate) {
         return SUBSCRIPTION_NAME_PREFIX + idGenerator.incrementAndGet();
     }
 
-    protected void subscribed(EventSubscription<E> s) {
+    void subscribed(EventSubscription<E> s) {}
 
-    }
-
-    protected void unsubscribed(EventSubscription<E> s) {
-
-    }
+    void unsubscribed(EventSubscription<E> s) {}
 }

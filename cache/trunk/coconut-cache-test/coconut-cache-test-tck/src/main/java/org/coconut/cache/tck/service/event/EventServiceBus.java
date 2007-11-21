@@ -9,7 +9,7 @@ import java.util.Collection;
 import org.coconut.cache.Cache;
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.core.EventProcessor;
-import org.coconut.event.EventSubscription;
+import org.coconut.event.bus.EventSubscription;
 import org.coconut.predicate.Predicate;
 import org.coconut.predicate.Predicates;
 import org.coconut.test.MockTestCase;

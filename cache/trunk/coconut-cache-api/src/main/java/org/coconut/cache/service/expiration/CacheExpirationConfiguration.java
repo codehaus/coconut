@@ -3,9 +3,9 @@
  */
 package org.coconut.cache.service.expiration;
 
-import static org.coconut.internal.util.XmlUtil.addAndsaveObject;
+import static org.coconut.internal.util.XmlUtil.addTypedElement;
 import static org.coconut.internal.util.XmlUtil.getChild;
-import static org.coconut.internal.util.XmlUtil.loadOptional;
+import static org.coconut.internal.util.XmlUtil.loadChildObject;
 
 import java.util.concurrent.TimeUnit;
 
@@ -148,7 +148,7 @@ public class CacheExpirationConfiguration<K, V> extends
         setDefaultTimeToLive(time, DEFAULT_TIME_UNIT);
 
         /* Expiration Filter */
-        expirationFilter = loadOptional(base, EXPIRATION_FILTER_TAG, Predicate.class);
+        expirationFilter = loadChildObject(base, EXPIRATION_FILTER_TAG, Predicate.class);
     }
 
     /** {@inheritDoc} */
@@ -159,7 +159,7 @@ public class CacheExpirationConfiguration<K, V> extends
                 DEFAULT_TIME_UNIT, DEFAULT.defaultTimeToLive);
 
         /* Filter */
-        addAndsaveObject(doc, parent, EXPIRATION_FILTER_TAG, getResourceBundle(),getClass(),
+        addTypedElement(doc, parent, EXPIRATION_FILTER_TAG, getResourceBundle(),getClass(),
                 "saveOfExpirationFilterFailed", expirationFilter);
     }
 }

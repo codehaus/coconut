@@ -7,6 +7,7 @@ import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.tck.RequireService;
 import org.coconut.cache.tck.service.servicemanager.ServiceManagerObjects.LifeMo;
 import org.coconut.cache.tck.service.servicemanager.ServiceManagerObjects.Mo;
+import org.coconut.cache.test.util.AbstractLifecycleVerifier;
 import org.junit.Test;
 
 @RequireService( { CacheManagementService.class })
@@ -32,7 +33,7 @@ public class ServiceManagerManagement extends AbstractCacheTCKTest {
         assertFalse(services().hasService(l.getClass()));
         prestart();
         l.shutdownAndAssert(c);
-        assertEquals(3, l.state);
+        assertEquals(AbstractLifecycleVerifier.Step.START, l.state);
         assertNotNull(l.g);
     }
 
