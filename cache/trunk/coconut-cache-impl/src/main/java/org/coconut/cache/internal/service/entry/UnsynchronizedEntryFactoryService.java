@@ -3,45 +3,57 @@
  */
 package org.coconut.cache.internal.service.entry;
 
-import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.core.AttributeMap;
+import org.coconut.core.Clock;
 
 /**
+ * This class creates unsynchronized instances of {@link AbstractCacheEntry}.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
+ * @param <K>
+ *            the type of keys maintained by the cache
+ * @param <V>
+ *            the type of mapped values
  */
-public class UnsynchronizedEntryFactoryService<K, V> extends
-        AbstractCacheEntryFactoryService<K, V> {
+public class UnsynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryFactoryService<K, V> {
 
-    private long defaultExpirationTime;
+    /** The default refresh time of newly added entries. */
+    private long defaultRefreshTimeNanos;
 
-    private long defaultRefreshTime;
-
-    public UnsynchronizedEntryFactoryService(CacheConfiguration<?, ?> conf,
-            InternalCacheExceptionService<K, V> exceptionHandler) {
-        super(conf.getClock(), exceptionHandler);
-    }
+    /** The default time to live of newly added entries. */
+    private long defaultTimeToLiveNanos;
 
     /**
-     * @see org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService#createEntry(java.lang.Object,
-     *      java.lang.Object, org.coconut.core.AttributeMap,
-     *      org.coconut.cache.internal.service.entry.AbstractCacheEntry)
+     * Creates a new UnsynchronizedEntryFactoryService.
+     * 
+     * @param clock
+     *            the clock used for calculating expiration and refresh times
+     * @param exceptionService the cache exception service
      */
+    public UnsynchronizedEntryFactoryService(Clock clock,
+            InternalCacheExceptionService<K, V> exceptionService) {
+        super(clock, exceptionService);
+    }
+
+    /** {@inheritDoc} */
     public AbstractCacheEntry<K, V> createEntry(K key, V value, AttributeMap attributes,
             AbstractCacheEntry<K, V> existing) {
         if (attributes == null) {
             attributes = createMap();
         }
-        long expirationTime = getTimeToLive(defaultExpirationTime, key, value, attributes, existing);
+        long expirationTime = getTimeToLive(defaultTimeToLiveNanos, key, value, attributes,
+                existing);
         double cost = getCost(key, value, attributes, existing);
         long size = getSize(key, value, attributes, existing);
         long creationTime = getCreationTime(key, value, attributes, existing);
         long lastUpdate = getLastModified(key, value, attributes, existing);
         long hits = getHits(key, value, attributes, existing);
-        long refreshTime = getTimeToRefresh(defaultRefreshTime, key, value, attributes, existing);
-        UnsynchronizedCacheEntry<K, V> newEntry = new UnsynchronizedCacheEntry<K, V>(
-                this, key, value, cost, creationTime, lastUpdate, size, refreshTime);
+        long refreshTime = getTimeToRefresh(defaultRefreshTimeNanos, key, value, attributes,
+                existing);
+        UnsynchronizedCacheEntry<K, V> newEntry = new UnsynchronizedCacheEntry<K, V>(key,
+                value, cost, creationTime, lastUpdate, size, refreshTime);
         newEntry.setHits(hits);
         newEntry.setExpirationTime(expirationTime);
 
@@ -52,21 +64,22 @@ public class UnsynchronizedEntryFactoryService<K, V> extends
     }
 
     /** {@inheritDoc} */
-    public long getExpirationTimeNanos() {
-        return defaultExpirationTime;
+    public long getDefaultTimeToLiveTimeNs() {
+        return defaultTimeToLiveNanos;
     }
 
     /** {@inheritDoc} */
-    public long getTimeToRefreshNanos() {
-        return defaultRefreshTime;
+    public long getTimeToRefreshNs() {
+        return defaultRefreshTimeNanos;
     }
-    
+
     /** {@inheritDoc} */
-    public void setExpirationTimeNanos(long nanos) {
-        this.defaultExpirationTime = nanos;
+    public void setDefaultTimeToLiveNs(long nanos) {
+        this.defaultTimeToLiveNanos = nanos;
     }
+
     /** {@inheritDoc} */
-    public void setTimeToFreshNanos(long nanos) {
-        this.defaultRefreshTime = nanos;
+    public void setTimeToRefreshNs(long nanos) {
+        this.defaultRefreshTimeNanos = nanos;
     }
 }

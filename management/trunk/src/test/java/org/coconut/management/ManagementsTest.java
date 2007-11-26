@@ -8,8 +8,8 @@ import java.lang.management.ManagementFactory;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 
-import org.coconut.management.defaults.OperationStubPublicMethod;
 import org.coconut.management.defaults.DefaultManagedGroup;
+import org.coconut.management.defaults.stubs.OperationStubPublicMethod;
 import org.junit.Before;
 import org.junit.Test;
 

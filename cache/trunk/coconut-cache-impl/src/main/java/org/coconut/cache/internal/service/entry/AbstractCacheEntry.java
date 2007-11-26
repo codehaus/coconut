@@ -83,7 +83,7 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         this.size = size;
     }
 
-    public abstract void accessed();
+    public abstract void accessed(InternalCacheEntryService<K, V> service);
 
     public void entryRemoved() {
 
@@ -163,13 +163,15 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
     public int hashCode() {
         return key.hashCode() ^ value.hashCode();
     }
-
-    public void incrementHits() {
-        setHits(getHits() + 1);
-    }
-
+    /**
+     * @param expirationTime
+     *            the expirationTime to set
+     */
     abstract void setExpirationTime(long time);
-
+    /**
+     * @param hits
+     *            the hits to set
+     */
     abstract void setHits(long hits);
 
     public void setNext(AbstractCacheEntry<K, V> entry) {

@@ -3,7 +3,10 @@
  */
 package org.coconut.cache.policy.util;
 
-import java.util.Collection;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertSame;
+import static junit.framework.Assert.assertTrue;
+
 import java.util.Collections;
 
 import org.coconut.cache.policy.paging.LRUPolicy;
@@ -16,7 +19,6 @@ import org.jmock.integration.junit4.JMock;
 import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static junit.framework.Assert.*;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

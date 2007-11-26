@@ -47,7 +47,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
     public AbstractCacheLoadingService(CacheLoadingConfiguration<K, V> loadingConfiguration,
             InternalCacheEntryService attributeFactory,
             InternalCacheExceptionService<K, V> exceptionHandler, LoadSupport<K, V> loadSupport) {
-        attributeFactory.setTimeToFreshNanos(LoadingUtils
+        attributeFactory.setTimeToRefreshNs(LoadingUtils
                 .getInitialTimeToRefresh(loadingConfiguration));
         this.loader = loadingConfiguration.getLoader();
         reloadFilter = loadingConfiguration.getRefreshPredicate();
@@ -129,7 +129,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
 
     /** {@inheritDoc} */
     public long getDefaultTimeToRefresh(TimeUnit unit) {
-        return LoadingUtils.convertNanosToRefreshTime(attributeFactory.getTimeToRefreshNanos(),
+        return LoadingUtils.convertNanosToRefreshTime(attributeFactory.getTimeToRefreshNs(),
                 unit);
     }
 
@@ -220,7 +220,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
 
     /** {@inheritDoc} */
     public void setDefaultTimeToRefresh(long timeToRefresh, TimeUnit unit) {
-        attributeFactory.setTimeToFreshNanos(LoadingUtils.convertRefreshTimeToNanos(timeToRefresh,
+        attributeFactory.setTimeToRefreshNs(LoadingUtils.convertRefreshTimeToNanos(timeToRefresh,
                 unit));
     }
 

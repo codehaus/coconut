@@ -42,7 +42,7 @@ public class SynchronizedEntryFactoryService<K, V> extends
         long hits = getHits(key, value, attributes, existing);
         long refreshTime = getTimeToRefresh(defaultRefreshTime, key, value, attributes,
                 existing);
-        SynchronizedCacheEntry<K, V> newEntry = new SynchronizedCacheEntry<K, V>(this, key,
+        SynchronizedCacheEntry<K, V> newEntry = new SynchronizedCacheEntry<K, V>(key,
                 value, cost, creationTime, lastUpdate, size, refreshTime, expirationTime,
                 hits);
 
@@ -53,28 +53,28 @@ public class SynchronizedEntryFactoryService<K, V> extends
     }
 
     /** {@inheritDoc} */
-    public synchronized long getExpirationTimeNanos() {
+    public synchronized long getDefaultTimeToLiveTimeNs() {
         synchronized (mutex) {
             return defaultExpirationTime;
         }
     }
 
     /** {@inheritDoc} */
-    public synchronized long getTimeToRefreshNanos() {
+    public synchronized long getTimeToRefreshNs() {
         synchronized (mutex) {
             return defaultRefreshTime;
         }
     }
 
     /** {@inheritDoc} */
-    public synchronized void setExpirationTimeNanos(long nanos) {
+    public synchronized void setDefaultTimeToLiveNs(long nanos) {
         synchronized (mutex) {
             this.defaultExpirationTime = nanos;
         }
     }
 
     /** {@inheritDoc} */
-    public void setTimeToFreshNanos(long nanos) {
+    public void setTimeToRefreshNs(long nanos) {
         synchronized (mutex) {
             this.defaultRefreshTime = nanos;
         }

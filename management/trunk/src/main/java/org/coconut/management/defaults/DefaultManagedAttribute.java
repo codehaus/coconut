@@ -11,11 +11,7 @@ import java.util.Map;
 
 import javax.management.IntrospectionException;
 import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanException;
 import javax.management.ReflectionException;
-import javax.management.RuntimeErrorException;
-import javax.management.RuntimeMBeanException;
-import javax.management.RuntimeOperationsException;
 
 import org.coconut.internal.util.StringUtil;
 import org.coconut.management.annotation.ManagedAttribute;
@@ -72,36 +68,33 @@ class DefaultManagedAttribute extends AbstractManagedAttribute {
     }
 
     /** {@inheritDoc} */
-    Object getValue() throws MBeanException, ReflectionException {
+    Object getValue() throws ReflectionException {
+        if (getter == null) {
+            throw new IllegalStateException("Attribute is write-only");
+        }
         try {
             return getter.invoke(obj, (Object[]) null);
         } catch (InvocationTargetException e) {
             Throwable t = e.getTargetException();
             if (t instanceof RuntimeException) {
-                throw new RuntimeMBeanException((RuntimeException) t,
-                        "RuntimeException thrown in the getter for the attribute " + getName());
+                throw (RuntimeException) t;
             } else if (t instanceof Error) {
-                throw new RuntimeErrorException((Error) t,
-                        "Error thrown in the getter for the attribute " + getName());
+                throw (Error) t;
             } else {
-                throw new MBeanException((Exception) t,
+                throw new ReflectionException((Exception) t,
                         "Exception thrown in the getter for the attribute " + getName());
             }
-        } catch (RuntimeException e) {
-            throw new RuntimeOperationsException(e,
-                    "RuntimeException thrown trying to invoke the getter" + " for the attribute "
-                            + getName());
         } catch (IllegalAccessException e) {
             throw new ReflectionException(e, "Exception thrown trying to"
                     + " invoke the getter for the attribute " + getName());
-        } catch (Error e) {
-            throw new RuntimeErrorException(e, "Error thrown trying to invoke the getter "
-                    + " for the attribute " + getName());
         }
     }
 
     /** {@inheritDoc} */
-    void setValue(Object o) throws ReflectionException, MBeanException {
+    void setValue(Object o) throws ReflectionException {
+        if (setter == null) {
+            throw new IllegalStateException("Attribute is read-only");
+        }
         try {
             setter.invoke(this.obj, o);
         } catch (IllegalAccessException e) {
@@ -110,13 +103,12 @@ class DefaultManagedAttribute extends AbstractManagedAttribute {
         } catch (InvocationTargetException e) {
             Throwable t = e.getTargetException();
             if (t instanceof RuntimeException) {
-                final String msg = "RuntimeException thrown in the setter for the attribute "
-                        + getName();
-                throw new RuntimeMBeanException((RuntimeException) t, msg);
+                throw (RuntimeException) t;
             } else if (t instanceof Error) {
-                throw new RuntimeErrorException((Error) t, "Error thrown in the MBean's setter");
+                throw (Error) t;
             } else {
-                throw new MBeanException((Exception) t, "Exception thrown in the MBean's setter");
+                throw new ReflectionException((Exception) t,
+                        "Exception thrown in the MBean's setter");
             }
         }
     }

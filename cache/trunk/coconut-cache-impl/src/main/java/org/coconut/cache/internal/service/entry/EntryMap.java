@@ -229,18 +229,15 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
         return false;
     }
 
-    /**
-     * @see java.util.AbstractMap#entrySet()
-     */
     public Set<Map.Entry<K, V>> entrySetPublic(ConcurrentMap<K, V> cache) {
         if (isThreadSafe) {
             synchronized (cache) {
-                return (entrySet != null) ? entrySet : (entrySet = (Set) new EntrySetSynchronized<K, V>(cache,
-                        this, false));
+                return (entrySet != null) ? entrySet
+                        : (entrySet = (Set) new EntrySetSynchronized<K, V>(cache, this));
             }
         } else {
-            return (entrySet != null) ? entrySet : (entrySet = (Set) new EntrySet<K, V>(cache,
-                    this, false));
+            return (entrySet != null) ? entrySet
+                    : (entrySet = (Set) new EntrySet<K, V>(cache, this));
         }
     }
 
@@ -448,14 +445,10 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             return nextEntry != null;
         }
 
-        /**
-         * @see java.util.Iterator#next()
-         */
+        /** {@inheritDoc} */
         public abstract E next();
 
-        /**
-         * @see java.util.Iterator#remove()
-         */
+        /** {@inheritDoc} */
         public void remove() {
             if (entry == null)
                 throw new IllegalStateException();
@@ -503,14 +496,12 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
     static class EntrySetSynchronized<K, V> extends EntrySet<K, V> {
         private final Object mutex;
 
-        EntrySetSynchronized(ConcurrentMap<K, V> cache, EntryMap<K, V> map, boolean copyEntries) {
-            super(cache, map, copyEntries);
+        EntrySetSynchronized(ConcurrentMap<K, V> cache, EntryMap<K, V> map) {
+            super(cache, map);
             this.mutex = cache;
         }
 
-        /**
-         * @see java.util.AbstractSet#equals(java.lang.Object)
-         */
+        /** {@inheritDoc} */
         @Override
         public boolean equals(Object o) {
             synchronized (mutex) {
@@ -518,9 +509,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
         }
 
-        /**
-         * @see java.util.AbstractSet#hashCode()
-         */
+        /** {@inheritDoc} */
         @Override
         public int hashCode() {
             synchronized (mutex) {
@@ -528,9 +517,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
         }
 
-        /**
-         * @see java.util.AbstractSet#removeAll(java.util.Collection)
-         */
+        /** {@inheritDoc} */
         @Override
         public boolean removeAll(Collection<?> c) {
             synchronized (mutex) {
@@ -538,9 +525,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
         }
 
-        /**
-         * @see java.util.AbstractCollection#containsAll(java.util.Collection)
-         */
+        /** {@inheritDoc} */
         @Override
         public boolean containsAll(Collection<?> c) {
             synchronized (mutex) {
@@ -548,9 +533,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
         }
 
-        /**
-         * @see java.util.AbstractCollection#retainAll(java.util.Collection)
-         */
+        /** {@inheritDoc} */
         @Override
         public boolean retainAll(Collection<?> c) {
             synchronized (mutex) {
@@ -558,9 +541,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
         }
 
-        /**
-         * @see java.util.AbstractCollection#toArray()
-         */
+        /** {@inheritDoc} */
         @Override
         public Object[] toArray() {
             synchronized (mutex) {
@@ -568,9 +549,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
         }
 
-        /**
-         * @see java.util.AbstractCollection#toArray(T[])
-         */
+        /** {@inheritDoc} */
         @Override
         public <T> T[] toArray(T[] a) {
             synchronized (mutex) {
@@ -578,9 +557,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
         }
 
-        /**
-         * @see java.util.AbstractCollection#toString()
-         */
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             synchronized (mutex) {
@@ -588,6 +565,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean contains(Object o) {
             synchronized (mutex) {
@@ -595,6 +573,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean remove(Object o) {
             synchronized (mutex) {
@@ -611,21 +590,19 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
 
         final boolean copyEntries;
 
-        /* Whacked */
-        final EntrySet<K, V> noCopySet;
-
-        EntrySet(ConcurrentMap<K, V> cache, EntryMap<K, V> map, boolean copyEntries) {
+        EntrySet(ConcurrentMap<K, V> cache, EntryMap<K, V> map) {
             this.map = map;
             this.cache = cache;
-            this.copyEntries = copyEntries;
-            noCopySet = copyEntries ? new EntrySet(cache, map, false) : null;
+            this.copyEntries = false;
         }
 
+        /** {@inheritDoc} */
         @Override
         public void clear() {
             cache.clear();
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean contains(Object o) {
             if (o == null) {
@@ -641,19 +618,14 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             return v != null && (v == val || v.equals(val));
         }
 
-        /**
-         * @see java.util.AbstractCollection#iterator()
-         */
+        /** {@inheritDoc} */
         @Override
         public Iterator<CacheEntry<K, V>> iterator() {
             map.ics.checkRunning("iterator");
-            if (copyEntries) {
-                return new EntrySetCopyIterator<K, V>(cache, map);
-            } else {
-                return (Iterator) new EntrySetIterator<K, V>(cache, map);
-            }
+            return (Iterator) new EntrySetIterator<K, V>(cache, map);
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean remove(Object o) {
             if (o == null) {
@@ -666,83 +638,65 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             return cache.remove(e.getKey(), e.getValue());
         }
 
-        /**
-         * @see java.util.AbstractCollection#size()
-         */
+        /** {@inheritDoc} */
         @Override
         public int size() {
             return cache.size();
         }
 
-        /**
-         * @see java.util.AbstractSet#equals(java.lang.Object)
-         */
+        /** {@inheritDoc} */
         @Override
         public boolean equals(Object o) {
-            return noCopySet == null ? super.equals(o) : noCopySet.equals(o);
+            return super.equals(o);
         }
 
-        /**
-         * @see java.util.AbstractSet#hashCode()
-         */
+        /** {@inheritDoc} */
         @Override
         public int hashCode() {
-            return noCopySet == null ? super.hashCode() : noCopySet.hashCode();
+            return super.hashCode();
         }
 
-        /**
-         * @see java.util.AbstractCollection#containsAll(java.util.Collection)
-         */
+        /** {@inheritDoc} */
         @Override
         public boolean containsAll(Collection<?> c) {
             map.ics.checkRunning("contains", false);
-            return noCopySet == null ? super.containsAll(c) : noCopySet.containsAll(c);
+            return super.containsAll(c);
         }
 
-        /**
-         * @see java.util.AbstractCollection#retainAll(java.util.Collection)
-         */
+        /** {@inheritDoc} */
         @Override
         public boolean retainAll(Collection<?> c) {
-            return noCopySet == null ? super.retainAll(c) : noCopySet.retainAll(c);
+            return super.retainAll(c);
         }
 
-        /**
-         * @see java.util.AbstractCollection#toArray()
-         */
+        /** {@inheritDoc} */
         @Override
         public Object[] toArray() {
             if (size() == 0) {
                 return new Object[0];
             }
-            return noCopySet == null ? super.toArray() : noCopySet.toArray();
+            return super.toArray();
         }
 
-        /**
-         * @see java.util.AbstractCollection#toArray(T[])
-         */
+        /** {@inheritDoc} */
         @Override
         public <T> T[] toArray(T[] a) {
             if (size() == 0) {
                 return a;
             }
-            return noCopySet == null ? super.toArray(a) : noCopySet.toArray(a);
+            return super.toArray(a);
         }
 
-        /**
-         * @see java.util.AbstractCollection#toString()
-         */
+        /** {@inheritDoc} */
         @Override
         public String toString() {
-            return noCopySet == null ? super.toString() : noCopySet.toString();
+            return super.toString();
         }
 
-        /**
-         * @see java.util.AbstractSet#removeAll(java.util.Collection)
-         */
+        /** {@inheritDoc} */
         @Override
         public boolean removeAll(Collection<?> c) {
-            return noCopySet == null ? super.removeAll(c) : noCopySet.removeAll(c);
+            return super.removeAll(c);
         }
     }
 
@@ -751,21 +705,10 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             super(cache, map);
         }
 
+        /** {@inheritDoc} */
         @Override
         public AbstractCacheEntry<K, V> next() {
             return nextEntry();
-        }
-    }
-
-    static class EntrySetCopyIterator<K, V> extends BaseIterator<K, V, CacheEntry<K, V>> {
-
-        EntrySetCopyIterator(Map<K, V> cache, EntryMap<K, V> map) {
-            super(cache, map);
-        }
-
-        @Override
-        public CacheEntry<K, V> next() {
-            return new ImmutableCacheEntry<K, V>(nextEntry());
         }
     }
 
@@ -774,6 +717,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             super(cache, map);
         }
 
+        /** {@inheritDoc} */
         @Override
         public K next() {
             return nextEntry().getKey();
@@ -788,9 +732,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             this.mutex = cache;
         }
 
-        /**
-         * @see java.util.AbstractSet#equals(java.lang.Object)
-         */
+        /** {@inheritDoc} */
         @Override
         public boolean equals(Object o) {
             synchronized (mutex) {
@@ -798,9 +740,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
         }
 
-        /**
-         * @see java.util.AbstractSet#hashCode()
-         */
+        /** {@inheritDoc} */
         @Override
         public int hashCode() {
             synchronized (mutex) {
@@ -808,9 +748,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
         }
 
-        /**
-         * @see java.util.AbstractSet#removeAll(java.util.Collection)
-         */
+        /** {@inheritDoc} */
         @Override
         public boolean removeAll(Collection<?> c) {
             synchronized (mutex) {
@@ -818,9 +756,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
         }
 
-        /**
-         * @see java.util.AbstractCollection#containsAll(java.util.Collection)
-         */
+        /** {@inheritDoc} */
         @Override
         public boolean containsAll(Collection<?> c) {
             synchronized (mutex) {
@@ -828,9 +764,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
         }
 
-        /**
-         * @see java.util.AbstractCollection#retainAll(java.util.Collection)
-         */
+        /** {@inheritDoc} */
         @Override
         public boolean retainAll(Collection<?> c) {
             synchronized (mutex) {
@@ -838,9 +772,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
         }
 
-        /**
-         * @see java.util.AbstractCollection#toArray()
-         */
+        /** {@inheritDoc} */
         @Override
         public Object[] toArray() {
             synchronized (mutex) {
@@ -848,9 +780,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
         }
 
-        /**
-         * @see java.util.AbstractCollection#toArray(T[])
-         */
+        /** {@inheritDoc} */
         @Override
         public <T> T[] toArray(T[] a) {
             synchronized (mutex) {
@@ -858,9 +788,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
         }
 
-        /**
-         * @see java.util.AbstractCollection#toString()
-         */
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             synchronized (mutex) {
@@ -880,33 +808,32 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             this.cache = cache;
         }
 
+        /** {@inheritDoc} */
         @Override
         public void clear() {
             cache.clear();
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean contains(Object o) {
             return cache.containsKey(o);
         }
 
-        /**
-         * @see java.util.AbstractCollection#iterator()
-         */
+        /** {@inheritDoc} */
         @Override
         public Iterator<K> iterator() {
             map.ics.checkRunning("iterator");
             return new KeyIterator<K, V>(cache, map);
         }
 
-        /**
-         * @see java.util.AbstractCollection#size()
-         */
+        /** {@inheritDoc} */
         @Override
         public int size() {
             return cache.size();
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean remove(Object o) {
             if (o == null) {
@@ -915,6 +842,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             return cache.remove(o) != null;
         }
 
+        /** {@inheritDoc} */
         @Override
         public Object[] toArray() {
             if (size() == 0) {
@@ -923,6 +851,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             return super.toArray();
         }
 
+        /** {@inheritDoc} */
         @Override
         public <T> T[] toArray(T[] a) {
             if (size() == 0) {
@@ -937,6 +866,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             super(cache, map);
         }
 
+        /** {@inheritDoc} */
         @Override
         public V next() {
             return nextEntry().getValue();
@@ -951,6 +881,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             this.mutex = cache;
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean remove(Object o) {
             synchronized (mutex) {
@@ -958,9 +889,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
         }
 
-        /**
-         * @see java.util.AbstractCollection#containsAll(java.util.Collection)
-         */
+        /** {@inheritDoc} */
         @Override
         public boolean containsAll(Collection<?> c) {
             synchronized (mutex) {
@@ -968,9 +897,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
         }
 
-        /**
-         * @see java.util.AbstractCollection#retainAll(java.util.Collection)
-         */
+        /** {@inheritDoc} */
         @Override
         public boolean retainAll(Collection<?> c) {
             synchronized (mutex) {
@@ -978,9 +905,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
         }
 
-        /**
-         * @see java.util.AbstractCollection#toArray()
-         */
+        /** {@inheritDoc} */
         @Override
         public Object[] toArray() {
             synchronized (mutex) {
@@ -988,9 +913,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
         }
 
-        /**
-         * @see java.util.AbstractCollection#toArray(T[])
-         */
+        /** {@inheritDoc} */
         @Override
         public <T> T[] toArray(T[] a) {
             synchronized (mutex) {
@@ -998,9 +921,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
         }
 
-        /**
-         * @see java.util.AbstractCollection#toString()
-         */
+        /** {@inheritDoc} */
         @Override
         public String toString() {
             synchronized (mutex) {
@@ -1008,9 +929,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
         }
 
-        /**
-         * @see org.coconut.cache.internal.service.entry.EntryMap.Values#removeAll(java.util.Collection)
-         */
+        /** {@inheritDoc} */
         @Override
         public boolean removeAll(Collection<?> c) {
             synchronized (mutex) {
@@ -1029,9 +948,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             this.cache = cache;
         }
 
-        /**
-         * @see java.util.AbstractCollection#removeAll(java.util.Collection)
-         */
+        /** {@inheritDoc} */
         @Override
         public boolean removeAll(Collection<?> c) {
             if (c == null) {
@@ -1040,6 +957,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             return super.removeAll(c);
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean remove(Object o) {
             if (o == null) {
@@ -1048,6 +966,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             return super.remove(o);
         }
 
+        /** {@inheritDoc} */
         @Override
         public Object[] toArray() {
             if (size() == 0) {
@@ -1056,6 +975,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             return super.toArray();
         }
 
+        /** {@inheritDoc} */
         @Override
         public <T> T[] toArray(T[] a) {
             if (size() == 0) {
@@ -1064,32 +984,29 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             return super.toArray(a);
         }
 
+        /** {@inheritDoc} */
         @Override
         public void clear() {
             cache.clear();
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean contains(Object o) {
             return cache.containsValue(o);
         }
 
-        /**
-         * @see java.util.AbstractCollection#iterator()
-         */
+        /** {@inheritDoc} */
         @Override
         public Iterator<V> iterator() {
             map.ics.checkRunning("iterator");
             return new ValueIterator<K, V>(cache, map);
         }
 
-        /**
-         * @see java.util.AbstractCollection#size()
-         */
+        /** {@inheritDoc} */
         @Override
         public int size() {
             return cache.size();
         }
     }
-
 }

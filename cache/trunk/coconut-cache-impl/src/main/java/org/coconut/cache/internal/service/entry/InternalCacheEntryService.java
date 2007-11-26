@@ -28,11 +28,12 @@ public interface InternalCacheEntryService<K, V> {
      */
     AttributeMap createMap();
 
-    void setExpirationTimeNanos(long nanos);
+    void setDefaultTimeToLiveNs(long nanos);
 
-    long getExpirationTimeNanos();
+    long getDefaultTimeToLiveTimeNs();
 
-    void setTimeToFreshNanos(long nanos);
+    void setTimeToRefreshNs(long nanos);
 
-    long getTimeToRefreshNanos();
+    long getTimeToRefreshNs();
+    long getAccessTimeStamp(AbstractCacheEntry<K, V> entry);
 }

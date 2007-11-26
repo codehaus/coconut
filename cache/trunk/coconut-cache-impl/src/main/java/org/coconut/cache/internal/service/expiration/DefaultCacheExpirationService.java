@@ -67,7 +67,7 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
         this.helper = helper;
         this.expirationFilter = confExpiration.getExpirationFilter();
         this.attributeFactory = attributeFactory;
-        attributeFactory.setExpirationTimeNanos(ExpirationUtils
+        attributeFactory.setDefaultTimeToLiveNs(ExpirationUtils
                 .getInitialTimeToLiveNS(confExpiration));
     }
 
@@ -79,7 +79,7 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
     /** {@inheritDoc} */
     public long getDefaultTimeToLive(TimeUnit unit) {
         return ExpirationUtils.convertNanosToExpirationTime(attributeFactory
-                .getExpirationTimeNanos(), unit);
+                .getDefaultTimeToLiveTimeNs(), unit);
     }
 
     /** {@inheritDoc} */
@@ -141,6 +141,6 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
     /** {@inheritDoc} */
     public void setDefaultTimeToLive(long timeToLive, TimeUnit unit) {
         long time = ExpirationUtils.convertExpirationTimeToNanos(timeToLive, unit);
-        attributeFactory.setExpirationTimeNanos(time == 0 ? Long.MAX_VALUE : time);
+        attributeFactory.setDefaultTimeToLiveNs(time == 0 ? Long.MAX_VALUE : time);
     }
 }

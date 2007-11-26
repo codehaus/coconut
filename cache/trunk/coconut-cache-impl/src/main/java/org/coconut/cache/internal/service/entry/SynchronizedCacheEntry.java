@@ -9,8 +9,6 @@ package org.coconut.cache.internal.service.entry;
  */
 public class SynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
 
-    private final AbstractCacheEntryFactoryService<K, V> service;
-
     private volatile long expirationTime;
 
     private volatile long hits;
@@ -27,11 +25,9 @@ public class SynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
      * @param lastUpdateTime
      * @param size
      */
-    public SynchronizedCacheEntry(AbstractCacheEntryFactoryService<K, V> service, K key,
-            V value, double cost, long creationTime, long lastUpdateTime, long size,
-            long refreshTime, long expirationTime, long hits) {
+    public SynchronizedCacheEntry(K key, V value, double cost, long creationTime,
+            long lastUpdateTime, long size, long refreshTime, long expirationTime, long hits) {
         super(key, value, cost, creationTime, lastUpdateTime, size);
-        this.service = service;
         this.refreshTime = refreshTime;
         this.expirationTime = expirationTime;
         this.hits = hits;
@@ -58,7 +54,7 @@ public class SynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
         return lastAccessedTime;
     }
 
-    public void accessed() {
+    public void accessed(InternalCacheEntryService<K, V> service) {
         lastAccessedTime = service.getAccessTimeStamp(this);
         hits++;
     }

@@ -5,7 +5,6 @@ package org.coconut.management.defaults;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -27,7 +26,6 @@ import javax.management.MBeanOperationInfo;
 import javax.management.ReflectionException;
 
 import org.coconut.management.ManagedGroup;
-import org.coconut.management.annotation.ManagedOperation;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -39,7 +37,7 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
 
     private volatile MBeanInfo mbeanInfo;
 
-    private final Map<String, List<AbstractManagedOperation>> ops = new ConcurrentHashMap<String, List<AbstractManagedOperation>>();
+    private final Map<OperationKey, AbstractManagedOperation> ops = new ConcurrentHashMap<OperationKey, AbstractManagedOperation>();
 
     private final Set<Object> os = new CopyOnWriteArraySet<Object>();
 
@@ -73,26 +71,7 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
         }
         attributes.putAll(DefaultManagedAttribute.fromPropertyDescriptors(bi
                 .getPropertyDescriptors(), o));
-
-        for (Method m : o.getClass().getMethods()) {
-            ManagedOperation mo = m.getAnnotation(ManagedOperation.class);
-            if (mo != null) {
-                String name = ManagementUtil.filterString(o, mo.defaultValue());
-                if (name.equals("")) {
-                    name = m.getName();
-                }
-                String description = ManagementUtil.filterString(o, mo.description());
-                AbstractManagedOperation io = new DefaultManagedOperation(o, m, name, description);
-                List<AbstractManagedOperation> l = ops.get(name);
-                if (l == null) {
-                    l = new ArrayList<AbstractManagedOperation>();
-                    ops.put(name, l);
-                }
-                l.add(io);
-                // TODO fix
-                // throw new IllegalArgumentException(name);
-            }
-        }
+        ops.putAll(DefaultManagedOperation.fromPropertyDescriptors(bi.getMethodDescriptors(), o));
         os.add(o);
         return this;
     }
@@ -133,17 +112,15 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
             try {
                 l.add(aa.getInfo());
             } catch (IntrospectionException e) {
-                e.printStackTrace();
+                throw new IllegalStateException(e);
             }
         }
         List<MBeanOperationInfo> lo = new ArrayList<MBeanOperationInfo>();
-        for (List<AbstractManagedOperation> li : ops.values()) {
-            for (AbstractManagedOperation aa : li) {
-                try {
-                    lo.add(aa.getInfo());
-                } catch (IntrospectionException e) {
-                    e.printStackTrace();
-                }
+        for (AbstractManagedOperation op : ops.values()) {
+            try {
+                lo.add(op.getInfo());
+            } catch (IntrospectionException e) {
+                throw new IllegalStateException(e);
             }
         }
 
@@ -161,11 +138,9 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
     /** {@inheritDoc} */
     public Object invoke(String actionName, Object[] params, String[] signature)
             throws MBeanException, ReflectionException {
-        List<AbstractManagedOperation> aa = ops.get(actionName);
+        AbstractManagedOperation aa = ops.get(new OperationKey(actionName, signature));
         if (aa != null) {
-            for (AbstractManagedOperation ao : aa) {
-                return ao.invoke(params);
-            }
+            return aa.invoke(params);
         }
         return null;
     }

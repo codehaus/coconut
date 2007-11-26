@@ -17,8 +17,6 @@ public class UnsynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
 
     long refreshTime;
 
-    private final AbstractCacheEntryFactoryService<K, V> service;
-
     /**
      * @param key
      * @param value
@@ -27,70 +25,51 @@ public class UnsynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
      * @param lastUpdateTime
      * @param size
      */
-    public UnsynchronizedCacheEntry(AbstractCacheEntryFactoryService<K, V> service,
-            K key, V value, double cost, long creationTime, long lastUpdateTime,
-            long size, long refreshTime) {
+    public UnsynchronizedCacheEntry(K key, V value, double cost, long creationTime,
+            long lastUpdateTime, long size, long refreshTime) {
         super(key, value, cost, creationTime, lastUpdateTime, size);
-        this.service = service;
         this.refreshTime = refreshTime;
 // this.expirationTime = expirationTime;
 // this.hits = hits;
 // this.lastAccessTime = lastAccessTime;
     }
 
-    public void accessed() {
+    /** {@inheritDoc} */
+    public void accessed(InternalCacheEntryService<K, V> service) {
         lastAccessTime = service.getAccessTimeStamp(this);
         hits++;
     }
 
-    /**
-     * @see org.coconut.cache.CacheEntry#getExpirationTime()
-     */
+    /** {@inheritDoc} */
     public long getExpirationTime() {
         return expirationTime;
     }
 
-    /**
-     * @see org.coconut.cache.CacheEntry#getHits()
-     */
+    /** {@inheritDoc} */
     public long getHits() {
         return hits;
     }
 
-    /**
-     * @see org.coconut.cache.CacheEntry#getLastAccessTime()
-     */
+    /** {@inheritDoc} */
     public long getLastAccessTime() {
         return lastAccessTime;
     }
 
-    /**
-     * @param expirationTime
-     *            the expirationTime to set
-     */
-    public void setExpirationTime(long expirationTime) {
-        this.expirationTime = expirationTime;
-    }
-
-    /**
-     * @param hits
-     *            the hits to set
-     */
-    public void setHits(long hits) {
-        this.hits = hits;
-    }
-
-    /**
-     * @param lastAccessTime
-     *            the lastAccessTime to set
-     */
-    void setLastAccessTime(long lastAccessTime) {
-        this.lastAccessTime = lastAccessTime;
-    }
-
+    /** {@inheritDoc} */
     @Override
     public long getRefreshTime() {
         return refreshTime;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public void setExpirationTime(long expirationTime) {
+        this.expirationTime = expirationTime;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void setHits(long hits) {
+        this.hits = hits;
+    }
 }

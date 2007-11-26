@@ -191,7 +191,7 @@ public class EntryMapTest {
     static class EntryStub extends UnsynchronizedCacheEntry<Integer, String> {
 
         public EntryStub(Integer key, String value) {
-            super(null, key, value, -1, 0, 0, 0,0);
+            super(key, value, -1, 0, 0, 0,0);
         }
     }
 }

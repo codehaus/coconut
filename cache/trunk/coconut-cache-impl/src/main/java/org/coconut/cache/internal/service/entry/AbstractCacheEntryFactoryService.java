@@ -29,7 +29,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
     /** Used for calculating timestamps. */
     private final Clock clock;
 
-    private final InternalCacheExceptionService<K, V> errorHandler;
+    private final InternalCacheExceptionService<K, V> exceptionService;
 
     /**
      * Creates a new AbstractCacheEntryFactoryService.
@@ -43,7 +43,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
     public AbstractCacheEntryFactoryService(Clock clock,
             InternalCacheExceptionService<K, V> exceptionHandler) {
         this.clock = clock;
-        this.errorHandler = exceptionHandler;
+        this.exceptionService = exceptionHandler;
     }
 
     /**
@@ -101,7 +101,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
         try {
             return CacheAttributes.getSize(attributes);
         } catch (IllegalArgumentException iae) {
-            errorHandler.getExceptionHandler().handleWarning(errorHandler.createContext(),
+            exceptionService.getExceptionHandler().handleWarning(exceptionService.createContext(),
                     iae.getMessage() + " was added for key = " + key);
             return CacheAttributes.DEFAULT_SIZE;
         }
@@ -113,7 +113,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
             expirationTimeNanos = CacheAttributes.getTimeToLive(attributes, TimeUnit.NANOSECONDS,
                     expirationTimeNanos);
         } catch (IllegalArgumentException iae) {
-            errorHandler.getExceptionHandler().handleWarning(errorHandler.createContext(),
+            exceptionService.getExceptionHandler().handleWarning(exceptionService.createContext(),
                     iae.getMessage() + " was added for key = " + key);
         }
 
@@ -138,7 +138,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
         try {
             return CacheAttributes.getCost(attributes);
         } catch (IllegalArgumentException iae) {
-            errorHandler.getExceptionHandler().handleWarning(errorHandler.createContext(),
+            exceptionService.getExceptionHandler().handleWarning(exceptionService.createContext(),
                     iae.getMessage() + " was added for key = " + key);
             return CacheAttributes.DEFAULT_COST;
         }
@@ -148,7 +148,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
         try {
             return CacheAttributes.getHits(attributes);
         } catch (IllegalArgumentException iae) {
-            errorHandler.getExceptionHandler().handleWarning(errorHandler.createContext(),
+            exceptionService.getExceptionHandler().handleWarning(exceptionService.createContext(),
                     iae.getMessage() + " was added for key = " + key);
             return clock.timestamp();
         }
@@ -158,7 +158,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
         try {
             return CacheAttributes.getLastUpdated(attributes, clock);
         } catch (IllegalArgumentException iae) {
-            errorHandler.getExceptionHandler().handleWarning(errorHandler.createContext(),
+            exceptionService.getExceptionHandler().handleWarning(exceptionService.createContext(),
                     iae.getMessage() + " was added for key = " + key);
             return clock.timestamp();
         }
@@ -170,7 +170,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
             refreshTimeNanos = CacheAttributes.getTimeToRefresh(attributes, TimeUnit.NANOSECONDS,
                     refreshTimeNanos);
         } catch (IllegalArgumentException iae) {
-            errorHandler.getExceptionHandler().handleWarning(errorHandler.createContext(),
+            exceptionService.getExceptionHandler().handleWarning(exceptionService.createContext(),
                     iae.getMessage() + " was added for key = " + key);
         }
         return clock.getDeadlineFromNow(refreshTimeNanos, TimeUnit.NANOSECONDS);
@@ -179,8 +179,8 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
     long getCreationTime(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
         long creationTime = attributes.getLong(CacheAttributes.CREATION_TIME);
         if (creationTime < 0) {
-            errorHandler.getExceptionHandler().handleWarning(
-                    errorHandler.createContext(),
+            exceptionService.getExceptionHandler().handleWarning(
+                    exceptionService.createContext(),
                     "Must specify a positive creation time [Attribute="
                             + CacheAttributes.CREATION_TIME + " , creationtime = " + creationTime
                             + " for key = " + key);
@@ -194,7 +194,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
         }
     }
 
-    long getAccessTimeStamp(AbstractCacheEntry<K, V> entry) {
+    public long getAccessTimeStamp(AbstractCacheEntry<K, V> entry) {
         return clock.timestamp();
     }
 }

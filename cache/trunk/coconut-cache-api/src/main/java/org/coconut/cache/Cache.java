@@ -104,7 +104,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
 
     /**
      * Returns <tt>true</tt> if this cache contains a mapping for the specified key.
-     * More formally, returns <tt>true</tt> if and only if this map contains a mapping
+     * More formally, returns <tt>true</tt> if and only if this cache contains a mapping
      * for a key <tt>k</tt> such that <tt>(key==null ? k==null : key.equals(k))</tt>.
      * (There can be at most one such mapping.)
      * <p>
@@ -259,7 +259,8 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
 
     /**
      * Returns the name of the cache. If no name has been specified while configuring the
-     * cache. The cache must choose a valid name.
+     * cache. The cache must choose a valid name. A valid name contains no other
+     * characters then alphanumeric characters and '_' or '-'.
      * 
      * @return the name of the cache
      * @see CacheConfiguration#setName(String)
@@ -278,7 +279,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @throws IllegalArgumentException
      *             if no service of the specified type exist
      * @throws NullPointerException
-     *             if the specified service is null
+     *             if the specified service type is null
      * @see org.coconut.cache.CacheServices
      * @see CacheServiceManagerService#hasService(Class)
      * @see CacheServiceManagerService#getAllServices()
@@ -297,9 +298,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * Returns <tt>true</tt> if this cache contains no elements.
      * <p>
      * If this cache has not been started a call to this method will automatically start
-     * it.
-     * <p>
-     * This method will always return <tt>true</tt> if this cache has been shutdown.
+     * it. If this cache has been shutdown this method returns <tt>true</tt>.
      * 
      * @return <tt>true</tt> if this cache contains no elements
      */
@@ -320,9 +319,9 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     boolean isStarted();
 
     /**
-     * Returns <tt>true</tt> if all tasks have completed following shut down. Note that
-     * <tt>isTerminated</tt> is never <tt>true</tt> unless either <tt>shutdown</tt>
-     * or <tt>shutdownNow</tt> was called first.
+     * Returns <tt>true</tt> if all service tasks have completed following shut down.
+     * Note that <tt>isTerminated</tt> is never <tt>true</tt> unless either
+     * <tt>shutdown</tt> or <tt>shutdownNow</tt> was called first.
      * 
      * @return <tt>true</tt> if all tasks have completed following shut down
      */
@@ -331,12 +330,13 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     /**
      * Returns a {@link Set} view of the keys contained in this cache. The set is backed
      * by the cache, so changes to the cache are reflected in the set, and vice-versa. If
-     * the map is modified while an iteration over the set is in progress (except through
-     * the iterator's own <tt>remove</tt> operation), the results of the iteration are
-     * undefined. The set supports element removal, which removes the corresponding
-     * mapping from the map, via the <tt>Iterator.remove</tt>, <tt>Set.remove</tt>,
-     * <tt>removeAll</tt>, <tt>retainAll</tt>, and <tt>clear</tt> operations. It
-     * does not support the <tt>add</tt> or <tt>addAll</tt> operations.
+     * the cache is modified while an iteration over the set is in progress (except
+     * through the iterator's own <tt>remove</tt> operation), the results of the
+     * iteration are undefined. The set supports element removal, which removes the
+     * corresponding mapping from the cache, via the <tt>Iterator.remove</tt>,
+     * <tt>Set.remove</tt>, <tt>removeAll</tt>, <tt>retainAll</tt>, and
+     * <tt>clear</tt> operations. It does not support the <tt>add</tt> or
+     * <tt>addAll</tt> operations.
      * <p>
      * Unlike {@link Cache#get(Object)} no methods on the view checks if an element has
      * expired. For example, iterating though key set the view might return a key for an
@@ -484,30 +484,26 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     V putIfAbsent(K key, V value);
 
     /**
-     * Removes the mapping for a key from this map if it is present (optional operation).
-     * More formally, if this map contains a mapping from key <tt>k</tt> to value
-     * <tt>v</tt> such that <code>(key==null ?  k==null : key.equals(k))</code>, that
-     * mapping is removed. (The map can contain at most one such mapping.)
+     * Removes the mapping for a key from this cache if it is present (optional
+     * operation). More formally, if this cache contains a mapping from key <tt>k</tt>
+     * to value <tt>v</tt> such that <code>(key==null ?  k==null : key.equals(k))</code>,
+     * that mapping is removed. (The cache can contain at most one such mapping.)
      * <p>
-     * Returns the value to which this map previously associated the key, or <tt>null</tt>
-     * if the map contained no mapping for the key.
+     * Returns the value to which this cache previously associated the key, or
+     * <tt>null</tt> if the cache contained no mapping for the key.
      * <p>
-     * If this map permits null values, then a return value of <tt>null</tt> does not
-     * <i>necessarily</i> indicate that the map contained no mapping for the key; it's
-     * also possible that the map explicitly mapped the key to <tt>null</tt>.
-     * <p>
-     * The map will not contain a mapping for the specified key once the call returns.
+     * The cache will not contain a mapping for the specified key once the call returns.
      * 
      * @param key
-     *            key whose mapping is to be removed from the map
+     *            key whose mapping is to be removed from the cache
      * @return the previous value associated with <tt>key</tt>, or <tt>null</tt> if
      *         there was no mapping for <tt>key</tt>.
      * @throws UnsupportedOperationException
-     *             if the <tt>remove</tt> operation is not supported by this map
+     *             if the <tt>remove</tt> operation is not supported by this cache
      * @throws IllegalStateException
      *             if the cache has been shutdown
      * @throws ClassCastException
-     *             if the key is of an inappropriate type for this map (optional)
+     *             if the key is of an inappropriate type for this cache (optional)
      * @throws NullPointerException
      *             if the specified key is null
      */
@@ -671,9 +667,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * <tt>Integer.MAX_VALUE</tt> elements, returns <tt>Integer.MAX_VALUE</tt>.
      * <p>
      * If this cache has not been started a call to this method will automatically start
-     * it.
-     * <p>
-     * This method will always return <tt>0</tt> if this cache has been shutdown.
+     * it. If this cache has been shutdown this method returns <tt>0</tt>.
      * 
      * @return the number of elements in this cache
      */

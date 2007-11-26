@@ -70,6 +70,7 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
         clock = conf.getClock();
         container.registerComponentInstance(this);
         container.registerComponentInstance(cache.getName());
+        container.registerComponentInstance(conf.getClock());
         container.registerComponentInstance(cache);
         container.registerComponentInstance(helper);
         container.registerComponentInstance(conf);

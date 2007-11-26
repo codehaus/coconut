@@ -36,4 +36,14 @@ class ManagementUtil {
 
         return params;
     }
+
+    static String[] methodStringSignature(Method method) {
+        Class[] classes = method.getParameterTypes();
+        String[] params = new String[classes.length];
+
+        for (int i = 0; i < classes.length; i++) {
+            params[i] = classes[i].getName();
+        }
+        return params;
+    }
 }

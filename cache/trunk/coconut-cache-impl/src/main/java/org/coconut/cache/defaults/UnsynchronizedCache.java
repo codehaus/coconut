@@ -242,7 +242,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
                 evictionService.remove(entry.getPolicyIndex());
             } else {
                 // reload if needed??
-                entry.accessed();
+                entry.accessed(entryService);
                 evictionService.touch(entry.getPolicyIndex());
             }
         }
@@ -293,7 +293,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
                     loadMe.add(key);
                 } else {
                     // reload if needed??
-                    entry.accessed();
+                    entry.accessed(entryService);
                     evictionService.touch(entry.getPolicyIndex());
                     result.put(key, entry.getValue());
                 }

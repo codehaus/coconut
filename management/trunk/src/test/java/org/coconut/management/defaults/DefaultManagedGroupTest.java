@@ -8,7 +8,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import javax.management.Attribute;
 import javax.management.JMException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanInfo;
@@ -18,6 +17,9 @@ import javax.management.MBeanServerFactory;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
+import org.coconut.management.defaults.stubs.AttributedStub1;
+import org.coconut.management.defaults.stubs.AttributedStub2;
+import org.coconut.management.defaults.stubs.OperationStubPublicMethod;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,7 +34,7 @@ public class DefaultManagedGroupTest {
         try {
             ON = new ObjectName("example:name=hello");
         } catch (MalformedObjectNameException e) {
-            throw new RuntimeException(e);
+            throw new Error(e);
         }
     }
 
@@ -95,7 +97,8 @@ public class DefaultManagedGroupTest {
         assertEquals(1, o.invokeCount);
         assertEquals("m3", server.invoke(ON, "method3", null, null));
 
-        assertEquals("FOO", server.invoke(ON, "method4", new Object[] { "foo" }, null));
+        assertEquals("FOO", server.invoke(ON, "method4", new Object[] { "foo" },
+                new String[] { "java.lang.String" }));
 
         moi = findOperation(info.getOperations(), "method5");
         assertEquals("desca", moi.getDescription());
@@ -106,7 +109,7 @@ public class DefaultManagedGroupTest {
 
     @Test
     public void testAttributeStub3() throws JMException {
-        AttributedStub3 o = new AttributedStub3();
+        AttributedStub1 o = new AttributedStub1();
         dmg.add(o);
         dmg.register(server, ON);
         assertEquals(initCount + 1, server.getMBeanCount().intValue());
@@ -126,8 +129,8 @@ public class DefaultManagedGroupTest {
 
         assertNull(server.getAttribute(ON, "String"));
 
-//        server.setAttribute(ON, new Attribute("String", "foo"));
-//        assertEquals("foo", server.getAttribute(ON, "String"));
+// server.setAttribute(ON, new Attribute("String", "foo"));
+// assertEquals("foo", server.getAttribute(ON, "String"));
     }
 
     static MBeanOperationInfo findOperation(MBeanOperationInfo[] operations, String name) {

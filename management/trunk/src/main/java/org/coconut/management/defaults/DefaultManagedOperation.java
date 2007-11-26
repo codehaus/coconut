@@ -3,15 +3,18 @@
  */
 package org.coconut.management.defaults;
 
+import java.beans.MethodDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.management.IntrospectionException;
 import javax.management.MBeanException;
 import javax.management.MBeanOperationInfo;
 import javax.management.ReflectionException;
-import javax.management.RuntimeErrorException;
-import javax.management.RuntimeMBeanException;
+
+import org.coconut.management.annotation.ManagedOperation;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -26,6 +29,7 @@ class DefaultManagedOperation extends AbstractManagedOperation {
 
     /**
      * Creates a new DefaultManagedOperation.
+     * 
      * @param obj
      *            the object the specified method should be invoked on
      * @param method
@@ -54,19 +58,18 @@ class DefaultManagedOperation extends AbstractManagedOperation {
     Object invoke(Object... objects) throws MBeanException, ReflectionException {
         try {
             return m.invoke(o, objects);
-        } catch (IllegalArgumentException e) {
-            throw new ReflectionException(e);/* Should never happen */
         } catch (IllegalAccessException e) {
-            throw new ReflectionException(e);/* Should never happen */
+            throw new ReflectionException(e, "Exception thrown trying to"
+                    + " invoke the operation " + getName());
         } catch (InvocationTargetException e) {
             Throwable t = e.getTargetException();
             if (t instanceof RuntimeException) {
-                final String msg = "RuntimeException thrown in method " + m;
-                throw new RuntimeMBeanException((RuntimeException) t, msg);
+                throw (RuntimeException) t;
             } else if (t instanceof Error) {
-                throw new RuntimeErrorException((Error) t, "Error thrown in the method " + m);
+                throw (Error) t;
             } else {
-                throw new MBeanException((Exception) t, "Exception thrown in the method " + m);
+                throw new ReflectionException((Exception) t,
+                        "Exception thrown while invoking the operation " + getName());
             }
         }
     }
@@ -78,4 +81,23 @@ class DefaultManagedOperation extends AbstractManagedOperation {
                 .methodSignature(m), m.getReturnType().getName(), MBeanOperationInfo.UNKNOWN);
     }
 
+    public static Map<OperationKey, AbstractManagedOperation> fromPropertyDescriptors(
+            MethodDescriptor[] pds, Object obj) {
+        Map<OperationKey, AbstractManagedOperation> result = new HashMap<OperationKey, AbstractManagedOperation>();
+        for (MethodDescriptor pd : pds) {
+            ManagedOperation mo = pd.getMethod().getAnnotation(ManagedOperation.class);
+            if (mo != null) {
+                String name = ManagementUtil.filterString(obj, mo.defaultValue());
+                if (name.equals("")) {
+                    name = pd.getName();
+                }
+                String description = ManagementUtil.filterString(obj, mo.description());
+                DefaultManagedOperation dmo = new DefaultManagedOperation(obj, pd.getMethod(),
+                        name, description);
+                result.put(new OperationKey(name, ManagementUtil.methodStringSignature(pd
+                        .getMethod())), dmo);
+            }
+        }
+        return result;
+    }
 }

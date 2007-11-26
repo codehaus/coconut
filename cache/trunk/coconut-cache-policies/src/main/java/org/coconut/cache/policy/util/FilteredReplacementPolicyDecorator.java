@@ -19,7 +19,7 @@ import org.coconut.core.AttributeMap;
 public class FilteredReplacementPolicyDecorator<T> extends ReplacementPolicyDecorator<T> {
 
     /** The policy filter we are decorating. */
-    private final AttributedFilter<T> filter;
+    private final AttributedPredicate<T> filter;
 
     /**
      * Creates a new FilteredPolicyDecorator from the specified replacement policy and
@@ -27,38 +27,35 @@ public class FilteredReplacementPolicyDecorator<T> extends ReplacementPolicyDeco
      * 
      * @param policy
      *            the replacement to decorate
-     * @param filter
+     * @param predicate
      *            the policy filter that decides if the specified element should be
      *            accepted
      * @throws NullPointerException
      *             if the specified policy or filter is <code>null</code>
      */
-    public FilteredReplacementPolicyDecorator(ReplacementPolicy<T> policy, AttributedFilter<T> filter) {
+    public FilteredReplacementPolicyDecorator(ReplacementPolicy<T> policy,
+            AttributedPredicate<T> predicate) {
         super(policy);
-        if (filter == null) {
-            throw new NullPointerException("filter is null");
+        if (predicate == null) {
+            throw new NullPointerException("predicate is null");
         }
-        this.filter = filter;
+        this.filter = predicate;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int add(T data, AttributeMap attributes) {
-        if (filter.accept(data, attributes)) {
+        if (filter.evaluate(data, attributes)) {
             return super.add(data, attributes);
         } else {
             return -1;
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean update(int index, T newElement, AttributeMap attributes) {
-        if (filter.accept(newElement, attributes)) {
+        if (filter.evaluate(newElement, attributes)) {
             return super.update(index, newElement, attributes);
         } else {
             remove(index);
@@ -71,7 +68,7 @@ public class FilteredReplacementPolicyDecorator<T> extends ReplacementPolicyDeco
      * 
      * @return the attributed filter that is being used
      */
-    protected AttributedFilter<T> getFilter() {
+    protected AttributedPredicate<T> getFilter() {
         return filter;
     }
 
@@ -79,7 +76,7 @@ public class FilteredReplacementPolicyDecorator<T> extends ReplacementPolicyDeco
      * @param <T>
      *            the type of elements accepted by this filter
      */
-    static class MinimumCostFilter<T> implements AttributedFilter<T> {
+    static class MinimumCostFilter<T> implements AttributedPredicate<T> {
         /** The minimum cost of an element that will be accepted. */
         private final double minimumCost;
 
@@ -96,7 +93,7 @@ public class FilteredReplacementPolicyDecorator<T> extends ReplacementPolicyDeco
         /**
          * {@inheritDoc}
          */
-        public boolean accept(T t, AttributeMap attributes) {
+        public boolean evaluate(T t, AttributeMap attributes) {
             double cost = CacheAttributes.getCost(attributes);
             return cost >= minimumCost;
         }
@@ -106,7 +103,7 @@ public class FilteredReplacementPolicyDecorator<T> extends ReplacementPolicyDeco
      * @param <T>
      *            the type of elements accepted by this filter
      */
-    static class MaximumSizeFilter<T> implements AttributedFilter<T> {
+    static class MaximumSizeFilter<T> implements AttributedPredicate<T> {
         /** The maximum size of an element that will be accepted. */
         private final long threshold;
 
@@ -118,8 +115,8 @@ public class FilteredReplacementPolicyDecorator<T> extends ReplacementPolicyDeco
          */
         public MaximumSizeFilter(final long maximumSize) {
             if (maximumSize <= 0) {
-                throw new IllegalArgumentException(
-                        "threshold must be a positive number, was " + maximumSize);
+                throw new IllegalArgumentException("threshold must be a positive number, was "
+                        + maximumSize);
             }
             this.threshold = maximumSize;
         }
@@ -127,7 +124,7 @@ public class FilteredReplacementPolicyDecorator<T> extends ReplacementPolicyDeco
         /**
          * {@inheritDoc}
          */
-        public boolean accept(T t, AttributeMap attributes) {
+        public boolean evaluate(T t, AttributeMap attributes) {
             long size = CacheAttributes.getSize(attributes);
             return size <= threshold;
         }

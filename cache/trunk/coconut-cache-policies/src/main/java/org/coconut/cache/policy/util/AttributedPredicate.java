@@ -10,9 +10,9 @@ import org.coconut.core.AttributeMap;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public interface AttributedFilter<T> {
+public interface AttributedPredicate<T> {
     /**
-     * Tests the given element an attributemap for acceptance.
+     * Tests the given element and attributemap for acceptance.
      * 
      * @param t
      *            The element to check
@@ -30,5 +30,5 @@ public interface AttributedFilter<T> {
      *             some aspect of this element prevents it from being evaluated by this
      *             filter.
      */
-    boolean accept(T t, AttributeMap attributes);
+    boolean evaluate(T t, AttributeMap attributes);
 }

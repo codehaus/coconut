@@ -72,22 +72,18 @@ abstract class AbstractManagedAttribute {
      * Returns the value of the attribute.
      *
      * @return the value of the attribute
-     * @throws MBeanException
-     *             could not get the value of the attribute
      * @throws ReflectionException
      *             could not get the value of the attribute
      */
-    abstract Object getValue() throws MBeanException, ReflectionException;
+    abstract Object getValue() throws ReflectionException;
 
     /**
      * Sets the value of the attribute to specified object.
      * 
      * @param o
      *            the value that the attribute should be set to
-     * @throws MBeanException
-     *             could not set the attribute
      * @throws ReflectionException
      *             could not set the attribute
      */
-    abstract void setValue(Object o) throws MBeanException, ReflectionException;
+    abstract void setValue(Object o) throws ReflectionException;
 }
