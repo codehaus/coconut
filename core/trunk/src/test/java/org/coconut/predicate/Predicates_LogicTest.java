@@ -12,8 +12,6 @@ import static org.junit.Assert.fail;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.coconut.predicate.Predicate;
-import org.coconut.predicate.Predicates;
 import org.coconut.predicate.Predicates.AllPredicate;
 import org.coconut.predicate.Predicates.AnyPredicate;
 import org.junit.Test;

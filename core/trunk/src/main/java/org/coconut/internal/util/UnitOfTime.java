@@ -6,9 +6,6 @@ package org.coconut.internal.util;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 /**
  * Mostly Copied from the TimeUnit class for Jave SE 6.0.
  * The reason is primarily support for minutes,hours and days.

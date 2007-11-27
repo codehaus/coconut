@@ -5,6 +5,7 @@ package org.coconut.cache.service.exceptionhandling;
 
 import java.util.Map;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
@@ -12,7 +13,6 @@ import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
-import org.coconut.core.AttributeMap;
 import org.coconut.event.bus.EventSubscription;
 
 /**

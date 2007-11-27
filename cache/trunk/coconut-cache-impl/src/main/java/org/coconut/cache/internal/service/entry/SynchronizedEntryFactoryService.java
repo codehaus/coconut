@@ -3,10 +3,10 @@
  */
 package org.coconut.cache.internal.service.entry;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
-import org.coconut.core.AttributeMap;
 
 public class SynchronizedEntryFactoryService<K, V> extends
         AbstractCacheEntryFactoryService<K, V> {

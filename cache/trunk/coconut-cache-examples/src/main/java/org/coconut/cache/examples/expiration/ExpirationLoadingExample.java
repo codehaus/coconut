@@ -5,12 +5,12 @@ package org.coconut.cache.examples.expiration;
 
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.defaults.UnsynchronizedCache;
 import org.coconut.cache.service.loading.AbstractCacheLoader;
-import org.coconut.core.AttributeMap;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -20,7 +20,7 @@ public class ExpirationLoadingExample {
     // START SNIPPET: class
     static class ExpirationLoader extends AbstractCacheLoader<Integer, String> {
         public String load(Integer key, AttributeMap attributes) throws Exception {
-            CacheAttributes.setTimeToLive(attributes, 60 * 60, TimeUnit.SECONDS);
+            CacheAttributes.TIME_TO_LIVE_ATR.set(attributes, 60 * 60, TimeUnit.SECONDS);
             return "some value";
         }
     }

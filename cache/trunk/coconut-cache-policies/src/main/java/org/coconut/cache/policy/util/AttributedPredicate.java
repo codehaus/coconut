@@ -3,7 +3,7 @@
  */
 package org.coconut.cache.policy.util;
 
-import org.coconut.core.AttributeMap;
+import org.coconut.attribute.AttributeMap;
 
 /**
  * @param <T>

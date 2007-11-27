@@ -8,11 +8,11 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingMXBean;
 import org.coconut.cache.service.loading.CacheLoadingService;
-import org.coconut.core.AttributeMap;
 import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.annotation.ManagedOperation;
 

@@ -6,8 +6,8 @@ package org.coconut.cache.test.util;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.service.loading.AbstractCacheLoader;
-import org.coconut.core.AttributeMap;
 
 /**
  * A simple cache loader used for testing. Will return 1->A, 2->B, 3->C, 4->D, 5->E and

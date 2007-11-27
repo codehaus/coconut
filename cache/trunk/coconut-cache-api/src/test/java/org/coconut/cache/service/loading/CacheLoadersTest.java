@@ -5,11 +5,9 @@ package org.coconut.cache.service.loading;
 
 import static junit.framework.Assert.assertNull;
 
-import java.util.Arrays;
-
+import org.coconut.attribute.AttributeMaps;
 import org.coconut.cache.Cache;
 import org.coconut.cache.DummyCache;
-import org.coconut.core.AttributeMaps;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;

@@ -135,7 +135,7 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V> {
      * store the element.
      * 
      * @return the size of the element. If the size of the object cannot be determined
-     *         {@link CacheAttributes#DEFAULT_SIZE} should be returned
+     *         {@link CacheAttributes#DEFAULT_VALUE} should be returned
      * @see CacheAttributes#setSize(org.coconut.core.AttributeMap, long)
      * @see CacheAttributes#getSize(org.coconut.core.AttributeMap)
      * @see CacheAttributes#SIZE

@@ -37,7 +37,6 @@ import org.junit.internal.runners.TestIntrospector;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.Suite;
 
 /**
  * This class is responsible for running TCK cache tests. Use <code>@RunWith</code> to indicate a test should run with CacheTCKRunner.

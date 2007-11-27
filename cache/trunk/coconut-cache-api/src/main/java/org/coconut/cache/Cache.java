@@ -9,9 +9,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
-import org.coconut.core.AttributeMap;
 
 /**
  * A <tt>cache</tt> is a collection of data duplicating original values stored elsewhere

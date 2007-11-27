@@ -6,8 +6,6 @@ package org.coconut.core;
 
 import java.io.PrintStream;
 
-import org.apache.commons.logging.Log;
-
 /**
  * This class is used for creating {@link Logger} wrappers from popular logging frameworks
  * such as <a

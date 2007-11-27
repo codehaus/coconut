@@ -8,8 +8,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.coconut.attribute.AttributeMaps;
 import org.coconut.cache.spi.ReplacementPolicy;
-import org.coconut.core.AttributeMaps;
 
 
 /**

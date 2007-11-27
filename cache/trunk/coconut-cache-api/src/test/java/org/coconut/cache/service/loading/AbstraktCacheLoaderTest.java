@@ -10,8 +10,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.coconut.core.AttributeMap;
-import org.coconut.core.AttributeMaps;
+import org.coconut.attribute.AttributeMap;
+import org.coconut.attribute.AttributeMaps;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;

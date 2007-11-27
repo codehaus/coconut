@@ -5,9 +5,9 @@ package org.coconut.cache.internal.service.loading;
 
 import java.util.Map;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.service.loading.CacheLoadingService;
-import org.coconut.core.AttributeMap;
 
 /**
  * This implementation of {@link CacheLoadingService} needs the cache implementation to

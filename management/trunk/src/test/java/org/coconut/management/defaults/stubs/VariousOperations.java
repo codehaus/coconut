@@ -9,9 +9,10 @@ import org.coconut.management.annotation.ManagedOperation;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: AttributedStub2.java 415 2007-11-09 08:25:23Z kasper $
  */
-public class AttributedStub2 {
+public class VariousOperations {
 	public int invokeCount;
 
+     
 	@ManagedOperation(defaultValue = "m2")
 	public void method2() {
 		invokeCount++;

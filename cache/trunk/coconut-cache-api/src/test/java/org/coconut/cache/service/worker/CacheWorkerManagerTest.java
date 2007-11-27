@@ -8,7 +8,7 @@ import static junit.framework.Assert.assertEquals;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.coconut.core.AttributeMap;
+import org.coconut.attribute.AttributeMap;
 import org.coconut.test.MockTestCase;
 import org.junit.Test;
 

@@ -7,8 +7,8 @@ package org.coconut.cache.policy.spi;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.coconut.attribute.AttributeMaps;
 import org.coconut.cache.spi.ReplacementPolicy;
-import org.coconut.core.AttributeMaps;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

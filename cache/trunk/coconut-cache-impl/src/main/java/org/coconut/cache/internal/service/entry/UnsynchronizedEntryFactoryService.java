@@ -3,8 +3,8 @@
  */
 package org.coconut.cache.internal.service.entry;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
-import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
 
 /**

@@ -3,16 +3,23 @@
  */
 package org.coconut.core;
 
-import static org.coconut.core.AttributeMaps.EMPTY_MAP;
 import static org.coconut.test.TestUtil.assertIsSerializable;
 import static org.coconut.test.TestUtil.serializeAndUnserialize;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.HashMap;
 import java.util.HashSet;
 
+import org.coconut.attribute.Attribute;
+import org.coconut.attribute.AttributeMaps;
+import org.coconut.test.MockTestCase;
+
+import static org.coconut.attribute.AttributeMaps.EMPTY_MAP;
 import org.junit.Test;
 
 /**
@@ -22,7 +29,7 @@ import org.junit.Test;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class AttributeMaps_EmptyMapTest {
-    private final static String KEY = "foo";
+    private final static Attribute KEY = MockTestCase.mockDummy(Attribute.class);
 
     @Test
     public void various() {
@@ -81,6 +88,7 @@ public class AttributeMaps_EmptyMapTest {
     @Test
     public void getters() {
         assertNull(EMPTY_MAP.get(KEY));
+        assertEquals("goo", EMPTY_MAP.get(KEY, "goo"));
         assertFalse(EMPTY_MAP.getBoolean(KEY));
         assertTrue(EMPTY_MAP.getBoolean(KEY, true));
         assertEquals((byte) 0, EMPTY_MAP.getByte(KEY));

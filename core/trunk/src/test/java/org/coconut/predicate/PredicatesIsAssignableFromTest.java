@@ -8,7 +8,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.coconut.predicate.Predicates;
 import org.coconut.predicate.CollectionPredicates.IsTypePredicate;
 import org.junit.Test;
 

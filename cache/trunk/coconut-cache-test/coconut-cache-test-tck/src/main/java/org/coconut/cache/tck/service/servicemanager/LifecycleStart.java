@@ -18,7 +18,6 @@ import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
-import org.coconut.cache.tck.service.servicemanager.LifecycleInitialize.InitializingExceptionHandler;
 import org.coconut.cache.test.util.AbstractLifecycleVerifier;
 import org.coconut.test.MockTestCase;
 import org.junit.Before;

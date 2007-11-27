@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.attribute.AttributeMap;
+import org.coconut.attribute.AttributeMaps;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
@@ -16,8 +18,6 @@ import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.entry.ImmutableCacheEntry;
 import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
 import org.coconut.cache.spi.ConfigurationValidator;
-import org.coconut.core.AttributeMap;
-import org.coconut.core.AttributeMaps;
 import org.coconut.core.Clock;
 import org.coconut.internal.util.CollectionUtils;
 

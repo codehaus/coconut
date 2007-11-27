@@ -3,11 +3,11 @@
  */
 package org.coconut.cache.internal.service.loading;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.entry.InternalCacheEntryService;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
-import org.coconut.core.AttributeMap;
 
 public class UnsynchronizedCacheLoaderService<K, V> extends AbstractCacheLoadingService<K, V> {
     private final InternalCacheEntryService attributeFactory;

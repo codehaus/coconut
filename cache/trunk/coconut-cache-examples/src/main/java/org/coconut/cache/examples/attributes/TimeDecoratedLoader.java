@@ -3,10 +3,10 @@
  */
 package org.coconut.cache.examples.attributes;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.service.loading.AbstractCacheLoader;
 import org.coconut.cache.service.loading.CacheLoader;
-import org.coconut.core.AttributeMap;
 
 public class TimeDecoratedLoader<K, V> extends AbstractCacheLoader<K, V> {
     private final CacheLoader<K, V> delegator;
@@ -21,7 +21,7 @@ public class TimeDecoratedLoader<K, V> extends AbstractCacheLoader<K, V> {
     public V load(K key, AttributeMap attributes) throws Exception {
         long start = System.nanoTime();
         V v = delegator.load(key, attributes);
-        CacheAttributes.setCost(attributes, System.nanoTime() - start);
+        CacheAttributes.COST_ATR.set(attributes, System.nanoTime() - start);
         return v;
     }
 

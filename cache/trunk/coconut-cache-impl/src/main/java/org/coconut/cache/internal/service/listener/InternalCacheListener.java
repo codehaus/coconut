@@ -6,10 +6,10 @@ package org.coconut.cache.internal.service.listener;
 import java.util.Collection;
 import java.util.Map;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
-import org.coconut.core.AttributeMap;
 
 /**
  * @param <K>

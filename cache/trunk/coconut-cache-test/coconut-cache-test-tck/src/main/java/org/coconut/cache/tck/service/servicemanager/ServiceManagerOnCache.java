@@ -3,7 +3,6 @@
  */
 package org.coconut.cache.tck.service.servicemanager;
 
-import org.coconut.cache.CacheException;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;

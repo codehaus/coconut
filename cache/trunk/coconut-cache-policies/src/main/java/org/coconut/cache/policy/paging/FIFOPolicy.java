@@ -9,8 +9,8 @@ import java.util.List;
 
 import net.jcip.annotations.NotThreadSafe;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.policy.spi.AbstractPolicy;
-import org.coconut.core.AttributeMap;
 
 /**
  * A FIFO based replacement policy.

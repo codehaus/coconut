@@ -1,9 +1,6 @@
 package org.coconut.management.defaults;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
@@ -11,11 +8,9 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanOperationInfo;
 import javax.management.ReflectionException;
 
-import org.coconut.management.defaults.stubs.AttributedStub3;
 import org.coconut.management.defaults.stubs.OperationStub;
 import org.junit.Before;
 import org.junit.Test;

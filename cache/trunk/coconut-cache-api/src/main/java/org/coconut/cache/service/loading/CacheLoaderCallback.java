@@ -3,7 +3,7 @@
  */
 package org.coconut.cache.service.loading;
 
-import org.coconut.core.AttributeMap;
+import org.coconut.attribute.AttributeMap;
 import org.coconut.core.Callback;
 
 /**

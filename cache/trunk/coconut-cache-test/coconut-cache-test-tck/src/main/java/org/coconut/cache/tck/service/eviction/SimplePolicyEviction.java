@@ -11,10 +11,10 @@ import static org.coconut.test.CollectionUtils.M4;
 import static org.coconut.test.CollectionUtils.asMap;
 import static org.coconut.test.CollectionUtils.asSet;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.policy.Policies;
 import org.coconut.cache.policy.paging.LRUPolicy;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
-import org.coconut.core.AttributeMap;
 import org.junit.Test;
 
 public class SimplePolicyEviction extends AbstractCacheTCKTest {

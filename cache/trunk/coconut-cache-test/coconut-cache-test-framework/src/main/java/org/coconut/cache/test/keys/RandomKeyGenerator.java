@@ -1,7 +1,5 @@
 package org.coconut.cache.test.keys;
 
-import java.util.Collection;
-
 import org.coconut.test.LoopHelpers;
 
 public class RandomKeyGenerator implements KeyGenerator<Integer> {

@@ -1,15 +1,9 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the Apache 2.0 License, see http://coconut.codehaus.org/license.
- */
 package org.coconut.management.defaults.stubs;
 
 import org.coconut.management.annotation.ManagedAttribute;
+import org.coconut.management.annotation.ManagedOperation;
 
-/**
- * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id$
- */
-public class AttributedStub1 {
+public class MixedOperationsAttributes {
     private String string;
 
     @ManagedAttribute
@@ -20,5 +14,11 @@ public class AttributedStub1 {
     public void setString(String string) {
         this.string = string;
     }
+    
+    public int invokeCount;
 
+    @ManagedOperation
+    public void method1() {
+        invokeCount += 1;
+    }
 }

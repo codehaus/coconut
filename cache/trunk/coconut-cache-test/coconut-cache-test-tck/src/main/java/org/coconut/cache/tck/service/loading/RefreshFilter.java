@@ -10,7 +10,6 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.test.util.CacheEntryFilter;
 import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.cache.test.util.lifecycle.LifecycleFilter;
-import org.coconut.cache.test.util.managed.ManagedFilter;
 import org.junit.Before;
 import org.junit.Test;
 

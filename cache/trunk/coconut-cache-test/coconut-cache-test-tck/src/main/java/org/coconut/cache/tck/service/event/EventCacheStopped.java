@@ -5,8 +5,6 @@ package org.coconut.cache.tck.service.event;
 
 import static org.coconut.test.CollectionUtils.M1;
 
-import java.util.Map;
-
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.event.CacheEventService;

@@ -11,7 +11,7 @@ import org.coconut.management.annotation.ManagedAttribute;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: AttributedStub3.java 415 2007-11-09 08:25:23Z kasper $
  */
-public class AttributedStub3 {
+public class VariousAttributes {
     private boolean readOnly;
 
     private String writeOnly;

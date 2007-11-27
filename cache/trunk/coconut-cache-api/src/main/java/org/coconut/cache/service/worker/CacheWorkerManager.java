@@ -6,8 +6,8 @@ package org.coconut.cache.service.worker;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
-import org.coconut.core.AttributeMap;
 
 /**
  * This class is reponsible for creating {@link ExecutorService}'s that are used to

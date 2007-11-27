@@ -9,8 +9,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.Map;
 
-import org.coconut.predicate.CollectionPredicates;
-import org.coconut.predicate.Predicate;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;

@@ -12,7 +12,7 @@ import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.coconut.core.AttributeMap;
+import org.coconut.attribute.AttributeMap;
 import org.junit.Before;
 import org.junit.Test;
 

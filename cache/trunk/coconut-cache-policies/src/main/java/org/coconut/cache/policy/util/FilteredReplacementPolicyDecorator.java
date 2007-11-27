@@ -3,9 +3,9 @@
  */
 package org.coconut.cache.policy.util;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.spi.ReplacementPolicy;
-import org.coconut.core.AttributeMap;
 
 /**
  * This replacement policy decorator can be used to easily reject certain types of
@@ -94,7 +94,7 @@ public class FilteredReplacementPolicyDecorator<T> extends ReplacementPolicyDeco
          * {@inheritDoc}
          */
         public boolean evaluate(T t, AttributeMap attributes) {
-            double cost = CacheAttributes.getCost(attributes);
+            double cost = CacheAttributes.COST_ATR.getPrimitive(attributes);
             return cost >= minimumCost;
         }
     }
@@ -125,7 +125,7 @@ public class FilteredReplacementPolicyDecorator<T> extends ReplacementPolicyDeco
          * {@inheritDoc}
          */
         public boolean evaluate(T t, AttributeMap attributes) {
-            long size = CacheAttributes.getSize(attributes);
+            long size = CacheAttributes.Size_ATR.getPrimitive(attributes);
             return size <= threshold;
         }
     }

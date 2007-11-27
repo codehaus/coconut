@@ -5,7 +5,6 @@ package org.coconut.management.defaults;
 
 import javax.management.IntrospectionException;
 import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanException;
 import javax.management.ReflectionException;
 
 /**

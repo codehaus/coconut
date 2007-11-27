@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.coconut.predicate.CollectionPredicates;
-import org.coconut.predicate.Predicates;
 import org.coconut.predicate.Predicates.AnyPredicate;
 import org.junit.Test;
 /**

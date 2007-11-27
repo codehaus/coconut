@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.coconut.core.AttributeMap;
+import org.coconut.attribute.AttributeMap;
 import org.junit.Test;
 
 /**

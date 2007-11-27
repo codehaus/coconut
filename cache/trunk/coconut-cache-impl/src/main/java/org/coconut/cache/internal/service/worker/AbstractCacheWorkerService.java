@@ -6,9 +6,9 @@ package org.coconut.cache.internal.service.worker;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.coconut.attribute.AttributeMaps;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.worker.CacheWorkerManager;
-import org.coconut.core.AttributeMaps;
 
 public abstract class AbstractCacheWorkerService extends AbstractCacheLifecycle implements
         InternalCacheWorkerService {

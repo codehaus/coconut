@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
@@ -19,7 +20,6 @@ import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
 import org.coconut.cache.service.statistics.CacheHitStat;
 import org.coconut.cache.service.statistics.CacheStatisticsConfiguration;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
-import org.coconut.core.AttributeMap;
 import org.coconut.core.Clock;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedLifecycle;

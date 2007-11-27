@@ -9,11 +9,11 @@ import static org.coconut.test.CollectionUtils.M2;
 import static org.coconut.test.CollectionUtils.M3;
 import static org.coconut.test.CollectionUtils.M4;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.policy.Policies;
 import org.coconut.cache.policy.paging.LRUPolicy;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemAdded;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
-import org.coconut.core.AttributeMap;
 import org.junit.Test;
 
 public class EventServiceEviction extends AbstractEventTestBundle {

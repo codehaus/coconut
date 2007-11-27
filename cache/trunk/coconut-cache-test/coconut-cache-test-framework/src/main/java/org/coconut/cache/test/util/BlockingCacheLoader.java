@@ -2,10 +2,10 @@ package org.coconut.cache.test.util;
 
 import java.util.Collection;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoaderCallback;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
-import org.coconut.core.AttributeMap;
 
 public class BlockingCacheLoader<K, V> extends AbstractCacheLifecycle implements CacheLoader<K, V> {
 

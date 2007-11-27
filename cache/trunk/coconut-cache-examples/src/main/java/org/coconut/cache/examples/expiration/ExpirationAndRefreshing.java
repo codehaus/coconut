@@ -5,11 +5,11 @@ package org.coconut.cache.examples.expiration;
 
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.defaults.UnsynchronizedCache;
 import org.coconut.cache.examples.loading.SimpleUrlLoader;
-import org.coconut.core.AttributeMap;
 
 public class ExpirationAndRefreshing {
     public static class StockQuoteLoader extends SimpleUrlLoader {

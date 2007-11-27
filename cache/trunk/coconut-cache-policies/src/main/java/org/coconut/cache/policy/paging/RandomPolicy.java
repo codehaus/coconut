@@ -12,8 +12,8 @@ import java.util.Random;
 
 import net.jcip.annotations.NotThreadSafe;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.policy.spi.AbstractPolicy;
-import org.coconut.core.AttributeMap;
 
 /**
  * This cache policy is not safe for concurrent access.

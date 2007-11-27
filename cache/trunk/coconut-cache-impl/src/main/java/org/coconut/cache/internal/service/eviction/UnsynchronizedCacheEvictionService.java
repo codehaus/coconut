@@ -8,12 +8,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.coconut.attribute.AttributeMaps;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.policy.Policies;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.spi.ReplacementPolicy;
-import org.coconut.core.AttributeMaps;
 
 /**
  * <p>

@@ -3,7 +3,6 @@
  */
 package org.coconut.cache.tck.cacheentry;
 
-import static org.coconut.cache.CacheAttributes.DEFAULT_COST;
 import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M2;
 import static org.coconut.test.CollectionUtils.M3;
@@ -11,12 +10,13 @@ import static org.coconut.test.CollectionUtils.M6;
 
 import java.util.Map;
 
+import org.coconut.attribute.AttributeMap;
+import org.coconut.attribute.common.CostAttribute;
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.loading.AbstractCacheLoader;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.IntegerToStringLoader;
-import org.coconut.core.AttributeMap;
 import org.junit.Test;
 
 /**
@@ -34,7 +34,7 @@ public class Cost extends AbstractCacheTCKTest {
         private int totalCount;
 
         public String load(Integer key, AttributeMap attributes) throws Exception {
-            CacheAttributes.setCost(attributes, key + 0.5 + totalCount);
+            CacheAttributes.COST_ATR.set(attributes, key + 0.5 + totalCount);
             totalCount++;
             return "" + (char) (key + 64);
         }
@@ -48,10 +48,10 @@ public class Cost extends AbstractCacheTCKTest {
     public void put() {
         c = newCache();
         put(M1);
-        assertCostEquals(M1, DEFAULT_COST);
+        assertCostEquals(M1, CostAttribute.DEFAULT_COST);
         putAll(M1, M2);
-        assertCostEquals(M1, DEFAULT_COST);
-        assertCostEquals(M2, DEFAULT_COST);
+        assertCostEquals(M1, CostAttribute.DEFAULT_COST);
+        assertCostEquals(M2, CostAttribute.DEFAULT_COST);
     }
 
     /**
@@ -61,7 +61,7 @@ public class Cost extends AbstractCacheTCKTest {
     public void loaded() {
         c = newCache(newConf().loading().setLoader(new IntegerToStringLoader()));
         assertGet(M1);
-        assertCostEquals(M1, DEFAULT_COST);
+        assertCostEquals(M1, CostAttribute.DEFAULT_COST);
     }
 
     /**
@@ -99,7 +99,7 @@ public class Cost extends AbstractCacheTCKTest {
         assertGet(M1);
         assertCostEquals(M1, 1.5);
         put(M1);
-        assertCostEquals(M1, DEFAULT_COST);
+        assertCostEquals(M1, CostAttribute.DEFAULT_COST);
     }
     
     /**

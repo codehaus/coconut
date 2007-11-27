@@ -3,7 +3,7 @@
  */
 package org.coconut.cache.tck.service.loading;
 
-import static org.coconut.core.AttributeMaps.from;
+import static org.coconut.attribute.AttributeMaps.from;
 import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M2;
 import static org.coconut.test.CollectionUtils.M3;
@@ -13,10 +13,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.coconut.attribute.Attribute;
+import org.coconut.attribute.AttributeMap;
+import org.coconut.attribute.AttributeMaps;
+import org.coconut.attribute.spi.AbstractAttribute;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.test.util.IntegerToStringLoader;
-import org.coconut.core.AttributeMap;
-import org.coconut.core.AttributeMaps;
+import org.coconut.test.MockTestCase;
 import org.junit.Test;
 
 /**
@@ -30,11 +33,15 @@ public class ExplicitForcedLoading extends AbstractLoadingTestBundle {
     private final static AttributeMap ATR_FOO;
 
     private final static AttributeMap ATR_FO1;
+
+    private final static Attribute FOO = MockTestCase.mockDummy(Attribute.class);
+
+    private final static Attribute OOF = MockTestCase.mockDummy(Attribute.class);
     static {
         ATR_FOO = new AttributeMaps.DefaultAttributeMap();
-        ATR_FOO.put("foo", "boo");
+        ATR_FOO.put(FOO, "boo");
         ATR_FO1 = new AttributeMaps.DefaultAttributeMap();
-        ATR_FO1.put("oof", "oob");
+        ATR_FO1.put(OOF, "oob");
     }
 
     @Test(expected = NullPointerException.class)

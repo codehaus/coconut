@@ -115,7 +115,7 @@ public abstract class AbstractManagedGroup implements ManagedGroup {
                     "This group has already been registered [MBeanServer = " + this.server
                             + ", ObjectName= " + this.objectName + "]");
         }
-        server.registerMBean(this, objectName); // might fail
+        server.registerMBean(getRegistrant(), objectName); // might fail
         this.server = server;
         this.objectName = objectName;
     }
@@ -142,7 +142,7 @@ public abstract class AbstractManagedGroup implements ManagedGroup {
         objectName = null;
         server = null;
     }
-
+    abstract Object getRegistrant();
     /**
      * Called by the class extending this class, when a child group is added.
      * 

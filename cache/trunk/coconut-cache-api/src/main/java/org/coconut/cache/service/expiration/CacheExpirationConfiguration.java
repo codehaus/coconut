@@ -12,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
-import org.coconut.internal.util.UnitOfTime;
 import org.coconut.internal.util.XmlUtil;
 import org.coconut.predicate.Predicate;
 import org.w3c.dom.Document;

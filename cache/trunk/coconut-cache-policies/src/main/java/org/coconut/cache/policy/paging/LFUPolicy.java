@@ -9,9 +9,9 @@ import java.util.List;
 
 import net.jcip.annotations.NotThreadSafe;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.policy.spi.AbstractPolicy;
-import org.coconut.core.AttributeMap;
 import org.coconut.internal.util.IndexedHeap;
 
 /**
@@ -75,7 +75,7 @@ public class LFUPolicy<T> extends AbstractPolicy<T> implements Serializable, Clo
         // we need to figure out hits are calculated
         // do we +1 to the hit count?
         // or has it already been incremented?
-        long hits = map.getLong(CacheAttributes.HITS, 1);
+        long hits = CacheAttributes.HITS_ATR.getPrimitive(map, 1);
         return add(data, hits);
     }
 

@@ -9,9 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlers;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
-import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
-import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;
 

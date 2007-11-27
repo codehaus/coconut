@@ -8,14 +8,14 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.coconut.attribute.AttributeMap;
+import org.coconut.attribute.AttributeMaps;
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
-import org.coconut.core.AttributeMap;
-import org.coconut.core.AttributeMaps;
 import org.coconut.core.Clock;
 import org.coconut.predicate.Predicate;
 import org.coconut.predicate.Predicates;
@@ -125,7 +125,7 @@ public class DefaultCacheExpirationServiceTest {
         };
         initialize();
         AttributeMap dam = new AttributeMaps.DefaultAttributeMap();
-        dam.putLong(CacheAttributes.TIME_TO_LIVE_NS, -1);
+        dam.putLong(CacheAttributes.TIME_TO_REFRESH_ATR, -1);
         // s.innerGetExpirationTime(123, null, dam);
 
 // assertTrue(ref.get().contains("-1"));

@@ -14,7 +14,6 @@ import java.util.Arrays;
 import org.coconut.core.EventProcessor;
 import org.coconut.core.EventUtils;
 import org.coconut.event.bus.EventBus;
-import org.coconut.event.bus.EventBusConfiguration;
 import org.coconut.event.bus.EventSubscription;
 import org.coconut.predicate.Predicates;
 import org.coconut.predicate.StringPredicates;

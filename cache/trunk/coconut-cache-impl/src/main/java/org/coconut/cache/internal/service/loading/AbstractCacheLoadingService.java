@@ -9,7 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.CacheConfiguration;
+import org.coconut.attribute.AttributeMap;
+import org.coconut.attribute.AttributeMaps;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.entry.InternalCacheEntryService;
@@ -20,8 +21,6 @@ import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
-import org.coconut.core.AttributeMap;
-import org.coconut.core.AttributeMaps;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedLifecycle;
 import org.coconut.predicate.Predicate;

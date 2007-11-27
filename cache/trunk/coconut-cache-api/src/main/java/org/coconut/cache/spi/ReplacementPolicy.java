@@ -5,7 +5,7 @@ package org.coconut.cache.spi;
 
 import java.util.List;
 
-import org.coconut.core.AttributeMap;
+import org.coconut.attribute.AttributeMap;
 
 /**
  * A (cache) replacement policy determines which data item(s) should be evicted (deleted)

@@ -3,7 +3,6 @@
  */
 package org.coconut.cache.spi;
 
-import java.io.ByteArrayOutputStream;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 

@@ -19,7 +19,6 @@ import java.util.HashMap;
 
 import junit.framework.AssertionFailedError;
 
-import org.coconut.predicate.Predicates;
 import org.coconut.predicate.Predicates.GreaterThenOrEqualPredicate;
 import org.coconut.predicate.Predicates.GreaterThenPredicate;
 import org.coconut.predicate.Predicates.LessThenOrEqualPredicate;

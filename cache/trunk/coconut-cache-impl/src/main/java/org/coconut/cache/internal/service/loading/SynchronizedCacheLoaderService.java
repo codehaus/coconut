@@ -9,13 +9,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.FutureTask;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.entry.InternalCacheEntryService;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.cache.internal.service.worker.InternalCacheWorkerService;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingService;
-import org.coconut.core.AttributeMap;
 
 /**
  * What to do on cache shutdown.

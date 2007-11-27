@@ -3,10 +3,10 @@
  */
 package org.coconut.cache.internal.service.event;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.event.CacheEntryEvent;
-import org.coconut.core.AttributeMap;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

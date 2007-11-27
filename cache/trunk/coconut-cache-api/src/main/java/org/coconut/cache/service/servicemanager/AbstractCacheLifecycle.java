@@ -3,10 +3,7 @@
  */
 package org.coconut.cache.service.servicemanager;
 
-import java.util.Map;
-
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheConfiguration;
 
 /**
  * An abstract base class for implementing a {@link CacheLifecycle}.

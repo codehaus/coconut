@@ -13,7 +13,6 @@ import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 
 /**

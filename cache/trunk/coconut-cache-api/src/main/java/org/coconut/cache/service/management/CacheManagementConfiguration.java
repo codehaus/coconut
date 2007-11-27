@@ -3,13 +3,13 @@
  */
 package org.coconut.cache.service.management;
 
-import static org.coconut.internal.util.XmlUtil.*;
-import static org.coconut.internal.util.XmlUtil.addTypedElement;
 import static org.coconut.internal.util.XmlUtil.addComment;
+import static org.coconut.internal.util.XmlUtil.addElementAndSetContent;
+import static org.coconut.internal.util.XmlUtil.addTypedElement;
 import static org.coconut.internal.util.XmlUtil.attributeBooleanGet;
+import static org.coconut.internal.util.XmlUtil.contentStringGet;
 import static org.coconut.internal.util.XmlUtil.getChild;
 import static org.coconut.internal.util.XmlUtil.loadChildObject;
-import static org.coconut.internal.util.XmlUtil.contentStringGet;
 
 import java.lang.management.ManagementFactory;
 

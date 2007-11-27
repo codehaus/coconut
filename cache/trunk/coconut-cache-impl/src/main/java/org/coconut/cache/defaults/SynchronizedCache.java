@@ -15,6 +15,8 @@ import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
 
+import org.coconut.attribute.AttributeMap;
+import org.coconut.attribute.AttributeMaps;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
@@ -46,8 +48,6 @@ import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.spi.CacheServiceSupport;
-import org.coconut.core.AttributeMap;
-import org.coconut.core.AttributeMaps;
 import org.coconut.internal.util.CollectionUtils;
 
 /**

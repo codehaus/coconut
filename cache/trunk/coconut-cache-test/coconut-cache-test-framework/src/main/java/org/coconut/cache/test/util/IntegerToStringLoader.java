@@ -7,8 +7,12 @@ package org.coconut.cache.test.util;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.coconut.attribute.Attribute;
+import org.coconut.attribute.AttributeMap;
+import org.coconut.attribute.spi.AbstractAttribute;
 import org.coconut.cache.service.loading.AbstractCacheLoader;
-import org.coconut.core.AttributeMap;
+import org.coconut.core.Logger;
+import org.coconut.test.MockTestCase;
 
 /**
  * A simple cache loader used for testing. Will return 1->A, 2->B, 3->C, 4->D, 5->E and
@@ -19,7 +23,7 @@ import org.coconut.core.AttributeMap;
  */
 public class IntegerToStringLoader extends AbstractCacheLoader<Integer, String> {
 
-    public static final String RESULT_ATTRIBUTE_KEY = "result";
+    public static final Attribute RESULT_ATTRIBUTE_KEY = MockTestCase.mockDummy(Attribute.class);
 
     private final AtomicLong totalLoads = new AtomicLong();
 

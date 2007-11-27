@@ -6,13 +6,13 @@ package org.coconut.cache.internal.service.listener;
 import java.util.Collection;
 import java.util.Map;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.event.InternalCacheEventService;
 import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
-import org.coconut.core.AttributeMap;
 
 public class DefaultCacheListener<K, V> extends AbstractCacheLifecycle implements
         InternalCacheListener<K, V> {

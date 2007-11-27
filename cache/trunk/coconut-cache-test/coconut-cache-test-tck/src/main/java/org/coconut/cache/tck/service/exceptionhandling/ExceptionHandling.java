@@ -6,6 +6,7 @@ package org.coconut.cache.tck.service.exceptionhandling;
 import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M2;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlers;
@@ -14,7 +15,6 @@ import org.coconut.cache.service.loading.AbstractCacheLoader;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.IntegerToStringLoader;
-import org.coconut.core.AttributeMap;
 import org.coconut.core.Logger;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;

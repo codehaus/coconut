@@ -3,10 +3,7 @@
  */
 package org.coconut.cache.service.servicemanager;
 
-import java.util.Map;
-
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheConfiguration;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

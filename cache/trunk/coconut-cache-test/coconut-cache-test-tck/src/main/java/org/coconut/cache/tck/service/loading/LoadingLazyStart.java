@@ -7,8 +7,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.coconut.core.AttributeMap;
-import org.coconut.core.AttributeMaps;
+import org.coconut.attribute.AttributeMap;
+import org.coconut.attribute.AttributeMaps;
 import org.junit.Test;
 
 /**

@@ -1,21 +1,22 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.core;
+package org.coconut.attribute;
 
 import java.util.Map;
 
 /**
- * A map specifically for the storage of String->Object values. Attribute-maps
+ * A map specifically for the storage of Attribute->Object values. Attribute-maps
  * are often only used to hold a very small amount of entries (perhaps just
- * one). And implementations of this interface might be memory wise optimized to
+ * one). And implementations of this interface might be memory-wise optimized to
  * hold only a single entry.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id$
+ * @version $Id: AttributeMap.java 415 2007-11-09 08:25:23Z kasper $
  */
-public interface AttributeMap extends Map<String, Object> {
+public interface AttributeMap extends Map<Attribute, Object> {
 
+    Object get(Attribute key, Object defaultValue);
     /**
      * Returns the boolean value to which this attribute-map maps the specified
      * key. Returns <tt>false</tt> if the attribute-map contains no mapping
@@ -42,7 +43,7 @@ public interface AttributeMap extends Map<String, Object> {
      *             if the key is <tt>null</tt>.
      * @see #containsKey(Object)
      */
-    boolean getBoolean(String key);
+    boolean getBoolean(Attribute key);
 
     /**
      * Returns the boolean value to which this attribute-map maps the specified
@@ -69,13 +70,13 @@ public interface AttributeMap extends Map<String, Object> {
      *         specified default value if the map contains no mapping for this
      *         key.
      * @throws ClassCastException
-     *             if the asssociated value if of another type then a boolean (or
+     *             if the asssociated value is of another type then a boolean (or
      *             Boolean)
      * @throws NullPointerException
      *             if the key is <tt>null</tt>.
      * @see #containsKey(Object)
      */
-    boolean getBoolean(String key, boolean defaultValue);
+    boolean getBoolean(Attribute key, boolean defaultValue);
 
     /**
      * Returns the byte value to which this attribute-map maps the specified
@@ -103,7 +104,7 @@ public interface AttributeMap extends Map<String, Object> {
      *             if the key is <tt>null</tt>.
      * @see #containsKey(Object)
      */
-    byte getByte(String key);
+    byte getByte(Attribute key);
 
     /**
      * Returns the byte value to which this attribute-map maps the specified
@@ -130,13 +131,13 @@ public interface AttributeMap extends Map<String, Object> {
      *         specified default value if the map contains no mapping for this
      *         key.
      * @throws ClassCastException
-     *             if the asssociated value if of another type then a byte (or
+     *             if the asssociated value is of another type then a byte (or
      *             Byte)
      * @throws NullPointerException
      *             if the key is <tt>null</tt>.
      * @see #containsKey(Object)
      */
-    byte getByte(String key, byte defaultValue);
+    byte getByte(Attribute key, byte defaultValue);
 
     /**
      * Returns the short value to which this attribute-map maps the specified
@@ -164,7 +165,7 @@ public interface AttributeMap extends Map<String, Object> {
      *             if the key is <tt>null</tt>.
      * @see #containsKey(Object)
      */
-    char getChar(String key);
+    char getChar(Attribute key);
 
     /**
      * Returns the char value to which this attribute-map maps the specified
@@ -191,13 +192,13 @@ public interface AttributeMap extends Map<String, Object> {
      *         specified default value if the map contains no mapping for this
      *         key.
      * @throws ClassCastException
-     *             if the asssociated value if of another type then a char (or
+     *             if the asssociated value is of another type then a char (or
      *             Character)
      * @throws NullPointerException
      *             if the key is <tt>null</tt>.
      * @see #containsKey(Object)
      */
-    char getChar(String key, char defaultValue);
+    char getChar(Attribute key, char defaultValue);
 
     /**
      * Returns the float value to which this attribute-map maps the specified
@@ -225,7 +226,7 @@ public interface AttributeMap extends Map<String, Object> {
      *             if the key is <tt>null</tt>.
      * @see #containsKey(Object)
      */
-    double getDouble(String key);
+    double getDouble(Attribute key);
 
     /**
      * Returns the double value to which this attribute-map maps the specified
@@ -252,13 +253,13 @@ public interface AttributeMap extends Map<String, Object> {
      *         specified default value if the map contains no mapping for this
      *         key.
      * @throws ClassCastException
-     *             if the asssociated value if of another type then a double (or
+     *             if the asssociated value is of another type then a double (or
      *             Double)
      * @throws NullPointerException
      *             if the key is <tt>null</tt>.
      * @see #containsKey(Object)
      */
-    double getDouble(String key, double defaultValue);
+    double getDouble(Attribute key, double defaultValue);
 
     /**
      * Returns the float value to which this attribute-map maps the specified
@@ -286,7 +287,7 @@ public interface AttributeMap extends Map<String, Object> {
      *             if the key is <tt>null</tt>.
      * @see #containsKey(Object)
      */
-    float getFloat(String key);
+    float getFloat(Attribute key);
 
     /**
      * Returns the float value to which this attribute-map maps the specified
@@ -313,13 +314,13 @@ public interface AttributeMap extends Map<String, Object> {
      *         specified default value if the map contains no mapping for this
      *         key.
      * @throws ClassCastException
-     *             if the asssociated value if of another type then a float (or
+     *             if the asssociated value is of another type then a float (or
      *             Float)
      * @throws NullPointerException
      *             if the key is <tt>null</tt>.
      * @see #containsKey(Object)
      */
-    float getFloat(String key, float defaultValue);
+    float getFloat(Attribute key, float defaultValue);
 
     /**
      * Returns the int value to which this attribute-map maps the specified key.
@@ -347,7 +348,7 @@ public interface AttributeMap extends Map<String, Object> {
      *             if the key is <tt>null</tt>.
      * @see #containsKey(Object)
      */
-    int getInt(String key);
+    int getInt(Attribute key);
 
     /**
      * Returns the int value to which this attribute-map maps the specified
@@ -374,13 +375,13 @@ public interface AttributeMap extends Map<String, Object> {
      *         specified default value if the map contains no mapping for this
      *         key.
      * @throws ClassCastException
-     *             if the asssociated value if of another type then a int (or
+     *             if the asssociated value is of another type then a int (or
      *             Integer)
      * @throws NullPointerException
      *             if the key is <tt>null</tt>.
      * @see #containsKey(Object)
      */
-    int getInt(String key, int defaultValue);
+    int getInt(Attribute key, int defaultValue);
 
     /**
      * Returns the long value to which this attribute-map maps the specified
@@ -408,7 +409,7 @@ public interface AttributeMap extends Map<String, Object> {
      *             if the key is <tt>null</tt>.
      * @see #containsKey(Object)
      */
-    long getLong(String key);
+    long getLong(Attribute key);
 
     /**
      * Returns the long value to which this attribute-map maps the specified
@@ -435,13 +436,13 @@ public interface AttributeMap extends Map<String, Object> {
      *         specified default value if the map contains no mapping for this
      *         key.
      * @throws ClassCastException
-     *             if the asssociated value if of another type then a long (or
+     *             if the asssociated value is of another type then a long (or
      *             Long)
      * @throws NullPointerException
      *             if the key is <tt>null</tt>.
      * @see #containsKey(Object)
      */
-    long getLong(String key, long defaultValue);
+    long getLong(Attribute key, long defaultValue);
 
     /**
      * Returns the short value to which this attribute-map maps the specified
@@ -469,7 +470,7 @@ public interface AttributeMap extends Map<String, Object> {
      *             if the key is <tt>null</tt>.
      * @see #containsKey(Object)
      */
-    short getShort(String key);
+    short getShort(Attribute key);
 
     /**
      * Returns the short value to which this attribute-map maps the specified
@@ -496,13 +497,13 @@ public interface AttributeMap extends Map<String, Object> {
      *         specified default value if the map contains no mapping for this
      *         key.
      * @throws ClassCastException
-     *             if the asssociated value if of another type then a short (or
+     *             if the asssociated value is of another type then a short (or
      *             Short)
      * @throws NullPointerException
      *             if the key is <tt>null</tt>.
      * @see #containsKey(Object)
      */
-    short getShort(String key, short defaultValue);
+    short getShort(Attribute key, short defaultValue);
 
     /**
      * Associates the specified boolean value with the specified key in this
@@ -525,7 +526,7 @@ public interface AttributeMap extends Map<String, Object> {
      * @throws NullPointerException
      *             if the key is <tt>null</tt>
      */
-    void putBoolean(String key, boolean value);
+    void putBoolean(Attribute key, boolean value);
 
     /**
      * Associates the specified byte value with the specified key in this
@@ -548,7 +549,7 @@ public interface AttributeMap extends Map<String, Object> {
      * @throws NullPointerException
      *             if the key is <tt>null</tt>
      */
-    void putByte(String key, byte value);
+    void putByte(Attribute key, byte value);
 
     /**
      * Associates the specified char value with the specified key in this
@@ -571,7 +572,7 @@ public interface AttributeMap extends Map<String, Object> {
      * @throws NullPointerException
      *             if the key is <tt>null</tt>
      */
-    void putChar(String key, char value);
+    void putChar(Attribute key, char value);
 
     /**
      * Associates the specified double value with the specified key in this
@@ -594,7 +595,7 @@ public interface AttributeMap extends Map<String, Object> {
      * @throws NullPointerException
      *             if the key is <tt>null</tt>
      */
-    void putDouble(String key, double value);
+    void putDouble(Attribute key, double value);
 
     /**
      * Associates the specified float value with the specified key in this
@@ -617,7 +618,7 @@ public interface AttributeMap extends Map<String, Object> {
      * @throws NullPointerException
      *             if the key is <tt>null</tt>
      */
-    void putFloat(String key, float value);
+    void putFloat(Attribute key, float value);
 
     /**
      * Associates the specified int value with the specified key in this
@@ -640,7 +641,7 @@ public interface AttributeMap extends Map<String, Object> {
      * @throws NullPointerException
      *             if the key is <tt>null</tt>
      */
-    void putInt(String key, int value);
+    void putInt(Attribute key, int value);
 
     /**
      * Associates the specified long value with the specified key in this
@@ -663,7 +664,7 @@ public interface AttributeMap extends Map<String, Object> {
      * @throws NullPointerException
      *             if the key is <tt>null</tt>
      */
-    void putLong(String key, long value);
+    void putLong(Attribute key, long value);
 
     /**
      * Associates the specified short value with the specified key in this
@@ -686,5 +687,5 @@ public interface AttributeMap extends Map<String, Object> {
      * @throws NullPointerException
      *             if the key is <tt>null</tt>
      */
-    void putShort(String key, short value);
+    void putShort(Attribute key, short value);
 }

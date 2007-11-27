@@ -5,9 +5,9 @@ package org.coconut.cache.internal.service.spi;
 
 import java.util.Map;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.internal.service.eviction.EvictionSupport;
 import org.coconut.cache.internal.service.loading.LoadSupport;
-import org.coconut.core.AttributeMap;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

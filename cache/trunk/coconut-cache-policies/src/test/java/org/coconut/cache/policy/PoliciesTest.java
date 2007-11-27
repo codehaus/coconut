@@ -15,9 +15,6 @@ import org.coconut.cache.policy.paging.LIFOPolicy;
 import org.coconut.cache.policy.paging.LRUPolicy;
 import org.coconut.cache.policy.paging.MRUPolicy;
 import org.coconut.cache.policy.paging.RandomPolicy;
-import org.coconut.cache.spi.ReplacementPolicy;
-import org.coconut.core.AttributeMaps;
-import org.coconut.predicate.Predicates;
 import org.junit.Test;
 
 /**

@@ -31,11 +31,9 @@ import org.coconut.management.ManagedGroup;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class DefaultManagedGroup extends AbstractManagedGroup implements DynamicMBean {
+public class DefaultManagedGroup extends AbstractManagedGroup {
 
     private final Map<String, AbstractManagedAttribute> attributes = new ConcurrentHashMap<String, AbstractManagedAttribute>();
-
-    private volatile MBeanInfo mbeanInfo;
 
     private final Map<OperationKey, AbstractManagedOperation> ops = new ConcurrentHashMap<OperationKey, AbstractManagedOperation>();
 
@@ -63,6 +61,9 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
         if (o == null) {
             throw new NullPointerException("o is null");
         }
+        if (isRegistered()) {
+            throw new IllegalStateException("Cannot add objects when this group is registered");
+        }
         BeanInfo bi;
         try {
             bi = Introspector.getBeanInfo(o.getClass());
@@ -83,95 +84,98 @@ public class DefaultManagedGroup extends AbstractManagedGroup implements Dynamic
     }
 
     /** {@inheritDoc} */
-    public Object getAttribute(String attribute) throws AttributeNotFoundException, MBeanException,
-            ReflectionException {
-        return findAttribute(attribute).getValue();
-    }
-
-    /** {@inheritDoc} */
-    public final AttributeList getAttributes(String[] attributes) {
-        final AttributeList result = new AttributeList(attributes.length);
-        for (String attrName : attributes) {
-            try {
-                final Object attrValue = getAttribute(attrName);
-                result.add(new Attribute(attrName, attrValue));
-            } catch (Exception e) {
-                // OK: attribute is not included in returned list, per spec
-            }
-        }
-        return result;
-    }
-
-    /** {@inheritDoc} */
-    public MBeanInfo getMBeanInfo() {
-        if (mbeanInfo != null) {
-            return mbeanInfo;
-        }
-        List<MBeanAttributeInfo> l = new ArrayList<MBeanAttributeInfo>();
-        for (AbstractManagedAttribute aa : attributes.values()) {
-            try {
-                l.add(aa.getInfo());
-            } catch (IntrospectionException e) {
-                throw new IllegalStateException(e);
-            }
-        }
-        List<MBeanOperationInfo> lo = new ArrayList<MBeanOperationInfo>();
-        for (AbstractManagedOperation op : ops.values()) {
-            try {
-                lo.add(op.getInfo());
-            } catch (IntrospectionException e) {
-                throw new IllegalStateException(e);
-            }
-        }
-
-        mbeanInfo = new MBeanInfo(getName(), getDescription(),
-                l.toArray(new MBeanAttributeInfo[0]), null, lo.toArray(new MBeanOperationInfo[0]),
-                null);
-        return mbeanInfo;
-    }
-
-    /** {@inheritDoc} */
     public Collection<?> getObjects() {
         return new ArrayList(os);
     }
 
-    /** {@inheritDoc} */
-    public Object invoke(String actionName, Object[] params, String[] signature)
-            throws MBeanException, ReflectionException {
-        AbstractManagedOperation aa = ops.get(new OperationKey(actionName, signature));
-        if (aa != null) {
-            return aa.invoke(params);
+    Object getRegistrant() {
+        return new MBean();
+    }
+
+    class MBean implements DynamicMBean {
+
+        /** {@inheritDoc} */
+        public Object getAttribute(String attribute) throws AttributeNotFoundException,
+                MBeanException, ReflectionException {
+            return findAttribute(attribute).getValue();
         }
-        return null;
-    }
 
-    /** {@inheritDoc} */
-    public void setAttribute(Attribute attribute) throws AttributeNotFoundException,
-            InvalidAttributeValueException, MBeanException, ReflectionException {
-        findAttribute(attribute.getName()).setValue(attribute.getValue());
-    }
-
-    /** {@inheritDoc} */
-    public final AttributeList setAttributes(AttributeList attributes) {
-        final AttributeList result = new AttributeList(attributes.size());
-        for (Object attrObj : attributes) {
-            Attribute attr = (Attribute) attrObj;
-            try {
-                setAttribute(attr);
-                result.add(new Attribute(attr.getName(), attr.getValue()));
-            } catch (Exception e) {
-                // OK: attribute is not included in returned list, per spec
+        /** {@inheritDoc} */
+        public final AttributeList getAttributes(String[] attributes) {
+            final AttributeList result = new AttributeList(attributes.length);
+            for (String attrName : attributes) {
+                try {
+                    final Object attrValue = getAttribute(attrName);
+                    result.add(new Attribute(attrName, attrValue));
+                } catch (Exception e) {
+                    // OK: attribute is not included in returned list, per spec
+                }
             }
+            return result;
         }
-        return result;
-    }
 
-    private AbstractManagedAttribute findAttribute(String attribute)
-            throws AttributeNotFoundException {
-        AbstractManagedAttribute att = attributes.get(attribute);
-        if (att == null) {
-            throw new AttributeNotFoundException("Attribute " + attribute + " could not be found");
+        /** {@inheritDoc} */
+        public MBeanInfo getMBeanInfo() {
+            List<MBeanAttributeInfo> l = new ArrayList<MBeanAttributeInfo>();
+            for (AbstractManagedAttribute aa : attributes.values()) {
+                try {
+                    l.add(aa.getInfo());
+                } catch (IntrospectionException e) {
+                    throw new IllegalStateException(e);
+                }
+            }
+            List<MBeanOperationInfo> lo = new ArrayList<MBeanOperationInfo>();
+            for (AbstractManagedOperation op : ops.values()) {
+                try {
+                    lo.add(op.getInfo());
+                } catch (IntrospectionException e) {
+                    throw new IllegalStateException(e);
+                }
+            }
+
+            return new MBeanInfo(getName(), getDescription(), l.toArray(new MBeanAttributeInfo[0]),
+                    null, lo.toArray(new MBeanOperationInfo[0]), null);
         }
-        return att;
+
+        /** {@inheritDoc} */
+        public Object invoke(String actionName, Object[] params, String[] signature)
+                throws MBeanException, ReflectionException {
+            AbstractManagedOperation aa = ops.get(new OperationKey(actionName, signature));
+            if (aa != null) {
+                return aa.invoke(params);
+            }
+            return null;
+        }
+
+        /** {@inheritDoc} */
+        public void setAttribute(Attribute attribute) throws AttributeNotFoundException,
+                InvalidAttributeValueException, MBeanException, ReflectionException {
+            findAttribute(attribute.getName()).setValue(attribute.getValue());
+        }
+
+        /** {@inheritDoc} */
+        public final AttributeList setAttributes(AttributeList attributes) {
+            final AttributeList result = new AttributeList(attributes.size());
+            for (Object attrObj : attributes) {
+                Attribute attr = (Attribute) attrObj;
+                try {
+                    setAttribute(attr);
+                    result.add(new Attribute(attr.getName(), attr.getValue()));
+                } catch (Exception e) {
+                    // OK: attribute is not included in returned list, per spec
+                }
+            }
+            return result;
+        }
+
+        private AbstractManagedAttribute findAttribute(String attribute)
+                throws AttributeNotFoundException {
+            AbstractManagedAttribute att = attributes.get(attribute);
+            if (att == null) {
+                throw new AttributeNotFoundException("Attribute " + attribute
+                        + " could not be found");
+            }
+            return att;
+        }
     }
 }

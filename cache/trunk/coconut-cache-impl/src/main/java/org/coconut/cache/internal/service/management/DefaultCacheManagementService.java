@@ -6,7 +6,6 @@ package org.coconut.cache.internal.service.management;
 import java.lang.management.ManagementFactory;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Map;
 
 import javax.management.JMException;
 import javax.management.MBeanServer;
@@ -15,7 +14,6 @@ import javax.management.ObjectName;
 import net.jcip.annotations.GuardedBy;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
 import org.coconut.cache.internal.service.servicemanager.CompositeService;
 import org.coconut.cache.service.management.CacheMXBean;

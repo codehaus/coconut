@@ -9,13 +9,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.coconut.attribute.AttributeMap;
+import org.coconut.attribute.AttributeMaps;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.internal.service.worker.InternalCacheWorkerService;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.worker.CacheWorkerManager;
-import org.coconut.core.AttributeMap;
-import org.coconut.core.AttributeMaps;
 import org.coconut.test.MockTestCase;
 import org.junit.Test;
 

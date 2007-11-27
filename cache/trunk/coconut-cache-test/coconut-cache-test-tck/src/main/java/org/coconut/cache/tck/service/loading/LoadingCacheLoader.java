@@ -7,15 +7,11 @@ import static org.coconut.test.CollectionUtils.M1;
 
 import java.util.Collection;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.service.loading.AbstractCacheLoader;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoaderCallback;
 import org.coconut.cache.test.util.AbstractLifecycleVerifier;
-import org.coconut.cache.test.util.IntegerToStringLoader;
-import org.coconut.core.AttributeMap;
-import org.coconut.management.ManagedGroup;
-import org.coconut.management.ManagedLifecycle;
 import org.junit.Test;
 
 /**

@@ -13,12 +13,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.attribute.AttributeMap;
+import org.coconut.attribute.AttributeMaps;
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.test.util.AsyncIntegerToStringLoader;
 import org.coconut.cache.test.util.IntegerToStringLoader;
-import org.coconut.core.AttributeMap;
-import org.coconut.core.AttributeMaps;
 import org.coconut.predicate.Predicate;
 import org.junit.Test;
 
@@ -30,7 +30,7 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
 
     static class MyLoader extends IntegerToStringLoader {
         public String load(Integer key, AttributeMap attributes) throws Exception {
-            CacheAttributes.setTimeToRefresh(attributes, key, TimeUnit.MILLISECONDS);
+            CacheAttributes.TIME_TO_REFRESH_ATR.set(attributes, key, TimeUnit.MILLISECONDS);
             return super.load(key, attributes);
         }
     }
@@ -41,8 +41,9 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
 
     @Test
     public void testNothing() {
-        
+
     }
+
     /**
      * Test refresh window
      */
@@ -74,19 +75,20 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
         loadThoseNeedsRefresh();// refresh, M1,M2,M4,M5
         assertEquals(12, loader.getNumberOfLoads());
     }
+
     /**
      * Checks setting refresh value while loading.
+     * 
      * @throws Exception
      */
     @SuppressWarnings("unchecked")
-
     public void explicitRefreshTimeCacheLoader() throws Exception {
         MyLoader loader = new MyLoader();
         c = newCache(newConf().setClock(clock).loading().setLoader(loader).c());
-        assertGet(M1); //load at time=1
-        assertGet(M2);//load at time=2
+        assertGet(M1); // load at time=1
+        assertGet(M2);// load at time=2
         incTime(); // 1
-        assertGet(M3); //load at time=4
+        assertGet(M3); // load at time=4
         loadThoseNeedsRefresh();
         assertEquals(4, loader.getNumberOfLoads());
 
@@ -110,6 +112,7 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
         assertEquals(17, loader.getNumberOfLoads());
 
     }
+
     /**
      * Test refresh window
      */
@@ -151,15 +154,14 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
         assertEquals("AB3", get(M3));
         assertEquals("AB4", get(M4));
     }
-    
+
     /**
      * Tests load all.
      */
     @Test
     public void testLoadAll() {
         IntegerToStringLoader loader = new IntegerToStringLoader();
-        c = newCache(newConf().loading().setRefreshPredicate(new RefreshFilter()).setLoader(
-                loader));
+        c = newCache(newConf().loading().setRefreshPredicate(new RefreshFilter()).setLoader(loader));
         loading().loadAll();
         awaitAllLoads();
         assertEquals("A", c.get(1));
@@ -170,6 +172,7 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
         assertEquals("C", c.peek(1));
         assertEquals("B", c.peek(2));
     }
+
     @Test
     public void loadAllWithAttributes() {
         AttributeMap am1 = new AttributeMaps.DefaultAttributeMap();
@@ -187,12 +190,13 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
         assertEquals("a2", get(2));
         assertEquals(2, loader.getNumberOfLoads());
     }
+
     static class RefreshFilter implements Predicate<CacheEntry<Integer, String>> {
         public boolean evaluate(CacheEntry<Integer, String> element) {
             return element.getKey().equals(1);
         }
     }
-    
+
     protected void waitAndAssertGet(Map.Entry<Integer, String>... e) throws InterruptedException {
         for (Map.Entry<Integer, String> m : e) {
             for (int i = 0; i < 100; i++) {

@@ -70,8 +70,8 @@ public class LoadingMXBean extends AbstractLoadingTestBundle {
         try {
             mxBean.setDefaultTimeToRefreshMs(-1);
             fail("Did not throw exception");
-        } catch (RuntimeMBeanException e) {
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
+        } catch (IllegalArgumentException e) {
+            
         }
     }
 

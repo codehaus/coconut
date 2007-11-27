@@ -5,10 +5,10 @@ package org.coconut.cache.internal.service.loading;
 
 import java.util.Map;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.service.loading.CacheLoadingService;
-import org.coconut.core.AttributeMap;
 import org.coconut.predicate.Predicate;
 
 /**

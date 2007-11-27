@@ -5,12 +5,14 @@ package org.coconut.cache.internal.service.entry;
 
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.attribute.AttributeMap;
+import org.coconut.attribute.AttributeMaps;
+import org.coconut.attribute.common.CostAttribute;
+import org.coconut.attribute.common.SizeAttribute;
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
-import org.coconut.core.AttributeMap;
-import org.coconut.core.AttributeMaps;
 import org.coconut.core.Clock;
 
 /**
@@ -98,27 +100,28 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
      * @return the size of the element that was added
      */
     long getSize(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
-        try {
-            return CacheAttributes.getSize(attributes);
-        } catch (IllegalArgumentException iae) {
+        long size = CacheAttributes.Size_ATR.getPrimitive(attributes,
+                CacheAttributes.Size_ATR.DEFAULT_VALUE);
+        if (!CacheAttributes.Size_ATR.isValid(size)) {
             exceptionService.getExceptionHandler().handleWarning(exceptionService.createContext(),
-                    iae.getMessage() + " was added for key = " + key);
-            return CacheAttributes.DEFAULT_SIZE;
+                    "An illegal size was added for key = " + key);
+            size = SizeAttribute.DEFAULT_VALUE;
         }
+        return size;
     }
 
     long getTimeToLive(long expirationTimeNanos, K key, V value, AttributeMap attributes,
             CacheEntry<K, V> existing) {
-        try {
-            expirationTimeNanos = CacheAttributes.getTimeToLive(attributes, TimeUnit.NANOSECONDS,
-                    expirationTimeNanos);
-        } catch (IllegalArgumentException iae) {
-            exceptionService.getExceptionHandler().handleWarning(exceptionService.createContext(),
-                    iae.getMessage() + " was added for key = " + key);
-        }
+        long nanos = CacheAttributes.TIME_TO_LIVE_ATR.getPrimitive(attributes,
+                TimeUnit.NANOSECONDS, expirationTimeNanos);
 
-        return expirationTimeNanos == Long.MAX_VALUE ? Long.MAX_VALUE : clock.getDeadlineFromNow(
-                expirationTimeNanos, TimeUnit.NANOSECONDS);
+        if (!CacheAttributes.TIME_TO_LIVE_ATR.isValid(nanos)) {
+            exceptionService.getExceptionHandler().handleWarning(exceptionService.createContext(),
+                    "An illegal expiration time was added for key = " + key);
+            nanos = expirationTimeNanos;
+        }
+        return nanos == Long.MAX_VALUE ? Long.MAX_VALUE : clock.getDeadlineFromNow(nanos,
+                TimeUnit.NANOSECONDS);
     }
 
     /**
@@ -135,55 +138,61 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
      * @return the cost of the element that was added
      */
     double getCost(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
-        try {
-            return CacheAttributes.getCost(attributes);
-        } catch (IllegalArgumentException iae) {
+        double cost = CacheAttributes.COST_ATR.getPrimitive(attributes,
+                CacheAttributes.COST_ATR.DEFAULT_COST);
+
+        if (!CacheAttributes.COST_ATR.isValid(cost)) {
             exceptionService.getExceptionHandler().handleWarning(exceptionService.createContext(),
-                    iae.getMessage() + " was added for key = " + key);
-            return CacheAttributes.DEFAULT_COST;
+                    "An illegal cost was added for key = " + key);
+            cost = CostAttribute.DEFAULT_COST;
         }
+        return cost;
     }
 
     long getHits(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
-        try {
-            return CacheAttributes.getHits(attributes);
-        } catch (IllegalArgumentException iae) {
+        long hits = CacheAttributes.HITS_ATR.getPrimitive(attributes);
+        if (!CacheAttributes.HITS_ATR.isValid(hits)) {
             exceptionService.getExceptionHandler().handleWarning(exceptionService.createContext(),
-                    iae.getMessage() + " was added for key = " + key);
-            return clock.timestamp();
+                    "An illegal hits was added for key = " + key);
+            hits = 0;
         }
+        return hits;
     }
 
     long getLastModified(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
-        try {
-            return CacheAttributes.getLastUpdated(attributes, clock);
-        } catch (IllegalArgumentException iae) {
-            exceptionService.getExceptionHandler().handleWarning(exceptionService.createContext(),
-                    iae.getMessage() + " was added for key = " + key);
-            return clock.timestamp();
+        long lastModified = CacheAttributes.Last_Modified_ATR.getPrimitive(attributes);
+        if (lastModified == 0) {
+            lastModified = clock.timestamp();
         }
+        if (!CacheAttributes.Last_Modified_ATR.isValid(lastModified)) {
+            exceptionService.getExceptionHandler().handleWarning(exceptionService.createContext(),
+                    "An illegal last modified time was added for key = " + key);
+            lastModified = clock.timestamp();
+        }
+        return lastModified;
     }
 
     long getTimeToRefresh(long refreshTimeNanos, K key, V value, AttributeMap attributes,
             CacheEntry<K, V> existing) {
-        try {
-            refreshTimeNanos = CacheAttributes.getTimeToRefresh(attributes, TimeUnit.NANOSECONDS,
-                    refreshTimeNanos);
-        } catch (IllegalArgumentException iae) {
+        long nanos = CacheAttributes.TIME_TO_REFRESH_ATR.getPrimitive(attributes,
+                TimeUnit.NANOSECONDS, refreshTimeNanos);
+
+        if (!CacheAttributes.TIME_TO_REFRESH_ATR.isValid(nanos)) {
             exceptionService.getExceptionHandler().handleWarning(exceptionService.createContext(),
-                    iae.getMessage() + " was added for key = " + key);
+                    "An illegal time to refresh time was added for key = " + key);
+            nanos = refreshTimeNanos;
         }
-        return clock.getDeadlineFromNow(refreshTimeNanos, TimeUnit.NANOSECONDS);
+        return clock.getDeadlineFromNow(nanos, TimeUnit.NANOSECONDS);
     }
 
     long getCreationTime(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
-        long creationTime = attributes.getLong(CacheAttributes.CREATION_TIME);
+        long creationTime = CacheAttributes.CREATION_TIME_ATR.getPrimitive(attributes);
         if (creationTime < 0) {
             exceptionService.getExceptionHandler().handleWarning(
                     exceptionService.createContext(),
                     "Must specify a positive creation time [Attribute="
-                            + CacheAttributes.CREATION_TIME + " , creationtime = " + creationTime
-                            + " for key = " + key);
+                            + CacheAttributes.CREATION_TIME_ATR + " , creationtime = "
+                            + creationTime + " for key = " + key);
         }
         if (creationTime > 0) {
             return creationTime;

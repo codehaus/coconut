@@ -1,7 +1,11 @@
 package org.coconut.management.defaults;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -10,13 +14,8 @@ import java.util.Map;
 import javax.management.MBeanAttributeInfo;
 import javax.management.ReflectionException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import org.coconut.management.annotation.ManagedAttribute;
-import org.coconut.management.defaults.stubs.AttributedStub3;
+import org.coconut.management.defaults.stubs.VariousAttributes;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,12 +23,12 @@ public class DefaultManagedAttributeTest {
 
     Map<String, AbstractManagedAttribute> attr;
 
-    AttributedStub3 stub;
+    VariousAttributes stub;
 
     @Before
     public void setup() throws Exception {
-        BeanInfo bi = Introspector.getBeanInfo(AttributedStub3.class);
-        stub = new AttributedStub3();
+        BeanInfo bi = Introspector.getBeanInfo(VariousAttributes.class);
+        stub = new VariousAttributes();
         attr = DefaultManagedAttribute.fromPropertyDescriptors(bi.getPropertyDescriptors(), stub);
         assertEquals(7, attr.size());
     }

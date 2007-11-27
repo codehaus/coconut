@@ -7,9 +7,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheServices;
-import org.coconut.core.AttributeMap;
 
 /**
  * This is the main interface for controlling the cache loading service of a cache at

@@ -3,27 +3,22 @@
  */
 package org.coconut.cache.internal.service.worker;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.CacheServices;
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.internal.service.servicemanager.CompositeService;
 import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
 import org.coconut.cache.service.servicemanager.AsynchronousShutdownObject;
 import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
-import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.service.worker.CacheWorkerConfiguration;
 import org.coconut.cache.service.worker.CacheWorkerManager;
 import org.coconut.cache.service.worker.CacheWorkerService;
-import org.coconut.core.AttributeMap;
 
 public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService implements
         CompositeService, CacheWorkerService {

@@ -3,9 +3,9 @@
  */
 package org.coconut.cache.service.loading;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheServices;
-import org.coconut.core.AttributeMap;
 
 /**
  * Various {@link CacheLoader} utility classes and functions.

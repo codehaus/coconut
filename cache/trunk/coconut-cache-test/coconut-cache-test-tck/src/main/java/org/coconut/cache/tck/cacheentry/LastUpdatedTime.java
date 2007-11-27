@@ -12,18 +12,17 @@ import static org.coconut.test.CollectionUtils.M8;
 
 import java.util.Map;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.service.loading.AbstractCacheLoader;
-import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.IntegerToStringLoader;
-import org.coconut.core.AttributeMap;
 import org.junit.Test;
 
 public class LastUpdatedTime extends AbstractCacheTCKTest {
     static class MyLoader extends AbstractCacheLoader<Integer, String> {
         public String load(Integer key, AttributeMap attributes) throws Exception {
-            CacheAttributes.setLastUpdated(attributes, key + 1);
+            CacheAttributes.Last_Modified_ATR.set(attributes, key + 1);
             return "" + (char) (key + 64);
         }
     }
@@ -32,7 +31,8 @@ public class LastUpdatedTime extends AbstractCacheTCKTest {
         assertEquals(modificationTime, peekEntry(entry).getLastUpdateTime());
         assertEquals(modificationTime, getEntry(entry).getLastUpdateTime());
         // TODO Enable when cachenetry.attributes is working
-        // assertEquals(modificationTime, CacheAttributes.getLastUpdateTime(getEntry(entry)
+        // assertEquals(modificationTime,
+        // CacheAttributes.getLastUpdateTime(getEntry(entry)
         // .getAttributes()));
     }
 
@@ -68,17 +68,17 @@ public class LastUpdatedTime extends AbstractCacheTCKTest {
         clock.setTimestamp(10);
         c = newCache(newConf().setClock(clock));
 
-        putAll(M1, M2,M3);
+        putAll(M1, M2, M3);
         assertPeekAndGet(M1, 10);
         assertPeekAndGet(M2, 10);
         assertPeekAndGet(M3, 10);
-        
+
         clock.incrementTimestamp();
         putAll(M1, M2);
         assertPeekAndGet(M1, 11);
         assertPeekAndGet(M2, 11);
         assertPeekAndGet(M3, 10);
-        
+
         putAll(M3, M4);
         assertPeekAndGet(M3, 11);
         assertPeekAndGet(M4, 11);
@@ -177,8 +177,7 @@ public class LastUpdatedTime extends AbstractCacheTCKTest {
     @Test
     public void loadedNoAttribute() {
         clock.setTimestamp(10);
-        c = newCache(newConf().setClock(clock).loading().setLoader(
-                new IntegerToStringLoader()));
+        c = newCache(newConf().setClock(clock).loading().setLoader(new IntegerToStringLoader()));
         get(M1);
         assertEquals(10l, getEntry(M1).getLastUpdateTime());
     }

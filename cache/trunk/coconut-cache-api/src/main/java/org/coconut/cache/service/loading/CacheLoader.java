@@ -5,7 +5,7 @@ package org.coconut.cache.service.loading;
 
 import java.util.Collection;
 
-import org.coconut.core.AttributeMap;
+import org.coconut.attribute.AttributeMap;
 
 /**
  * A <code>CacheLoader</code> is used for transparent loading or creation of values by a

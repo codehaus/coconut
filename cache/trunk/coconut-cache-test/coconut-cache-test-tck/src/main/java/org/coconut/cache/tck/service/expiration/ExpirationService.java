@@ -5,7 +5,6 @@ package org.coconut.cache.tck.service.expiration;
 
 import static org.coconut.test.CollectionUtils.M1_TO_M5_MAP;
 
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheException;

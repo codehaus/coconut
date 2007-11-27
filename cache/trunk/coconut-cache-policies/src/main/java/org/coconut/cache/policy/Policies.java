@@ -4,8 +4,6 @@
 
 package org.coconut.cache.policy;
 
-import java.util.Map;
-
 import org.coconut.cache.policy.paging.ClockPolicy;
 import org.coconut.cache.policy.paging.FIFOPolicy;
 import org.coconut.cache.policy.paging.LFUPolicy;
@@ -14,7 +12,6 @@ import org.coconut.cache.policy.paging.LRUPolicy;
 import org.coconut.cache.policy.paging.MRUPolicy;
 import org.coconut.cache.policy.paging.RandomPolicy;
 import org.coconut.cache.spi.ReplacementPolicy;
-import org.coconut.predicate.Predicate;
 
 /**
  * Factory methods for different {@link org.coconut.cache.spi.ReplacementPolicy}
