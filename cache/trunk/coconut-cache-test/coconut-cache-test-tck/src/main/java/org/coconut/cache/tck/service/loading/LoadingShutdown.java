@@ -32,7 +32,7 @@ public class LoadingShutdown extends AbstractLoadingTestBundle {
     public void load() {
         loading().load(1);
         awaitAllLoads();
-        shutdownAndAwait();
+        shutdownAndAwaitTermination();
         loading().load(1);
         awaitAllLoads();
     }
@@ -41,7 +41,7 @@ public class LoadingShutdown extends AbstractLoadingTestBundle {
     public void loadAtr() {
         loading().load(1, AttributeMaps.EMPTY_MAP);
         awaitAllLoads();
-        shutdownAndAwait();
+        shutdownAndAwaitTermination();
         loading().load(1, AttributeMaps.EMPTY_MAP);
         awaitAllLoads();
     }
@@ -50,7 +50,7 @@ public class LoadingShutdown extends AbstractLoadingTestBundle {
     public void loadAllCol() {
         loading().loadAll(Arrays.asList(1, 2));
         awaitAllLoads();
-        shutdownAndAwait();
+        shutdownAndAwaitTermination();
         loading().loadAll(Arrays.asList(1, 2));
         awaitAllLoads();
     }
@@ -59,7 +59,7 @@ public class LoadingShutdown extends AbstractLoadingTestBundle {
     public void loadAllMapAtr() {
         loading().loadAll(M);
         awaitAllLoads();
-        shutdownAndAwait();
+        shutdownAndAwaitTermination();
         loading().loadAll(M);
         awaitAllLoads();
     }
@@ -68,7 +68,7 @@ public class LoadingShutdown extends AbstractLoadingTestBundle {
     public void forceLoad() {
         loading().forceLoad(1);
         awaitAllLoads();
-        shutdownAndAwait();
+        shutdownAndAwaitTermination();
         loading().forceLoad(1);
         awaitAllLoads();
     }
@@ -77,7 +77,7 @@ public class LoadingShutdown extends AbstractLoadingTestBundle {
     public void forceLoadAtr() {
         loading().forceLoad(1, AttributeMaps.EMPTY_MAP);
         awaitAllLoads();
-        shutdownAndAwait();
+        shutdownAndAwaitTermination();
         loading().forceLoad(1, AttributeMaps.EMPTY_MAP);
         awaitAllLoads();
     }
@@ -86,7 +86,7 @@ public class LoadingShutdown extends AbstractLoadingTestBundle {
     public void forceLoadAllCol() {
         loading().forceLoadAll(Arrays.asList(1, 2));
         awaitAllLoads();
-        shutdownAndAwait();
+        shutdownAndAwaitTermination();
         loading().forceLoadAll(Arrays.asList(1, 2));
         awaitAllLoads();
     }
@@ -94,7 +94,7 @@ public class LoadingShutdown extends AbstractLoadingTestBundle {
     public void loadAllAtr() {
         loading().loadAll(AttributeMaps.EMPTY_MAP);
         awaitAllLoads();
-        shutdownAndAwait();
+        shutdownAndAwaitTermination();
         loading().loadAll(AttributeMaps.EMPTY_MAP);
         awaitAllLoads();
     }
@@ -102,7 +102,7 @@ public class LoadingShutdown extends AbstractLoadingTestBundle {
     public void forceLoadAllAtr() {
         loading().forceLoadAll(AttributeMaps.EMPTY_MAP);
         awaitAllLoads();
-        shutdownAndAwait();
+        shutdownAndAwaitTermination();
         loading().forceLoadAll(AttributeMaps.EMPTY_MAP);
         awaitAllLoads();
     }
@@ -111,7 +111,7 @@ public class LoadingShutdown extends AbstractLoadingTestBundle {
     public void forceLoadAllMapAtr() {
         loading().forceLoadAll(M);
         awaitAllLoads();
-        shutdownAndAwait();
+        shutdownAndAwaitTermination();
         loading().forceLoadAll(M);
         awaitAllLoads();
     }
@@ -120,7 +120,7 @@ public class LoadingShutdown extends AbstractLoadingTestBundle {
     public void forceLoadAll() {
         loading().forceLoadAll();
         awaitAllLoads();
-        shutdownAndAwait();
+        shutdownAndAwaitTermination();
         loading().forceLoadAll();
         awaitAllLoads();
     }

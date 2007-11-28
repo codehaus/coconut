@@ -16,6 +16,9 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
 import org.coconut.cache.DummyCache;
 import org.coconut.test.MockTestCase;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.After;
 import org.junit.Test;
 
@@ -30,20 +33,80 @@ public class CacheSingletonTest {
 
     private final static String PCK2 = "org/coconut/cache/util/CacheSingleton2.xml";
 
+    private final static String PCK3 = "org/coconut/cache/util/CacheSingletonIllegal.xml";
+
     @After
     public void after() throws Exception {
-        Field f = CacheSingleton.class.getDeclaredField("status");
+        Field f = CacheSingleton.class.getDeclaredField("isTerminated");
         f.setAccessible(true);
-        f.setInt(null, 0);
-
+        f.setBoolean(null, false);
         f = CacheSingleton.class.getDeclaredField("cacheInstance");
         f.setAccessible(true);
         f.set(null, null);
     }
 
     @Test(expected = CacheException.class)
-    public void testNoConfiguration1() {
+    public void noConfiguration() {
         CacheSingleton.getCache();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void setNull() {
+        CacheSingleton.setCache(null);//
+        CacheSingleton.getCache();
+    }
+
+    @Test
+    public void shutdownAndClearCache() {
+        CacheSingleton.shutdownAndClearCache();// ignored
+        final Mockery context = new JUnit4Mockery();
+        final Cache cache = context.mock(Cache.class);
+        context.checking(new Expectations() {
+            {
+                one(cache).shutdown();
+            }
+        });
+        CacheSingleton.setCache(cache);
+        CacheSingleton.shutdownAndClearCache();// ignored
+        context.assertIsSatisfied();
+
+        try {
+            CacheSingleton.getCache();
+            throw new AssertionError("should fail");
+        } catch (IllegalStateException ok) {}
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void setNull1() {
+        Cache<?, ?> c = MockTestCase.mockDummy(Cache.class);
+        CacheSingleton.setCache(c);
+        CacheSingleton.getCache();// ok
+        CacheSingleton.setCache(null);
+        CacheSingleton.getCache();
+    }
+
+    @Test
+    public void illegalConfiguration() {
+        String current = CacheSingleton.getCacheRessourceLocation();
+        CacheException e = null;
+        try {
+            CacheSingleton.setCacheRessourceLocation(PCK3);
+            try {
+                CacheSingleton.getCache();
+                throw new AssertionError("should fail");
+            } catch (CacheException ok) {
+                e = ok;
+                assertTrue(ok.getCause() instanceof ClassNotFoundException);
+            }
+            try {
+                CacheSingleton.getCache();
+                throw new AssertionError("should fail");
+            } catch (CacheException ok) {
+                assertSame(e, ok);
+            }
+        } finally {
+            CacheSingleton.setCacheRessourceLocation(current);
+        }
     }
 
     @Test

@@ -52,6 +52,10 @@ public class EventServiceLoading extends AbstractEventTestBundle {
         loading().forceLoadAll(Arrays.asList(1, 2));
         awaitAllLoads();
         // the order might vary
+        //TODO fix
+        //junit.framework.AssertionFailedError: expected type interface org.coconut.cache.service.event.CacheEntryEvent$ItemUpdated, but got type class org.coconut.cache.internal.service.event.InternalEntryEvent$AddedEvent
+        //at junit.framework.Assert.fail(Assert.java:47)
+        //at junit.framework.Assert.assertTrue(Assert.java:20)
         consumeItem(ItemUpdated.class, M1.getKey(), M2.getValue());
         consumeItem(ItemAdded.class, M2.getKey(), M3.getValue());
 

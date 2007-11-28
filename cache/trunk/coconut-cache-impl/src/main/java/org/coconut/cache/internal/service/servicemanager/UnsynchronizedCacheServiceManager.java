@@ -261,12 +261,12 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
             }
         }
     }
-    
+
     private void doStart() {
         status = RunState.STARTING;
         startServices();
         try {
-            
+
             // register mbeans
             CacheManagementService cms = (CacheManagementService) publicServices
                     .get(CacheManagementService.class);
@@ -297,6 +297,7 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
             conf = null; // Conf can be GC'ed now
         }
     }
+
     private Map<CacheLifecycle, RuntimeException> tryTerminateServices() {
         Map<CacheLifecycle, RuntimeException> m = new HashMap<CacheLifecycle, RuntimeException>();
         for (Iterator<ServiceHolder> iterator = services.descendingIterator(); iterator.hasNext();) {
@@ -311,7 +312,7 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
         }
         return m;
     }
-    
+
     private Map<CacheLifecycle, RuntimeException> tryShutdownServices() {
         Map<CacheLifecycle, RuntimeException> m = new HashMap<CacheLifecycle, RuntimeException>();
         for (Iterator<ServiceHolder> iterator = services.descendingIterator(); iterator.hasNext();) {
@@ -331,10 +332,12 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
     }
 
     protected void doTerminate() {
-        if (status != RunState.COULD_NOT_START) {
-            status = RunState.TERMINATED;
+        if (status != RunState.TERMINATED) {
+            if (status != RunState.COULD_NOT_START) {
+                status = RunState.TERMINATED;
+            }
+            ces.terminated(tryTerminateServices());
         }
-        ces.terminated(tryTerminateServices());
     }
 
     protected void tryTerminate() {
@@ -369,9 +372,11 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
         boolean isInitialized() {
             return state >= 2;
         }
+
         boolean isStarted() {
             return state >= 4;
         }
+
         boolean isInternal() {
             return isInternal;
         }

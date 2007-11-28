@@ -4,7 +4,6 @@
 
 package org.coconut.cache.util;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
@@ -46,10 +45,9 @@ public final class CacheSingleton {
     private static CacheException initializationException;
 
     /**
-     * Whether or not this singleton has been initialized. 0 = not initialized, 1 =
-     * initialized, 2 = terminated.
+     * Whether or not this singleton has been terminater.
      */
-    private static int status;
+    private static boolean isTerminated;
 
     /** Cannot instantiate. */
     // /CLOVER:OFF
@@ -98,12 +96,10 @@ public final class CacheSingleton {
      *            the cache to keep a singleton reference for
      */
     public synchronized static void setCache(Cache<?, ?> cache) {
-        cacheInstance = cache;
         if (cache == null) {
-            status = 2;
-        } else {
-            status = 1;
+            isTerminated = true;
         }
+        cacheInstance = cache;
         initializationException = null;
     }
 
@@ -122,10 +118,11 @@ public final class CacheSingleton {
      */
     public synchronized static void shutdownAndClearCache() {
         if (cacheInstance != null) {
-            // we want to clear the reference even if the cache shutdown fails
-            status = 2;
+            // we want to clear the reference even if the cache shutdown fails for some
+            // reason
             Cache<?, ?> c = cacheInstance;
             cacheInstance = null;
+            isTerminated = true;
             c.shutdown();
         }
     }
@@ -136,8 +133,7 @@ public final class CacheSingleton {
     static synchronized void lazyInitializeClasspathConfiguration() {
         if (initializationException != null) {
             throw initializationException;
-        }
-        if (status == 0) {
+        } else if (!isTerminated) {
             InputStream is = null;
             try {
                 URL url = Thread.currentThread().getContextClassLoader().getResource(
@@ -148,20 +144,14 @@ public final class CacheSingleton {
                 }
                 is = url.openStream();
                 Cache<?, ?> cache = CacheConfiguration.loadCacheFrom(is);
+                is.close();
                 setCache(cache);
-                status = 1;
-                if (is != null) {
-                    try {
-                        is.close();
-                    } catch (IOException e) {
-                        throw new CacheException("InputStream could not be closed", e);
-                    }
-                }
-
             } catch (Exception e) {
                 initializationException = new CacheException("Cache could not be instantiated", e);
                 throw initializationException;
             }
+        } else  {
+            throw new IllegalStateException("The singleton cache has been removed");
         }
     }
 }

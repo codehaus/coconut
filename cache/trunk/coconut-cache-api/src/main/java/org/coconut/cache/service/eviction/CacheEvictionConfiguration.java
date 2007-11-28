@@ -170,8 +170,8 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
      * <p>
      * The cache will, unless otherwise specified, pass instances of
      * {@link org.coconut.cache.CacheEntry} to
-     * {@link ReplacementPolicy#add(Object, org.coconut.core.AttributeMap)} and
-     * {@link ReplacementPolicy#update(int, Object, org.coconut.core.AttributeMap)}
+     * {@link ReplacementPolicy#add(Object, org.coconut.attribute.AttributeMap)} and
+     * {@link ReplacementPolicy#update(int, Object, org.coconut.attribute.AttributeMap)}
      * 
      * @param policy
      *            the replacement policy that should select which elements to evict when

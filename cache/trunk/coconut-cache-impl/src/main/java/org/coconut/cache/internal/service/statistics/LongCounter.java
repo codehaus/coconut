@@ -3,13 +3,8 @@
  */
 package org.coconut.cache.internal.service.statistics;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.coconut.core.EventProcessor;
-import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.annotation.ManagedOperation;
 
 /**
@@ -19,10 +14,6 @@ import org.coconut.management.annotation.ManagedOperation;
  * @version $Id$
  */
 public abstract class LongCounter {
-
-    public LongCounter(String name) {
-    // super(name, "No Description of " + name);
-    }
 
     public LongCounter(String name, String description) {
     // super(name, description);
@@ -39,50 +30,11 @@ public abstract class LongCounter {
     public abstract long addAndGet(long delta);
 
     /**
-     * Atomically decrements by one the current value.
-     * 
-     * @return the updated value
-     */
-    public abstract long decrementAndGet();
-
-    /**
      * Gets the current value.
      * 
      * @return the current value
      */
     public abstract long get();
-
-    /**
-     * Atomically adds the given value to the current value.
-     * 
-     * @param delta
-     *            the value to add
-     * @return the previous value
-     */
-    public abstract long getAndAdd(long delta);
-
-    /**
-     * Atomically decrements by one the current value.
-     * 
-     * @return the previous value
-     */
-    public abstract long getAndDecrement();
-
-    /**
-     * Atomically increments by one the current value.
-     * 
-     * @return the previous value
-     */
-    public abstract long getAndIncrement();
-
-    /**
-     * Atomically sets to the given value and returns the old value.
-     * 
-     * @param newValue
-     *            the new value
-     * @return the previous value
-     */
-    public abstract long getAndSet(long newValue);
 
     /**
      * Atomically increments by one the current value.
@@ -108,63 +60,15 @@ public abstract class LongCounter {
         return Long.toString(get());
     }
 
-    @ManagedAttribute(defaultValue = "$name Total", description = "Total $description")
-    public final long getLatest() {
-        return get();
-    }
-
-    /**
-     * @see org.coconut.metric.spi.SingleJMXNumber#getNumberClass()
-     */
-
-    protected final Class<? extends Number> getNumberClass() {
-        return Long.TYPE;
-    }
-
-    /**
-     * @see org.coconut.metric.spi.AbstractManagedNumber#getValue()
-     */
-
-    protected final Number getValue() {
-        return get();
-    }
 
     @ManagedOperation(defaultValue = "reset $name", description = "Sets the value of $name to 0")
     public void reset() {
         set(0);
     }
-
-    public void process(Number n) {
-        set(n.longValue());
-    }
-
-    static EventProcessor<? super LongCounter>[] add(EventProcessor<? super LongCounter>[] prev,
-            EventProcessor<? super LongCounter> add) {
-        ArrayList<EventProcessor<? super LongCounter>> al = new ArrayList<EventProcessor<? super LongCounter>>(
-                Arrays.asList(prev));
-        al.add(add);
-        return al.toArray(new EventProcessor[prev.length + 1]);
-    }
-
-    static EventProcessor<? super LongCounter>[] remove(EventProcessor<? super LongCounter>[] prev,
-            EventProcessor<?> remove) {
-        ArrayList<EventProcessor<? super LongCounter>> al = new ArrayList<EventProcessor<? super LongCounter>>(
-                Arrays.asList(prev));
-        al.remove(remove);
-        // very pessimistic, don't want an array that is to long
-        return al.toArray(new EventProcessor[0]);
-    }
-
    
     final static class ConcurrentLongCounter extends LongCounter {
 
-        private final static boolean DO_UPDATE = true;
-
         private final AtomicLong l = new AtomicLong();
-
-        private volatile EventProcessor<? super LongCounter>[] array = new EventProcessor[0];
-
-        private final Object mutex = new Object();
 
         /**
          * @param name
@@ -179,17 +83,6 @@ public abstract class LongCounter {
             l.set(0);
         }
 
-        private void update() {
-            if (DO_UPDATE) {
-                EventProcessor<? super LongCounter>[] a = array;
-                if (a.length > 0) {
-                    for (int i = 0; i < a.length; i++) {
-                        a[i].process(this);
-                    }
-                }
-            }
-        }
-
         /**
          * Atomically adds the given value to the current value.
          * 
@@ -199,31 +92,7 @@ public abstract class LongCounter {
          */
         public long addAndGet(long delta) {
             long result = l.addAndGet(delta);
-            update();
             return result;
-        }
-
-        /**
-         * Atomically decrements by one the current value.
-         * 
-         * @return the updated value
-         */
-        public long decrementAndGet() {
-            return l.decrementAndGet();
-        }
-
-        /**
-         * @see java.lang.Number#doubleValue()
-         */
-        public double doubleValue() {
-            return l.doubleValue();
-        }
-
-        /**
-         * @see java.lang.Number#floatValue()
-         */
-        public float floatValue() {
-            return l.floatValue();
         }
 
         /**
@@ -235,45 +104,6 @@ public abstract class LongCounter {
             return l.get();
         }
 
-        /**
-         * Atomically adds the given value to the current value.
-         * 
-         * @param delta
-         *            the value to add
-         * @return the previous value
-         */
-        public long getAndAdd(long delta) {
-            return l.getAndAdd(delta);
-        }
-
-        /**
-         * Atomically decrements by one the current value.
-         * 
-         * @return the previous value
-         */
-        public long getAndDecrement() {
-            return l.getAndDecrement();
-        }
-
-        /**
-         * Atomically increments by one the current value.
-         * 
-         * @return the previous value
-         */
-        public long getAndIncrement() {
-            return l.getAndIncrement();
-        }
-
-        /**
-         * Atomically sets to the given value and returns the old value.
-         * 
-         * @param newValue
-         *            the new value
-         * @return the previous value
-         */
-        public long getAndSet(long newValue) {
-            return l.getAndSet(newValue);
-        }
 
         /**
          * Atomically increments by one the current value.
@@ -282,20 +112,6 @@ public abstract class LongCounter {
          */
         public long incrementAndGet() {
             return l.incrementAndGet();
-        }
-
-        /**
-         * @see java.lang.Number#intValue()
-         */
-        public int intValue() {
-            return l.intValue();
-        }
-
-        /**
-         * @see java.lang.Number#longValue()
-         */
-        public long longValue() {
-            return l.longValue();
         }
 
         /**
@@ -308,27 +124,6 @@ public abstract class LongCounter {
             l.set(newValue);
         }
 
-        public EventProcessor<? super LongCounter> addEventProcessor(
-                EventProcessor<? super LongCounter> e) {
-            synchronized (mutex) {
-                array = add(array, e);
-                return e;
-            }
-        }
-
-        public List<EventProcessor<? super LongCounter>> getEventProcessors() {
-            synchronized (mutex) {
-                return new ArrayList<EventProcessor<? super LongCounter>>(Arrays.asList(array));
-            }
-        }
-
-        public boolean removeEventProcessor(EventProcessor<?> e) {
-            synchronized (mutex) {
-                EventProcessor<? super LongCounter>[] prev = array;
-                array = remove(array, e);
-                return prev.length != array.length;
-            }
-        }
 
     }
 

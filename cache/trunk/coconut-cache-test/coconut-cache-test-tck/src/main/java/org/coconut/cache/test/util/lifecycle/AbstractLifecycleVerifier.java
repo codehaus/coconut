@@ -53,6 +53,11 @@ public class AbstractLifecycleVerifier implements CacheLifecycle {
         assertTrue(currentStep.get() == Step.STARTED);
     }
 
+    public void assertShutdownPhase() {
+        Step state = currentStep.get();
+        assertTrue("state was " + state, state == Step.SHUTDOWN);
+    }
+
     public void assertShutdownOrTerminatedPhase() {
         Step state = currentStep.get();
         assertTrue("state was " + state, state == Step.SHUTDOWN || state == Step.TERMINATED);
@@ -113,11 +118,13 @@ public class AbstractLifecycleVerifier implements CacheLifecycle {
         assertNotNull(serviceManager.getAllServices().get(CacheServiceManagerService.class));
         currentStep.set(Step.START);
     }
+
     public void manage(ManagedGroup parent) {
         assertTrue(nextStep.compareAndSet(Step.MANAGED, Step.STARTED));
         assertNotNull(parent);
         currentStep.set(Step.MANAGED);
     }
+
     public void started(Cache<?, ?> cache) {
         assertTrue(nextStep.compareAndSet(Step.STARTED, Step.SHUTDOWN));
         if (c != null) {

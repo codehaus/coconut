@@ -12,6 +12,9 @@ import static org.coconut.cache.policy.PolicyTestUtils.empty;
 import static org.coconut.test.CollectionUtils.asList;
 import static org.coconut.test.CollectionUtils.seq;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -238,5 +241,37 @@ public class RandomPolicyTest {
         rp.add(6);
         int i2 = rp.add(5);
         rp.update(i2, 7);
+    }
+
+    @Test
+    public void copyConstructor() {
+        RandomPolicy<Integer> rp = new RandomPolicy<Integer>(2);
+        List<Integer> l = Arrays.asList(2, 4, 8, 7, 6, 5, 3, 1, 9, 10, 11, 12, 13, 14, 15, 16, 17);
+        rp.addAll(l);
+        RandomPolicy<Integer> clone = rp.clone();
+        assertEquals(rp.getSize(), clone.getSize());
+        assertEquals(new HashSet(l), new HashSet(rp.peekAll()));
+        assertEquals(new HashSet(l), new HashSet(clone.peekAll()));
+        assertEquals(new HashSet(l), new HashSet(clone.evictAll()));
+    }
+
+    @Test
+    public void peek() {
+        RandomPolicy<String> rp = new RandomPolicy<String>(3);
+        assertNull(rp.peek());
+        rp.add("A");
+        assertEquals("A", rp.peek());
+        rp.add("B");
+        rp.add("C");
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < 100; i++) {
+            String p = rp.peek();
+            assertTrue(p.equals("A") || p.equals("B") || p.equals("C"));
+            result.append(p);
+        }
+        String r = result.toString();
+        assertTrue(r.contains("A"));
+        assertTrue(r.contains("B"));
+        assertTrue(r.contains("C"));
     }
 }

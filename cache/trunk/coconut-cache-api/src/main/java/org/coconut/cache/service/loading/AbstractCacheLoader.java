@@ -9,7 +9,7 @@ import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 
 /**
  * An abstract implementation of a {@link CacheLoader}. Use this class if you only need
- * to override {@link CacheLoader#load(Object, org.coconut.core.AttributeMap)}.
+ * to override {@link CacheLoader#load(Object, org.coconut.attribute.AttributeMap)}.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $

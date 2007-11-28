@@ -39,7 +39,7 @@ public class ExceptionHandlingLifecycle extends AbstractCacheTCKTest {
         assertFalse(c.isStarted());
         c.put(1, "dd");
         assertEquals(1, status.get());
-        shutdownAndAwait();
+        shutdownAndAwaitTermination();
         assertEquals(
                 "ExceptionHandler.initialize should be called after the cache has been shutdown and terminated",
                 9, status.get());
@@ -52,7 +52,7 @@ public class ExceptionHandlingLifecycle extends AbstractCacheTCKTest {
         c = newCache(conf);
         c.put(1, "dd");
         assertEquals(3, status.get());
-        shutdownAndAwait();
+        shutdownAndAwaitTermination();
         assertEquals(15, status.get());
     }
 

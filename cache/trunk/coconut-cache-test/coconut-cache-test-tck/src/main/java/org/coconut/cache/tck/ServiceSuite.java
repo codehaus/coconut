@@ -5,6 +5,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import net.jcip.annotations.NotThreadSafe;
+import net.jcip.annotations.ThreadSafe;
+
 import org.coconut.cache.spi.CacheServiceSupport;
 import org.junit.internal.runners.InitializationError;
 import org.junit.internal.runners.TestClassRunner;
@@ -32,9 +35,14 @@ public class ServiceSuite extends TestClassRunner {
         if (annotation == null)
             throw new InitializationError(String.format(
                     "class '%s' must have a SuiteClasses annotation", klass.getName()));
-        List<Class> l = Arrays.asList(CacheTCKRunner.tt.getAnnotation(CacheServiceSupport.class)
-                .value());
+        List<Class> l = new ArrayList(Arrays.asList(CacheTCKRunner.tt.getAnnotation(CacheServiceSupport.class)
+                .value()));
         ArrayList<Class> classes = new ArrayList<Class>(Arrays.asList(annotation.value()));
+        if (CacheTCKRunner.tt.getAnnotation(NotThreadSafe.class) != null) {
+            l.add(NotThreadSafe.class);
+        } else { // assume its ThreadSafe
+            l.add(ThreadSafe.class);
+        }
         for (Iterator<Class> iterator = classes.iterator(); iterator.hasNext();) {
             Class<?> c = iterator.next();
             RequireService r = c.getAnnotation(RequireService.class);

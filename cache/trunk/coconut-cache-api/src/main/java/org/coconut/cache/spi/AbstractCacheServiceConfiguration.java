@@ -93,8 +93,7 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
             toXML(doc, root);
             return XmlUtil.prettyprint(doc);
         } catch (Exception e) {
-            if (conf.getClass().getPackage().getName().startsWith(
-                    Cache.class.getPackage().getName())) {
+            if (getClass().getPackage().getName().startsWith(Cache.class.getPackage().getName())) {
                 // speciel exception for Coconut Cache implementations.
                 throw new CacheException(CacheSPI.HIGHLY_IRREGULAR_MSG, e);
             } else {
@@ -132,19 +131,14 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
      * @throws IllegalStateException
      *             if no resource bundle has been specified when calling the constructor
      *             of this class
-     * @throws CacheException
+     * @throws MissingResourceException
      *             if no entry could be found for specified key
      */
     protected String lookup(String key) {
         if (bundle == null) {
             throw new IllegalStateException("No bundle has been defined");
         }
-        try {
-            return bundle.getString(key);
-        } catch (MissingResourceException e) {
-            throw new CacheException(
-                    "Could not find an entry for the specified resource bundle key " + key, e);
-        }
+        return bundle.getString(key);
     }
 
     /**

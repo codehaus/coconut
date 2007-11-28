@@ -68,8 +68,7 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements Serializable, 
     @SuppressWarnings("unchecked")
     public RandomPolicy(int initialCapacity) {
         if (initialCapacity < 0) {
-            throw new IllegalArgumentException(
-                    "initialSize must be a positive number or 0");
+            throw new IllegalArgumentException("initialSize must be a positive number or 0");
         }
         threshold = initialCapacity;
         references = new int[initialCapacity];
@@ -100,9 +99,12 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements Serializable, 
         System.arraycopy(h.data, 0, data, 0, h.data.length);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
+    public RandomPolicy<T> clone() {
+        return new RandomPolicy<T>(this);
+    }
+
+    /** {@inheritDoc} */
     public int add(T newData, AttributeMap ignore) {
         if (nextEntryIndex >= threshold - 1)
             resize(threshold * 2);
@@ -117,18 +119,14 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements Serializable, 
         return newIndex;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void clear() {
         while (evictNext() != null) {
             /* ignore */
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public T evictNext() {
         if (nextEntryIndex == 0) {
             return null; // list is empty
@@ -139,9 +137,7 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements Serializable, 
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getSize() {
         return nextEntryIndex;
     }
@@ -180,35 +176,24 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements Serializable, 
         return l;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public T remove(int index) {
         if (index > data.length - 1 || references[index] == -1)
             return null;
         return removeIndexed(references[index]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void touch(int index) {
-    // ignore
-    }
+    /** {@inheritDoc} */
+    public void touch(int index) {/* ignore */}
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean update(int index, T newElement, AttributeMap ignore) {
         data[references[index]] = newElement;
         return true; // Random never rejects an entry
     }
 
-    /**
-     * @return a random element index
-     */
     private int getRandomElement() {
-        return rnd.nextInt(nextEntryIndex - 1);
+        return rnd.nextInt(nextEntryIndex);
     }
 
     /**
@@ -253,8 +238,8 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements Serializable, 
 
         int[] oldFreeEntries = freeEntries;
         freeEntries = new int[threshold];
-        System.arraycopy(oldFreeEntries, 0, freeEntries, 0, Math.min(
-                oldFreeEntries.length, freeEntries.length));
+        System.arraycopy(oldFreeEntries, 0, freeEntries, 0, Math.min(oldFreeEntries.length,
+                freeEntries.length));
         for (int i = oldFreeEntries.length - 1; i < freeEntries.length; i++) {
             freeEntries[i] = i;
             references[i] = -1;

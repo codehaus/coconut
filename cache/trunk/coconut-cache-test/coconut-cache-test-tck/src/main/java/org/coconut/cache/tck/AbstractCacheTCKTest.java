@@ -361,7 +361,7 @@ public class AbstractCacheTCKTest extends Assert {
         c = newCache(conf);
     }
 
-    protected void shutdownAndAwait() {
+    protected void shutdownAndAwaitTermination() {
         c.shutdown();
         try {
             assertTrue(c.awaitTermination(5, TimeUnit.SECONDS));

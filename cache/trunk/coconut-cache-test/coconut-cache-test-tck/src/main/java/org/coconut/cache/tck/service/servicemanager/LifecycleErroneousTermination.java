@@ -43,7 +43,7 @@ public class LifecycleErroneousTermination extends AbstractCacheTCKTest {
         conf.serviceManager().add(alv);
         setCache(conf);
         prestart();
-        shutdownAndAwait();
+        shutdownAndAwaitTermination();
         assertEquals(1, handler.terminatationMap.size());
         assertTrue(handler.terminatationMap.get(alv) instanceof RuntimeException1);
         assertEquals(1, verifier.get());
@@ -85,7 +85,7 @@ public class LifecycleErroneousTermination extends AbstractCacheTCKTest {
         conf.serviceManager().add(alv1).add(alv2).add(alv3).add(alv4);
         setCache(conf);
         prestart();
-        shutdownAndAwait();
+        shutdownAndAwaitTermination();
         assertEquals(3, handler.terminatationMap.size());
         assertTrue(handler.terminatationMap.get(alv4) instanceof RuntimeException1);
         assertTrue(handler.terminatationMap.get(alv3) instanceof RuntimeException2);
