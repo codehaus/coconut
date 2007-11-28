@@ -3,7 +3,7 @@
  */
 package org.coconut.cache.examples.loading;
 
-//START SNIPPET: class
+//START SNIPPET: Class
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheServices;
 import org.coconut.cache.service.loading.CacheLoadingService;
@@ -22,4 +22,4 @@ public class VariousLoading {
         cls.loadAll(); // will reload all elements in the cache that is expired or needs refreshing
     }
 }
-//END SNIPPET: class
+//END SNIPPET: Class
