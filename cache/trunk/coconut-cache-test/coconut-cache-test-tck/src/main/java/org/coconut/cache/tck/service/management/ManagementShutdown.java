@@ -11,12 +11,14 @@ import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 
 import org.coconut.cache.service.management.CacheMXBean;
+import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
+import org.coconut.cache.tck.RequireService;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.annotation.ManagedOperation;
 import org.junit.Before;
 import org.junit.Test;
-
+@RequireService( { CacheManagementService.class })
 public class ManagementShutdown extends AbstractCacheTCKTest {
 
     private MBeanServer mbs;

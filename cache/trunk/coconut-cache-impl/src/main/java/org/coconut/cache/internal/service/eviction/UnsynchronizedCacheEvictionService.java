@@ -29,26 +29,28 @@ import org.coconut.cache.spi.ReplacementPolicy;
  */
 public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>> extends
         AbstractEvictionService<K, V, T> {
+    /** The ReplacementPolicy used for deciding which elements to evict. */
     private final ReplacementPolicy<T> cp;
 
+    /** The maximum volume of this cache. */
     private long maxVolume;
 
+    /** The maximum size of this cache. */
     private int maxSize;
 
     // @SuppressWarnings("unchecked")
     public UnsynchronizedCacheEvictionService(CacheEvictionConfiguration<K, V> conf,
             InternalCacheSupport<K, V> helper) {
         super(helper);
-        cp = conf.getPolicy() == null ? Policies.newLRU() : (ReplacementPolicy) conf
-                .getPolicy();
+        cp = conf.getPolicy() == null ? Policies.newLRU() : (ReplacementPolicy) conf.getPolicy();
         maxSize = EvictionUtils.getMaximumSizeFromConfiguration(conf);
         maxVolume = EvictionUtils.getMaximumVolumeFromConfiguration(conf);
     }
 
     /** {@inheritDoc} */
     public int add(T t) {
-        //TODO Test maxSize, maxVolume
-        if (maxVolume == 0) {
+        // TODO Test maxSize, maxVolume
+        if (maxVolume == 0 || maxSize == 0) {
             return -1;
         }
         return cp.add(t, AttributeMaps.EMPTY_MAP);
@@ -118,20 +120,17 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
 
     /** {@inheritDoc} */
     public void remove(int index) {
-        if (cp != null) {
-            cp.remove(index);
-        }
+        cp.remove(index);
     }
 
     /** {@inheritDoc} */
     public boolean replace(int index, T t) {
-        return cp.update(index, t,AttributeMaps.EMPTY_MAP);
+        return cp.update(index, t, AttributeMaps.EMPTY_MAP);
     }
 
     /** {@inheritDoc} */
     public void setMaximumSize(int size) {
-        this.maxSize = new CacheEvictionConfiguration<K, V>().setMaximumSize(size)
-                .getMaximumSize();
+        this.maxSize = new CacheEvictionConfiguration<K, V>().setMaximumSize(size).getMaximumSize();
     }
 
     /** {@inheritDoc} */
@@ -143,12 +142,9 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
     /** {@inheritDoc} */
     public void touch(int index) {
         if (index < 0) {
-            throw new IllegalArgumentException(
-                    "index must be a non negative number, was " + index);
+            throw new IllegalArgumentException("index must be a non negative number, was " + index);
         }
-        if (cp != null) {
-            cp.touch(index);
-        }
+        cp.touch(index);
     }
 
 }

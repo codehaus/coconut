@@ -4,9 +4,6 @@
 
 package org.coconut.predicate;
 
-import static org.coconut.core.Mappers.mapEntryToKey;
-import static org.coconut.core.Mappers.mapEntryToValue;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,7 +14,7 @@ import java.util.Map;
 
 import org.coconut.core.EventProcessor;
 import org.coconut.core.Mapper;
-import org.coconut.core.Mappers;
+import org.coconut.internal.util.Mappers;
 
 /**
  * Factory and utility methods for {@link Predicate}.
@@ -39,15 +36,15 @@ public final class CollectionPredicates {
      * 
      * @param <E>
      *            the types accepted
-     * @param collection
+     * @param iterable
      *            the collection to check
      * @param predicate
      *            the predicate to test against
      * @return whether or not all of elements in the specified can be accepted by the
      * specified predicate
      */
-    public static <E> boolean acceptAll(Collection<E> collection, Predicate<E> predicate) {
-        for (E s : collection) {
+    public static <E> boolean evaluateAll(Iterable<E> iterable, Predicate<E> predicate) {
+        for (E s : iterable) {
             if (!predicate.evaluate(s)) {
                 return false;
             }
@@ -61,15 +58,15 @@ public final class CollectionPredicates {
      * 
      * @param <E>
      *            the types accepted
-     * @param collection
-     *            the collection to check
+     * @param iterable
+     *            the iterable to check
      * @param predicate
      *            the predicate to test against
      * @return whether or not any of elements in the specified can be accepted by the
      * specified predicate
      */
-    public static <E> boolean acceptAny(Collection<E> collection, Predicate<E> predicate) {
-        for (E s : collection) {
+    public static <E> boolean evaluateAny(Iterable<E> iterable, Predicate<E> predicate) {
+        for (E s : iterable) {
             if (predicate.evaluate(s)) {
                 return true;
             }
@@ -206,7 +203,7 @@ public final class CollectionPredicates {
 
     @SuppressWarnings("unchecked")
     public static <K, V> Predicate<Map.Entry<K, V>> keyFilter(Predicate<K> filter) {
-        return new TransformerPredicate(mapEntryToKey(), filter);
+        return new TransformerPredicate(Mappers.mapEntryToKey(), filter);
     }
 
     public static <T> Predicate<T> notNullAnd(Predicate<T> f) {
@@ -238,7 +235,7 @@ public final class CollectionPredicates {
 
     @SuppressWarnings("unchecked")
     public static <K, V> Predicate<Map.Entry<K, V>> valueFilter(Predicate<V> filter) {
-        return new TransformerPredicate(mapEntryToValue(), filter);
+        return new TransformerPredicate(Mappers.mapEntryToValue(), filter);
     }
 
     final static class IsNullFilter implements Predicate, Serializable {

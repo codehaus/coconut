@@ -3,7 +3,7 @@
  */
 package org.coconut.cache.service.loading;
 
-import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.*;
 
 import org.coconut.attribute.AttributeMaps;
 import org.coconut.cache.Cache;
@@ -31,11 +31,33 @@ public class CacheLoadersTest {
 
     private CacheLoadingService<Integer, String> service;
 
-    @Before
-    public void setupDummy() {
-        dc = new DummyCache();
-        service = context.mock(CacheLoadingService.class);
-        dc.addService(CacheLoadingService.class, service);
+    /** Tests {@link CacheLoaders#nullLoader()}. */
+    @Test
+    public void nullLoader() throws Exception {
+        CacheLoader<Integer, String> cl = CacheLoaders.nullLoader();
+        assertNull(cl.load(1, AttributeMaps.EMPTY_MAP));
+        final CacheLoaderCallback<Integer, String> callback = context
+                .mock(CacheLoaderCallback.class);
+// context.checking(new Expectations() {
+// {
+//                
+// one(callback).getKey();
+// will(returnValue("1"));
+// one(callback).completed(null);
+// }
+// });
+// cl.loadAll(Arrays.asList(callback));
+    }
+
+    /** Tests {@link CacheLoaders#runForceLoad(Cache, Object)}. */
+    @Test
+    public void runForceLoad() {
+        context.checking(new Expectations() {
+            {
+                one(service).forceLoad(1);
+            }
+        });
+        CacheLoaders.runForceLoad(dc, 1).run();
     }
 
     /** Tests {@link CacheLoaders#runLoad(Cache, Object)}. */
@@ -49,18 +71,9 @@ public class CacheLoadersTest {
         CacheLoaders.runLoad(dc, 1).run();
     }
 
-    /**
-     * Tests {@link CacheLoaders#runLoad(Cache, Object)} throws
-     * {@link NullPointerException} for <code>null</code> key.
-     */
-    @Test(expected = NullPointerException.class)
-    public void runLoadNPE() {
-        CacheLoaders.runLoad(dc, null);
-    }
-
     /** Tests {@link CacheLoaders#runForceLoadAll(Cache)}. */
     @Test
-    public void runLoad1() {
+    public void runForceLoadAll() {
         context.checking(new Expectations() {
             {
                 one(service).forceLoadAll();
@@ -71,7 +84,7 @@ public class CacheLoadersTest {
 
     /** Tests {@link CacheLoaders#runLoadAll(Cache)}. */
     @Test
-    public void runLoad2() {
+    public void runLoadAll() {
         context.checking(new Expectations() {
             {
                 one(service).loadAll();
@@ -80,21 +93,52 @@ public class CacheLoadersTest {
         CacheLoaders.runLoadAll(dc).run();
     }
 
-    /** Tests {@link CacheLoaders#nullLoader()}. */
+    /**
+     * Tests {@link CacheLoaders#runLoad(Cache, Object)} throws
+     * {@link NullPointerException} for <code>null</code> key.
+     */
+    @Test(expected = NullPointerException.class)
+    public void runForceLoadNPE() {
+        CacheLoaders.runForceLoad(dc, null);
+    }
+
+    /**
+     * Tests {@link CacheLoaders#runLoad(Cache, Object)} throws
+     * {@link NullPointerException} for <code>null</code> key.
+     */
+    @Test(expected = NullPointerException.class)
+    public void runLoadNPE() {
+        CacheLoaders.runLoad(dc, null);
+    }
+
+    /**
+     * Tests {@link CacheLoaders#cacheAsCacheLoader(Cache)} throws
+     * {@link NullPointerException} for <code>cache</code> cache.
+     */
+    @Test(expected = NullPointerException.class)
+    public void cacheAsCacheLoaderNPE() {
+        CacheLoaders.cacheAsCacheLoader(null);
+    }
+
+    /**
+     * Tests {@link CacheLoaders#cacheAsCacheLoader(Cache)}.
+     */
     @Test
-    public void nullLoader() throws Exception {
-        CacheLoader<Integer, String> cl = CacheLoaders.nullLoader();
-        assertNull(cl.load(1, AttributeMaps.EMPTY_MAP));
-        final CacheLoaderCallback<Integer, String> callback = context
-                .mock(CacheLoaderCallback.class);
-//        context.checking(new Expectations() {
-//            {
-//                
-//                one(callback).getKey();
-//                will(returnValue("1"));
-//                one(callback).completed(null);
-//            }
-//        });
-//        cl.loadAll(Arrays.asList(callback));
+    public void cacheAsCacheLoader() throws Exception {
+        final Cache<Integer, String> c = context.mock(Cache.class);
+        context.checking(new Expectations() {
+            {
+                one(c).get(1);
+                will(returnValue("foo"));
+            }
+        });
+        assertEquals("foo", CacheLoaders.cacheAsCacheLoader(c).load(1, AttributeMaps.EMPTY_MAP));
+    }
+
+    @Before
+    public void setupDummy() {
+        dc = new DummyCache();
+        service = context.mock(CacheLoadingService.class);
+        dc.addService(CacheLoadingService.class, service);
     }
 }

@@ -57,6 +57,6 @@ public final class SizeAttribute extends LongAttribute {
     }
 
     public static AttributeMap singleton(long value) {
-        return AttributeMaps.from(INSTANCE, value);
+        return AttributeMaps.singleton(INSTANCE, value);
     }
 }

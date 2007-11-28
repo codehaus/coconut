@@ -4,62 +4,225 @@
 
 package org.coconut.core;
 
-import java.beans.EventHandler;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.Queue;
 
 /**
- * Factory and utility methods for {@link Callback}, {@link EventHandler} and
- * {@link Offerable} classes defined in this package. This class supports the following
- * kinds of methods:
+ * Factory and utility methods for {@link EventProcessor} and {@link Offerable} classes
+ * defined in this package. This class supports the following kinds of methods:
  * <ul>
  * <li>Methods that create and return an {@link Offerable} that performs common tasks.
+ * <li>Methods that create and return an {@link EventProcessor} that performs common
+ * tasks.
  * </ul>
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
 public final class EventUtils {
-    // /CLOVER:OFF
+    ///CLOVER:OFF
     /** Cannot instantiate. */
     private EventUtils() {}
-
-    // /CLOVER:ON
+    ///CLOVER:ON
 
     /**
-     * Wraps an {@link EventProcessor} in an {@link Offerable}.
+     * Returns an EventProcessor that ignores any call to
+     * {@link EventProcessor#process(Object)}.
+     * <p>
+     * The returned EventProcessor is serializable.
      * 
+     * @return an EventProcessor that ignores any call to
+     *         {@link EventProcessor#process(Object)}
      * @param <E>
-     *            the types of parameters accepted by the offer method
+     *            the types of elements accepted by EventProcessor
      */
-    static class EventProcessor2OfferableAdaptor<E> implements Offerable<E>, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = 5555001640212350081L;
+    @SuppressWarnings("unchecked")
+    public static <E> EventProcessor<E> dummyEventProcessor() {
+        return (EventProcessor<E>) fromOfferable(dummyOfferableFalse());
+    }
 
-        /** The EventProcessor we are wrapping. */
-        private final EventProcessor<E> offerable;
+    /**
+     * Returns an {@link Offerable} that returns <tt>false</tt> for any element that is
+     * offered to it.
+     * <p>
+     * The returned Offerable is serializable.
+     * 
+     * @return an offerable that returns <tt>false</tt> for any element that is offered
+     *         to it.
+     * @param <E>
+     *            the type of elements accepted by the offerable
+     */
+    public static <E> Offerable<E> dummyOfferableFalse() {
+        return new DummyOfferableFalse<E>();
+    }
 
-        /**
-         * Creates a new EventProcessor2OfferableAdaptor.
-         * 
-         * @param eventProcessor
-         *            the EventProcessor to wrap
-         * @throws NullPointerException
-         *             if the supplied eventHandler is <code>null</code>
-         */
-        public EventProcessor2OfferableAdaptor(final EventProcessor<E> eventProcessor) {
-            if (eventProcessor == null) {
-                throw new NullPointerException("offerable is null");
+    /**
+     * Returns an {@link Offerable} that returns <tt>true</tt> for any element that is
+     * offered to it.
+     * <p>
+     * The returned Offerable is serializable.
+     * 
+     * @return an {@link Offerable} that returns <tt>true</tt> for any element that is
+     *         offered to it.
+     * @param <E>
+     *            the types of elements accepted by the offer method
+     */
+    public static <E> Offerable<E> dummyOfferableTrue() {
+        return new DummyOfferableTrue<E>();
+    }
+
+    /**
+     * Wraps an {@link Offerable} in an {@link EventProcessor}.
+     * <p>
+     * The returned EventProcessor is serializable if the specified Offerable is
+     * serializable.
+     * 
+     * @param offerable
+     *            the offerable to wrap
+     * @return an EventProcessor wrapping an Offerable
+     * @throws NullPointerException
+     *             if the specified offerable is <code>null</code>
+     * @param <E>
+     *            the types of elements accepted by the specified Offerable
+     */
+    public static <E> EventProcessor<E> fromOfferable(final Offerable<E> offerable) {
+        return new Offerable2EventProcessor<E>(offerable);
+    }
+
+    /**
+     * Wraps an {@link java.util.Queue} in an {@link EventProcessor}.
+     * <p>
+     * The returned EventProcessor is serializable if the specified Queue is serializable.
+     * 
+     * @param queue
+     *            the queue to wrap
+     * @return an EventProcessor wrapping an Queue
+     * @throws NullPointerException
+     *             if the supplied queue is <code>null</code>
+     * @param <E>
+     *            the types of elements accepted by the specified Queue
+     */
+    public static <E> EventProcessor<E> fromQueue(final Queue<E> queue) {
+        return new Queue2EventProcessor<E>(queue);
+    }
+
+    /**
+     * Wraps an {@link EventProcessor} in an {@link Offerable}. The offer method of the
+     * returned Offerable will return <code>true</code> for all values parsed to the
+     * specified event processor.
+     * <p>
+     * The returned Offerable is serializable if the specified EventProcessor is
+     * serializable.
+     * 
+     * @param processor
+     *            the EventProcessor to wrap
+     * @return an Offerable wrapping an EventProcessor
+     * @throws NullPointerException
+     *             if the specified processor is <code>null</code>
+     * @param <E>
+     *            the types of elements accepted by the process method
+     */
+    public static <E> Offerable<E> toOfferable(final EventProcessor<E> processor) {
+        return new EventProcessor2Offerable<E>(processor);
+    }
+
+    /**
+     * Wraps an {@link Offerable} in an {@link EventProcessor}.The offer method of the
+     * returned Offerable will return <code>true</code> for all values parsed to the
+     * specified event processor. However, unlike {@link #toOfferable(EventProcessor)} any
+     * runtime thrown by the eventprocessor will be catched in the returned offerable and
+     * <code>false</code> will be returned.
+     * <p>
+     * The returned Offerable is serializable if the specified EventProcessor is
+     * serializable.
+     * 
+     * @param processor
+     *            the EventProcessor to wrap
+     * @return an EventProcessor wrapped in a Offerable
+     * @throws NullPointerException
+     *             if the specified processor is <code>null</code>
+     * @param <E>
+     *            the types of elements accepted by the process method
+     */
+    public static <E> Offerable<E> toOfferableSafe(final EventProcessor<E> processor) {
+        return new EventProcessor2OfferableSafe<E>(processor);
+    }
+
+    /**
+     * Returns an event processor that will print all elements processor to the specified
+     * printstream using the elements {@link Object#toString()} method.
+     * 
+     * @param ps
+     *            the PrintStream to write to
+     * @return an EventProcessor where all elements processor will be written to the
+     *         specified printstream.
+     * @throws NullPointerException
+     *             if the specified printstream is <code>null</code>
+     * @param <E>
+     *            the types of elements accepted by the process method
+     */
+    public static <E> EventProcessor<E> toPrintStream(final PrintStream ps) {
+        if (ps == null) {
+            throw new NullPointerException("ps is null");
+        }
+        return new EventProcessor<E>() {
+            public void process(E element) {
+                ps.println(element.toString());
             }
-            this.offerable = eventProcessor;
-        }
+        };
+    }
 
-        /** {@inheritDoc} */
-        public boolean offer(E element) {
-            offerable.process(element);
-            return true;
+    /**
+     * Works as {@link #toPrintStream(PrintStream)} except that any
+     * {@link RuntimeException} will be ignored.
+     * 
+     * @param ps
+     *            the PrintStream to write to
+     * @return an EventProcessor where all elements processor will be written to the
+     *         specified printstream.
+     * @throws NullPointerException
+     *             if the specified printstream is <code>null</code>
+     * @param <E>
+     *            the types of elements accepted by the process method
+     */
+    public static <E> EventProcessor<E> toPrintStreamSafe(final PrintStream ps) {
+        if (ps == null) {
+            throw new NullPointerException("ps is null");
         }
+        return new EventProcessor<E>() {
+            public void process(E element) {
+                try {
+                    ps.println(element.toString());
+                } catch (RuntimeException re) {
+                    // ignore
+                }
+            }
+        };
+    }
+
+    /**
+     * Shorthand for calling {@link #toPrintStream(PrintStream)} with {@link System#out}
+     * as the output printstream.
+     * 
+     * @return an eventhandler that prints all processed elements to {@link System#out}
+     * @param <E>
+     *            the types of elements accepted by the process method
+     */
+    public static <E> EventProcessor<E> toSystemOut() {
+        return toPrintStream(System.out);
+    }
+
+    /**
+     * Shorthand for calling {@link #toPrintStreamSafe(PrintStream)} with
+     * {@link System#out} as the output printstream.
+     * 
+     * @return an eventhandler that prints all processed elements to {@link System#out}
+     * @param <E>
+     *            the types of elements accepted by the process method
+     */
+    public static <E> EventProcessor<E> toSystemOutSafe() {
+        return toPrintStreamSafe(System.out);
     }
 
     /**
@@ -67,11 +230,11 @@ public final class EventUtils {
      * {@link #offer(Object)} method.
      * 
      * @param <E>
-     *            the types of parameters accepted by the offer method
+     *            the types of elements accepted by the offer method
      */
-    static class IgnoreFalseOfferable<E> implements Offerable<E>, Serializable {
+    static final class DummyOfferableFalse<E> implements Offerable<E>, Serializable {
         /** serialVersionUID. */
-        private static final long serialVersionUID = -3497640264421275470L;
+        private static final long serialVersionUID = -7759759407095347462L;
 
         /** {@inheritDoc} */
         public boolean offer(E element) {
@@ -84,9 +247,9 @@ public final class EventUtils {
      * method.
      * 
      * @param <E>
-     *            the types of parameters accepted by the offer method
+     *            the types of elements accepted by the offer method
      */
-    static class IgnoreTrueOfferable<E> implements Offerable<E>, Serializable {
+    static final class DummyOfferableTrue<E> implements Offerable<E>, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -8883512217513983631L;
 
@@ -97,27 +260,102 @@ public final class EventUtils {
     }
 
     /**
+     * Wraps an {@link EventProcessor} in an {@link Offerable}.
+     * 
+     * @param <E>
+     *            the types of parameters accepted by the offer method
+     */
+    static final class EventProcessor2Offerable<E> implements Offerable<E>, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = 5555001640212350081L;
+
+        /** The EventProcessor we are wrapping. */
+        private final EventProcessor<E> processor;
+
+        /**
+         * Creates a new EventProcessor2Offerable.
+         * 
+         * @param processor
+         *            the EventProcessor to wrap
+         * @throws NullPointerException
+         *             if the supplied eventProcessor is <code>null</code>
+         */
+        public EventProcessor2Offerable(final EventProcessor<E> processor) {
+            if (processor == null) {
+                throw new NullPointerException("processor is null");
+            }
+            this.processor = processor;
+        }
+
+        /** {@inheritDoc} */
+        public boolean offer(E element) {
+            processor.process(element);
+            return true;
+        }
+    }
+
+    /**
+     * Wraps an {@link EventProcessor} in an {@link Offerable}. Catching any
+     * {@link RuntimeException}'s.
+     * 
+     * @param <E>
+     *            the types of parameters accepted by the offer method
+     */
+    static final class EventProcessor2OfferableSafe<E> implements Offerable<E>, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = 5555001640212350081L;
+
+        /** The EventProcessor we are wrapping. */
+        private final EventProcessor<E> processor;
+
+        /**
+         * Creates a new EventProcessor2OfferableSafe.
+         * 
+         * @param processor
+         *            the EventProcessor to wrap
+         * @throws NullPointerException
+         *             if the supplied eventProcessor is <code>null</code>
+         */
+        public EventProcessor2OfferableSafe(final EventProcessor<E> processor) {
+            if (processor == null) {
+                throw new NullPointerException("processor is null");
+            }
+            this.processor = processor;
+        }
+
+        /** {@inheritDoc} */
+        public boolean offer(E element) {
+            try {
+                processor.process(element);
+                return true;
+            } catch (RuntimeException ex) {
+                return false;
+            }
+        }
+    }
+
+    /**
      * Wraps an {@link Offerable} in an {@link EventProcessor}.
      * 
      * @param <E>
      *            the types of parameters accepted by the offer method
      */
-    static class Offerable2EventHandlerAdaptor<E> implements EventProcessor<E>, Serializable {
+    static final class Offerable2EventProcessor<E> implements EventProcessor<E>, Serializable {
         /** serialVersionUID. */
-        private static final long serialVersionUID = -4293606104983956712L;
+        private static final long serialVersionUID = 5017539960531630701L;
 
         /** The offerable that is being wrapped. */
         private final Offerable<E> offerable;
 
         /**
-         * Creates a new Offerable2EventHandlerAdaptor.
+         * Creates a new Offerable2EventProcessor.
          * 
          * @param offerable
          *            the Offerable to wrap
          * @throws NullPointerException
          *             if the specified offerable is <code>null</code>
          */
-        public Offerable2EventHandlerAdaptor(final Offerable<E> offerable) {
+        public Offerable2EventProcessor(final Offerable<E> offerable) {
             if (offerable == null) {
                 throw new NullPointerException("offerable is null");
             }
@@ -136,22 +374,22 @@ public final class EventUtils {
      * @param <E>
      *            the types of parameters accepted by the offer method
      */
-    static class QueueAdaptor<E> implements EventProcessor<E>, Serializable {
+    static final class Queue2EventProcessor<E> implements EventProcessor<E>, Serializable {
         /** serialVersionUID. */
-        private static final long serialVersionUID = -467485596894009881L;
+        private static final long serialVersionUID = 2614647542607064042L;
 
         /** The queue we are wrapping. */
         private final Queue<E> queue;
 
         /**
-         * Creates a new QueueAdaptor.
+         * Creates a new QueueToEventProcessor.
          * 
          * @param queue
          *            the Queue to wrap
          * @throws NullPointerException
          *             if the specified queue is <code>null</code>
          */
-        public QueueAdaptor(final Queue<E> queue) {
+        public Queue2EventProcessor(final Queue<E> queue) {
             if (queue == null) {
                 throw new NullPointerException("queue is null");
             }
@@ -162,129 +400,5 @@ public final class EventUtils {
         public void process(E element) {
             queue.offer(element); // ignore return value
         }
-    }
-
-    /**
-     * Wraps an {@link Offerable} in an {@link EventHandler}.
-     * 
-     * @param offerable
-     *            the offerable to wrap
-     * @return an EventHandler wrapping an Offerable
-     * @throws NullPointerException
-     *             if the supplied offerable is <code>null</code>
-     * @param <E>
-     *            the types of parameters accepted by the specified Offerable
-     */
-    public static <E> EventProcessor<E> fromOfferable(final Offerable<E> offerable) {
-        return new Offerable2EventHandlerAdaptor<E>(offerable);
-    }
-
-    /**
-     * Wraps an {@link java.util.Queue} in an {@link EventHandler}.
-     * 
-     * @param queue
-     *            the queue to wrap
-     * @return an EventHandler wrapping an Queue
-     * @throws NullPointerException
-     *             if the supplied offerable is <code>null</code>
-     * @param <E>
-     *            the types of parameters accepted by the specified Queue
-     */
-    public static <E> EventProcessor<E> fromQueue(final Queue<E> queue) {
-        return new QueueAdaptor<E>(queue);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <E> EventProcessor<E> ignoreEventProcessor() {
-        return (EventProcessor<E>) fromOfferable(ignoreFalse());
-    }
-
-    /**
-     * Returns an {@link Offerable} that returns <tt>false</tt> for any element that is
-     * offered to it.
-     * 
-     * @return an offerable that returns <tt>false</tt> for any element that is offered
-     *         to it.
-     * @param <E>
-     *            the type of elements accepted by the offerable
-     */
-    public static <E> Offerable<E> ignoreFalse() {
-        return new IgnoreFalseOfferable<E>();
-    }
-
-    /**
-     * Returns an {@link Offerable} that returns <tt>true</tt> for any element that is
-     * offered to it.
-     * 
-     * @return an {@link Offerable} that returns <tt>true</tt> for any element that is
-     *         offered to it.
-     * @param <E>
-     *            the types of parameters accepted by the offer method
-     */
-    public static <E> Offerable<E> ignoreTrue() {
-        return new IgnoreTrueOfferable<E>();
-    }
-
-    /**
-     * Wraps an {@link EventProcessor} in an {@link Offerable}.
-     * 
-     * @param handler
-     *            the EventProcessor to wrap
-     * @return an Offerable wrapping an EventHandler
-     * @throws NullPointerException
-     *             if the supplied eventHandler is <code>null</code>
-     */
-    public static <E> Offerable<E> toOfferable(final EventProcessor<E> handler) {
-        return new EventProcessor2OfferableAdaptor<E>(handler);
-    }
-
-    public static <E> Offerable<E> toOfferableSafe(final EventProcessor<E> eventHandler) {
-        if (eventHandler == null) {
-            throw new NullPointerException("eventHandler is null");
-        }
-        return new Offerable<E>() {
-            public boolean offer(E element) {
-                try {
-                    eventHandler.process(element);
-                    return true;
-                } catch (RuntimeException ex) {
-                    return false;
-                }
-            }
-        };
-    }
-
-    public static <E> EventProcessor<E> toPrintStream(final PrintStream ps) {
-        if (ps == null) {
-            throw new NullPointerException("ps is null");
-        }
-        return new EventProcessor<E>() {
-            public void process(E element) {
-                ps.println(element.toString());
-            }
-        };
-    }
-
-    public static <E> EventProcessor<E> toPrintStreamSafe(final PrintStream ps) {
-        if (ps == null) {
-            throw new NullPointerException("ps is null");
-        }
-        return new EventProcessor<E>() {
-            public void process(E element) {
-                try {
-                    ps.println(element.toString());
-                } catch (RuntimeException re) {
-                    // ignore
-                }
-            }
-        };
-    }
-
-    public static <E> EventProcessor<E> toSystemOut() {
-        return toPrintStream(System.out);
-    }
-
-    public static <E> EventProcessor<E> toSystemOutSafe() {
-        return toPrintStreamSafe(System.out);
     }
 }

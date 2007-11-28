@@ -44,6 +44,7 @@ public interface InternalCacheEvictionService<K, V, T extends CacheEntry<K, V>> 
     boolean isSizeBreached(int size);
 
     boolean isSizeOrVolumeBreached(int size, long volume);
+
     int add(T t);
 
 // methods when we have a some storage

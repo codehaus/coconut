@@ -18,73 +18,26 @@ public final class CacheLoaders {
     // /CLOVER:OFF
     private CacheLoaders() {}
 
-    // /CLOVER:ON
-
     /**
-     * Returns a Runnable that when invoked will call the
-     * {@link CacheLoadingService#load(Object)} method on the specified cache with the
-     * specified key as parameter.
+     * This method converts the specified cache to a cache loader. Calls to
+     * {@link CacheLoader#load(Object, AttributeMap)} will be converted to calls to
+     * {@link Cache#get(Object)}. Calls to
+     * {@link CacheLoader#loadAll(java.util.Collection)} will be converted to calls to
+     * {@link Cache#getAll(java.util.Collection)}.
      * 
-     * @param fromCache
-     *            the cache from which to retrieve the CacheLoadingService and invoke the
-     *            load method on
-     * @param key
-     *            the key to load
-     * @return a Runnable that when invoked will call the
-     *         {@link CacheLoadingService#forceLoadAll()} method on the specified cache
+     * @param cache
+     *            the cache to load entries from
+     * @return a cache loader that can load values from another cache
+     * @throws NullPointerException
+     *             if the specified cache is <code>null</code>
      * @param <K>
      *            the type of keys used for loading values
+     * @param <V>
+     *            the type of values that are loaded
      */
-    public static <K> Runnable runLoad(Cache<K, ?> fromCache, final K key) {
-        if (key == null) {
-            throw new NullPointerException("key is null");
-        }
-        final CacheLoadingService<K, ?> service = CacheServices.loading(fromCache);
-        return new Runnable() {
-            public void run() {
-                service.load(key);
-            }
-        };
+    public static <K, V> CacheLoader<K, V> cacheAsCacheLoader(Cache<K, V> cache) {
+        return new CacheAsCacheLoader<K, V>(cache);
     }
-
-    /**
-     * Returns a Runnable that when invoked will call the
-     * {@link CacheLoadingService#forceLoadAll()} method on the specified cache.
-     * 
-     * @param fromCache
-     *            the cache from which to retrieve the CacheLoadingService and invoke the
-     *            forceLoadAll method on
-     * @return a Runnable that when invoked will call the
-     *         {@link CacheLoadingService#forceLoadAll()} method on the specified cache
-     */
-    public static Runnable runForceLoadAll(Cache<?, ?> fromCache) {
-        final CacheLoadingService<?, ?> service = CacheServices.loading(fromCache);
-        return new Runnable() {
-            public void run() {
-                service.forceLoadAll();
-            }
-        };
-    }
-
-    /**
-     * Returns a Runnable that when invoked will call the
-     * {@link CacheLoadingService#loadAll()} method on the specified cache.
-     * 
-     * @param fromCache
-     *            the cache from which to retrieve the CacheLoadingService and invoke the
-     *            loadAll method on
-     * @return a Runnable that when invoked will call the
-     *         {@link CacheLoadingService#loadAll()} method on the specified cache
-     */
-    public static Runnable runLoadAll(Cache<?, ?> fromCache) {
-        final CacheLoadingService<?, ?> service = CacheServices.loading(fromCache);
-        return new Runnable() {
-            public void run() {
-                service.loadAll();
-            }
-        };
-    }
-
     /**
      * Returns a CacheLoader that will return <tt>null</tt> as a result for any key.
      * 
@@ -98,21 +51,99 @@ public final class CacheLoaders {
         return new NullLoader<K, V>();
     }
 
+    // /CLOVER:ON
     /**
-     * This method converts the specified cache to a cache loader. Calls to
-     * {@link CacheLoader#load(Object, AttributeMap)} will be converted to calls to
-     * {@link Cache#get(Object)}. Calls to
-     * {@link CacheLoader#loadAll(java.util.Collection)} will be converted to calls to
-     * {@link Cache#getAll(java.util.Collection)}.
+     * Returns a Runnable that when invoked will call the
+     * {@link CacheLoadingService#forceLoad(Object)} method on the specified cache with the
+     * specified key as parameter.
      * 
      * @param cache
-     *            the cache to load entries from
-     * @return a cache loader that can load values from another cache
-     * @throws NullPointerException
-     *             if the specified cache is <code>null</code>
+     *            the cache from which to retrieve the CacheLoadingService and invoke the
+     *            forceLoad method on
+     * @param key
+     *            the key to load
+     * @return a Runnable that when invoked will call the
+     *         {@link CacheLoadingService#forceLoad(Object)} method on the specified cache with the
+     * specified key as parameter
+     * @param <K>
+     *            the type of keys used for loading values
      */
-    public static <K, V> CacheLoader<K, V> cacheAsCacheLoader(Cache<K, V> cache) {
-        return new CacheAsCacheLoader<K, V>(cache);
+    public static <K> Runnable runForceLoad(Cache<K, ?> cache, final K key) {
+        if (key == null) {
+            throw new NullPointerException("key is null");
+        }
+        final CacheLoadingService<K, ?> service = CacheServices.loading(cache);
+        return new Runnable() {
+            public void run() {
+                service.forceLoad(key);
+            }
+        };
+    }
+
+    /**
+     * Returns a Runnable that when invoked will call the
+     * {@link CacheLoadingService#forceLoadAll()} method on the specified cache.
+     * 
+     * @param cache
+     *            the cache from which to retrieve the CacheLoadingService and invoke the
+     *            forceLoadAll method on
+     * @return a Runnable that when invoked will call the
+     *         {@link CacheLoadingService#forceLoadAll()} method on the specified cache
+     */
+    public static Runnable runForceLoadAll(Cache<?, ?> cache) {
+        final CacheLoadingService<?, ?> service = CacheServices.loading(cache);
+        return new Runnable() {
+            public void run() {
+                service.forceLoadAll();
+            }
+        };
+    }
+
+    /**
+     * Returns a Runnable that when invoked will call the
+     * {@link CacheLoadingService#load(Object)} method on the specified cache with the
+     * specified key as parameter.
+     * 
+     * @param cache
+     *            the cache from which to retrieve the CacheLoadingService and invoke the
+     *            load method on
+     * @param key
+     *            the key to load
+     * @return a Runnable that when invoked will call the
+     *         {@link CacheLoadingService#load(Object)} method on the specified cache with the
+     * specified key as parameter
+     * @param <K>
+     *            the type of keys used for loading values
+     */
+    public static <K> Runnable runLoad(Cache<K, ?> cache, final K key) {
+        if (key == null) {
+            throw new NullPointerException("key is null");
+        }
+        final CacheLoadingService<K, ?> service = CacheServices.loading(cache);
+        return new Runnable() {
+            public void run() {
+                service.load(key);
+            }
+        };
+    }
+
+    /**
+     * Returns a Runnable that when invoked will call the
+     * {@link CacheLoadingService#loadAll()} method on the specified cache.
+     * 
+     * @param cache
+     *            the cache from which to retrieve the CacheLoadingService and invoke the
+     *            loadAll method on
+     * @return a Runnable that when invoked will call the
+     *         {@link CacheLoadingService#loadAll()} method on the specified cache
+     */
+    public static Runnable runLoadAll(Cache<?, ?> cache) {
+        final CacheLoadingService<?, ?> service = CacheServices.loading(cache);
+        return new Runnable() {
+            public void run() {
+                service.loadAll();
+            }
+        };
     }
 
     /**

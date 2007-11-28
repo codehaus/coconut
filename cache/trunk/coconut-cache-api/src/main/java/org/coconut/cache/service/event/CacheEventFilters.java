@@ -10,7 +10,7 @@ import org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated;
 import org.coconut.cache.service.event.CacheEvent.CacheCleared;
 import org.coconut.cache.service.event.CacheEvent.CacheStarted;
 import org.coconut.core.Mapper;
-import org.coconut.core.Mappers;
+import org.coconut.internal.util.Mappers;
 import org.coconut.predicate.CollectionPredicates;
 import org.coconut.predicate.Predicate;
 import org.coconut.predicate.Predicates;

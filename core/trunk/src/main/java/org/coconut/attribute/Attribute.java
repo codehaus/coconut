@@ -3,6 +3,16 @@
  */
 package org.coconut.attribute;
 
+/**
+ * Attribute-value pairs are a fundamental data representation in many computing systems
+ * and applications. Designers often desire an open-ended data structure that allows for
+ * future extension without modifying existing code or data. In such situations, all or
+ * part of the data model may be expressed as a collection of tuples <attribute name,
+ * value>; each element is an attribute-value pair.
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ */
 public interface Attribute<T> {
 
     /**
@@ -12,9 +22,24 @@ public interface Attribute<T> {
      */
     String getName();
 
+    /**
+     * Returns the default value of this attribute (may be <code>null</code>).
+     * 
+     * @return the default value of this attribute
+     */
+    T getDefaultValue();
+
     Class<T> getAttributeType();
 
-    boolean isValid(T t);
+    /**
+     * Returns whether or not the specified value is valid for this attribute.
+     * 
+     * @param value
+     *            the specified value to check
+     * @return <code>true</code> if the specified value is valid for this attribute,
+     *         otherwise <code>false</code>
+     */
+    boolean isValid(T value);
 
     T get(AttributeMap attributes);
 
@@ -23,4 +48,6 @@ public interface Attribute<T> {
     AttributeMap setAttribute(AttributeMap attributes, T t);
 
     T fromString(String str);
+
+    void checkValid(T o);
 }

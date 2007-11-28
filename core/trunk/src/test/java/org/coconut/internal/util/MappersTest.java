@@ -2,16 +2,19 @@
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.core;
+package org.coconut.internal.util;
 
-import static org.coconut.core.Mappers.transform;
+import static org.coconut.internal.util.Mappers.transform;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.coconut.core.Mappers.DynamicMapper;
+import org.coconut.core.GeneratedTransformerMock;
+import org.coconut.core.GeneratedTransformerMockChild;
+import org.coconut.core.Mapper;
+import org.coconut.internal.util.Mappers.DynamicMapper;
 import org.junit.Test;
 
-public class GeneratedTransformerTest {
+public class MappersTest {
 
     @Test
     public void testSimpleCreate() {

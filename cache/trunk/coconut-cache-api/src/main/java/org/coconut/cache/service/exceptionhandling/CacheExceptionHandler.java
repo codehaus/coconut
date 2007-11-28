@@ -112,6 +112,9 @@ public abstract class CacheExceptionHandler<K, V> {
 
     /**
      * Called as the last action by the cache once it has terminated.
+     * 
+     * @param terminationFailures
+     *            a map of services that failed.
      */
     public void terminated(Map<? extends CacheLifecycle, RuntimeException> terminationFailures) {}
 
@@ -128,6 +131,8 @@ public abstract class CacheExceptionHandler<K, V> {
      * 
      * @param configuration
      *            the configuration of the cache
+     * @param cacheType
+     *            the type of cache
      * @param service
      *            the service that failed
      * @param cause
@@ -138,16 +143,33 @@ public abstract class CacheExceptionHandler<K, V> {
 
     }
 
+    /**
+     * Called when a service fails to start properly.
+     * 
+     * @param configuration
+     *            the configuration of the cache
+     * @param cacheType
+     *            the type of cache
+     * @param service
+     *            the service that failed
+     * @param cause
+     *            the cause of the failure
+     */
     public void cacheStartFailed(CacheConfiguration<K, V> configuration,
             Class<? extends Cache> cacheType, CacheLifecycle service, RuntimeException cause) {
 
     }
 
     /**
-     * Called as the last action by the cache once it has terminated.
+     * Called if the cache fails to shutdown all service properly.
+     * 
+     * @param cache
+     *            the cache that was shutdown
+     * @param shutdownFailures
+     *            the services that failed to shutdown properly
      */
     public void cacheShutdownFailed(Cache<K, V> cache,
-            Map<? extends CacheLifecycle, RuntimeException> terminationFailures) {}
+            Map<? extends CacheLifecycle, RuntimeException> shutdownFailures) {}
 
     /**
      * A delivery of an event failed.

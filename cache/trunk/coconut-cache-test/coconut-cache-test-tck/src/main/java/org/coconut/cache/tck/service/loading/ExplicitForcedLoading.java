@@ -3,7 +3,7 @@
  */
 package org.coconut.cache.tck.service.loading;
 
-import static org.coconut.attribute.AttributeMaps.from;
+import static org.coconut.attribute.AttributeMaps.singleton;
 import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M2;
 import static org.coconut.test.CollectionUtils.M3;
@@ -156,8 +156,8 @@ public class ExplicitForcedLoading extends AbstractLoadingTestBundle {
         assertEquals(1, loader.getNumberOfLoads());
 
         Map<Integer, AttributeMap> req = new HashMap<Integer, AttributeMap>();
-        req.put(M1.getKey(), from(IntegerToStringLoader.RESULT_ATTRIBUTE_KEY, "a1"));
-        req.put(2, from(IntegerToStringLoader.RESULT_ATTRIBUTE_KEY, "a2"));
+        req.put(M1.getKey(), singleton(IntegerToStringLoader.RESULT_ATTRIBUTE_KEY, "a1"));
+        req.put(2, singleton(IntegerToStringLoader.RESULT_ATTRIBUTE_KEY, "a2"));
         loading().forceLoadAll(req);
         awaitAllLoads();
         assertEquals(3, loader.getNumberOfLoads());
@@ -182,9 +182,9 @@ public class ExplicitForcedLoading extends AbstractLoadingTestBundle {
     @Test
     public void forceLoadAll() {
         Map<Integer, AttributeMap> req = new HashMap<Integer, AttributeMap>();
-        req.put(M1.getKey(), from(IntegerToStringLoader.RESULT_ATTRIBUTE_KEY, "a1"));
-        req.put(2, from(IntegerToStringLoader.RESULT_ATTRIBUTE_KEY, "a2"));
-        req.put(3, from(IntegerToStringLoader.RESULT_ATTRIBUTE_KEY, "a3"));
+        req.put(M1.getKey(), singleton(IntegerToStringLoader.RESULT_ATTRIBUTE_KEY, "a1"));
+        req.put(2, singleton(IntegerToStringLoader.RESULT_ATTRIBUTE_KEY, "a2"));
+        req.put(3, singleton(IntegerToStringLoader.RESULT_ATTRIBUTE_KEY, "a3"));
         loading().loadAll(req);
         awaitAllLoads();
         assertEquals(3, loader.getNumberOfLoads());
@@ -200,7 +200,7 @@ public class ExplicitForcedLoading extends AbstractLoadingTestBundle {
         awaitAllLoads();
         assertGet(M1, M2, M3);
         assertEquals(3, loader.getNumberOfLoads());
-        loading().forceLoadAll(from(IntegerToStringLoader.RESULT_ATTRIBUTE_KEY, "a3"));
+        loading().forceLoadAll(singleton(IntegerToStringLoader.RESULT_ATTRIBUTE_KEY, "a3"));
         awaitAllLoads();
         assertEquals("a3", get(M1.getKey()));
         assertEquals("a3", get(M2.getKey()));

@@ -5,6 +5,12 @@ package org.coconut.cache;
 
 import java.util.Map;
 
+import org.coconut.attribute.common.CostAttribute;
+import org.coconut.attribute.common.DateCreatedAttribute;
+import org.coconut.attribute.common.DateLastModifiedAttribute;
+import org.coconut.attribute.common.HitsAttribute;
+import org.coconut.attribute.common.SizeAttribute;
+import org.coconut.attribute.common.TimeToLiveAttribute;
 import org.coconut.core.Clock;
 
 /**
@@ -50,12 +56,9 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V> {
      * However, this is often the case.
      * 
      * @return the expected cost of fetching this element. If the size of the object
-     *         cannot be determined {@link CacheAttributes#DEFAULT_COST} should be
+     *         cannot be determined {@link CostAttribute#DEFAULT_VALUE} should be
      *         returned
-     * @see CacheAttributes#setCost(org.coconut.core.AttributeMap, double)
-     * @see CacheAttributes#getCost(org.coconut.core.AttributeMap)
-     * @see CacheAttributes#DEFAULT_COST
-     * @see CacheAttributes#COST
+     * @see CostAttribute
      */
     double getCost();
 
@@ -68,10 +71,7 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V> {
      * @return the difference, measured in milliseconds, between the time at which this
      *         entry was created and January 1, 1970 UTC.
      * @see java.util.Date
-     * @see CacheAttributes#setCreationTime(org.coconut.core.AttributeMap, long)
-     * @see CacheAttributes#getCreationTime(org.coconut.core.AttributeMap)
-     * @see CacheAttributes#getCreationTime(org.coconut.core.AttributeMap, Clock)
-     * @see CacheAttributes#CREATION_TIME
+     * @see DateCreatedAttribute
      */
     long getCreationTime();
 
@@ -84,11 +84,7 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V> {
      *         current value of the cache entry will expire and January 1, 1970 UTC. Or
      *         {@link Long#MAX_VALUE} if it never expires
      * @see org.coconut.cache.service.expiration.CacheExpirationService
-     * @see CacheAttributes#setTimeToLive(org.coconut.core.AttributeMap, long,
-     *      java.util.concurrent.TimeUnit)
-     * @see CacheAttributes#getTimeToLive(org.coconut.core.AttributeMap,
-     *      java.util.concurrent.TimeUnit, long)
-     * @see CacheAttributes#TIME_TO_LIVE_NS
+     * @see TimeToLiveAttribute
      */
     long getExpirationTime();
 
@@ -96,9 +92,7 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V> {
      * Returns the number of times the object has been previously succesfully requested.
      * 
      * @return the number of times the object has been previously succesfully requested.
-     * @see CacheAttributes#setHits(org.coconut.core.AttributeMap, long)
-     * @see CacheAttributes#getHits(org.coconut.core.AttributeMap)
-     * @see CacheAttributes#HITS
+     * @see HitsAttribute
      */
     long getHits();
 
@@ -121,9 +115,7 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V> {
      * 
      * @return the difference, measured in milliseconds, between the time at which the
      *         entry was last updated and January 1, 1970 UTC.
-     * @see CacheAttributes#setLastUpdated(org.coconut.core.AttributeMap, long)
-     * @see CacheAttributes#getLastUpdated(org.coconut.core.AttributeMap, Clock)
-     * @see CacheAttributes#LAST_UPDATED_TIME
+     * @see DateLastModifiedAttribute
      */
     long getLastUpdateTime();
 
@@ -135,10 +127,8 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V> {
      * store the element.
      * 
      * @return the size of the element. If the size of the object cannot be determined
-     *         {@link CacheAttributes#DEFAULT_VALUE} should be returned
-     * @see CacheAttributes#setSize(org.coconut.core.AttributeMap, long)
-     * @see CacheAttributes#getSize(org.coconut.core.AttributeMap)
-     * @see CacheAttributes#SIZE
+     *         {@link SizeAttribute#DEFAULT_VALUE} should be returned
+     * @see SizeAttribute
      */
     long getSize();
 }

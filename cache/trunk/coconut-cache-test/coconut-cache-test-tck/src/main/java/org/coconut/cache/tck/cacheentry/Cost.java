@@ -47,10 +47,10 @@ public class Cost extends AbstractCacheTCKTest {
     public void put() {
         c = newCache();
         put(M1);
-        assertCostEquals(M1, CostAttribute.DEFAULT_COST);
+        assertCostEquals(M1, CostAttribute.DEFAULT_VALUE);
         putAll(M1, M2);
-        assertCostEquals(M1, CostAttribute.DEFAULT_COST);
-        assertCostEquals(M2, CostAttribute.DEFAULT_COST);
+        assertCostEquals(M1, CostAttribute.DEFAULT_VALUE);
+        assertCostEquals(M2, CostAttribute.DEFAULT_VALUE);
     }
 
     /**
@@ -60,7 +60,7 @@ public class Cost extends AbstractCacheTCKTest {
     public void loaded() {
         c = newCache(newConf().loading().setLoader(new IntegerToStringLoader()));
         assertGet(M1);
-        assertCostEquals(M1, CostAttribute.DEFAULT_COST);
+        assertCostEquals(M1, CostAttribute.DEFAULT_VALUE);
     }
 
     /**
@@ -98,7 +98,7 @@ public class Cost extends AbstractCacheTCKTest {
         assertGet(M1);
         assertCostEquals(M1, 1.5);
         put(M1);
-        assertCostEquals(M1, CostAttribute.DEFAULT_COST);
+        assertCostEquals(M1, CostAttribute.DEFAULT_VALUE);
     }
     
     /**

@@ -19,9 +19,7 @@ public interface CacheLifecycle {
      * exception thrown by this method will not be handled.
      * 
      * @param cli
-     *            the CacheConfiguration for the cache that this object belongs to
-     * @param publicServices
-     *            a map of registered service
+     *            provides information about the configuration of the cache
      */
     void initialize(CacheLifecycleInitializer cli);
 

@@ -37,7 +37,7 @@ public abstract class DoubleAttribute extends AbstractAttribute<Double> {
     }
 
     @Override
-    protected final void checkValid(Double o) {
+    public final void checkValid(Double o) {
         checkValid(o.doubleValue());
     }
 

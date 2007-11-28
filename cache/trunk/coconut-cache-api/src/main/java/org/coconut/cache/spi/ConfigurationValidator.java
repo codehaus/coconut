@@ -49,7 +49,7 @@ public class ConfigurationValidator {
      *            the configuration to verify
      * @param cacheType
      *            the type of cache to verify against
-     * @throw IllegalCacheConfigurationException if the cache does not fully support the
+     * @throws IllegalCacheConfigurationException if the cache does not fully support the
      *        specified configuration
      */
     public void verify(CacheConfiguration<?, ?> conf, Class<? extends Cache> cacheType) {

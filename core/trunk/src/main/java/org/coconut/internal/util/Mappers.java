@@ -2,7 +2,7 @@
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
-package org.coconut.core;
+package org.coconut.internal.util;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.coconut.core.Mapper;
 import org.coconut.internal.asm.ClassWriter;
 import org.coconut.internal.asm.FieldVisitor;
 import org.coconut.internal.asm.Label;
@@ -29,7 +30,7 @@ import org.coconut.internal.asm.Type;
  * Not quite done yet.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id$
+ * @version $Id: Mappers.java 415 2007-11-09 08:25:23Z kasper $
  */
 @SuppressWarnings("unchecked")
 public final class Mappers {

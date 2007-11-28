@@ -12,10 +12,12 @@ import javax.management.MBeanServerInvocationHandler;
 import javax.management.ObjectName;
 
 import org.coconut.cache.service.management.CacheMXBean;
+import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
+import org.coconut.cache.tck.RequireService;
 import org.junit.Before;
 import org.junit.Test;
-
+@RequireService( { CacheManagementService.class })
 public class ManagementCacheMXBean extends AbstractCacheTCKTest {
 
     private CacheMXBean mxBean;

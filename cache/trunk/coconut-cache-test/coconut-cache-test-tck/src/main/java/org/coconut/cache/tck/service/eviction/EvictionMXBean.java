@@ -7,13 +7,18 @@ import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.RuntimeMBeanException;
 
+import org.coconut.attribute.AttributeMap;
+import org.coconut.attribute.common.SizeAttribute;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.service.eviction.CacheEvictionMXBean;
+import org.coconut.cache.service.loading.AbstractCacheLoader;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.tck.RequireService;
+import org.coconut.cache.test.TestCacheLoader;
 import org.junit.Before;
 import org.junit.Test;
+import static org.coconut.test.CollectionUtils.*;
 
 @RequireService( { CacheManagementService.class })
 public class EvictionMXBean extends AbstractCacheTCKTest {
@@ -32,7 +37,8 @@ public class EvictionMXBean extends AbstractCacheTCKTest {
     @Before
     public void setup() {
         mbs = MBeanServerFactory.createMBeanServer();
-        c = newCache(newConf().management().setEnabled(true).setMBeanServer(mbs).c());
+        c = newCache(newConf().loading().setLoader(new TestCacheLoader(SizeAttribute.INSTANCE)).c()
+                .management().setEnabled(true).setMBeanServer(mbs).c());
         mxBean = findMXBean(mbs, CacheEvictionMXBean.class);
     }
 
@@ -56,8 +62,7 @@ public class EvictionMXBean extends AbstractCacheTCKTest {
         try {
             mxBean.setMaximumVolume(-1);
             fail("Did not throw exception");
-        } catch (IllegalArgumentException e) {
-        }
+        } catch (IllegalArgumentException e) {}
     }
 
     /**
@@ -81,7 +86,7 @@ public class EvictionMXBean extends AbstractCacheTCKTest {
             mxBean.setMaximumSize(-1);
             fail("Did not throw exception");
         } catch (IllegalArgumentException e) {
-            
+
         }
     }
 
@@ -107,12 +112,22 @@ public class EvictionMXBean extends AbstractCacheTCKTest {
     }
 
     @Test
-    public void trimToCapacity() {
-    // TODO implement
-    }
+    public void trimToVolume() {
+        assertGet(M1, M2, M3, M4);
+        assertSize(4);
+        assertEquals(1 + 2 + 3 + 4, c.getVolume());
+        mxBean.trimToVolume(5);
 
-    @Test
-    public void evictIdleElements() {
-    // TODO implement
+        long v = c.getVolume();
+        assertTrue(c.getVolume() <= 5);
+        assertGet(M5);
+        assertEquals(v + 5, c.getVolume());
+        mxBean.trimToVolume(3);
+        assertTrue(c.getVolume() <= 3);
+        // Exception
+        try {
+            mxBean.trimToVolume(-1);
+            fail("Did not throw exception");
+        } catch (IllegalArgumentException e) {}
     }
 }

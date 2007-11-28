@@ -49,7 +49,7 @@ public class DefaultEventBusTest {
 
     @Test
     public void subscribe() {
-        EventProcessor ep = EventUtils.ignoreEventProcessor();
+        EventProcessor ep = EventUtils.dummyEventProcessor();
         EventSubscription es = bus.subscribe(ep);
         assertNotNull(es);
 
@@ -63,7 +63,7 @@ public class DefaultEventBusTest {
 
     @Test
     public void subscribe2() {
-        EventProcessor ep = EventUtils.ignoreEventProcessor();
+        EventProcessor ep = EventUtils.dummyEventProcessor();
         EventSubscription es = bus.subscribe(ep, Predicates.FALSE);
         assertNotNull(es);
         assertSame(ep, es.getEventProcessor());
@@ -76,7 +76,7 @@ public class DefaultEventBusTest {
 
     @Test
     public void subscribe3() {
-        EventProcessor ep = EventUtils.ignoreEventProcessor();
+        EventProcessor ep = EventUtils.dummyEventProcessor();
         EventSubscription es = bus.subscribe(ep, Predicates.FALSE, "foo");
         assertNotNull(es);
         assertSame(ep, es.getEventProcessor());
@@ -89,8 +89,8 @@ public class DefaultEventBusTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void subscribe3IAE() {
-        bus.subscribe(EventUtils.ignoreEventProcessor(), Predicates.FALSE, "foo");
-        bus.subscribe(EventUtils.ignoreEventProcessor(), Predicates.FALSE, "foo");
+        bus.subscribe(EventUtils.dummyEventProcessor(), Predicates.FALSE, "foo");
+        bus.subscribe(EventUtils.dummyEventProcessor(), Predicates.FALSE, "foo");
     }
 
     @Test(expected = NullPointerException.class)
@@ -105,7 +105,7 @@ public class DefaultEventBusTest {
 
     @Test(expected = NullPointerException.class)
     public void subscribe2NPE2() {
-        bus.subscribe(EventUtils.ignoreEventProcessor(), null);
+        bus.subscribe(EventUtils.dummyEventProcessor(), null);
     }
 
     @Test(expected = NullPointerException.class)
@@ -115,12 +115,12 @@ public class DefaultEventBusTest {
 
     @Test(expected = NullPointerException.class)
     public void subscribe3NPE2() {
-        bus.subscribe(EventUtils.ignoreEventProcessor(), null, "foo");
+        bus.subscribe(EventUtils.dummyEventProcessor(), null, "foo");
     }
 
     @Test(expected = NullPointerException.class)
     public void subscribe3NPE3() {
-        bus.subscribe(EventUtils.ignoreEventProcessor(), Predicates.TRUE, null);
+        bus.subscribe(EventUtils.dummyEventProcessor(), Predicates.TRUE, null);
     }
 
     @Test(expected = NullPointerException.class)

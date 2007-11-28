@@ -143,12 +143,12 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
      */
     double getCost(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
         double cost = CostAttribute.INSTANCE.getPrimitive(attributes,
-                CostAttribute.DEFAULT_COST);
+                CostAttribute.DEFAULT_VALUE);
 
         if (!CostAttribute.INSTANCE.isValid(cost)) {
             exceptionService.getExceptionHandler().handleWarning(exceptionService.createContext(),
                     "An illegal cost was added for key = " + key);
-            cost = CostAttribute.DEFAULT_COST;
+            cost = CostAttribute.DEFAULT_VALUE;
         }
         return cost;
     }

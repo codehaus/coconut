@@ -138,9 +138,7 @@ public class CacheTCKRunner extends Runner {
         if (services.contains(CacheLoadingService.class)) {
             runner.add(new ServiceSuite(LoadingSuite.class));
         }
-        if (services.contains(CacheManagementService.class)) {
-            runner.add(new ServiceSuite(ManagementSuite.class));
-        }
+        runner.add(new ServiceSuite(ManagementSuite.class));
         if (services.contains(CacheServiceManagerService.class)) {
             runner.add(new ServiceSuite(ServiceManagerSuite.class));
         }

@@ -26,6 +26,10 @@ public abstract class AbstractAttribute<T> implements Attribute<T>, Serializable
         this.defaultValue = defaultValue;
     }
 
+    public T getDefaultValue() {
+        return defaultValue;
+    }
+
     public T get(AttributeMap attributes) {
         return (T) attributes.get(this, defaultValue);
     }
@@ -57,5 +61,5 @@ public abstract class AbstractAttribute<T> implements Attribute<T>, Serializable
         return attributes;
     }
 
-    protected void checkValid(T o) {}
+    public void checkValid(T o) {}
 }

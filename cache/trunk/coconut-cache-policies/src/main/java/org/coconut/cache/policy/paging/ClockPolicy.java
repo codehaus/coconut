@@ -189,7 +189,10 @@ public class ClockPolicy<T> extends AbstractPolicy<T> implements Serializable, C
             bits[0] = 1;
         }
 
-        /** Evicts the next element. */
+        /**
+         * Evicts the next element.
+         * @return the element that should be evicted
+         */
         public T evictNext() {
             if (currentEntryIndex == 0) {
                 return null;

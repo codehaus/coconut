@@ -19,7 +19,7 @@ import org.coconut.cache.spi.ReplacementPolicy;
 public abstract class AbstractPolicy<T> implements ReplacementPolicy<T> {
 
     /**
-     * Calls {@link ReplacementPolicy#add(Object, org.coconut.core.AttributeMap)} with an
+     * Calls {@link ReplacementPolicy#add(Object, org.coconut.attribute.AttributeMap)} with an
      * empty attributemap.
      * 
      * @param element
@@ -33,7 +33,7 @@ public abstract class AbstractPolicy<T> implements ReplacementPolicy<T> {
     }
 
     /**
-     * Calls {@link ReplacementPolicy#update(int, Object, org.coconut.core.AttributeMap)}
+     * Calls {@link ReplacementPolicy#update(int, Object, org.coconut.attribute.AttributeMap)}
      * with an empty attributemap.
      * 
      * @param index

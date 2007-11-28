@@ -17,12 +17,12 @@ import org.coconut.attribute.spi.DoubleAttribute;
 public class CostAttribute extends DoubleAttribute {
 
     /** The default value of the Cost attribute. */
-    public static final double DEFAULT_COST = 1.0;
+    public static final double DEFAULT_VALUE = 1.0;
 
     public final static CostAttribute INSTANCE = new CostAttribute();
 
     private CostAttribute() {
-        super("Cost", DEFAULT_COST);
+        super("Cost", DEFAULT_VALUE);
     }
 
     // Preserves singleton property

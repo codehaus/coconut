@@ -40,7 +40,10 @@ public class ServiceSuite extends TestClassRunner {
             RequireService r = c.getAnnotation(RequireService.class);
             if (r != null) {
                 for (Class<?> cl : r.value()) {
-                    if (!l.contains(cl)) {
+                    if (r.isAvailable() && !l.contains(cl)) {
+                        iterator.remove();
+                    }
+                    if (!r.isAvailable() && l.contains(cl)) {
                         iterator.remove();
                     }
                 }

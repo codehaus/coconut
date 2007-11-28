@@ -4,11 +4,16 @@
 
 package org.coconut.core;
 
+import static org.coconut.test.TestUtil.assertIsSerializable;
+import static org.coconut.test.TestUtil.assertNotSerializable;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 
+import org.coconut.core.LoggersTest.InnerPrintStream;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
@@ -17,7 +22,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
+ * Tests {@link EventUtils}.
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id$
  */
 @SuppressWarnings("unchecked")
 @RunWith(JMock.class)
@@ -25,36 +33,103 @@ public class EventUtilsTest {
     Mockery context = new JUnit4Mockery();
 
     @Test
-    public void testToHandler() {
+    public void dummyEventProcessor() {
+        EventUtils.dummyEventProcessor().process(null);
+        assertIsSerializable(EventUtils.dummyEventProcessor());
+    }
+
+    @Test
+    public void dummyOfferableFalse() {
+        assertFalse(EventUtils.dummyOfferableFalse().offer(this));
+        assertIsSerializable(EventUtils.dummyOfferableFalse());
+    }
+
+    @Test
+    public void dummyOfferableTrue() {
+        assertTrue(EventUtils.dummyOfferableTrue().offer(this));
+        assertIsSerializable(EventUtils.dummyOfferableTrue());
+    }
+
+    @Test
+    public void fromOfferable() {
         final Offerable subscriber = context.mock(Offerable.class);
         context.checking(new Expectations() {
             {
                 one(subscriber).offer(0);
             }
         });
-        EventProcessor eh = EventUtils.fromOfferable(subscriber);
-        eh.process(0);
+        EventProcessor processor = EventUtils.fromOfferable(subscriber);
+        processor.process(0);
+        assertNotSerializable(processor);
+        assertNotSerializable(EventUtils.fromOfferable(EventUtils.dummyOfferableFalse()));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void fromOfferableNPE() {
+        EventUtils.fromOfferable((Offerable) null);
     }
 
     @Test
-    public void testToHandlerFromQueue() {
+    public void fromQueue() {
         final Queue q = context.mock(Queue.class);
         context.checking(new Expectations() {
             {
                 one(q).offer(0);
             }
         });
-        EventProcessor eh = EventUtils.fromQueue(q);
-        eh.process(0);
+        EventProcessor processor = EventUtils.fromQueue(q);
+        processor.process(0);
+        assertNotSerializable(processor);
+        assertNotSerializable(EventUtils.fromQueue(new ArrayBlockingQueue(1)));
+
     }
 
     @Test(expected = NullPointerException.class)
-    public void testToOfferableNPE() {
-        EventUtils.toOfferable(null);
+    public void fromQueueNPE() {
+        EventUtils.fromQueue(null);
     }
 
     @Test
-    public void testToOfferable() {
+    public void toSystemOut() {
+        InnerPrintStream str = InnerPrintStream.get();
+        try {
+            EventProcessor eh = EventUtils.toSystemOut();
+            eh.process(234);
+            assertEquals("234\r\n", str.getFromLast(0));
+        } finally {
+            str.terminate();
+        }
+    }
+
+    @Test
+    public void toSystemOutSafe() {
+        InnerPrintStream str = InnerPrintStream.get();
+        try {
+            EventProcessor eh = EventUtils.toSystemOutSafe();
+            eh.process(234);
+            assertEquals("234\r\n", str.getFromLast(0));
+        } finally {
+            str.terminate();
+        }
+    }
+
+    @Test
+    public void toPrintStream() {
+        toSystemOut();// hack
+    }
+
+    @Test
+    public void toPrintStreamSafe() {
+        toSystemOutSafe();// hack
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void toPrintStreamNPE() {
+        EventUtils.toPrintStream(null);
+    }
+
+    @Test
+    public void toOfferable() {
         final EventProcessor eh = context.mock(EventProcessor.class);
         context.checking(new Expectations() {
             {
@@ -63,32 +138,41 @@ public class EventUtilsTest {
         });
         Offerable o = EventUtils.toOfferable(eh);
         assertTrue(o.offer(0));
+        assertNotSerializable(o);
+        assertNotSerializable(EventUtils.toOfferable(EventUtils.dummyEventProcessor()));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void toOfferableNPE() {
+        EventUtils.toOfferable(null);
     }
 
     @Test
-    public void testToOfferableSafe() {
+    public void toOfferableSafe() {
         final EventProcessor eh = context.mock(EventProcessor.class);
         context.checking(new Expectations() {
             {
                 one(eh).process(0);
-            }
-        });
-        Offerable o = EventUtils.toOfferableSafe(eh);
-        assertTrue(o.offer(0));
-    }
-
-    @Test
-    public void testToOfferableErroneous() {
-        final EventProcessor eh = context.mock(EventProcessor.class);
-        context.checking(new Expectations() {
-            {
-                one(eh).process(0);
+                one(eh).process(1);
                 will(throwException(new IllegalArgumentException()));
             }
         });
         Offerable o = EventUtils.toOfferableSafe(eh);
-        assertFalse(o.offer(0));
+        assertTrue(o.offer(0));
+        assertFalse(o.offer(1));
+        assertNotSerializable(o);
+        assertNotSerializable(EventUtils.toOfferableSafe(EventUtils.dummyEventProcessor()));
+
     }
-    // TODO check serializeable
+
+    @Test(expected = NullPointerException.class)
+    public void toOfferableSafeNPE() {
+        EventUtils.toOfferableSafe(null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void toPrintStreamSafeNPE() {
+        EventUtils.toPrintStreamSafe(null);
+    }
 
 }

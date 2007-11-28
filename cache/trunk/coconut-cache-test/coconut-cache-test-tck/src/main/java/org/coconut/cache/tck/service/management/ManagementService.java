@@ -11,9 +11,10 @@ import org.coconut.cache.service.management.CacheMXBean;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.statistics.CacheStatisticsConfiguration;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
+import org.coconut.cache.tck.RequireService;
 import org.coconut.management.ManagedGroup;
 import org.junit.Test;
-
+@RequireService( { CacheManagementService.class })
 public class ManagementService extends AbstractCacheTCKTest {
 
     @Test

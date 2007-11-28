@@ -3,10 +3,11 @@
  */
 package org.coconut.cache.tck.service.management;
 
+import org.coconut.cache.tck.ServiceSuite;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-@RunWith(Suite.class)
+@RunWith(ServiceSuite.class)
 @Suite.SuiteClasses( { ManagementCacheMXBean.class, ManagementConfiguration.class,
-        ManagementService.class, ManagementShutdown.class })
+        ManagementNoSupport.class, ManagementService.class, ManagementShutdown.class })
 public class ManagementSuite {}
