@@ -2,6 +2,7 @@
  * http://creativecommons.org/licenses/publicdomain
  */
 package org.coconut.cache.examples.loading;
+
 //START SNIPPET: class
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheServices;
