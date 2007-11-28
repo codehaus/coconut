@@ -2,7 +2,7 @@
  * http://creativecommons.org/licenses/publicdomain
  */
 package org.coconut.cache.examples.loading;
-
+//START SNIPPET: class
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheServices;
 import org.coconut.cache.service.loading.CacheLoadingService;
@@ -21,3 +21,4 @@ public class VariousLoading {
         cls.loadAll(); // will reload all elements in the cache that is expired or needs refreshing
     }
 }
+//END SNIPPET: class
