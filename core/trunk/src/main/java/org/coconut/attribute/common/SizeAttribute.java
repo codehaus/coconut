@@ -3,6 +3,8 @@
  */
 package org.coconut.attribute.common;
 
+import org.coconut.attribute.AttributeMap;
+import org.coconut.attribute.AttributeMaps;
 import org.coconut.attribute.spi.LongAttribute;
 
 /**
@@ -28,7 +30,7 @@ public final class SizeAttribute extends LongAttribute {
 
     /** Creates a new SizeAttribute. */
     private SizeAttribute() {
-        super(NAME);
+        super(NAME, DEFAULT_VALUE);
     }
 
     /** {@inheritDoc} */
@@ -42,11 +44,19 @@ public final class SizeAttribute extends LongAttribute {
         return INSTANCE;
     }
 
+    public static AttributeMap set(AttributeMap attributes, long value) {
+        return INSTANCE.setAtttribute(attributes, value);
+    }
+
     /** {@inheritDoc} */
     @Override
     protected void checkValid(long size) {
         if (size < 0) {
             throw new IllegalArgumentException("invalid size (size = " + size + ")");
         }
+    }
+
+    public static AttributeMap singleton(long value) {
+        return AttributeMaps.from(INSTANCE, value);
     }
 }

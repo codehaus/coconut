@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.AttributeMaps;
-import org.coconut.cache.CacheAttributes;
+import org.coconut.attribute.common.TimeToRefreshAttribute;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
@@ -125,7 +125,7 @@ public class DefaultCacheExpirationServiceTest {
         };
         initialize();
         AttributeMap dam = new AttributeMaps.DefaultAttributeMap();
-        dam.putLong(CacheAttributes.TIME_TO_REFRESH_ATR, -1);
+        dam.putLong(TimeToRefreshAttribute.INSTANCE, -1);
         // s.innerGetExpirationTime(123, null, dam);
 
 // assertTrue(ref.get().contains("-1"));

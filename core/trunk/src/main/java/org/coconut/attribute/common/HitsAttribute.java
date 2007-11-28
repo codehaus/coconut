@@ -9,7 +9,7 @@ import org.coconut.attribute.spi.LongAttribute;
 public class HitsAttribute extends LongAttribute {
     public final static HitsAttribute INSTANCE = new HitsAttribute();
     private HitsAttribute() {
-        super("Hits");
+        super("Hits",0l);
     }
 
     @Override

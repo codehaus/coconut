@@ -7,12 +7,12 @@ import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.spi.LongAttribute;
 import org.coconut.core.Clock;
 
-public class LastModifiedTimeAttribute extends LongAttribute {
+public class DateLastModifiedAttribute extends LongAttribute {
 
-    public final static LastModifiedTimeAttribute INSTANCE = new LastModifiedTimeAttribute();
+    public final static DateLastModifiedAttribute INSTANCE = new DateLastModifiedAttribute();
 
-    private LastModifiedTimeAttribute() {
-        super("LastModifiedTime");
+    private DateLastModifiedAttribute() {
+        super("LastModifiedTime",0l);
     }
 
     @Override

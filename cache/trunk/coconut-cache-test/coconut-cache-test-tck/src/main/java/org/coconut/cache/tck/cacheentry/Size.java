@@ -11,7 +11,7 @@ import static org.coconut.test.CollectionUtils.M6;
 import java.util.Map;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.cache.CacheAttributes;
+import org.coconut.attribute.common.SizeAttribute;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.loading.AbstractCacheLoader;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
@@ -29,7 +29,7 @@ public class Size extends AbstractCacheTCKTest {
         private int totalCount;
 
         public String load(Integer key, AttributeMap attributes) throws Exception {
-            CacheAttributes.Size_ATR.set(attributes, key + 1 + totalCount);
+            SizeAttribute.set(attributes, key + 1 + totalCount);
             totalCount++;
             return "" + (char) (key + 64);
         }

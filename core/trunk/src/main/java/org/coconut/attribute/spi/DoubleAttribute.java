@@ -7,8 +7,8 @@ import org.coconut.attribute.AttributeMap;
 
 public abstract class DoubleAttribute extends AbstractAttribute<Double> {
 
-    public DoubleAttribute(String name) {
-        super(name, Double.class);
+    public DoubleAttribute(String name, Double defaultValue) {
+        super(name, Double.class, defaultValue);
     }
 
     public double getPrimitive(AttributeMap attributes) {

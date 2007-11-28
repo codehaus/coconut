@@ -11,7 +11,8 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
-import org.coconut.cache.test.util.AbstractLifecycleVerifier;
+import org.coconut.cache.test.util.lifecycle.AbstractLifecycleManagedVerifier;
+import org.coconut.cache.test.util.lifecycle.AbstractLifecycleVerifier;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedLifecycle;
 import org.junit.Test;
@@ -28,13 +29,10 @@ public class ServiceManagerObjects extends AbstractCacheTCKTest {
     public void lifecycleNoService() {
         Life l = new Life();
         Mo mo = new Mo();
-        LifeMo lm = new LifeMo();
         setCache(newConf().serviceManager().add(l));
         setCache(newConf().serviceManager().add(mo));
-        setCache(newConf().serviceManager().add(lm));
         assertFalse(services().hasService(l.getClass()));
         assertFalse(services().hasService(mo.getClass()));
-        assertFalse(services().hasService(lm.getClass()));
     }
 
     @Test
@@ -76,14 +74,12 @@ public class ServiceManagerObjects extends AbstractCacheTCKTest {
 
     static class Life extends AbstractLifecycleVerifier {}
 
-    static class LifeMo extends AbstractLifecycleVerifier implements ManagedLifecycle {
+    static class LifeMo extends AbstractLifecycleManagedVerifier {
         ManagedGroup g;
 
-        AbstractLifecycleVerifier.Step state;
-
         public void manage(ManagedGroup parent) {
+            super.manage(parent);
             g = parent;
-            state = getCurrentState();
         }
     }
 

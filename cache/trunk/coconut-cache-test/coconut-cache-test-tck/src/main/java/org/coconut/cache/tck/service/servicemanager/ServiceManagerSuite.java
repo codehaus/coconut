@@ -8,8 +8,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(ServiceSuite.class)
-@Suite.SuiteClasses( { LifecycleInitialize.class, LifecycleStart.class,
-        ServiceManagerManagement.class, ServiceManagerObjects.class, ServiceManagerOnCache.class,
+@Suite.SuiteClasses( { Lifecycle.class, LifecycleErroneousInitialize.class,
+        LifecycleErroneousShutdown.class, LifecycleErroneousStart.class,
+        LifecycleErroneousTermination.class, LifecycleManaged.class, ServiceManagerObjects.class,
         ServiceManagerService.class, StartupFailed.class })
 public class ServiceManagerSuite {
 

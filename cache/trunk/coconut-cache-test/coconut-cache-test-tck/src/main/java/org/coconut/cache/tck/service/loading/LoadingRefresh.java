@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.AttributeMaps;
-import org.coconut.cache.CacheAttributes;
+import org.coconut.attribute.common.TimeToRefreshAttribute;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.test.util.AsyncIntegerToStringLoader;
 import org.coconut.cache.test.util.IntegerToStringLoader;
@@ -30,7 +30,7 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
 
     static class MyLoader extends IntegerToStringLoader {
         public String load(Integer key, AttributeMap attributes) throws Exception {
-            CacheAttributes.TIME_TO_REFRESH_ATR.set(attributes, key, TimeUnit.MILLISECONDS);
+            TimeToRefreshAttribute.INSTANCE.setAttribute(attributes, key, TimeUnit.MILLISECONDS);
             return super.load(key, attributes);
         }
     }

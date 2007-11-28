@@ -10,7 +10,7 @@ import org.coconut.attribute.AttributeMap;
 public abstract class DurationAttribute extends LongAttribute {
 
     public DurationAttribute(String name) {
-        super(name);
+        super(name,0l);
     }
 
     public long getPrimitive(AttributeMap attributes, TimeUnit unit) {
@@ -26,11 +26,11 @@ public abstract class DurationAttribute extends LongAttribute {
         }
     }
 
-    public AttributeMap set(AttributeMap attributes, long duration, TimeUnit unit) {
-        return set(attributes, unit.toNanos(duration));
+    public AttributeMap setAttribute(AttributeMap attributes, long duration, TimeUnit unit) {
+        return setAtttribute(attributes, unit.toNanos(duration));
     }
 
     public AttributeMap set(AttributeMap attributes, Long duration, TimeUnit unit) {
-        return set(attributes, duration.longValue(), unit);
+        return setAttribute(attributes, duration.longValue(), unit);
     }
 }

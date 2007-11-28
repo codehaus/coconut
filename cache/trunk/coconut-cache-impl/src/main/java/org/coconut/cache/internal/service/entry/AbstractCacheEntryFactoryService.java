@@ -8,8 +8,12 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.AttributeMaps;
 import org.coconut.attribute.common.CostAttribute;
+import org.coconut.attribute.common.DateCreatedAttribute;
+import org.coconut.attribute.common.HitsAttribute;
+import org.coconut.attribute.common.DateLastModifiedAttribute;
 import org.coconut.attribute.common.SizeAttribute;
-import org.coconut.cache.CacheAttributes;
+import org.coconut.attribute.common.TimeToLiveAttribute;
+import org.coconut.attribute.common.TimeToRefreshAttribute;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
@@ -100,9 +104,9 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
      * @return the size of the element that was added
      */
     long getSize(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
-        long size = CacheAttributes.Size_ATR.getPrimitive(attributes,
-                CacheAttributes.Size_ATR.DEFAULT_VALUE);
-        if (!CacheAttributes.Size_ATR.isValid(size)) {
+        long size = SizeAttribute.INSTANCE.getPrimitive(attributes,
+                SizeAttribute.DEFAULT_VALUE);
+        if (!SizeAttribute.INSTANCE.isValid(size)) {
             exceptionService.getExceptionHandler().handleWarning(exceptionService.createContext(),
                     "An illegal size was added for key = " + key);
             size = SizeAttribute.DEFAULT_VALUE;
@@ -112,10 +116,10 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
 
     long getTimeToLive(long expirationTimeNanos, K key, V value, AttributeMap attributes,
             CacheEntry<K, V> existing) {
-        long nanos = CacheAttributes.TIME_TO_LIVE_ATR.getPrimitive(attributes,
+        long nanos = TimeToLiveAttribute.INSTANCE.getPrimitive(attributes,
                 TimeUnit.NANOSECONDS, expirationTimeNanos);
 
-        if (!CacheAttributes.TIME_TO_LIVE_ATR.isValid(nanos)) {
+        if (!TimeToLiveAttribute.INSTANCE.isValid(nanos)) {
             exceptionService.getExceptionHandler().handleWarning(exceptionService.createContext(),
                     "An illegal expiration time was added for key = " + key);
             nanos = expirationTimeNanos;
@@ -138,10 +142,10 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
      * @return the cost of the element that was added
      */
     double getCost(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
-        double cost = CacheAttributes.COST_ATR.getPrimitive(attributes,
-                CacheAttributes.COST_ATR.DEFAULT_COST);
+        double cost = CostAttribute.INSTANCE.getPrimitive(attributes,
+                CostAttribute.DEFAULT_COST);
 
-        if (!CacheAttributes.COST_ATR.isValid(cost)) {
+        if (!CostAttribute.INSTANCE.isValid(cost)) {
             exceptionService.getExceptionHandler().handleWarning(exceptionService.createContext(),
                     "An illegal cost was added for key = " + key);
             cost = CostAttribute.DEFAULT_COST;
@@ -150,8 +154,8 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
     }
 
     long getHits(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
-        long hits = CacheAttributes.HITS_ATR.getPrimitive(attributes);
-        if (!CacheAttributes.HITS_ATR.isValid(hits)) {
+        long hits = HitsAttribute.INSTANCE.getPrimitive(attributes);
+        if (!HitsAttribute.INSTANCE.isValid(hits)) {
             exceptionService.getExceptionHandler().handleWarning(exceptionService.createContext(),
                     "An illegal hits was added for key = " + key);
             hits = 0;
@@ -160,11 +164,11 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
     }
 
     long getLastModified(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
-        long lastModified = CacheAttributes.Last_Modified_ATR.getPrimitive(attributes);
+        long lastModified = DateLastModifiedAttribute.INSTANCE.getPrimitive(attributes);
         if (lastModified == 0) {
             lastModified = clock.timestamp();
         }
-        if (!CacheAttributes.Last_Modified_ATR.isValid(lastModified)) {
+        if (!DateLastModifiedAttribute.INSTANCE.isValid(lastModified)) {
             exceptionService.getExceptionHandler().handleWarning(exceptionService.createContext(),
                     "An illegal last modified time was added for key = " + key);
             lastModified = clock.timestamp();
@@ -174,10 +178,10 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
 
     long getTimeToRefresh(long refreshTimeNanos, K key, V value, AttributeMap attributes,
             CacheEntry<K, V> existing) {
-        long nanos = CacheAttributes.TIME_TO_REFRESH_ATR.getPrimitive(attributes,
+        long nanos = TimeToRefreshAttribute.INSTANCE.getPrimitive(attributes,
                 TimeUnit.NANOSECONDS, refreshTimeNanos);
 
-        if (!CacheAttributes.TIME_TO_REFRESH_ATR.isValid(nanos)) {
+        if (!TimeToRefreshAttribute.INSTANCE.isValid(nanos)) {
             exceptionService.getExceptionHandler().handleWarning(exceptionService.createContext(),
                     "An illegal time to refresh time was added for key = " + key);
             nanos = refreshTimeNanos;
@@ -186,12 +190,12 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
     }
 
     long getCreationTime(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
-        long creationTime = CacheAttributes.CREATION_TIME_ATR.getPrimitive(attributes);
+        long creationTime = DateCreatedAttribute.INSTANCE.getPrimitive(attributes);
         if (creationTime < 0) {
             exceptionService.getExceptionHandler().handleWarning(
                     exceptionService.createContext(),
                     "Must specify a positive creation time [Attribute="
-                            + CacheAttributes.CREATION_TIME_ATR + " , creationtime = "
+                            + DateCreatedAttribute.INSTANCE + " , creationtime = "
                             + creationTime + " for key = " + key);
         }
         if (creationTime > 0) {

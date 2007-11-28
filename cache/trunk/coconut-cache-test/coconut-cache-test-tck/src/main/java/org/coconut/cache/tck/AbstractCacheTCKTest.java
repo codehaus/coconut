@@ -51,7 +51,7 @@ public class AbstractCacheTCKTest extends Assert {
 
     protected ThreadServiceTestHelper threadHelper;
 
-    protected Class<? extends Cache> getCacheType() {
+    public static Class<? extends Cache> getCacheType() {
         return CacheTCKRunner.tt;
     }
     @Before

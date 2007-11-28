@@ -135,12 +135,20 @@ public abstract class CacheExceptionHandler<K, V> {
      */
     public void cacheInitializationFailed(CacheConfiguration<K, V> configuration,
             Class<? extends Cache> cacheType, CacheLifecycle service, RuntimeException cause) {
-        throw cause;
+
     }
+
     public void cacheStartFailed(CacheConfiguration<K, V> configuration,
             Class<? extends Cache> cacheType, CacheLifecycle service, RuntimeException cause) {
-        throw cause;
+
     }
+
+    /**
+     * Called as the last action by the cache once it has terminated.
+     */
+    public void cacheShutdownFailed(Cache<K, V> cache,
+            Map<? extends CacheLifecycle, RuntimeException> terminationFailures) {}
+
     /**
      * A delivery of an event failed.
      * 

@@ -12,7 +12,6 @@ import java.util.Map;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.common.CostAttribute;
-import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.loading.AbstractCacheLoader;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
@@ -34,7 +33,7 @@ public class Cost extends AbstractCacheTCKTest {
         private int totalCount;
 
         public String load(Integer key, AttributeMap attributes) throws Exception {
-            CacheAttributes.COST_ATR.set(attributes, key + 0.5 + totalCount);
+            CostAttribute.INSTANCE.set(attributes, key + 0.5 + totalCount);
             totalCount++;
             return "" + (char) (key + 64);
         }

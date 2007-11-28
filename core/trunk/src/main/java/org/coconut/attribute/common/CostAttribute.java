@@ -22,7 +22,7 @@ public class CostAttribute extends DoubleAttribute {
     public final static CostAttribute INSTANCE = new CostAttribute();
 
     private CostAttribute() {
-        super("Cost");
+        super("Cost", DEFAULT_COST);
     }
 
     // Preserves singleton property

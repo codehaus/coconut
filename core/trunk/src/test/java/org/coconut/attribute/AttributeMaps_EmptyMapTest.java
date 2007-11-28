@@ -1,8 +1,9 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.core;
+package org.coconut.attribute;
 
+import static org.coconut.attribute.AttributeMaps.EMPTY_MAP;
 import static org.coconut.test.TestUtil.assertIsSerializable;
 import static org.coconut.test.TestUtil.serializeAndUnserialize;
 import static org.junit.Assert.assertEquals;
@@ -15,11 +16,7 @@ import static org.junit.Assert.fail;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import org.coconut.attribute.Attribute;
-import org.coconut.attribute.AttributeMaps;
 import org.coconut.test.MockTestCase;
-
-import static org.coconut.attribute.AttributeMaps.EMPTY_MAP;
 import org.junit.Test;
 
 /**

@@ -4,7 +4,7 @@
 package org.coconut.cache.tck.service.eviction;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.cache.CacheAttributes;
+import org.coconut.attribute.common.SizeAttribute;
 import org.coconut.cache.policy.Policies;
 import org.coconut.cache.service.loading.AbstractCacheLoader;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
@@ -105,7 +105,7 @@ public class EvictionTrimming extends AbstractCacheTCKTest {
         private int totalCount;
 
         public String load(Integer key, AttributeMap attributes) throws Exception {
-            CacheAttributes.Size_ATR.set(attributes, key + 1 + totalCount);
+            SizeAttribute.INSTANCE.setAtttribute(attributes, key + 1 + totalCount);
             totalCount++;
             return "" + (char) (key + 64);
         }

@@ -13,7 +13,7 @@ import static org.coconut.test.CollectionUtils.M8;
 import java.util.Map;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.cache.CacheAttributes;
+import org.coconut.attribute.common.DateLastModifiedAttribute;
 import org.coconut.cache.service.loading.AbstractCacheLoader;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.IntegerToStringLoader;
@@ -22,7 +22,7 @@ import org.junit.Test;
 public class LastUpdatedTime extends AbstractCacheTCKTest {
     static class MyLoader extends AbstractCacheLoader<Integer, String> {
         public String load(Integer key, AttributeMap attributes) throws Exception {
-            CacheAttributes.Last_Modified_ATR.set(attributes, key + 1);
+            DateLastModifiedAttribute.INSTANCE.setAtttribute(attributes, key + 1);
             return "" + (char) (key + 64);
         }
     }

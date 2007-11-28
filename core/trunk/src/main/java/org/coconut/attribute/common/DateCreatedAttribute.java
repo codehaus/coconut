@@ -5,8 +5,9 @@ package org.coconut.attribute.common;
 
 import org.coconut.attribute.spi.LongAttribute;
 
-public class CreationTimeAttribute extends LongAttribute {
-    public final static CreationTimeAttribute INSTANCE = new CreationTimeAttribute();
+public class DateCreatedAttribute extends LongAttribute {
+    public final static DateCreatedAttribute INSTANCE = new DateCreatedAttribute();
+
     /**
      * The <tt>Creation time</tt> attribute indicates the creation time of a cache
      * element. The mapped value must be of a type <tt>long</tt> between 1 and
@@ -17,8 +18,9 @@ public class CreationTimeAttribute extends LongAttribute {
      * @see #getCreationTime(AttributeMap, Clock)
      */
     public static final String CREATION_TIME = "creation_time";
-    private CreationTimeAttribute() {
-        super("CreationTime");
+
+    private DateCreatedAttribute() {
+        super("CreationTime", 0l);
     }
 
     @Override

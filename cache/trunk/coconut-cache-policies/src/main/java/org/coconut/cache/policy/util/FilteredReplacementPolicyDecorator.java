@@ -4,7 +4,8 @@
 package org.coconut.cache.policy.util;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.cache.CacheAttributes;
+import org.coconut.attribute.common.CostAttribute;
+import org.coconut.attribute.common.SizeAttribute;
 import org.coconut.cache.spi.ReplacementPolicy;
 
 /**
@@ -94,7 +95,7 @@ public class FilteredReplacementPolicyDecorator<T> extends ReplacementPolicyDeco
          * {@inheritDoc}
          */
         public boolean evaluate(T t, AttributeMap attributes) {
-            double cost = CacheAttributes.COST_ATR.getPrimitive(attributes);
+            double cost = CostAttribute.INSTANCE.getPrimitive(attributes);
             return cost >= minimumCost;
         }
     }
@@ -125,7 +126,7 @@ public class FilteredReplacementPolicyDecorator<T> extends ReplacementPolicyDeco
          * {@inheritDoc}
          */
         public boolean evaluate(T t, AttributeMap attributes) {
-            long size = CacheAttributes.Size_ATR.getPrimitive(attributes);
+            long size = SizeAttribute.INSTANCE.getPrimitive(attributes);
             return size <= threshold;
         }
     }

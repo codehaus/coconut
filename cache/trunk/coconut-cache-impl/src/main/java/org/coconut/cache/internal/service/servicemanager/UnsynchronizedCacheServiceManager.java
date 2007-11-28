@@ -248,6 +248,7 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
             } catch (RuntimeException re) {
                 conf = null;
                 startupException = new CacheException("Could not start the cache", re);
+                ces.cacheStartFailed(conf, getCache().getClass(), si.service, re);
                 status = RunState.COULD_NOT_START;
                 tryShutdownServices();
                 doTerminate();
@@ -321,6 +322,9 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
                 } catch (RuntimeException e) {
                     m.put(sh.service, e);
                 }
+            }
+            if (!m.isEmpty()) {
+                ces.cacheShutdownFailed(getCache(), m);
             }
         }
         return m;

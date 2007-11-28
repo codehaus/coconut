@@ -20,7 +20,7 @@ public interface Attribute<T> {
 
     T get(AttributeMap attributes, T defaultValue);
 
-    AttributeMap set(AttributeMap attributes, T t);
+    AttributeMap setAttribute(AttributeMap attributes, T t);
 
     T fromString(String str);
 }

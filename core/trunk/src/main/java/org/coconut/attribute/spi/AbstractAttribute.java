@@ -13,7 +13,9 @@ public abstract class AbstractAttribute<T> implements Attribute<T>, Serializable
 
     private final String name;
 
-    public AbstractAttribute(String name, Class<T> clazz) {
+    private final T defaultValue;
+
+    public AbstractAttribute(String name, Class<T> clazz, T defaultValue) {
         if (name == null) {
             throw new NullPointerException("name is null");
         } else if (clazz == null) {
@@ -21,10 +23,11 @@ public abstract class AbstractAttribute<T> implements Attribute<T>, Serializable
         }
         this.name = name;
         this.clazz = clazz;
+        this.defaultValue = defaultValue;
     }
 
     public T get(AttributeMap attributes) {
-        return (T) attributes.get(this);
+        return (T) attributes.get(this, defaultValue);
     }
 
     public T get(AttributeMap attributes, T defaultValue) {
@@ -43,12 +46,12 @@ public abstract class AbstractAttribute<T> implements Attribute<T>, Serializable
         return false;
     }
 
-    public AttributeMap set(AttributeMap attributes, T object) {
+    public AttributeMap setAttribute(AttributeMap attributes, T object) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
         }
-        //object==null??? override by longAttribute and DoubleAttribute
-        
+        // object==null??? override by longAttribute and DoubleAttribute
+
         checkValid(object);
         attributes.put(this, object);
         return attributes;

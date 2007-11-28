@@ -11,7 +11,7 @@ import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoaderCallback;
-import org.coconut.cache.test.util.AbstractLifecycleVerifier;
+import org.coconut.cache.test.util.lifecycle.AbstractLifecycleVerifier;
 import org.junit.Test;
 
 /**

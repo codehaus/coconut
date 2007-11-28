@@ -13,7 +13,7 @@ import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
-import org.coconut.cache.test.util.AbstractLifecycleVerifier;
+import org.coconut.cache.test.util.lifecycle.AbstractLifecycleVerifier;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +24,7 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class LifecycleInitialize extends AbstractCacheTCKTest {
+public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
 
     CacheConfiguration conf;
 
@@ -40,46 +40,6 @@ public class LifecycleInitialize extends AbstractCacheTCKTest {
     @After
     public void after() {
         assertSame(conf, handler.conf);
-    }
-
-    /**
-     * Tests that {@link CacheLifecycle#initialize(CacheLifecycleInitializer)} is called
-     * on a simple service.
-     */
-    @Test
-    public void initializeCalled() {
-        AbstractLifecycleVerifier alv = new AbstractLifecycleVerifier() {
-            @Override
-            public void initialize(CacheLifecycleInitializer cli) {
-                super.initialize(cli);
-                assertEquals(getCacheType(), cli.getCacheType());
-            }
-        };
-        conf.serviceManager().add(alv).c();
-        alv.setConfigurationToVerify(conf);
-        setCache(conf);
-        prestart();
-        shutdownAndAwait();
-        assertEquals(0, handler.terminatationMap.size());
-    }
-
-    /**
-     * Tests that the services are initialized in the order they where registered.
-     */
-    @Test
-    public void initializeOrder() {
-        final AtomicInteger verifier = new AtomicInteger();
-        for (int i = 0; i < 10; i++) {
-            final int j = i;
-            conf.serviceManager().add(new AbstractLifecycleVerifier() {
-                @Override
-                public void initialize(CacheLifecycleInitializer cli) {
-                    assertEquals(j, verifier.getAndIncrement());
-                }
-            });
-        }
-        newCache(conf);
-        assertEquals(10, verifier.get());
     }
 
     /**
@@ -278,6 +238,5 @@ public class LifecycleInitialize extends AbstractCacheTCKTest {
             assertNotNull(terminationFailures);
             this.terminatationMap = terminationFailures;
         }
-
     }
 }

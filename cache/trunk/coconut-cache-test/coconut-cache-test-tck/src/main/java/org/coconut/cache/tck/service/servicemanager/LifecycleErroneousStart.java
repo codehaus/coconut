@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import net.jcip.annotations.ThreadSafe;
 
+import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
@@ -18,65 +19,23 @@ import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
-import org.coconut.cache.test.util.AbstractLifecycleVerifier;
+import org.coconut.cache.test.util.lifecycle.AbstractLifecycleVerifier;
+import org.coconut.cache.test.util.lifecycle.AbstractLifecycleVerifier.Step;
 import org.coconut.test.MockTestCase;
 import org.junit.Before;
 import org.junit.Test;
 
-public class LifecycleStart extends AbstractCacheTCKTest {
+public class LifecycleErroneousStart extends AbstractCacheTCKTest {
 
     CacheConfiguration conf;
 
-    InitializingExceptionHandler handler;
+    StartExceptionHandler handler;
 
     @Before
     public void setup() {
         conf = newConf();
-        handler = new InitializingExceptionHandler();
+        handler = new StartExceptionHandler();
         conf.exceptionHandling().setExceptionHandler(handler);
-    }
-
-    /**
-     * Tests that {@link CacheLifecycle#start(CacheServiceManagerService)} is called on a
-     * simple service.
-     */
-    @Test
-    public void startCalled() {
-        AbstractLifecycleVerifier alv = new AbstractLifecycleVerifier() {
-            @Override
-            public void start(CacheServiceManagerService serviceManager) {
-                super.start(serviceManager);
-            }
-        };
-        conf.serviceManager().add(alv).c();
-        alv.setConfigurationToVerify(conf);
-        setCache(conf);
-        prestart();
-        shutdownAndAwait();
-        assertEquals(0, handler.terminatationMap.size());
-    }
-
-    /**
-     * Tests that the services are started in the order they where registered.
-     */
-    @Test
-    public void startOrder() {
-        final AtomicInteger verifier = new AtomicInteger();
-        for (int i = 0; i < 10; i++) {
-            final int j = i;
-            conf.serviceManager().add(new AbstractCacheLifecycle() {
-                @Override
-                public void start(CacheServiceManagerService serviceManager) {
-                    assertEquals(j, verifier.getAndIncrement());
-                    super.start(serviceManager);
-                }
-            });
-        }
-        setCache(conf);
-        prestart();
-        assertEquals(10, verifier.get());
-        shutdownAndAwait();
-        assertEquals(0, handler.terminatationMap.size());
     }
 
     /**
@@ -126,6 +85,7 @@ public class LifecycleStart extends AbstractCacheTCKTest {
             public void shutdown() {
                 assertEquals(2, verifier.getAndIncrement());
             }
+
             @Override
             public void terminated() {
                 assertEquals(5, verifier.getAndIncrement());
@@ -139,6 +99,7 @@ public class LifecycleStart extends AbstractCacheTCKTest {
                 super.start(serviceManager);
                 throw new IllegalMonitorStateException();
             }
+
             @Override
             public void terminated() {
                 assertEquals(4, verifier.getAndIncrement());
@@ -147,8 +108,9 @@ public class LifecycleStart extends AbstractCacheTCKTest {
         AbstractLifecycleVerifier alv3 = new AbstractLifecycleVerifier() {
             @Override
             public void start(CacheServiceManagerService serviceManager) {
-                throw new AssertionError("Should not have been initialized");
+                throw new AssertionError("Should not have been started");
             }
+
             @Override
             public void terminated() {
                 assertEquals(3, verifier.getAndIncrement());
@@ -162,12 +124,84 @@ public class LifecycleStart extends AbstractCacheTCKTest {
         } catch (CacheException e) {
             assertTrue(e.getCause() instanceof IllegalMonitorStateException);
         }
-//        assertEquals(alv2, handler.service);
-//        assertTrue(handler.cause instanceof IllegalMonitorStateException);
-//        assertEquals(0, handler.terminatationMap.size());
-//        assertEquals(3, verifier.get());
+        assertSame(alv2, handler.service);
+        assertTrue(handler.cause instanceof IllegalMonitorStateException);
+        assertEquals(0, handler.terminatationMap.size());
+        assertEquals(6, verifier.get());
     }
-    
+
+    /**
+     * Tests that {@link CacheLifecycle#terminated()} is called on components that have
+     * already been initialized. When other components fails to initialize.
+     */
+    @Test
+    public void exceptionInStartAndInitialize() {
+        final AtomicInteger verifier = new AtomicInteger();
+        AbstractCacheLifecycle alv1 = new AbstractCacheLifecycle() {
+            @Override
+            public void start(CacheServiceManagerService serviceManager) {
+                assertEquals(0, verifier.getAndIncrement());
+                super.start(serviceManager);
+            }
+
+            @Override
+            public void shutdown() {
+                assertEquals(2, verifier.getAndIncrement());
+                throw new ArithmeticException();
+            }
+
+            @Override
+            public void terminated() {
+                assertEquals(5, verifier.getAndIncrement());
+                throw new ArrayIndexOutOfBoundsException();
+            }
+
+        };
+        AbstractLifecycleVerifier alv2 = new AbstractLifecycleVerifier() {
+            @Override
+            public void start(CacheServiceManagerService serviceManager) {
+                assertEquals(1, verifier.getAndIncrement());
+                super.start(serviceManager);
+                throw new IllegalMonitorStateException();
+            }
+
+            @Override
+            public void terminated() {
+                assertEquals(4, verifier.getAndIncrement());
+                throw new ArrayIndexOutOfBoundsException();
+            }
+        };
+        AbstractLifecycleVerifier alv3 = new AbstractLifecycleVerifier() {
+            @Override
+            public void start(CacheServiceManagerService serviceManager) {
+                throw new AssertionError("Should not have been started");
+            }
+
+            @Override
+            public void terminated() {
+                assertEquals(3, verifier.getAndIncrement());
+            }
+        };
+        conf.serviceManager().add(alv1).add(alv2).add(alv3).c();
+        setCache(conf);
+        try {
+            prestart();
+            throw new AssertionError("Should have failed with IllegalMonitorStateException");
+        } catch (CacheException e) {
+            assertTrue(e.getCause() instanceof IllegalMonitorStateException);
+        }
+        assertSame(alv2, handler.service);
+        assertTrue(handler.cause instanceof IllegalMonitorStateException);
+        assertEquals(1, handler.shutdownMap.size());
+        assertTrue(handler.shutdownMap.get(alv1) instanceof ArithmeticException);
+        assertSame(c, handler.shutdownCache);
+
+        assertEquals(2, handler.terminatationMap.size());
+        assertTrue(handler.terminatationMap.get(alv1) instanceof ArrayIndexOutOfBoundsException);
+        assertTrue(handler.terminatationMap.get(alv2) instanceof ArrayIndexOutOfBoundsException);
+        assertEquals(6, verifier.get());
+    }
+
     @Test
     public void cannotCallshutdownServiceAsynchronously() {
         setCache(newConf().serviceManager().add(new AbstractCacheLifecycle() {
@@ -193,9 +227,7 @@ public class LifecycleStart extends AbstractCacheTCKTest {
         prestart();
     }
 
-
-    class InitializingExceptionHandler extends
-            CacheExceptionHandlers.DefaultLoggingExceptionHandler {
+    class StartExceptionHandler extends CacheExceptionHandlers.DefaultLoggingExceptionHandler {
         CacheConfiguration conf;
 
         Map terminatationMap;
@@ -204,19 +236,25 @@ public class LifecycleStart extends AbstractCacheTCKTest {
 
         CacheLifecycle service;
 
+        Cache shutdownCache;
+
+        Map shutdownMap;
+
         @Override
-        public void cacheInitializationFailed(CacheConfiguration configuration, Class cacheType,
+        public void cacheStartFailed(CacheConfiguration configuration, Class cacheType,
                 CacheLifecycle service, RuntimeException cause) {
             this.cause = cause;
             this.service = service;
-            assertEquals(conf, configuration);
+            this.conf = configuration;
             assertEquals(getCacheType(), cacheType);
-            super.cacheInitializationFailed(configuration, cacheType, service, cause);
+            super.cacheStartFailed(configuration, cacheType, service, cause);
         }
 
         @Override
-        public void initialize(CacheConfiguration configuration) {
-            this.conf = configuration;
+        public void cacheShutdownFailed(Cache cache, Map terminationFailures) {
+            this.shutdownCache = cache;
+            this.shutdownMap = terminationFailures;
+            super.cacheShutdownFailed(cache, terminationFailures);
         }
 
         @Override
@@ -224,6 +262,6 @@ public class LifecycleStart extends AbstractCacheTCKTest {
             assertNotNull(terminationFailures);
             this.terminatationMap = terminationFailures;
         }
-
     }
+
 }

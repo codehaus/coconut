@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.cache.test.util;
+package org.coconut.cache.test.util.lifecycle;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -15,11 +15,14 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
+import org.coconut.cache.tck.AbstractCacheTCKTest;
+import org.coconut.management.ManagedGroup;
+import org.coconut.management.ManagedLifecycle;
 
 public class AbstractLifecycleVerifier implements CacheLifecycle {
 
     public enum Step {
-        INITIALIZE, START, STARTED, SHUTDOWN, TERMINATED
+        INITIALIZE, START, MANAGED, STARTED, SHUTDOWN, TERMINATED
     }
 
     private final AtomicReference<Step> currentStep = new AtomicReference<Step>();
@@ -71,6 +74,10 @@ public class AbstractLifecycleVerifier implements CacheLifecycle {
         assertTerminatedPhase();
     }
 
+    private boolean isManaged() {
+        return ManagedLifecycle.class.isAssignableFrom(getClass());
+    }
+
     public void initialize(CacheLifecycleInitializer cli) {
         assertTrue(nextStep.compareAndSet(Step.INITIALIZE, Step.START));
         assertNotNull(
@@ -80,6 +87,7 @@ public class AbstractLifecycleVerifier implements CacheLifecycle {
                 .getCacheConfiguration());
         assertNotNull("The cache type that was passed to the initialize method was null", cli
                 .getCacheType());
+        assertEquals(AbstractCacheTCKTest.getCacheType(), cli.getCacheType());
         if (conf != null) {
             assertEquals(conf, cli.getCacheConfiguration());
         }
@@ -93,7 +101,11 @@ public class AbstractLifecycleVerifier implements CacheLifecycle {
     }
 
     public void start(CacheServiceManagerService serviceManager) {
-        assertTrue(nextStep.compareAndSet(Step.START, Step.STARTED));
+        if (isManaged()) {
+            assertTrue(nextStep.compareAndSet(Step.START, Step.MANAGED));
+        } else {
+            assertTrue(nextStep.compareAndSet(Step.START, Step.STARTED));
+        }
         assertNotNull(serviceManager);
         assertTrue(serviceManager.hasService(CacheServiceManagerService.class));
         assertNotNull(serviceManager.getService(CacheServiceManagerService.class));
@@ -101,7 +113,11 @@ public class AbstractLifecycleVerifier implements CacheLifecycle {
         assertNotNull(serviceManager.getAllServices().get(CacheServiceManagerService.class));
         currentStep.set(Step.START);
     }
-
+    public void manage(ManagedGroup parent) {
+        assertTrue(nextStep.compareAndSet(Step.MANAGED, Step.STARTED));
+        assertNotNull(parent);
+        currentStep.set(Step.MANAGED);
+    }
     public void started(Cache<?, ?> cache) {
         assertTrue(nextStep.compareAndSet(Step.STARTED, Step.SHUTDOWN));
         if (c != null) {

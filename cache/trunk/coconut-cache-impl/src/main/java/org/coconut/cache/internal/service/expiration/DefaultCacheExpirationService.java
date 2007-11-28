@@ -10,8 +10,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.attribute.AttributeMap;
+import org.coconut.attribute.common.TimeToLiveAttribute;
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheAttributes;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
@@ -110,7 +110,7 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
             return cache.put(key, value);
         } else {
             AttributeMap map = attributeFactory.createMap();
-            CacheAttributes.TIME_TO_LIVE_ATR.set(map, timeToLive, unit);
+            TimeToLiveAttribute.INSTANCE.setAttribute(map, timeToLive, unit);
             return helper.put(key, value, map);// checks for null key+value
         }
     }
@@ -124,7 +124,7 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
             for (Map.Entry<? extends K, ? extends V> entry : t.entrySet()) {
                 K key = entry.getKey();
                 AttributeMap att = attributeFactory.createMap();
-                CacheAttributes.TIME_TO_LIVE_ATR.set(att, timeToLive, unit);
+                TimeToLiveAttribute.INSTANCE.setAttribute(att, timeToLive, unit);
                 attributes.put(key, att);
             }
             helper.putAll(t, attributes);
