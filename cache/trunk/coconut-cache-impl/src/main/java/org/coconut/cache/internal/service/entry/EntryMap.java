@@ -192,24 +192,6 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
         return s;
     }
 
-    public boolean containsKey(Object key) {
-        // DONE
-        if (key == null) {
-            throw new NullPointerException("key is null");
-        }
-        if (size != 0) {
-            int hash = hash(key.hashCode());
-            AbstractCacheEntry<K, V> e = getFirst(hash);
-            while (e != null) {
-                if (e.getHash() == hash && key.equals(e.getKey())) {
-                    return true;
-                }
-                e = e.next;
-            }
-        }
-        return false;
-    }
-
     public boolean containsValue(Object value) {
         if (value == null) {
             throw new NullPointerException("value is null");
@@ -325,9 +307,6 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
     }
 
     public AbstractCacheEntry<K, V> remove(Object key, Object value) {
-        if (key == null) {
-            throw new NullPointerException("key is null");
-        }
         int hash = hash(key.hashCode());
         AbstractCacheEntry<K, V>[] tab = table;
         int index = hash & (tab.length - 1);

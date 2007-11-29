@@ -29,7 +29,7 @@ public final class AttributeMaps {
     // /CLOVER:ON
 
     public static <T> AttributeMap singleton(Attribute<T> attribute, T value) {
-        // rename to singleton?? and make immutable.
+        // make immutable.
         DefaultAttributeMap map = new DefaultAttributeMap();
         map.put(attribute, value);
         return map;

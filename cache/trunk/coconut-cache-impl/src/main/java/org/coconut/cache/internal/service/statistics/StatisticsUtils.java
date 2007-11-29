@@ -116,6 +116,9 @@ public class StatisticsUtils {
          *            the expiration service to wrap
          */
         public DelegatedCacheStatisticsService(CacheStatisticsService service) {
+            if (service == null) {
+                throw new NullPointerException("service is null");
+            }
             this.service = service;
         }
 

@@ -13,7 +13,7 @@ public class HitsAttribute extends LongAttribute {
     }
 
     @Override
-    protected void checkValid(long hits) {
+    public void checkValid(long hits) {
         if (hits < 0) {
             throw new IllegalArgumentException("invalid hit count (hits = " + hits + ")");
         }

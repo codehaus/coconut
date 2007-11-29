@@ -45,7 +45,7 @@ public abstract class LongAttribute extends AbstractAttribute<Long> {
         checkValid(o.longValue());
     }
 
-    protected void checkValid(long d) {
+    public void checkValid(long d) {
     // default ok
     }
 }

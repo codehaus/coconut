@@ -35,6 +35,14 @@ public final class SizeAttribute extends LongAttribute {
 
     /** {@inheritDoc} */
     @Override
+    public void checkValid(long size) {
+        if (size < 0) {
+            throw new IllegalArgumentException("invalid size (size = " + size + ")");
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public boolean isValid(long size) {
         return size >= 0;
     }
@@ -44,16 +52,12 @@ public final class SizeAttribute extends LongAttribute {
         return INSTANCE;
     }
 
-    public static AttributeMap set(AttributeMap attributes, long value) {
-        return INSTANCE.setAtttribute(attributes, value);
+    public static long get(AttributeMap attributes) {
+        return INSTANCE.getPrimitive(attributes);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    protected void checkValid(long size) {
-        if (size < 0) {
-            throw new IllegalArgumentException("invalid size (size = " + size + ")");
-        }
+    public static AttributeMap set(AttributeMap attributes, long value) {
+        return INSTANCE.setAtttribute(attributes, value);
     }
 
     public static AttributeMap singleton(long value) {

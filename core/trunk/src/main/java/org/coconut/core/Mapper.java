@@ -5,23 +5,20 @@
 package org.coconut.core;
 
 /**
- * An object with a function accepting objects of type T and returning those of type U For
- * example the following transformer transforms a String into a Long.
+ * An object with a function accepting objects of type T and returning those of type U.
+ * For example the following mapper transforms a String into a Long.
  * 
  * <pre>
  * class StringToLongMapper implements Mapper&lt;String, Long&gt; {
- *     public Long transform(String str) {
+ *     public Long map(String str) {
  *         return Long.parseLong(str);
  *     }
  * }
  * </pre>
  * 
  * <p>
- * Transformers are often applied together with {@link org.coconut.predicate.Predicate filters}
+ * Mappers are often applied together with {@link org.coconut.predicate.Predicate filters}
  * to extract information on objects.
- * <p>
- * The {@link Mappers} class supports easy construction of dynamic transformers
- * either via on-the-fly bytecode generation or reflection.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
@@ -40,13 +37,13 @@ public interface Mapper<T, U> {
      * @return the transformed element
      * @throws ClassCastException
      *             class of the specified element prevents it from being transformed by
-     *             this transformer.
+     *             this mapper.
      * @throws NullPointerException
-     *             if the specified element is null and this transformer does not support
+     *             if the specified element is null and this mapper does not support
      *             transformations of null elements.
      * @throws IllegalArgumentException
      *             some aspect of this element prevents it from being transformed by this
-     *             transformer.
+     *             mapper.
      */
     U map(T from);
 }

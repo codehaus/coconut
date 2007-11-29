@@ -7,8 +7,10 @@ import static org.junit.Assert.assertEquals;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.service.management.CacheMXBean;
+import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.management.ManagedGroup;
+import org.coconut.test.MockTestCase;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
@@ -47,9 +49,15 @@ public class ManagementUtilsTest {
 
     @Test(expected = NullPointerException.class)
     public void testWrapServiceNPE() {
-        ManagementUtils.synchronizedGroup(null, null);
+        ManagementUtils.synchronizedGroup(null, new DefaultCacheManagementService(
+                new CacheManagementConfiguration(), "foo"));
     }
-    
+
+    @Test(expected = NullPointerException.class)
+    public void testWrapServiceNPE1() {
+        ManagementUtils.synchronizedGroup(MockTestCase.mockDummy(ManagedGroup.class), null);
+    }
+
     @Test
     public void testWrapMXBean() {
         final Cache mock = context.mock(Cache.class);

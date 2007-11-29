@@ -30,11 +30,11 @@ public abstract class AbstractAttribute<T> implements Attribute<T>, Serializable
         return defaultValue;
     }
 
-    public T get(AttributeMap attributes) {
+    public T getValue(AttributeMap attributes) {
         return (T) attributes.get(this, defaultValue);
     }
 
-    public T get(AttributeMap attributes, T defaultValue) {
+    public T getValue(AttributeMap attributes, T defaultValue) {
         return (T) attributes.get(this, defaultValue);
     }
 
@@ -50,7 +50,7 @@ public abstract class AbstractAttribute<T> implements Attribute<T>, Serializable
         return false;
     }
 
-    public AttributeMap setAttribute(AttributeMap attributes, T object) {
+    public AttributeMap setValue(AttributeMap attributes, T object) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
         }

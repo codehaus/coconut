@@ -25,7 +25,7 @@ public class EntrySetToArray extends AbstractCacheTCKTest {
     @Test
     public void toArray() {
         c = newCache();
-        assertEquals(new HashSet(), new HashSet(Arrays.asList(c.keySet().toArray())));
+        assertEquals(new HashSet(), new HashSet(Arrays.asList(c.entrySet().toArray())));
 
         assertEquals(new HashSet(), new HashSet(Arrays.asList(c.entrySet().toArray(
                 new Map.Entry[0]))));

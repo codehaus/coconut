@@ -30,7 +30,7 @@ public class DateCreatedAttribute extends LongAttribute {
     }
 
     @Override
-    protected void checkValid(long time) {
+    public void checkValid(long time) {
         if (time < 0) {
             throw new IllegalArgumentException("creationTime was negative (creationTime = " + time
                     + ")");

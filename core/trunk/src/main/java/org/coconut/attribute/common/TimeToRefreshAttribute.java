@@ -20,7 +20,7 @@ public class TimeToRefreshAttribute extends DurationAttribute {
     public static final String TIME_TO_REFRESH_NS = "time_to_refresh_ns";
 
     @Override
-    protected void checkValid(long time) {
+    public void checkValid(long time) {
         if (time < 0) {
             throw new IllegalArgumentException("invalid refreshTime (refreshTimeNs = " + time + ")");
         }

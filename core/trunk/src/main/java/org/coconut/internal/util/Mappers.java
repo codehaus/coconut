@@ -12,7 +12,6 @@ import java.lang.reflect.Method;
 import java.security.SecureClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +27,9 @@ import org.coconut.internal.asm.Type;
 
 /**
  * Not quite done yet.
- * 
+ * <p>
+ * The {@link Mappers} class supports easy construction of dynamic transformers
+ * either via on-the-fly bytecode generation or reflection.
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Mappers.java 415 2007-11-09 08:25:23Z kasper $
  */
@@ -114,7 +115,7 @@ public final class Mappers {
             this.t = transformer.t;
         }
 
-        private ASMBasedMapper(Method m, Object... args) {
+        ASMBasedMapper(Method m, Object... args) {
             t = generateTransformer(m, args);
             this.m = m;
         }
@@ -461,26 +462,6 @@ public final class Mappers {
         return new PassThroughMapper<K>();
     }
 
-    public static <F, T> Mapper<F, T> reflect(Class<F> type, String method)
-            throws SecurityException, NoSuchMethodException {
-        return reflect(type, method, null);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <F, T> Mapper<F, T> reflect(Class<F> type, String method,
-            Class<T> to) throws SecurityException, NoSuchMethodException {
-        final Method m = type.getMethod(method, new Class[] {});
-        return new Mapper<F, T>() {
-            public T map(F from) {
-                try {
-                    return (T) m.invoke(from, (Object[]) null);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        };
-    }
-
     @SuppressWarnings("unchecked")
     public static <F, T> Mapper<F, T> t(Mapper... transformers) {
         if (transformers == null) {
@@ -621,48 +602,6 @@ public final class Mappers {
 
             }
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <F, T> DynamicMapper<F, T> transform(Method method,
-            Object... parameters) {
-        if (method == null) {
-            throw new NullPointerException("method is null");
-        }
-        if (parameters == null) {
-            if (method.getParameterTypes().length != 1
-                    || method.getParameterTypes()[0].isPrimitive()) {
-                throw new IllegalArgumentException("TODO");
-            }
-        } else {
-            if (method.getParameterTypes().length == parameters.length) {
-                boolean ok = true;
-                for (int i = 0; i < parameters.length; i++) {
-                    Class arg = method.getParameterTypes()[i];
-                    if (parameters[i] == null) {
-                        ok &= !arg.isPrimitive();
-                    } else {
-                        ok &= arg.isAssignableFrom(parameters[i].getClass());
-                    }
-                }
-                if (!ok) {
-                    throw new IllegalArgumentException("TODO");
-                }
-            } else {
-                throw new IllegalArgumentException("TODO");
-            }
-        }
-        // check assignability for parameters
-        return new ASMBasedMapper<F, T>(method, parameters);
-    }
-
-    public static <F, T> Collection<T> transformCollection(Collection<? extends F> col,
-            Mapper<F, T> t) {
-        ArrayList<T> list = new ArrayList<T>(col.size());
-        for (F f : col) {
-            list.add(t.map(f));
-        }
-        return list;
     }
 
     private static Class fromPrimitive(Class c) {

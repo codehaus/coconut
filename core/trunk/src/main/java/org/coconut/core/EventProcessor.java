@@ -5,14 +5,14 @@
 package org.coconut.core;
 
 /**
- * The typical usage of an <code>EventHandler</code> is for processing
+ * The typical usage of an <code>EventProcessor</code> is for processing
  * specific events in an event-driven architecture.
  * <p>
  * Usage example. This class process events (numbers) by taking the square and
  * printing it to <tt>System.out</tt>.
  * 
  * <pre>
- * public class SquareHandler implements EventProcessor&lt;Integer&gt; {
+ * public class SquareProcessor implements EventProcessor&lt;Integer&gt; {
  *     public void process(Integer n) {
  *         System.out.println(n * n);
  *     }
@@ -27,19 +27,19 @@ package org.coconut.core;
 public interface EventProcessor<E> {
 
     /**
-     * Handles an event.
+     * Processes an event.
      * 
      * @param event
-     *            The event that the EventHandler must process
+     *            The event that the EventProcessor must process
      * @throws ClassCastException
      *             the class of the specified element prevents it from handled
-     *             by this event-handler.
+     *             by this event processor.
      * @throws NullPointerException
-     *             if the specified element is null and this event-handler does
+     *             if the specified element is null and this event processor does
      *             not support null elements.
      * @throws IllegalArgumentException
      *             some aspect of this element prevents it from being handled by
-     *             this event-handler.
+     *             this event processor.
      */
     void process(E event);
 }

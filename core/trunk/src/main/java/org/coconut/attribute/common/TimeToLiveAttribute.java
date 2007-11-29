@@ -105,7 +105,7 @@ public class TimeToLiveAttribute extends DurationAttribute {
     }
 
     @Override
-    protected void checkValid(long ttl) {
+    public void checkValid(long ttl) {
         if (ttl < 0) {
             throw new IllegalArgumentException("invalid timeToLive (timeToLiveNs = " + ttl + ")");
         }

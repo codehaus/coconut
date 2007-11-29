@@ -29,6 +29,11 @@ public interface Attribute<T> {
      */
     T getDefaultValue();
 
+    /**
+     * Returns the type of this attribute.
+     * 
+     * @return the type of this attribute
+     */
     Class<T> getAttributeType();
 
     /**
@@ -41,11 +46,20 @@ public interface Attribute<T> {
      */
     boolean isValid(T value);
 
-    T get(AttributeMap attributes);
+    T getValue(AttributeMap attributes);
 
-    T get(AttributeMap attributes, T defaultValue);
+    T getValue(AttributeMap attributes, T defaultValue);
 
-    AttributeMap setAttribute(AttributeMap attributes, T t);
+    /**
+     * Sets the specified value in the specified attributemap.
+     * 
+     * @param attributes
+     *            the attribute map to set the value in.
+     * @param t
+     *            the value that should be set
+     * @return the specified attribute map
+     */
+    AttributeMap setValue(AttributeMap attributes, T t);
 
     T fromString(String str);
 

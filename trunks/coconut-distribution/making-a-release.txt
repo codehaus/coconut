@@ -12,9 +12,9 @@ mvn -Dmaven.repo.local=coconut-release/release-repo -f coconut-release/coconut-d
 mvn -N -Dmaven.repo.local=coconut-release/release-repo -f coconut-release/coconut-distribution/pom.xml site:deploy
 mvn -f coconut-release/coconut-distribution/coconut-uberjar/pom.xml deploy:deploy-file -Dfile=target\coconut-1.0-alpha4-SNAPSHOT.jar -Dversion=1.0-alpha4
 *********** Create clover report, deploy site ********
-> mvn -f coconut-release/pom.xml clover:instrument clover:aggregate clover:clover -P run-clover
+> mvn -f coconut-release/pom.xml clover:instrument clover:aggregate clover:clover -Dclover
 > mvn -N -f coconut-release/pom.xml site:deploy
- 
+
 
 ********* Update to next snapshot version, and upload new snapshots *********
 > find coconut-release -name 'pom.xml' -exec sed -i 's/1.0-alpha3/1.0-alpha4-SNAPSHOT/g' {} \;
