@@ -37,10 +37,20 @@ public class Predicates_ComparisonTest {
         }
     };
 
+    @Test
+    public void between() {
+        Predicate b = Predicates.between(2, 4);
+        assertFalse(b.evaluate(1));
+        assertTrue(b.evaluate(2));
+        assertTrue(b.evaluate(3));
+        assertTrue(b.evaluate(4));
+        assertFalse(b.evaluate(5));
+    }
+
     /* Test equals */
     @Test
     public void testEquals() {
-        assertEquals("1", Predicates.equal("1").getObject());
+        assertEquals("1", ((Predicates.EqualsPredicate) Predicates.equal("1")).getObject());
         assertTrue(Predicates.equal("1").evaluate("1"));
         assertFalse(Predicates.equal("1").evaluate("2"));
         assertFalse(Predicates.equal("1").evaluate(null));
@@ -55,7 +65,7 @@ public class Predicates_ComparisonTest {
     /* Test greater then */
     @Test
     public void testGreaterThenComparable() {
-        GreaterThenPredicate<Integer> f = greatherThen(5);
+        GreaterThenPredicate<Integer> f = (GreaterThenPredicate) greatherThen(5);
         assertEquals(5, f.getObject().intValue());
         assertNull(f.getComparator());
 
@@ -69,7 +79,7 @@ public class Predicates_ComparisonTest {
     @Test
     public void testGreaterThenComparator() {
 
-        GreaterThenPredicate<Dummy> f = greatherThen(Dummy.D2, COMP);
+        GreaterThenPredicate<Dummy> f = (GreaterThenPredicate) greatherThen(Dummy.D2, COMP);
         assertEquals(Dummy.D2, f.getObject());
         assertEquals(COMP, f.getComparator());
 
@@ -97,8 +107,7 @@ public class Predicates_ComparisonTest {
 
     @Test
     public void testGreaterThenNotComparable() throws Exception {
-        Constructor c = GreaterThenPredicate.class
-                .getConstructor(new Class[] { Object.class });
+        Constructor c = GreaterThenPredicate.class.getConstructor(new Class[] { Object.class });
         try {
             c.newInstance(new Object[] { new Object() });
             throw new AssertionFailedError("Did not throw exception");
@@ -110,7 +119,7 @@ public class Predicates_ComparisonTest {
     /* Test greaterTheOrEqual */
     @Test
     public void testGreaterThenOrEqualComparable() {
-        GreaterThenOrEqualPredicate<Integer> f = greatherThenOrEqual(5);
+        GreaterThenOrEqualPredicate<Integer> f = (GreaterThenOrEqualPredicate) greatherThenOrEqual(5);
         assertEquals(5, f.getObject().intValue());
         assertNull(f.getComparator());
 
@@ -124,7 +133,8 @@ public class Predicates_ComparisonTest {
     @Test
     public void testGreaterThenOrEqualComparator() {
 
-        GreaterThenOrEqualPredicate<Dummy> f = greatherThenOrEqual(Dummy.D2, COMP);
+        GreaterThenOrEqualPredicate<Dummy> f = (GreaterThenOrEqualPredicate) greatherThenOrEqual(
+                Dummy.D2, COMP);
         assertEquals(Dummy.D2, f.getObject());
         assertEquals(COMP, f.getComparator());
 
@@ -165,7 +175,7 @@ public class Predicates_ComparisonTest {
     /* Test lessThen */
     @Test
     public void testLessThenComparable() {
-        LessThenPredicate<Integer> f = lessThen(5);
+        LessThenPredicate<Integer> f = (LessThenPredicate) lessThen(5);
         assertEquals(5, f.getObject().intValue());
         assertNull(f.getComparator());
 
@@ -179,7 +189,7 @@ public class Predicates_ComparisonTest {
     @Test
     public void testLessThenComparator() {
 
-        LessThenPredicate<Dummy> f = lessThen(Dummy.D2, COMP);
+        LessThenPredicate<Dummy> f = (LessThenPredicate) lessThen(Dummy.D2, COMP);
         assertEquals(Dummy.D2, f.getObject());
         assertEquals(COMP, f.getComparator());
 
@@ -233,7 +243,7 @@ public class Predicates_ComparisonTest {
     /* Test lessThenOrEqual */
     @Test
     public void testLessThenOrEqualComparable() {
-        LessThenOrEqualPredicate<Integer> f = lessThenOrEqual(5);
+        LessThenOrEqualPredicate<Integer> f = (LessThenOrEqualPredicate) lessThenOrEqual(5);
         assertEquals(5, f.getObject().intValue());
         assertNull(f.getComparator());
 
@@ -247,7 +257,8 @@ public class Predicates_ComparisonTest {
     @Test
     public void testLessThenOrEqualComparator() {
 
-        LessThenOrEqualPredicate<Dummy> f = lessThenOrEqual(Dummy.D2, COMP);
+        LessThenOrEqualPredicate<Dummy> f = (LessThenOrEqualPredicate) lessThenOrEqual(Dummy.D2,
+                COMP);
         assertEquals(Dummy.D2, f.getObject());
         assertEquals(COMP, f.getComparator());
 
@@ -275,8 +286,7 @@ public class Predicates_ComparisonTest {
 
     @Test
     public void testLessThenOrEqualNotComparable() throws Exception {
-        Constructor c = LessThenOrEqualPredicate.class
-                .getConstructor(new Class[] { Object.class });
+        Constructor c = LessThenOrEqualPredicate.class.getConstructor(new Class[] { Object.class });
         try {
             c.newInstance(new Object[] { new Object() });
             throw new AssertionFailedError("Did not throw exception");
@@ -289,7 +299,7 @@ public class Predicates_ComparisonTest {
     @Test
     public void testSameEquals() {
         String o = "1";
-        assertEquals("1", Predicates.same("1").getObject());
+        assertEquals("1", ((Predicates.SamePredicate) Predicates.same("1")).getObject());
         assertTrue(Predicates.same(o).evaluate(o));
         assertFalse(Predicates.same(new HashMap()).evaluate(new HashMap()));
         assertFalse(Predicates.same("1").evaluate("2"));

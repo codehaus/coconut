@@ -88,7 +88,7 @@ public class DefaultCacheManagementService extends AbstractCacheLifecycle implem
             if (domain == null) {
                 domain = CacheMXBean.DEFAULT_JMX_DOMAIN;
             }
-            registrant = Managements.register(server, domain, "name", "service", "group");
+            registrant = Managements.hierarchicalRegistrant(server, domain, "name", "service", "group");
         } else {
             registrant = configuration.getRegistrant();
         }

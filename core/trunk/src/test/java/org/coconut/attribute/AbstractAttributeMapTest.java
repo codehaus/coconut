@@ -1,3 +1,6 @@
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
+ */
 package org.coconut.attribute;
 
 import static org.junit.Assert.*;
@@ -5,16 +8,17 @@ import static org.junit.Assert.*;
 import org.coconut.attribute.common.CostAttribute;
 import org.coconut.attribute.common.DateCreatedAttribute;
 import org.coconut.attribute.common.SizeAttribute;
+import org.coconut.test.MockTestCase;
 import org.junit.Before;
 import org.junit.Test;
 
 public abstract class AbstractAttributeMapTest {
 
-    Attribute a1 = CostAttribute.INSTANCE;
+    Attribute a1 = MockTestCase.mockDummy(Attribute.class);
 
-    Attribute a2 = SizeAttribute.INSTANCE;
+    Attribute a2 = MockTestCase.mockDummy(Attribute.class);
 
-    Attribute a3 = DateCreatedAttribute.INSTANCE;
+    Attribute a3 = MockTestCase.mockDummy(Attribute.class);
 
     AttributeMap m;
 

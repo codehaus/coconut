@@ -4,14 +4,36 @@
 package org.coconut.attribute.common;
 
 import org.coconut.attribute.AttributeMap;
+import org.coconut.attribute.AttributeMaps;
 import org.coconut.attribute.spi.LongAttribute;
 
+/**
+ * The <tt>Hits</tt> attribute indicates the number of hits for a cache element. The
+ * mapped value must be of a type <tt>long</tt> between 0 and {@link Long#MAX_VALUE}.
+ * 
+ * @see #setHits(AttributeMap, long)
+ * @see #getHits(AttributeMap)
+ */
 public class HitsAttribute extends LongAttribute {
+
+    /** The default value of this attribute. */
+    public static final long DEFAULT_VALUE = 0;
+
+    /** The singleton instance of this attribute. */
     public final static HitsAttribute INSTANCE = new HitsAttribute();
+
+    /** The name of this attribute. */
+    public static final String NAME = "hits";
+
+    /** serialVersionUID. */
+    private static final long serialVersionUID = -2353351535602223603L;
+
+    /** Creates a new SizeAttribute. */
     private HitsAttribute() {
-        super("Hits",0l);
+        super(NAME, DEFAULT_VALUE);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void checkValid(long hits) {
         if (hits < 0) {
@@ -19,17 +41,54 @@ public class HitsAttribute extends LongAttribute {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isValid(long hits) {
         return hits >= 0;
     }
 
+    /** @return Preserves singleton property */
+    private Object readResolve() {
+        return INSTANCE;
+    }
+
     /**
-     * The <tt>Hits</tt> attribute indicates the number of hits for a cache element. The
-     * mapped value must be of a type <tt>long</tt> between 0 and {@link Long#MAX_VALUE}.
+     * Returns the value of this attribute in the specified attribute map, or
+     * DEFAULT_VALUE if the attribute is not mapped to any value in the specified
+     * attribute map.
      * 
-     * @see #setHits(AttributeMap, long)
-     * @see #getHits(AttributeMap)
+     * @param attributes
+     *            the attribute map to return the value from
+     * @return the value of this attribute in the specified attribute map, or
+     *         DEFAULT_VALUE if the attribute is not mapped to any value in the specified
+     *         attribute map
      */
-    public static final String HITS = "hits";
+    public static long get(AttributeMap attributes) {
+        return INSTANCE.getPrimitive(attributes);
+    }
+
+    /**
+     * Sets the value of this attribute in the specified attribute map.
+     * 
+     * @param attributes
+     *            the attribute map to set set specified value in
+     * @param value
+     *            the value that this attribute should be set to
+     * @return the specified attribute map
+     */
+    public static AttributeMap set(AttributeMap attributes, long value) {
+        return INSTANCE.setAttribute(attributes, value);
+    }
+
+    /**
+     * Returns an AttributeMap containing only this attribute mapping to specified value.
+     * 
+     * @param value
+     *            the value to map to
+     * @return an AttributeMap containing only this attribute mapping to specified value
+     */
+    public static AttributeMap singleton(long value) {
+        INSTANCE.checkValid(value);
+        return AttributeMaps.singleton(INSTANCE, value);
+    }
 }

@@ -75,22 +75,6 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
     }
 
     /**
-     * Creates a new cache entry from the specified key, value, attribute map and existing
-     * cache entry.
-     * 
-     * @param key
-     *            the key of the cache entry that should be added
-     * @param value
-     *            the value of the cache entry that should be added
-     * @param attributes
-     *            the attributemap for the new cache entry
-     * @param existing
-     *            the existing cache entry, or null if this is a new entry
-     * @return a new cache entry from the specified key, value, attribute map and existing
-     *         cache entry
-     */
-
-    /**
      * Calculates the size of the element that was added.
      * 
      * @param key
@@ -104,8 +88,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
      * @return the size of the element that was added
      */
     long getSize(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
-        long size = SizeAttribute.INSTANCE.getPrimitive(attributes,
-                SizeAttribute.DEFAULT_VALUE);
+        long size = SizeAttribute.get(attributes);
         if (!SizeAttribute.INSTANCE.isValid(size)) {
             exceptionService.getExceptionHandler().handleWarning(exceptionService.createContext(),
                     "An illegal size was added for key = " + key);
@@ -142,9 +125,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
      * @return the cost of the element that was added
      */
     double getCost(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
-        double cost = CostAttribute.INSTANCE.getPrimitive(attributes,
-                CostAttribute.DEFAULT_VALUE);
-
+        double cost = CostAttribute.get(attributes);
         if (!CostAttribute.INSTANCE.isValid(cost)) {
             exceptionService.getExceptionHandler().handleWarning(exceptionService.createContext(),
                     "An illegal cost was added for key = " + key);

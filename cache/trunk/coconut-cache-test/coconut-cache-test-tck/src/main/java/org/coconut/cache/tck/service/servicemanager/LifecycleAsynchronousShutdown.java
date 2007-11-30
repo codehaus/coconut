@@ -77,5 +77,15 @@ public class LifecycleAsynchronousShutdown extends AbstractCacheTCKTest {
         public void shutdownNow() {
             isShutdownNow = true;
         }
+
+        public void run() {
+            while (!isTerminated()) {
+                try {
+                    latch.await(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+                } catch (InterruptedException e) {
+                    // ignore
+                }
+            }
+        }
     }
 }

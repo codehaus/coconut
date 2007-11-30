@@ -27,7 +27,7 @@ public abstract class DurationAttribute extends LongAttribute {
     }
 
     public AttributeMap setAttribute(AttributeMap attributes, long duration, TimeUnit unit) {
-        return setAtttribute(attributes, unit.toNanos(duration));
+        return setAttribute(attributes, unit.toNanos(duration));
     }
 
     public AttributeMap set(AttributeMap attributes, Long duration, TimeUnit unit) {

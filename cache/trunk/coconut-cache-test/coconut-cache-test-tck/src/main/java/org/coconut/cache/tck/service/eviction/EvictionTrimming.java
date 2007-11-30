@@ -105,7 +105,7 @@ public class EvictionTrimming extends AbstractCacheTCKTest {
         private int totalCount;
 
         public String load(Integer key, AttributeMap attributes) throws Exception {
-            SizeAttribute.INSTANCE.setAtttribute(attributes, key + 1 + totalCount);
+            SizeAttribute.set(attributes, key + 1 + totalCount);
             totalCount++;
             return "" + (char) (key + 64);
         }

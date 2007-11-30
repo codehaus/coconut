@@ -1,157 +1,215 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
- * the Apache 2.0 License, see http://coconut.codehaus.org/license.
- */
 package org.coconut.predicate;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import org.jmock.Expectations;
+import org.coconut.core.Mapper;
+import org.coconut.test.MockTestCase;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
 import org.jmock.integration.junit4.JUnit4Mockery;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-/**
- * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id$
- */
 @RunWith(JMock.class)
 public class CollectionPredicatesTest {
 
     Mockery context = new JUnit4Mockery();
 
-    Map.Entry<Integer, String> e1;
+    @Test
+    public void allTrue() {
+        Predicate<Number> p = (Predicate) Predicates.anyEquals(2, 3);
+        Predicate<Number> p2 = (Predicate) Predicates.anyEquals(1, 2, 3, 4, 5);
+        List<Integer> list = new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4));
+        assertFalse(CollectionPredicates.allTrue(list, p));
+        assertTrue(CollectionPredicates.allTrue(list, p2));
+    }
 
-    Map.Entry<Integer, String> e2;
+    @Test(expected = NullPointerException.class)
+    public void allTrueNPE1() {
+        CollectionPredicates.allTrue(null, MockTestCase.mockDummy(Predicate.class));
+    }
 
-    Map.Entry<Integer, String> e3;
-
-    @SuppressWarnings("unchecked")
-    @Before
-    public void setup() {
-        e1 = context.mock(Map.Entry.class);
-        e2 = context.mock(Map.Entry.class);
-        e3 = context.mock(Map.Entry.class);
+    @Test(expected = NullPointerException.class)
+    public void allTrueNPE2() {
+        CollectionPredicates.allTrue(new ArrayList(), null);
     }
 
     @Test
-    public void testKeyEqualsFilter() {
-        context.checking(new Expectations() {
-            {
-                one(e1).getKey();
-                will(returnValue(1));
-                one(e2).getKey();
-                will(returnValue(2));
-            }
-        });
-        Predicate<Map.Entry<Integer, String>> f = CollectionPredicates.keyEqualsFilter(1);
-        assertTrue(f.evaluate(e1));
-        assertFalse(f.evaluate(e2));
+    public void anyTrue() {
+        Predicate<Number> p = (Predicate) Predicates.anyEquals(2, 3);
+        Predicate<Number> p2 = (Predicate) Predicates.anyEquals(5, 6, 7, 8);
+        List<Integer> list = new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4));
+        assertTrue(CollectionPredicates.anyTrue(list, p));
+        assertFalse(CollectionPredicates.anyTrue(list, p2));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void anyTrueNPE1() {
+        CollectionPredicates.anyTrue(null, MockTestCase.mockDummy(Predicate.class));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void anyTrueNPE2() {
+        CollectionPredicates.anyTrue(new ArrayList(), null);
     }
 
     @Test
-    public void testAnyKeyEqualsFilter() {
-        context.checking(new Expectations() {
-            {
-                one(e1).getKey();
-                will(returnValue(1));
-                one(e2).getKey();
-                will(returnValue(2));
-                one(e3).getKey();
-                will(returnValue(3));
-
-            }
-        });
-        Predicate<Map.Entry<Integer, String>> f = CollectionPredicates.anyKeyEquals(1, 2);
-        assertTrue(f.evaluate(e1));
-        assertTrue(f.evaluate(e2));
-        assertFalse(f.evaluate(e3));
+    public void filter() {
+        Predicate<Number> p = (Predicate) Predicates.anyEquals(2, 3);
+        Collection<Integer> c = new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4));
+        List<Integer> list = CollectionPredicates.filter(c, p);
+        assertEquals(2, list.size());
+        assertEquals(2, list.get(0));
+        assertEquals(3, list.get(1));
     }
 
     @Test
-    public void testAnyKeyInCollectionEqualsFilter() {
-        context.checking(new Expectations() {
-            {
-                one(e1).getKey();
-                will(returnValue(1));
-                one(e2).getKey();
-                will(returnValue(2));
-                one(e3).getKey();
-                will(returnValue(3));
-
+    public void filterMap() {
+        Predicate<Map.Entry<Integer, String>> p = new Predicate<Map.Entry<Integer, String>>() {
+            public boolean evaluate(Entry<Integer, String> element) {
+                return element.getKey().equals(2) || element.getValue().equals("3");
             }
-        });
-        Predicate<Map.Entry<Integer, String>> f = CollectionPredicates.anyKeyInCollection(Arrays
-                .asList(1, 2));
-        assertTrue(f.evaluate(e1));
-        assertTrue(f.evaluate(e2));
-        assertFalse(f.evaluate(e3));
+        };
+        Map<Integer, String> m = new HashMap<Integer, String>();
+        m.put(1, "1");
+        m.put(2, "2");
+        m.put(3, "3");
+        m.put(4, "4");
+        Map<Integer, String> map = CollectionPredicates.filterMap(m, p);
+        assertEquals(2, map.size());
+        assertEquals("2", map.get(2));
+        assertEquals("3", map.get(3));
     }
 
     @Test
-    public void testValueEqualsFilter() {
-        context.checking(new Expectations() {
-            {
-                one(e1).getValue();
-                will(returnValue("A"));
-                one(e2).getValue();
-                will(returnValue("B"));
+    public void filterMapKey() {
+        Predicate<Number> p = new Predicate<Number>() {
+            public boolean evaluate(Number element) {
+                return element.equals(2) || element.equals(3);
             }
-        });
-        Predicate<Map.Entry<Integer, String>> f = CollectionPredicates.valueEqualsFilter("A");
-        assertTrue(f.evaluate(e1));
-        assertFalse(f.evaluate(e2));
+        };
+        Map<Integer, String> m = new HashMap<Integer, String>();
+        m.put(1, "1");
+        m.put(2, "2");
+        m.put(3, "3");
+        m.put(4, "4");
+        Map<Integer, String> map = CollectionPredicates.filterMapKeys(m, p);
+        assertEquals(2, map.size());
+        assertEquals("2", map.get(2));
+        assertEquals("3", map.get(3));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void filterMapKeyNPE1() {
+        CollectionPredicates.filterMapKeys(null, MockTestCase.mockDummy(Predicate.class));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void filterMapKeyNPE2() {
+        CollectionPredicates.filterMapKeys(new HashMap(), null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void filterMapNPE1() {
+        CollectionPredicates.filterMap(null, MockTestCase.mockDummy(Predicate.class));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void filterMapNPE2() {
+        CollectionPredicates.filterMap(new HashMap(), null);
     }
 
     @Test
-    public void testNullFilter() {
-        Predicate f = CollectionPredicates.isNull();
-        assertTrue(f.evaluate(null));
-        assertFalse(f.evaluate(1));
-        assertFalse(f.evaluate(f));
-        f.toString();// no fail
+    public void filterMapValue() {
+        Predicate<String> p = new Predicate<String>() {
+            public boolean evaluate(String element) {
+                return element.equals("2") || element.equals("3");
+            }
+        };
+        Map<Integer, String> m = new HashMap<Integer, String>();
+        m.put(1, "1");
+        m.put(2, "2");
+        m.put(3, "3");
+        m.put(4, "4");
+        Map<Integer, String> map = CollectionPredicates.filterMapValues(m, p);
+        assertEquals(2, map.size());
+        assertEquals("2", map.get(2));
+        assertEquals("3", map.get(3));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void filterMapValueNPE1() {
+        CollectionPredicates.filterMapValues(null, MockTestCase.mockDummy(Predicate.class));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void filterMapValueNPE2() {
+        CollectionPredicates.filterMapValues(new HashMap(), null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void filterNPE1() {
+        CollectionPredicates.filter(null, MockTestCase.mockDummy(Predicate.class));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void filterNPE2() {
+        CollectionPredicates.filter(new ArrayList(), null);
     }
 
     @Test
-    public void testAnyValueEqualsFilter() {
-        context.checking(new Expectations() {
-            {
-                one(e1).getValue();
-                will(returnValue("A"));
-                one(e2).getValue();
-                will(returnValue("B"));
-                one(e3).getValue();
-                will(returnValue("C"));
+    public void mapperPredicate() {
+        Predicate<Number> p = (Predicate) Predicates.anyEquals(4, 16);
+        Mapper<Integer, Integer> m = new Mapper<Integer, Integer>() {
+            public Integer map(Integer from) {
+                return from.intValue() * from.intValue();
             }
-        });
-        Predicate<Map.Entry<Integer, String>> f = CollectionPredicates.anyValueEquals("A", "B");
-        assertTrue(f.evaluate(e1));
-        assertTrue(f.evaluate(e2));
-        assertFalse(f.evaluate(e3));
+        };
+        Predicate mapped = CollectionPredicates.mapperPredicate(m, p);
+        assertTrue(mapped.evaluate(2));
+        assertFalse(mapped.evaluate(3));
+        assertTrue(mapped.evaluate(4));
+
+        assertSame(p, ((CollectionPredicates.MapperPredicate) mapped).getPredicate());
+        assertSame(m, ((CollectionPredicates.MapperPredicate) mapped).getMapper());
+        mapped.toString();
     }
 
-    public void testAnyValueInCollectionFilter() {
-        context.checking(new Expectations() {
-            {
-                one(e1).getValue();
-                will(returnValue("A"));
-                one(e2).getValue();
-                will(returnValue("B"));
-                one(e3).getValue();
-                will(returnValue("C"));
-            }
-        });
-        Predicate<Map.Entry<Integer, String>> f = CollectionPredicates.anyValueInCollection(Arrays
-                .asList("A", "B"));
-        assertTrue(f.evaluate(e1));
-        assertTrue(f.evaluate(e2));
-        assertFalse(f.evaluate(e3));
+    @Test(expected = NullPointerException.class)
+    public void mapperPredicateNPE1() {
+        CollectionPredicates.mapperPredicate(null, MockTestCase.mockDummy(Predicate.class));
     }
 
+    @Test(expected = NullPointerException.class)
+    public void mapperPredicateNPE2() {
+        CollectionPredicates.mapperPredicate(MockTestCase.mockDummy(Mapper.class), null);
+    }
+
+    @Test
+    public void removeFrom() {
+        Predicate<Number> p = (Predicate) Predicates.anyEquals(2, 3);
+        List<Integer> list = new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4));
+        CollectionPredicates.removeFrom(list, p);
+        assertEquals(2, list.size());
+        assertEquals(1, list.get(0));
+        assertEquals(4, list.get(1));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void removeFromNPE1() {
+        CollectionPredicates.removeFrom(null, MockTestCase.mockDummy(Predicate.class));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void removeFromNPE2() {
+        CollectionPredicates.removeFrom(new ArrayList(), null);
+    }
 }

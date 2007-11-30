@@ -5,15 +5,15 @@ package org.coconut.attribute.common;
 
 
 /**
- * Tests the {@link SizeAttribute}.
+ * Tests the {@link HitsAttribute}.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class SizeAttributeTest extends AbstractAttributeTest {
+public class HitsAttributeTest extends AbstractAttributeTest {
 
-    public SizeAttributeTest() {
-        super(SizeAttribute.INSTANCE, NON_NEGATIV_LONGS, NEGATIV_LONGS);
+    public HitsAttributeTest() {
+        super(HitsAttribute.INSTANCE, NON_NEGATIV_LONGS, NEGATIV_LONGS);
     }
 
 }

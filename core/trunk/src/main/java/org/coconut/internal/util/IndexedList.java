@@ -254,7 +254,7 @@ public class IndexedList<T> implements Serializable {
      * @see java.lang.Object#clone()
      */
     @Override
-    protected Object clone() {
+    protected IndexedList clone() {
         return new IndexedList(this);
     }
 

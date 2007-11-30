@@ -8,38 +8,37 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 /**
+ * Various management utility functions.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
 public class Managements {
-
-//    public static <T> T narrow(ManagedGroup group, Class<? extends T> c) {
-//        return null;
-//    }
-//
-//    public static Object wrap(Object o, String name, String description, Method m,
-//            Object... parameters) {
-//        return null;
-//    }
-
-    public static ManagedVisitor register(MBeanServer server, String domain,
+    public static ManagedVisitor hierarchicalRegistrant(MBeanServer server, String domain,
             String... levels) {
-        if (server == null) {
-            throw new NullPointerException("server is null");
-        } else if (domain == null) {
-            throw new NullPointerException("domain is null");
-        }
-        return new GroupVisitor(server, domain, levels);
+        return new HierarchicalRegistrant(server, domain, levels);
     }
 
-    static class GroupVisitor implements ManagedVisitor {
+    static class HierarchicalRegistrant implements ManagedVisitor {
         private final MBeanServer server;
 
         private final String domain;
 
         private final String[] levels;
 
-        GroupVisitor(MBeanServer server, String domain, String... levels) {
+        HierarchicalRegistrant(MBeanServer server, String domain, String... levels) {
+            if (server == null) {
+                throw new NullPointerException("server is null");
+            } else if (domain == null) {
+                throw new NullPointerException("domain is null");
+            } else if (levels == null) {
+                throw new NullPointerException("levels is null");
+            }
+            for (String level : levels) {
+                if (level == null) {
+                    throw new NullPointerException("levels contained a null");
+                }
+            }
             this.server = server;
             this.domain = domain;
             this.levels = levels.clone();
@@ -62,7 +61,8 @@ public class Managements {
             }
         }
 
-        public void visitManagedObject(ManagedGroup group, Object o) throws JMException {}
-
+        // /CLOVER:OFF
+        public void visitManagedObject(Object o) throws JMException {}
+        // /CLOVER:ON
     }
 }

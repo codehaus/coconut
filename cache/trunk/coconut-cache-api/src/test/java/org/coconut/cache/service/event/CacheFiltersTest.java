@@ -38,18 +38,18 @@ public class CacheFiltersTest {
             }
         });
         Predicate f = Predicates.equal(c);
-        Predicate<CacheEvent> filter = CacheEventFilters.cacheFilter(f);
+        Predicate<CacheEvent> filter = CacheEventFilters.mapperPredicate(f);
         assertTrue(filter.evaluate(event));
     }
 
     @Test(expected = NullPointerException.class)
     public void cacheFilterNPE() {
-        CacheEventFilters.cacheFilter(null);
+        CacheEventFilters.mapperPredicate(null);
     }
 
     @Test(expected = NullPointerException.class)
     public void cacheFilterNPE1() {
-        CacheEventFilters.cacheFilter(Predicates.TRUE).evaluate(null);
+        CacheEventFilters.mapperPredicate(Predicates.TRUE).evaluate(null);
     }
 
     @Test(expected = NullPointerException.class)

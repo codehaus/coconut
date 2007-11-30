@@ -3,52 +3,55 @@
  */
 package org.coconut.predicate;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.coconut.predicate.Predicates.AnyPredicate;
 import org.junit.Test;
+
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id$
  */
 public class PredicatesTest {
+    
+    @Test
+    public void anyType() {
+        Predicate p = Predicates.anyType(Integer.class, Double.class);
+        assertTrue(p.evaluate(1));
+        assertTrue(p.evaluate(1.0));
+        assertFalse(p.evaluate(1l));
+        assertFalse(p.evaluate(1.0f));
+    }
+    
+    @Test(expected = NullPointerException.class)
+    public void notNullAndNPE() {
+        Predicate<Integer> p = Predicates.notNullAnd(null);
+    }
 
-    @Test 
+    @Test
+    public void notNullAnd() {
+        Predicate<Integer> p = Predicates.notNullAnd(Predicates.anyEquals(1, 2));
+        assertFalse(p.evaluate(null));
+        assertTrue(p.evaluate(1));
+        assertFalse(p.evaluate(3));
+        p.toString();
+    }
+
+    @Test
     public void testAnyEqualsFilter() {
-        AnyPredicate<String> filter = Predicates.anyEquals("1", "2");
+        AnyPredicate<String> filter = (AnyPredicate) Predicates.anyEquals("1", "2");
         assertTrue(filter.evaluate("1"));
         assertTrue(filter.evaluate("2"));
         assertFalse(filter.evaluate("3"));
     }
-    @Test 
-    public void testFilterCollection() {
-        Collection<String> c = new ArrayList<String>();
-        c.add("1");
-        c.add("2");
-        c.add("3");
-        c.add("4");
-        c = CollectionPredicates.filter(c, Predicates.anyEquals("2", "3"));
-        assertEquals(2, c.size());
-        assertTrue(c.contains("2"));
-        assertTrue(c.contains("3"));
-    }
-    @Test 
-    public void testFilterList() {
-        List<String> c = new ArrayList<String>();
-        c.add("1");
-        c.add("2");
-        c.add("3");
-        c.add("4");
-        c = CollectionPredicates.filterList(c, Predicates.anyEquals("2", "3"));
-        assertEquals(2, c.size());
-        assertTrue(c.contains("2"));
-        assertTrue(c.contains("3"));
-    }
 
+    @Test
+    public void testNullFilter() {
+        Predicate f = Predicates.isNull();
+        assertTrue(f.evaluate(null));
+        assertFalse(f.evaluate(1));
+        assertFalse(f.evaluate(f));
+        f.toString();// no fail
+    }
 }

@@ -3,79 +3,89 @@
  */
 package org.coconut.attribute.common;
 
+import java.util.concurrent.TimeUnit;
+
+import org.coconut.attribute.AttributeMap;
+import org.coconut.attribute.AttributeMaps;
 import org.coconut.attribute.spi.DurationAttribute;
-
+/**
+ * This key can be used to indicate how long time a cache entry should live before it
+ * refreshed from a cacheloader. The time-to-refresh value should be a long and should
+ * be measured in nano seconds. Use {@link java.util.concurrent.TimeUnit} to convert
+ * between different time units.
+ */
 public class TimeToRefreshAttribute extends DurationAttribute {
+
+    /** The default value of this attribute. */
+    public static final long DEFAULT_VALUE = 0;
+
+    /** The singleton instance of this attribute. */
     public final static TimeToRefreshAttribute INSTANCE = new TimeToRefreshAttribute();
+    /** The timeunit of this attribute. */
+    public static final TimeUnit TIME_UNIT = TimeUnit.NANOSECONDS;
+
+    /** The name of this attribute. */
+    public static final String NAME = "timeToRefresh";
+
+    /** serialVersionUID. */
+    private static final long serialVersionUID = -2353351535602223603L;
+
+    /** Creates a new TimeToLiveAttribute. */
     private TimeToRefreshAttribute() {
-        super("TimeToRefresh");
+        super(NAME);
     }
-
-    /**
-     * This key can be used to indicate how long time a cache entry should live before it
-     * refreshed from a cacheloader. The time-to-refresh value should be a long and should
-     * be measured in nano seconds. Use {@link java.util.concurrent.TimeUnit} to convert
-     * between different time units.
-     */
-    public static final String TIME_TO_REFRESH_NS = "time_to_refresh_ns";
-
+    /** {@inheritDoc} */
     @Override
     public void checkValid(long time) {
         if (time < 0) {
             throw new IllegalArgumentException("invalid refreshTime (refreshTimeNs = " + time + ")");
         }
     }
-
+    /** {@inheritDoc} */
     @Override
     public boolean isValid(long value) {
         return value >= 0;
     }
 
-//
-// /**
-// * Returns the value that the specified AttributeMap maps the
-// * {@link #TIME_TO_REFRESH_NS} attribute to or the default specified value if no such
-// * mapping exist.
-// *
-// * @param attributes
-// * the map to retrieve the value of the time to refresh attribute from
-// * @param unit
-// * the unit that the time should be returned in
-// * @param defaultValue
-// * the value that should be returned if a mapping for the time to live
-// * attribute does not exist in the specified attribute map
-// * @return returns the value that the specified AttributeMap maps the
-// * {@link #TIME_TO_REFRESH_NS} attribute to, or the default specified value if
-// * no such mapping exist
-// * @throws NullPointerException
-// * if the specified attributeMap is <code>null</code>
-// * @throws IllegalArgumentException
-// * if the specified attributeMap returns a negative number for the time to
-// * refresh attribute
-// * @see #setTimeToRefresh(AttributeMap, long, TimeUnit)
-// * @see #TIME_TO_REFRESH_NS
-// */
-// public static long getTimeToRefresh(AttributeMap attributes, TimeUnit unit, long
-// defaultValue) {
-// if (attributes == null) {
-// throw new NullPointerException("attributes is null");
-// } else if (unit == null) {
-// throw new NullPointerException("unit is null");
-// } else if (defaultValue <= 0) {
-// throw new IllegalArgumentException("defaultValue must be a positive value");
-// }
-// long ttl = attributes.getLong(TIME_TO_REFRESH_NS);
-// if (ttl < 0) {
-// throw new IllegalArgumentException("invalid refreshTime (refreshTimeNs = " + ttl +
-// ")");
-// }
-// if (ttl == 0) {
-// return defaultValue;
-// } else if (ttl == Long.MAX_VALUE) {
-// return Long.MAX_VALUE;
-// } else {
-// return unit.convert(ttl, TimeUnit.NANOSECONDS);
-// }
-// }
+    /** @return Preserves singleton property */
+    private Object readResolve() {
+        return INSTANCE;
+    }
 
+    /**
+     * Returns the value of this attribute in the specified attribute map, or DEFAULT_VALUE
+     * if the attribute is not mapped to any value in the specified attribute map.
+     * 
+     * @param attributes the attribute map to return the value from
+     * @return the value of this attribute in the specified attribute map, or DEFAULT_VALUE
+     * if the attribute is not mapped to any value in the specified attribute map
+     */
+    public static long get(AttributeMap attributes) {
+        return INSTANCE.getPrimitive(attributes);
+    }
+
+    /**
+     * Sets the value of this attribute in the specified attribute map.
+     * 
+     * @param attributes
+     *            the attribute map to set set specified value in
+     * @param value
+     *            the value that this attribute should be set to
+     * @return the specified attribute map
+     */
+    public static AttributeMap set(AttributeMap attributes, long value) {
+        return INSTANCE.setAttribute(attributes, value);
+    }
+
+    /**
+     * Returns an AttributeMap containing only this attribute mapping to specified value.
+     * 
+     * @param value
+     *            the value to map to
+     * @return an AttributeMap containing only this attribute mapping to specified value
+     */
+    public static AttributeMap singleton(long value) {
+        INSTANCE.checkValid(value);
+        return AttributeMaps.singleton(INSTANCE, value);
+    }
 }

@@ -35,16 +35,16 @@ public final class SizeAttribute extends LongAttribute {
 
     /** {@inheritDoc} */
     @Override
-    public void checkValid(long size) {
-        if (size < 0) {
-            throw new IllegalArgumentException("invalid size (size = " + size + ")");
+    public void checkValid(long value) {
+        if (value < 0) {
+            throw new IllegalArgumentException("invalid size (size = " + value + ")");
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean isValid(long size) {
-        return size >= 0;
+    public boolean isValid(long value) {
+        return value >= 0;
     }
 
     /** @return Preserves singleton property */
@@ -52,15 +52,40 @@ public final class SizeAttribute extends LongAttribute {
         return INSTANCE;
     }
 
+    /**
+     * Returns the value of this attribute in the specified attribute map, or DEFAULT_VALUE
+     * if the attribute is not mapped to any value in the specified attribute map.
+     * 
+     * @param attributes the attribute map to return the value from
+     * @return the value of this attribute in the specified attribute map, or DEFAULT_VALUE
+     * if the attribute is not mapped to any value in the specified attribute map
+     */
     public static long get(AttributeMap attributes) {
         return INSTANCE.getPrimitive(attributes);
     }
 
+    /**
+     * Sets the value of this attribute in the specified attribute map.
+     * 
+     * @param attributes
+     *            the attribute map to set set specified value in
+     * @param value
+     *            the value that this attribute should be set to
+     * @return the specified attribute map
+     */
     public static AttributeMap set(AttributeMap attributes, long value) {
-        return INSTANCE.setAtttribute(attributes, value);
+        return INSTANCE.setAttribute(attributes, value);
     }
 
+    /**
+     * Returns an AttributeMap containing only this attribute mapping to specified value.
+     * 
+     * @param value
+     *            the value to map to
+     * @return an AttributeMap containing only this attribute mapping to specified value
+     */
     public static AttributeMap singleton(long value) {
+        INSTANCE.checkValid(value);
         return AttributeMaps.singleton(INSTANCE, value);
     }
 }

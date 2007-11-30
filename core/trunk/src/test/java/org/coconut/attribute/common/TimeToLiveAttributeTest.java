@@ -5,15 +5,15 @@ package org.coconut.attribute.common;
 
 
 /**
- * Tests the {@link SizeAttribute}.
+ * Tests the {@link TimeToLiveAttribute}.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class SizeAttributeTest extends AbstractAttributeTest {
+public class TimeToLiveAttributeTest extends AbstractAttributeTest {
 
-    public SizeAttributeTest() {
-        super(SizeAttribute.INSTANCE, NON_NEGATIV_LONGS, NEGATIV_LONGS);
+    public TimeToLiveAttributeTest() {
+        super(TimeToLiveAttribute.INSTANCE, NON_NEGATIV_LONGS, NEGATIV_LONGS);
     }
 
 }

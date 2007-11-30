@@ -3,7 +3,6 @@
  */
 package org.coconut.cache.internal.service.statistics;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -328,15 +327,8 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
         return System.nanoTime();
     }
 
-    public long beforePut(Cache<K, V> cache, CacheEntry<K, V> entry) {
-        return System.nanoTime();
-    }
 
     public long beforePut(Cache<K, V> cache, Object key, Object value) {
-        return System.nanoTime();
-    }
-
-    public long beforePutAll(Cache<K, V> cache, Collection<? extends CacheEntry<K, V>> entries) {
         return System.nanoTime();
     }
 
@@ -368,22 +360,9 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
     public void doStart() {
         started = System.currentTimeMillis();
     }
-    public long entryPutStop(long start) {
-        long time = System.nanoTime() - start;
-        entryPutTime.report(time);
-        entryPutCount.incrementAndGet();
-        return time;
-    }
 
     public CacheHitStat getHitStat() {
         return new CacheHitStat(entryGetHitCount.get(), entryGetMissCount.get());
-    }
-
-    public Collection<Object> getMetrics() {
-        ArrayList<Object> list = new ArrayList<Object>();
-        list.add(entryGetHitCount);
-        list.add(entryGetMissCount);
-        return list;
     }
 
     /** {@inheritDoc} */
@@ -403,19 +382,19 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
         cacheReset();
     }
 
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("hits: ");
-        sb.append(entryGetHitCount);
-        sb.append("\nmisses");
-        sb.append(entryGetMissCount);
-        sb.append("\nhit time: ");
-        sb.append(entryGetHitTime);
-        sb.append("\nmiss time: ");
-        sb.append(entryGetMissTime);
-
-        return sb.toString();
-    }
+//    public String toString() {
+//        StringBuilder sb = new StringBuilder();
+//        sb.append("hits: ");
+//        sb.append(entryGetHitCount);
+//        sb.append("\nmisses");
+//        sb.append(entryGetMissCount);
+//        sb.append("\nhit time: ");
+//        sb.append(entryGetHitTime);
+//        sb.append("\nmiss time: ");
+//        sb.append(entryGetMissTime);
+//
+//        return sb.toString();
+//    }
 
     private String getDesc(String key) {
         return Resources.lookup(DefaultCacheStatisticsService.class, key.toLowerCase());

@@ -101,7 +101,7 @@ public final class CacheEventFilters {
      *            the type of mapped values
      */
     public static <K, V> Predicate<CacheEvent<K, V>> cacheSameFilter(Cache<K, V> cache) {
-        return cacheFilter(Predicates.same(cache));
+        return mapperPredicate(Predicates.same(cache));
     }
 
     /**
@@ -129,8 +129,8 @@ public final class CacheEventFilters {
      *            the type of mapped values
      */
     @SuppressWarnings("unchecked")
-    public static <K, V> Predicate<CacheEvent<K, V>> cacheFilter(Predicate<Cache<K, V>> filter) {
-        return CollectionPredicates.transformFilter(
+    public static <K, V> Predicate<CacheEvent<K, V>> mapperPredicate(Predicate<Cache<K, V>> filter) {
+        return CollectionPredicates.mapperPredicate(
                 (Mapper) EVENT_TO_CACHE_TRANSFORMER, filter);
     }
 
@@ -149,7 +149,7 @@ public final class CacheEventFilters {
      */
     @SuppressWarnings("unchecked")
     public static <K, V> Predicate<CacheEvent<K, V>> eventName(Predicate<String> filter) {
-        return CollectionPredicates.transformFilter((Mapper) EVENT_TO_NAME_TRANSFORMER,
+        return CollectionPredicates.mapperPredicate((Mapper) EVENT_TO_NAME_TRANSFORMER,
                 filter);
     }
 

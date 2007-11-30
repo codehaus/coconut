@@ -22,7 +22,7 @@ import org.coconut.management.ManagedLifecycle;
 public class AbstractLifecycleVerifier implements CacheLifecycle {
 
     public enum Step {
-        INITIALIZE, START, MANAGED, STARTED, SHUTDOWN, TERMINATED
+        INITIALIZE, START, MANAGED, STARTED, SHUTDOWN, STOP, TERMINATED
     }
 
     private final AtomicReference<Step> currentStep = new AtomicReference<Step>();
@@ -102,9 +102,12 @@ public class AbstractLifecycleVerifier implements CacheLifecycle {
     public void shutdown() {
         assertTrue(nextStep.compareAndSet(Step.SHUTDOWN, Step.TERMINATED));
         currentStep.set(Step.SHUTDOWN);
-
     }
-
+    public void shutdownNow() {
+        assertTrue(nextStep.compareAndSet(Step.SHUTDOWN, Step.TERMINATED));
+        currentStep.set(Step.STOP);
+        
+    }
     public void start(CacheServiceManagerService serviceManager) {
         if (isManaged()) {
             assertTrue(nextStep.compareAndSet(Step.START, Step.MANAGED));

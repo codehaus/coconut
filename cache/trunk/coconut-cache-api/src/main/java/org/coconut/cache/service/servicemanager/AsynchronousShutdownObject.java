@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public interface AsynchronousShutdownObject {
+public interface AsynchronousShutdownObject extends Runnable {
 
     /**
      * Blocks until all tasks have completed execution after a shutdown request, or the

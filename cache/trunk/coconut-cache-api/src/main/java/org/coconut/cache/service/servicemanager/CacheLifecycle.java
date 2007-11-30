@@ -46,6 +46,12 @@ public interface CacheLifecycle {
     void shutdown();
 
     /**
+     * The {@link Cache#shutdownNow()} method has been invoked. This method is always
+     * invoked after {@link #shutdown()} if invoked at all.
+     */
+    void shutdownNow();
+
+    /**
      * Method invoked when the cache has terminated. This method is invoked as the last
      * method in this lifecycle interface and is called when the cache and all of it
      * services has been succesfully shutdown. This method is also called if the cache

@@ -95,7 +95,7 @@ public class FilteredReplacementPolicyDecorator<T> extends ReplacementPolicyDeco
          * {@inheritDoc}
          */
         public boolean evaluate(T t, AttributeMap attributes) {
-            double cost = CostAttribute.INSTANCE.getPrimitive(attributes);
+            double cost = CostAttribute.get(attributes);
             return cost >= minimumCost;
         }
     }
@@ -126,7 +126,7 @@ public class FilteredReplacementPolicyDecorator<T> extends ReplacementPolicyDeco
          * {@inheritDoc}
          */
         public boolean evaluate(T t, AttributeMap attributes) {
-            long size = SizeAttribute.INSTANCE.getPrimitive(attributes);
+            long size = SizeAttribute.get(attributes);
             return size <= threshold;
         }
     }

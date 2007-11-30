@@ -28,7 +28,7 @@ import org.junit.Test;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class IndexedTest {
+public class IndexedHeapTest {
 
     private int plenty = 1000;// magic number
 

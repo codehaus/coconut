@@ -3,10 +3,11 @@
  */
 package org.coconut.management;
 
-import java.lang.management.ManagementFactory;
+import static org.junit.Assert.assertEquals;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
+import javax.management.ObjectName;
 
 import org.coconut.management.defaults.DefaultManagedGroup;
 import org.coconut.management.defaults.stubs.SingleOperation;
@@ -24,21 +25,52 @@ public class ManagementsTest {
     @Before
     public void setup() {
         server = MBeanServerFactory.createMBeanServer();
-        server = ManagementFactory.getPlatformMBeanServer();
         initCount = server.getMBeanCount();
         dmg = new DefaultManagedGroup("fooa", "booa");
     }
 
+    @Test(expected = NullPointerException.class)
+    public void hierarchicalRegistrantNPE1() {
+        Managements.hierarchicalRegistrant(null, "foo", "d");
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void hierarchicalRegistrantNPE2() {
+        Managements.hierarchicalRegistrant(server, null, "d");
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void hierarchicalRegistrantNPE3() {
+        Managements.hierarchicalRegistrant(server, "foo", (String[]) null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void hierarchicalRegistrantNPE4() {
+        Managements.hierarchicalRegistrant(server, "foo", new String[] { "asd", null });
+    }
+
     @Test
-    public void testAttributeStub1() throws Exception {
-        SingleOperation o = new SingleOperation();
-        dmg.add(o);
-        dmg.addChild("bahoo", "desc2").add(new SingleOperation());
-        
-        ManagedVisitor mgv = Managements.register(server,
+    public void hierarchicalRegistrant() throws Exception {
+        SingleOperation parentOpr = new SingleOperation();
+        dmg.add(parentOpr);
+        dmg.addChild("a", "desc");
+        // dmg.addChild("b", "desc").add(new Object()); <-Should this be registered?
+
+        SingleOperation childOpr = new SingleOperation();
+        dmg.addChild("c", "desc").add(childOpr).addChild("d", "desc").add(new SingleOperation());
+
+        ManagedVisitor mgv = Managements.hierarchicalRegistrant(server,
                 "org.coconut.management.test", "l1", "l2", "l3");
         mgv.visitManagedGroup(dmg);
-
-        //Thread.sleep(10000000);
+        assertEquals(3 + initCount, server.getMBeanCount());
+        ObjectName parent = new ObjectName("org.coconut.management.test:l1=fooa");
+        ObjectName child = new ObjectName("org.coconut.management.test:l1=fooa,l2=c");
+        ObjectName child2 = new ObjectName("org.coconut.management.test:l1=fooa,l2=c,l3=d");
+        server.getObjectInstance(parent);
+        server.getObjectInstance(child);
+        server.getObjectInstance(child2);
+        server.invoke(parent, "method1", null, null);
+        assertEquals(1,parentOpr.invokeCount);
+        // System.out.println(server.queryNames(null, null));
     }
 }

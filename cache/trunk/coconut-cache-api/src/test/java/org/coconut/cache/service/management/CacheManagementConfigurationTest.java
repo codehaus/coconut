@@ -130,7 +130,7 @@ public class CacheManagementConfigurationTest {
 
         public void visitManagedGroup(ManagedGroup mg) throws JMException {}
 
-        public void visitManagedObject(ManagedGroup group, Object o) throws JMException {}
+        public void visitManagedObject(Object o) throws JMException {}
 
     }
 
@@ -139,7 +139,7 @@ public class CacheManagementConfigurationTest {
 
         public void visitManagedGroup(ManagedGroup mg) throws JMException {}
 
-        public void visitManagedObject(ManagedGroup group, Object o) throws JMException {}
+        public void visitManagedObject(Object o) throws JMException {}
 
     }
 }

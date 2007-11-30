@@ -90,6 +90,15 @@ public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService i
                             es.shutdownNow();
                             ses.shutdownNow();
                         }
+
+                        public void run() {
+                            try {
+                                es.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+                                ses.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+                            } catch (InterruptedException ie) {
+                                //ignore
+                            }
+                        }
                     });
         }
     }

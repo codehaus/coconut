@@ -7,8 +7,11 @@ import org.coconut.attribute.AttributeMap;
 
 public abstract class LongAttribute extends AbstractAttribute<Long> {
 
+    private final long defaultValue;
+
     public LongAttribute(String name, Long defaultValue) {
         super(name, Long.TYPE, defaultValue);
+        this.defaultValue = defaultValue;
     }
 
     public Long fromString(String str) {
@@ -16,7 +19,7 @@ public abstract class LongAttribute extends AbstractAttribute<Long> {
     }
 
     public long getPrimitive(AttributeMap attributes) {
-        return attributes.getLong(this);
+        return attributes.getLong(this,defaultValue);
     }
 
     public long getPrimitive(AttributeMap attributes, long defaultValue) {
@@ -31,7 +34,7 @@ public abstract class LongAttribute extends AbstractAttribute<Long> {
         return true;
     }
 
-    public AttributeMap setAtttribute(AttributeMap attributes, long value) {
+    public AttributeMap setAttribute(AttributeMap attributes, long value) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
         }
@@ -45,7 +48,5 @@ public abstract class LongAttribute extends AbstractAttribute<Long> {
         checkValid(o.longValue());
     }
 
-    public void checkValid(long d) {
-    // default ok
-    }
+    public void checkValid(long d) {  /* default ok */}
 }

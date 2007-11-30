@@ -33,7 +33,7 @@ public class Cost extends AbstractCacheTCKTest {
         private int totalCount;
 
         public String load(Integer key, AttributeMap attributes) throws Exception {
-            CostAttribute.INSTANCE.set(attributes, key + 0.5 + totalCount);
+            CostAttribute.set(attributes, key + 0.5 + totalCount);
             totalCount++;
             return "" + (char) (key + 64);
         }

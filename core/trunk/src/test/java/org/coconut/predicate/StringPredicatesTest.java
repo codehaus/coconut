@@ -10,8 +10,14 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+/**
+ * Tests {@link StringPredicates}.
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ */
 public class StringPredicatesTest {
-    
+
     @Test
     public void contains() {
         Predicate<String> p = StringPredicates.contains("foo");
@@ -24,6 +30,12 @@ public class StringPredicatesTest {
         assertEquals(StringPredicates.contains("foo").hashCode(), p.hashCode());
         assertNotNull(p.toString());
     }
+
+    @Test(expected = NullPointerException.class)
+    public void containsNPE() {
+        StringPredicates.contains(null);
+    }
+
     @Test
     public void startsWith() {
         Predicate<String> p = StringPredicates.startsWith("foo");
@@ -40,10 +52,4 @@ public class StringPredicatesTest {
     public void startsWithNPE() {
         StringPredicates.startsWith(null);
     }
-    
-    @Test(expected = NullPointerException.class)
-    public void containsNPE() {
-        StringPredicates.contains(null);
-    }
 }
-

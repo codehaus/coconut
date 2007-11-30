@@ -6,15 +6,12 @@ package org.coconut.predicate;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.coconut.core.EventProcessor;
 import org.coconut.core.Mapper;
-import org.coconut.internal.util.Mappers;
 
 /**
  * Factory and utility methods for {@link Predicate}.
@@ -31,8 +28,8 @@ public final class CollectionPredicates {
     // /CLOVER:ON
 
     /**
-     * Returns whether or not <b>all</b> of elements in the specified can be accepted by the
-     * specified predicate.
+     * Returns whether or not <b>all</b> of elements in the specified can be accepted by
+     * the specified predicate.
      * 
      * @param <E>
      *            the types accepted
@@ -41,9 +38,14 @@ public final class CollectionPredicates {
      * @param predicate
      *            the predicate to test against
      * @return whether or not all of elements in the specified can be accepted by the
-     * specified predicate
+     *         specified predicate
      */
-    public static <E> boolean evaluateAll(Iterable<E> iterable, Predicate<E> predicate) {
+    public static <E> boolean allTrue(Iterable<E> iterable, Predicate<? super E> predicate) {
+        if (iterable == null) {
+            throw new NullPointerException("iterable is null");
+        } else if (predicate == null) {
+            throw new NullPointerException("predicate is null");
+        }
         for (E s : iterable) {
             if (!predicate.evaluate(s)) {
                 return false;
@@ -53,8 +55,8 @@ public final class CollectionPredicates {
     }
 
     /**
-     * Returns whether or not <b>any</b> of elements in the specified can be accepted by the
-     * specified predicate.
+     * Returns whether or not <b>any</b> of elements in the specified can be accepted by
+     * the specified predicate.
      * 
      * @param <E>
      *            the types accepted
@@ -63,9 +65,14 @@ public final class CollectionPredicates {
      * @param predicate
      *            the predicate to test against
      * @return whether or not any of elements in the specified can be accepted by the
-     * specified predicate
+     *         specified predicate
      */
-    public static <E> boolean evaluateAny(Iterable<E> iterable, Predicate<E> predicate) {
+    public static <E> boolean anyTrue(Iterable<E> iterable, Predicate<? super E> predicate) {
+        if (iterable == null) {
+            throw new NullPointerException("iterable is null");
+        } else if (predicate == null) {
+            throw new NullPointerException("predicate is null");
+        }
         for (E s : iterable) {
             if (predicate.evaluate(s)) {
                 return true;
@@ -74,291 +81,118 @@ public final class CollectionPredicates {
         return false;
     }
 
-    @SuppressWarnings("unchecked")
-    public static <K, V> Predicate<Map.Entry<K, V>> anyKeyEquals(final K... keys) {
-        return (Predicate) keyFilter(Predicates.anyEquals(keys));
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <K, V> Predicate<Map.Entry<K, V>> anyKeyInCollection(
-            final Collection<? extends K> keys) {
-        return (Predicate) keyFilter(Predicates.anyEquals(keys.toArray()));
-    }
-
     /**
-     * Creates a filter that accepts all cache events which is being mapped to any of the
-     * specified values.
+     * Filters the specified iterable, returning a list of those items that evaluated to
+     * true given the specified predicate.
      * 
-     * @param values
-     *            the values that are accepted by the filter
+     * @param <E>
+     *            the types of items that are filtered
+     * @param iterable
+     *            the iterable to filter
+     * @param predicate
+     *            the predicate to evaluate items accordingly to
+     * @return a collection of filteres items
      */
-    @SuppressWarnings("unchecked")
-    public static <K, V> Predicate<Map.Entry<K, V>> anyValueEquals(final V... values) {
-        return (Predicate) valueFilter(Predicates.anyEquals(values));
-    }
-
-    /**
-     * Creates a filter that accepts all cache events which is being mapped to any of the
-     * values contained in the specified Collection.
-     * 
-     * @param values
-     *            the values that are accepted by the filter
-     */
-    @SuppressWarnings("unchecked")
-    public static <K, V> Predicate<Map.Entry<K, V>> anyValueInCollection(
-            final Collection<? extends V> values) {
-        // TODO what about null values in the collection?
-        return (Predicate) valueFilter(Predicates.anyEquals(values.toArray()));
-    }
-
-    public static <E> void apply(Iterable<E> iterable, Predicate<E> filter,
-            EventProcessor<E> handler) {
-        // usefull??
-        for (E e : iterable) {
-            if (filter.evaluate(e)) {
-                handler.process(e);
-            }
-        }
-    }
-
-    public static <E> Collection<E> filter(Collection<E> collection, Predicate<E> filter) {
-        if (collection == null) {
-            throw new NullPointerException("collection is null");
-        } else if (filter == null) {
-            throw new NullPointerException("filter is null");
+    public static <E> List<E> filter(Iterable<E> iterable, Predicate<? super E> predicate) {
+        if (iterable == null) {
+            throw new NullPointerException("iterable is null");
+        } else if (predicate == null) {
+            throw new NullPointerException("predicate is null");
         }
         List<E> list = new ArrayList<E>();
-        for (E e : collection) {
-            if (filter.evaluate(e)) {
+        for (E e : iterable) {
+            if (predicate.evaluate(e)) {
                 list.add(e);
             }
         }
         return list;
     }
 
-    public static <E> List<E> filterList(List<E> list, Class<E> filter) {
-        return filterList(list, Predicates.isType(filter));
-    }
-
-    public static <E> List<E> filterList(List<E> list, Predicate<E> filter) {
-        return (List<E>) filter(list, filter);
-    }
-
-    public static <K, V> Map<K, V> filterMap(Map<K, V> map, Predicate<Map.Entry<K, V>> filter) {
-        Map<K, V> m = new HashMap<K, V>();
-        for (Map.Entry<K, V> entry : map.entrySet()) {
-            if (filter.evaluate(entry)) {
-                m.put(entry.getKey(), entry.getValue());
-            }
+    public static <E> void removeFrom(Iterable<E> iterable, Predicate<? super E> predicate) {
+        if (iterable == null) {
+            throw new NullPointerException("iterable is null");
+        } else if (predicate == null) {
+            throw new NullPointerException("predicate is null");
         }
-        return m;
-    }
-    public static <K, V> Map<K, V> filterMapKeys(Map<K, V> map, Predicate<K> filter) {
-        Map<K, V> m = new HashMap<K, V>();
-        for (Map.Entry<K, V> entry : map.entrySet()) {
-            if (filter.evaluate(entry.getKey())) {
-                m.put(entry.getKey(), entry.getValue());
-            }
-        }
-        return m;
-    }
-
-    // public TransformerFilter(final Transformer<F, Boolean> transformer) {
-    // this
-
-    // }
-
-    public static <K, V> Map<K, V> filterMapValues(Map<K, V> map, Predicate<V> filter) {
-        Map<K, V> m = new HashMap<K, V>();
-        for (Map.Entry<K, V> entry : map.entrySet()) {
-            if (filter.evaluate(entry.getValue())) {
-                m.put(entry.getKey(), entry.getValue());
-            }
-        }
-        return m;
-    }
-
-    /**
-     * Returns a Predicate that tests whether the specified argument is <code>null</code>.
-     * 
-     * @param <T>
-     *            the types that are accepted by the predicate.
-     * @return a Predicate that tests whether the specified argument is <code>null</code>
-     */
-    public static <T> Predicate<T> isNull() {
-        return new IsNullFilter();
-    }
-
-    /**
-     * Returns a Filter that only accepts event regarding a particular key.
-     * 
-     * @param key
-     *            the key that is accepted
-     * @return a filter that only accepts event regarding a particular key.
-     */
-    @SuppressWarnings("unchecked")
-    public static <K, V> Predicate<Map.Entry<K, V>> keyEqualsFilter(K key) {
-        return (Predicate) keyFilter(Predicates.equal(key));
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <K, V> Predicate<Map.Entry<K, V>> keyFilter(Predicate<K> filter) {
-        return new TransformerPredicate(Mappers.mapEntryToKey(), filter);
-    }
-
-    public static <T> Predicate<T> notNullAnd(Predicate<T> f) {
-        return new NotNullAndFilter<T>(f);
-    }
-
-    public static <E> void removeFrom(Iterable<E> iterable, Predicate<E> filter) {
         for (Iterator<E> i = iterable.iterator(); i.hasNext();) {
-            if (filter.evaluate(i.next())) {
+            if (predicate.evaluate(i.next())) {
                 i.remove();
             }
         }
     }
 
-    public static <E> Predicate<E> transformFilter(Class<E> c, String method, Predicate<?> f) {
-        Mapper<E, ?> t = Mappers.transform(c, method);
-        return new TransformerPredicate(t, f);
-    }
-
-    public static <F, T> Predicate<F> transformFilter(final Mapper<F, T> transformer,
-            Predicate<T> filter) {
-        return new TransformerPredicate<F, T>(transformer, filter);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <K, V> Predicate<Map.Entry<K, V>> valueEqualsFilter(V value) {
-        return (Predicate) valueFilter(Predicates.equal(value));
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <K, V> Predicate<Map.Entry<K, V>> valueFilter(Predicate<V> filter) {
-        return new TransformerPredicate(Mappers.mapEntryToValue(), filter);
-    }
-
-    final static class IsNullFilter implements Predicate, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = 6280765768913457567L;
-
-        /** {@inheritDoc} */
-        public boolean evaluate(Object element) {
-            return element == null;
+    public static <K, V> Map<K, V> filterMap(Map<K, V> map, Predicate<Map.Entry<K, V>> predicate) {
+        if (map == null) {
+            throw new NullPointerException("map is null");
+        } else if (predicate == null) {
+            throw new NullPointerException("predicate is null");
         }
-
-        /** {@inheritDoc} */
-        @Override
-        public String toString() {
-            return "is null";
-        }
-    }
-
-    /**
-     * If this filter is specified with a class this Filter will match any objects of the
-     * specific type or that is super class of the specified class. If this Filter is
-     * specified with an interface it will match any class that implements the interface.
-     * 
-     * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
-     * @version $Id$
-     */
-    final static class IsTypePredicate implements Predicate, Serializable {
-
-        /** A Filter that accepts all classes. */
-        public static final Predicate<?> ALL = new IsTypePredicate(Object.class);
-
-        /** A default <code>serialVersionUID</code>. */
-        private static final long serialVersionUID = 3256440304922996793L;
-
-        /** The class we are testing against. */
-        private final Class<?> theClass;
-
-        /**
-         * Constructs a new ClassBasedFilter.
-         * 
-         * @param theClass
-         *            the class we are testing against.
-         * @throws NullPointerException
-         *             if the class that was supplied is <code>null</code>.
-         */
-        public IsTypePredicate(final Class<?> theClass) {
-            if (theClass == null) {
-                throw new NullPointerException("theClass is null");
+        Map<K, V> m = new HashMap<K, V>();
+        for (Map.Entry<K, V> entry : map.entrySet()) {
+            if (predicate.evaluate(entry)) {
+                m.put(entry.getKey(), entry.getValue());
             }
-            this.theClass = theClass;
         }
-
-        /**
-         * Tests the given element for acceptance.
-         * 
-         * @param element
-         *            the element to test against.
-         * @return <code>true</code> if the filter accepts the element;
-         *         <code>false</code> otherwise.
-         */
-        public boolean evaluate(Object element) {
-            return theClass.isAssignableFrom(element.getClass());
-        }
-
-        /**
-         * Returns the class we are testing against.
-         * 
-         * @return Returns the theClass.
-         */
-        public Class<?> getFilteredClass() {
-            return theClass;
-        }
+        return m;
     }
 
-    final static class NotNullAndFilter<T> implements Predicate<T>, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = -324206595097699714L;
-
-        /** the other filter. */
-        private final Predicate<T> filter;
-
-        public NotNullAndFilter(Predicate<T> filter) {
-            if (filter == null) {
-                throw new NullPointerException("filter is null");
+    public static <K, V> Map<K, V> filterMapKeys(Map<K, V> map, Predicate<? super K> predicate) {
+        if (map == null) {
+            throw new NullPointerException("map is null");
+        } else if (predicate == null) {
+            throw new NullPointerException("predicate is null");
+        }
+        Map<K, V> m = new HashMap<K, V>();
+        for (Map.Entry<K, V> entry : map.entrySet()) {
+            if (predicate.evaluate(entry.getKey())) {
+                m.put(entry.getKey(), entry.getValue());
             }
-            this.filter = filter;
         }
+        return m;
+    }
 
-        /** {@inheritDoc} */
-        public boolean evaluate(T element) {
-            return element != null && filter.evaluate(element);
+    public static <K, V> Map<K, V> filterMapValues(Map<K, V> map, Predicate<? super V> predicate) {
+        if (map == null) {
+            throw new NullPointerException("map is null");
+        } else if (predicate == null) {
+            throw new NullPointerException("predicate is null");
         }
-
-        /** {@inheritDoc} */
-        @Override
-        public String toString() {
-            return "is not null and " + filter.toString();
+        Map<K, V> m = new HashMap<K, V>();
+        for (Map.Entry<K, V> entry : map.entrySet()) {
+            if (predicate.evaluate(entry.getValue())) {
+                m.put(entry.getKey(), entry.getValue());
+            }
         }
+        return m;
+    }
 
+    public static <F, T> Predicate<F> mapperPredicate(final Mapper<F, T> mapper,
+            Predicate<? super T> predicate) {
+        return new MapperPredicate<F, T>(mapper, predicate);
     }
 
     /**
      * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
      * @version $Id$
      */
-    final static class TransformerPredicate<F, T> implements Predicate<F>, Serializable {
+    final static class MapperPredicate<F, T> implements Predicate<F>, Serializable {
 
         /** serialVersionUID. */
         private static final long serialVersionUID = -6292758840373110577L;
 
-        private final Predicate<T> filter;
+        private final Predicate<? super T> predicate;
 
         /** The object to compare with. */
-        private final Mapper<F, T> transformer;
+        private final Mapper<F, T> mapper;
 
-        public TransformerPredicate(final Mapper<F, T> transformer, Predicate<T> filter) {
-            if (transformer == null) {
-                throw new NullPointerException("transformer is null");
-            } else if (filter == null) {
-                throw new NullPointerException("filter is null");
+        public MapperPredicate(final Mapper<F, T> mapper, Predicate<? super T> predicate) {
+            if (mapper == null) {
+                throw new NullPointerException("mapper is null");
+            } else if (predicate == null) {
+                throw new NullPointerException("predicate is null");
             }
-            this.filter = filter;
-            this.transformer = transformer;
+            this.predicate = predicate;
+            this.mapper = mapper;
         }
 
         /**
@@ -367,35 +201,34 @@ public final class CollectionPredicates {
          * 
          * @param element
          *            the element to test against.
-         * @return <code>true</code> if the filter accepts the element;
+         * @return <code>true</code> if the predicate accepts the element;
          *         <code>false</code> otherwise.
          */
         public boolean evaluate(F element) {
-            return filter.evaluate(transformer.map(element));
+            return predicate.evaluate(mapper.map(element));
         }
 
         /**
-         * Returns the Filter we are testing against.
+         * Returns the Predicate we are testing against.
          * 
-         * @return the Filter we are testing against.
+         * @return the Predicate we are testing against.
          */
-        public Predicate<T> getFilter() {
-            return filter;
+        public Predicate<? super T> getPredicate() {
+            return predicate;
         }
 
         /**
-         * Returns the transformer that will transform the object before applying the
-         * filter on it.
+         * Returns the mappter that will map the object before applying the predicate on
+         * it.
          */
-        public Mapper<F, T> getTransformer() {
-            return transformer;
+        public Mapper<F, T> getMapper() {
+            return mapper;
         }
 
         /** {@inheritDoc} */
         @Override
         public String toString() {
-            return "convert " + transformer;
+            return "convert " + mapper;
         }
-
     }
 }

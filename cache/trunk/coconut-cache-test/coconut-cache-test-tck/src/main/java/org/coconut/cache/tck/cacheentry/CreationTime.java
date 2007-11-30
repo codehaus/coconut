@@ -33,7 +33,7 @@ public class CreationTime extends AbstractCacheTCKTest {
      */
     static class MyLoader extends AbstractCacheLoader<Integer, String> {
         public String load(Integer key, AttributeMap attributes) throws Exception {
-            DateCreatedAttribute.INSTANCE.setAtttribute(attributes, key + 1);
+            DateCreatedAttribute.INSTANCE.setAttribute(attributes, key + 1);
             return "" + (char) (key + 64);
         }
     }

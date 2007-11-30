@@ -7,19 +7,22 @@ import org.coconut.attribute.AttributeMap;
 
 public abstract class DoubleAttribute extends AbstractAttribute<Double> {
 
+    private final double defaultValue;
+
     public DoubleAttribute(String name, Double defaultValue) {
-        super(name, Double.class, defaultValue);
+        super(name, Double.TYPE, defaultValue);
+        this.defaultValue = defaultValue;
     }
 
     public double getPrimitive(AttributeMap attributes) {
-        return attributes.getDouble(this);
+        return attributes.getDouble(this, defaultValue);
     }
 
     public double getPrimitive(AttributeMap attributes, double defaultValue) {
         return attributes.getDouble(this, defaultValue);
     }
 
-    public AttributeMap set(AttributeMap attributes, double object) {
+    public AttributeMap setAttribute(AttributeMap attributes, double object) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
         }

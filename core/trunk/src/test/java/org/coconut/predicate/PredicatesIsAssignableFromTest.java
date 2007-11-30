@@ -8,18 +8,18 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.coconut.predicate.CollectionPredicates.IsTypePredicate;
+import org.coconut.predicate.Predicates.IsTypePredicate;
 import org.junit.Test;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id$
  */
-public class PredicatesIsAssignableFromTest  {
+public class PredicatesIsAssignableFromTest {
 
     @Test
     public void testFilter() {
-        IsTypePredicate filter = Predicates.isType(Number.class);
+        IsTypePredicate filter = (IsTypePredicate) Predicates.isType(Number.class);
         assertEquals(Number.class, filter.getFilteredClass());
         assertTrue(filter.evaluate(Integer.valueOf(0)));
         assertTrue(filter.evaluate(Long.valueOf(0)));

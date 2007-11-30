@@ -18,8 +18,25 @@ import org.junit.Test;
  */
 public class IndexedStackTest {
 
-    private final Random rnd = new Random();
+    private final Random rnd = new Random(23423213);
 
+    @Test
+    public void replace() {
+        IndexedStack<Integer> list = new IndexedStack<Integer>(15);
+        int i = list.add(1);
+        list.replace(i, 2);
+        assertEquals(2, list.peek());
+    }
+    @Test
+    public void copyConstructor() {
+        IndexedStack<Integer> list = new IndexedStack<Integer>(12);
+        for (int i = 0; i < 100; i++) {
+            list.add(i);
+            permuteRefresh(list);
+        }
+        IndexedStack<Integer> copy = new IndexedStack<Integer>(list);
+        assertEquals(copy.peekAll(), list.peekAll());
+    }
     @Test
     public void testAdd() {
         IndexedStack<Integer> stack = new IndexedStack<Integer>(5);

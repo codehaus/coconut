@@ -4,7 +4,7 @@
 
 package org.coconut.internal.util;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertNull;
 
 import java.util.Random;
@@ -12,14 +12,14 @@ import java.util.Random;
 import org.junit.Test;
 
 /**
- * Various String utils. 
+ * Various String utils.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class IndexedListTest  {
+public class IndexedListTest {
 
-    private final Random rnd = new Random();
+    private final Random rnd = new Random(123456432);
 
     @Test
     public void testAdd() {
@@ -166,6 +166,31 @@ public class IndexedListTest  {
     }
 
     @Test
+    public void replace() {
+        IndexedList<Integer> list = new IndexedList<Integer>(15);
+        int i = list.add(1);
+        list.replace(i, 2);
+        assertEquals(2, list.peek());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void indexedList() {
+        new IndexedList<Integer>(-1);
+    }
+
+    @Test
+    public void copyConstructor() {
+        IndexedList<Integer> list = new IndexedList<Integer>();
+        for (int i = 0; i < 100; i++) {
+            list.add(i);
+            permuteRefresh(list);
+        }
+        IndexedList<Integer> copy = new IndexedList<Integer>(list);
+        assertEquals(copy.peekAll(), list.peekAll());
+        assertEquals(copy.peekAll(), list.clone().peekAll());
+    }
+
+    @Test
     public void testPeek() {
         IndexedList<Integer> list = new IndexedList<Integer>(15);
         assertNull(list.peek());
@@ -176,7 +201,47 @@ public class IndexedListTest  {
         assertEquals(2, list.peek().intValue());
         assertEquals(2, list.removeFirst().intValue());
     }
-    
+
+    @Test
+    public void clear() {
+        IndexedList<Integer> l2 = new IndexedList<Integer>(20);
+        for (int i = 0; i < 100; i++) {
+            l2.add(i);
+        }
+        l2.clear();
+        assertEquals(0, l2.getSize());
+    }
+
+    @Test
+    public void equalsHashcodeToString() {
+
+        IndexedList<Integer> l1 = new IndexedList<Integer>(10);
+        IndexedList<Integer> l2 = new IndexedList<Integer>(20);
+        assertFalse(l1.equals(new Object()));
+        for (int i = 0; i < 100; i++) {
+            l1.add(i);
+            l2.add(i);
+        }
+        l1.touch(55);
+        l2.touch(55);
+        assertEquals(l1, l2);
+        assertEquals(l1.hashCode(), l2.hashCode());
+        assertEquals(l1.toString(), l2.toString());
+    }
+
+    @Test
+    public void testPeekAll() {
+        IndexedList<Integer> list = new IndexedList<Integer>(15);
+        assertEquals(0, list.peekAll().size());
+        list.add(1);
+        list.add(2);
+        assertEquals(1, list.peekAll().get(0));
+        assertEquals(2, list.peekAll().get(1));
+        list.touch(1);
+        assertEquals(2, list.peekAll().get(0));
+        assertEquals(1, list.peekAll().get(1));
+    }
+
     private IndexedList<Integer> getDirtyList() {
         IndexedList<Integer> list = new IndexedList<Integer>(1);
         for (int i = 0; i < 20; i++) {
