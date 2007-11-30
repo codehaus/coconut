@@ -9,9 +9,13 @@ import static org.coconut.test.CollectionUtils.M3;
 import static org.coconut.test.CollectionUtils.M4;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.service.event.CacheEntryEvent;
+import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.event.CacheEventFilters;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemAdded;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated;
@@ -51,20 +55,47 @@ public class EventServiceLoading extends AbstractEventTestBundle {
         consumeItem(ItemUpdated.class, M1.getKey(), M2.getValue());
         loading().forceLoadAll(Arrays.asList(1, 2));
         awaitAllLoads();
-        // the order might vary
-        //TODO fix
-        //junit.framework.AssertionFailedError: expected type interface org.coconut.cache.service.event.CacheEntryEvent$ItemUpdated, but got type class org.coconut.cache.internal.service.event.InternalEntryEvent$AddedEvent
-        //at junit.framework.Assert.fail(Assert.java:47)
-        //at junit.framework.Assert.assertTrue(Assert.java:20)
-        consumeItem(ItemUpdated.class, M1.getKey(), M2.getValue());
-        consumeItem(ItemAdded.class, M2.getKey(), M3.getValue());
+        // The order may wary
+        Collection<CacheEvent> ce = consumeItems(c, 2);
+        assertTrue(ce.contains(itemAdded(c, M2.getKey(), M3.getValue())));
+        assertTrue(ce.contains(itemUpdated(c, M1.getKey(), M2.getValue(), M2.getValue())));
 
         loader.incBase();
         loading().forceLoadAll();
         awaitAllLoads();
-        consumeItem(ItemUpdated.class, M1.getKey(), M3.getValue());
-        consumeItem(ItemUpdated.class, M2.getKey(), M4.getValue());
+        ce = consumeItems(c, 2);
+        assertTrue(ce.contains(itemUpdated(c, M1.getKey(), M3.getValue(), M2.getValue())));
+        assertTrue(ce.contains(itemUpdated(c, M2.getKey(), M4.getValue(), M3.getValue())));
+    }
 
+    static Object itemAdded(final Cache c, final Integer key, final String value) {
+        return new Object() {
+            @Override
+            public boolean equals(Object obj) {
+                if (obj instanceof CacheEntryEvent.ItemAdded) {
+                    CacheEntryEvent.ItemAdded event = (ItemAdded) obj;
+                    return event.getCache().equals(c) && event.getKey().equals(key)
+                            && event.getValue().equals(value);
+                }
+                return false;
+            }
+        };
+    }
+
+    static Object itemUpdated(final Cache c, final Integer key, final String value,
+            final String previousValue) {
+        return new Object() {
+            @Override
+            public boolean equals(Object obj) {
+                if (obj instanceof CacheEntryEvent.ItemUpdated) {
+                    CacheEntryEvent.ItemUpdated event = (ItemUpdated) obj;
+                    return event.getCache().equals(c) && event.getKey().equals(key)
+                            && event.getValue().equals(value)
+                            && event.getPreviousValue().equals(previousValue);
+                }
+                return false;
+            }
+        };
     }
 
     @Test

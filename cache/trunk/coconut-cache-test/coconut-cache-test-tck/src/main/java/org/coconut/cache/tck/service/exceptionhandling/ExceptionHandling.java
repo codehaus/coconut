@@ -84,7 +84,7 @@ public class ExceptionHandling extends AbstractCacheTCKTest {
         @Override
         public String loadFailed(CacheExceptionContext<Integer, String> context,
                 CacheLoader<? super Integer, ?> loader, Integer key, AttributeMap map,
-                Exception cause) {
+                Throwable cause) {
             assertSame(logger, context.defaultLogger());
             return "foo";
         }
@@ -99,7 +99,7 @@ public class ExceptionHandling extends AbstractCacheTCKTest {
                     public String loadFailed(
                             CacheExceptionContext<Integer, String> context,
                             CacheLoader<? super Integer, ?> loader, Integer key,
-                            AttributeMap map, Exception cause) {
+                            AttributeMap map, Throwable cause) {
                         try {
                             assertNotNull(context);
                             assertSame(logger, context.defaultLogger());
@@ -133,7 +133,7 @@ public class ExceptionHandling extends AbstractCacheTCKTest {
                     public String loadFailed(
                             CacheExceptionContext<Integer, String> context,
                             CacheLoader<? super Integer, ?> loader, Integer key,
-                            AttributeMap map, Exception cause) {
+                            AttributeMap map, Throwable cause) {
                         try {
                             assertNotNull(context);
                             assertSame(logger, context.defaultLogger());

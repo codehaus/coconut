@@ -124,11 +124,6 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
             return CacheEntryEvent.ItemAdded.NAME;
         }
 
-        /** {@inheritDoc} */
-        public boolean isLoaded() {
-            return wasLoaded;
-        }
-
         @Override
         public boolean equals(Object obj) {
             if (obj instanceof CacheEntryEvent.ItemAdded) {
@@ -178,11 +173,6 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
         /** {@inheritDoc} */
         public boolean hasExpired() {
             return isExpired;
-        }
-
-        /** {@inheritDoc} */
-        public boolean isLoaded() {
-            return isLoaded;
         }
     }
 

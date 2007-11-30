@@ -39,7 +39,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
 
     private final CacheLoader<? super K, ? extends V> loader;
 
-    private final LoadSupport<K, V> loadSupport;
+    final LoadSupport<K, V> loadSupport;
 
     private final Predicate<CacheEntry<K, V>> reloadFilter;
 

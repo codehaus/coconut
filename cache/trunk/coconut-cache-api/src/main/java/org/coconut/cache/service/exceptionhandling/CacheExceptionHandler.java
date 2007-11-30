@@ -95,7 +95,7 @@ public abstract class CacheExceptionHandler<K, V> {
      *         given key
      */
     public V loadFailed(CacheExceptionContext<K, V> context, CacheLoader<? super K, ?> loader,
-            K key, AttributeMap map, Exception cause) {
+            K key, AttributeMap map, Throwable cause) {
         handleThrowable(context, cause);
         return null;
     }

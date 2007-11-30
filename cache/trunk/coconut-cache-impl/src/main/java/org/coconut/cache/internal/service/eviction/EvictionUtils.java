@@ -21,8 +21,10 @@ import org.coconut.management.annotation.ManagedOperation;
 final class EvictionUtils {
 
     /** Cannot instantiate. */
+    // /CLOVER:OFF
     private EvictionUtils() {}
-
+    // /CLOVER:ON
+    
     /**
      * This class wraps CacheEvictionService as a CacheEvictionMXBean.
      * <p>
@@ -84,8 +86,7 @@ final class EvictionUtils {
      * This class wraps a CacheEvictionService implementation, only exposing the public
      * methods in CacheEvictionService.
      */
-    static class DelegatedCacheEvictionService<K, V> implements
-            CacheEvictionService<K, V> {
+    static class DelegatedCacheEvictionService<K, V> implements CacheEvictionService<K, V> {
         /** The CacheEvictionService we are wrapping. */
         private final CacheEvictionService<K, V> service;
 
@@ -157,8 +158,7 @@ final class EvictionUtils {
      * @param <V>
      *            the type of mapped values
      */
-    public static <K, V> CacheEvictionService<K, V> wrapService(
-            CacheEvictionService<K, V> service) {
+    public static <K, V> CacheEvictionService<K, V> wrapService(CacheEvictionService<K, V> service) {
         return new DelegatedCacheEvictionService<K, V>(service);
     }
 
@@ -186,29 +186,30 @@ final class EvictionUtils {
         return tmp == 0 ? Long.MAX_VALUE : tmp;
     }
 
-//    /**
-//     * Returns the preferable size configured in the specified configuration.
-//     * 
-//     * @param conf
-//     *            the configuration to read the preferable size from
-//     * @return the preferable size configured in the specified configuration
-//     */
-//    static int getPreferableSizeFromConfiguration(CacheEvictionConfiguration<?, ?> conf) {
-//        int tmp = conf.getPreferableSize();
-//        return tmp == 0 ? Integer.MAX_VALUE : tmp;
-//    }
+// /**
+// * Returns the preferable size configured in the specified configuration.
+// *
+// * @param conf
+// * the configuration to read the preferable size from
+// * @return the preferable size configured in the specified configuration
+// */
+// static int getPreferableSizeFromConfiguration(CacheEvictionConfiguration<?, ?> conf) {
+// int tmp = conf.getPreferableSize();
+// return tmp == 0 ? Integer.MAX_VALUE : tmp;
+// }
 //
-//    /**
-//     * Returns the preferable volume configured in the specified configuration.
-//     * 
-//     * @param conf
-//     *            the configuration to read the preferable volume from
-//     * @return the preferable volume configured in the specified configuration
-//     */
-//    static long getPreferableVolumeFromConfiguration(CacheEvictionConfiguration<?, ?> conf) {
-//        long tmp = conf.getPreferableVolume();
-//        return tmp == 0 ? Long.MAX_VALUE : tmp;
-//    }
+// /**
+// * Returns the preferable volume configured in the specified configuration.
+// *
+// * @param conf
+// * the configuration to read the preferable volume from
+// * @return the preferable volume configured in the specified configuration
+// */
+// static long getPreferableVolumeFromConfiguration(CacheEvictionConfiguration<?, ?> conf)
+// {
+// long tmp = conf.getPreferableVolume();
+// return tmp == 0 ? Long.MAX_VALUE : tmp;
+// }
 
     // @ManagedOperation(description = "Evict all elements that idle")
     // public void evictIdleElements() {

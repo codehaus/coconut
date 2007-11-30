@@ -6,6 +6,8 @@ package org.coconut.cache.tck.service.event;
 
 import static org.coconut.test.CollectionUtils.asMap;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -107,6 +109,31 @@ public class AbstractEventTestBundle extends AbstractCacheTCKTest {
 
     protected EventSubscription<?> subscribe(Predicate f) {
         return subscribe(CacheServices.event(c), f);
+    }
+
+    protected Collection<CacheEvent> consumeItems(Cache c, int count) throws Exception {
+        Collection<CacheEvent> eventsCol = new ArrayList<CacheEvent>();
+        while (eventsCol.size() != count) {
+            EventWrapper ew = null;
+            //System.err.println(events.size());
+            try {
+                ew = ev != null ? ev : events.poll(50, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException ie) {
+                throw new IllegalStateException("Thread was interrupted", ie);
+            }
+            if (ew == null) {
+                throw new IllegalStateException("No events was posted, size was " + eventsCol.size());
+            }
+            CacheEvent<?, ?> event = ew.event;
+            ev = null;
+            if (event == null) {
+                fail("No events was delivered ");
+            }
+            eventsCol.add(event);
+            assertEquals(c, event.getCache());
+        }
+        assertEquals(count, eventsCol.size());
+        return eventsCol;
     }
 
     protected void consumeItem() throws Exception {
