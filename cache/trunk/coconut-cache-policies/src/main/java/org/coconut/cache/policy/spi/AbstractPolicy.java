@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.coconut.attribute.AttributeMaps;
-import org.coconut.cache.spi.ReplacementPolicy;
+import org.coconut.cache.policy.ReplacementPolicy;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

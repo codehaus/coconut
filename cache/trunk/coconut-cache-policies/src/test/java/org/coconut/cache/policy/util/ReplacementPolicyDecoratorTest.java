@@ -11,8 +11,8 @@ import java.util.Collections;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.AttributeMaps;
+import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.policy.paging.LRUPolicy;
-import org.coconut.cache.spi.ReplacementPolicy;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;

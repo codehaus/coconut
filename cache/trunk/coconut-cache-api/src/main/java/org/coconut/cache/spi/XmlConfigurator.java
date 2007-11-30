@@ -155,7 +155,7 @@ public class XmlConfigurator {
         Element root = doc.getDocumentElement();
         int length = root.getElementsByTagName(CACHE_TAG).getLength();
         if (length == 0) {
-            throw new IllegalStateException("No cache is defined in the specified document, "
+            throw new IllegalArgumentException("No cache is defined in the specified document, "
                     + doc.getDocumentURI());
         }
         Node n = root.getElementsByTagName("cache").item(0);

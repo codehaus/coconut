@@ -5,6 +5,8 @@ package org.coconut.cache.internal.service.entry;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
+import org.coconut.cache.policy.IsCacheable;
+import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.core.Clock;
 
 /**
@@ -25,6 +27,8 @@ public class UnsynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryF
     /** The default time to live of newly added entries. */
     private long defaultTimeToLiveNanos;
 
+    private final IsCacheable<K, V> isCacheable;
+
     /**
      * Creates a new UnsynchronizedEntryFactoryService.
      * 
@@ -33,8 +37,10 @@ public class UnsynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryF
      * @param exceptionService the cache exception service
      */
     public UnsynchronizedEntryFactoryService(Clock clock,
+            CacheEvictionConfiguration<K, V> evictionConfiguration,
             InternalCacheExceptionService<K, V> exceptionService) {
         super(clock, exceptionService);
+        this.isCacheable = evictionConfiguration.getIsCacheableFilter();
     }
 
     /** {@inheritDoc} */
@@ -42,6 +48,9 @@ public class UnsynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryF
             AbstractCacheEntry<K, V> existing) {
         if (attributes == null) {
             attributes = createMap();
+        }
+        if (isCacheable != null && !isCacheable.isCacheable(key, value, attributes)) {
+            return null;
         }
         long expirationTime = getTimeToLive(defaultTimeToLiveNanos, key, value, attributes,
                 existing);

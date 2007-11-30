@@ -1,7 +1,6 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-
 package org.coconut.cache.policy;
 
 import org.coconut.cache.policy.paging.ClockPolicy;
@@ -11,10 +10,9 @@ import org.coconut.cache.policy.paging.LIFOPolicy;
 import org.coconut.cache.policy.paging.LRUPolicy;
 import org.coconut.cache.policy.paging.MRUPolicy;
 import org.coconut.cache.policy.paging.RandomPolicy;
-import org.coconut.cache.spi.ReplacementPolicy;
 
 /**
- * Factory methods for different {@link org.coconut.cache.spi.ReplacementPolicy}
+ * Factory methods for different {@link org.coconut.cache.policy.ReplacementPolicy}
  * implementations. This class provides shortcuts for the specific implementations of
  * policies defined in <tt>coconut.cache.policy</tt>.
  * 

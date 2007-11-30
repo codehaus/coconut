@@ -100,7 +100,9 @@ public class CacheConfiguration<K, V> {
                 addConfiguration(a);
                 CacheSPI.initializeConfiguration(a, this);
             } catch (Exception e) {
+                // /CLOVER:OFF
                 throw new CacheException(CacheSPI.HIGHLY_IRREGULAR_MSG, e);
+                // /CLOVER:ON
             }
         }
     }

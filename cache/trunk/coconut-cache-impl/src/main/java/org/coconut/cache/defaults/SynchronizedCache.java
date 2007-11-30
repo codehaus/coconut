@@ -226,7 +226,14 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
      * @param entry
      * @return the
      */
-    private boolean addElement(AbstractCacheEntry<K, V> entry) {
+    private boolean addElement(AbstractCacheEntry<K, V> prev, AbstractCacheEntry<K, V> entry) {
+        if (entry == null) {
+            if (prev != null) {
+                prev.setPolicyIndex(-1);
+                map.remove(prev.getKey());
+            }
+            return false;
+        }
         if (entry.getPolicyIndex() == -1) { // entry is newly added
             entry.setPolicyIndex(evictionService.add(entry));
             if (entry.getPolicyIndex() == -1) {
@@ -309,39 +316,6 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
         return result;
     }
 
-    Map<K, V> doGetAll2(Collection<? extends K> keys) {
-        if (keys == null) {
-            throw new NullPointerException("collection is null");
-        }
-        CollectionUtils.checkCollectionForNulls(keys);
-        Collection<K> loadMe = new ArrayList<K>();
-        long started = 0; // statisticsService.beforeGetAll(this, keys);
-        boolean[] isExpired = new boolean[keys.size()];
-        checkRunning("get");
-        HashMap<K, V> result = new HashMap<K, V>();
-        int i = 0;
-        for (K key : keys) {
-            AbstractCacheEntry<K, V> entry = map.get(key);
-            if (entry != null) {
-                isExpired[i] = expirationService.isExpired(entry);
-                if (isExpired[i]) {
-                    map.remove(key);
-                    evictionService.remove(entry.getPolicyIndex());
-                    loadMe.add(key);
-                } else {
-                    // reload if needed??
-                    entry.accessed(entryService);
-                    evictionService.touch(entry.getPolicyIndex());
-                    result.put(key, entry.getValue());
-                }
-            } else {
-                loadMe.add(key);
-            }
-            i++;
-        }
-        return result;
-    }
-
     /** {@inheritDoc} */
     @Override
     synchronized AbstractCacheEntry<K, V> doPeek(K key) {
@@ -365,7 +339,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
             prev = map.get(key);
             if (prev == null || !putOnlyIfAbsent) {
                 newEntry = entryService.createEntry(key, newValue, attributes, prev);
-                if (addElement(newEntry)) {
+                if (addElement(prev, newEntry)) {
                     trimmed = trimCache();
                 }
             }
@@ -392,8 +366,9 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
                 AbstractCacheEntry<K, V> prev = map.get(key);
                 AbstractCacheEntry<K, V> newEntry = entryService.createEntry(key, value, attributes
                         .get(key), prev);
-                addElement(newEntry);
-                newEntries.put(newEntry, prev);
+                if (addElement(prev, newEntry)) {
+                    newEntries.put(newEntry, prev);
+                }
             }
         }
 
@@ -437,8 +412,9 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
             if (oldValue == null && prev != null || oldValue != null && prev != null
                     && oldValue.equals(prev.getValue())) {
                 newEntry = entryService.createEntry(key, newValue, attributes, prev);
-                addElement(newEntry);
-                trimmed = trimCache();
+                if (addElement(prev, newEntry)) {
+                    trimmed = trimCache();
+                }
             }
         }
 
@@ -466,11 +442,6 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
             synchronized (SynchronizedCache.this) {
                 SynchronizedCache.this.checkRunning(operation, shutdown);
             }
-        }
-
-        /** {@inheritDoc} */
-        public String getName() {
-            return SynchronizedCache.this.getName();
         }
 
         /** {@inheritDoc} */

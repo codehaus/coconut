@@ -17,7 +17,7 @@ public final class CacheLoaders {
     /** Cannot instantiate. */
     // /CLOVER:OFF
     private CacheLoaders() {}
-
+    // /CLOVER:ON
     /**
      * This method converts the specified cache to a cache loader. Calls to
      * {@link CacheLoader#load(Object, AttributeMap)} will be converted to calls to
@@ -51,7 +51,6 @@ public final class CacheLoaders {
         return new NullLoader<K, V>();
     }
 
-    // /CLOVER:ON
     /**
      * Returns a Runnable that when invoked will call the
      * {@link CacheLoadingService#forceLoad(Object)} method on the specified cache with the

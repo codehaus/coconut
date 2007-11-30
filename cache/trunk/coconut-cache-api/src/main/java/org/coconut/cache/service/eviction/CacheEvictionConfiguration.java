@@ -3,14 +3,18 @@
  */
 package org.coconut.cache.service.eviction;
 
+import static org.coconut.internal.util.XmlUtil.addTypedElement;
 import static org.coconut.internal.util.XmlUtil.getChild;
 import static org.coconut.internal.util.XmlUtil.contentIntGet;
 import static org.coconut.internal.util.XmlUtil.contentLongGet;
 import static org.coconut.internal.util.XmlUtil.contentIntSet;
 import static org.coconut.internal.util.XmlUtil.contentLongSet;
+import static org.coconut.internal.util.XmlUtil.loadChildObject;
 
+import org.coconut.cache.policy.IsCacheable;
+import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
-import org.coconut.cache.spi.ReplacementPolicy;
+import org.coconut.predicate.Predicate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -44,11 +48,16 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
     /** XML tag for maximum volume. */
     private final static String MAXIMUM_VOLUME = "max-volume";
 
+    /** XML tag for maximum volume. */
+    private final static String IS_CACHEABLE_TAG = "isCacheable";
+    
     /** The maximum size of the cache. */
     private int maximumSize;
 
     /** The maximum volume of the cache. */
     private long maximumVolume;
+
+    private IsCacheable<K, V> isCacheableFilter;
 
     /** The replacement policy used for evicting elements. */
     private ReplacementPolicy<?> replacementPolicy;
@@ -188,6 +197,7 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
     protected void fromXML(Element e) throws Exception {
         maximumSize = contentIntGet(getChild(MAXIMUM_SIZE, e), maximumSize);
         maximumVolume = contentLongGet(getChild(MAXIMUM_VOLUME, e), maximumVolume);
+        isCacheableFilter = loadChildObject(e, IS_CACHEABLE_TAG, IsCacheable.class);
     }
 
     /** {@inheritDoc} */
@@ -195,5 +205,16 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
     protected void toXML(Document doc, Element base) throws Exception {
         contentLongSet(doc, base, MAXIMUM_VOLUME, maximumVolume, DEFAULT.getMaximumVolume());
         contentIntSet(doc, base, MAXIMUM_SIZE, maximumSize, DEFAULT.getMaximumSize());
+        addTypedElement(doc, base, IS_CACHEABLE_TAG, getResourceBundle(),getClass(),
+                "saveOfIsCacheableFilterFailed", isCacheableFilter);
+    }
+
+    public IsCacheable<K, V> getIsCacheableFilter() {
+        return isCacheableFilter;
+    }
+
+    public CacheEvictionConfiguration<K, V> setIsCacheableFilter(IsCacheable<K, V> isCacheableFilter) {
+        this.isCacheableFilter = isCacheableFilter;
+        return this;
     }
 }

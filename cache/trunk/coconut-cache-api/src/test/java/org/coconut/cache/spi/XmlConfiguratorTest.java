@@ -8,6 +8,7 @@ import static junit.framework.Assert.assertNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -35,18 +36,16 @@ public class XmlConfiguratorTest {
 
     @Test
     public void cacheGetsName() throws Exception {
-        String noNamed = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-                + "<cache-config version=\"" + XmlConfigurator.CURRENT_VERSION + "\">"
-                + "<cache/></cache-config>";
+        String noNamed = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<cache-config version=\""
+                + XmlConfigurator.CURRENT_VERSION + "\">" + "<cache/></cache-config>";
         assertNull(CacheConfiguration.loadConfigurationFrom(
                 new ByteArrayInputStream(noNamed.getBytes())).getName());
     }
 
     @Test
     public void cacheType() throws Exception {
-        String noNamed = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-                + "<cache-config version=\"" + XmlConfigurator.CURRENT_VERSION + "\">"
-                + "<cache type=\"foo\"/></cache-config>";
+        String noNamed = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<cache-config version=\""
+                + XmlConfigurator.CURRENT_VERSION + "\">" + "<cache type=\"foo\"/></cache-config>";
         assertEquals("foo", CacheConfiguration.loadConfigurationFrom(
                 new ByteArrayInputStream(noNamed.getBytes())).getProperty(
                 XmlConfigurator.CACHE_INSTANCE_TYPE));
@@ -55,8 +54,7 @@ public class XmlConfiguratorTest {
     static CacheConfiguration<?, ?> rw(CacheConfiguration<?, ?> conf) throws Exception {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         new XmlConfigurator().write(conf, os);
-        return CacheConfiguration.loadConfigurationFrom(new ByteArrayInputStream(os
-                .toByteArray()));
+        return CacheConfiguration.loadConfigurationFrom(new ByteArrayInputStream(os.toByteArray()));
     }
 
     @Test(expected = NullPointerException.class)
@@ -119,6 +117,23 @@ public class XmlConfiguratorTest {
         return reloadService(configuration, configuration);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testNoCacheTagsDefined() throws Exception {
+        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document doc = builder.newDocument();
+        Element root = doc.createElement(XmlConfigurator.CONFIG_TAG);
+        doc.appendChild(root);
+
+        new XmlConfigurator().readDocument(CacheConfiguration.create(), doc);
+    }
+
+    @Test
+    public void simpleReadWrite() throws Exception {
+        CacheConfiguration conf = CacheConfiguration.create();
+        conf.expiration().setDefaultTimeToLive(10, TimeUnit.SECONDS);
+        assertEquals(10, rw(conf).expiration().getDefaultTimeToLive(TimeUnit.SECONDS));
+    }
+
     /**
      * This method is used for saving and reloading a configuration object.
      * 
@@ -128,8 +143,7 @@ public class XmlConfiguratorTest {
      */
     public static <K, V, T extends AbstractCacheServiceConfiguration<K, V>> T reloadService(
             T configuration, T configuration2) throws Exception {
-        DocumentBuilder builder = DocumentBuilderFactory.newInstance()
-                .newDocumentBuilder();
+        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document doc = builder.newDocument();
         Element parent = doc.createElement(XmlConfigurator.CACHE_TAG); // dummy
         XmlConfigurator xml = new XmlConfigurator();

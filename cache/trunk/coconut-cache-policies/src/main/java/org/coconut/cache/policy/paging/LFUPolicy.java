@@ -100,7 +100,7 @@ public class LFUPolicy<T> extends AbstractPolicy<T> implements Serializable, Clo
     }
 
     /**
-     * @see org.coconut.cache.spi.ReplacementPolicy#clear()
+     * @see org.coconut.cache.policy.ReplacementPolicy#clear()
      */
     public void clear() {
         while (evictNext() != null) {

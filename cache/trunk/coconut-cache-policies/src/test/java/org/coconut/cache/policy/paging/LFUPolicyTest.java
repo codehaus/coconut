@@ -9,7 +9,7 @@ import static org.coconut.cache.policy.PolicyTestUtils.addToPolicy;
 import static org.coconut.cache.policy.PolicyTestUtils.empty;
 import static org.coconut.test.CollectionUtils.seq;
 
-import org.coconut.cache.spi.ReplacementPolicy;
+import org.coconut.cache.policy.ReplacementPolicy;
 import org.junit.Test;
 
 /**

@@ -8,7 +8,8 @@ import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertSame;
 import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
 
-import org.coconut.cache.spi.ReplacementPolicy;
+import org.coconut.cache.policy.IsCacheable;
+import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.test.MockTestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -74,7 +75,17 @@ public class CacheEvictionConfigurationTest {
         assertEquals(Integer.MAX_VALUE, conf.getMaximumSize());
     }
 
-
+    @Test
+    public void isCacheable() {
+        IsCacheable i = MockTestCase.mockDummy(IsCacheable.class);
+        assertNull(conf.getIsCacheableFilter());
+        assertSame(conf, conf.setIsCacheableFilter(i));
+        assertEquals(i, conf.getIsCacheableFilter());
+    }
+    @Test
+    public void isCacheableXML() {
+    // TODO
+    }
     @Test
     public void testPolicy() {
         ReplacementPolicy<?> p = MockTestCase.mockDummy(ReplacementPolicy.class);
@@ -88,29 +99,28 @@ public class CacheEvictionConfigurationTest {
     // TODO
     }
 
+    // @Test
+    // public void testPreferableSize() {
+    // assertEquals(0, conf.getPreferableSize());
+    // assertSame(conf, conf.setPreferableSize(4));
+    // assertEquals(4, conf.getPreferableSize());
+    // }
+    //
+    // @Test(expected = IllegalArgumentException.class)
+    // public void testPreferableSizeIAE() {
+    // conf.setPreferableSize(-1);
+    // }
+    //
+    // @Test
+    // public void testPreferableSizeXML() throws Exception {
+    // conf = reloadService(conf);
+    // assertEquals(0, conf.getPreferableSize());
+    // assertSame(conf, conf.setPreferableSize(Integer.MAX_VALUE));
+    //
+    // conf = reloadService(conf);
+    // assertEquals(Integer.MAX_VALUE, conf.getPreferableSize());
+    // }
 
- // @Test
- // public void testPreferableSize() {
- // assertEquals(0, conf.getPreferableSize());
- // assertSame(conf, conf.setPreferableSize(4));
- // assertEquals(4, conf.getPreferableSize());
- // }
- //
- // @Test(expected = IllegalArgumentException.class)
- // public void testPreferableSizeIAE() {
- // conf.setPreferableSize(-1);
- // }
- //
- // @Test
- // public void testPreferableSizeXML() throws Exception {
- // conf = reloadService(conf);
- // assertEquals(0, conf.getPreferableSize());
- // assertSame(conf, conf.setPreferableSize(Integer.MAX_VALUE));
- //
- // conf = reloadService(conf);
- // assertEquals(Integer.MAX_VALUE, conf.getPreferableSize());
- // }
-    
 // /**
 // * Test default time to live. The default is that entries never needs to be refreshed.
 // */

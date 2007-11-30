@@ -7,7 +7,7 @@ package org.coconut.cache.policy.util;
 import java.util.List;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.cache.spi.ReplacementPolicy;
+import org.coconut.cache.policy.ReplacementPolicy;
 
 /**
  * A ReplacementPolicyDecorator is used to decorate an existing ReplacementPolicy with additional
