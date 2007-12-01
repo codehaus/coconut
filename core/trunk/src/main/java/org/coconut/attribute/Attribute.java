@@ -46,6 +46,9 @@ public interface Attribute<T> {
      */
     boolean isValid(T value);
 
+    void unSet(AttributeMap attributes);
+    boolean isSet(AttributeMap attributes);
+
     T getValue(AttributeMap attributes);
 
     T getValue(AttributeMap attributes, T defaultValue);
@@ -55,13 +58,13 @@ public interface Attribute<T> {
      * 
      * @param attributes
      *            the attribute map to set the value in.
-     * @param t
+     * @param value
      *            the value that should be set
      * @return the specified attribute map
      */
-    AttributeMap setValue(AttributeMap attributes, T t);
+    AttributeMap setValue(AttributeMap attributes, T value);
 
     T fromString(String str);
 
-    void checkValid(T o);
+    void checkValid(T value);
 }

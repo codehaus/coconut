@@ -3,6 +3,8 @@
  */
 package org.coconut.attribute.common;
 
+import org.coconut.attribute.spi.AbstractAttributeTest;
+
 
 /**
  * Tests the {@link DateLastModifiedAttribute}.

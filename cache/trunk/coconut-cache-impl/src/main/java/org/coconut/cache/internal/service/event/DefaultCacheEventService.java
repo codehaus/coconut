@@ -257,7 +257,7 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
     }
 
     public void dexpired(Cache<K, V> cache, long started, CacheEntry<K, V> entry) {
-        dispatch(removed(cache, entry, true));
+        dispatch(expired(cache, entry));
     }
 
     public void afterRemoveAll(Cache<K, V> cache, long started, Collection<CacheEntry<K, V>> entries) {

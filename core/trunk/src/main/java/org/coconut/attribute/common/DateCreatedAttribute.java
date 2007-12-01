@@ -11,9 +11,8 @@ import org.coconut.attribute.spi.LongAttribute;
  * The <tt>Creation time</tt> attribute indicates the creation time of a cache element.
  * The mapped value must be of a type <tt>long</tt> between 1 and {@link Long#MAX_VALUE}.
  * 
- * @see #setCreationTime(AttributeMap, long)
- * @see #getCreationTime(AttributeMap)
- * @see #getCreationTime(AttributeMap, Clock)
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class DateCreatedAttribute extends LongAttribute {
     /** The default value of this attribute. */

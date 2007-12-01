@@ -13,64 +13,36 @@ import org.coconut.cache.service.event.CacheEvent;
 final class InternalEvent {
 
     /** Cannot instantiate. */
+    // /CLOVER:OFF
     private InternalEvent() {}
 
+    // /CLOVER:ON
+    static int cacheHashCode(Cache<?, ?> cache) {
+        return cache.getName().hashCode();
+    }
+
     /**
-     * The default implementation of the cache cleared event.
+     * Creates a new {@link CacheCleared} event from the specified parameters.
      * 
+     * @param previousSize
+     *            the size of the cache before it was cleared
+     * @param previousVolume
+     *            the capacity of the cache before it was cleared
+     * @param cache
+     *            the cache that was cleared
+     * @return a Cleared event from the specified parameters
      * @param <K>
      *            the type of keys maintained by the cache
      * @param <V>
      *            the type of values maintained by the cache
      */
-    static class Started<K, V> implements CacheEvent.CacheStarted<K, V> {
-        /** The cache that was cleared. */
-        private final Cache<K, V> cache;
+    static <K, V> CacheEvent.CacheCleared<K, V> cleared(Cache<K, V> cache, int previousSize,
+            long previousVolume) {
+        return new Cleared<K, V>(cache, previousSize, previousVolume);
+    }
 
-        /**
-         * Creates a new Started event.
-
-         * @param cache
-         *            the cache that was started
-         */
-        Started(final Cache<K, V> cache) {
-            if (cache == null) {
-                throw new NullPointerException("cache is null");
-            }
-            this.cache = cache;
-        }
-
-        /** {@inheritDoc} */
-        public Cache<K, V> getCache() {
-            return cache;
-        }
-
-        /** {@inheritDoc} */
-        public String getName() {
-            return CacheEvent.CacheStarted.NAME;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public boolean equals(Object obj) {
-            return obj instanceof CacheEvent.CacheStarted && equals((CacheEvent.CacheStarted) obj);
-        }
-
-        public boolean equals(CacheEvent.CacheStarted<K, V> event) {
-            return cache.equals(event.getCache()) && getName() == event.getName();
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public int hashCode() {
-            return cache.hashCode() ^ getName().hashCode();
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String toString() {
-            return getName();
-        }
+    static <K, V> CacheEvent.CacheStarted<K, V> started(Cache<K, V> cache) {
+        return new Started<K, V>(cache);
     }
 
     /**
@@ -85,11 +57,11 @@ final class InternalEvent {
         /** The cache that was cleared. */
         private final Cache<K, V> cache;
 
-        /** The capacity of the cache before it was cleared. */
-        private final long previousVolume;
-
         /** The size of the cache before it was cleared. */
         private final int previousSize;
+
+        /** The capacity of the cache before it was cleared. */
+        private final long previousVolume;
 
         /**
          * Creates a new Cleared event.
@@ -114,6 +86,18 @@ final class InternalEvent {
             this.cache = cache;
         }
 
+        public boolean equals(CacheEvent.CacheCleared<K, V> event) {
+            return cache.equals(event.getCache()) && getName() == event.getName()
+                    && getPreviousSize() == event.getPreviousSize()
+                    && getPreviousVolume() == event.getPreviousVolume();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof CacheEvent.CacheCleared && equals((CacheEvent.CacheCleared) obj);
+        }
+
         /** {@inheritDoc} */
         public Cache<K, V> getCache() {
             return cache;
@@ -125,25 +109,13 @@ final class InternalEvent {
         }
 
         /** {@inheritDoc} */
-        public long getPreviousVolume() {
-            return previousVolume;
-        }
-
-        /** {@inheritDoc} */
         public int getPreviousSize() {
             return previousSize;
         }
 
         /** {@inheritDoc} */
-        @Override
-        public boolean equals(Object obj) {
-            return obj instanceof CacheEvent.CacheCleared && equals((CacheEvent.CacheCleared) obj);
-        }
-
-        public boolean equals(CacheEvent.CacheCleared<K, V> event) {
-            return cache.equals(event.getCache()) && getName() == event.getName()
-                    && getPreviousSize() == event.getPreviousSize()
-                    && getPreviousVolume() == event.getPreviousVolume();
+        public long getPreviousVolume() {
+            return previousVolume;
         }
 
         /** {@inheritDoc} */
@@ -160,94 +132,62 @@ final class InternalEvent {
         }
     }
 
-// /**
-// * The default implementation of the cache Evicted event.
-// *
-// * @param <K>
-// * the type of keys maintained by the cache
-// * @param <V>
-// * the type of values maintained by the cache
-// */
-// static class Evicted<K, V> implements CacheEvent.CacheEvicted<K, V> {
-// private final Cache<K, V> cache;
-//
-// private final int currentSize;
-//
-// private final int previousSize;
-//
-// public Evicted(final Cache<K, V> cache, final int previousSize,
-// final int currentSize) {
-// this.cache = cache;
-// this.previousSize = previousSize;
-// this.currentSize = currentSize;
-// }
-//
-// /** {@inheritDoc} */
-// public Cache<K, V> getCache() {
-// return cache;
-// }
-//
-// /** {@inheritDoc} */
-// public int getCurrentSize() {
-// return currentSize;
-// }
-//
-// /** {@inheritDoc} */
-// public String getName() {
-// return CacheEvent.CacheEvicted.NAME;
-// }
-//
-// /** {@inheritDoc} */
-// public int getPreviousSize() {
-// return previousSize;
-// }
-// }
-//
-// /**
-// * An event indicating that {@link Cache#evict()} was called on a particular
-// * {@link Cache}.
-// */
-// interface CacheEvicted<K, V> extends CacheEvent<K, V> {
-// /** The unique name of the event. */
-// String NAME = "cache.evicted";
-//
-// /**
-// * Returns the current number of elements contained in the cache after evict has
-// * been called.
-// * @return the current number of elements contained in the cache after evict has
-// * been called
-// */
-// int getCurrentSize();
-//
-// /**
-// * Return the previous number of elements contained in the cache before the call
-// * to evict.
-// * @return the previous number of elements contained in the cache before the call
-// * to evict
-// */
-// int getPreviousSize();
-// }
     /**
-     * Creates a new {@link CacheCleared} event from the specified parameters.
+     * The default implementation of the cache cleared event.
      * 
-     * @param previousSize
-     *            the size of the cache before it was cleared
-     * @param previousVolume
-     *            the capacity of the cache before it was cleared
-     * @param cache
-     *            the cache that was cleared
-     * @return a Cleared event from the specified parameters
      * @param <K>
      *            the type of keys maintained by the cache
      * @param <V>
      *            the type of values maintained by the cache
      */
-    static <K, V> CacheEvent.CacheCleared<K, V> cleared(Cache<K, V> cache, int previousSize,
-            long previousVolume) {
-        return new Cleared<K, V>(cache, previousSize, previousVolume);
+    static class Started<K, V> implements CacheEvent.CacheStarted<K, V> {
+        /** The cache that was cleared. */
+        private final Cache<K, V> cache;
+
+        /**
+         * Creates a new Started event.
+         * 
+         * @param cache
+         *            the cache that was started
+         */
+        Started(final Cache<K, V> cache) {
+            if (cache == null) {
+                throw new NullPointerException("cache is null");
+            }
+            this.cache = cache;
+        }
+
+        public boolean equals(CacheEvent.CacheStarted<K, V> event) {
+            return cache.equals(event.getCache()) && getName() == event.getName();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof CacheEvent.CacheStarted && equals((CacheEvent.CacheStarted) obj);
+        }
+
+        /** {@inheritDoc} */
+        public Cache<K, V> getCache() {
+            return cache;
+        }
+
+        /** {@inheritDoc} */
+        public String getName() {
+            return CacheEvent.CacheStarted.NAME;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public int hashCode() {
+            return cacheHashCode(cache) ^ getName().hashCode();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString() {
+            return getName();
+        }
     }
 
-    static <K, V> CacheEvent.CacheStarted<K, V> started(Cache<K, V> cache) {
-        return new Started<K, V>(cache);
-    }
 }

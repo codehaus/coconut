@@ -5,6 +5,8 @@ package org.coconut.attribute.common;
 
 import java.util.Arrays;
 
+import org.coconut.attribute.spi.AbstractAttributeTest;
+
 public class CostAttributeTest extends AbstractAttributeTest {
 
     public CostAttributeTest() {

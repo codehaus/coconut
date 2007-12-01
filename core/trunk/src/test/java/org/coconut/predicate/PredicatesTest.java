@@ -3,7 +3,7 @@
  */
 package org.coconut.predicate;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
 
 import org.coconut.predicate.Predicates.AnyPredicate;
@@ -14,7 +14,7 @@ import org.junit.Test;
  * @version $Id$
  */
 public class PredicatesTest {
-    
+
     @Test
     public void anyType() {
         Predicate p = Predicates.anyType(Integer.class, Double.class);
@@ -23,10 +23,28 @@ public class PredicatesTest {
         assertFalse(p.evaluate(1l));
         assertFalse(p.evaluate(1.0f));
     }
-    
-    @Test(expected = NullPointerException.class)
-    public void notNullAndNPE() {
-        Predicate<Integer> p = Predicates.notNullAnd(null);
+
+    @Test
+    public void isNull() {
+        Predicate f = Predicates.isNull();
+        assertTrue(f.evaluate(null));
+        assertFalse(f.evaluate(1));
+        assertFalse(f.evaluate(f));
+        f.toString();// no fail
+    }
+
+    @Test
+    public void isNumber() {
+        assertSame(Predicates.IS_NUMBER, Predicates.isNumber());
+        assertTrue(Predicates.isNumber().evaluate(new Double(1)));
+        assertTrue(Predicates.isNumber().evaluate(new Float(1)));
+        assertTrue(Predicates.isNumber().evaluate(new Integer(1)));
+        assertTrue(Predicates.isNumber().evaluate(new Long(1)));
+        assertTrue(Predicates.isNumber().evaluate(new Byte((byte) 1)));
+        assertTrue(Predicates.isNumber().evaluate(new Short((short) 1)));
+
+        assertFalse(Predicates.isNumber().evaluate(Boolean.FALSE));
+        assertFalse(Predicates.isNumber().evaluate(new Character((char) 1)));
     }
 
     @Test
@@ -38,20 +56,16 @@ public class PredicatesTest {
         p.toString();
     }
 
+    @Test(expected = NullPointerException.class)
+    public void notNullAndNPE() {
+       Predicates.notNullAnd(null);
+    }
+
     @Test
-    public void testAnyEqualsFilter() {
+    public void anyEquals() {
         AnyPredicate<String> filter = (AnyPredicate) Predicates.anyEquals("1", "2");
         assertTrue(filter.evaluate("1"));
         assertTrue(filter.evaluate("2"));
         assertFalse(filter.evaluate("3"));
-    }
-
-    @Test
-    public void testNullFilter() {
-        Predicate f = Predicates.isNull();
-        assertTrue(f.evaluate(null));
-        assertFalse(f.evaluate(1));
-        assertFalse(f.evaluate(f));
-        f.toString();// no fail
     }
 }

@@ -19,5 +19,5 @@ public interface CompositePredicate<E> {
     /**
      * Returns all the predicates that are used for the accept method.
      */
-    List<Predicate<E>> getPredicates();
+    List<? extends Predicate<? super E>> getPredicates();
 }

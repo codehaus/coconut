@@ -8,6 +8,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 
 import org.coconut.cache.Cache;
+import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.defaults.UnsynchronizedCache;
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.test.MockTestCase;
 import org.junit.Test;
@@ -25,11 +27,10 @@ public class InternalEventTest {
         assertEquals(c, c);
         assertFalse(c.equals(InternalEvent.cleared(cache, 1, 3)));
         assertFalse(c.equals(InternalEvent.cleared(cache, 2, 2)));
-        assertFalse(c.equals(InternalEvent.cleared(MockTestCase.mockDummy(Cache.class),
-                1, 2)));
+        assertFalse(c.equals(InternalEvent.cleared(MockTestCase.mockDummy(Cache.class), 1, 2)));
         c.toString();
-        assertEquals(InternalEvent.cleared(cache, 1, 2).hashCode(), InternalEvent
-                .cleared(cache, 1, 2).hashCode());
+        assertEquals(InternalEvent.cleared(cache, 1, 2).hashCode(), InternalEvent.cleared(cache, 1,
+                2).hashCode());
     }
 
     @Test(expected = NullPointerException.class)
@@ -46,4 +47,26 @@ public class InternalEventTest {
     public void clearedIAE2() {
         InternalEvent.cleared(MockTestCase.mockDummy(Cache.class), 0, -1);
     }
+
+    @Test
+    public void started() {
+        Cache<Integer, String> cache = CacheConfiguration.<Integer, String> create("foo")
+                .newCacheInstance(UnsynchronizedCache.class);
+        CacheEvent.CacheStarted<Integer, String> c = InternalEvent.started(cache);
+        assertSame(cache, c.getCache());
+        assertEquals(CacheEvent.CacheStarted.NAME, c.getName());
+
+        assertEquals(c, c);
+        assertFalse(c.equals(new Object()));
+        assertFalse(c.equals(InternalEvent.started(MockTestCase.mockDummy(Cache.class))));
+        c.toString();
+        assertEquals(InternalEvent.started(cache).hashCode(), InternalEvent.started(cache)
+                .hashCode());
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void startedNPE() {
+        InternalEvent.started(null);
+    }
+
 }

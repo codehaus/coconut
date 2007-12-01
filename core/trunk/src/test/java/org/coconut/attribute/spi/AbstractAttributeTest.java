@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.attribute.common;
+package org.coconut.attribute.spi;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -19,13 +19,14 @@ import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.AttributeMaps;
 import org.coconut.internal.util.ClassUtils;
 import org.coconut.test.TestUtil;
-import org.junit.Before;
 import org.junit.Test;
 
 public abstract class AbstractAttributeTest {
 
     private final Attribute a;
+
     private final Object defaultValue;
+
     private final Class c;
 
     private final Collection valid;
@@ -50,6 +51,10 @@ public abstract class AbstractAttributeTest {
         }
     }
 
+    protected Attribute a() {
+        return a;
+    }
+
     @Test
     public void instance() throws Exception {
         assertSame(a, a.getClass().getField("INSTANCE").get(null));
@@ -68,7 +73,7 @@ public abstract class AbstractAttributeTest {
     }
 
     @Test
-    public void serializableAndSingleton() throws IOException, ClassNotFoundException {
+    public void serializableAndPreservesSingletonProperty() throws IOException, ClassNotFoundException {
         TestUtil.assertIsSerializable(a);
         assertSame(a, TestUtil.serializeAndUnserialize(a));
     }
@@ -146,7 +151,7 @@ public abstract class AbstractAttributeTest {
     }
 
     @Test
-    public void singletoninvalid() throws Exception {
+    public void singleton() throws Exception {
         Method singleton = a.getClass().getMethod("singleton", c);
         assertTrue(singleton.getReturnType().equals(AttributeMap.class));
         for (Object l : valid) {

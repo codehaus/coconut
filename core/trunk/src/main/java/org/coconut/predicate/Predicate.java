@@ -5,19 +5,21 @@
 package org.coconut.predicate;
 
 /**
- * A Filter class that can be used to filter elements. Can be used in the following way.
+ * A Predicate can determine a true or false value for any input of its parameterized
+ * type. For example, a FileIsDirectoryPredicate might implement Predicate<String>, and
+ * return true for any File that is a directory.
  * 
  * <pre>
- * class FileIsDirectoryFilter implements Filter&lt;File&gt; {
- *     public boolean accept(File file) {
+ * class FileIsDirectoryPredicate implements Predicate&lt;File&gt; {
+ *     public boolean evaluate(File file) {
  *         return file.isDirectory();
  *     }
  * }
  * </pre>
  * 
- * A number of files can then be tested against this filter accepting only the files that
- * are directories. A Filter should be stateless. Furthermore an application of the
- * <tt>accept</tt> method should not have any side effects.
+ * A number of files can then be tested against this predicate accepting only those files
+ * that are directories. A Predicate should be stateless. Furthermore an application of the
+ * <tt>evaluate</tt> method should not have any side effects.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id$

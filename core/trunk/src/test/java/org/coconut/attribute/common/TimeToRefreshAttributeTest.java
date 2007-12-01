@@ -3,7 +3,7 @@
  */
 package org.coconut.attribute.common;
 
-import java.util.Arrays;
+import org.coconut.attribute.spi.AbstractDurationAttributeTest;
 
 /**
  * Tests the {@link TimeToRefreshAttribute}.
@@ -11,10 +11,9 @@ import java.util.Arrays;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class TimeToRefreshAttributeTest extends AbstractAttributeTest {
+public class TimeToRefreshAttributeTest extends AbstractDurationAttributeTest {
 
     public TimeToRefreshAttributeTest() {
-        super(TimeToRefreshAttribute.INSTANCE, NON_NEGATIV_LONGS, NEGATIV_LONGS);
+        super(TimeToRefreshAttribute.INSTANCE);
     }
-
 }

@@ -3,7 +3,6 @@
  */
 package org.coconut.cache.internal.service.event;
 
-import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.event.CacheEntryEvent;
@@ -23,33 +22,8 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
     }
 
     /** {@inheritDoc} */
-    public AttributeMap getAttributes() {
-        throw new UnsupportedOperationException();
-    }
-
-    /** {@inheritDoc} */
     public Cache<K, V> getCache() {
         return cache;
-    }
-
-    /** {@inheritDoc} */
-    public double getCost() {
-        return entry.getCost();
-    }
-
-    /** {@inheritDoc} */
-    public long getCreationTime() {
-        return entry.getCreationTime();
-    }
-
-    /** {@inheritDoc} */
-    public long getExpirationTime() {
-        return entry.getExpirationTime();
-    }
-
-    /** {@inheritDoc} */
-    public long getHits() {
-        return entry.getHits();
     }
 
     /** {@inheritDoc} */
@@ -58,23 +32,12 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
     }
 
     /** {@inheritDoc} */
-    public long getLastAccessTime() {
-        return entry.getLastAccessTime();
-    }
-
-    /** {@inheritDoc} */
-    public long getLastUpdateTime() {
-        return entry.getLastUpdateTime();
-    }
-
-    /** {@inheritDoc} */
-    public long getSize() {
-        return entry.getSize();
-    }
-
-    /** {@inheritDoc} */
     public V getValue() {
         return entry.getValue();
+    }
+
+    public int hashCode() {
+        return getKey().hashCode();
     }
 
     /** {@inheritDoc} */
@@ -97,31 +60,41 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
     }
 
     private boolean equals(CacheEntryEvent<K, V> event) {
-        return this.getKey().equals(event.getKey())
-                && this.getValue().equals(event.getValue());
+        return this.getKey().equals(event.getKey()) && this.getValue().equals(event.getValue());
     }
 
-    public int hashCode() {
-        return getKey().hashCode();
+    static <K, V> CacheEntryEvent.ItemAdded<K, V> added(Cache<K, V> cache, CacheEntry<K, V> entry,
+            boolean isLoaded) {
+        return new AddedEvent<K, V>(cache, entry);
+    }
+
+    static <K, V> CacheEntryEvent<K, V> evicted(Cache<K, V> cache, CacheEntry<K, V> entry) {
+        return new RemovedEvent<K, V>(cache, entry, false);
+    }
+
+    static <K, V> CacheEntryEvent<K, V> expired(Cache<K, V> cache, CacheEntry<K, V> entry) {
+        return new RemovedEvent<K, V>(cache, entry, true);
+    }
+
+    static <K, V> CacheEntryEvent<K, V> removed(Cache<K, V> cache, CacheEntry<K, V> entry,
+            boolean isExpired) {
+        return new RemovedEvent<K, V>(cache, entry, isExpired);
+    }
+
+    static <K, V> CacheEntryEvent<K, V> updated(Cache<K, V> cache, CacheEntry<K, V> entry,
+            V previous, boolean isLoaded, boolean isExpired) {
+        return new ChangedEvent<K, V>(cache, entry, previous, isExpired);
     }
 
     static class AddedEvent<K, V> extends InternalEntryEvent<K, V> implements
             CacheEntryEvent.ItemAdded<K, V> {
 
-        private final boolean wasLoaded;
-
         /**
          * @param cache
          * @param entry
          */
-        AddedEvent(Cache<K, V> cache, CacheEntry<K, V> entry, boolean wasLoaded) {
+        AddedEvent(Cache<K, V> cache, CacheEntry<K, V> entry) {
             super(cache, entry);
-            this.wasLoaded = wasLoaded;
-        }
-
-        /** {@inheritDoc} */
-        public String getName() {
-            return CacheEntryEvent.ItemAdded.NAME;
         }
 
         @Override
@@ -131,6 +104,11 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
                 return super.equals(event); // && isLoaded() == event.isLoaded();
             }
             return false;
+        }
+
+        /** {@inheritDoc} */
+        public String getName() {
+            return CacheEntryEvent.ItemAdded.NAME;
         }
 
         @Override
@@ -144,20 +122,16 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
             CacheEntryEvent.ItemUpdated<K, V> {
         private boolean isExpired;
 
-        private boolean isLoaded;
-
         private V previous;
 
         /**
          * @param cache
          * @param entry
          */
-        ChangedEvent(Cache<K, V> cache, CacheEntry<K, V> entry, V previous,
-                boolean isExpired, boolean isLoaded) {
+        ChangedEvent(Cache<K, V> cache, CacheEntry<K, V> entry, V previous, boolean isExpired) {
             super(cache, entry);
             this.previous = previous;
             this.isExpired = isExpired;
-            this.isLoaded = isLoaded;
         }
 
         /** {@inheritDoc} */
@@ -200,36 +174,5 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
             return hasExpired;
         }
 
-    }
-
-    static <K, V> CacheEntryEvent.ItemAdded<K, V> added(Cache<K, V> cache,
-            CacheEntry<K, V> entry, boolean isLoaded) {
-        return new AddedEvent<K, V>(cache, entry, isLoaded);
-    }
-
-    static <K, V> CacheEntryEvent<K, V> evicted(Cache<K, V> cache, CacheEntry<K, V> entry) {
-        return new RemovedEvent<K, V>(cache, entry, false);
-    }
-
-    static <K, V> CacheEntryEvent<K, V> expired(Cache<K, V> cache, CacheEntry<K, V> entry) {
-        return new RemovedEvent<K, V>(cache, entry, true);
-    }
-
-// static <K, V> CacheEntryEvent<K, V> hit(Cache<K, V> cache, CacheEntry<K, V> entry) {
-// return new HitEvent<K, V>(cache, entry);
-// }
-//
-// static <K, V> CacheEntryEvent<K, V> miss(Cache<K, V> cache, K key) {
-// return new MissEvent<K, V>(cache, key);
-// }
-
-    static <K, V> CacheEntryEvent<K, V> removed(Cache<K, V> cache,
-            CacheEntry<K, V> entry, boolean isExpired) {
-        return new RemovedEvent<K, V>(cache, entry, isExpired);
-    }
-
-    static <K, V> CacheEntryEvent<K, V> updated(Cache<K, V> cache,
-            CacheEntry<K, V> entry, V previous, boolean isLoaded, boolean isExpired) {
-        return new ChangedEvent<K, V>(cache, entry, previous, isLoaded, isExpired);
     }
 }

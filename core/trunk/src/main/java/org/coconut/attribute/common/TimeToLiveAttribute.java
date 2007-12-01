@@ -6,7 +6,6 @@ package org.coconut.attribute.common;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.AttributeMaps;
 import org.coconut.attribute.spi.DurationAttribute;
 
 /**
@@ -15,15 +14,13 @@ import org.coconut.attribute.spi.DurationAttribute;
  * measured in nanoseconds. Use {@link java.util.concurrent.TimeUnit} to convert between
  * different time units.
  * 
- * @see org.coconut.cache.service.expiration.CacheExpirationService
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class TimeToLiveAttribute extends DurationAttribute {
 
     /** The default value of this attribute. */
-    public static final long DEFAULT_VALUE = 0;
-
-    /** The timeunit of this attribute. */
-    public static final TimeUnit TIME_UNIT = TimeUnit.NANOSECONDS;
+    public static final long DEFAULT_VALUE = DurationAttribute.DEFAULT_DURATION;
 
     /** The singleton instance of this attribute. */
     public final static TimeToLiveAttribute INSTANCE = new TimeToLiveAttribute();
@@ -31,26 +28,15 @@ public class TimeToLiveAttribute extends DurationAttribute {
     /** The name of this attribute. */
     public static final String NAME = "timeToLive";
 
+    /** The time unit of this attribute. */
+    public static final TimeUnit TIME_UNIT = TimeUnit.NANOSECONDS;
+
     /** serialVersionUID. */
     private static final long serialVersionUID = -2353351535602223603L;
 
     /** Creates a new TimeToLiveAttribute. */
     private TimeToLiveAttribute() {
         super(NAME);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void checkValid(long ttl) {
-        if (ttl < 0) {
-            throw new IllegalArgumentException("invalid timeToLive (timeToLiveNs = " + ttl + ")");
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean isValid(long ttl) {
-        return ttl >= 0;
     }
 
     /** @return Preserves singleton property */
@@ -78,15 +64,14 @@ public class TimeToLiveAttribute extends DurationAttribute {
      * 
      * @param attributes
      *            the attribute map to set set specified value in
-     * @param value
+     * @param duration
      *            the value that this attribute should be set to
      * @return the specified attribute map
      */
-    public static AttributeMap set(AttributeMap attributes, long value) {
-        return INSTANCE.setAttribute(attributes, value);
+    public static AttributeMap set(AttributeMap attributes, long duration, TimeUnit unit) {
+        return INSTANCE.setAttribute(attributes, duration, unit);
     }
-    //TODO replace this with
-    //public static AttributeMap set(AttributeMap attributes, long value, TimeUnit unit) {
+
     /**
      * Returns an AttributeMap containing only this attribute mapping to specified value.
      * 
@@ -94,8 +79,7 @@ public class TimeToLiveAttribute extends DurationAttribute {
      *            the value to map to
      * @return an AttributeMap containing only this attribute mapping to specified value
      */
-    public static AttributeMap singleton(long value) {
-        INSTANCE.checkValid(value);
-        return AttributeMaps.singleton(INSTANCE, value);
+    public static AttributeMap singleton(long value, TimeUnit unit) {
+        return INSTANCE.s(value, unit);
     }
 }

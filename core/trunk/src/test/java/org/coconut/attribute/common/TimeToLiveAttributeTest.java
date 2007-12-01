@@ -3,6 +3,8 @@
  */
 package org.coconut.attribute.common;
 
+import org.coconut.attribute.spi.AbstractDurationAttributeTest;
+
 
 /**
  * Tests the {@link TimeToLiveAttribute}.
@@ -10,10 +12,10 @@ package org.coconut.attribute.common;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class TimeToLiveAttributeTest extends AbstractAttributeTest {
+public class TimeToLiveAttributeTest extends AbstractDurationAttributeTest {
 
     public TimeToLiveAttributeTest() {
-        super(TimeToLiveAttribute.INSTANCE, NON_NEGATIV_LONGS, NEGATIV_LONGS);
+        super(TimeToLiveAttribute.INSTANCE);
     }
 
 }

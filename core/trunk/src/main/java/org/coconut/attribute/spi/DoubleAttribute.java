@@ -7,11 +7,27 @@ import org.coconut.attribute.AttributeMap;
 
 public abstract class DoubleAttribute extends AbstractAttribute<Double> {
 
+    /** The default value of this attribute. */
     private final double defaultValue;
 
     public DoubleAttribute(String name, Double defaultValue) {
         super(name, Double.TYPE, defaultValue);
         this.defaultValue = defaultValue;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final void checkValid(Double o) {
+        checkValid(o.doubleValue());
+    }
+
+    public void checkValid(double d) {
+        checkNotNaNInfinity(d);
+    }
+
+    /** {@inheritDoc} */
+    public Double fromString(String str) {
+        return Double.parseDouble(str);
     }
 
     public double getPrimitive(AttributeMap attributes) {
@@ -22,15 +38,8 @@ public abstract class DoubleAttribute extends AbstractAttribute<Double> {
         return attributes.getDouble(this, defaultValue);
     }
 
-    public AttributeMap setAttribute(AttributeMap attributes, double object) {
-        if (attributes == null) {
-            throw new NullPointerException("attributes is null");
-        }
-        checkValid(object);
-        attributes.putDouble(this, object);
-        return attributes;
-    }
-
+    /** {@inheritDoc} */
+    @Override
     public final boolean isValid(Double value) {
         return isValid(value.doubleValue());
     }
@@ -39,17 +48,13 @@ public abstract class DoubleAttribute extends AbstractAttribute<Double> {
         return notNaNInfinity(value);
     }
 
-    @Override
-    public final void checkValid(Double o) {
-        checkValid(o.doubleValue());
-    }
-
-    protected void checkValid(double d) {
-        checkNotNaNInfinity(d);
-    }
-
-    protected boolean notNaNInfinity(double d) {
-        return !Double.isNaN(d) && !Double.isInfinite(d);
+    public AttributeMap setAttribute(AttributeMap attributes, double object) {
+        if (attributes == null) {
+            throw new NullPointerException("attributes is null");
+        }
+        checkValid(object);
+        attributes.putDouble(this, object);
+        return attributes;
     }
 
     protected void checkNotNaNInfinity(double d) {
@@ -62,7 +67,7 @@ public abstract class DoubleAttribute extends AbstractAttribute<Double> {
         }
     }
 
-    public Double fromString(String str) {
-        return Double.parseDouble(str);
+    protected boolean notNaNInfinity(double d) {
+        return !Double.isNaN(d) && !Double.isInfinite(d);
     }
 }

@@ -6,6 +6,7 @@ package org.coconut.predicate;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -13,13 +14,17 @@ import java.util.List;
 import org.coconut.predicate.spi.CompositePredicate;
 
 /**
+ * Various implementations of {@link Predicate}.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
 public final class Predicates {
+
     /** A predicate that always return False. */
     public static final Predicate FALSE = Predicates.FalsePredicate.INSTANCE;
 
+    /** A predicate that returns whether or not the element being tested is null. */
     public final static Predicate IS_NUMBER = isType(Number.class);
 
     /** A predicate that always return True. */
@@ -30,17 +35,36 @@ public final class Predicates {
     private Predicates() {}
 
     // /CLOVER:ON
-
     /**
-     * Returns a Predicate that only accepts an element if <tt>all</tt> the predicates
-     * accept the element. The Predicate will use a copy of the array of supplied
-     * predicates.
+     * Returns a Predicate that evaluates to true iff each of its components evaluates to
+     * true. The returned predicate uses short-circuit evaluation (or minimal evaluation).
+     * That is subsequent arguments are only evaluated if the previous arguments does not
+     * suffice to determine the truth value. The Predicate will use a copy of the array of
+     * supplied predicates.
+     * <p>
+     * If all the supplied predicates are serializable the return predicate will also be
+     * serializable.
      * 
      * @param predicates
-     *            the predicates to test
+     *            the predicates to test against
      * @return a Predicate that tests all elements
+     * @param <E>
+     *            the type of elements accepted by the predicate
      */
-    public static <E> Predicate<E> all(Predicate<E>... predicates) {
+    public static <E> Predicate<E> all(Predicate<? super E>... predicates) {
+        return new Predicates.AllPredicate<E>(predicates);
+    }
+
+    /**
+     * As {@link #all(Predicate...)} except taking an {@link Iterable} as parameter.
+     * 
+     * @param predicates
+     *            the predicates to evaluate against
+     * @return a Predicate that tests all elements
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     */
+    public static <E> Predicate<E> all(Iterable<? extends Predicate<? super E>> predicates) {
         return new Predicates.AllPredicate<E>(predicates);
     }
 
@@ -69,7 +93,7 @@ public final class Predicates {
         }
         return Predicates.any(cbf);
     }
-    
+
     public static <E> Predicate<E> between(E first, E second) {
         return and(Predicates.greatherThenOrEqual(first), Predicates.lessThenOrEqual(second));
     }
@@ -97,8 +121,7 @@ public final class Predicates {
         return new Predicates.GreaterThenPredicate<E>(element);
     }
 
-    public static <E> Predicate<E> greatherThen(E object,
-            final Comparator<? extends E> comparator) {
+    public static <E> Predicate<E> greatherThen(E object, final Comparator<? extends E> comparator) {
         return new Predicates.GreaterThenPredicate<E>(object, comparator);
     }
 
@@ -130,8 +153,7 @@ public final class Predicates {
         return new Predicates.LessThenPredicate<E>(element);
     }
 
-    public static <E> Predicate<E> lessThen(E object,
-            final Comparator<? extends E> comparator) {
+    public static <E> Predicate<E> lessThen(E object, final Comparator<? extends E> comparator) {
         return new Predicates.LessThenPredicate<E>(object, comparator);
     }
 
@@ -185,6 +207,11 @@ public final class Predicates {
         return TRUE;
     }
 
+    @SuppressWarnings("unchecked")
+    public static <E> Predicate<E> isNumber() {
+        return IS_NUMBER;
+    }
+
     /**
      * This method returns a Predicate that performs xor on two other predicates.
      * 
@@ -198,18 +225,42 @@ public final class Predicates {
         return new Predicates.XorPredicate<E>(left, right);
     }
 
+    static <E> Predicate<E>[] iterableToArray(Iterable<? extends Predicate<? super E>> iterable) {
+        if (iterable == null) {
+            throw new NullPointerException("iterable is null");
+        }
+        ArrayList list = new ArrayList();
+        for (Predicate p : iterable) {
+            if (p == null) {
+                throw new NullPointerException("iterable contained a null");
+            }
+            list.add(p);
+        }
+        return (Predicate[]) list.toArray(new Predicate[list.size()]);
+    }
+
     /**
      * A Predicate that tests that <tt>all</tt> of the supplied Predicates accepts a
      * given element.
      */
     final static class AllPredicate<E> implements Predicate<E>, CompositePredicate<E>,
-            Iterable<Predicate<E>>, Serializable {
+            Iterable<Predicate<? super E>>, Serializable {
 
         /** Default <code>serialVersionUID</code>. */
-        private static final long serialVersionUID = -8945752276662769791L;
+        private static final long serialVersionUID = -2054989348063839373L;
 
         /** All the predicates that are being checked. */
-        private final Predicate<E>[] predicates;
+        private final Predicate<? super E>[] predicates;
+
+        /**
+         * Constructs a new AllPredicate.
+         * 
+         * @param iterable
+         *            the iterable to test
+         */
+        public AllPredicate(Iterable<? extends Predicate<? super E>> iterable) {
+            this.predicates = iterableToArray(iterable);
+        }
 
         /**
          * Constructs a new AllPredicate. The Predicate will use a copy of the array of
@@ -237,7 +288,7 @@ public final class Predicates {
          * @return <tt>true</tt> if all supplied Predicates accepts the element.
          */
         public boolean evaluate(E element) {
-            for (Predicate<E> predicate : predicates) {
+            for (Predicate<? super E> predicate : predicates) {
                 if (!predicate.evaluate(element)) {
                     return false;
                 }
@@ -250,12 +301,12 @@ public final class Predicates {
          * 
          * @return the predicates we are testing against
          */
-        public List<Predicate<E>> getPredicates() {
-            return new ArrayList<Predicate<E>>(Arrays.asList(predicates));
+        public List<Predicate<? super E>> getPredicates() {
+            return Collections.unmodifiableList(Arrays.asList(predicates));
         }
 
         /** {@inheritDoc} */
-        public Iterator<Predicate<E>> iterator() {
+        public Iterator<Predicate<? super E>> iterator() {
             return Arrays.asList(predicates).iterator();
         }
 
@@ -837,8 +888,7 @@ public final class Predicates {
         public LessThenPredicate(E object) {
             if (object == null) {
                 throw new NullPointerException("element is null");
-            }
-            if (!(object instanceof Comparable)) {
+            } else if (!(object instanceof Comparable)) {
                 throw new IllegalArgumentException("object not instanceof Comparable");
             }
             this.object = object;
@@ -855,8 +905,7 @@ public final class Predicates {
         public LessThenPredicate(E object, final Comparator<? extends E> comparator) {
             if (object == null) {
                 throw new NullPointerException("element is null");
-            }
-            if (comparator == null) {
+            } else if (comparator == null) {
                 throw new NullPointerException("comparator is null");
             }
             this.object = object;
@@ -1205,5 +1254,4 @@ public final class Predicates {
             return "(" + left + ") xor (" + right + ")";
         }
     }
-
 }

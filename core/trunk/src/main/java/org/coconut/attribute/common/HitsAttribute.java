@@ -11,8 +11,8 @@ import org.coconut.attribute.spi.LongAttribute;
  * The <tt>Hits</tt> attribute indicates the number of hits for a cache element. The
  * mapped value must be of a type <tt>long</tt> between 0 and {@link Long#MAX_VALUE}.
  * 
- * @see #setHits(AttributeMap, long)
- * @see #getHits(AttributeMap)
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class HitsAttribute extends LongAttribute {
 
