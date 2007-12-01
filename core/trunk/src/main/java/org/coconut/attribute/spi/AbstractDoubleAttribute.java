@@ -5,12 +5,12 @@ package org.coconut.attribute.spi;
 
 import org.coconut.attribute.AttributeMap;
 
-public abstract class DoubleAttribute extends AbstractAttribute<Double> {
+public abstract class AbstractDoubleAttribute extends AbstractAttribute<Double> {
 
     /** The default value of this attribute. */
     private final double defaultValue;
 
-    public DoubleAttribute(String name, Double defaultValue) {
+    public AbstractDoubleAttribute(String name, double defaultValue) {
         super(name, Double.TYPE, defaultValue);
         this.defaultValue = defaultValue;
     }

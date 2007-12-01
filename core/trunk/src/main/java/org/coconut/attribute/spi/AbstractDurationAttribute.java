@@ -6,13 +6,12 @@ package org.coconut.attribute.spi;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.AttributeMaps;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public abstract class DurationAttribute extends LongAttribute {
+public abstract class AbstractDurationAttribute extends AbstractLongAttribute {
     protected static long DEFAULT_DURATION = Long.MAX_VALUE;
 
     /**
@@ -21,23 +20,14 @@ public abstract class DurationAttribute extends LongAttribute {
      * @param name
      *            the name of the attribute
      */
-    public DurationAttribute(String name) {
+    public AbstractDurationAttribute(String name) {
         super(name, DEFAULT_DURATION);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void checkValid(long time) {
-        if (time < 0) {
-            throw new IllegalArgumentException("invalid " + getName() + "refreshTime (" + getName()
-                    + " = " + time + ")");
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public final boolean isValid(long value) {
-        return value >= 0;
+        return value > 0;
     }
 
     public long getPrimitive(AttributeMap attributes, TimeUnit unit) {
@@ -45,8 +35,8 @@ public abstract class DurationAttribute extends LongAttribute {
     }
 
     public long getPrimitive(AttributeMap attributes, TimeUnit unit, long defaultValue) {
-        long val = getPrimitive(attributes, -1);
-        if (val == -1) {
+        long val = getPrimitive(attributes, 0);
+        if (val == 0) {
             return defaultValue;
         } else {
             return convertTo(val, unit);
@@ -61,10 +51,8 @@ public abstract class DurationAttribute extends LongAttribute {
         return setAttribute(attributes, duration.longValue(), unit);
     }
 
-    protected AttributeMap s(long value, TimeUnit unit) {
-        final long converted = convertFrom(value, unit);
-        checkValid(converted);
-        return AttributeMaps.singleton(this, converted);
+    protected AttributeMap toSingleton(long value, TimeUnit unit) {
+        return super.toSingleton(convertFrom(value, unit));
     }
 
     static long convertFrom(long value, TimeUnit unit) {

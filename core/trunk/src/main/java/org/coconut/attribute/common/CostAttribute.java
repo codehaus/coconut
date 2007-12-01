@@ -5,7 +5,7 @@ package org.coconut.attribute.common;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.AttributeMaps;
-import org.coconut.attribute.spi.DoubleAttribute;
+import org.coconut.attribute.spi.AbstractDoubleAttribute;
 
 /**
  * The <tt>Cost</tt> attribute indicates the <tt>cost</tt> of retrieving or
@@ -16,7 +16,7 @@ import org.coconut.attribute.spi.DoubleAttribute;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class CostAttribute extends DoubleAttribute {
+public class CostAttribute extends AbstractDoubleAttribute {
 
     /** The default value of the Cost attribute. */
     public static final double DEFAULT_VALUE = 1.0;

@@ -19,6 +19,7 @@ import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.AttributeMaps;
 import org.coconut.internal.util.ClassUtils;
 import org.coconut.test.TestUtil;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public abstract class AbstractAttributeTest {
@@ -33,8 +34,13 @@ public abstract class AbstractAttributeTest {
 
     private final Collection invalid;
 
-    protected static final Collection<Long> NON_NEGATIV_LONGS = Arrays.asList(0l, 10l,
+    protected static final Collection<Long> NON_POSITIVE_LONGS = Arrays.asList(Long.MIN_VALUE,
+            -10l, -5l, -1l, 0L);
+
+    protected static final Collection<Long> NON_NEGATIV_LONGS = Arrays.asList(0l, 1L, 10l,
             Long.MAX_VALUE);
+
+    protected static final Collection<Long> POSITIV_LONGS = Arrays.asList(1L, 10l, Long.MAX_VALUE);
 
     protected static final Collection<Long> NEGATIV_LONGS = Arrays.asList(Long.MIN_VALUE, -10l,
             -5l, -1l);
@@ -73,7 +79,8 @@ public abstract class AbstractAttributeTest {
     }
 
     @Test
-    public void serializableAndPreservesSingletonProperty() throws IOException, ClassNotFoundException {
+    public void serializableAndPreservesSingletonProperty() throws IOException,
+            ClassNotFoundException {
         TestUtil.assertIsSerializable(a);
         assertSame(a, TestUtil.serializeAndUnserialize(a));
     }

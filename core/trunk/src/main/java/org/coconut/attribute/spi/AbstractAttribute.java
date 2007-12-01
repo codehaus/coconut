@@ -7,6 +7,7 @@ import java.io.Serializable;
 
 import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
+import org.coconut.attribute.AttributeMaps;
 
 /**
  * An abstract implementation of {@link Attribute}.
@@ -50,7 +51,12 @@ public abstract class AbstractAttribute<T> implements Attribute<T>, Serializable
     }
 
     /** {@inheritDoc} */
-    public void checkValid(T value) {/* all values are acceped. */}
+    public void checkValid(T value) {
+        if (!isValid(value)) {
+            throw new IllegalArgumentException("Illegal value for attribute " + getName()
+                    + ", value = " + value);
+        }
+    }
 
     /** {@inheritDoc} */
     public final Class<T> getAttributeType() {
@@ -84,9 +90,10 @@ public abstract class AbstractAttribute<T> implements Attribute<T>, Serializable
 
     /** {@inheritDoc} */
     public boolean isValid(T value) {
-        // all values are accepted.
+        // all values are accepted by default.
         return true;
     }
+
     /** {@inheritDoc} */
     public AttributeMap setValue(AttributeMap attributes, T value) {
         if (attributes == null) {
@@ -98,13 +105,18 @@ public abstract class AbstractAttribute<T> implements Attribute<T>, Serializable
     }
 
     /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    /** {@inheritDoc} */
     public void unSet(AttributeMap attributes) {
         attributes.remove(this);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return name;
+    protected AttributeMap toSingleton(T value) {
+        checkValid(value);
+        return AttributeMaps.singleton(this, value);
     }
 }

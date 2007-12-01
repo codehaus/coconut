@@ -9,11 +9,12 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
+import org.junit.Ignore;
 import org.junit.Test;
 
-public class AbstractDurationAttributeTest extends AbstractAttributeTest {
+public abstract class AbstractDurationAttributeTest extends AbstractAttributeTest {
     public AbstractDurationAttributeTest(Attribute a) {
-        super(a, NON_NEGATIV_LONGS, NEGATIV_LONGS);
+        super(a, POSITIV_LONGS, NON_POSITIVE_LONGS);
     }
 
     @Override
@@ -23,16 +24,16 @@ public class AbstractDurationAttributeTest extends AbstractAttributeTest {
                 TimeUnit.class);
         assertTrue(setMethod.getReturnType().equals(AttributeMap.class));
         AttributeMap am = newMap();
-        
+
         setMethod.invoke(null, am, 10, TimeUnit.NANOSECONDS);
         assertEquals(10l, am.getLong(a(), 0l));
-        
+
         setMethod.invoke(null, am, 10, TimeUnit.MICROSECONDS);
         assertEquals(10000l, am.getLong(a(), 0l));
 
         setMethod.invoke(null, am, Long.MAX_VALUE, TimeUnit.MICROSECONDS);
         assertEquals(Long.MAX_VALUE, am.getLong(a(), 0l));
-        
+
         try {
             setMethod.invoke(null, am, -1, TimeUnit.NANOSECONDS);
             throw new AssertionError("Should Throw");
@@ -61,7 +62,7 @@ public class AbstractDurationAttributeTest extends AbstractAttributeTest {
         assertEquals(1, map.size());
         assertTrue(map.containsKey(a()));
         assertEquals(Long.MAX_VALUE, map.get(a()));
-        
+
         try {
             singleton.invoke(null, -1, TimeUnit.NANOSECONDS);
             throw new AssertionError("Should Throw");

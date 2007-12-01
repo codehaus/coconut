@@ -5,7 +5,7 @@ package org.coconut.attribute.common;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.AttributeMaps;
-import org.coconut.attribute.spi.LongAttribute;
+import org.coconut.attribute.spi.AbstractLongAttribute;
 import org.coconut.core.Clock;
 
 /**
@@ -16,7 +16,7 @@ import org.coconut.core.Clock;
  * @see #setLastUpdated(AttributeMap, long)
  * @see #getLastUpdated(AttributeMap, Clock)
  */
-public class DateLastModifiedAttribute extends LongAttribute {
+public class DateLastModifiedAttribute extends AbstractLongAttribute {
 
     /** The default value of this attribute. */
     public static final long DEFAULT_VALUE = 0;

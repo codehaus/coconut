@@ -12,13 +12,15 @@ import org.coconut.attribute.AttributeMaps;
 import org.junit.Test;
 
 public class AttributeTest {
-    static final AbstractAttribute<String> DA = new DefaultAttribute("name", String.class,
-            "default")
-    {};
+    static final AbstractAttribute<String> ATR = new DefaultAttribute("name", String.class,
+            "default");
 
+    static final AbstractAttribute<String> ATR_VALIDATE = new ValidateAttribute("fooignore");
+
+    // ValidateAttribute
     AttributeMap am1 = new AttributeMaps.DefaultAttributeMap();
 
-    AttributeMap am2 = AttributeMaps.singleton(DA, "value");
+    AttributeMap am2 = AttributeMaps.singleton(ATR, "value");
 
     @Test(expected = NullPointerException.class)
     public void AbstractAttributeNPE() {
@@ -31,35 +33,21 @@ public class AttributeTest {
     }
 
     @Test
-    public void set() {
-        AttributeMap am = new AttributeMaps.DefaultAttributeMap();
-        assertEquals(0, am.size());
-        assertSame(am, DA.setValue(am, "a"));
-        assertEquals(1, am.size());
-        assertEquals("a", am.get(DA));
-        assertSame(am, DA.setValue(am, null));
-        assertEquals(1, am.size());
-        assertNull(am.get(DA));
-    }
-
-    @Test
-    public void setValidate() {
-        Attribute a = new ValidateAttribute("fooignore");
-        a.setValue(new AttributeMaps.DefaultAttributeMap(), "fooasd");
+    public void checkValid() {
+        ATR_VALIDATE.checkValid("foowerwer");
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void setIllegal() {
-        Attribute a = new ValidateAttribute("fooignore");
-        a.setValue(new AttributeMaps.DefaultAttributeMap(), "asd");
+    public void checkValidIAE() {
+        ATR_VALIDATE.checkValid("werwer");
     }
 
     @Test
     public void get() {
-        assertEquals("default", DA.getValue(am1));
-        assertEquals("value", DA.getValue(am2));
-        assertEquals("foo", DA.getValue(am1, "foo"));
-        assertEquals("value", DA.getValue(am2, "foo"));
+        assertEquals("default", ATR.getValue(am1));
+        assertEquals("value", ATR.getValue(am2));
+        assertEquals("foo", ATR.getValue(am1, "foo"));
+        assertEquals("value", ATR.getValue(am2, "foo"));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -69,8 +57,8 @@ public class AttributeTest {
 
     @Test
     public void isSet() {
-        assertFalse(DA.isSet(am1));
-        assertTrue(DA.isSet(am2));
+        assertFalse(ATR.isSet(am1));
+        assertTrue(ATR.isSet(am2));
     }
 
     @Test
@@ -78,41 +66,83 @@ public class AttributeTest {
         assertNull(new DefaultAttribute("name", String.class, null).getDefaultValue());
     }
 
+    @Test
+    public void set() {
+        AttributeMap am = new AttributeMaps.DefaultAttributeMap();
+        assertEquals(0, am.size());
+        assertSame(am, ATR.setValue(am, "a"));
+        assertEquals(1, am.size());
+        assertEquals("a", am.get(ATR));
+        assertSame(am, ATR.setValue(am, null));
+        assertEquals(1, am.size());
+        assertNull(am.get(ATR));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void setIllegal() {
+        Attribute a = new ValidateAttribute("fooignore");
+        a.setValue(new AttributeMaps.DefaultAttributeMap(), "asd");
+    }
+
     @Test(expected = NullPointerException.class)
     public void setNPE() {
-        DA.setValue(null, "value");
+        ATR.setValue(null, "value");
+    }
+
+    @Test
+    public void setValidate() {
+        Attribute a = new ValidateAttribute("fooignore");
+        a.setValue(new AttributeMaps.DefaultAttributeMap(), "fooasd");
     }
 
     @Test
     public void test() {
-        assertEquals("name", DA.getName());
-        assertEquals(String.class, DA.getAttributeType());
-        assertEquals("default", DA.getDefaultValue());
+        assertEquals("name", ATR.getName());
+        assertEquals(String.class, ATR.getAttributeType());
+        assertEquals("default", ATR.getDefaultValue());
+    }
+
+    @Test
+    public void toSingleton() {
+        AttributeMap map = ATR.toSingleton("singleton");
+        assertEquals(1, map.size());
+        assertTrue(map.containsKey(ATR));
+        assertEquals("singleton", map.get(ATR));
+
+        map = ATR.toSingleton(null);
+        assertEquals(1, map.size());
+        assertTrue(map.containsKey(ATR));
+        assertNull(map.get(ATR));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void toSingletonIAE() {
+        ATR_VALIDATE.toSingleton("sdfsdf");
     }
 
     @Test
     public void toStrng() {
-        assertEquals("name", DA.toString());
+        assertEquals("name", ATR.toString());
     }
 
     @Test
     public void unSet() {
         AttributeMap am1 = new AttributeMaps.DefaultAttributeMap();
-        AttributeMap am2 = AttributeMaps.singleton(DA, "value");
+        AttributeMap am2 = AttributeMaps.singleton(ATR, "value");
         assertEquals(0, am1.size());
         assertEquals(1, am2.size());
-        DA.unSet(am1);
-        DA.unSet(am2);
+        ATR.unSet(am1);
+        ATR.unSet(am2);
         assertEquals(0, am1.size());
         assertEquals(0, am2.size());
     }
 
     @Test
     public void valid() {
-        assertTrue(DA.isValid(""));
-        assertTrue(DA.isValid(null));
-        DA.checkValid("");
-        DA.checkValid(null);
+        assertTrue(ATR.isValid(""));
+        assertTrue(ATR.isValid(null));
+        ATR.checkValid("");
+        ATR.checkValid(null);
     }
 
     protected AttributeMap newMap() {
@@ -132,13 +162,6 @@ public class AttributeTest {
     static class ValidateAttribute extends DefaultAttribute {
         public ValidateAttribute(String defaultValue) {
             super("validate", String.class, defaultValue);
-        }
-
-        @Override
-        public void checkValid(String value) {
-            if (!isValid(value)) {
-                throw new IllegalArgumentException();
-            }
         }
 
         @Override

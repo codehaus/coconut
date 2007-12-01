@@ -6,7 +6,7 @@ package org.coconut.attribute.common;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.spi.DurationAttribute;
+import org.coconut.attribute.spi.AbstractDurationAttribute;
 
 /**
  * This key can be used to indicate how long time a cache entry should live before it
@@ -17,10 +17,10 @@ import org.coconut.attribute.spi.DurationAttribute;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class TimeToLiveAttribute extends DurationAttribute {
+public class TimeToLiveAttribute extends AbstractDurationAttribute {
 
     /** The default value of this attribute. */
-    public static final long DEFAULT_VALUE = DurationAttribute.DEFAULT_DURATION;
+    public static final long DEFAULT_VALUE = AbstractDurationAttribute.DEFAULT_DURATION;
 
     /** The singleton instance of this attribute. */
     public final static TimeToLiveAttribute INSTANCE = new TimeToLiveAttribute();
@@ -80,6 +80,6 @@ public class TimeToLiveAttribute extends DurationAttribute {
      * @return an AttributeMap containing only this attribute mapping to specified value
      */
     public static AttributeMap singleton(long value, TimeUnit unit) {
-        return INSTANCE.s(value, unit);
+        return INSTANCE.toSingleton(value, unit);
     }
 }

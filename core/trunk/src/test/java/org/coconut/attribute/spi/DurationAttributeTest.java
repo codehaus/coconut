@@ -1,25 +1,40 @@
 package org.coconut.attribute.spi;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.AttributeMaps;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class DurationAttributeTest {
-    static final DurationAttribute DA = new DurationAttribute("foo") {};
+    static final AbstractDurationAttribute DA = new AbstractDurationAttribute("foo") {};
 
-    protected AttributeMap newMap() {
-        return new AttributeMaps.DefaultAttributeMap();
+    @Test
+    public void isValid() {
+        assertFalse(DA.isValid(Long.MIN_VALUE));
+        assertFalse(DA.isValid(0));
+        assertTrue(DA.isValid(1));
+        assertTrue(DA.isValid(Long.MAX_VALUE));
     }
 
     @Test
-    public void s() {
-        assertEquals(10l, DA.s(10, TimeUnit.NANOSECONDS).get(DA));
-        assertEquals(10000l, DA.s(10, TimeUnit.MICROSECONDS).get(DA));
-        assertEquals(Long.MAX_VALUE, DA.s(Long.MAX_VALUE, TimeUnit.MICROSECONDS).get(DA));
+    public void checkValid() {
+        assertTrue(DA.isValid(1));
+        assertTrue(DA.isValid(Long.MAX_VALUE));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void checkValidIAE() {
+        DA.checkValid(0);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void checkValidIAE1() {
+        DA.checkValid(Long.MIN_VALUE);
     }
 
     @Test
@@ -45,7 +60,7 @@ public class DurationAttributeTest {
         assertEquals(-1l, DA.getPrimitive(am, TimeUnit.NANOSECONDS, -1l));
         assertEquals(1l, DA.getPrimitive(am, TimeUnit.MICROSECONDS, 1l));
         assertEquals(Long.MAX_VALUE, DA.getPrimitive(am, TimeUnit.MICROSECONDS, Long.MAX_VALUE));
-        
+
         assertEquals(1l, DA.getPrimitive(am1, TimeUnit.NANOSECONDS, 2));
         assertEquals(10000l, DA.getPrimitive(am10000, TimeUnit.NANOSECONDS, 2));
         assertEquals(Long.MAX_VALUE, DA.getPrimitive(ammax, TimeUnit.NANOSECONDS, 2));
@@ -62,5 +77,21 @@ public class DurationAttributeTest {
         assertEquals(10000l, DA.setAttribute(am, new Long(10), TimeUnit.MICROSECONDS).get(DA));
         assertEquals(Long.MAX_VALUE, DA.setAttribute(am, Long.MAX_VALUE, TimeUnit.MICROSECONDS)
                 .get(DA));
+    }
+
+    @Test
+    public void toSingleton() {
+        assertEquals(10l, DA.toSingleton(10, TimeUnit.NANOSECONDS).get(DA));
+        assertEquals(10000l, DA.toSingleton(10, TimeUnit.MICROSECONDS).get(DA));
+        assertEquals(Long.MAX_VALUE, DA.toSingleton(Long.MAX_VALUE, TimeUnit.MICROSECONDS).get(DA));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void toSingletonIAE() {
+        DA.toSingleton(-10, TimeUnit.NANOSECONDS);
+    }
+
+    protected AttributeMap newMap() {
+        return new AttributeMaps.DefaultAttributeMap();
     }
 }

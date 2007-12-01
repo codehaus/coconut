@@ -3,13 +3,16 @@
  */
 package org.coconut.attribute.spi;
 
+import java.util.concurrent.TimeUnit;
+
 import org.coconut.attribute.AttributeMap;
+import org.coconut.attribute.AttributeMaps;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public abstract class LongAttribute extends AbstractAttribute<Long> {
+public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
 
     /** The default value of this attribute. */
     private final long defaultValue;
@@ -22,7 +25,7 @@ public abstract class LongAttribute extends AbstractAttribute<Long> {
      * @param defaultValue
      *            the default value of this attribute
      */
-    public LongAttribute(String name, Long defaultValue) {
+    public AbstractLongAttribute(String name, long defaultValue) {
         super(name, Long.TYPE, defaultValue);
         this.defaultValue = defaultValue;
     }
@@ -33,7 +36,12 @@ public abstract class LongAttribute extends AbstractAttribute<Long> {
         checkValid(o.longValue());
     }
 
-    public void checkValid(long d) { /* default ok */}
+    public void checkValid(long value) {
+        if (!isValid(value)) {
+            throw new IllegalArgumentException("Illegal value for attribute " + getName()
+                    + ", value = " + value);
+        }
+    }
 
     /** {@inheritDoc} */
     public Long fromString(String str) {
@@ -64,6 +72,10 @@ public abstract class LongAttribute extends AbstractAttribute<Long> {
 
     public boolean isValid(long value) {
         return true;
+    }
+
+    protected AttributeMap toSingleton(long value) {
+        return super.toSingleton(value);
     }
 
     public AttributeMap setAttribute(AttributeMap attributes, long value) {

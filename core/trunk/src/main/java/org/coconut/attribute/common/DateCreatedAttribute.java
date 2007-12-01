@@ -5,7 +5,7 @@ package org.coconut.attribute.common;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.AttributeMaps;
-import org.coconut.attribute.spi.LongAttribute;
+import org.coconut.attribute.spi.AbstractLongAttribute;
 
 /**
  * The <tt>Creation time</tt> attribute indicates the creation time of a cache element.
@@ -14,7 +14,7 @@ import org.coconut.attribute.spi.LongAttribute;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class DateCreatedAttribute extends LongAttribute {
+public class DateCreatedAttribute extends AbstractLongAttribute {
     /** The default value of this attribute. */
     public static final long DEFAULT_VALUE = 0;
 
