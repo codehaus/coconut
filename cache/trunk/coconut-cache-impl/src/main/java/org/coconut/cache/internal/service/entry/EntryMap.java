@@ -157,17 +157,6 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
         return h ^ (h >>> 7) ^ (h >>> 4);
     }
 
-    /**
-     * Returns the table entry that should be used for key with given hash.
-     * 
-     * @param hash
-     *            the hash code for the key
-     * @return the table entry
-     */
-    static int indexFor(int hash, int tableLength) {
-        return hash & (tableLength - 1);
-    }
-
     /* ---------------- Inner Classes -------------- */
 
     /**
@@ -244,10 +233,6 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
         }
         return null;
-    }
-
-    public boolean isEmpty() {
-        return size == 0;
     }
 
     /**

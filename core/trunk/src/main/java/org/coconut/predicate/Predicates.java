@@ -36,11 +36,12 @@ public final class Predicates {
 
     // /CLOVER:ON
     /**
-     * Returns a Predicate that evaluates to true iff each of its components evaluates to
-     * true. The returned predicate uses short-circuit evaluation (or minimal evaluation).
-     * That is subsequent arguments are only evaluated if the previous arguments does not
-     * suffice to determine the truth value. The Predicate will use a copy of the array of
-     * supplied predicates.
+     * Returns a Predicate that evaluates to true iff each of the specified predicates
+     * evaluates to true. The returned predicate uses short-circuit evaluation (or minimal
+     * evaluation). That is, subsequent arguments are only evaluated if the previous
+     * arguments does not suffice to determine the truth value.
+     * <p>
+     * The Predicate will use a copy of the array of supplied predicates.
      * <p>
      * If all the supplied predicates are serializable the return predicate will also be
      * serializable.
@@ -68,6 +69,28 @@ public final class Predicates {
         return new Predicates.AllPredicate<E>(predicates);
     }
 
+    /**
+     * Returns a Predicate that evaluates to true iff both of its components evaluates to
+     * true. The returned predicate uses short-circuit evaluation (or minimal evaluation).
+     * That is, if the specified left-hand predicate evaluates to <code>false</code> the
+     * right-hand predicate will not be evaluated. This is equivalent to:
+     * 
+     * <pre>
+     * left.evaluate(element) &amp;&amp; right.evaluate(element);
+     * </pre>
+     * 
+     * <p>
+     * If both of the supplied predicates are serializable the return predicate will also
+     * be serializable.
+     * 
+     * @param left
+     *            the left-hand predicate
+     * @param right
+     *            the right hand predicate
+     * @return an and predicate
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     */
     public static <E> Predicate<E> and(Predicate<E> left, Predicate<E> right) {
         return new Predicates.AndPredicate<E>(left, right);
     }
@@ -334,15 +357,12 @@ public final class Predicates {
     }
 
     /**
-     * A Predicate that performs a logical exclusive AND on two supplied predicates. The
-     * predicate TODO check focs for javas and.
+     * A Predicate that performs a logical exclusive AND on two supplied predicates.
      */
     final static class AndPredicate<E> implements Predicate<E>, CompositePredicate<E>, Serializable {
 
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 6981902451700512606L;
-
-        private final boolean isStrict;
 
         /** The left side operand. */
         private final Predicate<E> left;
@@ -359,19 +379,13 @@ public final class Predicates {
          *            the right side operand
          */
         public AndPredicate(final Predicate<E> left, final Predicate<E> right) {
-            this(left, right, true);
-        }
-
-        public AndPredicate(final Predicate<E> left, final Predicate<E> right, boolean isStrict) {
             if (left == null) {
                 throw new NullPointerException("left is null");
-            }
-            if (right == null) {
+            } else if (right == null) {
                 throw new NullPointerException("right is null");
             }
             this.left = left;
             this.right = right;
-            this.isStrict = isStrict;
         }
 
         /** {@inheritDoc} */
@@ -401,14 +415,6 @@ public final class Predicates {
          */
         public Predicate<E> getRightPredicate() {
             return right;
-        }
-
-        /**
-         * Returns whether the operands must be evaluated left and then right (strict) or
-         * if each of them can be evaluated indenpendently.
-         */
-        public boolean isStrict() {
-            return isStrict;
         }
 
         /** {@inheritDoc} */

@@ -4,54 +4,84 @@
 
 package org.coconut.cache.internal.service.entry;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 
+import org.coconut.cache.Cache;
+import org.coconut.cache.internal.service.spi.InternalCacheSupport;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.integration.junit4.JMock;
+import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
+@RunWith(JMock.class)
 public class EntryMapTest {
 
+    Mockery context = new JUnit4Mockery();
+
+    @Test(expected = ConcurrentModificationException.class)
+    public void concurrentModification() {
+        final InternalCacheSupport ics = context.mock(InternalCacheSupport.class);
+        final Cache c = context.mock(Cache.class);
+        context.checking(new Expectations() {
+            {
+                allowing(ics).checkRunning("iterator");
+            }
+        });
+        EntryMap s = new EntryMap(ics, false);
+        s.put(new EntryStub(1, "A"));
+        s.put(new EntryStub(2, "B"));
+        Iterator iter1 = s.keySet(c).iterator();
+        iter1.next();
+        s.remove(1);
+        iter1.next();
+    }
+
     @Test
-    public void testNoting() {
-        // CacheEntryMapStub s = new CacheEntryMapStub();
-        // Random r = new Random();
-        // ArrayList<Integer> al = new ArrayList<Integer>();
-        // for (int i = 0; i < 5; i++) {
-        // int ia = r.nextInt();
-        // al.add(ia);
-        // s.put(new EntryStub(ia, "foo" + ia));
-        // }
-        // ArrayList<Integer> removeOrder = new ArrayList<Integer>();
-        //
-        // Collections.shuffle(al);
-        // while (al.size() > 0) {
-        // int take = al.remove(al.size() - 1);
-        // Map.Entry o = s.remove(take);
-        // assertEquals("foo" + take, o.getValue());
-        // }
+    public void rehash() {
+        InternalCacheSupport ics = null;
+        EntryMap s = new EntryMap(ics, false);
+        Random r = new Random(12312312);
+        ArrayList<Integer> al = new ArrayList<Integer>();
+        for (int i = 0; i < 1000; i++) {
+            int ia = r.nextInt();
+            al.add(ia);
+            s.put(new EntryStub(ia, "" + ia));
+        }
+        Collections.shuffle(al);
+        while (al.size() > 0) {
+            int take = al.remove(al.size() - 1);
+            Map.Entry o = s.remove(take);
+            assertEquals("" + take, o.getValue());
+        }
     }
 
     @Test
     public void testNotsa() {
-        EntryMap<Integer, String> s = new EntryMap<Integer, String>(null,false);
+        EntryMap<Integer, String> s = new EntryMap<Integer, String>(null, false);
         s.put(new EntryStub(-348653132, "a"));
         s.put(new EntryStub(772636595, "b"));
-        AbstractCacheEntry<?,?> ac1 = s.remove(-348653132);
-        AbstractCacheEntry<?,?> ac2 = s.remove(772636595);
+        AbstractCacheEntry<?, ?> ac1 = s.remove(-348653132);
+        AbstractCacheEntry<?, ?> ac2 = s.remove(772636595);
         assertNotNull(ac1);
         assertNotNull(ac2);
     }
 
     public boolean testNots() {
-        EntryMap<Integer, String> s = new EntryMap<Integer, String>(null,false);
+        EntryMap<Integer, String> s = new EntryMap<Integer, String>(null, false);
         Random r = new Random();
         ArrayList<Integer> al = new ArrayList<Integer>();
         for (int i = 0; i < 30; i++) {
@@ -191,7 +221,7 @@ public class EntryMapTest {
     static class EntryStub extends UnsynchronizedCacheEntry<Integer, String> {
 
         public EntryStub(Integer key, String value) {
-            super(key, value, -1, 0, 0, 0,0);
+            super(key, value, -1, 0, 0, 0, 0);
         }
     }
 }

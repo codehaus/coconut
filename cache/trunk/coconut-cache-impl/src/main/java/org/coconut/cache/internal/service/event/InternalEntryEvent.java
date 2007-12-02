@@ -17,6 +17,11 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
     private final CacheEntry<K, V> entry;
 
     InternalEntryEvent(Cache<K, V> cache, CacheEntry<K, V> entry) {
+        if (cache == null) {
+            throw new NullPointerException("cache is null");
+        } else if (entry == null) {
+            throw new NullPointerException("entry is null");
+        }
         this.cache = cache;
         this.entry = entry;
     }
@@ -36,13 +41,9 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
         return entry.getValue();
     }
 
-    public int hashCode() {
-        return getKey().hashCode();
-    }
-
     /** {@inheritDoc} */
     public V setValue(V value) {
-        return entry.setValue(value);
+        throw new UnsupportedOperationException("setValue not supported");
     }
 
     /** {@inheritDoc} */
@@ -59,30 +60,31 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
         return builder.toString();
     }
 
-    private boolean equals(CacheEntryEvent<K, V> event) {
-        return this.getKey().equals(event.getKey()) && this.getValue().equals(event.getValue());
-    }
+//    private boolean equals(CacheEntryEvent<K, V> event) {
+//        return this.getKey().equals(event.getKey()) && this.getValue().equals(event.getValue());
+//    }
 
-    static <K, V> CacheEntryEvent.ItemAdded<K, V> added(Cache<K, V> cache, CacheEntry<K, V> entry,
-            boolean isLoaded) {
+    static <K, V> CacheEntryEvent.ItemAdded<K, V> added(Cache<K, V> cache, CacheEntry<K, V> entry) {
         return new AddedEvent<K, V>(cache, entry);
     }
 
-    static <K, V> CacheEntryEvent<K, V> evicted(Cache<K, V> cache, CacheEntry<K, V> entry) {
+    static <K, V> CacheEntryEvent.ItemRemoved<K, V> evicted(Cache<K, V> cache,
+            CacheEntry<K, V> entry) {
         return new RemovedEvent<K, V>(cache, entry, false);
     }
 
-    static <K, V> CacheEntryEvent<K, V> expired(Cache<K, V> cache, CacheEntry<K, V> entry) {
+    static <K, V> CacheEntryEvent.ItemRemoved<K, V> expired(Cache<K, V> cache,
+            CacheEntry<K, V> entry) {
         return new RemovedEvent<K, V>(cache, entry, true);
     }
 
-    static <K, V> CacheEntryEvent<K, V> removed(Cache<K, V> cache, CacheEntry<K, V> entry,
-            boolean isExpired) {
-        return new RemovedEvent<K, V>(cache, entry, isExpired);
+    static <K, V> CacheEntryEvent.ItemRemoved<K, V> removed(Cache<K, V> cache,
+            CacheEntry<K, V> entry) {
+        return new RemovedEvent<K, V>(cache, entry, false);
     }
 
-    static <K, V> CacheEntryEvent<K, V> updated(Cache<K, V> cache, CacheEntry<K, V> entry,
-            V previous, boolean isLoaded, boolean isExpired) {
+    static <K, V> CacheEntryEvent.ItemUpdated<K, V> updated(Cache<K, V> cache, CacheEntry<K, V> entry,
+            V previous, boolean isExpired) {
         return new ChangedEvent<K, V>(cache, entry, previous, isExpired);
     }
 
@@ -97,25 +99,10 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
             super(cache, entry);
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof CacheEntryEvent.ItemAdded) {
-                CacheEntryEvent.ItemAdded<K, V> event = (ItemAdded<K, V>) obj;
-                return super.equals(event); // && isLoaded() == event.isLoaded();
-            }
-            return false;
-        }
-
         /** {@inheritDoc} */
         public String getName() {
             return CacheEntryEvent.ItemAdded.NAME;
         }
-
-        @Override
-        public int hashCode() {
-            return super.hashCode() ^ getName().hashCode();
-        }
-
     }
 
     static class ChangedEvent<K, V> extends InternalEntryEvent<K, V> implements
@@ -130,6 +117,9 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
          */
         ChangedEvent(Cache<K, V> cache, CacheEntry<K, V> entry, V previous, boolean isExpired) {
             super(cache, entry);
+            if (previous == null) {
+                throw new NullPointerException("previous is null");
+            }
             this.previous = previous;
             this.isExpired = isExpired;
         }

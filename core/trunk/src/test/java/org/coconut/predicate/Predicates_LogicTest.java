@@ -16,6 +16,7 @@ import java.util.Iterator;
 import org.coconut.predicate.Predicates.AllPredicate;
 import org.coconut.predicate.Predicates.AndPredicate;
 import org.coconut.predicate.Predicates.AnyPredicate;
+import org.coconut.test.MockTestCase;
 import org.coconut.test.TestUtil;
 import org.junit.Test;
 
@@ -24,28 +25,27 @@ import org.junit.Test;
  * @version $Id$
  */
 public class Predicates_LogicTest {
-    static Predicate<Object> P_OBJECT = null;
-
-    static Predicate<Number> P_NUMBER = null;
-
     static Predicate<? extends Number> P_EXTEND_NUMBER = null;
 
     static Predicate<Long> P_LONG = null;
 
+    static Predicate<Number> P_NUMBER = null;
+
+    static Predicate<Object> P_OBJECT = null;
+
     static Predicate[] PREDICATES_WITH_NULL_ARRAY = { Predicates.TRUE, null, Predicates.TRUE };
 
     static Iterable PREDICATES_WITH_NULL_ITERABLE = Arrays.asList(PREDICATES_WITH_NULL_ARRAY);
-
-    static Predicate[] TRUE_FALSE_TRUE_ARRAY = { Predicates.TRUE, Predicates.FALSE, Predicates.TRUE };
-
-    static Iterable TRUE_FALSE_TRUE_ITERABLE = Arrays.asList(TRUE_FALSE_TRUE_ARRAY);
 
     static Predicate[] STRING_PREDICATE_ARRAY = { StringPredicates.startsWith("foo"),
             StringPredicates.contains("boo") };
 
     static Iterable STRING_PREDICATE_ITERABLE = Arrays.asList(STRING_PREDICATE_ARRAY);
 
-    /* Test all */
+    static Predicate[] TRUE_FALSE_TRUE_ARRAY = { Predicates.TRUE, Predicates.FALSE, Predicates.TRUE };
+
+    static Iterable TRUE_FALSE_TRUE_ITERABLE = Arrays.asList(TRUE_FALSE_TRUE_ARRAY);
+
     @Test
     public void all() {
         AllPredicate<?> filter = (AllPredicate) Predicates.all(TRUE_FALSE_TRUE_ARRAY);
@@ -75,11 +75,16 @@ public class Predicates_LogicTest {
 
         // Serializable
         TestUtil.assertIsSerializable(filter);
-        
+
         // toString, just check that they don't throw exceptions
         Predicates.all(TRUE_FALSE_TRUE_ARRAY).toString();
         Predicates.all(new Predicate[] {}).toString();
         Predicates.all(new Predicate[] { Predicates.TRUE }).toString();
+
+        // shortcircuted evaluation
+        Predicates.all(Predicates.TRUE, Predicates.FALSE, MockTestCase.mockDummy(Predicate.class))
+                .evaluate(null);
+
     }
 
     @Test(expected = NullPointerException.class)
@@ -104,19 +109,32 @@ public class Predicates_LogicTest {
 
     /* Test and */
     @Test
-    public void testAnd() {
+    public void and() {
         assertTrue(Predicates.and(Predicates.TRUE, Predicates.TRUE).evaluate(null));
         assertFalse(Predicates.and(Predicates.TRUE, Predicates.FALSE).evaluate(null));
         assertFalse(Predicates.and(Predicates.FALSE, Predicates.TRUE).evaluate(null));
         assertFalse(Predicates.and(Predicates.FALSE, Predicates.FALSE).evaluate(null));
+
         assertSame(((AndPredicate) Predicates.and(Predicates.FALSE, Predicates.TRUE))
                 .getLeftPredicate(), Predicates.FALSE);
         assertSame(((AndPredicate) Predicates.and(Predicates.FALSE, Predicates.TRUE))
                 .getRightPredicate(), Predicates.TRUE);
         assertEquals(((AndPredicate) Predicates.and(Predicates.FALSE, Predicates.TRUE))
                 .getPredicates(), Arrays.asList(Predicates.FALSE, Predicates.TRUE));
-        Predicates.and(Predicates.FALSE, Predicates.FALSE).toString(); // check no
-        // exception
+        Predicates.and(Predicates.FALSE, Predicates.FALSE).toString(); // no exception
+
+        // shortcircuted evaluation
+        Predicates.and(Predicates.FALSE, MockTestCase.mockDummy(Predicate.class)).evaluate(null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void andNPE() {
+        Predicates.and(null, Predicates.TRUE);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void andNPE1() {
+        Predicates.and(Predicates.TRUE, null);
     }
 
     @SuppressWarnings("unchecked")
@@ -197,16 +215,6 @@ public class Predicates_LogicTest {
         Predicates.not(null);
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testNullLeft() {
-        Predicates.and(null, Predicates.TRUE);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testNullRight() {
-        Predicates.and(Predicates.TRUE, null);
-    }
-
     /* Test or */
     @Test
     public void testOr() {
@@ -232,12 +240,6 @@ public class Predicates_LogicTest {
     @Test(expected = NullPointerException.class)
     public void testOrNullRight() {
         Predicates.or(Predicates.TRUE, null);
-    }
-
-    @Test
-    public void testStrict() {
-        assertTrue(((AndPredicate) Predicates.and(Predicates.TRUE, Predicates.TRUE)).isStrict());
-        assertFalse((new AndPredicate(Predicates.FALSE, Predicates.TRUE, false)).isStrict());
     }
 
     @Test

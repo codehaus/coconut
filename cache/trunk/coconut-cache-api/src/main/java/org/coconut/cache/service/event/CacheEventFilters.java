@@ -3,6 +3,8 @@
  */
 package org.coconut.cache.service.event;
 
+import java.io.Serializable;
+
 import org.coconut.cache.Cache;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemAdded;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
@@ -10,7 +12,6 @@ import org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated;
 import org.coconut.cache.service.event.CacheEvent.CacheCleared;
 import org.coconut.cache.service.event.CacheEvent.CacheStarted;
 import org.coconut.core.Mapper;
-import org.coconut.internal.util.Mappers;
 import org.coconut.predicate.CollectionPredicates;
 import org.coconut.predicate.Predicate;
 import org.coconut.predicate.Predicates;
@@ -25,11 +26,10 @@ import org.coconut.predicate.Predicates;
 public final class CacheEventFilters {
 
     /** A filter that only accepts instances of CacheStarted events. */
-    public static final Predicate<?> CACHE_STARTED_FILTER = Predicates
-            .isType(CacheStarted.class);
+    public static final Predicate<?> CACHE_STARTED_FILTER = Predicates.isType(CacheStarted.class);
+
     /** A filter that only accepts instances of CacheCleared events. */
-    public static final Predicate<?> CACHE_CLEARED_FILTER = Predicates
-            .isType(CacheCleared.class);
+    public static final Predicate<?> CACHE_CLEARED_FILTER = Predicates.isType(CacheCleared.class);
 
     /**
      * A filter that only accepts all instance events (events that are not instances of
@@ -40,22 +40,21 @@ public final class CacheEventFilters {
             .isType(CacheEntryEvent.class));
 
     /**
-     * A {@link org.coconut.predicate.Predicate} that only accepts instances of ItemUpdated
-     * events.
+     * A {@link org.coconut.predicate.Predicate} that only accepts instances of
+     * ItemUpdated events.
      */
-    public final static Predicate<?> CACHEENTRY_ADDED_FILTER = Predicates
-            .isType(ItemAdded.class);
+    public final static Predicate<?> CACHEENTRY_ADDED_FILTER = Predicates.isType(ItemAdded.class);
 
     /**
-     * A {@link org.coconut.predicate.Predicate} that only accepts instances of ItemUpdated
-     * events.
+     * A {@link org.coconut.predicate.Predicate} that only accepts instances of
+     * ItemUpdated events.
      */
     public final static Predicate<?> CACHEENTRY_REMOVED_FILTER = Predicates
             .isType(ItemRemoved.class);
 
     /**
-     * A {@link org.coconut.predicate.Predicate} that only accepts instances of ItemUpdated
-     * events.
+     * A {@link org.coconut.predicate.Predicate} that only accepts instances of
+     * ItemUpdated events.
      */
     public final static Predicate<?> CACHEENTRY_UPDATED_FILTER = Predicates
             .isType(ItemUpdated.class);
@@ -70,26 +69,25 @@ public final class CacheEventFilters {
     /** A filter that only accepts instances of CacheEvent events. */
 
     public static final Predicate<?> CACHEEVENT_FILTER = Predicates.isType(CacheEvent.class);
-    
+
     /** A transformer that extracts the cache from the specified {@link CacheEvent}. */
-    private final static Mapper<CacheEvent, Cache<?, ?>> EVENT_TO_CACHE_TRANSFORMER = (Mapper) Mappers
-            .transform(CacheEvent.class, "getCache");
+    private final static Mapper<CacheEvent, Cache<?, ?>> EVENT_TO_CACHE_TRANSFORMER = new EventToCacheMapper();
 
     /**
      * A transformer that extracts the name of the cache from the specified
      * {@link CacheEvent}.
      */
-    private final static Mapper<CacheEvent, String> EVENT_TO_NAME_TRANSFORMER = (Mapper) Mappers
-            .transform(CacheEvent.class, "getName");
+    private final static Mapper<CacheEvent, String> EVENT_TO_NAME_TRANSFORMER = new EventToNameMapper();
 
     /** Cannot instantiate. */
     // /CLOVER:OFF
     private CacheEventFilters() {}
+
     // /CLOVER:ON
-    
+
     /**
-     * Returns a {@link Predicate} that only accepts {@link CacheEvent}s that originate from
-     * the specified cache.
+     * Returns a {@link Predicate} that only accepts {@link CacheEvent}s that originate
+     * from the specified cache.
      * 
      * @param cache
      *            the cache that the cache events must originate from to be accepted
@@ -111,8 +109,7 @@ public final class CacheEventFilters {
      * 10.
      * 
      * <pre>
-     * Filter&lt;CacheEvent&lt;Integer, String&gt;&gt; filter = cacheFilter(new Filter&lt;Cache&lt;Integer, String&gt;&gt;()
-     * {
+     * Filter&lt;CacheEvent&lt;Integer, String&gt;&gt; filter = cacheFilter(new Filter&lt;Cache&lt;Integer, String&gt;&gt;() {
      *     public boolean accept(Cache&lt;Integer, String&gt; cache) {
      *         return cache.size() &gt; 10;
      *     }
@@ -130,8 +127,7 @@ public final class CacheEventFilters {
      */
     @SuppressWarnings("unchecked")
     public static <K, V> Predicate<CacheEvent<K, V>> mapperPredicate(Predicate<Cache<K, V>> filter) {
-        return CollectionPredicates.mapperPredicate(
-                (Mapper) EVENT_TO_CACHE_TRANSFORMER, filter);
+        return CollectionPredicates.mapperPredicate((Mapper) EVENT_TO_CACHE_TRANSFORMER, filter);
     }
 
     /**
@@ -149,8 +145,28 @@ public final class CacheEventFilters {
      */
     @SuppressWarnings("unchecked")
     public static <K, V> Predicate<CacheEvent<K, V>> eventName(Predicate<String> filter) {
-        return CollectionPredicates.mapperPredicate((Mapper) EVENT_TO_NAME_TRANSFORMER,
-                filter);
+        return CollectionPredicates.mapperPredicate((Mapper) EVENT_TO_NAME_TRANSFORMER, filter);
     }
 
+    static class EventToCacheMapper<K, V> implements Mapper<CacheEvent<K, V>, Cache<K, V>>,
+            Serializable {
+
+        /** serialVersionUID */
+        private static final long serialVersionUID = -1630603894320061693L;
+
+        /** {@inheritDoc} */
+        public Cache<K, V> map(CacheEvent<K, V> from) {
+            return from.getCache();
+        }
+    }
+
+    static class EventToNameMapper<K, V> implements Mapper<CacheEvent<K, V>, String>, Serializable {
+        /** serialVersionUID */
+        private static final long serialVersionUID = -1277521728691313867L;
+
+        /** {@inheritDoc} */
+        public String map(CacheEvent<K, V> from) {
+            return from.getName();
+        }
+    }
 }

@@ -6,8 +6,8 @@ package org.coconut.predicate;
 
 /**
  * A Predicate can determine a true or false value for any input of its parameterized
- * type. For example, a FileIsDirectoryPredicate might implement Predicate<String>, and
- * return true for any File that is a directory.
+ * type. For example, a FileIsDirectoryPredicate might implement Predicate and return
+ * <code>true</code> for any File that is a directory.
  * 
  * <pre>
  * class FileIsDirectoryPredicate implements Predicate&lt;File&gt; {
@@ -18,7 +18,7 @@ package org.coconut.predicate;
  * </pre>
  * 
  * A number of files can then be tested against this predicate accepting only those files
- * that are directories. A Predicate should be stateless. Furthermore an application of the
+ * that are directories. A Predicate should be stateless. Furthermore, invoking the
  * <tt>evaluate</tt> method should not have any side effects.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>

@@ -33,7 +33,7 @@ public abstract class AbstractEventBus<E> implements EventBus<E> {
         if (configuration.getCheckReentrant()) {
             allowReentrance = new ThreadLocal<Boolean>();
             allowReentrance.set(false);
-            throw new UnsupportedOperationException("check reentrant not supported yet");
+         //   throw new UnsupportedOperationException("check reentrant not supported yet");
         } else {
             allowReentrance = null;
         }

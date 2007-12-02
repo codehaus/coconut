@@ -140,6 +140,13 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
     }
 
     /** {@inheritDoc} */
+    public boolean containsValue(Object value) {
+        checkRunning("get", false);
+        return map.containsValue(value);
+    }
+    
+    
+    /** {@inheritDoc} */
     public Set<Entry<K, V>> entrySet() {
         return map.entrySetPublic(this);
     }

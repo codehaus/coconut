@@ -48,11 +48,11 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
 
     private final boolean doRemove;
 
-    private final boolean doUpdate;
-
     private final boolean doStart;
 
     private final boolean doStopped;
+
+    private final boolean doUpdate;
 
     private final CacheEventBus<CacheEvent<K, V>> eb = new CacheEventBus<CacheEvent<K, V>>();
 
@@ -78,14 +78,18 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
 
     public void afterCacheClear(Cache<K, V> cache, long timestamp,
             Collection<? extends CacheEntry<K, V>> entries, long previousVolume) {
-        if (entries != null && doRemove) {
+        if (doRemove) {
             for (CacheEntry<K, V> entry : entries) {
-                removed(cache, entry, false);
+                removed(cache, entry);
             }
         }
         if (doClear && entries.size() > 0) {
             dispatch(cleared(cache, entries.size(), previousVolume));
         }
+    }
+
+    public void afterPurge(Cache<K, V> cache, Collection<? extends CacheEntry<K, V>> expired) {
+        doExpireAll(cache, expired);
     }
 
     /** {@inheritDoc} */
@@ -96,21 +100,6 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
 
         put(cache, prev, newEntry);
 
-    }
-
-    void put(Cache<K, V> cache, AbstractCacheEntry<K, V> prev, AbstractCacheEntry<K, V> newEntry) {
-        if (prev == null) {
-            if (doAdd && newEntry != null && newEntry.getPolicyIndex() >= 0) {
-                dispatch(added(cache, newEntry, false));
-            }
-        } else if (prev.getPolicyIndex() >= 0 && newEntry != null
-                && newEntry.getPolicyIndex() == -1) {
-            if (doRemove) {
-                dispatch(removed(cache, prev, false));
-            }
-        } else if (doUpdate) {
-            dispatch(updated(cache, newEntry, prev.getValue(), false, false));
-        }
     }
 
     /** {@inheritDoc} */
@@ -128,11 +117,24 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
     /** {@inheritDoc} */
     public void afterRemove(Cache<K, V> cache, long ignoreStarted, CacheEntry<K, V> entry) {
         if (doRemove && entry != null) {
-            dispatch(removed(cache, entry, false));
+            dispatch(removed(cache, entry));
         }
     }
 
-//    /** {@inheritDoc} */
+public void afterRemoveAll(Cache<K, V> cache, long started, Collection<CacheEntry<K, V>> entries) {
+        for (CacheEntry<K, V> entry : entries) {
+            afterRemove(cache, started, entry);
+        }
+
+    }
+
+    public void afterStart(Cache<K, V> cache) {
+        if (doStart) {
+            dispatch(InternalEvent.started(cache));
+        }
+    }
+
+    //    /** {@inheritDoc} */
 //    public void afterReplace(Cache<K, V> cache, long started,
 //            Collection<? extends CacheEntry<K, V>> evictedEntries, CacheEntry<K, V> oldEntry,
 //            CacheEntry<K, V> newEntry) {
@@ -176,6 +178,10 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
         doEvictAll(cache, evictedEntries);
     }
 
+    public void dexpired(Cache<K, V> cache, long started, CacheEntry<K, V> entry) {
+        dispatch(expired(cache, entry));
+    }
+
     /** {@inheritDoc} */
     public Collection<EventSubscription<CacheEvent<K, V>>> getSubscribers() {
         return eb.getSubscribers();
@@ -201,6 +207,11 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
     /** {@inheritDoc} */
     public void process(CacheEvent<K, V> event) {
         eb.process(event);
+    }
+
+    @Override
+    public void shutdown() {
+        eb.setShutdown();
     }
 
     /** {@inheritDoc} */
@@ -229,7 +240,7 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
     }
 
     private void doEvictAll(Cache<K, V> cache, Iterable<? extends CacheEntry<K, V>> entries) {
-        if (entries != null && doEvict) {
+        if ( doEvict) {
             for (CacheEntry<K, V> entry : entries) {
                 dispatch(evicted(cache, entry));
             }
@@ -237,7 +248,7 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
     }
 
     private void doExpireAll(Cache<K, V> cache, Iterable<? extends CacheEntry<K, V>> entries) {
-        if (entries != null && doExpire) {
+        if (doExpire) {
             for (CacheEntry<K, V> entry : entries) {
                 dispatch(expired(cache, entry));
             }
@@ -248,33 +259,18 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
         offerable.offer(event);
     }
 
-    public interface NotificationTransformer {
-        Notification notification(Object source);
-    }
-
-    public void afterPurge(Cache<K, V> cache, Collection<? extends CacheEntry<K, V>> expired) {
-        doExpireAll(cache, expired);
-    }
-
-    public void dexpired(Cache<K, V> cache, long started, CacheEntry<K, V> entry) {
-        dispatch(expired(cache, entry));
-    }
-
-    public void afterRemoveAll(Cache<K, V> cache, long started, Collection<CacheEntry<K, V>> entries) {
-        for (CacheEntry<K, V> entry : entries) {
-            afterRemove(cache, started, entry);
-        }
-
-    }
-
-    @Override
-    public void shutdown() {
-        eb.setShutdown();
-    }
-
-    public void afterStart(Cache<K, V> cache) {
-        if (doStart) {
-            dispatch(InternalEvent.started(cache));
+    void put(Cache<K, V> cache, AbstractCacheEntry<K, V> prev, AbstractCacheEntry<K, V> newEntry) {
+        if (prev == null) {
+            if (doAdd && newEntry != null && newEntry.getPolicyIndex() >= 0) {
+                dispatch(added(cache, newEntry));
+            }
+        } else if (prev.getPolicyIndex() >= 0 && newEntry != null
+                && newEntry.getPolicyIndex() == -1) {
+            if (doRemove) {
+                dispatch(removed(cache, prev));
+            }
+        } else if (doUpdate) {
+            dispatch(updated(cache, newEntry, prev.getValue(), false));
         }
     }
 }

@@ -155,9 +155,9 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
     }
 
     /** {@inheritDoc} */
-    @Override
     public synchronized boolean containsValue(Object value) {
-        return super.containsValue(value);
+        checkRunning("get", false);
+        return map.containsValue(value);
     }
 
     /** {@inheritDoc} */

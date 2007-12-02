@@ -14,11 +14,13 @@
     This library contains class that are used across all Coconut projects
   </description>
   <dependencies>
+  <!-- 
     <dependency>
       <groupId>org.coconut.internal</groupId>
       <artifactId>coconut-internal-asm</artifactId>
       <version>3.0</version>
     </dependency>
+     -->
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
