@@ -50,16 +50,16 @@ public class Predicates_ComparisonTest {
     /* Test equals */
     @Test
     public void testEquals() {
-        assertEquals("1", ((Predicates.EqualsPredicate) Predicates.equal("1")).getObject());
-        assertTrue(Predicates.equal("1").evaluate("1"));
-        assertFalse(Predicates.equal("1").evaluate("2"));
-        assertFalse(Predicates.equal("1").evaluate(null));
-        Predicates.equal(Predicates.TRUE).toString(); // check no exception
+        assertEquals("1", ((Predicates.EqualsPredicate) Predicates.equalsTo("1")).getObject());
+        assertTrue(Predicates.equalsTo("1").evaluate("1"));
+        assertFalse(Predicates.equalsTo("1").evaluate("2"));
+        assertFalse(Predicates.equalsTo("1").evaluate(null));
+        Predicates.equalsTo(Predicates.TRUE).toString(); // check no exception
     }
 
     @Test(expected = NullPointerException.class)
     public void testEqualsNPE() {
-        Predicates.equal(null);
+        Predicates.equalsTo(null);
     }
 
     /* Test greater then */

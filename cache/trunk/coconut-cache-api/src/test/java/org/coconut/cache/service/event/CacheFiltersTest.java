@@ -37,7 +37,7 @@ public class CacheFiltersTest {
                 will(returnValue(c));
             }
         });
-        Predicate f = Predicates.equal(c);
+        Predicate f = Predicates.equalsTo(c);
         Predicate<CacheEvent> filter = CacheEventFilters.mapperPredicate(f);
         assertTrue(filter.evaluate(event));
     }
@@ -88,7 +88,7 @@ public class CacheFiltersTest {
             }
         });
         Predicate<CacheEvent<Integer, String>> f = CacheEventFilters.eventName(Predicates
-                .equal("T1"));
+                .equalsTo("T1"));
         assertTrue(f.evaluate(event1));
         assertFalse(f.evaluate(event2));
     }

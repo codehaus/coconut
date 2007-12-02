@@ -34,28 +34,6 @@ public final class Predicates {
     /** Cannot instantiate. */
     private Predicates() {}
 
-    // /CLOVER:ON
-    /**
-     * Returns a Predicate that evaluates to true iff each of the specified predicates
-     * evaluates to true. The returned predicate uses short-circuit evaluation (or minimal
-     * evaluation). That is, subsequent arguments are only evaluated if the previous
-     * arguments does not suffice to determine the truth value.
-     * <p>
-     * The Predicate will use a copy of the array of supplied predicates.
-     * <p>
-     * If all the supplied predicates are serializable the return predicate will also be
-     * serializable.
-     * 
-     * @param predicates
-     *            the predicates to test against
-     * @return a Predicate that tests all elements
-     * @param <E>
-     *            the type of elements accepted by the predicate
-     */
-    public static <E> Predicate<E> all(Predicate<? super E>... predicates) {
-        return new Predicates.AllPredicate<E>(predicates);
-    }
-
     /**
      * As {@link #all(Predicate...)} except taking an {@link Iterable} as parameter.
      * 
@@ -66,6 +44,28 @@ public final class Predicates {
      *            the type of elements accepted by the predicate
      */
     public static <E> Predicate<E> all(Iterable<? extends Predicate<? super E>> predicates) {
+        return new Predicates.AllPredicate<E>(predicates);
+    }
+
+    // /CLOVER:ON
+    /**
+     * Returns a Predicate that evaluates to true iff each of the specified predicates
+     * evaluates to true. The returned predicate uses short-circuit evaluation (or minimal
+     * evaluation). That is, subsequent arguments are only evaluated if the previous
+     * arguments does not suffice to determine the truth value.
+     * <p>
+     * The Predicate will use a copy of the array of supplied predicates.
+     * <p>
+     * If all the supplied predicates are serializable the returned predicate will also be
+     * serializable.
+     * 
+     * @param predicates
+     *            the predicates to test against
+     * @return a Predicate that tests all elements
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     */
+    public static <E> Predicate<E> all(Predicate<? super E>... predicates) {
         return new Predicates.AllPredicate<E>(predicates);
     }
 
@@ -91,21 +91,86 @@ public final class Predicates {
      * @param <E>
      *            the type of elements accepted by the predicate
      */
-    public static <E> Predicate<E> and(Predicate<E> left, Predicate<E> right) {
+    public static <E> Predicate<E> and(Predicate<? super E> left, Predicate<? super E> right) {
         return new Predicates.AndPredicate<E>(left, right);
     }
 
-    public static <E> Predicate<E> any(Predicate<E>... predicates) {
+    /**
+     * As {@link #any(Predicate...)} except taking an {@link Iterable} as parameter.
+     * 
+     * @param predicates
+     *            the predicates to evaluate against
+     * @return a Predicate that tests all elements
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     */
+    public static <E> Predicate<E> any(Iterable<? extends Predicate<? super E>> predicates) {
         return new Predicates.AnyPredicate<E>(predicates);
     }
 
+    /**
+     * Returns a Predicate that evaluates to true if any of the specified predicates
+     * evaluates to true. The returned predicate uses short-circuit evaluation (or minimal
+     * evaluation). That is, subsequent arguments are only evaluated if the previous
+     * arguments does not suffice to determine the truth value.
+     * <p>
+     * The Predicate will use a copy of the array of supplied predicates.
+     * <p>
+     * If all the supplied predicates are serializable the returned predicate will also be
+     * serializable.
+     * 
+     * @param predicates
+     *            the predicates to test against
+     * @return a Predicate that tests all elements
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     */
+    public static <E> Predicate<E> any(Predicate<? super E>... predicates) {
+        return new Predicates.AnyPredicate<E>(predicates);
+    }
+
+    /**
+     * Returns a Predicate that evaluates to true if any of the specified elements are
+     * equal to the element that is being tested. The returned predicate uses
+     * short-circuit evaluation (or minimal evaluation). That is, subsequent arguments are
+     * only evaluated if the previous arguments does not suffice to determine the truth
+     * value.
+     * <p>
+     * The Predicate will use a copy of the array of supplied predicates.
+     * <p>
+     * If all the supplied predicates are serializable the returned predicate will also be
+     * serializable.
+     * 
+     * @param elements
+     *            the elements to test against
+     * @return a Predicate that tests all elements
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     */
     @SuppressWarnings( { "unchecked" })
     public static <E> Predicate<E> anyEquals(E... elements) {
-        Predicate[] predicate = new Predicates.EqualsPredicate[elements.length];
-        for (int i = 0; i < predicate.length; i++) {
-            predicate[i] = Predicates.equal(elements[i]);
+        List<Predicate<E>> list = new ArrayList<Predicate<E>>();
+        for (E e : elements) {
+            list.add(Predicates.equalsTo(e));
         }
-        return any(predicate);
+        return any(list);
+    }
+
+    /**
+     * As {@link #anyEquals(Object...)} except taking an {@link Iterable} as parameter.
+     * 
+     * @param elements
+     *            the element to evaluate
+     * @return a Predicate that tests all elements
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     */
+    public static <E> Predicate<E> anyEquals(Iterable<? extends E> elements) {
+        List<Predicate<E>> list = new ArrayList<Predicate<E>>();
+        for (E e : elements) {
+            list.add(Predicates.equalsTo(e));
+        }
+        return any(list);
     }
 
     @SuppressWarnings("unchecked")
@@ -118,7 +183,7 @@ public final class Predicates {
     }
 
     public static <E> Predicate<E> between(E first, E second) {
-        return and(Predicates.greatherThenOrEqual(first), Predicates.lessThenOrEqual(second));
+        return and((Predicate)Predicates.greatherThenOrEqual(first),(Predicate) Predicates.lessThenOrEqual(second));
     }
 
     /**
@@ -131,7 +196,7 @@ public final class Predicates {
      * @throws NullPointerException
      *             if the specified object is <code>null</code>
      */
-    public static <E> Predicate<E> equal(E object) {
+    public static <E> Predicate<E> equalsTo(E object) {
         return new Predicates.EqualsPredicate<E>(object);
     }
 
@@ -166,6 +231,11 @@ public final class Predicates {
      */
     public static <T> Predicate<T> isNull() {
         return new IsNullFilter();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <E> Predicate<E> isNumber() {
+        return IS_NUMBER;
     }
 
     public static Predicate isType(Class clazz) {
@@ -228,11 +298,6 @@ public final class Predicates {
     @SuppressWarnings("unchecked")
     public static <E> Predicate<E> truePredicate() {
         return TRUE;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <E> Predicate<E> isNumber() {
-        return IS_NUMBER;
     }
 
     /**
@@ -365,10 +430,10 @@ public final class Predicates {
         private static final long serialVersionUID = 6981902451700512606L;
 
         /** The left side operand. */
-        private final Predicate<E> left;
+        private final Predicate<? super E> left;
 
         /** The right side operand. */
-        private final Predicate<E> right;
+        private final Predicate<? super E> right;
 
         /**
          * Constructs a new <code>AndPredicate</code>.
@@ -378,7 +443,7 @@ public final class Predicates {
          * @param right
          *            the right side operand
          */
-        public AndPredicate(final Predicate<E> left, final Predicate<E> right) {
+        public AndPredicate(final Predicate<? super E> left, final Predicate<? super E> right) {
             if (left == null) {
                 throw new NullPointerException("left is null");
             } else if (right == null) {
@@ -398,14 +463,14 @@ public final class Predicates {
          * 
          * @return the left side operand.
          */
-        public Predicate<E> getLeftPredicate() {
+        public Predicate<? super E> getLeftPredicate() {
             return left;
         }
 
         /** {@inheritDoc} */
         @SuppressWarnings("unchecked")
-        public List<Predicate<E>> getPredicates() {
-            return Arrays.asList(left, right);
+        public List<? extends Predicate<? super E>> getPredicates() {
+            return (List) Arrays.asList(left, right);
         }
 
         /**
@@ -413,7 +478,7 @@ public final class Predicates {
          * 
          * @return the right side operand.
          */
-        public Predicate<E> getRightPredicate() {
+        public Predicate<? super E> getRightPredicate() {
             return right;
         }
 
@@ -428,15 +493,30 @@ public final class Predicates {
      * element.
      */
     final static class AnyPredicate<E> implements Predicate<E>, CompositePredicate<E>,
-            Iterable<Predicate<E>>, Serializable {
+            Iterable<Predicate<? super E>>, Serializable {
 
         /** Default <code>serialVersionUID</code>. */
-        private static final long serialVersionUID = 3257282517878192437L;
+        private static final long serialVersionUID = -848457724637828171L;
 
-        private final Predicate<E>[] predicates;
+        /** All the predicates that are being checked. */
+        private final Predicate<? super E>[] predicates;
 
         /**
+         * Constructs a new AllPredicate.
+         * 
+         * @param iterable
+         *            the iterable to test
+         */
+        public AnyPredicate(Iterable<? extends Predicate<? super E>> iterable) {
+            this.predicates = iterableToArray(iterable);
+        }
+
+        /**
+         * Constructs a new AllPredicate. The Predicate will use a copy of the array of
+         * supplied predicates.
+         * 
          * @param predicates
+         *            the predicates to test
          */
         @SuppressWarnings("unchecked")
         public AnyPredicate(final Predicate<? super E>[] predicates) {
@@ -449,9 +529,15 @@ public final class Predicates {
             }
         }
 
-        /** {@inheritDoc} */
+        /**
+         * Returns <tt>true</tt> if all supplied Predicates accepts the element.
+         * 
+         * @param element
+         *            the element to test
+         * @return <tt>true</tt> if all supplied Predicates accepts the element.
+         */
         public boolean evaluate(E element) {
-            for (Predicate<E> predicate : predicates) {
+            for (Predicate<? super E> predicate : predicates) {
                 if (predicate.evaluate(element)) {
                     return true;
                 }
@@ -464,12 +550,12 @@ public final class Predicates {
          * 
          * @return the predicates we are testing against
          */
-        public List<Predicate<E>> getPredicates() {
-            return new ArrayList<Predicate<E>>(Arrays.asList(predicates));
+        public List<Predicate<? super E>> getPredicates() {
+            return Collections.unmodifiableList(Arrays.asList(predicates));
         }
 
         /** {@inheritDoc} */
-        public Iterator<Predicate<E>> iterator() {
+        public Iterator<Predicate<? super E>> iterator() {
             return Arrays.asList(predicates).iterator();
         }
 

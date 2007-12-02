@@ -7,7 +7,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -84,7 +83,6 @@ public class Predicates_LogicTest {
         // shortcircuted evaluation
         Predicates.all(Predicates.TRUE, Predicates.FALSE, MockTestCase.mockDummy(Predicate.class))
                 .evaluate(null);
-
     }
 
     @Test(expected = NullPointerException.class)
@@ -125,6 +123,10 @@ public class Predicates_LogicTest {
 
         // shortcircuted evaluation
         Predicates.and(Predicates.FALSE, MockTestCase.mockDummy(Predicate.class)).evaluate(null);
+
+        // generic test
+        Predicate<Number> pn = Predicates.TRUE;
+        Predicate<Integer> ok = Predicates.and(pn, pn);
     }
 
     @Test(expected = NullPointerException.class)
@@ -137,60 +139,115 @@ public class Predicates_LogicTest {
         Predicates.and(Predicates.TRUE, null);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
-    public void testAny() {
-        assertTrue(Predicates.any(Predicates.TRUE).evaluate(null));
+    public void any() {
+        AnyPredicate<?> filter = (AnyPredicate) Predicates.any(TRUE_FALSE_TRUE_ARRAY);
+
+        // evaluate
+        assertTrue((Predicates.any(Predicates.TRUE)).evaluate(null));
         assertFalse(Predicates.any(Predicates.FALSE).evaluate(null));
-        assertTrue(Predicates.any(Predicates.FALSE, Predicates.TRUE).evaluate(null));
+        assertTrue(Predicates.any(Predicates.TRUE, Predicates.TRUE).evaluate(null));
+        assertTrue(Predicates.any(Predicates.TRUE, Predicates.FALSE).evaluate(null));
         assertFalse(Predicates.any(Predicates.FALSE, Predicates.FALSE).evaluate(null));
+        assertFalse(Predicates.any(STRING_PREDICATE_ITERABLE).evaluate("fobo"));
+        assertTrue(Predicates.any(STRING_PREDICATE_ITERABLE).evaluate("foobo"));
+        assertTrue(Predicates.any(STRING_PREDICATE_ITERABLE).evaluate("foboo"));
+        assertTrue(Predicates.any(STRING_PREDICATE_ITERABLE).evaluate("fooboo"));
+
+        // getPredicates
+        assertEquals(3, filter.getPredicates().size());
+        assertEquals(Predicates.TRUE, filter.getPredicates().get(0));
+        assertEquals(Predicates.FALSE, filter.getPredicates().get(1));
+        assertEquals(Predicates.TRUE, filter.getPredicates().get(2));
+
+        // iterable
+        Iterator<?> i = filter.iterator();
+        assertSame(Predicates.TRUE, i.next());
+        assertSame(Predicates.FALSE, i.next());
+        assertSame(Predicates.TRUE, i.next());
+        assertFalse(i.hasNext());
+
+        // Serializable
+        TestUtil.assertIsSerializable(filter);
+
+        // toString, just check that they don't throw exceptions
+        Predicates.any(TRUE_FALSE_TRUE_ARRAY).toString();
+        Predicates.any(new Predicate[] {}).toString();
+        Predicates.any(new Predicate[] { Predicates.TRUE }).toString();
+
+        // shortcircuted evaluation
+        Predicates.any(Predicates.FALSE, Predicates.TRUE, MockTestCase.mockDummy(Predicate.class))
+                .evaluate(null);
     }
 
-    /* Test any */
     @Test
-    @SuppressWarnings("unchecked")
-    public void testAnyConstructor() {
-        Predicate[] f = new Predicate[] { Predicates.TRUE, Predicates.FALSE, Predicates.TRUE };
-        AnyPredicate filter = (AnyPredicate) Predicates.any(f);
-        assertEquals(filter.getPredicates().size(), f.length);
-        assertEquals(filter.getPredicates().get(0), f[0]);
-        assertEquals(filter.getPredicates().get(1), f[1]);
-        assertEquals(filter.getPredicates().get(2), f[2]);
-    }
+    public void anyEquals() {
+        Predicate<?> filter = Predicates.anyEquals(TRUE_FALSE_TRUE_ARRAY);
 
-    @Test
-    @SuppressWarnings("unchecked")
-    public void testAnyIterator() {
-        Predicate<?>[] f = new Predicate[] { Predicates.TRUE, Predicates.FALSE, Predicates.TRUE };
-        AnyPredicate<?> filter = (AnyPredicate) Predicates.any((Predicate[]) f);
-        int i = 0;
-        for (Predicate<?> f1 : filter) {
-            if (i == 0 || i == 2) {
-                assertSame(Predicates.TRUE, f1);
-            } else if (i == 1) {
-                assertSame(Predicates.FALSE, f1);
-            } else {
-                fail("too many elements");
-            }
-            i++;
-        }
+        // evaluate
+        assertTrue((Predicates.anyEquals(Predicates.TRUE)).evaluate(Predicates.TRUE));
+        assertFalse(Predicates.anyEquals(Predicates.TRUE).evaluate(Predicates.FALSE));
+        assertTrue(Predicates.anyEquals(Predicates.TRUE, Predicates.FALSE)
+                .evaluate(Predicates.TRUE));
+        assertTrue(Predicates.anyEquals(Predicates.TRUE, Predicates.FALSE).evaluate(
+                Predicates.FALSE));
+        assertFalse(Predicates.anyEquals(Predicates.FALSE, Predicates.FALSE).evaluate(
+                Predicates.TRUE));
+        assertTrue(Predicates.anyEquals(Arrays.asList(Predicates.TRUE, Predicates.FALSE)).evaluate(
+                Predicates.FALSE));
+        assertFalse(Predicates.anyEquals(Arrays.asList(Predicates.FALSE, Predicates.FALSE)).evaluate(
+                Predicates.TRUE));
+        // Serializable
+        TestUtil.assertIsSerializable(filter);
+
+        // toString, just check that they don't throw exceptions
+        Predicates.anyEquals(TRUE_FALSE_TRUE_ARRAY).toString();
+        Predicates.anyEquals(new Predicate[] {}).toString();
+        Predicates.anyEquals(new Predicate[] { Predicates.TRUE }).toString();
+
+        // shortcircuted evaluation
+        Predicates.anyEquals(Predicates.FALSE, Predicates.TRUE,
+                MockTestCase.mockDummy(Predicate.class)).evaluate(Predicates.TRUE);
     }
 
     @Test(expected = NullPointerException.class)
-    @SuppressWarnings("unchecked")
-    public void testAnyNull() {
-        Predicate<?>[] f = new Predicate[] { Predicates.TRUE, null, Predicates.TRUE };
-        Predicates.any((Predicate[]) f);
+    public void anyEqualsNPE1() {
+        Predicates.anyEquals((Predicate[]) null);
     }
 
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testAnyToString() {
-        // just check that they don't throw exceptions
-        Predicate<?>[] f = new Predicate[] { Predicates.TRUE, Predicates.FALSE, Predicates.TRUE };
-        Predicates.any((Predicate[]) f).toString();
-        Predicates.any(new Predicate[0]).toString();
-        Predicates.any(new Predicate[] { Predicates.TRUE }).toString();
+    @Test(expected = NullPointerException.class)
+    public void anyEqualsNPE2() {
+        Predicates.anyEquals((Iterable) null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void anyEqualsNPE3() {
+        Predicates.anyEquals(PREDICATES_WITH_NULL_ARRAY);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void anyEqualsNPE4() {
+        Predicates.anyEquals(PREDICATES_WITH_NULL_ITERABLE);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void anyNPE1() {
+        Predicates.any((Predicate[]) null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void anyNPE2() {
+        Predicates.any((Iterable) null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void anyNPE3() {
+        Predicates.any(PREDICATES_WITH_NULL_ARRAY);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void anyNPE4() {
+        Predicates.any(PREDICATES_WITH_NULL_ITERABLE);
     }
 
     @Test
@@ -278,5 +335,4 @@ public class Predicates_LogicTest {
     public void testXorNullRight() {
         Predicates.xor(Predicates.TRUE, null);
     }
-
 }

@@ -38,7 +38,7 @@ import org.coconut.management.ManagedLifecycle;
 public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManager implements
         CacheServiceManagerService {
 
-    private final CacheExceptionHandler ces;
+    private volatile CacheExceptionHandler ces;
 
     private final Clock clock;
 
@@ -65,9 +65,23 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
     public UnsynchronizedCacheServiceManager(Cache<?, ?> cache, InternalCacheSupport<?, ?> helper,
             CacheConfiguration<?, ?> conf,
             Collection<Class<? extends AbstractCacheLifecycle>> classes) {
+        this(cache, helper, conf, classes, true);
+    }
+
+    public UnsynchronizedCacheServiceManager(Cache<?, ?> cache, InternalCacheSupport<?, ?> helper,
+            CacheConfiguration<?, ?> conf,
+            Collection<Class<? extends AbstractCacheLifecycle>> classes, boolean initialize) {
         super(cache);
         this.conf = conf;
         clock = conf.getClock();
+        if (initialize) {
+            initialize(cache, helper, conf, classes);
+        }
+    }
+
+    protected void initialize(Cache<?, ?> cache, InternalCacheSupport<?, ?> helper,
+            CacheConfiguration<?, ?> conf,
+            Collection<Class<? extends AbstractCacheLifecycle>> classes) {
         container.registerComponentInstance(this);
         container.registerComponentInstance(cache.getName());
         container.registerComponentInstance(conf.getClock());

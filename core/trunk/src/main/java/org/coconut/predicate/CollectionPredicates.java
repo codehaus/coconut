@@ -180,6 +180,7 @@ public final class CollectionPredicates {
         /** serialVersionUID. */
         private static final long serialVersionUID = -6292758840373110577L;
 
+        /** The predicate to test against. */
         private final Predicate<? super T> predicate;
 
         /** The object to compare with. */
@@ -218,8 +219,10 @@ public final class CollectionPredicates {
         }
 
         /**
-         * Returns the mappter that will map the object before applying the predicate on
+         * Returns the mapper that will map the object before applying the predicate on
          * it.
+         * 
+         * @return the mapper that will map the object before applying the predicate on it
          */
         public Mapper<F, T> getMapper() {
             return mapper;

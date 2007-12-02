@@ -3,8 +3,11 @@
  */
 package org.coconut.predicate;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+
+import java.util.Collection;
 
 import org.coconut.predicate.Predicates.AnyPredicate;
 import org.junit.Test;
@@ -59,13 +62,5 @@ public class PredicatesTest {
     @Test(expected = NullPointerException.class)
     public void notNullAndNPE() {
        Predicates.notNullAnd(null);
-    }
-
-    @Test
-    public void anyEquals() {
-        AnyPredicate<String> filter = (AnyPredicate) Predicates.anyEquals("1", "2");
-        assertTrue(filter.evaluate("1"));
-        assertTrue(filter.evaluate("2"));
-        assertFalse(filter.evaluate("3"));
     }
 }

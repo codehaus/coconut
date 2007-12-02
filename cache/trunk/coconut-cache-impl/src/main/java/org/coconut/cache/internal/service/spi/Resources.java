@@ -21,6 +21,7 @@ public final class Resources {
     /** Cannot instantiate. */
     // /CLOVER:OFF
     private Resources() {}
+
     // /CLOVER:ON
 
     /**
@@ -35,7 +36,7 @@ public final class Resources {
      * @return a message from the default bundle.
      */
     public static String lookup(Class<?> c, String key, Object... o) {
-        String k=key.replace(' ', '_');
+        String k = key.replace(' ', '_');
         return RESOURCE_HOLDER.lookup(c.getSimpleName() + "." + k, o);
     }
 

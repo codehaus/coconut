@@ -46,8 +46,9 @@ public class SynchronizedCacheServiceManager implements InternalCacheServiceMana
         public Inner(Cache<?, ?> cache, InternalCacheSupport<?, ?> helper,
                 CacheConfiguration<?, ?> conf,
                 Collection<Class<? extends AbstractCacheLifecycle>> classes) {
-            super(cache, helper, conf, classes);
+            super(cache, helper, conf, classes,false);
             this.mutex = cache;
+            initialize(cache, helper, conf, classes);
         }
 
         @Override
