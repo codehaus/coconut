@@ -18,7 +18,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 final class WorkerUtils {
 
     /** Cannot instantiate. */
+    // /CLOVER:OFF
     private WorkerUtils() {}
+
+    // /CLOVER:ON
    
 //
 //    /**

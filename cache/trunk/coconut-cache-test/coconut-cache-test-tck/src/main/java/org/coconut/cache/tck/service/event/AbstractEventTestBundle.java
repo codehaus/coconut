@@ -48,8 +48,8 @@ public class AbstractEventTestBundle extends AbstractCacheTCKTest {
 
     private EventWrapper ev;
 
-    static CacheConfiguration<Integer, String> includeAll() {
-        CacheConfiguration<Integer, String> c = CacheConfiguration.create();
+    CacheConfiguration<Integer, String> includeAll() {
+        CacheConfiguration<Integer, String> c = newConf();
         c.event().setEnabled(true).include(CacheEvent.class);
         return c;
     }
@@ -115,14 +115,15 @@ public class AbstractEventTestBundle extends AbstractCacheTCKTest {
         Collection<CacheEvent> eventsCol = new ArrayList<CacheEvent>();
         while (eventsCol.size() != count) {
             EventWrapper ew = null;
-            //System.err.println(events.size());
+            // System.err.println(events.size());
             try {
                 ew = ev != null ? ev : events.poll(50, TimeUnit.MILLISECONDS);
             } catch (InterruptedException ie) {
                 throw new IllegalStateException("Thread was interrupted", ie);
             }
             if (ew == null) {
-                throw new IllegalStateException("No events was posted, size was " + eventsCol.size());
+                throw new IllegalStateException("No events was posted, size was "
+                        + eventsCol.size());
             }
             CacheEvent<?, ?> event = ew.event;
             ev = null;

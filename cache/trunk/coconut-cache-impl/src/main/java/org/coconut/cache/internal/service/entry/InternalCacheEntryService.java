@@ -35,5 +35,6 @@ public interface InternalCacheEntryService<K, V> {
     void setTimeToRefreshNs(long nanos);
 
     long getTimeToRefreshNs();
+
     long getAccessTimeStamp(AbstractCacheEntry<K, V> entry);
 }

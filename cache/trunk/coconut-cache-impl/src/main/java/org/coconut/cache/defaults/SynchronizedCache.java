@@ -47,6 +47,7 @@ import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
+import org.coconut.cache.service.worker.CacheWorkerService;
 import org.coconut.cache.spi.CacheServiceSupport;
 import org.coconut.internal.util.CollectionUtils;
 
@@ -80,7 +81,7 @@ import org.coconut.internal.util.CollectionUtils;
 @ThreadSafe
 @CacheServiceSupport( { CacheEventService.class, CacheEvictionService.class,
         CacheExpirationService.class, CacheLoadingService.class, CacheManagementService.class,
-        CacheServiceManagerService.class, CacheStatisticsService.class })
+        CacheServiceManagerService.class, CacheStatisticsService.class, CacheWorkerService.class })
 public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
 
     private final static Collection<Class<? extends AbstractCacheLifecycle>> DEFAULTS = Arrays

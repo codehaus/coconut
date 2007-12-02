@@ -119,7 +119,7 @@ public class LoadingMXBean extends AbstractLoadingTestBundle {
     
     @Test
     public void loadingManagement() {
-        CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
+        CacheConfiguration<Integer, String> cc = newConf();
         cc.management().setEnabled(true);
         MyLoader loader = new MyLoader();
         c = newCache(cc.loading().setLoader(loader).c());
@@ -129,7 +129,7 @@ public class LoadingMXBean extends AbstractLoadingTestBundle {
 
     @Test
     public void filterManagement() {
-        CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
+        CacheConfiguration<Integer, String> cc = newConf();
         cc.management().setEnabled(true);
         ManagedFilter filter = new ManagedFilter();
         c = newCache(cc.loading().setRefreshPredicate(filter).setLoader(new IntegerToStringLoader())

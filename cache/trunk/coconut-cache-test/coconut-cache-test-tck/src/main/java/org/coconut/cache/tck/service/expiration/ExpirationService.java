@@ -21,19 +21,24 @@ import org.junit.Test;
  */
 public class ExpirationService extends AbstractCacheTCKTest {
 
-    @Before
-    public void setup() {
-        c = newCache();
-    }
-
     @Test
     public void expirationServiceAvailable() {
         assertTrue(services().hasService(CacheExpirationService.class));
         assertNotNull(c.getService(CacheExpirationService.class));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void setDefaultTimeToLiveIAE() {
+        expiration().setDefaultTimeToLive(-1, TimeUnit.MICROSECONDS);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void setDefaultTimeToLiveNPE() {
+        expiration().setDefaultTimeToLive(123, null);
+    }
+
     @Test
-    public void testSetGetDefaultTimeToLive() {
+    public void setGetDefaultTimeToLive() {
         assertEquals(CacheExpirationService.NEVER_EXPIRE, expiration().getDefaultTimeToLive(
                 TimeUnit.NANOSECONDS));
         assertEquals(CacheExpirationService.NEVER_EXPIRE, expiration().getDefaultTimeToLive(
@@ -48,21 +53,6 @@ public class ExpirationService extends AbstractCacheTCKTest {
         assertEquals(5 * 1000 * 1000 * 1000l, expiration().getDefaultTimeToLive(
                 TimeUnit.NANOSECONDS));
         assertEquals(5l, expiration().getDefaultTimeToLive(TimeUnit.SECONDS));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void setDefaultTimeToLiveIAE() {
-        expiration().setDefaultTimeToLive(-1, TimeUnit.MICROSECONDS);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void setDefaultTimeToLiveNPE() {
-        expiration().setDefaultTimeToLive(123, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void illegalTimeToLive() {
-        expiration().setDefaultTimeToLive(-1, TimeUnit.NANOSECONDS);
     }
 
     /**
@@ -89,17 +79,9 @@ public class ExpirationService extends AbstractCacheTCKTest {
                 TimeUnit.NANOSECONDS));
     }
 
-    @Test(expected = CacheException.class)
-    public void testIllegalPutCall() {
-        c = newCache(newConf().serviceManager().add(new AbstractCacheLifecycle() {
-            @Override
-            public void start(CacheServiceManagerService serviceManager) {
-                CacheExpirationService ces = serviceManager
-                        .getService(CacheExpirationService.class);
-                ces.put(1, "foo", 10, TimeUnit.HOURS);// should fail
-            }
-        }));
-        prestart();
+    @Before
+    public void setup() {
+        c = newCache();
     }
 
     @Test(expected = CacheException.class)
@@ -110,6 +92,19 @@ public class ExpirationService extends AbstractCacheTCKTest {
                 CacheExpirationService ces = serviceManager
                         .getService(CacheExpirationService.class);
                 ces.putAll(M1_TO_M5_MAP, 10, TimeUnit.HOURS);// should fail
+            }
+        }));
+        prestart();
+    }
+
+    @Test(expected = CacheException.class)
+    public void testIllegalPutCall() {
+        c = newCache(newConf().serviceManager().add(new AbstractCacheLifecycle() {
+            @Override
+            public void start(CacheServiceManagerService serviceManager) {
+                CacheExpirationService ces = serviceManager
+                        .getService(CacheExpirationService.class);
+                ces.put(1, "foo", 10, TimeUnit.HOURS);// should fail
             }
         }));
         prestart();

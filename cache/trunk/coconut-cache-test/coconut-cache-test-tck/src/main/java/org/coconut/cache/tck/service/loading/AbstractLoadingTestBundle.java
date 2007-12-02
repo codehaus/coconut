@@ -22,7 +22,7 @@ public class AbstractLoadingTestBundle extends AbstractCacheTCKTest {
 
     @Before
     public void setupLoading() {
-        CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
+        CacheConfiguration<Integer, String> cc = newConf();
         loader = new IntegerToStringLoader();
         c = newCache(cc.loading().setLoader(loader));
     }

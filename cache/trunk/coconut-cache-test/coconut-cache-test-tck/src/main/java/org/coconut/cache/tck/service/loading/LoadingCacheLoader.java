@@ -24,7 +24,7 @@ public class LoadingCacheLoader extends AbstractLoadingTestBundle {
 
     @Test
     public void loadingLifecycle() {
-        CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
+        CacheConfiguration<Integer, String> cc = newConf();
         MyLoader2 loader = new MyLoader2();
         c = newCache(cc.loading().setLoader(loader).c());
 

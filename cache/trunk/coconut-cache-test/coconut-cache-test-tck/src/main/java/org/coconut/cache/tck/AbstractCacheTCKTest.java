@@ -15,7 +15,6 @@ import javax.management.MBeanServerInvocationHandler;
 import javax.management.ObjectName;
 
 import junit.framework.Assert;
-
 import net.jcip.annotations.ThreadSafe;
 
 import org.coconut.cache.Cache;
@@ -31,6 +30,7 @@ import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.statistics.CacheHitStat;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
+import org.coconut.cache.service.worker.CacheWorkerService;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.cache.test.util.ThreadServiceTestHelper;
 import org.coconut.core.Clock.DeterministicClock;
@@ -54,6 +54,7 @@ public class AbstractCacheTCKTest extends Assert {
     public static Class<? extends Cache> getCacheType() {
         return CacheTCKRunner.tt;
     }
+
     @Before
     public void setupClock() {
         clock = new DeterministicClock();
@@ -224,6 +225,10 @@ public class AbstractCacheTCKTest extends Assert {
         return c.getService(CacheManagementService.class);
     }
 
+    protected final CacheWorkerService worker() {
+        return c.getService(CacheWorkerService.class);
+    }
+
     protected Cache<Integer, String> newCache() {
         return newCache(0);
     }
@@ -240,10 +245,6 @@ public class AbstractCacheTCKTest extends Assert {
     protected Cache<Integer, String> newCache(CacheConfiguration<?, ?> conf) {
         if (conf == null) {
             throw new NullPointerException("conf is null");
-        }
-        if (CacheTCKRunner.tt.getAnnotation(ThreadSafe.class) != null) {
-            threadHelper = new ThreadServiceTestHelper();
-            conf.worker().setWorkerManager(threadHelper);
         }
         return (Cache) conf.newCacheInstance(CacheTCKRunner.tt);
     }
@@ -266,7 +267,12 @@ public class AbstractCacheTCKTest extends Assert {
 
     @SuppressWarnings("unchecked")
     protected CacheConfiguration<Integer, String> newConf() {
-        return CacheConfiguration.create();
+        CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
+        if (CacheTCKRunner.tt.getAnnotation(ThreadSafe.class) != null) {
+            threadHelper = new ThreadServiceTestHelper();
+            cc.worker().setWorkerManager(threadHelper);
+        }
+        return cc;
     }
 
     protected Cache<Integer, String> newStartupFailedCache() {
@@ -293,7 +299,7 @@ public class AbstractCacheTCKTest extends Assert {
     }
 
     protected Collection<Map.Entry<Integer, String>> put(int to) {
-        //TODO what is this doing?
+        // TODO what is this doing?
         return put(1, to);
     }
 
@@ -364,7 +370,12 @@ public class AbstractCacheTCKTest extends Assert {
     protected void shutdownAndAwaitTermination() {
         c.shutdown();
         try {
-            assertTrue(c.awaitTermination(5, TimeUnit.SECONDS));
+            long start = System.nanoTime();
+            assertTrue(c.awaitTermination(10, TimeUnit.SECONDS));
+            long finish=System.nanoTime();
+            if (finish-start>1000000) {
+                System.out.println(finish-start);
+            }
         } catch (InterruptedException e) {
             throw new AssertionError(e);
         }

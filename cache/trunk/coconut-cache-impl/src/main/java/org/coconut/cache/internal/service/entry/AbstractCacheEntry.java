@@ -101,15 +101,12 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         if (k1 == k2 || (k1 != null && k1.equals(k2))) {
             Object v1 = value;
             Object v2 = e.getValue();
-            if (v1 == v2 || (v1 != null && v1.equals(v2)))
+            if (v1 == v2 ||  v1.equals(v2))
                 return true;
         }
         return false;
     }
 
-    public AttributeMap getAttributes() {
-        return null;
-    }
 
     /** {@inheritDoc} */
     public double getCost() {
@@ -135,10 +132,6 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
      */
     public long getLastUpdateTime() {
         return lastUpdateTime;
-    }
-
-    AbstractCacheEntry<K, V> getNext() {
-        return next;
     }
 
     /** {@inheritDoc} */
@@ -173,10 +166,6 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
      *            the hits to set
      */
     abstract void setHits(long hits);
-
-    public void setNext(AbstractCacheEntry<K, V> entry) {
-        next = entry;
-    }
 
     public void setPolicyIndex(int index) {
         this.policyIndex = index;

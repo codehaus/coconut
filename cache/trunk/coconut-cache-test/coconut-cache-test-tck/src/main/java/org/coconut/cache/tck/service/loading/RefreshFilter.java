@@ -59,7 +59,7 @@ public class RefreshFilter extends AbstractLoadingTestBundle {
 
     @Test
     public void filterLifecycle() {
-        CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
+        CacheConfiguration<Integer, String> cc = newConf();
         LifecycleFilter filter = new LifecycleFilter();
         c = newCache(cc.loading().setRefreshPredicate(filter).setLoader(new IntegerToStringLoader())
                 .c());

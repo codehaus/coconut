@@ -101,7 +101,7 @@ public class ExpirationMXBean extends AbstractExpirationTestBundle {
      */
     @Test
     public void managedObject() {
-        CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
+        CacheConfiguration<Integer, String> cc = newConf();
         cc.management().setEnabled(true);
         ManagedFilter filter = new ManagedFilter();
         c = newCache(cc.expiration().setExpirationFilter(filter).c());

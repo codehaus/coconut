@@ -43,11 +43,13 @@ public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService i
     public CacheWorkerManager getManager() {
         return worker;
     }
+
     /** {@inheritDoc} */
     @Override
     public void initialize(CacheLifecycleInitializer cli) {
         cli.registerService(CacheWorkerService.class, this);
     }
+
     class SameThreadCacheWorker extends CacheWorkerManager {
 
         final ExecutorService es;
@@ -57,7 +59,8 @@ public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService i
         SameThreadCacheWorker() {
             es = Executors.newCachedThreadPool(new WorkerUtils.DefaultThreadFactory("cache-"
                     + cacheName));
-            ses = Executors.newScheduledThreadPool(5);
+            ses = Executors.newScheduledThreadPool(5, new WorkerUtils.DefaultThreadFactory("cache-"
+                    + cacheName));
         }
 
         public ExecutorService getExecutorService(Object service, AttributeMap attributes) {
@@ -79,7 +82,8 @@ public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService i
                         public boolean awaitTermination(long timeout, TimeUnit unit)
                                 throws InterruptedException {
                             es.awaitTermination(timeout, unit);
-                            return ses.awaitTermination(timeout, unit);
+                            ses.awaitTermination(timeout, unit);
+                            return true;
                         }
 
                         public boolean isTerminated() {
@@ -96,7 +100,7 @@ public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService i
                                 es.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
                                 ses.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
                             } catch (InterruptedException ie) {
-                                //ignore
+                                // ignore
                             }
                         }
                     });

@@ -3,6 +3,9 @@
  */
 package org.coconut.cache.tck.service.loading;
 
+import java.util.concurrent.TimeUnit;
+
+import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
@@ -44,12 +47,43 @@ public class LoadingService extends AbstractCacheTCKTest {
      */
     @Test
     public void hasAndGetLoadingService() {
-        c = newCache(newConf().loading().setLoader(
-                MockTestCase.mockDummy(CacheLoader.class)));
+        c = newCache(newConf().loading().setLoader(MockTestCase.mockDummy(CacheLoader.class)));
         assertTrue(services().hasService(CacheLoadingService.class));
         // check that it doesn't fail with a classcast exception
         assertNotNull(c.getService(CacheLoadingService.class));
         assertTrue(services().getAllServices().containsKey(CacheLoadingService.class));
         assertTrue(services().getAllServices().get(CacheLoadingService.class) instanceof CacheLoadingService);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void setDefaultTimeToLiveIAE() {
+        c = newCache(newConf().loading().setLoader(MockTestCase.mockDummy(CacheLoader.class)));
+        loading().setDefaultTimeToRefresh(-1, TimeUnit.MICROSECONDS);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void setDefaultTimeToLiveNPE() {
+        c = newCache(newConf().loading().setLoader(MockTestCase.mockDummy(CacheLoader.class)));
+        loading().setDefaultTimeToRefresh(123, null);
+    }
+
+    @Test
+    public void setGetDefaultTimeToLive() {
+        c = newCache(newConf().loading().setLoader(MockTestCase.mockDummy(CacheLoader.class)));
+        assertEquals(CacheExpirationService.NEVER_EXPIRE, loading().getDefaultTimeToRefresh(
+                TimeUnit.NANOSECONDS));
+        assertEquals(CacheExpirationService.NEVER_EXPIRE, loading().getDefaultTimeToRefresh(
+                TimeUnit.SECONDS));
+
+        loading().setDefaultTimeToRefresh(2 * 1000, TimeUnit.MILLISECONDS);
+        assertEquals(2 * 1000 * 1000 * 1000l, loading().getDefaultTimeToRefresh(
+                TimeUnit.NANOSECONDS));
+        assertEquals(2l, loading().getDefaultTimeToRefresh(TimeUnit.SECONDS));
+
+        setCache(newConf().loading().setLoader(MockTestCase.mockDummy(CacheLoader.class))
+                .setDefaultTimeToRefresh(5, TimeUnit.SECONDS));
+        assertEquals(5 * 1000 * 1000 * 1000l, loading().getDefaultTimeToRefresh(
+                TimeUnit.NANOSECONDS));
+        assertEquals(5l, loading().getDefaultTimeToRefresh(TimeUnit.SECONDS));
     }
 }

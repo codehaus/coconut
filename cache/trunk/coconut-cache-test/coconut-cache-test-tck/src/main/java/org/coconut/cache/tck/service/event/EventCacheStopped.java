@@ -20,7 +20,7 @@ public class EventCacheStopped extends AbstractEventTestBundle {
 
     @Before
     public void setupConf() {
-        conf = CacheConfiguration.create();
+        conf = newConf();
         conf.serviceManager().add(new Subscriber());
         conf.event().setEnabled(true).include(CacheEvent.class);
     }

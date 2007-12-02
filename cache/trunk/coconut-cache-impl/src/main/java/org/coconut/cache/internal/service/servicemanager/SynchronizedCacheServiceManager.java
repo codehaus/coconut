@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -102,8 +103,14 @@ public class SynchronizedCacheServiceManager implements InternalCacheServiceMana
         }
 
         protected void doTerminate() {
-            super.doTerminate();
-            shutdownThread = null;
+            mainLock.lock();
+            try {
+                super.doTerminate();
+                shutdownThread = null;
+                termination.signalAll();
+            } finally {
+                mainLock.unlock();
+            }
         }
 
         private Thread shutdownThread;

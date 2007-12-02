@@ -15,9 +15,9 @@ import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
-import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
+import org.coconut.cache.service.worker.CacheWorkerService;
 import org.coconut.cache.spi.CacheServiceSupport;
 import org.coconut.cache.tck.cacheentry.CacheEntrySuite;
 import org.coconut.cache.tck.core.CoreSuite;
@@ -29,6 +29,7 @@ import org.coconut.cache.tck.service.loading.LoadingSuite;
 import org.coconut.cache.tck.service.management.ManagementSuite;
 import org.coconut.cache.tck.service.servicemanager.ServiceManagerSuite;
 import org.coconut.cache.tck.service.statistics.StatisticsSuite;
+import org.coconut.cache.tck.service.worker.WorkerSuite;
 import org.junit.Test;
 import org.junit.internal.runners.CompositeRunner;
 import org.junit.internal.runners.InitializationError;
@@ -144,6 +145,9 @@ public class CacheTCKRunner extends Runner {
         }
         if (services.contains(CacheStatisticsService.class)) {
             runner.add(new ServiceSuite(StatisticsSuite.class));
+        }
+        if (services.contains(CacheWorkerService.class)) {
+            runner.add(new ServiceSuite(WorkerSuite.class));
         }
     }
 }
