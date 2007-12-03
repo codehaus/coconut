@@ -31,7 +31,7 @@ public class ReplacementPolicyDecoratorTest {
     Mockery context = new JUnit4Mockery();
 
     @Test(expected = NullPointerException.class)
-    public void PolicyDecoratorNPE() {
+    public void policyDecoratorNPE() {
         new ReplacementPolicyDecorator(null);
     }
 

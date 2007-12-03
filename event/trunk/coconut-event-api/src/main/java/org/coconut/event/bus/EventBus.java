@@ -55,9 +55,11 @@ import org.coconut.predicate.Predicate;
  * Most implementations does not have any transactional gurantees and a primary meant to
  * be a lightweight alternative to message frameworks such as JMS.
  * <p>
- * Use {@link Events} to easily create instances of various implementations of eventbus
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: EventBusConfiguration.java 415 2007-11-09 08:25:23Z kasper $
+ * @param <E>
+ *            the type of events processed by this event bus
  */
 public interface EventBus<E> extends Offerable<E>, EventProcessor<E> {
 
@@ -127,6 +129,6 @@ public interface EventBus<E> extends Offerable<E>, EventProcessor<E> {
      * @throws IllegalArgumentException
      *             if the specified name is not unique within all the subscriptions
      */
-    EventSubscription<E> subscribe(EventProcessor<? super E> listener,
-            Predicate<? super E> filter, String name);
+    EventSubscription<E> subscribe(EventProcessor<? super E> listener, Predicate<? super E> filter,
+            String name);
 }

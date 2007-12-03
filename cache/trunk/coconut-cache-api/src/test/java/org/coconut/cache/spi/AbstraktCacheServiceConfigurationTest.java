@@ -5,6 +5,7 @@ package org.coconut.cache.spi;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertSame;
+import static junit.framework.Assert.assertTrue;
 
 import java.util.ListResourceBundle;
 import java.util.MissingResourceException;
@@ -26,12 +27,12 @@ public class AbstraktCacheServiceConfigurationTest {
     };
 
     @Test(expected = NullPointerException.class)
-    public void AbstractCacheServiceConfigurationNPE() {
+    public void abstractCacheServiceConfigurationNPE() {
         new AbstractCacheServiceConfiguration(null) {};
     }
 
     @Test
-    public void AbstractCacheServiceConfiguration() {
+    public void abstractCacheServiceConfiguration() {
         AbstractCacheServiceConfiguration a = new AbstractCacheServiceConfiguration("foo") {};
         assertEquals("foo", a.getServiceName());
 
@@ -45,7 +46,7 @@ public class AbstraktCacheServiceConfigurationTest {
     }
 
     @Test
-    public void AbstractCacheServiceConfiguration2() {
+    public void abstractCacheServiceConfiguration2() {
         AbstractCacheServiceConfiguration a = new AbstractCacheServiceConfiguration("foo", rb) {};
         assertEquals("foo", a.getServiceName());
         assertSame(rb, a.getResourceBundle());
@@ -78,10 +79,9 @@ public class AbstraktCacheServiceConfigurationTest {
                 parent.appendChild(doc.createElement("foo"));
             }
         };
-        String newline = System.getProperty("line.separator");
-        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" + newline
-                + "<s>" + newline + "    <foo/>" + newline + "</s>" + newline;
-        assertEquals(expected, a.toString());
+        assertTrue(a.toString().contains("<s>"));
+        assertTrue(a.toString().contains("<foo/>"));
+        assertTrue(a.toString().contains("</s>"));
     }
 
     @Test(expected = CacheException.class)

@@ -42,6 +42,9 @@ public final class Predicates {
      * @return a Predicate that tests all elements
      * @param <E>
      *            the type of elements accepted by the predicate
+     * @throws NullPointerException
+     *             if the specified iterable is <code>null</code> or contains a null
+     *             element
      */
     public static <E> Predicate<E> all(Iterable<? extends Predicate<? super E>> predicates) {
         return new Predicates.AllPredicate<E>(predicates);
@@ -64,6 +67,8 @@ public final class Predicates {
      * @return a Predicate that tests all elements
      * @param <E>
      *            the type of elements accepted by the predicate
+     * @throws NullPointerException
+     *             if any of the specified predicates are <code>null</code>
      */
     public static <E> Predicate<E> all(Predicate<? super E>... predicates) {
         return new Predicates.AllPredicate<E>(predicates);
@@ -80,8 +85,8 @@ public final class Predicates {
      * </pre>
      * 
      * <p>
-     * If both of the supplied predicates are serializable the return predicate will also
-     * be serializable.
+     * If both of the supplied predicates are serializable the returned predicate will
+     * also be serializable.
      * 
      * @param left
      *            the left-hand predicate
@@ -90,6 +95,8 @@ public final class Predicates {
      * @return an and predicate
      * @param <E>
      *            the type of elements accepted by the predicate
+     * @throws NullPointerException
+     *             if any of the specified predicates are <code>null</code>
      */
     public static <E> Predicate<E> and(Predicate<? super E> left, Predicate<? super E> right) {
         return new Predicates.AndPredicate<E>(left, right);
@@ -103,6 +110,9 @@ public final class Predicates {
      * @return a Predicate that tests all elements
      * @param <E>
      *            the type of elements accepted by the predicate
+     * @throws NullPointerException
+     *             if the specified iterable is <code>null</code> or contains a null
+     *             element
      */
     public static <E> Predicate<E> any(Iterable<? extends Predicate<? super E>> predicates) {
         return new Predicates.AnyPredicate<E>(predicates);
@@ -124,6 +134,8 @@ public final class Predicates {
      * @return a Predicate that tests all elements
      * @param <E>
      *            the type of elements accepted by the predicate
+     * @throws NullPointerException
+     *             if any of the specified predicates are <code>null</code>
      */
     public static <E> Predicate<E> any(Predicate<? super E>... predicates) {
         return new Predicates.AnyPredicate<E>(predicates);
@@ -146,8 +158,9 @@ public final class Predicates {
      * @return a Predicate that tests all elements
      * @param <E>
      *            the type of elements accepted by the predicate
+     * @throws NullPointerException
+     *             if any of the specified elements are <code>null</code>
      */
-    @SuppressWarnings( { "unchecked" })
     public static <E> Predicate<E> anyEquals(E... elements) {
         List<Predicate<E>> list = new ArrayList<Predicate<E>>();
         for (E e : elements) {
@@ -164,6 +177,9 @@ public final class Predicates {
      * @return a Predicate that tests all elements
      * @param <E>
      *            the type of elements accepted by the predicate
+     * @throws NullPointerException
+     *             if the specified iterable is <code>null</code> or contains a null
+     *             element
      */
     public static <E> Predicate<E> anyEquals(Iterable<? extends E> elements) {
         List<Predicate<E>> list = new ArrayList<Predicate<E>>();
@@ -173,31 +189,116 @@ public final class Predicates {
         return any(list);
     }
 
-    @SuppressWarnings("unchecked")
-    public static Predicate anyType(Class... clazz) {
-        Predicate[] cbf = new IsTypePredicate[clazz.length];
-        for (int i = 0; i < cbf.length; i++) {
-            cbf[i] = isType(clazz[i]);
+    /**
+     * Returns a Predicate that evaluates to true if any of the specified elements are a
+     * supertype of the element that is being tested. The returned predicate uses
+     * short-circuit evaluation (or minimal evaluation). That is, subsequent arguments are
+     * only evaluated if the previous arguments does not suffice to determine the truth
+     * value.
+     * <p>
+     * The Predicate will use a copy of the array of supplied predicates.
+     * <p>
+     * If all the supplied predicates are serializable the returned predicate will also be
+     * serializable.
+     * 
+     * @param classes
+     *            the types to test against
+     * @return a Predicate that tests all elements
+     * @throws NullPointerException
+     *             if any of the specified classes are <code>null</code>
+     */
+    public static Predicate anyType(Class<?>... classes) {
+        List<Predicate<?>> list = new ArrayList<Predicate<?>>();
+        for (Class<?> c : classes) {
+            list.add(isType(c));
         }
-        return Predicates.any(cbf);
+        return any(list);
     }
 
-    public static <E> Predicate<E> between(E first, E second) {
-        return and((Predicate)Predicates.greatherThenOrEqual(first),(Predicate) Predicates.lessThenOrEqual(second));
+    /**
+     * As {@link #anyType(Class...)} except taking an {@link Iterable} as parameter.
+     * 
+     * @param classes
+     *            the types to test against
+     * @return a Predicate that tests all elements
+     * @throws NullPointerException
+     *             if the specified iterable is <code>null</code> or contains a null
+     *             element
+     */
+    public static Predicate anyType(Iterable<? extends Class<?>> classes) {
+        List<Predicate<?>> list = new ArrayList<Predicate<?>>();
+        for (Class<?> c : classes) {
+            list.add(isType(c));
+        }
+        return any(list);
+    }
+
+    /**
+     * Returns a Predicate that evaluates to true if the element being is between the two
+     * specified elements (both inclusive). This is equivalent to:
+     * 
+     * <pre>
+     * left &lt;= element_being_tester &lt;= right
+     * </pre>
+     * 
+     * <p>
+     * If both of the supplied predicates are serializable the returned predicate will
+     * also be serializable.
+     * 
+     * @param left
+     *            the left-hand element to compare with
+     * @param right
+     *            the right hand element to compare with
+     * @return a between predicate
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     * @throws NullPointerException
+     *             if any of the specified elements are <code>null</code>
+     */
+    public static <E> Predicate<E> between(E left, E right) {
+        return and((Predicate) Predicates.greatherThenOrEqual(left), (Predicate) Predicates
+                .lessThenOrEqual(right));
+    }
+
+    /**
+     * As {@link #between(Object, Object)} except using the specified {@link Comparator}
+     * when evaluating elements.
+     * 
+     * @param left
+     *            the left-hand element to compare with
+     * @param right
+     *            the right hand element to compare with
+     * @param comparator
+     *            the comparator to compare elements with
+     * @return a between predicate
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     * @throws NullPointerException
+     *             if the specified comparator or any of the specified elements are
+     *             <code>null</code>
+     */
+    public static <E> Predicate<E> between(E left, E right, Comparator<? extends E> comparator) {
+        return and((Predicate) Predicates.greatherThenOrEqual(left, comparator),
+                (Predicate) Predicates.lessThenOrEqual(right, comparator));
     }
 
     /**
      * Returns a Predicate that accepts all elements that are {@link Object#equals equal}
      * to the specified object.
+     * <p>
+     * If the specified object is serializable the returned predicate will also be
+     * serializable.
      * 
      * @param object
      *            the object we test against.
-     * @return a new EqualPredicate
+     * @return an equals predicate
      * @throws NullPointerException
      *             if the specified object is <code>null</code>
+     * @param <E>
+     *            the type of elements accepted by the predicate
      */
     public static <E> Predicate<E> equalsTo(E object) {
-        return new Predicates.EqualsPredicate<E>(object);
+        return new Predicates.EqualsToPredicate<E>(object);
     }
 
     @SuppressWarnings("unchecked")
@@ -586,10 +687,10 @@ public final class Predicates {
      * A Predicate that accepts all elements that are {@link Object#equals equal} to the
      * specified object.
      */
-    final static class EqualsPredicate<E> implements Predicate<E>, Serializable {
+    final static class EqualsToPredicate<E> implements Predicate<E>, Serializable {
 
         /** Default <code>serialVersionUID</code>. */
-        private static final long serialVersionUID = 3761971557773620791L;
+        private static final long serialVersionUID = -802615306772905787L;
 
         /** The object to compare with. */
         private final E object;
@@ -602,7 +703,7 @@ public final class Predicates {
          * @throws NullPointerException
          *             if the specified object is null
          */
-        public EqualsPredicate(final E object) throws NullPointerException {
+        public EqualsToPredicate(final E object) {
             if (object == null) {
                 throw new NullPointerException("element is null");
             }
@@ -647,11 +748,11 @@ public final class Predicates {
      */
     final static class FalsePredicate implements Predicate, Serializable {
 
-        /** Default <code>serialVersionUID</code>. */
-        private static final long serialVersionUID = -3048464662394104180L;
-
         /** The one and only instance. */
         static final FalsePredicate INSTANCE = new FalsePredicate();
+
+        /** Default <code>serialVersionUID</code>. */
+        private static final long serialVersionUID = -3048464662394104180L;
 
         /** Construct a new FalsePredicate. */
         private FalsePredicate() {}
@@ -1253,11 +1354,11 @@ public final class Predicates {
      */
     final static class TruePredicate implements Predicate, Serializable {
 
+        /** The TruePredicate instance. */
+        final static TruePredicate INSTANCE = new TruePredicate();
+
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 3258129137502925875L;
-
-        /** The TruePredicate instance. */
-        static final TruePredicate INSTANCE = new TruePredicate();
 
         /** Construct a new TruePredicate. */
         private TruePredicate() {}

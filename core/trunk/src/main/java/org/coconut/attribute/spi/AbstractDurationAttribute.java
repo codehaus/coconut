@@ -12,7 +12,7 @@ import org.coconut.attribute.AttributeMap;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public abstract class AbstractDurationAttribute extends AbstractLongAttribute {
-    protected static long DEFAULT_DURATION = Long.MAX_VALUE;
+    protected static final long DEFAULT_DURATION = Long.MAX_VALUE;
 
     /**
      * Creates a new DurationAttribute.

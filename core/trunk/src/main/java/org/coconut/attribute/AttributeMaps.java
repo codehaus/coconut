@@ -28,6 +28,18 @@ public final class AttributeMaps {
 
     // /CLOVER:ON
 
+    /**
+     * Returns an AttributeMap containing only the specified attribute mapping to the
+     * specified value.
+     * 
+     * @param attribute
+     *            the attribute to map from
+     * @param value
+     *            the value to map to
+     * @return a singleton attribute map
+     * @param <T>
+     *            the containing type of the attribute
+     */
     public static <T> AttributeMap singleton(Attribute<T> attribute, T value) {
         // make immutable.
         DefaultAttributeMap map = new DefaultAttributeMap();

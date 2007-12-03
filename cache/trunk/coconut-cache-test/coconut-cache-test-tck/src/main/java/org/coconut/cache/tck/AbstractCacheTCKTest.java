@@ -136,6 +136,10 @@ public class AbstractCacheTCKTest extends Assert {
         assertEquals(size, c.size());
     }
 
+    protected void assertVolume(long volume) {
+        assertEquals(volume, c.getVolume());
+    }
+
     /**
      * Await all loads that currently active.
      */
@@ -181,7 +185,7 @@ public class AbstractCacheTCKTest extends Assert {
         } else if (found.size() == 1) {
             ObjectName on = found.iterator().next().getObjectName();
             // System.out.println(on);
-            T proxy = MBeanServerInvocationHandler.newProxyInstance(server, on, clazz, false);
+            T proxy = (T) MBeanServerInvocationHandler.newProxyInstance(server, on, clazz, false);
             return proxy;
         } else {
             throw new IllegalArgumentException("Duplicate service " + clazz);
@@ -372,9 +376,10 @@ public class AbstractCacheTCKTest extends Assert {
         try {
             long start = System.nanoTime();
             assertTrue(c.awaitTermination(10, TimeUnit.SECONDS));
-            long finish=System.nanoTime();
-            if (finish-start>1000000) {
-                System.out.println(finish-start);
+            long finish = System.nanoTime();
+            if (finish - start > 1000000) {
+//                System.out.println(finish - start);
+     //           new Exception().printStackTrace();
             }
         } catch (InterruptedException e) {
             throw new AssertionError(e);

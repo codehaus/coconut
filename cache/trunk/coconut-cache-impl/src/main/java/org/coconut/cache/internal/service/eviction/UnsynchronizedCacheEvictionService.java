@@ -44,6 +44,7 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
         super(helper);
         cp = conf.getPolicy() == null ? Policies.newLRU() : (ReplacementPolicy) conf.getPolicy();
         maxSize = EvictionUtils.getMaximumSizeFromConfiguration(conf);
+        //System.out.println("maxSize " + maxSize);
         maxVolume = EvictionUtils.getMaximumVolumeFromConfiguration(conf);
     }
 

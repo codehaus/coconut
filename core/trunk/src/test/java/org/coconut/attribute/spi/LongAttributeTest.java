@@ -40,7 +40,7 @@ public class LongAttributeTest {
 
     @Test
     public void fromString() {
-        assertEquals(-1L, LA.fromString(new Long(-1).toString()));
+        assertEquals(-1L, LA.fromString(Long.valueOf(-1).toString()));
         assertEquals(Long.MIN_VALUE, LA.fromString(new Long(Long.MIN_VALUE).toString()));
         assertEquals(Long.MAX_VALUE, LA.fromString(new Long(Long.MAX_VALUE).toString()));
     }
@@ -69,8 +69,8 @@ public class LongAttributeTest {
     public void isValid() {
         assertTrue(LA.isValid(Long.MIN_VALUE));
         assertTrue(LA.isValid(Long.MAX_VALUE));
-        assertTrue(LA.isValid(new Long(Long.MIN_VALUE)));
-        assertTrue(LA.isValid(new Long(Long.MAX_VALUE)));
+        assertTrue(LA.isValid(Long.valueOf(Long.MIN_VALUE)));
+        assertTrue(LA.isValid(Long.valueOf(Long.MAX_VALUE)));
 
         assertTrue(NON_NEGATIVE.isValid(Long.MAX_VALUE));
         assertFalse(NON_NEGATIVE.isValid(Long.MIN_VALUE));
@@ -81,7 +81,7 @@ public class LongAttributeTest {
         AttributeMap am = new AttributeMaps.DefaultAttributeMap();
         assertEquals(10l, LA.setAttribute(am, 10l).get(LA));
         assertEquals(-10000l, LA.setAttribute(am, -10000l).get(LA));
-        assertEquals(10000l, LA.setAttribute(am, new Long(10000)).get(LA));
+        assertEquals(10000l, LA.setValue(am, Long.valueOf(10000)).get(LA));
         assertEquals(Long.MAX_VALUE, LA.setAttribute(am, Long.MAX_VALUE).get(LA));
     }
 

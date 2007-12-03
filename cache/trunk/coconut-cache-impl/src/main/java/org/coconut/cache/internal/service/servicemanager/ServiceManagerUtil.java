@@ -5,7 +5,6 @@ package org.coconut.cache.internal.service.servicemanager;
 
 import java.util.Map;
 
-import org.coconut.cache.service.servicemanager.AsynchronousShutdownObject;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 
 /**
@@ -65,7 +64,7 @@ public class ServiceManagerUtil {
         }
 
         /** {@inheritDoc} */
-        public void shutdownServiceAsynchronously(AsynchronousShutdownObject service) {
+        public void shutdownServiceAsynchronously(Runnable service) {
             delegate.shutdownServiceAsynchronously(service);
         }
 

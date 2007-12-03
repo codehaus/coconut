@@ -3,13 +3,19 @@
  */
 package org.coconut.cache.internal.service.servicemanager;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -17,7 +23,6 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
-import org.coconut.cache.service.servicemanager.AsynchronousShutdownObject;
 
 public class SynchronizedCacheServiceManager implements InternalCacheServiceManager {
     private final Inner delegate;
@@ -29,124 +34,6 @@ public class SynchronizedCacheServiceManager implements InternalCacheServiceMana
             Collection<Class<? extends AbstractCacheLifecycle>> classes) {
         delegate = new Inner(cache, helper, conf, classes);
         this.mutex = cache;
-    }
-
-    class Inner extends UnsynchronizedCacheServiceManager {
-        private final Object mutex;
-
-        private final ReentrantLock mainLock = new ReentrantLock();
-
-        private final List<ServiceHolder> missing = new ArrayList<ServiceHolder>();
-
-        /**
-         * Wait condition to support awaitTermination.
-         */
-        private final Condition termination = mainLock.newCondition();
-
-        public Inner(Cache<?, ?> cache, InternalCacheSupport<?, ?> helper,
-                CacheConfiguration<?, ?> conf,
-                Collection<Class<? extends AbstractCacheLifecycle>> classes) {
-            super(cache, helper, conf, classes,false);
-            this.mutex = cache;
-            initialize(cache, helper, conf, classes);
-        }
-
-        @Override
-        public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
-            long nanos = unit.toNanos(timeout);
-            final ReentrantLock mainLock = this.mainLock;
-            mainLock.lock();
-            try {
-                for (;;) {
-                    if (isTerminated())
-                        return true;
-                    if (nanos <= 0)
-                        return false;
-                    nanos = termination.awaitNanos(nanos);
-                }
-            } finally {
-                mainLock.unlock();
-            }
-        }
-
-        protected void tryTerminate() {
-            // TODO fix missing, not threadSafe
-            for (Iterator<ServiceHolder> iterator = missing.iterator(); iterator.hasNext();) {
-                if (iterator.next().aso.isTerminated()) {
-                    iterator.remove();
-                }
-            }
-            if (missing.size() == 0) {
-                super.doTerminate();
-            } else {
-                if (shutdownThread == null) {
-                    shutdownThread = new Thread(new Runnable() {
-                        public void run() {
-                            for (;;) {
-                                if (missing.size() == 0) {
-                                    doTerminate();
-                                    return;
-                                }
-                                for (ServiceHolder sh : missing) {
-                                    try {
-                                        sh.aso.awaitTermination(60, TimeUnit.SECONDS);
-                                    } catch (InterruptedException e) {
-                                        // ignore???
-                                    }
-                                }
-                                tryTerminate();
-                            }
-                        }
-                    }, "cache shutdown thread");
-                    shutdownThread.start();
-                }
-            }
-        }
-
-        protected void doTerminate() {
-            mainLock.lock();
-            try {
-                super.doTerminate();
-                shutdownThread = null;
-                termination.signalAll();
-            } finally {
-                mainLock.unlock();
-            }
-        }
-
-        private Thread shutdownThread;
-
-        @Override
-        public void shutdown() {
-            synchronized (mutex) {
-                super.shutdown();
-            }
-        }
-
-        @Override
-        public synchronized void shutdownNow() {
-            synchronized (mutex) {
-                shutdown();
-                for (ServiceHolder sh : super.services) {
-                    if (sh.aso != null && !sh.aso.isTerminated()) {
-                        sh.aso.shutdownNow();
-                    }
-                }
-                tryTerminate();
-            }
-        }
-
-        @Override
-        public void shutdownServiceAsynchronously(AsynchronousShutdownObject service2) {
-            synchronized (mutex) {
-                ServiceHolder sh = super.serviceBeingShutdown;
-                if (sh == null) {
-                    throw new IllegalStateException();
-                }
-                sh.aso = service2;
-                missing.add(sh);
-            }
-        }
     }
 
     public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
@@ -169,6 +56,10 @@ public class SynchronizedCacheServiceManager implements InternalCacheServiceMana
         synchronized (mutex) {
             return delegate.getService(type);
         }
+    }
+
+    public synchronized <T> T getServiceFromCache(Class<T> type) {
+        return delegate.getServiceFromCache(type);
     }
 
     public boolean hasService(Class<?> type) {
@@ -203,11 +94,15 @@ public class SynchronizedCacheServiceManager implements InternalCacheServiceMana
         delegate.shutdown();
     }
 
+    public void shutdown(Throwable cause) {
+        delegate.shutdown(cause);
+    }
+
     public void shutdownNow() {
         delegate.shutdownNow();
     }
 
-    public void shutdownServiceAsynchronously(AsynchronousShutdownObject service2) {
+    public void shutdownServiceAsynchronously(Runnable service2) {
         delegate.shutdownServiceAsynchronously(service2);
     }
 
@@ -217,11 +112,138 @@ public class SynchronizedCacheServiceManager implements InternalCacheServiceMana
         }
     }
 
-    public void shutdown(Throwable cause) {
-        delegate.shutdown(cause);
-    }
+    static class Inner extends UnsynchronizedCacheServiceManager {
+        private volatile Executor e;
 
-    public synchronized <T> T getServiceFromCache(Class<T> type) {
-        return delegate.getServiceFromCache(type);
+        private final ExecutorService es = Executors.newCachedThreadPool();
+
+        private final Queue<Future> futures = new ConcurrentLinkedQueue<Future>();
+
+        private final ReentrantLock mainLock = new ReentrantLock();
+
+        private final Object mutex;
+
+        /**
+         * Wait condition to support awaitTermination.
+         */
+        private final Condition termination = mainLock.newCondition();
+
+        public Inner(Cache<?, ?> cache, InternalCacheSupport<?, ?> helper,
+                CacheConfiguration<?, ?> conf,
+                Collection<Class<? extends AbstractCacheLifecycle>> classes) {
+            super(cache, helper, conf, classes, false);
+            this.mutex = cache;
+            initialize();
+        }
+
+        @Override
+        public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+            long nanos = unit.toNanos(timeout);
+            final ReentrantLock mainLock = this.mainLock;
+            mainLock.lock();
+            try {
+                for (;;) {
+                    if (super.isTerminated())
+                        return true;
+                    if (nanos <= 0)
+                        return false;
+                    nanos = termination.awaitNanos(nanos);
+                }
+            } finally {
+                mainLock.unlock();
+            }
+        }
+
+        @Override
+        public void shutdown() {
+            synchronized (mutex) {
+                mainLock.lock();
+                try {
+                    try {
+                    super.shutdown();
+                    } catch (RuntimeException e) {
+                        e.printStackTrace();
+                    }
+                    if (!futures.isEmpty()) {
+                        ThreadPoolExecutor tpe=new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
+                                new LinkedBlockingQueue<Runnable>());
+                        tpe.execute(new Runnable() {
+                            public void run() {
+                                try {
+                                    while (!futures.isEmpty()) {
+                                        Future f = futures.poll();
+                                        try {
+                                            f.get();
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        } catch (ExecutionException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                } finally {
+                                    doTerminate();
+                                }
+                            }
+                        });
+                        tpe.shutdown();
+                    } else {
+                        doTerminate();
+                    }
+                } finally {
+                    mainLock.unlock();
+                }
+            }
+        }
+
+        @Override
+        public synchronized void shutdownNow() {
+            synchronized (mutex) {
+                shutdown();
+                for (ServiceHolder sh : super.services) {
+                    sh.shutdownNow();
+                }
+            }
+        }
+
+        @Override
+        public void shutdownService(final ServiceHolder service) {
+            final AtomicInteger canSubmit = new AtomicInteger();
+            e = new Executor() {
+                public void execute(final Runnable command) {
+                    if (canSubmit.compareAndSet(0, 1)) {
+                        service.aso = es.submit(new Runnable() {
+                            public void run() {
+                                command.run();
+                            }
+                        });
+                        futures.add(service.aso);
+                    } else {
+                        throw new IllegalStateException();
+                    }
+                }
+            };
+            super.shutdownService(service);
+            canSubmit.set(2);
+        }
+
+        @Override
+        public void shutdownServiceAsynchronously(Runnable service2) {
+            if (e == null) {
+                throw new IllegalStateException("cannot shutdown now");
+            }
+            e.execute(service2);
+        }
+
+        protected void doTerminate() {
+            mainLock.lock();
+            try {
+                super.doTerminate();
+                termination.signalAll();
+            } finally {
+                mainLock.unlock();
+            }
+        }
+
+        protected void tryTerminate() {}
     }
 }

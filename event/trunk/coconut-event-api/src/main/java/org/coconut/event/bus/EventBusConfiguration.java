@@ -7,18 +7,32 @@ import org.coconut.predicate.matcher.PredicateMatcher;
 
 /**
  * This class is the primary class used for representing the configuration of a cache. All
- * general-purpose <tt>EventBus</tt> implementation classes should have a constructor with
- * a single argument taking a EventBus.
+ * general-purpose <tt>EventBus</tt> implementation classes should have a constructor
+ * with a single argument taking a EventBus.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: EventBusConfiguration.java 415 2007-11-09 08:25:23Z kasper $
+ * @param <E>
+ *            the type of events processed by the event bus
+ */
+/**
+ * @param <E>
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class EventBusConfiguration<E> {
 
+    /** The predicate matcher that the event bus should use. */
     private PredicateMatcher<?, E> filterMatcher;
 
+    /** Whether or not the event bus should be reentrant. */
     private boolean reentrant;
 
+    /**
+     * Returns whether or not the event bus is reentrant.
+     * 
+     * @return whether or not the event bus is reentrant
+     */
     public boolean getCheckReentrant() {
         return reentrant;
     }
@@ -36,6 +50,7 @@ public class EventBusConfiguration<E> {
      * 
      * @param check
      *            check reenterent
+     * @return this configuration
      */
     public EventBusConfiguration<E> setCheckReentrant(boolean check) {
         this.reentrant = check;
@@ -45,6 +60,7 @@ public class EventBusConfiguration<E> {
     /**
      * @param filterMatcher
      *            the filterMatcher to set
+     * @return this configuration
      */
     public EventBusConfiguration<E> setFilterMatcher(PredicateMatcher<?, E> filterMatcher) {
         this.filterMatcher = filterMatcher;

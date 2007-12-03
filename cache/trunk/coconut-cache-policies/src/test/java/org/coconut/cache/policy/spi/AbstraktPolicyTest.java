@@ -58,9 +58,6 @@ public class AbstraktPolicyTest {
 
         int addCount;
 
-        /**
-         * @see org.coconut.cache.policy.ReplacementPolicy#add(java.lang.Object)
-         */
         public int add(String element, AttributeMap ignore) {
             list.add(element);
             return addCount++;
@@ -115,10 +112,6 @@ public class AbstraktPolicyTest {
             throw new UnsupportedOperationException();
         }
 
-        /**
-         * @see org.coconut.cache.policy.ReplacementPolicy#update(int,
-         *      java.lang.Object)
-         */
         public boolean update(int index, String newElement, AttributeMap ignore) {
             throw new UnsupportedOperationException();
         }

@@ -14,43 +14,41 @@ import org.coconut.predicate.Predicate;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class IsCacheables {
-    public static final IsCacheable REJECT_ALL = new RejectAll();
+public final class IsCacheables {
 
+    /** An IsCacheable that accepts all elements. */
     public static final IsCacheable ACCEPT_ALL = new AcceptAll();
 
-    public static final <K, V> IsCacheable<K, V> rejectAll() {
-        return REJECT_ALL;
-    }
+    // /CLOVER:ON
+    /** An IsCacheable that rejects all elements. */
+    public static final IsCacheable REJECT_ALL = new RejectAll();
+
+    /** Cannot instantiate. */
+    // /CLOVER:OFF
+    private IsCacheables() {}
 
     public static final <K, V> IsCacheable<K, V> acceptAll() {
         return ACCEPT_ALL;
     }
-    public static final <K, V> IsCacheable<K, V> fromValuePredicate(Predicate<? super V> predicate) {
-        return new ValuePredicate<K, V>(predicate);
-    }
+
     public static final <K, V> IsCacheable<K, V> fromKeyPredicate(Predicate<? super K> predicate) {
         return new KeyPredicate<K, V>(predicate);
     }
 
-    public static final <K, V> IsCacheable<K, V> minimumCost(double minimumCost) {
-        return new MinimumCost<K, V>(minimumCost);
+    public static final <K, V> IsCacheable<K, V> fromValuePredicate(Predicate<? super V> predicate) {
+        return new ValuePredicate<K, V>(predicate);
     }
 
     public static final <K, V> IsCacheable<K, V> maximumSize(long maximumSize) {
         return new MaximumSize<K, V>(maximumSize);
     }
 
-    /**
-     * @param <T>
-     *            the type of elements accepted by this filter
-     */
-    static class RejectAll<K, V> implements IsCacheable<K, V>, Serializable {
+    public static final <K, V> IsCacheable<K, V> minimumCost(double minimumCost) {
+        return new MinimumCost<K, V>(minimumCost);
+    }
 
-        /** {@inheritDoc} */
-        public boolean isCacheable(K key, V value, AttributeMap attributes) {
-            return false;
-        }
+    public static final <K, V> IsCacheable<K, V> rejectAll() {
+        return REJECT_ALL;
     }
 
     /**
@@ -58,6 +56,9 @@ public class IsCacheables {
      *            the type of elements accepted by this filter
      */
     static class AcceptAll<K, V> implements IsCacheable<K, V>, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -7594333684624926263L;
+
         /** {@inheritDoc} */
         public boolean isCacheable(K key, V value, AttributeMap attributes) {
             return true;
@@ -68,7 +69,40 @@ public class IsCacheables {
      * @param <T>
      *            the type of elements accepted by this filter
      */
+    static class KeyPredicate<K, V> implements IsCacheable<K, V>, Serializable {
+        /** serialVersionUID */
+        private static final long serialVersionUID = 5046395272186446797L;
+
+        /** The minimum cost of an element that will be accepted. */
+        private final Predicate<? super K> predicate;
+
+        /**
+         * Creates a new KeyPredicate.
+         * 
+         * @param predicate
+         *            the key predicate
+         */
+        public KeyPredicate(final Predicate<? super K> predicate) {
+            if (predicate == null) {
+                throw new NullPointerException("predicate is null");
+            }
+            this.predicate = predicate;
+        }
+
+        /** {@inheritDoc} */
+        public boolean isCacheable(K key, V value, AttributeMap attributes) {
+            return predicate.evaluate(key);
+        }
+    }
+
+    /**
+     * @param <T>
+     *            the type of elements accepted by this filter
+     */
     static class MaximumSize<K, V> implements IsCacheable<K, V>, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -1284778010296201666L;
+
         /** The maximum size of an element that will be accepted. */
         private final long threshold;
 
@@ -91,64 +125,15 @@ public class IsCacheables {
             return size <= threshold;
         }
     }
-    /**
-     * @param <T>
-     *            the type of elements accepted by this filter
-     */
-    static class ValuePredicate<K, V> implements IsCacheable<K, V>, Serializable {
-        /** The minimum cost of an element that will be accepted. */
-        private final Predicate<? super V> predicate;
-
-        /**
-         * Creates a new KeyPredicate.
-         * 
-         * @param Predicate
-         *            the key predicate
-         */
-        public ValuePredicate(final Predicate<? super V> predicate) {
-            if (predicate == null) {
-                throw new NullPointerException("predicate is null");
-            }
-            this.predicate = predicate;
-        }
-
-        /** {@inheritDoc} */
-        public boolean isCacheable(K key, V value, AttributeMap attributes) {
-            return predicate.evaluate(value);
-        }
-    }
-    /**
-     * @param <T>
-     *            the type of elements accepted by this filter
-     */
-    static class KeyPredicate<K, V> implements IsCacheable<K, V>, Serializable {
-        /** The minimum cost of an element that will be accepted. */
-        private final Predicate<? super K> predicate;
-
-        /**
-         * Creates a new KeyPredicate.
-         * 
-         * @param Predicate
-         *            the key predicate
-         */
-        public KeyPredicate(final Predicate<? super K> predicate) {
-            if (predicate == null) {
-                throw new NullPointerException("predicate is null");
-            }
-            this.predicate = predicate;
-        }
-
-        /** {@inheritDoc} */
-        public boolean isCacheable(K key, V value, AttributeMap attributes) {
-            return predicate.evaluate(key);
-        }
-    }
 
     /**
      * @param <T>
      *            the type of elements accepted by this filter
      */
     static class MinimumCost<K, V> implements IsCacheable<K, V>, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = 7985164051605463107L;
+
         /** The minimum cost of an element that will be accepted. */
         private final double minimumCost;
 
@@ -166,6 +151,51 @@ public class IsCacheables {
         public boolean isCacheable(K key, V value, AttributeMap attributes) {
             double cost = CostAttribute.get(attributes);
             return cost >= minimumCost;
+        }
+    }
+
+    /**
+     * @param <T>
+     *            the type of elements accepted by this filter
+     */
+    static class RejectAll<K, V> implements IsCacheable<K, V>, Serializable {
+
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -3317413702565532922L;
+
+        /** {@inheritDoc} */
+        public boolean isCacheable(K key, V value, AttributeMap attributes) {
+            return false;
+        }
+    }
+
+    /**
+     * @param <T>
+     *            the type of elements accepted by this filter
+     */
+    static class ValuePredicate<K, V> implements IsCacheable<K, V>, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -8315484330603656664L;
+
+        /** The minimum cost of an element that will be accepted. */
+        private final Predicate<? super V> predicate;
+
+        /**
+         * Creates a new KeyPredicate.
+         * 
+         * @param predicate
+         *            the key predicate
+         */
+        public ValuePredicate(final Predicate<? super V> predicate) {
+            if (predicate == null) {
+                throw new NullPointerException("predicate is null");
+            }
+            this.predicate = predicate;
+        }
+
+        /** {@inheritDoc} */
+        public boolean isCacheable(K key, V value, AttributeMap attributes) {
+            return predicate.evaluate(value);
         }
     }
 }

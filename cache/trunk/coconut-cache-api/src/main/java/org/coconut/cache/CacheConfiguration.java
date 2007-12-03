@@ -565,7 +565,7 @@ public class CacheConfiguration<K, V> {
     public static <K, V> Cache<K, V> loadCacheFrom(InputStream xmlDoc) throws Exception {
         CacheConfiguration<K, V> conf = loadConfigurationFrom(xmlDoc);
         return conf.newCacheInstance((Class) Class.forName(conf.getProperty(
-                XmlConfigurator.CACHE_INSTANCE_TYPE).toString()));
+                XmlConfigurator.CACHE_INSTANCE_TYPE)));
     }
 
     /**

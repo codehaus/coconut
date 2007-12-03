@@ -260,8 +260,7 @@ public class XmlConfigurator {
             throws Exception {
         cacheElement.setAttribute(CACHE_NAME_ATTR, cc.getName());
         if (cc.getProperties().containsKey(XmlConfigurator.CACHE_INSTANCE_TYPE)) {
-            cacheElement.setAttribute(CACHE_TYPE_ATTR, cc.getProperty(CACHE_INSTANCE_TYPE)
-                    .toString());
+            cacheElement.setAttribute(CACHE_TYPE_ATTR, cc.getProperty(CACHE_INSTANCE_TYPE));
         }
         if (cc.getProperties().size() > 0) {
             Element ee = doc.createElement(PROPERTIES_TAG);

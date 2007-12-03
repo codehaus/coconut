@@ -7,9 +7,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Collection;
-
-import org.coconut.predicate.Predicates.AnyPredicate;
 import org.junit.Test;
 
 /**
@@ -17,15 +14,6 @@ import org.junit.Test;
  * @version $Id$
  */
 public class PredicatesTest {
-
-    @Test
-    public void anyType() {
-        Predicate p = Predicates.anyType(Integer.class, Double.class);
-        assertTrue(p.evaluate(1));
-        assertTrue(p.evaluate(1.0));
-        assertFalse(p.evaluate(1l));
-        assertFalse(p.evaluate(1.0f));
-    }
 
     @Test
     public void isNull() {
@@ -47,7 +35,7 @@ public class PredicatesTest {
         assertTrue(Predicates.isNumber().evaluate(new Short((short) 1)));
 
         assertFalse(Predicates.isNumber().evaluate(Boolean.FALSE));
-        assertFalse(Predicates.isNumber().evaluate(new Character((char) 1)));
+        assertFalse(Predicates.isNumber().evaluate(Character.valueOf((char) 1)));
     }
 
     @Test

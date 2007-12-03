@@ -44,7 +44,7 @@ public class StatisticsMXBean extends AbstractCacheTCKTest {
             throw new AssertionError(e);
         }
         prestart();
-        mxBean = MBeanServerInvocationHandler.newProxyInstance(mbs, on,
+        mxBean = (CacheStatisticsMXBean) MBeanServerInvocationHandler.newProxyInstance(mbs, on,
                 CacheStatisticsMXBean.class, false);
         return c;
     }

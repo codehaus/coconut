@@ -6,7 +6,6 @@ package org.coconut.attribute.common;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.AttributeMaps;
 import org.coconut.attribute.spi.AbstractDurationAttribute;
 
 /**
@@ -18,7 +17,7 @@ import org.coconut.attribute.spi.AbstractDurationAttribute;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class TimeToRefreshAttribute extends AbstractDurationAttribute {
+public final class TimeToRefreshAttribute extends AbstractDurationAttribute {
 
     /** The default value of this attribute. */
     public static final long DEFAULT_VALUE = AbstractDurationAttribute.DEFAULT_DURATION;
@@ -67,6 +66,8 @@ public class TimeToRefreshAttribute extends AbstractDurationAttribute {
      *            the attribute map to set set specified value in
      * @param duration
      *            the value that this attribute should be set to
+     * @param unit
+     *            the time unit of the specified duration
      * @return the specified attribute map
      */
     public static AttributeMap set(AttributeMap attributes, long duration, TimeUnit unit) {
@@ -74,11 +75,13 @@ public class TimeToRefreshAttribute extends AbstractDurationAttribute {
     }
 
     /**
-     * Returns an AttributeMap containing only this attribute mapping to specified value.
+     * Returns an AttributeMap containing only this attribute mapping to the specified value.
      * 
      * @param value
      *            the value to map to
-     * @return an AttributeMap containing only this attribute mapping to specified value
+     * @param unit
+     *            the time unit of the specified value
+     * @return an AttributeMap containing only this attribute mapping to the specified value
      */
     public static AttributeMap singleton(long value, TimeUnit unit) {
         return INSTANCE.toSingleton(value, unit);

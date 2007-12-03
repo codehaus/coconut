@@ -52,7 +52,6 @@ public class DefaultCacheManagementService extends AbstractCacheLifecycle implem
     private final ManagedVisitor registrant;
 
     /** Whether or not this service has been shutdown. */
-    @GuardedBy("this")
     private boolean isShutdown;
 
     /**

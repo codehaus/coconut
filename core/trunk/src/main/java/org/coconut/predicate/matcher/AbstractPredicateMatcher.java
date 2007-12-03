@@ -14,6 +14,7 @@ import org.coconut.predicate.Predicate;
  * @version $Id$
  */
 public abstract class AbstractPredicateMatcher<K, E> implements PredicateMatcher<K, E> {
+    
     private final Map<K, Predicate<? super E>> map;
 
     public AbstractPredicateMatcher(Map<K, Predicate<? super E>> map) {

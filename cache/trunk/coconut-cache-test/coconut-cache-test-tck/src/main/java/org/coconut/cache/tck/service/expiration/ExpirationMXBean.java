@@ -37,7 +37,7 @@ public class ExpirationMXBean extends AbstractExpirationTestBundle {
         ObjectName on = new ObjectName("org.coconut.cache:name=managementtest,service="
                 + CacheExpirationConfiguration.SERVICE_NAME);
         prestart();
-        mxBean = MBeanServerInvocationHandler.newProxyInstance(mbs, on,
+        mxBean = (CacheExpirationMXBean) MBeanServerInvocationHandler.newProxyInstance(mbs, on,
                 CacheExpirationMXBean.class, false);
     }
 

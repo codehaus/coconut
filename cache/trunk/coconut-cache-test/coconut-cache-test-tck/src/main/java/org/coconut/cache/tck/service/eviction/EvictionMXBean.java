@@ -62,7 +62,9 @@ public class EvictionMXBean extends AbstractCacheTCKTest {
         try {
             mxBean.setMaximumVolume(-1);
             fail("Did not throw exception");
-        } catch (IllegalArgumentException e) {}
+        } catch (IllegalArgumentException e) {} catch (RuntimeMBeanException e) {
+            assertTrue(e.getCause() instanceof IllegalArgumentException);
+        }
     }
 
     /**
@@ -85,8 +87,8 @@ public class EvictionMXBean extends AbstractCacheTCKTest {
         try {
             mxBean.setMaximumSize(-1);
             fail("Did not throw exception");
-        } catch (IllegalArgumentException e) {
-
+        } catch (IllegalArgumentException e) {} catch (RuntimeMBeanException e) {
+            assertTrue(e.getCause() instanceof IllegalArgumentException);
         }
     }
 
@@ -108,7 +110,9 @@ public class EvictionMXBean extends AbstractCacheTCKTest {
         try {
             mxBean.trimToSize(-1);
             fail("Did not throw exception");
-        } catch (IllegalArgumentException e) {}
+        } catch (IllegalArgumentException e) {} catch (RuntimeMBeanException e) {
+            assertTrue(e.getCause() instanceof IllegalArgumentException);
+        }
     }
 
     @Test
@@ -128,6 +132,8 @@ public class EvictionMXBean extends AbstractCacheTCKTest {
         try {
             mxBean.trimToVolume(-1);
             fail("Did not throw exception");
-        } catch (IllegalArgumentException e) {}
+        } catch (IllegalArgumentException e) {} catch (RuntimeMBeanException e) {
+            assertTrue(e.getCause() instanceof IllegalArgumentException);
+        }
     }
 }

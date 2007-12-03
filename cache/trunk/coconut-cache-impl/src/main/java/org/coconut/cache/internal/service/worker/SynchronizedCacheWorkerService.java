@@ -13,7 +13,6 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.internal.service.servicemanager.CompositeService;
 import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
-import org.coconut.cache.service.servicemanager.AsynchronousShutdownObject;
 import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.worker.CacheWorkerConfiguration;
@@ -52,6 +51,12 @@ public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService i
 
     class SameThreadCacheWorker extends CacheWorkerManager {
 
+        @Override
+        public void shutdownNow() {
+            es.shutdownNow();
+            ses.shutdownNow();
+        }
+
         final ExecutorService es;
 
         final ScheduledExecutorService ses;
@@ -78,23 +83,7 @@ public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService i
             es.shutdown();
             ses.shutdown();
             csm.getService(CacheServiceManagerService.class).shutdownServiceAsynchronously(
-                    new AsynchronousShutdownObject() {
-                        public boolean awaitTermination(long timeout, TimeUnit unit)
-                                throws InterruptedException {
-                            es.awaitTermination(timeout, unit);
-                            ses.awaitTermination(timeout, unit);
-                            return true;
-                        }
-
-                        public boolean isTerminated() {
-                            return es.isTerminated() && ses.isTerminated();
-                        }
-
-                        public void shutdownNow() {
-                            es.shutdownNow();
-                            ses.shutdownNow();
-                        }
-
+                    new Runnable() {
                         public void run() {
                             try {
                                 es.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);

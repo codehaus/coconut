@@ -201,13 +201,10 @@ public class XmlUtilTest {
     public void prettyprint() throws TransformerException {
         // I'm not to sure about this test.
         //
-        String newline = System.getProperty("line.separator");
         e.setAttribute("a", "b");
         e.setTextContent("c");
         String pp = XmlUtil.prettyprint(doc);
-        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" + newline
-                + "<element a=\"b\">c</element>" + newline;
-        assertEquals(pp, expected);
+        assertTrue(pp.contains("<element a=\"b\">c</element>"));
     }
 
     @Before
@@ -216,6 +213,5 @@ public class XmlUtilTest {
         doc = builder.newDocument();
         e = doc.createElement("element");
         doc.appendChild(e);
-
     }
 }

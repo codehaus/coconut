@@ -3,6 +3,7 @@
  */
 package org.coconut.cache.tck.service.event;
 
+import static org.coconut.cache.service.event.CacheEventFilters.CACHEENTRYEVENT_FILTER;
 import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M2;
 import static org.coconut.test.CollectionUtils.M3;
@@ -14,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.policy.IsCacheables;
 import org.coconut.cache.service.event.CacheEntryEvent;
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.event.CacheEventFilters;
@@ -113,6 +115,19 @@ public class EventServiceLoading extends AbstractEventTestBundle {
         loader.incBase();
         loading().loadAll();
         awaitAllLoads();
+    }
+
+    @Test
+    public void isCacheables() {
+        CacheConfiguration<Integer, String> conf = newConf();
+        conf.event().setEnabled(true);
+        conf.loading().setLoader(loader);
+        conf.eviction().setIsCacheableFilter(IsCacheables.REJECT_ALL);
+        c = newCache(conf);
+        subscribe(CACHEENTRYEVENT_FILTER);
+        loading().load(1);
+        awaitAllLoads();
+        assertSize(0);
     }
 
     @Test

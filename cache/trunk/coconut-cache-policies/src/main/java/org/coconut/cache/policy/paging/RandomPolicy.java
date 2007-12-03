@@ -192,6 +192,11 @@ public class RandomPolicy<T> extends AbstractPolicy<T> implements Serializable, 
         return true; // Random never rejects an entry
     }
 
+    /**
+     * Returns a random element.
+     * 
+     * @return a random element
+     */
     private int getRandomElement() {
         return rnd.nextInt(nextEntryIndex);
     }

@@ -34,24 +34,24 @@ public class DefaultManagedAttributeTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void DefaultManagedAttribute1NPE() {
+    public void defaultManagedAttribute1NPE() {
         Method m = DefaultManagedAttribute.class.getMethods()[0];
         new DefaultManagedAttribute(null, m, m, "name", "desc");
     }
 
     @Test(expected = NullPointerException.class)
-    public void DefaultManagedAttribute2NPE() {
+    public void defaultManagedAttribute2NPE() {
         new DefaultManagedAttribute(new Object(), null, null, "name", "desc");
     }
 
     @Test(expected = NullPointerException.class)
-    public void DefaultManagedAttribute3NPE() {
+    public void defaultManagedAttribute3NPE() {
         Method m = DefaultManagedAttribute.class.getMethods()[0];
         new DefaultManagedAttribute(new Object(), m, m, null, "desc");
     }
 
     @Test(expected = NullPointerException.class)
-    public void DefaultManagedAttribute4NPE() {
+    public void defaultManagedAttribute4NPE() {
         Method m = DefaultManagedAttribute.class.getMethods()[0];
         new DefaultManagedAttribute(new Object(), m, m, "name", null);
     }

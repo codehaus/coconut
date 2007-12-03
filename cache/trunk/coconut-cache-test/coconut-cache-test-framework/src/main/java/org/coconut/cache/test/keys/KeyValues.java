@@ -50,6 +50,6 @@ public class KeyValues {
     }
     
     public static String getStringMod(int i) {
-        return keys[(int) (Math.abs(i % MAXIMUM_ELEMENTS))] ;
+        return keys[(Math.abs(i % MAXIMUM_ELEMENTS))] ;
     }
 }

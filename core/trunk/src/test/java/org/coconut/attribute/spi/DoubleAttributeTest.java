@@ -76,7 +76,7 @@ public class DoubleAttributeTest {
     public void set() {
         AttributeMap am = new AttributeMaps.DefaultAttributeMap();
         assertEquals(10.5, LA.setAttribute(am, 10.5D).get(LA));
-        assertEquals(10000d, LA.setAttribute(am, new Double(10000)).get(LA));
+        assertEquals(10000d, LA.setValue(am, new Double(10000)).get(LA));
         assertEquals(Double.MAX_VALUE, LA.setAttribute(am, Double.MAX_VALUE).get(LA));
     }
 

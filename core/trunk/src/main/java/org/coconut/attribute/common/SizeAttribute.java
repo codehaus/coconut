@@ -78,11 +78,11 @@ public final class SizeAttribute extends AbstractLongAttribute {
     }
 
     /**
-     * Returns an AttributeMap containing only this attribute mapping to specified value.
+     * Returns an AttributeMap containing only this attribute mapping to the specified value.
      * 
      * @param value
      *            the value to map to
-     * @return an AttributeMap containing only this attribute mapping to specified value
+     * @return an AttributeMap containing only this attribute mapping to the specified value
      */
     public static AttributeMap singleton(long value) {
         INSTANCE.checkValid(value);

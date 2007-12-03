@@ -1,3 +1,6 @@
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
+ */
 package org.coconut.management.defaults;
 
 import java.util.Arrays;
@@ -14,7 +17,7 @@ public class OperationKey {
         if (signature == null) {
             signature = new String[0];
         }
-        this.signature = signature;
+        this.signature = signature.clone();
         hashCode = methodName.hashCode() ^ Arrays.hashCode(signature);
     }
 

@@ -12,6 +12,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Comparator;
@@ -23,6 +24,7 @@ import org.coconut.predicate.Predicates.GreaterThenOrEqualPredicate;
 import org.coconut.predicate.Predicates.GreaterThenPredicate;
 import org.coconut.predicate.Predicates.LessThenOrEqualPredicate;
 import org.coconut.predicate.Predicates.LessThenPredicate;
+import org.coconut.test.TestUtil;
 import org.junit.Test;
 
 /**
@@ -31,11 +33,38 @@ import org.junit.Test;
  */
 public class Predicates_ComparisonTest {
 
-    private final static Comparator<Dummy> COMP = new Comparator<Dummy>() {
+    static final class DummyComparator implements Comparator<Dummy>, Serializable {
         public int compare(Dummy o1, Dummy o2) {
             return (o1.i < o2.i ? -1 : (o1.i == o2.i ? 0 : 1));
         }
     };
+
+    private final static Comparator<Dummy> COMP = new DummyComparator();
+
+    @Test(expected = NullPointerException.class)
+    public void betweenNPE() {
+        Predicates.between(null, 2);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void betweenNPE1() {
+        Predicates.between(1, null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void betweenNPE2() {
+        Predicates.between(null, 2, COMP);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void betweenNPE3() {
+        Predicates.between(1, null, COMP);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void betweenNPE4() {
+        Predicates.between(1, 2, null);
+    }
 
     @Test
     public void between() {
@@ -45,20 +74,33 @@ public class Predicates_ComparisonTest {
         assertTrue(b.evaluate(3));
         assertTrue(b.evaluate(4));
         assertFalse(b.evaluate(5));
+        TestUtil.assertIsSerializable(b);
+    }
+
+    @Test
+    public void betweenComparator() {
+        Predicate b = Predicates.between(Dummy.D2, Dummy.D4, COMP);
+        assertFalse(b.evaluate(Dummy.D1));
+        assertTrue(b.evaluate(Dummy.D2));
+        assertTrue(b.evaluate(Dummy.D3));
+        assertTrue(b.evaluate(Dummy.D4));
+        assertFalse(b.evaluate(Dummy.D5));
+        TestUtil.assertIsSerializable(b);
     }
 
     /* Test equals */
     @Test
-    public void testEquals() {
-        assertEquals("1", ((Predicates.EqualsPredicate) Predicates.equalsTo("1")).getObject());
+    public void equalsTo() {
+        assertEquals("1", ((Predicates.EqualsToPredicate) Predicates.equalsTo("1")).getObject());
         assertTrue(Predicates.equalsTo("1").evaluate("1"));
         assertFalse(Predicates.equalsTo("1").evaluate("2"));
         assertFalse(Predicates.equalsTo("1").evaluate(null));
         Predicates.equalsTo(Predicates.TRUE).toString(); // check no exception
+        TestUtil.assertIsSerializable(Predicates.equalsTo(Predicates.TRUE));
     }
 
     @Test(expected = NullPointerException.class)
-    public void testEqualsNPE() {
+    public void equalsToNPE() {
         Predicates.equalsTo(null);
     }
 
@@ -226,12 +268,16 @@ public class Predicates_ComparisonTest {
         }
     }
 
-    static final class Dummy {
+    static final class Dummy implements Serializable{
         static final Dummy D1 = new Dummy(1);
 
         static final Dummy D2 = new Dummy(2);
 
         static final Dummy D3 = new Dummy(3);
+
+        static final Dummy D4 = new Dummy(4);
+
+        static final Dummy D5 = new Dummy(5);
 
         final int i;
 

@@ -8,9 +8,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 import org.coconut.predicate.Predicates.AllPredicate;
 import org.coconut.predicate.Predicates.AndPredicate;
@@ -121,6 +123,9 @@ public class Predicates_LogicTest {
                 .getPredicates(), Arrays.asList(Predicates.FALSE, Predicates.TRUE));
         Predicates.and(Predicates.FALSE, Predicates.FALSE).toString(); // no exception
 
+        //serializable
+        TestUtil.assertIsSerializable(Predicates.and(Predicates.TRUE, Predicates.TRUE));
+        
         // shortcircuted evaluation
         Predicates.and(Predicates.FALSE, MockTestCase.mockDummy(Predicate.class)).evaluate(null);
 
@@ -195,8 +200,8 @@ public class Predicates_LogicTest {
                 Predicates.TRUE));
         assertTrue(Predicates.anyEquals(Arrays.asList(Predicates.TRUE, Predicates.FALSE)).evaluate(
                 Predicates.FALSE));
-        assertFalse(Predicates.anyEquals(Arrays.asList(Predicates.FALSE, Predicates.FALSE)).evaluate(
-                Predicates.TRUE));
+        assertFalse(Predicates.anyEquals(Arrays.asList(Predicates.FALSE, Predicates.FALSE))
+                .evaluate(Predicates.TRUE));
         // Serializable
         TestUtil.assertIsSerializable(filter);
 
@@ -228,6 +233,53 @@ public class Predicates_LogicTest {
     @Test(expected = NullPointerException.class)
     public void anyEqualsNPE4() {
         Predicates.anyEquals(PREDICATES_WITH_NULL_ITERABLE);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void anyTypeNPE1() {
+        Predicates.anyType((Class[]) null);
+    }
+
+    @Test
+    public void anyType() {
+        Predicate p = Predicates.anyType(String.class, Number.class, LinkedList.class);
+
+        // evaluate
+        assertTrue(p.evaluate("ddd"));
+        assertTrue(p.evaluate(1));
+        assertTrue(p.evaluate(1.0d));
+        assertTrue(p.evaluate(new LinkedList()));
+        assertFalse(p.evaluate(new ArrayList()));
+        assertFalse(p.evaluate(this));
+
+        p = Predicates.anyType(Arrays.asList(String.class, Number.class, LinkedList.class));
+        assertTrue(p.evaluate(Byte.valueOf((byte) 3)));
+        assertFalse(p.evaluate(Boolean.FALSE));
+        assertFalse(p.evaluate(new Object()));
+        
+        // Serializable
+        TestUtil.assertIsSerializable(p);
+
+        // toString, just check that they don't throw exceptions
+        p.toString();
+        Predicates.anyType(new Class[] {}).toString();
+        Predicates.anyType(new Class[] { Predicates.class }).toString();
+
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void anyTypeNPE2() {
+        Predicates.anyType((Iterable) null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void anyTypeNPE3() {
+        Predicates.anyType(String.class, Long.class, null, Integer.class);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void anyTypeNPE4() {
+        Predicates.anyType(Arrays.asList(String.class, Long.class, null, Integer.class));
     }
 
     @Test(expected = NullPointerException.class)

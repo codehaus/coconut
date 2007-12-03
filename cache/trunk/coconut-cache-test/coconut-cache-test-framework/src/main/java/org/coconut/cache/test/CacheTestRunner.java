@@ -95,7 +95,7 @@ public class CacheTestRunner {
         long time = timer.getTime();
         long tpo = time / (i * (long) nops);
         System.out.print(LoopHelpers.rightJustify(tpo) + " ns per op");
-        double secs = ((double) (time)) / 1000000000.0;
+        double secs =  time / 1000000000.0;
         System.out.println("\t " + secs + "s run time");
         c.shutdown();
         pool.shutdown();

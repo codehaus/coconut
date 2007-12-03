@@ -4,19 +4,43 @@
 package org.coconut.cache.internal.service.servicemanager;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheConfiguration;
 
+/**
+ * An abstract implementation of InternalCacheServiceManager.
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id$
+ */
 public abstract class AbstractCacheServiceManager implements InternalCacheServiceManager {
 
+    /** The cache we are managing. */
     private final Cache<?, ?> cache;
 
-    private volatile CacheConfiguration conf;
-
+    /**
+     * Creates a new AbstractCacheServiceManager.
+     * 
+     * @param cache
+     *            the cache we are managing
+     * @throws NullPointerException
+     *             if the specified cache is null
+     */
     AbstractCacheServiceManager(Cache<?, ?> cache) {
         if (cache == null) {
             throw new NullPointerException("cache is null");
         }
         this.cache = cache;
+    }
+
+    /** {@inheritDoc} */
+    public <T> T getService(Class<T> serviceType) {
+        if (serviceType == null) {
+            throw new NullPointerException("serviceType is null");
+        }
+        T t = (T) getAllServices().get(serviceType);
+        if (t == null) {
+            throw new IllegalArgumentException("Unknown service " + serviceType);
+        }
+        return t;
     }
 
     /** {@inheritDoc} */
@@ -34,6 +58,11 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
         return getRunState().isTerminated();
     }
 
+    /**
+     * Returns the service manager's cache.
+     * 
+     * @return the service manager's cache
+     */
     Cache<?, ?> getCache() {
         return cache;
     }
@@ -43,6 +72,11 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
         return getAllServices().containsKey(type);
     }
 
+    /**
+     * Returns the state of the cache.
+     * 
+     * @return the state of the cache
+     */
     abstract RunState getRunState();
 
     static enum RunState {

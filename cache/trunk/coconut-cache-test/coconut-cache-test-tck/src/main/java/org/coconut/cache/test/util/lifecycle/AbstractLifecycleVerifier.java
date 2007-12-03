@@ -104,9 +104,8 @@ public class AbstractLifecycleVerifier implements CacheLifecycle {
         currentStep.set(Step.SHUTDOWN);
     }
     public void shutdownNow() {
-        assertTrue(nextStep.compareAndSet(Step.SHUTDOWN, Step.TERMINATED));
-        currentStep.set(Step.STOP);
-        
+        assertTrue(nextStep.compareAndSet(Step.TERMINATED, Step.TERMINATED));
+        assertTrue(currentStep.compareAndSet(Step.SHUTDOWN, Step.STOP));
     }
     public void start(CacheServiceManagerService serviceManager) {
         if (isManaged()) {

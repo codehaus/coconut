@@ -9,11 +9,15 @@ import java.util.Map;
 import org.coconut.predicate.Predicate;
 
 /**
- * A PredicateMatcher can be used to query a large number of predicates to obtain all those
- * that will match a particular object.
+ * A PredicateMatcher can be used to query a large number of predicates to obtain all
+ * those that will match a particular object.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
+ * @param <K>
+ *            the type of keys that are returned when matched against an object
+ * @param <E>
+ *            the type of objects we match
  */
 public interface PredicateMatcher<K, E> extends Map<K, Predicate<? super E>> {
 

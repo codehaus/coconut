@@ -81,5 +81,5 @@ public interface CacheServiceManagerService {
      * @throws UnsupportedOperationException
      *             if services cannot be shutdown asynchronously
      */
-    void shutdownServiceAsynchronously(AsynchronousShutdownObject service);
+    void shutdownServiceAsynchronously(Runnable service);
 }

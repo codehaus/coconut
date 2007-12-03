@@ -23,12 +23,12 @@ public class AttributeTest {
     AttributeMap am2 = AttributeMaps.singleton(ATR, "value");
 
     @Test(expected = NullPointerException.class)
-    public void AbstractAttributeNPE() {
+    public void abstractAttributeNPE() {
         new DefaultAttribute(null, String.class, "default");
     }
 
     @Test(expected = NullPointerException.class)
-    public void AbstractAttributeNPE1() {
+    public void abstractAttributeNPE1() {
         new DefaultAttribute("asd", null, "default");
     }
 

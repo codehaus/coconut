@@ -16,7 +16,7 @@ import org.coconut.attribute.spi.AbstractDoubleAttribute;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class CostAttribute extends AbstractDoubleAttribute {
+public final class CostAttribute extends AbstractDoubleAttribute {
 
     /** The default value of the Cost attribute. */
     public static final double DEFAULT_VALUE = 1.0;
@@ -35,19 +35,21 @@ public class CostAttribute extends AbstractDoubleAttribute {
         super(NAME, DEFAULT_VALUE);
     }
 
-    // Preserves singleton property
+    /** @return Preserves singleton property */
     private Object readResolve() {
         return INSTANCE;
     }
-    
 
     /**
-     * Returns the value of this attribute in the specified attribute map, or DEFAULT_VALUE
-     * if the attribute is not mapped to any value in the specified attribute map.
+     * Returns the value of this attribute in the specified attribute map, or
+     * DEFAULT_VALUE if the attribute is not mapped to any value in the specified
+     * attribute map.
      * 
-     * @param attributes the attribute map to return the value from
-     * @return the value of this attribute in the specified attribute map, or DEFAULT_VALUE
-     * if the attribute is not mapped to any value in the specified attribute map
+     * @param attributes
+     *            the attribute map to return the value from
+     * @return the value of this attribute in the specified attribute map, or
+     *         DEFAULT_VALUE if the attribute is not mapped to any value in the specified
+     *         attribute map
      */
     public static double get(AttributeMap attributes) {
         return INSTANCE.getPrimitive(attributes);
@@ -67,11 +69,11 @@ public class CostAttribute extends AbstractDoubleAttribute {
     }
 
     /**
-     * Returns an AttributeMap containing only this attribute mapping to specified value.
+     * Returns an AttributeMap containing only this attribute mapping to the specified value.
      * 
      * @param value
      *            the value to map to
-     * @return an AttributeMap containing only this attribute mapping to specified value
+     * @return an AttributeMap containing only this attribute mapping to the specified value
      */
     public static AttributeMap singleton(double value) {
         INSTANCE.checkValid(value);

@@ -43,8 +43,8 @@ public class LoadingMXBean extends AbstractLoadingTestBundle {
     @Before
     public void setup() {
         mbs = MBeanServerFactory.createMBeanServer();
-        c = newCache(newConf().loading().setLoader(loader).c().management().setEnabled(
-                true).setMBeanServer(mbs).c());
+        c = newCache(newConf().loading().setLoader(loader).c().management().setEnabled(true)
+                .setMBeanServer(mbs).c());
         mxBean = findMXBean(mbs, CacheLoadingMXBean.class);
     }
 
@@ -56,13 +56,11 @@ public class LoadingMXBean extends AbstractLoadingTestBundle {
         assertEquals(Long.MAX_VALUE, mxBean.getDefaultTimeToRefreshMs());
         mxBean.setDefaultTimeToRefreshMs(1000);
         assertEquals(1000, mxBean.getDefaultTimeToRefreshMs());
-        assertEquals(1000 * 1000, loading()
-                .getDefaultTimeToRefresh(TimeUnit.MICROSECONDS));
+        assertEquals(1000 * 1000, loading().getDefaultTimeToRefresh(TimeUnit.MICROSECONDS));
 
         // start value
-        c = newCache(newConf().setName("foo").management().setEnabled(true)
-                .setMBeanServer(mbs).c().loading().setLoader(loader)
-                .setDefaultTimeToRefresh(1800, TimeUnit.SECONDS));
+        c = newCache(newConf().setName("foo").management().setEnabled(true).setMBeanServer(mbs).c()
+                .loading().setLoader(loader).setDefaultTimeToRefresh(1800, TimeUnit.SECONDS));
         mxBean = findMXBean(mbs, CacheLoadingMXBean.class);
         assertEquals(1800 * 1000, mxBean.getDefaultTimeToRefreshMs());
 
@@ -70,8 +68,8 @@ public class LoadingMXBean extends AbstractLoadingTestBundle {
         try {
             mxBean.setDefaultTimeToRefreshMs(-1);
             fail("Did not throw exception");
-        } catch (IllegalArgumentException e) {
-            
+        } catch (IllegalArgumentException e) {} catch (RuntimeMBeanException e) {
+            assertTrue(e.getCause() instanceof IllegalArgumentException);
         }
     }
 
@@ -97,8 +95,8 @@ public class LoadingMXBean extends AbstractLoadingTestBundle {
     @Test
     public void testLoadAll() {
         IntegerToStringLoader loader = new IntegerToStringLoader();
-        c = newCache(newConf().loading().setRefreshPredicate(new RefreshFilter()).setLoader(
-                loader).c().management().setEnabled(true).setMBeanServer(mbs));
+        c = newCache(newConf().loading().setRefreshPredicate(new RefreshFilter()).setLoader(loader)
+                .c().management().setEnabled(true).setMBeanServer(mbs));
         mxBean = findMXBean(mbs, CacheLoadingMXBean.class);
         mxBean.loadAll();
         awaitAllLoads();
@@ -116,7 +114,7 @@ public class LoadingMXBean extends AbstractLoadingTestBundle {
             return element.getKey().equals(1);
         }
     }
-    
+
     @Test
     public void loadingManagement() {
         CacheConfiguration<Integer, String> cc = newConf();
@@ -132,14 +130,14 @@ public class LoadingMXBean extends AbstractLoadingTestBundle {
         CacheConfiguration<Integer, String> cc = newConf();
         cc.management().setEnabled(true);
         ManagedFilter filter = new ManagedFilter();
-        c = newCache(cc.loading().setRefreshPredicate(filter).setLoader(new IntegerToStringLoader())
-                .c());
+        c = newCache(cc.loading().setRefreshPredicate(filter)
+                .setLoader(new IntegerToStringLoader()).c());
         prestart();
         assertNotNull(
                 "The Filter extends ManagedObject, and its manage() method should have been invoked",
                 filter.getManagedGroup());
     }
-    
+
     static class MyLoader extends IntegerToStringLoader implements ManagedLifecycle {
         ManagedGroup g;
 

@@ -54,6 +54,6 @@ public class MapMemoryOverheadTest {
 	}
 
 	public String toString() {
-        return c.getCanonicalName().toString();
+        return c.getCanonicalName();
     }
 }

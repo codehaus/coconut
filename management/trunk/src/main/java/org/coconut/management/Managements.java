@@ -13,15 +13,23 @@ import javax.management.ObjectName;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class Managements {
+public final class Managements {
+
+    /** Cannot instantiate. */
+    // /CLOVER:OFF
+    private Managements() {}
+
+    // /CLOVER:ON
     public static ManagedVisitor hierarchicalRegistrant(MBeanServer server, String domain,
             String... levels) {
         return new HierarchicalRegistrant(server, domain, levels);
     }
 
     static class HierarchicalRegistrant implements ManagedVisitor {
+        /** The MBeanServer to register with. */
         private final MBeanServer server;
 
+        /** The base domain to register at. */
         private final String domain;
 
         private final String[] levels;

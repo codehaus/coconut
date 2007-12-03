@@ -14,13 +14,11 @@ import org.coconut.cache.CacheException;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlers;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
-import org.coconut.cache.service.servicemanager.AsynchronousShutdownObject;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.lifecycle.AbstractLifecycleVerifier;
-import org.coconut.cache.test.util.lifecycle.AbstractLifecycleVerifier.Step;
 import org.coconut.test.MockTestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -210,14 +208,14 @@ public class LifecycleErroneousStart extends AbstractCacheTCKTest {
                 if (getCacheType().getAnnotation(ThreadSafe.class) != null) {
                     try {
                         serviceManager.shutdownServiceAsynchronously(MockTestCase
-                                .mockDummy(AsynchronousShutdownObject.class));
+                                .mockDummy(Runnable.class));
                         throw new AssertionError(
                                 "serviceManager should throw IllegalStateException");
                     } catch (IllegalStateException ok) {/* ok */}
                 } else {
                     try {
                         serviceManager.shutdownServiceAsynchronously(MockTestCase
-                                .mockDummy(AsynchronousShutdownObject.class));
+                                .mockDummy(Runnable.class));
                         throw new AssertionError(
                                 "serviceManager should throw UnsupportedOperationException");
                     } catch (UnsupportedOperationException ok) {/* ok */}

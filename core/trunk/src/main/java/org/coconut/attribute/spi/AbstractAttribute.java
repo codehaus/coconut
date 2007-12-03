@@ -115,6 +115,13 @@ public abstract class AbstractAttribute<T> implements Attribute<T>, Serializable
         attributes.remove(this);
     }
 
+    /**
+     * Returns an AttributeMap containing only this attribute mapping to the specified value.
+     * 
+     * @param value
+     *            the value to map to
+     * @return an AttributeMap containing only this attribute mapping to the specified value
+     */
     protected AttributeMap toSingleton(T value) {
         checkValid(value);
         return AttributeMaps.singleton(this, value);

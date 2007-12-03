@@ -24,7 +24,7 @@ public class ManagementConfiguration extends AbstractCacheTCKTest {
         ObjectName on = new ObjectName("com.acme:name=managementtest,service="
                 + CacheMXBean.MANAGED_SERVICE_NAME);
         prestart();
-        CacheMXBean mxBean = MBeanServerInvocationHandler.newProxyInstance(mbs, on,
+        CacheMXBean mxBean = (CacheMXBean) MBeanServerInvocationHandler.newProxyInstance(mbs, on,
                 CacheMXBean.class, false);
         assertEquals(0, mxBean.getSize());
     }

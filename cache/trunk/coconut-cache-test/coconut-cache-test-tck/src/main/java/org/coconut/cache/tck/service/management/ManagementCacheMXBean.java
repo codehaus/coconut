@@ -32,7 +32,7 @@ public class ManagementCacheMXBean extends AbstractCacheTCKTest {
         ObjectName on = new ObjectName("org.coconut.cache:name=managementtest,service="
                 + CacheMXBean.MANAGED_SERVICE_NAME);
         prestart();
-        mxBean = MBeanServerInvocationHandler.newProxyInstance(mbs, on,
+        mxBean = (CacheMXBean) MBeanServerInvocationHandler.newProxyInstance(mbs, on,
                 CacheMXBean.class, false);
     }
 

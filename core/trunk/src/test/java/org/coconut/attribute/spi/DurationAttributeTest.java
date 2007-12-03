@@ -74,7 +74,7 @@ public class DurationAttributeTest {
         AttributeMap am = newMap();
         assertEquals(10l, DA.setAttribute(am, 10l, TimeUnit.NANOSECONDS).get(DA));
         assertEquals(10000l, DA.setAttribute(am, 10l, TimeUnit.MICROSECONDS).get(DA));
-        assertEquals(10000l, DA.setAttribute(am, new Long(10), TimeUnit.MICROSECONDS).get(DA));
+        assertEquals(10000l, DA.setAttribute(am, Long.valueOf(10), TimeUnit.MICROSECONDS).get(DA));
         assertEquals(Long.MAX_VALUE, DA.setAttribute(am, Long.MAX_VALUE, TimeUnit.MICROSECONDS)
                 .get(DA));
     }

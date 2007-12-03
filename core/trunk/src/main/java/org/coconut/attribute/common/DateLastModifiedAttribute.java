@@ -15,8 +15,11 @@ import org.coconut.core.Clock;
  * 
  * @see #setLastUpdated(AttributeMap, long)
  * @see #getLastUpdated(AttributeMap, Clock)
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class DateLastModifiedAttribute extends AbstractLongAttribute {
+public final class DateLastModifiedAttribute extends AbstractLongAttribute {
 
     /** The default value of this attribute. */
     public static final long DEFAULT_VALUE = 0;
@@ -35,6 +38,7 @@ public class DateLastModifiedAttribute extends AbstractLongAttribute {
         super(NAME, DEFAULT_VALUE);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void checkValid(long time) {
         if (time < 0) {
@@ -43,6 +47,7 @@ public class DateLastModifiedAttribute extends AbstractLongAttribute {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isValid(long time) {
         return time >= 0;
@@ -55,12 +60,15 @@ public class DateLastModifiedAttribute extends AbstractLongAttribute {
     }
 
     /**
-     * Returns the value of this attribute in the specified attribute map, or DEFAULT_VALUE
-     * if the attribute is not mapped to any value in the specified attribute map.
+     * Returns the value of this attribute in the specified attribute map, or
+     * DEFAULT_VALUE if the attribute is not mapped to any value in the specified
+     * attribute map.
      * 
-     * @param attributes the attribute map to return the value from
-     * @return the value of this attribute in the specified attribute map, or DEFAULT_VALUE
-     * if the attribute is not mapped to any value in the specified attribute map
+     * @param attributes
+     *            the attribute map to return the value from
+     * @return the value of this attribute in the specified attribute map, or
+     *         DEFAULT_VALUE if the attribute is not mapped to any value in the specified
+     *         attribute map
      */
     public static long get(AttributeMap attributes) {
         return INSTANCE.getPrimitive(attributes);
@@ -80,15 +88,15 @@ public class DateLastModifiedAttribute extends AbstractLongAttribute {
     }
 
     /**
-     * Returns an AttributeMap containing only this attribute mapping to specified value.
+     * Returns an AttributeMap containing only this attribute mapping to the specified value.
      * 
      * @param value
      *            the value to map to
-     * @return an AttributeMap containing only this attribute mapping to specified value
+     * @return an AttributeMap containing only this attribute mapping to the specified value
      */
     public static AttributeMap singleton(long value) {
         INSTANCE.checkValid(value);
         return AttributeMaps.singleton(INSTANCE, value);
     }
-    
+
 }

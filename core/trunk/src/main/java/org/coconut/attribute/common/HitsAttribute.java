@@ -14,7 +14,7 @@ import org.coconut.attribute.spi.AbstractLongAttribute;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class HitsAttribute extends AbstractLongAttribute {
+public final class HitsAttribute extends AbstractLongAttribute {
 
     /** The default value of this attribute. */
     public static final long DEFAULT_VALUE = 0;
@@ -81,11 +81,11 @@ public class HitsAttribute extends AbstractLongAttribute {
     }
 
     /**
-     * Returns an AttributeMap containing only this attribute mapping to specified value.
+     * Returns an AttributeMap containing only this attribute mapping to the specified value.
      * 
      * @param value
      *            the value to map to
-     * @return an AttributeMap containing only this attribute mapping to specified value
+     * @return an AttributeMap containing only this attribute mapping to the specified value
      */
     public static AttributeMap singleton(long value) {
         INSTANCE.checkValid(value);

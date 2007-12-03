@@ -12,6 +12,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
+import java.util.List;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -63,22 +64,22 @@ public class DefaultManagedGroupTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void DefaultManagedGroupNPE1() {
+    public void defaultManagedGroupNPE1() {
         new DefaultManagedGroup(null, "boo");
     }
 
     @Test(expected = NullPointerException.class)
-    public void DefaultManagedGroupNPE2() {
+    public void defaultManagedGroupNPE2() {
         new DefaultManagedGroup("foo", null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void DefaultManagedGroupISE1() {
+    public void defaultManagedGroupISE1() {
         new DefaultManagedGroup("", "d");
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void DefaultManagedGroupISE2() {
+    public void defaultManagedGroupISE2() {
         new DefaultManagedGroup("foo´+", "boo");
     }
 
@@ -272,8 +273,10 @@ public class DefaultManagedGroupTest {
         assertEquals(0, info.getOperations().length);
         assertEquals(0, info.getNotifications().length);
 
-        AttributeList list = new AttributeList(Arrays.asList(new Attribute("ReadWrite", 123),
-                new Attribute("WriteOnly", "boofoo"), new Attribute("DoNotExist", "boofoo")));
+        AttributeList list = new AttributeList();
+        list.add(new Attribute("ReadWrite", 123));
+        list.add(new Attribute("WriteOnly", "boofoo"));
+        list.add(new Attribute("DoNotExist", "boofoo"));
         AttributeList l = server.setAttributes(ON, list);
         assertEquals(2, l.size());
         assertEquals(123, o.getReadWrite());

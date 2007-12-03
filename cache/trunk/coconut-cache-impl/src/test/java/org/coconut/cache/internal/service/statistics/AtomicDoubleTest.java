@@ -219,7 +219,7 @@ public class AtomicDoubleTest extends TestCase {
         AtomicDouble ai = new AtomicDouble();
         for (int i = -12; i < 6; ++i) {
             ai.set(i);
-            assertEquals((long) i, ai.longValue());
+            assertEquals(i, ai.longValue());
         }
     }
 

@@ -7,8 +7,8 @@ package org.coconut.attribute;
  * Attribute-value pairs are a fundamental data representation in many computing systems
  * and applications. Designers often desire an open-ended data structure that allows for
  * future extension without modifying existing code or data. In such situations, all or
- * part of the data model may be expressed as a collection of tuples <attribute name,
- * value>; each element is an attribute-value pair.
+ * part of the data model may be expressed as a collection of tuples attribute name,
+ * value; each element is an attribute-value pair.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
