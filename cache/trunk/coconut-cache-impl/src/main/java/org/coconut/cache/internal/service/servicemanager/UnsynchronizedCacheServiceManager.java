@@ -62,6 +62,171 @@ public class UnsynchronizedCacheServiceManager extends AbstractPicoBasedCacheSer
         }
     }
 
+    /** {@inheritDoc} */
+    public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
+        return isTerminated();
+    }
+
+    /** {@inheritDoc} */
+    public Map<Class<?>, Object> getAllServices() {
+        return publicServices;
+    }
+
+    /** {@inheritDoc} */
+    public <T> T getServiceFromCache(Class<T> serviceType) {
+        lazyStart(false);
+        return getService(serviceType);
+    }
+
+    /** {@inheritDoc} */
+    public boolean lazyStart(boolean failIfShutdown) {
+        if (status != RunState.RUNNING) {
+            if (startupException != null) {
+                throw startupException;
+            } else if (status == RunState.STARTING) {
+                throw new IllegalStateException(
+                        "Cannot invoke this method from CacheLifecycle.start(Map services), should be invoked from CacheLifecycle.started(Cache c)");
+            } else if (status == RunState.NOTRUNNING) {
+                doStart();
+            } else if (failIfShutdown && status.isShutdown()) {
+                throw new IllegalStateException("Cache has been shutdown");
+            }
+            // else if status==STARTING=throw illegalStateException()
+            return status == RunState.RUNNING;
+        }
+        return true;
+    }
+
+    /** {@inheritDoc} */
+    public void shutdown() {
+        if (status == RunState.NOTRUNNING) {
+            status = RunState.TERMINATED;
+        } else if (status == RunState.RUNNING) {
+            getCache().clear();
+            status = RunState.SHUTDOWN;
+            List<ServiceHolder> shutdown = new ArrayList<ServiceHolder>(services);
+            Collections.reverse(shutdown);
+            for (ServiceHolder si : shutdown) {
+                shutdownService(si);
+            }
+            serviceBeingShutdown = null;
+            tryTerminate();
+        }
+    }
+
+    /** {@inheritDoc} */
+    public void shutdownNow() {
+        shutdown();// synchronous shutdown
+    }
+
+    public void shutdownServiceAsynchronously(Runnable service) {
+        throw new UnsupportedOperationException();
+    }
+
+    private void doStart() {
+        status = RunState.STARTING;
+        startServices();
+        try {
+
+            // register mbeans
+            CacheManagementService cms = (CacheManagementService) publicServices
+                    .get(CacheManagementService.class);
+            if (cms != null) {
+                for (ManagedLifecycle si : managedObjects) {
+                    si.manage(cms);
+                }
+            }
+            status = RunState.RUNNING;
+            // started
+            for (ServiceHolder si : services) {
+                si.started(getCache());
+            }
+            InternalCacheListener icl = getInternalService(InternalCacheListener.class);
+            icl.afterStart(getCache());
+        } catch (RuntimeException re) {
+            startupException = new CacheException("Could not start cache", re);
+            status = RunState.COULD_NOT_START;
+            doTerminate();
+            throw startupException;
+        } catch (Error er) {
+            startupException = new CacheException("Could not start cache", er);
+            status = RunState.COULD_NOT_START;
+            ces.terminated(tryTerminateServices());
+            throw er;
+        } finally {
+            conf = null; // Conf can be GC'ed now
+        }
+    }
+
+    private void startServices() {
+        CacheServiceManagerService wrapped = ServiceManagerUtil.wrapService(this);
+        initializedPublicServices.put(CacheServiceManagerService.class, wrapped);
+        publicServices = Collections.unmodifiableMap(initializedPublicServices);
+        for (ServiceHolder si : services) {
+            try {
+                si.start(wrapped);
+            } catch (RuntimeException re) {
+                conf = null;
+                startupException = new CacheException("Could not start the cache", re);
+                ces.cacheStartFailed(conf, getCache().getClass(), si.service, re);
+                status = RunState.COULD_NOT_START;
+                tryShutdownServices();
+                doTerminate();
+                throw startupException;
+            } catch (Error er) {
+                conf = null;
+                startupException = new CacheException("Could not start the cache", er);
+                status = RunState.COULD_NOT_START;
+                throw er;
+            }
+        }
+    }
+
+    private Map<CacheLifecycle, RuntimeException> tryShutdownServices() {
+        Map<CacheLifecycle, RuntimeException> m = new HashMap<CacheLifecycle, RuntimeException>();
+        
+        List<ServiceHolder> l = new ArrayList<ServiceHolder>(services);
+        Collections.reverse(l);
+        for (ServiceHolder sh : l) {
+            if (sh.isStarted()) {
+                try {
+                    sh.shutdown();
+                } catch (RuntimeException e) {
+                    m.put(sh.service, e);
+                }
+            }
+            if (!m.isEmpty()) {
+                ces.cacheShutdownFailed(getCache(), m);
+            }
+        }
+        return m;
+    }
+
+    private Map<CacheLifecycle, RuntimeException> tryTerminateServices() {
+        Map<CacheLifecycle, RuntimeException> m = new HashMap<CacheLifecycle, RuntimeException>();
+        List<ServiceHolder> l = new ArrayList<ServiceHolder>(services);
+        Collections.reverse(l);
+        for (ServiceHolder sh : l) {
+            if (sh.isInitialized()) {
+                try {
+                    sh.terminated();
+                } catch (RuntimeException e) {
+                    m.put(sh.service, e);
+                }
+            }
+        }
+        return m;
+    }
+
+    protected void doTerminate() {
+        if (status != RunState.TERMINATED) {
+            if (status != RunState.COULD_NOT_START) {
+                status = RunState.TERMINATED;
+            }
+            ces.terminated(tryTerminateServices());
+        }
+    }
+
     protected void initialize() {
         List<AbstractCacheLifecycle> l = container
                 .getComponentInstancesOfType(AbstractCacheLifecycle.class);
@@ -127,173 +292,8 @@ public class UnsynchronizedCacheServiceManager extends AbstractPicoBasedCacheSer
         }
     }
 
-    /** {@inheritDoc} */
-    public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
-        return isTerminated();
-    }
-
-    /** {@inheritDoc} */
-    public Map<Class<?>, Object> getAllServices() {
-        return publicServices;
-    }
-
-    /** {@inheritDoc} */
-    public <T> T getServiceFromCache(Class<T> serviceType) {
-        lazyStart(false);
-        return getService(serviceType);
-    }
-
-    /** {@inheritDoc} */
-    public boolean lazyStart(boolean failIfShutdown) {
-        if (status != RunState.RUNNING) {
-            if (startupException != null) {
-                throw startupException;
-            } else if (status == RunState.STARTING) {
-                throw new IllegalStateException(
-                        "Cannot invoke this method from CacheLifecycle.start(Map services), should be invoked from CacheLifecycle.started(Cache c)");
-            } else if (status == RunState.NOTRUNNING) {
-                doStart();
-            } else if (failIfShutdown && status.isShutdown()) {
-                throw new IllegalStateException("Cache has been shutdown");
-            }
-            // else if status==STARTING=throw illegalStateException()
-            return status == RunState.RUNNING;
-        }
-        return true;
-    }
-
-    /** {@inheritDoc} */
-    public void shutdown() {
-        if (status == RunState.NOTRUNNING) {
-            status = RunState.TERMINATED;
-        } else if (status == RunState.RUNNING) {
-            getCache().clear();
-            status = RunState.SHUTDOWN;
-            List<ServiceHolder> shutdown = new ArrayList<ServiceHolder>(services);
-            Collections.reverse(shutdown);
-            for (ServiceHolder si : shutdown) {
-                shutdownService(si);
-            }
-            serviceBeingShutdown = null;
-            tryTerminate();
-        }
-    }
-
     protected void shutdownService(ServiceHolder service) {
         service.shutdown();
-    }
-
-    /** {@inheritDoc} */
-    public void shutdownNow() {
-        shutdown();// synchronous shutdown
-    }
-
-    public void shutdownServiceAsynchronously(Runnable service) {
-        throw new UnsupportedOperationException();
-    }
-
-    private void startServices() {
-        CacheServiceManagerService wrapped = ServiceManagerUtil.wrapService(this);
-        initializedPublicServices.put(CacheServiceManagerService.class, wrapped);
-        publicServices = Collections.unmodifiableMap(initializedPublicServices);
-        for (ServiceHolder si : services) {
-            try {
-                si.start(wrapped);
-            } catch (RuntimeException re) {
-                conf = null;
-                startupException = new CacheException("Could not start the cache", re);
-                ces.cacheStartFailed(conf, getCache().getClass(), si.service, re);
-                status = RunState.COULD_NOT_START;
-                tryShutdownServices();
-                doTerminate();
-                throw startupException;
-            } catch (Error er) {
-                conf = null;
-                startupException = new CacheException("Could not start the cache", er);
-                status = RunState.COULD_NOT_START;
-                throw er;
-            }
-        }
-    }
-
-    private void doStart() {
-        status = RunState.STARTING;
-        startServices();
-        try {
-
-            // register mbeans
-            CacheManagementService cms = (CacheManagementService) publicServices
-                    .get(CacheManagementService.class);
-            if (cms != null) {
-                for (ManagedLifecycle si : managedObjects) {
-                    si.manage(cms);
-                }
-            }
-            status = RunState.RUNNING;
-            // started
-            for (ServiceHolder si : services) {
-                si.started(getCache());
-            }
-            InternalCacheListener icl = getInternalService(InternalCacheListener.class);
-            icl.afterStart(getCache());
-        } catch (RuntimeException re) {
-            startupException = new CacheException("Could not start cache", re);
-            status = RunState.COULD_NOT_START;
-            doTerminate();
-            throw startupException;
-        } catch (Error er) {
-            startupException = new CacheException("Could not start cache", er);
-            status = RunState.COULD_NOT_START;
-            ces.terminated(tryTerminateServices());
-            throw er;
-        } finally {
-            conf = null; // Conf can be GC'ed now
-        }
-    }
-
-    private Map<CacheLifecycle, RuntimeException> tryTerminateServices() {
-        Map<CacheLifecycle, RuntimeException> m = new HashMap<CacheLifecycle, RuntimeException>();
-        List<ServiceHolder> l = new ArrayList<ServiceHolder>(services);
-        Collections.reverse(l);
-        for (ServiceHolder sh : l) {
-            if (sh.isInitialized()) {
-                try {
-                    sh.terminated();
-                } catch (RuntimeException e) {
-                    m.put(sh.service, e);
-                }
-            }
-        }
-        return m;
-    }
-
-    private Map<CacheLifecycle, RuntimeException> tryShutdownServices() {
-        Map<CacheLifecycle, RuntimeException> m = new HashMap<CacheLifecycle, RuntimeException>();
-        
-        List<ServiceHolder> l = new ArrayList<ServiceHolder>(services);
-        Collections.reverse(l);
-        for (ServiceHolder sh : l) {
-            if (sh.isStarted()) {
-                try {
-                    sh.shutdown();
-                } catch (RuntimeException e) {
-                    m.put(sh.service, e);
-                }
-            }
-            if (!m.isEmpty()) {
-                ces.cacheShutdownFailed(getCache(), m);
-            }
-        }
-        return m;
-    }
-
-    protected void doTerminate() {
-        if (status != RunState.TERMINATED) {
-            if (status != RunState.COULD_NOT_START) {
-                status = RunState.TERMINATED;
-            }
-            ces.terminated(tryTerminateServices());
-        }
     }
 
     protected void tryTerminate() {
@@ -329,12 +329,12 @@ public class UnsynchronizedCacheServiceManager extends AbstractPicoBasedCacheSer
             return state >= 2;
         }
 
-        boolean isStarted() {
-            return state >= 4;
-        }
-
         boolean isInternal() {
             return isInternal;
+        }
+
+        boolean isStarted() {
+            return state >= 4;
         }
 
         void shutdown() {

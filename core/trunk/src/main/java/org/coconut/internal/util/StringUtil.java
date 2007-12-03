@@ -9,7 +9,12 @@ package org.coconut.internal.util;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class StringUtil {
+public final class StringUtil {
+    // /CLOVER:OFF
+    /** Cannot instantiate. */
+    private StringUtil() {}
+
+    // /CLOVER:ON
     public static String capitalize(String capitalizeMe) {
         if (capitalizeMe == null) {
             throw new NullPointerException("capitalizeMe is null");

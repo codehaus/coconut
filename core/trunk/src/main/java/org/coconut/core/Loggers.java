@@ -96,7 +96,14 @@ public final class Loggers {
         private Commons() {}
 
         // /CLOVER:ON
-
+        /**
+         * Shorthand for {@link #from(String)}.
+         * 
+         * @param clazz
+         *            name of clazz will be used as the name of the logger to retrieve.
+         *            See getLogger(String) for more detailed information.
+         * @return returns the logger for the specified class
+         */
         public static Logger from(Class<?> clazz) {
             return from(org.apache.commons.logging.LogFactory.getLog(clazz));
         }
@@ -127,7 +134,14 @@ public final class Loggers {
         private JDK() {}
 
         // /CLOVER:ON
-
+        /**
+         * Shorthand for {@link #from(String)}.
+         * 
+         * @param clazz
+         *            name of clazz will be used as the name of the logger to retrieve.
+         *            See getLogger(String) for more detailed information.
+         * @return returns the logger for the specified class
+         */
         public static Logger from(Class<?> clazz) {
             return from(clazz.getName());
         }
@@ -144,7 +158,7 @@ public final class Loggers {
             if (!isJDKLogger(log)) {
                 throw new IllegalArgumentException("Not a JDK Logger");
             }
-            return ((JDKLogger) log).log;
+            return ((JDKLogger) log).logger;
         }
 
         public static boolean isJDKLogger(Logger log) {
@@ -196,7 +210,7 @@ public final class Loggers {
             if (!isLog4jLogger(logger)) {
                 throw new IllegalArgumentException("Not a JDK Logger");
             }
-            return ((Log4JLogger) logger).log;
+            return ((Log4JLogger) logger).logger;
         }
 
         /**
@@ -312,6 +326,9 @@ public final class Loggers {
         }
     }
 
+    /**
+     * The wrapper class commons logging.
+     */
     final static class CommonsLogger extends AbstractLogger {
         /** The commons Log class we are wrapping. */
         private final org.apache.commons.logging.Log log;
@@ -403,33 +420,51 @@ public final class Loggers {
         }
     }
 
+    /**
+     * The wrapper class for a JDK logger.
+     */
     final static class JDKLogger extends AbstractLogger {
-        private final java.util.logging.Logger log;
 
-        JDKLogger(java.util.logging.Logger log) {
-            this.log = log;
+        /** The logger we are wrapping. */
+        private final java.util.logging.Logger logger;
+
+        /**
+         * Creates a new JDKLogger from the specified logger.
+         * 
+         * @param logger
+         *            the logger to wrap
+         */
+        JDKLogger(java.util.logging.Logger logger) {
+            this.logger = logger;
         }
 
         /** {@inheritDoc} */
         public String getName() {
-            return log.getName();
+            return logger.getName();
         }
 
         /** {@inheritDoc} */
         public boolean isEnabled(Level level) {
-            return log.isLoggable(from(level));
+            return logger.isLoggable(from(level));
         }
 
         /** {@inheritDoc} */
         public void log(Logger.Level level, String message) {
-            log.log(from(level), message);
+            logger.log(from(level), message);
         }
 
         /** {@inheritDoc} */
         public void log(Logger.Level level, String message, Throwable cause) {
-            log.log(from(level), message, cause);
+            logger.log(from(level), message, cause);
         }
 
+        /**
+         * Converts from a {@link Level} to a {@link java.util.logging.Level}.
+         * 
+         * @param level
+         *            the level to convert
+         * @return the converted level
+         */
         static java.util.logging.Level from(Level level) {
             switch (level) {
             case Debug:
@@ -446,21 +481,32 @@ public final class Loggers {
         }
     }
 
+    /**
+     * The wrapper class for a Log4j logger.
+     */
     final static class Log4JLogger extends AbstractLogger {
-        private final org.apache.log4j.Logger log;
 
-        Log4JLogger(org.apache.log4j.Logger log) {
-            this.log = log;
+        /** The logger we are wrapping. */
+        private final org.apache.log4j.Logger logger;
+
+        /**
+         * Creates a new Log4JLogger from the specified logger.
+         * 
+         * @param logger
+         *            the logger to wrap
+         */
+        Log4JLogger(org.apache.log4j.Logger logger) {
+            this.logger = logger;
         }
 
         /** {@inheritDoc} */
         public String getName() {
-            return log.getName();
+            return logger.getName();
         }
 
         /** {@inheritDoc} */
         public boolean isEnabled(Level level) {
-            return log.isEnabledFor(from(level));
+            return logger.isEnabledFor(from(level));
         }
 
         /** {@inheritDoc} */
@@ -470,9 +516,16 @@ public final class Loggers {
 
         /** {@inheritDoc} */
         public void log(Logger.Level level, String message, Throwable cause) {
-            log.log(from(level), message, cause);
+            logger.log(from(level), message, cause);
         }
 
+        /**
+         * Converts from a {@link Level} to a {@link org.apache.log4j.Level}.
+         * 
+         * @param level
+         *            the level to convert
+         * @return the converted level
+         */
         static org.apache.log4j.Level from(Level level) {
             switch (level) {
             case Debug:
@@ -499,11 +552,26 @@ public final class Loggers {
         /** The PrintStream to write to. */
         private final PrintStream stream;
 
+        /**
+         * Creates a new SimpleLogger, only used for the {@link Loggers#nullLog()} method.
+         * 
+         * @param level
+         *            the level to log at
+         */
         SimpleLogger(int level) {
             this.level = level;
             this.stream = null;
         }
 
+        /**
+         * Creates a new SimpleLogger that logs to the specified print stream at the
+         * specified level.
+         * 
+         * @param level
+         *            the level to log at
+         * @param stream
+         *            the stream to log to
+         */
         SimpleLogger(int level, PrintStream stream) {
             if (stream == null) {
                 throw new NullPointerException("stream is null");

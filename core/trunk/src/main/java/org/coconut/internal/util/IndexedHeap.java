@@ -16,7 +16,8 @@ import net.jcip.annotations.NotThreadSafe;
  * you are doing before changing anything. This class is not synchronized in any
  * way.
  * 
- * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id$
  */
 @NotThreadSafe
 public class IndexedHeap<T> implements Serializable {

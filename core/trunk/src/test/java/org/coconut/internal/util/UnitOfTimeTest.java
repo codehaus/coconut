@@ -48,12 +48,12 @@ public class UnitOfTimeTest extends TestCase {
     }
 
     /**
-     * Flag set true if any threadAssert methods fail
+     * Flag set true if any threadAssert methods fail.
      */
     volatile boolean threadFailed;
 
     /**
-     * Initializes test to indicate that no thread assertions have failed
+     * Initializes test to indicate that no thread assertions have failed.
      */
     public void setUp() {
         setDelays();
@@ -61,14 +61,14 @@ public class UnitOfTimeTest extends TestCase {
     }
 
     /**
-     * Triggers test case failure if any thread assertions have failed
+     * Triggers test case failure if any thread assertions have failed.
      */
     public void tearDown() {
         assertFalse(threadFailed);
     }
 
     /**
-     * Fail, also setting status to indicate current testcase should fail
+     * Fail, also setting status to indicate current testcase should fail.
      */
     public void threadFail(String reason) {
         threadFailed = true;
@@ -76,7 +76,7 @@ public class UnitOfTimeTest extends TestCase {
     }
 
     /**
-     * threadFail with message "should throw exception"
+     * threadFail with message "should throw exception".
      */
     public void threadShouldThrow() {
         threadFailed = true;
@@ -84,7 +84,7 @@ public class UnitOfTimeTest extends TestCase {
     }
 
     /**
-     * threadFail with message "Unexpected exception"
+     * threadFail with message "Unexpected exception".
      */
     public void threadUnexpectedException() {
         threadFailed = true;
@@ -92,7 +92,7 @@ public class UnitOfTimeTest extends TestCase {
     }
 
     /**
-     * fail with message "Unexpected exception"
+     * fail with message "Unexpected exception".
      */
     public void unexpectedException() {
         fail("Unexpected exception");
@@ -147,7 +147,7 @@ public class UnitOfTimeTest extends TestCase {
     }
 
     /**
-     * convert correctly converts sample values across the units
+     * convert correctly converts sample values across the units.
      */
     public void testConvert() {
         for (long t = 0; t < 88888; ++t) {
@@ -217,7 +217,7 @@ public class UnitOfTimeTest extends TestCase {
     }
 
     /**
-     * toNanos correctly converts sample values in different units to nanoseconds
+     * toNanos correctly converts sample values in different units to nanoseconds.
      */
     public void testToNanos() {
         for (long t = 0; t < 88888; ++t) {
@@ -232,7 +232,7 @@ public class UnitOfTimeTest extends TestCase {
     }
 
     /**
-     * toMicros correctly converts sample values in different units to microseconds
+     * toMicros correctly converts sample values in different units to microseconds.
      */
     public void testToMicros() {
         for (long t = 0; t < 88888; ++t) {
@@ -247,7 +247,7 @@ public class UnitOfTimeTest extends TestCase {
     }
 
     /**
-     * toMillis correctly converts sample values in different units to milliseconds
+     * toMillis correctly converts sample values in different units to milliseconds.
      */
     public void testToMillis() {
         for (long t = 0; t < 88888; ++t) {
@@ -262,7 +262,7 @@ public class UnitOfTimeTest extends TestCase {
     }
 
     /**
-     * toSeconds correctly converts sample values in different units to seconds
+     * toSeconds correctly converts sample values in different units to seconds.
      */
     public void testToSeconds() {
         for (long t = 0; t < 88888; ++t) {
@@ -277,7 +277,7 @@ public class UnitOfTimeTest extends TestCase {
     }
 
     /**
-     * toMinutes correctly converts sample values in different units to minutes
+     * toMinutes correctly converts sample values in different units to minutes.
      */
     public void testToMinutes() {
         for (long t = 0; t < 88888; ++t) {
@@ -292,7 +292,7 @@ public class UnitOfTimeTest extends TestCase {
     }
 
     /**
-     * toHours correctly converts sample values in different units to hours
+     * toHours correctly converts sample values in different units to hours.
      */
     public void testToHours() {
         for (long t = 0; t < 88888; ++t) {
@@ -307,7 +307,7 @@ public class UnitOfTimeTest extends TestCase {
     }
 
     /**
-     * toDays correctly converts sample values in different units to days
+     * toDays correctly converts sample values in different units to days.
      */
     public void testToDays() {
         for (long t = 0; t < 88888; ++t) {
@@ -323,7 +323,7 @@ public class UnitOfTimeTest extends TestCase {
 
     /**
      * convert saturates positive too-large values to Long.MAX_VALUE and negative to
-     * LONG.MIN_VALUE
+     * LONG.MIN_VALUE.
      */
     public void testConvertSaturate() {
         assertEquals(Long.MAX_VALUE, UnitOfTime.NANOSECONDS.convert(Long.MAX_VALUE / 2,
@@ -346,7 +346,7 @@ public class UnitOfTimeTest extends TestCase {
     }
 
     /**
-     * toNanos saturates positive too-large values to Long.MAX_VALUE and negative to
+     * toNanos saturates positive too-large values to Long.MAX_VALUE and negative to.
      * LONG.MIN_VALUE
      */
     public void testToNanosSaturate() {
@@ -355,7 +355,7 @@ public class UnitOfTimeTest extends TestCase {
     }
 
     /**
-     * toString returns string containing common name of unit
+     * toString returns string containing common name of unit.
      */
     public void testToString() {
         String s = UnitOfTime.SECONDS.toString();
@@ -363,7 +363,7 @@ public class UnitOfTimeTest extends TestCase {
     }
 
     /**
-     * Timed wait without holding lock throws IllegalMonitorStateException
+     * Timed wait without holding lock throws IllegalMonitorStateException.
      */
     public void testTimedWait_IllegalMonitorException() {
         // created a new thread with anonymous runnable
@@ -392,7 +392,7 @@ public class UnitOfTimeTest extends TestCase {
     }
 
     /**
-     * timedWait throws InterruptedException when interrupted
+     * timedWait throws InterruptedException when interrupted.
      */
     public void testTimedWait() throws Exception {
         Thread t = new Thread(new Runnable() {
@@ -422,7 +422,7 @@ public class UnitOfTimeTest extends TestCase {
     }
 
     /**
-     * timedJoin throws InterruptedException when interrupted
+     * timedJoin throws InterruptedException when interrupted.
      */
     public void testTimedJoin() throws Exception {
         Thread t = new Thread(new Runnable() {
@@ -454,7 +454,7 @@ public class UnitOfTimeTest extends TestCase {
     }
 
     /**
-     * timedSleep throws InterruptedException when interrupted
+     * timedSleep throws InterruptedException when interrupted.
      */
     public void testTimedSleep() throws Exception{
         // created a new thread with anonymous runnable
@@ -480,7 +480,7 @@ public class UnitOfTimeTest extends TestCase {
     }
 
     /**
-     * a deserialized serialized unit is equal
+     * a deserialized serialized unit is equal.
      */
     public void testSerialization() {
         UnitOfTime q = UnitOfTime.MILLISECONDS;

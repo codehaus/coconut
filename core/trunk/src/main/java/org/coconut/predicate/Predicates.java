@@ -301,6 +301,27 @@ public final class Predicates {
         return new Predicates.EqualsToPredicate<E>(object);
     }
 
+    /**
+     * Returns a predicate that always evaluates to <code>false</code>. This predicate
+     * is serializable.
+     * <p>
+     * This example illustrates the type-safe way to obtain a true predicate:
+     * 
+     * <pre>
+     * Predicate&lt;String&gt; s = Predicates.truePredicate();
+     * </pre>
+     * 
+     * Implementation note: Implementations of this method need not create a separate
+     * <tt>predicate</tt> object for each call. Using this method is likely to have
+     * comparable cost to using the like-named field. (Unlike this method, the field does
+     * not provide type safety.)
+     * 
+     * @see #TRUE
+     * @return a predicate that returns <tt>true</tt> for any element passed to the
+     *         {@link Predicate#evaluate(Object)} method.
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     */
     @SuppressWarnings("unchecked")
     public static <E> Predicate<E> falsePredicate() {
         return FALSE;
@@ -743,8 +764,6 @@ public final class Predicates {
      * A Predicate that always returns <tt>false</tt>. Use {@link #INSTANCE} or
      * {@link org.coconut.predicate.Predicates#FALSE} to get an instance of this
      * Predicate.
-     * 
-     * @see TruePredicate
      */
     final static class FalsePredicate implements Predicate, Serializable {
 
@@ -771,7 +790,7 @@ public final class Predicates {
         /** {@inheritDoc} */
         @Override
         public String toString() {
-            return "false";
+            return Boolean.FALSE.toString();
         }
     }
 

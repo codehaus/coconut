@@ -28,11 +28,11 @@ import org.junit.Test;
 public class Predicates_LogicTest {
     static Predicate<? extends Number> P_EXTEND_NUMBER = null;
 
-    static Predicate<Long> P_LONG = null;
+    static Predicate<Long> P_LONG = Predicates.FALSE;
 
-    static Predicate<Number> P_NUMBER = null;
+    static Predicate<Number> P_NUMBER = Predicates.FALSE;
 
-    static Predicate<Object> P_OBJECT = null;
+    static Predicate<Object> P_OBJECT = Predicates.FALSE;
 
     static Predicate[] PREDICATES_WITH_NULL_ARRAY = { Predicates.TRUE, null, Predicates.TRUE };
 
@@ -303,11 +303,12 @@ public class Predicates_LogicTest {
     }
 
     @Test
-    public void testFalseFilter() {
+    public void falseFilter() {
         assertFalse(Predicates.FALSE.evaluate(null));
         assertFalse(Predicates.FALSE.evaluate(this));
         assertSame(Predicates.FALSE, Predicates.falsePredicate());
         Predicates.FALSE.toString(); // does not fail
+        TestUtil.assertIsSerializable(Predicates.falsePredicate());
     }
 
     /* Test not */

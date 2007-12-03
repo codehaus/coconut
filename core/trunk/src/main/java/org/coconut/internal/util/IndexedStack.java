@@ -13,7 +13,8 @@ import net.jcip.annotations.NotThreadSafe;
 /**
  * A PolicyStack.
  * 
- * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id$
  */
 @NotThreadSafe
 public class IndexedStack<T> implements Serializable{

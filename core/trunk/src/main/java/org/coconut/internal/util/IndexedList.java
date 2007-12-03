@@ -13,7 +13,8 @@ import net.jcip.annotations.NotThreadSafe;
 /**
  * A PolicyList.
  * 
- * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id$
  */
 @NotThreadSafe
 public class IndexedList<T> implements Serializable {
