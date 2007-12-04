@@ -19,15 +19,6 @@ import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
  */
 public interface InternalCacheListener<K, V> {
     /**
-     * Called before the cache was cleared.
-     * 
-     * @param cache
-     *            the cache that was cleared
-     * @return a timestamp
-     */
-    long beforeCacheClear(Cache<K, V> cache);
-
-    /**
      * Called after the specified cache was cleared.
      * 
      * @param cache
@@ -42,55 +33,72 @@ public interface InternalCacheListener<K, V> {
     void afterCacheClear(Cache<K, V> cache, long timestamp,
             Collection<? extends CacheEntry<K, V>> entries, long previousVolume);
 
-    long beforeRemoveAll(Cache<K, V> cache, Collection<? extends K> keys);
+    void afterCachePurge(Cache<K, V> cache, long start,
+            Collection<? extends CacheEntry<K, V>> purgedEntries, int previousSize,
+            long previousVolume, int newSize, long newVolume);
 
-    void afterRemoveAll(Cache<K, V> cache, long start, Collection<? extends K> keys,
-            Collection<CacheEntry<K, V>> removed);
+    void afterGetAll(Cache<K, V> cache, long started, Object[] keys,
+            AbstractCacheEntry<K, V>[] entries, boolean isHit[], boolean isExpired[],
+            Map<K, AbstractCacheEntry<K, V>> loadedEntries);
 
-    long beforePut(Cache<K, V> cache, K key, V value, boolean fromLoader);
+    void afterHit(Cache<K, V> cache, long started, K key, CacheEntry<K, V> entry);
+
+    void afterMiss(Cache<K, V> cache, long started, K key, CacheEntry<K, V> previousEntry,
+            CacheEntry<K, V> newEntry, boolean isExpired);
+
+    void afterPut(Cache<K, V> cache, long started,
+            Collection<? extends CacheEntry<K, V>> evictedEntries,
+
+            AbstractCacheEntry<K, V> oldEntry, AbstractCacheEntry<K, V> newEntry);
 
     void afterPut(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries,
             AbstractCacheEntry<K, V> oldEntry, AbstractCacheEntry<K, V> newEntry, boolean fromLoader);
-
-    long beforePutAll(Cache<K, V> cache, Map<? extends K, ? extends V> map,
-            Map<? extends K, AttributeMap> attributes, boolean fromLoader);
 
     void afterPutAll(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries,
             Map<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>> newPrevEntries,
             boolean fromLoader);
 
-    long beforeCachePurge(Cache<K, V> cache);
+    void afterRemove(Cache<K, V> cache, long started, CacheEntry<K, V> entry);
 
-    void afterCachePurge(Cache<K, V> cache, long start, Collection<? extends CacheEntry<K, V>> purgedEntries,
-            int previousSize, long previousVolume, int newSize, long newVolume);
+    void afterRemoveAll(Cache<K, V> cache, long start, Collection<? extends K> keys,
+            Collection<CacheEntry<K, V>> removed);
 
-    long beforeTrim(Cache<K, V> cache, int newSize, long newVolume);
+    void afterStart(Cache<K, V> cache);
 
     void afterTrimCache(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries, int previousSize, int newSize,
             long previousVolume, long newVolume);
-    
-    long beforeRemove(Cache<K, V> cache, Object key, Object value);
-    
-    void afterRemove(Cache<K, V> cache, long started, CacheEntry<K, V> entry);
-    
-    long beforeReplace(Cache<K, V> cache, K key, V value);
-    
-    void afterPut(Cache<K, V> cache, long started,
-            Collection<? extends CacheEntry<K, V>> evictedEntries,
-            AbstractCacheEntry<K, V> oldEntry, AbstractCacheEntry<K, V> newEntry);
-    
+
+    /**
+     * Called before the cache was cleared.
+     * 
+     * @param cache
+     *            the cache that was cleared
+     * @return a timestamp
+     */
+    long beforeCacheClear(Cache<K, V> cache);
+
+    long beforeCachePurge(Cache<K, V> cache);
+
     long beforeGet(Cache<K, V> cache, K key);
-    
-    void afterHit(Cache<K, V> cache, long started, K key, CacheEntry<K, V> entry);
-    
-    void afterMiss(Cache<K, V> cache, long started, K key, CacheEntry<K, V> previousEntry,
-            CacheEntry<K, V> newEntry, boolean isExpired);
+
+    long beforeGetAll(Cache<K, V> cache, Collection<? extends K> keys);
+
+    long beforePut(Cache<K, V> cache, K key, V value, boolean fromLoader);
+
+    long beforePutAll(Cache<K, V> cache, Map<? extends K, ? extends V> map,
+            Map<? extends K, AttributeMap> attributes, boolean fromLoader);
+
+    long beforeRemove(Cache<K, V> cache, Object key, Object value);
+
+    long beforeRemoveAll(Cache<K, V> cache, Collection<? extends K> keys);
+
+    long beforeReplace(Cache<K, V> cache, K key, V value);
+
+    long beforeTrim(Cache<K, V> cache, int newSize, long newVolume);
 
     void dexpired(Cache<K, V> cache, long started, CacheEntry<K, V> entry);
 
-    void afterStart(Cache<K, V> cache);
-    
 }

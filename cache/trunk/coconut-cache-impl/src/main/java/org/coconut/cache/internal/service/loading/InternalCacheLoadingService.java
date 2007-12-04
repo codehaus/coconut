@@ -35,6 +35,12 @@ public interface InternalCacheLoadingService<K, V> extends CacheLoadingService<K
     AbstractCacheEntry<K, V> loadBlocking(K key, AttributeMap attributes);
 
     /**
+     * @param entry
+     * @return
+     */
+    Map<K, AbstractCacheEntry<K, V>> loadAllBlocking(Map<K, AttributeMap> keys);
+
+    /**
      * Asynchronously load the value for the specified key and AttributeMap.
      * 
      * @param key

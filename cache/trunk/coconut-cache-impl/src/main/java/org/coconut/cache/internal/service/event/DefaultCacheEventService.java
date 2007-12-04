@@ -235,4 +235,5 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
             dispatch(updated(cache, newEntry, prev.getValue(), false));
         }
     }
+
 }

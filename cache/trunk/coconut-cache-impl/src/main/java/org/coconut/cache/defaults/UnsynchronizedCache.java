@@ -18,6 +18,7 @@ import net.jcip.annotations.NotThreadSafe;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.AttributeMaps;
+import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
@@ -144,8 +145,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         checkRunning("get", false);
         return map.containsValue(value);
     }
-    
-    
+
     /** {@inheritDoc} */
     public Set<Entry<K, V>> entrySet() {
         return map.entrySetPublic(this);
@@ -278,46 +278,55 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
     /** {@inheritDoc} */
     @Override
     Map<K, V> doGetAll(Collection<? extends K> keys) {
-        checkRunning("get");
         HashMap<K, V> result = new HashMap<K, V>();
+        Collection<K> loadMe = new ArrayList<K>();
+        Object[] k = keys.toArray();
+        AbstractCacheEntry<K, V>[] entries = new AbstractCacheEntry[k.length];
+        boolean[] isExpired = new boolean[k.length];
+        boolean[] isHit = new boolean[k.length];
+        long started = listener.beforeGetAll(this, keys);
+        checkRunning("get");
+
+        int i = 0;
         for (K key : keys) {
-            result.put(key, get(key));
+            result.put(key, null);
+            AbstractCacheEntry<K, V> entry = map.get(key);
+            entries[i] = entry;
+            if (entry != null) {
+                isExpired[i] = expirationService.isExpired(entry);
+                if (isExpired[i]) {
+                    map.remove(key);
+                    evictionService.remove(entry.getPolicyIndex());
+                    loadMe.add(key);
+                } else {
+                    // reload if needed??
+                    entry.accessed(entryService);
+                    evictionService.touch(entry.getPolicyIndex());
+                    isHit[i] = true;
+                    result.put(key, entry.getValue());
+                }
+            } else {
+                loadMe.add(key);
+            }
+            i++;
         }
+        Map<K, AbstractCacheEntry<K, V>> ma = Collections.EMPTY_MAP;
+        for (int j = 0; j < isExpired.length; j++) {
+            if (isExpired[j]) {
+                listener.dexpired(this, started, entries[j]);
+            }
+        }
+        if (loadMe.size() != 0) {
+            ma = loadingService.loadAllBlocking(AttributeMaps.toMap(loadMe, AttributeMaps.EMPTY_MAP));
+            for (AbstractCacheEntry<K, V> entry : ma.values()) {
+                if (entry != null) {
+                    result.put(entry.getKey(), entry.getValue());
+                }
+            }
+        }
+        listener.afterGetAll(this, started, k, entries, isHit, isExpired, ma);
         return result;
     }
-
-//    Map<K, V> doGetAll2(Collection<? extends K> keys) {
-//        if (keys == null) {
-//            throw new NullPointerException("collection is null");
-//        }
-//        CollectionUtils.checkCollectionForNulls(keys);
-//        Collection<K> loadMe = new ArrayList<K>();
-//        long started = 0; // statisticsService.beforeGetAll(this, keys);
-//        boolean[] isExpired = new boolean[keys.size()];
-//        checkRunning("get");
-//        HashMap<K, V> result = new HashMap<K, V>();
-//        int i = 0;
-//        for (K key : keys) {
-//            AbstractCacheEntry<K, V> entry = map.get(key);
-//            if (entry != null) {
-//                isExpired[i] = expirationService.isExpired(entry);
-//                if (isExpired[i]) {
-//                    map.remove(key);
-//                    evictionService.remove(entry.getPolicyIndex());
-//                    loadMe.add(key);
-//                } else {
-//                    // reload if needed??
-//                    entry.accessed(entryService);
-//                    evictionService.touch(entry.getPolicyIndex());
-//                    result.put(key, entry.getValue());
-//                }
-//            } else {
-//                loadMe.add(key);
-//            }
-//            i++;
-//        }
-//        return result;
-//    }
 
     /** {@inheritDoc} */
     @Override

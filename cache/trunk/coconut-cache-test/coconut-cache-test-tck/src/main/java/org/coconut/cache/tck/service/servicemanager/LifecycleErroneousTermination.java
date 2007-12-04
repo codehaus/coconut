@@ -3,7 +3,6 @@ package org.coconut.cache.tck.service.servicemanager;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlers;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
@@ -16,13 +15,10 @@ import org.junit.Test;
 
 public class LifecycleErroneousTermination extends AbstractCacheTCKTest {
 
-    CacheConfiguration conf;
-
     TerminationExceptionHandler handler;
 
     @Before
     public void setup() {
-        conf = newConf();
         handler = new TerminationExceptionHandler();
         conf.exceptionHandling().setExceptionHandler(handler);
     }
@@ -41,7 +37,7 @@ public class LifecycleErroneousTermination extends AbstractCacheTCKTest {
             }
         };
         conf.serviceManager().add(alv);
-        setCache(conf);
+        setCache();
         prestart();
         shutdownAndAwaitTermination();
         assertEquals(1, handler.terminatationMap.size());
@@ -83,7 +79,7 @@ public class LifecycleErroneousTermination extends AbstractCacheTCKTest {
             }
         };
         conf.serviceManager().add(alv1).add(alv2).add(alv3).add(alv4);
-        setCache(conf);
+        setCache();
         prestart();
         shutdownAndAwaitTermination();
         assertEquals(3, handler.terminatationMap.size());

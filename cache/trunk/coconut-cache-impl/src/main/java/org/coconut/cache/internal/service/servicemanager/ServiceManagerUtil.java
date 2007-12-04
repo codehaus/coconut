@@ -36,64 +36,6 @@ public final class ServiceManagerUtil {
 
     // /CLOVER:ON
 
-    static Map<Class<?>, Object> initialize(PicoContainer container,
-            Iterable<ServiceHolder> services, final Class<? extends Cache> type) {
-        Map<Class<?>, Object> map = new HashMap<Class<?>, Object>();
-        final CacheConfiguration conf = (CacheConfiguration) container
-                .getComponentInstance(CacheConfiguration.class);
-        final CacheExceptionHandler ces = ((InternalCacheExceptionService) container
-                .getComponentInstanceOfType(InternalCacheExceptionService.class))
-                .getExceptionHandler();
-        for (ServiceHolder si : services) {
-            try {
-                final Map<Class<?>, Object> tmpMap = new HashMap<Class<?>, Object>();
-                si.initialize(new CacheLifecycleInitializer() {
-                    public CacheConfiguration<?, ?> getCacheConfiguration() {
-                        return conf;
-                    }
-
-                    public Class<? extends Cache> getCacheType() {
-                        return type;
-                    }
-
-                    public <T> void registerService(Class<T> clazz, T service) {
-                        tmpMap.put(clazz, service);
-                    }
-                });
-                map.putAll(tmpMap);
-            } catch (RuntimeException re) {
-                ces.cacheInitializationFailed(conf, type, si.getService(), re);
-                throw re;
-            }
-        }
-        return map;
-    }
-
-    static List<ServiceHolder> initializeServices(PicoContainer container) {
-        List<ServiceHolder> services = new ArrayList<ServiceHolder>();
-        List<AbstractCacheLifecycle> l = container
-                .getComponentInstancesOfType(AbstractCacheLifecycle.class);
-
-        for (AbstractCacheLifecycle a : l) {
-            if (a instanceof CompositeService) {
-                for (Object o : ((CompositeService) a).getChildServices()) {
-                    if (o instanceof CacheLifecycle) {
-                        services.add(new ServiceHolder((CacheLifecycle) o, false));
-                    }
-                }
-            }
-            services.add(new ServiceHolder(a, true));
-        }
-        CacheConfiguration conf = (CacheConfiguration) container
-                .getComponentInstance(CacheConfiguration.class);
-        for (Object service : conf.serviceManager().getObjects()) {
-            if (service instanceof CacheLifecycle) {
-                services.add(new ServiceHolder((CacheLifecycle) service, false));
-            }
-        }
-        return services;
-    }
-
     static List<ManagedLifecycle> initializeManagedObjects(PicoContainer container) {
         List<ManagedLifecycle> managedObjects = new ArrayList<ManagedLifecycle>();
         List<AbstractCacheLifecycle> l = container
@@ -119,16 +61,6 @@ public final class ServiceManagerUtil {
             }
         }
         return managedObjects;
-    }
-
-    static CacheExceptionHandler initializeCacheExceptionService(PicoContainer container) {
-        CacheConfiguration conf = (CacheConfiguration) container
-                .getComponentInstance(CacheConfiguration.class);
-        CacheExceptionHandler ces = ((InternalCacheExceptionService) container
-                .getComponentInstanceOfType(InternalCacheExceptionService.class))
-                .getExceptionHandler();
-        ces.initialize(conf);
-        return ces;
     }
 
     /**
@@ -186,5 +118,4 @@ public final class ServiceManagerUtil {
             return delegate.getService(serviceType);
         }
     }
-
 }

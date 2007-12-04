@@ -128,8 +128,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
 
     /** {@inheritDoc} */
     public long getDefaultTimeToRefresh(TimeUnit unit) {
-        return LoadingUtils.convertNanosToRefreshTime(attributeFactory.getTimeToRefreshNs(),
-                unit);
+        return LoadingUtils.convertNanosToRefreshTime(attributeFactory.getTimeToRefreshNs(), unit);
     }
 
     /** {@inheritDoc} */
@@ -264,5 +263,13 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
             }
         }
         return loadSupport.valueLoaded(key, v, attributes);
+    }
+
+    public Map<K, AbstractCacheEntry<K, V>> loadAllBlocking(Map<K, AttributeMap> keys) {
+        HashMap<K, AbstractCacheEntry<K, V>> map = new HashMap<K, AbstractCacheEntry<K, V>>();
+        for (Map.Entry<K, AttributeMap> e : keys.entrySet()) {
+            map.put(e.getKey(), loadBlocking(e.getKey(), e.getValue()));
+        }
+        return map;
     }
 }

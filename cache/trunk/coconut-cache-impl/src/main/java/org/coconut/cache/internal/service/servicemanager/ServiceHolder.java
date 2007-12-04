@@ -7,18 +7,22 @@ import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 
-public class ServiceHolder {
+class ServiceHolder {
     private final boolean isInternal;
+
+    private final CacheLifecycle service;
 
     private int state;
 
     volatile Future future;
 
-    private final CacheLifecycle service;
-
     ServiceHolder(CacheLifecycle service, boolean isInternal) {
         this.isInternal = isInternal;
         this.service = service;
+    }
+
+    CacheLifecycle getService() {
+        return service;
     }
 
     void initialize(CacheLifecycleInitializer cli) {
@@ -69,10 +73,5 @@ public class ServiceHolder {
         state = 11;
         service.terminated();
         state = 12;
-    }
-    
-
-    CacheLifecycle getService() {
-        return service;
     }
 }

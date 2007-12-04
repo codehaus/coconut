@@ -16,8 +16,7 @@ import org.coconut.cache.service.event.CacheEventService;
  * @version $Id$
  */
 public interface InternalCacheEventService<K, V> extends CacheEventService<K, V> {
-
-    /**
+   /**
      * Called after the specified cache was cleared.
      * 
      * @param cache
@@ -35,10 +34,6 @@ public interface InternalCacheEventService<K, V> extends CacheEventService<K, V>
     void afterPurge(Cache<K, V> cache, Collection<? extends CacheEntry<K, V>> expired);
 
     void dexpired(Cache<K, V> cache, long started, CacheEntry<K, V> entry);
-
-//    void afterGet(Cache<K, V> cache, long started,
-//            Collection<? extends CacheEntry<K, V>> evictedEntries, K key, CacheEntry<K, V> prev,
-//            CacheEntry<K, V> newEntry, boolean isExpired);
 
     void afterPut(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries,
@@ -61,4 +56,5 @@ public interface InternalCacheEventService<K, V> extends CacheEventService<K, V>
             long previousVolume, long newVolume);
 
     void afterStart(Cache<K, V> cache);
+    
 }

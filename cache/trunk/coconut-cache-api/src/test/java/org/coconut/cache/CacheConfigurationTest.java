@@ -132,6 +132,17 @@ public class CacheConfigurationTest {
     }
 
     /**
+     * Tests {@link CacheConfiguration#setCacheType(Class)} and
+     * {@link CacheConfiguration#getCacheType()}.
+     */
+    @Test
+    public void cacheType() {
+        assertNull(conf.getCacheType());
+        assertSame(conf, conf.setCacheType(DummyCache.class));
+        assertEquals(DummyCache.class, conf.getCacheType());
+    }
+
+    /**
      * Tests {@link CacheConfiguration#setDefaultLogger(Logger)} and
      * {@link CacheConfiguration#getDefaultLogger()}.
      */
@@ -260,7 +271,7 @@ public class CacheConfigurationTest {
      */
     @Test
     public void loadCacheFrom() throws Exception {
-        conf.setProperty(XmlConfigurator.CACHE_INSTANCE_TYPE, "org.coconut.cache.DummyCache");
+        conf.setCacheType(DummyCache.class);
         conf.setName("foo");
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -458,7 +469,6 @@ public class CacheConfigurationTest {
         } catch (IllegalArgumentException ok) {/** ok */
         }
     }
-
 
     private <K> Collection<K> getInstancesOfType(Collection<?> col, Class<K> type) {
         ArrayList<K> list = new ArrayList<K>();

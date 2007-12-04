@@ -10,6 +10,10 @@ import org.coconut.cache.service.event.CacheEntryEvent;
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
+ * @param <K>
+ *            the type of keys maintained by the cache
+ * @param <V>
+ *            the type of mapped values
  */
 abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
     private final Cache<K, V> cache;
@@ -60,10 +64,6 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
         return builder.toString();
     }
 
-//    private boolean equals(CacheEntryEvent<K, V> event) {
-//        return this.getKey().equals(event.getKey()) && this.getValue().equals(event.getValue());
-//    }
-
     static <K, V> CacheEntryEvent.ItemAdded<K, V> added(Cache<K, V> cache, CacheEntry<K, V> entry) {
         return new AddedEvent<K, V>(cache, entry);
     }
@@ -83,17 +83,24 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
         return new RemovedEvent<K, V>(cache, entry, false);
     }
 
-    static <K, V> CacheEntryEvent.ItemUpdated<K, V> updated(Cache<K, V> cache, CacheEntry<K, V> entry,
-            V previous, boolean isExpired) {
+    static <K, V> CacheEntryEvent.ItemUpdated<K, V> updated(Cache<K, V> cache,
+            CacheEntry<K, V> entry, V previous, boolean isExpired) {
         return new ChangedEvent<K, V>(cache, entry, previous, isExpired);
     }
 
+    /**
+     * An Implementation of {@link CacheEntryEvent.ItemAdded}.
+     */
     static class AddedEvent<K, V> extends InternalEntryEvent<K, V> implements
             CacheEntryEvent.ItemAdded<K, V> {
 
         /**
+         * Creates a new RemovedEvent.
+         * 
          * @param cache
+         *            the cache the entry was added to
          * @param entry
+         *            the entry that was added
          */
         AddedEvent(Cache<K, V> cache, CacheEntry<K, V> entry) {
             super(cache, entry);
@@ -105,23 +112,37 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
         }
     }
 
+    /**
+     * An Implementation of {@link CacheEntryEvent.ItemUpdated}.
+     */
     static class ChangedEvent<K, V> extends InternalEntryEvent<K, V> implements
             CacheEntryEvent.ItemUpdated<K, V> {
-        private boolean isExpired;
 
+        /** Whether or not the item was updated because it expired. */
+        private boolean hasExpired;
+
+        /** The previous value of this entry. */
         private V previous;
 
         /**
+         * Creates a new RemovedEvent.
+         * 
          * @param cache
+         *            the cache the entry was updated from
          * @param entry
+         *            the entry that was updated
+         * @param previous
+         *            the previous value of this entry
+         * @param hasExpired
+         *            whether or not the item was updated because it expired
          */
-        ChangedEvent(Cache<K, V> cache, CacheEntry<K, V> entry, V previous, boolean isExpired) {
+        ChangedEvent(Cache<K, V> cache, CacheEntry<K, V> entry, V previous, boolean hasExpired) {
             super(cache, entry);
             if (previous == null) {
                 throw new NullPointerException("previous is null");
             }
             this.previous = previous;
-            this.isExpired = isExpired;
+            this.hasExpired = hasExpired;
         }
 
         /** {@inheritDoc} */
@@ -136,18 +157,28 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
 
         /** {@inheritDoc} */
         public boolean hasExpired() {
-            return isExpired;
+            return hasExpired;
         }
     }
 
-    static class RemovedEvent<K, V> extends InternalEntryEvent<K, V> implements
+    /**
+     * An Implementation of {@link CacheEntryEvent.ItemRemoved}.
+     */
+    static final class RemovedEvent<K, V> extends InternalEntryEvent<K, V> implements
             CacheEntryEvent.ItemRemoved<K, V> {
 
+        /** Whether or not the item was removed because it expired. */
         private boolean hasExpired;
 
         /**
+         * Creates a new RemovedEvent.
+         * 
          * @param cache
+         *            the cache the entry was removed from
          * @param entry
+         *            the entry that was removed
+         * @param hasExpired
+         *            whether or not the item was removed because it expired
          */
         RemovedEvent(Cache<K, V> cache, CacheEntry<K, V> entry, boolean hasExpired) {
             super(cache, entry);
@@ -163,6 +194,5 @@ abstract class InternalEntryEvent<K, V> implements CacheEntryEvent<K, V> {
         public boolean hasExpired() {
             return hasExpired;
         }
-
     }
 }

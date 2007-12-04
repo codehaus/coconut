@@ -35,11 +35,13 @@ import org.junit.Before;
 @SuppressWarnings("unchecked")
 public class AbstractEventTestBundle extends AbstractCacheTCKTest {
 
-    static final CacheConfiguration<Integer, String> INCLUDE_ALL_CONFIGURATION;
+    CacheConfiguration<Integer, String> INCLUDE_ALL_CONFIGURATION;
 
-    static {
-        INCLUDE_ALL_CONFIGURATION = CacheConfiguration.create();
+    @Before
+    public void setup() {
+        INCLUDE_ALL_CONFIGURATION = newConf();
         INCLUDE_ALL_CONFIGURATION.event().setEnabled(true).include(CacheEvent.class);
+
     }
 
     LinkedBlockingQueue<EventWrapper> events;

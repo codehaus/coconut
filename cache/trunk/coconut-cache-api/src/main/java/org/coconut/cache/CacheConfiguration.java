@@ -77,6 +77,8 @@ public class CacheConfiguration<K, V> {
     /** A Map of additional properties. */
     private final Map<String, String> additionalProperties = new HashMap<String, String>();
 
+    private Class<? extends Cache> cacheType;
+
     /** The clock that should be used for timing. */
     private Clock clock = Clock.DEFAULT_CLOCK;
 
@@ -211,6 +213,10 @@ public class CacheConfiguration<K, V> {
         return (Collection) new ArrayList<AbstractCacheServiceConfiguration>(list);
     }
 
+    public Class<? extends Cache> getCacheType() {
+        return cacheType;
+    }
+
     /**
      * Returns the {@link org.coconut.core.Clock} that the cache should use.
      * 
@@ -311,6 +317,10 @@ public class CacheConfiguration<K, V> {
         return getConfiguration(CacheManagementConfiguration.class);
     }
 
+    public Cache<K, V> newCacheInstance() {
+        return newCacheInstance(getCacheType());
+    }
+
     /**
      * Creates a new cache instance of the specified type using this configuration.
      * <p>
@@ -367,6 +377,11 @@ public class CacheConfiguration<K, V> {
      */
     public CacheServiceManagerConfiguration serviceManager() {
         return getConfiguration(CacheServiceManagerConfiguration.class);
+    }
+
+    public CacheConfiguration<K, V> setCacheType(Class<? extends Cache> cacheType) {
+        this.cacheType = cacheType;
+        return this;
     }
 
     /**
@@ -564,8 +579,7 @@ public class CacheConfiguration<K, V> {
      */
     public static <K, V> Cache<K, V> loadCacheFrom(InputStream xmlDoc) throws Exception {
         CacheConfiguration<K, V> conf = loadConfigurationFrom(xmlDoc);
-        return conf.newCacheInstance((Class) Class.forName(conf.getProperty(
-                XmlConfigurator.CACHE_INSTANCE_TYPE)));
+        return conf.newCacheInstance();
     }
 
     /**

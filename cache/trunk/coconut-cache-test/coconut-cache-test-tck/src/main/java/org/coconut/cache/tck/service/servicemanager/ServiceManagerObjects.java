@@ -8,7 +8,6 @@ import static org.coconut.test.CollectionUtils.M1;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.lifecycle.AbstractLifecycleManagedVerifier;
@@ -38,9 +37,9 @@ public class ServiceManagerObjects extends AbstractCacheTCKTest {
     @Test
     public void lifecycle() {
         Life l = new Life();
-        CacheConfiguration conf = newConf().serviceManager().add(l).c();
+        conf.serviceManager().add(l);
         l.setConfigurationToVerify(conf);
-        setCache(conf);
+        setCache();
         l.assertInitializedButNotStarted();
         assertFalse(services().hasService(l.getClass()));
         prestart();
@@ -60,7 +59,7 @@ public class ServiceManagerObjects extends AbstractCacheTCKTest {
 
     @Test
     public void recursiveStart() {
-        setCache(newConf().serviceManager().add(new Put()));
+        setCache(conf.serviceManager().add(new Put()));
         get(M1);
     }
 

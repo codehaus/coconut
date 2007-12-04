@@ -51,15 +51,20 @@ public class AbstractCacheTCKTest extends Assert {
 
     protected ThreadServiceTestHelper threadHelper;
 
-    public static Class<? extends Cache> getCacheType() {
-        return CacheTCKRunner.tt;
-    }
+    protected CacheConfiguration<Integer, String> conf;
 
     @Before
-    public void setupClock() {
+    public void setupConf() {
         clock = new DeterministicClock();
+        conf = newConf();
+        conf.setClock(clock);
     }
-
+    public void assertNotStarted() {
+        assertFalse(c.isStarted());
+    }
+    public void assertStarted() {
+        assertTrue(c.isStarted());
+    }
     protected void assertGet(Map.Entry<Integer, String>... e) {
         for (Map.Entry<Integer, String> entry : e) {
             assertEquals(entry.getValue(), c.get(entry.getKey()));
@@ -229,12 +234,8 @@ public class AbstractCacheTCKTest extends Assert {
         return c.getService(CacheManagementService.class);
     }
 
-    protected final CacheWorkerService worker() {
-        return c.getService(CacheWorkerService.class);
-    }
-
     protected Cache<Integer, String> newCache() {
-        return newCache(0);
+        return newCache(conf);
     }
 
     protected Cache<Integer, String> newCache(AbstractCacheServiceConfiguration<?, ?> conf) {
@@ -250,7 +251,7 @@ public class AbstractCacheTCKTest extends Assert {
         if (conf == null) {
             throw new NullPointerException("conf is null");
         }
-        return (Cache) conf.newCacheInstance(CacheTCKRunner.tt);
+        return (Cache) conf.newCacheInstance();
     }
 
     protected Cache<Integer, String> newCache(CacheConfiguration<?, ?> conf, int entries) {
@@ -260,7 +261,7 @@ public class AbstractCacheTCKTest extends Assert {
     }
 
     protected Cache<Integer, String> newCache(int entries) {
-        CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
+        CacheConfiguration<Integer, String> cc = newConf();
         cc.setClock(clock);
         Cache<Integer, String> c = newCache(cc);
         if (entries > 0) {
@@ -272,6 +273,7 @@ public class AbstractCacheTCKTest extends Assert {
     @SuppressWarnings("unchecked")
     protected CacheConfiguration<Integer, String> newConf() {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
+        cc.setCacheType(CacheTCKRunner.tt);
         if (CacheTCKRunner.tt.getAnnotation(ThreadSafe.class) != null) {
             threadHelper = new ThreadServiceTestHelper();
             cc.worker().setWorkerManager(threadHelper);
@@ -367,6 +369,14 @@ public class AbstractCacheTCKTest extends Assert {
         c = newCache(conf);
     }
 
+    protected void setCache() {
+        c = newCache(conf);
+    }
+
+    protected void setCache(int entries) {
+        c = newCache(conf, entries);
+    }
+
     protected void setCache(CacheConfiguration<?, ?> conf) {
         c = newCache(conf);
     }
@@ -378,8 +388,8 @@ public class AbstractCacheTCKTest extends Assert {
             assertTrue(c.awaitTermination(10, TimeUnit.SECONDS));
             long finish = System.nanoTime();
             if (finish - start > 1000000) {
-//                System.out.println(finish - start);
-     //           new Exception().printStackTrace();
+// System.out.println(finish - start);
+                // new Exception().printStackTrace();
             }
         } catch (InterruptedException e) {
             throw new AssertionError(e);
@@ -396,6 +406,10 @@ public class AbstractCacheTCKTest extends Assert {
         }
     }
 
+    protected final CacheWorkerService worker() {
+        return c.getService(CacheWorkerService.class);
+    }
+
     public static Map<Integer, String> createMap(int entries) {
         if (entries < 0 || entries > 26) {
             throw new IllegalArgumentException();
@@ -406,6 +420,10 @@ public class AbstractCacheTCKTest extends Assert {
         }
 
         return map;
+    }
+
+    public static Class<? extends Cache> getCacheType() {
+        return CacheTCKRunner.tt;
     }
 
     private static <T> void doFindMXBeans(Collection<ManagedGroup> col, ManagedGroup group,

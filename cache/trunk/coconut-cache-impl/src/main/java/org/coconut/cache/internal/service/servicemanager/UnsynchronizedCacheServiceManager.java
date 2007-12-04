@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -17,19 +16,15 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
 import org.coconut.cache.internal.service.listener.InternalCacheListener;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
-import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
-import org.coconut.management.ManagedLifecycle;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
 public class UnsynchronizedCacheServiceManager extends AbstractPicoBasedCacheServiceManager {
-
-    private final LinkedList<ManagedLifecycle> managedObjects = new LinkedList<ManagedLifecycle>();
 
     private RuntimeException startupException;
 
@@ -65,7 +60,6 @@ public class UnsynchronizedCacheServiceManager extends AbstractPicoBasedCacheSer
             } else if (failIfShutdown && status.isShutdown()) {
                 throw new IllegalStateException("Cache has been shutdown");
             }
-            // else if status==STARTING=throw illegalStateException()
             return status == RunState.RUNNING;
         }
         return true;
@@ -81,9 +75,9 @@ public class UnsynchronizedCacheServiceManager extends AbstractPicoBasedCacheSer
             List<ServiceHolder> shutdown = new ArrayList<ServiceHolder>(services);
             Collections.reverse(shutdown);
             for (ServiceHolder si : shutdown) {
-                shutdownService(si);
+                si.shutdown();
             }
-            tryTerminate();
+            doTerminate();
         }
     }
 
@@ -100,16 +94,6 @@ public class UnsynchronizedCacheServiceManager extends AbstractPicoBasedCacheSer
         status = RunState.STARTING;
         startServices();
         try {
-
-            // register mbeans
-            CacheManagementService cms = (CacheManagementService) publicServices
-                    .get(CacheManagementService.class);
-            if (cms != null) {
-                managedObjects.addAll(ServiceManagerUtil.initializeManagedObjects(container));
-                for (ManagedLifecycle si : managedObjects) {
-                    si.manage(cms);
-                }
-            }
             status = RunState.RUNNING;
             // started
             for (ServiceHolder si : services) {
@@ -120,7 +104,7 @@ public class UnsynchronizedCacheServiceManager extends AbstractPicoBasedCacheSer
         } catch (RuntimeException re) {
             startupException = new CacheException("Could not start cache", re);
             status = RunState.COULD_NOT_START;
-            doTerminate(false);
+            doTerminate();
             throw startupException;
         } catch (Error er) {
             startupException = new CacheException("Could not start cache", er);
@@ -142,7 +126,7 @@ public class UnsynchronizedCacheServiceManager extends AbstractPicoBasedCacheSer
                 ces.cacheStartFailed(conf, getCache().getClass(), si.getService(), re);
                 status = RunState.COULD_NOT_START;
                 tryShutdownServices();
-                doTerminate(false);
+                doTerminate();
                 throw startupException;
             } catch (Error er) {
                 startupException = new CacheException("Could not start the cache", er);
@@ -172,22 +156,8 @@ public class UnsynchronizedCacheServiceManager extends AbstractPicoBasedCacheSer
         return m;
     }
 
-    protected void doTerminate(boolean isInitializing) {
-        if (status != RunState.TERMINATED) {
-            if (status != RunState.COULD_NOT_START) {
-                status = RunState.TERMINATED;
-            }
-            ces.terminated(tryTerminateServices());
-        }
-    }
-
-
-    protected void shutdownService(ServiceHolder service) {
-        service.shutdown();
-    }
-
-    protected void tryTerminate() {
-        doTerminate(false);
+    void setRunState(RunState state) {
+        this.status = state;
     }
 
     /** {@inheritDoc} */

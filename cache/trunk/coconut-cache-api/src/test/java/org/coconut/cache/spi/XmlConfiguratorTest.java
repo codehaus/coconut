@@ -42,14 +42,14 @@ public class XmlConfiguratorTest {
                 new ByteArrayInputStream(noNamed.getBytes())).getName());
     }
 
-    @Test
-    public void cacheType() throws Exception {
-        String noNamed = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<cache-config version=\""
-                + XmlConfigurator.CURRENT_VERSION + "\">" + "<cache type=\"foo\"/></cache-config>";
-        assertEquals("foo", CacheConfiguration.loadConfigurationFrom(
-                new ByteArrayInputStream(noNamed.getBytes())).getProperty(
-                XmlConfigurator.CACHE_INSTANCE_TYPE));
-    }
+//    @Test
+//    public void cacheType() throws Exception {
+//        String noNamed = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<cache-config version=\""
+//                + XmlConfigurator.CURRENT_VERSION + "\">" + "<cache type=\"foo\"/></cache-config>";
+//        assertEquals("foo", CacheConfiguration.loadConfigurationFrom(
+//                new ByteArrayInputStream(noNamed.getBytes())).getProperty(
+//                XmlConfigurator.CACHE_INSTANCE_TYPE));
+//    }
 
     static CacheConfiguration<?, ?> rw(CacheConfiguration<?, ?> conf) throws Exception {
         ByteArrayOutputStream os = new ByteArrayOutputStream();

@@ -8,20 +8,21 @@ import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;
 
 /**
- * 
+ * Tests {@link Cache#entrySet()} lazy start and shutdown.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
 public class EntrySet extends AbstractCacheTCKTest {
+
     /**
      * Calls to {@link Cache#entrySet} should not start the cache.
      */
     @Test
     public void noLazyStart() {
-        c = newCache(0);
+        setCache();
         c.entrySet();
-        assertFalse(c.isStarted());
+        assertNotStarted();
     }
 
     /**
@@ -29,9 +30,9 @@ public class EntrySet extends AbstractCacheTCKTest {
      */
     @Test
     public void noFailOnShutdown() {
-        c = newCache(5);
-        assertTrue(c.isStarted());
-        c.shutdown();
+        setCache(5);
+        assertStarted();
+        shutdownAndAwaitTermination();
         c.entrySet(); // should not fail
     }
 }

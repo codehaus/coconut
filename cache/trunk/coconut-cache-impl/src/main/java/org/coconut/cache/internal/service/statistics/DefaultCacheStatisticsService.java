@@ -307,13 +307,13 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
         entryRemoveCount.addAndGet(removed.size());
     }
 
-//    public void afterReplace(Cache<K, V> cache, long started,
-//            Collection<? extends CacheEntry<K, V>> evicted, CacheEntry<K, V> oldEntry,
-//            CacheEntry<K, V> newEntry) {
-//        long time = System.nanoTime() - started;
-//        entryPutTime.report(time);
-//        entryPutCount.incrementAndGet();
-//    }
+// public void afterReplace(Cache<K, V> cache, long started,
+// Collection<? extends CacheEntry<K, V>> evicted, CacheEntry<K, V> oldEntry,
+// CacheEntry<K, V> newEntry) {
+// long time = System.nanoTime() - started;
+// entryPutTime.report(time);
+// entryPutCount.incrementAndGet();
+// }
 
     public void afterTrimCache(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries, int previousSize, int newSize,
@@ -327,6 +327,22 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
         return System.nanoTime();
     }
 
+    public long beforeGetAll(Cache<K, V> cache, Collection<? extends K> keys) {
+        return System.nanoTime();
+    }
+
+    public void afterGetAll(Cache<K, V> cache, long started, Object[] keys,
+            AbstractCacheEntry<K, V>[] entries, boolean isHit[], boolean isExpired[],
+            Map<K, AbstractCacheEntry<K, V>> loadedEntries) {
+        int hits = 0;
+        for (int i = 0; i < isHit.length; i++) {
+            if (isHit[i]) {
+                hits++;
+            }
+        }
+        entryGetHitCount.addAndGet(hits);
+        entryGetMissCount.addAndGet(isHit.length - hits);
+    }
 
     public long beforePut(Cache<K, V> cache, Object key, Object value) {
         return System.nanoTime();
@@ -382,19 +398,19 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
         cacheReset();
     }
 
-//    public String toString() {
-//        StringBuilder sb = new StringBuilder();
-//        sb.append("hits: ");
-//        sb.append(entryGetHitCount);
-//        sb.append("\nmisses");
-//        sb.append(entryGetMissCount);
-//        sb.append("\nhit time: ");
-//        sb.append(entryGetHitTime);
-//        sb.append("\nmiss time: ");
-//        sb.append(entryGetMissTime);
+// public String toString() {
+// StringBuilder sb = new StringBuilder();
+// sb.append("hits: ");
+// sb.append(entryGetHitCount);
+// sb.append("\nmisses");
+// sb.append(entryGetMissCount);
+// sb.append("\nhit time: ");
+// sb.append(entryGetHitTime);
+// sb.append("\nmiss time: ");
+// sb.append(entryGetMissTime);
 //
-//        return sb.toString();
-//    }
+// return sb.toString();
+// }
 
     private String getDesc(String key) {
         return Resources.lookup(DefaultCacheStatisticsService.class, key.toLowerCase());

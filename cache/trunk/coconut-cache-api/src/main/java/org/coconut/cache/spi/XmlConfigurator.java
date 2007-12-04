@@ -28,12 +28,6 @@ import org.w3c.dom.NodeList;
  */
 public class XmlConfigurator {
 
-    /**
-     * The key for which the type of the cache is specified in
-     * CacheConfiguration.getProperty().
-     */
-    public static final String CACHE_INSTANCE_TYPE = "org.coconut.cache.type";
-
     /** The current version of the XML schema. */
     public static final String CURRENT_VERSION = "0.0.4";
 
@@ -183,8 +177,7 @@ public class XmlConfigurator {
             base.setName(cacheElement.getAttribute(CACHE_NAME_ATTR));
         }
         if (cacheElement.hasAttribute(CACHE_TYPE_ATTR)) {
-            base.setProperty(XmlConfigurator.CACHE_INSTANCE_TYPE, cacheElement
-                    .getAttribute(CACHE_TYPE_ATTR));
+            base.setCacheType((Class) Class.forName(cacheElement.getAttribute(CACHE_TYPE_ATTR)));
         }
         Element properties = (Element) cacheElement.getElementsByTagName(PROPERTIES_TAG).item(0);
         if (properties != null) {
@@ -259,8 +252,8 @@ public class XmlConfigurator {
     protected void writeSingleCache(CacheConfiguration<?, ?> cc, Document doc, Element cacheElement)
             throws Exception {
         cacheElement.setAttribute(CACHE_NAME_ATTR, cc.getName());
-        if (cc.getProperties().containsKey(XmlConfigurator.CACHE_INSTANCE_TYPE)) {
-            cacheElement.setAttribute(CACHE_TYPE_ATTR, cc.getProperty(CACHE_INSTANCE_TYPE));
+        if (cc.getCacheType() != null) {
+            cacheElement.setAttribute(CACHE_TYPE_ATTR, cc.getCacheType().getName());
         }
         if (cc.getProperties().size() > 0) {
             Element ee = doc.createElement(PROPERTIES_TAG);

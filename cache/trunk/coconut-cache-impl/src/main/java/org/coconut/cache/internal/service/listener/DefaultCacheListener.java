@@ -140,4 +140,14 @@ public class DefaultCacheListener<K, V> extends AbstractCacheLifecycle implement
         event.afterStart(cache);
     }
 
+    public long beforeGetAll(Cache<K, V> cache, Collection<? extends K> keys) {
+        return statistics.beforeGetAll(cache, keys);
+    }
+
+    public void afterGetAll(Cache<K, V> cache, long started, Object[] keys,
+            AbstractCacheEntry<K, V>[] entries, boolean[] isHit, boolean[] isExpired,
+            Map<K, AbstractCacheEntry<K, V>> loadedEntries) {
+        statistics.afterGetAll(cache, started, keys, entries, isHit, isExpired, loadedEntries);
+    }
+
 }
