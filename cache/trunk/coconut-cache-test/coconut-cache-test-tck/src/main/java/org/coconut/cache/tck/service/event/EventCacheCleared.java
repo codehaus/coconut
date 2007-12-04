@@ -3,8 +3,11 @@
  */
 package org.coconut.cache.tck.service.event;
 
+import static org.coconut.test.CollectionUtils.M1;
+
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.event.CacheEventFilters;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
 import org.junit.Test;
 
 public class EventCacheCleared extends AbstractEventTestBundle {
@@ -19,7 +22,14 @@ public class EventCacheCleared extends AbstractEventTestBundle {
         CacheEvent.CacheCleared<?, ?> cleared = consumeItem(c, CacheEvent.CacheCleared.class);
         assertEquals(3, cleared.getPreviousSize());
     }
-
+   @Test
+    public void cleared2() throws Exception {
+        c = newCache(INCLUDE_ALL_CONFIGURATION, 0);
+        assertNotNull(subscribe(CacheEventFilters.CACHEENTRY_REMOVED_FILTER));
+        put(M1);
+        c.clear();
+        consumeItem(ItemRemoved.class, M1);
+    }
     @Test
     public void noClearEvent0() {
         c = newCache(INCLUDE_ALL_CONFIGURATION);
@@ -70,7 +80,7 @@ public class EventCacheCleared extends AbstractEventTestBundle {
         assertEquals(3, cleared.getPreviousSize());
     }
 
-    @Test
+    //@Test
     public void testClearedRemoved() throws Exception {
         c = newCache(INCLUDE_ALL_CONFIGURATION, 2);
         c.put(1, "B");

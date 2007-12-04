@@ -3,7 +3,12 @@
  */
 package org.coconut.cache.internal.service.servicemanager;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -21,229 +26,267 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.CacheException;
+import org.coconut.cache.internal.service.listener.InternalCacheListener;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
+import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
+import org.coconut.cache.service.servicemanager.CacheLifecycle;
+import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
+import org.coconut.management.ManagedLifecycle;
 
-public class SynchronizedCacheServiceManager implements InternalCacheServiceManager {
-    private final Inner delegate;
+public class SynchronizedCacheServiceManager extends AbstractPicoBasedCacheServiceManager {
+
+    private volatile Executor e;
+
+    private final ExecutorService es = Executors.newCachedThreadPool();
+
+    private final Queue<Future> futures = new ConcurrentLinkedQueue<Future>();
+
+    private final ReentrantLock mainLock = new ReentrantLock();
+
+    private final LinkedList<ManagedLifecycle> managedObjects = new LinkedList<ManagedLifecycle>();
 
     private final Object mutex;
+
+    private RuntimeException startupException;
+
+    private RunState status = RunState.NOTRUNNING;
+
+    /**
+     * Wait condition to support awaitTermination.
+     */
+    private final Condition termination = mainLock.newCondition();
 
     public SynchronizedCacheServiceManager(Cache<?, ?> cache, InternalCacheSupport<?, ?> helper,
             CacheConfiguration<?, ?> conf,
             Collection<Class<? extends AbstractCacheLifecycle>> classes) {
-        delegate = new Inner(cache, helper, conf, classes);
+        super(cache, helper, conf, classes);
         this.mutex = cache;
     }
 
     public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
-        return delegate.awaitTermination(timeout, unit);
-    }
-
-    public Map<Class<?>, Object> getAllServices() {
-        synchronized (mutex) {
-            return delegate.getAllServices();
+        long nanos = unit.toNanos(timeout);
+        final ReentrantLock mainLock = this.mainLock;
+        mainLock.lock();
+        try {
+            for (;;) {
+                if (super.isTerminated())
+                    return true;
+                if (nanos <= 0)
+                    return false;
+                nanos = termination.awaitNanos(nanos);
+            }
+        } finally {
+            mainLock.unlock();
         }
     }
 
-    public <T> T getInternalService(Class<T> type) {
-        synchronized (mutex) {
-            return delegate.getInternalService(type);
-        }
+    /** {@inheritDoc} */
+    public <T> T getServiceFromCache(Class<T> serviceType) {
+        lazyStart(false);
+        return getService(serviceType);
     }
 
-    public <T> T getService(Class<T> type) {
-        synchronized (mutex) {
-            return delegate.getService(type);
-        }
-    }
-
-    public synchronized <T> T getServiceFromCache(Class<T> type) {
-        return delegate.getServiceFromCache(type);
-    }
-
-    public boolean hasService(Class<?> type) {
-        synchronized (mutex) {
-            return delegate.hasService(type);
-        }
-    }
-
-    public boolean isShutdown() {
-        synchronized (mutex) {
-            return delegate.isShutdown();
-        }
-    }
-
-    public boolean isStarted() {
-        synchronized (mutex) {
-            return delegate.isStarted();
-        }
-    }
-
-    public boolean isTerminated() {
-        synchronized (mutex) {
-            return delegate.isTerminated();
-        }
-    }
-
+    /** {@inheritDoc} */
     public boolean lazyStart(boolean failIfShutdown) {
-        return delegate.lazyStart(failIfShutdown);
+        if (status != RunState.RUNNING) {
+            if (startupException != null) {
+                throw startupException;
+            } else if (status == RunState.STARTING) {
+                throw new IllegalStateException(
+                        "Cannot invoke this method from CacheLifecycle.start(Map services), should be invoked from CacheLifecycle.started(Cache c)");
+            } else if (status == RunState.NOTRUNNING) {
+                doStart();
+            } else if (failIfShutdown && status.isShutdown()) {
+                throw new IllegalStateException("Cache has been shutdown");
+            }
+            // else if status==STARTING=throw illegalStateException()
+            return status == RunState.RUNNING;
+        }
+        return true;
     }
 
     public void shutdown() {
-        delegate.shutdown();
-    }
-
-    public void shutdown(Throwable cause) {
-        delegate.shutdown(cause);
+        synchronized (mutex) {
+            mainLock.lock();
+            try {
+                try {
+                    if (status == RunState.NOTRUNNING) {
+                        status = RunState.TERMINATED;
+                    } else if (status == RunState.RUNNING) {
+                        getCache().clear();
+                        status = RunState.SHUTDOWN;
+                        List<ServiceHolder> shutdown = new ArrayList<ServiceHolder>(services);
+                        Collections.reverse(shutdown);
+                        for (ServiceHolder si : shutdown) {
+                            shutdownService(si);
+                        }
+                    }
+                } catch (RuntimeException e) {
+                    e.printStackTrace();
+                }
+                if (!futures.isEmpty()) {
+                    ThreadPoolExecutor tpe = new ThreadPoolExecutor(1, 1, 0L,
+                            TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+                    tpe.execute(new Runnable() {
+                        public void run() {
+                            try {
+                                while (!futures.isEmpty()) {
+                                    Future f = futures.poll();
+                                    try {
+                                        f.get();
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    } catch (ExecutionException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            } finally {
+                                doTerminate(false);
+                            }
+                        }
+                    });
+                    tpe.shutdown();
+                } else {
+                    doTerminate(false);
+                }
+            } finally {
+                mainLock.unlock();
+            }
+        }
     }
 
     public void shutdownNow() {
-        delegate.shutdownNow();
+        synchronized (mutex) {
+            shutdown();
+            for (ServiceHolder sh : super.services) {
+                sh.shutdownNow();
+            }
+        }
+    }
+
+    public void shutdownService(final ServiceHolder service) {
+        final AtomicInteger canSubmit = new AtomicInteger();
+        e = new Executor() {
+            public void execute(final Runnable command) {
+                if (canSubmit.compareAndSet(0, 1)) {
+                    service.future = es.submit(new Runnable() {
+                        public void run() {
+                            command.run();
+                        }
+                    });
+                    futures.add(service.future);
+                } else {
+                    throw new IllegalStateException();
+                }
+            }
+        };
+        service.shutdown();
+        canSubmit.set(2);
     }
 
     public void shutdownServiceAsynchronously(Runnable service2) {
-        delegate.shutdownServiceAsynchronously(service2);
+        if (e == null) {
+            throw new IllegalStateException("cannot shutdown now");
+        }
+        e.execute(service2);
     }
 
-    public String toString() {
-        synchronized (mutex) {
-            return delegate.toString();
-        }
-    }
+    private void doStart() {
+        status = RunState.STARTING;
+        startServices();
+        try {
 
-    static class Inner extends UnsynchronizedCacheServiceManager {
-        private volatile Executor e;
-
-        private final ExecutorService es = Executors.newCachedThreadPool();
-
-        private final Queue<Future> futures = new ConcurrentLinkedQueue<Future>();
-
-        private final ReentrantLock mainLock = new ReentrantLock();
-
-        private final Object mutex;
-
-        /**
-         * Wait condition to support awaitTermination.
-         */
-        private final Condition termination = mainLock.newCondition();
-
-        public Inner(Cache<?, ?> cache, InternalCacheSupport<?, ?> helper,
-                CacheConfiguration<?, ?> conf,
-                Collection<Class<? extends AbstractCacheLifecycle>> classes) {
-            super(cache, helper, conf, classes, false);
-            this.mutex = cache;
-            initialize();
-        }
-
-        @Override
-        public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
-            long nanos = unit.toNanos(timeout);
-            final ReentrantLock mainLock = this.mainLock;
-            mainLock.lock();
-            try {
-                for (;;) {
-                    if (super.isTerminated())
-                        return true;
-                    if (nanos <= 0)
-                        return false;
-                    nanos = termination.awaitNanos(nanos);
+            // register mbeans
+            CacheManagementService cms = (CacheManagementService) publicServices
+                    .get(CacheManagementService.class);
+            if (cms != null) {
+                managedObjects.addAll(ServiceManagerUtil.initializeManagedObjects(container));
+                for (ManagedLifecycle si : managedObjects) {
+                    si.manage(cms);
                 }
-            } finally {
-                mainLock.unlock();
+            }
+            status = RunState.RUNNING;
+            // started
+            for (ServiceHolder si : services) {
+                si.started(getCache());
+            }
+            InternalCacheListener icl = getInternalService(InternalCacheListener.class);
+            icl.afterStart(getCache());
+        } catch (RuntimeException re) {
+            startupException = new CacheException("Could not start cache", re);
+            status = RunState.COULD_NOT_START;
+            doTerminate(false);
+            throw startupException;
+        } catch (Error er) {
+            startupException = new CacheException("Could not start cache", er);
+            status = RunState.COULD_NOT_START;
+            ces.terminated(tryTerminateServices());
+            throw er;
+        }
+    }
+
+    private void startServices() {
+        CacheServiceManagerService wrapped = ServiceManagerUtil.wrapService(this);
+        for (ServiceHolder si : services) {
+            try {
+                si.start(wrapped);
+            } catch (RuntimeException re) {
+                startupException = new CacheException("Could not start the cache", re);
+                final CacheConfiguration conf = (CacheConfiguration) container
+                        .getComponentInstance(CacheConfiguration.class);
+                ces.cacheStartFailed(conf, getCache().getClass(), si.getService(), re);
+                status = RunState.COULD_NOT_START;
+                tryShutdownServices();
+                doTerminate(false);
+                throw startupException;
+            } catch (Error er) {
+                startupException = new CacheException("Could not start the cache", er);
+                status = RunState.COULD_NOT_START;
+                throw er;
             }
         }
+    }
 
-        @Override
-        public void shutdown() {
-            synchronized (mutex) {
-                mainLock.lock();
+    private Map<CacheLifecycle, RuntimeException> tryShutdownServices() {
+        Map<CacheLifecycle, RuntimeException> m = new HashMap<CacheLifecycle, RuntimeException>();
+
+        List<ServiceHolder> l = new ArrayList<ServiceHolder>(services);
+        Collections.reverse(l);
+        for (ServiceHolder sh : l) {
+            if (sh.isStarted()) {
                 try {
-                    try {
-                    super.shutdown();
-                    } catch (RuntimeException e) {
-                        e.printStackTrace();
-                    }
-                    if (!futures.isEmpty()) {
-                        ThreadPoolExecutor tpe=new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
-                                new LinkedBlockingQueue<Runnable>());
-                        tpe.execute(new Runnable() {
-                            public void run() {
-                                try {
-                                    while (!futures.isEmpty()) {
-                                        Future f = futures.poll();
-                                        try {
-                                            f.get();
-                                        } catch (InterruptedException e) {
-                                            e.printStackTrace();
-                                        } catch (ExecutionException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                } finally {
-                                    doTerminate();
-                                }
-                            }
-                        });
-                        tpe.shutdown();
-                    } else {
-                        doTerminate();
-                    }
-                } finally {
-                    mainLock.unlock();
+                    sh.shutdown();
+                } catch (RuntimeException e) {
+                    m.put(sh.getService(), e);
                 }
             }
-        }
-
-        @Override
-        public synchronized void shutdownNow() {
-            synchronized (mutex) {
-                shutdown();
-                for (ServiceHolder sh : super.services) {
-                    sh.shutdownNow();
-                }
+            if (!m.isEmpty()) {
+                ces.cacheShutdownFailed(getCache(), m);
             }
         }
-
-        @Override
-        public void shutdownService(final ServiceHolder service) {
-            final AtomicInteger canSubmit = new AtomicInteger();
-            e = new Executor() {
-                public void execute(final Runnable command) {
-                    if (canSubmit.compareAndSet(0, 1)) {
-                        service.aso = es.submit(new Runnable() {
-                            public void run() {
-                                command.run();
-                            }
-                        });
-                        futures.add(service.aso);
-                    } else {
-                        throw new IllegalStateException();
-                    }
-                }
-            };
-            super.shutdownService(service);
-            canSubmit.set(2);
-        }
-
-        @Override
-        public void shutdownServiceAsynchronously(Runnable service2) {
-            if (e == null) {
-                throw new IllegalStateException("cannot shutdown now");
-            }
-            e.execute(service2);
-        }
-
-        protected void doTerminate() {
-            mainLock.lock();
-            try {
-                super.doTerminate();
-                termination.signalAll();
-            } finally {
-                mainLock.unlock();
-            }
-        }
-
-        protected void tryTerminate() {}
+        return m;
     }
+
+    protected void doTerminate(boolean isInitializing) {
+        mainLock.lock();
+        try {
+            if (status != RunState.TERMINATED) {
+                if (status != RunState.COULD_NOT_START) {
+                    status = RunState.TERMINATED;
+                }
+                ces.terminated(tryTerminateServices());
+            }
+            termination.signalAll();
+        } finally {
+            mainLock.unlock();
+        }
+    }
+
+    /** {@inheritDoc} */
+    RunState getRunState() {
+        return status;
+    }
+
 }

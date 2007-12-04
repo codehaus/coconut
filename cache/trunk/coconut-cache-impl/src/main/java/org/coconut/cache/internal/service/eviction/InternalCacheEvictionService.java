@@ -37,7 +37,7 @@ public interface InternalCacheEvictionService<K, V, T extends CacheEntry<K, V>> 
 
     List<T> evict(int count);
 
-    List<T> evict(int size, long capacity);
+    //List<T> evict(int size, long capacity);
 
     boolean isVolumeBreached(long capacity);
 

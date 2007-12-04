@@ -25,6 +25,9 @@ public final class Predicates {
     public static final Predicate FALSE = Predicates.FalsePredicate.INSTANCE;
 
     /** A predicate that returns whether or not the element being tested is null. */
+    public final static Predicate IS_NULL = new IsNullFilter();
+
+    /** A predicate that returns whether or not the element being tested is a number. */
     public final static Predicate IS_NUMBER = isType(Number.class);
 
     /** A predicate that always return True. */
@@ -234,16 +237,16 @@ public final class Predicates {
     }
 
     /**
-     * Returns a Predicate that evaluates to true if the element being is between the two
-     * specified elements (both inclusive). This is equivalent to:
+     * Returns a Predicate that evaluates to true if the element being tested is between
+     * the two specified elements (both inclusive). This is equivalent to:
      * 
      * <pre>
      * left &lt;= element_being_tester &lt;= right
      * </pre>
      * 
      * <p>
-     * If both of the supplied predicates are serializable the returned predicate will
-     * also be serializable.
+     * If both of the supplied elements are serializable the returned predicate will also
+     * be serializable.
      * 
      * @param left
      *            the left-hand element to compare with
@@ -256,7 +259,7 @@ public final class Predicates {
      *             if any of the specified elements are <code>null</code>
      */
     public static <E> Predicate<E> between(E left, E right) {
-        return and((Predicate) Predicates.greatherThenOrEqual(left), (Predicate) Predicates
+        return and((Predicate) Predicates.greaterThenOrEqual(left), (Predicate) Predicates
                 .lessThenOrEqual(right));
     }
 
@@ -278,7 +281,7 @@ public final class Predicates {
      *             <code>null</code>
      */
     public static <E> Predicate<E> between(E left, E right, Comparator<? extends E> comparator) {
-        return and((Predicate) Predicates.greatherThenOrEqual(left, comparator),
+        return and((Predicate) Predicates.greaterThenOrEqual(left, comparator),
                 (Predicate) Predicates.lessThenOrEqual(right, comparator));
     }
 
@@ -327,32 +330,115 @@ public final class Predicates {
         return FALSE;
     }
 
-    public static <E> Predicate<E> greatherThen(E element) {
+    /**
+     * Returns a Predicate that evaluates to true if the element being tested is greater
+     * then the element being used to construct the predicate. The predicate will use the
+     * objects natural comparator.
+     * <p>
+     * If the supplied element is serializable the returned predicate will also be
+     * serializable.
+     * 
+     * @param element
+     *            the element to compare with
+     * @return a greater then predicate
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     * @throws NullPointerException
+     *             if the specified element is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if the specified element does not implement {@link Comparable}
+     */
+    public static <E> Predicate<E> greaterThen(E element) {
         return new Predicates.GreaterThenPredicate<E>(element);
     }
 
-    public static <E> Predicate<E> greatherThen(E object, final Comparator<? extends E> comparator) {
-        return new Predicates.GreaterThenPredicate<E>(object, comparator);
-    }
-
-    public static <E> Predicate<E> greatherThenOrEqual(E object) {
-        return new Predicates.GreaterThenOrEqualPredicate<E>(object);
-    }
-
-    public static <E> Predicate<E> greatherThenOrEqual(E object,
-            final Comparator<? extends E> comparator) {
-        return new Predicates.GreaterThenOrEqualPredicate<E>(object, comparator);
+    /**
+     * Returns a Predicate that evaluates to true if the element being tested is greater
+     * then the element being used to construct the predicate. The predicate will use the
+     * specified Comparator to compare the objects.
+     * <p>
+     * If the supplied element and Comparator is serializable the returned predicate will
+     * also be serializable.
+     * 
+     * @param element
+     *            the element to compare with
+     * @param comparator
+     *            the Comparator used for comparing elements
+     * @return a greater then predicate
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     * @throws NullPointerException
+     *             if the specified element is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if the specified element does not implement {@link Comparable}
+     */
+    public static <E> Predicate<E> greaterThen(E element, final Comparator<? extends E> comparator) {
+        return new Predicates.GreaterThenPredicate<E>(element, comparator);
     }
 
     /**
-     * Returns a Predicate that tests whether the specified argument is <code>null</code>.
+     * Returns a Predicate that evaluates to true if the element being tested is greater
+     * then or equal to the element being used to construct the predicate. The predicate
+     * will use the objects natural comparator.
+     * <p>
+     * If the supplied element is serializable the returned predicate will also be
+     * serializable.
      * 
-     * @param <T>
-     *            the types that are accepted by the predicate.
-     * @return a Predicate that tests whether the specified argument is <code>null</code>
+     * @param element
+     *            the element to compare with
+     * @return a greater then or equal predicate
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     * @throws NullPointerException
+     *             if the specified element is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if the specified element does not implement {@link Comparable}
      */
-    public static <T> Predicate<T> isNull() {
-        return new IsNullFilter();
+    public static <E> Predicate<E> greaterThenOrEqual(E element) {
+        return new Predicates.GreaterThenOrEqualPredicate<E>(element);
+    }
+
+    /**
+     * Returns a Predicate that evaluates to true if the element being tested is greater
+     * then or equal to the element being used to construct the predicate. The predicate
+     * will use the specified Comparator to compare the objects.
+     * <p>
+     * If the supplied element and Comparator is serializable the returned predicate will
+     * also be serializable.
+     * 
+     * @param element
+     *            the element to compare with
+     * @param comparator
+     *            the Comparator used for comparing elements
+     * @return a greater then or equals predicate
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     * @throws NullPointerException
+     *             if the specified element is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if the specified element does not implement {@link Comparable}
+     */
+    public static <E> Predicate<E> greaterThenOrEqual(E element,
+            final Comparator<? extends E> comparator) {
+        return new Predicates.GreaterThenOrEqualPredicate<E>(element, comparator);
+    }
+
+    /**
+     * Returns a Predicate that tests whether the element being tested is
+     * <code>null</code>. This predicate is serializable.
+     * <p>
+     * Implementation note: Implementations of this method need not create a separate
+     * <tt>predicate</tt> object for each call. Using this method is likely to have
+     * comparable cost to using the like-named field. (Unlike this method, the field does
+     * not provide type safety.)
+     * 
+     * @param <E>
+     *            the types that are accepted by the predicate.
+     * @return a Predicate that tests whether the element being tested is
+     *         <code>null</code>.
+     */
+    public static <E> Predicate<E> isNull() {
+        return IS_NULL;
     }
 
     @SuppressWarnings("unchecked")
@@ -385,8 +471,8 @@ public final class Predicates {
         return new Predicates.NotPredicate<E>(predicate);
     }
 
-    public static <T> Predicate<T> notNullAnd(Predicate<T> f) {
-        return new NotNullAndFilter<T>(f);
+    public static <E> Predicate<E> notNullAnd(Predicate<E> f) {
+        return new NotNullAndFilter<E>(f);
     }
 
     public static <E> Predicate<E> or(Predicate<E> left, Predicate<E> right) {
@@ -802,34 +888,43 @@ public final class Predicates {
         /** <code>serialVersionUID</code>. */
         private static final long serialVersionUID = -6815218477296552273L;
 
+        /**
+         * The comparator to compare elements with or null if the objects natural
+         * comparator should be used.
+         */
         private final Comparator comparator;
 
         /** The object to compare against. */
         private final E object;
 
         /**
-         * Creates a new Predicate that accepts all elements that have the same object
-         * identity as the element supplied.
+         * Creates a new greater then predicate.
          * 
          * @param object
-         *            the objetc to compare with.
+         *            the object to compare with.
+         * @param comparator
+         *            the comparator that should be used to compare elements
          */
         public GreaterThenOrEqualPredicate(E object, final Comparator<? extends E> comparator) {
             if (object == null) {
                 throw new NullPointerException("element is null");
-            }
-            if (comparator == null) {
+            } else if (comparator == null) {
                 throw new NullPointerException("comparator is null");
             }
             this.object = object;
             this.comparator = comparator;
         }
 
-        public <T extends E> GreaterThenOrEqualPredicate(T object) {
+        /**
+         * Creates a new greater then predicate.
+         * 
+         * @param object
+         *            the object to compare with.
+         */
+        public GreaterThenOrEqualPredicate(E object) {
             if (object == null) {
                 throw new NullPointerException("element is null");
-            }
-            if (!(object instanceof Comparable)) {
+            } else if (!(object instanceof Comparable)) {
                 throw new IllegalArgumentException("object not instanceof Comparable");
             }
             this.object = object;
@@ -846,7 +941,10 @@ public final class Predicates {
             }
         }
 
-        @SuppressWarnings("unchecked")
+        /**
+         * @return the comparator to compare elements with or null if the objects natural
+         *         comparator should be used.
+         */
         public Comparator<? extends E> getComparator() {
             return comparator;
         }
@@ -875,16 +973,25 @@ public final class Predicates {
         /** <code>serialVersionUID</code>. */
         private static final long serialVersionUID = -6815218477296552273L;
 
+        /**
+         * The comparator to compare elements with or null if the objects natural
+         * comparator should be used.
+         */
         private final Comparator comparator;
 
         /** The object to compare against. */
         private final E object;
 
+        /**
+         * Creates a new greater then predicate.
+         * 
+         * @param object
+         *            the object to compare with.
+         */
         public GreaterThenPredicate(E object) {
             if (object == null) {
                 throw new NullPointerException("element is null");
-            }
-            if (!(object instanceof Comparable)) {
+            } else if (!(object instanceof Comparable)) {
                 throw new IllegalArgumentException("object not instanceof Comparable");
             }
             this.object = object;
@@ -892,17 +999,17 @@ public final class Predicates {
         }
 
         /**
-         * Creates a new Predicate that accepts all elements that have the same object
-         * identity as the element supplied.
+         * Creates a new greater then predicate.
          * 
          * @param object
          *            the objetc to compare with.
+         * @param comparator
+         *            the comparator that should be used to compare elements
          */
         public GreaterThenPredicate(E object, final Comparator<? extends E> comparator) {
             if (object == null) {
                 throw new NullPointerException("element is null");
-            }
-            if (comparator == null) {
+            } else if (comparator == null) {
                 throw new NullPointerException("comparator is null");
             }
             this.object = object;
@@ -919,7 +1026,10 @@ public final class Predicates {
             }
         }
 
-        @SuppressWarnings("unchecked")
+        /**
+         * @return the comparator to compare elements with or null if the objects natural
+         *         comparator should be used.
+         */
         public Comparator<? extends E> getComparator() {
             return comparator;
         }
@@ -940,6 +1050,9 @@ public final class Predicates {
         }
     }
 
+    /**
+     * A predicate that tests whether or not an element is <code>null</code>.
+     */
     final static class IsNullFilter implements Predicate, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = 6280765768913457567L;
@@ -1020,17 +1133,23 @@ public final class Predicates {
         /** <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 1330339174193813467L;
 
+        /**
+         * The comparator to compare elements with or null if the objects natural
+         * comparator should be used.
+         */
+
         private final Comparator comparator;
 
         /** The object to compare against. */
         private final E object;
 
         /**
-         * Creates a new Predicate that accepts all elements that have the same object
-         * identity as the element supplied.
+         * Creates a new less then or equal predicate.
          * 
          * @param object
          *            the objetc to compare with.
+         * @param comparator
+         *            the comparator that should be used to compare elements
          */
         public LessThenOrEqualPredicate(E object, final Comparator<? extends E> comparator) {
             if (object == null) {
@@ -1042,7 +1161,13 @@ public final class Predicates {
             this.comparator = comparator;
         }
 
-        public <T extends E> LessThenOrEqualPredicate(T object) {
+        /**
+         * Creates a new less then or equals predicate.
+         * 
+         * @param object
+         *            the object to compare with.
+         */
+        public LessThenOrEqualPredicate(E object) {
             if (object == null) {
                 throw new NullPointerException("element is null");
             }
@@ -1063,7 +1188,10 @@ public final class Predicates {
             }
         }
 
-        @SuppressWarnings("unchecked")
+        /**
+         * @return the comparator to compare elements with or null if the objects natural
+         *         comparator should be used.
+         */
         public Comparator<? extends E> getComparator() {
             return comparator;
         }
@@ -1092,11 +1220,22 @@ public final class Predicates {
         /** <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 1330339174193813467L;
 
+        /**
+         * The comparator to compare elements with or null if the objects natural
+         * comparator should be used.
+         */
+
         private final Comparator comparator;
 
         /** The object to compare against. */
         private final E object;
 
+        /**
+         * Creates a new less then predicate.
+         * 
+         * @param object
+         *            the object to compare with.
+         */
         public LessThenPredicate(E object) {
             if (object == null) {
                 throw new NullPointerException("element is null");
@@ -1108,11 +1247,12 @@ public final class Predicates {
         }
 
         /**
-         * Creates a new Predicate that accepts all elements that have the same object
-         * identity as the element supplied.
+         * Creates a new less then Predicate.
          * 
          * @param object
-         *            the objetc to compare with.
+         *            the object to compare with.
+         * @param comparator
+         *            the comparator that should be used to compare elements
          */
         public LessThenPredicate(E object, final Comparator<? extends E> comparator) {
             if (object == null) {
@@ -1134,7 +1274,10 @@ public final class Predicates {
             }
         }
 
-        @SuppressWarnings("unchecked")
+        /**
+         * @return the comparator to compare elements with or null if the objects natural
+         *         comparator should be used.
+         */
         public Comparator<? extends E> getComparator() {
             return comparator;
         }
@@ -1373,11 +1516,11 @@ public final class Predicates {
      */
     final static class TruePredicate implements Predicate, Serializable {
 
-        /** The TruePredicate instance. */
-        final static TruePredicate INSTANCE = new TruePredicate();
-
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 3258129137502925875L;
+
+        /** The TruePredicate instance. */
+        static final TruePredicate INSTANCE = new TruePredicate();
 
         /** Construct a new TruePredicate. */
         private TruePredicate() {}

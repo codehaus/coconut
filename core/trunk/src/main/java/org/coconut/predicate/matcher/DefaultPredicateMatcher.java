@@ -37,4 +37,13 @@ public class DefaultPredicateMatcher<K, E> extends AbstractPredicateMatcher<K, E
         }
         return al == null ? Collections.EMPTY_LIST : al;
     }
+
+    public void matchAndHandle(PredicateMatcherHandler<K, E> handler, E event) {
+        for (Map.Entry<K, Predicate<? super E>> f : getMap().entrySet()) {
+            Predicate<? super E> predicate = f.getValue();
+            if (predicate.evaluate(event)) {
+                handler.handle(f.getKey(), event);
+            }
+        }
+    }
 }

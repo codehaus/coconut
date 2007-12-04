@@ -72,18 +72,18 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
         return list;
     }
 
-    /** {@inheritDoc} */
-    public List<T> evict(int size, long capacity) {
-        ArrayList<T> list = new ArrayList<T>();
-        int diffSize = size - maxSize;
-        long diffCapacity = capacity - maxVolume;
-        while (diffSize-- > 0 || diffCapacity > 0) {
-            T e = evictNext();
-            list.add(e);
-            diffCapacity -= e.getSize();
-        }
-        return list;
-    }
+//    /** {@inheritDoc} */
+//    public List<T> evict(int size, long capacity) {
+//        ArrayList<T> list = new ArrayList<T>();
+//        int diffSize = size - maxSize;
+//        long diffCapacity = capacity - maxVolume;
+//        while (diffSize-- > 0 || diffCapacity > 0) {
+//            T e = evictNext();
+//            list.add(e);
+//            diffCapacity -= e.getSize();
+//        }
+//        return list;
+//    }
 
     /** {@inheritDoc} */
     public T evictNext() {

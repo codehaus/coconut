@@ -3,8 +3,8 @@
  */
 package org.coconut.predicate;
 
-import static org.coconut.predicate.Predicates.greatherThen;
-import static org.coconut.predicate.Predicates.greatherThenOrEqual;
+import static org.coconut.predicate.Predicates.greaterThen;
+import static org.coconut.predicate.Predicates.greaterThenOrEqual;
 import static org.coconut.predicate.Predicates.lessThen;
 import static org.coconut.predicate.Predicates.lessThenOrEqual;
 import static org.junit.Assert.assertEquals;
@@ -106,11 +106,11 @@ public class Predicates_ComparisonTest {
 
     /* Test greater then */
     @Test
-    public void testGreaterThenComparable() {
-        GreaterThenPredicate<Integer> f = (GreaterThenPredicate) greatherThen(5);
+    public void greaterThenComparable() {
+        GreaterThenPredicate<Integer> f = (GreaterThenPredicate) greaterThen(5);
         assertEquals(5, f.getObject().intValue());
         assertNull(f.getComparator());
-
+        TestUtil.assertIsSerializable(f);
         assertFalse(f.evaluate(4));
         assertFalse(f.evaluate(5));
         assertTrue(f.evaluate(6));
@@ -119,12 +119,11 @@ public class Predicates_ComparisonTest {
     }
 
     @Test
-    public void testGreaterThenComparator() {
-
-        GreaterThenPredicate<Dummy> f = (GreaterThenPredicate) greatherThen(Dummy.D2, COMP);
+    public void greaterThenComperator() {
+        GreaterThenPredicate<Dummy> f = (GreaterThenPredicate) greaterThen(Dummy.D2, COMP);
         assertEquals(Dummy.D2, f.getObject());
         assertEquals(COMP, f.getComparator());
-
+        TestUtil.assertIsSerializable(f);
         assertFalse(f.evaluate(Dummy.D1));
         assertFalse(f.evaluate(Dummy.D2));
         assertTrue(f.evaluate(Dummy.D3));
@@ -133,38 +132,32 @@ public class Predicates_ComparisonTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void testGreaterThenNull1() {
-        greatherThen(null);
+    public void greaterThenNPE() {
+        greaterThen(null);
     }
 
     @Test(expected = NullPointerException.class)
-    public void testGreaterThenNull2() {
-        greatherThen(null, COMP);
+    public void greaterThenNPE1() {
+        greaterThen(null, COMP);
     }
 
     @Test(expected = NullPointerException.class)
-    public void testGreaterThenNull3() {
-        greatherThen(2, null);
+    public void greaterThenNPE2() {
+        greaterThen(2, null);
     }
 
-    @Test
-    public void testGreaterThenNotComparable() throws Exception {
-        Constructor c = GreaterThenPredicate.class.getConstructor(new Class[] { Object.class });
-        try {
-            c.newInstance(new Object[] { new Object() });
-            throw new AssertionFailedError("Did not throw exception");
-        } catch (InvocationTargetException e) {
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
-        }
+    @Test(expected = IllegalArgumentException.class)
+    public void greaterThenNotComparableIAE() throws Exception {
+        greaterThen(new Object());
     }
 
     /* Test greaterTheOrEqual */
     @Test
-    public void testGreaterThenOrEqualComparable() {
-        GreaterThenOrEqualPredicate<Integer> f = (GreaterThenOrEqualPredicate) greatherThenOrEqual(5);
+    public void greaterThenOrEqualComparable() {
+        GreaterThenOrEqualPredicate<Integer> f = (GreaterThenOrEqualPredicate) greaterThenOrEqual(5);
         assertEquals(5, f.getObject().intValue());
         assertNull(f.getComparator());
-
+        TestUtil.assertIsSerializable(f);
         assertFalse(f.evaluate(4));
         assertTrue(f.evaluate(5));
         assertTrue(f.evaluate(6));
@@ -173,13 +166,12 @@ public class Predicates_ComparisonTest {
     }
 
     @Test
-    public void testGreaterThenOrEqualComparator() {
-
-        GreaterThenOrEqualPredicate<Dummy> f = (GreaterThenOrEqualPredicate) greatherThenOrEqual(
+    public void greaterThenOrEqualComparator() {
+        GreaterThenOrEqualPredicate<Dummy> f = (GreaterThenOrEqualPredicate) greaterThenOrEqual(
                 Dummy.D2, COMP);
         assertEquals(Dummy.D2, f.getObject());
         assertEquals(COMP, f.getComparator());
-
+        TestUtil.assertIsSerializable(f);
         assertFalse(f.evaluate(Dummy.D1));
         assertTrue(f.evaluate(Dummy.D2));
         assertTrue(f.evaluate(Dummy.D3));
@@ -188,30 +180,23 @@ public class Predicates_ComparisonTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void testGreaterThenOrEqualNull1() {
-        greatherThenOrEqual(null);
+    public void greaterThenOrEqualNPE() {
+        greaterThenOrEqual(null);
     }
 
     @Test(expected = NullPointerException.class)
-    public void testGreaterThenOrEqualNull2() {
-        greatherThenOrEqual(null, COMP);
+    public void greaterThenOrEqualNPE1() {
+        greaterThenOrEqual(null, COMP);
     }
 
     @Test(expected = NullPointerException.class)
-    public void testGreaterThenOrEqualNull3() {
-        greatherThenOrEqual(2, null);
+    public void greaterThenOrEqualNPE2() {
+        greaterThenOrEqual(2, null);
     }
 
-    @Test
-    public void testGreaterThenOrEqualNotComparable() throws Exception {
-        Constructor c = GreaterThenOrEqualPredicate.class
-                .getConstructor(new Class[] { Object.class });
-        try {
-            c.newInstance(new Object[] { new Object() });
-            throw new AssertionFailedError("Did not throw exception");
-        } catch (InvocationTargetException e) {
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
-        }
+    @Test(expected = IllegalArgumentException.class)
+    public void greaterThenOrEqualNotComparableIAE() throws Exception {
+        greaterThenOrEqual(new Object());
     }
 
     /* Test lessThen */
@@ -268,7 +253,7 @@ public class Predicates_ComparisonTest {
         }
     }
 
-    static final class Dummy implements Serializable{
+    static final class Dummy implements Serializable {
         static final Dummy D1 = new Dummy(1);
 
         static final Dummy D2 = new Dummy(2);

@@ -128,6 +128,10 @@ public class AbstraktPredicateMatcherTest {
 		protected Map<K, Predicate<? super V>> getMap() {
 			return super.getMap();
 		}
+
+        public void matchAndHandle(PredicateMatcherHandler<K, V> handler, V object) {
+            throw new UnsupportedOperationException();
+        }
 	}
 
 }

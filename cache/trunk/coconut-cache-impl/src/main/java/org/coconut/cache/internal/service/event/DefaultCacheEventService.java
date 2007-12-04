@@ -12,9 +12,6 @@ import static org.coconut.cache.internal.service.event.InternalEvent.cleared;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.FutureTask;
-
-import javax.management.Notification;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
@@ -76,11 +73,12 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
         this.doStopped = co.isIncluded(CacheEvent.CacheStopped.class);
     }
 
+    /** {@inheritDoc} */
     public void afterCacheClear(Cache<K, V> cache, long timestamp,
             Collection<? extends CacheEntry<K, V>> entries, long previousVolume) {
         if (doRemove) {
             for (CacheEntry<K, V> entry : entries) {
-                removed(cache, entry);
+                dispatch(removed(cache, entry));
             }
         }
         if (doClear && entries.size() > 0) {
@@ -88,6 +86,7 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
         }
     }
 
+    /** {@inheritDoc} */
     public void afterPurge(Cache<K, V> cache, Collection<? extends CacheEntry<K, V>> expired) {
         doExpireAll(cache, expired);
     }
@@ -97,9 +96,7 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
             Collection<? extends CacheEntry<K, V>> entries, AbstractCacheEntry<K, V> prev,
             AbstractCacheEntry<K, V> newEntry) {
         doEvictAll(cache, entries);
-
         put(cache, prev, newEntry);
-
     }
 
     /** {@inheritDoc} */
@@ -113,7 +110,6 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
         }
     }
 
-
     /** {@inheritDoc} */
     public void afterRemove(Cache<K, V> cache, long ignoreStarted, CacheEntry<K, V> entry) {
         if (doRemove && entry != null) {
@@ -121,56 +117,21 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
         }
     }
 
-public void afterRemoveAll(Cache<K, V> cache, long started, Collection<CacheEntry<K, V>> entries) {
+    /** {@inheritDoc} */
+    public void afterRemoveAll(Cache<K, V> cache, long started, Collection<CacheEntry<K, V>> entries) {
         for (CacheEntry<K, V> entry : entries) {
             afterRemove(cache, started, entry);
         }
 
     }
 
+    /** {@inheritDoc} */
     public void afterStart(Cache<K, V> cache) {
         if (doStart) {
             dispatch(InternalEvent.started(cache));
         }
     }
 
-    //    /** {@inheritDoc} */
-//    public void afterReplace(Cache<K, V> cache, long started,
-//            Collection<? extends CacheEntry<K, V>> evictedEntries, CacheEntry<K, V> oldEntry,
-//            CacheEntry<K, V> newEntry) {
-//        doEvictAll(cache, evictedEntries);
-//        if (oldEntry == null) {
-//            if (newEntry != null && doAdd) {
-//                dispatch(added(cache, newEntry, false));
-//            }
-//        } else if (newEntry == null) {
-//            if (doRemove) {
-//                dispatch(removed(cache, oldEntry, false));
-//            }
-//        } else if (doUpdate) {
-//            dispatch(updated(cache, newEntry, oldEntry.getValue(), false, false));
-//        }
-//    }
-//
-//    /** {@inheritDoc} */
-//    public void afterGet(Cache<K, V> cache, long started,
-//            Collection<? extends CacheEntry<K, V>> evictedEntries, K key, CacheEntry<K, V> prev,
-//            CacheEntry<K, V> newEntry, boolean isExpired) {
-//        doEvictAll(cache, evictedEntries);
-//        if (newEntry == null) {
-//            if (isExpired && prev != null && doRemove) {
-//                // removed expiration
-//                dispatch(removed(cache, prev, true));
-//            }
-//        } else {
-//            if (newEntry != prev && prev != null && doUpdate) {
-//                dispatch(updated(cache, newEntry, prev.getValue(), true, isExpired));
-//            }
-//            if (prev == null && doAdd) {
-//                dispatch(added(cache, newEntry, true));
-//            }
-//        }
-//    }
     /** {@inheritDoc} */
     public void afterTrimCache(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries, int previousSize, int newSize,
@@ -187,6 +148,7 @@ public void afterRemoveAll(Cache<K, V> cache, long started, Collection<CacheEntr
         return eb.getSubscribers();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void initialize(CacheLifecycleInitializer cli) {
         if (isEnabled) {
@@ -240,7 +202,7 @@ public void afterRemoveAll(Cache<K, V> cache, long started, Collection<CacheEntr
     }
 
     private void doEvictAll(Cache<K, V> cache, Iterable<? extends CacheEntry<K, V>> entries) {
-        if ( doEvict) {
+        if (doEvict) {
             for (CacheEntry<K, V> entry : entries) {
                 dispatch(evicted(cache, entry));
             }

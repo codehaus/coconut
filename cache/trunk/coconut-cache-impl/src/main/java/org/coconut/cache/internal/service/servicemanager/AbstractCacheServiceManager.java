@@ -32,7 +32,7 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
     }
 
     /** {@inheritDoc} */
-    public <T> T getService(Class<T> serviceType) {
+    public final <T> T getService(Class<T> serviceType) {
         if (serviceType == null) {
             throw new NullPointerException("serviceType is null");
         }
@@ -68,7 +68,7 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
     }
 
     /** {@inheritDoc} */
-    public boolean hasService(Class<?> type) {
+    public final boolean hasService(Class<?> type) {
         return getAllServices().containsKey(type);
     }
 

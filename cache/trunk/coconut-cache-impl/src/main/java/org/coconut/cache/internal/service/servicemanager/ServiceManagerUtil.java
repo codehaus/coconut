@@ -3,9 +3,21 @@
  */
 package org.coconut.cache.internal.service.servicemanager;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.coconut.cache.Cache;
+import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
+import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
+import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
+import org.coconut.cache.service.servicemanager.CacheLifecycle;
+import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
+import org.coconut.internal.picocontainer.PicoContainer;
+import org.coconut.management.ManagedLifecycle;
 
 /**
  * Various utility classes for {@link CacheServiceManagerService} implementations.
@@ -16,7 +28,108 @@ import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class ServiceManagerUtil {
+public final class ServiceManagerUtil {
+
+    /** Cannot instantiate. */
+    // /CLOVER:OFF
+    private ServiceManagerUtil() {}
+
+    // /CLOVER:ON
+
+    static Map<Class<?>, Object> initialize(PicoContainer container,
+            Iterable<ServiceHolder> services, final Class<? extends Cache> type) {
+        Map<Class<?>, Object> map = new HashMap<Class<?>, Object>();
+        final CacheConfiguration conf = (CacheConfiguration) container
+                .getComponentInstance(CacheConfiguration.class);
+        final CacheExceptionHandler ces = ((InternalCacheExceptionService) container
+                .getComponentInstanceOfType(InternalCacheExceptionService.class))
+                .getExceptionHandler();
+        for (ServiceHolder si : services) {
+            try {
+                final Map<Class<?>, Object> tmpMap = new HashMap<Class<?>, Object>();
+                si.initialize(new CacheLifecycleInitializer() {
+                    public CacheConfiguration<?, ?> getCacheConfiguration() {
+                        return conf;
+                    }
+
+                    public Class<? extends Cache> getCacheType() {
+                        return type;
+                    }
+
+                    public <T> void registerService(Class<T> clazz, T service) {
+                        tmpMap.put(clazz, service);
+                    }
+                });
+                map.putAll(tmpMap);
+            } catch (RuntimeException re) {
+                ces.cacheInitializationFailed(conf, type, si.getService(), re);
+                throw re;
+            }
+        }
+        return map;
+    }
+
+    static List<ServiceHolder> initializeServices(PicoContainer container) {
+        List<ServiceHolder> services = new ArrayList<ServiceHolder>();
+        List<AbstractCacheLifecycle> l = container
+                .getComponentInstancesOfType(AbstractCacheLifecycle.class);
+
+        for (AbstractCacheLifecycle a : l) {
+            if (a instanceof CompositeService) {
+                for (Object o : ((CompositeService) a).getChildServices()) {
+                    if (o instanceof CacheLifecycle) {
+                        services.add(new ServiceHolder((CacheLifecycle) o, false));
+                    }
+                }
+            }
+            services.add(new ServiceHolder(a, true));
+        }
+        CacheConfiguration conf = (CacheConfiguration) container
+                .getComponentInstance(CacheConfiguration.class);
+        for (Object service : conf.serviceManager().getObjects()) {
+            if (service instanceof CacheLifecycle) {
+                services.add(new ServiceHolder((CacheLifecycle) service, false));
+            }
+        }
+        return services;
+    }
+
+    static List<ManagedLifecycle> initializeManagedObjects(PicoContainer container) {
+        List<ManagedLifecycle> managedObjects = new ArrayList<ManagedLifecycle>();
+        List<AbstractCacheLifecycle> l = container
+                .getComponentInstancesOfType(AbstractCacheLifecycle.class);
+
+        for (AbstractCacheLifecycle a : l) {
+            if (a instanceof CompositeService) {
+                for (Object o : ((CompositeService) a).getChildServices()) {
+                    if (o instanceof ManagedLifecycle) {
+                        managedObjects.add((ManagedLifecycle) o);
+                    }
+                }
+            }
+            if (a instanceof ManagedLifecycle) {
+                managedObjects.add((ManagedLifecycle) a);
+            }
+        }
+        CacheConfiguration conf = (CacheConfiguration) container
+                .getComponentInstance(CacheConfiguration.class);
+        for (Object service : conf.serviceManager().getObjects()) {
+            if (service instanceof ManagedLifecycle) {
+                managedObjects.add((ManagedLifecycle) service);
+            }
+        }
+        return managedObjects;
+    }
+
+    static CacheExceptionHandler initializeCacheExceptionService(PicoContainer container) {
+        CacheConfiguration conf = (CacheConfiguration) container
+                .getComponentInstance(CacheConfiguration.class);
+        CacheExceptionHandler ces = ((InternalCacheExceptionService) container
+                .getComponentInstanceOfType(InternalCacheExceptionService.class))
+                .getExceptionHandler();
+        ces.initialize(conf);
+        return ces;
+    }
 
     /**
      * Wraps a CacheServiceManagerService implementation such that only methods from the
@@ -26,7 +139,7 @@ public class ServiceManagerUtil {
      *            the CacheServiceManagerService to wrap
      * @return a wrapped service that only exposes CacheServiceManagerService methods
      */
-    public static <K, V> CacheServiceManagerService wrapService(CacheServiceManagerService service) {
+    public static CacheServiceManagerService wrapService(CacheServiceManagerService service) {
         return new DelegatedCacheServiceManagerService(service);
     }
 
@@ -68,6 +181,7 @@ public class ServiceManagerUtil {
             delegate.shutdownServiceAsynchronously(service);
         }
 
+        /** {@inheritDoc} */
         public <T> T getService(Class<T> serviceType) {
             return delegate.getService(serviceType);
         }

@@ -31,4 +31,6 @@ public interface PredicateMatcher<K, E> extends Map<K, Predicate<? super E>> {
      * @return a Collection of keys whose filter match the particular event.
      */
     List<K> match(E object);
+
+    void matchAndHandle(PredicateMatcherHandler<K, E> handler, E object);
 }

@@ -63,24 +63,25 @@ public abstract class AbstractEventBus<E> implements EventBus<E> {
         if (element == null) {
             throw new NullPointerException("element is null");
         }
-        if (allowReentrance != null) {
-            Boolean current = allowReentrance.get();
-            if (current.equals(Boolean.TRUE)) {
-                if (doThrow) {
-                    throw new IllegalStateException("Eventbus does not allow reentrence");
-                } else {
-                    return false;
-                }
-            }
-            allowReentrance.set(Boolean.TRUE);
-            try {
-                return doInform(element, doThrow);
-            } finally {
-                allowReentrance.set(Boolean.FALSE);
-            }
-        } else {
-            return doInform(element, doThrow);
-        }
+        return doInform(element, doThrow);
+//        if (allowReentrance != null) {
+//            Boolean current = allowReentrance.get();
+//            if (current.equals(Boolean.TRUE)) {
+//                if (doThrow) {
+//                    throw new IllegalStateException("Eventbus does not allow reentrence");
+//                } else {
+//                    return false;
+//                }
+//            }
+//            allowReentrance.set(Boolean.TRUE);
+//            try {
+//                return doInform(element, doThrow);
+//            } finally {
+//                allowReentrance.set(Boolean.FALSE);
+//            }
+//        } else {
+//            return doInform(element, doThrow);
+//        }
     }
 
     private boolean informAll(Collection<? extends E> c, boolean doThrow) {
@@ -92,24 +93,25 @@ public abstract class AbstractEventBus<E> implements EventBus<E> {
                 throw new NullPointerException("collection contained a null");
             }
         }
-        if (allowReentrance != null) {
-            Boolean current = allowReentrance.get();
-            if (current.equals(Boolean.TRUE)) {
-                if (doThrow) {
-                    throw new IllegalStateException("Eventbus does not allow reentrence");
-                } else {
-                    return false;
-                }
-            }
-            allowReentrance.set(Boolean.TRUE);
-            try {
-                return doInformAll(c, doThrow);
-            } finally {
-                allowReentrance.set(Boolean.FALSE);
-            }
-        } else {
-            return doInformAll(c, doThrow);
-        }
+        return doInformAll(c, doThrow);
+//        if (allowReentrance != null) {
+//            Boolean current = allowReentrance.get();
+//            if (current.equals(Boolean.TRUE)) {
+//                if (doThrow) {
+//                    throw new IllegalStateException("Eventbus does not allow reentrence");
+//                } else {
+//                    return false;
+//                }
+//            }
+//            allowReentrance.set(Boolean.TRUE);
+//            try {
+//                return doInformAll(c, doThrow);
+//            } finally {
+//                allowReentrance.set(Boolean.FALSE);
+//            }
+//        } else {
+//            return doInformAll(c, doThrow);
+//        }
     }
 
     void cancel(EventSubscription<E> aes) {}

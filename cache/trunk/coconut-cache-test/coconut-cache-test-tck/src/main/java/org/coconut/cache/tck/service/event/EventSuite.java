@@ -10,5 +10,6 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses( { EventBusShutdownLazyStart.class, EventCacheCleared.class,
         EventCacheStarted.class, EventCacheStopped.class, EventGet.class, EventPut.class,
         EventRemove.class, EventReplace.class, EventServiceBus.class, EventServiceEviction.class,
-        EventServiceExpiration.class, EventServiceGeneral.class, EventServiceLoading.class })
+        EventServiceExpiration.class, EventServiceGeneral.class, EventServiceLoading.class,
+        IgnoreEvents.class })
 public class EventSuite {}

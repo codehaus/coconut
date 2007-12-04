@@ -7,6 +7,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import org.coconut.test.TestUtil;
 import org.junit.Test;
 
 /**
@@ -14,14 +15,15 @@ import org.junit.Test;
  * @version $Id$
  */
 public class PredicatesTest {
-
+    
     @Test
     public void isNull() {
-        Predicate f = Predicates.isNull();
-        assertTrue(f.evaluate(null));
-        assertFalse(f.evaluate(1));
-        assertFalse(f.evaluate(f));
-        f.toString();// no fail
+        assertTrue(Predicates.isNull().evaluate(null));
+        assertFalse(Predicates.isNull().evaluate(1));
+        assertFalse(Predicates.isNull().evaluate("f"));
+        assertSame(Predicates.IS_NULL, Predicates.isNull());
+        Predicates.IS_NULL.toString();// no fail
+        TestUtil.assertIsSerializable(Predicates.IS_NULL);
     }
 
     @Test
