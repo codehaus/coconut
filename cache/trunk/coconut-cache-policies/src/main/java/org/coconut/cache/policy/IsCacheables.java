@@ -39,10 +39,43 @@ public final class IsCacheables {
         return new ValuePredicate<K, V>(predicate);
     }
 
+    /**
+     * This method return a replacement policy that decorates another replacement policy
+     * rejecting any elements whose size is larger than the specified maximum size.
+     * <p>
+     * This policy is based on a ACM SIGCOMM '96 paper: <a
+     * href="http://ei.cs.vt.edu/~succeed/96sigcomm/">Removal Policies in Network Caches
+     * for World-Wide Web Documents</a> by Stephen Williams et al. However, this version
+     * is generalized for any replacement policies not just LRU.
+     * 
+     * @param policy
+     *            the replacement policy to wrap
+     * @param maximumSize
+     *            the maximum size of any element that will be accepted by the returned
+     *            policy
+     * @return a replacement policy that will reject any elements that are larger then the
+     *         specified maximum size
+     * @param <T>
+     *            the type of elements accepted by the replacement policy
+     */
     public static final <K, V> IsCacheable<K, V> maximumSize(long maximumSize) {
         return new MaximumSize<K, V>(maximumSize);
     }
 
+    /**
+     * This method return a replacement policy that decorates another replacement policy
+     * rejecting any elements whose retrievel cost is less then a specified minimum cost.
+     * 
+     * @param policy
+     *            the replacement policy to wrap
+     * @param minimumCost
+     *            the minimum cost of an element that will be accepted by the returned
+     *            replacement policy
+     * @return a replacement policy that will reject any elements that are larger then the
+     *         specified maximum size
+     * @param <T>
+     *            the type of elements accepted by the replacement policy
+     */
     public static final <K, V> IsCacheable<K, V> minimumCost(double minimumCost) {
         return new MinimumCost<K, V>(minimumCost);
     }

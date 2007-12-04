@@ -48,6 +48,21 @@ public class CacheServiceManagerConfiguration extends AbstractCacheServiceConfig
      * object. If the object is of type {@link ManagedLifecycle} and management is enabled
      * for the cache (see {@link CacheManagementConfiguration#setEnabled(boolean)}). It
      * will be registered with a {@link ManagedGroup}.
+     * <p>
+     * Attaches the specified instance to the service map of the cache. This object can
+     * then later be retrived by calling {@link org.coconut.cache.Cache#getService(Class)}.
+     * 
+     * <pre>
+     * CacheServiceManagerConfiguration csmc;
+     * csmc.attach(String.class, &quot;fooboo&quot;);
+     * 
+     * ...later..
+     * Cache&lt;?,?&gt; c;
+     * assert &quot;fooboo&quot; = c.getService(String.class);
+     * </pre>
+     * 
+     * If the specified key conflicts with the key-type of any of the build in service an
+     * exception will be thrown when the cache is constructed.
      * 
      * @param o
      *            the object to register
