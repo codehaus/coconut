@@ -10,7 +10,7 @@ import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.core.EventProcessor;
 import org.coconut.core.EventUtils;
 import org.coconut.event.bus.EventSubscription;
-import org.coconut.predicate.Predicates;
+import org.coconut.operations.Predicates;
 import org.coconut.test.MockTestCase;
 import org.junit.Before;
 import org.junit.Test;

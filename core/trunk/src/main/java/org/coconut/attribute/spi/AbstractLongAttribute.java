@@ -3,12 +3,15 @@
  */
 package org.coconut.attribute.spi;
 
-import java.util.concurrent.TimeUnit;
+import java.io.Serializable;
 
+import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.AttributeMaps;
+import org.coconut.operations.Ops;
 
 /**
+ * An abstract implementation of an {@link Attribute} mapping to a long.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -18,7 +21,12 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
     private final long defaultValue;
 
     /**
-     * Creates a new LongAttribute.
+     * A MapperToLong that takes an AttributeMap and returns the value of this attribute.
+     */
+    private final Ops.MapperToLong<AttributeMap> mapperToLong = new AttributeMapToLong();
+
+    /**
+     * Creates a new AbstractLongAttribute.
      * 
      * @param name
      *            the name of the attribute
@@ -36,6 +44,12 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
         checkValid(o.longValue());
     }
 
+    /**
+     * Works as {@link #checkValid(Long)} except taking a primitive long.
+     * 
+     * @param value
+     *            the value to check
+     */
     public void checkValid(long value) {
         if (!isValid(value)) {
             throw new IllegalArgumentException("Illegal value for attribute " + getName()
@@ -70,12 +84,26 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
         return isValid(value.longValue());
     }
 
+    /**
+     * Works as {@link #isValid(Long)} except taking a primitive long.
+     * 
+     * @param value
+     *            the value to check
+     * @return whether or not the value is valid
+     */
     public boolean isValid(long value) {
         return true;
     }
 
-    protected AttributeMap toSingleton(long value) {
-        return super.toSingleton(value);
+    /**
+     * Returns a mapper that extracts the value of this attribute from an
+     * {@link AttributeMap} or {@link #getDefaultValue()} if this attribute is not
+     * present.
+     * 
+     * @return a mapper from an AttributeMap to the value of this attribute
+     */
+    public Ops.MapperToLong<AttributeMap> mapToLong() {
+        return mapperToLong;
     }
 
     public AttributeMap setAttribute(AttributeMap attributes, long value) {
@@ -85,5 +113,29 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
         checkValid(value);
         attributes.putLong(this, value);
         return attributes;
+    }
+
+    /**
+     * Returns an AttributeMap containing only this attribute mapping to the specified
+     * value.
+     * 
+     * @param value
+     *            the value to map to
+     * @return an AttributeMap containing only this attribute mapping to the specified
+     *         value
+     */
+    protected AttributeMap toSingleton(long value) {
+        return super.toSingleton(value);
+    }
+
+    class AttributeMapToLong implements Ops.MapperToLong<AttributeMap>, Serializable {
+
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -953844729549732090L;
+
+        /** {@inheritDoc} */
+        public long map(AttributeMap t) {
+            return getPrimitive(t);
+        }
     }
 }

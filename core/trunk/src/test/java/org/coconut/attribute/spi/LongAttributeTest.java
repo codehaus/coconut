@@ -6,6 +6,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.AttributeMaps;
+import org.coconut.attribute.common.SizeAttribute;
+import org.coconut.test.TestUtil;
 import org.junit.Test;
 
 public class LongAttributeTest {
@@ -109,4 +111,16 @@ public class LongAttributeTest {
         NON_NEGATIVE.toSingleton(-10);
     }
 
+    @Test
+    public void mapToLong() {
+        TestUtil.assertIsSerializable(LA.mapToLong());
+        AttributeMap am = AttributeMaps.singleton(LA, 10000L);
+        assertEquals(10000L, LA.mapToLong().map(am));
+        assertEquals(100L, LA.mapToLong().map(AttributeMaps.EMPTY_MAP));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void mapper() {
+        LA.mapToLong().map(null);
+    }
 }

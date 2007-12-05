@@ -31,7 +31,7 @@ public class MRUPolicy<T> extends AbstractPolicy<T> implements Serializable {
     private static final long serialVersionUID = 7334611172293116644L;
 
     /** The list used for bookkeeping. */
-    private final IndexedStack<T> list;
+    private final IndexedStack<T> stack;
 
     /**
      * Constructs a new MRUPolicy with an initial size of 100.
@@ -50,10 +50,9 @@ public class MRUPolicy<T> extends AbstractPolicy<T> implements Serializable {
      */
     public MRUPolicy(int initialCapacity) throws IllegalArgumentException {
         if (initialCapacity < 0) {
-            throw new IllegalArgumentException(
-                    "initialCapacity must be a positive number or 0");
+            throw new IllegalArgumentException("initialCapacity must be a positive number or 0");
         }
-        list = new IndexedStack<T>(initialCapacity);
+        stack = new IndexedStack<T>(initialCapacity);
     }
 
     /**
@@ -63,88 +62,63 @@ public class MRUPolicy<T> extends AbstractPolicy<T> implements Serializable {
      *            the MRUPolicy to copy from
      */
     public MRUPolicy(MRUPolicy policy) {
-        list = new IndexedStack<T>(policy.list);
+        stack = new IndexedStack<T>(policy.stack);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int add(T data, AttributeMap ignore) {
-        return list.add(data);
+        return stack.add(data);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void clear() {
-        while (evictNext() != null) {
-            /* ignore */
-        }
+        stack.clear();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public MRUPolicy<T> clone() {
         return new MRUPolicy<T>(this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public T evictNext() {
-        return list.remove();
+        return stack.remove();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getSize() {
-        return list.getSize();
+        return stack.getSize();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public T peek() {
-        return list.peek();
+        return stack.peek();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public List<T> peekAll() {
-        return list.peekAll();
+        return stack.peekAll();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public T remove(int index) {
-        return list.remove(index);
+        return stack.remove(index);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
-        return "MRU Policy with " + list.getSize() + " entries";
+        return "MRU Policy with " + stack.getSize() + " entries";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void touch(int index) {
-        list.touch(index);
+        stack.touch(index);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean update(int index, T newElement, AttributeMap ignore) {
-        list.replace(index, newElement);
+        stack.replace(index, newElement);
         return true; // MRU never rejects an entry
     }
-
 }

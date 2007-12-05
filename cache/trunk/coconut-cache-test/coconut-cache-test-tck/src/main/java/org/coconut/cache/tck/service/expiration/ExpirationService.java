@@ -89,8 +89,7 @@ public class ExpirationService extends AbstractCacheTCKTest {
         c = newCache(newConf().serviceManager().add(new AbstractCacheLifecycle() {
             @Override
             public void start(CacheServiceManagerService serviceManager) {
-                CacheExpirationService ces = serviceManager
-                        .getService(CacheExpirationService.class);
+                CacheExpirationService ces = c.getService(CacheExpirationService.class);
                 ces.putAll(M1_TO_M5_MAP, 10, TimeUnit.SECONDS);// should fail
             }
         }));
@@ -102,8 +101,7 @@ public class ExpirationService extends AbstractCacheTCKTest {
         c = newCache(newConf().serviceManager().add(new AbstractCacheLifecycle() {
             @Override
             public void start(CacheServiceManagerService serviceManager) {
-                CacheExpirationService ces = serviceManager
-                        .getService(CacheExpirationService.class);
+                CacheExpirationService ces = c.getService(CacheExpirationService.class);
                 ces.put(1, "foo", 10, TimeUnit.SECONDS);// should fail
             }
         }));

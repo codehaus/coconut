@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.predicate;
+package org.coconut.operations;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -14,28 +14,30 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import org.coconut.predicate.Predicates.AllPredicate;
-import org.coconut.predicate.Predicates.AndPredicate;
-import org.coconut.predicate.Predicates.AnyPredicate;
+import org.coconut.operations.Ops.Predicate;
+import org.coconut.operations.Predicates.AllPredicate;
+import org.coconut.operations.Predicates.AndPredicate;
+import org.coconut.operations.Predicates.AnyPredicate;
+import org.coconut.operations.Predicates.IsTypePredicate;
 import org.coconut.test.MockTestCase;
 import org.coconut.test.TestUtil;
 import org.junit.Test;
 
 /**
- * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id$
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
+ * @version $Id: PredicatesTest.java 501 2007-12-04 11:03:23Z kasper $
  */
-public class Predicates_LogicTest {
+public class PredicatesTest {
+    
     static Predicate<? extends Number> P_EXTEND_NUMBER = null;
 
     static Predicate<Long> P_LONG = Predicates.FALSE;
 
     static Predicate<Number> P_NUMBER = Predicates.FALSE;
-
+    
     static Predicate<Object> P_OBJECT = Predicates.FALSE;
 
     static Predicate[] PREDICATES_WITH_NULL_ARRAY = { Predicates.TRUE, null, Predicates.TRUE };
-
     static Iterable PREDICATES_WITH_NULL_ITERABLE = Arrays.asList(PREDICATES_WITH_NULL_ARRAY);
 
     static Predicate[] STRING_PREDICATE_ARRAY = { StringPredicates.startsWith("foo"),
@@ -236,8 +238,23 @@ public class Predicates_LogicTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void anyTypeNPE1() {
-        Predicates.anyType((Class[]) null);
+    public void anyNPE1() {
+        Predicates.any((Predicate[]) null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void anyNPE2() {
+        Predicates.any((Iterable) null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void anyNPE3() {
+        Predicates.any(PREDICATES_WITH_NULL_ARRAY);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void anyNPE4() {
+        Predicates.any(PREDICATES_WITH_NULL_ITERABLE);
     }
 
     @Test
@@ -268,6 +285,11 @@ public class Predicates_LogicTest {
     }
 
     @Test(expected = NullPointerException.class)
+    public void anyTypeNPE1() {
+        Predicates.anyType((Class[]) null);
+    }
+
+    @Test(expected = NullPointerException.class)
     public void anyTypeNPE2() {
         Predicates.anyType((Iterable) null);
     }
@@ -282,26 +304,6 @@ public class Predicates_LogicTest {
         Predicates.anyType(Arrays.asList(String.class, Long.class, null, Integer.class));
     }
 
-    @Test(expected = NullPointerException.class)
-    public void anyNPE1() {
-        Predicates.any((Predicate[]) null);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void anyNPE2() {
-        Predicates.any((Iterable) null);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void anyNPE3() {
-        Predicates.any(PREDICATES_WITH_NULL_ARRAY);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void anyNPE4() {
-        Predicates.any(PREDICATES_WITH_NULL_ITERABLE);
-    }
-
     @Test
     public void falseFilter() {
         assertFalse(Predicates.FALSE.evaluate(null));
@@ -309,6 +311,45 @@ public class Predicates_LogicTest {
         assertSame(Predicates.FALSE, Predicates.falsePredicate());
         Predicates.FALSE.toString(); // does not fail
         TestUtil.assertIsSerializable(Predicates.falsePredicate());
+    }
+
+    @Test
+    public void isNull() {
+        assertFalse(Predicates.isNotNull().evaluate(null));
+        assertTrue(Predicates.isNotNull().evaluate(1));
+        assertTrue(Predicates.isNotNull().evaluate("f"));
+        assertSame(Predicates.IS_NOT_NULL, Predicates.isNotNull());
+        Predicates.IS_NOT_NULL.toString();// no fail
+        TestUtil.assertIsSerializable(Predicates.IS_NOT_NULL);
+    }
+
+    @Test
+    public void isType() {
+        IsTypePredicate filter = (IsTypePredicate) Predicates.isType(Number.class);
+        assertEquals(Number.class, filter.getFilteredClass());
+        assertTrue(filter.evaluate(Integer.valueOf(0)));
+        assertTrue(filter.evaluate(Long.valueOf(0)));
+        assertFalse(filter.evaluate(new Object()));
+        TestUtil.assertIsSerializable(filter);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void isTypeNPE() {
+        Predicates.isType(null);
+    }
+
+    @Test
+    public void notNullAnd() {
+        Predicate<Integer> p = Predicates.notNullAnd(Predicates.anyEquals(1, 2));
+        assertFalse(p.evaluate(null));
+        assertTrue(p.evaluate(1));
+        assertFalse(p.evaluate(3));
+        p.toString();
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void notNullAndNPE() {
+       Predicates.notNullAnd(null);
     }
 
     /* Test not */

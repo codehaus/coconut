@@ -8,7 +8,7 @@ import java.util.concurrent.Semaphore;
 import org.coconut.core.EventProcessor;
 import org.coconut.event.bus.EventSubscription;
 import org.coconut.event.bus.defaults.DefaultEventBus;
-import org.coconut.predicate.Predicate;
+import org.coconut.operations.Ops.Predicate;
 
 public class CacheEventBus<E> extends DefaultEventBus<E> {
 

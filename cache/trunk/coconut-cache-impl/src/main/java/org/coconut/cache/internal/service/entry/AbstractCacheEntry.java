@@ -5,11 +5,10 @@ package org.coconut.cache.internal.service.entry;
 
 import java.util.Map;
 
-import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.core.Clock;
-import org.coconut.predicate.Predicate;
+import org.coconut.operations.Ops.Predicate;
 
 /**
  * A basis implementation of the {@link CacheEntry} interface.

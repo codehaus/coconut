@@ -1,16 +1,17 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-
-package org.coconut.predicate;
+package org.coconut.operations;
 
 import java.io.Serializable;
+
+import org.coconut.operations.Ops.Predicate;
 
 /**
  * Various instances of String based predicates.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id$
+ * @version $Id: StringPredicates.java 472 2007-11-19 09:34:26Z kasper $
  */
 public final class StringPredicates {
 

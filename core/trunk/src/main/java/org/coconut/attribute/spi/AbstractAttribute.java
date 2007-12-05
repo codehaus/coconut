@@ -116,11 +116,13 @@ public abstract class AbstractAttribute<T> implements Attribute<T>, Serializable
     }
 
     /**
-     * Returns an AttributeMap containing only this attribute mapping to the specified value.
+     * Returns an AttributeMap containing only this attribute mapping to the specified
+     * value.
      * 
      * @param value
      *            the value to map to
-     * @return an AttributeMap containing only this attribute mapping to the specified value
+     * @return an AttributeMap containing only this attribute mapping to the specified
+     *         value
      */
     protected AttributeMap toSingleton(T value) {
         checkValid(value);

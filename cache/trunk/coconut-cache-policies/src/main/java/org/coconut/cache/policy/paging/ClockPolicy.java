@@ -64,82 +64,60 @@ public class ClockPolicy<T> extends AbstractPolicy<T> implements Serializable, C
         policy = new InnerClockPolicy<T>(initialCapacity);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int add(T data, AttributeMap ignore) {
         return policy.add(data);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void clear() {
         while (evictNext() != null) {
             /* ignore */
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public ClockPolicy<T> clone() {
         return new ClockPolicy<T>(this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public T evictNext() {
         return policy.evictNext();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getSize() {
         return policy.getSize();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public T peek() {
         return policy.peek();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public List<T> peekAll() {
         return policy.peekAll();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public T remove(int index) {
         return policy.remove(index);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "Clock Policy with " + getSize() + " entries";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void touch(int index) {
         policy.touch(index);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean update(int index, T newElement, AttributeMap ignore) {
         policy.replace(index, newElement);
         return false;
@@ -191,6 +169,7 @@ public class ClockPolicy<T> extends AbstractPolicy<T> implements Serializable, C
 
         /**
          * Evicts the next element.
+         * 
          * @return the element that should be evicted
          */
         public T evictNext() {
@@ -226,9 +205,7 @@ public class ClockPolicy<T> extends AbstractPolicy<T> implements Serializable, C
             }
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public T peek() {
             if (currentEntryIndex == 0) {
                 return null;
@@ -237,9 +214,7 @@ public class ClockPolicy<T> extends AbstractPolicy<T> implements Serializable, C
             }
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public List<T> peekAll() {
             ArrayList<T> col = new ArrayList<T>(currentEntryIndex);
             if (currentEntryIndex == 0) {
@@ -271,33 +246,25 @@ public class ClockPolicy<T> extends AbstractPolicy<T> implements Serializable, C
             }
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         public void touch(int index) {
             bits[index] = 1;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         protected void innerAdd(int index) {
             if (currentEntryIndex == 1) // first element
                 handPosition = index;
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         protected void innerRemove(int index) {
             bits[index] = 0; // lazy recycle
             if (index == handPosition)
                 handPosition = next[index];
         }
 
-        /**
-         * {@inheritDoc}
-         */
+        /** {@inheritDoc} */
         protected void innerResize(int newSize) {
             super.innerResize(newSize);
             int[] oldBits = bits;

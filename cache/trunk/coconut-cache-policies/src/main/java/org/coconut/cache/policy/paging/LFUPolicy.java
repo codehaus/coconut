@@ -51,8 +51,7 @@ public class LFUPolicy<T> extends AbstractPolicy<T> implements Serializable, Clo
      */
     public LFUPolicy(int initialCapacity) {
         if (initialCapacity < 0) {
-            throw new IllegalArgumentException("size must be 0 or greater, was "
-                    + initialCapacity);
+            throw new IllegalArgumentException("size must be 0 or greater, was " + initialCapacity);
         }
         heap = new IndexedHeap<T>(initialCapacity);
     }
@@ -67,15 +66,9 @@ public class LFUPolicy<T> extends AbstractPolicy<T> implements Serializable, Clo
         this.heap = new IndexedHeap<T>(policy.heap);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int add(T data, AttributeMap map) {
-        // TODO
-        // we need to figure out hits are calculated
-        // do we +1 to the hit count?
-        // or has it already been incremented?
-        long hits = HitsAttribute.INSTANCE.getPrimitive(map, 1);
+        long hits = HitsAttribute.get(map);
         return add(data, hits);
     }
 
@@ -93,94 +86,61 @@ public class LFUPolicy<T> extends AbstractPolicy<T> implements Serializable, Clo
      */
     public int add(T data, long hits) {
         if (hits < 0) {
-            throw new IllegalArgumentException("hits must a non-negative number, was"
-                    + hits);
+            throw new IllegalArgumentException("hits must a non-negative number, was" + hits);
         }
         return heap.add(data, hits);
     }
 
-    /**
-     * @see org.coconut.cache.policy.ReplacementPolicy#clear()
-     */
+    /** {@inheritDoc} */
     public void clear() {
-        while (evictNext() != null) {
-            /* ignore */
-        }
+        heap.clear();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public LFUPolicy<T> clone() {
         return new LFUPolicy<T>(this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public T evictNext() {
         return heap.poll();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public int getSize() {
         return heap.size();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public T peek() {
         return heap.peek();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public List<T> peekAll() {
         return heap.peekAll();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public T remove(int index) {
         return heap.remove(index);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "LFU Policy with " + heap.size() + " entries";
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public void touch(int index) {
         heap.changePriorityDelta(index, 1);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean update(int index, T newElement) {
-        // TODO what about hits for newElement
-        heap.replace(index, newElement);
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     public boolean update(int index, T newElement, AttributeMap map) {
-        // TODO what about hits for newElement
-        heap.replace(index, newElement);
+        heap.replace(index, newElement); // ignore hits for new element for now
         return true;
     }
 }

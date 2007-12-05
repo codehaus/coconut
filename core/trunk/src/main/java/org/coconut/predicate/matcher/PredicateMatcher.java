@@ -6,7 +6,7 @@ package org.coconut.predicate.matcher;
 import java.util.List;
 import java.util.Map;
 
-import org.coconut.predicate.Predicate;
+import org.coconut.operations.Ops.Predicate;
 
 /**
  * A PredicateMatcher can be used to query a large number of predicates to obtain all

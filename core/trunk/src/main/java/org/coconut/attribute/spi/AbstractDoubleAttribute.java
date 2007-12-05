@@ -3,13 +3,38 @@
  */
 package org.coconut.attribute.spi;
 
-import org.coconut.attribute.AttributeMap;
+import java.io.Serializable;
 
+import org.coconut.attribute.Attribute;
+import org.coconut.attribute.AttributeMap;
+import org.coconut.attribute.spi.AbstractLongAttribute.AttributeMapToLong;
+import org.coconut.operations.Ops;
+
+/**
+ * An abstract implementation of an {@link Attribute} mapping to a double.
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ */
 public abstract class AbstractDoubleAttribute extends AbstractAttribute<Double> {
 
     /** The default value of this attribute. */
     private final double defaultValue;
 
+    /**
+     * A MapperToDouble that takes an AttributeMap and returns the value of this
+     * attribute.
+     */
+    private final AttributeMapToDouble mapperToDouble = new AttributeMapToDouble();
+
+    /**
+     * Creates a new AbstractDoubleAttribute.
+     * 
+     * @param name
+     *            the name of the attribute
+     * @param defaultValue
+     *            the default value of this attribute
+     */
     public AbstractDoubleAttribute(String name, double defaultValue) {
         super(name, Double.TYPE, defaultValue);
         this.defaultValue = defaultValue;
@@ -21,8 +46,16 @@ public abstract class AbstractDoubleAttribute extends AbstractAttribute<Double> 
         checkValid(o.doubleValue());
     }
 
-    public void checkValid(double d) {
-        checkNotNaNInfinity(d);
+    /**
+     * Works as {@link #checkValid(Double)} except taking a primitive double. The default
+     * implementation fails for {@link Double#NEGATIVE_INFINITY},
+     * {@link Double#POSITIVE_INFINITY} and {@link Double#NaN}.
+     * 
+     * @param value
+     *            the value to check
+     */
+    public void checkValid(double value) {
+        checkNotNaNInfinity(value);
     }
 
     /** {@inheritDoc} */
@@ -44,8 +77,21 @@ public abstract class AbstractDoubleAttribute extends AbstractAttribute<Double> 
         return isValid(value.doubleValue());
     }
 
+    /**
+     * Works as {@link #isValid(Double)} except taking a primitive double. The default
+     * implementation returns <code>false</code> for {@link Double#NEGATIVE_INFINITY},
+     * {@link Double#POSITIVE_INFINITY} and {@link Double#NaN}.
+     * 
+     * @return whether or not the value is valid
+     * @param value
+     *            the value to check
+     */
     public boolean isValid(double value) {
         return notNaNInfinity(value);
+    }
+
+    public Ops.MapperToDouble<AttributeMap> mapToDouble() {
+        return mapperToDouble;
     }
 
     public AttributeMap setAttribute(AttributeMap attributes, double object) {
@@ -69,5 +115,16 @@ public abstract class AbstractDoubleAttribute extends AbstractAttribute<Double> 
 
     protected boolean notNaNInfinity(double d) {
         return !Double.isNaN(d) && !Double.isInfinite(d);
+    }
+
+    class AttributeMapToDouble implements Ops.MapperToDouble<AttributeMap>, Serializable {
+
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -953844729549732090L;
+
+        /** {@inheritDoc} */
+        public double map(AttributeMap t) {
+            return getPrimitive(t);
+        }
     }
 }

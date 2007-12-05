@@ -3,12 +3,21 @@
  */
 package org.coconut.management;
 
+
 /**
- * 
+ * A mix-in style interface for marking objects that can be registered with a
+ * {@link ManagedGroup}.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
 public interface ManagedLifecycle {
+
+    /**
+     * Registers this object with the specified {@link ManagedGroup}.
+     * 
+     * @param parent
+     *            the group to register with
+     */
     void manage(ManagedGroup parent);
 }

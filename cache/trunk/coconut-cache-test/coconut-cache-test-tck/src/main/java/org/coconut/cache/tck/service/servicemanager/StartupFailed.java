@@ -19,7 +19,7 @@ public class StartupFailed extends AbstractCacheTCKTest {
     public void awaitTermination() throws InterruptedException {
         assertFalse(c.awaitTermination(1, TimeUnit.NANOSECONDS));
         failSize();
-        assertTrue(c.awaitTermination(1, TimeUnit.NANOSECONDS));
+        assertTrue(c.awaitTermination(10, TimeUnit.SECONDS));
     }
 
     @Test
@@ -149,6 +149,7 @@ public class StartupFailed extends AbstractCacheTCKTest {
         }
         failedLater();
     }
+
     @Test
     public void peekEntry() {
         try {
@@ -159,7 +160,7 @@ public class StartupFailed extends AbstractCacheTCKTest {
         }
         failedLater();
     }
-    
+
     @Test
     public void put() {
         try {
@@ -170,6 +171,7 @@ public class StartupFailed extends AbstractCacheTCKTest {
         }
         failedLater();
     }
+
     public void putAll() {
         try {
             c.putAll(M1_TO_M5_MAP);
@@ -179,7 +181,7 @@ public class StartupFailed extends AbstractCacheTCKTest {
         }
         failedLater();
     }
-    
+
     public void putIfAbsent() {
         try {
             c.putIfAbsent(1, "A");
@@ -189,6 +191,7 @@ public class StartupFailed extends AbstractCacheTCKTest {
         }
         failedLater();
     }
+
     public void remove1() {
         try {
             c.remove(1);
@@ -198,6 +201,7 @@ public class StartupFailed extends AbstractCacheTCKTest {
         }
         failedLater();
     }
+
     public void remove2() {
         try {
             c.remove(1, "A");
@@ -207,7 +211,7 @@ public class StartupFailed extends AbstractCacheTCKTest {
         }
         failedLater();
     }
-    
+
     public void removeAll() {
         try {
             c.removeAll(Arrays.asList(1, 2, 3));
@@ -217,6 +221,7 @@ public class StartupFailed extends AbstractCacheTCKTest {
         }
         failedLater();
     }
+
     public void replace2() {
         try {
             c.replace(1, "B");
@@ -226,15 +231,17 @@ public class StartupFailed extends AbstractCacheTCKTest {
         }
         failedLater();
     }
+
     public void replace3() {
         try {
-            c.replace(1,"A", "B");
+            c.replace(1, "A", "B");
             fail("should throw CacheException");
         } catch (CacheException ce) {
             assertTrue(ce.getCause() instanceof IllegalMonitorStateException);
         }
         failedLater();
     }
+
     @Test
     public void keySetClear() {
         // TODO test all methods on keySet
@@ -246,6 +253,7 @@ public class StartupFailed extends AbstractCacheTCKTest {
         }
         failedLater();
     }
+
     @Test
     public void valuesClear() {
         // TODO test all methods on values
@@ -261,27 +269,29 @@ public class StartupFailed extends AbstractCacheTCKTest {
     @Test
     public void shutdown() {
         c.shutdown();
-        c.size(); //does not fail, cache was never started
+        c.size(); // does not fail, cache was never started
         try {
             put(1);
             fail("should throw IllegalStateException");
         } catch (IllegalStateException ce) {
-            //ignore
+            // ignore
         }
         c.shutdown();
     }
+
     @Test
     public void shutdownNow() {
         c.shutdownNow();
-        c.size(); //does not fail, cache was never started
+        c.size(); // does not fail, cache was never started
         try {
             put(1);
             fail("should throw IllegalStateException");
         } catch (IllegalStateException ce) {
-            //ignore
+            // ignore
         }
         c.shutdownNow();
     }
+
     @Test
     public void isShutdown() {
         assertFalse(c.isShutdown());
@@ -297,9 +307,10 @@ public class StartupFailed extends AbstractCacheTCKTest {
     }
 
     @Test
-    public void isTerminated() {
+    public void isTerminated() throws Exception {
         assertFalse(c.isTerminated());
         failSize();
+        c.awaitTermination(10, TimeUnit.SECONDS);
         assertTrue(c.isTerminated());
     }
 

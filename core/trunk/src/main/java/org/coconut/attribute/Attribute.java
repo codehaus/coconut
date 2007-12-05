@@ -12,6 +12,8 @@ package org.coconut.attribute;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ * @param <T>
+ *            the type of objects that this attribute maps to
  */
 public interface Attribute<T> {
 
@@ -47,6 +49,15 @@ public interface Attribute<T> {
     boolean isValid(T value);
 
     void unSet(AttributeMap attributes);
+
+    /**
+     * Returns whether or not this attribute is set in the specified attribute map.
+     * 
+     * @param attributes
+     *            the attribute map to check if this attribute is set
+     * @return <code>true</code> if this attribute is set in the specified attribute
+     *         map, otherwise false
+     */
     boolean isSet(AttributeMap attributes);
 
     T getValue(AttributeMap attributes);

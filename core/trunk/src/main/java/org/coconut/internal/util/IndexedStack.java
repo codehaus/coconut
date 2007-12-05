@@ -15,9 +15,11 @@ import net.jcip.annotations.NotThreadSafe;
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
+ * @param <T>
+ *            the type of elements contained in this stack
  */
 @NotThreadSafe
-public class IndexedStack<T> implements Serializable{
+public class IndexedStack<T> implements Serializable {
     private int threshold;
 
     private int currentEntryIndex;
@@ -48,8 +50,7 @@ public class IndexedStack<T> implements Serializable{
         System.arraycopy(stack.prev, 0, prev, 0, stack.prev.length);
 
         freeEntries = new int[stack.freeEntries.length];
-        System.arraycopy(stack.freeEntries, 0, freeEntries, 0,
-                stack.freeEntries.length);
+        System.arraycopy(stack.freeEntries, 0, freeEntries, 0, stack.freeEntries.length);
 
         data = (T[]) new Object[stack.data.length];
         System.arraycopy(stack.data, 0, data, 0, stack.data.length);
@@ -88,25 +89,22 @@ public class IndexedStack<T> implements Serializable{
         threshold = newSize + 1;
         int[] oldNext = next;
         next = new int[threshold];
-        System.arraycopy(oldNext, 0, next, 0, Math.min(oldNext.length,
-                next.length));
+        System.arraycopy(oldNext, 0, next, 0, Math.min(oldNext.length, next.length));
 
         int[] oldPrev = prev;
         prev = new int[threshold];
-        System.arraycopy(oldPrev, 0, prev, 0, Math.min(oldPrev.length,
-                prev.length));
+        System.arraycopy(oldPrev, 0, prev, 0, Math.min(oldPrev.length, prev.length));
 
         int[] oldFreeEntries = freeEntries;
         freeEntries = new int[threshold];
-        System.arraycopy(oldFreeEntries, 0, freeEntries, 0, Math.min(
-                oldFreeEntries.length, freeEntries.length));
+        System.arraycopy(oldFreeEntries, 0, freeEntries, 0, Math.min(oldFreeEntries.length,
+                freeEntries.length));
         for (int i = oldFreeEntries.length - 1; i < freeEntries.length; i++) {
             freeEntries[i] = i;
         }
         Object[] oldData = data;
         data = (T[]) new Object[threshold];
-        System.arraycopy(oldData, 0, data, 0, Math.min(oldData.length,
-                data.length));
+        System.arraycopy(oldData, 0, data, 0, Math.min(oldData.length, data.length));
     }
 
     public void touch(int index) {
@@ -145,6 +143,10 @@ public class IndexedStack<T> implements Serializable{
         T oldData = data[entry];
         data[entry] = null;
         return oldData;
+    }
+
+    public void clear() {
+        while (remove() != null) {}
     }
 
     public T remove() {
@@ -190,15 +192,14 @@ public class IndexedStack<T> implements Serializable{
         data[index] = newElement;
         return old;
     }
-    
-    ///CLOVER:OFF
+
+    // /CLOVER:OFF
     void print() {
         for (int i = 0; i < currentEntryIndex; i++) {
-            System.out.println(i + " " + next[i] + " " + prev[i] + " "
-                    + freeEntries[i]);
+            System.out.println(i + " " + next[i] + " " + prev[i] + " " + freeEntries[i]);
         }
         int head = next[0];
-        StringBuilder sb=new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         sb.append("head:");
         while (head != 0) {
             sb.append(head);
@@ -207,5 +208,5 @@ public class IndexedStack<T> implements Serializable{
         }
         System.out.println(sb.toString());
     }
-    ///CLOVER:ON
+    // /CLOVER:ON
 }

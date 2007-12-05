@@ -19,7 +19,7 @@ import org.coconut.attribute.common.TimeToRefreshAttribute;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.test.util.AsyncIntegerToStringLoader;
 import org.coconut.cache.test.util.IntegerToStringLoader;
-import org.coconut.predicate.Predicate;
+import org.coconut.operations.Ops.Predicate;
 import org.junit.Test;
 
 /**

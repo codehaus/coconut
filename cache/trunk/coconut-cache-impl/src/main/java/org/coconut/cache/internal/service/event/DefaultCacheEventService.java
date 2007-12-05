@@ -26,7 +26,7 @@ import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
 import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
 import org.coconut.event.bus.EventSubscription;
-import org.coconut.predicate.Predicate;
+import org.coconut.operations.Ops.Predicate;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

@@ -1,23 +1,21 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
+package org.coconut.operations;
 
-package org.coconut.predicate;
-
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.coconut.core.Mapper;
+import org.coconut.operations.Ops.Predicate;
 
 /**
  * Factory and utility methods for {@link Predicate}.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
- * @version $Id$
+ * @version $Id: CollectionPredicates.java 498 2007-12-02 17:17:11Z kasper $
  */
 public final class CollectionPredicates {
 
@@ -164,74 +162,5 @@ public final class CollectionPredicates {
             }
         }
         return m;
-    }
-
-    public static <F, T> Predicate<F> mapperPredicate(final Mapper<F, T> mapper,
-            Predicate<? super T> predicate) {
-        return new MapperPredicate<F, T>(mapper, predicate);
-    }
-
-    /**
-     * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
-     * @version $Id$
-     */
-    final static class MapperPredicate<F, T> implements Predicate<F>, Serializable {
-
-        /** serialVersionUID. */
-        private static final long serialVersionUID = -6292758840373110577L;
-
-        /** The predicate to test against. */
-        private final Predicate<? super T> predicate;
-
-        /** The object to compare with. */
-        private final Mapper<F, T> mapper;
-
-        public MapperPredicate(final Mapper<F, T> mapper, Predicate<? super T> predicate) {
-            if (mapper == null) {
-                throw new NullPointerException("mapper is null");
-            } else if (predicate == null) {
-                throw new NullPointerException("predicate is null");
-            }
-            this.predicate = predicate;
-            this.mapper = mapper;
-        }
-
-        /**
-         * Accepts all elements that are {@link Object#equals equal} to the specified
-         * object.
-         * 
-         * @param element
-         *            the element to test against.
-         * @return <code>true</code> if the predicate accepts the element;
-         *         <code>false</code> otherwise.
-         */
-        public boolean evaluate(F element) {
-            return predicate.evaluate(mapper.map(element));
-        }
-
-        /**
-         * Returns the Predicate we are testing against.
-         * 
-         * @return the Predicate we are testing against.
-         */
-        public Predicate<? super T> getPredicate() {
-            return predicate;
-        }
-
-        /**
-         * Returns the mapper that will map the object before applying the predicate on
-         * it.
-         * 
-         * @return the mapper that will map the object before applying the predicate on it
-         */
-        public Mapper<F, T> getMapper() {
-            return mapper;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String toString() {
-            return "convert " + mapper;
-        }
     }
 }

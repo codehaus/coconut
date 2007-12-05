@@ -10,8 +10,8 @@ import org.coconut.core.EventProcessor;
 import org.coconut.event.bus.EventBus;
 import org.coconut.event.bus.EventBusConfiguration;
 import org.coconut.event.bus.EventSubscription;
-import org.coconut.predicate.Predicate;
-import org.coconut.predicate.Predicates;
+import org.coconut.operations.Predicates;
+import org.coconut.operations.Ops.Predicate;
 
 /**
  * @param <E>

@@ -12,8 +12,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.CacheEntry;
-import org.coconut.predicate.Predicate;
-import org.coconut.predicate.Predicates;
+import org.coconut.operations.Predicates;
+import org.coconut.operations.Ops.Predicate;
 import org.junit.Before;
 import org.junit.Test;
 

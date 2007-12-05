@@ -87,7 +87,7 @@ public final class Loggers {
     }
 
     /**
-     * Used to access commons logging.
+     * Used for Commons Logging conversion.
      */
     public final static class Commons {
 
@@ -108,6 +108,13 @@ public final class Loggers {
             return from(org.apache.commons.logging.LogFactory.getLog(clazz));
         }
 
+        /**
+         * Wraps a Commons logging log.
+         * 
+         * @param log
+         *            the Commons logging log to wrap
+         * @return a wrapped Commons logging logger
+         */
         public static Logger from(org.apache.commons.logging.Log log) {
             return new CommonsLogger(log);
         }
@@ -123,11 +130,21 @@ public final class Loggers {
             return ((CommonsLogger) log).log;
         }
 
-        public static boolean isCommonsLogger(Logger log) {
-            return log instanceof CommonsLogger;
+        /**
+         * Returns whether or not the specified logger encapsulates a Commons Logging log.
+         * 
+         * @param logger
+         *            the logger to test
+         * @return true is the encapsulated logger is Commons Logging log
+         */
+        public static boolean isCommonsLogger(Logger logger) {
+            return logger instanceof CommonsLogger;
         }
     }
 
+    /**
+     * Used for java.util.logger conversion.
+     */
     public final static class JDK {
         // /CLOVER:OFF
         /** Cannot instantiate. */
@@ -146,8 +163,15 @@ public final class Loggers {
             return from(clazz.getName());
         }
 
-        public static Logger from(java.util.logging.Logger log) {
-            return new JDKLogger(log);
+        /**
+         * Wraps a JDK logger.
+         * 
+         * @param logger
+         *            the JDK logger to wrap
+         * @return a wrapped JDK logger
+         */
+        public static Logger from(java.util.logging.Logger logger) {
+            return new JDKLogger(logger);
         }
 
         public static Logger from(String name) {
@@ -161,17 +185,20 @@ public final class Loggers {
             return ((JDKLogger) log).logger;
         }
 
-        public static boolean isJDKLogger(Logger log) {
-            return log instanceof JDKLogger;
+        /**
+         * Returns whether or not the specified logger encapsulates a JDK logger.
+         * 
+         * @param logger
+         *            the logger to test
+         * @return true is the encapsulated logger is a JDK logger
+         */
+        public static boolean isJDKLogger(Logger logger) {
+            return logger instanceof JDKLogger;
         }
     }
 
     /**
-     * This class is used for creating Log4j wrapper Loggers.
-     * 
-     * <pre>
-     * Logger logger = Loggers.Log4j.from(myLog4jLogger);
-     * </pre>
+     * Used for Log4J logging conversion.
      */
     public final static class Log4j {
         // /CLOVER:OFF
@@ -195,7 +222,7 @@ public final class Loggers {
          * Wraps a Log4j logger.
          * 
          * @param logger
-         *            the Log4j logger
+         *            the Log4j logger to wrap
          * @return a wrapped Log4j logger
          */
         public static Logger from(org.apache.log4j.Logger logger) {
@@ -217,7 +244,8 @@ public final class Loggers {
          * Returns whether or not the specified logger encapsulates a Log4J logger.
          * 
          * @param logger
-         * @return
+         *            the logger to test
+         * @return true is the encapsulated logger is a Log4J logger
          */
         public static boolean isLog4jLogger(Logger logger) {
             return logger instanceof Log4JLogger;

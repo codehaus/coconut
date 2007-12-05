@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.coconut.predicate.Predicate;
-import org.coconut.predicate.Predicates;
+import org.coconut.operations.Predicates;
+import org.coconut.operations.Ops.Predicate;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
@@ -66,7 +66,7 @@ public class AbstraktPredicateMatcherTest {
 				one(m).keySet();
 				will(returnValue(s1));
 
-				one(m).put(3, Predicates.IS_NUMBER);
+				one(m).put(3, Predicates.IS_NOT_NULL);
 				will(returnValue(Predicates.TRUE));
 
 				one(m).putAll(Collections.EMPTY_MAP);
@@ -89,7 +89,7 @@ public class AbstraktPredicateMatcherTest {
 		assertEquals(m, afm.getMap());
 		assertTrue(afm.isEmpty());
 		assertSame(s1, afm.keySet());
-		assertSame(Predicates.TRUE, afm.put(3, Predicates.IS_NUMBER));
+		assertSame(Predicates.TRUE, afm.put(3, Predicates.IS_NOT_NULL));
 		afm.putAll(Collections.EMPTY_MAP);
 		assertSame(Predicates.FALSE, afm.remove(4));
 		assertEquals(12, afm.size());

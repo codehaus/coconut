@@ -8,8 +8,8 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
 import org.coconut.cache.Cache;
-import org.coconut.predicate.Predicate;
-import org.coconut.predicate.Predicates;
+import org.coconut.operations.Predicates;
+import org.coconut.operations.Ops.Predicate;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;

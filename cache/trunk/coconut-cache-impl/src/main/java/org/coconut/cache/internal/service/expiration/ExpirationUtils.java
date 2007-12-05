@@ -13,7 +13,7 @@ import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.core.Clock;
 import org.coconut.management.annotation.ManagedAttribute;
 import org.coconut.management.annotation.ManagedOperation;
-import org.coconut.predicate.Predicate;
+import org.coconut.operations.Ops.Predicate;
 
 /**
  * Various utility classes for expiration service implementation.

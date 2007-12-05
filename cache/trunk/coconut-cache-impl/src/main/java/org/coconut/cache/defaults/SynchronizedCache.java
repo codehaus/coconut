@@ -309,11 +309,58 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
     /** {@inheritDoc} */
     @Override
     Map<K, V> doGetAll(Collection<? extends K> keys) {
-        checkRunning("get");
         HashMap<K, V> result = new HashMap<K, V>();
-        for (K key : keys) {
-            result.put(key, get(key));
+        Collection<K> loadMe = new ArrayList<K>();
+
+        Object[] k = keys.toArray();
+        AbstractCacheEntry<K, V>[] entries = new AbstractCacheEntry[k.length];
+        boolean[] isExpired = new boolean[k.length];
+        boolean[] isHit = new boolean[k.length];
+
+        long started = listener.beforeGetAll(this, keys);
+        synchronized (this) {
+            checkRunning("get");
+
+            int i = 0;
+            for (K key : keys) {
+                entries[i] = map.get(key);
+                if (entries[i] != null) {
+                    isExpired[i] = expirationService.isExpired(entries[i]);
+                    if (isExpired[i]) {
+                        map.remove(key);
+                        evictionService.remove(entries[i].getPolicyIndex());
+                        loadMe.add(key);
+                        result.put(key, null);
+                    } else {
+                        // reload if needed??
+                        entries[i].accessed(entryService);
+                        evictionService.touch(entries[i].getPolicyIndex());
+                        isHit[i] = true;
+                        result.put(key, entries[i].getValue());
+                    }
+                } else {
+                    loadMe.add(key);
+                    result.put(key, null);
+                }
+                i++;
+            }
         }
+        Map<K, AbstractCacheEntry<K, V>> loadedEntries = Collections.EMPTY_MAP;
+        for (int j = 0; j < isExpired.length; j++) {
+            if (isExpired[j]) {
+                listener.dexpired(this, started, entries[j]);
+            }
+        }
+        if (loadMe.size() != 0) {
+            loadedEntries = loadingService.loadAllBlocking(AttributeMaps.toMap(loadMe,
+                    AttributeMaps.EMPTY_MAP));
+            for (AbstractCacheEntry<K, V> entry : loadedEntries.values()) {
+                if (entry != null) {
+                    result.put(entry.getKey(), entry.getValue());
+                }
+            }
+        }
+        listener.afterGetAll(this, started, k, entries, isHit, isExpired, loadedEntries);
         return result;
     }
 

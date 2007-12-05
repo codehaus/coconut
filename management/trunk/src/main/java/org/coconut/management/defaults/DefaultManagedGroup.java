@@ -28,15 +28,20 @@ import javax.management.ReflectionException;
 import org.coconut.management.ManagedGroup;
 
 /**
+ * The default implementation of {@link ManagedGroup}.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
 public class DefaultManagedGroup extends AbstractManagedGroup {
 
+    /** A map of all attributes. */
     private final Map<String, AbstractManagedAttribute> attributes = new ConcurrentHashMap<String, AbstractManagedAttribute>();
 
+    /** A map of all operations. */
     private final Map<OperationKey, AbstractManagedOperation> ops = new ConcurrentHashMap<OperationKey, AbstractManagedOperation>();
 
+    /** A set of the objects that have been registered with this group. */
     private final Set<Object> os = new CopyOnWriteArraySet<Object>();
 
     /**
@@ -88,10 +93,14 @@ public class DefaultManagedGroup extends AbstractManagedGroup {
         return new ArrayList(os);
     }
 
+    /** {@inheritDoc} */
     Object getRegistrant() {
         return new MBean();
     }
 
+    /**
+     * The DynamicMBean that is used to expose this group.
+     */
     class MBean implements DynamicMBean {
 
         /** {@inheritDoc} */
@@ -168,6 +177,16 @@ public class DefaultManagedGroup extends AbstractManagedGroup {
             return result;
         }
 
+        /**
+         * Finds and returns the an attribute with the specified name, or throws an
+         * Exception.
+         * 
+         * @param attribute
+         *            the name of the attribute
+         * @return the attribute with the specified name
+         * @throws AttributeNotFoundException
+         *             if no such attribute existed
+         */
         private AbstractManagedAttribute findAttribute(String attribute)
                 throws AttributeNotFoundException {
             AbstractManagedAttribute att = attributes.get(attribute);

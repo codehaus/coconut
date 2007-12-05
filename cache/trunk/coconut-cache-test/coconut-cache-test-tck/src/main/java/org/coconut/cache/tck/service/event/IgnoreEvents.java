@@ -1,6 +1,5 @@
 package org.coconut.cache.tck.service.event;
 
-import static org.coconut.cache.service.event.CacheEventFilters.CACHEENTRYEVENT_FILTER;
 import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M2;
 import static org.coconut.test.CollectionUtils.M3;
@@ -8,13 +7,13 @@ import static org.coconut.test.CollectionUtils.M3;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.service.event.CacheEntryEvent.*;
 import org.coconut.cache.service.event.CacheEvent;
-import org.coconut.cache.service.event.CacheEventFilters;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemAdded;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated;
 import org.coconut.cache.tck.service.event.EventServiceEviction.RejectEntriesPolicy;
 import org.coconut.cache.test.util.IntegerToStringLoader;
-import org.coconut.predicate.Predicates;
+import org.coconut.operations.Predicates;
 import org.junit.Test;
 
 public class IgnoreEvents extends AbstractEventTestBundle {

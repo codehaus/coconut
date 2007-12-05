@@ -4,9 +4,9 @@
 package org.coconut.cache.examples.policy;
 
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.predicate.Predicate;
-import org.coconut.predicate.Predicates;
-import org.coconut.predicate.StringPredicates;
+import org.coconut.operations.Predicates;
+import org.coconut.operations.StringPredicates;
+import org.coconut.operations.Ops.Predicate;
 
 /**
  * The following example create a cache configuration that uses a LRU

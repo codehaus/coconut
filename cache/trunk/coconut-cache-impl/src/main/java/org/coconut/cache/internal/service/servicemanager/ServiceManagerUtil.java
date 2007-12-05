@@ -4,17 +4,11 @@
 package org.coconut.cache.internal.service.servicemanager;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
-import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
-import org.coconut.cache.service.servicemanager.CacheLifecycle;
-import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.internal.picocontainer.PicoContainer;
 import org.coconut.management.ManagedLifecycle;
@@ -71,7 +65,7 @@ public final class ServiceManagerUtil {
      *            the CacheServiceManagerService to wrap
      * @return a wrapped service that only exposes CacheServiceManagerService methods
      */
-    public static CacheServiceManagerService wrapService(CacheServiceManagerService service) {
+    public static CacheServiceManagerService wrapService(InternalCacheServiceManager service) {
         return new DelegatedCacheServiceManagerService(service);
     }
 
@@ -83,7 +77,7 @@ public final class ServiceManagerUtil {
             CacheServiceManagerService {
 
         /** The CacheServiceManagerService that is wrapped. */
-        private final CacheServiceManagerService delegate;
+        private final InternalCacheServiceManager delegate;
 
         /**
          * Creates a wrapped CacheServiceManagerService from the specified implementation.
@@ -91,7 +85,7 @@ public final class ServiceManagerUtil {
          * @param service
          *            the CacheServiceManagerService to wrap
          */
-        public DelegatedCacheServiceManagerService(CacheServiceManagerService service) {
+        public DelegatedCacheServiceManagerService(InternalCacheServiceManager service) {
             if (service == null) {
                 throw new NullPointerException("service is null");
             }
@@ -115,7 +109,7 @@ public final class ServiceManagerUtil {
 
         /** {@inheritDoc} */
         public <T> T getService(Class<T> serviceType) {
-            return delegate.getService(serviceType);
+            return delegate.getServiceFromCache(serviceType);
         }
     }
 }

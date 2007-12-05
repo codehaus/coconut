@@ -3,8 +3,9 @@ package org.coconut.cache.tck.service.eviction;
 import static org.coconut.test.CollectionUtils.M1;
 import static org.coconut.test.CollectionUtils.M2;
 import static org.coconut.test.CollectionUtils.M3;
-import static org.coconut.test.CollectionUtils.*;
+import static org.coconut.test.CollectionUtils.M4;
 import static org.coconut.test.CollectionUtils.M5;
+import static org.coconut.test.CollectionUtils.newEntry;
 
 import java.util.Arrays;
 
@@ -12,7 +13,7 @@ import org.coconut.cache.policy.IsCacheable;
 import org.coconut.cache.policy.IsCacheables;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.IntegerToStringLoader;
-import org.coconut.predicate.Predicates;
+import org.coconut.operations.Predicates;
 import org.junit.Test;
 
 public class EvictionIsCacheable extends AbstractCacheTCKTest {

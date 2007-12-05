@@ -16,7 +16,7 @@ import org.coconut.core.EventProcessor;
 import org.coconut.event.bus.EventBus;
 import org.coconut.event.bus.EventBusConfiguration;
 import org.coconut.event.bus.EventSubscription;
-import org.coconut.predicate.Predicate;
+import org.coconut.operations.Ops.Predicate;
 import org.coconut.predicate.matcher.DefaultPredicateMatcher;
 import org.coconut.predicate.matcher.PredicateMatcher;
 

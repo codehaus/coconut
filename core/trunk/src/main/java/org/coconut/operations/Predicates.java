@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.predicate;
+package org.coconut.operations;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,27 +11,25 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import org.coconut.predicate.spi.CompositePredicate;
+import org.coconut.operations.Ops.Mapper;
+import org.coconut.operations.Ops.Predicate;
 
 /**
  * Various implementations of {@link Predicate}.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id$
+ * @version $Id: Predicates.java 501 2007-12-04 11:03:23Z kasper $
  */
 public final class Predicates {
 
     /** A predicate that always return False. */
-    public static final Predicate FALSE = Predicates.FalsePredicate.INSTANCE;
+    public static final Predicate FALSE = new Predicates.FalsePredicate();
 
     /** A predicate that returns whether or not the element being tested is null. */
-    public final static Predicate IS_NULL = new IsNullFilter();
-
-    /** A predicate that returns whether or not the element being tested is a number. */
-    public final static Predicate IS_NUMBER = isType(Number.class);
+    public final static Predicate IS_NOT_NULL = new IsNotNullFilter();
 
     /** A predicate that always return True. */
-    public static final Predicate TRUE = Predicates.TruePredicate.INSTANCE;
+    public static final Predicate TRUE = new Predicates.TruePredicate();
 
     // /CLOVER:OFF
     /** Cannot instantiate. */
@@ -257,6 +255,8 @@ public final class Predicates {
      *            the type of elements accepted by the predicate
      * @throws NullPointerException
      *             if any of the specified elements are <code>null</code>
+     * @throws IllegalArgumentException
+     *             if the specified elements does not implement {@link Comparable}
      */
     public static <E> Predicate<E> between(E left, E right) {
         return and((Predicate) Predicates.greaterThenOrEqual(left), (Predicate) Predicates
@@ -369,8 +369,6 @@ public final class Predicates {
      *            the type of elements accepted by the predicate
      * @throws NullPointerException
      *             if the specified element is <code>null</code>
-     * @throws IllegalArgumentException
-     *             if the specified element does not implement {@link Comparable}
      */
     public static <E> Predicate<E> greaterThen(E element, final Comparator<? extends E> comparator) {
         return new Predicates.GreaterThenPredicate<E>(element, comparator);
@@ -415,8 +413,6 @@ public final class Predicates {
      *            the type of elements accepted by the predicate
      * @throws NullPointerException
      *             if the specified element is <code>null</code>
-     * @throws IllegalArgumentException
-     *             if the specified element does not implement {@link Comparable}
      */
     public static <E> Predicate<E> greaterThenOrEqual(E element,
             final Comparator<? extends E> comparator) {
@@ -437,34 +433,114 @@ public final class Predicates {
      * @return a Predicate that tests whether the element being tested is
      *         <code>null</code>.
      */
-    public static <E> Predicate<E> isNull() {
-        return IS_NULL;
+    public static <E> Predicate<E> isNotNull() {
+        return IS_NOT_NULL;
     }
 
-    @SuppressWarnings("unchecked")
-    public static <E> Predicate<E> isNumber() {
-        return IS_NUMBER;
-    }
-
+    /**
+     * Returns a predicate that tests whether or not the element being tested is a subtype
+     * of the specified class. This predicate is serializable.
+     * 
+     * @param clazz
+     *            the class to test
+     * @return whether or the element being tested is of a sub type of the specified class
+     */
     public static Predicate isType(Class clazz) {
         return new IsTypePredicate(clazz);
     }
 
+    /**
+     * Returns a Predicate that evaluates to true if the element being tested is less then
+     * the element being used to construct the predicate. The predicate will use the
+     * objects natural comparator.
+     * <p>
+     * If the supplied element is serializable the returned predicate will also be
+     * serializable.
+     * 
+     * @param element
+     *            the element to compare with
+     * @return a less then predicate
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     * @throws NullPointerException
+     *             if the specified element is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if the specified element does not implement {@link Comparable}
+     */
     public static <E> Predicate<E> lessThen(E element) {
         return new Predicates.LessThenPredicate<E>(element);
     }
 
-    public static <E> Predicate<E> lessThen(E object, final Comparator<? extends E> comparator) {
-        return new Predicates.LessThenPredicate<E>(object, comparator);
+    /**
+     * Returns a Predicate that evaluates to true if the element being tested is less then
+     * the element being used to construct the predicate. The predicate will use the
+     * specified Comparator to compare the objects.
+     * <p>
+     * If the supplied element and Comparator is serializable the returned predicate will
+     * also be serializable.
+     * 
+     * @param element
+     *            the element to compare with
+     * @param comparator
+     *            the Comparator used for comparing elements
+     * @return a less then predicate
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     * @throws NullPointerException
+     *             if the specified element is <code>null</code>
+     */
+    public static <E> Predicate<E> lessThen(E element, final Comparator<? extends E> comparator) {
+        return new Predicates.LessThenPredicate<E>(element, comparator);
     }
 
-    public static <E> Predicate<E> lessThenOrEqual(E object) {
-        return new Predicates.LessThenOrEqualPredicate<E>(object);
+    /**
+     * Returns a Predicate that evaluates to true if the element being tested is less then
+     * or equal to the element being used to construct the predicate. The predicate will
+     * use the objects natural comparator.
+     * <p>
+     * If the supplied element is serializable the returned predicate will also be
+     * serializable.
+     * 
+     * @param element
+     *            the element to compare with
+     * @return a less then or equal predicate
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     * @throws NullPointerException
+     *             if the specified element is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if the specified element does not implement {@link Comparable}
+     */
+    public static <E> Predicate<E> lessThenOrEqual(E element) {
+        return new Predicates.LessThenOrEqualPredicate<E>(element);
     }
 
-    public static <E> Predicate<E> lessThenOrEqual(E object,
+    /**
+     * Returns a Predicate that evaluates to true if the element being tested is less then
+     * or equal to the element being used to construct the predicate. The predicate will
+     * use the specified Comparator to compare the objects.
+     * <p>
+     * If the supplied element and Comparator is serializable the returned predicate will
+     * also be serializable.
+     * 
+     * @param element
+     *            the element to compare with
+     * @param comparator
+     *            the Comparator used for comparing elements
+     * @return a less then or equals predicate
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     * @throws NullPointerException
+     *             if the specified element is <code>null</code>
+     */
+    public static <E> Predicate<E> lessThenOrEqual(E element,
             final Comparator<? extends E> comparator) {
-        return new Predicates.LessThenOrEqualPredicate<E>(object, comparator);
+        return new Predicates.LessThenOrEqualPredicate<E>(element, comparator);
+    }
+
+    public static <F, T> Predicate<F> mapperPredicate(final Mapper<F, T> mapper,
+            Predicate<? super T> predicate) {
+        return new MapperPredicate<F, T>(mapper, predicate);
     }
 
     public static <E> Predicate<E> not(Predicate<E> predicate) {
@@ -472,7 +548,7 @@ public final class Predicates {
     }
 
     public static <E> Predicate<E> notNullAnd(Predicate<E> f) {
-        return new NotNullAndFilter<E>(f);
+        return and(IS_NOT_NULL, f);
     }
 
     public static <E> Predicate<E> or(Predicate<E> left, Predicate<E> right) {
@@ -516,6 +592,8 @@ public final class Predicates {
      * @param right
      *            the right hand side of the expression
      * @return a Predicate that performs xor on two other predicates.
+     * @param <E>
+     *            the type of elements accepted by this predicate
      */
     public static <E> Predicate<E> xor(Predicate<E> left, Predicate<E> right) {
         return new Predicates.XorPredicate<E>(left, right);
@@ -539,8 +617,8 @@ public final class Predicates {
      * A Predicate that tests that <tt>all</tt> of the supplied Predicates accepts a
      * given element.
      */
-    final static class AllPredicate<E> implements Predicate<E>, CompositePredicate<E>,
-            Iterable<Predicate<? super E>>, Serializable {
+    final static class AllPredicate<E> implements Predicate<E>, Iterable<Predicate<? super E>>,
+            Serializable {
 
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = -2054989348063839373L;
@@ -632,7 +710,7 @@ public final class Predicates {
     /**
      * A Predicate that performs a logical exclusive AND on two supplied predicates.
      */
-    final static class AndPredicate<E> implements Predicate<E>, CompositePredicate<E>, Serializable {
+    final static class AndPredicate<E> implements Predicate<E>, Serializable {
 
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 6981902451700512606L;
@@ -700,7 +778,7 @@ public final class Predicates {
      * A Predicate that tests that at least one of the supplied predicates accepts a given
      * element.
      */
-    final static class AnyPredicate<E> implements Predicate<E>, CompositePredicate<E>,
+    final static class AnyPredicate<E> implements Predicate<E>, 
             Iterable<Predicate<? super E>>, Serializable {
 
         /** Default <code>serialVersionUID</code>. */
@@ -853,14 +931,11 @@ public final class Predicates {
      */
     final static class FalsePredicate implements Predicate, Serializable {
 
-        /** The one and only instance. */
-        static final FalsePredicate INSTANCE = new FalsePredicate();
-
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = -3048464662394104180L;
 
         /** Construct a new FalsePredicate. */
-        private FalsePredicate() {}
+        FalsePredicate() {}
 
         /**
          * Returns <tt>false</tt> for any element passed to this method.
@@ -902,6 +977,22 @@ public final class Predicates {
          * 
          * @param object
          *            the object to compare with.
+         */
+        public GreaterThenOrEqualPredicate(E object) {
+            if (object == null) {
+                throw new NullPointerException("element is null");
+            } else if (!(object instanceof Comparable)) {
+                throw new IllegalArgumentException("object not instanceof Comparable");
+            }
+            this.object = object;
+            this.comparator = null;
+        }
+
+        /**
+         * Creates a new greater then predicate.
+         * 
+         * @param object
+         *            the object to compare with.
          * @param comparator
          *            the comparator that should be used to compare elements
          */
@@ -913,22 +1004,6 @@ public final class Predicates {
             }
             this.object = object;
             this.comparator = comparator;
-        }
-
-        /**
-         * Creates a new greater then predicate.
-         * 
-         * @param object
-         *            the object to compare with.
-         */
-        public GreaterThenOrEqualPredicate(E object) {
-            if (object == null) {
-                throw new NullPointerException("element is null");
-            } else if (!(object instanceof Comparable)) {
-                throw new IllegalArgumentException("object not instanceof Comparable");
-            }
-            this.object = object;
-            this.comparator = null;
         }
 
         /** {@inheritDoc} */
@@ -1053,19 +1128,19 @@ public final class Predicates {
     /**
      * A predicate that tests whether or not an element is <code>null</code>.
      */
-    final static class IsNullFilter implements Predicate, Serializable {
+    final static class IsNotNullFilter implements Predicate, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = 6280765768913457567L;
 
         /** {@inheritDoc} */
         public boolean evaluate(Object element) {
-            return element == null;
+            return element != null;
         }
 
         /** {@inheritDoc} */
         @Override
         public String toString() {
-            return "is null";
+            return "is not null";
         }
     }
 
@@ -1075,7 +1150,7 @@ public final class Predicates {
      * specified with an interface it will match any class that implements the interface.
      * 
      * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
-     * @version $Id$
+     * @version $Id: Predicates.java 501 2007-12-04 11:03:23Z kasper $
      */
     final static class IsTypePredicate implements Predicate, Serializable {
 
@@ -1137,11 +1212,26 @@ public final class Predicates {
          * The comparator to compare elements with or null if the objects natural
          * comparator should be used.
          */
-
         private final Comparator comparator;
 
         /** The object to compare against. */
         private final E object;
+
+        /**
+         * Creates a new less then or equals predicate.
+         * 
+         * @param object
+         *            the object to compare with.
+         */
+        public LessThenOrEqualPredicate(E object) {
+            if (object == null) {
+                throw new NullPointerException("element is null");
+            } else if (!(object instanceof Comparable)) {
+                throw new IllegalArgumentException("object not instanceof Comparable");
+            }
+            this.object = object;
+            this.comparator = null;
+        }
 
         /**
          * Creates a new less then or equal predicate.
@@ -1159,23 +1249,6 @@ public final class Predicates {
             }
             this.object = object;
             this.comparator = comparator;
-        }
-
-        /**
-         * Creates a new less then or equals predicate.
-         * 
-         * @param object
-         *            the object to compare with.
-         */
-        public LessThenOrEqualPredicate(E object) {
-            if (object == null) {
-                throw new NullPointerException("element is null");
-            }
-            if (!(object instanceof Comparable)) {
-                throw new IllegalArgumentException("object not instanceof Comparable");
-            }
-            this.object = object;
-            this.comparator = null;
         }
 
         /** {@inheritDoc} */
@@ -1298,38 +1371,75 @@ public final class Predicates {
         }
     }
 
-    final static class NotNullAndFilter<T> implements Predicate<T>, Serializable {
+    /**
+     * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+     * @version $Id: CollectionPredicates.java 498 2007-12-02 17:17:11Z kasper $
+     */
+    final static class MapperPredicate<F, T> implements Predicate<F>, Serializable {
+
         /** serialVersionUID. */
-        private static final long serialVersionUID = -324206595097699714L;
+        private static final long serialVersionUID = -6292758840373110577L;
 
-        /** the other filter. */
-        private final Predicate<T> filter;
+        /** The object to compare with. */
+        private final Mapper<F, T> mapper;
 
-        public NotNullAndFilter(Predicate<T> filter) {
-            if (filter == null) {
-                throw new NullPointerException("filter is null");
+        /** The predicate to test against. */
+        private final Predicate<? super T> predicate;
+
+        public MapperPredicate(final Mapper<F, T> mapper, Predicate<? super T> predicate) {
+            if (mapper == null) {
+                throw new NullPointerException("mapper is null");
+            } else if (predicate == null) {
+                throw new NullPointerException("predicate is null");
             }
-            this.filter = filter;
+            this.predicate = predicate;
+            this.mapper = mapper;
         }
 
-        /** {@inheritDoc} */
-        public boolean evaluate(T element) {
-            return element != null && filter.evaluate(element);
+        /**
+         * Accepts all elements that are {@link Object#equals equal} to the specified
+         * object.
+         * 
+         * @param element
+         *            the element to test against.
+         * @return <code>true</code> if the predicate accepts the element;
+         *         <code>false</code> otherwise.
+         */
+        public boolean evaluate(F element) {
+            return predicate.evaluate(mapper.map(element));
+        }
+
+        /**
+         * Returns the mapper that will map the object before applying the predicate on
+         * it.
+         * 
+         * @return the mapper that will map the object before applying the predicate on it
+         */
+        public Mapper<F, T> getMapper() {
+            return mapper;
+        }
+
+        /**
+         * Returns the Predicate we are testing against.
+         * 
+         * @return the Predicate we are testing against.
+         */
+        public Predicate<? super T> getPredicate() {
+            return predicate;
         }
 
         /** {@inheritDoc} */
         @Override
         public String toString() {
-            return "is not null and " + filter.toString();
+            return "convert " + mapper;
         }
-
     }
 
     /**
      * A Predicate that test that a supplied Predicate does <tt>not</tt> accept a given
      * Element.
      */
-    final static class NotPredicate<E> implements Predicate<E>, CompositePredicate<E>, Serializable {
+    final static class NotPredicate<E> implements Predicate<E>,  Serializable {
 
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = -5117781730584740429L;
@@ -1373,9 +1483,7 @@ public final class Predicates {
             return predicate;
         }
 
-        /**
-         * @see org.coconut.predicate.spi.CompositePredicate#getPredicates()
-         */
+        /** {@inheritDoc} */
         public List<Predicate<E>> getPredicates() {
             return Arrays.asList(predicate);
         }
@@ -1390,7 +1498,7 @@ public final class Predicates {
     /**
      * A Predicate that performs a logical inclusive OR on two supplied predicates.
      */
-    final static class OrPredicate<E> implements Predicate<E>, CompositePredicate<E>, Serializable {
+    final static class OrPredicate<E> implements Predicate<E>, Serializable {
 
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 7602293335100183390L;
@@ -1434,9 +1542,7 @@ public final class Predicates {
             return left;
         }
 
-        /**
-         * @see org.coconut.predicate.spi.CompositePredicate#getPredicates()
-         */
+        /** {@inheritDoc} */
         @SuppressWarnings("unchecked")
         public List<Predicate<E>> getPredicates() {
             return Arrays.asList(left, right);
@@ -1463,7 +1569,7 @@ public final class Predicates {
      * specified.
      * 
      * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
-     * @version $Id$
+     * @version $Id: Predicates.java 501 2007-12-04 11:03:23Z kasper $
      */
     final static class SamePredicate<E> implements Predicate<E>, Serializable {
 
@@ -1519,11 +1625,8 @@ public final class Predicates {
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 3258129137502925875L;
 
-        /** The TruePredicate instance. */
-        static final TruePredicate INSTANCE = new TruePredicate();
-
         /** Construct a new TruePredicate. */
-        private TruePredicate() {}
+        TruePredicate() {}
 
         /**
          * Returns <tt>true</tt> for any element passed to this method.
@@ -1546,7 +1649,7 @@ public final class Predicates {
     /**
      * A Predicate that performs a logical exclusive OR (XOR) on two supplied predicates.
      */
-    final static class XorPredicate<E> implements CompositePredicate<E>, Predicate<E>, Serializable {
+    final static class XorPredicate<E> implements Predicate<E>, Serializable {
 
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 1155267141991954303L;

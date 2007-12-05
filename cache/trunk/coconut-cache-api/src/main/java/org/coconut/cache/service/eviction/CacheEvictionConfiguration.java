@@ -4,17 +4,16 @@
 package org.coconut.cache.service.eviction;
 
 import static org.coconut.internal.util.XmlUtil.addTypedElement;
-import static org.coconut.internal.util.XmlUtil.getChild;
 import static org.coconut.internal.util.XmlUtil.contentIntGet;
-import static org.coconut.internal.util.XmlUtil.contentLongGet;
 import static org.coconut.internal.util.XmlUtil.contentIntSet;
+import static org.coconut.internal.util.XmlUtil.contentLongGet;
 import static org.coconut.internal.util.XmlUtil.contentLongSet;
+import static org.coconut.internal.util.XmlUtil.getChild;
 import static org.coconut.internal.util.XmlUtil.loadChildObject;
 
 import org.coconut.cache.policy.IsCacheable;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
-import org.coconut.predicate.Predicate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

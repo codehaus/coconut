@@ -11,10 +11,12 @@ import java.util.List;
 import net.jcip.annotations.NotThreadSafe;
 
 /**
- * A PolicyList.
+ * An indexed list.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
+ * @param <T>
+ *            the type of elements contained in this list
  */
 @NotThreadSafe
 public class IndexedList<T> implements Serializable {
@@ -65,8 +67,8 @@ public class IndexedList<T> implements Serializable {
     @SuppressWarnings("unchecked")
     public IndexedList(int initialCapacity) {
         if (initialCapacity < 0) {
-            throw new IllegalArgumentException(
-                    "initialCapacity must be 0 or greater, was " + initialCapacity);
+            throw new IllegalArgumentException("initialCapacity must be 0 or greater, was "
+                    + initialCapacity);
         }
 
         this.threshold = initialCapacity;
@@ -105,9 +107,7 @@ public class IndexedList<T> implements Serializable {
         data = (T[]) new Object[threshold];
     }
 
-    /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof IndexedList)) {
@@ -117,13 +117,16 @@ public class IndexedList<T> implements Serializable {
         return peekAll().equals(il.peekAll());
     }
 
+    /**
+     * Returns the number of elements in this list.
+     * 
+     * @return the number of elements in this list
+     */
     public int getSize() {
         return currentEntryIndex;
     }
 
-    /**
-     * @see java.lang.Object#hashCode()
-     */
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return peekAll().hashCode();
@@ -194,9 +197,7 @@ public class IndexedList<T> implements Serializable {
         return old;
     }
 
-    /**
-     * @see java.lang.Object#toString()
-     */
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -240,8 +241,8 @@ public class IndexedList<T> implements Serializable {
 
         int[] oldFreeEntries = freeEntries;
         freeEntries = new int[threshold];
-        System.arraycopy(oldFreeEntries, 0, freeEntries, 0, Math.min(
-                oldFreeEntries.length, freeEntries.length));
+        System.arraycopy(oldFreeEntries, 0, freeEntries, 0, Math.min(oldFreeEntries.length,
+                freeEntries.length));
         for (int i = oldFreeEntries.length - 1; i < freeEntries.length; i++) {
             freeEntries[i] = i;
         }
@@ -251,45 +252,32 @@ public class IndexedList<T> implements Serializable {
         innerResize(threshold);
     }
 
-    /**
-     * @see java.lang.Object#clone()
-     */
+    /** {@inheritDoc} */
     @Override
     protected IndexedList clone() {
         return new IndexedList(this);
     }
 
     protected void innerAdd(int index) {
-        /* Override to be informed */
+    /* Override to be informed */
     }
 
     protected void innerRefresh(int index) {
-        /* Override to be informed */
+    /* Override to be informed */
     }
 
     protected void innerRemove(int index) {
-        /* Override to be informed */
+    /* Override to be informed */
     }
 
     protected void innerResize(int newThreshold) {
-        /* Override to be informed */
+    /* Override to be informed */
     }
 /*
-    ///CLOVER:ON
-    void print() {
-        for (int i = 0; i < threshold; i++) {
-            System.out.println(i + " " + next[i] + " " + prev[i] + " " + freeEntries[i]
-                    + " Data: " + data[i]);
-        }
-        int head = next[0];
-        String str = "head:";
-        while (head != 0) {
-            str += head + ", ";
-            head = next[head];
-        }
-        System.out.println(str);
-    }
-    ///CLOVER:OFF
+ * ///CLOVER:ON void print() { for (int i = 0; i < threshold; i++) { System.out.println(i + " " +
+ * next[i] + " " + prev[i] + " " + freeEntries[i] + " Data: " + data[i]); } int head =
+ * next[0]; String str = "head:"; while (head != 0) { str += head + ", "; head =
+ * next[head]; } System.out.println(str); } ///CLOVER:OFF
  */
-     
+
 }

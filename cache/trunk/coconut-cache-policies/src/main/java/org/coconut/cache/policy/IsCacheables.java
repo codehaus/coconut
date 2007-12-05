@@ -8,9 +8,12 @@ import java.io.Serializable;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.common.CostAttribute;
 import org.coconut.attribute.common.SizeAttribute;
-import org.coconut.predicate.Predicate;
+import org.coconut.operations.LongPredicates;
+import org.coconut.operations.Ops.Predicate;
 
 /**
+ * Various implementations of {@link IsCacheable}.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -19,7 +22,6 @@ public final class IsCacheables {
     /** An IsCacheable that accepts all elements. */
     public static final IsCacheable ACCEPT_ALL = new AcceptAll();
 
-    // /CLOVER:ON
     /** An IsCacheable that rejects all elements. */
     public static final IsCacheable REJECT_ALL = new RejectAll();
 
@@ -27,14 +29,69 @@ public final class IsCacheables {
     // /CLOVER:OFF
     private IsCacheables() {}
 
+    // /CLOVER:ON
+
+    /**
+     * Returns an {@link IsCacheables} that accepts any argument.
+     * 
+     * @param <K>
+     *            the type of keys that are being cached
+     * @param <V>
+     *            the type of values that are being cached
+     * @return an {@link IsCacheables} that accepts any argument
+     */
     public static final <K, V> IsCacheable<K, V> acceptAll() {
         return ACCEPT_ALL;
     }
 
+    /**
+     * Returns an {@link IsCacheables} that accepts any argument where the AttributeMap is
+     * accepted by the specified predicate.
+     * 
+     * @param predicate
+     *            the predicate to test the attribute map with
+     * @return an {@link IsCacheables} that accepts any argument where the AttributeMap is
+     *         accepted by the specified predicate
+     * @param <K>
+     *            the type of keys that are being cached
+     * @param <V>
+     *            the type of values that are being cached
+     */
+    public static final <K, V> IsCacheable<K, V> fromAttributeMapPredicate(
+            Predicate<AttributeMap> predicate) {
+        return new AttributeMapPredicate<K, V>(predicate);
+    }
+
+    /**
+     * Returns an {@link IsCacheables} that accepts any argument where the key is accepted
+     * by the specified predicate.
+     * 
+     * @param predicate
+     *            the predicate to test the key with
+     * @return an {@link IsCacheables} that accepts any argument where the key is accepted
+     *         by the specified predicate
+     * @param <K>
+     *            the type of keys that are being cached
+     * @param <V>
+     *            the type of values that are being cached
+     */
     public static final <K, V> IsCacheable<K, V> fromKeyPredicate(Predicate<? super K> predicate) {
         return new KeyPredicate<K, V>(predicate);
     }
 
+    /**
+     * Returns an {@link IsCacheables} that accepts any argument where the value is
+     * accepted by the specified predicate.
+     * 
+     * @param predicate
+     *            the predicate to test the value with
+     * @return an {@link IsCacheables} that accepts any argument where the value is
+     *         accepted by the specified predicate
+     * @param <K>
+     *            the type of keys that are being cached
+     * @param <V>
+     *            the type of values that are being cached
+     */
     public static final <K, V> IsCacheable<K, V> fromValuePredicate(Predicate<? super V> predicate) {
         return new ValuePredicate<K, V>(predicate);
     }
@@ -43,50 +100,63 @@ public final class IsCacheables {
      * This method return a replacement policy that decorates another replacement policy
      * rejecting any elements whose size is larger than the specified maximum size.
      * <p>
-     * This policy is based on a ACM SIGCOMM '96 paper: <a
-     * href="http://ei.cs.vt.edu/~succeed/96sigcomm/">Removal Policies in Network Caches
-     * for World-Wide Web Documents</a> by Stephen Williams et al. However, this version
-     * is generalized for any replacement policies not just LRU.
+     * This can be used implement policies such the ones outlined in the ACM SIGCOMM '96
+     * paper: <a href="http://ei.cs.vt.edu/~succeed/96sigcomm/">Removal Policies in
+     * Network Caches for World-Wide Web Documents</a> by Stephen Williams et al.
+     * However, this version is generalized for any replacement policies not just LRU.
      * 
-     * @param policy
-     *            the replacement policy to wrap
      * @param maximumSize
      *            the maximum size of any element that will be accepted by the returned
      *            policy
      * @return a replacement policy that will reject any elements that are larger then the
      *         specified maximum size
-     * @param <T>
-     *            the type of elements accepted by the replacement policy
+     * @param <K>
+     *            the type of keys that are being cached
+     * @param <V>
+     *            the type of values that are being cached
      */
     public static final <K, V> IsCacheable<K, V> maximumSize(long maximumSize) {
-        return new MaximumSize<K, V>(maximumSize);
+        SizeAttribute.INSTANCE.checkValid(maximumSize);
+        return new AttributeMapPredicate<K, V>(LongPredicates.mapperPredicate(
+                SizeAttribute.INSTANCE.mapToLong(), LongPredicates.lessThenOrEquals(maximumSize)));
     }
 
     /**
      * This method return a replacement policy that decorates another replacement policy
      * rejecting any elements whose retrievel cost is less then a specified minimum cost.
      * 
-     * @param policy
-     *            the replacement policy to wrap
      * @param minimumCost
      *            the minimum cost of an element that will be accepted by the returned
      *            replacement policy
      * @return a replacement policy that will reject any elements that are larger then the
      *         specified maximum size
-     * @param <T>
-     *            the type of elements accepted by the replacement policy
+     * @param <K>
+     *            the type of keys that are being cached
+     * @param <V>
+     *            the type of values that are being cached
      */
     public static final <K, V> IsCacheable<K, V> minimumCost(double minimumCost) {
         return new MinimumCost<K, V>(minimumCost);
     }
 
+    /**
+     * Returns an {@link IsCacheables} that rejects all arguments.
+     * 
+     * @param <K>
+     *            the type of keys that are being cached
+     * @param <V>
+     *            the type of values that are being cached
+     * @return an {@link IsCacheables} that accepts any argument
+     */
     public static final <K, V> IsCacheable<K, V> rejectAll() {
         return REJECT_ALL;
     }
 
     /**
-     * @param <T>
-     *            the type of elements accepted by this filter
+     * @param <K>
+     *            the type of keys that are being cached
+     * @param <V>
+     *            the type of values that are being cached
      */
     static class AcceptAll<K, V> implements IsCacheable<K, V>, Serializable {
         /** serialVersionUID. */
@@ -99,11 +169,45 @@ public final class IsCacheables {
     }
 
     /**
-     * @param <T>
-     *            the type of elements accepted by this filter
+     * @param <K>
+     *            the type of keys that are being cached
+     * @param <V>
+     *            the type of values that are being cached
+     */
+    static class AttributeMapPredicate<K, V> implements IsCacheable<K, V>, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = 7985164051605463107L;
+
+        /** The minimum cost of an element that will be accepted. */
+        private final Predicate<AttributeMap> predicate;
+
+        /**
+         * Creates a new AttributeMapPredicate.
+         * 
+         * @param predicate
+         *            the predicate to test the attribute map with
+         */
+        public AttributeMapPredicate(Predicate<AttributeMap> predicate) {
+            if (predicate == null) {
+                throw new NullPointerException("predicate is null");
+            }
+            this.predicate = predicate;
+        }
+
+        /** {@inheritDoc} */
+        public boolean isCacheable(K key, V value, AttributeMap attributes) {
+            return predicate.evaluate(attributes);
+        }
+    }
+
+    /**
+     * @param <K>
+     *            the type of keys that are being cached
+     * @param <V>
+     *            the type of values that are being cached
      */
     static class KeyPredicate<K, V> implements IsCacheable<K, V>, Serializable {
-        /** serialVersionUID */
+        /** serialVersionUID. */
         private static final long serialVersionUID = 5046395272186446797L;
 
         /** The minimum cost of an element that will be accepted. */
@@ -129,39 +233,10 @@ public final class IsCacheables {
     }
 
     /**
-     * @param <T>
-     *            the type of elements accepted by this filter
-     */
-    static class MaximumSize<K, V> implements IsCacheable<K, V>, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = -1284778010296201666L;
-
-        /** The maximum size of an element that will be accepted. */
-        private final long threshold;
-
-        /**
-         * Creates a new MaximumSize.
-         * 
-         * @param maximumSize
-         *            the maximum size of an element that will be accepted by this filter
-         */
-        public MaximumSize(final long maximumSize) {
-            if (!SizeAttribute.INSTANCE.isValid(maximumSize)) {
-                throw new IllegalArgumentException("threshold must be a positive number, was "
-                        + maximumSize);
-            }
-            this.threshold = maximumSize;
-        }
-
-        public boolean isCacheable(K key, V value, AttributeMap attributes) {
-            long size = SizeAttribute.get(attributes);
-            return size <= threshold;
-        }
-    }
-
-    /**
-     * @param <T>
-     *            the type of elements accepted by this filter
+     * @param <K>
+     *            the type of keys that are being cached
+     * @param <V>
+     *            the type of values that are being cached
      */
     static class MinimumCost<K, V> implements IsCacheable<K, V>, Serializable {
         /** serialVersionUID. */
@@ -183,13 +258,17 @@ public final class IsCacheables {
         /** {@inheritDoc} */
         public boolean isCacheable(K key, V value, AttributeMap attributes) {
             double cost = CostAttribute.get(attributes);
-            return cost >= minimumCost;
+            return minimumCost <= cost;
         }
     }
 
     /**
-     * @param <T>
-     *            the type of elements accepted by this filter
+     * An {@link IsCacheable} implementation that rejects all.
+     * 
+     * @param <K>
+     *            the type of keys that are being cached
+     * @param <V>
+     *            the type of values that are being cached
      */
     static class RejectAll<K, V> implements IsCacheable<K, V>, Serializable {
 
@@ -203,8 +282,10 @@ public final class IsCacheables {
     }
 
     /**
-     * @param <T>
-     *            the type of elements accepted by this filter
+     * @param <K>
+     *            the type of keys that are being cached
+     * @param <V>
+     *            the type of values that are being cached
      */
     static class ValuePredicate<K, V> implements IsCacheable<K, V>, Serializable {
         /** serialVersionUID. */

@@ -14,7 +14,6 @@ import org.w3c.dom.Element;
  */
 public final class LogHelper {
 
-    // /CLOVER:ON
     public final static String LOG_TYPE_ATRB = "type";
 
     private final static String COMMONS_LOGGING = "commons";
@@ -26,6 +25,7 @@ public final class LogHelper {
     // /CLOVER:OFF
     /** Cannot instantiate. */
     private LogHelper() {}
+    // /CLOVER:ON
 
     public static Logger fromCommons(String name) {
         return Loggers.Commons.from(name);

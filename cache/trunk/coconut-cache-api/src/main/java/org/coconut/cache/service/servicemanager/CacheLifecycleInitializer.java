@@ -23,8 +23,7 @@ public interface CacheLifecycleInitializer {
 
     /**
      * Registers the specified service in the cache. The service can later be retrieved by
-     * calls to {@link CacheServiceManagerService#getService(Class)} with the specified
-     * class as parameter.
+     * calls to {@link Cache#getService(Class)} with the specified class as parameter.
      * 
      * @param <T>
      *            the type of the service
@@ -37,6 +36,7 @@ public interface CacheLifecycleInitializer {
 
     /**
      * Returns the type of cache that is being initialized.
+     * 
      * @return the type of cache that is being initialized
      */
     Class<? extends Cache> getCacheType();

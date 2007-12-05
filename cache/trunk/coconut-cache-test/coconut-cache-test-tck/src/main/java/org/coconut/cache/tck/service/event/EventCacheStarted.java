@@ -11,7 +11,7 @@ import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemAdded;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
-import org.coconut.predicate.Predicates;
+import org.coconut.operations.Predicates;
 import org.junit.Before;
 import org.junit.Test;
 

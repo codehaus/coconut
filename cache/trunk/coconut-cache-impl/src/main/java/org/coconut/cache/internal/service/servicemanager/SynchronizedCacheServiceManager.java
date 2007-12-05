@@ -6,11 +6,11 @@ package org.coconut.cache.internal.service.servicemanager;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -26,12 +26,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
-import org.coconut.cache.internal.service.listener.InternalCacheListener;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
-import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.management.ManagedLifecycle;
 
 public class SynchronizedCacheServiceManager extends AbstractPicoBasedCacheServiceManager {
@@ -46,11 +44,11 @@ public class SynchronizedCacheServiceManager extends AbstractPicoBasedCacheServi
 
     private final Object mutex;
 
-    private RuntimeException startupException;
-
     private volatile RunState status = RunState.NOTRUNNING;
 
     private final CountDownLatch terminationLatch = new CountDownLatch(1);
+
+    final Map<CacheLifecycle, RuntimeException> shutdownExceptions = new ConcurrentHashMap<CacheLifecycle, RuntimeException>();
 
     public SynchronizedCacheServiceManager(Cache<?, ?> cache, InternalCacheSupport<?, ?> helper,
             CacheConfiguration<?, ?> conf,
@@ -80,7 +78,11 @@ public class SynchronizedCacheServiceManager extends AbstractPicoBasedCacheServi
                     throw new IllegalStateException(
                             "Cannot invoke this method from CacheLifecycle.start(Map services), should be invoked from CacheLifecycle.started(Cache c)");
                 } else if (state == RunState.NOTRUNNING) {
-                    doStart();
+                    status = RunState.STARTING;
+                    startServices();
+                    managementStart();
+                    status = RunState.RUNNING;
+                    servicesStarted();
                 } else if (failIfShutdown && state.isShutdown()) {
                     throw new IllegalStateException("Cache has been shutdown");
                 } else {
@@ -94,21 +96,26 @@ public class SynchronizedCacheServiceManager extends AbstractPicoBasedCacheServi
 
     public void shutdown() {
         synchronized (mutex) {
-            try {
-                if (status == RunState.NOTRUNNING) {
-                    status = RunState.TERMINATED;
-                } else if (status == RunState.RUNNING) {
-                    getCache().clear();
-                    status = RunState.SHUTDOWN;
-                    List<ServiceHolder> shutdown = new ArrayList<ServiceHolder>(services);
-                    Collections.reverse(shutdown);
-                    for (ServiceHolder si : shutdown) {
-                        shutdownService(si);
+            if (status == RunState.NOTRUNNING) {
+                status = RunState.TERMINATED;
+            } else if (status == RunState.RUNNING) {
+                getCache().clear();
+            }
+            if (status == RunState.RUNNING || status == RunState.STARTING) {
+                status = RunState.SHUTDOWN;
+                List<ServiceHolder> l = new ArrayList<ServiceHolder>(services);
+                Collections.reverse(l);
+                for (ServiceHolder sh : l) {
+                    if (sh.isStarted()) {
+                        try {
+                            shutdownService(sh);
+                        } catch (RuntimeException e) {
+                            shutdownExceptions.put(sh.getService(), e);
+                        }
                     }
                 }
-            } catch (RuntimeException e) {
-                e.printStackTrace();
             }
+
             if (!futures.isEmpty()) {
                 ThreadPoolExecutor tpe = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
                         new LinkedBlockingQueue<Runnable>());
@@ -139,31 +146,40 @@ public class SynchronizedCacheServiceManager extends AbstractPicoBasedCacheServi
 
     public void shutdownNow() {
         synchronized (mutex) {
-            shutdown();
-            for (ServiceHolder sh : super.services) {
-                sh.shutdownNow();
+            if (status == RunState.NOTRUNNING) {
+                status = RunState.TERMINATED;
+            } else if (status == RunState.RUNNING) {
+                shutdown();
+            }
+            if (status == RunState.SHUTDOWN) {
+                status = RunState.STOP;
+                for (ServiceHolder sh : super.services) {
+                    sh.shutdownNow();
+                }
             }
         }
     }
 
     public void shutdownService(final ServiceHolder service) {
-        final AtomicInteger canSubmit = new AtomicInteger();
-        e = new Executor() {
-            public void execute(final Runnable command) {
-                if (canSubmit.compareAndSet(0, 1)) {
-                    service.future = es.submit(new Runnable() {
-                        public void run() {
-                            command.run();
-                        }
-                    });
-                    futures.add(service.future);
-                } else {
-                    throw new IllegalStateException();
+        if (service.isStarted()) {
+            final AtomicInteger canSubmit = new AtomicInteger();
+            e = new Executor() {
+                public void execute(final Runnable command) {
+                    if (canSubmit.compareAndSet(0, 1)) {
+                        service.future = es.submit(new Runnable() {
+                            public void run() {
+                                command.run();
+                            }
+                        });
+                        futures.add(service.future);
+                    } else {
+                        throw new IllegalStateException();
+                    }
                 }
-            }
-        };
-        service.shutdown();
-        canSubmit.set(2);
+            };
+            service.shutdown();
+            canSubmit.set(2);
+        }
     }
 
     public void shutdownServiceAsynchronously(Runnable service2) {
@@ -173,102 +189,47 @@ public class SynchronizedCacheServiceManager extends AbstractPicoBasedCacheServi
         e.execute(service2);
     }
 
-    private boolean doStart() {
-        synchronized (mutex) {
-            if (status == RunState.NOTRUNNING) {
-                status = RunState.STARTING;
-                startServices();
-                try {
-
-                    // register mbeans
-                    CacheManagementService cms = (CacheManagementService) publicServices
-                            .get(CacheManagementService.class);
-                    if (cms != null) {
-                        managedObjects.addAll(ServiceManagerUtil
-                                .initializeManagedObjects(container));
-                        for (ManagedLifecycle si : managedObjects) {
-                            si.manage(cms);
-                        }
-                    }
-                    status = RunState.RUNNING;
-                    // started
-                    for (ServiceHolder si : services) {
-                        si.started(getCache());
-                    }
-                    InternalCacheListener icl = getInternalService(InternalCacheListener.class);
-                    icl.afterStart(getCache());
-                    return true;
-                } catch (RuntimeException re) {
-                    startupException = new CacheException("Could not start cache", re);
-                    status = RunState.COULD_NOT_START;
-                    doTerminate();
-                    throw startupException;
-                } catch (Error er) {
-                    startupException = new CacheException("Could not start cache", er);
-                    status = RunState.COULD_NOT_START;
-                    doTerminate();
-                    throw er;
-                }
-            }
-        }
-        return false;
-    }
-
-    private void startServices() {
-        CacheServiceManagerService wrapped = ServiceManagerUtil.wrapService(this);
-        for (ServiceHolder si : services) {
-            try {
-                si.start(wrapped);
-            } catch (RuntimeException re) {
-                startupException = new CacheException("Could not start the cache", re);
-                final CacheConfiguration conf = (CacheConfiguration) container
-                        .getComponentInstance(CacheConfiguration.class);
-                ces.cacheStartFailed(conf, getCache().getClass(), si.getService(), re);
-                status = RunState.COULD_NOT_START;
-                tryShutdownServices();
-                doTerminate();
-                throw startupException;
-            } catch (Error er) {
-                startupException = new CacheException("Could not start the cache", er);
-                status = RunState.COULD_NOT_START;
-                throw er;
-            }
-        }
-    }
-
-    private Map<CacheLifecycle, RuntimeException> tryShutdownServices() {
-        Map<CacheLifecycle, RuntimeException> m = new HashMap<CacheLifecycle, RuntimeException>();
-
-        List<ServiceHolder> l = new ArrayList<ServiceHolder>(services);
-        Collections.reverse(l);
-        for (ServiceHolder sh : l) {
-            if (sh.isStarted()) {
-                try {
-                    sh.shutdown();
-                } catch (RuntimeException e) {
-                    m.put(sh.getService(), e);
-                }
-            }
-            if (!m.isEmpty()) {
-                ces.cacheShutdownFailed(getCache(), m);
-            }
-        }
-        return m;
-    }
-
     protected void doTerminate() {
         synchronized (mutex) {
+            if (!shutdownExceptions.isEmpty()) {
+                ces.cacheShutdownFailed(getCache(), shutdownExceptions);
+            }
             super.doTerminate();
             terminationLatch.countDown();
         }
     }
 
-    void setRunState(RunState state) {
-        this.status = state;
-    }
-
     /** {@inheritDoc} */
     RunState getRunState() {
         return status;
+    }
+
+    void managementStart() {
+        // register mbeans
+        CacheManagementService cms = (CacheManagementService) publicServices
+                .get(CacheManagementService.class);
+        if (cms != null) {
+            managedObjects.addAll(ServiceManagerUtil.initializeManagedObjects(container));
+            for (ManagedLifecycle si : managedObjects) {
+                try {
+                    si.manage(cms);
+                } catch (RuntimeException re) {
+                    startupException = new CacheException("Could not start the cache", re);
+                    final CacheConfiguration conf = (CacheConfiguration) container
+                            .getComponentInstance(CacheConfiguration.class);
+                    ces.cacheStartFailed(conf, getCache().getClass(), null, re);
+                    shutdown();
+                    throw startupException;
+                } catch (Error er) {
+                    startupException = new CacheException("Could not start the cache", er);
+                    setRunState(RunState.TERMINATED);
+                    throw er;
+                }
+            }
+        }
+    }
+
+    void setRunState(RunState state) {
+        this.status = state;
     }
 }

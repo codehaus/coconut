@@ -11,10 +11,9 @@ import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated;
 import org.coconut.cache.service.event.CacheEvent.CacheCleared;
 import org.coconut.cache.service.event.CacheEvent.CacheStarted;
-import org.coconut.core.Mapper;
-import org.coconut.predicate.CollectionPredicates;
-import org.coconut.predicate.Predicate;
-import org.coconut.predicate.Predicates;
+import org.coconut.operations.Predicates;
+import org.coconut.operations.Ops.Mapper;
+import org.coconut.operations.Ops.Predicate;
 
 /**
  * Factory and utility methods for for creating different types of filters for cache
@@ -127,7 +126,7 @@ public final class CacheEventFilters {
      */
     @SuppressWarnings("unchecked")
     public static <K, V> Predicate<CacheEvent<K, V>> mapperPredicate(Predicate<Cache<K, V>> filter) {
-        return CollectionPredicates.mapperPredicate((Mapper) EVENT_TO_CACHE_TRANSFORMER, filter);
+        return Predicates.mapperPredicate((Mapper) EVENT_TO_CACHE_TRANSFORMER, filter);
     }
 
     /**
@@ -145,7 +144,7 @@ public final class CacheEventFilters {
      */
     @SuppressWarnings("unchecked")
     public static <K, V> Predicate<CacheEvent<K, V>> eventName(Predicate<String> filter) {
-        return CollectionPredicates.mapperPredicate((Mapper) EVENT_TO_NAME_TRANSFORMER, filter);
+        return Predicates.mapperPredicate((Mapper) EVENT_TO_NAME_TRANSFORMER, filter);
     }
 
     static class EventToCacheMapper<K, V> implements Mapper<CacheEvent<K, V>, Cache<K, V>>,

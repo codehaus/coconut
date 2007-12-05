@@ -1,6 +1,9 @@
-package org.coconut.predicate;
+package org.coconut.operations;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,9 +11,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import org.coconut.core.Mapper;
+import org.coconut.operations.Ops.Mapper;
+import org.coconut.operations.Ops.Predicate;
 import org.coconut.test.MockTestCase;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
@@ -74,7 +77,7 @@ public class CollectionPredicatesTest {
     @Test
     public void filterMap() {
         Predicate<Map.Entry<Integer, String>> p = new Predicate<Map.Entry<Integer, String>>() {
-            public boolean evaluate(Entry<Integer, String> element) {
+            public boolean evaluate(Map.Entry<Integer, String> element) {
                 return element.getKey().equals(2) || element.getValue().equals("3");
             }
         };
@@ -173,24 +176,24 @@ public class CollectionPredicatesTest {
                 return from.intValue() * from.intValue();
             }
         };
-        Predicate mapped = CollectionPredicates.mapperPredicate(m, p);
+        Predicate mapped = Predicates.mapperPredicate(m, p);
         assertTrue(mapped.evaluate(2));
         assertFalse(mapped.evaluate(3));
         assertTrue(mapped.evaluate(4));
 
-        assertSame(p, ((CollectionPredicates.MapperPredicate) mapped).getPredicate());
-        assertSame(m, ((CollectionPredicates.MapperPredicate) mapped).getMapper());
+        assertSame(p, ((Predicates.MapperPredicate) mapped).getPredicate());
+        assertSame(m, ((Predicates.MapperPredicate) mapped).getMapper());
         mapped.toString();
     }
 
     @Test(expected = NullPointerException.class)
     public void mapperPredicateNPE1() {
-        CollectionPredicates.mapperPredicate(null, MockTestCase.mockDummy(Predicate.class));
+        Predicates.mapperPredicate(null, MockTestCase.mockDummy(Predicate.class));
     }
 
     @Test(expected = NullPointerException.class)
     public void mapperPredicateNPE2() {
-        CollectionPredicates.mapperPredicate(MockTestCase.mockDummy(Mapper.class), null);
+        Predicates.mapperPredicate(MockTestCase.mockDummy(Mapper.class), null);
     }
 
     @Test

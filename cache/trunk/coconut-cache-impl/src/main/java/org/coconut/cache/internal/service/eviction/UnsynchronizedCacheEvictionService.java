@@ -50,10 +50,10 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
 
     /** {@inheritDoc} */
     public int add(T t) {
-        // TODO Test maxSize, maxVolume
-        if (maxVolume == 0 || maxSize == 0) {
-            return -1;
-        }
+//        // TODO Test maxSize, maxVolume
+//        if (maxVolume == 0 || maxSize == 0) {
+//            return -1;
+//        }
         return cp.add(t, AttributeMaps.EMPTY_MAP);
     }
 
@@ -142,9 +142,9 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
 
     /** {@inheritDoc} */
     public void touch(int index) {
-        if (index < 0) {
-            throw new IllegalArgumentException("index must be a non negative number, was " + index);
-        }
+//        if (index < 0) {
+//            throw new IllegalArgumentException("index must be a non negative number, was " + index);
+//        }
         cp.touch(index);
     }
 

@@ -5,7 +5,7 @@ package org.coconut.cache.test.util.managed;
 
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedLifecycle;
-import org.coconut.predicate.Predicate;
+import org.coconut.operations.Ops.Predicate;
 
 public class ManagedFilter implements ManagedLifecycle, Predicate {
     ManagedGroup g;

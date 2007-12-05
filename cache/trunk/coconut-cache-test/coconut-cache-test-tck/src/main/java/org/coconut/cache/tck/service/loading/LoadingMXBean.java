@@ -18,7 +18,7 @@ import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.cache.test.util.managed.ManagedFilter;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedLifecycle;
-import org.coconut.predicate.Predicate;
+import org.coconut.operations.Ops.Predicate;
 import org.junit.Before;
 import org.junit.Test;
 

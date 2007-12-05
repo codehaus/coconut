@@ -52,6 +52,7 @@ public final class Managements {
             this.levels = levels.clone();
         }
 
+        /** {@inheritDoc} */
         public void visitManagedGroup(ManagedGroup mg) throws JMException {
             String prefix = domain + ":" + levels[0] + "=" + mg.getName();
             visitManagedGroup(mg, prefix, 0);
@@ -70,6 +71,7 @@ public final class Managements {
         }
 
         // /CLOVER:OFF
+        /** {@inheritDoc} */
         public void visitManagedObject(Object o) throws JMException {}
         // /CLOVER:ON
     }

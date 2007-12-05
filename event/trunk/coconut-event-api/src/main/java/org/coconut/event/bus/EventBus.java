@@ -7,7 +7,7 @@ import java.util.Collection;
 
 import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
-import org.coconut.predicate.Predicate;
+import org.coconut.operations.Ops.Predicate;
 
 /**
  * An event bus is an api for the publish/subscribe messaging paradigm. Publishers post

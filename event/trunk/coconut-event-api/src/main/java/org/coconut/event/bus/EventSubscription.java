@@ -4,8 +4,8 @@
 package org.coconut.event.bus;
 
 import org.coconut.core.EventProcessor;
-import org.coconut.predicate.Predicate;
-import org.coconut.predicate.Predicates;
+import org.coconut.operations.Predicates;
+import org.coconut.operations.Ops.Predicate;
 
 /**
  * This interface represent a subscription of a particular sets of events by its predicate

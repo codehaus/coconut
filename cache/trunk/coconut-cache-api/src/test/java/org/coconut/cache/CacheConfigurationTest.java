@@ -205,8 +205,26 @@ public class CacheConfigurationTest {
         assertEquals("B", conf.getProperty("b", "C"));
         assertEquals("B", conf.getProperty("b", null));
         assertEquals("C", conf.getProperty("c", "C"));
+        
+        reloadConf();
+        assertEquals("A", conf.getProperty("a"));
+        assertEquals("B", conf.getProperty("b"));
+        assertNull(conf.getProperty("c"));
+        
         conf.setProperty("b", null);
         assertNull(conf.getProperty("b"));
+        
+    }
+
+    private void reloadConf() {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        try {
+            new XmlConfigurator().write(conf, os);
+            conf= CacheConfiguration.loadConfigurationFrom(new ByteArrayInputStream(os
+                    .toByteArray()));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

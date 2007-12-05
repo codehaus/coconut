@@ -280,51 +280,54 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
     Map<K, V> doGetAll(Collection<? extends K> keys) {
         HashMap<K, V> result = new HashMap<K, V>();
         Collection<K> loadMe = new ArrayList<K>();
+
         Object[] k = keys.toArray();
         AbstractCacheEntry<K, V>[] entries = new AbstractCacheEntry[k.length];
         boolean[] isExpired = new boolean[k.length];
         boolean[] isHit = new boolean[k.length];
+        
         long started = listener.beforeGetAll(this, keys);
         checkRunning("get");
 
         int i = 0;
         for (K key : keys) {
-            result.put(key, null);
-            AbstractCacheEntry<K, V> entry = map.get(key);
-            entries[i] = entry;
-            if (entry != null) {
-                isExpired[i] = expirationService.isExpired(entry);
+            entries[i] = map.get(key);
+            if (entries[i] != null) {
+                isExpired[i] = expirationService.isExpired(entries[i]);
                 if (isExpired[i]) {
                     map.remove(key);
-                    evictionService.remove(entry.getPolicyIndex());
+                    evictionService.remove(entries[i].getPolicyIndex());
                     loadMe.add(key);
+                    result.put(key, null);
                 } else {
                     // reload if needed??
-                    entry.accessed(entryService);
-                    evictionService.touch(entry.getPolicyIndex());
+                    entries[i].accessed(entryService);
+                    evictionService.touch(entries[i].getPolicyIndex());
                     isHit[i] = true;
-                    result.put(key, entry.getValue());
+                    result.put(key, entries[i].getValue());
                 }
             } else {
                 loadMe.add(key);
+                result.put(key, null);
             }
             i++;
         }
-        Map<K, AbstractCacheEntry<K, V>> ma = Collections.EMPTY_MAP;
+        
+        Map<K, AbstractCacheEntry<K, V>> loadedEntries = Collections.EMPTY_MAP;
         for (int j = 0; j < isExpired.length; j++) {
             if (isExpired[j]) {
                 listener.dexpired(this, started, entries[j]);
             }
         }
         if (loadMe.size() != 0) {
-            ma = loadingService.loadAllBlocking(AttributeMaps.toMap(loadMe, AttributeMaps.EMPTY_MAP));
-            for (AbstractCacheEntry<K, V> entry : ma.values()) {
+            loadedEntries = loadingService.loadAllBlocking(AttributeMaps.toMap(loadMe, AttributeMaps.EMPTY_MAP));
+            for (AbstractCacheEntry<K, V> entry : loadedEntries.values()) {
                 if (entry != null) {
                     result.put(entry.getKey(), entry.getValue());
                 }
             }
         }
-        listener.afterGetAll(this, started, k, entries, isHit, isExpired, ma);
+        listener.afterGetAll(this, started, k, entries, isHit, isExpired, loadedEntries);
         return result;
     }
 

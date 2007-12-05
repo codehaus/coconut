@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.AttributeMaps;
+import org.coconut.test.TestUtil;
 import org.junit.Test;
 
 public class DoubleAttributeTest {
@@ -100,5 +101,18 @@ public class DoubleAttributeTest {
         assertEquals(Double.NEGATIVE_INFINITY, LA.fromString(new Double(Double.NEGATIVE_INFINITY)
                 .toString()));
         assertEquals(Double.NaN, LA.fromString(new Double(Double.NaN).toString()));
+    }
+    
+    @Test
+    public void mapToLong() {
+        TestUtil.assertIsSerializable(LA.mapToDouble());
+        AttributeMap am = AttributeMaps.singleton(LA, 100.1);
+        assertEquals(100.1, LA.mapToDouble().map(am));
+        assertEquals(100.5, LA.mapToDouble().map(AttributeMaps.EMPTY_MAP));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void mapper() {
+        LA.mapToDouble().map(null);
     }
 }

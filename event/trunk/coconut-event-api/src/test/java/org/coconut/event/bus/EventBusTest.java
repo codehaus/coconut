@@ -6,8 +6,8 @@ package org.coconut.event.bus;
 import java.util.Collection;
 
 import org.coconut.core.EventProcessor;
-import org.coconut.predicate.Predicate;
-import org.coconut.predicate.Predicates;
+import org.coconut.operations.Predicates;
+import org.coconut.operations.Ops.Predicate;
 import org.junit.Test;
 
 /**

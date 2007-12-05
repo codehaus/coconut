@@ -44,6 +44,11 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
     }
 
     /** {@inheritDoc} */
+    public final boolean hasService(Class<?> type) {
+        return getAllServices().containsKey(type);
+    }
+
+    /** {@inheritDoc} */
     public boolean isShutdown() {
         return getRunState().isShutdown();
     }
@@ -58,47 +63,6 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
         return getRunState().isTerminated();
     }
 
-    /**
-     * Returns the service manager's cache.
-     * 
-     * @return the service manager's cache
-     */
-    Cache<?, ?> getCache() {
-        return cache;
-    }
-
-    /** {@inheritDoc} */
-    public final boolean hasService(Class<?> type) {
-        return getAllServices().containsKey(type);
-    }
-
-    /**
-     * Returns the state of the cache.
-     * 
-     * @return the state of the cache
-     */
-    abstract RunState getRunState();
-
-    static enum RunState {
-        COULD_NOT_START, NOTRUNNING, STARTING, RUNNING, SHUTDOWN, STOP, TERMINATED, TIDYING;
-
-        public boolean isShutdown() {
-            return this != RUNNING && this != NOTRUNNING;
-        }
-
-        public boolean isStarted() {
-            return this != NOTRUNNING && this != COULD_NOT_START;
-        }
-
-        public boolean isTerminated() {
-            return this == TERMINATED || this == COULD_NOT_START;
-        }
-
-        public boolean isTerminating() {
-            return this == SHUTDOWN || this == STOP;
-        }
-    }
-
     public void shutdown(Throwable cause) {
         // First thing we must do is set the exception so later invocations
         // of methods on the cache will throw it.
@@ -110,4 +74,20 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
 
         throw new UnsupportedOperationException();
     }
+
+    /**
+     * Returns the service manager's cache.
+     * 
+     * @return the service manager's cache
+     */
+    Cache<?, ?> getCache() {
+        return cache;
+    }
+
+    /**
+     * Returns the state of the cache.
+     * 
+     * @return the state of the cache
+     */
+    abstract RunState getRunState();
 }

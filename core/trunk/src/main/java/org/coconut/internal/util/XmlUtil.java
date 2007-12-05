@@ -44,7 +44,8 @@ public final class XmlUtil {
                 e.setAttribute("type", objectToSave.getClass().getName());
                 return true;
             } catch (NoSuchMethodException e1) {
-                addComment(doc, bundle, commentClazz, commentKey, e.getParentNode(), objectToSave.getClass());
+                addComment(doc, bundle, commentClazz, commentKey, e.getParentNode(), objectToSave
+                        .getClass());
                 e.getParentNode().removeChild(e);
             }
             return false;
@@ -81,7 +82,17 @@ public final class XmlUtil {
     }
 
     /**
-     * Sets an attribute on the specified element with the specified name.
+     * Sets an attribute on the specified element with the specified name if the specified
+     * value is different from the specified default value.
+     * 
+     * @param base
+     *            the Element to set the attribute on
+     * @param name
+     *            the attribute name
+     * @param value
+     *            the value that attribute should be set to
+     * @param defaultValue
+     *            the default value of the attribute
      */
     public static void attributeBooleanSet(Element base, String name, boolean value,
             boolean defaultValue) {
@@ -196,6 +207,15 @@ public final class XmlUtil {
         return loadObject(e, type);
     }
 
+    /**
+     * Converts the specified {@link Document} to a string.
+     * 
+     * @param doc
+     *            the Document to convert
+     * @return a String representing the specified Document
+     * @throws TransformerException
+     *             the Document could not be converted for some reason
+     */
     public static String prettyprint(Document doc) throws TransformerException {
         ByteArrayOutputStream sos = new ByteArrayOutputStream();
         XmlUtil.prettyprint(doc, sos);

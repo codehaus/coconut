@@ -9,7 +9,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.Map;
 
 import org.coconut.cache.CacheEntry;
-import org.coconut.predicate.Predicate;
+import org.coconut.operations.Ops.Predicate;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
