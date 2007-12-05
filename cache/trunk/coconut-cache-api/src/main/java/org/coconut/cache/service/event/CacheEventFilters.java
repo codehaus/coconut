@@ -98,7 +98,7 @@ public final class CacheEventFilters {
      *            the type of mapped values
      */
     public static <K, V> Predicate<CacheEvent<K, V>> cacheSameFilter(Cache<K, V> cache) {
-        return mapperPredicate(Predicates.same(cache));
+        return mapperPredicate(Predicates.isSame(cache));
     }
 
     /**

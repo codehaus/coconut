@@ -21,22 +21,18 @@ import junit.framework.AssertionFailedError;
  */
 public class TestUtil {
 
-    public static Object serializeAndUnserialize(Object o) throws IOException,
-            ClassNotFoundException {
-        ByteArrayOutputStream bout = new ByteArrayOutputStream(20000);
-        ObjectOutputStream out = new ObjectOutputStream(
-                new BufferedOutputStream(bout));
-        out.writeObject(o);
-        out.close();
-        ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
-        ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(
-                bin));
-        return in.readObject();
+    public static Object serializeAndUnserialize(Object o) {
+        try {
+            return readWrite(o);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new AssertionFailedError("not serialiable");
+        }
     }
 
     public static void assertNotSerializable(Object o) {
         try {
-            serializeAndUnserialize(o);
+            readWrite(o);
         } catch (NotSerializableException nse) {
             // ignore
         } catch (IOException e) {
@@ -50,16 +46,25 @@ public class TestUtil {
 
     public static void assertIsSerializable(Object o) {
         try {
-            serializeAndUnserialize(o);
-            //TODO test has serializableID
+            readWrite(o);
+            // TODO test has serializableID
         } catch (IOException e) {
-            throw new AssertionFailedError("class " + o.getClass()
-                    + " not serializable");
+            throw new AssertionFailedError("class " + o.getClass() + " not serializable");
         } catch (ClassNotFoundException e) {
             // should not happen
             e.printStackTrace();
             throw new AssertionFailedError("class " + o.getClass()
                     + " not serializable, this is strange");
         }
+    }
+
+    static Object readWrite(Object o) throws IOException, ClassNotFoundException {
+        ByteArrayOutputStream bout = new ByteArrayOutputStream(20000);
+        ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(bout));
+        out.writeObject(o);
+        out.close();
+        ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
+        ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(bin));
+        return in.readObject();
     }
 }

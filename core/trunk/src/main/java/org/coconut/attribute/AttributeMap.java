@@ -7,7 +7,7 @@ import java.util.Map;
 
 /**
  * A map specifically for the storage of Attribute->Object values. Attribute-maps are
- * often only used to hold a very small amount of entries (perhaps just one). And
+ * often only used to hold a very small amount of entries (perhaps just one). An
  * implementations of this interface might be memory-wise optimized to hold only a single
  * entry.
  * 

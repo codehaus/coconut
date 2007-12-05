@@ -38,7 +38,7 @@ public final class CollectionPredicates {
      * @return whether or not all of elements in the specified can be accepted by the
      *         specified predicate
      */
-    public static <E> boolean allTrue(Iterable<E> iterable, Predicate<? super E> predicate) {
+    public static <E> boolean isAllTrue(Iterable<E> iterable, Predicate<? super E> predicate) {
         if (iterable == null) {
             throw new NullPointerException("iterable is null");
         } else if (predicate == null) {
@@ -65,7 +65,7 @@ public final class CollectionPredicates {
      * @return whether or not any of elements in the specified can be accepted by the
      *         specified predicate
      */
-    public static <E> boolean anyTrue(Iterable<E> iterable, Predicate<? super E> predicate) {
+    public static <E> boolean isAnyTrue(Iterable<E> iterable, Predicate<? super E> predicate) {
         if (iterable == null) {
             throw new NullPointerException("iterable is null");
         } else if (predicate == null) {

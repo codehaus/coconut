@@ -5,6 +5,7 @@ package org.coconut.operations;
 
 import java.io.Serializable;
 
+import org.coconut.operations.Ops.LongPredicate;
 import org.coconut.operations.Ops.Predicate;
 
 /**
@@ -14,10 +15,20 @@ import org.coconut.operations.Ops.Predicate;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public final class LongPredicates {
+
+    /** A LongPredicate that always evaluates to <code>false</code>. */
+    public static final LongPredicate FALSE = new FalseLongPredicate();
+
+    /** A LongPredicate that always evaluates to <code>true</code>. */
+    public static final LongPredicate TRUE = new TrueLongPredicate();
+
     // /CLOVER:OFF
     /** Cannot instantiate. */
     private LongPredicates() {}
 
+    // /CLOVER:ON
+
+    // between, not
     /**
      * Returns a predicate that accepts any long that is equal to the value specified.
      * 
@@ -25,38 +36,37 @@ public final class LongPredicates {
      *            the value of the equals predicate
      * @return a predicate that accepts any long that is equal to the value specified
      */
-    public static EqualsToPredicate equalsTo(long equalsTo) {
-        return new EqualsToPredicate(equalsTo);
+    public static EqualsToLongPredicate equalsTo(long equalsTo) {
+        return new EqualsToLongPredicate(equalsTo);
     }
 
-    public static GreaterThenPredicate greaterThen(long greaterThen) {
-        return new GreaterThenPredicate(greaterThen);
+    public static GreaterThenLongPredicate greaterThen(long greaterThen) {
+        return new GreaterThenLongPredicate(greaterThen);
     }
 
-    public static GreaterThenOrEqualsPredicate greaterThenOrEquals(long greaterThenOrEquals) {
-        return new GreaterThenOrEqualsPredicate(greaterThenOrEquals);
+    public static GreaterThenOrEqualsLongPredicate greaterThenOrEquals(long greaterThenOrEquals) {
+        return new GreaterThenOrEqualsLongPredicate(greaterThenOrEquals);
     }
 
-    // /CLOVER:ON
-    public static LessThenPredicate lessThen(long lessThen) {
-        return new LessThenPredicate(lessThen);
+    public static LessThenLongPredicate lessThen(long lessThen) {
+        return new LessThenLongPredicate(lessThen);
     }
 
-    public static LessThenOrEqualsPredicate lessThenOrEquals(long lessThenOrEquals) {
-        return new LessThenOrEqualsPredicate(lessThenOrEquals);
+    public static LessThenOrEqualsLongPredicate lessThenOrEquals(long lessThenOrEquals) {
+        return new LessThenOrEqualsLongPredicate(lessThenOrEquals);
     }
 
     public static <T> Predicate<T> mapperPredicate(final Ops.MapperToLong<T> mapper,
             Ops.LongPredicate predicate) {
-        return new MapperPredicate<T>(mapper, predicate);
+        return new MapperToLongPredicate<T>(mapper, predicate);
     }
 
-    public static class EqualsToPredicate implements Ops.LongPredicate, Serializable {
+    public static class EqualsToLongPredicate implements Ops.LongPredicate, Serializable {
 
         /** The value to compare with. */
         private final long equalsTo;
 
-        public EqualsToPredicate(long equalsTo) {
+        public EqualsToLongPredicate(long equalsTo) {
             this.equalsTo = equalsTo;
         }
 
@@ -78,28 +88,11 @@ public final class LongPredicates {
         }
     }
 
-    public static class GreaterThenOrEqualsPredicate implements Ops.LongPredicate, Serializable {
-        /** The value to compare with. */
-        private final long greaterThenOrEquals;
-
-        public GreaterThenOrEqualsPredicate(long greaterThenOrEquals) {
-            this.greaterThenOrEquals = greaterThenOrEquals;
-        }
-
-        public boolean evaluate(long t) {
-            return greaterThenOrEquals <= t;
-        }
-
-        public long getGreaterThenOrEquals() {
-            return greaterThenOrEquals;
-        }
-    }
-
-    public static class GreaterThenPredicate implements Ops.LongPredicate, Serializable {
+    public static class GreaterThenLongPredicate implements Ops.LongPredicate, Serializable {
         /** The value to compare with. */
         private final long greaterThen;
 
-        public GreaterThenPredicate(long greaterThen) {
+        public GreaterThenLongPredicate(long greaterThen) {
             this.greaterThen = greaterThen;
         }
 
@@ -112,28 +105,28 @@ public final class LongPredicates {
         }
     }
 
-    public static class LessThenOrEqualsPredicate implements Ops.LongPredicate, Serializable {
+    public static class GreaterThenOrEqualsLongPredicate implements Ops.LongPredicate, Serializable {
         /** The value to compare with. */
-        private final long lessThenOrEquals;
+        private final long greaterThenOrEquals;
 
-        public LessThenOrEqualsPredicate(long lessThenOrEquals) {
-            this.lessThenOrEquals = lessThenOrEquals;
+        public GreaterThenOrEqualsLongPredicate(long greaterThenOrEquals) {
+            this.greaterThenOrEquals = greaterThenOrEquals;
         }
 
         public boolean evaluate(long t) {
-            return lessThenOrEquals >= t;
+            return greaterThenOrEquals <= t;
         }
 
-        public long getLessThenOrEquals() {
-            return lessThenOrEquals;
+        public long getGreaterThenOrEquals() {
+            return greaterThenOrEquals;
         }
     }
 
-    public static class LessThenPredicate implements Ops.LongPredicate, Serializable {
+    public static class LessThenLongPredicate implements Ops.LongPredicate, Serializable {
         /** The value to compare with. */
         private final long lessThen;
 
-        public LessThenPredicate(long lessThen) {
+        public LessThenLongPredicate(long lessThen) {
             this.lessThen = lessThen;
         }
 
@@ -146,20 +139,68 @@ public final class LongPredicates {
         }
     }
 
+    public static class LessThenOrEqualsLongPredicate implements Ops.LongPredicate, Serializable {
+        /** The value to compare with. */
+        private final long lessThenOrEquals;
+
+        public LessThenOrEqualsLongPredicate(long lessThenOrEquals) {
+            this.lessThenOrEquals = lessThenOrEquals;
+        }
+
+        public boolean evaluate(long t) {
+            return lessThenOrEquals >= t;
+        }
+
+        public long getLessThenOrEquals() {
+            return lessThenOrEquals;
+        }
+    }
+
+    /**
+     * A LongPredicate that always evaluates to <tt>false</tt>. Use {@link #FALSE} to get
+     * an instance of this LongPredicate.
+     * 
+     * @see TrueLongPredicate
+     */
+    final static class FalseLongPredicate implements LongPredicate, Serializable {
+
+        /** Default <code>serialVersionUID</code>. */
+        private static final long serialVersionUID = -3048464662394104180L;
+
+        /** Creates a new FalseLongPredicate. */
+        private FalseLongPredicate() {}
+
+        /** {@inheritDoc} */
+        public boolean evaluate(long value) {
+            return false;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString() {
+            return Boolean.FALSE.toString();
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return FALSE;
+        }
+    }
+
     /**
      */
-    final static class MapperPredicate<T> implements Predicate<T>, Serializable {
+    final static class MapperToLongPredicate<T> implements Predicate<T>, Serializable {
 
         /** serialVersionUID. */
         private static final long serialVersionUID = -6292758840373110577L;
 
-        /** The object to compare with. */
+        /** The mapper that maps the element being tested to a long. */
         private final Ops.MapperToLong<T> mapper;
 
         /** The predicate to test against. */
         private final Ops.LongPredicate predicate;
 
-        public MapperPredicate(final Ops.MapperToLong<T> mapper, Ops.LongPredicate predicate) {
+        public MapperToLongPredicate(final Ops.MapperToLong<T> mapper, Ops.LongPredicate predicate) {
             if (mapper == null) {
                 throw new NullPointerException("mapper is null");
             } else if (predicate == null) {
@@ -169,24 +210,17 @@ public final class LongPredicates {
             this.mapper = mapper;
         }
 
-        /**
-         * Accepts all elements that are {@link Object#equals equal} to the specified
-         * object.
-         * 
-         * @param element
-         *            the element to test against.
-         * @return <code>true</code> if the predicate accepts the element;
-         *         <code>false</code> otherwise.
-         */
+        /** {@inheritDoc} */
         public boolean evaluate(T element) {
             return predicate.evaluate(mapper.map(element));
         }
 
         /**
-         * Returns the mapper that will map the object before applying the predicate on
-         * it.
+         * Returns the mapper that will map the object to a long before applying the
+         * predicate on it.
          * 
-         * @return the mapper that will map the object before applying the predicate on it
+         * @return the mapper that will map the object to a long before applying the
+         *         predicate on it
          */
         public Ops.MapperToLong<T> getMapper() {
             return mapper;
@@ -208,4 +242,34 @@ public final class LongPredicates {
         }
     }
 
+    /**
+     * A LongPredicate that always evaluates to <tt>true</tt>. Use {@link #TRUE} to get
+     * an instance of this LongPredicate.
+     * 
+     * @see FalseLongPredicate
+     */
+    final static class TrueLongPredicate implements LongPredicate, Serializable {
+
+        /** Default <code>serialVersionUID</code>. */
+        private static final long serialVersionUID = 3258129137502925875L;
+
+        /** Creates a new TrueLongPredicate. */
+        private TrueLongPredicate() {}
+
+        /** {@inheritDoc} */
+        public boolean evaluate(long value) {
+            return true;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString() {
+            return Boolean.TRUE.toString();
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return TRUE;
+        }
+    }
 }

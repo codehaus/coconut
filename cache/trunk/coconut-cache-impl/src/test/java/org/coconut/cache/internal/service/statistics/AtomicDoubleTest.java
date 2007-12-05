@@ -213,6 +213,16 @@ public class AtomicDoubleTest extends TestCase {
     }
 
     /**
+     * intValue returns current value.
+     */
+    public void testIntValue() {
+        AtomicDouble ai = new AtomicDouble();
+        for (int i = -12; i < 6; ++i) {
+            ai.set(i);
+            assertEquals(i, ai.intValue());
+        }
+    }
+    /**
      * longValue returns current value.
      */
     public void testLongValue() {

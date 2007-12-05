@@ -31,18 +31,18 @@ public class CollectionPredicatesTest {
         Predicate<Number> p = (Predicate) Predicates.anyEquals(2, 3);
         Predicate<Number> p2 = (Predicate) Predicates.anyEquals(1, 2, 3, 4, 5);
         List<Integer> list = new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4));
-        assertFalse(CollectionPredicates.allTrue(list, p));
-        assertTrue(CollectionPredicates.allTrue(list, p2));
+        assertFalse(CollectionPredicates.isAllTrue(list, p));
+        assertTrue(CollectionPredicates.isAllTrue(list, p2));
     }
 
     @Test(expected = NullPointerException.class)
     public void allTrueNPE1() {
-        CollectionPredicates.allTrue(null, MockTestCase.mockDummy(Predicate.class));
+        CollectionPredicates.isAllTrue(null, MockTestCase.mockDummy(Predicate.class));
     }
 
     @Test(expected = NullPointerException.class)
     public void allTrueNPE2() {
-        CollectionPredicates.allTrue(new ArrayList(), null);
+        CollectionPredicates.isAllTrue(new ArrayList(), null);
     }
 
     @Test
@@ -50,18 +50,18 @@ public class CollectionPredicatesTest {
         Predicate<Number> p = (Predicate) Predicates.anyEquals(2, 3);
         Predicate<Number> p2 = (Predicate) Predicates.anyEquals(5, 6, 7, 8);
         List<Integer> list = new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4));
-        assertTrue(CollectionPredicates.anyTrue(list, p));
-        assertFalse(CollectionPredicates.anyTrue(list, p2));
+        assertTrue(CollectionPredicates.isAnyTrue(list, p));
+        assertFalse(CollectionPredicates.isAnyTrue(list, p2));
     }
 
     @Test(expected = NullPointerException.class)
     public void anyTrueNPE1() {
-        CollectionPredicates.anyTrue(null, MockTestCase.mockDummy(Predicate.class));
+        CollectionPredicates.isAnyTrue(null, MockTestCase.mockDummy(Predicate.class));
     }
 
     @Test(expected = NullPointerException.class)
     public void anyTrueNPE2() {
-        CollectionPredicates.anyTrue(new ArrayList(), null);
+        CollectionPredicates.isAnyTrue(new ArrayList(), null);
     }
 
     @Test

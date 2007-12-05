@@ -3,41 +3,61 @@
  */
 package org.coconut.operations;
 
+import static org.coconut.operations.Predicates.FALSE;
+import static org.coconut.operations.Predicates.TRUE;
+import static org.coconut.operations.Predicates.greaterThen;
+import static org.coconut.operations.Predicates.greaterThenOrEqual;
+import static org.coconut.operations.Predicates.lessThen;
+import static org.coconut.operations.Predicates.lessThenOrEqual;
+import static org.coconut.test.TestUtil.assertIsSerializable;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.coconut.operations.Ops.Predicate;
 import org.coconut.operations.Predicates.AllPredicate;
-import org.coconut.operations.Predicates.AndPredicate;
 import org.coconut.operations.Predicates.AnyPredicate;
+import org.coconut.operations.Predicates.GreaterThenOrEqualPredicate;
+import org.coconut.operations.Predicates.GreaterThenPredicate;
+import org.coconut.operations.Predicates.IsEqualsPredicate;
+import org.coconut.operations.Predicates.IsSamePredicate;
 import org.coconut.operations.Predicates.IsTypePredicate;
+import org.coconut.operations.Predicates.LessThenOrEqualPredicate;
+import org.coconut.operations.Predicates.LessThenPredicate;
 import org.coconut.test.MockTestCase;
 import org.coconut.test.TestUtil;
 import org.junit.Test;
 
 /**
+ * Tests {@link Predicates}.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id: PredicatesTest.java 501 2007-12-04 11:03:23Z kasper $
  */
 public class PredicatesTest {
-    
+
+    private final static Comparator<Dummy> COMP = new DummyComparator();
+
     static Predicate<? extends Number> P_EXTEND_NUMBER = null;
 
-    static Predicate<Long> P_LONG = Predicates.FALSE;
+    static Predicate<Long> P_LONG = FALSE;
 
-    static Predicate<Number> P_NUMBER = Predicates.FALSE;
-    
-    static Predicate<Object> P_OBJECT = Predicates.FALSE;
+    static Predicate<Number> P_NUMBER = FALSE;
 
-    static Predicate[] PREDICATES_WITH_NULL_ARRAY = { Predicates.TRUE, null, Predicates.TRUE };
+    static Predicate<Object> P_OBJECT = FALSE;
+
+    static Predicate[] PREDICATES_WITH_NULL_ARRAY = { TRUE, null, TRUE };
+
     static Iterable PREDICATES_WITH_NULL_ITERABLE = Arrays.asList(PREDICATES_WITH_NULL_ARRAY);
 
     static Predicate[] STRING_PREDICATE_ARRAY = { StringPredicates.startsWith("foo"),
@@ -45,7 +65,7 @@ public class PredicatesTest {
 
     static Iterable STRING_PREDICATE_ITERABLE = Arrays.asList(STRING_PREDICATE_ARRAY);
 
-    static Predicate[] TRUE_FALSE_TRUE_ARRAY = { Predicates.TRUE, Predicates.FALSE, Predicates.TRUE };
+    static Predicate[] TRUE_FALSE_TRUE_ARRAY = { TRUE, FALSE, TRUE };
 
     static Iterable TRUE_FALSE_TRUE_ITERABLE = Arrays.asList(TRUE_FALSE_TRUE_ARRAY);
 
@@ -54,10 +74,10 @@ public class PredicatesTest {
         AllPredicate<?> filter = (AllPredicate) Predicates.all(TRUE_FALSE_TRUE_ARRAY);
 
         // evaluate
-        assertTrue((Predicates.all(Predicates.TRUE)).evaluate(null));
-        assertFalse(Predicates.all(Predicates.FALSE).evaluate(null));
-        assertTrue(Predicates.all(Predicates.TRUE, Predicates.TRUE).evaluate(null));
-        assertFalse(Predicates.all(Predicates.TRUE, Predicates.FALSE).evaluate(null));
+        assertTrue((Predicates.all(TRUE)).evaluate(null));
+        assertFalse(Predicates.all(FALSE).evaluate(null));
+        assertTrue(Predicates.all(TRUE, TRUE).evaluate(null));
+        assertFalse(Predicates.all(TRUE, FALSE).evaluate(null));
         assertFalse(Predicates.all(STRING_PREDICATE_ITERABLE).evaluate("fobo"));
         assertFalse(Predicates.all(STRING_PREDICATE_ITERABLE).evaluate("foobo"));
         assertFalse(Predicates.all(STRING_PREDICATE_ITERABLE).evaluate("foboo"));
@@ -65,15 +85,15 @@ public class PredicatesTest {
 
         // getPredicates
         assertEquals(3, filter.getPredicates().size());
-        assertEquals(Predicates.TRUE, filter.getPredicates().get(0));
-        assertEquals(Predicates.FALSE, filter.getPredicates().get(1));
-        assertEquals(Predicates.TRUE, filter.getPredicates().get(2));
+        assertEquals(TRUE, filter.getPredicates().get(0));
+        assertEquals(FALSE, filter.getPredicates().get(1));
+        assertEquals(TRUE, filter.getPredicates().get(2));
 
         // iterable
         Iterator<?> i = filter.iterator();
-        assertSame(Predicates.TRUE, i.next());
-        assertSame(Predicates.FALSE, i.next());
-        assertSame(Predicates.TRUE, i.next());
+        assertSame(TRUE, i.next());
+        assertSame(FALSE, i.next());
+        assertSame(TRUE, i.next());
         assertFalse(i.hasNext());
 
         // Serializable
@@ -82,11 +102,10 @@ public class PredicatesTest {
         // toString, just check that they don't throw exceptions
         Predicates.all(TRUE_FALSE_TRUE_ARRAY).toString();
         Predicates.all(new Predicate[] {}).toString();
-        Predicates.all(new Predicate[] { Predicates.TRUE }).toString();
+        Predicates.all(new Predicate[] { TRUE }).toString();
 
         // shortcircuted evaluation
-        Predicates.all(Predicates.TRUE, Predicates.FALSE, MockTestCase.mockDummy(Predicate.class))
-                .evaluate(null);
+        Predicates.all(TRUE, FALSE, MockTestCase.mockDummy(Predicate.class)).evaluate(null);
     }
 
     @Test(expected = NullPointerException.class)
@@ -109,41 +128,44 @@ public class PredicatesTest {
         Predicates.all(PREDICATES_WITH_NULL_ITERABLE);
     }
 
-    /* Test and */
+    /**
+     * Tests {@link Predicates#and(Predicate, Predicate)}.
+     */
     @Test
     public void and() {
-        assertTrue(Predicates.and(Predicates.TRUE, Predicates.TRUE).evaluate(null));
-        assertFalse(Predicates.and(Predicates.TRUE, Predicates.FALSE).evaluate(null));
-        assertFalse(Predicates.and(Predicates.FALSE, Predicates.TRUE).evaluate(null));
-        assertFalse(Predicates.and(Predicates.FALSE, Predicates.FALSE).evaluate(null));
+        assertTrue(Predicates.and(TRUE, TRUE).evaluate(null));
+        assertFalse(Predicates.and(TRUE, FALSE).evaluate(null));
+        assertFalse(Predicates.and(FALSE, TRUE).evaluate(null));
+        assertFalse(Predicates.and(FALSE, FALSE).evaluate(null));
 
-        assertSame(((AndPredicate) Predicates.and(Predicates.FALSE, Predicates.TRUE))
-                .getLeftPredicate(), Predicates.FALSE);
-        assertSame(((AndPredicate) Predicates.and(Predicates.FALSE, Predicates.TRUE))
-                .getRightPredicate(), Predicates.TRUE);
-        assertEquals(((AndPredicate) Predicates.and(Predicates.FALSE, Predicates.TRUE))
-                .getPredicates(), Arrays.asList(Predicates.FALSE, Predicates.TRUE));
-        Predicates.and(Predicates.FALSE, Predicates.FALSE).toString(); // no exception
+        Predicates.AndPredicate p = new Predicates.AndPredicate(FALSE, TRUE);
+        assertSame(p.getLeftPredicate(), FALSE);
+        assertSame(p.getRightPredicate(), TRUE);
+        p.toString(); // no exception
+        assertIsSerializable(p);
 
-        //serializable
-        TestUtil.assertIsSerializable(Predicates.and(Predicates.TRUE, Predicates.TRUE));
-        
         // shortcircuted evaluation
-        Predicates.and(Predicates.FALSE, MockTestCase.mockDummy(Predicate.class)).evaluate(null);
-
-        // generic test
-        Predicate<Number> pn = Predicates.TRUE;
-        Predicate<Integer> ok = Predicates.and(pn, pn);
+        Predicates.and(FALSE, MockTestCase.mockDummy(Predicate.class)).evaluate(null);
     }
 
+    /**
+     * Tests that {@link Predicates#and(Predicate, Predicate)} throws a
+     * {@link NullPointerException} when invoked with a left side <code>null</code>
+     * argument.
+     */
     @Test(expected = NullPointerException.class)
     public void andNPE() {
-        Predicates.and(null, Predicates.TRUE);
+        Predicates.and(null, TRUE);
     }
 
+    /**
+     * Tests that {@link Predicates#and(Predicate, Predicate)} throws a
+     * {@link NullPointerException} when invoked with a right side <code>null</code>
+     * argument.
+     */
     @Test(expected = NullPointerException.class)
     public void andNPE1() {
-        Predicates.and(Predicates.TRUE, null);
+        Predicates.and(TRUE, null);
     }
 
     @Test
@@ -151,11 +173,11 @@ public class PredicatesTest {
         AnyPredicate<?> filter = (AnyPredicate) Predicates.any(TRUE_FALSE_TRUE_ARRAY);
 
         // evaluate
-        assertTrue((Predicates.any(Predicates.TRUE)).evaluate(null));
-        assertFalse(Predicates.any(Predicates.FALSE).evaluate(null));
-        assertTrue(Predicates.any(Predicates.TRUE, Predicates.TRUE).evaluate(null));
-        assertTrue(Predicates.any(Predicates.TRUE, Predicates.FALSE).evaluate(null));
-        assertFalse(Predicates.any(Predicates.FALSE, Predicates.FALSE).evaluate(null));
+        assertTrue((Predicates.any(TRUE)).evaluate(null));
+        assertFalse(Predicates.any(FALSE).evaluate(null));
+        assertTrue(Predicates.any(TRUE, TRUE).evaluate(null));
+        assertTrue(Predicates.any(TRUE, FALSE).evaluate(null));
+        assertFalse(Predicates.any(FALSE, FALSE).evaluate(null));
         assertFalse(Predicates.any(STRING_PREDICATE_ITERABLE).evaluate("fobo"));
         assertTrue(Predicates.any(STRING_PREDICATE_ITERABLE).evaluate("foobo"));
         assertTrue(Predicates.any(STRING_PREDICATE_ITERABLE).evaluate("foboo"));
@@ -163,15 +185,15 @@ public class PredicatesTest {
 
         // getPredicates
         assertEquals(3, filter.getPredicates().size());
-        assertEquals(Predicates.TRUE, filter.getPredicates().get(0));
-        assertEquals(Predicates.FALSE, filter.getPredicates().get(1));
-        assertEquals(Predicates.TRUE, filter.getPredicates().get(2));
+        assertEquals(TRUE, filter.getPredicates().get(0));
+        assertEquals(FALSE, filter.getPredicates().get(1));
+        assertEquals(TRUE, filter.getPredicates().get(2));
 
         // iterable
         Iterator<?> i = filter.iterator();
-        assertSame(Predicates.TRUE, i.next());
-        assertSame(Predicates.FALSE, i.next());
-        assertSame(Predicates.TRUE, i.next());
+        assertSame(TRUE, i.next());
+        assertSame(FALSE, i.next());
+        assertSame(TRUE, i.next());
         assertFalse(i.hasNext());
 
         // Serializable
@@ -180,11 +202,10 @@ public class PredicatesTest {
         // toString, just check that they don't throw exceptions
         Predicates.any(TRUE_FALSE_TRUE_ARRAY).toString();
         Predicates.any(new Predicate[] {}).toString();
-        Predicates.any(new Predicate[] { Predicates.TRUE }).toString();
+        Predicates.any(new Predicate[] { TRUE }).toString();
 
         // shortcircuted evaluation
-        Predicates.any(Predicates.FALSE, Predicates.TRUE, MockTestCase.mockDummy(Predicate.class))
-                .evaluate(null);
+        Predicates.any(FALSE, TRUE, MockTestCase.mockDummy(Predicate.class)).evaluate(null);
     }
 
     @Test
@@ -192,29 +213,23 @@ public class PredicatesTest {
         Predicate<?> filter = Predicates.anyEquals(TRUE_FALSE_TRUE_ARRAY);
 
         // evaluate
-        assertTrue((Predicates.anyEquals(Predicates.TRUE)).evaluate(Predicates.TRUE));
-        assertFalse(Predicates.anyEquals(Predicates.TRUE).evaluate(Predicates.FALSE));
-        assertTrue(Predicates.anyEquals(Predicates.TRUE, Predicates.FALSE)
-                .evaluate(Predicates.TRUE));
-        assertTrue(Predicates.anyEquals(Predicates.TRUE, Predicates.FALSE).evaluate(
-                Predicates.FALSE));
-        assertFalse(Predicates.anyEquals(Predicates.FALSE, Predicates.FALSE).evaluate(
-                Predicates.TRUE));
-        assertTrue(Predicates.anyEquals(Arrays.asList(Predicates.TRUE, Predicates.FALSE)).evaluate(
-                Predicates.FALSE));
-        assertFalse(Predicates.anyEquals(Arrays.asList(Predicates.FALSE, Predicates.FALSE))
-                .evaluate(Predicates.TRUE));
+        assertTrue((Predicates.anyEquals(TRUE)).evaluate(TRUE));
+        assertFalse(Predicates.anyEquals(TRUE).evaluate(FALSE));
+        assertTrue(Predicates.anyEquals(TRUE, FALSE).evaluate(TRUE));
+        assertTrue(Predicates.anyEquals(TRUE, FALSE).evaluate(FALSE));
+        assertFalse(Predicates.anyEquals(FALSE, FALSE).evaluate(TRUE));
+        assertTrue(Predicates.anyEquals(Arrays.asList(TRUE, FALSE)).evaluate(FALSE));
+        assertFalse(Predicates.anyEquals(Arrays.asList(FALSE, FALSE)).evaluate(TRUE));
         // Serializable
         TestUtil.assertIsSerializable(filter);
 
         // toString, just check that they don't throw exceptions
         Predicates.anyEquals(TRUE_FALSE_TRUE_ARRAY).toString();
         Predicates.anyEquals(new Predicate[] {}).toString();
-        Predicates.anyEquals(new Predicate[] { Predicates.TRUE }).toString();
+        Predicates.anyEquals(new Predicate[] { TRUE }).toString();
 
         // shortcircuted evaluation
-        Predicates.anyEquals(Predicates.FALSE, Predicates.TRUE,
-                MockTestCase.mockDummy(Predicate.class)).evaluate(Predicates.TRUE);
+        Predicates.anyEquals(FALSE, TRUE, MockTestCase.mockDummy(Predicate.class)).evaluate(TRUE);
     }
 
     @Test(expected = NullPointerException.class)
@@ -273,7 +288,7 @@ public class PredicatesTest {
         assertTrue(p.evaluate(Byte.valueOf((byte) 3)));
         assertFalse(p.evaluate(Boolean.FALSE));
         assertFalse(p.evaluate(new Object()));
-        
+
         // Serializable
         TestUtil.assertIsSerializable(p);
 
@@ -305,12 +320,183 @@ public class PredicatesTest {
     }
 
     @Test
-    public void falseFilter() {
-        assertFalse(Predicates.FALSE.evaluate(null));
-        assertFalse(Predicates.FALSE.evaluate(this));
-        assertSame(Predicates.FALSE, Predicates.falsePredicate());
-        Predicates.FALSE.toString(); // does not fail
-        TestUtil.assertIsSerializable(Predicates.falsePredicate());
+    public void between() {
+        Predicate b = Predicates.between(2, 4);
+        assertFalse(b.evaluate(1));
+        assertTrue(b.evaluate(2));
+        assertTrue(b.evaluate(3));
+        assertTrue(b.evaluate(4));
+        assertFalse(b.evaluate(5));
+        TestUtil.assertIsSerializable(b);
+    }
+
+    @Test
+    public void betweenComparator() {
+        Predicate b = Predicates.between(Dummy.D2, Dummy.D4, COMP);
+        assertFalse(b.evaluate(Dummy.D1));
+        assertTrue(b.evaluate(Dummy.D2));
+        assertTrue(b.evaluate(Dummy.D3));
+        assertTrue(b.evaluate(Dummy.D4));
+        assertFalse(b.evaluate(Dummy.D5));
+        TestUtil.assertIsSerializable(b);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void betweenNPE() {
+        Predicates.between(null, 2);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void betweenNPE1() {
+        Predicates.between(1, null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void betweenNPE2() {
+        Predicates.between(null, 2, COMP);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void betweenNPE3() {
+        Predicates.between(1, null, COMP);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void betweenNPE4() {
+        Predicates.between(1, 2, null);
+    }
+
+    /**
+     * Tests {@link Predicates#FALSE}.
+     */
+    @Test
+    public void falsePredicate() {
+        assertFalse(FALSE.evaluate(null));
+        assertFalse(FALSE.evaluate(this));
+        assertSame(FALSE, Predicates.falsePredicate());
+        FALSE.toString(); // does not fail
+        assertIsSerializable(Predicates.falsePredicate());
+        assertSame(FALSE, TestUtil.serializeAndUnserialize(FALSE));
+    }
+
+    /* Test greater then */
+    @Test
+    public void greaterThenComparable() {
+        GreaterThenPredicate<Integer> f = (GreaterThenPredicate) greaterThen(5);
+        assertEquals(5, f.getObject().intValue());
+        assertNull(f.getComparator());
+        TestUtil.assertIsSerializable(f);
+        assertFalse(f.evaluate(4));
+        assertFalse(f.evaluate(5));
+        assertTrue(f.evaluate(6));
+
+        f.toString(); // no exceptions
+    }
+
+    @Test
+    public void greaterThenComperator() {
+        GreaterThenPredicate<Dummy> f = (GreaterThenPredicate) greaterThen(Dummy.D2, COMP);
+        assertEquals(Dummy.D2, f.getObject());
+        assertEquals(COMP, f.getComparator());
+        TestUtil.assertIsSerializable(f);
+        assertFalse(f.evaluate(Dummy.D1));
+        assertFalse(f.evaluate(Dummy.D2));
+        assertTrue(f.evaluate(Dummy.D3));
+
+        f.toString(); // no exceptions
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void greaterThenNotComparableIAE() throws Exception {
+        greaterThen(new Object());
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void greaterThenNPE() {
+        greaterThen(null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void greaterThenNPE1() {
+        greaterThen(null, COMP);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void greaterThenNPE2() {
+        greaterThen(2, null);
+    };
+
+    /* Test greaterTheOrEqual */
+    @Test
+    public void greaterThenOrEqualComparable() {
+        GreaterThenOrEqualPredicate<Integer> f = (GreaterThenOrEqualPredicate) greaterThenOrEqual(5);
+        assertEquals(5, f.getObject().intValue());
+        assertNull(f.getComparator());
+        TestUtil.assertIsSerializable(f);
+        assertFalse(f.evaluate(4));
+        assertTrue(f.evaluate(5));
+        assertTrue(f.evaluate(6));
+
+        f.toString(); // no exceptions
+    }
+
+    @Test
+    public void greaterThenOrEqualComparator() {
+        GreaterThenOrEqualPredicate<Dummy> f = (GreaterThenOrEqualPredicate) greaterThenOrEqual(
+                Dummy.D2, COMP);
+        assertEquals(Dummy.D2, f.getObject());
+        assertEquals(COMP, f.getComparator());
+        TestUtil.assertIsSerializable(f);
+        assertFalse(f.evaluate(Dummy.D1));
+        assertTrue(f.evaluate(Dummy.D2));
+        assertTrue(f.evaluate(Dummy.D3));
+
+        f.toString(); // no exceptions
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void greaterThenOrEqualNotComparableIAE() throws Exception {
+        greaterThenOrEqual(new Object());
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void greaterThenOrEqualNPE() {
+        greaterThenOrEqual(null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void greaterThenOrEqualNPE1() {
+        greaterThenOrEqual(null, COMP);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void greaterThenOrEqualNPE2() {
+        greaterThenOrEqual(2, null);
+    }
+
+    /**
+     * Tests {@link Predicates#isEquals(Object)}.
+     */
+    @Test
+    public void isEquals() {
+        assertTrue(Predicates.isEquals("1").evaluate("1"));
+        assertTrue(Predicates.isEquals(new HashMap()).evaluate(new HashMap()));
+        assertFalse(Predicates.isEquals("1").evaluate("2"));
+        assertFalse(Predicates.isEquals("1").evaluate(null));
+
+        IsEqualsPredicate p = new IsEqualsPredicate("1");
+        assertEquals("1", p.getElement());
+        p.toString(); // check no exception
+        assertIsSerializable(p);
+    }
+
+    /**
+     * Tests that {@link Predicates#isEquals(Object)} throws a
+     * {@link NullPointerException} when invoked with a <code>null</code> element.
+     */
+    @Test(expected = NullPointerException.class)
+    public void isEqualsNPE() {
+        Predicates.isEquals(null);
     }
 
     @Test
@@ -321,6 +507,33 @@ public class PredicatesTest {
         assertSame(Predicates.IS_NOT_NULL, Predicates.isNotNull());
         Predicates.IS_NOT_NULL.toString();// no fail
         TestUtil.assertIsSerializable(Predicates.IS_NOT_NULL);
+    }
+
+    /**
+     * Tests {@link Predicates#isSame(Object)}.
+     */
+    @Test
+    public void isSame() {
+        Object o = new Object();
+        assertTrue(Predicates.isSame(o).evaluate(o));
+        assertFalse(Predicates.isSame(o).evaluate(new Object()));
+        assertFalse(Predicates.isSame(o).evaluate(null));
+        assertEquals(new HashMap(), new HashMap());
+        assertFalse(Predicates.isSame(new HashMap()).evaluate(new HashMap()));
+
+        IsSamePredicate p = new IsSamePredicate("1");
+        assertEquals("1", p.getElement());
+        p.toString(); // check no exception
+        assertIsSerializable(p);
+    }
+
+    /**
+     * Tests that {@link Predicates#isSame(Object)} throws a {@link NullPointerException}
+     * when invoked with a <code>null</code> element.
+     */
+    @Test(expected = NullPointerException.class)
+    public void isSameNPE() {
+        Predicates.isSame(null);
     }
 
     @Test
@@ -338,6 +551,102 @@ public class PredicatesTest {
         Predicates.isType(null);
     }
 
+    /* Test lessThen */
+    @Test
+    public void lessThenComparable() {
+        LessThenPredicate<Integer> f = (LessThenPredicate) lessThen(5);
+        assertEquals(5, f.getObject().intValue());
+        assertNull(f.getComparator());
+        TestUtil.assertIsSerializable(f);
+        assertTrue(f.evaluate(4));
+        assertFalse(f.evaluate(5));
+        assertFalse(f.evaluate(6));
+
+        f.toString(); // no exceptions
+    }
+
+    @Test
+    public void lessThenComparator() {
+
+        LessThenPredicate<Dummy> f = (LessThenPredicate) lessThen(Dummy.D2, COMP);
+        assertEquals(Dummy.D2, f.getObject());
+        assertEquals(COMP, f.getComparator());
+        TestUtil.assertIsSerializable(f);
+        assertTrue(f.evaluate(Dummy.D1));
+        assertFalse(f.evaluate(Dummy.D2));
+        assertFalse(f.evaluate(Dummy.D3));
+
+        f.toString(); // no exceptions
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void lessThenNotComparableIAE() throws Exception {
+        lessThen(new Object());
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void lessThenNPE() {
+        lessThen(null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void lessThenNPE1() {
+        lessThen(null, COMP);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void lessThenNPE2() {
+        lessThen(2, null);
+    }
+
+    /* Test lessThenOrEqual */
+    @Test
+    public void lessThenOrEqualComparable() {
+        LessThenOrEqualPredicate<Integer> f = (LessThenOrEqualPredicate) lessThenOrEqual(5);
+        assertEquals(5, f.getObject().intValue());
+        assertNull(f.getComparator());
+        TestUtil.assertIsSerializable(f);
+        assertTrue(f.evaluate(4));
+        assertTrue(f.evaluate(5));
+        assertFalse(f.evaluate(6));
+
+        f.toString(); // no exceptions
+    }
+
+    @Test
+    public void lessThenOrEqualComparator() {
+        LessThenOrEqualPredicate<Dummy> f = (LessThenOrEqualPredicate) lessThenOrEqual(Dummy.D2,
+                COMP);
+        assertEquals(Dummy.D2, f.getObject());
+        assertEquals(COMP, f.getComparator());
+        TestUtil.assertIsSerializable(f);
+        assertTrue(f.evaluate(Dummy.D1));
+        assertTrue(f.evaluate(Dummy.D2));
+        assertFalse(f.evaluate(Dummy.D3));
+
+        f.toString(); // no exceptions
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void lessThenOrEqualNotComparable() throws Exception {
+        lessThenOrEqual(new Object());
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void lessThenOrEqualNPE() {
+        lessThenOrEqual(null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void lessThenOrEqualNPE1() {
+        lessThenOrEqual(null, COMP);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void lessThenOrEqualNPE2() {
+        lessThenOrEqual(2, null);
+    }
+
     @Test
     public void notNullAnd() {
         Predicate<Integer> p = Predicates.notNullAnd(Predicates.anyEquals(1, 2));
@@ -349,84 +658,132 @@ public class PredicatesTest {
 
     @Test(expected = NullPointerException.class)
     public void notNullAndNPE() {
-       Predicates.notNullAnd(null);
+        Predicates.notNullAnd(null);
+    }
+
+    /**
+     * Tests {@link Predicates#or(Predicate, Predicate)}.
+     */
+    @Test
+    public void or() {
+        assertTrue(Predicates.or(TRUE, TRUE).evaluate(null));
+        assertTrue(Predicates.or(TRUE, FALSE).evaluate(null));
+        assertTrue(Predicates.or(FALSE, TRUE).evaluate(null));
+        assertFalse(Predicates.or(FALSE, FALSE).evaluate(null));
+
+        Predicates.OrPredicate p = new Predicates.OrPredicate(FALSE, TRUE);
+        assertSame(p.getLeftPredicate(), FALSE);
+        assertSame(p.getRightPredicate(), TRUE);
+        p.toString(); // no exception
+        assertIsSerializable(p);
+
+        // shortcircuted evaluation
+        Predicates.or(TRUE, MockTestCase.mockDummy(Predicate.class)).evaluate(null);
+    }
+
+    /**
+     * Tests that {@link Predicates#or(Predicate, Predicate)} throws a
+     * {@link NullPointerException} when invoked with a left side <code>null</code>
+     * argument.
+     */
+    @Test(expected = NullPointerException.class)
+    public void orNPE() {
+        Predicates.or(null, TRUE);
+    }
+
+    /**
+     * Tests that {@link Predicates#or(Predicate, Predicate)} throws a
+     * {@link NullPointerException} when invoked with a right side <code>null</code>
+     * argument.
+     */
+    @Test(expected = NullPointerException.class)
+    public void orNPE1() {
+        Predicates.or(TRUE, null);
     }
 
     /* Test not */
     @Test(expected = NullPointerException.class)
     public void testNot() {
-        assertFalse(Predicates.not(Predicates.TRUE).evaluate(null));
-        assertTrue(Predicates.not(Predicates.FALSE).evaluate(null));
-        assertEquals(((Predicates.NotPredicate) Predicates.not(Predicates.FALSE)).getPredicate(),
-                Predicates.FALSE);
-        assertEquals(((Predicates.NotPredicate) Predicates.not(Predicates.FALSE)).getPredicates(),
-                Collections.singletonList(Predicates.FALSE));
-        Predicates.not(Predicates.TRUE).toString(); // check no exception
+        assertFalse(Predicates.not(TRUE).evaluate(null));
+        assertTrue(Predicates.not(FALSE).evaluate(null));
+        assertEquals(((Predicates.NotPredicate) Predicates.not(FALSE)).getPredicate(), FALSE);
+        Predicates.not(TRUE).toString(); // check no exception
 
         Predicates.not(null);
     }
 
-    /* Test or */
+    /**
+     * Tests {@link Predicates#TRUE}.
+     */
     @Test
-    public void testOr() {
-        assertTrue(Predicates.or(Predicates.TRUE, Predicates.TRUE).evaluate(null));
-        assertTrue(Predicates.or(Predicates.TRUE, Predicates.FALSE).evaluate(null));
-        assertTrue(Predicates.or(Predicates.FALSE, Predicates.TRUE).evaluate(null));
-        assertFalse(Predicates.or(Predicates.FALSE, Predicates.FALSE).evaluate(null));
-        assertSame(((Predicates.OrPredicate) Predicates.or(Predicates.FALSE, Predicates.TRUE))
-                .getLeftPredicate(), Predicates.FALSE);
-        assertSame(((Predicates.OrPredicate) Predicates.or(Predicates.FALSE, Predicates.TRUE))
-                .getRightPredicate(), Predicates.TRUE);
-        assertEquals(((Predicates.OrPredicate) Predicates.or(Predicates.FALSE, Predicates.TRUE))
-                .getPredicates(), Arrays.asList(Predicates.FALSE, Predicates.TRUE));
-        Predicates.or(Predicates.FALSE, Predicates.FALSE).toString(); // check no
-        // exception
+    public void truePredicate() {
+        assertTrue(TRUE.evaluate(null));
+        assertTrue(TRUE.evaluate(this));
+        assertSame(TRUE, Predicates.truePredicate());
+        TRUE.toString(); // does not fail
+        assertIsSerializable(Predicates.truePredicate());
+        assertSame(TRUE, TestUtil.serializeAndUnserialize(TRUE));
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testOrNullLeft() {
-        Predicates.or(null, Predicates.TRUE);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testOrNullRight() {
-        Predicates.or(Predicates.TRUE, null);
-    }
-
+    /**
+     * Tests {@link Predicates#xor(Predicate, Predicate)}.
+     */
     @Test
-    public void testTrueFilter() {
-        assertTrue(Predicates.TRUE.evaluate(null));
-        assertTrue(Predicates.TRUE.evaluate(this));
-        assertSame(Predicates.TRUE, Predicates.truePredicate());
-        Predicates.TRUE.toString(); // does not fail
+    public void xor() {
+        assertFalse(Predicates.xor(TRUE, TRUE).evaluate(null));
+        assertTrue(Predicates.xor(TRUE, FALSE).evaluate(null));
+        assertTrue(Predicates.xor(FALSE, TRUE).evaluate(null));
+        assertFalse(Predicates.xor(FALSE, FALSE).evaluate(null));
+
+        Predicates.XorPredicate p = new Predicates.XorPredicate(FALSE, TRUE);
+        assertSame(p.getLeftPredicate(), FALSE);
+        assertSame(p.getRightPredicate(), TRUE);
+        p.toString(); // no exception
+        assertIsSerializable(p);
     }
 
-    /* Test xor */
-    @Test
-    public void testXor() {
-        assertFalse(Predicates.xor(Predicates.TRUE, Predicates.TRUE).evaluate(null));
-        assertTrue(Predicates.xor(Predicates.TRUE, Predicates.FALSE).evaluate(null));
-        assertTrue(Predicates.xor(Predicates.FALSE, Predicates.TRUE).evaluate(null));
-        assertFalse(Predicates.xor(Predicates.FALSE, Predicates.FALSE).evaluate(null));
-        assertSame(((Predicates.XorPredicate) Predicates.xor(Predicates.FALSE, Predicates.TRUE))
-                .getLeftPredicate(), Predicates.FALSE);
-        assertSame(((Predicates.XorPredicate) Predicates.xor(Predicates.FALSE, Predicates.TRUE))
-                .getRightPredicate(), Predicates.TRUE);
-        assertSame(((Predicates.XorPredicate) Predicates.xor(Predicates.FALSE, Predicates.TRUE))
-                .getPredicates().get(0), Predicates.FALSE);
-        assertSame(((Predicates.XorPredicate) Predicates.xor(Predicates.FALSE, Predicates.TRUE))
-                .getPredicates().get(1), Predicates.TRUE);
-        Predicates.xor(Predicates.FALSE, Predicates.FALSE).toString(); // check no
-        // exception
-    }
-
+    /**
+     * Tests that {@link Predicates#xor(Predicate, Predicate)} throws a
+     * {@link NullPointerException} when invoked with a left side <code>null</code>
+     * argument.
+     */
     @Test(expected = NullPointerException.class)
-    public void testXorNullLeft() {
-        Predicates.xor(null, Predicates.TRUE);
+    public void xorNPE() {
+        Predicates.xor(null, TRUE);
     }
 
+    /**
+     * Tests that {@link Predicates#xor(Predicate, Predicate)} throws a
+     * {@link NullPointerException} when invoked with a right side <code>null</code>
+     * argument.
+     */
     @Test(expected = NullPointerException.class)
-    public void testXorNullRight() {
-        Predicates.xor(Predicates.TRUE, null);
+    public void xorNPE1() {
+        Predicates.xor(TRUE, null);
     }
+
+    static final class Dummy implements Serializable {
+        static final Dummy D1 = new Dummy(1);
+
+        static final Dummy D2 = new Dummy(2);
+
+        static final Dummy D3 = new Dummy(3);
+
+        static final Dummy D4 = new Dummy(4);
+
+        static final Dummy D5 = new Dummy(5);
+
+        final int i;
+
+        private Dummy(int i) {
+            this.i = i;
+        }
+    }
+
+    static final class DummyComparator implements Comparator<Dummy>, Serializable {
+        public int compare(Dummy o1, Dummy o2) {
+            return (o1.i < o2.i ? -1 : (o1.i == o2.i ? 0 : 1));
+        }
+    }
+
 }

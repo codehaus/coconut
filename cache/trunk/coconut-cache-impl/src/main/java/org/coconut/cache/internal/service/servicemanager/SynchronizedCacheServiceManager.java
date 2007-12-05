@@ -232,4 +232,10 @@ public class SynchronizedCacheServiceManager extends AbstractPicoBasedCacheServi
     void setRunState(RunState state) {
         this.status = state;
     }
+    /*
+     * Hmm, we might have a service that throws an exception when shutdown is called, after having
+     * submitted a Runnable that should be used to asynchronously shutdown the service. 
+     * If this also fails, we will have two exceptions for one service....
+     *   
+     * */
 }

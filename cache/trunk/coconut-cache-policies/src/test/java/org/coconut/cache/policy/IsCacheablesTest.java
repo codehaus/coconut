@@ -29,7 +29,7 @@ public class IsCacheablesTest {
     public void fromAttributeMapPredicate() {
         AttributeMap nono = MockTestCase.mockDummy(AttributeMap.class);
         IsCacheable ic = IsCacheables.fromAttributeMapPredicate(Predicates
-                .same(AttributeMaps.EMPTY_MAP));
+                .isSame(AttributeMaps.EMPTY_MAP));
         assertTrue(ic.isCacheable(0, 123, AttributeMaps.EMPTY_MAP));
         assertFalse(ic.isCacheable(0, 123, nono));
         TestUtil.assertIsSerializable(ic);

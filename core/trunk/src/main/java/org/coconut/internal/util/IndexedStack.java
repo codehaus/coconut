@@ -11,7 +11,7 @@ import java.util.List;
 import net.jcip.annotations.NotThreadSafe;
 
 /**
- * A PolicyStack.
+ * A Stack.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
