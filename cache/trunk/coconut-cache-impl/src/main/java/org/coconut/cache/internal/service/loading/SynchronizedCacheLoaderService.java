@@ -78,7 +78,7 @@ public class SynchronizedCacheLoaderService<K, V> extends AbstractCacheLoadingSe
         FutureTask<AbstractCacheEntry<K, V>> future = futures.get(key);
         if (future == null) {
             AttributeMap map = attributeFactory.createMap(attributes);
-            Callable<AbstractCacheEntry<K, V>> r = LoadingUtils.loadValue(this, key, map);
+            Callable<AbstractCacheEntry<K, V>> r = LoadingUtils.createLoadCallable(this, key, map);
             FutureTask<AbstractCacheEntry<K, V>> newFuture = new FutureTask<AbstractCacheEntry<K, V>>(
                     r);
             future = futures.putIfAbsent(key, newFuture);
@@ -91,7 +91,7 @@ public class SynchronizedCacheLoaderService<K, V> extends AbstractCacheLoadingSe
 
     /** {@inheritDoc} */
     @Override
-    AbstractCacheEntry<K, V> loadAndAddToCache(K key, AttributeMap attributes, boolean isSynchronous) {
+    public AbstractCacheEntry<K, V> loadAndAddToCache(K key, AttributeMap attributes, boolean isSynchronous) {
         try {
             return super.loadAndAddToCache(key, attributes, isSynchronous);
         } finally {

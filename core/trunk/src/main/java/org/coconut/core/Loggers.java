@@ -5,6 +5,7 @@
 package org.coconut.core;
 
 import java.io.PrintStream;
+import java.io.Serializable;
 
 /**
  * This class is used for creating {@link Logger} wrappers from popular logging frameworks
@@ -17,6 +18,10 @@ import java.io.PrintStream;
  * @version $Id$
  */
 public final class Loggers {
+
+    /** A logger that ignores all input. */
+    public static final Logger NULL_LOGGER = new NullLogger();
+
     // /CLOVER:OFF
     /** Cannot instantiate. */
     private Loggers() {}
@@ -38,15 +43,6 @@ public final class Loggers {
     }
 
     /**
-     * Creates a new Logger that ignores any input.
-     * 
-     * @return a logger that ignores any input.
-     */
-    public static Logger nullLog() {
-        return new SimpleLogger(Logger.Level.Off.getLevel());
-    }
-
-    /**
      * Creates a new Logger that ignores any input below the specified level. Any logging
      * messages on this level or above it, will be logged to the specified printstream.
      * 
@@ -54,12 +50,12 @@ public final class Loggers {
      *            the maximum log level to log
      * @param ps
      *            the printstream to output to
-     * @return a printstream logger
+     * @return the newly created logger
      * @throws NullPointerException
      *             if the specified PrintStream is <code>null</code>
      */
     public static Logger printStreamLogger(Logger.Level level, PrintStream ps) {
-        return new SimpleLogger(level.getLevel(), ps);
+        return new PrintStreamLogger(level.getLevel(), ps);
     }
 
     /**
@@ -68,10 +64,10 @@ public final class Loggers {
      * 
      * @param level
      *            the maximum log level to log
-     * @return a system.err logger
+     * @return the newly created logger
      */
     public static Logger systemErrLogger(Logger.Level level) {
-        return new SimpleLogger(level.getLevel(), System.err);
+        return new SystemErrLogger(level);
     }
 
     /**
@@ -80,10 +76,10 @@ public final class Loggers {
      * 
      * @param level
      *            the maximum log level to log
-     * @return a system.out logger
+     * @return the newly created logger
      */
     public static Logger systemOutLogger(Logger.Level level) {
-        return new SimpleLogger(level.getLevel(), System.out);
+        return new SystemOutLogger(level);
     }
 
     /**
@@ -334,6 +330,11 @@ public final class Loggers {
         }
 
         /** {@inheritDoc} */
+        public void log(Logger.Level l, String message) {
+            log(l, message, null);
+        }
+
+        /** {@inheritDoc} */
         public void trace(String message) {
             log(Level.Trace, message);
         }
@@ -571,25 +572,42 @@ public final class Loggers {
     }
 
     /**
+     * A Logger that ignores all input.
+     */
+    final static class NullLogger extends AbstractLogger implements Serializable {
+        /** {@inheritDoc} */
+        @Override
+        public String getName() {
+            return "null-logger";
+        }
+
+        /** {@inheritDoc} */
+        public boolean isEnabled(Level level) {
+            return false;
+        }
+
+        /** {@inheritDoc} */
+        public void log(Level level, String message) {}
+
+        /** {@inheritDoc} */
+        public void log(Level level, String message, Throwable cause) {}
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return NULL_LOGGER;
+        }
+
+    }
+
+    /**
      * A simple logger that prints logging information to a PrintStream.
      */
-    final static class SimpleLogger extends AbstractLogger {
+    final static class PrintStreamLogger extends AbstractLogger {
         /** The level to log at. */
         private final int level;
 
         /** The PrintStream to write to. */
         private final PrintStream stream;
-
-        /**
-         * Creates a new SimpleLogger, only used for the {@link Loggers#nullLog()} method.
-         * 
-         * @param level
-         *            the level to log at
-         */
-        SimpleLogger(int level) {
-            this.level = level;
-            this.stream = null;
-        }
 
         /**
          * Creates a new SimpleLogger that logs to the specified print stream at the
@@ -600,7 +618,7 @@ public final class Loggers {
          * @param stream
          *            the stream to log to
          */
-        SimpleLogger(int level, PrintStream stream) {
+        PrintStreamLogger(int level, PrintStream stream) {
             if (stream == null) {
                 throw new NullPointerException("stream is null");
             }
@@ -611,7 +629,7 @@ public final class Loggers {
         /** {@inheritDoc} */
         @Override
         public String getName() {
-            return "simple";
+            return "simple-logger";
         }
 
         /** {@inheritDoc} */
@@ -620,16 +638,87 @@ public final class Loggers {
         }
 
         /** {@inheritDoc} */
-        public void log(Logger.Level l, String message) {
-            log(l, message, null);
-        }
-
-        /** {@inheritDoc} */
         public void log(Logger.Level l, String message, Throwable cause) {
-            if (stream != null && level <= l.getLevel()) {
+            if (level <= l.getLevel()) {
                 stream.println(message);
                 if (cause != null)
                     cause.printStackTrace(stream);
+            }
+        }
+    }
+
+    /**
+     * A simple logger that prints logging information to {@link System#err}.
+     */
+    final static class SystemErrLogger extends AbstractLogger implements Serializable {
+        /** The level to log at. */
+        private final int level;
+
+        /**
+         * Creates a new SystemErrLogger.
+         * 
+         * @param level
+         *            the level to log at
+         */
+        SystemErrLogger(Logger.Level level) {
+            this.level = level.getLevel();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String getName() {
+            return "system.err-logger";
+        }
+
+        /** {@inheritDoc} */
+        public boolean isEnabled(Level level) {
+            return this.level <= level.getLevel();
+        }
+
+        /** {@inheritDoc} */
+        public void log(Level l, String message, Throwable cause) {
+            if (level <= l.getLevel()) {
+                System.err.println(message);
+                if (cause != null)
+                    cause.printStackTrace(System.err);
+            }
+        }
+    }
+
+    /**
+     * A simple logger that prints logging information to {@link System#out}.
+     */
+    final static class SystemOutLogger extends AbstractLogger implements Serializable {
+        /** The level to log at. */
+        private final int level;
+
+        /**
+         * Creates a new SystemErrLogger.
+         * 
+         * @param level
+         *            the level to log at
+         */
+        SystemOutLogger(Logger.Level level) {
+            this.level = level.getLevel();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String getName() {
+            return "system.out-logger";
+        }
+
+        /** {@inheritDoc} */
+        public boolean isEnabled(Level level) {
+            return this.level <= level.getLevel();
+        }
+
+        /** {@inheritDoc} */
+        public void log(Level l, String message, Throwable cause) {
+            if (level <= l.getLevel()) {
+                System.out.println(message);
+                if (cause != null)
+                    cause.printStackTrace(System.out);
             }
         }
     }

@@ -12,7 +12,6 @@ import org.coconut.attribute.AttributeMaps;
 import org.coconut.attribute.common.CostAttribute;
 import org.coconut.attribute.common.SizeAttribute;
 import org.coconut.operations.Predicates;
-import org.coconut.test.MockTestCase;
 import org.coconut.test.TestUtil;
 import org.junit.Test;
 
@@ -27,7 +26,7 @@ public class IsCacheablesTest {
 
     @Test
     public void fromAttributeMapPredicate() {
-        AttributeMap nono = MockTestCase.mockDummy(AttributeMap.class);
+        AttributeMap nono = TestUtil.dummy(AttributeMap.class);
         IsCacheable ic = IsCacheables.fromAttributeMapPredicate(Predicates
                 .isSame(AttributeMaps.EMPTY_MAP));
         assertTrue(ic.isCacheable(0, 123, AttributeMaps.EMPTY_MAP));

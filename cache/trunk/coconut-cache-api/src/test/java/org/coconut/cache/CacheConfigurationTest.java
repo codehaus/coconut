@@ -27,7 +27,7 @@ import org.coconut.cache.spi.XmlConfigurator;
 import org.coconut.cache.util.CacheSingleton;
 import org.coconut.core.Clock;
 import org.coconut.core.Logger;
-import org.coconut.test.MockTestCase;
+import org.coconut.test.TestUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -149,7 +149,7 @@ public class CacheConfigurationTest {
     @Test
     public void defaultLogger() {
         assertNull(conf.getDefaultLogger());
-        Logger log = MockTestCase.mockDummy(Logger.class);
+        Logger log = TestUtil.dummy(Logger.class);
         assertSame(conf, conf.setDefaultLogger(log));
         assertSame(log, conf.getDefaultLogger());
         conf.setDefaultLogger(null);
@@ -361,7 +361,7 @@ public class CacheConfigurationTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void newInstanceNoConstructor() throws Exception {
-        conf.newCacheInstance(MockTestCase.mockDummy(Cache.class).getClass());
+        conf.newCacheInstance(TestUtil.dummy(Cache.class).getClass());
     }
 
     /**

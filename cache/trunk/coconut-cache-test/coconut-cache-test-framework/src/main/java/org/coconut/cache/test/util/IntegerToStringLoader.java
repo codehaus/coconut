@@ -12,7 +12,7 @@ import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.spi.AbstractAttribute;
 import org.coconut.cache.service.loading.AbstractCacheLoader;
 import org.coconut.core.Logger;
-import org.coconut.test.MockTestCase;
+import org.coconut.test.TestUtil;
 
 /**
  * A simple cache loader used for testing. Will return 1->A, 2->B, 3->C, 4->D, 5->E and
@@ -23,7 +23,7 @@ import org.coconut.test.MockTestCase;
  */
 public class IntegerToStringLoader extends AbstractCacheLoader<Integer, String> {
 
-    public static final Attribute RESULT_ATTRIBUTE_KEY = MockTestCase.mockDummy(Attribute.class);
+    public static final Attribute RESULT_ATTRIBUTE_KEY = TestUtil.dummy(Attribute.class);
 
     private final AtomicLong totalLoads = new AtomicLong();
 

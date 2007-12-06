@@ -39,27 +39,27 @@ public final class CacheEventFilters {
             .isType(CacheEntryEvent.class));
 
     /**
-     * A {@link org.coconut.predicate.Predicate} that only accepts instances of
+     * A {@link Predicate} that only accepts instances of
      * ItemUpdated events.
      */
     public final static Predicate<?> CACHEENTRY_ADDED_FILTER = Predicates.isType(ItemAdded.class);
 
     /**
-     * A {@link org.coconut.predicate.Predicate} that only accepts instances of
+     * A {@link Predicate} that only accepts instances of
      * ItemUpdated events.
      */
     public final static Predicate<?> CACHEENTRY_REMOVED_FILTER = Predicates
             .isType(ItemRemoved.class);
 
     /**
-     * A {@link org.coconut.predicate.Predicate} that only accepts instances of
+     * A {@link Predicate} that only accepts instances of
      * ItemUpdated events.
      */
     public final static Predicate<?> CACHEENTRY_UPDATED_FILTER = Predicates
             .isType(ItemUpdated.class);
 
     /**
-     * A {@link org.coconut.predicate.Predicate} that will accept all instances of
+     * A {@link Predicate} that will accept all instances of
      * CacheItemEvent.
      */
     public final static Predicate<?> CACHEENTRYEVENT_FILTER = Predicates
@@ -150,7 +150,7 @@ public final class CacheEventFilters {
     static class EventToCacheMapper<K, V> implements Mapper<CacheEvent<K, V>, Cache<K, V>>,
             Serializable {
 
-        /** serialVersionUID */
+        /** serialVersionUID. */
         private static final long serialVersionUID = -1630603894320061693L;
 
         /** {@inheritDoc} */
@@ -160,7 +160,7 @@ public final class CacheEventFilters {
     }
 
     static class EventToNameMapper<K, V> implements Mapper<CacheEvent<K, V>, String>, Serializable {
-        /** serialVersionUID */
+        /** serialVersionUID. */
         private static final long serialVersionUID = -1277521728691313867L;
 
         /** {@inheritDoc} */

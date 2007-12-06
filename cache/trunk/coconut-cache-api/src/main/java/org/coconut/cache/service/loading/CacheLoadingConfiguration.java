@@ -157,6 +157,7 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
      * @param predicate
      *            the reload predicate
      * @return this configuration
+     * @see #getRefreshPredicate()
      */
     public CacheLoadingConfiguration<K, V> setRefreshPredicate(Predicate<CacheEntry<K, V>> predicate) {
         refreshPredicate = predicate;

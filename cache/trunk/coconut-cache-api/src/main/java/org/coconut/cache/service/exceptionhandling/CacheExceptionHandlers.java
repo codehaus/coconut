@@ -4,9 +4,7 @@
 package org.coconut.cache.service.exceptionhandling;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.loading.CacheLoader;
-import org.coconut.event.bus.EventSubscription;
 
 /**
  * This class should define a number of standard {@link CacheExceptionHandler}s. However,
@@ -20,10 +18,11 @@ public final class CacheExceptionHandlers {
     /** Cannot instantiate. */
     // /CLOVER:OFF
     private CacheExceptionHandlers() {}
+
     // /CLOVER:ON
-    
+
     /**
-     * Returns a new instance of {@link DefaultLoggingExceptionHandler}.
+     * Creates a new instance of {@link DefaultLoggingExceptionHandler}.
      * 
      * @return a new instance of DefaultLoggingExceptionHandler
      * @param <K>
@@ -40,30 +39,26 @@ public final class CacheExceptionHandlers {
      * logger defined accordingly to
      * {@link CacheExceptionHandlingConfiguration#setExceptionLogger(org.coconut.core.Logger)}.
      */
-    public static class DefaultLoggingExceptionHandler<K, V> extends
-            CacheExceptionHandler<K, V> {
+    public static class DefaultLoggingExceptionHandler<K, V> extends CacheExceptionHandler<K, V> {
 
         /** {@inheritDoc} */
         @Override
         public void handleError(CacheExceptionContext<K, V> context, Error cause) {
-            context.defaultLogger().fatal(
-                    "An unexpected failure occured inside the cache", cause);
+            context.defaultLogger().fatal("An unexpected error occured inside the cache", cause);
             throw cause;
         }
 
         /** {@inheritDoc} */
         @Override
         public void handleException(CacheExceptionContext<K, V> context, Exception cause) {
-            context.defaultLogger().fatal(
-                    "An unexpected failure occured inside the cache", cause);
+            context.defaultLogger().error("An exception occured inside the cache", cause);
         }
 
         /** {@inheritDoc} */
         @Override
         public void handleRuntimeException(CacheExceptionContext<K, V> context,
                 RuntimeException cause) {
-            context.defaultLogger().fatal(
-                    "An unexpected failure occured inside the cache", cause);
+            context.defaultLogger().fatal("An unexpected failure occured inside the cache", cause);
         }
 
         /** {@inheritDoc} */
@@ -74,21 +69,9 @@ public final class CacheExceptionHandlers {
 
         /** {@inheritDoc} */
         @Override
-        public boolean eventDeliveryFailed(CacheExceptionContext<K, V> context,
-                CacheEvent<K, V> event, EventSubscription<CacheEvent<K, V>> destination,
-                RuntimeException cause) {
-            context.defaultLogger().error(
-                    "Could not deliver event (destination " + destination + ", event ="
-                            + event + ")", cause);
-            return false;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public V loadFailed(CacheExceptionContext<K, V> context,
-                CacheLoader<? super K, ?> loader, K key, AttributeMap map, Throwable cause) {
-            context.defaultLogger().error("Could not load value (key =" + key + ")",
-                    cause);
+        public V loadingFailed(CacheExceptionContext<K, V> context, CacheLoader<? super K, ?> loader,
+                K key, AttributeMap map, Throwable cause) {
+            context.defaultLogger().error("Could not load value [key = " + key + "]", cause);
             return null;
         }
     }

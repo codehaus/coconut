@@ -12,12 +12,10 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheServices;
 
 /**
- * This is the main interface for controlling the cache loading service of a cache at
- * runtime.
+ * This is the main interface for controlling the cache loading service at runtime.
  * <p>
- * Most of the methods for this service is usefull for prefetching the cache with entries
- * that might be used at later time. Prefetching attempts to place data in the cache far
- * enough in advance to hide the latency of a cache miss.
+ * Most of the methods for this service is usefull for reloading cache entries or
+ * prefetching the cache with entries that might be used at later time.
  * <p>
  * This service is only available at runtime if a cache loader has been set using
  * {@link CacheLoadingConfiguration#setLoader(CacheLoader)}.
@@ -27,16 +25,16 @@ import org.coconut.cache.CacheServices;
  * 
  * <pre>
  * Cache&lt;?, ?&gt; c = someCache;
- * CacheEvictionService&lt;?, ?&gt; ces = c.getService(CacheEvictionService.class);
- * ces.trimToSize(10);
+ * CacheLoadingService&lt;?, ?&gt; ces = c.getService(CacheLoadingService.class);
+ * ces.load("somekey");
  * </pre>
  * 
  * Or by using {@link CacheServices}
  * 
  * <pre>
  * Cache&lt;?, ?&gt; c = someCache;
- * CacheEvictionService&lt;?, ?&gt; ces = CacheServices.eviction(c);
- * ces.setMaximumSize(10000);
+ * CacheLoadingService&lt;?, ?&gt; ces = CacheServices.loading(c);
+ * ces.forceLoad("somekey");
  * </pre>
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -152,7 +150,7 @@ public interface CacheLoadingService<K, V> {
      *             if the specified map is <tt>null</tt> or any of the keys in the map
      *             is <tt>null</tt>
      */
-    void forceLoadAll(Map<K, AttributeMap> mapsWithAttributes);
+    void forceLoadAll(Map<? extends K, ? extends AttributeMap> mapsWithAttributes);
 
     /**
      * Returns the default refresh time for entries. If entries are never refreshed,
@@ -260,7 +258,7 @@ public interface CacheLoadingService<K, V> {
      * @param mapsWithAttributes
      *            a map with keys that should be loaded and a corresponding attribute map
      */
-    void loadAll(Map<K, AttributeMap> mapsWithAttributes);
+    void loadAll(Map<? extends K, ? extends AttributeMap> mapsWithAttributes);
 
     /**
      * Sets the default refresh time for new objects that are added to the cache. If no

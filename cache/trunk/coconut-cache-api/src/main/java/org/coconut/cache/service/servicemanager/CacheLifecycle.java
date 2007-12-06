@@ -4,6 +4,7 @@
 package org.coconut.cache.service.servicemanager;
 
 import org.coconut.cache.Cache;
+import org.coconut.cache.CacheConfiguration;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -18,10 +19,10 @@ public interface CacheLifecycle {
      * This method will be called from within the constructor of the cache. Any runtime
      * exception thrown by this method will not be handled.
      * 
-     * @param cli
+     * @param initializer
      *            provides information about the configuration of the cache
      */
-    void initialize(CacheLifecycleInitializer cli);
+    void initialize(CacheLifecycle.Initializer initializer);
 
     /**
      * Starts the service. The specified serviceManager can be used to retrieve other
@@ -30,7 +31,7 @@ public interface CacheLifecycle {
      * @param serviceManager
      *            the caches service manager
      */
-    void start(CacheServiceManagerService serviceManager);
+    void start(CacheServiceManagerService serviceManager) throws Exception;
 
     /**
      * All services have been initialized correctly, and the cache is ready for use.
@@ -55,8 +56,42 @@ public interface CacheLifecycle {
      * Method invoked when the cache has terminated. This method is invoked as the last
      * method in this lifecycle interface and is called when the cache and all of it
      * services has been succesfully shutdown. This method is also called if the cache
-     * failed to initialize or start. But only if the service was succesfully initialized ({@link #initialize(CacheLifecycleInitializer)}
+     * failed to initialize or start. But only if the service was succesfully initialized ({@link #initialize(Initializer)}
      * was run without failing).
      */
     void terminated();
+
+    /**
+     * Provides information about the configuration of the cache. Used when initializing
+     * services.
+     */
+    public interface Initializer {
+        /**
+         * Returns the configuration used for creating this cache.
+         * 
+         * @return the configuration used for creating this cache
+         */
+        CacheConfiguration<?, ?> getCacheConfiguration();
+
+        /**
+         * Registers the specified service in the cache. The service can later be
+         * retrieved by calls to {@link Cache#getService(Class)} with the specified class
+         * as parameter.
+         * 
+         * @param <T>
+         *            the type of the service
+         * @param clazz
+         *            the type of the service
+         * @param service
+         *            the service to register
+         */
+        <T> void registerService(Class<T> clazz, T service);
+
+        /**
+         * Returns the type of cache that is being initialized.
+         * 
+         * @return the type of cache that is being initialized
+         */
+        Class<? extends Cache> getCacheType();
+    }
 }

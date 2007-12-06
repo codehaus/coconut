@@ -7,6 +7,8 @@ import org.coconut.attribute.AttributeMap;
 import org.coconut.core.Callback;
 
 /**
+ * A callback that is used to asynchronously load values.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  * @param <K>
@@ -17,9 +19,9 @@ import org.coconut.core.Callback;
 public interface CacheLoaderCallback<K, V> extends Callback<V> {
 
     /**
-     * Returns <tt>true</tt> if this task completed. Completion may be due to normal
-     * termination, an exception, or cancellation -- in all of these cases, this method
-     * will return <tt>true</tt>.
+     * Returns <tt>true</tt> if the loading has completed. Completion may be due to
+     * normal termination or an exception -- in both these cases, this method will return
+     * <tt>true</tt>.
      * 
      * @return <tt>true</tt> if this task completed
      */

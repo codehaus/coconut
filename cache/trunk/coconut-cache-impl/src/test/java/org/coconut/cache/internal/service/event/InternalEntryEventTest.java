@@ -8,7 +8,7 @@ import static org.junit.Assert.assertTrue;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.event.CacheEntryEvent;
-import org.coconut.test.MockTestCase;
+import org.coconut.test.TestUtil;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
@@ -23,7 +23,7 @@ public class InternalEntryEventTest {
 
     CacheEntry<Integer, String> ce;
 
-    Cache<Integer, String> cache = MockTestCase.mockDummy(Cache.class);
+    Cache<Integer, String> cache = TestUtil.dummy(Cache.class);
 
     @Before
     public void setup() {

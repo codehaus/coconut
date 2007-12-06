@@ -20,11 +20,11 @@ public class ClassUtilsTest {
         assertSame(Integer.class, ClassUtils.fromPrimitive(Integer.TYPE));
         assertSame(Long.class, ClassUtils.fromPrimitive(Long.TYPE));
         assertSame(Short.class, ClassUtils.fromPrimitive(Short.TYPE));
-
-        assertSame(Short.class, ClassUtils.fromPrimitive(Short.class));
+        assertSame(Void.class, ClassUtils.fromPrimitive(Void.TYPE));
+        
         assertSame(String.class, ClassUtils.fromPrimitive(String.class));
     }
-    
+
     @Test
     public void isNumber() {
         assertTrue(ClassUtils.isNumberOrPrimitiveNumber(Float.TYPE));

@@ -3,7 +3,7 @@
  */
 package org.coconut.attribute.common;
 
-import org.coconut.attribute.spi.AbstractAttributeTest;
+import org.coconut.attribute.spi.AbstractValueTest;
 
 
 /**
@@ -12,7 +12,7 @@ import org.coconut.attribute.spi.AbstractAttributeTest;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public class SizeAttributeTest extends AbstractAttributeTest {
+public class SizeAttributeTest extends AbstractValueTest {
 
     public SizeAttributeTest() {
         super(SizeAttribute.INSTANCE, NON_NEGATIV_LONGS, NEGATIV_LONGS);

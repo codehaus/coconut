@@ -9,7 +9,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public abstract class AbstractDurationAttributeTest extends AbstractAttributeTest {
@@ -17,7 +16,7 @@ public abstract class AbstractDurationAttributeTest extends AbstractAttributeTes
         super(a, POSITIV_LONGS, NON_POSITIVE_LONGS);
     }
 
-    @Override
+    //@Override
     @Test
     public void set() throws Exception {
         Method setMethod = a().getClass().getMethod("set", AttributeMap.class, Long.TYPE,
@@ -42,7 +41,7 @@ public abstract class AbstractDurationAttributeTest extends AbstractAttributeTes
         }
     }
 
-    @Override
+   // @Override
     @Test
     public void singleton() throws Exception {
         Method singleton = a().getClass().getMethod("singleton", Long.TYPE, TimeUnit.class);

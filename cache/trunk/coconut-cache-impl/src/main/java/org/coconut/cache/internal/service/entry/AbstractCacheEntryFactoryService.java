@@ -90,7 +90,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
     long getSize(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
         long size = SizeAttribute.get(attributes);
         if (!SizeAttribute.INSTANCE.isValid(size)) {
-            exceptionService.getExceptionHandler().handleWarning(exceptionService.createContext(),
+            exceptionService.getHandler().handleWarning(exceptionService.createContext(),
                     "An illegal size was added for key = " + key);
             size = SizeAttribute.DEFAULT_VALUE;
         }
@@ -103,7 +103,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
                 TimeUnit.NANOSECONDS, expirationTimeNanos);
 
         if (!TimeToLiveAttribute.INSTANCE.isValid(nanos)) {
-            exceptionService.getExceptionHandler().handleWarning(exceptionService.createContext(),
+            exceptionService.getHandler().handleWarning(exceptionService.createContext(),
                     "An illegal expiration time was added for key = " + key);
             nanos = expirationTimeNanos;
         }
@@ -127,7 +127,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
     double getCost(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
         double cost = CostAttribute.get(attributes);
         if (!CostAttribute.INSTANCE.isValid(cost)) {
-            exceptionService.getExceptionHandler().handleWarning(exceptionService.createContext(),
+            exceptionService.getHandler().handleWarning(exceptionService.createContext(),
                     "An illegal cost was added for key = " + key);
             cost = CostAttribute.DEFAULT_VALUE;
         }
@@ -137,7 +137,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
     long getHits(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
         long hits = HitsAttribute.INSTANCE.getPrimitive(attributes);
         if (!HitsAttribute.INSTANCE.isValid(hits)) {
-            exceptionService.getExceptionHandler().handleWarning(exceptionService.createContext(),
+            exceptionService.getHandler().handleWarning(exceptionService.createContext(),
                     "An illegal hits was added for key = " + key);
             hits = 0;
         }
@@ -150,7 +150,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
             lastModified = clock.timestamp();
         }
         if (!DateLastModifiedAttribute.INSTANCE.isValid(lastModified)) {
-            exceptionService.getExceptionHandler().handleWarning(exceptionService.createContext(),
+            exceptionService.getHandler().handleWarning(exceptionService.createContext(),
                     "An illegal last modified time was added for key = " + key);
             lastModified = clock.timestamp();
         }
@@ -163,7 +163,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
                 TimeUnit.NANOSECONDS, refreshTimeNanos);
 
         if (!TimeToRefreshAttribute.INSTANCE.isValid(nanos)) {
-            exceptionService.getExceptionHandler().handleWarning(exceptionService.createContext(),
+            exceptionService.getHandler().handleWarning(exceptionService.createContext(),
                     "An illegal time to refresh time was added for key = " + key);
             nanos = refreshTimeNanos;
         }
@@ -173,7 +173,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
     long getCreationTime(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
         long creationTime = DateCreatedAttribute.INSTANCE.getPrimitive(attributes);
         if (creationTime < 0) {
-            exceptionService.getExceptionHandler().handleWarning(
+            exceptionService.getHandler().handleWarning(
                     exceptionService.createContext(),
                     "Must specify a positive creation time [Attribute="
                             + DateCreatedAttribute.INSTANCE + " , creationtime = "

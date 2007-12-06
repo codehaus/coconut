@@ -23,7 +23,7 @@ public abstract class AbstractCacheLifecycle implements CacheLifecycle {
 
     // /CLOVER:OFF
     /** {@inheritDoc} */
-    public void initialize(CacheLifecycleInitializer cli) {}
+    public void initialize(Initializer cli) {}
 
     /** {@inheritDoc} */
     public void start(CacheServiceManagerService serviceManager) {}

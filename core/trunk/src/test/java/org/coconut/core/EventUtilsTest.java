@@ -13,7 +13,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
-import org.coconut.core.LoggersTest.InnerPrintStream;
+import org.coconut.test.SystemErrOutHelper;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
@@ -91,7 +91,7 @@ public class EventUtilsTest {
 
     @Test
     public void toSystemOut() {
-        InnerPrintStream str = InnerPrintStream.get();
+        SystemErrOutHelper str = SystemErrOutHelper.get();
         try {
             EventProcessor eh = EventUtils.toSystemOut();
             eh.process(234);
@@ -103,7 +103,7 @@ public class EventUtilsTest {
 
     @Test
     public void toSystemOutSafe() {
-        InnerPrintStream str = InnerPrintStream.get();
+        SystemErrOutHelper str = SystemErrOutHelper.get();
         try {
             EventProcessor eh = EventUtils.toSystemOutSafe();
             eh.process(234);

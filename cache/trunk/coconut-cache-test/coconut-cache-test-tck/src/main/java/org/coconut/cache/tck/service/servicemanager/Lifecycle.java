@@ -6,9 +6,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlers;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
-import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.lifecycle.AbstractLifecycleVerifier;
@@ -35,8 +35,7 @@ public class Lifecycle extends AbstractCacheTCKTest {
     }
 
     /**
-     * Tests that {@link CacheLifecycle#initialize(CacheLifecycleInitializer)} is called
-     * on a simple service.
+     * Tests the lifecycle on a simple service.
      * 
      * @throws InterruptedException
      */
@@ -56,6 +55,25 @@ public class Lifecycle extends AbstractCacheTCKTest {
     }
 
     /**
+     * Tests the terminated is called on a cache that was never started only initialized
+     * 
+     * @throws InterruptedException
+     */
+    @Test
+    public void simpleLifecycleNoStart() throws InterruptedException {
+        AbstractLifecycleVerifier alv = new AbstractLifecycleVerifier();
+        conf.serviceManager().add(alv).c();
+        alv.setConfigurationToVerify(conf);
+        setCache(conf);
+        alv.assertInitializedButNotStarted();
+        alv.setNextStep(AbstractLifecycleVerifier.Step.TERMINATED);
+        c.shutdown();
+        alv.assertShutdownOrTerminatedPhase();
+        assertTrue(c.awaitTermination(10, TimeUnit.SECONDS));
+        alv.assertTerminatedPhase();
+    }
+
+    /**
      * Tests that the services are initialized in the order they where registered.
      */
     @Test
@@ -67,7 +85,7 @@ public class Lifecycle extends AbstractCacheTCKTest {
             final int j = i;
             alvs[i] = new AbstractLifecycleVerifier() {
                 @Override
-                public void initialize(CacheLifecycleInitializer cli) {
+                public void initialize(Initializer cli) {
                     assertEquals(j, verifier.getAndIncrement());
                     super.initialize(cli);
                 }
@@ -122,18 +140,13 @@ public class Lifecycle extends AbstractCacheTCKTest {
         CacheConfiguration initializeConf;
 
         @Override
-        public void cacheShutdownFailed(Cache cache, Map terminationFailures) {
+        public void lifecycleStartFailed(CacheConfiguration configuration, Class cacheType,
+                Object service, Exception cause) {
             throw new AssertionError("should not be called");
         }
 
         @Override
-        public void cacheStartFailed(CacheConfiguration configuration, Class cacheType,
-                CacheLifecycle service, RuntimeException cause) {
-            throw new AssertionError("should not be called");
-        }
-
-        @Override
-        public void cacheInitializationFailed(CacheConfiguration configuration, Class cacheType,
+        public void lifecycleInitializationFailed(CacheConfiguration configuration, Class cacheType,
                 CacheLifecycle service, RuntimeException cause) {
             throw new AssertionError("should not be called");
         }
@@ -147,6 +160,12 @@ public class Lifecycle extends AbstractCacheTCKTest {
         public void terminated(Map terminationFailures) {
             assertNotNull(terminationFailures);
             assertEquals(0, terminationFailures.size());
+        }
+
+        @Override
+        public void lifecycleShutdownFailed(CacheExceptionContext  cache, CacheLifecycle lifecycle,
+                RuntimeException cause) {
+            throw new AssertionError("should not be called");
         }
     }
 }

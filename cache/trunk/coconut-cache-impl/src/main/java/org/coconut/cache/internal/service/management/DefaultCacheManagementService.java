@@ -11,8 +11,6 @@ import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import net.jcip.annotations.GuardedBy;
-
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheException;
 import org.coconut.cache.internal.service.servicemanager.CompositeService;
@@ -20,7 +18,7 @@ import org.coconut.cache.service.management.CacheMXBean;
 import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
-import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
+import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedVisitor;
 import org.coconut.management.Managements;
@@ -114,7 +112,7 @@ public class DefaultCacheManagementService extends AbstractCacheLifecycle implem
 
     /** {@inheritDoc} */
     @Override
-    public synchronized void initialize(CacheLifecycleInitializer cli) {
+    public synchronized void initialize(CacheLifecycle.Initializer cli) {
         if (isEnabled) {
             cli.registerService(CacheManagementService.class, ManagementUtils
                     .wrapService(this));

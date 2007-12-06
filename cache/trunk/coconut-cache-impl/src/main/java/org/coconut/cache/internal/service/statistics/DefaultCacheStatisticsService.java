@@ -15,7 +15,7 @@ import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
 import org.coconut.cache.internal.service.spi.Resources;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
-import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
+import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.cache.service.statistics.CacheHitStat;
 import org.coconut.cache.service.statistics.CacheStatisticsConfiguration;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
@@ -383,7 +383,7 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
 
     /** {@inheritDoc} */
     @Override
-    public void initialize(CacheLifecycleInitializer cli) {
+    public void initialize(CacheLifecycle.Initializer cli) {
         cli.registerService(CacheStatisticsService.class, StatisticsUtils.wrapService(this));
     }
 

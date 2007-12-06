@@ -9,7 +9,7 @@ import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.service.eviction.CacheEvictionMXBean;
 import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
-import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
+import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedLifecycle;
 
@@ -44,7 +44,7 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
 
     /** {@inheritDoc} */
     @Override
-    public void initialize(CacheLifecycleInitializer cli) {
+    public void initialize(CacheLifecycle.Initializer cli) {
         cli.registerService(CacheEvictionService.class, EvictionUtils.wrapService(this));
     }
 

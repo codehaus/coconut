@@ -160,7 +160,10 @@ public class IndexedHeapTest {
     @Test
     public void noArgConstructor() {
         IndexedHeap<Integer> heap = new IndexedHeap<Integer>();
+        assertEquals(0, heap.size());
+        assertTrue(heap.isEmpty());
         heap.add(1);
+        assertFalse(heap.isEmpty());
         assertEquals(1, heap.size());
     }
 

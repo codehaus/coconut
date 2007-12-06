@@ -112,10 +112,9 @@ public final class LoadingUtils {
         return new DelegatedCacheLoadingService<K, V>(service);
     }
 
-    static <K, V> Callable<AbstractCacheEntry<K, V>> loadValue(
-            final AbstractCacheLoadingService<K, V> loaderService, final K key,
-            AttributeMap attributes) {
-        return new LoadValueRunnable<K, V>(loaderService, key, attributes);
+    static <K, V> Callable<AbstractCacheEntry<K, V>> createLoadCallable(
+            InternalCacheLoadingService<K, V> loaderService, K key, AttributeMap attributes) {
+        return new LoadValueCallable<K, V>(loaderService, key, attributes);
     }
 
     /**
@@ -212,7 +211,7 @@ public final class LoadingUtils {
         }
 
         /** {@inheritDoc} */
-        public void forceLoadAll(Map<K, AttributeMap> mapsWithAttributes) {
+        public void forceLoadAll(Map<? extends K, ? extends AttributeMap> mapsWithAttributes) {
             delegate.forceLoadAll(mapsWithAttributes);
         }
 
@@ -247,7 +246,7 @@ public final class LoadingUtils {
         }
 
         /** {@inheritDoc} */
-        public void loadAll(Map<K, AttributeMap> mapsWithAttributes) {
+        public void loadAll(Map<? extends K, ? extends AttributeMap> mapsWithAttributes) {
             delegate.loadAll(mapsWithAttributes);
         }
 
@@ -257,35 +256,68 @@ public final class LoadingUtils {
         }
     }
 
-    static class LoadValueRunnable<K, V> implements Callable<AbstractCacheEntry<K, V>> {
+    /**
+     * A LoadValueCallable is used to asynchronously load a value into the cache.
+     */
+    static class LoadValueCallable<K, V> implements Callable<AbstractCacheEntry<K, V>> {
+
+        /** The attribute map that should be passed to the cache loader. */
         private final AttributeMap attributes;
 
+        /** The key to load. */
         private final K key;
 
-        private final AbstractCacheLoadingService<K, V> loaderService;
+        /** The loading service to load the value from. */
+        private final InternalCacheLoadingService<K, V> loadingService;
 
         /**
-         * @param loader
+         * Creates a new LoadValueCallable.
+         * 
+         * @param loadingService
+         *            the loading service to load the value from
          * @param key
-         * @param callback
+         *            the key to load
+         * @param attributes
+         *            the attribute map that should be passed to the cache loader
+         * @throws NullPointerException
+         *             if the specified loading service, key or attribute map is
+         *             <code>null</code>
          */
-        LoadValueRunnable(final AbstractCacheLoadingService<K, V> loaderService, final K key,
+        LoadValueCallable(final InternalCacheLoadingService<K, V> loadingService, K key,
                 AttributeMap attributes) {
-            if (key == null) {
+            if (loadingService == null) {
+                throw new NullPointerException("loadingService is null");
+            } else if (key == null) {
                 throw new NullPointerException("key is null");
+            } else if (attributes == null) {
+                throw new NullPointerException("attributes is null");
             }
             this.key = key;
-            this.loaderService = loaderService;
+            this.loadingService = loadingService;
             this.attributes = attributes;
         }
 
         /** {@inheritDoc} */
         public AbstractCacheEntry<K, V> call() {
-            return loaderService.loadAndAddToCache(key, attributes, false);
+            return loadingService.loadAndAddToCache(key, attributes, false);
         }
 
+        /**
+         * Returns the key whose corresponding value should be loaded.
+         * 
+         * @return the key whose corresponding value should be loaded
+         */
         public K getKey() {
             return key;
+        }
+
+        /**
+         * Returns the attribute map that should be passed to the cache loader.
+         * 
+         * @return the attribute map that should be passed to the cache loader
+         */
+        public AttributeMap getAttributes() {
+            return attributes;
         }
     }
 }

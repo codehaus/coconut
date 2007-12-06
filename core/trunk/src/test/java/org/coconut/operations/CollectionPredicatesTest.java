@@ -14,7 +14,7 @@ import java.util.Map;
 
 import org.coconut.operations.Ops.Mapper;
 import org.coconut.operations.Ops.Predicate;
-import org.coconut.test.MockTestCase;
+import org.coconut.test.TestUtil;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
 import org.jmock.integration.junit4.JUnit4Mockery;
@@ -37,7 +37,7 @@ public class CollectionPredicatesTest {
 
     @Test(expected = NullPointerException.class)
     public void allTrueNPE1() {
-        CollectionPredicates.isAllTrue(null, MockTestCase.mockDummy(Predicate.class));
+        CollectionPredicates.isAllTrue(null, TestUtil.dummy(Predicate.class));
     }
 
     @Test(expected = NullPointerException.class)
@@ -56,7 +56,7 @@ public class CollectionPredicatesTest {
 
     @Test(expected = NullPointerException.class)
     public void anyTrueNPE1() {
-        CollectionPredicates.isAnyTrue(null, MockTestCase.mockDummy(Predicate.class));
+        CollectionPredicates.isAnyTrue(null, TestUtil.dummy(Predicate.class));
     }
 
     @Test(expected = NullPointerException.class)
@@ -112,7 +112,7 @@ public class CollectionPredicatesTest {
 
     @Test(expected = NullPointerException.class)
     public void filterMapKeyNPE1() {
-        CollectionPredicates.filterMapKeys(null, MockTestCase.mockDummy(Predicate.class));
+        CollectionPredicates.filterMapKeys(null, TestUtil.dummy(Predicate.class));
     }
 
     @Test(expected = NullPointerException.class)
@@ -122,7 +122,7 @@ public class CollectionPredicatesTest {
 
     @Test(expected = NullPointerException.class)
     public void filterMapNPE1() {
-        CollectionPredicates.filterMap(null, MockTestCase.mockDummy(Predicate.class));
+        CollectionPredicates.filterMap(null, TestUtil.dummy(Predicate.class));
     }
 
     @Test(expected = NullPointerException.class)
@@ -150,7 +150,7 @@ public class CollectionPredicatesTest {
 
     @Test(expected = NullPointerException.class)
     public void filterMapValueNPE1() {
-        CollectionPredicates.filterMapValues(null, MockTestCase.mockDummy(Predicate.class));
+        CollectionPredicates.filterMapValues(null, TestUtil.dummy(Predicate.class));
     }
 
     @Test(expected = NullPointerException.class)
@@ -160,7 +160,7 @@ public class CollectionPredicatesTest {
 
     @Test(expected = NullPointerException.class)
     public void filterNPE1() {
-        CollectionPredicates.filter(null, MockTestCase.mockDummy(Predicate.class));
+        CollectionPredicates.filter(null, TestUtil.dummy(Predicate.class));
     }
 
     @Test(expected = NullPointerException.class)
@@ -188,12 +188,12 @@ public class CollectionPredicatesTest {
 
     @Test(expected = NullPointerException.class)
     public void mapperPredicateNPE1() {
-        Predicates.mapperPredicate(null, MockTestCase.mockDummy(Predicate.class));
+        Predicates.mapperPredicate(null, TestUtil.dummy(Predicate.class));
     }
 
     @Test(expected = NullPointerException.class)
     public void mapperPredicateNPE2() {
-        Predicates.mapperPredicate(MockTestCase.mockDummy(Mapper.class), null);
+        Predicates.mapperPredicate(TestUtil.dummy(Mapper.class), null);
     }
 
     @Test
@@ -208,7 +208,7 @@ public class CollectionPredicatesTest {
 
     @Test(expected = NullPointerException.class)
     public void removeFromNPE1() {
-        CollectionPredicates.removeFrom(null, MockTestCase.mockDummy(Predicate.class));
+        CollectionPredicates.removeFrom(null, TestUtil.dummy(Predicate.class));
     }
 
     @Test(expected = NullPointerException.class)

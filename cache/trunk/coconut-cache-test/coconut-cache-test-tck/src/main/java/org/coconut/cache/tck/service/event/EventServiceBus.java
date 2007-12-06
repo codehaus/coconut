@@ -12,7 +12,7 @@ import org.coconut.core.EventProcessor;
 import org.coconut.event.bus.EventSubscription;
 import org.coconut.operations.Predicates;
 import org.coconut.operations.Ops.Predicate;
-import org.coconut.test.MockTestCase;
+import org.coconut.test.TestUtil;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
@@ -146,10 +146,10 @@ public class EventServiceBus extends AbstractEventTestBundle {
 
     @Test
     public void unsubscribeAll() {
-        EventSubscription e1 = event().subscribe(MockTestCase.mockDummy(EventProcessor.class));
-        EventSubscription e2 = event().subscribe(MockTestCase.mockDummy(EventProcessor.class),
+        EventSubscription e1 = event().subscribe(TestUtil.dummy(EventProcessor.class));
+        EventSubscription e2 = event().subscribe(TestUtil.dummy(EventProcessor.class),
                 Predicates.TRUE);
-        EventSubscription e3 = event().subscribe(MockTestCase.mockDummy(EventProcessor.class),
+        EventSubscription e3 = event().subscribe(TestUtil.dummy(EventProcessor.class),
                 Predicates.TRUE, "ddd");
         assertEquals(3, event().getSubscribers().size());
         assertTrue(event().getSubscribers().contains(e1));
@@ -160,7 +160,7 @@ public class EventServiceBus extends AbstractEventTestBundle {
     }
 
     static class DefaultCacheEvent<K, V> implements CacheEvent<K, V> {
-        static Cache c = MockTestCase.mockDummy(Cache.class);
+        static Cache c = TestUtil.dummy(Cache.class);
 
         String name;
 

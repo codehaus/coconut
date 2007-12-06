@@ -66,17 +66,10 @@ import org.coconut.core.Logger;
 @NotThreadSafe
 public class CacheConfiguration<K, V> {
 
-    /** A list of all default service configuration types. */
-    private final static List<Class<? extends AbstractCacheServiceConfiguration>> DEFAULTS = Arrays
-            .asList(CacheEventConfiguration.class, CacheManagementConfiguration.class,
-                    CacheStatisticsConfiguration.class, CacheLoadingConfiguration.class,
-                    CacheExpirationConfiguration.class, CacheExceptionHandlingConfiguration.class,
-                    CacheWorkerConfiguration.class, CacheServiceManagerConfiguration.class,
-                    CacheEvictionConfiguration.class);
-
     /** A Map of additional properties. */
     private final Map<String, String> additionalProperties = new HashMap<String, String>();
 
+    /** The type of cache that should be created. */
     private Class<? extends Cache> cacheType;
 
     /** The clock that should be used for timing. */
@@ -96,7 +89,7 @@ public class CacheConfiguration<K, V> {
      * should be created using the {@link #create()} or {@link #create(String)} method.
      */
     public CacheConfiguration() {
-        for (Class<? extends AbstractCacheServiceConfiguration> c : DEFAULTS) {
+        for (Class<? extends AbstractCacheServiceConfiguration> c : CacheSPI.DEFAULT_CONFIGURATIONS) {
             try {
                 AbstractCacheServiceConfiguration a = c.newInstance();
                 addConfiguration(a);

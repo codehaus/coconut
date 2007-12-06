@@ -9,7 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.test.MockTestCase;
+import org.coconut.test.TestUtil;
 import org.junit.Test;
 
 public class CacheWorkerManagerTest {
@@ -18,9 +18,9 @@ public class CacheWorkerManagerTest {
 
     private Object s2 = Integer.class;
 
-    private ExecutorService es = MockTestCase.mockDummy(ExecutorService.class);
+    private ExecutorService es = TestUtil.dummy(ExecutorService.class);
 
-    private ScheduledExecutorService ses = MockTestCase.mockDummy(ScheduledExecutorService.class);
+    private ScheduledExecutorService ses = TestUtil.dummy(ScheduledExecutorService.class);
 
     @Test
     public void name() {

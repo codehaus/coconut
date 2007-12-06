@@ -5,9 +5,9 @@ package org.coconut.attribute.common;
 
 import java.util.Arrays;
 
-import org.coconut.attribute.spi.AbstractAttributeTest;
+import org.coconut.attribute.spi.AbstractValueTest;
 
-public class CostAttributeTest extends AbstractAttributeTest {
+public class CostAttributeTest extends AbstractValueTest {
 
     public CostAttributeTest() {
         super(CostAttribute.INSTANCE, Arrays.asList(Double.MIN_VALUE, -100d, -1d, 0d, 10d,

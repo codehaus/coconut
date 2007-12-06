@@ -80,7 +80,7 @@ public class EntryMapTest {
         assertNotNull(ac2);
     }
 
-    public boolean testNots() {
+    public boolean stNots() {
         EntryMap<Integer, String> s = new EntryMap<Integer, String>(null, false);
         Random r = new Random();
         ArrayList<Integer> al = new ArrayList<Integer>();

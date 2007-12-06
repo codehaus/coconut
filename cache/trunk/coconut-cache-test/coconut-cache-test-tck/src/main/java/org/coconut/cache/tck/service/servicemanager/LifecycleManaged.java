@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
-import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
+import org.coconut.cache.service.servicemanager.CacheLifecycle.Initializer;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.tck.RequireService;
 import org.coconut.cache.tck.service.servicemanager.Lifecycle.ExceptionHandler;
@@ -28,7 +28,7 @@ public class LifecycleManaged extends AbstractCacheTCKTest {
         conf.exceptionHandling().setExceptionHandler(handler);
     }
     /**
-     * Tests that {@link CacheLifecycle#initialize(CacheLifecycleInitializer)} is called
+     * Tests that {@link CacheLifecycle#initialize(Initializer)} is called
      * on a simple service.
      * 
      * @throws InterruptedException

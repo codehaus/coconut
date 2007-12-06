@@ -13,7 +13,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
-import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.management.ManagedGroup;
@@ -83,7 +82,7 @@ public class AbstractLifecycleVerifier implements CacheLifecycle {
         return ManagedLifecycle.class.isAssignableFrom(getClass());
     }
 
-    public void initialize(CacheLifecycleInitializer cli) {
+    public void initialize(Initializer cli) {
         assertTrue(nextStep.compareAndSet(Step.INITIALIZE, Step.START));
         assertNotNull(
                 "The CacheLifecycleInitialize that was passed to the initialize method was null",

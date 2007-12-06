@@ -143,10 +143,12 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
+         <groupId>org.apache.maven.plugins</groupId>
+<!--         <groupId>com.atlassian.maven.plugins</groupId> -->
         <artifactId>maven-clover-plugin</artifactId>
         <configuration>
-          <targetPercentage>60%</targetPercentage>
+          <targetPercentage>80%</targetPercentage>
+          <includesTestSourceRoots>false</includesTestSourceRoots>
           <licenseLocation>
             ${user.home}/licenses/coconut-clover.license
           </licenseLocation>

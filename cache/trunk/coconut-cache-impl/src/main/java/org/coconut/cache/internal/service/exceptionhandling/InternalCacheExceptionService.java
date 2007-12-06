@@ -26,7 +26,7 @@ public interface InternalCacheExceptionService<K, V> {
      * 
      * @return the CacheExceptionHandler configured for this cache
      */
-    CacheExceptionHandler<K, V> getExceptionHandler();
+    CacheExceptionHandler<K, V> getHandler();
 
     /**
      * Creates and returns a new CacheExceptionContext.

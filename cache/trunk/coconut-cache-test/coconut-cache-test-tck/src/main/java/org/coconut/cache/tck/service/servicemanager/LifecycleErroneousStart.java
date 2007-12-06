@@ -3,6 +3,7 @@
  */
 package org.coconut.cache.tck.service.servicemanager;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -11,15 +12,16 @@ import net.jcip.annotations.ThreadSafe;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
+import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlers;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
-import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
+import org.coconut.cache.service.servicemanager.CacheLifecycle.Initializer;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.lifecycle.AbstractLifecycleVerifier;
-import org.coconut.test.MockTestCase;
+import org.coconut.test.TestUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,8 +40,8 @@ public class LifecycleErroneousStart extends AbstractCacheTCKTest {
 
     /**
      * Tests throwing an {@link RuntimeException} from within
-     * {@link CacheLifecycle#initialize(CacheLifecycleInitializer)}. Makes sure
-     * {@link CacheExceptionHandler#cacheInitializationFailed(CacheConfiguration, Class, CacheLifecycle, RuntimeException)}
+     * {@link CacheLifecycle#initialize(Initializer)}. Makes sure
+     * {@link CacheExceptionHandler#lifecycleInitializationFailed(CacheConfiguration, Class, CacheLifecycle, RuntimeException)}
      * is called.
      */
     @Test
@@ -207,15 +209,15 @@ public class LifecycleErroneousStart extends AbstractCacheTCKTest {
             public void start(CacheServiceManagerService serviceManager) {
                 if (getCacheType().getAnnotation(ThreadSafe.class) != null) {
                     try {
-                        serviceManager.shutdownServiceAsynchronously(MockTestCase
-                                .mockDummy(Runnable.class));
+                        serviceManager.shutdownServiceAsynchronously(TestUtil
+                                .dummy(Runnable.class));
                         throw new AssertionError(
                                 "serviceManager should throw IllegalStateException");
                     } catch (IllegalStateException ok) {/* ok */}
                 } else {
                     try {
-                        serviceManager.shutdownServiceAsynchronously(MockTestCase
-                                .mockDummy(Runnable.class));
+                        serviceManager.shutdownServiceAsynchronously(TestUtil
+                                .dummy(Runnable.class));
                         throw new AssertionError(
                                 "serviceManager should throw UnsupportedOperationException");
                     } catch (UnsupportedOperationException ok) {/* ok */}
@@ -230,30 +232,32 @@ public class LifecycleErroneousStart extends AbstractCacheTCKTest {
 
         Map terminatationMap;
 
-        RuntimeException cause;
+        Throwable cause;
 
-        CacheLifecycle service;
+        Object service;
 
         Cache shutdownCache;
 
-        Map shutdownMap;
+        Map shutdownMap=new HashMap();
 
         @Override
-        public void cacheStartFailed(CacheConfiguration configuration, Class cacheType,
-                CacheLifecycle service, RuntimeException cause) {
+        public void lifecycleStartFailed(CacheConfiguration configuration, Class cacheType,
+                Object service, Exception cause) {
             this.cause = cause;
             this.service = service;
             this.conf = configuration;
             assertEquals(getCacheType(), cacheType);
-            super.cacheStartFailed(configuration, cacheType, service, cause);
+            super.lifecycleStartFailed(configuration, cacheType, service, cause);
         }
 
         @Override
-        public void cacheShutdownFailed(Cache cache, Map terminationFailures) {
-            this.shutdownCache = cache;
-            this.shutdownMap = terminationFailures;
-            super.cacheShutdownFailed(cache, terminationFailures);
+        public void lifecycleShutdownFailed(CacheExceptionContext context, CacheLifecycle lifecycle,
+                RuntimeException cause) {
+            this.shutdownCache = context.getCache();
+            shutdownMap.put(lifecycle, cause);
+            super.lifecycleShutdownFailed(context, lifecycle, cause);
         }
+
 
         @Override
         public void terminated(Map terminationFailures) {

@@ -491,14 +491,14 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         }
 
         /** {@inheritDoc} */
-        public void loadAll(Map<K, AttributeMap> attributes) {
+        public void loadAll(Map< ? extends K,  ? extends AttributeMap> attributes) {
             Map<K, AttributeMap> keys = new HashMap<K, AttributeMap>();
             long timestamp = getClock().timestamp();
 
             if (!UnsynchronizedCache.this.checkRunning("load", false)) {
                 return;
             }
-            for (Map.Entry<K, AttributeMap> e : attributes.entrySet()) {
+            for (Map.Entry< ? extends K,  ? extends AttributeMap> e : attributes.entrySet()) {
                 AbstractCacheEntry<K, V> ce = map.get(e.getKey());
                 boolean doLoad = ce == null;
                 if (!doLoad) {

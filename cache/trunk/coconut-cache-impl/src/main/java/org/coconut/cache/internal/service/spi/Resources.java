@@ -3,7 +3,9 @@
  */
 package org.coconut.cache.internal.service.spi;
 
-import org.coconut.internal.util.ResourceHolder;
+import java.util.ResourceBundle;
+
+import org.coconut.internal.util.ResourceBundleUtil;
 
 /**
  * This is class is used for looking up ressources. The default language is english no
@@ -16,7 +18,7 @@ public final class Resources {
 
     private static final String BUNDLE_NAME = "org.coconut.cache.messagesimpl";//$NON-NLS-1$
 
-    private static final ResourceHolder RESOURCE_HOLDER = new ResourceHolder(BUNDLE_NAME);
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
     /** Cannot instantiate. */
     // /CLOVER:OFF
@@ -37,7 +39,7 @@ public final class Resources {
      */
     public static String lookup(Class<?> c, String key, Object... o) {
         String k = key.replace(' ', '_');
-        return RESOURCE_HOLDER.lookup(c.getSimpleName() + "." + k, o);
+        return ResourceBundleUtil.lookupKey(RESOURCE_BUNDLE, c.getSimpleName() + "." + k, o);
     }
 
 }

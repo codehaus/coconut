@@ -45,7 +45,7 @@ public final class XmlUtil {
                 return true;
             } catch (NoSuchMethodException e1) {
                 addComment(doc, bundle, commentClazz, commentKey, e.getParentNode(), objectToSave
-                        .getClass());
+                        .getClass().getName());
                 e.getParentNode().removeChild(e);
             }
             return false;
@@ -55,7 +55,7 @@ public final class XmlUtil {
 
     public static void addComment(Document doc, ResourceBundle bundle, Class clazz, String comment,
             Node e, Object... o) {
-        String c = ResourceHolder.lookupKey(bundle, clazz.getSimpleName() + "." + comment, o);
+        String c = ResourceBundleUtil.lookupKey(bundle, clazz.getSimpleName() + "." + comment, o);
         Comment eee = doc.createComment(c);
         e.appendChild(eee);
     }
@@ -139,15 +139,6 @@ public final class XmlUtil {
         } else {
             return e.getTextContent();
         }
-    }
-
-    public static void elementLoggerAdd(Document doc, Element base, String element, Logger logger) {
-        LogHelper.saveLogger(doc, base, element, logger, "could not save logger");
-    }
-
-    public static Logger elementLoggerRead(Element base, String element) {
-        Element e = getChild(element, base);
-        return e == null ? null : LogHelper.readLog(e);
     }
 
     public static void elementTimeUnitAdd(Document doc, Element parent, String name, long time,

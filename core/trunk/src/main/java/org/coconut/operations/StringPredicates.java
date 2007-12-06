@@ -82,7 +82,7 @@ public final class StringPredicates {
     }
 
     /**
-     * A Predicate that will accept any String that contains the specified CharSequence
+     * A Predicate that will accept any String that contains the specified CharSequence.
      * 
      * @see String#contains(CharSequence)
      */
@@ -186,7 +186,7 @@ public final class StringPredicates {
 
     /**
      * A Predicate that will accept any String that is equal to the specified String
-     * ignoring case considerations
+     * ignoring case considerations.
      * 
      * @see String#equalsIgnoreCase(String)
      */

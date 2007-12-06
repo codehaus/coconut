@@ -10,7 +10,7 @@ import org.coconut.cache.service.management.CacheMXBean;
 import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.management.ManagedGroup;
-import org.coconut.test.MockTestCase;
+import org.coconut.test.TestUtil;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
@@ -55,7 +55,7 @@ public class ManagementUtilsTest {
 
     @Test(expected = NullPointerException.class)
     public void testWrapServiceNPE1() {
-        ManagementUtils.synchronizedGroup(MockTestCase.mockDummy(ManagedGroup.class), null);
+        ManagementUtils.synchronizedGroup(TestUtil.dummy(ManagedGroup.class), null);
     }
 
     @Test

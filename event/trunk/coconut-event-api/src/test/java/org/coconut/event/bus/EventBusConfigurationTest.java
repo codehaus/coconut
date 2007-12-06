@@ -11,7 +11,7 @@ import static junit.framework.Assert.assertTrue;
 import java.util.List;
 
 import org.coconut.predicate.matcher.PredicateMatcher;
-import org.coconut.test.MockTestCase;
+import org.coconut.test.TestUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -53,7 +53,7 @@ public class EventBusConfigurationTest {
     @Test
     public void filterMatcher() {
         assertNull(conf.getFilterMatcher());
-        PredicateMatcher pm = MockTestCase.mockDummy(PredicateMatcher.class);
+        PredicateMatcher pm = TestUtil.dummy(PredicateMatcher.class);
         assertSame(conf, conf.setFilterMatcher(pm));
         assertSame(pm, conf.getFilterMatcher());
     }

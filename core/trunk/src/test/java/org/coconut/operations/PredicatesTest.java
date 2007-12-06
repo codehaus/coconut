@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 
 import org.coconut.operations.Ops.Predicate;
 import org.coconut.operations.Predicates.AllPredicate;
@@ -34,7 +35,6 @@ import org.coconut.operations.Predicates.IsSamePredicate;
 import org.coconut.operations.Predicates.IsTypePredicate;
 import org.coconut.operations.Predicates.LessThenOrEqualPredicate;
 import org.coconut.operations.Predicates.LessThenPredicate;
-import org.coconut.test.MockTestCase;
 import org.coconut.test.TestUtil;
 import org.junit.Test;
 
@@ -48,26 +48,14 @@ public class PredicatesTest {
 
     private final static Comparator<Dummy> COMP = new DummyComparator();
 
-    static Predicate<? extends Number> P_EXTEND_NUMBER = null;
+    private static Predicate[] PREDICATES_WITH_NULL_ARRAY = { TRUE, null, TRUE };
 
-    static Predicate<Long> P_LONG = FALSE;
+    private static Iterable PREDICATES_WITH_NULL_ITERABLE = Arrays.asList(PREDICATES_WITH_NULL_ARRAY);
 
-    static Predicate<Number> P_NUMBER = FALSE;
+    private static Iterable STRING_PREDICATE_ITERABLE = Arrays.asList(StringPredicates.startsWith("foo"),
+            StringPredicates.contains("boo"));
 
-    static Predicate<Object> P_OBJECT = FALSE;
-
-    static Predicate[] PREDICATES_WITH_NULL_ARRAY = { TRUE, null, TRUE };
-
-    static Iterable PREDICATES_WITH_NULL_ITERABLE = Arrays.asList(PREDICATES_WITH_NULL_ARRAY);
-
-    static Predicate[] STRING_PREDICATE_ARRAY = { StringPredicates.startsWith("foo"),
-            StringPredicates.contains("boo") };
-
-    static Iterable STRING_PREDICATE_ITERABLE = Arrays.asList(STRING_PREDICATE_ARRAY);
-
-    static Predicate[] TRUE_FALSE_TRUE_ARRAY = { TRUE, FALSE, TRUE };
-
-    static Iterable TRUE_FALSE_TRUE_ITERABLE = Arrays.asList(TRUE_FALSE_TRUE_ARRAY);
+    private static Predicate[] TRUE_FALSE_TRUE_ARRAY = { TRUE, FALSE, TRUE };
 
     @Test
     public void all() {
@@ -105,7 +93,7 @@ public class PredicatesTest {
         Predicates.all(new Predicate[] { TRUE }).toString();
 
         // shortcircuted evaluation
-        Predicates.all(TRUE, FALSE, MockTestCase.mockDummy(Predicate.class)).evaluate(null);
+        Predicates.all(TRUE, FALSE, TestUtil.dummy(Predicate.class)).evaluate(null);
     }
 
     @Test(expected = NullPointerException.class)
@@ -145,7 +133,7 @@ public class PredicatesTest {
         assertIsSerializable(p);
 
         // shortcircuted evaluation
-        Predicates.and(FALSE, MockTestCase.mockDummy(Predicate.class)).evaluate(null);
+        Predicates.and(FALSE, TestUtil.dummy(Predicate.class)).evaluate(null);
     }
 
     /**
@@ -205,7 +193,7 @@ public class PredicatesTest {
         Predicates.any(new Predicate[] { TRUE }).toString();
 
         // shortcircuted evaluation
-        Predicates.any(FALSE, TRUE, MockTestCase.mockDummy(Predicate.class)).evaluate(null);
+        Predicates.any(FALSE, TRUE, TestUtil.dummy(Predicate.class)).evaluate(null);
     }
 
     @Test
@@ -229,7 +217,7 @@ public class PredicatesTest {
         Predicates.anyEquals(new Predicate[] { TRUE }).toString();
 
         // shortcircuted evaluation
-        Predicates.anyEquals(FALSE, TRUE, MockTestCase.mockDummy(Predicate.class)).evaluate(TRUE);
+        Predicates.anyEquals(FALSE, TRUE, TestUtil.dummy(Predicate.class)).evaluate(TRUE);
     }
 
     @Test(expected = NullPointerException.class)
@@ -499,6 +487,21 @@ public class PredicatesTest {
         Predicates.isEquals(null);
     }
 
+    /**
+     * Tests {@link Predicates#isNull()}.
+     */
+    @Test
+    public void isNotNull() {
+        assertTrue(Predicates.isNull().evaluate(null));
+        assertFalse(Predicates.isNull().evaluate(1));
+        assertFalse(Predicates.isNull().evaluate("f"));
+        Predicates.IS_NOT_NULL.toString();// no fail
+        TestUtil.assertIsSerializable(Predicates.IS_NOT_NULL);
+    }
+
+    /**
+     * Tests {@link Predicates#isNotNull()}.
+     */
     @Test
     public void isNull() {
         assertFalse(Predicates.isNotNull().evaluate(null));
@@ -507,6 +510,7 @@ public class PredicatesTest {
         assertSame(Predicates.IS_NOT_NULL, Predicates.isNotNull());
         Predicates.IS_NOT_NULL.toString();// no fail
         TestUtil.assertIsSerializable(Predicates.IS_NOT_NULL);
+        assertSame(Predicates.IS_NOT_NULL, TestUtil.serializeAndUnserialize(Predicates.IS_NOT_NULL));
     }
 
     /**
@@ -536,16 +540,40 @@ public class PredicatesTest {
         Predicates.isSame(null);
     }
 
+    /**
+     * Tests {@link Predicates#isType(Class)}.
+     */
     @Test
     public void isType() {
-        IsTypePredicate filter = (IsTypePredicate) Predicates.isType(Number.class);
-        assertEquals(Number.class, filter.getFilteredClass());
-        assertTrue(filter.evaluate(Integer.valueOf(0)));
-        assertTrue(filter.evaluate(Long.valueOf(0)));
-        assertFalse(filter.evaluate(new Object()));
-        TestUtil.assertIsSerializable(filter);
+        assertTrue(Predicates.isType(Object.class).evaluate(new Object()));
+        assertTrue(Predicates.isType(Object.class).evaluate(1));
+        assertTrue(Predicates.isType(Object.class).evaluate(new HashMap()));
+
+        assertFalse(Predicates.isType(Number.class).evaluate(new Object()));
+        assertTrue(Predicates.isType(Number.class).evaluate(1));
+        assertTrue(Predicates.isType(Number.class).evaluate(1L));
+        assertFalse(Predicates.isType(Number.class).evaluate(new HashMap()));
+
+        IsTypePredicate p = new IsTypePredicate(Map.class);
+        assertEquals(Map.class, p.getType());
+        assertTrue(p.evaluate(new HashMap()));
+        assertFalse(p.evaluate(new Object()));
+        TestUtil.assertIsSerializable(p);
     }
 
+    /**
+     * Tests that {@link Predicates#isType(Class)} throws a
+     * {@link IllegalArgumentException} when invoked with a pritimive type.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void isTypeIAE() {
+        Predicates.isType(Long.TYPE);
+    }
+
+    /**
+     * Tests that {@link Predicates#isType(Class)} throws a {@link NullPointerException}
+     * when invoked with a right side <code>null</code> argument.
+     */
     @Test(expected = NullPointerException.class)
     public void isTypeNPE() {
         Predicates.isType(null);
@@ -647,6 +675,32 @@ public class PredicatesTest {
         lessThenOrEqual(2, null);
     }
 
+    /**
+     * Tests {@link Predicates#not(Predicate)}.
+     */
+    @Test
+    public void not() {
+        assertFalse(Predicates.not(TRUE).evaluate(null));
+        assertTrue(Predicates.not(FALSE).evaluate(null));
+
+        Predicates.NotPredicate p = new Predicates.NotPredicate(TRUE);
+        assertSame(p.getPredicate(), TRUE);
+        p.toString(); // no exception
+        assertIsSerializable(p);
+    }
+
+    /**
+     * Tests that {@link Predicates#not(Predicate)} throws a {@link NullPointerException}
+     * when invoked with a <code>null</code> argument.
+     */
+    @Test(expected = NullPointerException.class)
+    public void notNPE() {
+        Predicates.not(null);
+    }
+
+    /**
+     * Tests {@link Predicates#notNullAnd(Predicate)}.
+     */
     @Test
     public void notNullAnd() {
         Predicate<Integer> p = Predicates.notNullAnd(Predicates.anyEquals(1, 2));
@@ -654,8 +708,13 @@ public class PredicatesTest {
         assertTrue(p.evaluate(1));
         assertFalse(p.evaluate(3));
         p.toString();
+        assertIsSerializable(p);
     }
 
+    /**
+     * Tests that {@link Predicates#notNullAnd(Predicate)} throws a
+     * {@link NullPointerException} when invoked with a <code>null</code> argument.
+     */
     @Test(expected = NullPointerException.class)
     public void notNullAndNPE() {
         Predicates.notNullAnd(null);
@@ -678,7 +737,7 @@ public class PredicatesTest {
         assertIsSerializable(p);
 
         // shortcircuted evaluation
-        Predicates.or(TRUE, MockTestCase.mockDummy(Predicate.class)).evaluate(null);
+        Predicates.or(TRUE, TestUtil.dummy(Predicate.class)).evaluate(null);
     }
 
     /**
@@ -699,17 +758,6 @@ public class PredicatesTest {
     @Test(expected = NullPointerException.class)
     public void orNPE1() {
         Predicates.or(TRUE, null);
-    }
-
-    /* Test not */
-    @Test(expected = NullPointerException.class)
-    public void testNot() {
-        assertFalse(Predicates.not(TRUE).evaluate(null));
-        assertTrue(Predicates.not(FALSE).evaluate(null));
-        assertEquals(((Predicates.NotPredicate) Predicates.not(FALSE)).getPredicate(), FALSE);
-        Predicates.not(TRUE).toString(); // check no exception
-
-        Predicates.not(null);
     }
 
     /**

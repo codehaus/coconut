@@ -5,11 +5,11 @@ package org.coconut.cache.service.exceptionhandling;
 
 import static org.coconut.internal.util.XmlUtil.addTypedElement;
 import static org.coconut.internal.util.XmlUtil.loadChildObject;
-import static org.coconut.internal.util.XmlUtil.elementLoggerRead;
-import static org.coconut.internal.util.XmlUtil.elementLoggerAdd;
 
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.core.Logger;
+import org.coconut.internal.util.LogHelper;
+import org.coconut.internal.util.XmlUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -73,7 +73,8 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
     /**
      * Sets the exception handler that should be used to handle all exceptions and
      * warnings. If no exception handler is set using this method the cache should use the
-     * one specified to {@link org.coconut.cache.CacheConfiguration#setDefaultLogger(Logger)}. If a logger
+     * one specified to
+     * {@link org.coconut.cache.CacheConfiguration#setDefaultLogger(Logger)}. If a logger
      * has not been set using that method either. The cache will, unless otherwise
      * specified, use an instance of
      * {@link CacheExceptionHandlers#defaultLoggingExceptionHandler()} to handle
@@ -112,17 +113,18 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
     @Override
     protected void fromXML(Element parent) throws Exception {
         /* Exception Logger */
-        logger = elementLoggerRead(parent, EXCEPTION_LOGGER_TAG);
+        logger = LogHelper.readLog(XmlUtil.getChild(EXCEPTION_LOGGER_TAG, parent));
 
         /* Exception Handler */
-        exceptionHandler = loadChildObject(parent, EXCEPTION_HANDLER_TAG, CacheExceptionHandler.class);
+        exceptionHandler = loadChildObject(parent, EXCEPTION_HANDLER_TAG,
+                CacheExceptionHandler.class);
     }
 
     /** {@inheritDoc} */
     @Override
     protected void toXML(Document doc, Element parent) throws Exception {
         /* Exception Logger */
-        elementLoggerAdd(doc, parent, EXCEPTION_LOGGER_TAG, logger);
+        LogHelper.saveLogger(doc, getResourceBundle(), parent, EXCEPTION_LOGGER_TAG, logger);
 
         /* Exception Handler */
         addTypedElement(doc, parent, EXCEPTION_HANDLER_TAG, getResourceBundle(), getClass(),

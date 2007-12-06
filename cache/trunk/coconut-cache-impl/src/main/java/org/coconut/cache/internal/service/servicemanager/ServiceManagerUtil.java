@@ -30,33 +30,6 @@ public final class ServiceManagerUtil {
 
     // /CLOVER:ON
 
-    static List<ManagedLifecycle> initializeManagedObjects(PicoContainer container) {
-        List<ManagedLifecycle> managedObjects = new ArrayList<ManagedLifecycle>();
-        List<AbstractCacheLifecycle> l = container
-                .getComponentInstancesOfType(AbstractCacheLifecycle.class);
-
-        for (AbstractCacheLifecycle a : l) {
-            if (a instanceof CompositeService) {
-                for (Object o : ((CompositeService) a).getChildServices()) {
-                    if (o instanceof ManagedLifecycle) {
-                        managedObjects.add((ManagedLifecycle) o);
-                    }
-                }
-            }
-            if (a instanceof ManagedLifecycle) {
-                managedObjects.add((ManagedLifecycle) a);
-            }
-        }
-        CacheConfiguration conf = (CacheConfiguration) container
-                .getComponentInstance(CacheConfiguration.class);
-        for (Object service : conf.serviceManager().getObjects()) {
-            if (service instanceof ManagedLifecycle) {
-                managedObjects.add((ManagedLifecycle) service);
-            }
-        }
-        return managedObjects;
-    }
-
     /**
      * Wraps a CacheServiceManagerService implementation such that only methods from the
      * CacheServiceManagerService interface is exposed.

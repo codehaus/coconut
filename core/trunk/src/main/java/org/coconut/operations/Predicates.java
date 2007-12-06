@@ -25,8 +25,11 @@ public final class Predicates {
     /** A Predicate that always evaluates to <code>false</code>. */
     public static final Predicate FALSE = new FalsePredicate();
 
-    /** A predicate that returns whether or not the element being tested is null. */
+    /** A Predicate that returns <code>false</code> if the element being tested is null. */
     public final static Predicate IS_NOT_NULL = new IsNotNullFilter();
+
+    /** A Predicate that returns <code>true</code> if the element being tested is null. */
+    public final static Predicate IS_NULL = not(IS_NOT_NULL);
 
     /** A Predicate that always evaluates to <code>true</code>. */
     public static final Predicate TRUE = new TruePredicate();
@@ -38,7 +41,7 @@ public final class Predicates {
     // /CLOVER:ON
 
     /**
-     * As {@link #all(Predicate...)} except taking an {@link Iterable} as parameter.
+     * As {@link #all(Predicate[])} except taking an {@link Iterable} as parameter.
      * 
      * @param predicates
      *            the predicates to evaluate against
@@ -105,7 +108,7 @@ public final class Predicates {
     }
 
     /**
-     * As {@link #any(Predicate...)} except taking an {@link Iterable} as parameter.
+     * As {@link #any(Predicate[])} except taking an {@link Iterable} as parameter.
      * 
      * @param predicates
      *            the predicates to evaluate against
@@ -287,26 +290,6 @@ public final class Predicates {
     }
 
     /**
-     * Creates a Predicate that evaluates to <code>true</code> iff the element being
-     * evaluated is {@link Object#equals equal} to the element being specified in this
-     * method.
-     * <p>
-     * If the specified object is serializable the returned predicate will also be
-     * serializable.
-     * 
-     * @param element
-     *            the element to use for comparison
-     * @return the newly created Predicate
-     * @throws NullPointerException
-     *             if the specified element is <code>null</code>
-     * @param <E>
-     *            the type of elements accepted by the predicate
-     */
-    public static <E> Predicate<E> isEquals(E element) {
-        return new Predicates.IsEqualsPredicate<E>(element);
-    }
-
-    /**
      * Returns a Predicate that always evaluates to <code>false</code>. The returned
      * predicate is serializable.
      * <p>
@@ -421,7 +404,45 @@ public final class Predicates {
     }
 
     /**
-     * Returns a Predicate that tests whether the element being tested is
+     * Creates a Predicate that evaluates to <code>true</code> iff the element being
+     * evaluated is {@link Object#equals equal} to the element being specified in this
+     * method.
+     * <p>
+     * If the specified object is serializable the returned predicate will also be
+     * serializable.
+     * 
+     * @param element
+     *            the element to use for comparison
+     * @return the newly created Predicate
+     * @throws NullPointerException
+     *             if the specified element is <code>null</code>
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     */
+    public static <E> Predicate<E> isEquals(E element) {
+        return new Predicates.IsEqualsPredicate<E>(element);
+    }
+
+    /**
+     * Returns a Predicate that returns <code>false</code> if the element being tested
+     * is <code>null</code>. This predicate is serializable.
+     * <p>
+     * Implementation note: Implementations of this method need not create a separate
+     * <tt>predicate</tt> object for each call. Using this method is likely to have
+     * comparable cost to using the like-named field. (Unlike this method, the field does
+     * not provide type safety.)
+     * 
+     * @param <E>
+     *            the types that are accepted by the predicate.
+     * @return a Predicate that returns <code>false</code> if the element being tested
+     *         is <code>null</code>
+     */
+    public static <E> Predicate<E> isNotNull() {
+        return IS_NOT_NULL;
+    }
+
+    /**
+     * Returns a Predicate that returns <code>true</code> if the element being tested is
      * <code>null</code>. This predicate is serializable.
      * <p>
      * Implementation note: Implementations of this method need not create a separate
@@ -431,22 +452,51 @@ public final class Predicates {
      * 
      * @param <E>
      *            the types that are accepted by the predicate.
-     * @return a Predicate that tests whether the element being tested is not
-     *         <code>null</code>.
+     * @return a Predicate that returns <code>true</code> if the element being tested is
+     *         <code>null</code>
      */
-    public static <E> Predicate<E> isNotNull() {
-        return IS_NOT_NULL;
+    public static <E> Predicate<E> isNull() {
+        return IS_NULL;
     }
 
     /**
-     * Returns a predicate that tests whether or not the element being tested is a subtype
-     * of the specified class. This predicate is serializable.
+     * Creates a Predicate that evaluates to <code>true</code> iff the element being
+     * evaluated has the same object identity as the element being specified in this
+     * method.
+     * <p>
+     * If the specified object is serializable the returned predicate will also be
+     * serializable.
+     * 
+     * @param element
+     *            the element to use for comparison
+     * @return the newly created Predicate
+     * @throws NullPointerException
+     *             if the specified element is <code>null</code>
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     */
+    public static <E> Predicate<E> isSame(E element) {
+        return new Predicates.IsSamePredicate<E>(element);
+    }
+
+    /**
+     * Returns a predicate that tests whether the class of the element being tested is
+     * either the same as, or is a superclass or superinterface of, the class or interface
+     * represented by the specified Class parameter. It returns <code>true</code> if so;
+     * otherwise it returns <code>false</code>. This predicate is serializable.
      * 
      * @param clazz
      *            the class to test
      * @return the newly created Predicate
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     * @throws NullPointerException
+     *             if the specified clazz is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if the class represents a primitive type
+     * @see Class#isAssignableFrom(Class)
      */
-    public static Predicate isType(Class clazz) {
+    public static <E> Predicate<E> isType(Class<?> clazz) {
         return new IsTypePredicate(clazz);
     }
 
@@ -552,21 +602,52 @@ public final class Predicates {
     }
 
     /**
-     * @param <E>
+     * Creates a Predicate that performs a logical logical NOT on the supplied Predicate.
+     * This is equivalent to:
+     * 
+     * <pre>
+     * !predicate.evaluate(element);
+     * </pre>
+     * 
+     * <p>
+     * If the specified predicate is serializable the returned predicate will also be
+     * serializable.
+     * 
      * @param predicate
+     *            the predicate to negate
      * @return the newly created Predicate
+     * @param <E>
+     *            the type of elements accepted by the predicate
+     * @throws NullPointerException
+     *             if any of the specified predicates are <code>null</code>
      */
-    public static <E> Predicate<E> not(Predicate<E> predicate) {
+    public static <E> Predicate<E> not(Predicate<? super E> predicate) {
         return new Predicates.NotPredicate<E>(predicate);
     }
 
     /**
-     * @param <E>
-     * @param f
+     * Creates a new Predicate that will evaluate to <code>false</code> if the specified
+     * element is <code>null</code>. Otherwise, it will return the evalutation result
+     * of the specified predicate evaluate the element. This is equivalent to:
+     * 
+     * <pre>
+     * element!=null &amp;&amp; predicate.evaluate(element);
+     * </pre>
+     * 
+     * <p>
+     * If the specified predicate is serializable the returned predicate will also be
+     * serializable.
+     * 
+     * @param predicate
+     *            the predicate
      * @return the newly created Predicate
+     * @throws NullPointerException
+     *             if the specified element is <code>null</code>
+     * @param <E>
+     *            the type of elements accepted by the predicate
      */
-    public static <E> Predicate<E> notNullAnd(Predicate<E> f) {
-        return and(IS_NOT_NULL, f);
+    public static <E> Predicate<E> notNullAnd(Predicate<E> predicate) {
+        return and(IS_NOT_NULL, predicate);
     }
 
     /**
@@ -595,26 +676,6 @@ public final class Predicates {
      */
     public static <E> Predicate<E> or(Predicate<? super E> left, Predicate<? super E> right) {
         return new Predicates.OrPredicate<E>(left, right);
-    }
-
-    /**
-     * Creates a Predicate that evaluates to <code>true</code> iff the element being
-     * evaluated has the same object identity as the element being specified in this
-     * method.
-     * <p>
-     * If the specified object is serializable the returned predicate will also be
-     * serializable.
-     * 
-     * @param element
-     *            the element to use for comparison
-     * @return the newly created Predicate
-     * @throws NullPointerException
-     *             if the specified element is <code>null</code>
-     * @param <E>
-     *            the type of elements accepted by the predicate
-     */
-    public static <E> Predicate<E> isSame(E element) {
-        return new Predicates.IsSamePredicate<E>(element);
     }
 
     /**
@@ -674,6 +735,8 @@ public final class Predicates {
      * @param iterable
      *            the iterable to convert
      * @return and array of predicate
+     * @param <E>
+     *            the type of the predicates
      */
     static <E> Predicate<E>[] iterableToArray(Iterable<? extends Predicate<? super E>> iterable) {
         if (iterable == null) {
@@ -941,54 +1004,6 @@ public final class Predicates {
     }
 
     /**
-     * A Predicate that evaluates to <code>true</code> iff the element being evaluated
-     * is {@link Object#equals equal} to the element being specified.
-     */
-    final static class IsEqualsPredicate<E> implements Predicate<E>, Serializable {
-
-        /** Default <code>serialVersionUID</code>. */
-        private static final long serialVersionUID = -802615306772905787L;
-
-        /** The element to compare with. */
-        private final E element;
-
-        /**
-         * Creates an IsEqualsPredicate.
-         * 
-         * @param element
-         *            the element to use for comparison
-         * @throws NullPointerException
-         *             if the specified element is <code>null</code>
-         */
-        public IsEqualsPredicate(E element) {
-            if (element == null) {
-                throw new NullPointerException("element is null");
-            }
-            this.element = element;
-        }
-
-        /** {@inheritDoc} */
-        public boolean evaluate(E element) {
-            return this.element == element || this.element.equals(element);
-        }
-
-        /**
-         * Returns the element we are comparing with.
-         * 
-         * @return the element we are comparing with
-         */
-        public E getElement() {
-            return element;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String toString() {
-            return "equals " + element;
-        }
-    }
-
-    /**
      * A Predicate that always evaluates to <tt>false</tt>. Use {@link #FALSE} to get
      * an instance of this Predicate.
      * 
@@ -1196,7 +1211,56 @@ public final class Predicates {
     }
 
     /**
-     * A predicate that tests whether or not an element is <code>null</code>.
+     * A Predicate that evaluates to <code>true</code> iff the element being evaluated
+     * is {@link Object#equals equal} to the element being specified.
+     */
+    final static class IsEqualsPredicate<E> implements Predicate<E>, Serializable {
+
+        /** Default <code>serialVersionUID</code>. */
+        private static final long serialVersionUID = -802615306772905787L;
+
+        /** The element to compare with. */
+        private final E element;
+
+        /**
+         * Creates an IsEqualsPredicate.
+         * 
+         * @param element
+         *            the element to use for comparison
+         * @throws NullPointerException
+         *             if the specified element is <code>null</code>
+         */
+        public IsEqualsPredicate(E element) {
+            if (element == null) {
+                throw new NullPointerException("element is null");
+            }
+            this.element = element;
+        }
+
+        /** {@inheritDoc} */
+        public boolean evaluate(E element) {
+            return this.element == element || this.element.equals(element);
+        }
+
+        /**
+         * Returns the element we are comparing with.
+         * 
+         * @return the element we are comparing with
+         */
+        public E getElement() {
+            return element;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString() {
+            return "equals " + element;
+        }
+    }
+
+    /**
+     * A Predicate that returns <code>true</code> if the element being tested is not
+     * null.
      */
     final static class IsNotNullFilter implements Predicate, Serializable {
         /** serialVersionUID. */
@@ -1212,20 +1276,68 @@ public final class Predicates {
         public String toString() {
             return "is not null";
         }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return IS_NOT_NULL;
+        }
     }
 
     /**
-     * If this filter is specified with a class this Filter will match any objects of the
-     * specific type or that is super class of the specified class. If this Filter is
-     * specified with an interface it will match any class that implements the interface.
-     * 
-     * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
-     * @version $Id: Predicates.java 501 2007-12-04 11:03:23Z kasper $
+     * A Predicate that evaluates to <code>true</code> iff the element being evaluated
+     * has the same object identity as the element being specified.
      */
-    final static class IsTypePredicate implements Predicate, Serializable {
+    final static class IsSamePredicate<E> implements Predicate<E>, Serializable {
 
-        /** A Filter that accepts all classes. */
-        public static final Predicate<?> ALL = new IsTypePredicate(Object.class);
+        /** Default <code>serialVersionUID</code>. */
+        private static final long serialVersionUID = 3761971557773620791L;
+
+        /** The element to compare with. */
+        private final E element;
+
+        /**
+         * Creates an IsSamePredicate.
+         * 
+         * @param element
+         *            the element to use for comparison
+         * @throws NullPointerException
+         *             if the specified element is <code>null</code>
+         */
+        public IsSamePredicate(E element) {
+            if (element == null) {
+                throw new NullPointerException("element is null");
+            }
+            this.element = element;
+        }
+
+        /** {@inheritDoc} */
+        public boolean evaluate(E element) {
+            return this.element == element;
+        }
+
+        /**
+         * Returns the element we are comparing with.
+         * 
+         * @return the element we are comparing with
+         */
+        public E getElement() {
+            return element;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString() {
+            return "is (==) " + element;
+        }
+    }
+
+    /**
+     * A predicate that tests whether the class of the element being tested is either the
+     * same as, or is a superclass or superinterface of, the class or interface
+     * represented by the specified Class parameter. It returns <code>true</code> if so;
+     * otherwise it returns <code>false</code>.
+     */
+    final static class IsTypePredicate<E> implements Predicate<E>, Serializable {
 
         /** A default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = 3256440304922996793L;
@@ -1234,17 +1346,25 @@ public final class Predicates {
         private final Class<?> theClass;
 
         /**
-         * Constructs a new ClassBasedFilter.
+         * Creates a new IsTypePredicate.
          * 
          * @param theClass
          *            the class we are testing against.
          * @throws NullPointerException
-         *             if the class that was supplied is <code>null</code>.
+         *             if the specified clazz is <code>null</code>
+         * @throws IllegalArgumentException
+         *             if the class represents a primitive type
          */
         public IsTypePredicate(Class<?> theClass) {
             if (theClass == null) {
                 throw new NullPointerException("theClass is null");
+            } else if (theClass.isPrimitive()) {
+                throw new IllegalArgumentException(
+                        "cannot create IsTypePredicate from primitive class '"
+                                + theClass.getName()
+                                + "', since all primitive arguments to evaluate() are automatically boxed");
             }
+
             this.theClass = theClass;
         }
 
@@ -1256,7 +1376,7 @@ public final class Predicates {
          * @return <code>true</code> if the filter accepts the element;
          *         <code>false</code> otherwise.
          */
-        public boolean evaluate(Object element) {
+        public boolean evaluate(E element) {
             return theClass.isAssignableFrom(element.getClass());
         }
 
@@ -1265,7 +1385,7 @@ public final class Predicates {
          * 
          * @return Returns the theClass.
          */
-        public Class<?> getFilteredClass() {
+        public Class<?> getType() {
             return theClass;
         }
     }
@@ -1506,8 +1626,8 @@ public final class Predicates {
     }
 
     /**
-     * A PredicatePredicate that evaluates to true iff the given Predicate evaluates to
-     * <code>false</code>.
+     * A PredicatePredicate that evaluates to true iff the Predicate used for constructing
+     * evaluates to <code>false</code>.
      */
     final static class NotPredicate<E> implements Predicate<E>, Serializable {
 
@@ -1515,7 +1635,7 @@ public final class Predicates {
         private static final long serialVersionUID = -5117781730584740429L;
 
         /** The Predicate to negate. */
-        private final Predicate<E> predicate;
+        private final Predicate<? super E> predicate;
 
         /**
          * Creates a new NotPredicate.
@@ -1525,7 +1645,7 @@ public final class Predicates {
          * @throws NullPointerException
          *             if the specified predicate is <code>null</code>
          */
-        public NotPredicate(Predicate<E> predicate) {
+        public NotPredicate(Predicate<? super E> predicate) {
             if (predicate == null) {
                 throw new NullPointerException("predicate is null");
             }
@@ -1548,7 +1668,7 @@ public final class Predicates {
          * 
          * @return the predicate that is being negated.
          */
-        public Predicate<E> getPredicate() {
+        public Predicate<? super E> getPredicate() {
             return predicate;
         }
 
@@ -1620,54 +1740,6 @@ public final class Predicates {
         @Override
         public String toString() {
             return "(" + left + ") or (" + right + ")";
-        }
-    }
-
-    /**
-     * A Predicate that evaluates to <code>true</code> iff the element being evaluated
-     * has the same object identity as the element being specified.
-     */
-    final static class IsSamePredicate<E> implements Predicate<E>, Serializable {
-
-        /** Default <code>serialVersionUID</code>. */
-        private static final long serialVersionUID = 3761971557773620791L;
-
-        /** The element to compare with. */
-        private final E element;
-
-        /**
-         * Creates an IsSamePredicate.
-         * 
-         * @param element
-         *            the element to use for comparison
-         * @throws NullPointerException
-         *             if the specified element is <code>null</code>
-         */
-        public IsSamePredicate(E element) {
-            if (element == null) {
-                throw new NullPointerException("element is null");
-            }
-            this.element = element;
-        }
-
-        /** {@inheritDoc} */
-        public boolean evaluate(E element) {
-            return this.element == element;
-        }
-
-        /**
-         * Returns the element we are comparing with.
-         * 
-         * @return the element we are comparing with
-         */
-        public E getElement() {
-            return element;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String toString() {
-            return "is (==) " + element;
         }
     }
 

@@ -48,7 +48,7 @@ public class CacheExceptionHandlingConfigurationTest {
 
     @Test
     public void testLoggerHandler() {
-        Logger l = Loggers.nullLog();
+        Logger l = Loggers.NULL_LOGGER;
         assertNull(conf.getExceptionLogger());
         assertSame(conf, conf.setExceptionLogger(l));
         assertSame(l, conf.getExceptionLogger());

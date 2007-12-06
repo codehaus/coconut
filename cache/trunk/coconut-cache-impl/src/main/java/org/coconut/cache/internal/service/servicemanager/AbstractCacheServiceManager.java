@@ -63,16 +63,10 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
         return getRunState().isTerminated();
     }
 
-    public void shutdown(Throwable cause) {
-        // First thing we must do is set the exception so later invocations
-        // of methods on the cache will throw it.
-        // after that we might want to try and shutdown the cache
-        // perhaps we can have a terminateCache(Throwable cause)
-        // what about terminatation of services??
-        // lots to think about
-        shutdown();
-
-        throw new UnsupportedOperationException();
+    /** {@inheritDoc} */
+    public <T> T getServiceFromCache(Class<T> serviceType) {
+        lazyStart(false);
+        return getService(serviceType);
     }
 
     /**

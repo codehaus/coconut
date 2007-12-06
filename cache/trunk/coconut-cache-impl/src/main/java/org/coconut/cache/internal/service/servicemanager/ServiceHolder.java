@@ -4,8 +4,8 @@ import java.util.concurrent.Future;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
-import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
+import org.coconut.cache.service.servicemanager.CacheLifecycle.Initializer;
 
 class ServiceHolder {
     private final boolean isInternal;
@@ -25,7 +25,7 @@ class ServiceHolder {
         return service;
     }
 
-    void initialize(CacheLifecycleInitializer cli) {
+    void initialize(Initializer cli) {
         state = 1;
         service.initialize(cli);
         state = 2;
@@ -33,10 +33,6 @@ class ServiceHolder {
 
     boolean isInitialized() {
         return state >= 2;
-    }
-
-    boolean isInternal() {
-        return isInternal;
     }
 
     boolean isStarted() {
@@ -57,7 +53,7 @@ class ServiceHolder {
         }
     }
 
-    void start(CacheServiceManagerService serviceManager) {
+    void start(CacheServiceManagerService serviceManager) throws Exception {
         state = 3;
         service.start(serviceManager);
         state = 4;

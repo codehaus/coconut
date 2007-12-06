@@ -15,7 +15,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.core.Logger;
-import org.coconut.test.MockTestCase;
+import org.coconut.test.TestUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -107,7 +107,7 @@ public class XmlConfiguratorTest {
 
     @Test
     public void testCustomLog() throws Exception {
-        conf.setDefaultLogger(MockTestCase.mockDummy(Logger.class));
+        conf.setDefaultLogger(TestUtil.dummy(Logger.class));
         conf = rw(conf);
         assertNull(conf.getDefaultLogger());
     }

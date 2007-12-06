@@ -17,7 +17,7 @@ import org.coconut.attribute.AttributeMaps;
 import org.coconut.attribute.spi.AbstractAttribute;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.test.util.IntegerToStringLoader;
-import org.coconut.test.MockTestCase;
+import org.coconut.test.TestUtil;
 import org.junit.Test;
 
 /**
@@ -35,9 +35,9 @@ public class ExplicitLoading extends AbstractLoadingTestBundle {
 
     static {
         ATR_FOO = new AttributeMaps.DefaultAttributeMap();
-        ATR_FOO.put(MockTestCase.mockDummy(Attribute.class), "boo");
+        ATR_FOO.put(TestUtil.dummy(Attribute.class), "boo");
         ATR_FO1 = new AttributeMaps.DefaultAttributeMap();
-        ATR_FO1.put(MockTestCase.mockDummy(Attribute.class), "oob");
+        ATR_FO1.put(TestUtil.dummy(Attribute.class), "oob");
     }
 
     @Test(expected = NullPointerException.class)

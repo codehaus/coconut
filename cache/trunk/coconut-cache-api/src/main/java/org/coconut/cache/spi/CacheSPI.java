@@ -3,10 +3,22 @@
  */
 package org.coconut.cache.spi;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.internal.util.ResourceHolder;
+import org.coconut.cache.service.event.CacheEventConfiguration;
+import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
+import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
+import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
+import org.coconut.cache.service.loading.CacheLoadingConfiguration;
+import org.coconut.cache.service.management.CacheManagementConfiguration;
+import org.coconut.cache.service.servicemanager.CacheServiceManagerConfiguration;
+import org.coconut.cache.service.statistics.CacheStatisticsConfiguration;
+import org.coconut.cache.service.worker.CacheWorkerConfiguration;
+import org.coconut.internal.util.ResourceBundleUtil;
 
 /**
  * This class is used internally. It should not be referenced by user code.
@@ -23,10 +35,15 @@ public final class CacheSPI {
     static final String BUNDLE_NAME = "org.coconut.cache.messages";//$NON-NLS-1$
 
     /** A message indicating a highly irregular error. */
-    static final ResourceBundle DEFAULT_CACHE_BUNDLE = ResourceHolder.lookup(BUNDLE_NAME);
+    public static final ResourceBundle DEFAULT_CACHE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
-    /** A message indicating a highly irregular error. */
-    private static final ResourceHolder RESOURCE_HOLDER = new ResourceHolder(BUNDLE_NAME);
+    /** A list of all default service configuration types. */
+    public final static List<Class<? extends AbstractCacheServiceConfiguration>> DEFAULT_CONFIGURATIONS = Collections
+            .unmodifiableList(Arrays.asList(CacheEventConfiguration.class,
+                    CacheEvictionConfiguration.class, CacheExceptionHandlingConfiguration.class,
+                    CacheExpirationConfiguration.class, CacheLoadingConfiguration.class,
+                    CacheManagementConfiguration.class, CacheServiceManagerConfiguration.class,
+                    CacheStatisticsConfiguration.class, CacheWorkerConfiguration.class));
 
     /** Cannot instantiate. */
     // /CLOVER:OFF
@@ -64,7 +81,7 @@ public final class CacheSPI {
      * @return a message from the default bundle.
      */
     public static String lookup(Class<?> c, String key, Object... o) {
-        return RESOURCE_HOLDER.lookup(c.getSimpleName() + "." + key, o);
+        return ResourceBundleUtil.lookupKey(DEFAULT_CACHE_BUNDLE,c.getSimpleName() + "." + key, o);
     }
 
 }

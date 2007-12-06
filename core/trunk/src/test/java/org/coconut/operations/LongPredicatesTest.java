@@ -16,7 +16,6 @@ import org.coconut.operations.LongPredicates.LessThenLongPredicate;
 import org.coconut.operations.Ops.LongPredicate;
 import org.coconut.operations.Ops.MapperToLong;
 import org.coconut.operations.Ops.Predicate;
-import org.coconut.test.MockTestCase;
 import org.coconut.test.TestUtil;
 import org.junit.Test;
 
@@ -136,11 +135,11 @@ public class LongPredicatesTest {
 
     @Test(expected = NullPointerException.class)
     public void mapperPredicateNPE1() {
-        LongPredicates.mapperPredicate(null, MockTestCase.mockDummy(LongPredicate.class));
+        LongPredicates.mapperPredicate(null, TestUtil.dummy(LongPredicate.class));
     }
 
     @Test(expected = NullPointerException.class)
     public void mapperPredicateNPE2() {
-        LongPredicates.mapperPredicate(MockTestCase.mockDummy(MapperToLong.class), null);
+        LongPredicates.mapperPredicate(TestUtil.dummy(MapperToLong.class), null);
     }
 }

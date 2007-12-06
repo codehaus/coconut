@@ -73,7 +73,7 @@ public interface InternalCacheServiceManager extends CacheServiceManagerService 
      */
     void shutdown();
 
-    void shutdown(Throwable cause);
+    //void shutdown(Throwable cause);
 
     void shutdownNow();
 }

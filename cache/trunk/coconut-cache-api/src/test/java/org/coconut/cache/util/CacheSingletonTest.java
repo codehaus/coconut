@@ -15,7 +15,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
 import org.coconut.cache.DummyCache;
-import org.coconut.test.MockTestCase;
+import org.coconut.test.TestUtil;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JUnit4Mockery;
@@ -78,7 +78,7 @@ public class CacheSingletonTest {
 
     @Test(expected = IllegalStateException.class)
     public void setNull1() {
-        Cache<?, ?> c = MockTestCase.mockDummy(Cache.class);
+        Cache<?, ?> c = TestUtil.dummy(Cache.class);
         CacheSingleton.setCache(c);
         CacheSingleton.getCache();// ok
         CacheSingleton.setCache(null);
@@ -111,7 +111,7 @@ public class CacheSingletonTest {
 
     @Test
     public void testSetGetDefault() {
-        Cache<?, ?> c = MockTestCase.mockDummy(Cache.class);
+        Cache<?, ?> c = TestUtil.dummy(Cache.class);
         CacheSingleton.setCache(c);
         assertEquals(c, CacheSingleton.getCache());
     }

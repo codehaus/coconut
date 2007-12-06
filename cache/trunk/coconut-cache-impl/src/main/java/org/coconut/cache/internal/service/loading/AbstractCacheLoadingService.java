@@ -20,7 +20,7 @@ import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
-import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
+import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedLifecycle;
 import org.coconut.operations.Ops.Predicate;
@@ -114,7 +114,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
     }
 
     /** {@inheritDoc} */
-    public final void forceLoadAll(Map<K, AttributeMap> mapsWithAttributes) {
+    public final void forceLoadAll(Map< ? extends K,  ? extends AttributeMap> mapsWithAttributes) {
         if (mapsWithAttributes == null) {
             throw new NullPointerException("mapsWithAttributes is null");
         }
@@ -180,7 +180,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
     }
 
     /** {@inheritDoc} */
-    public final void loadAll(Map<K, AttributeMap> mapsWithAttributes) {
+    public final void loadAll(Map< ? extends K,  ? extends AttributeMap> mapsWithAttributes) {
         if (mapsWithAttributes == null) {
             throw new NullPointerException("mapsWithAttributes is null");
         }
@@ -188,8 +188,8 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
     }
 
     /** {@inheritDoc} */
-    public void loadAllAsync(Map<K, AttributeMap> mapsWithAttributes) {
-        for (Map.Entry<K, AttributeMap> e : mapsWithAttributes.entrySet()) {
+    public void loadAllAsync(Map< ? extends K,  ? extends AttributeMap> mapsWithAttributes) {
+        for (Map.Entry< ? extends K,  ? extends AttributeMap> e : mapsWithAttributes.entrySet()) {
             loadAsync(e.getKey(), e.getValue());
         }
     }
@@ -205,7 +205,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
 
     /** {@inheritDoc} */
     @Override
-    public void initialize(CacheLifecycleInitializer cli) {
+    public void initialize(CacheLifecycle.Initializer cli) {
         if (loader != null) {
             cli.registerService(CacheLoadingService.class, LoadingUtils.wrapService(this));
         }
@@ -249,13 +249,13 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
      *            Whether or not this is synchronous operation (user waits on the result)
      * @return the cache entry that was added to the cache or null if no entry was added
      */
-    AbstractCacheEntry<K, V> loadAndAddToCache(K key, AttributeMap attributes, boolean isSynchronous) {
+    public AbstractCacheEntry<K, V> loadAndAddToCache(K key, AttributeMap attributes, boolean isSynchronous) {
         V v = null;
         if (loader != null) {
             try {
                 v = loader.load(key, attributes);
             } catch (Exception e) {
-                v = getExceptionHandler().getExceptionHandler().loadFailed(
+                v = getExceptionHandler().getHandler().loadingFailed(
                         getExceptionHandler().createContext(), loader, key, attributes, e);
             } catch (Error e) {
                 e.printStackTrace();
@@ -265,9 +265,9 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
         return loadSupport.valueLoaded(key, v, attributes);
     }
 
-    public Map<K, AbstractCacheEntry<K, V>> loadAllBlocking(Map<K, AttributeMap> keys) {
+    public Map<K, AbstractCacheEntry<K, V>> loadAllBlocking(Map< ? extends K,  ? extends AttributeMap> keys) {
         HashMap<K, AbstractCacheEntry<K, V>> map = new HashMap<K, AbstractCacheEntry<K, V>>();
-        for (Map.Entry<K, AttributeMap> e : keys.entrySet()) {
+        for (Map.Entry< ? extends K,  ? extends AttributeMap> e : keys.entrySet()) {
             map.put(e.getKey(), loadBlocking(e.getKey(), e.getValue()));
         }
         return map;

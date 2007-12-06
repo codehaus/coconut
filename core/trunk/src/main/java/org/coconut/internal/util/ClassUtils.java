@@ -15,6 +15,14 @@ public final class ClassUtils {
 
     // /CLOVER:ON
 
+    /**
+     * Converts the specified primitive class to the corresponding Object based class. Or
+     * returns the specified class if it is not a primitive class.
+     * 
+     * @param c
+     *            the class to convert
+     * @return the converted class
+     */
     public static Class fromPrimitive(Class c) {
         if (c.equals(Integer.TYPE)) {
             return Integer.class;
@@ -32,6 +40,8 @@ public final class ClassUtils {
             return Boolean.class;
         } else if (c.equals(Character.TYPE)) {
             return Character.class;
+        } else if (c.equals(Void.TYPE)) {
+            return Void.class;
         } else {
             return c;
         }

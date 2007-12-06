@@ -9,7 +9,7 @@ import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
 
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedLifecycle;
-import org.coconut.test.MockTestCase;
+import org.coconut.test.TestUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,7 +29,7 @@ public class CacheServiceManagerConfigurationTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void registerIAE1() {
-        ManagedLifecycle mo = MockTestCase.mockDummy(ManagedLifecycle.class);
+        ManagedLifecycle mo = TestUtil.dummy(ManagedLifecycle.class);
         c.add(mo);
         c.add(mo);
     }
@@ -70,7 +70,7 @@ public class CacheServiceManagerConfigurationTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void registerIAE2() {
-        CacheLifecycle cl = MockTestCase.mockDummy(CacheLifecycle.class);
+        CacheLifecycle cl = TestUtil.dummy(CacheLifecycle.class);
         c.add(cl);
         c.add(cl);
     }
@@ -91,10 +91,10 @@ public class CacheServiceManagerConfigurationTest {
 
     public void register() {
         assertEquals(0, c.getObjects().size());
-        ManagedLifecycle mo = MockTestCase.mockDummy(ManagedLifecycle.class);
-        ManagedLifecycle mo1 = MockTestCase.mockDummy(ManagedLifecycle.class);
-        CacheLifecycle cl = MockTestCase.mockDummy(CacheLifecycle.class);
-        CacheLifecycle cl1 = MockTestCase.mockDummy(CacheLifecycle.class);
+        ManagedLifecycle mo = TestUtil.dummy(ManagedLifecycle.class);
+        ManagedLifecycle mo1 = TestUtil.dummy(ManagedLifecycle.class);
+        CacheLifecycle cl = TestUtil.dummy(CacheLifecycle.class);
+        CacheLifecycle cl1 = TestUtil.dummy(CacheLifecycle.class);
         c.add(mo);
         c.add(mo1);
         c.add(cl);

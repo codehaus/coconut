@@ -11,14 +11,14 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.defaults.UnsynchronizedCache;
 import org.coconut.cache.service.event.CacheEvent;
-import org.coconut.test.MockTestCase;
+import org.coconut.test.TestUtil;
 import org.junit.Test;
 
 public class InternalEventTest {
 
     @Test
     public void cleared() {
-        Cache<Integer, String> cache = MockTestCase.mockDummy(Cache.class);
+        Cache<Integer, String> cache = TestUtil.dummy(Cache.class);
         CacheEvent.CacheCleared<Integer, String> c = InternalEvent.cleared(cache, 1, 2);
         assertSame(cache, c.getCache());
         assertEquals(1, c.getPreviousSize());
@@ -27,7 +27,7 @@ public class InternalEventTest {
         assertEquals(c, c);
         assertFalse(c.equals(InternalEvent.cleared(cache, 1, 3)));
         assertFalse(c.equals(InternalEvent.cleared(cache, 2, 2)));
-        assertFalse(c.equals(InternalEvent.cleared(MockTestCase.mockDummy(Cache.class), 1, 2)));
+        assertFalse(c.equals(InternalEvent.cleared(TestUtil.dummy(Cache.class), 1, 2)));
         c.toString();
         assertEquals(InternalEvent.cleared(cache, 1, 2).hashCode(), InternalEvent.cleared(cache, 1,
                 2).hashCode());
@@ -40,12 +40,12 @@ public class InternalEventTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void clearedIAE() {
-        InternalEvent.cleared(MockTestCase.mockDummy(Cache.class), -1, 0);
+        InternalEvent.cleared(TestUtil.dummy(Cache.class), -1, 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void clearedIAE2() {
-        InternalEvent.cleared(MockTestCase.mockDummy(Cache.class), 0, -1);
+        InternalEvent.cleared(TestUtil.dummy(Cache.class), 0, -1);
     }
 
     @Test
@@ -58,7 +58,7 @@ public class InternalEventTest {
 
         assertEquals(c, c);
         assertFalse(c.equals(new Object()));
-        assertFalse(c.equals(InternalEvent.started(MockTestCase.mockDummy(Cache.class))));
+        assertFalse(c.equals(InternalEvent.started(TestUtil.dummy(Cache.class))));
         c.toString();
         assertEquals(InternalEvent.started(cache).hashCode(), InternalEvent.started(cache)
                 .hashCode());

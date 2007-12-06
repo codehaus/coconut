@@ -10,7 +10,7 @@ import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
 
 import org.coconut.cache.policy.IsCacheable;
 import org.coconut.cache.policy.ReplacementPolicy;
-import org.coconut.test.MockTestCase;
+import org.coconut.test.TestUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -77,7 +77,7 @@ public class CacheEvictionConfigurationTest {
 
     @Test
     public void isCacheable() {
-        IsCacheable i = MockTestCase.mockDummy(IsCacheable.class);
+        IsCacheable i = TestUtil.dummy(IsCacheable.class);
         assertNull(conf.getIsCacheableFilter());
         assertSame(conf, conf.setIsCacheableFilter(i));
         assertEquals(i, conf.getIsCacheableFilter());
@@ -88,7 +88,7 @@ public class CacheEvictionConfigurationTest {
     }
     @Test
     public void testPolicy() {
-        ReplacementPolicy<?> p = MockTestCase.mockDummy(ReplacementPolicy.class);
+        ReplacementPolicy<?> p = TestUtil.dummy(ReplacementPolicy.class);
         assertNull(conf.getPolicy());
         assertEquals(conf, conf.setPolicy(p));
         assertEquals(p, conf.getPolicy());

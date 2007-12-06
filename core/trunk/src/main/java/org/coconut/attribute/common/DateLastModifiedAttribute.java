@@ -13,8 +13,6 @@ import org.coconut.core.Clock;
  * updated. The mapped value must be of a type <tt>long</tt> between 1 and
  * {@link Long#MAX_VALUE}.
  * 
- * @see #setLastUpdated(AttributeMap, long)
- * @see #getLastUpdated(AttributeMap, Clock)
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $

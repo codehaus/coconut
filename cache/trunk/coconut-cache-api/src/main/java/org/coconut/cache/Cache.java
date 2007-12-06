@@ -193,7 +193,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      *             if the cache has been shutdown
      * @throws CacheException
      *             if the cache loader failed while trying to load a value (optional). See
-     *             {@link org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#loadFailed(org.coconut.cache.service.exceptionhandling.CacheExceptionContext, org.coconut.cache.service.loading.CacheLoader, Object, AttributeMap, Exception)}
+     *             {@link org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#loadingFailed(org.coconut.cache.service.exceptionhandling.CacheExceptionContext, org.coconut.cache.service.loading.CacheLoader, Object, AttributeMap, Throwable)}
      * @see Map#get(Object)
      * @see org.coconut.cache.service.loading.CacheLoadingConfiguration#setLoader(org.coconut.cache.service.loading.CacheLoader)
      */
@@ -253,7 +253,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @throws CacheException
      *             if the backend cache loader failed while trying to load a value
      *             (optional). See
-     *             {@link org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#loadFailed(org.coconut.cache.service.exceptionhandling.CacheExceptionContext, org.coconut.cache.service.loading.CacheLoader, Object, AttributeMap, Exception)}
+     *             {@link org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#loadingFailed(org.coconut.cache.service.exceptionhandling.CacheExceptionContext, org.coconut.cache.service.loading.CacheLoader, Object, AttributeMap, Throwable)}
      */
     CacheEntry<K, V> getEntry(K key);
 

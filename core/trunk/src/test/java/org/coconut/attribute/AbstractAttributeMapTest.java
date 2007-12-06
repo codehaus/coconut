@@ -7,17 +7,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.coconut.test.MockTestCase;
+import org.coconut.test.TestUtil;
 import org.junit.Before;
 import org.junit.Test;
 
 public abstract class AbstractAttributeMapTest {
 
-    Attribute a1 = MockTestCase.mockDummy(Attribute.class);
+    Attribute a1 = TestUtil.dummy(Attribute.class);
 
-    Attribute a2 = MockTestCase.mockDummy(Attribute.class);
+    Attribute a2 = TestUtil.dummy(Attribute.class);
 
-    Attribute a3 = MockTestCase.mockDummy(Attribute.class);
+    Attribute a3 = TestUtil.dummy(Attribute.class);
 
     AttributeMap m;
 

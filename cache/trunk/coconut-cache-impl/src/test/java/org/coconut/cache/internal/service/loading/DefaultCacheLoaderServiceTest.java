@@ -16,7 +16,7 @@ import org.coconut.cache.internal.service.worker.InternalCacheWorkerService;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.worker.CacheWorkerManager;
-import org.coconut.test.MockTestCase;
+import org.coconut.test.TestUtil;
 import org.junit.Test;
 
 /**
@@ -26,11 +26,11 @@ import org.junit.Test;
 @SuppressWarnings( { "unchecked", "serial" })
 public class DefaultCacheLoaderServiceTest {
 
-    private final static AttributeMap ATTRIBUTES = MockTestCase.mockDummy(AttributeMap.class);
+    private final static AttributeMap ATTRIBUTES = TestUtil.dummy(AttributeMap.class);
 
-    private final static Map<Integer, AttributeMap> KEYS1 = MockTestCase.mockDummy(Map.class);
+    private final static Map<Integer, AttributeMap> KEYS1 = TestUtil.dummy(Map.class);
 
-    private final static Map<Integer, AttributeMap> KEYS2 = MockTestCase.mockDummy(Map.class);
+    private final static Map<Integer, AttributeMap> KEYS2 = TestUtil.dummy(Map.class);
 
     private final static Map<Integer, AttributeMap> REAL_KEYS = new HashMap() {
         {
@@ -329,21 +329,21 @@ public class DefaultCacheLoaderServiceTest {
                 
                 public ExecutorService getExecutorService(Object service,
                         AttributeMap attributes) {
-                    return MockTestCase.mockDummy(ExecutorService.class);
+                    return TestUtil.dummy(ExecutorService.class);
                 }
                 
                 public ScheduledExecutorService getScheduledExecutorService(
                         Object service, AttributeMap attributes) {
-                    return MockTestCase.mockDummy(ScheduledExecutorService.class);
+                    return TestUtil.dummy(ScheduledExecutorService.class);
                 }};
         }
 
         public ExecutorService getExecutorService(Class<?> service) {
-            return MockTestCase.mockDummy(ExecutorService.class);
+            return TestUtil.dummy(ExecutorService.class);
         }
 
         public ScheduledExecutorService getScheduledExecutorService(Class<?> service) {
-            return MockTestCase.mockDummy(ScheduledExecutorService.class);
+            return TestUtil.dummy(ScheduledExecutorService.class);
         }
 
     }

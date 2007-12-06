@@ -55,7 +55,7 @@ public class PutAll extends AbstractCacheTCKTest {
     }
 
     /**
-     * {@link Cache#containsKey()} should not fail when cache is shutdown.
+     * {@link Cache#putAll(Map)} should fail when the cache is shutdown.
      */
     @Test(expected = IllegalStateException.class)
     public void putAllShutdownISE() {

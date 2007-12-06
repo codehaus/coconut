@@ -12,8 +12,11 @@ import static org.coconut.internal.util.XmlUtil.getChild;
 import static org.coconut.internal.util.XmlUtil.loadChildObject;
 
 import org.coconut.cache.policy.IsCacheable;
+import org.coconut.cache.policy.IsCacheables;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
+import org.coconut.operations.Predicates;
+import org.coconut.operations.StringPredicates;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -56,6 +59,7 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
     /** The maximum volume of the cache. */
     private long maximumVolume;
 
+    /** A filter used for filtering what items should be cached. */
     private IsCacheable<K, V> isCacheableFilter;
 
     /** The replacement policy used for evicting elements. */

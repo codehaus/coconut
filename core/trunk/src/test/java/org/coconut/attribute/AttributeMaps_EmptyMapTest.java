@@ -16,7 +16,7 @@ import static org.junit.Assert.fail;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import org.coconut.test.MockTestCase;
+import org.coconut.test.TestUtil;
 import org.junit.Test;
 
 /**
@@ -26,7 +26,7 @@ import org.junit.Test;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public class AttributeMaps_EmptyMapTest {
-    private final static Attribute KEY = MockTestCase.mockDummy(Attribute.class);
+    private final static Attribute KEY = TestUtil.dummy(Attribute.class);
 
     @Test
     public void various() {

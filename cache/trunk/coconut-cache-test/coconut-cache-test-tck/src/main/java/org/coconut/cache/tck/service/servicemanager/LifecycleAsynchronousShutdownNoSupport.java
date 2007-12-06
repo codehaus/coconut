@@ -8,7 +8,7 @@ import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.tck.RequireService;
-import org.coconut.test.MockTestCase;
+import org.coconut.test.TestUtil;
 import org.junit.Test;
 
 @RequireService({ NotThreadSafe.class })
@@ -21,8 +21,8 @@ public class LifecycleAsynchronousShutdownNoSupport extends AbstractCacheTCKTest
             @Override
             public void shutdown() {
                 try {
-                    services.shutdownServiceAsynchronously(MockTestCase
-                            .mockDummy(Runnable.class));
+                    services.shutdownServiceAsynchronously(TestUtil
+                            .dummy(Runnable.class));
                     throw new AssertionError("should throw");
                 } catch (UnsupportedOperationException ok) {}
             }

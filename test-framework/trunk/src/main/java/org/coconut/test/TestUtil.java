@@ -1,7 +1,6 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-
 package org.coconut.test;
 
 import java.io.BufferedInputStream;
@@ -13,6 +12,8 @@ import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import org.jmock.Mockery;
+
 import junit.framework.AssertionFailedError;
 
 /**
@@ -20,6 +21,11 @@ import junit.framework.AssertionFailedError;
  * @version $Id$
  */
 public class TestUtil {
+
+    @SuppressWarnings("unchecked")
+    public static <V> V dummy(Class<V> arg) {
+        return new Mockery().mock(arg);
+    }
 
     public static Object serializeAndUnserialize(Object o) {
         try {

@@ -24,15 +24,15 @@ import org.junit.Test;
 
 public abstract class AbstractAttributeTest {
 
-    private final Attribute a;
+     final Attribute a;
 
-    private final Object defaultValue;
+     final Object defaultValue;
 
-    private final Class c;
+     final Class c;
 
-    private final Collection valid;
+     final Collection valid;
 
-    private final Collection invalid;
+     final Collection invalid;
 
     protected static final Collection<Long> NON_POSITIVE_LONGS = Arrays.asList(Long.MIN_VALUE,
             -10l, -5l, -1l, 0L);
@@ -107,32 +107,6 @@ public abstract class AbstractAttributeTest {
     }
 
     @Test
-    public void set() throws Exception {
-        Method setMethod = a.getClass().getMethod("set", AttributeMap.class, c);
-        assertTrue(setMethod.getReturnType().equals(AttributeMap.class));
-
-        for (Object l : valid) {
-            AttributeMap am = newMap();
-            if (l instanceof Long) {
-                assertEquals(0l, am.getLong(a, 0));
-            }
-            assertSame(am, setMethod.invoke(null, am, l));
-            if (l instanceof Long) {
-                assertEquals(l, am.getLong(a, 0));
-            }
-        }
-        for (Object l : invalid) {
-            AttributeMap am = newMap();
-            try {
-                setMethod.invoke(null, am, l);
-                throw new AssertionError("Should Throw");
-            } catch (InvocationTargetException e) {
-                assertTrue(e.getCause() instanceof IllegalArgumentException);
-            }
-        }
-    }
-
-    @Test
     public void get() throws Exception {
         Method getMethod = a.getClass().getMethod("get", AttributeMap.class);
         assertTrue(getMethod.getReturnType().equals(c));
@@ -157,27 +131,5 @@ public abstract class AbstractAttributeTest {
         isNotValid(invalid.toArray());
     }
 
-    @Test
-    public void singleton() throws Exception {
-        Method singleton = a.getClass().getMethod("singleton", c);
-        assertTrue(singleton.getReturnType().equals(AttributeMap.class));
-        for (Object l : valid) {
-            AttributeMap map = (AttributeMap) singleton.invoke(null, l);
-            assertEquals(1, map.size());
-            assertTrue(map.containsKey(a));
-            assertEquals(l, map.get(a));
-            if (l instanceof Long) {
-                assertEquals(l, map.getLong(a));
-                assertEquals(l, map.getLong(a, 0l));
-            }
-        }
-        for (Object l : invalid) {
-            try {
-                singleton.invoke(null, l);
-                throw new AssertionError("Should Throw");
-            } catch (InvocationTargetException e) {
-                assertTrue(e.getCause() instanceof IllegalArgumentException);
-            }
-        }
-    }
+   
 }

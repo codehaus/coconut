@@ -5,6 +5,7 @@ package org.coconut.cache.internal.service.exceptionhandling;
 
 import java.text.MessageFormat;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.internal.service.spi.Resources;
@@ -57,7 +58,7 @@ public class DefaultCacheExceptionService<K, V> extends AbstractCacheLifecycle i
         if (configuration.getExceptionHandler() != null) {
             this.exceptionHandler = configuration.getExceptionHandler();
         } else {
-            this.exceptionHandler = new CacheExceptionHandlers.DefaultLoggingExceptionHandler<K, V>();
+            this.exceptionHandler = CacheExceptionHandlers.defaultLoggingExceptionHandler();
         }
     }
 
@@ -74,16 +75,11 @@ public class DefaultCacheExceptionService<K, V> extends AbstractCacheLifecycle i
             public Cache<K, V> getCache() {
                 return cache;
             }
-
-            @Override
-            public void shutdownCache(Throwable cause) {
-                throw new UnsupportedOperationException();
-            }
         };
     }
 
     /** {@inheritDoc} */
-    public CacheExceptionHandler<K, V> getExceptionHandler() {
+    public CacheExceptionHandler<K, V> getHandler() {
         // TODO we really should wrap it in something that catches all runtime exceptions
         // thrown by the handler methods.
         return exceptionHandler;
@@ -105,11 +101,18 @@ public class DefaultCacheExceptionService<K, V> extends AbstractCacheLifecycle i
             if (logger == null) {
                 String name = cache.getName();
                 String loggerName = Cache.class.getPackage().getName() + "." + name;
-                java.util.logging.Logger jucLogger = java.util.logging.Logger.getLogger(loggerName);
-                String infoMsg = Resources.lookup(DefaultCacheExceptionService.class, "noLogger");
-                jucLogger.setLevel(Level.ALL);
-                jucLogger.info(MessageFormat.format(infoMsg, name, loggerName));
-                jucLogger.setLevel(Level.SEVERE);
+                java.util.logging.Logger jucLogger = LogManager.getLogManager().getLogger(
+                        loggerName);
+                if (jucLogger == null) {
+                    String infoMsg = Resources.lookup(DefaultCacheExceptionService.class,
+                            "noLogger");
+                    jucLogger = java.util.logging.Logger.getLogger(loggerName);
+
+                    jucLogger.setLevel(Level.ALL);
+                    jucLogger.info(MessageFormat.format(infoMsg, name, loggerName));
+                    jucLogger.setLevel(Level.SEVERE);
+                    
+                }
                 logger = Loggers.JDK.from(jucLogger);
             }
         }

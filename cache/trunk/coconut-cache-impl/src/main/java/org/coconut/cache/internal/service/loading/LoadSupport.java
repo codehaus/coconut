@@ -32,7 +32,7 @@ public interface LoadSupport<K, V> {
 
     void loadAll(AttributeMap attributes, boolean force);
 
-    void loadAll(Map<K, AttributeMap> attributes);
+    void loadAll(Map< ? extends K,  ? extends AttributeMap> attributes);
 
     /**
      * Called whenever a cacheloader has loaded an element.

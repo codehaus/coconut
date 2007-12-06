@@ -37,24 +37,14 @@ public class UnsynchronizedCacheServiceManager extends AbstractPicoBasedCacheSer
     }
 
     /** {@inheritDoc} */
-    public <T> T getServiceFromCache(Class<T> serviceType) {
-        lazyStart(false);
-        return getService(serviceType);
-    }
-
-    /** {@inheritDoc} */
     public boolean lazyStart(boolean failIfShutdown) {
         if (status != RunState.RUNNING) {
-            if (startupException != null) {
-                throw startupException;
-            } else if (status == RunState.STARTING) {
+            checkStartupException();
+            if (status == RunState.STARTING) {
                 throw new IllegalStateException(
                         "Cannot invoke this method from CacheLifecycle.start(Map services), should be invoked from CacheLifecycle.started(Cache c)");
             } else if (status == RunState.NOTRUNNING) {
-                status = RunState.STARTING;
-                startServices();
-                status = RunState.RUNNING;
-                servicesStarted();
+                doStart();
             } else if (failIfShutdown && status.isShutdown()) {
                 throw new IllegalStateException("Cache has been shutdown");
             }
@@ -66,13 +56,15 @@ public class UnsynchronizedCacheServiceManager extends AbstractPicoBasedCacheSer
     /** {@inheritDoc} */
     public void shutdown() {
         if (status == RunState.NOTRUNNING) {
+            doTerminate();
             status = RunState.TERMINATED;
         } else if (status == RunState.RUNNING) {
             getCache().clear();
-            status = RunState.SHUTDOWN;
             initiateShutdown();
+            doTerminate();
         } else if (status == RunState.STARTING && super.startupException != null) {
             initiateShutdown();
+            doTerminate();
         }
     }
 
@@ -85,31 +77,12 @@ public class UnsynchronizedCacheServiceManager extends AbstractPicoBasedCacheSer
         throw new UnsupportedOperationException();
     }
 
-    void initiateShutdown() {
-        Map<CacheLifecycle, RuntimeException> m = new HashMap<CacheLifecycle, RuntimeException>();
-        List<ServiceHolder> l = new ArrayList<ServiceHolder>(services);
-        Collections.reverse(l);
-        for (ServiceHolder sh : l) {
-            if (sh.isStarted()) {
-                try {
-                    sh.shutdown();
-                } catch (RuntimeException e) {
-                    m.put(sh.getService(), e);
-                }
-            }
-        }
-        if (!m.isEmpty()) {
-            ces.cacheShutdownFailed(getCache(), m);
-        }
-        doTerminate();
+    /** {@inheritDoc} */
+    RunState getRunState() {
+        return status;
     }
 
     void setRunState(RunState state) {
         this.status = state;
-    }
-
-    /** {@inheritDoc} */
-    RunState getRunState() {
-        return status;
     }
 }

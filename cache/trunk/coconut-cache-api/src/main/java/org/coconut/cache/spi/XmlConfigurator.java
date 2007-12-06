@@ -207,7 +207,13 @@ public class XmlConfigurator {
      */
     protected Element writeCacheService(Document doc,
             AbstractCacheServiceConfiguration<?, ?> configuration) throws Exception {
-        Element ee = doc.createElement(configuration.getServiceName());
+        final Element ee;
+        if (CacheSPI.DEFAULT_CONFIGURATIONS.contains(configuration.getClass())) {
+            ee = doc.createElement(configuration.getServiceName());
+        } else {
+            ee = doc.createElement("configuration");
+            ee.setAttribute("type", configuration.getClass().getName());
+        }
         configuration.toXML(doc, ee);
         if (ee.hasAttributes() || ee.hasChildNodes()) {
             return ee;

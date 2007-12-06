@@ -11,7 +11,7 @@ import org.coconut.core.EventProcessor;
 import org.coconut.core.EventUtils;
 import org.coconut.event.bus.EventSubscription;
 import org.coconut.operations.Predicates;
-import org.coconut.test.MockTestCase;
+import org.coconut.test.TestUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,13 +36,13 @@ public class EventBusShutdownLazyStart extends AbstractEventTestBundle {
     public void subscribe1Shutdown() {
         prestart();
         c.shutdown();
-        event().subscribe(MockTestCase.mockDummy(EventProcessor.class));
+        event().subscribe(TestUtil.dummy(EventProcessor.class));
     }
 
     @Test
     public void subscribe1LazyStart() {
         assertFalse(c.isStarted());
-        event().subscribe(MockTestCase.mockDummy(EventProcessor.class));
+        event().subscribe(TestUtil.dummy(EventProcessor.class));
         assertTrue(c.isStarted());
     }
 
@@ -50,13 +50,13 @@ public class EventBusShutdownLazyStart extends AbstractEventTestBundle {
     public void subscribe2Shutdown() {
         prestart();
         c.shutdown();
-        event().subscribe(MockTestCase.mockDummy(EventProcessor.class), Predicates.TRUE);
+        event().subscribe(TestUtil.dummy(EventProcessor.class), Predicates.TRUE);
     }
 
     @Test
     public void subscribe2LazyStart() {
         assertFalse(c.isStarted());
-        event().subscribe(MockTestCase.mockDummy(EventProcessor.class), Predicates.TRUE);
+        event().subscribe(TestUtil.dummy(EventProcessor.class), Predicates.TRUE);
         assertTrue(c.isStarted());
     }
 
@@ -64,13 +64,13 @@ public class EventBusShutdownLazyStart extends AbstractEventTestBundle {
     public void subscribe3Shutdown() {
         prestart();
         c.shutdown();
-        event().subscribe(MockTestCase.mockDummy(EventProcessor.class), Predicates.TRUE, "foo");
+        event().subscribe(TestUtil.dummy(EventProcessor.class), Predicates.TRUE, "foo");
     }
 
     @Test
     public void subscribe3LazyStart() {
         assertFalse(c.isStarted());
-        event().subscribe(MockTestCase.mockDummy(EventProcessor.class), Predicates.TRUE, "foo");
+        event().subscribe(TestUtil.dummy(EventProcessor.class), Predicates.TRUE, "foo");
         assertTrue(c.isStarted());
     }
 
@@ -106,13 +106,13 @@ public class EventBusShutdownLazyStart extends AbstractEventTestBundle {
     public void offerShutdown() {
         prestart();
         c.shutdown();
-        event().offer(MockTestCase.mockDummy(CacheEvent.class));
+        event().offer(TestUtil.dummy(CacheEvent.class));
     }
 
     @Test
     public void offerLazyStart() {
         assertFalse(c.isStarted());
-        event().offer(MockTestCase.mockDummy(CacheEvent.class));
+        event().offer(TestUtil.dummy(CacheEvent.class));
         assertTrue(c.isStarted());
     }
 
@@ -120,13 +120,13 @@ public class EventBusShutdownLazyStart extends AbstractEventTestBundle {
     public void processShutdown() {
         prestart();
         c.shutdown();
-        event().process(MockTestCase.mockDummy(CacheEvent.class));
+        event().process(TestUtil.dummy(CacheEvent.class));
     }
 
     @Test
     public void processLazyStart() {
         assertFalse(c.isStarted());
-        event().process(MockTestCase.mockDummy(CacheEvent.class));
+        event().process(TestUtil.dummy(CacheEvent.class));
         assertTrue(c.isStarted());
     }
 
@@ -135,16 +135,16 @@ public class EventBusShutdownLazyStart extends AbstractEventTestBundle {
         prestart();
         c.shutdown();
         event().offerAll(
-                (Collection) Arrays.asList(MockTestCase.mockDummy(CacheEvent.class), MockTestCase
-                        .mockDummy(CacheEvent.class)));
+                (Collection) Arrays.asList(TestUtil.dummy(CacheEvent.class), TestUtil
+                        .dummy(CacheEvent.class)));
     }
 
     @Test
     public void offerAllLazyStart() {
         assertFalse(c.isStarted());
         event().offerAll(
-                (Collection) Arrays.asList(MockTestCase.mockDummy(CacheEvent.class), MockTestCase
-                        .mockDummy(CacheEvent.class)));
+                (Collection) Arrays.asList(TestUtil.dummy(CacheEvent.class), TestUtil
+                        .dummy(CacheEvent.class)));
         assertTrue(c.isStarted());
     }
 }

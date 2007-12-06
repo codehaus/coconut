@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.internal.service.servicemanager.CompositeService;
 import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
-import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
+import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.worker.CacheWorkerConfiguration;
 import org.coconut.cache.service.worker.CacheWorkerManager;
@@ -45,7 +45,7 @@ public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService i
 
     /** {@inheritDoc} */
     @Override
-    public void initialize(CacheLifecycleInitializer cli) {
+    public void initialize(CacheLifecycle.Initializer cli) {
         cli.registerService(CacheWorkerService.class, this);
     }
 

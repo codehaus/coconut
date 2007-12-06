@@ -8,7 +8,8 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheServices;
 
 /**
- * Various {@link CacheLoader} utility classes and functions.
+ * Various {@link CacheLoadingService}} and {@link CacheLoader} utility classes and
+ * functions.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -17,6 +18,7 @@ public final class CacheLoaders {
     /** Cannot instantiate. */
     // /CLOVER:OFF
     private CacheLoaders() {}
+
     // /CLOVER:ON
     /**
      * This method converts the specified cache to a cache loader. Calls to
@@ -38,6 +40,7 @@ public final class CacheLoaders {
     public static <K, V> CacheLoader<K, V> cacheAsCacheLoader(Cache<K, V> cache) {
         return new CacheAsCacheLoader<K, V>(cache);
     }
+
     /**
      * Returns a CacheLoader that will return <tt>null</tt> as a result for any key.
      * 
@@ -53,8 +56,9 @@ public final class CacheLoaders {
 
     /**
      * Returns a Runnable that when invoked will call the
-     * {@link CacheLoadingService#forceLoad(Object)} method on the specified cache with the
-     * specified key as parameter.
+     * {@link CacheLoadingService#forceLoad(Object)} method on the specified cache with
+     * the specified key as parameter. This can, for example, be used to schedule the
+     * reload of a specific element.
      * 
      * @param cache
      *            the cache from which to retrieve the CacheLoadingService and invoke the
@@ -62,8 +66,8 @@ public final class CacheLoaders {
      * @param key
      *            the key to load
      * @return a Runnable that when invoked will call the
-     *         {@link CacheLoadingService#forceLoad(Object)} method on the specified cache with the
-     * specified key as parameter
+     *         {@link CacheLoadingService#forceLoad(Object)} method on the specified cache
+     *         with the specified key as parameter
      * @param <K>
      *            the type of keys used for loading values
      */
@@ -109,8 +113,8 @@ public final class CacheLoaders {
      * @param key
      *            the key to load
      * @return a Runnable that when invoked will call the
-     *         {@link CacheLoadingService#load(Object)} method on the specified cache with the
-     * specified key as parameter
+     *         {@link CacheLoadingService#load(Object)} method on the specified cache with
+     *         the specified key as parameter
      * @param <K>
      *            the type of keys used for loading values
      */

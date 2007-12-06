@@ -11,7 +11,7 @@ import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlers;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
-import org.coconut.cache.service.servicemanager.CacheLifecycleInitializer;
+import org.coconut.cache.service.servicemanager.CacheLifecycle.Initializer;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.lifecycle.AbstractLifecycleVerifier;
 import org.junit.After;
@@ -44,15 +44,15 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
 
     /**
      * Tests throwing an {@link RuntimeException} from within
-     * {@link CacheLifecycle#initialize(CacheLifecycleInitializer)}. Makes sure
-     * {@link CacheExceptionHandler#cacheInitializationFailed(CacheConfiguration, Class, CacheLifecycle, RuntimeException)}
+     * {@link CacheLifecycle#initialize(Initializer)}. Makes sure
+     * {@link CacheExceptionHandler#lifecycleInitializationFailed(CacheConfiguration, Class, CacheLifecycle, RuntimeException)}
      * is called.
      */
     @Test
     public void exceptionInInitialize() {
         AbstractLifecycleVerifier alv = new AbstractLifecycleVerifier() {
             @Override
-            public void initialize(CacheLifecycleInitializer cli) {
+            public void initialize(Initializer cli) {
                 super.initialize(cli);
                 throw new IllegalMonitorStateException();
             }
@@ -70,13 +70,13 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
 
     /**
      * Tests that we do not try to handle an {@link Error} when thrown in
-     * {@link CacheLifecycle#initialize(CacheLifecycleInitializer)}.
+     * {@link CacheLifecycle#initialize(Initializer)}.
      */
     @Test
     public void errorInInitialize() {
         AbstractLifecycleVerifier alv = new AbstractLifecycleVerifier() {
             @Override
-            public void initialize(CacheLifecycleInitializer cli) {
+            public void initialize(Initializer cli) {
                 super.initialize(cli);
                 assertEquals(getCacheType(), cli.getCacheType());
                 throw new IncompatibleClassChangeError();
@@ -100,7 +100,7 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
         final AtomicInteger verifier = new AtomicInteger();
         AbstractCacheLifecycle alv1 = new AbstractCacheLifecycle() {
             @Override
-            public void initialize(CacheLifecycleInitializer cli) {
+            public void initialize(Initializer cli) {
                 assertEquals(0, verifier.getAndIncrement());
                 super.initialize(cli);
             }
@@ -112,7 +112,7 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
         };
         AbstractLifecycleVerifier alv2 = new AbstractLifecycleVerifier() {
             @Override
-            public void initialize(CacheLifecycleInitializer cli) {
+            public void initialize(Initializer cli) {
                 assertEquals(1, verifier.getAndIncrement());
                 super.initialize(cli);
                 throw new IllegalMonitorStateException();
@@ -120,7 +120,7 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
         };
         AbstractLifecycleVerifier alv3 = new AbstractLifecycleVerifier() {
             @Override
-            public void initialize(CacheLifecycleInitializer cli) {
+            public void initialize(Initializer cli) {
                 throw new AssertionError("Should not have been initialized");
             }
         };
@@ -138,7 +138,7 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
 
     /**
      * Tests components that fail both in
-     * {@link CacheLifecycle#initialize(CacheLifecycleInitializer)} and
+     * {@link CacheLifecycle#initialize(Initializer)} and
      * {@link CacheLifecycle#terminated()}.
      */
     @Test
@@ -146,7 +146,7 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
         final AtomicInteger verifier = new AtomicInteger();
         conf.serviceManager().add(new AbstractCacheLifecycle() {
             @Override
-            public void initialize(CacheLifecycleInitializer cli) {
+            public void initialize(Initializer cli) {
                 assertEquals(0, verifier.getAndIncrement());
                 super.initialize(cli);
             }
@@ -158,7 +158,7 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
         });
         AbstractCacheLifecycle alv1 = new AbstractCacheLifecycle() {
             @Override
-            public void initialize(CacheLifecycleInitializer cli) {
+            public void initialize(Initializer cli) {
                 assertEquals(1, verifier.getAndIncrement());
                 super.initialize(cli);
             }
@@ -172,7 +172,7 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
 
         AbstractCacheLifecycle alv2 = new AbstractCacheLifecycle() {
             @Override
-            public void initialize(CacheLifecycleInitializer cli) {
+            public void initialize(Initializer cli) {
                 assertEquals(2, verifier.getAndIncrement());
                 super.initialize(cli);
             }
@@ -185,7 +185,7 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
         };
         conf.serviceManager().add(alv1).add(alv2).add(new AbstractLifecycleVerifier() {
             @Override
-            public void initialize(CacheLifecycleInitializer cli) {
+            public void initialize(Initializer cli) {
                 assertEquals(3, verifier.getAndIncrement());
                 super.initialize(cli);
                 throw new IllegalMonitorStateException();
@@ -193,7 +193,7 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
         });
         conf.serviceManager().add(new AbstractLifecycleVerifier() {
             @Override
-            public void initialize(CacheLifecycleInitializer cli) {
+            public void initialize(Initializer cli) {
                 throw new AssertionError("Should not have been initialized");
             }
         });
@@ -219,13 +219,13 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
         CacheLifecycle service;
 
         @Override
-        public void cacheInitializationFailed(CacheConfiguration configuration, Class cacheType,
+        public void lifecycleInitializationFailed(CacheConfiguration configuration, Class cacheType,
                 CacheLifecycle service, RuntimeException cause) {
             this.cause = cause;
             this.service = service;
             assertEquals(conf, configuration);
             assertEquals(getCacheType(), cacheType);
-            super.cacheInitializationFailed(configuration, cacheType, service, cause);
+            super.lifecycleInitializationFailed(configuration, cacheType, service, cause);
         }
 
         @Override

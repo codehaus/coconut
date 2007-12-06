@@ -13,7 +13,7 @@ import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.service.worker.CacheWorkerService;
-import org.coconut.test.MockTestCase;
+import org.coconut.test.TestUtil;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
@@ -51,7 +51,7 @@ public class CacheServicesTest {
      */
     @Test
     public void eventService() {
-        final CacheEventService service = MockTestCase.mockDummy(CacheEventService.class);
+        final CacheEventService service = TestUtil.dummy(CacheEventService.class);
         context.checking(new Expectations() {
             {
                 one(cache).getService(CacheEventService.class);
@@ -67,7 +67,7 @@ public class CacheServicesTest {
      */
     @Test
     public void evictionService() {
-        final CacheEvictionService service = MockTestCase.mockDummy(CacheEvictionService.class);
+        final CacheEvictionService service = TestUtil.dummy(CacheEvictionService.class);
         context.checking(new Expectations() {
             {
                 one(cache).getService(CacheEvictionService.class);
@@ -83,7 +83,7 @@ public class CacheServicesTest {
      */
     @Test
     public void expirationService() {
-        final CacheExpirationService service = MockTestCase.mockDummy(CacheExpirationService.class);
+        final CacheExpirationService service = TestUtil.dummy(CacheExpirationService.class);
         context.checking(new Expectations() {
             {
                 one(cache).getService(CacheExpirationService.class);
@@ -99,7 +99,7 @@ public class CacheServicesTest {
      */
     @Test
     public void loadingService() {
-        final CacheLoadingService service = MockTestCase.mockDummy(CacheLoadingService.class);
+        final CacheLoadingService service = TestUtil.dummy(CacheLoadingService.class);
         context.checking(new Expectations() {
             {
                 one(cache).getService(CacheLoadingService.class);
@@ -115,7 +115,7 @@ public class CacheServicesTest {
      */
     @Test
     public void managementService() {
-        final CacheManagementService service = MockTestCase.mockDummy(CacheManagementService.class);
+        final CacheManagementService service = TestUtil.dummy(CacheManagementService.class);
         context.checking(new Expectations() {
             {
                 one(cache).getService(CacheManagementService.class);
@@ -131,8 +131,8 @@ public class CacheServicesTest {
      */
     @Test
     public void serviceManagerService() {
-        final CacheServiceManagerService service = MockTestCase
-                .mockDummy(CacheServiceManagerService.class);
+        final CacheServiceManagerService service = TestUtil
+                .dummy(CacheServiceManagerService.class);
         context.checking(new Expectations() {
             {
                 one(cache).getService(CacheServiceManagerService.class);
@@ -148,7 +148,7 @@ public class CacheServicesTest {
      */
     @Test
     public void statisticsService() {
-        final CacheStatisticsService service = MockTestCase.mockDummy(CacheStatisticsService.class);
+        final CacheStatisticsService service = TestUtil.dummy(CacheStatisticsService.class);
         context.checking(new Expectations() {
             {
                 one(cache).getService(CacheStatisticsService.class);
@@ -164,7 +164,7 @@ public class CacheServicesTest {
      */
     @Test
     public void workerService() {
-        final CacheWorkerService service = MockTestCase.mockDummy(CacheWorkerService.class);
+        final CacheWorkerService service = TestUtil.dummy(CacheWorkerService.class);
         context.checking(new Expectations() {
             {
                 one(cache).getService(CacheWorkerService.class);

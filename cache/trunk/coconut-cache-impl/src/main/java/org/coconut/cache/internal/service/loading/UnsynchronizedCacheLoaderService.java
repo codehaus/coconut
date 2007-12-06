@@ -25,10 +25,10 @@ public class UnsynchronizedCacheLoaderService<K, V> extends AbstractCacheLoading
     }
 
     /** {@inheritDoc} */
-    public void loadAllAsync(Map<K, AttributeMap> mapsWithAttributes) {
+    public void loadAllAsync(Map<? extends K, ? extends AttributeMap> mapsWithAttributes) {
         Collection<UnsynchronizedCacheLoaderCallback<K, V>> col = new ArrayList<UnsynchronizedCacheLoaderCallback<K, V>>(
                 mapsWithAttributes.size());
-        for (Map.Entry<K, AttributeMap> e : mapsWithAttributes.entrySet()) {
+        for (Map.Entry<? extends K, ? extends AttributeMap> e : mapsWithAttributes.entrySet()) {
             UnsynchronizedCacheLoaderCallback<K, V> callback = new UnsynchronizedCacheLoaderCallback<K, V>(
                     e.getKey(), e.getValue());
             col.add(callback);
@@ -47,7 +47,7 @@ public class UnsynchronizedCacheLoaderService<K, V> extends AbstractCacheLoading
             }
             V result = callback.getResult();
             if (callback.getCause() != null) {
-                result = getExceptionHandler().getExceptionHandler().loadFailed(
+                result = getExceptionHandler().getHandler().loadingFailed(
                         getExceptionHandler().createContext(), getLoader(), callback.getKey(),
                         callback.getAttributes(), callback.getCause());
             }
