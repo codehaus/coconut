@@ -49,14 +49,14 @@ public class ConfigurationValidator {
      *            the configuration to verify
      * @param cacheType
      *            the type of cache to verify against
-     * @throws IllegalCacheConfigurationException if the cache does not fully support the
-     *        specified configuration
+     * @throws IllegalCacheConfigurationException
+     *             if the cache does not fully support the specified configuration
      */
     public void verify(CacheConfiguration<?, ?> conf, Class<? extends Cache> cacheType) {
         CacheServiceSupport support = cacheType.getAnnotation(CacheServiceSupport.class);
         if (support == null) {
-            throw new IllegalCacheConfigurationException(String.format(
-                    "class '%s' must have a CacheServiceSupport annotation", cacheType.getName()));
+            throw new IllegalCacheConfigurationException("class '" + cacheType.getName()
+                    + "' must have a CacheServiceSupport annotation");
         }
         Set<Class> supportedServices = new HashSet(Arrays.asList(support.value()));
 

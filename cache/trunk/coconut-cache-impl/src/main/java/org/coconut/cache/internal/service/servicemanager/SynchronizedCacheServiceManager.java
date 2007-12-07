@@ -5,13 +5,10 @@ package org.coconut.cache.internal.service.servicemanager;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -24,19 +21,30 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
+import org.coconut.cache.service.servicemanager.CacheLifecycle;
+import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 
-public class SynchronizedCacheServiceManager extends AbstractPicoBasedCacheServiceManager {
+/**
+ * An synchronized implementation of {@link CacheServiceManagerService}.
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id$
+ */
+public class SynchronizedCacheServiceManager extends AbstractCacheServiceManager {
 
-    private volatile Executor e;
+    /** Executor responsible for shutting down services asynchronously. */
+    private final ExecutorService shutdownServiceExecutor = Executors.newCachedThreadPool();
 
-    private final ExecutorService es = Executors.newCachedThreadPool();
+    /** A list of shutdown futures. */
+    private final List<Future> shutdownFutures = new ArrayList<Future>();
 
-    private final Queue<Future> futures = new ConcurrentLinkedQueue<Future>();
-
+    /** The cache mutex to synchronize on. */
     private final Object mutex;
 
-    private volatile RunState status = RunState.NOTRUNNING;
+    /** The current state of the service manager. */
+    private volatile RunState runState = RunState.NOTRUNNING;
 
+    /** CountDownLatch used for signalling termination. */
     private final CountDownLatch terminationLatch = new CountDownLatch(1);
 
     public SynchronizedCacheServiceManager(Cache<?, ?> cache, InternalCacheSupport<?, ?> helper,
@@ -46,6 +54,7 @@ public class SynchronizedCacheServiceManager extends AbstractPicoBasedCacheServi
         this.mutex = cache;
     }
 
+    /** {@inheritDoc} */
     public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
         return terminationLatch.await(timeout, unit);
     }
@@ -76,29 +85,30 @@ public class SynchronizedCacheServiceManager extends AbstractPicoBasedCacheServi
         }
     }
 
+    /** {@inheritDoc} */
     public void shutdown() {
         synchronized (mutex) {
-            if (status == RunState.NOTRUNNING) {
+            if (runState == RunState.NOTRUNNING) {
                 doTerminate();
-            } else if (status == RunState.RUNNING) {
-                getCache().clear();
+            } else if (runState == RunState.RUNNING) {
+                cache.clear();
             }
-            if (status == RunState.RUNNING || status == RunState.STARTING) {
+            if (runState == RunState.RUNNING || runState == RunState.STARTING) {
                 initiateShutdown();
             }
 
-            if (!futures.isEmpty()) {
+            if (!shutdownFutures.isEmpty()) {
+                // java 5 bug, cannot use Executors.
                 ThreadPoolExecutor tpe = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
                         new LinkedBlockingQueue<Runnable>());
                 tpe.execute(new Runnable() {
                     public void run() {
                         try {
-                            while (!futures.isEmpty()) {
-                                Future f = futures.poll();
+                            for (Future f : shutdownFutures) {
                                 try {
                                     f.get();
                                 } catch (InterruptedException e) {
-                                    //ignore???
+                                    // ignore???
                                     e.printStackTrace();
                                 } catch (ExecutionException e) {
                                     e.printStackTrace();
@@ -109,6 +119,7 @@ public class SynchronizedCacheServiceManager extends AbstractPicoBasedCacheServi
                         }
                     }
                 });
+                shutdownServiceExecutor.shutdown();
                 tpe.shutdown();
             } else {
                 doTerminate();
@@ -116,46 +127,40 @@ public class SynchronizedCacheServiceManager extends AbstractPicoBasedCacheServi
         }
     }
 
+    /** {@inheritDoc} */
     public void shutdownNow() {
         synchronized (mutex) {
-            if (status == RunState.NOTRUNNING) {
-                status = RunState.TERMINATED;
-            } else if (status == RunState.RUNNING) {
+            if (runState == RunState.NOTRUNNING) {
+                runState = RunState.TERMINATED;
+            } else if (runState == RunState.RUNNING) {
                 shutdown();
             }
-            if (status == RunState.SHUTDOWN) {
+            if (runState == RunState.SHUTDOWN) {
                 initiateShutdownNow();
             }
         }
     }
 
-    public void shutdownService(final ServiceHolder service) {
+    /** {@inheritDoc} */
+    @Override
+    void shutdownService(final ServiceHolder service) {
         final AtomicInteger canSubmit = new AtomicInteger();
-        e = new Executor() {
-            public void execute(final Runnable command) {
+        CacheLifecycle.Shutdown cs = new CacheLifecycle.Shutdown() {
+            public void shutdownAsynchronously(Callable<?> callable) {
                 if (canSubmit.compareAndSet(0, 1)) {
-                    service.future = es.submit(new Runnable() {
-                        public void run() {
-                            command.run();
-                        }
-                    });
-                    futures.add(service.future);
+                    service.future = shutdownServiceExecutor.submit(callable);
+                    shutdownFutures.add(service.future);
                 } else {
                     throw new IllegalStateException();
                 }
             }
         };
-        service.shutdown();
-        canSubmit.set(2);
+        service.shutdown(cs);// service can call shutdownServiceAsynchronously now
+        canSubmit.set(2); // but not now
     }
 
-    public void shutdownServiceAsynchronously(Runnable service2) {
-        if (e == null) {
-            throw new IllegalStateException("cannot shutdown now");
-        }
-        e.execute(service2);
-    }
-
+    /** {@inheritDoc} */
+    @Override
     protected void doTerminate() {
         synchronized (mutex) {
             try {
@@ -167,11 +172,14 @@ public class SynchronizedCacheServiceManager extends AbstractPicoBasedCacheServi
     }
 
     /** {@inheritDoc} */
+    @Override
     RunState getRunState() {
-        return status;
+        return runState;
     }
 
+    /** {@inheritDoc} */
+    @Override
     void setRunState(RunState state) {
-        this.status = state;
+        this.runState = state;
     }
 }

@@ -3,15 +3,9 @@
  */
 package org.coconut.cache.internal.service.servicemanager;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
-import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
-import org.coconut.internal.picocontainer.PicoContainer;
-import org.coconut.management.ManagedLifecycle;
 
 /**
  * Various utility classes for {@link CacheServiceManagerService} implementations.
@@ -73,11 +67,6 @@ public final class ServiceManagerUtil {
         /** {@inheritDoc} */
         public boolean hasService(Class<?> serviceType) {
             return delegate.hasService(serviceType);
-        }
-
-        /** {@inheritDoc} */
-        public void shutdownServiceAsynchronously(Runnable service) {
-            delegate.shutdownServiceAsynchronously(service);
         }
 
         /** {@inheritDoc} */

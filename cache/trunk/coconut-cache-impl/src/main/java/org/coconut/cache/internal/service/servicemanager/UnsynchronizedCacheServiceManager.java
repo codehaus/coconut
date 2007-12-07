@@ -3,26 +3,24 @@
  */
 package org.coconut.cache.internal.service.servicemanager;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
-import org.coconut.cache.service.servicemanager.CacheLifecycle;
+import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 
 /**
+ * An unsynchronized implementation of {@link CacheServiceManagerService}.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class UnsynchronizedCacheServiceManager extends AbstractPicoBasedCacheServiceManager {
+public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManager {
 
+    /** The current state of the service manager. */
     private RunState status = RunState.NOTRUNNING;
 
     public UnsynchronizedCacheServiceManager(Cache<?, ?> cache, InternalCacheSupport<?, ?> helper,
@@ -59,7 +57,7 @@ public class UnsynchronizedCacheServiceManager extends AbstractPicoBasedCacheSer
             doTerminate();
             status = RunState.TERMINATED;
         } else if (status == RunState.RUNNING) {
-            getCache().clear();
+            cache.clear();
             initiateShutdown();
             doTerminate();
         } else if (status == RunState.STARTING && super.startupException != null) {
@@ -73,15 +71,14 @@ public class UnsynchronizedCacheServiceManager extends AbstractPicoBasedCacheSer
         shutdown();// synchronous shutdown
     }
 
-    public void shutdownServiceAsynchronously(Runnable service) {
-        throw new UnsupportedOperationException();
-    }
-
     /** {@inheritDoc} */
+    @Override
     RunState getRunState() {
         return status;
     }
 
+    /** {@inheritDoc} */
+    @Override
     void setRunState(RunState state) {
         this.status = state;
     }

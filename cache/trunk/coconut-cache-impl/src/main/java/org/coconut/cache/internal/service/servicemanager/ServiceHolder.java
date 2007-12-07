@@ -6,6 +6,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.servicemanager.CacheLifecycle.Initializer;
+import org.coconut.cache.service.servicemanager.CacheLifecycle.Shutdown;
 
 class ServiceHolder {
     private final boolean isInternal;
@@ -39,9 +40,9 @@ class ServiceHolder {
         return state >= 4;
     }
 
-    void shutdown() {
+    void shutdown(Shutdown shutdown) {
         state = 7;
-        service.shutdown();
+        service.shutdown(shutdown);
         state = 8;
     }
 

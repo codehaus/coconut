@@ -24,7 +24,9 @@ public class ServiceManagerService extends AbstractCacheTCKTest {
     @Test
     public void serviceManagerAvailable() {
         c = newCache();
-        c.getService(CacheServiceManagerService.class);
+        CacheServiceManagerService s = c.getService(CacheServiceManagerService.class);
+        assertSame(s, s.getAllServices().get(CacheServiceManagerService.class));
+        assertSame(s, s.getService(CacheServiceManagerService.class));
     }
 
     @Test(expected = NullPointerException.class)
@@ -32,7 +34,7 @@ public class ServiceManagerService extends AbstractCacheTCKTest {
         c = newCache();
         c.getService(null);
     }
-    
+
     @Test
     public void testServiceAvailable() {
     // TODO fix

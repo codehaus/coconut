@@ -10,6 +10,7 @@ import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlers;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
+import org.coconut.cache.service.servicemanager.CacheLifecycle.Shutdown;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.lifecycle.AbstractLifecycleVerifier;
 import org.junit.After;
@@ -97,9 +98,9 @@ public class Lifecycle extends AbstractCacheTCKTest {
                 }
 
                 @Override
-                public void shutdown() {
+                public void shutdown(Shutdown shutdown) {
                     assertEquals((count - j - 1) + count * 3, verifier.getAndIncrement());
-                    super.shutdown();
+                    super.shutdown(shutdown);
                 }
 
                 @Override

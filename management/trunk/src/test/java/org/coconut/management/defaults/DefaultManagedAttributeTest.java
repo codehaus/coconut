@@ -15,6 +15,7 @@ import javax.management.MBeanAttributeInfo;
 import javax.management.ReflectionException;
 
 import org.coconut.management.annotation.ManagedAttribute;
+import org.coconut.management.defaults.stubs.PrivateMethods;
 import org.coconut.management.defaults.stubs.VariousAttributes;
 import org.junit.Before;
 import org.junit.Test;
@@ -154,6 +155,7 @@ public class DefaultManagedAttributeTest {
             throw e.getCause();
         }
     }
+
     @Test(expected = IOException.class)
     public void setException() throws Throwable {
         AbstractManagedAttribute att = attr.get("Exception1");
@@ -164,6 +166,7 @@ public class DefaultManagedAttributeTest {
             throw e.getCause();
         }
     }
+
     @Test(expected = IllegalArgumentException.class)
     public void twoAttributeAnnotations() throws Exception {
         BeanInfo bi = Introspector.getBeanInfo(TwoAttributes.class);
@@ -178,6 +181,22 @@ public class DefaultManagedAttributeTest {
                 new WritableReader());
     }
 
+    @Test(expected = ReflectionException.class)
+    public void illegalAccessGet() throws Exception {
+        Method mGet = PrivateMethods.class.getDeclaredMethod("getIllegal");
+        Method mSet = PrivateMethods.class.getDeclaredMethod("setIllegal", String.class);
+        DefaultManagedAttribute opr = new DefaultManagedAttribute(new PrivateMethods(), mGet, mSet,
+                "", "");
+        opr.getValue();
+    }
+    @Test(expected = ReflectionException.class)
+    public void illegalAccessSet() throws Exception {
+        Method mGet = PrivateMethods.class.getDeclaredMethod("getIllegal");
+        Method mSet = PrivateMethods.class.getDeclaredMethod("setIllegal", String.class);
+        DefaultManagedAttribute opr = new DefaultManagedAttribute(new PrivateMethods(), mGet, mSet,
+                "", "");
+        opr.setValue("dd");
+    }
     public static class WritableReader {
         @ManagedAttribute(isWriteOnly = true)
         public String getFoo() {

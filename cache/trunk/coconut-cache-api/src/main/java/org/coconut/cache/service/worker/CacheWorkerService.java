@@ -5,6 +5,7 @@ package org.coconut.cache.service.worker;
 
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheServices;
 
@@ -32,7 +33,6 @@ import org.coconut.cache.CacheServices;
  * @version $Id: CacheStatisticsService.java 430 2007-11-11 14:50:09Z kasper $
  */
 public interface CacheWorkerService {
-
     /**
      * Returns a ScheduledExecutorService for the specified service.
      * 
@@ -41,4 +41,13 @@ public interface CacheWorkerService {
      * @return a ScheduledExecutorService for the specified service
      */
     ScheduledExecutorService getScheduledExecutorService(Object service);
+
+    /**
+     * Returns a ScheduledExecutorService for the specified service.
+     * 
+     * @param service
+     *            the service that needs a ScheduledExecutorService
+     * @return a ScheduledExecutorService for the specified service
+     */
+    ScheduledExecutorService getScheduledExecutorService(Object service, AttributeMap attributes);
 }

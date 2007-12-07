@@ -12,6 +12,7 @@ import javax.management.MBeanOperationInfo;
 import javax.management.ReflectionException;
 
 import org.coconut.management.defaults.stubs.OperationStub;
+import org.coconut.management.defaults.stubs.PrivateMethods;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -171,4 +172,12 @@ public class DefaultManagedOperationTest {
         AbstractManagedOperation opr = attr.get(new OperationKey("throwRuntimeException"));
         opr.invoke();
     }
+
+    @Test(expected = ReflectionException.class)
+    public void illegalAccess() throws Exception {
+        Method m = PrivateMethods.class.getDeclaredMethod("illegal");
+        DefaultManagedOperation opr = new DefaultManagedOperation(new PrivateMethods(), m, "", "");
+        opr.invoke();
+    }
+
 }

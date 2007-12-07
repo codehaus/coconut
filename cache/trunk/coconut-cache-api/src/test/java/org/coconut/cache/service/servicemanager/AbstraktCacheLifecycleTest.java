@@ -14,7 +14,5 @@ public class AbstraktCacheLifecycleTest {
         assertEquals("MyLifecycle", new MyLifecycle().getName());
     }
 
-    static class MyLifecycle extends AbstractCacheLifecycle {
-
-    }
+    static class MyLifecycle extends AbstractCacheLifecycle {}
 }

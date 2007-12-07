@@ -3,6 +3,8 @@
  */
 package org.coconut.cache.service.servicemanager;
 
+import java.util.concurrent.Callable;
+
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 
@@ -17,7 +19,7 @@ public interface CacheLifecycle {
      * called.
      * <p>
      * This method will be called from within the constructor of the cache. Any runtime
-     * exception thrown by this method will not be handled.
+     * exception thrown from this method will be rethrown from the cache's constructor
      * 
      * @param initializer
      *            provides information about the configuration of the cache
@@ -30,6 +32,8 @@ public interface CacheLifecycle {
      * 
      * @param serviceManager
      *            the caches service manager
+     * @throws Exception
+     *             the service failed to start properly
      */
     void start(CacheServiceManagerService serviceManager) throws Exception;
 
@@ -44,7 +48,7 @@ public interface CacheLifecycle {
     /**
      * The cache has been shutdown.
      */
-    void shutdown();
+    void shutdown(Shutdown shutdown);
 
     /**
      * The {@link Cache#shutdownNow()} method has been invoked. This method is always
@@ -61,11 +65,25 @@ public interface CacheLifecycle {
      */
     void terminated();
 
+    interface Shutdown {
+
+        /**
+         * @param callable
+         * @throws IllegalStateException
+         *             if this method has already been called, or if this method is called
+         *             outside {@link CacheLifecycle#shutdown()}.
+         * @throws UnsupportedOperationException
+         *             if shutting down services asynchronously is not supported by the
+         *             cache
+         */
+        void shutdownAsynchronously(Callable<?> callable);
+    }
+
     /**
      * Provides information about the configuration of the cache. Used when initializing
      * services.
      */
-    public interface Initializer {
+    interface Initializer {
         /**
          * Returns the configuration used for creating this cache.
          * 

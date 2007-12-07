@@ -69,17 +69,4 @@ public interface CacheServiceManagerService {
      * @return a map of all registered services
      */
     Map<Class<?>, Object> getAllServices();
-
-    /**
-     * If a service has to block while shutting cannot be completly shutdown Must be
-     * called.
-     * 
-     * @param service the service that can be asynchronously shutdown
-     * @throws IllegalStateException
-     *             if this method is called before shutdown has been called on the cache
-     *             or if it called after it has been terminated
-     * @throws UnsupportedOperationException
-     *             if services cannot be shutdown asynchronously
-     */
-    void shutdownServiceAsynchronously(Runnable service);
 }

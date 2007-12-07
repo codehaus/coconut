@@ -1,10 +1,10 @@
 package org.coconut.cache.internal.service.servicemanager;
 
 enum RunState {
-    NOTRUNNING, STARTING, RUNNING, SHUTDOWN, STOP, TERMINATED, TIDYING;
+    NOTRUNNING, STARTING, RUNNING, SHUTDOWN, STOP, TERMINATED;
 
     public boolean isShutdown() {
-        return this != RUNNING && this != NOTRUNNING;
+        return this == SHUTDOWN || this == STOP || this == TERMINATED;
     }
 
     public boolean isStarted() {
@@ -14,10 +14,10 @@ enum RunState {
     public boolean isTerminated() {
         return this == TERMINATED;
     }
-
-    public boolean isTerminating() {
-        return this == SHUTDOWN || this == STOP;
-    }
+//
+//    public boolean isTerminating() {
+//        return this == SHUTDOWN || this == STOP;
+//    }
 
     public RunState advanceToTerminated() {
         return TERMINATED;

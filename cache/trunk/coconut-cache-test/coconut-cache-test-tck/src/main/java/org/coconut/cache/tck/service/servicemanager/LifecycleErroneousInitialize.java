@@ -4,7 +4,6 @@
 package org.coconut.cache.tck.service.servicemanager;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
@@ -13,7 +12,12 @@ import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle.Initializer;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
-import org.coconut.cache.test.util.lifecycle.AbstractLifecycleVerifier;
+import org.coconut.cache.test.util.lifecycle.LifecycleVerifier;
+import org.coconut.cache.test.util.lifecycle.LifecycleVerifierContext;
+import org.coconut.test.throwables.Error1;
+import org.coconut.test.throwables.RuntimeException1;
+import org.coconut.test.throwables.RuntimeException2;
+import org.coconut.test.throwables.RuntimeException3;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,15 +34,19 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
 
     InitializingExceptionHandler handler;
 
+    LifecycleVerifierContext context;
+
     @Before
     public void setup() {
         conf = newConf();
+        context = new LifecycleVerifierContext(conf);
         handler = new InitializingExceptionHandler();
         conf.exceptionHandling().setExceptionHandler(handler);
     }
 
     @After
     public void after() {
+        context.verify();
         assertSame(conf, handler.conf);
     }
 
@@ -48,164 +56,101 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
      * {@link CacheExceptionHandler#lifecycleInitializationFailed(CacheConfiguration, Class, CacheLifecycle, RuntimeException)}
      * is called.
      */
-    @Test
+    @Test(expected = RuntimeException1.class)
     public void exceptionInInitialize() {
-        AbstractLifecycleVerifier alv = new AbstractLifecycleVerifier() {
+        LifecycleVerifier alv = context.create(new AbstractCacheLifecycle() {
             @Override
             public void initialize(Initializer cli) {
-                super.initialize(cli);
-                throw new IllegalMonitorStateException();
+                throw new RuntimeException1();
             }
-        };
-        conf.serviceManager().add(alv).c();
-        alv.setConfigurationToVerify(conf);
+        });
         try {
             setCache(conf);
-            throw new AssertionError("Should have failed with IllegalMonitorStateException");
-        } catch (IllegalMonitorStateException e) {/* ok */}
-        assertEquals(alv, handler.service);
-        assertTrue(handler.cause instanceof IllegalMonitorStateException);
-        assertEquals(0, handler.terminatationMap.size());
+        } finally {
+            alv.initialization().assertFailed();
+            assertEquals(alv, handler.service);
+            assertTrue(handler.cause instanceof RuntimeException1);
+            assertEquals(0, handler.terminatationMap.size());
+        }
     }
 
     /**
      * Tests that we do not try to handle an {@link Error} when thrown in
      * {@link CacheLifecycle#initialize(Initializer)}.
      */
-    @Test
+    @Test(expected = Error1.class)
     public void errorInInitialize() {
-        AbstractLifecycleVerifier alv = new AbstractLifecycleVerifier() {
+        context.create(new AbstractCacheLifecycle() {
             @Override
             public void initialize(Initializer cli) {
-                super.initialize(cli);
-                assertEquals(getCacheType(), cli.getCacheType());
-                throw new IncompatibleClassChangeError();
+                throw new Error1();
             }
-        };
-        conf.serviceManager().add(alv).c();
-        alv.setConfigurationToVerify(conf);
+        });
         try {
             setCache(conf);
-            throw new AssertionError("Should have failed with IncompatibleClassChangeError");
-        } catch (IncompatibleClassChangeError e) {/* ok */}
-        assertNull(handler.terminatationMap); // terminated should not have been called
+        } finally {
+            assertNull(handler.terminatationMap);
+        }
     }
 
     /**
      * Tests that {@link CacheLifecycle#terminated()} is called on components that have
      * already been initialized. When other components fails to initialize.
      */
-    @Test
-    public void exceptionInInitialize3() {
-        final AtomicInteger verifier = new AtomicInteger();
-        AbstractCacheLifecycle alv1 = new AbstractCacheLifecycle() {
+    @Test(expected = RuntimeException1.class)
+    public void exceptionInInitialize33() {
+        context.create();
+        LifecycleVerifier alv = context.create(new AbstractCacheLifecycle() {
             @Override
             public void initialize(Initializer cli) {
-                assertEquals(0, verifier.getAndIncrement());
-                super.initialize(cli);
+                throw new RuntimeException1();
             }
+        });
+        context.createNever();
 
-            @Override
-            public void terminated() {
-                assertEquals(2, verifier.getAndIncrement());
-            }
-        };
-        AbstractLifecycleVerifier alv2 = new AbstractLifecycleVerifier() {
-            @Override
-            public void initialize(Initializer cli) {
-                assertEquals(1, verifier.getAndIncrement());
-                super.initialize(cli);
-                throw new IllegalMonitorStateException();
-            }
-        };
-        AbstractLifecycleVerifier alv3 = new AbstractLifecycleVerifier() {
-            @Override
-            public void initialize(Initializer cli) {
-                throw new AssertionError("Should not have been initialized");
-            }
-        };
-        conf.serviceManager().add(alv1).add(alv2).add(alv3).c();
-        alv2.setConfigurationToVerify(conf);
         try {
             setCache(conf);
-            throw new AssertionError("Should have failed with IllegalMonitorStateException");
-        } catch (IllegalMonitorStateException e) {/* ok */}
-        assertEquals(alv2, handler.service);
-        assertTrue(handler.cause instanceof IllegalMonitorStateException);
-        assertEquals(0, handler.terminatationMap.size());
-        assertEquals(3, verifier.get());
+        } finally {
+            assertEquals(alv, handler.service);
+            assertTrue(handler.cause instanceof RuntimeException1);
+            assertEquals(0, handler.terminatationMap.size());
+        }
     }
 
     /**
-     * Tests components that fail both in
-     * {@link CacheLifecycle#initialize(Initializer)} and
-     * {@link CacheLifecycle#terminated()}.
+     * Tests components that fail both in {@link CacheLifecycle#initialize(Initializer)}
+     * and {@link CacheLifecycle#terminated()}.
      */
-    @Test
-    public void exceptionInInitializeAndTerminate() {
-        final AtomicInteger verifier = new AtomicInteger();
-        conf.serviceManager().add(new AbstractCacheLifecycle() {
-            @Override
-            public void initialize(Initializer cli) {
-                assertEquals(0, verifier.getAndIncrement());
-                super.initialize(cli);
-            }
-
+    @Test(expected = RuntimeException1.class)
+    public void exceptionInInitializeAndTerminate1() {
+        context.create();
+        LifecycleVerifier alv1 = context.create(new AbstractCacheLifecycle() {
             @Override
             public void terminated() {
-                assertEquals(6, verifier.getAndIncrement());
+                throw new RuntimeException2();
             }
         });
-        AbstractCacheLifecycle alv1 = new AbstractCacheLifecycle() {
-            @Override
-            public void initialize(Initializer cli) {
-                assertEquals(1, verifier.getAndIncrement());
-                super.initialize(cli);
-            }
-
+        LifecycleVerifier alv2 = context.create(new AbstractCacheLifecycle() {
             @Override
             public void terminated() {
-                assertEquals(5, verifier.getAndIncrement());
-                throw new IndexOutOfBoundsException();
-            }
-        };
-
-        AbstractCacheLifecycle alv2 = new AbstractCacheLifecycle() {
-            @Override
-            public void initialize(Initializer cli) {
-                assertEquals(2, verifier.getAndIncrement());
-                super.initialize(cli);
-            }
-
-            @Override
-            public void terminated() {
-                assertEquals(4, verifier.getAndIncrement());
-                throw new ArithmeticException();
-            }
-        };
-        conf.serviceManager().add(alv1).add(alv2).add(new AbstractLifecycleVerifier() {
-            @Override
-            public void initialize(Initializer cli) {
-                assertEquals(3, verifier.getAndIncrement());
-                super.initialize(cli);
-                throw new IllegalMonitorStateException();
+                throw new RuntimeException3();
             }
         });
-        conf.serviceManager().add(new AbstractLifecycleVerifier() {
+        context.create(new AbstractCacheLifecycle() {
             @Override
             public void initialize(Initializer cli) {
-                throw new AssertionError("Should not have been initialized");
+                throw new RuntimeException1();
             }
         });
+        context.createNever();
         try {
             setCache(conf);
-            throw new AssertionError("Should have failed with IllegalMonitorStateException");
-        } catch (IllegalMonitorStateException e) {/* ok */}
-        assertTrue(handler.cause instanceof IllegalMonitorStateException);
-        assertEquals(2, handler.terminatationMap.size());
-        assertTrue(handler.terminatationMap.get(alv1) instanceof IndexOutOfBoundsException);
-        assertTrue(handler.terminatationMap.get(alv2) instanceof ArithmeticException);
-        assertEquals(7, verifier.get());
+        } finally {
+            assertTrue(handler.cause instanceof RuntimeException1);
+            assertEquals(2, handler.terminatationMap.size());
+            assertTrue(handler.terminatationMap.get(alv1) instanceof RuntimeException2);
+            assertTrue(handler.terminatationMap.get(alv2) instanceof RuntimeException3);
+        }
     }
 
     class InitializingExceptionHandler extends
@@ -219,8 +164,8 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
         CacheLifecycle service;
 
         @Override
-        public void lifecycleInitializationFailed(CacheConfiguration configuration, Class cacheType,
-                CacheLifecycle service, RuntimeException cause) {
+        public void lifecycleInitializationFailed(CacheConfiguration configuration,
+                Class cacheType, CacheLifecycle service, RuntimeException cause) {
             this.cause = cause;
             this.service = service;
             assertEquals(conf, configuration);

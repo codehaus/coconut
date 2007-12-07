@@ -14,6 +14,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
+import org.coconut.cache.service.servicemanager.CacheLifecycle.Shutdown;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedLifecycle;
@@ -98,7 +99,7 @@ public class AbstractLifecycleVerifier implements CacheLifecycle {
         currentStep.set(Step.INITIALIZE);
     }
 
-    public void shutdown() {
+    public void shutdown(Shutdown shutdown) {
         assertTrue("NextStep was " + nextStep.get(), nextStep.compareAndSet(Step.SHUTDOWN,
                 Step.TERMINATED));
         currentStep.set(Step.SHUTDOWN);

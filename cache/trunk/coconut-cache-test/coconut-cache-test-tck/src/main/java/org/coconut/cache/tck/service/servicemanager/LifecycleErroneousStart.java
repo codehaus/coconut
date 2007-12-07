@@ -19,6 +19,7 @@ import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.servicemanager.CacheLifecycle.Initializer;
+import org.coconut.cache.service.servicemanager.CacheLifecycle.Shutdown;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.lifecycle.AbstractLifecycleVerifier;
 import org.coconut.test.TestUtil;
@@ -82,7 +83,7 @@ public class LifecycleErroneousStart extends AbstractCacheTCKTest {
             }
 
             @Override
-            public void shutdown() {
+            public void shutdown(Shutdown shutdown) {
                 assertEquals(2, verifier.getAndIncrement());
             }
 
@@ -145,7 +146,7 @@ public class LifecycleErroneousStart extends AbstractCacheTCKTest {
             }
 
             @Override
-            public void shutdown() {
+            public void shutdown(Shutdown shutdown) {
                 assertEquals(2, verifier.getAndIncrement());
                 throw new ArithmeticException();
             }
@@ -202,30 +203,30 @@ public class LifecycleErroneousStart extends AbstractCacheTCKTest {
         assertEquals(6, verifier.get());
     }
 
-    @Test
-    public void cannotCallshutdownServiceAsynchronously() {
-        setCache(newConf().serviceManager().add(new AbstractCacheLifecycle() {
-            @Override
-            public void start(CacheServiceManagerService serviceManager) {
-                if (getCacheType().getAnnotation(ThreadSafe.class) != null) {
-                    try {
-                        serviceManager.shutdownServiceAsynchronously(TestUtil
-                                .dummy(Runnable.class));
-                        throw new AssertionError(
-                                "serviceManager should throw IllegalStateException");
-                    } catch (IllegalStateException ok) {/* ok */}
-                } else {
-                    try {
-                        serviceManager.shutdownServiceAsynchronously(TestUtil
-                                .dummy(Runnable.class));
-                        throw new AssertionError(
-                                "serviceManager should throw UnsupportedOperationException");
-                    } catch (UnsupportedOperationException ok) {/* ok */}
-                }
-            }
-        }));
-        prestart();
-    }
+//    @Test
+//    public void cannotCallshutdownServiceAsynchronously() {
+//        setCache(newConf().serviceManager().add(new AbstractCacheLifecycle() {
+//            @Override
+//            public void start(CacheServiceManagerService serviceManager) {
+//                if (getCacheType().getAnnotation(ThreadSafe.class) != null) {
+//                    try {
+//                        serviceManager.shutdownServiceAsynchronously(TestUtil
+//                                .dummy(Runnable.class));
+//                        throw new AssertionError(
+//                                "serviceManager should throw IllegalStateException");
+//                    } catch (IllegalStateException ok) {/* ok */}
+//                } else {
+//                    try {
+//                        serviceManager.shutdownServiceAsynchronously(TestUtil
+//                                .dummy(Runnable.class));
+//                        throw new AssertionError(
+//                                "serviceManager should throw UnsupportedOperationException");
+//                    } catch (UnsupportedOperationException ok) {/* ok */}
+//                }
+//            }
+//        }));
+//        prestart();
+//    }
 
     class StartExceptionHandler extends CacheExceptionHandlers.DefaultLoggingExceptionHandler {
         CacheConfiguration conf;

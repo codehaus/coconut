@@ -1,13 +1,11 @@
 package org.coconut.cache.tck.service.servicemanager;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import net.jcip.annotations.ThreadSafe;
 
-import org.coconut.cache.Cache;
-import org.coconut.cache.CacheServices;
-import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.tck.RequireService;
 import org.coconut.cache.test.util.lifecycle.AbstractLifecycleVerifier;
@@ -20,23 +18,15 @@ public class LifecycleAsynchronousShutdown extends AbstractCacheTCKTest {
     public void dummy() throws Exception {
         final Asyn asyn = new Asyn();
         AbstractLifecycleVerifier alv = new AbstractLifecycleVerifier() {
-            private volatile CacheServiceManagerService services;
-
             @Override
-            public void shutdown() {
-                super.shutdown();
-                services.shutdownServiceAsynchronously(asyn);
+            public void shutdown(Shutdown shutdown) {
+                super.shutdown(shutdown);
+                shutdown.shutdownAsynchronously(asyn);
             }
 
             @Override
             public void shutdownNow() {
                 asyn.isShutdownNow = true;
-            }
-
-            @Override
-            public void started(Cache<?, ?> cache) {
-                super.started(cache);
-                services = CacheServices.servicemanager(cache);
             }
         };
         setCache(newConf().serviceManager().add(alv));
@@ -56,7 +46,7 @@ public class LifecycleAsynchronousShutdown extends AbstractCacheTCKTest {
         alv.assertTerminatedPhase();
     }
 
-    static class Asyn implements Runnable {
+    static class Asyn implements Callable {
         private volatile boolean isShutdownNow;
 
         private final CountDownLatch latch = new CountDownLatch(1);
@@ -69,7 +59,7 @@ public class LifecycleAsynchronousShutdown extends AbstractCacheTCKTest {
             latch.countDown();
         }
 
-        public void run() {
+        public Object call() throws Exception {
             while (latch.getCount() != 0) {
                 try {
                     latch.await(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
@@ -77,6 +67,7 @@ public class LifecycleAsynchronousShutdown extends AbstractCacheTCKTest {
                     // ignore
                 }
             }
+            return null;
         }
     }
 }

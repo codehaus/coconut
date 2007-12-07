@@ -23,6 +23,7 @@ import org.coconut.cache.service.event.CacheEventConfiguration;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
+import org.coconut.cache.service.servicemanager.CacheLifecycle.Shutdown;
 import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
 import org.coconut.event.bus.EventSubscription;
@@ -172,7 +173,7 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
     }
 
     @Override
-    public void shutdown() {
+    public void shutdown(Shutdown shutdown) {
         eb.setShutdown();
     }
 

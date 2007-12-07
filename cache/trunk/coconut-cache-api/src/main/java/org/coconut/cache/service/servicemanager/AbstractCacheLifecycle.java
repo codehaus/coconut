@@ -32,7 +32,7 @@ public abstract class AbstractCacheLifecycle implements CacheLifecycle {
     public void started(Cache<?, ?> cache) {}
 
     /** {@inheritDoc} */
-    public void shutdown() {}
+    public void shutdown(Shutdown shutdown) {}
     
     /** {@inheritDoc} */
     public void shutdownNow() {}

@@ -19,6 +19,7 @@ import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
+import org.coconut.cache.service.servicemanager.CacheLifecycle.Shutdown;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedVisitor;
 import org.coconut.management.Managements;
@@ -122,7 +123,7 @@ public class DefaultCacheManagementService extends AbstractCacheLifecycle implem
 
     /** {@inheritDoc} */
     @Override
-    public synchronized void shutdown() {
+    public synchronized void shutdown(Shutdown shutdown) {
         if (isEnabled) {
             try {
                 root.unregister();

@@ -1,11 +1,14 @@
 package org.coconut.cache.tck.service.servicemanager;
 
+import java.util.concurrent.Callable;
+
 import net.jcip.annotations.NotThreadSafe;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheServices;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
+import org.coconut.cache.service.servicemanager.CacheLifecycle.Shutdown;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.tck.RequireService;
 import org.coconut.test.TestUtil;
@@ -19,10 +22,10 @@ public class LifecycleAsynchronousShutdownNoSupport extends AbstractCacheTCKTest
             private volatile CacheServiceManagerService services;
 
             @Override
-            public void shutdown() {
+            public void shutdown(Shutdown shutdown) {
                 try {
-                    services.shutdownServiceAsynchronously(TestUtil
-                            .dummy(Runnable.class));
+                    shutdown.shutdownAsynchronously(TestUtil
+                            .dummy(Callable.class));
                     throw new AssertionError("should throw");
                 } catch (UnsupportedOperationException ok) {}
             }
