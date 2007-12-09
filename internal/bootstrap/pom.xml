@@ -42,16 +42,17 @@
       </roles>
     </developer>
   </developers>
+  <!-- 
   <build>
     <extensions>
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
         <artifactId>wagon-webdav</artifactId>
-        <!-- <version>1.0-rc1-SNAPSHOT</version> -->
         <version>1.0-beta-2</version>
       </extension>
     </extensions>
   </build>
+   -->
   <organization>
     <name>Codehaus</name>
     <url>http://www.codehaus.org/</url>
@@ -60,7 +61,7 @@
     <repository>
       <id>codehaus.snapshots</id>
       <name>Codehaus Snapshot Repository</name>
-      <url>http://snapshots.repository.codehaus.org/</url>
+      <url>http://people.apache.org/repo/m2-snapshot-repository/</url>
     </repository>
     <repository>
       <id>codehaus.releases</id>
@@ -71,6 +72,26 @@
       </releases>
     </repository>
   </repositories>
+  <pluginRepositories>
+  <!-- 
+    <pluginRepository>
+      <id>atlassian-m2-repository</id>
+      <name>Atlassian Maven 2.x Repository</name>
+      <url>http://repository.atlassian.com/maven2</url>
+    </pluginRepository>
+     -->
+    <pluginRepository>
+      <id>apache.org</id>
+      <name>Maven Plugin Snapshots</name>
+      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
   <modules>
     <module>coconut-internal-asm</module>
     <module>coconut-internal-picocontainer</module>
