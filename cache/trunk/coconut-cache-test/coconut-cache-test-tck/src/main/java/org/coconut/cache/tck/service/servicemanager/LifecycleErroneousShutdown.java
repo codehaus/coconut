@@ -7,4 +7,6 @@ public class LifecycleErroneousShutdown extends AbstractCacheTCKTest {
 
     @Test
     public void dummy() {}
+    
+    
 }

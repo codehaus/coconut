@@ -81,7 +81,13 @@ class DefaultManagedOperation extends AbstractManagedOperation {
                 .methodSignature(m), m.getReturnType().getName(), MBeanOperationInfo.UNKNOWN);
     }
 
-    public static Map<OperationKey, AbstractManagedOperation> fromPropertyDescriptors(
+    /**
+     * Creates 
+     * @param pds
+     * @param obj
+     * @return
+     */
+    static Map<OperationKey, AbstractManagedOperation> fromMethodDescriptors(
             MethodDescriptor[] pds, Object obj) {
         Map<OperationKey, AbstractManagedOperation> result = new HashMap<OperationKey, AbstractManagedOperation>();
         for (MethodDescriptor pd : pds) {

@@ -19,7 +19,6 @@ import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
-import org.coconut.cache.service.servicemanager.CacheLifecycle.Shutdown;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedVisitor;
 import org.coconut.management.Managements;
@@ -44,14 +43,11 @@ public class DefaultCacheManagementService extends AbstractCacheLifecycle implem
     /** The Managed root group. */
     private final ManagedGroup root;
 
-    /** Whether or not this service is enabled. */
-    private final boolean isEnabled;
-
     /** Used to register all services. */
     private final ManagedVisitor registrant;
 
     /** Whether or not this service has been shutdown. */
-    private boolean isShutdown;
+    private volatile boolean isShutdown;
 
     /**
      * Creates a new DefaultCacheManagementService.
@@ -69,12 +65,17 @@ public class DefaultCacheManagementService extends AbstractCacheLifecycle implem
             throw new NullPointerException("cacheName is null");
         }
 
-        /* Set IsEnabled */
-        isEnabled = configuration.isEnabled();
-
         /* Set Management Root */
-        root = ManagementUtils.synchronizedGroup(new DefaultManagedGroup(cacheName,
-                "This group contains all managed Cache services"), this);
+        // We probably want to lock the group, when shutting down the cache.
+        root = new DefaultManagedGroup(cacheName, "This group contains all managed Cache services")
+        {
+            @Override
+            protected void beforeMutableOperation() {
+                if (isShutdown) {
+                    throw new IllegalStateException("Cache has been shutdown");
+                }
+            }
+        };
 
         /* Set Registrant */
         if (configuration.getRegistrant() == null) {
@@ -86,66 +87,39 @@ public class DefaultCacheManagementService extends AbstractCacheLifecycle implem
             if (domain == null) {
                 domain = CacheMXBean.DEFAULT_JMX_DOMAIN;
             }
-            registrant = Managements.hierarchicalRegistrant(server, domain, "name", "service", "group");
+            registrant = Managements.hierarchicalRegistrant(server, domain, "name", "service",
+                    "group");
         } else {
             registrant = configuration.getRegistrant();
-        }
-    }
-
-    /**
-     * Returns whether or not this service is enabled.
-     * 
-     * @return whether or not this service is enabled
-     */
-    public boolean isEnabled() {
-        return isEnabled;
-    }
-
-    /** {@inheritDoc} */
-    public ManagedGroup getRoot() {
-        if (isEnabled) {
-            return root;
-        } else {
-            throw new UnsupportedOperationException(
-                    "This service does not support this operation");
         }
     }
 
     /** {@inheritDoc} */
     @Override
     public synchronized void initialize(CacheLifecycle.Initializer cli) {
-        if (isEnabled) {
-            cli.registerService(CacheManagementService.class, ManagementUtils
-                    .wrapService(this));
-        }
+        cli.registerService(CacheManagementService.class, ManagementUtils.wrapService(this));
     }
-
 
     /** {@inheritDoc} */
     @Override
-    public synchronized void shutdown(Shutdown shutdown) {
-        if (isEnabled) {
-            try {
-                root.unregister();
-                isShutdown = true;
-            } catch (JMException jme) {
-                throw new CacheException(jme);
-            }
+    public synchronized void shutdown(Shutdown shutdown) throws JMException {
+        try {
+            Managements.unregister().traverse(root);
+        } finally {
+            isShutdown = true;
         }
     }
 
     /** {@inheritDoc} */
     @Override
     public synchronized void started(Cache<?, ?> cache) {
-        if (isEnabled) {
-            ManagedGroup g = root.addChild(CacheMXBean.MANAGED_SERVICE_NAME,
-                    "General cache attributes and operations");
-            g.add(ManagementUtils.wrapMXBean(cache));
-            try {
-                registrant.visitManagedGroup(root);
-            } catch (JMException e) {
-                throw new CacheException(e);
-            }
+        ManagedGroup g = root.addChild(CacheMXBean.MANAGED_SERVICE_NAME,
+                "General cache attributes and operations");
+        g.add(ManagementUtils.wrapMXBean(cache));
+        try {
+            registrant.traverse(root);
+        } catch (JMException e) {
+            throw new CacheException(e);
         }
     }
 
@@ -214,9 +188,7 @@ public class DefaultCacheManagementService extends AbstractCacheLifecycle implem
         root.unregister();
     }
 
-    void checkShutdown() {
-        if (isShutdown) {
-            throw new IllegalStateException("Cache has been shutdown");
-        }
+    public String toString() {
+        return "Management Service";
     }
 }

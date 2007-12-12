@@ -26,7 +26,7 @@ public class DefaultManagedOperationTest {
     public void setup() throws Exception {
         BeanInfo bi = Introspector.getBeanInfo(OperationStub.class);
         stub = new OperationStub();
-        attr = DefaultManagedOperation.fromPropertyDescriptors(bi.getMethodDescriptors(), stub);
+        attr = DefaultManagedOperation.fromMethodDescriptors(bi.getMethodDescriptors(), stub);
         assertEquals(10, attr.size());
     }
 

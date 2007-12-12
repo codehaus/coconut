@@ -49,7 +49,7 @@ class DefaultManagedAttribute extends AbstractManagedAttribute {
      *             if the specified object, name or description is <code>null</code>.
      *             Or if both reader and writer are <code>null</code>
      */
-    public DefaultManagedAttribute(Object obj, Method reader, Method writer, String name,
+    DefaultManagedAttribute(Object obj, Method reader, Method writer, String name,
             String description) {
         super(name, description);
         if (obj == null) {
@@ -64,7 +64,7 @@ class DefaultManagedAttribute extends AbstractManagedAttribute {
 
     /** {@inheritDoc} */
     MBeanAttributeInfo getInfo() throws IntrospectionException {
-        return new MBeanAttributeInfo(getName(), getDescription(), getter, setter);
+            return new MBeanAttributeInfo(getName(), getDescription(), getter, setter);
     }
 
     /** {@inheritDoc} */
@@ -128,7 +128,7 @@ class DefaultManagedAttribute extends AbstractManagedAttribute {
      *             the writter. Or if it has a ManagedAttribute set on the reader where
      *             isWriteOnly is set to <code>true</code>
      */
-    public static DefaultManagedAttribute fromPropertyDescriptor(PropertyDescriptor pd, Object obj) {
+    static DefaultManagedAttribute fromPropertyDescriptor(PropertyDescriptor pd, Object obj) {
         ManagedAttribute readAttribute = pd.getReadMethod() == null ? null : pd.getReadMethod()
                 .getAnnotation(ManagedAttribute.class);
         ManagedAttribute writeAttribute = pd.getWriteMethod() == null ? null : pd.getWriteMethod()
@@ -164,8 +164,20 @@ class DefaultManagedAttribute extends AbstractManagedAttribute {
         return null; // no annotation for property
     }
 
-    public static Map<String, AbstractManagedAttribute> fromPropertyDescriptors(
-            PropertyDescriptor[] pds, Object obj) {
+    /**
+     * Creates {@link AbstractManagedAttribute}'s for the object and its
+     * {@link PropertyDescriptor}'s.
+     * 
+     * @param pds
+     *            the PropertyDescriptor that should be created AbstractManagedAttributes
+     *            for
+     * @param obj
+     *            the object that the properties can be set and retrieved from
+     * @return a map mapping from the name of the attribute to the
+     *         AbstractManagedAttribute
+     */
+    static Map<String, AbstractManagedAttribute> fromPropertyDescriptors(PropertyDescriptor[] pds,
+            Object obj) {
         Map<String, AbstractManagedAttribute> result = new HashMap<String, AbstractManagedAttribute>();
         for (PropertyDescriptor pd : pds) {
             AbstractManagedAttribute a = fromPropertyDescriptor(pd, obj);

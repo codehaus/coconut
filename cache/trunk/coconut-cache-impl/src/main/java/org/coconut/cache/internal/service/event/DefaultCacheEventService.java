@@ -23,7 +23,6 @@ import org.coconut.cache.service.event.CacheEventConfiguration;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
-import org.coconut.cache.service.servicemanager.CacheLifecycle.Shutdown;
 import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
 import org.coconut.event.bus.EventSubscription;
@@ -54,14 +53,11 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
 
     private final CacheEventBus<CacheEvent<K, V>> eb = new CacheEventBus<CacheEvent<K, V>>();
 
-    private final boolean isEnabled;
-
     private final InternalCacheServiceManager manager;
 
     private final Offerable<CacheEvent<K, V>> offerable;
 
     public DefaultCacheEventService(InternalCacheServiceManager manager, CacheEventConfiguration co) {
-        isEnabled = co.isEnabled();
         this.manager = manager;
         this.offerable = eb;
         this.doAdd = co.isIncluded(CacheEntryEvent.ItemAdded.class);
@@ -152,9 +148,7 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
     /** {@inheritDoc} */
     @Override
     public void initialize(CacheLifecycle.Initializer cli) {
-        if (isEnabled) {
-            cli.registerService(CacheEventService.class, this);
-        }
+        cli.registerService(CacheEventService.class, this);
     }
 
     /** {@inheritDoc} */
@@ -237,4 +231,7 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
         }
     }
 
+    public String toString() {
+        return "Event Service";
+    }
 }

@@ -11,5 +11,5 @@ import org.junit.runners.Suite;
         EventCacheStarted.class, EventCacheStopped.class, EventGet.class, EventPut.class,
         EventRemove.class, EventReplace.class, EventServiceBus.class, EventServiceEviction.class,
         EventServiceExpiration.class, EventServiceGeneral.class, EventServiceLoading.class,
-        IgnoreEvents.class })
+        EventTrimmer.class, IgnoreEvents.class })
 public class EventSuite {}

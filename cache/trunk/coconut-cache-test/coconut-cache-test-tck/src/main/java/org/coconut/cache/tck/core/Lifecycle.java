@@ -44,12 +44,23 @@ public class Lifecycle extends AbstractCacheTCKTest {
         c = newCache();
         c.shutdown();
         assertTrue(c.isShutdown());
+        assertTrue(c.isTerminated());
         c.shutdown();
         assertTrue(c.isShutdown());
         // TODO c is started???
 
     }
+    @Test
+    public void shutdownNowNoOp() {
+        c = newCache();
+        c.shutdownNow();
+        assertTrue(c.isShutdown());
+        assertTrue(c.isTerminated());
+        c.shutdownNow();
+        assertTrue(c.isShutdown());
+        // TODO c is started???
 
+    }
     @Test
     public void shutdown() {
         c = newCache();

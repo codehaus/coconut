@@ -7,7 +7,7 @@ import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedLifecycle;
 import org.coconut.operations.Ops.Predicate;
 
-public class ManagedFilter implements ManagedLifecycle, Predicate {
+public class ManagedPredicate implements ManagedLifecycle, Predicate {
     ManagedGroup g;
 
     public void manage(ManagedGroup parent) {

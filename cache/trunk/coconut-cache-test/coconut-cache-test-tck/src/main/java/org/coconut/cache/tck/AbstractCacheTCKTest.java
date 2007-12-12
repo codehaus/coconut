@@ -441,6 +441,12 @@ public class AbstractCacheTCKTest extends Assert {
     static class FailingService extends AbstractCacheLifecycle {
 
         @Override
+        public void start(CacheServiceManagerService serviceManager) {
+            throw new IllegalMonitorStateException();
+            //super.start(serviceManager);
+        }
+
+        @Override
         public void started(Cache<?, ?> cache) {
             throw new IllegalMonitorStateException();
         }

@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
+import org.coconut.cache.tck.service.servicemanager.LifecycleManaged;
+import org.coconut.management.ManagedLifecycle;
 
 public class LifecycleVerifierContext {
     private int id = 0;;
@@ -23,12 +25,27 @@ public class LifecycleVerifierContext {
     public LifecycleVerifier create() {
         return create(new AbstractCacheLifecycle() {});
     }
+
     public LifecycleVerifier createNever() {
         LifecycleVerifier lw = create(new AbstractCacheLifecycle() {});
         lw.finished();
         return lw;
     }
-    
+
+    public LifecycleVerifier createManaged(CacheLifecycle cl) {
+        if (!(cl instanceof ManagedLifecycle)) {
+            throw new IllegalArgumentException();
+        }
+        LifecycleVerifier lw = new LifecycleManagedVerifier(this, cl, ++id);
+        if (list.size() > 0) {
+            lw.previous = list.getLast();
+            list.getLast().next = lw;
+        }
+        conf.serviceManager().add(lw);
+        list.add(lw);
+        return lw;
+    }
+
     public LifecycleVerifier create(CacheLifecycle cl) {
         LifecycleVerifier lw = new LifecycleVerifier(this, cl, ++id);
         if (list.size() > 0) {

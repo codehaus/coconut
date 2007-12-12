@@ -21,6 +21,11 @@ public class DefaultCacheListener<K, V> extends AbstractCacheLifecycle implement
 
     private final InternalCacheEventService<K, V> event;
 
+    public DefaultCacheListener(DefaultCacheStatisticsService<K, V> statistics) {
+        this.statistics = statistics;
+        this.event = null;
+    }
+
     public DefaultCacheListener(DefaultCacheStatisticsService<K, V> statistics,
             InternalCacheEventService<K, V> event) {
         this.statistics = statistics;
@@ -30,7 +35,9 @@ public class DefaultCacheListener<K, V> extends AbstractCacheLifecycle implement
     public void afterCacheClear(Cache<K, V> cache, long timestamp,
             Collection<? extends CacheEntry<K, V>> entries, long previousVolume) {
         statistics.afterCacheClear(cache, timestamp, entries, previousVolume);
-        event.afterCacheClear(cache, timestamp, entries, previousVolume);
+        if (event != null) {
+            event.afterCacheClear(cache, timestamp, entries, previousVolume);
+        }
     }
 
     public long beforeCacheClear(Cache<K, V> cache) {
@@ -40,7 +47,9 @@ public class DefaultCacheListener<K, V> extends AbstractCacheLifecycle implement
     public void afterRemoveAll(Cache<K, V> cache, long start, Collection<? extends K> keys,
             Collection<CacheEntry<K, V>> removed) {
         statistics.afterRemoveAll(cache, start, removed);
-        event.afterRemoveAll(cache, start, removed);
+        if (event != null) {
+            event.afterRemoveAll(cache, start, removed);
+        }
     }
 
     public long beforeRemoveAll(Cache<K, V> cache, Collection<? extends K> keys) {
@@ -51,7 +60,7 @@ public class DefaultCacheListener<K, V> extends AbstractCacheLifecycle implement
             Collection<? extends CacheEntry<K, V>> evictedEntries,
             AbstractCacheEntry<K, V> oldEntry, AbstractCacheEntry<K, V> newEntry, boolean fromLoader) {
         statistics.afterPut(cache, started, evictedEntries, oldEntry, newEntry);
-        if (newEntry != null) {
+        if (event != null && newEntry != null) {
             event.afterPut(cache, started, evictedEntries, oldEntry, newEntry);
         }
     }
@@ -70,14 +79,17 @@ public class DefaultCacheListener<K, V> extends AbstractCacheLifecycle implement
             Map<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>> newPrevEntries,
             boolean fromLoader) {
         statistics.afterPutAll(cache, started, evictedEntries, newPrevEntries);
-        event.afterPutAll(cache, started, evictedEntries, newPrevEntries);
-
+        if (event != null) {
+            event.afterPutAll(cache, started, evictedEntries, newPrevEntries);
+        }
     }
 
-    public void afterCachePurge(Cache<K, V> cache,long start, 
+    public void afterCachePurge(Cache<K, V> cache, long start,
             Collection<? extends CacheEntry<K, V>> purgedEntries, int previousSize,
             long previousVolume, int newSize, long newVolume) {
-        event.afterPurge(cache, purgedEntries);
+        if (event != null) {
+            event.afterPurge(cache, purgedEntries);
+        }
     }
 
     public void afterTrimCache(Cache<K, V> cache, long started,
@@ -85,8 +97,10 @@ public class DefaultCacheListener<K, V> extends AbstractCacheLifecycle implement
             long previousVolume, long newVolume) {
         statistics.afterTrimCache(cache, started, evictedEntries, previousSize, newSize,
                 previousVolume, newVolume);
-        event.afterTrimCache(cache, started, evictedEntries, previousSize, newSize, previousVolume,
-                newVolume);
+        if (event != null) {
+            event.afterTrimCache(cache, started, evictedEntries, previousSize, newSize,
+                    previousVolume, newVolume);
+        }
     }
 
     public long beforeCachePurge(Cache<K, V> cache) {
@@ -103,7 +117,9 @@ public class DefaultCacheListener<K, V> extends AbstractCacheLifecycle implement
 
     public void afterRemove(Cache<K, V> cache, long started, CacheEntry<K, V> entry) {
         statistics.afterRemove(cache, started, entry);
-        event.afterRemove(cache, started, entry);
+        if (event != null) {
+            event.afterRemove(cache, started, entry);
+        }
     }
 
     public long beforeReplace(Cache<K, V> cache, K key, V value) {
@@ -114,7 +130,7 @@ public class DefaultCacheListener<K, V> extends AbstractCacheLifecycle implement
             Collection<? extends CacheEntry<K, V>> evictedEntries,
             AbstractCacheEntry<K, V> oldEntry, AbstractCacheEntry<K, V> newEntry) {
         statistics.afterPut(cache, started, evictedEntries, oldEntry, newEntry);
-        if (newEntry != null) {
+        if (event != null && newEntry != null) {
             event.afterPut(cache, started, evictedEntries, oldEntry, newEntry);
         }
     }
@@ -133,11 +149,15 @@ public class DefaultCacheListener<K, V> extends AbstractCacheLifecycle implement
     }
 
     public void dexpired(Cache<K, V> cache, long started, CacheEntry<K, V> entry) {
-        event.dexpired(cache, started, entry);
+        if (event != null) {
+            event.dexpired(cache, started, entry);
+        }
     }
 
     public void afterStart(Cache<K, V> cache) {
-        event.afterStart(cache);
+        if (event != null) {
+            event.afterStart(cache);
+        }
     }
 
     public long beforeGetAll(Cache<K, V> cache, Collection<? extends K> keys) {
@@ -150,4 +170,7 @@ public class DefaultCacheListener<K, V> extends AbstractCacheLifecycle implement
         statistics.afterGetAll(cache, started, keys, entries, isHit, isExpired, loadedEntries);
     }
 
+    public String toString() {
+        return "Listener Service";
+    }
 }

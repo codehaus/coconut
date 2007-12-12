@@ -5,7 +5,7 @@ package org.coconut.cache.test.util.lifecycle;
 
 import org.coconut.operations.Ops.Predicate;
 
-public class LifecycleFilter extends AbstractLifecycleVerifier implements Predicate {
+public class LifecyclePredicate extends AbstractLifecycleVerifier implements Predicate {
     public boolean evaluate(Object element) {
         return false;
     }

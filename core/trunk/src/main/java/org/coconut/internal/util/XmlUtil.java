@@ -7,6 +7,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
@@ -117,6 +119,15 @@ public final class XmlUtil {
         }
     }
 
+    public static double contentDoubleGet(Element e, double defaultDouble) {
+        if (e == null) {
+            return defaultDouble;
+        } else {
+            String text = e.getTextContent();
+            return Double.parseDouble(text);
+        }
+    }
+    
     public static long contentLongGet(Element e, long defaultLong) {
         if (e == null) {
             return defaultLong;
@@ -178,6 +189,18 @@ public final class XmlUtil {
             }
         }
         return null;
+    }
+
+    public static List<Element> getChildren(String name, Element e) {
+        List<Element> result = new ArrayList<Element>();
+        if (e != null) {
+            for (int i = 0; i < e.getChildNodes().getLength(); i++) {
+                if (e.getChildNodes().item(i).getNodeName().equals(name)) {
+                    result.add((Element) e.getChildNodes().item(i));
+                }
+            }
+        }
+        return result;
     }
 
     public static <T> T loadObject(Element e, Class<T> type) throws InstantiationException,

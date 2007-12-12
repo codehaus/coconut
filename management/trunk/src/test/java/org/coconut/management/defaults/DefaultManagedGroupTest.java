@@ -11,9 +11,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.InstanceNotFoundException;
@@ -25,6 +22,7 @@ import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
+import javax.management.RuntimeMBeanException;
 
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.defaults.stubs.MixedOperationsAttributes;
@@ -94,6 +92,7 @@ public class DefaultManagedGroupTest {
         assertNull(dmg.getServer());
         assertFalse(dmg.isRegistered());
         dmg.toString(); // does not fail
+        assertNotNull(dmg.getLock());
     }
 
     @Test
@@ -108,6 +107,7 @@ public class DefaultManagedGroupTest {
         assertNull(mg.getServer());
         assertEquals(1, dmg.getChildren().size());
         assertTrue(dmg.getChildren().contains(mg));
+        assertSame(dmg.getLock(), ((DefaultManagedGroup) mg).getLock());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -176,6 +176,18 @@ public class DefaultManagedGroupTest {
             server.getMBeanInfo(ON);
             fail("should throw");
         } catch (InstanceNotFoundException ok) {}
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void noOperation() throws Throwable {
+        SingleOperation o = new SingleOperation();
+        dmg.add(o);
+        dmg.register(server, ON);
+        try {
+            server.invoke(ON, "method1d", null, null);
+        } catch (RuntimeMBeanException e) {
+            throw e.getCause();
+        }
     }
 
     @Test
@@ -284,11 +296,11 @@ public class DefaultManagedGroupTest {
 
         list = server.getAttributes(ON, new String[] { "ReadWrite", "WriteOnly", "ReadOnly" });
         assertEquals(2, list.size());
-//        System.out.println(list.get(0).getClass());
-        assertEquals("ReadWrite",((Attribute) list.get(0)).getName());
-        assertEquals(123,((Attribute) list.get(0)).getValue());
-        assertEquals("ReadOnly",((Attribute) list.get(1)).getName());
-        assertEquals(false,((Attribute) list.get(1)).getValue());
+// System.out.println(list.get(0).getClass());
+        assertEquals("ReadWrite", ((Attribute) list.get(0)).getName());
+        assertEquals(123, ((Attribute) list.get(0)).getValue());
+        assertEquals("ReadOnly", ((Attribute) list.get(1)).getName());
+        assertEquals(false, ((Attribute) list.get(1)).getValue());
 
     }
 

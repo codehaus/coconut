@@ -22,10 +22,10 @@ import org.coconut.core.Clock;
 public class UnsynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryFactoryService<K, V> {
 
     /** The default refresh time of newly added entries. */
-    private long defaultRefreshTimeNanos;
+    private long defaultRefreshTimeNanos = Long.MAX_VALUE;
 
     /** The default time to live of newly added entries. */
-    private long defaultTimeToLiveNanos;
+    private long defaultTimeToLiveNanos = Long.MAX_VALUE;
 
     private final IsCacheable<K, V> isCacheable;
 
@@ -34,7 +34,8 @@ public class UnsynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryF
      * 
      * @param clock
      *            the clock used for calculating expiration and refresh times
-     * @param exceptionService the cache exception service
+     * @param exceptionService
+     *            the cache exception service
      */
     public UnsynchronizedEntryFactoryService(Clock clock,
             CacheEvictionConfiguration<K, V> evictionConfiguration,
@@ -61,8 +62,8 @@ public class UnsynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryF
         long hits = getHits(key, value, attributes, existing);
         long refreshTime = getTimeToRefresh(defaultRefreshTimeNanos, key, value, attributes,
                 existing);
-        UnsynchronizedCacheEntry<K, V> newEntry = new UnsynchronizedCacheEntry<K, V>(key,
-                value, cost, creationTime, lastUpdate, size, refreshTime);
+        UnsynchronizedCacheEntry<K, V> newEntry = new UnsynchronizedCacheEntry<K, V>(key, value,
+                cost, creationTime, lastUpdate, size, refreshTime);
         newEntry.setHits(hits);
         newEntry.setExpirationTime(expirationTime);
 

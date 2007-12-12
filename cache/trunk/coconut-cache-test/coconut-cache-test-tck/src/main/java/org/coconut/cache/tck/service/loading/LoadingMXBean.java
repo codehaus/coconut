@@ -15,7 +15,7 @@ import org.coconut.cache.service.loading.CacheLoadingMXBean;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.tck.RequireService;
 import org.coconut.cache.test.util.IntegerToStringLoader;
-import org.coconut.cache.test.util.managed.ManagedFilter;
+import org.coconut.cache.test.util.managed.ManagedPredicate;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedLifecycle;
 import org.coconut.operations.Ops.Predicate;
@@ -129,7 +129,7 @@ public class LoadingMXBean extends AbstractLoadingTestBundle {
     public void filterManagement() {
         CacheConfiguration<Integer, String> cc = newConf();
         cc.management().setEnabled(true);
-        ManagedFilter filter = new ManagedFilter();
+        ManagedPredicate filter = new ManagedPredicate();
         c = newCache(cc.loading().setRefreshPredicate(filter)
                 .setLoader(new IntegerToStringLoader()).c());
         prestart();

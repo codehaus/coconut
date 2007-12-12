@@ -1,17 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <cache-config version="0.0.4">
-    <cache name="">
-        <properties>
-            <property key="test.opr.cache.clear">0.0020</property>
-            <property key="test.opr.cache.get">50.0</property>
-            <property key="test.opr.loading.forceLoad">0.3</property>
-            <property key="test.opr.loading.load">1.0</property>
-        </properties>
-        <loading>
-            <loader type="org.coconut.cache.test.util.SimpelLoader"/>
-        </loading>
-        <eviction>
-            <max-size>5000</max-size>
-        </eviction>
-    </cache>
+  <cache name="" type="org.coconut.cache.defaults.SynchronizedCache">
+    <loading>
+      <loader type="org.coconut.cache.test.util.SimpelLoader" />
+    </loading>
+    <eviction>
+      <max-size>5000</max-size>
+    </eviction>
+    <configuration
+      type="org.coconut.cache.test.harness.HarnessTestConfiguration">
+      <operations defaultprefix="org.coconut.cache.test.operations">
+        <operation class="CacheOps$Clear">0.0020</operation>
+        <operation class="CacheOps$Get">50.0</operation>
+        <operation class="LoadingOps$ForceLoad">0.3</operation>
+        <operation class="LoadingOps$Load">1.0</operation>
+      </operations>
+      <testruns>
+        <testrun name="sometest" description="dksjfskdjfdkjf" time="1"
+          unit="h">
+        </testrun>
+      </testruns>
+      <output type="xml">$name</output>
+      <output type="sysout" />
+    </configuration>
+  </cache>
 </cache-config>

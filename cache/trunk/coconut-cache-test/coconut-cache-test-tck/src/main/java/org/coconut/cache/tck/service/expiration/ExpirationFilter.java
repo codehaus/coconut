@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.test.util.CacheEntryFilter;
-import org.coconut.cache.test.util.lifecycle.LifecycleFilter;
+import org.coconut.cache.test.util.lifecycle.LifecyclePredicate;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -115,7 +115,7 @@ public class ExpirationFilter extends AbstractExpirationTestBundle {
     @Test
     public void lifecycle() {
         CacheConfiguration<Integer, String> cc = newConf();
-        LifecycleFilter filter = new LifecycleFilter();
+        LifecyclePredicate filter = new LifecyclePredicate();
         c = newCache(cc.expiration().setExpirationFilter(filter));
         filter.assertInitializedButNotStarted();
         prestart();

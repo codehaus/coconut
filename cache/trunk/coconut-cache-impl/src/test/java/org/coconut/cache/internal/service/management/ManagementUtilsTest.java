@@ -47,17 +47,6 @@ public class ManagementUtilsTest {
         ManagementUtils.wrapService(null);
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testWrapServiceNPE() {
-        ManagementUtils.synchronizedGroup(null, new DefaultCacheManagementService(
-                new CacheManagementConfiguration(), "foo"));
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testWrapServiceNPE1() {
-        ManagementUtils.synchronizedGroup(TestUtil.dummy(ManagedGroup.class), null);
-    }
-
     @Test
     public void testWrapMXBean() {
         final Cache mock = context.mock(Cache.class);

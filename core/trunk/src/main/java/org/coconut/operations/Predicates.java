@@ -53,14 +53,15 @@ public final class Predicates {
      *             element
      */
     public static <E> Predicate<E> all(Iterable<? extends Predicate<? super E>> predicates) {
-        return new Predicates.AllPredicate<E>(predicates);
+        return new AllPredicate<E>(predicates);
     }
 
     /**
      * Creates a Predicate that evaluates to true iff each of the specified predicates
-     * evaluates to true. The returned predicate uses short-circuit evaluation (or minimal
-     * evaluation). That is, subsequent arguments are only evaluated if the previous
-     * arguments does not suffice to determine the truth value.
+     * evaluates to true for the element being tested. The returned predicate uses
+     * short-circuit evaluation (or minimal evaluation). That is, subsequent arguments are
+     * only evaluated if the previous arguments does not suffice to determine the truth
+     * value.
      * <p>
      * The Predicate will use a copy of the array of supplied predicates.
      * <p>
@@ -76,7 +77,7 @@ public final class Predicates {
      *             if any of the specified predicates are <code>null</code>
      */
     public static <E> Predicate<E> all(Predicate<? super E>... predicates) {
-        return new Predicates.AllPredicate<E>(predicates);
+        return new AllPredicate<E>(predicates);
     }
 
     /**
@@ -104,7 +105,7 @@ public final class Predicates {
      *             if any of the specified predicates are <code>null</code>
      */
     public static <E> Predicate<E> and(Predicate<? super E> left, Predicate<? super E> right) {
-        return new Predicates.AndPredicate<E>(left, right);
+        return new AndPredicate<E>(left, right);
     }
 
     /**
@@ -120,14 +121,15 @@ public final class Predicates {
      *             element
      */
     public static <E> Predicate<E> any(Iterable<? extends Predicate<? super E>> predicates) {
-        return new Predicates.AnyPredicate<E>(predicates);
+        return new AnyPredicate<E>(predicates);
     }
 
     /**
      * Creates a Predicate that evaluates to true if any of the specified predicates
-     * evaluates to true. The returned predicate uses short-circuit evaluation (or minimal
-     * evaluation). That is, subsequent arguments are only evaluated if the previous
-     * arguments does not suffice to determine the truth value.
+     * evaluates to true for the element being tested. The returned predicate uses
+     * short-circuit evaluation (or minimal evaluation). That is, subsequent arguments are
+     * only evaluated if the previous arguments does not suffice to determine the truth
+     * value.
      * <p>
      * The Predicate will use a copy of the array of supplied predicates.
      * <p>
@@ -143,7 +145,7 @@ public final class Predicates {
      *             if any of the specified predicates are <code>null</code>
      */
     public static <E> Predicate<E> any(Predicate<? super E>... predicates) {
-        return new Predicates.AnyPredicate<E>(predicates);
+        return new AnyPredicate<E>(predicates);
     }
 
     /**
@@ -170,7 +172,7 @@ public final class Predicates {
     public static <E> Predicate<E> anyEquals(E... elements) {
         List<Predicate<E>> list = new ArrayList<Predicate<E>>();
         for (E e : elements) {
-            list.add(Predicates.isEquals(e));
+            list.add(isEquals(e));
         }
         return any(list);
     }
@@ -191,7 +193,7 @@ public final class Predicates {
     public static <E> Predicate<E> anyEquals(Iterable<? extends E> elements) {
         List<Predicate<E>> list = new ArrayList<Predicate<E>>();
         for (E e : elements) {
-            list.add(Predicates.isEquals(e));
+            list.add(isEquals(e));
         }
         return any(list);
     }
@@ -246,12 +248,17 @@ public final class Predicates {
 
     /**
      * Creates a Predicate that evaluates to true if the element being tested is between
-     * the two specified elements (both inclusive). More formally,
+     * the two specified elements (both inclusive) according to the <i>natural ordering</i>
+     * of the elements. More formally,
      * 
      * <pre>
      * left &lt;= element &lt;= right
      * </pre>
      * 
+     * All elements evaluated must implement the <tt>Comparable</tt> interface.
+     * Furthermore, all elements evaluated must be <i>mutually comparable</i> (that is,
+     * <tt>left.compareTo(element)</tt> or <tt>right.compareTo(element)</tt> must not
+     * throw a <tt>ClassCastException</tt>.
      * <p>
      * If both of the supplied elements are serializable the returned predicate will also
      * be serializable.
@@ -267,10 +274,11 @@ public final class Predicates {
      *             if any of the specified elements are <code>null</code>
      * @throws IllegalArgumentException
      *             if the specified elements does not implement {@link Comparable}
+     * @see #between(Object, Object, Comparator)
+     * @see Comparable
      */
     public static <E> Predicate<E> between(E left, E right) {
-        return and((Predicate) Predicates.greaterThenOrEqual(left), (Predicate) Predicates
-                .lessThenOrEqual(right));
+        return and((Predicate) greaterThenOrEqual(left), (Predicate) lessThenOrEqual(right));
     }
 
     /**
@@ -291,8 +299,8 @@ public final class Predicates {
      *             <code>null</code>
      */
     public static <E> Predicate<E> between(E left, E right, Comparator<? extends E> comparator) {
-        return and((Predicate) Predicates.greaterThenOrEqual(left, comparator),
-                (Predicate) Predicates.lessThenOrEqual(right, comparator));
+        return and((Predicate) greaterThenOrEqual(left, comparator), (Predicate) lessThenOrEqual(
+                right, comparator));
     }
 
     /**
@@ -321,9 +329,9 @@ public final class Predicates {
     }
 
     /**
-     * Creates a Predicate that evaluates to true if the element being tested is greater
-     * then the element being used to construct the predicate. The predicate will use the
-     * objects natural comparator.
+     * Creates a Predicate that evaluates to <code>true</code> if the element being
+     * tested is greater then the element being used to construct the predicate. The
+     * predicate will use the objects natural comparator.
      * <p>
      * If the supplied element is serializable the returned predicate will also be
      * serializable.
@@ -339,13 +347,13 @@ public final class Predicates {
      *             if the specified element does not implement {@link Comparable}
      */
     public static <E> Predicate<E> greaterThen(E element) {
-        return new Predicates.GreaterThenPredicate<E>(element);
+        return new GreaterThenPredicate<E>(element);
     }
 
     /**
-     * Creates a Predicate that evaluates to true if the element being tested is greater
-     * then the element being used to construct the predicate. The predicate will use the
-     * specified Comparator to compare the objects.
+     * Creates a Predicate that evaluates to <code>true</code> if the element being
+     * tested is greater then the element being used to construct the predicate. The
+     * predicate will use the specified Comparator to compare the objects.
      * <p>
      * If the supplied element and Comparator is serializable the returned predicate will
      * also be serializable.
@@ -361,13 +369,13 @@ public final class Predicates {
      *             if the specified element is <code>null</code>
      */
     public static <E> Predicate<E> greaterThen(E element, final Comparator<? extends E> comparator) {
-        return new Predicates.GreaterThenPredicate<E>(element, comparator);
+        return new GreaterThenPredicate<E>(element, comparator);
     }
 
     /**
-     * Creates a Predicate that evaluates to true if the element being tested is greater
-     * then or equal to the element being used to construct the predicate. The predicate
-     * will use the objects natural comparator.
+     * Creates a Predicate that evaluates to <code>true</code> if the element being
+     * tested is greater then or equal to the element being used to construct the
+     * predicate. The predicate will use the objects natural comparator.
      * <p>
      * If the supplied element is serializable the returned predicate will also be
      * serializable.
@@ -383,13 +391,13 @@ public final class Predicates {
      *             if the specified element does not implement {@link Comparable}
      */
     public static <E> Predicate<E> greaterThenOrEqual(E element) {
-        return new Predicates.GreaterThenOrEqualPredicate<E>(element);
+        return new GreaterThenOrEqualPredicate<E>(element);
     }
 
     /**
-     * Creates a Predicate that evaluates to true if the element being tested is greater
-     * then or equal to the element being used to construct the predicate. The predicate
-     * will use the specified Comparator to compare the objects.
+     * Creates a Predicate that evaluates to <code>true</code> if the element being
+     * tested is greater then or equal to the element being used to construct the
+     * predicate. The predicate will use the specified Comparator to compare the objects.
      * <p>
      * If the supplied element and Comparator is serializable the returned predicate will
      * also be serializable.
@@ -406,7 +414,7 @@ public final class Predicates {
      */
     public static <E> Predicate<E> greaterThenOrEqual(E element,
             final Comparator<? extends E> comparator) {
-        return new Predicates.GreaterThenOrEqualPredicate<E>(element, comparator);
+        return new GreaterThenOrEqualPredicate<E>(element, comparator);
     }
 
     /**
@@ -426,7 +434,7 @@ public final class Predicates {
      *            the type of elements accepted by the predicate
      */
     public static <E> Predicate<E> isEquals(E element) {
-        return new Predicates.IsEqualsPredicate<E>(element);
+        return new IsEqualsPredicate<E>(element);
     }
 
     /**
@@ -482,7 +490,7 @@ public final class Predicates {
      *            the type of elements accepted by the predicate
      */
     public static <E> Predicate<E> isSame(E element) {
-        return new Predicates.IsSamePredicate<E>(element);
+        return new IsSamePredicate<E>(element);
     }
 
     /**
@@ -507,9 +515,9 @@ public final class Predicates {
     }
 
     /**
-     * Creates a Predicate that evaluates to true if the element being tested is less then
-     * the element being used to construct the predicate. The predicate will use the
-     * objects natural comparator.
+     * Creates a Predicate that evaluates to <code>true</code> if the element being
+     * tested is less then the element being used to construct the predicate. The
+     * predicate will use the objects natural comparator.
      * <p>
      * If the supplied element is serializable the returned predicate will also be
      * serializable.
@@ -525,13 +533,13 @@ public final class Predicates {
      *             if the specified element does not implement {@link Comparable}
      */
     public static <E> Predicate<E> lessThen(E element) {
-        return new Predicates.LessThenPredicate<E>(element);
+        return new LessThenPredicate<E>(element);
     }
 
     /**
-     * Creates a Predicate that evaluates to true if the element being tested is less then
-     * the element being used to construct the predicate. The predicate will use the
-     * specified Comparator to compare the objects.
+     * Creates a Predicate that evaluates to <code>true</code> if the element being
+     * tested is less then the element being used to construct the predicate. The
+     * predicate will use the specified Comparator to compare the objects.
      * <p>
      * If the supplied element and Comparator is serializable the returned predicate will
      * also be serializable.
@@ -547,13 +555,13 @@ public final class Predicates {
      *             if the specified element is <code>null</code>
      */
     public static <E> Predicate<E> lessThen(E element, final Comparator<? extends E> comparator) {
-        return new Predicates.LessThenPredicate<E>(element, comparator);
+        return new LessThenPredicate<E>(element, comparator);
     }
 
     /**
-     * Creates a Predicate that evaluates to true if the element being tested is less then
-     * or equal to the element being used to construct the predicate. The predicate will
-     * use the objects natural comparator.
+     * Creates a Predicate that evaluates to <code>true</code> if the element being
+     * tested is less then or equal to the element being used to construct the predicate.
+     * The predicate will use the objects natural comparator.
      * <p>
      * If the supplied element is serializable the returned predicate will also be
      * serializable.
@@ -569,13 +577,13 @@ public final class Predicates {
      *             if the specified element does not implement {@link Comparable}
      */
     public static <E> Predicate<E> lessThenOrEqual(E element) {
-        return new Predicates.LessThenOrEqualPredicate<E>(element);
+        return new LessThenOrEqualPredicate<E>(element);
     }
 
     /**
-     * Creates a Predicate that evaluates to true if the element being tested is less then
-     * or equal to the element being used to construct the predicate. The predicate will
-     * use the specified Comparator to compare the objects.
+     * Creates a Predicate that evaluates to <code>true</code> if the element being
+     * tested is less then or equal to the element being used to construct the predicate.
+     * The predicate will use the specified Comparator to compare the objects.
      * <p>
      * If the supplied element and Comparator is serializable the returned predicate will
      * also be serializable.
@@ -592,12 +600,12 @@ public final class Predicates {
      */
     public static <E> Predicate<E> lessThenOrEqual(E element,
             final Comparator<? extends E> comparator) {
-        return new Predicates.LessThenOrEqualPredicate<E>(element, comparator);
+        return new LessThenOrEqualPredicate<E>(element, comparator);
     }
 
     /**
-     * Creates a Predicate that first applies the mapper to the argument before evaluating
-     * the predicate. More formally
+     * Creates a Predicate that first applies the specified mapper to the argument before
+     * evaluating the specified predicate. More formally
      * 
      * <pre>
      * predicate.evaluate(mapper.map(element));
@@ -619,9 +627,9 @@ public final class Predicates {
      * @param <T>
      *            the type of elements accepted by the specified Predicate
      */
-    public static <F, T> Predicate<F> mapperPredicate(final Mapper<F, T> mapper,
+    public static <F, T> Predicate<F> mapAndEvaluate(final Mapper<F, T> mapper,
             Predicate<? super T> predicate) {
-        return new MapperPredicate<F, T>(mapper, predicate);
+        return new MapAndEvaluatePredicate<F, T>(mapper, predicate);
     }
 
     /**
@@ -645,7 +653,7 @@ public final class Predicates {
      *             if the specified predicate is <code>null</code>
      */
     public static <E> Predicate<E> not(Predicate<? super E> predicate) {
-        return new Predicates.NotPredicate<E>(predicate);
+        return new NotPredicate<E>(predicate);
     }
 
     /**
@@ -698,7 +706,7 @@ public final class Predicates {
      *             if any of the specified predicates are <code>null</code>
      */
     public static <E> Predicate<E> or(Predicate<? super E> left, Predicate<? super E> right) {
-        return new Predicates.OrPredicate<E>(left, right);
+        return new OrPredicate<E>(left, right);
     }
 
     /**
@@ -749,7 +757,7 @@ public final class Predicates {
      *             if any of the specified predicates are <code>null</code>
      */
     public static <E> Predicate<E> xor(Predicate<? super E> left, Predicate<? super E> right) {
-        return new Predicates.XorPredicate<E>(left, right);
+        return new XorPredicate<E>(left, right);
     }
 
     /**
@@ -1585,10 +1593,10 @@ public final class Predicates {
     }
 
     /**
-     * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
-     * @version $Id: CollectionPredicates.java 498 2007-12-02 17:17:11Z kasper $
+     * A Predicate that first applies the specified mapper to the argument before
+     * evaluating the specified predicate.
      */
-    final static class MapperPredicate<F, T> implements Predicate<F>, Serializable {
+    final static class MapAndEvaluatePredicate<F, T> implements Predicate<F>, Serializable {
 
         /** serialVersionUID. */
         private static final long serialVersionUID = -6292758840373110577L;
@@ -1599,7 +1607,15 @@ public final class Predicates {
         /** The predicate to test the mapped value against. */
         private final Predicate<? super T> predicate;
 
-        public MapperPredicate(Mapper<F, T> mapper, Predicate<? super T> predicate) {
+        /**
+         * Creates a new MapAndEvaluatePredicate.
+         * 
+         * @param mapper
+         *            the mapper used to first map the argument
+         * @param predicate
+         *            the predicate used to evaluate the mapped argument
+         */
+        public MapAndEvaluatePredicate(Mapper<F, T> mapper, Predicate<? super T> predicate) {
             if (mapper == null) {
                 throw new NullPointerException("mapper is null");
             } else if (predicate == null) {
@@ -1649,7 +1665,7 @@ public final class Predicates {
     }
 
     /**
-     * A PredicatePredicate that evaluates to true iff the Predicate used for constructing
+     * A Predicate that evaluates to true iff the Predicate used for constructing
      * evaluates to <code>false</code>.
      */
     final static class NotPredicate<E> implements Predicate<E>, Serializable {

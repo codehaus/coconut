@@ -18,6 +18,7 @@ import org.coconut.management.ManagedGroup;
 import org.coconut.management.annotation.ManagedOperation;
 import org.junit.Before;
 import org.junit.Test;
+
 @RequireService( { CacheManagementService.class })
 public class ManagementShutdown extends AbstractCacheTCKTest {
 
@@ -51,6 +52,7 @@ public class ManagementShutdown extends AbstractCacheTCKTest {
         c.shutdown();
         mg.add(new Op());
     }
+
     @Test(expected = IllegalStateException.class)
     public void childAddChildShutdownISE() {
         ManagedGroup mg = management().getChildren().iterator().next();
@@ -58,6 +60,7 @@ public class ManagementShutdown extends AbstractCacheTCKTest {
         // generate unique name
         mg.addChild("name" + System.nanoTime(), "description");
     }
+
     @Test(expected = IllegalStateException.class)
     public void addChildShutdownISE() {
         c.shutdown();
@@ -90,6 +93,15 @@ public class ManagementShutdown extends AbstractCacheTCKTest {
         assertEquals(name, management().getName());
         assertTrue(c.awaitTermination(1, TimeUnit.SECONDS));
         assertEquals(name, management().getName());
+    }
+
+    @Test
+    public void getObjectsShutdown() throws InterruptedException {
+        Collection col = management().getObjects();
+        c.shutdown();
+        assertEquals(col, management().getObjects());
+        assertTrue(c.awaitTermination(1, TimeUnit.SECONDS));
+        assertEquals(col, management().getObjects());
     }
 
     @Test
@@ -136,10 +148,10 @@ public class ManagementShutdown extends AbstractCacheTCKTest {
         management().remove();
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void getUnregisterShutdownISE() throws Exception {
+    @Test
+    public void getUnregisterShutdown() throws Exception {
         c.shutdown();
-        management().unregister();
+        management().unregister(); // already unregistered..., ignore
     }
 
     public static class Op {

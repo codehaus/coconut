@@ -5,6 +5,7 @@ package org.coconut.cache.spi;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -42,14 +43,15 @@ public class XmlConfiguratorTest {
                 new ByteArrayInputStream(noNamed.getBytes())).getName());
     }
 
-//    @Test
-//    public void cacheType() throws Exception {
-//        String noNamed = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<cache-config version=\""
-//                + XmlConfigurator.CURRENT_VERSION + "\">" + "<cache type=\"foo\"/></cache-config>";
-//        assertEquals("foo", CacheConfiguration.loadConfigurationFrom(
-//                new ByteArrayInputStream(noNamed.getBytes())).getProperty(
-//                XmlConfigurator.CACHE_INSTANCE_TYPE));
-//    }
+// @Test
+// public void cacheType() throws Exception {
+// String noNamed = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<cache-config
+// version=\""
+// + XmlConfigurator.CURRENT_VERSION + "\">" + "<cache type=\"foo\"/></cache-config>";
+// assertEquals("foo", CacheConfiguration.loadConfigurationFrom(
+// new ByteArrayInputStream(noNamed.getBytes())).getProperty(
+// XmlConfigurator.CACHE_INSTANCE_TYPE));
+// }
 
     static CacheConfiguration<?, ?> rw(CacheConfiguration<?, ?> conf) throws Exception {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -152,5 +154,52 @@ public class XmlConfiguratorTest {
             parent.appendChild(e);
         }
         return (T) xml.readCacheService(parent, configuration2);
+    }
+
+    @Test
+    public void testOwnConfiguration() throws Exception {
+        conf.addConfiguration(new MyConfiguration());
+        XmlConfigurator xml = new XmlConfigurator();
+        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document doc = builder.newDocument();
+        Element parent = doc.createElement(XmlConfigurator.CACHE_TAG); // dummy
+
+        xml.writeSingleCache(conf, doc, parent);
+
+        MyConf<?, ?> newConf = new MyConf();
+        xml.readSingleCache(newConf, parent);
+        MyConfiguration conf = (MyConfiguration) newConf.getConfiguration(MyConfiguration.class);
+        assertTrue(conf.isRun);
+    }
+
+    static class MyConf<K, V> extends CacheConfiguration<K, V> {
+
+        // visibility
+        @Override
+        protected AbstractCacheServiceConfiguration<K, V> getConfiguration(Class c) {
+            return super.getConfiguration(c);
+        }
+
+    }
+
+    static class MyConfiguration extends AbstractCacheServiceConfiguration {
+
+        boolean isRun;
+
+        public MyConfiguration() {
+            super("my-conf");
+        }
+
+        @Override
+        protected void fromXML(Element element) throws Exception {
+            assertEquals("foo", element.getAttribute("bad"));
+            isRun = true;
+        }
+
+        @Override
+        protected void toXML(Document doc, Element parent) throws Exception {
+            parent.setAttribute("bad", "foo");
+        }
+
     }
 }

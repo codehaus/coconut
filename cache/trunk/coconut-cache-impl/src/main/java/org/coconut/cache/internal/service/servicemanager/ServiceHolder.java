@@ -32,6 +32,10 @@ class ServiceHolder {
         state = 2;
     }
 
+    boolean isInternal() {
+        return isInternal;
+    }
+
     boolean isInitialized() {
         return state >= 2;
     }
@@ -40,18 +44,16 @@ class ServiceHolder {
         return state >= 4;
     }
 
-    void shutdown(Shutdown shutdown) {
+    void shutdown(Shutdown shutdown) throws Exception {
         state = 7;
         service.shutdown(shutdown);
         state = 8;
     }
 
     void shutdownNow() {
-        if (future != null) {
             state = 9;
             service.shutdownNow();
             state = 10;
-        }
     }
 
     void start(CacheServiceManagerService serviceManager) throws Exception {

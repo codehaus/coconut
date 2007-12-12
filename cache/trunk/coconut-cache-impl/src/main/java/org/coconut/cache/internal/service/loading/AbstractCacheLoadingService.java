@@ -46,6 +46,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
     public AbstractCacheLoadingService(CacheLoadingConfiguration<K, V> loadingConfiguration,
             InternalCacheEntryService attributeFactory,
             InternalCacheExceptionService<K, V> exceptionHandler, LoadSupport<K, V> loadSupport) {
+        
         attributeFactory.setTimeToRefreshNs(LoadingUtils
                 .getInitialTimeToRefresh(loadingConfiguration));
         this.loader = loadingConfiguration.getLoader();
@@ -254,12 +255,9 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
         if (loader != null) {
             try {
                 v = loader.load(key, attributes);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 v = getExceptionHandler().getHandler().loadingFailed(
                         getExceptionHandler().createContext(), loader, key, attributes, e);
-            } catch (Error e) {
-                e.printStackTrace();
-                throw e;
             }
         }
         return loadSupport.valueLoaded(key, v, attributes);
@@ -271,5 +269,9 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
             map.put(e.getKey(), loadBlocking(e.getKey(), e.getValue()));
         }
         return map;
+    }
+    
+    public String toString() {
+        return "Loading Service";
     }
 }

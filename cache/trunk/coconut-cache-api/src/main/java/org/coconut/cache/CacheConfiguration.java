@@ -8,11 +8,9 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -26,7 +24,6 @@ import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerConfiguration;
-import org.coconut.cache.service.statistics.CacheStatisticsConfiguration;
 import org.coconut.cache.service.worker.CacheWorkerConfiguration;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.cache.spi.CacheSPI;
@@ -93,7 +90,6 @@ public class CacheConfiguration<K, V> {
             try {
                 AbstractCacheServiceConfiguration a = c.newInstance();
                 addConfiguration(a);
-                CacheSPI.initializeConfiguration(a, this);
             } catch (Exception e) {
                 // /CLOVER:OFF
                 throw new CacheException(CacheSPI.HIGHLY_IRREGULAR_MSG, e);
@@ -122,7 +118,6 @@ public class CacheConfiguration<K, V> {
             try {
                 AbstractCacheServiceConfiguration a = c.newInstance();
                 addConfiguration(a);
-                CacheSPI.initializeConfiguration(a, this);
             } catch (Exception e) {
                 throw new IllegalArgumentException(
                         "Configuration type could not be registered [class = " + c + "]", e);
@@ -153,6 +148,7 @@ public class CacheConfiguration<K, V> {
                         + conf.getClass() + " has already been registered");
             }
         }
+        CacheSPI.initializeConfiguration(conf, this);
         list.add(conf);
         return conf;
     }

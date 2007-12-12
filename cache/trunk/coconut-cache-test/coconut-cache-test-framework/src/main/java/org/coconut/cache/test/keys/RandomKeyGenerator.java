@@ -1,12 +1,13 @@
 package org.coconut.cache.test.keys;
 
+import org.coconut.operations.Ops.Generator;
 import org.coconut.test.LoopHelpers;
 
-public class RandomKeyGenerator implements KeyGenerator<Integer> {
+public class RandomKeyGenerator implements Generator<Integer> {
 
     final LoopHelpers.SimpleRandom rng = new LoopHelpers.SimpleRandom();
 
-    public Integer nextKey() {
+    public Integer generate() {
         return rng.next() % 1000;
     }
 }

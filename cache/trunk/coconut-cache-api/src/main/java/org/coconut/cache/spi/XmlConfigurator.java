@@ -192,6 +192,15 @@ public class XmlConfigurator {
         for (AbstractCacheServiceConfiguration<K, V> c : base.getAllConfigurations()) {
             readCacheService(cacheElement, c);
         }
+        NodeList list = cacheElement.getElementsByTagName("configuration");
+        for (int i = 0; i < list.getLength(); i++) {
+            Element e = ((Element) list.item(i));
+            String type = e.getAttribute("type");
+            Class<? extends AbstractCacheServiceConfiguration> c = (Class) Class.forName(type);
+            AbstractCacheServiceConfiguration a = c.newInstance();
+            a.fromXML(e);
+            base.addConfiguration(a);
+        }
     }
 
     /**

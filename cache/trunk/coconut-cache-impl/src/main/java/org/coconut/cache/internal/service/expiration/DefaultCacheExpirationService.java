@@ -143,4 +143,8 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
         long time = ExpirationUtils.convertExpirationTimeToNanos(timeToLive, unit);
         attributeFactory.setDefaultTimeToLiveNs(time == 0 ? Long.MAX_VALUE : time);
     }
+    
+    public String toString() {
+        return "Expiration Service";
+    }
 }

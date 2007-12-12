@@ -31,4 +31,8 @@ public abstract class AbstractCacheWorkerService extends AbstractCacheLifecycle 
     }
     
     abstract CacheWorkerManager getManager();
+    
+    public String toString() {
+        return "Worker Service";
+    }
 }

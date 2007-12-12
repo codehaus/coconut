@@ -67,7 +67,7 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
      * @return the parent {@link CacheConfiguration}, or <tt>null</tt> if this
      *         configuration has not been registered yet.
      */
-    public CacheConfiguration<K, V> c() {
+    public final CacheConfiguration<K, V> c() {
         return conf;
     }
 
@@ -146,12 +146,12 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
      * 
      * @param doc
      *            the Document to write to
-     * @param parent
+     * @param element
      *            the top element of this configuration
      * @throws Exception
      *             this configuration could not be probably saved
      */
-    protected void toXML(Document doc, Element parent) throws Exception {}
+    protected void toXML(Document doc, Element element) throws Exception {}
 
     /**
      * Sets the parent cache configuration which is available when calling {@link #c()}.
@@ -161,5 +161,8 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
      */
     void setConfiguration(CacheConfiguration<K, V> conf) {
         this.conf = conf;
+        initialize(conf);
     }
+
+    protected void initialize(CacheConfiguration<K, V> conf) {}
 }

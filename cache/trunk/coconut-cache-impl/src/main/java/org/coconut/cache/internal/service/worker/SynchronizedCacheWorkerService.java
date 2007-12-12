@@ -104,5 +104,4 @@ public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService i
             ses.shutdownNow();
         }
     }
-
 }

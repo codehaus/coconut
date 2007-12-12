@@ -78,6 +78,7 @@ public class CacheConfigurationTest {
         conf.addConfiguration(s1);
         assertSame(s1, conf.getConfiguration(SimpleService.class));
         assertTrue(conf.getAllConfigurations().contains(s1));
+        assertSame(conf,s1.c());
         try {
             conf.getConfiguration(SimpleService2.class);
             throw new AssertionError("Should fail");

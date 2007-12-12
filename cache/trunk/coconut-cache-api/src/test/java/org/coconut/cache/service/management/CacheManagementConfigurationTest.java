@@ -132,6 +132,10 @@ public class CacheManagementConfigurationTest {
 
         public void visitManagedObject(Object o) throws JMException {}
 
+        public Object traverse(Object node) {
+            return null;
+        }
+
     }
 
 
@@ -140,6 +144,10 @@ public class CacheManagementConfigurationTest {
         public void visitManagedGroup(ManagedGroup mg) throws JMException {}
 
         public void visitManagedObject(Object o) throws JMException {}
+
+        public Object traverse(Object node) {
+            return null;
+        }
 
     }
 }

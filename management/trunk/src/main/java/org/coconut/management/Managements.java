@@ -3,6 +3,9 @@
  */
 package org.coconut.management;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -20,9 +23,54 @@ public final class Managements {
     private Managements() {}
 
     // /CLOVER:ON
+
+    /**
+     * Returns a ManagedVisitor that will unregister a ManagedGroup and all its children.
+     * The map returned from the {@link ManagedVisitor#traverse(Object)} method will
+     * contain a mapping from any group that failed to unregister to the cause of the
+     * failure. If all groups where succesfully unregistered the returned map is empty.
+     * 
+     * @return a ManagedVisitor that will unregister a ManagedGroup and all its children.
+     */
+    public static ManagedVisitor<Map<ManagedGroup, Exception>> unregister() {
+        return new UnregisterAll();
+    }
+
     public static ManagedVisitor hierarchicalRegistrant(MBeanServer server, String domain,
             String... levels) {
         return new HierarchicalRegistrant(server, domain, levels);
+    }
+
+    static class UnregisterAll implements ManagedVisitor<Map<ManagedGroup, Exception>> {
+        /** {@inheritDoc} */
+        public void visitManagedGroup(ManagedGroup mg) throws JMException {
+            mg.unregister();
+        }
+
+        /** {@inheritDoc} */
+        // /CLOVER:OFF
+        public void visitManagedObject(Object o) throws JMException {}
+
+        // /CLOVER:ON
+        private void depthFirstVisit(ManagedGroup group, Map<ManagedGroup, Exception> map) {
+            for (ManagedGroup child : group.getChildren()) {
+                depthFirstVisit(child, map);
+            }
+            try {
+                visitManagedGroup(group);
+            } catch (Exception e) {
+                map.put(group, e);
+            }
+        }
+
+        /** {@inheritDoc} */
+        public Map<ManagedGroup, Exception> traverse(Object node) throws JMException {
+            Map<ManagedGroup, Exception> map = new HashMap<ManagedGroup, Exception>();
+            ManagedGroup group = (ManagedGroup) node;
+            depthFirstVisit(group, map);
+            return map;
+        }
+
     }
 
     static class HierarchicalRegistrant implements ManagedVisitor {
@@ -73,6 +121,12 @@ public final class Managements {
         // /CLOVER:OFF
         /** {@inheritDoc} */
         public void visitManagedObject(Object o) throws JMException {}
+
         // /CLOVER:ON
+
+        public Object traverse(Object node) throws JMException {
+            visitManagedGroup((ManagedGroup) node);
+            return Void.TYPE;
+        }
     }
 }

@@ -12,9 +12,9 @@ import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 
 public class SynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryFactoryService<K, V> {
 
-    private long defaultExpirationTime;
+    private long defaultExpirationTime = Long.MAX_VALUE;
 
-    private long defaultRefreshTime;
+    private long defaultRefreshTime = Long.MAX_VALUE;
 
     private final Object mutex;
 

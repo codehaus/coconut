@@ -12,6 +12,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
+import org.coconut.cache.internal.service.management.DefaultCacheManagementService;
 import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
 import org.coconut.cache.internal.service.spi.Resources;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
@@ -416,4 +417,7 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
         return Resources.lookup(DefaultCacheStatisticsService.class, key.toLowerCase());
     }
 
+    public String toString() {
+        return "Statistics Service";
+    }
 }

@@ -8,6 +8,8 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 
 import org.coconut.cache.Cache;
+import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.internal.service.debug.InternalDebugService;
 import org.coconut.cache.internal.service.spi.Resources;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
@@ -31,10 +33,12 @@ import org.coconut.core.Loggers;
  *            the type of mapped values
  */
 public class DefaultCacheExceptionService<K, V> extends AbstractCacheLifecycle implements
-        InternalCacheExceptionService<K, V> {
+        InternalCacheExceptionService<K, V>, InternalDebugService {
 
     /** The cache for which exceptions should be handled. */
     private final Cache<K, V> cache;
+
+    private final Logger debugLogger;
 
     /** The CacheExceptionHandler configured for this cache. */
     private final CacheExceptionHandler<K, V> exceptionHandler;
@@ -50,11 +54,12 @@ public class DefaultCacheExceptionService<K, V> extends AbstractCacheLifecycle i
      * @param configuration
      *            the configuration of CacheExceptionService
      */
-    public DefaultCacheExceptionService(Cache<K, V> cache,
+    public DefaultCacheExceptionService(Cache<K, V> cache, CacheConfiguration<K, V> conf,
             CacheExceptionHandlingConfiguration<K, V> configuration) {
         this.cache = cache;
         // TODO resort to default logger if no exceptionLogger is defined?
         this.logger = configuration.getExceptionLogger();
+        debugLogger = conf.getDefaultLogger();
         if (configuration.getExceptionHandler() != null) {
             this.exceptionHandler = configuration.getExceptionHandler();
         } else {
@@ -68,6 +73,7 @@ public class DefaultCacheExceptionService<K, V> extends AbstractCacheLifecycle i
 
             @Override
             public Logger defaultLogger() {
+                //(new Exception()).printStackTrace();
                 return getLogger();
             }
 
@@ -78,11 +84,35 @@ public class DefaultCacheExceptionService<K, V> extends AbstractCacheLifecycle i
         };
     }
 
+    public void debug(String str) {
+        if (debugLogger != null) {
+            debugLogger.debug(str);
+        }
+    }
+
     /** {@inheritDoc} */
     public CacheExceptionHandler<K, V> getHandler() {
         // TODO we really should wrap it in something that catches all runtime exceptions
         // thrown by the handler methods.
         return exceptionHandler;
+    }
+
+    public boolean isDebugEnabled() {
+        return debugLogger != null && debugLogger.isDebugEnabled();
+    }
+
+    public boolean isTraceEnabled() {
+        return debugLogger != null && debugLogger.isTraceEnabled();
+    }
+
+    public String toString() {
+        return "ExceptionHandling Service";
+    }
+
+    public void trace(String str) {
+        if (debugLogger != null) {
+            debugLogger.trace(str);
+        }
     }
 
     /**
@@ -111,7 +141,7 @@ public class DefaultCacheExceptionService<K, V> extends AbstractCacheLifecycle i
                     jucLogger.setLevel(Level.ALL);
                     jucLogger.info(MessageFormat.format(infoMsg, name, loggerName));
                     jucLogger.setLevel(Level.SEVERE);
-                    
+
                 }
                 logger = Loggers.JDK.from(jucLogger);
             }

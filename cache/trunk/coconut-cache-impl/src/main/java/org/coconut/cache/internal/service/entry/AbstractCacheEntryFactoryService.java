@@ -139,7 +139,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
         if (!HitsAttribute.INSTANCE.isValid(hits)) {
             exceptionService.getHandler().handleWarning(exceptionService.createContext(),
                     "An illegal hits was added for key = " + key);
-            hits = 0;
+            hits = HitsAttribute.DEFAULT_VALUE;
         }
         return hits;
     }
@@ -175,9 +175,9 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
         if (creationTime < 0) {
             exceptionService.getHandler().handleWarning(
                     exceptionService.createContext(),
-                    "Must specify a positive creation time [Attribute="
-                            + DateCreatedAttribute.INSTANCE + " , creationtime = "
-                            + creationTime + " for key = " + key);
+                    "Must specify a positive creation time [Attribute = "
+                            + DateCreatedAttribute.INSTANCE + ", creationtime = "
+                            + creationTime + ", key = " + key);
         }
         if (creationTime > 0) {
             return creationTime;
@@ -190,5 +190,9 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
 
     public long getAccessTimeStamp(AbstractCacheEntry<K, V> entry) {
         return clock.timestamp();
+    }
+    
+    public String toString() {
+        return "Entry Service";
     }
 }

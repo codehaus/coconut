@@ -10,7 +10,6 @@ import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlers;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
-import org.coconut.cache.service.servicemanager.CacheLifecycle.Shutdown;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.lifecycle.AbstractLifecycleVerifier;
 import org.junit.After;
@@ -141,7 +140,7 @@ public class Lifecycle extends AbstractCacheTCKTest {
         CacheConfiguration initializeConf;
 
         @Override
-        public void lifecycleStartFailed(CacheConfiguration configuration, Class cacheType,
+        public void lifecycleStartFailed(CacheExceptionContext context, 
                 Object service, Exception cause) {
             throw new AssertionError("should not be called");
         }
@@ -165,7 +164,7 @@ public class Lifecycle extends AbstractCacheTCKTest {
 
         @Override
         public void lifecycleShutdownFailed(CacheExceptionContext  cache, CacheLifecycle lifecycle,
-                RuntimeException cause) {
+               Exception cause) {
             throw new AssertionError("should not be called");
         }
     }

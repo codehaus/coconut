@@ -117,7 +117,7 @@ public final class IsCacheables {
      */
     public static final <K, V> IsCacheable<K, V> maximumSize(long maximumSize) {
         SizeAttribute.INSTANCE.checkValid(maximumSize);
-        return new AttributeMapPredicate<K, V>(LongPredicates.mapperPredicate(
+        return new AttributeMapPredicate<K, V>(LongPredicates.mapAndEvaluate(
                 SizeAttribute.INSTANCE.mapToLong(), LongPredicates.lessThenOrEquals(maximumSize)));
     }
 

@@ -34,6 +34,60 @@ public class LongPredicatesTest {
     }
 
     /**
+     * Tests {@link LongPredicates#between(long, long)}.
+     */
+    @Test
+    public void between() {
+        LongPredicate b = LongPredicates.between(2, 4);
+        assertFalse(b.evaluate(1));
+        assertTrue(b.evaluate(2));
+        assertTrue(b.evaluate(3));
+        assertTrue(b.evaluate(4));
+        assertFalse(b.evaluate(5));
+        assertIsSerializable(b);
+    }
+    
+    /**
+     * Tests {@link LongPredicates#and(LongPredicate, LongPredicate)}.
+     */
+    @Test
+    public void and() {
+        assertTrue(LongPredicates.and(TRUE, TRUE).evaluate(1));
+        assertFalse(LongPredicates.and(TRUE, FALSE).evaluate(1));
+        assertFalse(LongPredicates.and(FALSE, TRUE).evaluate(1));
+        assertFalse(LongPredicates.and(FALSE, FALSE).evaluate(1));
+
+        LongPredicates.AndLongPredicate p = new LongPredicates.AndLongPredicate(FALSE, TRUE);
+        assertSame(p.getLeftPredicate(), FALSE);
+        assertSame(p.getRightPredicate(), TRUE);
+        p.toString(); // no exception
+        assertIsSerializable(p);
+
+        // shortcircuted evaluation
+        LongPredicates.and(FALSE, TestUtil.dummy(LongPredicate.class)).evaluate(1);
+    }
+
+    /**
+     * Tests that {@link LongPredicates#and(LongPredicate, LongPredicate)} throws a
+     * {@link NullPointerException} when invoked with a left side <code>null</code>
+     * argument.
+     */
+    @Test(expected = NullPointerException.class)
+    public void andNPE() {
+        LongPredicates.and(null, TRUE);
+    }
+
+    /**
+     * Tests that {@link LongPredicates#and(LongPredicate, LongPredicate)} throws a
+     * {@link NullPointerException} when invoked with a right side <code>null</code>
+     * argument.
+     */
+    @Test(expected = NullPointerException.class)
+    public void andNPE1() {
+        LongPredicates.and(TRUE, null);
+    }
+
+    /**
      * Tests {@link LongPredicates#TRUE}.
      */
     @Test
@@ -43,6 +97,18 @@ public class LongPredicatesTest {
         TRUE.toString(); // does not fail
         assertIsSerializable(TRUE);
         assertSame(TRUE, TestUtil.serializeAndUnserialize(TRUE));
+    }
+
+    /**
+     * Tests {@link LongPredicates#TRUE}.
+     */
+    @Test
+    public void notPredicate() {
+        assertFalse(LongPredicates.not(TRUE).evaluate(2));
+        assertTrue(LongPredicates.not(FALSE).evaluate(2));
+        LongPredicates.not(TRUE).toString(); // does not fail
+        assertIsSerializable(LongPredicates.not(TRUE));
+        assertSame(TRUE,LongPredicates.not(TRUE).getPredicate());
     }
 
     /* Test greater then */
@@ -58,7 +124,14 @@ public class LongPredicatesTest {
 
         TestUtil.assertIsSerializable(f);
     }
-
+    /**
+     * Tests that {@link LongPredicates#not(LongPredicate)} throws a {@link NullPointerException}
+     * when invoked with a <code>null</code> argument.
+     */
+    @Test(expected = NullPointerException.class)
+    public void notNPE() {
+        LongPredicates.not(null);
+    }
     @Test
     public void greaterThenOrEquals() {
         GreaterThenOrEqualsLongPredicate f = LongPredicates.greaterThenOrEquals(5);
@@ -123,23 +196,23 @@ public class LongPredicatesTest {
                 return from.intValue() * from.intValue();
             }
         };
-        Predicate mapped = LongPredicates.mapperPredicate(m, p);
+        Predicate mapped = LongPredicates.mapAndEvaluate(m, p);
         assertFalse(mapped.evaluate(2));
         assertTrue(mapped.evaluate(3));
         assertFalse(mapped.evaluate(4));
 
-        assertSame(p, ((LongPredicates.MapperToLongPredicate) mapped).getPredicate());
-        assertSame(m, ((LongPredicates.MapperToLongPredicate) mapped).getMapper());
+        assertSame(p, ((LongPredicates.MapToLongAndEvaluatePredicate) mapped).getPredicate());
+        assertSame(m, ((LongPredicates.MapToLongAndEvaluatePredicate) mapped).getMapper());
         mapped.toString();
     }
 
     @Test(expected = NullPointerException.class)
     public void mapperPredicateNPE1() {
-        LongPredicates.mapperPredicate(null, TestUtil.dummy(LongPredicate.class));
+        LongPredicates.mapAndEvaluate(null, TestUtil.dummy(LongPredicate.class));
     }
 
     @Test(expected = NullPointerException.class)
     public void mapperPredicateNPE2() {
-        LongPredicates.mapperPredicate(TestUtil.dummy(MapperToLong.class), null);
+        LongPredicates.mapAndEvaluate(TestUtil.dummy(MapperToLong.class), null);
     }
 }

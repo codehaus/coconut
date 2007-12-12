@@ -111,6 +111,13 @@ public class XmlUtilTest {
     }
 
     @Test
+    public void contentDoubleGet() {
+        assertEquals(123.0, XmlUtil.contentDoubleGet(null, 123.0));
+        e.setTextContent(Double.toString(Double.MAX_VALUE));
+        assertEquals(Double.MAX_VALUE, XmlUtil.contentDoubleGet(e, 0));
+    }
+
+    @Test
     public void contentLongSet() {
         XmlUtil.contentLongSet(doc, e, "boo", 123l, 321l);
         assertEquals(1, e.getChildNodes().getLength());
@@ -162,6 +169,17 @@ public class XmlUtilTest {
         assertEquals("b2", XmlUtil.getChild("a2", e).getTextContent());
         assertEquals("b3", XmlUtil.getChild("a3", e).getTextContent());
         assertNull(XmlUtil.getChild("a4", e));
+    }
+
+    @Test
+    public void getChildren() {
+        assertEquals(0, XmlUtil.getChildren("a2", null).size());
+        XmlUtil.addElementAndSetContent(doc, "a1", e, "b1");
+        XmlUtil.addElementAndSetContent(doc, "a2", e, "b2");
+        XmlUtil.addElementAndSetContent(doc, "a2", e, "b3");
+        assertEquals(2, XmlUtil.getChildren("a2", e).size());
+        assertEquals(1, XmlUtil.getChildren("a1", e).size());
+        assertEquals(0, XmlUtil.getChildren("a4", e).size());
     }
 
     @Test

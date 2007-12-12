@@ -48,7 +48,7 @@ public interface CacheLifecycle {
     /**
      * The cache has been shutdown.
      */
-    void shutdown(Shutdown shutdown);
+    void shutdown(Shutdown shutdown) throws Exception;
 
     /**
      * The {@link Cache#shutdownNow()} method has been invoked. This method is always

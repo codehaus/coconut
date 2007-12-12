@@ -3,9 +3,18 @@
  */
 package org.coconut.cache.internal.service.servicemanager;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 
+import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.internal.service.event.InternalCacheEventService;
+import org.coconut.cache.internal.service.loading.InternalCacheLoadingService;
+import org.coconut.cache.service.management.CacheManagementService;
+import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
+import org.coconut.operations.CollectionPredicates;
+import org.coconut.operations.Ops.Predicate;
 
 /**
  * Various utility classes for {@link CacheServiceManagerService} implementations.
@@ -23,6 +32,35 @@ public final class ServiceManagerUtil {
     private ServiceManagerUtil() {}
 
     // /CLOVER:ON
+
+    static Collection<Class<? extends AbstractCacheLifecycle>> removeUnusedServices(
+            CacheConfiguration<?, ?> conf,
+            Collection<Class<? extends AbstractCacheLifecycle>> classes) {
+        ArrayList<Class<? extends AbstractCacheLifecycle>> c = new ArrayList<Class<? extends AbstractCacheLifecycle>>(
+                classes);
+        if (!conf.management().isEnabled()) {
+            CollectionPredicates.removeFrom(c, new Predicate<Class>() {
+                public boolean evaluate(Class t) {
+                    return CacheManagementService.class.isAssignableFrom(t);
+                }
+            });
+        }
+        if (!conf.event().isEnabled()) {
+            CollectionPredicates.removeFrom(c, new Predicate<Class>() {
+                public boolean evaluate(Class t) {
+                    return InternalCacheEventService.class.isAssignableFrom(t);
+                }
+            });
+        }
+        if (conf.loading().getLoader()==null) {
+            CollectionPredicates.removeFrom(c, new Predicate<Class>() {
+                public boolean evaluate(Class t) {
+                    return InternalCacheLoadingService.class.isAssignableFrom(t);
+                }
+            });
+        }
+        return c;
+    }
 
     /**
      * Wraps a CacheServiceManagerService implementation such that only methods from the

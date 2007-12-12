@@ -6,6 +6,8 @@ package org.coconut.management.defaults;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
 import javax.management.JMException;
@@ -16,6 +18,7 @@ import org.coconut.management.ManagedGroup;
 
 /**
  * An abstract implementation of AbstractManagedGroup.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -30,17 +33,19 @@ public abstract class AbstractManagedGroup implements ManagedGroup {
     /** The description of this group. */
     private final String description;
 
+    final Lock mainLock;
+
     /** The name of this group. */
     private final String name;
 
     /** The ObjectName this group is registered under. */
-    private ObjectName objectName;
+    private volatile ObjectName objectName;
 
     /** The parent of this group. */
     private AbstractManagedGroup parent;
 
     /** The MBeanServer this group is registered with. */
-    private MBeanServer server;
+    private volatile MBeanServer server;
 
     /**
      * Creates a new AbstractManagedGroup with the specified name and description.
@@ -56,6 +61,10 @@ public abstract class AbstractManagedGroup implements ManagedGroup {
      *             groups
      */
     AbstractManagedGroup(String name, String description) {
+        this(null, name, description);
+    }
+
+    AbstractManagedGroup(AbstractManagedGroup parent, String name, String description) {
         if (name == null) {
             throw new NullPointerException("name is null");
         } else if (description == null) {
@@ -67,6 +76,21 @@ public abstract class AbstractManagedGroup implements ManagedGroup {
         }
         this.name = name;
         this.description = description;
+
+        if (parent == null) {
+            mainLock = new ReentrantLock();
+        } else {
+            if (parent.childGroups.putIfAbsent(name, this) != null) {
+                throw new IllegalArgumentException(
+                        "Could not add group, group with same name has already been added " + name);
+            }
+            this.parent = parent;
+            mainLock = parent.mainLock;
+        }
+    }
+
+    protected Lock getLock() {
+        return mainLock;
     }
 
     /** {@inheritDoc} */
@@ -85,46 +109,69 @@ public abstract class AbstractManagedGroup implements ManagedGroup {
     }
 
     /** {@inheritDoc} */
-    public synchronized ObjectName getObjectName() {
+    public ObjectName getObjectName() {
         return objectName;
     }
 
     /** {@inheritDoc} */
-    public synchronized ManagedGroup getParent() {
+    public ManagedGroup getParent() {
         return parent;
     }
 
     /** {@inheritDoc} */
-    public synchronized MBeanServer getServer() {
+    public MBeanServer getServer() {
         return server;
     }
 
     /** {@inheritDoc} */
-    public synchronized boolean isRegistered() {
+    public boolean isRegistered() {
         return objectName != null;
     }
 
     /** {@inheritDoc} */
-    public synchronized void register(MBeanServer server, ObjectName objectName) throws JMException {
+    public void register(MBeanServer server, ObjectName objectName) throws JMException {
         if (server == null) {
             throw new NullPointerException("server is null");
         } else if (objectName == null) {
             throw new NullPointerException("objectName is null");
-        } else if (this.objectName != null) {
-            throw new IllegalStateException(
-                    "This group has already been registered [MBeanServer = " + this.server
-                            + ", ObjectName= " + this.objectName + "]");
         }
-        server.registerMBean(getRegistrant(), objectName); // might fail
-        this.server = server;
-        this.objectName = objectName;
+        mainLock.lock();
+        try {
+            beforeMutableOperationInner();
+            if (this.objectName != null) {
+                throw new IllegalStateException(
+                        "This group has already been registered [MBeanServer = " + this.server
+                                + ", ObjectName= " + this.objectName + "]");
+            }
+            server.registerMBean(getRegistrant(), objectName); // might fail
+            this.server = server;
+            this.objectName = objectName;
+        } finally {
+            mainLock.unlock();
+        }
+    }
+    protected void beforeMutableOperation() {
+        
+    }
+    void beforeMutableOperationInner() {
+        if (parent != null) {
+            parent.beforeMutableOperationInner();
+        } else {
+            beforeMutableOperation();
+        }
     }
 
     /** {@inheritDoc} */
-    public synchronized void remove() {
-        if (parent != null) {
-            parent.childGroups.remove(getName());
-            parent = null;
+    public void remove() {
+        mainLock.lock();
+        try {
+            beforeMutableOperationInner();
+            if (parent != null) {
+                parent.childGroups.remove(getName());
+                parent = null;
+            }
+        } finally {
+            mainLock.unlock();
         }
     }
 
@@ -135,30 +182,19 @@ public abstract class AbstractManagedGroup implements ManagedGroup {
     }
 
     /** {@inheritDoc} */
-    public synchronized void unregister() throws JMException {
-        if (objectName != null) {
-            server.unregisterMBean(objectName);
+    public void unregister() throws JMException {
+        mainLock.lock();
+        try {
+            if (objectName != null) {
+                beforeMutableOperationInner();
+                server.unregisterMBean(objectName);
+                objectName = null;
+                server = null;
+            }
+        } finally {
+            mainLock.unlock();
         }
-        objectName = null;
-        server = null;
     }
+
     abstract Object getRegistrant();
-    /**
-     * Called by the class extending this class, when a child group is added.
-     * 
-     * @param group
-     *            the group that should be added
-     * @return the group that was added
-     * @throws IllegalArgumentException
-     *             if a group with the specified name has already been added
-     */
-    protected ManagedGroup addNewGroup(AbstractManagedGroup group) {
-        if (childGroups.putIfAbsent(group.getName(), group) != null) {
-            throw new IllegalArgumentException(
-                    "Could not add group, group with same name has already been added "
-                            + group.getName());
-        }
-        group.parent = this;
-        return group;
-    }
 }

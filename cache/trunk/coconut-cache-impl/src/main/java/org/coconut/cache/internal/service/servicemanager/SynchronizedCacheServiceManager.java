@@ -3,15 +3,14 @@
  */
 package org.coconut.cache.internal.service.servicemanager;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -36,7 +35,7 @@ public class SynchronizedCacheServiceManager extends AbstractCacheServiceManager
     private final ExecutorService shutdownServiceExecutor = Executors.newCachedThreadPool();
 
     /** A list of shutdown futures. */
-    private final List<Future> shutdownFutures = new ArrayList<Future>();
+    private final Queue<ServiceHolder> shutdownFutures = new ConcurrentLinkedQueue<ServiceHolder>();
 
     /** The cache mutex to synchronize on. */
     private final Object mutex;
@@ -71,7 +70,7 @@ public class SynchronizedCacheServiceManager extends AbstractCacheServiceManager
                 } else if (state == RunState.NOTRUNNING) {
                     synchronized (mutex) {
                         if (getRunState() == RunState.NOTRUNNING) {
-                            doStart();
+                            doStart(true);
                         }
                     }
                 } else if (failIfShutdown && state.isShutdown()) {
@@ -85,71 +84,79 @@ public class SynchronizedCacheServiceManager extends AbstractCacheServiceManager
         }
     }
 
-    /** {@inheritDoc} */
-    public void shutdown() {
+    void shutdown(boolean shutdownNow) {
         synchronized (mutex) {
-            if (runState == RunState.NOTRUNNING) {
+            RunState runState = this.runState;
+            if ((runState == RunState.SHUTDOWN && !shutdownNow)
+                    || (runState == RunState.STOP && shutdownNow)
+                    || (runState == RunState.TERMINATED)) {
+                return;
+            } else if (runState == RunState.NOTRUNNING) {
                 doTerminate();
-            } else if (runState == RunState.RUNNING) {
-                cache.clear();
+                return;
             }
-            if (runState == RunState.RUNNING || runState == RunState.STARTING) {
-                initiateShutdown();
-            }
+            boolean shutdown = (shutdownNow && runState == RunState.RUNNING) || !shutdownNow;
+            if (shutdown) {
+                if (runState == RunState.RUNNING) {
+                    cache.clear();
+                }
+                if (runState == RunState.RUNNING || runState == RunState.STARTING) {
+                    setRunState(shutdownNow ? RunState.STOP : RunState.SHUTDOWN);
+                    initiateShutdown();
+                }
 
-            if (!shutdownFutures.isEmpty()) {
-                // java 5 bug, cannot use Executors.
-                ThreadPoolExecutor tpe = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
-                        new LinkedBlockingQueue<Runnable>());
-                tpe.execute(new Runnable() {
-                    public void run() {
-                        try {
-                            for (Future f : shutdownFutures) {
-                                try {
-                                    f.get();
-                                } catch (InterruptedException e) {
-                                    // ignore???
-                                    e.printStackTrace();
-                                } catch (ExecutionException e) {
-                                    e.printStackTrace();
+                if (!shutdownFutures.isEmpty()) {
+                    // java 5 bug, cannot use Executors.
+                    ThreadPoolExecutor tpe = new ThreadPoolExecutor(1, 1, 0L,
+                            TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+                    tpe.execute(new Runnable() {
+                        public void run() {
+                            try {
+                                while (!shutdownFutures.isEmpty()) {
+                                    try {
+                                        shutdownFutures.peek().future.get();
+                                        shutdownFutures.poll();
+                                    } catch (InterruptedException e) {
+                                        // ignore???
+                                        e.printStackTrace();
+                                    } catch (ExecutionException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
+                            } finally {
+                                doTerminate();
                             }
-                        } finally {
-                            doTerminate();
                         }
-                    }
-                });
-                shutdownServiceExecutor.shutdown();
-                tpe.shutdown();
-            } else {
-                doTerminate();
+                    });
+                    shutdownServiceExecutor.shutdown();
+                    tpe.shutdown();
+                } else {
+                    doTerminate();
+                    return;
+                }
+            }
+            if (shutdownNow) {
+                setRunState(RunState.STOP);
+                initiateShutdownNow(shutdownFutures);
             }
         }
     }
 
-    /** {@inheritDoc} */
-    public void shutdownNow() {
-        synchronized (mutex) {
-            if (runState == RunState.NOTRUNNING) {
-                runState = RunState.TERMINATED;
-            } else if (runState == RunState.RUNNING) {
-                shutdown();
-            }
-            if (runState == RunState.SHUTDOWN) {
-                initiateShutdownNow();
-            }
-        }
-    }
+// else if (runState == RunState.STARTING) {
+// throw new IllegalStateException(
+// "Cannot invoke this method from CacheLifecycle.start(Map services), should be invoked
+// from CacheLifecycle.started(Cache c)");
+// }
 
     /** {@inheritDoc} */
     @Override
-    void shutdownService(final ServiceHolder service) {
+    void shutdownService(final ServiceHolder service) throws Exception{
         final AtomicInteger canSubmit = new AtomicInteger();
         CacheLifecycle.Shutdown cs = new CacheLifecycle.Shutdown() {
             public void shutdownAsynchronously(Callable<?> callable) {
                 if (canSubmit.compareAndSet(0, 1)) {
                     service.future = shutdownServiceExecutor.submit(callable);
-                    shutdownFutures.add(service.future);
+                    shutdownFutures.add(service);
                 } else {
                     throw new IllegalStateException();
                 }

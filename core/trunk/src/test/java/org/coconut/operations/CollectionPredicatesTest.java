@@ -15,16 +15,9 @@ import java.util.Map;
 import org.coconut.operations.Ops.Mapper;
 import org.coconut.operations.Ops.Predicate;
 import org.coconut.test.TestUtil;
-import org.jmock.Mockery;
-import org.jmock.integration.junit4.JMock;
-import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(JMock.class)
 public class CollectionPredicatesTest {
-
-    Mockery context = new JUnit4Mockery();
 
     @Test
     public void allTrue() {
@@ -176,24 +169,24 @@ public class CollectionPredicatesTest {
                 return from.intValue() * from.intValue();
             }
         };
-        Predicate mapped = Predicates.mapperPredicate(m, p);
+        Predicate mapped = Predicates.mapAndEvaluate(m, p);
         assertTrue(mapped.evaluate(2));
         assertFalse(mapped.evaluate(3));
         assertTrue(mapped.evaluate(4));
 
-        assertSame(p, ((Predicates.MapperPredicate) mapped).getPredicate());
-        assertSame(m, ((Predicates.MapperPredicate) mapped).getMapper());
+        assertSame(p, ((Predicates.MapAndEvaluatePredicate) mapped).getPredicate());
+        assertSame(m, ((Predicates.MapAndEvaluatePredicate) mapped).getMapper());
         mapped.toString();
     }
 
     @Test(expected = NullPointerException.class)
     public void mapperPredicateNPE1() {
-        Predicates.mapperPredicate(null, TestUtil.dummy(Predicate.class));
+        Predicates.mapAndEvaluate(null, TestUtil.dummy(Predicate.class));
     }
 
     @Test(expected = NullPointerException.class)
     public void mapperPredicateNPE2() {
-        Predicates.mapperPredicate(TestUtil.dummy(Mapper.class), null);
+        Predicates.mapAndEvaluate(TestUtil.dummy(Mapper.class), null);
     }
 
     @Test

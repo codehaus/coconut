@@ -9,7 +9,7 @@ import static org.coconut.test.CollectionUtils.M3;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.test.util.CacheEntryFilter;
 import org.coconut.cache.test.util.IntegerToStringLoader;
-import org.coconut.cache.test.util.lifecycle.LifecycleFilter;
+import org.coconut.cache.test.util.lifecycle.LifecyclePredicate;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -60,7 +60,7 @@ public class RefreshFilter extends AbstractLoadingTestBundle {
     @Test
     public void filterLifecycle() {
         CacheConfiguration<Integer, String> cc = newConf();
-        LifecycleFilter filter = new LifecycleFilter();
+        LifecyclePredicate filter = new LifecyclePredicate();
         c = newCache(cc.loading().setRefreshPredicate(filter).setLoader(new IntegerToStringLoader())
                 .c());
 

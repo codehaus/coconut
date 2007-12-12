@@ -9,6 +9,7 @@ import static org.coconut.operations.Predicates.greaterThen;
 import static org.coconut.operations.Predicates.greaterThenOrEqual;
 import static org.coconut.operations.Predicates.lessThen;
 import static org.coconut.operations.Predicates.lessThenOrEqual;
+import static org.coconut.operations.Predicates.not;
 import static org.coconut.test.TestUtil.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -60,35 +61,34 @@ public class PredicatesTest {
 
     private static Iterable TRUE_FALSE_TRUE_ITERABLE = Arrays.asList(TRUE_FALSE_TRUE_ARRAY);
 
+    /**
+     * Tests {@link Predicates#all(Predicate...)}.
+     */
     @Test
-    public void all() {
-        AllPredicate<?> filter = (AllPredicate) Predicates.all(TRUE_FALSE_TRUE_ARRAY);
+    public void allArray() {
+        AllPredicate<?> p = (AllPredicate) Predicates.all(TRUE_FALSE_TRUE_ARRAY);
 
         // evaluate
         assertTrue((Predicates.all(TRUE)).evaluate(null));
         assertFalse(Predicates.all(FALSE).evaluate(null));
         assertTrue(Predicates.all(TRUE, TRUE).evaluate(null));
         assertFalse(Predicates.all(TRUE, FALSE).evaluate(null));
-        assertFalse(Predicates.all(STRING_PREDICATE_ITERABLE).evaluate("fobo"));
-        assertFalse(Predicates.all(STRING_PREDICATE_ITERABLE).evaluate("foobo"));
-        assertFalse(Predicates.all(STRING_PREDICATE_ITERABLE).evaluate("foboo"));
-        assertTrue(Predicates.all(STRING_PREDICATE_ITERABLE).evaluate("fooboo"));
 
         // getPredicates
-        assertEquals(3, filter.getPredicates().size());
-        assertEquals(TRUE, filter.getPredicates().get(0));
-        assertEquals(FALSE, filter.getPredicates().get(1));
-        assertEquals(TRUE, filter.getPredicates().get(2));
+        assertEquals(3, p.getPredicates().size());
+        assertEquals(TRUE, p.getPredicates().get(0));
+        assertEquals(FALSE, p.getPredicates().get(1));
+        assertEquals(TRUE, p.getPredicates().get(2));
 
         // iterable
-        Iterator<?> i = filter.iterator();
+        Iterator<?> i = p.iterator();
         assertSame(TRUE, i.next());
         assertSame(FALSE, i.next());
         assertSame(TRUE, i.next());
         assertFalse(i.hasNext());
 
         // Serializable
-        TestUtil.assertIsSerializable(filter);
+        TestUtil.assertIsSerializable(p);
 
         // toString, just check that they don't throw exceptions
         Predicates.all(TRUE_FALSE_TRUE_ARRAY).toString();
@@ -99,23 +99,77 @@ public class PredicatesTest {
         Predicates.all(TRUE, FALSE, TestUtil.dummy(Predicate.class)).evaluate(null);
     }
 
+    /**
+     * Tests that {@link Predicates#all(Predicate...)} throws a
+     * {@link NullPointerException} when invoked with a <code>null</code> element.
+     */
     @Test(expected = NullPointerException.class)
-    public void allNPE1() {
+    public void allArrayNPE() {
         Predicates.all((Predicate[]) null);
     }
 
+    /**
+     * Tests that {@link Predicates#all(Predicate...)} throws a
+     * {@link NullPointerException} when invoked with an array containing a
+     * <code>null</code> element.
+     */
     @Test(expected = NullPointerException.class)
-    public void allNPE2() {
-        Predicates.all((Iterable) null);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void allNPE3() {
+    public void allArrayNPE1() {
         Predicates.all(PREDICATES_WITH_NULL_ARRAY);
     }
 
+    /**
+     * Tests {@link Predicates#all(Iterable)}.
+     */
+    @Test
+    public void allIterable() {
+        AllPredicate<String> p = (AllPredicate) Predicates.all(STRING_PREDICATE_ITERABLE);
+
+        // evaluate
+        assertFalse(p.evaluate("fobo"));
+        assertFalse(p.evaluate("foobo"));
+        assertFalse(p.evaluate("foboo"));
+        assertTrue(p.evaluate("fooboo"));
+
+        // getPredicates
+        assertEquals(2, p.getPredicates().size());
+        assertEquals(StringPredicates.startsWith("foo"), p.getPredicates().get(0));
+        assertEquals(StringPredicates.contains("boo"), p.getPredicates().get(1));
+
+        // iterable
+        Iterator<?> i = p.iterator();
+        assertEquals(StringPredicates.startsWith("foo"), i.next());
+        assertEquals(StringPredicates.contains("boo"), i.next());
+        assertFalse(i.hasNext());
+
+        // Serializable
+        TestUtil.assertIsSerializable(p);
+
+        // toString, just check that they don't throw exceptions
+        Predicates.all(TRUE_FALSE_TRUE_ITERABLE).toString();
+        Predicates.all((Iterable) Arrays.asList()).toString();
+        Predicates.all((Iterable) Arrays.asList(TRUE)).toString();
+
+        // shortcircuted evaluation
+        Predicates.all((Iterable) Arrays.asList(TRUE, FALSE, TestUtil.dummy(Predicate.class)))
+                .evaluate(null);
+    }
+
+    /**
+     * Tests that {@link Predicates#all(Iterable)} throws a {@link NullPointerException}
+     * when invoked with a <code>null</code> element.
+     */
     @Test(expected = NullPointerException.class)
-    public void allNPE4() {
+    public void allIterableNPE() {
+        Predicates.all((Iterable) null);
+    }
+
+    /**
+     * Tests that {@link Predicates#all(Iterable)} throws a {@link NullPointerException}
+     * when invoked with an iterable containing a <code>null</code> element.
+     */
+    @Test(expected = NullPointerException.class)
+    public void allIterableNPE1() {
         Predicates.all(PREDICATES_WITH_NULL_ITERABLE);
     }
 
@@ -159,8 +213,11 @@ public class PredicatesTest {
         Predicates.and(TRUE, null);
     }
 
+    /**
+     * Tests {@link Predicates#any(Predicate...)}.
+     */
     @Test
-    public void any() {
+    public void anyArray() {
         AnyPredicate<?> filter = (AnyPredicate) Predicates.any(TRUE_FALSE_TRUE_ARRAY);
 
         // evaluate
@@ -169,10 +226,6 @@ public class PredicatesTest {
         assertTrue(Predicates.any(TRUE, TRUE).evaluate(null));
         assertTrue(Predicates.any(TRUE, FALSE).evaluate(null));
         assertFalse(Predicates.any(FALSE, FALSE).evaluate(null));
-        assertFalse(Predicates.any(STRING_PREDICATE_ITERABLE).evaluate("fobo"));
-        assertTrue(Predicates.any(STRING_PREDICATE_ITERABLE).evaluate("foobo"));
-        assertTrue(Predicates.any(STRING_PREDICATE_ITERABLE).evaluate("foboo"));
-        assertTrue(Predicates.any(STRING_PREDICATE_ITERABLE).evaluate("fooboo"));
 
         // getPredicates
         assertEquals(3, filter.getPredicates().size());
@@ -197,6 +250,25 @@ public class PredicatesTest {
 
         // shortcircuted evaluation
         Predicates.any(FALSE, TRUE, TestUtil.dummy(Predicate.class)).evaluate(null);
+    }
+
+    /**
+     * Tests that {@link Predicates#any(Predicate...)} throws a
+     * {@link NullPointerException} when invoked with a <code>null</code> element.
+     */
+    @Test(expected = NullPointerException.class)
+    public void anyArrayNPE() {
+        Predicates.any((Predicate[]) null);
+    }
+
+    /**
+     * Tests that {@link Predicates#any(Predicate...)} throws a
+     * {@link NullPointerException} when invoked with an array containing a
+     * <code>null</code> element.
+     */
+    @Test(expected = NullPointerException.class)
+    public void anyArrayNPE1() {
+        Predicates.any(PREDICATES_WITH_NULL_ARRAY);
     }
 
     /**
@@ -283,23 +355,58 @@ public class PredicatesTest {
         Predicates.anyEquals(PREDICATES_WITH_NULL_ITERABLE);
     }
 
-    @Test(expected = NullPointerException.class)
-    public void anyNPE1() {
-        Predicates.any((Predicate[]) null);
+    /**
+     * Tests {@link Predicates#any(Iterable)}.
+     */
+    @Test
+    public void anyIterable() {
+        AnyPredicate<String> p = (AnyPredicate) Predicates.any(STRING_PREDICATE_ITERABLE);
+
+        // evaluate
+        assertFalse(p.evaluate("fobo"));
+        assertTrue(p.evaluate("foobo"));
+        assertTrue(p.evaluate("foboo"));
+        assertTrue(p.evaluate("fooboo"));
+
+        // getPredicates
+        assertEquals(2, p.getPredicates().size());
+        assertEquals(StringPredicates.startsWith("foo"), p.getPredicates().get(0));
+        assertEquals(StringPredicates.contains("boo"), p.getPredicates().get(1));
+
+        // iterable
+        Iterator<?> i = p.iterator();
+        assertEquals(StringPredicates.startsWith("foo"), i.next());
+        assertEquals(StringPredicates.contains("boo"), i.next());
+        assertFalse(i.hasNext());
+
+        // Serializable
+        TestUtil.assertIsSerializable(p);
+
+        // toString, just check that they don't throw exceptions
+        Predicates.any(TRUE_FALSE_TRUE_ITERABLE).toString();
+        Predicates.any((Iterable) Arrays.asList()).toString();
+        Predicates.any((Iterable) Arrays.asList(TRUE)).toString();
+
+        // shortcircuted evaluation
+        Predicates.any((Iterable) Arrays.asList(FALSE, TRUE, TestUtil.dummy(Predicate.class)))
+                .evaluate(null);
     }
 
+    /**
+     * Tests that {@link Predicates#any(Iterable)} throws a {@link NullPointerException}
+     * when invoked with a <code>null</code> element.
+     */
     @Test(expected = NullPointerException.class)
-    public void anyNPE2() {
+    public void anyIterableNPE() {
         Predicates.any((Iterable) null);
     }
 
+    /**
+     * Tests that {@link Predicates#any(Iterable)} throws a {@link NullPointerException}
+     * when invoked with an iterable containing a <code>null</code> element.
+     */
     @Test(expected = NullPointerException.class)
-    public void anyNPE3() {
-        Predicates.any(PREDICATES_WITH_NULL_ARRAY);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void anyNPE4() {
+    public void anyIterableNPE1() {
         Predicates.any(PREDICATES_WITH_NULL_ITERABLE);
     }
 
@@ -404,7 +511,13 @@ public class PredicatesTest {
         assertTrue(b.evaluate(3));
         assertTrue(b.evaluate(4));
         assertFalse(b.evaluate(5));
-        TestUtil.assertIsSerializable(b);
+        assertIsSerializable(b);
+    }
+
+    @Test(expected = ClassCastException.class)
+    public void betweenCCE() {
+        Predicate p = Predicates.between(2, 4);
+        p.evaluate("foo");
     }
 
     @Test
@@ -415,7 +528,7 @@ public class PredicatesTest {
         assertTrue(b.evaluate(Dummy.D3));
         assertTrue(b.evaluate(Dummy.D4));
         assertFalse(b.evaluate(Dummy.D5));
-        TestUtil.assertIsSerializable(b);
+        assertIsSerializable(b);
     }
 
     @Test(expected = NullPointerException.class)

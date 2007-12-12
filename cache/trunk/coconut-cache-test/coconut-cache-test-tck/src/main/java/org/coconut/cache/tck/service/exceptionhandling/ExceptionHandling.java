@@ -20,10 +20,12 @@ import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.core.Logger;
 import org.coconut.test.SystemErrOutHelper;
 import org.coconut.test.throwables.Exception1;
+import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
 import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -35,7 +37,16 @@ public class ExceptionHandling extends AbstractCacheTCKTest {
     CacheLoader<Integer, String> loader = new FailingLoader();
 
     private Throwable failure;
-
+    Logger logger;
+    @Before
+    public void setup() {
+        logger = context.mock(Logger.class);
+        context.checking(new Expectations() {
+            {
+                ignoring(logger);
+            }
+        });
+    }
     @After
     public void resetLogging() throws Exception {
         // reset the logging system
@@ -44,7 +55,6 @@ public class ExceptionHandling extends AbstractCacheTCKTest {
 
     @Test
     public void defaultLogger() {
-        final Logger logger = context.mock(Logger.class);
         c = newCache(newConf().setDefaultLogger(logger).exceptionHandling().setExceptionHandler(
                 new LoaderVerifyingExceptionHandler(logger)).setExceptionLogger(logger).c()
                 .loading().setLoader(loader));
@@ -68,10 +78,9 @@ public class ExceptionHandling extends AbstractCacheTCKTest {
      */
     @Test
     public void exceptionLoggerPreference() {
-        final Logger logger = context.mock(Logger.class);
         final Logger logger2 = context.mock(Logger.class);
-        c = newCache(newConf().setDefaultLogger(logger2).exceptionHandling().setExceptionHandler(
-                new LoaderVerifyingExceptionHandler(logger)).setExceptionLogger(logger).c()
+        c = newCache(newConf().setDefaultLogger(logger).exceptionHandling().setExceptionHandler(
+                new LoaderVerifyingExceptionHandler(logger2)).setExceptionLogger(logger2).c()
                 .loading().setLoader(loader));
         assertEquals("foo", c.get(10));
     }

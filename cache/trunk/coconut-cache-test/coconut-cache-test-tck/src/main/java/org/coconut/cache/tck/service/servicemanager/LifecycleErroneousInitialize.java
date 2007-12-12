@@ -30,15 +30,12 @@ import org.junit.Test;
  */
 public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
 
-    CacheConfiguration conf;
-
     InitializingExceptionHandler handler;
 
     LifecycleVerifierContext context;
 
     @Before
     public void setup() {
-        conf = newConf();
         context = new LifecycleVerifierContext(conf);
         handler = new InitializingExceptionHandler();
         conf.exceptionHandling().setExceptionHandler(handler);

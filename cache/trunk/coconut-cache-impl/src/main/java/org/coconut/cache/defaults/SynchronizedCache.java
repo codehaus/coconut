@@ -296,11 +296,14 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
             listener.afterHit(this, started, key, entry);
             return entry;
         } else {
+            AbstractCacheEntry<K, V> previous = entry;
             if (isExpired) {
                 listener.dexpired(this, started, entry);
+                entry = null;
             }
-            AbstractCacheEntry<K, V> previous = entry;
-            entry = loadingService.loadBlocking(key, AttributeMaps.EMPTY_MAP);
+            if (loadingService != null) {
+                entry = loadingService.loadBlocking(key, AttributeMaps.EMPTY_MAP);
+            }
             listener.afterMiss(this, started, key, previous, entry, isExpired);
         }
         return entry;
@@ -351,7 +354,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
                 listener.dexpired(this, started, entries[j]);
             }
         }
-        if (loadMe.size() != 0) {
+        if (loadingService != null && loadMe.size() != 0) {
             loadedEntries = loadingService.loadAllBlocking(AttributeMaps.toMap(loadMe,
                     AttributeMaps.EMPTY_MAP));
             for (AbstractCacheEntry<K, V> entry : loadedEntries.values()) {
@@ -541,7 +544,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
         }
 
         /** {@inheritDoc} */
-        public void loadAll(Map< ? extends K,  ? extends AttributeMap> attributes) {
+        public void loadAll(Map<? extends K, ? extends AttributeMap> attributes) {
             Map<K, AttributeMap> keys = new HashMap<K, AttributeMap>();
             long timestamp = getClock().timestamp();
 
@@ -549,7 +552,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
                 if (!SynchronizedCache.this.checkRunning("load", false)) {
                     return;
                 }
-                for (Map.Entry< ? extends K,  ? extends AttributeMap> e : attributes.entrySet()) {
+                for (Map.Entry<? extends K, ? extends AttributeMap> e : attributes.entrySet()) {
                     AbstractCacheEntry<K, V> ce = map.get(e.getKey());
                     boolean doLoad = ce == null;
                     if (!doLoad) {

@@ -8,7 +8,6 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheServices;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
-import org.coconut.cache.service.servicemanager.CacheLifecycle.Shutdown;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.tck.RequireService;
 import org.coconut.test.TestUtil;

@@ -145,22 +145,22 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
         }
         //unsubscribe
         //fix
-        lock.lock();
-        try {
-            s.readLock().unlock();
-            s.writeLock().lock();
-            try {
-                subscribers.remove(s.getName());
-                indexer.remove(s);
-                unsubscribed(s);
-                s.setActive(false);
-            } finally {
-                s.writeLock().unlock();
-                s.readLock().lock();
-            }
-        } finally {
-            lock.unlock();
-        }
+//        lock.lock();
+//        try {
+//            s.readLock().unlock();
+//            s.writeLock().lock();
+//            try {
+//                subscribers.remove(s.getName());
+//                indexer.remove(s);
+//                unsubscribed(s);
+//                s.setActive(false);
+//            } finally {
+//                s.writeLock().unlock();
+//                s.readLock().lock();
+//            }
+//        } finally {
+//            lock.unlock();
+//        }
     }
 
     protected boolean doInform(final E element, boolean doThrow) {

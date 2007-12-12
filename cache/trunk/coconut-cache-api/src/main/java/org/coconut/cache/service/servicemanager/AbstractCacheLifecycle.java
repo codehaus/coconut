@@ -26,13 +26,13 @@ public abstract class AbstractCacheLifecycle implements CacheLifecycle {
     public void initialize(Initializer cli) {}
 
     /** {@inheritDoc} */
-    public void start(CacheServiceManagerService serviceManager) {}
+    public void start(CacheServiceManagerService serviceManager) throws Exception {}
 
     /** {@inheritDoc} */
     public void started(Cache<?, ?> cache) {}
 
     /** {@inheritDoc} */
-    public void shutdown(Shutdown shutdown) {}
+    public void shutdown(Shutdown shutdown) throws Exception {} 
     
     /** {@inheritDoc} */
     public void shutdownNow() {}

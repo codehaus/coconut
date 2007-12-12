@@ -126,7 +126,7 @@ public final class CacheEventFilters {
      */
     @SuppressWarnings("unchecked")
     public static <K, V> Predicate<CacheEvent<K, V>> mapperPredicate(Predicate<Cache<K, V>> filter) {
-        return Predicates.mapperPredicate((Mapper) EVENT_TO_CACHE_TRANSFORMER, filter);
+        return Predicates.mapAndEvaluate((Mapper) EVENT_TO_CACHE_TRANSFORMER, filter);
     }
 
     /**
@@ -144,7 +144,7 @@ public final class CacheEventFilters {
      */
     @SuppressWarnings("unchecked")
     public static <K, V> Predicate<CacheEvent<K, V>> eventName(Predicate<String> filter) {
-        return Predicates.mapperPredicate((Mapper) EVENT_TO_NAME_TRANSFORMER, filter);
+        return Predicates.mapAndEvaluate((Mapper) EVENT_TO_NAME_TRANSFORMER, filter);
     }
 
     static class EventToCacheMapper<K, V> implements Mapper<CacheEvent<K, V>, Cache<K, V>>,

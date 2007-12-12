@@ -265,11 +265,14 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
             listener.afterHit(this, started, key, entry);
             return entry;
         } else {
+            AbstractCacheEntry<K, V> previous = entry;
             if (isExpired) {
                 listener.dexpired(this, started, entry);
+                entry = null;
             }
-            AbstractCacheEntry<K, V> previous = entry;
-            entry = loadingService.loadBlocking(key, AttributeMaps.EMPTY_MAP);
+            if (loadingService != null) {
+                entry = loadingService.loadBlocking(key, AttributeMaps.EMPTY_MAP);
+            }
             listener.afterMiss(this, started, key, previous, entry, isExpired);
         }
         return entry;
@@ -285,7 +288,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         AbstractCacheEntry<K, V>[] entries = new AbstractCacheEntry[k.length];
         boolean[] isExpired = new boolean[k.length];
         boolean[] isHit = new boolean[k.length];
-        
+
         long started = listener.beforeGetAll(this, keys);
         checkRunning("get");
 
@@ -312,15 +315,16 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
             }
             i++;
         }
-        
+
         Map<K, AbstractCacheEntry<K, V>> loadedEntries = Collections.EMPTY_MAP;
         for (int j = 0; j < isExpired.length; j++) {
             if (isExpired[j]) {
                 listener.dexpired(this, started, entries[j]);
             }
         }
-        if (loadMe.size() != 0) {
-            loadedEntries = loadingService.loadAllBlocking(AttributeMaps.toMap(loadMe, AttributeMaps.EMPTY_MAP));
+        if (loadingService != null && loadMe.size() != 0) {
+            loadedEntries = loadingService.loadAllBlocking(AttributeMaps.toMap(loadMe,
+                    AttributeMaps.EMPTY_MAP));
             for (AbstractCacheEntry<K, V> entry : loadedEntries.values()) {
                 if (entry != null) {
                     result.put(entry.getKey(), entry.getValue());
@@ -491,14 +495,14 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         }
 
         /** {@inheritDoc} */
-        public void loadAll(Map< ? extends K,  ? extends AttributeMap> attributes) {
+        public void loadAll(Map<? extends K, ? extends AttributeMap> attributes) {
             Map<K, AttributeMap> keys = new HashMap<K, AttributeMap>();
             long timestamp = getClock().timestamp();
 
             if (!UnsynchronizedCache.this.checkRunning("load", false)) {
                 return;
             }
-            for (Map.Entry< ? extends K,  ? extends AttributeMap> e : attributes.entrySet()) {
+            for (Map.Entry<? extends K, ? extends AttributeMap> e : attributes.entrySet()) {
                 AbstractCacheEntry<K, V> ce = map.get(e.getKey());
                 boolean doLoad = ce == null;
                 if (!doLoad) {

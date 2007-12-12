@@ -18,7 +18,7 @@ import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationMXBean;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.tck.RequireService;
-import org.coconut.cache.test.util.managed.ManagedFilter;
+import org.coconut.cache.test.util.managed.ManagedPredicate;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -103,7 +103,7 @@ public class ExpirationMXBean extends AbstractExpirationTestBundle {
     public void managedObject() {
         CacheConfiguration<Integer, String> cc = newConf();
         cc.management().setEnabled(true);
-        ManagedFilter filter = new ManagedFilter();
+        ManagedPredicate filter = new ManagedPredicate();
         c = newCache(cc.expiration().setExpirationFilter(filter).c());
         prestart();
         assertNotNull(filter.getManagedGroup());

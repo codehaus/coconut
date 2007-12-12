@@ -178,22 +178,18 @@ public abstract class CacheExceptionHandler<K, V> {
      *            the cause of the failure
      */
     public void lifecycleShutdownFailed(CacheExceptionContext<K, V> context,
-            CacheLifecycle lifecycle, RuntimeException cause) {}
+            CacheLifecycle lifecycle, Exception cause) {}
 
     /**
      * Called when a service fails to start properly.
      * 
-     * @param configuration
-     *            the configuration of the cache
-     * @param cacheType
-     *            the type of cache
      * @param service
      *            the service that failed
      * @param cause
      *            the cause of the failure
      */
-    public void lifecycleStartFailed(CacheConfiguration<K, V> configuration,
-            Class<? extends Cache> cacheType, Object service, Exception cause) {}
+    public void lifecycleStartFailed(CacheExceptionContext<K, V> context, Object service,
+            Exception cause) {}
 
     /**
      * Called whenever a CacheLoader fails while trying to load a value.

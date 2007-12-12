@@ -64,4 +64,8 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
     public void trimToSize(int size) {
         helper.trimCache(size, Long.MAX_VALUE);
     }
+    
+    public String toString() {
+        return "Eviction Service";
+    }
 }

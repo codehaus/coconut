@@ -31,7 +31,7 @@ public interface ManagedGroup {
      *             if this group has already been register with a {@link MBeanServer}
      * @throws IllegalArgumentException
      *             if the object has already been registered, if it contains no methods or
-     *             operations?, or if operations or methods with the same name has already
+     *             operations, or if operations or methods with the same name has already
      *             been registered
      */
     ManagedGroup add(Object o);
@@ -54,19 +54,22 @@ public interface ManagedGroup {
 
     /**
      * Returns all this groups child groups.
+     * 
      * @return all this groups child groups
      */
     Collection<ManagedGroup> getChildren();
 
     /**
+     * Returns the description of this group
+     * 
      * @return the description of this group.
      */
     String getDescription();
 
     /**
-     * Returns the unique name of this group.
+     * Returns the name of this group.
      * 
-     * @return the unique name of this group.
+     * @return the name of this group.
      */
     String getName();
 
@@ -88,7 +91,7 @@ public interface ManagedGroup {
      * a parent.
      * 
      * @return the parent of this group or <code>null</code> if this group does not have
-     * a parent
+     *         a parent
      */
     ManagedGroup getParent();
 
@@ -106,6 +109,8 @@ public interface ManagedGroup {
     boolean isRegistered();
 
     /**
+     * Registers this group with the specified server under the specified object name.
+     * 
      * @param server
      *            the mbean server where this group should be registered
      * @param objectName
@@ -118,13 +123,15 @@ public interface ManagedGroup {
     void register(MBeanServer server, ObjectName objectName) throws JMException;
 
     /**
-     * Remove this group from its parent.
+     * Remove this group from its parent. If this group does not have a parent, calls to
+     * this method is ignored.
      */
     void remove();
 
     /**
      * Unregisters this group from the registered {@link MBeanServer} server. Any child
-     * groups will not be unregistered.
+     * groups will not be unregistered. If this group it not registered with a
+     * {@link MBeanServer}, calls to this method is ignored.
      * 
      * @throws JMException
      *             if the mbean could not be properly unregistered
