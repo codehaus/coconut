@@ -14,7 +14,7 @@ public class EventReplace extends AbstractEventTestBundle {
 
     @Test
     public void noEvents() throws Exception {
-        c = newCache(INCLUDE_ALL_CONFIGURATION, 2);
+        setCache(2);
         subscribe(CACHEENTRYEVENT_FILTER);
         replace(M3);
         c.replace(M2.getKey(), M3.getValue(), M2.getValue());
@@ -22,7 +22,7 @@ public class EventReplace extends AbstractEventTestBundle {
 
     @Test
     public void replace() throws Exception {
-        c = newCache(INCLUDE_ALL_CONFIGURATION, 0);
+        setCache();
         c.put(M2.getKey(), M3.getValue());
         subscribe(CACHEENTRYEVENT_FILTER);
         replace(M2);
@@ -35,7 +35,7 @@ public class EventReplace extends AbstractEventTestBundle {
 
     @Test
     public void replace3() throws Exception {
-        c = newCache(INCLUDE_ALL_CONFIGURATION, 0);
+        setCache();
         c.put(M2.getKey(), M3.getValue());
         subscribe(CACHEENTRYEVENT_FILTER);
         replace(M2.getKey(), M3.getValue(), M2.getValue());

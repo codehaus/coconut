@@ -13,12 +13,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated;
 import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.test.CollectionTestUtil;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -26,14 +24,6 @@ import org.junit.Test;
  * @version $Id$
  */
 public class EventServiceExpiration extends AbstractEventTestBundle {
-
-    @Before
-    public void setup() {
-        CacheConfiguration conf = newConf();
-        conf.event();
-        conf.expiration();
-        c = newCache(conf);
-    }
 
     @Test
     public void itemRemovedExpired() throws Exception {

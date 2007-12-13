@@ -26,7 +26,7 @@ public class EventPut extends AbstractEventTestBundle {
      */
     @Test
     public void put() {
-        c = newCache(INCLUDE_ALL_CONFIGURATION, 0);
+        setCache();
         subscribe(CACHEENTRYEVENT_FILTER);
 
         put(M1);
@@ -37,7 +37,7 @@ public class EventPut extends AbstractEventTestBundle {
 
     @Test
     public void putOverrideExisting() {
-        c = newCache(INCLUDE_ALL_CONFIGURATION, 0);
+        setCache();
         c.put(M2.getKey(), M3.getValue());
         subscribe(CACHEENTRYEVENT_FILTER);
         put(M2);
@@ -57,7 +57,7 @@ public class EventPut extends AbstractEventTestBundle {
      */
     @Test
     public void putAll() throws Exception {
-        c = newCache(INCLUDE_ALL_CONFIGURATION, 0);
+        setCache();
         subscribe(CACHEENTRYEVENT_FILTER);
 
         putAll(M1, M2);
@@ -71,7 +71,7 @@ public class EventPut extends AbstractEventTestBundle {
 
     @Test
     public void putIfAbsent() throws Exception {
-        c = newCache(INCLUDE_ALL_CONFIGURATION, 1);
+        setCache(1);
         subscribe(CACHEENTRYEVENT_FILTER);
         putIfAbsent(M1);
         putIfAbsent(M2);
@@ -81,10 +81,8 @@ public class EventPut extends AbstractEventTestBundle {
 
     @Test
     public void isCacheables() {
-        CacheConfiguration<Integer, String> conf = newConf();
-        conf.event().setEnabled(true);
         conf.eviction().setIsCacheableFilter(IsCacheables.REJECT_ALL);
-        c = newCache(conf);
+        setCache();
         subscribe(CACHEENTRYEVENT_FILTER);
         put(M1);
         putAll(M1, M2, M3);
@@ -100,7 +98,7 @@ public class EventPut extends AbstractEventTestBundle {
      */
     @Test
     public void itemUpdatedEventForSameValuePut() throws Exception {
-        c = newCache(INCLUDE_ALL_CONFIGURATION, 0);
+        setCache();
         subscribe(CACHEENTRYEVENT_FILTER);
 
         put(M1);

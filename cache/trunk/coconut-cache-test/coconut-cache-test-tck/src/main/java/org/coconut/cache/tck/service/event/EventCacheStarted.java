@@ -16,13 +16,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class EventCacheStarted extends AbstractEventTestBundle {
-    CacheConfiguration conf;
-
     @Before
-    public void setupConf() {
-        conf = newConf();
+    public void setupEvent() {
         conf.serviceManager().add(new Subscriber());
-        conf.event().setEnabled(true).include(CacheEvent.class);
     }
 
     @Test

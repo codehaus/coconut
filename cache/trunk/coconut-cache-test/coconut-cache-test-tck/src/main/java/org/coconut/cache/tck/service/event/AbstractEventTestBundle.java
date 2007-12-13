@@ -35,32 +35,16 @@ import org.junit.Before;
 @SuppressWarnings("unchecked")
 public class AbstractEventTestBundle extends AbstractCacheTCKTest {
 
-    CacheConfiguration<Integer, String> INCLUDE_ALL_CONFIGURATION;
-
-    @Before
-    public void setup() {
-        INCLUDE_ALL_CONFIGURATION = newConf();
-        INCLUDE_ALL_CONFIGURATION.event().setEnabled(true).include(CacheEvent.class);
-    }
-
-    LinkedBlockingQueue<EventWrapper> events;
+    private EventWrapper ev;
 
     private EventProcessor<CacheEvent<Integer, String>> eventHandler;
 
-    private EventWrapper ev;
-
-    CacheConfiguration<Integer, String> includeAll() {
-        CacheConfiguration<Integer, String> c = newConf();
-        c.event().setEnabled(true).include(CacheEvent.class);
-        return c;
-    }
-
-    protected int getPendingEvents() {
-        return ev == null ? events.size() : events.size() + 1;
-    }
+    LinkedBlockingQueue<EventWrapper> events;
 
     @Before
-    public void setUpEvent() {
+    public void setup() {
+        conf.event().setEnabled(true).include(CacheEvent.class);
+
         events = new LinkedBlockingQueue<EventWrapper>();
         eventHandler = new EventProcessor<CacheEvent<Integer, String>>() {
             public void process(CacheEvent<Integer, String> event) {
@@ -81,61 +65,11 @@ public class AbstractEventTestBundle extends AbstractCacheTCKTest {
         }
     }
 
-    static class EventWrapper {
-        CacheEvent<Integer, String> event;
-
-        private StackTraceElement[] elements;
-
-        EventWrapper(CacheEvent<Integer, String> event) {
-            this.event = event;
-            elements = (new Exception()).fillInStackTrace().getStackTrace();
+    protected void assertQueueEmpty() {
+        if (events.size() > 0) {
+            events.clear();
+            throw new AssertionFailedError("event queue not empty");
         }
-
-        CacheEvent<Integer, String> event() {
-            return event;
-        }
-
-        public void toErr() {
-            Exception e = new Exception();
-            e.setStackTrace(elements);
-            e.printStackTrace(System.err);
-        }
-    }
-
-    protected EventSubscription<?> subscribe(CacheEventService ces, Predicate f) {
-        EventSubscription s = ces.subscribe(eventHandler, f);
-        assertNotNull(s);
-        return s;
-    }
-
-    protected EventSubscription<?> subscribe(Predicate f) {
-        return subscribe(CacheServices.event(c), f);
-    }
-
-    protected Collection<CacheEvent> consumeItems(Cache c, int count) throws Exception {
-        Collection<CacheEvent> eventsCol = new ArrayList<CacheEvent>();
-        while (eventsCol.size() != count) {
-            EventWrapper ew = null;
-            // System.err.println(events.size());
-            try {
-                ew = ev != null ? ev : events.poll(50, TimeUnit.MILLISECONDS);
-            } catch (InterruptedException ie) {
-                throw new IllegalStateException("Thread was interrupted", ie);
-            }
-            if (ew == null) {
-                throw new IllegalStateException("No events was posted, size was "
-                        + eventsCol.size());
-            }
-            CacheEvent<?, ?> event = ew.event;
-            ev = null;
-            if (event == null) {
-                fail("No events was delivered ");
-            }
-            eventsCol.add(event);
-            assertEquals(c, event.getCache());
-        }
-        assertEquals(count, eventsCol.size());
-        return eventsCol;
     }
 
     protected void consumeItem() throws Exception {
@@ -173,16 +107,11 @@ public class AbstractEventTestBundle extends AbstractCacheTCKTest {
         return (S) event;
     }
 
-    protected void assertQueueEmpty() {
-        if (events.size() > 0) {
-            events.clear();
-            throw new AssertionFailedError("event queue not empty");
-        }
-    }
-
-    protected Integer peekKey() throws InterruptedException {
-        ev = events.poll(1, TimeUnit.SECONDS);
-        return ((CacheEntryEvent<Integer, String>) ev.event).getKey();
+    protected <S extends CacheEntryEvent> S consumeItem(Class<S> type, Integer key, String value) {
+        S event = consumeItem(c, type);
+        assertEquals(key, event.getKey());
+        assertEquals(value, event.getValue());
+        return event;
     }
 
     protected <S extends CacheEntryEvent> S consumeItem(Class<S> type,
@@ -190,11 +119,30 @@ public class AbstractEventTestBundle extends AbstractCacheTCKTest {
         return consumeItem(type, entry.getKey(), entry.getValue());
     }
 
-    protected <S extends CacheEntryEvent> S consumeItem(Class<S> type, Integer key, String value) {
-        S event = consumeItem(c, type);
-        assertEquals(key, event.getKey());
-        assertEquals(value, event.getValue());
-        return event;
+    protected Collection<CacheEvent> consumeItems(Cache c, int count) throws Exception {
+        Collection<CacheEvent> eventsCol = new ArrayList<CacheEvent>();
+        while (eventsCol.size() != count) {
+            EventWrapper ew = null;
+            // System.err.println(events.size());
+            try {
+                ew = ev != null ? ev : events.poll(50, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException ie) {
+                throw new IllegalStateException("Thread was interrupted", ie);
+            }
+            if (ew == null) {
+                throw new IllegalStateException("No events was posted, size was "
+                        + eventsCol.size());
+            }
+            CacheEvent<?, ?> event = ew.event;
+            ev = null;
+            if (event == null) {
+                fail("No events was delivered ");
+            }
+            eventsCol.add(event);
+            assertEquals(c, event.getCache());
+        }
+        assertEquals(count, eventsCol.size());
+        return eventsCol;
     }
 
     protected <S extends CacheEntryEvent> java.util.Collection<S> consumeItems(Class<S> type,
@@ -217,6 +165,52 @@ public class AbstractEventTestBundle extends AbstractCacheTCKTest {
             throw new IllegalStateException("sizes differ");
         }
         return result.values();
+    }
+
+    protected int getPendingEvents() {
+        return ev == null ? events.size() : events.size() + 1;
+    }
+
+    protected Integer peekKey() throws InterruptedException {
+        ev = events.poll(1, TimeUnit.SECONDS);
+        return ((CacheEntryEvent<Integer, String>) ev.event).getKey();
+    }
+
+    protected EventSubscription<?> subscribe(CacheEventService ces, Predicate f) {
+        EventSubscription s = ces.subscribe(eventHandler, f);
+        assertNotNull(s);
+        return s;
+    }
+
+    protected EventSubscription<?> subscribe(Predicate f) {
+        return subscribe(CacheServices.event(c), f);
+    }
+
+    CacheConfiguration<Integer, String> includeAll() {
+        CacheConfiguration<Integer, String> c = newConf();
+        c.event().setEnabled(true).include(CacheEvent.class);
+        return c;
+    }
+
+    static class EventWrapper {
+        private StackTraceElement[] elements;
+
+        CacheEvent<Integer, String> event;
+
+        EventWrapper(CacheEvent<Integer, String> event) {
+            this.event = event;
+            elements = (new Exception()).fillInStackTrace().getStackTrace();
+        }
+
+        public void toErr() {
+            Exception e = new Exception();
+            e.setStackTrace(elements);
+            e.printStackTrace(System.err);
+        }
+
+        CacheEvent<Integer, String> event() {
+            return event;
+        }
     }
 
 }

@@ -35,13 +35,10 @@ public class EventServiceLoading extends AbstractEventTestBundle {
     IntegerToStringLoader loader;
 
     @Before
-    public void setup() {
-        CacheConfiguration conf = newConf();
-        conf.setClock(clock);
-        conf.event().setEnabled(true);
+    public void setupLoading() {
         loader = new IntegerToStringLoader();
         conf.loading().setLoader(loader);
-        c = newCache(conf);
+        setCache();
     }
 
     @Test

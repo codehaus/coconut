@@ -5,7 +5,6 @@ package org.coconut.cache.tck.service.event;
 
 import static org.coconut.test.CollectionTestUtil.M1;
 
-import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemAdded;
@@ -16,13 +15,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class EventCacheStopped extends AbstractEventTestBundle {
-    CacheConfiguration conf;
-
     @Before
-    public void setupConf() {
-        conf = newConf();
+    public void setupEvent() {
         conf.serviceManager().add(new Subscriber());
-        conf.event().setEnabled(true).include(CacheEvent.class);
     }
 
     @Test

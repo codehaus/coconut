@@ -28,7 +28,7 @@ public class EventGet extends AbstractEventTestBundle {
      */
     @Test
     public void get() throws Exception {
-        c = newCache(INCLUDE_ALL_CONFIGURATION, 2);
+        c = newCache(2);
         subscribe(CACHEENTRYEVENT_FILTER);
         assertGet(M1);
         assertGet(M2);

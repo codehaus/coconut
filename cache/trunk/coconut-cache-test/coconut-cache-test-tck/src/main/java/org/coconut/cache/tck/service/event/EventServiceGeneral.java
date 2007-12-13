@@ -12,7 +12,7 @@ import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.event.bus.EventSubscription;
 import org.junit.Test;
 
-public class EventServiceGeneral extends AbstractEventTestBundle{
+public class EventServiceGeneral extends AbstractEventTestBundle {
 
     @Test
     public void testNotEnabled() {
@@ -31,7 +31,7 @@ public class EventServiceGeneral extends AbstractEventTestBundle{
 
     @Test
     public void testEnabled() {
-        CacheConfiguration<?, ?> conf =newConf();
+        CacheConfiguration<?, ?> conf = newConf();
         conf.event().setEnabled(true);
         c = newCache(conf);
         assertTrue(services().hasService(CacheEventService.class));
@@ -39,9 +39,10 @@ public class EventServiceGeneral extends AbstractEventTestBundle{
         Object cs = services().getAllServices().get(CacheEventService.class);
         assertSame(cs, c.getService(CacheEventService.class));
     }
+
     @Test
     public void testUnsubscribe() throws Exception {
-        c = newCache(INCLUDE_ALL_CONFIGURATION, 0);
+        setCache();
         EventSubscription<?> s = subscribe(CACHEENTRY_ADDED_FILTER);
         put(M1);
         assertEquals(1, getPendingEvents());
