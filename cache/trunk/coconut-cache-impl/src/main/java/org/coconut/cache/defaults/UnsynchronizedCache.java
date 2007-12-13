@@ -17,7 +17,7 @@ import java.util.Set;
 import net.jcip.annotations.NotThreadSafe;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.AttributeMaps;
+import org.coconut.attribute.Attributes;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
@@ -72,7 +72,7 @@ import org.coconut.internal.util.CollectionUtils;
 public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
 
     /** The default services for this cache. */
-    private final static Collection<Class<? extends AbstractCacheLifecycle>> DEFAULTS = Arrays
+    private final static Collection<Class<?>> DEFAULTS = Arrays
             .asList(DefaultCacheStatisticsService.class, DefaultCacheListener.class,
                     UnsynchronizedCacheEvictionService.class, DefaultCacheExpirationService.class,
                     UnsynchronizedCacheLoaderService.class, DefaultCacheEventService.class,
@@ -271,7 +271,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
                 entry = null;
             }
             if (loadingService != null) {
-                entry = loadingService.loadBlocking(key, AttributeMaps.EMPTY_MAP);
+                entry = loadingService.loadBlocking(key, Attributes.EMPTY_MAP);
             }
             listener.afterMiss(this, started, key, previous, entry, isExpired);
         }
@@ -323,8 +323,8 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
             }
         }
         if (loadingService != null && loadMe.size() != 0) {
-            loadedEntries = loadingService.loadAllBlocking(AttributeMaps.toMap(loadMe,
-                    AttributeMaps.EMPTY_MAP));
+            loadedEntries = loadingService.loadAllBlocking(Attributes.toMap(loadMe,
+                    Attributes.EMPTY_MAP));
             for (AbstractCacheEntry<K, V> entry : loadedEntries.values()) {
                 if (entry != null) {
                     result.put(entry.getKey(), entry.getValue());
@@ -479,7 +479,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
                 return;
             }
             if (force) {
-                keys = AttributeMaps.toMap(new ArrayList(keySet()), attributes);
+                keys = Attributes.toMap(new ArrayList(keySet()), attributes);
             } else {
                 keys = new HashMap<K, AttributeMap>();
                 for (Iterator<AbstractCacheEntry<K, V>> i = map.iterator(); i.hasNext();) {

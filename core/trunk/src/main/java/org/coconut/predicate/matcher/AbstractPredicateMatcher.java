@@ -14,22 +14,29 @@ import org.coconut.operations.Ops.Predicate;
  * @version $Id$
  */
 public abstract class AbstractPredicateMatcher<K, E> implements PredicateMatcher<K, E> {
-    
+
     private final Map<K, Predicate<? super E>> map;
 
+    /**
+     * Creates a new AbstractPredicateMatcher using the specified Map as backend.
+     * @param map the map to use as backend
+     */
     public AbstractPredicateMatcher(Map<K, Predicate<? super E>> map) {
         this.map = map;
     }
 
-    protected Map<K,Predicate<? super E>> getMap() {
+    /**
+     * @return the map we are wrapping
+     */
+    protected Map<K, Predicate<? super E>> getMap() {
         return map;
     }
-    
+
     /** {@inheritDoc} */
     public void clear() {
         map.clear();
     }
-   
+
     /** {@inheritDoc} */
     public Set<java.util.Map.Entry<K, Predicate<? super E>>> entrySet() {
         return map.entrySet();

@@ -7,7 +7,7 @@ package org.coconut.cache.policy.spi;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.coconut.attribute.AttributeMaps;
+import org.coconut.attribute.Attributes;
 import org.coconut.cache.policy.ReplacementPolicy;
 
 /**
@@ -29,7 +29,7 @@ public abstract class AbstractPolicy<T> implements ReplacementPolicy<T> {
      *         accepted into the replacement policy
      */
     public int add(T element) {
-        return add(element, AttributeMaps.EMPTY_MAP);
+        return add(element, Attributes.EMPTY_MAP);
     }
 
     /**
@@ -44,7 +44,7 @@ public abstract class AbstractPolicy<T> implements ReplacementPolicy<T> {
      *         <tt>false</tt>
      */
     public boolean update(int index, T newElement) {
-        return update(index, newElement, AttributeMaps.EMPTY_MAP);
+        return update(index, newElement, Attributes.EMPTY_MAP);
     }
 
     /**

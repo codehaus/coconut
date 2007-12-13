@@ -50,11 +50,11 @@ class ServiceHolder {
         state = 8;
     }
 
-    void shutdownNow() {
-            state = 9;
-            service.shutdownNow();
-            state = 10;
-    }
+//    void shutdownNow() {
+//        state = 9;
+//        service.shutdownNow();
+//        state = 10;
+//    }
 
     void start(CacheServiceManagerService serviceManager) throws Exception {
         state = 3;

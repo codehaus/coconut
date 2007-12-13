@@ -3,17 +3,17 @@
  */
 package org.coconut.cache.tck.core.entryset;
 
-import static org.coconut.test.CollectionUtils.M1;
-import static org.coconut.test.CollectionUtils.M2;
-import static org.coconut.test.CollectionUtils.M4;
-import static org.coconut.test.CollectionUtils.MNAN1;
-import static org.coconut.test.CollectionUtils.MNAN2;
+import static org.coconut.test.CollectionTestUtil.M1;
+import static org.coconut.test.CollectionTestUtil.M2;
+import static org.coconut.test.CollectionTestUtil.M4;
+import static org.coconut.test.CollectionTestUtil.MNAN1;
+import static org.coconut.test.CollectionTestUtil.MNAN2;
 
 import java.util.Arrays;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
-import org.coconut.test.CollectionUtils;
+import org.coconut.test.CollectionTestUtil;
 import org.junit.Test;
 
 /**
@@ -109,7 +109,7 @@ public class EntrySetRemove extends AbstractCacheTCKTest {
     public void removeAllLazyStart() {
         c = newCache();
         assertFalse(c.isStarted());
-        c.entrySet().removeAll(CollectionUtils.asList(2, 3));
+        c.entrySet().removeAll(CollectionTestUtil.asList(2, 3));
         checkLazystart();
     }
 
@@ -123,6 +123,6 @@ public class EntrySetRemove extends AbstractCacheTCKTest {
         c.shutdown();
 
         // should fail
-        c.entrySet().removeAll(CollectionUtils.asList(2, 3));
+        c.entrySet().removeAll(CollectionTestUtil.asList(2, 3));
     }
 }

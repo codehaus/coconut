@@ -55,7 +55,7 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
     public List<EventSubscription<E>> getSubscribers() {
         return Collections.unmodifiableList(new ArrayList(subscribers.values()));
     }
-
+    /** {@inheritDoc} */
     public EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler,
             Predicate<? super E> filter) {
         if (eventHandler == null) {
@@ -80,7 +80,7 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
             lock.unlock();
         }
     }
-
+    /** {@inheritDoc} */
     public EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler,
             Predicate<? super E> filter, String name) {
         if (eventHandler == null) {
@@ -104,7 +104,7 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
             lock.unlock();
         }
     }
-
+    /** {@inheritDoc} */
     public Collection<EventSubscription<E>> unsubscribeAll() {
         lock.lock();
         try {
@@ -176,9 +176,6 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
         return true;
     }
 
-    /**
-     * @see org.coconut.event.bus.defaults.OldAbstractEventBus#cancel(org.coconut.event.bus.defaults.OldAbstractEventBus.DefaultSubscription)
-     */
     void cancel(DefaultEventSubscription<E> s) {
         lock.lock();
         try {

@@ -3,7 +3,7 @@
  */
 package org.coconut.internal.util;
 
-import static org.coconut.test.CollectionUtils.seq;
+import static org.coconut.test.CollectionTestUtil.seq;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;

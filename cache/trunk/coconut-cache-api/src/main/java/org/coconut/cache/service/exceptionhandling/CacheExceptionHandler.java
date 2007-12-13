@@ -12,6 +12,8 @@ import org.coconut.cache.CacheException;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
+import org.coconut.core.Logger;
+import org.coconut.management.ManagedLifecycle;
 
 /**
  * The purpose of this class is to have one central place where all exceptions that arise
@@ -50,7 +52,7 @@ import org.coconut.cache.service.servicemanager.CacheLifecycle;
  * methods that handle a particular type of failure. The idea is that all common exception
  * points has a corresponding method in CacheExceptionHandler. For example, whenever an
  * exception occurs while loading an element in a cache loader the
- * {@link #loadingFailed(CacheExceptionContext, CacheLoader, Object, AttributeMap, Throwable)}
+ * {@link #loadingLoadValueFailed(CacheExceptionContext, CacheLoader, Object, AttributeMap)}
  * method is called. In addition to the exception that was raised a number of additional
  * information is provided to this method. For example, the key for which the load failed,
  * the cache in which the cache occured as well as other relevant information. The default
@@ -67,64 +69,65 @@ import org.coconut.cache.service.servicemanager.CacheLifecycle;
  */
 public abstract class CacheExceptionHandler<K, V> {
 
-    /**
-     * Handles an error.
-     * 
-     * @param context
-     *            an CacheExceptionContext containing the default logger configured for
-     *            this cache
-     * @param cause
-     *            the error to handle
-     */
-    public abstract void handleError(CacheExceptionContext<K, V> context, Error cause);
+// /**
+// * Handles an error.
+// *
+// * @param context
+// * an CacheExceptionContext containing the default logger configured for
+// * this cache
+// * @param cause
+// * the error to handle
+// */
+// public abstract void handleError(CacheExceptionContext<K, V> context, Error cause);
+//
+// /**
+// * Handles an exception.
+// *
+// * @param context
+// * an CacheExceptionContext containing the default logger configured for
+// * this cache
+// * @param cause
+// * the exception to handle
+// */
+// public abstract void handleException(CacheExceptionContext<K, V> context, Exception
+// cause);
+//
+// /**
+// * Handles a runtime exception.
+// *
+// * @param context
+// * an CacheExceptionContext containing the default logger configured for
+// * this cache
+// * @param cause
+// * the runtime exception to handle
+// */
+// public abstract void handleRuntimeException(CacheExceptionContext<K, V> context,
+// RuntimeException cause);
+//
+// /**
+// * Handles the generic throwable.
+// *
+// * @param context
+// * an CacheExceptionContext containing the default logger configured for
+// * this cache
+// * @param cause
+// * the throwable to handle
+// */
+// public void handleThrowable(CacheExceptionContext<K, V> context, Throwable cause) {
+// if (cause instanceof RuntimeException) {
+// handleRuntimeException(context, (RuntimeException) cause);
+// } else if (cause instanceof Exception) {
+// handleException(context, (Exception) cause);
+// } else if (cause instanceof Error) {
+// handleError(context, (Error) cause);
+// } else {
+// // hmm
+// handleRuntimeException(context, new CacheException(cause));
+// }
+// }
 
     /**
-     * Handles an exception.
-     * 
-     * @param context
-     *            an CacheExceptionContext containing the default logger configured for
-     *            this cache
-     * @param cause
-     *            the exception to handle
-     */
-    public abstract void handleException(CacheExceptionContext<K, V> context, Exception cause);
-
-    /**
-     * Handles a runtime exception.
-     * 
-     * @param context
-     *            an CacheExceptionContext containing the default logger configured for
-     *            this cache
-     * @param cause
-     *            the runtime exception to handle
-     */
-    public abstract void handleRuntimeException(CacheExceptionContext<K, V> context,
-            RuntimeException cause);
-
-    /**
-     * Handles the generic throwable.
-     * 
-     * @param context
-     *            an CacheExceptionContext containing the default logger configured for
-     *            this cache
-     * @param cause
-     *            the throwable to handle
-     */
-    public void handleThrowable(CacheExceptionContext<K, V> context, Throwable cause) {
-        if (cause instanceof RuntimeException) {
-            handleRuntimeException(context, (RuntimeException) cause);
-        } else if (cause instanceof Exception) {
-            handleException(context, (Exception) cause);
-        } else if (cause instanceof Error) {
-            handleError(context, (Error) cause);
-        } else {
-            // hmm
-            handleRuntimeException(context, new CacheException(cause));
-        }
-    }
-
-    /**
-     * Handles a warning from the cache. The default implementation ignores warning.
+     * Handles a warning from the cache. The default implementation ignores all warnings.
      * 
      * @param context
      *            an CacheExceptionContext containing the default logger configured for
@@ -137,12 +140,56 @@ public abstract class CacheExceptionHandler<K, V> {
     /**
      * Called to initialize the CacheExceptionHandler. This method must be called as the
      * first operation from within the constructor of the cache. Exceptions thrown by this
-     * method will not be handled by the cache.
+     * method will not be handled by the cache. The default implementation does nothing
      * 
      * @param configuration
      *            the configuration of the cache
      */
     public void initialize(CacheConfiguration<K, V> configuration) {}
+
+    /**
+     * Rethrows any errors.
+     * @param context the context
+     */
+    protected void throwErrors(CacheExceptionContext<K, V> context) {
+        if (context.getCause() instanceof Error) {
+            throw (Error) context.getCause();
+        }
+    }
+
+    /**
+     * Called whenever a CacheLoader fails while trying to load a value.
+     * <p>
+     * If this method chooses to throw a {@link RuntimeException} and the cache loader was
+     * invoked through a synchronous method, for example, {@link Cache#get(Object)} the
+     * exception will be propagated to the callee. If the cache loader was invoked through
+     * an asynchronous method, for example, {@link CacheLoadingService#load(Object)} any
+     * exception throw from this method will not be visible to the user.
+     * <p>
+     * The default implementation, will log
+     * 
+     * @param context
+     *            an CacheExceptionContext containing the default logger configured for
+     *            this cache and the cause of the failure
+     * @param loader
+     *            the cacheloader that failed to load a value
+     * @param key
+     *            the key for which the load failed
+     * @param map
+     *            a map of attributes used while trying to load
+     * @return a value that can be used instead of the value that couldn't be loaded. If
+     *         <code>null</code> returned no entry will be added to the cache for the
+     *         given key
+     */
+    public V loadingLoadValueFailed(CacheExceptionContext<K, V> context,
+            CacheLoader<? super K, ?> loader, K key, AttributeMap map) {
+        throwErrors(context);
+        return null;
+    }
+//
+//    protected void defaultHandle(CacheExceptionContext<K, V> context) {
+//    // do nothing
+//    }
 
     /**
      * This method is called when the
@@ -151,11 +198,15 @@ public abstract class CacheExceptionHandler<K, V> {
      * <p>
      * The
      * {@link CacheLifecycle#initialize(org.coconut.cache.service.servicemanager.CacheLifecycle.Initializer)}
-     * method is always called from the constructor of the cache. Any Exception thrown
-     * from this method will override the cause.
+     * method is as a general rule called from the constructor of the cache. Any Exception
+     * thrown from this method will override the cause.
      * 
+     * @param logger
+     *            the configured logger for the cache
      * @param configuration
      *            the configuration of the cache
+     * @param cacheName
+     *            the name of the cache
      * @param cacheType
      *            the type of cache
      * @param service
@@ -163,7 +214,8 @@ public abstract class CacheExceptionHandler<K, V> {
      * @param cause
      *            the cause of the failure
      */
-    public void lifecycleInitializationFailed(CacheConfiguration<K, V> configuration,
+    public void serviceManagerInitializationFailed(Logger logger,
+            CacheConfiguration<K, V> configuration, String cacheName,
             Class<? extends Cache> cacheType, CacheLifecycle service, RuntimeException cause) {}
 
     /**
@@ -174,52 +226,23 @@ public abstract class CacheExceptionHandler<K, V> {
      *            this cache
      * @param lifecycle
      *            the service that failed
-     * @param cause
-     *            the cause of the failure
      */
-    public void lifecycleShutdownFailed(CacheExceptionContext<K, V> context,
-            CacheLifecycle lifecycle, Exception cause) {}
+    public void serviceManagerShutdownFailed(CacheExceptionContext<K, V> context,
+            CacheLifecycle lifecycle) {}
 
     /**
      * Called when a service fails to start properly.
      * 
-     * @param service
-     *            the service that failed
-     * @param cause
-     *            the cause of the failure
-     */
-    public void lifecycleStartFailed(CacheExceptionContext<K, V> context, Object service,
-            Exception cause) {}
-
-    /**
-     * Called whenever a CacheLoader fails while trying to load a value.
-     * <p>
-     * If this method chooses to throw a {@link RuntimeException} and the cache loader was
-     * invoked through a synchronous method, for example, {@link Cache#get(Object)} the
-     * exception will be propagated to the callee. If the cache loader was invoked through
-     * an asynchronous method, for example, {@link CacheLoadingService#load(Object)} any
-     * exception throw from this method will not be visible to the user.
-     * 
      * @param context
      *            an CacheExceptionContext containing the default logger configured for
      *            this cache
-     * @param loader
-     *            the cacheloader that failed to load a value
-     * @param key
-     *            the key for which the load failed
-     * @param map
-     *            a map of attributes used while trying to load
-     * @param cause
-     *            the exception that was raised.
-     * @return a value that can be used instead of the value that couldn't be loaded. If
-     *         <code>null</code> returned no entry will be added to the cache for the
-     *         given key
+     * @param configuration
+     *            the configuration of the cache
+     * @param service
+     *            the {@link CacheLifecycle} or {@link ManagedLifecycle} that failed
      */
-    public V loadingFailed(CacheExceptionContext<K, V> context, CacheLoader<? super K, ?> loader,
-            K key, AttributeMap map, Throwable cause) {
-        handleThrowable(context, cause);
-        return null;
-    }
+    public void serviceManagerStartFailed(CacheExceptionContext<K, V> context,
+            CacheConfiguration<K, V> configuration, Object service) {}
 
     /**
      * Called as the last action by the cache once it has terminated. The map argument

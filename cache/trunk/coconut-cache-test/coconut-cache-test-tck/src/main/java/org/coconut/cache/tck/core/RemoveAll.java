@@ -5,7 +5,7 @@ package org.coconut.cache.tck.core;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
-import org.coconut.test.CollectionUtils;
+import org.coconut.test.CollectionTestUtil;
 import org.junit.Test;
 
 public class RemoveAll extends AbstractCacheTCKTest {
@@ -20,21 +20,21 @@ public class RemoveAll extends AbstractCacheTCKTest {
     @Test(expected = NullPointerException.class)
     public void removeAllNPE() {
         c = newCache();
-        c.removeAll(CollectionUtils.keysWithNull);
+        c.removeAll(CollectionTestUtil.keysWithNull);
 
     }
 
     @Test
     public void removeAll() {
         c = newCache();
-        c.removeAll(CollectionUtils.asList(2, 3));
+        c.removeAll(CollectionTestUtil.asList(2, 3));
 
         c = newCache(5);
-        c.removeAll(CollectionUtils.asList(2, 3));
+        c.removeAll(CollectionTestUtil.asList(2, 3));
         assertSize(3);
 
         c = newCache(5);
-        c.removeAll(CollectionUtils.asList(5, 6));
+        c.removeAll(CollectionTestUtil.asList(5, 6));
         assertSize(4);
     }
 
@@ -45,7 +45,7 @@ public class RemoveAll extends AbstractCacheTCKTest {
     public void removeAllLazyStart() {
         c = newCache();
         assertFalse(c.isStarted());
-        c.removeAll(CollectionUtils.asList(2, 3));
+        c.removeAll(CollectionTestUtil.asList(2, 3));
         checkLazystart();
     }
 
@@ -59,6 +59,6 @@ public class RemoveAll extends AbstractCacheTCKTest {
         c.shutdown();
 
         // should fail
-        c.removeAll(CollectionUtils.asList(2, 3));
+        c.removeAll(CollectionTestUtil.asList(2, 3));
     }
 }

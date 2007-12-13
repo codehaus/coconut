@@ -3,10 +3,10 @@
  */
 package org.coconut.cache.tck.service.statistics;
 
-import static org.coconut.test.CollectionUtils.M1;
-import static org.coconut.test.CollectionUtils.M2;
-import static org.coconut.test.CollectionUtils.M3;
-import static org.coconut.test.CollectionUtils.M4;
+import static org.coconut.test.CollectionTestUtil.M1;
+import static org.coconut.test.CollectionTestUtil.M2;
+import static org.coconut.test.CollectionTestUtil.M3;
+import static org.coconut.test.CollectionTestUtil.M4;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;

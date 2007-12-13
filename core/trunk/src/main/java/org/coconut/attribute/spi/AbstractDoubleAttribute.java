@@ -7,11 +7,12 @@ import java.io.Serializable;
 
 import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.spi.AbstractLongAttribute.AttributeMapToLong;
-import org.coconut.operations.Ops;
+import org.coconut.operations.Ops.MapperToDouble;
 
 /**
- * An abstract implementation of an {@link Attribute} mapping to a double.
+ * An abstract implementation of an {@link Attribute} mapping to a double. This
+ * implementation add a number of methods that works on primitive doubles instead of their
+ * object counterpart.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -34,6 +35,10 @@ public abstract class AbstractDoubleAttribute extends AbstractAttribute<Double> 
      *            the name of the attribute
      * @param defaultValue
      *            the default value of this attribute
+     * @throws NullPointerException
+     *             if the specified name is <code>null</code>
+     * @throws IllegalArgumentException
+     *             if the specified default value is not a valid value
      */
     public AbstractDoubleAttribute(String name, double defaultValue) {
         super(name, Double.TYPE, defaultValue);
@@ -47,12 +52,16 @@ public abstract class AbstractDoubleAttribute extends AbstractAttribute<Double> 
     }
 
     /**
-     * Works as {@link #checkValid(Double)} except taking a primitive double. The default
-     * implementation fails for {@link Double#NEGATIVE_INFINITY},
-     * {@link Double#POSITIVE_INFINITY} and {@link Double#NaN}.
+     * Analogous to {@link #checkValid(Double)} except taking a primitive double.
+     * <p>
+     * The default implementation fails if the specified value is either
+     * {@link Double#NEGATIVE_INFINITY}, {@link Double#POSITIVE_INFINITY} or
+     * {@link Double#NaN}.
      * 
      * @param value
      *            the value to check
+     * @throws IllegalArgumentException
+     *             if the specified value is not valid
      */
     public void checkValid(double value) {
         checkNotNaNInfinity(value);
@@ -63,10 +72,29 @@ public abstract class AbstractDoubleAttribute extends AbstractAttribute<Double> 
         return Double.parseDouble(str);
     }
 
+    /**
+     * Analogous to {@link #getValue(AttributeMap)} except returning a primitive
+     * <tt>double</tt>.
+     * 
+     * @param attributes
+     *            the attribute map to retrieve the value of this attribute from
+     * @return the value of this attribute
+     */
     public double getPrimitive(AttributeMap attributes) {
         return attributes.getDouble(this, defaultValue);
     }
 
+    /**
+     * Analogous to {@link #getValue(AttributeMap, Double)} except returning a primitive
+     * <tt>double</tt>.
+     * 
+     * @param attributes
+     *            the attribute map to check for this attribute in
+     * @param defaultValue
+     *            the value to return if this attribute is not set in the specified
+     *            attribute map
+     * @return the value of this attribute
+     */
     public double getPrimitive(AttributeMap attributes, double defaultValue) {
         return attributes.getDouble(this, defaultValue);
     }
@@ -87,37 +115,87 @@ public abstract class AbstractDoubleAttribute extends AbstractAttribute<Double> 
      *            the value to check
      */
     public boolean isValid(double value) {
-        return notNaNInfinity(value);
+        return !isNaNInfinity(value);
     }
 
-    public Ops.MapperToDouble<AttributeMap> mapToDouble() {
+    /**
+     * Returns a mapper that extracts the value of this attribute from an
+     * {@link AttributeMap}, or returns {@link #getDefaultValue()} if this attribute is
+     * not present.
+     * 
+     * @return a mapper from an AttributeMap to the value of this attribute
+     */
+    public MapperToDouble<AttributeMap> mapToDouble() {
         return mapperToDouble;
     }
 
-    public AttributeMap setAttribute(AttributeMap attributes, double object) {
+    /**
+     * Analogous to {@link #setValue(AttributeMap, Double)} except taking a primitive
+     * double as parameter.
+     * 
+     * @param attributes
+     *            the attribute map to set the value in.
+     * @param value
+     *            the value that should be set
+     * @return the specified attribute map
+     * @throws IllegalArgumentException
+     *             if the specified value is not valid accordingly to
+     *             {@link #checkValid(double)}
+     */
+    public AttributeMap setAttribute(AttributeMap attributes, double value) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
         }
-        checkValid(object);
-        attributes.putDouble(this, object);
+        checkValid(value);
+        attributes.putDouble(this, value);
         return attributes;
     }
-
+    /**
+     * Analogous to {@link #toSingleton(Double)} except taking a primitive double as
+     * parameter.
+     * 
+     * @param value
+     *            the value to create the singleton from
+     * @return an AttributeMap containing only this attribute mapping to the specified
+     *         value
+     */
+    protected AttributeMap toSingleton(double value) {
+        return super.toSingleton(value);
+    }
+    /**
+     * Check if the specified value is either {@link Double#NEGATIVE_INFINITY},
+     * {@link Double#POSITIVE_INFINITY} or {@link Double#NaN}. If it is, this method will
+     * throw an {@link IllegalArgumentException}.
+     * 
+     * @param d
+     *            the value to check
+     * @throws IllegalArgumentException
+     *             if the specified value is Infinity or NaN
+     */
     protected void checkNotNaNInfinity(double d) {
-        if (Double.isNaN(d)) {
-            throw new IllegalArgumentException("invalid " + getName() + " (" + getName()
-                    + " = NaN)");
-        } else if (Double.isInfinite(d)) {
-            throw new IllegalArgumentException("invalid " + getName() + " (" + getName()
-                    + " = Infinity)");
+        if (isNaNInfinity(d)) {
+            throw new IllegalArgumentException("invalid " + getName() + " (" + getName() + " = "
+                    + Double.toString(d) + ")");
         }
     }
 
-    protected boolean notNaNInfinity(double d) {
-        return !Double.isNaN(d) && !Double.isInfinite(d);
+    /**
+     * Returns <code>true</code> if the specified value is either
+     * {@link Double#NEGATIVE_INFINITY}, {@link Double#POSITIVE_INFINITY} or
+     * {@link Double#NaN}. Otherwise, false
+     * 
+     * @param d
+     *            the value to check
+     * @return whether or not the specified value is Infinity or NaN
+     */
+    protected boolean isNaNInfinity(double d) {
+        return Double.isNaN(d) || Double.isInfinite(d);
     }
 
-    class AttributeMapToDouble implements Ops.MapperToDouble<AttributeMap>, Serializable {
+    /**
+     * A MapperToDouble that maps from an attribute map to the value of this attribute.
+     */
+    class AttributeMapToDouble implements MapperToDouble<AttributeMap>, Serializable {
 
         /** serialVersionUID. */
         private static final long serialVersionUID = -953844729549732090L;

@@ -9,7 +9,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.AttributeMaps;
+import org.coconut.attribute.Attributes;
 import org.coconut.attribute.common.TimeToRefreshAttribute;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
@@ -124,7 +124,7 @@ public class DefaultCacheExpirationServiceTest {
             }
         };
         initialize();
-        AttributeMap dam = new AttributeMaps.DefaultAttributeMap();
+        AttributeMap dam = new Attributes.DefaultAttributeMap();
         dam.putLong(TimeToRefreshAttribute.INSTANCE, -1);
         // s.innerGetExpirationTime(123, null, dam);
 
@@ -134,17 +134,13 @@ public class DefaultCacheExpirationServiceTest {
 
     static class AbstractTester<K, V> extends CacheExceptionHandler<K, V> {
 
-        @Override
         public void handleError(CacheExceptionContext<K, V> context, Error cause) {}
 
-        @Override
         public void handleException(CacheExceptionContext<K, V> context, Exception cause) {}
 
-        @Override
         public void handleRuntimeException(CacheExceptionContext<K, V> context,
                 RuntimeException cause) {}
 
-        @Override
         public void handleWarning(CacheExceptionContext<K, V> context, String warning) {}
 
     }

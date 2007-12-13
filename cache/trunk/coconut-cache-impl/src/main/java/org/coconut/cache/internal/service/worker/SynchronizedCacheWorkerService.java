@@ -12,7 +12,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.AttributeMaps;
+import org.coconut.attribute.Attributes;
 import org.coconut.cache.internal.service.servicemanager.CompositeService;
 import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
@@ -36,20 +36,23 @@ public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService i
             worker = conf.getWorkerManager();
         }
     }
+
     /** {@inheritDoc} */
     public Collection<?> getChildServices() {
         return Arrays.asList(worker);
     }
 
-    /** {@inheritDoc} *//** {@inheritDoc} */
+    /** {@inheritDoc} */
+    /** {@inheritDoc} */
     public CacheWorkerManager getManager() {
         return worker;
     }
 
     /** {@inheritDoc} */
     public ScheduledExecutorService getScheduledExecutorService(Object service) {
-        return getScheduledExecutorService(service, AttributeMaps.EMPTY_MAP);
+        return getScheduledExecutorService(service, Attributes.EMPTY_MAP);
     }
+
     /** {@inheritDoc} */
     public ScheduledExecutorService getScheduledExecutorService(Object service,
             AttributeMap attributes) {
@@ -79,6 +82,7 @@ public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService i
         public ExecutorService getExecutorService(Object service, AttributeMap attributes) {
             return es;
         }
+
         @Override
         public ScheduledExecutorService getScheduledExecutorService(Object service,
                 AttributeMap attributes) {
@@ -91,17 +95,22 @@ public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService i
             ses.shutdown();
             shutdown.shutdownAsynchronously(new Callable() {
                 public Object call() throws InterruptedException {
-                    es.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-                    ses.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-                    return null;
+                    try {
+                        es.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+                        ses.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+                    } catch (InterruptedException ie) {
+                        es.shutdownNow();
+                        ses.shutdownNow();
+                        throw ie;
+                    }
+                    return Void.TYPE;
                 }
             });
         }
-
-        @Override
-        public void shutdownNow() {
-            es.shutdownNow();
-            ses.shutdownNow();
-        }
+// @Override
+// public void shutdownNow() {
+// es.shutdownNow();
+// ses.shutdownNow();
+// }
     }
 }

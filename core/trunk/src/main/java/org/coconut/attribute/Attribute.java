@@ -48,6 +48,12 @@ public interface Attribute<T> {
      */
     boolean isValid(T value);
 
+    /**
+     * Removes this attribute from the specified attribute map if it is present.
+     * 
+     * @param attributes
+     *            the attribute map to remove this attribute from
+     */
     void unSet(AttributeMap attributes);
 
     /**
@@ -60,8 +66,29 @@ public interface Attribute<T> {
      */
     boolean isSet(AttributeMap attributes);
 
+    /**
+     * Returns the value of this attribute from the specified attribute map. If this
+     * attribute is not set in the map, the {@link #getDefaultValue()} will be returned
+     * instead.
+     * 
+     * @param attributes
+     *            the attribute map to check for this attribute in
+     * @return the value of this attribute
+     */
     T getValue(AttributeMap attributes);
 
+    /**
+     * Returns the value of this attribute from the specified attribute map. If this
+     * attribute is not set in the map, the specified defaultValue will be returned
+     * instead.
+     * 
+     * @param attributes
+     *            the attribute map to check for this attribute in
+     * @param defaultValue
+     *            the value to return if this attribute is not set in the specified
+     *            attribute map
+     * @return the value of this attribute
+     */
     T getValue(AttributeMap attributes, T defaultValue);
 
     /**
@@ -72,10 +99,31 @@ public interface Attribute<T> {
      * @param value
      *            the value that should be set
      * @return the specified attribute map
+     * @throws IllegalArgumentException
+     *             if the specified value is not valid accordingly to
+     *             {@link #checkValid(Object)}
      */
     AttributeMap setValue(AttributeMap attributes, T value);
 
+    /**
+     * Creates a value instance of this attribute from the specified string.
+     * 
+     * @param str
+     *            the string to create the value from.
+     * @return a value instance from the specified string
+     * @throws UnsupportedOperationException
+     *             if this operation is not supported by this attribute
+     */
     T fromString(String str);
 
+    /**
+     * Checks if the specified value is valid for this attribute. If the specified value
+     * is not valid this method will throw an {@link IllegalArgumentException}.
+     * 
+     * @param value
+     *            the value to check
+     * @throws IllegalArgumentException
+     *             if the specified value is not valid
+     */
     void checkValid(T value);
 }

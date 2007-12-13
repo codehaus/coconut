@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.AttributeMaps;
+import org.coconut.attribute.Attributes;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.entry.InternalCacheEntryService;
@@ -46,7 +46,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
     public AbstractCacheLoadingService(CacheLoadingConfiguration<K, V> loadingConfiguration,
             InternalCacheEntryService attributeFactory,
             InternalCacheExceptionService<K, V> exceptionHandler, LoadSupport<K, V> loadSupport) {
-        
+
         attributeFactory.setTimeToRefreshNs(LoadingUtils
                 .getInitialTimeToRefresh(loadingConfiguration));
         this.loader = loadingConfiguration.getLoader();
@@ -68,12 +68,12 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
     }
 
     AbstractCacheEntry<K, V> loadBlocking(K key) {
-        return loadBlocking(key, AttributeMaps.EMPTY_MAP);
+        return loadBlocking(key, Attributes.EMPTY_MAP);
     }
 
     /** {@inheritDoc} */
     public final void forceLoad(K key) {
-        forceLoad(key, AttributeMaps.EMPTY_MAP);
+        forceLoad(key, Attributes.EMPTY_MAP);
     }
 
     /** {@inheritDoc} */
@@ -88,7 +88,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
 
     /** {@inheritDoc} */
     public final void forceLoadAll() {
-        forceLoadAll(AttributeMaps.EMPTY_MAP);
+        forceLoadAll(Attributes.EMPTY_MAP);
     }
 
     /** {@inheritDoc} */
@@ -109,13 +109,13 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
             if (key == null) {
                 throw new NullPointerException("Collection contains a null key");
             }
-            map.put(key, AttributeMaps.EMPTY_MAP);
+            map.put(key, Attributes.EMPTY_MAP);
         }
         loadAllAsync(map);
     }
 
     /** {@inheritDoc} */
-    public final void forceLoadAll(Map< ? extends K,  ? extends AttributeMap> mapsWithAttributes) {
+    public final void forceLoadAll(Map<? extends K, ? extends AttributeMap> mapsWithAttributes) {
         if (mapsWithAttributes == null) {
             throw new NullPointerException("mapsWithAttributes is null");
         }
@@ -139,7 +139,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
 
     /** {@inheritDoc} */
     public final void load(K key) {
-        load(key, AttributeMaps.EMPTY_MAP);
+        load(key, Attributes.EMPTY_MAP);
     }
 
     /** {@inheritDoc} */
@@ -154,7 +154,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
 
     /** {@inheritDoc} */
     public final void loadAll() {
-        loadAll(AttributeMaps.EMPTY_MAP);
+        loadAll(Attributes.EMPTY_MAP);
     }
 
     /** {@inheritDoc} */
@@ -175,13 +175,13 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
             if (key == null) {
                 throw new NullPointerException("Collection contains a null key");
             }
-            map.put(key, AttributeMaps.EMPTY_MAP);
+            map.put(key, Attributes.EMPTY_MAP);
         }
         loadSupport.loadAll(map);
     }
 
     /** {@inheritDoc} */
-    public final void loadAll(Map< ? extends K,  ? extends AttributeMap> mapsWithAttributes) {
+    public final void loadAll(Map<? extends K, ? extends AttributeMap> mapsWithAttributes) {
         if (mapsWithAttributes == null) {
             throw new NullPointerException("mapsWithAttributes is null");
         }
@@ -189,27 +189,23 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
     }
 
     /** {@inheritDoc} */
-    public void loadAllAsync(Map< ? extends K,  ? extends AttributeMap> mapsWithAttributes) {
-        for (Map.Entry< ? extends K,  ? extends AttributeMap> e : mapsWithAttributes.entrySet()) {
+    public void loadAllAsync(Map<? extends K, ? extends AttributeMap> mapsWithAttributes) {
+        for (Map.Entry<? extends K, ? extends AttributeMap> e : mapsWithAttributes.entrySet()) {
             loadAsync(e.getKey(), e.getValue());
         }
     }
 
     /** {@inheritDoc} */
     public void manage(ManagedGroup parent) {
-        if (loader != null) {
-            ManagedGroup g = parent.addChild(CacheLoadingConfiguration.SERVICE_NAME,
-                    "Cache Loading attributes and operations");
-            g.add(LoadingUtils.wrapMXBean(this));
-        }
+        ManagedGroup g = parent.addChild(CacheLoadingConfiguration.SERVICE_NAME,
+                "Cache Loading attributes and operations");
+        g.add(LoadingUtils.wrapMXBean(this));
     }
 
     /** {@inheritDoc} */
     @Override
     public void initialize(CacheLifecycle.Initializer cli) {
-        if (loader != null) {
-            cli.registerService(CacheLoadingService.class, LoadingUtils.wrapService(this));
-        }
+        cli.registerService(CacheLoadingService.class, LoadingUtils.wrapService(this));
     }
 
     /** {@inheritDoc} */
@@ -250,27 +246,27 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
      *            Whether or not this is synchronous operation (user waits on the result)
      * @return the cache entry that was added to the cache or null if no entry was added
      */
-    public AbstractCacheEntry<K, V> loadAndAddToCache(K key, AttributeMap attributes, boolean isSynchronous) {
+    public AbstractCacheEntry<K, V> loadAndAddToCache(K key, AttributeMap attributes,
+            boolean isSynchronous) {
         V v = null;
-        if (loader != null) {
-            try {
-                v = loader.load(key, attributes);
-            } catch (Throwable e) {
-                v = getExceptionHandler().getHandler().loadingFailed(
-                        getExceptionHandler().createContext(), loader, key, attributes, e);
-            }
+        try {
+            v = loader.load(key, attributes);
+        } catch (Throwable e) {
+            v = getExceptionHandler().getHandler().loadingLoadValueFailed(
+                    getExceptionHandler().createContext(e), loader, key, attributes);
         }
         return loadSupport.valueLoaded(key, v, attributes);
     }
 
-    public Map<K, AbstractCacheEntry<K, V>> loadAllBlocking(Map< ? extends K,  ? extends AttributeMap> keys) {
+    public Map<K, AbstractCacheEntry<K, V>> loadAllBlocking(
+            Map<? extends K, ? extends AttributeMap> keys) {
         HashMap<K, AbstractCacheEntry<K, V>> map = new HashMap<K, AbstractCacheEntry<K, V>>();
-        for (Map.Entry< ? extends K,  ? extends AttributeMap> e : keys.entrySet()) {
+        for (Map.Entry<? extends K, ? extends AttributeMap> e : keys.entrySet()) {
             map.put(e.getKey(), loadBlocking(e.getKey(), e.getValue()));
         }
         return map;
     }
-    
+
     public String toString() {
         return "Loading Service";
     }

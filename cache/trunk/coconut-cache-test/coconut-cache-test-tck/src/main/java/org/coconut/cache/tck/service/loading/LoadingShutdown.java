@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.AttributeMaps;
+import org.coconut.attribute.Attributes;
 import org.junit.Test;
 
 /**
@@ -24,8 +24,8 @@ public class LoadingShutdown extends AbstractLoadingTestBundle {
     static Map<Integer, AttributeMap> M = new HashMap<Integer, AttributeMap>();
 
     static {
-        M.put(1, AttributeMaps.EMPTY_MAP);
-        M.put(2, AttributeMaps.EMPTY_MAP);
+        M.put(1, Attributes.EMPTY_MAP);
+        M.put(2, Attributes.EMPTY_MAP);
     }
 
     @Test
@@ -39,10 +39,10 @@ public class LoadingShutdown extends AbstractLoadingTestBundle {
 
     @Test
     public void loadAtr() {
-        loading().load(1, AttributeMaps.EMPTY_MAP);
+        loading().load(1, Attributes.EMPTY_MAP);
         awaitAllLoads();
         shutdownAndAwaitTermination();
-        loading().load(1, AttributeMaps.EMPTY_MAP);
+        loading().load(1, Attributes.EMPTY_MAP);
         awaitAllLoads();
     }
 
@@ -75,10 +75,10 @@ public class LoadingShutdown extends AbstractLoadingTestBundle {
 
     @Test
     public void forceLoadAtr() {
-        loading().forceLoad(1, AttributeMaps.EMPTY_MAP);
+        loading().forceLoad(1, Attributes.EMPTY_MAP);
         awaitAllLoads();
         shutdownAndAwaitTermination();
-        loading().forceLoad(1, AttributeMaps.EMPTY_MAP);
+        loading().forceLoad(1, Attributes.EMPTY_MAP);
         awaitAllLoads();
     }
 
@@ -92,18 +92,18 @@ public class LoadingShutdown extends AbstractLoadingTestBundle {
     }
     @Test
     public void loadAllAtr() {
-        loading().loadAll(AttributeMaps.EMPTY_MAP);
+        loading().loadAll(Attributes.EMPTY_MAP);
         awaitAllLoads();
         shutdownAndAwaitTermination();
-        loading().loadAll(AttributeMaps.EMPTY_MAP);
+        loading().loadAll(Attributes.EMPTY_MAP);
         awaitAllLoads();
     }
     @Test
     public void forceLoadAllAtr() {
-        loading().forceLoadAll(AttributeMaps.EMPTY_MAP);
+        loading().forceLoadAll(Attributes.EMPTY_MAP);
         awaitAllLoads();
         shutdownAndAwaitTermination();
-        loading().forceLoadAll(AttributeMaps.EMPTY_MAP);
+        loading().forceLoadAll(Attributes.EMPTY_MAP);
         awaitAllLoads();
     }
 

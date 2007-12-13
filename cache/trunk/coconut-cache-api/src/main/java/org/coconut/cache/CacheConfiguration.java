@@ -5,6 +5,7 @@ package org.coconut.cache;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -30,6 +31,10 @@ import org.coconut.cache.spi.CacheSPI;
 import org.coconut.cache.spi.XmlConfigurator;
 import org.coconut.core.Clock;
 import org.coconut.core.Logger;
+import org.coconut.core.Loggers;
+import org.coconut.core.Loggers.Commons;
+import org.coconut.core.Loggers.JDK;
+import org.coconut.core.Loggers.Log4j;
 
 /**
  * This class is the primary class used for representing the configuration of a cache. All
@@ -202,6 +207,12 @@ public class CacheConfiguration<K, V> {
         return (Collection) new ArrayList<AbstractCacheServiceConfiguration>(list);
     }
 
+    /**
+     * Returns the type of cache set by {@link #setCacheType(Class)}.
+     * 
+     * @return the type of cache set by {@link #setCacheType(Class)} or <code>null</code>
+     *         if no type has been set
+     */
     public Class<? extends Cache> getCacheType() {
         return cacheType;
     }
@@ -306,8 +317,22 @@ public class CacheConfiguration<K, V> {
         return getConfiguration(CacheManagementConfiguration.class);
     }
 
+    /**
+     * Creates a new Cache of the type set using {@link #setCacheType(Class)} from this
+     * configuration.
+     * 
+     * @return the newly created Cache
+     * @throws IllegalArgumentException
+     *             if a cache of the specified type could not be created
+     * @throws IllegalStateException
+     *             if no cache has been set using {@link #setCacheType(Class)}
+     */
     public Cache<K, V> newCacheInstance() {
-        return newCacheInstance(getCacheType());
+        Class<? extends Cache> cacheType = getCacheType();
+        if (cacheType == null) {
+            throw new IllegalStateException("no cache type has been set, using #setCacheType");
+        }
+        return newCacheInstance(cacheType);
     }
 
     /**
@@ -368,6 +393,14 @@ public class CacheConfiguration<K, V> {
         return getConfiguration(CacheServiceManagerConfiguration.class);
     }
 
+    /**
+     * Sets the type of cache that should be created when calling
+     * {@link #newCacheInstance()}.
+     * 
+     * @param cacheType
+     *            the type of cache
+     * @return this configuration
+     */
     public CacheConfiguration<K, V> setCacheType(Class<? extends Cache> cacheType) {
         this.cacheType = cacheType;
         return this;
@@ -410,6 +443,9 @@ public class CacheConfiguration<K, V> {
      *            the logger to use
      * @return this configuration
      * @see #getDefaultLogger()
+     * @see JDK
+     * @see Commons
+     * @see Log4j
      */
     public CacheConfiguration<K, V> setDefaultLogger(Logger logger) {
         this.defaultLogger = logger;
@@ -485,8 +521,9 @@ public class CacheConfiguration<K, V> {
         try {
             new XmlConfigurator().write(this, sos);
         } catch (Exception e) {
-            throw new IllegalStateException(
-                    "An xml-based representation of this cache could not be created", e);
+            PrintStream ps = new PrintStream(sos);
+            ps.println("An xml-based representation of this cache could not be created");
+            e.printStackTrace(ps);
         }
         return new String(sos.toByteArray());
     }

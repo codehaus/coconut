@@ -8,7 +8,7 @@ public class AttributeMaps_DefaultMapTest extends AbstractAttributeMapTest {
 
     @Override
     protected AttributeMap create() {
-        return new AttributeMaps.DefaultAttributeMap();
+        return new Attributes.DefaultAttributeMap();
     }
 
     @Test
@@ -16,6 +16,6 @@ public class AttributeMaps_DefaultMapTest extends AbstractAttributeMapTest {
         AttributeMap am = create();
         am.put(a1, 12.23);
         am.put(a2, 12);
-        assertEquals(am, new AttributeMaps.DefaultAttributeMap(am));
+        assertEquals(am, new Attributes.DefaultAttributeMap(am));
     }
 }

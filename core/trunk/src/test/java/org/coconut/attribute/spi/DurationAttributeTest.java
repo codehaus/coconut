@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.AttributeMaps;
+import org.coconut.attribute.Attributes;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -39,10 +39,10 @@ public class DurationAttributeTest {
 
     @Test
     public void get() {
-        AttributeMap am = AttributeMaps.EMPTY_MAP;
-        AttributeMap am1 = AttributeMaps.singleton(DA, 1L);
-        AttributeMap am10000 = AttributeMaps.singleton(DA, 10000L);
-        AttributeMap ammax = AttributeMaps.singleton(DA, Long.MAX_VALUE);
+        AttributeMap am = Attributes.EMPTY_MAP;
+        AttributeMap am1 = Attributes.singleton(DA, 1L);
+        AttributeMap am10000 = Attributes.singleton(DA, 10000L);
+        AttributeMap ammax = Attributes.singleton(DA, Long.MAX_VALUE);
 
         // No default
         assertEquals(Long.MAX_VALUE, DA.getPrimitive(am, TimeUnit.NANOSECONDS));
@@ -92,6 +92,6 @@ public class DurationAttributeTest {
     }
 
     protected AttributeMap newMap() {
-        return new AttributeMaps.DefaultAttributeMap();
+        return new Attributes.DefaultAttributeMap();
     }
 }

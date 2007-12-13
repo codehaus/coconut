@@ -3,10 +3,10 @@
  */
 package org.coconut.cache.tck.service.loading;
 
-import static org.coconut.attribute.AttributeMaps.singleton;
-import static org.coconut.test.CollectionUtils.M1;
-import static org.coconut.test.CollectionUtils.M2;
-import static org.coconut.test.CollectionUtils.M3;
+import static org.coconut.attribute.Attributes.singleton;
+import static org.coconut.test.CollectionTestUtil.M1;
+import static org.coconut.test.CollectionTestUtil.M2;
+import static org.coconut.test.CollectionTestUtil.M3;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,8 +15,7 @@ import java.util.Map;
 
 import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.AttributeMaps;
-import org.coconut.attribute.spi.AbstractAttribute;
+import org.coconut.attribute.Attributes;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.test.TestUtil;
@@ -38,9 +37,9 @@ public class ExplicitForcedLoading extends AbstractLoadingTestBundle {
 
     private final static Attribute OOF = TestUtil.dummy(Attribute.class);
     static {
-        ATR_FOO = new AttributeMaps.DefaultAttributeMap();
+        ATR_FOO = new Attributes.DefaultAttributeMap();
         ATR_FOO.put(FOO, "boo");
-        ATR_FO1 = new AttributeMaps.DefaultAttributeMap();
+        ATR_FO1 = new Attributes.DefaultAttributeMap();
         ATR_FO1.put(OOF, "oob");
     }
 
@@ -51,7 +50,7 @@ public class ExplicitForcedLoading extends AbstractLoadingTestBundle {
 
     @Test(expected = NullPointerException.class)
     public void loadNPE1() {
-        loading().forceLoad(null, AttributeMaps.EMPTY_MAP);
+        loading().forceLoad(null, Attributes.EMPTY_MAP);
     }
 
     @Test(expected = NullPointerException.class)
@@ -133,9 +132,9 @@ public class ExplicitForcedLoading extends AbstractLoadingTestBundle {
 
     @Test
     public void loadAllWithAttributes() {
-        AttributeMap am1 = new AttributeMaps.DefaultAttributeMap();
+        AttributeMap am1 = new Attributes.DefaultAttributeMap();
         am1.put(IntegerToStringLoader.RESULT_ATTRIBUTE_KEY, "a1");
-        AttributeMap am2 = new AttributeMaps.DefaultAttributeMap();
+        AttributeMap am2 = new Attributes.DefaultAttributeMap();
         am2.put(IntegerToStringLoader.RESULT_ATTRIBUTE_KEY, "a2");
 
         Map<Integer, AttributeMap> req = new HashMap<Integer, AttributeMap>();

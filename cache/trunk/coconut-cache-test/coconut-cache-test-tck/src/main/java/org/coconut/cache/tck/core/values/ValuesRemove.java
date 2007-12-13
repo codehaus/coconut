@@ -3,11 +3,11 @@
  */
 package org.coconut.cache.tck.core.values;
 
-import static org.coconut.test.CollectionUtils.M1;
-import static org.coconut.test.CollectionUtils.M2;
-import static org.coconut.test.CollectionUtils.M4;
-import static org.coconut.test.CollectionUtils.MNAN1;
-import static org.coconut.test.CollectionUtils.MNAN2;
+import static org.coconut.test.CollectionTestUtil.M1;
+import static org.coconut.test.CollectionTestUtil.M2;
+import static org.coconut.test.CollectionTestUtil.M4;
+import static org.coconut.test.CollectionTestUtil.MNAN1;
+import static org.coconut.test.CollectionTestUtil.MNAN2;
 
 import java.util.Arrays;
 

@@ -12,7 +12,6 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
-import org.coconut.cache.internal.service.management.DefaultCacheManagementService;
 import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
 import org.coconut.cache.internal.service.spi.Resources;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
@@ -212,7 +211,7 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
 
     public void afterCacheClear(Cache<K, V> cache, long start,
             Collection<? extends CacheEntry<K, V>> removed, long capacity) {
-        long time = System.nanoTime() - start;
+        long time = getTimeStamp() - start;
         // TODO what about removed?
         cacheClearLast.run();
         cacheClearTime.report(time);
@@ -271,7 +270,7 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
 // }
 
     public void afterHit(Cache<K, V> cache, long started, K key, CacheEntry<K, V> entry) {
-        long time = System.nanoTime() - started;
+        long time = getTimeStamp() - started;
         entryGetHitTime.report(time);
         entryGetHitCount.incrementAndGet();
         double cost = entry.getCost();
@@ -283,7 +282,7 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
     public void afterMiss(Cache<K, V> cache, long started, K key, CacheEntry<K, V> previousEntry,
             CacheEntry<K, V> newEntry, boolean isExpired) {
 
-        long time = System.nanoTime() - started;
+        long time = getTimeStamp() - started;
         entryGetMissTime.report(time);
         entryGetMissCount.incrementAndGet();
     }
@@ -297,7 +296,7 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
             Map<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>> newPrevEntries) {}
 
     public void afterRemove(Cache<K, V> cache, long start, CacheEntry<K, V> removed) {
-        long time = System.nanoTime() - start;
+        long time =  getTimeStamp()- start;
         entryRemoveTime.report(time);
         entryRemoveCount.incrementAndGet();
     }
@@ -321,15 +320,15 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
             long previousVolume, long newVolume) {}
 
     public long beforeCacheClear(Cache<K, V> cache) {
-        return System.nanoTime();
+        return getTimeStamp();
     }
 
     public long beforeGet(Cache<K, V> cache, K key) {
-        return System.nanoTime();
+        return getTimeStamp();
     }
 
     public long beforeGetAll(Cache<K, V> cache, Collection<? extends K> keys) {
-        return System.nanoTime();
+        return getTimeStamp();
     }
 
     public void afterGetAll(Cache<K, V> cache, long started, Object[] keys,
@@ -346,24 +345,24 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
     }
 
     public long beforePut(Cache<K, V> cache, Object key, Object value) {
-        return System.nanoTime();
+        return getTimeStamp();
     }
 
     public long beforePutAll(Cache<K, V> cache, Map<? extends K, ? extends V> t,
             Map<? extends K, AttributeMap> attributes) {
-        return System.nanoTime();
+        return getTimeStamp();
     }
 
     public long beforeRemove(Cache<K, V> cache, Object key) {
-        return System.nanoTime();
+        return getTimeStamp();
     }
 
     public long beforeRemoveAll(Cache<K, V> cache, Collection keys) {
-        return System.nanoTime();
+        return getTimeStamp();
     }
 
     public long beforeTrim(Cache<K, V> cache, int size, long volume) {
-        return System.nanoTime();
+        return getTimeStamp();
     }
 
     public void cacheReset() {
@@ -419,5 +418,9 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
 
     public String toString() {
         return "Statistics Service";
+    }
+    
+    long getTimeStamp() {
+        return 0;
     }
 }

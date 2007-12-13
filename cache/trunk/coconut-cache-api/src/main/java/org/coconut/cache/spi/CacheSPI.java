@@ -29,10 +29,7 @@ import org.coconut.internal.util.ResourceBundleUtil;
 public final class CacheSPI {
 
     /** A message indicating a highly irregular error. */
-    public static final String HIGHLY_IRREGULAR_MSG = "This is a highly irregular exception, and most likely means that the jar containing this class is corrupt";
-
-    /** A message indicating a highly irregular error. */
-    static final String BUNDLE_NAME = "org.coconut.cache.messages";//$NON-NLS-1$
+    public static final String BUNDLE_NAME = "org.coconut.cache.messages";//$NON-NLS-1$
 
     /** A message indicating a highly irregular error. */
     public static final ResourceBundle DEFAULT_CACHE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
@@ -44,6 +41,9 @@ public final class CacheSPI {
                     CacheExpirationConfiguration.class, CacheLoadingConfiguration.class,
                     CacheManagementConfiguration.class, CacheServiceManagerConfiguration.class,
                     CacheStatisticsConfiguration.class, CacheWorkerConfiguration.class));
+
+    /** A message indicating a highly irregular error. */
+    public static final String HIGHLY_IRREGULAR_MSG = "This is a highly irregular exception, and most likely means that the jar containing this class is corrupt";
 
     /** Cannot instantiate. */
     // /CLOVER:OFF
@@ -83,5 +83,4 @@ public final class CacheSPI {
     public static String lookup(Class<?> c, String key, Object... o) {
         return ResourceBundleUtil.lookupKey(DEFAULT_CACHE_BUNDLE,c.getSimpleName() + "." + key, o);
     }
-
 }

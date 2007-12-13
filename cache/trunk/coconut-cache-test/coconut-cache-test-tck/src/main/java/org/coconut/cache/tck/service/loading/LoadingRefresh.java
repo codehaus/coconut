@@ -3,18 +3,18 @@
  */
 package org.coconut.cache.tck.service.loading;
 
-import static org.coconut.test.CollectionUtils.M1;
-import static org.coconut.test.CollectionUtils.M2;
-import static org.coconut.test.CollectionUtils.M3;
-import static org.coconut.test.CollectionUtils.M4;
-import static org.coconut.test.CollectionUtils.M5;
+import static org.coconut.test.CollectionTestUtil.M1;
+import static org.coconut.test.CollectionTestUtil.M2;
+import static org.coconut.test.CollectionTestUtil.M3;
+import static org.coconut.test.CollectionTestUtil.M4;
+import static org.coconut.test.CollectionTestUtil.M5;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.AttributeMaps;
+import org.coconut.attribute.Attributes;
 import org.coconut.attribute.common.TimeToRefreshAttribute;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.test.util.AsyncIntegerToStringLoader;
@@ -175,9 +175,9 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
 
     @Test
     public void loadAllWithAttributes() {
-        AttributeMap am1 = new AttributeMaps.DefaultAttributeMap();
+        AttributeMap am1 = new Attributes.DefaultAttributeMap();
         am1.put(IntegerToStringLoader.RESULT_ATTRIBUTE_KEY, "a1");
-        AttributeMap am2 = new AttributeMaps.DefaultAttributeMap();
+        AttributeMap am2 = new Attributes.DefaultAttributeMap();
         am2.put(IntegerToStringLoader.RESULT_ATTRIBUTE_KEY, "a2");
 
         Map<Integer, AttributeMap> req = new HashMap<Integer, AttributeMap>();

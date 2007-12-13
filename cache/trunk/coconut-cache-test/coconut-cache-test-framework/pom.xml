@@ -11,6 +11,11 @@
   <description>Coconut Cache Test Framework</description>
   <dependencies>
     <dependency>
+      <groupId>com.thoughtworks.xstream</groupId>
+      <artifactId>xstream</artifactId>
+      <version>1.2.2</version>
+    </dependency>
+    <dependency>
       <groupId>org.coconut.cache</groupId>
       <artifactId>coconut-cache-api</artifactId>
       <version>${project.version}</version>

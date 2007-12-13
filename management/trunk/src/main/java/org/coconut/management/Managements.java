@@ -123,7 +123,7 @@ public final class Managements {
         public void visitManagedObject(Object o) throws JMException {}
 
         // /CLOVER:ON
-
+        /** {@inheritDoc} */
         public Object traverse(Object node) throws JMException {
             visitManagedGroup((ManagedGroup) node);
             return Void.TYPE;

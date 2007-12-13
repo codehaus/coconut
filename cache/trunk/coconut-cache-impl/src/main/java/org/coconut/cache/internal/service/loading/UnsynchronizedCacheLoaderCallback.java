@@ -22,28 +22,37 @@ class UnsynchronizedCacheLoaderCallback<K, V> implements CacheLoaderCallback<K, 
     UnsynchronizedCacheLoaderCallback(final K key, AttributeMap attributes) {
         if (key == null) {
             throw new NullPointerException("key is null");
+        } else if (attributes == null) {
+            throw new NullPointerException("attributes is null");
         }
         this.key = key;
         this.attributes = attributes;
     }
 
+    /** {@inheritDoc} */
     public AttributeMap getAttributes() {
         return attributes;
     }
 
+    /** {@inheritDoc} */
     public K getKey() {
         return key;
     }
-    public V getResult() {
+
+    V getResult() {
         return result;
     }
-    public Throwable getCause() {
+
+    Throwable getCause() {
         return cause;
     }
+
+    /** {@inheritDoc} */
     public boolean isDone() {
         return isDone;
     }
 
+    /** {@inheritDoc} */
     public void completed(V result) {
         if (isDone) {
             throw new IllegalStateException("Result already set");
@@ -52,6 +61,7 @@ class UnsynchronizedCacheLoaderCallback<K, V> implements CacheLoaderCallback<K, 
         isDone = true;
     }
 
+    /** {@inheritDoc} */
     public void failed(Throwable cause) {
         if (cause == null) {
             throw new NullPointerException("cause is null");

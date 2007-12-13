@@ -57,6 +57,19 @@ final class ManagementUtil {
         return str;
     }
 
+    /**
+     * Creates a {@link DynamicMBean} from the specified parameters.
+     * 
+     * @param name
+     *            the name of the MBean
+     * @param description
+     *            the description of the MBean
+     * @param attributes
+     *            a Map of all attributes
+     * @param ops
+     *            a Map of all operations
+     * @return the newly created MBean
+     */
     public static DynamicMBean from(String name, String description,
             Map<String, AbstractManagedAttribute> attributes,
             Map<OperationKey, AbstractManagedOperation> ops) {
@@ -68,8 +81,10 @@ final class ManagementUtil {
      */
     static class MBean implements DynamicMBean {
 
+        /** The name of this MBean. */
         private final String name;
 
+        /** The description of this MBean. */
         private final String description;
 
         /** A map of all attributes. */
@@ -78,6 +93,18 @@ final class ManagementUtil {
         /** A map of all operations. */
         private final Map<OperationKey, AbstractManagedOperation> ops;
 
+        /**
+         * Creates a {@link DynamicMBean} from the specified parameters.
+         * 
+         * @param name
+         *            the name of the MBean
+         * @param description
+         *            the description of the MBean
+         * @param attributes
+         *            a Map of all attributes
+         * @param ops
+         *            a Map of all operations
+         */
         public MBean(String name, String description,
                 Map<String, AbstractManagedAttribute> attributes,
                 Map<OperationKey, AbstractManagedOperation> ops) {
@@ -141,7 +168,8 @@ final class ManagementUtil {
             if (aa != null) {
                 return aa.invoke(params);
             }
-            throw new IllegalArgumentException("Unknown method " + actionName + " [ signature = " + Arrays.toString(signature) + "]" ) ;
+            throw new IllegalArgumentException("Unknown method " + actionName + " [ signature = "
+                    + Arrays.toString(signature) + "]");
         }
 
         /** {@inheritDoc} */
@@ -205,13 +233,4 @@ final class ManagementUtil {
         return params;
     }
 
-    static String[] methodStringSignature(Method method) {
-        Class[] classes = method.getParameterTypes();
-        String[] params = new String[classes.length];
-
-        for (int i = 0; i < classes.length; i++) {
-            params[i] = classes[i].getName();
-        }
-        return params;
-    }
 }

@@ -3,7 +3,7 @@
  */
 package org.coconut.cache.tck.core.entryset;
 
-import static org.coconut.test.CollectionUtils.M1_TO_M5_SET;
+import static org.coconut.test.CollectionTestUtil.M1_TO_M5_SET;
 
 import java.util.HashSet;
 import java.util.concurrent.TimeUnit;

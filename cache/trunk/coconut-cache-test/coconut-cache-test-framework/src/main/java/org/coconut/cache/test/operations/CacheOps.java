@@ -1,38 +1,14 @@
 package org.coconut.cache.test.operations;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.coconut.cache.Cache;
-import org.coconut.operations.Ops.Generator;
 
-public abstract class CacheOps<K> implements Runnable {
-
-    public static final Collection<Class<? extends Runnable>> col = (Collection) Arrays.asList(
-            Get.class, Peek.class);
+public class CacheOps {
 
     static final String PREFIX = "test.opr.cache.";
 
-    final Generator<K> keyGenerator;
-
-    final Cache cache;
-
-    public CacheOps(Cache cache) {
-        this(cache, null);
-    }
-
-    public CacheOps(Cache cache, Generator<K> keyGenerator) {
-        this.cache = cache;
-        this.keyGenerator = keyGenerator;
-    }
-
-    public static class Get<K> extends CacheOps<K> {
+    public static class Get<K, V> extends AbstractOperation<K, V> {
         /** The name of this operation. */
         public final static String NAME = PREFIX + "get";
-
-        public Get(Cache cache, Generator<K> keyGenerator) {
-            super(cache, keyGenerator);
-        }
 
         /** {@inheritDoc} */
         public void run() {
@@ -43,19 +19,32 @@ public abstract class CacheOps<K> implements Runnable {
     /**
      * Invokes the {@link Cache#clear()} method.
      */
-    public static class Clear extends CacheOps {
+    public static class EntrySetIterateAll<K, V> extends AbstractOperation<K, V> {
+        /** The name of this operation. */
+        public final static String NAME = PREFIX + "entrySetIterateAll";
+
+        /** {@inheritDoc} */
+        public void run() {
+            synchronized (cache) {
+                int currentSize = cache.size();
+                int size = 0;
+                for (Object o : cache.entrySet()) {
+                    size++;
+                }
+                if (size != currentSize) {
+                    throw new AssertionError("Size difference should be 0, expected " + currentSize
+                            + ", was " + size);
+                }
+            }
+        }
+    }
+
+    /**
+     * Invokes the {@link Cache#clear()} method.
+     */
+    public static class Clear<K, V> extends AbstractOperation<K, V> {
         /** The name of this operation. */
         public final static String NAME = PREFIX + "clear";
-
-        /**
-         * Creates a new Clear operation.
-         * 
-         * @param cache
-         *            the cache to invoke the operation on
-         */
-        public Clear(Cache cache) {
-            super(cache);
-        }
 
         /** {@inheritDoc} */
         public void run() {
@@ -66,19 +55,9 @@ public abstract class CacheOps<K> implements Runnable {
     /**
      * Invokes the {@link Cache#shutdown()} method.
      */
-    public static class Shutdown extends CacheOps {
+    public static class Shutdown<K, V> extends AbstractOperation<K, V> {
         /** The name of this operation. */
         public final static String NAME = PREFIX + "shutdown";
-
-        /**
-         * Creates a new Clear operation.
-         * 
-         * @param cache
-         *            the cache to invoke the operation on
-         */
-        public Shutdown(Cache cache) {
-            super(cache);
-        }
 
         /** {@inheritDoc} */
         public void run() {
@@ -89,19 +68,9 @@ public abstract class CacheOps<K> implements Runnable {
     /**
      * Invokes the {@link Cache#shutdownNow()} method.
      */
-    public static class ShutdownNow extends CacheOps {
+    public static class ShutdownNow<K, V> extends AbstractOperation<K, V> {
         /** The name of this operation. */
         public final static String NAME = PREFIX + "shutdownNow";
-
-        /**
-         * Creates a new Clear operation.
-         * 
-         * @param cache
-         *            the cache to invoke the operation on
-         */
-        public ShutdownNow(Cache cache) {
-            super(cache);
-        }
 
         /** {@inheritDoc} */
         public void run() {
@@ -109,12 +78,8 @@ public abstract class CacheOps<K> implements Runnable {
         }
     }
 
-    public static class Peek<K> extends CacheOps<K> {
+    public static class Peek<K, V> extends AbstractOperation<K, V> {
         public final static String NAME = PREFIX + "peek";
-
-        public Peek(Cache cache, Generator<K> keyGenerator) {
-            super(cache, keyGenerator);
-        }
 
         /** {@inheritDoc} */
         public void run() {

@@ -47,6 +47,9 @@ public interface CacheWorkerService {
      * 
      * @param service
      *            the service that needs a ScheduledExecutorService
+     * @param attributes
+     *            a map of attributes that can be used by the work service to determind
+     *            what types of executor services that should be created
      * @return a ScheduledExecutorService for the specified service
      */
     ScheduledExecutorService getScheduledExecutorService(Object service, AttributeMap attributes);

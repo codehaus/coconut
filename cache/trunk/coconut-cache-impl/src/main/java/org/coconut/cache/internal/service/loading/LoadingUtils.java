@@ -107,11 +107,31 @@ public final class LoadingUtils {
      * @param service
      *            the CacheLoadingService to wrap
      * @return a wrapped service that only exposes CacheLoadingService methods
+     * @param <K>
+     *            the type of keys maintained by this service
+     * @param <V>
+     *            the type of mapped values
      */
     public static <K, V> CacheLoadingService<K, V> wrapService(CacheLoadingService<K, V> service) {
         return new DelegatedCacheLoadingService<K, V>(service);
     }
 
+    /**
+     * Creates a new Callable that will call the specified loader service to load a new
+     * AbstractCacheEntry.
+     * 
+     * @param loaderService
+     *            the loading service to load from
+     * @param key
+     *            the key that should be loaded
+     * @param attributes
+     *            a map of attributes that should be loaded
+     * @return the newly created callable
+     * @param <K>
+     *            the type of keys maintained by this service
+     * @param <V>
+     *            the type of mapped values
+     */
     static <K, V> Callable<AbstractCacheEntry<K, V>> createLoadCallable(
             InternalCacheLoadingService<K, V> loaderService, K key, AttributeMap attributes) {
         return new LoadValueCallable<K, V>(loaderService, key, attributes);

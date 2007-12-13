@@ -285,20 +285,20 @@ public class LifecycleErroneousStart extends AbstractCacheTCKTest {
         CacheExceptionContext context;
 
         @Override
-        public void lifecycleStartFailed(CacheExceptionContext context, Object service,
-                Exception cause) {
-            this.cause = cause;
+        public void serviceManagerStartFailed(CacheExceptionContext context, CacheConfiguration conf,
+                Object service) {
+            this.cause = context.getCause();
             this.service = service;
             this.context = context;
-            super.lifecycleStartFailed(context, service, cause);
+            super.serviceManagerStartFailed(context, conf, service);
         }
 
         @Override
-        public void lifecycleShutdownFailed(CacheExceptionContext context,
-                CacheLifecycle lifecycle, Exception cause) {
+        public void serviceManagerShutdownFailed(CacheExceptionContext context,
+                CacheLifecycle lifecycle) {
             this.shutdownCache = context.getCache();
-            shutdownMap.put(lifecycle, cause);
-            super.lifecycleShutdownFailed(context, lifecycle, cause);
+            shutdownMap.put(lifecycle, context.getCause());
+            super.serviceManagerShutdownFailed(context, lifecycle);
         }
 
         @Override

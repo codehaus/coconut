@@ -8,8 +8,6 @@ import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.lifecycle.LifecycleVerifier;
 import org.coconut.cache.test.util.lifecycle.LifecycleVerifierContext;
-import org.coconut.core.Loggers;
-import org.coconut.core.Logger.Level;
 import org.coconut.test.throwables.RuntimeException1;
 import org.coconut.test.throwables.RuntimeException2;
 import org.coconut.test.throwables.RuntimeException3;
@@ -29,7 +27,7 @@ public class LifecycleErroneousTermination extends AbstractCacheTCKTest {
         context = new LifecycleVerifierContext(conf);
         conf.exceptionHandling().setExceptionHandler(handler);
         //conf.management().setEnabled(true);
-       // conf.setDefaultLogger(Loggers.systemErrLogger(Level.Debug));
+       //conf.setDefaultLogger(Loggers.systemErrLogger(Level.Debug));
     }
 
     @After

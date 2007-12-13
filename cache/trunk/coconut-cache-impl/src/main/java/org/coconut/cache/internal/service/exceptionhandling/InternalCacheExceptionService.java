@@ -5,6 +5,7 @@ package org.coconut.cache.internal.service.exceptionhandling;
 
 import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
+import org.coconut.core.Logger;
 
 /**
  * An exception service available as an internal service at runtime.
@@ -34,4 +35,8 @@ public interface InternalCacheExceptionService<K, V> {
      * @return a new CacheExceptionContext.
      */
     CacheExceptionContext<K, V> createContext();
+    
+    CacheExceptionContext<K, V> createContext(Throwable cause);
+    
+    Logger getExceptionLogger();
 }

@@ -39,28 +39,24 @@ public final class CacheEventFilters {
             .isType(CacheEntryEvent.class));
 
     /**
-     * A {@link Predicate} that only accepts instances of
-     * ItemUpdated events.
+     * A {@link Predicate} that only accepts instances of ItemUpdated events.
      */
     public final static Predicate<?> CACHEENTRY_ADDED_FILTER = Predicates.isType(ItemAdded.class);
 
     /**
-     * A {@link Predicate} that only accepts instances of
-     * ItemUpdated events.
+     * A {@link Predicate} that only accepts instances of ItemUpdated events.
      */
     public final static Predicate<?> CACHEENTRY_REMOVED_FILTER = Predicates
             .isType(ItemRemoved.class);
 
     /**
-     * A {@link Predicate} that only accepts instances of
-     * ItemUpdated events.
+     * A {@link Predicate} that only accepts instances of ItemUpdated events.
      */
     public final static Predicate<?> CACHEENTRY_UPDATED_FILTER = Predicates
             .isType(ItemUpdated.class);
 
     /**
-     * A {@link Predicate} that will accept all instances of
-     * CacheItemEvent.
+     * A {@link Predicate} that will accept all instances of CacheItemEvent.
      */
     public final static Predicate<?> CACHEENTRYEVENT_FILTER = Predicates
             .isType(CacheEntryEvent.class);
@@ -147,6 +143,9 @@ public final class CacheEventFilters {
         return Predicates.mapAndEvaluate((Mapper) EVENT_TO_NAME_TRANSFORMER, filter);
     }
 
+    /**
+     * A Mapper mapping from a CacheEvent to the cache in which is it attached.
+     */
     static class EventToCacheMapper<K, V> implements Mapper<CacheEvent<K, V>, Cache<K, V>>,
             Serializable {
 
@@ -158,7 +157,9 @@ public final class CacheEventFilters {
             return from.getCache();
         }
     }
-
+    /**
+     * A Mapper mapping from a CacheEvent to the name of the event.
+     */
     static class EventToNameMapper<K, V> implements Mapper<CacheEvent<K, V>, String>, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -1277521728691313867L;

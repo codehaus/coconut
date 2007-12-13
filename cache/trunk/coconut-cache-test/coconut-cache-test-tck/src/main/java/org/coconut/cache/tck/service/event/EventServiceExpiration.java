@@ -5,9 +5,9 @@ package org.coconut.cache.tck.service.event;
 
 import static org.coconut.cache.service.event.CacheEventFilters.CACHEENTRYEVENT_FILTER;
 import static org.coconut.cache.service.event.CacheEventFilters.CACHEENTRY_REMOVED_FILTER;
-import static org.coconut.test.CollectionUtils.M1;
-import static org.coconut.test.CollectionUtils.M2;
-import static org.coconut.test.CollectionUtils.M3;
+import static org.coconut.test.CollectionTestUtil.M1;
+import static org.coconut.test.CollectionTestUtil.M2;
+import static org.coconut.test.CollectionTestUtil.M3;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,7 +17,7 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated;
 import org.coconut.cache.test.util.IntegerToStringLoader;
-import org.coconut.test.CollectionUtils;
+import org.coconut.test.CollectionTestUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,7 +40,7 @@ public class EventServiceExpiration extends AbstractEventTestBundle {
         c = newCache(newConf().setClock(clock).event().setEnabled(true));
         subscribe(CACHEENTRY_REMOVED_FILTER);
         expiration().put(M1.getKey(), M1.getValue(), 1, TimeUnit.MILLISECONDS);
-        expiration().putAll(CollectionUtils.asMap(M2, M3), 2, TimeUnit.MILLISECONDS);
+        expiration().putAll(CollectionTestUtil.asMap(M2, M3), 2, TimeUnit.MILLISECONDS);
 
         clock.incrementTimestamp();
         expiration().purgeExpired();
@@ -63,7 +63,7 @@ public class EventServiceExpiration extends AbstractEventTestBundle {
         c = newCache(newConf().setClock(clock).loading().setLoader(
                 new IntegerToStringLoader()).c().event().setEnabled(true));
         expiration().put(M1.getKey(), M1.getValue(), 1, TimeUnit.MILLISECONDS);
-        expiration().putAll(CollectionUtils.asMap(M2, M3), 3, TimeUnit.MILLISECONDS);
+        expiration().putAll(CollectionTestUtil.asMap(M2, M3), 3, TimeUnit.MILLISECONDS);
         subscribe(CACHEENTRYEVENT_FILTER);
         clock.incrementTimestamp(2);
         assertSize(3);

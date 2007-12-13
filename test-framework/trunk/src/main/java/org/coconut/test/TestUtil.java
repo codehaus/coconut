@@ -31,46 +31,41 @@ public class TestUtil {
         try {
             return readWrite(o);
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new AssertionFailedError("not serialiable");
+            throw new AssertionFailedError(o + " not serialiable");
         }
     }
 
     public static void assertNotSerializable(Object o) {
         try {
             readWrite(o);
-        } catch (NotSerializableException nse) {
-            // ignore
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new AssertionFailedError("Unknown exception");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            throw new AssertionFailedError("Unknown exception");
-        }
+            throw new AssertionFailedError(o + " is serialiable");
+        } catch (NotSerializableException nse) {/* ok */}
     }
 
     public static void assertIsSerializable(Object o) {
+        // TODO test has serializableID
         try {
             readWrite(o);
-            // TODO test has serializableID
-        } catch (IOException e) {
-            throw new AssertionFailedError("class " + o.getClass() + " not serializable");
-        } catch (ClassNotFoundException e) {
-            // should not happen
-            e.printStackTrace();
-            throw new AssertionFailedError("class " + o.getClass()
-                    + " not serializable, this is strange");
+        } catch (NotSerializableException e) {
+            throw new AssertionFailedError(o + " not serialiable");
         }
     }
 
-    static Object readWrite(Object o) throws IOException, ClassNotFoundException {
-        ByteArrayOutputStream bout = new ByteArrayOutputStream(20000);
-        ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(bout));
-        out.writeObject(o);
-        out.close();
-        ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
-        ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(bin));
-        return in.readObject();
+    static Object readWrite(Object o) throws NotSerializableException {
+        try {
+            ByteArrayOutputStream bout = new ByteArrayOutputStream(20000);
+            ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(bout));
+            out.writeObject(o);
+            out.close();
+            ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
+            ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(bin));
+            return in.readObject();
+        } catch (NotSerializableException nse) {
+            throw nse;
+        } catch (ClassNotFoundException e) {
+            throw new Error(e);// should'nt happen
+        } catch (IOException e) {
+            throw new Error(e);// should'nt happen
+        }
     }
 }

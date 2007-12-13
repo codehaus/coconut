@@ -3,8 +3,8 @@
  */
 package org.coconut.cache.tck.service.exceptionhandling;
 
-import static org.coconut.test.CollectionUtils.M1;
-import static org.coconut.test.CollectionUtils.M2;
+import static org.coconut.test.CollectionTestUtil.M1;
+import static org.coconut.test.CollectionTestUtil.M2;
 
 import java.util.logging.LogManager;
 
@@ -93,9 +93,8 @@ public class ExceptionHandling extends AbstractCacheTCKTest {
         }
 
         @Override
-        public String loadingFailed(CacheExceptionContext<Integer, String> context,
-                CacheLoader<? super Integer, ?> loader, Integer key, AttributeMap map,
-                Throwable cause) {
+        public String loadingLoadValueFailed(CacheExceptionContext<Integer, String> context,
+                CacheLoader<? super Integer, ?> loader, Integer key, AttributeMap map) {
             assertSame(logger, context.defaultLogger());
             return "foo";
         }
@@ -120,16 +119,15 @@ public class ExceptionHandling extends AbstractCacheTCKTest {
         final Logger logger = context.mock(Logger.class);
         c = newCache(newConf().exceptionHandling().setExceptionHandler(new BaseExceptionHandler() {
             @Override
-            public String loadingFailed(CacheExceptionContext<Integer, String> context,
-                    CacheLoader<? super Integer, ?> loader, Integer key, AttributeMap map,
-                    Throwable cause) {
+            public String loadingLoadValueFailed(CacheExceptionContext<Integer, String> context,
+                    CacheLoader<? super Integer, ?> loader, Integer key, AttributeMap map) {
                 try {
                     assertNotNull(context);
                     assertSame(logger, context.defaultLogger());
                     assertSame(c, context.getCache());
                     assertEquals(10, key.intValue());
                     assertNotNull(map);
-                    assertTrue(cause instanceof Exception1);
+                    assertTrue(context.getCause() instanceof Exception1);
                 } catch (Error t) {
                     failure = t;
                     throw t;
@@ -152,16 +150,15 @@ public class ExceptionHandling extends AbstractCacheTCKTest {
         final Logger logger = context.mock(Logger.class);
         c = newCache(newConf().exceptionHandling().setExceptionHandler(new BaseExceptionHandler() {
             @Override
-            public String loadingFailed(CacheExceptionContext<Integer, String> context,
-                    CacheLoader<? super Integer, ?> loader, Integer key, AttributeMap map,
-                    Throwable cause) {
+            public String loadingLoadValueFailed(CacheExceptionContext<Integer, String> context,
+                    CacheLoader<? super Integer, ?> loader, Integer key, AttributeMap map) {
                 try {
                     assertNotNull(context);
                     assertSame(logger, context.defaultLogger());
                     assertSame(c, context.getCache());
                     assertEquals(10, key.intValue());
                     assertNotNull(map);
-                    assertTrue(cause instanceof Exception1);
+                    assertTrue(context.getCause() instanceof Exception1);
                 } catch (Error t) {
                     failure = t;
                     throw t;

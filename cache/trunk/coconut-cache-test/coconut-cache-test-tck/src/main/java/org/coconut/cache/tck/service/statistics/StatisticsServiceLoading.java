@@ -3,9 +3,9 @@
  */
 package org.coconut.cache.tck.service.statistics;
 
-import static org.coconut.test.CollectionUtils.M2;
-import static org.coconut.test.CollectionUtils.M4;
-import static org.coconut.test.CollectionUtils.M5;
+import static org.coconut.test.CollectionTestUtil.M2;
+import static org.coconut.test.CollectionTestUtil.M4;
+import static org.coconut.test.CollectionTestUtil.M5;
 
 import java.util.Arrays;
 

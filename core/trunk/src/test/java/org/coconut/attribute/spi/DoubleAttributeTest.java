@@ -5,7 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.AttributeMaps;
+import org.coconut.attribute.Attributes;
 import org.coconut.test.TestUtil;
 import org.junit.Test;
 
@@ -53,11 +53,11 @@ public class DoubleAttributeTest {
 
     @Test
     public void get() {
-        AttributeMap am = AttributeMaps.EMPTY_MAP;
-        AttributeMap am1 = AttributeMaps.singleton(LA, -1D);
-        AttributeMap am10000 = AttributeMaps.singleton(LA, 10000D);
-        AttributeMap ammax = AttributeMaps.singleton(LA, Double.MAX_VALUE);
-        AttributeMap amINf = AttributeMaps.singleton(LA, Double.POSITIVE_INFINITY);
+        AttributeMap am = Attributes.EMPTY_MAP;
+        AttributeMap am1 = Attributes.singleton(LA, -1D);
+        AttributeMap am10000 = Attributes.singleton(LA, 10000D);
+        AttributeMap ammax = Attributes.singleton(LA, Double.MAX_VALUE);
+        AttributeMap amINf = Attributes.singleton(LA, Double.POSITIVE_INFINITY);
 
         assertEquals(100.5, LA.getPrimitive(am));
         assertEquals(-1D, LA.getPrimitive(am1));
@@ -75,7 +75,7 @@ public class DoubleAttributeTest {
 
     @Test
     public void set() {
-        AttributeMap am = new AttributeMaps.DefaultAttributeMap();
+        AttributeMap am = new Attributes.DefaultAttributeMap();
         assertEquals(10.5, LA.setAttribute(am, 10.5D).get(LA));
         assertEquals(10000d, LA.setValue(am, new Double(10000)).get(LA));
         assertEquals(Double.MAX_VALUE, LA.setAttribute(am, Double.MAX_VALUE).get(LA));
@@ -83,12 +83,24 @@ public class DoubleAttributeTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void setIAE() {
-        LA.setAttribute(new AttributeMaps.DefaultAttributeMap(), Double.NaN);
+        LA.setAttribute(new Attributes.DefaultAttributeMap(), Double.NaN);
     }
 
     @Test(expected = NullPointerException.class)
     public void setNPE() {
         LA.setAttribute(null, 1L);
+    }
+
+    @Test
+    public void toSingleton() {
+        assertEquals(-10.0, LA.toSingleton(-10).get(LA));
+        assertEquals(10.0, LA.toSingleton(10).get(LA));
+        assertEquals(Double.MAX_VALUE, LA.toSingleton(Double.MAX_VALUE).get(LA));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void toSingletonIAE() {
+        LA.toSingleton(Double.NaN);
     }
 
     @Test
@@ -102,13 +114,13 @@ public class DoubleAttributeTest {
                 .toString()));
         assertEquals(Double.NaN, LA.fromString(new Double(Double.NaN).toString()));
     }
-    
+
     @Test
     public void mapToLong() {
         TestUtil.assertIsSerializable(LA.mapToDouble());
-        AttributeMap am = AttributeMaps.singleton(LA, 100.1);
+        AttributeMap am = Attributes.singleton(LA, 100.1);
         assertEquals(100.1, LA.mapToDouble().map(am));
-        assertEquals(100.5, LA.mapToDouble().map(AttributeMaps.EMPTY_MAP));
+        assertEquals(100.5, LA.mapToDouble().map(Attributes.EMPTY_MAP));
     }
 
     @Test(expected = NullPointerException.class)

@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.AttributeMaps;
+import org.coconut.attribute.Attributes;
 
 /**
  * An abstract implementation of {@link Attribute}.
@@ -120,12 +120,12 @@ public abstract class AbstractAttribute<T> implements Attribute<T>, Serializable
      * value.
      * 
      * @param value
-     *            the value to map to
+     *            the value to create the singleton from
      * @return an AttributeMap containing only this attribute mapping to the specified
      *         value
      */
     protected AttributeMap toSingleton(T value) {
         checkValid(value);
-        return AttributeMaps.singleton(this, value);
+        return Attributes.singleton(this, value);
     }
 }

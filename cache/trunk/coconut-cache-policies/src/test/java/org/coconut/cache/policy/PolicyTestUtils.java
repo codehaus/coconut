@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.coconut.attribute.AttributeMaps;
+import org.coconut.attribute.Attributes;
 
 
 /**
@@ -32,7 +32,7 @@ public final class PolicyTestUtils {
     public static int[] addToPolicy(ReplacementPolicy<Integer> policy, int start, int stop) {
         int[] result = new int[stop - start + 1];
         for (int i = start; i <= stop; i++) {
-            result[i] = policy.add(VALUES[i], AttributeMaps.EMPTY_MAP);
+            result[i] = policy.add(VALUES[i], Attributes.EMPTY_MAP);
         }
         return result;
     } 

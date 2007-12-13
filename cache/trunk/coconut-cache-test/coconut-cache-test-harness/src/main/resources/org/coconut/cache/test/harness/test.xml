@@ -9,12 +9,16 @@
     </eviction>
     <configuration
       type="org.coconut.cache.test.harness.HarnessTestConfiguration">
-      <operations defaultprefix="org.coconut.cache.test.operations">
-        <operation class="CacheOps$Clear">0.0020</operation>
-        <operation class="CacheOps$Get">50.0</operation>
-        <operation class="LoadingOps$ForceLoad">0.3</operation>
-        <operation class="LoadingOps$Load">1.0</operation>
-      </operations>
+      <lines defaultprefix="org.coconut.cache.test.operations">
+        <line threads="10" type="pct">
+          <operation class="CacheOps$Get" weight="50.0" />
+        </line>
+        <line threads="20">
+          <operation class="CacheOps$Get" pct="50.0" />
+          <wait time="1" unit="m" />
+        </line>
+      </lines>
+
       <testruns>
         <testrun name="sometest" description="dksjfskdjfdkjf" time="1"
           unit="h">

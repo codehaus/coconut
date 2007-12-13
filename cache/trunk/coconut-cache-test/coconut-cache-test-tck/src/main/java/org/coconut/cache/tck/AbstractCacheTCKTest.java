@@ -35,7 +35,7 @@ import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.cache.test.util.ThreadServiceTestHelper;
 import org.coconut.core.Clock.DeterministicClock;
 import org.coconut.management.ManagedGroup;
-import org.coconut.test.CollectionUtils;
+import org.coconut.test.CollectionTestUtil;
 import org.junit.Before;
 
 /**
@@ -74,7 +74,7 @@ public class AbstractCacheTCKTest extends Assert {
     protected void assertGetAll(Map.Entry<Integer, String>... e) {
         Map<Integer, String> all = getAll(e);
         for (Map.Entry<Integer, String> entry : all.entrySet()) {
-            assertEquals(entry.getValue(), CollectionUtils.getValue(entry.getKey()));
+            assertEquals(entry.getValue(), CollectionTestUtil.getValue(entry.getKey()));
         }
     }
 
@@ -206,7 +206,7 @@ public class AbstractCacheTCKTest extends Assert {
     }
 
     protected Map<Integer, String> getAll(Map.Entry<Integer, String>... e) {
-        return c.getAll(CollectionUtils.asMap(e).keySet());
+        return c.getAll(CollectionTestUtil.asMap(e).keySet());
     }
 
     protected CacheEntry<Integer, String> getEntry(Map.Entry<Integer, String> e) {
@@ -334,7 +334,7 @@ public class AbstractCacheTCKTest extends Assert {
     }
 
     protected void putAll(Map.Entry<Integer, String>... entries) {
-        c.putAll(CollectionUtils.asMap(entries));
+        c.putAll(CollectionTestUtil.asMap(entries));
     }
 
     protected String putIfAbsent(Integer key, String value) {
@@ -369,8 +369,9 @@ public class AbstractCacheTCKTest extends Assert {
         c = newCache(conf);
     }
 
-    protected void setCache() {
+    protected Cache<Integer,String> setCache() {
         c = newCache(conf);
+        return c;
     }
 
     protected void setCache(int entries) {
@@ -443,7 +444,6 @@ public class AbstractCacheTCKTest extends Assert {
         @Override
         public void start(CacheServiceManagerService serviceManager) {
             throw new IllegalMonitorStateException();
-            //super.start(serviceManager);
         }
 
         @Override

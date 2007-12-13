@@ -60,14 +60,18 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
     public DefaultCacheEventService(InternalCacheServiceManager manager, CacheEventConfiguration co) {
         this.manager = manager;
         this.offerable = eb;
-        this.doAdd = co.isIncluded(CacheEntryEvent.ItemAdded.class);
-        this.doClear = co.isIncluded(CacheEvent.CacheCleared.class);
-        this.doRemove = co.isIncluded(CacheEntryEvent.ItemRemoved.class);
-        this.doExpire = co.isIncluded(CacheEntryEvent.ItemRemoved.class);
-        this.doEvict = co.isIncluded(CacheEntryEvent.ItemRemoved.class);
-        this.doUpdate = co.isIncluded(CacheEntryEvent.ItemUpdated.class);
-        this.doStart = co.isIncluded(CacheEvent.CacheStarted.class);
-        this.doStopped = co.isIncluded(CacheEvent.CacheStopped.class);
+        this.doAdd = isIncluded(co, CacheEntryEvent.ItemAdded.class);
+        this.doClear = isIncluded(co, CacheEvent.CacheCleared.class);
+        this.doRemove = isIncluded(co, CacheEntryEvent.ItemRemoved.class);
+        this.doExpire = isIncluded(co, CacheEntryEvent.ItemRemoved.class);
+        this.doEvict = isIncluded(co, CacheEntryEvent.ItemRemoved.class);
+        this.doUpdate = isIncluded(co, CacheEntryEvent.ItemUpdated.class);
+        this.doStart = isIncluded(co, CacheEvent.CacheStarted.class);
+        this.doStopped = isIncluded(co, CacheEvent.CacheStopped.class);
+    }
+
+    private boolean isIncluded(CacheEventConfiguration co, Class c) {
+        return co.isIncluded(c);
     }
 
     /** {@inheritDoc} */

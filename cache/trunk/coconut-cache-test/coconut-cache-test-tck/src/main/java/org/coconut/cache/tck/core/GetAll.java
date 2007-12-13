@@ -3,10 +3,10 @@
  */
 package org.coconut.cache.tck.core;
 
-import static org.coconut.test.CollectionUtils.M1;
-import static org.coconut.test.CollectionUtils.M4;
-import static org.coconut.test.CollectionUtils.M5;
-import static org.coconut.test.CollectionUtils.asList;
+import static org.coconut.test.CollectionTestUtil.M1;
+import static org.coconut.test.CollectionTestUtil.M4;
+import static org.coconut.test.CollectionTestUtil.M5;
+import static org.coconut.test.CollectionTestUtil.asList;
 
 import java.util.Arrays;
 import java.util.Map;

@@ -4,7 +4,7 @@
 package org.coconut.attribute.common;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.AttributeMaps;
+import org.coconut.attribute.Attributes;
 import org.coconut.attribute.spi.AbstractDoubleAttribute;
 
 /**
@@ -77,6 +77,6 @@ public final class CostAttribute extends AbstractDoubleAttribute {
      */
     public static AttributeMap singleton(double value) {
         INSTANCE.checkValid(value);
-        return AttributeMaps.singleton(INSTANCE, value);
+        return Attributes.singleton(INSTANCE, value);
     }
 }

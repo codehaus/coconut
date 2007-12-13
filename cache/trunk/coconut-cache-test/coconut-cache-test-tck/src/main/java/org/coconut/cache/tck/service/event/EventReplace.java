@@ -4,8 +4,8 @@
 package org.coconut.cache.tck.service.event;
 
 import static org.coconut.cache.service.event.CacheEventFilters.CACHEENTRYEVENT_FILTER;
-import static org.coconut.test.CollectionUtils.M2;
-import static org.coconut.test.CollectionUtils.M3;
+import static org.coconut.test.CollectionTestUtil.M2;
+import static org.coconut.test.CollectionTestUtil.M3;
 
 import org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated;
 import org.junit.Test;

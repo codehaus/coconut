@@ -3,7 +3,7 @@
  */
 package org.coconut.cache.tck.service.servicemanager;
 
-import static org.coconut.test.CollectionUtils.M1;
+import static org.coconut.test.CollectionTestUtil.M1;
 
 import java.util.concurrent.TimeUnit;
 

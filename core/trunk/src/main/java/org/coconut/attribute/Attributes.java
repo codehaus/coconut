@@ -17,14 +17,14 @@ import java.util.Set;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: AttributeMaps.java 472 2007-11-19 09:34:26Z kasper $
  */
-public final class AttributeMaps {
+public final class Attributes {
 
     /** The empty attribute map (immutable). This attribute map is serializable. */
     public final static AttributeMap EMPTY_MAP = new EmptyMap();
 
     // /CLOVER:OFF
     /** Cannot instantiate. */
-    private AttributeMaps() {}
+    private Attributes() {}
 
     // /CLOVER:ON
 

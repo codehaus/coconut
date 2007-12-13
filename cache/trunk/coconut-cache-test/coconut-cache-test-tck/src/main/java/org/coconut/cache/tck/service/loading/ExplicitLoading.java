@@ -3,8 +3,8 @@
  */
 package org.coconut.cache.tck.service.loading;
 
-import static org.coconut.test.CollectionUtils.M1;
-import static org.coconut.test.CollectionUtils.M2;
+import static org.coconut.test.CollectionTestUtil.M1;
+import static org.coconut.test.CollectionTestUtil.M2;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -13,8 +13,7 @@ import java.util.Map;
 
 import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.AttributeMaps;
-import org.coconut.attribute.spi.AbstractAttribute;
+import org.coconut.attribute.Attributes;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.test.TestUtil;
@@ -34,9 +33,9 @@ public class ExplicitLoading extends AbstractLoadingTestBundle {
     private final static AttributeMap ATR_FO1;
 
     static {
-        ATR_FOO = new AttributeMaps.DefaultAttributeMap();
+        ATR_FOO = new Attributes.DefaultAttributeMap();
         ATR_FOO.put(TestUtil.dummy(Attribute.class), "boo");
-        ATR_FO1 = new AttributeMaps.DefaultAttributeMap();
+        ATR_FO1 = new Attributes.DefaultAttributeMap();
         ATR_FO1.put(TestUtil.dummy(Attribute.class), "oob");
     }
 
@@ -47,7 +46,7 @@ public class ExplicitLoading extends AbstractLoadingTestBundle {
 
     @Test(expected = NullPointerException.class)
     public void loadNPE1() {
-        loading().load(null, AttributeMaps.EMPTY_MAP);
+        loading().load(null, Attributes.EMPTY_MAP);
     }
 
     @Test(expected = NullPointerException.class)
@@ -129,9 +128,9 @@ public class ExplicitLoading extends AbstractLoadingTestBundle {
 
     @Test
     public void loadAllWithAttributes() {
-        AttributeMap am1 = new AttributeMaps.DefaultAttributeMap();
+        AttributeMap am1 = new Attributes.DefaultAttributeMap();
         am1.put(IntegerToStringLoader.RESULT_ATTRIBUTE_KEY, "a1");
-        AttributeMap am2 = new AttributeMaps.DefaultAttributeMap();
+        AttributeMap am2 = new Attributes.DefaultAttributeMap();
         am2.put(IntegerToStringLoader.RESULT_ATTRIBUTE_KEY, "a2");
 
         Map<Integer, AttributeMap> req = new HashMap<Integer, AttributeMap>();
@@ -151,9 +150,9 @@ public class ExplicitLoading extends AbstractLoadingTestBundle {
         awaitAllLoads();
         assertEquals(1, loader.getNumberOfLoads());
 
-        AttributeMap am1 = new AttributeMaps.DefaultAttributeMap();
+        AttributeMap am1 = new Attributes.DefaultAttributeMap();
         am1.put(IntegerToStringLoader.RESULT_ATTRIBUTE_KEY, "a1");
-        AttributeMap am2 = new AttributeMaps.DefaultAttributeMap();
+        AttributeMap am2 = new Attributes.DefaultAttributeMap();
         am2.put(IntegerToStringLoader.RESULT_ATTRIBUTE_KEY, "a2");
 
         Map<Integer, AttributeMap> req = new HashMap<Integer, AttributeMap>();

@@ -47,9 +47,9 @@ public class UnsynchronizedCacheLoaderService<K, V> extends AbstractCacheLoading
             }
             V result = callback.getResult();
             if (callback.getCause() != null) {
-                result = getExceptionHandler().getHandler().loadingFailed(
-                        getExceptionHandler().createContext(), getLoader(), callback.getKey(),
-                        callback.getAttributes(), callback.getCause());
+                result = getExceptionHandler().getHandler().loadingLoadValueFailed(
+                        getExceptionHandler().createContext(callback.getCause()), getLoader(), callback.getKey(),
+                        callback.getAttributes());
             }
             keyValues.put(callback.getKey(), result);
             keyAttributes.put(callback.getKey(), callback.getAttributes());

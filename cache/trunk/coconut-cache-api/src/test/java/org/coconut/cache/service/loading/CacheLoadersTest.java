@@ -5,7 +5,7 @@ package org.coconut.cache.service.loading;
 
 import static junit.framework.Assert.*;
 
-import org.coconut.attribute.AttributeMaps;
+import org.coconut.attribute.Attributes;
 import org.coconut.cache.Cache;
 import org.coconut.cache.DummyCache;
 import org.jmock.Expectations;
@@ -35,7 +35,7 @@ public class CacheLoadersTest {
     @Test
     public void nullLoader() throws Exception {
         CacheLoader<Integer, String> cl = CacheLoaders.nullLoader();
-        assertNull(cl.load(1, AttributeMaps.EMPTY_MAP));
+        assertNull(cl.load(1, Attributes.EMPTY_MAP));
         final CacheLoaderCallback<Integer, String> callback = context
                 .mock(CacheLoaderCallback.class);
 // context.checking(new Expectations() {
@@ -132,7 +132,7 @@ public class CacheLoadersTest {
                 will(returnValue("foo"));
             }
         });
-        assertEquals("foo", CacheLoaders.cacheAsCacheLoader(c).load(1, AttributeMaps.EMPTY_MAP));
+        assertEquals("foo", CacheLoaders.cacheAsCacheLoader(c).load(1, Attributes.EMPTY_MAP));
     }
 
     @Before

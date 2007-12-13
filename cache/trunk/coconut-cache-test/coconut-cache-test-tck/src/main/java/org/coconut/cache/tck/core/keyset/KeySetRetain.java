@@ -3,10 +3,10 @@
  */
 package org.coconut.cache.tck.core.keyset;
 
-import static org.coconut.test.CollectionUtils.M1;
-import static org.coconut.test.CollectionUtils.M2;
-import static org.coconut.test.CollectionUtils.M3;
-import static org.coconut.test.CollectionUtils.M5;
+import static org.coconut.test.CollectionTestUtil.M1;
+import static org.coconut.test.CollectionTestUtil.M2;
+import static org.coconut.test.CollectionTestUtil.M3;
+import static org.coconut.test.CollectionTestUtil.M5;
 
 import java.util.Arrays;
 import java.util.Collections;

@@ -62,37 +62,29 @@ public class CacheExceptionHandlingConfigurationTest {
     public static class LoadableAbstractCacheExceptionHandler extends
             CacheExceptionHandler<Integer, String> {
 
-        @Override
         public void handleError(CacheExceptionContext<Integer, String> context,
                 Error cause) {}
 
-        @Override
         public void handleException(CacheExceptionContext<Integer, String> context,
                 Exception cause) {}
 
-        @Override
         public void handleRuntimeException(
                 CacheExceptionContext<Integer, String> context, RuntimeException cause) {}
 
-        @Override
         public void handleWarning(CacheExceptionContext<Integer, String> context, String warning) {}}
 
     public class NonLoadableAbstractCacheExceptionHandler extends
             CacheExceptionHandler<Integer, String> {
 
-        @Override
         public void handleError(CacheExceptionContext<Integer, String> context,
                 Error cause) {}
 
-        @Override
         public void handleException(CacheExceptionContext<Integer, String> context,
                 Exception cause) {}
 
-        @Override
         public void handleRuntimeException(
                 CacheExceptionContext<Integer, String> context, RuntimeException cause) {}
 
-        @Override
         public void handleWarning(CacheExceptionContext<Integer, String> context, String warning) {}}
 
 }

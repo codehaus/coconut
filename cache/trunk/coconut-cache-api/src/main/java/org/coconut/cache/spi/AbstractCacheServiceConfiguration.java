@@ -164,5 +164,12 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
         initialize(conf);
     }
 
+    /**
+     * Called after this configuration has been registered with an
+     * {@link CacheConfiguration} instance.
+     * 
+     * @param conf
+     *            the cache configuration that this configuration is part
+     */
     protected void initialize(CacheConfiguration<K, V> conf) {}
 }

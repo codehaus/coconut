@@ -47,14 +47,13 @@ public interface CacheLifecycle {
 
     /**
      * The cache has been shutdown.
+     * 
+     * @param shutdown
+     *            shutdown helper
+     * @throws Exception
+     *             if this service could not shutdown properly
      */
     void shutdown(Shutdown shutdown) throws Exception;
-
-    /**
-     * The {@link Cache#shutdownNow()} method has been invoked. This method is always
-     * invoked after {@link #shutdown()} if invoked at all.
-     */
-    void shutdownNow();
 
     /**
      * Method invoked when the cache has terminated. This method is invoked as the last
@@ -65,13 +64,17 @@ public interface CacheLifecycle {
      */
     void terminated();
 
+    /**
+     * An object used to shutdown services asynchronously if needed.
+     */
     interface Shutdown {
-
         /**
          * @param callable
+         *            a callable that will shutdown the service asynchronously
          * @throws IllegalStateException
          *             if this method has already been called, or if this method is called
-         *             outside {@link CacheLifecycle#shutdown()}.
+         *             outside
+         *             {@link CacheLifecycle#shutdown(org.coconut.cache.service.servicemanager.CacheLifecycle.Shutdown)}.
          * @throws UnsupportedOperationException
          *             if shutting down services asynchronously is not supported by the
          *             cache

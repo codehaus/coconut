@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.AttributeMaps;
+import org.coconut.attribute.Attributes;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
@@ -39,7 +39,7 @@ public class AbstraktCacheLoaderTest {
                 one(callback).getKey();
                 will(returnValue(1));
                 one(callback).getAttributes();
-                will(returnValue(AttributeMaps.EMPTY_MAP));
+                will(returnValue(Attributes.EMPTY_MAP));
                 one(callback).completed("foo");
             }
         });
@@ -54,7 +54,7 @@ public class AbstraktCacheLoaderTest {
                 one(callback).getKey();
                 will(returnValue(0));
                 one(callback).getAttributes();
-                will(returnValue(AttributeMaps.EMPTY_MAP));
+                will(returnValue(Attributes.EMPTY_MAP));
                 one(callback).failed(ERR);
             }
         });
@@ -88,7 +88,7 @@ public class AbstraktCacheLoaderTest {
                 throw ERR;
             } else {
                 assertEquals(1, key.intValue());
-                assertSame(AttributeMaps.EMPTY_MAP, attributes);
+                assertSame(Attributes.EMPTY_MAP, attributes);
                 return "foo";
             }
         }

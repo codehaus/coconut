@@ -23,11 +23,6 @@ public class LifecycleAsynchronousShutdown extends AbstractCacheTCKTest {
                 super.shutdown(shutdown);
                 shutdown.shutdownAsynchronously(asyn);
             }
-
-            @Override
-            public void shutdownNow() {
-                asyn.isShutdownNow = true;
-            }
         };
         setCache(newConf().serviceManager().add(alv));
 
@@ -40,8 +35,8 @@ public class LifecycleAsynchronousShutdown extends AbstractCacheTCKTest {
 
         assertFalse(asyn.isShutdownNow);
         c.shutdownNow();
+        asyn.latch.await();
         assertTrue(asyn.isShutdownNow);
-        asyn.release();
         assertTrue(c.awaitTermination(5, TimeUnit.SECONDS));
         alv.assertTerminatedPhase();
     }
@@ -60,14 +55,15 @@ public class LifecycleAsynchronousShutdown extends AbstractCacheTCKTest {
         }
 
         public Object call() throws Exception {
-            while (latch.getCount() != 0) {
+            for (;;) {
                 try {
                     latch.await(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
                 } catch (InterruptedException e) {
-                    // ignore
+                    latch.countDown();
+                    isShutdownNow = true;
+                    return null;
                 }
             }
-            return null;
         }
     }
 }

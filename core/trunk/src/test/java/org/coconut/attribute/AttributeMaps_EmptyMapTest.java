@@ -3,7 +3,7 @@
  */
 package org.coconut.attribute;
 
-import static org.coconut.attribute.AttributeMaps.EMPTY_MAP;
+import static org.coconut.attribute.Attributes.EMPTY_MAP;
 import static org.coconut.test.TestUtil.assertIsSerializable;
 import static org.coconut.test.TestUtil.serializeAndUnserialize;
 import static org.junit.Assert.assertEquals;
@@ -20,7 +20,7 @@ import org.coconut.test.TestUtil;
 import org.junit.Test;
 
 /**
- * Tests {@link AttributeMaps#EMPTY_MAP}.
+ * Tests {@link Attributes#EMPTY_MAP}.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $

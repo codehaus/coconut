@@ -26,7 +26,7 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
 
     public UnsynchronizedCacheServiceManager(Cache<?, ?> cache, InternalCacheSupport<?, ?> helper,
             CacheConfiguration<?, ?> conf,
-            Collection<Class<? extends AbstractCacheLifecycle>> classes) {
+            Collection<Class<?>> classes) {
         super(cache, helper, conf, classes);
     }
 

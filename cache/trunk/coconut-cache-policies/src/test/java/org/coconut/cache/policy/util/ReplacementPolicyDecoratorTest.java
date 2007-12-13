@@ -10,7 +10,7 @@ import static junit.framework.Assert.assertTrue;
 import java.util.Collections;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.AttributeMaps;
+import org.coconut.attribute.Attributes;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.policy.paging.LRUPolicy;
 import org.jmock.Expectations;
@@ -44,7 +44,7 @@ public class ReplacementPolicyDecoratorTest {
 
     @Test
     public void test() {
-        final AttributeMap am = AttributeMaps.EMPTY_MAP;
+        final AttributeMap am = Attributes.EMPTY_MAP;
         final ReplacementPolicy policy = context.mock(ReplacementPolicy.class);
         context.checking(new Expectations() {
             {

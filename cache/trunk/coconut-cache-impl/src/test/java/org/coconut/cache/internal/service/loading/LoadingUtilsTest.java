@@ -7,7 +7,7 @@ import static org.coconut.test.TestUtil.dummy;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
-import org.coconut.attribute.AttributeMaps;
+import org.coconut.attribute.Attributes;
 import org.coconut.cache.internal.service.loading.LoadingUtils.LoadValueCallable;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -30,13 +30,13 @@ public class LoadingUtilsTest {
 
     @Test(expected = NullPointerException.class)
     public void createLoadCallableNPE() {
-        LoadingUtils.createLoadCallable(null, "A", AttributeMaps.EMPTY_MAP);
+        LoadingUtils.createLoadCallable(null, "A", Attributes.EMPTY_MAP);
     }
 
     @Test(expected = NullPointerException.class)
     public void createLoadCallableNPE1() {
         LoadingUtils.createLoadCallable(dummy(InternalCacheLoadingService.class), null,
-                AttributeMaps.EMPTY_MAP);
+                Attributes.EMPTY_MAP);
     }
 
     @Test(expected = NullPointerException.class)
@@ -47,12 +47,12 @@ public class LoadingUtilsTest {
     @Test
     public void loadValueCallable() {
         final InternalCacheLoadingService service = context.mock(InternalCacheLoadingService.class);
-        LoadValueCallable callable = new LoadValueCallable(service, 1, AttributeMaps.EMPTY_MAP);
+        LoadValueCallable callable = new LoadValueCallable(service, 1, Attributes.EMPTY_MAP);
         assertEquals(1, callable.getKey());
-        assertSame(AttributeMaps.EMPTY_MAP, callable.getAttributes());
+        assertSame(Attributes.EMPTY_MAP, callable.getAttributes());
         context.checking(new Expectations() {
             {
-                one(service).loadAndAddToCache(1, AttributeMaps.EMPTY_MAP, false);
+                one(service).loadAndAddToCache(1, Attributes.EMPTY_MAP, false);
             }
         });
         callable.call();

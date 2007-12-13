@@ -3,7 +3,7 @@
  */
 package org.coconut.cache.tck.service.expiration;
 
-import static org.coconut.test.CollectionUtils.M1_TO_M5_MAP;
+import static org.coconut.test.CollectionTestUtil.M1_TO_M5_MAP;
 
 import java.util.concurrent.TimeUnit;
 

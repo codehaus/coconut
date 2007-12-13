@@ -3,12 +3,12 @@
  */
 package org.coconut.cache.tck.core.values;
 
-import static org.coconut.test.CollectionUtils.M1;
-import static org.coconut.test.CollectionUtils.M1_TO_M5_VALUES;
-import static org.coconut.test.CollectionUtils.M2;
-import static org.coconut.test.CollectionUtils.M3;
-import static org.coconut.test.CollectionUtils.M4;
-import static org.coconut.test.CollectionUtils.M5;
+import static org.coconut.test.CollectionTestUtil.M1;
+import static org.coconut.test.CollectionTestUtil.M1_TO_M5_VALUES;
+import static org.coconut.test.CollectionTestUtil.M2;
+import static org.coconut.test.CollectionTestUtil.M3;
+import static org.coconut.test.CollectionTestUtil.M4;
+import static org.coconut.test.CollectionTestUtil.M5;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;

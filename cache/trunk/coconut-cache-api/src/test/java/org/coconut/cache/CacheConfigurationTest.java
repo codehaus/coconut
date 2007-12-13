@@ -78,7 +78,7 @@ public class CacheConfigurationTest {
         conf.addConfiguration(s1);
         assertSame(s1, conf.getConfiguration(SimpleService.class));
         assertTrue(conf.getAllConfigurations().contains(s1));
-        assertSame(conf,s1.c());
+        assertSame(conf, s1.c());
         try {
             conf.getConfiguration(SimpleService2.class);
             throw new AssertionError("Should fail");
@@ -206,22 +206,22 @@ public class CacheConfigurationTest {
         assertEquals("B", conf.getProperty("b", "C"));
         assertEquals("B", conf.getProperty("b", null));
         assertEquals("C", conf.getProperty("c", "C"));
-        
+
         reloadConf();
         assertEquals("A", conf.getProperty("a"));
         assertEquals("B", conf.getProperty("b"));
         assertNull(conf.getProperty("c"));
-        
+
         conf.setProperty("b", null);
         assertNull(conf.getProperty("b"));
-        
+
     }
 
     private void reloadConf() {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
             new XmlConfigurator().write(conf, os);
-            conf= CacheConfiguration.loadConfigurationFrom(new ByteArrayInputStream(os
+            conf = CacheConfiguration.loadConfigurationFrom(new ByteArrayInputStream(os
                     .toByteArray()));
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -271,14 +271,14 @@ public class CacheConfigurationTest {
     }
 
     /**
-     * Tests the {@link CacheConfiguration#toString()} throws an
-     * {@link IllegalStateException} when it cannot persist a configuration.
+     * Tests the {@link CacheConfiguration#toString()} does not throw an exception even if
+     * it cannot persist a configuration.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void toStringISE() {
         conf.setName("foo");
         conf.addConfiguration(new SimpleServiceAE());
-        conf.toString();
+        assertTrue(conf.toString().contains(ArithmeticException.class.getName()));
     }
 
     /**

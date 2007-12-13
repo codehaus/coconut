@@ -16,15 +16,13 @@ import java.util.Map;
 import java.util.Set;
 
 @SuppressWarnings("unchecked")
-public class CollectionUtils {
+public class CollectionTestUtil {
 
     public static final Map.Entry<Integer, String> M1 = newEntry(1, "A");
 
-    public static final Map.Entry<Integer, String> M1_NULL_VALUE = newEntry(
-            null, "A");
+    public static final Map.Entry<Integer, String> M1_NULL_VALUE = newEntry(null, "A");
 
-    public static final Map.Entry<Integer, String> M1_KEY_NULL = newEntry(1,
-            null);
+    public static final Map.Entry<Integer, String> M1_KEY_NULL = newEntry(1, null);
 
     public static final Map.Entry<Integer, String> M2 = newEntry(2, "B");
 
@@ -42,22 +40,19 @@ public class CollectionUtils {
 
     public static final Map.Entry<Integer, String> M9 = newEntry(9, "I");
 
-    public static final Map<Integer, String> M1_TO_M5_MAP = asMap(M1, M2, M3,
-            M4, M5);
+    public static final Map<Integer, String> M1_TO_M5_MAP = asMap(M1, M2, M3, M4, M5);
 
     public static final Set<Map.Entry<Integer, String>> M1_TO_M5_SET = new HashSet<Map.Entry<Integer, String>>(
             Arrays.asList(M1, M2, M3, M4, M5));
 
-    public static final Collection<String> M1_TO_M5_VALUES = Arrays.asList(M1
-            .getValue(), M2.getValue(), M3.getValue(), M4.getValue(), M5
-            .getValue());
+    public static final Collection<String> M1_TO_M5_VALUES = Arrays.asList(M1.getValue(), M2
+            .getValue(), M3.getValue(), M4.getValue(), M5.getValue());
 
-    public static final Collection<Integer> M1_TO_M5_KEY_SET = Arrays.asList(M1
-            .getKey(), M2.getKey(), M3.getKey(), M4.getKey(), M5.getKey());
+    public static final Collection<Integer> M1_TO_M5_KEY_SET = Arrays.asList(M1.getKey(), M2
+            .getKey(), M3.getKey(), M4.getKey(), M5.getKey());
 
     static final Integer[] M1_TO_M5_KEY_ARRAY = M1_TO_M5_KEY_SET.toArray(new Integer[0]);
 
-    
     public static final Map.Entry<Integer, String> MNAN1 = newEntry(1, "B");
 
     public static final Map.Entry<Integer, String> MNAN2 = newEntry(2, "A");
@@ -66,7 +61,7 @@ public class CollectionUtils {
 
     public static final Map.Entry<Integer, String> MNAN4 = newEntry(4, "C");
 
-    public static final Collection<Integer> keysWithNull=Arrays.asList(1,2,null,4);
+    public static final Collection<Integer> keysWithNull = Arrays.asList(1, 2, null, 4);
 
     public static Map.Entry<Integer, String> newEntry(Integer key, String value) {
         return new ImmutableMapEntry<Integer, String>(key, value);
@@ -92,8 +87,7 @@ public class CollectionUtils {
         return map;
     }
 
-    public static Map<Integer, String> asMap(
-            Map.Entry<Integer, String>... entries) {
+    public static Map<Integer, String> asMap(Map.Entry<Integer, String>... entries) {
         Map<Integer, String> map = new LinkedHashMap<Integer, String>();
         for (Map.Entry<Integer, String> name : entries) {
             map.put(name.getKey(), name.getValue());
@@ -108,6 +102,7 @@ public class CollectionUtils {
     public static String getValue(int key) {
         return "" + (char) (key + 64);
     }
+
     public static Collection<Integer> asList(int... data) {
         ArrayList<Integer> list = new ArrayList<Integer>(data.length);
         for (int i : data)

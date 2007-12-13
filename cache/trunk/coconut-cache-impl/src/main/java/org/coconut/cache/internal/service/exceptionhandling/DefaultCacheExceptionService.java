@@ -3,7 +3,6 @@
  */
 package org.coconut.cache.internal.service.exceptionhandling;
 
-import java.text.MessageFormat;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 
@@ -15,7 +14,6 @@ import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlers;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
-import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.core.Logger;
 import org.coconut.core.Loggers;
 
@@ -32,8 +30,8 @@ import org.coconut.core.Loggers;
  * @param <V>
  *            the type of mapped values
  */
-public class DefaultCacheExceptionService<K, V> extends AbstractCacheLifecycle implements
-        InternalCacheExceptionService<K, V>, InternalDebugService {
+public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptionService<K, V>,
+        InternalDebugService {
 
     /** The cache for which exceptions should be handled. */
     private final Cache<K, V> cache;
@@ -58,7 +56,11 @@ public class DefaultCacheExceptionService<K, V> extends AbstractCacheLifecycle i
             CacheExceptionHandlingConfiguration<K, V> configuration) {
         this.cache = cache;
         // TODO resort to default logger if no exceptionLogger is defined?
-        this.logger = configuration.getExceptionLogger();
+        if (configuration.getExceptionHandler() == null) {
+            this.logger = conf.getDefaultLogger();
+        } else {
+            this.logger = configuration.getExceptionLogger();
+        }
         debugLogger = conf.getDefaultLogger();
         if (configuration.getExceptionHandler() != null) {
             this.exceptionHandler = configuration.getExceptionHandler();
@@ -68,18 +70,25 @@ public class DefaultCacheExceptionService<K, V> extends AbstractCacheLifecycle i
     }
 
     /** {@inheritDoc} */
-    public CacheExceptionContext<K, V> createContext() {
+    public CacheExceptionContext<K, V> createContext(final Throwable cause) {
+        if (cause == null) {
+            throw new NullPointerException("cause is null");
+        }
         return new CacheExceptionContext<K, V>() {
 
             @Override
             public Logger defaultLogger() {
-                //(new Exception()).printStackTrace();
                 return getLogger();
             }
 
             @Override
             public Cache<K, V> getCache() {
                 return cache;
+            }
+
+            @Override
+            public Throwable getCause() {
+                return cause;
             }
         };
     }
@@ -134,18 +143,26 @@ public class DefaultCacheExceptionService<K, V> extends AbstractCacheLifecycle i
                 java.util.logging.Logger jucLogger = LogManager.getLogManager().getLogger(
                         loggerName);
                 if (jucLogger == null) {
-                    String infoMsg = Resources.lookup(DefaultCacheExceptionService.class,
-                            "noLogger");
                     jucLogger = java.util.logging.Logger.getLogger(loggerName);
-
                     jucLogger.setLevel(Level.ALL);
-                    jucLogger.info(MessageFormat.format(infoMsg, name, loggerName));
-                    jucLogger.setLevel(Level.SEVERE);
 
+                    String infoMsg = Resources.lookup(DefaultCacheExceptionService.class,
+                            "noLogger", name, loggerName);
+                    jucLogger.info(infoMsg);
+                    jucLogger.setLevel(Level.WARNING);
                 }
                 logger = Loggers.JDK.from(jucLogger);
             }
         }
         return logger;
+    }
+
+    public Logger getExceptionLogger() {
+        Logger l=logger;
+        return l==null ? Loggers.NULL_LOGGER : l;
+    }
+
+    public CacheExceptionContext<K, V> createContext() {
+        return createContext(new Exception());
     }
 }

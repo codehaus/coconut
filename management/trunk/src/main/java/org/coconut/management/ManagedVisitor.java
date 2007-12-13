@@ -25,8 +25,11 @@ public interface ManagedVisitor<T> {
      * @return a visitor-specific value.
      * @throws IllegalArgumentException
      *             in case of an argument of invalid type.
+     * @throws JMException
+     *             an exception occured while visiting the node
      */
     T traverse(Object node) throws JMException;
+
     /**
      * Visit a {@link ManagedGroup} that has to accept the visitor.
      * 

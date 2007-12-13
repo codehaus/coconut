@@ -9,8 +9,8 @@ import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 import static org.coconut.cache.policy.PolicyTestUtils.addToPolicy;
 import static org.coconut.cache.policy.PolicyTestUtils.empty;
-import static org.coconut.test.CollectionUtils.asList;
-import static org.coconut.test.CollectionUtils.seq;
+import static org.coconut.test.CollectionTestUtil.asList;
+import static org.coconut.test.CollectionTestUtil.seq;
 
 import java.util.Arrays;
 import java.util.HashSet;

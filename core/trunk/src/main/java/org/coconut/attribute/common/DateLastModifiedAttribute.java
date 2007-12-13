@@ -4,7 +4,7 @@
 package org.coconut.attribute.common;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.AttributeMaps;
+import org.coconut.attribute.Attributes;
 import org.coconut.attribute.spi.AbstractLongAttribute;
 import org.coconut.core.Clock;
 
@@ -94,7 +94,7 @@ public final class DateLastModifiedAttribute extends AbstractLongAttribute {
      */
     public static AttributeMap singleton(long value) {
         INSTANCE.checkValid(value);
-        return AttributeMaps.singleton(INSTANCE, value);
+        return Attributes.singleton(INSTANCE, value);
     }
 
 }

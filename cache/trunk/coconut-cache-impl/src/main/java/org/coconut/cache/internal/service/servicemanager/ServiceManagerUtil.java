@@ -33,10 +33,10 @@ public final class ServiceManagerUtil {
 
     // /CLOVER:ON
 
-    static Collection<Class<? extends AbstractCacheLifecycle>> removeUnusedServices(
+    static Collection<Class<?>> removeUnusedServices(
             CacheConfiguration<?, ?> conf,
-            Collection<Class<? extends AbstractCacheLifecycle>> classes) {
-        ArrayList<Class<? extends AbstractCacheLifecycle>> c = new ArrayList<Class<? extends AbstractCacheLifecycle>>(
+            Collection<Class<?>> classes) {
+        ArrayList<Class<?>> c = new ArrayList<Class<?>>(
                 classes);
         if (!conf.management().isEnabled()) {
             CollectionPredicates.removeFrom(c, new Predicate<Class>() {

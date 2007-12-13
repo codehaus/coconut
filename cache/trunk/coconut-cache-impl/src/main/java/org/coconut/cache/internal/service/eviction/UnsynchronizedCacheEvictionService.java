@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.coconut.attribute.AttributeMaps;
+import org.coconut.attribute.Attributes;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.policy.Policies;
@@ -54,7 +54,7 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
 //        if (maxVolume == 0 || maxSize == 0) {
 //            return -1;
 //        }
-        return cp.add(t, AttributeMaps.EMPTY_MAP);
+        return cp.add(t, Attributes.EMPTY_MAP);
     }
 
     /** {@inheritDoc} */
@@ -126,7 +126,7 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
 
     /** {@inheritDoc} */
     public boolean replace(int index, T t) {
-        return cp.update(index, t, AttributeMaps.EMPTY_MAP);
+        return cp.update(index, t, Attributes.EMPTY_MAP);
     }
 
     /** {@inheritDoc} */

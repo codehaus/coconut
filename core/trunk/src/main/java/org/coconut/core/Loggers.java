@@ -7,6 +7,8 @@ package org.coconut.core;
 import java.io.PrintStream;
 import java.io.Serializable;
 
+import org.apache.commons.logging.Log;
+
 /**
  * This class is used for creating {@link Logger} wrappers from popular logging frameworks
  * such as <a
@@ -115,15 +117,36 @@ public final class Loggers {
             return new CommonsLogger(log);
         }
 
+        /**
+         * Creates a decorated commons logger from the specified name. The commons log is
+         * created by calling:
+         * 
+         * <pre>
+         * org.apache.commons.logging.LogFactory.getLog(name)
+         * </pre>
+         * 
+         * @param name
+         *            the name of the logger
+         * @return the decorated commons logger
+         */
         public static Logger from(String name) {
             return from(org.apache.commons.logging.LogFactory.getLog(name));
         }
 
-        public static org.apache.commons.logging.Log getAsCommonsLogger(Logger log) {
-            if (!isCommonsLogger(log)) {
+        /**
+         * Unwraps a wrapped Commons {@link Log} that is wrapped in a {@link Logger}.
+         * 
+         * @param logger
+         *            the logger to unwrap
+         * @return the unwrapped commons log
+         * @throws IllegalArgumentException
+         *             if the specified logger is not wrapping a commons log
+         */
+        public static org.apache.commons.logging.Log getAsCommonsLogger(Logger logger) {
+            if (!isCommonsLogger(logger)) {
                 throw new IllegalArgumentException("Not a Commons Logger");
             }
-            return ((CommonsLogger) log).log;
+            return ((CommonsLogger) logger).log;
         }
 
         /**
@@ -170,15 +193,37 @@ public final class Loggers {
             return new JDKLogger(logger);
         }
 
+        /**
+         * Creates a decorated Jdk logger from the specified name. The Jdk logger is
+         * created by calling:
+         * 
+         * <pre>
+         * java.util.logging.Logger.getLogger(name)
+         * </pre>
+         * 
+         * @param name
+         *            the name of the logger
+         * @return the decorated Jdk logger
+         */
         public static Logger from(String name) {
             return from(java.util.logging.Logger.getLogger(name));
         }
 
-        public static java.util.logging.Logger getAsJDKLogger(Logger log) {
-            if (!isJDKLogger(log)) {
+        /**
+         * Unwraps a wrapped JDK {@link java.util.logging.Logger} that is wrapped in a
+         * {@link Logger}.
+         * 
+         * @param logger
+         *            the logger to unwrap
+         * @return the unwrapped jdk logger
+         * @throws IllegalArgumentException
+         *             if the specified logger is not wrapping a Jdk logger
+         */
+        public static java.util.logging.Logger getAsJDKLogger(Logger logger) {
+            if (!isJDKLogger(logger)) {
                 throw new IllegalArgumentException("Not a JDK Logger");
             }
-            return ((JDKLogger) log).logger;
+            return ((JDKLogger) logger).logger;
         }
 
         /**
@@ -225,10 +270,32 @@ public final class Loggers {
             return new Log4JLogger(logger);
         }
 
+        /**
+         * Creates a decorated Log4J logger from the specified name. The Log4J logger is
+         * created by calling:
+         * 
+         * <pre>
+         * org.apache.log4j.Logger.getLogger(name)
+         * </pre>
+         * 
+         * @param name
+         *            the name of the logger
+         * @return the decorated Log4J logger
+         */
         public static Logger from(String name) {
             return from(org.apache.log4j.Logger.getLogger(name));
         }
 
+        /**
+         * Unwraps a wrapped Log4J {@link org.apache.log4j.Logger} that is wrapped in a
+         * {@link Logger}.
+         * 
+         * @param logger
+         *            the logger to unwrap
+         * @return the unwrapped Log4J log
+         * @throws IllegalArgumentException
+         *             if the specified logger is not wrapping a Log4J log
+         */
         public static org.apache.log4j.Logger getAsLog4jLogger(Logger logger) {
             if (!isLog4jLogger(logger)) {
                 throw new IllegalArgumentException("Not a JDK Logger");

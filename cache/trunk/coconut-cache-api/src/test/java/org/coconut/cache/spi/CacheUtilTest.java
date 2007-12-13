@@ -3,11 +3,11 @@
  */
 package org.coconut.cache.spi;
 
-import static org.coconut.test.CollectionUtils.M1;
-import static org.coconut.test.CollectionUtils.M1_KEY_NULL;
-import static org.coconut.test.CollectionUtils.M1_NULL_VALUE;
-import static org.coconut.test.CollectionUtils.M2;
-import static org.coconut.test.CollectionUtils.asMap;
+import static org.coconut.test.CollectionTestUtil.M1;
+import static org.coconut.test.CollectionTestUtil.M1_KEY_NULL;
+import static org.coconut.test.CollectionTestUtil.M1_NULL_VALUE;
+import static org.coconut.test.CollectionTestUtil.M2;
+import static org.coconut.test.CollectionTestUtil.asMap;
 
 import java.util.Arrays;
 

@@ -3,14 +3,11 @@
  */
 package org.coconut.cache.internal.service.management;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-
-import net.jcip.annotations.ThreadSafe;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.service.management.CacheMXBean;

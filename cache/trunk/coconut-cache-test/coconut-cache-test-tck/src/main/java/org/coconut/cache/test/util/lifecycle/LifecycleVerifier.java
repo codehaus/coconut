@@ -170,10 +170,10 @@ public class LifecycleVerifier extends AbstractCacheLifecycle {
         }
     }
 
-    @Override
-    public void shutdownNow() {
-        decorator.shutdownNow();
-    }
+//    @Override
+//    public void shutdownNow() {
+//        decorator.shutdownNow();
+//    }
 
     @Override
     public void start(CacheServiceManagerService serviceManager) throws Exception {

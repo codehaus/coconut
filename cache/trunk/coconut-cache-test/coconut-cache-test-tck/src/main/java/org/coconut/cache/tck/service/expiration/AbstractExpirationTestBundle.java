@@ -7,13 +7,13 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.tck.AbstractCacheTCKTest;
-import org.coconut.test.CollectionUtils;
+import org.coconut.test.CollectionTestUtil;
 
 public class AbstractExpirationTestBundle extends AbstractCacheTCKTest {
 
     protected void putAll(long timeout, TimeUnit unit,
             Map.Entry<Integer, String>... entries) {
-        expiration().putAll(CollectionUtils.asMap(entries), timeout, unit);
+        expiration().putAll(CollectionTestUtil.asMap(entries), timeout, unit);
     }
 
     protected void putAll(long timeout, Map.Entry<Integer, String>... entries) {

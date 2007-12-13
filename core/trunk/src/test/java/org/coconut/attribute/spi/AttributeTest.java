@@ -8,7 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.AttributeMaps;
+import org.coconut.attribute.Attributes;
 import org.junit.Test;
 
 public class AttributeTest {
@@ -18,9 +18,9 @@ public class AttributeTest {
     static final AbstractAttribute<String> ATR_VALIDATE = new ValidateAttribute("fooignore");
 
     // ValidateAttribute
-    AttributeMap am1 = new AttributeMaps.DefaultAttributeMap();
+    AttributeMap am1 = new Attributes.DefaultAttributeMap();
 
-    AttributeMap am2 = AttributeMaps.singleton(ATR, "value");
+    AttributeMap am2 = Attributes.singleton(ATR, "value");
 
     @Test(expected = NullPointerException.class)
     public void abstractAttributeNPE() {
@@ -68,7 +68,7 @@ public class AttributeTest {
 
     @Test
     public void set() {
-        AttributeMap am = new AttributeMaps.DefaultAttributeMap();
+        AttributeMap am = new Attributes.DefaultAttributeMap();
         assertEquals(0, am.size());
         assertSame(am, ATR.setValue(am, "a"));
         assertEquals(1, am.size());
@@ -81,7 +81,7 @@ public class AttributeTest {
     @Test(expected = IllegalArgumentException.class)
     public void setIllegal() {
         Attribute a = new ValidateAttribute("fooignore");
-        a.setValue(new AttributeMaps.DefaultAttributeMap(), "asd");
+        a.setValue(new Attributes.DefaultAttributeMap(), "asd");
     }
 
     @Test(expected = NullPointerException.class)
@@ -92,7 +92,7 @@ public class AttributeTest {
     @Test
     public void setValidate() {
         Attribute a = new ValidateAttribute("fooignore");
-        a.setValue(new AttributeMaps.DefaultAttributeMap(), "fooasd");
+        a.setValue(new Attributes.DefaultAttributeMap(), "fooasd");
     }
 
     @Test
@@ -127,8 +127,8 @@ public class AttributeTest {
 
     @Test
     public void unSet() {
-        AttributeMap am1 = new AttributeMaps.DefaultAttributeMap();
-        AttributeMap am2 = AttributeMaps.singleton(ATR, "value");
+        AttributeMap am1 = new Attributes.DefaultAttributeMap();
+        AttributeMap am2 = Attributes.singleton(ATR, "value");
         assertEquals(0, am1.size());
         assertEquals(1, am2.size());
         ATR.unSet(am1);
@@ -146,7 +146,7 @@ public class AttributeTest {
     }
 
     protected AttributeMap newMap() {
-        return new AttributeMaps.DefaultAttributeMap();
+        return new Attributes.DefaultAttributeMap();
     }
 
     static class DefaultAttribute extends AbstractAttribute<String> {

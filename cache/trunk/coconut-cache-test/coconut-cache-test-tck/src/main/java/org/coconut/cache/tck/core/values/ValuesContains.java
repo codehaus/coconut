@@ -3,10 +3,10 @@
  */
 package org.coconut.cache.tck.core.values;
 
-import static org.coconut.test.CollectionUtils.M1;
-import static org.coconut.test.CollectionUtils.M1_TO_M5_VALUES;
-import static org.coconut.test.CollectionUtils.M5;
-import static org.coconut.test.CollectionUtils.M6;
+import static org.coconut.test.CollectionTestUtil.M1;
+import static org.coconut.test.CollectionTestUtil.M1_TO_M5_VALUES;
+import static org.coconut.test.CollectionTestUtil.M5;
+import static org.coconut.test.CollectionTestUtil.M6;
 
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;

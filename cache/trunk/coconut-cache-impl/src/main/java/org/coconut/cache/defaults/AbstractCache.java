@@ -10,12 +10,11 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.AttributeMaps;
+import org.coconut.attribute.Attributes;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
-import org.coconut.cache.internal.service.entry.ImmutableCacheEntry;
 import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
 import org.coconut.cache.spi.ConfigurationValidator;
 import org.coconut.core.Clock;
@@ -97,7 +96,8 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
             throw new NullPointerException("key is null");
         }
         AbstractCacheEntry<K, V> entry = doGet(key);
-        return entry == null ? null : new ImmutableCacheEntry<K, V>(entry);
+        //return entry == null ? null : new ImmutableCacheEntry<K, V>(entry);
+        return entry;
     }
 
     /** {@inheritDoc} */
@@ -145,7 +145,8 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
             throw new NullPointerException("key is null");
         }
         AbstractCacheEntry<K, V> entry = doPeek(key);
-        return entry == null ? null : new ImmutableCacheEntry<K, V>(entry);
+        //return entry == null ? null : new ImmutableCacheEntry<K, V>(entry);
+        return entry;
     }
 
     /**
@@ -157,7 +158,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
 
     /** {@inheritDoc} */
     public V put(K key, V value) {
-        return put(key, value, AttributeMaps.EMPTY_MAP, false);
+        return put(key, value, Attributes.EMPTY_MAP, false);
     }
 
     /** {@inheritDoc} */
@@ -166,12 +167,12 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
             throw new NullPointerException("m is null");
         }
         CollectionUtils.checkMapForNulls(m);
-        doPutAll(m, AttributeMaps.toMap(m.keySet(), AttributeMaps.EMPTY_MAP), false);
+        doPutAll(m, Attributes.toMap(m.keySet(), Attributes.EMPTY_MAP), false);
     }
 
     /** {@inheritDoc} */
     public V putIfAbsent(K key, V value) {
-        return put(key, value, AttributeMaps.EMPTY_MAP, true);
+        return put(key, value, Attributes.EMPTY_MAP, true);
     }
 
     /** {@inheritDoc} */

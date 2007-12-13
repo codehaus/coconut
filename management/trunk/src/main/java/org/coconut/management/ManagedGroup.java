@@ -60,7 +60,7 @@ public interface ManagedGroup {
     Collection<ManagedGroup> getChildren();
 
     /**
-     * Returns the description of this group
+     * Returns the description of this group.
      * 
      * @return the description of this group.
      */

@@ -5,8 +5,9 @@ package org.coconut.cache.internal.service.entry;
 
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.AttributeMaps;
+import org.coconut.attribute.Attributes;
 import org.coconut.attribute.common.CostAttribute;
 import org.coconut.attribute.common.DateCreatedAttribute;
 import org.coconut.attribute.common.DateLastModifiedAttribute;
@@ -15,7 +16,9 @@ import org.coconut.attribute.common.SizeAttribute;
 import org.coconut.attribute.common.TimeToLiveAttribute;
 import org.coconut.attribute.common.TimeToRefreshAttribute;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.service.exceptionhandling.DefaultCacheExceptionService;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
+import org.coconut.cache.internal.service.spi.Resources;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.core.Clock;
 
@@ -29,12 +32,13 @@ import org.coconut.core.Clock;
  * @param <V>
  *            the type of mapped values
  */
-public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCacheLifecycle
+public abstract class AbstractCacheEntryFactoryService<K, V> 
         implements InternalCacheEntryService<K, V> {
 
     /** Used for calculating timestamps. */
     private final Clock clock;
 
+    /** The cache exception service. */
     private final InternalCacheExceptionService<K, V> exceptionService;
 
     /**
@@ -43,8 +47,6 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
      * @param clock
      *            the clock used to calculate time stamps
      * @param exceptionHandler
-     * @param expirationService
-     * @param loadingService
      */
     public AbstractCacheEntryFactoryService(Clock clock,
             InternalCacheExceptionService<K, V> exceptionHandler) {
@@ -58,12 +60,12 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
      * @return a new empty AttributeMap
      */
     public AttributeMap createMap() {
-        return new AttributeMaps.DefaultAttributeMap();
+        return new Attributes.DefaultAttributeMap();
     }
 
     /**
      * Creates a new AttributeMap populated containing the entries specified in the
-     * provided attribute map.
+     * specified attribute map.
      * 
      * @param copyFrom
      *            the map to copy entries from
@@ -71,44 +73,17 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
      *         provided attribute map
      */
     public AttributeMap createMap(AttributeMap copyFrom) {
-        return new AttributeMaps.DefaultAttributeMap(copyFrom);
+        return new Attributes.DefaultAttributeMap(copyFrom);
     }
 
-    /**
-     * Calculates the size of the element that was added.
-     * 
-     * @param key
-     *            the key of the cache entry
-     * @param value
-     *            the value of the cache entry
-     * @param attributes
-     *            a map of cache entry attributes
-     * @param existing
-     *            the existing cache entry, or null if this is a new entry
-     * @return the size of the element that was added
-     */
-    long getSize(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
-        long size = SizeAttribute.get(attributes);
-        if (!SizeAttribute.INSTANCE.isValid(size)) {
-            exceptionService.getHandler().handleWarning(exceptionService.createContext(),
-                    "An illegal size was added for key = " + key);
-            size = SizeAttribute.DEFAULT_VALUE;
-        }
-        return size;
+    public long getAccessTimeStamp(AbstractCacheEntry<K, V> entry) {
+        return clock.timestamp();
     }
 
-    long getTimeToLive(long expirationTimeNanos, K key, V value, AttributeMap attributes,
-            CacheEntry<K, V> existing) {
-        long nanos = TimeToLiveAttribute.INSTANCE.getPrimitive(attributes,
-                TimeUnit.NANOSECONDS, expirationTimeNanos);
-
-        if (!TimeToLiveAttribute.INSTANCE.isValid(nanos)) {
-            exceptionService.getHandler().handleWarning(exceptionService.createContext(),
-                    "An illegal expiration time was added for key = " + key);
-            nanos = expirationTimeNanos;
-        }
-        return nanos == Long.MAX_VALUE ? Long.MAX_VALUE : clock.getDeadlineFromNow(nanos,
-                TimeUnit.NANOSECONDS);
+    private void illegalAttribute(Attribute a, K key, Object illegal, Object defaultValue) {
+        String infoMsg = Resources.lookup(AbstractCacheEntryFactoryService.class, "ia", a, key,
+                illegal.toString(), defaultValue.toString());
+        exceptionService.getHandler().handleWarning(exceptionService.createContext(), infoMsg);
     }
 
     /**
@@ -127,18 +102,33 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
     double getCost(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
         double cost = CostAttribute.get(attributes);
         if (!CostAttribute.INSTANCE.isValid(cost)) {
-            exceptionService.getHandler().handleWarning(exceptionService.createContext(),
-                    "An illegal cost was added for key = " + key);
+            illegalAttribute(CostAttribute.INSTANCE, key, cost, CostAttribute.DEFAULT_VALUE);
             cost = CostAttribute.DEFAULT_VALUE;
         }
         return cost;
     }
 
+    long getCreationTime(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
+        long creationTime = DateCreatedAttribute.INSTANCE.getPrimitive(attributes);
+        final long time;
+        if (creationTime > 0) {
+            time = creationTime;
+        } else if (existing != null) {
+            time = existing.getCreationTime();
+        } else {
+            time = clock.timestamp();
+        }
+        if (!DateCreatedAttribute.INSTANCE.isValid(creationTime)) {
+            illegalAttribute(DateCreatedAttribute.INSTANCE, key, creationTime, time);
+        }
+        return time;
+
+    }
+
     long getHits(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
         long hits = HitsAttribute.INSTANCE.getPrimitive(attributes);
         if (!HitsAttribute.INSTANCE.isValid(hits)) {
-            exceptionService.getHandler().handleWarning(exceptionService.createContext(),
-                    "An illegal hits was added for key = " + key);
+            illegalAttribute(HitsAttribute.INSTANCE, key, hits, HitsAttribute.DEFAULT_VALUE);
             hits = HitsAttribute.DEFAULT_VALUE;
         }
         return hits;
@@ -150,49 +140,56 @@ public abstract class AbstractCacheEntryFactoryService<K, V> extends AbstractCac
             lastModified = clock.timestamp();
         }
         if (!DateLastModifiedAttribute.INSTANCE.isValid(lastModified)) {
-            exceptionService.getHandler().handleWarning(exceptionService.createContext(),
-                    "An illegal last modified time was added for key = " + key);
+            long illegal = lastModified;
             lastModified = clock.timestamp();
+            illegalAttribute(DateLastModifiedAttribute.INSTANCE, key, illegal, lastModified);
         }
         return lastModified;
     }
 
+    /**
+     * Calculates the size of the element that was added.
+     * 
+     * @param key
+     *            the key of the cache entry
+     * @param value
+     *            the value of the cache entry
+     * @param attributes
+     *            a map of cache entry attributes
+     * @param existing
+     *            the existing cache entry, or null if this is a new entry
+     * @return the size of the element that was added
+     */
+    long getSize(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
+        long size = SizeAttribute.get(attributes);
+        if (!SizeAttribute.INSTANCE.isValid(size)) {
+            illegalAttribute(SizeAttribute.INSTANCE, key, size, SizeAttribute.DEFAULT_VALUE);
+            size = SizeAttribute.DEFAULT_VALUE;
+        }
+        return size;
+    }
+
+    long getTimeToLive(long expirationTimeNanos, K key, V value, AttributeMap attributes,
+            CacheEntry<K, V> existing) {
+        long nanos = TimeToLiveAttribute.INSTANCE.getPrimitive(attributes, TimeUnit.NANOSECONDS,
+                expirationTimeNanos);
+        if (!TimeToLiveAttribute.INSTANCE.isValid(nanos)) {
+            illegalAttribute(TimeToLiveAttribute.INSTANCE, key, nanos, expirationTimeNanos);
+            nanos = expirationTimeNanos;
+        }
+        return nanos == Long.MAX_VALUE ? Long.MAX_VALUE : clock.getDeadlineFromNow(nanos,
+                TimeUnit.NANOSECONDS);
+    }
+
     long getTimeToRefresh(long refreshTimeNanos, K key, V value, AttributeMap attributes,
             CacheEntry<K, V> existing) {
-        long nanos = TimeToRefreshAttribute.INSTANCE.getPrimitive(attributes,
-                TimeUnit.NANOSECONDS, refreshTimeNanos);
+        long nanos = TimeToRefreshAttribute.INSTANCE.getPrimitive(attributes, TimeUnit.NANOSECONDS,
+                refreshTimeNanos);
 
         if (!TimeToRefreshAttribute.INSTANCE.isValid(nanos)) {
-            exceptionService.getHandler().handleWarning(exceptionService.createContext(),
-                    "An illegal time to refresh time was added for key = " + key);
+            illegalAttribute(TimeToRefreshAttribute.INSTANCE, key, nanos, refreshTimeNanos);
             nanos = refreshTimeNanos;
         }
         return clock.getDeadlineFromNow(nanos, TimeUnit.NANOSECONDS);
-    }
-
-    long getCreationTime(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
-        long creationTime = DateCreatedAttribute.INSTANCE.getPrimitive(attributes);
-        if (creationTime < 0) {
-            exceptionService.getHandler().handleWarning(
-                    exceptionService.createContext(),
-                    "Must specify a positive creation time [Attribute = "
-                            + DateCreatedAttribute.INSTANCE + ", creationtime = "
-                            + creationTime + ", key = " + key);
-        }
-        if (creationTime > 0) {
-            return creationTime;
-        } else if (existing != null) {
-            return existing.getCreationTime();
-        } else {
-            return clock.timestamp();
-        }
-    }
-
-    public long getAccessTimeStamp(AbstractCacheEntry<K, V> entry) {
-        return clock.timestamp();
-    }
-    
-    public String toString() {
-        return "Entry Service";
     }
 }

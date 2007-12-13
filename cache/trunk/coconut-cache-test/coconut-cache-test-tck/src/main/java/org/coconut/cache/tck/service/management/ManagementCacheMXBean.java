@@ -3,8 +3,8 @@
  */
 package org.coconut.cache.tck.service.management;
 
-import static org.coconut.test.CollectionUtils.M1;
-import static org.coconut.test.CollectionUtils.M2;
+import static org.coconut.test.CollectionTestUtil.M1;
+import static org.coconut.test.CollectionTestUtil.M2;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;

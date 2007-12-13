@@ -11,6 +11,8 @@ import static org.coconut.internal.util.XmlUtil.contentLongSet;
 import static org.coconut.internal.util.XmlUtil.getChild;
 import static org.coconut.internal.util.XmlUtil.loadChildObject;
 
+import java.util.concurrent.ThreadPoolExecutor;
+
 import org.coconut.cache.policy.IsCacheable;
 import org.coconut.cache.policy.IsCacheables;
 import org.coconut.cache.policy.ReplacementPolicy;
@@ -52,7 +54,7 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
 
     /** XML tag for maximum volume. */
     private final static String IS_CACHEABLE_TAG = "isCacheable";
-    
+
     /** The maximum size of the cache. */
     private int maximumSize;
 
@@ -208,16 +210,33 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
     protected void toXML(Document doc, Element base) throws Exception {
         contentLongSet(doc, base, MAXIMUM_VOLUME, maximumVolume, DEFAULT.getMaximumVolume());
         contentIntSet(doc, base, MAXIMUM_SIZE, maximumSize, DEFAULT.getMaximumSize());
-        addTypedElement(doc, base, IS_CACHEABLE_TAG, getResourceBundle(),getClass(),
+        addTypedElement(doc, base, IS_CACHEABLE_TAG, getResourceBundle(), getClass(),
                 "saveOfIsCacheableFilterFailed", isCacheableFilter);
     }
 
+    /**
+     * Returns the {@link IsCacheable} predicate that determinds if a given key and value
+     * should be cached.
+     * 
+     * @return the IsCacheable predicate configured or <code>null</code> if no predicate
+     *         has been set
+     * @see #setIsCacheableFilter(IsCacheable)
+     */
     public IsCacheable<K, V> getIsCacheableFilter() {
         return isCacheableFilter;
     }
 
-    public CacheEvictionConfiguration<K, V> setIsCacheableFilter(IsCacheable<K, V> isCacheableFilter) {
-        this.isCacheableFilter = isCacheableFilter;
+    /**
+     * Sets a {@link IsCacheable} predicate that the cache will use to determind if a
+     * specific key, value pair should be cached. For example,
+     * 
+     * @param predicate
+     *            the predicate that decides if a given key, value combination can be
+     *            added to the cache
+     * @return this configration
+     */
+    public CacheEvictionConfiguration<K, V> setIsCacheableFilter(IsCacheable<K, V> predicate) {
+        this.isCacheableFilter = predicate;
         return this;
     }
 }

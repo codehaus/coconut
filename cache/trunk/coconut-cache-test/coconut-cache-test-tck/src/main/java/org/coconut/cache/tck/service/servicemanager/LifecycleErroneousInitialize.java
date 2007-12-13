@@ -14,6 +14,7 @@ import org.coconut.cache.service.servicemanager.CacheLifecycle.Initializer;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.lifecycle.LifecycleVerifier;
 import org.coconut.cache.test.util.lifecycle.LifecycleVerifierContext;
+import org.coconut.core.Logger;
 import org.coconut.test.throwables.Error1;
 import org.coconut.test.throwables.RuntimeException1;
 import org.coconut.test.throwables.RuntimeException2;
@@ -161,13 +162,13 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
         CacheLifecycle service;
 
         @Override
-        public void lifecycleInitializationFailed(CacheConfiguration configuration,
-                Class cacheType, CacheLifecycle service, RuntimeException cause) {
+        public void serviceManagerInitializationFailed(Logger logger,CacheConfiguration configuration,
+                String name,Class cacheType, CacheLifecycle service, RuntimeException cause) {
             this.cause = cause;
             this.service = service;
             assertEquals(conf, configuration);
             assertEquals(getCacheType(), cacheType);
-            super.lifecycleInitializationFailed(configuration, cacheType, service, cause);
+            super.serviceManagerInitializationFailed(logger,configuration, name,cacheType, service, cause);
         }
 
         @Override

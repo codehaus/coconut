@@ -18,7 +18,7 @@ import org.coconut.cache.tck.RequireService;
 import org.coconut.cache.test.TestCacheLoader;
 import org.junit.Before;
 import org.junit.Test;
-import static org.coconut.test.CollectionUtils.*;
+import static org.coconut.test.CollectionTestUtil.*;
 
 @RequireService( { CacheManagementService.class })
 public class EvictionMXBean extends AbstractCacheTCKTest {

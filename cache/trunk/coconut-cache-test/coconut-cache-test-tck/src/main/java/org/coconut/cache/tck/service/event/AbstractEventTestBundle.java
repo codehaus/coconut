@@ -4,7 +4,7 @@
 
 package org.coconut.cache.tck.service.event;
 
-import static org.coconut.test.CollectionUtils.asMap;
+import static org.coconut.test.CollectionTestUtil.asMap;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,7 +41,6 @@ public class AbstractEventTestBundle extends AbstractCacheTCKTest {
     public void setup() {
         INCLUDE_ALL_CONFIGURATION = newConf();
         INCLUDE_ALL_CONFIGURATION.event().setEnabled(true).include(CacheEvent.class);
-
     }
 
     LinkedBlockingQueue<EventWrapper> events;

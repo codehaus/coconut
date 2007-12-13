@@ -8,7 +8,6 @@ import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -19,7 +18,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
-import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 
@@ -47,8 +45,7 @@ public class SynchronizedCacheServiceManager extends AbstractCacheServiceManager
     private final CountDownLatch terminationLatch = new CountDownLatch(1);
 
     public SynchronizedCacheServiceManager(Cache<?, ?> cache, InternalCacheSupport<?, ?> helper,
-            CacheConfiguration<?, ?> conf,
-            Collection<Class<? extends AbstractCacheLifecycle>> classes) {
+            CacheConfiguration<?, ?> conf, Collection<Class<?>> classes) {
         super(cache, helper, conf, classes);
         this.mutex = cache;
     }
@@ -100,27 +97,24 @@ public class SynchronizedCacheServiceManager extends AbstractCacheServiceManager
                 if (runState == RunState.RUNNING) {
                     cache.clear();
                 }
-                if (runState == RunState.RUNNING || runState == RunState.STARTING) {
-                    setRunState(shutdownNow ? RunState.STOP : RunState.SHUTDOWN);
-                    initiateShutdown();
-                }
+                setRunState(shutdownNow ? RunState.STOP : RunState.SHUTDOWN);
+                initiateShutdown();
 
                 if (!shutdownFutures.isEmpty()) {
                     // java 5 bug, cannot use Executors.
                     ThreadPoolExecutor tpe = new ThreadPoolExecutor(1, 1, 0L,
                             TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+
                     tpe.execute(new Runnable() {
                         public void run() {
                             try {
                                 while (!shutdownFutures.isEmpty()) {
+                                    ServiceHolder sh = shutdownFutures.peek();
                                     try {
-                                        shutdownFutures.peek().future.get();
+                                        sh.future.get();
                                         shutdownFutures.poll();
-                                    } catch (InterruptedException e) {
-                                        // ignore???
-                                        e.printStackTrace();
-                                    } catch (ExecutionException e) {
-                                        e.printStackTrace();
+                                    } catch (Exception e) {
+                                        ces.getHandler().serviceManagerShutdownFailed(ces.createContext(e), sh.getService());
                                     }
                                 }
                             } finally {
@@ -137,20 +131,14 @@ public class SynchronizedCacheServiceManager extends AbstractCacheServiceManager
             }
             if (shutdownNow) {
                 setRunState(RunState.STOP);
-                initiateShutdownNow(shutdownFutures);
+                shutdownServiceExecutor.shutdownNow();
             }
         }
     }
 
-// else if (runState == RunState.STARTING) {
-// throw new IllegalStateException(
-// "Cannot invoke this method from CacheLifecycle.start(Map services), should be invoked
-// from CacheLifecycle.started(Cache c)");
-// }
-
     /** {@inheritDoc} */
     @Override
-    void shutdownService(final ServiceHolder service) throws Exception{
+    void shutdownService(final ServiceHolder service) throws Exception {
         final AtomicInteger canSubmit = new AtomicInteger();
         CacheLifecycle.Shutdown cs = new CacheLifecycle.Shutdown() {
             public void shutdownAsynchronously(Callable<?> callable) {

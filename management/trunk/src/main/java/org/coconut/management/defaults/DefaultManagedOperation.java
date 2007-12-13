@@ -6,7 +6,9 @@ package org.coconut.management.defaults;
 import java.beans.MethodDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.management.IntrospectionException;
@@ -82,15 +84,20 @@ class DefaultManagedOperation extends AbstractManagedOperation {
     }
 
     /**
-     * Creates 
-     * @param pds
+     * Creates a DefaultManagedAttribute from the specified MethodDescriptors if the
+     * {@link ManagedOperation} annotation is present.
+     * 
+     * @param mds
+     *            the MethodDescriptors for the object
      * @param obj
-     * @return
+     *            the object that the operations should be invoked on
+     * @return a map mapping from the combined name of the attribute to the
+     *         AbstractManagedOperation
      */
     static Map<OperationKey, AbstractManagedOperation> fromMethodDescriptors(
-            MethodDescriptor[] pds, Object obj) {
+            MethodDescriptor[] mds, Object obj) {
         Map<OperationKey, AbstractManagedOperation> result = new HashMap<OperationKey, AbstractManagedOperation>();
-        for (MethodDescriptor pd : pds) {
+        for (MethodDescriptor pd : mds) {
             ManagedOperation mo = pd.getMethod().getAnnotation(ManagedOperation.class);
             if (mo != null) {
                 String name = ManagementUtil.filterString(obj, mo.defaultValue());
@@ -100,8 +107,12 @@ class DefaultManagedOperation extends AbstractManagedOperation {
                 String description = ManagementUtil.filterString(obj, mo.description());
                 DefaultManagedOperation dmo = new DefaultManagedOperation(obj, pd.getMethod(),
                         name, description);
-                result.put(new OperationKey(name, ManagementUtil.methodStringSignature(pd
-                        .getMethod())), dmo);
+                // create String[] signature
+                List<String> p = new ArrayList<String>();
+                for (Class c : pd.getMethod().getParameterTypes()) {
+                    p.add(c.getName());
+                }
+                result.put(new OperationKey(name, p.toArray(new String[0])), dmo);
             }
         }
         return result;

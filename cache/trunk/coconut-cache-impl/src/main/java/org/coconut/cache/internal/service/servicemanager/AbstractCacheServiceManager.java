@@ -42,7 +42,7 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
     private final List<ServiceHolder> services = new ArrayList<ServiceHolder>();
 
     /** The cache exception services. */
-    private final InternalCacheExceptionService ces;
+    final InternalCacheExceptionService ces;
 
     /** The cache debug services. */
     private final InternalDebugService debugService;
@@ -59,8 +59,7 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
      *             if the specified cache is null
      */
     AbstractCacheServiceManager(Cache<?, ?> cache, InternalCacheSupport<?, ?> cacheSupport,
-            CacheConfiguration<?, ?> conf,
-            Collection<Class<? extends AbstractCacheLifecycle>> classes) {
+            CacheConfiguration<?, ?> conf, Collection<Class<?>> classes) {
         long initializationStart = System.nanoTime();
         this.cache = cache;
         container.registerComponentInstance(this);
@@ -188,8 +187,8 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
                 }
                 result.putAll(tmpMap);
             } catch (RuntimeException re) {
-                ces.getHandler().lifecycleInitializationFailed(conf, cache.getClass(),
-                        si.getService(), re);
+                ces.getHandler().serviceManagerInitializationFailed(ces.getExceptionLogger(), conf,
+                        cache.getName(), cache.getClass(), si.getService(), re);
                 throw re;
             }
         }
@@ -242,7 +241,8 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
                     si.manage(cms);
                 } catch (RuntimeException re) {
                     startupException = new CacheException("Could not start the cache", re);
-                    ces.getHandler().lifecycleStartFailed(ces.createContext(), si, re);
+                    ces.getHandler().serviceManagerStartFailed(ces.createContext(re),
+                            lookup(CacheConfiguration.class), si);
                     shutdown();
                     throw startupException;
                 } catch (Error er) {
@@ -277,7 +277,8 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
                 si.started(cache);
             } catch (RuntimeException re) {
                 startupException = new CacheException("Could not start the cache", re);
-                ces.getHandler().lifecycleStartFailed(ces.createContext(), si.getService(), re);
+                ces.getHandler().serviceManagerStartFailed(ces.createContext(re),
+                        lookup(CacheConfiguration.class), si.getService());
                 shutdown();
                 throw startupException;
             } catch (Error er) {
@@ -316,7 +317,8 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
                 si.start(service);
             } catch (Exception re) {
                 startupException = new CacheException("Could not start the cache", re);
-                ces.getHandler().lifecycleStartFailed(ces.createContext(), si.getService(), re);
+                ces.getHandler().serviceManagerStartFailed(ces.createContext(re),
+                        lookup(CacheConfiguration.class), si.getService());
                 shutdown();
                 throw startupException;
             } catch (Error er) {
@@ -367,7 +369,9 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
     }
 
     private static boolean overrideInitialize(Class c) {
-        return overridesMethod(AbstractCacheLifecycle.class, c, "initialize", Initializer.class);
+        return true;
+        // return overridesMethod(AbstractCacheLifecycle.class, c, "initialize",
+        // Initializer.class);
     }
 
     private static boolean overridesMethod(Class from, Class clz, String method,
@@ -462,24 +466,25 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
                 try {
                     shutdownService(sh);
                 } catch (Exception e) {
-                    ces.getHandler().lifecycleShutdownFailed(ces.createContext(), sh.getService(),
-                            e);
+                    ces.getHandler().serviceManagerShutdownFailed(ces.createContext(e),
+                            sh.getService());
                 }
             }
         }
     }
 
-    void initiateShutdownNow(Collection<ServiceHolder> services) {
-        List<ServiceHolder> l = new ArrayList<ServiceHolder>(services);
-        Collections.reverse(l);
-        for (ServiceHolder sh : l) {
-            try {
-                sh.shutdownNow();
-            } catch (RuntimeException e) {
-                ces.getHandler().lifecycleShutdownFailed(ces.createContext(), sh.getService(), e);
-            }
-        }
-    }
+//    void initiateShutdownNow(Collection<ServiceHolder> services) {
+//        List<ServiceHolder> l = new ArrayList<ServiceHolder>(services);
+//        Collections.reverse(l);
+//        for (ServiceHolder sh : l) {
+//            try {
+//                sh.shutdownNow();
+//            } catch (RuntimeException e) {
+//                ces.getHandler()
+//                        .serviceManagerShutdownFailed(ces.createContext(e), sh.getService());
+//            }
+//        }
+//    }
 
     abstract void setRunState(RunState state);
 

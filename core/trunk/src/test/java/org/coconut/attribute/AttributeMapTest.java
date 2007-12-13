@@ -17,7 +17,7 @@ public class AttributeMapTest {
     @Test
     public void singleton() {
         Attribute a = TestUtil.dummy(Attribute.class);
-        AttributeMap am = AttributeMaps.singleton(a, 1);
+        AttributeMap am = Attributes.singleton(a, 1);
         assertEquals(1, am.size());
         assertEquals(1, am.get(a));
     }
@@ -25,7 +25,7 @@ public class AttributeMapTest {
     @Test
     public void toMap() {
         AttributeMap am = TestUtil.dummy(AttributeMap.class);
-        Map<Integer, AttributeMap> m = AttributeMaps.toMap(Arrays.asList(1, 2, 3, 4), am);
+        Map<Integer, AttributeMap> m = Attributes.toMap(Arrays.asList(1, 2, 3, 4), am);
         assertEquals(4, m.size());
         assertEquals(am, m.get(1));
         assertEquals(am, m.get(2));

@@ -16,7 +16,7 @@ import java.util.Collection;
 
 import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.AttributeMaps;
+import org.coconut.attribute.Attributes;
 import org.coconut.internal.util.ClassUtils;
 import org.coconut.test.TestUtil;
 import org.junit.Ignore;
@@ -86,7 +86,7 @@ public abstract class AbstractAttributeTest {
     }
 
     protected AttributeMap newMap() {
-        return new AttributeMaps.DefaultAttributeMap();
+        return new Attributes.DefaultAttributeMap();
     }
 
     protected void isNotValid(Object... o) {
@@ -111,7 +111,7 @@ public abstract class AbstractAttributeTest {
         Method getMethod = a.getClass().getMethod("get", AttributeMap.class);
         assertTrue(getMethod.getReturnType().equals(c));
 
-        assertEquals(defaultValue, getMethod.invoke(null, AttributeMaps.EMPTY_MAP));
+        assertEquals(defaultValue, getMethod.invoke(null, Attributes.EMPTY_MAP));
         for (Object l : valid) {
             AttributeMap am = newMap();
             am.put(a, l);
