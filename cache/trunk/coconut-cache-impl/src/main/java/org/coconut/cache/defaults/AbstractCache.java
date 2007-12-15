@@ -96,7 +96,6 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
             throw new NullPointerException("key is null");
         }
         AbstractCacheEntry<K, V> entry = doGet(key);
-        //return entry == null ? null : new ImmutableCacheEntry<K, V>(entry);
         return entry;
     }
 
@@ -145,7 +144,6 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
             throw new NullPointerException("key is null");
         }
         AbstractCacheEntry<K, V> entry = doPeek(key);
-        //return entry == null ? null : new ImmutableCacheEntry<K, V>(entry);
         return entry;
     }
 
@@ -153,7 +151,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
      * Prestarts the Cache.
      */
     public void prestart() {
-        getServiceManager().lazyStart(false);
+        size();// calls to size will start the cache, if not already started
     }
 
     /** {@inheritDoc} */

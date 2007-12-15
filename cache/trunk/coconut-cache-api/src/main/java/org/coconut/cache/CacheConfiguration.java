@@ -31,7 +31,6 @@ import org.coconut.cache.spi.CacheSPI;
 import org.coconut.cache.spi.XmlConfigurator;
 import org.coconut.core.Clock;
 import org.coconut.core.Logger;
-import org.coconut.core.Loggers;
 import org.coconut.core.Loggers.Commons;
 import org.coconut.core.Loggers.JDK;
 import org.coconut.core.Loggers.Log4j;

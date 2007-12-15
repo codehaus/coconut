@@ -38,11 +38,13 @@ public abstract class CacheExceptionContext<K, V> {
     public abstract Logger defaultLogger();
 
     /**
-     * Returns the cause of the failure.
+     * Returns the cause of the failure, or <code>null</code> if no exception was raised.
      * 
      * @return the cause of the failure
      */
     public abstract Throwable getCause();
+    
+    public abstract String getMessage();
 // /**
 // * Shutdowns the cache. Either we should only take a runtime exception, or else the
 // * cache needs to wrap the cause in a runtime exception. Well the later is more

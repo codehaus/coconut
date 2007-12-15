@@ -3,6 +3,8 @@
  */
 package org.coconut.attribute.common;
 
+import java.io.Serializable;
+
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
 import org.coconut.attribute.spi.AbstractDoubleAttribute;
@@ -16,7 +18,7 @@ import org.coconut.attribute.spi.AbstractDoubleAttribute;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public final class CostAttribute extends AbstractDoubleAttribute {
+public final class CostAttribute extends AbstractDoubleAttribute  {
 
     /** The default value of the Cost attribute. */
     public static final double DEFAULT_VALUE = 1.0;

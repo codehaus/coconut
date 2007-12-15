@@ -21,7 +21,7 @@ import org.junit.Test;
 public class ExpirationWithExplicitTimeout extends AbstractExpirationTestBundle {
     @Before
     public void setUpCaches() {
-        c = newCache(newConf().setClock(clock));
+       setCache();
     }
 
     /**

@@ -19,13 +19,13 @@ public class ManagementService extends AbstractCacheTCKTest {
 
     @Test
     public void testNonConfigured() {
-        c = newCache();
+        setCache();
         assertFalse(services().hasService(CacheManagementService.class));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testNonConfiguredIAE() {
-        c = newCache();
+        setCache();
         c.getService(CacheManagementService.class);
     }
 

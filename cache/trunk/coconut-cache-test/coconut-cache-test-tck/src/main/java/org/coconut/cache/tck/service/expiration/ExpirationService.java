@@ -81,12 +81,12 @@ public class ExpirationService extends AbstractCacheTCKTest {
 
     @Before
     public void setup() {
-        c = newCache();
+        setCache();
     }
 
     @Test(expected = CacheException.class)
     public void testIllegalPutAllCall() {
-        c = newCache(newConf().serviceManager().add(new AbstractCacheLifecycle() {
+        c = newCache(conf.serviceManager().add(new AbstractCacheLifecycle() {
             @Override
             public void start(CacheServiceManagerService serviceManager) {
                 CacheExpirationService ces = c.getService(CacheExpirationService.class);
@@ -98,7 +98,7 @@ public class ExpirationService extends AbstractCacheTCKTest {
 
     @Test(expected = CacheException.class)
     public void testIllegalPutCall() {
-        c = newCache(newConf().serviceManager().add(new AbstractCacheLifecycle() {
+        c = newCache(conf.serviceManager().add(new AbstractCacheLifecycle() {
             @Override
             public void start(CacheServiceManagerService serviceManager) {
                 CacheExpirationService ces = c.getService(CacheExpirationService.class);

@@ -23,7 +23,7 @@ public class PutIfAbsent extends AbstractCacheTCKTest {
      */
     @Test
     public void putIfAbsent() {
-        c = newCache();
+        setCache();
         assertNull(c.putIfAbsent(M1.getKey(), M1.getValue()));
         assertEquals(M1.getValue(), c.get(M1.getKey()));
         assertEquals(M1.getValue(), c.putIfAbsent(M1.getKey(), M2.getValue()));
@@ -35,7 +35,7 @@ public class PutIfAbsent extends AbstractCacheTCKTest {
      */
     @Test
     public void putIfAbsentLazyStart() {
-        c = newCache();
+        setCache();
         assertFalse(c.isStarted());
         c.putIfAbsent(M1.getKey(), M1.getValue());
         checkLazystart();
@@ -46,7 +46,7 @@ public class PutIfAbsent extends AbstractCacheTCKTest {
      */
     @Test(expected = NullPointerException.class)
     public void putIfAbsentKeyNPE() {
-        c = newCache();
+        setCache();
         c.putIfAbsent(null, "A");
     }
     /**
@@ -66,7 +66,7 @@ public class PutIfAbsent extends AbstractCacheTCKTest {
      */
     @Test(expected = NullPointerException.class)
     public void putIfAbsentValueNPE() {
-        c = newCache();
+        setCache();
         c.putIfAbsent(1, null);
     }
 }

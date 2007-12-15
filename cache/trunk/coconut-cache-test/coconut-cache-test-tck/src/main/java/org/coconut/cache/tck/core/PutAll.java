@@ -28,7 +28,7 @@ public class PutAll extends AbstractCacheTCKTest {
     @SuppressWarnings("unchecked")
     @Test
     public void putAll() {
-        c = newCache();
+        setCache();
         c.putAll(asMap(M1, M5));
         assertEquals(2, c.size());
         assertTrue(c.entrySet().contains(M1));
@@ -48,7 +48,7 @@ public class PutAll extends AbstractCacheTCKTest {
      */
     @Test
     public void putAllLazyStart() {
-        c = newCache();
+        setCache();
         assertFalse(c.isStarted());
         c.putAll(asMap(M1, M5));
         checkLazystart();
@@ -69,21 +69,21 @@ public class PutAll extends AbstractCacheTCKTest {
 
     @Test(expected = NullPointerException.class)
     public void putAllNPE() {
-        c = newCache();
+        setCache();
         putAll((Map.Entry) null);
     }
 
     @SuppressWarnings("unchecked")
     @Test(expected = NullPointerException.class)
     public void putAllKeyMappingNPE() {
-        c = newCache();
+        setCache();
         c.putAll(asMap(M1, M1_NULL_VALUE));
     }
 
     @SuppressWarnings("unchecked")
     @Test(expected = NullPointerException.class)
     public void putAllValueMappingNPE() {
-        c = newCache();
+        setCache();
         c.putAll(asMap(M1, M1_KEY_NULL));
     }
 }

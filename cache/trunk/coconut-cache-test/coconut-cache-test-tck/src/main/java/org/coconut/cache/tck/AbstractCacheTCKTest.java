@@ -15,6 +15,7 @@ import javax.management.MBeanServerInvocationHandler;
 import javax.management.ObjectName;
 
 import junit.framework.Assert;
+import junit.framework.AssertionFailedError;
 import net.jcip.annotations.ThreadSafe;
 
 import org.coconut.cache.Cache;
@@ -36,6 +37,7 @@ import org.coconut.cache.test.util.ThreadServiceTestHelper;
 import org.coconut.core.Clock.DeterministicClock;
 import org.coconut.management.ManagedGroup;
 import org.coconut.test.CollectionTestUtil;
+import org.junit.After;
 import org.junit.Before;
 
 /**
@@ -53,18 +55,55 @@ public class AbstractCacheTCKTest extends Assert {
 
     protected CacheConfiguration<Integer, String> conf;
 
+    private Throwable failure;
+
+    protected void failed(Throwable cause) {
+        this.failure = cause;
+        if (cause instanceof Error) {
+            throw (Error) cause;
+        } else if (cause instanceof RuntimeException) {
+            throw (RuntimeException) cause;
+        }
+    }
+
+    private String failText;
+
+    public final void doFail(String txt) {
+        failText = txt;
+    }
+
+    @After
+    public final void noFailures() throws Throwable {
+        if (failText != null) {
+            throw new AssertionError(failText);
+        }
+        if (failure != null) {
+            if (failure instanceof AssertionFailedError) {
+                throw failure;
+            }
+            failure = null;
+            failure.printStackTrace();
+            throw new AssertionError("Test failed");
+        }
+    }
+
     @Before
-    public void setupConf() {
+    public final void setupConf() {
+        failText = null;
+        failure = null;
         clock = new DeterministicClock();
         conf = newConf();
         conf.setClock(clock);
     }
+
     public void assertNotStarted() {
         assertFalse(c.isStarted());
     }
+
     public void assertStarted() {
         assertTrue(c.isStarted());
     }
+
     protected void assertGet(Map.Entry<Integer, String>... e) {
         for (Map.Entry<Integer, String> entry : e) {
             assertEquals(entry.getValue(), c.get(entry.getKey()));
@@ -261,9 +300,8 @@ public class AbstractCacheTCKTest extends Assert {
     }
 
     protected Cache<Integer, String> newCache(int entries) {
-        CacheConfiguration<Integer, String> cc = newConf();
-        cc.setClock(clock);
-        Cache<Integer, String> c = newCache(cc);
+        conf.setClock(clock);
+        Cache<Integer, String> c = newCache(conf);
         if (entries > 0) {
             c.putAll(createMap(entries));
         }
@@ -369,7 +407,7 @@ public class AbstractCacheTCKTest extends Assert {
         c = newCache(conf);
     }
 
-    protected Cache<Integer,String> setCache() {
+    protected Cache<Integer, String> setCache() {
         c = newCache(conf);
         return c;
     }

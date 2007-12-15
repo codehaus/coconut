@@ -15,7 +15,7 @@ import org.junit.Test;
 public class StatisticsServiceGeneral extends AbstractCacheTCKTest {
     @Before
     public void setup() {
-        c = newCache();
+        setCache();
     }
 
     @Test

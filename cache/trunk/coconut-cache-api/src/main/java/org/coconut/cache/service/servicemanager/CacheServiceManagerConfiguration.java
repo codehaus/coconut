@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
+import org.coconut.cache.spi.CacheSPI;
 import org.coconut.internal.util.XmlUtil;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedLifecycle;
@@ -107,7 +108,7 @@ public class CacheServiceManagerConfiguration extends AbstractCacheServiceConfig
     @Override
     protected void toXML(Document doc, Element parent) throws Exception {
         for (Object o : getObjects()) {
-            addTypedElement(doc, parent, SERVICE_TAG, getResourceBundle(),
+            addTypedElement(doc, parent, SERVICE_TAG, CacheSPI.DEFAULT_CACHE_BUNDLE,
                     CacheServiceManagerConfiguration.class, "saveOfLifecycleFailed", o);
         }
     }

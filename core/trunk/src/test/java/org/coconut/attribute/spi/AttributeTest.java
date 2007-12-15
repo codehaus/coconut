@@ -95,6 +95,12 @@ public class AttributeTest {
         a.setValue(new Attributes.DefaultAttributeMap(), "fooasd");
     }
 
+    @Test(expected = UnsupportedOperationException.class)
+    public void fromStringUOE() {
+        Attribute a = new ValidateAttribute("fooignore");
+        a.fromString("foo");
+    }
+
     @Test
     public void test() {
         assertEquals("name", ATR.getName());
@@ -104,12 +110,12 @@ public class AttributeTest {
 
     @Test
     public void toSingleton() {
-        AttributeMap map = ATR.toSingleton("singleton");
+        AttributeMap map = ATR.singleton("singleton");
         assertEquals(1, map.size());
         assertTrue(map.containsKey(ATR));
         assertEquals("singleton", map.get(ATR));
 
-        map = ATR.toSingleton(null);
+        map = ATR.singleton(null);
         assertEquals(1, map.size());
         assertTrue(map.containsKey(ATR));
         assertNull(map.get(ATR));
@@ -117,7 +123,7 @@ public class AttributeTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void toSingletonIAE() {
-        ATR_VALIDATE.toSingleton("sdfsdf");
+        ATR_VALIDATE.singleton("sdfsdf");
     }
 
     @Test
@@ -128,13 +134,9 @@ public class AttributeTest {
     @Test
     public void unSet() {
         AttributeMap am1 = new Attributes.DefaultAttributeMap();
-        AttributeMap am2 = Attributes.singleton(ATR, "value");
         assertEquals(0, am1.size());
-        assertEquals(1, am2.size());
         ATR.unSet(am1);
-        ATR.unSet(am2);
         assertEquals(0, am1.size());
-        assertEquals(0, am2.size());
     }
 
     @Test
@@ -154,9 +156,9 @@ public class AttributeTest {
             super(name, clazz, defaultValue);
         }
 
-        public String fromString(String str) {
-            return str;
-        }
+// public String fromString(String str) {
+// return str;
+// }
     }
 
     static class ValidateAttribute extends DefaultAttribute {

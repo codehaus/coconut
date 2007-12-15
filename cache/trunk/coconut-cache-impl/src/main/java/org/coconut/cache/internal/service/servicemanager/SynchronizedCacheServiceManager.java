@@ -99,13 +99,12 @@ public class SynchronizedCacheServiceManager extends AbstractCacheServiceManager
                 }
                 setRunState(shutdownNow ? RunState.STOP : RunState.SHUTDOWN);
                 initiateShutdown();
-
                 if (!shutdownFutures.isEmpty()) {
                     // java 5 bug, cannot use Executors.
                     ThreadPoolExecutor tpe = new ThreadPoolExecutor(1, 1, 0L,
                             TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
 
-                    tpe.execute(new Runnable() {
+                    Runnable r = new Runnable() {
                         public void run() {
                             try {
                                 while (!shutdownFutures.isEmpty()) {
@@ -114,14 +113,18 @@ public class SynchronizedCacheServiceManager extends AbstractCacheServiceManager
                                         sh.future.get();
                                         shutdownFutures.poll();
                                     } catch (Exception e) {
-                                        ces.getHandler().serviceManagerShutdownFailed(ces.createContext(e), sh.getService());
+                                        ces.getHandler().serviceManagerShutdownFailed(
+                                                ces.createContext(e,
+                                                        "Could not shutdown the service properly"),
+                                                sh.getService());
                                     }
                                 }
                             } finally {
                                 doTerminate();
                             }
                         }
-                    });
+                    };
+                    tpe.execute(r);
                     shutdownServiceExecutor.shutdown();
                     tpe.shutdown();
                 } else {
@@ -141,9 +144,21 @@ public class SynchronizedCacheServiceManager extends AbstractCacheServiceManager
     void shutdownService(final ServiceHolder service) throws Exception {
         final AtomicInteger canSubmit = new AtomicInteger();
         CacheLifecycle.Shutdown cs = new CacheLifecycle.Shutdown() {
-            public void shutdownAsynchronously(Callable<?> callable) {
+            public void shutdownAsynchronously(final Callable<?> callable) {
                 if (canSubmit.compareAndSet(0, 1)) {
-                    service.future = shutdownServiceExecutor.submit(callable);
+                    final CountDownLatch cdl = new CountDownLatch(1);
+                    service.future = shutdownServiceExecutor.submit(new Callable() {
+                        public Object call() throws Exception {
+                            // sometimes the shutdown executor service
+                            // shutsdown before this entry is processed
+                            // therefor we make sure its invoked
+                            cdl.countDown();
+                            return callable.call();
+                        }
+                    });
+                    try {
+                        cdl.await();
+                    } catch (InterruptedException e) { /* ignore */}
                     shutdownFutures.add(service);
                 } else {
                     throw new IllegalStateException();

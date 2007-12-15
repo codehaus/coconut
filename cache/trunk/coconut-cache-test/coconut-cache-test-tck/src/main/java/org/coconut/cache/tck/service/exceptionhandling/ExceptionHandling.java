@@ -6,6 +6,7 @@ package org.coconut.cache.tck.service.exceptionhandling;
 import static org.coconut.test.CollectionTestUtil.M1;
 import static org.coconut.test.CollectionTestUtil.M2;
 
+import java.util.Arrays;
 import java.util.logging.LogManager;
 
 import org.coconut.attribute.AttributeMap;
@@ -19,6 +20,7 @@ import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.core.Logger;
 import org.coconut.test.SystemErrOutHelper;
+import org.coconut.test.TestUtil;
 import org.coconut.test.throwables.Exception1;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -37,7 +39,9 @@ public class ExceptionHandling extends AbstractCacheTCKTest {
     CacheLoader<Integer, String> loader = new FailingLoader();
 
     private Throwable failure;
+
     Logger logger;
+
     @Before
     public void setup() {
         logger = context.mock(Logger.class);
@@ -47,6 +51,7 @@ public class ExceptionHandling extends AbstractCacheTCKTest {
             }
         });
     }
+
     @After
     public void resetLogging() throws Exception {
         // reset the logging system
@@ -115,8 +120,22 @@ public class ExceptionHandling extends AbstractCacheTCKTest {
     }
 
     @Test
+    public void loadAllFailedToSystemOut() throws Exception {
+        c = newCache(newConf().loading().setLoader(loader));
+        SystemErrOutHelper str = SystemErrOutHelper.getErr();
+        try {
+            loading().loadAll(Arrays.asList(1, 10));
+            awaitAllLoads();
+            assertNotNull(str.getFromLast(1));
+        } finally {
+            str.terminate();
+        }
+        LogManager.getLogManager().readConfiguration();
+    }
+
+    @Test
     public void loadFailed() {
-        final Logger logger = context.mock(Logger.class);
+        final Logger logger = TestUtil.dummy(Logger.class);
         c = newCache(newConf().exceptionHandling().setExceptionHandler(new BaseExceptionHandler() {
             @Override
             public String loadingLoadValueFailed(CacheExceptionContext<Integer, String> context,
@@ -194,6 +213,6 @@ public class ExceptionHandling extends AbstractCacheTCKTest {
 
     }
 
-    static class BaseExceptionHandler extends
+    public static class BaseExceptionHandler extends
             CacheExceptionHandlers.DefaultLoggingExceptionHandler<Integer, String> {}
 }

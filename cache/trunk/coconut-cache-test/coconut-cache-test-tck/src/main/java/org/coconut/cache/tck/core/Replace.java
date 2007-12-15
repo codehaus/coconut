@@ -57,7 +57,7 @@ public class Replace extends AbstractCacheTCKTest {
      */
     @Test
     public void replace2LazyStart() {
-        c = newCache();
+        setCache();
         assertFalse(c.isStarted());
         c.replace(M2.getKey(), M2.getValue());
         checkLazystart();
@@ -87,7 +87,7 @@ public class Replace extends AbstractCacheTCKTest {
      */
     @Test
     public void replace3LazyStart() {
-        c = newCache();
+        setCache();
         assertFalse(c.isStarted());
         c.replace(M1.getKey(), M1.getValue(), M3.getValue());
         checkLazystart();

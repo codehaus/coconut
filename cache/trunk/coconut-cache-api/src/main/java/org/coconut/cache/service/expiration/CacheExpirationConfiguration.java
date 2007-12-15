@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
+import org.coconut.cache.spi.CacheSPI;
 import org.coconut.internal.util.XmlUtil;
 import org.coconut.operations.Ops.Predicate;
 import org.w3c.dom.Document;
@@ -158,7 +159,7 @@ public class CacheExpirationConfiguration<K, V> extends
                 DEFAULT_TIME_UNIT, DEFAULT.defaultTimeToLive);
 
         /* Filter */
-        addTypedElement(doc, parent, EXPIRATION_FILTER_TAG, getResourceBundle(),getClass(),
+        addTypedElement(doc, parent, EXPIRATION_FILTER_TAG, CacheSPI.DEFAULT_CACHE_BUNDLE,getClass(),
                 "saveOfExpirationFilterFailed", expirationFilter);
     }
 }

@@ -27,8 +27,7 @@ public class EventServiceEviction extends AbstractEventTestBundle {
      */
     @Test
     public void evicted() throws Exception {
-        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(3).c()
-                .event().setEnabled(true));
+        c = newCache(conf.eviction().setPolicy(Policies.newLRU()).setMaximumSize(3).c());
         put(M1);
         put(M2);
         put(M3);
@@ -40,10 +39,11 @@ public class EventServiceEviction extends AbstractEventTestBundle {
         ItemAdded<?, ?> a = consumeItem(ItemAdded.class, M4);
 // assertFalse(a.isLoaded());
     }
+
     @Test
     public void testRejectPutEntry() {
         RejectEntriesPolicy rep = new RejectEntriesPolicy();
-        c = newCache(newConf().eviction().setPolicy(rep).c().event().setEnabled(true));
+        c = newCache(conf.eviction().setPolicy(rep));
 
         c.put(1, "A");
         c.put(2, "B");
@@ -52,11 +52,11 @@ public class EventServiceEviction extends AbstractEventTestBundle {
         put(M3);
         assertSize(2);
     }
-    
+
     @Test
     public void testRejectReplaceEntry() {
         RejectEntriesPolicy rep = new RejectEntriesPolicy();
-        c = newCache(newConf().eviction().setPolicy(rep).c().event().setEnabled(true));
+        c = newCache(conf.eviction().setPolicy(rep).c());
 
         c.put(1, "A");
         c.put(2, "B");

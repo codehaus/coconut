@@ -17,6 +17,7 @@ import org.coconut.cache.policy.IsCacheable;
 import org.coconut.cache.policy.IsCacheables;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
+import org.coconut.cache.spi.CacheSPI;
 import org.coconut.operations.Predicates;
 import org.coconut.operations.StringPredicates;
 import org.w3c.dom.Document;
@@ -210,7 +211,7 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
     protected void toXML(Document doc, Element base) throws Exception {
         contentLongSet(doc, base, MAXIMUM_VOLUME, maximumVolume, DEFAULT.getMaximumVolume());
         contentIntSet(doc, base, MAXIMUM_SIZE, maximumSize, DEFAULT.getMaximumSize());
-        addTypedElement(doc, base, IS_CACHEABLE_TAG, getResourceBundle(), getClass(),
+        addTypedElement(doc, base, IS_CACHEABLE_TAG, CacheSPI.DEFAULT_CACHE_BUNDLE, getClass(),
                 "saveOfIsCacheableFilterFailed", isCacheableFilter);
     }
 

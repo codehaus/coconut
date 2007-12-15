@@ -13,20 +13,20 @@ public class RemoveAll extends AbstractCacheTCKTest {
 
     @Test(expected = NullPointerException.class)
     public void removeAllNPE1() {
-        c = newCache();
+        setCache();
         c.removeAll(null);
     }
 
     @Test(expected = NullPointerException.class)
     public void removeAllNPE() {
-        c = newCache();
+        setCache();
         c.removeAll(CollectionTestUtil.keysWithNull);
 
     }
 
     @Test
     public void removeAll() {
-        c = newCache();
+        setCache();
         c.removeAll(CollectionTestUtil.asList(2, 3));
 
         c = newCache(5);
@@ -43,7 +43,7 @@ public class RemoveAll extends AbstractCacheTCKTest {
      */
     @Test
     public void removeAllLazyStart() {
-        c = newCache();
+        setCache();
         assertFalse(c.isStarted());
         c.removeAll(CollectionTestUtil.asList(2, 3));
         checkLazystart();

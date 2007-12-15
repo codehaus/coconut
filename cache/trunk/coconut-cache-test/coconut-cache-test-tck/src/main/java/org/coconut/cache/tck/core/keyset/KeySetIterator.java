@@ -29,7 +29,7 @@ public class KeySetIterator extends AbstractCacheTCKTest {
     @SuppressWarnings("unused")
     public void iterator() {
         int count = 0;
-        c = newCache();
+        setCache();
         for (Integer entry : c.keySet()) {
             count++;
         }

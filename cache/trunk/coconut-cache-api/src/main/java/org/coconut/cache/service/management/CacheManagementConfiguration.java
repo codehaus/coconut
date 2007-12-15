@@ -18,6 +18,7 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
+import org.coconut.cache.spi.CacheSPI;
 import org.coconut.internal.util.XmlUtil;
 import org.coconut.management.ManagedVisitor;
 import org.w3c.dom.Document;
@@ -211,12 +212,12 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
             if (mBeanServer == ManagementFactory.getPlatformMBeanServer()) {
                 base.setAttribute("usePlatformMBeanServer", Boolean.toString(true));
             } else {
-                addComment(doc, getResourceBundle(), getClass(), "cannotPersistMBeanServer", base);
+                addComment(doc, CacheSPI.DEFAULT_CACHE_BUNDLE, getClass(), "cannotPersistMBeanServer", base);
             }
         }
 
         /* Registrant */
-        addTypedElement(doc, base, XML_REGISTRANT_TAG, getResourceBundle(), getClass(),
+        addTypedElement(doc, base, XML_REGISTRANT_TAG, CacheSPI.DEFAULT_CACHE_BUNDLE, getClass(),
                 "saveOfRegistrantFailed", registrant);
 
     }

@@ -24,6 +24,7 @@ import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.core.EventProcessor;
 import org.coconut.event.bus.EventSubscription;
+import org.coconut.operations.Predicates;
 import org.coconut.operations.Ops.Predicate;
 import org.junit.After;
 import org.junit.Before;
@@ -43,14 +44,18 @@ public class AbstractEventTestBundle extends AbstractCacheTCKTest {
 
     @Before
     public void setup() {
-        conf.event().setEnabled(true).include(CacheEvent.class);
-
+        conf.event().setEnabled(true);
         events = new LinkedBlockingQueue<EventWrapper>();
         eventHandler = new EventProcessor<CacheEvent<Integer, String>>() {
             public void process(CacheEvent<Integer, String> event) {
                 events.add(new EventWrapper(event));
             }
         };
+    }
+
+    CacheConfiguration<Integer, String> anythingBut(Class<?> clazz) {
+        conf.event().setEnabledEventPredicate((Predicate) Predicates.not(Predicates.isEquals(clazz)));
+        return conf;
     }
 
     @After
@@ -65,12 +70,12 @@ public class AbstractEventTestBundle extends AbstractCacheTCKTest {
         }
     }
 
-    protected void assertQueueEmpty() {
-        if (events.size() > 0) {
-            events.clear();
-            throw new AssertionFailedError("event queue not empty");
-        }
-    }
+// protected void assertQueueEmpty() {
+// if (events.size() > 0) {
+// events.clear();
+// throw new AssertionFailedError("event queue not empty");
+// }
+// }
 
     protected void consumeItem() throws Exception {
         assertNotNull(events.poll(50, TimeUnit.MILLISECONDS));
@@ -184,12 +189,6 @@ public class AbstractEventTestBundle extends AbstractCacheTCKTest {
 
     protected EventSubscription<?> subscribe(Predicate f) {
         return subscribe(CacheServices.event(c), f);
-    }
-
-    CacheConfiguration<Integer, String> includeAll() {
-        CacheConfiguration<Integer, String> c = newConf();
-        c.event().setEnabled(true).include(CacheEvent.class);
-        return c;
     }
 
     static class EventWrapper {

@@ -52,7 +52,7 @@ public class Remove extends AbstractCacheTCKTest {
      */
     @Test
     public void remove2LazyStart() {
-        c = newCache();
+        setCache();
         assertFalse(c.isStarted());
         c.remove(M1.getKey(), M2.getValue());
         checkLazystart();
@@ -78,7 +78,7 @@ public class Remove extends AbstractCacheTCKTest {
      */
     @Test(expected = NullPointerException.class)
     public void remove2ValueNPE() {
-        c = newCache();
+        setCache();
         c.remove(M1.getKey(), null);
     }
 
@@ -87,7 +87,7 @@ public class Remove extends AbstractCacheTCKTest {
      */
     @Test
     public void removeLazyStart() {
-        c = newCache();
+        setCache();
         assertFalse(c.isStarted());
         c.remove(M1.getKey());
         checkLazystart();

@@ -11,19 +11,19 @@ public class ServiceManagerService extends AbstractCacheTCKTest {
 
     @Test
     public void testUnknownService() {
-        c = newCache();
+        setCache();
         assertFalse(services().hasService(Object.class));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testNonConfiguredIAE() {
-        c = newCache();
+        setCache();
         c.getService(Object.class);
     }
 
     @Test
     public void serviceManagerAvailable() {
-        c = newCache();
+        setCache();
         CacheServiceManagerService s = c.getService(CacheServiceManagerService.class);
         assertSame(s, s.getAllServices().get(CacheServiceManagerService.class));
         assertSame(s, s.getService(CacheServiceManagerService.class));
@@ -31,7 +31,7 @@ public class ServiceManagerService extends AbstractCacheTCKTest {
 
     @Test(expected = NullPointerException.class)
     public void serviceManagerGetNPE() {
-        c = newCache();
+        setCache();
         c.getService(null);
     }
 

@@ -93,14 +93,14 @@ public class DoubleAttributeTest {
 
     @Test
     public void toSingleton() {
-        assertEquals(-10.0, LA.toSingleton(-10).get(LA));
-        assertEquals(10.0, LA.toSingleton(10).get(LA));
-        assertEquals(Double.MAX_VALUE, LA.toSingleton(Double.MAX_VALUE).get(LA));
+        assertEquals(-10.0, LA.toSingletonLong(-10).get(LA));
+        assertEquals(10.0, LA.toSingletonLong(10).get(LA));
+        assertEquals(Double.MAX_VALUE, LA.toSingletonLong(Double.MAX_VALUE).get(LA));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void toSingletonIAE() {
-        LA.toSingleton(Double.NaN);
+        LA.toSingletonLong(Double.NaN);
     }
 
     @Test

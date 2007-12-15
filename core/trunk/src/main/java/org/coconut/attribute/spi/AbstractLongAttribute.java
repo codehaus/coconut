@@ -7,6 +7,7 @@ import java.io.Serializable;
 
 import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
+import org.coconut.attribute.Attributes;
 import org.coconut.operations.Ops.MapperToLong;
 
 /**
@@ -20,7 +21,7 @@ import org.coconut.operations.Ops.MapperToLong;
 public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
 
     /** The default value of this attribute. */
-    private final long defaultValue;
+    private final long defaultLongValue;
 
     /**
      * A MapperToLong that takes an AttributeMap and returns the value of this attribute.
@@ -41,7 +42,7 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
      */
     public AbstractLongAttribute(String name, long defaultValue) {
         super(name, Long.TYPE, defaultValue);
-        this.defaultValue = defaultValue;
+        this.defaultLongValue = defaultValue;
     }
 
     /** {@inheritDoc} */
@@ -79,7 +80,7 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
      * @return the value of this attribute
      */
     public long getPrimitive(AttributeMap attributes) {
-        return attributes.getLong(this, defaultValue);
+        return attributes.getLong(this, defaultLongValue);
     }
 
     /**
@@ -148,7 +149,7 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
     }
 
     /**
-     * Analogous to {@link #toSingleton(Long)} except taking a primitive long as
+     * Analogous to {@link #singleton(Long)} except taking a primitive long as
      * parameter.
      * 
      * @param value
@@ -156,8 +157,9 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
      * @return an AttributeMap containing only this attribute mapping to the specified
      *         value
      */
-    protected AttributeMap toSingleton(long value) {
-        return super.toSingleton(value);
+    protected AttributeMap toSingletonLong(long value) {
+        checkValid(value);
+        return Attributes.singleton(this, value);
     }
 
     /**

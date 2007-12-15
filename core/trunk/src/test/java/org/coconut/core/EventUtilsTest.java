@@ -61,7 +61,7 @@ public class EventUtilsTest {
         EventProcessor processor = EventUtils.fromOfferable(subscriber);
         processor.process(0);
         assertNotSerializable(processor);
-        assertNotSerializable(EventUtils.fromOfferable(EventUtils.dummyOfferableFalse()));
+        assertIsSerializable(EventUtils.fromOfferable(EventUtils.dummyOfferableFalse()));
     }
 
     @Test(expected = NullPointerException.class)
@@ -80,7 +80,7 @@ public class EventUtilsTest {
         EventProcessor processor = EventUtils.fromQueue(q);
         processor.process(0);
         assertNotSerializable(processor);
-        assertNotSerializable(EventUtils.fromQueue(new ArrayBlockingQueue(1)));
+        assertIsSerializable(EventUtils.fromQueue(new ArrayBlockingQueue(1)));
 
     }
 
@@ -139,7 +139,7 @@ public class EventUtilsTest {
         Offerable o = EventUtils.toOfferable(eh);
         assertTrue(o.offer(0));
         assertNotSerializable(o);
-        assertNotSerializable(EventUtils.toOfferable(EventUtils.dummyEventProcessor()));
+        assertIsSerializable(EventUtils.toOfferable(EventUtils.dummyEventProcessor()));
     }
 
     @Test(expected = NullPointerException.class)
@@ -161,7 +161,7 @@ public class EventUtilsTest {
         assertTrue(o.offer(0));
         assertFalse(o.offer(1));
         assertNotSerializable(o);
-        assertNotSerializable(EventUtils.toOfferableSafe(EventUtils.dummyEventProcessor()));
+        assertIsSerializable(EventUtils.toOfferableSafe(EventUtils.dummyEventProcessor()));
 
     }
 

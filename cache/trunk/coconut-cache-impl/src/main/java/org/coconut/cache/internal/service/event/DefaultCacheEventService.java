@@ -16,7 +16,6 @@ import java.util.Map;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
-import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
 import org.coconut.cache.service.event.CacheEntryEvent;
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.event.CacheEventConfiguration;
@@ -53,12 +52,9 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
 
     private final CacheEventBus<CacheEvent<K, V>> eb = new CacheEventBus<CacheEvent<K, V>>();
 
-    private final InternalCacheServiceManager manager;
-
     private final Offerable<CacheEvent<K, V>> offerable;
 
-    public DefaultCacheEventService(InternalCacheServiceManager manager, CacheEventConfiguration co) {
-        this.manager = manager;
+    public DefaultCacheEventService(CacheEventConfiguration co) {
         this.offerable = eb;
         this.doAdd = isIncluded(co, CacheEntryEvent.ItemAdded.class);
         this.doClear = isIncluded(co, CacheEvent.CacheCleared.class);
@@ -71,7 +67,11 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
     }
 
     private boolean isIncluded(CacheEventConfiguration co, Class c) {
-        return co.isIncluded(c);
+        Predicate p = co.getEnabledEventPredicate();
+        if (p == null) {
+            return true;
+        }
+        return p.evaluate(c);
     }
 
     /** {@inheritDoc} */

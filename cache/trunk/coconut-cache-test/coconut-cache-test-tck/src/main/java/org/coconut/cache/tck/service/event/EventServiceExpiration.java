@@ -27,7 +27,7 @@ public class EventServiceExpiration extends AbstractEventTestBundle {
 
     @Test
     public void itemRemovedExpired() throws Exception {
-        c = newCache(newConf().setClock(clock).event().setEnabled(true));
+        setCache();
         subscribe(CACHEENTRY_REMOVED_FILTER);
         expiration().put(M1.getKey(), M1.getValue(), 1, TimeUnit.MILLISECONDS);
         expiration().putAll(CollectionTestUtil.asMap(M2, M3), 2, TimeUnit.MILLISECONDS);
@@ -50,8 +50,7 @@ public class EventServiceExpiration extends AbstractEventTestBundle {
     }
 
     public void itemUpdatedExpiredWithLoading() throws Exception {
-        c = newCache(newConf().setClock(clock).loading().setLoader(
-                new IntegerToStringLoader()).c().event().setEnabled(true));
+        c = newCache(conf.loading().setLoader(new IntegerToStringLoader()));
         expiration().put(M1.getKey(), M1.getValue(), 1, TimeUnit.MILLISECONDS);
         expiration().putAll(CollectionTestUtil.asMap(M2, M3), 3, TimeUnit.MILLISECONDS);
         subscribe(CACHEENTRYEVENT_FILTER);
@@ -61,7 +60,7 @@ public class EventServiceExpiration extends AbstractEventTestBundle {
         c.getAll(Arrays.asList(M1.getKey(), M2.getKey(), M3.getKey()));
         ItemUpdated<?, ?> r = consumeItem(ItemUpdated.class, M1);
         assertTrue(r.hasExpired());
-     //   assertTrue(r.isLoaded());
+        // assertTrue(r.isLoaded());
 
         clock.incrementTimestamp(2);
         c.getAll(Arrays.asList(M1.getKey(), M2.getKey(), M3.getKey()));
@@ -69,7 +68,7 @@ public class EventServiceExpiration extends AbstractEventTestBundle {
         Collection<ItemUpdated> removed = consumeItems(ItemUpdated.class, M2, M3);
         for (ItemUpdated i : removed) {
             assertTrue(i.hasExpired());
-   //         assertTrue(i.isLoaded());
+            // assertTrue(i.isLoaded());
         }
 
     }

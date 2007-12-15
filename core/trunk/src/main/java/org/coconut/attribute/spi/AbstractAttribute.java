@@ -59,6 +59,11 @@ public abstract class AbstractAttribute<T> implements Attribute<T>, Serializable
     }
 
     /** {@inheritDoc} */
+    public T fromString(String str) {
+        throw new UnsupportedOperationException();
+    }
+
+    /** {@inheritDoc} */
     public final Class<T> getAttributeType() {
         return clazz;
     }
@@ -74,8 +79,8 @@ public abstract class AbstractAttribute<T> implements Attribute<T>, Serializable
     }
 
     /** {@inheritDoc} */
-    public T getValue(AttributeMap attributes) {
-        return (T) attributes.get(this, defaultValue);
+    public final T getValue(AttributeMap attributes) {
+        return getValue(attributes, defaultValue);
     }
 
     /** {@inheritDoc} */
@@ -124,7 +129,7 @@ public abstract class AbstractAttribute<T> implements Attribute<T>, Serializable
      * @return an AttributeMap containing only this attribute mapping to the specified
      *         value
      */
-    protected AttributeMap toSingleton(T value) {
+    public AttributeMap singleton(T value) {
         checkValid(value);
         return Attributes.singleton(this, value);
     }

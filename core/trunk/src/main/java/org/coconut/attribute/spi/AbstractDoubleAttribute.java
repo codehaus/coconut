@@ -20,7 +20,7 @@ import org.coconut.operations.Ops.MapperToDouble;
 public abstract class AbstractDoubleAttribute extends AbstractAttribute<Double> {
 
     /** The default value of this attribute. */
-    private final double defaultValue;
+    private final double defaultDoubleValue;
 
     /**
      * A MapperToDouble that takes an AttributeMap and returns the value of this
@@ -42,7 +42,7 @@ public abstract class AbstractDoubleAttribute extends AbstractAttribute<Double> 
      */
     public AbstractDoubleAttribute(String name, double defaultValue) {
         super(name, Double.TYPE, defaultValue);
-        this.defaultValue = defaultValue;
+        this.defaultDoubleValue = defaultValue;
     }
 
     /** {@inheritDoc} */
@@ -81,7 +81,7 @@ public abstract class AbstractDoubleAttribute extends AbstractAttribute<Double> 
      * @return the value of this attribute
      */
     public double getPrimitive(AttributeMap attributes) {
-        return attributes.getDouble(this, defaultValue);
+        return attributes.getDouble(this, defaultDoubleValue);
     }
 
     /**
@@ -150,8 +150,9 @@ public abstract class AbstractDoubleAttribute extends AbstractAttribute<Double> 
         attributes.putDouble(this, value);
         return attributes;
     }
+
     /**
-     * Analogous to {@link #toSingleton(Double)} except taking a primitive double as
+     * Analogous to {@link #singleton(Double)} except taking a primitive double as
      * parameter.
      * 
      * @param value
@@ -159,9 +160,10 @@ public abstract class AbstractDoubleAttribute extends AbstractAttribute<Double> 
      * @return an AttributeMap containing only this attribute mapping to the specified
      *         value
      */
-    protected AttributeMap toSingleton(double value) {
-        return super.toSingleton(value);
+    protected AttributeMap toSingletonLong(double value) {
+        return super.singleton(value);
     }
+
     /**
      * Check if the specified value is either {@link Double#NEGATIVE_INFINITY},
      * {@link Double#POSITIVE_INFINITY} or {@link Double#NaN}. If it is, this method will

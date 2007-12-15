@@ -37,7 +37,7 @@ public class EventGet extends AbstractEventTestBundle {
 
     @Test
     public void getAll2WithCacheLoader() throws Exception {
-        c = newCache(includeAll().loading().setLoader(new IntegerToStringLoader()).c(), 0);
+        c = newCache(conf.loading().setLoader(new IntegerToStringLoader()).c(), 0);
         subscribe(CACHEENTRY_ADDED_FILTER);
 
         assertEquals(M1.getValue(), get(M1));
@@ -53,7 +53,7 @@ public class EventGet extends AbstractEventTestBundle {
 
     @Test
     public void getAllWithCacheLoader() throws Exception {
-        c = newCache(includeAll().loading().setLoader(new IntegerToStringLoader()).c(), 0);
+        c = newCache(conf.loading().setLoader(new IntegerToStringLoader()).c(), 0);
         subscribe(CACHEENTRYEVENT_FILTER);
         assertEquals(M1.getValue(), get(M1));
         consumeItem(ItemAdded.class, M1);
@@ -70,7 +70,7 @@ public class EventGet extends AbstractEventTestBundle {
      */
     @Test
     public void getEntryWithCacheLoader() throws Exception {
-        c = newCache(includeAll().loading().setLoader(new IntegerToStringLoader()), 2);
+        c = newCache(conf.loading().setLoader(new IntegerToStringLoader()), 2);
         subscribe(CACHEENTRYEVENT_FILTER);
         assertGetEntry(M1);
         assertGetEntry(M2);
@@ -88,7 +88,7 @@ public class EventGet extends AbstractEventTestBundle {
     @Test
     public void getExpired() throws Exception {
         CacheEntryFilter f = new CacheEntryFilter();
-        c = newCache(includeAll().expiration().setExpirationFilter(f).c(), 2);
+        c = newCache(conf.expiration().setExpirationFilter(f).c(), 2);
         subscribe(CACHEENTRYEVENT_FILTER);
         assertGet(M1);
         assertGet(M2);
@@ -109,7 +109,7 @@ public class EventGet extends AbstractEventTestBundle {
     public void getExpiredWithCacheLoader() throws Exception {
         CacheEntryFilter f = new CacheEntryFilter();
         IntegerToStringLoader loader = new IntegerToStringLoader();
-        c = newCache(includeAll().loading().setLoader(loader).c().expiration()
+        c = newCache(conf.loading().setLoader(loader).c().expiration()
                 .setExpirationFilter(f), 2);
         subscribe(CACHEENTRYEVENT_FILTER);
         assertGet(M1);
@@ -126,7 +126,7 @@ public class EventGet extends AbstractEventTestBundle {
         CacheEntryFilter f = new CacheEntryFilter();
         IntegerToStringLoader loader = new IntegerToStringLoader();
         loader.setDoReturnNull(true);
-        c = newCache(includeAll().loading().setLoader(loader).c().expiration()
+        c = newCache(conf.loading().setLoader(loader).c().expiration()
                 .setExpirationFilter(f), 2);
         subscribe(CACHEENTRYEVENT_FILTER);
         assertGet(M1);
@@ -146,7 +146,7 @@ public class EventGet extends AbstractEventTestBundle {
      */
     @Test
     public void getWithCacheLoader() throws Exception {
-        c = newCache(includeAll().loading().setLoader(new IntegerToStringLoader()).c(), 2);
+        c = newCache(conf.loading().setLoader(new IntegerToStringLoader()).c(), 2);
         subscribe(CACHEENTRYEVENT_FILTER);
         assertGet(M1);
         assertGet(M2);
@@ -166,7 +166,7 @@ public class EventGet extends AbstractEventTestBundle {
     public void getWithCacheLoaderNullLoad() throws Exception {
         IntegerToStringLoader loader = new IntegerToStringLoader();
         loader.setDoReturnNull(true);
-        c = newCache(includeAll().loading().setLoader(loader).c(), 2);
+        c = newCache(conf.loading().setLoader(loader).c(), 2);
         subscribe(CACHEENTRYEVENT_FILTER);
         assertGet(M1);
         assertGet(M2);
@@ -182,7 +182,7 @@ public class EventGet extends AbstractEventTestBundle {
      */
     @Test
     public void peekWithCacheLoader() throws Exception {
-        c = newCache(includeAll().loading().setLoader(new IntegerToStringLoader()).c(), 2);
+        c = newCache(conf.loading().setLoader(new IntegerToStringLoader()).c(), 2);
         subscribe(CACHEENTRYEVENT_FILTER);
         assertPeek(M1);
         assertPeek(M2);

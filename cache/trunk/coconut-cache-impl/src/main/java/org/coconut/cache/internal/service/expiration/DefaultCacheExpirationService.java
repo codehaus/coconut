@@ -110,7 +110,7 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
             return cache.put(key, value);
         } else {
             AttributeMap map = attributeFactory.createMap();
-            TimeToLiveAttribute.INSTANCE.setAttribute(map, timeToLive, unit);
+            TimeToLiveAttribute.set(map, timeToLive, unit);
             return helper.put(key, value, map);// checks for null key+value
         }
     }
@@ -124,7 +124,7 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
             for (Map.Entry<? extends K, ? extends V> entry : t.entrySet()) {
                 K key = entry.getKey();
                 AttributeMap att = attributeFactory.createMap();
-                TimeToLiveAttribute.INSTANCE.setAttribute(att, timeToLive, unit);
+                TimeToLiveAttribute.set(att, timeToLive, unit);
                 attributes.put(key, att);
             }
             helper.putAll(t, attributes);
@@ -137,13 +137,12 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
         cli.registerService(CacheExpirationService.class, ExpirationUtils.wrapService(this));
     }
 
-
     /** {@inheritDoc} */
     public void setDefaultTimeToLive(long timeToLive, TimeUnit unit) {
         long time = ExpirationUtils.convertExpirationTimeToNanos(timeToLive, unit);
         attributeFactory.setDefaultTimeToLiveNs(time == 0 ? Long.MAX_VALUE : time);
     }
-    
+
     public String toString() {
         return "Expiration Service";
     }

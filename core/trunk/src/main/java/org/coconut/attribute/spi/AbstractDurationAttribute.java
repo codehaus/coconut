@@ -52,7 +52,7 @@ public abstract class AbstractDurationAttribute extends AbstractLongAttribute {
     }
 
     protected AttributeMap toSingleton(long value, TimeUnit unit) {
-        return super.toSingleton(convertFrom(value, unit));
+        return super.toSingletonLong(convertFrom(value, unit));
     }
 
     static long convertFrom(long value, TimeUnit unit) {

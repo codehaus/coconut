@@ -83,7 +83,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V>
     private void illegalAttribute(Attribute a, K key, Object illegal, Object defaultValue) {
         String infoMsg = Resources.lookup(AbstractCacheEntryFactoryService.class, "ia", a, key,
                 illegal.toString(), defaultValue.toString());
-        exceptionService.getHandler().handleWarning(exceptionService.createContext(), infoMsg);
+        exceptionService.getHandler().handleWarning(exceptionService.createContext(infoMsg));
     }
 
     /**

@@ -23,7 +23,7 @@ public class ValuesToArray extends AbstractCacheTCKTest {
     @SuppressWarnings("unchecked")
     @Test
     public void toArray() {
-        c = newCache();
+        setCache();
         assertEquals(new HashSet(), new HashSet(Arrays.asList(c.values().toArray())));
 
         assertEquals(new HashSet(), new HashSet(Arrays.asList(c.values().toArray(

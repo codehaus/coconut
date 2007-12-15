@@ -1,7 +1,6 @@
 package org.coconut.cache.tck.service.worker;
 
 import org.coconut.cache.service.eviction.CacheEvictionService;
-import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.worker.CacheWorkerService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.tck.RequireService;

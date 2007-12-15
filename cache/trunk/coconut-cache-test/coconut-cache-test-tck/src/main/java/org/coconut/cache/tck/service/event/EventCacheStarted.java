@@ -31,7 +31,7 @@ public class EventCacheStarted extends AbstractEventTestBundle {
 
     @Test
     public void startedDisabled() throws Exception {
-        conf.event().exclude(CacheEvent.CacheStarted.class);
+        anythingBut(CacheEvent.CacheStarted.class);
 
         c = newCache(conf);
         put(M1);

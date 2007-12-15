@@ -19,7 +19,7 @@ public class Lifecycle extends AbstractCacheTCKTest {
 
     @Test
     public void initialStatus() {
-        c = newCache();
+        setCache();
         assertFalse(c.isStarted());
         assertFalse(c.isTerminated());
         assertFalse(c.isShutdown());
@@ -32,7 +32,7 @@ public class Lifecycle extends AbstractCacheTCKTest {
 
     @Test
     public void lazyStart() {
-        c = newCache();
+        setCache();
         startCache();
         assertTrue(c.isStarted());
         assertFalse(c.isTerminated());
@@ -41,7 +41,7 @@ public class Lifecycle extends AbstractCacheTCKTest {
 
     @Test
     public void shutdownNoOp() {
-        c = newCache();
+        setCache();
         c.shutdown();
         assertTrue(c.isShutdown());
         assertTrue(c.isTerminated());
@@ -52,7 +52,7 @@ public class Lifecycle extends AbstractCacheTCKTest {
     }
     @Test
     public void shutdownNowNoOp() {
-        c = newCache();
+        setCache();
         c.shutdownNow();
         assertTrue(c.isShutdown());
         assertTrue(c.isTerminated());
@@ -63,7 +63,7 @@ public class Lifecycle extends AbstractCacheTCKTest {
     }
     @Test
     public void shutdown() {
-        c = newCache();
+        setCache();
         startCache();
         assertTrue(c.isStarted());
         assertFalse(c.isShutdown());
@@ -74,7 +74,7 @@ public class Lifecycle extends AbstractCacheTCKTest {
 
     @Test
     public void shutdownNow()  {
-        c = newCache();
+        setCache();
         startCache();
         assertTrue(c.isStarted());
         assertFalse(c.isShutdown());
@@ -85,7 +85,7 @@ public class Lifecycle extends AbstractCacheTCKTest {
 
     @Test
     public void shutdownTerminated() throws InterruptedException {
-        c = newCache();
+        setCache();
         startCache();
         assertTrue(c.isStarted());
         c.shutdown();
@@ -97,7 +97,7 @@ public class Lifecycle extends AbstractCacheTCKTest {
 
     @Test
     public void shutdownNowTerminated() throws InterruptedException {
-        c = newCache();
+        setCache();
         startCache();
         assertTrue(c.isStarted());
         c.shutdownNow();

@@ -41,7 +41,7 @@ public class EvictionTrimming extends AbstractCacheTCKTest {
      */
     @Test
     public void trimToSize2() {
-        c = newCache();
+        setCache();
         put(5);
         assertSize(5);
         eviction().trimToSize(3);
@@ -57,7 +57,7 @@ public class EvictionTrimming extends AbstractCacheTCKTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void trimToSizeIAE() {
-        c = newCache();
+        setCache();
         eviction().trimToSize(-1);
     }
 
@@ -97,7 +97,7 @@ public class EvictionTrimming extends AbstractCacheTCKTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void trimToVolumeIAE() {
-        c = newCache();
+        setCache();
         eviction().trimToVolume(-1);
     }
 

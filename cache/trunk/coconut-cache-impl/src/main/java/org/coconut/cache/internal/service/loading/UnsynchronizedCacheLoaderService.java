@@ -6,12 +6,14 @@ package org.coconut.cache.internal.service.loading;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.entry.InternalCacheEntryService;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
+import org.coconut.cache.service.loading.CacheLoaderCallback;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 
 public class UnsynchronizedCacheLoaderService<K, V> extends AbstractCacheLoadingService<K, V> {
@@ -36,23 +38,38 @@ public class UnsynchronizedCacheLoaderService<K, V> extends AbstractCacheLoading
         try {
             getLoader().loadAll(col);
         } catch (RuntimeException re) {
-            throw re;// check
+            getExceptionHandler().fatalRuntimeException(
+                    "CacheLoader.loadAll() failed with runtime exception", re);
+            for (Iterator<UnsynchronizedCacheLoaderCallback<K, V>> iterator = col.iterator(); iterator
+                    .hasNext();) {
+                getExceptionHandler().fatalRuntimeException(
+                        "As a result, load of value was never completed [key = "
+                                + iterator.next().getKey() + "]");
+                iterator.remove();
+            }
         }
-        // all are done in sync version
+        // all callbacks should be done in unsync version
         Map<K, V> keyValues = new HashMap<K, V>();
         Map<K, AttributeMap> keyAttributes = new HashMap<K, AttributeMap>();
         for (UnsynchronizedCacheLoaderCallback<K, V> callback : col) {
             if (!callback.isDone()) {
-                throw new RuntimeException();
+                getExceptionHandler().fatalRuntimeException(
+                        "CacheLoader.loadAll() failed to complete load, completed() or failed() was never called for '"
+                                + CacheLoaderCallback.class.getSimpleName() + "' [key = "
+                                + callback.getKey() + "]", new RuntimeException());
+            } else {
+                V result = callback.getResult();
+                if (callback.getCause() != null) {
+                    result = getExceptionHandler().getHandler().loadingLoadValueFailed(
+                            getExceptionHandler().createContext(
+                                    callback.getCause(),
+                                    "Could not load value [key = " + callback.getKey() + ", attributes = "
+                                            + callback.getAttributes() + "]"), getLoader(), callback.getKey(),
+                            callback.getAttributes());
+                }
+                keyValues.put(callback.getKey(), result);
+                keyAttributes.put(callback.getKey(), callback.getAttributes());
             }
-            V result = callback.getResult();
-            if (callback.getCause() != null) {
-                result = getExceptionHandler().getHandler().loadingLoadValueFailed(
-                        getExceptionHandler().createContext(callback.getCause()), getLoader(), callback.getKey(),
-                        callback.getAttributes());
-            }
-            keyValues.put(callback.getKey(), result);
-            keyAttributes.put(callback.getKey(), callback.getAttributes());
         }
         loadSupport.valuesLoaded(keyValues, keyAttributes);
     }

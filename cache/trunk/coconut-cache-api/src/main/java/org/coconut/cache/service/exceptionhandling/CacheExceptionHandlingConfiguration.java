@@ -7,6 +7,7 @@ import static org.coconut.internal.util.XmlUtil.addTypedElement;
 import static org.coconut.internal.util.XmlUtil.loadChildObject;
 
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
+import org.coconut.cache.spi.CacheSPI;
 import org.coconut.core.Logger;
 import org.coconut.internal.util.LogHelper;
 import org.coconut.internal.util.XmlUtil;
@@ -124,10 +125,10 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
     @Override
     protected void toXML(Document doc, Element parent) throws Exception {
         /* Exception Logger */
-        LogHelper.saveLogger(doc, getResourceBundle(), parent, EXCEPTION_LOGGER_TAG, logger);
+        LogHelper.saveLogger(doc, CacheSPI.DEFAULT_CACHE_BUNDLE, parent, EXCEPTION_LOGGER_TAG, logger);
 
         /* Exception Handler */
-        addTypedElement(doc, parent, EXCEPTION_HANDLER_TAG, getResourceBundle(), getClass(),
+        addTypedElement(doc, parent, EXCEPTION_HANDLER_TAG, CacheSPI.DEFAULT_CACHE_BUNDLE, getClass(),
                 "saveOfExceptionHandlerFailed", exceptionHandler);
 
     }

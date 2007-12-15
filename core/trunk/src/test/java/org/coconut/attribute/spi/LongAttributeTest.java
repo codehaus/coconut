@@ -98,16 +98,16 @@ public class LongAttributeTest {
 
     @Test
     public void toSingleton() {
-        assertEquals(-10l, LONG_A.toSingleton(-10).get(LONG_A));
-        assertEquals(10l, LONG_A.toSingleton(10).get(LONG_A));
-        assertEquals(Long.MAX_VALUE, LONG_A.toSingleton(Long.MAX_VALUE).get(LONG_A));
+        assertEquals(-10l, LONG_A.toSingletonLong(-10).get(LONG_A));
+        assertEquals(10l, LONG_A.toSingletonLong(10).get(LONG_A));
+        assertEquals(Long.MAX_VALUE, LONG_A.toSingletonLong(Long.MAX_VALUE).get(LONG_A));
 
-        assertEquals(10l, NON_NEGATIVE.toSingleton(10).get(NON_NEGATIVE));
+        assertEquals(10l, NON_NEGATIVE.toSingletonLong(10).get(NON_NEGATIVE));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void toSingletonIAE() {
-        NON_NEGATIVE.toSingleton(-10);
+        NON_NEGATIVE.toSingletonLong(-10);
     }
 
     @Test

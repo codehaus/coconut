@@ -116,8 +116,6 @@ public class EventServiceLoading extends AbstractEventTestBundle {
 
     @Test
     public void isCacheables() {
-        CacheConfiguration<Integer, String> conf = newConf();
-        conf.event().setEnabled(true);
         conf.loading().setLoader(loader);
         conf.eviction().setIsCacheableFilter(IsCacheables.REJECT_ALL);
         c = newCache(conf);

@@ -187,8 +187,8 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
                 }
                 result.putAll(tmpMap);
             } catch (RuntimeException re) {
-                ces.getHandler().serviceManagerInitializationFailed(ces.getExceptionLogger(), conf,
-                        cache.getName(), cache.getClass(), si.getService(), re);
+                ces.initializationFailed(conf, cache.getName(), cache.getClass(), si.getService(),
+                        re);
                 throw re;
             }
         }
@@ -241,7 +241,8 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
                     si.manage(cms);
                 } catch (RuntimeException re) {
                     startupException = new CacheException("Could not start the cache", re);
-                    ces.getHandler().serviceManagerStartFailed(ces.createContext(re),
+                    ces.getHandler().serviceManagerStartFailed(
+                            ces.createContext(re, "Could not start the cache"),
                             lookup(CacheConfiguration.class), si);
                     shutdown();
                     throw startupException;
@@ -277,7 +278,8 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
                 si.started(cache);
             } catch (RuntimeException re) {
                 startupException = new CacheException("Could not start the cache", re);
-                ces.getHandler().serviceManagerStartFailed(ces.createContext(re),
+                ces.getHandler().serviceManagerStartFailed(
+                        ces.createContext(re, "Could not start the cache"),
                         lookup(CacheConfiguration.class), si.getService());
                 shutdown();
                 throw startupException;
@@ -317,7 +319,8 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
                 si.start(service);
             } catch (Exception re) {
                 startupException = new CacheException("Could not start the cache", re);
-                ces.getHandler().serviceManagerStartFailed(ces.createContext(re),
+                ces.getHandler().serviceManagerStartFailed(
+                        ces.createContext(re, "Could not start the cache"),
                         lookup(CacheConfiguration.class), si.getService());
                 shutdown();
                 throw startupException;
@@ -466,25 +469,26 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
                 try {
                     shutdownService(sh);
                 } catch (Exception e) {
-                    ces.getHandler().serviceManagerShutdownFailed(ces.createContext(e),
+                    ces.getHandler().serviceManagerShutdownFailed(
+                            ces.createContext(e, "Could not shutdown the service properly"),
                             sh.getService());
                 }
             }
         }
     }
 
-//    void initiateShutdownNow(Collection<ServiceHolder> services) {
-//        List<ServiceHolder> l = new ArrayList<ServiceHolder>(services);
-//        Collections.reverse(l);
-//        for (ServiceHolder sh : l) {
-//            try {
-//                sh.shutdownNow();
-//            } catch (RuntimeException e) {
-//                ces.getHandler()
-//                        .serviceManagerShutdownFailed(ces.createContext(e), sh.getService());
-//            }
-//        }
-//    }
+// void initiateShutdownNow(Collection<ServiceHolder> services) {
+// List<ServiceHolder> l = new ArrayList<ServiceHolder>(services);
+// Collections.reverse(l);
+// for (ServiceHolder sh : l) {
+// try {
+// sh.shutdownNow();
+// } catch (RuntimeException e) {
+// ces.getHandler()
+// .serviceManagerShutdownFailed(ces.createContext(e), sh.getService());
+// }
+// }
+// }
 
     abstract void setRunState(RunState state);
 

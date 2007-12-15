@@ -20,7 +20,7 @@ public class ServiceManagerObjects extends AbstractCacheTCKTest {
 
     @Test
     public void testUnknownService() {
-        c = newCache();
+        setCache();
         assertFalse(services().hasService(Object.class));
     }
 

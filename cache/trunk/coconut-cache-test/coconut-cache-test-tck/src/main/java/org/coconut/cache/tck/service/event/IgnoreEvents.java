@@ -18,12 +18,6 @@ import org.junit.Test;
 
 public class IgnoreEvents extends AbstractEventTestBundle {
 
-    CacheConfiguration<Integer, String> anythingBut(Class clazz) {
-        CacheConfiguration<Integer, String> c = newConf();
-        c.event().setEnabled(true).exclude(clazz);
-        return c;
-    }
-
     @Test
     public void add() {
         setCache(anythingBut(ItemAdded.class));
@@ -93,12 +87,12 @@ public class IgnoreEvents extends AbstractEventTestBundle {
         loading().forceLoad(1);
         awaitAllLoads();
     }
-    
+
     @Test
     public void testRejectReplaceEntry() {
         RejectEntriesPolicy rep = new RejectEntriesPolicy();
-        CacheConfiguration<Integer, String> conf = anythingBut(ItemRemoved.class);
-        c = newCache(conf.eviction().setPolicy(rep).c().event().setEnabled(true));
+        anythingBut(ItemRemoved.class);
+        c = newCache(conf.eviction().setPolicy(rep).c());
 
         c.put(1, "A");
         c.put(2, "B");

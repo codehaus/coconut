@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
+import org.coconut.cache.spi.CacheSPI;
 import org.coconut.internal.util.XmlUtil;
 import org.coconut.operations.Ops.Predicate;
 import org.w3c.dom.Document;
@@ -183,7 +184,7 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
     @Override
     protected void toXML(Document doc, Element parent) {
         /* Cache Loader */
-        addTypedElement(doc, parent, LOADER_TAG, getResourceBundle(), getClass(),
+        addTypedElement(doc, parent, LOADER_TAG, CacheSPI.DEFAULT_CACHE_BUNDLE, getClass(),
                 "saveOfLoaderFailed", loader);
 
         /* Refresh Timer */
@@ -191,7 +192,9 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
                 TimeUnit.NANOSECONDS, 0);
 
         /* Refresh Predicate */
-        addTypedElement(doc, parent, REFRESH_PREDICATE_TAG, getResourceBundle(), getClass(),
+        addTypedElement(doc, parent, REFRESH_PREDICATE_TAG, CacheSPI.DEFAULT_CACHE_BUNDLE, getClass(),
                 "saveOfFilterFailed", refreshPredicate);
+        
+      //  new XStream().toXML(this, System.out);
     }
 }

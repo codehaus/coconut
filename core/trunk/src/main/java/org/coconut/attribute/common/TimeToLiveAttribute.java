@@ -17,7 +17,7 @@ import org.coconut.attribute.spi.AbstractDurationAttribute;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public final class TimeToLiveAttribute extends AbstractDurationAttribute {
+public final class TimeToLiveAttribute extends AbstractDurationAttribute{
 
     /** The default value of this attribute. */
     public static final long DEFAULT_VALUE = AbstractDurationAttribute.DEFAULT_DURATION;

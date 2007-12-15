@@ -50,7 +50,7 @@ public class Size extends AbstractCacheTCKTest {
     @SuppressWarnings("unchecked")
     @Test
     public void put() {
-        c = newCache();
+        setCache();
         put(M1);
         assertPeekAndGet(M1, 1);
         putAll(M1, M2);
@@ -92,7 +92,7 @@ public class Size extends AbstractCacheTCKTest {
         c.clear();
         assertEquals(0, c.getVolume());
 
-        c = newCache();
+        setCache();
         put(M1);
         assertEquals(1, c.getVolume());
         putAll(M1, M2);

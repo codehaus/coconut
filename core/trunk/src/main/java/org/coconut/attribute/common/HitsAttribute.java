@@ -3,6 +3,8 @@
  */
 package org.coconut.attribute.common;
 
+import java.io.Serializable;
+
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
 import org.coconut.attribute.spi.AbstractLongAttribute;
@@ -81,14 +83,15 @@ public final class HitsAttribute extends AbstractLongAttribute {
     }
 
     /**
-     * Returns an AttributeMap containing only this attribute mapping to the specified value.
+     * Returns an AttributeMap containing only this attribute mapping to the specified
+     * value.
      * 
      * @param value
      *            the value to map to
-     * @return an AttributeMap containing only this attribute mapping to the specified value
+     * @return an AttributeMap containing only this attribute mapping to the specified
+     *         value
      */
     public static AttributeMap singleton(long value) {
-        INSTANCE.checkValid(value);
-        return Attributes.singleton(INSTANCE, value);
+        return INSTANCE.toSingletonLong(value);
     }
 }

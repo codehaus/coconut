@@ -4,11 +4,9 @@
 package org.coconut.cache.spi;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertSame;
 import static junit.framework.Assert.assertTrue;
 
 import java.util.ListResourceBundle;
-import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.coconut.cache.CacheException;
@@ -47,29 +45,28 @@ public class AbstraktCacheServiceConfigurationTest {
 
     @Test
     public void abstractCacheServiceConfiguration2() {
-        AbstractCacheServiceConfiguration a = new AbstractCacheServiceConfiguration("foo", rb) {};
-        assertEquals("foo", a.getServiceName());
-        assertSame(rb, a.getResourceBundle());
-    }
-
-    @Test
-    public void lookup() {
-        AbstractCacheServiceConfiguration a = new AbstractCacheServiceConfiguration("foo", rb) {};
-        assertEquals("b", a.lookup("a"));
-        assertEquals("d", a.lookup("c"));
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void lookupISE() {
-        AbstractCacheServiceConfiguration a = new AbstractCacheServiceConfiguration("foo", null) {};
-        a.lookup("a");
-    }
-
-    @Test(expected = MissingResourceException.class)
-    public void lookupFail() {
         AbstractCacheServiceConfiguration a = new AbstractCacheServiceConfiguration("foo") {};
-        a.lookup("a");
+        assertEquals("foo", a.getServiceName());
     }
+
+//    @Test
+//    public void lookup() {
+//        AbstractCacheServiceConfiguration a = new AbstractCacheServiceConfiguration("foo", rb) {};
+//        assertEquals("b", a.lookup("a"));
+//        assertEquals("d", a.lookup("c"));
+//    }
+//
+//    @Test(expected = IllegalStateException.class)
+//    public void lookupISE() {
+//        AbstractCacheServiceConfiguration a = new AbstractCacheServiceConfiguration("foo", null) {};
+//        a.lookup("a");
+//    }
+//
+//    @Test(expected = MissingResourceException.class)
+//    public void lookupFail() {
+//        AbstractCacheServiceConfiguration a = new AbstractCacheServiceConfiguration("foo") {};
+//        a.lookup("a");
+//    }
 
     @Test
     public void toString_() {

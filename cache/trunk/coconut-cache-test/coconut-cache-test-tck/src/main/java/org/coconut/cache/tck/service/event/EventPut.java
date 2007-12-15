@@ -10,7 +10,6 @@ import static org.coconut.test.CollectionTestUtil.M3;
 
 import java.util.Collection;
 
-import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.policy.IsCacheables;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemAdded;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated;

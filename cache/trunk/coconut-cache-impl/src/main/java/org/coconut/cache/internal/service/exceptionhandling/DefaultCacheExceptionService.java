@@ -14,6 +14,7 @@ import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlers;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
+import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.core.Logger;
 import org.coconut.core.Loggers;
 
@@ -61,7 +62,8 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
         } else {
             this.logger = configuration.getExceptionLogger();
         }
-        debugLogger = conf.getDefaultLogger();
+        debugLogger = conf.getDefaultLogger() == null ? Loggers.NULL_LOGGER : conf
+                .getDefaultLogger();
         if (configuration.getExceptionHandler() != null) {
             this.exceptionHandler = configuration.getExceptionHandler();
         } else {
@@ -69,11 +71,12 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
         }
     }
 
+    public CacheExceptionContext<K, V> createContext(String message) {
+        return createContext(null, message);
+    }
+
     /** {@inheritDoc} */
-    public CacheExceptionContext<K, V> createContext(final Throwable cause) {
-        if (cause == null) {
-            throw new NullPointerException("cause is null");
-        }
+    public CacheExceptionContext<K, V> createContext(final Throwable cause, final String message) {
         return new CacheExceptionContext<K, V>() {
 
             @Override
@@ -90,13 +93,16 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
             public Throwable getCause() {
                 return cause;
             }
+
+            @Override
+            public String getMessage() {
+                return message;
+            }
         };
     }
 
     public void debug(String str) {
-        if (debugLogger != null) {
-            debugLogger.debug(str);
-        }
+        debugLogger.debug(str);
     }
 
     /** {@inheritDoc} */
@@ -107,21 +113,23 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
     }
 
     public boolean isDebugEnabled() {
-        return debugLogger != null && debugLogger.isDebugEnabled();
+        return debugLogger.isDebugEnabled();
     }
 
     public boolean isTraceEnabled() {
-        return debugLogger != null && debugLogger.isTraceEnabled();
+        return debugLogger.isTraceEnabled();
     }
 
-    public String toString() {
-        return "ExceptionHandling Service";
+    public void fatalRuntimeException(String msg) {
+        getLogger().error(msg);
+    }
+
+    public void fatalRuntimeException(String msg, RuntimeException cause) {
+        getLogger().error(msg, cause);
     }
 
     public void trace(String str) {
-        if (debugLogger != null) {
-            debugLogger.trace(str);
-        }
+        debugLogger.trace(str);
     }
 
     /**
@@ -157,12 +165,13 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
         return logger;
     }
 
-    public Logger getExceptionLogger() {
-        Logger l=logger;
-        return l==null ? Loggers.NULL_LOGGER : l;
-    }
-
-    public CacheExceptionContext<K, V> createContext() {
-        return createContext(new Exception());
+    public void initializationFailed(CacheConfiguration<K, V> configuration, String cacheName,
+            Class<? extends Cache> cacheType, CacheLifecycle service, RuntimeException cause) {
+        Logger l = logger;
+        if (l == null) {
+            l = Loggers.NULL_LOGGER;
+        }
+        exceptionHandler.serviceManagerInitializationFailed(l, configuration, cacheName, cacheType,
+                service, cause);
     }
 }

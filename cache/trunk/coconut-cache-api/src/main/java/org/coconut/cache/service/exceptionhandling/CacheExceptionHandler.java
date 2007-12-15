@@ -135,7 +135,7 @@ public abstract class CacheExceptionHandler<K, V> {
      * @param warning
      *            the warning to handle
      */
-    public void handleWarning(CacheExceptionContext<K, V> context, String warning) {}
+    public void handleWarning(CacheExceptionContext<K, V> context) {}
 
     /**
      * Called to initialize the CacheExceptionHandler. This method must be called as the
@@ -228,7 +228,9 @@ public abstract class CacheExceptionHandler<K, V> {
      *            the service that failed
      */
     public void serviceManagerShutdownFailed(CacheExceptionContext<K, V> context,
-            CacheLifecycle lifecycle) {}
+            CacheLifecycle lifecycle) {
+        context.defaultLogger().error("error",context.getCause());
+    }
 
     /**
      * Called when a service fails to start properly.
@@ -242,7 +244,9 @@ public abstract class CacheExceptionHandler<K, V> {
      *            the {@link CacheLifecycle} or {@link ManagedLifecycle} that failed
      */
     public void serviceManagerStartFailed(CacheExceptionContext<K, V> context,
-            CacheConfiguration<K, V> configuration, Object service) {}
+            CacheConfiguration<K, V> configuration, Object service) {
+        
+    }
 
     /**
      * Called as the last action by the cache once it has terminated. The map argument

@@ -27,7 +27,7 @@ public class LoadingService extends AbstractCacheTCKTest {
      */
     @Test
     public void noLoadingServiceIfNoLoaderConfigured() {
-        c = newCache();
+        setCache();
         assertFalse(services().hasService(CacheLoadingService.class));
     }
 
@@ -37,7 +37,7 @@ public class LoadingService extends AbstractCacheTCKTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void getLoadingServiceFailIfNoLoaderConfigured() {
-        c = newCache();
+        setCache();
         c.getService(CacheLoadingService.class);
     }
 

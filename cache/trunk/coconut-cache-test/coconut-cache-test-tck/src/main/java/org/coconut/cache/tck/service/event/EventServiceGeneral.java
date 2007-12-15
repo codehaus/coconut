@@ -31,9 +31,7 @@ public class EventServiceGeneral extends AbstractEventTestBundle {
 
     @Test
     public void testEnabled() {
-        CacheConfiguration<?, ?> conf = newConf();
-        conf.event().setEnabled(true);
-        c = newCache(conf);
+        setCache();
         assertTrue(services().hasService(CacheEventService.class));
         assertTrue(services().getAllServices().containsKey(CacheEventService.class));
         Object cs = services().getAllServices().get(CacheEventService.class);

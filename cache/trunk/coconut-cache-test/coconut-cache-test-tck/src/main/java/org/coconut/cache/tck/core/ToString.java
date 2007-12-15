@@ -14,7 +14,7 @@ public class ToString extends AbstractCacheTCKTest {
      */
     @Test
     public void toStringEmpty() {
-        c = newCache();
+        setCache();
         c.toString();
     }
 

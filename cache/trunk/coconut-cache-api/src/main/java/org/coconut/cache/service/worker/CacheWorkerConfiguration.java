@@ -7,6 +7,7 @@ import static org.coconut.internal.util.XmlUtil.addTypedElement;
 import static org.coconut.internal.util.XmlUtil.loadChildObject;
 
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
+import org.coconut.cache.spi.CacheSPI;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -70,7 +71,7 @@ public class CacheWorkerConfiguration extends AbstractCacheServiceConfiguration 
     @Override
     protected void toXML(Document doc, Element parent) throws Exception {
         /* CacheWorkerManager */
-        addTypedElement(doc, parent, CACHE_WORKER_MANAGER_TAG, getResourceBundle(), getClass(),
+        addTypedElement(doc, parent, CACHE_WORKER_MANAGER_TAG, CacheSPI.DEFAULT_CACHE_BUNDLE, getClass(),
                 "saveOfCacheWorkerManagerFailed", cacheWorkerManager);
     }
 }

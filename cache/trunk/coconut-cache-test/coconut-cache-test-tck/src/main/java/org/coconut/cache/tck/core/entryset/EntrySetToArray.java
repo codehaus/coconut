@@ -24,7 +24,7 @@ public class EntrySetToArray extends AbstractCacheTCKTest {
     @SuppressWarnings("unchecked")
     @Test
     public void toArray() {
-        c = newCache();
+        setCache();
         assertEquals(new HashSet(), new HashSet(Arrays.asList(c.entrySet().toArray())));
 
         assertEquals(new HashSet(), new HashSet(Arrays.asList(c.entrySet().toArray(

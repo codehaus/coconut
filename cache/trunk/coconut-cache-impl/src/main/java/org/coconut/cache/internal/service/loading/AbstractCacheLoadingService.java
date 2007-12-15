@@ -253,7 +253,10 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
             v = loader.load(key, attributes);
         } catch (Throwable e) {
             v = getExceptionHandler().getHandler().loadingLoadValueFailed(
-                    getExceptionHandler().createContext(e), loader, key, attributes);
+                    getExceptionHandler().createContext(
+                            e,
+                            "Could not load value [key = " + key + ", attributes = " + attributes
+                                    + "]"), loader, key, attributes);
         }
         return loadSupport.valueLoaded(key, v, attributes);
     }

@@ -20,7 +20,7 @@ public class EvictionService extends AbstractCacheTCKTest {
 
     @Before
     public void setup() {
-        c = newCache();
+        setCache();
     }
 
     @Test

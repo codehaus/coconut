@@ -28,11 +28,8 @@ import org.w3c.dom.Element;
  */
 public abstract class AbstractCacheServiceConfiguration<K, V> {
 
-    /** The default resource bundle used to look up resources. */
-    private final ResourceBundle bundle;
-
     /** The parent cache configuration. */
-    private CacheConfiguration<K, V> conf;
+    private transient CacheConfiguration<K, V> conf;
 
     /** The short name of this service. */
     private final String serviceName;
@@ -44,23 +41,10 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
      *            the name of the service
      */
     public AbstractCacheServiceConfiguration(String serviceName) {
-        this(serviceName, CacheSPI.DEFAULT_CACHE_BUNDLE);
-    }
-
-    /**
-     * Creates a new AbstractCacheServiceConfiguration.
-     * 
-     * @param serviceName
-     *            the name of the service
-     * @param bundle
-     *            a ResourceBundle used for looking up text strings
-     */
-    public AbstractCacheServiceConfiguration(String serviceName, ResourceBundle bundle) {
         if (serviceName == null) {
             throw new NullPointerException("serviceName is null");
         }
         this.serviceName = serviceName;
-        this.bundle = bundle;
     }
 
     /**
@@ -113,33 +97,6 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
      *             if the configuration could not be properly read
      */
     protected void fromXML(Element element) throws Exception {}
-
-    /**
-     * @return the ResourceBundle that is used by this configuration, or <code>null</code>
-     *         if no resource bundle is used.
-     */
-    protected ResourceBundle getResourceBundle() {
-        return bundle;
-    }
-
-    /**
-     * Attempts to lookup a resource bundle entry for the specified key.
-     * 
-     * @param key
-     *            the key to lookup
-     * @return the string matching the key
-     * @throws IllegalStateException
-     *             if no resource bundle has been specified when calling the constructor
-     *             of this class
-     * @throws MissingResourceException
-     *             if no entry could be found for specified key
-     */
-    protected String lookup(String key) {
-        if (bundle == null) {
-            throw new IllegalStateException("No bundle has been defined");
-        }
-        return bundle.getString(key);
-    }
 
     /**
      * Saves this configuration to xml.

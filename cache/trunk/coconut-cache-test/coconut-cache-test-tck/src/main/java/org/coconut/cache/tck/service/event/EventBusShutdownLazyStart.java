@@ -19,7 +19,7 @@ public class EventBusShutdownLazyStart extends AbstractEventTestBundle {
 
     @Before
     public void init() {
-        c = newCache(newConf().event().setEnabled(true));
+        setCache();
     }
 
     @Test

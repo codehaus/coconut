@@ -23,7 +23,7 @@ public class EntrySetHashCodeEquals extends AbstractCacheTCKTest {
      */
     @Test
     public void testEquals() {
-        c = newCache();
+        setCache();
 
         assertTrue(new HashSet().equals(c.entrySet()));
         assertTrue(c.entrySet().equals(new HashSet()));

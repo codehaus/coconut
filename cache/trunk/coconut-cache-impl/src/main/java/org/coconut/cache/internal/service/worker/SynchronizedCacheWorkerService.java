@@ -94,16 +94,17 @@ public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService i
             es.shutdown();
             ses.shutdown();
             shutdown.shutdownAsynchronously(new Callable() {
-                public Object call() throws InterruptedException {
-                    try {
-                        es.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-                        ses.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-                    } catch (InterruptedException ie) {
-                        es.shutdownNow();
-                        ses.shutdownNow();
-                        throw ie;
+                public Object call() {
+                    for (;;) {
+                        try {
+                            es.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+                            ses.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+                            return Void.TYPE;
+                        } catch (InterruptedException ie) {
+                            es.shutdownNow();
+                            ses.shutdownNow();
+                        }
                     }
-                    return Void.TYPE;
                 }
             });
         }

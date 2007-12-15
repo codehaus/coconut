@@ -45,7 +45,7 @@ public class Cost extends AbstractCacheTCKTest {
     @SuppressWarnings("unchecked")
     @Test
     public void put() {
-        c = newCache();
+        setCache();
         put(M1);
         assertCostEquals(M1, CostAttribute.DEFAULT_VALUE);
         putAll(M1, M2);
