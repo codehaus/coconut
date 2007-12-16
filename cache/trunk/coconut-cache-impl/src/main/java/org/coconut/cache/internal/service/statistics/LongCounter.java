@@ -19,7 +19,6 @@ public abstract class LongCounter {
     // super(name, description);
     }
 
-
     /**
      * Atomically adds the given value to the current value.
      * 
@@ -51,21 +50,20 @@ public abstract class LongCounter {
      */
     public abstract void set(long newValue);
 
-    /**
-     * Returns the String representation of the current value.
-     * 
-     * @return the String representation of the current value.
-     */
-    public String toString() {
-        return Long.toString(get());
-    }
-
+// /**
+// * Returns the String representation of the current value.
+// *
+// * @return the String representation of the current value.
+// */
+// public String toString() {
+// return Long.toString(get());
+// }
 
     @ManagedOperation(defaultValue = "reset $name", description = "Sets the value of $name to 0")
     public void reset() {
         set(0);
     }
-   
+
     final static class ConcurrentLongCounter extends LongCounter {
 
         private final AtomicLong l = new AtomicLong();
@@ -80,7 +78,7 @@ public abstract class LongCounter {
 
         @ManagedOperation(defaultValue = "reset $name", description = "Sets the value of $name to 0")
         public synchronized void reset() {
-            l.set(0);
+            super.reset();
         }
 
         /**
@@ -104,7 +102,6 @@ public abstract class LongCounter {
             return l.get();
         }
 
-
         /**
          * Atomically increments by one the current value.
          * 
@@ -124,10 +121,9 @@ public abstract class LongCounter {
             l.set(newValue);
         }
 
-
     }
 
-    public static LongCounter newConcurrent(String string, String string2) {
+    public static ConcurrentLongCounter newConcurrent(String string, String string2) {
         return new ConcurrentLongCounter(string, string2);
     }
 }

@@ -106,32 +106,42 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
     }
 
     /** {@inheritDoc} */
+    public void fatalRuntimeException(String msg) {
+        getLogger().error(msg);
+    }
+    /** {@inheritDoc} */
+    public void fatalRuntimeException(String msg, RuntimeException cause) {
+        getLogger().error(msg, cause);
+    }
+    /** {@inheritDoc} */
     public CacheExceptionHandler<K, V> getHandler() {
         // TODO we really should wrap it in something that catches all runtime exceptions
         // thrown by the handler methods.
         return exceptionHandler;
     }
-
+    /** {@inheritDoc} */
+    public void initializationFailed(CacheConfiguration<K, V> configuration, String cacheName,
+            Class<? extends Cache> cacheType, CacheLifecycle service, RuntimeException cause) {
+        Logger l = logger;
+        if (l == null) {
+            l = Loggers.NULL_LOGGER;
+        }
+        exceptionHandler.serviceManagerInitializationFailed(l, configuration, cacheName, cacheType,
+                service, cause);
+    }
+    /** {@inheritDoc} */
     public boolean isDebugEnabled() {
         return debugLogger.isDebugEnabled();
     }
-
+    /** {@inheritDoc} */
     public boolean isTraceEnabled() {
         return debugLogger.isTraceEnabled();
     }
 
-    public void fatalRuntimeException(String msg) {
-        getLogger().error(msg);
-    }
-
-    public void fatalRuntimeException(String msg, RuntimeException cause) {
-        getLogger().error(msg, cause);
-    }
-
+    /** {@inheritDoc} */
     public void trace(String str) {
         debugLogger.trace(str);
     }
-
     /**
      * Returns the exception logger configured for this cache. Or initializes the default
      * logger if no logger has been defined and the default logger has not already been
@@ -163,15 +173,5 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
             }
         }
         return logger;
-    }
-
-    public void initializationFailed(CacheConfiguration<K, V> configuration, String cacheName,
-            Class<? extends Cache> cacheType, CacheLifecycle service, RuntimeException cause) {
-        Logger l = logger;
-        if (l == null) {
-            l = Loggers.NULL_LOGGER;
-        }
-        exceptionHandler.serviceManagerInitializationFailed(l, configuration, cacheName, cacheType,
-                service, cause);
     }
 }

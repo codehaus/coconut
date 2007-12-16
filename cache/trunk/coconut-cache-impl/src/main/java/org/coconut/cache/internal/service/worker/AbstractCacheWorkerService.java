@@ -8,10 +8,10 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.coconut.attribute.Attributes;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
-import org.coconut.cache.service.worker.CacheWorkerManager;
+import org.coconut.cache.service.worker.CacheWorkerService;
 
 public abstract class AbstractCacheWorkerService extends AbstractCacheLifecycle implements
-        InternalCacheWorkerService {
+        CacheWorkerService {
 
     /**
      * Returns a ExecutorService that can be used to asynchronously execute tasks for the
@@ -22,16 +22,14 @@ public abstract class AbstractCacheWorkerService extends AbstractCacheLifecycle 
      * @return a ExecutorService that can be used to asynchronously execute tasks for the
      *         specified service
      */
-    public final ExecutorService getExecutorService(Class<?> service) {
-        return getManager().getExecutorService(service, Attributes.EMPTY_MAP);
+    public final ExecutorService getExecutorService(Object service) {
+        return getExecutorService(service, Attributes.EMPTY_MAP);
     }
 
-    public final ScheduledExecutorService getScheduledExecutorService(Class<?> service) {
-        return getManager().getScheduledExecutorService(service, Attributes.EMPTY_MAP);
+    public final ScheduledExecutorService getScheduledExecutorService(Object service) {
+        return getScheduledExecutorService(service, Attributes.EMPTY_MAP);
     }
-    
-    abstract CacheWorkerManager getManager();
-    
+
     public String toString() {
         return "Worker Service";
     }

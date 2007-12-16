@@ -56,20 +56,16 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
         this.exceptionHandler = exceptionHandler;
     }
 
-    public V loadAndGet(K key) {
-        // will and probably should count as a cache miss
-        AbstractCacheEntry<K, V> ace = loadBlocking(key);
-        return ace == null ? null : ace.getValue();
-    }
-
-    public V loadAndGet(K key, AttributeMap attributes) {
-        AbstractCacheEntry<K, V> ace = loadBlocking(key, attributes);
-        return ace == null ? null : ace.getValue();
-    }
-
-    AbstractCacheEntry<K, V> loadBlocking(K key) {
-        return loadBlocking(key, Attributes.EMPTY_MAP);
-    }
+//    public V loadAndGet(K key) {
+//        // will and probably should count as a cache miss
+//        AbstractCacheEntry<K, V> ace = loadBlocking(key);
+//        return ace == null ? null : ace.getValue();
+//    }
+//
+//    public V loadAndGet(K key, AttributeMap attributes) {
+//        AbstractCacheEntry<K, V> ace = loadBlocking(key, attributes);
+//        return ace == null ? null : ace.getValue();
+//    }
 
     /** {@inheritDoc} */
     public final void forceLoad(K key) {

@@ -3,6 +3,9 @@
  */
 package org.coconut.internal.util;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
+
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: ClassUtils.java 415 2007-11-09 08:25:23Z kasper $
@@ -49,5 +52,30 @@ public final class ClassUtils {
 
     public static boolean isNumberOrPrimitiveNumber(Class c) {
         return Number.class.isAssignableFrom(fromPrimitive(c));
+    }
+
+    public static boolean overridesMethod(Class from, Class clz, String method, Class... parameters) {
+        try {
+            try {
+                from.getMethod(method, parameters);
+            } catch (NoSuchMethodException e) {
+                throw new IllegalArgumentException("unknown method " + method);
+            }
+            if (from.isAssignableFrom(clz)) {
+                Class cc = clz;
+                while (!cc.equals(from)) {
+                    Method[] ms = cc.getDeclaredMethods();
+                    for (Method m : ms) {
+                        if (m.getName().equals(method)
+                                && Arrays.equals(m.getParameterTypes(), parameters)) {
+                            return true;
+                        }
+                    }
+                    cc = cc.getSuperclass();
+                }
+                return false;
+            }
+        } catch (SecurityException ignore) {/* ignore exception, return unknown */}
+        return true; // unknown
     }
 }

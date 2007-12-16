@@ -5,14 +5,10 @@ package org.coconut.cache.internal.service.worker;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.Attributes;
 import org.coconut.cache.internal.service.servicemanager.CompositeService;
 import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
@@ -20,18 +16,21 @@ import org.coconut.cache.service.worker.CacheWorkerConfiguration;
 import org.coconut.cache.service.worker.CacheWorkerManager;
 import org.coconut.cache.service.worker.CacheWorkerService;
 
+/**
+ * 
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id$
+ */
 public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService implements
-        CompositeService, CacheWorkerService {
-
-    private final String cacheName;
+        CompositeService {
 
     private final CacheWorkerManager worker;
 
     public SynchronizedCacheWorkerService(String cacheName, CacheWorkerConfiguration conf,
             InternalCacheServiceManager csm) {
-        this.cacheName = cacheName;
         if (conf.getWorkerManager() == null) {
-            worker = new SameThreadCacheWorker();
+            worker = new SharedCacheWorkerManager(cacheName);
         } else {
             worker = conf.getWorkerManager();
         }
@@ -43,14 +42,8 @@ public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService i
     }
 
     /** {@inheritDoc} */
-    /** {@inheritDoc} */
-    public CacheWorkerManager getManager() {
-        return worker;
-    }
-
-    /** {@inheritDoc} */
-    public ScheduledExecutorService getScheduledExecutorService(Object service) {
-        return getScheduledExecutorService(service, Attributes.EMPTY_MAP);
+    public ExecutorService getExecutorService(Object service, AttributeMap attributes) {
+        return worker.getExecutorService(service, attributes);
     }
 
     /** {@inheritDoc} */
@@ -65,53 +58,4 @@ public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService i
         cli.registerService(CacheWorkerService.class, this);
     }
 
-    class SameThreadCacheWorker extends CacheWorkerManager {
-
-        final ExecutorService es;
-
-        final ScheduledExecutorService ses;
-
-        SameThreadCacheWorker() {
-            es = Executors.newCachedThreadPool(new WorkerUtils.DefaultThreadFactory("cache-"
-                    + cacheName));
-            ses = Executors.newScheduledThreadPool(5, new WorkerUtils.DefaultThreadFactory("cache-"
-                    + cacheName));
-        }
-
-        /** {@inheritDoc} */
-        public ExecutorService getExecutorService(Object service, AttributeMap attributes) {
-            return es;
-        }
-
-        @Override
-        public ScheduledExecutorService getScheduledExecutorService(Object service,
-                AttributeMap attributes) {
-            return ses;
-        }
-
-        @Override
-        public void shutdown(Shutdown shutdown) {
-            es.shutdown();
-            ses.shutdown();
-            shutdown.shutdownAsynchronously(new Callable() {
-                public Object call() {
-                    for (;;) {
-                        try {
-                            es.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-                            ses.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-                            return Void.TYPE;
-                        } catch (InterruptedException ie) {
-                            es.shutdownNow();
-                            ses.shutdownNow();
-                        }
-                    }
-                }
-            });
-        }
-// @Override
-// public void shutdownNow() {
-// es.shutdownNow();
-// ses.shutdownNow();
-// }
-    }
 }

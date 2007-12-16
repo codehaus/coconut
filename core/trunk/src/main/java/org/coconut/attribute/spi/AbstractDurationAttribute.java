@@ -5,6 +5,7 @@ package org.coconut.attribute.spi;
 
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
 
 /**
@@ -12,6 +13,8 @@ import org.coconut.attribute.AttributeMap;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public abstract class AbstractDurationAttribute extends AbstractLongAttribute {
+
+    /** The default value of this attribute. */
     protected static final long DEFAULT_DURATION = Long.MAX_VALUE;
 
     /**
@@ -30,6 +33,16 @@ public abstract class AbstractDurationAttribute extends AbstractLongAttribute {
         return value > 0;
     }
 
+    /**
+     * Analogous to {@link #getPrimitive(AttributeMap)} except taking a parameter
+     * indicating what time unit the value should be returned in.
+     * 
+     * @param attributes
+     *            the attribute map to retrieve the value of this attribute from
+     * @param unit
+     *            the time unit to return the value in
+     * @return the value of this attribute
+     */
     public long getPrimitive(AttributeMap attributes, TimeUnit unit) {
         return convertTo(getPrimitive(attributes), unit);
     }
@@ -51,6 +64,17 @@ public abstract class AbstractDurationAttribute extends AbstractLongAttribute {
         return setAttribute(attributes, duration.longValue(), unit);
     }
 
+    /**
+     * Returns an immutable AttributeMap containing only this attribute mapping to the
+     * specified value.
+     * 
+     * @param value
+     *            the value to create the singleton from
+     * @param unit
+     *            the time unit of the value
+     * @return an AttributeMap containing only this attribute mapping to the specified
+     *         value
+     */
     protected AttributeMap toSingleton(long value, TimeUnit unit) {
         return super.toSingletonLong(convertFrom(value, unit));
     }

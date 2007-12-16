@@ -12,10 +12,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
-import org.coconut.cache.internal.service.worker.InternalCacheWorkerService;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.worker.CacheWorkerManager;
+import org.coconut.cache.service.worker.CacheWorkerService;
 import org.coconut.test.TestUtil;
 import org.junit.Test;
 
@@ -306,7 +306,7 @@ public class DefaultCacheLoaderServiceTest {
 // }
 // }
 
-    static class MyExecutor implements InternalCacheWorkerService {
+    static class MyExecutor implements CacheWorkerService {
         Runnable r;
 
         /**
@@ -338,12 +338,21 @@ public class DefaultCacheLoaderServiceTest {
                 }};
         }
 
-        public ExecutorService getExecutorService(Class<?> service) {
+        public ScheduledExecutorService getScheduledExecutorService(Object service) {
+            return TestUtil.dummy(ScheduledExecutorService.class);
+        }
+
+        public ScheduledExecutorService getScheduledExecutorService(Object service,
+                AttributeMap attributes) {
+            return TestUtil.dummy(ScheduledExecutorService.class);
+        }
+
+        public ExecutorService getExecutorService(Object service) {
             return TestUtil.dummy(ExecutorService.class);
         }
 
-        public ScheduledExecutorService getScheduledExecutorService(Class<?> service) {
-            return TestUtil.dummy(ScheduledExecutorService.class);
+        public ExecutorService getExecutorService(Object service, AttributeMap attributes) {
+            return TestUtil.dummy(ExecutorService.class);
         }
 
     }

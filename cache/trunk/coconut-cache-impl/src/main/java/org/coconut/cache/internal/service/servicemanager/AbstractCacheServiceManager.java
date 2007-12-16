@@ -24,16 +24,17 @@ import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.servicemanager.CacheLifecycle.Initializer;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.internal.picocontainer.defaults.DefaultPicoContainer;
+import org.coconut.internal.util.ClassUtils;
 import org.coconut.internal.util.TimeFormatter;
 import org.coconut.management.ManagedLifecycle;
 
 public abstract class AbstractCacheServiceManager implements InternalCacheServiceManager {
 
-    /** The cache we are managing. */
-    final Cache<?, ?> cache;
-
     /** The picocontainer used to wire servicers. */
     private final DefaultPicoContainer container = new DefaultPicoContainer();
+
+    /** The cache debug services. */
+    private final InternalDebugService debugService;
 
     /** A map of services that can be retrieved from {@link Cache#getService(Class)}. */
     private final Map<Class<?>, Object> publicServices;
@@ -41,11 +42,11 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
     /** The list of services. */
     private final List<ServiceHolder> services = new ArrayList<ServiceHolder>();
 
+    /** The cache we are managing. */
+    final Cache<?, ?> cache;
+
     /** The cache exception services. */
     final InternalCacheExceptionService ces;
-
-    /** The cache debug services. */
-    private final InternalDebugService debugService;
 
     /** Any exception that might have been encountered while starting up. */
     volatile RuntimeException startupException;
@@ -116,8 +117,51 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
     }
 
     /** {@inheritDoc} */
+    public final <T> T getService(Class<T> serviceType) {
+        if (serviceType == null) {
+            throw new NullPointerException("serviceType is null");
+        }
+        T t = (T) getAllServices().get(serviceType);
+        if (t == null) {
+            throw new IllegalArgumentException("Unknown service " + serviceType);
+        }
+        return t;
+    }
+
+    /** {@inheritDoc} */
+    public <T> T getServiceFromCache(Class<T> serviceType) {
+        lazyStart(false);
+        return getService(serviceType);
+    }
+
+    /** {@inheritDoc} */
+    public final boolean hasService(Class<?> type) {
+        return getAllServices().containsKey(type);
+    }
+
+    /** {@inheritDoc} */
+    public boolean isShutdown() {
+        return getRunState().isShutdown();
+    }
+
+    /** {@inheritDoc} */
     public boolean isStarted() {
         return getRunState().isStarted() && startupException == null;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isTerminated() {
+        return getRunState().isTerminated();
+    }
+
+    /** {@inheritDoc} */
+    public void shutdown() {
+        shutdown(false);
+    }
+
+    /** {@inheritDoc} */
+    public void shutdownNow() {
+        shutdown(true);
     }
 
     private List<ServiceHolder> createServiceHolders(CacheConfiguration conf) {
@@ -362,42 +406,6 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
         ces.getHandler().terminated(m);
     }
 
-    private static boolean overrideStarted(Class c) {
-        return overridesMethod(AbstractCacheLifecycle.class, c, "started", Cache.class);
-    }
-
-    private static boolean overrideStart(Class c) {
-        return overridesMethod(AbstractCacheLifecycle.class, c, "start",
-                CacheServiceManagerService.class);
-    }
-
-    private static boolean overrideInitialize(Class c) {
-        return true;
-        // return overridesMethod(AbstractCacheLifecycle.class, c, "initialize",
-        // Initializer.class);
-    }
-
-    private static boolean overridesMethod(Class from, Class clz, String method,
-            Class... parameters) {
-        try {
-            if (from.isAssignableFrom(clz)) {
-                Class cc = clz;
-                while (!cc.equals(from)) {
-                    Method[] ms = cc.getDeclaredMethods();
-                    for (Method m : ms) {
-                        if (m.getName().equals(method)
-                                && Arrays.equals(m.getParameterTypes(), parameters)) {
-                            return true;
-                        }
-                    }
-                    cc = cc.getSuperclass();
-                }
-                return false;
-            }
-        } catch (SecurityException ignore) {/* ignore exception, return unknown */}
-        return true; // unknown
-    }
-
     void checkStartupException() {
         RuntimeException re = startupException;
         if (re != null) {
@@ -449,17 +457,25 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
         }
     }
 
-    /** {@inheritDoc} */
-    public void shutdown() {
-        shutdown(false);
-    }
+// void initiateShutdownNow(Collection<ServiceHolder> services) {
+// List<ServiceHolder> l = new ArrayList<ServiceHolder>(services);
+// Collections.reverse(l);
+// for (ServiceHolder sh : l) {
+// try {
+// sh.shutdownNow();
+// } catch (RuntimeException e) {
+// ces.getHandler()
+// .serviceManagerShutdownFailed(ces.createContext(e), sh.getService());
+// }
+// }
+// }
 
-    /** {@inheritDoc} */
-    public void shutdownNow() {
-        shutdown(true);
-    }
-
-    abstract void shutdown(boolean shutdownNow);
+    /**
+     * Returns the state of the cache.
+     * 
+     * @return the state of the cache
+     */
+    abstract RunState getRunState();
 
     void initiateShutdown() {
         List<ServiceHolder> l = new ArrayList<ServiceHolder>(services);
@@ -477,20 +493,9 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
         }
     }
 
-// void initiateShutdownNow(Collection<ServiceHolder> services) {
-// List<ServiceHolder> l = new ArrayList<ServiceHolder>(services);
-// Collections.reverse(l);
-// for (ServiceHolder sh : l) {
-// try {
-// sh.shutdownNow();
-// } catch (RuntimeException e) {
-// ces.getHandler()
-// .serviceManagerShutdownFailed(ces.createContext(e), sh.getService());
-// }
-// }
-// }
-
     abstract void setRunState(RunState state);
+
+    abstract void shutdown(boolean shutdownNow);
 
     void shutdownService(ServiceHolder holder) throws Exception {
         holder.shutdown(new CacheLifecycle.Shutdown() {
@@ -501,43 +506,16 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
         });
     }
 
-    /**
-     * Returns the state of the cache.
-     * 
-     * @return the state of the cache
-     */
-    abstract RunState getRunState();
-
-    /** {@inheritDoc} */
-    public final <T> T getService(Class<T> serviceType) {
-        if (serviceType == null) {
-            throw new NullPointerException("serviceType is null");
-        }
-        T t = (T) getAllServices().get(serviceType);
-        if (t == null) {
-            throw new IllegalArgumentException("Unknown service " + serviceType);
-        }
-        return t;
+    private static boolean overrideInitialize(Class c) {
+        return ClassUtils.overridesMethod(AbstractCacheLifecycle.class, c, "initialize", Initializer.class);
     }
 
-    /** {@inheritDoc} */
-    public final boolean hasService(Class<?> type) {
-        return getAllServices().containsKey(type);
+    private static boolean overrideStart(Class c) {
+        return ClassUtils.overridesMethod(AbstractCacheLifecycle.class, c, "start",
+                CacheServiceManagerService.class);
     }
 
-    /** {@inheritDoc} */
-    public boolean isShutdown() {
-        return getRunState().isShutdown();
-    }
-
-    /** {@inheritDoc} */
-    public boolean isTerminated() {
-        return getRunState().isTerminated();
-    }
-
-    /** {@inheritDoc} */
-    public <T> T getServiceFromCache(Class<T> serviceType) {
-        lazyStart(false);
-        return getService(serviceType);
+    private static boolean overrideStarted(Class c) {
+        return ClassUtils.overridesMethod(AbstractCacheLifecycle.class, c, "started", Cache.class);
     }
 }

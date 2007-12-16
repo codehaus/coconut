@@ -14,12 +14,14 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
 import org.coconut.cache.internal.service.spi.Resources;
+import org.coconut.cache.internal.service.statistics.LongCounter.ConcurrentLongCounter;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.cache.service.statistics.CacheHitStat;
 import org.coconut.cache.service.statistics.CacheStatisticsConfiguration;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.core.Clock;
+import org.coconut.internal.util.AtomicDouble;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedLifecycle;
 
@@ -86,8 +88,6 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
 
     private final LongCounter cacheEvictCount;
 
-    private final DateSampler cacheEvictLast;
-
     private final LongSamplingCounter cacheEvictTime;
 
     private final LongCounter cacheStatisticsResetCount;
@@ -104,7 +104,7 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
 
     private final AtomicDouble entryGetHitCostCount = new AtomicDouble();
 
-    private final LongCounter entryGetHitCount;
+    private final ConcurrentLongCounter entryGetHitCount;
 
     private final AtomicLong entryGetHitSizeCount = new AtomicLong();
 
@@ -136,7 +136,6 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
         // invocations of evict() on the cache (since start or last reset)
         cacheEvictCount = LongCounter.newConcurrent(CACHE_EVICT_COUNTER,
                 getDesc(CACHE_EVICT_COUNTER));
-        cacheEvictLast = new DateSampler(CACHE_EVICT_LASTTIME, getDesc(CACHE_EVICT_LASTTIME), c);
         cacheEvictTime = new LongSamplingCounter(CACHE_EVICT_TIMER, getDesc(CACHE_EVICT_TIMER));
 
         cacheClearCount = LongCounter.newConcurrent(CACHE_CLEAR_COUNTER,
@@ -296,7 +295,7 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
             Map<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>> newPrevEntries) {}
 
     public void afterRemove(Cache<K, V> cache, long start, CacheEntry<K, V> removed) {
-        long time =  getTimeStamp()- start;
+        long time = getTimeStamp() - start;
         entryRemoveTime.report(time);
         entryRemoveCount.incrementAndGet();
     }
@@ -373,10 +372,6 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
         cacheStatisticsResetCount.incrementAndGet();
     }
 
-    public void doStart() {
-        started = System.currentTimeMillis();
-    }
-
     public CacheHitStat getHitStat() {
         return new CacheHitStat(entryGetHitCount.get(), entryGetMissCount.get());
     }
@@ -419,8 +414,13 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
     public String toString() {
         return "Statistics Service";
     }
-    
+
     long getTimeStamp() {
         return 0;
+    }
+
+    @Override
+    public void started(Cache<?, ?> cache) {
+        started = System.currentTimeMillis();
     }
 }

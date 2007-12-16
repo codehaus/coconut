@@ -61,14 +61,11 @@ public class UnsynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
         return refreshTime;
     }
 
-    /** {@inheritDoc} */
-    @Override
     public void setExpirationTime(long expirationTime) {
         this.expirationTime = expirationTime;
     }
 
     /** {@inheritDoc} */
-    @Override
     public void setHits(long hits) {
         this.hits = hits;
     }

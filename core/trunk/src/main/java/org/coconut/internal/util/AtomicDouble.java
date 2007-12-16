@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.cache.internal.service.statistics;
+package org.coconut.internal.util;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * deal with numerically-based classes.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id$
+ * @version $Id: AtomicDouble.java 415 2007-11-09 08:25:23Z kasper $
  */
 public class AtomicDouble extends Number {
 

@@ -155,16 +155,16 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
     public int hashCode() {
         return key.hashCode() ^ value.hashCode();
     }
-    /**
-     * @param expirationTime
-     *            the expirationTime to set
-     */
-    abstract void setExpirationTime(long time);
-    /**
-     * @param hits
-     *            the hits to set
-     */
-    abstract void setHits(long hits);
+//    /**
+//     * @param expirationTime
+//     *            the expirationTime to set
+//     */
+//    abstract void setExpirationTime(long time);
+//    /**
+//     * @param hits
+//     *            the hits to set
+//     */
+//    abstract void setHits(long hits);
 
     public void setPolicyIndex(int index) {
         this.policyIndex = index;

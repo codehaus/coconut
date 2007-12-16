@@ -14,6 +14,7 @@ package org.coconut.attribute;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  * @param <T>
  *            the type of objects that this attribute maps to
+ * @see AttributeMap
  */
 public interface Attribute<T> {
 

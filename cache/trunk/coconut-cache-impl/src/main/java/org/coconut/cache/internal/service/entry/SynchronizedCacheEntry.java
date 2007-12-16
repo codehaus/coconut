@@ -60,20 +60,6 @@ public class SynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
     }
 
     @Override
-    void setExpirationTime(long time) {
-        this.expirationTime = time;
-    }
-
-    @Override
-    void setHits(long hits) {
-        this.hits = hits;
-    }
-
-    void setRefreshTime(long refreshTime) {
-        this.refreshTime = refreshTime;
-    }
-
-    @Override
     public long getRefreshTime() {
         return refreshTime;
     }
