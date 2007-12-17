@@ -16,8 +16,26 @@ import org.coconut.core.Callback;
  * @param <V>
  *            the type of values returned when loading
  */
-public interface CacheLoaderCallback<K, V> extends Callback<V> {
+public interface CacheLoaderCallback<K, V> {
 
+    /**
+     * This method is invoked if the asynchronous computation completed
+     * succesfully.
+     * 
+     * @param result
+     *            the result of the computation
+     */
+    void completed(V result);
+
+    /**
+     * This method is invoked if the asynchronous computation completed with
+     * failures.
+     * 
+     * @param cause
+     *            the cause of the failure
+     */
+    void failed(Throwable cause);
+    
     /**
      * Returns <tt>true</tt> if the loading has completed. Completion may be due to
      * normal termination or an exception -- in both these cases, this method will return

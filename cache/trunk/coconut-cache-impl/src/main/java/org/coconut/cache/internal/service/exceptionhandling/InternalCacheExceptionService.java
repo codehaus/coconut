@@ -39,8 +39,8 @@ public interface InternalCacheExceptionService<K, V> {
 
     void fatalRuntimeException(String msg, RuntimeException cause);
 
-    void initializationFailed(CacheConfiguration<K, V> configuration, String cacheName,
-            Class<? extends Cache> cacheType, CacheLifecycle service, RuntimeException cause);
+    void initializationFailed(CacheConfiguration<K, V> configuration, CacheLifecycle service,
+            RuntimeException cause);
 
     /**
      * Returns the CacheExceptionHandler configured for this cache.

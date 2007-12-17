@@ -54,7 +54,7 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
      * {@link CacheExceptionHandler#lifecycleInitializationFailed(CacheConfiguration, Class, CacheLifecycle, RuntimeException)}
      * is called.
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void exceptionInInitialize() {
         LifecycleVerifier alv = context.create(new AbstractCacheLifecycle() {
             @Override
@@ -64,10 +64,9 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
         });
         try {
             setCache(conf);
-        } finally {
+            fail();
+        } catch (IllegalArgumentException ok) {
             alv.initialization().assertFailed();
-            assertEquals(alv, handler.service);
-            assertTrue(handler.cause instanceof RuntimeException1);
             assertEquals(0, handler.terminatationMap.size());
         }
     }
@@ -111,8 +110,6 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
             fail("should fail");
         } catch (IllegalArgumentException e) {
             assertTrue(e.getCause() instanceof RuntimeException1);
-            assertEquals(alv, handler.service);
-            assertTrue(handler.cause instanceof RuntimeException1);
             assertEquals(0, handler.terminatationMap.size());
         }
     }
@@ -143,13 +140,12 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
             }
         });
         context.createNever();
-        
+
         try {
             setCache(conf);
             fail("should fail");
         } catch (IllegalArgumentException e) {
             assertTrue(e.getCause() instanceof RuntimeException1);
-            assertTrue(handler.cause instanceof RuntimeException1);
             assertEquals(2, handler.terminatationMap.size());
             assertTrue(handler.terminatationMap.get(alv1) instanceof RuntimeException2);
             assertTrue(handler.terminatationMap.get(alv2) instanceof RuntimeException3);
@@ -161,20 +157,6 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
         CacheConfiguration conf;
 
         Map terminatationMap;
-
-        RuntimeException cause;
-
-        CacheLifecycle service;
-
-        @Override
-        public void serviceManagerInitializationFailed(Logger logger,CacheConfiguration configuration,
-                String name,Class cacheType, CacheLifecycle service, RuntimeException cause) {
-            this.cause = cause;
-            this.service = service;
-            assertEquals(conf, configuration);
-            assertEquals(getCacheType(), cacheType);
-            super.serviceManagerInitializationFailed(logger,configuration, name,cacheType, service, cause);
-        }
 
         @Override
         public void initialize(CacheConfiguration configuration) {

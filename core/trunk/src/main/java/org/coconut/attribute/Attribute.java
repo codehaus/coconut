@@ -19,92 +19,15 @@ package org.coconut.attribute;
 public interface Attribute<T> {
 
     /**
-     * Returns the name of the attribute.
-     * 
-     * @return the name of the attribute
-     */
-    String getName();
-
-    /**
-     * Returns the default value of this attribute (may be <code>null</code>).
-     * 
-     * @return the default value of this attribute
-     */
-    T getDefaultValue();
-
-    /**
-     * Returns the type of this attribute.
-     * 
-     * @return the type of this attribute
-     */
-    Class<T> getAttributeType();
-
-    /**
-     * Returns whether or not the specified value is valid for this attribute.
+     * Checks if the specified value is valid for this attribute. If the specified value
+     * is not valid this method will throw an {@link IllegalArgumentException}.
      * 
      * @param value
-     *            the specified value to check
-     * @return <code>true</code> if the specified value is valid for this attribute,
-     *         otherwise <code>false</code>
-     */
-    boolean isValid(T value);
-
-    /**
-     * Removes this attribute from the specified attribute map if it is present.
-     * 
-     * @param attributes
-     *            the attribute map to remove this attribute from
-     */
-    void unSet(AttributeMap attributes);
-
-    /**
-     * Returns whether or not this attribute is set in the specified attribute map.
-     * 
-     * @param attributes
-     *            the attribute map to check if this attribute is set
-     * @return <code>true</code> if this attribute is set in the specified attribute
-     *         map, otherwise false
-     */
-    boolean isSet(AttributeMap attributes);
-
-    /**
-     * Returns the value of this attribute from the specified attribute map. If this
-     * attribute is not set in the map, the {@link #getDefaultValue()} will be returned
-     * instead.
-     * 
-     * @param attributes
-     *            the attribute map to check for this attribute in
-     * @return the value of this attribute
-     */
-    T getValue(AttributeMap attributes);
-
-    /**
-     * Returns the value of this attribute from the specified attribute map. If this
-     * attribute is not set in the map, the specified defaultValue will be returned
-     * instead.
-     * 
-     * @param attributes
-     *            the attribute map to check for this attribute in
-     * @param defaultValue
-     *            the value to return if this attribute is not set in the specified
-     *            attribute map
-     * @return the value of this attribute
-     */
-    T getValue(AttributeMap attributes, T defaultValue);
-
-    /**
-     * Sets the specified value in the specified attributemap.
-     * 
-     * @param attributes
-     *            the attribute map to set the value in.
-     * @param value
-     *            the value that should be set
-     * @return the specified attribute map
+     *            the value to check
      * @throws IllegalArgumentException
-     *             if the specified value is not valid accordingly to
-     *             {@link #checkValid(Object)}
+     *             if the specified value is not valid
      */
-    AttributeMap setValue(AttributeMap attributes, T value);
+    void checkValid(T value);
 
     /**
      * Creates a value instance of this attribute from the specified string.
@@ -118,13 +41,91 @@ public interface Attribute<T> {
     T fromString(String str);
 
     /**
-     * Checks if the specified value is valid for this attribute. If the specified value
-     * is not valid this method will throw an {@link IllegalArgumentException}.
+     * Returns the type of this attribute.
+     * 
+     * @return the type of this attribute
+     */
+    Class<T> getAttributeType();
+
+    /**
+     * Returns the default value of this attribute (<code>null</code> values are
+     * allowed).
+     * 
+     * @return the default value of this attribute
+     */
+    T getDefaultValue();
+
+    /**
+     * Returns the name of the attribute.
+     * 
+     * @return the name of the attribute
+     */
+    String getName();
+
+    /**
+     * Returns the value of this attribute from the specified attribute map. If this
+     * attribute is not set in the map, the value of {@link #getDefaultValue()} will be
+     * returned instead.
+     * 
+     * @param attributes
+     *            the attribute map for which to retrieve the value of this attribute
+     * @return the value of this attribute
+     */
+    T getValue(AttributeMap attributes);
+
+    /**
+     * Returns the value of this attribute from the specified attribute map. If this
+     * attribute is not set in the map, the specified defaultValue will be returned
+     * instead.
+     * 
+     * @param attributes
+     *             the attribute map for which to retrieve the value of this attribute
+     * @param defaultValue
+     *            the value to return if this attribute is not set in the specified
+     *            attribute map
+     * @return the value of this attribute
+     */
+    T getValue(AttributeMap attributes, T defaultValue);
+
+    /**
+     * Returns whether or not this attribute is set in the specified attribute map.
+     * 
+     * @param attributes
+     *            the attribute map to check if this attribute is set
+     * @return <code>true</code> if this attribute is set in the specified attribute
+     *         map, otherwise false
+     */
+    boolean isSet(AttributeMap attributes);
+
+    /**
+     * Returns whether or not the specified value is valid for this attribute.
      * 
      * @param value
-     *            the value to check
-     * @throws IllegalArgumentException
-     *             if the specified value is not valid
+     *            the specified value to check
+     * @return <code>true</code> if the specified value is valid for this attribute,
+     *         otherwise <code>false</code>
      */
-    void checkValid(T value);
+    boolean isValid(T value);
+
+    /**
+     * Sets the specified value in the specified attribute map.
+     * 
+     * @param attributes
+     *            the attribute map to set the value in.
+     * @param value
+     *            the value that should be set
+     * @return the specified attribute map
+     * @throws IllegalArgumentException
+     *             if the specified value is not valid accordingly to
+     *             {@link #checkValid(Object)}
+     */
+    AttributeMap setValue(AttributeMap attributes, T value);
+
+    /**
+     * Removes this attribute from the specified attribute map if it is present.
+     * 
+     * @param attributes
+     *            the attribute map to remove this attribute from
+     */
+    void unSet(AttributeMap attributes);
 }

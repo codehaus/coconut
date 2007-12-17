@@ -43,7 +43,7 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
                 throw new IllegalStateException(
                         "Cannot invoke this method from CacheLifecycle.start(Map services), should be invoked from CacheLifecycle.started(Cache c)");
             } else if (status == RunState.NOTRUNNING) {
-                doStart(true);
+                doStart();
             } else if (failIfShutdown && status.isShutdown()) {
                 throw new IllegalStateException("Cache has been shutdown");
             }

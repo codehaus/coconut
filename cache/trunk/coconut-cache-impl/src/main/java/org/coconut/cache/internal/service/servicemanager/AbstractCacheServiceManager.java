@@ -232,8 +232,7 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
                 }
                 result.putAll(tmpMap);
             } catch (RuntimeException re) {
-                ces.initializationFailed(conf, cache.getName(), cache.getClass(), si.getService(),
-                        re);
+                ces.initializationFailed(conf, si.getService(), re);
                 throw re;
             }
         }
@@ -291,9 +290,6 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
                             lookup(CacheConfiguration.class), si);
                     shutdown();
                     throw startupException;
-                } catch (Error er) {
-                    startupException = new CacheException("Could not start the cache", er);
-                    throw er;
                 }
 
                 if (debug) {
@@ -328,9 +324,6 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
                         lookup(CacheConfiguration.class), si.getService());
                 shutdown();
                 throw startupException;
-            } catch (Error er) {
-                startupException = new CacheException("Could not start the cache", er);
-                throw er;
             }
             if (debug && overrideStarted(si.getService().getClass())) {
                 StringBuilder sb = new StringBuilder();
@@ -369,9 +362,6 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
                         lookup(CacheConfiguration.class), si.getService());
                 shutdown();
                 throw startupException;
-            } catch (Error er) {
-                startupException = new CacheException("Could not start the cache", er);
-                throw er;
             }
             if (debug && overrideStart(si.getService().getClass())) {
                 StringBuilder sb = new StringBuilder();
@@ -414,17 +404,13 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
         }
     }
 
-    void doStart(boolean isLazyStart) {
+    void doStart() {
         long startTime = System.nanoTime();
         if (debugService.isDebugEnabled()) {
             debugService.debug("Cache starting [name = " + cache.getName() + ", type = "
                     + cache.getClass() + "]");
             if (debugService.isTraceEnabled()) {
-                if (isLazyStart) {
-                    debugService.trace("Cache was *lazy* started through this call:");
-                } else {
-                    debugService.trace("Cache was *manually* started through this call:");
-                }
+                    debugService.trace("Cache was started through this call:");
                 StackTraceElement[] trace = new Exception().getStackTrace();
                 for (int i = 0; i < Math.min(8, trace.length); i++)
                     debugService.trace("    " + trace[i]);
@@ -457,19 +443,6 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
             }
         }
     }
-
-// void initiateShutdownNow(Collection<ServiceHolder> services) {
-// List<ServiceHolder> l = new ArrayList<ServiceHolder>(services);
-// Collections.reverse(l);
-// for (ServiceHolder sh : l) {
-// try {
-// sh.shutdownNow();
-// } catch (RuntimeException e) {
-// ces.getHandler()
-// .serviceManagerShutdownFailed(ces.createContext(e), sh.getService());
-// }
-// }
-// }
 
     /**
      * Returns the state of the cache.
@@ -508,7 +481,8 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
     }
 
     private static boolean overrideInitialize(Class c) {
-        return ClassUtils.overridesMethod(AbstractCacheLifecycle.class, c, "initialize", Initializer.class);
+        return ClassUtils.overridesMethod(AbstractCacheLifecycle.class, c, "initialize",
+                Initializer.class);
     }
 
     private static boolean overrideStart(Class c) {

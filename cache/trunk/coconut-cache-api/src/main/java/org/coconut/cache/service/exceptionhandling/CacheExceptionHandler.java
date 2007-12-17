@@ -186,37 +186,6 @@ public abstract class CacheExceptionHandler<K, V> {
         throwErrors(context);
         return null;
     }
-//
-//    protected void defaultHandle(CacheExceptionContext<K, V> context) {
-//    // do nothing
-//    }
-
-    /**
-     * This method is called when the
-     * {@link CacheLifecycle#initialize(org.coconut.cache.service.servicemanager.CacheLifecycle.Initializer)}
-     * method of a cache service fails.
-     * <p>
-     * The
-     * {@link CacheLifecycle#initialize(org.coconut.cache.service.servicemanager.CacheLifecycle.Initializer)}
-     * method is as a general rule called from the constructor of the cache. Any Exception
-     * thrown from this method will override the cause.
-     * 
-     * @param logger
-     *            the configured logger for the cache
-     * @param configuration
-     *            the configuration of the cache
-     * @param cacheName
-     *            the name of the cache
-     * @param cacheType
-     *            the type of cache
-     * @param service
-     *            the service that failed
-     * @param cause
-     *            the cause of the failure
-     */
-    public void serviceManagerInitializationFailed(Logger logger,
-            CacheConfiguration<K, V> configuration, String cacheName,
-            Class<? extends Cache> cacheType, CacheLifecycle service, RuntimeException cause) {}
 
     /**
      * Called if the cache fails to shutdown all service properly.

@@ -67,7 +67,7 @@ public class SynchronizedCacheServiceManager extends AbstractCacheServiceManager
                 } else if (state == RunState.NOTRUNNING) {
                     synchronized (mutex) {
                         if (getRunState() == RunState.NOTRUNNING) {
-                            doStart(true);
+                            doStart();
                         }
                     }
                 } else if (failIfShutdown && state.isShutdown()) {

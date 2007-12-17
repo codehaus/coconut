@@ -49,13 +49,6 @@ public final class CacheExceptionHandlers {
         public void serviceManagerInitializationFailed(Logger logger,
                 CacheConfiguration<K, V> configuration, String cacheName,
                 Class<? extends Cache> cacheType, CacheLifecycle service, RuntimeException cause) {
-            logger.fatal("Failed to initialize cache [name = " + cacheName + ", type = "
-                    + cacheType + "]", cause);
-            logger
-                    .debug("---------------------------------CacheConfiguration Start---------------------------------");
-            logger.debug(configuration.toString());
-            logger
-                    .debug("---------------------------------CacheConfiguration Finish--------------------------------");
         }
 
 //        /** {@inheritDoc} */

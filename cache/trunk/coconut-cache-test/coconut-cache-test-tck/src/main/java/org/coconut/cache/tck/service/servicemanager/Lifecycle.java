@@ -150,12 +150,6 @@ public class Lifecycle extends AbstractCacheTCKTest {
         }
 
         @Override
-        public void serviceManagerInitializationFailed(Logger logger, CacheConfiguration configuration,
-                String name, Class cacheType, CacheLifecycle service, RuntimeException cause) {
-            throw new AssertionError("should not be called");
-        }
-
-        @Override
         public void initialize(CacheConfiguration configuration) {
             this.initializeConf = configuration;
         }

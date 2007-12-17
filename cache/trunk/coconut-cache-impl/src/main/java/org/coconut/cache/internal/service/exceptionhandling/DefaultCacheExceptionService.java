@@ -109,30 +109,40 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
     public void fatalRuntimeException(String msg) {
         getLogger().error(msg);
     }
+
     /** {@inheritDoc} */
     public void fatalRuntimeException(String msg, RuntimeException cause) {
         getLogger().error(msg, cause);
     }
+
     /** {@inheritDoc} */
     public CacheExceptionHandler<K, V> getHandler() {
         // TODO we really should wrap it in something that catches all runtime exceptions
         // thrown by the handler methods.
         return exceptionHandler;
     }
+
     /** {@inheritDoc} */
-    public void initializationFailed(CacheConfiguration<K, V> configuration, String cacheName,
-            Class<? extends Cache> cacheType, CacheLifecycle service, RuntimeException cause) {
-        Logger l = logger;
-        if (l == null) {
-            l = Loggers.NULL_LOGGER;
+    public void initializationFailed(CacheConfiguration<K, V> configuration,
+            CacheLifecycle service, RuntimeException cause) {
+        Logger logger = this.logger;
+        if (logger != null) {
+            logger.fatal("Failed to initialize cache [name = " + cache.getName() + ", type = "
+                    + cache.getClass() + ", service = " + service + " ]", cause);
+            logger
+                    .debug("---------------------------------CacheConfiguration Start---------------------------------");
+            logger.debug(configuration.toString());
+            logger
+                    .debug("---------------------------------CacheConfiguration Finish--------------------------------");
+
         }
-        exceptionHandler.serviceManagerInitializationFailed(l, configuration, cacheName, cacheType,
-                service, cause);
     }
+
     /** {@inheritDoc} */
     public boolean isDebugEnabled() {
         return debugLogger.isDebugEnabled();
     }
+
     /** {@inheritDoc} */
     public boolean isTraceEnabled() {
         return debugLogger.isTraceEnabled();
@@ -142,6 +152,7 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
     public void trace(String str) {
         debugLogger.trace(str);
     }
+
     /**
      * Returns the exception logger configured for this cache. Or initializes the default
      * logger if no logger has been defined and the default logger has not already been

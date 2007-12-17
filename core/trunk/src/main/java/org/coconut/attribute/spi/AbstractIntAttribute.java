@@ -8,28 +8,28 @@ import java.io.Serializable;
 import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
-import org.coconut.operations.Ops.MapperToLong;
+import org.coconut.operations.Ops.MapperToInt;
 
 /**
- * An abstract implementation of an {@link Attribute} mapping to a long. This
- * implementation adds a number of methods that works on primitive longs instead of their
+ * An abstract implementation of an {@link Attribute} mapping to a int. This
+ * implementation adds a number of methods that works on primitive ints instead of their
  * object counterpart.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
+public abstract class AbstractIntAttribute extends AbstractAttribute<Integer> {
 
     /** The default value of this attribute. */
-    private final long defaultLongValue;
+    private final int defaultIntValue;
 
     /**
-     * A MapperToLong that takes an AttributeMap and returns the value of this attribute.
+     * A MapperToInteger that takes an AttributeMap and returns the value of this attribute.
      */
-    private final MapperToLong<AttributeMap> mapperToLong = new AttributeMapToLong();
+    private final MapperToInt<AttributeMap> mapperToInt = new AttributeMapToInt();
 
     /**
-     * Creates a new AbstractLongAttribute.
+     * Creates a new AbstractIntegerAttribute.
      * 
      * @param name
      *            the name of the attribute
@@ -40,26 +40,20 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
      * @throws IllegalArgumentException
      *             if the specified default value is not a valid value
      */
-    public AbstractLongAttribute(String name, long defaultValue) {
-        super(name, Long.TYPE, defaultValue);
-        this.defaultLongValue = defaultValue;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void checkValid(Long o) {
-        checkValid(o.longValue());
+    public AbstractIntAttribute(String name, int defaultValue) {
+        super(name, Integer.TYPE, defaultValue);
+        this.defaultIntValue = defaultValue;
     }
 
     /**
-     * Analogous to {@link #checkValid(Long)} except taking a primitive long.
+     * Analogous to {@link #checkValid(Integer)} except taking a primitive Integer.
      * 
      * @param value
      *            the value to check
      * @throws IllegalArgumentException
      *             if the specified value is not valid
      */
-    public void checkValid(long value) {
+    public void checkValid(int value) {
         if (!isValid(value)) {
             throw new IllegalArgumentException("Illegal value for attribute " + getName()
                     + ", value = " + value);
@@ -67,25 +61,31 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
     }
 
     /** {@inheritDoc} */
-    public Long fromString(String str) {
-        return Long.parseLong(str);
+    @Override
+    public final void checkValid(Integer o) {
+        checkValid(o.intValue());
+    }
+
+    /** {@inheritDoc} */
+    public Integer fromString(String str) {
+        return Integer.parseInt(str);
     }
 
     /**
      * Analogous to {@link #getValue(AttributeMap)} except returning a primitive
-     * <tt>long</tt>.
+     * <tt>Integer</tt>.
      * 
      * @param attributes
      *            the attribute map to retrieve the value of this attribute from
      * @return the value of this attribute
      */
-    public long getPrimitive(AttributeMap attributes) {
-        return attributes.getLong(this, defaultLongValue);
+    public int getPrimitive(AttributeMap attributes) {
+        return attributes.getInt(this, defaultIntValue);
     }
 
     /**
-     * Analogous to {@link #getValue(AttributeMap, Long)} except returning a primitive
-     * <tt>long</tt>.
+     * Analogous to {@link #getValue(AttributeMap, Integer)} except returning a primitive
+     * <tt>Integer</tt>.
      * 
      * @param attributes
      *            the attribute map to check for this attribute in
@@ -94,25 +94,25 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
      *            attribute map
      * @return the value of this attribute
      */
-    public long getPrimitive(AttributeMap attributes, long defaultValue) {
-        return attributes.getLong(this, defaultValue);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final boolean isValid(Long value) {
-        return isValid(value.longValue());
+    public int getPrimitive(AttributeMap attributes, int defaultValue) {
+        return attributes.getInt(this, defaultValue);
     }
 
     /**
-     * Analogous to {@link #isValid(Long)} except taking a primitive long as parameter.
+     * Analogous to {@link #isValid(Integer)} except taking a primitive Integer as parameter.
      * 
      * @param value
      *            the value to check
      * @return whether or not the value is valid
      */
-    public boolean isValid(long value) {
+    public boolean isValid(int value) {
         return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final boolean isValid(Integer value) {
+        return isValid(value.intValue());
     }
 
     /**
@@ -122,12 +122,12 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
      * 
      * @return a mapper from an AttributeMap to the value of this attribute
      */
-    public MapperToLong<AttributeMap> mapToLong() {
-        return mapperToLong;
+    public MapperToInt<AttributeMap> mapToInt() {
+        return mapperToInt;
     }
 
     /**
-     * Analogous to {@link #setValue(AttributeMap, Long)} except taking a primitive long
+     * Analogous to {@link #setValue(AttributeMap, Integer)} except taking a primitive Integer
      * as parameter.
      * 
      * @param attributes
@@ -137,19 +137,19 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
      * @return the specified attribute map
      * @throws IllegalArgumentException
      *             if the specified value is not valid accordingly to
-     *             {@link #checkValid(long)}
+     *             {@link #checkValid(Integer)}
      */
-    public AttributeMap setAttribute(AttributeMap attributes, long value) {
+    public AttributeMap setAttribute(AttributeMap attributes, int value) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
         }
         checkValid(value);
-        attributes.putLong(this, value);
+        attributes.putInt(this, value);
         return attributes;
     }
 
     /**
-     * Analogous to {@link #singleton(Long)} except taking a primitive long as
+     * Analogous to {@link #singleton(Integer)} except taking a primitive Integer as
      * parameter.
      * 
      * @param value
@@ -157,21 +157,21 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
      * @return an AttributeMap containing only this attribute mapping to the specified
      *         value
      */
-    protected AttributeMap toSingletonLong(long value) {
+    protected AttributeMap toSingletonInt(int value) {
         checkValid(value);
         return Attributes.singleton(this, value);
     }
 
     /**
-     * A MapperToLong that maps from an attribute map to the value of this attribute.
+     * A MapperToInteger that maps from an attribute map to the value of this attribute.
      */
-    class AttributeMapToLong implements MapperToLong<AttributeMap>, Serializable {
+    class AttributeMapToInt implements MapperToInt<AttributeMap>, Serializable {
 
         /** serialVersionUID. */
-        private static final long serialVersionUID = -953844729549732090L;
+        private static final long serialVersionUID = -8341885789250723522L;
 
         /** {@inheritDoc} */
-        public long map(AttributeMap t) {
+        public int map(AttributeMap t) {
             return getPrimitive(t);
         }
     }
