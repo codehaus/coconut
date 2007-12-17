@@ -10,7 +10,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.Attributes;
+import org.coconut.attribute.DefaultAttributeMap;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingService;
@@ -34,8 +34,8 @@ public class DefaultCacheLoaderServiceTest {
 
     private final static Map<Integer, AttributeMap> REAL_KEYS = new HashMap() {
         {
-            put(3, new Attributes.DefaultAttributeMap());
-            put(5, new Attributes.DefaultAttributeMap());
+            put(3, new DefaultAttributeMap());
+            put(5, new DefaultAttributeMap());
         }
     };
 

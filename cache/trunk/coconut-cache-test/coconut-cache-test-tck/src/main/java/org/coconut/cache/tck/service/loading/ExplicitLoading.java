@@ -14,6 +14,7 @@ import java.util.Map;
 import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
+import org.coconut.attribute.DefaultAttributeMap;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.test.TestUtil;
@@ -33,9 +34,9 @@ public class ExplicitLoading extends AbstractLoadingTestBundle {
     private final static AttributeMap ATR_FO1;
 
     static {
-        ATR_FOO = new Attributes.DefaultAttributeMap();
+        ATR_FOO = new DefaultAttributeMap();
         ATR_FOO.put(TestUtil.dummy(Attribute.class), "boo");
-        ATR_FO1 = new Attributes.DefaultAttributeMap();
+        ATR_FO1 = new DefaultAttributeMap();
         ATR_FO1.put(TestUtil.dummy(Attribute.class), "oob");
     }
 
@@ -128,9 +129,9 @@ public class ExplicitLoading extends AbstractLoadingTestBundle {
 
     @Test
     public void loadAllWithAttributes() {
-        AttributeMap am1 = new Attributes.DefaultAttributeMap();
+        AttributeMap am1 = new DefaultAttributeMap();
         am1.put(IntegerToStringLoader.RESULT_ATTRIBUTE_KEY, "a1");
-        AttributeMap am2 = new Attributes.DefaultAttributeMap();
+        AttributeMap am2 = new DefaultAttributeMap();
         am2.put(IntegerToStringLoader.RESULT_ATTRIBUTE_KEY, "a2");
 
         Map<Integer, AttributeMap> req = new HashMap<Integer, AttributeMap>();
@@ -150,9 +151,9 @@ public class ExplicitLoading extends AbstractLoadingTestBundle {
         awaitAllLoads();
         assertEquals(1, loader.getNumberOfLoads());
 
-        AttributeMap am1 = new Attributes.DefaultAttributeMap();
+        AttributeMap am1 = new DefaultAttributeMap();
         am1.put(IntegerToStringLoader.RESULT_ATTRIBUTE_KEY, "a1");
-        AttributeMap am2 = new Attributes.DefaultAttributeMap();
+        AttributeMap am2 = new DefaultAttributeMap();
         am2.put(IntegerToStringLoader.RESULT_ATTRIBUTE_KEY, "a2");
 
         Map<Integer, AttributeMap> req = new HashMap<Integer, AttributeMap>();

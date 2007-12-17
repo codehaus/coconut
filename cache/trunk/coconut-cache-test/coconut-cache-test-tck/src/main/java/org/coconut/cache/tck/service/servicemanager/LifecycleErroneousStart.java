@@ -290,7 +290,6 @@ public class LifecycleErroneousStart extends AbstractCacheTCKTest {
             this.cause = context.getCause();
             this.service = service;
             this.context = context;
-            super.serviceManagerStartFailed(context, conf, service);
         }
 
         @Override
@@ -298,7 +297,6 @@ public class LifecycleErroneousStart extends AbstractCacheTCKTest {
                 CacheLifecycle lifecycle) {
             this.shutdownCache = context.getCache();
             shutdownMap.put(lifecycle, context.getCause());
-            super.serviceManagerShutdownFailed(context, lifecycle);
         }
 
         @Override
@@ -307,5 +305,4 @@ public class LifecycleErroneousStart extends AbstractCacheTCKTest {
             this.terminatationMap = terminationFailures;
         }
     }
-
 }

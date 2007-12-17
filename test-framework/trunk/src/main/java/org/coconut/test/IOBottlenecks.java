@@ -71,8 +71,8 @@ public class IOBottlenecks {
             byte[] buffer = LOCAL.get();
             try {
                 FileInputStream fis = new FileInputStream(f);
-                while (fis.read(buffer) >= 0)
-                    ;
+                while (fis.read(buffer) >= 0){}
+                    
                 fis.close();
             } catch (IOException e) {
                 throw new IllegalStateException("Could not process file", e);

@@ -54,7 +54,7 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
      * {@link CacheExceptionHandler#lifecycleInitializationFailed(CacheConfiguration, Class, CacheLifecycle, RuntimeException)}
      * is called.
      */
-    @Test(expected = RuntimeException1.class)
+    @Test(expected = IllegalArgumentException.class)
     public void exceptionInInitialize() {
         LifecycleVerifier alv = context.create(new AbstractCacheLifecycle() {
             @Override
@@ -95,7 +95,7 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
      * Tests that {@link CacheLifecycle#terminated()} is called on components that have
      * already been initialized. When other components fails to initialize.
      */
-    @Test(expected = RuntimeException1.class)
+    @Test
     public void exceptionInInitialize33() {
         context.create();
         LifecycleVerifier alv = context.create(new AbstractCacheLifecycle() {
@@ -108,7 +108,9 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
 
         try {
             setCache(conf);
-        } finally {
+            fail("should fail");
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getCause() instanceof RuntimeException1);
             assertEquals(alv, handler.service);
             assertTrue(handler.cause instanceof RuntimeException1);
             assertEquals(0, handler.terminatationMap.size());
@@ -119,7 +121,7 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
      * Tests components that fail both in {@link CacheLifecycle#initialize(Initializer)}
      * and {@link CacheLifecycle#terminated()}.
      */
-    @Test(expected = RuntimeException1.class)
+    @Test
     public void exceptionInInitializeAndTerminate1() {
         context.create();
         LifecycleVerifier alv1 = context.create(new AbstractCacheLifecycle() {
@@ -141,9 +143,12 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
             }
         });
         context.createNever();
+        
         try {
             setCache(conf);
-        } finally {
+            fail("should fail");
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getCause() instanceof RuntimeException1);
             assertTrue(handler.cause instanceof RuntimeException1);
             assertEquals(2, handler.terminatationMap.size());
             assertTrue(handler.terminatationMap.get(alv1) instanceof RuntimeException2);

@@ -387,7 +387,11 @@ public class CacheConfigurationTest {
      */
     @Test(expected = ArithmeticException.class)
     public void newInstanceConstructorRuntimeThrows() throws Throwable {
-        conf.newCacheInstance(DummyCache.ConstructorRuntimeThrowingCache.class);
+        try {
+            conf.newCacheInstance(DummyCache.ConstructorRuntimeThrowingCache.class);
+        } catch (IllegalArgumentException e) {
+            throw e.getCause();
+        }
     }
 
     /**

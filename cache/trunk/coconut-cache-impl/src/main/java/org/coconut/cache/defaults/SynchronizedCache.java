@@ -84,12 +84,12 @@ import org.coconut.internal.util.CollectionUtils;
         CacheServiceManagerService.class, CacheStatisticsService.class, CacheWorkerService.class })
 public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
 
-    private final static Collection<Class<?>> DEFAULTS = Arrays
-            .asList(DefaultCacheStatisticsService.class, DefaultCacheListener.class,
-                    SynchronizedCacheEvictionService.class, DefaultCacheExpirationService.class,
-                    SynchronizedCacheLoaderService.class, DefaultCacheManagementService.class,
-                    DefaultCacheEventService.class, SynchronizedCacheWorkerService.class,
-                    SynchronizedEntryFactoryService.class, DefaultCacheExceptionService.class);
+    private final static Collection<Class<?>> DEFAULTS = Arrays.asList(
+            DefaultCacheStatisticsService.class, DefaultCacheListener.class,
+            SynchronizedCacheEvictionService.class, DefaultCacheExpirationService.class,
+            SynchronizedCacheLoaderService.class, DefaultCacheManagementService.class,
+            DefaultCacheEventService.class, SynchronizedCacheWorkerService.class,
+            SynchronizedEntryFactoryService.class, DefaultCacheExceptionService.class);
 
     private final InternalCacheEntryService entryService;
 
@@ -233,6 +233,9 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
                 prev.setPolicyIndex(-1);
                 map.remove(prev.getKey());
             }
+            return false;
+        }
+        if (entry.getPolicyIndex() == Integer.MIN_VALUE) {
             return false;
         }
         if (entry.getPolicyIndex() == -1) { // entry is newly added

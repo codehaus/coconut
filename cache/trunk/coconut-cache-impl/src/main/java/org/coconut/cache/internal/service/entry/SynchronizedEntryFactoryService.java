@@ -20,10 +20,13 @@ public class SynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryFac
 
     private final IsCacheable<K, V> isCacheable;
 
+    private boolean isDisabled;
+
     public SynchronizedEntryFactoryService(CacheConfiguration<?, ?> conf,
             CacheEvictionConfiguration<K, V> evictionConfiguration,
             InternalCacheExceptionService<K, V> exceptionHandler, Cache<K, V> mutex) {
         super(conf.getClock(), exceptionHandler);
+        this.isDisabled = evictionConfiguration.isDisabled();
         this.isCacheable = evictionConfiguration.getIsCacheableFilter();
         this.mutex = mutex;
     }
@@ -49,6 +52,9 @@ public class SynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryFac
 
         if (existing != null) {
             newEntry.setPolicyIndex(existing.getPolicyIndex());
+        }
+        if (isDisabled) {
+            newEntry.setPolicyIndex(Integer.MIN_VALUE);
         }
         return newEntry;
     }
@@ -78,6 +84,18 @@ public class SynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryFac
     public void setTimeToRefreshNs(long nanos) {
         synchronized (mutex) {
             this.defaultRefreshTime = nanos;
+        }
+    }
+
+    public boolean isDisabled() {
+        synchronized (mutex) {
+            return isDisabled;
+        }
+    }
+
+    public void setDisabled(boolean isDisabled) {
+        synchronized (mutex) {
+            this.isDisabled = isDisabled;
         }
     }
 }

@@ -37,4 +37,8 @@ public interface InternalCacheEntryService<K, V> {
     long getTimeToRefreshNs();
 
     long getAccessTimeStamp(AbstractCacheEntry<K, V> entry);
+
+    boolean isDisabled();
+
+    void setDisabled(boolean isDisabled);
 }

@@ -206,6 +206,9 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
             }
             return false;
         }
+        if (entry.getPolicyIndex() == Integer.MIN_VALUE) {
+            return false;
+        }
         if (entry.getPolicyIndex() == -1) { // entry is newly added
             entry.setPolicyIndex(evictionService.add(entry));
             if (entry.getPolicyIndex() == -1) {

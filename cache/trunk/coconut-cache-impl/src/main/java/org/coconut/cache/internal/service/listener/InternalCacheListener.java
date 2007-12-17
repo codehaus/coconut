@@ -38,7 +38,7 @@ public interface InternalCacheListener<K, V> {
             long previousVolume, int newSize, long newVolume);
 
     void afterGetAll(Cache<K, V> cache, long started, Object[] keys,
-            AbstractCacheEntry<K, V>[] entries, boolean isHit[], boolean isExpired[],
+            AbstractCacheEntry<K, V>[] entries, boolean[] isHit, boolean[] isExpired,
             Map<K, AbstractCacheEntry<K, V>> loadedEntries);
 
     void afterHit(Cache<K, V> cache, long started, K key, CacheEntry<K, V> entry);

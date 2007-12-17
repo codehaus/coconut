@@ -1,7 +1,10 @@
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
+ */
 package org.coconut.cache.tck.service.loading;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.Attributes;
+import org.coconut.attribute.DefaultAttributeMap;
 import org.coconut.attribute.common.CostAttribute;
 import org.coconut.attribute.common.DateCreatedAttribute;
 import org.coconut.attribute.common.DateLastModifiedAttribute;
@@ -29,7 +32,7 @@ public class LoadingIllegalAttributeValues extends AbstractCacheTCKTest {
 
     @Before
     public void setup() {
-        map = new Attributes.DefaultAttributeMap();
+        map = new DefaultAttributeMap();
         conf.loading().setLoader(new IntegerToStringLoader());
         conf.setDefaultLogger(Loggers.systemErrLogger(Level.Error));
         setCache();

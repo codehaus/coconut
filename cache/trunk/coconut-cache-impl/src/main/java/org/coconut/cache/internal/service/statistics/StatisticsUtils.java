@@ -18,7 +18,7 @@ import org.coconut.management.annotation.ManagedOperation;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
-public class StatisticsUtils {
+public final class StatisticsUtils {
     /** Cannot instantiate. */
     // /CLOVER:OFF
     private StatisticsUtils() {}

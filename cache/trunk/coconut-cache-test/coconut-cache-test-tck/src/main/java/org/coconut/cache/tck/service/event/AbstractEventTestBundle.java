@@ -53,11 +53,6 @@ public class AbstractEventTestBundle extends AbstractCacheTCKTest {
         };
     }
 
-    CacheConfiguration<Integer, String> anythingBut(Class<?> clazz) {
-        conf.event().setEnabledEventPredicate((Predicate) Predicates.not(Predicates.isEquals(clazz)));
-        return conf;
-    }
-
     @After
     public void stop() {
         if (!events.isEmpty()) {
@@ -70,16 +65,16 @@ public class AbstractEventTestBundle extends AbstractCacheTCKTest {
         }
     }
 
+    protected void consumeItem() throws Exception {
+        assertNotNull(events.poll(50, TimeUnit.MILLISECONDS));
+    }
+
 // protected void assertQueueEmpty() {
 // if (events.size() > 0) {
 // events.clear();
 // throw new AssertionFailedError("event queue not empty");
 // }
 // }
-
-    protected void consumeItem() throws Exception {
-        assertNotNull(events.poll(50, TimeUnit.MILLISECONDS));
-    }
 
     protected <S extends CacheEvent> S consumeItem(Cache c, Class<S> type) {
         EventWrapper ew;
@@ -189,6 +184,11 @@ public class AbstractEventTestBundle extends AbstractCacheTCKTest {
 
     protected EventSubscription<?> subscribe(Predicate f) {
         return subscribe(CacheServices.event(c), f);
+    }
+
+    CacheConfiguration<Integer, String> anythingBut(Class<?> clazz) {
+        conf.event().setEnabledEventPredicate((Predicate) Predicates.not(Predicates.isEquals(clazz)));
+        return conf;
     }
 
     static class EventWrapper {

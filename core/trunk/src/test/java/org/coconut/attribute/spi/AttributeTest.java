@@ -1,3 +1,6 @@
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
+ */
 package org.coconut.attribute.spi;
 
 import static org.junit.Assert.assertEquals;
@@ -9,6 +12,7 @@ import static org.junit.Assert.assertTrue;
 import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
+import org.coconut.attribute.DefaultAttributeMap;
 import org.junit.Test;
 
 public class AttributeTest {
@@ -18,7 +22,7 @@ public class AttributeTest {
     static final AbstractAttribute<String> ATR_VALIDATE = new ValidateAttribute("fooignore");
 
     // ValidateAttribute
-    AttributeMap am1 = new Attributes.DefaultAttributeMap();
+    AttributeMap am1 = new DefaultAttributeMap();
 
     AttributeMap am2 = Attributes.singleton(ATR, "value");
 
@@ -68,7 +72,7 @@ public class AttributeTest {
 
     @Test
     public void set() {
-        AttributeMap am = new Attributes.DefaultAttributeMap();
+        AttributeMap am = new DefaultAttributeMap();
         assertEquals(0, am.size());
         assertSame(am, ATR.setValue(am, "a"));
         assertEquals(1, am.size());
@@ -81,7 +85,7 @@ public class AttributeTest {
     @Test(expected = IllegalArgumentException.class)
     public void setIllegal() {
         Attribute a = new ValidateAttribute("fooignore");
-        a.setValue(new Attributes.DefaultAttributeMap(), "asd");
+        a.setValue(new DefaultAttributeMap(), "asd");
     }
 
     @Test(expected = NullPointerException.class)
@@ -92,7 +96,7 @@ public class AttributeTest {
     @Test
     public void setValidate() {
         Attribute a = new ValidateAttribute("fooignore");
-        a.setValue(new Attributes.DefaultAttributeMap(), "fooasd");
+        a.setValue(new DefaultAttributeMap(), "fooasd");
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -133,7 +137,7 @@ public class AttributeTest {
 
     @Test
     public void unSet() {
-        AttributeMap am1 = new Attributes.DefaultAttributeMap();
+        AttributeMap am1 = new DefaultAttributeMap();
         assertEquals(0, am1.size());
         ATR.unSet(am1);
         assertEquals(0, am1.size());
@@ -148,7 +152,7 @@ public class AttributeTest {
     }
 
     protected AttributeMap newMap() {
-        return new Attributes.DefaultAttributeMap();
+        return new DefaultAttributeMap();
     }
 
     static class DefaultAttribute extends AbstractAttribute<String> {

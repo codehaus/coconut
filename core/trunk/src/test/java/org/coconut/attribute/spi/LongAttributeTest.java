@@ -1,3 +1,6 @@
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
+ */
 package org.coconut.attribute.spi;
 
 import static org.junit.Assert.assertEquals;
@@ -6,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
+import org.coconut.attribute.DefaultAttributeMap;
 import org.coconut.test.TestUtil;
 import org.junit.Test;
 
@@ -79,7 +83,7 @@ public class LongAttributeTest {
 
     @Test
     public void set() {
-        AttributeMap am = new Attributes.DefaultAttributeMap();
+        AttributeMap am = new DefaultAttributeMap();
         assertEquals(10l, LONG_A.setAttribute(am, 10l).get(LONG_A));
         assertEquals(-10000l, LONG_A.setAttribute(am, -10000l).get(LONG_A));
         assertEquals(10000l, LONG_A.setValue(am, Long.valueOf(10000)).get(LONG_A));
@@ -88,7 +92,7 @@ public class LongAttributeTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void setIAE() {
-        NON_NEGATIVE.setAttribute(new Attributes.DefaultAttributeMap(), -1L);
+        NON_NEGATIVE.setAttribute(new DefaultAttributeMap(), -1L);
     }
 
     @Test(expected = NullPointerException.class)

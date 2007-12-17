@@ -133,6 +133,14 @@ final class EvictionUtils {
         public void trimToVolume(long volume) {
             service.trimToVolume(volume);
         }
+        /** {@inheritDoc} */
+        public boolean isDisabled() {
+            return service.isDisabled();
+        }
+        /** {@inheritDoc} */
+        public void setDisabled(boolean isDisabled) {
+            service.setDisabled(isDisabled);
+        }
     }
 
     /**

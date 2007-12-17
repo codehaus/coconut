@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.coconut.attribute.Attributes;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.policy.Policies;
 import org.coconut.cache.policy.ReplacementPolicy;
@@ -39,21 +40,21 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
     private int maxSize;
 
     // @SuppressWarnings("unchecked")
-    public UnsynchronizedCacheEvictionService(CacheEvictionConfiguration<K, V> conf,
-            InternalCacheSupport<K, V> helper) {
-        super(helper);
+    public UnsynchronizedCacheEvictionService(AbstractCacheEntryFactoryService<K, V> factory,
+            CacheEvictionConfiguration<K, V> conf, InternalCacheSupport<K, V> helper) {
+        super(factory, helper);
         cp = conf.getPolicy() == null ? Policies.newLRU() : (ReplacementPolicy) conf.getPolicy();
         maxSize = EvictionUtils.getMaximumSizeFromConfiguration(conf);
-        //System.out.println("maxSize " + maxSize);
+        // System.out.println("maxSize " + maxSize);
         maxVolume = EvictionUtils.getMaximumVolumeFromConfiguration(conf);
     }
 
     /** {@inheritDoc} */
     public int add(T t) {
-//        // TODO Test maxSize, maxVolume
-//        if (maxVolume == 0 || maxSize == 0) {
-//            return -1;
-//        }
+// // TODO Test maxSize, maxVolume
+// if (maxVolume == 0 || maxSize == 0) {
+// return -1;
+// }
         return cp.add(t, Attributes.EMPTY_MAP);
     }
 
@@ -72,18 +73,18 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
         return list;
     }
 
-//    /** {@inheritDoc} */
-//    public List<T> evict(int size, long capacity) {
-//        ArrayList<T> list = new ArrayList<T>();
-//        int diffSize = size - maxSize;
-//        long diffCapacity = capacity - maxVolume;
-//        while (diffSize-- > 0 || diffCapacity > 0) {
-//            T e = evictNext();
-//            list.add(e);
-//            diffCapacity -= e.getSize();
-//        }
-//        return list;
-//    }
+// /** {@inheritDoc} */
+// public List<T> evict(int size, long capacity) {
+// ArrayList<T> list = new ArrayList<T>();
+// int diffSize = size - maxSize;
+// long diffCapacity = capacity - maxVolume;
+// while (diffSize-- > 0 || diffCapacity > 0) {
+// T e = evictNext();
+// list.add(e);
+// diffCapacity -= e.getSize();
+// }
+// return list;
+// }
 
     /** {@inheritDoc} */
     public T evictNext() {
@@ -142,9 +143,10 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
 
     /** {@inheritDoc} */
     public void touch(int index) {
-//        if (index < 0) {
-//            throw new IllegalArgumentException("index must be a non negative number, was " + index);
-//        }
+// if (index < 0) {
+// throw new IllegalArgumentException("index must be a non negative number, was " +
+// index);
+// }
         cp.touch(index);
     }
 

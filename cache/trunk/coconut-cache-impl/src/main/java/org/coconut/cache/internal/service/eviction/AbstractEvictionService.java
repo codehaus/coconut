@@ -4,6 +4,7 @@
 package org.coconut.cache.internal.service.eviction;
 
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
 import org.coconut.cache.internal.service.servicemanager.CompositeService;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.service.eviction.CacheEvictionMXBean;
@@ -29,6 +30,8 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
         AbstractCacheLifecycle implements InternalCacheEvictionService<K, V, T>,
         CacheEvictionMXBean, ManagedLifecycle, CompositeService {
 
+    private final AbstractCacheEntryFactoryService<K, V> entryFactory;
+
     /** An EvictionSupport instance used for trimming the cache. */
     private final EvictionSupport helper;
 
@@ -38,14 +41,20 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
      * @param evictionSupport
      *            the InternalCacheSupport for the cache
      */
-    public AbstractEvictionService(EvictionSupport evictionSupport) {
+    public AbstractEvictionService(AbstractCacheEntryFactoryService<K, V> factory,
+            EvictionSupport evictionSupport) {
         this.helper = evictionSupport;
+        this.entryFactory = factory;
     }
 
     /** {@inheritDoc} */
     @Override
     public void initialize(CacheLifecycle.Initializer cli) {
         cli.registerService(CacheEvictionService.class, EvictionUtils.wrapService(this));
+    }
+
+    public boolean isDisabled() {
+        return entryFactory.isDisabled();
     }
 
     /** {@inheritDoc} */
@@ -55,17 +64,21 @@ public abstract class AbstractEvictionService<K, V, T extends CacheEntry<K, V>> 
         g.add(EvictionUtils.wrapMXBean(this));
     }
 
-    /** {@inheritDoc} */
-    public void trimToVolume(long capacity) {
-        helper.trimCache(Integer.MAX_VALUE, capacity);
+    public void setDisabled(boolean isDisabled) {
+        entryFactory.setDisabled(isDisabled);
+    }
+
+    public String toString() {
+        return "Eviction Service";
     }
 
     /** {@inheritDoc} */
     public void trimToSize(int size) {
         helper.trimCache(size, Long.MAX_VALUE);
     }
-    
-    public String toString() {
-        return "Eviction Service";
+
+    /** {@inheritDoc} */
+    public void trimToVolume(long capacity) {
+        helper.trimCache(Integer.MAX_VALUE, capacity);
     }
 }

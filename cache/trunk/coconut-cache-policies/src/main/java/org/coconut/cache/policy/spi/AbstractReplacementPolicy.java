@@ -1,7 +1,6 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-
 package org.coconut.cache.policy.spi;
 
 import java.util.ArrayList;
@@ -16,7 +15,7 @@ import org.coconut.cache.policy.ReplacementPolicy;
  * @param <T>
  *            the type of objects contained within the replacement policy
  */
-public abstract class AbstractPolicy<T> implements ReplacementPolicy<T> {
+public abstract class AbstractReplacementPolicy<T> implements ReplacementPolicy<T> {
 
     /**
      * Calls {@link ReplacementPolicy#add(Object, org.coconut.attribute.AttributeMap)} with an

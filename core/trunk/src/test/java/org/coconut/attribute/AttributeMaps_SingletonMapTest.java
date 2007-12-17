@@ -1,3 +1,6 @@
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
+ */
 package org.coconut.attribute;
 
 import static org.junit.Assert.*;
@@ -166,7 +169,7 @@ public class AttributeMaps_SingletonMapTest {
         assertFalse(singleton.equals(m));
 
         // differen sizes
-        AttributeMap am = new Attributes.DefaultAttributeMap();
+        AttributeMap am = new DefaultAttributeMap();
         am.put(KEY, VALUE);
         am.put(OTHER_KEY, VALUE);
         assertFalse(singleton.equals(am));

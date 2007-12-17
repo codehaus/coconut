@@ -35,23 +35,23 @@ import org.coconut.cache.CacheServices;
  */
 public interface CacheWorkerService {
     /**
-     * Returns a ScheduledExecutorService for the specified service.
+     * Returns a ExecutorService for the specified service.
      * 
      * @param service
-     *            the service that needs a ScheduledExecutorService
-     * @return a ScheduledExecutorService for the specified service
+     *            the service that needs a ExecutorService
+     * @return a ExecutorService for the specified service
      */
     ExecutorService getExecutorService(Object service);
 
     /**
-     * Returns a ScheduledExecutorService for the specified service.
+     * Returns a ExecutorService for the specified service.
      * 
      * @param service
-     *            the service that needs a ScheduledExecutorService
+     *            the service that needs a ExecutorService
      * @param attributes
      *            a map of attributes that can be used by the work service to determind
      *            what types of executor services that should be created
-     * @return a ScheduledExecutorService for the specified service
+     * @return a ExecutorService for the specified service
      */
     ExecutorService getExecutorService(Object service, AttributeMap attributes);
     

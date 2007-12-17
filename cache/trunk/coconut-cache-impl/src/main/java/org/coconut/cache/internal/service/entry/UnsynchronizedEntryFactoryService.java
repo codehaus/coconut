@@ -29,6 +29,8 @@ public class UnsynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryF
 
     private final IsCacheable<K, V> isCacheable;
 
+    private boolean isDisabled;
+
     /**
      * Creates a new UnsynchronizedEntryFactoryService.
      * 
@@ -41,6 +43,7 @@ public class UnsynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryF
             CacheEvictionConfiguration<K, V> evictionConfiguration,
             InternalCacheExceptionService<K, V> exceptionService) {
         super(clock, exceptionService);
+        this.isDisabled = evictionConfiguration.isDisabled();
         this.isCacheable = evictionConfiguration.getIsCacheableFilter();
     }
 
@@ -70,6 +73,9 @@ public class UnsynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryF
         if (existing != null) {
             newEntry.setPolicyIndex(existing.getPolicyIndex());
         }
+        if (isDisabled) {
+            newEntry.setPolicyIndex(Integer.MIN_VALUE);
+        }
         return newEntry;
     }
 
@@ -91,5 +97,13 @@ public class UnsynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryF
     /** {@inheritDoc} */
     public void setTimeToRefreshNs(long nanos) {
         this.defaultRefreshTimeNanos = nanos;
+    }
+
+    public boolean isDisabled() {
+        return isDisabled;
+    }
+
+    public void setDisabled(boolean isDisabled) {
+        this.isDisabled = isDisabled;
     }
 }

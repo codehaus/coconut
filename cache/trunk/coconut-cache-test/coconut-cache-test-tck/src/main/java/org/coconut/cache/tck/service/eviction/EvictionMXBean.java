@@ -87,7 +87,7 @@ public class EvictionMXBean extends AbstractCacheTCKTest {
         try {
             mxBean.setMaximumSize(-1);
             fail("Did not throw exception");
-        } catch (IllegalArgumentException e) {} catch (RuntimeMBeanException e) {
+        } catch (IllegalArgumentException e) {/* ok */} catch (RuntimeMBeanException e) {
             assertTrue(e.getCause() instanceof IllegalArgumentException);
         }
     }

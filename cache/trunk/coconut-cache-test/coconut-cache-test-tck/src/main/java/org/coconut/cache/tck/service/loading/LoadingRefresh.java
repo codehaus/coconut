@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.Attributes;
+import org.coconut.attribute.DefaultAttributeMap;
 import org.coconut.attribute.common.TimeToRefreshAttribute;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.test.util.AsyncIntegerToStringLoader;
@@ -175,9 +175,9 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
 
     @Test
     public void loadAllWithAttributes() {
-        AttributeMap am1 = new Attributes.DefaultAttributeMap();
+        AttributeMap am1 = new DefaultAttributeMap();
         am1.put(IntegerToStringLoader.RESULT_ATTRIBUTE_KEY, "a1");
-        AttributeMap am2 = new Attributes.DefaultAttributeMap();
+        AttributeMap am2 = new DefaultAttributeMap();
         am2.put(IntegerToStringLoader.RESULT_ATTRIBUTE_KEY, "a2");
 
         Map<Integer, AttributeMap> req = new HashMap<Integer, AttributeMap>();

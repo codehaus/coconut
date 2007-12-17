@@ -3,7 +3,7 @@
  */
 package org.coconut.cache.service.eviction;
 
-import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.*;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertSame;
 import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
@@ -54,6 +54,23 @@ public class CacheEvictionConfigurationTest {
     }
 
     @Test
+    public void isDisabled() {
+        assertFalse(conf.isDisabled());
+        assertSame(conf, conf.setDisabled(true));
+        assertTrue(conf.isDisabled());
+    }
+
+    @Test
+    public void isDisabledXML() throws Exception {
+        conf = reloadService(conf);
+        assertFalse(conf.isDisabled());
+        assertSame(conf, conf.setDisabled(true));
+
+        conf = reloadService(conf);
+        assertTrue(conf.isDisabled());
+    }
+
+    @Test
     public void testMaximumSize() {
         assertEquals(0, conf.getMaximumSize());
         assertSame(conf, conf.setMaximumSize(4));
@@ -82,10 +99,12 @@ public class CacheEvictionConfigurationTest {
         assertSame(conf, conf.setIsCacheableFilter(i));
         assertEquals(i, conf.getIsCacheableFilter());
     }
+
     @Test
     public void isCacheableXML() {
     // TODO
     }
+
     @Test
     public void testPolicy() {
         ReplacementPolicy<?> p = TestUtil.dummy(ReplacementPolicy.class);

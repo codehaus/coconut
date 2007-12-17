@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.Attributes;
+import org.coconut.attribute.DefaultAttributeMap;
 import org.coconut.attribute.common.CostAttribute;
 import org.coconut.attribute.common.DateCreatedAttribute;
 import org.coconut.attribute.common.DateLastModifiedAttribute;
@@ -16,10 +16,8 @@ import org.coconut.attribute.common.SizeAttribute;
 import org.coconut.attribute.common.TimeToLiveAttribute;
 import org.coconut.attribute.common.TimeToRefreshAttribute;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.exceptionhandling.DefaultCacheExceptionService;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.cache.internal.service.spi.Resources;
-import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.core.Clock;
 
 /**
@@ -60,7 +58,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V>
      * @return a new empty AttributeMap
      */
     public AttributeMap createMap() {
-        return new Attributes.DefaultAttributeMap();
+        return new DefaultAttributeMap();
     }
 
     /**
@@ -73,7 +71,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V>
      *         provided attribute map
      */
     public AttributeMap createMap(AttributeMap copyFrom) {
-        return new Attributes.DefaultAttributeMap(copyFrom);
+        return new DefaultAttributeMap(copyFrom);
     }
 
     public long getAccessTimeStamp(AbstractCacheEntry<K, V> entry) {

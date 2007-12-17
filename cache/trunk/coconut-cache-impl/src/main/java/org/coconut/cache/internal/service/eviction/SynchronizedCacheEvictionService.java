@@ -4,15 +4,15 @@
 package org.coconut.cache.internal.service.eviction;
 
 import org.coconut.cache.Cache;
+import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 
 /**
- * 
- * 
  * <p>
  * NOTICE: This is an internal class and should not be directly referred. No guarantee is
  * made to the compatibility of this class between different releases of Coconut Cache.
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -20,13 +20,13 @@ import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
  * @param <V>
  *            the type of mapped values
  */
-public class SynchronizedCacheEvictionService<K, V> extends
-        UnsynchronizedCacheEvictionService {
+public class SynchronizedCacheEvictionService<K, V> extends UnsynchronizedCacheEvictionService {
     private final Object mutex;
 
-    public SynchronizedCacheEvictionService(Cache c, CacheEvictionConfiguration conf,
+    public SynchronizedCacheEvictionService(Cache c,
+            AbstractCacheEntryFactoryService<K, V> factory, CacheEvictionConfiguration conf,
             InternalCacheSupport<K, V> helper) {
-        super(conf, helper);
+        super(factory, conf, helper);
         this.mutex = c;
     }
 

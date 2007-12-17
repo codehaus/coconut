@@ -75,7 +75,7 @@ public class Debugging extends AbstractCacheTCKTest {
         prestart();
     }
 
-    @Test(expected = RuntimeException1.class)
+    @Test(expected = IllegalArgumentException.class)
     public void debuggingInitializeFailed() {
         conf.setDefaultLogger(Loggers.printStreamLogger(Level.Debug, new PrintStream(
                 new NullOutputStream())));

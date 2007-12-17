@@ -1,3 +1,6 @@
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
+ */
 package org.coconut.attribute.spi;
 
 import static org.junit.Assert.assertEquals;
@@ -7,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
+import org.coconut.attribute.DefaultAttributeMap;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -92,6 +96,6 @@ public class DurationAttributeTest {
     }
 
     protected AttributeMap newMap() {
-        return new Attributes.DefaultAttributeMap();
+        return new DefaultAttributeMap();
     }
 }

@@ -82,13 +82,13 @@ public class AtomicDoubleTest extends TestCase {
      */
     public void testWeakCompareAndSet() {
         AtomicDouble ai = new AtomicDouble(1);
-        while (!ai.weakCompareAndSet(1, 2))
-            ;
-        while (!ai.weakCompareAndSet(2, -4))
-            ;
+        while (!ai.weakCompareAndSet(1, 2)){}
+            
+        while (!ai.weakCompareAndSet(2, -4)){}
+            
         assertEquals(-4.0, ai.get());
-        while (!ai.weakCompareAndSet(-4, 7))
-            ;
+        while (!ai.weakCompareAndSet(-4, 7)){}
+            
         assertEquals(7.0, ai.get());
     }
 

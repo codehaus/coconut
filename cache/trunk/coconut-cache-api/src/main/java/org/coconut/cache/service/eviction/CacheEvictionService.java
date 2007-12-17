@@ -121,4 +121,23 @@ public interface CacheEvictionService<K, V> {
      *             if the specified volume is negative
      */
     void trimToVolume(long volume);
+
+    /**
+     * Returns whether or not caching is disabled.
+     * 
+     * @return <code>true</code> if caching is disabled, otherwise <code>false</code>
+     */
+    public boolean isDisabled();
+
+    /**
+     * Sets whether or not caching is disabled. If caching is disabled, the cache will not
+     * cache any items added. This can sometimes be useful while testing.
+     * <p>
+     * Note: setting this value to <code>true</code> will not remove elements already
+     * present in the cache
+     * 
+     * @param isDisabled
+     *            whether or not caching is disabled
+     */
+    public void setDisabled(boolean isDisabled);
 }

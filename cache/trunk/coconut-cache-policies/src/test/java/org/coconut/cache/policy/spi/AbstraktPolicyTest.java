@@ -52,7 +52,7 @@ public class AbstraktPolicyTest {
         new Mock().evict(0);
     }
 
-    static class Mock extends AbstractPolicy<String> {
+    static class Mock extends AbstractReplacementPolicy<String> {
 
         LinkedList<String> list = new LinkedList<String>();
 

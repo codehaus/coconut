@@ -20,5 +20,4 @@ public class SingleAttribute {
     public void setString(String string) {
         this.string = string;
     }
-
 }

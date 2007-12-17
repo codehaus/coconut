@@ -1,3 +1,6 @@
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
+ */
 package org.coconut.attribute.spi;
 
 import static org.junit.Assert.assertEquals;
@@ -6,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
+import org.coconut.attribute.DefaultAttributeMap;
 import org.coconut.test.TestUtil;
 import org.junit.Test;
 
@@ -75,7 +79,7 @@ public class DoubleAttributeTest {
 
     @Test
     public void set() {
-        AttributeMap am = new Attributes.DefaultAttributeMap();
+        AttributeMap am = new DefaultAttributeMap();
         assertEquals(10.5, LA.setAttribute(am, 10.5D).get(LA));
         assertEquals(10000d, LA.setValue(am, new Double(10000)).get(LA));
         assertEquals(Double.MAX_VALUE, LA.setAttribute(am, Double.MAX_VALUE).get(LA));
@@ -83,7 +87,7 @@ public class DoubleAttributeTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void setIAE() {
-        LA.setAttribute(new Attributes.DefaultAttributeMap(), Double.NaN);
+        LA.setAttribute(new DefaultAttributeMap(), Double.NaN);
     }
 
     @Test(expected = NullPointerException.class)

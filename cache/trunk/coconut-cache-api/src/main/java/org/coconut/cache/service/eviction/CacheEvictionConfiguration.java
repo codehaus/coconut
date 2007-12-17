@@ -4,6 +4,8 @@
 package org.coconut.cache.service.eviction;
 
 import static org.coconut.internal.util.XmlUtil.addTypedElement;
+import static org.coconut.internal.util.XmlUtil.attributeBooleanGet;
+import static org.coconut.internal.util.XmlUtil.attributeBooleanSet;
 import static org.coconut.internal.util.XmlUtil.contentIntGet;
 import static org.coconut.internal.util.XmlUtil.contentIntSet;
 import static org.coconut.internal.util.XmlUtil.contentLongGet;
@@ -11,15 +13,10 @@ import static org.coconut.internal.util.XmlUtil.contentLongSet;
 import static org.coconut.internal.util.XmlUtil.getChild;
 import static org.coconut.internal.util.XmlUtil.loadChildObject;
 
-import java.util.concurrent.ThreadPoolExecutor;
-
 import org.coconut.cache.policy.IsCacheable;
-import org.coconut.cache.policy.IsCacheables;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.cache.spi.CacheSPI;
-import org.coconut.operations.Predicates;
-import org.coconut.operations.StringPredicates;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -56,6 +53,9 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
     /** XML tag for maximum volume. */
     private final static String IS_CACHEABLE_TAG = "isCacheable";
 
+    /** XML tag for maximum volume. */
+    private final static String IS_DISABLED = "disabled";
+
     /** The maximum size of the cache. */
     private int maximumSize;
 
@@ -67,6 +67,9 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
 
     /** The replacement policy used for evicting elements. */
     private ReplacementPolicy<?> replacementPolicy;
+
+    /** Whether or not caching is disabled. */
+    private boolean isDisabled;
 
     /**
      * Creates a new CacheEvictionConfiguration with default settings.
@@ -201,6 +204,7 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
     /** {@inheritDoc} */
     @Override
     protected void fromXML(Element e) throws Exception {
+        isDisabled = attributeBooleanGet(e, IS_DISABLED, false);
         maximumSize = contentIntGet(getChild(MAXIMUM_SIZE, e), maximumSize);
         maximumVolume = contentLongGet(getChild(MAXIMUM_VOLUME, e), maximumVolume);
         isCacheableFilter = loadChildObject(e, IS_CACHEABLE_TAG, IsCacheable.class);
@@ -208,10 +212,11 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
 
     /** {@inheritDoc} */
     @Override
-    protected void toXML(Document doc, Element base) throws Exception {
-        contentLongSet(doc, base, MAXIMUM_VOLUME, maximumVolume, DEFAULT.getMaximumVolume());
-        contentIntSet(doc, base, MAXIMUM_SIZE, maximumSize, DEFAULT.getMaximumSize());
-        addTypedElement(doc, base, IS_CACHEABLE_TAG, CacheSPI.DEFAULT_CACHE_BUNDLE, getClass(),
+    protected void toXML(Document doc, Element e) throws Exception {
+        attributeBooleanSet(e, IS_DISABLED, isDisabled, false);
+        contentLongSet(doc, e, MAXIMUM_VOLUME, maximumVolume, DEFAULT.getMaximumVolume());
+        contentIntSet(doc, e, MAXIMUM_SIZE, maximumSize, DEFAULT.getMaximumSize());
+        addTypedElement(doc, e, IS_CACHEABLE_TAG, CacheSPI.DEFAULT_CACHE_BUNDLE, getClass(),
                 "saveOfIsCacheableFilterFailed", isCacheableFilter);
     }
 
@@ -238,6 +243,28 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
      */
     public CacheEvictionConfiguration<K, V> setIsCacheableFilter(IsCacheable<K, V> predicate) {
         this.isCacheableFilter = predicate;
+        return this;
+    }
+
+    /**
+     * Returns whether or not caching is disabled.
+     * 
+     * @return <code>true</code> if caching is disabled, otherwise <code>false</code>
+     */
+    public boolean isDisabled() {
+        return isDisabled;
+    }
+
+    /**
+     * Sets whether or not caching is disabled. If caching is disabled, the cache will not
+     * cache any items added. This can sometimes be useful while testing.
+     * 
+     * @param isDisabled
+     *            whether or not caching is disabled
+     * @return this configuration
+     */
+    public CacheEvictionConfiguration<K, V> setDisabled(boolean isDisabled) {
+        this.isDisabled = isDisabled;
         return this;
     }
 }

@@ -1,7 +1,6 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-
 package org.coconut.cache.policy.paging;
 
 import java.io.Serializable;
@@ -10,7 +9,7 @@ import java.util.List;
 import net.jcip.annotations.NotThreadSafe;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.cache.policy.spi.AbstractPolicy;
+import org.coconut.cache.policy.spi.AbstractReplacementPolicy;
 
 /**
  * A FIFO based replacement policy.
@@ -21,7 +20,7 @@ import org.coconut.cache.policy.spi.AbstractPolicy;
  *            the type of data maintained by this policy
  */
 @NotThreadSafe
-public class FIFOPolicy<T> extends AbstractPolicy<T> implements Serializable, Cloneable {
+public class FIFOPolicy<T> extends AbstractReplacementPolicy<T> implements Serializable, Cloneable {
 
     /** A unique policy name. */
     public static final String NAME = "FIFO";
