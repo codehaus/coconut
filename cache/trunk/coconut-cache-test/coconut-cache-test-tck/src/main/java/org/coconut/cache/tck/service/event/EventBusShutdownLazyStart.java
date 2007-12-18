@@ -24,7 +24,7 @@ public class EventBusShutdownLazyStart extends AbstractEventTestBundle {
 
     @Test
     public void unsubscribeAllOnShutdown() {
-        EventSubscription es = event().subscribe(EventUtils.dummyEventProcessor());
+        EventSubscription es = event().subscribe(TestUtil.dummy(EventProcessor.class));
         assertTrue(es.isValid());
         assertEquals(1, event().getSubscribers().size());
         shutdownAndAwaitTermination();

@@ -1101,7 +1101,7 @@ public final class Predicates {
                 throw new IllegalArgumentException("object not instanceof Comparable");
             }
             this.object = object;
-            this.comparator = null;
+            this.comparator = Comparators.NATURAL_COMPARATOR;
         }
 
         /**
@@ -1125,11 +1125,7 @@ public final class Predicates {
         /** {@inheritDoc} */
         @SuppressWarnings("unchecked")
         public boolean evaluate(E element) {
-            if (comparator == null) {
-                return ((Comparable) object).compareTo(element) <= 0;
-            } else {
-                return comparator.compare(object, element) <= 0;
-            }
+            return comparator.compare(object, element) <= 0;
         }
 
         /**
@@ -1186,7 +1182,7 @@ public final class Predicates {
                 throw new IllegalArgumentException("object not instanceof Comparable");
             }
             this.object = object;
-            this.comparator = null;
+            this.comparator = Comparators.NATURAL_COMPARATOR;
         }
 
         /**
@@ -1210,11 +1206,7 @@ public final class Predicates {
         /** {@inheritDoc} */
         @SuppressWarnings("unchecked")
         public boolean evaluate(E element) {
-            if (comparator == null) {
-                return ((Comparable) object).compareTo(element) < 0;
-            } else {
-                return comparator.compare(object, element) < 0;
-            }
+            return comparator.compare(object, element) < 0;
         }
 
         /**
@@ -1451,7 +1443,7 @@ public final class Predicates {
                 throw new IllegalArgumentException("object not instanceof Comparable");
             }
             this.object = object;
-            this.comparator = null;
+            this.comparator = Comparators.NATURAL_COMPARATOR;
         }
 
         /**
@@ -1475,11 +1467,7 @@ public final class Predicates {
         /** {@inheritDoc} */
         @SuppressWarnings("unchecked")
         public boolean evaluate(E element) {
-            if (comparator == null) {
-                return ((Comparable) object).compareTo(element) >= 0;
-            } else {
-                return comparator.compare(object, element) >= 0;
-            }
+            return comparator.compare(object, element) >= 0;
         }
 
         /**
@@ -1537,7 +1525,7 @@ public final class Predicates {
                 throw new IllegalArgumentException("object not instanceof Comparable");
             }
             this.object = object;
-            this.comparator = null;
+            this.comparator = Comparators.NATURAL_COMPARATOR;
         }
 
         /**
@@ -1561,11 +1549,7 @@ public final class Predicates {
         /** {@inheritDoc} */
         @SuppressWarnings("unchecked")
         public boolean evaluate(E element) {
-            if (comparator == null) {
-                return ((Comparable) object).compareTo(element) > 0;
-            } else {
-                return comparator.compare(object, element) > 0;
-            }
+            return comparator.compare(object, element) > 0;
         }
 
         /**

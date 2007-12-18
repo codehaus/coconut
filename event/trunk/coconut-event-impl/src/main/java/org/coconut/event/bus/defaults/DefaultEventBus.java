@@ -14,11 +14,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
 
 import org.coconut.core.EventProcessor;
 import org.coconut.event.bus.EventBus;
-import org.coconut.event.bus.EventBusConfiguration;
 import org.coconut.event.bus.EventSubscription;
+import org.coconut.internal.predicatematcher.DefaultPredicateMatcher;
+import org.coconut.internal.predicatematcher.PredicateMatcher;
 import org.coconut.operations.Ops.Predicate;
-import org.coconut.predicate.matcher.DefaultPredicateMatcher;
-import org.coconut.predicate.matcher.PredicateMatcher;
 
 /**
  * The order of subscribers are maintained.
@@ -39,22 +38,14 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
     private final ConcurrentHashMap<String, DefaultEventSubscription<E>> subscribers = new ConcurrentHashMap<String, DefaultEventSubscription<E>>();
 
     public DefaultEventBus() {
-        this((EventBusConfiguration) EventBusConfiguration.create());
-    }
-
-    public DefaultEventBus(EventBusConfiguration<E> conf) {
-        super(conf);
-        if (conf.getFilterMatcher() == null) {
-            indexer = new DefaultPredicateMatcher<DefaultEventSubscription<E>, E>();
-        } else {
-            indexer = (PredicateMatcher<DefaultEventSubscription<E>, E>) conf.getFilterMatcher();
-        }
+        indexer = new DefaultPredicateMatcher<DefaultEventSubscription<E>, E>();
     }
 
     @SuppressWarnings("unchecked")
     public List<EventSubscription<E>> getSubscribers() {
         return Collections.unmodifiableList(new ArrayList(subscribers.values()));
     }
+
     /** {@inheritDoc} */
     public EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler,
             Predicate<? super E> filter) {
@@ -80,6 +71,7 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
             lock.unlock();
         }
     }
+
     /** {@inheritDoc} */
     public EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler,
             Predicate<? super E> filter, String name) {
@@ -104,6 +96,7 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
             lock.unlock();
         }
     }
+
     /** {@inheritDoc} */
     public Collection<EventSubscription<E>> unsubscribeAll() {
         lock.lock();
@@ -143,24 +136,24 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
         } catch (RuntimeException re) {
             re.printStackTrace(System.out);
         }
-        //unsubscribe
-        //fix
-//        lock.lock();
-//        try {
-//            s.readLock().unlock();
-//            s.writeLock().lock();
-//            try {
-//                subscribers.remove(s.getName());
-//                indexer.remove(s);
-//                unsubscribed(s);
-//                s.setActive(false);
-//            } finally {
-//                s.writeLock().unlock();
-//                s.readLock().lock();
-//            }
-//        } finally {
-//            lock.unlock();
-//        }
+        // unsubscribe
+        // fix
+// lock.lock();
+// try {
+// s.readLock().unlock();
+// s.writeLock().lock();
+// try {
+// subscribers.remove(s.getName());
+// indexer.remove(s);
+// unsubscribed(s);
+// s.setActive(false);
+// } finally {
+// s.writeLock().unlock();
+// s.readLock().lock();
+// }
+// } finally {
+// lock.unlock();
+// }
     }
 
     protected boolean doInform(final E element, boolean doThrow) {

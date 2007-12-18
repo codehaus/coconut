@@ -4,7 +4,6 @@
 package org.coconut.cache.service.loading;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.core.Callback;
 
 /**
  * A callback that is used to asynchronously load values.

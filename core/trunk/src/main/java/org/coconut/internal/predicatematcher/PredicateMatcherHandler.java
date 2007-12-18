@@ -1,7 +1,7 @@
 /* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.predicate.matcher;
+package org.coconut.internal.predicatematcher;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

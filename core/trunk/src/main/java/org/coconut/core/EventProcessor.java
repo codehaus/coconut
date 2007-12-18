@@ -4,6 +4,8 @@
 
 package org.coconut.core;
 
+import org.coconut.operations.Ops.Procedure;
+
 /**
  * The typical usage of an <code>EventProcessor</code> is for processing
  * specific events in an event-driven architecture.

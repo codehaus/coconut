@@ -8,7 +8,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.coconut.core.EventProcessor;
 import org.coconut.event.bus.EventBus;
-import org.coconut.event.bus.EventBusConfiguration;
 import org.coconut.event.bus.EventSubscription;
 import org.coconut.operations.Predicates;
 import org.coconut.operations.Ops.Predicate;
@@ -22,22 +21,7 @@ public abstract class AbstractEventBus<E> implements EventBus<E> {
 
     private final static String SUBSCRIPTION_NAME_PREFIX = "Subscription-";
 
-    private final ThreadLocal<Boolean> allowReentrance;
-
     private final AtomicLong idGenerator = new AtomicLong();
-
-    AbstractEventBus(EventBusConfiguration<E> configuration) {
-        if (configuration == null) {
-            throw new NullPointerException("configuration is null");
-        }
-        if (configuration.getCheckReentrant()) {
-            allowReentrance = new ThreadLocal<Boolean>();
-            allowReentrance.set(false);
-         //   throw new UnsupportedOperationException("check reentrant not supported yet");
-        } else {
-            allowReentrance = null;
-        }
-    }
 
     /** {@inheritDoc} */
     public boolean offer(final E element) {

@@ -12,11 +12,11 @@ import static junit.framework.Assert.assertTrue;
 import java.util.Arrays;
 
 import org.coconut.core.EventProcessor;
-import org.coconut.core.EventUtils;
 import org.coconut.event.bus.EventBus;
 import org.coconut.event.bus.EventSubscription;
 import org.coconut.operations.Predicates;
 import org.coconut.operations.StringPredicates;
+import org.coconut.test.TestUtil;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
@@ -42,14 +42,14 @@ public class DefaultEventBusTest {
         bus = new DefaultEventBus<String>();
     }
 
-    @Test(expected = NullPointerException.class)
-    public void constructorNPE() {
-        new DefaultEventBus(null);
-    }
+//    @Test(expected = NullPointerException.class)
+//    public void constructorNPE() {
+//        new DefaultEventBus(null);
+//    }
 
     @Test
     public void subscribe() {
-        EventProcessor ep = EventUtils.dummyEventProcessor();
+        EventProcessor ep = TestUtil.dummy(EventProcessor.class);
         EventSubscription es = bus.subscribe(ep);
         assertNotNull(es);
 
@@ -63,7 +63,7 @@ public class DefaultEventBusTest {
 
     @Test
     public void subscribe2() {
-        EventProcessor ep = EventUtils.dummyEventProcessor();
+        EventProcessor ep =TestUtil.dummy(EventProcessor.class);
         EventSubscription es = bus.subscribe(ep, Predicates.FALSE);
         assertNotNull(es);
         assertSame(ep, es.getEventProcessor());
@@ -76,7 +76,7 @@ public class DefaultEventBusTest {
 
     @Test
     public void subscribe3() {
-        EventProcessor ep = EventUtils.dummyEventProcessor();
+        EventProcessor ep = TestUtil.dummy(EventProcessor.class);
         EventSubscription es = bus.subscribe(ep, Predicates.FALSE, "foo");
         assertNotNull(es);
         assertSame(ep, es.getEventProcessor());
@@ -89,8 +89,8 @@ public class DefaultEventBusTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void subscribe3IAE() {
-        bus.subscribe(EventUtils.dummyEventProcessor(), Predicates.FALSE, "foo");
-        bus.subscribe(EventUtils.dummyEventProcessor(), Predicates.FALSE, "foo");
+        bus.subscribe(TestUtil.dummy(EventProcessor.class), Predicates.FALSE, "foo");
+        bus.subscribe(TestUtil.dummy(EventProcessor.class), Predicates.FALSE, "foo");
     }
 
     @Test(expected = NullPointerException.class)
@@ -105,7 +105,7 @@ public class DefaultEventBusTest {
 
     @Test(expected = NullPointerException.class)
     public void subscribe2NPE2() {
-        bus.subscribe(EventUtils.dummyEventProcessor(), null);
+        bus.subscribe(TestUtil.dummy(EventProcessor.class), null);
     }
 
     @Test(expected = NullPointerException.class)
@@ -115,12 +115,12 @@ public class DefaultEventBusTest {
 
     @Test(expected = NullPointerException.class)
     public void subscribe3NPE2() {
-        bus.subscribe(EventUtils.dummyEventProcessor(), null, "foo");
+        bus.subscribe(TestUtil.dummy(EventProcessor.class), null, "foo");
     }
 
     @Test(expected = NullPointerException.class)
     public void subscribe3NPE3() {
-        bus.subscribe(EventUtils.dummyEventProcessor(), Predicates.TRUE, null);
+        bus.subscribe(TestUtil.dummy(EventProcessor.class), Predicates.TRUE, null);
     }
 
     @Test(expected = NullPointerException.class)

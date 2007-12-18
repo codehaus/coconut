@@ -45,12 +45,6 @@ public final class CacheExceptionHandlers {
      */
     public static class DefaultLoggingExceptionHandler<K, V> extends CacheExceptionHandler<K, V> {
 
-        /** {@inheritDoc} */
-        public void serviceManagerInitializationFailed(Logger logger,
-                CacheConfiguration<K, V> configuration, String cacheName,
-                Class<? extends Cache> cacheType, CacheLifecycle service, RuntimeException cause) {
-        }
-
 //        /** {@inheritDoc} */
 //        public void handleError(CacheExceptionContext<K, V> context, Error cause) {
 //            context.defaultLogger().fatal("An unexpected error occured inside the cache", cause);

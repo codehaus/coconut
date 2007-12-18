@@ -8,9 +8,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * A Clock is used to create timestamps and measure time in a determi. For example,
- * {@link DeterministicClock} which can be used while testing applications, to make
- * sure...
+ * A Clock is used to create timestamps and measure time in a deterministic manner. For
+ * example, {@link DeterministicClock} which can be used while testing applications, to
+ * make sure...
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$

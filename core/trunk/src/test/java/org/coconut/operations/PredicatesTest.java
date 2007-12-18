@@ -574,7 +574,7 @@ public class PredicatesTest {
     public void greaterThenComparable() {
         GreaterThenPredicate<Integer> f = (GreaterThenPredicate) greaterThen(5);
         assertEquals(5, f.getObject().intValue());
-        assertNull(f.getComparator());
+        assertSame(Comparators.NATURAL_COMPARATOR, f.getComparator());
         TestUtil.assertIsSerializable(f);
         assertFalse(f.evaluate(4));
         assertFalse(f.evaluate(5));
@@ -621,7 +621,7 @@ public class PredicatesTest {
     public void greaterThenOrEqualComparable() {
         GreaterThenOrEqualPredicate<Integer> f = (GreaterThenOrEqualPredicate) greaterThenOrEqual(5);
         assertEquals(5, f.getObject().intValue());
-        assertNull(f.getComparator());
+        assertSame(Comparators.NATURAL_COMPARATOR, f.getComparator());
         TestUtil.assertIsSerializable(f);
         assertFalse(f.evaluate(4));
         assertTrue(f.evaluate(5));
@@ -786,7 +786,7 @@ public class PredicatesTest {
     public void lessThenComparable() {
         LessThenPredicate<Integer> f = (LessThenPredicate) lessThen(5);
         assertEquals(5, f.getObject().intValue());
-        assertNull(f.getComparator());
+        assertSame(Comparators.NATURAL_COMPARATOR, f.getComparator());
         TestUtil.assertIsSerializable(f);
         assertTrue(f.evaluate(4));
         assertFalse(f.evaluate(5));
@@ -834,7 +834,7 @@ public class PredicatesTest {
     public void lessThenOrEqualComparable() {
         LessThenOrEqualPredicate<Integer> f = (LessThenOrEqualPredicate) lessThenOrEqual(5);
         assertEquals(5, f.getObject().intValue());
-        assertNull(f.getComparator());
+        assertSame(Comparators.NATURAL_COMPARATOR, f.getComparator());
         TestUtil.assertIsSerializable(f);
         assertTrue(f.evaluate(4));
         assertTrue(f.evaluate(5));
