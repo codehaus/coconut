@@ -7,13 +7,19 @@ import java.io.Serializable;
 
 import org.coconut.operations.Ops.Mapper;
 
-public class Mappers {
+/**
+ * Various implementations of {@link Mapper}.
+ * 
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ */
+public final class Mappers {
+    public static final Mapper NOOP_MAPPER = new NoOpMapper();
+
     // /CLOVER:OFF
     /** Cannot instantiate. */
     private Mappers() {}
-
     // /CLOVER:ON
-    public static final Mapper NOOP_MAPPER = new NoOpMapper();
 
     /**
      * Creates a composite mapper that applies a second mapper to the results of applying
@@ -40,8 +46,7 @@ public class Mappers {
 
         private final Mapper<? super U, ? extends V> second;
 
-        CompoundMapper(Mapper<? super T, ? extends U> first,
-                Mapper<? super U, ? extends V> second) {
+        CompoundMapper(Mapper<? super T, ? extends U> first, Mapper<? super U, ? extends V> second) {
             if (first == null) {
                 throw new NullPointerException("first is null");
             } else if (second == null) {
@@ -51,7 +56,8 @@ public class Mappers {
             this.second = second;
         }
 
-        /** Returns <tt>second.map(first.map(t))</tt> */
+        /** {@inheritDoc} */
+        // Returns <tt>second.map(first.map(t))</tt>
         public V map(T t) {
             return second.map(first.map(t));
         }
@@ -61,11 +67,7 @@ public class Mappers {
         /** serialVersionUID. */
         private static final long serialVersionUID = -8159540593935721003L;
 
-        /**
-         * Returns the specified element
-         * 
-         * @return the specified element
-         */
+        /** {@inheritDoc} */
         public T map(T element) {
             return element;
         }

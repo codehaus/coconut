@@ -37,6 +37,8 @@ import org.coconut.cache.test.util.ThreadServiceTestHelper;
 import org.coconut.core.Clock.DeterministicClock;
 import org.coconut.management.ManagedGroup;
 import org.coconut.test.CollectionTestUtil;
+import org.coconut.test.throwables.RuntimeException1;
+import org.coconut.test.throwables.RuntimeException2;
 import org.junit.After;
 import org.junit.Before;
 
@@ -481,12 +483,12 @@ public class AbstractCacheTCKTest extends Assert {
 
         @Override
         public void start(CacheServiceManagerService serviceManager) {
-            throw new IllegalMonitorStateException();
+            throw new RuntimeException1();
         }
 
         @Override
         public void started(Cache<?, ?> cache) {
-            throw new IllegalMonitorStateException();
+            throw new RuntimeException2();
         }
 
     }

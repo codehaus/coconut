@@ -10,8 +10,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.cache.service.loading.CacheLoadingService;
-import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 
 /**
  * A <tt>cache</tt> is a collection of data duplicating original values stored elsewhere
@@ -92,7 +90,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * <p>
      * If the reason for clearing the cache is to get rid of stale data another
      * alternative, if the cache has a CacheLoader defined, might be to use
-     * {@link CacheLoadingService#forceLoadAll()} which will reload all elements that
+     * {@link org.coconut.cache.service.loading.CacheLoadingService#forceLoadAll()} which will reload all elements that
      * current in the cache.
      * <p>
      * If the cache has been shutdown calls to this method is ignored
@@ -193,7 +191,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      *             if the cache has been shutdown
      * @throws CacheException
      *             if the cache loader failed while trying to load a value (optional). See
-     *             {@link org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#loadingLoadValueFailed(org.coconut.cache.service.exceptionhandling.CacheExceptionContext, org.coconut.cache.service.loading.CacheLoader, Object, AttributeMap, Throwable)}
+     *             {@link org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#loadingLoadValueFailed(org.coconut.cache.service.exceptionhandling.CacheExceptionContext, org.coconut.cache.service.loading.CacheLoader, Object, AttributeMap)}
      * @see Map#get(Object)
      * @see org.coconut.cache.service.loading.CacheLoadingConfiguration#setLoader(org.coconut.cache.service.loading.CacheLoader)
      */
@@ -253,7 +251,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @throws CacheException
      *             if the backend cache loader failed while trying to load a value
      *             (optional). See
-     *             {@link org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#loadingLoadValueFailed(org.coconut.cache.service.exceptionhandling.CacheExceptionContext, org.coconut.cache.service.loading.CacheLoader, Object, AttributeMap, Throwable)}
+     *             {@link org.coconut.cache.service.exceptionhandling.CacheExceptionHandler#loadingLoadValueFailed(org.coconut.cache.service.exceptionhandling.CacheExceptionContext, org.coconut.cache.service.loading.CacheLoader, Object, AttributeMap)}
      */
     CacheEntry<K, V> getEntry(K key);
 
@@ -281,8 +279,8 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * @throws NullPointerException
      *             if the specified service type is null
      * @see org.coconut.cache.CacheServices
-     * @see CacheServiceManagerService#hasService(Class)
-     * @see CacheServiceManagerService#getAllServices()
+     * @see org.coconut.cache.service.servicemanager.CacheServiceManagerService#hasService(Class)
+     * @see org.coconut.cache.service.servicemanager.CacheServiceManagerService#getAllServices()
      */
     <T> T getService(Class<T> serviceType);
 

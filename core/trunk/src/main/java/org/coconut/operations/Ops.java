@@ -18,7 +18,7 @@ package org.coconut.operations;
  * <p>
  * This class is normally best used via <tt>import static</tt>.
  */
-public class Ops {
+public final class Ops {
 
     /**
      * A generator (builder) of objects of type T that takes no arguments.

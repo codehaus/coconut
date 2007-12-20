@@ -38,7 +38,7 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
     /** {@inheritDoc} */
     public boolean lazyStart(boolean failIfShutdown) {
         if (status != RunState.RUNNING) {
-            checkStartupException();
+            ces.checkStartupException();
             if (status == RunState.STARTING) {
                 throw new IllegalStateException(
                         "Cannot invoke this method from CacheLifecycle.start(Map services), should be invoked from CacheLifecycle.started(Cache c)");
@@ -84,7 +84,7 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
             cache.clear();
             initiateShutdown();
             doTerminate();
-        } else if (status == RunState.STARTING && super.startupException != null) {
+        } else if (status == RunState.STARTING && ces.startupFailed()) {
             // only called from within the startup routine
             setRunState(RunState.SHUTDOWN);
             initiateShutdown();

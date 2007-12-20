@@ -49,7 +49,27 @@ public class LongPredicatesTest {
         assertFalse(b.evaluate(5));
         assertIsSerializable(b);
     }
-    
+
+    /**
+     * Tests {@link LongPredicates#or(LongPredicate, LongPredicate)}.
+     */
+    @Test
+    public void or() {
+        assertTrue(LongPredicates.or(TRUE, TRUE).evaluate(1));
+        assertTrue(LongPredicates.or(TRUE, FALSE).evaluate(1));
+        assertTrue(LongPredicates.or(FALSE, TRUE).evaluate(1));
+        assertFalse(LongPredicates.or(FALSE, FALSE).evaluate(1));
+
+        LongPredicates.OrLongPredicate p = new LongPredicates.OrLongPredicate(FALSE, TRUE);
+        assertSame(p.getLeftPredicate(), FALSE);
+        assertSame(p.getRightPredicate(), TRUE);
+        p.toString(); // no exception
+        assertIsSerializable(p);
+
+        // shortcircuted evaluation
+        LongPredicates.or(TRUE, TestUtil.dummy(LongPredicate.class)).evaluate(1);
+    }
+
     /**
      * Tests {@link LongPredicates#and(LongPredicate, LongPredicate)}.
      */
@@ -91,6 +111,26 @@ public class LongPredicatesTest {
     }
 
     /**
+     * Tests that {@link LongPredicates#or(LongPredicate, LongPredicate)} throws a
+     * {@link NullPointerException} when invoked with a left side <code>null</code>
+     * argument.
+     */
+    @Test(expected = NullPointerException.class)
+    public void orNPE() {
+        LongPredicates.or(null, TRUE);
+    }
+
+    /**
+     * Tests that {@link LongPredicates#or(LongPredicate, LongPredicate)} throws a
+     * {@link NullPointerException} when invoked with a right side <code>null</code>
+     * argument.
+     */
+    @Test(expected = NullPointerException.class)
+    public void orNPE1() {
+        LongPredicates.or(TRUE, null);
+    }
+
+    /**
      * Tests {@link LongPredicates#TRUE}.
      */
     @Test
@@ -111,14 +151,14 @@ public class LongPredicatesTest {
         assertTrue(LongPredicates.not(FALSE).evaluate(2));
         LongPredicates.not(TRUE).toString(); // does not fail
         assertIsSerializable(LongPredicates.not(TRUE));
-        assertSame(TRUE,LongPredicates.not(TRUE).getPredicate());
+        assertSame(TRUE, LongPredicates.not(TRUE).getPredicate());
     }
 
     /* Test greater then */
     @Test
     public void lessThenOrEquals() {
-        LessThenOrEqualsLongPredicate f = LongPredicates.lessThenOrEquals(5);
-        assertEquals(5L, f.getLessThenOrEquals());
+        LongPredicate f = LongPredicates.lessThenOrEquals(5);
+        assertEquals(5L, new LessThenOrEqualsLongPredicate(5).getLessThenOrEquals());
         assertTrue(f.evaluate(4));
         assertTrue(f.evaluate(5));
         assertFalse(f.evaluate(6));
@@ -127,18 +167,20 @@ public class LongPredicatesTest {
 
         TestUtil.assertIsSerializable(f);
     }
+
     /**
-     * Tests that {@link LongPredicates#not(LongPredicate)} throws a {@link NullPointerException}
-     * when invoked with a <code>null</code> argument.
+     * Tests that {@link LongPredicates#not(LongPredicate)} throws a
+     * {@link NullPointerException} when invoked with a <code>null</code> argument.
      */
     @Test(expected = NullPointerException.class)
     public void notNPE() {
         LongPredicates.not(null);
     }
+
     @Test
     public void greaterThenOrEquals() {
-        GreaterThenOrEqualsLongPredicate f = LongPredicates.greaterThenOrEquals(5);
-        assertEquals(5L, f.getGreaterThenOrEquals());
+        LongPredicate f = LongPredicates.greaterThenOrEquals(5);
+        assertEquals(5L, new GreaterThenOrEqualsLongPredicate(5).getGreaterThenOrEquals());
         assertFalse(f.evaluate(4));
         assertTrue(f.evaluate(5));
         assertTrue(f.evaluate(6));
@@ -151,8 +193,8 @@ public class LongPredicatesTest {
     /* Test greater then */
     @Test
     public void greaterThen() {
-        GreaterThenLongPredicate f = LongPredicates.greaterThen(5);
-        assertEquals(5L, f.getGreaterThen());
+        LongPredicate f = LongPredicates.greaterThen(5);
+        assertEquals(5L, new GreaterThenLongPredicate(5).getGreaterThen());
         assertFalse(f.evaluate(4));
         assertFalse(f.evaluate(5));
         assertTrue(f.evaluate(6));
@@ -165,8 +207,8 @@ public class LongPredicatesTest {
     /* Test greater then */
     @Test
     public void lessThen() {
-        LessThenLongPredicate f = LongPredicates.lessThen(5);
-        assertEquals(5L, f.getLessThen());
+        LongPredicate f = LongPredicates.lessThen(5);
+        assertEquals(5L, new LessThenLongPredicate(5).getLessThen());
         assertTrue(f.evaluate(4));
         assertFalse(f.evaluate(5));
         assertFalse(f.evaluate(6));
@@ -179,8 +221,8 @@ public class LongPredicatesTest {
     /* Test greater then */
     @Test
     public void equalsTo() {
-        EqualsToLongPredicate f = LongPredicates.equalsTo(5);
-        assertEquals(5L, f.getEqualsTo());
+        LongPredicate f = LongPredicates.equalsTo(5);
+        assertEquals(5L, new EqualsToLongPredicate(5).getEqualsTo());
         assertFalse(f.evaluate(4));
         assertTrue(f.evaluate(5));
         assertFalse(f.evaluate(6));

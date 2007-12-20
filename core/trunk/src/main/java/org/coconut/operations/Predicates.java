@@ -277,12 +277,12 @@ public final class Predicates {
      * @see #between(Object, Object, Comparator)
      * @see Comparable
      */
-    public static <E> Predicate<E> between(E left, E right) {
+    public static <E extends Comparable<? super E>> Predicate<E> between(E left, E right) {
         return and((Predicate) greaterThenOrEqual(left), (Predicate) lessThenOrEqual(right));
     }
 
     /**
-     * As {@link #between(Object, Object)} except using the specified {@link Comparator}
+     * As {@link #between(Comparable, Comparable)} except using the specified {@link Comparator}
      * when evaluating elements.
      * 
      * @param left
@@ -343,10 +343,8 @@ public final class Predicates {
      *            the type of elements accepted by the predicate
      * @throws NullPointerException
      *             if the specified element is <code>null</code>
-     * @throws IllegalArgumentException
-     *             if the specified element does not implement {@link Comparable}
      */
-    public static <E> Predicate<E> greaterThen(E element) {
+    public static <E extends Comparable<? super E>> Predicate<E> greaterThen(E element) {
         return new GreaterThenPredicate<E>(element);
     }
 
@@ -387,10 +385,8 @@ public final class Predicates {
      *            the type of elements accepted by the predicate
      * @throws NullPointerException
      *             if the specified element is <code>null</code>
-     * @throws IllegalArgumentException
-     *             if the specified element does not implement {@link Comparable}
      */
-    public static <E> Predicate<E> greaterThenOrEqual(E element) {
+    public static <E extends Comparable<? super E>> Predicate<E> greaterThenOrEqual(E element) {
         return new GreaterThenOrEqualPredicate<E>(element);
     }
 
@@ -529,10 +525,8 @@ public final class Predicates {
      *            the type of elements accepted by the predicate
      * @throws NullPointerException
      *             if the specified element is <code>null</code>
-     * @throws IllegalArgumentException
-     *             if the specified element does not implement {@link Comparable}
      */
-    public static <E> Predicate<E> lessThen(E element) {
+    public static <E extends Comparable<? super E>> Predicate<E> lessThen(E element) {
         return new LessThenPredicate<E>(element);
     }
 
@@ -573,10 +567,8 @@ public final class Predicates {
      *            the type of elements accepted by the predicate
      * @throws NullPointerException
      *             if the specified element is <code>null</code>
-     * @throws IllegalArgumentException
-     *             if the specified element does not implement {@link Comparable}
      */
-    public static <E> Predicate<E> lessThenOrEqual(E element) {
+    public static <E extends Comparable<? super E>> Predicate<E> lessThenOrEqual(E element) {
         return new LessThenOrEqualPredicate<E>(element);
     }
 
@@ -1086,7 +1078,7 @@ public final class Predicates {
         private final Comparator comparator;
 
         /** The object to compare against. */
-        private final E object;
+        private final Object object;
 
         /**
          * Creates a new greater then predicate.
@@ -1097,8 +1089,6 @@ public final class Predicates {
         public GreaterThenOrEqualPredicate(E object) {
             if (object == null) {
                 throw new NullPointerException("element is null");
-            } else if (!(object instanceof Comparable)) {
-                throw new IllegalArgumentException("object not instanceof Comparable");
             }
             this.object = object;
             this.comparator = Comparators.NATURAL_COMPARATOR;
@@ -1142,7 +1132,7 @@ public final class Predicates {
          * @return the object we are comparing
          */
         public E getObject() {
-            return object;
+            return (E) object;
         }
 
         /** {@inheritDoc} */
@@ -1167,7 +1157,7 @@ public final class Predicates {
         private final Comparator comparator;
 
         /** The object to compare against. */
-        private final E object;
+        private final Object object;
 
         /**
          * Creates a new greater then predicate.
@@ -1175,11 +1165,9 @@ public final class Predicates {
          * @param object
          *            the object to compare with.
          */
-        public GreaterThenPredicate(E object) {
+        public <T extends Comparable<? super E>> GreaterThenPredicate(T object) {
             if (object == null) {
                 throw new NullPointerException("element is null");
-            } else if (!(object instanceof Comparable)) {
-                throw new IllegalArgumentException("object not instanceof Comparable");
             }
             this.object = object;
             this.comparator = Comparators.NATURAL_COMPARATOR;
@@ -1223,7 +1211,7 @@ public final class Predicates {
          * @return the object we are comparing
          */
         public E getObject() {
-            return object;
+            return (E) object;
         }
 
         /** {@inheritDoc} */
@@ -1428,7 +1416,7 @@ public final class Predicates {
         private final Comparator comparator;
 
         /** The object to compare against. */
-        private final E object;
+        private final Object object;
 
         /**
          * Creates a new less then or equals predicate.
@@ -1436,16 +1424,14 @@ public final class Predicates {
          * @param object
          *            the object to compare with.
          */
-        public LessThenOrEqualPredicate(E object) {
+        public <T extends Comparable<? super E>> LessThenOrEqualPredicate(T object) {
             if (object == null) {
                 throw new NullPointerException("element is null");
-            } else if (!(object instanceof Comparable)) {
-                throw new IllegalArgumentException("object not instanceof Comparable");
-            }
+            } 
             this.object = object;
             this.comparator = Comparators.NATURAL_COMPARATOR;
         }
-
+ 
         /**
          * Creates a new less then or equal predicate.
          * 
@@ -1484,7 +1470,7 @@ public final class Predicates {
          * @return the object we are comparing
          */
         public E getObject() {
-            return object;
+            return (E) object;
         }
 
         /** {@inheritDoc} */
@@ -1510,7 +1496,7 @@ public final class Predicates {
         private final Comparator comparator;
 
         /** The object to compare against. */
-        private final E object;
+        private final Object object;
 
         /**
          * Creates a new less then predicate.
@@ -1518,11 +1504,9 @@ public final class Predicates {
          * @param object
          *            the object to compare with.
          */
-        public LessThenPredicate(E object) {
+        public <T extends Comparable<? super E>> LessThenPredicate(T object) {
             if (object == null) {
                 throw new NullPointerException("element is null");
-            } else if (!(object instanceof Comparable)) {
-                throw new IllegalArgumentException("object not instanceof Comparable");
             }
             this.object = object;
             this.comparator = Comparators.NATURAL_COMPARATOR;
@@ -1566,7 +1550,7 @@ public final class Predicates {
          * @return the object we are comparing
          */
         public E getObject() {
-            return object;
+            return (E) object;
         }
 
         /** {@inheritDoc} */

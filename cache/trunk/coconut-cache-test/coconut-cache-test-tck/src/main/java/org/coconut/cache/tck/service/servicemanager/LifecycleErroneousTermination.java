@@ -5,7 +5,7 @@ package org.coconut.cache.tck.service.servicemanager;
 
 import java.util.Map;
 
-import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlers;
+import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
@@ -92,7 +92,7 @@ public class LifecycleErroneousTermination extends AbstractCacheTCKTest {
         assertTrue(handler.terminatationMap.get(alv1) instanceof RuntimeException1);
     }
 
-    class TerminationExceptionHandler extends CacheExceptionHandlers.DefaultLoggingExceptionHandler {
+    class TerminationExceptionHandler extends CacheExceptionHandler {
 
         Map terminatationMap;
 

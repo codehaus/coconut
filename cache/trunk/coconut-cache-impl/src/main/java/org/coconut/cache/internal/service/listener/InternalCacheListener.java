@@ -66,7 +66,8 @@ public interface InternalCacheListener<K, V> {
             Collection<CacheEntry<K, V>> removed);
 
     void afterStart(Cache<K, V> cache);
-
+    void afterStop(Cache<K, V> cache);
+    
     void afterTrimCache(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries, int previousSize, int newSize,
             long previousVolume, long newVolume);

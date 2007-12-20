@@ -13,7 +13,6 @@ import java.util.concurrent.Callable;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.CacheException;
 import org.coconut.cache.internal.service.debug.InternalDebugService;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.cache.internal.service.listener.InternalCacheListener;
@@ -49,9 +48,6 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
     /** The cache exception services. */
     final InternalCacheExceptionService ces;
 
-    /** Any exception that might have been encountered while starting up. */
-    volatile RuntimeException startupException;
-
     /**
      * Creates a new AbstractPicoBasedCacheServiceManager.
      * 
@@ -80,7 +76,7 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
 
         // initialize exception service
         ces = lookup(InternalCacheExceptionService.class);
-        ces.getHandler().initialize(conf);
+        ces.initialize(conf);
         debugService = lookup(InternalDebugService.class);
         if (debugService.isDebugEnabled()) {
             debugService.debug("Cache initializing [name = " + cache.getName() + ", type = "
@@ -147,7 +143,7 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
 
     /** {@inheritDoc} */
     public boolean isStarted() {
-        return getRunState().isStarted() && startupException == null;
+        return getRunState().isStarted() && !ces.startupFailed();
     }
 
     /** {@inheritDoc} */
@@ -283,13 +279,8 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
                 long start = System.nanoTime();
                 try {
                     si.manage(cms);
-                } catch (RuntimeException re) {
-                    startupException = new CacheException("Could not start the cache", re);
-                    ces.getHandler().serviceManagerStartFailed(
-                            ces.createContext(re, "Could not start the cache"),
-                            lookup(CacheConfiguration.class), si);
-                    shutdown();
-                    throw startupException;
+                } catch (Throwable re) {
+                    ces.startFailed(re, lookup(CacheConfiguration.class), si);
                 }
 
                 if (debug) {
@@ -317,13 +308,8 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
             long start = System.nanoTime();
             try {
                 si.started(cache);
-            } catch (RuntimeException re) {
-                startupException = new CacheException("Could not start the cache", re);
-                ces.getHandler().serviceManagerStartFailed(
-                        ces.createContext(re, "Could not start the cache"),
-                        lookup(CacheConfiguration.class), si.getService());
-                shutdown();
-                throw startupException;
+            } catch (Throwable re) {
+                ces.startFailed(re, lookup(CacheConfiguration.class), si.getService());
             }
             if (debug && overrideStarted(si.getService().getClass())) {
                 StringBuilder sb = new StringBuilder();
@@ -355,13 +341,8 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
             long start = System.nanoTime();
             try {
                 si.start(service);
-            } catch (Exception re) {
-                startupException = new CacheException("Could not start the cache", re);
-                ces.getHandler().serviceManagerStartFailed(
-                        ces.createContext(re, "Could not start the cache"),
-                        lookup(CacheConfiguration.class), si.getService());
-                shutdown();
-                throw startupException;
+            } catch (Throwable re) {
+                ces.startFailed(re, lookup(CacheConfiguration.class), si.getService());
             }
             if (debug && overrideStart(si.getService().getClass())) {
                 StringBuilder sb = new StringBuilder();
@@ -394,14 +375,7 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
                 }
             }
         }
-        ces.getHandler().terminated(m);
-    }
-
-    void checkStartupException() {
-        RuntimeException re = startupException;
-        if (re != null) {
-            throw re;
-        }
+        ces.terminated(m);
     }
 
     void doStart() {
@@ -410,7 +384,7 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
             debugService.debug("Cache starting [name = " + cache.getName() + ", type = "
                     + cache.getClass() + "]");
             if (debugService.isTraceEnabled()) {
-                    debugService.trace("Cache was started through this call:");
+                debugService.trace("Cache was started through this call:");
                 StackTraceElement[] trace = new Exception().getStackTrace();
                 for (int i = 0; i < Math.min(8, trace.length); i++)
                     debugService.trace("    " + trace[i]);
@@ -436,6 +410,7 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
     void doTerminate() {
         RunState state = getRunState();
         if (!state.isTerminated()) {
+            getInternalService(InternalCacheListener.class).afterStop(cache);
             try {
                 terminateServices();
             } finally {
@@ -459,9 +434,7 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
                 try {
                     shutdownService(sh);
                 } catch (Exception e) {
-                    ces.getHandler().serviceManagerShutdownFailed(
-                            ces.createContext(e, "Could not shutdown the service properly"),
-                            sh.getService());
+                    ces.serviceManagerShutdownFailed(e, sh.getService());
                 }
             }
         }

@@ -5,6 +5,7 @@ package org.coconut.operations;
 
 import java.io.Serializable;
 
+import org.coconut.operations.Ops.LongComparator;
 import org.coconut.operations.Ops.LongPredicate;
 import org.coconut.operations.Ops.MapperToLong;
 import org.coconut.operations.Ops.Predicate;
@@ -66,26 +67,39 @@ public final class LongPredicates {
      *            the value of the equals predicate
      * @return a predicate that accepts any long that is equal to the value specified
      */
-    public static EqualsToLongPredicate equalsTo(long equalsTo) {
+    public static LongPredicate equalsTo(long equalsTo) {
         return new EqualsToLongPredicate(equalsTo);
     }
 
-    public static GreaterThenLongPredicate greaterThen(long greaterThen) {
+    public static LongPredicate greaterThen(long greaterThen) {
         return new GreaterThenLongPredicate(greaterThen);
     }
 
-    public static GreaterThenOrEqualsLongPredicate greaterThenOrEquals(long greaterThenOrEquals) {
+    public static LongPredicate greaterThenOrEquals(long greaterThenOrEquals) {
         return new GreaterThenOrEqualsLongPredicate(greaterThenOrEquals);
     }
 
-    public static LessThenLongPredicate lessThen(long lessThen) {
+    public static LongPredicate lessThen(long lessThen) {
         return new LessThenLongPredicate(lessThen);
     }
 
-    public static LessThenOrEqualsLongPredicate lessThenOrEquals(long lessThenOrEquals) {
+//    /**
+//     * @param lessThen
+//     * @param comparator the comparator
+//     * @return
+//     */
+//    public static LongPredicate lessThen(long lessThen, LongComparator comparator) {
+//        return null;
+//    }
+
+    public static LongPredicate lessThenOrEquals(long lessThenOrEquals) {
         return new LessThenOrEqualsLongPredicate(lessThenOrEquals);
     }
 
+    /**
+     * Creates a Predicate that first applies the specified mapper to the argument before
+     * evaluating the specified LongPredicate.
+     */
     public static <T> Predicate<T> mapAndEvaluate(MapperToLong<T> mapper, LongPredicate predicate) {
         return new MapToLongAndEvaluatePredicate<T>(mapper, predicate);
     }
@@ -112,7 +126,36 @@ public final class LongPredicates {
         return new NotLongPredicate(predicate);
     }
 
-    public static class EqualsToLongPredicate implements LongPredicate, Serializable {
+    /**
+     * Creates a LongPredicate that performs a logical OR on two supplied predicates. The
+     * returned predicate uses short-circuit evaluation (or minimal evaluation). That is,
+     * if the specified left side predicate evaluates to <code>true</code> the right
+     * side predicate will not be evaluated. More formally
+     * 
+     * <pre>
+     * left.evaluate(element) || right.evaluate(element);
+     * </pre>
+     * 
+     * <p>
+     * If both of the supplied predicates are serializable the returned predicate will
+     * also be serializable.
+     * 
+     * @param left
+     *            the left side LongPredicate
+     * @param right
+     *            the right side LongPredicate
+     * @return the newly created LongPredicate
+     * @throws NullPointerException
+     *             if any of the specified predicates are <code>null</code>
+     */
+    public static LongPredicate or(LongPredicate left, LongPredicate right) {
+        return new OrLongPredicate(left, right);
+    }
+
+    static class EqualsToLongPredicate implements LongPredicate, Serializable {
+
+        /** serialVersionUID. */
+        private static final long serialVersionUID = 8220487572042162409L;
 
         /** The value to compare with. */
         private final long equalsTo;
@@ -142,7 +185,10 @@ public final class LongPredicates {
         }
     }
 
-    public static class GreaterThenLongPredicate implements LongPredicate, Serializable {
+    static class GreaterThenLongPredicate implements LongPredicate, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = 7198592614364500859L;
+
         /** The value to compare with. */
         private final long greaterThen;
 
@@ -159,7 +205,10 @@ public final class LongPredicates {
         }
     }
 
-    public static class GreaterThenOrEqualsLongPredicate implements LongPredicate, Serializable {
+    static class GreaterThenOrEqualsLongPredicate implements LongPredicate, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -4681995097900012563L;
+
         /** The value to compare with. */
         private final long greaterThenOrEquals;
 
@@ -176,7 +225,10 @@ public final class LongPredicates {
         }
     }
 
-    public static class LessThenLongPredicate implements LongPredicate, Serializable {
+    static class LessThenLongPredicate implements LongPredicate, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -9180606923416408020L;
+
         /** The value to compare with. */
         private final long lessThen;
 
@@ -193,7 +245,10 @@ public final class LongPredicates {
         }
     }
 
-    public static class LessThenOrEqualsLongPredicate implements LongPredicate, Serializable {
+    static class LessThenOrEqualsLongPredicate implements LongPredicate, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = 8711220473905545122L;
+
         /** The value to compare with. */
         private final long lessThenOrEquals;
 
@@ -214,7 +269,7 @@ public final class LongPredicates {
      * A LongPredicate that evaluates to true iff the Predicate used for constructing
      * evaluates to <code>false</code>.
      */
-    public final static class NotLongPredicate implements LongPredicate, Serializable {
+    final static class NotLongPredicate implements LongPredicate, Serializable {
 
         /** Default <code>serialVersionUID</code>. */
         private static final long serialVersionUID = -5117781730584740429L;
@@ -421,6 +476,69 @@ public final class LongPredicates {
         @Override
         public String toString() {
             return "convert " + mapper;
+        }
+    }
+
+    /**
+     * A LongPredicate that performs a logical exclusive OR on two supplied predicates.
+     */
+    final static class OrLongPredicate implements LongPredicate, Serializable {
+
+        /** Default <code>serialVersionUID</code>. */
+        private static final long serialVersionUID = 747277162607915666L;
+
+        /** The left side operand. */
+        private final LongPredicate left;
+
+        /** The right side operand. */
+        private final LongPredicate right;
+
+        /**
+         * Creates a new <code>OrLongPredicate</code>.
+         * 
+         * @param left
+         *            the left side LongPredicate
+         * @param right
+         *            the right side LongPredicate
+         * @throws NullPointerException
+         *             if any of the supplied predicates are <code>null</code>
+         */
+        public OrLongPredicate(LongPredicate left, LongPredicate right) {
+            if (left == null) {
+                throw new NullPointerException("left is null");
+            } else if (right == null) {
+                throw new NullPointerException("right is null");
+            }
+            this.left = left;
+            this.right = right;
+        }
+
+        /** {@inheritDoc} */
+        public boolean evaluate(long element) {
+            return left.evaluate(element) || right.evaluate(element);
+        }
+
+        /**
+         * Returns the left side LongPredicate.
+         * 
+         * @return the left side LongPredicate.
+         */
+        public LongPredicate getLeftPredicate() {
+            return left;
+        }
+
+        /**
+         * Returns the right side LongPredicate.
+         * 
+         * @return the right side LongPredicate.
+         */
+        public LongPredicate getRightPredicate() {
+            return right;
+        }
+
+        /** {@inheritDoc} */
+        public String toString() {
+            return "(" + left + ") && (" + right + ")";
         }
     }
 

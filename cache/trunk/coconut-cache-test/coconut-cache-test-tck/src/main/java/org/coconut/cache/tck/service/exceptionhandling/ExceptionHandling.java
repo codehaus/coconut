@@ -12,7 +12,7 @@ import java.util.logging.LogManager;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
-import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlers;
+import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
 import org.coconut.cache.service.loading.AbstractCacheLoader;
 import org.coconut.cache.service.loading.CacheLoader;
@@ -106,7 +106,7 @@ public class ExceptionHandling extends AbstractCacheTCKTest {
     }
 
     @Test
-    public void loadFailedToSystemOut() throws Exception {
+    public void loadFailedToSystemErr() throws Exception {
         c = newCache(newConf().loading().setLoader(loader));
         SystemErrOutHelper str = SystemErrOutHelper.getErr();
         try {
@@ -120,7 +120,7 @@ public class ExceptionHandling extends AbstractCacheTCKTest {
     }
 
     @Test
-    public void loadAllFailedToSystemOut() throws Exception {
+    public void loadAllFailedToSystemErr() throws Exception {
         c = newCache(newConf().loading().setLoader(loader));
         SystemErrOutHelper str = SystemErrOutHelper.getErr();
         try {
@@ -213,6 +213,5 @@ public class ExceptionHandling extends AbstractCacheTCKTest {
 
     }
 
-    public static class BaseExceptionHandler extends
-            CacheExceptionHandlers.DefaultLoggingExceptionHandler<Integer, String> {}
+    public static class BaseExceptionHandler extends CacheExceptionHandler<Integer, String> {}
 }

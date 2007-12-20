@@ -58,16 +58,12 @@ public class UnsynchronizedCacheLoaderService<K, V> extends AbstractCacheLoading
                                 + CacheLoaderCallback.class.getSimpleName() + "' [key = "
                                 + callback.getKey() + "]", new RuntimeException());
             } else {
-                V result = callback.getResult();
+                V v = callback.getResult();
                 if (callback.getCause() != null) {
-                    result = getExceptionHandler().getHandler().loadingLoadValueFailed(
-                            getExceptionHandler().createContext(
-                                    callback.getCause(),
-                                    "Could not load value [key = " + callback.getKey() + ", attributes = "
-                                            + callback.getAttributes() + "]"), getLoader(), callback.getKey(),
-                            callback.getAttributes());
+                    v = getExceptionHandler().loadFailed(callback.getCause(), getLoader(),
+                            callback.getKey(), callback.getAttributes());
                 }
-                keyValues.put(callback.getKey(), result);
+                keyValues.put(callback.getKey(), v);
                 keyAttributes.put(callback.getKey(), callback.getAttributes());
             }
         }

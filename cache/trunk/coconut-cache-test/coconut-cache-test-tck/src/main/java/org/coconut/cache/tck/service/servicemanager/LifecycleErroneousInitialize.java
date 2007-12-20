@@ -7,14 +7,12 @@ import java.util.Map;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
-import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlers;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle.Initializer;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.lifecycle.LifecycleVerifier;
 import org.coconut.cache.test.util.lifecycle.LifecycleVerifierContext;
-import org.coconut.core.Logger;
 import org.coconut.test.throwables.Error1;
 import org.coconut.test.throwables.RuntimeException1;
 import org.coconut.test.throwables.RuntimeException2;
@@ -152,8 +150,7 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
         }
     }
 
-    class InitializingExceptionHandler extends
-            CacheExceptionHandlers.DefaultLoggingExceptionHandler {
+    class InitializingExceptionHandler extends CacheExceptionHandler {
         CacheConfiguration conf;
 
         Map terminatationMap;

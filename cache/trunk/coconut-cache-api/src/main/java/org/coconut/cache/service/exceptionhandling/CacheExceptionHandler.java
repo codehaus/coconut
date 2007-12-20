@@ -8,12 +8,10 @@ import java.util.Map;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.CacheException;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
-import org.coconut.core.Logger;
-import org.coconut.management.ManagedLifecycle;
+import org.coconut.core.Logger.Level;
 
 /**
  * The purpose of this class is to have one central place where all exceptions that arise
@@ -42,10 +40,10 @@ import org.coconut.management.ManagedLifecycle;
  * mysterious way. Or even worse that the cache implementation contains a bug. Of course,
  * this is highly unlikely if using one of the default implementation provided by Coconut
  * Cache;).
- * <li>{@link #handleWarning(CacheExceptionContext, String)} which is called whenever a
- * some kind of inconsistency arrises in the system. Normally this always indicates a
- * non-critical problem that should be fixed at some time. For example, if a CacheLoader
- * tries to set the creation time of a newly loaded element to a negative value.
+ * <li>{@link #handleWarning(CacheExceptionContext)} which is called whenever a some kind
+ * of inconsistency arrises in the system. Normally this always indicates a non-critical
+ * problem that should be fixed at some time. For example, if a CacheLoader tries to set
+ * the creation time of a newly loaded element to a negative value.
  * </ul>
  * <p>
  * In addition to these general methods there are also a number of <tt>specialized</tt>
@@ -56,9 +54,7 @@ import org.coconut.management.ManagedLifecycle;
  * method is called. In addition to the exception that was raised a number of additional
  * information is provided to this method. For example, the key for which the load failed,
  * the cache in which the cache occured as well as other relevant information. The default
- * implementation provided in this class just calls the
- * {@link #handleException(CacheExceptionContext, Exception)} method with the provided
- * exception.
+ * implementation provided in this class just logs the error and returns <code>null</code>.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
@@ -67,75 +63,18 @@ import org.coconut.management.ManagedLifecycle;
  * @param <V>
  *            the type of mapped values
  */
-public abstract class CacheExceptionHandler<K, V> {
-
-// /**
-// * Handles an error.
-// *
-// * @param context
-// * an CacheExceptionContext containing the default logger configured for
-// * this cache
-// * @param cause
-// * the error to handle
-// */
-// public abstract void handleError(CacheExceptionContext<K, V> context, Error cause);
-//
-// /**
-// * Handles an exception.
-// *
-// * @param context
-// * an CacheExceptionContext containing the default logger configured for
-// * this cache
-// * @param cause
-// * the exception to handle
-// */
-// public abstract void handleException(CacheExceptionContext<K, V> context, Exception
-// cause);
-//
-// /**
-// * Handles a runtime exception.
-// *
-// * @param context
-// * an CacheExceptionContext containing the default logger configured for
-// * this cache
-// * @param cause
-// * the runtime exception to handle
-// */
-// public abstract void handleRuntimeException(CacheExceptionContext<K, V> context,
-// RuntimeException cause);
-//
-// /**
-// * Handles the generic throwable.
-// *
-// * @param context
-// * an CacheExceptionContext containing the default logger configured for
-// * this cache
-// * @param cause
-// * the throwable to handle
-// */
-// public void handleThrowable(CacheExceptionContext<K, V> context, Throwable cause) {
-// if (cause instanceof RuntimeException) {
-// handleRuntimeException(context, (RuntimeException) cause);
-// } else if (cause instanceof Exception) {
-// handleException(context, (Exception) cause);
-// } else if (cause instanceof Error) {
-// handleError(context, (Error) cause);
-// } else {
-// // hmm
-// handleRuntimeException(context, new CacheException(cause));
-// }
-// }
+public class CacheExceptionHandler<K, V> {
 
     /**
-     * Handles a warning from the cache. The default implementation ignores all warnings.
+     * Handles a warning from the cache. The default implementation just logs the warning.
      * 
      * @param context
      *            an CacheExceptionContext containing the default logger configured for
      *            this cache
-     * @param warning
-     *            the warning to handle
      */
-    public void handleWarning(CacheExceptionContext<K, V> context) {}
+    public void handleWarning(CacheExceptionContext<K, V> context) {
+        context.defaultLogger().log(Level.Warn, context.getMessage(), context.getCause());
+    }
 
     /**
      * Called to initialize the CacheExceptionHandler. This method must be called as the
@@ -149,7 +88,9 @@ public abstract class CacheExceptionHandler<K, V> {
 
     /**
      * Rethrows any errors.
-     * @param context the context
+     * 
+     * @param context
+     *            the context
      */
     protected void throwErrors(CacheExceptionContext<K, V> context) {
         if (context.getCause() instanceof Error) {
@@ -170,7 +111,8 @@ public abstract class CacheExceptionHandler<K, V> {
      * 
      * @param context
      *            an CacheExceptionContext containing the default logger configured for
-     *            this cache and the cause of the failure
+     *            this cache and the cause of the failure. The exception message includes
+     *            the
      * @param loader
      *            the cacheloader that failed to load a value
      * @param key
@@ -184,37 +126,8 @@ public abstract class CacheExceptionHandler<K, V> {
     public V loadingLoadValueFailed(CacheExceptionContext<K, V> context,
             CacheLoader<? super K, ?> loader, K key, AttributeMap map) {
         throwErrors(context);
+        context.defaultLogger().error(context.getMessage(), context.getCause());
         return null;
-    }
-
-    /**
-     * Called if the cache fails to shutdown all service properly.
-     * 
-     * @param context
-     *            an CacheExceptionContext containing the default logger configured for
-     *            this cache
-     * @param lifecycle
-     *            the service that failed
-     */
-    public void serviceManagerShutdownFailed(CacheExceptionContext<K, V> context,
-            CacheLifecycle lifecycle) {
-        context.defaultLogger().error("error",context.getCause());
-    }
-
-    /**
-     * Called when a service fails to start properly.
-     * 
-     * @param context
-     *            an CacheExceptionContext containing the default logger configured for
-     *            this cache
-     * @param configuration
-     *            the configuration of the cache
-     * @param service
-     *            the {@link CacheLifecycle} or {@link ManagedLifecycle} that failed
-     */
-    public void serviceManagerStartFailed(CacheExceptionContext<K, V> context,
-            CacheConfiguration<K, V> configuration, Object service) {
-        
     }
 
     /**

@@ -87,7 +87,6 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
 
     private final InternalCacheSupport<K, V> ics;
 
-    // Collection<AbstractCacheEntry<K, V>> entries;
     /**
      * Creates a new, empty map with a default initial capacity, and load factor.
      */
@@ -124,13 +123,6 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
      */
     public EntryMap(InternalCacheSupport<K, V> ics, boolean isThreadSafe, int initialCapacity,
             float loadFactor) {
-        if (initialCapacity < 0) {
-            throw new IllegalArgumentException("initialCapacity must be >=0, was "
-                    + initialCapacity);
-        }
-        if (loadFactor <= 0 || Float.isNaN(loadFactor)) {
-            throw new IllegalArgumentException("load factor must be >0, was " + loadFactor);
-        }
         if (initialCapacity > MAXIMUM_CAPACITY) {
             initialCapacity = MAXIMUM_CAPACITY;
         }

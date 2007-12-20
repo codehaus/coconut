@@ -25,55 +25,18 @@ public final class CacheExceptionHandlers {
 
     // /CLOVER:ON
 
-    /**
-     * Creates a new instance of {@link DefaultLoggingExceptionHandler}.
-     * 
-     * @return a new instance of DefaultLoggingExceptionHandler
-     * @param <K>
-     *            the type of keys maintained by the cache
-     * @param <V>
-     *            the type of mapped values
-     */
-    public static <K, V> DefaultLoggingExceptionHandler<K, V> defaultLoggingExceptionHandler() {
-        return new DefaultLoggingExceptionHandler<K, V>();
-    }
+//    /**
+//     * Creates a new instance of {@link DefaultLoggingExceptionHandler}.
+//     * 
+//     * @return a new instance of DefaultLoggingExceptionHandler
+//     * @param <K>
+//     *            the type of keys maintained by the cache
+//     * @param <V>
+//     *            the type of mapped values
+//     */
+//    public static <K, V> DefaultLoggingExceptionHandler<K, V> defaultLoggingExceptionHandler() {
+//        return new DefaultLoggingExceptionHandler<K, V>();
+//    }
 
-    /**
-     * An implementation of {@link CacheExceptionHandler} that logs all exceptions to the
-     * logger defined accordingly to
-     * {@link CacheExceptionHandlingConfiguration#setExceptionLogger(org.coconut.core.Logger)}.
-     */
-    public static class DefaultLoggingExceptionHandler<K, V> extends CacheExceptionHandler<K, V> {
 
-//        /** {@inheritDoc} */
-//        public void handleError(CacheExceptionContext<K, V> context, Error cause) {
-//            context.defaultLogger().fatal("An unexpected error occured inside the cache", cause);
-//            throw cause;
-//        }
-//
-//        /** {@inheritDoc} */
-//        public void handleException(CacheExceptionContext<K, V> context, Exception cause) {
-//            context.defaultLogger().error("An exception occured inside the cache", cause);
-//        }
-//
-//        /** {@inheritDoc} */
-//        public void handleRuntimeException(CacheExceptionContext<K, V> context,
-//                RuntimeException cause) {
-//            context.defaultLogger().fatal("An unexpected failure occured inside the cache", cause);
-//        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void handleWarning(CacheExceptionContext<K, V> context) {
-            context.defaultLogger().warn(context.getMessage());
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public V loadingLoadValueFailed(CacheExceptionContext<K, V> context,
-                CacheLoader<? super K, ?> loader, K key, AttributeMap map) {
-            context.defaultLogger().error(context.getMessage(), context.getCause());
-            return super.loadingLoadValueFailed(context, loader, key, map);
-        }
-    }
 }

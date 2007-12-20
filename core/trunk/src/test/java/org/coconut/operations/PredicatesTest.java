@@ -596,14 +596,9 @@ public class PredicatesTest {
         f.toString(); // no exceptions
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void greaterThenNotComparableIAE() throws Exception {
-        greaterThen(new Object());
-    }
-
     @Test(expected = NullPointerException.class)
     public void greaterThenNPE() {
-        greaterThen(null);
+        greaterThen((Integer) null);
     }
 
     @Test(expected = NullPointerException.class)
@@ -644,14 +639,9 @@ public class PredicatesTest {
         f.toString(); // no exceptions
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void greaterThenOrEqualNotComparableIAE() throws Exception {
-        greaterThenOrEqual(new Object());
-    }
-
     @Test(expected = NullPointerException.class)
     public void greaterThenOrEqualNPE() {
-        greaterThenOrEqual(null);
+        greaterThenOrEqual((Integer)null);
     }
 
     @Test(expected = NullPointerException.class)
@@ -809,14 +799,9 @@ public class PredicatesTest {
         f.toString(); // no exceptions
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void lessThenNotComparableIAE() throws Exception {
-        lessThen(new Object());
-    }
-
     @Test(expected = NullPointerException.class)
     public void lessThenNPE() {
-        lessThen(null);
+        lessThen((Integer)null);
     }
 
     @Test(expected = NullPointerException.class)
@@ -857,14 +842,9 @@ public class PredicatesTest {
         f.toString(); // no exceptions
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void lessThenOrEqualNotComparable() throws Exception {
-        lessThenOrEqual(new Object());
-    }
-
     @Test(expected = NullPointerException.class)
     public void lessThenOrEqualNPE() {
-        lessThenOrEqual(null);
+        lessThenOrEqual((Integer)null);
     }
 
     @Test(expected = NullPointerException.class)

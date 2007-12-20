@@ -56,5 +56,6 @@ public interface InternalCacheEventService<K, V> extends CacheEventService<K, V>
             long previousVolume, long newVolume);
 
     void afterStart(Cache<K, V> cache);
+    void afterStop(Cache<K, V> cache);
     
 }

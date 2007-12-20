@@ -5,11 +5,10 @@ package org.coconut.cache;
 
 /**
  * <code>CacheException</code> is the main runtime exception thrown by Coconut Cache.
- * For control of when exceptions are thrown see
- * {@link org.coconut.cache.service.exceptionhandling.CacheExceptionHandler}.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
+ * @see org.coconut.cache.service.exceptionhandling.CacheExceptionHandler
  */
 public class CacheException extends RuntimeException {
 

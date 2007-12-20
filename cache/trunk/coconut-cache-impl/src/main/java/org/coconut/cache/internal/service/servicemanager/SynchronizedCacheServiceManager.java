@@ -60,7 +60,7 @@ public class SynchronizedCacheServiceManager extends AbstractCacheServiceManager
         for (;;) {
             RunState state = getRunState();
             if (state != RunState.RUNNING) {
-                checkStartupException();
+                ces.checkStartupException();
                 if (state == RunState.STARTING) {
                     throw new IllegalStateException(
                             "Cannot invoke this method from CacheLifecycle.start(Map services), should be invoked from CacheLifecycle.started(Cache c)");
@@ -100,7 +100,6 @@ public class SynchronizedCacheServiceManager extends AbstractCacheServiceManager
                 setRunState(shutdownNow ? RunState.STOP : RunState.SHUTDOWN);
                 initiateShutdown();
                 if (!shutdownFutures.isEmpty()) {
-                    // java 5 bug, cannot use Executors.
                     ThreadPoolExecutor tpe = new ThreadPoolExecutor(1, 1, 0L,
                             TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
 
@@ -113,10 +112,7 @@ public class SynchronizedCacheServiceManager extends AbstractCacheServiceManager
                                         sh.future.get();
                                         shutdownFutures.poll();
                                     } catch (Exception e) {
-                                        ces.getHandler().serviceManagerShutdownFailed(
-                                                ces.createContext(e,
-                                                        "Could not shutdown the service properly"),
-                                                sh.getService());
+                                        ces.serviceManagerShutdownFailed(e, sh.getService());
                                     }
                                 }
                             } finally {
@@ -152,6 +148,7 @@ public class SynchronizedCacheServiceManager extends AbstractCacheServiceManager
                             // sometimes the shutdown executor service
                             // shutsdown before this entry is processed
                             // therefor we make sure its invoked
+                            // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6440728
                             cdl.countDown();
                             return callable.call();
                         }

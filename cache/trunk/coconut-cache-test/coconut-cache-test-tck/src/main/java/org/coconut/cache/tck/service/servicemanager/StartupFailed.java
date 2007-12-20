@@ -10,6 +10,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.CacheException;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
+import org.coconut.test.throwables.RuntimeException1;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,8 +28,8 @@ public class StartupFailed extends AbstractCacheTCKTest {
         try {
             c.clear();
             fail("should throw CacheException");
-        } catch (CacheException ce) {
-            assertTrue(ce.getCause() instanceof IllegalMonitorStateException);
+        } catch (RuntimeException1 ce) {
+
         }
         failedLater();
     }
@@ -38,8 +39,8 @@ public class StartupFailed extends AbstractCacheTCKTest {
         try {
             c.containsKey(1);
             fail("should throw CacheException");
-        } catch (CacheException ce) {
-            assertTrue(ce.getCause() instanceof IllegalMonitorStateException);
+        } catch (RuntimeException1 ce) {
+
         }
         failedLater();
     }
@@ -49,8 +50,8 @@ public class StartupFailed extends AbstractCacheTCKTest {
         try {
             c.containsValue("1");
             fail("should throw CacheException");
-        } catch (CacheException ce) {
-            assertTrue(ce.getCause() instanceof IllegalMonitorStateException);
+        } catch (RuntimeException1 ce) {
+
         }
         failedLater();
     }
@@ -61,8 +62,8 @@ public class StartupFailed extends AbstractCacheTCKTest {
         try {
             c.entrySet().clear();
             fail("should throw CacheException");
-        } catch (CacheException ce) {
-            assertTrue(ce.getCause() instanceof IllegalMonitorStateException);
+        } catch (RuntimeException1 ce) {
+
         }
         failedLater();
     }
@@ -72,8 +73,8 @@ public class StartupFailed extends AbstractCacheTCKTest {
         try {
             c.get(1);
             fail("should throw CacheException");
-        } catch (CacheException ce) {
-            assertTrue(ce.getCause() instanceof IllegalMonitorStateException);
+        } catch (RuntimeException1 ce) {
+
         }
         failedLater();
     }
@@ -83,8 +84,8 @@ public class StartupFailed extends AbstractCacheTCKTest {
         try {
             c.getAll(Arrays.asList(1, 2, 3));
             fail("should throw CacheException");
-        } catch (CacheException ce) {
-            assertTrue(ce.getCause() instanceof IllegalMonitorStateException);
+        } catch (RuntimeException1 ce) {
+
         }
         failedLater();
     }
@@ -94,8 +95,8 @@ public class StartupFailed extends AbstractCacheTCKTest {
         try {
             c.getEntry(1);
             fail("should throw CacheException");
-        } catch (CacheException ce) {
-            assertTrue(ce.getCause() instanceof IllegalMonitorStateException);
+        } catch (RuntimeException1 ce) {
+
         }
         failedLater();
     }
@@ -116,8 +117,8 @@ public class StartupFailed extends AbstractCacheTCKTest {
         try {
             c.getVolume();
             fail("should throw CacheException");
-        } catch (CacheException ce) {
-            assertTrue(ce.getCause() instanceof IllegalMonitorStateException);
+        } catch (RuntimeException1 ce) {
+
         }
         failedLater();
     }
@@ -127,15 +128,18 @@ public class StartupFailed extends AbstractCacheTCKTest {
         try {
             c.isEmpty();
             fail("should throw CacheException");
-        } catch (CacheException ce) {
-            assertTrue(ce.getCause() instanceof IllegalMonitorStateException);
+        } catch (RuntimeException1 ce) {
+
         }
         failedLater();
     }
 
     @Test
     public void size() {
-        failSize();
+        try {
+            c.size();
+            fail("should throw CacheException");
+        } catch (RuntimeException1 ce) {}
         failedLater();
     }
 
@@ -144,8 +148,8 @@ public class StartupFailed extends AbstractCacheTCKTest {
         try {
             c.peek(1);
             fail("should throw CacheException");
-        } catch (CacheException ce) {
-            assertTrue(ce.getCause() instanceof IllegalMonitorStateException);
+        } catch (RuntimeException1 ce) {
+
         }
         failedLater();
     }
@@ -155,8 +159,8 @@ public class StartupFailed extends AbstractCacheTCKTest {
         try {
             c.peekEntry(1);
             fail("should throw CacheException");
-        } catch (CacheException ce) {
-            assertTrue(ce.getCause() instanceof IllegalMonitorStateException);
+        } catch (RuntimeException1 ce) {
+
         }
         failedLater();
     }
@@ -166,8 +170,8 @@ public class StartupFailed extends AbstractCacheTCKTest {
         try {
             c.put(1, "1");
             fail("should throw CacheException");
-        } catch (CacheException ce) {
-            assertTrue(ce.getCause() instanceof IllegalMonitorStateException);
+        } catch (RuntimeException1 ok) {
+
         }
         failedLater();
     }
@@ -176,8 +180,8 @@ public class StartupFailed extends AbstractCacheTCKTest {
         try {
             c.putAll(M1_TO_M5_MAP);
             fail("should throw CacheException");
-        } catch (CacheException ce) {
-            assertTrue(ce.getCause() instanceof IllegalMonitorStateException);
+        } catch (RuntimeException1 ce) {
+
         }
         failedLater();
     }
@@ -186,8 +190,8 @@ public class StartupFailed extends AbstractCacheTCKTest {
         try {
             c.putIfAbsent(1, "A");
             fail("should throw CacheException");
-        } catch (CacheException ce) {
-            assertTrue(ce.getCause() instanceof IllegalMonitorStateException);
+        } catch (RuntimeException1 ce) {
+
         }
         failedLater();
     }
@@ -196,8 +200,8 @@ public class StartupFailed extends AbstractCacheTCKTest {
         try {
             c.remove(1);
             fail("should throw CacheException");
-        } catch (CacheException ce) {
-            assertTrue(ce.getCause() instanceof IllegalMonitorStateException);
+        } catch (RuntimeException1 ce) {
+
         }
         failedLater();
     }
@@ -206,8 +210,8 @@ public class StartupFailed extends AbstractCacheTCKTest {
         try {
             c.remove(1, "A");
             fail("should throw CacheException");
-        } catch (CacheException ce) {
-            assertTrue(ce.getCause() instanceof IllegalMonitorStateException);
+        } catch (RuntimeException1 ce) {
+
         }
         failedLater();
     }
@@ -216,8 +220,8 @@ public class StartupFailed extends AbstractCacheTCKTest {
         try {
             c.removeAll(Arrays.asList(1, 2, 3));
             fail("should throw CacheException");
-        } catch (CacheException ce) {
-            assertTrue(ce.getCause() instanceof IllegalMonitorStateException);
+        } catch (RuntimeException1 ce) {
+
         }
         failedLater();
     }
@@ -226,8 +230,8 @@ public class StartupFailed extends AbstractCacheTCKTest {
         try {
             c.replace(1, "B");
             fail("should throw CacheException");
-        } catch (CacheException ce) {
-            assertTrue(ce.getCause() instanceof IllegalMonitorStateException);
+        } catch (RuntimeException1 ce) {
+
         }
         failedLater();
     }
@@ -236,8 +240,8 @@ public class StartupFailed extends AbstractCacheTCKTest {
         try {
             c.replace(1, "A", "B");
             fail("should throw CacheException");
-        } catch (CacheException ce) {
-            assertTrue(ce.getCause() instanceof IllegalMonitorStateException);
+        } catch (RuntimeException1 ce) {
+
         }
         failedLater();
     }
@@ -248,8 +252,8 @@ public class StartupFailed extends AbstractCacheTCKTest {
         try {
             c.keySet().clear();
             fail("should throw CacheException");
-        } catch (CacheException ce) {
-            assertTrue(ce.getCause() instanceof IllegalMonitorStateException);
+        } catch (RuntimeException1 ce) {
+
         }
         failedLater();
     }
@@ -260,8 +264,8 @@ public class StartupFailed extends AbstractCacheTCKTest {
         try {
             c.values().clear();
             fail("should throw CacheException");
-        } catch (CacheException ce) {
-            assertTrue(ce.getCause() instanceof IllegalMonitorStateException);
+        } catch (RuntimeException1 ce) {
+
         }
         failedLater();
     }
@@ -316,7 +320,12 @@ public class StartupFailed extends AbstractCacheTCKTest {
 
     @Test
     public void getServiceStartupFailed() {
-        failGetService();
+        try {
+            c.getService(CacheServiceManagerService.class);
+            fail("should throw CacheException");
+        } catch (RuntimeException1 ce) {
+
+        }
         failedLater();
     }
 
@@ -326,16 +335,17 @@ public class StartupFailed extends AbstractCacheTCKTest {
     }
 
     private void failedLater() {
-        failGetService();
-        failSize();
-    }
-
-    private void failGetService() {
         try {
             c.getService(CacheServiceManagerService.class);
             fail("should throw CacheException");
-        } catch (CacheException ce) {
-            assertTrue(ce.getCause() instanceof IllegalMonitorStateException);
+        } catch (IllegalStateException ce) {
+            assertTrue(ce.getCause() instanceof RuntimeException1);
+        }
+        try {
+            c.size();
+            fail("should throw CacheException");
+        } catch (IllegalStateException ce) {
+            assertTrue(ce.getCause() instanceof RuntimeException1);
         }
     }
 
@@ -343,8 +353,8 @@ public class StartupFailed extends AbstractCacheTCKTest {
         try {
             c.size();
             fail("should throw CacheException");
-        } catch (CacheException ce) {
-            assertTrue(ce.getCause() instanceof IllegalMonitorStateException);
+        } catch (RuntimeException1 ce) {
+            
         }
     }
 }

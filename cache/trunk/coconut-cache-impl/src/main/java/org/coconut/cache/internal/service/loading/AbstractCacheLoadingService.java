@@ -56,16 +56,16 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
         this.exceptionHandler = exceptionHandler;
     }
 
-//    public V loadAndGet(K key) {
-//        // will and probably should count as a cache miss
-//        AbstractCacheEntry<K, V> ace = loadBlocking(key);
-//        return ace == null ? null : ace.getValue();
-//    }
+// public V loadAndGet(K key) {
+// // will and probably should count as a cache miss
+// AbstractCacheEntry<K, V> ace = loadBlocking(key);
+// return ace == null ? null : ace.getValue();
+// }
 //
-//    public V loadAndGet(K key, AttributeMap attributes) {
-//        AbstractCacheEntry<K, V> ace = loadBlocking(key, attributes);
-//        return ace == null ? null : ace.getValue();
-//    }
+// public V loadAndGet(K key, AttributeMap attributes) {
+// AbstractCacheEntry<K, V> ace = loadBlocking(key, attributes);
+// return ace == null ? null : ace.getValue();
+// }
 
     /** {@inheritDoc} */
     public final void forceLoad(K key) {
@@ -248,11 +248,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
         try {
             v = loader.load(key, attributes);
         } catch (Throwable e) {
-            v = getExceptionHandler().getHandler().loadingLoadValueFailed(
-                    getExceptionHandler().createContext(
-                            e,
-                            "Could not load value [key = " + key + ", attributes = " + attributes
-                                    + "]"), loader, key, attributes);
+            v = getExceptionHandler().loadFailed(e, loader, key, attributes);
         }
         return loadSupport.valueLoaded(key, v, attributes);
     }

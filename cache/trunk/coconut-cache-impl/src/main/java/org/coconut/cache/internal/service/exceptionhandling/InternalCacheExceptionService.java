@@ -3,10 +3,14 @@
  */
 package org.coconut.cache.internal.service.exceptionhandling;
 
+import java.util.Map;
+
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
+import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.core.Logger;
 
@@ -25,16 +29,6 @@ import org.coconut.core.Logger;
  */
 public interface InternalCacheExceptionService<K, V> {
 
-    /**
-     * Creates a new CacheExceptionContext with no
-     * {@link CacheExceptionContext#getCause() cause}.
-     * 
-     * @return the newly created CacheExceptionContext
-     */
-    CacheExceptionContext<K, V> createContext(String message);
-
-    CacheExceptionContext<K, V> createContext(Throwable cause, String message);
-
     void fatalRuntimeException(String msg);
 
     void fatalRuntimeException(String msg, RuntimeException cause);
@@ -42,10 +36,20 @@ public interface InternalCacheExceptionService<K, V> {
     void initializationFailed(CacheConfiguration<K, V> configuration, CacheLifecycle service,
             RuntimeException cause);
 
-    /**
-     * Returns the CacheExceptionHandler configured for this cache.
-     * 
-     * @return the CacheExceptionHandler configured for this cache
-     */
-    CacheExceptionHandler<K, V> getHandler();
+    void initialize(CacheConfiguration<K, V> conf);
+
+    void checkStartupException();
+
+    V loadFailed(Throwable cause, CacheLoader<? super K, ?> loader, K key, AttributeMap map);
+
+    boolean startupFailed();
+
+    void serviceManagerShutdownFailed(Throwable cause, CacheLifecycle lifecycle);
+
+    void startFailed(Throwable cause, CacheConfiguration<K, V> configuration,
+            Object service);
+
+    void terminated(Map<? extends CacheLifecycle, RuntimeException> terminationFailures);
+
+    void warning(String warning);
 }

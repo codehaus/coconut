@@ -9,13 +9,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
-import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlers;
-import org.coconut.cache.service.servicemanager.CacheLifecycle;
+import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.lifecycle.AbstractLifecycleVerifier;
-import org.coconut.core.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -140,14 +137,8 @@ public class Lifecycle extends AbstractCacheTCKTest {
         assertEquals(count * 5, verifier.get());
     }
 
-    static class ExceptionHandler extends CacheExceptionHandlers.DefaultLoggingExceptionHandler {
+    static class ExceptionHandler extends CacheExceptionHandler {
         CacheConfiguration initializeConf;
-
-        @Override
-        public void serviceManagerStartFailed(CacheExceptionContext context, CacheConfiguration conf,
-                Object service) {
-            throw new AssertionError("should not be called");
-        }
 
         @Override
         public void initialize(CacheConfiguration configuration) {
@@ -158,11 +149,6 @@ public class Lifecycle extends AbstractCacheTCKTest {
         public void terminated(Map terminationFailures) {
             assertNotNull(terminationFailures);
             assertEquals(0, terminationFailures.size());
-        }
-
-        @Override
-        public void serviceManagerShutdownFailed(CacheExceptionContext cache, CacheLifecycle lifecycle) {
-            throw new AssertionError("should not be called");
         }
     }
 }

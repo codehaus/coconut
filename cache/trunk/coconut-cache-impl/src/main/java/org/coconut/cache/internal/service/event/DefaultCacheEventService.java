@@ -132,7 +132,13 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
             dispatch(InternalEvent.started(cache));
         }
     }
-
+    /** {@inheritDoc} */
+    public void afterStop(Cache<K, V> cache) {
+        //no impl
+//        if (doStopped) {
+//          //  dispatch(InternalEvent.started(cache));
+//        }
+    }
     /** {@inheritDoc} */
     public void afterTrimCache(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries, int previousSize, int newSize,

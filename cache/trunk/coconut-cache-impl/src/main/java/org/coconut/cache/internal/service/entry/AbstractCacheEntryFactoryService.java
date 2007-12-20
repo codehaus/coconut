@@ -30,8 +30,8 @@ import org.coconut.core.Clock;
  * @param <V>
  *            the type of mapped values
  */
-public abstract class AbstractCacheEntryFactoryService<K, V> 
-        implements InternalCacheEntryService<K, V> {
+public abstract class AbstractCacheEntryFactoryService<K, V> implements
+        InternalCacheEntryService<K, V> {
 
     /** Used for calculating timestamps. */
     private final Clock clock;
@@ -79,9 +79,9 @@ public abstract class AbstractCacheEntryFactoryService<K, V>
     }
 
     private void illegalAttribute(Attribute a, K key, Object illegal, Object defaultValue) {
-        String infoMsg = Resources.lookup(AbstractCacheEntryFactoryService.class, "ia", a, key,
+        String warning = Resources.lookup(AbstractCacheEntryFactoryService.class, "ia", a, key,
                 illegal.toString(), defaultValue.toString());
-        exceptionService.getHandler().handleWarning(exceptionService.createContext(infoMsg));
+        exceptionService.warning(warning);
     }
 
     /**

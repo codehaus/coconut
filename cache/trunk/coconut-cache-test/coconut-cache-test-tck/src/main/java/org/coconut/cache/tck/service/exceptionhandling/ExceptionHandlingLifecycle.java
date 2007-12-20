@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlers;
+import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
@@ -56,14 +56,14 @@ public class ExceptionHandlingLifecycle extends AbstractCacheTCKTest {
         assertEquals(15, status.get());
     }
 
-    class ErroneousExceptionHandler extends CacheExceptionHandlers.DefaultLoggingExceptionHandler {
+    class ErroneousExceptionHandler extends CacheExceptionHandler{
         @Override
         public void initialize(CacheConfiguration configuration) {
             throw new IllegalMonitorStateException();
         }
     }
 
-    class MyExceptionHandler extends CacheExceptionHandlers.DefaultLoggingExceptionHandler {
+    class MyExceptionHandler extends CacheExceptionHandler {
         @Override
         public void initialize(CacheConfiguration configuration) {
             assertEquals(conf, configuration);

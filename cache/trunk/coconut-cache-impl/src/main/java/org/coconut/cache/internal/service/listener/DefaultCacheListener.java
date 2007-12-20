@@ -172,4 +172,10 @@ public class DefaultCacheListener<K, V> implements InternalCacheListener<K, V> {
     public String toString() {
         return "Listener Service";
     }
+
+    public void afterStop(Cache<K, V> cache) {
+        if (event != null) {
+            event.afterStop(cache);
+        }
+    }
 }

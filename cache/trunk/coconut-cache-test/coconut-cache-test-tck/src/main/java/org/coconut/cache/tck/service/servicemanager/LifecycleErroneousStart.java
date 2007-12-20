@@ -3,16 +3,13 @@
  */
 package org.coconut.cache.tck.service.servicemanager;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheException;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
-import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlers;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
@@ -21,6 +18,7 @@ import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.lifecycle.AbstractLifecycleVerifier;
 import org.coconut.cache.test.util.lifecycle.LifecycleVerifier;
 import org.coconut.cache.test.util.lifecycle.LifecycleVerifierContext;
+import org.coconut.core.Loggers;
 import org.coconut.test.throwables.Error1;
 import org.coconut.test.throwables.RuntimeException1;
 import org.junit.After;
@@ -55,7 +53,7 @@ public class LifecycleErroneousStart extends AbstractCacheTCKTest {
      * {@link CacheExceptionHandler#lifecycleInitializationFailed(CacheConfiguration, Class, CacheLifecycle, RuntimeException)}
      * is called.
      */
-    @Test(expected = CacheException.class)
+    @Test(expected = RuntimeException1.class)
     public void exceptionInStart() {
         LifecycleVerifier lv = context.create(new AbstractCacheLifecycle() {
             @Override
@@ -103,7 +101,7 @@ public class LifecycleErroneousStart extends AbstractCacheTCKTest {
      * Tests that {@link CacheLifecycle#terminated()} is called on components that have
      * already been initialized. When other components fails to initialize.
      */
-    @Test(expected = CacheException.class)
+    @Test(expected = RuntimeException1.class)
     public void exceptionInStart3() {
         context.create();
         LifecycleVerifier lv = context.create(new AbstractCacheLifecycle() {
@@ -117,12 +115,7 @@ public class LifecycleErroneousStart extends AbstractCacheTCKTest {
         try {
             prestart();
             throw new AssertionError("Should have failed with IllegalMonitorStateException");
-        } catch (CacheException e) {
-            assertTrue(e.getCause() instanceof RuntimeException1);
-            throw e;
         } finally {
-            assertSame(lv, handler.service);
-            assertTrue(handler.cause instanceof RuntimeException1);
             assertEquals(0, handler.terminatationMap.size());
         }
     }
@@ -180,18 +173,17 @@ public class LifecycleErroneousStart extends AbstractCacheTCKTest {
             }
         };
         conf.serviceManager().add(alv1).add(alv2).add(alv3).c();
+        conf.setDefaultLogger(Loggers.NULL_LOGGER);
         setCache(conf);
         try {
             prestart();
             throw new AssertionError("Should have failed with IllegalMonitorStateException");
-        } catch (CacheException e) {
-            assertTrue(e.getCause() instanceof IllegalMonitorStateException);
+        } catch (IllegalMonitorStateException ok) {
+            
         }
-        assertSame(alv2, handler.service);
-        assertTrue(handler.cause instanceof IllegalMonitorStateException);
-        assertEquals(1, handler.shutdownMap.size());
-        assertTrue(handler.shutdownMap.get(alv1) instanceof ArithmeticException);
-        assertSame(c, handler.shutdownCache);
+//        assertEquals(1, handler.shutdownMap.size());
+//        assertTrue(handler.shutdownMap.get(alv1) instanceof ArithmeticException);
+//        assertSame(c, handler.shutdownCache);
 
         assertEquals(2, handler.terminatationMap.size());
         assertTrue(handler.terminatationMap.get(alv1) instanceof ArrayIndexOutOfBoundsException);
@@ -252,18 +244,17 @@ public class LifecycleErroneousStart extends AbstractCacheTCKTest {
             }
         };
         conf.serviceManager().add(alv1).add(alv2).add(alv3).c();
+        conf.setDefaultLogger(Loggers.NULL_LOGGER);
         setCache(conf);
         try {
             prestart();
             throw new AssertionError("Should have failed with IllegalMonitorStateException");
-        } catch (CacheException e) {
-            assertTrue(e.getCause() instanceof IllegalMonitorStateException);
+        } catch (IllegalMonitorStateException ok) {
+            
         }
-        assertSame(alv2, handler.service);
-        assertTrue(handler.cause instanceof IllegalMonitorStateException);
-        assertEquals(1, handler.shutdownMap.size());
-        assertTrue(handler.shutdownMap.get(alv1) instanceof ArithmeticException);
-        assertSame(c, handler.shutdownCache);
+//        assertEquals(1, handler.shutdownMap.size());
+//        assertTrue(handler.shutdownMap.get(alv1) instanceof ArithmeticException);
+//        assertSame(c, handler.shutdownCache);
 
         assertEquals(2, handler.terminatationMap.size());
         assertTrue(handler.terminatationMap.get(alv1) instanceof ArrayIndexOutOfBoundsException);
@@ -271,33 +262,11 @@ public class LifecycleErroneousStart extends AbstractCacheTCKTest {
         assertEquals(6, verifier.get());
     }
 
-    class StartExceptionHandler extends CacheExceptionHandlers.DefaultLoggingExceptionHandler {
+    class StartExceptionHandler extends CacheExceptionHandler {
         Map terminatationMap;
-
-        Throwable cause;
-
-        Object service;
-
-        Cache shutdownCache;
-
-        Map shutdownMap = new HashMap();
 
         CacheExceptionContext context;
 
-        @Override
-        public void serviceManagerStartFailed(CacheExceptionContext context, CacheConfiguration conf,
-                Object service) {
-            this.cause = context.getCause();
-            this.service = service;
-            this.context = context;
-        }
-
-        @Override
-        public void serviceManagerShutdownFailed(CacheExceptionContext context,
-                CacheLifecycle lifecycle) {
-            this.shutdownCache = context.getCache();
-            shutdownMap.put(lifecycle, context.getCause());
-        }
 
         @Override
         public void terminated(Map terminationFailures) {
