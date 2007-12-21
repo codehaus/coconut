@@ -149,7 +149,7 @@ public class LifecycleErroneousStart extends AbstractCacheTCKTest {
         };
         AbstractLifecycleVerifier alv2 = new AbstractLifecycleVerifier() {
             @Override
-            public void start(CacheServiceManagerService serviceManager) {
+            public void start(CacheServiceManagerService serviceManager) throws Exception{
                 assertEquals(1, verifier.getAndIncrement());
                 super.start(serviceManager);
                 throw new IllegalMonitorStateException();
@@ -220,7 +220,7 @@ public class LifecycleErroneousStart extends AbstractCacheTCKTest {
         };
         AbstractLifecycleVerifier alv2 = new AbstractLifecycleVerifier() {
             @Override
-            public void start(CacheServiceManagerService serviceManager) {
+            public void start(CacheServiceManagerService serviceManager) throws Exception{
                 assertEquals(1, verifier.getAndIncrement());
                 super.start(serviceManager);
                 throw new IllegalMonitorStateException();

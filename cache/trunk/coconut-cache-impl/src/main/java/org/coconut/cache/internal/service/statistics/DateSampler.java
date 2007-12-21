@@ -3,11 +3,7 @@
  */
 package org.coconut.cache.internal.service.statistics;
 
-import java.util.Date;
-
 import org.coconut.core.Clock;
-import org.coconut.management.annotation.ManagedAttribute;
-import org.coconut.management.annotation.ManagedOperation;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

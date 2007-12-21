@@ -11,11 +11,11 @@ import static junit.framework.Assert.assertTrue;
 
 import java.util.Arrays;
 
-import org.coconut.core.EventProcessor;
 import org.coconut.event.bus.EventBus;
 import org.coconut.event.bus.EventSubscription;
 import org.coconut.operations.Predicates;
 import org.coconut.operations.StringPredicates;
+import org.coconut.operations.Ops.Procedure;
 import org.coconut.test.TestUtil;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -49,7 +49,7 @@ public class DefaultEventBusTest {
 
     @Test
     public void subscribe() {
-        EventProcessor ep = TestUtil.dummy(EventProcessor.class);
+        Procedure ep = TestUtil.dummy(Procedure.class);
         EventSubscription es = bus.subscribe(ep);
         assertNotNull(es);
 
@@ -63,7 +63,7 @@ public class DefaultEventBusTest {
 
     @Test
     public void subscribe2() {
-        EventProcessor ep =TestUtil.dummy(EventProcessor.class);
+        Procedure ep =TestUtil.dummy(Procedure.class);
         EventSubscription es = bus.subscribe(ep, Predicates.FALSE);
         assertNotNull(es);
         assertSame(ep, es.getEventProcessor());
@@ -76,7 +76,7 @@ public class DefaultEventBusTest {
 
     @Test
     public void subscribe3() {
-        EventProcessor ep = TestUtil.dummy(EventProcessor.class);
+        Procedure ep = TestUtil.dummy(Procedure.class);
         EventSubscription es = bus.subscribe(ep, Predicates.FALSE, "foo");
         assertNotNull(es);
         assertSame(ep, es.getEventProcessor());
@@ -89,8 +89,8 @@ public class DefaultEventBusTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void subscribe3IAE() {
-        bus.subscribe(TestUtil.dummy(EventProcessor.class), Predicates.FALSE, "foo");
-        bus.subscribe(TestUtil.dummy(EventProcessor.class), Predicates.FALSE, "foo");
+        bus.subscribe(TestUtil.dummy(Procedure.class), Predicates.FALSE, "foo");
+        bus.subscribe(TestUtil.dummy(Procedure.class), Predicates.FALSE, "foo");
     }
 
     @Test(expected = NullPointerException.class)
@@ -105,7 +105,7 @@ public class DefaultEventBusTest {
 
     @Test(expected = NullPointerException.class)
     public void subscribe2NPE2() {
-        bus.subscribe(TestUtil.dummy(EventProcessor.class), null);
+        bus.subscribe(TestUtil.dummy(Procedure.class), null);
     }
 
     @Test(expected = NullPointerException.class)
@@ -115,12 +115,12 @@ public class DefaultEventBusTest {
 
     @Test(expected = NullPointerException.class)
     public void subscribe3NPE2() {
-        bus.subscribe(TestUtil.dummy(EventProcessor.class), null, "foo");
+        bus.subscribe(TestUtil.dummy(Procedure.class), null, "foo");
     }
 
     @Test(expected = NullPointerException.class)
     public void subscribe3NPE3() {
-        bus.subscribe(TestUtil.dummy(EventProcessor.class), Predicates.TRUE, null);
+        bus.subscribe(TestUtil.dummy(Procedure.class), Predicates.TRUE, null);
     }
 
     @Test(expected = NullPointerException.class)
@@ -140,18 +140,18 @@ public class DefaultEventBusTest {
 
     @Test(expected = NullPointerException.class)
     public void processNPE() {
-        bus.process(null);
+        bus.apply(null);
     }
 
     @Test
     public void offer() {
-        final EventProcessor ep1 = context.mock(EventProcessor.class);
-        final EventProcessor ep2 = context.mock(EventProcessor.class);
+        final Procedure ep1 = context.mock(Procedure.class);
+        final Procedure ep2 = context.mock(Procedure.class);
         context.checking(new Expectations() {
             {
-                one(ep1).process("foob");
-                one(ep2).process("foob");
-                one(ep1).process("fof");
+                one(ep1).apply("foob");
+                one(ep2).apply("foob");
+                one(ep1).apply("fof");
             }
         });
         bus.subscribe(ep1, StringPredicates.startsWith("fo"));
@@ -163,31 +163,31 @@ public class DefaultEventBusTest {
 
     @Test
     public void process() {
-        final EventProcessor ep1 = context.mock(EventProcessor.class);
-        final EventProcessor ep2 = context.mock(EventProcessor.class);
+        final Procedure ep1 = context.mock(Procedure.class);
+        final Procedure ep2 = context.mock(Procedure.class);
         context.checking(new Expectations() {
             {
-                one(ep1).process("foob");
-                one(ep2).process("foob");
-                one(ep1).process("fof");
+                one(ep1).apply("foob");
+                one(ep2).apply("foob");
+                one(ep1).apply("fof");
             }
         });
         bus.subscribe(ep1, StringPredicates.startsWith("fo"));
         bus.subscribe(ep2, StringPredicates.startsWith("foo"));
         assertEquals(2, bus.getSubscribers().size());
-        bus.process("foob");
+        bus.apply("foob");
         bus.offer("fof");
     }
 
     @Test
     public void offerAll() {
-        final EventProcessor ep1 = context.mock(EventProcessor.class);
-        final EventProcessor ep2 = context.mock(EventProcessor.class);
+        final Procedure ep1 = context.mock(Procedure.class);
+        final Procedure ep2 = context.mock(Procedure.class);
         context.checking(new Expectations() {
             {
-                one(ep1).process("foob");
-                one(ep2).process("foob");
-                one(ep1).process("fof");
+                one(ep1).apply("foob");
+                one(ep2).apply("foob");
+                one(ep1).apply("fof");
             }
         });
         bus.subscribe(ep1, StringPredicates.startsWith("fo"));
@@ -198,30 +198,30 @@ public class DefaultEventBusTest {
 
     @Test
     public void unsubscribe() {
-        final EventProcessor ep1 = context.mock(EventProcessor.class);
-        final EventProcessor ep2 = context.mock(EventProcessor.class);
-        final EventProcessor ep3 = context.mock(EventProcessor.class);
+        final Procedure ep1 = context.mock(Procedure.class);
+        final Procedure ep2 = context.mock(Procedure.class);
+        final Procedure ep3 = context.mock(Procedure.class);
         context.checking(new Expectations() {
             {
-                one(ep1).process("foo");
-                one(ep2).process("foo");
-                one(ep3).process("foo");
-                one(ep1).process("fooo");
-                one(ep2).process("fooo");
+                one(ep1).apply("foo");
+                one(ep2).apply("foo");
+                one(ep3).apply("foo");
+                one(ep1).apply("fooo");
+                one(ep2).apply("fooo");
             }
         });
         bus.subscribe(ep1);
         bus.subscribe(ep2);
         EventSubscription<String> es3 = bus.subscribe(ep3);
         assertEquals(3, bus.getSubscribers().size());
-        bus.process("foo");
+        bus.apply("foo");
 
         es3.unsubscribe();
         assertFalse(es3.isValid());
         assertEquals(2, bus.getSubscribers().size());
-        bus.process("fooo");
+        bus.apply("fooo");
         bus.unsubscribeAll();
-        bus.process("foooo");
+        bus.apply("foooo");
     }
 
 //    @Test

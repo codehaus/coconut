@@ -3,11 +3,12 @@
  */
 package org.coconut.cache.tck.service.servicemanager;
 
+import static org.coconut.test.CollectionTestUtil.M1_TO_M5_MAP;
+
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
-import static org.coconut.test.CollectionTestUtil.M1_TO_M5_MAP;
+
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheException;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.test.throwables.RuntimeException1;

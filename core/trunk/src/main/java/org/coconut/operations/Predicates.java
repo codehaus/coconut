@@ -282,8 +282,8 @@ public final class Predicates {
     }
 
     /**
-     * As {@link #between(Comparable, Comparable)} except using the specified {@link Comparator}
-     * when evaluating elements.
+     * As {@link #between(Comparable, Comparable)} except using the specified
+     * {@link Comparator} when evaluating elements.
      * 
      * @param left
      *            the left-hand element to compare with
@@ -1085,8 +1085,10 @@ public final class Predicates {
          * 
          * @param object
          *            the object to compare with.
+         * @param <T>
+         *            type of objects accepted by the predicate
          */
-        public GreaterThenOrEqualPredicate(E object) {
+        public <T extends Comparable<? super E>> GreaterThenOrEqualPredicate(T object) {
             if (object == null) {
                 throw new NullPointerException("element is null");
             }
@@ -1164,6 +1166,8 @@ public final class Predicates {
          * 
          * @param object
          *            the object to compare with.
+         * @param <T>
+         *            type of objects accepted by the predicate
          */
         public <T extends Comparable<? super E>> GreaterThenPredicate(T object) {
             if (object == null) {
@@ -1423,15 +1427,17 @@ public final class Predicates {
          * 
          * @param object
          *            the object to compare with.
+         * @param <T>
+         *            type of objects accepted by the predicate
          */
         public <T extends Comparable<? super E>> LessThenOrEqualPredicate(T object) {
             if (object == null) {
                 throw new NullPointerException("element is null");
-            } 
+            }
             this.object = object;
             this.comparator = Comparators.NATURAL_COMPARATOR;
         }
- 
+
         /**
          * Creates a new less then or equal predicate.
          * 
@@ -1503,6 +1509,8 @@ public final class Predicates {
          * 
          * @param object
          *            the object to compare with.
+         * @param <T>
+         *            type of objects accepted by the predicate
          */
         public <T extends Comparable<? super E>> LessThenPredicate(T object) {
             if (object == null) {

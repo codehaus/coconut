@@ -7,9 +7,15 @@ package org.coconut.internal.util;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-import junit.framework.*;
-import java.util.concurrent.atomic.*;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.concurrent.atomic.AtomicLong;
+
+import junit.framework.TestCase;
 
 public class AtomicDoubleTest extends TestCase {
 

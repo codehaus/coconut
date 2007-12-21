@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.CacheServices;
 import org.coconut.cache.defaults.UnsynchronizedCache;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 
@@ -22,9 +21,8 @@ public class SpecialExpirationValueExample {
         cc.expiration().setDefaultTimeToLive(24 * 60 * 60, TimeUnit.SECONDS);
         Cache<String, String> cache = cc.newCacheInstance(UnsynchronizedCache.class);
 
-        CacheExpirationService<String, String> e = CacheServices.expiration(cache);
-        e.put("key1", "value", CacheExpirationService.DEFAULT_EXPIRATION,
-                TimeUnit.SECONDS);
+        CacheExpirationService<String, String> e = cache.services().expiration();
+        cache.put("key1", "value");
         // element will expire after 24 hours
 
         e.put("key2", "value", CacheExpirationService.NEVER_EXPIRE, TimeUnit.SECONDS);

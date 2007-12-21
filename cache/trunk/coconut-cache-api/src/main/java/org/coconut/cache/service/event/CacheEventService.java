@@ -5,10 +5,10 @@ package org.coconut.cache.service.event;
 
 import java.util.Collection;
 
-import org.coconut.core.EventProcessor;
 import org.coconut.event.bus.EventBus;
 import org.coconut.event.bus.EventSubscription;
 import org.coconut.operations.Ops.Predicate;
+import org.coconut.operations.Ops.Procedure;
 
 /**
  * The CacheEventService can be used to subscribe to CacheEvent's raised by the cache.
@@ -52,7 +52,7 @@ public interface CacheEventService<K, V> extends EventBus<CacheEvent<K, V>> {
      * @throws IllegalStateException
      *             if the cache has been shutdown
      */
-    void process(CacheEvent<K, V> event);
+    void apply(CacheEvent<K, V> event);
 
     /**
      * A failure encountered while attempting to offering elements to an event bus may
@@ -92,7 +92,7 @@ public interface CacheEventService<K, V> extends EventBus<CacheEvent<K, V>> {
      *             if the cache has been shutdown
      */
     EventSubscription<CacheEvent<K, V>> subscribe(
-            EventProcessor<? super CacheEvent<K, V>> eventHandler);
+            Procedure<? super CacheEvent<K, V>> eventHandler);
 
     /**
      * Creates an subscription that will be notified for any event that is accepted by the
@@ -107,7 +107,7 @@ public interface CacheEventService<K, V> extends EventBus<CacheEvent<K, V>> {
      *             if the cache has been shutdown
      */
     EventSubscription<CacheEvent<K, V>> subscribe(
-            EventProcessor<? super CacheEvent<K, V>> eventHandler,
+            Procedure<? super CacheEvent<K, V>> eventHandler,
             Predicate<? super CacheEvent<K, V>> filter);
 
     /**
@@ -129,6 +129,6 @@ public interface CacheEventService<K, V> extends EventBus<CacheEvent<K, V>> {
      *             if the cache has been shutdown
      */
     EventSubscription<CacheEvent<K, V>> subscribe(
-            EventProcessor<? super CacheEvent<K, V>> listener,
+            Procedure<? super CacheEvent<K, V>> listener,
             Predicate<? super CacheEvent<K, V>> filter, String name);
 }

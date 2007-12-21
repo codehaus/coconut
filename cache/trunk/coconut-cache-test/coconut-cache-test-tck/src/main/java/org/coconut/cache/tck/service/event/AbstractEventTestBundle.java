@@ -17,15 +17,14 @@ import junit.framework.AssertionFailedError;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.CacheServices;
 import org.coconut.cache.service.event.CacheEntryEvent;
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
-import org.coconut.core.EventProcessor;
 import org.coconut.event.bus.EventSubscription;
 import org.coconut.operations.Predicates;
 import org.coconut.operations.Ops.Predicate;
+import org.coconut.operations.Ops.Procedure;
 import org.junit.After;
 import org.junit.Before;
 
@@ -38,7 +37,7 @@ public class AbstractEventTestBundle extends AbstractCacheTCKTest {
 
     private EventWrapper ev;
 
-    private EventProcessor<CacheEvent<Integer, String>> eventHandler;
+    private Procedure<CacheEvent<Integer, String>> eventHandler;
 
     LinkedBlockingQueue<EventWrapper> events;
 
@@ -46,8 +45,8 @@ public class AbstractEventTestBundle extends AbstractCacheTCKTest {
     public void setup() {
         conf.event().setEnabled(true);
         events = new LinkedBlockingQueue<EventWrapper>();
-        eventHandler = new EventProcessor<CacheEvent<Integer, String>>() {
-            public void process(CacheEvent<Integer, String> event) {
+        eventHandler = new Procedure<CacheEvent<Integer, String>>() {
+            public void apply(CacheEvent<Integer, String> event) {
                 events.add(new EventWrapper(event));
             }
         };
@@ -183,7 +182,7 @@ public class AbstractEventTestBundle extends AbstractCacheTCKTest {
     }
 
     protected EventSubscription<?> subscribe(Predicate f) {
-        return subscribe(CacheServices.event(c), f);
+        return subscribe(c.services().event(), f);
     }
 
     CacheConfiguration<Integer, String> anythingBut(Class<?> clazz) {

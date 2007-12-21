@@ -5,7 +5,6 @@ package org.coconut.cache.service.statistics;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.CacheServices;
 
 /**
  * This is the main interface for controlling the statistics service of a cache at
@@ -20,7 +19,7 @@ import org.coconut.cache.CacheServices;
  * statistics.resetStatistics();
  * </pre>
  * 
- * Or by using {@link CacheServices}
+ * Or by using {@link CacheServicesOld}
  * 
  * <pre>
  * Cache&lt;?, ?&gt; c = someCache;

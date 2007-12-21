@@ -6,14 +6,10 @@ package org.coconut.core;
 
 import static org.coconut.test.TestUtil.assertIsSerializable;
 import static org.coconut.test.TestUtil.assertNotSerializable;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Queue;
-import java.util.concurrent.ArrayBlockingQueue;
-
-import org.coconut.test.SystemErrOutHelper;
+import org.coconut.operations.Ops.Procedure;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
@@ -34,7 +30,7 @@ public class EventUtilsTest {
 
     @Test
     public void dummyEventProcessor() {
-        EventUtils.dummyEventProcessor().process(null);
+        EventUtils.dummyEventProcessor().apply(null);
         assertIsSerializable(EventUtils.dummyEventProcessor());
     }
 
@@ -58,8 +54,8 @@ public class EventUtilsTest {
                 one(subscriber).offer(0);
             }
         });
-        EventProcessor processor = EventUtils.fromOfferable(subscriber);
-        processor.process(0);
+        Procedure processor = EventUtils.fromOfferable(subscriber);
+        processor.apply(0);
         assertNotSerializable(processor);
         assertIsSerializable(EventUtils.fromOfferable(EventUtils.dummyOfferableFalse()));
     }
@@ -69,71 +65,14 @@ public class EventUtilsTest {
         EventUtils.fromOfferable((Offerable) null);
     }
 
-    @Test
-    public void fromQueue() {
-        final Queue q = context.mock(Queue.class);
-        context.checking(new Expectations() {
-            {
-                one(q).offer(0);
-            }
-        });
-        EventProcessor processor = EventUtils.fromQueue(q);
-        processor.process(0);
-        assertNotSerializable(processor);
-        assertIsSerializable(EventUtils.fromQueue(new ArrayBlockingQueue(1)));
 
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void fromQueueNPE() {
-        EventUtils.fromQueue(null);
-    }
-
-    @Test
-    public void toSystemOut() {
-        SystemErrOutHelper str = SystemErrOutHelper.get();
-        try {
-            EventProcessor eh = EventUtils.toSystemOut();
-            eh.process(234);
-            assertEquals("234\r\n", str.getFromLast(0));
-        } finally {
-            str.terminate();
-        }
-    }
-
-    @Test
-    public void toSystemOutSafe() {
-        SystemErrOutHelper str = SystemErrOutHelper.get();
-        try {
-            EventProcessor eh = EventUtils.toSystemOutSafe();
-            eh.process(234);
-            assertEquals("234\r\n", str.getFromLast(0));
-        } finally {
-            str.terminate();
-        }
-    }
-
-    @Test
-    public void toPrintStream() {
-        toSystemOut();// hack
-    }
-
-    @Test
-    public void toPrintStreamSafe() {
-        toSystemOutSafe();// hack
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void toPrintStreamNPE() {
-        EventUtils.toPrintStream(null);
-    }
 
     @Test
     public void toOfferable() {
-        final EventProcessor eh = context.mock(EventProcessor.class);
+        final Procedure eh = context.mock(Procedure.class);
         context.checking(new Expectations() {
             {
-                one(eh).process(0);
+                one(eh).apply(0);
             }
         });
         Offerable o = EventUtils.toOfferable(eh);
@@ -149,11 +88,11 @@ public class EventUtilsTest {
 
     @Test
     public void toOfferableSafe() {
-        final EventProcessor eh = context.mock(EventProcessor.class);
+        final Procedure eh = context.mock(Procedure.class);
         context.checking(new Expectations() {
             {
-                one(eh).process(0);
-                one(eh).process(1);
+                one(eh).apply(0);
+                one(eh).apply(1);
                 will(throwException(new IllegalArgumentException()));
             }
         });
@@ -170,9 +109,5 @@ public class EventUtilsTest {
         EventUtils.toOfferableSafe(null);
     }
 
-    @Test(expected = NullPointerException.class)
-    public void toPrintStreamSafeNPE() {
-        EventUtils.toPrintStreamSafe(null);
-    }
 
 }

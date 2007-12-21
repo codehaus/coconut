@@ -4,7 +4,6 @@
 package org.coconut.cache.service.management;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheServices;
 import org.coconut.management.ManagedGroup;
 
 /**
@@ -20,7 +19,7 @@ import org.coconut.management.ManagedGroup;
  * ces.trimToSize(10);
  * </pre>
  * 
- * Or by using {@link CacheServices}
+ * Or by using {@link CacheServicesOld}
  * 
  * <pre>
  * Cache&lt;?, ?&gt; c = someCache;

@@ -21,7 +21,6 @@ import net.jcip.annotations.ThreadSafe;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.CacheServices;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
@@ -225,7 +224,7 @@ public class AbstractCacheTCKTest extends Assert {
 
     protected <T> T findMXBean(MBeanServer server, Class<T> clazz) {
         Collection<ManagedGroup> found = new ArrayList<ManagedGroup>();
-        doFindMXBeans(found, CacheServices.management(c), clazz);
+        doFindMXBeans(found, c.services().management(), clazz);
         if (found.size() == 0) {
             throw new IllegalArgumentException("Did not find any service " + clazz);
         } else if (found.size() == 1) {

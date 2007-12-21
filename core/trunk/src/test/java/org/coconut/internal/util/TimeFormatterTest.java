@@ -3,9 +3,8 @@
  */
 package org.coconut.internal.util;
 
-import static org.junit.Assert.*;
-
-import java.text.DecimalFormat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -29,6 +28,9 @@ public class TimeFormatterTest {
                 || tf.formatNanos(1000L).equals("0.001 ms"));
         assertTrue(tf.formatNanos(12321033L).equals("12,321 ms")
                 || tf.formatNanos(12321033L).equals("12.321 ms"));
+        assertTrue(tf.formatNanos(12321033000L).equals("12,321 s")
+                || tf.formatNanos(12321033000L).equals("12.321 s"));
+
     }
 
     @Test

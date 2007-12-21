@@ -283,4 +283,8 @@ public class DummyCache<K, V> implements Cache<K, V> {
             super(configuration);
         }
     }
+
+    public CacheServices<K, V> services() {
+        return new CacheServices<K, V>(this);
+    }
 }

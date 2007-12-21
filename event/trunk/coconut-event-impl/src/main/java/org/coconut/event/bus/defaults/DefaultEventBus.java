@@ -12,12 +12,12 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
 
-import org.coconut.core.EventProcessor;
 import org.coconut.event.bus.EventBus;
 import org.coconut.event.bus.EventSubscription;
 import org.coconut.internal.predicatematcher.DefaultPredicateMatcher;
 import org.coconut.internal.predicatematcher.PredicateMatcher;
 import org.coconut.operations.Ops.Predicate;
+import org.coconut.operations.Ops.Procedure;
 
 /**
  * The order of subscribers are maintained.
@@ -44,7 +44,7 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
     }
 
     /** {@inheritDoc} */
-    public EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler,
+    public EventSubscription<E> subscribe(Procedure<? super E> eventHandler,
             Predicate<? super E> filter) {
         if (eventHandler == null) {
             throw new NullPointerException("eventHandler is null");
@@ -70,7 +70,7 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
     }
 
     /** {@inheritDoc} */
-    public EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler,
+    public EventSubscription<E> subscribe(Procedure<? super E> eventHandler,
             Predicate<? super E> filter, String name) {
         if (eventHandler == null) {
             throw new NullPointerException("eventHandler is null");
@@ -112,7 +112,7 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
         }
     }
 
-    private DefaultEventSubscription<E> newSubscription(EventProcessor<? super E> eventHandler,
+    private DefaultEventSubscription<E> newSubscription(Procedure<? super E> eventHandler,
             Predicate<? super E> filter, String name) {
         return new DefaultEventSubscription<E>(this, name, eventHandler, filter);
     }
@@ -120,7 +120,7 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
     protected void deliver(final E element, DefaultEventSubscription<E> s) {
         try {
             // check if still valid subscription??
-            s.getEventProcessor().process(element);
+            s.getEventProcessor().apply(element);
         } catch (RuntimeException e) {
             deliveryFailed(s, element, e);
         }

@@ -7,10 +7,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.service.management.CacheMXBean;
-import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.management.ManagedGroup;
-import org.coconut.test.TestUtil;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;

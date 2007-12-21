@@ -9,9 +9,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.spi.AbstractAttribute;
 import org.coconut.cache.service.loading.AbstractCacheLoader;
-import org.coconut.core.Logger;
 import org.coconut.test.TestUtil;
 
 /**

@@ -8,7 +8,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheServices;
 import org.coconut.cache.defaults.UnsynchronizedCache;
 import org.coconut.cache.service.eviction.CacheEvictionService;
 
@@ -25,23 +24,21 @@ public class ScheduableTrimmerExample {
 
         private final int trimTo;
 
-        public TrimToSize(Cache<?,?> cache, int threshold, int trimTo) {
+        public TrimToSize(Cache<?, ?> cache, int threshold, int trimTo) {
             if (cache == null) {
                 throw new NullPointerException("cache is null");
             } else if (threshold < 0) {
                 throw new IllegalArgumentException("threshold must be non negative, was "
                         + threshold);
             } else if (trimTo < 0) {
-                throw new IllegalArgumentException("trimTo must be non negative, was "
-                        + trimTo);
+                throw new IllegalArgumentException("trimTo must be non negative, was " + trimTo);
             } else if (trimTo >= threshold) {
-                throw new IllegalArgumentException(
-                        "trimTo must smaller then threshold, was " + trimTo + " and "
-                                + threshold);
+                throw new IllegalArgumentException("trimTo must smaller then threshold, was "
+                        + trimTo + " and " + threshold);
             }
             this.threshold = threshold;
             this.trimTo = trimTo;
-            c = CacheServices.eviction(cache);
+            c = cache.services().eviction();
         }
 
         /**
@@ -55,7 +52,7 @@ public class ScheduableTrimmerExample {
     public static void main(String[] args) {
         UnsynchronizedCache<String, String> c = new UnsynchronizedCache<String, String>();
         ScheduledExecutorService ses = Executors.newSingleThreadScheduledExecutor();
-        
+
         ses.scheduleAtFixedRate(new TrimToSize(c, 1100, 1000), 0, 1, TimeUnit.SECONDS);
 
         // other code

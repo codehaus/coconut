@@ -3,13 +3,7 @@
  */
 package org.coconut.cache.test.operations;
 
-import java.util.Arrays;
-import java.util.Collection;
-
-import javax.crypto.KeyGenerator;
-
 import org.coconut.cache.service.loading.CacheLoadingService;
-import org.coconut.operations.Ops.Generator;
 
 /**
  * Used to invoke operations on {@link CacheLoadingService}.

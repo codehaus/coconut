@@ -3,9 +3,9 @@
  */
 package org.coconut.event.bus;
 
-import org.coconut.core.EventProcessor;
 import org.coconut.operations.Predicates;
 import org.coconut.operations.Ops.Predicate;
+import org.coconut.operations.Ops.Procedure;
 
 /**
  * This interface represent a subscription of a particular sets of events by its predicate
@@ -33,7 +33,7 @@ public interface EventSubscription<E> {
      * 
      * @return the listener for this subscription
      */
-    EventProcessor<? super E> getEventProcessor();
+    Procedure<? super E> getEventProcessor();
 
     /**
      * Returns the predicate that is used for this subscription, or

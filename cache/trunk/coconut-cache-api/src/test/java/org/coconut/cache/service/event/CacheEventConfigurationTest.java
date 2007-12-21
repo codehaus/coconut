@@ -8,10 +8,6 @@ import static junit.framework.Assert.assertSame;
 import static junit.framework.Assert.assertTrue;
 import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
 
-import java.lang.reflect.Field;
-import java.util.Set;
-
-import org.coconut.cache.spi.IllegalCacheConfigurationException;
 import org.junit.Before;
 import org.junit.Test;
 

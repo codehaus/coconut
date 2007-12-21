@@ -3,7 +3,8 @@
  */
 package org.coconut.cache.service.loading;
 
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
 
 import org.coconut.attribute.Attributes;
 import org.coconut.cache.Cache;

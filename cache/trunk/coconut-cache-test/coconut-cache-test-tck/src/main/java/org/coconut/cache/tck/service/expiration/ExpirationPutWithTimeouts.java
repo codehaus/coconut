@@ -69,7 +69,7 @@ public class ExpirationPutWithTimeouts extends AbstractExpirationTestBundle {
 
     @Test(expected = NullPointerException.class)
     public void testPutTimeoutKeyNull() {
-        expiration().put(null, "A", CacheExpirationService.DEFAULT_EXPIRATION, TimeUnit.SECONDS);
+        expiration().put(null, "A", 0, TimeUnit.SECONDS);
     }
 
     @Test(expected = NullPointerException.class)
@@ -79,7 +79,7 @@ public class ExpirationPutWithTimeouts extends AbstractExpirationTestBundle {
 
     @Test(expected = NullPointerException.class)
     public void testPutTimeoutValueNull() {
-        expiration().put(1, null, CacheExpirationService.DEFAULT_EXPIRATION, TimeUnit.SECONDS);
+        expiration().put(1, null, 0, TimeUnit.SECONDS);
     }
 
     @Test(expected = NullPointerException.class)
@@ -137,7 +137,7 @@ public class ExpirationPutWithTimeouts extends AbstractExpirationTestBundle {
 
     @Test(expected = NullPointerException.class)
     public void testPutTimeoutMapNull() {
-        expiration().putAll(null, CacheExpirationService.DEFAULT_EXPIRATION, TimeUnit.SECONDS);
+        expiration().putAll(null, 0, TimeUnit.SECONDS);
     }
 
     @Test(expected = NullPointerException.class)

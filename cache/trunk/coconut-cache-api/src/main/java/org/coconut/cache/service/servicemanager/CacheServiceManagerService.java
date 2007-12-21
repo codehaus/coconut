@@ -6,7 +6,6 @@ package org.coconut.cache.service.servicemanager;
 import java.util.Map;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheServices;
 
 /**
  * This is the main interface for controlling the services of a cache at runtime.
@@ -21,7 +20,7 @@ import org.coconut.cache.CacheServices;
  * ces.trimToSize(10);
  * </pre>
  * 
- * Or by using {@link CacheServices}
+ * Or by using {@link CacheServicesOld}
  * 
  * <pre>
  * Cache&lt;?, ?&gt; c = someCache;
@@ -46,7 +45,7 @@ public interface CacheServiceManagerService {
      *             if no service of the specified type exist
      * @throws NullPointerException
      *             if the specified service is null
-     * @see org.coconut.cache.CacheServices
+     * @see org.coconut.cache.CacheServicesOld
      * @see CacheServiceManagerService#hasService(Class)
      * @see CacheServiceManagerService#getAllServices()
      */

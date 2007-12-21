@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.CacheServices;
 import org.coconut.cache.defaults.UnsynchronizedCache;
 
 /**
@@ -20,7 +19,7 @@ public class ReloadEntryExample {
         CacheConfiguration<String, String> cc = CacheConfiguration.create();
         cc.loading().setDefaultTimeToRefresh(55 * 60, TimeUnit.SECONDS);
         Cache<String, String> cache = cc.newCacheInstance(UnsynchronizedCache.class);
-        CacheServices.expiration(cache).put("key", "value", 60 * 60, TimeUnit.SECONDS);
+        cache.services().expiration().put("key", "value", 60 * 60, TimeUnit.SECONDS);
         // element will expire after 1 hours, but should be reloaded 5 minutes
         // before it expires.
         // END SNIPPET: class

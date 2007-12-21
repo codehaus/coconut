@@ -5,7 +5,6 @@ package org.coconut.cache.tck.service.event;
 
 import static org.coconut.test.CollectionTestUtil.M1;
 
-import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemAdded;

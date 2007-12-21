@@ -103,6 +103,11 @@ public abstract class TimeFormatter {
         protected String doFormat(int millies, int micros, int nano) {
             return Z.format((millies * 1000 + micros) / 1000.0) + " ms";
         }
+
+        @Override
+        protected String doFormat(int seconds, int millies, int micros, int nano) {
+            return Z.format((seconds * 1000 + millies) / 1000.0) + " s";
+        }
     }
 
     static class UnixTime extends TimeFormatter {

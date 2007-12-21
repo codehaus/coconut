@@ -6,7 +6,8 @@ package org.coconut.cache.tck.service.eviction;
 import static org.coconut.test.CollectionTestUtil.M1;
 import static org.coconut.test.CollectionTestUtil.M2;
 import static org.coconut.test.CollectionTestUtil.M3;
-import static org.coconut.test.CollectionTestUtil.*;
+import static org.coconut.test.CollectionTestUtil.M4;
+import static org.coconut.test.CollectionTestUtil.M5;
 
 import java.util.Arrays;
 

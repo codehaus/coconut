@@ -5,13 +5,12 @@ package org.coconut.cache.examples.loading;
 
 //START SNIPPET: Class
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheServices;
 import org.coconut.cache.service.loading.CacheLoadingService;
 
 public class VariousLoading {
     public static void main(String[] args) {
         Cache<String, String> cache = null;// replace with real cache instance
-        CacheLoadingService<String, String> cls = CacheServices.loading(cache);
+        CacheLoadingService<String, String> cls = cache.services().loading();
 
         //Forced loading will always load the specified elements
         cls.forceLoad("http://www.google.com"); //will load the specified url even if it already present in the cache

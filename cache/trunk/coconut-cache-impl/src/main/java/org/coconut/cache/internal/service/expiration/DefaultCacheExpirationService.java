@@ -82,12 +82,10 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
                 .getDefaultTimeToLiveTimeNs(), unit);
     }
 
-    /** {@inheritDoc} */
     public Predicate<CacheEntry<K, V>> getExpirationFilter() {
         return expirationFilter;
     }
 
-    /** {@inheritDoc} */
     public boolean isExpired(CacheEntry<K, V> entry) {
         return ExpirationUtils.isExpired(entry, clock, expirationFilter);
     }
@@ -106,7 +104,7 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
 
     /** {@inheritDoc} */
     public V put(K key, V value, long timeToLive, TimeUnit unit) {
-        if (timeToLive == CacheExpirationService.DEFAULT_EXPIRATION) {
+        if (timeToLive == 0) {
             return cache.put(key, value);
         } else {
             AttributeMap map = attributeFactory.createMap();
@@ -117,7 +115,7 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
 
     /** {@inheritDoc} */
     public void putAll(Map<? extends K, ? extends V> t, long timeToLive, TimeUnit unit) {
-        if (timeToLive == CacheExpirationService.DEFAULT_EXPIRATION) {
+        if (timeToLive == 0) {
             cache.putAll(t);
         } else {
             HashMap<K, AttributeMap> attributes = new HashMap<K, AttributeMap>();

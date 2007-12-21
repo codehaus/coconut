@@ -5,9 +5,9 @@ package org.coconut.event.bus.defaults;
 
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.coconut.core.EventProcessor;
 import org.coconut.event.bus.EventSubscription;
 import org.coconut.operations.Ops.Predicate;
+import org.coconut.operations.Ops.Procedure;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -18,7 +18,7 @@ class DefaultEventSubscription<E> extends ReentrantReadWriteLock implements Even
     private final DefaultEventBus<E> bus;
 
     /** The destination of events for this subscription. */
-    private final EventProcessor<? super E> destination;
+    private final Procedure<? super E> destination;
 
     /**
      * The Predicate that is used to decide, if a given event should be delivered to this
@@ -45,7 +45,7 @@ class DefaultEventSubscription<E> extends ReentrantReadWriteLock implements Even
      *            delivered to this subscriptions destination
      */
     DefaultEventSubscription(DefaultEventBus<E> bus, final String name,
-            final EventProcessor<? super E> destination, final Predicate<? super E> predicate) {
+            final Procedure<? super E> destination, final Predicate<? super E> predicate) {
         this.bus = bus;
         this.name = name;
         this.destination = destination;
@@ -58,7 +58,7 @@ class DefaultEventSubscription<E> extends ReentrantReadWriteLock implements Even
     }
 
     /** {@inheritDoc} */
-    public EventProcessor<? super E> getEventProcessor() {
+    public Procedure<? super E> getEventProcessor() {
         return destination;
     }
 

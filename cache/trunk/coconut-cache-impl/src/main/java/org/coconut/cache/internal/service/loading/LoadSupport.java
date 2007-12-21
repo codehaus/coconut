@@ -6,6 +6,7 @@ package org.coconut.cache.internal.service.loading;
 import java.util.Map;
 
 import org.coconut.attribute.AttributeMap;
+import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.service.loading.CacheLoadingService;
 
@@ -48,7 +49,7 @@ public interface LoadSupport<K, V> {
      */
     AbstractCacheEntry<K, V> valueLoaded(K key, V value, AttributeMap attributes);
 
-    Map<K, AbstractCacheEntry<K, V>> valuesLoaded(Map<? extends K, ? extends V> values,
+    Map<K, CacheEntry<K, V>> valuesLoaded(Map<? extends K, ? extends V> values,
             Map<? extends K, AttributeMap> keys);
 
 }

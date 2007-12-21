@@ -22,10 +22,10 @@ import org.coconut.cache.service.event.CacheEventConfiguration;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
-import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
 import org.coconut.event.bus.EventSubscription;
 import org.coconut.operations.Ops.Predicate;
+import org.coconut.operations.Ops.Procedure;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -172,8 +172,8 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
     }
 
     /** {@inheritDoc} */
-    public void process(CacheEvent<K, V> event) {
-        eb.process(event);
+    public void apply(CacheEvent<K, V> event) {
+        eb.apply(event);
     }
 
     @Override
@@ -183,20 +183,20 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
 
     /** {@inheritDoc} */
     public EventSubscription<CacheEvent<K, V>> subscribe(
-            EventProcessor<? super CacheEvent<K, V>> eventHandler) {
+            Procedure<? super CacheEvent<K, V>> eventHandler) {
         return eb.subscribe(eventHandler);
     }
 
     /** {@inheritDoc} */
     public EventSubscription<CacheEvent<K, V>> subscribe(
-            EventProcessor<? super CacheEvent<K, V>> eventHandler,
+            Procedure<? super CacheEvent<K, V>> eventHandler,
             Predicate<? super CacheEvent<K, V>> filter) {
         return eb.subscribe(eventHandler, filter);
     }
 
     /** {@inheritDoc} */
     public EventSubscription<CacheEvent<K, V>> subscribe(
-            EventProcessor<? super CacheEvent<K, V>> listener,
+            Procedure<? super CacheEvent<K, V>> listener,
             Predicate<? super CacheEvent<K, V>> filter, String name) {
         return eb.subscribe(listener, filter, name);
     }

@@ -104,7 +104,11 @@ public final class Reducers {
     }
 
     /**
-     * Creates a max reducer.
+     * Returns a reducer that returns the minimum of two Comparable elements, treating
+     * null as less than any non-null element.
+     * <p>
+     * To treat <code>null</code> as greather then any other non-null element use
+     * <tt>Reducers.minReducer(Comparators.nullGreatestOrder());</tt>
      */
     public static <T extends Comparable<? super T>> Reducer<T> minReducer() {
         return MIN_REDUCER;
@@ -131,7 +135,7 @@ public final class Reducers {
     }
 
     /**
-     * A reducer returning the maximum of two double elements, using the given comparator
+     * A reducer returning the maximum of two double elements, using the given comparator.
      */
     static final class DoubleMaxReducer implements DoubleReducer, Serializable {
         /** serialVersionUID. */
@@ -141,7 +145,10 @@ public final class Reducers {
         private final DoubleComparator comparator;
 
         /**
-         * Creates a DoubleMaxReducer using the given comparator
+         * Creates a DoubleMaxReducer.
+         * 
+         * @param comparator
+         *            the DoubleComparator to use
          */
         DoubleMaxReducer(DoubleComparator comparator) {
             if (comparator == null) {
@@ -157,7 +164,7 @@ public final class Reducers {
     }
 
     /**
-     * A reducer returning the minimum of two double elements, using the given comparator
+     * A reducer returning the minimum of two double elements, using the given comparator.
      */
     static final class DoubleMinReducer implements DoubleReducer, Serializable {
         /** serialVersionUID. */
@@ -167,7 +174,10 @@ public final class Reducers {
         private final DoubleComparator comparator;
 
         /**
-         * Creates a DoubleMinReducer using the given comparator
+         * Creates a DoubleMinReducer.
+         * 
+         * @param comparator
+         *            the DoubleComparator to use
          */
         DoubleMinReducer(DoubleComparator comparator) {
             if (comparator == null) {
@@ -176,6 +186,7 @@ public final class Reducers {
             this.comparator = comparator;
         }
 
+        /** {@inheritDoc} */
         public double combine(double a, double b) {
             return (comparator.compare(a, b) <= 0) ? a : b;
         }
@@ -199,7 +210,7 @@ public final class Reducers {
     }
 
     /**
-     * A reducer returning the maximum of two int elements, using the given comparator
+     * A reducer returning the maximum of two int elements, using the given comparator.
      */
     static final class IntMaxReducer implements IntReducer, Serializable {
         /** serialVersionUID. */
@@ -209,7 +220,10 @@ public final class Reducers {
         final IntComparator comparator;
 
         /**
-         * Creates a IntMaxReducer using the given comparator
+         * Creates a IntMaxReducer.
+         * 
+         * @param comparator
+         *            the IntComparator to use
          */
         IntMaxReducer(IntComparator comparator) {
             if (comparator == null) {
@@ -225,7 +239,7 @@ public final class Reducers {
     }
 
     /**
-     * A reducer returning the minimum of two int elements, using the given comparator
+     * A reducer returning the minimum of two int elements, using the given comparator.
      */
     static final class IntMinReducer implements IntReducer, Serializable {
         /** serialVersionUID. */
@@ -235,7 +249,10 @@ public final class Reducers {
         final IntComparator comparator;
 
         /**
-         * Creates a IntMinReducer using the given comparator
+         * Creates a IntMinReducer.
+         * 
+         * @param comparator
+         *            the IntComparator to use
          */
         IntMinReducer(IntComparator comparator) {
             if (comparator == null) {
@@ -267,7 +284,7 @@ public final class Reducers {
     }
 
     /**
-     * A reducer returning the maximum of two long elements, using the given comparator
+     * A reducer returning the maximum of two long elements, using the given comparator.
      */
     static final class LongMaxReducer implements LongReducer, Serializable {
         /** serialVersionUID. */
@@ -277,7 +294,10 @@ public final class Reducers {
         final LongComparator comparator;
 
         /**
-         * Creates a LongMaxReducer using the given comparator
+         * Creates a LongMaxReducer.
+         * 
+         * @param comparator
+         *            the LongComparator to use
          */
         LongMaxReducer(LongComparator comparator) {
             if (comparator == null) {
@@ -293,7 +313,7 @@ public final class Reducers {
     }
 
     /**
-     * A reducer returning the minimum of two long elements, using the given comparator
+     * A reducer returning the minimum of two long elements, using the given comparator.
      */
     static final class LongMinReducer implements LongReducer, Serializable {
         /** serialVersionUID. */
@@ -303,7 +323,10 @@ public final class Reducers {
         private final LongComparator comparator;
 
         /**
-         * Creates a LongMinReducer using the given comparator
+         * Creates a LongMinReducer.
+         * 
+         * @param comparator
+         *            the LongComparator to use
          */
         LongMinReducer(LongComparator comparator) {
             if (comparator == null) {
@@ -329,6 +352,12 @@ public final class Reducers {
         /** Comparator used when reducing. */
         private final Comparator<? super T> comparator;
 
+        /**
+         * Creates a MaxReducer.
+         * 
+         * @param comparator
+         *            the Comparator to use
+         */
         MaxReducer(Comparator<? super T> comparator) {
             if (comparator == null) {
                 throw new NullPointerException("comparator is null");
@@ -353,6 +382,12 @@ public final class Reducers {
         /** Comparator used when reducing. */
         private final Comparator<? super T> comparator;
 
+        /**
+         * Creates a MinReducer.
+         * 
+         * @param comparator
+         *            the Comparator to use
+         */
         MinReducer(Comparator<? super T> comparator) {
             if (comparator == null) {
                 throw new NullPointerException("comparator is null");
@@ -369,7 +404,7 @@ public final class Reducers {
     /** A reducer returning the maximum of two double elements, using natural comparator. */
     static final class NaturalDoubleMaxReducer implements DoubleReducer, Serializable {
 
-        /** NaturalDoubleMaxReducer */
+        /** serialVersionUID. */
         private static final long serialVersionUID = -5902864811727900806L;
 
         /** {@inheritDoc} */

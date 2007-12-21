@@ -11,7 +11,6 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.event.InternalCacheEventService;
 import org.coconut.cache.internal.service.loading.InternalCacheLoadingService;
 import org.coconut.cache.service.management.CacheManagementService;
-import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.operations.CollectionPredicates;
 import org.coconut.operations.Ops.Predicate;

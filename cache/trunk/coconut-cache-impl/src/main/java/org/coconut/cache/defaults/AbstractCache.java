@@ -14,7 +14,7 @@ import org.coconut.attribute.Attributes;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
+import org.coconut.cache.CacheServices;
 import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
 import org.coconut.cache.spi.ConfigurationValidator;
 import org.coconut.core.Clock;
@@ -95,10 +95,12 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         if (key == null) {
             throw new NullPointerException("key is null");
         }
-        AbstractCacheEntry<K, V> entry = doGet(key);
+        CacheEntry<K, V> entry = doGet(key);
         return entry;
     }
-
+    public CacheServices<K, V> services() {
+        return new CacheServices<K, V>(this);
+    }
     /** {@inheritDoc} */
     public String getName() {
         return name;
@@ -143,7 +145,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         if (key == null) {
             throw new NullPointerException("key is null");
         }
-        AbstractCacheEntry<K, V> entry = doPeek(key);
+        CacheEntry<K, V> entry = doPeek(key);
         return entry;
     }
 
@@ -257,7 +259,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         }
     }
 
-    abstract AbstractCacheEntry<K, V> doGet(K key);
+    abstract CacheEntry<K, V> doGet(K key);
 
     abstract Map<K, V> doGetAll(Collection<? extends K> keys);
 
@@ -270,7 +272,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
      * @return an AbstractCacheEntry if an exists for the specified key, otherwise
      *         <code>null</code>
      */
-    abstract AbstractCacheEntry<K, V> doPeek(K key);
+    abstract CacheEntry<K, V> doPeek(K key);
 
     /**
      * Adds a non-null key and non-value to the cache.
@@ -285,7 +287,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     abstract CacheEntry<K, V> doPut(K key, V newValue, AttributeMap attributes,
             boolean putOnlyIfAbsent, boolean returnNewEntry);
 
-    abstract Map<K, AbstractCacheEntry<K, V>> doPutAll(Map<? extends K, ? extends V> t,
+    abstract Map<K, CacheEntry<K, V>> doPutAll(Map<? extends K, ? extends V> t,
             Map<? extends K, AttributeMap> attributes, boolean fromLoader);
 
     abstract CacheEntry<K, V> doRemove(Object key, Object value);

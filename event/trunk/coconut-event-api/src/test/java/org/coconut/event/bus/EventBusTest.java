@@ -5,9 +5,9 @@ package org.coconut.event.bus;
 
 import java.util.Collection;
 
-import org.coconut.core.EventProcessor;
 import org.coconut.operations.Predicates;
 import org.coconut.operations.Ops.Predicate;
+import org.coconut.operations.Ops.Procedure;
 import org.junit.Test;
 
 /**
@@ -27,11 +27,11 @@ public class EventBusTest {
     public void testSubscribe() {
         EventBus<Number> bus = createNew();
 
-        EventProcessor<Integer> hi = null;
-        EventProcessor<Number> hn = null;
-        EventProcessor<Object> ho = null;
-        EventProcessor hall = null;
-        EventProcessor<String> hs = null;
+        Procedure<Integer> hi = null;
+        Procedure<Number> hn = null;
+        Procedure<Object> ho = null;
+        Procedure hall = null;
+        Procedure<String> hs = null;
 
         // bus.subscribe(hi, Filters.clazz(Integer.class));
         bus.subscribe(hn, Predicates.isType(Integer.class));
@@ -43,7 +43,7 @@ public class EventBusTest {
     public void testSubscribeFilter() {
         EventBus<Number> bus = createNew();
 
-        EventProcessor<Object> o = null;
+        Procedure<Object> o = null;
         Predicate<Integer> hi = null;
         Predicate<Number> hn = null;
         Predicate<Object> ho = null;
@@ -67,16 +67,16 @@ public class EventBusTest {
             return false;
         }
 
-        public EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler) {
+        public EventSubscription<E> subscribe(Procedure<? super E> eventHandler) {
             return null;
         }
 
-        public EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler,
+        public EventSubscription<E> subscribe(Procedure<? super E> eventHandler,
                 Predicate<? super E> filter) {
             return null;
         }
 
-        public EventSubscription<E> subscribe(EventProcessor<? super E> listener,
+        public EventSubscription<E> subscribe(Procedure<? super E> listener,
                 Predicate<? super E> filter, String name) {
             return null;
         }
@@ -89,7 +89,7 @@ public class EventBusTest {
             return false;
         }
 
-        public void process(E event) {}
+        public void apply(E event) {}
 
     }
 }

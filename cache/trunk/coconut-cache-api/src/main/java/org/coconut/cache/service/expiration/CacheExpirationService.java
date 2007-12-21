@@ -7,12 +7,10 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheServices;
 
 /**
  * A service used to control the expiration of cache elements at runtime. See the package
  * documentation for a detailed explanation of the expiration service.
- * 
  * <p>
  * An instance of this interface can be retrieved by using {@link Cache#getService(Class)}
  * to look it up.
@@ -23,13 +21,14 @@ import org.coconut.cache.CacheServices;
  * ces.trimToSize(10);
  * </pre>
  * 
- * Or by using {@link CacheServices}
+ * Or by using {@link CacheServicesOld}
  * 
  * <pre>
  * Cache&lt;?, ?&gt; c = someCache;
  * CacheEvictionService&lt;?, ?&gt; ces = CacheServices.eviction(c);
  * ces.setMaximumSize(10000);
  * </pre>
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -41,23 +40,10 @@ public interface CacheExpirationService<K, V> {
 
     /**
      * Used in {@link #put(Object, Object, long, TimeUnit)} and
-     * {@link #putAll(Map, long, TimeUnit)} to specify that an element should use the
-     * default expiration time configured for the cache or never expire if no such default
-     * value has been configured for the cache.
-     */
-    long DEFAULT_EXPIRATION = 0;
-
-    /**
-     * Used in {@link #put(Object, Object, long, TimeUnit)} and
      * {@link #putAll(Map, long, TimeUnit)} to specify that an element should never
      * expire.
      */
     long NEVER_EXPIRE = Long.MAX_VALUE;
-
-    /**
-     * Removes all expired items from the cache.
-     */
-    void purgeExpired();
 
     /**
      * Returns the default time to live for entries that are added to the cache. If
@@ -71,9 +57,17 @@ public interface CacheExpirationService<K, V> {
     long getDefaultTimeToLive(TimeUnit unit);
 
     /**
+     * Removes all expired items from the cache.
+     */
+    void purgeExpired();
+
+    /**
      * Works as {@link Cache#put(Object, Object)} except that entry added will expire
      * after the specified time to live. The specified time to live will override any
      * default value returned by {@link #getDefaultTimeToLive(TimeUnit)}
+     * <p>
+     * If the specified timeToLive is 0 the cache will use the value of
+     * {@link #getDefaultTimeToLive(TimeUnit)} to calculate the expiration time.
      * 
      * @param key
      *            key with which the specified value is to be associated.
@@ -105,7 +99,9 @@ public interface CacheExpirationService<K, V> {
      * operation). The effect of this call is equivalent to that of calling
      * {@link #put(Object,Object,long,TimeUnit) put(k, v,time,unit)} on this map once for
      * each mapping from key <tt>k</tt> to value <tt>v</tt> in the specified map.
-     * 
+     * <p>
+     * If the specified timeToLive is 0 the cache will use the value of
+     * {@link #getDefaultTimeToLive(TimeUnit)} to calculate the expiration time.
      * @param t
      *            Mappings to be stored in this cache.
      * @param timeout

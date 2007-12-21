@@ -48,6 +48,8 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
     /** The cache exception services. */
     final InternalCacheExceptionService ces;
 
+    private int userServices;
+
     /**
      * Creates a new AbstractPicoBasedCacheServiceManager.
      * 
@@ -80,10 +82,23 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
         debugService = lookup(InternalDebugService.class);
         if (debugService.isDebugEnabled()) {
             debugService.debug("Cache initializing [name = " + cache.getName() + ", type = "
-                    + cache.getClass() + "]");
-            debugService.debug("  " + services.size()
+                    + cache.getClass() + "]\n   " + services.size()
                     + " services to initialize, (*) marked services are used specified");
 
+        }
+        if (debugService.isTraceEnabled()) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Cache was initialized through this call:\n");
+            StackTraceElement[] trace = new Exception().getStackTrace();
+            for (int i = 0; i < Math.min(12, trace.length); i++) {
+                sb.append("    ");
+                sb.append(trace[i]);
+                if (i < 11) {
+                    sb.append("\n");
+                }
+            }
+            debugService.trace(sb.toString());
+            debugService.trace("Cache was initialized with the following configuration:\n" + conf);
         }
         try {
             Map<Class<?>, Object> tmp = new HashMap<Class<?>, Object>();
@@ -94,12 +109,10 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
             terminateServices();
             throw e;
         }
-        if (debugService.isDebugEnabled()) {
-            debugService.debug("Cache initialized succesfully [initialization time = "
-                    + TimeFormatter.SHORT_FORMAT.formatNanos(System.nanoTime()
-                            - initializationStart) + ", services initialized = " + services.size()
-                    + "]");
-        }
+        debugService.debug("Cache initialized [name = " + cache.getName()
+                + ", initialization time = "
+                + TimeFormatter.SHORT_FORMAT.formatNanos(System.nanoTime() - initializationStart)
+                + ", services initialized = " + services.size() + "]");
     }
 
     /** {@inheritDoc} */
@@ -308,6 +321,9 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
             long start = System.nanoTime();
             try {
                 si.started(cache);
+                if (si.isInternal()) {
+                    userServices++;
+                }
             } catch (Throwable re) {
                 ces.startFailed(re, lookup(CacheConfiguration.class), si.getService());
             }
@@ -384,10 +400,17 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
             debugService.debug("Cache starting [name = " + cache.getName() + ", type = "
                     + cache.getClass() + "]");
             if (debugService.isTraceEnabled()) {
-                debugService.trace("Cache was started through this call:");
+                StringBuilder sb = new StringBuilder();
+                sb.append("Cache was started through this call:\n");
                 StackTraceElement[] trace = new Exception().getStackTrace();
-                for (int i = 0; i < Math.min(8, trace.length); i++)
-                    debugService.trace("    " + trace[i]);
+                for (int i = 0; i < Math.min(10, trace.length); i++) {
+                    sb.append("    ");
+                    sb.append(trace[i]);
+                    if (i < 9) {
+                        sb.append("\n");
+                    }
+                }
+                debugService.trace(sb.toString());
             }
             debugService.debug(services.size()
                     + " services to start, (*) marked services are used specified");
@@ -400,11 +423,10 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
         } finally {
             container.dispose();
         }
-        if (debugService.isDebugEnabled()) {
-            debugService.debug("Cache started succesfully [startup time = "
-                    + TimeFormatter.SHORT_FORMAT.formatNanos(System.nanoTime() - startTime)
-                    + ", services started = " + services.size() + "]");
-        }
+        debugService.info("Cache started [name = " + cache.getName() + ", initial size = "
+                + cache.size() + ", startup time = "
+                + TimeFormatter.SHORT_FORMAT.formatNanos(System.nanoTime() - startTime)
+                + ", services started = " + services.size() + "(" + userServices + " internal)]");
     }
 
     void doTerminate() {

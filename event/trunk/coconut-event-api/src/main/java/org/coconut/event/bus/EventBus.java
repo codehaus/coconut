@@ -5,9 +5,9 @@ package org.coconut.event.bus;
 
 import java.util.Collection;
 
-import org.coconut.core.EventProcessor;
 import org.coconut.core.Offerable;
 import org.coconut.operations.Ops.Predicate;
+import org.coconut.operations.Ops.Procedure;
 
 /**
  * An event bus is an api for the publish/subscribe messaging paradigm. Publishers post
@@ -27,7 +27,7 @@ import org.coconut.operations.Ops.Predicate;
  * thread (synchronous delivery) that originally dispatched the event (called the
  * {@link #offer(Object) method}. Some implementations might choose to use another thread
  * (asynchronous delivery) to do the actual delivery of the event (by calling
- * {@link org.coconut.core.EventProcessor#process(Object) on the subscriber}. It is also
+ * {@link org.coconut.core.Procedure#apply(Object) on the subscriber}. It is also
  * possible to use a mixture of the two approaches where high priority events are
  * delivered synchronously and low priority are delivered asynchronusly by a low priority
  * thread.
@@ -61,7 +61,7 @@ import org.coconut.operations.Ops.Predicate;
  * @param <E>
  *            the type of events processed by this event bus
  */
-public interface EventBus<E> extends Offerable<E>, EventProcessor<E> {
+public interface EventBus<E> extends Offerable<E>, Procedure<E> {
 
     /**
      * A failure encountered while attempting to offering elements to an event bus may
@@ -98,7 +98,7 @@ public interface EventBus<E> extends Offerable<E>, EventProcessor<E> {
      *            the event handler that will be notified of a published event.
      * @return a subscription that can be used to cancel any further notifications
      */
-    EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler);
+    EventSubscription<E> subscribe(Procedure<? super E> eventHandler);
 
     /**
      * Creates an subscription that will be notified for any event that is accepted by the
@@ -110,7 +110,7 @@ public interface EventBus<E> extends Offerable<E>, EventProcessor<E> {
      *            the filter that will be used to test against events
      * @return a subscription that can be used to cancel any further notifications
      */
-    EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler,
+    EventSubscription<E> subscribe(Procedure<? super E> eventHandler,
             Predicate<? super E> filter);
 
     /**
@@ -129,6 +129,6 @@ public interface EventBus<E> extends Offerable<E>, EventProcessor<E> {
      * @throws IllegalArgumentException
      *             if the specified name is not unique within all the subscriptions
      */
-    EventSubscription<E> subscribe(EventProcessor<? super E> listener, Predicate<? super E> filter,
+    EventSubscription<E> subscribe(Procedure<? super E> listener, Predicate<? super E> filter,
             String name);
 }

@@ -266,7 +266,9 @@ public class XmlConfigurator {
      */
     protected void writeSingleCache(CacheConfiguration<?, ?> cc, Document doc, Element cacheElement)
             throws Exception {
-        cacheElement.setAttribute(CACHE_NAME_ATTR, cc.getName());
+        if (cc.getName() != null) {
+            cacheElement.setAttribute(CACHE_NAME_ATTR, cc.getName());
+        }
         if (cc.getCacheType() != null) {
             cacheElement.setAttribute(CACHE_TYPE_ATTR, cc.getCacheType().getName());
         }

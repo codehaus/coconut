@@ -194,7 +194,5 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
         /* Refresh Predicate */
         addTypedElement(doc, parent, REFRESH_PREDICATE_TAG, CacheSPI.DEFAULT_CACHE_BUNDLE, getClass(),
                 "saveOfFilterFailed", refreshPredicate);
-        
-      //  new XStream().toXML(this, System.out);
     }
 }

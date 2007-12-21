@@ -4,7 +4,6 @@
 package org.coconut.cache.service.eviction;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheServices;
 
 /**
  * The eviction service controls the size of the cache and what entries to evict at
@@ -19,7 +18,7 @@ import org.coconut.cache.CacheServices;
  * ces.trimToSize(10);
  * </pre>
  * 
- * Or by using {@link CacheServices}
+ * Or by using {@link CacheServicesOld}
  * 
  * <pre>
  * Cache&lt;?, ?&gt; c = someCache;
@@ -64,8 +63,8 @@ public interface CacheEvictionService<K, V> {
      * To indicate that a cache can hold an unlimited number of items,
      * {@link Integer#MAX_VALUE} should be specified.
      * <p>
-     * If the specified maximum size is 0, the cache will never store any elements
-     * internally. This can sometimes be useful while testing.
+     * If the specified maximum size is 0, unless otherwise specified will mean unlimited
+     * amount
      * 
      * @param maximumSize
      *            the maximum number of elements the cache can hold or Integer.MAX_VALUE
@@ -133,8 +132,10 @@ public interface CacheEvictionService<K, V> {
      * Sets whether or not caching is disabled. If caching is disabled, the cache will not
      * cache any items added. This can sometimes be useful while testing.
      * <p>
+     * Note: the following applies
      * Note: setting this value to <code>true</code> will not remove elements already
-     * present in the cache
+     * present in the cache. Put will override values, already present. Loading of values
+     * will override values already present?
      * 
      * @param isDisabled
      *            whether or not caching is disabled

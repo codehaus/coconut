@@ -12,7 +12,6 @@ import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.event.InternalCacheEventService;
 import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsService;
-import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 
 public class DefaultCacheListener<K, V> implements InternalCacheListener<K, V> {
 

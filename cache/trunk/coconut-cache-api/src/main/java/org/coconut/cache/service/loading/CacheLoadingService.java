@@ -9,7 +9,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheServices;
 
 /**
  * This is the main interface for controlling the cache loading service at runtime.
@@ -29,7 +28,7 @@ import org.coconut.cache.CacheServices;
  * ces.load("somekey");
  * </pre>
  * 
- * Or by using {@link CacheServices}
+ * Or by using {@link CacheServicesOld}
  * 
  * <pre>
  * Cache&lt;?, ?&gt; c = someCache;

@@ -9,7 +9,6 @@ import java.util.LinkedList;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
-import org.coconut.cache.tck.service.servicemanager.LifecycleManaged;
 import org.coconut.management.ManagedLifecycle;
 
 public class LifecycleVerifierContext {

@@ -6,11 +6,11 @@ package org.coconut.event.bus.defaults;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.coconut.core.EventProcessor;
 import org.coconut.event.bus.EventBus;
 import org.coconut.event.bus.EventSubscription;
 import org.coconut.operations.Predicates;
 import org.coconut.operations.Ops.Predicate;
+import org.coconut.operations.Ops.Procedure;
 
 /**
  * @param <E>
@@ -34,12 +34,12 @@ public abstract class AbstractEventBus<E> implements EventBus<E> {
     }
 
     /** {@inheritDoc} */
-    public void process(E event) {
+    public void apply(E event) {
         inform(event, false);
     }
 
     /** {@inheritDoc} */
-    public EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler) {
+    public EventSubscription<E> subscribe(Procedure<? super E> eventHandler) {
         return subscribe(eventHandler, Predicates.truePredicate());
     }
 
@@ -110,7 +110,7 @@ public abstract class AbstractEventBus<E> implements EventBus<E> {
         return ok;
     }
 
-    String getNextName(EventProcessor<? super E> eventHandler, Predicate<? super E> predicate) {
+    String getNextName(Procedure<? super E> eventHandler, Predicate<? super E> predicate) {
         return SUBSCRIPTION_NAME_PREFIX + idGenerator.incrementAndGet();
     }
 

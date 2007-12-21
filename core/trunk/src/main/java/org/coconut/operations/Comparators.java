@@ -10,6 +10,7 @@ import java.util.Comparator;
 import org.coconut.operations.Ops.DoubleComparator;
 import org.coconut.operations.Ops.IntComparator;
 import org.coconut.operations.Ops.LongComparator;
+import org.coconut.operations.Ops.Mapper;
 
 /**
  * Various implementations of {@link Comparator}, {@link LongComparator},
@@ -64,11 +65,28 @@ public final class Comparators {
      */
     public static final Comparator NATURAL_REVERSE_COMPARATOR = Collections.reverseOrder();
 
+    public static final Comparator NULL_GREATEST_ORDER = new NullGreatestOrderPredicate();
+
+    /**
+     * A Comparator for Comparable.objects. The comparator is Serializable.
+     */
+    public static final Comparator NULL_LEAST_ORDER = new NullLeastOrderPredicate();
+
     // /CLOVER:OFF
     /** Cannot instantiate. */
     private Comparators() {}
 
     // /CLOVER:ON
+
+    public static <T, U extends Comparable<? super U>> Comparator<T> mappedComparator(
+            Mapper<? super T, U> mapper) {
+        return mappedComparator(mapper, NATURAL_COMPARATOR);
+    }
+
+    public static <T, U extends Comparable<? super U>> Comparator<T> mappedComparator(
+            Mapper<? super T, U> mapper, Comparator<? super U> comperator) {
+        return new MappedComparator<T, U>(mapper);
+    }
 
     /**
      * Returns a Comparator that use the objects natural comparator. The returned
@@ -93,6 +111,24 @@ public final class Comparators {
         return NATURAL_COMPARATOR;
     }
 
+    public static <T extends Comparable<? super T>> Comparator<T> nullGreatestOrder() {
+        return NULL_GREATEST_ORDER;
+    }
+
+    public static <T extends Comparable<? super T>> Comparator<T> nullGreatestOrder(
+            Comparator<T> comparator) {
+        return new NullGreatestOrderComparatorPredicate<T>(comparator);
+    }
+
+    public static <T extends Comparable<? super T>> Comparator<T> nullLeastOrder() {
+        return NULL_LEAST_ORDER;
+    }
+
+    public static <T extends Comparable<? super T>> Comparator<T> nullLeastOrder(
+            Comparator<T> comparator) {
+        return new NullLeastOrderComparatorPredicate<T>(comparator);
+    }
+
     /**
      * Returns a comparator that imposes the reverse of the <i>natural ordering</i> on a
      * collection of objects that implement the <tt>Comparable</tt> interface. (The
@@ -105,6 +141,8 @@ public final class Comparators {
      * 
      * @return a comparator that imposes the reverse of the <i>natural ordering</i> on a
      *         collection of objects that implement the <tt>Comparable</tt> interface.
+     * @param <T>
+     *            the Comparable types accepted by the Comparator
      * @see Comparable
      */
     public static <T extends Comparable<? super T>> Comparator<T> reverseOrder() {
@@ -117,7 +155,11 @@ public final class Comparators {
      * The returned comparator is serializable (assuming the specified comparator is also
      * serializable).
      * 
+     * @param comparator
+     *            the Comparator to reverse
      * @return a comparator that imposes the reverse ordering of the specified comparator.
+     * @param <T>
+     *            the Comparable types accepted by the Comparator
      */
     public static <T> Comparator<T> reverseOrder(Comparator<T> comparator) {
         if (comparator == null) {
@@ -132,6 +174,8 @@ public final class Comparators {
      * The returned comparator is serializable (assuming the specified comparator is also
      * serializable).
      * 
+     * @param comparator
+     *            the DoubleComparator to reverse
      * @return a comparator that imposes the reverse ordering of the specified comparator.
      */
     public static DoubleComparator reverseOrder(DoubleComparator comparator) {
@@ -144,6 +188,8 @@ public final class Comparators {
      * The returned comparator is serializable (assuming the specified comparator is also
      * serializable).
      * 
+     * @param comparator
+     *            the IntComparator to reverse
      * @return a comparator that imposes the reverse ordering of the specified comparator.
      */
     public static IntComparator reverseOrder(IntComparator comparator) {
@@ -156,16 +202,41 @@ public final class Comparators {
      * The returned comparator is serializable (assuming the specified comparator is also
      * serializable).
      * 
+     * @param comparator
+     *            the LongComparator to reverse
      * @return a comparator that imposes the reverse ordering of the specified comparator.
      */
     public static LongComparator reverseOrder(LongComparator comparator) {
         return new ReverseLongComparator(comparator);
     }
 
-    /** A Comparator for Comparable.objects */
+    /** A Comparator for Comparable.objects. */
+    static final class MappedComparator<T, U extends Comparable<? super U>> implements
+            Comparator<T>, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -5405101414861263699L;
+
+        private final Mapper<? super T, U> mapper;
+
+        MappedComparator(Mapper<? super T, U> mapper) {
+            if (mapper == null) {
+                throw new NullPointerException("mapper is null");
+            }
+            this.mapper = mapper;
+        }
+
+        /** {@inheritDoc} */
+        public int compare(T a, T b) {
+            U ua = mapper.map(a);
+            U ub = mapper.map(b);
+            return ua.compareTo(ub);
+        }
+    }
+
+    /** A Comparator for Comparable.objects. */
     static final class NaturalComparator<T extends Comparable<? super T>> implements Comparator<T>,
             Serializable {
-        /** serialVersionUID */
+        /** serialVersionUID. */
         private static final long serialVersionUID = 949691819933412722L;
 
         /** {@inheritDoc} */
@@ -212,22 +283,6 @@ public final class Comparators {
     }
 
     /** A comparator for ints relying on natural ordering. */
-    static final class NaturalIntReverseComparator implements IntComparator, Serializable {
-        /** serialVersionUID. */
-        private static final long serialVersionUID = -94614177221491910L;
-
-        /** {@inheritDoc} */
-        public int compare(int a, int b) {
-            return a < b ? 1 : ((a > b) ? -1 : 0);
-        }
-
-        /** @return Preserves singleton property */
-        private Object readResolve() {
-            return INT_REVERSE_COMPARATOR;
-        }
-    }
-
-    /** A comparator for ints relying on natural ordering. */
     static final class NaturalIntComparator implements IntComparator, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -937141628195281323L;
@@ -240,6 +295,22 @@ public final class Comparators {
         /** @return Preserves singleton property */
         private Object readResolve() {
             return INT_COMPARATOR;
+        }
+    }
+
+    /** A comparator for ints relying on natural ordering. */
+    static final class NaturalIntReverseComparator implements IntComparator, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -94614177221491910L;
+
+        /** {@inheritDoc} */
+        public int compare(int a, int b) {
+            return a < b ? 1 : ((a > b) ? -1 : 0);
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return INT_REVERSE_COMPARATOR;
         }
     }
 
@@ -272,6 +343,77 @@ public final class Comparators {
         /** @return Preserves singleton property */
         private Object readResolve() {
             return LONG_REVERSE_COMPARATOR;
+        }
+    }
+
+    static final class NullGreatestOrderComparatorPredicate<T> implements Comparator<T>,
+            Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -5918068122775742745L;
+
+        private final Comparator<T> comparator;
+
+        NullGreatestOrderComparatorPredicate(Comparator<T> comparator) {
+            if (comparator == null) {
+                throw new NullPointerException("comparator is null");
+            }
+            this.comparator = comparator;
+        }
+
+        /** {@inheritDoc} */
+        public int compare(T a, T b) {
+            return a == null ? 1 : b == null ? -1 : comparator.compare(a, b);
+        }
+    }
+
+    static final class NullGreatestOrderPredicate<T extends Comparable<? super T>> implements
+            Comparator<T>, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = 4313874045537757310L;
+
+        /** {@inheritDoc} */
+        public int compare(T a, T b) {
+            return a == null ? 1 : b == null ? -1 : a.compareTo(b);
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return NULL_GREATEST_ORDER;
+        }
+    }
+
+    static final class NullLeastOrderComparatorPredicate<T> implements Comparator<T>, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -5918068122775742745L;
+
+        private final Comparator<T> comparator;
+
+        NullLeastOrderComparatorPredicate(Comparator<T> comparator) {
+            if (comparator == null) {
+                throw new NullPointerException("comparator is null");
+            }
+            this.comparator = comparator;
+        }
+
+        /** {@inheritDoc} */
+        public int compare(T a, T b) {
+            return a == null ? -1 : b == null ? 1 : comparator.compare(a, b);
+        }
+    }
+
+    static final class NullLeastOrderPredicate<T extends Comparable<? super T>> implements
+            Comparator<T>, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -5791305305191186665L;
+
+        /** {@inheritDoc} */
+        public int compare(T a, T b) {
+            return a == null ? -1 : b == null ? 1 : a.compareTo(b);
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return NULL_LEAST_ORDER;
         }
     }
 

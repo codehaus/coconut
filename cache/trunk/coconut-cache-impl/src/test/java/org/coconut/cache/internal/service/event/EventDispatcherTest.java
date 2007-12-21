@@ -14,8 +14,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.service.event.CacheEvent;
-import org.coconut.core.EventProcessor;
-import org.coconut.core.EventUtils;
 import org.coconut.test.TestUtil;
 import org.junit.Test;
 
@@ -26,12 +24,10 @@ public class EventDispatcherTest {
 
     BlockingQueue<CacheEvent<Integer, String>> events;
 
-    EventProcessor<CacheEvent<Integer, String>> eventHandler;
-
+ 
     protected void setUp() throws Exception {
         c = TestUtil.dummy(Cache.class);
         events = new LinkedBlockingQueue<CacheEvent<Integer, String>>();
-        eventHandler = EventUtils.fromQueue(events);
     }
 
     private <S> S consumeItem(Class<? extends CacheEvent> type, long sequenceId) {

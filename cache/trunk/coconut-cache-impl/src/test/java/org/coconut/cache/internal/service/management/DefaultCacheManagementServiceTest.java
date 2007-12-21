@@ -3,8 +3,6 @@
  */
 package org.coconut.cache.internal.service.management;
 
-import static org.junit.Assert.assertFalse;
-
 import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;

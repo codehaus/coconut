@@ -3,14 +3,15 @@
  */
 package org.coconut.internal.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Random;
 
 import org.junit.Ignore;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  * An indexed heap stress test.

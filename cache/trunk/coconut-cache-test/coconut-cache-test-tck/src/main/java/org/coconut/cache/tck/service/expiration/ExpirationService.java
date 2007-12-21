@@ -7,7 +7,6 @@ import static org.coconut.test.CollectionTestUtil.M1_TO_M5_MAP;
 
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.CacheException;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;

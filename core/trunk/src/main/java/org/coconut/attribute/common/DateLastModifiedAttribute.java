@@ -3,12 +3,8 @@
  */
 package org.coconut.attribute.common;
 
-import java.io.Serializable;
-
 import org.coconut.attribute.AttributeMap;
-import org.coconut.attribute.Attributes;
 import org.coconut.attribute.spi.AbstractLongAttribute;
-import org.coconut.core.Clock;
 
 /**
  * The <tt>Last updated time</tt> attribute indicates when a cache element was last

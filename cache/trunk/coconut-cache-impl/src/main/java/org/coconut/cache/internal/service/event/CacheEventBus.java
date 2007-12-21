@@ -5,10 +5,10 @@ package org.coconut.cache.internal.service.event;
 
 import java.util.concurrent.Semaphore;
 
-import org.coconut.core.EventProcessor;
 import org.coconut.event.bus.EventSubscription;
 import org.coconut.event.bus.defaults.DefaultEventBus;
 import org.coconut.operations.Ops.Predicate;
+import org.coconut.operations.Ops.Procedure;
 
 public class CacheEventBus<E> extends DefaultEventBus<E> {
 
@@ -35,7 +35,7 @@ public class CacheEventBus<E> extends DefaultEventBus<E> {
     }
 
     @Override
-    public EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler,
+    public EventSubscription<E> subscribe(Procedure<? super E> eventHandler,
             Predicate<? super E> filter, String name) {
         s.acquireUninterruptibly();
         try {
@@ -47,7 +47,7 @@ public class CacheEventBus<E> extends DefaultEventBus<E> {
     }
 
     @Override
-    public EventSubscription<E> subscribe(EventProcessor<? super E> eventHandler,
+    public EventSubscription<E> subscribe(Procedure<? super E> eventHandler,
             Predicate<? super E> filter) {
         s.acquireUninterruptibly();
         try {

@@ -11,16 +11,11 @@ import static junit.framework.Assert.assertTrue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
-import org.coconut.core.EventProcessor;
 import org.coconut.management.ManagedGroup;
 import org.coconut.management.ManagedLifecycle;
-import org.coconut.test.throwables.Error1;
-import org.coconut.test.throwables.RuntimeException1;
-import org.coconut.test.throwables.RuntimeException2;
 
 public class LifecycleVerifier extends AbstractCacheLifecycle {
 

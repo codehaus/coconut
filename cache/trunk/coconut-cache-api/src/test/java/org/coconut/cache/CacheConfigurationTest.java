@@ -13,18 +13,15 @@ import static junit.framework.Assert.assertTrue;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 import junit.framework.AssertionFailedError;
 
 import org.coconut.cache.service.management.CacheManagementConfiguration;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.cache.spi.XmlConfigurator;
-import org.coconut.cache.util.CacheSingleton;
 import org.coconut.core.Clock;
 import org.coconut.core.Logger;
 import org.coconut.test.TestUtil;

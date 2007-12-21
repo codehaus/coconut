@@ -3,22 +3,25 @@
  */
 package org.coconut.cache.tck.service.eviction;
 
+import static org.coconut.test.CollectionTestUtil.M1;
+import static org.coconut.test.CollectionTestUtil.M2;
+import static org.coconut.test.CollectionTestUtil.M3;
+import static org.coconut.test.CollectionTestUtil.M4;
+import static org.coconut.test.CollectionTestUtil.M5;
+
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.RuntimeMBeanException;
 
-import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.common.SizeAttribute;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.cache.service.eviction.CacheEvictionMXBean;
-import org.coconut.cache.service.loading.AbstractCacheLoader;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.tck.RequireService;
 import org.coconut.cache.test.TestCacheLoader;
 import org.junit.Before;
 import org.junit.Test;
-import static org.coconut.test.CollectionTestUtil.*;
 
 @RequireService( { CacheManagementService.class })
 public class EvictionMXBean extends AbstractCacheTCKTest {

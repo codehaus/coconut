@@ -60,7 +60,7 @@ public class SynchronizedCacheServiceManager extends AbstractCacheServiceManager
         for (;;) {
             RunState state = getRunState();
             if (state != RunState.RUNNING) {
-                ces.checkStartupException();
+                ces.checkExceptions(failIfShutdown);
                 if (state == RunState.STARTING) {
                     throw new IllegalStateException(
                             "Cannot invoke this method from CacheLifecycle.start(Map services), should be invoked from CacheLifecycle.started(Cache c)");

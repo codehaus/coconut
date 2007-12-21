@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * Tests the {@link CacheServices} class.
+ * Tests the {@link CacheServicesOld} class.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
@@ -47,87 +47,97 @@ public class CacheServicesTest {
     }
 
     /**
-     * Tests {@link CacheServices#event(Cache)}.
+     * Tests {@link CacheServices#event()}.
      */
     @Test
     public void eventService() {
         final CacheEventService service = TestUtil.dummy(CacheEventService.class);
         context.checking(new Expectations() {
             {
+                one(cache).services();
+                will(returnValue(new CacheServices(cache)));
                 one(cache).getService(CacheEventService.class);
                 will(returnValue(service));
             }
         });
-        CacheEventService<Integer, String> ces = CacheServices.event(cache);
+        CacheEventService<Integer, String> ces = cache.services().event();
         assertSame(service, ces);
     }
 
     /**
-     * Tests {@link CacheServices#eviction(Cache)}.
+     * Tests {@link CacheServices#eviction()}.
      */
     @Test
     public void evictionService() {
         final CacheEvictionService service = TestUtil.dummy(CacheEvictionService.class);
         context.checking(new Expectations() {
             {
+                one(cache).services();
+                will(returnValue(new CacheServices(cache)));
                 one(cache).getService(CacheEvictionService.class);
                 will(returnValue(service));
             }
         });
-        CacheEvictionService<Integer, String> ces = CacheServices.eviction(cache);
+        CacheEvictionService<Integer, String> ces = cache.services().eviction();
         assertSame(service, ces);
     }
 
     /**
-     * Tests {@link CacheServices#expiration(Cache)}.
+     * Tests {@link CacheServices#expiration()}.
      */
     @Test
     public void expirationService() {
         final CacheExpirationService service = TestUtil.dummy(CacheExpirationService.class);
         context.checking(new Expectations() {
             {
+                one(cache).services();
+                will(returnValue(new CacheServices(cache)));
                 one(cache).getService(CacheExpirationService.class);
                 will(returnValue(service));
             }
         });
-        CacheExpirationService<Integer, String> ces = CacheServices.expiration(cache);
+        CacheExpirationService<Integer, String> ces = cache.services().expiration();
         assertSame(service, ces);
     }
 
     /**
-     * Tests {@link CacheServices#loading(Cache)}.
+     * Tests {@link CacheServices#loading()}.
      */
     @Test
     public void loadingService() {
         final CacheLoadingService service = TestUtil.dummy(CacheLoadingService.class);
         context.checking(new Expectations() {
             {
+                one(cache).services();
+                will(returnValue(new CacheServices(cache)));
                 one(cache).getService(CacheLoadingService.class);
                 will(returnValue(service));
             }
         });
-        CacheLoadingService<Integer, String> ces = CacheServices.loading(cache);
+        CacheLoadingService<Integer, String> ces = cache.services().loading();
         assertSame(service, ces);
     }
 
     /**
-     * Tests {@link CacheServices#management(Cache)}.
+     * Tests {@link CacheServicesOld#management(Cache)}.
      */
     @Test
     public void managementService() {
         final CacheManagementService service = TestUtil.dummy(CacheManagementService.class);
         context.checking(new Expectations() {
             {
+                one(cache).services();
+                will(returnValue(new CacheServices(cache)));
                 one(cache).getService(CacheManagementService.class);
                 will(returnValue(service));
             }
         });
-        CacheManagementService ces = CacheServices.management(cache);
+        CacheManagementService ces = cache.services().management();
         assertSame(service, ces);
     }
 
     /**
-     * Tests {@link CacheServices#servicemanager(Cache)}.
+     * Tests {@link CacheServicesOld#servicemanager(Cache)}.
      */
     @Test
     public void serviceManagerService() {
@@ -135,43 +145,49 @@ public class CacheServicesTest {
                 .dummy(CacheServiceManagerService.class);
         context.checking(new Expectations() {
             {
+                one(cache).services();
+                will(returnValue(new CacheServices(cache)));
                 one(cache).getService(CacheServiceManagerService.class);
                 will(returnValue(service));
             }
         });
-        CacheServiceManagerService ces = CacheServices.servicemanager(cache);
+        CacheServiceManagerService ces = cache.services().servicemanager();;
         assertSame(service, ces);
     }
 
     /**
-     * Tests {@link CacheServices#statistics(Cache)}.
+     * Tests {@link CacheServices#statistics()}.
      */
     @Test
     public void statisticsService() {
         final CacheStatisticsService service = TestUtil.dummy(CacheStatisticsService.class);
         context.checking(new Expectations() {
             {
+                one(cache).services();
+                will(returnValue(new CacheServices(cache)));
                 one(cache).getService(CacheStatisticsService.class);
                 will(returnValue(service));
             }
         });
-        CacheStatisticsService ces = CacheServices.statistics(cache);
+        CacheStatisticsService ces = cache.services().statistics();
         assertSame(service, ces);
     }
     
     /**
-     * Tests {@link CacheServices#worker(Cache)}.
+     * Tests {@link CacheServices#worker()}.
      */
     @Test
     public void workerService() {
         final CacheWorkerService service = TestUtil.dummy(CacheWorkerService.class);
         context.checking(new Expectations() {
             {
+                one(cache).services();
+                will(returnValue(new CacheServices(cache)));
                 one(cache).getService(CacheWorkerService.class);
                 will(returnValue(service));
             }
         });
-        CacheWorkerService ces = CacheServices.worker(cache);
+        CacheWorkerService ces = cache.services().worker();
         assertSame(service, ces);
     }
 }

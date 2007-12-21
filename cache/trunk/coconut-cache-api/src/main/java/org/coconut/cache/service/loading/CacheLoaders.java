@@ -5,7 +5,6 @@ package org.coconut.cache.service.loading;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheServices;
 
 /**
  * Various {@link CacheLoadingService}} and {@link CacheLoader} utility classes and
@@ -75,7 +74,7 @@ public final class CacheLoaders {
         if (key == null) {
             throw new NullPointerException("key is null");
         }
-        final CacheLoadingService<K, ?> service = CacheServices.loading(cache);
+        final CacheLoadingService<K, ?> service = cache.services().loading();
         return new Runnable() {
             public void run() {
                 service.forceLoad(key);
@@ -94,7 +93,7 @@ public final class CacheLoaders {
      *         {@link CacheLoadingService#forceLoadAll()} method on the specified cache
      */
     public static Runnable runForceLoadAll(Cache<?, ?> cache) {
-        final CacheLoadingService<?, ?> service = CacheServices.loading(cache);
+        final CacheLoadingService<?, ?> service = cache.services().loading();
         return new Runnable() {
             public void run() {
                 service.forceLoadAll();
@@ -122,7 +121,7 @@ public final class CacheLoaders {
         if (key == null) {
             throw new NullPointerException("key is null");
         }
-        final CacheLoadingService<K, ?> service = CacheServices.loading(cache);
+        final CacheLoadingService<K, ?> service = cache.services().loading();
         return new Runnable() {
             public void run() {
                 service.load(key);
@@ -141,7 +140,7 @@ public final class CacheLoaders {
      *         {@link CacheLoadingService#loadAll()} method on the specified cache
      */
     public static Runnable runLoadAll(Cache<?, ?> cache) {
-        final CacheLoadingService<?, ?> service = CacheServices.loading(cache);
+        final CacheLoadingService<?, ?> service = cache.services().loading();
         return new Runnable() {
             public void run() {
                 service.loadAll();

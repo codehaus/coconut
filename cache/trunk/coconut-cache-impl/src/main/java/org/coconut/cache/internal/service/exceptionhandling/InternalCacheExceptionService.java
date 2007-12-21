@@ -6,13 +6,9 @@ package org.coconut.cache.internal.service.exceptionhandling;
 import java.util.Map;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
-import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
-import org.coconut.core.Logger;
 
 /**
  * An exception service available as an internal service at runtime.
@@ -38,7 +34,7 @@ public interface InternalCacheExceptionService<K, V> {
 
     void initialize(CacheConfiguration<K, V> conf);
 
-    void checkStartupException();
+    void checkExceptions(boolean failIfShutdown);
 
     V loadFailed(Throwable cause, CacheLoader<? super K, ?> loader, K key, AttributeMap map);
 

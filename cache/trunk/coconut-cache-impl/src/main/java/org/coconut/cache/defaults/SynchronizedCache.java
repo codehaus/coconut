@@ -44,7 +44,6 @@ import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.management.CacheManagementService;
-import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.service.worker.CacheWorkerService;
@@ -405,7 +404,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
 
     /** {@inheritDoc} */
     @Override
-    Map<K, AbstractCacheEntry<K, V>> doPutAll(Map<? extends K, ? extends V> t,
+    Map<K, CacheEntry<K, V>> doPutAll(Map<? extends K, ? extends V> t,
             Map<? extends K, AttributeMap> attributes, boolean fromLoader) {
         long started = listener.beforePutAll(this, t, attributes, fromLoader);
         Map<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>> newEntries = new HashMap<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>>();
@@ -427,7 +426,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
         }
 
         listener.afterPutAll(this, started, trimCache(), newEntries, fromLoader);
-        HashMap<K, AbstractCacheEntry<K, V>> result = new HashMap<K, AbstractCacheEntry<K, V>>();
+        HashMap<K, CacheEntry<K, V>> result = new HashMap<K, CacheEntry<K, V>>();
         for (AbstractCacheEntry<K, V> ace : newEntries.keySet()) {
             result.put(ace.getKey(), ace);
         }
@@ -483,8 +482,8 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
 
     /** A helper class. */
     class Support implements InternalCacheSupport<K, V> {
-        /** {@inheritDoc} */
 
+        /** {@inheritDoc} */
         public void checkRunning(String operation) {
             synchronized (SynchronizedCache.this) {
                 SynchronizedCache.this.checkRunning(operation);
@@ -657,7 +656,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
         }
 
         /** {@inheritDoc} */
-        public Map<K, AbstractCacheEntry<K, V>> valuesLoaded(Map<? extends K, ? extends V> values,
+        public Map<K, CacheEntry<K, V>> valuesLoaded(Map<? extends K, ? extends V> values,
                 Map<? extends K, AttributeMap> keys) {
             HashMap<? extends K, ? extends V> map = new HashMap<K, V>(values);
             HashMap<? extends K, AttributeMap> attr = new HashMap<K, AttributeMap>(keys);

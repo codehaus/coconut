@@ -8,7 +8,6 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheServices;
 
 /**
  * This is the main interface for controlling the worker service of a cache at runtime.
@@ -22,7 +21,7 @@ import org.coconut.cache.CacheServices;
  * worker....
  * </pre>
  * 
- * Or by using {@link CacheServices}
+ * Or by using {@link CacheServicesOld}
  * 
  * <pre>
  * Cache&lt;?, ?&gt; c = someCache;
@@ -34,6 +33,7 @@ import org.coconut.cache.CacheServices;
  * @version $Id: CacheStatisticsService.java 430 2007-11-11 14:50:09Z kasper $
  */
 public interface CacheWorkerService {
+
     /**
      * Returns a ExecutorService for the specified service.
      * 
@@ -54,7 +54,7 @@ public interface CacheWorkerService {
      * @return a ExecutorService for the specified service
      */
     ExecutorService getExecutorService(Object service, AttributeMap attributes);
-    
+
     /**
      * Returns a ScheduledExecutorService for the specified service.
      * 

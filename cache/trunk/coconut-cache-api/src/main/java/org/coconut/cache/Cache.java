@@ -278,7 +278,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      *             if no service of the specified type exist
      * @throws NullPointerException
      *             if the specified service type is null
-     * @see org.coconut.cache.CacheServices
+     * @see org.coconut.cache.CacheServicesOld
      * @see org.coconut.cache.service.servicemanager.CacheServiceManagerService#hasService(Class)
      * @see org.coconut.cache.service.servicemanager.CacheServiceManagerService#getAllServices()
      */
@@ -421,6 +421,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      */
     V put(K key, V value);
 
+    CacheServices<K,V> services();
     /**
      * Copies all of the mappings from the specified map to this cache (optional
      * operation). The effect of this call is equivalent to that of calling

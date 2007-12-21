@@ -3,7 +3,6 @@
  */
 package org.coconut.attribute.common;
 
-import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.attribute.AttributeMap;

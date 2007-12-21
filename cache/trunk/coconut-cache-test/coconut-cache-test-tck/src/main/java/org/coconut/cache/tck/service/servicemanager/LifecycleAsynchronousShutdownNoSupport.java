@@ -8,7 +8,6 @@ import java.util.concurrent.Callable;
 import net.jcip.annotations.NotThreadSafe;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheServices;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
@@ -34,7 +33,7 @@ public class LifecycleAsynchronousShutdownNoSupport extends AbstractCacheTCKTest
 
             @Override
             public void started(Cache<?, ?> cache) {
-                services = CacheServices.servicemanager(cache);
+                services = cache.services().servicemanager();
             }
         }));
 

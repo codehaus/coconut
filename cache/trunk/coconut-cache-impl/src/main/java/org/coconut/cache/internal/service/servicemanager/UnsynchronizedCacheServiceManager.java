@@ -4,13 +4,11 @@
 package org.coconut.cache.internal.service.servicemanager;
 
 import java.util.Collection;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
-import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 
 /**
@@ -38,7 +36,7 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
     /** {@inheritDoc} */
     public boolean lazyStart(boolean failIfShutdown) {
         if (status != RunState.RUNNING) {
-            ces.checkStartupException();
+            ces.checkExceptions(failIfShutdown);
             if (status == RunState.STARTING) {
                 throw new IllegalStateException(
                         "Cannot invoke this method from CacheLifecycle.start(Map services), should be invoked from CacheLifecycle.started(Cache c)");

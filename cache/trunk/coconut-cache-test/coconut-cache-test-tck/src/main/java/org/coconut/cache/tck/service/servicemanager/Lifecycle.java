@@ -43,6 +43,14 @@ public class Lifecycle extends AbstractCacheTCKTest {
     @Test
     public void simpleLifecycle() throws InterruptedException {
         AbstractLifecycleVerifier alv = new AbstractLifecycleVerifier();
+//        Handler[] handlers =
+//            Logger.getLogger( "" ).getHandlers();
+//          for ( int index = 0; index < handlers.length; index++ ) {
+//            handlers[index].setLevel( java.util.logging.Level.FINEST );
+//          }
+//        conf.setDefaultLogger(Loggers.JDK.from("foo"));// s.systemOutLogger(Level.Debug));
+//        LogManager.getLogManager().getLogger("foo").setLevel(java.util.logging.Level.FINEST);
+//        LogManager.getLogManager().getLogger("foo").getParent().setLevel(java.util.logging.Level.FINEST);
         conf.serviceManager().add(alv).c();
         alv.setConfigurationToVerify(conf);
         setCache(conf);
@@ -92,7 +100,7 @@ public class Lifecycle extends AbstractCacheTCKTest {
                 }
 
                 @Override
-                public void start(CacheServiceManagerService serviceManager) {
+                public void start(CacheServiceManagerService serviceManager) throws Exception {
                     assertEquals(j + count, verifier.getAndIncrement());
                     super.start(serviceManager);
                 }

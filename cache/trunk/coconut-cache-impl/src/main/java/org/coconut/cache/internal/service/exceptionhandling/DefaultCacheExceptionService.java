@@ -4,8 +4,6 @@
 package org.coconut.cache.internal.service.exceptionhandling;
 
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
@@ -14,12 +12,12 @@ import org.coconut.cache.internal.service.debug.InternalDebugService;
 import org.coconut.cache.internal.service.spi.Resources;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
-import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlers;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandlingConfiguration;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.core.Logger;
 import org.coconut.core.Loggers;
+import org.coconut.internal.util.LazyLogger;
 
 /**
  * The default implementation of the {@link InternalCacheExceptionService}.
@@ -45,8 +43,10 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
     /** The CacheExceptionHandler configured for this cache. */
     private final CacheExceptionHandler<K, V> exceptionHandler;
 
+    private final Logger startupLogger;
+
     /** The logger to log exceptions to. */
-    private volatile Logger logger;
+    private final Logger logger;
 
     volatile Throwable startupException;
 
@@ -62,54 +62,32 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
             CacheExceptionHandlingConfiguration<K, V> configuration) {
         this.cache = cache;
         // TODO resort to default logger if no exceptionLogger is defined?
-        logger = configuration.getExceptionLogger();
+        Logger logger = configuration.getExceptionLogger();
         if (logger == null) {
             logger = conf.getDefaultLogger();
         }
-        debugLogger = conf.getDefaultLogger() == null ? Loggers.NULL_LOGGER : conf
-                .getDefaultLogger();
-        if (configuration.getExceptionHandler() != null) {
-            this.exceptionHandler = configuration.getExceptionHandler();
-        } else {
-            this.exceptionHandler = new CacheExceptionHandler();
+        startupLogger = logger;
+        if (logger == null) {
+            String loggerName = Cache.class.getPackage().getName() + "." + cache.getName();
+            String infoMsg = Resources.lookup(DefaultCacheExceptionService.class, "noLogger", cache
+                    .getName(), loggerName);
+            logger = new LazyLogger(loggerName, infoMsg);
         }
+        this.logger = logger;
+        // set debug logger
+        Logger debugLogger = conf.getDefaultLogger();
+        this.debugLogger = debugLogger == null ? Loggers.NULL_LOGGER : debugLogger;
+        // Set cache exception handler
+        CacheExceptionHandler<K, V> exceptionHandler = configuration.getExceptionHandler();
+        this.exceptionHandler = exceptionHandler == null ? new CacheExceptionHandler()
+                : exceptionHandler;
     }
 
-    public void checkStartupException() {
+    public void checkExceptions(boolean failIfShutdown) {
         Throwable re = startupException;
         if (re != null) {
             throw new IllegalStateException("Cache failed to start previously", re);
         }
-    }
-
-    public CacheExceptionContext<K, V> createContext(String message) {
-        return createContext(null, message);
-    }
-
-    /** {@inheritDoc} */
-    public CacheExceptionContext<K, V> createContext(final Throwable cause, final String message) {
-        return new CacheExceptionContext<K, V>() {
-
-            @Override
-            public Logger defaultLogger() {
-                return getLogger();
-            }
-
-            @Override
-            public Cache<K, V> getCache() {
-                return cache;
-            }
-
-            @Override
-            public Throwable getCause() {
-                return cause;
-            }
-
-            @Override
-            public String getMessage() {
-                return message;
-            }
-        };
     }
 
     public void debug(String str) {
@@ -118,18 +96,22 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
 
     /** {@inheritDoc} */
     public void fatalRuntimeException(String msg) {
-        getLogger().error(msg);
+        logger.error(msg);
     }
 
     /** {@inheritDoc} */
     public void fatalRuntimeException(String msg, RuntimeException cause) {
-        getLogger().error(msg, cause);
+        logger.error(msg, cause);
+    }
+
+    public void info(String str) {
+        debugLogger.info(str);
     }
 
     /** {@inheritDoc} */
     public void initializationFailed(CacheConfiguration<K, V> configuration,
             CacheLifecycle service, RuntimeException cause) {
-        Logger logger = this.logger;
+        Logger logger = this.startupLogger;
         if (logger != null) {
             logger.fatal("Failed to initialize cache [name = " + cache.getName() + ", type = "
                     + cache.getClass() + ", service = " + service + " ]", cause);
@@ -163,7 +145,6 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
     }
 
     public void serviceManagerShutdownFailed(Throwable cause, CacheLifecycle lifecycle) {
-        getLogger();
         logger.fatal("Failed to shutdown service [name = " + cache.getName() + ", type = "
                 + cache.getClass() + ", service = " + lifecycle + " ]", cause);
     }
@@ -173,7 +154,7 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
         if (cause instanceof Error) {
             throw (Error) cause;
         }
-        Logger logger = this.logger;
+        Logger logger = this.startupLogger;
         if (logger != null) {
             logger.fatal("Failed to start cache [name = " + cache.getName() + ", type = "
                     + cache.getClass() + ", service = " + service + " ]", cause);
@@ -202,39 +183,31 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
     }
 
     public void warning(String warning) {
-        exceptionHandler.handleWarning(createContext(warning));
+        exceptionHandler.handleWarning(createContext(null, warning));
     }
 
-    /**
-     * Returns the exception logger configured for this cache. Or initializes the default
-     * logger if no logger has been defined and the default logger has not already been
-     * initialized
-     * 
-     * @return the exception logger for the cache
-     */
-    private Logger getLogger() {
-        Logger l = logger;
-        if (l != null) {
-            return l;
-        }
-        synchronized (this) {
-            if (logger == null) {
-                String name = cache.getName();
-                String loggerName = Cache.class.getPackage().getName() + "." + name;
-                java.util.logging.Logger jucLogger = LogManager.getLogManager().getLogger(
-                        loggerName);
-                if (jucLogger == null) {
-                    jucLogger = java.util.logging.Logger.getLogger(loggerName);
-                    jucLogger.setLevel(Level.ALL);
+    private CacheExceptionContext<K, V> createContext(final Throwable cause, final String message) {
+        return new CacheExceptionContext<K, V>() {
 
-                    String infoMsg = Resources.lookup(DefaultCacheExceptionService.class,
-                            "noLogger", name, loggerName);
-                    jucLogger.info(infoMsg);
-                    jucLogger.setLevel(Level.WARNING);
-                }
-                logger = Loggers.JDK.from(jucLogger);
+            @Override
+            public Logger defaultLogger() {
+                return logger;
             }
-        }
-        return logger;
+
+            @Override
+            public Cache<K, V> getCache() {
+                return cache;
+            }
+
+            @Override
+            public Throwable getCause() {
+                return cause;
+            }
+
+            @Override
+            public String getMessage() {
+                return message;
+            }
+        };
     }
 }

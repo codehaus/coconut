@@ -3,8 +3,6 @@
  */
 package org.coconut.attribute.common;
 
-import java.io.Serializable;
-
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.spi.AbstractLongAttribute;
 

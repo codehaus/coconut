@@ -8,10 +8,10 @@ import java.util.Collection;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.service.event.CacheEvent;
-import org.coconut.core.EventProcessor;
 import org.coconut.event.bus.EventSubscription;
 import org.coconut.operations.Predicates;
 import org.coconut.operations.Ops.Predicate;
+import org.coconut.operations.Ops.Procedure;
 import org.coconut.test.TestUtil;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -33,13 +33,13 @@ public class EventServiceBus extends AbstractEventTestBundle {
 
     @Test
     public void subscribe() {
-        final EventProcessor mock = context.mock(EventProcessor.class);
+        final Procedure mock = context.mock(Procedure.class);
         context.checking(new Expectations() {
             {
-                one(mock).process(new DefaultCacheEvent("a1"));
-                one(mock).process(new DefaultCacheEvent("a2"));
-                one(mock).process(new DefaultCacheEvent("a3"));
-                one(mock).process(new DefaultCacheEvent("a4"));
+                one(mock).apply(new DefaultCacheEvent("a1"));
+                one(mock).apply(new DefaultCacheEvent("a2"));
+                one(mock).apply(new DefaultCacheEvent("a3"));
+                one(mock).apply(new DefaultCacheEvent("a4"));
             }
         });
 
@@ -52,7 +52,7 @@ public class EventServiceBus extends AbstractEventTestBundle {
         assertTrue(es.isValid());
 
         assertTrue(event().offer(new DefaultCacheEvent("a1")));
-        event().process(new DefaultCacheEvent("a2"));
+        event().apply(new DefaultCacheEvent("a2"));
         assertTrue(event().offerAll(
                 (Collection) Arrays
                         .asList(new DefaultCacheEvent("a3"), new DefaultCacheEvent("a4"))));
@@ -65,13 +65,13 @@ public class EventServiceBus extends AbstractEventTestBundle {
 
     @Test
     public void subscribeFiltered() {
-        final EventProcessor mock = context.mock(EventProcessor.class);
+        final Procedure mock = context.mock(Procedure.class);
         context.checking(new Expectations() {
             {
-                one(mock).process(new DefaultCacheEvent("a1"));
-                one(mock).process(new DefaultCacheEvent("a2"));
-                one(mock).process(new DefaultCacheEvent("a3"));
-                one(mock).process(new DefaultCacheEvent("a4"));
+                one(mock).apply(new DefaultCacheEvent("a1"));
+                one(mock).apply(new DefaultCacheEvent("a2"));
+                one(mock).apply(new DefaultCacheEvent("a3"));
+                one(mock).apply(new DefaultCacheEvent("a4"));
             }
         });
         Predicate<CacheEvent<Integer, String>> p = new Predicate<CacheEvent<Integer, String>>() {
@@ -90,8 +90,8 @@ public class EventServiceBus extends AbstractEventTestBundle {
 
         assertTrue(event().offer(new DefaultCacheEvent("a1")));
         assertTrue(event().offer(new DefaultCacheEvent("b1")));
-        event().process(new DefaultCacheEvent("b2"));
-        event().process(new DefaultCacheEvent("a2"));
+        event().apply(new DefaultCacheEvent("b2"));
+        event().apply(new DefaultCacheEvent("a2"));
         assertTrue(event().offerAll(
                 (Collection) Arrays.asList(new DefaultCacheEvent("a3"),
                         new DefaultCacheEvent("b3"), new DefaultCacheEvent("a4"),
@@ -105,13 +105,13 @@ public class EventServiceBus extends AbstractEventTestBundle {
 
     @Test
     public void subscribeFilteredNamed() {
-        final EventProcessor mock = context.mock(EventProcessor.class);
+        final Procedure mock = context.mock(Procedure.class);
         context.checking(new Expectations() {
             {
-                one(mock).process(new DefaultCacheEvent("a1"));
-                one(mock).process(new DefaultCacheEvent("a2"));
-                one(mock).process(new DefaultCacheEvent("a3"));
-                one(mock).process(new DefaultCacheEvent("a4"));
+                one(mock).apply(new DefaultCacheEvent("a1"));
+                one(mock).apply(new DefaultCacheEvent("a2"));
+                one(mock).apply(new DefaultCacheEvent("a3"));
+                one(mock).apply(new DefaultCacheEvent("a4"));
             }
         });
 
@@ -131,8 +131,8 @@ public class EventServiceBus extends AbstractEventTestBundle {
 
         assertTrue(event().offer(new DefaultCacheEvent("a1")));
         assertTrue(event().offer(new DefaultCacheEvent("b1")));
-        event().process(new DefaultCacheEvent("b2"));
-        event().process(new DefaultCacheEvent("a2"));
+        event().apply(new DefaultCacheEvent("b2"));
+        event().apply(new DefaultCacheEvent("a2"));
         assertTrue(event().offerAll(
                 (Collection) Arrays.asList(new DefaultCacheEvent("a3"),
                         new DefaultCacheEvent("b3"), new DefaultCacheEvent("a4"),
@@ -146,10 +146,10 @@ public class EventServiceBus extends AbstractEventTestBundle {
 
     @Test
     public void unsubscribeAll() {
-        EventSubscription e1 = event().subscribe(TestUtil.dummy(EventProcessor.class));
-        EventSubscription e2 = event().subscribe(TestUtil.dummy(EventProcessor.class),
+        EventSubscription e1 = event().subscribe(TestUtil.dummy(Procedure.class));
+        EventSubscription e2 = event().subscribe(TestUtil.dummy(Procedure.class),
                 Predicates.TRUE);
-        EventSubscription e3 = event().subscribe(TestUtil.dummy(EventProcessor.class),
+        EventSubscription e3 = event().subscribe(TestUtil.dummy(Procedure.class),
                 Predicates.TRUE, "ddd");
         assertEquals(3, event().getSubscribers().size());
         assertTrue(event().getSubscribers().contains(e1));

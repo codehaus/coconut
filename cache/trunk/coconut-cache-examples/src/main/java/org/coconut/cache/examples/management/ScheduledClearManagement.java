@@ -9,7 +9,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheServices;
 import org.coconut.cache.Caches;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.management.ManagedGroup;
@@ -44,7 +43,7 @@ public class ScheduledClearManagement extends AbstractCacheLifecycle implements 
 
     @Override
     public synchronized void started(Cache<?, ?> cache) {
-        ses = CacheServices.worker(cache).getScheduledExecutorService(this);
+        ses = cache.services().worker().getScheduledExecutorService(this);
         runnable = Caches.runClear(cache);
         setClearScheduleMs(60 * 60 * 1000);// default 1 hour
     }

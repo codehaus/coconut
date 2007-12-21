@@ -7,10 +7,9 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.coconut.cache.service.event.CacheEvent;
-import org.coconut.core.EventProcessor;
-import org.coconut.core.EventUtils;
 import org.coconut.event.bus.EventSubscription;
 import org.coconut.operations.Predicates;
+import org.coconut.operations.Ops.Procedure;
 import org.coconut.test.TestUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +23,7 @@ public class EventBusShutdownLazyStart extends AbstractEventTestBundle {
 
     @Test
     public void unsubscribeAllOnShutdown() {
-        EventSubscription es = event().subscribe(TestUtil.dummy(EventProcessor.class));
+        EventSubscription es = event().subscribe(TestUtil.dummy(Procedure.class));
         assertTrue(es.isValid());
         assertEquals(1, event().getSubscribers().size());
         shutdownAndAwaitTermination();
@@ -36,13 +35,13 @@ public class EventBusShutdownLazyStart extends AbstractEventTestBundle {
     public void subscribe1Shutdown() {
         prestart();
         c.shutdown();
-        event().subscribe(TestUtil.dummy(EventProcessor.class));
+        event().subscribe(TestUtil.dummy(Procedure.class));
     }
 
     @Test
     public void subscribe1LazyStart() {
         assertFalse(c.isStarted());
-        event().subscribe(TestUtil.dummy(EventProcessor.class));
+        event().subscribe(TestUtil.dummy(Procedure.class));
         assertTrue(c.isStarted());
     }
 
@@ -50,13 +49,13 @@ public class EventBusShutdownLazyStart extends AbstractEventTestBundle {
     public void subscribe2Shutdown() {
         prestart();
         c.shutdown();
-        event().subscribe(TestUtil.dummy(EventProcessor.class), Predicates.TRUE);
+        event().subscribe(TestUtil.dummy(Procedure.class), Predicates.TRUE);
     }
 
     @Test
     public void subscribe2LazyStart() {
         assertFalse(c.isStarted());
-        event().subscribe(TestUtil.dummy(EventProcessor.class), Predicates.TRUE);
+        event().subscribe(TestUtil.dummy(Procedure.class), Predicates.TRUE);
         assertTrue(c.isStarted());
     }
 
@@ -64,13 +63,13 @@ public class EventBusShutdownLazyStart extends AbstractEventTestBundle {
     public void subscribe3Shutdown() {
         prestart();
         c.shutdown();
-        event().subscribe(TestUtil.dummy(EventProcessor.class), Predicates.TRUE, "foo");
+        event().subscribe(TestUtil.dummy(Procedure.class), Predicates.TRUE, "foo");
     }
 
     @Test
     public void subscribe3LazyStart() {
         assertFalse(c.isStarted());
-        event().subscribe(TestUtil.dummy(EventProcessor.class), Predicates.TRUE, "foo");
+        event().subscribe(TestUtil.dummy(Procedure.class), Predicates.TRUE, "foo");
         assertTrue(c.isStarted());
     }
 
@@ -120,13 +119,13 @@ public class EventBusShutdownLazyStart extends AbstractEventTestBundle {
     public void processShutdown() {
         prestart();
         c.shutdown();
-        event().process(TestUtil.dummy(CacheEvent.class));
+        event().apply(TestUtil.dummy(CacheEvent.class));
     }
 
     @Test
     public void processLazyStart() {
         assertFalse(c.isStarted());
-        event().process(TestUtil.dummy(CacheEvent.class));
+        event().apply(TestUtil.dummy(CacheEvent.class));
         assertTrue(c.isStarted());
     }
 

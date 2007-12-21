@@ -8,6 +8,8 @@ import java.io.PrintStream;
 import java.io.Serializable;
 
 import org.apache.commons.logging.Log;
+import org.coconut.internal.util.LogHelper;
+import org.coconut.internal.util.LogHelper.AbstractLogger;
 
 /**
  * This class is used for creating {@link Logger} wrappers from popular logging frameworks
@@ -40,7 +42,7 @@ public final class Loggers {
      *         not be determinded
      */
     public static String getName(Logger logger) {
-        return logger instanceof Loggers.AbstractLogger ? ((Loggers.AbstractLogger) logger)
+        return logger instanceof AbstractLogger ? ((AbstractLogger) logger)
                 .getName() : null;
     }
 
@@ -315,112 +317,6 @@ public final class Loggers {
         }
     }
 
-    /**
-     * An AbstractLogger that all logger wrappers extend.
-     */
-    static abstract class AbstractLogger implements Logger {
-        /** {@inheritDoc} */
-        public void debug(String message) {
-            log(Level.Debug, message);
-        }
-
-        /** {@inheritDoc} */
-        public void debug(String message, Throwable cause) {
-            log(Level.Debug, message, cause);
-        }
-
-        /** {@inheritDoc} */
-        public void error(String message) {
-            log(Level.Error, message);
-        }
-
-        /** {@inheritDoc} */
-        public void error(String message, Throwable cause) {
-            log(Level.Error, message, cause);
-        }
-
-        /** {@inheritDoc} */
-        public void fatal(String message) {
-            log(Level.Fatal, message);
-        }
-
-        /** {@inheritDoc} */
-        public void fatal(String message, Throwable cause) {
-            log(Level.Fatal, message, cause);
-        }
-
-        /**
-         * Returns the name of the logger.
-         * 
-         * @return the name of the logger
-         */
-        public abstract String getName();
-
-        /** {@inheritDoc} */
-        public void info(String message) {
-            log(Level.Info, message);
-        }
-
-        /** {@inheritDoc} */
-        public void info(String message, Throwable cause) {
-            log(Level.Info, message, cause);
-        }
-
-        /** {@inheritDoc} */
-        public boolean isDebugEnabled() {
-            return isEnabled(Level.Debug);
-        }
-
-        /** {@inheritDoc} */
-        public boolean isErrorEnabled() {
-            return isEnabled(Level.Error);
-        }
-
-        /** {@inheritDoc} */
-        public boolean isFatalEnabled() {
-            return isEnabled(Level.Fatal);
-        }
-
-        /** {@inheritDoc} */
-        public boolean isInfoEnabled() {
-            return isEnabled(Level.Info);
-        }
-
-        /** {@inheritDoc} */
-        public boolean isTraceEnabled() {
-            return isEnabled(Level.Trace);
-        }
-
-        /** {@inheritDoc} */
-        public boolean isWarnEnabled() {
-            return isEnabled(Level.Warn);
-        }
-
-        /** {@inheritDoc} */
-        public void log(Logger.Level l, String message) {
-            log(l, message, null);
-        }
-
-        /** {@inheritDoc} */
-        public void trace(String message) {
-            log(Level.Trace, message);
-        }
-
-        /** {@inheritDoc} */
-        public void trace(String message, Throwable cause) {
-            log(Level.Trace, message, cause);
-        }
-
-        /** {@inheritDoc} */
-        public void warn(String message) {
-            log(Level.Warn, message);
-        }
-
-        /** {@inheritDoc} */
-        public void warn(String message, Throwable cause) {
-            log(Level.Warn, message, cause);
-        }
-    }
 
     /**
      * The wrapper class commons logging.
@@ -541,39 +437,17 @@ public final class Loggers {
 
         /** {@inheritDoc} */
         public boolean isEnabled(Level level) {
-            return logger.isLoggable(from(level));
+            return logger.isLoggable(LogHelper.toJdkLevel(level));
         }
 
         /** {@inheritDoc} */
         public void log(Logger.Level level, String message) {
-            logger.log(from(level), message);
+            logger.log(LogHelper.toJdkLevel(level), message);
         }
 
         /** {@inheritDoc} */
         public void log(Logger.Level level, String message, Throwable cause) {
-            logger.log(from(level), message, cause);
-        }
-
-        /**
-         * Converts from a {@link Level} to a {@link java.util.logging.Level}.
-         * 
-         * @param level
-         *            the level to convert
-         * @return the converted level
-         */
-        static java.util.logging.Level from(Level level) {
-            switch (level) {
-            case Debug:
-                return java.util.logging.Level.FINE;
-            case Error:
-                return java.util.logging.Level.SEVERE;
-            case Fatal:
-                return java.util.logging.Level.SEVERE;
-            case Info:
-                return java.util.logging.Level.INFO;
-            default /* Warn */:
-                return java.util.logging.Level.WARNING;
-            }
+            logger.log(LogHelper.toJdkLevel(level), message, cause);
         }
     }
 

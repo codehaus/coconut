@@ -3,9 +3,6 @@
  */
 package org.coconut.cache.spi;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 

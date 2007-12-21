@@ -5,7 +5,6 @@ package org.coconut.operations;
 
 import java.io.Serializable;
 
-import org.coconut.operations.Ops.LongComparator;
 import org.coconut.operations.Ops.LongPredicate;
 import org.coconut.operations.Ops.MapperToLong;
 import org.coconut.operations.Ops.Predicate;
@@ -62,43 +61,84 @@ public final class LongPredicates {
 
     /**
      * Returns a predicate that accepts any long that is equal to the value specified.
+     * <p>
+     * The predicate is serializable.
      * 
-     * @param equalsTo
+     * @param element
      *            the value of the equals predicate
      * @return a predicate that accepts any long that is equal to the value specified
      */
-    public static LongPredicate equalsTo(long equalsTo) {
-        return new EqualsToLongPredicate(equalsTo);
+    public static LongPredicate equalsTo(long element) {
+        return new EqualsToLongPredicate(element);
     }
 
-    public static LongPredicate greaterThen(long greaterThen) {
-        return new GreaterThenLongPredicate(greaterThen);
+    /**
+     * Creates a LongPredicate that evaluates to <code>true</code> if the element being
+     * tested is greater then the element being used to construct the predicate.
+     * <p>
+     * The returned predicate is serializable.
+     * 
+     * @param element
+     *            the element to compare with
+     * @return the newly created LongPredicate
+     */
+    public static LongPredicate greaterThen(long element) {
+        return new GreaterThenLongPredicate(element);
     }
 
-    public static LongPredicate greaterThenOrEquals(long greaterThenOrEquals) {
-        return new GreaterThenOrEqualsLongPredicate(greaterThenOrEquals);
+    /**
+     * Creates a LongPredicate that evaluates to <code>true</code> if the element being
+     * tested is greater then or equals to the element being used to construct the
+     * predicate.
+     * <p>
+     * The returned predicate is serializable.
+     * 
+     * @param element
+     *            the element to compare with
+     * @return the newly created LongPredicate
+     */
+    public static LongPredicate greaterThenOrEquals(long element) {
+        return new GreaterThenOrEqualsLongPredicate(element);
     }
 
-    public static LongPredicate lessThen(long lessThen) {
-        return new LessThenLongPredicate(lessThen);
+    /**
+     * Creates a LongPredicate that evaluates to <code>true</code> if the element being
+     * tested is less then the element being used to construct the predicate.
+     * <p>
+     * The returned predicate is serializable.
+     * 
+     * @param element
+     *            the element to compare with
+     * @return the newly created LongPredicate
+     */
+    public static LongPredicate lessThen(long element) {
+        return new LessThenLongPredicate(element);
     }
 
-//    /**
-//     * @param lessThen
-//     * @param comparator the comparator
-//     * @return
-//     */
-//    public static LongPredicate lessThen(long lessThen, LongComparator comparator) {
-//        return null;
-//    }
-
-    public static LongPredicate lessThenOrEquals(long lessThenOrEquals) {
-        return new LessThenOrEqualsLongPredicate(lessThenOrEquals);
+    /**
+     * Creates a LongPredicate that evaluates to <code>true</code> if the element being
+     * tested is less then or equals to the element being used to construct the predicate.
+     * <p>
+     * The returned predicate is serializable.
+     * 
+     * @param element
+     *            the element to compare with
+     * @return the newly created LongPredicate
+     */
+    public static LongPredicate lessThenOrEquals(long element) {
+        return new LessThenOrEqualsLongPredicate(element);
     }
 
     /**
      * Creates a Predicate that first applies the specified mapper to the argument before
      * evaluating the specified LongPredicate.
+     * <p>
+     * If the specified mapper and predicate are serializable the returni.
+     * 
+     * @param <T>
+     * @param mapper
+     * @param predicate
+     * @return the
      */
     public static <T> Predicate<T> mapAndEvaluate(MapperToLong<T> mapper, LongPredicate predicate) {
         return new MapToLongAndEvaluatePredicate<T>(mapper, predicate);

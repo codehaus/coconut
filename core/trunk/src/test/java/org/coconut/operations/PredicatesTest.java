@@ -9,11 +9,10 @@ import static org.coconut.operations.Predicates.greaterThen;
 import static org.coconut.operations.Predicates.greaterThenOrEqual;
 import static org.coconut.operations.Predicates.lessThen;
 import static org.coconut.operations.Predicates.lessThenOrEqual;
-import static org.coconut.operations.Predicates.not;
-import static org.coconut.test.TestUtil.*;
+import static org.coconut.test.TestUtil.assertIsSerializable;
+import static org.coconut.test.TestUtil.dummy;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 

@@ -5,7 +5,6 @@ package org.coconut.attribute.spi;
 
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
 
 /**

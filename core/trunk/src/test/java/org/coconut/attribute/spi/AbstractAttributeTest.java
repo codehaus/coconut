@@ -9,7 +9,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,7 +19,6 @@ import org.coconut.attribute.Attributes;
 import org.coconut.attribute.DefaultAttributeMap;
 import org.coconut.internal.util.ClassUtils;
 import org.coconut.test.TestUtil;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public abstract class AbstractAttributeTest {
