@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.LinkedList;
 
+@Deprecated
 public final class SystemErrOutHelper {
     public LinkedList<String> last = new LinkedList<String>();
 

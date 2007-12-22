@@ -9,6 +9,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.attribute.AttributeMap;
+import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingMXBean;
@@ -132,7 +133,7 @@ public final class LoadingUtils {
      * @param <V>
      *            the type of mapped values
      */
-    static <K, V> Callable<AbstractCacheEntry<K, V>> createLoadCallable(
+    static <K, V> Callable<CacheEntry<K, V>> createLoadCallable(
             InternalCacheLoadingService<K, V> loaderService, K key, AttributeMap attributes) {
         return new LoadValueCallable<K, V>(loaderService, key, attributes);
     }
@@ -279,7 +280,7 @@ public final class LoadingUtils {
     /**
      * A LoadValueCallable is used to asynchronously load a value into the cache.
      */
-    static class LoadValueCallable<K, V> implements Callable<AbstractCacheEntry<K, V>> {
+    static class LoadValueCallable<K, V> implements Callable<CacheEntry<K, V>> {
 
         /** The attribute map that should be passed to the cache loader. */
         private final AttributeMap attributes;
@@ -318,7 +319,7 @@ public final class LoadingUtils {
         }
 
         /** {@inheritDoc} */
-        public AbstractCacheEntry<K, V> call() {
+        public CacheEntry<K, V> call() {
             return loadingService.loadAndAddToCache(key, attributes, false);
         }
 

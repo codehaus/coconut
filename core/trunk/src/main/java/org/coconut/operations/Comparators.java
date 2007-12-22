@@ -83,9 +83,9 @@ public final class Comparators {
         return mappedComparator(mapper, NATURAL_COMPARATOR);
     }
 
-    public static <T, U extends Comparable<? super U>> Comparator<T> mappedComparator(
-            Mapper<? super T, U> mapper, Comparator<? super U> comperator) {
-        return new MappedComparator<T, U>(mapper);
+    public static <T, U> Comparator<T> mappedComparator(Mapper<? super T, U> mapper,
+            Comparator<? super U> comparator) {
+        return new MappedComparator<T, U>(comparator, mapper);
     }
 
     /**
@@ -107,25 +107,23 @@ public final class Comparators {
      * @param <T>
      *            the type of elements accepted by the comparator
      */
-    public static <T extends Comparable<? super T>> Comparator<T> naturalComparator() {
+    public static <T extends Comparable> Comparator<T> naturalComparator() {
         return NATURAL_COMPARATOR;
     }
 
-    public static <T extends Comparable<? super T>> Comparator<T> nullGreatestOrder() {
+    public static <T extends Comparable> Comparator<T> nullGreatestOrder() {
         return NULL_GREATEST_ORDER;
     }
 
-    public static <T extends Comparable<? super T>> Comparator<T> nullGreatestOrder(
-            Comparator<T> comparator) {
+    public static <T extends Comparable> Comparator<T> nullGreatestOrder(Comparator<T> comparator) {
         return new NullGreatestOrderComparatorPredicate<T>(comparator);
     }
 
-    public static <T extends Comparable<? super T>> Comparator<T> nullLeastOrder() {
+    public static <T extends Comparable> Comparator<T> nullLeastOrder() {
         return NULL_LEAST_ORDER;
     }
 
-    public static <T extends Comparable<? super T>> Comparator<T> nullLeastOrder(
-            Comparator<T> comparator) {
+    public static <T extends Comparable> Comparator<T> nullLeastOrder(Comparator<T> comparator) {
         return new NullLeastOrderComparatorPredicate<T>(comparator);
     }
 
@@ -145,7 +143,7 @@ public final class Comparators {
      *            the Comparable types accepted by the Comparator
      * @see Comparable
      */
-    public static <T extends Comparable<? super T>> Comparator<T> reverseOrder() {
+    public static <T extends Comparable> Comparator<T> reverseOrder() {
         return NATURAL_REVERSE_COMPARATOR;
     }
 
@@ -211,25 +209,29 @@ public final class Comparators {
     }
 
     /** A Comparator for Comparable.objects. */
-    static final class MappedComparator<T, U extends Comparable<? super U>> implements
-            Comparator<T>, Serializable {
+    static final class MappedComparator<T, U> implements Comparator<T>, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -5405101414861263699L;
 
         private final Mapper<? super T, U> mapper;
 
-        MappedComparator(Mapper<? super T, U> mapper) {
+        private final Comparator<? super U> comparator;
+
+        MappedComparator(Comparator<? super U> comparator, Mapper<? super T, U> mapper) {
             if (mapper == null) {
                 throw new NullPointerException("mapper is null");
+            } else if (comparator == null) {
+                throw new NullPointerException("comparator is null");
             }
             this.mapper = mapper;
+            this.comparator = comparator;
         }
 
         /** {@inheritDoc} */
         public int compare(T a, T b) {
             U ua = mapper.map(a);
             U ub = mapper.map(b);
-            return ua.compareTo(ub);
+            return comparator.compare(ua, ub);
         }
     }
 
@@ -362,7 +364,7 @@ public final class Comparators {
 
         /** {@inheritDoc} */
         public int compare(T a, T b) {
-            return a == null ? 1 : b == null ? -1 : comparator.compare(a, b);
+            return a == null ? b == null ? 0 : 1 : b == null ? -1 : comparator.compare(a, b);
         }
     }
 
@@ -373,7 +375,7 @@ public final class Comparators {
 
         /** {@inheritDoc} */
         public int compare(T a, T b) {
-            return a == null ? 1 : b == null ? -1 : a.compareTo(b);
+            return a == null ? b == null ? 0 : 1 : b == null ? -1 : a.compareTo(b);
         }
 
         /** @return Preserves singleton property */
@@ -397,7 +399,7 @@ public final class Comparators {
 
         /** {@inheritDoc} */
         public int compare(T a, T b) {
-            return a == null ? -1 : b == null ? 1 : comparator.compare(a, b);
+            return a == null ? b == null ? 0 : -1 : b == null ? 1 : comparator.compare(a, b);
         }
     }
 
@@ -408,7 +410,7 @@ public final class Comparators {
 
         /** {@inheritDoc} */
         public int compare(T a, T b) {
-            return a == null ? -1 : b == null ? 1 : a.compareTo(b);
+            return a == null ? b == null ? 0 : -1 : b == null ? 1 : a.compareTo(b);
         }
 
         /** @return Preserves singleton property */

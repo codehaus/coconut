@@ -36,7 +36,6 @@ import org.coconut.cache.internal.service.loading.InternalCacheLoadingService;
 import org.coconut.cache.internal.service.loading.UnsynchronizedCacheLoaderService;
 import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
 import org.coconut.cache.internal.service.servicemanager.UnsynchronizedCacheServiceManager;
-import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsService;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.eviction.CacheEvictionService;
@@ -272,7 +271,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
                 entry = null;
             }
             if (loadingService != null) {
-                entry = loadingService.loadBlocking(key, Attributes.EMPTY_MAP);
+                entry = (AbstractCacheEntry)loadingService.loadBlocking(key, Attributes.EMPTY_MAP);
             }
             listener.afterMiss(this, started, key, previous, entry, isExpired);
         }
@@ -317,7 +316,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
             i++;
         }
 
-        Map<K, AbstractCacheEntry<K, V>> loadedEntries = Collections.EMPTY_MAP;
+        Map<K, CacheEntry<K, V>> loadedEntries = Collections.EMPTY_MAP;
         for (int j = 0; j < isExpired.length; j++) {
             if (isExpired[j]) {
                 listener.dexpired(this, started, entries[j]);
@@ -326,7 +325,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         if (loadingService != null && loadMe.size() != 0) {
             loadedEntries = loadingService.loadAllBlocking(Attributes.toMap(loadMe,
                     Attributes.EMPTY_MAP));
-            for (AbstractCacheEntry<K, V> entry : loadedEntries.values()) {
+            for (CacheEntry<K, V> entry : loadedEntries.values()) {
                 if (entry != null) {
                     result.put(entry.getKey(), entry.getValue());
                 }
@@ -440,7 +439,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
     }
 
     /** A helper class. */
-    class Support implements InternalCacheSupport<K, V> {
+    class Support extends AbstractSupport {
         /** {@inheritDoc} */
         public void checkRunning(String operation) {
             UnsynchronizedCache.this.checkRunning(operation);
@@ -546,17 +545,6 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         }
 
         /** {@inheritDoc} */
-        public V put(K key, V value, AttributeMap attributes) {
-            return UnsynchronizedCache.this.put(key, value, attributes, false);
-        }
-
-        /** {@inheritDoc} */
-        public void putAll(Map<? extends K, ? extends V> keyValues,
-                Map<? extends K, AttributeMap> attributes) {
-            doPutAll(keyValues, attributes, false);
-        }
-
-        /** {@inheritDoc} */
         public void trimCache(int toSize, long toVolume) {
             if (toSize < 0) {
                 throw new IllegalArgumentException("newSize cannot be a negative number, was "
@@ -592,28 +580,6 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
             listener.afterTrimCache(UnsynchronizedCache.this, started, l, size, newSize, volume,
                     newVolume);
 
-        }
-
-        /** {@inheritDoc} */
-        public AbstractCacheEntry<K, V> valueLoaded(K key, V value, AttributeMap attributes) {
-            if (value != null) {
-                return doPut(key, value, attributes, false, true);
-            }
-            return null;
-        }
-
-        /** {@inheritDoc} */
-        public Map<K, CacheEntry<K, V>> valuesLoaded(Map<? extends K, ? extends V> values,
-                Map<? extends K, AttributeMap> keys) {
-            HashMap<? extends K, ? extends V> map = new HashMap<K, V>(values);
-            HashMap<? extends K, AttributeMap> attr = new HashMap<K, AttributeMap>(keys);
-            for (Map.Entry<? extends K, ? extends V> entry : values.entrySet()) {
-                if (entry.getValue() == null) {
-                    map.remove(entry.getKey());
-                    attr.remove(entry.getKey());
-                }
-            }
-            return doPutAll(map, attr, true);
         }
     }
 }

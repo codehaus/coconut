@@ -16,11 +16,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 
 import org.coconut.operations.Ops.DoubleComparator;
 import org.coconut.operations.Ops.IntComparator;
 import org.coconut.operations.Ops.LongComparator;
+import org.coconut.operations.Ops.Mapper;
 import org.coconut.test.TestUtil;
 import org.junit.Test;
 
@@ -161,6 +165,126 @@ public class ComparatorsTest {
     }
 
     /**
+     * 
+     */
+    @Test
+    public void mappedComparator() {
+        Collection<Integer> c1 = Arrays.asList(1);
+        Collection<Integer> c2 = Arrays.asList(1, 2);
+
+        Comparator c = Comparators.mappedComparator(new CollectionToSizeMapper());
+        assertEquals(0, c.compare(c1, Arrays.asList("A")));
+        assertTrue(c.compare(c2, c1) > 0);
+        assertTrue(c.compare(c1, c2) < 0);
+        c.toString(); // does not fail
+        assertIsSerializable(c);
+    }
+
+    @Test
+    public void mappedComparatorComparator() {
+        Collection<Integer> c1 = Arrays.asList(1);
+        Collection<Integer> c2 = Arrays.asList(1, 2);
+
+        Comparator c = Comparators.mappedComparator(new CollectionToSizeMapper(),
+                NATURAL_REVERSE_COMPARATOR);
+        assertEquals(0, c.compare(c1, Arrays.asList("A")));
+        assertTrue(c.compare(c2, c1) < 0);
+        assertTrue(c.compare(c1, c2) > 0);
+        c.toString(); // does not fail
+        assertIsSerializable(c);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void mappedComparatorNPE() {
+        Comparators.mappedComparator((Mapper) null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void mappedComparatorNPE1() {
+        Comparators.mappedComparator(Mappers.NOOP_MAPPER, null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void mappedComparatorNPE2() {
+        Comparators.mappedComparator((Mapper) null);
+    }
+
+    /**
+     * Tests {@link Comparators#nullGreatestOrder()}.
+     */
+    @Test
+    public void nullGreatestOrder() {
+        Comparator<Integer> c = Comparators.nullGreatestOrder();
+        assertEquals(0, c.compare(null, null));
+        assertEquals(0, c.compare(Integer.MIN_VALUE, Integer.MIN_VALUE));
+        assertTrue(c.compare(null, Integer.MAX_VALUE) > 0);
+        assertTrue(c.compare(Integer.MAX_VALUE, null) < 0);
+        assertSame(c, Comparators.NULL_GREATEST_ORDER);
+        c.toString(); // does not fail
+        assertIsSerializable(c);
+        assertSame(c, TestUtil.serializeAndUnserialize(Comparators.nullGreatestOrder()));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void nullGreatestOrderComparatorNPE() {
+        Comparators.nullGreatestOrder(null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void nullLeastOrderComparatorNPE() {
+        Comparators.nullLeastOrder(null);
+    }
+
+    /**
+     * Tests {@link Comparators#nullGreatestOrder(Comparator)}.
+     */
+    @Test
+    public void nullGreatestOrderComparator() {
+        Comparator<Integer> c = Comparators
+                .nullGreatestOrder(Comparators.NATURAL_REVERSE_COMPARATOR);
+        assertEquals(0, c.compare(null, null));
+        assertEquals(0, c.compare(Integer.MIN_VALUE, Integer.MIN_VALUE));
+        assertTrue(c.compare(2, 1) < 0);
+        assertTrue(c.compare(1, 2) > 0);
+        assertTrue(c.compare(null, Integer.MIN_VALUE) > 0);
+        assertTrue(c.compare(Integer.MIN_VALUE, null) < 0);
+        c.toString(); // does not fail
+        assertIsSerializable(c);
+    }
+
+    /**
+     * Tests {@link Comparators#nullLeastOrder()}.
+     */
+    @Test
+    public void nullLeastOrder() {
+        Comparator<Integer> c = Comparators.nullLeastOrder();
+        assertEquals(0, c.compare(null, null));
+        assertEquals(0, c.compare(Integer.MIN_VALUE, Integer.MIN_VALUE));
+        assertTrue(c.compare(null, Integer.MIN_VALUE) < 0);
+        assertTrue(c.compare(Integer.MIN_VALUE, null) > 0);
+        assertSame(c, Comparators.NULL_LEAST_ORDER);
+        c.toString(); // does not fail
+        assertIsSerializable(c);
+        assertSame(c, TestUtil.serializeAndUnserialize(Comparators.nullLeastOrder()));
+    }
+
+    /**
+     * Tests {@link Comparators#nullLeastOrder(Comparator)}.
+     */
+    @Test
+    public void nullLeastOrderComparator() {
+        Comparator<Integer> c = Comparators.nullLeastOrder(Comparators.NATURAL_REVERSE_COMPARATOR);
+        assertEquals(0, c.compare(null, null));
+        assertEquals(0, c.compare(Integer.MIN_VALUE, Integer.MIN_VALUE));
+        assertTrue(c.compare(2, 1) < 0);
+        assertTrue(c.compare(1, 2) > 0);
+        assertTrue(c.compare(null, Integer.MAX_VALUE) < 0);
+        assertTrue(c.compare(Integer.MAX_VALUE, null) > 0);
+        c.toString(); // does not fail
+        assertIsSerializable(c);
+    }
+
+    /**
      * Tests {@link Comparators#reverseOrder()}.
      */
     @Test
@@ -206,4 +330,10 @@ public class ComparatorsTest {
     public void reverseOrderNPE() {
         Comparators.reverseOrder((Comparator) null);
     }
+
+    static class CollectionToSizeMapper implements Mapper<Collection, Integer>, Serializable {
+        public Integer map(Collection t) {
+            return t.size();
+        }
+    };
 }

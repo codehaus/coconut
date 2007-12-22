@@ -331,8 +331,8 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
     }
 
     public void afterGetAll(Cache<K, V> cache, long started, Object[] keys,
-            AbstractCacheEntry<K, V>[] entries, boolean[] isHit, boolean[] isExpired,
-            Map<K, AbstractCacheEntry<K, V>> loadedEntries) {
+            CacheEntry<K, V>[] entries, boolean[] isHit, boolean[] isExpired,
+            Map<K, CacheEntry<K, V>> loadedEntries) {
         int hits = 0;
         for (int i = 0; i < isHit.length; i++) {
             if (isHit[i]) {

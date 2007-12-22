@@ -163,8 +163,8 @@ public class DefaultCacheListener<K, V> implements InternalCacheListener<K, V> {
     }
 
     public void afterGetAll(Cache<K, V> cache, long started, Object[] keys,
-            AbstractCacheEntry<K, V>[] entries, boolean[] isHit, boolean[] isExpired,
-            Map<K, AbstractCacheEntry<K, V>> loadedEntries) {
+            CacheEntry<K, V>[] entries, boolean[] isHit, boolean[] isExpired,
+            Map<K, CacheEntry<K, V>> loadedEntries) {
         statistics.afterGetAll(cache, started, keys, entries, isHit, isExpired, loadedEntries);
     }
 

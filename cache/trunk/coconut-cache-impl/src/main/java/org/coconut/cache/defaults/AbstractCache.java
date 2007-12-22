@@ -4,6 +4,7 @@
 package org.coconut.cache.defaults;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
@@ -16,6 +17,7 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheServices;
 import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
+import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.spi.ConfigurationValidator;
 import org.coconut.core.Clock;
 import org.coconut.internal.util.CollectionUtils;
@@ -315,5 +317,39 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         }
         CacheEntry<K, V> prev = doPut(key, value, attributes, putOnlyIfAbsent, false);
         return prev == null ? null : prev.getValue();
+    }
+    
+    abstract class AbstractSupport implements InternalCacheSupport<K, V> {
+
+        /** {@inheritDoc} */
+        public final V put(K key, V value, AttributeMap attributes) {
+            return AbstractCache.this.put(key, value, attributes, false);
+        }
+        /** {@inheritDoc} */
+        public final void putAll(Map<? extends K, ? extends V> keyValues,
+                Map<? extends K, AttributeMap> attributes) {
+            doPutAll(keyValues, attributes, false);
+        }
+        /** {@inheritDoc} */
+        public final CacheEntry<K, V> valueLoaded(K key, V value, AttributeMap attributes) {
+            if (value != null) {
+                return doPut(key, value, attributes, false, true);
+            }
+            return null;
+        }
+        
+        /** {@inheritDoc} */
+        public final Map<K, CacheEntry<K, V>> valuesLoaded(Map<? extends K, ? extends V> values,
+                Map<? extends K, AttributeMap> keys) {
+            HashMap<? extends K, ? extends V> map = new HashMap<K, V>(values);
+            HashMap<? extends K, AttributeMap> attr = new HashMap<K, AttributeMap>(keys);
+            for (Map.Entry<? extends K, ? extends V> entry : values.entrySet()) {
+                if (entry.getValue() == null) {
+                    map.remove(entry.getKey());
+                    attr.remove(entry.getKey());
+                }
+            }
+            return doPutAll(map, attr, true);
+        }
     }
 }

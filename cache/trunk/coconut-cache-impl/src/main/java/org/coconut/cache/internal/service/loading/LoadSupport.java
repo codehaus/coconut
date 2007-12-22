@@ -47,7 +47,7 @@ public interface LoadSupport<K, V> {
      * @return the AbstractCacheEntry that was added to the cache or <code>null</code>
      *         if it was not added.
      */
-    AbstractCacheEntry<K, V> valueLoaded(K key, V value, AttributeMap attributes);
+    CacheEntry<K, V> valueLoaded(K key, V value, AttributeMap attributes);
 
     Map<K, CacheEntry<K, V>> valuesLoaded(Map<? extends K, ? extends V> values,
             Map<? extends K, AttributeMap> keys);

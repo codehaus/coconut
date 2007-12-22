@@ -242,7 +242,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
      *            Whether or not this is synchronous operation (user waits on the result)
      * @return the cache entry that was added to the cache or null if no entry was added
      */
-    public AbstractCacheEntry<K, V> loadAndAddToCache(K key, AttributeMap attributes,
+    public CacheEntry<K, V> loadAndAddToCache(K key, AttributeMap attributes,
             boolean isSynchronous) {
         V v = null;
         try {
@@ -253,9 +253,9 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
         return loadSupport.valueLoaded(key, v, attributes);
     }
 
-    public Map<K, AbstractCacheEntry<K, V>> loadAllBlocking(
+    public Map<K, CacheEntry<K, V>> loadAllBlocking(
             Map<? extends K, ? extends AttributeMap> keys) {
-        HashMap<K, AbstractCacheEntry<K, V>> map = new HashMap<K, AbstractCacheEntry<K, V>>();
+        HashMap<K, CacheEntry<K, V>> map = new HashMap<K,CacheEntry<K, V>>();
         for (Map.Entry<? extends K, ? extends AttributeMap> e : keys.entrySet()) {
             map.put(e.getKey(), loadBlocking(e.getKey(), e.getValue()));
         }

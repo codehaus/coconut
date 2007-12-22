@@ -28,19 +28,19 @@ public interface InternalCacheLoadingService<K, V> extends CacheLoadingService<K
      */
     Predicate<CacheEntry<K, V>> getRefreshPredicate();
 
-    AbstractCacheEntry<K, V> loadAndAddToCache(K key, AttributeMap attributes, boolean isSynchronous);
+    CacheEntry<K, V> loadAndAddToCache(K key, AttributeMap attributes, boolean isSynchronous);
 
     /**
      * @param entry
      * @return
      */
-    AbstractCacheEntry<K, V> loadBlocking(K key, AttributeMap attributes);
+    CacheEntry<K, V> loadBlocking(K key, AttributeMap attributes);
 
     /**
      * @param entry
      * @return
      */
-    Map<K, AbstractCacheEntry<K, V>> loadAllBlocking(Map<? extends K, ? extends AttributeMap> keys);
+    Map<K, CacheEntry<K, V>> loadAllBlocking(Map<? extends K, ? extends AttributeMap> keys);
 
     /**
      * Asynchronously load the value for the specified key and AttributeMap.

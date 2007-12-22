@@ -1,0 +1,38 @@
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
+ */
+package org.coconut.test;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+
+public final class SystemErrCatcher {
+    private final StringBuffer sb = new StringBuffer();
+
+    private final PrintStream old;
+
+    SystemErrCatcher() {
+        old = System.err;
+        System.setErr(new PrintStream(new MyOutput()));
+    }
+
+    public String toString() {
+        return sb.toString();
+    }
+
+    public void terminate() {
+        System.setErr(old);
+    }
+
+    public static SystemErrCatcher get() {
+        return new SystemErrCatcher();
+    }
+
+    private class MyOutput extends OutputStream {
+        public void write(int b) throws IOException {
+            sb.append((char) b);
+        }
+    }
+
+}

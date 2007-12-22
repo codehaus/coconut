@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
+import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.InternalCacheEntryService;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.cache.service.loading.CacheLoaderCallback;
@@ -71,7 +71,7 @@ public class UnsynchronizedCacheLoaderService<K, V> extends AbstractCacheLoading
     }
 
     /** {@inheritDoc} */
-    public AbstractCacheEntry<K, V> loadBlocking(K key, AttributeMap attributes) {
+    public CacheEntry<K, V> loadBlocking(K key, AttributeMap attributes) {
         AttributeMap map = attributeFactory.createMap(attributes);
         return loadAndAddToCache(key, map, false);
     }

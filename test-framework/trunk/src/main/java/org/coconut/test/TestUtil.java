@@ -21,6 +21,7 @@ import junit.framework.AssertionFailedError;
  * @version $Id$
  */
 public class TestUtil {
+    public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     @SuppressWarnings("unchecked")
     public static <V> V dummy(Class<V> arg) {

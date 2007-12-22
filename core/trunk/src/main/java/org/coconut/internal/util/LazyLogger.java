@@ -9,8 +9,6 @@ import org.coconut.internal.util.LogHelper.AbstractLogger;
  * Returns the exception logger configured for this cache. Or initializes the default
  * logger if no logger has been defined and the default logger has not already been
  * initialized
- * 
- * @return the exception logger for the cache
  */
 public class LazyLogger extends AbstractLogger {
 
@@ -46,23 +44,22 @@ public class LazyLogger extends AbstractLogger {
     }
 
     private Logger getLogger() {
-        Logger l = logger;
-        if (l != null) {
-            return l;
+        Logger logger = this.logger;
+        if (logger != null) {
+            return logger;
         }
         synchronized (this) {
-            if (logger == null) {
-                java.util.logging.Logger jucLogger = LogManager.getLogManager().getLogger(
-                        jdkLoggerName);
-                if (jucLogger == null) {
-                    jucLogger = java.util.logging.Logger.getLogger(jdkLoggerName);
-                    jucLogger.setLevel(java.util.logging.Level.ALL);
-                    jucLogger.info(msg);
-                    jucLogger.setLevel(java.util.logging.Level.WARNING);
+            if (this.logger == null) {
+                logger = LogManager.getLogManager().getLogger(jdkLoggerName);
+                if (logger == null) {
+                    logger = java.util.logging.Logger.getLogger(jdkLoggerName);
+                    logger.setLevel(java.util.logging.Level.ALL);
+                    logger.info(msg);
+                    logger.setLevel(java.util.logging.Level.WARNING);
                 }
-                logger = jucLogger;
+                this.logger = logger;
             }
+            return logger;
         }
-        return logger;
     }
 }
