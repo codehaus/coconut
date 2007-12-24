@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.service.expiration;
@@ -9,6 +9,7 @@ import static org.coconut.internal.util.XmlUtil.loadChildObject;
 
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.attribute.common.TimeToLiveAttribute;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
@@ -20,7 +21,7 @@ import org.w3c.dom.Element;
 
 /**
  * This class is used to configure the expiration service prior to usage.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -62,15 +63,15 @@ public class CacheExpirationConfiguration<K, V> extends
 
     /**
      * Returns the default configured time to live in the specified time unit.
-     * 
+     *
      * @param unit
      *            the time unit to return the time to live in
      * @return the default configured time to live
      * @see #setDefaultTimeToLive(long, TimeUnit)
      */
     public long getDefaultTimeToLive(TimeUnit unit) {
-        if (defaultTimeToLive == CacheExpirationService.NEVER_EXPIRE) {
-            return CacheExpirationService.NEVER_EXPIRE;
+        if (defaultTimeToLive == TimeToLiveAttribute.FOREVER) {
+            return TimeToLiveAttribute.FOREVER;
         } else {
             return unit.convert(defaultTimeToLive, DEFAULT_TIME_UNIT);
         }
@@ -79,7 +80,7 @@ public class CacheExpirationConfiguration<K, V> extends
     /**
      * Returns the configured expiration filter or <tt>null</tt> if no filter has been
      * configured.
-     * 
+     *
      * @return the configured expiration filter or null if no filter has been configured
      * @see #setExpirationFilter(Predicate)
      */
@@ -92,7 +93,7 @@ public class CacheExpirationConfiguration<K, V> extends
      * using the {@link Cache#put(Object, Object)} will expire at
      * <tt>time_of_insert + default_expiration_time</tt>. The default expiration is
      * infinite, that is elements never expires..
-     * 
+     *
      * @param timeToLive
      *            the default time to live for elements added to the cache, must be
      *            positive
@@ -112,8 +113,8 @@ public class CacheExpirationConfiguration<K, V> extends
         } else if (unit == null) {
             throw new NullPointerException("unit is null");
         }
-        if (timeToLive == CacheExpirationService.NEVER_EXPIRE) {
-            defaultTimeToLive = CacheExpirationService.NEVER_EXPIRE;
+        if (timeToLive == TimeToLiveAttribute.FOREVER) {
+            defaultTimeToLive = TimeToLiveAttribute.FOREVER;
             // don't convert relative to time unit
         } else {
             defaultTimeToLive = DEFAULT_TIME_UNIT.convert(timeToLive, unit);
@@ -127,7 +128,7 @@ public class CacheExpirationConfiguration<K, V> extends
      * set items are expired according to their registered expiration time. If an
      * expiration filter is set cache entries are first checked against that filter then
      * against the time based expiration times.
-     * 
+     *
      * @param filter
      *            the filter to use for checking expired elements
      * @return this configuration
@@ -144,7 +145,7 @@ public class CacheExpirationConfiguration<K, V> extends
         /* Expiration timeout */
         Element eTime = getChild(DEFAULT_TIMEOUT_TAG, base);
         long time = XmlUtil.elementTimeUnitRead(eTime, DEFAULT_TIME_UNIT,
-                CacheExpirationService.NEVER_EXPIRE);
+                TimeToLiveAttribute.FOREVER);
         setDefaultTimeToLive(time, DEFAULT_TIME_UNIT);
 
         /* Expiration Filter */

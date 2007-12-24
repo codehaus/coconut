@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
@@ -35,7 +35,8 @@ public final class Ops {
     }
 
     /**
-     * An object with a function accepting objects of type T and returning those of type U
+     * An object with a function accepting objects of type T and returning those of type
+     * U.
      */
     public static interface Mapper<T, U> {
         public U map(T t);
@@ -43,7 +44,7 @@ public final class Ops {
 
     /**
      * An object with a function accepting pairs of objects, one of type T and one of type
-     * U, returning those of type V
+     * U, returning those of type V.
      */
     public static interface Combiner<T, U, V> {
         public V combine(T t, U u);
@@ -60,213 +61,213 @@ public final class Ops {
     }
 
     /**
-     * An object with boolean method of one argument
+     * An object with boolean method of one argument.
      */
     public static interface Predicate<T> {
         public boolean evaluate(T t);
     }
 
     /**
-     * An object with boolean method of two arguments
+     * An object with boolean method of two arguments.
      */
     public static interface RelationalPredicate<T, U> {
         public boolean evaluate(T t, U u);
     }
 
     /**
-     * A mapper returning an int
+     * A mapper returning an int.
      */
     public static interface MapperToInt<T> {
         public int map(T t);
     }
 
     /**
-     * A mapper returning a double
+     * A mapper returning a double.
      */
     public static interface MapperToDouble<T> {
         public double map(T t);
     }
 
     /**
-     * A mapper returning a long
+     * A mapper returning a long.
      */
     public static interface MapperToLong<T> {
         public long map(T t);
     }
 
     /**
-     * A mapper accepting an int
+     * A mapper accepting an int.
      */
     public static interface MapperFromInt<T> {
         public T map(int t);
     }
 
     /**
-     * A mapper accepting a double
+     * A mapper accepting a double.
      */
     public static interface MapperFromDouble<T> {
         public T map(double t);
     }
 
     /**
-     * A mapper accepting a long argument
+     * A mapper accepting a long argument.
      */
     public static interface MapperFromLong<T> {
         public T map(long t);
     }
 
-    /** A generator of doubles */
+    /** A generator of doubles. */
     public static interface DoubleGenerator {
         public double generate();
     }
 
-    /** A procedure accepting a double */
+    /** A procedure accepting a double. */
     public static interface DoubleProcedure {
         public void apply(double t);
     }
 
     /**
-     * A mapper accepting a double argument and returning an int
+     * A mapper accepting a double argument and returning an int.
      */
     public static interface MapperFromDoubleToInt {
         public int map(double t);
     }
 
     /**
-     * A mapper accepting a double argument and returning a long
+     * A mapper accepting a double argument and returning a long.
      */
     public static interface MapperFromDoubleToLong {
         public long map(double t);
     }
 
     /**
-     * A mapper accepting a double argument and returning a double
+     * A mapper accepting a double argument and returning a double.
      */
     public static interface MapperFromDoubleToDouble {
         public double map(double t);
     }
 
-    /** A reducer accepting and returning doubles */
+    /** A reducer accepting and returning doubles. */
     public static interface DoubleReducer {
         public double combine(double u, double v);
     }
 
-    /** A predicate accepting a double argument */
+    /** A predicate accepting a double argument. */
     public static interface DoublePredicate {
         public boolean evaluate(double t);
     }
 
-    /** A relationalPredicate accepting double arguments */
+    /** A relationalPredicate accepting double arguments. */
     public static interface DoubleRelationalPredicate {
         public boolean evaluate(double t, double u);
     }
 
-    /** A generator of longs */
+    /** A generator of longs. */
     public static interface LongGenerator {
         public long generate();
     }
 
-    /** A procedure accepting a long */
+    /** A procedure accepting a long. */
     public static interface LongProcedure {
         public void apply(long t);
     }
 
     /**
-     * A mapper accepting a long argument and returning an int
+     * A mapper accepting a long argument and returning an int.
      */
     public static interface MapperFromLongToInt {
         public int map(long t);
     }
 
     /**
-     * A mapper accepting a long argument and returning a double
+     * A mapper accepting a long argument and returning a double.
      */
     public static interface MapperFromLongToDouble {
         public double map(long t);
     }
 
     /**
-     * A mapper accepting a long argument and returning a long
+     * A mapper accepting a long argument and returning a long.
      */
     public static interface MapperFromLongToLong {
         public long map(long t);
     }
 
-    /** A reducer accepting and returning longs */
+    /** A reducer accepting and returning longs. */
     public static interface LongReducer {
         public long combine(long u, long v);
     }
 
-    /** A predicate accepting a long argument */
+    /** A predicate accepting a long argument. */
     public static interface LongPredicate {
         public boolean evaluate(long t);
     }
 
-    /** A relationalPredicate accepting long arguments */
+    /** A relationalPredicate accepting long arguments. */
     public static interface LongRelationalPredicate {
         public boolean evaluate(long t, long u);
     }
 
-    /** A generator of ints */
+    /** A generator of ints. */
     public static interface IntGenerator {
         public int generate();
     }
 
-    /** A procedure accepting an int */
+    /** A procedure accepting an int. */
     public static interface IntProcedure {
         public void apply(int t);
     }
 
-    /** A map accepting an int and returning an int */
+    /** A map accepting an int and returning an int. */
     public static interface MapperFromIntToInt {
         public int map(int u);
     }
 
     /**
-     * A mapper accepting an int argument and returning a long
+     * A mapper accepting an int argument and returning a long.
      */
     public static interface MapperFromIntToLong {
         public long map(int t);
     }
 
     /**
-     * A mapper accepting an int argument and returning a double
+     * A mapper accepting an int argument and returning a double.
      */
     public static interface MapperFromIntToDouble {
         public double map(int t);
     }
 
-    /** A reducer accepting and returning ints */
+    /** A reducer accepting and returning ints. */
     public static interface IntReducer {
         public int combine(int u, int v);
     }
 
-    /** A predicate accepting an int */
+    /** A predicate accepting an int. */
     public static interface IntPredicate {
         public boolean evaluate(int t);
     }
 
-    /** A relationalPredicate accepting int arguments */
+    /** A relationalPredicate accepting int arguments. */
     public static interface IntRelationalPredicate {
         public boolean evaluate(int t, int u);
     }
 
     /**
-     * A Comparator for doubles
+     * A Comparator for doubles.
      */
     public static interface DoubleComparator {
         public int compare(double x, double y);
     }
 
     /**
-     * A Comparator for longs
+     * A Comparator for longs.
      */
     public static interface LongComparator {
         public int compare(long x, long y);
     }
 
     /**
-     * A Comparator for ints
+     * A Comparator for ints.
      */
     public static interface IntComparator {
         public int compare(int x, int y);

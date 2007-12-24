@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.exceptionhandling;
@@ -15,7 +15,7 @@ import org.coconut.cache.service.servicemanager.CacheLifecycle;
  * <p>
  * NOTICE: This is an internal class and should not be directly referred. No guarantee is
  * made to the compatibility of this class between different releases.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -25,9 +25,9 @@ import org.coconut.cache.service.servicemanager.CacheLifecycle;
  */
 public interface InternalCacheExceptionService<K, V> {
 
-    void fatalRuntimeException(String msg);
+    void fatal(String msg);
 
-    void fatalRuntimeException(String msg, RuntimeException cause);
+    void fatal(String msg, Throwable cause);
 
     void initializationFailed(CacheConfiguration<K, V> configuration, CacheLifecycle service,
             RuntimeException cause);

@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.attribute.common.TimeToLiveAttribute;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,7 +45,7 @@ public class ExpirationPutWithTimeouts extends AbstractExpirationTestBundle {
 
     /**
      * {@link CacheExpirationService#put(Object, Object, long, TimeUnit) should  fail when cache is shutdown.
-     * 
+     *
      * @throws InterruptedException
      *             was interrupted
      */
@@ -60,9 +61,9 @@ public class ExpirationPutWithTimeouts extends AbstractExpirationTestBundle {
 
     @Test
     public void testPutTimeout() {
-        expiration().put(1, "B", CacheExpirationService.NEVER_EXPIRE, TimeUnit.SECONDS);
+        expiration().put(1, "B", TimeToLiveAttribute.FOREVER, TimeUnit.SECONDS);
         assertSize(1);
-        expiration().put(1, "C", CacheExpirationService.NEVER_EXPIRE, TimeUnit.SECONDS);
+        expiration().put(1, "C", TimeToLiveAttribute.FOREVER, TimeUnit.SECONDS);
         assertSize(1);
         assertEquals("C", c.get(1));
     }
@@ -74,7 +75,7 @@ public class ExpirationPutWithTimeouts extends AbstractExpirationTestBundle {
 
     @Test(expected = NullPointerException.class)
     public void testPutTimeoutKeyNull2() {
-        expiration().put(null, "A", CacheExpirationService.NEVER_EXPIRE, TimeUnit.SECONDS);
+        expiration().put(null, "A", TimeToLiveAttribute.FOREVER, TimeUnit.SECONDS);
     }
 
     @Test(expected = NullPointerException.class)
@@ -84,7 +85,7 @@ public class ExpirationPutWithTimeouts extends AbstractExpirationTestBundle {
 
     @Test(expected = NullPointerException.class)
     public void testPutTimeoutValueNull2() {
-        expiration().put(1, null, CacheExpirationService.NEVER_EXPIRE, TimeUnit.SECONDS);
+        expiration().put(1, null, TimeToLiveAttribute.FOREVER, TimeUnit.SECONDS);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -110,7 +111,7 @@ public class ExpirationPutWithTimeouts extends AbstractExpirationTestBundle {
 
     /**
      * {@link CacheExpirationService#putAll(Map, long, TimeUnit) should  fail when cache is shutdown.
-     * 
+     *
      * @throws InterruptedException
      *             was interrupted
      */
@@ -145,7 +146,7 @@ public class ExpirationPutWithTimeouts extends AbstractExpirationTestBundle {
         Map<Integer, String> m = new HashMap<Integer, String>();
         m.put(0, "A");
         m.put(null, "D");
-        expiration().putAll(m, CacheExpirationService.NEVER_EXPIRE, TimeUnit.SECONDS);
+        expiration().putAll(m, TimeToLiveAttribute.FOREVER, TimeUnit.SECONDS);
     }
 
     @Test(expected = NullPointerException.class)
@@ -153,7 +154,7 @@ public class ExpirationPutWithTimeouts extends AbstractExpirationTestBundle {
         Map<Integer, String> m = new HashMap<Integer, String>();
         m.put(0, "A");
         m.put(5, null);
-        expiration().putAll(m, CacheExpirationService.NEVER_EXPIRE, TimeUnit.SECONDS);
+        expiration().putAll(m, TimeToLiveAttribute.FOREVER, TimeUnit.SECONDS);
     }
 
     @Test(expected = IllegalArgumentException.class)

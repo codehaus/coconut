@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.exceptionhandling;
@@ -24,7 +24,7 @@ import org.coconut.internal.util.LazyLogger;
  * <p>
  * NOTICE: This is an internal class and should not be directly referred. No guarantee is
  * made to the compatibility of this class between different releases.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -52,7 +52,7 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
 
     /**
      * Creates a new DefaultCacheExceptionService.
-     * 
+     *
      * @param cache
      *            the cache that is using this service
      * @param configuration
@@ -95,13 +95,13 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
     }
 
     /** {@inheritDoc} */
-    public void fatalRuntimeException(String msg) {
-        logger.error(msg);
+    public void fatal(String msg) {
+        exceptionHandler.apply(createContext(null, msg));
     }
 
     /** {@inheritDoc} */
-    public void fatalRuntimeException(String msg, RuntimeException cause) {
-        logger.error(msg, cause);
+    public void fatal(String msg, Throwable cause) {
+        exceptionHandler.apply(createContext(cause, msg));
     }
 
     public void info(String str) {

@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.loading;
@@ -317,21 +317,16 @@ public class DefaultCacheLoaderServiceTest {
             r.run();
         }
 
-        /**
-         * @see org.coconut.cache.internal.service.threading.InternalCacheThreadingService#isValid()
-         */
-        public boolean isActive() {
-            throw new UnsupportedOperationException();
-        }
-
         public CacheWorkerManager getManager() {
             return new CacheWorkerManager(){
-                
+
+                @Override
                 public ExecutorService getExecutorService(Object service,
                         AttributeMap attributes) {
                     return TestUtil.dummy(ExecutorService.class);
                 }
-                
+
+                @Override
                 public ScheduledExecutorService getScheduledExecutorService(
                         Object service, AttributeMap attributes) {
                     return TestUtil.dummy(ScheduledExecutorService.class);

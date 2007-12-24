@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.event.bus.defaults;
@@ -16,12 +16,13 @@ import org.coconut.event.bus.EventBus;
 import org.coconut.event.bus.EventSubscription;
 import org.coconut.internal.predicatematcher.DefaultPredicateMatcher;
 import org.coconut.internal.predicatematcher.PredicateMatcher;
+import org.coconut.operations.Ops.Generator;
 import org.coconut.operations.Ops.Predicate;
 import org.coconut.operations.Ops.Procedure;
 
 /**
  * The order of subscribers are maintained.
- * 
+ *
  * @param <E>
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: DefaultEventBus.java 415 2007-11-09 08:25:23Z kasper $
@@ -33,6 +34,8 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
     private final Lock lock = new ReentrantLock();
 
     private final ConcurrentHashMap<String, DefaultEventSubscription<E>> subscribers = new ConcurrentHashMap<String, DefaultEventSubscription<E>>();
+
+    private final Generator<String> nameGenerator = new NameGenerator("Subscription-");
 
     public DefaultEventBus() {
         indexer = new DefaultPredicateMatcher<DefaultEventSubscription<E>, E>();
@@ -54,7 +57,7 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
         lock.lock();
         try {
             for (;;) {
-                String name = getNextName(eventHandler, filter);
+                String name = nameGenerator.generate();
                 DefaultEventSubscription<E> s = newSubscription(eventHandler, filter, name);
                 // this will only fail if somebody has registered some stage
                 // with a specified name starting with SUBSCRIPTION_NAME_PREFIX
@@ -153,6 +156,7 @@ public class DefaultEventBus<E> extends AbstractEventBus<E> implements EventBus<
 // }
     }
 
+    @Override
     protected boolean doInform(final E element, boolean doThrow) {
         for (DefaultEventSubscription<E> s : indexer.match(element)) {
             ReadLock rl = s.readLock();

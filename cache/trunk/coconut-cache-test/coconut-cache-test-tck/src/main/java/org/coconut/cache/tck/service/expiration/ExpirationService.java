@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.service.expiration;
@@ -7,6 +7,7 @@ import static org.coconut.test.CollectionTestUtil.M1_TO_M5_MAP;
 
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.attribute.common.TimeToLiveAttribute;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
@@ -38,9 +39,9 @@ public class ExpirationService extends AbstractCacheTCKTest {
 
     @Test
     public void setGetDefaultTimeToLive() {
-        assertEquals(CacheExpirationService.NEVER_EXPIRE, expiration().getDefaultTimeToLive(
+        assertEquals(TimeToLiveAttribute.FOREVER, expiration().getDefaultTimeToLive(
                 TimeUnit.NANOSECONDS));
-        assertEquals(CacheExpirationService.NEVER_EXPIRE, expiration().getDefaultTimeToLive(
+        assertEquals(TimeToLiveAttribute.FOREVER, expiration().getDefaultTimeToLive(
                 TimeUnit.SECONDS));
 
         expiration().setDefaultTimeToLive(2 * 1000, TimeUnit.MILLISECONDS);
@@ -56,7 +57,7 @@ public class ExpirationService extends AbstractCacheTCKTest {
 
     /**
      * {@link CacheExpirationService#setDefaultTimeToLive(long, TimeUnit) and CacheExpirationService#getDefaultTimeToLive(TimeUnit) should not fail when cache is shutdown.
-     * 
+     *
      * @throws InterruptedException
      *             was interrupted
      */

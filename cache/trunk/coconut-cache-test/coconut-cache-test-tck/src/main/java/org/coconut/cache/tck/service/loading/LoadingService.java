@@ -1,11 +1,11 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.service.loading;
 
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.service.expiration.CacheExpirationService;
+import org.coconut.attribute.common.TimeToLiveAttribute;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
@@ -14,7 +14,7 @@ import org.junit.Test;
 
 /**
  * Tests whether or not the cache loading service is available at runtime.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -70,9 +70,9 @@ public class LoadingService extends AbstractCacheTCKTest {
     @Test
     public void setGetDefaultTimeToLive() {
         c = newCache(newConf().loading().setLoader(TestUtil.dummy(CacheLoader.class)));
-        assertEquals(CacheExpirationService.NEVER_EXPIRE, loading().getDefaultTimeToRefresh(
+        assertEquals(TimeToLiveAttribute.FOREVER, loading().getDefaultTimeToRefresh(
                 TimeUnit.NANOSECONDS));
-        assertEquals(CacheExpirationService.NEVER_EXPIRE, loading().getDefaultTimeToRefresh(
+        assertEquals(TimeToLiveAttribute.FOREVER, loading().getDefaultTimeToRefresh(
                 TimeUnit.SECONDS));
 
         loading().setDefaultTimeToRefresh(2 * 1000, TimeUnit.MILLISECONDS);

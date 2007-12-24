@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.operations;
@@ -11,7 +11,7 @@ import org.coconut.operations.Ops.Predicate;
 
 /**
  * Various implementations of {@link Ops.LongPredicate}.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -34,15 +34,15 @@ public final class LongPredicates {
      * returned predicate uses short-circuit evaluation (or minimal evaluation). That is,
      * if the specified left side predicate evaluates to <code>false</code> the right
      * side predicate will not be evaluated. More formally
-     * 
+     *
      * <pre>
      * left.evaluate(element) &amp;&amp; right.evaluate(element);
      * </pre>
-     * 
+     *
      * <p>
      * If both of the supplied predicates are serializable the returned predicate will
      * also be serializable.
-     * 
+     *
      * @param left
      *            the left side LongPredicate
      * @param right
@@ -63,7 +63,7 @@ public final class LongPredicates {
      * Returns a predicate that accepts any long that is equal to the value specified.
      * <p>
      * The predicate is serializable.
-     * 
+     *
      * @param element
      *            the value of the equals predicate
      * @return a predicate that accepts any long that is equal to the value specified
@@ -77,7 +77,7 @@ public final class LongPredicates {
      * tested is greater then the element being used to construct the predicate.
      * <p>
      * The returned predicate is serializable.
-     * 
+     *
      * @param element
      *            the element to compare with
      * @return the newly created LongPredicate
@@ -92,7 +92,7 @@ public final class LongPredicates {
      * predicate.
      * <p>
      * The returned predicate is serializable.
-     * 
+     *
      * @param element
      *            the element to compare with
      * @return the newly created LongPredicate
@@ -106,7 +106,7 @@ public final class LongPredicates {
      * tested is less then the element being used to construct the predicate.
      * <p>
      * The returned predicate is serializable.
-     * 
+     *
      * @param element
      *            the element to compare with
      * @return the newly created LongPredicate
@@ -120,7 +120,7 @@ public final class LongPredicates {
      * tested is less then or equals to the element being used to construct the predicate.
      * <p>
      * The returned predicate is serializable.
-     * 
+     *
      * @param element
      *            the element to compare with
      * @return the newly created LongPredicate
@@ -134,7 +134,7 @@ public final class LongPredicates {
      * evaluating the specified LongPredicate.
      * <p>
      * If the specified mapper and predicate are serializable the returni.
-     * 
+     *
      * @param <T>
      * @param mapper
      * @param predicate
@@ -147,15 +147,15 @@ public final class LongPredicates {
     /**
      * Creates a LongPredicate that performs a logical logical NOT on the supplied
      * LongPredicate. More formally
-     * 
+     *
      * <pre>
      * !predicate.evaluate(value);
      * </pre>
-     * 
+     *
      * <p>
      * If the specified predicate is serializable the returned predicate will also be
      * serializable.
-     * 
+     *
      * @param predicate
      *            the predicate to negate
      * @return the newly created LongPredicate
@@ -171,15 +171,15 @@ public final class LongPredicates {
      * returned predicate uses short-circuit evaluation (or minimal evaluation). That is,
      * if the specified left side predicate evaluates to <code>true</code> the right
      * side predicate will not be evaluated. More formally
-     * 
+     *
      * <pre>
      * left.evaluate(element) || right.evaluate(element);
      * </pre>
-     * 
+     *
      * <p>
      * If both of the supplied predicates are serializable the returned predicate will
      * also be serializable.
-     * 
+     *
      * @param left
      *            the left side LongPredicate
      * @param right
@@ -207,7 +207,7 @@ public final class LongPredicates {
         /**
          * Returns <code>true</code> if the specified value is equal to the value that
          * was used when constructing this predicate, otherwise <code>false</code>.
-         * 
+         *
          * @param t
          *            the value to compare with
          * @return <code>true</code> if the specified value is equal to the value that
@@ -235,7 +235,7 @@ public final class LongPredicates {
         public GreaterThenLongPredicate(long greaterThen) {
             this.greaterThen = greaterThen;
         }
-
+        /** {@inheritDoc} */     /** {@inheritDoc} */
         public boolean evaluate(long t) {
             return greaterThen < t;
         }
@@ -255,7 +255,7 @@ public final class LongPredicates {
         public GreaterThenOrEqualsLongPredicate(long greaterThenOrEquals) {
             this.greaterThenOrEquals = greaterThenOrEquals;
         }
-
+        /** {@inheritDoc} */
         public boolean evaluate(long t) {
             return greaterThenOrEquals <= t;
         }
@@ -275,7 +275,7 @@ public final class LongPredicates {
         public LessThenLongPredicate(long lessThen) {
             this.lessThen = lessThen;
         }
-
+        /** {@inheritDoc} */
         public boolean evaluate(long t) {
             return lessThen > t;
         }
@@ -296,6 +296,7 @@ public final class LongPredicates {
             this.lessThenOrEquals = lessThenOrEquals;
         }
 
+        /** {@inheritDoc} */
         public boolean evaluate(long t) {
             return lessThenOrEquals >= t;
         }
@@ -319,7 +320,7 @@ public final class LongPredicates {
 
         /**
          * Creates a new NotLongPredicate.
-         * 
+         *
          * @param predicate
          *            the predicate to negate.
          * @throws NullPointerException
@@ -335,7 +336,7 @@ public final class LongPredicates {
         /**
          * Returns a boolean representing the logical NOT value of the supplied
          * LongPredicate.
-         * 
+         *
          * @param element
          *            the element to test
          * @return the logical NOT of the supplied LongPredicate
@@ -346,7 +347,7 @@ public final class LongPredicates {
 
         /**
          * Returns the predicate that is being negated.
-         * 
+         *
          * @return the predicate that is being negated.
          */
         public LongPredicate getPredicate() {
@@ -376,7 +377,7 @@ public final class LongPredicates {
 
         /**
          * Creates a new <code>AndLongPredicate</code>.
-         * 
+         *
          * @param left
          *            the left side LongPredicate
          * @param right
@@ -401,7 +402,7 @@ public final class LongPredicates {
 
         /**
          * Returns the left side LongPredicate.
-         * 
+         *
          * @return the left side LongPredicate.
          */
         public LongPredicate getLeftPredicate() {
@@ -410,7 +411,7 @@ public final class LongPredicates {
 
         /**
          * Returns the right side LongPredicate.
-         * 
+         *
          * @return the right side LongPredicate.
          */
         public LongPredicate getRightPredicate() {
@@ -418,6 +419,7 @@ public final class LongPredicates {
         }
 
         /** {@inheritDoc} */
+        @Override
         public String toString() {
             return "(" + left + ") && (" + right + ")";
         }
@@ -426,7 +428,7 @@ public final class LongPredicates {
     /**
      * A LongPredicate that always evaluates to <tt>false</tt>. Use {@link #FALSE} to
      * get an instance of this LongPredicate.
-     * 
+     *
      * @see TrueLongPredicate
      */
     final static class FalseLongPredicate implements LongPredicate, Serializable {
@@ -471,7 +473,7 @@ public final class LongPredicates {
 
         /**
          * Creates a new MapToLongAndEvaluatePredicate.
-         * 
+         *
          * @param mapper
          *            the mapper used to first map the argument
          * @param predicate
@@ -495,7 +497,7 @@ public final class LongPredicates {
         /**
          * Returns the mapper that will map the object to a long before applying the
          * predicate on it.
-         * 
+         *
          * @return the mapper that will map the object to a long before applying the
          *         predicate on it
          */
@@ -505,7 +507,7 @@ public final class LongPredicates {
 
         /**
          * Returns the Predicate we are testing against.
-         * 
+         *
          * @return the Predicate we are testing against.
          */
         public LongPredicate getPredicate() {
@@ -535,7 +537,7 @@ public final class LongPredicates {
 
         /**
          * Creates a new <code>OrLongPredicate</code>.
-         * 
+         *
          * @param left
          *            the left side LongPredicate
          * @param right
@@ -560,7 +562,7 @@ public final class LongPredicates {
 
         /**
          * Returns the left side LongPredicate.
-         * 
+         *
          * @return the left side LongPredicate.
          */
         public LongPredicate getLeftPredicate() {
@@ -569,7 +571,7 @@ public final class LongPredicates {
 
         /**
          * Returns the right side LongPredicate.
-         * 
+         *
          * @return the right side LongPredicate.
          */
         public LongPredicate getRightPredicate() {
@@ -577,6 +579,7 @@ public final class LongPredicates {
         }
 
         /** {@inheritDoc} */
+        @Override
         public String toString() {
             return "(" + left + ") && (" + right + ")";
         }
@@ -585,7 +588,7 @@ public final class LongPredicates {
     /**
      * A LongPredicate that always evaluates to <tt>true</tt>. Use {@link #TRUE} to get
      * an instance of this LongPredicate.
-     * 
+     *
      * @see FalseLongPredicate
      */
     final static class TrueLongPredicate implements LongPredicate, Serializable {

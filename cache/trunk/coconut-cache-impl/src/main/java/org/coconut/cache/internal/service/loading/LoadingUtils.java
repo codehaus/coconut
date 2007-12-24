@@ -1,16 +1,16 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.loading;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingMXBean;
 import org.coconut.cache.service.loading.CacheLoadingService;
@@ -22,7 +22,7 @@ import org.coconut.management.annotation.ManagedOperation;
  * <p>
  * NOTICE: This is an internal class and should not be directly referred. No guarantee is
  * made to the compatibility of this class between different releases of Coconut Cache.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -36,7 +36,7 @@ public final class LoadingUtils {
     /**
      * Converts the specified timeToRefresh in nanoseconds to the specified unit. This
      * conversion routine will handle the special meaning of {@link Long#MAX_VALUE}.
-     * 
+     *
      * @param timeToRefreshNanos
      *            the time in nanoseconds to convert
      * @param unit
@@ -55,7 +55,7 @@ public final class LoadingUtils {
     /**
      * Converts the specified timeToRefresh in the specified unit to nanoseconds. This
      * conversion routine will handle the special meaning of {@link Long#MAX_VALUE}.
-     * 
+     *
      * @param timeToRefresh
      *            the time to convert from
      * @param unit
@@ -77,7 +77,7 @@ public final class LoadingUtils {
      * {@link #convertRefreshTimeToNanos(long, TimeUnit)}, however when we get tree
      * caching working 0 will mean that the time to refresh must be inherited from the
      * parent.
-     * 
+     *
      * @param conf
      *            the CacheLoadingConfiguration to fetch the refresh time from
      * @return the configured refresh time
@@ -92,7 +92,7 @@ public final class LoadingUtils {
 
     /**
      * Wraps a CacheLoadingService in a CacheLoadingMXBean.
-     * 
+     *
      * @param service
      *            the CacheLoadingService to wrap
      * @return the wrapped CacheLoadingMXBean
@@ -101,10 +101,24 @@ public final class LoadingUtils {
         return new DelegatedCacheLoadingMXBean(service);
     }
 
+    public static <K, V> List<UnsynchronizedCacheLoaderCallback<K, V>> findAndRemoveCallbacks(
+            Iterable<UnsynchronizedCacheLoaderCallback<K, V>> i) {
+        ArrayList<UnsynchronizedCacheLoaderCallback<K, V>> missing = new ArrayList<UnsynchronizedCacheLoaderCallback<K, V>>();
+        for (Iterator<UnsynchronizedCacheLoaderCallback<K, V>> iterator = i.iterator(); iterator
+                .hasNext();) {
+            UnsynchronizedCacheLoaderCallback<K, V> callback = iterator.next();
+            if (!callback.isDone()) {
+                missing.add(callback);
+                iterator.remove();
+            }
+        }
+        return missing;
+    }
+
     /**
      * Wraps a CacheLoadingService implementation such that only methods from the
      * CacheLoadingService interface is exposed.
-     * 
+     *
      * @param service
      *            the CacheLoadingService to wrap
      * @return a wrapped service that only exposes CacheLoadingService methods
@@ -118,27 +132,6 @@ public final class LoadingUtils {
     }
 
     /**
-     * Creates a new Callable that will call the specified loader service to load a new
-     * AbstractCacheEntry.
-     * 
-     * @param loaderService
-     *            the loading service to load from
-     * @param key
-     *            the key that should be loaded
-     * @param attributes
-     *            a map of attributes that should be loaded
-     * @return the newly created callable
-     * @param <K>
-     *            the type of keys maintained by this service
-     * @param <V>
-     *            the type of mapped values
-     */
-    static <K, V> Callable<CacheEntry<K, V>> createLoadCallable(
-            InternalCacheLoadingService<K, V> loaderService, K key, AttributeMap attributes) {
-        return new LoadValueCallable<K, V>(loaderService, key, attributes);
-    }
-
-    /**
      * A class that exposes a {@link CacheLoadingService} as a {@link CacheLoadingMXBean}.
      */
     public static final class DelegatedCacheLoadingMXBean implements CacheLoadingMXBean {
@@ -148,7 +141,7 @@ public final class LoadingUtils {
 
         /**
          * Creates a new DelegatedCacheLoadingMXBean.
-         * 
+         *
          * @param service
          *            the CacheLoadingService to wrap
          */
@@ -195,7 +188,7 @@ public final class LoadingUtils {
 
         /**
          * Creates a wrapped CacheLoadingService from the specified implementation.
-         * 
+         *
          * @param service
          *            the CacheLoadingService to wrap
          */
@@ -274,71 +267,6 @@ public final class LoadingUtils {
         /** {@inheritDoc} */
         public void setDefaultTimeToRefresh(long timeToLive, TimeUnit unit) {
             delegate.setDefaultTimeToRefresh(timeToLive, unit);
-        }
-    }
-
-    /**
-     * A LoadValueCallable is used to asynchronously load a value into the cache.
-     */
-    static class LoadValueCallable<K, V> implements Callable<CacheEntry<K, V>> {
-
-        /** The attribute map that should be passed to the cache loader. */
-        private final AttributeMap attributes;
-
-        /** The key to load. */
-        private final K key;
-
-        /** The loading service to load the value from. */
-        private final InternalCacheLoadingService<K, V> loadingService;
-
-        /**
-         * Creates a new LoadValueCallable.
-         * 
-         * @param loadingService
-         *            the loading service to load the value from
-         * @param key
-         *            the key to load
-         * @param attributes
-         *            the attribute map that should be passed to the cache loader
-         * @throws NullPointerException
-         *             if the specified loading service, key or attribute map is
-         *             <code>null</code>
-         */
-        LoadValueCallable(final InternalCacheLoadingService<K, V> loadingService, K key,
-                AttributeMap attributes) {
-            if (loadingService == null) {
-                throw new NullPointerException("loadingService is null");
-            } else if (key == null) {
-                throw new NullPointerException("key is null");
-            } else if (attributes == null) {
-                throw new NullPointerException("attributes is null");
-            }
-            this.key = key;
-            this.loadingService = loadingService;
-            this.attributes = attributes;
-        }
-
-        /** {@inheritDoc} */
-        public CacheEntry<K, V> call() {
-            return loadingService.loadAndAddToCache(key, attributes, false);
-        }
-
-        /**
-         * Returns the key whose corresponding value should be loaded.
-         * 
-         * @return the key whose corresponding value should be loaded
-         */
-        public K getKey() {
-            return key;
-        }
-
-        /**
-         * Returns the attribute map that should be passed to the cache loader.
-         * 
-         * @return the attribute map that should be passed to the cache loader
-         */
-        public AttributeMap getAttributes() {
-            return attributes;
         }
     }
 }

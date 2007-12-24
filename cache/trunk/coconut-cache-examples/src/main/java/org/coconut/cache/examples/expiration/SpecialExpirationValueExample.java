@@ -5,6 +5,7 @@ package org.coconut.cache.examples.expiration;
 
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.attribute.common.TimeToLiveAttribute;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.defaults.UnsynchronizedCache;
@@ -25,7 +26,7 @@ public class SpecialExpirationValueExample {
         cache.put("key1", "value");
         // element will expire after 24 hours
 
-        e.put("key2", "value", CacheExpirationService.NEVER_EXPIRE, TimeUnit.SECONDS);
+        e.put("key2", "value", TimeToLiveAttribute.FOREVER, TimeUnit.SECONDS);
         // element will never expire
         // END SNIPPET: class
     }

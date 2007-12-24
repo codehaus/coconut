@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.defaults;
@@ -25,7 +25,7 @@ import org.coconut.internal.util.CollectionUtils;
 /**
  * An abstract implementation of {@link Cache}. Currently not general usable, hence some
  * methods and constructors have package private access.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -43,7 +43,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
 
     /**
      * Creates a new AbstractCache from the specified configuration.
-     * 
+     *
      * @param configuration
      *            the cache configuration to create the cache from
      */
@@ -238,13 +238,15 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
      * space). Each key-value mapping is rendered as the key followed by an equals sign (<tt>"="</tt>)
      * followed by the associated value. Keys and values are converted to strings as by
      * {@link String#valueOf(Object)}.
-     * 
+     *
      * @return a string representation of this cache
      */
+    @Override
     public String toString() {
         Iterator<Entry<K, V>> i = entrySet().iterator();
-        if (!i.hasNext())
+        if (!i.hasNext()) {
             return "{}";
+        }
 
         StringBuilder sb = new StringBuilder();
         sb.append('{');
@@ -255,8 +257,9 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
             sb.append(key == this ? "(this Cache)" : key);
             sb.append('=');
             sb.append(value == this ? "(this Cache)" : value);
-            if (!i.hasNext())
+            if (!i.hasNext()) {
                 return sb.append('}').toString();
+            }
             sb.append(", ");
         }
     }
@@ -268,7 +271,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     /**
      * Peeks an entry for the specified non-null key. The returned AbstractCacheEntry must
      * not be published.
-     * 
+     *
      * @param key
      *            the key for which to peek for
      * @return an AbstractCacheEntry if an exists for the specified key, otherwise
@@ -278,7 +281,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
 
     /**
      * Adds a non-null key and non-value to the cache.
-     * 
+     *
      * @param key
      * @param value
      * @param putOnlyIfAbsent
@@ -302,7 +305,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
 
     /**
      * Returns the service manager used by the cache.
-     * 
+     *
      * @return the service manager used by the cache
      */
     abstract InternalCacheServiceManager getServiceManager();
@@ -312,13 +315,11 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
             throw new NullPointerException("key is null");
         } else if (value == null) {
             throw new NullPointerException("value is null");
-        } else if (attributes == null) {
-            throw new NullPointerException("attributes is null");
         }
         CacheEntry<K, V> prev = doPut(key, value, attributes, putOnlyIfAbsent, false);
         return prev == null ? null : prev.getValue();
     }
-    
+
     abstract class AbstractSupport implements InternalCacheSupport<K, V> {
 
         /** {@inheritDoc} */
@@ -337,7 +338,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
             }
             return null;
         }
-        
+
         /** {@inheritDoc} */
         public final Map<K, CacheEntry<K, V>> valuesLoaded(Map<? extends K, ? extends V> values,
                 Map<? extends K, AttributeMap> keys) {

@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.service.exceptionhandling;
@@ -12,6 +12,7 @@ import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.core.Logger.Level;
+import org.coconut.operations.Ops.Procedure;
 
 /**
  * The purpose of this class is to have one central place where all exceptions that arise
@@ -55,7 +56,7 @@ import org.coconut.core.Logger.Level;
  * information is provided to this method. For example, the key for which the load failed,
  * the cache in which the cache occured as well as other relevant information. The default
  * implementation provided in this class just logs the error and returns <code>null</code>.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -63,11 +64,11 @@ import org.coconut.core.Logger.Level;
  * @param <V>
  *            the type of mapped values
  */
-public class CacheExceptionHandler<K, V> {
+public class CacheExceptionHandler<K, V> implements Procedure<CacheExceptionContext<K, V>> {
 
     /**
      * Handles a warning from the cache. The default implementation just logs the warning.
-     * 
+     *
      * @param context
      *            an CacheExceptionContext containing the default logger configured for
      *            this cache
@@ -80,7 +81,7 @@ public class CacheExceptionHandler<K, V> {
      * Called to initialize the CacheExceptionHandler. This method must be called as the
      * first operation from within the constructor of the cache. Exceptions thrown by this
      * method will not be handled by the cache. The default implementation does nothing
-     * 
+     *
      * @param configuration
      *            the configuration of the cache
      */
@@ -88,13 +89,21 @@ public class CacheExceptionHandler<K, V> {
 
     /**
      * Rethrows any errors.
-     * 
+     *
      * @param context
      *            the context
      */
-    protected void throwErrors(CacheExceptionContext<K, V> context) {
-        if (context.getCause() instanceof Error) {
-            throw (Error) context.getCause();
+    public void apply(CacheExceptionContext<K, V> context) {
+        Throwable cause = context.getCause();
+        if (cause instanceof RuntimeException) {
+            context.defaultLogger().fatal(context.getMessage(), cause);
+        } else if (cause instanceof Exception) {
+            context.defaultLogger().error(context.getMessage(), cause);
+        } else {
+            context.defaultLogger().fatal(context.getMessage(), cause);
+            if (context.getCause() instanceof Error) {
+                throw (Error) context.getCause();
+            }
         }
     }
 
@@ -107,8 +116,8 @@ public class CacheExceptionHandler<K, V> {
      * an asynchronous method, for example, {@link CacheLoadingService#load(Object)} any
      * exception throw from this method will not be visible to the user.
      * <p>
-     * The default implementation, will log
-     * 
+     * The default implementation, will just log any exception.
+     *
      * @param context
      *            an CacheExceptionContext containing the default logger configured for
      *            this cache and the cause of the failure. The exception message includes
@@ -125,8 +134,7 @@ public class CacheExceptionHandler<K, V> {
      */
     public V loadingLoadValueFailed(CacheExceptionContext<K, V> context,
             CacheLoader<? super K, ?> loader, K key, AttributeMap map) {
-        throwErrors(context);
-        context.defaultLogger().error(context.getMessage(), context.getCause());
+        apply(context);
         return null;
     }
 
@@ -135,7 +143,7 @@ public class CacheExceptionHandler<K, V> {
      * contains a mapping from any service that failed to properly
      * {@link CacheLifecycle#terminated() terminate} to the corresponding cause. If all
      * services was succesfully terminated, the map is empty.
-     * 
+     *
      * @param terminationFailures
      *            a map of services that failed or the empty map if all services
      *            terminated succesfully.

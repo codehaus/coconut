@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.loading;
@@ -8,7 +8,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
 import org.coconut.attribute.Attributes;
-import org.coconut.cache.internal.service.loading.LoadingUtils.LoadValueCallable;
+import org.coconut.cache.internal.service.loading.LoadableFutureTask.LoadValueCallable;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
@@ -18,7 +18,7 @@ import org.junit.runner.RunWith;
 
 /**
  * Tests {@link LoadingUtilsTest} class.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: CacheConfigurationTest.java 434 2007-11-13 15:36:17Z kasper $
  */
@@ -30,18 +30,18 @@ public class LoadingUtilsTest {
 
     @Test(expected = NullPointerException.class)
     public void createLoadCallableNPE() {
-        LoadingUtils.createLoadCallable(null, "A", Attributes.EMPTY_MAP);
+        LoadableFutureTask.createLoadCallable(null, "A", Attributes.EMPTY_MAP);
     }
 
     @Test(expected = NullPointerException.class)
     public void createLoadCallableNPE1() {
-        LoadingUtils.createLoadCallable(dummy(InternalCacheLoadingService.class), null,
+        LoadableFutureTask.createLoadCallable(dummy(InternalCacheLoadingService.class), null,
                 Attributes.EMPTY_MAP);
     }
 
     @Test(expected = NullPointerException.class)
     public void createLoadCallableNPE2() {
-        LoadingUtils.createLoadCallable(dummy(InternalCacheLoadingService.class), "A", null);
+        LoadableFutureTask.createLoadCallable(dummy(InternalCacheLoadingService.class), "A", null);
     }
 
     @Test

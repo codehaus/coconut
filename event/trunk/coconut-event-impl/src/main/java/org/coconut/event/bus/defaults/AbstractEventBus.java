@@ -1,15 +1,13 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.event.bus.defaults;
 
 import java.util.Collection;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.coconut.event.bus.EventBus;
 import org.coconut.event.bus.EventSubscription;
 import org.coconut.operations.Predicates;
-import org.coconut.operations.Ops.Predicate;
 import org.coconut.operations.Ops.Procedure;
 
 /**
@@ -18,10 +16,6 @@ import org.coconut.operations.Ops.Procedure;
  * @version $Id: AbstractEventBus.java 415 2007-11-09 08:25:23Z kasper $
  */
 public abstract class AbstractEventBus<E> implements EventBus<E> {
-
-    private final static String SUBSCRIPTION_NAME_PREFIX = "Subscription-";
-
-    private final AtomicLong idGenerator = new AtomicLong();
 
     /** {@inheritDoc} */
     public boolean offer(final E element) {
@@ -48,24 +42,6 @@ public abstract class AbstractEventBus<E> implements EventBus<E> {
             throw new NullPointerException("element is null");
         }
         return doInform(element, doThrow);
-//        if (allowReentrance != null) {
-//            Boolean current = allowReentrance.get();
-//            if (current.equals(Boolean.TRUE)) {
-//                if (doThrow) {
-//                    throw new IllegalStateException("Eventbus does not allow reentrence");
-//                } else {
-//                    return false;
-//                }
-//            }
-//            allowReentrance.set(Boolean.TRUE);
-//            try {
-//                return doInform(element, doThrow);
-//            } finally {
-//                allowReentrance.set(Boolean.FALSE);
-//            }
-//        } else {
-//            return doInform(element, doThrow);
-//        }
     }
 
     private boolean informAll(Collection<? extends E> c, boolean doThrow) {
@@ -78,24 +54,6 @@ public abstract class AbstractEventBus<E> implements EventBus<E> {
             }
         }
         return doInformAll(c, doThrow);
-//        if (allowReentrance != null) {
-//            Boolean current = allowReentrance.get();
-//            if (current.equals(Boolean.TRUE)) {
-//                if (doThrow) {
-//                    throw new IllegalStateException("Eventbus does not allow reentrence");
-//                } else {
-//                    return false;
-//                }
-//            }
-//            allowReentrance.set(Boolean.TRUE);
-//            try {
-//                return doInformAll(c, doThrow);
-//            } finally {
-//                allowReentrance.set(Boolean.FALSE);
-//            }
-//        } else {
-//            return doInformAll(c, doThrow);
-//        }
     }
 
     void cancel(EventSubscription<E> aes) {}
@@ -108,10 +66,6 @@ public abstract class AbstractEventBus<E> implements EventBus<E> {
             ok &= inform(element, doThrow);
         }
         return ok;
-    }
-
-    String getNextName(Procedure<? super E> eventHandler, Predicate<? super E> predicate) {
-        return SUBSCRIPTION_NAME_PREFIX + idGenerator.incrementAndGet();
     }
 
     void subscribed(EventSubscription<E> s) {}

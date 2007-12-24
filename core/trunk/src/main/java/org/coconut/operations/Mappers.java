@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.operations;
@@ -9,16 +9,17 @@ import org.coconut.operations.Ops.Mapper;
 
 /**
  * Various implementations of {@link Mapper}.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public final class Mappers {
-    public static final Mapper NOOP_MAPPER = new NoOpMapper();
+    static final Mapper NOOP_MAPPER = new NoOpMapper();
 
     // /CLOVER:OFF
     /** Cannot instantiate. */
     private Mappers() {}
+
     // /CLOVER:ON
 
     /**
@@ -36,10 +37,10 @@ public final class Mappers {
 
     /**
      * A composite mapper that applies a second mapper to the results of applying the
-     * first one
+     * first one.
      */
     static final class CompoundMapper<T, U, V> implements Mapper<T, V>, Serializable {
-        /** serialVersionUID */
+        /** serialVersionUID. */
         private static final long serialVersionUID = 8856225241069810045L;
 
         private final Mapper<? super T, ? extends U> first;
@@ -63,6 +64,13 @@ public final class Mappers {
         }
     }
 
+    /**
+     * A Mappper that returns the same object being provided to the {@link #map(Object)}
+     * method.
+     *
+     * @param <T>
+     *            the type of objects accepted by the Mapper
+     */
     final static class NoOpMapper<T> implements Mapper<T, T>, Serializable {
         /** serialVersionUID. */
         private static final long serialVersionUID = -8159540593935721003L;

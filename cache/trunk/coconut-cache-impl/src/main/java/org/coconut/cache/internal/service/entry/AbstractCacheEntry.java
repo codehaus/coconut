@@ -1,12 +1,12 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.entry;
 
 import java.util.Map;
 
+import org.coconut.attribute.common.TimeToLiveAttribute;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.core.Clock;
 import org.coconut.operations.Ops.Predicate;
 
@@ -15,7 +15,7 @@ import org.coconut.operations.Ops.Predicate;
  * <p>
  * NOTICE: This is an internal class and should not be directly referred. No guarantee is
  * made to the compatibility of this class between different releases of Coconut Cache.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -54,7 +54,7 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
 
     /**
      * Creates a new AbstractCacheEntry.
-     * 
+     *
      * @param key
      *            the key of the cache entry
      * @param value
@@ -90,18 +90,20 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof Map.Entry))
+        if (!(o instanceof Map.Entry)) {
             return false;
+        }
         Map.Entry e = (Map.Entry) o;
         Object k1 = getKey();
         Object k2 = e.getKey();
         // we keep null checks, might later want to use Map.Entry instead of
         // Entry to compare with
-        if (k1 == k2 || (k1 != null && k1.equals(k2))) {
+        if (k1 == k2 || k1 != null && k1.equals(k2)) {
             Object v1 = value;
             Object v2 = e.getValue();
-            if (v1 == v2 ||  v1.equals(v2))
+            if (v1 == v2 ||  v1.equals(v2)) {
                 return true;
+            }
         }
         return false;
     }
@@ -180,7 +182,7 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
             return true;
         }
         long refreshTime = getRefreshTime();
-        return refreshTime == CacheExpirationService.NEVER_EXPIRE ? false : Clock
+        return refreshTime == TimeToLiveAttribute.FOREVER ? false : Clock
                 .isPassed(timestamp, refreshTime);
     }
 
@@ -189,7 +191,7 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
             return true;
         }
         long expTime = getExpirationTime();
-        return expTime == CacheExpirationService.NEVER_EXPIRE ? false : Clock.isPassed(
+        return expTime == TimeToLiveAttribute.FOREVER ? false : Clock.isPassed(
                 timestamp, expTime);
     }
 

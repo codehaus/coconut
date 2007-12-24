@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.operations;
@@ -15,7 +15,7 @@ import org.coconut.operations.Ops.Mapper;
 /**
  * Various implementations of {@link Comparator}, {@link LongComparator},
  * {@link DoubleComparator} and {@link IntComparator}.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -55,7 +55,8 @@ public final class Comparators {
     public static final LongComparator LONG_REVERSE_COMPARATOR = new NaturalLongReverseComparator();
 
     /**
-     * A Comparator for Comparable.objects. The comparator is Serializable.
+     * A Comparator for Comparable.objects using their <i>natural ordering</i>. The
+     * comparator is Serializable.
      */
     public static final Comparator NATURAL_COMPARATOR = new NaturalComparator();
 
@@ -93,16 +94,16 @@ public final class Comparators {
      * comparator is serializable.
      * <p>
      * This example illustrates the type-safe way to obtain a natural comparator:
-     * 
+     *
      * <pre>
      * Comparator&lt;String&gt; s = Comparators.naturalComparator();
      * </pre>
-     * 
+     *
      * Implementation note: Implementations of this method need not create a separate
      * <tt>comparator</tt> object for each call. Using this method is likely to have
      * comparable cost to using the like-named field. (Unlike this method, the field does
      * not provide type safety.)
-     * 
+     *
      * @return a comparator for Comparable.objects
      * @param <T>
      *            the type of elements accepted by the comparator
@@ -136,7 +137,7 @@ public final class Comparators {
      * reverse-natural-order.
      * <p>
      * The returned comparator is serializable.
-     * 
+     *
      * @return a comparator that imposes the reverse of the <i>natural ordering</i> on a
      *         collection of objects that implement the <tt>Comparable</tt> interface.
      * @param <T>
@@ -152,7 +153,7 @@ public final class Comparators {
      * <p>
      * The returned comparator is serializable (assuming the specified comparator is also
      * serializable).
-     * 
+     *
      * @param comparator
      *            the Comparator to reverse
      * @return a comparator that imposes the reverse ordering of the specified comparator.
@@ -171,7 +172,7 @@ public final class Comparators {
      * <p>
      * The returned comparator is serializable (assuming the specified comparator is also
      * serializable).
-     * 
+     *
      * @param comparator
      *            the DoubleComparator to reverse
      * @return a comparator that imposes the reverse ordering of the specified comparator.
@@ -185,7 +186,7 @@ public final class Comparators {
      * <p>
      * The returned comparator is serializable (assuming the specified comparator is also
      * serializable).
-     * 
+     *
      * @param comparator
      *            the IntComparator to reverse
      * @return a comparator that imposes the reverse ordering of the specified comparator.
@@ -199,7 +200,7 @@ public final class Comparators {
      * <p>
      * The returned comparator is serializable (assuming the specified comparator is also
      * serializable).
-     * 
+     *
      * @param comparator
      *            the LongComparator to reverse
      * @return a comparator that imposes the reverse ordering of the specified comparator.
@@ -291,7 +292,7 @@ public final class Comparators {
 
         /** {@inheritDoc} */
         public int compare(int a, int b) {
-            return a < b ? -1 : ((a > b) ? 1 : 0);
+            return a < b ? -1 : a > b ? 1 : 0;
         }
 
         /** @return Preserves singleton property */
@@ -307,7 +308,7 @@ public final class Comparators {
 
         /** {@inheritDoc} */
         public int compare(int a, int b) {
-            return a < b ? 1 : ((a > b) ? -1 : 0);
+            return a < b ? 1 : a > b ? -1 : 0;
         }
 
         /** @return Preserves singleton property */
@@ -323,7 +324,7 @@ public final class Comparators {
 
         /** {@inheritDoc} */
         public int compare(long a, long b) {
-            return a < b ? -1 : ((a > b) ? 1 : 0);
+            return a < b ? -1 : a > b ? 1 : 0;
         }
 
         /** @return Preserves singleton property */
@@ -339,7 +340,7 @@ public final class Comparators {
 
         /** {@inheritDoc} */
         public int compare(long a, long b) {
-            return a < b ? 1 : ((a > b) ? -1 : 0);
+            return a < b ? 1 : a > b ? -1 : 0;
         }
 
         /** @return Preserves singleton property */
@@ -429,7 +430,7 @@ public final class Comparators {
 
         /**
          * Creates a new ReverseDoubleComparator.
-         * 
+         *
          * @param comparator
          *            the comparator to reverse
          */
@@ -457,7 +458,7 @@ public final class Comparators {
 
         /**
          * Creates a new ReverseIntComparator.
-         * 
+         *
          * @param comparator
          *            the comparator to reverse
          */
@@ -484,7 +485,7 @@ public final class Comparators {
 
         /**
          * Creates a new ReverseLongComparator.
-         * 
+         *
          * @param comparator
          *            the comparator to reverse
          */

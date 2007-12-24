@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.service.expiration;
@@ -10,6 +10,7 @@ import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
 
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.attribute.common.TimeToLiveAttribute;
 import org.coconut.cache.CacheEntry;
 import org.coconut.operations.Predicates;
 import org.coconut.operations.Ops.Predicate;
@@ -18,7 +19,7 @@ import org.junit.Test;
 
 /**
  * Tests CacheExpirationConfiguration.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -54,9 +55,9 @@ public class CacheExpirationConfigurationTest {
         assertEquals(2l * 1000 * 1000 * 1000, conf
                 .getDefaultTimeToLive(TimeUnit.NANOSECONDS));
 
-        conf.setDefaultTimeToLive(CacheExpirationService.NEVER_EXPIRE,
+        conf.setDefaultTimeToLive(TimeToLiveAttribute.FOREVER,
                 TimeUnit.MICROSECONDS);
-        assertEquals(CacheExpirationService.NEVER_EXPIRE, conf
+        assertEquals(TimeToLiveAttribute.FOREVER, conf
                 .getDefaultTimeToLive(TimeUnit.SECONDS));
     }
 

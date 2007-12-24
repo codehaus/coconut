@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.expiration;
@@ -6,6 +6,7 @@ package org.coconut.cache.internal.service.expiration;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.coconut.attribute.common.TimeToLiveAttribute;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
 import org.coconut.cache.service.expiration.CacheExpirationMXBean;
@@ -20,7 +21,7 @@ import org.coconut.operations.Ops.Predicate;
  * <p>
  * NOTICE: This is an internal class and should not be directly referred. No guarantee is
  * made to the compatibility of this class between different releases.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -35,7 +36,7 @@ final class ExpirationUtils {
     /**
      * Returns the initial time to live in nanoseconds from the specified expiration
      * configuration.
-     * 
+     *
      * @param conf
      *            the configuration to read the initial time to live from
      * @return the initial time to live in nanoseconds
@@ -47,7 +48,7 @@ final class ExpirationUtils {
 
     /**
      * Converts the specified timeToLiveNanos.
-     * 
+     *
      * @param timeToLiveNanos
      * @param unit
      * @return
@@ -68,7 +69,7 @@ final class ExpirationUtils {
 
     /**
      * Checks if the specified cache entry is expired.
-     * 
+     *
      * @param entry
      *            the cache entry to check for expiration
      * @param clock
@@ -88,13 +89,13 @@ final class ExpirationUtils {
             return true;
         }
         long expTime = entry.getExpirationTime();
-        return expTime == CacheExpirationService.NEVER_EXPIRE ? false : clock.isPassed(expTime);
+        return expTime == TimeToLiveAttribute.FOREVER ? false : clock.isPassed(expTime);
     }
 
     /**
      * Wraps the specified CacheExpirationService implementation only exposing the methods
      * available in the {@link CacheExpirationService} interface.
-     * 
+     *
      * @param expirationService
      *            the expiration service we want to wrap
      * @return a wrapped service that only exposes CacheExpirationService methods
@@ -112,7 +113,7 @@ final class ExpirationUtils {
 
     /**
      * Wraps a {@link CacheExpirationService} as a {@link CacheExpirationMXBean}.
-     * 
+     *
      * @param expirationService
      *            the service to wrap
      * @return a wrapped CacheExpirationMXBean
@@ -133,7 +134,7 @@ final class ExpirationUtils {
         /**
          * Creates a new DelegatedCacheExpirationMXBean from the specified expiration
          * service.
-         * 
+         *
          * @param expirationService
          *            the expiration service to wrap
          */
@@ -174,7 +175,7 @@ final class ExpirationUtils {
         /**
          * Creates a new DelegatedCacheExpirationService from the specified expiration
          * service.
-         * 
+         *
          * @param expirationService
          *            the expiration service to wrap
          */

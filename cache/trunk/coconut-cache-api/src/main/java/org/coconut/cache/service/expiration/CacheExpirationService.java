@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.service.expiration;
@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
+import org.coconut.cache.CacheServices;
 
 /**
  * A service used to control the expiration of cache elements at runtime. See the package
@@ -14,21 +15,21 @@ import org.coconut.cache.Cache;
  * <p>
  * An instance of this interface can be retrieved by using {@link Cache#getService(Class)}
  * to look it up.
- * 
+ *
  * <pre>
  * Cache&lt;?, ?&gt; c = someCache;
  * CacheEvictionService&lt;?, ?&gt; ces = c.getService(CacheEvictionService.class);
  * ces.trimToSize(10);
  * </pre>
- * 
- * Or by using {@link CacheServicesOld}
- * 
+ *
+ * Or by using {@link CacheServices}
+ *
  * <pre>
  * Cache&lt;?, ?&gt; c = someCache;
  * CacheEvictionService&lt;?, ?&gt; ces = CacheServices.eviction(c);
  * ces.setMaximumSize(10000);
  * </pre>
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -39,16 +40,9 @@ import org.coconut.cache.Cache;
 public interface CacheExpirationService<K, V> {
 
     /**
-     * Used in {@link #put(Object, Object, long, TimeUnit)} and
-     * {@link #putAll(Map, long, TimeUnit)} to specify that an element should never
-     * expire.
-     */
-    long NEVER_EXPIRE = Long.MAX_VALUE;
-
-    /**
      * Returns the default time to live for entries that are added to the cache. If
      * entries do not expire by default, {@link Long#MAX_VALUE} is returned.
-     * 
+     *
      * @param unit
      *            the time unit that should be used for returning the default expiration
      * @return the default time to live for entries that are added to the cache, or
@@ -68,7 +62,7 @@ public interface CacheExpirationService<K, V> {
      * <p>
      * If the specified timeToLive is 0 the cache will use the value of
      * {@link #getDefaultTimeToLive(TimeUnit)} to calculate the expiration time.
-     * 
+     *
      * @param key
      *            key with which the specified value is to be associated.
      * @param value
@@ -127,7 +121,7 @@ public interface CacheExpirationService<K, V> {
     /**
      * Sets the default expiration time for new elements that are added to the cache. If
      * no default expiration time has been set, entries will never expire.
-     * 
+     *
      * @param timeToLive
      *            the time from insertion to the point where the entry should expire
      * @param unit
