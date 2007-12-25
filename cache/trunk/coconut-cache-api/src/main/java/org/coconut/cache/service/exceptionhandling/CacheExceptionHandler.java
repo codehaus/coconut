@@ -11,7 +11,6 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
-import org.coconut.core.Logger.Level;
 import org.coconut.operations.Ops.Procedure;
 
 /**
@@ -41,7 +40,7 @@ import org.coconut.operations.Ops.Procedure;
  * mysterious way. Or even worse that the cache implementation contains a bug. Of course,
  * this is highly unlikely if using one of the default implementation provided by Coconut
  * Cache;).
- * <li>{@link #handleWarning(CacheExceptionContext)} which is called whenever a some kind
+ * <li>{@link #warning(CacheExceptionContext)} which is called whenever a some kind
  * of inconsistency arrises in the system. Normally this always indicates a non-critical
  * problem that should be fixed at some time. For example, if a CacheLoader tries to set
  * the creation time of a newly loaded element to a negative value.
@@ -73,8 +72,8 @@ public class CacheExceptionHandler<K, V> implements Procedure<CacheExceptionCont
      *            an CacheExceptionContext containing the default logger configured for
      *            this cache
      */
-    public void handleWarning(CacheExceptionContext<K, V> context) {
-        context.defaultLogger().log(Level.Warn, context.getMessage(), context.getCause());
+    public void warning(CacheExceptionContext<K, V> context) {
+        context.defaultLogger().warn(context.getMessage(), context.getCause());
     }
 
     /**

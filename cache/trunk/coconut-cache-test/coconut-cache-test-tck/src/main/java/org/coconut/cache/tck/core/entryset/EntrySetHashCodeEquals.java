@@ -1,10 +1,13 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.core.entryset;
 
+import static org.coconut.test.CollectionTestUtil.M1;
 import static org.coconut.test.CollectionTestUtil.M1_TO_M5_SET;
+import static org.coconut.test.CollectionTestUtil.M2;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
 
@@ -30,6 +33,12 @@ public class EntrySetHashCodeEquals extends AbstractCacheTCKTest {
 
         assertFalse(c.entrySet().equals(null));
         assertFalse(c.entrySet().equals(newCache(1).entrySet()));
+
+        //abstractCacheEntry corner case
+        setCache();
+        c.put(M1.getKey(), M2.getValue());
+        assertFalse(c.entrySet().equals(new HashSet(Collections.singletonList(M1))));
+
         c = newCache(5);
         assertTrue(M1_TO_M5_SET.equals(c.entrySet()));
         assertTrue(c.entrySet().equals(M1_TO_M5_SET));
@@ -37,11 +46,13 @@ public class EntrySetHashCodeEquals extends AbstractCacheTCKTest {
         assertFalse(c.entrySet().equals(null));
         assertFalse(c.entrySet().equals(newCache(4).entrySet()));
         assertFalse(c.entrySet().equals(newCache(6).entrySet()));
+
+
     }
 
     /**
      * {@link Cache#containsKey()} should not fail when cache is shutdown.
-     * 
+     *
      * @throws InterruptedException
      *             was interrupted
      */
@@ -68,7 +79,7 @@ public class EntrySetHashCodeEquals extends AbstractCacheTCKTest {
 
     /**
      * {@link Cache#containsKey()} should not fail when cache is shutdown.
-     * 
+     *
      * @throws InterruptedException
      *             was interrupted
      */

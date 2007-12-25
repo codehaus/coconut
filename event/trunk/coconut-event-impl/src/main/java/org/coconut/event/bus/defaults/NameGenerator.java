@@ -15,9 +15,9 @@ public class NameGenerator implements Generator<String> {
     }
 
     public NameGenerator(String prefix) {
-        if (prefix == null) {
-            throw new NullPointerException("prefix is null");
-        }
+//        if (prefix == null) {
+//            throw new NullPointerException("prefix is null");
+//        }
         this.prefix = prefix;
     }
 

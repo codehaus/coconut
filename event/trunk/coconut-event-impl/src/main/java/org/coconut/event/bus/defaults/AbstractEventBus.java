@@ -56,8 +56,6 @@ public abstract class AbstractEventBus<E> implements EventBus<E> {
         return doInformAll(c, doThrow);
     }
 
-    void cancel(EventSubscription<E> aes) {}
-
     abstract boolean doInform(E element, boolean doThrow);
 
     boolean doInformAll(Collection<? extends E> col, boolean doThrow) {

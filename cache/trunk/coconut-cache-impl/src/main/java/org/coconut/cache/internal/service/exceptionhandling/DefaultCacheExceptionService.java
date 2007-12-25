@@ -183,7 +183,7 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
     }
 
     public void warning(String warning) {
-        exceptionHandler.handleWarning(createContext(null, warning));
+        exceptionHandler.warning(createContext(null, warning));
     }
 
     private CacheExceptionContext<K, V> createContext(final Throwable cause, final String message) {

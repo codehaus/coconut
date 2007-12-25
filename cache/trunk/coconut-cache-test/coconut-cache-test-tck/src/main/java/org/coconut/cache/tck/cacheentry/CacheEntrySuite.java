@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.cacheentry;
@@ -10,7 +10,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses( { Attributes.class, Cost.class, CreationTime.class,
         ExpirationTime.class, GetEntry.class, Hits.class, KeyValue.class,
         LastAccessedTime.class, LastUpdatedTime.class, PeekEntry.class,
-        RefreshTime.class, Size.class })
+        RefreshTime.class, SetValue.class,Size.class })
 public class CacheEntrySuite {
 
 }

@@ -6,12 +6,11 @@ import java.util.concurrent.FutureTask;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.CacheException;
-import org.coconut.cache.spi.CacheSPI;
 
 class LoadableFutureTask<K, V> extends FutureTask<CacheEntry<K, V>> {
 
-    LoadableFutureTask(InternalCacheLoadingService<K, V> loaderService, K key, AttributeMap attributes) {
+    LoadableFutureTask(InternalCacheLoadingService<K, V> loaderService, K key,
+            AttributeMap attributes) {
         super(createLoadCallable(loaderService, key, attributes));
     }
 
@@ -25,11 +24,8 @@ class LoadableFutureTask<K, V> extends FutureTask<CacheEntry<K, V>> {
         } catch (ExecutionException e) {
             if (e.getCause() instanceof RuntimeException) {
                 throw (RuntimeException) e.getCause();
-            } else if (e.getCause() instanceof Error) {
-                throw (Error) e.getCause();
-            } else {
-                throw new CacheException(CacheSPI.HIGHLY_IRREGULAR_MSG, e);
             }
+            throw (Error) e.getCause();
         }
     }
 

@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.event.bus.defaults;
@@ -14,9 +14,12 @@ import java.util.Arrays;
 import org.coconut.event.bus.EventBus;
 import org.coconut.event.bus.EventSubscription;
 import org.coconut.operations.Predicates;
+import org.coconut.operations.Procedures;
 import org.coconut.operations.StringPredicates;
 import org.coconut.operations.Ops.Procedure;
+import org.coconut.test.SystemErrCatcher;
 import org.coconut.test.TestUtil;
+import org.coconut.test.throwables.RuntimeException1;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
@@ -27,7 +30,7 @@ import org.junit.runner.RunWith;
 
 /**
  * Tests the {@link  DefaultEventBus} class.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: CacheConfigurationTest.java 475 2007-11-20 17:22:26Z kasper $
  */
@@ -42,10 +45,35 @@ public class DefaultEventBusTest {
         bus = new DefaultEventBus<String>();
     }
 
-//    @Test(expected = NullPointerException.class)
-//    public void constructorNPE() {
-//        new DefaultEventBus(null);
-//    }
+// @Test(expected = NullPointerException.class)
+// public void constructorNPE() {
+// new DefaultEventBus(null);
+// }
+
+    @Test
+    public void subscribeSpecial() {
+        String name = bus.subscribe(Procedures.NOOP).getName();
+        bus = new DefaultEventBus<String>();
+        bus.subscribe(Procedures.NOOP, Predicates.TRUE, name);
+        assertFalse(bus.subscribe(Procedures.NOOP).getName().equals(name));
+    }
+
+    @Test
+    public void exceptionHandling() {
+        bus = new DefaultEventBus<String>();
+        bus.subscribe(new Procedure() {
+            public void apply(Object t) {
+                throw new RuntimeException1();
+            }
+        });
+        SystemErrCatcher sec = SystemErrCatcher.get();
+        try {
+            bus.offer("foo");
+        } finally {
+            sec.terminate();
+        }
+        assertTrue(sec.toString().contains(RuntimeException1.class.getName()));
+    }
 
     @Test
     public void subscribe() {
@@ -63,7 +91,7 @@ public class DefaultEventBusTest {
 
     @Test
     public void subscribe2() {
-        Procedure ep =TestUtil.dummy(Procedure.class);
+        Procedure ep = TestUtil.dummy(Procedure.class);
         EventSubscription es = bus.subscribe(ep, Predicates.FALSE);
         assertNotNull(es);
         assertSame(ep, es.getEventProcessor());
@@ -224,15 +252,16 @@ public class DefaultEventBusTest {
         bus.apply("foooo");
     }
 
-//    @Test
-//    public void noReentrent() {
-//        bus = new DefaultEventBus<String>((EventBusConfiguration) EventBusConfiguration.create()
-//                .setCheckReentrant(true));
-//        bus.subscribe(new EventProcessor<String>() {
-//            public void process(String event) {
-//                bus.offer(event);
-//            }
-//        });
-//        bus.offer("foo");
-//    }
+// @Test
+// public void noReentrent() {
+// bus = new DefaultEventBus<String>((EventBusConfiguration)
+// EventBusConfiguration.create()
+// .setCheckReentrant(true));
+// bus.subscribe(new EventProcessor<String>() {
+// public void process(String event) {
+// bus.offer(event);
+// }
+// });
+// bus.offer("foo");
+// }
 }

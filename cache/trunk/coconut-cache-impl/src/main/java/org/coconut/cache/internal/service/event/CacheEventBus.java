@@ -1,10 +1,11 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.event;
 
 import java.util.concurrent.Semaphore;
 
+import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.event.bus.EventSubscription;
 import org.coconut.event.bus.defaults.DefaultEventBus;
 import org.coconut.operations.Ops.Predicate;
@@ -15,6 +16,12 @@ public class CacheEventBus<E> extends DefaultEventBus<E> {
     private boolean isShutdown;
 
     private final Semaphore s = new Semaphore(Integer.MAX_VALUE);
+
+    private final InternalCacheExceptionService exceptionHandling;
+
+    public CacheEventBus(InternalCacheExceptionService<?, ?> exceptionHandling) {
+        this.exceptionHandling = exceptionHandling;
+    }
 
     void setShutdown() {
         s.acquireUninterruptibly(Integer.MAX_VALUE);
@@ -64,4 +71,8 @@ public class CacheEventBus<E> extends DefaultEventBus<E> {
         }
     }
 
+    @Override
+    protected void deliveryFailed(EventSubscription<E> s, E element, Throwable cause) {
+        exceptionHandling.fatal("The delivery to " + s.getName() + " failed", cause);
+    }
 }

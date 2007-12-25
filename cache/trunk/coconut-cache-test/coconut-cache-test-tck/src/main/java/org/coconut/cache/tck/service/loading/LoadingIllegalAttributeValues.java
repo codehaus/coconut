@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.service.loading;
@@ -26,7 +26,7 @@ import org.junit.runner.RunWith;
 
 /**
  * Tests illegal values of various cache attributes, cache shouldn't fail.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -67,14 +67,14 @@ public class LoadingIllegalAttributeValues extends AbstractCacheTCKTest {
     public void modifiedDate() {
         map.put(DateLastModifiedAttribute.INSTANCE, -1L);
     }
-    
+
     @Before
     public void setup() {
         map = new DefaultAttributeMap();
         conf.loading().setLoader(new IntegerToStringLoader());
         conf.exceptionHandling().setExceptionHandler(new CacheExceptionHandler() {
             @Override
-            public void handleWarning(CacheExceptionContext context) {
+            public void warning(CacheExceptionContext context) {
                 ceh = context;
             }
         });

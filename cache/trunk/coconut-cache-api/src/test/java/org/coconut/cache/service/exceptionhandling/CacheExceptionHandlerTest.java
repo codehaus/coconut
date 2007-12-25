@@ -66,7 +66,7 @@ public class CacheExceptionHandlerTest {
     @Test
     public void handleWarning() {
         MyExceptionContext<Integer, String> cec = new MyExceptionContext(Exception1.INSTANCE, "msg");
-        ceh.handleWarning(cec);
+        ceh.warning(cec);
         assertSame(Exception1.INSTANCE, cec.logger.cause);
         assertSame(Level.Warn, cec.logger.level);
         assertEquals("msg", cec.logger.msg);

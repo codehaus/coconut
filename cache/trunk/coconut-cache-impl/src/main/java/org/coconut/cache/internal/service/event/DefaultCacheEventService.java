@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.event;
@@ -16,6 +16,7 @@ import java.util.Map;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
+import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.cache.service.event.CacheEntryEvent;
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.event.CacheEventConfiguration;
@@ -50,11 +51,13 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
 
     private final boolean doUpdate;
 
-    private final CacheEventBus<CacheEvent<K, V>> eb = new CacheEventBus<CacheEvent<K, V>>();
+    private final CacheEventBus<CacheEvent<K, V>> eb;
 
     private final Offerable<CacheEvent<K, V>> offerable;
 
-    public DefaultCacheEventService(CacheEventConfiguration co) {
+    public DefaultCacheEventService(CacheEventConfiguration co,
+            InternalCacheExceptionService<K, V> exceptionHandling) {
+        eb = new CacheEventBus<CacheEvent<K, V>>(exceptionHandling);
         this.offerable = eb;
         this.doAdd = isIncluded(co, CacheEntryEvent.ItemAdded.class);
         this.doClear = isIncluded(co, CacheEvent.CacheCleared.class);
@@ -132,13 +135,15 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
             dispatch(InternalEvent.started(cache));
         }
     }
+
     /** {@inheritDoc} */
     public void afterStop(Cache<K, V> cache) {
-        //no impl
-//        if (doStopped) {
-//          //  dispatch(InternalEvent.started(cache));
-//        }
+    // no impl
+// if (doStopped) {
+// // dispatch(InternalEvent.started(cache));
+// }
     }
+
     /** {@inheritDoc} */
     public void afterTrimCache(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries, int previousSize, int newSize,
@@ -241,6 +246,7 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
         }
     }
 
+    @Override
     public String toString() {
         return "Event Service";
     }

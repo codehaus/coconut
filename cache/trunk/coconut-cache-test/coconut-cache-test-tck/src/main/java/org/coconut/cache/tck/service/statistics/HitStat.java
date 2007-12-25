@@ -4,7 +4,7 @@
 
 package org.coconut.cache.tck.service.statistics;
 
-import static org.coconut.test.CollectionTestUtil.M1;
+import static org.coconut.test.CollectionTestUtil.*;
 import static org.coconut.test.CollectionTestUtil.M2;
 import static org.coconut.test.CollectionTestUtil.M3;
 import static org.coconut.test.CollectionTestUtil.M4;
@@ -132,6 +132,7 @@ public class HitStat extends AbstractCacheTCKTest {
         entrySet.remove(M4);
         entrySet.removeAll(Arrays.asList(M4, M3));
         entrySet.retainAll(Arrays.asList(M2, M3));
+        entrySet.retainAll(Arrays.asList(newEntry(2, "B"), M3));
         entrySet.size();
         entrySet.toArray();
         entrySet.toArray(new Map.Entry[4]);
