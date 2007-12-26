@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
@@ -54,7 +54,7 @@ import org.coconut.internal.util.CollectionUtils;
  * structural modification is any operation that adds, deletes or changes one or more
  * mappings.) This is typically accomplished by synchronizing on some object that
  * naturally encapsulates the cache.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -99,7 +99,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
 
     /**
      * Creates a new UnsynchronizedCache from the specified configuration.
-     * 
+     *
      * @param conf
      *            the configuration to create the cache from
      * @throws NullPointerException
@@ -242,6 +242,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
     }
 
     /** {@inheritDoc} */
+    @Override
     AbstractCacheEntry<K, V> doGet(K key) {
         AbstractCacheEntry<K, V> entry = null;
         boolean isExpired = false;
@@ -316,16 +317,16 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
             i++;
         }
 
-        Map<K, CacheEntry<K, V>> loadedEntries = Collections.EMPTY_MAP;
+        Map<K, V> loadedEntries = Collections.EMPTY_MAP;
         for (int j = 0; j < isExpired.length; j++) {
             if (isExpired[j]) {
                 listener.dexpired(this, started, entries[j]);
             }
         }
         if (loadingService != null && loadMe.size() != 0) {
-            loadedEntries = loadingService.loadAllBlocking(Attributes.toMap(loadMe,
+            loadedEntries = loadingService.loadBlockingAll(Attributes.toMap(loadMe,
                     Attributes.EMPTY_MAP));
-            for (CacheEntry<K, V> entry : loadedEntries.values()) {
+            for (Map.Entry<K, V> entry : loadedEntries.entrySet()) {
                 if (entry != null) {
                     result.put(entry.getKey(), entry.getValue());
                 }
@@ -434,6 +435,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         return newEntry == null ? null : prev;
     }
 
+    @Override
     InternalCacheServiceManager getServiceManager() {
         return serviceManager;
     }
@@ -482,8 +484,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
                 keys = Attributes.toMap(new ArrayList(keySet()), attributes);
             } else {
                 keys = new HashMap<K, AttributeMap>();
-                for (Iterator<AbstractCacheEntry<K, V>> i = map.iterator(); i.hasNext();) {
-                    AbstractCacheEntry<K, V> e = i.next();
+                for (AbstractCacheEntry<K, V> e : map) {
                     if (e.isExpired(expirationService.getExpirationFilter(), timestamp)
                             || e.needsRefresh(loadingService.getRefreshPredicate(), timestamp)) {
                         keys.put(e.getKey(), attributes);

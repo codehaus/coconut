@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.loading;
@@ -12,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.entry.InternalCacheEntryService;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.cache.internal.service.servicemanager.CompositeService;
@@ -27,7 +26,7 @@ import org.coconut.operations.Ops.Predicate;
 
 /**
  * An abstract implementation of CacheLoadingService.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -107,7 +106,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
             }
             map.put(key, Attributes.EMPTY_MAP);
         }
-        loadAllAsync(map);
+        loadAsyncAll(map);
     }
 
     /** {@inheritDoc} */
@@ -115,7 +114,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
         if (mapsWithAttributes == null) {
             throw new NullPointerException("mapsWithAttributes is null");
         }
-        loadAllAsync(mapsWithAttributes);
+        loadAsyncAll(mapsWithAttributes);
     }
 
     /** {@inheritDoc} */
@@ -185,7 +184,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
     }
 
     /** {@inheritDoc} */
-    public void loadAllAsync(Map<? extends K, ? extends AttributeMap> mapsWithAttributes) {
+    public void loadAsyncAll(Map<? extends K, ? extends AttributeMap> mapsWithAttributes) {
         for (Map.Entry<? extends K, ? extends AttributeMap> e : mapsWithAttributes.entrySet()) {
             loadAsync(e.getKey(), e.getValue());
         }
@@ -205,11 +204,6 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
     }
 
     /** {@inheritDoc} */
-    public void loadAsync(K key, AttributeMap attributes) {
-        loadBlocking(key, attributes);// Load blocking as default
-    }
-
-    /** {@inheritDoc} */
     public void setDefaultTimeToRefresh(long timeToRefresh, TimeUnit unit) {
         attributeFactory.setTimeToRefreshNs(LoadingUtils.convertRefreshTimeToNanos(timeToRefresh,
                 unit));
@@ -217,7 +211,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
 
     /**
      * Returns the {@link InternalCacheExceptionService} configured for this service.
-     * 
+     *
      * @return the CacheExceptionService configured for this service
      */
     final InternalCacheExceptionService<K, V> getExceptionHandler() {
@@ -226,7 +220,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
 
     /**
      * Returns the {@link CacheLoader} configured for this service.
-     * 
+     *
      * @return the CacheLoader configured for this service
      */
     final CacheLoader<? super K, ? extends V> getLoader() {
@@ -242,8 +236,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
      *            Whether or not this is synchronous operation (user waits on the result)
      * @return the cache entry that was added to the cache or null if no entry was added
      */
-    public CacheEntry<K, V> loadAndAddToCache(K key, AttributeMap attributes,
-            boolean isSynchronous) {
+    public CacheEntry<K, V> loadAndAddToCache(K key, AttributeMap attributes, boolean isSynchronous) {
         V v = null;
         try {
             v = loader.load(key, attributes);
@@ -253,15 +246,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
         return loadSupport.valueLoaded(key, v, attributes);
     }
 
-    public Map<K, CacheEntry<K, V>> loadAllBlocking(
-            Map<? extends K, ? extends AttributeMap> keys) {
-        HashMap<K, CacheEntry<K, V>> map = new HashMap<K,CacheEntry<K, V>>();
-        for (Map.Entry<? extends K, ? extends AttributeMap> e : keys.entrySet()) {
-            map.put(e.getKey(), loadBlocking(e.getKey(), e.getValue()));
-        }
-        return map;
-    }
-
+    @Override
     public String toString() {
         return "Loading Service";
     }

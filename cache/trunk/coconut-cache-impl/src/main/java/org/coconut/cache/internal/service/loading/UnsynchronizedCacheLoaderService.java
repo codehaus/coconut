@@ -28,12 +28,18 @@ public class UnsynchronizedCacheLoaderService<K, V> extends AbstractCacheLoading
 
     /** {@inheritDoc} */
     @Override
-    public void loadAllAsync(Map<? extends K, ? extends AttributeMap> mapsWithAttributes) {
+    public void loadAsyncAll(Map<? extends K, ? extends AttributeMap> mapsWithAttributes) {
+        loadBlockingAll(mapsWithAttributes);
+    }
+
+    /** {@inheritDoc} */
+    public Map<K, V> loadBlockingAll(Map<? extends K, ? extends AttributeMap> keys) {
         Collection<UnsynchronizedCacheLoaderCallback<K, V>> col = new ArrayList<UnsynchronizedCacheLoaderCallback<K, V>>(
-                mapsWithAttributes.size());
-        for (Map.Entry<? extends K, ? extends AttributeMap> e : mapsWithAttributes.entrySet()) {
+                keys.size());
+        for (Map.Entry<? extends K, ? extends AttributeMap> e : keys.entrySet()) {
+            AttributeMap map = attributeFactory.createMap(e.getValue());
             UnsynchronizedCacheLoaderCallback<K, V> callback = new UnsynchronizedCacheLoaderCallback<K, V>(
-                    e.getKey(), e.getValue());
+                    e.getKey(), map);
             col.add(callback);
         }
         try {
@@ -78,12 +84,17 @@ public class UnsynchronizedCacheLoaderService<K, V> extends AbstractCacheLoading
             }
         }
         loadSupport.valuesLoaded(keyValues, keyAttributes);
+        return keyValues;
+    }
+
+    /** {@inheritDoc} */
+    public void loadAsync(K key, AttributeMap attributes) {
+        loadBlocking(key, attributes);// Load blocking as default
     }
 
     /** {@inheritDoc} */
     public CacheEntry<K, V> loadBlocking(K key, AttributeMap attributes) {
-        AttributeMap map = attributeFactory.createMap(attributes);
-        return loadAndAddToCache(key, map, false);
+        return loadAndAddToCache(key, attributeFactory.createMap(attributes), false);
     }
 
 }

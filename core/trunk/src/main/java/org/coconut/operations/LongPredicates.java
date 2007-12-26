@@ -200,7 +200,7 @@ public final class LongPredicates {
         /** The value to compare with. */
         private final long equalsTo;
 
-        public EqualsToLongPredicate(long equalsTo) {
+        EqualsToLongPredicate(long equalsTo) {
             this.equalsTo = equalsTo;
         }
 
@@ -232,10 +232,12 @@ public final class LongPredicates {
         /** The value to compare with. */
         private final long greaterThen;
 
-        public GreaterThenLongPredicate(long greaterThen) {
+        GreaterThenLongPredicate(long greaterThen) {
             this.greaterThen = greaterThen;
         }
-        /** {@inheritDoc} */     /** {@inheritDoc} */
+
+        /** {@inheritDoc} */
+        /** {@inheritDoc} */
         public boolean evaluate(long t) {
             return greaterThen < t;
         }
@@ -252,9 +254,10 @@ public final class LongPredicates {
         /** The value to compare with. */
         private final long greaterThenOrEquals;
 
-        public GreaterThenOrEqualsLongPredicate(long greaterThenOrEquals) {
+        GreaterThenOrEqualsLongPredicate(long greaterThenOrEquals) {
             this.greaterThenOrEquals = greaterThenOrEquals;
         }
+
         /** {@inheritDoc} */
         public boolean evaluate(long t) {
             return greaterThenOrEquals <= t;
@@ -272,9 +275,10 @@ public final class LongPredicates {
         /** The value to compare with. */
         private final long lessThen;
 
-        public LessThenLongPredicate(long lessThen) {
+        LessThenLongPredicate(long lessThen) {
             this.lessThen = lessThen;
         }
+
         /** {@inheritDoc} */
         public boolean evaluate(long t) {
             return lessThen > t;
@@ -292,7 +296,7 @@ public final class LongPredicates {
         /** The value to compare with. */
         private final long lessThenOrEquals;
 
-        public LessThenOrEqualsLongPredicate(long lessThenOrEquals) {
+        LessThenOrEqualsLongPredicate(long lessThenOrEquals) {
             this.lessThenOrEquals = lessThenOrEquals;
         }
 
@@ -326,7 +330,7 @@ public final class LongPredicates {
          * @throws NullPointerException
          *             if the specified predicate is <code>null</code>
          */
-        public NotLongPredicate(LongPredicate predicate) {
+        NotLongPredicate(LongPredicate predicate) {
             if (predicate == null) {
                 throw new NullPointerException("predicate is null");
             }
@@ -385,7 +389,7 @@ public final class LongPredicates {
          * @throws NullPointerException
          *             if any of the supplied predicates are <code>null</code>
          */
-        public AndLongPredicate(LongPredicate left, LongPredicate right) {
+        AndLongPredicate(LongPredicate left, LongPredicate right) {
             if (left == null) {
                 throw new NullPointerException("left is null");
             } else if (right == null) {
@@ -405,7 +409,7 @@ public final class LongPredicates {
          *
          * @return the left side LongPredicate.
          */
-        public LongPredicate getLeftPredicate() {
+        public LongPredicate getLeft() {
             return left;
         }
 
@@ -414,7 +418,7 @@ public final class LongPredicates {
          *
          * @return the right side LongPredicate.
          */
-        public LongPredicate getRightPredicate() {
+        public LongPredicate getRight() {
             return right;
         }
 
@@ -437,7 +441,7 @@ public final class LongPredicates {
         private static final long serialVersionUID = -3048464662394104180L;
 
         /** Creates a new FalseLongPredicate. */
-        private FalseLongPredicate() {}
+        FalseLongPredicate() {}
 
         /** {@inheritDoc} */
         public boolean evaluate(long value) {
@@ -479,7 +483,7 @@ public final class LongPredicates {
          * @param predicate
          *            the predicate used to evaluate the mapped argument
          */
-        public MapToLongAndEvaluatePredicate(final MapperToLong<T> mapper, LongPredicate predicate) {
+        MapToLongAndEvaluatePredicate(final MapperToLong<T> mapper, LongPredicate predicate) {
             if (mapper == null) {
                 throw new NullPointerException("mapper is null");
             } else if (predicate == null) {
@@ -545,7 +549,7 @@ public final class LongPredicates {
          * @throws NullPointerException
          *             if any of the supplied predicates are <code>null</code>
          */
-        public OrLongPredicate(LongPredicate left, LongPredicate right) {
+        OrLongPredicate(LongPredicate left, LongPredicate right) {
             if (left == null) {
                 throw new NullPointerException("left is null");
             } else if (right == null) {
@@ -565,7 +569,7 @@ public final class LongPredicates {
          *
          * @return the left side LongPredicate.
          */
-        public LongPredicate getLeftPredicate() {
+        public LongPredicate getLeft() {
             return left;
         }
 
@@ -574,7 +578,7 @@ public final class LongPredicates {
          *
          * @return the right side LongPredicate.
          */
-        public LongPredicate getRightPredicate() {
+        public LongPredicate getRight() {
             return right;
         }
 
@@ -597,7 +601,7 @@ public final class LongPredicates {
         private static final long serialVersionUID = 3258129137502925875L;
 
         /** Creates a new TrueLongPredicate. */
-        private TrueLongPredicate() {}
+        TrueLongPredicate() {}
 
         /** {@inheritDoc} */
         public boolean evaluate(long value) {

@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.listener;
@@ -20,7 +20,7 @@ import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 public interface InternalCacheListener<K, V> {
     /**
      * Called after the specified cache was cleared.
-     * 
+     *
      * @param cache
      *            the cache that was cleared
      * @param timestamp
@@ -39,7 +39,7 @@ public interface InternalCacheListener<K, V> {
 
     void afterGetAll(Cache<K, V> cache, long started, Object[] keys,
             CacheEntry<K, V>[] entries, boolean[] isHit, boolean[] isExpired,
-            Map<K, CacheEntry<K, V>> loadedEntries);
+            Map<K,  V> loadedEntries);
 
     void afterHit(Cache<K, V> cache, long started, K key, CacheEntry<K, V> entry);
 
@@ -67,14 +67,14 @@ public interface InternalCacheListener<K, V> {
 
     void afterStart(Cache<K, V> cache);
     void afterStop(Cache<K, V> cache);
-    
+
     void afterTrimCache(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries, int previousSize, int newSize,
             long previousVolume, long newVolume);
 
     /**
      * Called before the cache was cleared.
-     * 
+     *
      * @param cache
      *            the cache that was cleared
      * @return a timestamp

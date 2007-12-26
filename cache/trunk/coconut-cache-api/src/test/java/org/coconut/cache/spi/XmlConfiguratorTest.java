@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.spi;
@@ -138,7 +138,7 @@ public class XmlConfiguratorTest {
 
     /**
      * This method is used for saving and reloading a configuration object.
-     * 
+     *
      * @param configuration
      * @return the reloaded configuration
      * @throws Exception
@@ -168,8 +168,8 @@ public class XmlConfiguratorTest {
 
         MyConf<?, ?> newConf = new MyConf();
         xml.readSingleCache(newConf, parent);
-        MyConfiguration conf = (MyConfiguration) newConf.getConfiguration(MyConfiguration.class);
-        assertTrue(conf.isRun);
+        Object cc = newConf.getConfiguration(MyConfiguration.class);
+        assertTrue(((MyConfiguration) cc).isRun);
     }
 
     static class MyConf<K, V> extends CacheConfiguration<K, V> {

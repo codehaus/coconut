@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.statistics;
@@ -31,7 +31,7 @@ import org.coconut.management.ManagedLifecycle;
  * synchronous, concurrent, unsynchornized versions
  * <p>
  * do we want to provide cache entries?
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -332,10 +332,10 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
 
     public void afterGetAll(Cache<K, V> cache, long started, Object[] keys,
             CacheEntry<K, V>[] entries, boolean[] isHit, boolean[] isExpired,
-            Map<K, CacheEntry<K, V>> loadedEntries) {
+            Map<K, V> loadedEntries) {
         int hits = 0;
-        for (int i = 0; i < isHit.length; i++) {
-            if (isHit[i]) {
+        for (boolean element : isHit) {
+            if (element) {
                 hits++;
             }
         }
@@ -411,6 +411,7 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
         return Resources.lookup(DefaultCacheStatisticsService.class, key.toLowerCase());
     }
 
+    @Override
     public String toString() {
         return "Statistics Service";
     }

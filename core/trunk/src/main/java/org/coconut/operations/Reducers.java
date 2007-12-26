@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.operations;
@@ -17,7 +17,7 @@ import org.coconut.operations.Ops.Reducer;
 /**
  * Various implementations of {@link Reducer}, {@link DoubleReducer}, {@link IntReducer}
  * and {@link LongReducer}.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -68,37 +68,100 @@ public final class Reducers {
 
     // /CLOVER:ON
 
+    /**
+     * A reducer returning the maximum of two double elements, using the specified
+     * comparator.
+     *
+     * @param comparator
+     *            the comparator to use when comparing elements
+     * @return the newly created reducer
+     */
     public static DoubleReducer doubleMaxReducer(DoubleComparator comparator) {
         return new DoubleMaxReducer(comparator);
     }
 
+    /**
+     * A reducer returning the minimum of two double elements, using the specified
+     * comparator.
+     *
+     * @param comparator
+     *            the comparator to use when comparing elements
+     * @return the newly created reducer
+     */
     public static DoubleReducer doubleMinReducer(DoubleComparator comparator) {
         return new DoubleMinReducer(comparator);
     }
 
+    /**
+     * A reducer returning the maximum of two int elements, using the specified
+     * comparator.
+     *
+     * @param comparator
+     *            the comparator to use when comparing elements
+     * @return the newly created reducer
+     */
     public static IntReducer intMaxReducer(IntComparator comparator) {
         return new IntMaxReducer(comparator);
     }
 
+    /**
+     * A reducer returning the minimum of two int elements, using the specified
+     * comparator.
+     *
+     * @param comparator
+     *            the comparator to use when comparing elements
+     * @return the newly created reducer
+     */
     public static IntReducer intMinReducer(IntComparator comparator) {
         return new IntMinReducer(comparator);
     }
 
+    /**
+     * A reducer returning the maximum of two long elements, using the specified
+     * comparator.
+     *
+     * @param comparator
+     *            the comparator to use when comparing elements
+     * @return the newly created reducer
+     */
     public static LongReducer longMaxReducer(LongComparator comparator) {
         return new LongMaxReducer(comparator);
     }
 
+    /**
+     * A reducer returning the minimum of two long elements, using the specified
+     * comparator.
+     *
+     * @param comparator
+     *            the comparator to use when comparing elements
+     * @return the newly created reducer
+     */
     public static LongReducer longMinReducer(LongComparator comparator) {
         return new LongMinReducer(comparator);
     }
 
     /**
-     * Creates a max reducer.
+     * Returns a reducer returning the maximum of two Comparable elements, treating null
+     * as less than any non-null element.
+     *
+     * @return a maximum reducer
+     * @param <T>
+     *            the types of elements accepted by the Reducer
      */
     public static <T extends Comparable<? super T>> Reducer<T> maxReducer() {
         return MAX_REDUCER;
     }
 
+    /**
+     * A reducer returning the maximum of two elements, using the given comparator, and
+     * treating null as less than any non-null element.
+     *
+     * @param comparator
+     *            the comparator to use when comparing elements
+     * @return the newly created Reducer
+     * @param <T>
+     *            the types of elements accepted by the Reducer
+     */
     public static <T> Reducer<T> maxReducer(Comparator<? super T> comparator) {
         return new MaxReducer(comparator);
     }
@@ -106,14 +169,25 @@ public final class Reducers {
     /**
      * Returns a reducer that returns the minimum of two Comparable elements, treating
      * null as less than any non-null element.
-     * <p>
-     * To treat <code>null</code> as greather then any other non-null element use
-     * <tt>Reducers.minReducer(Comparators.nullGreatestOrder());</tt>
+     *
+     * @return a minimum reducer
+     * @param <T>
+     *            the types of elements accepted by the Reducer
      */
     public static <T extends Comparable<? super T>> Reducer<T> minReducer() {
         return MIN_REDUCER;
     }
 
+    /**
+     * A reducer returning the minimum of two elements, using the given comparator, and
+     * treating null as greater than any non-null element.
+     *
+     * @param comparator
+     *            the comparator to use when comparing elements
+     * @return the newly created Reducer
+     * @param <T>
+     *            the types of elements accepted by the Reducer
+     */
     public static <T> Reducer<T> minReducer(Comparator<? super T> comparator) {
         return new MinReducer(comparator);
     }
@@ -146,7 +220,7 @@ public final class Reducers {
 
         /**
          * Creates a DoubleMaxReducer.
-         * 
+         *
          * @param comparator
          *            the DoubleComparator to use
          */
@@ -159,7 +233,7 @@ public final class Reducers {
 
         /** {@inheritDoc} */
         public double combine(double a, double b) {
-            return (comparator.compare(a, b) >= 0) ? a : b;
+            return comparator.compare(a, b) >= 0 ? a : b;
         }
     }
 
@@ -175,7 +249,7 @@ public final class Reducers {
 
         /**
          * Creates a DoubleMinReducer.
-         * 
+         *
          * @param comparator
          *            the DoubleComparator to use
          */
@@ -188,7 +262,7 @@ public final class Reducers {
 
         /** {@inheritDoc} */
         public double combine(double a, double b) {
-            return (comparator.compare(a, b) <= 0) ? a : b;
+            return comparator.compare(a, b) <= 0 ? a : b;
         }
     }
 
@@ -221,7 +295,7 @@ public final class Reducers {
 
         /**
          * Creates a IntMaxReducer.
-         * 
+         *
          * @param comparator
          *            the IntComparator to use
          */
@@ -234,7 +308,7 @@ public final class Reducers {
 
         /** {@inheritDoc} */
         public int combine(int a, int b) {
-            return (comparator.compare(a, b) >= 0) ? a : b;
+            return comparator.compare(a, b) >= 0 ? a : b;
         }
     }
 
@@ -250,7 +324,7 @@ public final class Reducers {
 
         /**
          * Creates a IntMinReducer.
-         * 
+         *
          * @param comparator
          *            the IntComparator to use
          */
@@ -263,7 +337,7 @@ public final class Reducers {
 
         /** {@inheritDoc} */
         public int combine(int a, int b) {
-            return (comparator.compare(a, b) <= 0) ? a : b;
+            return comparator.compare(a, b) <= 0 ? a : b;
         }
     }
 
@@ -295,7 +369,7 @@ public final class Reducers {
 
         /**
          * Creates a LongMaxReducer.
-         * 
+         *
          * @param comparator
          *            the LongComparator to use
          */
@@ -308,7 +382,7 @@ public final class Reducers {
 
         /** {@inheritDoc} */
         public long combine(long a, long b) {
-            return (comparator.compare(a, b) >= 0) ? a : b;
+            return comparator.compare(a, b) >= 0 ? a : b;
         }
     }
 
@@ -324,7 +398,7 @@ public final class Reducers {
 
         /**
          * Creates a LongMinReducer.
-         * 
+         *
          * @param comparator
          *            the LongComparator to use
          */
@@ -337,7 +411,7 @@ public final class Reducers {
 
         /** {@inheritDoc} */
         public long combine(long a, long b) {
-            return (comparator.compare(a, b) <= 0) ? a : b;
+            return comparator.compare(a, b) <= 0 ? a : b;
         }
     }
 
@@ -354,7 +428,7 @@ public final class Reducers {
 
         /**
          * Creates a MaxReducer.
-         * 
+         *
          * @param comparator
          *            the Comparator to use
          */
@@ -367,7 +441,7 @@ public final class Reducers {
 
         /** {@inheritDoc} */
         public T combine(T a, T b) {
-            return (a != null && (b == null || comparator.compare(a, b) >= 0)) ? a : b;
+            return a != null && (b == null || comparator.compare(a, b) >= 0) ? a : b;
         }
     }
 
@@ -384,7 +458,7 @@ public final class Reducers {
 
         /**
          * Creates a MinReducer.
-         * 
+         *
          * @param comparator
          *            the Comparator to use
          */
@@ -397,7 +471,7 @@ public final class Reducers {
 
         /** {@inheritDoc} */
         public T combine(T a, T b) {
-            return (a != null && (b == null || comparator.compare(a, b) <= 0)) ? a : b;
+            return a != null && (b == null || comparator.compare(a, b) <= 0) ? a : b;
         }
     }
 
@@ -510,7 +584,7 @@ public final class Reducers {
 
         /** {@inheritDoc} */
         public T combine(T a, T b) {
-            return (a != null && (b == null || a.compareTo(b) >= 0)) ? a : b;
+            return a != null && (b == null || a.compareTo(b) >= 0) ? a : b;
         }
 
         /** @return Preserves singleton property */
@@ -530,7 +604,7 @@ public final class Reducers {
 
         /** {@inheritDoc} */
         public T combine(T a, T b) {
-            return (a != null && (b == null || a.compareTo(b) <= 0)) ? a : b;
+            return a != null && (b == null || a.compareTo(b) <= 0) ? a : b;
         }
 
         /** @return Preserves singleton property */

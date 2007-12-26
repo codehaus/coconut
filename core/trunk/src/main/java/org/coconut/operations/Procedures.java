@@ -1,3 +1,6 @@
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
+ */
 package org.coconut.operations;
 
 import java.io.PrintStream;
@@ -22,7 +25,7 @@ public class Procedures {
      * Wraps the {@link Collection#add(Object)} method in an {@link Procedure}.
      * <p>
      * The returned Procedure is serializable if the specified Collection is serializable.
-     * 
+     *
      * @param collection
      *            the collection to wrap
      * @return the newly created Procedure
@@ -43,7 +46,7 @@ public class Procedures {
      * Wraps the {@link Queue#offer(Object)} method in an {@link Procedure}.
      * <p>
      * The returned Procedure is serializable if the specified Queue is serializable.
-     * 
+     *
      * @param queue
      *            the queue to wrap
      * @return the newly created Procedure
@@ -59,7 +62,7 @@ public class Procedures {
     /**
      * Returns a Procedure that calls {@link PrintStream#print(boolean)} on
      * {@link System#out}.
-     * 
+     *
      * @return an eventhandler that prints all processed elements to {@link System#out}
      * @param <E>
      *            the types of elements accepted by the procedure
@@ -71,7 +74,7 @@ public class Procedures {
     /**
      * Returns a Procedure that calls {@link PrintStream#println(boolean)} on
      * {@link System#out}.
-     * 
+     *
      * @return an eventhandler that prints all processed elements to {@link System#out}
      * @param <E>
      *            the types of elements accepted by the procedure
@@ -83,7 +86,7 @@ public class Procedures {
     /**
      * Returns an event processor that will print all elements processor to the specified
      * printstream using the elements {@link Object#toString()} method.
-     * 
+     *
      * @param ps
      *            the PrintStream to write to
      * @return an EventProcessor where all elements processor will be written to the
@@ -107,7 +110,7 @@ public class Procedures {
     /**
      * Works as {@link #toPrintStream(PrintStream)} except that any
      * {@link RuntimeException} will be ignored.
-     * 
+     *
      * @param ps
      *            the PrintStream to write to
      * @return an EventProcessor where all elements processor will be written to the
@@ -135,7 +138,7 @@ public class Procedures {
     /**
      * Shorthand for calling {@link #toPrintStreamSafe(PrintStream)} with
      * {@link System#out} as the output printstream.
-     * 
+     *
      * @return an eventhandler that prints all processed elements to {@link System#out}
      * @param <E>
      *            the types of elements accepted by the process method
@@ -156,7 +159,7 @@ public class Procedures {
 
         /**
          * Creates a new CollectionAdd.
-         * 
+         *
          * @param collection
          *            the Collection to wrap
          * @throws NullPointerException
@@ -207,7 +210,7 @@ public class Procedures {
 
         /**
          * Creates a new QueueOffer.
-         * 
+         *
          * @param queue
          *            the Queue to wrap
          * @throws NullPointerException

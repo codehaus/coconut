@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.defaults;
@@ -36,7 +36,6 @@ import org.coconut.cache.internal.service.loading.SynchronizedCacheLoaderService
 import org.coconut.cache.internal.service.management.DefaultCacheManagementService;
 import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
 import org.coconut.cache.internal.service.servicemanager.SynchronizedCacheServiceManager;
-import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsService;
 import org.coconut.cache.internal.service.worker.SynchronizedCacheWorkerService;
 import org.coconut.cache.service.event.CacheEventService;
@@ -55,7 +54,7 @@ import org.coconut.internal.util.CollectionUtils;
  * <p>
  * It is imperative that the user manually synchronize on the cache when iterating over
  * any of its collection views:
- * 
+ *
  * <pre>
  *  Cache c = new SynchronizedCache();
  *      ...
@@ -67,9 +66,9 @@ import org.coconut.internal.util.CollectionUtils;
  *          foo(i.next());
  *  }
  * </pre>
- * 
+ *
  * Failure to follow this advice may result in non-deterministic behavior.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -114,7 +113,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
 
     /**
      * Creates a new UnsynchronizedCache from the specified configuration.
-     * 
+     *
      * @param conf
      *            the configuration to create the cache from
      * @throws NullPointerException
@@ -273,6 +272,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
     }
 
     /** {@inheritDoc} */
+    @Override
     AbstractCacheEntry<K, V> doGet(K key) {
         AbstractCacheEntry<K, V> entry = null;
         boolean isExpired = false;
@@ -350,16 +350,16 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
                 i++;
             }
         }
-        Map<K, CacheEntry<K, V>> loadedEntries = Collections.EMPTY_MAP;
+        Map<K,  V> loadedEntries = Collections.EMPTY_MAP;
         for (int j = 0; j < isExpired.length; j++) {
             if (isExpired[j]) {
                 listener.dexpired(this, started, entries[j]);
             }
         }
         if (loadingService != null && loadMe.size() != 0) {
-            loadedEntries = loadingService.loadAllBlocking(Attributes.toMap(loadMe,
+            loadedEntries = loadingService.loadBlockingAll(Attributes.toMap(loadMe,
                     Attributes.EMPTY_MAP));
-            for (CacheEntry<K, V> entry : loadedEntries.values()) {
+            for (Map.Entry<K, V> entry : loadedEntries.entrySet()) {
                 if (entry != null) {
                     result.put(entry.getKey(), entry.getValue());
                 }
@@ -476,6 +476,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
     }
 
     /** {@inheritDoc} */
+    @Override
     InternalCacheServiceManager getServiceManager() {
         return serviceManager;
     }
@@ -532,8 +533,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
                     keys = Attributes.toMap(new ArrayList(keySet()), attributes);
                 } else {
                     keys = new HashMap<K, AttributeMap>();
-                    for (Iterator<AbstractCacheEntry<K, V>> i = map.iterator(); i.hasNext();) {
-                        AbstractCacheEntry<K, V> e = i.next();
+                    for (AbstractCacheEntry<K, V> e : map) {
                         if (e.isExpired(expirationService.getExpirationFilter(), timestamp)
                                 || e.needsRefresh(loadingService.getRefreshPredicate(), timestamp)) {
                             keys.put(e.getKey(), attributes);

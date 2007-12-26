@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.listener;
@@ -164,10 +164,11 @@ public class DefaultCacheListener<K, V> implements InternalCacheListener<K, V> {
 
     public void afterGetAll(Cache<K, V> cache, long started, Object[] keys,
             CacheEntry<K, V>[] entries, boolean[] isHit, boolean[] isExpired,
-            Map<K, CacheEntry<K, V>> loadedEntries) {
+            Map<K,  V> loadedEntries) {
         statistics.afterGetAll(cache, started, keys, entries, isHit, isExpired, loadedEntries);
     }
 
+    @Override
     public String toString() {
         return "Listener Service";
     }

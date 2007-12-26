@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.entry;
@@ -35,6 +35,7 @@ public class UnsynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void accessed(InternalCacheEntryService<K, V> service) {
         lastAccessTime = service.getAccessTimeStamp(this);
         hits++;
@@ -65,7 +66,6 @@ public class UnsynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
         this.expirationTime = expirationTime;
     }
 
-    /** {@inheritDoc} */
     public void setHits(long hits) {
         this.hits = hits;
     }

@@ -3,6 +3,8 @@
  */
 package org.coconut.cache.internal.service.loading;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 
@@ -26,7 +28,7 @@ import org.coconut.cache.service.worker.CacheWorkerService;
  * @param <K>
  * @param <V>
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id$
+ * @version $Id: SynchronizedCacheLoaderService.java 521 2007-12-22 19:15:11Z kasper $
  */
 public class SynchronizedCacheLoaderService<K, V> extends AbstractCacheLoadingService<K, V> {
 
@@ -49,6 +51,15 @@ public class SynchronizedCacheLoaderService<K, V> extends AbstractCacheLoadingSe
 
     /** {@inheritDoc} */
     @Override
+    public CacheEntry<K, V> loadAndAddToCache(K key, AttributeMap attributes, boolean isSynchronous) {
+        try {
+            return super.loadAndAddToCache(key, attributes, isSynchronous);
+        } finally {
+            futures.remove(key);
+        }
+    }
+
+    /** {@inheritDoc} */
     public void loadAsync(K key, AttributeMap attributes) {
         loadExecutor.execute(createFuture(key, attributes));
     }
@@ -60,12 +71,22 @@ public class SynchronizedCacheLoaderService<K, V> extends AbstractCacheLoadingSe
         return ft.getBlocking();
     }
 
+    public Map<K, V> loadBlockingAll(Map<? extends K, ? extends AttributeMap> keys) {
+        HashMap<K, V> map = new HashMap<K, V>();
+        for (Map.Entry<? extends K, ? extends AttributeMap> e : keys.entrySet()) {
+            CacheEntry<K, V> ce = loadBlocking(e.getKey(), e.getValue());
+            if (ce != null) {
+                map.put(e.getKey(), ce.getValue());
+            }
+        }
+        return map;
+    }
+
     private LoadableFutureTask<K, V> createFuture(K key, AttributeMap attributes) {
         LoadableFutureTask<K, V> future = futures.get(key);
         if (future == null) {
             // no load in progress, create new Future for load of key
             AttributeMap map = attributeFactory.createMap(attributes);
-//            Callable<CacheEntry<K, V>> r = LoadingUtils.createLoadCallable(this, key, map);
             LoadableFutureTask<K, V> newFuture = new LoadableFutureTask<K, V>(this, key, map);
             future = futures.putIfAbsent(key, newFuture);
             // another thread might have created a future in the mean time
@@ -74,15 +95,5 @@ public class SynchronizedCacheLoaderService<K, V> extends AbstractCacheLoadingSe
             }
         }
         return future;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public CacheEntry<K, V> loadAndAddToCache(K key, AttributeMap attributes, boolean isSynchronous) {
-        try {
-            return super.loadAndAddToCache(key, attributes, isSynchronous);
-        } finally {
-            futures.remove(key);
-        }
     }
 }

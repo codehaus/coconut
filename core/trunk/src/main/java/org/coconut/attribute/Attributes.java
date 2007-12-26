@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.attribute;
@@ -13,18 +13,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.coconut.internal.util.CollectionUtils;
 import org.coconut.internal.util.CollectionUtils.SimpleImmutableEntry;
 
 /**
  * Contains various utility methods for a {@link AttributeMap}.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: AttributeMaps.java 472 2007-11-19 09:34:26Z kasper $
  */
 public final class Attributes {
 
     /** The empty attribute map (immutable). This attribute map is serializable. */
-    public final static AttributeMap EMPTY_MAP = new EmptyMap();
+    public final static AttributeMap EMPTY_MAP = new EmptyAttributeMap();
 
     // /CLOVER:OFF
     /** Cannot instantiate. */
@@ -35,7 +36,7 @@ public final class Attributes {
     /**
      * Returns an immutable AttributeMap containing only the specified attribute mapping
      * to the specified value.
-     * 
+     *
      * @param attribute
      *            the attribute to map from
      * @param value
@@ -50,10 +51,14 @@ public final class Attributes {
         return new SingletonAttributeMap(attribute, value);
     }
 
+    public static AttributeMap unmodifiableAttributeMap(AttributeMap attributes) {
+        return new ImmutableAttributeMap(attributes);
+    }
+
     /**
      * Creates a new {@link Map} where all the specified keys maps to the specified
      * AttributeMap.
-     * 
+     *
      * @param <K>
      *            the type of keys
      * @param keys
@@ -74,33 +79,43 @@ public final class Attributes {
     /**
      * The default implementation of an immutable empty {@link AttributeMap}.
      */
-    static final class EmptyMap extends AbstractMap<Attribute, Object> implements AttributeMap,
-            Serializable {
+    static final class EmptyAttributeMap extends AbstractMap<Attribute, Object> implements
+            AttributeMap, Serializable {
 
         /** serialVersionUID. */
         private static final long serialVersionUID = -3037602713439417782L;
 
         /** {@inheritDoc} */
+        @Override
         public boolean containsKey(Object key) {
             return false;
         }
 
         /** {@inheritDoc} */
+        @Override
         public boolean containsValue(Object value) {
             return false;
         }
 
         /** {@inheritDoc} */
+        @Override
         public Set<Map.Entry<Attribute, Object>> entrySet() {
             return Collections.emptySet();
         }
 
         /** {@inheritDoc} */
+        @Override
         public boolean equals(Object o) {
-            return (o instanceof Map) && ((Map) o).size() == 0;
+            return o instanceof Map && ((Map) o).size() == 0;
         }
 
         /** {@inheritDoc} */
+        public Object get(Attribute key, Object defaultValue) {
+            return defaultValue;
+        }
+
+        /** {@inheritDoc} */
+        @Override
         public Object get(Object key) {
             return null;
         }
@@ -138,11 +153,6 @@ public final class Attributes {
         /** {@inheritDoc} */
         public double getDouble(Attribute key) {
             return 0;
-        }
-
-        /** {@inheritDoc} */
-        public Object get(Attribute key, Object defaultValue) {
-            return defaultValue;
         }
 
         /** {@inheritDoc} */
@@ -191,16 +201,19 @@ public final class Attributes {
         }
 
         /** {@inheritDoc} */
+        @Override
         public int hashCode() {
             return 0;
         }
 
         /** {@inheritDoc} */
+        @Override
         public boolean isEmpty() {
             return true;
         }
 
         /** {@inheritDoc} */
+        @Override
         public Set<Attribute> keySet() {
             return Collections.<Attribute> emptySet();
         }
@@ -246,22 +259,241 @@ public final class Attributes {
         }
 
         /** {@inheritDoc} */
+        @Override
         public int size() {
             return 0;
         }
 
         /** {@inheritDoc} */
+        @Override
         public Collection<Object> values() {
             return Collections.<Object> emptySet();
         }
 
         /**
          * Preserves singleton property.
-         * 
+         *
          * @return the empty map
          */
         private Object readResolve() {
             return EMPTY_MAP;
+        }
+    }
+
+    static class ImmutableAttributeMap implements AttributeMap, Serializable {
+        /** serialVersionUID. */
+        // private static final long serialVersionUID = -6979724477215052911L;
+        /** The singleton key. */
+        private final AttributeMap map;
+
+        ImmutableAttributeMap(AttributeMap attributes) {
+            if (attributes == null) {
+                throw new NullPointerException("attributes is null");
+            }
+            this.map = attributes;
+        }
+
+        /** {@inheritDoc} */
+        public void clear() {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        public boolean containsKey(Object key) {
+            return map.containsKey(key);
+        }
+
+        /** {@inheritDoc} */
+        public boolean containsValue(Object value) {
+            return map.containsValue(value);
+        }
+
+        /** {@inheritDoc} */
+        public Set<Entry<Attribute, Object>> entrySet() {
+            return new CollectionUtils.ImmutableEntrySet(map.entrySet());
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean equals(Object o) {
+            return map.equals(o);
+        }
+
+        /** {@inheritDoc} */
+        public Object get(Attribute key, Object defaultValue) {
+            return map.get(key, defaultValue);
+        }
+
+        /** {@inheritDoc} */
+        public Object get(Object key) {
+            return map.get(key);
+        }
+
+        /** {@inheritDoc} */
+        public boolean getBoolean(Attribute key) {
+            return map.getBoolean(key);
+        }
+
+        /** {@inheritDoc} */
+        public boolean getBoolean(Attribute key, boolean defaultValue) {
+            return map.getBoolean(key, defaultValue);
+        }
+
+        /** {@inheritDoc} */
+        public byte getByte(Attribute key) {
+            return map.getByte(key);
+        }
+
+        /** {@inheritDoc} */
+        public byte getByte(Attribute key, byte defaultValue) {
+            return map.getByte(key, defaultValue);
+        }
+
+        /** {@inheritDoc} */
+        public char getChar(Attribute key) {
+            return map.getChar(key);
+        }
+
+        /** {@inheritDoc} */
+        public char getChar(Attribute key, char defaultValue) {
+            return map.getChar(key, defaultValue);
+        }
+
+        /** {@inheritDoc} */
+        public double getDouble(Attribute key) {
+            return map.getDouble(key);
+        }
+
+        /** {@inheritDoc} */
+        public double getDouble(Attribute key, double defaultValue) {
+            return map.getDouble(key, defaultValue);
+        }
+
+        /** {@inheritDoc} */
+        public float getFloat(Attribute key) {
+            return map.getFloat(key);
+        }
+
+        /** {@inheritDoc} */
+        public float getFloat(Attribute key, float defaultValue) {
+            return map.getFloat(key, defaultValue);
+        }
+
+        /** {@inheritDoc} */
+        public int getInt(Attribute key) {
+            return map.getInt(key);
+        }
+
+        /** {@inheritDoc} */
+        public int getInt(Attribute key, int defaultValue) {
+            return map.getInt(key, defaultValue);
+        }
+
+        /** {@inheritDoc} */
+        public long getLong(Attribute key) {
+            return map.getLong(key);
+        }
+
+        /** {@inheritDoc} */
+        public long getLong(Attribute key, long defaultValue) {
+            return map.getLong(key, defaultValue);
+        }
+
+        /** {@inheritDoc} */
+        public short getShort(Attribute key) {
+            return map.getShort(key);
+        }
+
+        /** {@inheritDoc} */
+        public short getShort(Attribute key, short defaultValue) {
+            return map.getShort(key, defaultValue);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public int hashCode() {
+            return map.hashCode();
+        }
+
+        /** {@inheritDoc} */
+        public boolean isEmpty() {
+            return map.isEmpty();
+        }
+
+        /** {@inheritDoc} */
+        public Set<Attribute> keySet() {
+            return Collections.unmodifiableSet(map.keySet());
+        }
+
+        /** {@inheritDoc} */
+        public Object put(Attribute key, Object value) {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        public void putAll(Map<? extends Attribute, ? extends Object> t) {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        public void putBoolean(Attribute key, boolean value) {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        public void putByte(Attribute key, byte value) {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        public void putChar(Attribute key, char value) {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        public void putDouble(Attribute key, double value) {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        public void putFloat(Attribute key, float value) {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        public void putInt(Attribute key, int value) {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        public void putLong(Attribute key, long value) {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        public void putShort(Attribute key, short value) {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        public Object remove(Object key) {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        public int size() {
+            return map.size();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString() {
+            return map.toString();
+        }
+
+        /** {@inheritDoc} */
+        public Collection<Object> values() {
+            return Collections.unmodifiableCollection(map.values());
         }
     }
 
@@ -309,20 +541,25 @@ public final class Attributes {
         /** {@inheritDoc} */
         @Override
         public boolean equals(Object o) {
-            if (o == this)
+            if (o == this) {
                 return true;
-            if (!(o instanceof Map))
+            }
+            if (!(o instanceof Map)) {
                 return false;
+            }
             Map<Attribute, Object> map = (Map<Attribute, Object>) o;
-            if (map.size() != size())
+            if (map.size() != size()) {
                 return false;
+            }
             try {
                 if (v == null) {
-                    if (!(map.get(a) == null && map.containsKey(a)))
+                    if (!(map.get(a) == null && map.containsKey(a))) {
                         return false;
+                    }
                 } else {
-                    if (!v.equals(map.get(a)))
+                    if (!v.equals(map.get(a))) {
                         return false;
+                    }
                 }
             } catch (ClassCastException unused) {
                 return false;
@@ -337,7 +574,7 @@ public final class Attributes {
 
         /** {@inheritDoc} */
         public Object get(Object key) {
-            return (eq(key, a) ? v : null);
+            return eq(key, a) ? v : null;
         }
 
         /** {@inheritDoc} */

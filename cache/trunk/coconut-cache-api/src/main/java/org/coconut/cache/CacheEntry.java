@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache;
@@ -25,7 +25,7 @@ import org.coconut.core.Clock;
  * <p>
  * The notion of time, unless otherwise specified by the implementation, is relative to
  * the Unix epoch (on January 1, 1970, 00:00:00 GMT).
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @see Clock#timestamp()
@@ -38,7 +38,7 @@ import org.coconut.core.Clock;
 public interface CacheEntry<K, V> extends Map.Entry<K, V> {
     /**
      * Returns the value corresponding to this entry.
-     * 
+     *
      * @return the value corresponding to this entry
      */
     V getValue();
@@ -54,10 +54,9 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V> {
      * <p>
      * The cost does not necessarily represent the actual time to fetch the element.
      * However, this is often the case.
-     * 
+     *
      * @return the expected cost of fetching this element. If the size of the object
-     *         cannot be determined {@link CostAttribute#DEFAULT_VALUE} should be
-     *         returned
+     *         cannot be determined {@link CostAttribute#DEFAULT_VALUE} should be returned
      * @see CostAttribute
      */
     double getCost();
@@ -67,7 +66,7 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V> {
      * <p>
      * See the description of the class Date for a discussion of slight discrepancies that
      * may arise between "computer time" and coordinated universal time (UTC).
-     * 
+     *
      * @return the difference, measured in milliseconds, between the time at which this
      *         entry was created and January 1, 1970 UTC.
      * @see java.util.Date
@@ -79,7 +78,7 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V> {
      * Returns the time at which the current value of the cache entry will expire. Expired
      * entries are never served by the cache. If {@link Long#MAX_VALUE} is returned if the
      * entry will never expire.
-     * 
+     *
      * @return the difference, measured in milliseconds, between the time at which the
      *         current value of the cache entry will expire and January 1, 1970 UTC. Or
      *         {@link Long#MAX_VALUE} if it never expires
@@ -90,7 +89,7 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V> {
 
     /**
      * Returns the number of times the object has been previously succesfully requested.
-     * 
+     *
      * @return the number of times the object has been previously succesfully requested.
      * @see HitsAttribute
      */
@@ -102,7 +101,7 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V> {
      * example, if the entry has been added to the cache due to a call on
      * {@link org.coconut.cache.service.loading.CacheLoadingService#load(Object)} this
      * method returns <tt>0</tt>.
-     * 
+     *
      * @return the difference, measured in milliseconds, between the time at which the
      *         entry was last accessed and January 1, 1970 UTC. Or <tt>0</tt> if it has
      *         never been accessed
@@ -112,7 +111,7 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V> {
     /**
      * Returns when the value of the specific cache entry was last updated in milliseconds
      * (optional operation).
-     * 
+     *
      * @return the difference, measured in milliseconds, between the time at which the
      *         entry was last updated and January 1, 1970 UTC.
      * @see DateLastModifiedAttribute
@@ -125,7 +124,7 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V> {
      * <p>
      * The size returned does not necessarily represent the actual number of bytes used to
      * store the element.
-     * 
+     *
      * @return the size of the element. If the size of the object cannot be determined
      *         {@link SizeAttribute#DEFAULT_VALUE} should be returned
      * @see SizeAttribute

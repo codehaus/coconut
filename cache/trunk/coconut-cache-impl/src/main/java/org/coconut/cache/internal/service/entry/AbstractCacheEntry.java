@@ -24,10 +24,6 @@ import org.coconut.operations.Ops.Predicate;
  *            the type of mapped values
  */
 public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
-
-    /** The next cache entry in the hash map. */
-    AbstractCacheEntry<K, V> next;
-
     /** The cost of this cache entry. */
     private final double cost;
 
@@ -52,6 +48,9 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
     /** The value of the cache entry. */
     private final V value;
 
+    /** The next cache entry in the hash map. */
+    AbstractCacheEntry<K, V> next;
+
     /**
      * Creates a new AbstractCacheEntry.
      *
@@ -68,8 +67,8 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
      * @param size
      *            the size of the cache entry
      */
-    AbstractCacheEntry(K key, V value, double cost, long creationTime,
-            long lastUpdateTime, long size) {
+    AbstractCacheEntry(K key, V value, double cost, long creationTime, long lastUpdateTime,
+            long size) {
         if (value == null) {
             throw new NullPointerException("value is null");
         }
@@ -101,13 +100,20 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         if (k1 == k2 || k1 != null && k1.equals(k2)) {
             Object v1 = value;
             Object v2 = e.getValue();
-            if (v1 == v2 ||  v1.equals(v2)) {
+            if (v1 == v2 || v1.equals(v2)) {
                 return true;
             }
         }
         return false;
     }
 
+//    /** {@inheritDoc} */
+//    public AttributeMap getAttributes() {
+//        AttributeMap map = new DefaultAttributeMap();
+//        CostAttribute.set(map, getCost());
+//        SizeAttribute.set(map, getSize());
+//        return map;
+//    }
 
     /** {@inheritDoc} */
     public double getCost() {
@@ -117,10 +123,6 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
     /** {@inheritDoc} */
     public long getCreationTime() {
         return creationTime;
-    }
-
-    int getHash() {
-        return hash;
     }
 
     /** {@inheritDoc} */
@@ -135,12 +137,10 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         return lastUpdateTime;
     }
 
-    /** {@inheritDoc} */
+
     public int getPolicyIndex() {
         return policyIndex;
     }
-
-    abstract long getRefreshTime();
 
     /** {@inheritDoc} */
     public long getSize() {
@@ -157,16 +157,23 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
     public int hashCode() {
         return key.hashCode() ^ value.hashCode();
     }
-//    /**
-//     * @param expirationTime
-//     *            the expirationTime to set
-//     */
-//    abstract void setExpirationTime(long time);
-//    /**
-//     * @param hits
-//     *            the hits to set
-//     */
-//    abstract void setHits(long hits);
+
+    public boolean isExpired(Predicate<CacheEntry<K, V>> filter, long timestamp) {
+        if (filter != null && filter.evaluate(this)) {
+            return true;
+        }
+        long expTime = getExpirationTime();
+        return expTime == TimeToLiveAttribute.FOREVER ? false : Clock.isPassed(timestamp, expTime);
+    }
+
+    public boolean needsRefresh(Predicate<CacheEntry<K, V>> filter, long timestamp) {
+        if (filter != null && filter.evaluate(this)) {
+            return true;
+        }
+        long refreshTime = getRefreshTime();
+        return refreshTime == TimeToLiveAttribute.FOREVER ? false : Clock.isPassed(timestamp,
+                refreshTime);
+    }
 
     public void setPolicyIndex(int index) {
         this.policyIndex = index;
@@ -176,28 +183,15 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         throw new UnsupportedOperationException();
     }
 
-
-    public boolean needsRefresh(Predicate<CacheEntry<K, V>> filter, long timestamp) {
-        if (filter != null && filter.evaluate(this)) {
-            return true;
-        }
-        long refreshTime = getRefreshTime();
-        return refreshTime == TimeToLiveAttribute.FOREVER ? false : Clock
-                .isPassed(timestamp, refreshTime);
-    }
-
-    public boolean isExpired(Predicate<CacheEntry<K, V>> filter, long timestamp) {
-        if (filter != null && filter.evaluate(this)) {
-            return true;
-        }
-        long expTime = getExpirationTime();
-        return expTime == TimeToLiveAttribute.FOREVER ? false : Clock.isPassed(
-                timestamp, expTime);
-    }
-
     /** {@inheritDoc} */
     @Override
     public String toString() {
         return getKey() + "=" + getValue() + " (policyIndex= " + getPolicyIndex() + ")";
     }
+
+    int getHash() {
+        return hash;
+    }
+
+    abstract long getRefreshTime();
 }

@@ -61,8 +61,8 @@ public class LongPredicatesTest {
         assertFalse(LongPredicates.or(FALSE, FALSE).evaluate(1));
 
         LongPredicates.OrLongPredicate p = new LongPredicates.OrLongPredicate(FALSE, TRUE);
-        assertSame(p.getLeftPredicate(), FALSE);
-        assertSame(p.getRightPredicate(), TRUE);
+        assertSame(p.getLeft(), FALSE);
+        assertSame(p.getRight(), TRUE);
         p.toString(); // no exception
         assertIsSerializable(p);
 
@@ -81,8 +81,8 @@ public class LongPredicatesTest {
         assertFalse(LongPredicates.and(FALSE, FALSE).evaluate(1));
 
         LongPredicates.AndLongPredicate p = new LongPredicates.AndLongPredicate(FALSE, TRUE);
-        assertSame(p.getLeftPredicate(), FALSE);
-        assertSame(p.getRightPredicate(), TRUE);
+        assertSame(p.getLeft(), FALSE);
+        assertSame(p.getRight(), TRUE);
         p.toString(); // no exception
         assertIsSerializable(p);
 
