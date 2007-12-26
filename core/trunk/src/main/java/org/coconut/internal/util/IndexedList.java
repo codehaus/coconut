@@ -1,7 +1,6 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-
 package org.coconut.internal.util;
 
 import java.io.Serializable;
@@ -12,7 +11,7 @@ import net.jcip.annotations.NotThreadSafe;
 
 /**
  * A list.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <T>
@@ -119,7 +118,7 @@ public class IndexedList<T> implements Serializable {
 
     /**
      * Returns the number of elements in this list.
-     * 
+     *
      * @return the number of elements in this list
      */
     public int getSize() {
@@ -150,6 +149,28 @@ public class IndexedList<T> implements Serializable {
         return col;
     }
 
+    public T remove(int index) {
+        if (index > data.length - 1 || data[index] == null) {
+            return null;
+        }
+        int entry = index;
+        if (index >= currentEntryIndex) {
+            int removeMe = freeEntries[index];
+            freeEntries[removeMe] = freeEntries[currentEntryIndex];
+            freeEntries[currentEntryIndex--] = index;
+
+        } else {
+            freeEntries[index] = freeEntries[currentEntryIndex];
+            freeEntries[currentEntryIndex--] = entry;
+        }
+        prev[next[entry]] = prev[entry]; // update next head pointer
+        next[prev[entry]] = next[entry];
+        T oldData = data[entry];
+        data[entry] = null;
+        innerRemove(entry);
+        return oldData;
+    }
+
     public T removeFirst() {
         if (currentEntryIndex == 0) {
             return null;
@@ -168,27 +189,6 @@ public class IndexedList<T> implements Serializable {
             data[remove] = null;
             return removeMe;
         }
-    }
-
-    public T remove(int index) {
-        if (index > data.length - 1 || data[index] == null)
-            return null;
-        int entry = index;
-        if (index >= currentEntryIndex) {
-            int removeMe = freeEntries[index];
-            freeEntries[removeMe] = freeEntries[currentEntryIndex];
-            freeEntries[currentEntryIndex--] = index;
-
-        } else {
-            freeEntries[index] = freeEntries[currentEntryIndex];
-            freeEntries[currentEntryIndex--] = entry;
-        }
-        prev[next[entry]] = prev[entry]; // update next head pointer
-        next[prev[entry]] = next[entry];
-        T oldData = data[entry];
-        data[entry] = null;
-        innerRemove(entry);
-        return oldData;
     }
 
     public T replace(int index, T newElement) {

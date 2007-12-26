@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.service.worker;
@@ -13,7 +13,7 @@ import org.w3c.dom.Element;
 
 /**
  * This class is used to configure the worker service prior to usage.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -38,7 +38,7 @@ public class CacheWorkerConfiguration extends AbstractCacheServiceConfiguration 
     /**
      * Returns the CacheWorkerManager or <code>null</code> if no cache worker manager
      * has been set.
-     * 
+     *
      * @return the CacheWorkerManager or <code>null</code> if no cache worker manager
      *         has been set
      */
@@ -49,7 +49,7 @@ public class CacheWorkerConfiguration extends AbstractCacheServiceConfiguration 
     /**
      * Sets the CacheWorkerManager used by the cache. If no CacheWorkerManager is set the
      * cache will create a worker manager to use.
-     * 
+     *
      * @param workerManager
      *            the worker manager to use for the cache
      * @return this configuration
@@ -63,15 +63,15 @@ public class CacheWorkerConfiguration extends AbstractCacheServiceConfiguration 
     @Override
     protected void fromXML(Element element) throws Exception {
         /* CacheWorkerManager */
-        cacheWorkerManager = loadChildObject(element, CACHE_WORKER_MANAGER_TAG,
-                CacheWorkerManager.class);
+        setWorkerManager(loadChildObject(element, CACHE_WORKER_MANAGER_TAG,
+                CacheWorkerManager.class));
     }
 
     /** {@inheritDoc} */
     @Override
     protected void toXML(Document doc, Element parent) throws Exception {
         /* CacheWorkerManager */
-        addTypedElement(doc, parent, CACHE_WORKER_MANAGER_TAG, CacheSPI.DEFAULT_CACHE_BUNDLE, getClass(),
-                "saveOfCacheWorkerManagerFailed", cacheWorkerManager);
+        addTypedElement(doc, parent, CACHE_WORKER_MANAGER_TAG, CacheSPI.DEFAULT_CACHE_BUNDLE,
+                getClass(), "saveOfCacheWorkerManagerFailed", cacheWorkerManager);
     }
 }

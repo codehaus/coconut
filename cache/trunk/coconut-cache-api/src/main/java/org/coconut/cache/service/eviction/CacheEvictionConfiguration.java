@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.service.eviction;
@@ -22,7 +22,7 @@ import org.w3c.dom.Element;
 
 /**
  * Used for configuring the eviction service prior to usage.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -44,17 +44,23 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
     /** The default settings, used when xml-serializing this configuration. */
     private final static CacheEvictionConfiguration<?, ?> DEFAULT = new CacheEvictionConfiguration<Object, Object>();
 
+    /** XML tag for maximum volume. */
+    private final static String IS_CACHEABLE_TAG = "isCacheable";
+
+    /** XML tag for maximum volume. */
+    private final static String IS_DISABLED = "disabled";
+
     /** XML tag for maximum size. */
     private final static String MAXIMUM_SIZE = "max-size";
 
     /** XML tag for maximum volume. */
     private final static String MAXIMUM_VOLUME = "max-volume";
 
-    /** XML tag for maximum volume. */
-    private final static String IS_CACHEABLE_TAG = "isCacheable";
+    /** A filter used for filtering what items should be cached. */
+    private IsCacheable<K, V> isCacheableFilter;
 
-    /** XML tag for maximum volume. */
-    private final static String IS_DISABLED = "disabled";
+    /** Whether or not caching is disabled. */
+    private boolean isDisabled;
 
     /** The maximum size of the cache. */
     private int maximumSize;
@@ -62,14 +68,8 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
     /** The maximum volume of the cache. */
     private long maximumVolume;
 
-    /** A filter used for filtering what items should be cached. */
-    private IsCacheable<K, V> isCacheableFilter;
-
     /** The replacement policy used for evicting elements. */
     private ReplacementPolicy<?> replacementPolicy;
-
-    /** Whether or not caching is disabled. */
-    private boolean isDisabled;
 
     /**
      * Creates a new CacheEvictionConfiguration with default settings.
@@ -79,9 +79,21 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
     }
 
     /**
+     * Returns the {@link IsCacheable} predicate that determinds if a given key and value
+     * should be cached.
+     *
+     * @return the IsCacheable predicate configured or <code>null</code> if no predicate
+     *         has been set
+     * @see #setIsCacheableFilter(IsCacheable)
+     */
+    public IsCacheable<K, V> getIsCacheableFilter() {
+        return isCacheableFilter;
+    }
+
+    /**
      * Returns the maximum allowed size of the cache or {@link Integer#MAX_VALUE} if there
      * is no upper limit.
-     * 
+     *
      * @return the maximum allowed size of the cache or Integer.MAX_VALUE if there is no
      *         limit.
      * @see #setMaximumSize(int)
@@ -93,7 +105,7 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
     /**
      * Returns the maximum allowed volume of the cache or {@link Long#MAX_VALUE} if there
      * is no upper limit.
-     * 
+     *
      * @return the maximum allowed volume of the cache or Long.MAX_VALUE if there is no
      *         limit.
      * @see #setMaximumVolume(long)
@@ -105,13 +117,49 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
     /**
      * Returns the configured replacement policy or <tt>null</tt> if none has been
      * configured.
-     * 
+     *
      * @return the configured replacement policy or <tt>null</tt> if none has been
      *         configured
      * @see #setPolicy(ReplacementPolicy)
      */
     public ReplacementPolicy<?> getPolicy() {
         return replacementPolicy;
+    }
+
+    /**
+     * Returns whether or not caching is disabled.
+     *
+     * @return <code>true</code> if caching is disabled, otherwise <code>false</code>
+     */
+    public boolean isDisabled() {
+        return isDisabled;
+    }
+
+    /**
+     * Sets whether or not caching is disabled. If caching is disabled, the cache will not
+     * cache any items added. This can sometimes be useful while testing.
+     *
+     * @param isDisabled
+     *            whether or not caching is disabled
+     * @return this configuration
+     */
+    public CacheEvictionConfiguration<K, V> setDisabled(boolean isDisabled) {
+        this.isDisabled = isDisabled;
+        return this;
+    }
+
+    /**
+     * Sets a {@link IsCacheable} predicate that the cache will use to determind if a
+     * specific key, value pair should be cached. For example,
+     *
+     * @param predicate
+     *            the predicate that decides if a given key, value combination can be
+     *            added to the cache
+     * @return this configration
+     */
+    public CacheEvictionConfiguration<K, V> setIsCacheableFilter(IsCacheable<K, V> predicate) {
+        this.isCacheableFilter = predicate;
+        return this;
     }
 
     /**
@@ -130,7 +178,7 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
      * <p>
      * If the specified maximum size is 0, the cache will never store any elements
      * internally.
-     * 
+     *
      * @param maximumSize
      *            the maximum number of elements the cache can hold or Integer.MAX_VALUE
      *            if there is no limit
@@ -156,7 +204,7 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
      * <p>
      * The default value is Integer.MAX_VALUE. Which roughly translates to no limit on the
      * number of elements. TODO fix
-     * 
+     *
      * @param maximumVolume
      *            the maximum volume.
      * @return this configuration
@@ -190,7 +238,7 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
      * {@link org.coconut.cache.CacheEntry} to
      * {@link ReplacementPolicy#add(Object, org.coconut.attribute.AttributeMap)} and
      * {@link ReplacementPolicy#update(int, Object, org.coconut.attribute.AttributeMap)}
-     * 
+     *
      * @param policy
      *            the replacement policy that should select which elements to evict when
      *            the cache is full
@@ -204,10 +252,10 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
     /** {@inheritDoc} */
     @Override
     protected void fromXML(Element e) throws Exception {
-        isDisabled = attributeBooleanGet(e, IS_DISABLED, false);
-        maximumSize = contentIntGet(getChild(MAXIMUM_SIZE, e), maximumSize);
-        maximumVolume = contentLongGet(getChild(MAXIMUM_VOLUME, e), maximumVolume);
-        isCacheableFilter = loadChildObject(e, IS_CACHEABLE_TAG, IsCacheable.class);
+        setDisabled(attributeBooleanGet(e, IS_DISABLED, false));
+        setMaximumSize(contentIntGet(getChild(MAXIMUM_SIZE, e), maximumSize));
+        setMaximumVolume(contentLongGet(getChild(MAXIMUM_VOLUME, e), maximumVolume));
+        setIsCacheableFilter(loadChildObject(e, IS_CACHEABLE_TAG, IsCacheable.class));
     }
 
     /** {@inheritDoc} */
@@ -218,53 +266,5 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
         contentIntSet(doc, e, MAXIMUM_SIZE, maximumSize, DEFAULT.getMaximumSize());
         addTypedElement(doc, e, IS_CACHEABLE_TAG, CacheSPI.DEFAULT_CACHE_BUNDLE, getClass(),
                 "saveOfIsCacheableFilterFailed", isCacheableFilter);
-    }
-
-    /**
-     * Returns the {@link IsCacheable} predicate that determinds if a given key and value
-     * should be cached.
-     * 
-     * @return the IsCacheable predicate configured or <code>null</code> if no predicate
-     *         has been set
-     * @see #setIsCacheableFilter(IsCacheable)
-     */
-    public IsCacheable<K, V> getIsCacheableFilter() {
-        return isCacheableFilter;
-    }
-
-    /**
-     * Sets a {@link IsCacheable} predicate that the cache will use to determind if a
-     * specific key, value pair should be cached. For example,
-     * 
-     * @param predicate
-     *            the predicate that decides if a given key, value combination can be
-     *            added to the cache
-     * @return this configration
-     */
-    public CacheEvictionConfiguration<K, V> setIsCacheableFilter(IsCacheable<K, V> predicate) {
-        this.isCacheableFilter = predicate;
-        return this;
-    }
-
-    /**
-     * Returns whether or not caching is disabled.
-     * 
-     * @return <code>true</code> if caching is disabled, otherwise <code>false</code>
-     */
-    public boolean isDisabled() {
-        return isDisabled;
-    }
-
-    /**
-     * Sets whether or not caching is disabled. If caching is disabled, the cache will not
-     * cache any items added. This can sometimes be useful while testing.
-     * 
-     * @param isDisabled
-     *            whether or not caching is disabled
-     * @return this configuration
-     */
-    public CacheEvictionConfiguration<K, V> setDisabled(boolean isDisabled) {
-        this.isDisabled = isDisabled;
-        return this;
     }
 }

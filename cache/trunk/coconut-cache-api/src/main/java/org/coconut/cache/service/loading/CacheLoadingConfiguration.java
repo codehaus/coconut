@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.service.loading;
@@ -21,7 +21,7 @@ import org.w3c.dom.Element;
 
 /**
  * This class is used to configure the loading service prior to usage.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -61,7 +61,7 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
 
     /**
      * Returns the refresh interval in the specified timeunit.
-     * 
+     *
      * @param unit
      *            the unit of time to return the reload interval in
      * @return the refresh interval in the specified timeunit.
@@ -77,7 +77,7 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
 
     /**
      * Returns the CacheLoader that the cache should use for loading cache elements.
-     * 
+     *
      * @return the configured cache loader for the cache
      * @see #setLoader(CacheLoader)
      */
@@ -87,7 +87,7 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
 
     /**
      * Returns the configured refresh predicate.
-     * 
+     *
      * @return the configured refresh predicate
      * @see #setRefreshPredicate(Predicate)
      */
@@ -99,12 +99,12 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
      * Sets the default refresh interval relative to the last update of the element. For
      * example, if all elements should be refreshed 1 hour after they have been added to
      * cache by default, one might use:
-     * 
+     *
      * <pre>
      * CacheLoadingConfiguration clc;
      * clc.setDefaultRefreshTime(1, TimeUnit.HOUR);
      * </pre>
-     * 
+     *
      * @param interval
      *            the interval between refreshes
      * @param unit
@@ -136,7 +136,7 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
      * at runtime. All values must then put into the cache by
      * {@link Cache#put(Object, Object)}, {@link Cache#putAll(java.util.Map)} or some of
      * the other put operations.
-     * 
+     *
      * @param cacheLoader
      *            the cache loader to set
      * @return the current CacheConfiguration
@@ -154,7 +154,7 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
      * Some cache implementations might also check the predicate on calls to
      * {@link org.coconut.cache.Cache#get(Object)},{@link org.coconut.cache.Cache#getAll(Collection)},
      * {@link org.coconut.cache.Cache#getEntry(Object)}, but this is not required.
-     * 
+     *
      * @param predicate
      *            the reload predicate
      * @return this configuration
@@ -169,7 +169,7 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
     @Override
     protected void fromXML(Element parent) throws Exception {
         /* Loader */
-        this.loader = loadChildObject(parent, LOADER_TAG, CacheLoader.class);
+        setLoader(loadChildObject(parent, LOADER_TAG, CacheLoader.class));
 
         /* Refresh timer */
         Element eTime = getChild(REFRESH_INTERVAL_TAG, parent);
@@ -177,7 +177,7 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
         setDefaultTimeToRefresh(time, TimeUnit.NANOSECONDS);
 
         /* Refresh Filter */
-        refreshPredicate = loadChildObject(parent, REFRESH_PREDICATE_TAG, Predicate.class);
+        setRefreshPredicate(loadChildObject(parent, REFRESH_PREDICATE_TAG, Predicate.class));
     }
 
     /** {@inheritDoc} */

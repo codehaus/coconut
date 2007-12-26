@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.attribute;
@@ -10,7 +10,7 @@ import java.util.Map;
  * often only used to hold a very small amount of entries (perhaps just one). An
  * implementations of this interface might be memory-wise optimized to hold only a single
  * entry.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: AttributeMap.java 415 2007-11-09 08:25:23Z kasper $
  */
@@ -29,7 +29,7 @@ public interface AttributeMap extends Map<Attribute, Object> {
      * key.equals(k))</tt>,
      * then this method returns <tt>v</tt>; otherwise it returns <tt>defaultValue</tt>.
      * (There can be at most one such mapping.)
-     * 
+     *
      * @param key
      *            key whose associated value is to be returned.
      * @param defaultValue
@@ -56,7 +56,7 @@ public interface AttributeMap extends Map<Attribute, Object> {
      * key.equals(k))</tt>,
      * then this method returns <tt>v</tt>; otherwise it returns <tt>false</tt>.
      * (There can be at most one such mapping.)
-     * 
+     *
      * @param key
      *            key whose associated value is to be returned.
      * @return the value to which this map maps the specified key, or <tt>false</tt> if
@@ -83,7 +83,7 @@ public interface AttributeMap extends Map<Attribute, Object> {
      * key.equals(k))</tt>,
      * then this method returns <tt>v</tt>; otherwise it returns <tt>defaultValue</tt>.
      * (There can be at most one such mapping.)
-     * 
+     *
      * @param key
      *            key whose associated value is to be returned.
      * @param defaultValue
@@ -112,7 +112,7 @@ public interface AttributeMap extends Map<Attribute, Object> {
      * key.equals(k))</tt>,
      * then this method returns <tt>v</tt>; otherwise it returns <tt>0</tt>. (There
      * can be at most one such mapping.)
-     * 
+     *
      * @param key
      *            key whose associated value is to be returned.
      * @return the value to which this map maps the specified key, or <tt>0</tt> if the
@@ -139,7 +139,7 @@ public interface AttributeMap extends Map<Attribute, Object> {
      * key.equals(k))</tt>,
      * then this method returns <tt>v</tt>; otherwise it returns <tt>defaultValue</tt>.
      * (There can be at most one such mapping.)
-     * 
+     *
      * @param key
      *            key whose associated value is to be returned.
      * @param defaultValue
@@ -168,7 +168,7 @@ public interface AttributeMap extends Map<Attribute, Object> {
      * key.equals(k))</tt>,
      * then this method returns <tt>v</tt>; otherwise it returns <tt>'\u0000'</tt>.
      * (There can be at most one such mapping.)
-     * 
+     *
      * @param key
      *            key whose associated value is to be returned.
      * @return the value to which this map maps the specified key, or <tt>'\u0000'</tt>
@@ -195,7 +195,7 @@ public interface AttributeMap extends Map<Attribute, Object> {
      * key.equals(k))</tt>,
      * then this method returns <tt>v</tt>; otherwise it returns <tt>defaultValue</tt>.
      * (There can be at most one such mapping.)
-     * 
+     *
      * @param key
      *            key whose associated value is to be returned.
      * @param defaultValue
@@ -224,7 +224,7 @@ public interface AttributeMap extends Map<Attribute, Object> {
      * key.equals(k))</tt>,
      * then this method returns <tt>v</tt>; otherwise it returns <tt>0.0</tt>.
      * (There can be at most one such mapping.)
-     * 
+     *
      * @param key
      *            key whose associated value is to be returned.
      * @return the value to which this map maps the specified key, or <tt>0.0</tt> if
@@ -251,7 +251,7 @@ public interface AttributeMap extends Map<Attribute, Object> {
      * key.equals(k))</tt>,
      * then this method returns <tt>v</tt>; otherwise it returns <tt>defaultValue</tt>.
      * (There can be at most one such mapping.)
-     * 
+     *
      * @param key
      *            key whose associated value is to be returned.
      * @param defaultValue
@@ -280,7 +280,7 @@ public interface AttributeMap extends Map<Attribute, Object> {
      * key.equals(k))</tt>,
      * then this method returns <tt>v</tt>; otherwise it returns <tt>0.0</tt>.
      * (There can be at most one such mapping.)
-     * 
+     *
      * @param key
      *            key whose associated value is to be returned.
      * @return the value to which this map maps the specified key, or <tt>0.0</tt> if
@@ -307,7 +307,7 @@ public interface AttributeMap extends Map<Attribute, Object> {
      * key.equals(k))</tt>,
      * then this method returns <tt>v</tt>; otherwise it returns <tt>defaultValue</tt>.
      * (There can be at most one such mapping.)
-     * 
+     *
      * @param key
      *            key whose associated value is to be returned.
      * @param defaultValue
@@ -336,7 +336,7 @@ public interface AttributeMap extends Map<Attribute, Object> {
      * key.equals(k))</tt>,
      * then this method returns <tt>v</tt>; otherwise it returns <tt>0</tt>. (There
      * can be at most one such mapping.)
-     * 
+     *
      * @param key
      *            key whose associated value is to be returned.
      * @return the value to which this map maps the specified key, or <tt>0</tt> if the
@@ -363,7 +363,7 @@ public interface AttributeMap extends Map<Attribute, Object> {
      * key.equals(k))</tt>,
      * then this method returns <tt>v</tt>; otherwise it returns <tt>defaultValue</tt>.
      * (There can be at most one such mapping.)
-     * 
+     *
      * @param key
      *            key whose associated value is to be returned.
      * @param defaultValue
@@ -392,7 +392,7 @@ public interface AttributeMap extends Map<Attribute, Object> {
      * key.equals(k))</tt>,
      * then this method returns <tt>v</tt>; otherwise it returns <tt>0</tt>. (There
      * can be at most one such mapping.)
-     * 
+     *
      * @param key
      *            key whose associated value is to be returned.
      * @return the value to which this map maps the specified key, or <tt>0</tt> if the
@@ -419,7 +419,7 @@ public interface AttributeMap extends Map<Attribute, Object> {
      * key.equals(k))</tt>,
      * then this method returns <tt>v</tt>; otherwise it returns <tt>defaultValue</tt>.
      * (There can be at most one such mapping.)
-     * 
+     *
      * @param key
      *            key whose associated value is to be returned.
      * @param defaultValue
@@ -448,7 +448,7 @@ public interface AttributeMap extends Map<Attribute, Object> {
      * key.equals(k))</tt>,
      * then this method returns <tt>v</tt>; otherwise it returns <tt>0</tt>. (There
      * can be at most one such mapping.)
-     * 
+     *
      * @param key
      *            key whose associated value is to be returned.
      * @return the value to which this map maps the specified key, or <tt>0</tt> if the
@@ -475,7 +475,7 @@ public interface AttributeMap extends Map<Attribute, Object> {
      * key.equals(k))</tt>,
      * then this method returns <tt>v</tt>; otherwise it returns <tt>defaultValue</tt>.
      * (There can be at most one such mapping.)
-     * 
+     *
      * @param key
      *            key whose associated value is to be returned.
      * @param defaultValue
@@ -497,7 +497,7 @@ public interface AttributeMap extends Map<Attribute, Object> {
      * key, the old value is replaced by the specified value. (A attribute-map <tt>am</tt>
      * is said to contain a mapping for a key <tt>k</tt> if and only if
      * {@link #containsKey(Object) am.containsKey(k)} would return <tt>true</tt>.))
-     * 
+     *
      * @param key
      *            key with which the specified value is to be associated.
      * @param value
@@ -519,7 +519,7 @@ public interface AttributeMap extends Map<Attribute, Object> {
      * key, the old value is replaced by the specified value. (A attribute-map <tt>am</tt>
      * is said to contain a mapping for a key <tt>k</tt> if and only if
      * {@link #containsKey(Object) am.containsKey(k)} would return <tt>true</tt>.))
-     * 
+     *
      * @param key
      *            key with which the specified value is to be associated.
      * @param value
@@ -541,7 +541,7 @@ public interface AttributeMap extends Map<Attribute, Object> {
      * key, the old value is replaced by the specified value. (A attribute-map <tt>am</tt>
      * is said to contain a mapping for a key <tt>k</tt> if and only if
      * {@link #containsKey(Object) am.containsKey(k)} would return <tt>true</tt>.))
-     * 
+     *
      * @param key
      *            key with which the specified value is to be associated.
      * @param value
@@ -563,7 +563,7 @@ public interface AttributeMap extends Map<Attribute, Object> {
      * key, the old value is replaced by the specified value. (A attribute-map <tt>am</tt>
      * is said to contain a mapping for a key <tt>k</tt> if and only if
      * {@link #containsKey(Object) am.containsKey(k)} would return <tt>true</tt>.))
-     * 
+     *
      * @param key
      *            key with which the specified value is to be associated.
      * @param value
@@ -585,7 +585,7 @@ public interface AttributeMap extends Map<Attribute, Object> {
      * key, the old value is replaced by the specified value. (A attribute-map <tt>am</tt>
      * is said to contain a mapping for a key <tt>k</tt> if and only if
      * {@link #containsKey(Object) am.containsKey(k)} would return <tt>true</tt>.))
-     * 
+     *
      * @param key
      *            key with which the specified value is to be associated.
      * @param value
@@ -607,7 +607,7 @@ public interface AttributeMap extends Map<Attribute, Object> {
      * key, the old value is replaced by the specified value. (A attribute-map <tt>am</tt>
      * is said to contain a mapping for a key <tt>k</tt> if and only if
      * {@link #containsKey(Object) am.containsKey(k)} would return <tt>true</tt>.))
-     * 
+     *
      * @param key
      *            key with which the specified value is to be associated.
      * @param value
@@ -629,7 +629,7 @@ public interface AttributeMap extends Map<Attribute, Object> {
      * key, the old value is replaced by the specified value. (A attribute-map <tt>am</tt>
      * is said to contain a mapping for a key <tt>k</tt> if and only if
      * {@link #containsKey(Object) am.containsKey(k)} would return <tt>true</tt>.))
-     * 
+     *
      * @param key
      *            key with which the specified value is to be associated.
      * @param value
@@ -651,7 +651,7 @@ public interface AttributeMap extends Map<Attribute, Object> {
      * key, the old value is replaced by the specified value. (A attribute-map <tt>am</tt>
      * is said to contain a mapping for a key <tt>k</tt> if and only if
      * {@link #containsKey(Object) am.containsKey(k)} would return <tt>true</tt>.))
-     * 
+     *
      * @param key
      *            key with which the specified value is to be associated.
      * @param value

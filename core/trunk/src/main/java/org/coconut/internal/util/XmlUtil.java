@@ -36,24 +36,6 @@ public final class XmlUtil {
 
     // /CLOVER:ON
 
-    public static boolean addTypedElement(Document doc, Element parent, String elementName,
-            ResourceBundle bundle, Class commentClazz, String commentKey, Object objectToSave) {
-        if (objectToSave != null) {
-            Element e = addElement(doc, elementName, parent);
-            try {
-                objectToSave.getClass().getConstructor((Class[]) null);
-                e.setAttribute("type", objectToSave.getClass().getName());
-                return true;
-            } catch (NoSuchMethodException e1) {
-                addComment(doc, bundle, commentClazz, commentKey, e.getParentNode(), objectToSave
-                        .getClass().getName());
-                e.getParentNode().removeChild(e);
-            }
-            return false;
-        }
-        return false;
-    }
-
     public static void addComment(Document doc, ResourceBundle bundle, Class clazz, String comment,
             Node e, Object... o) {
         String c = ResourceBundleUtil.lookupKey(bundle, clazz.getSimpleName() + "." + comment, o);
@@ -72,6 +54,24 @@ public final class XmlUtil {
         Element ee = addElement(doc, name, parent);
         ee.setTextContent(text);
         return ee;
+    }
+
+    public static boolean addTypedElement(Document doc, Element parent, String elementName,
+            ResourceBundle bundle, Class commentClazz, String commentKey, Object objectToSave) {
+        if (objectToSave != null) {
+            Element e = addElement(doc, elementName, parent);
+            try {
+                objectToSave.getClass().getConstructor((Class[]) null);
+                e.setAttribute("type", objectToSave.getClass().getName());
+                return true;
+            } catch (NoSuchMethodException e1) {
+                addComment(doc, bundle, commentClazz, commentKey, e.getParentNode(), objectToSave
+                        .getClass().getName());
+                e.getParentNode().removeChild(e);
+            }
+            return false;
+        }
+        return false;
     }
 
     public static boolean attributeBooleanGet(Element e, String name, boolean defaultValue) {
@@ -102,6 +102,15 @@ public final class XmlUtil {
         }
     }
 
+    public static double contentDoubleGet(Element e, double defaultDouble) {
+        if (e == null) {
+            return defaultDouble;
+        } else {
+            String text = e.getTextContent();
+            return Double.parseDouble(text);
+        }
+    }
+
     public static int contentIntGet(Element e, int defaultInt) {
         if (e == null) {
             return defaultInt;
@@ -118,15 +127,6 @@ public final class XmlUtil {
         }
     }
 
-    public static double contentDoubleGet(Element e, double defaultDouble) {
-        if (e == null) {
-            return defaultDouble;
-        } else {
-            String text = e.getTextContent();
-            return Double.parseDouble(text);
-        }
-    }
-    
     public static long contentLongGet(Element e, long defaultLong) {
         if (e == null) {
             return defaultLong;
@@ -202,6 +202,12 @@ public final class XmlUtil {
         return result;
     }
 
+    public static <T> T loadChildObject(Element parent, String tagName, Class<T> type)
+            throws Exception {
+        Element e = getChild(tagName, parent);
+        return loadObject(e, type);
+    }
+
     public static <T> T loadObject(Element e, Class<T> type) throws InstantiationException,
             IllegalAccessException, InvocationTargetException, NoSuchMethodException,
             ClassNotFoundException {
@@ -212,12 +218,6 @@ public final class XmlUtil {
             return con.newInstance();
         }
         return null;
-    }
-
-    public static <T> T loadChildObject(Element parent, String tagName, Class<T> type)
-            throws Exception {
-        Element e = getChild(tagName, parent);
-        return loadObject(e, type);
     }
 
     /**

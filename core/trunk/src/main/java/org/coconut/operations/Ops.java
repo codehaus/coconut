@@ -17,21 +17,140 @@ package org.coconut.operations;
  * (Lesser used types like <tt>short</tt> are absent.)
  * <p>
  * This class is normally best used via <tt>import static</tt>.
+ *
+ * @version $Id: AttributeMaps.java 472 2007-11-19 09:34:26Z kasper $
  */
 public final class Ops {
+
+    /**
+     * An object with a function accepting pairs of objects, one of type T and one of type
+     * U, returning those of type V.
+     */
+    public static interface Combiner<T, U, V> {
+        public V combine(T t, U u);
+    }
+
+    /**
+     * A Comparator for doubles.
+     */
+    public static interface DoubleComparator {
+        public int compare(double x, double y);
+    }
+
+    /** A generator of doubles. */
+    public static interface DoubleGenerator {
+        /**
+         * Generates a double.
+         *
+         * @return the generated double
+         */
+        public double generate();
+    }
+
+    /** A predicate accepting a double argument. */
+    public static interface DoublePredicate {
+        public boolean evaluate(double t);
+    }
+
+    /** A procedure accepting a double. */
+    public static interface DoubleProcedure {
+        public void apply(double t);
+    }
+
+    /** A reducer accepting and returning doubles. */
+    public static interface DoubleReducer {
+        public double combine(double u, double v);
+    }
+
+    /** A relationalPredicate accepting double arguments. */
+    public static interface DoubleRelationalPredicate {
+        public boolean evaluate(double t, double u);
+    }
 
     /**
      * A generator (builder) of objects of type T that takes no arguments.
      */
     public static interface Generator<T> {
+        /**
+         * Generates an object of Type T.
+         *
+         * @return the generated object
+         */
         public T generate();
     }
 
     /**
-     * An object with a method of one argument that does not return a result.
+     * A Comparator for ints.
      */
-    public static interface Procedure<T> {
-        public void apply(T t);
+    public static interface IntComparator {
+        public int compare(int x, int y);
+    }
+
+    /** A generator of ints. */
+    public static interface IntGenerator {
+        /**
+         * Generates a int.
+         *
+         * @return the generated int
+         */
+        public int generate();
+    }
+
+    /** A predicate accepting an int. */
+    public static interface IntPredicate {
+        public boolean evaluate(int t);
+    }
+
+    /** A procedure accepting an int. */
+    public static interface IntProcedure {
+        public void apply(int t);
+    }
+
+    /** A reducer accepting and returning ints. */
+    public static interface IntReducer {
+        public int combine(int u, int v);
+    }
+
+    /** A relationalPredicate accepting int arguments. */
+    public static interface IntRelationalPredicate {
+        public boolean evaluate(int t, int u);
+    }
+
+    /**
+     * A Comparator for longs.
+     */
+    public static interface LongComparator {
+        public int compare(long x, long y);
+    }
+
+    /** A generator of longs. */
+    public static interface LongGenerator {
+        /**
+         * Generates a long.
+         *
+         * @return the generated long
+         */
+        public long generate();
+    }
+
+    /** A predicate accepting a long argument. */
+    public static interface LongPredicate {
+        public boolean evaluate(long t);
+    }
+
+    /** A procedure accepting a long. */
+    public static interface LongProcedure {
+        public void apply(long t);
+    }
+
+    /** A reducer accepting and returning longs. */
+    public static interface LongReducer {
+        public long combine(long u, long v);
+    }
+
+    /** A relationalPredicate accepting long arguments. */
+    public static interface LongRelationalPredicate {
+        public boolean evaluate(long t, long u);
     }
 
     /**
@@ -43,66 +162,6 @@ public final class Ops {
     }
 
     /**
-     * An object with a function accepting pairs of objects, one of type T and one of type
-     * U, returning those of type V.
-     */
-    public static interface Combiner<T, U, V> {
-        public V combine(T t, U u);
-    }
-
-    /**
-     * A specialized combiner that is associative and accepts pairs of objects of the same
-     * type and returning one of the same type. Like for example, an addition operation, a
-     * Reducer must be (left) associative: combine(a, combine(b, c)) should have the same
-     * result as combine(conbine(a, b), c).
-     */
-    public static interface Reducer<T> extends Combiner<T, T, T> {
-        public T combine(T t, T v);
-    }
-
-    /**
-     * An object with boolean method of one argument.
-     */
-    public static interface Predicate<T> {
-        public boolean evaluate(T t);
-    }
-
-    /**
-     * An object with boolean method of two arguments.
-     */
-    public static interface RelationalPredicate<T, U> {
-        public boolean evaluate(T t, U u);
-    }
-
-    /**
-     * A mapper returning an int.
-     */
-    public static interface MapperToInt<T> {
-        public int map(T t);
-    }
-
-    /**
-     * A mapper returning a double.
-     */
-    public static interface MapperToDouble<T> {
-        public double map(T t);
-    }
-
-    /**
-     * A mapper returning a long.
-     */
-    public static interface MapperToLong<T> {
-        public long map(T t);
-    }
-
-    /**
-     * A mapper accepting an int.
-     */
-    public static interface MapperFromInt<T> {
-        public T map(int t);
-    }
-
-    /**
      * A mapper accepting a double.
      */
     public static interface MapperFromDouble<T> {
@@ -110,20 +169,10 @@ public final class Ops {
     }
 
     /**
-     * A mapper accepting a long argument.
+     * A mapper accepting a double argument and returning a double.
      */
-    public static interface MapperFromLong<T> {
-        public T map(long t);
-    }
-
-    /** A generator of doubles. */
-    public static interface DoubleGenerator {
-        public double generate();
-    }
-
-    /** A procedure accepting a double. */
-    public static interface DoubleProcedure {
-        public void apply(double t);
+    public static interface MapperFromDoubleToDouble {
+        public double map(double t);
     }
 
     /**
@@ -141,81 +190,17 @@ public final class Ops {
     }
 
     /**
-     * A mapper accepting a double argument and returning a double.
+     * A mapper accepting an int.
      */
-    public static interface MapperFromDoubleToDouble {
-        public double map(double t);
-    }
-
-    /** A reducer accepting and returning doubles. */
-    public static interface DoubleReducer {
-        public double combine(double u, double v);
-    }
-
-    /** A predicate accepting a double argument. */
-    public static interface DoublePredicate {
-        public boolean evaluate(double t);
-    }
-
-    /** A relationalPredicate accepting double arguments. */
-    public static interface DoubleRelationalPredicate {
-        public boolean evaluate(double t, double u);
-    }
-
-    /** A generator of longs. */
-    public static interface LongGenerator {
-        public long generate();
-    }
-
-    /** A procedure accepting a long. */
-    public static interface LongProcedure {
-        public void apply(long t);
+    public static interface MapperFromInt<T> {
+        public T map(int t);
     }
 
     /**
-     * A mapper accepting a long argument and returning an int.
+     * A mapper accepting an int argument and returning a double.
      */
-    public static interface MapperFromLongToInt {
-        public int map(long t);
-    }
-
-    /**
-     * A mapper accepting a long argument and returning a double.
-     */
-    public static interface MapperFromLongToDouble {
-        public double map(long t);
-    }
-
-    /**
-     * A mapper accepting a long argument and returning a long.
-     */
-    public static interface MapperFromLongToLong {
-        public long map(long t);
-    }
-
-    /** A reducer accepting and returning longs. */
-    public static interface LongReducer {
-        public long combine(long u, long v);
-    }
-
-    /** A predicate accepting a long argument. */
-    public static interface LongPredicate {
-        public boolean evaluate(long t);
-    }
-
-    /** A relationalPredicate accepting long arguments. */
-    public static interface LongRelationalPredicate {
-        public boolean evaluate(long t, long u);
-    }
-
-    /** A generator of ints. */
-    public static interface IntGenerator {
-        public int generate();
-    }
-
-    /** A procedure accepting an int. */
-    public static interface IntProcedure {
-        public void apply(int t);
+    public static interface MapperFromIntToDouble {
+        public double map(int t);
     }
 
     /** A map accepting an int and returning an int. */
@@ -231,46 +216,83 @@ public final class Ops {
     }
 
     /**
-     * A mapper accepting an int argument and returning a double.
+     * A mapper accepting a long argument.
      */
-    public static interface MapperFromIntToDouble {
-        public double map(int t);
-    }
-
-    /** A reducer accepting and returning ints. */
-    public static interface IntReducer {
-        public int combine(int u, int v);
-    }
-
-    /** A predicate accepting an int. */
-    public static interface IntPredicate {
-        public boolean evaluate(int t);
-    }
-
-    /** A relationalPredicate accepting int arguments. */
-    public static interface IntRelationalPredicate {
-        public boolean evaluate(int t, int u);
+    public static interface MapperFromLong<T> {
+        public T map(long t);
     }
 
     /**
-     * A Comparator for doubles.
+     * A mapper accepting a long argument and returning a double.
      */
-    public static interface DoubleComparator {
-        public int compare(double x, double y);
+    public static interface MapperFromLongToDouble {
+        public double map(long t);
     }
 
     /**
-     * A Comparator for longs.
+     * A mapper accepting a long argument and returning an int.
      */
-    public static interface LongComparator {
-        public int compare(long x, long y);
+    public static interface MapperFromLongToInt {
+        public int map(long t);
     }
 
     /**
-     * A Comparator for ints.
+     * A mapper accepting a long argument and returning a long.
      */
-    public static interface IntComparator {
-        public int compare(int x, int y);
+    public static interface MapperFromLongToLong {
+        public long map(long t);
+    }
+
+    /**
+     * A mapper returning a double.
+     */
+    public static interface MapperToDouble<T> {
+        public double map(T t);
+    }
+
+    /**
+     * A mapper returning an int.
+     */
+    public static interface MapperToInt<T> {
+        public int map(T t);
+    }
+
+    /**
+     * A mapper returning a long.
+     */
+    public static interface MapperToLong<T> {
+        public long map(T t);
+    }
+
+    /**
+     * An object with boolean method of one argument.
+     */
+    public static interface Predicate<T> {
+        public boolean evaluate(T t);
+    }
+
+    /**
+     * An object with a method of one argument that does not return a result.
+     */
+    public static interface Procedure<T> {
+        public void apply(T t);
+    }
+
+    /**
+     * A specialized combiner that is associative and accepts pairs of objects of the same
+     * type and returning one of the same type. Like for example, an addition operation, a
+     * Reducer must be (left) associative: combine(a, combine(b, c)) should have the same
+     * result as combine(conbine(a, b), c).
+     */
+    public static interface Reducer<T> extends Combiner<T, T, T> {
+        public T combine(T t, T v);
+    }
+
+    /**
+     * An object with boolean method of two arguments.
+     */
+    public static interface RelationalPredicate<T, U> {
+        public boolean evaluate(T t, U u);
     }
 
 }

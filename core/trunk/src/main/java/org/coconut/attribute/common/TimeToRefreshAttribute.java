@@ -17,7 +17,7 @@ import org.coconut.attribute.spi.AbstractDurationAttribute;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public final class TimeToRefreshAttribute extends AbstractDurationAttribute{
+public final class TimeToRefreshAttribute extends AbstractDurationAttribute {
 
     /** The default value of this attribute. */
     public static final long DEFAULT_VALUE = AbstractDurationAttribute.DEFAULT_DURATION;
@@ -27,11 +27,11 @@ public final class TimeToRefreshAttribute extends AbstractDurationAttribute{
     /** The singleton instance of this attribute. */
     public final static TimeToRefreshAttribute INSTANCE = new TimeToRefreshAttribute();
 
-    /** The timeunit of this attribute. */
-    public static final TimeUnit TIME_UNIT = TimeUnit.NANOSECONDS;
-
     /** The name of this attribute. */
     public static final String NAME = "timeToRefresh";
+
+    /** The timeunit of this attribute. */
+    public static final TimeUnit TIME_UNIT = TimeUnit.NANOSECONDS;
 
     /** serialVersionUID. */
     private static final long serialVersionUID = -2353351535602223603L;

@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.attribute;
@@ -6,6 +6,9 @@ package org.coconut.attribute;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.util.HashMap;
 
 import org.coconut.test.TestUtil;
 import org.junit.Before;
@@ -56,6 +59,7 @@ public abstract class AbstractAttributeMapTest {
     public void putGet() {
         m.put(a1, "foo");
         m.put(a2, true);
+        mappedPutted();
         assertEquals("foo", m.get(a1));
         assertEquals(Boolean.TRUE, m.get(a2));
         assertEquals("foo", m.get(a1,"boo"));
@@ -64,10 +68,14 @@ public abstract class AbstractAttributeMapTest {
         assertEquals("true", m.get(a3, "true"));
     }
 
+    void mappedPutted() {
+
+    }
     @Test
     public void putGetBoolean() {
         m.putBoolean(a1, false);
         m.put(a2, Boolean.TRUE);
+        mappedPutted();
         assertEquals(Boolean.FALSE, m.get(a1));
         assertEquals(Boolean.TRUE, m.get(a2));
         assertEquals(false, m.getBoolean(a1));
@@ -79,6 +87,7 @@ public abstract class AbstractAttributeMapTest {
     public void putGetByte() {
         m.putByte(a1, (byte) 1);
         m.put(a2, Byte.valueOf((byte) 2));
+        mappedPutted();
         assertEquals(Byte.valueOf((byte) 1), m.get(a1));
         assertEquals(Byte.valueOf((byte) 2), m.get(a2));
         assertEquals((byte) 1, m.getByte(a1));
@@ -90,6 +99,7 @@ public abstract class AbstractAttributeMapTest {
     public void putGetChar() {
         m.putChar(a1, (char) 1);
         m.put(a2, Character.valueOf((char) 2));
+        mappedPutted();
         assertEquals(Character.valueOf((char) 1), m.get(a1));
         assertEquals(Character.valueOf((char) 2), m.get(a2));
         assertEquals((char) 1, m.getChar(a1));
@@ -101,6 +111,7 @@ public abstract class AbstractAttributeMapTest {
     public void putGetDouble() {
         m.putDouble(a1, 1);
         m.put(a2, 2.1d);
+        mappedPutted();
         assertEquals(1d, m.get(a1));
         assertEquals(2.1d, m.get(a2));
         assertEquals(1d, m.getDouble(a1));
@@ -112,6 +123,7 @@ public abstract class AbstractAttributeMapTest {
     public void putGetFloat() {
         m.putFloat(a1, 1);
         m.put(a2, 2.1f);
+        mappedPutted();
         assertEquals(1f, m.get(a1));
         assertEquals(2.1f, m.get(a2));
         assertEquals(1f, m.getFloat(a1));
@@ -123,6 +135,7 @@ public abstract class AbstractAttributeMapTest {
     public void putGetInt() {
         m.putInt(a1, 1);
         m.put(a2, 2);
+        mappedPutted();
         assertEquals(1, m.get(a1));
         assertEquals(2, m.get(a2));
         assertEquals(1, m.getInt(a1));
@@ -134,6 +147,7 @@ public abstract class AbstractAttributeMapTest {
     public void putGetLong() {
         m.putLong(a1, 1);
         m.put(a2, 2l);
+        mappedPutted();
         assertEquals(1l, m.get(a1));
         assertEquals(2l, m.get(a2));
         assertEquals(1l, m.getLong(a1));
@@ -145,10 +159,54 @@ public abstract class AbstractAttributeMapTest {
     public void putGetShort() {
         m.putShort(a1, (short) 1);
         m.put(a2, Short.valueOf((short) 2));
+        mappedPutted();
         assertEquals(Short.valueOf((short) 1), m.get(a1));
         assertEquals(Short.valueOf((short) 2), m.get(a2));
         assertEquals((short) 1, m.getShort(a1));
         assertEquals((short) 2, m.getShort(a2));
         assertEquals((short) 3, m.getShort(a3, (short) 3));
+    }
+
+    public static void noPut(AttributeMap map, Attribute KEY) {
+        try {
+            map.putAll(new HashMap());
+            fail("should throw UnsupportedOperationException");
+        } catch (UnsupportedOperationException ok) {/* ok */}
+        try {
+            map.put(KEY, 123);
+            fail("should throw UnsupportedOperationException");
+        } catch (UnsupportedOperationException ok) {/* ok */}
+        try {
+            map.putBoolean(KEY, true);
+            fail("should throw UnsupportedOperationException");
+        } catch (UnsupportedOperationException ok) {/* ok */}
+        try {
+            map.putByte(KEY, (byte) 123);
+            fail("should throw UnsupportedOperationException");
+        } catch (UnsupportedOperationException ok) {/* ok */}
+        try {
+            map.putChar(KEY, 'd');
+            fail("should throw UnsupportedOperationException");
+        } catch (UnsupportedOperationException ok) {/* ok */}
+        try {
+            map.putDouble(KEY, 3.4d);
+            fail("should throw UnsupportedOperationException");
+        } catch (UnsupportedOperationException ok) {/* ok */}
+        try {
+            map.putFloat(KEY, 123.3f);
+            fail("should throw UnsupportedOperationException");
+        } catch (UnsupportedOperationException ok) {/* ok */}
+        try {
+            map.putInt(KEY, 123);
+            fail("should throw UnsupportedOperationException");
+        } catch (UnsupportedOperationException ok) {/* ok */}
+        try {
+            map.putLong(KEY, 34l);
+            fail("should throw UnsupportedOperationException");
+        } catch (UnsupportedOperationException ok) {/* ok */}
+        try {
+            map.putShort(KEY, (short) 123);
+            fail("should throw UnsupportedOperationException");
+        } catch (UnsupportedOperationException ok) {/* ok */}
     }
 }

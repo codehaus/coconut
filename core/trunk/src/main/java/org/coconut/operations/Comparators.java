@@ -214,9 +214,9 @@ public final class Comparators {
         /** serialVersionUID. */
         private static final long serialVersionUID = -5405101414861263699L;
 
-        private final Mapper<? super T, U> mapper;
-
         private final Comparator<? super U> comparator;
+
+        private final Mapper<? super T, U> mapper;
 
         MappedComparator(Comparator<? super U> comparator, Mapper<? super T, U> mapper) {
             if (mapper == null) {

@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.operations;
@@ -9,7 +9,7 @@ import org.coconut.operations.Ops.Predicate;
 
 /**
  * Various String based {@link Predicate} methods and utility classes.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: StringPredicates.java 472 2007-11-19 09:34:26Z kasper $
  */
@@ -24,7 +24,7 @@ public final class StringPredicates {
     /**
      * Creates a Predicate that will accept any String that contains the specified
      * CharSequence. The returned predicate is serializable.
-     * 
+     *
      * @param contains
      *            the CharSequence the predicate will check for
      * @return the newly created Predicate
@@ -39,7 +39,7 @@ public final class StringPredicates {
     /**
      * Creates a Predicate that will accept any String that ends with the specified
      * String. The returned predicate is serializable.
-     * 
+     *
      * @param endsWith
      *            the String the predicate will check against
      * @return the newly created Predicate
@@ -54,7 +54,7 @@ public final class StringPredicates {
     /**
      * Creates a Predicate that will accept any String that is equal to the specified
      * String ignoring case considerations. The returned predicate is serializable.
-     * 
+     *
      * @param equalsToIgnoreCase
      *            the String the predicate will check against
      * @return the newly created Predicate
@@ -69,7 +69,7 @@ public final class StringPredicates {
     /**
      * Creates a Predicate that will accept any String that starts with the specified
      * String. The returned predicate is serializable.
-     * 
+     *
      * @param startsWith
      *            the String the predicate will check against
      * @return the newly created Predicate
@@ -83,7 +83,7 @@ public final class StringPredicates {
 
     /**
      * A Predicate that will accept any String that contains the specified CharSequence.
-     * 
+     *
      * @see String#contains(CharSequence)
      */
     static final class ContainsPredicate implements Predicate<String>, Serializable {
@@ -95,7 +95,7 @@ public final class StringPredicates {
 
         /**
          * Creates a new ContainsPredicate.
-         * 
+         *
          * @param contains
          *            the CharSequence the predicate will check for
          * @throws NullPointerException
@@ -146,7 +146,7 @@ public final class StringPredicates {
 
         /**
          * Creates a new EndsWithPredicate.
-         * 
+         *
          * @param endsWith
          *            the String the predicate will check against
          * @throws NullPointerException
@@ -187,7 +187,7 @@ public final class StringPredicates {
     /**
      * A Predicate that will accept any String that is equal to the specified String
      * ignoring case considerations.
-     * 
+     *
      * @see String#equalsIgnoreCase(String)
      */
     static final class EqualsIgnoreCasePredicate implements Predicate<String>, Serializable {
@@ -200,7 +200,7 @@ public final class StringPredicates {
 
         /**
          * Creates a new EqualsIgnoreCasePredicate.
-         * 
+         *
          * @param equalsIgnoreCase
          *            the String the predicate will check against
          * @throws NullPointerException
@@ -251,7 +251,7 @@ public final class StringPredicates {
 
         /**
          * Creates a new StartsWithPredicate.
-         * 
+         *
          * @param startsWith
          *            the String the predicate will check against
          * @throws NullPointerException

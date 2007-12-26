@@ -1,3 +1,6 @@
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
+ * the Apache 2.0 License, see http://coconut.codehaus.org/license.
+ */
 package org.coconut.internal.util;
 
 import java.util.logging.LogManager;
@@ -34,6 +37,7 @@ public class LazyLogger extends AbstractLogger {
     }
 
     /** {@inheritDoc} */
+    @Override
     public void log(Level level, String message) {
         getLogger().log(LogHelper.toJdkLevel(level), message);
     }

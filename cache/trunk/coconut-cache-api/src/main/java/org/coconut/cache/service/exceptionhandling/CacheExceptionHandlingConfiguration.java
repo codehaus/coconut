@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.service.exceptionhandling;
@@ -16,7 +16,7 @@ import org.w3c.dom.Element;
 
 /**
  * This class is used to configure the exception handling service prior to usage.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -51,7 +51,7 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
     /**
      * Returns the exception handler that should be used to handle all exceptions and
      * warnings or <code>null</code> if it has been defined.
-     * 
+     *
      * @return the exceptionHandler that is configured for the cache
      * @see #setExceptionHandler(CacheExceptionHandler)
      */
@@ -62,7 +62,7 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
     /**
      * Returns the log that is used for exception handling, or <tt>null</tt> if no such
      * log has been set.
-     * 
+     *
      * @return the log that is used for exception handling, or <tt>null</tt> if no such
      *         log has been set
      * @see #setExceptionLogger(Logger)
@@ -80,7 +80,7 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
      * specified, use an instance of
      * {@link CacheExceptionHandlers#defaultLoggingExceptionHandler()} to handle
      * exceptions.
-     * 
+     *
      * @param exceptionHandler
      *            the exceptionHandler to use for handling exceptions and warnings
      * @return this configuration
@@ -99,7 +99,7 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
      * used the default logger returned from
      * {@link org.coconut.cache.CacheConfiguration#getDefaultLogger()}. If no default
      * logger has been set, output will be sent to {@link System#err}.
-     * 
+     *
      * @param log
      *            the log to use for exception handling
      * @return this configuration
@@ -114,11 +114,11 @@ public class CacheExceptionHandlingConfiguration<K, V> extends
     @Override
     protected void fromXML(Element parent) throws Exception {
         /* Exception Logger */
-        logger = LogHelper.readLog(XmlUtil.getChild(EXCEPTION_LOGGER_TAG, parent));
+        setExceptionLogger(LogHelper.readLog(XmlUtil.getChild(EXCEPTION_LOGGER_TAG, parent)));
 
         /* Exception Handler */
-        exceptionHandler = loadChildObject(parent, EXCEPTION_HANDLER_TAG,
-                CacheExceptionHandler.class);
+        setExceptionHandler(loadChildObject(parent, EXCEPTION_HANDLER_TAG,
+                CacheExceptionHandler.class));
     }
 
     /** {@inheritDoc} */

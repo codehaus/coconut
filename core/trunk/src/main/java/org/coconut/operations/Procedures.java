@@ -8,19 +8,39 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Queue;
 
+import org.coconut.operations.Ops.Mapper;
 import org.coconut.operations.Ops.Procedure;
 
-public class Procedures {
+/**
+ * Various implementations of {@link Procedure}.
+ *
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
+ */
+public final class Procedures {
 
     /**
      * A Procedure that does nothing.
      */
     public final static Procedure NOOP = new NoopProcedure();
 
+    /**
+     * A Procedure that prints the argument object to {@link System#out} using its
+     * {@link Object#toString()} and {@link PrintStream#print(String)}.
+     */
     public final static Procedure SYS_OUT_PRINT = new SystemOutPrintProcedure();
 
+    /**
+     * A Procedure that prints the argument object to {@link System#out} using its
+     * {@link Object#toString()} and {@link PrintStream#println(String)} .
+     */
     public final static Procedure SYS_OUT_PRINTLN = new SystemOutPrintlnProcedure();
 
+    // /CLOVER:OFF
+    /** Cannot instantiate. */
+    private Procedures() {}
+
+    // /CLOVER:ON
     /**
      * Wraps the {@link Collection#add(Object)} method in an {@link Procedure}.
      * <p>
@@ -38,6 +58,13 @@ public class Procedures {
         return new CollectionAdd<E>(collection);
     }
 
+    /**
+     * Returns a Procedure that does nothing.
+     *
+     * @return a Procedure that does nothing.
+     * @param <T>
+     *            the types of elements accepted by the specified Collection
+     */
     public static <T> Procedure<T> noop() {
         return NOOP;
     }

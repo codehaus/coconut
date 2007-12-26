@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.attribute.spi;
@@ -18,7 +18,7 @@ public abstract class AbstractDurationAttribute extends AbstractLongAttribute {
 
     /**
      * Creates a new DurationAttribute.
-     * 
+     *
      * @param name
      *            the name of the attribute
      */
@@ -26,16 +26,10 @@ public abstract class AbstractDurationAttribute extends AbstractLongAttribute {
         super(name, DEFAULT_DURATION);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public final boolean isValid(long value) {
-        return value > 0;
-    }
-
     /**
      * Analogous to {@link #getPrimitive(AttributeMap)} except taking a parameter
      * indicating what time unit the value should be returned in.
-     * 
+     *
      * @param attributes
      *            the attribute map to retrieve the value of this attribute from
      * @param unit
@@ -55,18 +49,24 @@ public abstract class AbstractDurationAttribute extends AbstractLongAttribute {
         }
     }
 
-    public AttributeMap setAttribute(AttributeMap attributes, long duration, TimeUnit unit) {
-        return setAttribute(attributes, convertFrom(duration, unit));
+    /** {@inheritDoc} */
+    @Override
+    public final boolean isValid(long value) {
+        return value > 0;
     }
 
     public AttributeMap setAttribute(AttributeMap attributes, Long duration, TimeUnit unit) {
         return setAttribute(attributes, duration.longValue(), unit);
     }
 
+    public AttributeMap setAttribute(AttributeMap attributes, long duration, TimeUnit unit) {
+        return setAttribute(attributes, convertFrom(duration, unit));
+    }
+
     /**
      * Returns an immutable AttributeMap containing only this attribute mapping to the
      * specified value.
-     * 
+     *
      * @param value
      *            the value to create the singleton from
      * @param unit

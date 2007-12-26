@@ -1,20 +1,19 @@
-/* Written by Kasper Nielsen and released to the public domain, as explained at
- * http://creativecommons.org/licenses/publicdomain
- */
 package org.coconut.cache.examples.management;
 
-//START SNIPPET: class
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.defaults.SynchronizedCache;
 
-public class EnableManagement {
+public class CountCacheUsage {
     public static void main(String[] args) throws InterruptedException {
-        CacheConfiguration<String, String> conf = CacheConfiguration.create("ManagementTest");
+      //START SNIPPET: class
+        CacheConfiguration<String, String> conf = CacheConfiguration.create("CountCacheUsage");
+        conf.loading().setLoader(new CountCacheLoader());
         conf.management().setEnabled(true); //enables JMX management
         Cache<String, String> cache = conf.newCacheInstance(SynchronizedCache.class);
-        cache.put("hello", "world");
+        cache.get("count-1");
+        cache.get("count-2");
+      //END SNIPPET: class
         Thread.sleep(10 * 60 * 1000); // sleep 10 minutes, to allow management console to startup
     }
 }
-//END SNIPPET: class

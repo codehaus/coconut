@@ -15,13 +15,13 @@ public class ResourceBundleUtil {
 
     public static String lookupKey(ResourceBundle bundle, String key, Object... o) {
         String lookup = bundle.getString(key);
-//        String lookup = null;
-//        try {
-//            lookup = bundle.getString(key);
-//        } catch (MissingResourceException e) {
-//            System.out.println(key + " = TODO Fillout");
-//            throw new RuntimeException("missing entry for key " + key, e);
-//        }
+// String lookup = null;
+// try {
+// lookup = bundle.getString(key);
+// } catch (MissingResourceException e) {
+// System.out.println(key + " = TODO Fillout");
+// throw new RuntimeException("missing entry for key " + key, e);
+// }
         if (o != null && o.length > 0) {
             MessageFormat mf = new MessageFormat(lookup, Locale.US);
             return mf.format(o);

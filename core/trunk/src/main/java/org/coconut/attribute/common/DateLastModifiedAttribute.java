@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.attribute.common;
@@ -10,8 +10,7 @@ import org.coconut.attribute.spi.AbstractLongAttribute;
  * The <tt>Last updated time</tt> attribute indicates when a cache element was last
  * updated. The mapped value must be of a type <tt>long</tt> between 1 and
  * {@link Long#MAX_VALUE}.
- * 
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -59,7 +58,7 @@ public final class DateLastModifiedAttribute extends AbstractLongAttribute {
      * Returns the value of this attribute in the specified attribute map, or
      * DEFAULT_VALUE if the attribute is not mapped to any value in the specified
      * attribute map.
-     * 
+     *
      * @param attributes
      *            the attribute map to return the value from
      * @return the value of this attribute in the specified attribute map, or
@@ -72,7 +71,7 @@ public final class DateLastModifiedAttribute extends AbstractLongAttribute {
 
     /**
      * Sets the value of this attribute in the specified attribute map.
-     * 
+     *
      * @param attributes
      *            the attribute map to set set specified value in
      * @param value
@@ -84,11 +83,13 @@ public final class DateLastModifiedAttribute extends AbstractLongAttribute {
     }
 
     /**
-     * Returns an AttributeMap containing only this attribute mapping to the specified value.
-     * 
+     * Returns an AttributeMap containing only this attribute mapping to the specified
+     * value.
+     *
      * @param value
      *            the value to map to
-     * @return an AttributeMap containing only this attribute mapping to the specified value
+     * @return an AttributeMap containing only this attribute mapping to the specified
+     *         value
      */
     public static AttributeMap singleton(long value) {
         return INSTANCE.toSingletonLong(value);

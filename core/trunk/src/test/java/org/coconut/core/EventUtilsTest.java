@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
@@ -19,7 +19,7 @@ import org.junit.runner.RunWith;
 
 /**
  * Tests {@link EventUtils}.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -30,8 +30,8 @@ public class EventUtilsTest {
 
     @Test
     public void dummyEventProcessor() {
-        EventUtils.dummyEventProcessor().apply(null);
-        assertIsSerializable(EventUtils.dummyEventProcessor());
+        EventUtils.dummyProcedure().apply(null);
+        assertIsSerializable(EventUtils.dummyProcedure());
     }
 
     @Test
@@ -78,7 +78,7 @@ public class EventUtilsTest {
         Offerable o = EventUtils.toOfferable(eh);
         assertTrue(o.offer(0));
         assertNotSerializable(o);
-        assertIsSerializable(EventUtils.toOfferable(EventUtils.dummyEventProcessor()));
+        assertIsSerializable(EventUtils.toOfferable(EventUtils.dummyProcedure()));
     }
 
     @Test(expected = NullPointerException.class)
@@ -100,7 +100,7 @@ public class EventUtilsTest {
         assertTrue(o.offer(0));
         assertFalse(o.offer(1));
         assertNotSerializable(o);
-        assertIsSerializable(EventUtils.toOfferableSafe(EventUtils.dummyEventProcessor()));
+        assertIsSerializable(EventUtils.toOfferableSafe(EventUtils.dummyProcedure()));
 
     }
 

@@ -1086,22 +1086,6 @@ public final class Predicates {
          *
          * @param object
          *            the object to compare with.
-         * @param <T>
-         *            type of objects accepted by the predicate
-         */
-        public <T extends Comparable<? super E>> GreaterThenOrEqualPredicate(T object) {
-            if (object == null) {
-                throw new NullPointerException("element is null");
-            }
-            this.object = object;
-            this.comparator = Comparators.NATURAL_COMPARATOR;
-        }
-
-        /**
-         * Creates a new greater then predicate.
-         *
-         * @param object
-         *            the object to compare with.
          * @param comparator
          *            the comparator that should be used to compare elements
          */
@@ -1113,6 +1097,22 @@ public final class Predicates {
             }
             this.object = object;
             this.comparator = comparator;
+        }
+
+        /**
+         * Creates a new greater then predicate.
+         *
+         * @param object
+         *            the object to compare with.
+         * @param <T>
+         *            type of objects accepted by the predicate
+         */
+        public <T extends Comparable<? super E>> GreaterThenOrEqualPredicate(T object) {
+            if (object == null) {
+                throw new NullPointerException("element is null");
+            }
+            this.object = object;
+            this.comparator = Comparators.NATURAL_COMPARATOR;
         }
 
         /** {@inheritDoc} */
@@ -1166,22 +1166,6 @@ public final class Predicates {
          * Creates a new greater then predicate.
          *
          * @param object
-         *            the object to compare with.
-         * @param <T>
-         *            type of objects accepted by the predicate
-         */
-        public <T extends Comparable<? super E>> GreaterThenPredicate(T object) {
-            if (object == null) {
-                throw new NullPointerException("element is null");
-            }
-            this.object = object;
-            this.comparator = Comparators.NATURAL_COMPARATOR;
-        }
-
-        /**
-         * Creates a new greater then predicate.
-         *
-         * @param object
          *            the objetc to compare with.
          * @param comparator
          *            the comparator that should be used to compare elements
@@ -1194,6 +1178,22 @@ public final class Predicates {
             }
             this.object = object;
             this.comparator = comparator;
+        }
+
+        /**
+         * Creates a new greater then predicate.
+         *
+         * @param object
+         *            the object to compare with.
+         * @param <T>
+         *            type of objects accepted by the predicate
+         */
+        public <T extends Comparable<? super E>> GreaterThenPredicate(T object) {
+            if (object == null) {
+                throw new NullPointerException("element is null");
+            }
+            this.object = object;
+            this.comparator = Comparators.NATURAL_COMPARATOR;
         }
 
         /** {@inheritDoc} */
@@ -1424,22 +1424,6 @@ public final class Predicates {
         private final Object object;
 
         /**
-         * Creates a new less then or equals predicate.
-         *
-         * @param object
-         *            the object to compare with.
-         * @param <T>
-         *            type of objects accepted by the predicate
-         */
-        public <T extends Comparable<? super E>> LessThenOrEqualPredicate(T object) {
-            if (object == null) {
-                throw new NullPointerException("element is null");
-            }
-            this.object = object;
-            this.comparator = Comparators.NATURAL_COMPARATOR;
-        }
-
-        /**
          * Creates a new less then or equal predicate.
          *
          * @param object
@@ -1455,6 +1439,22 @@ public final class Predicates {
             }
             this.object = object;
             this.comparator = comparator;
+        }
+
+        /**
+         * Creates a new less then or equals predicate.
+         *
+         * @param object
+         *            the object to compare with.
+         * @param <T>
+         *            type of objects accepted by the predicate
+         */
+        public <T extends Comparable<? super E>> LessThenOrEqualPredicate(T object) {
+            if (object == null) {
+                throw new NullPointerException("element is null");
+            }
+            this.object = object;
+            this.comparator = Comparators.NATURAL_COMPARATOR;
         }
 
         /** {@inheritDoc} */
@@ -1506,22 +1506,6 @@ public final class Predicates {
         private final Object object;
 
         /**
-         * Creates a new less then predicate.
-         *
-         * @param object
-         *            the object to compare with.
-         * @param <T>
-         *            type of objects accepted by the predicate
-         */
-        public <T extends Comparable<? super E>> LessThenPredicate(T object) {
-            if (object == null) {
-                throw new NullPointerException("element is null");
-            }
-            this.object = object;
-            this.comparator = Comparators.NATURAL_COMPARATOR;
-        }
-
-        /**
          * Creates a new less then Predicate.
          *
          * @param object
@@ -1537,6 +1521,22 @@ public final class Predicates {
             }
             this.object = object;
             this.comparator = comparator;
+        }
+
+        /**
+         * Creates a new less then predicate.
+         *
+         * @param object
+         *            the object to compare with.
+         * @param <T>
+         *            type of objects accepted by the predicate
+         */
+        public <T extends Comparable<? super E>> LessThenPredicate(T object) {
+            if (object == null) {
+                throw new NullPointerException("element is null");
+            }
+            this.object = object;
+            this.comparator = Comparators.NATURAL_COMPARATOR;
         }
 
         /** {@inheritDoc} */

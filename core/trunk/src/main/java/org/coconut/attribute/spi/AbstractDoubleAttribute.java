@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.attribute.spi;
@@ -13,7 +13,7 @@ import org.coconut.operations.Ops.MapperToDouble;
  * An abstract implementation of an {@link Attribute} mapping to a double. This
  * implementation add a number of methods that works on primitive doubles instead of their
  * object counterpart.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -30,7 +30,7 @@ public abstract class AbstractDoubleAttribute extends AbstractAttribute<Double> 
 
     /**
      * Creates a new AbstractDoubleAttribute.
-     * 
+     *
      * @param name
      *            the name of the attribute
      * @param defaultValue
@@ -57,7 +57,7 @@ public abstract class AbstractDoubleAttribute extends AbstractAttribute<Double> 
      * The default implementation fails if the specified value is either
      * {@link Double#NEGATIVE_INFINITY}, {@link Double#POSITIVE_INFINITY} or
      * {@link Double#NaN}.
-     * 
+     *
      * @param value
      *            the value to check
      * @throws IllegalArgumentException
@@ -68,6 +68,7 @@ public abstract class AbstractDoubleAttribute extends AbstractAttribute<Double> 
     }
 
     /** {@inheritDoc} */
+    @Override
     public Double fromString(String str) {
         return Double.parseDouble(str);
     }
@@ -75,7 +76,7 @@ public abstract class AbstractDoubleAttribute extends AbstractAttribute<Double> 
     /**
      * Analogous to {@link #getValue(AttributeMap)} except returning a primitive
      * <tt>double</tt>.
-     * 
+     *
      * @param attributes
      *            the attribute map to retrieve the value of this attribute from
      * @return the value of this attribute
@@ -87,7 +88,7 @@ public abstract class AbstractDoubleAttribute extends AbstractAttribute<Double> 
     /**
      * Analogous to {@link #getValue(AttributeMap, Double)} except returning a primitive
      * <tt>double</tt>.
-     * 
+     *
      * @param attributes
      *            the attribute map to check for this attribute in
      * @param defaultValue
@@ -109,7 +110,7 @@ public abstract class AbstractDoubleAttribute extends AbstractAttribute<Double> 
      * Works as {@link #isValid(Double)} except taking a primitive double. The default
      * implementation returns <code>false</code> for {@link Double#NEGATIVE_INFINITY},
      * {@link Double#POSITIVE_INFINITY} and {@link Double#NaN}.
-     * 
+     *
      * @return whether or not the value is valid
      * @param value
      *            the value to check
@@ -122,7 +123,7 @@ public abstract class AbstractDoubleAttribute extends AbstractAttribute<Double> 
      * Returns a mapper that extracts the value of this attribute from an
      * {@link AttributeMap}, or returns {@link #getDefaultValue()} if this attribute is
      * not present.
-     * 
+     *
      * @return a mapper from an AttributeMap to the value of this attribute
      */
     public MapperToDouble<AttributeMap> mapToDouble() {
@@ -132,7 +133,7 @@ public abstract class AbstractDoubleAttribute extends AbstractAttribute<Double> 
     /**
      * Analogous to {@link #setValue(AttributeMap, Double)} except taking a primitive
      * double as parameter.
-     * 
+     *
      * @param attributes
      *            the attribute map to set the value in.
      * @param value
@@ -152,23 +153,10 @@ public abstract class AbstractDoubleAttribute extends AbstractAttribute<Double> 
     }
 
     /**
-     * Analogous to {@link #singleton(Double)} except taking a primitive double as
-     * parameter.
-     * 
-     * @param value
-     *            the value to create the singleton from
-     * @return an AttributeMap containing only this attribute mapping to the specified
-     *         value
-     */
-    protected AttributeMap toSingletonLong(double value) {
-        return super.singleton(value);
-    }
-
-    /**
      * Check if the specified value is either {@link Double#NEGATIVE_INFINITY},
      * {@link Double#POSITIVE_INFINITY} or {@link Double#NaN}. If it is, this method will
      * throw an {@link IllegalArgumentException}.
-     * 
+     *
      * @param d
      *            the value to check
      * @throws IllegalArgumentException
@@ -185,13 +173,26 @@ public abstract class AbstractDoubleAttribute extends AbstractAttribute<Double> 
      * Returns <code>true</code> if the specified value is either
      * {@link Double#NEGATIVE_INFINITY}, {@link Double#POSITIVE_INFINITY} or
      * {@link Double#NaN}. Otherwise, false
-     * 
+     *
      * @param d
      *            the value to check
      * @return whether or not the specified value is Infinity or NaN
      */
     protected boolean isNaNInfinity(double d) {
         return Double.isNaN(d) || Double.isInfinite(d);
+    }
+
+    /**
+     * Analogous to {@link #singleton(Double)} except taking a primitive double as
+     * parameter.
+     *
+     * @param value
+     *            the value to create the singleton from
+     * @return an AttributeMap containing only this attribute mapping to the specified
+     *         value
+     */
+    protected AttributeMap toSingletonLong(double value) {
+        return super.singleton(value);
     }
 
     /**

@@ -149,7 +149,7 @@ public class CacheExpirationConfiguration<K, V> extends
         setDefaultTimeToLive(time, DEFAULT_TIME_UNIT);
 
         /* Expiration Filter */
-        expirationFilter = loadChildObject(base, EXPIRATION_FILTER_TAG, Predicate.class);
+        setExpirationFilter(loadChildObject(base, EXPIRATION_FILTER_TAG, Predicate.class));
     }
 
     /** {@inheritDoc} */

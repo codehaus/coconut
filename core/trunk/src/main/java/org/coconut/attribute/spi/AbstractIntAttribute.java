@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.attribute.spi;
@@ -14,7 +14,7 @@ import org.coconut.operations.Ops.MapperToInt;
  * An abstract implementation of an {@link Attribute} mapping to a int. This
  * implementation adds a number of methods that works on primitive ints instead of their
  * object counterpart.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -24,13 +24,14 @@ public abstract class AbstractIntAttribute extends AbstractAttribute<Integer> {
     private final int defaultIntValue;
 
     /**
-     * A MapperToInteger that takes an AttributeMap and returns the value of this attribute.
+     * A MapperToInteger that takes an AttributeMap and returns the value of this
+     * attribute.
      */
     private final MapperToInt<AttributeMap> mapperToInt = new AttributeMapToInt();
 
     /**
      * Creates a new AbstractIntegerAttribute.
-     * 
+     *
      * @param name
      *            the name of the attribute
      * @param defaultValue
@@ -47,7 +48,7 @@ public abstract class AbstractIntAttribute extends AbstractAttribute<Integer> {
 
     /**
      * Analogous to {@link #checkValid(Integer)} except taking a primitive Integer.
-     * 
+     *
      * @param value
      *            the value to check
      * @throws IllegalArgumentException
@@ -67,6 +68,7 @@ public abstract class AbstractIntAttribute extends AbstractAttribute<Integer> {
     }
 
     /** {@inheritDoc} */
+    @Override
     public Integer fromString(String str) {
         return Integer.parseInt(str);
     }
@@ -74,7 +76,7 @@ public abstract class AbstractIntAttribute extends AbstractAttribute<Integer> {
     /**
      * Analogous to {@link #getValue(AttributeMap)} except returning a primitive
      * <tt>Integer</tt>.
-     * 
+     *
      * @param attributes
      *            the attribute map to retrieve the value of this attribute from
      * @return the value of this attribute
@@ -86,7 +88,7 @@ public abstract class AbstractIntAttribute extends AbstractAttribute<Integer> {
     /**
      * Analogous to {@link #getValue(AttributeMap, Integer)} except returning a primitive
      * <tt>Integer</tt>.
-     * 
+     *
      * @param attributes
      *            the attribute map to check for this attribute in
      * @param defaultValue
@@ -99,8 +101,9 @@ public abstract class AbstractIntAttribute extends AbstractAttribute<Integer> {
     }
 
     /**
-     * Analogous to {@link #isValid(Integer)} except taking a primitive Integer as parameter.
-     * 
+     * Analogous to {@link #isValid(Integer)} except taking a primitive Integer as
+     * parameter.
+     *
      * @param value
      *            the value to check
      * @return whether or not the value is valid
@@ -119,7 +122,7 @@ public abstract class AbstractIntAttribute extends AbstractAttribute<Integer> {
      * Returns a mapper that extracts the value of this attribute from an
      * {@link AttributeMap}, or returns {@link #getDefaultValue()} if this attribute is
      * not present.
-     * 
+     *
      * @return a mapper from an AttributeMap to the value of this attribute
      */
     public MapperToInt<AttributeMap> mapToInt() {
@@ -127,9 +130,9 @@ public abstract class AbstractIntAttribute extends AbstractAttribute<Integer> {
     }
 
     /**
-     * Analogous to {@link #setValue(AttributeMap, Integer)} except taking a primitive Integer
-     * as parameter.
-     * 
+     * Analogous to {@link #setValue(AttributeMap, Integer)} except taking a primitive
+     * Integer as parameter.
+     *
      * @param attributes
      *            the attribute map to set the value in.
      * @param value
@@ -151,7 +154,7 @@ public abstract class AbstractIntAttribute extends AbstractAttribute<Integer> {
     /**
      * Analogous to {@link #singleton(Integer)} except taking a primitive Integer as
      * parameter.
-     * 
+     *
      * @param value
      *            the value to create the singleton from
      * @return an AttributeMap containing only this attribute mapping to the specified

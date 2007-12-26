@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.operations;
@@ -13,7 +13,7 @@ import org.coconut.operations.Ops.Predicate;
 
 /**
  * Factory and utility methods for {@link Predicate}.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id: CollectionPredicates.java 498 2007-12-02 17:17:11Z kasper $
  */
@@ -26,63 +26,9 @@ public final class CollectionPredicates {
     // /CLOVER:ON
 
     /**
-     * Returns whether or not <b>all</b> of elements in the specified can be accepted by
-     * the specified predicate.
-     * 
-     * @param <E>
-     *            the types accepted
-     * @param iterable
-     *            the collection to check
-     * @param predicate
-     *            the predicate to test against
-     * @return whether or not all of elements in the specified can be accepted by the
-     *         specified predicate
-     */
-    public static <E> boolean isAllTrue(Iterable<E> iterable, Predicate<? super E> predicate) {
-        if (iterable == null) {
-            throw new NullPointerException("iterable is null");
-        } else if (predicate == null) {
-            throw new NullPointerException("predicate is null");
-        }
-        for (E s : iterable) {
-            if (!predicate.evaluate(s)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Returns whether or not <b>any</b> of elements in the specified can be accepted by
-     * the specified predicate.
-     * 
-     * @param <E>
-     *            the types accepted
-     * @param iterable
-     *            the iterable to check
-     * @param predicate
-     *            the predicate to test against
-     * @return whether or not any of elements in the specified can be accepted by the
-     *         specified predicate
-     */
-    public static <E> boolean isAnyTrue(Iterable<E> iterable, Predicate<? super E> predicate) {
-        if (iterable == null) {
-            throw new NullPointerException("iterable is null");
-        } else if (predicate == null) {
-            throw new NullPointerException("predicate is null");
-        }
-        for (E s : iterable) {
-            if (predicate.evaluate(s)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Filters the specified iterable, returning a list of those items that evaluated to
      * true given the specified predicate.
-     * 
+     *
      * @param <E>
      *            the types of items that are filtered
      * @param iterable
@@ -104,19 +50,6 @@ public final class CollectionPredicates {
             }
         }
         return list;
-    }
-
-    public static <E> void removeFrom(Iterable<E> iterable, Predicate<? super E> predicate) {
-        if (iterable == null) {
-            throw new NullPointerException("iterable is null");
-        } else if (predicate == null) {
-            throw new NullPointerException("predicate is null");
-        }
-        for (Iterator<E> i = iterable.iterator(); i.hasNext();) {
-            if (predicate.evaluate(i.next())) {
-                i.remove();
-            }
-        }
     }
 
     public static <K, V> Map<K, V> filterMap(Map<K, V> map, Predicate<Map.Entry<K, V>> predicate) {
@@ -162,5 +95,72 @@ public final class CollectionPredicates {
             }
         }
         return m;
+    }
+
+    /**
+     * Returns whether or not <b>all</b> of elements in the specified can be accepted by
+     * the specified predicate.
+     *
+     * @param <E>
+     *            the types accepted
+     * @param iterable
+     *            the collection to check
+     * @param predicate
+     *            the predicate to test against
+     * @return whether or not all of elements in the specified can be accepted by the
+     *         specified predicate
+     */
+    public static <E> boolean isAllTrue(Iterable<E> iterable, Predicate<? super E> predicate) {
+        if (iterable == null) {
+            throw new NullPointerException("iterable is null");
+        } else if (predicate == null) {
+            throw new NullPointerException("predicate is null");
+        }
+        for (E s : iterable) {
+            if (!predicate.evaluate(s)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns whether or not <b>any</b> of elements in the specified can be accepted by
+     * the specified predicate.
+     *
+     * @param <E>
+     *            the types accepted
+     * @param iterable
+     *            the iterable to check
+     * @param predicate
+     *            the predicate to test against
+     * @return whether or not any of elements in the specified can be accepted by the
+     *         specified predicate
+     */
+    public static <E> boolean isAnyTrue(Iterable<E> iterable, Predicate<? super E> predicate) {
+        if (iterable == null) {
+            throw new NullPointerException("iterable is null");
+        } else if (predicate == null) {
+            throw new NullPointerException("predicate is null");
+        }
+        for (E s : iterable) {
+            if (predicate.evaluate(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static <E> void removeFrom(Iterable<E> iterable, Predicate<? super E> predicate) {
+        if (iterable == null) {
+            throw new NullPointerException("iterable is null");
+        } else if (predicate == null) {
+            throw new NullPointerException("predicate is null");
+        }
+        for (Iterator<E> i = iterable.iterator(); i.hasNext();) {
+            if (predicate.evaluate(i.next())) {
+                i.remove();
+            }
+        }
     }
 }

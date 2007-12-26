@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.internal.predicatematcher;
@@ -19,27 +19,17 @@ public abstract class AbstractPredicateMatcher<K, E> implements PredicateMatcher
 
     /**
      * Creates a new AbstractPredicateMatcher using the specified Map as backend.
-     * @param map the map to use as backend
+     *
+     * @param map
+     *            the map to use as backend
      */
     public AbstractPredicateMatcher(Map<K, Predicate<? super E>> map) {
         this.map = map;
     }
 
-    /**
-     * @return the map we are wrapping
-     */
-    protected Map<K, Predicate<? super E>> getMap() {
-        return map;
-    }
-
     /** {@inheritDoc} */
     public void clear() {
         map.clear();
-    }
-
-    /** {@inheritDoc} */
-    public Set<java.util.Map.Entry<K, Predicate<? super E>>> entrySet() {
-        return map.entrySet();
     }
 
     /** {@inheritDoc} */
@@ -53,6 +43,12 @@ public abstract class AbstractPredicateMatcher<K, E> implements PredicateMatcher
     }
 
     /** {@inheritDoc} */
+    public Set<java.util.Map.Entry<K, Predicate<? super E>>> entrySet() {
+        return map.entrySet();
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public boolean equals(Object o) {
         return map.equals(o);
     }
@@ -63,6 +59,7 @@ public abstract class AbstractPredicateMatcher<K, E> implements PredicateMatcher
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return map.hashCode();
     }
@@ -98,6 +95,7 @@ public abstract class AbstractPredicateMatcher<K, E> implements PredicateMatcher
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return map.toString();
     }
@@ -105,6 +103,13 @@ public abstract class AbstractPredicateMatcher<K, E> implements PredicateMatcher
     /** {@inheritDoc} */
     public Collection<Predicate<? super E>> values() {
         return map.values();
+    }
+
+    /**
+     * @return the map we are wrapping
+     */
+    protected Map<K, Predicate<? super E>> getMap() {
+        return map;
     }
 
 }

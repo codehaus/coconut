@@ -15,11 +15,11 @@ public abstract class TimeFormatter {
 
     public static TimeFormatter UPTIME_FORMAT = new UnixTime();
 
-    final static DecimalFormat Z = new DecimalFormat("##0.000");
-
     final static DecimalFormat NN = new DecimalFormat("00");
 
     final static DecimalFormat NNN = new DecimalFormat("000");
+
+    final static DecimalFormat Z = new DecimalFormat("##0.000");
 
     public String format(long time, UnitOfTime unit) {
         return formatNanos(unit.toNanos(time));

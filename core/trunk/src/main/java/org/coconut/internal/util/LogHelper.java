@@ -93,30 +93,6 @@ public final class LogHelper {
         return null;
     }
 
-    static Level getLogLevel(Logger logger) {
-        if (!logger.isFatalEnabled()) {
-            return Level.Off;
-        } else if (!logger.isErrorEnabled()) {
-            return Level.Fatal;
-        } else if (!logger.isWarnEnabled()) {
-            return Level.Error;
-        } else if (!logger.isInfoEnabled()) {
-            return Level.Warn;
-        } else if (!logger.isDebugEnabled()) {
-            return Level.Info;
-        } else if (!logger.isTraceEnabled()) {
-            return Level.Debug;
-        } else {
-            return Level.Trace;
-        }
-    }
-
-    static Level toLevel(Element e) {
-        String level = e.getAttribute(LOG_LEVEL_ATRB);
-        Level l = Level.valueOf(level);
-        return l;
-    }
-
     /**
      * Converts from a {@link Level} to a {@link java.util.logging.Level}.
      * 
@@ -139,6 +115,30 @@ public final class LogHelper {
         default /* Warn */:
             return java.util.logging.Level.WARNING;
         }
+    }
+
+    static Level getLogLevel(Logger logger) {
+        if (!logger.isFatalEnabled()) {
+            return Level.Off;
+        } else if (!logger.isErrorEnabled()) {
+            return Level.Fatal;
+        } else if (!logger.isWarnEnabled()) {
+            return Level.Error;
+        } else if (!logger.isInfoEnabled()) {
+            return Level.Warn;
+        } else if (!logger.isDebugEnabled()) {
+            return Level.Info;
+        } else if (!logger.isTraceEnabled()) {
+            return Level.Debug;
+        } else {
+            return Level.Trace;
+        }
+    }
+
+    static Level toLevel(Element e) {
+        String level = e.getAttribute(LOG_LEVEL_ATRB);
+        Level l = Level.valueOf(level);
+        return l;
     }
 
     /**

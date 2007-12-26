@@ -1,17 +1,22 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.attribute;
 
+import static org.coconut.attribute.Attributes.EMPTY_MAP;
+import static org.coconut.test.TestUtil.assertIsSerializable;
+import static org.coconut.test.TestUtil.serializeAndUnserialize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.coconut.attribute.common.SizeAttribute;
 import org.coconut.test.TestUtil;
 import org.junit.Test;
 
@@ -191,49 +196,20 @@ public class AttributeMaps_SingletonMapTest {
             fail("should throw UnsupportedOperationException");
         } catch (UnsupportedOperationException ok) {/* ok */}
         try {
-            singleton.putAll(new HashMap());
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */}
-        try {
             singleton.remove(KEY);
             fail("should throw UnsupportedOperationException");
         } catch (UnsupportedOperationException ok) {/* ok */}
-        try {
-            singleton.put(KEY, 123);
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */}
-        try {
-            singleton.putBoolean(KEY, true);
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */}
-        try {
-            singleton.putByte(KEY, (byte) 123);
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */}
-        try {
-            singleton.putChar(KEY, 'd');
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */}
-        try {
-            singleton.putDouble(KEY, 3.4d);
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */}
-        try {
-            singleton.putFloat(KEY, 123.3f);
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */}
-        try {
-            singleton.putInt(KEY, 123);
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */}
-        try {
-            singleton.putLong(KEY, 34l);
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */}
-        try {
-            singleton.putShort(KEY, (short) 123);
-            fail("should throw UnsupportedOperationException");
-        } catch (UnsupportedOperationException ok) {/* ok */}
+        AbstractAttributeMapTest.noPut(singleton, KEY);
     }
 
+    /**
+     * Tests that singleton map is serializable
+     *
+     * @throws Exception
+     *             something went wrong
+     */
+    @Test
+    public void serialization() throws Exception {
+        assertIsSerializable(Attributes.singleton(SizeAttribute.INSTANCE, 123L));
+    }
 }

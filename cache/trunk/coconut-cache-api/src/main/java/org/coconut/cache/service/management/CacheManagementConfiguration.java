@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.service.management;
@@ -30,7 +30,7 @@ import org.w3c.dom.Element;
  * <p>
  * Remote management (JMX) is turned off by default and you need to call
  * {@link #setEnabled(boolean)} to enable it before construction the cache.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -69,7 +69,7 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
 
     /**
      * Returns the default domain to register all managed beans under.
-     * 
+     *
      * @return the domain to register all managed beans under
      * @see #setDomain(String)
      */
@@ -87,7 +87,7 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
 
     /**
      * Returns the configured registrant.
-     * 
+     *
      * @return the configured registrant
      * @see #setRegistrant(ManagedVisitor)
      */
@@ -99,7 +99,7 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
      * Returns true if management is enabled for the cache, otherwise false.
      * <p>
      * The default setting is <tt>false</tt>.
-     * 
+     *
      * @return <tt>true</tt> if management is enabled for the cache, otherwise
      *         <tt>false</tt>
      * @see #setEnabled(boolean)
@@ -111,7 +111,7 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
     /**
      * Sets the specific domain that this cache should register under. If no domain is
      * specified the cache will use {@link CacheMXBean#DEFAULT_JMX_DOMAIN}.
-     * 
+     *
      * @param domain
      *            the domain name
      * @return this configuration
@@ -134,7 +134,7 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
     /**
      * Sets whether or not management is enabled for the cache. The default value is
      * <tt>false</tt>.
-     * 
+     *
      * @param enabled
      *            whether or not management should be enabled for the cache
      * @return this configuration
@@ -150,7 +150,7 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
      * MBeanServer is set and this service is enabled; the
      * {@link java.lang.management.ManagementFactory#getPlatformMBeanServer() platform MBeanServer}
      * will be used.
-     * 
+     *
      * @param server
      *            the server that the cache should register with
      * @return this configuration
@@ -169,7 +169,7 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
      * special registrant that will visit each cache service.
      * <p>
      * If no registrant is specified a default registrant will be used.
-     * 
+     *
      * @param registrant
      *            the registrant
      * @return this configuration
@@ -183,17 +183,17 @@ public class CacheManagementConfiguration extends AbstractCacheServiceConfigurat
     /** {@inheritDoc} */
     @Override
     protected void fromXML(Element e) throws Exception {
-        domain = contentStringGet(getChild(XML_DOMAIN_TAG, e), CacheMXBean.DEFAULT_JMX_DOMAIN);
-        enabled = attributeBooleanGet(e, XML_ENABLED_ATTRIBUTE, false);
-        registrant = loadChildObject(e, XML_REGISTRANT_TAG, ManagedVisitor.class);
+        setDomain(contentStringGet(getChild(XML_DOMAIN_TAG, e), CacheMXBean.DEFAULT_JMX_DOMAIN));
+        setEnabled(attributeBooleanGet(e, XML_ENABLED_ATTRIBUTE, false));
+        setRegistrant(loadChildObject(e, XML_REGISTRANT_TAG, ManagedVisitor.class));
         if (attributeBooleanGet(e, "usePlatformMBeanServer", false)) {
             // This is bit whacked but we need it for consistency sake
             // sick configuration->ParentCache with custom MBeanServer
             // child wants to us platform MBeanServer, if set the
             // child server to null, it will use parents customer MBeanServer
-            mBeanServer = ManagementFactory.getPlatformMBeanServer();
+            setMBeanServer(ManagementFactory.getPlatformMBeanServer());
         } else {
-            mBeanServer = null;
+            setMBeanServer(null);
         }
     }
 

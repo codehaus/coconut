@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
@@ -17,7 +17,7 @@ import org.coconut.internal.util.LogHelper.AbstractLogger;
  * href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/logging/package-summary.html">
  * Standard JDK logging </a>, <a href="http://logging.apache.org/log4j/"> Log4j </a> or <a
  * href="http://commons.apache.org/logging/"> commons logging </a>.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id$
  */
@@ -35,21 +35,20 @@ public final class Loggers {
     /**
      * Returns the name of the specified logger or <code>null</code> if the name could
      * not be determinded.
-     * 
+     *
      * @param logger
      *            the logger for which the name should be returned
      * @return the name of the specified logger or <code>null</code> if the name could
      *         not be determinded
      */
     public static String getName(Logger logger) {
-        return logger instanceof AbstractLogger ? ((AbstractLogger) logger)
-                .getName() : null;
+        return logger instanceof AbstractLogger ? ((AbstractLogger) logger).getName() : null;
     }
 
     /**
      * Creates a new Logger that ignores any input below the specified level. Any logging
      * messages on this level or above it, will be logged to the specified printstream.
-     * 
+     *
      * @param level
      *            the maximum log level to log
      * @param ps
@@ -65,7 +64,7 @@ public final class Loggers {
     /**
      * Creates a new Logger that ignores any input below the specified level. Any logging
      * messages on this level or above it, will be logged to {@link System#err}.
-     * 
+     *
      * @param level
      *            the maximum log level to log
      * @return the newly created logger
@@ -77,7 +76,7 @@ public final class Loggers {
     /**
      * Creates a new Logger that ignores any input below the specified level. Any logging
      * messages on this level or above it, will be logged to {@link System#out}.
-     * 
+     *
      * @param level
      *            the maximum log level to log
      * @return the newly created logger
@@ -98,7 +97,7 @@ public final class Loggers {
         // /CLOVER:ON
         /**
          * Shorthand for {@link #from(String)}.
-         * 
+         *
          * @param clazz
          *            name of clazz will be used as the name of the logger to retrieve.
          *            See getLogger(String) for more detailed information.
@@ -110,7 +109,7 @@ public final class Loggers {
 
         /**
          * Wraps a Commons logging log.
-         * 
+         *
          * @param log
          *            the Commons logging log to wrap
          * @return a wrapped Commons logging logger
@@ -122,11 +121,11 @@ public final class Loggers {
         /**
          * Creates a decorated commons logger from the specified name. The commons log is
          * created by calling:
-         * 
+         *
          * <pre>
          * org.apache.commons.logging.LogFactory.getLog(name)
          * </pre>
-         * 
+         *
          * @param name
          *            the name of the logger
          * @return the decorated commons logger
@@ -137,7 +136,7 @@ public final class Loggers {
 
         /**
          * Unwraps a wrapped Commons {@link Log} that is wrapped in a {@link Logger}.
-         * 
+         *
          * @param logger
          *            the logger to unwrap
          * @return the unwrapped commons log
@@ -153,7 +152,7 @@ public final class Loggers {
 
         /**
          * Returns whether or not the specified logger encapsulates a Commons Logging log.
-         * 
+         *
          * @param logger
          *            the logger to test
          * @return true is the encapsulated logger is Commons Logging log
@@ -174,7 +173,7 @@ public final class Loggers {
         // /CLOVER:ON
         /**
          * Shorthand for {@link #from(String)}.
-         * 
+         *
          * @param clazz
          *            name of clazz will be used as the name of the logger to retrieve.
          *            See getLogger(String) for more detailed information.
@@ -186,7 +185,7 @@ public final class Loggers {
 
         /**
          * Wraps a JDK logger.
-         * 
+         *
          * @param logger
          *            the JDK logger to wrap
          * @return a wrapped JDK logger
@@ -198,11 +197,11 @@ public final class Loggers {
         /**
          * Creates a decorated Jdk logger from the specified name. The Jdk logger is
          * created by calling:
-         * 
+         *
          * <pre>
          * java.util.logging.Logger.getLogger(name)
          * </pre>
-         * 
+         *
          * @param name
          *            the name of the logger
          * @return the decorated Jdk logger
@@ -214,7 +213,7 @@ public final class Loggers {
         /**
          * Unwraps a wrapped JDK {@link java.util.logging.Logger} that is wrapped in a
          * {@link Logger}.
-         * 
+         *
          * @param logger
          *            the logger to unwrap
          * @return the unwrapped jdk logger
@@ -230,7 +229,7 @@ public final class Loggers {
 
         /**
          * Returns whether or not the specified logger encapsulates a JDK logger.
-         * 
+         *
          * @param logger
          *            the logger to test
          * @return true is the encapsulated logger is a JDK logger
@@ -251,7 +250,7 @@ public final class Loggers {
         // /CLOVER:ON
         /**
          * Shorthand for {@link #from(String)}.
-         * 
+         *
          * @param clazz
          *            name of clazz will be used as the name of the logger to retrieve.
          *            See getLogger(String) for more detailed information.
@@ -263,7 +262,7 @@ public final class Loggers {
 
         /**
          * Wraps a Log4j logger.
-         * 
+         *
          * @param logger
          *            the Log4j logger to wrap
          * @return a wrapped Log4j logger
@@ -275,11 +274,11 @@ public final class Loggers {
         /**
          * Creates a decorated Log4J logger from the specified name. The Log4J logger is
          * created by calling:
-         * 
+         *
          * <pre>
          * org.apache.log4j.Logger.getLogger(name)
          * </pre>
-         * 
+         *
          * @param name
          *            the name of the logger
          * @return the decorated Log4J logger
@@ -291,7 +290,7 @@ public final class Loggers {
         /**
          * Unwraps a wrapped Log4J {@link org.apache.log4j.Logger} that is wrapped in a
          * {@link Logger}.
-         * 
+         *
          * @param logger
          *            the logger to unwrap
          * @return the unwrapped Log4J log
@@ -307,7 +306,7 @@ public final class Loggers {
 
         /**
          * Returns whether or not the specified logger encapsulates a Log4J logger.
-         * 
+         *
          * @param logger
          *            the logger to test
          * @return true is the encapsulated logger is a Log4J logger
@@ -316,7 +315,6 @@ public final class Loggers {
             return logger instanceof Log4JLogger;
         }
     }
-
 
     /**
      * The wrapper class commons logging.
@@ -327,7 +325,7 @@ public final class Loggers {
 
         /**
          * Creates a new Logger by wrapping a commons Log class.
-         * 
+         *
          * @param log
          *            the log to wrap
          */
@@ -366,6 +364,7 @@ public final class Loggers {
         }
 
         /** {@inheritDoc} */
+        @Override
         public void log(Level level, String message) {
             switch (level) {
             case Debug:
@@ -422,7 +421,7 @@ public final class Loggers {
 
         /**
          * Creates a new JDKLogger from the specified logger.
-         * 
+         *
          * @param logger
          *            the logger to wrap
          */
@@ -431,6 +430,7 @@ public final class Loggers {
         }
 
         /** {@inheritDoc} */
+        @Override
         public String getName() {
             return logger.getName();
         }
@@ -441,6 +441,7 @@ public final class Loggers {
         }
 
         /** {@inheritDoc} */
+        @Override
         public void log(Logger.Level level, String message) {
             logger.log(LogHelper.toJdkLevel(level), message);
         }
@@ -461,7 +462,7 @@ public final class Loggers {
 
         /**
          * Creates a new Log4JLogger from the specified logger.
-         * 
+         *
          * @param logger
          *            the logger to wrap
          */
@@ -470,6 +471,7 @@ public final class Loggers {
         }
 
         /** {@inheritDoc} */
+        @Override
         public String getName() {
             return logger.getName();
         }
@@ -480,6 +482,7 @@ public final class Loggers {
         }
 
         /** {@inheritDoc} */
+        @Override
         public void log(Logger.Level level, String message) {
             log(level, message, null);
         }
@@ -491,7 +494,7 @@ public final class Loggers {
 
         /**
          * Converts from a {@link Level} to a {@link org.apache.log4j.Level}.
-         * 
+         *
          * @param level
          *            the level to convert
          * @return the converted level
@@ -528,6 +531,7 @@ public final class Loggers {
         }
 
         /** {@inheritDoc} */
+        @Override
         public void log(Level level, String message) {}
 
         /** {@inheritDoc} */
@@ -553,7 +557,7 @@ public final class Loggers {
         /**
          * Creates a new SimpleLogger that logs to the specified print stream at the
          * specified level.
-         * 
+         *
          * @param level
          *            the level to log at
          * @param stream
@@ -582,8 +586,9 @@ public final class Loggers {
         public void log(Logger.Level l, String message, Throwable cause) {
             if (level <= l.getLevel()) {
                 stream.println(message);
-                if (cause != null)
+                if (cause != null) {
                     cause.printStackTrace(stream);
+                }
             }
         }
     }
@@ -592,12 +597,15 @@ public final class Loggers {
      * A simple logger that prints logging information to {@link System#err}.
      */
     final static class SystemErrLogger extends AbstractLogger implements Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = 3128919839751961759L;
+
         /** The level to log at. */
         private final int level;
 
         /**
          * Creates a new SystemErrLogger.
-         * 
+         *
          * @param level
          *            the level to log at
          */
@@ -620,8 +628,9 @@ public final class Loggers {
         public void log(Level l, String message, Throwable cause) {
             if (level <= l.getLevel()) {
                 System.err.println(message);
-                if (cause != null)
+                if (cause != null) {
                     cause.printStackTrace(System.err);
+                }
             }
         }
     }
@@ -630,12 +639,16 @@ public final class Loggers {
      * A simple logger that prints logging information to {@link System#out}.
      */
     final static class SystemOutLogger extends AbstractLogger implements Serializable {
+        /**
+         *
+         */
+        private static final long serialVersionUID = -4803581500251076928L;
         /** The level to log at. */
         private final int level;
 
         /**
          * Creates a new SystemErrLogger.
-         * 
+         *
          * @param level
          *            the level to log at
          */
@@ -658,8 +671,9 @@ public final class Loggers {
         public void log(Level l, String message, Throwable cause) {
             if (level <= l.getLevel()) {
                 System.out.println(message);
-                if (cause != null)
+                if (cause != null) {
                     cause.printStackTrace(System.out);
+                }
             }
         }
     }

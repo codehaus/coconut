@@ -15,255 +15,21 @@ import java.util.concurrent.TimeUnit;
  */
 public enum UnitOfTime {
 
-    NANOSECONDS {
-        public long toNanos(long d) {
-            return d;
-        }
-
-        public long toMicros(long d) {
-            return d / (C1 / C0);
-        }
-
-        public long toMillis(long d) {
-            return d / (C2 / C0);
-        }
-
-        public long toSeconds(long d) {
-            return d / (C3 / C0);
-        }
-
-        public long toMinutes(long d) {
-            return d / (C4 / C0);
-        }
-
-        public long toHours(long d) {
-            return d / (C5 / C0);
-        }
-
-        public long toDays(long d) {
-            return d / (C6 / C0);
-        }
-
-        public long convert(long d, UnitOfTime u) {
-            return u.toNanos(d);
-        }
-
-        public String getSymbol() {
-            return "ns";
-        };
-
-        int excessNanos(long d, long m) {
-            return (int) (d - (m * C2));
-        }
-    },
-    MICROSECONDS {
-        public long toNanos(long d) {
-            return x(d, C1 / C0, MAX / (C1 / C0));
-        }
-
-        public long toMicros(long d) {
-            return d;
-        }
-
-        public long toMillis(long d) {
-            return d / (C2 / C1);
-        }
-
-        public long toSeconds(long d) {
-            return d / (C3 / C1);
-        }
-
-        public long toMinutes(long d) {
-            return d / (C4 / C1);
-        }
-
-        public long toHours(long d) {
-            return d / (C5 / C1);
-        }
-
-        public long toDays(long d) {
-            return d / (C6 / C1);
-        }
-
-        public long convert(long d, UnitOfTime u) {
-            return u.toMicros(d);
-        }
-
-        public String getSymbol() {
-            return "µs";
-        };
-
-        int excessNanos(long d, long m) {
-            return (int) ((d * C1) - (m * C2));
-        }
-    },
-    MILLISECONDS {
-        public long toNanos(long d) {
-            return x(d, C2 / C0, MAX / (C2 / C0));
-        }
-
-        public long toMicros(long d) {
-            return x(d, C2 / C1, MAX / (C2 / C1));
-        }
-
-        public long toMillis(long d) {
-            return d;
-        }
-
-        public long toSeconds(long d) {
-            return d / (C3 / C2);
-        }
-
-        public long toMinutes(long d) {
-            return d / (C4 / C2);
-        }
-
-        public long toHours(long d) {
-            return d / (C5 / C2);
-        }
-
-        public long toDays(long d) {
-            return d / (C6 / C2);
-        }
-
-        public long convert(long d, UnitOfTime u) {
-            return u.toMillis(d);
-        }
-
-        public String getSymbol() {
-            return "ms";
-        };
-
-        int excessNanos(long d, long m) {
-            return 0;
-        }
-    },
-    SECONDS {
-        public long toNanos(long d) {
-            return x(d, C3 / C0, MAX / (C3 / C0));
-        }
-
-        public long toMicros(long d) {
-            return x(d, C3 / C1, MAX / (C3 / C1));
-        }
-
-        public long toMillis(long d) {
-            return x(d, C3 / C2, MAX / (C3 / C2));
-        }
-
-        public long toSeconds(long d) {
-            return d;
-        }
-
-        public long toMinutes(long d) {
-            return d / (C4 / C3);
-        }
-
-        public long toHours(long d) {
-            return d / (C5 / C3);
-        }
-
-        public long toDays(long d) {
-            return d / (C6 / C3);
-        }
-
-        public long convert(long d, UnitOfTime u) {
-            return u.toSeconds(d);
-        }
-
-        public String getSymbol() {
-            return "s";
-        };
-
-        int excessNanos(long d, long m) {
-            return 0;
-        }
-    },
-    MINUTES {
-        public long toNanos(long d) {
-            return x(d, C4 / C0, MAX / (C4 / C0));
-        }
-
-        public long toMicros(long d) {
-            return x(d, C4 / C1, MAX / (C4 / C1));
-        }
-
-        public long toMillis(long d) {
-            return x(d, C4 / C2, MAX / (C4 / C2));
-        }
-
-        public long toSeconds(long d) {
-            return x(d, C4 / C3, MAX / (C4 / C3));
-        }
-
-        public long toMinutes(long d) {
-            return d;
-        }
-
-        public long toHours(long d) {
-            return d / (C5 / C4);
-        }
-
-        public long toDays(long d) {
-            return d / (C6 / C4);
-        }
-
-        public long convert(long d, UnitOfTime u) {
-            return u.toMinutes(d);
-        }
-
-        public String getSymbol() {
-            return "min";
-        };
-
-        int excessNanos(long d, long m) {
-            return 0;
-        }
-    },
-    HOURS {
-        public long toNanos(long d) {
-            return x(d, C5 / C0, MAX / (C5 / C0));
-        }
-
-        public long toMicros(long d) {
-            return x(d, C5 / C1, MAX / (C5 / C1));
-        }
-
-        public long toMillis(long d) {
-            return x(d, C5 / C2, MAX / (C5 / C2));
-        }
-
-        public long toSeconds(long d) {
-            return x(d, C5 / C3, MAX / (C5 / C3));
-        }
-
-        public long toMinutes(long d) {
-            return x(d, C5 / C4, MAX / (C5 / C4));
-        }
-
-        public long toHours(long d) {
-            return d;
-        }
-
-        public long toDays(long d) {
-            return d / (C6 / C5);
-        }
-
-        public long convert(long d, UnitOfTime u) {
-            return u.toHours(d);
-        }
-
-        public String getSymbol() {
-            return "h";
-        };
-
-        int excessNanos(long d, long m) {
-            return 0;
-        }
-    },
     DAYS {
-        public long toNanos(long d) {
-            return x(d, C6 / C0, MAX / (C6 / C0));
+        public long convert(long d, UnitOfTime u) {
+            return u.toDays(d);
+        }
+
+        public String getSymbol() {
+            return "d";
+        }
+
+        public long toDays(long d) {
+            return d;
+        }
+
+        public long toHours(long d) {
+            return x(d, C6 / C5, MAX / (C6 / C5));
         }
 
         public long toMicros(long d) {
@@ -274,28 +40,262 @@ public enum UnitOfTime {
             return x(d, C6 / C2, MAX / (C6 / C2));
         }
 
-        public long toSeconds(long d) {
-            return x(d, C6 / C3, MAX / (C6 / C3));
-        }
-
         public long toMinutes(long d) {
             return x(d, C6 / C4, MAX / (C6 / C4));
         }
 
-        public long toHours(long d) {
-            return x(d, C6 / C5, MAX / (C6 / C5));
+        public long toNanos(long d) {
+            return x(d, C6 / C0, MAX / (C6 / C0));
         }
 
-        public long toDays(long d) {
-            return d;
-        }
+        public long toSeconds(long d) {
+            return x(d, C6 / C3, MAX / (C6 / C3));
+        };
 
+        int excessNanos(long d, long m) {
+            return 0;
+        }
+    },
+    HOURS {
         public long convert(long d, UnitOfTime u) {
-            return u.toDays(d);
+            return u.toHours(d);
         }
 
         public String getSymbol() {
-            return "d";
+            return "h";
+        }
+
+        public long toDays(long d) {
+            return d / (C6 / C5);
+        }
+
+        public long toHours(long d) {
+            return d;
+        }
+
+        public long toMicros(long d) {
+            return x(d, C5 / C1, MAX / (C5 / C1));
+        }
+
+        public long toMillis(long d) {
+            return x(d, C5 / C2, MAX / (C5 / C2));
+        }
+
+        public long toMinutes(long d) {
+            return x(d, C5 / C4, MAX / (C5 / C4));
+        }
+
+        public long toNanos(long d) {
+            return x(d, C5 / C0, MAX / (C5 / C0));
+        }
+
+        public long toSeconds(long d) {
+            return x(d, C5 / C3, MAX / (C5 / C3));
+        };
+
+        int excessNanos(long d, long m) {
+            return 0;
+        }
+    },
+    MICROSECONDS {
+        public long convert(long d, UnitOfTime u) {
+            return u.toMicros(d);
+        }
+
+        public String getSymbol() {
+            return "µs";
+        }
+
+        public long toDays(long d) {
+            return d / (C6 / C1);
+        }
+
+        public long toHours(long d) {
+            return d / (C5 / C1);
+        }
+
+        public long toMicros(long d) {
+            return d;
+        }
+
+        public long toMillis(long d) {
+            return d / (C2 / C1);
+        }
+
+        public long toMinutes(long d) {
+            return d / (C4 / C1);
+        }
+
+        public long toNanos(long d) {
+            return x(d, C1 / C0, MAX / (C1 / C0));
+        }
+
+        public long toSeconds(long d) {
+            return d / (C3 / C1);
+        };
+
+        int excessNanos(long d, long m) {
+            return (int) ((d * C1) - (m * C2));
+        }
+    },
+    MILLISECONDS {
+        public long convert(long d, UnitOfTime u) {
+            return u.toMillis(d);
+        }
+
+        public String getSymbol() {
+            return "ms";
+        }
+
+        public long toDays(long d) {
+            return d / (C6 / C2);
+        }
+
+        public long toHours(long d) {
+            return d / (C5 / C2);
+        }
+
+        public long toMicros(long d) {
+            return x(d, C2 / C1, MAX / (C2 / C1));
+        }
+
+        public long toMillis(long d) {
+            return d;
+        }
+
+        public long toMinutes(long d) {
+            return d / (C4 / C2);
+        }
+
+        public long toNanos(long d) {
+            return x(d, C2 / C0, MAX / (C2 / C0));
+        }
+
+        public long toSeconds(long d) {
+            return d / (C3 / C2);
+        };
+
+        int excessNanos(long d, long m) {
+            return 0;
+        }
+    },
+    MINUTES {
+        public long convert(long d, UnitOfTime u) {
+            return u.toMinutes(d);
+        }
+
+        public String getSymbol() {
+            return "min";
+        }
+
+        public long toDays(long d) {
+            return d / (C6 / C4);
+        }
+
+        public long toHours(long d) {
+            return d / (C5 / C4);
+        }
+
+        public long toMicros(long d) {
+            return x(d, C4 / C1, MAX / (C4 / C1));
+        }
+
+        public long toMillis(long d) {
+            return x(d, C4 / C2, MAX / (C4 / C2));
+        }
+
+        public long toMinutes(long d) {
+            return d;
+        }
+
+        public long toNanos(long d) {
+            return x(d, C4 / C0, MAX / (C4 / C0));
+        }
+
+        public long toSeconds(long d) {
+            return x(d, C4 / C3, MAX / (C4 / C3));
+        };
+
+        int excessNanos(long d, long m) {
+            return 0;
+        }
+    },
+    NANOSECONDS {
+        public long convert(long d, UnitOfTime u) {
+            return u.toNanos(d);
+        }
+
+        public String getSymbol() {
+            return "ns";
+        }
+
+        public long toDays(long d) {
+            return d / (C6 / C0);
+        }
+
+        public long toHours(long d) {
+            return d / (C5 / C0);
+        }
+
+        public long toMicros(long d) {
+            return d / (C1 / C0);
+        }
+
+        public long toMillis(long d) {
+            return d / (C2 / C0);
+        }
+
+        public long toMinutes(long d) {
+            return d / (C4 / C0);
+        }
+
+        public long toNanos(long d) {
+            return d;
+        }
+
+        public long toSeconds(long d) {
+            return d / (C3 / C0);
+        };
+
+        int excessNanos(long d, long m) {
+            return (int) (d - (m * C2));
+        }
+    },
+    SECONDS {
+        public long convert(long d, UnitOfTime u) {
+            return u.toSeconds(d);
+        }
+
+        public String getSymbol() {
+            return "s";
+        }
+
+        public long toDays(long d) {
+            return d / (C6 / C3);
+        }
+
+        public long toHours(long d) {
+            return d / (C5 / C3);
+        }
+
+        public long toMicros(long d) {
+            return x(d, C3 / C1, MAX / (C3 / C1));
+        }
+
+        public long toMillis(long d) {
+            return x(d, C3 / C2, MAX / (C3 / C2));
+        }
+
+        public long toMinutes(long d) {
+            return d / (C4 / C3);
+        }
+
+        public long toNanos(long d) {
+            return x(d, C3 / C0, MAX / (C3 / C0));
+        }
+
+        public long toSeconds(long d) {
+            return d;
         };
 
         int excessNanos(long d, long m) {
@@ -321,37 +321,6 @@ public enum UnitOfTime {
 
     final static long MAX = Long.MAX_VALUE;
 
-    public static UnitOfTime fromTimeUnit(TimeUnit unit) {
-        return UnitOfTime.values()[unit.ordinal()];
-    }
-    public static UnitOfTime fromSiSymbol(String symbol) {
-        for (UnitOfTime b : UnitOfTime.values()) {
-            if (b.getSymbol().equals(symbol)) {
-                return b;
-            }
-        }
-        throw new IllegalArgumentException("not a valid timeunit, was '" + symbol + "'");
-    }
-
-    /**
-     * Scale d by m, checking for overflow. This has a short name to make above code more
-     * readable.
-     */
-    static long x(long d, long m, long over) {
-        if (d > over)
-            return Long.MAX_VALUE;
-        if (d < -over)
-            return Long.MIN_VALUE;
-        return d * m;
-    }
-
-    /**
-     * Returns the SI symbol of the time unit.
-     * 
-     * @return the SI symbol of the time unit
-     */
-    public abstract String getSymbol();
-
     /**
      * Convert the given time duration in the given unit to this unit. Conversions from
      * finer to coarser granularities truncate, so lose precision. For example converting
@@ -374,100 +343,53 @@ public enum UnitOfTime {
     public abstract long convert(long sourceDuration, UnitOfTime sourceUnit);
 
     /**
-     * Equivalent to <tt>NANOSECONDS.convert(duration, this)</tt>.
+     * Returns the SI symbol of the time unit.
      * 
-     * @param duration
-     *            the duration
-     * @return the converted duration, or <tt>Long.MIN_VALUE</tt> if conversion would
-     *         negatively overflow, or <tt>Long.MAX_VALUE</tt> if it would positively
-     *         overflow.
-     * @see #convert
+     * @return the SI symbol of the time unit
      */
-    public abstract long toNanos(long duration);
+    public abstract String getSymbol();
 
     /**
-     * Equivalent to <tt>MICROSECONDS.convert(duration, this)</tt>.
+     * Performs a <tt>Thread.sleep</tt> using this unit. This is a convenience method
+     * that converts time arguments into the form required by the <tt>Thread.sleep</tt>
+     * method.
      * 
-     * @param duration
-     *            the duration
-     * @return the converted duration, or <tt>Long.MIN_VALUE</tt> if conversion would
-     *         negatively overflow, or <tt>Long.MAX_VALUE</tt> if it would positively
-     *         overflow.
-     * @see #convert
+     * @param timeout
+     *            the minimum time to sleep. If less than or equal to zero, do not sleep
+     *            at all.
+     * @throws InterruptedException
+     *             if interrupted while sleeping.
+     * @see Thread#sleep(long)
      */
-    public abstract long toMicros(long duration);
+    public void sleep(long timeout) throws InterruptedException {
+        if (timeout > 0) {
+            long ms = toMillis(timeout);
+            int ns = excessNanos(timeout, ms);
+            Thread.sleep(ms, ns);
+        }
+    }
 
     /**
-     * Equivalent to <tt>MILLISECONDS.convert(duration, this)</tt>.
+     * Performs a timed <tt>Thread.join</tt> using this time unit. This is a convenience
+     * method that converts time arguments into the form required by the
+     * <tt>Thread.join</tt> method.
      * 
-     * @param duration
-     *            the duration
-     * @return the converted duration, or <tt>Long.MIN_VALUE</tt> if conversion would
-     *         negatively overflow, or <tt>Long.MAX_VALUE</tt> if it would positively
-     *         overflow.
-     * @see #convert
+     * @param thread
+     *            the thread to wait for
+     * @param timeout
+     *            the maximum time to wait. If less than or equal to zero, do not wait at
+     *            all.
+     * @throws InterruptedException
+     *             if interrupted while waiting.
+     * @see Thread#join(long, int)
      */
-    public abstract long toMillis(long duration);
-
-    /**
-     * Equivalent to <tt>SECONDS.convert(duration, this)</tt>.
-     * 
-     * @param duration
-     *            the duration
-     * @return the converted duration, or <tt>Long.MIN_VALUE</tt> if conversion would
-     *         negatively overflow, or <tt>Long.MAX_VALUE</tt> if it would positively
-     *         overflow.
-     * @see #convert
-     */
-    public abstract long toSeconds(long duration);
-
-    /**
-     * Equivalent to <tt>MINUTES.convert(duration, this)</tt>.
-     * 
-     * @param duration
-     *            the duration
-     * @return the converted duration, or <tt>Long.MIN_VALUE</tt> if conversion would
-     *         negatively overflow, or <tt>Long.MAX_VALUE</tt> if it would positively
-     *         overflow.
-     * @see #convert
-     * @since 1.6
-     */
-    public abstract long toMinutes(long duration);
-
-    /**
-     * Equivalent to <tt>HOURS.convert(duration, this)</tt>.
-     * 
-     * @param duration
-     *            the duration
-     * @return the converted duration, or <tt>Long.MIN_VALUE</tt> if conversion would
-     *         negatively overflow, or <tt>Long.MAX_VALUE</tt> if it would positively
-     *         overflow.
-     * @see #convert
-     * @since 1.6
-     */
-    public abstract long toHours(long duration);
-
-    /**
-     * Equivalent to <tt>DAYS.convert(duration, this)</tt>.
-     * 
-     * @param duration
-     *            the duration
-     * @return the converted duration
-     * @see #convert
-     * @since 1.6
-     */
-    public abstract long toDays(long duration);
-
-    /**
-     * Utility to compute the excess-nanosecond argument to wait, sleep, join.
-     * 
-     * @param d
-     *            the duration
-     * @param m
-     *            the number of milliseconds
-     * @return the number of nanoseconds
-     */
-    abstract int excessNanos(long d, long m);
+    public void timedJoin(Thread thread, long timeout) throws InterruptedException {
+        if (timeout > 0) {
+            long ms = toMillis(timeout);
+            int ns = excessNanos(timeout, ms);
+            thread.join(ms, ns);
+        }
+    }
 
     /**
      * Performs a timed <tt>Object.wait</tt> using this time unit. This is a convenience
@@ -504,45 +426,124 @@ public enum UnitOfTime {
     }
 
     /**
-     * Performs a timed <tt>Thread.join</tt> using this time unit. This is a convenience
-     * method that converts time arguments into the form required by the
-     * <tt>Thread.join</tt> method.
+     * Equivalent to <tt>DAYS.convert(duration, this)</tt>.
      * 
-     * @param thread
-     *            the thread to wait for
-     * @param timeout
-     *            the maximum time to wait. If less than or equal to zero, do not wait at
-     *            all.
-     * @throws InterruptedException
-     *             if interrupted while waiting.
-     * @see Thread#join(long, int)
+     * @param duration
+     *            the duration
+     * @return the converted duration
+     * @see #convert
+     * @since 1.6
      */
-    public void timedJoin(Thread thread, long timeout) throws InterruptedException {
-        if (timeout > 0) {
-            long ms = toMillis(timeout);
-            int ns = excessNanos(timeout, ms);
-            thread.join(ms, ns);
+    public abstract long toDays(long duration);
+
+    /**
+     * Equivalent to <tt>HOURS.convert(duration, this)</tt>.
+     * 
+     * @param duration
+     *            the duration
+     * @return the converted duration, or <tt>Long.MIN_VALUE</tt> if conversion would
+     *         negatively overflow, or <tt>Long.MAX_VALUE</tt> if it would positively
+     *         overflow.
+     * @see #convert
+     * @since 1.6
+     */
+    public abstract long toHours(long duration);
+
+    /**
+     * Equivalent to <tt>MICROSECONDS.convert(duration, this)</tt>.
+     * 
+     * @param duration
+     *            the duration
+     * @return the converted duration, or <tt>Long.MIN_VALUE</tt> if conversion would
+     *         negatively overflow, or <tt>Long.MAX_VALUE</tt> if it would positively
+     *         overflow.
+     * @see #convert
+     */
+    public abstract long toMicros(long duration);
+
+    /**
+     * Equivalent to <tt>MILLISECONDS.convert(duration, this)</tt>.
+     * 
+     * @param duration
+     *            the duration
+     * @return the converted duration, or <tt>Long.MIN_VALUE</tt> if conversion would
+     *         negatively overflow, or <tt>Long.MAX_VALUE</tt> if it would positively
+     *         overflow.
+     * @see #convert
+     */
+    public abstract long toMillis(long duration);
+
+    /**
+     * Equivalent to <tt>MINUTES.convert(duration, this)</tt>.
+     * 
+     * @param duration
+     *            the duration
+     * @return the converted duration, or <tt>Long.MIN_VALUE</tt> if conversion would
+     *         negatively overflow, or <tt>Long.MAX_VALUE</tt> if it would positively
+     *         overflow.
+     * @see #convert
+     * @since 1.6
+     */
+    public abstract long toMinutes(long duration);
+
+    /**
+     * Equivalent to <tt>NANOSECONDS.convert(duration, this)</tt>.
+     * 
+     * @param duration
+     *            the duration
+     * @return the converted duration, or <tt>Long.MIN_VALUE</tt> if conversion would
+     *         negatively overflow, or <tt>Long.MAX_VALUE</tt> if it would positively
+     *         overflow.
+     * @see #convert
+     */
+    public abstract long toNanos(long duration);
+
+    /**
+     * Equivalent to <tt>SECONDS.convert(duration, this)</tt>.
+     * 
+     * @param duration
+     *            the duration
+     * @return the converted duration, or <tt>Long.MIN_VALUE</tt> if conversion would
+     *         negatively overflow, or <tt>Long.MAX_VALUE</tt> if it would positively
+     *         overflow.
+     * @see #convert
+     */
+    public abstract long toSeconds(long duration);
+
+    /**
+     * Utility to compute the excess-nanosecond argument to wait, sleep, join.
+     * 
+     * @param d
+     *            the duration
+     * @param m
+     *            the number of milliseconds
+     * @return the number of nanoseconds
+     */
+    abstract int excessNanos(long d, long m);
+
+    public static UnitOfTime fromSiSymbol(String symbol) {
+        for (UnitOfTime b : UnitOfTime.values()) {
+            if (b.getSymbol().equals(symbol)) {
+                return b;
+            }
         }
+        throw new IllegalArgumentException("not a valid timeunit, was '" + symbol + "'");
+    }
+
+    public static UnitOfTime fromTimeUnit(TimeUnit unit) {
+        return UnitOfTime.values()[unit.ordinal()];
     }
 
     /**
-     * Performs a <tt>Thread.sleep</tt> using this unit. This is a convenience method
-     * that converts time arguments into the form required by the <tt>Thread.sleep</tt>
-     * method.
-     * 
-     * @param timeout
-     *            the minimum time to sleep. If less than or equal to zero, do not sleep
-     *            at all.
-     * @throws InterruptedException
-     *             if interrupted while sleeping.
-     * @see Thread#sleep(long)
+     * Scale d by m, checking for overflow. This has a short name to make above code more
+     * readable.
      */
-    public void sleep(long timeout) throws InterruptedException {
-        if (timeout > 0) {
-            long ms = toMillis(timeout);
-            int ns = excessNanos(timeout, ms);
-            Thread.sleep(ms, ns);
-        }
+    static long x(long d, long m, long over) {
+        if (d > over)
+            return Long.MAX_VALUE;
+        if (d < -over)
+            return Long.MIN_VALUE;
+        return d * m;
     }
 
 }

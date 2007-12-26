@@ -192,6 +192,70 @@ public final class LongPredicates {
         return new OrLongPredicate(left, right);
     }
 
+    /**
+     * A LongPredicate that performs a logical exclusive AND on two supplied predicates.
+     */
+    final static class AndLongPredicate implements LongPredicate, Serializable {
+
+        /** Default <code>serialVersionUID</code>. */
+        private static final long serialVersionUID = 6981902451700512606L;
+
+        /** The left side operand. */
+        private final LongPredicate left;
+
+        /** The right side operand. */
+        private final LongPredicate right;
+
+        /**
+         * Creates a new <code>AndLongPredicate</code>.
+         *
+         * @param left
+         *            the left side LongPredicate
+         * @param right
+         *            the right side LongPredicate
+         * @throws NullPointerException
+         *             if any of the supplied predicates are <code>null</code>
+         */
+        AndLongPredicate(LongPredicate left, LongPredicate right) {
+            if (left == null) {
+                throw new NullPointerException("left is null");
+            } else if (right == null) {
+                throw new NullPointerException("right is null");
+            }
+            this.left = left;
+            this.right = right;
+        }
+
+        /** {@inheritDoc} */
+        public boolean evaluate(long element) {
+            return left.evaluate(element) && right.evaluate(element);
+        }
+
+        /**
+         * Returns the left side LongPredicate.
+         *
+         * @return the left side LongPredicate.
+         */
+        public LongPredicate getLeft() {
+            return left;
+        }
+
+        /**
+         * Returns the right side LongPredicate.
+         *
+         * @return the right side LongPredicate.
+         */
+        public LongPredicate getRight() {
+            return right;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString() {
+            return "(" + left + ") && (" + right + ")";
+        }
+    }
+
     static class EqualsToLongPredicate implements LongPredicate, Serializable {
 
         /** serialVersionUID. */
@@ -222,6 +286,37 @@ public final class LongPredicates {
          */
         public long getEqualsTo() {
             return equalsTo;
+        }
+    }
+
+    /**
+     * A LongPredicate that always evaluates to <tt>false</tt>. Use {@link #FALSE} to
+     * get an instance of this LongPredicate.
+     *
+     * @see TrueLongPredicate
+     */
+    final static class FalseLongPredicate implements LongPredicate, Serializable {
+
+        /** Default <code>serialVersionUID</code>. */
+        private static final long serialVersionUID = -3048464662394104180L;
+
+        /** Creates a new FalseLongPredicate. */
+        FalseLongPredicate() {}
+
+        /** {@inheritDoc} */
+        public boolean evaluate(long value) {
+            return false;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString() {
+            return Boolean.FALSE.toString();
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return FALSE;
         }
     }
 
@@ -311,156 +406,6 @@ public final class LongPredicates {
     }
 
     /**
-     * A LongPredicate that evaluates to true iff the Predicate used for constructing
-     * evaluates to <code>false</code>.
-     */
-    final static class NotLongPredicate implements LongPredicate, Serializable {
-
-        /** Default <code>serialVersionUID</code>. */
-        private static final long serialVersionUID = -5117781730584740429L;
-
-        /** The LongPredicate to negate. */
-        private final LongPredicate predicate;
-
-        /**
-         * Creates a new NotLongPredicate.
-         *
-         * @param predicate
-         *            the predicate to negate.
-         * @throws NullPointerException
-         *             if the specified predicate is <code>null</code>
-         */
-        NotLongPredicate(LongPredicate predicate) {
-            if (predicate == null) {
-                throw new NullPointerException("predicate is null");
-            }
-            this.predicate = predicate;
-        }
-
-        /**
-         * Returns a boolean representing the logical NOT value of the supplied
-         * LongPredicate.
-         *
-         * @param element
-         *            the element to test
-         * @return the logical NOT of the supplied LongPredicate
-         */
-        public boolean evaluate(long element) {
-            return !predicate.evaluate(element);
-        }
-
-        /**
-         * Returns the predicate that is being negated.
-         *
-         * @return the predicate that is being negated.
-         */
-        public LongPredicate getPredicate() {
-            return predicate;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String toString() {
-            return "!(" + predicate + ")";
-        }
-    }
-
-    /**
-     * A LongPredicate that performs a logical exclusive AND on two supplied predicates.
-     */
-    final static class AndLongPredicate implements LongPredicate, Serializable {
-
-        /** Default <code>serialVersionUID</code>. */
-        private static final long serialVersionUID = 6981902451700512606L;
-
-        /** The left side operand. */
-        private final LongPredicate left;
-
-        /** The right side operand. */
-        private final LongPredicate right;
-
-        /**
-         * Creates a new <code>AndLongPredicate</code>.
-         *
-         * @param left
-         *            the left side LongPredicate
-         * @param right
-         *            the right side LongPredicate
-         * @throws NullPointerException
-         *             if any of the supplied predicates are <code>null</code>
-         */
-        AndLongPredicate(LongPredicate left, LongPredicate right) {
-            if (left == null) {
-                throw new NullPointerException("left is null");
-            } else if (right == null) {
-                throw new NullPointerException("right is null");
-            }
-            this.left = left;
-            this.right = right;
-        }
-
-        /** {@inheritDoc} */
-        public boolean evaluate(long element) {
-            return left.evaluate(element) && right.evaluate(element);
-        }
-
-        /**
-         * Returns the left side LongPredicate.
-         *
-         * @return the left side LongPredicate.
-         */
-        public LongPredicate getLeft() {
-            return left;
-        }
-
-        /**
-         * Returns the right side LongPredicate.
-         *
-         * @return the right side LongPredicate.
-         */
-        public LongPredicate getRight() {
-            return right;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String toString() {
-            return "(" + left + ") && (" + right + ")";
-        }
-    }
-
-    /**
-     * A LongPredicate that always evaluates to <tt>false</tt>. Use {@link #FALSE} to
-     * get an instance of this LongPredicate.
-     *
-     * @see TrueLongPredicate
-     */
-    final static class FalseLongPredicate implements LongPredicate, Serializable {
-
-        /** Default <code>serialVersionUID</code>. */
-        private static final long serialVersionUID = -3048464662394104180L;
-
-        /** Creates a new FalseLongPredicate. */
-        FalseLongPredicate() {}
-
-        /** {@inheritDoc} */
-        public boolean evaluate(long value) {
-            return false;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String toString() {
-            return Boolean.FALSE.toString();
-        }
-
-        /** @return Preserves singleton property */
-        private Object readResolve() {
-            return FALSE;
-        }
-    }
-
-    /**
      * A Predicate that first applies the specified mapper to the argument before
      * evaluating the specified LongPredicate.
      */
@@ -522,6 +467,61 @@ public final class LongPredicates {
         @Override
         public String toString() {
             return "convert " + mapper;
+        }
+    }
+
+    /**
+     * A LongPredicate that evaluates to true iff the Predicate used for constructing
+     * evaluates to <code>false</code>.
+     */
+    final static class NotLongPredicate implements LongPredicate, Serializable {
+
+        /** Default <code>serialVersionUID</code>. */
+        private static final long serialVersionUID = -5117781730584740429L;
+
+        /** The LongPredicate to negate. */
+        private final LongPredicate predicate;
+
+        /**
+         * Creates a new NotLongPredicate.
+         *
+         * @param predicate
+         *            the predicate to negate.
+         * @throws NullPointerException
+         *             if the specified predicate is <code>null</code>
+         */
+        NotLongPredicate(LongPredicate predicate) {
+            if (predicate == null) {
+                throw new NullPointerException("predicate is null");
+            }
+            this.predicate = predicate;
+        }
+
+        /**
+         * Returns a boolean representing the logical NOT value of the supplied
+         * LongPredicate.
+         *
+         * @param element
+         *            the element to test
+         * @return the logical NOT of the supplied LongPredicate
+         */
+        public boolean evaluate(long element) {
+            return !predicate.evaluate(element);
+        }
+
+        /**
+         * Returns the predicate that is being negated.
+         *
+         * @return the predicate that is being negated.
+         */
+        public LongPredicate getPredicate() {
+            return predicate;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString() {
+            return "!(" + predicate + ")";
         }
     }
 

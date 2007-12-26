@@ -25,6 +25,15 @@ public class IndexedHeap<T> implements Serializable {
     /** serialVersionUID. */
     private static final long serialVersionUID = 4996450401667126273L;
 
+    /** The objects attached to each element. */
+    private T[] data;
+
+    /** The actual number of elements contained in the heap. */
+    private int numberOfElements;
+
+    /** The priority of each element. */
+    private long[] priority;
+
     /**
      * 
      */
@@ -32,20 +41,30 @@ public class IndexedHeap<T> implements Serializable {
 
     private int[] refBack;
 
-    /** The priority of each element. */
-    private long[] priority;
-
-    /** The objects attached to each element. */
-    private T[] data;
-
-    /** The actual number of elements contained in the heap. */
-    private int numberOfElements;
-
     /**
      * Constructors a new heap with an initial size of 100.
      */
     public IndexedHeap() {
         this(100);
+    }
+
+    /**
+     * Constructs a new Heap by copying an existing.
+     * 
+     * @param h
+     *            the heap to copy
+     */
+    @SuppressWarnings("unchecked")
+    public IndexedHeap(IndexedHeap h) {
+        numberOfElements = h.numberOfElements;
+        priority = new long[h.priority.length];
+        System.arraycopy(h.priority, 0, priority, 0, h.priority.length);
+        ref = new int[h.ref.length];
+        System.arraycopy(h.ref, 0, ref, 0, h.ref.length);
+        refBack = new int[h.refBack.length];
+        System.arraycopy(h.refBack, 0, refBack, 0, h.refBack.length);
+        data = (T[]) new Object[h.data.length];
+        System.arraycopy(h.data, 0, data, 0, h.data.length);
     }
 
     /**
@@ -67,25 +86,6 @@ public class IndexedHeap<T> implements Serializable {
             ref[i] = i;
             refBack[i] = i;
         }
-    }
-
-    /**
-     * Constructs a new Heap by copying an existing.
-     * 
-     * @param h
-     *            the heap to copy
-     */
-    @SuppressWarnings("unchecked")
-    public IndexedHeap(IndexedHeap h) {
-        numberOfElements = h.numberOfElements;
-        priority = new long[h.priority.length];
-        System.arraycopy(h.priority, 0, priority, 0, h.priority.length);
-        ref = new int[h.ref.length];
-        System.arraycopy(h.ref, 0, ref, 0, h.ref.length);
-        refBack = new int[h.refBack.length];
-        System.arraycopy(h.refBack, 0, refBack, 0, h.refBack.length);
-        data = (T[]) new Object[h.data.length];
-        System.arraycopy(h.data, 0, data, 0, h.data.length);
     }
 
     /**
@@ -114,19 +114,54 @@ public class IndexedHeap<T> implements Serializable {
         return innerAdd(element, prio);
     }
 
+    public long changePriorityDelta(int index, long delta) {
+        checkIndex(index);
+        int i = ref[index];
+        return heapChangeKey(i, priority[i] + delta);
+    }
+
+    public void clear() {
+        while (heapExtractMin() != null) {
+
+        }
+    }
+
+    public long getPriority(int index) {
+        return priority[ref[index]];
+    }
+
     /**
-     * Replaces an element in the heap.
+     * Returns the number of elements in this collection.
      * 
-     * @param index
-     *            the index of the element
-     * @param newElement
-     *            the element to replace the old element with
-     * @return the previous element
+     * @return the number of elements in this collection
      */
-    public T replace(int index, T newElement) {
-        T old = data[ref[index]];
-        data[ref[index]] = newElement;
-        return old;
+    public boolean isEmpty() {
+        return size() == 0;
+    }
+
+    public T peek() {
+        if (numberOfElements > 0) {
+            return data[1];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns an ordered list of elements contained in the heap. The first element in the
+     * list is the top of the heap.
+     * 
+     * @return an ordered list of elements contained in the heap
+     */
+    public List<T> peekAll() {
+        List<T> col = new ArrayList<T>(numberOfElements);
+        IndexedHeap<T> h = new IndexedHeap<T>(this);
+        T t = h.poll();
+        while (t != null) {
+            col.add(t);
+            t = h.poll();
+        }
+        return col;
     }
 
     /**
@@ -139,60 +174,24 @@ public class IndexedHeap<T> implements Serializable {
         return heapExtractMin();
     }
 
-    /**
-     * Returns the number of elements in this collection.
-     * 
-     * @return the number of elements in this collection
-     */
-    public int size() {
-        return numberOfElements;
-    }
+    // /CLOVER:OFF
+    public void print() {
+        System.out.println("--Size= " + numberOfElements + "----------");
+        System.out.println("Idx Ref Back");
+        for (int i = 0; i < data.length; i++) {
+            if (i <= numberOfElements) {
+                System.out.println(" " + i + "   " + ref[i] + "   " + refBack[i] + " Data: "
+                        + data[i] + " Prio:" + priority[i]);
+            } else {
+                System.out.println(" " + i + "*  " + ref[i] + "   " + refBack[i] + " Data: "
+                        + data[i] + " Prio:" + priority[i]);
 
-    /**
-     * Returns the number of elements in this collection.
-     * 
-     * @return the number of elements in this collection
-     */
-    public boolean isEmpty() {
-        return size() == 0;
-    }
-
-    @SuppressWarnings("unchecked")
-    private void setSize(int newlen) {
-        Object[] newData = new Object[newlen];
-        long[] newA = new long[newlen];
-        int[] newReferences = new int[newlen];
-        int[] newReferencesBack = new int[newlen];
-        System.arraycopy(data, 0, newData, 0, data.length);
-        System.arraycopy(priority, 0, newA, 0, priority.length);
-        System.arraycopy(ref, 0, newReferences, 0, ref.length);
-        System.arraycopy(refBack, 0, newReferencesBack, 0, refBack.length);
-        for (int i = priority.length; i < newA.length; i++) {
-            newReferences[i] = i;
-            newReferencesBack[i] = i;
+            }
         }
-        data = (T[]) newData;
-        priority = newA;
-        ref = newReferences;
-        refBack = newReferencesBack;
-        // print();
+        System.out.println("------------");
     }
 
-    private void grow(int requestedSize) {
-        int newlen = priority.length;
-        if (requestedSize < newlen) // don't need to grow
-            return;
-        if (requestedSize == Integer.MAX_VALUE)
-            throw new OutOfMemoryError();
-        while (newlen <= requestedSize) {
-            if (newlen >= Integer.MAX_VALUE / 2) // avoid overflow
-                newlen = Integer.MAX_VALUE;
-            else
-                newlen <<= 1; // Double up baby
-        }
-
-        setSize(newlen);
-    }
+    // /CLOVER:ON
 
     public T remove(int index) {
         checkIndex(index);
@@ -216,22 +215,102 @@ public class IndexedHeap<T> implements Serializable {
         }
     }
 
-    public long getPriority(int index) {
-        return priority[ref[index]];
+    /**
+     * Replaces an element in the heap.
+     * 
+     * @param index
+     *            the index of the element
+     * @param newElement
+     *            the element to replace the old element with
+     * @return the previous element
+     */
+    public T replace(int index, T newElement) {
+        T old = data[ref[index]];
+        data[ref[index]] = newElement;
+        return old;
     }
 
-    public T peek() {
-        if (numberOfElements > 0) {
-            return data[1];
+    /**
+     * Sets the priority of a single element and fix the heap.
+     * 
+     * @param index
+     *            the index of the element
+     * @param newPriority
+     *            the new priority of the element
+     * @return the old priority of the elements.
+     */
+    public long setPriority(int index, long newPriority) {
+        checkIndex(index);
+        int i = ref[index];
+        return heapChangeKey(i, newPriority);
+    }
+
+    /**
+     * Returns the number of elements in this collection.
+     * 
+     * @return the number of elements in this collection
+     */
+    public int size() {
+        return numberOfElements;
+    }
+
+    /** {@inheritDoc} */
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 1; i <= numberOfElements; i++) {
+            sb.append(priority[i]);
+            sb.append(",");
+        }
+        sb.append("\r");
+        for (int i = 1; i <= numberOfElements; i++) {
+            sb.append(ref[i] + "(" + priority[ref[i]] + "),");
+        }
+
+        return sb.toString();
+    }
+
+    private void checkIndex(int index) {
+        if (index >= ref.length)
+            throw new IllegalArgumentException("index does not exist [index=" + index + "]");
+    }
+
+    private void fixUp(int i) {
+        while (i > 1) {
+            int j = i >>> 1;
+            if (priority[j] <= priority[i])
+                break;
+            swap(j, i);
+            i = j;
+        }
+    }
+
+    private void grow(int requestedSize) {
+        int newlen = priority.length;
+        if (requestedSize < newlen) // don't need to grow
+            return;
+        if (requestedSize == Integer.MAX_VALUE)
+            throw new OutOfMemoryError();
+        while (newlen <= requestedSize) {
+            if (newlen >= Integer.MAX_VALUE / 2) // avoid overflow
+                newlen = Integer.MAX_VALUE;
+            else
+                newlen <<= 1; // Double up baby
+        }
+
+        setSize(newlen);
+    }
+
+    private long heapChangeKey(int i, long key) {
+        long oldKey = priority[i];
+        if (key == oldKey)
+            return oldKey;
+        priority[i] = key;
+        if (key < oldKey) {
+            fixUp(i);
         } else {
-            return null;
+            minHeapify(i);
         }
-    }
-
-    public void clear() {
-        while (heapExtractMin() != null) {
-
-        }
+        return oldKey;
     }
 
     private T heapExtractMin() {
@@ -259,50 +338,6 @@ public class IndexedHeap<T> implements Serializable {
         return index;
     }
 
-    public long changePriorityDelta(int index, long delta) {
-        checkIndex(index);
-        int i = ref[index];
-        return heapChangeKey(i, priority[i] + delta);
-    }
-
-    /**
-     * Sets the priority of a single element and fix the heap.
-     * 
-     * @param index
-     *            the index of the element
-     * @param newPriority
-     *            the new priority of the element
-     * @return the old priority of the elements.
-     */
-    public long setPriority(int index, long newPriority) {
-        checkIndex(index);
-        int i = ref[index];
-        return heapChangeKey(i, newPriority);
-    }
-
-    private long heapChangeKey(int i, long key) {
-        long oldKey = priority[i];
-        if (key == oldKey)
-            return oldKey;
-        priority[i] = key;
-        if (key < oldKey) {
-            fixUp(i);
-        } else {
-            minHeapify(i);
-        }
-        return oldKey;
-    }
-
-    private void fixUp(int i) {
-        while (i > 1) {
-            int j = i >>> 1;
-            if (priority[j] <= priority[i])
-                break;
-            swap(j, i);
-            i = j;
-        }
-    }
-
     private void minHeapify(int i) {
         // no recursive version of heapify
         int j;
@@ -314,6 +349,27 @@ public class IndexedHeap<T> implements Serializable {
             swap(i, j);
             i = j;
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void setSize(int newlen) {
+        Object[] newData = new Object[newlen];
+        long[] newA = new long[newlen];
+        int[] newReferences = new int[newlen];
+        int[] newReferencesBack = new int[newlen];
+        System.arraycopy(data, 0, newData, 0, data.length);
+        System.arraycopy(priority, 0, newA, 0, priority.length);
+        System.arraycopy(ref, 0, newReferences, 0, ref.length);
+        System.arraycopy(refBack, 0, newReferencesBack, 0, refBack.length);
+        for (int i = priority.length; i < newA.length; i++) {
+            newReferences[i] = i;
+            newReferencesBack[i] = i;
+        }
+        data = (T[]) newData;
+        priority = newA;
+        ref = newReferences;
+        refBack = newReferencesBack;
+        // print();
     }
 
     /**
@@ -341,59 +397,4 @@ public class IndexedHeap<T> implements Serializable {
         data[i] = data[j];
         data[j] = t;
     }
-
-    /**
-     * Returns an ordered list of elements contained in the heap. The first element in the
-     * list is the top of the heap.
-     * 
-     * @return an ordered list of elements contained in the heap
-     */
-    public List<T> peekAll() {
-        List<T> col = new ArrayList<T>(numberOfElements);
-        IndexedHeap<T> h = new IndexedHeap<T>(this);
-        T t = h.poll();
-        while (t != null) {
-            col.add(t);
-            t = h.poll();
-        }
-        return col;
-    }
-
-    private void checkIndex(int index) {
-        if (index >= ref.length)
-            throw new IllegalArgumentException("index does not exist [index=" + index + "]");
-    }
-
-    /** {@inheritDoc} */
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 1; i <= numberOfElements; i++) {
-            sb.append(priority[i]);
-            sb.append(",");
-        }
-        sb.append("\r");
-        for (int i = 1; i <= numberOfElements; i++) {
-            sb.append(ref[i] + "(" + priority[ref[i]] + "),");
-        }
-
-        return sb.toString();
-    }
-
-    // /CLOVER:OFF
-    public void print() {
-        System.out.println("--Size= " + numberOfElements + "----------");
-        System.out.println("Idx Ref Back");
-        for (int i = 0; i < data.length; i++) {
-            if (i <= numberOfElements) {
-                System.out.println(" " + i + "   " + ref[i] + "   " + refBack[i] + " Data: "
-                        + data[i] + " Prio:" + priority[i]);
-            } else {
-                System.out.println(" " + i + "*  " + ref[i] + "   " + refBack[i] + " Data: "
-                        + data[i] + " Prio:" + priority[i]);
-
-            }
-        }
-        System.out.println("------------");
-    }
-    // /CLOVER:ON
 }

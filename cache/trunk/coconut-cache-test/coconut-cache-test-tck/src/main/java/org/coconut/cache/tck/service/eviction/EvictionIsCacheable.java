@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.service.eviction;
@@ -118,5 +118,12 @@ public class EvictionIsCacheable extends AbstractCacheTCKTest {
         awaitAllLoads();
         assertSize(2);
         assertEquals(5, loader.getNumberOfLoads());
+    }
+
+    @Test
+    public void loadRemoveOld() {
+        IntegerToStringLoader loader = new IntegerToStringLoader();
+        c = newCache(newConf().eviction().setIsCacheableFilter(ic).c().loading().setLoader(loader));
+        loading().load(M1.getKey());
     }
 }

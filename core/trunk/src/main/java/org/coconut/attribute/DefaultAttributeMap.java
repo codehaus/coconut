@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.attribute;
@@ -7,9 +7,11 @@ import java.util.HashMap;
 
 /**
  * The default implementation of an {@link AttributeMap}.
+ *
+ * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
+ * @version $Id: AttributeMaps.java 472 2007-11-19 09:34:26Z kasper $
  */
-public class DefaultAttributeMap extends HashMap<Attribute, Object> implements
-        AttributeMap {
+public class DefaultAttributeMap extends HashMap<Attribute, Object> implements AttributeMap {
 
     /** serialVersionUID. */
     private static final long serialVersionUID = -5954819329578687686L;
@@ -20,12 +22,18 @@ public class DefaultAttributeMap extends HashMap<Attribute, Object> implements
     /**
      * Creates a new DefaultAttributeMap copying the existing attributes from the
      * specified map.
-     * 
+     *
      * @param copyFrom
      *            the attributemap to copy existing attributes from
      */
     public DefaultAttributeMap(AttributeMap copyFrom) {
         super(copyFrom);
+    }
+
+    /** {@inheritDoc} */
+    public Object get(Attribute key, Object defaultValue) {
+        Object o = get(key);
+        return o == null ? defaultValue : o;
     }
 
     /** {@inheritDoc} */
@@ -64,12 +72,6 @@ public class DefaultAttributeMap extends HashMap<Attribute, Object> implements
     /** {@inheritDoc} */
     public double getDouble(Attribute key) {
         return getDouble(key, 0);
-    }
-
-    /** {@inheritDoc} */
-    public Object get(Attribute key, Object defaultValue) {
-        Object o = get(key);
-        return o == null ? defaultValue : o;
     }
 
     /** {@inheritDoc} */

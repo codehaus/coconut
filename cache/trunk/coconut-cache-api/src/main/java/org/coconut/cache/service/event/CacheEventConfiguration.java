@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.service.event;
@@ -22,7 +22,7 @@ import org.w3c.dom.Element;
  * If the cache is running with a 99% read ratio there will be a substantial overhead of
  * notifying all listeners on each cache access. Instead, it must be manually enabled by
  * calling ...some code...
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -38,6 +38,7 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
     private boolean enabled;
 
     private Predicate<? super Class<?>> enabledEventPredicate;
+
     /**
      * Creates a new CacheEventConfiguration with default settings.
      */
@@ -51,7 +52,7 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
      * otherwise <code>false</code>.
      * <p>
      * The default setting is <tt>false</tt>.
-     * 
+     *
      * @return <tt>true</tt> if the event service is enabled for the cache, otherwise
      *         <tt>false</tt>
      * @see #setEnabled(boolean)
@@ -64,7 +65,7 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
      * Sets whether or not the event service is enabled for the cache. The default value
      * is <tt>false</tt>.
      * <p>
-     * 
+     *
      * @param enabled
      *            whether or not the event service should be enabled for the cache
      * @return this configuration
@@ -75,21 +76,13 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
         return this;
     }
 
-
-
-
-
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     protected void fromXML(Element parent) throws DOMException, ClassNotFoundException {
-        enabled = attributeBooleanGet(parent, XML_ENABLED_ATTRIBUTE, false);
+        setEnabled(attributeBooleanGet(parent, XML_ENABLED_ATTRIBUTE, false));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     protected void toXML(Document doc, Element parent) {
         XmlUtil.attributeBooleanSet(parent, XML_ENABLED_ATTRIBUTE, enabled, false);
@@ -102,6 +95,5 @@ public class CacheEventConfiguration extends AbstractCacheServiceConfiguration {
     public void setEnabledEventPredicate(Predicate<? super Class<?>> enabledEventPredicate) {
         this.enabledEventPredicate = enabledEventPredicate;
     }
-
 
 }

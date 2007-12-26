@@ -20,17 +20,17 @@ import net.jcip.annotations.NotThreadSafe;
  */
 @NotThreadSafe
 public class IndexedStack<T> implements Serializable {
-    private int threshold;
-
     private int currentEntryIndex;
+
+    private T[] data;
+
+    private int[] freeEntries;
 
     private int[] next;
 
     private int[] prev; // double linked to allow in-the-middle removals
 
-    private int[] freeEntries;
-
-    private T[] data;
+    private int threshold;
 
     /**
      * Creates a new PolicyStack by copying an existing.
@@ -68,10 +68,6 @@ public class IndexedStack<T> implements Serializable {
         }
     }
 
-    public int getSize() {
-        return currentEntryIndex;
-    }
-
     public int add(T element) {
         if (currentEntryIndex >= threshold - 1)
             resize(threshold * 2);
@@ -84,44 +80,49 @@ public class IndexedStack<T> implements Serializable {
         return newIndex;
     }
 
-    @SuppressWarnings("unchecked")
-    private void resize(int newSize) {
-        threshold = newSize + 1;
-        int[] oldNext = next;
-        next = new int[threshold];
-        System.arraycopy(oldNext, 0, next, 0, Math.min(oldNext.length, next.length));
-
-        int[] oldPrev = prev;
-        prev = new int[threshold];
-        System.arraycopy(oldPrev, 0, prev, 0, Math.min(oldPrev.length, prev.length));
-
-        int[] oldFreeEntries = freeEntries;
-        freeEntries = new int[threshold];
-        System.arraycopy(oldFreeEntries, 0, freeEntries, 0, Math.min(oldFreeEntries.length,
-                freeEntries.length));
-        for (int i = oldFreeEntries.length - 1; i < freeEntries.length; i++) {
-            freeEntries[i] = i;
-        }
-        Object[] oldData = data;
-        data = (T[]) new Object[threshold];
-        System.arraycopy(oldData, 0, data, 0, Math.min(oldData.length, data.length));
+    public void clear() {
+        while (remove() != null) {}
     }
 
-    public void touch(int index) {
-        if (index < data.length - 1 && data[index] != null) {
-            // we do not keep count of access attempts so we only
-            // need to modify datastructures if we have 2 or more entries
-            if (currentEntryIndex > 1) {
-                prev[next[index]] = prev[index]; // update next head pointer
-                next[prev[index]] = next[index];
-                prev[index] = 0;
+    public int getSize() {
+        return currentEntryIndex;
+    }
 
-                int n0 = next[0]; // list dif
-                prev[n0] = index; // list dif
-                next[index] = n0; // list dif
+    public T peek() {
+        if (currentEntryIndex == 0) {
+            return null;
+        } else {
+            return peekAll().get(0); // TODO optimize
+        }
+    }
 
-                next[0] = index;
+    public List<T> peekAll() {
+        List<T> col = new ArrayList<T>(getSize());
+        int head = next[0];
+        while (head != 0) {
+            col.add(data[head]);
+            head = next[head];
+        }
+        return col;
+    }
+
+    public T remove() {
+        if (currentEntryIndex == 0) {
+            return null;
+        } else {
+            int remove = next[0]; // remove head
+            freeEntries[currentEntryIndex--] = remove; // recycle entry
+            if (currentEntryIndex == 0) { // clear
+                next[0] = 0;
+                prev[0] = 0;
+            } else {
+                int nextHead = next[remove];
+                prev[nextHead] = 0; // update next head pointer
+                next[0] = nextHead; // update head
             }
+            T removeMe = data[remove];
+            data[remove] = null;
+            return removeMe;
         }
     }
 
@@ -145,52 +146,51 @@ public class IndexedStack<T> implements Serializable {
         return oldData;
     }
 
-    public void clear() {
-        while (remove() != null) {}
-    }
-
-    public T remove() {
-        if (currentEntryIndex == 0) {
-            return null;
-        } else {
-            int remove = next[0]; // remove head
-            freeEntries[currentEntryIndex--] = remove; // recycle entry
-            if (currentEntryIndex == 0) { // clear
-                next[0] = 0;
-                prev[0] = 0;
-            } else {
-                int nextHead = next[remove];
-                prev[nextHead] = 0; // update next head pointer
-                next[0] = nextHead; // update head
-            }
-            T removeMe = data[remove];
-            data[remove] = null;
-            return removeMe;
-        }
-    }
-
-    public T peek() {
-        if (currentEntryIndex == 0) {
-            return null;
-        } else {
-            return peekAll().get(0); // TODO optimize
-        }
-    }
-
-    public List<T> peekAll() {
-        List<T> col = new ArrayList<T>(getSize());
-        int head = next[0];
-        while (head != 0) {
-            col.add(data[head]);
-            head = next[head];
-        }
-        return col;
-    }
-
     public T replace(int index, T newElement) {
         T old = data[index];
         data[index] = newElement;
         return old;
+    }
+
+    public void touch(int index) {
+        if (index < data.length - 1 && data[index] != null) {
+            // we do not keep count of access attempts so we only
+            // need to modify datastructures if we have 2 or more entries
+            if (currentEntryIndex > 1) {
+                prev[next[index]] = prev[index]; // update next head pointer
+                next[prev[index]] = next[index];
+                prev[index] = 0;
+
+                int n0 = next[0]; // list dif
+                prev[n0] = index; // list dif
+                next[index] = n0; // list dif
+
+                next[0] = index;
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void resize(int newSize) {
+        threshold = newSize + 1;
+        int[] oldNext = next;
+        next = new int[threshold];
+        System.arraycopy(oldNext, 0, next, 0, Math.min(oldNext.length, next.length));
+
+        int[] oldPrev = prev;
+        prev = new int[threshold];
+        System.arraycopy(oldPrev, 0, prev, 0, Math.min(oldPrev.length, prev.length));
+
+        int[] oldFreeEntries = freeEntries;
+        freeEntries = new int[threshold];
+        System.arraycopy(oldFreeEntries, 0, freeEntries, 0, Math.min(oldFreeEntries.length,
+                freeEntries.length));
+        for (int i = oldFreeEntries.length - 1; i < freeEntries.length; i++) {
+            freeEntries[i] = i;
+        }
+        Object[] oldData = data;
+        data = (T[]) new Object[threshold];
+        System.arraycopy(oldData, 0, data, 0, Math.min(oldData.length, data.length));
     }
 
     // /CLOVER:OFF

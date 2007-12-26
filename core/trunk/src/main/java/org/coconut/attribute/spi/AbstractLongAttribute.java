@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.attribute.spi;
@@ -14,7 +14,7 @@ import org.coconut.operations.Ops.MapperToLong;
  * An abstract implementation of an {@link Attribute} mapping to a long. This
  * implementation adds a number of methods that works on primitive longs instead of their
  * object counterpart.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -30,7 +30,7 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
 
     /**
      * Creates a new AbstractLongAttribute.
-     * 
+     *
      * @param name
      *            the name of the attribute
      * @param defaultValue
@@ -53,7 +53,7 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
 
     /**
      * Analogous to {@link #checkValid(Long)} except taking a primitive long.
-     * 
+     *
      * @param value
      *            the value to check
      * @throws IllegalArgumentException
@@ -67,6 +67,7 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
     }
 
     /** {@inheritDoc} */
+    @Override
     public Long fromString(String str) {
         return Long.parseLong(str);
     }
@@ -74,7 +75,7 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
     /**
      * Analogous to {@link #getValue(AttributeMap)} except returning a primitive
      * <tt>long</tt>.
-     * 
+     *
      * @param attributes
      *            the attribute map to retrieve the value of this attribute from
      * @return the value of this attribute
@@ -86,7 +87,7 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
     /**
      * Analogous to {@link #getValue(AttributeMap, Long)} except returning a primitive
      * <tt>long</tt>.
-     * 
+     *
      * @param attributes
      *            the attribute map to check for this attribute in
      * @param defaultValue
@@ -106,7 +107,7 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
 
     /**
      * Analogous to {@link #isValid(Long)} except taking a primitive long as parameter.
-     * 
+     *
      * @param value
      *            the value to check
      * @return whether or not the value is valid
@@ -119,7 +120,7 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
      * Returns a mapper that extracts the value of this attribute from an
      * {@link AttributeMap}, or returns {@link #getDefaultValue()} if this attribute is
      * not present.
-     * 
+     *
      * @return a mapper from an AttributeMap to the value of this attribute
      */
     public MapperToLong<AttributeMap> mapToLong() {
@@ -129,7 +130,7 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
     /**
      * Analogous to {@link #setValue(AttributeMap, Long)} except taking a primitive long
      * as parameter.
-     * 
+     *
      * @param attributes
      *            the attribute map to set the value in.
      * @param value
@@ -149,9 +150,8 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
     }
 
     /**
-     * Analogous to {@link #singleton(Long)} except taking a primitive long as
-     * parameter.
-     * 
+     * Analogous to {@link #singleton(Long)} except taking a primitive long as parameter.
+     *
      * @param value
      *            the value to create the singleton from
      * @return an AttributeMap containing only this attribute mapping to the specified

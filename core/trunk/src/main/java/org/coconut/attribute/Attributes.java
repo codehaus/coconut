@@ -51,10 +51,6 @@ public final class Attributes {
         return new SingletonAttributeMap(attribute, value);
     }
 
-    public static AttributeMap unmodifiableAttributeMap(AttributeMap attributes) {
-        return new ImmutableAttributeMap(attributes);
-    }
-
     /**
      * Creates a new {@link Map} where all the specified keys maps to the specified
      * AttributeMap.
@@ -74,6 +70,24 @@ public final class Attributes {
             map.put(key, attributeMap);
         }
         return map;
+    }
+
+    /**
+     * Returns an unmodifiable view of the specified attribute map. This method allows
+     * modules to provide users with "read-only" access to internal maps. Query operations
+     * on the returned attribute map "read through" to the specified attribute map, and
+     * attempts to modify the returned attribute map, whether direct or via its collection
+     * views, result in an <tt>UnsupportedOperationException</tt>.
+     * <p>
+     * The returned attribute map will be serializable if the specified map is
+     * serializable.
+     *
+     * @param attributes
+     *            the attribute map for which an unmodifiable view is to be returned.
+     * @return an unmodifiable view of the specified attribute map.
+     */
+    public static AttributeMap unmodifiableAttributeMap(AttributeMap attributes) {
+        return new ImmutableAttributeMap(attributes);
     }
 
     /**
@@ -280,12 +294,20 @@ public final class Attributes {
         }
     }
 
+    /** An unmodifiable view of an attribute map. */
     static class ImmutableAttributeMap implements AttributeMap, Serializable {
         /** serialVersionUID. */
-        // private static final long serialVersionUID = -6979724477215052911L;
-        /** The singleton key. */
+        private static final long serialVersionUID = -8792952517961074713L;
+
+        /** The map that is being wrapped. */
         private final AttributeMap map;
 
+        /**
+         * Creates a new ImmutableAttributeMap.
+         *
+         * @param attributes
+         *            the attribute map to wrap
+         */
         ImmutableAttributeMap(AttributeMap attributes) {
             if (attributes == null) {
                 throw new NullPointerException("attributes is null");
@@ -316,7 +338,7 @@ public final class Attributes {
         /** {@inheritDoc} */
         @Override
         public boolean equals(Object o) {
-            return map.equals(o);
+            return o == this || map.equals(o);
         }
 
         /** {@inheritDoc} */
@@ -497,6 +519,7 @@ public final class Attributes {
         }
     }
 
+    /** A singleton attribute map. */
     static class SingletonAttributeMap implements AttributeMap, Serializable {
 
         /** serialVersionUID. */
@@ -508,6 +531,14 @@ public final class Attributes {
         /** The singleton value. */
         private final Object v;
 
+        /**
+         * Creates a new SingletonAttributeMap.
+         *
+         * @param attribute
+         *            the attribute to create the singleton from
+         * @param value
+         *            the value of the specified attribute
+         */
         SingletonAttributeMap(Attribute attribute, Object value) {
             if (attribute == null) {
                 throw new NullPointerException("attribute is null");

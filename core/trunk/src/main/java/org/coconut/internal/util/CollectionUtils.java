@@ -170,108 +170,6 @@ public final class CollectionUtils {
         }
     }
 
-    public static class ImmutableSet<E> extends ImmutableCollection<E> implements Set<E>,
-            Serializable {
-
-        /** serialVersionUID. */
-        private static final long serialVersionUID = -7936489435110973730L;
-
-        public ImmutableSet(Set<? extends E> set) {
-            super(set);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public boolean equals(Object o) {
-            return o == this || col.equals(o);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public int hashCode() {
-            return col.hashCode();
-        }
-    }
-
-    /**
-     * An Entry maintaining an immutable key and value. This class does not support method
-     * <tt>setValue</tt>. This class may be convenient in methods that return
-     * thread-safe snapshots of key-value mappings.
-     */
-    public static class SimpleImmutableEntry<K, V> implements Entry<K, V>, Serializable {
-
-        /** serialVersionUID */
-        private static final long serialVersionUID = -354750390197347279L;
-
-        /** The key of the entry. */
-        private final K key;
-
-        /** The value of the entry. */
-        private final V value;
-
-        /**
-         * Creates an entry representing the same mapping as the specified entry.
-         *
-         * @param entry
-         *            the entry to copy
-         */
-        public SimpleImmutableEntry(Entry<? extends K, ? extends V> entry) {
-            this.key = entry.getKey();
-            this.value = entry.getValue();
-        }
-
-        /**
-         * Creates an entry representing a mapping from the specified key to the specified
-         * value.
-         *
-         * @param key
-         *            the key represented by this entry
-         * @param value
-         *            the value represented by this entry
-         */
-        public SimpleImmutableEntry(K key, V value) {
-            this.key = key;
-            this.value = value;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public boolean equals(Object o) {
-            if (!(o instanceof Map.Entry)) {
-                return false;
-            }
-            Map.Entry e = (Map.Entry) o;
-            return eq(key, e.getKey()) && eq(value, e.getValue());
-        }
-
-        /** {@inheritDoc} */
-        public K getKey() {
-            return key;
-        }
-
-        /** {@inheritDoc} */
-        public V getValue() {
-            return value;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public int hashCode() {
-            return (key == null ? 0 : key.hashCode()) ^ (value == null ? 0 : value.hashCode());
-        }
-
-        /** {@inheritDoc} */
-        public V setValue(V value) {
-            throw new UnsupportedOperationException();
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String toString() {
-            return key + "=" + value;
-        }
-    }
-
     public static class ImmutableEntrySet<K, V> extends ImmutableSet<Map.Entry<K, V>> {
         private static final long serialVersionUID = 7854390611657943733L;
 
@@ -372,6 +270,108 @@ public final class CollectionUtils {
                 a[arr.length] = null;
             }
             return a;
+        }
+    }
+
+    public static class ImmutableSet<E> extends ImmutableCollection<E> implements Set<E>,
+            Serializable {
+
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -7936489435110973730L;
+
+        public ImmutableSet(Set<? extends E> set) {
+            super(set);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean equals(Object o) {
+            return o == this || col.equals(o);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public int hashCode() {
+            return col.hashCode();
+        }
+    }
+
+    /**
+     * An Entry maintaining an immutable key and value. This class does not support method
+     * <tt>setValue</tt>. This class may be convenient in methods that return
+     * thread-safe snapshots of key-value mappings.
+     */
+    public static class SimpleImmutableEntry<K, V> implements Entry<K, V>, Serializable {
+
+        /** serialVersionUID */
+        private static final long serialVersionUID = -354750390197347279L;
+
+        /** The key of the entry. */
+        private final K key;
+
+        /** The value of the entry. */
+        private final V value;
+
+        /**
+         * Creates an entry representing the same mapping as the specified entry.
+         *
+         * @param entry
+         *            the entry to copy
+         */
+        public SimpleImmutableEntry(Entry<? extends K, ? extends V> entry) {
+            this.key = entry.getKey();
+            this.value = entry.getValue();
+        }
+
+        /**
+         * Creates an entry representing a mapping from the specified key to the specified
+         * value.
+         *
+         * @param key
+         *            the key represented by this entry
+         * @param value
+         *            the value represented by this entry
+         */
+        public SimpleImmutableEntry(K key, V value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof Map.Entry)) {
+                return false;
+            }
+            Map.Entry e = (Map.Entry) o;
+            return eq(key, e.getKey()) && eq(value, e.getValue());
+        }
+
+        /** {@inheritDoc} */
+        public K getKey() {
+            return key;
+        }
+
+        /** {@inheritDoc} */
+        public V getValue() {
+            return value;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public int hashCode() {
+            return (key == null ? 0 : key.hashCode()) ^ (value == null ? 0 : value.hashCode());
+        }
+
+        /** {@inheritDoc} */
+        public V setValue(V value) {
+            throw new UnsupportedOperationException();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString() {
+            return key + "=" + value;
         }
     }
 

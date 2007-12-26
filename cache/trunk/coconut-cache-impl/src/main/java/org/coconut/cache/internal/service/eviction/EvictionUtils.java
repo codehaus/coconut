@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.eviction;
@@ -14,7 +14,7 @@ import org.coconut.management.annotation.ManagedOperation;
  * <p>
  * NOTICE: This is an internal class and should not be directly referred. No guarantee is
  * made to the compatibility of this class between different releases of Coconut Cache.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -23,8 +23,9 @@ final class EvictionUtils {
     /** Cannot instantiate. */
     // /CLOVER:OFF
     private EvictionUtils() {}
+
     // /CLOVER:ON
-    
+
     /**
      * This class wraps CacheEvictionService as a CacheEvictionMXBean.
      * <p>
@@ -36,7 +37,7 @@ final class EvictionUtils {
 
         /**
          * Creates a new CacheEvictionMXBean by wrapping a CacheEvictionService.
-         * 
+         *
          * @param service
          *            the service to wrap.
          */
@@ -93,7 +94,7 @@ final class EvictionUtils {
         /**
          * Creates a new DelegatedCacheEvictionService from the specified
          * CacheEvictionService instance.
-         * 
+         *
          * @param service
          *            the CacheEvictionService to wrap.
          */
@@ -133,10 +134,12 @@ final class EvictionUtils {
         public void trimToVolume(long volume) {
             service.trimToVolume(volume);
         }
+
         /** {@inheritDoc} */
         public boolean isDisabled() {
             return service.isDisabled();
         }
+
         /** {@inheritDoc} */
         public void setDisabled(boolean isDisabled) {
             service.setDisabled(isDisabled);
@@ -145,7 +148,7 @@ final class EvictionUtils {
 
     /**
      * Wraps a CacheEvictionService as a CacheEvictionMXBean.
-     * 
+     *
      * @param service
      *            the CacheEvictionService to wrap
      * @return the wrapped CacheEvictionMXBean
@@ -157,7 +160,7 @@ final class EvictionUtils {
     /**
      * Wraps a CacheEvictionService implementation such that only methods from the
      * CacheEvictionService interface is exposed.
-     * 
+     *
      * @param service
      *            the CacheEvictionService to wrap
      * @return a wrapped service that only exposes CacheEvictionService methods
@@ -172,7 +175,7 @@ final class EvictionUtils {
 
     /**
      * Returns the maximum size configured in the specified configuration.
-     * 
+     *
      * @param conf
      *            the configuration to read the maximum size from
      * @return the maximum size configured in the specified configuration
@@ -184,7 +187,7 @@ final class EvictionUtils {
 
     /**
      * Returns the maximum volume configured in the specified configuration.
-     * 
+     *
      * @param conf
      *            the configuration to read the maximum volume from
      * @return the maximum volume configured in the specified configuration
