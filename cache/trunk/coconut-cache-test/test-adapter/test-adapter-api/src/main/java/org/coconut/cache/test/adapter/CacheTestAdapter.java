@@ -10,4 +10,7 @@ package org.coconut.cache.test.adapter;
 public interface CacheTestAdapter {
 	void put(String key, Object value) throws Exception;
 	Object get(String key) throws Exception;
+	
+	int size();
+	Object getCache();
 }

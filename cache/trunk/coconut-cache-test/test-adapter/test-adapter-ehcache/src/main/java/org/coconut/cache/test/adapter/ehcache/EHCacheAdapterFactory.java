@@ -31,4 +31,7 @@ public class EHCacheAdapterFactory implements CacheAdapterFactory {
 		return true;
 	}
 
+//	public String toString() {
+//	    return 
+//	}
 }

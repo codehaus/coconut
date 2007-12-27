@@ -41,4 +41,12 @@ class EHCacheAdapter implements CacheTestAdapter {
 		return cache.get(key).getValue();
 	}
 
+    public Object getCache() {
+        return cache;
+    }
+
+    public int size() {
+        return cache.getSize();
+    }
+
 }

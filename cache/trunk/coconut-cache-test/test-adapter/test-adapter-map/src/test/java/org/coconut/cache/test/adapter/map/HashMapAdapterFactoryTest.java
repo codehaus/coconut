@@ -3,6 +3,8 @@
  */
 package org.coconut.cache.test.adapter.map;
 
+import java.util.HashMap;
+
 import org.coconut.cache.test.adapter.util.AbstractSimpleTest;
 import org.junit.Test;
 
@@ -14,6 +16,6 @@ public class HashMapAdapterFactoryTest {
 
 	@Test
 	public void testFactory() throws Exception {
-		AbstractSimpleTest.testPutGet(new HashMapAdapterFactory());
+		AbstractSimpleTest.testPutGet(new MapAdapterFactory(HashMap.class));
 	}
 }

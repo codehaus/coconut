@@ -47,4 +47,12 @@ class WhirlyCacheAdapter implements CacheTestAdapter {
 		return cache.retrieve(key);
 	}
 
+    public Object getCache() {
+        return cache;
+    }
+
+    public int size() {
+        return cache.size();
+    }
+
 }

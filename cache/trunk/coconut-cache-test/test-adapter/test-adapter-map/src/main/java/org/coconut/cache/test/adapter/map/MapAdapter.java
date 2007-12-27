@@ -32,5 +32,11 @@ class MapAdapter implements CacheTestAdapter {
 	public Object get(String key) throws Exception {
 		return map.get(key);
 	}
+    public Object getCache() {
+        return map;
+    }
+    public int size() {
+        return map.size();
+    }
 
 }

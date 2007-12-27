@@ -17,13 +17,9 @@ import org.coconut.cache.test.adapter.CacheTestAdapter;
  * @version $Id$
  */
 public class JCSCacheAdapterFactory implements CacheAdapterFactory {
-	static void shutupLogger(String logger) {
-		Logger.getLogger(logger).setLevel(Level.OFF);
-	}
 
 	static {
-		// JCS is mentally retarded, and wins the prize, without much
-		// competition for "most difficult to configure cacheing framework"
+		// JCS is just mentally retarded
     	Logger.getRootLogger().setLevel(Level.OFF);
 		CompositeCacheManager cc = CompositeCacheManager.getUnconfiguredInstance();
 		Properties props = new Properties();

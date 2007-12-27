@@ -45,4 +45,12 @@ class JbossCacheAdapter implements CacheTestAdapter {
 	public Object get(String key) throws Exception {
 		return cache.get(fqn, key);
 	}
+
+    public Object getCache() {
+        return cache;
+    }
+
+    public int size() {
+        return -1;
+    }
 }

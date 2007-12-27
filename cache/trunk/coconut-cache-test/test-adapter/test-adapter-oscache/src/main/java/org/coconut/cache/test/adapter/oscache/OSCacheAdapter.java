@@ -34,5 +34,11 @@ class OSCacheAdapter implements CacheTestAdapter {
 	public Object get(String key) throws Exception {
 		return cache.getFromCache(key);
 	}
+    public Object getCache() {
+        return cache;
+    }
+    public int size() {
+        return cache.getSize();
+    }
 
 }
