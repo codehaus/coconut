@@ -7,7 +7,6 @@ import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
 import org.coconut.cache.service.loading.CacheLoader;
-import org.coconut.cache.service.loading.CacheLoaderCallback;
 
 public class TestLoader implements CacheLoader<Integer, String> {
 
@@ -58,8 +57,8 @@ public class TestLoader implements CacheLoader<Integer, String> {
     }
 
     public void loadAll(
-            Collection<? extends CacheLoaderCallback<? extends Integer, ? super String>> loadCallbacks) {
-        for (CacheLoaderCallback<? extends Integer, ? super String> req : loadCallbacks) {
+            Collection<? extends LoaderCallback<? extends Integer, ? super String>> loadCallbacks) {
+        for (LoaderCallback<? extends Integer, ? super String> req : loadCallbacks) {
             try {
                 String result = load(req.getKey(), req.getAttributes());
                 req.completed(result);

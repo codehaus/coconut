@@ -13,8 +13,8 @@ import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.InternalCacheEntryService;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
-import org.coconut.cache.service.loading.CacheLoaderCallback;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
+import org.coconut.cache.service.loading.CacheLoader.LoaderCallback;
 
 public class UnsynchronizedCacheLoaderService<K, V> extends AbstractCacheLoadingService<K, V> {
     private final InternalCacheEntryService attributeFactory;
@@ -71,7 +71,7 @@ public class UnsynchronizedCacheLoaderService<K, V> extends AbstractCacheLoading
             if (!callback.isDone()) {
                 getExceptionHandler().fatal(
                         "CacheLoader.loadAll() failed to complete load, completed() or failed() was never called for '"
-                                + CacheLoaderCallback.class.getSimpleName() + "' [loader ="
+                                + LoaderCallback.class.getSimpleName() + "' [loader ="
                                 + getLoader() + ", key = " + callback.getKey() + "]");
             } else {
                 V v = callback.getResult();

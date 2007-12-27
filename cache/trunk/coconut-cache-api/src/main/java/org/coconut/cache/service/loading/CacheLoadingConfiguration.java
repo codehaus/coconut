@@ -38,7 +38,7 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
     private final static String LOADER_TAG = "loader";
 
     /** The XML tag for the refresh predicate. */
-    private final static String REFRESH_PREDICATE_TAG = "refresh-predicate";
+    private final static String REFRESH_PREDICATE_TAG = "refresh-filter";
 
     /** The XML tag for the refresh interval. */
     private final static String REFRESH_INTERVAL_TAG = "default-time-to-refresh";
@@ -50,7 +50,7 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
     private CacheLoader<? super K, ? extends V> loader;
 
     /** The refresh predicate. */
-    private Predicate<CacheEntry<K, V>> refreshPredicate;
+    private Predicate<CacheEntry<K, V>> refreshSelector;
 
     /**
      * Creates a new CacheLoadingConfiguration.
@@ -89,10 +89,10 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
      * Returns the configured refresh predicate.
      *
      * @return the configured refresh predicate
-     * @see #setRefreshPredicate(Predicate)
+     * @see #setRefreshFilter(Predicate)
      */
-    public Predicate<CacheEntry<K, V>> getRefreshPredicate() {
-        return refreshPredicate;
+    public Predicate<CacheEntry<K, V>> getRefreshFilter() {
+        return refreshSelector;
     }
 
     /**
@@ -155,13 +155,13 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
      * {@link org.coconut.cache.Cache#get(Object)},{@link org.coconut.cache.Cache#getAll(Collection)},
      * {@link org.coconut.cache.Cache#getEntry(Object)}, but this is not required.
      *
-     * @param predicate
+     * @param selector
      *            the reload predicate
      * @return this configuration
-     * @see #getRefreshPredicate()
+     * @see #getRefreshFilter()
      */
-    public CacheLoadingConfiguration<K, V> setRefreshPredicate(Predicate<CacheEntry<K, V>> predicate) {
-        refreshPredicate = predicate;
+    public CacheLoadingConfiguration<K, V> setRefreshFilter(Predicate<CacheEntry<K, V>> selector) {
+        refreshSelector = selector;
         return this;
     }
 
@@ -177,7 +177,7 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
         setDefaultTimeToRefresh(time, TimeUnit.NANOSECONDS);
 
         /* Refresh Filter */
-        setRefreshPredicate(loadChildObject(parent, REFRESH_PREDICATE_TAG, Predicate.class));
+        setRefreshFilter(loadChildObject(parent, REFRESH_PREDICATE_TAG, Predicate.class));
     }
 
     /** {@inheritDoc} */
@@ -193,6 +193,6 @@ public class CacheLoadingConfiguration<K, V> extends AbstractCacheServiceConfigu
 
         /* Refresh Predicate */
         addTypedElement(doc, parent, REFRESH_PREDICATE_TAG, CacheSPI.DEFAULT_CACHE_BUNDLE, getClass(),
-                "saveOfFilterFailed", refreshPredicate);
+                "saveOfFilterFailed", refreshSelector);
     }
 }

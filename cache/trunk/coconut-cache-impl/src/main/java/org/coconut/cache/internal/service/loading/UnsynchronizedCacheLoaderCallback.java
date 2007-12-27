@@ -1,12 +1,12 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.loading;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.cache.service.loading.CacheLoaderCallback;
+import org.coconut.cache.service.loading.CacheLoader.LoaderCallback;
 
-class UnsynchronizedCacheLoaderCallback<K, V> implements CacheLoaderCallback<K, V> {
+class UnsynchronizedCacheLoaderCallback<K, V> implements LoaderCallback<K, V> {
     private final AttributeMap attributes;
 
     private final K key;

@@ -28,11 +28,11 @@ public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService i
     private final CacheWorkerManager worker;
 
     public SynchronizedCacheWorkerService(String cacheName, CacheWorkerConfiguration conf) {
-        if (conf.getWorkerManager() == null) {
+        CacheWorkerManager worker = conf.getWorkerManager();
+        if (worker == null) {
             worker = new SharedCacheWorkerManager(cacheName);
-        } else {
-            worker = conf.getWorkerManager();
         }
+        this.worker = worker;
     }
 
     /** {@inheritDoc} */

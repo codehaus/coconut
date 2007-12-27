@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.management;
@@ -33,7 +33,7 @@ import org.coconut.management.defaults.DefaultManagedGroup;
  * made to the compatibility of this class between different releases of Coconut Cache.
  * <p>
  * This is class is thread-safe.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -51,7 +51,7 @@ public class DefaultCacheManagementService extends AbstractCacheLifecycle implem
 
     /**
      * Creates a new DefaultCacheManagementService.
-     * 
+     *
      * @param configuration
      *            the configuration of the Cache Management service
      * @param cacheName
@@ -125,7 +125,7 @@ public class DefaultCacheManagementService extends AbstractCacheLifecycle implem
 
     /** {@inheritDoc} */
     public Collection<?> getChildServices() {
-        return Arrays.asList(root, registrant);
+        return Arrays.asList(registrant);
     }
 
     /** {@inheritDoc} */
@@ -188,6 +188,7 @@ public class DefaultCacheManagementService extends AbstractCacheLifecycle implem
         root.unregister();
     }
 
+    @Override
     public String toString() {
         return "Management Service";
     }

@@ -207,7 +207,7 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
     @Test
     public void testLoadAll() {
         TestLoader loader = TestLoader.create(2);
-        c = newCache(newConf().loading().setRefreshPredicate(new RefreshFilter()).setLoader(loader));
+        c = newCache(newConf().loading().setRefreshFilter(new RefreshFilter()).setLoader(loader));
         loading().loadAll();
         awaitAllLoads();
         assertEquals("A", c.get(1));

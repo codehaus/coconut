@@ -9,7 +9,6 @@ import java.util.Collection;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.service.loading.CacheLoader;
-import org.coconut.cache.service.loading.CacheLoaderCallback;
 import org.coconut.cache.test.util.lifecycle.AbstractLifecycleVerifier;
 import org.junit.Test;
 
@@ -39,7 +38,7 @@ public class LoadingCacheLoader extends AbstractLoadingTestBundle {
 
         public final void loadAll(Collection loadRequests) {
             for (Object req : loadRequests) {
-                ((CacheLoaderCallback) req).completed("1");
+                ((LoaderCallback) req).completed("1");
             }
         }
     }

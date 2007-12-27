@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
+import org.coconut.cache.service.loading.CacheLoader.LoaderCallback;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
@@ -34,7 +35,7 @@ public class AbstraktCacheLoaderTest {
 
     @Test
     public void loadAll() {
-        final CacheLoaderCallback callback = context.mock(CacheLoaderCallback.class);
+        final LoaderCallback callback = context.mock(LoaderCallback.class);
         context.checking(new Expectations() {
             {
                 one(callback).getKey();
@@ -50,7 +51,7 @@ public class AbstraktCacheLoaderTest {
     @Test
     @Ignore //don't think we should catch errors here
     public void loadAllErr() {
-        final CacheLoaderCallback callback = context.mock(CacheLoaderCallback.class);
+        final LoaderCallback callback = context.mock(LoaderCallback.class);
         context.checking(new Expectations() {
             {
                 one(callback).getKey();
@@ -68,7 +69,7 @@ public class AbstraktCacheLoaderTest {
      */
     public void genericSignature() {
         AbstractCacheLoader<Number, List> cl = null;
-        List<CacheLoaderCallback<Number, List>> l1 = null;
+        List<LoaderCallback<Number, List>> l1 = null;
         List<AbstractCacheLoaderCallback<Number, List>> l2 = null;
         List<AbstractCacheLoaderCallback<Number, Collection>> l3 = null;
         List<AbstractCacheLoaderCallback<Integer, List>> l4 = null;
@@ -80,7 +81,7 @@ public class AbstraktCacheLoaderTest {
         cl.loadAll(l5);
     }
 
-    abstract static class AbstractCacheLoaderCallback<K, V> implements CacheLoaderCallback<K, V> {}
+    abstract static class AbstractCacheLoaderCallback<K, V> implements LoaderCallback<K, V> {}
 
     static class MyLoader extends AbstractCacheLoader<Integer, String> {
 

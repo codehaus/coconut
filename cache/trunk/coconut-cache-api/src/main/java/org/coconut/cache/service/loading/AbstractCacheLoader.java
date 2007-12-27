@@ -23,8 +23,8 @@ public abstract class AbstractCacheLoader<K, V> extends AbstractCacheLifecycle i
 
     /** {@inheritDoc} */
     public final void loadAll(
-            Collection<? extends CacheLoaderCallback<? extends K, ? super V>> loadCallbacks) {
-        for (CacheLoaderCallback<? extends K, ? super V> req : loadCallbacks) {
+            Collection<? extends LoaderCallback<? extends K, ? super V>> loadCallbacks) {
+        for (LoaderCallback<? extends K, ? super V> req : loadCallbacks) {
             try {
                 V result = load(req.getKey(), req.getAttributes());
                 req.completed(result);

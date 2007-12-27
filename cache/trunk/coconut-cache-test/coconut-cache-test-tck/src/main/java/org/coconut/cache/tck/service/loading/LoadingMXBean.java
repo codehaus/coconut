@@ -95,7 +95,7 @@ public class LoadingMXBean extends AbstractLoadingTestBundle {
     @Test
     public void testLoadAll() {
         IntegerToStringLoader loader = new IntegerToStringLoader();
-        c = newCache(newConf().loading().setRefreshPredicate(new RefreshFilter()).setLoader(loader)
+        c = newCache(newConf().loading().setRefreshFilter(new RefreshFilter()).setLoader(loader)
                 .c().management().setEnabled(true).setMBeanServer(mbs));
         mxBean = findMXBean(mbs, CacheLoadingMXBean.class);
         mxBean.loadAll();
@@ -130,7 +130,7 @@ public class LoadingMXBean extends AbstractLoadingTestBundle {
         CacheConfiguration<Integer, String> cc = newConf();
         cc.management().setEnabled(true);
         ManagedPredicate filter = new ManagedPredicate();
-        c = newCache(cc.loading().setRefreshPredicate(filter)
+        c = newCache(cc.loading().setRefreshFilter(filter)
                 .setLoader(new IntegerToStringLoader()).c());
         prestart();
         assertNotNull(

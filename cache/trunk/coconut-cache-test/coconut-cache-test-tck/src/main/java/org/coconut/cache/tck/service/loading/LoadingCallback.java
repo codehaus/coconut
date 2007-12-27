@@ -11,7 +11,6 @@ import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.spi.AbstractAttribute;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
 import org.coconut.cache.service.loading.CacheLoader;
-import org.coconut.cache.service.loading.CacheLoaderCallback;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.tck.service.exceptionhandling.ExceptionHandling.BaseExceptionHandler;
 import org.coconut.core.Logger;
@@ -151,9 +150,9 @@ public class LoadingCallback extends AbstractCacheTCKTest {
         }
 
         public void loadAll(
-                Collection<? extends CacheLoaderCallback<? extends Integer, ? super String>> loadCallbacks) {
+                Collection<? extends LoaderCallback<? extends Integer, ? super String>> loadCallbacks) {
             wasLoadAll = true;
-            for (CacheLoaderCallback<? extends Integer, ? super String> cc : loadCallbacks) {
+            for (LoaderCallback<? extends Integer, ? super String> cc : loadCallbacks) {
                 AttributeMap am = cc.getAttributes();
                 Object result = RA.getValue(am);
 

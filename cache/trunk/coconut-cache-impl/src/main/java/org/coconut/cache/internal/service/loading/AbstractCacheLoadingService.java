@@ -48,7 +48,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
         attributeFactory.setTimeToRefreshNs(LoadingUtils
                 .getInitialTimeToRefresh(loadingConfiguration));
         this.loader = loadingConfiguration.getLoader();
-        reloadFilter = loadingConfiguration.getRefreshPredicate();
+        reloadFilter = loadingConfiguration.getRefreshFilter();
         this.loadSupport = loadSupport;
         this.attributeFactory = attributeFactory;
         this.exceptionHandler = exceptionHandler;

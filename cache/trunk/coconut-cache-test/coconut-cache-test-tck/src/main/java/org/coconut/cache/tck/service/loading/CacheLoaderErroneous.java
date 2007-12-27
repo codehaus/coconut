@@ -5,7 +5,6 @@ import java.util.Collection;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.service.loading.CacheLoader;
-import org.coconut.cache.service.loading.CacheLoaderCallback;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.core.Logger.Level;
 import org.coconut.internal.util.LogHelper.AbstractLogger;
@@ -111,8 +110,8 @@ public class CacheLoaderErroneous extends AbstractCacheTCKTest {
         }
 
         public void loadAll(
-                Collection<? extends CacheLoaderCallback<? extends Integer, ? super String>> loadCallbacks) {
-            CacheLoaderCallback<? extends Integer, ? super String> clc = loadCallbacks.iterator()
+                Collection<? extends LoaderCallback<? extends Integer, ? super String>> loadCallbacks) {
+            LoaderCallback<? extends Integer, ? super String> clc = loadCallbacks.iterator()
                     .next();
             key = clc.getKey();
             value = load(clc.getKey(), clc.getAttributes());
@@ -134,8 +133,8 @@ public class CacheLoaderErroneous extends AbstractCacheTCKTest {
         }
 
         public void loadAll(
-                Collection<? extends CacheLoaderCallback<? extends Integer, ? super String>> loadCallbacks) {
-            CacheLoaderCallback<? extends Integer, ? super String> clc = loadCallbacks.iterator()
+                Collection<? extends LoaderCallback<? extends Integer, ? super String>> loadCallbacks) {
+            LoaderCallback<? extends Integer, ? super String> clc = loadCallbacks.iterator()
                     .next();
             key = clc.getKey();
             value = load(clc.getKey(), clc.getAttributes());

@@ -20,7 +20,7 @@ public class RefreshFilter extends AbstractLoadingTestBundle {
     @Test
     public void refreshFilterGet() {
         CacheEntryFilter f = new CacheEntryFilter();
-        init(conf.loading().setLoader(loader).setRefreshPredicate(f));
+        init(conf.loading().setLoader(loader).setRefreshFilter(f));
 
         assertGet(M1);
         assertEquals(loader.getNumberOfLoads(), 1);
@@ -39,7 +39,7 @@ public class RefreshFilter extends AbstractLoadingTestBundle {
     @Test
     public void refreshFilterGetNullLoad() {
         CacheEntryFilter f = new CacheEntryFilter();
-        init(conf.loading().setLoader(loader).setRefreshPredicate(f));
+        init(conf.loading().setLoader(loader).setRefreshFilter(f));
 
         assertGet(M1);
         assertEquals(loader.getNumberOfLoads(), 1);
@@ -55,7 +55,7 @@ public class RefreshFilter extends AbstractLoadingTestBundle {
     @Test
     public void filterLifecycle() {
         LifecyclePredicate filter = new LifecyclePredicate();
-        init(newConf().loading().setRefreshPredicate(filter).setLoader(new IntegerToStringLoader()));
+        init(newConf().loading().setRefreshFilter(filter).setLoader(new IntegerToStringLoader()));
 
         filter.assertInitializedButNotStarted();
         loading().load(M1.getKey());// lazy start

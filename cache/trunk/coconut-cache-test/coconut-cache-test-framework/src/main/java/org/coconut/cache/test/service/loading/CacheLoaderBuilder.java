@@ -8,7 +8,6 @@ import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.service.loading.AbstractCacheLoader;
 import org.coconut.cache.service.loading.CacheLoader;
-import org.coconut.cache.service.loading.CacheLoaderCallback;
 
 public class CacheLoaderBuilder<K, V> {
 
@@ -31,7 +30,7 @@ public class CacheLoaderBuilder<K, V> {
         }
 
         public void loadAll(
-                Collection<? extends CacheLoaderCallback<? extends K, ? super V>> loadCallbacks) {}
+                Collection<? extends LoaderCallback<? extends K, ? super V>> loadCallbacks) {}
 
     }
 

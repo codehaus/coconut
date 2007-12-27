@@ -78,23 +78,23 @@ public class CacheLoadingConfigurationTest {
 
     @Test
     public void testExpirationFilter() {
-        assertNull(conf.getRefreshPredicate());
-        assertEquals(conf, conf.setRefreshPredicate(DEFAULT_FILTER));
-        assertEquals(DEFAULT_FILTER, conf.getRefreshPredicate());
+        assertNull(conf.getRefreshFilter());
+        assertEquals(conf, conf.setRefreshFilter(DEFAULT_FILTER));
+        assertEquals(DEFAULT_FILTER, conf.getRefreshFilter());
     }
 
     @Test
     public void testExpirationFilterXML() throws Exception {
         conf = reloadService(conf);
-        assertNull(conf.getRefreshPredicate());
+        assertNull(conf.getRefreshFilter());
 
-        conf.setRefreshPredicate(new LoadableFilter());
+        conf.setRefreshFilter(new LoadableFilter());
         conf = reloadService(conf);
-        assertTrue(conf.getRefreshPredicate() instanceof LoadableFilter);
+        assertTrue(conf.getRefreshFilter() instanceof LoadableFilter);
 
-        conf.setRefreshPredicate(new NonLoadableFilter());
+        conf.setRefreshFilter(new NonLoadableFilter());
         conf = reloadService(conf);
-        assertNull(conf.getRefreshPredicate());
+        assertNull(conf.getRefreshFilter());
     }
 
     @Test

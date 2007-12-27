@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.service.loading;
@@ -9,6 +9,7 @@ import static junit.framework.Assert.assertNull;
 import org.coconut.attribute.Attributes;
 import org.coconut.cache.Cache;
 import org.coconut.cache.DummyCache;
+import org.coconut.cache.service.loading.CacheLoader.LoaderCallback;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
@@ -19,7 +20,7 @@ import org.junit.runner.RunWith;
 
 /**
  * Tests the {@link CacheLoaders} class.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: CacheServicesTest.java 427 2007-11-10 13:15:25Z kasper $
  */
@@ -37,11 +38,11 @@ public class CacheLoadersTest {
     public void nullLoader() throws Exception {
         CacheLoader<Integer, String> cl = CacheLoaders.nullLoader();
         assertNull(cl.load(1, Attributes.EMPTY_ATTRIBUTE_MAP));
-        final CacheLoaderCallback<Integer, String> callback = context
-                .mock(CacheLoaderCallback.class);
+        final LoaderCallback<Integer, String> callback = context
+                .mock(LoaderCallback.class);
 // context.checking(new Expectations() {
 // {
-//                
+//
 // one(callback).getKey();
 // will(returnValue("1"));
 // one(callback).completed(null);

@@ -39,7 +39,7 @@ public class CacheExpirationConfiguration<K, V> extends
     private final static String DEFAULT_TIMEOUT_TAG = "default-timetolive";
 
     /** The XML expiration filter tag. */
-    private final static String EXPIRATION_FILTER_TAG = "filter";
+    private final static String EXPIRATION_FILTER_TAG = "expiration-filter";
 
     /** The default TimeUnit uses in this service. */
     private final static TimeUnit DEFAULT_TIME_UNIT = TimeUnit.NANOSECONDS;
@@ -129,13 +129,13 @@ public class CacheExpirationConfiguration<K, V> extends
      * expiration filter is set cache entries are first checked against that filter then
      * against the time based expiration times.
      *
-     * @param filter
+     * @param selector
      *            the filter to use for checking expired elements
      * @return this configuration
      */
     public CacheExpirationConfiguration<K, V> setExpirationFilter(
-            Predicate<CacheEntry<K, V>> filter) {
-        expirationFilter = filter;
+            Predicate<CacheEntry<K, V>> selector) {
+        expirationFilter = selector;
         return this;
     }
 
