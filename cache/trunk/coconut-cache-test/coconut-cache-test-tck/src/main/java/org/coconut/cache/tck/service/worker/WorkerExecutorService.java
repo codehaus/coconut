@@ -35,7 +35,7 @@ public class WorkerExecutorService extends AbstractCacheTCKTest {
     public void executeDefaultExecutorAttributeMap() throws Exception {
         final Semaphore s = new Semaphore(0);
         c = newCache(newConf().worker().setWorkerManager(null));
-        ExecutorService ses = worker().getExecutorService("ignore", Attributes.EMPTY_MAP);
+        ExecutorService ses = worker().getExecutorService("ignore", Attributes.EMPTY_ATTRIBUTE_MAP);
         ses.execute(new Runnable() {
             public void run() {
                 s.release();
@@ -63,7 +63,7 @@ public class WorkerExecutorService extends AbstractCacheTCKTest {
     public void executeDefaultScheduledExecutorAttributeMap() throws Exception {
         final Semaphore s = new Semaphore(0);
         c = newCache(newConf().worker().setWorkerManager(null));
-        ScheduledExecutorService ses = worker().getScheduledExecutorService("ignore", Attributes.EMPTY_MAP);
+        ScheduledExecutorService ses = worker().getScheduledExecutorService("ignore", Attributes.EMPTY_ATTRIBUTE_MAP);
         ses.schedule(new Runnable() {
             public void run() {
                 s.release();

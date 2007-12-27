@@ -74,11 +74,11 @@ public class LoadingIllegalAttributeValues extends AbstractCacheTCKTest {
         conf.loading().setLoader(new IntegerToStringLoader());
         conf.exceptionHandling().setExceptionHandler(new CacheExceptionHandler() {
             @Override
-            public void warning(CacheExceptionContext context) {
+            public void apply(CacheExceptionContext context) {
                 ceh = context;
             }
         });
-        setCache();
+        init();
     }
 
     @Test

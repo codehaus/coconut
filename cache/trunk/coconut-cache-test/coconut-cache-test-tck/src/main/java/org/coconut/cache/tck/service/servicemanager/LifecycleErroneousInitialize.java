@@ -61,7 +61,7 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
             }
         });
         try {
-            setCache(conf);
+            init(conf);
             fail();
         } catch (IllegalArgumentException ok) {
             alv.initialization().assertFailed();
@@ -82,7 +82,7 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
             }
         });
         try {
-            setCache(conf);
+            init(conf);
         } finally {
             assertNull(handler.terminatationMap);
         }
@@ -104,7 +104,7 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
         context.createNever();
 
         try {
-            setCache(conf);
+            init(conf);
             fail("should fail");
         } catch (IllegalArgumentException e) {
             assertTrue(e.getCause() instanceof RuntimeException1);
@@ -140,7 +140,7 @@ public class LifecycleErroneousInitialize extends AbstractCacheTCKTest {
         context.createNever();
 
         try {
-            setCache(conf);
+            init(conf);
             fail("should fail");
         } catch (IllegalArgumentException e) {
             assertTrue(e.getCause() instanceof RuntimeException1);

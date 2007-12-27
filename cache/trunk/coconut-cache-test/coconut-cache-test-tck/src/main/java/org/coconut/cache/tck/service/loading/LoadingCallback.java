@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.service.loading;
@@ -15,8 +15,10 @@ import org.coconut.cache.service.loading.CacheLoaderCallback;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.tck.service.exceptionhandling.ExceptionHandling.BaseExceptionHandler;
 import org.coconut.core.Logger;
+import org.coconut.core.Logger.Level;
 import org.coconut.test.TestUtil;
 import org.coconut.test.throwables.Exception1;
+import org.coconut.test.throwables.RuntimeException1;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,7 +34,7 @@ public class LoadingCallback extends AbstractCacheTCKTest {
     public void loadAll1() {
         conf.loading().setLoader(new MyCacheLoader());
         Map<Integer, AttributeMap> map = singletons(1, RA.singleton("A"));
-        setCache();
+        init();
         loading().loadAll(map);
         awaitAllLoads();
         if (wasLoadAll) {
@@ -45,7 +47,7 @@ public class LoadingCallback extends AbstractCacheTCKTest {
         conf.loading().setLoader(new MyCacheLoader());
         Map<Integer, AttributeMap> map = singletons(1, RA.singleton("A"), 2, RA.singleton("B"), 3,
                 RA.singleton("C"));
-        setCache();
+        init();
         loading().loadAll(map);
         awaitAllLoads();
         if (wasLoadAll) {
@@ -59,7 +61,7 @@ public class LoadingCallback extends AbstractCacheTCKTest {
     @Test
     public void loadFailed() {
         final Logger logger = TestUtil.dummy(Logger.class);
-        setCache(conf.exceptionHandling().setExceptionHandler(new BaseExceptionHandler() {
+        init(conf.exceptionHandling().setExceptionHandler(new BaseExceptionHandler() {
             @Override
             public String loadingLoadValueFailed(CacheExceptionContext<Integer, String> context,
                     CacheLoader<? super Integer, ?> loader, Integer key, AttributeMap map) {
@@ -69,6 +71,7 @@ public class LoadingCallback extends AbstractCacheTCKTest {
                     assertSame(c, context.getCache());
                     assertEquals(1, key.intValue());
                     assertNotNull(map);
+                    assertEquals(Level.Error, context.getLevel());
                     assertTrue(context.getCause() instanceof Exception1);
                 } catch (Error t) {
                     failed(t);
@@ -84,7 +87,35 @@ public class LoadingCallback extends AbstractCacheTCKTest {
             assertEquals("a", c.get(1));
         }
     }
-
+    @Test
+    public void loadFailedRuntimeException() {
+        final Logger logger = TestUtil.dummy(Logger.class);
+        init(conf.exceptionHandling().setExceptionHandler(new BaseExceptionHandler() {
+            @Override
+            public String loadingLoadValueFailed(CacheExceptionContext<Integer, String> context,
+                    CacheLoader<? super Integer, ?> loader, Integer key, AttributeMap map) {
+                try {
+                    assertNotNull(context);
+                    assertSame(logger, context.defaultLogger());
+                    assertSame(c, context.getCache());
+                    assertEquals(1, key.intValue());
+                    assertNotNull(map);
+                    assertEquals(Level.Fatal, context.getLevel());
+                    assertTrue(context.getCause() instanceof RuntimeException1);
+                } catch (Error t) {
+                    failed(t);
+                }
+                return "a";
+            }
+        }).setExceptionLogger(logger).c().loading().setLoader(loader));
+        Map<Integer, AttributeMap> map = singletons(1, RA.singleton(new RuntimeException1()));
+        loading().loadAll(map);
+        awaitAllLoads();
+        if (wasLoadAll) {
+            assertSize(1);
+            assertEquals("a", c.get(1));
+        }
+    }
     @Before
     public void setup() {
         wasLoadAll = false;
@@ -130,7 +161,7 @@ public class LoadingCallback extends AbstractCacheTCKTest {
                     cc.failed(null);
                     fail();
                 } catch (NullPointerException ok) {/* ok */}
-                
+
                 if (result instanceof Throwable) {
                     assertFalse(cc.isDone());
                     cc.failed((Throwable) result);
@@ -140,12 +171,12 @@ public class LoadingCallback extends AbstractCacheTCKTest {
                     cc.completed((String) result);
                     assertTrue(cc.isDone());
                 }
-                
+
                 try {
                     cc.failed(new Exception());
                     fail();
                 } catch (IllegalStateException ok) {/* ok */}
-                
+
                 try {
                     cc.completed("foo");
                     fail();

@@ -17,7 +17,7 @@ public class Put extends AbstractCacheTCKTest {
 
     @Test
     public void put() {
-        setCache();
+        init();
         c.put(1, "B");
         assertEquals(1, c.size());
         c.put(1, "C");
@@ -30,7 +30,7 @@ public class Put extends AbstractCacheTCKTest {
      */
     @Test
     public void putLazyStart() {
-        setCache();
+        init();
         assertFalse(c.isStarted());
         c.put(1, "B");
         checkLazystart();
@@ -51,13 +51,13 @@ public class Put extends AbstractCacheTCKTest {
 
     @Test(expected = NullPointerException.class)
     public void putKeyNPE() {
-        setCache();
+        init();
         c.put(null, "A");
     }
 
     @Test(expected = NullPointerException.class)
     public void putValueNPE() {
-        setCache();
+        init();
         c.put(1, null);
     }
 }

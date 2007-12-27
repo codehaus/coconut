@@ -38,12 +38,6 @@ public class TestExceptionHandler<K, V> extends CacheExceptionHandler<K, V> {
         cause = context.getCause();
     }
 
-    @Override
-    public synchronized void warning(CacheExceptionContext<K, V> context) {
-        level = Level.Warn;
-        apply(context);
-    }
-
     public Cache getC() {
         return c;
     }

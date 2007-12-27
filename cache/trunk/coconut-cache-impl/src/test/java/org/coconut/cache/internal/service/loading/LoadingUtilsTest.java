@@ -30,13 +30,13 @@ public class LoadingUtilsTest {
 
     @Test(expected = NullPointerException.class)
     public void createLoadCallableNPE() {
-        LoadableFutureTask.createLoadCallable(null, "A", Attributes.EMPTY_MAP);
+        LoadableFutureTask.createLoadCallable(null, "A", Attributes.EMPTY_ATTRIBUTE_MAP);
     }
 
     @Test(expected = NullPointerException.class)
     public void createLoadCallableNPE1() {
         LoadableFutureTask.createLoadCallable(dummy(InternalCacheLoadingService.class), null,
-                Attributes.EMPTY_MAP);
+                Attributes.EMPTY_ATTRIBUTE_MAP);
     }
 
     @Test(expected = NullPointerException.class)
@@ -47,12 +47,12 @@ public class LoadingUtilsTest {
     @Test
     public void loadValueCallable() {
         final InternalCacheLoadingService service = context.mock(InternalCacheLoadingService.class);
-        LoadValueCallable callable = new LoadValueCallable(service, 1, Attributes.EMPTY_MAP);
+        LoadValueCallable callable = new LoadValueCallable(service, 1, Attributes.EMPTY_ATTRIBUTE_MAP);
         assertEquals(1, callable.getKey());
-        assertSame(Attributes.EMPTY_MAP, callable.getAttributes());
+        assertSame(Attributes.EMPTY_ATTRIBUTE_MAP, callable.getAttributes());
         context.checking(new Expectations() {
             {
-                one(service).loadAndAddToCache(1, Attributes.EMPTY_MAP, false);
+                one(service).loadAndAddToCache(1, Attributes.EMPTY_ATTRIBUTE_MAP, false);
             }
         });
         callable.call();

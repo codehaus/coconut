@@ -304,7 +304,8 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
                 entry = null;
             }
             if (loadingService != null) {
-                entry =(AbstractCacheEntry) loadingService.loadBlocking(key, Attributes.EMPTY_MAP);
+                entry = (AbstractCacheEntry) loadingService.loadBlocking(key,
+                        Attributes.EMPTY_ATTRIBUTE_MAP);
             }
             listener.afterMiss(this, started, key, previous, entry, isExpired);
         }
@@ -350,20 +351,15 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
                 i++;
             }
         }
-        Map<K,  V> loadedEntries = Collections.EMPTY_MAP;
+        Map<K, V> loadedEntries = Collections.EMPTY_MAP;
         for (int j = 0; j < isExpired.length; j++) {
             if (isExpired[j]) {
                 listener.dexpired(this, started, entries[j]);
             }
         }
         if (loadingService != null && loadMe.size() != 0) {
-            loadedEntries = loadingService.loadBlockingAll(Attributes.toMap(loadMe,
-                    Attributes.EMPTY_MAP));
-            for (Map.Entry<K, V> entry : loadedEntries.entrySet()) {
-                if (entry != null) {
-                    result.put(entry.getKey(), entry.getValue());
-                }
-            }
+            loadedEntries = loadingService.loadBlockingAll(Attributes.toMap(loadMe));
+            result.putAll(loadedEntries);
         }
         listener.afterGetAll(this, started, k, entries, isHit, isExpired, loadedEntries);
         return result;

@@ -23,11 +23,11 @@ public abstract class AbstractCacheWorkerService extends AbstractCacheLifecycle 
      *         specified service
      */
     public final ExecutorService getExecutorService(Object service) {
-        return getExecutorService(service, Attributes.EMPTY_MAP);
+        return getExecutorService(service, Attributes.EMPTY_ATTRIBUTE_MAP);
     }
 
     public final ScheduledExecutorService getScheduledExecutorService(Object service) {
-        return getScheduledExecutorService(service, Attributes.EMPTY_MAP);
+        return getScheduledExecutorService(service, Attributes.EMPTY_ATTRIBUTE_MAP);
     }
 
     public String toString() {

@@ -17,7 +17,7 @@ public class EvictionNoPolicy extends AbstractCacheTCKTest {
 
     @Test
     public void testMaximumSize() {
-        setCache(newConf().eviction().setMaximumSize(3));
+        init(newConf().eviction().setMaximumSize(3));
         put(5);
         assertSize(3);
         putAll(10, 15);
@@ -26,7 +26,7 @@ public class EvictionNoPolicy extends AbstractCacheTCKTest {
 
     @Test
     public void testMaximumSizeChange() {
-        setCache(newConf().eviction().setMaximumSize(3));
+        init(newConf().eviction().setMaximumSize(3));
         put(5);
         assertSize(3);
         eviction().setMaximumSize(6);

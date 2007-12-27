@@ -69,11 +69,11 @@ import org.coconut.internal.util.CollectionUtils;
 public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
 
     /** The default services for this cache. */
-    private final static Collection<Class<?>> DEFAULTS = Arrays
-            .asList(DefaultCacheStatisticsService.class, DefaultCacheListener.class,
-                    UnsynchronizedCacheEvictionService.class, DefaultCacheExpirationService.class,
-                    UnsynchronizedCacheLoaderService.class, DefaultCacheEventService.class,
-                    UnsynchronizedEntryFactoryService.class, DefaultCacheExceptionService.class);
+    private final static Collection<Class<?>> DEFAULTS = Arrays.asList(
+            DefaultCacheStatisticsService.class, DefaultCacheListener.class,
+            UnsynchronizedCacheEvictionService.class, DefaultCacheExpirationService.class,
+            UnsynchronizedCacheLoaderService.class, DefaultCacheEventService.class,
+            UnsynchronizedEntryFactoryService.class, DefaultCacheExceptionService.class);
 
     private final InternalCacheEntryService entryService;
 
@@ -272,7 +272,8 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
                 entry = null;
             }
             if (loadingService != null) {
-                entry = (AbstractCacheEntry)loadingService.loadBlocking(key, Attributes.EMPTY_MAP);
+                entry = (AbstractCacheEntry) loadingService.loadBlocking(key,
+                        Attributes.EMPTY_ATTRIBUTE_MAP);
             }
             listener.afterMiss(this, started, key, previous, entry, isExpired);
         }
@@ -324,13 +325,8 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
             }
         }
         if (loadingService != null && loadMe.size() != 0) {
-            loadedEntries = loadingService.loadBlockingAll(Attributes.toMap(loadMe,
-                    Attributes.EMPTY_MAP));
-            for (Map.Entry<K, V> entry : loadedEntries.entrySet()) {
-                if (entry != null) {
-                    result.put(entry.getKey(), entry.getValue());
-                }
-            }
+            loadedEntries = loadingService.loadBlockingAll(Attributes.toMap(loadMe));
+            result.putAll(loadedEntries);
         }
         listener.afterGetAll(this, started, k, entries, isHit, isExpired, loadedEntries);
         return result;

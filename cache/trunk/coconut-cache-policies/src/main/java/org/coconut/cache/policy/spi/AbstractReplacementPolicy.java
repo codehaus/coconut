@@ -28,7 +28,7 @@ public abstract class AbstractReplacementPolicy<T> implements ReplacementPolicy<
      *         accepted into the replacement policy
      */
     public int add(T element) {
-        return add(element, Attributes.EMPTY_MAP);
+        return add(element, Attributes.EMPTY_ATTRIBUTE_MAP);
     }
 
     /**
@@ -43,7 +43,7 @@ public abstract class AbstractReplacementPolicy<T> implements ReplacementPolicy<
      *         <tt>false</tt>
      */
     public boolean update(int index, T newElement) {
-        return update(index, newElement, Attributes.EMPTY_MAP);
+        return update(index, newElement, Attributes.EMPTY_ATTRIBUTE_MAP);
     }
 
     /**

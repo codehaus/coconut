@@ -67,7 +67,7 @@ public abstract class AbstractAttributeTest {
         Method getMethod = a.getClass().getMethod("get", AttributeMap.class);
         assertTrue(getMethod.getReturnType().equals(c));
 
-        assertEquals(defaultValue, getMethod.invoke(null, Attributes.EMPTY_MAP));
+        assertEquals(defaultValue, getMethod.invoke(null, Attributes.EMPTY_ATTRIBUTE_MAP));
         for (Object l : valid) {
             AttributeMap am = newMap();
             am.put(a, l);

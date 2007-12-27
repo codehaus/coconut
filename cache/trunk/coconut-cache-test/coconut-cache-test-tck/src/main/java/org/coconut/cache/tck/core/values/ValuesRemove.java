@@ -54,7 +54,7 @@ public class ValuesRemove extends AbstractCacheTCKTest {
      */
     @Test
     public void removeLazyStart() {
-        setCache();
+        init();
         assertFalse(c.isStarted());
         c.values().remove(MNAN1.getValue());
         checkLazystart();
@@ -111,7 +111,7 @@ public class ValuesRemove extends AbstractCacheTCKTest {
      */
     @Test
     public void removeAllLazyStart() {
-        setCache();
+        init();
         assertFalse(c.isStarted());
         c.values().removeAll(Arrays.asList(M1.getValue(), M2.getValue()));
         checkLazystart();

@@ -38,7 +38,7 @@ public class ExpirationPurge extends AbstractExpirationTestBundle {
      */
     @Test
     public void evictSingleElement() {
-        setCache();
+        init();
         put(M1, 2);
         incTime();
         purge();
@@ -55,7 +55,7 @@ public class ExpirationPurge extends AbstractExpirationTestBundle {
      */
     @Test
     public void evictManyElements() {
-        setCache();
+        init();
         fillItUp();
         assertSize(5);
 
@@ -90,7 +90,7 @@ public class ExpirationPurge extends AbstractExpirationTestBundle {
     @Test
     public void customExpirationFilter() {
         CacheEntryFilter f = new CacheEntryFilter();
-        setCache(conf.expiration().setExpirationFilter(f));
+        init(conf.expiration().setExpirationFilter(f));
         fillItUp();
 
         incTime(3);
@@ -107,7 +107,7 @@ public class ExpirationPurge extends AbstractExpirationTestBundle {
      */
     @Test
     public void purgeLazyStart() {
-        setCache();
+        init();
         assertFalse(c.isStarted());
         purge();
         checkLazystart();
@@ -121,7 +121,7 @@ public class ExpirationPurge extends AbstractExpirationTestBundle {
      */
     @Test
     public void purgeShutdown() throws InterruptedException {
-        setCache(5);
+        init(5);
         assertTrue(c.isStarted());
         c.shutdown();
 

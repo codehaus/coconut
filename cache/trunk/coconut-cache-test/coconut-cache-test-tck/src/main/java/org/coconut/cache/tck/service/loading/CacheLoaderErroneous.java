@@ -19,7 +19,7 @@ public class CacheLoaderErroneous extends AbstractCacheTCKTest {
         MyLoader loader = new MyLoader();
         MyLogger logger = new MyLogger();
         conf.exceptionHandling().setExceptionLogger(logger);
-        setCache(conf.loading().setLoader(loader));
+        init(conf.loading().setLoader(loader));
 
         loading().loadAll(Arrays.asList(1, 2, 3));
 
@@ -38,7 +38,7 @@ public class CacheLoaderErroneous extends AbstractCacheTCKTest {
         MyLoader loader = new MyLoader();
         MyLogger logger = new MyLogger();
         conf.exceptionHandling().setExceptionLogger(logger);
-        setCache(conf.loading().setLoader(loader));
+        init(conf.loading().setLoader(loader));
 
         loading().loadAll(Arrays.asList(1));
 
@@ -57,7 +57,7 @@ public class CacheLoaderErroneous extends AbstractCacheTCKTest {
         MyLoader2 loader = new MyLoader2();
         MyLogger logger = new MyLogger();
         conf.exceptionHandling().setExceptionLogger(logger);
-        setCache(conf.loading().setLoader(loader));
+        init(conf.loading().setLoader(loader));
 
         loading().loadAll(Arrays.asList(1, 2));
 

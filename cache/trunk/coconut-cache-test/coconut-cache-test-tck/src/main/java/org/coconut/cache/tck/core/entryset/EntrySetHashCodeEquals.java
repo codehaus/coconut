@@ -26,7 +26,7 @@ public class EntrySetHashCodeEquals extends AbstractCacheTCKTest {
      */
     @Test
     public void testEquals() {
-        setCache();
+        init();
 
         assertTrue(new HashSet().equals(c.entrySet()));
         assertTrue(c.entrySet().equals(new HashSet()));
@@ -35,7 +35,7 @@ public class EntrySetHashCodeEquals extends AbstractCacheTCKTest {
         assertFalse(c.entrySet().equals(newCache(1).entrySet()));
 
         //abstractCacheEntry corner case
-        setCache();
+        init();
         c.put(M1.getKey(), M2.getValue());
         assertFalse(c.entrySet().equals(new HashSet(Collections.singletonList(M1))));
 

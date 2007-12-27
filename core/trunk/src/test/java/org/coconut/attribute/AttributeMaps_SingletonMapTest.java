@@ -3,7 +3,7 @@
  */
 package org.coconut.attribute;
 
-import static org.coconut.attribute.Attributes.EMPTY_MAP;
+import static org.coconut.attribute.Attributes.EMPTY_ATTRIBUTE_MAP;
 import static org.coconut.test.TestUtil.assertIsSerializable;
 import static org.coconut.test.TestUtil.serializeAndUnserialize;
 import static org.junit.Assert.assertEquals;

@@ -17,6 +17,7 @@ import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.core.Logger;
 import org.coconut.core.Loggers;
+import org.coconut.core.Logger.Level;
 import org.coconut.internal.util.LazyLogger;
 
 /**
@@ -96,12 +97,12 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
 
     /** {@inheritDoc} */
     public void fatal(String msg) {
-        exceptionHandler.apply(createContext(null, msg));
+        exceptionHandler.apply(createContext(null, msg, Level.Fatal));
     }
 
     /** {@inheritDoc} */
     public void fatal(String msg, Throwable cause) {
-        exceptionHandler.apply(createContext(cause, msg));
+        exceptionHandler.apply(createContext(cause, msg, Level.Fatal));
     }
 
     public void info(String str) {
@@ -140,8 +141,16 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
     public V loadFailed(Throwable cause, CacheLoader<? super K, ?> loader, K key,
             AttributeMap attributes) {
         return exceptionHandler.loadingLoadValueFailed(createContext(cause,
-                "Could not load value [key = " + key + ", attributes = " + attributes + "]"),
+                "Could not load value [key = " + key + ", attributes = " + attributes + "]",
+                fromException(cause)),
                 loader, key, attributes);
+    }
+
+    private Level fromException(Throwable cause) {
+        if (cause instanceof Exception && !(cause instanceof RuntimeException)) {
+            return Level.Error;
+        }
+        return Level.Fatal;
     }
 
     public void serviceManagerShutdownFailed(Throwable cause, CacheLifecycle lifecycle) {
@@ -183,10 +192,11 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
     }
 
     public void warning(String warning) {
-        exceptionHandler.warning(createContext(null, warning));
+        exceptionHandler.apply(createContext(null, warning, Level.Warn));
     }
 
-    private CacheExceptionContext<K, V> createContext(final Throwable cause, final String message) {
+    private CacheExceptionContext<K, V> createContext(final Throwable cause, final String message,
+            final Level level) {
         return new CacheExceptionContext<K, V>() {
 
             @Override
@@ -207,6 +217,11 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
             @Override
             public String getMessage() {
                 return message;
+            }
+
+            @Override
+            public Level getLevel() {
+                return level;
             }
         };
     }

@@ -23,7 +23,7 @@ public class EvictionLRU extends AbstractCacheTCKTest {
     //TODO check some loading
     @Before
     public void setup() {
-        setCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(5));
+        init(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(5));
     }
 
     @Test

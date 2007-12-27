@@ -20,7 +20,7 @@ public class EntrySet extends AbstractCacheTCKTest {
      */
     @Test
     public void noLazyStart() {
-        setCache();
+        init();
         c.entrySet();
         assertNotStarted();
     }
@@ -30,7 +30,7 @@ public class EntrySet extends AbstractCacheTCKTest {
      */
     @Test
     public void noFailOnShutdown() {
-        setCache(5);
+        init(5);
         assertStarted();
         shutdownAndAwaitTermination();
         c.entrySet(); // should not fail

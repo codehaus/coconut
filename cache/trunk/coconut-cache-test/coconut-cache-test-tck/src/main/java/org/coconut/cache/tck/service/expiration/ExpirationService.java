@@ -49,7 +49,7 @@ public class ExpirationService extends AbstractCacheTCKTest {
                 TimeUnit.NANOSECONDS));
         assertEquals(2l, expiration().getDefaultTimeToLive(TimeUnit.SECONDS));
 
-        setCache(newConf().expiration().setDefaultTimeToLive(5, TimeUnit.SECONDS));
+        init(newConf().expiration().setDefaultTimeToLive(5, TimeUnit.SECONDS));
         assertEquals(5 * 1000 * 1000 * 1000l, expiration().getDefaultTimeToLive(
                 TimeUnit.NANOSECONDS));
         assertEquals(5l, expiration().getDefaultTimeToLive(TimeUnit.SECONDS));
@@ -81,7 +81,7 @@ public class ExpirationService extends AbstractCacheTCKTest {
 
     @Before
     public void setup() {
-        setCache();
+        init();
     }
 
     @Test(expected = IllegalStateException.class)

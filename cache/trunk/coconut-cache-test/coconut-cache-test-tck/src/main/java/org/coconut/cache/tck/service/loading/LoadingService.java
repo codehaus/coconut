@@ -27,7 +27,7 @@ public class LoadingService extends AbstractCacheTCKTest {
      */
     @Test
     public void noLoadingServiceIfNoLoaderConfigured() {
-        setCache();
+        init();
         assertFalse(services().hasService(CacheLoadingService.class));
     }
 
@@ -37,7 +37,7 @@ public class LoadingService extends AbstractCacheTCKTest {
      */
     @Test(expected = IllegalArgumentException.class)
     public void getLoadingServiceFailIfNoLoaderConfigured() {
-        setCache();
+        init();
         c.getService(CacheLoadingService.class);
     }
 
@@ -47,7 +47,7 @@ public class LoadingService extends AbstractCacheTCKTest {
      */
     @Test
     public void hasAndGetLoadingService() {
-        c = newCache(newConf().loading().setLoader(TestUtil.dummy(CacheLoader.class)));
+        init(conf.loading().setLoader(TestUtil.dummy(CacheLoader.class)));
         assertTrue(services().hasService(CacheLoadingService.class));
         // check that it doesn't fail with a classcast exception
         assertNotNull(c.getService(CacheLoadingService.class));
@@ -57,7 +57,7 @@ public class LoadingService extends AbstractCacheTCKTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void setDefaultTimeToLiveIAE() {
-        c = newCache(newConf().loading().setLoader(TestUtil.dummy(CacheLoader.class)));
+        init(conf.loading().setLoader(TestUtil.dummy(CacheLoader.class)));
         loading().setDefaultTimeToRefresh(-1, TimeUnit.MICROSECONDS);
     }
 
@@ -80,7 +80,7 @@ public class LoadingService extends AbstractCacheTCKTest {
                 TimeUnit.NANOSECONDS));
         assertEquals(2l, loading().getDefaultTimeToRefresh(TimeUnit.SECONDS));
 
-        setCache(newConf().loading().setLoader(TestUtil.dummy(CacheLoader.class))
+        init(newConf().loading().setLoader(TestUtil.dummy(CacheLoader.class))
                 .setDefaultTimeToRefresh(5, TimeUnit.SECONDS));
         assertEquals(5 * 1000 * 1000 * 1000l, loading().getDefaultTimeToRefresh(
                 TimeUnit.NANOSECONDS));

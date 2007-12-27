@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
@@ -191,7 +191,7 @@ public class AbstractEventTestBundle extends AbstractCacheTCKTest {
     }
 
     static class EventWrapper {
-        private StackTraceElement[] elements;
+        private final StackTraceElement[] elements;
 
         CacheEvent<Integer, String> event;
 

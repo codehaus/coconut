@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.service.loading;
@@ -9,7 +9,11 @@ import static org.coconut.test.CollectionTestUtil.M3;
 import static org.coconut.test.CollectionTestUtil.M4;
 import static org.coconut.test.CollectionTestUtil.M5;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -17,7 +21,8 @@ import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.DefaultAttributeMap;
 import org.coconut.attribute.common.TimeToRefreshAttribute;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.test.util.AsyncIntegerToStringLoader;
+import org.coconut.cache.service.loading.CacheLoader;
+import org.coconut.cache.test.service.loading.TestLoader;
 import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.operations.Ops.Predicate;
 import org.junit.Test;
@@ -29,6 +34,7 @@ import org.junit.Test;
 public class LoadingRefresh extends AbstractLoadingTestBundle {
 
     static class MyLoader extends IntegerToStringLoader {
+        @Override
         public String load(Integer key, AttributeMap attributes) throws Exception {
             TimeToRefreshAttribute.INSTANCE.setAttribute(attributes, key, TimeUnit.MILLISECONDS);
             return super.load(key, attributes);
@@ -39,19 +45,14 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
         loading().loadAll();
     }
 
-    @Test
-    public void testNothing() {
-
-    }
-
     /**
      * Test refresh window
      */
     @SuppressWarnings("unchecked")
     public void defaultRefreshTime() throws Exception {
         IntegerToStringLoader loader = new IntegerToStringLoader();
-        c = newCache(newConf().setClock(clock).loading().setDefaultTimeToRefresh(2,
-                TimeUnit.MILLISECONDS).setLoader(loader).c());
+        init(conf.setClock(clock).loading().setDefaultTimeToRefresh(2, TimeUnit.MILLISECONDS)
+                .setLoader(loader).c());
         assertGet(M1);
         assertGet(M2);
         incTime(); // 1
@@ -78,7 +79,7 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
 
     /**
      * Checks setting refresh value while loading.
-     * 
+     *
      * @throws Exception
      */
     @SuppressWarnings("unchecked")
@@ -117,23 +118,66 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
      * Test refresh window
      */
     @SuppressWarnings("unchecked")
+    @Test
     public void refreshWindowSingleElementEvict() throws Exception {
-        AsyncIntegerToStringLoader loader = new AsyncIntegerToStringLoader();
-        c = newCache(newConf().setClock(clock).loading().setDefaultTimeToRefresh(2,
-                TimeUnit.NANOSECONDS).setLoader(loader).c());
-        expiration().put(M1.getKey(), "AB1", 2, TimeUnit.NANOSECONDS);
-        expiration().put(M2.getKey(), "AB2", 3, TimeUnit.NANOSECONDS);
-        expiration().put(M3.getKey(), "AB3", 4, TimeUnit.NANOSECONDS);
-        expiration().put(M4.getKey(), "AB4", 7, TimeUnit.NANOSECONDS);
+        TestLoader tl = new TestLoader();
+        // tl.add(M1.getKey(), value, attributes)
+        init(conf.setClock(clock).loading().setDefaultTimeToRefresh(2, TimeUnit.MILLISECONDS)
+                .setLoader(tl));
+        tl.add(M1.getKey(), "AB1", TimeToRefreshAttribute.singleton(2, TimeUnit.MILLISECONDS));
+        tl.add(M2.getKey(), "AB2", TimeToRefreshAttribute.singleton(3, TimeUnit.MILLISECONDS));
+        tl.add(M3.getKey(), "AB3", TimeToRefreshAttribute.singleton(4, TimeUnit.MILLISECONDS));
+        tl.add(M4.getKey(), "AB4", TimeToRefreshAttribute.singleton(7, TimeUnit.MILLISECONDS));
 
-        incTime(); // time is one
-        // test no refresh on get
+        getAll(M1, M2, M3, M4);
+        assertSize(4);
+        assertEquals(4, tl.totalLoads());
+
         loading().loadAll();
-        assertEquals(2, loader.getLoadedKeys().size());
-        waitAndAssertGet(M1, M2);
+        awaitAllLoads();
+        assertEquals(4, tl.totalLoads());
+        tl.clearAndFromBase(4, 0);
 
-        assertEquals("AB3", get(M3));
-        assertEquals("AB4", get(M4));
+        incTime(); // time = 1
+        loading().loadAll();
+        awaitAllLoads();
+        assertEquals(0, tl.totalLoads());
+
+        incTime(); // time = 2
+        loading().loadAll();
+        awaitAllLoads();
+        assertEquals(1, tl.totalLoads());
+        assertPeek(M1);
+
+        incTime(); // time = 3
+        loading().loadAll();
+        awaitAllLoads();
+        assertEquals(2, tl.totalLoads());
+        assertPeek(M1, M2);
+
+        incTime(); // time = 4
+        loading().loadAll();
+        awaitAllLoads();
+        assertEquals(4, tl.totalLoads());
+        assertPeek(M1, M2, M3);
+
+        incTime(); // time = 5
+        loading().loadAll();
+        awaitAllLoads();
+        assertEquals(5, tl.totalLoads());
+        assertPeek(M1, M2, M3);
+
+        incTime(); // time = 6
+        loading().loadAll();
+        awaitAllLoads();
+        assertEquals(7, tl.totalLoads());
+        assertPeek(M1, M2, M3);
+
+        incTime(); // time = 6
+        loading().loadAll();
+        awaitAllLoads();
+        assertEquals(9, tl.totalLoads());
+        assertPeek(M1, M2, M3, M4);
     }
 
     @SuppressWarnings("unchecked")
@@ -150,7 +194,9 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
         // test no refresh on get
         getAll(M1, M2, M3, M4);
         assertEquals(2, loader.getLoadedKeys().size());
-        waitAndAssertGet(M1, M2);
+        awaitAllLoads();
+        assertGetAll(M1, M2);
+
         assertEquals("AB3", get(M3));
         assertEquals("AB4", get(M4));
     }
@@ -160,17 +206,19 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
      */
     @Test
     public void testLoadAll() {
-        IntegerToStringLoader loader = new IntegerToStringLoader();
+        TestLoader loader = TestLoader.create(2);
         c = newCache(newConf().loading().setRefreshPredicate(new RefreshFilter()).setLoader(loader));
         loading().loadAll();
         awaitAllLoads();
         assertEquals("A", c.get(1));
         assertEquals("B", c.get(2));
-        loader.setBase(2);
+        assertEquals(2, loader.totalLoads());
+        loader.clearAndFromBase(2, 2);
         loading().loadAll();
         awaitAllLoads();
         assertEquals("C", c.peek(1));
         assertEquals("B", c.peek(2));
+        assertEquals(1, loader.totalLoads());
     }
 
     @Test
@@ -197,19 +245,14 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
         }
     }
 
-    protected void waitAndAssertGet(Map.Entry<Integer, String>... e) throws InterruptedException {
-        for (Map.Entry<Integer, String> m : e) {
-            for (int i = 0; i < 100; i++) {
-                if (c.get(m.getKey()).equals(m.getValue())) {
-                    break;
-                } else {
-                    Thread.sleep(15);
-                }
-                if (i == 99) {
-                    throw new AssertionError("Value did not change");
-                }
-            }
+    public static class AsyncIntegerToStringLoader extends IntegerToStringLoader implements
+            CacheLoader<Integer, String> {
+
+        private final List<Integer> keysLoader = Collections
+                .synchronizedList(new LinkedList<Integer>());
+
+        public List<Integer> getLoadedKeys() {
+            return new ArrayList<Integer>(keysLoader);
         }
     }
-
 }

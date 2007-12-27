@@ -27,7 +27,7 @@ public class EventServiceExpiration extends AbstractEventTestBundle {
 
     @Test
     public void itemRemovedExpired() throws Exception {
-        setCache();
+        init();
         subscribe(CACHEENTRY_REMOVED_FILTER);
         expiration().put(M1.getKey(), M1.getValue(), 1, TimeUnit.MILLISECONDS);
         expiration().putAll(CollectionTestUtil.asMap(M2, M3), 2, TimeUnit.MILLISECONDS);

@@ -23,7 +23,7 @@ public class IgnoreEvents extends AbstractEventTestBundle {
 
     @Test
     public void add() {
-        setCache(anythingBut(ItemAdded.class));
+        init(anythingBut(ItemAdded.class));
         subscribe(Predicates.truePredicate());
         put(M1);
         putAll(M2, M3);
@@ -32,7 +32,7 @@ public class IgnoreEvents extends AbstractEventTestBundle {
     @Test
     public void addLoad() {
         CacheConfiguration<Integer, String> conf = anythingBut(ItemAdded.class);
-        setCache(conf.loading().setLoader(new IntegerToStringLoader()));
+        init(conf.loading().setLoader(new IntegerToStringLoader()));
         subscribe(Predicates.truePredicate());
         loading().forceLoad(1);
         awaitAllLoads();
@@ -40,7 +40,7 @@ public class IgnoreEvents extends AbstractEventTestBundle {
 
     @Test
     public void update() {
-        setCache(anythingBut(ItemUpdated.class));
+        init(anythingBut(ItemUpdated.class));
         put(M1);
         subscribe(Predicates.truePredicate());
         c.put(M1.getKey(), "C");
@@ -48,7 +48,7 @@ public class IgnoreEvents extends AbstractEventTestBundle {
 
     @Test
     public void remove() {
-        setCache(anythingBut(ItemRemoved.class));
+        init(anythingBut(ItemRemoved.class));
         put(M1);
         subscribe(Predicates.truePredicate());
         remove(M1);
@@ -56,7 +56,7 @@ public class IgnoreEvents extends AbstractEventTestBundle {
 
     @Test
     public void removeCleared() {
-        setCache(anythingBut(ItemRemoved.class));
+        init(anythingBut(ItemRemoved.class));
         put(M1);
         subscribe(Predicates.truePredicate());
         c.clear();
@@ -67,7 +67,7 @@ public class IgnoreEvents extends AbstractEventTestBundle {
 
     @Test
     public void clear() {
-        setCache(anythingBut(CacheEvent.CacheCleared.class));
+        init(anythingBut(CacheEvent.CacheCleared.class));
         put(M1);
         subscribe(Predicates.truePredicate());
         c.clear();
@@ -76,7 +76,7 @@ public class IgnoreEvents extends AbstractEventTestBundle {
 
     @Test
     public void purgeExpired() {
-        setCache(anythingBut(ItemRemoved.class).setClock(clock));
+        init(anythingBut(ItemRemoved.class).setClock(clock));
         expiration().put(M1.getKey(), M1.getValue(), 1, TimeUnit.NANOSECONDS);
         assertSize(1);
         expiration().purgeExpired();
@@ -85,7 +85,7 @@ public class IgnoreEvents extends AbstractEventTestBundle {
     @Test
     public void putLoad() {
         CacheConfiguration<Integer, String> conf = anythingBut(ItemAdded.class);
-        setCache(conf.loading().setLoader(new IntegerToStringLoader()));
+        init(conf.loading().setLoader(new IntegerToStringLoader()));
         subscribe(Predicates.truePredicate());
         loading().forceLoad(1);
         awaitAllLoads();

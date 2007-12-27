@@ -41,7 +41,7 @@ public class DebuggingWithManagement extends AbstractCacheTCKTest {
             public void started(Cache cache) {}
         });
 
-        setCache();
+        init();
         prestart();
     }
 }

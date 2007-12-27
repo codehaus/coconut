@@ -5,6 +5,7 @@ package org.coconut.cache.service.exceptionhandling;
 
 import org.coconut.cache.Cache;
 import org.coconut.core.Logger;
+import org.coconut.core.Logger.Level;
 
 /**
  * A CacheExceptionContext is provided by the cache to all of the exception-handle methods
@@ -45,6 +46,8 @@ public abstract class CacheExceptionContext<K, V> {
     public abstract Throwable getCause();
 
     public abstract String getMessage();
+
+    public abstract Level getLevel();
 
 // /**
 // * Shutdowns the cache. Either we should only take a runtime exception, or else the

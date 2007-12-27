@@ -28,7 +28,7 @@ public class EntrySetIterator extends AbstractCacheTCKTest {
     @SuppressWarnings("unused")
     public void iterator() {
         int count = 0;
-        setCache();
+        init();
         for (Integer entry : c.keySet()) {
             count++;
         }

@@ -100,9 +100,11 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         CacheEntry<K, V> entry = doGet(key);
         return entry;
     }
+
     public CacheServices<K, V> services() {
         return new CacheServices<K, V>(this);
     }
+
     /** {@inheritDoc} */
     public String getName() {
         return name;
@@ -160,7 +162,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
 
     /** {@inheritDoc} */
     public V put(K key, V value) {
-        return put(key, value, Attributes.EMPTY_MAP, false);
+        return put(key, value, Attributes.EMPTY_ATTRIBUTE_MAP, false);
     }
 
     /** {@inheritDoc} */
@@ -169,12 +171,12 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
             throw new NullPointerException("m is null");
         }
         CollectionUtils.checkMapForNulls(m);
-        doPutAll(m, Attributes.toMap(m.keySet(), Attributes.EMPTY_MAP), false);
+        doPutAll(m, Attributes.toMap(m.keySet()), false);
     }
 
     /** {@inheritDoc} */
     public V putIfAbsent(K key, V value) {
-        return put(key, value, Attributes.EMPTY_MAP, true);
+        return put(key, value, Attributes.EMPTY_ATTRIBUTE_MAP, true);
     }
 
     /** {@inheritDoc} */
@@ -326,11 +328,13 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         public final V put(K key, V value, AttributeMap attributes) {
             return AbstractCache.this.put(key, value, attributes, false);
         }
+
         /** {@inheritDoc} */
         public final void putAll(Map<? extends K, ? extends V> keyValues,
                 Map<? extends K, AttributeMap> attributes) {
             doPutAll(keyValues, attributes, false);
         }
+
         /** {@inheritDoc} */
         public final CacheEntry<K, V> valueLoaded(K key, V value, AttributeMap attributes) {
             if (value != null) {

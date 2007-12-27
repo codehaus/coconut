@@ -20,7 +20,7 @@ public class IsCacheablesTest {
     @Test
     public void acceptAll() {
         assertSame(IsCacheables.ACCEPT_ALL, IsCacheables.acceptAll());
-        assertTrue(IsCacheables.ACCEPT_ALL.isCacheable(1, 2, Attributes.EMPTY_MAP));
+        assertTrue(IsCacheables.ACCEPT_ALL.isCacheable(1, 2, Attributes.EMPTY_ATTRIBUTE_MAP));
         TestUtil.assertIsSerializable(IsCacheables.ACCEPT_ALL);
     }
 
@@ -28,8 +28,8 @@ public class IsCacheablesTest {
     public void fromAttributeMapPredicate() {
         AttributeMap nono = TestUtil.dummy(AttributeMap.class);
         IsCacheable ic = IsCacheables.fromAttributeMapPredicate(Predicates
-                .isSame(Attributes.EMPTY_MAP));
-        assertTrue(ic.isCacheable(0, 123, Attributes.EMPTY_MAP));
+                .isSame(Attributes.EMPTY_ATTRIBUTE_MAP));
+        assertTrue(ic.isCacheable(0, 123, Attributes.EMPTY_ATTRIBUTE_MAP));
         assertFalse(ic.isCacheable(0, 123, nono));
         TestUtil.assertIsSerializable(ic);
     }
@@ -42,10 +42,10 @@ public class IsCacheablesTest {
     @Test
     public void fromKeyPredicate() {
         IsCacheable ic = IsCacheables.fromKeyPredicate(Predicates.anyEquals(1, 2));
-        assertFalse(ic.isCacheable(0, 123, Attributes.EMPTY_MAP));
-        assertTrue(ic.isCacheable(1, "12", Attributes.EMPTY_MAP));
-        assertTrue(ic.isCacheable(2, 1, Attributes.EMPTY_MAP));
-        assertFalse(ic.isCacheable(3, 3, Attributes.EMPTY_MAP));
+        assertFalse(ic.isCacheable(0, 123, Attributes.EMPTY_ATTRIBUTE_MAP));
+        assertTrue(ic.isCacheable(1, "12", Attributes.EMPTY_ATTRIBUTE_MAP));
+        assertTrue(ic.isCacheable(2, 1, Attributes.EMPTY_ATTRIBUTE_MAP));
+        assertFalse(ic.isCacheable(3, 3, Attributes.EMPTY_ATTRIBUTE_MAP));
 
         TestUtil.assertIsSerializable(ic);
     }
@@ -58,10 +58,10 @@ public class IsCacheablesTest {
     @Test
     public void fromValuePredicate() {
         IsCacheable ic = IsCacheables.fromValuePredicate(Predicates.anyEquals(1, 2));
-        assertFalse(ic.isCacheable(0, 0, Attributes.EMPTY_MAP));
-        assertTrue(ic.isCacheable("1", 1, Attributes.EMPTY_MAP));
-        assertTrue(ic.isCacheable(23, 2, Attributes.EMPTY_MAP));
-        assertFalse(ic.isCacheable(13, 3, Attributes.EMPTY_MAP));
+        assertFalse(ic.isCacheable(0, 0, Attributes.EMPTY_ATTRIBUTE_MAP));
+        assertTrue(ic.isCacheable("1", 1, Attributes.EMPTY_ATTRIBUTE_MAP));
+        assertTrue(ic.isCacheable(23, 2, Attributes.EMPTY_ATTRIBUTE_MAP));
+        assertFalse(ic.isCacheable(13, 3, Attributes.EMPTY_ATTRIBUTE_MAP));
 
         TestUtil.assertIsSerializable(ic);
     }
@@ -100,7 +100,7 @@ public class IsCacheablesTest {
     @Test
     public void rejectAll() {
         assertSame(IsCacheables.REJECT_ALL, IsCacheables.rejectAll());
-        assertFalse(IsCacheables.REJECT_ALL.isCacheable(1, 2, Attributes.EMPTY_MAP));
+        assertFalse(IsCacheables.REJECT_ALL.isCacheable(1, 2, Attributes.EMPTY_ATTRIBUTE_MAP));
         TestUtil.assertIsSerializable(IsCacheables.REJECT_ALL);
     }
 }

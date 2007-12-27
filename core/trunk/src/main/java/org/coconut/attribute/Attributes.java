@@ -25,7 +25,7 @@ import org.coconut.internal.util.CollectionUtils.SimpleImmutableEntry;
 public final class Attributes {
 
     /** The empty attribute map (immutable). This attribute map is serializable. */
-    public final static AttributeMap EMPTY_MAP = new EmptyAttributeMap();
+    public final static AttributeMap EMPTY_ATTRIBUTE_MAP = new EmptyAttributeMap();
 
     // /CLOVER:OFF
     /** Cannot instantiate. */
@@ -49,6 +49,19 @@ public final class Attributes {
      */
     public static <T> AttributeMap singleton(Attribute<T> attribute, T value) {
         return new SingletonAttributeMap(attribute, value);
+    }
+
+    /**
+     * Creates a new {@link Map} where all the specified keys maps to {@link #EMPTY_ATTRIBUTE_MAP}.
+     *
+     * @param <K>
+     *            the type of keys
+     * @param keys
+     *            the collection of keys that should map to the empty AttributeMap
+     * @return a new Map where all the specified keys maps to an empty AttributeMap
+     */
+    public static <K> Map<K, AttributeMap> toMap(Collection<? extends K> keys) {
+        return toMap(keys, EMPTY_ATTRIBUTE_MAP);
     }
 
     /**
@@ -290,7 +303,7 @@ public final class Attributes {
          * @return the empty map
          */
         private Object readResolve() {
-            return EMPTY_MAP;
+            return EMPTY_ATTRIBUTE_MAP;
         }
     }
 

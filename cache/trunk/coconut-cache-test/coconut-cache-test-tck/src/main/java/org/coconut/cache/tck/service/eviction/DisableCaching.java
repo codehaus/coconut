@@ -19,7 +19,7 @@ public class DisableCaching extends AbstractCacheTCKTest {
 
     @Test
     public void put() {
-        setCache(newConf().eviction().setDisabled(true));
+        init(newConf().eviction().setDisabled(true));
         put(M1);
         assertSize(0);
         putIfAbsent(M2);
@@ -32,7 +32,7 @@ public class DisableCaching extends AbstractCacheTCKTest {
 
     @Test
     public void putDisable() {
-        setCache();
+        init();
         assertFalse(eviction().isDisabled());
         put(M1);
         assertSize(1);
@@ -52,7 +52,7 @@ public class DisableCaching extends AbstractCacheTCKTest {
     @Test
     public void get() {
         IntegerToStringLoader loader = new IntegerToStringLoader();
-        setCache(newConf().eviction().setDisabled(true).c().loading().setLoader(loader));
+        init(newConf().eviction().setDisabled(true).c().loading().setLoader(loader));
         assertGet(M1);
         assertSize(0);
         assertGet(M1, M2);
@@ -67,7 +67,7 @@ public class DisableCaching extends AbstractCacheTCKTest {
     @Test
     public void getDisable() {
         IntegerToStringLoader loader = new IntegerToStringLoader();
-        setCache(newConf().loading().setLoader(loader));
+        init(newConf().loading().setLoader(loader));
         assertGet(M1);
         assertSize(1);
         assertGet(M1, M2);
@@ -86,7 +86,7 @@ public class DisableCaching extends AbstractCacheTCKTest {
     @Test
     public void loadDisable() {
         IntegerToStringLoader loader = new IntegerToStringLoader();
-        setCache(newConf().loading().setLoader(loader));
+        init(newConf().loading().setLoader(loader));
         loading().load(1);
         awaitAllLoads();
         assertSize(1);
@@ -104,7 +104,7 @@ public class DisableCaching extends AbstractCacheTCKTest {
     @Test
     public void load() {
         IntegerToStringLoader loader = new IntegerToStringLoader();
-        setCache(newConf().eviction().setDisabled(true).c().loading().setLoader(loader));
+        init(newConf().eviction().setDisabled(true).c().loading().setLoader(loader));
         loading().load(1);
         awaitAllLoads();
         assertSize(0);

@@ -53,7 +53,7 @@ public class Lifecycle extends AbstractCacheTCKTest {
 //        LogManager.getLogManager().getLogger("foo").getParent().setLevel(java.util.logging.Level.FINEST);
         conf.serviceManager().add(alv).c();
         alv.setConfigurationToVerify(conf);
-        setCache(conf);
+        init(conf);
         alv.assertInitializedButNotStarted();
         prestart();
         alv.assertInStartedPhase();
@@ -73,7 +73,7 @@ public class Lifecycle extends AbstractCacheTCKTest {
         AbstractLifecycleVerifier alv = new AbstractLifecycleVerifier();
         conf.serviceManager().add(alv).c();
         alv.setConfigurationToVerify(conf);
-        setCache(conf);
+        init(conf);
         alv.assertInitializedButNotStarted();
         alv.setNextStep(AbstractLifecycleVerifier.Step.TERMINATED);
         c.shutdown();
@@ -126,7 +126,7 @@ public class Lifecycle extends AbstractCacheTCKTest {
             conf.serviceManager().add(alvs[i]);
             alvs[i].setConfigurationToVerify(conf);
         }
-        setCache(conf);
+        init(conf);
         for (int i = 0; i < 10; i++) {
             alvs[i].assertInitializedButNotStarted();
         }

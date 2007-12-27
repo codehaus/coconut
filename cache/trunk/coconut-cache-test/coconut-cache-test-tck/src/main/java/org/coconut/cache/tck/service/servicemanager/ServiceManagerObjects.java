@@ -20,7 +20,7 @@ public class ServiceManagerObjects extends AbstractCacheTCKTest {
 
     @Test
     public void testUnknownService() {
-        setCache();
+        init();
         assertFalse(services().hasService(Object.class));
     }
 
@@ -28,8 +28,8 @@ public class ServiceManagerObjects extends AbstractCacheTCKTest {
     public void lifecycleNoService() {
         Life l = new Life();
         Mo mo = new Mo();
-        setCache(newConf().serviceManager().add(l));
-        setCache(newConf().serviceManager().add(mo));
+        init(newConf().serviceManager().add(l));
+        init(newConf().serviceManager().add(mo));
         assertFalse(services().hasService(l.getClass()));
         assertFalse(services().hasService(mo.getClass()));
     }
@@ -39,7 +39,7 @@ public class ServiceManagerObjects extends AbstractCacheTCKTest {
         Life l = new Life();
         conf.serviceManager().add(l);
         l.setConfigurationToVerify(conf);
-        setCache();
+        init();
         l.assertInitializedButNotStarted();
         assertFalse(services().hasService(l.getClass()));
         prestart();
@@ -49,7 +49,7 @@ public class ServiceManagerObjects extends AbstractCacheTCKTest {
     @Test
     public void managedObjectManagementNotEnabled() throws InterruptedException {
         Mo l = new Mo();
-        setCache(newConf().serviceManager().add(l));
+        init(newConf().serviceManager().add(l));
         assertNull(l.g);
         prestart();
         c.shutdown();
@@ -59,7 +59,7 @@ public class ServiceManagerObjects extends AbstractCacheTCKTest {
 
     @Test
     public void recursiveStart() {
-        setCache(conf.serviceManager().add(new Put()));
+        init(conf.serviceManager().add(new Put()));
         get(M1);
     }
 

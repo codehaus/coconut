@@ -55,7 +55,7 @@ public class KeySetRemove extends AbstractCacheTCKTest {
      */
     @Test
     public void removeLazyStart() {
-        setCache();
+        init();
         assertFalse(c.isStarted());
         c.keySet().remove(MNAN1.getKey());
         checkLazystart();
@@ -111,7 +111,7 @@ public class KeySetRemove extends AbstractCacheTCKTest {
      */
     @Test
     public void removeAllLazyStart() {
-        setCache();
+        init();
         assertFalse(c.isStarted());
         c.keySet().removeAll(CollectionTestUtil.asList(2, 3));
         checkLazystart();

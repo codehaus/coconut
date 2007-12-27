@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache;
@@ -51,7 +51,7 @@ import org.coconut.attribute.AttributeMap;
  * errors. If nulls are absolutely needed the <a
  * href="http://today.java.net/today/2004/12/10/refactor.pdf">Null Object Pattern</a> can
  * be used as an alternative.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -65,7 +65,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * Blocks until all tasks within this cache have completed execution after a shutdown
      * request, or the timeout occurs, or the current thread is interrupted, whichever
      * happens first.
-     * 
+     *
      * @param timeout
      *            the maximum time to wait
      * @param unit
@@ -94,7 +94,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * current in the cache.
      * <p>
      * If the cache has been shutdown calls to this method is ignored
-     * 
+     *
      * @throws UnsupportedOperationException
      *             if the <tt>clear</tt> operation is not supported by this cache
      */
@@ -108,7 +108,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * <p>
      * This method does not check the expiration status of an element and will return if a
      * expired element is present in the cache for the specified key.
-     * 
+     *
      * @param key
      *            key whose presence in this cache is to be tested
      * @return <tt>true</tt> if this cache contains a mapping for the specified key
@@ -129,7 +129,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * <p>
      * This method does not check the expiration status of an element and will return if a
      * expired element is present in the cache for the specified value.
-     * 
+     *
      * @param value
      *            value whose presence in this cache is to be tested
      * @return <tt>true</tt> if this cache maps one or more keys to the specified value
@@ -159,7 +159,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * If the cache has been shutdown calls to <tt>Iterator.remove</tt>,
      * <tt>Collection.remove</tt>, <tt>removeAll</tt>, <tt>retainAll</tt> and
      * <tt>clear</tt> operation will throw an IllegalStateException.
-     * 
+     *
      * @return a set view of the mappings contained in this map
      */
     Set<Map.Entry<K, V>> entrySet();
@@ -177,7 +177,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * <p>
      * If the <tt><A HREF="service/event/package-summary.html"><CODE>event</CODE></A></tt>
      * service is enabled the following events may be raised.
-     * 
+     *
      * @param key
      *            key whose associated value is to be returned.
      * @return the value to which this cache maps the specified key
@@ -210,7 +210,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * <p>
      * The behavior of this operation is unspecified if the specified collection is
      * modified while the operation is in progress.
-     * 
+     *
      * @param keys
      *            a collection of keys whose associated values are to be returned.
      * @return a map with mappings from each key to the corresponding value, or to
@@ -235,7 +235,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * Works as {@link #get(Object)} with the following modification.
      * <p>
      * An immutable cache entry is returned.
-     * 
+     *
      * @param key
      *            whose associated cache entry is to be returned.
      * @return the cache entry to which this cache maps the specified key, or
@@ -259,7 +259,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * Returns the name of the cache. If no name has been specified while configuring the
      * cache. The cache must choose a valid name. A valid name contains no other
      * characters then alphanumeric characters and '_' or '-'.
-     * 
+     *
      * @return the name of the cache
      * @see CacheConfiguration#setName(String)
      */
@@ -268,7 +268,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     /**
      * Returns a service of the specified type or throws a
      * {@link IllegalArgumentException} if no such service exists.
-     * 
+     *
      * @param <T>
      *            the type of service to retrieve
      * @param serviceType
@@ -287,7 +287,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     /**
      * Returns the current volume of this cache. If the current volume of this cache is
      * greater then Long.MAX_VALUE, this method returns Long.MAX_VALUE.
-     * 
+     *
      * @return the current volume of this cache
      */
     long getVolume();
@@ -297,21 +297,21 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * <p>
      * If this cache has not been started a call to this method will automatically start
      * it. If this cache has been shutdown this method returns <tt>true</tt>.
-     * 
+     *
      * @return <tt>true</tt> if this cache contains no elements
      */
     boolean isEmpty();
 
     /**
      * Returns <tt>true</tt> if this cache has been shut down.
-     * 
+     *
      * @return <tt>true</tt> if this cache has been shut down
      */
     boolean isShutdown();
 
     /**
      * Returns <tt>true</tt> if this cache has been started.
-     * 
+     *
      * @return <tt>true</tt> if this cache has been started
      */
     boolean isStarted();
@@ -320,7 +320,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * Returns <tt>true</tt> if all service tasks have completed following shut down.
      * Note that <tt>isTerminated</tt> is never <tt>true</tt> unless either
      * <tt>shutdown</tt> or <tt>shutdownNow</tt> was called first.
-     * 
+     *
      * @return <tt>true</tt> if all tasks have completed following shut down
      */
     boolean isTerminated();
@@ -343,7 +343,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * If the cache has been shutdown calls to <tt>Iterator.remove</tt>,
      * <tt>Collection.remove</tt>, <tt>removeAll</tt>, <tt>retainAll</tt> and
      * <tt>clear</tt> operation will throw an IllegalStateException.
-     * 
+     *
      * @return a set view of the keys contained in this cache
      */
     Set<K> keySet();
@@ -360,7 +360,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * All implementations of this method should take care to assure that a call to peek
      * does not have any unforseen side effects. For example, it should not modify some
      * state in addition to returning a value or not returning a value.
-     * 
+     *
      * @param key
      *            key whose associated value is to be returned.
      * @return the value to which this cache maps the specified key, or <tt>null</tt> if
@@ -375,7 +375,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     /**
      * This method works analogoes to the {@link #peek(Object)} method. However, it will
      * return a cache entry instead of just the value.
-     * 
+     *
      * @param key
      *            key whose associated cache entry is to be returned.
      * @return the cache entry to which this cache maps the specified key, or
@@ -399,7 +399,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * {@link org.coconut.cache.service.loading.CacheLoader} that implicitly loads values
      * then to explicitly add them to cache using the various <tt>put</tt> and
      * <tt>putAll</tt> methods.
-     * 
+     *
      * @param key
      *            key with which the specified value is to be associated.
      * @param value
@@ -429,7 +429,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * <tt>k</tt> to value <tt>v</tt> in the specified map. The behavior of this
      * operation is undefined if the specified map is modified while the operation is in
      * progress.
-     * 
+     *
      * @param m
      *            mappings to be stored in this cache
      * @throws UnsupportedOperationException
@@ -451,16 +451,16 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     /**
      * If the specified key is not already associated with a value, associate it with the
      * given value. This is equivalent to
-     * 
+     *
      * <pre>
      * if (!cache.containsKey(key))
      *     return cache.put(key, value);
      * else
      *     return cache.get(key);
      * </pre>
-     * 
+     *
      * except that the action is performed atomically.
-     * 
+     *
      * @param key
      *            key with which the specified value is to be associated
      * @param value
@@ -492,7 +492,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * <tt>null</tt> if the cache contained no mapping for the key.
      * <p>
      * The cache will not contain a mapping for the specified key once the call returns.
-     * 
+     *
      * @param key
      *            key whose mapping is to be removed from the cache
      * @return the previous value associated with <tt>key</tt>, or <tt>null</tt> if
@@ -511,7 +511,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     /**
      * Removes the entry for a key only if currently mapped to a given value. This is
      * equivalent to
-     * 
+     *
      * <pre>
      * if (cache.containsKey(key) &amp;&amp; cache.get(key).equals(value)) {
      *     cache.remove(key);
@@ -519,9 +519,9 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * } else
      *     return false;
      * </pre>
-     * 
+     *
      * except that the action is performed atomically.
-     * 
+     *
      * @param key
      *            key with which the specified value is associated
      * @param value
@@ -546,7 +546,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * the specified collection. However, in some cases it can be much faster to remove
      * several cache items at once, for example, if some of the values must also be
      * removed on a remote host.
-     * 
+     *
      * @param keys
      *            a collection of keys whose associated mappings are to be removed.
      * @throws UnsupportedOperationException
@@ -562,16 +562,16 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     /**
      * Replaces the entry for a key only if currently mapped to some value. This is
      * equivalent to
-     * 
+     *
      * <pre>
      * if (cache.containsKey(key)) {
      *     return cache.put(key, value);
      * } else
      *     return null;
      * </pre>
-     * 
+     *
      * except that the action is performed atomically.
-     * 
+     *
      * @param key
      *            key with which the specified value is associated
      * @param value
@@ -596,7 +596,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
     /**
      * Replaces the entry for a key only if currently mapped to a given value. This is
      * equivalent to
-     * 
+     *
      * <pre>
      * if (cache.containsKey(key) &amp;&amp; cache.get(key).equals(oldValue)) {
      *     cache.put(key, newValue);
@@ -604,9 +604,9 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * } else
      *     return false;
      * </pre>
-     * 
+     *
      * except that the action is performed atomically.
-     * 
+     *
      * @param key
      *            key with which the specified value is associated
      * @param oldValue
@@ -634,7 +634,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * as cache loading will be executed, but no new tasks will be started and no values
      * will be added to the cache. Invocation has no additional effect if already shut
      * down.
-     * 
+     *
      * @throws SecurityException
      *             if a security manager exists and shutting down this Cache may
      *             manipulate threads that the caller is not permitted to modify because
@@ -652,7 +652,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * executing tasks in the cache. For example, typical implementations will cancel via
      * {@link Thread#interrupt}, so any task that fails to respond to interrupts may
      * never terminate.
-     * 
+     *
      * @throws SecurityException
      *             if a security manager exists and shutting down this Cache may
      *             manipulate threads that the caller is not permitted to modify because
@@ -667,7 +667,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * <p>
      * If this cache has not been started a call to this method will automatically start
      * it. If this cache has been shutdown this method returns <tt>0</tt>.
-     * 
+     *
      * @return the number of elements in this cache
      */
     int size();
@@ -690,7 +690,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * If the cache has been shutdown calls to <tt>Iterator.remove</tt>,
      * <tt>Collection.remove</tt>, <tt>removeAll</tt>, <tt>retainAll</tt> and
      * <tt>clear</tt> operation will throw an IllegalStateException.
-     * 
+     *
      * @return a collection view of the values contained in this cache
      */
     Collection<V> values();

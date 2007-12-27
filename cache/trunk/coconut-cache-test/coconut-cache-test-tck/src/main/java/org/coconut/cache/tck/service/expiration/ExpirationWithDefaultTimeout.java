@@ -21,7 +21,7 @@ import org.junit.Test;
 public class ExpirationWithDefaultTimeout extends AbstractCacheTCKTest {
     @Before
     public void setUpCaches() {
-        setCache(conf.expiration().setDefaultTimeToLive(10, TimeUnit.MILLISECONDS).c());
+        init(conf.expiration().setDefaultTimeToLive(10, TimeUnit.MILLISECONDS).c());
     }
 
     /**

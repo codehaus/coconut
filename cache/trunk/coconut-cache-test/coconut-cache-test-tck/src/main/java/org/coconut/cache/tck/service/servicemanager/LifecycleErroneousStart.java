@@ -61,7 +61,7 @@ public class LifecycleErroneousStart extends AbstractCacheTCKTest {
                 throw new RuntimeException1();
             }
         });
-        setCache(conf);
+        init(conf);
         try {
             prestart();
         } finally {
@@ -84,7 +84,7 @@ public class LifecycleErroneousStart extends AbstractCacheTCKTest {
                 throw new Error1();
             }
         });
-        setCache(conf);
+        init(conf);
         try {
             prestart();
         } catch (CacheException e) {
@@ -111,7 +111,7 @@ public class LifecycleErroneousStart extends AbstractCacheTCKTest {
             }
         });
         context.create();
-        setCache(conf);
+        init(conf);
         try {
             prestart();
             throw new AssertionError("Should have failed with IllegalMonitorStateException");
@@ -174,7 +174,7 @@ public class LifecycleErroneousStart extends AbstractCacheTCKTest {
         };
         conf.serviceManager().add(alv1).add(alv2).add(alv3).c();
         conf.setDefaultLogger(Loggers.NULL_LOGGER);
-        setCache(conf);
+        init(conf);
         try {
             prestart();
             throw new AssertionError("Should have failed with IllegalMonitorStateException");
@@ -245,7 +245,7 @@ public class LifecycleErroneousStart extends AbstractCacheTCKTest {
         };
         conf.serviceManager().add(alv1).add(alv2).add(alv3).c();
         conf.setDefaultLogger(Loggers.NULL_LOGGER);
-        setCache(conf);
+        init(conf);
         try {
             prestart();
             throw new AssertionError("Should have failed with IllegalMonitorStateException");

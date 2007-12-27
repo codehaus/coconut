@@ -52,7 +52,7 @@ public class LongAttributeTest {
 
     @Test
     public void get() {
-        AttributeMap am = Attributes.EMPTY_MAP;
+        AttributeMap am = Attributes.EMPTY_ATTRIBUTE_MAP;
         AttributeMap am1 = Attributes.singleton(LONG_A, -1L);
         AttributeMap am10000 = Attributes.singleton(LONG_A, 10000L);
         AttributeMap ammax = Attributes.singleton(LONG_A, Long.MAX_VALUE);
@@ -119,7 +119,7 @@ public class LongAttributeTest {
         TestUtil.assertIsSerializable(LONG_A.mapToLong());
         AttributeMap am = Attributes.singleton(LONG_A, 10000L);
         assertEquals(10000L, LONG_A.mapToLong().map(am));
-        assertEquals(100L, LONG_A.mapToLong().map(Attributes.EMPTY_MAP));
+        assertEquals(100L, LONG_A.mapToLong().map(Attributes.EMPTY_ATTRIBUTE_MAP));
     }
 
     @Test(expected = NullPointerException.class)

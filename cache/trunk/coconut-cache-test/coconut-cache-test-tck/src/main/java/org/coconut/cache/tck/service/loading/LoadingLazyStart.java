@@ -24,8 +24,8 @@ public class LoadingLazyStart extends AbstractLoadingTestBundle {
     static Map<Integer, AttributeMap> M = new HashMap<Integer, AttributeMap>();
 
     static {
-        M.put(1, Attributes.EMPTY_MAP);
-        M.put(2, Attributes.EMPTY_MAP);
+        M.put(1, Attributes.EMPTY_ATTRIBUTE_MAP);
+        M.put(2, Attributes.EMPTY_ATTRIBUTE_MAP);
     }
 
     @Test
@@ -38,7 +38,7 @@ public class LoadingLazyStart extends AbstractLoadingTestBundle {
     @Test
     public void loadAtr() {
         assertFalse(c.isStarted());
-        loading().load(1, Attributes.EMPTY_MAP);
+        loading().load(1, Attributes.EMPTY_ATTRIBUTE_MAP);
         assertTrue(c.isStarted());
     }
 
@@ -66,7 +66,7 @@ public class LoadingLazyStart extends AbstractLoadingTestBundle {
     @Test
     public void forceLoadAtr() {
         assertFalse(c.isStarted());
-        loading().forceLoad(1, Attributes.EMPTY_MAP);
+        loading().forceLoad(1, Attributes.EMPTY_ATTRIBUTE_MAP);
         assertTrue(c.isStarted());
     }
 
@@ -80,14 +80,14 @@ public class LoadingLazyStart extends AbstractLoadingTestBundle {
     @Test
     public void loadAllAtr() {
         assertFalse(c.isStarted());
-        loading().loadAll(Attributes.EMPTY_MAP);
+        loading().loadAll(Attributes.EMPTY_ATTRIBUTE_MAP);
         assertTrue(c.isStarted());
     }
 
     @Test
     public void forceLoadAllAtr() {
         assertFalse(c.isStarted());
-        loading().forceLoadAll(Attributes.EMPTY_MAP);
+        loading().forceLoadAll(Attributes.EMPTY_ATTRIBUTE_MAP);
         assertTrue(c.isStarted());
     }
 

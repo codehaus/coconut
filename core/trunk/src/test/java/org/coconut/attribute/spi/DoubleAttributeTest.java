@@ -57,7 +57,7 @@ public class DoubleAttributeTest {
 
     @Test
     public void get() {
-        AttributeMap am = Attributes.EMPTY_MAP;
+        AttributeMap am = Attributes.EMPTY_ATTRIBUTE_MAP;
         AttributeMap am1 = Attributes.singleton(LA, -1D);
         AttributeMap am10000 = Attributes.singleton(LA, 10000D);
         AttributeMap ammax = Attributes.singleton(LA, Double.MAX_VALUE);
@@ -124,7 +124,7 @@ public class DoubleAttributeTest {
         TestUtil.assertIsSerializable(LA.mapToDouble());
         AttributeMap am = Attributes.singleton(LA, 100.1);
         assertEquals(100.1, LA.mapToDouble().map(am));
-        assertEquals(100.5, LA.mapToDouble().map(Attributes.EMPTY_MAP));
+        assertEquals(100.5, LA.mapToDouble().map(Attributes.EMPTY_ATTRIBUTE_MAP));
     }
 
     @Test(expected = NullPointerException.class)

@@ -14,7 +14,7 @@ public class EventCacheCleared extends AbstractEventTestBundle {
 
     @Test
     public void testCleared() throws Exception {
-        setCache(2);
+        init(2);
         assertNotNull(subscribe(CacheEventFilters.CACHE_CLEARED_FILTER));
         c.put(1, "B");
         c.put(5, "F");
@@ -25,7 +25,7 @@ public class EventCacheCleared extends AbstractEventTestBundle {
 
     @Test
     public void cleared2() throws Exception {
-        setCache();
+        init();
         assertNotNull(subscribe(CacheEventFilters.CACHEENTRY_REMOVED_FILTER));
         put(M1);
         c.clear();
@@ -34,14 +34,14 @@ public class EventCacheCleared extends AbstractEventTestBundle {
 
     @Test
     public void noClearEvent0() {
-        setCache();
+        init();
         assertNotNull(subscribe(CacheEventFilters.CACHE_CLEARED_FILTER));
         c.clear();
     }
 
     @Test
     public void noClearEvent0_() throws Exception {
-        setCache();
+        init();
         assertNotNull(subscribe(CacheEventFilters.CACHE_CLEARED_FILTER));
         c.put(1, "B");
         c.clear();
@@ -51,7 +51,7 @@ public class EventCacheCleared extends AbstractEventTestBundle {
 
     @Test
     public void keySetCleared() throws Exception {
-        setCache(2);
+        init(2);
         assertNotNull(subscribe(CacheEventFilters.CACHE_CLEARED_FILTER));
         c.put(1, "B");
         c.put(5, "F");
@@ -62,7 +62,7 @@ public class EventCacheCleared extends AbstractEventTestBundle {
 
     @Test
     public void entrySetCleared() throws Exception {
-        setCache(2);
+        init(2);
         assertNotNull(subscribe(CacheEventFilters.CACHE_CLEARED_FILTER));
         c.put(1, "B");
         c.put(5, "F");
@@ -73,7 +73,7 @@ public class EventCacheCleared extends AbstractEventTestBundle {
 
     @Test
     public void valueSetCleared() throws Exception {
-        setCache(2);
+        init(2);
         assertNotNull(subscribe(CacheEventFilters.CACHE_CLEARED_FILTER));
         c.put(1, "B");
         c.put(5, "F");
@@ -84,7 +84,7 @@ public class EventCacheCleared extends AbstractEventTestBundle {
 
     // @Test
     public void testClearedRemoved() throws Exception {
-        setCache(2);
+        init(2);
         c.put(1, "B");
         c.put(5, "F");
         assertNotNull(subscribe(CacheEventFilters.CACHEEVENT_FILTER));

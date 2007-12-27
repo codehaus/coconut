@@ -47,12 +47,18 @@ public class SingleLoader extends AbstractCacheLoader<Integer, String> {
             } else if (cause instanceof Exception) {
                 throw (Exception) cause;
             }
-            for (Map.Entry<Attribute, Object> me : this.attributes.entrySet()) {
-                attributes.put(me.getKey(), me.getValue());
+            if (this.attributes != null) {
+                for (Map.Entry<Attribute, Object> me : this.attributes.entrySet()) {
+                    attributes.put(me.getKey(), me.getValue());
+                }
             }
             return value;
         }
         return null;
+    }
+
+    public static SingleLoader from(Integer key) {
+        return from(key, "" + (char) (key + 64));
     }
 
     public static SingleLoader from(Integer key, String value) {
@@ -68,7 +74,14 @@ public class SingleLoader extends AbstractCacheLoader<Integer, String> {
         return sl;
     }
 
-    public static SingleLoader from(Integer key, Throwable cause) {
+    public static SingleLoader from(Integer key, Error cause) {
+        SingleLoader sl = new SingleLoader();
+        sl.key = key;
+        sl.cause = cause;
+        return sl;
+    }
+
+    public static SingleLoader from(Integer key, Exception cause) {
         SingleLoader sl = new SingleLoader();
         sl.key = key;
         sl.cause = cause;

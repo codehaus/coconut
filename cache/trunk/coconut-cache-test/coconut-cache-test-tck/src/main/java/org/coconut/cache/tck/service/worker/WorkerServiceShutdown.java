@@ -19,7 +19,7 @@ public class WorkerServiceShutdown extends AbstractCacheTCKTest {
     @Test
     public void tt() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
-        setCache(conf.worker().setWorkerManager(null));// override test worker manager
+        init(conf.worker().setWorkerManager(null));// override test worker manager
         ScheduledExecutorService ses = worker().getScheduledExecutorService("ignore");
         ses.execute(new Runnable() {
             public void run() {
@@ -56,7 +56,7 @@ public class WorkerServiceShutdown extends AbstractCacheTCKTest {
             }
         });
         try {
-            setCache(conf.worker().setWorkerManager(null));// override test worker
+            init(conf.worker().setWorkerManager(null));// override test worker
             // manager
             worker().getScheduledExecutorService("ignore").execute(new Runnable() {
                 public void run() {
@@ -77,7 +77,7 @@ public class WorkerServiceShutdown extends AbstractCacheTCKTest {
      */
     @Test
     public void threadDeamonPriority() throws InterruptedException {
-        setCache(conf.worker().setWorkerManager(null));// override test worker
+        init(conf.worker().setWorkerManager(null));// override test worker
         // manager
         Thread t = new Thread(new Runnable() {
             public void run() {

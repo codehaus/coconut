@@ -29,7 +29,7 @@ public class ValuesIterator extends AbstractCacheTCKTest {
     @SuppressWarnings("unused")
     public void iterator() {
         int count = 0;
-        setCache();
+        init();
         for (String entry : c.values()) {
             count++;
         }

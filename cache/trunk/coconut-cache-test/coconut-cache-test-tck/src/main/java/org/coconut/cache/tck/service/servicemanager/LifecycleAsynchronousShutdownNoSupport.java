@@ -19,7 +19,7 @@ import org.junit.Test;
 public class LifecycleAsynchronousShutdownNoSupport extends AbstractCacheTCKTest {
     @Test
     public void noSupport() {
-        setCache(newConf().serviceManager().add(new AbstractCacheLifecycle() {
+        init(newConf().serviceManager().add(new AbstractCacheLifecycle() {
             private volatile CacheServiceManagerService services;
 
             @Override

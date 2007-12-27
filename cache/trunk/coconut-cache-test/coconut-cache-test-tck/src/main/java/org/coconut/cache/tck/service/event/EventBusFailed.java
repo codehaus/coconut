@@ -11,7 +11,7 @@ public class EventBusFailed extends AbstractEventTestBundle {
     public void testname() throws Exception {
         TestExceptionHandler teh=new TestExceptionHandler();
         conf.exceptionHandling().setExceptionHandler(teh);
-        setCache();
+        init();
         event().subscribe(new Procedure() {
             public void apply(Object t) {
                 throw new RuntimeException1();

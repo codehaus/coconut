@@ -19,7 +19,7 @@ public class Lifecycle extends AbstractCacheTCKTest {
 
     @Test
     public void initialStatus() {
-        setCache();
+        init();
         assertFalse(c.isStarted());
         assertFalse(c.isTerminated());
         assertFalse(c.isShutdown());
@@ -32,7 +32,7 @@ public class Lifecycle extends AbstractCacheTCKTest {
 
     @Test
     public void lazyStart() {
-        setCache();
+        init();
         startCache();
         assertTrue(c.isStarted());
         assertFalse(c.isTerminated());
@@ -41,7 +41,7 @@ public class Lifecycle extends AbstractCacheTCKTest {
 
     @Test
     public void shutdownNoOp() {
-        setCache();
+        init();
         c.shutdown();
         assertTrue(c.isShutdown());
         assertTrue(c.isTerminated());
@@ -52,7 +52,7 @@ public class Lifecycle extends AbstractCacheTCKTest {
     }
     @Test
     public void shutdownNowNoOp() {
-        setCache();
+        init();
         c.shutdownNow();
         assertTrue(c.isShutdown());
         assertTrue(c.isTerminated());
@@ -63,7 +63,7 @@ public class Lifecycle extends AbstractCacheTCKTest {
     }
     @Test
     public void shutdown() {
-        setCache();
+        init();
         startCache();
         assertTrue(c.isStarted());
         assertFalse(c.isShutdown());
@@ -74,7 +74,7 @@ public class Lifecycle extends AbstractCacheTCKTest {
 
     @Test
     public void shutdownNow()  {
-        setCache();
+        init();
         startCache();
         assertTrue(c.isStarted());
         assertFalse(c.isShutdown());
@@ -85,7 +85,7 @@ public class Lifecycle extends AbstractCacheTCKTest {
 
     @Test
     public void shutdownTerminated() throws InterruptedException {
-        setCache();
+        init();
         startCache();
         assertTrue(c.isStarted());
         c.shutdown();
@@ -97,7 +97,7 @@ public class Lifecycle extends AbstractCacheTCKTest {
 
     @Test
     public void shutdownNowTerminated() throws InterruptedException {
-        setCache();
+        init();
         startCache();
         assertTrue(c.isStarted());
         c.shutdownNow();

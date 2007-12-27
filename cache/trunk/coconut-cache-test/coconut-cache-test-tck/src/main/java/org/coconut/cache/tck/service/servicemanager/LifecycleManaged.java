@@ -41,7 +41,7 @@ public class LifecycleManaged extends AbstractCacheTCKTest {
         AbstractLifecycleManagedVerifier alv = new AbstractLifecycleManagedVerifier();
         conf.serviceManager().add(alv);
         alv.setConfigurationToVerify(conf);
-        setCache(conf);
+        init(conf);
         alv.assertInitializedButNotStarted();
         prestart();
         alv.assertInStartedPhase();
@@ -54,7 +54,7 @@ public class LifecycleManaged extends AbstractCacheTCKTest {
     @Test
     public void managedObject() throws InterruptedException {
         Mo l = new Mo();
-        setCache(newConf().serviceManager().add(l).c().management().setEnabled(true));
+        init(newConf().serviceManager().add(l).c().management().setEnabled(true));
         assertNull(l.g);
         prestart();
         assertNotNull(l.g);

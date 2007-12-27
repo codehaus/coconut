@@ -52,7 +52,7 @@ public class IntAttributeTest {
 
     @Test
     public void get() {
-        AttributeMap am = Attributes.EMPTY_MAP;
+        AttributeMap am = Attributes.EMPTY_ATTRIBUTE_MAP;
         AttributeMap am1 = Attributes.singleton(LONG_A, -1);
         AttributeMap am10000 = Attributes.singleton(LONG_A, 10000);
         AttributeMap ammax = Attributes.singleton(LONG_A, Integer.MAX_VALUE);
@@ -119,7 +119,7 @@ public class IntAttributeTest {
         TestUtil.assertIsSerializable(LONG_A.mapToInt());
         AttributeMap am = Attributes.singleton(LONG_A, 10000);
         assertEquals(10000, LONG_A.mapToInt().map(am));
-        assertEquals(100, LONG_A.mapToInt().map(Attributes.EMPTY_MAP));
+        assertEquals(100, LONG_A.mapToInt().map(Attributes.EMPTY_ATTRIBUTE_MAP));
     }
 
     @Test(expected = NullPointerException.class)

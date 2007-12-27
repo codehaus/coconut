@@ -84,10 +84,7 @@ public final class LoadingUtils {
      */
     public static long getInitialTimeToRefresh(CacheLoadingConfiguration<?, ?> conf) {
         long tmp = conf.getDefaultTimeToRefresh(TimeUnit.NANOSECONDS);
-        if (tmp == 0) {
-            tmp = Long.MAX_VALUE;
-        }
-        return tmp;
+        return tmp == 0 ? Long.MAX_VALUE : tmp;
     }
 
     /**

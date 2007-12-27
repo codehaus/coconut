@@ -21,7 +21,7 @@ public class EventRemove extends AbstractEventTestBundle {
 
     @Test
     public void entrySetRemove() throws Exception {
-        setCache(2);
+        init(2);
         subscribe(CACHEENTRYEVENT_FILTER);
         c.entrySet().remove(M1);
         ItemRemoved<?, ?> removed = consumeItem(ItemRemoved.class, M1);
@@ -30,7 +30,7 @@ public class EventRemove extends AbstractEventTestBundle {
 
     @Test
     public void entrySetRemoveAllEntry() throws Exception {
-        setCache(4);
+        init(4);
         subscribe(CACHEENTRYEVENT_FILTER);
         c.entrySet().removeAll(Arrays.asList(M3, M4));
         Collection<ItemRemoved> removed = consumeItems(ItemRemoved.class, M3, M4);
@@ -41,7 +41,7 @@ public class EventRemove extends AbstractEventTestBundle {
 
     @Test
     public void entrySetRemoveIterator() throws Exception {
-        setCache(2);
+        init(2);
         subscribe(CACHEENTRYEVENT_FILTER);
         Iterator<Map.Entry<Integer, String>> iter = c.entrySet().iterator();
         while (iter.hasNext()) {
@@ -56,7 +56,7 @@ public class EventRemove extends AbstractEventTestBundle {
 
     @Test
     public void entrySetRetainAllEntry() throws Exception {
-        setCache(4);
+        init(4);
         subscribe(CACHEENTRYEVENT_FILTER);
         c.entrySet().retainAll(Arrays.asList(M3, M4));
         Collection<ItemRemoved> removed = consumeItems(ItemRemoved.class, M1, M2);
@@ -67,7 +67,7 @@ public class EventRemove extends AbstractEventTestBundle {
 
     @Test
     public void keySetRemove() throws Exception {
-        setCache(2);
+        init(2);
         subscribe(CACHEENTRYEVENT_FILTER);
         c.keySet().remove(M1.getKey());
         ItemRemoved<?, ?> removed = consumeItem(ItemRemoved.class, M1);
@@ -76,7 +76,7 @@ public class EventRemove extends AbstractEventTestBundle {
 
     @Test
     public void keySetRemoveAllEntry() throws Exception {
-        setCache(4);
+        init(4);
         subscribe(CACHEENTRYEVENT_FILTER);
         c.keySet().removeAll(Arrays.asList(M3.getKey(), M4.getKey()));
         Collection<ItemRemoved> removed = consumeItems(ItemRemoved.class, M3, M4);
@@ -87,7 +87,7 @@ public class EventRemove extends AbstractEventTestBundle {
 
     @Test
     public void keySetRemoveIterator() throws Exception {
-        setCache(2);
+        init(2);
         subscribe(CACHEENTRYEVENT_FILTER);
         Iterator<Integer> iter = c.keySet().iterator();
         while (iter.hasNext()) {
@@ -102,7 +102,7 @@ public class EventRemove extends AbstractEventTestBundle {
 
     @Test
     public void keySetRetainAllEntry() throws Exception {
-        setCache(4);
+        init(4);
         subscribe(CACHEENTRYEVENT_FILTER);
         c.keySet().retainAll(Arrays.asList(M3.getKey(), M4.getKey()));
         Collection<ItemRemoved> removed = consumeItems(ItemRemoved.class, M1, M2);
@@ -113,7 +113,7 @@ public class EventRemove extends AbstractEventTestBundle {
 
     @Test
     public void removeAllEntry() throws Exception {
-        setCache(4);
+        init(4);
         subscribe(CACHEENTRYEVENT_FILTER);
         c.removeAll(Arrays.asList(M3.getKey(), M4.getKey()));
 
@@ -125,7 +125,7 @@ public class EventRemove extends AbstractEventTestBundle {
 
     @Test
     public void removeEntry() throws Exception {
-        setCache(2);
+        init(2);
         subscribe(CACHEENTRYEVENT_FILTER);
         c.remove(M1.getKey());
 
@@ -135,7 +135,7 @@ public class EventRemove extends AbstractEventTestBundle {
 
     @Test
     public void removeKeyValueEntry() throws Exception {
-        setCache(2);
+        init(2);
         subscribe(CACHEENTRYEVENT_FILTER);
         c.remove(M2.getKey(), M2.getValue());
 
@@ -145,7 +145,7 @@ public class EventRemove extends AbstractEventTestBundle {
 
     @Test
     public void removeNonExisting() throws Exception {
-        setCache(2);
+        init(2);
         subscribe(CACHEENTRYEVENT_FILTER);
         c.remove(M3.getKey());
         c.remove(M3.getKey(), M3.getValue());
@@ -154,7 +154,7 @@ public class EventRemove extends AbstractEventTestBundle {
 
     @Test
     public void valueSetRemove() throws Exception {
-        setCache(2);
+        init(2);
         subscribe(CACHEENTRYEVENT_FILTER);
         c.values().remove(M1.getValue());
         ItemRemoved<?, ?> removed = consumeItem(ItemRemoved.class, M1);
@@ -163,7 +163,7 @@ public class EventRemove extends AbstractEventTestBundle {
 
     @Test
     public void valueSetRemoveAllEntry() throws Exception {
-        setCache(4);
+        init(4);
         subscribe(CACHEENTRYEVENT_FILTER);
         c.values().removeAll(Arrays.asList(M3.getValue(), M4.getValue()));
         Collection<ItemRemoved> removed = consumeItems(ItemRemoved.class, M3, M4);
@@ -174,7 +174,7 @@ public class EventRemove extends AbstractEventTestBundle {
 
     @Test
     public void valueSetRemoveIterator() throws Exception {
-        setCache(2);
+        init(2);
         subscribe(CACHEENTRYEVENT_FILTER);
         Iterator<String> iter = c.values().iterator();
         while (iter.hasNext()) {
@@ -189,7 +189,7 @@ public class EventRemove extends AbstractEventTestBundle {
 
     @Test
     public void valueSetRetainAllEntry() throws Exception {
-        setCache(4);
+        init(4);
         subscribe(CACHEENTRYEVENT_FILTER);
         c.values().retainAll(Arrays.asList(M3.getValue(), M4.getValue()));
         Collection<ItemRemoved> removed = consumeItems(ItemRemoved.class, M1, M2);

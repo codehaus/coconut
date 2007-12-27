@@ -49,7 +49,7 @@ public class LifecycleErroneousTermination extends AbstractCacheTCKTest {
                 throw new RuntimeException1();
             }
         });
-        setCache();
+        init();
         prestart();
         shutdownAndAwaitTermination();
         assertEquals(1, handler.terminatationMap.size());
@@ -83,7 +83,7 @@ public class LifecycleErroneousTermination extends AbstractCacheTCKTest {
                 throw new RuntimeException3();
             }
         });
-        setCache();
+        init();
         prestart();
         shutdownAndAwaitTermination();
         assertEquals(3, handler.terminatationMap.size());

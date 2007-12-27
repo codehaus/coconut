@@ -40,8 +40,8 @@ import org.coconut.operations.Ops.Procedure;
  * mysterious way. Or even worse that the cache implementation contains a bug. Of course,
  * this is highly unlikely if using one of the default implementation provided by Coconut
  * Cache;).
- * <li>{@link #warning(CacheExceptionContext)} which is called whenever a some kind
- * of inconsistency arrises in the system. Normally this always indicates a non-critical
+ * <li>{@link #warning(CacheExceptionContext)} which is called whenever a some kind of
+ * inconsistency arrises in the system. Normally this always indicates a non-critical
  * problem that should be fixed at some time. For example, if a CacheLoader tries to set
  * the creation time of a newly loaded element to a negative value.
  * </ul>
@@ -66,17 +66,6 @@ import org.coconut.operations.Ops.Procedure;
 public class CacheExceptionHandler<K, V> implements Procedure<CacheExceptionContext<K, V>> {
 
     /**
-     * Handles a warning from the cache. The default implementation just logs the warning.
-     *
-     * @param context
-     *            an CacheExceptionContext containing the default logger configured for
-     *            this cache
-     */
-    public void warning(CacheExceptionContext<K, V> context) {
-        context.defaultLogger().warn(context.getMessage(), context.getCause());
-    }
-
-    /**
      * Called to initialize the CacheExceptionHandler. This method must be called as the
      * first operation from within the constructor of the cache. Exceptions thrown by this
      * method will not be handled by the cache. The default implementation does nothing
@@ -94,15 +83,9 @@ public class CacheExceptionHandler<K, V> implements Procedure<CacheExceptionCont
      */
     public void apply(CacheExceptionContext<K, V> context) {
         Throwable cause = context.getCause();
-        if (cause instanceof RuntimeException) {
-            context.defaultLogger().fatal(context.getMessage(), cause);
-        } else if (cause instanceof Exception) {
-            context.defaultLogger().error(context.getMessage(), cause);
-        } else {
-            context.defaultLogger().fatal(context.getMessage(), cause);
-            if (context.getCause() instanceof Error) {
-                throw (Error) context.getCause();
-            }
+        context.defaultLogger().log(context.getLevel(), context.getMessage(), cause);
+        if (cause instanceof Error) {
+            throw (Error) cause;
         }
     }
 

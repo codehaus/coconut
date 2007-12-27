@@ -27,7 +27,7 @@ public class LifecycleAsynchronousShutdown extends AbstractCacheTCKTest {
                 shutdown.shutdownAsynchronously(asyn);
             }
         };
-        setCache(newConf().serviceManager().add(alv));
+        init(newConf().serviceManager().add(alv));
 
         prestart();
         c.shutdown();

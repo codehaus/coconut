@@ -45,7 +45,6 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
     public AbstractCacheLoadingService(CacheLoadingConfiguration<K, V> loadingConfiguration,
             InternalCacheEntryService attributeFactory,
             InternalCacheExceptionService<K, V> exceptionHandler, LoadSupport<K, V> loadSupport) {
-
         attributeFactory.setTimeToRefreshNs(LoadingUtils
                 .getInitialTimeToRefresh(loadingConfiguration));
         this.loader = loadingConfiguration.getLoader();
@@ -68,7 +67,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
 
     /** {@inheritDoc} */
     public final void forceLoad(K key) {
-        forceLoad(key, Attributes.EMPTY_MAP);
+        forceLoad(key, Attributes.EMPTY_ATTRIBUTE_MAP);
     }
 
     /** {@inheritDoc} */
@@ -83,7 +82,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
 
     /** {@inheritDoc} */
     public final void forceLoadAll() {
-        forceLoadAll(Attributes.EMPTY_MAP);
+        forceLoadAll(Attributes.EMPTY_ATTRIBUTE_MAP);
     }
 
     /** {@inheritDoc} */
@@ -104,7 +103,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
             if (key == null) {
                 throw new NullPointerException("Collection contains a null key");
             }
-            map.put(key, Attributes.EMPTY_MAP);
+            map.put(key, Attributes.EMPTY_ATTRIBUTE_MAP);
         }
         loadAsyncAll(map);
     }
@@ -134,7 +133,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
 
     /** {@inheritDoc} */
     public final void load(K key) {
-        load(key, Attributes.EMPTY_MAP);
+        load(key, Attributes.EMPTY_ATTRIBUTE_MAP);
     }
 
     /** {@inheritDoc} */
@@ -149,7 +148,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
 
     /** {@inheritDoc} */
     public final void loadAll() {
-        loadAll(Attributes.EMPTY_MAP);
+        loadAll(Attributes.EMPTY_ATTRIBUTE_MAP);
     }
 
     /** {@inheritDoc} */
@@ -170,7 +169,7 @@ public abstract class AbstractCacheLoadingService<K, V> extends AbstractCacheLif
             if (key == null) {
                 throw new NullPointerException("Collection contains a null key");
             }
-            map.put(key, Attributes.EMPTY_MAP);
+            map.put(key, Attributes.EMPTY_ATTRIBUTE_MAP);
         }
         loadSupport.loadAll(map);
     }

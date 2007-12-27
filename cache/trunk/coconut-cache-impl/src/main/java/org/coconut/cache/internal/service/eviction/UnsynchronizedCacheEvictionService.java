@@ -55,7 +55,7 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
 // if (maxVolume == 0 || maxSize == 0) {
 // return -1;
 // }
-        return cp.add(t, Attributes.EMPTY_MAP);
+        return cp.add(t, Attributes.EMPTY_ATTRIBUTE_MAP);
     }
 
     /** {@inheritDoc} */
@@ -127,7 +127,7 @@ public class UnsynchronizedCacheEvictionService<K, V, T extends CacheEntry<K, V>
 
     /** {@inheritDoc} */
     public boolean replace(int index, T t) {
-        return cp.update(index, t, Attributes.EMPTY_MAP);
+        return cp.update(index, t, Attributes.EMPTY_ATTRIBUTE_MAP);
     }
 
     /** {@inheritDoc} */

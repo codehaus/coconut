@@ -46,7 +46,7 @@ public class Debugging extends AbstractCacheTCKTest {
             public void started(Cache cache) {}
         });
 
-        setCache();
+        init();
         prestart();
     }
 
@@ -71,7 +71,7 @@ public class Debugging extends AbstractCacheTCKTest {
             public void started(Cache cache) {}
         });
 
-        setCache();
+        init();
         prestart();
     }
 
@@ -86,7 +86,7 @@ public class Debugging extends AbstractCacheTCKTest {
                 throw new RuntimeException1();
             }
         });
-        setCache();
+        init();
         prestart();
     }
 

@@ -20,7 +20,7 @@ public class ExpirationPutWithTimeouts extends AbstractExpirationTestBundle {
 
     @Before
     public void setupCache() {
-        setCache();
+        init();
     }
 
     @Test
@@ -37,7 +37,7 @@ public class ExpirationPutWithTimeouts extends AbstractExpirationTestBundle {
      */
     @Test
     public void putLazyStart() {
-        setCache();
+        init();
         assertFalse(c.isStarted());
         put(M1, 5);
         checkLazystart();
@@ -51,7 +51,7 @@ public class ExpirationPutWithTimeouts extends AbstractExpirationTestBundle {
      */
     @Test(expected = IllegalStateException.class)
     public void putShutdownISE() {
-        setCache(5);
+        init(5);
         assertTrue(c.isStarted());
         c.shutdown();
 
@@ -103,7 +103,7 @@ public class ExpirationPutWithTimeouts extends AbstractExpirationTestBundle {
      */
     @Test
     public void putAllLazyStart() {
-        setCache();
+        init();
         assertFalse(c.isStarted());
         putAll(5, M1, M2);
         checkLazystart();
@@ -117,7 +117,7 @@ public class ExpirationPutWithTimeouts extends AbstractExpirationTestBundle {
      */
     @Test(expected = IllegalStateException.class)
     public void putAllShutdownISE() {
-        setCache(5);
+        init(5);
         assertTrue(c.isStarted());
         c.shutdown();
 

@@ -25,7 +25,7 @@ public class KeySetHashCodeEquals extends AbstractCacheTCKTest {
     @Test
     public void testEquals() {
         // assertTrue(c5.values().equals(c5.values()));
-        setCache();
+        init();
         assertFalse(c.keySet().equals(null));
         assertFalse(c.keySet().equals(newCache(1).keySet()));
         c = newCache(5);

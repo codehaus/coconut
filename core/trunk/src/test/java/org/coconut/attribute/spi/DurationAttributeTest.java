@@ -43,7 +43,7 @@ public class DurationAttributeTest {
 
     @Test
     public void get() {
-        AttributeMap am = Attributes.EMPTY_MAP;
+        AttributeMap am = Attributes.EMPTY_ATTRIBUTE_MAP;
         AttributeMap am1 = Attributes.singleton(DA, 1L);
         AttributeMap am10000 = Attributes.singleton(DA, 10000L);
         AttributeMap ammax = Attributes.singleton(DA, Long.MAX_VALUE);

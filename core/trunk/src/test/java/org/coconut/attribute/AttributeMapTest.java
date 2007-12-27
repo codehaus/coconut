@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.attribute;
@@ -21,7 +21,16 @@ public class AttributeMapTest {
         assertEquals(1, am.size());
         assertEquals(1, am.get(a));
     }
-
+    @Test
+    public void toMapEmpty() {
+        Map<Integer, AttributeMap> m = Attributes.toMap(Arrays.asList(1, 2, 3, 4));
+        assertEquals(4, m.size());
+        assertEquals(Attributes.EMPTY_ATTRIBUTE_MAP, m.get(1));
+        assertEquals(Attributes.EMPTY_ATTRIBUTE_MAP, m.get(2));
+        assertEquals(Attributes.EMPTY_ATTRIBUTE_MAP, m.get(3));
+        assertEquals(Attributes.EMPTY_ATTRIBUTE_MAP, m.get(4));
+        assertNull(m.get(5));
+    }
     @Test
     public void toMap() {
         AttributeMap am = TestUtil.dummy(AttributeMap.class);

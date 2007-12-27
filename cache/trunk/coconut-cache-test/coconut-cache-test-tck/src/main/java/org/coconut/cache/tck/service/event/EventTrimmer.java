@@ -16,7 +16,7 @@ public class EventTrimmer extends AbstractEventTestBundle {
 
     @Test
     public void entrySetRemove() throws Exception {
-        setCache(2);
+        init(2);
         subscribe(CACHEENTRYEVENT_FILTER);
         assertSize(2);
         eviction().trimToSize(1);

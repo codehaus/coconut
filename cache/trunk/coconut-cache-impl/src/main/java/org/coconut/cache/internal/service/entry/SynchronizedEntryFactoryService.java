@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.entry;
@@ -60,21 +60,21 @@ public class SynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryFac
     }
 
     /** {@inheritDoc} */
-    public synchronized long getDefaultTimeToLiveTimeNs() {
+    public long getDefaultTimeToLiveTimeNs() {
         synchronized (mutex) {
             return defaultExpirationTime;
         }
     }
 
     /** {@inheritDoc} */
-    public synchronized long getTimeToRefreshNs() {
+    public long getTimeToRefreshNs() {
         synchronized (mutex) {
             return defaultRefreshTime;
         }
     }
 
     /** {@inheritDoc} */
-    public synchronized void setDefaultTimeToLiveNs(long nanos) {
+    public void setDefaultTimeToLiveNs(long nanos) {
         synchronized (mutex) {
             this.defaultExpirationTime = nanos;
         }

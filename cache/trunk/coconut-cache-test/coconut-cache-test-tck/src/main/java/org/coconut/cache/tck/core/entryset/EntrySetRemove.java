@@ -36,7 +36,7 @@ public class EntrySetRemove extends AbstractCacheTCKTest {
 
     @Test
     public void remove() {
-        setCache();
+        init();
         assertFalse(c.entrySet().remove(1));
         assertFalse(c.entrySet().remove(MNAN1));
         c = newCache(5);
@@ -54,7 +54,7 @@ public class EntrySetRemove extends AbstractCacheTCKTest {
      */
     @Test
     public void removeLazyStart() {
-        setCache();
+        init();
         assertFalse(c.isStarted());
         c.entrySet().remove(MNAN1);
         checkLazystart();
@@ -107,7 +107,7 @@ public class EntrySetRemove extends AbstractCacheTCKTest {
      */
     @Test
     public void removeAllLazyStart() {
-        setCache();
+        init();
         assertFalse(c.isStarted());
         c.entrySet().removeAll(CollectionTestUtil.asList(2, 3));
         checkLazystart();

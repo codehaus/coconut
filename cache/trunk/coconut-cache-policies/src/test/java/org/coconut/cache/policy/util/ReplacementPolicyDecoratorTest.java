@@ -44,7 +44,7 @@ public class ReplacementPolicyDecoratorTest {
 
     @Test
     public void test() {
-        final AttributeMap am = Attributes.EMPTY_MAP;
+        final AttributeMap am = Attributes.EMPTY_ATTRIBUTE_MAP;
         final ReplacementPolicy policy = context.mock(ReplacementPolicy.class);
         context.checking(new Expectations() {
             {

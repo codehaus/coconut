@@ -51,7 +51,7 @@ public class ExplicitForcedLoading extends AbstractLoadingTestBundle {
 
     @Test(expected = NullPointerException.class)
     public void loadNPE1() {
-        loading().forceLoad(null, Attributes.EMPTY_MAP);
+        loading().forceLoad(null, Attributes.EMPTY_ATTRIBUTE_MAP);
     }
 
     @Test(expected = NullPointerException.class)

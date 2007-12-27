@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.service.event;
@@ -27,8 +27,8 @@ public class EventServiceBus extends AbstractEventTestBundle {
     Mockery context = new JUnit4Mockery();
 
     @Before
-    public void init() {
-        setCache();
+    public void setupBus() {
+        init();
     }
 
     @Test

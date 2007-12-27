@@ -6,6 +6,7 @@ package org.coconut.cache.internal.service.entry;
 import java.util.Map;
 
 import org.coconut.attribute.common.TimeToLiveAttribute;
+import org.coconut.attribute.common.TimeToRefreshAttribute;
 import org.coconut.cache.CacheEntry;
 import org.coconut.core.Clock;
 import org.coconut.operations.Ops.Predicate;
@@ -107,13 +108,13 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         return false;
     }
 
-//    /** {@inheritDoc} */
-//    public AttributeMap getAttributes() {
-//        AttributeMap map = new DefaultAttributeMap();
-//        CostAttribute.set(map, getCost());
-//        SizeAttribute.set(map, getSize());
-//        return map;
-//    }
+// /** {@inheritDoc} */
+// public AttributeMap getAttributes() {
+// AttributeMap map = new DefaultAttributeMap();
+// CostAttribute.set(map, getCost());
+// SizeAttribute.set(map, getSize());
+// return map;
+// }
 
     /** {@inheritDoc} */
     public double getCost() {
@@ -136,7 +137,6 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
     public long getLastUpdateTime() {
         return lastUpdateTime;
     }
-
 
     public int getPolicyIndex() {
         return policyIndex;
@@ -171,7 +171,7 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
             return true;
         }
         long refreshTime = getRefreshTime();
-        return refreshTime == TimeToLiveAttribute.FOREVER ? false : Clock.isPassed(timestamp,
+        return refreshTime == TimeToRefreshAttribute.FOREVER ? false : Clock.isPassed(timestamp,
                 refreshTime);
     }
 

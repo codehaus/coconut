@@ -37,7 +37,7 @@ public class EventServiceLoading extends AbstractEventTestBundle {
     public void setupLoading() {
         loader = new IntegerToStringLoader();
         conf.loading().setLoader(loader);
-        setCache();
+        init();
     }
 
     @Test

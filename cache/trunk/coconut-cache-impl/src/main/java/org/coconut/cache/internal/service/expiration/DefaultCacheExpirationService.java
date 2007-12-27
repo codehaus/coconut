@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.expiration;
@@ -35,7 +35,7 @@ import org.coconut.operations.Ops.Predicate;
  * <p>
  * NOTICE: This is an internal class and should not be directly referred. No guarantee is
  * made to the compatibility of this class between different releases.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -141,6 +141,7 @@ public class DefaultCacheExpirationService<K, V> extends AbstractCacheLifecycle 
         attributeFactory.setDefaultTimeToLiveNs(time == 0 ? Long.MAX_VALUE : time);
     }
 
+    @Override
     public String toString() {
         return "Expiration Service";
     }

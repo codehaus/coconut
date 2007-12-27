@@ -23,7 +23,8 @@ public class CacheExceptionHandlerTest {
 
     @Test(expected = Error1.class)
     public void applyError() {
-        MyExceptionContext<Integer, String> cec = new MyExceptionContext(Error1.INSTANCE, "msg3");
+        MyExceptionContext<Integer, String> cec = new MyExceptionContext(Error1.INSTANCE, "msg3",
+                Level.Fatal);
         try {
             ceh.apply(cec);
         } finally {
@@ -36,7 +37,7 @@ public class CacheExceptionHandlerTest {
     @Test
     public void applyException() {
         MyExceptionContext<Integer, String> cec = new MyExceptionContext(Exception1.INSTANCE,
-                "msg1");
+                "msg1", Level.Error);
         ceh.apply(cec);
         assertSame(Exception1.INSTANCE, cec.logger.cause);
         assertSame(Level.Error, cec.logger.level);
@@ -46,7 +47,7 @@ public class CacheExceptionHandlerTest {
     @Test
     public void applyRuntimeException() {
         MyExceptionContext<Integer, String> cec = new MyExceptionContext(
-                RuntimeException1.INSTANCE, "msg2");
+                RuntimeException1.INSTANCE, "msg2", Level.Fatal);
         ceh.apply(cec);
         assertSame(RuntimeException1.INSTANCE, cec.logger.cause);
         assertSame(Level.Fatal, cec.logger.level);
@@ -56,7 +57,7 @@ public class CacheExceptionHandlerTest {
     @Test
     public void applyThrowable() {
         MyExceptionContext<Integer, String> cec = new MyExceptionContext(Throwable1.INSTANCE,
-                "msg4");
+                "msg4", Level.Fatal);
         ceh.apply(cec);
         assertSame(Throwable1.INSTANCE, cec.logger.cause);
         assertSame(Level.Fatal, cec.logger.level);
@@ -65,8 +66,9 @@ public class CacheExceptionHandlerTest {
 
     @Test
     public void handleWarning() {
-        MyExceptionContext<Integer, String> cec = new MyExceptionContext(Exception1.INSTANCE, "msg");
-        ceh.warning(cec);
+        MyExceptionContext<Integer, String> cec = new MyExceptionContext(Exception1.INSTANCE,
+                "msg", Level.Warn);
+        ceh.apply(cec);
         assertSame(Exception1.INSTANCE, cec.logger.cause);
         assertSame(Level.Warn, cec.logger.level);
         assertEquals("msg", cec.logger.msg);
@@ -81,7 +83,7 @@ public class CacheExceptionHandlerTest {
     @Test
     public void loadingLoadValueFailed() {
         MyExceptionContext<Integer, String> cec = new MyExceptionContext(
-                RuntimeException1.INSTANCE, "msg5");
+                RuntimeException1.INSTANCE, "msg5", Level.Fatal);
         assertNull(ceh.loadingLoadValueFailed(cec, dummy(CacheLoader.class), 1,
                 dummy(AttributeMap.class)));
         assertSame(RuntimeException1.INSTANCE, cec.logger.cause);
@@ -97,10 +99,13 @@ public class CacheExceptionHandlerTest {
 
         private final String msg;
 
-        public MyExceptionContext(Throwable cause, String msg) {
+        private final Level level;
+
+        public MyExceptionContext(Throwable cause, String msg, Level level) {
             this.logger = new MyLogger();
             this.cause = cause;
             this.msg = msg;
+            this.level = level;
         }
 
         @Override
@@ -121,6 +126,11 @@ public class CacheExceptionHandlerTest {
         @Override
         public String getMessage() {
             return msg;
+        }
+
+        @Override
+        public Level getLevel() {
+            return level;
         }
 
     }

@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.service.loading;
@@ -6,7 +6,6 @@ package org.coconut.cache.tck.service.loading;
 import static org.coconut.test.CollectionTestUtil.M1;
 import static org.coconut.test.CollectionTestUtil.M3;
 
-import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.test.util.CacheEntryFilter;
 import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.cache.test.util.lifecycle.LifecyclePredicate;
@@ -15,19 +14,14 @@ import org.junit.Test;
 
 public class RefreshFilter extends AbstractLoadingTestBundle {
 
-    private CacheEntryFilter f;
-
-    @Before
-    public void setUpCaches() {
-        f = new CacheEntryFilter();
-        c = newCache(newConf().loading().setLoader(loader).setRefreshPredicate(f));
-    }
-
     /**
      * Tests a custom expiration filter with get.
      */
     @Test
     public void refreshFilterGet() {
+        CacheEntryFilter f = new CacheEntryFilter();
+        init(conf.loading().setLoader(loader).setRefreshPredicate(f));
+
         assertGet(M1);
         assertEquals(loader.getNumberOfLoads(), 1);
         f.setAccept(true);// All entries should be refreshed
@@ -44,6 +38,9 @@ public class RefreshFilter extends AbstractLoadingTestBundle {
      */
     @Test
     public void refreshFilterGetNullLoad() {
+        CacheEntryFilter f = new CacheEntryFilter();
+        init(conf.loading().setLoader(loader).setRefreshPredicate(f));
+
         assertGet(M1);
         assertEquals(loader.getNumberOfLoads(), 1);
         f.setAccept(true);// All entries should be refreshed
@@ -55,14 +52,10 @@ public class RefreshFilter extends AbstractLoadingTestBundle {
         assertGet(M1);
     }
 
-
-
     @Test
     public void filterLifecycle() {
-        CacheConfiguration<Integer, String> cc = newConf();
         LifecyclePredicate filter = new LifecyclePredicate();
-        c = newCache(cc.loading().setRefreshPredicate(filter).setLoader(new IntegerToStringLoader())
-                .c());
+        init(newConf().loading().setRefreshPredicate(filter).setLoader(new IntegerToStringLoader()));
 
         filter.assertInitializedButNotStarted();
         loading().load(M1.getKey());// lazy start

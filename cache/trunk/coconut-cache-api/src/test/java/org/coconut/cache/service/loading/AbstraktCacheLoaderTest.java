@@ -40,7 +40,7 @@ public class AbstraktCacheLoaderTest {
                 one(callback).getKey();
                 will(returnValue(1));
                 one(callback).getAttributes();
-                will(returnValue(Attributes.EMPTY_MAP));
+                will(returnValue(Attributes.EMPTY_ATTRIBUTE_MAP));
                 one(callback).completed("foo");
             }
         });
@@ -56,7 +56,7 @@ public class AbstraktCacheLoaderTest {
                 one(callback).getKey();
                 will(returnValue(0));
                 one(callback).getAttributes();
-                will(returnValue(Attributes.EMPTY_MAP));
+                will(returnValue(Attributes.EMPTY_ATTRIBUTE_MAP));
                 one(callback).failed(ERR);
             }
         });
@@ -90,7 +90,7 @@ public class AbstraktCacheLoaderTest {
                 throw ERR;
             } else {
                 assertEquals(1, key.intValue());
-                assertSame(Attributes.EMPTY_MAP, attributes);
+                assertSame(Attributes.EMPTY_ATTRIBUTE_MAP, attributes);
                 return "foo";
             }
         }

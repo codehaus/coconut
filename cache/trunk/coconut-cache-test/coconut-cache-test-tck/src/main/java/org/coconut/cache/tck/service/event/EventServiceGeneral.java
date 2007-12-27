@@ -31,7 +31,7 @@ public class EventServiceGeneral extends AbstractEventTestBundle {
 
     @Test
     public void testEnabled() {
-        setCache();
+        init();
         assertTrue(services().hasService(CacheEventService.class));
         assertTrue(services().getAllServices().containsKey(CacheEventService.class));
         Object cs = services().getAllServices().get(CacheEventService.class);
@@ -40,7 +40,7 @@ public class EventServiceGeneral extends AbstractEventTestBundle {
 
     @Test
     public void testUnsubscribe() throws Exception {
-        setCache();
+        init();
         EventSubscription<?> s = subscribe(CACHEENTRY_ADDED_FILTER);
         put(M1);
         assertEquals(1, getPendingEvents());

@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.entry;
@@ -22,7 +22,7 @@ import org.coconut.core.Clock;
 
 /**
  * An AbstractCacheEntryFactoryService is responsible for creating cache entry instances.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -41,7 +41,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> implements
 
     /**
      * Creates a new AbstractCacheEntryFactoryService.
-     * 
+     *
      * @param clock
      *            the clock used to calculate time stamps
      * @param exceptionHandler
@@ -54,7 +54,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> implements
 
     /**
      * Creates a new empty AttributeMap.
-     * 
+     *
      * @return a new empty AttributeMap
      */
     public AttributeMap createMap() {
@@ -64,7 +64,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> implements
     /**
      * Creates a new AttributeMap populated containing the entries specified in the
      * specified attribute map.
-     * 
+     *
      * @param copyFrom
      *            the map to copy entries from
      * @return a new AttributeMap populated containing the entries specified in the
@@ -86,7 +86,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> implements
 
     /**
      * Calculates the cost of the element that was added.
-     * 
+     *
      * @param key
      *            the key of the cache entry
      * @param value
@@ -147,7 +147,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> implements
 
     /**
      * Calculates the size of the element that was added.
-     * 
+     *
      * @param key
      *            the key of the cache entry
      * @param value
@@ -188,6 +188,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> implements
             illegalAttribute(TimeToRefreshAttribute.INSTANCE, key, nanos, refreshTimeNanos);
             nanos = refreshTimeNanos;
         }
-        return clock.getDeadlineFromNow(nanos, TimeUnit.NANOSECONDS);
+        return nanos == Long.MAX_VALUE ? Long.MAX_VALUE : clock.getDeadlineFromNow(nanos,
+                TimeUnit.NANOSECONDS);
     }
 }

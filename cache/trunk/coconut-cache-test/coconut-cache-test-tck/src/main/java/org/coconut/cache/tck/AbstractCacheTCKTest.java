@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck;
@@ -43,7 +43,7 @@ import org.junit.Before;
 
 /**
  * All Cache tests should
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -126,7 +126,7 @@ public class AbstractCacheTCKTest extends Assert {
 
     /**
      * Assert method for hit statistics.
-     * 
+     *
      * @param ratio
      *            the expected ratio of the cache
      * @param hits
@@ -404,20 +404,20 @@ public class AbstractCacheTCKTest extends Assert {
         return c.getService(CacheServiceManagerService.class);
     }
 
-    protected void setCache(AbstractCacheServiceConfiguration<?, ?> conf) {
+    protected void init(AbstractCacheServiceConfiguration<?, ?> conf) {
         c = newCache(conf);
     }
 
-    protected Cache<Integer, String> setCache() {
+    protected Cache<Integer, String> init() {
         c = newCache(conf);
         return c;
     }
 
-    protected void setCache(int entries) {
+    protected void init(int entries) {
         c = newCache(conf, entries);
     }
 
-    protected void setCache(CacheConfiguration<?, ?> conf) {
+    protected void init(CacheConfiguration<?, ?> conf) {
         c = newCache(conf);
     }
 
