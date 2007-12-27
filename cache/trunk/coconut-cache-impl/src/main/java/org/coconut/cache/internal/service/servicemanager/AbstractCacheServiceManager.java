@@ -1,10 +1,9 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.servicemanager;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -16,25 +15,21 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.debug.InternalDebugService;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.cache.internal.service.listener.InternalCacheListener;
-import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.service.management.CacheManagementService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.servicemanager.CacheLifecycle.Initializer;
-import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
-import org.coconut.internal.picocontainer.defaults.DefaultPicoContainer;
 import org.coconut.internal.util.ClassUtils;
 import org.coconut.internal.util.TimeFormatter;
 import org.coconut.management.ManagedLifecycle;
 
 public abstract class AbstractCacheServiceManager implements InternalCacheServiceManager {
 
-    /** The picocontainer used to wire servicers. */
-    private final DefaultPicoContainer container = new DefaultPicoContainer();
-
     /** The cache debug services. */
     private final InternalDebugService debugService;
+
+    private final InternalCacheListener listener;
 
     /** A map of services that can be retrieved from {@link Cache#getService(Class)}. */
     private final Map<Class<?>, Object> publicServices;
@@ -42,44 +37,34 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
     /** The list of services. */
     private final List<ServiceHolder> services = new ArrayList<ServiceHolder>();
 
+    private int userServices;
+
     /** The cache we are managing. */
     final Cache<?, ?> cache;
 
     /** The cache exception services. */
     final InternalCacheExceptionService ces;
 
-    private int userServices;
+    private CacheConfiguration<?, ?> conf;
 
     /**
      * Creates a new AbstractPicoBasedCacheServiceManager.
-     * 
+     *
      * @param cache
      *            the cache we are managing
      * @throws NullPointerException
      *             if the specified cache is null
      */
-    AbstractCacheServiceManager(Cache<?, ?> cache, InternalCacheSupport<?, ?> cacheSupport,
-            CacheConfiguration<?, ?> conf, Collection<Class<?>> classes) {
+    AbstractCacheServiceManager(ServiceComposer composer) {
         long initializationStart = System.nanoTime();
-        this.cache = cache;
-        container.registerComponentInstance(this);
-        container.registerComponentInstance(cache.getName());
-        container.registerComponentInstance(conf.getClock());
-        container.registerComponentInstance(cache);
-        container.registerComponentInstance(cacheSupport);
-        container.registerComponentInstance(conf);
-        for (AbstractCacheServiceConfiguration<?, ?> c : conf.getAllConfigurations()) {
-            container.registerComponentInstance(c);
-        }
-        for (Class cla : ServiceManagerUtil.removeUnusedServices(conf, classes)) {
-            container.registerComponentImplementation(cla);
-        }
-        services.addAll(createServiceHolders(conf));
+        this.cache = composer.getInternalService(Cache.class);
+        this.conf = composer.getInternalService(CacheConfiguration.class);
+        services.addAll(createServiceHolders(composer, conf));
 
         // initialize exception service
-        ces = lookup(InternalCacheExceptionService.class);
+        ces = composer.getInternalService(InternalCacheExceptionService.class);
         ces.initialize(conf);
-        debugService = lookup(InternalDebugService.class);
+        debugService = composer.getInternalService(InternalDebugService.class);
         if (debugService.isDebugEnabled()) {
             debugService.debug("Cache initializing [name = " + cache.getName() + ", type = "
                     + cache.getClass() + "]\n   " + services.size()
@@ -100,15 +85,17 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
             debugService.trace(sb.toString());
             debugService.trace("Cache was initialized with the following configuration:\n" + conf);
         }
+        Map<Class<?>, Object> tmp = new HashMap<Class<?>, Object>();
+        tmp.put(CacheServiceManagerService.class, ServiceManagerUtil.wrapService(this));
         try {
-            Map<Class<?>, Object> tmp = new HashMap<Class<?>, Object>();
-            tmp.put(CacheServiceManagerService.class, ServiceManagerUtil.wrapService(this));
             tmp.putAll(initialize(conf));
-            publicServices = Collections.unmodifiableMap(tmp);
         } catch (RuntimeException e) {
             terminateServices();
             throw e;
         }
+        publicServices = Collections.unmodifiableMap(tmp);
+
+        listener = composer.getInternalService(InternalCacheListener.class);
         debugService.debug("Cache initialized [name = " + cache.getName()
                 + ", initialization time = "
                 + TimeFormatter.SHORT_FORMAT.formatNanos(System.nanoTime() - initializationStart)
@@ -118,12 +105,6 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
     /** {@inheritDoc} */
     public final Map<Class<?>, Object> getAllServices() {
         return publicServices;
-    }
-
-    /** {@inheritDoc} */
-    public <T> T getInternalService(Class<T> type) {
-        T service = (T) container.getComponentInstanceOfType(type);
-        return service;
     }
 
     /** {@inheritDoc} */
@@ -174,7 +155,8 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
         shutdown(true);
     }
 
-    private List<ServiceHolder> createServiceHolders(CacheConfiguration conf) {
+    private List<ServiceHolder> createServiceHolders(ServiceComposer container,
+            CacheConfiguration conf) {
         List<ServiceHolder> services = new ArrayList<ServiceHolder>();
         List<AbstractCacheLifecycle> l = container
                 .getComponentInstancesOfType(AbstractCacheLifecycle.class);
@@ -250,32 +232,27 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
 
     private List<ManagedLifecycle> initializeManagedObjects() {
         List<ManagedLifecycle> managedObjects = new ArrayList<ManagedLifecycle>();
-        List<AbstractCacheLifecycle> l = container
-                .getComponentInstancesOfType(AbstractCacheLifecycle.class);
-
-        for (AbstractCacheLifecycle a : l) {
-            if (a instanceof CompositeService) {
-                for (Object o : ((CompositeService) a).getChildServices()) {
-                    if (o instanceof ManagedLifecycle) {
-                        managedObjects.add((ManagedLifecycle) o);
+        for (ServiceHolder sh : services) {
+            if (sh.isInternal()) {
+                CacheLifecycle a = sh.getService();
+                if (a instanceof CompositeService) {
+                    for (Object o : ((CompositeService) a).getChildServices()) {
+                        if (o instanceof ManagedLifecycle) {
+                            managedObjects.add((ManagedLifecycle) o);
+                        }
                     }
                 }
-            }
-            if (a instanceof ManagedLifecycle) {
-                managedObjects.add((ManagedLifecycle) a);
+                if (a instanceof ManagedLifecycle) {
+                    managedObjects.add((ManagedLifecycle) a);
+                }
             }
         }
-        CacheConfiguration conf = lookup(CacheConfiguration.class);
         for (Object service : conf.serviceManager().getObjects()) {
             if (service instanceof ManagedLifecycle) {
                 managedObjects.add((ManagedLifecycle) service);
             }
         }
         return managedObjects;
-    }
-
-    private <T> T lookup(Class<? extends T> clazz) {
-        return (T) container.getComponentInstanceOfType(clazz);
     }
 
     private void managementStart() {
@@ -293,7 +270,7 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
                 try {
                     si.manage(cms);
                 } catch (Throwable re) {
-                    ces.startFailed(re, lookup(CacheConfiguration.class), si);
+                    ces.startFailed(re, conf, si);
                 }
 
                 if (debug) {
@@ -325,7 +302,7 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
                     userServices++;
                 }
             } catch (Throwable re) {
-                ces.startFailed(re, lookup(CacheConfiguration.class), si.getService());
+                ces.startFailed(re, conf, si.getService());
             }
             if (debug && overrideStarted(si.getService().getClass())) {
                 StringBuilder sb = new StringBuilder();
@@ -343,12 +320,12 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
                 debugService.debug(sb.toString());
             }
         }
-        getInternalService(InternalCacheListener.class).afterStart(cache);
+        listener.afterStart(cache);
     }
 
     private void startServices() {
         setRunState(RunState.STARTING);
-        CacheServiceManagerService service = lookup(CacheServiceManagerService.class);
+        CacheServiceManagerService service = this;
         boolean debug = debugService.isDebugEnabled();
         if (debug) {
             debugService.debug("  calling CacheLifecycle.start()");
@@ -358,7 +335,7 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
             try {
                 si.start(service);
             } catch (Throwable re) {
-                ces.startFailed(re, lookup(CacheConfiguration.class), si.getService());
+                ces.startFailed(re, conf, si.getService());
             }
             if (debug && overrideStart(si.getService().getClass())) {
                 StringBuilder sb = new StringBuilder();
@@ -421,7 +398,7 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
             managementStart();
             servicesStarted();
         } finally {
-            container.dispose();
+            conf = null;
         }
         debugService.info("Cache started [name = " + cache.getName() + ", initial size = "
                 + cache.size() + ", startup time = "
@@ -432,7 +409,7 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
     void doTerminate() {
         RunState state = getRunState();
         if (!state.isTerminated()) {
-            getInternalService(InternalCacheListener.class).afterStop(cache);
+            listener.afterStop(cache);
             try {
                 terminateServices();
             } finally {
@@ -443,7 +420,7 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
 
     /**
      * Returns the state of the cache.
-     * 
+     *
      * @return the state of the cache
      */
     abstract RunState getRunState();

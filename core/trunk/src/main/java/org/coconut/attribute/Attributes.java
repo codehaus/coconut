@@ -539,10 +539,10 @@ public final class Attributes {
         private static final long serialVersionUID = -6979724477215052911L;
 
         /** The singleton key. */
-        private final Attribute a;
+        private final Attribute attribute;
 
         /** The singleton value. */
-        private final Object v;
+        private final Object value;
 
         /**
          * Creates a new SingletonAttributeMap.
@@ -556,8 +556,8 @@ public final class Attributes {
             if (attribute == null) {
                 throw new NullPointerException("attribute is null");
             }
-            a = attribute;
-            v = value;
+            this.attribute = attribute;
+            this.value = value;
         }
 
         /** {@inheritDoc} */
@@ -567,19 +567,19 @@ public final class Attributes {
 
         /** {@inheritDoc} */
         public boolean containsKey(Object key) {
-            return eq(key, a);
+            return eq(key, attribute);
         }
 
         /** {@inheritDoc} */
         public boolean containsValue(Object value) {
-            return eq(value, v);
+            return eq(value, value);
         }
 
         /** {@inheritDoc} */
         public Set<Map.Entry<Attribute, Object>> entrySet() {
             return Collections
                     .<Map.Entry<Attribute, Object>> singleton(new SimpleImmutableEntry<Attribute, Object>(
-                            a, v));
+                            attribute, value));
         }
 
         /** {@inheritDoc} */
@@ -596,12 +596,12 @@ public final class Attributes {
                 return false;
             }
             try {
-                if (v == null) {
-                    if (!(map.get(a) == null && map.containsKey(a))) {
+                if (value == null) {
+                    if (!(map.get(attribute) == null && map.containsKey(attribute))) {
                         return false;
                     }
                 } else {
-                    if (!v.equals(map.get(a))) {
+                    if (!value.equals(map.get(attribute))) {
                         return false;
                     }
                 }
@@ -613,12 +613,12 @@ public final class Attributes {
 
         /** {@inheritDoc} */
         public Object get(Attribute key, Object defaultValue) {
-            return a == key ? v : defaultValue;
+            return attribute == key ? value : defaultValue;
         }
 
         /** {@inheritDoc} */
         public Object get(Object key) {
-            return eq(key, a) ? v : null;
+            return eq(key, attribute) ? value : null;
         }
 
         /** {@inheritDoc} */
@@ -628,7 +628,7 @@ public final class Attributes {
 
         /** {@inheritDoc} */
         public boolean getBoolean(Attribute key, boolean defaultValue) {
-            return a == key ? v == null ? false : (Boolean) v : defaultValue;
+            return attribute == key ? value == null ? false : (Boolean) value : defaultValue;
         }
 
         /** {@inheritDoc} */
@@ -638,7 +638,7 @@ public final class Attributes {
 
         /** {@inheritDoc} */
         public byte getByte(Attribute key, byte defaultValue) {
-            return a == key ? v == null ? 0 : (Byte) v : defaultValue;
+            return attribute == key ? value == null ? 0 : (Byte) value : defaultValue;
         }
 
         /** {@inheritDoc} */
@@ -648,7 +648,7 @@ public final class Attributes {
 
         /** {@inheritDoc} */
         public char getChar(Attribute key, char defaultValue) {
-            return a == key ? v == null ? 0 : (Character) v : defaultValue;
+            return attribute == key ? value == null ? 0 : (Character) value : defaultValue;
         }
 
         /** {@inheritDoc} */
@@ -658,7 +658,7 @@ public final class Attributes {
 
         /** {@inheritDoc} */
         public double getDouble(Attribute key, double defaultValue) {
-            return a == key ? v == null ? 0 : (Double) v : defaultValue;
+            return attribute == key ? value == null ? 0 : (Double) value : defaultValue;
         }
 
         /** {@inheritDoc} */
@@ -668,7 +668,7 @@ public final class Attributes {
 
         /** {@inheritDoc} */
         public float getFloat(Attribute key, float defaultValue) {
-            return a == key ? v == null ? 0 : (Float) v : defaultValue;
+            return attribute == key ? value == null ? 0 : (Float) value : defaultValue;
         }
 
         /** {@inheritDoc} */
@@ -678,7 +678,7 @@ public final class Attributes {
 
         /** {@inheritDoc} */
         public int getInt(Attribute key, int defaultValue) {
-            return a == key ? v == null ? 0 : (Integer) v : defaultValue;
+            return attribute == key ? value == null ? 0 : (Integer) value : defaultValue;
         }
 
         /** {@inheritDoc} */
@@ -688,7 +688,7 @@ public final class Attributes {
 
         /** {@inheritDoc} */
         public long getLong(Attribute key, long defaultValue) {
-            return a == key ? v == null ? 0 : (Long) v : defaultValue;
+            return attribute == key ? value == null ? 0 : (Long) value : defaultValue;
         }
 
         /** {@inheritDoc} */
@@ -698,13 +698,13 @@ public final class Attributes {
 
         /** {@inheritDoc} */
         public short getShort(Attribute key, short defaultValue) {
-            return a == key ? v == null ? 0 : (Short) v : defaultValue;
+            return attribute == key ? value == null ? 0 : (Short) value : defaultValue;
         }
 
         /** {@inheritDoc} */
         @Override
         public int hashCode() {
-            return a.hashCode() ^ (v == null ? 0 : v.hashCode());
+            return attribute.hashCode() ^ (value == null ? 0 : value.hashCode());
         }
 
         /** {@inheritDoc} */
@@ -714,7 +714,7 @@ public final class Attributes {
 
         /** {@inheritDoc} */
         public Set<Attribute> keySet() {
-            return Collections.singleton(a);
+            return Collections.singleton(attribute);
         }
 
         /** {@inheritDoc} */
@@ -782,16 +782,16 @@ public final class Attributes {
         public String toString() {
             StringBuffer buf = new StringBuffer();
             buf.append("{");
-            buf.append(a);
+            buf.append(attribute);
             buf.append("=");
-            buf.append(v);
+            buf.append(value);
             buf.append("}");
             return buf.toString();
         }
 
         /** {@inheritDoc} */
         public Collection<Object> values() {
-            return Collections.singleton(v);
+            return Collections.singleton(value);
         }
     }
 

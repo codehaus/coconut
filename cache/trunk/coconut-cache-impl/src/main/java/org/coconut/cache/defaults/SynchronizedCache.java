@@ -35,6 +35,7 @@ import org.coconut.cache.internal.service.loading.InternalCacheLoadingService;
 import org.coconut.cache.internal.service.loading.SynchronizedCacheLoaderService;
 import org.coconut.cache.internal.service.management.DefaultCacheManagementService;
 import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
+import org.coconut.cache.internal.service.servicemanager.ServiceComposer;
 import org.coconut.cache.internal.service.servicemanager.SynchronizedCacheServiceManager;
 import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsService;
 import org.coconut.cache.internal.service.worker.SynchronizedCacheWorkerService;
@@ -87,7 +88,8 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
             SynchronizedCacheEvictionService.class, DefaultCacheExpirationService.class,
             SynchronizedCacheLoaderService.class, DefaultCacheManagementService.class,
             DefaultCacheEventService.class, SynchronizedCacheWorkerService.class,
-            SynchronizedEntryFactoryService.class, DefaultCacheExceptionService.class);
+            SynchronizedCacheServiceManager.class, SynchronizedEntryFactoryService.class,
+            DefaultCacheExceptionService.class);
 
     private final InternalCacheEntryService entryService;
 
@@ -123,12 +125,13 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
     public SynchronizedCache(CacheConfiguration<K, V> conf) {
         super(conf);
         Support s = new Support();
-        serviceManager = new SynchronizedCacheServiceManager(this, s, conf, DEFAULTS);
-        listener = serviceManager.getInternalService(InternalCacheListener.class);
-        expirationService = serviceManager.getInternalService(DefaultCacheExpirationService.class);
-        loadingService = serviceManager.getInternalService(InternalCacheLoadingService.class);
-        evictionService = serviceManager.getInternalService(InternalCacheEvictionService.class);
-        entryService = serviceManager.getInternalService(AbstractCacheEntryFactoryService.class);
+        ServiceComposer sc = ServiceComposer.compose(this, s, conf, DEFAULTS);
+        serviceManager = sc.getInternalService(InternalCacheServiceManager.class);
+        listener = sc.getInternalService(InternalCacheListener.class);
+        expirationService = sc.getInternalService(DefaultCacheExpirationService.class);
+        loadingService = sc.getInternalService(InternalCacheLoadingService.class);
+        evictionService = sc.getInternalService(InternalCacheEvictionService.class);
+        entryService = sc.getInternalService(AbstractCacheEntryFactoryService.class);
         map = new EntryMap<K, V>(s, true);
     }
 

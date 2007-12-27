@@ -19,7 +19,7 @@ public final class SizeAttribute extends AbstractLongAttribute {
     public static final long DEFAULT_VALUE = 1;
 
     /** The singleton instance of this attribute. */
-    public final static SizeAttribute INSTANCE = new SizeAttribute();
+    public static final SizeAttribute INSTANCE = new SizeAttribute();
 
     /** The name of this attribute. */
     public static final String NAME = "size";

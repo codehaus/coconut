@@ -21,12 +21,12 @@ import org.coconut.operations.Ops.MapperToLong;
 public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
 
     /** The default value of this attribute. */
-    private final long defaultLongValue;
+    private final transient long defaultLongValue;
 
     /**
      * A MapperToLong that takes an AttributeMap and returns the value of this attribute.
      */
-    private final MapperToLong<AttributeMap> mapperToLong = new AttributeMapToLong();
+    private final transient MapperToLong<AttributeMap> mapperToLong = new AttributeMapToLong();
 
     /**
      * Creates a new AbstractLongAttribute.

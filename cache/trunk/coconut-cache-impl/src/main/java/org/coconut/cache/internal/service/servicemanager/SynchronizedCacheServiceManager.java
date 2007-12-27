@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.servicemanager;
@@ -23,14 +23,14 @@ import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 
 /**
  * An synchronized implementation of {@link CacheServiceManagerService}.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
 public class SynchronizedCacheServiceManager extends AbstractCacheServiceManager {
 
     /** Executor responsible for shutting down services asynchronously. */
-    private final ExecutorService shutdownServiceExecutor = Executors.newCachedThreadPool();
+    private final ExecutorService shutdownServiceExecutor;
 
     /** A list of shutdown futures. */
     private final Queue<ServiceHolder> shutdownFutures = new ConcurrentLinkedQueue<ServiceHolder>();
@@ -44,10 +44,10 @@ public class SynchronizedCacheServiceManager extends AbstractCacheServiceManager
     /** CountDownLatch used for signalling termination. */
     private final CountDownLatch terminationLatch = new CountDownLatch(1);
 
-    public SynchronizedCacheServiceManager(Cache<?, ?> cache, InternalCacheSupport<?, ?> helper,
-            CacheConfiguration<?, ?> conf, Collection<Class<?>> classes) {
-        super(cache, helper, conf, classes);
-        this.mutex = cache;
+    public SynchronizedCacheServiceManager(ServiceComposer composer) {
+        super(composer);
+        this.mutex = composer.getInternalService(Cache.class);
+        shutdownServiceExecutor = Executors.newCachedThreadPool();
     }
 
     /** {@inheritDoc} */
@@ -81,18 +81,19 @@ public class SynchronizedCacheServiceManager extends AbstractCacheServiceManager
         }
     }
 
+    @Override
     void shutdown(boolean shutdownNow) {
         synchronized (mutex) {
             RunState runState = this.runState;
-            if ((runState == RunState.SHUTDOWN && !shutdownNow)
-                    || (runState == RunState.STOP && shutdownNow)
-                    || (runState == RunState.TERMINATED)) {
+            if (runState == RunState.SHUTDOWN && !shutdownNow
+                    || runState == RunState.STOP && shutdownNow
+                    || runState == RunState.TERMINATED) {
                 return;
             } else if (runState == RunState.NOTRUNNING) {
                 doTerminate();
                 return;
             }
-            boolean shutdown = (shutdownNow && runState == RunState.RUNNING) || !shutdownNow;
+            boolean shutdown = shutdownNow && runState == RunState.RUNNING || !shutdownNow;
             if (shutdown) {
                 if (runState == RunState.RUNNING) {
                     cache.clear();

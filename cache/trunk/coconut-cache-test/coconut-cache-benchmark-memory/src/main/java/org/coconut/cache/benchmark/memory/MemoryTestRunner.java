@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.benchmark.memory;
@@ -9,18 +9,24 @@ import java.util.LinkedHashMap;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.coconut.cache.defaults.SynchronizedCache;
 import org.coconut.cache.defaults.UnsynchronizedCache;
+import org.coconut.cache.test.adapter.CacheAdapterFactory;
+import org.coconut.cache.test.adapter.ehcache.EHCacheAdapterFactory;
+import org.coconut.cache.test.adapter.jbosscache.JbossCacheAdapterFactory;
+import org.coconut.cache.test.adapter.jcs.JCSCacheAdapterFactory;
+import org.coconut.cache.test.adapter.oscache.OSCacheAdapterFactory;
+import org.coconut.cache.test.adapter.whirlycache.WhirlyCacheAdapterFactory;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
 public class MemoryTestRunner {
-    public final static int[] DEFAULT_ITERATIONS = new int[] { 1, 10, 100, 1000, 10000,
-            100000 };
+    public final static int[] DEFAULT_ITERATIONS = new int[] { 1, 10, 100, 1000, 10000 /*, 100000*/};
 
-    // 
-    private static final Runtime RUNTIME = Runtime.getRuntime();
+    // public final static int[] DEFAULT_ITERATIONS = new int[] { 1, 10, 100, 1000, 10000,
+    // 100000 /* ,1000000 */};
 
     public static void main(String[] args) throws Exception {
         MemoryTestRunner t = new MemoryTestRunner();
@@ -31,49 +37,29 @@ public class MemoryTestRunner {
         t.test(new MapMemoryOverheadTest(Hashtable.class));
         t.test(new MapMemoryOverheadTest(LinkedHashMap.class));
         t.test(new MapMemoryOverheadTest(TreeMap.class));
-        System.out
-                .println("|| Coconut Cache Implementations \\\\ || || || || || || || ||");
+        System.out.println("|| Coconut Cache Implementations \\\\ || || || || || || || ||");
         t.test(new MapMemoryOverheadTest(UnsynchronizedCache.class));
+        t.test(new MapMemoryOverheadTest(SynchronizedCache.class));
         System.out.println("|| Other Cache Implementations \\\\ || || || || || || || ||");
-//        t.test(new EHcacheMemoryOverheadTest());
-//        t.test(new JBossMemoryOverheadTest());
-//        t.test(new JCSOverheadTest());
-//        t.test(new OSCacheMemoryOverTest());
-//        t.test(new WhirlyCacheMemoryOverheadTest());
+        t.test(new EHCacheAdapterFactory());
+        t.test(new JbossCacheAdapterFactory());
+        t.test(new JCSCacheAdapterFactory());
+        t.test(new OSCacheAdapterFactory());
+        t.test(new WhirlyCacheAdapterFactory());
     }
-
-    /**
-	 * @param test
-	 */
-	private void test(MapMemoryOverheadTest test) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public int test(MemoryOverheadTest map, int iterations) throws Exception {
-        final int count = 1;
-        runGC();
-        new MemoryTestResult(1, iterations).run(map);
-        usedMemory();
-        runGC();
-        MemoryTestResult t = new MemoryTestResult(count, iterations);
-        runGC();
-        t.run(map);
-        float memUsage = t.memoryUse; // Take an after heap snapshot:
-        final int size = Math.round(memUsage / count);
-        return size;
+    void test(CacheAdapterFactory tt) throws Exception {
+        test(new MapMemoryOverheadTest(tt));
     }
-
-    void test(MemoryOverheadTest tt) throws Exception {
-        int[] scores = new int[DEFAULT_ITERATIONS.length];
+    void test(MapMemoryOverheadTest tt) throws Exception {
+        long[] scores = new long[DEFAULT_ITERATIONS.length];
         for (int i = 0; i < DEFAULT_ITERATIONS.length; i++) {
             int iter = DEFAULT_ITERATIONS[i];
-            scores[i] = test(tt, iter);
+            scores[i] = tt.test2(iter);
         }
         System.out.println(toConfluenceString(tt.toString(), scores, DEFAULT_ITERATIONS));
     }
 
-    private String toConfluenceString(String name, int[] scores, int[] iterations) {
+    private String toConfluenceString(String name, long[] scores, int[] iterations) {
         StringBuilder sb = new StringBuilder();
         sb.append("| ");
         sb.append(name);
@@ -91,21 +77,4 @@ public class MemoryTestRunner {
         return sb.toString();
     }
 
-    private static void runGC() throws Exception {
-        for (int r = 0; r < 4; ++r) {
-            long usedMem1 = usedMemory(), usedMem2 = Long.MAX_VALUE;
-            for (int i = 0; (usedMem1 < usedMem2) && (i < 500); ++i) {
-                RUNTIME.runFinalization();
-                RUNTIME.gc();
-                Thread.sleep(50);
-
-                usedMem2 = usedMem1;
-                usedMem1 = usedMemory();
-            }
-        }
-    }
-
-    private static long usedMemory() {
-        return RUNTIME.totalMemory() - RUNTIME.freeMemory();
-    }
 }

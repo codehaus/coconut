@@ -20,13 +20,13 @@ import org.coconut.attribute.Attributes;
 public abstract class AbstractAttribute<T> implements Attribute<T>, Serializable {
 
     /** The type of this attribute, as returned {@link #getAttributeType()}. */
-    private final Class<T> clazz;
+    private final transient Class<T> clazz;
 
     /** The default value of this attribute. */
-    private final T defaultValue;
+    private final transient T defaultValue;
 
     /** The name of this attribute. */
-    private final String name;
+    private final transient String name;
 
     /**
      * Creates a new AbstractAttribute.

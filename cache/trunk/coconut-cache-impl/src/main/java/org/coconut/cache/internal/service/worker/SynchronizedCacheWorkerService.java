@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.worker;
@@ -17,8 +17,8 @@ import org.coconut.cache.service.worker.CacheWorkerManager;
 import org.coconut.cache.service.worker.CacheWorkerService;
 
 /**
- * 
- * 
+ *
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -27,8 +27,7 @@ public class SynchronizedCacheWorkerService extends AbstractCacheWorkerService i
 
     private final CacheWorkerManager worker;
 
-    public SynchronizedCacheWorkerService(String cacheName, CacheWorkerConfiguration conf,
-            InternalCacheServiceManager csm) {
+    public SynchronizedCacheWorkerService(String cacheName, CacheWorkerConfiguration conf) {
         if (conf.getWorkerManager() == null) {
             worker = new SharedCacheWorkerManager(cacheName);
         } else {

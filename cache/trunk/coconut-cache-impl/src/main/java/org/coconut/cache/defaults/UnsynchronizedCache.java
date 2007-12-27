@@ -35,6 +35,7 @@ import org.coconut.cache.internal.service.listener.InternalCacheListener;
 import org.coconut.cache.internal.service.loading.InternalCacheLoadingService;
 import org.coconut.cache.internal.service.loading.UnsynchronizedCacheLoaderService;
 import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
+import org.coconut.cache.internal.service.servicemanager.ServiceComposer;
 import org.coconut.cache.internal.service.servicemanager.UnsynchronizedCacheServiceManager;
 import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsService;
 import org.coconut.cache.service.event.CacheEventService;
@@ -73,7 +74,8 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
             DefaultCacheStatisticsService.class, DefaultCacheListener.class,
             UnsynchronizedCacheEvictionService.class, DefaultCacheExpirationService.class,
             UnsynchronizedCacheLoaderService.class, DefaultCacheEventService.class,
-            UnsynchronizedEntryFactoryService.class, DefaultCacheExceptionService.class);
+            UnsynchronizedCacheServiceManager.class, UnsynchronizedEntryFactoryService.class,
+            DefaultCacheExceptionService.class);
 
     private final InternalCacheEntryService entryService;
 
@@ -109,12 +111,13 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
     public UnsynchronizedCache(CacheConfiguration<K, V> conf) {
         super(conf);
         Support s = new Support();
-        serviceManager = new UnsynchronizedCacheServiceManager(this, s, conf, DEFAULTS);
-        listener = serviceManager.getInternalService(InternalCacheListener.class);
-        expirationService = serviceManager.getInternalService(DefaultCacheExpirationService.class);
-        loadingService = serviceManager.getInternalService(InternalCacheLoadingService.class);
-        evictionService = serviceManager.getInternalService(InternalCacheEvictionService.class);
-        entryService = serviceManager.getInternalService(AbstractCacheEntryFactoryService.class);
+        ServiceComposer sc = ServiceComposer.compose(this, s, conf, DEFAULTS);
+        serviceManager = sc.getInternalService(InternalCacheServiceManager.class);
+        listener = sc.getInternalService(InternalCacheListener.class);
+        expirationService = sc.getInternalService(DefaultCacheExpirationService.class);
+        loadingService = sc.getInternalService(InternalCacheLoadingService.class);
+        evictionService = sc.getInternalService(InternalCacheEvictionService.class);
+        entryService = sc.getInternalService(AbstractCacheEntryFactoryService.class);
         map = new EntryMap<K, V>(s, false);
     }
 

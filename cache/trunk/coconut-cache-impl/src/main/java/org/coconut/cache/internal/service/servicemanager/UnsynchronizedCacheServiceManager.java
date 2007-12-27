@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.servicemanager;
@@ -13,7 +13,7 @@ import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 
 /**
  * An unsynchronized implementation of {@link CacheServiceManagerService}.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -22,10 +22,8 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
     /** The current state of the service manager. */
     private RunState status = RunState.NOTRUNNING;
 
-    public UnsynchronizedCacheServiceManager(Cache<?, ?> cache, InternalCacheSupport<?, ?> helper,
-            CacheConfiguration<?, ?> conf,
-            Collection<Class<?>> classes) {
-        super(cache, helper, conf, classes);
+    public UnsynchronizedCacheServiceManager(ServiceComposer composer) {
+        super(composer);
     }
 
     /** {@inheritDoc} */

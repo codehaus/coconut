@@ -9,10 +9,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
-import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
 import org.coconut.cache.internal.service.spi.Resources;
 import org.coconut.cache.internal.service.statistics.LongCounter.ConcurrentLongCounter;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
@@ -128,8 +126,7 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
 
     volatile long started;
 
-    public DefaultCacheStatisticsService(InternalCacheServiceManager manager,
-            CacheConfiguration<K, V> conf) {
+    public DefaultCacheStatisticsService() {
         Clock c = Clock.DEFAULT_CLOCK;
         // cache counters
 
