@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.spi;
@@ -15,7 +15,7 @@ import org.w3c.dom.Element;
 
 /**
  * All services should define a Configuration class that is used to configure the service.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -33,7 +33,7 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
 
     /**
      * Creates a new AbstractCacheServiceConfiguration.
-     * 
+     *
      * @param serviceName
      *            the name of the service
      */
@@ -56,7 +56,7 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
      * Returns the unique name of this service. For example,
      * {@link org.coconut.cache.service.expiration.CacheExpirationConfiguration} returns '{@value
      * org.coconut.cache.service.expiration.CacheExpirationConfiguration#SERVICE_NAME}'.
-     * 
+     *
      * @return the unique name of this service
      */
     public String getServiceName() {
@@ -87,7 +87,7 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
 
     /**
      * Reads this configuration from an XML element.
-     * 
+     *
      * @param element
      *            The XML Element to read the configuration from
      * @throws Exception
@@ -97,7 +97,7 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
 
     /**
      * Saves this configuration to xml.
-     * 
+     *
      * @param doc
      *            the Document to write to
      * @param element
@@ -109,7 +109,7 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
 
     /**
      * Sets the parent cache configuration which is available when calling {@link #c()}.
-     * 
+     *
      * @param conf
      *            the parent cache configuration
      */
@@ -121,7 +121,7 @@ public abstract class AbstractCacheServiceConfiguration<K, V> {
     /**
      * Called after this configuration has been registered with an
      * {@link CacheConfiguration} instance.
-     * 
+     *
      * @param conf
      *            the cache configuration that this configuration is part
      */

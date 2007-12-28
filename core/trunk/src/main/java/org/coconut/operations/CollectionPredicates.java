@@ -4,6 +4,7 @@
 package org.coconut.operations;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -151,14 +152,14 @@ public final class CollectionPredicates {
         return false;
     }
 
-    public static <E> void removeFrom(Iterable<E> iterable, Predicate<? super E> predicate) {
+    public static <E> void retain(Iterable<E> iterable, Predicate<? super E> predicate) {
         if (iterable == null) {
             throw new NullPointerException("iterable is null");
         } else if (predicate == null) {
             throw new NullPointerException("predicate is null");
         }
         for (Iterator<E> i = iterable.iterator(); i.hasNext();) {
-            if (predicate.evaluate(i.next())) {
+            if (!predicate.evaluate(i.next())) {
                 i.remove();
             }
         }

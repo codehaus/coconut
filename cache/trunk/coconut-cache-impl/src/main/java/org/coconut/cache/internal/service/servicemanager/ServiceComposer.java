@@ -42,23 +42,23 @@ public class ServiceComposer {
             Collection<Class<?>> classes) {
         ArrayList<Class<?>> c = new ArrayList<Class<?>>(classes);
         if (!conf.management().isEnabled()) {
-            CollectionPredicates.removeFrom(c, new Predicate<Class>() {
+            CollectionPredicates.retain(c, new Predicate<Class>() {
                 public boolean evaluate(Class t) {
-                    return CacheManagementService.class.isAssignableFrom(t);
+                    return !CacheManagementService.class.isAssignableFrom(t);
                 }
             });
         }
         if (!conf.event().isEnabled()) {
-            CollectionPredicates.removeFrom(c, new Predicate<Class>() {
+            CollectionPredicates.retain(c, new Predicate<Class>() {
                 public boolean evaluate(Class t) {
-                    return InternalCacheEventService.class.isAssignableFrom(t);
+                    return !InternalCacheEventService.class.isAssignableFrom(t);
                 }
             });
         }
         if (conf.loading().getLoader() == null) {
-            CollectionPredicates.removeFrom(c, new Predicate<Class>() {
+            CollectionPredicates.retain(c, new Predicate<Class>() {
                 public boolean evaluate(Class t) {
-                    return InternalCacheLoadingService.class.isAssignableFrom(t);
+                    return !InternalCacheLoadingService.class.isAssignableFrom(t);
                 }
             });
         }

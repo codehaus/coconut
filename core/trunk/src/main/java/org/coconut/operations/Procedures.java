@@ -8,7 +8,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Queue;
 
-import org.coconut.operations.Ops.Mapper;
 import org.coconut.operations.Ops.Procedure;
 
 /**
@@ -108,70 +107,6 @@ public final class Procedures {
      */
     public static <E> Procedure<E> systemOutPrintln() {
         return SYS_OUT_PRINTLN;
-    }
-
-    /**
-     * Returns an event processor that will print all elements processor to the specified
-     * printstream using the elements {@link Object#toString()} method.
-     *
-     * @param ps
-     *            the PrintStream to write to
-     * @return an EventProcessor where all elements processor will be written to the
-     *         specified printstream.
-     * @throws NullPointerException
-     *             if the specified printstream is <code>null</code>
-     * @param <E>
-     *            the types of elements accepted by the process method
-     */
-    public static <E> Procedure<E> toPrintStream(final PrintStream ps) {
-        if (ps == null) {
-            throw new NullPointerException("ps is null");
-        }
-        return new Procedure<E>() {
-            public void apply(E element) {
-                ps.println(element.toString());
-            }
-        };
-    }
-
-    /**
-     * Works as {@link #toPrintStream(PrintStream)} except that any
-     * {@link RuntimeException} will be ignored.
-     *
-     * @param ps
-     *            the PrintStream to write to
-     * @return an EventProcessor where all elements processor will be written to the
-     *         specified printstream.
-     * @throws NullPointerException
-     *             if the specified printstream is <code>null</code>
-     * @param <E>
-     *            the types of elements accepted by the process method
-     */
-    public static <E> Procedure<E> toPrintStreamSafe(final PrintStream ps) {
-        if (ps == null) {
-            throw new NullPointerException("ps is null");
-        }
-        return new Procedure<E>() {
-            public void apply(E element) {
-                try {
-                    ps.println(element.toString());
-                } catch (RuntimeException re) {
-                    // ignore
-                }
-            }
-        };
-    }
-
-    /**
-     * Shorthand for calling {@link #toPrintStreamSafe(PrintStream)} with
-     * {@link System#out} as the output printstream.
-     *
-     * @return an eventhandler that prints all processed elements to {@link System#out}
-     * @param <E>
-     *            the types of elements accepted by the process method
-     */
-    public static <E> Procedure<E> toSystemOutSafe() {
-        return toPrintStreamSafe(System.out);
     }
 
     /**

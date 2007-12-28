@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.operations;
@@ -196,19 +196,19 @@ public class CollectionPredicatesTest {
     public void removeFrom() {
         Predicate<Number> p = (Predicate) Predicates.anyEquals(2, 3);
         List<Integer> list = new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4));
-        CollectionPredicates.removeFrom(list, p);
+        CollectionPredicates.retain(list, p);
         assertEquals(2, list.size());
-        assertEquals(1, list.get(0));
-        assertEquals(4, list.get(1));
+        assertEquals(2, list.get(0));
+        assertEquals(3, list.get(1));
     }
 
     @Test(expected = NullPointerException.class)
     public void removeFromNPE1() {
-        CollectionPredicates.removeFrom(null, TestUtil.dummy(Predicate.class));
+        CollectionPredicates.retain(null, TestUtil.dummy(Predicate.class));
     }
 
     @Test(expected = NullPointerException.class)
     public void removeFromNPE2() {
-        CollectionPredicates.removeFrom(new ArrayList(), null);
+        CollectionPredicates.retain(new ArrayList(), null);
     }
 }

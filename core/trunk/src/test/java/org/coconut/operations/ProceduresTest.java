@@ -64,15 +64,6 @@ public class ProceduresTest {
         Procedures.queueOffer(null);
     }
 
-    @Test(expected = NullPointerException.class)
-    public void toPrintStreamNPE() {
-        Procedures.toPrintStream(null);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void toPrintStreamSafeNPE() {
-        Procedures.toPrintStreamSafe(null);
-    }
 
     @Test
     public void systemOutPrint() {
@@ -105,32 +96,6 @@ public class ProceduresTest {
         assertSame(Procedures.SYS_OUT_PRINTLN, TestUtil.serializeAndUnserialize(Procedures
                 .systemOutPrintln()));
     }
-    @Test
-    public void toPrintStream() {
-        SystemOutCatcher str = SystemOutCatcher.get();
-        try {
-            Procedure eh = Procedures.toPrintStream(System.out);
-            eh.apply(234);
-            assertTrue(str.toString().equals("234"+TestUtil.LINE_SEPARATOR));
-        } finally {
-            str.terminate();
-        }
-//        assertIsSerializable(Procedures.SYS_OUT_PRINTLN);
-//        assertSame(Procedures.SYS_OUT_PRINTLN, Procedures.systemOutPrintln());
-//        assertSame(Procedures.SYS_OUT_PRINTLN, TestUtil.serializeAndUnserialize(Procedures
-//                .systemOutPrintln()));
-    }
-    @Test
-    public void toSystemOutSafe() {
-        SystemErrOutHelper str = SystemErrOutHelper.get();
-        try {
-            Procedure eh = Procedures.toSystemOutSafe();
-            eh.apply(234);
-            assertTrue(str.getFromLast(0).startsWith("234"));
-        } finally {
-            str.terminate();
-        }
-    }
 
     @Test
     public void noop() {
@@ -143,9 +108,4 @@ public class ProceduresTest {
         assertSame(p, TestUtil.serializeAndUnserialize(p));
     }
 
-
-    @Test
-    public void toPrintStreamSafe() {
-        toSystemOutSafe();// hack
-    }
 }
