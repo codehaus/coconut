@@ -16,7 +16,7 @@ import jsr166y.forkjoin.Ops.Predicate;
  * Factory and utility methods for {@link Predicate}.
  *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
- * @version $Id: CollectionPredicates.java 498 2007-12-02 17:17:11Z kasper $
+ * @version $Id$
  */
 public final class CollectionPredicates {
 
