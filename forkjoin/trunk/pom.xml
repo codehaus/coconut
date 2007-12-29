@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.coconut</groupId>
+    <artifactId>coconut-root-pom</artifactId>
+    <version>1.0</version>
+  </parent>
+  <groupId>org.coconut.forkjoin</groupId>
+  <artifactId>coconut-forkjoin-parent</artifactId>
+  <version>0.1</version>
+  <name>Coconut Forkjoin (pom)</name>
+  <packaging>pom</packaging>
+  <distributionManagement>
+    <site>
+      <id>codehaus.org</id>
+      <url>dav:https://dav.codehaus.org/coconut</url>
+    </site>
+  </distributionManagement>
+  <scm>
+    <connection>
+      scm:svn:http://svn.codehaus.org/coconut/forkjoin/trunk
+    </connection>
+    <developerConnection>
+      scm:svn:https://svn.codehaus.org/coconut/forkjoin/trunk
+    </developerConnection>
+  </scm>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <modules>
+    <module>coconut-forkjoin</module>
+    <module>jsr166y</module>
+  </modules>
+</project>
