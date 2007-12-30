@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.policy.paging;
@@ -9,12 +9,12 @@ import java.util.List;
 import net.jcip.annotations.NotThreadSafe;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.cache.policy.spi.AbstractReplacementPolicy;
+import org.coconut.cache.policy.AbstractReplacementPolicy;
 import org.coconut.internal.util.IndexedList;
 
 /**
  * A Least Recently Used replacement policy discards the least recently used items first.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <T>
@@ -41,7 +41,7 @@ public class LRUPolicy<T> extends AbstractReplacementPolicy<T> implements Serial
 
     /**
      * Constructs a new LRUPolicy with a specified initial size.
-     * 
+     *
      * @param initialCapacity
      *            the initial size of the internal list, must be 0 or greater
      * @throws IllegalArgumentException
@@ -56,7 +56,7 @@ public class LRUPolicy<T> extends AbstractReplacementPolicy<T> implements Serial
 
     /**
      * Constructs a new LRUPolicy by copying an existing LRUPolicy.
-     * 
+     *
      * @param policy
      *            the LRUPolicy policy to copy from
      */

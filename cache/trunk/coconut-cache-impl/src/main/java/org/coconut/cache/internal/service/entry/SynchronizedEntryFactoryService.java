@@ -3,7 +3,11 @@
  */
 package org.coconut.cache.internal.service.entry;
 
+import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
+import org.coconut.attribute.Attributes;
+import org.coconut.attribute.DefaultAttributeMap;
+import org.coconut.attribute.common.TimeToLiveAttribute;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
@@ -47,8 +51,19 @@ public class SynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryFac
         long lastUpdate = getLastModified(key, value, attributes, existing);
         long hits = getHits(key, value, attributes, existing);
         long refreshTime = getTimeToRefresh(defaultRefreshTime, key, value, attributes, existing);
+        AttributeMap am = Attributes.EMPTY_ATTRIBUTE_MAP;
+        if (attributes.size() > 0) {
+            for (Attribute a : attributes.keySet()) {
+                if (!isCacheAttribute(a)) {
+                    if (am == Attributes.EMPTY_ATTRIBUTE_MAP) {
+                        am = new DefaultAttributeMap();
+                    }
+                    am.put(a, attributes.get(a));
+                }
+            }
+        }
         SynchronizedCacheEntry<K, V> newEntry = new SynchronizedCacheEntry<K, V>(key, value, cost,
-                creationTime, lastUpdate, size, refreshTime, expirationTime, hits);
+                creationTime, lastUpdate, size, refreshTime, expirationTime, hits, am);
 
         if (existing != null) {
             newEntry.setPolicyIndex(existing.getPolicyIndex());

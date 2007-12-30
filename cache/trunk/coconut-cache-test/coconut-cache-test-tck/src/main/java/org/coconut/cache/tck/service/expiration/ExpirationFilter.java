@@ -81,7 +81,7 @@ public class ExpirationFilter extends AbstractExpirationTestBundle {
      */
     @Test
     public void testFilterAndTimeExpiration() {
-        c = newCache(newConf().setClock(clock).expiration().setExpirationFilter(f));
+        c = newCache(newConf().expiration().setExpirationFilter(f));
         put(M1, 5);
         put(M2, 7);
         incTime(5);
@@ -97,7 +97,7 @@ public class ExpirationFilter extends AbstractExpirationTestBundle {
      */
     @Test
     public void testFilterAndDefaultTimeExpiration() {
-        c = newCache(newConf().setClock(clock).expiration().setExpirationFilter(f)
+        c = newCache(newConf().expiration().setExpirationFilter(f)
                 .setDefaultTimeToLive(5, TimeUnit.MILLISECONDS).c());
         put(M1);
         put(M2);

@@ -3,6 +3,8 @@
  */
 package org.coconut.cache.internal.service.entry;
 
+import org.coconut.attribute.AttributeMap;
+
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
@@ -26,19 +28,12 @@ public class UnsynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
      * @param size
      */
     public UnsynchronizedCacheEntry(K key, V value, double cost, long creationTime,
-            long lastUpdateTime, long size, long refreshTime) {
-        super(key, value, cost, creationTime, lastUpdateTime, size);
+            long lastUpdateTime, long size, long refreshTime, AttributeMap attributes) {
+        super(key, value, cost, creationTime, lastUpdateTime, size, attributes);
         this.refreshTime = refreshTime;
 // this.expirationTime = expirationTime;
 // this.hits = hits;
 // this.lastAccessTime = lastAccessTime;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void accessed(InternalCacheEntryService<K, V> service) {
-        lastAccessTime = service.getAccessTimeStamp(this);
-        hits++;
     }
 
     /** {@inheritDoc} */
@@ -66,7 +61,13 @@ public class UnsynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
         this.expirationTime = expirationTime;
     }
 
+    @Override
     public void setHits(long hits) {
         this.hits = hits;
+    }
+
+    @Override
+    public void setLastAccessTime(long lastAccessTime) {
+        this.lastAccessTime = lastAccessTime;
     }
 }

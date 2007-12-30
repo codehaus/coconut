@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
@@ -99,7 +99,7 @@ public class SimplePolicyEviction extends AbstractCacheTCKTest {
     @Test
     public void testRejectEntry() {
         RejectEntriesPolicy rep = new RejectEntriesPolicy();
-        c = newCache(newConf().eviction().setPolicy(rep).setMaximumSize(5).c().setClock(clock));
+        c = newCache(newConf().eviction().setPolicy(rep).setMaximumSize(5));
 
         c.put(1, "A");
         rep.rejectAdd = true;
@@ -113,14 +113,14 @@ public class SimplePolicyEviction extends AbstractCacheTCKTest {
     @Test
     public void testRejectReplaceEntry() {
         RejectEntriesPolicy rep = new RejectEntriesPolicy();
-        c = newCache(newConf().eviction().setPolicy(rep).setMaximumSize(5).c().setClock(clock));
+        c = newCache(newConf().eviction().setPolicy(rep).setMaximumSize(5));
 
         c.put(1, "A");
         c.put(2, "B");
         c.put(2, "C");
         assertEquals(2, c.size());
         rep.rejectUpdate = true;
-        //TODO should probably also this this for loading 
+        // TODO should probably also this this for loading
         c.put(2, "D");
         assertEquals(1, c.size());
         assertFalse(c.containsKey(2));
@@ -129,8 +129,7 @@ public class SimplePolicyEviction extends AbstractCacheTCKTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testRejectEntryPutAll() {
-        c = newCache(newConf().eviction().setPolicy(new Reject2EntriesPolicy()).setMaximumSize(5)
-                .c().setClock(clock));
+        c = newCache(newConf().eviction().setPolicy(new Reject2EntriesPolicy()).setMaximumSize(5));
         // the reject2EntriesPolicy is kind of a hack until we are
         // clear what type og object goes into add() for the policy
         c.putAll(asMap(M1, M2, M3));
@@ -140,7 +139,7 @@ public class SimplePolicyEviction extends AbstractCacheTCKTest {
 
     // put of elements
 
-    // 
+    //
     /**
      * Currently put is ignored with regards to cache policies, but should just inherit
      * the previous entry.
@@ -194,8 +193,7 @@ public class SimplePolicyEviction extends AbstractCacheTCKTest {
     public void testExpiration() {
         // cross check with expiration.
 
-        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(5).c()
-                .setClock(clock));
+        c = newCache(newConf().eviction().setPolicy(Policies.newLRU()).setMaximumSize(5));
 
         for (int i = 0; i < 5; i++) {
             c.put(i, Integer.toString(i));

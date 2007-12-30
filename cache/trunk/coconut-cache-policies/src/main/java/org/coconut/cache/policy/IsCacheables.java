@@ -257,7 +257,7 @@ public final class IsCacheables {
 
         /** {@inheritDoc} */
         public boolean isCacheable(K key, V value, AttributeMap attributes) {
-            double cost = CostAttribute.get(attributes);
+            double cost = CostAttribute.getCost(attributes);
             return minimumCost <= cost;
         }
     }

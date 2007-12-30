@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.policy.paging;
@@ -12,11 +12,11 @@ import java.util.Random;
 import net.jcip.annotations.NotThreadSafe;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.cache.policy.spi.AbstractReplacementPolicy;
+import org.coconut.cache.policy.AbstractReplacementPolicy;
 
 /**
  * This cache policy is not safe for concurrent access.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <T>
@@ -58,7 +58,7 @@ public class RandomPolicy<T> extends AbstractReplacementPolicy<T> implements Ser
 
     /**
      * Constructs a new RandomPolicy with a specified initial size.
-     * 
+     *
      * @param initialCapacity
      *            the initial size of the internal list, must be 0 or greater
      * @throws IllegalArgumentException
@@ -82,7 +82,7 @@ public class RandomPolicy<T> extends AbstractReplacementPolicy<T> implements Ser
     /**
      * Constructs a new RandomPolicy by copying an existing. The copy is not required to
      * use the same source of randomness.
-     * 
+     *
      * @param h
      *            the policy to copy
      */
@@ -99,14 +99,16 @@ public class RandomPolicy<T> extends AbstractReplacementPolicy<T> implements Ser
     }
 
     /** {@inheritDoc} */
+    @Override
     public RandomPolicy<T> clone() {
         return new RandomPolicy<T>(this);
     }
 
     /** {@inheritDoc} */
     public int add(T newData, AttributeMap ignore) {
-        if (nextEntryIndex >= threshold - 1)
+        if (nextEntryIndex >= threshold - 1) {
             resize(threshold * 2);
+        }
 
         this.data[nextEntryIndex] = newData;
 
@@ -144,7 +146,7 @@ public class RandomPolicy<T> extends AbstractReplacementPolicy<T> implements Ser
     /**
      * Returns a random element. The element will not necessarily be the one that is
      * removed the next time.
-     * 
+     *
      * @return a random element or <code>null</code> if the policy does not contain any
      *         elements
      * @see org.coconut.cache.policy.ReplacementPolicy#evictNext()
@@ -162,7 +164,7 @@ public class RandomPolicy<T> extends AbstractReplacementPolicy<T> implements Ser
     /**
      * This method return a random sorted list of all the elements. Multiple invocations
      * of this method will most likely return different results.
-     * 
+     *
      * @return a list of all elements contained in this policy in some random order
      * @see org.coconut.cache.policy.ReplacementPolicy#peekAll()
      */
@@ -177,8 +179,9 @@ public class RandomPolicy<T> extends AbstractReplacementPolicy<T> implements Ser
 
     /** {@inheritDoc} */
     public T remove(int index) {
-        if (index > data.length - 1 || references[index] == -1)
+        if (index > data.length - 1 || references[index] == -1) {
             return null;
+        }
         return removeIndexed(references[index]);
     }
 
@@ -193,7 +196,7 @@ public class RandomPolicy<T> extends AbstractReplacementPolicy<T> implements Ser
 
     /**
      * Returns a random element.
-     * 
+     *
      * @return a random element
      */
     private int getRandomElement() {
@@ -202,7 +205,7 @@ public class RandomPolicy<T> extends AbstractReplacementPolicy<T> implements Ser
 
     /**
      * Removes an element from the specified index.
-     * 
+     *
      * @param remove
      *            the index of the element to remove
      * @return the element that was removed
@@ -228,7 +231,7 @@ public class RandomPolicy<T> extends AbstractReplacementPolicy<T> implements Ser
 
     /**
      * Resizes the internal datastructure.
-     * 
+     *
      * @param newSize
      *            the new size of the internal arrays
      */

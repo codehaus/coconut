@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.service.management;
@@ -14,6 +14,7 @@ import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.tck.RequireService;
 import org.coconut.management.ManagedGroup;
 import org.junit.Test;
+
 @RequireService( { CacheManagementService.class })
 public class ManagementService extends AbstractCacheTCKTest {
 
@@ -39,8 +40,8 @@ public class ManagementService extends AbstractCacheTCKTest {
 
     @Test
     public void testGetRoot() {
-        c = newCache(newConf().management().setEnabled(true).setMBeanServer(
-                MBeanServerFactory.createMBeanServer()));
+        c = newCache(newConf().loading().setLoader(null).c().management().setEnabled(true)
+                .setMBeanServer(MBeanServerFactory.createMBeanServer()));
         assertNotNull(management());
         ManagedGroup mg = management();
         assertNull(mg.getParent());
@@ -50,7 +51,7 @@ public class ManagementService extends AbstractCacheTCKTest {
         assertNotNull(findChild(mg, CacheStatisticsConfiguration.SERVICE_NAME));
         assertNotNull(findChild(mg, CacheMXBean.MANAGED_SERVICE_NAME));
     }
-    
+
     private static ManagedGroup findChild(ManagedGroup mg, String name) {
         for (ManagedGroup m : mg.getChildren()) {
             if (m.getName().equals(name)) {

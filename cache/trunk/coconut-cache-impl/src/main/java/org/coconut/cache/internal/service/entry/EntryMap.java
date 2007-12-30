@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.entry;
@@ -19,7 +19,7 @@ import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 
 /**
  * This class is partly adopted from ConcurrentHashMap.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -97,7 +97,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
     /**
      * Creates a new, empty map with the specified initial capacity, and with default load
      * factor.
-     * 
+     *
      * @param initialCapacity
      *            the initial capacity. The implementation performs internal sizing to
      *            accommodate this many elements.
@@ -110,7 +110,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
 
     /**
      * Creates a new, empty map with the specified initial capacity, and load factor.
-     * 
+     *
      * @param initialCapacity
      *            the initial capacity. The implementation performs internal sizing to
      *            accommodate this many elements.
@@ -145,8 +145,8 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
         // This function ensures that hashCodes that differ only by
         // constant multiples at each bit position have a bounded
         // number of collisions (approximately 8 at default load factor).
-        h ^= (h >>> 20) ^ (h >>> 12);
-        return h ^ (h >>> 7) ^ (h >>> 4);
+        h ^= h >>> 20 ^ h >>> 12;
+        return h ^ h >>> 7 ^ h >>> 4;
     }
 
     /* ---------------- Inner Classes -------------- */
@@ -156,7 +156,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
      */
     private AbstractCacheEntry<K, V> getFirst(int hash) {
         AbstractCacheEntry<?, ?>[] tab = table;
-        return (AbstractCacheEntry<K, V>) tab[hash & (tab.length - 1)];
+        return (AbstractCacheEntry<K, V>) tab[hash & tab.length - 1];
     }
 
     public int clear() {
@@ -195,11 +195,11 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
     public Set<Map.Entry<K, V>> entrySetPublic(ConcurrentMap<K, V> cache) {
         if (isThreadSafe) {
             synchronized (cache) {
-                return (entrySet != null) ? entrySet
+                return entrySet != null ? entrySet
                         : (entrySet = (Set) new EntrySetSynchronized<K, V>(cache, this));
             }
         } else {
-            return (entrySet != null) ? entrySet
+            return entrySet != null ? entrySet
                     : (entrySet = (Set) new EntrySet<K, V>(cache, this));
         }
     }
@@ -233,11 +233,11 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
     public Set<K> keySet(ConcurrentMap<K, V> cache) {
         if (isThreadSafe) {
             synchronized (cache) {
-                return (keySet != null) ? keySet : (keySet = new KeySetSynchronized<K, V>(cache,
+                return keySet != null ? keySet : (keySet = new KeySetSynchronized<K, V>(cache,
                         this));
             }
         } else {
-            return (keySet != null) ? keySet : (keySet = new KeySet<K, V>(cache, this));
+            return keySet != null ? keySet : (keySet = new KeySet<K, V>(cache, this));
         }
     }
 
@@ -249,7 +249,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
         K key = entry.getKey();
         int hash = entry.getHash();
         AbstractCacheEntry<K, V>[] tab = table;
-        int index = hash & (tab.length - 1);
+        int index = hash & tab.length - 1;
         AbstractCacheEntry<K, V> first = tab[index];
         AbstractCacheEntry<K, V> e = first;
         AbstractCacheEntry<K, V> prev = first;
@@ -286,7 +286,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
     public AbstractCacheEntry<K, V> remove(Object key, Object value) {
         int hash = hash(key.hashCode());
         AbstractCacheEntry<K, V>[] tab = table;
-        int index = hash & (tab.length - 1);
+        int index = hash & tab.length - 1;
         AbstractCacheEntry<K, V> first = tab[index];
         AbstractCacheEntry<K, V> e = first;
         AbstractCacheEntry<K, V> prev = first;
@@ -298,11 +298,12 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
                     modCount++;
                     size--;
                     volume -= e.getSize();
-                    if (prev == e)
+                    if (prev == e) {
                         table[index] = next;
-                    else
+                    } else {
                         prev.next = next;
-                    e.entryRemoved();
+                    }
+                    //e.entryRemoved();
                     return e;
                 } else {
                     next = null;
@@ -328,11 +329,11 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
     public Collection<V> values(Map<K, V> cache) {
         if (isThreadSafe) {
             synchronized (cache) {
-                return (values != null) ? values : (values = new ValuesSynchronized<K, V>(cache,
+                return values != null ? values : (values = new ValuesSynchronized<K, V>(cache,
                         this));
             }
         } else {
-            return (values != null) ? values : (values = new Values<K, V>(cache, this));
+            return values != null ? values : (values = new Values<K, V>(cache, this));
         }
     }
 
@@ -342,8 +343,9 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
     private void rehash() {
         AbstractCacheEntry<K, V>[] oldTable = table;
         int oldCapacity = oldTable.length;
-        if (oldCapacity >= MAXIMUM_CAPACITY)
+        if (oldCapacity >= MAXIMUM_CAPACITY) {
             return;
+        }
         AbstractCacheEntry<K, V>[] newTable = new AbstractCacheEntry[oldCapacity << 1]; // HashEntry.newArray(oldCapacity
         // <<
         // 1);
@@ -406,8 +408,9 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
 
         /** {@inheritDoc} */
         public void remove() {
-            if (entry == null)
+            if (entry == null) {
                 throw new IllegalStateException();
+            }
             checkForConcurrentMod();
             AbstractCacheEntry<?, ?> e = entry;
             entry = null;
@@ -439,8 +442,9 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             checkForConcurrentMod();
             AbstractCacheEntry<K, V> e = nextEntry;
             entry = nextEntry;
-            if (e == null)
+            if (e == null) {
                 throw new NoSuchElementException();
+            }
             nextEntry = nextEntry.next;
             if (nextEntry == null) {
                 findNextBucket();
@@ -564,8 +568,9 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             if (o == null) {
                 throw new NullPointerException("o is null");
             }
-            if (!(o instanceof Map.Entry))
+            if (!(o instanceof Map.Entry)) {
                 return false;
+            }
             map.ics.checkRunning("contains", false);
             Map.Entry<?, ?> e = (Map.Entry<?, ?>) o;
             AbstractCacheEntry<K, V> ace = map.get(e.getKey());
@@ -587,8 +592,9 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             if (o == null) {
                 throw new NullPointerException("o is null");
             }
-            if (!(o instanceof Map.Entry))
+            if (!(o instanceof Map.Entry)) {
                 return false;
+            }
             map.ics.checkRunning("remove");
             Map.Entry<?, ?> e = (Map.Entry<?, ?>) o;
             return cache.remove(e.getKey(), e.getValue());

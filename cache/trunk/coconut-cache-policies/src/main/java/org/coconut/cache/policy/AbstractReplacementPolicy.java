@@ -1,7 +1,7 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
-package org.coconut.cache.policy.spi;
+package org.coconut.cache.policy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,7 @@ import org.coconut.cache.policy.ReplacementPolicy;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id$
+ * @version $Id: AbstractReplacementPolicy.java 526 2007-12-27 01:32:16Z kasper $
  * @param <T>
  *            the type of objects contained within the replacement policy
  */
@@ -20,7 +20,7 @@ public abstract class AbstractReplacementPolicy<T> implements ReplacementPolicy<
     /**
      * Calls {@link ReplacementPolicy#add(Object, org.coconut.attribute.AttributeMap)} with an
      * empty attributemap.
-     * 
+     *
      * @param element
      *            the element to add
      * @return a positive index that can be used to reference the element in the
@@ -34,7 +34,7 @@ public abstract class AbstractReplacementPolicy<T> implements ReplacementPolicy<
     /**
      * Calls {@link ReplacementPolicy#update(int, Object, org.coconut.attribute.AttributeMap)}
      * with an empty attributemap.
-     * 
+     *
      * @param index
      *            the index of the previous element
      * @param newElement
@@ -49,7 +49,7 @@ public abstract class AbstractReplacementPolicy<T> implements ReplacementPolicy<
     /**
      * Adds all the elements to the policy. The elements will be added accordingly to the
      * returning order of the iterator.
-     * 
+     *
      * @param items
      *            the elements to add
      * @return the references of each element that was added. The first element returned
@@ -67,7 +67,7 @@ public abstract class AbstractReplacementPolicy<T> implements ReplacementPolicy<
 
     /**
      * Evict at most the specified entries. If the
-     * 
+     *
      * @param number
      *            the number of entries to evict
      * @return a list containing the elements that was evicted in the order they where
@@ -90,7 +90,7 @@ public abstract class AbstractReplacementPolicy<T> implements ReplacementPolicy<
 
     /**
      * Evicts all the entries in the policy.
-     * 
+     *
      * @return all the entries in the policy.
      */
     public List<T> evictAll() {

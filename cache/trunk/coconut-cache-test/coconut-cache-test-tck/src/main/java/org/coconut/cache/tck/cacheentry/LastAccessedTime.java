@@ -15,7 +15,6 @@ public class LastAccessedTime extends AbstractCacheTCKTest {
     @Test
     public void get() {
         clock.setTimestamp(10);
-        c = newCache(newConf().setClock(clock));
         put(2);
         assertEquals(0l, peekEntry(M1).getLastAccessTime());
         assertEquals(0l, peekEntry(M2).getLastAccessTime());
@@ -34,7 +33,6 @@ public class LastAccessedTime extends AbstractCacheTCKTest {
     @Test
     public void getEntry() {
         clock.setTimestamp(10);
-        c = newCache(newConf().setClock(clock));
         put(2);
 
         getEntry(M1);
@@ -52,7 +50,7 @@ public class LastAccessedTime extends AbstractCacheTCKTest {
     @Test
     public void loadedNoAttributes() {
         clock.setTimestamp(10);
-        c = newCache(newConf().setClock(clock).loading().setLoader(new IntegerToStringLoader()));
+        c = newCache(newConf().loading().setLoader(new IntegerToStringLoader()));
 
         loadAndAwait(M1);
         assertEquals(0l, peekEntry(M1).getLastAccessTime());

@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.service.expiration;
@@ -19,6 +19,7 @@ import org.junit.Test;
  */
 @SuppressWarnings("unchecked")
 public class ExpirationWithDefaultTimeout extends AbstractCacheTCKTest {
+
     @Before
     public void setUpCaches() {
         init(conf.expiration().setDefaultTimeToLive(10, TimeUnit.MILLISECONDS).c());
@@ -140,7 +141,7 @@ public class ExpirationWithDefaultTimeout extends AbstractCacheTCKTest {
      */
     @Test
     public void testExpirationCornerCase() {
-        c = newCache(newConf().setClock(clock));
+        init(newConf().setClock(clock));
         put(M1);
         clock.setTimestamp(Long.MAX_VALUE - 1);
         assertGet(M1);

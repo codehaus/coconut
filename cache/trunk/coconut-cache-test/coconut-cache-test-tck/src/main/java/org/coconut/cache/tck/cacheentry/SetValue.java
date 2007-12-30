@@ -10,19 +10,21 @@ public class SetValue extends AbstractCacheTCKTest {
 
     @Test
     public void getEntry() {
-        c = newCache(5);
+        init(5);
         CacheEntry<Integer, String> ce = c.getEntry(M1.getKey());
         try {
             ce.setValue("foo");
+            assertEquals("foo", get(M1));
         } catch (UnsupportedOperationException ok) {}
     }
 
     @Test
     public void peekEntry() {
-        c = newCache(5);
+        init(5);
         CacheEntry<Integer, String> ce = c.peekEntry(M1.getKey());
         try {
             ce.setValue("foo");
+            assertEquals("foo", get(M1));
         } catch (UnsupportedOperationException ok) {}
     }
 }

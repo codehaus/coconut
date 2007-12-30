@@ -98,7 +98,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> implements
      * @return the cost of the element that was added
      */
     double getCost(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
-        double cost = CostAttribute.get(attributes);
+        double cost = CostAttribute.getCost(attributes);
         if (!CostAttribute.INSTANCE.isValid(cost)) {
             illegalAttribute(CostAttribute.INSTANCE, key, cost, CostAttribute.DEFAULT_VALUE);
             cost = CostAttribute.DEFAULT_VALUE;
@@ -190,5 +190,11 @@ public abstract class AbstractCacheEntryFactoryService<K, V> implements
         }
         return nanos == Long.MAX_VALUE ? Long.MAX_VALUE : clock.getDeadlineFromNow(nanos,
                 TimeUnit.NANOSECONDS);
+    }
+
+    protected boolean isCacheAttribute(Attribute a) {
+        return a == CostAttribute.INSTANCE || a == DateCreatedAttribute.INSTANCE || a == DateLastModifiedAttribute
+               .INSTANCE || a == HitsAttribute.INSTANCE || a == SizeAttribute.INSTANCE || a == TimeToLiveAttribute
+               .INSTANCE || a == TimeToRefreshAttribute.INSTANCE;
     }
 }

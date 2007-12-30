@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 
@@ -14,7 +14,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 
+import org.coconut.attribute.Attributes;
 import org.coconut.cache.Cache;
+import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -74,8 +76,8 @@ public class EntryMapTest {
         EntryMap<Integer, String> s = new EntryMap<Integer, String>(null, false);
         s.put(new EntryStub(-348653132, "a"));
         s.put(new EntryStub(772636595, "b"));
-        AbstractCacheEntry<?, ?> ac1 = s.remove(-348653132);
-        AbstractCacheEntry<?, ?> ac2 = s.remove(772636595);
+        CacheEntry<?, ?> ac1 = s.remove(-348653132);
+        CacheEntry<?, ?> ac2 = s.remove(772636595);
         assertNotNull(ac1);
         assertNotNull(ac2);
     }
@@ -121,7 +123,7 @@ public class EntryMapTest {
     // public static junit.framework.Test suite() {
     // return new JUnit4TestAdapter(CacheEntryMapTest.class);
     // }
-    //    
+    //
     // @Before
     // public void setUp() throws Exception {
     // c0 = new CacheEntryMapStub();
@@ -221,7 +223,7 @@ public class EntryMapTest {
     static class EntryStub extends UnsynchronizedCacheEntry<Integer, String> {
 
         public EntryStub(Integer key, String value) {
-            super(key, value, -1, 0, 0, 0, 0);
+            super(key, value, -1, 0, 0, 0, 0, Attributes.EMPTY_ATTRIBUTE_MAP);
         }
     }
 }

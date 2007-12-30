@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.policy.paging;
@@ -9,14 +9,14 @@ import java.util.List;
 import net.jcip.annotations.NotThreadSafe;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.cache.policy.spi.AbstractReplacementPolicy;
+import org.coconut.cache.policy.AbstractReplacementPolicy;
 
 /**
  * A LIFO based replacement policy.
  * <p>
  * This implementation works by wrapping an LRU replacement policy and ignoring any calls
  * to touch.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <T>
@@ -43,7 +43,7 @@ public class LIFOPolicy<T> extends AbstractReplacementPolicy<T> implements Seria
 
     /**
      * Constructs a new LFUPolicy with a specified initial size.
-     * 
+     *
      * @param initialCapacity
      *            the initial size of the internal list, must be 0 or greater
      * @throws IllegalArgumentException
@@ -59,7 +59,7 @@ public class LIFOPolicy<T> extends AbstractReplacementPolicy<T> implements Seria
 
     /**
      * Constructs a new LFUPolicy by copying an existing LFUPolicy.
-     * 
+     *
      * @param policy
      *            the LFU policy to copy from
      */

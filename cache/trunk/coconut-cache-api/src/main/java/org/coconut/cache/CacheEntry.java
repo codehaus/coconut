@@ -5,6 +5,8 @@ package org.coconut.cache;
 
 import java.util.Map;
 
+import org.coconut.attribute.AttributeMap;
+import org.coconut.attribute.WithAttributes;
 import org.coconut.attribute.common.CostAttribute;
 import org.coconut.attribute.common.DateCreatedAttribute;
 import org.coconut.attribute.common.DateLastModifiedAttribute;
@@ -35,7 +37,16 @@ import org.coconut.core.Clock;
  * @param <V>
  *            the type of mapped values
  */
-public interface CacheEntry<K, V> extends Map.Entry<K, V> {
+public interface CacheEntry<K, V> extends Map.Entry<K, V>, WithAttributes {
+
+    /**
+     * Returns the attribute map for this entry. Besides any user defined attributes it
+     * also contains {@link SizeAttribute} and {@link CostAttribute}.
+     *
+     * @return the attributemap for this entry
+     */
+    AttributeMap getAttributes();
+
     /**
      * Returns the value corresponding to this entry.
      *

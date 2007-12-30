@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.service.loading;
@@ -24,7 +24,7 @@ import org.junit.Test;
 public class ExpirationWithCacheLoader extends AbstractCacheTCKTest {
     @Before
     public void setup() {
-        c = newCache(newConf().setClock(clock).loading().setLoader(
+        c = newCache(newConf().loading().setLoader(
                 new IntegerToStringLoader()).c());
     }
 
@@ -48,7 +48,7 @@ public class ExpirationWithCacheLoader extends AbstractCacheTCKTest {
     @Test
     public void testCreationTime() {
         CacheEntryFilter f = new CacheEntryFilter();
-        c = newCache(newConf().setClock(clock).loading().setLoader(
+        c = newCache(newConf().loading().setLoader(
                 new IntegerToStringLoader()).c().expiration().setExpirationFilter(
                 f));
         clock.incrementTimestamp();

@@ -1,9 +1,12 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.entry;
 
+import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
+import org.coconut.attribute.Attributes;
+import org.coconut.attribute.DefaultAttributeMap;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.cache.policy.IsCacheable;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
@@ -11,7 +14,7 @@ import org.coconut.core.Clock;
 
 /**
  * This class creates unsynchronized instances of {@link AbstractCacheEntry}.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -33,7 +36,7 @@ public class UnsynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryF
 
     /**
      * Creates a new UnsynchronizedEntryFactoryService.
-     * 
+     *
      * @param clock
      *            the clock used for calculating expiration and refresh times
      * @param exceptionService
@@ -65,8 +68,19 @@ public class UnsynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryF
         long hits = getHits(key, value, attributes, existing);
         long refreshTime = getTimeToRefresh(defaultRefreshTimeNanos, key, value, attributes,
                 existing);
+        AttributeMap am = Attributes.EMPTY_ATTRIBUTE_MAP;
+        if (attributes.size() > 0) {
+            for (Attribute a : attributes.keySet()) {
+                if (!isCacheAttribute(a)) {
+                    if (am == Attributes.EMPTY_ATTRIBUTE_MAP) {
+                        am = new DefaultAttributeMap();
+                    }
+                    am.put(a, attributes.get(a));
+                }
+            }
+        }
         UnsynchronizedCacheEntry<K, V> newEntry = new UnsynchronizedCacheEntry<K, V>(key, value,
-                cost, creationTime, lastUpdate, size, refreshTime);
+                cost, creationTime, lastUpdate, size, refreshTime, am);
         newEntry.setHits(hits);
         newEntry.setExpirationTime(expirationTime);
 

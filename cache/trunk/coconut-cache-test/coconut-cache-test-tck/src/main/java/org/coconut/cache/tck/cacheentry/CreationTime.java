@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.cacheentry;
@@ -22,7 +22,7 @@ import org.junit.Test;
 
 /**
  * Tests that the creation time attribute of cache entries are working properly.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -45,7 +45,6 @@ public class CreationTime extends AbstractCacheTCKTest {
     @Test
     public void put() {
         clock.setTimestamp(10);
-        c = newCache(newConf().setClock(clock));
 
         put(M1);
         assertPeekAndGet(M1, 10);
@@ -68,7 +67,6 @@ public class CreationTime extends AbstractCacheTCKTest {
     @Test
     public void putAll() {
         clock.setTimestamp(10);
-        c = newCache(newConf().setClock(clock));
 
         putAll(M1, M2);
         assertPeekAndGet(M1, 10);
@@ -91,7 +89,6 @@ public class CreationTime extends AbstractCacheTCKTest {
     @Test
     public void putIfAbsent() {
         clock.setTimestamp(10);
-        c = newCache(newConf().setClock(clock));
 
         putIfAbsent(M1);
         assertPeekAndGet(M1, 10);
@@ -115,7 +112,6 @@ public class CreationTime extends AbstractCacheTCKTest {
     @Test
     public void replace() {
         clock.setTimestamp(10);
-        c = newCache(newConf().setClock(clock));
 
         put(M1);
         assertPeekAndGet(M1, 10);
@@ -142,7 +138,6 @@ public class CreationTime extends AbstractCacheTCKTest {
     @Test
     public void remove() {
         clock.setTimestamp(10);
-        c = newCache(newConf().setClock(clock));
 
         put(M1);
         assertPeekAndGet(M1, 10);
@@ -159,7 +154,6 @@ public class CreationTime extends AbstractCacheTCKTest {
     @Test
     public void clear() {
         clock.setTimestamp(10);
-        c = newCache(newConf().setClock(clock));
 
         put(M1);
         assertPeekAndGet(M1, 10);
@@ -176,7 +170,7 @@ public class CreationTime extends AbstractCacheTCKTest {
     @Test
     public void loadedNoAttribute() {
         clock.setTimestamp(10);
-        c = newCache(newConf().setClock(clock).loading().setLoader(
+        c = newCache(newConf().loading().setLoader(
                 new IntegerToStringLoader()));
         get(M1);
         assertEquals(10l, getEntry(M1).getCreationTime());

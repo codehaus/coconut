@@ -18,6 +18,7 @@ import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 import net.jcip.annotations.ThreadSafe;
 
+import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
@@ -32,6 +33,7 @@ import org.coconut.cache.service.statistics.CacheHitStat;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.service.worker.CacheWorkerService;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
+import org.coconut.cache.test.service.loading.TestLoader;
 import org.coconut.cache.test.util.ThreadServiceTestHelper;
 import org.coconut.core.Clock.DeterministicClock;
 import org.coconut.management.ManagedGroup;
@@ -57,6 +59,8 @@ public class AbstractCacheTCKTest extends Assert {
     protected CacheConfiguration<Integer, String> conf;
 
     private Throwable failure;
+
+    protected TestLoader tl = new TestLoader();
 
     protected void failed(Throwable cause) {
         this.failure = cause;
@@ -94,7 +98,7 @@ public class AbstractCacheTCKTest extends Assert {
         failure = null;
         clock = new DeterministicClock();
         conf = newConf();
-        conf.setClock(clock);
+        init();
     }
 
     public void assertNotStarted() {
@@ -301,7 +305,6 @@ public class AbstractCacheTCKTest extends Assert {
     }
 
     protected Cache<Integer, String> newCache(int entries) {
-        conf.setClock(clock);
         Cache<Integer, String> c = newCache(conf);
         if (entries > 0) {
             c.putAll(createMap(entries));
@@ -312,6 +315,9 @@ public class AbstractCacheTCKTest extends Assert {
     @SuppressWarnings("unchecked")
     protected CacheConfiguration<Integer, String> newConf() {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
+        cc.setClock(clock);
+        tl = new TestLoader();
+        cc.loading().setLoader(tl);
         cc.setCacheType(CacheTCKRunner.tt);
         if (CacheTCKRunner.tt.getAnnotation(ThreadSafe.class) != null) {
             threadHelper = new ThreadServiceTestHelper();
@@ -333,6 +339,14 @@ public class AbstractCacheTCKTest extends Assert {
 
     protected String peek(Map.Entry<Integer, String> e) {
         return c.peek(e.getKey());
+    }
+
+    protected AttributeMap getAttributes(Map.Entry<Integer, String> e) {
+        return getEntry(e).getAttributes();
+    }
+
+    protected AttributeMap peekAttributes(Map.Entry<Integer, String> e) {
+        return peekEntry(e).getAttributes();
     }
 
     protected CacheEntry<Integer, String> peekEntry(Map.Entry<Integer, String> e) {

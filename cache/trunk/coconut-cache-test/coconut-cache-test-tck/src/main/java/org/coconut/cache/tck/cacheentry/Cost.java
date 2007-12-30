@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.cacheentry;
@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.common.CostAttribute;
+import org.coconut.attribute.common.SizeAttribute;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.loading.AbstractCacheLoader;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
@@ -20,7 +21,7 @@ import org.junit.Test;
 
 /**
  * Tests {@link CacheEntry#getCost()}.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -33,7 +34,7 @@ public class Cost extends AbstractCacheTCKTest {
         private int totalCount;
 
         public String load(Integer key, AttributeMap attributes) throws Exception {
-            CostAttribute.set(attributes, key + 0.5 + totalCount);
+            CostAttribute.setCost(attributes, key + 0.5 + totalCount);
             totalCount++;
             return "" + (char) (key + 64);
         }
@@ -45,7 +46,6 @@ public class Cost extends AbstractCacheTCKTest {
     @SuppressWarnings("unchecked")
     @Test
     public void put() {
-        init();
         put(M1);
         assertCostEquals(M1, CostAttribute.DEFAULT_VALUE);
         putAll(M1, M2);
@@ -58,7 +58,7 @@ public class Cost extends AbstractCacheTCKTest {
      */
     @Test
     public void loaded() {
-        c = newCache(newConf().loading().setLoader(new IntegerToStringLoader()));
+        init(conf.loading().setLoader(new IntegerToStringLoader()));
         assertGet(M1);
         assertCostEquals(M1, CostAttribute.DEFAULT_VALUE);
     }
@@ -69,7 +69,7 @@ public class Cost extends AbstractCacheTCKTest {
     @SuppressWarnings("unchecked")
     @Test
     public void loadedCost() {
-        c = newCache(newConf().loading().setLoader(new MyLoader()));
+        init(conf.loading().setLoader(new MyLoader()));
         assertGet(M1);
         assertCostEquals(M1, 1.5);
 
@@ -94,18 +94,31 @@ public class Cost extends AbstractCacheTCKTest {
      */
     @Test
     public void putOverride() {
-        c = newCache(newConf().loading().setLoader(new MyLoader()));
+        init(conf.loading().setLoader(new MyLoader()));
         assertGet(M1);
         assertCostEquals(M1, 1.5);
         put(M1);
         assertCostEquals(M1, CostAttribute.DEFAULT_VALUE);
     }
-    
+
     /**
      * Asserts that the entry has the specified cost.
      */
     private void assertCostEquals(Map.Entry<Integer, String> entry, double cost) {
         assertEquals(cost, peekEntry(entry).getCost());
         assertEquals(cost, getEntry(entry).getCost());
+
+        assertEquals(cost, CostAttribute.getCost(peekAttributes(entry)));
+        assertEquals(cost, peekAttributes(entry).getDouble(CostAttribute.INSTANCE));
+        assertEquals(cost, peekAttributes(entry).getDouble(CostAttribute.INSTANCE, cost - 1));
+        assertEquals(cost, peekAttributes(entry).get(CostAttribute.INSTANCE));
+        assertEquals(cost, peekAttributes(entry).get(CostAttribute.INSTANCE, cost - 1));
+
+        assertEquals(cost, CostAttribute.getCost(getAttributes(entry)));
+        assertEquals(cost, getAttributes(entry).getDouble(CostAttribute.INSTANCE));
+        assertEquals(cost, getAttributes(entry).getDouble(CostAttribute.INSTANCE, cost - 1));
+        assertEquals(cost, getAttributes(entry).get(CostAttribute.INSTANCE));
+        assertEquals(cost, getAttributes(entry).get(CostAttribute.INSTANCE, cost - 1));
+
     }
 }

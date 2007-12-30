@@ -21,7 +21,7 @@ public class TimeDecoratedLoader<K, V> extends AbstractCacheLoader<K, V> {
     public V load(K key, AttributeMap attributes) throws Exception {
         long start = System.nanoTime();
         V v = delegator.load(key, attributes);
-        CostAttribute.set(attributes, System.nanoTime() - start);
+        CostAttribute.setCost(attributes, System.nanoTime() - start);
         return v;
     }
 

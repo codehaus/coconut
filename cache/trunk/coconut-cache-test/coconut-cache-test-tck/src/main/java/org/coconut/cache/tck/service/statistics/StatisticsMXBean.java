@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.service.statistics;
@@ -30,11 +30,11 @@ public class StatisticsMXBean extends AbstractCacheTCKTest {
     private CacheStatisticsMXBean mxBean;
 
     private MBeanServer mbs;
-    
+
     @Override
     protected Cache<Integer, String> newCache(int size) {
         mbs = MBeanServerFactory.createMBeanServer();
-        c = newCache(newConf().setClock(clock).setName("managementtest").management()
+        c = newCache(newConf().setName("managementtest").management()
                 .setEnabled(true).setMBeanServer(mbs).c(), size);
         ObjectName on;
         try {

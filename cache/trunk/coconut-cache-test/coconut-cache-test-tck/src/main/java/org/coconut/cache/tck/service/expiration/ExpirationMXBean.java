@@ -32,7 +32,7 @@ public class ExpirationMXBean extends AbstractExpirationTestBundle {
     @Before
     public void setup() throws Exception {
         mbs = MBeanServerFactory.createMBeanServer();
-        c = newCache(newConf().setClock(clock).setName("managementtest").management()
+        c = newCache(newConf().setName("managementtest").management()
                 .setEnabled(true).setMBeanServer(mbs).c());
         ObjectName on = new ObjectName("org.coconut.cache:name=managementtest,service="
                 + CacheExpirationConfiguration.SERVICE_NAME);

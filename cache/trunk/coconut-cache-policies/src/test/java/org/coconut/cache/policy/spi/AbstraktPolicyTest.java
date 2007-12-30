@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.policy.spi;
@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.coconut.attribute.AttributeMap;
+import org.coconut.cache.policy.AbstractReplacementPolicy;
 import org.junit.Test;
 
 /**

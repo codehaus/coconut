@@ -51,7 +51,7 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
     @SuppressWarnings("unchecked")
     public void defaultRefreshTime() throws Exception {
         IntegerToStringLoader loader = new IntegerToStringLoader();
-        init(conf.setClock(clock).loading().setDefaultTimeToRefresh(2, TimeUnit.MILLISECONDS)
+        init(conf.loading().setDefaultTimeToRefresh(2, TimeUnit.MILLISECONDS)
                 .setLoader(loader).c());
         assertGet(M1);
         assertGet(M2);
@@ -85,7 +85,7 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
     @SuppressWarnings("unchecked")
     public void explicitRefreshTimeCacheLoader() throws Exception {
         MyLoader loader = new MyLoader();
-        c = newCache(newConf().setClock(clock).loading().setLoader(loader).c());
+        c = newCache(newConf().loading().setLoader(loader).c());
         assertGet(M1); // load at time=1
         assertGet(M2);// load at time=2
         incTime(); // 1
@@ -122,7 +122,7 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
     public void refreshWindowSingleElementEvict() throws Exception {
         TestLoader tl = new TestLoader();
         // tl.add(M1.getKey(), value, attributes)
-        init(conf.setClock(clock).loading().setDefaultTimeToRefresh(2, TimeUnit.MILLISECONDS)
+        init(conf.loading().setDefaultTimeToRefresh(2, TimeUnit.MILLISECONDS)
                 .setLoader(tl));
         tl.add(M1.getKey(), "AB1", TimeToRefreshAttribute.singleton(2, TimeUnit.MILLISECONDS));
         tl.add(M2.getKey(), "AB2", TimeToRefreshAttribute.singleton(3, TimeUnit.MILLISECONDS));
@@ -183,7 +183,7 @@ public class LoadingRefresh extends AbstractLoadingTestBundle {
     @SuppressWarnings("unchecked")
     public void refreshWindowSingleElementGet() throws Exception {
         AsyncIntegerToStringLoader loader = new AsyncIntegerToStringLoader();
-        c = newCache(newConf().setClock(clock).loading().setDefaultTimeToRefresh(2,
+        c = newCache(newConf().loading().setDefaultTimeToRefresh(2,
                 TimeUnit.NANOSECONDS).setLoader(loader).c());
         expiration().put(M1.getKey(), "AB1", 2, TimeUnit.NANOSECONDS);
         expiration().put(M2.getKey(), "AB2", 3, TimeUnit.NANOSECONDS);

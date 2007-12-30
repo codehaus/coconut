@@ -1,11 +1,13 @@
 package org.coconut.cache.test.service.loading;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
+import org.coconut.attribute.DefaultAttributeMap;
 import org.coconut.cache.service.loading.CacheLoader;
 
 public class TestLoader implements CacheLoader<Integer, String> {
@@ -13,7 +15,7 @@ public class TestLoader implements CacheLoader<Integer, String> {
     private final ConcurrentHashMap<Integer, SingleLoader> map = new ConcurrentHashMap<Integer, SingleLoader>();
 
     public String load(Integer key, AttributeMap attributes) throws Exception {
-        //System.out.println("load " + key);
+        // System.out.println("load " + key);
         SingleLoader sl = map.get(key);
         if (sl != null) {
             return sl.load(key, attributes);
@@ -75,6 +77,18 @@ public class TestLoader implements CacheLoader<Integer, String> {
     public TestLoader add(Integer key, String value, AttributeMap attributes) {
         map.put(key, SingleLoader.from(key, value, attributes));
         return this;
+    }
+
+    public <T> TestLoader add(Map.Entry<Integer, String> entry, Attribute<T> attribute, T avalue) {
+        return add(entry.getKey(), entry.getValue(), attribute, avalue);
+    }
+
+    public <T, S> TestLoader add(Map.Entry<Integer, String> entry, Attribute<T> attribute,
+            T avalue, Attribute<S> attributes, S svalue) {
+        AttributeMap ma=new DefaultAttributeMap();
+        ma.put(attribute, avalue);
+        ma.put(attributes, svalue);
+        return add(entry.getKey(), entry.getValue(), ma);
     }
 
     public <T> TestLoader add(Integer key, String value, Attribute<T> attribute, T avalue) {

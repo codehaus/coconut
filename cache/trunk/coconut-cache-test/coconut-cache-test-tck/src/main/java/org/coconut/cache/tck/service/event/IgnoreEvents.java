@@ -76,7 +76,7 @@ public class IgnoreEvents extends AbstractEventTestBundle {
 
     @Test
     public void purgeExpired() {
-        init(anythingBut(ItemRemoved.class).setClock(clock));
+        init(anythingBut(ItemRemoved.class));
         expiration().put(M1.getKey(), M1.getValue(), 1, TimeUnit.NANOSECONDS);
         assertSize(1);
         expiration().purgeExpired();

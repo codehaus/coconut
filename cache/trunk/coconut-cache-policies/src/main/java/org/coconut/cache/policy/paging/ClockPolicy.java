@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.policy.paging;
@@ -10,13 +10,12 @@ import java.util.List;
 import net.jcip.annotations.NotThreadSafe;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.cache.policy.spi.AbstractReplacementPolicy;
+import org.coconut.cache.policy.AbstractReplacementPolicy;
 import org.coconut.internal.util.IndexedList;
 
 /**
- * <a href="http://larch-www.lcs.mit.edu:8001/~corbato/">Frank Corbató</a> introduced
- * CLOCK in 1968 as a one-bit approximation to LRU in the Multics system.
- * 
+ * The CLOCK replacement policy is a one-bit approximation to LRU.
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <T>
@@ -43,7 +42,7 @@ public class ClockPolicy<T> extends AbstractReplacementPolicy<T> implements Seri
 
     /**
      * Constructs a new ClockPolicy by copying an existing ClockPolicy.
-     * 
+     *
      * @param other
      *            the ClockPolicy policy to copy from
      */
@@ -53,7 +52,7 @@ public class ClockPolicy<T> extends AbstractReplacementPolicy<T> implements Seri
 
     /**
      * Constructs a new LFUPolicy with a specified initial size.
-     * 
+     *
      * @param initialCapacity
      *            the initial size of the internal list, must be 0 or greater
      * @throws IllegalArgumentException
@@ -76,6 +75,7 @@ public class ClockPolicy<T> extends AbstractReplacementPolicy<T> implements Seri
     }
 
     /** {@inheritDoc} */
+    @Override
     public ClockPolicy<T> clone() {
         return new ClockPolicy<T>(this);
     }
@@ -124,7 +124,7 @@ public class ClockPolicy<T> extends AbstractReplacementPolicy<T> implements Seri
 
     /**
      * An inner class used for maintaining the clock datastructure.
-     * 
+     *
      * @param <T>
      *            the type of data maintained by this policy
      */
@@ -141,7 +141,7 @@ public class ClockPolicy<T> extends AbstractReplacementPolicy<T> implements Seri
 
         /**
          * Constructs a new ClockPolicy by copying an existing ClockPolicy.
-         * 
+         *
          * @param other
          *            the clock policy to copy from
          */
@@ -154,7 +154,7 @@ public class ClockPolicy<T> extends AbstractReplacementPolicy<T> implements Seri
 
         /**
          * Constructs a new ClockPolicy with a specified initial size.
-         * 
+         *
          * @param initialCapacity
          *            the initial capacity for this policy, must be bigger then 0.
          * @throws IllegalArgumentException
@@ -168,7 +168,7 @@ public class ClockPolicy<T> extends AbstractReplacementPolicy<T> implements Seri
 
         /**
          * Evicts the next element.
-         * 
+         *
          * @return the element that should be evicted
          */
         public T evictNext() {
@@ -196,8 +196,9 @@ public class ClockPolicy<T> extends AbstractReplacementPolicy<T> implements Seri
                         handPosition = next[handPosition];
                         return removeMe;
                     } else {
-                        if (handPosition != 0) // keep head-index at 1
+                        if (handPosition != 0) {
                             bits[handPosition] = 0;
+                        }
                         handPosition = next[handPosition];
                     }
                 }
@@ -205,6 +206,7 @@ public class ClockPolicy<T> extends AbstractReplacementPolicy<T> implements Seri
         }
 
         /** {@inheritDoc} */
+        @Override
         public T peek() {
             if (currentEntryIndex == 0) {
                 return null;
@@ -214,6 +216,7 @@ public class ClockPolicy<T> extends AbstractReplacementPolicy<T> implements Seri
         }
 
         /** {@inheritDoc} */
+        @Override
         public List<T> peekAll() {
             ArrayList<T> col = new ArrayList<T>(currentEntryIndex);
             if (currentEntryIndex == 0) {
@@ -224,8 +227,9 @@ public class ClockPolicy<T> extends AbstractReplacementPolicy<T> implements Seri
                 // and
                 // one for 1's
                 for (;;) {
-                    if (tempClock == handPosition && clockCount-- == 0)
+                    if (tempClock == handPosition && clockCount-- == 0) {
                         return col; // okay we have been around twice
+                    }
                     if (clockCount == 1) {
                         // looking for 0's
                         if (bits[tempClock] == 0) {
@@ -246,24 +250,30 @@ public class ClockPolicy<T> extends AbstractReplacementPolicy<T> implements Seri
         }
 
         /** {@inheritDoc} */
+        @Override
         public void touch(int index) {
             bits[index] = 1;
         }
 
         /** {@inheritDoc} */
+        @Override
         protected void innerAdd(int index) {
-            if (currentEntryIndex == 1) // first element
+            if (currentEntryIndex == 1) {
                 handPosition = index;
+            }
         }
 
         /** {@inheritDoc} */
+        @Override
         protected void innerRemove(int index) {
             bits[index] = 0; // lazy recycle
-            if (index == handPosition)
+            if (index == handPosition) {
                 handPosition = next[index];
+            }
         }
 
         /** {@inheritDoc} */
+        @Override
         protected void innerResize(int newSize) {
             super.innerResize(newSize);
             int[] oldBits = bits;

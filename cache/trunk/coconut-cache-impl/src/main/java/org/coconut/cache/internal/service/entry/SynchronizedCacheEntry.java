@@ -1,7 +1,9 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.entry;
+
+import org.coconut.attribute.AttributeMap;
 
 /**
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -9,13 +11,13 @@ package org.coconut.cache.internal.service.entry;
  */
 public class SynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
 
-    private volatile long expirationTime;
+    private final long expirationTime;
 
     private volatile long hits;
 
     private volatile long lastAccessedTime;
 
-    private volatile long refreshTime;
+    private final long refreshTime;
 
     /**
      * @param key
@@ -26,8 +28,9 @@ public class SynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
      * @param size
      */
     public SynchronizedCacheEntry(K key, V value, double cost, long creationTime,
-            long lastUpdateTime, long size, long refreshTime, long expirationTime, long hits) {
-        super(key, value, cost, creationTime, lastUpdateTime, size);
+            long lastUpdateTime, long size, long refreshTime, long expirationTime, long hits,
+            AttributeMap attributes) {
+        super(key, value, cost, creationTime, lastUpdateTime, size, attributes);
         this.refreshTime = refreshTime;
         this.expirationTime = expirationTime;
         this.hits = hits;
@@ -54,13 +57,18 @@ public class SynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
         return lastAccessedTime;
     }
 
-    public void accessed(InternalCacheEntryService<K, V> service) {
-        lastAccessedTime = service.getAccessTimeStamp(this);
-        hits++;
+    @Override
+    public void setLastAccessTime(long lastAccessTime) {
+        this.lastAccessedTime = lastAccessTime;
     }
 
     @Override
     public long getRefreshTime() {
         return refreshTime;
+    }
+
+    @Override
+    public void setHits(long hits) {
+        this.hits = hits;
     }
 }

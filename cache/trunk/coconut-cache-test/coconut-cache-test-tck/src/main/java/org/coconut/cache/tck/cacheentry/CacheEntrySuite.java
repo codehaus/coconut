@@ -7,10 +7,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses( { Attributes.class, Cost.class, CreationTime.class,
-        ExpirationTime.class, GetEntry.class, Hits.class, KeyValue.class,
-        LastAccessedTime.class, LastUpdatedTime.class, PeekEntry.class,
-        RefreshTime.class, SetValue.class,Size.class })
+@Suite.SuiteClasses( { Attributes.class, Cost.class, CreationTime.class, CustomAttribute.class,
+        ExpirationTime.class, GetEntry.class, Hits.class, KeyValue.class, LastAccessedTime.class,
+        LastUpdatedTime.class, PeekEntry.class, RefreshTime.class, SetValue.class, Size.class })
 public class CacheEntrySuite {
 
 }

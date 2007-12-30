@@ -5,6 +5,13 @@ package org.coconut.cache.internal.service.entry;
 
 import java.util.Map;
 
+import javax.smartcardio.ATR;
+
+import org.coconut.attribute.AttributeMap;
+import org.coconut.attribute.Attributes;
+import org.coconut.attribute.DefaultAttributeMap;
+import org.coconut.attribute.common.CostAttribute;
+import org.coconut.attribute.common.SizeAttribute;
 import org.coconut.attribute.common.TimeToLiveAttribute;
 import org.coconut.attribute.common.TimeToRefreshAttribute;
 import org.coconut.cache.CacheEntry;
@@ -52,6 +59,8 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
     /** The next cache entry in the hash map. */
     AbstractCacheEntry<K, V> next;
 
+    private final AttributeMap attributes;
+
     /**
      * Creates a new AbstractCacheEntry.
      *
@@ -69,7 +78,7 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
      *            the size of the cache entry
      */
     AbstractCacheEntry(K key, V value, double cost, long creationTime, long lastUpdateTime,
-            long size) {
+            long size, AttributeMap attributes) {
         if (value == null) {
             throw new NullPointerException("value is null");
         }
@@ -80,12 +89,7 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         this.creationTime = creationTime;
         this.lastUpdateTime = lastUpdateTime;
         this.size = size;
-    }
-
-    public abstract void accessed(InternalCacheEntryService<K, V> service);
-
-    public void entryRemoved() {
-
+        this.attributes = attributes;
     }
 
     @Override
@@ -108,13 +112,13 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         return false;
     }
 
-// /** {@inheritDoc} */
-// public AttributeMap getAttributes() {
-// AttributeMap map = new DefaultAttributeMap();
-// CostAttribute.set(map, getCost());
-// SizeAttribute.set(map, getSize());
-// return map;
-// }
+    /** {@inheritDoc} */
+    public AttributeMap getAttributes() {
+        AttributeMap map = new DefaultAttributeMap(attributes);
+        CostAttribute.setCost(map, getCost());
+        SizeAttribute.set(map, getSize());
+        return Attributes.unmodifiableAttributeMap(map);
+    }
 
     /** {@inheritDoc} */
     public double getCost() {
@@ -179,6 +183,10 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         this.policyIndex = index;
     }
 
+    public abstract void setHits(long hits);
+
+    public abstract void setLastAccessTime(long lastAccessTime);
+
     public V setValue(V v) {
         throw new UnsupportedOperationException();
     }
@@ -186,7 +194,7 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return getKey() + "=" + getValue() + " (policyIndex= " + getPolicyIndex() + ")";
+        return getKey() + "=" + getValue();
     }
 
     int getHash() {
