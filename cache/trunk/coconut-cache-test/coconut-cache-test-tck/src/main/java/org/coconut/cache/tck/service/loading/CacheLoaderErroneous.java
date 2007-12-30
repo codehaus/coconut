@@ -7,7 +7,6 @@ import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.core.Logger.Level;
-import org.coconut.internal.util.LogHelper.AbstractLogger;
 import org.coconut.test.throwables.RuntimeException1;
 import org.junit.Test;
 
@@ -16,8 +15,6 @@ public class CacheLoaderErroneous extends AbstractCacheTCKTest {
     @Test
     public void loadAllRuntime() {
         MyLoader loader = new MyLoader();
-        MyLogger logger = new MyLogger();
-        conf.exceptionHandling().setExceptionLogger(logger);
         init(conf.loading().setLoader(loader));
 
         loading().loadAll(Arrays.asList(1, 2, 3));
@@ -25,18 +22,13 @@ public class CacheLoaderErroneous extends AbstractCacheTCKTest {
         if (loader.key != null) {
             assertSize(1);
             assertEquals(loader.value, c.get(loader.key));
-
-            assertTrue(logger.cause instanceof RuntimeException1);
-            assertEquals(Level.Fatal, logger.level);
-            assertNotNull(logger.msg);
+            exceptionHandler.eat(RuntimeException1.INSTANCE, Level.Fatal);
         }
     }
 
     @Test
     public void loadAllRuntime1() {
         MyLoader loader = new MyLoader();
-        MyLogger logger = new MyLogger();
-        conf.exceptionHandling().setExceptionLogger(logger);
         init(conf.loading().setLoader(loader));
 
         loading().loadAll(Arrays.asList(1));
@@ -44,18 +36,13 @@ public class CacheLoaderErroneous extends AbstractCacheTCKTest {
         if (loader.key != null) {
             assertSize(1);
             assertEquals(loader.value, c.get(loader.key));
-
-            assertTrue(logger.cause instanceof RuntimeException1);
-            assertEquals(Level.Fatal, logger.level);
-            assertNotNull(logger.msg);
+            exceptionHandler.eat(RuntimeException1.INSTANCE, Level.Fatal);
         }
     }
 
     @Test
     public void failedToComplete() {
         MyLoader2 loader = new MyLoader2();
-        MyLogger logger = new MyLogger();
-        conf.exceptionHandling().setExceptionLogger(logger);
         init(conf.loading().setLoader(loader));
 
         loading().loadAll(Arrays.asList(1, 2));
@@ -63,38 +50,10 @@ public class CacheLoaderErroneous extends AbstractCacheTCKTest {
         if (loader.key != null) {
             assertSize(1);
             assertEquals(loader.value, c.get(loader.key));
-            assertNull(logger.cause);
-            assertEquals(Level.Fatal, logger.level);
-            assertNotNull(logger.msg);
+            exceptionHandler.eat(null, Level.Fatal);
         }
     }
 
-    static class MyLogger extends AbstractLogger {
-
-        private Throwable cause;
-
-        private Level level;
-
-        private String msg;
-
-        @Override
-        public String getName() {
-            return "unknown";
-        }
-
-        public boolean isEnabled(Level level) {
-            return true;
-        }
-
-        public void log(Level level, String message, Throwable cause) {
-            if (this.level != null) {
-                throw new IllegalStateException("Can only invoke once");
-            }
-            this.level = level;
-            this.msg = message;
-            this.cause = cause;
-        }
-    }
 
     static class MyLoader2 implements CacheLoader<Integer, String> {
         private Integer key;
@@ -139,7 +98,7 @@ public class CacheLoaderErroneous extends AbstractCacheTCKTest {
             key = clc.getKey();
             value = load(clc.getKey(), clc.getAttributes());
             clc.completed(value);
-            throw new RuntimeException1();
+            throw RuntimeException1.INSTANCE;
         }
     }
 }

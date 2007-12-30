@@ -11,13 +11,13 @@ import org.coconut.attribute.AttributeMap;
  */
 public class UnsynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
 
-    long expirationTime;
+    private long expirationTime;
 
-    long hits;
+    private long hits;
 
-    long lastAccessTime;
+    private long lastAccessTime;
 
-    long refreshTime;
+    private final long refreshTime;
 
     /**
      * @param key

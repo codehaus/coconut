@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.service.exceptionhandling;
@@ -19,7 +19,7 @@ import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.core.Logger;
-import org.coconut.test.SystemErrOutHelper;
+import org.coconut.test.SystemErrCatcher;
 import org.coconut.test.TestUtil;
 import org.coconut.test.throwables.Exception1;
 import org.jmock.Expectations;
@@ -28,6 +28,7 @@ import org.jmock.integration.junit4.JMock;
 import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -107,28 +108,32 @@ public class ExceptionHandling extends AbstractCacheTCKTest {
 
     @Test
     public void loadFailedToSystemErr() throws Exception {
-        c = newCache(newConf().loading().setLoader(loader));
-        SystemErrOutHelper str = SystemErrOutHelper.getErr();
+        SystemErrCatcher str2 = SystemErrCatcher.get();
+        LogManager.getLogManager().readConfiguration();
+        c = newCache(cleanConf().worker().setWorkerManager(threadHelper).c().loading().setLoader(
+                loader));
         try {
             loading().load(10);
             awaitAllLoads();
-            assertNotNull(str.getFromLast(1));
+            assertTrue(str2.toString().length() > 10);
         } finally {
-            str.terminate();
+            str2.terminate();
         }
         LogManager.getLogManager().readConfiguration();
     }
 
     @Test
     public void loadAllFailedToSystemErr() throws Exception {
-        c = newCache(newConf().loading().setLoader(loader));
-        SystemErrOutHelper str = SystemErrOutHelper.getErr();
+        SystemErrCatcher str2 = SystemErrCatcher.get();
+        LogManager.getLogManager().readConfiguration();
+        c = newCache(cleanConf().worker().setWorkerManager(threadHelper).c().loading().setLoader(
+                loader));
         try {
             loading().loadAll(Arrays.asList(1, 10));
             awaitAllLoads();
-            assertNotNull(str.getFromLast(1));
+            assertTrue(str2.toString().length() > 10);
         } finally {
-            str.terminate();
+            str2.terminate();
         }
         LogManager.getLogManager().readConfiguration();
     }

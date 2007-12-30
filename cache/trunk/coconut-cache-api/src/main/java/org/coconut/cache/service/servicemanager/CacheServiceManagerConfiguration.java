@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.service.servicemanager;
@@ -6,8 +6,8 @@ package org.coconut.cache.service.servicemanager;
 import static org.coconut.internal.util.XmlUtil.addTypedElement;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.coconut.cache.service.management.CacheManagementConfiguration;
@@ -35,9 +35,7 @@ public class CacheServiceManagerConfiguration extends AbstractCacheServiceConfig
     /** Any additional services attached to the cache. */
     private final Map<Object, Boolean> registeredServices = new LinkedHashMap<Object, Boolean>();
 
-    /**
-     * Create a new CacheManagementConfiguration.
-     */
+    /** Create a new CacheManagementConfiguration. */
     public CacheServiceManagerConfiguration() {
         super(SERVICE_NAME);
     }
@@ -48,23 +46,23 @@ public class CacheServiceManagerConfiguration extends AbstractCacheServiceConfig
      * {@link CacheLifecycle} the cache will invoke the respectic lifecycle methods on the
      * object. If the object is of type {@link ManagedLifecycle} and management is enabled
      * for the cache (see {@link CacheManagementConfiguration#setEnabled(boolean)}). It
-     * will be registered with a {@link ManagedGroup}.
+     * can be registered with a {@link ManagedGroup}.
      * <p>
      * Attaches the specified instance to the service map of the cache. This object can
      * then later be retrived by calling {@link org.coconut.cache.Cache#getService(Class)}.
-     * 
+     *
      * <pre>
      * CacheServiceManagerConfiguration csmc;
-     * csmc.attach(String.class, &quot;fooboo&quot;);
-     * 
+     * csmc.add(&quot;fooboo&quot;);
+     *
      * ...later..
      * Cache&lt;?,?&gt; c;
      * assert &quot;fooboo&quot; = c.getService(String.class);
      * </pre>
-     * 
+     *
      * If the specified key conflicts with the key-type of any of the build in service an
      * exception will be thrown when the cache is constructed.
-     * 
+     *
      * @param o
      *            the object to register
      * @return this configuration
@@ -87,10 +85,10 @@ public class CacheServiceManagerConfiguration extends AbstractCacheServiceConfig
 
     /**
      * Returns the objects that have been registered through {@link #add(Object)}.
-     * 
+     *
      * @return the objects that have been registered
      */
-    public Collection<Object> getObjects() {
+    public List<Object> getObjects() {
         return new ArrayList(registeredServices.keySet());
     }
 

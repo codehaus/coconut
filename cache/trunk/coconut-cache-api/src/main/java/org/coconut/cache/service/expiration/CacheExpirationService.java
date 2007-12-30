@@ -18,7 +18,7 @@ import org.coconut.cache.CacheServices;
  *
  * <pre>
  * Cache&lt;?, ?&gt; c = someCache;
- * CacheEvictionService&lt;?, ?&gt; ces = c.getService(CacheEvictionService.class);
+ * CacheExpirationService&lt;?, ?&gt; ces = c.getService(CacheExpirationService.class);
  * ces.trimToSize(10);
  * </pre>
  *
@@ -26,7 +26,7 @@ import org.coconut.cache.CacheServices;
  *
  * <pre>
  * Cache&lt;?, ?&gt; c = someCache;
- * CacheEvictionService&lt;?, ?&gt; ces = CacheServices.eviction(c);
+ * CacheExpirationService&lt;?, ?&gt; ces = CacheServices.service.expiration();
  * ces.setMaximumSize(10000);
  * </pre>
  *

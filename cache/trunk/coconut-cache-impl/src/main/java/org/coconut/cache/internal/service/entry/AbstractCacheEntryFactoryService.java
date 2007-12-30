@@ -18,7 +18,9 @@ import org.coconut.attribute.common.TimeToRefreshAttribute;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.cache.internal.service.spi.Resources;
+import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.core.Clock;
+import org.coconut.operations.Ops.Predicate;
 
 /**
  * An AbstractCacheEntryFactoryService is responsible for creating cache entry instances.
@@ -39,6 +41,8 @@ public abstract class AbstractCacheEntryFactoryService<K, V> implements
     /** The cache exception service. */
     private final InternalCacheExceptionService<K, V> exceptionService;
 
+    private final Predicate<CacheEntry<K, V>> isCacheable;
+
     /**
      * Creates a new AbstractCacheEntryFactoryService.
      *
@@ -47,9 +51,23 @@ public abstract class AbstractCacheEntryFactoryService<K, V> implements
      * @param exceptionHandler
      */
     public AbstractCacheEntryFactoryService(Clock clock,
+            CacheEvictionConfiguration<K, V> evictionConfiguration,
             InternalCacheExceptionService<K, V> exceptionHandler) {
         this.clock = clock;
+        this.isCacheable = evictionConfiguration.getIsCacheableFilter();
         this.exceptionService = exceptionHandler;
+    }
+
+    boolean isCacheable(CacheEntry<K, V> entry) {
+        boolean result = isCacheable == null;
+        if (!result) {
+            try {
+                result = isCacheable.evaluate(entry);
+            } catch (RuntimeException e) {
+                exceptionService.fatal("Could not determind if the object was cacheable", e);
+            }
+        }
+        return result;
     }
 
     /**
@@ -193,8 +211,9 @@ public abstract class AbstractCacheEntryFactoryService<K, V> implements
     }
 
     protected boolean isCacheAttribute(Attribute a) {
-        return a == CostAttribute.INSTANCE || a == DateCreatedAttribute.INSTANCE || a == DateLastModifiedAttribute
-               .INSTANCE || a == HitsAttribute.INSTANCE || a == SizeAttribute.INSTANCE || a == TimeToLiveAttribute
-               .INSTANCE || a == TimeToRefreshAttribute.INSTANCE;
+        return a == CostAttribute.INSTANCE || a == DateCreatedAttribute.INSTANCE
+                || a == DateLastModifiedAttribute.INSTANCE || a == HitsAttribute.INSTANCE
+                || a == SizeAttribute.INSTANCE || a == TimeToLiveAttribute.INSTANCE
+                || a == TimeToRefreshAttribute.INSTANCE;
     }
 }

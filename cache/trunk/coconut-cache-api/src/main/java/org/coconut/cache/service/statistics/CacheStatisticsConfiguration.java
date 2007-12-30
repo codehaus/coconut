@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.service.statistics;
@@ -7,8 +7,8 @@ import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 
 /**
  * This class is used to configure the statistics service prior to usage. Currently there
- * isn't much functionality to configure.
- * 
+ * is not any functionality to configure.
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */

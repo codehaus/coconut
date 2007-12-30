@@ -1,9 +1,14 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.operations;
 
+import static org.coconut.operations.Mappers.KEY_MAPPER;
 import static org.coconut.operations.Mappers.NOOP_MAPPER;
+import static org.coconut.operations.Mappers.VALUE_MAPPER;
+import static org.coconut.test.CollectionTestUtil.M1;
+import static org.coconut.test.CollectionTestUtil.M1_KEY_NULL;
+import static org.coconut.test.CollectionTestUtil.M1_NULL_VALUE;
 import static org.coconut.test.TestUtil.assertIsSerializable;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
@@ -53,13 +58,39 @@ public class MappersTest {
      * Tests {@link Mappers#NOOP_MAPPER}.
      */
     @Test
-    public void naturalComparator() {
+    public void noop() {
         assertEquals(0, NOOP_MAPPER.map(0));
         assertEquals("1", NOOP_MAPPER.map("1"));
         assertSame(NOOP_MAPPER, Mappers.noOpMapper());
         NOOP_MAPPER.toString(); // does not fail
         assertIsSerializable(Mappers.noOpMapper());
         assertSame(NOOP_MAPPER, TestUtil.serializeAndUnserialize(NOOP_MAPPER));
+    }
+
+    /**
+     * Tests {@link Mappers#NOOP_MAPPER}.
+     */
+    @Test
+    public void keyFromMap() {
+        assertEquals(M1.getKey(), KEY_MAPPER.map(M1));
+        assertEquals(null, KEY_MAPPER.map(M1_NULL_VALUE));
+        assertSame(KEY_MAPPER, Mappers.keyFromMapEntry());
+        KEY_MAPPER.toString(); // does not fail
+        assertIsSerializable(Mappers.keyFromMapEntry());
+        assertSame(KEY_MAPPER, TestUtil.serializeAndUnserialize(KEY_MAPPER));
+    }
+
+    /**
+     * Tests {@link Mappers#NOOP_MAPPER}.
+     */
+    @Test
+    public void valueFromMap() {
+        assertEquals(M1.getValue(), VALUE_MAPPER.map(M1));
+        assertEquals(null, VALUE_MAPPER.map(M1_KEY_NULL));
+        assertSame(VALUE_MAPPER, Mappers.valueFromMapEntry());
+        VALUE_MAPPER.toString(); // does not fail
+        assertIsSerializable(Mappers.valueFromMapEntry());
+        assertSame(VALUE_MAPPER, TestUtil.serializeAndUnserialize(VALUE_MAPPER));
     }
 
     static class Mapper1 implements Mapper<Integer, Integer>, Serializable {

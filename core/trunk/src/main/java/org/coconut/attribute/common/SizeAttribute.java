@@ -70,18 +70,10 @@ public final class SizeAttribute extends AbstractLongAttribute {
         return INSTANCE.getPrimitive(attributes);
     }
 
-    public static Predicate<AttributeMap> sizeGreaterThen(long size) {
-        return INSTANCE.filterLong(greaterThen(size));
-    }
-
-    public static Predicate<AttributeMap> filterSize(LongPredicate predicate) {
+    public static Predicate<AttributeMap> filterOnSize(LongPredicate predicate) {
         return INSTANCE.filterLong(predicate);
     }
 
-//    public static void main(String[] args) {
-//        Predicate<AttributeMap> p1=SizeAttribute.sizeGreaterThen(3);
-//        Predicate<AttributeMap> p2=SizeAttribute.filterSize(greaterThen(3));
-//    }
     /**
      * Sets the value of this attribute in the specified attribute map.
      *

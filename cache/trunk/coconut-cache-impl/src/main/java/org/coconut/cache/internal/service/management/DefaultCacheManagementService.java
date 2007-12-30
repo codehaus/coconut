@@ -192,4 +192,8 @@ public class DefaultCacheManagementService extends AbstractCacheLifecycle implem
     public String toString() {
         return "Management Service";
     }
+
+    public String getName() {
+        return root.getName();
+    }
 }

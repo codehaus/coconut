@@ -1,7 +1,10 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.core;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
@@ -9,7 +12,7 @@ import org.junit.Test;
 
 /**
  * Tests put operations for a cache.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -25,6 +28,17 @@ public class Put extends AbstractCacheTCKTest {
         assertEquals("C", c.get(1));
     }
 
+    @Test
+    public void putMany() {
+        final int count = 500;
+        Random r = new Random(1123123);
+        for (int i = 0; i < count; i++) {
+            int key = r.nextInt(250);
+            c.put(key, "" + key);
+        }
+        assertEquals(c.size(), new ArrayList(c.entrySet()).size());
+    }
+
     /**
      * {@link Cache#put(Object, Object)} lazy starts the cache.
      */
@@ -37,7 +51,7 @@ public class Put extends AbstractCacheTCKTest {
     }
 
     /**
-     * {@link Cache#containsKey()} should  fail when cache is shutdown.
+     * {@link Cache#containsKey()} should fail when cache is shutdown.
      */
     @Test(expected = IllegalStateException.class)
     public void putShutdownISE() {

@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.service.eviction;
@@ -10,15 +10,16 @@ import static junit.framework.Assert.assertSame;
 import static junit.framework.Assert.assertTrue;
 import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
 
-import org.coconut.cache.policy.IsCacheable;
 import org.coconut.cache.policy.ReplacementPolicy;
+import org.coconut.operations.Predicates;
+import org.coconut.operations.Ops.Predicate;
 import org.coconut.test.TestUtil;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
  * Tests {@link CacheEvictionConfiguration}.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -96,15 +97,20 @@ public class CacheEvictionConfigurationTest {
 
     @Test
     public void isCacheable() {
-        IsCacheable i = TestUtil.dummy(IsCacheable.class);
+        Predicate i = TestUtil.dummy(Predicate.class);
         assertNull(conf.getIsCacheableFilter());
         assertSame(conf, conf.setIsCacheableFilter(i));
         assertEquals(i, conf.getIsCacheableFilter());
     }
 
     @Test
-    public void isCacheableXML() {
-    // TODO
+    public void isCacheableXML() throws Exception {
+        conf = reloadService(conf);
+        assertNull(conf.getIsCacheableFilter());
+        assertSame(conf, conf.setIsCacheableFilter(new MyPredicate()));
+
+        conf = reloadService(conf);
+        assertTrue(conf.getIsCacheableFilter() instanceof MyPredicate);
     }
 
     @Test
@@ -187,4 +193,12 @@ public class CacheEvictionConfigurationTest {
 // public void testDefaultTimeToLiveNPE() {
 // conf.setScheduledEvictionAtFixedRate(1, null);
 // }
+
+    public static class MyPredicate implements Predicate {
+
+        public boolean evaluate(Object t) {
+            return false;
+        }
+
+    }
 }

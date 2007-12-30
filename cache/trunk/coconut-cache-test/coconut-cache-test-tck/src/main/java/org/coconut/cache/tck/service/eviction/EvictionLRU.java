@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.service.eviction;
@@ -60,18 +60,23 @@ public class EvictionLRU extends AbstractCacheTCKTest {
 
         assertPeek(M5);
         put(17, 17);
+        assertSize(5);
         assertNullPeek(M5);
 
         assertPeek(M6);
+
         put(18, 18);
+        assertSize(5);
         assertNullPeek(M6);
 
         assertPeek(M4);
         put(18, 18);
+        assertSize(5);
         assertPeek(M4);
 
         assertPeek(M4);
         put(19, 19);
+        assertSize(5);
         assertNullPeek(M4);
 
         assertPeek(M1);

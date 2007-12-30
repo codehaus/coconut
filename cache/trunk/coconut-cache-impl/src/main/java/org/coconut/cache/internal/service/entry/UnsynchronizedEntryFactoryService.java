@@ -8,7 +8,6 @@ import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
 import org.coconut.attribute.DefaultAttributeMap;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
-import org.coconut.cache.policy.IsCacheable;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.core.Clock;
 
@@ -30,8 +29,6 @@ public class UnsynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryF
     /** The default time to live of newly added entries. */
     private long defaultTimeToLiveNanos = Long.MAX_VALUE;
 
-    private final IsCacheable<K, V> isCacheable;
-
     private boolean isDisabled;
 
     /**
@@ -45,9 +42,8 @@ public class UnsynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryF
     public UnsynchronizedEntryFactoryService(Clock clock,
             CacheEvictionConfiguration<K, V> evictionConfiguration,
             InternalCacheExceptionService<K, V> exceptionService) {
-        super(clock, exceptionService);
+        super(clock, evictionConfiguration, exceptionService);
         this.isDisabled = evictionConfiguration.isDisabled();
-        this.isCacheable = evictionConfiguration.getIsCacheableFilter();
     }
 
     /** {@inheritDoc} */
@@ -55,9 +51,6 @@ public class UnsynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryF
             AbstractCacheEntry<K, V> existing) {
         if (attributes == null) {
             attributes = createMap();
-        }
-        if (isCacheable != null && !isCacheable.isCacheable(key, value, attributes)) {
-            return null;
         }
         long expirationTime = getTimeToLive(defaultTimeToLiveNanos, key, value, attributes,
                 existing);
@@ -83,7 +76,9 @@ public class UnsynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryF
                 cost, creationTime, lastUpdate, size, refreshTime, am);
         newEntry.setHits(hits);
         newEntry.setExpirationTime(expirationTime);
-
+        if (!isCacheable(newEntry)) {
+            return null;
+        }
         if (existing != null) {
             newEntry.setPolicyIndex(existing.getPolicyIndex());
         }

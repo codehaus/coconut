@@ -1,9 +1,10 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.core.entryset;
 
 import static org.coconut.test.CollectionTestUtil.M1;
+import static org.coconut.test.CollectionTestUtil.M1_KEY_NULL;
 import static org.coconut.test.CollectionTestUtil.M2;
 import static org.coconut.test.CollectionTestUtil.M3;
 import static org.coconut.test.CollectionTestUtil.M5;
@@ -38,7 +39,9 @@ public class EntrySetRetain extends AbstractCacheTCKTest {
         c = newCache(1);
         c.entrySet().retainAll(Collections.singleton(M1));
         assertSize(1);
-
+        c.entrySet().retainAll(Collections.singleton(M1_KEY_NULL));
+        assertSize(0);
+        c = newCache(1);
         c.entrySet().retainAll(Collections.singleton(M2));
         assertSize(0);
         c = newCache(5);

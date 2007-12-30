@@ -1,52 +1,33 @@
 package org.coconut.cache.test.service.exceptionhandling;
 
-import org.coconut.cache.Cache;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.core.Logger.Level;
 
 public class TestExceptionHandler<K, V> extends CacheExceptionHandler<K, V> {
-
-    private final int count;
-
-    private int i = 0;
-
-    private Cache c;
-
-    private Level level;
-
-    private Throwable cause;
-
-    private String msg;
-
-    public TestExceptionHandler() {
-        this(1);
-    }
-
-    public TestExceptionHandler(int count) {
-        this.count = count;
-    }
+    private final Queue<CacheExceptionContext> q = new ConcurrentLinkedQueue<CacheExceptionContext>();
 
     @Override
     public synchronized void apply(CacheExceptionContext<K, V> context) {
-        i++;
-        if (i > count) {
-            throw new AssertionError(i);
-        }
-        this.c = context.getCache();
-        msg = context.getMessage();
-        cause = context.getCause();
+        q.add(context);
     }
 
-    public Cache getC() {
-        return c;
+
+    public void eat(Throwable cause, Level level) {
+        CacheExceptionContext context = q.poll();
+        assertSame(cause, context.getCause());
+        assertSame(level, context.getLevel());
     }
 
-    public Throwable getCause() {
-        return cause;
+    public void assertCleared() {
+        assertEquals(0, q.size());
     }
 
-    public String getMsg() {
-        return msg;
-    }
 }

@@ -1,9 +1,10 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.core.entryset;
 
 import static org.coconut.test.CollectionTestUtil.M1;
+import static org.coconut.test.CollectionTestUtil.M1_KEY_NULL;
 import static org.coconut.test.CollectionTestUtil.M1_TO_M5_SET;
 import static org.coconut.test.CollectionTestUtil.M2;
 import static org.coconut.test.CollectionTestUtil.M3;
@@ -20,8 +21,8 @@ import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;
 
 /**
- * 
- * 
+ *
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -34,6 +35,7 @@ public class EntrySetContains extends AbstractCacheTCKTest {
     public void contains() {
         c = newCache(5);
         assertTrue(c.entrySet().contains(M1));
+        assertFalse(c.entrySet().contains(M1_KEY_NULL));
         assertFalse(c.entrySet().contains(M6));
         assertFalse(c.entrySet().contains(M7));
     }
@@ -41,7 +43,7 @@ public class EntrySetContains extends AbstractCacheTCKTest {
     @Test
     public void containsAll() {
         c = newCache(5);
-        
+
         assertTrue(c.entrySet().containsAll(M1_TO_M5_SET));
         assertFalse(c.entrySet().containsAll(Arrays.asList(M1, M2, M3, M4, M5,M6)));
     }
@@ -75,7 +77,7 @@ public class EntrySetContains extends AbstractCacheTCKTest {
 
     /**
      * {@link Cache#containsKey()} should not fail when cache is shutdown.
-     * 
+     *
      * @throws InterruptedException
      *             was interrupted
      */
@@ -115,7 +117,7 @@ public class EntrySetContains extends AbstractCacheTCKTest {
 
     /**
      * {@link Cache#containsKey()} should not fail when cache is shutdown.
-     * 
+     *
      * @throws InterruptedException
      *             was interrupted
      */

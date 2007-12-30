@@ -199,8 +199,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
                         : (entrySet = (Set) new EntrySetSynchronized<K, V>(cache, this));
             }
         } else {
-            return entrySet != null ? entrySet
-                    : (entrySet = (Set) new EntrySet<K, V>(cache, this));
+            return entrySet != null ? entrySet : (entrySet = (Set) new EntrySet<K, V>(cache, this));
         }
     }
 
@@ -233,8 +232,8 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
     public Set<K> keySet(ConcurrentMap<K, V> cache) {
         if (isThreadSafe) {
             synchronized (cache) {
-                return keySet != null ? keySet : (keySet = new KeySetSynchronized<K, V>(cache,
-                        this));
+                return keySet != null ? keySet
+                        : (keySet = new KeySetSynchronized<K, V>(cache, this));
             }
         } else {
             return keySet != null ? keySet : (keySet = new KeySet<K, V>(cache, this));
@@ -242,41 +241,37 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
     }
 
     public AbstractCacheEntry<K, V> put(AbstractCacheEntry<K, V> entry) {
-        if (size + 1 > threshold) {
-            // ensure capacity
-            rehash();
-        }
         K key = entry.getKey();
         int hash = entry.getHash();
         AbstractCacheEntry<K, V>[] tab = table;
         int index = hash & tab.length - 1;
-        AbstractCacheEntry<K, V> first = tab[index];
-        AbstractCacheEntry<K, V> e = first;
-        AbstractCacheEntry<K, V> prev = first;
-        while (e != null && (e.getHash() != hash || !key.equals(e.getKey()))) {
-            e = e.next;
-            prev = e;
-        }
-        AbstractCacheEntry<K, V> oldValue;
-        if (e != null) {
-            oldValue = e;
-            entry.next = oldValue.next;
-            if (prev == e) { // first entry
-                table[index] = entry;
-            } else {
-                prev.next = entry;
+        AbstractCacheEntry<K, V> e = tab[index];
+        AbstractCacheEntry<K, V> prev = e;
+        while (e != null) {
+            AbstractCacheEntry<K, V> next = e.next;
+            if (e.getHash() == hash && key.equals(e.getKey())) {
+                ++modCount;
+                volume = volume + entry.getSize() - e.getSize();
+                if (prev == e) {
+                    tab[index] = entry;
+                } else {
+                    prev.next = entry;
+                }
+                entry.next = e.next;
+                return e;
             }
-            volume -= oldValue.getSize();
-        } else {
-            oldValue = null;
-            ++modCount;
-            tab[index] = entry;
-            entry.next = first;
-            size++;
+            prev = e;
+            e = next;
         }
+        ++modCount;
+        entry.next = tab[index];
+        tab[index] = entry;
         volume += entry.getSize();
-        return oldValue;
-
+        if (size++ >= threshold) {
+            // ensure capacity
+            rehash();
+        }
+        return null;
     }
 
     public AbstractCacheEntry<K, V> remove(Object key) {
@@ -287,9 +282,8 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
         int hash = hash(key.hashCode());
         AbstractCacheEntry<K, V>[] tab = table;
         int index = hash & tab.length - 1;
-        AbstractCacheEntry<K, V> first = tab[index];
-        AbstractCacheEntry<K, V> e = first;
-        AbstractCacheEntry<K, V> prev = first;
+        AbstractCacheEntry<K, V> e = tab[index];
+        AbstractCacheEntry<K, V> prev = e;
 
         while (e != null) {
             AbstractCacheEntry<K, V> next = e.next;
@@ -303,7 +297,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
                     } else {
                         prev.next = next;
                     }
-                    //e.entryRemoved();
+                    // e.entryRemoved();
                     return e;
                 } else {
                     next = null;
@@ -329,8 +323,8 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
     public Collection<V> values(Map<K, V> cache) {
         if (isThreadSafe) {
             synchronized (cache) {
-                return values != null ? values : (values = new ValuesSynchronized<K, V>(cache,
-                        this));
+                return values != null ? values
+                        : (values = new ValuesSynchronized<K, V>(cache, this));
             }
         } else {
             return values != null ? values : (values = new Values<K, V>(cache, this));

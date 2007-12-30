@@ -1,11 +1,11 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.service.statistics;
 
 /**
  * The management interface for the statistics service.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -13,11 +13,11 @@ public interface CacheStatisticsMXBean {
 
     /**
      * Returns the number of retrievels from the cache where the element was already
-     * contained in the cache at the time of retrievel.
+     * contained in the cache at the time of retrieval.
      * <p>
      * This number is equivalent to that returned by
      * {@link CacheStatisticsService#getHitStat()}.
-     * 
+     *
      * @return the number of hits
      * @see #getNumberOfMisses
      * @see #resetStatistics
@@ -26,11 +26,11 @@ public interface CacheStatisticsMXBean {
 
     /**
      * Returns the number of retrievels from the cache where the element was <tt>not</tt>
-     * already contained in the cache at the time of retrievel.
+     * already contained in the cache at the time of retrieval.
      * <p>
      * This number is equivalent to that returned by
      * {@link CacheStatisticsService#getHitStat()}.
-     * 
+     *
      * @return the number of cache misses.
      */
     long getNumberOfMisses();
@@ -39,7 +39,7 @@ public interface CacheStatisticsMXBean {
      * Return the ratio between hits and misses. This method will return
      * <tt> {@value java.lang.Double#NaN}</tt> if both the number of misses and hits are
      * equal to zero.
-     * 
+     *
      * @return the ratio between hits and misses.
      */
     double getHitRatio();

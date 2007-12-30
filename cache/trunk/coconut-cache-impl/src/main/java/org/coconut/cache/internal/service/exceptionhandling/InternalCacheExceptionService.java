@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.CacheConfiguration;
+import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 
@@ -42,8 +43,7 @@ public interface InternalCacheExceptionService<K, V> {
 
     void serviceManagerShutdownFailed(Throwable cause, CacheLifecycle lifecycle);
 
-    void startFailed(Throwable cause, CacheConfiguration<K, V> configuration,
-            Object service);
+    void startFailed(Throwable cause, CacheConfiguration<K, V> configuration, Object service);
 
     void terminated(Map<? extends CacheLifecycle, RuntimeException> terminationFailures);
 

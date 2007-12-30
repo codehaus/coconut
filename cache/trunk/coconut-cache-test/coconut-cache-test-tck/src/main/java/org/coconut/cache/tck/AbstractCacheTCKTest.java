@@ -33,6 +33,7 @@ import org.coconut.cache.service.statistics.CacheHitStat;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.service.worker.CacheWorkerService;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
+import org.coconut.cache.test.service.exceptionhandling.TestExceptionHandler;
 import org.coconut.cache.test.service.loading.TestLoader;
 import org.coconut.cache.test.util.ThreadServiceTestHelper;
 import org.coconut.core.Clock.DeterministicClock;
@@ -55,6 +56,8 @@ public class AbstractCacheTCKTest extends Assert {
     protected DeterministicClock clock;
 
     protected ThreadServiceTestHelper threadHelper;
+
+    protected TestExceptionHandler<Integer, String> exceptionHandler;
 
     protected CacheConfiguration<Integer, String> conf;
 
@@ -79,6 +82,7 @@ public class AbstractCacheTCKTest extends Assert {
 
     @After
     public final void noFailures() throws Throwable {
+        exceptionHandler.assertCleared();
         if (failText != null) {
             throw new AssertionError(failText);
         }
@@ -97,6 +101,8 @@ public class AbstractCacheTCKTest extends Assert {
         failText = null;
         failure = null;
         clock = new DeterministicClock();
+        threadHelper = new ThreadServiceTestHelper();
+        exceptionHandler = new TestExceptionHandler<Integer, String>();
         conf = newConf();
         init();
     }
@@ -313,14 +319,21 @@ public class AbstractCacheTCKTest extends Assert {
     }
 
     @SuppressWarnings("unchecked")
+    protected CacheConfiguration<Integer, String> cleanConf() {
+        CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
+        cc.setCacheType(CacheTCKRunner.tt);
+        return cc;
+    }
+
+    @SuppressWarnings("unchecked")
     protected CacheConfiguration<Integer, String> newConf() {
         CacheConfiguration<Integer, String> cc = CacheConfiguration.create();
         cc.setClock(clock);
         tl = new TestLoader();
         cc.loading().setLoader(tl);
+        cc.exceptionHandling().setExceptionHandler(exceptionHandler);
         cc.setCacheType(CacheTCKRunner.tt);
         if (CacheTCKRunner.tt.getAnnotation(ThreadSafe.class) != null) {
-            threadHelper = new ThreadServiceTestHelper();
             cc.worker().setWorkerManager(threadHelper);
         }
         return cc;

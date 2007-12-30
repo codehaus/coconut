@@ -7,11 +7,9 @@ import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
 import org.coconut.attribute.DefaultAttributeMap;
-import org.coconut.attribute.common.TimeToLiveAttribute;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
-import org.coconut.cache.policy.IsCacheable;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 
 public class SynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryFactoryService<K, V> {
@@ -22,16 +20,13 @@ public class SynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryFac
 
     private final Object mutex;
 
-    private final IsCacheable<K, V> isCacheable;
-
     private boolean isDisabled;
 
     public SynchronizedEntryFactoryService(CacheConfiguration<?, ?> conf,
             CacheEvictionConfiguration<K, V> evictionConfiguration,
             InternalCacheExceptionService<K, V> exceptionHandler, Cache<K, V> mutex) {
-        super(conf.getClock(), exceptionHandler);
+        super(conf.getClock(),evictionConfiguration, exceptionHandler);
         this.isDisabled = evictionConfiguration.isDisabled();
-        this.isCacheable = evictionConfiguration.getIsCacheableFilter();
         this.mutex = mutex;
     }
 
@@ -40,9 +35,6 @@ public class SynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryFac
             AbstractCacheEntry<K, V> existing) {
         if (attributes == null) {
             attributes = createMap();
-        }
-        if (isCacheable != null && !isCacheable.isCacheable(key, value, attributes)) {
-            return null;
         }
         long expirationTime = getTimeToLive(defaultExpirationTime, key, value, attributes, existing);
         double cost = getCost(key, value, attributes, existing);
@@ -64,7 +56,9 @@ public class SynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryFac
         }
         SynchronizedCacheEntry<K, V> newEntry = new SynchronizedCacheEntry<K, V>(key, value, cost,
                 creationTime, lastUpdate, size, refreshTime, expirationTime, hits, am);
-
+        if (!isCacheable(newEntry)) {
+            return null;
+        }
         if (existing != null) {
             newEntry.setPolicyIndex(existing.getPolicyIndex());
         }

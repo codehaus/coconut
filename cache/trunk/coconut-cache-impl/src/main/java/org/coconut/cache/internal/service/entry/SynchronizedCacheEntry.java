@@ -58,11 +58,6 @@ public class SynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
     }
 
     @Override
-    public void setLastAccessTime(long lastAccessTime) {
-        this.lastAccessedTime = lastAccessTime;
-    }
-
-    @Override
     public long getRefreshTime() {
         return refreshTime;
     }
@@ -70,5 +65,10 @@ public class SynchronizedCacheEntry<K, V> extends AbstractCacheEntry<K, V> {
     @Override
     public void setHits(long hits) {
         this.hits = hits;
+    }
+
+    @Override
+    public void setLastAccessTime(long lastAccessTime) {
+        this.lastAccessedTime = lastAccessTime;
     }
 }

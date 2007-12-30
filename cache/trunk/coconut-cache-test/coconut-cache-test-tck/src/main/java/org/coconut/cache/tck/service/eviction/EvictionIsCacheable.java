@@ -12,18 +12,24 @@ import static org.coconut.test.CollectionTestUtil.newEntry;
 
 import java.util.Arrays;
 
-import org.coconut.cache.policy.IsCacheable;
-import org.coconut.cache.policy.IsCacheables;
 import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.coconut.cache.test.util.IntegerToStringLoader;
+import org.coconut.core.Logger.Level;
+import org.coconut.operations.Mappers;
 import org.coconut.operations.Predicates;
+import org.coconut.operations.Ops.Mapper;
+import org.coconut.operations.Ops.Predicate;
+import org.coconut.test.throwables.RuntimeException1;
+import org.coconut.test.throwables.RuntimeException2;
 import org.junit.Test;
 
 public class EvictionIsCacheable extends AbstractCacheTCKTest {
 
-    static IsCacheable ic = IsCacheables.fromKeyPredicate(Predicates.anyEquals(1, 2));
+    static Predicate ic = Predicates.mapAndEvaluate((Mapper) Mappers.keyFromMapEntry(), Predicates
+            .anyEquals(1, 2));
 
-    static IsCacheable ivalue = IsCacheables.fromValuePredicate(Predicates.anyEquals("A", "B"));
+    static Predicate ivalue = Predicates.mapAndEvaluate((Mapper) Mappers.valueFromMapEntry(),
+            Predicates.anyEquals("A", "B"));
 
     @Test
     public void put() {
@@ -75,6 +81,18 @@ public class EvictionIsCacheable extends AbstractCacheTCKTest {
         assertSize(2);
         putAll(newEntry(M1.getKey(), "foo"), M2, M3, M4);
         assertSize(1);
+    }
+
+    @Test
+    public void predicateFail() {
+        init(conf.eviction().setIsCacheableFilter(new Predicate() {
+            public boolean evaluate(Object t) {
+                throw RuntimeException1.INSTANCE;
+            }
+        }).c().exceptionHandling().setExceptionHandler(exceptionHandler));
+        put(M1);
+        assertSize(0);
+        exceptionHandler.eat(RuntimeException1.INSTANCE, Level.Fatal);
     }
 
     @Test

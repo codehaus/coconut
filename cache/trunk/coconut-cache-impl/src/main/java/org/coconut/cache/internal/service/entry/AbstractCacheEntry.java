@@ -5,8 +5,6 @@ package org.coconut.cache.internal.service.entry;
 
 import java.util.Map;
 
-import javax.smartcardio.ATR;
-
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
 import org.coconut.attribute.DefaultAttributeMap;
@@ -103,6 +101,7 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         // we keep null checks, might later want to use Map.Entry instead of
         // Entry to compare with
         if (k1 == k2 || k1 != null && k1.equals(k2)) {
+          //  new Exception().printStackTrace();
             Object v1 = value;
             Object v2 = e.getValue();
             if (v1 == v2 || v1.equals(v2)) {

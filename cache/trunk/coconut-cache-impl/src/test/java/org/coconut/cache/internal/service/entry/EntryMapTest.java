@@ -13,6 +13,7 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.coconut.attribute.Attributes;
 import org.coconut.cache.Cache;
@@ -58,7 +59,7 @@ public class EntryMapTest {
         EntryMap s = new EntryMap(ics, false);
         Random r = new Random(12312312);
         ArrayList<Integer> al = new ArrayList<Integer>();
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 20; i++) {
             int ia = r.nextInt();
             al.add(ia);
             s.put(new EntryStub(ia, "" + ia));

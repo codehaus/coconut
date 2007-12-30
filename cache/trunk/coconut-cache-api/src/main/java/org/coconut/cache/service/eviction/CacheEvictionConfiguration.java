@@ -13,10 +13,11 @@ import static org.coconut.internal.util.XmlUtil.contentLongSet;
 import static org.coconut.internal.util.XmlUtil.getChild;
 import static org.coconut.internal.util.XmlUtil.loadChildObject;
 
-import org.coconut.cache.policy.IsCacheable;
+import org.coconut.cache.CacheEntry;
 import org.coconut.cache.policy.ReplacementPolicy;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.cache.spi.CacheSPI;
+import org.coconut.operations.Ops.Predicate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -57,7 +58,7 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
     private final static String MAXIMUM_VOLUME = "max-volume";
 
     /** A filter used for filtering what items should be cached. */
-    private IsCacheable<K, V> isCacheableFilter;
+    private Predicate<CacheEntry<K, V>> isCacheableFilter;
 
     /** Whether or not caching is disabled. */
     private boolean isDisabled;
@@ -79,14 +80,13 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
     }
 
     /**
-     * Returns the {@link IsCacheable} predicate that determinds if a given key and value
-     * should be cached.
+     * Returns the Predicate that determinds if a given key and value should be cached.
      *
      * @return the IsCacheable predicate configured or <code>null</code> if no predicate
      *         has been set
-     * @see #setIsCacheableFilter(IsCacheable)
+     * @see #setIsCacheableFilter(Predicate)
      */
-    public IsCacheable<K, V> getIsCacheableFilter() {
+    public Predicate<CacheEntry<K, V>> getIsCacheableFilter() {
         return isCacheableFilter;
     }
 
@@ -149,15 +149,16 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
     }
 
     /**
-     * Sets a {@link IsCacheable} predicate that the cache will use to determind if a
-     * specific key, value pair should be cached. For example,
+     * Sets a Predicate that the cache will use to determind if a cache entry can be
+     * cached. For example,
      *
      * @param predicate
      *            the predicate that decides if a given key, value combination can be
      *            added to the cache
      * @return this configration
      */
-    public CacheEvictionConfiguration<K, V> setIsCacheableFilter(IsCacheable<K, V> predicate) {
+    public CacheEvictionConfiguration<K, V> setIsCacheableFilter(
+            Predicate<CacheEntry<K, V>> predicate) {
         this.isCacheableFilter = predicate;
         return this;
     }
@@ -255,7 +256,7 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
         setDisabled(attributeBooleanGet(e, IS_DISABLED, false));
         setMaximumSize(contentIntGet(getChild(MAXIMUM_SIZE, e), maximumSize));
         setMaximumVolume(contentLongGet(getChild(MAXIMUM_VOLUME, e), maximumVolume));
-        setIsCacheableFilter(loadChildObject(e, IS_CACHEABLE_TAG, IsCacheable.class));
+        setIsCacheableFilter(loadChildObject(e, IS_CACHEABLE_TAG, Predicate.class));
     }
 
     /** {@inheritDoc} */

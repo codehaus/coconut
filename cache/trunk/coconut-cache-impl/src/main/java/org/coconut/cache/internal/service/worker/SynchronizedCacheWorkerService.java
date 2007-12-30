@@ -10,7 +10,6 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.internal.service.servicemanager.CompositeService;
-import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 import org.coconut.cache.service.worker.CacheWorkerConfiguration;
 import org.coconut.cache.service.worker.CacheWorkerManager;

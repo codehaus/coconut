@@ -4,6 +4,8 @@
 package org.coconut.operations;
 
 import java.io.Serializable;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.coconut.operations.Ops.Mapper;
 
@@ -14,7 +16,11 @@ import org.coconut.operations.Ops.Mapper;
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public final class Mappers {
+    static final Mapper KEY_MAPPER = new KeyFromMapEntry();
+
     static final Mapper NOOP_MAPPER = new NoOpMapper();
+
+    static final Mapper VALUE_MAPPER = new ValueFromMapEntry();
 
     // /CLOVER:OFF
     /** Cannot instantiate. */
@@ -31,8 +37,16 @@ public final class Mappers {
         return new CompoundMapper<T, U, V>(first, second);
     }
 
+    public static <K, V> Mapper<Map.Entry<K, V>, K> keyFromMapEntry() {
+        return KEY_MAPPER;
+    }
+
     public static <T> Mapper<T, T> noOpMapper() {
         return NOOP_MAPPER;
+    }
+
+    public static <K, V> Mapper<Map.Entry<K, V>, V> valueFromMapEntry() {
+        return VALUE_MAPPER;
     }
 
     /**
@@ -64,6 +78,20 @@ public final class Mappers {
         }
     }
 
+    static class KeyFromMapEntry<K, V> implements Mapper<Map.Entry<K, V>, K>, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = 6825556225078171244L;
+
+        public K map(Entry<K, V> t) {
+            return t.getKey();
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return KEY_MAPPER;
+        }
+    }
+
     /**
      * A Mappper that returns the same object being provided to the {@link #map(Object)}
      * method.
@@ -84,5 +112,20 @@ public final class Mappers {
         private Object readResolve() {
             return NOOP_MAPPER;
         }
+    }
+
+    static class ValueFromMapEntry<K, V> implements Mapper<Map.Entry<K, V>, V>, Serializable {
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -1080832065709931446L;
+
+        public V map(Entry<K, V> t) {
+            return t.getValue();
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return VALUE_MAPPER;
+        }
+
     }
 }

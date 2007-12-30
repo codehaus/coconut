@@ -16,6 +16,7 @@ import org.w3c.dom.Element;
  *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
+ * @see CacheWorkerService
  */
 public class CacheWorkerConfiguration extends AbstractCacheServiceConfiguration {
 
@@ -28,9 +29,7 @@ public class CacheWorkerConfiguration extends AbstractCacheServiceConfiguration 
     /** The cache worker manager to use. */
     private CacheWorkerManager cacheWorkerManager;
 
-    /**
-     * Creates a new instance of CacheWorkerConfiguration.
-     */
+    /** Creates a new instance of CacheWorkerConfiguration. */
     public CacheWorkerConfiguration() {
         super(SERVICE_NAME);
     }
@@ -41,6 +40,7 @@ public class CacheWorkerConfiguration extends AbstractCacheServiceConfiguration 
      *
      * @return the CacheWorkerManager or <code>null</code> if no cache worker manager
      *         has been set
+     * @see #setWorkerManager(CacheWorkerManager)
      */
     public CacheWorkerManager getWorkerManager() {
         return cacheWorkerManager;
@@ -53,6 +53,7 @@ public class CacheWorkerConfiguration extends AbstractCacheServiceConfiguration 
      * @param workerManager
      *            the worker manager to use for the cache
      * @return this configuration
+     * @see #getWorkerManager()
      */
     public CacheWorkerConfiguration setWorkerManager(CacheWorkerManager workerManager) {
         this.cacheWorkerManager = workerManager;

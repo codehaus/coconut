@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.service.loading;
@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
+import org.coconut.cache.CacheServices;
 
 /**
  * This is the main interface for controlling the cache loading service at runtime.
@@ -21,21 +22,21 @@ import org.coconut.cache.Cache;
  * <p>
  * An instance of this interface can be retrieved by using {@link Cache#getService(Class)}
  * to look it up.
- * 
+ *
  * <pre>
  * Cache&lt;?, ?&gt; c = someCache;
  * CacheLoadingService&lt;?, ?&gt; ces = c.getService(CacheLoadingService.class);
  * ces.load("somekey");
  * </pre>
- * 
- * Or by using {@link CacheServicesOld}
- * 
+ *
+ * Or by using {@link CacheServices}
+ *
  * <pre>
  * Cache&lt;?, ?&gt; c = someCache;
- * CacheLoadingService&lt;?, ?&gt; ces = CacheServices.loading(c);
+ * CacheLoadingService&lt;?, ?&gt; ces = CacheServices.services.loading();
  * ces.forceLoad("somekey");
  * </pre>
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -51,7 +52,7 @@ public interface CacheLoadingService<K, V> {
      * the cache.
      * <p>
      * If this cache has been shutdown calls to this method is ignored.
-     * 
+     *
      * @param key
      *            whose associated value is to be loaded.
      * @throws ClassCastException
@@ -67,7 +68,7 @@ public interface CacheLoadingService<K, V> {
      * valid mapping for the specified key is already in the cache.
      * <p>
      * If this cache has been shutdown calls to this method is ignored.
-     * 
+     *
      * @param key
      *            whose associated value is to be loaded.
      * @param attributes
@@ -94,7 +95,7 @@ public interface CacheLoadingService<K, V> {
      * configured cache loader.
      * <p>
      * If this cache has been shutdown calls to this method is ignored.
-     * 
+     *
      * @param attributes
      *            a map of attributes that will be available in the attribute map parsed
      *            to {@link CacheLoader#load(Object, AttributeMap)} method of the
@@ -115,7 +116,7 @@ public interface CacheLoadingService<K, V> {
      * modified while the operation is in progress.
      * <p>
      * If this cache has been shutdown calls to this method is ignored.
-     * 
+     *
      * @param keys
      *            whose associated values is to be loaded.
      * @throws ClassCastException
@@ -139,7 +140,7 @@ public interface CacheLoadingService<K, V> {
      * modified while the operation is in progress.
      * <p>
      * If this cache has been shutdown calls to this method is ignored.
-     * 
+     *
      * @param mapsWithAttributes
      *            a map of keys that should be loaded with an associated AttributeMap
      * @throws ClassCastException
@@ -154,7 +155,7 @@ public interface CacheLoadingService<K, V> {
     /**
      * Returns the default refresh time for entries. If entries are never refreshed,
      * {@link Long#MAX_VALUE} is returned.
-     * 
+     *
      * @param unit
      *            the time unit that should be used for returning the default refresh time
      * @return the default refresh time for entries, or {value Long#MAX_VALUE} if entries
@@ -176,7 +177,7 @@ public interface CacheLoadingService<K, V> {
      * it cannot allow a background thread to add the value to cache once loaded.
      * <p>
      * If this cache has been shutdown calls to this method is ignored.
-     * 
+     *
      * @param key
      *            whose associated value is to be loaded.
      * @throws ClassCastException
@@ -193,7 +194,7 @@ public interface CacheLoadingService<K, V> {
      * loader.
      * <p>
      * If this cache has been shutdown calls to this method is ignored.
-     * 
+     *
      * @param key
      *            whose associated value is to be loaded.
      * @param attributes
@@ -216,7 +217,7 @@ public interface CacheLoadingService<K, V> {
      * Attempts to reload all entries that are either expired or which needs refreshing.
      * <p>
      * If this cache has been shutdown calls to this method is ignored.
-     * 
+     *
      * @param attributes
      *            a map of attributes that will be available in the attribute map parsed
      *            to {@link CacheLoader#load(Object, AttributeMap)} method of the
@@ -238,7 +239,7 @@ public interface CacheLoadingService<K, V> {
      * modified while the operation is in progress.
      * <p>
      * If this cache has been shutdown calls to this method is ignored.
-     * 
+     *
      * @param keys
      *            whose associated values is to be loaded.
      * @throws ClassCastException
@@ -253,7 +254,7 @@ public interface CacheLoadingService<K, V> {
     /**
      * <p>
      * If this cache has been shutdown calls to this method is ignored.
-     * 
+     *
      * @param mapsWithAttributes
      *            a map with keys that should be loaded and a corresponding attribute map
      */
@@ -262,7 +263,7 @@ public interface CacheLoadingService<K, V> {
     /**
      * Sets the default refresh time for new objects that are added to the cache. If no
      * default refresh time has been set, entries will never be refreshed.
-     * 
+     *
      * @param timeToRefresh
      *            the time from insertion to the point where the entry should be refreshed
      * @param unit

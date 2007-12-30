@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.service.event;
@@ -14,13 +14,13 @@ import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.policy.IsCacheables;
 import org.coconut.cache.service.event.CacheEntryEvent;
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.event.CacheEventFilters;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemAdded;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated;
 import org.coconut.cache.test.util.IntegerToStringLoader;
+import org.coconut.operations.Predicates;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -116,7 +116,7 @@ public class EventServiceLoading extends AbstractEventTestBundle {
     @Test
     public void isCacheables() {
         conf.loading().setLoader(loader);
-        conf.eviction().setIsCacheableFilter(IsCacheables.REJECT_ALL);
+        conf.eviction().setIsCacheableFilter(Predicates.FALSE);
         c = newCache(conf);
         subscribe(CACHEENTRYEVENT_FILTER);
         loading().load(1);
