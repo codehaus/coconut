@@ -3,8 +3,12 @@
  */
 package org.coconut.attribute.common;
 
+import static org.coconut.operations.LongPredicates.greaterThen;
+
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.spi.AbstractLongAttribute;
+import org.coconut.operations.Ops.LongPredicate;
+import org.coconut.operations.Ops.Predicate;
 
 /**
  * The <tt>Size</tt> attribute indicates the <tt>size</tt> of some element. The mapped
@@ -66,6 +70,18 @@ public final class SizeAttribute extends AbstractLongAttribute {
         return INSTANCE.getPrimitive(attributes);
     }
 
+    public static Predicate<AttributeMap> sizeGreaterThen(long size) {
+        return INSTANCE.filterLong(greaterThen(size));
+    }
+
+    public static Predicate<AttributeMap> filterSize(LongPredicate predicate) {
+        return INSTANCE.filterLong(predicate);
+    }
+
+//    public static void main(String[] args) {
+//        Predicate<AttributeMap> p1=SizeAttribute.sizeGreaterThen(3);
+//        Predicate<AttributeMap> p2=SizeAttribute.filterSize(greaterThen(3));
+//    }
     /**
      * Sets the value of this attribute in the specified attribute map.
      *

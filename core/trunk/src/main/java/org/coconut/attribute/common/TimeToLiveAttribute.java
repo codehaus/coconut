@@ -22,6 +22,7 @@ public final class TimeToLiveAttribute extends AbstractDurationAttribute {
     /** The default value of this attribute. */
     public static final long DEFAULT_VALUE = AbstractDurationAttribute.DEFAULT_DURATION;
 
+    /** A value that indicates that an object should live forever. */
     public static final long FOREVER = Long.MAX_VALUE;
 
     /** The singleton instance of this attribute. */

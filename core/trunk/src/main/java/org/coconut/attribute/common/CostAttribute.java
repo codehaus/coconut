@@ -51,7 +51,7 @@ public final class CostAttribute extends AbstractDoubleAttribute {
      *         DEFAULT_VALUE if the attribute is not mapped to any value in the specified
      *         attribute map
      */
-    public static double get(AttributeMap attributes) {
+    public static double getCost(AttributeMap attributes) {
         return INSTANCE.getPrimitive(attributes);
     }
 
@@ -64,7 +64,7 @@ public final class CostAttribute extends AbstractDoubleAttribute {
      *            the value that this attribute should be set to
      * @return the specified attribute map
      */
-    public static AttributeMap set(AttributeMap attributes, double value) {
+    public static AttributeMap setCost(AttributeMap attributes, double value) {
         return INSTANCE.setAttribute(attributes, value);
     }
 

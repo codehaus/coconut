@@ -572,7 +572,7 @@ public final class Attributes {
 
         /** {@inheritDoc} */
         public boolean containsValue(Object value) {
-            return eq(value, value);
+            return eq(this.value, value);
         }
 
         /** {@inheritDoc} */

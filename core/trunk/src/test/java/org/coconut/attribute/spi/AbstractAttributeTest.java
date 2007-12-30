@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.attribute.spi;
@@ -18,23 +18,24 @@ import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
 import org.coconut.attribute.DefaultAttributeMap;
 import org.coconut.internal.util.ClassUtils;
+import org.coconut.internal.util.StringUtil;
 import org.coconut.test.TestUtil;
 import org.junit.Test;
 
 public abstract class AbstractAttributeTest {
 
-     protected static final Collection<Long> NEGATIV_LONGS = Arrays.asList(Long.MIN_VALUE, -10l,
+    protected static final Collection<Long> NEGATIV_LONGS = Arrays.asList(Long.MIN_VALUE, -10l,
             -5l, -1l);
 
-     protected static final Collection<Long> NON_NEGATIV_LONGS = Arrays.asList(0l, 1L, 10l,
+    protected static final Collection<Long> NON_NEGATIV_LONGS = Arrays.asList(0l, 1L, 10l,
             Long.MAX_VALUE);
 
-     protected static final Collection<Long> NON_POSITIVE_LONGS = Arrays.asList(Long.MIN_VALUE,
+    protected static final Collection<Long> NON_POSITIVE_LONGS = Arrays.asList(Long.MIN_VALUE,
             -10l, -5l, -1l, 0L);
 
-     protected static final Collection<Long> POSITIV_LONGS = Arrays.asList(1L, 10l, Long.MAX_VALUE);
+    protected static final Collection<Long> POSITIV_LONGS = Arrays.asList(1L, 10l, Long.MAX_VALUE);
 
-     final Attribute a;
+    final Attribute a;
 
     final Class c;
 
@@ -64,7 +65,14 @@ public abstract class AbstractAttributeTest {
 
     @Test
     public void get() throws Exception {
-        Method getMethod = a.getClass().getMethod("get", AttributeMap.class);
+        Method getMethod = null;
+        try {
+            getMethod = a.getClass().getMethod("get", AttributeMap.class);
+        } catch (NoSuchMethodException e) {
+            getMethod = a.getClass().getMethod("get" + StringUtil.capitalize(a.getName()),
+                    AttributeMap.class);
+        }
+
         assertTrue(getMethod.getReturnType().equals(c));
 
         assertEquals(defaultValue, getMethod.invoke(null, Attributes.EMPTY_ATTRIBUTE_MAP));
@@ -130,5 +138,4 @@ public abstract class AbstractAttributeTest {
         return new DefaultAttributeMap();
     }
 
-   
 }

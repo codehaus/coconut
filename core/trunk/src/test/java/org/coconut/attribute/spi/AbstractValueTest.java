@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.attribute.spi;
@@ -13,6 +13,7 @@ import java.util.Collection;
 
 import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
+import org.coconut.internal.util.StringUtil;
 import org.junit.Test;
 
 public class AbstractValueTest extends AbstractAttributeTest {
@@ -46,7 +47,14 @@ public class AbstractValueTest extends AbstractAttributeTest {
 
     @Test
     public void set() throws Exception {
-        Method setMethod = a.getClass().getMethod("set", AttributeMap.class, c);
+        Method setMethod = null;
+        try {
+            setMethod = a.getClass().getMethod("set", AttributeMap.class,c);
+        } catch (NoSuchMethodException e) {
+            setMethod = a.getClass().getMethod("set" + StringUtil.capitalize(a.getName()),
+                    AttributeMap.class,c);
+        }
+
         assertTrue(setMethod.getReturnType().equals(AttributeMap.class));
 
         for (Object l : valid) {

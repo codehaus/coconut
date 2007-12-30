@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.attribute.spi;
@@ -10,6 +10,9 @@ import static org.junit.Assert.assertTrue;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
 import org.coconut.attribute.DefaultAttributeMap;
+import org.coconut.operations.LongPredicates;
+import org.coconut.operations.Ops.LongPredicate;
+import org.coconut.operations.Ops.Predicate;
 import org.coconut.test.TestUtil;
 import org.junit.Test;
 
@@ -125,5 +128,18 @@ public class LongAttributeTest {
     @Test(expected = NullPointerException.class)
     public void mapper() {
         LONG_A.mapToLong().map(null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void filterOnLongNPE() {
+        LONG_A.filterLong(null);
+    }
+
+    @Test
+    public void filterOnLong() {
+        Predicate<AttributeMap> filter = LONG_A.filterLong(LongPredicates.greaterThen(5));
+        assertTrue(filter.evaluate(Attributes.singleton(LONG_A, 6L)));
+        assertFalse(filter.evaluate(Attributes.singleton(LONG_A, 5L)));
+        assertFalse(filter.evaluate(Attributes.singleton(LONG_A, 4L)));
     }
 }

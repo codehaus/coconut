@@ -8,7 +8,10 @@ import java.io.Serializable;
 import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
+import org.coconut.operations.LongPredicates;
+import org.coconut.operations.Ops.LongPredicate;
 import org.coconut.operations.Ops.MapperToLong;
+import org.coconut.operations.Ops.Predicate;
 
 /**
  * An abstract implementation of an {@link Attribute} mapping to a long. This
@@ -125,6 +128,10 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
      */
     public MapperToLong<AttributeMap> mapToLong() {
         return mapperToLong;
+    }
+
+    protected Predicate<AttributeMap> filterLong(LongPredicate p) {
+        return LongPredicates.mapAndEvaluate(mapToLong(), p);
     }
 
     /**

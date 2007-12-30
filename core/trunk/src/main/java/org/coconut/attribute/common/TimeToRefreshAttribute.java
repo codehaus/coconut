@@ -22,6 +22,7 @@ public final class TimeToRefreshAttribute extends AbstractDurationAttribute {
     /** The default value of this attribute. */
     public static final long DEFAULT_VALUE = AbstractDurationAttribute.DEFAULT_DURATION;
 
+    /** A value that indicates that an object should never need to be refreshed. */
     public static final long FOREVER = Long.MAX_VALUE;
 
     /** The singleton instance of this attribute. */
