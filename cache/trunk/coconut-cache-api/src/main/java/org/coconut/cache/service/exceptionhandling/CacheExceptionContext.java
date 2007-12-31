@@ -39,22 +39,25 @@ public abstract class CacheExceptionContext<K, V> {
     public abstract Logger defaultLogger();
 
     /**
-     * Returns the cause of the failure, or <code>null</code> if no exception was raised.
+     * Returns the cause of the failure, or <code>null</code> if no exception was
+     * raised.
      *
      * @return the cause of the failure
      */
     public abstract Throwable getCause();
 
+    /**
+     * Returns the message of the failure.
+     *
+     * @return the message of the failure
+     */
     public abstract String getMessage();
 
+    /**
+     * Returns the level of the failure. The level is either {@link Level#Warn},
+     * {@link Level#Error} or {@link Level#Fatal}.
+     *
+     * @return the level of the failure
+     */
     public abstract Level getLevel();
-
-// /**
-// * Shutdowns the cache. Either we should only take a runtime exception, or else the
-// * cache needs to wrap the cause in a runtime exception. Well the later is more
-// * flexible, and not that tedios to implement
-// *
-// * @param cause the cause of the failure
-// */
-// public abstract void shutdownCache(Throwable cause);
 }

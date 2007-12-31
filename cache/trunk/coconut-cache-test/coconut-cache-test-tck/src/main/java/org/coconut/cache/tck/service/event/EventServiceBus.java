@@ -51,7 +51,7 @@ public class EventServiceBus extends AbstractEventTestBundle {
         assertNotNull(es.getName());
         assertTrue(es.isValid());
 
-        assertTrue(event().offer(new DefaultCacheEvent("a1")));
+        assertTrue(offer(new DefaultCacheEvent("a1")));
         event().apply(new DefaultCacheEvent("a2"));
         assertTrue(event().offerAll(
                 (Collection) Arrays
@@ -60,7 +60,7 @@ public class EventServiceBus extends AbstractEventTestBundle {
         es.unsubscribe();
         assertEquals(0, event().getSubscribers().size());
         assertFalse(es.isValid());
-        assertTrue(event().offer(new DefaultCacheEvent("a1")));
+        assertTrue(offer(new DefaultCacheEvent("a1")));
     }
 
     @Test
@@ -88,8 +88,8 @@ public class EventServiceBus extends AbstractEventTestBundle {
         assertNotNull(es.getName());
         assertTrue(es.isValid());
 
-        assertTrue(event().offer(new DefaultCacheEvent("a1")));
-        assertTrue(event().offer(new DefaultCacheEvent("b1")));
+        assertTrue(offer(new DefaultCacheEvent("a1")));
+        assertTrue(offer(new DefaultCacheEvent("b1")));
         event().apply(new DefaultCacheEvent("b2"));
         event().apply(new DefaultCacheEvent("a2"));
         assertTrue(event().offerAll(
@@ -100,7 +100,7 @@ public class EventServiceBus extends AbstractEventTestBundle {
         es.unsubscribe();
         assertEquals(0, event().getSubscribers().size());
         assertFalse(es.isValid());
-        assertTrue(event().offer(new DefaultCacheEvent("a1")));
+        assertTrue(offer(new DefaultCacheEvent("a1")));
     }
 
     @Test
@@ -129,8 +129,8 @@ public class EventServiceBus extends AbstractEventTestBundle {
         assertEquals("fooName", es.getName());
         assertTrue(es.isValid());
 
-        assertTrue(event().offer(new DefaultCacheEvent("a1")));
-        assertTrue(event().offer(new DefaultCacheEvent("b1")));
+        assertTrue(offer(new DefaultCacheEvent("a1")));
+        assertTrue(offer(new DefaultCacheEvent("b1")));
         event().apply(new DefaultCacheEvent("b2"));
         event().apply(new DefaultCacheEvent("a2"));
         assertTrue(event().offerAll(
@@ -141,9 +141,13 @@ public class EventServiceBus extends AbstractEventTestBundle {
         es.unsubscribe();
         assertEquals(0, event().getSubscribers().size());
         assertFalse(es.isValid());
-        assertTrue(event().offer(new DefaultCacheEvent("a1")));
+        assertTrue(offer(new DefaultCacheEvent("a1")));
     }
 
+    private boolean offer(CacheEvent ce) {
+        event().apply(ce);
+        return true;
+    }
     @Test
     public void unsubscribeAll() {
         EventSubscription e1 = event().subscribe(TestUtil.dummy(Procedure.class));

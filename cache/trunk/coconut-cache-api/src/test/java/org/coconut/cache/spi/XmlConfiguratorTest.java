@@ -6,6 +6,7 @@ package org.coconut.cache.spi;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -116,7 +117,7 @@ public class XmlConfiguratorTest {
 
     public static <K, V, T extends AbstractCacheServiceConfiguration<K, V>> T reloadService(
             T configuration) throws Exception {
-        return reloadService(configuration, configuration);
+        return reloadService(configuration, (T) configuration.getClass().newInstance());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -145,6 +146,7 @@ public class XmlConfiguratorTest {
      */
     public static <K, V, T extends AbstractCacheServiceConfiguration<K, V>> T reloadService(
             T configuration, T configuration2) throws Exception {
+        assertFalse(configuration == configuration2);
         DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document doc = builder.newDocument();
         Element parent = doc.createElement(XmlConfigurator.CACHE_TAG); // dummy

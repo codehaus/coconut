@@ -23,7 +23,6 @@ import org.coconut.cache.service.event.CacheEventConfiguration;
 import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
-import org.coconut.core.Offerable;
 import org.coconut.event.bus.EventSubscription;
 import org.coconut.operations.Ops.Predicate;
 import org.coconut.operations.Ops.Procedure;
@@ -53,7 +52,7 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
 
     private final CacheEventBus<CacheEvent<K, V>> eb;
 
-    private final Offerable<CacheEvent<K, V>> offerable;
+    private final Procedure<CacheEvent<K, V>> offerable;
 
     public DefaultCacheEventService(CacheEventConfiguration co,
             InternalCacheExceptionService<K, V> exceptionHandling) {
@@ -167,11 +166,6 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
     }
 
     /** {@inheritDoc} */
-    public boolean offer(CacheEvent<K, V> element) {
-        return eb.offer(element);
-    }
-
-    /** {@inheritDoc} */
     public boolean offerAll(Collection<? extends CacheEvent<K, V>> c) {
         return eb.offerAll(c);
     }
@@ -228,7 +222,7 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
     }
 
     protected void dispatch(CacheEvent<K, V> event) {
-        offerable.offer(event);
+        offerable.apply(event);
     }
 
     void put(Cache<K, V> cache, AbstractCacheEntry<K, V> prev, AbstractCacheEntry<K, V> newEntry) {

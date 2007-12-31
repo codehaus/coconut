@@ -18,11 +18,6 @@ import org.coconut.operations.Ops.Procedure;
 public abstract class AbstractEventBus<E> implements EventBus<E> {
 
     /** {@inheritDoc} */
-    public boolean offer(final E element) {
-        return inform(element, true);
-    }
-
-    /** {@inheritDoc} */
     public boolean offerAll(Collection<? extends E> c) {
         return informAll(c, false);
     }

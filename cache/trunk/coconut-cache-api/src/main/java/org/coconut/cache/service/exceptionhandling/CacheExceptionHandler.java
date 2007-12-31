@@ -20,12 +20,11 @@ import org.coconut.operations.Ops.Procedure;
  * development environments. Another implementation might just log the exception and
  * continue serving other requests. To allow for easily extending this class with new
  * methods at a later time this class is an abstract class instead of an interface.
- * {@link CacheExceptionHandlers} defines a number of predefined exception handlers.
  * <p>
  * There are 4 basis <tt>general</tt> methods for handling failures occuring in the
  * cache.
  * <ul>
- * <li>{@link #handleError(CacheExceptionContext, Error)} which is called, on a best
+ * <li>{@link #apply(CacheExceptionContext)} which is called, on a best
  * effort basis, whenever an Error is raised within the cache. No reasonable application
  * should not try to handle this, except for writing as much debug information as
  * possible.
@@ -46,15 +45,14 @@ import org.coconut.operations.Ops.Procedure;
  * the creation time of a newly loaded element to a negative value.
  * </ul>
  * <p>
- * In addition to these general methods there are also a number of <tt>specialized</tt>
+ * In addition to this general methods there are also a number of <tt>specialized</tt>
  * methods that handle a particular type of failure. The idea is that all common exception
  * points has a corresponding method in CacheExceptionHandler. For example, whenever an
  * exception occurs while loading an element in a cache loader the
  * {@link #loadingLoadValueFailed(CacheExceptionContext, CacheLoader, Object, AttributeMap)}
  * method is called. In addition to the exception that was raised a number of additional
  * information is provided to this method. For example, the key for which the load failed,
- * the cache in which the cache occured as well as other relevant information. The default
- * implementation provided in this class just logs the error and returns <code>null</code>.
+ * the cache in which the cache occured as well as other relevant information.
  *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$

@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.internal.util;
@@ -69,8 +69,9 @@ public class AtomicDoubleTest extends TestCase {
         final AtomicDouble ai = new AtomicDouble(1);
         Thread t = new Thread(new Runnable() {
             public void run() {
-                while (!ai.compareAndSet(2.0, 3.0))
+                while (!ai.compareAndSet(2.0, 3.0)) {
                     Thread.yield();
+                }
             }
         });
 
@@ -79,7 +80,6 @@ public class AtomicDoubleTest extends TestCase {
         t.join(100);
         assertFalse(t.isAlive());
         assertEquals(ai.get(), 3.0);
-
     }
 
     /**
@@ -89,12 +89,12 @@ public class AtomicDoubleTest extends TestCase {
     public void testWeakCompareAndSet() {
         AtomicDouble ai = new AtomicDouble(1);
         while (!ai.weakCompareAndSet(1, 2)){}
-            
+
         while (!ai.weakCompareAndSet(2, -4)){}
-            
+
         assertEquals(-4.0, ai.get());
         while (!ai.weakCompareAndSet(-4, 7)){}
-            
+
         assertEquals(7.0, ai.get());
     }
 
@@ -125,8 +125,8 @@ public class AtomicDoubleTest extends TestCase {
         System.out.println(AtomicDouble.c(5));
         System.out.println(AtomicDouble.c(4));
         System.out.println(AtomicDouble.c(9));
-        
-        System.out.println(al); 
+
+        System.out.println(al);
     }
     /**
      * getAndDecrement returns previous value and decrements

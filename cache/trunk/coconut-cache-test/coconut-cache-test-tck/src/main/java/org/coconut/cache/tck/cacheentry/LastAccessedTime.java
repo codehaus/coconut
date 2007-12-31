@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.cacheentry;
@@ -15,7 +15,7 @@ public class LastAccessedTime extends AbstractCacheTCKTest {
     @Test
     public void get() {
         clock.setTimestamp(10);
-        put(2);
+        init(2);
         assertEquals(0l, peekEntry(M1).getLastAccessTime());
         assertEquals(0l, peekEntry(M2).getLastAccessTime());
 
@@ -29,11 +29,11 @@ public class LastAccessedTime extends AbstractCacheTCKTest {
         assertEquals(11l, peekEntry(M1).getLastAccessTime());
         assertEquals(11l, peekEntry(M2).getLastAccessTime());
     }
-    
+
     @Test
     public void getEntry() {
         clock.setTimestamp(10);
-        put(2);
+        init(2);
 
         getEntry(M1);
         assertEquals(10l, peekEntry(M1).getLastAccessTime());
@@ -46,7 +46,7 @@ public class LastAccessedTime extends AbstractCacheTCKTest {
         assertEquals(11l, peekEntry(M1).getLastAccessTime());
         assertEquals(11l, peekEntry(M2).getLastAccessTime());
     }
-    
+
     @Test
     public void loadedNoAttributes() {
         clock.setTimestamp(10);

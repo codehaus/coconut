@@ -1,8 +1,9 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.service.servicemanager;
 
+import static org.coconut.test.CollectionTestUtil.M1;
 import static org.coconut.test.CollectionTestUtil.M1_TO_M5_MAP;
 
 import java.util.Arrays;
@@ -276,7 +277,7 @@ public class StartupFailed extends AbstractCacheTCKTest {
         c.shutdown();
         c.size(); // does not fail, cache was never started
         try {
-            put(1);
+            put(M1);
             fail("should throw IllegalStateException");
         } catch (IllegalStateException ce) {
             // ignore
@@ -289,7 +290,7 @@ public class StartupFailed extends AbstractCacheTCKTest {
         c.shutdownNow();
         c.size(); // does not fail, cache was never started
         try {
-            put(1);
+            put(M1);
             fail("should throw IllegalStateException");
         } catch (IllegalStateException ce) {
             // ignore
@@ -355,7 +356,7 @@ public class StartupFailed extends AbstractCacheTCKTest {
             c.size();
             fail("should throw CacheException");
         } catch (RuntimeException1 ce) {
-            
+
         }
     }
 }

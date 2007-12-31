@@ -11,6 +11,13 @@ import static junit.framework.Assert.assertTrue;
 import static org.coconut.cache.spi.XmlConfiguratorTest.reloadService;
 
 import org.coconut.cache.policy.ReplacementPolicy;
+import org.coconut.cache.policy.paging.ClockPolicy;
+import org.coconut.cache.policy.paging.FIFOPolicy;
+import org.coconut.cache.policy.paging.LFUPolicy;
+import org.coconut.cache.policy.paging.LIFOPolicy;
+import org.coconut.cache.policy.paging.LRUPolicy;
+import org.coconut.cache.policy.paging.MRUPolicy;
+import org.coconut.cache.policy.paging.RandomPolicy;
 import org.coconut.operations.Predicates;
 import org.coconut.operations.Ops.Predicate;
 import org.coconut.test.TestUtil;
@@ -111,6 +118,10 @@ public class CacheEvictionConfigurationTest {
 
         conf = reloadService(conf);
         assertTrue(conf.getIsCacheableFilter() instanceof MyPredicate);
+
+        assertSame(conf, conf.setIsCacheableFilter(Predicates.TRUE));
+        conf = reloadService(conf);
+        assertNull(conf.getIsCacheableFilter());
     }
 
     @Test
@@ -122,83 +133,57 @@ public class CacheEvictionConfigurationTest {
     }
 
     @Test
-    public void testPolicyXML() {
-    // TODO
+    public void testPolicyXML() throws Exception {
+        conf = reloadService(conf);
+        assertNull(conf.getPolicy());
+
+        conf.setPolicy(new ClockPolicy());
+        conf = reloadService(conf);
+        assertTrue(conf.getPolicy() instanceof ClockPolicy);
+
+        conf.setPolicy(new FIFOPolicy());
+        Object prev = conf;
+        conf = reloadService(conf);
+        assertTrue(conf.getPolicy() instanceof FIFOPolicy);
+        conf.setPolicy(new LIFOPolicy());
+        conf = reloadService(conf);
+        assertTrue(conf.getPolicy() instanceof LIFOPolicy);
+
+        conf.setPolicy(new LFUPolicy());
+        conf = reloadService(conf);
+        assertTrue(conf.getPolicy() instanceof LFUPolicy);
+
+        conf.setPolicy(new LRUPolicy());
+        conf = reloadService(conf);
+        assertTrue(conf.getPolicy() instanceof LRUPolicy);
+
+        conf.setPolicy(new MRUPolicy());
+        conf = reloadService(conf);
+        assertTrue(conf.getPolicy() instanceof MRUPolicy);
+
+        conf.setPolicy(new RandomPolicy());
+        conf = reloadService(conf);
+        assertTrue(conf.getPolicy() instanceof RandomPolicy);
+
+        conf.setPolicy(new RP());
+        conf = reloadService(conf);
+        assertTrue(conf.getPolicy() instanceof RP);
+        conf.setPolicy(new RPNone());
+        conf = reloadService(conf);
+        assertNull(conf.getPolicy());
     }
 
-    // @Test
-    // public void testPreferableSize() {
-    // assertEquals(0, conf.getPreferableSize());
-    // assertSame(conf, conf.setPreferableSize(4));
-    // assertEquals(4, conf.getPreferableSize());
-    // }
-    //
-    // @Test(expected = IllegalArgumentException.class)
-    // public void testPreferableSizeIAE() {
-    // conf.setPreferableSize(-1);
-    // }
-    //
-    // @Test
-    // public void testPreferableSizeXML() throws Exception {
-    // conf = reloadService(conf);
-    // assertEquals(0, conf.getPreferableSize());
-    // assertSame(conf, conf.setPreferableSize(Integer.MAX_VALUE));
-    //
-    // conf = reloadService(conf);
-    // assertEquals(Integer.MAX_VALUE, conf.getPreferableSize());
-    // }
-
-// /**
-// * Test default time to live. The default is that entries never needs to be refreshed.
-// */
-// @Test
-// public void testEvictSchedule() {
-// // initial values
-// assertEquals(0, conf.getScheduledEvictionAtFixedRate(TimeUnit.NANOSECONDS));
-// assertEquals(0, conf.getScheduledEvictionAtFixedRate(TimeUnit.SECONDS));
-//
-// assertEquals(conf, conf.setScheduledEvictionAtFixedRate(2, TimeUnit.SECONDS));
-//
-// assertEquals(2l, conf.getScheduledEvictionAtFixedRate(TimeUnit.SECONDS));
-// assertEquals(2l * 1000, conf
-// .getScheduledEvictionAtFixedRate(TimeUnit.MILLISECONDS));
-// assertEquals(2l * 1000 * 1000, conf
-// .getScheduledEvictionAtFixedRate(TimeUnit.MICROSECONDS));
-// assertEquals(2l * 1000 * 1000 * 1000, conf
-// .getScheduledEvictionAtFixedRate(TimeUnit.NANOSECONDS));
-//
-// conf.setScheduledEvictionAtFixedRate(Long.MAX_VALUE, TimeUnit.MICROSECONDS);
-// assertEquals(Long.MAX_VALUE, conf
-// .getScheduledEvictionAtFixedRate(TimeUnit.SECONDS));
-// }
-//
-// @Test
-// public void testDefaultTimeToLiveXML() throws Exception {
-// conf = reloadService(conf);
-// assertEquals(0, conf.getScheduledEvictionAtFixedRate(TimeUnit.NANOSECONDS));
-// assertEquals(0, conf.getScheduledEvictionAtFixedRate(TimeUnit.SECONDS));
-//
-// conf.setScheduledEvictionAtFixedRate(60, TimeUnit.SECONDS);
-// conf = reloadService(conf);
-// assertEquals(60 * 1000, conf
-// .getScheduledEvictionAtFixedRate(TimeUnit.MILLISECONDS));
-// }
-//
-// @Test(expected = IllegalArgumentException.class)
-// public void testDefaultTimeToLiveIAE() {
-// conf.setScheduledEvictionAtFixedRate(-1, TimeUnit.MICROSECONDS);
-// }
-//
-// @Test(expected = NullPointerException.class)
-// public void testDefaultTimeToLiveNPE() {
-// conf.setScheduledEvictionAtFixedRate(1, null);
-// }
-
     public static class MyPredicate implements Predicate {
-
         public boolean evaluate(Object t) {
             return false;
         }
+    }
+
+    public static class RP extends LIFOPolicy {
+
+    }
+
+    public class RPNone extends LIFOPolicy {
 
     }
 }

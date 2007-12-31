@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.service.event;
@@ -12,7 +12,7 @@ import org.coconut.operations.Ops.Procedure;
 
 /**
  * The CacheEventService can be used to subscribe to CacheEvent's raised by the cache.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -22,23 +22,23 @@ import org.coconut.operations.Ops.Procedure;
  */
 public interface CacheEventService<K, V> extends EventBus<CacheEvent<K, V>> {
 
-    /**
-     * Inserts the specified element into the underlying data structure, if possible. Some
-     * implementations may impose insertion restrictions (for example capacity bounds),
-     * which can fail to insert an element by returning false.
-     * 
-     * @param event
-     *            the event to add.
-     * @return <tt>true</tt> if it was possible to add the element to the data
-     *         structure, else <tt>false</tt>
-     * @throws NullPointerException
-     *             if the specified element is <tt>null</tt>
-     */
-    boolean offer(CacheEvent<K, V> event);
+//    /**
+//     * Inserts the specified element into the underlying data structure, if possible. Some
+//     * implementations may impose insertion restrictions (for example capacity bounds),
+//     * which can fail to insert an element by returning false.
+//     *
+//     * @param event
+//     *            the event to add.
+//     * @return <tt>true</tt> if it was possible to add the element to the data
+//     *         structure, else <tt>false</tt>
+//     * @throws NullPointerException
+//     *             if the specified element is <tt>null</tt>
+//     */
+//    boolean offer(CacheEvent<K, V> event);
 
     /**
      * Handles an event.
-     * 
+     *
      * @param event
      *            The event that the EventHandler must process
      * @throws ClassCastException
@@ -59,7 +59,7 @@ public interface CacheEventService<K, V> extends EventBus<CacheEvent<K, V>> {
      * result in some elements having already been processed. when the associated
      * exception is thrown. The behavior of this operation is unspecified if the specified
      * collection is modified while the operation is in progress.
-     * 
+     *
      * @param events
      *            the events to process
      * @return a boolean indicating if all events was succesfully processed.
@@ -68,7 +68,7 @@ public interface CacheEventService<K, V> extends EventBus<CacheEvent<K, V>> {
 
     /**
      * Returns all subscribers that are registered for this EventBus.
-     * 
+     *
      * @return all subscribers that are registered for this EventBus
      */
     Collection<EventSubscription<CacheEvent<K, V>>> getSubscribers();
@@ -76,7 +76,7 @@ public interface CacheEventService<K, V> extends EventBus<CacheEvent<K, V>> {
     /**
      * Cancels all subscriptions. This is analogues to calling cancel on every
      * subscription.
-     * 
+     *
      * @return A collection of all the subscribers that was unregistered.
      */
     Collection<EventSubscription<CacheEvent<K, V>>> unsubscribeAll();
@@ -84,7 +84,7 @@ public interface CacheEventService<K, V> extends EventBus<CacheEvent<K, V>> {
     /**
      * Creates an subscription that will be notified for <tt>any</tt> event being
      * published to this event bus.
-     * 
+     *
      * @param eventHandler
      *            the event handler that will be notified of a published event.
      * @return a subscription that can be used to cancel any further notifications
@@ -97,7 +97,7 @@ public interface CacheEventService<K, V> extends EventBus<CacheEvent<K, V>> {
     /**
      * Creates an subscription that will be notified for any event that is accepted by the
      * specified filter.
-     * 
+     *
      * @param eventHandler
      *            the event handler that will be notified of a published event.
      * @param filter
@@ -114,7 +114,7 @@ public interface CacheEventService<K, V> extends EventBus<CacheEvent<K, V>> {
      * Creates an subscription that will be notified for any event that is accepted by the
      * specified filter. This method also specifies the name of the subscription which is
      * usefull for remote monitoring and controlling.
-     * 
+     *
      * @param listener
      *            the event handler that will be notified of a published event.
      * @param filter

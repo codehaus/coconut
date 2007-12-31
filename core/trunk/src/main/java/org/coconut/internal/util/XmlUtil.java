@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.internal.util;
@@ -85,7 +85,7 @@ public final class XmlUtil {
     /**
      * Sets an attribute on the specified element with the specified name if the specified
      * value is different from the specified default value.
-     * 
+     *
      * @param base
      *            the Element to set the attribute on
      * @param name
@@ -222,7 +222,7 @@ public final class XmlUtil {
 
     /**
      * Converts the specified {@link Document} to a string.
-     * 
+     *
      * @param doc
      *            the Document to convert
      * @return a String representing the specified Document
@@ -237,7 +237,7 @@ public final class XmlUtil {
 
     /**
      * Pretty prints the specified XML document to the specified OutputStream.
-     * 
+     *
      * @param doc
      *            the xml document to pretty print
      * @param stream

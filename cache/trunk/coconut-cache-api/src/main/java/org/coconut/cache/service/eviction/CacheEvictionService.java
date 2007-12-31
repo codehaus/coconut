@@ -1,9 +1,11 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.service.eviction;
 
 import org.coconut.cache.Cache;
+import org.coconut.cache.CacheEntry;
+import org.coconut.cache.CacheServices;
 
 /**
  * The eviction service controls the size of the cache and what entries to evict at
@@ -11,21 +13,21 @@ import org.coconut.cache.Cache;
  * <p>
  * An instance of this interface can be retrieved by using {@link Cache#getService(Class)}
  * to look it up.
- * 
+ *
  * <pre>
  * Cache&lt;?, ?&gt; c = someCache;
  * CacheEvictionService&lt;?, ?&gt; ces = c.getService(CacheEvictionService.class);
  * ces.trimToSize(10);
  * </pre>
- * 
- * Or by using {@link CacheServicesOld}
- * 
+ *
+ * Or by using {@link CacheServices}
+ *
  * <pre>
  * Cache&lt;?, ?&gt; c = someCache;
- * CacheEvictionService&lt;?, ?&gt; ces = CacheServices.eviction(c);
+ * CacheEvictionService&lt;?, ?&gt; ces = CacheServices.service.eviction();
  * ces.setMaximumSize(10000);
  * </pre>
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>
@@ -37,7 +39,7 @@ public interface CacheEvictionService<K, V> {
     /**
      * Returns the maximum number of elements that this cache can hold. If the cache has
      * no upper limit {@link Integer#MAX_VALUE} is returned.
-     * 
+     *
      * @return the maximum number of elements that this cache can hold or
      *         {@link Integer#MAX_VALUE} if no such limit exist
      * @see #setMaximumSize(int)
@@ -48,7 +50,7 @@ public interface CacheEvictionService<K, V> {
     /**
      * Returns the maximum allowed volume of the cache or {@link Long#MAX_VALUE} if there
      * is no limit.
-     * 
+     *
      * @return the maximum allowed volume of the cache or {@link Long#MAX_VALUE} if there
      *         is no limit.
      * @see #setMaximumVolume(long)
@@ -65,7 +67,7 @@ public interface CacheEvictionService<K, V> {
      * <p>
      * If the specified maximum size is 0, unless otherwise specified will mean unlimited
      * amount
-     * 
+     *
      * @param maximumSize
      *            the maximum number of elements the cache can hold or Integer.MAX_VALUE
      *            if there is no limit
@@ -78,12 +80,13 @@ public interface CacheEvictionService<K, V> {
 
     /**
      * Sets that maximum volume of the cache. The total volume of the cache is the sum of
-     * all the individual element sizes. If the limit is reached the cache must evict
-     * existing elements before adding new elements.
+     * all the individual element sizes (sum of all elements {@link CacheEntry#getSize()}.
+     * If the limit is reached the cache must evict existing elements before adding new
+     * elements.
      * <p>
      * To indicate that a cache can have an unlimited volume, {@link Long#MAX_VALUE}
      * should be specified.
-     * 
+     *
      * @param maximumVolume
      *            the maximum volume.
      * @throws IllegalArgumentException
@@ -99,7 +102,7 @@ public interface CacheEvictionService<K, V> {
      * taken.
      * <p>
      * If the cache has been shutdown calls to this method is ignored.
-     * 
+     *
      * @param size
      *            the number of elements to trim the cache down to
      * @throws IllegalArgumentException
@@ -113,7 +116,7 @@ public interface CacheEvictionService<K, V> {
      * action is taken.
      * <p>
      * If the cache has been shutdown calls to this method is ignored.
-     * 
+     *
      * @param volume
      *            the volume to trim the cache down to
      * @throws IllegalArgumentException
@@ -123,7 +126,7 @@ public interface CacheEvictionService<K, V> {
 
     /**
      * Returns whether or not caching is disabled.
-     * 
+     *
      * @return <code>true</code> if caching is disabled, otherwise <code>false</code>
      */
     public boolean isDisabled();
@@ -132,11 +135,10 @@ public interface CacheEvictionService<K, V> {
      * Sets whether or not caching is disabled. If caching is disabled, the cache will not
      * cache any items added. This can sometimes be useful while testing.
      * <p>
-     * Note: the following applies
-     * Note: setting this value to <code>true</code> will not remove elements already
-     * present in the cache. Put will override values, already present. Loading of values
-     * will override values already present?
-     * 
+     * Note: the following applies Note: setting this value to <code>true</code> will
+     * not remove elements already present in the cache. Put will override values, already
+     * present. Loading of values will override values already present?
+     *
      * @param isDisabled
      *            whether or not caching is disabled
      */

@@ -15,8 +15,16 @@ import static org.coconut.internal.util.XmlUtil.loadChildObject;
 
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.policy.ReplacementPolicy;
+import org.coconut.cache.policy.paging.ClockPolicy;
+import org.coconut.cache.policy.paging.FIFOPolicy;
+import org.coconut.cache.policy.paging.LFUPolicy;
+import org.coconut.cache.policy.paging.LIFOPolicy;
+import org.coconut.cache.policy.paging.LRUPolicy;
+import org.coconut.cache.policy.paging.MRUPolicy;
+import org.coconut.cache.policy.paging.RandomPolicy;
 import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.cache.spi.CacheSPI;
+import org.coconut.internal.util.XmlUtil;
 import org.coconut.operations.Ops.Predicate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -56,6 +64,9 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
 
     /** XML tag for maximum volume. */
     private final static String MAXIMUM_VOLUME = "max-volume";
+
+    /** XML tag for policy. */
+    private final static String POLICY = "policy";
 
     /** A filter used for filtering what items should be cached. */
     private Predicate<CacheEntry<K, V>> isCacheableFilter;
@@ -197,14 +208,13 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
     }
 
     /**
-     * Sets that maximum number of elements that a cache can contain. If the limit is
-     * reached the cache must evict existing elements before adding new elements. For
-     * example, if the limit is 10 elements and the cache currently holds 10 elements.
-     * Then, if a user tries to add a new element the cache must choose one of the 10
-     * elements to remove from the cache before it inserting the new element.
+     * Sets that maximum volume of the cache. The total volume of the cache is the sum of
+     * all the individual element sizes (sum of all elements {@link CacheEntry#getSize()}.
+     * If the limit is reached the cache must evict existing elements before adding new
+     * elements.
      * <p>
-     * The default value is Integer.MAX_VALUE. Which roughly translates to no limit on the
-     * number of elements. TODO fix
+     * To indicate that a cache can have an unlimited volume, {@link Long#MAX_VALUE}
+     * should be specified.
      *
      * @param maximumVolume
      *            the maximum volume.
@@ -254,6 +264,7 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
     @Override
     protected void fromXML(Element e) throws Exception {
         setDisabled(attributeBooleanGet(e, IS_DISABLED, false));
+        setPolicy(getPolicy(e));
         setMaximumSize(contentIntGet(getChild(MAXIMUM_SIZE, e), maximumSize));
         setMaximumVolume(contentLongGet(getChild(MAXIMUM_VOLUME, e), maximumVolume));
         setIsCacheableFilter(loadChildObject(e, IS_CACHEABLE_TAG, Predicate.class));
@@ -263,9 +274,66 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
     @Override
     protected void toXML(Document doc, Element e) throws Exception {
         attributeBooleanSet(e, IS_DISABLED, isDisabled, false);
+        setPolicyAttribute(doc, e);
         contentLongSet(doc, e, MAXIMUM_VOLUME, maximumVolume, DEFAULT.getMaximumVolume());
         contentIntSet(doc, e, MAXIMUM_SIZE, maximumSize, DEFAULT.getMaximumSize());
         addTypedElement(doc, e, IS_CACHEABLE_TAG, CacheSPI.DEFAULT_CACHE_BUNDLE, getClass(),
                 "saveOfIsCacheableFilterFailed", isCacheableFilter);
+    }
+
+    ReplacementPolicy getPolicy(Element e) throws Exception {
+        String value = e.getAttribute(POLICY);
+        if (value != null && !value.equals("")) {
+            if (value.equalsIgnoreCase(ClockPolicy.NAME)) {
+                return new ClockPolicy();
+            } else if (value.equalsIgnoreCase(FIFOPolicy.NAME)) {
+                return new FIFOPolicy();
+            } else if (value.equalsIgnoreCase(LIFOPolicy.NAME)) {
+                return new LIFOPolicy();
+            } else if (value.equalsIgnoreCase(LFUPolicy.NAME)) {
+                return new LFUPolicy();
+            } else if (value.equalsIgnoreCase(LRUPolicy.NAME)) {
+                return new LRUPolicy();
+            } else if (value.equalsIgnoreCase(MRUPolicy.NAME)) {
+                return new MRUPolicy();
+            } else if (value.equalsIgnoreCase(RandomPolicy.NAME)) {
+                return new RandomPolicy();
+            } else {
+                return (ReplacementPolicy<?>) Class.forName(value).newInstance();
+            }
+        }
+        return null;
+    }
+
+    void setPolicyAttribute(Document doc, Element e) {
+        if (replacementPolicy != null) {
+            final String value;
+            if (replacementPolicy.getClass().equals(ClockPolicy.class)) {
+                value = ClockPolicy.NAME;
+            } else if (replacementPolicy.getClass().equals(FIFOPolicy.class)) {
+                value = FIFOPolicy.NAME;
+            } else if (replacementPolicy.getClass().equals(LIFOPolicy.class)) {
+                value = LIFOPolicy.NAME;
+            } else if (replacementPolicy.getClass().equals(LFUPolicy.class)) {
+                value = LFUPolicy.NAME;
+            } else if (replacementPolicy.getClass().equals(LRUPolicy.class)) {
+                value = LRUPolicy.NAME;
+            } else if (replacementPolicy.getClass().equals(MRUPolicy.class)) {
+                value = MRUPolicy.NAME;
+            } else if (replacementPolicy.getClass().equals(RandomPolicy.class)) {
+                value = RandomPolicy.NAME;
+            } else {
+                try {
+                    replacementPolicy.getClass().getConstructor((Class[]) null);
+                    value = replacementPolicy.getClass().getName();
+                } catch (NoSuchMethodException e1) {
+                    XmlUtil.addComment(doc, CacheSPI.DEFAULT_CACHE_BUNDLE, getClass(),
+                            "saveOfReplacementPolicyFailed", e, replacementPolicy
+                                    .getClass().getName());
+                    return;
+                }
+            }
+            e.setAttribute(POLICY, value);
+        }
     }
 }

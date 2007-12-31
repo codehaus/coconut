@@ -1,11 +1,10 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.event.bus;
 
 import java.util.Collection;
 
-import org.coconut.core.Offerable;
 import org.coconut.operations.Ops.Predicate;
 import org.coconut.operations.Ops.Procedure;
 
@@ -55,20 +54,20 @@ import org.coconut.operations.Ops.Procedure;
  * Most implementations does not have any transactional gurantees and a primary meant to
  * be a lightweight alternative to message frameworks such as JMS.
  * <p>
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: EventBusConfiguration.java 415 2007-11-09 08:25:23Z kasper $
  * @param <E>
  *            the type of events processed by this event bus
  */
-public interface EventBus<E> extends Offerable<E>, Procedure<E> {
+public interface EventBus<E> extends Procedure<E> {
 
     /**
      * A failure encountered while attempting to offering elements to an event bus may
      * result in some elements having already been processed. when the associated
      * exception is thrown. The behavior of this operation is unspecified if the specified
      * collection is modified while the operation is in progress.
-     * 
+     *
      * @param events
      *            the events to process
      * @return a boolean indicating if all events was succesfully processed.
@@ -77,7 +76,7 @@ public interface EventBus<E> extends Offerable<E>, Procedure<E> {
 
     /**
      * Returns all subscribers that are registered for this EventBus.
-     * 
+     *
      * @return all subscribers that are registered for this EventBus
      */
     Collection<EventSubscription<E>> getSubscribers();
@@ -85,7 +84,7 @@ public interface EventBus<E> extends Offerable<E>, Procedure<E> {
     /**
      * Cancels all subscriptions. This is analogues to calling cancel on every
      * subscription.
-     * 
+     *
      * @return A collection of all the subscribers that was unregistered.
      */
     Collection<EventSubscription<E>> unsubscribeAll();
@@ -93,7 +92,7 @@ public interface EventBus<E> extends Offerable<E>, Procedure<E> {
     /**
      * Creates an subscription that will be notified for <tt>any</tt> event being
      * published to this event bus.
-     * 
+     *
      * @param eventHandler
      *            the event handler that will be notified of a published event.
      * @return a subscription that can be used to cancel any further notifications
@@ -103,7 +102,7 @@ public interface EventBus<E> extends Offerable<E>, Procedure<E> {
     /**
      * Creates an subscription that will be notified for any event that is accepted by the
      * specified filter.
-     * 
+     *
      * @param eventHandler
      *            the event handler that will be notified of a published event.
      * @param filter
@@ -117,7 +116,7 @@ public interface EventBus<E> extends Offerable<E>, Procedure<E> {
      * Creates an subscription that will be notified for any event that is accepted by the
      * specified filter. This method also specifies the name of the subscription which is
      * usefull for remote monitoring and controlling.
-     * 
+     *
      * @param listener
      *            the event handler that will be notified of a published event.
      * @param filter
