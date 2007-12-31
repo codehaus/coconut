@@ -11,16 +11,32 @@
   <name>Coconut Cache Test Adapter JbossCache</name>
 
   <dependencies>
-    <dependency>
+    <!-- 
+      <dependency>
       <groupId>org.coconut.cache.3rdparty</groupId>
       <artifactId>jbosscache</artifactId>
       <version>2.0.0-beta2</version>
+      </dependency>
+    -->
+    <dependency>
+      <groupId>jboss</groupId>
+      <artifactId>jboss-cache</artifactId>
+      <version>2.0.0.GA</version>
     </dependency>
-
     <dependency>
       <groupId>org.coconut.cache.test</groupId>
       <artifactId>coconut-cache-test-adapter-api</artifactId>
       <version>1.0</version>
     </dependency>
   </dependencies>
+  <repositories>
+    <repository>
+      <id>jboss</id>
+      <name>JBoss Inc. Repository</name>
+      <url>http://repository.jboss.com/maven2/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 </project>
