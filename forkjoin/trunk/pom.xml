@@ -14,7 +14,7 @@
   <distributionManagement>
     <site>
       <id>codehaus.org</id>
-      <url>dav:https://dav.codehaus.org/coconut</url>
+      <url>dav:https://dav.codehaus.org/coconut/forkjoin</url>
     </site>
   </distributionManagement>
   <scm>
@@ -35,7 +35,26 @@
         </configuration>
       </plugin>
     </plugins>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-webdav</artifactId>
+        <version>1.0-beta-2</version>
+      </extension>
+    </extensions>
   </build>
+    <reporting>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <aggregate>true</aggregate>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
   <modules>
     <module>coconut-forkjoin</module>
     <module>jsr166y</module>

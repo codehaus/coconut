@@ -415,8 +415,8 @@ public final class Predicates {
 
     /**
      * Creates a Predicate that evaluates to <code>true</code> iff the element being
-     * evaluated is {@link Object#equals equal} to the element being specified in this
-     * method.
+     * evaluated is the same or {@link Object#equals equal} to the element being specified
+     * in this method.
      * <p>
      * If the specified object is serializable the returned predicate will also be
      * serializable.
