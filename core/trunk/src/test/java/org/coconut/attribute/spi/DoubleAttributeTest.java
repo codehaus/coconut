@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.attribute.spi;
@@ -63,36 +63,36 @@ public class DoubleAttributeTest {
         AttributeMap ammax = Attributes.singleton(LA, Double.MAX_VALUE);
         AttributeMap amINf = Attributes.singleton(LA, Double.POSITIVE_INFINITY);
 
-        assertEquals(100.5, LA.getPrimitive(am));
-        assertEquals(-1D, LA.getPrimitive(am1));
-        assertEquals(10000D, LA.getPrimitive(am10000));
-        assertEquals(Double.MAX_VALUE, LA.getPrimitive(ammax));
-        assertEquals(Double.POSITIVE_INFINITY, LA.getPrimitive(amINf));
+        assertEquals(100.5, LA.getDouble(am));
+        assertEquals(-1D, LA.getDouble(am1));
+        assertEquals(10000D, LA.getDouble(am10000));
+        assertEquals(Double.MAX_VALUE, LA.getDouble(ammax));
+        assertEquals(Double.POSITIVE_INFINITY, LA.getDouble(amINf));
 
-        assertEquals(10D, LA.getPrimitive(am, 10D));
-        assertEquals(-1D, LA.getPrimitive(am1, 10));
-        assertEquals(10000D, LA.getPrimitive(am10000, 10));
-        assertEquals(Double.MAX_VALUE, LA.getPrimitive(ammax, 10));
-        assertEquals(Double.POSITIVE_INFINITY, LA.getPrimitive(amINf, 10));
+        assertEquals(10D, LA.getDouble(am, 10D));
+        assertEquals(-1D, LA.getDouble(am1, 10));
+        assertEquals(10000D, LA.getDouble(am10000, 10));
+        assertEquals(Double.MAX_VALUE, LA.getDouble(ammax, 10));
+        assertEquals(Double.POSITIVE_INFINITY, LA.getDouble(amINf, 10));
 
     }
 
     @Test
     public void set() {
         AttributeMap am = new DefaultAttributeMap();
-        assertEquals(10.5, LA.setAttribute(am, 10.5D).get(LA));
+        assertEquals(10.5, LA.setDouble(am, 10.5D).get(LA));
         assertEquals(10000d, LA.setValue(am, new Double(10000)).get(LA));
-        assertEquals(Double.MAX_VALUE, LA.setAttribute(am, Double.MAX_VALUE).get(LA));
+        assertEquals(Double.MAX_VALUE, LA.setDouble(am, Double.MAX_VALUE).get(LA));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void setIAE() {
-        LA.setAttribute(new DefaultAttributeMap(), Double.NaN);
+        LA.setDouble(new DefaultAttributeMap(), Double.NaN);
     }
 
     @Test(expected = NullPointerException.class)
     public void setNPE() {
-        LA.setAttribute(null, 1L);
+        LA.setDouble(null, 1L);
     }
 
     @Test

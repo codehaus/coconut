@@ -1,5 +1,11 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
+ */
+/*
+ * Copyright (c) 2005 Brian Goetz and Tim Peierls Released under the Creative Commons
+ * Attribution License (http://creativecommons.org/licenses/by/2.5) Official home:
+ * http://www.jcip.net Any republication or derived work distributed in source code form
+ * must include this copyright and license notice.
  */
 package net.jcip.annotations;
 
@@ -8,12 +14,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/*
- * Copyright (c) 2005 Brian Goetz and Tim Peierls Released under the Creative Commons
- * Attribution License (http://creativecommons.org/licenses/by/2.5) Official home:
- * http://www.jcip.net Any republication or derived work distributed in source code form
- * must include this copyright and license notice.
- */
 
 /**
  * The field or method to which this annotation is applied can only be accessed when
@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
  * <li> <code>class-name.class</code> : The Class object for the specified class should
  * be used as the lock object. </li>
  * </ul>
- * 
+ *
  * @version $Id$
  */
 @Target( { ElementType.FIELD, ElementType.METHOD })

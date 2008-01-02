@@ -80,7 +80,7 @@ import org.coconut.internal.util.CollectionUtils;
 @ThreadSafe
 @CacheServiceSupport( { CacheEventService.class, CacheEvictionService.class,
         CacheExpirationService.class, CacheLoadingService.class, CacheManagementService.class,
-        CacheServiceManagerService.class, CacheStatisticsService.class, CacheWorkerService.class })
+        /*CacheParallelService.class,*/ CacheServiceManagerService.class, CacheStatisticsService.class, CacheWorkerService.class })
 public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
 
     private final static Collection<Class<?>> DEFAULTS = Arrays.asList(
@@ -89,6 +89,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
             SynchronizedCacheLoaderService.class, DefaultCacheManagementService.class,
             DefaultCacheEventService.class, SynchronizedCacheWorkerService.class,
             SynchronizedCacheServiceManager.class, SynchronizedEntryFactoryService.class,
+          /*  SynchronizedParallelCacheService.class,*/
             DefaultCacheExceptionService.class);
 
     private final InternalCacheEntryService entryService;
@@ -125,6 +126,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
     public SynchronizedCache(CacheConfiguration<K, V> conf) {
         super(conf);
         Support s = new Support();
+        map = new EntryMap<K, V>(s, true);
         ServiceComposer sc = ServiceComposer.compose(this, s, conf, DEFAULTS);
         serviceManager = sc.getInternalService(InternalCacheServiceManager.class);
         listener = sc.getInternalService(InternalCacheListener.class);
@@ -132,7 +134,6 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
         loadingService = sc.getInternalService(InternalCacheLoadingService.class);
         evictionService = sc.getInternalService(InternalCacheEvictionService.class);
         entryService = sc.getInternalService(AbstractCacheEntryFactoryService.class);
-        map = new EntryMap<K, V>(s, true);
     }
 
     /** {@inheritDoc} */
@@ -635,6 +636,10 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
             }
             listener.afterTrimCache(SynchronizedCache.this, started, l, size, newSize, volume,
                     newVolume);
+        }
+
+        public EntryMap getEntryMap() {
+            return map;
         }
     }
 }

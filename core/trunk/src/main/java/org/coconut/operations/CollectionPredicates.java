@@ -4,7 +4,6 @@
 package org.coconut.operations;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -13,7 +12,8 @@ import java.util.Map;
 import org.coconut.operations.Ops.Predicate;
 
 /**
- * Factory and utility methods for {@link Predicate}.
+ * Various implementations of {@link Predicate} that operates on {@link Collection},
+ * {@link Iterable} and {@link Map}.
  *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id: CollectionPredicates.java 498 2007-12-02 17:17:11Z kasper $
@@ -27,8 +27,8 @@ public final class CollectionPredicates {
     // /CLOVER:ON
 
     /**
-     * Filters the specified iterable, returning a list of those items that evaluated to
-     * true given the specified predicate.
+     * Filters the specified iterable, returning a new list of those items that evaluated
+     * to true given the specified predicate.
      *
      * @param <E>
      *            the types of items that are filtered
@@ -53,7 +53,22 @@ public final class CollectionPredicates {
         return list;
     }
 
-    public static <K, V> Map<K, V> filterMap(Map<K, V> map, Predicate<Map.Entry<K, V>> predicate) {
+    /**
+     * Filters the specified map, returning a new map of those items that evaluated to
+     * true given the specified predicate.
+     *
+     * @param <K>
+     *            the type of keys in the map
+     * @param <V>
+     *            the type of values in the map
+     * @param iterable
+     *            the map to filter
+     * @param predicate
+     *            the predicate to evaluate items accordingly to
+     * @return a collection of filteres items
+     */
+    public static <K, V> Map<K, V> filterMap(Map<K, V> map,
+            Predicate<? super Map.Entry<K, V>> predicate) {
         if (map == null) {
             throw new NullPointerException("map is null");
         } else if (predicate == null) {
@@ -105,7 +120,7 @@ public final class CollectionPredicates {
      * @param <E>
      *            the types accepted
      * @param iterable
-     *            the collection to check
+     *            the iterable to check
      * @param predicate
      *            the predicate to test against
      * @return whether or not all of elements in the specified can be accepted by the

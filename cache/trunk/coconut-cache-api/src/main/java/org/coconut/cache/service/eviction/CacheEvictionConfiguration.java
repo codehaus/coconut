@@ -26,6 +26,7 @@ import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.cache.spi.CacheSPI;
 import org.coconut.internal.util.XmlUtil;
 import org.coconut.operations.Ops.Predicate;
+import org.coconut.operations.Ops.Reducer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -328,12 +329,28 @@ public class CacheEvictionConfiguration<K, V> extends AbstractCacheServiceConfig
                     value = replacementPolicy.getClass().getName();
                 } catch (NoSuchMethodException e1) {
                     XmlUtil.addComment(doc, CacheSPI.DEFAULT_CACHE_BUNDLE, getClass(),
-                            "saveOfReplacementPolicyFailed", e, replacementPolicy
-                                    .getClass().getName());
+                            "saveOfReplacementPolicyFailed", e, replacementPolicy.getClass()
+                                    .getName());
                     return;
                 }
             }
             e.setAttribute(POLICY, value);
         }
     }
+
+//    static class PredicateReducer<K, V> implements Reducer<CacheEntry<K, V>> {
+//
+//        private final Predicate<CacheEntry<K, V>> predicate = null;
+//
+//        private final boolean returnNull = true;
+//
+//        public CacheEntry<K, V> combine(CacheEntry<K, V> t, CacheEntry<K, V> v) {
+//            if (predicate.evaluate(v)) {
+//                return v;
+//            } else {
+//                return returnNull ? null : t;
+//            }
+//        }
+//
+//    }
 }

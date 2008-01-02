@@ -7,7 +7,7 @@ import org.coconut.attribute.spi.AbstractValueTest;
 
 
 /**
- * Tests the {@link DateLastModifiedAttribute}.
+ * Tests the {@link DateModifiedAttribute}.
  * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -15,7 +15,7 @@ import org.coconut.attribute.spi.AbstractValueTest;
 public class DateLastModifiedAttributeTest extends AbstractValueTest {
 
     public DateLastModifiedAttributeTest() {
-        super(DateLastModifiedAttribute.INSTANCE, NON_NEGATIV_LONGS, NEGATIV_LONGS);
+        super(DateModifiedAttribute.INSTANCE, NON_NEGATIV_LONGS, NEGATIV_LONGS);
     }
 
 }

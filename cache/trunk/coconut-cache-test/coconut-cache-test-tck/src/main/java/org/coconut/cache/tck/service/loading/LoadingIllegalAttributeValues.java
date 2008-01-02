@@ -7,7 +7,7 @@ import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.DefaultAttributeMap;
 import org.coconut.attribute.common.CostAttribute;
 import org.coconut.attribute.common.DateCreatedAttribute;
-import org.coconut.attribute.common.DateLastModifiedAttribute;
+import org.coconut.attribute.common.DateModifiedAttribute;
 import org.coconut.attribute.common.HitsAttribute;
 import org.coconut.attribute.common.SizeAttribute;
 import org.coconut.attribute.common.TimeToLiveAttribute;
@@ -65,7 +65,7 @@ public class LoadingIllegalAttributeValues extends AbstractCacheTCKTest {
 
     @Test
     public void modifiedDate() {
-        map.put(DateLastModifiedAttribute.INSTANCE, -1L);
+        map.put(DateModifiedAttribute.INSTANCE, -1L);
     }
 
     @Before

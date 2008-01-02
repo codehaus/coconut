@@ -9,7 +9,7 @@ import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.WithAttributes;
 import org.coconut.attribute.common.CostAttribute;
 import org.coconut.attribute.common.DateCreatedAttribute;
-import org.coconut.attribute.common.DateLastModifiedAttribute;
+import org.coconut.attribute.common.DateModifiedAttribute;
 import org.coconut.attribute.common.HitsAttribute;
 import org.coconut.attribute.common.SizeAttribute;
 import org.coconut.attribute.common.TimeToLiveAttribute;
@@ -125,7 +125,7 @@ public interface CacheEntry<K, V> extends Map.Entry<K, V>, WithAttributes {
      *
      * @return the difference, measured in milliseconds, between the time at which the
      *         entry was last updated and January 1, 1970 UTC.
-     * @see DateLastModifiedAttribute
+     * @see DateModifiedAttribute
      */
     long getLastUpdateTime();
 

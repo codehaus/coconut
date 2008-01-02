@@ -81,7 +81,7 @@ public abstract class AbstractDoubleAttribute extends AbstractAttribute<Double> 
      *            the attribute map to retrieve the value of this attribute from
      * @return the value of this attribute
      */
-    public double getPrimitive(AttributeMap attributes) {
+    public double getDouble(AttributeMap attributes) {
         return attributes.getDouble(this, defaultDoubleValue);
     }
 
@@ -96,7 +96,7 @@ public abstract class AbstractDoubleAttribute extends AbstractAttribute<Double> 
      *            attribute map
      * @return the value of this attribute
      */
-    public double getPrimitive(AttributeMap attributes, double defaultValue) {
+    public double getDouble(AttributeMap attributes, double defaultValue) {
         return attributes.getDouble(this, defaultValue);
     }
 
@@ -107,9 +107,10 @@ public abstract class AbstractDoubleAttribute extends AbstractAttribute<Double> 
     }
 
     /**
-     * Works as {@link #isValid(Double)} except taking a primitive double. The default
-     * implementation returns <code>false</code> for {@link Double#NEGATIVE_INFINITY},
-     * {@link Double#POSITIVE_INFINITY} and {@link Double#NaN}.
+     * Works as {@link Attribute#isValid(Object)} except taking a primitive double. The
+     * default implementation returns <code>false</code> for
+     * {@link Double#NEGATIVE_INFINITY}, {@link Double#POSITIVE_INFINITY} and
+     * {@link Double#NaN}.
      *
      * @return whether or not the value is valid
      * @param value
@@ -143,7 +144,7 @@ public abstract class AbstractDoubleAttribute extends AbstractAttribute<Double> 
      *             if the specified value is not valid accordingly to
      *             {@link #checkValid(double)}
      */
-    public AttributeMap setAttribute(AttributeMap attributes, double value) {
+    public AttributeMap setDouble(AttributeMap attributes, double value) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
         }
@@ -205,7 +206,7 @@ public abstract class AbstractDoubleAttribute extends AbstractAttribute<Double> 
 
         /** {@inheritDoc} */
         public double map(AttributeMap t) {
-            return getPrimitive(t);
+            return getDouble(t);
         }
     }
 }

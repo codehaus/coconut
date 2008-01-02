@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.core.values;
@@ -18,8 +18,6 @@ import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;
 
 /**
- * 
- * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -68,7 +66,7 @@ public class ValuesIterator extends AbstractCacheTCKTest {
         Iterator<String> iter = c.values().iterator();
         while (iter.hasNext()) {
             String next = iter.next();
-            if (next.equals(M2.getValue()) ||  next.equals(M4.getValue())) {
+            if (next.equals(M2.getValue()) || next.equals(M4.getValue())) {
                 iter.remove();
             }
         }
@@ -102,11 +100,11 @@ public class ValuesIterator extends AbstractCacheTCKTest {
     /**
      * {@link Set#iterator()} fails when the cache is shutdown.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void iteratorShutdown() {
         c = newCache(5);
         assertTrue(c.isStarted());
         c.shutdown();
-        c.values().iterator();
+        assertFalse(c.values().iterator().hasNext());
     }
 }

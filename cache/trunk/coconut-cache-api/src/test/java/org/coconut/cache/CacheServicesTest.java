@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache;
@@ -10,6 +10,7 @@ import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.management.CacheManagementService;
+import org.coconut.cache.service.parallel.CacheParallelService;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.service.worker.CacheWorkerService;
@@ -24,7 +25,7 @@ import org.junit.runner.RunWith;
 
 /**
  * Tests the {@link CacheServicesOld} class.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -172,7 +173,23 @@ public class CacheServicesTest {
         CacheStatisticsService ces = cache.services().statistics();
         assertSame(service, ces);
     }
-    
+    /**
+     * Tests {@link CacheServices#parallel()}.
+     */
+    @Test
+    public void parallelService() {
+        final CacheParallelService service = TestUtil.dummy(CacheParallelService.class);
+        context.checking(new Expectations() {
+            {
+                one(cache).services();
+                will(returnValue(new CacheServices(cache)));
+                one(cache).getService(CacheParallelService.class);
+                will(returnValue(service));
+            }
+        });
+        CacheParallelService ces = cache.services().parallel();
+        assertSame(service, ces);
+    }
     /**
      * Tests {@link CacheServices#worker()}.
      */

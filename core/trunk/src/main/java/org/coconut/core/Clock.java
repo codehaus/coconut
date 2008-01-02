@@ -20,10 +20,16 @@ public abstract class Clock {
     /** An instance of the {@link DefaultClock}. */
     public static final Clock DEFAULT_CLOCK = new DefaultClock();
 
+    /**
+     * @return <tt>timestamp() + unit.toMillis(timeout)</tt>
+     */
     public long getDeadlineFromNow(long timeout, TimeUnit unit) {
         return timestamp() + unit.toMillis(timeout);
     }
 
+    /**
+     * @return timestamp() >= timeStampToCheck;
+     */
     public boolean isPassed(long timestamp) {
         return isPassed(timestamp(), timestamp);
     }
@@ -69,6 +75,9 @@ public abstract class Clock {
      */
     public abstract long timestamp();
 
+    /**
+     * @return <tt>currentTimeStamp >= timeStampToCheck</tt>
+     */
     public static boolean isPassed(long currentTimeStamp, long timeStampToCheck) {
         return currentTimeStamp >= timeStampToCheck;
     }

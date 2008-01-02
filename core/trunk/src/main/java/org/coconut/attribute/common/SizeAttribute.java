@@ -3,15 +3,13 @@
  */
 package org.coconut.attribute.common;
 
-import static org.coconut.operations.LongPredicates.greaterThen;
-
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.spi.AbstractLongAttribute;
 import org.coconut.operations.Ops.LongPredicate;
 import org.coconut.operations.Ops.Predicate;
 
 /**
- * The <tt>Size</tt> attribute indicates the <tt>size</tt> of some element. The mapped
+ * The <tt>Size</tt> attribute indicates the <tt>size</tt> of an object. The mapped
  * value must is of type <tt>long</tt> and between 0 and {@link Long#MAX_VALUE}.
  *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
@@ -55,6 +53,10 @@ public final class SizeAttribute extends AbstractLongAttribute {
         return INSTANCE;
     }
 
+    public static Predicate<AttributeMap> filterOnSize(LongPredicate predicate) {
+        return INSTANCE.filterLong(predicate);
+    }
+
     /**
      * Returns the value of this attribute in the specified attribute map, or
      * DEFAULT_VALUE if the attribute is not mapped to any value in the specified
@@ -67,11 +69,7 @@ public final class SizeAttribute extends AbstractLongAttribute {
      *         attribute map
      */
     public static long get(AttributeMap attributes) {
-        return INSTANCE.getPrimitive(attributes);
-    }
-
-    public static Predicate<AttributeMap> filterOnSize(LongPredicate predicate) {
-        return INSTANCE.filterLong(predicate);
+        return INSTANCE.getLong(attributes);
     }
 
     /**
@@ -84,7 +82,7 @@ public final class SizeAttribute extends AbstractLongAttribute {
      * @return the specified attribute map
      */
     public static AttributeMap set(AttributeMap attributes, long value) {
-        return INSTANCE.setAttribute(attributes, value);
+        return INSTANCE.setLong(attributes, value);
     }
 
     /**

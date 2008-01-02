@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.core.keyset;
@@ -18,8 +18,8 @@ import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;
 
 /**
- * 
- * 
+ *
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -102,11 +102,11 @@ public class KeySetIterator extends AbstractCacheTCKTest {
     /**
      * {@link Set#iterator()} fails when the cache is shutdown.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void iteratorShutdown() {
         c = newCache(5);
         assertTrue(c.isStarted());
         c.shutdown();
-        c.keySet().iterator();
+        assertFalse(c.keySet().iterator().hasNext());
     }
 }

@@ -49,28 +49,28 @@ public class DurationAttributeTest {
         AttributeMap ammax = Attributes.singleton(DA, Long.MAX_VALUE);
 
         // No default
-        assertEquals(Long.MAX_VALUE, DA.getPrimitive(am, TimeUnit.NANOSECONDS));
-        assertEquals(1l, DA.getPrimitive(am1, TimeUnit.NANOSECONDS));
-        assertEquals(10000l, DA.getPrimitive(am10000, TimeUnit.NANOSECONDS));
-        assertEquals(Long.MAX_VALUE, DA.getPrimitive(ammax, TimeUnit.NANOSECONDS));
+        assertEquals(Long.MAX_VALUE, DA.getDuration(am, TimeUnit.NANOSECONDS));
+        assertEquals(1l, DA.getDuration(am1, TimeUnit.NANOSECONDS));
+        assertEquals(10000l, DA.getDuration(am10000, TimeUnit.NANOSECONDS));
+        assertEquals(Long.MAX_VALUE, DA.getDuration(ammax, TimeUnit.NANOSECONDS));
 
-        assertEquals(Long.MAX_VALUE, DA.getPrimitive(am, TimeUnit.MICROSECONDS));
-        assertEquals(0l, DA.getPrimitive(am1, TimeUnit.MICROSECONDS));
-        assertEquals(10l, DA.getPrimitive(am10000, TimeUnit.MICROSECONDS));
-        assertEquals(Long.MAX_VALUE, DA.getPrimitive(ammax, TimeUnit.MICROSECONDS));
+        assertEquals(Long.MAX_VALUE, DA.getDuration(am, TimeUnit.MICROSECONDS));
+        assertEquals(0l, DA.getDuration(am1, TimeUnit.MICROSECONDS));
+        assertEquals(10l, DA.getDuration(am10000, TimeUnit.MICROSECONDS));
+        assertEquals(Long.MAX_VALUE, DA.getDuration(ammax, TimeUnit.MICROSECONDS));
 
         // With default
-        assertEquals(1l, DA.getPrimitive(am, TimeUnit.NANOSECONDS, 1l));
-        assertEquals(-1l, DA.getPrimitive(am, TimeUnit.NANOSECONDS, -1l));
-        assertEquals(1l, DA.getPrimitive(am, TimeUnit.MICROSECONDS, 1l));
-        assertEquals(Long.MAX_VALUE, DA.getPrimitive(am, TimeUnit.MICROSECONDS, Long.MAX_VALUE));
+        assertEquals(1l, DA.getDuration(am, TimeUnit.NANOSECONDS, 1l));
+        assertEquals(-1l, DA.getDuration(am, TimeUnit.NANOSECONDS, -1l));
+        assertEquals(1l, DA.getDuration(am, TimeUnit.MICROSECONDS, 1l));
+        assertEquals(Long.MAX_VALUE, DA.getDuration(am, TimeUnit.MICROSECONDS, Long.MAX_VALUE));
 
-        assertEquals(1l, DA.getPrimitive(am1, TimeUnit.NANOSECONDS, 2));
-        assertEquals(10000l, DA.getPrimitive(am10000, TimeUnit.NANOSECONDS, 2));
-        assertEquals(Long.MAX_VALUE, DA.getPrimitive(ammax, TimeUnit.NANOSECONDS, 2));
-        assertEquals(0l, DA.getPrimitive(am1, TimeUnit.MICROSECONDS, 2));
-        assertEquals(10l, DA.getPrimitive(am10000, TimeUnit.MICROSECONDS, 2));
-        assertEquals(Long.MAX_VALUE, DA.getPrimitive(ammax, TimeUnit.MICROSECONDS, 2));
+        assertEquals(1l, DA.getDuration(am1, TimeUnit.NANOSECONDS, 2));
+        assertEquals(10000l, DA.getDuration(am10000, TimeUnit.NANOSECONDS, 2));
+        assertEquals(Long.MAX_VALUE, DA.getDuration(ammax, TimeUnit.NANOSECONDS, 2));
+        assertEquals(0l, DA.getDuration(am1, TimeUnit.MICROSECONDS, 2));
+        assertEquals(10l, DA.getDuration(am10000, TimeUnit.MICROSECONDS, 2));
+        assertEquals(Long.MAX_VALUE, DA.getDuration(ammax, TimeUnit.MICROSECONDS, 2));
     }
 
     @Test
@@ -78,7 +78,7 @@ public class DurationAttributeTest {
         AttributeMap am = newMap();
         assertEquals(10l, DA.setAttribute(am, 10l, TimeUnit.NANOSECONDS).get(DA));
         assertEquals(10000l, DA.setAttribute(am, 10l, TimeUnit.MICROSECONDS).get(DA));
-        assertEquals(10000l, DA.setAttribute(am, Long.valueOf(10), TimeUnit.MICROSECONDS).get(DA));
+        assertEquals(10000l, DA.setDuration(am, Long.valueOf(10), TimeUnit.MICROSECONDS).get(DA));
         assertEquals(Long.MAX_VALUE, DA.setAttribute(am, Long.MAX_VALUE, TimeUnit.MICROSECONDS)
                 .get(DA));
     }

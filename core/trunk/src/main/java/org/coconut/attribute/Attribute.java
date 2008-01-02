@@ -88,7 +88,9 @@ public interface Attribute<T> {
     T getValue(AttributeMap attributes, T defaultValue);
 
     /**
-     * Returns whether or not this attribute is set in the specified attribute map.
+     * Returns whether or not this attribute is set in the specified attribute map. This
+     * method is useful for distinguishing those case where an attribute maps to
+     * <code>null</code> or 0.
      *
      * @param attributes
      *            the attribute map to check if this attribute is set
@@ -108,6 +110,14 @@ public interface Attribute<T> {
     boolean isValid(T value);
 
     /**
+     * Removes this attribute from the specified attribute map if it is present.
+     *
+     * @param attributes
+     *            the attribute map to remove this attribute from
+     */
+    void remove(AttributeMap attributes);
+
+    /**
      * Sets the specified value in the specified attribute map.
      *
      * @param attributes
@@ -120,12 +130,4 @@ public interface Attribute<T> {
      *             {@link #checkValid(Object)}
      */
     AttributeMap setValue(AttributeMap attributes, T value);
-
-    /**
-     * Removes this attribute from the specified attribute map if it is present.
-     *
-     * @param attributes
-     *            the attribute map to remove this attribute from
-     */
-    void unSet(AttributeMap attributes);
 }

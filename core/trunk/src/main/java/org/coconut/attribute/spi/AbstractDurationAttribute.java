@@ -27,8 +27,8 @@ public abstract class AbstractDurationAttribute extends AbstractLongAttribute {
     }
 
     /**
-     * Analogous to {@link #getPrimitive(AttributeMap)} except taking a parameter
-     * indicating what time unit the value should be returned in.
+     * Analogous to {@link #getLong(AttributeMap)} except taking a parameter indicating
+     * what time unit the value should be returned in.
      *
      * @param attributes
      *            the attribute map to retrieve the value of this attribute from
@@ -36,12 +36,12 @@ public abstract class AbstractDurationAttribute extends AbstractLongAttribute {
      *            the time unit to return the value in
      * @return the value of this attribute
      */
-    public long getPrimitive(AttributeMap attributes, TimeUnit unit) {
-        return convertTo(getPrimitive(attributes), unit);
+    public long getDuration(AttributeMap attributes, TimeUnit unit) {
+        return convertTo(getLong(attributes), unit);
     }
 
-    public long getPrimitive(AttributeMap attributes, TimeUnit unit, long defaultValue) {
-        long val = getPrimitive(attributes, 0);
+    public long getDuration(AttributeMap attributes, TimeUnit unit, long defaultValue) {
+        long val = getLong(attributes, 0);
         if (val == 0) {
             return defaultValue;
         } else {
@@ -55,12 +55,12 @@ public abstract class AbstractDurationAttribute extends AbstractLongAttribute {
         return value > 0;
     }
 
-    public AttributeMap setAttribute(AttributeMap attributes, Long duration, TimeUnit unit) {
+    public AttributeMap setDuration(AttributeMap attributes, Long duration, TimeUnit unit) {
         return setAttribute(attributes, duration.longValue(), unit);
     }
 
     public AttributeMap setAttribute(AttributeMap attributes, long duration, TimeUnit unit) {
-        return setAttribute(attributes, convertFrom(duration, unit));
+        return setLong(attributes, convertFrom(duration, unit));
     }
 
     /**

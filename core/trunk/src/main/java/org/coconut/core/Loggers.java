@@ -642,6 +642,7 @@ public final class Loggers {
          *
          */
         private static final long serialVersionUID = -4803581500251076928L;
+
         /** The level to log at. */
         private final int level;
 
@@ -676,5 +677,4 @@ public final class Loggers {
             }
         }
     }
-
 }

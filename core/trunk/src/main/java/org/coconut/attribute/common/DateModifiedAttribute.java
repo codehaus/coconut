@@ -14,13 +14,13 @@ import org.coconut.attribute.spi.AbstractLongAttribute;
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
-public final class DateLastModifiedAttribute extends AbstractLongAttribute {
+public final class DateModifiedAttribute extends AbstractLongAttribute {
 
     /** The default value of this attribute. */
     public static final long DEFAULT_VALUE = 0;
 
     /** The singleton instance of this attribute. */
-    public final static DateLastModifiedAttribute INSTANCE = new DateLastModifiedAttribute();
+    public final static DateModifiedAttribute INSTANCE = new DateModifiedAttribute();
 
     /** The name of this attribute. */
     public static final String NAME = "lastModified";
@@ -29,7 +29,7 @@ public final class DateLastModifiedAttribute extends AbstractLongAttribute {
     private static final long serialVersionUID = -2353351535602223603L;
 
     /** Creates a new SizeAttribute. */
-    private DateLastModifiedAttribute() {
+    private DateModifiedAttribute() {
         super(NAME, DEFAULT_VALUE);
     }
 
@@ -66,7 +66,7 @@ public final class DateLastModifiedAttribute extends AbstractLongAttribute {
      *         attribute map
      */
     public static long get(AttributeMap attributes) {
-        return INSTANCE.getPrimitive(attributes);
+        return INSTANCE.getLong(attributes);
     }
 
     /**
@@ -79,7 +79,7 @@ public final class DateLastModifiedAttribute extends AbstractLongAttribute {
      * @return the specified attribute map
      */
     public static AttributeMap set(AttributeMap attributes, long value) {
-        return INSTANCE.setAttribute(attributes, value);
+        return INSTANCE.setLong(attributes, value);
     }
 
     /**

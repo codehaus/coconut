@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck;
@@ -15,6 +15,7 @@ import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
+import org.coconut.cache.service.parallel.CacheParallelService;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.service.worker.CacheWorkerService;
@@ -27,6 +28,7 @@ import org.coconut.cache.tck.service.exceptionhandling.ExceptionHandlingSuite;
 import org.coconut.cache.tck.service.expiration.ExpirationSuite;
 import org.coconut.cache.tck.service.loading.LoadingSuite;
 import org.coconut.cache.tck.service.management.ManagementSuite;
+import org.coconut.cache.tck.service.parallel.ParallelSuite;
 import org.coconut.cache.tck.service.servicemanager.ServiceManagerSuite;
 import org.coconut.cache.tck.service.statistics.StatisticsSuite;
 import org.coconut.cache.tck.service.worker.WorkerSuite;
@@ -70,13 +72,13 @@ public class CacheTCKRunner extends Runner {
         }
     }
 
-    private CompositeRunner composite;
+    private final CompositeRunner composite;
 
     Class<? extends Cache> tt2;
 
     /**
      * Creates a new CacheTCKRunner testing the specified type of cache.
-     * 
+     *
      * @param klass
      *            the class to test
      * @throws Exception
@@ -109,7 +111,7 @@ public class CacheTCKRunner extends Runner {
 
     /**
      * Decides which tests to run for the configured cache test class
-     * 
+     *
      * @param runner
      * @throws InitializationError
      */
@@ -145,6 +147,9 @@ public class CacheTCKRunner extends Runner {
         }
         if (services.contains(CacheStatisticsService.class)) {
             runner.add(new ServiceSuite(StatisticsSuite.class));
+        }
+        if (services.contains(CacheParallelService.class)) {
+            runner.add(new ServiceSuite(ParallelSuite.class));
         }
         if (services.contains(CacheWorkerService.class)) {
             runner.add(new ServiceSuite(WorkerSuite.class));

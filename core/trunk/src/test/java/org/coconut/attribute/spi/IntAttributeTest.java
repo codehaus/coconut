@@ -57,17 +57,17 @@ public class IntAttributeTest {
         AttributeMap am10000 = Attributes.singleton(LONG_A, 10000);
         AttributeMap ammax = Attributes.singleton(LONG_A, Integer.MAX_VALUE);
 
-        assertEquals(100, LONG_A.getPrimitive(am));
-        assertEquals(-1, LONG_A.getPrimitive(am1));
-        assertEquals(10000, LONG_A.getPrimitive(am10000));
-        assertEquals(Integer.MAX_VALUE, LONG_A.getPrimitive(ammax));
+        assertEquals(100, LONG_A.getInt(am));
+        assertEquals(-1, LONG_A.getInt(am1));
+        assertEquals(10000, LONG_A.getInt(am10000));
+        assertEquals(Integer.MAX_VALUE, LONG_A.getInt(ammax));
 
-        assertEquals(10, LONG_A.getPrimitive(am, 10));
-        assertEquals(-1, LONG_A.getPrimitive(am1, 10));
-        assertEquals(10000, LONG_A.getPrimitive(am10000, 10));
-        assertEquals(Integer.MAX_VALUE, LONG_A.getPrimitive(ammax, 10));
+        assertEquals(10, LONG_A.getInt(am, 10));
+        assertEquals(-1, LONG_A.getInt(am1, 10));
+        assertEquals(10000, LONG_A.getInt(am10000, 10));
+        assertEquals(Integer.MAX_VALUE, LONG_A.getInt(ammax, 10));
 
-        assertEquals(-1, NON_NEGATIVE.getPrimitive(am, -1));
+        assertEquals(-1, NON_NEGATIVE.getInt(am, -1));
     }
 
     @Test
@@ -84,20 +84,20 @@ public class IntAttributeTest {
     @Test
     public void set() {
         AttributeMap am = new DefaultAttributeMap();
-        assertEquals(10, LONG_A.setAttribute(am, 10).get(LONG_A));
-        assertEquals(-10000, LONG_A.setAttribute(am, -10000).get(LONG_A));
+        assertEquals(10, LONG_A.setInt(am, 10).get(LONG_A));
+        assertEquals(-10000, LONG_A.setInt(am, -10000).get(LONG_A));
         assertEquals(10000, LONG_A.setValue(am, Integer.valueOf(10000)).get(LONG_A));
-        assertEquals(Integer.MAX_VALUE, LONG_A.setAttribute(am, Integer.MAX_VALUE).get(LONG_A));
+        assertEquals(Integer.MAX_VALUE, LONG_A.setInt(am, Integer.MAX_VALUE).get(LONG_A));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void setIAE() {
-        NON_NEGATIVE.setAttribute(new DefaultAttributeMap(), -1);
+        NON_NEGATIVE.setInt(new DefaultAttributeMap(), -1);
     }
 
     @Test(expected = NullPointerException.class)
     public void setNPE() {
-        LONG_A.setAttribute(null, 1);
+        LONG_A.setInt(null, 1);
     }
 
     @Test

@@ -14,7 +14,7 @@ package org.coconut.core;
  * href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/logging/package-summary.html">
  * Log4j </a> or <a
  * href="http://java.sun.com/j2se/1.5.0/docs/api/java/util/logging/package-summary.html">
- * commons logging </a>. Perhaps i'll just use jdk logging per default ...
+ * commons logging </a>.
  *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen </a>
  * @version $Id$

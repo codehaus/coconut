@@ -16,7 +16,7 @@ import org.junit.Test;
 public class Hits extends AbstractCacheTCKTest {
     static class MyLoader extends AbstractCacheLoader<Integer, String> {
         public String load(Integer key, AttributeMap attributes) throws Exception {
-            HitsAttribute.INSTANCE.setAttribute(attributes, key + 1);
+            HitsAttribute.INSTANCE.setLong(attributes, key + 1);
             return "" + (char) (key + 64);
         }
     }

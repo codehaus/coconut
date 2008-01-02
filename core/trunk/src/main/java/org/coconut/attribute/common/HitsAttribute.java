@@ -9,7 +9,7 @@ import org.coconut.attribute.spi.AbstractLongAttribute;
 /**
  * The <tt>Hits</tt> attribute indicates the number of hits for a cache element. The
  * mapped value must be of a type <tt>long</tt> between 0 and {@link Long#MAX_VALUE}.
- *
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -55,7 +55,7 @@ public final class HitsAttribute extends AbstractLongAttribute {
      * Returns the value of this attribute in the specified attribute map, or
      * DEFAULT_VALUE if the attribute is not mapped to any value in the specified
      * attribute map.
-     *
+     * 
      * @param attributes
      *            the attribute map to return the value from
      * @return the value of this attribute in the specified attribute map, or
@@ -63,12 +63,12 @@ public final class HitsAttribute extends AbstractLongAttribute {
      *         attribute map
      */
     public static long get(AttributeMap attributes) {
-        return INSTANCE.getPrimitive(attributes);
+        return INSTANCE.getLong(attributes);
     }
 
     /**
      * Sets the value of this attribute in the specified attribute map.
-     *
+     * 
      * @param attributes
      *            the attribute map to set set specified value in
      * @param value
@@ -76,13 +76,13 @@ public final class HitsAttribute extends AbstractLongAttribute {
      * @return the specified attribute map
      */
     public static AttributeMap set(AttributeMap attributes, long value) {
-        return INSTANCE.setAttribute(attributes, value);
+        return INSTANCE.setLong(attributes, value);
     }
 
     /**
      * Returns an AttributeMap containing only this attribute mapping to the specified
      * value.
-     *
+     * 
      * @param value
      *            the value to map to
      * @return an AttributeMap containing only this attribute mapping to the specified

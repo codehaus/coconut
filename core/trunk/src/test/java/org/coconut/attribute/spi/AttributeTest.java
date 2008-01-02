@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.attribute.spi;
@@ -13,6 +13,10 @@ import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
 import org.coconut.attribute.DefaultAttributeMap;
+import org.coconut.operations.Predicates;
+import org.coconut.operations.StringPredicates;
+import org.coconut.operations.Ops.Predicate;
+import org.coconut.test.TestUtil;
 import org.junit.Test;
 
 public class AttributeTest {
@@ -139,7 +143,7 @@ public class AttributeTest {
     public void unSet() {
         AttributeMap am1 = new DefaultAttributeMap();
         assertEquals(0, am1.size());
-        ATR.unSet(am1);
+        ATR.remove(am1);
         assertEquals(0, am1.size());
     }
 
@@ -153,6 +157,32 @@ public class AttributeTest {
 
     protected AttributeMap newMap() {
         return new DefaultAttributeMap();
+    }
+
+    @Test
+    public void map() {
+        TestUtil.assertIsSerializable(ATR.map());
+        AttributeMap am = Attributes.singleton(ATR, "abc");
+        assertEquals("abc", ATR.map().map(am));
+        assertEquals("default", ATR.map().map(Attributes.EMPTY_ATTRIBUTE_MAP));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void mapper() {
+        ATR.map().map(null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void filterNPE() {
+        ATR.filter(null);
+    }
+
+    @Test
+    public void filter() {
+        Predicate<AttributeMap> filter = ATR.filter(StringPredicates.startsWith("A"));
+        assertTrue(filter.evaluate(Attributes.singleton(ATR, "Adf")));
+        assertFalse(filter.evaluate(Attributes.singleton(ATR, "Bdf")));
+        assertFalse(filter.evaluate(Attributes.singleton(ATR, "adf")));
     }
 
     static class DefaultAttribute extends AbstractAttribute<String> {

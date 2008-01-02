@@ -12,7 +12,7 @@ import org.coconut.attribute.spi.AbstractDoubleAttribute;
  * calculating an element. The mapped value must be of a type <tt>double</tt> and can be
  * any value except {@link Double#NaN}, {@link Double#NEGATIVE_INFINITY} or
  * {@link Double#POSITIVE_INFINITY}
- *
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -44,7 +44,7 @@ public final class CostAttribute extends AbstractDoubleAttribute {
      * Returns the value of this attribute in the specified attribute map, or
      * DEFAULT_VALUE if the attribute is not mapped to any value in the specified
      * attribute map.
-     *
+     * 
      * @param attributes
      *            the attribute map to return the value from
      * @return the value of this attribute in the specified attribute map, or
@@ -52,12 +52,12 @@ public final class CostAttribute extends AbstractDoubleAttribute {
      *         attribute map
      */
     public static double getCost(AttributeMap attributes) {
-        return INSTANCE.getPrimitive(attributes);
+        return INSTANCE.getDouble(attributes);
     }
 
     /**
      * Sets the value of this attribute in the specified attribute map.
-     *
+     * 
      * @param attributes
      *            the attribute map to set set specified value in
      * @param value
@@ -65,13 +65,13 @@ public final class CostAttribute extends AbstractDoubleAttribute {
      * @return the specified attribute map
      */
     public static AttributeMap setCost(AttributeMap attributes, double value) {
-        return INSTANCE.setAttribute(attributes, value);
+        return INSTANCE.setDouble(attributes, value);
     }
 
     /**
      * Returns an AttributeMap containing only this attribute mapping to the specified
      * value.
-     *
+     * 
      * @param value
      *            the value to map to
      * @return an AttributeMap containing only this attribute mapping to the specified

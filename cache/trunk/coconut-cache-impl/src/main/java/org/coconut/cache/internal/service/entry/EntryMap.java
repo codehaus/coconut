@@ -779,7 +779,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
         /** {@inheritDoc} */
         @Override
         public Iterator<K> iterator() {
-            map.ics.checkRunning("iterator");
+            map.ics.checkRunning("iterator", false);
             return new KeyIterator<K, V>(cache, map);
         }
 
@@ -795,6 +795,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             if (o == null) {
                 throw new NullPointerException("o is null");
             }
+            map.ics.checkRunning("remove");
             return cache.remove(o) != null;
         }
 
@@ -814,6 +815,12 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
                 return a;
             }
             return super.toArray(a);
+        }
+
+        @Override
+        public boolean removeAll(Collection<?> c) {
+            map.ics.checkRunning("remove");
+            return super.removeAll(c);
         }
     }
 
@@ -910,6 +917,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             if (c == null) {
                 throw new NullPointerException("c is null");
             }
+            map.ics.checkRunning("remove");
             return super.removeAll(c);
         }
 
@@ -919,6 +927,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             if (o == null) {
                 throw new NullPointerException("o is null");
             }
+            map.ics.checkRunning("remove");
             return super.remove(o);
         }
 
@@ -955,7 +964,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
         /** {@inheritDoc} */
         @Override
         public Iterator<V> iterator() {
-            map.ics.checkRunning("iterator");
+            map.ics.checkRunning("iterator", false);
             return new ValueIterator<K, V>(cache, map);
         }
 

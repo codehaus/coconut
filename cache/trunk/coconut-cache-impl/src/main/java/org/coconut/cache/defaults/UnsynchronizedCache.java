@@ -34,6 +34,7 @@ import org.coconut.cache.internal.service.listener.DefaultCacheListener;
 import org.coconut.cache.internal.service.listener.InternalCacheListener;
 import org.coconut.cache.internal.service.loading.InternalCacheLoadingService;
 import org.coconut.cache.internal.service.loading.UnsynchronizedCacheLoaderService;
+import org.coconut.cache.internal.service.parallel.UnsynchronizedParallelCacheService;
 import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
 import org.coconut.cache.internal.service.servicemanager.ServiceComposer;
 import org.coconut.cache.internal.service.servicemanager.UnsynchronizedCacheServiceManager;
@@ -42,6 +43,7 @@ import org.coconut.cache.service.event.CacheEventService;
 import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
+import org.coconut.cache.service.parallel.CacheParallelService;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.statistics.CacheStatisticsService;
 import org.coconut.cache.spi.CacheServiceSupport;
@@ -65,8 +67,8 @@ import org.coconut.internal.util.CollectionUtils;
  */
 @NotThreadSafe
 @CacheServiceSupport( { CacheEventService.class, CacheEvictionService.class,
-        CacheExpirationService.class, CacheLoadingService.class, CacheServiceManagerService.class,
-        CacheStatisticsService.class })
+        CacheExpirationService.class, CacheLoadingService.class, CacheParallelService.class,
+        CacheServiceManagerService.class, CacheStatisticsService.class })
 public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
 
     /** The default services for this cache. */
@@ -74,8 +76,8 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
             DefaultCacheStatisticsService.class, DefaultCacheListener.class,
             UnsynchronizedCacheEvictionService.class, DefaultCacheExpirationService.class,
             UnsynchronizedCacheLoaderService.class, DefaultCacheEventService.class,
-            UnsynchronizedCacheServiceManager.class, UnsynchronizedEntryFactoryService.class,
-            DefaultCacheExceptionService.class);
+            UnsynchronizedParallelCacheService.class, UnsynchronizedCacheServiceManager.class,
+            UnsynchronizedEntryFactoryService.class, DefaultCacheExceptionService.class);
 
     private final InternalCacheEntryService entryService;
 
@@ -111,6 +113,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
     public UnsynchronizedCache(CacheConfiguration<K, V> conf) {
         super(conf);
         Support s = new Support();
+        map = new EntryMap<K, V>(s, false);
         ServiceComposer sc = ServiceComposer.compose(this, s, conf, DEFAULTS);
         serviceManager = sc.getInternalService(InternalCacheServiceManager.class);
         listener = sc.getInternalService(InternalCacheListener.class);
@@ -118,7 +121,6 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
         loadingService = sc.getInternalService(InternalCacheLoadingService.class);
         evictionService = sc.getInternalService(InternalCacheEvictionService.class);
         entryService = sc.getInternalService(AbstractCacheEntryFactoryService.class);
-        map = new EntryMap<K, V>(s, false);
     }
 
     /** {@inheritDoc} */
@@ -260,7 +262,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
                 evictionService.remove(entry.getPolicyIndex());
             } else {
                 // reload if needed??
-                entry.setHits(entry.getHits()+1);
+                entry.setHits(entry.getHits() + 1);
                 entry.setLastAccessTime(entryService.getAccessTimeStamp(entry));
                 evictionService.touch(entry.getPolicyIndex());
             }
@@ -310,7 +312,7 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
                     result.put(key, null);
                 } else {
                     // reload if needed??
-                    entries[i].setHits(entries[i].getHits()+1);
+                    entries[i].setHits(entries[i].getHits() + 1);
                     entries[i].setLastAccessTime(entryService.getAccessTimeStamp(entries[i]));
                     evictionService.touch(entries[i].getPolicyIndex());
                     isHit[i] = true;
@@ -582,6 +584,10 @@ public class UnsynchronizedCache<K, V> extends AbstractCache<K, V> {
             listener.afterTrimCache(UnsynchronizedCache.this, started, l, size, newSize, volume,
                     newVolume);
 
+        }
+
+        public EntryMap<K, V> getEntryMap() {
+            return map;
         }
     }
 }

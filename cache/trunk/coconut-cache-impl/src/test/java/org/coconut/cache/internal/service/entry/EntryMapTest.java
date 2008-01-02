@@ -41,7 +41,7 @@ public class EntryMapTest {
         final Cache c = context.mock(Cache.class);
         context.checking(new Expectations() {
             {
-                allowing(ics).checkRunning("iterator");
+                allowing(ics).checkRunning("iterator", false);
             }
         });
         EntryMap s = new EntryMap(ics, false);

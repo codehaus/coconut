@@ -27,6 +27,7 @@ import org.coconut.cache.service.eviction.CacheEvictionService;
 import org.coconut.cache.service.expiration.CacheExpirationService;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.management.CacheManagementService;
+import org.coconut.cache.service.parallel.CacheParallelService;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.cache.service.statistics.CacheHitStat;
@@ -278,6 +279,10 @@ public class AbstractCacheTCKTest extends Assert {
 
     protected final CacheLoadingService<Integer, String> loading() {
         return c.getService(CacheLoadingService.class);
+    }
+
+    protected final CacheParallelService<Integer, String> parallel() {
+        return c.getService(CacheParallelService.class);
     }
 
     protected final CacheManagementService management() {

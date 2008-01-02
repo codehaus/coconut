@@ -83,7 +83,7 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
      *            the attribute map to retrieve the value of this attribute from
      * @return the value of this attribute
      */
-    public long getPrimitive(AttributeMap attributes) {
+    public long getLong(AttributeMap attributes) {
         return attributes.getLong(this, defaultLongValue);
     }
 
@@ -98,7 +98,7 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
      *            attribute map
      * @return the value of this attribute
      */
-    public long getPrimitive(AttributeMap attributes, long defaultValue) {
+    public long getLong(AttributeMap attributes, long defaultValue) {
         return attributes.getLong(this, defaultValue);
     }
 
@@ -109,7 +109,8 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
     }
 
     /**
-     * Analogous to {@link #isValid(Long)} except taking a primitive long as parameter.
+     * Analogous to {@link Attribute#isValid(Object)} except taking a primitive long as
+     * parameter.
      *
      * @param value
      *            the value to check
@@ -130,10 +131,6 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
         return mapperToLong;
     }
 
-    protected Predicate<AttributeMap> filterLong(LongPredicate p) {
-        return LongPredicates.mapAndEvaluate(mapToLong(), p);
-    }
-
     /**
      * Analogous to {@link #setValue(AttributeMap, Long)} except taking a primitive long
      * as parameter.
@@ -147,13 +144,17 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
      *             if the specified value is not valid accordingly to
      *             {@link #checkValid(long)}
      */
-    public AttributeMap setAttribute(AttributeMap attributes, long value) {
+    public AttributeMap setLong(AttributeMap attributes, long value) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
         }
         checkValid(value);
         attributes.putLong(this, value);
         return attributes;
+    }
+
+    protected Predicate<AttributeMap> filterLong(LongPredicate p) {
+        return LongPredicates.mapAndEvaluate(mapToLong(), p);
     }
 
     /**
@@ -179,7 +180,7 @@ public abstract class AbstractLongAttribute extends AbstractAttribute<Long> {
 
         /** {@inheritDoc} */
         public long map(AttributeMap t) {
-            return getPrimitive(t);
+            return getLong(t);
         }
     }
 }

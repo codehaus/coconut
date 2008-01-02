@@ -60,17 +60,17 @@ public class LongAttributeTest {
         AttributeMap am10000 = Attributes.singleton(LONG_A, 10000L);
         AttributeMap ammax = Attributes.singleton(LONG_A, Long.MAX_VALUE);
 
-        assertEquals(100L, LONG_A.getPrimitive(am));
-        assertEquals(-1l, LONG_A.getPrimitive(am1));
-        assertEquals(10000l, LONG_A.getPrimitive(am10000));
-        assertEquals(Long.MAX_VALUE, LONG_A.getPrimitive(ammax));
+        assertEquals(100L, LONG_A.getLong(am));
+        assertEquals(-1l, LONG_A.getLong(am1));
+        assertEquals(10000l, LONG_A.getLong(am10000));
+        assertEquals(Long.MAX_VALUE, LONG_A.getLong(ammax));
 
-        assertEquals(10L, LONG_A.getPrimitive(am, 10L));
-        assertEquals(-1l, LONG_A.getPrimitive(am1, 10));
-        assertEquals(10000l, LONG_A.getPrimitive(am10000, 10));
-        assertEquals(Long.MAX_VALUE, LONG_A.getPrimitive(ammax, 10));
+        assertEquals(10L, LONG_A.getLong(am, 10L));
+        assertEquals(-1l, LONG_A.getLong(am1, 10));
+        assertEquals(10000l, LONG_A.getLong(am10000, 10));
+        assertEquals(Long.MAX_VALUE, LONG_A.getLong(ammax, 10));
 
-        assertEquals(-1l, NON_NEGATIVE.getPrimitive(am, -1));
+        assertEquals(-1l, NON_NEGATIVE.getLong(am, -1));
     }
 
     @Test
@@ -87,20 +87,20 @@ public class LongAttributeTest {
     @Test
     public void set() {
         AttributeMap am = new DefaultAttributeMap();
-        assertEquals(10l, LONG_A.setAttribute(am, 10l).get(LONG_A));
-        assertEquals(-10000l, LONG_A.setAttribute(am, -10000l).get(LONG_A));
+        assertEquals(10l, LONG_A.setLong(am, 10l).get(LONG_A));
+        assertEquals(-10000l, LONG_A.setLong(am, -10000l).get(LONG_A));
         assertEquals(10000l, LONG_A.setValue(am, Long.valueOf(10000)).get(LONG_A));
-        assertEquals(Long.MAX_VALUE, LONG_A.setAttribute(am, Long.MAX_VALUE).get(LONG_A));
+        assertEquals(Long.MAX_VALUE, LONG_A.setLong(am, Long.MAX_VALUE).get(LONG_A));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void setIAE() {
-        NON_NEGATIVE.setAttribute(new DefaultAttributeMap(), -1L);
+        NON_NEGATIVE.setLong(new DefaultAttributeMap(), -1L);
     }
 
     @Test(expected = NullPointerException.class)
     public void setNPE() {
-        LONG_A.setAttribute(null, 1L);
+        LONG_A.setLong(null, 1L);
     }
 
     @Test

@@ -13,7 +13,7 @@ import org.coconut.attribute.spi.AbstractDurationAttribute;
  * refreshed from a cacheloader. The time-to-refresh value should be a long and should be
  * measured in nano seconds. Use {@link java.util.concurrent.TimeUnit} to convert between
  * different time units.
- *
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -51,7 +51,7 @@ public final class TimeToRefreshAttribute extends AbstractDurationAttribute {
      * Returns the value of this attribute in the specified attribute map, or
      * DEFAULT_VALUE if the attribute is not mapped to any value in the specified
      * attribute map.
-     *
+     * 
      * @param attributes
      *            the attribute map to return the value from
      * @return the value of this attribute in the specified attribute map, or
@@ -59,12 +59,12 @@ public final class TimeToRefreshAttribute extends AbstractDurationAttribute {
      *         attribute map
      */
     public static long get(AttributeMap attributes) {
-        return INSTANCE.getPrimitive(attributes);
+        return INSTANCE.getLong(attributes);
     }
 
     /**
      * Sets the value of this attribute in the specified attribute map.
-     *
+     * 
      * @param attributes
      *            the attribute map to set set specified value in
      * @param duration
@@ -80,7 +80,7 @@ public final class TimeToRefreshAttribute extends AbstractDurationAttribute {
     /**
      * Returns an AttributeMap containing only this attribute mapping to the specified
      * value.
-     *
+     * 
      * @param value
      *            the value to map to
      * @param unit

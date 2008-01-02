@@ -35,7 +35,12 @@ public final class Attributes {
 
     /**
      * Returns an immutable AttributeMap containing only the specified attribute mapping
-     * to the specified value.
+     * to the specified value. Attempts to modify the returned attribute map, whether
+     * direct or via its collection views, result in an
+     * <tt>UnsupportedOperationException</tt>.
+     * <p>
+     * The returned attribute map will be serializable if the specified attribute and its
+     * value are serializable.
      *
      * @param attribute
      *            the attribute to map from
@@ -52,7 +57,8 @@ public final class Attributes {
     }
 
     /**
-     * Creates a new {@link Map} where all the specified keys maps to {@link #EMPTY_ATTRIBUTE_MAP}.
+     * Creates a new {@link Map} where all the specified keys maps to
+     * {@link #EMPTY_ATTRIBUTE_MAP}.
      *
      * @param <K>
      *            the type of keys
@@ -87,10 +93,10 @@ public final class Attributes {
 
     /**
      * Returns an unmodifiable view of the specified attribute map. This method allows
-     * modules to provide users with "read-only" access to internal maps. Query operations
-     * on the returned attribute map "read through" to the specified attribute map, and
-     * attempts to modify the returned attribute map, whether direct or via its collection
-     * views, result in an <tt>UnsupportedOperationException</tt>.
+     * modules to provide users with "read-only" access to internal attribute maps. Query
+     * operations on the returned attribute map "read through" to the specified attribute
+     * map, and attempts to modify the returned attribute map, whether direct or via its
+     * collection views, result in an <tt>UnsupportedOperationException</tt>.
      * <p>
      * The returned attribute map will be serializable if the specified map is
      * serializable.

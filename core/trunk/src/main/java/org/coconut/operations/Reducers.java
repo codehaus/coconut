@@ -23,42 +23,60 @@ import org.coconut.operations.Ops.Reducer;
  */
 public final class Reducers {
 
-    /** A reducer that adds two double elements. */
+    /** A reducer that adds two double elements. The Reducer is serializable */
     public static final DoubleReducer DOUBLE_ADDER_REDUCER = new DoubleAdder();
 
-    /** A reducer returning the maximum of two double elements, using natural comparator. */
+    /**
+     * A reducer returning the maximum of two double elements, using natural comparator.
+     * The Reducer is serializable
+     */
     public static final DoubleReducer DOUBLE_MAX_REDUCER = new NaturalDoubleMaxReducer();
 
-    /** A reducer returning the minimum of two double elements, using natural comparator. */
+    /**
+     * A reducer returning the minimum of two double elements, using natural comparator.
+     * The Reducer is serializable
+     */
     public static final DoubleReducer DOUBLE_MIN_REDUCER = new NaturalDoubleMinReducer();
 
-    /** A reducer that adds two int elements. */
+    /** A reducer that adds two int elements. The Reducer is serializable */
     public static final IntReducer INT_ADDER_REDUCER = new IntAdder();
 
-    /** A reducer returning the maximum of two int elements, using natural comparator. */
+    /**
+     * A reducer returning the maximum of two int elements, using natural comparator. The
+     * Reducer is serializable
+     */
     public static final IntReducer INT_MAX_REDUCER = new NaturalIntMaxReducer();
 
-    /** A reducer returning the minimum of two int elements, using natural comparator. */
+    /**
+     * A reducer returning the minimum of two int elements, using natural comparator. The
+     * Reducer is serializable
+     */
     public static final IntReducer INT_MIN_REDUCER = new NaturalIntMinReducer();
 
-    /** A reducer that adds two double elements. */
+    /** A reducer that adds two double elements. The Reducer is serializable */
     public static final LongReducer LONG_ADDER_REDUCER = new LongAdder();
 
-    /** A reducer returning the maximum of two long elements, using natural comparator. */
+    /**
+     * A reducer returning the maximum of two long elements, using natural comparator. The
+     * Reducer is serializable
+     */
     public static final LongReducer LONG_MAX_REDUCER = new NaturalLongMaxReducer();
 
-    /** A reducer returning the minimum of two long elements, using natural comparator. */
+    /**
+     * A reducer returning the minimum of two long elements, using natural comparator. The
+     * Reducer is serializable
+     */
     public static final LongReducer LONG_MIN_REDUCER = new NaturalLongMinReducer();
 
     /**
      * A reducer returning the maximum of two Comparable elements, treating null as less
-     * than any non-null element.
+     * than any non-null element. The Reducer is serializable
      */
     public static final Reducer MAX_REDUCER = new NaturalMaxReducer();
 
     /**
      * A reducer returning the minimum of two Comparable elements, treating null as less
-     * than any non-null element.
+     * than any non-null element. The Reducer is serializable
      */
     public static final Reducer MIN_REDUCER = new NaturalMinReducer();
 

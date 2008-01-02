@@ -81,7 +81,7 @@ public abstract class AbstractIntAttribute extends AbstractAttribute<Integer> {
      *            the attribute map to retrieve the value of this attribute from
      * @return the value of this attribute
      */
-    public int getPrimitive(AttributeMap attributes) {
+    public int getInt(AttributeMap attributes) {
         return attributes.getInt(this, defaultIntValue);
     }
 
@@ -96,12 +96,12 @@ public abstract class AbstractIntAttribute extends AbstractAttribute<Integer> {
      *            attribute map
      * @return the value of this attribute
      */
-    public int getPrimitive(AttributeMap attributes, int defaultValue) {
+    public int getInt(AttributeMap attributes, int defaultValue) {
         return attributes.getInt(this, defaultValue);
     }
 
     /**
-     * Analogous to {@link #isValid(Integer)} except taking a primitive Integer as
+     * Analogous to {@link Attribute#isValid(Object)} except taking a primitive Integer as
      * parameter.
      *
      * @param value
@@ -142,7 +142,7 @@ public abstract class AbstractIntAttribute extends AbstractAttribute<Integer> {
      *             if the specified value is not valid accordingly to
      *             {@link #checkValid(Integer)}
      */
-    public AttributeMap setAttribute(AttributeMap attributes, int value) {
+    public AttributeMap setInt(AttributeMap attributes, int value) {
         if (attributes == null) {
             throw new NullPointerException("attributes is null");
         }
@@ -175,7 +175,7 @@ public abstract class AbstractIntAttribute extends AbstractAttribute<Integer> {
 
         /** {@inheritDoc} */
         public int map(AttributeMap t) {
-            return getPrimitive(t);
+            return getInt(t);
         }
     }
 }

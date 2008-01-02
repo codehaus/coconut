@@ -8,6 +8,9 @@ import java.io.Serializable;
 import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
+import org.coconut.operations.Predicates;
+import org.coconut.operations.Ops.Mapper;
+import org.coconut.operations.Ops.Predicate;
 
 /**
  * An abstract implementation of {@link Attribute}.
@@ -24,6 +27,9 @@ public abstract class AbstractAttribute<T> implements Attribute<T>, Serializable
 
     /** The default value of this attribute. */
     private final transient T defaultValue;
+
+    /** A Mapper that takes an AttributeMap and returns the value of this attribute. */
+    private final transient Mapper<AttributeMap, T> mapper = new AttributeMapToT();
 
     /** The name of this attribute. */
     private final transient String name;
@@ -95,8 +101,23 @@ public abstract class AbstractAttribute<T> implements Attribute<T>, Serializable
 
     /** {@inheritDoc} */
     public boolean isValid(T value) {
-        // all values are accepted by default.
-        return true;
+        return true; // all values are accepted by default.
+    }
+
+    /**
+     * Returns a mapper that extracts the value of this attribute from an
+     * {@link AttributeMap}, or returns {@link #getDefaultValue()} if this attribute is
+     * not present.
+     *
+     * @return a mapper from an AttributeMap to the value of this attribute
+     */
+    public Mapper<AttributeMap, T> map() {
+        return mapper;
+    }
+
+    /** {@inheritDoc} */
+    public void remove(AttributeMap attributes) {
+        attributes.remove(this);
     }
 
     /** {@inheritDoc} */
@@ -129,8 +150,21 @@ public abstract class AbstractAttribute<T> implements Attribute<T>, Serializable
         return name;
     }
 
-    /** {@inheritDoc} */
-    public void unSet(AttributeMap attributes) {
-        attributes.remove(this);
+    protected Predicate<AttributeMap> filter(Predicate<? super T> p) {
+        return Predicates.mapAndEvaluate(map(), p);
+    }
+
+    /**
+     * A MapperToLong that maps from an attribute map to the value of this attribute.
+     */
+    class AttributeMapToT implements Mapper<AttributeMap, T>, Serializable {
+
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -953844729549732090L;
+
+        /** {@inheritDoc} */
+        public T map(AttributeMap t) {
+            return getValue(t);
+        }
     }
 }

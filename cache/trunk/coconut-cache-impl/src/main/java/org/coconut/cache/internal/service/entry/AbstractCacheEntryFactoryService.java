@@ -10,7 +10,7 @@ import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.DefaultAttributeMap;
 import org.coconut.attribute.common.CostAttribute;
 import org.coconut.attribute.common.DateCreatedAttribute;
-import org.coconut.attribute.common.DateLastModifiedAttribute;
+import org.coconut.attribute.common.DateModifiedAttribute;
 import org.coconut.attribute.common.HitsAttribute;
 import org.coconut.attribute.common.SizeAttribute;
 import org.coconut.attribute.common.TimeToLiveAttribute;
@@ -125,7 +125,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> implements
     }
 
     long getCreationTime(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
-        long creationTime = DateCreatedAttribute.INSTANCE.getPrimitive(attributes);
+        long creationTime = DateCreatedAttribute.INSTANCE.getLong(attributes);
         final long time;
         if (creationTime > 0) {
             time = creationTime;
@@ -142,7 +142,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> implements
     }
 
     long getHits(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
-        long hits = HitsAttribute.INSTANCE.getPrimitive(attributes);
+        long hits = HitsAttribute.INSTANCE.getLong(attributes);
         if (!HitsAttribute.INSTANCE.isValid(hits)) {
             illegalAttribute(HitsAttribute.INSTANCE, key, hits, HitsAttribute.DEFAULT_VALUE);
             hits = HitsAttribute.DEFAULT_VALUE;
@@ -151,14 +151,14 @@ public abstract class AbstractCacheEntryFactoryService<K, V> implements
     }
 
     long getLastModified(K key, V value, AttributeMap attributes, CacheEntry<K, V> existing) {
-        long lastModified = DateLastModifiedAttribute.INSTANCE.getPrimitive(attributes);
+        long lastModified = DateModifiedAttribute.INSTANCE.getLong(attributes);
         if (lastModified == 0) {
             lastModified = clock.timestamp();
         }
-        if (!DateLastModifiedAttribute.INSTANCE.isValid(lastModified)) {
+        if (!DateModifiedAttribute.INSTANCE.isValid(lastModified)) {
             long illegal = lastModified;
             lastModified = clock.timestamp();
-            illegalAttribute(DateLastModifiedAttribute.INSTANCE, key, illegal, lastModified);
+            illegalAttribute(DateModifiedAttribute.INSTANCE, key, illegal, lastModified);
         }
         return lastModified;
     }
@@ -187,7 +187,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> implements
 
     long getTimeToLive(long expirationTimeNanos, K key, V value, AttributeMap attributes,
             CacheEntry<K, V> existing) {
-        long nanos = TimeToLiveAttribute.INSTANCE.getPrimitive(attributes, TimeUnit.NANOSECONDS,
+        long nanos = TimeToLiveAttribute.INSTANCE.getDuration(attributes, TimeUnit.NANOSECONDS,
                 expirationTimeNanos);
         if (!TimeToLiveAttribute.INSTANCE.isValid(nanos)) {
             illegalAttribute(TimeToLiveAttribute.INSTANCE, key, nanos, expirationTimeNanos);
@@ -199,7 +199,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> implements
 
     long getTimeToRefresh(long refreshTimeNanos, K key, V value, AttributeMap attributes,
             CacheEntry<K, V> existing) {
-        long nanos = TimeToRefreshAttribute.INSTANCE.getPrimitive(attributes, TimeUnit.NANOSECONDS,
+        long nanos = TimeToRefreshAttribute.INSTANCE.getDuration(attributes, TimeUnit.NANOSECONDS,
                 refreshTimeNanos);
 
         if (!TimeToRefreshAttribute.INSTANCE.isValid(nanos)) {
@@ -212,7 +212,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> implements
 
     protected boolean isCacheAttribute(Attribute a) {
         return a == CostAttribute.INSTANCE || a == DateCreatedAttribute.INSTANCE
-                || a == DateLastModifiedAttribute.INSTANCE || a == HitsAttribute.INSTANCE
+                || a == DateModifiedAttribute.INSTANCE || a == HitsAttribute.INSTANCE
                 || a == SizeAttribute.INSTANCE || a == TimeToLiveAttribute.INSTANCE
                 || a == TimeToRefreshAttribute.INSTANCE;
     }

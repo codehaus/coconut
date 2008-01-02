@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.management;
@@ -10,9 +10,11 @@ import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.coconut.internal.util.ArrayUtils;
+
 /**
  * Various management utility functions.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -29,7 +31,7 @@ public final class Managements {
      * The map returned from the {@link ManagedVisitor#traverse(Object)} method will
      * contain a mapping from any group that failed to unregister to the cause of the
      * failure. If all groups where succesfully unregistered the returned map is empty.
-     * 
+     *
      * @return a ManagedVisitor that will unregister a ManagedGroup and all its children.
      */
     public static ManagedVisitor<Map<ManagedGroup, Exception>> unregister() {
@@ -97,7 +99,7 @@ public final class Managements {
             }
             this.server = server;
             this.domain = domain;
-            this.levels = levels.clone();
+            this.levels = ArrayUtils.copyOf(levels);
         }
 
         /** {@inheritDoc} */

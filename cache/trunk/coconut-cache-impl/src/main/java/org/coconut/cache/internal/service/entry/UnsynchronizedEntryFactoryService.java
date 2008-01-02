@@ -7,9 +7,11 @@ import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
 import org.coconut.attribute.DefaultAttributeMap;
+import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.core.Clock;
+import org.coconut.operations.Ops.Reducer;
 
 /**
  * This class creates unsynchronized instances of {@link AbstractCacheEntry}.
@@ -79,6 +81,19 @@ public class UnsynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryF
         if (!isCacheable(newEntry)) {
             return null;
         }
+//        if (false) {
+//            Reducer<CacheEntry<K, V>> red = null;
+//            Object result = red.combine(existing, newEntry);
+//            if (result == newEntry) {
+//
+//            } else if (result == existing) {
+//
+//            } else if (result == null) {
+//
+//            } else {
+//                // warning
+//            }
+//        }
         if (existing != null) {
             newEntry.setPolicyIndex(existing.getPolicyIndex());
         }
