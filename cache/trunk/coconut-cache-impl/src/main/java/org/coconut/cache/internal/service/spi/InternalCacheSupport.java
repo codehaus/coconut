@@ -6,8 +6,6 @@ package org.coconut.cache.internal.service.spi;
 import java.util.Map;
 
 import org.coconut.attribute.AttributeMap;
-import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.entry.EntryMap;
 import org.coconut.cache.internal.service.eviction.EvictionSupport;
 import org.coconut.cache.internal.service.loading.LoadSupport;
 
@@ -26,6 +24,4 @@ public interface InternalCacheSupport<K, V> extends LoadSupport<K, V>, EvictionS
     void checkRunning(String operation);
 
     void checkRunning(String operation, boolean shutdown);
-
-    EntryMap<K, V> getEntryMap();
 }

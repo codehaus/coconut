@@ -24,6 +24,7 @@ import org.coconut.cache.internal.service.entry.AbstractCacheEntryFactoryService
 import org.coconut.cache.internal.service.entry.EntryMap;
 import org.coconut.cache.internal.service.entry.InternalCacheEntryService;
 import org.coconut.cache.internal.service.entry.SynchronizedEntryFactoryService;
+import org.coconut.cache.internal.service.entry.SynchronizedEntryMap;
 import org.coconut.cache.internal.service.event.DefaultCacheEventService;
 import org.coconut.cache.internal.service.eviction.InternalCacheEvictionService;
 import org.coconut.cache.internal.service.eviction.SynchronizedCacheEvictionService;
@@ -80,7 +81,8 @@ import org.coconut.internal.util.CollectionUtils;
 @ThreadSafe
 @CacheServiceSupport( { CacheEventService.class, CacheEvictionService.class,
         CacheExpirationService.class, CacheLoadingService.class, CacheManagementService.class,
-        /*CacheParallelService.class,*/ CacheServiceManagerService.class, CacheStatisticsService.class, CacheWorkerService.class })
+        /* CacheParallelService.class, */CacheServiceManagerService.class,
+        CacheStatisticsService.class, CacheWorkerService.class })
 public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
 
     private final static Collection<Class<?>> DEFAULTS = Arrays.asList(
@@ -89,7 +91,8 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
             SynchronizedCacheLoaderService.class, DefaultCacheManagementService.class,
             DefaultCacheEventService.class, SynchronizedCacheWorkerService.class,
             SynchronizedCacheServiceManager.class, SynchronizedEntryFactoryService.class,
-          /*  SynchronizedParallelCacheService.class,*/
+            /* SynchronizedParallelCacheService.class, */
+            SynchronizedEntryMap.class,
             DefaultCacheExceptionService.class);
 
     private final InternalCacheEntryService entryService;
@@ -125,14 +128,13 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
     @SuppressWarnings("unchecked")
     public SynchronizedCache(CacheConfiguration<K, V> conf) {
         super(conf);
-        Support s = new Support();
-        map = new EntryMap<K, V>(s, true);
-        ServiceComposer sc = ServiceComposer.compose(this, s, conf, DEFAULTS);
+        ServiceComposer sc = ServiceComposer.compose(this, new Support(), conf, DEFAULTS);
         serviceManager = sc.getInternalService(InternalCacheServiceManager.class);
         listener = sc.getInternalService(InternalCacheListener.class);
         expirationService = sc.getInternalService(DefaultCacheExpirationService.class);
         loadingService = sc.getInternalService(InternalCacheLoadingService.class);
         evictionService = sc.getInternalService(InternalCacheEvictionService.class);
+        map = sc.getInternalService(SynchronizedEntryMap.class);
         entryService = sc.getInternalService(AbstractCacheEntryFactoryService.class);
     }
 
@@ -140,18 +142,12 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
     public void clear() {
         long started = listener.beforeCacheClear(this);
         Collection<? extends AbstractCacheEntry<K, V>> list = Collections.EMPTY_LIST;
-        int size = 0;
         long volume = 0;
 
         synchronized (this) {
             checkRunning("clear", false);
-            size = map.size();
             volume = map.volume();
-            if (size != 0) {
-                list = new ArrayList<AbstractCacheEntry<K, V>>(map.getAll());
-                evictionService.clear();
-                map.clear();
-            }
+            list = map.clearAndGetAll();
         }
 
         listener.afterCacheClear(this, started, list, volume);
@@ -165,7 +161,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
 
     /** {@inheritDoc} */
     public Set<Entry<K, V>> entrySet() {
-        return map.entrySetPublic(this);
+        return map.entrySet(this);
     }
 
     /** {@inheritDoc} */
@@ -196,13 +192,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
 
         synchronized (this) {
             checkRunning("put");
-            for (K key : keys) {
-                AbstractCacheEntry<K, V> e = map.remove(key, null);
-                if (e != null) {
-                    evictionService.remove(e.getPolicyIndex());
-                    list.add(e);
-                }
-            }
+            map.do_removeAll(list, keys);
         }
 
         listener.afterRemoveAll(this, started, keys, list);
@@ -225,54 +215,12 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
         return map.values(this);
     }
 
-    /**
-     * @param entry
-     * @return the
-     */
-    private boolean addElement(AbstractCacheEntry<K, V> prev, AbstractCacheEntry<K, V> entry) {
-        if (entry == null) {
-            if (prev != null) {
-                prev.setPolicyIndex(-1);
-                map.remove(prev.getKey());
-            }
-            return false;
-        }
-        if (entry.getPolicyIndex() == Integer.MIN_VALUE) {
-            return false;
-        }
-        if (entry.getPolicyIndex() == -1) { // entry is newly added
-            entry.setPolicyIndex(evictionService.add(entry));
-            if (entry.getPolicyIndex() == -1) {
-                return false; // entry was rejected
-            }
-        } else if (!evictionService.replace(entry.getPolicyIndex(), entry)) {
-            entry.setPolicyIndex(-1);
-            map.remove(entry.getKey());
-            return false;
-        }
-        map.put(entry);
-        return true;
-    }
-
     private boolean checkRunning(String operation) {
         return checkRunning(operation, true);
     }
 
     private boolean checkRunning(String operation, boolean op) {
         return serviceManager.lazyStart(op);
-    }
-
-    private List<CacheEntry<K, V>> trimCache() {
-        List<CacheEntry<K, V>> list = null;
-        while (evictionService.isSizeOrVolumeBreached(map.size(), map.volume())) {
-            if (list == null) {
-                list = new ArrayList<CacheEntry<K, V>>(2);
-            }
-            AbstractCacheEntry<K, V> e = evictionService.evictNext();
-            map.remove(e.getKey());
-            list.add(e);
-        }
-        return list == null ? Collections.EMPTY_LIST : list;
     }
 
     /** {@inheritDoc} */
@@ -292,7 +240,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
                     evictionService.remove(entry.getPolicyIndex());
                 } else {
                     // reload if needed??
-                    entry.setHits(entry.getHits()+1);
+                    entry.setHits(entry.getHits() + 1);
                     entry.setLastAccessTime(entryService.getAccessTimeStamp(entry));
                     evictionService.touch(entry.getPolicyIndex());
                 }
@@ -344,7 +292,7 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
                         result.put(key, null);
                     } else {
                         // reload if needed??
-                        entries[i].setHits(entries[i].getHits()+1);
+                        entries[i].setHits(entries[i].getHits() + 1);
                         entries[i].setLastAccessTime(entryService.getAccessTimeStamp(entries[i]));
                         evictionService.touch(entries[i].getPolicyIndex());
                         isHit[i] = true;
@@ -394,8 +342,8 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
             prev = map.get(key);
             if (prev == null || !putOnlyIfAbsent) {
                 newEntry = entryService.createEntry(key, newValue, attributes, prev);
-                if (addElement(prev, newEntry)) {
-                    trimmed = trimCache();
+                if (map.addElement(prev, newEntry)) {
+                    trimmed = map.trimCache();
                 }
             }
         }
@@ -421,13 +369,13 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
                 AbstractCacheEntry<K, V> prev = map.get(key);
                 AbstractCacheEntry<K, V> newEntry = entryService.createEntry(key, value, attributes
                         .get(key), prev);
-                if (addElement(prev, newEntry)) {
+                if (map.addElement(prev, newEntry)) {
                     newEntries.put(newEntry, prev);
                 }
             }
         }
 
-        listener.afterPutAll(this, started, trimCache(), newEntries, fromLoader);
+        listener.afterPutAll(this, started, map.trimCache(), newEntries, fromLoader);
         HashMap<K, CacheEntry<K, V>> result = new HashMap<K, CacheEntry<K, V>>();
         for (AbstractCacheEntry<K, V> ace : newEntries.keySet()) {
             result.put(ace.getKey(), ace);
@@ -439,14 +387,11 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
     @Override
     CacheEntry<K, V> doRemove(Object key, Object value) {
         long started = listener.beforeRemove(this, key, value);
-        AbstractCacheEntry<K, V> e = null;
+        CacheEntry<K, V> e = null;
 
         synchronized (this) {
             checkRunning("remove");
-            e = map.remove(key, value);
-            if (e != null) {
-                evictionService.remove(e.getPolicyIndex());
-            }
+            e = map.do_remove(key, value);
         }
 
         listener.afterRemove(this, started, e);
@@ -467,8 +412,8 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
             if (oldValue == null && prev != null || oldValue != null && prev != null
                     && oldValue.equals(prev.getValue())) {
                 newEntry = entryService.createEntry(key, newValue, attributes, prev);
-                if (addElement(prev, newEntry)) {
-                    trimmed = trimCache();
+                if (map.addElement(prev, newEntry)) {
+                    trimmed = map.trimCache();
                 }
             }
         }
@@ -636,10 +581,6 @@ public class SynchronizedCache<K, V> extends AbstractCache<K, V> {
             }
             listener.afterTrimCache(SynchronizedCache.this, started, l, size, newSize, volume,
                     newVolume);
-        }
-
-        public EntryMap getEntryMap() {
-            return map;
         }
     }
 }

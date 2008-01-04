@@ -7,14 +7,17 @@ import java.util.AbstractCollection;
 import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.service.eviction.InternalCacheEvictionService;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 
 /**
@@ -83,15 +86,16 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
 
     Collection<V> values;
 
-    private final boolean isThreadSafe;
-
     private final InternalCacheSupport<K, V> ics;
+
+    private final InternalCacheEvictionService<K, V, AbstractCacheEntry<K, V>> evictionService;
 
     /**
      * Creates a new, empty map with a default initial capacity, and load factor.
      */
-    public EntryMap(InternalCacheSupport<K, V> ics, boolean isThreadSafe) {
-        this(ics, isThreadSafe, DEFAULT_INITIAL_CAPACITY);
+    public EntryMap(InternalCacheEvictionService<K, V, AbstractCacheEntry<K, V>> evictionService,
+            InternalCacheSupport<K, V> ics) {
+        this(evictionService, ics, DEFAULT_INITIAL_CAPACITY);
     }
 
     /**
@@ -104,8 +108,9 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
      * @throws IllegalArgumentException
      *             if the initial capacity of elements is negative.
      */
-    public EntryMap(InternalCacheSupport<K, V> ics, boolean isThreadSafe, int initialCapacity) {
-        this(ics, isThreadSafe, initialCapacity, DEFAULT_LOAD_FACTOR);
+    public EntryMap(InternalCacheEvictionService<K, V, AbstractCacheEntry<K, V>> evictionService,
+            InternalCacheSupport<K, V> ics, int initialCapacity) {
+        this(evictionService, ics, initialCapacity, DEFAULT_LOAD_FACTOR);
     }
 
     /**
@@ -121,16 +126,16 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
      * @throws IllegalArgumentException
      *             if the initial capacity is negative or the load factor is nonpositive.
      */
-    public EntryMap(InternalCacheSupport<K, V> ics, boolean isThreadSafe, int initialCapacity,
-            float loadFactor) {
+    public EntryMap(InternalCacheEvictionService<K, V, AbstractCacheEntry<K, V>> evictionService,
+            InternalCacheSupport<K, V> ics, int initialCapacity, float loadFactor) {
         if (initialCapacity > MAXIMUM_CAPACITY) {
             initialCapacity = MAXIMUM_CAPACITY;
         }
+        this.evictionService = evictionService;
         this.ics = ics;
         this.loadFactor = loadFactor;
         threshold = (int) (16 * loadFactor);
         table = new AbstractCacheEntry[16];
-        this.isThreadSafe = isThreadSafe;
     }
 
     /* ---------------- Small Utilities -------------- */
@@ -159,20 +164,6 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
         return (AbstractCacheEntry<K, V>) tab[hash & tab.length - 1];
     }
 
-    public int clear() {
-        int s = size;
-        if (s != 0) {
-            modCount++;
-            AbstractCacheEntry<K, V>[] tab = table;
-            for (int i = 0; i < tab.length; i++) {
-                tab[i] = null;
-            }
-            size = 0;
-            volume = 0;
-        }
-        return s;
-    }
-
     public boolean containsValue(Object value) {
         if (value == null) {
             throw new NullPointerException("value is null");
@@ -192,23 +183,74 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
         return false;
     }
 
-    public Set<Map.Entry<K, V>> entrySetPublic(ConcurrentMap<K, V> cache) {
-        if (isThreadSafe) {
-            synchronized (cache) {
-                return entrySet != null ? entrySet
-                        : (entrySet = (Set) new EntrySetSynchronized<K, V>(cache, this));
-            }
-        } else {
-            return entrySet != null ? entrySet : (entrySet = (Set) new EntrySet<K, V>(cache, this));
-        }
+    public Set<Map.Entry<K, V>> entrySet(ConcurrentMap<K, V> cache) {
+        return entrySet != null ? entrySet : (entrySet = (Set) new EntrySet<K, V>(cache, this));
     }
 
-    public Collection<? extends AbstractCacheEntry<K, V>> getAll() {
-        ArrayList<AbstractCacheEntry<K, V>> list = new ArrayList<AbstractCacheEntry<K, V>>(size);
-        for (AbstractCacheEntry<K, V> e : this) {
+    /**
+     * @param entry
+     * @return the
+     */
+    public boolean addElement(AbstractCacheEntry<K, V> prev, AbstractCacheEntry<K, V> entry) {
+        if (entry == null) {
+            if (prev != null) {
+                prev.setPolicyIndex(-1);
+                remove(prev.getKey());
+            }
+            return false;
+        }
+        if (entry.getPolicyIndex() == Integer.MIN_VALUE) {
+            return false;
+        }
+        if (entry.getPolicyIndex() == -1) { // entry is newly added
+            entry.setPolicyIndex(evictionService.add(entry));
+            if (entry.getPolicyIndex() == -1) {
+                return false; // entry was rejected
+            }
+        } else if (!evictionService.replace(entry.getPolicyIndex(), entry)) {
+            entry.setPolicyIndex(-1);
+            remove(entry.getKey());
+            return false;
+        }
+        put(entry);
+        return true;
+    }
+
+    public List<CacheEntry<K, V>> trimCache() {
+        List<CacheEntry<K, V>> list = null;
+        while (evictionService.isSizeOrVolumeBreached(size, volume)) {
+            if (list == null) {
+                list = new ArrayList<CacheEntry<K, V>>(2);
+            }
+            AbstractCacheEntry<K, V> e = evictionService.evictNext();
+            remove(e.getKey());
             list.add(e);
         }
-        return list;
+        return list == null ? Collections.EMPTY_LIST : list;
+    }
+
+    public Collection<? extends AbstractCacheEntry<K, V>> clearAndGetAll() {
+        int s = size;
+
+        if (s != 0) {
+            ArrayList<AbstractCacheEntry<K, V>> list = new ArrayList<AbstractCacheEntry<K, V>>(size);
+            modCount++;
+            AbstractCacheEntry<K, V>[] tab = table;
+            for (int i = 0; i < tab.length; i++) {
+                AbstractCacheEntry<K, V> next = tab[i];
+                while (next != null) {
+                    list.add(next);
+                    next = next.next;
+                }
+                tab[i] = null;
+            }
+            size = 0;
+            volume = 0;
+            evictionService.clear();
+            return list;
+        } else {
+            return Collections.EMPTY_LIST;
+        }
     }
 
     public AbstractCacheEntry<K, V> get(Object key) {
@@ -230,14 +272,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
      * @see java.util.AbstractMap#keySet()
      */
     public Set<K> keySet(ConcurrentMap<K, V> cache) {
-        if (isThreadSafe) {
-            synchronized (cache) {
-                return keySet != null ? keySet
-                        : (keySet = new KeySetSynchronized<K, V>(cache, this));
-            }
-        } else {
-            return keySet != null ? keySet : (keySet = new KeySet<K, V>(cache, this));
-        }
+        return keySet != null ? keySet : (keySet = new KeySet<K, V>(cache, this));
     }
 
     public AbstractCacheEntry<K, V> put(AbstractCacheEntry<K, V> entry) {
@@ -274,11 +309,29 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
         return null;
     }
 
+    public void do_removeAll(List<CacheEntry<K, V>> list, Collection<? extends K> keys) {
+        for (K key : keys) {
+            AbstractCacheEntry<K, V> e = remove(key, null);
+            if (e != null) {
+                evictionService.remove(e.getPolicyIndex());
+                list.add(e);
+            }
+        }
+    }
+
+    public CacheEntry<K, V> do_remove(Object key, Object value) {
+        AbstractCacheEntry<K, V> e = remove(key, value);
+        if (e != null) {
+            evictionService.remove(e.getPolicyIndex());
+        }
+        return e;
+    }
+
     public AbstractCacheEntry<K, V> remove(Object key) {
         return remove(key, null);
     }
 
-    public AbstractCacheEntry<K, V> remove(Object key, Object value) {
+    AbstractCacheEntry<K, V> remove(Object key, Object value) {
         int hash = hash(key.hashCode());
         AbstractCacheEntry<K, V>[] tab = table;
         int index = hash & tab.length - 1;
@@ -321,14 +374,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
      * @see java.util.AbstractMap#values()
      */
     public Collection<V> values(Map<K, V> cache) {
-        if (isThreadSafe) {
-            synchronized (cache) {
-                return values != null ? values
-                        : (values = new ValuesSynchronized<K, V>(cache, this));
-            }
-        } else {
-            return values != null ? values : (values = new Values<K, V>(cache, this));
-        }
+        return values != null ? values : (values = new Values<K, V>(cache, this));
     }
 
     /**
@@ -445,96 +491,6 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
             return e;
         }
-    }
-
-    static class EntrySetSynchronized<K, V> extends EntrySet<K, V> {
-        private final Object mutex;
-
-        EntrySetSynchronized(ConcurrentMap<K, V> cache, EntryMap<K, V> map) {
-            super(cache, map);
-            this.mutex = cache;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public boolean equals(Object o) {
-            synchronized (mutex) {
-                return super.equals(o);
-            }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public int hashCode() {
-            synchronized (mutex) {
-                return super.hashCode();
-            }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public boolean removeAll(Collection<?> c) {
-            synchronized (mutex) {
-                return super.removeAll(c);
-            }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public boolean containsAll(Collection<?> c) {
-            synchronized (mutex) {
-                return super.containsAll(c);
-            }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public boolean retainAll(Collection<?> c) {
-            synchronized (mutex) {
-                return super.retainAll(c);
-            }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Object[] toArray() {
-            synchronized (mutex) {
-                return super.toArray();
-            }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public <T> T[] toArray(T[] a) {
-            synchronized (mutex) {
-                return super.toArray(a);
-            }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String toString() {
-            synchronized (mutex) {
-                return super.toString();
-            }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public boolean contains(Object o) {
-            synchronized (mutex) {
-                return super.contains(o);
-            }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public boolean remove(Object o) {
-            synchronized (mutex) {
-                return super.remove(o);
-            }
-        }
-
     }
 
     static class EntrySet<K, V> extends AbstractSet<CacheEntry<K, V>> {
@@ -680,80 +636,6 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
         }
     }
 
-    static class KeySetSynchronized<K, V> extends KeySet<K, V> {
-        private final Object mutex;
-
-        KeySetSynchronized(ConcurrentMap<K, V> cache, EntryMap<K, V> map) {
-            super(cache, map);
-            this.mutex = cache;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public boolean equals(Object o) {
-            synchronized (mutex) {
-                return super.equals(o);
-            }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public int hashCode() {
-            synchronized (mutex) {
-                return super.hashCode();
-            }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public boolean removeAll(Collection<?> c) {
-            synchronized (mutex) {
-                return super.removeAll(c);
-            }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public boolean containsAll(Collection<?> c) {
-            synchronized (mutex) {
-                return super.containsAll(c);
-            }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public boolean retainAll(Collection<?> c) {
-            synchronized (mutex) {
-                return super.retainAll(c);
-            }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Object[] toArray() {
-            synchronized (mutex) {
-                return super.toArray();
-            }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public <T> T[] toArray(T[] a) {
-            synchronized (mutex) {
-                return super.toArray(a);
-            }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String toString() {
-            synchronized (mutex) {
-                return super.toString();
-            }
-        }
-
-    }
-
     static class KeySet<K, V> extends AbstractSet<K> {
         final EntryMap<K, V> map;
 
@@ -833,71 +715,6 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
         @Override
         public V next() {
             return nextEntry().getValue();
-        }
-    }
-
-    static class ValuesSynchronized<K, V> extends Values<K, V> {
-        final Object mutex;
-
-        ValuesSynchronized(Map<K, V> cache, EntryMap<K, V> map) {
-            super(cache, map);
-            this.mutex = cache;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public boolean remove(Object o) {
-            synchronized (mutex) {
-                return super.remove(o);
-            }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public boolean containsAll(Collection<?> c) {
-            synchronized (mutex) {
-                return super.containsAll(c);
-            }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public boolean retainAll(Collection<?> c) {
-            synchronized (mutex) {
-                return super.retainAll(c);
-            }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Object[] toArray() {
-            synchronized (mutex) {
-                return super.toArray();
-            }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public <T> T[] toArray(T[] a) {
-            synchronized (mutex) {
-                return super.toArray(a);
-            }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String toString() {
-            synchronized (mutex) {
-                return super.toString();
-            }
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public boolean removeAll(Collection<?> c) {
-            synchronized (mutex) {
-                return super.removeAll(c);
-            }
         }
     }
 

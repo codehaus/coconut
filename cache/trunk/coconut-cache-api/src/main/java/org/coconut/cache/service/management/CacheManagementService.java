@@ -16,7 +16,7 @@ import org.coconut.management.ManagedGroup;
  *
  * <pre>
  * Cache&lt;?, ?&gt; c = someCache;
- * CacheEvictionService&lt;?, ?&gt; ces = c.getService(CacheEvictionService.class);
+ * CacheManagementService&lt;?, ?&gt; ces = c.getService(CacheManagementService.class);
  * ces.trimToSize(10);
  * </pre>
  *
@@ -24,7 +24,7 @@ import org.coconut.management.ManagedGroup;
  *
  * <pre>
  * Cache&lt;?, ?&gt; c = someCache;
- * CacheEvictionService&lt;?, ?&gt; ces = CacheServices.services.management(c);
+ * CacheManagementService&lt;?, ?&gt; ces = CacheServices.services.management(c);
  * ces.setMaximumSize(10000);
  * </pre>
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

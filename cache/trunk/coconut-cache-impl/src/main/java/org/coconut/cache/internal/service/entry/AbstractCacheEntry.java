@@ -178,7 +178,7 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
                 refreshTime);
     }
 
-    public void setPolicyIndex(int index) {
+    void setPolicyIndex(int index) {
         this.policyIndex = index;
     }
 

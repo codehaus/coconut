@@ -3,7 +3,6 @@ package org.coconut.cache.internal.service.parallel;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.entry.EntryMap;
-import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.service.parallel.ParallelCache;
 import org.coconut.cache.service.parallel.ParallelCache.WithFilter;
 import org.coconut.operations.Predicates;
@@ -18,8 +17,8 @@ public class UnsynchronizedParallelCacheService<K, V> extends AbstractParallelCa
 
     private final Cache<K, V> cache;
 
-    public UnsynchronizedParallelCacheService(Cache<K, V> cache, InternalCacheSupport<K, V> map) {
-        this.map = map.getEntryMap();
+    public UnsynchronizedParallelCacheService(Cache<K, V> cache, EntryMap map) {
+        this.map = map;
         this.cache = cache;
         pc = new UnsynchronizedParallelCache();
     }

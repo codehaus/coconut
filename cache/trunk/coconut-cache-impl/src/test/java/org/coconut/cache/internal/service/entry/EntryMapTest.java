@@ -44,7 +44,7 @@ public class EntryMapTest {
                 allowing(ics).checkRunning("iterator", false);
             }
         });
-        EntryMap s = new EntryMap(ics, false);
+        EntryMap s = new EntryMap(null,ics);
         s.put(new EntryStub(1, "A"));
         s.put(new EntryStub(2, "B"));
         Iterator iter1 = s.keySet(c).iterator();
@@ -56,7 +56,7 @@ public class EntryMapTest {
     @Test
     public void rehash() {
         InternalCacheSupport ics = null;
-        EntryMap s = new EntryMap(ics, false);
+        EntryMap s = new EntryMap(null,ics);
         Random r = new Random(12312312);
         ArrayList<Integer> al = new ArrayList<Integer>();
         for (int i = 0; i < 20; i++) {
@@ -74,7 +74,7 @@ public class EntryMapTest {
 
     @Test
     public void testNotsa() {
-        EntryMap<Integer, String> s = new EntryMap<Integer, String>(null, false);
+        EntryMap<Integer, String> s = new EntryMap<Integer, String>(null,null);
         s.put(new EntryStub(-348653132, "a"));
         s.put(new EntryStub(772636595, "b"));
         CacheEntry<?, ?> ac1 = s.remove(-348653132);
@@ -84,7 +84,7 @@ public class EntryMapTest {
     }
 
     public boolean stNots() {
-        EntryMap<Integer, String> s = new EntryMap<Integer, String>(null, false);
+        EntryMap<Integer, String> s = new EntryMap<Integer, String>(null,null);
         Random r = new Random();
         ArrayList<Integer> al = new ArrayList<Integer>();
         for (int i = 0; i < 30; i++) {

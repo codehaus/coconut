@@ -26,7 +26,6 @@ import org.coconut.cache.spi.AbstractCacheServiceConfiguration;
 import org.coconut.cache.spi.CacheSPI;
 import org.coconut.internal.util.XmlUtil;
 import org.coconut.operations.Ops.Predicate;
-import org.coconut.operations.Ops.Reducer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
