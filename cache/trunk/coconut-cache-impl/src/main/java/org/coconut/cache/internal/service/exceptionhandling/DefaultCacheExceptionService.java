@@ -37,7 +37,7 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
         InternalDebugService {
 
     /** The cache for which exceptions should be handled. */
-    private final Cache<K, V> cache;
+    private volatile Cache<K, V> cache;
 
     private final Logger debugLogger;
 
@@ -54,14 +54,11 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
     /**
      * Creates a new DefaultCacheExceptionService.
      *
-     * @param cache
-     *            the cache that is using this service
      * @param configuration
      *            the configuration of CacheExceptionService
      */
-    public DefaultCacheExceptionService(Cache<K, V> cache, CacheConfiguration<K, V> conf,
+    public DefaultCacheExceptionService(String cacheName, CacheConfiguration<K, V> conf,
             CacheExceptionHandlingConfiguration<K, V> configuration) {
-        this.cache = cache;
         // TODO resort to default logger if no exceptionLogger is defined?
         Logger logger = configuration.getExceptionLogger();
         if (logger == null) {
@@ -69,9 +66,9 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
         }
         startupLogger = logger;
         if (logger == null) {
-            String loggerName = Cache.class.getPackage().getName() + "." + cache.getName();
-            String infoMsg = Resources.lookup(DefaultCacheExceptionService.class, "noLogger", cache
-                    .getName(), loggerName);
+            String loggerName = Cache.class.getPackage().getName() + "." + cacheName;
+            String infoMsg = Resources.lookup(DefaultCacheExceptionService.class, "noLogger",
+                    cacheName, loggerName);
             logger = new LazyLogger(loggerName, infoMsg);
         }
         this.logger = logger;
@@ -124,7 +121,8 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
         }
     }
 
-    public void initialize(CacheConfiguration<K, V> conf) {
+    public void initialize(Cache<K, V> cache, CacheConfiguration<K, V> conf) {
+        this.cache = cache;
         exceptionHandler.initialize(conf);
     }
 
@@ -142,8 +140,7 @@ public class DefaultCacheExceptionService<K, V> implements InternalCacheExceptio
             AttributeMap attributes) {
         return exceptionHandler.loadingLoadValueFailed(createContext(cause,
                 "Could not load value [key = " + key + ", attributes = " + attributes + "]",
-                fromException(cause)),
-                loader, key, attributes);
+                fromException(cause)), loader, key, attributes);
     }
 
     private Level fromException(Throwable cause) {

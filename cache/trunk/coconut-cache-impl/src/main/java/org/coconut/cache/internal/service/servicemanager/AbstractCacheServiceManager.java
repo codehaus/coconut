@@ -55,15 +55,15 @@ public abstract class AbstractCacheServiceManager implements InternalCacheServic
      * @throws NullPointerException
      *             if the specified cache is null
      */
-    AbstractCacheServiceManager(ServiceComposer composer) {
+    AbstractCacheServiceManager(Cache<?,?> cache, ServiceComposer composer) {
         long initializationStart = System.nanoTime();
-        this.cache = composer.getInternalService(Cache.class);
+        this.cache = cache;
         this.conf = composer.getInternalService(CacheConfiguration.class);
         services.addAll(createServiceHolders(composer, conf));
 
         // initialize exception service
         ces = composer.getInternalService(InternalCacheExceptionService.class);
-        ces.initialize(conf);
+        ces.initialize(this.cache, conf);
         debugService = composer.getInternalService(InternalDebugService.class);
         if (debugService.isDebugEnabled()) {
             debugService.debug("Cache initializing [name = " + cache.getName() + ", type = "

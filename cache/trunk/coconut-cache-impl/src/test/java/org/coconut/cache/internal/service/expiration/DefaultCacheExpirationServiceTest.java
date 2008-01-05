@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.expiration;
@@ -42,7 +42,7 @@ public class DefaultCacheExpirationServiceTest {
 
     private DefaultCacheExpirationService<Integer, String> s;
 
-    private InternalCacheSupport<Integer, String> helper = new JUnit4Mockery()
+    private final InternalCacheSupport<Integer, String> helper = new JUnit4Mockery()
             .mock(InternalCacheSupport.class);
 
     private CacheExceptionHandler<Integer, String> errorHandler;
@@ -77,19 +77,7 @@ public class DefaultCacheExpirationServiceTest {
     }
     @Test
     public void testNoting() {
-        
-    }
-    //@Test
-    public void testIsExpired_Time() {
-        clock.setTimestamp(9);
-        assertFalse(s.isExpired(EXPIRE_AT_10));
-        assertFalse(s.isExpired(NEVER_EXPIRE));
-        clock.setTimestamp(10);
-        assertTrue(s.isExpired(EXPIRE_AT_10));
-        assertFalse(s.isExpired(NEVER_EXPIRE));
-        clock.setTimestamp(Long.MAX_VALUE);
-        assertTrue(s.isExpired(EXPIRE_AT_10));
-        assertFalse(s.isExpired(NEVER_EXPIRE));
+
     }
 
 // @Test

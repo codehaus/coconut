@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.internal.service.eviction;
@@ -12,7 +12,7 @@ import org.coconut.cache.service.eviction.CacheEvictionService;
  * <p>
  * NOTICE: This is an internal class and should not be directly referred. No guarantee is
  * made to the compatibility of this class between different releases of Coconut Cache.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  * @param <K>

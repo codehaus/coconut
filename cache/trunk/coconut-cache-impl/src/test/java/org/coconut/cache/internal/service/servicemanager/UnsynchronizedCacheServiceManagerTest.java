@@ -40,7 +40,7 @@ public class UnsynchronizedCacheServiceManagerTest {
     public void testConstructor() {
         CacheConfiguration<?, ?> conf = CacheConfiguration.create();
         ServiceComposer sc = ServiceComposer.compose(cache, helper, conf, Collections.EMPTY_LIST);
-        UnsynchronizedCacheServiceManager m = new UnsynchronizedCacheServiceManager(sc);
+        UnsynchronizedCacheServiceManager m = new UnsynchronizedCacheServiceManager(cache, sc);
         assertFalse(m.isStarted());
         assertFalse(m.isShutdown());
         assertFalse(m.isTerminated());

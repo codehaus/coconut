@@ -10,7 +10,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
 import org.coconut.cache.internal.service.spi.Resources;
 import org.coconut.cache.internal.service.statistics.LongCounter.ConcurrentLongCounter;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
@@ -289,7 +288,7 @@ public final class DefaultCacheStatisticsService<K, V> extends AbstractCacheLife
 
     public void afterPutAll(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries,
-            Map<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>> newPrevEntries) {}
+            Map<CacheEntry<K, V>, CacheEntry<K, V>> newPrevEntries) {}
 
     public void afterRemove(Cache<K, V> cache, long start, CacheEntry<K, V> removed) {
         long time = getTimeStamp() - start;

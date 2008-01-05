@@ -31,8 +31,9 @@ public class SynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryFac
     }
 
     /** {@inheritDoc} */
+    @Override
     public AbstractCacheEntry<K, V> createEntry(K key, V value, AttributeMap attributes,
-            AbstractCacheEntry<K, V> existing) {
+            InternalCacheEntry<K, V> existing) {
         if (attributes == null) {
             attributes = createMap();
         }
@@ -57,10 +58,11 @@ public class SynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryFac
         SynchronizedCacheEntry<K, V> newEntry = new SynchronizedCacheEntry<K, V>(key, value, cost,
                 creationTime, lastUpdate, size, refreshTime, expirationTime, hits, am);
         if (!isCacheable(newEntry)) {
-            return null;
+            newEntry.setPolicyIndex(Integer.MIN_VALUE);
+            return newEntry;
         }
         if (existing != null) {
-            newEntry.setPolicyIndex(existing.getPolicyIndex());
+            newEntry.setPolicyIndex(((AbstractCacheEntry) existing).getPolicyIndex());
         }
         if (isDisabled) {
             newEntry.setPolicyIndex(Integer.MIN_VALUE);

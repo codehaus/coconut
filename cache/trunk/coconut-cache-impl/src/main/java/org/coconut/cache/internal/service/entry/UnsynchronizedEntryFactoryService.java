@@ -7,12 +7,13 @@ import org.coconut.attribute.Attribute;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.Attributes;
 import org.coconut.attribute.DefaultAttributeMap;
+import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.cache.service.eviction.CacheEvictionConfiguration;
 import org.coconut.core.Clock;
 
 /**
- * This class creates unsynchronized instances of {@link AbstractCacheEntry}.
+ * This class creates unsynchronized instances of {@link CacheEntry}.
  *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
@@ -47,8 +48,9 @@ public class UnsynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryF
     }
 
     /** {@inheritDoc} */
+    @Override
     public AbstractCacheEntry<K, V> createEntry(K key, V value, AttributeMap attributes,
-            AbstractCacheEntry<K, V> existing) {
+            InternalCacheEntry<K, V> existing) {
         if (attributes == null) {
             attributes = createMap();
         }
@@ -77,23 +79,24 @@ public class UnsynchronizedEntryFactoryService<K, V> extends AbstractCacheEntryF
         newEntry.setHits(hits);
         newEntry.setExpirationTime(expirationTime);
         if (!isCacheable(newEntry)) {
-            return null;
+            newEntry.setPolicyIndex(Integer.MIN_VALUE);
+            return newEntry;
         }
-//        if (false) {
-//            Reducer<CacheEntry<K, V>> red = null;
-//            Object result = red.combine(existing, newEntry);
-//            if (result == newEntry) {
+// if (false) {
+// Reducer<CacheEntry<K, V>> red = null;
+// Object result = red.combine(existing, newEntry);
+// if (result == newEntry) {
 //
-//            } else if (result == existing) {
+// } else if (result == existing) {
 //
-//            } else if (result == null) {
+// } else if (result == null) {
 //
-//            } else {
-//                // warning
-//            }
-//        }
+// } else {
+// // warning
+// }
+// }
         if (existing != null) {
-            newEntry.setPolicyIndex(existing.getPolicyIndex());
+            newEntry.setPolicyIndex(((AbstractCacheEntry) existing).getPolicyIndex());
         }
         if (isDisabled) {
             newEntry.setPolicyIndex(Integer.MIN_VALUE);

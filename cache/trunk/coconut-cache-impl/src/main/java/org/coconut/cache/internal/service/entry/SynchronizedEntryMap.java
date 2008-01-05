@@ -6,14 +6,16 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
 import org.coconut.cache.internal.service.eviction.InternalCacheEvictionService;
+import org.coconut.cache.internal.service.servicemanager.ServiceComposer;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 
 public class SynchronizedEntryMap<K, V> extends EntryMap<K, V> {
 
-    public SynchronizedEntryMap(
+    public SynchronizedEntryMap(ServiceComposer sc,
+            AbstractCacheEntryFactoryService<K, V> entryService,
             InternalCacheEvictionService<K, V, AbstractCacheEntry<K, V>> evictionService,
             InternalCacheSupport<K, V> ics) {
-        super(evictionService, ics);
+        super(sc, entryService, evictionService, ics);
     }
 
     @Override
@@ -40,6 +42,7 @@ public class SynchronizedEntryMap<K, V> extends EntryMap<K, V> {
             return values != null ? values : (values = new ValuesSynchronized<K, V>(cache, this));
         }
     }
+
     static class ValuesSynchronized<K, V> extends Values<K, V> {
         final Object mutex;
 
@@ -104,7 +107,6 @@ public class SynchronizedEntryMap<K, V> extends EntryMap<K, V> {
             }
         }
     }
-
 
     static class KeySetSynchronized<K, V> extends KeySet<K, V> {
         private final Object mutex;

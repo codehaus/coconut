@@ -9,7 +9,7 @@ import java.util.Map;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
+import org.coconut.cache.internal.service.entry.InternalCacheEntry;
 import org.coconut.cache.internal.service.event.InternalCacheEventService;
 import org.coconut.cache.internal.service.statistics.DefaultCacheStatisticsService;
 
@@ -56,9 +56,9 @@ public class DefaultCacheListener<K, V> implements InternalCacheListener<K, V> {
 
     public void afterPut(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries,
-            AbstractCacheEntry<K, V> oldEntry, AbstractCacheEntry<K, V> newEntry, boolean fromLoader) {
+            InternalCacheEntry<K, V> oldEntry, InternalCacheEntry<K, V> newEntry, boolean fromLoader) {
         statistics.afterPut(cache, started, evictedEntries, oldEntry, newEntry);
-        if (event != null && newEntry != null) {
+        if (event != null) {
             event.afterPut(cache, started, evictedEntries, oldEntry, newEntry);
         }
     }
@@ -74,9 +74,9 @@ public class DefaultCacheListener<K, V> implements InternalCacheListener<K, V> {
 
     public void afterPutAll(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries,
-            Map<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>> newPrevEntries,
+            Map<InternalCacheEntry<K, V>, InternalCacheEntry<K, V>> newPrevEntries,
             boolean fromLoader) {
-        statistics.afterPutAll(cache, started, evictedEntries, newPrevEntries);
+        statistics.afterPutAll(cache, started, evictedEntries, (Map) newPrevEntries);
         if (event != null) {
             event.afterPutAll(cache, started, evictedEntries, newPrevEntries);
         }
@@ -126,7 +126,7 @@ public class DefaultCacheListener<K, V> implements InternalCacheListener<K, V> {
 
     public void afterPut(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries,
-            AbstractCacheEntry<K, V> oldEntry, AbstractCacheEntry<K, V> newEntry) {
+            InternalCacheEntry<K, V> oldEntry, InternalCacheEntry<K, V> newEntry) {
         statistics.afterPut(cache, started, evictedEntries, oldEntry, newEntry);
         if (event != null && newEntry != null) {
             event.afterPut(cache, started, evictedEntries, oldEntry, newEntry);
@@ -164,7 +164,7 @@ public class DefaultCacheListener<K, V> implements InternalCacheListener<K, V> {
 
     public void afterGetAll(Cache<K, V> cache, long started, Object[] keys,
             CacheEntry<K, V>[] entries, boolean[] isHit, boolean[] isExpired,
-            Map<K,  V> loadedEntries) {
+            Map<K, V> loadedEntries) {
         statistics.afterGetAll(cache, started, keys, entries, isHit, isExpired, loadedEntries);
     }
 

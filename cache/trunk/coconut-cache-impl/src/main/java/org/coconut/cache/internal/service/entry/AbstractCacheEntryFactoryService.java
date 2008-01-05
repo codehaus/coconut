@@ -70,6 +70,9 @@ public abstract class AbstractCacheEntryFactoryService<K, V> implements
         return result;
     }
 
+    abstract AbstractCacheEntry<K, V> createEntry(K key, V value, AttributeMap attributes,
+            InternalCacheEntry<K, V> existing);
+
     /**
      * Creates a new empty AttributeMap.
      *
@@ -92,7 +95,7 @@ public abstract class AbstractCacheEntryFactoryService<K, V> implements
         return new DefaultAttributeMap(copyFrom);
     }
 
-    public long getAccessTimeStamp(AbstractCacheEntry<K, V> entry) {
+    public long getAccessTimeStamp(InternalCacheEntry<K, V> entry) {
         return clock.timestamp();
     }
 

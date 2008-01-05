@@ -6,8 +6,8 @@ package org.coconut.cache.internal.service.exceptionhandling;
 import java.util.Map;
 
 import org.coconut.attribute.AttributeMap;
+import org.coconut.cache.Cache;
 import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.CacheEntry;
 import org.coconut.cache.service.loading.CacheLoader;
 import org.coconut.cache.service.servicemanager.CacheLifecycle;
 
@@ -33,7 +33,7 @@ public interface InternalCacheExceptionService<K, V> {
     void initializationFailed(CacheConfiguration<K, V> configuration, CacheLifecycle service,
             RuntimeException cause);
 
-    void initialize(CacheConfiguration<K, V> conf);
+    void initialize(Cache<K, V> cache, CacheConfiguration<K, V> conf);
 
     void checkExceptions(boolean failIfShutdown);
 

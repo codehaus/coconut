@@ -29,7 +29,9 @@ import org.coconut.operations.Ops.Predicate;
  * @param <V>
  *            the type of mapped values
  */
-public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
+abstract class AbstractCacheEntry<K, V> implements InternalCacheEntry<K, V> {
+    private final AttributeMap attributes;
+
     /** The cost of this cache entry. */
     private final double cost;
 
@@ -57,7 +59,7 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
     /** The next cache entry in the hash map. */
     AbstractCacheEntry<K, V> next;
 
-    private final AttributeMap attributes;
+    boolean isExpired;
 
     /**
      * Creates a new AbstractCacheEntry.
@@ -101,7 +103,7 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         // we keep null checks, might later want to use Map.Entry instead of
         // Entry to compare with
         if (k1 == k2 || k1 != null && k1.equals(k2)) {
-          //  new Exception().printStackTrace();
+            // new Exception().printStackTrace();
             Object v1 = value;
             Object v2 = e.getValue();
             if (v1 == v2 || v1.equals(v2)) {
@@ -134,6 +136,10 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         return key;
     }
 
+    public boolean isExpired() {
+        return isExpired;
+    }
+
     /**
      * @return the lastUpdateTime
      */
@@ -161,7 +167,11 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         return key.hashCode() ^ value.hashCode();
     }
 
-    public boolean isExpired(Predicate<CacheEntry<K, V>> filter, long timestamp) {
+    public boolean isCachable() {
+        return getPolicyIndex() > 0;
+    }
+
+    boolean isExpired(Predicate<CacheEntry<K, V>> filter, long timestamp) {
         if (filter != null && filter.evaluate(this)) {
             return true;
         }
@@ -169,7 +179,7 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
         return expTime == TimeToLiveAttribute.FOREVER ? false : Clock.isPassed(timestamp, expTime);
     }
 
-    public boolean needsRefresh(Predicate<CacheEntry<K, V>> filter, long timestamp) {
+     boolean needsRefresh(Predicate<CacheEntry<K, V>> filter, long timestamp) {
         if (filter != null && filter.evaluate(this)) {
             return true;
         }
@@ -178,13 +188,9 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
                 refreshTime);
     }
 
-    void setPolicyIndex(int index) {
-        this.policyIndex = index;
-    }
+    abstract void setHits(long hits);
 
-    public abstract void setHits(long hits);
-
-    public abstract void setLastAccessTime(long lastAccessTime);
+    abstract void setLastAccessTime(long lastAccessTime);
 
     public V setValue(V v) {
         throw new UnsupportedOperationException();
@@ -201,4 +207,8 @@ public abstract class AbstractCacheEntry<K, V> implements CacheEntry<K, V> {
     }
 
     abstract long getRefreshTime();
+
+    void setPolicyIndex(int index) {
+        this.policyIndex = index;
+    }
 }

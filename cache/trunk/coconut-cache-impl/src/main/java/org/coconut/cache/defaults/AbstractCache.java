@@ -17,6 +17,7 @@ import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.CacheServices;
 import org.coconut.cache.internal.service.servicemanager.InternalCacheServiceManager;
+import org.coconut.cache.internal.service.servicemanager.ServiceComposer;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.spi.ConfigurationValidator;
 import org.coconut.core.Clock;
@@ -60,6 +61,12 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         } else {
             this.name = name;
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    AbstractCache(ServiceComposer configuration) {
+        name = null;
+        clock = null;
     }
 
     /** {@inheritDoc} */
@@ -323,6 +330,20 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     }
 
     abstract class AbstractSupport implements InternalCacheSupport<K, V> {
+
+        /** {@inheritDoc} */
+        public void trimCache(int toSize, long toVolume) {
+            if (toSize < 0) {
+                throw new IllegalArgumentException("newSize cannot be a negative number, was "
+                        + toSize);
+            } else if (toVolume < 0) {
+                throw new IllegalArgumentException("newVolume cannot be a negative number, was "
+                        + toVolume);
+            }
+            doTrimCache(toSize, toVolume);
+        }
+
+        abstract void doTrimCache(int toSize, long toVolume);
 
         /** {@inheritDoc} */
         public final V put(K key, V value, AttributeMap attributes) {

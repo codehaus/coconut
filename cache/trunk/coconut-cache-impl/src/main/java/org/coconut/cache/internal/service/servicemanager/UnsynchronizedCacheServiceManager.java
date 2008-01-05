@@ -3,12 +3,9 @@
  */
 package org.coconut.cache.internal.service.servicemanager;
 
-import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.internal.service.spi.InternalCacheSupport;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 
 /**
@@ -22,8 +19,8 @@ public class UnsynchronizedCacheServiceManager extends AbstractCacheServiceManag
     /** The current state of the service manager. */
     private RunState status = RunState.NOTRUNNING;
 
-    public UnsynchronizedCacheServiceManager(ServiceComposer composer) {
-        super(composer);
+    public UnsynchronizedCacheServiceManager(Cache<?, ?> cache, ServiceComposer composer) {
+        super(cache, composer);
     }
 
     /** {@inheritDoc} */

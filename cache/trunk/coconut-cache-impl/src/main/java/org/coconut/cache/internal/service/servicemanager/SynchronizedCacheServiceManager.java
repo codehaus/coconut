@@ -44,9 +44,9 @@ public class SynchronizedCacheServiceManager extends AbstractCacheServiceManager
     /** CountDownLatch used for signalling termination. */
     private final CountDownLatch terminationLatch = new CountDownLatch(1);
 
-    public SynchronizedCacheServiceManager(ServiceComposer composer) {
-        super(composer);
-        this.mutex = composer.getInternalService(Cache.class);
+    public SynchronizedCacheServiceManager(Cache<?, ?> cache, ServiceComposer composer) {
+        super(cache, composer);
+        this.mutex = cache;
         shutdownServiceExecutor = Executors.newCachedThreadPool();
     }
 
@@ -85,9 +85,8 @@ public class SynchronizedCacheServiceManager extends AbstractCacheServiceManager
     void shutdown(boolean shutdownNow) {
         synchronized (mutex) {
             RunState runState = this.runState;
-            if (runState == RunState.SHUTDOWN && !shutdownNow
-                    || runState == RunState.STOP && shutdownNow
-                    || runState == RunState.TERMINATED) {
+            if (runState == RunState.SHUTDOWN && !shutdownNow || runState == RunState.STOP
+                    && shutdownNow || runState == RunState.TERMINATED) {
                 return;
             } else if (runState == RunState.NOTRUNNING) {
                 doTerminate();

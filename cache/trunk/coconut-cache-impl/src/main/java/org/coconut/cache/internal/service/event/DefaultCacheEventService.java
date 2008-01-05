@@ -15,7 +15,7 @@ import java.util.Map;
 
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
+import org.coconut.cache.internal.service.entry.InternalCacheEntry;
 import org.coconut.cache.internal.service.exceptionhandling.InternalCacheExceptionService;
 import org.coconut.cache.service.event.CacheEntryEvent;
 import org.coconut.cache.service.event.CacheEvent;
@@ -96,8 +96,8 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
 
     /** {@inheritDoc} */
     public void afterPut(Cache<K, V> cache, long ignoreStarted,
-            Collection<? extends CacheEntry<K, V>> entries, AbstractCacheEntry<K, V> prev,
-            AbstractCacheEntry<K, V> newEntry) {
+            Collection<? extends CacheEntry<K, V>> entries, InternalCacheEntry<K, V> prev,
+            InternalCacheEntry<K, V> newEntry) {
         doEvictAll(cache, entries);
         put(cache, prev, newEntry);
     }
@@ -105,9 +105,9 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
     /** {@inheritDoc} */
     public void afterPutAll(Cache<K, V> cache, long ignoreStarted,
             Collection<? extends CacheEntry<K, V>> evictedEntries,
-            Map<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>> entries) {
+            Map<InternalCacheEntry<K, V>, InternalCacheEntry<K, V>> entries) {
         doEvictAll(cache, evictedEntries);
-        for (Map.Entry<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>> entry : entries
+        for (Map.Entry<InternalCacheEntry<K, V>, InternalCacheEntry<K, V>> entry : entries
                 .entrySet()) {
             put(cache, entry.getValue(), entry.getKey());
         }
@@ -225,13 +225,28 @@ public class DefaultCacheEventService<K, V> extends AbstractCacheLifecycle imple
         offerable.apply(event);
     }
 
-    void put(Cache<K, V> cache, AbstractCacheEntry<K, V> prev, AbstractCacheEntry<K, V> newEntry) {
+// void _put(Cache<K, V> cache, InternalCacheEntry<K, V> prev, InternalCacheEntry<K, V>
+// newEntry) {
+// if (prev == null) {
+// if (doAdd && newEntry != null && newEntry.getPolicyIndex() >= 0) {
+// dispatch(added(cache, newEntry));
+// }
+// } else if (prev.getPolicyIndex() >= 0 && newEntry != null
+// && newEntry.getPolicyIndex() == -1) {
+// if (doRemove) {
+// dispatch(removed(cache, prev));
+// }
+// } else if (doUpdate) {
+// dispatch(updated(cache, newEntry, prev.getValue(), false));
+// }
+// }
+
+    void put(Cache<K, V> cache, InternalCacheEntry<K, V> prev, InternalCacheEntry<K, V> newEntry) {
         if (prev == null) {
-            if (doAdd && newEntry != null && newEntry.getPolicyIndex() >= 0) {
+            if (doAdd && newEntry != null && newEntry.isCachable()) {
                 dispatch(added(cache, newEntry));
             }
-        } else if (prev.getPolicyIndex() >= 0 && newEntry != null
-                && newEntry.getPolicyIndex() == -1) {
+        } else if (prev.isCachable() && newEntry != null && !newEntry.isCachable()) {
             if (doRemove) {
                 dispatch(removed(cache, prev));
             }

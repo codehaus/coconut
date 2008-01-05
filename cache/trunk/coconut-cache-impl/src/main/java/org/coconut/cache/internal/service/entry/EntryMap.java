@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -16,9 +17,18 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
+import org.coconut.attribute.AttributeMap;
+import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.CacheEntry;
 import org.coconut.cache.internal.service.eviction.InternalCacheEvictionService;
+import org.coconut.cache.internal.service.expiration.DefaultCacheExpirationService;
+import org.coconut.cache.internal.service.expiration.ExpirationUtils;
+import org.coconut.cache.internal.service.loading.InternalCacheLoadingService;
+import org.coconut.cache.internal.service.servicemanager.ServiceComposer;
 import org.coconut.cache.internal.service.spi.InternalCacheSupport;
+import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
+import org.coconut.core.Clock;
+import org.coconut.operations.Ops.Predicate;
 
 /**
  * This class is partly adopted from ConcurrentHashMap.
@@ -90,27 +100,24 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
 
     private final InternalCacheEvictionService<K, V, AbstractCacheEntry<K, V>> evictionService;
 
+    private final AbstractCacheEntryFactoryService<K, V> entryService;
+
+    private final InternalCacheLoadingService<K, V> loadingService;
+
+    private final Clock clock;
+
+    /** The user specified expiration filter. */
+    private final Predicate<CacheEntry<K, V>> expirationFilter;
+
     /**
      * Creates a new, empty map with a default initial capacity, and load factor.
      */
-    public EntryMap(InternalCacheEvictionService<K, V, AbstractCacheEntry<K, V>> evictionService,
+    public EntryMap(ServiceComposer sc,
+            AbstractCacheEntryFactoryService<K, V> entryService,
+            InternalCacheEvictionService<K, V, AbstractCacheEntry<K, V>> evictionService,
             InternalCacheSupport<K, V> ics) {
-        this(evictionService, ics, DEFAULT_INITIAL_CAPACITY);
-    }
-
-    /**
-     * Creates a new, empty map with the specified initial capacity, and with default load
-     * factor.
-     *
-     * @param initialCapacity
-     *            the initial capacity. The implementation performs internal sizing to
-     *            accommodate this many elements.
-     * @throws IllegalArgumentException
-     *             if the initial capacity of elements is negative.
-     */
-    public EntryMap(InternalCacheEvictionService<K, V, AbstractCacheEntry<K, V>> evictionService,
-            InternalCacheSupport<K, V> ics, int initialCapacity) {
-        this(evictionService, ics, initialCapacity, DEFAULT_LOAD_FACTOR);
+        this(sc, entryService, evictionService, ics, DEFAULT_INITIAL_CAPACITY,
+                DEFAULT_LOAD_FACTOR);
     }
 
     /**
@@ -126,12 +133,19 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
      * @throws IllegalArgumentException
      *             if the initial capacity is negative or the load factor is nonpositive.
      */
-    public EntryMap(InternalCacheEvictionService<K, V, AbstractCacheEntry<K, V>> evictionService,
+    public EntryMap(ServiceComposer sc,
+            AbstractCacheEntryFactoryService<K, V> entryService,
+            InternalCacheEvictionService<K, V, AbstractCacheEntry<K, V>> evictionService,
             InternalCacheSupport<K, V> ics, int initialCapacity, float loadFactor) {
         if (initialCapacity > MAXIMUM_CAPACITY) {
             initialCapacity = MAXIMUM_CAPACITY;
         }
+        this.expirationFilter = sc.getInternalService(CacheExpirationConfiguration.class)
+                .getExpirationFilter();
+        this.loadingService = sc.getInternalService(InternalCacheLoadingService.class);
+        this.clock = sc.getInternalService(Clock.class);
         this.evictionService = evictionService;
+        this.entryService = entryService;
         this.ics = ics;
         this.loadFactor = loadFactor;
         threshold = (int) (16 * loadFactor);
@@ -169,10 +183,10 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             throw new NullPointerException("value is null");
         }
         if (size != 0) {
-            AbstractCacheEntry<K, V>[] tab = table;
-            int len = tab.length;
+            AbstractCacheEntry<K, V>[] table = this.table;
+            int len = table.length;
             for (int i = 0; i < len; i++) {
-                for (AbstractCacheEntry<K, V> e = tab[i]; e != null; e = e.next) {
+                for (AbstractCacheEntry<K, V> e = table[i]; e != null; e = e.next) {
                     V v = e.getValue();
                     if (value == v || value.equals(v)) {
                         return true;
@@ -183,37 +197,72 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
         return false;
     }
 
+    public Map<K, AttributeMap> whoNeedsLoading(AttributeMap attributes) {
+        long timestamp = clock.timestamp();
+        Map<K, AttributeMap> keys = new HashMap<K, AttributeMap>();
+        for (AbstractCacheEntry<K, V> e : this) {
+            if (e.isExpired(expirationFilter, timestamp)
+                    || e.needsRefresh(loadingService.getRefreshPredicate(), timestamp)) {
+                keys.put(e.getKey(), attributes);
+            }
+        }
+        return keys;
+    }
+
+    public void needsLoad(Map<K, AttributeMap> keys,
+            Map<? extends K, ? extends AttributeMap> attributes) {
+        long timestamp = clock.timestamp();
+        for (Map.Entry<? extends K, ? extends AttributeMap> e : attributes.entrySet()) {
+            AbstractCacheEntry<K, V> ce = peek(e.getKey());
+            boolean doLoad = ce == null;
+            if (!doLoad) {
+                doLoad = ce.isExpired(expirationFilter, timestamp)
+                        || ce.needsRefresh(loadingService.getRefreshPredicate(), timestamp);
+            }
+            if (doLoad) {
+                keys.put(e.getKey(), e.getValue());
+            }
+        }
+    }
+
+    public boolean needsLoad(Object key) {
+        AbstractCacheEntry<K, V> e = peek(key);
+        if (e != null) {
+            long timestamp = clock.timestamp();
+            return e.isExpired(expirationFilter, timestamp)
+                    || e.needsRefresh(loadingService.getRefreshPredicate(), timestamp);
+        }
+        return true;
+    }
+
     public Set<Map.Entry<K, V>> entrySet(ConcurrentMap<K, V> cache) {
         return entrySet != null ? entrySet : (entrySet = (Set) new EntrySet<K, V>(cache, this));
     }
 
-    /**
-     * @param entry
-     * @return the
-     */
-    public boolean addElement(AbstractCacheEntry<K, V> prev, AbstractCacheEntry<K, V> entry) {
-        if (entry == null) {
-            if (prev != null) {
-                prev.setPolicyIndex(-1);
-                remove(prev.getKey());
+    public AbstractCacheEntry add(K key, V value, InternalCacheEntry<K, V> prev,
+            AttributeMap attributes) {
+        AbstractCacheEntry entry = entryService.createEntry(key, value, attributes, prev);
+
+        if (entry.getPolicyIndex() != Integer.MIN_VALUE) {
+            if (entry.getPolicyIndex() == -1) { // entry is newly added
+                entry.setPolicyIndex(evictionService.add(entry));
+                if (entry.getPolicyIndex() == -1) {
+                    return entry;
+                }
+            } else if (!evictionService.replace(entry.getPolicyIndex(), entry)) {
+                entry.setPolicyIndex(-1);
+                _remove(entry.getKey(), null);
+                return entry;
             }
-            return false;
+            put(entry);
         }
-        if (entry.getPolicyIndex() == Integer.MIN_VALUE) {
-            return false;
-        }
-        if (entry.getPolicyIndex() == -1) { // entry is newly added
-            entry.setPolicyIndex(evictionService.add(entry));
-            if (entry.getPolicyIndex() == -1) {
-                return false; // entry was rejected
-            }
-        } else if (!evictionService.replace(entry.getPolicyIndex(), entry)) {
-            entry.setPolicyIndex(-1);
-            remove(entry.getKey());
-            return false;
-        }
-        put(entry);
-        return true;
+        return entry;
+    }
+
+    public void touch(AbstractCacheEntry<K, V> entry) {
+        entry.setHits(entry.getHits() + 1);
+        entry.setLastAccessTime(entryService.getAccessTimeStamp(entry));
+        evictionService.touch(entry.getPolicyIndex());
     }
 
     public List<CacheEntry<K, V>> trimCache() {
@@ -223,7 +272,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
                 list = new ArrayList<CacheEntry<K, V>>(2);
             }
             AbstractCacheEntry<K, V> e = evictionService.evictNext();
-            remove(e.getKey());
+            _remove(e.getKey(), null);
             list.add(e);
         }
         return list == null ? Collections.EMPTY_LIST : list;
@@ -231,7 +280,6 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
 
     public Collection<? extends AbstractCacheEntry<K, V>> clearAndGetAll() {
         int s = size;
-
         if (s != 0) {
             ArrayList<AbstractCacheEntry<K, V>> list = new ArrayList<AbstractCacheEntry<K, V>>(size);
             modCount++;
@@ -253,7 +301,35 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
         }
     }
 
-    public AbstractCacheEntry<K, V> get(Object key) {
+    public Collection<K> doGetAll(Collection<? extends K> keys, InternalCacheEntry<K, V>[] entries,
+            boolean[] isExpired, boolean[] isHit, HashMap<K, V> result) {
+        Collection<K> loadMe = new ArrayList<K>();
+        int i = 0;
+        for (K key : keys) {
+            AbstractCacheEntry<K, V> entry = peek(key);
+            entries[i] = entry;
+            if (entry != null) {
+                isExpired[i] = ExpirationUtils.isExpired(entry,clock,expirationFilter);
+                if (isExpired[i]) {
+                    remove(key);
+                    loadMe.add(key);
+                    result.put(key, null);
+                } else {
+                    // reload if needed??
+                    touch(entry);
+                    isHit[i] = true;
+                    result.put(key, entry.getValue());
+                }
+            } else {
+                loadMe.add(key);
+                result.put(key, null);
+            }
+            i++;
+        }
+        return loadMe;
+    }
+
+    public AbstractCacheEntry<K, V> peek(Object key) {
         // DONE
         if (size != 0) {
             int hash = hash(key.hashCode());
@@ -266,6 +342,21 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
         }
         return null;
+    }
+
+    public AbstractCacheEntry<K, V> doGet(Object key) {
+        AbstractCacheEntry<K, V> entry = peek(key);
+        if (entry != null) {
+
+            boolean isExpired = ExpirationUtils.isExpired(entry,clock,expirationFilter);
+            entry.isExpired = isExpired;
+            if (isExpired) {
+                remove(key);
+            } else {
+                touch(entry); // reload if needed??
+            }
+        }
+        return entry;
     }
 
     /**
@@ -309,9 +400,9 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
         return null;
     }
 
-    public void do_removeAll(List<CacheEntry<K, V>> list, Collection<? extends K> keys) {
+    public void removeAll(List<CacheEntry<K, V>> list, Collection<? extends K> keys) {
         for (K key : keys) {
-            AbstractCacheEntry<K, V> e = remove(key, null);
+            AbstractCacheEntry<K, V> e = _remove(key, null);
             if (e != null) {
                 evictionService.remove(e.getPolicyIndex());
                 list.add(e);
@@ -319,19 +410,34 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
         }
     }
 
-    public CacheEntry<K, V> do_remove(Object key, Object value) {
-        AbstractCacheEntry<K, V> e = remove(key, value);
+    public List<CacheEntry<K, V>> trimCache(int toSize, long toVolume) {
+        int numberToTrim = Math.max(0, peekSize() - toSize);
+        List<CacheEntry<K, V>> l = new ArrayList<CacheEntry<K, V>>(evictionService
+                .evict(numberToTrim));
+        for (CacheEntry<K, V> entry : l) {
+            _remove(entry.getKey(), null);
+        }
+        while (volume > toVolume) {
+            CacheEntry<K, V> entry = evictionService.evictNext();
+            _remove(entry.getKey(), null);
+            l.add(entry);
+        }
+        return l;
+    }
+
+    public void remove(Object key) {
+        remove(key, null);
+    }
+
+    public CacheEntry<K, V> remove(Object key, Object value) {
+        AbstractCacheEntry<K, V> e = _remove(key, value);
         if (e != null) {
             evictionService.remove(e.getPolicyIndex());
         }
         return e;
     }
 
-    public AbstractCacheEntry<K, V> remove(Object key) {
-        return remove(key, null);
-    }
-
-    AbstractCacheEntry<K, V> remove(Object key, Object value) {
+    AbstractCacheEntry<K, V> _remove(Object key, Object value) {
         int hash = hash(key.hashCode());
         AbstractCacheEntry<K, V>[] tab = table;
         int index = hash & tab.length - 1;
@@ -362,7 +468,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
         return null;
     }
 
-    public int size() {
+    public int peekSize() {
         return size;
     }
 
@@ -413,7 +519,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
      * @see java.lang.Iterable#iterator()
      */
     public Iterator<AbstractCacheEntry<K, V>> iterator() {
-        return new EntrySetIterator<K, V>(null, this);
+        return (Iterator) new EntrySetIterator<K, V>(null, this);
     }
 
     static abstract class BaseIterator<K, V, E> implements Iterator<E> {
@@ -457,7 +563,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             if (cache != null) {
                 cache.remove(e.getKey());
             } else {
-                map.remove(e.getKey(), null);
+                map._remove(e.getKey(), null);
             }
             expectedModCount = map.modCount;
         }
@@ -523,7 +629,7 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
             }
             map.ics.checkRunning("contains", false);
             Map.Entry<?, ?> e = (Map.Entry<?, ?>) o;
-            AbstractCacheEntry<K, V> ace = map.get(e.getKey());
+            AbstractCacheEntry<K, V> ace = map.peek(e.getKey());
             V v = ace != null ? ace.getValue() : null;
             Object val = e.getValue();
             return v != null && (v == val || v.equals(val));
@@ -610,6 +716,19 @@ public class EntryMap<K, V> implements Iterable<AbstractCacheEntry<K, V>> {
         public boolean removeAll(Collection<?> c) {
             return super.removeAll(c);
         }
+    }
+
+    public List<InternalCacheEntry<K, V>> purgeExpired(long timestamp) {
+        List<InternalCacheEntry<K, V>> expired = new ArrayList<InternalCacheEntry<K, V>>();
+        for (Iterator<AbstractCacheEntry<K, V>> i = iterator(); i.hasNext();) {
+            AbstractCacheEntry<K, V> e = i.next();
+            if (e.isExpired(expirationFilter, timestamp)) {
+                expired.add(e);
+                evictionService.remove(e.getPolicyIndex());
+                i.remove();
+            }
+        }
+        return expired;
     }
 
     static class EntrySetIterator<K, V> extends BaseIterator<K, V, AbstractCacheEntry<K, V>> {

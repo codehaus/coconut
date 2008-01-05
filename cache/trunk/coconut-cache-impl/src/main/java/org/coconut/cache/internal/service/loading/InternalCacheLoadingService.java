@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.CacheEntry;
+import org.coconut.cache.internal.service.entry.InternalCacheEntry;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.operations.Ops.Predicate;
 

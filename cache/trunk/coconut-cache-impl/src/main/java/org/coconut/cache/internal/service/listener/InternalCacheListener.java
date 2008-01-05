@@ -9,7 +9,7 @@ import java.util.Map;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.Cache;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.entry.AbstractCacheEntry;
+import org.coconut.cache.internal.service.entry.InternalCacheEntry;
 
 /**
  * @param <K>
@@ -37,9 +37,8 @@ public interface InternalCacheListener<K, V> {
             Collection<? extends CacheEntry<K, V>> purgedEntries, int previousSize,
             long previousVolume, int newSize, long newVolume);
 
-    void afterGetAll(Cache<K, V> cache, long started, Object[] keys,
-            CacheEntry<K, V>[] entries, boolean[] isHit, boolean[] isExpired,
-            Map<K,  V> loadedEntries);
+    void afterGetAll(Cache<K, V> cache, long started, Object[] keys, CacheEntry<K, V>[] entries,
+            boolean[] isHit, boolean[] isExpired, Map<K, V> loadedEntries);
 
     void afterHit(Cache<K, V> cache, long started, K key, CacheEntry<K, V> entry);
 
@@ -48,16 +47,15 @@ public interface InternalCacheListener<K, V> {
 
     void afterPut(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries,
-
-            AbstractCacheEntry<K, V> oldEntry, AbstractCacheEntry<K, V> newEntry);
+            InternalCacheEntry<K, V> oldEntry, InternalCacheEntry<K, V> newEntry);
 
     void afterPut(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries,
-            AbstractCacheEntry<K, V> oldEntry, AbstractCacheEntry<K, V> newEntry, boolean fromLoader);
+            InternalCacheEntry<K, V> oldEntry, InternalCacheEntry<K, V> newEntry, boolean fromLoader);
 
     void afterPutAll(Cache<K, V> cache, long started,
             Collection<? extends CacheEntry<K, V>> evictedEntries,
-            Map<AbstractCacheEntry<K, V>, AbstractCacheEntry<K, V>> newPrevEntries,
+            Map<InternalCacheEntry<K, V>, InternalCacheEntry<K, V>> newPrevEntries,
             boolean fromLoader);
 
     void afterRemove(Cache<K, V> cache, long started, CacheEntry<K, V> entry);
@@ -66,6 +64,7 @@ public interface InternalCacheListener<K, V> {
             Collection<CacheEntry<K, V>> removed);
 
     void afterStart(Cache<K, V> cache);
+
     void afterStop(Cache<K, V> cache);
 
     void afterTrimCache(Cache<K, V> cache, long started,
