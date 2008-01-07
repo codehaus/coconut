@@ -9,6 +9,6 @@
   </parent>
   <artifactId>jsr166y</artifactId>
   <name>Coconut Jsr166y</name>
-  <version>281207</version>
+  <version>070108</version>
   <packaging>jar</packaging>
 </project>
