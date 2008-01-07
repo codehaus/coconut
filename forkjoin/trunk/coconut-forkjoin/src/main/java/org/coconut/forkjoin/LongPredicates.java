@@ -5,14 +5,14 @@ package org.coconut.forkjoin;
 
 import java.io.Serializable;
 
-import jsr166y.forkjoin.Ops;
 import jsr166y.forkjoin.Ops.LongPredicate;
 import jsr166y.forkjoin.Ops.MapperToLong;
 import jsr166y.forkjoin.Ops.Predicate;
 
 /**
- * Various implementations of {@link Ops.LongPredicate}.
- *
+ * Various implementations of {@link LongPredicate}.
+ * <p>
+ * This class is normally best used via <tt>import static</tt>.
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -67,7 +67,7 @@ public final class LongPredicates {
      *
      * @param element
      *            the value of the equals predicate
-     * @return the newly created LongPredicate
+     * @return a predicate that accepts any long that is equal to the value specified
      */
     public static LongPredicate equalsTo(long element) {
         return new EqualsToLongPredicate(element);

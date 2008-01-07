@@ -17,6 +17,8 @@ import jsr166y.forkjoin.Ops.Reducer;
 /**
  * Various implementations of {@link Reducer}, {@link DoubleReducer}, {@link IntReducer}
  * and {@link LongReducer}.
+ * <p>
+ * This class is normally best used via <tt>import static</tt>.
  *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
@@ -72,7 +74,6 @@ public final class Reducers {
      * A reducer returning the maximum of two Comparable elements, treating null as less
      * than any non-null element. The Reducer is serializable
      */
-
     public static final Reducer MAX_REDUCER = new NaturalMaxReducer();
 
     /**
@@ -90,8 +91,6 @@ public final class Reducers {
     /**
      * A reducer returning the maximum of two double elements, using the specified
      * comparator.
-     * <p>
-     * The reducer is serializable.
      *
      * @param comparator
      *            the comparator to use when comparing elements
@@ -104,8 +103,6 @@ public final class Reducers {
     /**
      * A reducer returning the minimum of two double elements, using the specified
      * comparator.
-     * <p>
-     * The reducer is serializable.
      *
      * @param comparator
      *            the comparator to use when comparing elements
@@ -118,8 +115,6 @@ public final class Reducers {
     /**
      * A reducer returning the maximum of two int elements, using the specified
      * comparator.
-     * <p>
-     * The reducer is serializable.
      *
      * @param comparator
      *            the comparator to use when comparing elements
@@ -132,8 +127,6 @@ public final class Reducers {
     /**
      * A reducer returning the minimum of two int elements, using the specified
      * comparator.
-     * <p>
-     * The reducer is serializable.
      *
      * @param comparator
      *            the comparator to use when comparing elements
@@ -146,8 +139,6 @@ public final class Reducers {
     /**
      * A reducer returning the maximum of two long elements, using the specified
      * comparator.
-     * <p>
-     * The reducer is serializable.
      *
      * @param comparator
      *            the comparator to use when comparing elements
@@ -160,8 +151,6 @@ public final class Reducers {
     /**
      * A reducer returning the minimum of two long elements, using the specified
      * comparator.
-     * <p>
-     * The reducer is serializable.
      *
      * @param comparator
      *            the comparator to use when comparing elements
@@ -174,8 +163,6 @@ public final class Reducers {
     /**
      * Returns a reducer returning the maximum of two Comparable elements, treating null
      * as less than any non-null element.
-     * <p>
-     * The reducer is serializable.
      *
      * @return a maximum reducer
      * @param <T>
@@ -188,8 +175,6 @@ public final class Reducers {
     /**
      * A reducer returning the maximum of two elements, using the given comparator, and
      * treating null as less than any non-null element.
-     * <p>
-     * The reducer is serializable.
      *
      * @param comparator
      *            the comparator to use when comparing elements
@@ -204,8 +189,6 @@ public final class Reducers {
     /**
      * Returns a reducer that returns the minimum of two Comparable elements, treating
      * null as less than any non-null element.
-     * <p>
-     * The reducer is serializable.
      *
      * @return a minimum reducer
      * @param <T>
@@ -218,8 +201,6 @@ public final class Reducers {
     /**
      * A reducer returning the minimum of two elements, using the given comparator, and
      * treating null as greater than any non-null element.
-     * <p>
-     * The reducer is serializable.
      *
      * @param comparator
      *            the comparator to use when comparing elements

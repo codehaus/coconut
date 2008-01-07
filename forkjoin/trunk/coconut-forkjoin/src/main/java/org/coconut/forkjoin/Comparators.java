@@ -15,7 +15,8 @@ import jsr166y.forkjoin.Ops.Mapper;
 /**
  * Various implementations of {@link Comparator}, {@link LongComparator},
  * {@link DoubleComparator} and {@link IntComparator}.
- *
+ * <p>
+ * This class is normally best used via <tt>import static</tt>.
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */

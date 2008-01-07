@@ -12,6 +12,7 @@ import java.util.Map;
 
 import jsr166y.forkjoin.Ops.Predicate;
 
+
 /**
  * Various implementations of {@link Predicate} that operates on {@link Collection},
  * {@link Iterable} and {@link Map}.
@@ -62,7 +63,7 @@ public final class CollectionPredicates {
      *            the type of keys in the map
      * @param <V>
      *            the type of values in the map
-     * @param iterable
+     * @param map
      *            the map to filter
      * @param predicate
      *            the predicate to evaluate items accordingly to

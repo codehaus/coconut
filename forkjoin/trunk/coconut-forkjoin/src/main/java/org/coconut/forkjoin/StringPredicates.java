@@ -7,9 +7,10 @@ import java.io.Serializable;
 
 import jsr166y.forkjoin.Ops.Predicate;
 
-
 /**
  * Various String based {@link Predicate} methods and utility classes.
+ * <p>
+ * This class is normally best used via <tt>import static</tt>.
  *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$

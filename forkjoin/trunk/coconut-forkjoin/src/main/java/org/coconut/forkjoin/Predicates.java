@@ -14,8 +14,11 @@ import java.util.List;
 import jsr166y.forkjoin.Ops.Mapper;
 import jsr166y.forkjoin.Ops.Predicate;
 
+
 /**
  * Various implementations of {@link Predicate}.
+ * <p>
+ * This class is normally best used via <tt>import static</tt>.
  *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$

@@ -11,12 +11,14 @@
   <version>0.1</version>
   <name>Coconut Forkjoin (pom)</name>
   <packaging>pom</packaging>
+<!-- 
   <distributionManagement>
     <site>
       <id>codehaus.org</id>
       <url>dav:https://dav.codehaus.org/coconut/forkjoin</url>
     </site>
   </distributionManagement>
+   -->
   <scm>
     <connection>
       scm:svn:http://svn.codehaus.org/coconut/forkjoin/trunk
@@ -43,8 +45,7 @@
       </extension>
     </extensions>
   </build>
-    <reporting>
-
+  <reporting>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -60,3 +61,4 @@
     <module>jsr166y</module>
   </modules>
 </project>
+
