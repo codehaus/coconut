@@ -4,6 +4,7 @@
 package org.coconut.operations;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -61,7 +62,7 @@ public final class CollectionPredicates {
      *            the type of keys in the map
      * @param <V>
      *            the type of values in the map
-     * @param iterable
+     * @param map
      *            the map to filter
      * @param predicate
      *            the predicate to evaluate items accordingly to

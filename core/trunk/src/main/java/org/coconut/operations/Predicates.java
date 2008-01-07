@@ -16,6 +16,8 @@ import org.coconut.operations.Ops.Predicate;
 
 /**
  * Various implementations of {@link Predicate}.
+ * <p>
+ * This class is normally best used via <tt>import static</tt>.
  *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Predicates.java 501 2007-12-04 11:03:23Z kasper $
@@ -415,8 +417,8 @@ public final class Predicates {
 
     /**
      * Creates a Predicate that evaluates to <code>true</code> iff the element being
-     * evaluated is the same or {@link Object#equals equal} to the element being specified in this
-     * method.
+     * evaluated is the same or {@link Object#equals equal} to the element being specified
+     * in this method.
      * <p>
      * If the specified object is serializable the returned predicate will also be
      * serializable.

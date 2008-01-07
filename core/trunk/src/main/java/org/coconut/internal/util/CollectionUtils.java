@@ -303,7 +303,7 @@ public final class CollectionUtils {
      */
     public static class SimpleImmutableEntry<K, V> implements Entry<K, V>, Serializable {
 
-        /** serialVersionUID */
+        /** serialVersionUID. */
         private static final long serialVersionUID = -354750390197347279L;
 
         /** The key of the entry. */

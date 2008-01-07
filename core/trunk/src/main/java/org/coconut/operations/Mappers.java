@@ -11,16 +11,18 @@ import org.coconut.operations.Ops.Mapper;
 
 /**
  * Various implementations of {@link Mapper}.
+ * <p>
+ * This class is normally best used via <tt>import static</tt>.
  *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
 public final class Mappers {
-    static final Mapper KEY_MAPPER = new KeyFromMapEntry();
+    public static final Mapper MAP_ENTRY_TO_KEY_MAPPER = new KeyFromMapEntry();
 
-    static final Mapper NOOP_MAPPER = new NoOpMapper();
+    public static final Mapper CONSTANT_MAPPER = new NoOpMapper();
 
-    static final Mapper VALUE_MAPPER = new ValueFromMapEntry();
+    public static final Mapper MAP_ENTRY_TO_VALUE_MAPPER = new ValueFromMapEntry();
 
     // /CLOVER:OFF
     /** Cannot instantiate. */
@@ -37,16 +39,16 @@ public final class Mappers {
         return new CompoundMapper<T, U, V>(first, second);
     }
 
-    public static <K, V> Mapper<Map.Entry<K, V>, K> keyFromMapEntry() {
-        return KEY_MAPPER;
+    public static <K, V> Mapper<Map.Entry<K, V>, K> mapEntryToKey() {
+        return MAP_ENTRY_TO_KEY_MAPPER;
     }
 
-    public static <T> Mapper<T, T> noOpMapper() {
-        return NOOP_MAPPER;
+    public static <T> Mapper<T, T> constant() {
+        return CONSTANT_MAPPER;
     }
 
-    public static <K, V> Mapper<Map.Entry<K, V>, V> valueFromMapEntry() {
-        return VALUE_MAPPER;
+    public static <K, V> Mapper<Map.Entry<K, V>, V> mapEntryToValue() {
+        return MAP_ENTRY_TO_VALUE_MAPPER;
     }
 
     /**
@@ -88,7 +90,7 @@ public final class Mappers {
 
         /** @return Preserves singleton property */
         private Object readResolve() {
-            return KEY_MAPPER;
+            return MAP_ENTRY_TO_KEY_MAPPER;
         }
     }
 
@@ -110,7 +112,7 @@ public final class Mappers {
 
         /** @return Preserves singleton property */
         private Object readResolve() {
-            return NOOP_MAPPER;
+            return CONSTANT_MAPPER;
         }
     }
 
@@ -124,7 +126,7 @@ public final class Mappers {
 
         /** @return Preserves singleton property */
         private Object readResolve() {
-            return VALUE_MAPPER;
+            return MAP_ENTRY_TO_VALUE_MAPPER;
         }
 
     }

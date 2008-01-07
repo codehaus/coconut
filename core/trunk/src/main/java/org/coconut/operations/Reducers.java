@@ -17,6 +17,8 @@ import org.coconut.operations.Ops.Reducer;
 /**
  * Various implementations of {@link Reducer}, {@link DoubleReducer}, {@link IntReducer}
  * and {@link LongReducer}.
+ * <p>
+ * This class is normally best used via <tt>import static</tt>.
  *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $

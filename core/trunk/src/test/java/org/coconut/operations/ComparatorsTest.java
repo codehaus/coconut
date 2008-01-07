@@ -201,7 +201,7 @@ public class ComparatorsTest {
 
     @Test(expected = NullPointerException.class)
     public void mappedComparatorNPE1() {
-        Comparators.mappedComparator(Mappers.NOOP_MAPPER, null);
+        Comparators.mappedComparator(Mappers.CONSTANT_MAPPER, null);
     }
 
     @Test(expected = NullPointerException.class)

@@ -78,7 +78,7 @@ public abstract class AbstractDurationAttribute extends AbstractLongAttribute {
         return super.toSingletonLong(convertFrom(value, unit));
     }
 
-    static long convertFrom(long value, TimeUnit unit) {
+    public static long convertFrom(long value, TimeUnit unit) {
         if (value == Long.MAX_VALUE) {
             return Long.MAX_VALUE;
         } else {
@@ -86,7 +86,7 @@ public abstract class AbstractDurationAttribute extends AbstractLongAttribute {
         }
     }
 
-    static long convertTo(long value, TimeUnit unit) {
+    public static long convertTo(long value, TimeUnit unit) {
         if (value == Long.MAX_VALUE) {
             return Long.MAX_VALUE;
         } else {

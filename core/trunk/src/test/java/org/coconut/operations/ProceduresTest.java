@@ -75,9 +75,9 @@ public class ProceduresTest {
         } finally {
             str.terminate();
         }
-        assertIsSerializable(Procedures.SYS_OUT_PRINT);
-        assertSame(Procedures.SYS_OUT_PRINT, Procedures.systemOutPrint());
-        assertSame(Procedures.SYS_OUT_PRINT, TestUtil.serializeAndUnserialize(Procedures
+        assertIsSerializable(Procedures.SYS_OUT_PRINT_PROCEDURE);
+        assertSame(Procedures.SYS_OUT_PRINT_PROCEDURE, Procedures.systemOutPrint());
+        assertSame(Procedures.SYS_OUT_PRINT_PROCEDURE, TestUtil.serializeAndUnserialize(Procedures
                 .systemOutPrint()));
     }
 
@@ -91,20 +91,20 @@ public class ProceduresTest {
         } finally {
             str.terminate();
         }
-        assertIsSerializable(Procedures.SYS_OUT_PRINTLN);
-        assertSame(Procedures.SYS_OUT_PRINTLN, Procedures.systemOutPrintln());
-        assertSame(Procedures.SYS_OUT_PRINTLN, TestUtil.serializeAndUnserialize(Procedures
+        assertIsSerializable(Procedures.SYS_OUT_PRINTLN_PROCEDURE);
+        assertSame(Procedures.SYS_OUT_PRINTLN_PROCEDURE, Procedures.systemOutPrintln());
+        assertSame(Procedures.SYS_OUT_PRINTLN_PROCEDURE, TestUtil.serializeAndUnserialize(Procedures
                 .systemOutPrintln()));
     }
 
     @Test
     public void noop() {
-        Procedure<Integer> p = Procedures.noop();
+        Procedure<Integer> p = Procedures.ignore();
         p.apply(null);
         p.apply(1);
         p.toString(); // does not fail
-        assertIsSerializable(Procedures.NOOP);
-        assertSame(Procedures.NOOP, Procedures.noop());
+        assertIsSerializable(Procedures.IGNORE_PROCEDURE);
+        assertSame(Procedures.IGNORE_PROCEDURE, Procedures.ignore());
         assertSame(p, TestUtil.serializeAndUnserialize(p));
     }
 

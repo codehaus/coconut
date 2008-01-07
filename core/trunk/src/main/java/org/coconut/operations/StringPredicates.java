@@ -9,6 +9,8 @@ import org.coconut.operations.Ops.Predicate;
 
 /**
  * Various String based {@link Predicate} methods and utility classes.
+ * <p>
+ * This class is normally best used via <tt>import static</tt>.
  *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: StringPredicates.java 472 2007-11-19 09:34:26Z kasper $

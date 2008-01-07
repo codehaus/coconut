@@ -12,6 +12,8 @@ import org.coconut.operations.Ops.Procedure;
 
 /**
  * Various implementations of {@link Procedure}.
+ * <p>
+ * This class is normally best used via <tt>import static</tt>.
  *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
@@ -21,19 +23,19 @@ public final class Procedures {
     /**
      * A Procedure that does nothing.
      */
-    public final static Procedure NOOP = new NoopProcedure();
+    public final static Procedure IGNORE_PROCEDURE = new NoopProcedure();
 
     /**
      * A Procedure that prints the argument object to {@link System#out} using its
      * {@link Object#toString()} and {@link PrintStream#print(String)}.
      */
-    public final static Procedure SYS_OUT_PRINT = new SystemOutPrintProcedure();
+    public final static Procedure SYS_OUT_PRINT_PROCEDURE = new SystemOutPrintProcedure();
 
     /**
      * A Procedure that prints the argument object to {@link System#out} using its
      * {@link Object#toString()} and {@link PrintStream#println(String)} .
      */
-    public final static Procedure SYS_OUT_PRINTLN = new SystemOutPrintlnProcedure();
+    public final static Procedure SYS_OUT_PRINTLN_PROCEDURE = new SystemOutPrintlnProcedure();
 
     // /CLOVER:OFF
     /** Cannot instantiate. */
@@ -64,8 +66,8 @@ public final class Procedures {
      * @param <T>
      *            the types of elements accepted by the specified Collection
      */
-    public static <T> Procedure<T> noop() {
-        return NOOP;
+    public static <T> Procedure<T> ignore() {
+        return IGNORE_PROCEDURE;
     }
 
     /**
@@ -94,7 +96,7 @@ public final class Procedures {
      *            the types of elements accepted by the procedure
      */
     public static <E> Procedure<E> systemOutPrint() {
-        return SYS_OUT_PRINT;
+        return SYS_OUT_PRINT_PROCEDURE;
     }
 
     /**
@@ -106,7 +108,7 @@ public final class Procedures {
      *            the types of elements accepted by the procedure
      */
     public static <E> Procedure<E> systemOutPrintln() {
-        return SYS_OUT_PRINTLN;
+        return SYS_OUT_PRINTLN_PROCEDURE;
     }
 
     /**
@@ -156,7 +158,7 @@ public final class Procedures {
 
         /** @return Preserves singleton property */
         private Object readResolve() {
-            return NOOP;
+            return IGNORE_PROCEDURE;
         }
     }
 
@@ -209,7 +211,7 @@ public final class Procedures {
 
         /** @return Preserves singleton property */
         private Object readResolve() {
-            return SYS_OUT_PRINTLN;
+            return SYS_OUT_PRINTLN_PROCEDURE;
         }
     }
 
@@ -231,7 +233,7 @@ public final class Procedures {
 
         /** @return Preserves singleton property */
         private Object readResolve() {
-            return SYS_OUT_PRINT;
+            return SYS_OUT_PRINT_PROCEDURE;
         }
     }
 }
