@@ -9,27 +9,39 @@ import org.coconut.internal.forkjoin.ParallelArray;
 import org.coconut.operations.Ops.Predicate;
 
 public interface MemoryStore<K, V> extends Iterable<CacheEntry<K, V>>, MemoryStoreWithFilter<K, V> {
-
     CacheEntry<K, V> get(Object key);
+
+    int getMaximumSize();
+
+    long getMaximumVolume();
+
+    ParallelArray<CacheEntry<K, V>> trim();
+
+    ParallelArray<CacheEntry<K, V>> trimTo(int size, long volume);
 
     Map.Entry<CacheEntry<K, V>, CacheEntry<K, V>> put(K key, V value, AttributeMap attributes,
             boolean OnlyIfAbsent);
-
+    
     Map<CacheEntry<K, V>, CacheEntry<K, V>> putAllWithAttributes(
             Map<K, Map.Entry<V, AttributeMap>> data);
-
     CacheEntry<K, V> remove(Object key);
 
     CacheEntry<K, V> remove(Object key, Object value);
+
+    ParallelArray<CacheEntry<K, V>> removeAll(Collection entries);
 
     CacheEntry<K, V> removeAny(Predicate<? super CacheEntry<K, V>> selector);
 
     ParallelArray<CacheEntry<K, V>> removeEntries(Collection entries);
 
     CacheEntry<K, V> removeValue(Object value);
-    ParallelArray<CacheEntry<K, V>> removeAll(Collection entries);
+
     ParallelArray<CacheEntry<K, V>> removeValues(Collection entries);
     // ParallelArray<CacheEntry<K, V>> all();
+
+    void setMaximumSize(int size);
+    void setMaximumVolume(long volume);
+    long volume();
 
     // ParallelArray<CacheEntry<K, V>> all(Class<? super CacheEntry> elementType);
 

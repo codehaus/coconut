@@ -53,6 +53,8 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
 
     int threshold;
 
+    long volume;
+
     AbstractSequentialMemoryStore(InternalCache<K, V> cache) {
         if (cache == null) {
             throw new NullPointerException("cache is null");
@@ -134,6 +136,44 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
         }
     }
 
+    public int getMaximumSize() {
+        return Integer.MAX_VALUE;
+    }
+
+    public long getMaximumVolume() {
+        return Long.MAX_VALUE;
+    }
+    public void setMaximumSize(int size) {
+        throw new UnsupportedOperationException("size limitation not supported for this cache");
+    }
+
+    public void setMaximumVolume(long volume) {
+        throw new UnsupportedOperationException("volume limitation not supported for this cache");
+    }
+    public ParallelArray<CacheEntry<K, V>> trimTo(int size, long volume) {
+        if (this.size == 0 || size == 0 || volume == 0) {
+            return removeAll();
+        } else {
+            ArrayList<ChainingEntry<K, V>> list = new ArrayList<ChainingEntry<K, V>>(Math.max(0,
+                    this.size - size));
+// while (this.size > size && this.volume > volume) {
+//
+// }
+            return fromArray((CacheEntry<K, V>[]) list.toArray(new CacheEntry[list.size()]));
+        }
+    }
+    public ParallelArray<CacheEntry<K, V>> trim() {
+        if (this.size == 0 || size == 0 || volume == 0) {
+            return removeAll();
+        } else {
+            ArrayList<ChainingEntry<K, V>> list = new ArrayList<ChainingEntry<K, V>>(Math.max(0,
+                    this.size - size));
+// while (this.size > size && this.volume > volume) {
+//
+// }
+            return fromArray((CacheEntry<K, V>[]) list.toArray(new CacheEntry[list.size()]));
+        }
+    }
     public Map.Entry<CacheEntry<K, V>, CacheEntry<K, V>> put(K key, V value, AttributeMap map,
             boolean onlyIfAbsent) {
         int hash = hash(key.hashCode());
@@ -149,6 +189,7 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
                 }
                 ++modCount;
                 ChainingEntry<K, V> entry = updated(e, key, value, map);
+                volume += (entry.getSize() - e.getSize());
                 if (prev == e) {
                     tab[index] = entry;
                 } else {
@@ -162,6 +203,7 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
         }
         ++modCount;
         ChainingEntry<K, V> entry = created(key, value, map);
+        volume += entry.getSize();
         entry.setNext(tab[index]);
         tab[index] = entry;
         if (size++ >= threshold) {
@@ -201,7 +243,9 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
             }
             table[i] = null;
         }
+        // TODO call clear.callback() for sub classes
         size = 0;
+        volume = 0;
         return fromArray(entries);
     }
 
@@ -232,7 +276,6 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
                             prev.setNext(next);
                         }
                         deleted(e, false);
-                        e.setNext(null);
                         return e;
                     }
                     prev = e;
@@ -320,6 +363,10 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
         }
     }
 
+    public long volume() {
+        return volume;
+    }
+
     public MemoryStoreWithFilter<K, V> withFilter(Predicate<? super CacheEntry<K, V>> selector) {
         return new WithFilterImpl(selector);
     }
@@ -349,6 +396,12 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
 
     public final MemoryStoreWithMapping<V> withValues() {
         return withMapping(MAP_ENTRY_TO_VALUE_MAPPER);
+    }
+
+    private void deleted(ChainingEntry<K, V> entry, boolean isEvicted) {
+        entry.setNext(null);
+        removed(entry, isEvicted);
+        volume -= entry.getSize();
     }
 
     /**
@@ -434,8 +487,6 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
 
     abstract ChainingEntry<K, V> created(K key, V value, AttributeMap attributes);
 
-    abstract void deleted(ChainingEntry<K, V> entry, boolean isEvicted);
-
     ChainingEntry<K, V> doRemove(Object key, Object value) {
         return remove(key, value, false);
     }
@@ -464,7 +515,6 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
                         prev.setNext(next);
                     }
                     deleted(e, isEvicted);
-                    e.setNext(null);
                     return e;
                 } else {
                     return null; // was next = null;
@@ -475,6 +525,8 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
         }
         return null;
     }
+
+    void removed(ChainingEntry<K, V> entry, boolean isEvicted) {};
 
     abstract ChainingEntry<K, V> updated(ChainingEntry<K, V> old, K key, V value,
             AttributeMap attributes);
@@ -1262,7 +1314,6 @@ public abstract class AbstractSequentialMemoryStore<K, V> implements MemoryStore
                                 prev.setNext(next);
                             }
                             deleted(e, false);
-                            e.setNext(null);
                             al.add(e);
                         }
                         prev = e;
