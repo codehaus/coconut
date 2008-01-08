@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.core.entryset;
@@ -18,7 +18,7 @@ import org.junit.Test;
 
 /**
  * Tests the modifying functions of a keySet().
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -63,7 +63,7 @@ public class EntrySetRemove extends AbstractCacheTCKTest {
     /**
      * {@link Cache#containsKey()} should not fail when cache is shutdown.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void removeShutdownISE() {
         c = newCache(5);
         assertTrue(c.isStarted());
@@ -109,20 +109,20 @@ public class EntrySetRemove extends AbstractCacheTCKTest {
     public void removeAllLazyStart() {
         init();
         assertFalse(c.isStarted());
-        c.entrySet().removeAll(CollectionTestUtil.asList(2, 3));
+        c.entrySet().removeAll(Arrays.asList(M1, M4));
         checkLazystart();
     }
 
     /**
      * {@link Cache#containsKey()} should not fail when cache is shutdown.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void removeAllShutdownISE() {
         c = newCache(5);
         assertTrue(c.isStarted());
         c.shutdown();
 
         // should fail
-        c.entrySet().removeAll(CollectionTestUtil.asList(2, 3));
+        assertFalse(c.entrySet().removeAll(Arrays.asList(M1, M4)));
     }
 }

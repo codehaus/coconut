@@ -13,8 +13,8 @@ import static org.coconut.test.CollectionTestUtil.M6;
 
 import java.util.Collection;
 
-import org.coconut.cache.service.event.CacheEntryEvent.ItemAdded;
-import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemCreated;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemDeleted;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated;
 import org.coconut.cache.test.util.CacheEntryFilter;
 import org.coconut.cache.test.util.IntegerToStringLoader;
@@ -43,7 +43,7 @@ public class EventGet extends AbstractEventTestBundle {
         subscribe(CACHEENTRY_ADDED_FILTER);
 
         assertEquals(M1.getValue(), get(M1));
-        consumeItem(ItemAdded.class, M1);
+        consumeItem(ItemCreated.class, M1);
 
         getAll(M2, M3);
         Collection col = consumeItems(c, 2);
@@ -51,7 +51,7 @@ public class EventGet extends AbstractEventTestBundle {
         assertTrue(col.contains(EventServiceLoading.itemAdded(c, M3.getKey(), M3.getValue())));
 
         getAll(M4, M6); // M6 does not cause loading
-        consumeItem(ItemAdded.class, M4);
+        consumeItem(ItemCreated.class, M4);
     }
 
     @Test
@@ -59,9 +59,9 @@ public class EventGet extends AbstractEventTestBundle {
         c = newCache(conf.loading().setLoader(new IntegerToStringLoader()).c(), 0);
         subscribe(CACHEENTRYEVENT_FILTER);
         assertEquals(M1.getValue(), get(M1));
-        consumeItem(ItemAdded.class, M1);
+        consumeItem(ItemCreated.class, M1);
         getAll(M1, M3);
-        consumeItem(ItemAdded.class, M3);
+        consumeItem(ItemCreated.class, M3);
     }
 
     /**
@@ -78,7 +78,7 @@ public class EventGet extends AbstractEventTestBundle {
         assertGetEntry(M1);
         assertGetEntry(M2);
         assertGetEntry(M3);
-        ItemAdded<?, ?> added = consumeItem(ItemAdded.class, M3);
+        ItemCreated<?, ?> added = consumeItem(ItemCreated.class, M3);
         // assertTrue(added.isLoaded());
     }
 
@@ -97,7 +97,7 @@ public class EventGet extends AbstractEventTestBundle {
         assertGet(M2);
         f.setAccept(true);
         assertNullGet(M2);
-        ItemRemoved<?, ?> removed = consumeItem(ItemRemoved.class, M2);
+        ItemDeleted<?, ?> removed = consumeItem(ItemDeleted.class, M2);
         assertTrue(removed.hasExpired());
     }
 
@@ -134,7 +134,7 @@ public class EventGet extends AbstractEventTestBundle {
         assertGet(M2);
         f.setAccept(true);
         assertNullGet(M2);
-        ItemRemoved<?, ?> removed = consumeItem(ItemRemoved.class, M2);
+        ItemDeleted<?, ?> removed = consumeItem(ItemDeleted.class, M2);
         assertTrue(removed.hasExpired());
     }
 
@@ -152,7 +152,7 @@ public class EventGet extends AbstractEventTestBundle {
         assertGet(M1);
         assertGet(M2);
         assertGet(M3);
-        ItemAdded<?, ?> added = consumeItem(ItemAdded.class, M3);
+        ItemCreated<?, ?> added = consumeItem(ItemCreated.class, M3);
         // assertTrue(added.isLoaded());
     }
 

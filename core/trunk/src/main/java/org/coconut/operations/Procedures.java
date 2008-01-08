@@ -8,13 +8,14 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Queue;
 
+import org.coconut.operations.Ops.Mapper;
 import org.coconut.operations.Ops.Procedure;
 
 /**
  * Various implementations of {@link Procedure}.
  * <p>
  * This class is normally best used via <tt>import static</tt>.
- *
+ * 
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id: Cache.java,v 1.2 2005/04/27 15:49:16 kasper Exp $
  */
@@ -46,7 +47,7 @@ public final class Procedures {
      * Wraps the {@link Collection#add(Object)} method in an {@link Procedure}.
      * <p>
      * The returned Procedure is serializable if the specified Collection is serializable.
-     *
+     * 
      * @param collection
      *            the collection to wrap
      * @return the newly created Procedure
@@ -61,7 +62,7 @@ public final class Procedures {
 
     /**
      * Returns a Procedure that does nothing.
-     *
+     * 
      * @return a Procedure that does nothing.
      * @param <T>
      *            the types of elements accepted by the specified Collection
@@ -74,7 +75,7 @@ public final class Procedures {
      * Wraps the {@link Queue#offer(Object)} method in an {@link Procedure}.
      * <p>
      * The returned Procedure is serializable if the specified Queue is serializable.
-     *
+     * 
      * @param queue
      *            the queue to wrap
      * @return the newly created Procedure
@@ -90,7 +91,7 @@ public final class Procedures {
     /**
      * Returns a Procedure that calls {@link PrintStream#print(boolean)} on
      * {@link System#out}.
-     *
+     * 
      * @return an eventhandler that prints all processed elements to {@link System#out}
      * @param <E>
      *            the types of elements accepted by the procedure
@@ -102,13 +103,75 @@ public final class Procedures {
     /**
      * Returns a Procedure that calls {@link PrintStream#println(boolean)} on
      * {@link System#out}.
-     *
+     * 
      * @return an eventhandler that prints all processed elements to {@link System#out}
      * @param <E>
      *            the types of elements accepted by the procedure
      */
     public static <E> Procedure<E> systemOutPrintln() {
         return SYS_OUT_PRINTLN_PROCEDURE;
+    }
+
+    public static <F, T> Procedure<F> mapAndApply(final Mapper<F, T> mapper,
+            Procedure<? super T> procedure) {
+        return new MapAndApplyPredicate<F, T>(mapper, procedure);
+    }
+
+    /**
+     * A Predicate that first applies the specified mapper to the argument before
+     * evaluating the specified predicate.
+     */
+    final static class MapAndApplyPredicate<F, T> implements Procedure<F>, Serializable {
+
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -6292758840373110577L;
+
+        /** The mapper used to map the element. */
+        private final Mapper<F, T> mapper;
+
+        /** The procedure to to apply the mapped value on. */
+        private final Procedure<? super T> procedure;
+
+        /**
+         * Creates a new MapAndEvaluatePredicate.
+         * 
+         * @param mapper
+         *            the mapper used to first map the argument
+         * @param procedure
+         *            the predicate used to evaluate the mapped argument
+         */
+        public MapAndApplyPredicate(Mapper<F, T> mapper, Procedure<? super T> procedure) {
+            if (mapper == null) {
+                throw new NullPointerException("mapper is null");
+            } else if (procedure == null) {
+                throw new NullPointerException("procedure is null");
+            }
+            this.procedure = procedure;
+            this.mapper = mapper;
+        }
+
+        public void apply(F element) {
+            procedure.apply(mapper.map(element));
+        }
+
+        /**
+         * Returns the mapper that will map the object before applying the predicate on
+         * it.
+         * 
+         * @return the mapper that will map the object before applying the predicate on it
+         */
+        public Mapper<F, T> getMapper() {
+            return mapper;
+        }
+
+        /**
+         * Returns the Procedure we are testing against.
+         * 
+         * @return the Procedure we are testing against.
+         */
+        public Procedure<? super T> getProcedure() {
+            return procedure;
+        }
     }
 
     /**
@@ -123,7 +186,7 @@ public final class Procedures {
 
         /**
          * Creates a new CollectionAdd.
-         *
+         * 
          * @param collection
          *            the Collection to wrap
          * @throws NullPointerException
@@ -174,7 +237,7 @@ public final class Procedures {
 
         /**
          * Creates a new QueueOffer.
-         *
+         * 
          * @param queue
          *            the Queue to wrap
          * @throws NullPointerException

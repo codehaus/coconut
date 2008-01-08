@@ -171,7 +171,7 @@ public final class Ops {
     /**
      * A mapper accepting a double argument and returning a double.
      */
-    public static interface MapperFromDoubleToDouble {
+    public static interface DoubleMapper {
         public double map(double t);
     }
 
@@ -239,7 +239,7 @@ public final class Ops {
     /**
      * A mapper accepting a long argument and returning a long.
      */
-    public static interface MapperFromLongToLong {
+    public static interface LongMapper {
         public long map(long t);
     }
 

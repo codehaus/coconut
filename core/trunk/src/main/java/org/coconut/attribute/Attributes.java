@@ -15,6 +15,7 @@ import java.util.Set;
 
 import org.coconut.internal.util.CollectionUtils;
 import org.coconut.internal.util.CollectionUtils.SimpleImmutableEntry;
+import org.coconut.operations.Ops.Mapper;
 
 /**
  * Contains various utility methods for a {@link AttributeMap}.
@@ -27,11 +28,11 @@ public final class Attributes {
     /** The empty attribute map (immutable). This attribute map is serializable. */
     public final static AttributeMap EMPTY_ATTRIBUTE_MAP = new EmptyAttributeMap();
 
+    public static final Mapper WITHATTRIBUTES_TO_ATTRIBUTES_MAPPER = new AttributesFromCacheEntry();
+
     // /CLOVER:OFF
     /** Cannot instantiate. */
     private Attributes() {}
-
-    // /CLOVER:ON
 
     /**
      * Returns an immutable AttributeMap containing only the specified attribute mapping
@@ -55,6 +56,8 @@ public final class Attributes {
     public static <T> AttributeMap singleton(Attribute<T> attribute, T value) {
         return new SingletonAttributeMap(attribute, value);
     }
+
+    // /CLOVER:ON
 
     /**
      * Creates a new {@link Map} where all the specified keys maps to
@@ -107,6 +110,22 @@ public final class Attributes {
      */
     public static AttributeMap unmodifiableAttributeMap(AttributeMap attributes) {
         return new ImmutableAttributeMap(attributes);
+    }
+
+    static class AttributesFromCacheEntry implements Mapper<WithAttributes, AttributeMap>,
+            Serializable {
+
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -7434819505208127940L;
+
+        public AttributeMap map(WithAttributes t) {
+            return t.getAttributes();
+        }
+
+        /** @return Preserves singleton property */
+        private Object readResolve() {
+            return WITHATTRIBUTES_TO_ATTRIBUTES_MAPPER;
+        }
     }
 
     /**

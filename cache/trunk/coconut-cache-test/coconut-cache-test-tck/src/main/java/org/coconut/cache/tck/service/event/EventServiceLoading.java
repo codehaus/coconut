@@ -17,7 +17,7 @@ import org.coconut.cache.Cache;
 import org.coconut.cache.service.event.CacheEntryEvent;
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.event.CacheEventFilters;
-import org.coconut.cache.service.event.CacheEntryEvent.ItemAdded;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemCreated;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated;
 import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.operations.Predicates;
@@ -45,7 +45,7 @@ public class EventServiceLoading extends AbstractEventTestBundle {
         subscribe(CacheEventFilters.CACHEENTRYEVENT_FILTER);
         loading().forceLoad(1);
         awaitAllLoads();
-        ItemAdded added = consumeItem(ItemAdded.class, M1);
+        ItemCreated added = consumeItem(ItemCreated.class, M1);
         // assertTrue(added.isLoaded());
         loader.incBase();
         loading().forceLoad(1);
@@ -70,8 +70,8 @@ public class EventServiceLoading extends AbstractEventTestBundle {
         return new Object() {
             @Override
             public boolean equals(Object obj) {
-                if (obj instanceof CacheEntryEvent.ItemAdded) {
-                    CacheEntryEvent.ItemAdded event = (ItemAdded) obj;
+                if (obj instanceof CacheEntryEvent.ItemCreated) {
+                    CacheEntryEvent.ItemCreated event = (ItemCreated) obj;
                     return event.getCache().equals(c) && event.getKey().equals(key)
                             && event.getValue().equals(value);
                 }
@@ -101,13 +101,13 @@ public class EventServiceLoading extends AbstractEventTestBundle {
         subscribe(CacheEventFilters.CACHEENTRYEVENT_FILTER);
         loading().load(1);
         awaitAllLoads();
-        consumeItem(ItemAdded.class, M1);
+        consumeItem(ItemCreated.class, M1);
         loader.incBase();
         loading().load(1);// does not trigger load
         awaitAllLoads();
         loading().loadAll(Arrays.asList(1, 2));
         awaitAllLoads();
-        consumeItem(ItemAdded.class, M2.getKey(), M3.getValue());
+        consumeItem(ItemCreated.class, M2.getKey(), M3.getValue());
         loader.incBase();
         loading().loadAll();
         awaitAllLoads();
@@ -130,7 +130,7 @@ public class EventServiceLoading extends AbstractEventTestBundle {
         loading().setDefaultTimeToRefresh(1, TimeUnit.MILLISECONDS);
         loading().load(1);
         awaitAllLoads();
-        consumeItem(ItemAdded.class, M1);
+        consumeItem(ItemCreated.class, M1);
         incTime(1);
         loader.incBase();
         loading().loadAll();

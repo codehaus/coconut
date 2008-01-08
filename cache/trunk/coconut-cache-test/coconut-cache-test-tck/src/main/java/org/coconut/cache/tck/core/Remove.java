@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.core;
@@ -57,20 +57,20 @@ public class Remove extends AbstractCacheTCKTest {
         c.remove(M1.getKey(), M2.getValue());
         checkLazystart();
     }
-    
-    
-    
+
+
+
     /**
      * {@link Cache#containsKey()} should not fail when cache is shutdown.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void remove2ShutdownISE() {
         c = newCache(5);
         assertTrue(c.isStarted());
         c.shutdown();
 
         // should fail
-        c.remove(M1.getKey(), M2.getValue());
+        assertFalse(c.remove(M1.getKey(), M2.getValue()));
     }
 
     /**
@@ -102,17 +102,17 @@ public class Remove extends AbstractCacheTCKTest {
     public void removeNPE1() {
         newCache(5).remove(null);
     }
-    
+
     /**
      * {@link Cache#containsKey()} should not fail when cache is shutdown.
      */
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void removeShutdownISE() {
         c = newCache(5);
         assertTrue(c.isStarted());
         c.shutdown();
 
         // should fail
-        c.remove(MNAN1.getKey());
+        assertNull(c.remove(MNAN1.getKey()));
     }
 }

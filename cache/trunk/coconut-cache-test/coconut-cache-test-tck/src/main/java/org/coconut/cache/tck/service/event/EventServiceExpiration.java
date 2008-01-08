@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
-import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemDeleted;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated;
 import org.coconut.cache.test.util.IntegerToStringLoader;
 import org.coconut.test.CollectionTestUtil;
@@ -36,14 +36,14 @@ public class EventServiceExpiration extends AbstractEventTestBundle {
         expiration().purgeExpired();
         assertSize(2);
 
-        ItemRemoved<?, ?> r = consumeItem(ItemRemoved.class, M1);
+        ItemDeleted<?, ?> r = consumeItem(ItemDeleted.class, M1);
         assertTrue(r.hasExpired());
 
         clock.incrementTimestamp(1);
         expiration().purgeExpired();
 
-        Collection<ItemRemoved> removed = consumeItems(ItemRemoved.class, M3, M2);
-        for (ItemRemoved i : removed) {
+        Collection<ItemDeleted> removed = consumeItems(ItemDeleted.class, M3, M2);
+        for (ItemDeleted i : removed) {
             assertTrue(i.hasExpired());
         }
 

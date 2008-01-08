@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.core.entryset;
@@ -14,8 +14,8 @@ import org.coconut.cache.tck.AbstractCacheTCKTest;
 import org.junit.Test;
 
 /**
- * 
- * 
+ *
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -30,6 +30,7 @@ public class EntrySetToArray extends AbstractCacheTCKTest {
         assertEquals(new HashSet(), new HashSet(Arrays.asList(c.entrySet().toArray(
                 new Map.Entry[0]))));
         c = newCache(5);
+        c.entrySet().toArray();
         assertEquals(new HashSet(M1_TO_M5_SET), new HashSet(Arrays.asList(c.entrySet()
                 .toArray())));
 
@@ -63,7 +64,7 @@ public class EntrySetToArray extends AbstractCacheTCKTest {
 
     /**
      * {@link Cache#isEmpty()} should not fail when cache is shutdown.
-     * 
+     *
      * @throws InterruptedException
      *             was interrupted
      */

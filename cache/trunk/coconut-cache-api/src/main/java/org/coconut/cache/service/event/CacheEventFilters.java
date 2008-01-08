@@ -6,8 +6,8 @@ package org.coconut.cache.service.event;
 import java.io.Serializable;
 
 import org.coconut.cache.Cache;
-import org.coconut.cache.service.event.CacheEntryEvent.ItemAdded;
-import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemCreated;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemDeleted;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated;
 import org.coconut.cache.service.event.CacheEvent.CacheCleared;
 import org.coconut.cache.service.event.CacheEvent.CacheStarted;
@@ -41,13 +41,13 @@ public final class CacheEventFilters {
     /**
      * A {@link Predicate} that only accepts instances of ItemUpdated events.
      */
-    public final static Predicate<?> CACHEENTRY_ADDED_FILTER = Predicates.isType(ItemAdded.class);
+    public final static Predicate<?> CACHEENTRY_ADDED_FILTER = Predicates.isType(ItemCreated.class);
 
     /**
      * A {@link Predicate} that only accepts instances of ItemUpdated events.
      */
     public final static Predicate<?> CACHEENTRY_REMOVED_FILTER = Predicates
-            .isType(ItemRemoved.class);
+            .isType(ItemDeleted.class);
 
     /**
      * A {@link Predicate} that only accepts instances of ItemUpdated events.

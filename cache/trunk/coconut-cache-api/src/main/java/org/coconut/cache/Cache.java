@@ -53,7 +53,7 @@ import org.coconut.attribute.AttributeMap;
  * be used as an alternative.
  *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
- * @version $Id$
+ * @version $Id: Cache.java 520 2007-12-21 17:53:31Z kasper $
  * @param <K>
  *            the type of keys maintained by this cache
  * @param <V>
@@ -82,7 +82,7 @@ public interface Cache<K, V> extends ConcurrentMap<K, V> {
      * that are stored externally, for example, on disk. The cache will be empty after
      * this call returns.
      * <p>
-     * A {@link org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved} event will be
+     * A {@link org.coconut.cache.service.event.CacheEntryEvent.ItemDeleted} event will be
      * raised for each mapping that is removed when the cache is cleared. When all entries
      * have been removed from the cache a single
      * {@link org.coconut.cache.service.event.CacheEvent.CacheCleared} will be raised.

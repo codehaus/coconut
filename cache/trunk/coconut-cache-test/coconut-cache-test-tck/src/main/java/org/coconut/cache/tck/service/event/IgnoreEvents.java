@@ -11,8 +11,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.coconut.cache.CacheConfiguration;
 import org.coconut.cache.service.event.CacheEvent;
-import org.coconut.cache.service.event.CacheEntryEvent.ItemAdded;
-import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemCreated;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemDeleted;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated;
 import org.coconut.cache.tck.service.event.EventServiceEviction.RejectEntriesPolicy;
 import org.coconut.cache.test.util.IntegerToStringLoader;
@@ -23,7 +23,7 @@ public class IgnoreEvents extends AbstractEventTestBundle {
 
     @Test
     public void add() {
-        init(anythingBut(ItemAdded.class));
+        init(anythingBut(ItemCreated.class));
         subscribe(Predicates.truePredicate());
         put(M1);
         putAll(M2, M3);
@@ -31,7 +31,7 @@ public class IgnoreEvents extends AbstractEventTestBundle {
 
     @Test
     public void addLoad() {
-        CacheConfiguration<Integer, String> conf = anythingBut(ItemAdded.class);
+        CacheConfiguration<Integer, String> conf = anythingBut(ItemCreated.class);
         init(conf.loading().setLoader(new IntegerToStringLoader()));
         subscribe(Predicates.truePredicate());
         loading().forceLoad(1);
@@ -48,7 +48,7 @@ public class IgnoreEvents extends AbstractEventTestBundle {
 
     @Test
     public void remove() {
-        init(anythingBut(ItemRemoved.class));
+        init(anythingBut(ItemDeleted.class));
         put(M1);
         subscribe(Predicates.truePredicate());
         remove(M1);
@@ -56,7 +56,7 @@ public class IgnoreEvents extends AbstractEventTestBundle {
 
     @Test
     public void removeCleared() {
-        init(anythingBut(ItemRemoved.class));
+        init(anythingBut(ItemDeleted.class));
         put(M1);
         subscribe(Predicates.truePredicate());
         c.clear();
@@ -71,12 +71,12 @@ public class IgnoreEvents extends AbstractEventTestBundle {
         put(M1);
         subscribe(Predicates.truePredicate());
         c.clear();
-        consumeItem(ItemRemoved.class, M1);
+        consumeItem(ItemDeleted.class, M1);
     }
 
     @Test
     public void purgeExpired() {
-        init(anythingBut(ItemRemoved.class));
+        init(anythingBut(ItemDeleted.class));
         expiration().put(M1.getKey(), M1.getValue(), 1, TimeUnit.NANOSECONDS);
         assertSize(1);
         expiration().purgeExpired();
@@ -84,7 +84,7 @@ public class IgnoreEvents extends AbstractEventTestBundle {
 
     @Test
     public void putLoad() {
-        CacheConfiguration<Integer, String> conf = anythingBut(ItemAdded.class);
+        CacheConfiguration<Integer, String> conf = anythingBut(ItemCreated.class);
         init(conf.loading().setLoader(new IntegerToStringLoader()));
         subscribe(Predicates.truePredicate());
         loading().forceLoad(1);
@@ -94,7 +94,7 @@ public class IgnoreEvents extends AbstractEventTestBundle {
     @Test
     public void testRejectReplaceEntry() {
         RejectEntriesPolicy rep = new RejectEntriesPolicy();
-        anythingBut(ItemRemoved.class);
+        anythingBut(ItemDeleted.class);
         c = newCache(conf.eviction().setPolicy(rep).c());
 
         c.put(1, "A");

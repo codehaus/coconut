@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemDeleted;
 import org.junit.Test;
 
 public class EventRemove extends AbstractEventTestBundle {
@@ -24,7 +24,7 @@ public class EventRemove extends AbstractEventTestBundle {
         init(2);
         subscribe(CACHEENTRYEVENT_FILTER);
         c.entrySet().remove(M1);
-        ItemRemoved<?, ?> removed = consumeItem(ItemRemoved.class, M1);
+        ItemDeleted<?, ?> removed = consumeItem(ItemDeleted.class, M1);
         assertFalse(removed.hasExpired());
     }
 
@@ -33,8 +33,8 @@ public class EventRemove extends AbstractEventTestBundle {
         init(4);
         subscribe(CACHEENTRYEVENT_FILTER);
         c.entrySet().removeAll(Arrays.asList(M3, M4));
-        Collection<ItemRemoved> removed = consumeItems(ItemRemoved.class, M3, M4);
-        for (ItemRemoved i : removed) {
+        Collection<ItemDeleted> removed = consumeItems(ItemDeleted.class, M3, M4);
+        for (ItemDeleted i : removed) {
             assertFalse(i.hasExpired());
         }
     }
@@ -50,7 +50,7 @@ public class EventRemove extends AbstractEventTestBundle {
                 iter.remove();
             }
         }
-        ItemRemoved<?, ?> removed = consumeItem(ItemRemoved.class, M2);
+        ItemDeleted<?, ?> removed = consumeItem(ItemDeleted.class, M2);
         assertFalse(removed.hasExpired());
     }
 
@@ -59,8 +59,8 @@ public class EventRemove extends AbstractEventTestBundle {
         init(4);
         subscribe(CACHEENTRYEVENT_FILTER);
         c.entrySet().retainAll(Arrays.asList(M3, M4));
-        Collection<ItemRemoved> removed = consumeItems(ItemRemoved.class, M1, M2);
-        for (ItemRemoved i : removed) {
+        Collection<ItemDeleted> removed = consumeItems(ItemDeleted.class, M1, M2);
+        for (ItemDeleted i : removed) {
             assertFalse(i.hasExpired());
         }
     }
@@ -70,7 +70,7 @@ public class EventRemove extends AbstractEventTestBundle {
         init(2);
         subscribe(CACHEENTRYEVENT_FILTER);
         c.keySet().remove(M1.getKey());
-        ItemRemoved<?, ?> removed = consumeItem(ItemRemoved.class, M1);
+        ItemDeleted<?, ?> removed = consumeItem(ItemDeleted.class, M1);
         assertFalse(removed.hasExpired());
     }
 
@@ -79,8 +79,8 @@ public class EventRemove extends AbstractEventTestBundle {
         init(4);
         subscribe(CACHEENTRYEVENT_FILTER);
         c.keySet().removeAll(Arrays.asList(M3.getKey(), M4.getKey()));
-        Collection<ItemRemoved> removed = consumeItems(ItemRemoved.class, M3, M4);
-        for (ItemRemoved i : removed) {
+        Collection<ItemDeleted> removed = consumeItems(ItemDeleted.class, M3, M4);
+        for (ItemDeleted i : removed) {
             assertFalse(i.hasExpired());
         }
     }
@@ -96,7 +96,7 @@ public class EventRemove extends AbstractEventTestBundle {
                 iter.remove();
             }
         }
-        ItemRemoved<?, ?> removed = consumeItem(ItemRemoved.class, M2);
+        ItemDeleted<?, ?> removed = consumeItem(ItemDeleted.class, M2);
         assertFalse(removed.hasExpired());
     }
 
@@ -105,8 +105,8 @@ public class EventRemove extends AbstractEventTestBundle {
         init(4);
         subscribe(CACHEENTRYEVENT_FILTER);
         c.keySet().retainAll(Arrays.asList(M3.getKey(), M4.getKey()));
-        Collection<ItemRemoved> removed = consumeItems(ItemRemoved.class, M1, M2);
-        for (ItemRemoved i : removed) {
+        Collection<ItemDeleted> removed = consumeItems(ItemDeleted.class, M1, M2);
+        for (ItemDeleted i : removed) {
             assertFalse(i.hasExpired());
         }
     }
@@ -117,8 +117,8 @@ public class EventRemove extends AbstractEventTestBundle {
         subscribe(CACHEENTRYEVENT_FILTER);
         c.removeAll(Arrays.asList(M3.getKey(), M4.getKey()));
 
-        Collection<ItemRemoved> removed = consumeItems(ItemRemoved.class, M3, M4);
-        for (ItemRemoved i : removed) {
+        Collection<ItemDeleted> removed = consumeItems(ItemDeleted.class, M3, M4);
+        for (ItemDeleted i : removed) {
             assertFalse(i.hasExpired());
         }
     }
@@ -129,7 +129,7 @@ public class EventRemove extends AbstractEventTestBundle {
         subscribe(CACHEENTRYEVENT_FILTER);
         c.remove(M1.getKey());
 
-        ItemRemoved<?, ?> removed = consumeItem(ItemRemoved.class, M1);
+        ItemDeleted<?, ?> removed = consumeItem(ItemDeleted.class, M1);
         assertFalse(removed.hasExpired());
     }
 
@@ -139,7 +139,7 @@ public class EventRemove extends AbstractEventTestBundle {
         subscribe(CACHEENTRYEVENT_FILTER);
         c.remove(M2.getKey(), M2.getValue());
 
-        ItemRemoved<?, ?> removed = consumeItem(ItemRemoved.class, M2);
+        ItemDeleted<?, ?> removed = consumeItem(ItemDeleted.class, M2);
         assertFalse(removed.hasExpired());
     }
 
@@ -157,7 +157,7 @@ public class EventRemove extends AbstractEventTestBundle {
         init(2);
         subscribe(CACHEENTRYEVENT_FILTER);
         c.values().remove(M1.getValue());
-        ItemRemoved<?, ?> removed = consumeItem(ItemRemoved.class, M1);
+        ItemDeleted<?, ?> removed = consumeItem(ItemDeleted.class, M1);
         assertFalse(removed.hasExpired());
     }
 
@@ -166,8 +166,8 @@ public class EventRemove extends AbstractEventTestBundle {
         init(4);
         subscribe(CACHEENTRYEVENT_FILTER);
         c.values().removeAll(Arrays.asList(M3.getValue(), M4.getValue()));
-        Collection<ItemRemoved> removed = consumeItems(ItemRemoved.class, M3, M4);
-        for (ItemRemoved i : removed) {
+        Collection<ItemDeleted> removed = consumeItems(ItemDeleted.class, M3, M4);
+        for (ItemDeleted i : removed) {
             assertFalse(i.hasExpired());
         }
     }
@@ -183,7 +183,7 @@ public class EventRemove extends AbstractEventTestBundle {
                 iter.remove();
             }
         }
-        ItemRemoved<?, ?> removed = consumeItem(ItemRemoved.class, M2);
+        ItemDeleted<?, ?> removed = consumeItem(ItemDeleted.class, M2);
         assertFalse(removed.hasExpired());
     }
 
@@ -192,8 +192,8 @@ public class EventRemove extends AbstractEventTestBundle {
         init(4);
         subscribe(CACHEENTRYEVENT_FILTER);
         c.values().retainAll(Arrays.asList(M3.getValue(), M4.getValue()));
-        Collection<ItemRemoved> removed = consumeItems(ItemRemoved.class, M1, M2);
-        for (ItemRemoved i : removed) {
+        Collection<ItemDeleted> removed = consumeItems(ItemDeleted.class, M1, M2);
+        for (ItemDeleted i : removed) {
             assertFalse(i.hasExpired());
         }
     }

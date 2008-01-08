@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.tck.core;
@@ -12,7 +12,7 @@ import org.junit.Test;
 
 /**
  * Tests put operations for a cache.
- * 
+ *
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
  */
@@ -23,9 +23,8 @@ public class PutIfAbsent extends AbstractCacheTCKTest {
      */
     @Test
     public void putIfAbsent() {
-        init();
         assertNull(c.putIfAbsent(M1.getKey(), M1.getValue()));
-        assertEquals(M1.getValue(), c.get(M1.getKey()));
+        assertEquals(M1.getValue(), c.peek(M1.getKey()));
         assertEquals(M1.getValue(), c.putIfAbsent(M1.getKey(), M2.getValue()));
         assertFalse(c.containsValue(M2.getValue()));
     }
@@ -40,7 +39,7 @@ public class PutIfAbsent extends AbstractCacheTCKTest {
         c.putIfAbsent(M1.getKey(), M1.getValue());
         checkLazystart();
     }
-    
+
     /**
      * Tests that putIfAbsent(null, Object) throws NPE.
      */

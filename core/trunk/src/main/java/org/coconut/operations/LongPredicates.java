@@ -10,7 +10,7 @@ import org.coconut.operations.Ops.MapperToLong;
 import org.coconut.operations.Ops.Predicate;
 
 /**
- * Various implementations of {@link Ops.LongPredicate}.
+ * Various implementations of {@link LongPredicate}.
  * <p>
  * This class is normally best used via <tt>import static</tt>.
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>

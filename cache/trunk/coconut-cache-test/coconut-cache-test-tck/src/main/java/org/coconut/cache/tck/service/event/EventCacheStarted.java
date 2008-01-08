@@ -7,7 +7,7 @@ import static org.coconut.test.CollectionTestUtil.M1;
 
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.event.CacheEventService;
-import org.coconut.cache.service.event.CacheEntryEvent.ItemAdded;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemCreated;
 import org.coconut.cache.service.servicemanager.AbstractCacheLifecycle;
 import org.coconut.cache.service.servicemanager.CacheServiceManagerService;
 import org.coconut.operations.Predicates;
@@ -25,7 +25,7 @@ public class EventCacheStarted extends AbstractEventTestBundle {
         c = newCache(conf);
         put(M1);
         consumeItem(c, CacheEvent.CacheStarted.class);// start event is first
-        consumeItem(ItemAdded.class, M1);
+        consumeItem(ItemCreated.class, M1);
     }
 
     @Test
@@ -34,7 +34,7 @@ public class EventCacheStarted extends AbstractEventTestBundle {
 
         c = newCache(conf);
         put(M1);
-        consumeItem(ItemAdded.class, M1);// no start event posted
+        consumeItem(ItemCreated.class, M1);// no start event posted
     }
 
     public class Subscriber extends AbstractCacheLifecycle {

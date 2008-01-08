@@ -10,7 +10,7 @@ import static org.coconut.test.CollectionTestUtil.M3;
 
 import java.util.Collection;
 
-import org.coconut.cache.service.event.CacheEntryEvent.ItemAdded;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemCreated;
 import org.coconut.cache.service.event.CacheEntryEvent.ItemUpdated;
 import org.coconut.operations.Predicates;
 import org.junit.Test;
@@ -30,7 +30,7 @@ public class EventPut extends AbstractEventTestBundle {
 
         put(M1);
 
-        ItemAdded<?, ?> added = consumeItem(ItemAdded.class, M1);
+        ItemCreated<?, ?> added = consumeItem(ItemCreated.class, M1);
         // assertFalse(added.isLoaded());
     }
 
@@ -61,7 +61,7 @@ public class EventPut extends AbstractEventTestBundle {
 
         putAll(M1, M2);
 
-        Collection<ItemAdded> added = consumeItems(ItemAdded.class, M1, M2);
+        Collection<ItemCreated> added = consumeItems(ItemCreated.class, M1, M2);
 // for (ItemAdded i : added) {
 // assertFalse(i.isLoaded());
 // }
@@ -74,7 +74,7 @@ public class EventPut extends AbstractEventTestBundle {
         subscribe(CACHEENTRYEVENT_FILTER);
         putIfAbsent(M1);
         putIfAbsent(M2);
-        ItemAdded<?, ?> added = consumeItem(ItemAdded.class, M2);
+        ItemCreated<?, ?> added = consumeItem(ItemCreated.class, M2);
         // assertFalse(added.isLoaded());
     }
 
@@ -101,7 +101,7 @@ public class EventPut extends AbstractEventTestBundle {
         subscribe(CACHEENTRYEVENT_FILTER);
 
         put(M1);
-        ItemAdded<?, ?> added = consumeItem(ItemAdded.class, M1);
+        ItemCreated<?, ?> added = consumeItem(ItemCreated.class, M1);
         // assertFalse(added.isLoaded());
         put(M1);
         ItemUpdated<?, ?> updated = consumeItem(ItemUpdated.class, M1);

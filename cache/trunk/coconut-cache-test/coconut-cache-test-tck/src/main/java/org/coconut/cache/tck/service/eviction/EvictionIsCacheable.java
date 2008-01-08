@@ -25,10 +25,10 @@ import org.junit.Test;
 
 public class EvictionIsCacheable extends AbstractCacheTCKTest {
 
-    static Predicate ic = Predicates.mapAndEvaluate((Mapper) Mappers.keyFromMapEntry(), Predicates
+    static Predicate ic = Predicates.mapAndEvaluate((Mapper) Mappers.mapEntryToKey(), Predicates
             .anyEquals(1, 2));
 
-    static Predicate ivalue = Predicates.mapAndEvaluate((Mapper) Mappers.valueFromMapEntry(),
+    static Predicate ivalue = Predicates.mapAndEvaluate((Mapper) Mappers.mapEntryToValue(),
             Predicates.anyEquals("A", "B"));
 
     @Test

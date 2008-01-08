@@ -5,7 +5,7 @@ package org.coconut.cache.tck.service.event;
 
 import static org.coconut.cache.service.event.CacheEventFilters.CACHEENTRYEVENT_FILTER;
 
-import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemDeleted;
 import org.junit.Test;
 
 /**
@@ -21,7 +21,7 @@ public class EventTrimmer extends AbstractEventTestBundle {
         assertSize(2);
         eviction().trimToSize(1);
         assertSize(1);
-        ItemRemoved<?, ?> removed = consumeItem(c, ItemRemoved.class);
+        ItemDeleted<?, ?> removed = consumeItem(c, ItemDeleted.class);
         assertTrue(removed.getKey().equals(1) || removed.getKey().equals(2));
         assertFalse(removed.hasExpired());
     }

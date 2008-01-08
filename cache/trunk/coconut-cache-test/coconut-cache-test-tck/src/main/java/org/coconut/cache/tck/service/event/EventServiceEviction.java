@@ -12,8 +12,8 @@ import static org.coconut.test.CollectionTestUtil.M4;
 import org.coconut.attribute.AttributeMap;
 import org.coconut.cache.policy.Policies;
 import org.coconut.cache.policy.paging.LRUPolicy;
-import org.coconut.cache.service.event.CacheEntryEvent.ItemAdded;
-import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemCreated;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemDeleted;
 import org.junit.Test;
 
 public class EventServiceEviction extends AbstractEventTestBundle {
@@ -33,10 +33,10 @@ public class EventServiceEviction extends AbstractEventTestBundle {
         put(M3);
         subscribe(CACHEENTRYEVENT_FILTER);
         put(M4);
-        ItemRemoved<?, ?> r = consumeItem(ItemRemoved.class, M1);
+        ItemDeleted<?, ?> r = consumeItem(ItemDeleted.class, M1);
         assertFalse(r.hasExpired());
 
-        ItemAdded<?, ?> a = consumeItem(ItemAdded.class, M4);
+        ItemCreated<?, ?> a = consumeItem(ItemCreated.class, M4);
 // assertFalse(a.isLoaded());
     }
 
@@ -65,7 +65,7 @@ public class EventServiceEviction extends AbstractEventTestBundle {
         rep.rejectUpdate = true;
         c.put(2, "C");
         assertEquals(1, c.size());
-        ItemRemoved<?, ?> r = consumeItem(ItemRemoved.class, M2);
+        ItemDeleted<?, ?> r = consumeItem(ItemDeleted.class, M2);
         assertFalse(r.hasExpired());
         assertFalse(c.containsKey(2));
     }

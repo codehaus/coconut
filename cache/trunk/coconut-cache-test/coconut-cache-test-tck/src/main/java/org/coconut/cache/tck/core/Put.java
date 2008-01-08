@@ -25,7 +25,7 @@ public class Put extends AbstractCacheTCKTest {
         assertEquals(1, c.size());
         c.put(1, "C");
         assertEquals(1, c.size());
-        assertEquals("C", c.get(1));
+        assertEquals("C", c.peek(1));
     }
 
     @Test

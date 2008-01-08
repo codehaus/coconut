@@ -7,7 +7,7 @@ import static org.coconut.test.CollectionTestUtil.M1;
 
 import org.coconut.cache.service.event.CacheEvent;
 import org.coconut.cache.service.event.CacheEventFilters;
-import org.coconut.cache.service.event.CacheEntryEvent.ItemRemoved;
+import org.coconut.cache.service.event.CacheEntryEvent.ItemDeleted;
 import org.junit.Test;
 
 public class EventCacheCleared extends AbstractEventTestBundle {
@@ -29,7 +29,7 @@ public class EventCacheCleared extends AbstractEventTestBundle {
         assertNotNull(subscribe(CacheEventFilters.CACHEENTRY_REMOVED_FILTER));
         put(M1);
         c.clear();
-        consumeItem(ItemRemoved.class, M1);
+        consumeItem(ItemDeleted.class, M1);
     }
 
     @Test

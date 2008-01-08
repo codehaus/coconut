@@ -53,10 +53,10 @@ public class DefaultEventBusTest {
 
     @Test
     public void subscribeSpecial() {
-        String name = bus.subscribe(Procedures.NOOP).getName();
+        String name = bus.subscribe(Procedures.IGNORE_PROCEDURE).getName();
         bus = new DefaultEventBus<String>();
-        bus.subscribe(Procedures.NOOP, Predicates.TRUE, name);
-        assertFalse(bus.subscribe(Procedures.NOOP).getName().equals(name));
+        bus.subscribe(Procedures.IGNORE_PROCEDURE, Predicates.TRUE, name);
+        assertFalse(bus.subscribe(Procedures.IGNORE_PROCEDURE).getName().equals(name));
     }
 
     @Test

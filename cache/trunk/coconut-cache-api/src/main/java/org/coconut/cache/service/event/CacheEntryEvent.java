@@ -1,4 +1,4 @@
-/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under 
+/* Copyright 2004 - 2007 Kasper Nielsen <kasper@codehaus.org> Licensed under
  * the Apache 2.0 License, see http://coconut.codehaus.org/license.
  */
 package org.coconut.cache.service.event;
@@ -15,11 +15,11 @@ import org.coconut.cache.service.loading.CacheLoadingService;
  * <p>
  * Currently 3 standard events are supported.
  * <ul>
- * <li>{@link ItemAdded}</li>
- * <li>{@link ItemRemoved}</li>
+ * <li>{@link ItemCreated}</li>
+ * <li>{@link ItemDeleted}</li>
  * <li>{@link ItemUpdated}</li>
  * </ul>
- * 
+ *
  * @see CacheEventConfiguration
  * @author <a href="mailto:kasper@codehaus.org">Kasper Nielsen</a>
  * @version $Id$
@@ -37,10 +37,10 @@ public interface CacheEntryEvent<K, V> extends CacheEvent<K, V>, Map.Entry<K, V>
      * by calling {@link Cache#get(Object)} or {@link CacheLoadingService#load(Object)}
      * and letting the cache loader fetch the value.
      */
-    interface ItemAdded<K, V> extends CacheEntryEvent<K, V> {
+    interface ItemCreated<K, V> extends CacheEntryEvent<K, V> {
 
         /** The unique name of this event. */
-        String NAME = "cacheitem.Added";
+        String NAME = "cacheitem.Created";
     }
 
     /**
@@ -50,15 +50,15 @@ public interface CacheEntryEvent<K, V> extends CacheEvent<K, V>, Map.Entry<K, V>
      * an entry has expired an the cache is configured to automatically fetch fresh
      * elements whenever an element expires.
      */
-    interface ItemRemoved<K, V> extends CacheEntryEvent<K, V> {
+    interface ItemDeleted<K, V> extends CacheEntryEvent<K, V> {
 
         /** The unique name of this event. */
-        String NAME = "cacheitem.Removed";
+        String NAME = "cacheitem.Deleted";
 
         /**
          * Returns true if the item was removed because the timeout value specified for
          * the item had been reached. Otherwise returns false.
-         * 
+         *
          * @return whether or not the value was implicitly removed
          */
         boolean hasExpired();
@@ -88,7 +88,7 @@ public interface CacheEntryEvent<K, V> extends CacheEvent<K, V>, Map.Entry<K, V>
          * <code>null</code>, but this must be clearly specified. The reason for this
          * is that if there exist a entry for the particular in a background store it will
          * need to fetched before this event can be posted.
-         * 
+         *
          * @return the value that was previously associated with the specified key, or
          *         <tt>null</tt> if there was no mapping for the key.
          */
@@ -97,7 +97,7 @@ public interface CacheEntryEvent<K, V> extends CacheEvent<K, V>, Map.Entry<K, V>
         /**
          * Returns true if the item was updated because the timeout value specified for
          * the item had been reached. Otherwise returns false.
-         * 
+         *
          * @return true if the item was updated because the timeout value specified for
          *         the item had been reached. Otherwise returns false.
          */

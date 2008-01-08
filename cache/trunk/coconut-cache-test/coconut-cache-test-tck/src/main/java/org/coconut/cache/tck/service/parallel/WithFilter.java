@@ -78,10 +78,10 @@ public class WithFilter extends AbstractCacheTCKTest {
     public void filterOnFilter() {
         init(5);
         ParallelCache.WithFilter wf = parallel().get().withFilter(
-                Predicates.mapAndEvaluate((Mapper) Mappers.keyFromMapEntry(), Predicates
+                Predicates.mapAndEvaluate((Mapper) Mappers.mapEntryToKey(), Predicates
                         .greaterThen(1)));
         assertEquals(4, wf.size());
-        wf = wf.withFilter(Predicates.mapAndEvaluate((Mapper) Mappers.keyFromMapEntry(), Predicates
+        wf = wf.withFilter(Predicates.mapAndEvaluate((Mapper) Mappers.mapEntryToKey(), Predicates
                 .lessThen(5)));
         assertEquals(3, wf.size());
     }
