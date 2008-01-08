@@ -3,13 +3,8 @@
  */
 package org.coconut.cache.internal.service.servicemanager;
 
-import static org.junit.Assert.assertFalse;
-
-import java.util.Collections;
-
 import org.coconut.cache.Cache;
-import org.coconut.cache.CacheConfiguration;
-import org.coconut.cache.internal.service.spi.InternalCacheSupport;
+import org.coconut.cache.internal.InternalCache;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
 import org.jmock.integration.junit4.JUnit4Mockery;
@@ -23,11 +18,11 @@ public class UnsynchronizedCacheServiceManagerTest {
 
     Cache<?, ?> cache;
 
-    private InternalCacheSupport<?, ?> helper;
+    private InternalCache<?, ?> helper;
 
     @Before
     public void before() {
-        helper = context.mock(InternalCacheSupport.class);
+        helper = context.mock(InternalCache.class);
         cache = context.mock(Cache.class);
     }
 
@@ -38,12 +33,13 @@ public class UnsynchronizedCacheServiceManagerTest {
 
     // @Test
     public void testConstructor() {
-        CacheConfiguration<?, ?> conf = CacheConfiguration.create();
-        ServiceComposer sc = ServiceComposer.compose(cache, helper, conf, Collections.EMPTY_LIST);
-        UnsynchronizedCacheServiceManager m = new UnsynchronizedCacheServiceManager(cache, sc);
-        assertFalse(m.isStarted());
-        assertFalse(m.isShutdown());
-        assertFalse(m.isTerminated());
+// CacheConfiguration<?, ?> conf = CacheConfiguration.create();
+// ServiceComposer sc = ServiceComposer.compose(cache, helper, conf,
+// Collections.EMPTY_LIST);
+// UnsynchronizedCacheServiceManager m = new UnsynchronizedCacheServiceManager(cache, sc);
+// assertFalse(m.isStarted());
+// assertFalse(m.isShutdown());
+// assertFalse(m.isTerminated());
     }
 
 // //@Test

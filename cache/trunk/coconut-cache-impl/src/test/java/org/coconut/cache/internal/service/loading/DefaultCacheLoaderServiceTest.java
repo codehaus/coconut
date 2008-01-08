@@ -11,7 +11,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.DefaultAttributeMap;
-import org.coconut.cache.internal.service.spi.InternalCacheSupport;
+import org.coconut.cache.internal.InternalCache;
 import org.coconut.cache.service.loading.CacheLoadingConfiguration;
 import org.coconut.cache.service.loading.CacheLoadingService;
 import org.coconut.cache.service.worker.CacheWorkerManager;
@@ -63,7 +63,7 @@ public class DefaultCacheLoaderServiceTest {
 //
 // Mock cacheHelperMock;
 
-    InternalCacheSupport<Integer, String> cacheHelperProxy;
+    InternalCache<Integer, String> cacheHelperProxy;
 
     CacheLoadingService<Integer, String> service;
 
@@ -318,19 +318,19 @@ public class DefaultCacheLoaderServiceTest {
         }
 
         public CacheWorkerManager getManager() {
-            return new CacheWorkerManager(){
+            return new CacheWorkerManager() {
 
                 @Override
-                public ExecutorService getExecutorService(Object service,
-                        AttributeMap attributes) {
+                public ExecutorService getExecutorService(Object service, AttributeMap attributes) {
                     return TestUtil.dummy(ExecutorService.class);
                 }
 
                 @Override
-                public ScheduledExecutorService getScheduledExecutorService(
-                        Object service, AttributeMap attributes) {
+                public ScheduledExecutorService getScheduledExecutorService(Object service,
+                        AttributeMap attributes) {
                     return TestUtil.dummy(ScheduledExecutorService.class);
-                }};
+                }
+            };
         }
 
         public ScheduledExecutorService getScheduledExecutorService(Object service) {

@@ -3,16 +3,13 @@
  */
 package org.coconut.cache.internal.service.expiration;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.coconut.attribute.AttributeMap;
 import org.coconut.attribute.DefaultAttributeMap;
 import org.coconut.attribute.common.TimeToRefreshAttribute;
 import org.coconut.cache.CacheEntry;
-import org.coconut.cache.internal.service.spi.InternalCacheSupport;
+import org.coconut.cache.internal.InternalCache;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionContext;
 import org.coconut.cache.service.exceptionhandling.CacheExceptionHandler;
 import org.coconut.cache.service.expiration.CacheExpirationConfiguration;
@@ -40,10 +37,10 @@ public class DefaultCacheExpirationServiceTest {
 
     private Clock.DeterministicClock clock;
 
-    private DefaultCacheExpirationService<Integer, String> s;
+    private AbstractCacheExpirationService<Integer, String> s;
 
-    private final InternalCacheSupport<Integer, String> helper = new JUnit4Mockery()
-            .mock(InternalCacheSupport.class);
+    private final InternalCache<Integer, String> helper = new JUnit4Mockery()
+            .mock(InternalCache.class);
 
     private CacheExceptionHandler<Integer, String> errorHandler;
 

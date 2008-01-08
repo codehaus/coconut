@@ -43,12 +43,12 @@ public class InternalEntryEventTest {
 
     @Test
     public void removed() {
-        CacheEntryEvent.ItemRemoved<Integer, String> c = InternalEntryEvent.removed(cache, ce);
+        CacheEntryEvent.ItemDeleted<Integer, String> c = InternalEntryEvent.removed(cache, ce);
         assertSame(cache, c.getCache());
         assertEquals(1, c.getKey());
         assertEquals("A", c.getValue());
         assertFalse(c.hasExpired());
-        assertEquals(CacheEntryEvent.ItemRemoved.NAME, c.getName());
+        assertEquals(CacheEntryEvent.ItemDeleted.NAME, c.getName());
         c.toString();
     }
 
@@ -69,12 +69,12 @@ public class InternalEntryEventTest {
 
     @Test
     public void evicted() {
-        CacheEntryEvent.ItemRemoved<Integer, String> c = InternalEntryEvent.evicted(cache, ce);
+        CacheEntryEvent.ItemDeleted<Integer, String> c = InternalEntryEvent.evicted(cache, ce);
         assertSame(cache, c.getCache());
         assertEquals(1, c.getKey());
         assertEquals("A", c.getValue());
         assertFalse(c.hasExpired());
-        assertEquals(CacheEntryEvent.ItemRemoved.NAME, c.getName());
+        assertEquals(CacheEntryEvent.ItemDeleted.NAME, c.getName());
         c.toString();
     }
 
@@ -95,12 +95,12 @@ public class InternalEntryEventTest {
 
     @Test
     public void expired() {
-        CacheEntryEvent.ItemRemoved<Integer, String> c = InternalEntryEvent.expired(cache, ce);
+        CacheEntryEvent.ItemDeleted<Integer, String> c = InternalEntryEvent.expired(cache, ce);
         assertSame(cache, c.getCache());
         assertEquals(1, c.getKey());
         assertEquals("A", c.getValue());
         assertTrue(c.hasExpired());
-        assertEquals(CacheEntryEvent.ItemRemoved.NAME, c.getName());
+        assertEquals(CacheEntryEvent.ItemDeleted.NAME, c.getName());
         c.toString();
     }
 
@@ -121,11 +121,11 @@ public class InternalEntryEventTest {
 
     @Test
     public void added() {
-        CacheEntryEvent.ItemAdded<Integer, String> c = InternalEntryEvent.added(cache, ce);
+        CacheEntryEvent.ItemCreated<Integer, String> c = InternalEntryEvent.added(cache, ce);
         assertSame(cache, c.getCache());
         assertEquals(1, c.getKey());
         assertEquals("A", c.getValue());
-        assertEquals(CacheEntryEvent.ItemAdded.NAME, c.getName());
+        assertEquals(CacheEntryEvent.ItemCreated.NAME, c.getName());
         c.toString();
     }
 
